@@ -2,77 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DEF6E7615
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 11:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B224F6E766D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 11:36:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232051AbjDSJSm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 05:18:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48496 "EHLO
+        id S232971AbjDSJgu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 05:36:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230179AbjDSJSl (ORCPT
+        with ESMTP id S232697AbjDSJgs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 05:18:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 845CF192;
-        Wed, 19 Apr 2023 02:18:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 19 Apr 2023 05:36:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8298FC645
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 02:35:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681896938;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=L4v7zrylHwuRp2YWTbCpqw/6xWeZNu0GBQgJfjNAz/Y=;
+        b=i8sYcNnH1QjhSeZQeCu4uGX52l4j7fPlhMmmTfS2FyCALcYUQVwl0pVZqsVI5diPBnG7HG
+        qYolAxo8zA6d8jxlH1QtvFzpr0zxIHZ+OUwoRD+p2FfuBkN6vAPPX72O8OWXLjMioRQkRU
+        NJq4OBGOQhgjt0fLFxEglX7WsmKkMtU=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-259-J12118u3OJ-DeEPOVg5lvA-1; Wed, 19 Apr 2023 05:35:37 -0400
+X-MC-Unique: J12118u3OJ-DeEPOVg5lvA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1FE8062FEF;
-        Wed, 19 Apr 2023 09:18:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35951C433D2;
-        Wed, 19 Apr 2023 09:18:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681895919;
-        bh=0JRt4+UCgQcLvAFBrSwg6hQTLtsT165JbVFD1DMmGTw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tVOLZBc1HT1azFTxkgfFVCmTv1LQMfjkxqyxBGDzIykRsicPawbusI/vAp3eWJxqt
-         3AwTamYzxG1+OPwzkew8fuH76K5GD9ryrDFvTEItYRVBwGZWQDz4tv3T6POc3Dyjyq
-         lBs8L9Q2tuX04xZoegOUSc2wUqhGS36tX8L00EuaWZ+/sFxrFi0awcQrT6zU+rU6uK
-         jm64XXsNBy14w4qc8+CH2zy0abMm2ZNSQING7bQIEHXBUM5liaAnbGXyRhCD6+/AX2
-         tiKQO1Gm3DD9dzR0hUJs7oqt6Iy+MUiVXrHQ+EuqCBH93DwuuWK3VehwjMhUlVcqUK
-         Y9Db41aKxT1Ag==
-Date:   Wed, 19 Apr 2023 11:18:28 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Mezgani Ali <ali.mezgani@gmail.com>
-Cc:     Ameer Hamza <ahamza@ixsystems.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>, chuck.lever@oracle.com,
-        arnd@arndb.de, guoren@kernel.org, palmer@rivosinc.com,
-        f.fainelli@gmail.com, slark_xiao@163.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, awalker@ixsystems.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] Add new open(2) flag - O_EMPTY_PATH
-Message-ID: <20230419-dachorganisation-infozentrum-40a4234d6a4c@brauner>
-References: <20221228160249.428399-1-ahamza@ixsystems.com>
- <20230106130651.vxz7pjtu5gvchdgt@wittgenstein>
- <ZD9AsWMnNKJ4dpjm@hamza-pc>
- <7454A798-1277-411A-853C-635B33439029@gmail.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D6BF91C0755E;
+        Wed, 19 Apr 2023 09:35:36 +0000 (UTC)
+Received: from ws.net.home (ovpn-192-7.brq.redhat.com [10.40.192.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3D05C2166B33;
+        Wed, 19 Apr 2023 09:35:36 +0000 (UTC)
+Date:   Wed, 19 Apr 2023 11:35:34 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.39-rc3
+Message-ID: <20230419093534.hdksjs3jp4nsbmlo@ws.net.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7454A798-1277-411A-853C-635B33439029@gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 19, 2023 at 01:46:16AM +0000, Mezgani Ali wrote:
-> Look Hamza,
-> 
-> The style you’re writing with project a reader of drafts and IETF documents.
-> Interesting what you are doing here in Kernel files.
-> 
-> But let me tell you I suspect you are a hyper virtualized Moroccan ( Hypocrite ).
-> 
-> One solution you have HR and leave.
+The util-linux release v2.39-rc3 is available at
+ 
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.39
+ 
+Feedback and bug reports, as always, are welcomed.
+ 
+  Karel
 
-Nonsensical off-topic mails like this with thinly veiled personal
-attacks are not acceptable. So stop it.
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
