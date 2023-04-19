@@ -2,55 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55AE06E8038
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 19:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51A056E804C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Apr 2023 19:26:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231947AbjDSRTK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 13:19:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36860 "EHLO
+        id S232505AbjDSR0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 13:26:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjDSRTI (ORCPT
+        with ESMTP id S230346AbjDSR0F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 13:19:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CBF67AA1;
-        Wed, 19 Apr 2023 10:19:07 -0700 (PDT)
+        Wed, 19 Apr 2023 13:26:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEDEA659B;
+        Wed, 19 Apr 2023 10:26:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9BF4463B69;
-        Wed, 19 Apr 2023 17:19:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB9EC433D2;
-        Wed, 19 Apr 2023 17:19:04 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 53B6A64122;
+        Wed, 19 Apr 2023 17:26:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6ABC433EF;
+        Wed, 19 Apr 2023 17:26:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681924746;
-        bh=Jn2bDE/AiC/C5l1xHvCadqv/n3u1woFUW6d117MZ/R0=;
+        s=k20201202; t=1681925162;
+        bh=VFRws15p+q59RSTrU0VATjC0LQ6eFGIpuOjxTTSlgZA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FYhtDNKq0O6I39tdZKi68ph54dC58iJXYdKG+aR0an0grsbfMblyXuJlXZT+dIE2t
-         hJfBwlC8311k/1DLleqSirI2g8vCppgV+8vq//IF0B7Zsdp/WRRekoLxJPZw4JTOvo
-         tkcD+YeeCGrZ+vG2LLJaozhz7IETH7o+DNvAaKXsosy+DdTVAW/O3bKHASBhrapAp7
-         g9ozYAjltLq8FOs6JNN1Oo8N+2DbMDcpXgF7GlmMOIqy38E3uMF8YOF3uFCNd+SSnO
-         wQ3PLlQyj7O1UBzigKGcpefa4Y9O01o8ISSI00eo6qIHMBvuf3VCrJKu/Co2cpqiwp
-         p7r5D2r5fPlcg==
-Date:   Wed, 19 Apr 2023 19:19:01 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/2] Monitoring unmounted fs with fanotify
-Message-ID: <20230419-besungen-filzen-adad4a1f3247@brauner>
-References: <20230414182903.1852019-1-amir73il@gmail.com>
- <20230418-diesmal-heimlaufen-ba2f2d1e1938@brauner>
- <CAOQ4uxj5UwDhV7XxWZ-Os+fzM=_N1DDWHpjmt6UnHr96EDriMw@mail.gmail.com>
- <20230418-absegnen-sputen-11212a0615c7@brauner>
- <CAOQ4uxgM2x93UKcJ5D5tfoTt8s0ChTrEheTGqTcndGoyGwS=7w@mail.gmail.com>
+        b=UycFIy4d7bCijEj9Km8Xjqeq9Y7EDL81kXO55cTmYZWaCoWU32Dc670Zrnc7oLZIE
+         zohoopB6vvjwHWAIgZi2HjslXGgNOIJNhWwyycPnyOYwJZEXyC3u+30gOvOxZSPYmz
+         UoBxqtx/hq9Yb4HYkTl/ePo7blbSjZczejMiqCwIcKJRmGoEgpFxw635kJIa5LL6cK
+         fj7fBUFeirx+lzm/NNEwcg+rYsJHgsDOwXoE9yDM1+xQ7Vq0YueKHyzojjw0y6iVIo
+         MzRSXQLJPb3cF4Xqo1ry0NuHAPTGe48TEIN9UMSK0LxFIaOB2wSFR2bO9Zr4jBxkZj
+         6EldBf3ubjw1Q==
+Date:   Wed, 19 Apr 2023 10:26:02 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Mike Snitzer <snitzer@kernel.org>
+Cc:     Sarthak Kukreti <sarthakkukreti@chromium.org>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Theodore Ts'o <tytso@mit.edu>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Bart Van Assche <bvanassche@google.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Daniil Lunev <dlunev@google.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>
+Subject: Re: [PATCH v4 1/4] block: Introduce provisioning primitives
+Message-ID: <20230419172602.GE360881@frogsfrogsfrogs>
+References: <20230414000219.92640-1-sarthakkukreti@chromium.org>
+ <20230418221207.244685-1-sarthakkukreti@chromium.org>
+ <20230418221207.244685-2-sarthakkukreti@chromium.org>
+ <20230419153611.GE360885@frogsfrogsfrogs>
+ <ZEAUHnWqt9cIiJRb@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgM2x93UKcJ5D5tfoTt8s0ChTrEheTGqTcndGoyGwS=7w@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <ZEAUHnWqt9cIiJRb@redhat.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -59,160 +69,180 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 18, 2023 at 06:20:22PM +0300, Amir Goldstein wrote:
-> On Tue, Apr 18, 2023 at 5:12 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Apr 18, 2023 at 04:56:40PM +0300, Amir Goldstein wrote:
-> > > On Tue, Apr 18, 2023 at 4:33 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > On Fri, Apr 14, 2023 at 09:29:01PM +0300, Amir Goldstein wrote:
-> > > > > Jan,
-> > > > >
-> > > > > Followup on my quest to close the gap with inotify functionality,
-> > > > > here is a proposal for FAN_UNMOUNT event.
-> > > > >
-> > > > > I have had many design questions about this:
-> > > >
-> > > > I'm going to humbly express what I feel makes sense to me when looking
-> > > > at this from a user perspective:
-> > > >
-> > > > > 1) Should we also report FAN_UNMOUNT for marked inodes and sb
-> > > > >    on sb shutdown (same as IN_UNMOUNT)?
-> > > >
-> > > > My preference would be if this would be a separate event type.
-> > > > FAN_SB_SHUTDOWN or something.
-> > >
-> > > If we implement an event for this at all, I would suggest FAN_IGNORED
-> > > or FAN_EVICTED, which has the same meaning as IN_IGNORED.
-> > > When you get an event that the watch went away, it could be because of:
-> > > 1. watch removed by user
-> > > 2. watch removed because inode was evicted (with FAN_MARK_EVICTABLE)
-> > > 3. inode deleted
-> > > 4. sb shutdown
-> > >
-> > > IN_IGNORED is generated in all of the above except for inode evict
-> > > that is not possible with inotify.
-> > >
-> > > User can figure out on his own if the inode was deleted or if fs was unmounted,
-> > > so there is not really a need for FAN_SB_SHUTDOWN IMO.
-> >
-> > Ok, sounds good.
-> >
-> > >
-> > > Actually, I think that FAN_IGNORED would be quite useful for the
-> > > FAN_MARK_EVICTABLE case, but it is a bit less trivial to implement
-> > > than FAN_UNMOUNT was.
-> > >
-> > > >
-> > > > > 2) Should we also report FAN_UNMOUNT on sb mark for any unmounts
-> > > > >    of that sb?
-> > > >
-> > > > I don't think so. It feels to me that if you watch an sb you don't
-> > > > necessarily want to watch bind mounts of that sb.
-> > > >
-> > > > > 3) Should we report also the fid of the mount root? and if we do...
-> > > > > 4) Should we report/consider FAN_ONDIR filter?
-> > > > >
-> > > > > All of the questions above I answered "not unless somebody requests"
-> > > > > in this first RFC.
-> > > >
-> > > > Fwiw, I agree.
-> > > >
-> > > > >
-> > > > > Specifically, I did get a request for an unmount event for containers
-> > > > > use case.
-> > > > >
-> > > > > I have also had doubts regarding the info records.
-> > > > > I decided that reporting fsid and mntid is minimum, but couldn't
-> > > > > decide if they were better of in a single MNTID record or seprate
-> > > > > records.
-> > > > >
-> > > > > I went with separate records, because:
-> > > > > a) FAN_FS_ERROR has set a precendent of separate fid record with
-> > > > >    fsid and empty fid, so I followed this precendent
-> > > > > b) MNTID record we may want to add later with FAN_REPORT_MNTID
-> > > > >    to all the path events, so better that it is independent
-> > > >
-> > >
-> > > Just thought of another reason:
-> > >  c) FAN_UNMOUNT does not need to require FAN_REPORT_FID
-> > >      so it does not depend on filesystem having a valid f_fsid nor
-> > >      exports_ops. In case of "pseudo" fs, FAN_UNMOUNT can report
-> > >      only MNTID record (I will amend the patch with this minor change).
-> >
-> > I see some pseudo fses generate f_fsid, e.g., tmpfs in mm/shmem.c
+On Wed, Apr 19, 2023 at 12:17:34PM -0400, Mike Snitzer wrote:
+> On Wed, Apr 19 2023 at 11:36P -0400,
+> Darrick J. Wong <djwong@kernel.org> wrote:
 > 
-> tmpfs is not "pseudo" in my eyes, because it implements a great deal of the
-> vfs interfaces, including export_ops.
-
-The term "pseudo" is somewhat well-defined though, no? It really just
-means that there's no backing device associated with it. So for example,
-anything that uses get_tree_nodev() including tmpfs. If erofs is
-compiled with fscache support it's even a pseudo fs (TIL).
-
+> > On Tue, Apr 18, 2023 at 03:12:04PM -0700, Sarthak Kukreti wrote:
+> > > Introduce block request REQ_OP_PROVISION. The intent of this request
+> > > is to request underlying storage to preallocate disk space for the given
+> > > block range. Block devices that support this capability will export
+> > > a provision limit within their request queues.
+> > > 
+> > > This patch also adds the capability to call fallocate() in mode 0
+> > > on block devices, which will send REQ_OP_PROVISION to the block
+> > > device for the specified range,
+> > > 
+> > > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
+> > > ---
+> > >  block/blk-core.c          |  5 ++++
+> > >  block/blk-lib.c           | 53 +++++++++++++++++++++++++++++++++++++++
+> > >  block/blk-merge.c         | 18 +++++++++++++
+> > >  block/blk-settings.c      | 19 ++++++++++++++
+> > >  block/blk-sysfs.c         |  8 ++++++
+> > >  block/bounce.c            |  1 +
+> > >  block/fops.c              | 25 +++++++++++++-----
+> > >  include/linux/bio.h       |  6 +++--
+> > >  include/linux/blk_types.h |  5 +++-
+> > >  include/linux/blkdev.h    | 16 ++++++++++++
+> > >  10 files changed, 147 insertions(+), 9 deletions(-)
+> > > 
+> > 
+> > <cut to the fallocate part; the block/ changes look fine to /me/ at
+> > first glance, but what do I know... ;)>
+> > 
+> > > diff --git a/block/fops.c b/block/fops.c
+> > > index d2e6be4e3d1c..e1775269654a 100644
+> > > --- a/block/fops.c
+> > > +++ b/block/fops.c
+> > > @@ -611,9 +611,13 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > >  	return ret;
+> > >  }
+> > >  
+> > > +#define	BLKDEV_FALLOC_FL_TRUNCATE				\
+> > 
+> > At first I thought from this name that you were defining a new truncate
+> > mode for fallocate, then I realized that this is mask for deciding if we
+> > /want/ to truncate the pagecache.
+> > 
+> > #define		BLKDEV_FALLOC_TRUNCATE_MASK ?
+> > 
+> > > +		(FALLOC_FL_PUNCH_HOLE |	FALLOC_FL_ZERO_RANGE |	\
+> > 
+> > Ok, so discarding and writing zeroes truncates the page cache, makes
+> > sense since we're "writing" directly to the block device.
+> > 
+> > > +		 FALLOC_FL_NO_HIDE_STALE)
+> > 
+> > Here things get tricky -- some of the FALLOC_FL mode bits are really an
+> > opcode and cannot be specified together, whereas others select optional
+> > behavior for certain opcodes.
+> > 
+> > IIRC, the mutually exclusive opcodes are:
+> > 
+> > 	PUNCH_HOLE
+> > 	ZERO_RANGE
+> > 	COLLAPSE_RANGE
+> > 	INSERT_RANGE
+> > 	(none of the above, for allocation)
+> > 
+> > and the "variants on a theme are":
+> > 
+> > 	KEEP_SIZE
+> > 	NO_HIDE_STALE
+> > 	UNSHARE_RANGE
+> > 
+> > not all of which are supported by all the opcodes.
+> > 
+> > Does it make sense to truncate the page cache if userspace passes in
+> > mode == NO_HIDE_STALE?  There's currently no defined meaning for this
+> > combination, but I think this means we'll truncate the pagecache before
+> > deciding if we're actually going to issue any commands.
+> > 
+> > I think that's just a bug in the existing code -- it should be
+> > validating that @mode is any of the supported combinations *before*
+> > truncating the pagecache.
+> > 
+> > Otherwise you could have a mkfs program that starts writing new fs
+> > metadata, decides to provision the storage (say for a logging region),
+> > doesn't realize it's running on an old kernel, and then oops the
+> > provision attempt fails but have we now shredded the pagecache and lost
+> > all the writes?
 > 
-> and also I fixed its f_fsid recently:
-> 59cda49ecf6c shmem: allow reporting fanotify events with file handles on tmpfs
+> While that just caused me to have an "oh shit, that's crazy" (in a
+> scary way) belly laugh...
 
-Well thank you for that this has been very useful in userspace already
-I've been told.
+I just tried this and:
 
+# xfs_io -c 'pwrite -S 0x58 1m 1m' -c fsync -c 'pwrite -S 0x59 1m 4096' -c 'pread -v 1m 64' -c 'falloc 1m 4096' -c 'pread -v 1m 64' /dev/sda
+wrote 1048576/1048576 bytes at offset 1048576
+1 MiB, 256 ops; 0.0013 sec (723.589 MiB/sec and 185238.7844 ops/sec)
+wrote 4096/4096 bytes at offset 1048576
+4 KiB, 1 ops; 0.0000 sec (355.114 MiB/sec and 90909.0909 ops/sec)
+00100000:  59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  YYYYYYYYYYYYYYYY
+00100010:  59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  YYYYYYYYYYYYYYYY
+00100020:  59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  YYYYYYYYYYYYYYYY
+00100030:  59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59  YYYYYYYYYYYYYYYY
+read 64/64 bytes at offset 1048576
+64.000000 bytes, 1 ops; 0.0000 sec (1.565 MiB/sec and 25641.0256 ops/sec)
+fallocate: Operation not supported
+00100000:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
+00100010:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
+00100020:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
+00100030:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
+read 64/64 bytes at offset 1048576
+64.000000 bytes, 1 ops; 0.0003 sec (176.554 KiB/sec and 2824.8588 ops/sec)
+
+(Write 1MB of Xs, flush it to disk, write 4k of Ys, confirm the Y's are
+in the page cache, fail to fallocate, reread and spot the Xs that we
+supposedly overwrote.)
+
+oops.
+
+> (And obviously needs fixing independent of this patchset)
 > 
-> > At the risk of putting my foot in my mouth, what's stopping us from
-> > making them all support f_fsid?
+> Shouldn't mkfs first check that the underlying storage supports
+> REQ_OP_PROVISION by verifying
+> /sys/block/<dev>/queue/provision_max_bytes exists and is not 0?
+> (Just saying, we need to add new features more defensively.. you just
+> made the case based on this scenario's implications alone)
+
+Not for fallocate -- for regular files, there's no way to check if the
+filesystem actually supports the operation requested other than to try
+it and see if it succeeds.  We probably should've defined a DRY_RUN flag
+for that purpose back when it was introduced.
+
+For fallocate calls to block devices, yes, the program can check the
+queue limits in sysfs if fstat says the supplied path is a block device,
+but I don't know that most programs are that thorough.  The fallocate(1)
+CLI program does not check.
+
+Then I moved on to fs utilities:
+
+ext4: For discard, mke2fs calls BLKDISCARD if it detects a block device
+via fstat, and falloc(PUNCH|KEEP_SIZE) for anything else.  For zeroing,
+it only uses falloc(ZERO) or falloc(PUNCH|KEEP_SIZE) and does not try to
+use BLKZEROOUT.  It does not check sysfs queue limits at all.
+
+XFS: mkfs.xfs issues BLKDISCARD before writing anything to the device,
+so that's fine.  It uses falloc(ZERO) to erase the log, but since
+xfsprogs provides its own buffer cache and uses O_DIRECT, pagecache
+coherency problems aren't an issue.
+
+btrfs: mkfs.btrfs only issues BLKDISCARD, and only before it starts
+writing the new fs, so no problems there.
+
+--D
+
+> Sarthak, please note I said "provision_max_bytes": all other ops
+> (e.g. DISCARD, WRITE_ZEROES, etc) have <op>_max_bytes exported through
+> sysfs, not <op>_max_sectors.  Please export provision_max_bytes, e.g.:
 > 
-> Nothing much. Jan had the same opinion [1].
-
-I think that's what we should try to do without having thought too much
-about potential edge-cases.
-
-> 
-> We could do either:
-> 1. use uuid_to_fsid() in vfs_statfs() if fs has set s_uuid and not set f_fsid
-> 2. use s_dev as f_fsid in vfs_statfs() if fs did not set f_fsid nor s_uuid
-> 3. randomize s_uuid for simple fs (like tmpfs)
-> 4. any combination of the above and more
-> 
-> Note that we will also need to decide what to do with
-> name_to_handle_at() for those pseudo fs.
-
-Doing it on the fly during vfs_statfs() feels a bit messy and could
-cause bugs. One should never underestimate the possibility that there's
-some fs that somehow would get into trouble because of odd behavior.
-
-So switching each fs over to generate a s_uuid seems the prudent thing
-to do. Doing it the hard way also forces us to make sure that each
-filesystem can deal with this.
-
-It seems that for pseudo fses we can just allocate a new s_uuid for each
-instance. So each tmpfs instance - like your patch did - would just get
-a new s_uuid.
-
-For kernel internal filesystems - mostly those that use init_pseudo -
-the s_uuid would remain stable until the next reboot when it is
-regenerated.
-
-Looking around just a little there's some block-backed fses like fat
-that have an f_fsid but no s_uuid. So if we give those s_uuid then it'll
-mean that the f_fsid isn't generated based on the s_uuid. That should be
-ok though and shouldn't matter to userspace.
-
-Afterwards we could probably lift the ext4 and xfs specific ioctls to
-retrieve the s_uuid into a generic ioctl to allow userspace to get the
-s_uuid.
-
-That's my thinking without having crawled to all possible corner
-cases... Also needs documenting that s_uuid is not optional anymore and
-explain the difference between pseudo and device-backed fses. I hope
-that's not completely naive...
-
-> 
-> Quoting Jan from [1]:
-> "But otherwise the proposal to make name_to_handle_at() work even for
-> filesystems not exportable through NFS makes sense to me. But I guess we
-> need some buy-in from VFS maintainers for this." (hint hint).
-> 
-> Thanks,
-> Amir.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20230417162721.ouzs33oh6mb7vtft@quack3/
+> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> index 202aa78f933e..2e5ac7b1ffbd 100644
+> --- a/block/blk-sysfs.c
+> +++ b/block/blk-sysfs.c
+> @@ -605,12 +605,12 @@ QUEUE_RO_ENTRY(queue_io_min, "minimum_io_size");
+>  QUEUE_RO_ENTRY(queue_io_opt, "optimal_io_size");
+>  
+>  QUEUE_RO_ENTRY(queue_max_discard_segments, "max_discard_segments");
+> -QUEUE_RO_ENTRY(queue_max_provision_sectors, "max_provision_sectors");
+>  QUEUE_RO_ENTRY(queue_discard_granularity, "discard_granularity");
+>  QUEUE_RO_ENTRY(queue_discard_max_hw, "discard_max_hw_bytes");
+>  QUEUE_RW_ENTRY(queue_discard_max, "discard_max_bytes");
+>  QUEUE_RO_ENTRY(queue_discard_zeroes_data, "discard_zeroes_data");
+>  
+> +QUEUE_RO_ENTRY(queue_provision_max, "provision_max_bytes");
+>  QUEUE_RO_ENTRY(queue_write_same_max, "write_same_max_bytes");
+>  QUEUE_RO_ENTRY(queue_write_zeroes_max, "write_zeroes_max_bytes");
+>  QUEUE_RO_ENTRY(queue_zone_append_max, "zone_append_max_bytes");
