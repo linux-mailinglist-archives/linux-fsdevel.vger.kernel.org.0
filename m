@@ -2,58 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FF6E6E9C22
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 20:56:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F5AB6E9C26
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 20:58:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230510AbjDTS4G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 14:56:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60482 "EHLO
+        id S231806AbjDTS5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 14:57:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231826AbjDTSzy (ORCPT
+        with ESMTP id S231939AbjDTS5U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 14:55:54 -0400
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9DCC273B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 11:55:52 -0700 (PDT)
-Received: by mail-qt1-x82a.google.com with SMTP id d75a77b69052e-3ef34c49cb9so893751cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 11:55:52 -0700 (PDT)
+        Thu, 20 Apr 2023 14:57:20 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D039DE65
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 11:57:18 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id d75a77b69052e-3ef36d814a5so908781cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 11:57:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1682016952; x=1684608952;
+        d=google.com; s=20221208; t=1682017038; x=1684609038;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hbCxu47aXqOZFjOgElAuAaCkhQzE3b3RJfWYjmehSCc=;
-        b=oa5zJsQrq+PRcAacYKvPmJFEiT892k3KGbGwJQk5suWva6mPaVh1qqAA8IzY+Jj/hD
-         VFBYO4okZJxeVSzysh4ToRnXR/6o5DYUVATkBJfNde9WKEOtWJJ8yy7sY1xXBfZGEY3q
-         xOZ0jkjwyMWdnarfIh0L8R4nUzdGSyWIKSazjknGk1r11LI/2RO684ecfw7UrQTVXs/M
-         GzaTUPkrFcjqNquKq6y2UAqISLWfsxVd028RdcSxBegIpsM6e0JAtRgxUzO7FY9aKxf+
-         Lt1hLlXFBFqgRdkJ2/8j3ivRECJ5MYEvxha3Z2O262UcpC3xjQwUKeyV2yCazEbahUJf
-         4cIw==
+        bh=PPC/T+cZBiALDJb1UQ+biPUmWPyQkwBmvhpGsYNp8Ec=;
+        b=PkKT30pQsy0dCCBavAqHdYdEypziw027sTRPtrDqQEAdFY/TgNivu3OfPvntSwK5vh
+         mU5R6qzBEL+qOULk/9IpVdRCuSYMJd/CzosuFnkJHrtdKzbtz0qrvCTLqa6YVYOFENL6
+         eUbuwLtPygmsEnnix7qVPS4j+Mb06vn2kCVGU22IQ/QipOnHx3x30cc17Wf2V/b6eOQA
+         FBcLvayQhbewEQqXjzzBGqjCWuPzVpydlIFaj667t12Zh2ffgrUquDBsin3Tzj+OScUJ
+         BWjEbdTXXG4edmqIovf5NwazZ359XreOT3MIExV27wqDBPOW6JeKvDnWf6Vv752fS0yk
+         hnzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682016952; x=1684608952;
+        d=1e100.net; s=20221208; t=1682017038; x=1684609038;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hbCxu47aXqOZFjOgElAuAaCkhQzE3b3RJfWYjmehSCc=;
-        b=UbhkkaZm1RPiNvHaO1VULeuLJ9qm4+5tA9fGaU+/dvvWtWp2BKV1AkLt4RI2dwc+PG
-         iMMccHcrd7/Y5i2rKC0p2v3D0Dj451eXtJEVA2VtiC6sjC9m3PXfpFbgm2e97+/hATJ/
-         O6164MfeobOa8ax2JF4dRJeU8v5BHYID7/4Ea5mJOhW1zgrJnpUgXxUOuteUUTCnIneR
-         Fuxci5RzK2IOZg2QuHHdQSiQGZPgUnucmzKT3BNGYA0B7+qiBxZ93fQw+ZfUnUu3jbr0
-         FloEoMO4s69M4KuyznHhq6eGve48ZGqMADhLRFzty4TiIYU+f+jlAsxfZSG1Y4MQwklq
-         Fdzg==
-X-Gm-Message-State: AAQBX9eHyR1exRblZ7NgkDdLW9w8ZicOgZm70J3wI4ui2PxrBvjJS3kc
-        jQE8JR2cbv21oOTEG25u+4Nvqkg7C+N44Ckgm9/u08H2GJ6NA4jLs3o=
-X-Google-Smtp-Source: AKy350YQ85co+lRTcuWRO1Vltk6Lkvqveeyi1jPBPoTaqbL7736XRkZW9Hessn4M1C1JBov0tCRU8RrPiXoZoB3KNYs=
-X-Received: by 2002:ac8:5b10:0:b0:3ef:343b:fe7e with SMTP id
- m16-20020ac85b10000000b003ef343bfe7emr60397qtw.2.1682016952049; Thu, 20 Apr
- 2023 11:55:52 -0700 (PDT)
+        bh=PPC/T+cZBiALDJb1UQ+biPUmWPyQkwBmvhpGsYNp8Ec=;
+        b=QfDG9dKa2qZ7MZzLRjb1zf/hxczlQs178GQ+c4fZ8clVybFc9DEmOiDPS48MpLOLvq
+         +POlnYZgdChxBiivi3jOyZ1kdrYOq4TwiL6I4s1MWoBwSDrhDcCOd8ZOdUBBUtkADffF
+         xrZ2y+yGzrtYFVcKXvCcfWxj3FHy1wKrmqO/RIqqUx7GU5IAB20u/1GZGgwp9ALkz8iL
+         JaDQFu/XtsU8JOBCqn6HXeEDd9uJy42tnLdtYKitexCrIqTSzvCaRafXwoB9LaB9qPUP
+         jPT0P6OEcqoZt07fpzmlSVWKZaKPk1t6sm/hVr2dpHNiDe5azLSf+chafRhqIpkelT3t
+         Oxtw==
+X-Gm-Message-State: AAQBX9cGy6AMrMejyndncG81uGwJxV7yIyXgycETzHF2VPBVW46W89ih
+        sfRIQDPKBJgL/5bXGrzxLGSx3ZNhVBolNCK7mKcMBA==
+X-Google-Smtp-Source: AKy350Ybjxqe9UNlAY93vEa6/CWa86430QrJTp0Wuib3dT/K1RCencGmEZTuWYiHeeJuqVMNI7KbpwHyDPsTlcYFsTw=
+X-Received: by 2002:a05:622a:290:b0:3ef:5008:336f with SMTP id
+ z16-20020a05622a029000b003ef5008336fmr29892qtw.1.1682017037936; Thu, 20 Apr
+ 2023 11:57:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230403220337.443510-1-yosryahmed@google.com> <20230403220337.443510-3-yosryahmed@google.com>
-In-Reply-To: <20230403220337.443510-3-yosryahmed@google.com>
+References: <20230403220337.443510-1-yosryahmed@google.com> <20230403220337.443510-4-yosryahmed@google.com>
+In-Reply-To: <20230403220337.443510-4-yosryahmed@google.com>
 From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 20 Apr 2023 11:55:40 -0700
-Message-ID: <CALvZod5mxE8RAtCEZkaq2fce-Od5MZtyPppn-ns0XzXHMcFm9g@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable RFC 2/5] memcg: flush stats non-atomically in mem_cgroup_wb_stats()
+Date:   Thu, 20 Apr 2023 11:57:06 -0700
+Message-ID: <CALvZod5WNiiV2NmikaGMPd62hiGtKWZrO0f2amk2HE8quBxkDQ@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable RFC 3/5] memcg: calculate root usage from
+ global state
 To:     Yosry Ahmed <yosryahmed@google.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
@@ -80,9 +81,17 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Mon, Apr 3, 2023 at 3:03=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com> =
 wrote:
 >
-> The previous patch moved the wb_over_bg_thresh()->mem_cgroup_wb_stats()
-> code path in wb_writeback() outside the lock section. We no longer need
-> to flush the stats atomically. Flush the stats non-atomically.
+> Currently, we approximate the root usage by adding the memcg stats for
+> anon, file, and conditionally swap (for memsw). To read the memcg stats
+> we need to invoke an rstat flush. rstat flushes can be expensive, they
+> scale with the number of cpus and cgroups on the system.
+>
+> mem_cgroup_usage() is called by memcg_events()->mem_cgroup_threshold()
+> with irqs disabled, so such an expensive operation with irqs disabled
+> can cause problems.
+>
+> Instead, approximate the root usage from global state. This is not 100%
+> accurate, but the root usage has always been ill-defined anyway.
 >
 > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
