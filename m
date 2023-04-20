@@ -2,155 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A2CA6E96BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 16:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 261626E975A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 16:40:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231723AbjDTOPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 10:15:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39402 "EHLO
+        id S232213AbjDTOj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 10:39:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230459AbjDTOPT (ORCPT
+        with ESMTP id S232193AbjDTOj6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 10:15:19 -0400
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 373B1358A;
-        Thu, 20 Apr 2023 07:15:18 -0700 (PDT)
-Received: by mail-vk1-xa30.google.com with SMTP id 71dfb90a1353d-440364c90d6so169430e0c.0;
-        Thu, 20 Apr 2023 07:15:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682000117; x=1684592117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bfXT5/UjqAn/aYok60aRQfZSJdZtek6u1RvOESD4I3k=;
-        b=MUfmJSGdg517Fitq4tA6PWRDGubuFA80Vg6KUbUzSt7GxUOuvnoj8rBHNd5dlX3JVw
-         m3D8aDbA1nxoVlWH50MQUcUsx6KxMuzHoxlj/1qrNzy35kqwF2c0xBlIxNxHBSZ98cdP
-         nQxL41XkUdTEhafaviNtGaGYp1u8uWUr1D1iVtF5mJLgBhegwlmRsAhjFwSfeomTsoMQ
-         EAm27/bpBVPTsnIAIv/zpR0dL8iDGwaFRzk3tVuMVEwaLwm8Z6W64SfSBMM6ldqF5HAK
-         oriOpMSYKWM0DQZuI64E54NlZ2B8GeDSLhZrpPYb7SbqQszdiybNaAAaP+rrjibBjEHZ
-         yXCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682000117; x=1684592117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bfXT5/UjqAn/aYok60aRQfZSJdZtek6u1RvOESD4I3k=;
-        b=e0OvyAqeXmaXmGeIkvsHKzEIXvp6Rwi0/UJqjNGpT9XQ8mnglt4JnUWfLjnTD9ccol
-         7+L5rwAfCJcbfFrRS68n+lWmtBXLgZ7I7QKgStyuOmG40bqt5d3gSYEcx/PQLO/+EcFH
-         01eJBUHugC6XI/Lj8DvuMUySoQUfR58PXFLBDa/6WeCfIWp6t7SDVUCqaxdWNlDOObs0
-         n86yPP9cf7aD4BtBHO6gI5WdT+zwL2JWK+AIcl6cmhx7ymcE4Bh52+XkC354kPVm0wmJ
-         tgNMdIEoTn37Z+krkzbLw4H7ygtScVxfgR1ZbKfDkswiR1Pf5ITO5gOLRDcTvmZZVl4x
-         N8zw==
-X-Gm-Message-State: AAQBX9cQFrxnBKA/WMFztJz6/1AlvMzRPmS9XxGJfn6U1o89Zv8CIP0Y
-        IFkigZaHHIu0sye2DvnT9UJwz3jW/pRl/tmDrFg=
-X-Google-Smtp-Source: AKy350ZvbChU1Y6ibKpXvvI147sJ6DbsauyHErkG01i6JtBr5z6tMtytZLsSqTkMpcmPz1JpBeFdgNiJJcrGVAyEjQk=
-X-Received: by 2002:a67:c106:0:b0:42e:3b51:2a8a with SMTP id
- d6-20020a67c106000000b0042e3b512a8amr1029341vsj.0.1682000117225; Thu, 20 Apr
- 2023 07:15:17 -0700 (PDT)
+        Thu, 20 Apr 2023 10:39:58 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC3F610F2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 07:39:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id EEE8F1FDB3;
+        Thu, 20 Apr 2023 14:39:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1682001594; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qHAAL2DzpsQCozNz8x3S9EtbHdkbdVoss/RQUW176WA=;
+        b=Id22B1U228MFmO4fzCWEF1cYa2Bv0JHQnIe3QA1Q47191EwoV9iLrLfqo7B8ImCDp4IPKt
+        x100xL1A9bVNzJwiGCTEG+bY7MLaNnXwaZpMmGD3baVeNswqKWXfXeMKqzCtY7xT60CbsA
+        j1jrrLhqtPRYddeHTYvI5Q/c+1a/lzE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1682001594;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qHAAL2DzpsQCozNz8x3S9EtbHdkbdVoss/RQUW176WA=;
+        b=Ik7WFZbbaJ3mOyfrxuRcyg7kfw5zuOyOqGA22weyslekHhihz+XfG7/mfey9AbSS80g2OL
+        btXTL2Yeq0wwxfDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E07101333C;
+        Thu, 20 Apr 2023 14:39:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id jgLANrpOQWRMQgAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 20 Apr 2023 14:39:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 743DCA0729; Thu, 20 Apr 2023 16:39:54 +0200 (CEST)
+Date:   Thu, 20 Apr 2023 16:39:54 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     cem@kernel.org
+Cc:     hughd@google.com, jack@suse.cz, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org
+Subject: Re: [PATCH 6/6] Add default quota limit mount options
+Message-ID: <20230420143954.asmpkta4tknyzcda@quack3>
+References: <20230420080359.2551150-1-cem@kernel.org>
+ <20230420080359.2551150-7-cem@kernel.org>
 MIME-Version: 1.0
-References: <20230416060722.1912831-1-amir73il@gmail.com> <20230420131207.dligsga5spbiptje@quack3>
-In-Reply-To: <20230420131207.dligsga5spbiptje@quack3>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 20 Apr 2023 17:15:05 +0300
-Message-ID: <CAOQ4uxiKdg5TMR0J+_3ENKOr+t+K3eU61h0m2Oc1PY1npEONuw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] fanotify: support watching filesystems and mounts
- inside userns
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Lennart Poettering <lennart@poettering.net>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230420080359.2551150-7-cem@kernel.org>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 20, 2023 at 4:12=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Sun 16-04-23 09:07:22, Amir Goldstein wrote:
-> > An unprivileged user is allowed to create an fanotify group and add
-> > inode marks, but not filesystem and mount marks.
-> >
-> > Add limited support for setting up filesystem and mount marks by an
-> > unprivileged user under the following conditions:
-> >
-> > 1.   User has CAP_SYS_ADMIN in the user ns where the group was created
-> > 2.a. User has CAP_SYS_ADMIN in the user ns where the filesystem was
-> >      mounted (implies FS_USERNS_MOUNT)
-> >   OR (in case setting up a mark mount)
-> > 2.b. User has CAP_SYS_ADMIN in the user ns attached to an idmapped moun=
-t
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> The patch looks good to me. Just two comments below.
->
-> > Christian,
-> >
-> > You can find this patch, along with FAN_UNMOUNT patches on my github [3=
-].
-> > Please confirm that this meets your needs for watching container mounts=
-.
-> >
-> > [3] https://github.com/amir73il/linux/commits/fan_unmount
->
-> Yeah, it would be good to get ack from Christian that the model you propo=
-se
-> works for him.
->
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fa=
-notify_user.c
-> > index db3b79b8e901..2c3e123aee14 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -1238,6 +1238,7 @@ static struct fsnotify_mark *fanotify_add_new_mar=
-k(struct fsnotify_group *group,
-> >        * A group with FAN_UNLIMITED_MARKS does not contribute to mark c=
-ount
-> >        * in the limited groups account.
-> >        */
-> > +     BUILD_BUG_ON(!(FANOTIFY_ADMIN_INIT_FLAGS & FAN_UNLIMITED_MARKS));
-> >       if (!FAN_GROUP_FLAG(group, FAN_UNLIMITED_MARKS) &&
-> >           !inc_ucount(ucounts->ns, ucounts->uid, UCOUNT_FANOTIFY_MARKS)=
-)
-> >               return ERR_PTR(-ENOSPC);
-> ...
-> > @@ -1557,21 +1559,13 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, fl=
-ags, unsigned int, event_f_flags)
-> >               goto out_destroy_group;
-> >       }
-> >
-> > +     BUILD_BUG_ON(!(FANOTIFY_ADMIN_INIT_FLAGS & FAN_UNLIMITED_QUEUE));
-> >       if (flags & FAN_UNLIMITED_QUEUE) {
-> > -             fd =3D -EPERM;
-> > -             if (!capable(CAP_SYS_ADMIN))
-> > -                     goto out_destroy_group;
-> >               group->max_events =3D UINT_MAX;
-> >       } else {
-> >               group->max_events =3D fanotify_max_queued_events;
-> >       }
-> >
-> > -     if (flags & FAN_UNLIMITED_MARKS) {
-> > -             fd =3D -EPERM;
-> > -             if (!capable(CAP_SYS_ADMIN))
-> > -                     goto out_destroy_group;
-> > -     }
-> > -
->
-> Perhaps this hunk (plus the BUILD_BUG_ON hunk above) should go into a
-> separate patch with a proper changelog?  I was scratching my head over it
-> for a while until I've realized it's unrelated cleanup of dead code.
->
+On Thu 20-04-23 10:03:59, cem@kernel.org wrote:
+> From: Lukas Czerner <lczerner@redhat.com>
+> 
+> Allow system administrator to set default global quota limits at tmpfs
+> mount time.
+> 
+> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> ---
+>  Documentation/filesystems/tmpfs.rst | 34 ++++++++++----
+>  include/linux/shmem_fs.h            |  8 ++++
+>  mm/shmem.c                          | 69 +++++++++++++++++++++++++++++
+>  mm/shmem_quota.c                    |  9 ++++
+>  4 files changed, 111 insertions(+), 9 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+> index 1d4ef4f7cca7e..241c11f86cd73 100644
+> --- a/Documentation/filesystems/tmpfs.rst
+> +++ b/Documentation/filesystems/tmpfs.rst
+> @@ -88,15 +88,31 @@ that instance in a system with many CPUs making intensive use of it.
+>  
+>  tmpfs also supports quota with the following mount options
+>  
+> -========  =============================================================
+> -quota     User and group quota accounting and enforcement is enabled on
+> -          the mount. Tmpfs is using hidden system quota files that are
+> -          initialized on mount.
+> -usrquota  User quota accounting and enforcement is enabled on the
+> -          mount.
+> -grpquota  Group quota accounting and enforcement is enabled on the
+> -          mount.
+> -========  =============================================================
+> +======================== =================================================
+> +quota                    User and group quota accounting and enforcement
+> +                         is enabled on the mount. Tmpfs is using hidden
+> +                         system quota files that are initialized on mount.
+> +usrquota                 User quota accounting and enforcement is enabled
+> +                         on the mount.
+> +grpquota                 Group quota accounting and enforcement is enabled
+> +                         on the mount.
+> +usrquota_block_hardlimit Set global user quota block hard limit.
+> +usrquota_inode_hardlimit Set global user quota inode hard limit.
+> +grpquota_block_hardlimit Set global group quota block hard limit.
+> +grpquota_inode_hardlimit Set global group quota inode hard limit.
+> +======================== =================================================
+> +
+> +None of the quota related mount options can be set or changed on remount.
+> +
+> +Quota limit parameters accept a suffix k, m or g for kilo, mega and giga
+> +and can't be changed on remount. Default global quota limits are taking
+> +effect for any and all user/group/project except root the first time the
+> +quota entry for user/group/project id is being accessed - typically the
+> +first time an inode with a particular id ownership is being created after
+> +the mount. In other words, instead of the limits being initialized to zero,
+> +they are initialized with the particular value provided with these mount
+> +options. The limits can be changed for any user/group id at any time as it
+									   ^^ they
+> +normally can.
+	    ^^^ can be
+           
+> @@ -3714,6 +3723,50 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+>  		ctx->seen |= SHMEM_SEEN_QUOTA;
+>  		ctx->quota_types |= QTYPE_MASK_GRP;
+>  		break;
+> +	case Opt_usrquota_block_hardlimit:
+> +		size = memparse(param->string, &rest);
+> +		if (*rest || !size)
+> +			goto bad_value;
+> +		if (size > SHMEM_QUOTA_MAX_SPC_LIMIT)
+> +			return invalfc(fc,
+> +				       "User quota block hardlimit too large.");
+> +		ctx->qlimits.usrquota_bhardlimit = size;
+> +		ctx->seen |= SHMEM_SEEN_QUOTA;
+> +		ctx->quota_types |= QTYPE_MASK_USR;
 
-Sure. It took me a while to understand it myself, when I re-read it
-after two years...
+So if I get it right, the intention here is that if
+usrquota_block_hardlimit=value option is used, it automatically enables
+user quota accounting and enforcement. I guess it is logical but it is not
+documented and I'd prefer to require explicit usrquota mount option to
+enable accounting & enforcement - it is then e.g. easier to parse mount
+options (in userspace) for finding out whether enforcement is enabled or
+not. Also I can imagine we would allow changing the default limits on
+remount but it isn't easy to enable quota accounting on remount etc.
 
-Thanks,
-Amir.
+> diff --git a/mm/shmem_quota.c b/mm/shmem_quota.c
+> index c0b531e2ef688..3cc53f2c35e2c 100644
+> --- a/mm/shmem_quota.c
+> +++ b/mm/shmem_quota.c
+> @@ -166,6 +166,7 @@ static int shmem_acquire_dquot(struct dquot *dquot)
+>  {
+>  	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
+>  	struct rb_node **n = &((struct rb_root *)info->dqi_priv)->rb_node;
+> +	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
+>  	struct rb_node *parent = NULL, *new_node = NULL;
+>  	struct quota_id *new_entry, *entry;
+>  	qid_t id = from_kqid(&init_user_ns, dquot->dq_id);
+> @@ -195,6 +196,14 @@ static int shmem_acquire_dquot(struct dquot *dquot)
+>  	}
+>  
+>  	new_entry->id = id;
+> +	if (dquot->dq_id.type == USRQUOTA) {
+> +		new_entry->bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
+> +		new_entry->ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
+> +	} else if (dquot->dq_id.type == GRPQUOTA) {
+> +		new_entry->bhardlimit = sbinfo->qlimits.grpquota_bhardlimit;
+> +		new_entry->ihardlimit = sbinfo->qlimits.grpquota_ihardlimit;
+> +	}
+> +
+>  	new_node = &new_entry->node;
+>  	rb_link_node(new_node, parent, n);
+>  	rb_insert_color(new_node, (struct rb_root *)info->dqi_priv);
+
+Maybe in shmem_dquot_release() when usage is 0 and limits are at default
+limits, we can free the structure?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
