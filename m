@@ -2,70 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C35716E8A35
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 08:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 458C36E8A6E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 08:33:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233765AbjDTGNH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 02:13:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59852 "EHLO
+        id S233915AbjDTGdE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 02:33:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231860AbjDTGNF (ORCPT
+        with ESMTP id S233687AbjDTGdD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 02:13:05 -0400
-Received: from mail-vk1-xa2f.google.com (mail-vk1-xa2f.google.com [IPv6:2607:f8b0:4864:20::a2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C4846A5;
-        Wed, 19 Apr 2023 23:13:04 -0700 (PDT)
-Received: by mail-vk1-xa2f.google.com with SMTP id 71dfb90a1353d-44048c2de31so170351e0c.0;
-        Wed, 19 Apr 2023 23:13:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681971183; x=1684563183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PBJtHUl3WWXKQhLJMTuHgqqfjlIWf5tHymiO1bzFmxI=;
-        b=sIXTGCdSZJ0VDuteowLQt+J4N8RRAuFSKfN2WOhhbAsJqOqMt7PvcsS7HvPDd/+/Wz
-         b+CrC+E3g7p6OgFM3KJzXjjFRjQLkdkeJZt7Ai9RYDsXpTo2XdB95rZFLTJ5Na2fGU08
-         yq4vPrnXfrRsouKbkoCbyLRK6HHRNY8+mZ/lB/93ohsNnGSq7GjaMcFAEJ/pQmJINdPQ
-         pfPZq/+u901tTl8N/iMEv5EWr2UpnXsWKpahAmBb8VJ+pHUENfk2rwyZnKhNsO7udi30
-         c3sSXNinRi4mYbMmvb5vM4hFSI/dgvjW66FPLVCVP0nQTmAsj+O6bnkibdE509YVNRI2
-         kAJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681971183; x=1684563183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PBJtHUl3WWXKQhLJMTuHgqqfjlIWf5tHymiO1bzFmxI=;
-        b=MnPtHSGGfnwQoRvBravjy1dloULfpAP+r54Kf9j/KN2YrY1Dk5B6S6NC5e0NjNPv92
-         fNjuyIj854I7q8hpBDeWyVSJiobXUEXqmieqDVLGG2b7u59Q8vCcvHlx5JIIlDFThVx+
-         sScas0qbBKXl8F9iyUTEHVyOWv1tFZOiGhDZKdx1zuR01gIoPxKemHxpe+tJqUGfF8nS
-         59ae1n3i4BqwKd6l5ZZ4lRFy54Xd+g9HpxL1tNvO4q1ovuYKVRjTus6KKmIBTxGZBWoR
-         6ckV8obWYBo37uTRwAE8qFe32g8v2m7JBwwsIVyz7Ib7XHkveYsaWZYf2qWIkkwaqUkQ
-         AOlw==
-X-Gm-Message-State: AAQBX9e6UyqqfZkcp4gklSJRZTNuysQpZpcNoAyevR+iDs0UdDJOSpco
-        me/NWmSFrn0oMdvdAV2OjRxqphDoPopZlfRl6dSF0a2g3p0=
-X-Google-Smtp-Source: AKy350YKu3sdNcj1YMw9OXYB1/PGoawX7KuJccVyHva4G1i75Ic4ZlZfxiUOrqIVDBKPuE+avRjQsMlY33vOjeu4ZRg=
-X-Received: by 2002:a67:e049:0:b0:42c:9397:429 with SMTP id
- n9-20020a67e049000000b0042c93970429mr411637vsl.0.1681971183411; Wed, 19 Apr
- 2023 23:13:03 -0700 (PDT)
+        Thu, 20 Apr 2023 02:33:03 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB2854C24;
+        Wed, 19 Apr 2023 23:33:00 -0700 (PDT)
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33K5OLra028415;
+        Thu, 20 Apr 2023 06:32:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=oaQBcVSLTHhfZ06cyqHfnQOj/aWC6x8DCiKcXTO7fp0=;
+ b=exXGh3ebp8VerMC9eG1FWuHmzgjZ6WqirmM4SH8ZisAr7dtfzFZEHd3OR+eKZrtW4G9Q
+ b5+dzQinTxy9tE8GVmZg722NbwEI9KxNuQaIM7cHqC9a1Hof8euAWiFSJXkWb08oAO6C
+ Wlbqmn6q2OVdeSAskBMhjq8V2H6O8Oz1RgHysooNL3GuI4Gt2I4u46kmC0MEf07cZvM0
+ noqEpPttMTelct7a2nuS+ZjVoq3HvU+NOhRlDx3Lu0w+i9X1F/mcCNKzZ7KknfDjIjtA
+ DQvyN0WhykqZQwntaii9lQ+gnr0mPPijeFLqfOxJQ69KR5qP8ZO3dnElORAUpkrnnbQu GA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q2y7d1qcs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Apr 2023 06:32:54 +0000
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33K6PA09001434;
+        Thu, 20 Apr 2023 06:32:54 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q2y7d1qbe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Apr 2023 06:32:53 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33JIkcAd010564;
+        Thu, 20 Apr 2023 06:32:51 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3pykj6k66j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Apr 2023 06:32:51 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33K6WnZH17171034
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Apr 2023 06:32:49 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5910020043;
+        Thu, 20 Apr 2023 06:32:49 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7ED4B20040;
+        Thu, 20 Apr 2023 06:32:47 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.169])
+        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Thu, 20 Apr 2023 06:32:47 +0000 (GMT)
+Date:   Thu, 20 Apr 2023 12:02:44 +0530
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>
+Subject: Re: [RFC 04/11] ext4: Convert mballoc cr (criteria) to enum
+Message-ID: <ZEDcjKUG3OjK9hg9@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1674822311.git.ojaswin@linux.ibm.com>
+ <9670431b31aa62e83509fa2802aad364910ee52e.1674822311.git.ojaswin@linux.ibm.com>
+ <20230309121122.vzfswandgqqm4yk5@quack3>
+ <ZBRAZsvbcSBNJ+Pl@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <20230323105537.rrecw5xqqzmw567d@quack3>
+ <ZB8IB14yLaoY4+19@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 MIME-Version: 1.0
-References: <20230414182903.1852019-1-amir73il@gmail.com> <20230418-diesmal-heimlaufen-ba2f2d1e1938@brauner>
- <CAOQ4uxj5UwDhV7XxWZ-Os+fzM=_N1DDWHpjmt6UnHr96EDriMw@mail.gmail.com>
- <20230418-absegnen-sputen-11212a0615c7@brauner> <CAOQ4uxgM2x93UKcJ5D5tfoTt8s0ChTrEheTGqTcndGoyGwS=7w@mail.gmail.com>
- <20230419-besungen-filzen-adad4a1f3247@brauner>
-In-Reply-To: <20230419-besungen-filzen-adad4a1f3247@brauner>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 20 Apr 2023 09:12:52 +0300
-Message-ID: <CAOQ4uxgPsxtNHgvETTUyYrguPmOBOK=jzRHgfivSDbbNPnzL2w@mail.gmail.com>
-Subject: Re: [RFC][PATCH 0/2] Monitoring unmounted fs with fanotify
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZB8IB14yLaoY4+19@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: dIfsX5fbnPSW3ub2EXv3iTCdPmIuUPFj
+X-Proofpoint-GUID: _3-pQLHFycWDufRYiLyrr9r8QMvMsxl1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-20_03,2023-04-18_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ spamscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ lowpriorityscore=0 mlxscore=0 clxscore=1011 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2303200000 definitions=main-2304200052
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,146 +96,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 19, 2023 at 8:19=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, Apr 18, 2023 at 06:20:22PM +0300, Amir Goldstein wrote:
-> > On Tue, Apr 18, 2023 at 5:12=E2=80=AFPM Christian Brauner <brauner@kern=
-el.org> wrote:
-> > >
-> > > On Tue, Apr 18, 2023 at 04:56:40PM +0300, Amir Goldstein wrote:
-> > > > On Tue, Apr 18, 2023 at 4:33=E2=80=AFPM Christian Brauner <brauner@=
-kernel.org> wrote:
+On Sat, Mar 25, 2023 at 08:12:36PM +0530, Ojaswin Mujoo wrote:
+> On Thu, Mar 23, 2023 at 11:55:37AM +0100, Jan Kara wrote:
+> > On Fri 17-03-23 15:56:46, Ojaswin Mujoo wrote:
+> > > On Thu, Mar 09, 2023 at 01:11:22PM +0100, Jan Kara wrote:
+> > > > Also when going for symbolic allocator scan names maybe we could actually
+> > > > make names sensible instead of CR[0-4]? Perhaps like CR_ORDER2_ALIGNED,
+> > > > CR_BEST_LENGHT_FAST, CR_BEST_LENGTH_ALL, CR_ANY_FREE. And probably we could
+> > > > deal with ordered comparisons like in:
+> > > I like this idea, it should make the code a bit more easier to
+> > > understand. However just wondering if I should do it as a part of this
+> > > series or a separate patch since we'll be touching code all around and 
+> > > I don't want to confuse people with the noise :) 
+> > 
+> > I guess a mechanical rename should not be really confusing. It just has to
+> > be a separate patch.
+> Alright, got it.
+> > 
+> > > > 
+> > > >                 if (cr < 2 &&
+> > > >                     (!sbi->s_log_groups_per_flex ||
+> > > >                      ((group & ((1 << sbi->s_log_groups_per_flex) - 1)) != 0)) &
+> > > >                     !(ext4_has_group_desc_csum(sb) &&
+> > > >                       (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT))))
+> > > >                         return 0;
+> > > > 
+> > > > to declare CR_FAST_SCAN = 2, or something like that. What do you think?
+> > > About this, wont it be better to just use something like
+> > > 
+> > > cr < CR_BEST_LENGTH_ALL 
+> > > 
+> > > instead of defining a new CR_FAST_SCAN = 2.
+> > 
+> > Yeah, that works as well.
+> > 
+> > > The only concern is that if we add a new "fast" CR (say between
+> > > CR_BEST_LENGTH_FAST and CR_BEST_LENGTH_ALL) then we'll need to make
+> > > sure we also update CR_FAST_SCAN to 3 which is easy to miss.
+> > 
+> > Well, you have that problem with any naming scheme (and even with numbers).
+> > So as long as names are all defined together, there's reasonable chance
+> > you'll remember to verify the limits still hold :)
+> haha that's true. Anyways, I'll try a few things and see what looks
+> good. Thanks for the suggestions.
+Hey Jan,
 
-[...]
+So I was playing around with this and I prepare a patch to convert CR
+numbers to symbolic names and it looks good as far as things like these
+are concerned:
 
-> > > > Just thought of another reason:
-> > > >  c) FAN_UNMOUNT does not need to require FAN_REPORT_FID
-> > > >      so it does not depend on filesystem having a valid f_fsid nor
-> > > >      exports_ops. In case of "pseudo" fs, FAN_UNMOUNT can report
-> > > >      only MNTID record (I will amend the patch with this minor chan=
-ge).
-> > >
-> > > I see some pseudo fses generate f_fsid, e.g., tmpfs in mm/shmem.c
-> >
-> > tmpfs is not "pseudo" in my eyes, because it implements a great deal of=
- the
-> > vfs interfaces, including export_ops.
->
-> The term "pseudo" is somewhat well-defined though, no? It really just
-> means that there's no backing device associated with it. So for example,
-> anything that uses get_tree_nodev() including tmpfs. If erofs is
-> compiled with fscache support it's even a pseudo fs (TIL).
->
+  if (cr < CR_POWER2_ALIGNED)
+		...
 
-Ok, "pseudo fs" is an ambiguous term.
+However there's one problem that this numeric naming scheme is used in
+several places like struct member names, function names, traces and
+comments. The issue is that replacing it everywhere is making some of
+the names very long for example:
 
-For the sake of this discussion, let's refer to fs that use get_tree_nodev(=
-)
-"non-disk fs".
+	atomic_read(&sbi->s_bal_cr0_bad_suggestions));
 
-But as far as fsnotify is concerned, tmpfs is equivalent to xfs, because
-all of the changes are made by users via vfs.
+becomes:
 
-Let's call fs where changes can occur not via vfs "remote fs", those
-include the network fs and some "internal fs" like the kernfs class of fs
-and the "simple fs" class of fs (i.e. simple_fill_super).
+	atomic_read(&sbi->s_bal_cr_power2_aligned_bad_suggestions));
 
-With all the remote fs, the behavior of fsnotify is (and has always been)
-undefined, that is, you can use inotify to subscribe for events and you
-never know what you will get when changes are not made via vfs.
+And this is kind of making the code look messy at a lot of places. So
+right now there are a few options we can consider:
 
-Some people (hypothetical) may expect to watch nsfs for dying ns
-and may be disappointed to find out that they do not get the desired
-IN_DELETE event.
+1. Use symbolic names everywhere at the cost of readability
 
-We have had lengthy discussions about remote fs change notifications
-with no clear decisions of the best API for them:
-https://lore.kernel.org/linux-fsdevel/20211025204634.2517-1-iangelak@redhat=
-.com/
+2. Keep function names/members as is but change criterias enums to symbolic
+names. This again is not ideal as it makes things ambiguous.
 
-> >
-> > and also I fixed its f_fsid recently:
-> > 59cda49ecf6c shmem: allow reporting fanotify events with file handles o=
-n tmpfs
->
-> Well thank you for that this has been very useful in userspace already
-> I've been told.
->
-> >
-> > > At the risk of putting my foot in my mouth, what's stopping us from
-> > > making them all support f_fsid?
-> >
-> > Nothing much. Jan had the same opinion [1].
->
-> I think that's what we should try to do without having thought too much
-> about potential edge-cases.
->
-> >
-> > We could do either:
-> > 1. use uuid_to_fsid() in vfs_statfs() if fs has set s_uuid and not set =
-f_fsid
-> > 2. use s_dev as f_fsid in vfs_statfs() if fs did not set f_fsid nor s_u=
-uid
-> > 3. randomize s_uuid for simple fs (like tmpfs)
-> > 4. any combination of the above and more
-> >
-> > Note that we will also need to decide what to do with
-> > name_to_handle_at() for those pseudo fs.
->
-> Doing it on the fly during vfs_statfs() feels a bit messy and could
-> cause bugs. One should never underestimate the possibility that there's
-> some fs that somehow would get into trouble because of odd behavior.
->
-> So switching each fs over to generate a s_uuid seems the prudent thing
-> to do. Doing it the hard way also forces us to make sure that each
-> filesystem can deal with this.
->
-> It seems that for pseudo fses we can just allocate a new s_uuid for each
-> instance. So each tmpfs instance - like your patch did - would just get
-> a new s_uuid.
->
-> For kernel internal filesystems - mostly those that use init_pseudo -
-> the s_uuid would remain stable until the next reboot when it is
-> regenerated.
->
+3. Keep the enums as is i.e. CR0, CR1.. etc and add the documentation in the enum
+declaration on what these enum means. (we can still use CR_FAST_SCAN).
 
-I am fine with opt-in for every fs as long as we do not duplicate
-boilerplate code.
-An FS_ flag could be a simple way to opt-in for this generic behavior.
+Let me know you thoughts on this, or incase you'd like to look at the
+patch I can attach that as well.
 
-> Looking around just a little there's some block-backed fses like fat
-> that have an f_fsid but no s_uuid. So if we give those s_uuid then it'll
-> mean that the f_fsid isn't generated based on the s_uuid. That should be
-> ok though and shouldn't matter to userspace.
->
-> Afterwards we could probably lift the ext4 and xfs specific ioctls to
-> retrieve the s_uuid into a generic ioctl to allow userspace to get the
-> s_uuid.
->
-> That's my thinking without having crawled to all possible corner
-> cases... Also needs documenting that s_uuid is not optional anymore and
-> explain the difference between pseudo and device-backed fses. I hope
-> that's not completely naive...
->
-
-I don't think that the dichotomy of device-backed vs. pseudo is enough
-to describe the situation.
-
-I think what needs to be better documented and annotated is what type
-of fsnotify services can be expected to work on a given fs.
-
-Jan has already introduced FS_DISALLOW_NOTIFY_PERM to opt-out
-of permission events (for procfs).
-
-Perhaps this could be generalized to s_type->fs_notify_supported_events
-or s_type->fs_notify_supported_features.
-
-For example, if an fs opts-in to FAN_REPORT_FID, then it gets an auto
-allocated s_uuid and f_fsid if it did not fill them in fill_super and in st=
-atfs
-and it gets a default implementation for encoding file handles from ino/gen=
-.
-
-Thanks,
-Amir.
+Regards,
+ojaswin
+> 
+> Regards,
+> ojaswin
+> > 
+> > 								Honza
+> > -- 
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
