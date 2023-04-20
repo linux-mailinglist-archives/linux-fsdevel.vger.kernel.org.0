@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 825FF6E8F05
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 12:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D21826E8F1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 12:06:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234433AbjDTKG0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 06:06:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46866 "EHLO
+        id S234626AbjDTKGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 06:06:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234055AbjDTKGG (ORCPT
+        with ESMTP id S234518AbjDTKGK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 06:06:06 -0400
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A92F2D64;
-        Thu, 20 Apr 2023 03:05:56 -0700 (PDT)
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-2efbaad9d76so446424f8f.0;
-        Thu, 20 Apr 2023 03:05:56 -0700 (PDT)
+        Thu, 20 Apr 2023 06:06:10 -0400
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FC4B49EB;
+        Thu, 20 Apr 2023 03:05:57 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-3f09b9ac51dso15220115e9.0;
+        Thu, 20 Apr 2023 03:05:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681985155; x=1684577155;
+        d=1e100.net; s=20221208; t=1681985156; x=1684577156;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=THHWtCWhqF512rUBihGspkzbDFWU17ewgGDnTehbMVM=;
-        b=CXhBlQ4gqrAUeNkkz+qgpUahYUtQrlhWckqgjPSih/DnLr1XgHn3Rhkus8kr38nXVh
-         Ia2Ys82JarSrVz0eaiDVlH9Gjf+TdN+zMM36u+AXMsNWQNOZmvJnxCG4/IqEHvGLeHiu
-         SYTeaXsT5Jym6cleZNwRzz6F7oXHjqKUBz+MBlo+l4wC9ncP3ZqRU3SopxU1mzp3xxUz
-         Uh+0d2JbTh1m6Hv/QGH7J2LYC95ghUUGLyaAXilI/BeLeI3i90v9HjbM3e7N4nW5VSCf
-         kXFacuo4COp42lUhMjejhq1IcFsMMM7NkG4Tz5/uzklWDCZJmamnsDN3eHrZMZsl2vUn
-         Fqgw==
-X-Gm-Message-State: AAQBX9dewxzcS5Tz90lFkKUzIdoQ3hvgE4SAjPu7NuuLZopPJg6Fo8ZW
-        fXchoIAakXZmSd8YwiPRHj8=
-X-Google-Smtp-Source: AKy350ZbsU031TtJxFavPxkTZE6B7tUnHyO6WeJiIUhkKTmUeZa+r+aiK8RXIaDWo688qiAVYVDPhA==
-X-Received: by 2002:adf:e745:0:b0:2ef:8c85:771b with SMTP id c5-20020adfe745000000b002ef8c85771bmr926966wrn.51.1681985154753;
-        Thu, 20 Apr 2023 03:05:54 -0700 (PDT)
+        bh=EWddmUi1sUqAJfDu3vTNgbuTywHhrfsi4XwupHN4WwQ=;
+        b=HMHw7mrsmC+17usjt0VtJimD6d3I/V0+jAQ9FnY09SitmJXx3+jMI7T4HAJmIzSidw
+         m9PANY2LK/z2XhikgxJInhVtD89TpFIAAEcHNIBY75Ft0JKZya+YuM4R+jZ3f2YpV2Xv
+         JuctDYTh2HGhmMzhTcYZhupt/6rx3JcTnKJyijwPwD48RjftinsT2aH7vvwGNmSdz4zv
+         CZePZDm7EuvOJHwJYvbdiwxwCx1jk5FpN3PaySCPtap9w+CPtt5awT5ROQqxb116fjYN
+         zMW9jiEdktfAgPYcYGuvBtqYFgvxPfXVO1sKwUQnm5/Ih4YV8jFKOlJ79TOFVcktCK98
+         u/Cg==
+X-Gm-Message-State: AAQBX9emiULPunBBIWiMCtq13LCHaNnyYaNDefNM0ogOJA7rWPmviioj
+        2234mBOBItYmwPjxpoDDQiI=
+X-Google-Smtp-Source: AKy350ZauLkuXWs6kSjBHCPBBCSAVBhubP5jzpCR4qZ4hYu8gg1Jhd0aZ4abYsMUbuSqsM3DfmG2NQ==
+X-Received: by 2002:adf:f2c8:0:b0:2fc:114c:76e with SMTP id d8-20020adff2c8000000b002fc114c076emr899567wrp.27.1681985155941;
+        Thu, 20 Apr 2023 03:05:55 -0700 (PDT)
 Received: from localhost.localdomain (aftr-62-216-205-208.dynamic.mnet-online.de. [62.216.205.208])
-        by smtp.googlemail.com with ESMTPSA id l11-20020a5d674b000000b0030276f42f08sm201410wrw.88.2023.04.20.03.05.53
+        by smtp.googlemail.com with ESMTPSA id l11-20020a5d674b000000b0030276f42f08sm201410wrw.88.2023.04.20.03.05.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 03:05:54 -0700 (PDT)
+        Thu, 20 Apr 2023 03:05:55 -0700 (PDT)
 From:   Johannes Thumshirn <jth@kernel.org>
 To:     axboe@kernel.dk
 Cc:     johannes.thumshirn@wdc.com, agruenba@redhat.com,
@@ -50,9 +50,9 @@ Cc:     johannes.thumshirn@wdc.com, agruenba@redhat.com,
         rpeterso@redhat.com, shaggy@kernel.org, snitzer@kernel.org,
         song@kernel.org, willy@infradead.org,
         Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Subject: [PATCH v4 04/22] fs: buffer: use __bio_add_page to add single page to bio
-Date:   Thu, 20 Apr 2023 12:04:43 +0200
-Message-Id: <20230420100501.32981-5-jth@kernel.org>
+Subject: [PATCH v4 05/22] md: use __bio_add_page to add single page
+Date:   Thu, 20 Apr 2023 12:04:44 +0200
+Message-Id: <20230420100501.32981-6-jth@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230420100501.32981-1-jth@kernel.org>
 References: <20230420100501.32981-1-jth@kernel.org>
@@ -70,7 +70,7 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-The buffer_head submission code uses bio_add_page() to add a page to a
+The md-raid superblock writing code uses bio_add_page() to add a page to a
 newly created bio. bio_add_page() can fail, but the return value is never
 checked.
 
@@ -79,25 +79,35 @@ guaranteed to succeed.
 
 This brings us a step closer to marking bio_add_page() as __must_check.
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-of_-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Acked-by: Song Liu <song@kernel.org>
 ---
- fs/buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/md.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 9e1e2add541e..855dc41fe162 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2733,7 +2733,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 13321dbb5fbc..20b9cd7c2f39 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -958,7 +958,7 @@ void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
+ 	atomic_inc(&rdev->nr_pending);
  
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+ 	bio->bi_iter.bi_sector = sector;
+-	bio_add_page(bio, page, size, 0);
++	__bio_add_page(bio, page, size, 0);
+ 	bio->bi_private = rdev;
+ 	bio->bi_end_io = super_written;
  
--	bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
-+	__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
- 	BUG_ON(bio->bi_iter.bi_size != bh->b_size);
+@@ -999,7 +999,7 @@ int sync_page_io(struct md_rdev *rdev, sector_t sector, int size,
+ 		bio.bi_iter.bi_sector = sector + rdev->new_data_offset;
+ 	else
+ 		bio.bi_iter.bi_sector = sector + rdev->data_offset;
+-	bio_add_page(&bio, page, size, 0);
++	__bio_add_page(&bio, page, size, 0);
  
- 	bio->bi_end_io = end_bio_bh_io_sync;
+ 	submit_bio_wait(&bio);
+ 
 -- 
 2.39.2
 
