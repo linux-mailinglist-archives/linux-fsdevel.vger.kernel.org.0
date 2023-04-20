@@ -2,145 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 79D1A6E9B0D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 19:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D8D76E9B63
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 20:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231551AbjDTRos (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 13:44:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46876 "EHLO
+        id S229644AbjDTSPs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 14:15:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjDTRor (ORCPT
+        with ESMTP id S231246AbjDTSPr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 13:44:47 -0400
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5453E133;
-        Thu, 20 Apr 2023 10:44:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1682012678;
-        bh=8Z9tCQrE4IZ72nzfVNAMoGMKCT3xO74OPin8ygG6pIA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=xNbPuIB9sLG0YJREqQTbUKXwuFi/u+hqaPRmje1xAiL39CPg3wL6bkHthgcwPAD0g
-         Ivt2t483c/xjBzT/Ak+3ZEk1f9unsjJmIi5wF7YG0NWw0dRx+NFh5GHmVeTx5KZzJf
-         erIv7qQSKTx4o2WDfikC8hMdI/09mJ/3wPC7GXds=
-Received: from [172.31.255.72] ([116.236.146.234])
-        by newxmesmtplogicsvrsza12-0.qq.com (NewEsmtp) with SMTP
-        id B23390B6; Fri, 21 Apr 2023 01:44:35 +0800
-X-QQ-mid: xmsmtpt1682012675tpqexjue7
-Message-ID: <tencent_31DEA62F31CFF96D3ED356F1508707594C0A@qq.com>
-X-QQ-XMAILINFO: OKKHiI6c9SH3XK2ZbEjTQ9bEnhxrsMrydezzJEFx+hnTkisG+lwe3A0n1DcDma
-         HTiYw0z2yK24gTEbt+IH/9b7urHKJuApXRzmGpNveZ4dJXtlvy37ze3tG0WDakcWkTviY1iRd+Lc
-         +5OUi1c8OjrTHuzAe+QObESnDDejeA6FV4c4JgbCpsbj7lVGK/J9S/KU44b8is+UXS5VbD0R3i5D
-         x4AoWGAAxHIP6RxaquqYTLhSIlq0rkflTpMqb9Tx/Vxk3uMptwsS4K0X1/EOx3eDiBh7A9FZAk8a
-         0QjRvQW3i7AwgadA8ldLITHNKQEU9dIpq3BPY/0Sl5iaLX213eS06A+PKEdRnPa1YNCJg3io9nMf
-         aaVNrb/f7ds90wT2fEGK4zrLjMDhzmDNhdjADiVYV/uJE0/16Gm+sjjHR6iwG/gG1yT1yvgWOMv7
-         V4VNnr9ggGqrdqZubJ0HBI7H6Z4UqXHzOvu5/IH1WfDOAH8Ca6ckCRsxHv0cgGP/gw67ueND7F2e
-         eZEhB/pUQ4l2qk0DgDMAneKbtG5CasVzt1FBhoqa3izWLhe+BKrsuVyZmNy1ah2gUDBiC5aFt6W/
-         q0HcAGwC0cfoa2LdWyJanKrFmzmFe6B14CGo+5SdgZUDqzfkTc7IpbPFctzHpNwlV2JP9/mgMGul
-         89UhZCpt8BnyDurPuZTrhM6ESPpaSRAiQJwvCbwC4yyVsEqCPaocnvpzwwEv01T9DCwwK6q0Vkmo
-         6wYMpPd+1MsEBDB7Hf+guNs4g+/r5J6dkt0xSieKlz8UMfk/gKPp+gzc5FT8/jlddHO8ZFUaMxkg
-         lWgE9+MU4RCKnPcPa1kIgE8qFioP7PW81CunJuMOVXPhp77N4hGu/s3jEzUCjZbwYKPH3Jh+ReHh
-         r5oVk7K4/K41D0K2FX7xF68ERD5LaEcr/cklwvOb3Hq3vqYO7q+H2lSZX5R/4WjHu03SYgVCQPUI
-         nbmraS81l7JpKw9HmF6ivrMyB9ASR2DsFOO3nC7Ok=
-X-OQ-MSGID: <45756597-a0eb-79f1-0706-1c2bf7e08d19@foxmail.com>
-Date:   Fri, 21 Apr 2023 01:44:35 +0800
+        Thu, 20 Apr 2023 14:15:47 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 908BB3A90
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 11:15:44 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id 98e67ed59e1d1-2472dc49239so1135125a91.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 11:15:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1682014544; x=1684606544;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jdrDhaZEOy+UKGsi82P8bV8Exkli2SlfWKGwO5/v5to=;
+        b=C6iwSPnNEkACtdMWtmTCTc4J4utsn2bNXPhh/YIsthCiGtPItJj5nljqHj+E8kbk4c
+         CiZNtCni6d4pm5zyJsFVUAqfG5r04hyRZxlZliwhm/K3WmBYFudunroOc9P6zwp5l4a7
+         qY2X9w7GTSr24KWOxRAyRQFjH7TYyIQ7Gek5c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682014544; x=1684606544;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jdrDhaZEOy+UKGsi82P8bV8Exkli2SlfWKGwO5/v5to=;
+        b=ljOleZHIs+6zUPlmZoXo8TT2V2ANkTttEEJNlFPqRpQF6RCWQMrB/WilwajALNza1Y
+         sU208EbthcVxOjrAFakKX904VbRXjyf2L81OKUbXTn5SzH9x2KK5BgW61kaYWNvdAHJe
+         ltC8wSzrOJFc5H4uC+hCUyhmCKeyIrsrxYj/cSfl1neyuzWAlRtd2F/SvYllj5XYv283
+         S2FfuVu6tu5wvDrBtojpqkvLlXOG+sqQnWvb9oD8lKLZ3gwLLDVqHBJwnWnoH3e1Nz/X
+         yr687KjGoliHgAreaNtsQdxKHPfrWecxGKYs+bm2aQRMJvMqzKaFV8MW4eKi6a2iOY7g
+         yCSA==
+X-Gm-Message-State: AAQBX9edPSPsvhzVcf2XYogGlRx9gTVM6gg04E5IkO94yIcUd8O1zDIS
+        p3AVLPc5PzlojHq3Y4xOgl9Qig==
+X-Google-Smtp-Source: AKy350ZaDYxOz1KaCvteqlMJzUhYsjwN2ABUnz4TxRTY2yv//E9hm9d6g/BfyYrSik+PBwHYtByO3w==
+X-Received: by 2002:a17:90a:4f0b:b0:247:1e13:90ef with SMTP id p11-20020a17090a4f0b00b002471e1390efmr2574129pjh.20.1682014544026;
+        Thu, 20 Apr 2023 11:15:44 -0700 (PDT)
+Received: from sarthakkukreti-glaptop.hsd1.ca.comcast.net ([2601:647:4200:b5b0:236d:acb8:49ac:b60a])
+        by smtp.gmail.com with ESMTPSA id il7-20020a17090b164700b00247150f2091sm3373157pjb.8.2023.04.20.11.15.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Apr 2023 11:15:43 -0700 (PDT)
+From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
+To:     dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        Daniil Lunev <dlunev@google.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH v5-fix 1/5] block: Don't invalidate pagecache for invalid falloc modes
+Date:   Thu, 20 Apr 2023 11:15:40 -0700
+Message-ID: <20230420181540.337203-1-sarthakkukreti@chromium.org>
+X-Mailer: git-send-email 2.40.0.396.gfff15efe05-goog
+In-Reply-To: <ZEFmS9h81Wwlv9+/@redhat.com>
+References: <ZEFmS9h81Wwlv9+/@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.9.1
-Subject: Re: [PATCH] eventfd: support delayed wakeup for non-semaphore eventfd
- to reduce cpu utilization
-To:     Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Paolo Bonzini <pbonzini@redhat.com>, Fu Wei <wefu@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <tencent_AF886EF226FD9F39D28FE4D9A94A95FA2605@qq.com>
- <817984a2-570c-cb23-4121-0d75005ebd4d@kernel.dk>
- <tencent_9D8583482619D25B9953FCA89E69AA92A909@qq.com>
- <7dded5a8-32c1-e994-52a0-ce32011d5e6b@kernel.dk>
- <20230419-blinzeln-sortieren-343826ee30ce@brauner>
- <868ceaa3-4854-345f-900e-52a79b924aa6@kernel.dk>
-From:   Wen Yang <wenyang.linux@foxmail.com>
-In-Reply-To: <868ceaa3-4854-345f-900e-52a79b924aa6@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_MUA_MOZILLA,
-        FREEMAIL_FROM,HELO_DYNAMIC_IPADDR,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,RDNS_DYNAMIC,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Only call truncate_bdev_range() if the fallocate mode is
+supported. This fixes a bug where data in the pagecache
+could be invalidated if the fallocate() was called on the
+block device with an invalid mode.
 
-在 2023/4/20 00:42, Jens Axboe 写道:
-> On 4/19/23 3:12?AM, Christian Brauner wrote:
->> On Tue, Apr 18, 2023 at 08:15:03PM -0600, Jens Axboe wrote:
->>> On 4/17/23 10:32?AM, Wen Yang wrote:
->>>> ? 2023/4/17 22:38, Jens Axboe ??:
->>>>> On 4/16/23 5:31?AM, wenyang.linux@foxmail.com wrote:
->>>>>> From: Wen Yang <wenyang.linux@foxmail.com>
->>>>>>
->>>>>> For the NON SEMAPHORE eventfd, if it's counter has a nonzero value,
->>>>>> then a read(2) returns 8 bytes containing that value, and the counter's
->>>>>> value is reset to zero. Therefore, in the NON SEMAPHORE scenario,
->>>>>> N event_writes vs ONE event_read is possible.
->>>>>>
->>>>>> However, the current implementation wakes up the read thread immediately
->>>>>> in eventfd_write so that the cpu utilization increases unnecessarily.
->>>>>>
->>>>>> By adding a configurable delay after eventfd_write, these unnecessary
->>>>>> wakeup operations are avoided, thereby reducing cpu utilization.
->>>>> What's the real world use case of this, and what would the expected
->>>>> delay be there? With using a delayed work item for this, there's
->>>>> certainly a pretty wide grey zone in terms of delay where this would
->>>>> perform considerably worse than not doing any delayed wakeups at all.
->>>>
->>>> Thanks for your comments.
->>>>
->>>> We have found that the CPU usage of the message middleware is high in
->>>> our environment, because sensor messages from MCU are very frequent
->>>> and constantly reported, possibly several hundred thousand times per
->>>> second. As a result, the message receiving thread is frequently
->>>> awakened to process short messages.
->>>>
->>>> The following is the simplified test code:
->>>> https://github.com/w-simon/tests/blob/master/src/test.c
->>>>
->>>> And the test code in this patch is further simplified.
->>>>
->>>> Finally, only a configuration item has been added here, allowing users
->>>> to make more choices.
->>> I think you'd have a higher chance of getting this in if the delay
->>> setting was per eventfd context, rather than a global thing.
->> That patch seems really weird. Is that an established paradigm to
->> address problems like this through a configured wakeup delay? Because
->> naively this looks like a pretty brutal hack.
-> It is odd, and it is a brutal hack. My worries were outlined in an
-> earlier reply, there's quite a big gap where no delay would be better
-> and the delay approach would be miserable because it'd cause extra
-> latency and extra context switches. It'd be much cleaner if you KNEW
-> there'd be more events coming, as you could then get rid of that delayed
-> work item completely. And I suspect, if this patch makes sense, that
-> it'd be better to have a number+time limit as well and if you hit the
-> event number count that you'd notify inline and put some smarts in the
-> delayed work handling to just not do anything if nothing is pending.
+Fixes: 25f4c41415e5 ("block: implement (some of) fallocate for block devices")
+Cc: stable@vger.kernel.org
+Reported-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
+---
+ block/fops.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-Thank you very much for your suggestion.
-
-We will improve the implementation according to your suggestion and send 
-the v2 later.
-
-
---
-
-Best wishes,
-
-Wen
-
+diff --git a/block/fops.c b/block/fops.c
+index d2e6be4e3d1c..4c70fdc546e7 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -648,24 +648,35 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+ 
+ 	filemap_invalidate_lock(inode->i_mapping);
+ 
+-	/* Invalidate the page cache, including dirty pages. */
+-	error = truncate_bdev_range(bdev, file->f_mode, start, end);
+-	if (error)
+-		goto fail;
+-
++	/*
++	 * Invalidate the page cache, including dirty pages, for valid
++	 * de-allocate mode calls to fallocate().
++	 */
+ 	switch (mode) {
+ 	case FALLOC_FL_ZERO_RANGE:
+ 	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
++		error = truncate_bdev_range(bdev, file->f_mode, start, end);
++		if (error)
++			goto fail;
++
+ 		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
+ 					     len >> SECTOR_SHIFT, GFP_KERNEL,
+ 					     BLKDEV_ZERO_NOUNMAP);
+ 		break;
+ 	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE:
++		error = truncate_bdev_range(bdev, file->f_mode, start, end);
++		if (error)
++			goto fail;
++
+ 		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
+ 					     len >> SECTOR_SHIFT, GFP_KERNEL,
+ 					     BLKDEV_ZERO_NOFALLBACK);
+ 		break;
+ 	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE | FALLOC_FL_NO_HIDE_STALE:
++		error = truncate_bdev_range(bdev, file->f_mode, start, end);
++		if (error)
++			goto fail;
++
+ 		error = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
+ 					     len >> SECTOR_SHIFT, GFP_KERNEL);
+ 		break;
+-- 
+2.40.0.396.gfff15efe05-goog
 
