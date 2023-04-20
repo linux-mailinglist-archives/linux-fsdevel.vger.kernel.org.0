@@ -2,56 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 185986E8BA0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 09:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 142E06E8C0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 10:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233970AbjDTHqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 03:46:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51622 "EHLO
+        id S234276AbjDTIEI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 04:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233697AbjDTHq3 (ORCPT
+        with ESMTP id S234122AbjDTIEH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 03:46:29 -0400
+        Thu, 20 Apr 2023 04:04:07 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0267140F6;
-        Thu, 20 Apr 2023 00:46:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C2613E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 01:04:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0374163A52;
-        Thu, 20 Apr 2023 07:46:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0046C433EF;
-        Thu, 20 Apr 2023 07:46:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2094F60DFC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 08:04:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E154C433D2;
+        Thu, 20 Apr 2023 08:04:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681976785;
-        bh=wYo7yDBN5furC1kmQJhOjmje3ZrfuJc22xDctcedxts=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SisjJi9UbXwKxY5yLEdip9iW0De1FwTySPxyRLd5F5eINrt6Qraxc4A8lvy+BEcUv
-         HNjalx50qoBfiSTm8U1bntnEWVMBvsf+A7Lyi7mwcBF9GbxZqUuJQ5tN/6orbvkuH6
-         Z+H/8NXxmmhGaK/KoF/yIr4zUlkgK27iiZcfoVynORX4dPeDx2lH/3j6u8J3Vcd7OV
-         Db+QBg5zxeS7O7yPuA+uGxKU5h6edx1mhnGLeBD/0EOlt+zz9sD9ZNUdNnZojO5jk7
-         iMcxFuDEjm5yBPW4lnubXQjzhO8Mp7k90ZGii2sqUzFJ9UPzTDchlBsILMrRVVjwOw
-         e8xYyyclzRG5Q==
-Date:   Thu, 20 Apr 2023 09:46:20 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [RFC][PATCH 0/2] Monitoring unmounted fs with fanotify
-Message-ID: <20230420-funkverkehr-adler-7f6794bea737@brauner>
-References: <20230414182903.1852019-1-amir73il@gmail.com>
- <20230418-diesmal-heimlaufen-ba2f2d1e1938@brauner>
- <CAOQ4uxj5UwDhV7XxWZ-Os+fzM=_N1DDWHpjmt6UnHr96EDriMw@mail.gmail.com>
- <20230418-absegnen-sputen-11212a0615c7@brauner>
- <CAOQ4uxgM2x93UKcJ5D5tfoTt8s0ChTrEheTGqTcndGoyGwS=7w@mail.gmail.com>
- <20230419-besungen-filzen-adad4a1f3247@brauner>
- <CAOQ4uxgPsxtNHgvETTUyYrguPmOBOK=jzRHgfivSDbbNPnzL2w@mail.gmail.com>
+        s=k20201202; t=1681977844;
+        bh=XeWdmkyc9D5aTf3bX5LVoYzWJtaddA3mhOd1N60Bjdo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=erTaHao8Evg4+ims2BPdPuBoczHPfOSr124yKoqYMiClw2jEbMJaqW2B3TN+IzxES
+         cfE/o0AAehouLcJXwa+jp7Fwxt2ZxAiKZc7DpGgvHBYBG9ELxNhCoPYLkUgX2+HOIj
+         mkg+o1v0jWtfSLD/EoHXkn4urHp5CW5U+mbn+153ZeTsYTgujmbQdiW4ZW+EC6eU3i
+         g9+RpV+Xe1ebOUvUH41V86psVgfYpq0GaFpXPB78sX93+Ej8CKy/b/VxC6hLSyci+g
+         co0TURTjrs0sH1a/3EUTbKIaJMyoMOmeNeNemOWmgdw9iRgrnKE90/ygiCJwv2Cyke
+         27OGuN5oFdGHg==
+From:   cem@kernel.org
+To:     hughd@google.com
+Cc:     jack@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        djwong@kernel.org
+Subject: [PATCH V2 0/6] shmem: Add user and group quota support for tmpfs
+Date:   Thu, 20 Apr 2023 10:03:53 +0200
+Message-Id: <20230420080359.2551150-1-cem@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgPsxtNHgvETTUyYrguPmOBOK=jzRHgfivSDbbNPnzL2w@mail.gmail.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -62,144 +52,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 20, 2023 at 09:12:52AM +0300, Amir Goldstein wrote:
-> On Wed, Apr 19, 2023 at 8:19 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Apr 18, 2023 at 06:20:22PM +0300, Amir Goldstein wrote:
-> > > On Tue, Apr 18, 2023 at 5:12 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > On Tue, Apr 18, 2023 at 04:56:40PM +0300, Amir Goldstein wrote:
-> > > > > On Tue, Apr 18, 2023 at 4:33 PM Christian Brauner <brauner@kernel.org> wrote:
-> 
-> [...]
-> 
-> > > > > Just thought of another reason:
-> > > > >  c) FAN_UNMOUNT does not need to require FAN_REPORT_FID
-> > > > >      so it does not depend on filesystem having a valid f_fsid nor
-> > > > >      exports_ops. In case of "pseudo" fs, FAN_UNMOUNT can report
-> > > > >      only MNTID record (I will amend the patch with this minor change).
-> > > >
-> > > > I see some pseudo fses generate f_fsid, e.g., tmpfs in mm/shmem.c
-> > >
-> > > tmpfs is not "pseudo" in my eyes, because it implements a great deal of the
-> > > vfs interfaces, including export_ops.
-> >
-> > The term "pseudo" is somewhat well-defined though, no? It really just
-> > means that there's no backing device associated with it. So for example,
-> > anything that uses get_tree_nodev() including tmpfs. If erofs is
-> > compiled with fscache support it's even a pseudo fs (TIL).
-> >
-> 
-> Ok, "pseudo fs" is an ambiguous term.
-> 
-> For the sake of this discussion, let's refer to fs that use get_tree_nodev()
-> "non-disk fs".
-> 
-> But as far as fsnotify is concerned, tmpfs is equivalent to xfs, because
-> all of the changes are made by users via vfs.
-> 
-> Let's call fs where changes can occur not via vfs "remote fs", those
-> include the network fs and some "internal fs" like the kernfs class of fs
-> and the "simple fs" class of fs (i.e. simple_fill_super).
-> 
-> With all the remote fs, the behavior of fsnotify is (and has always been)
-> undefined, that is, you can use inotify to subscribe for events and you
-> never know what you will get when changes are not made via vfs.
-> 
-> Some people (hypothetical) may expect to watch nsfs for dying ns
-> and may be disappointed to find out that they do not get the desired
-> IN_DELETE event.
-> 
-> We have had lengthy discussions about remote fs change notifications
-> with no clear decisions of the best API for them:
-> https://lore.kernel.org/linux-fsdevel/20211025204634.2517-1-iangelak@redhat.com/
-> 
-> > >
-> > > and also I fixed its f_fsid recently:
-> > > 59cda49ecf6c shmem: allow reporting fanotify events with file handles on tmpfs
-> >
-> > Well thank you for that this has been very useful in userspace already
-> > I've been told.
-> >
-> > >
-> > > > At the risk of putting my foot in my mouth, what's stopping us from
-> > > > making them all support f_fsid?
-> > >
-> > > Nothing much. Jan had the same opinion [1].
-> >
-> > I think that's what we should try to do without having thought too much
-> > about potential edge-cases.
-> >
-> > >
-> > > We could do either:
-> > > 1. use uuid_to_fsid() in vfs_statfs() if fs has set s_uuid and not set f_fsid
-> > > 2. use s_dev as f_fsid in vfs_statfs() if fs did not set f_fsid nor s_uuid
-> > > 3. randomize s_uuid for simple fs (like tmpfs)
-> > > 4. any combination of the above and more
-> > >
-> > > Note that we will also need to decide what to do with
-> > > name_to_handle_at() for those pseudo fs.
-> >
-> > Doing it on the fly during vfs_statfs() feels a bit messy and could
-> > cause bugs. One should never underestimate the possibility that there's
-> > some fs that somehow would get into trouble because of odd behavior.
-> >
-> > So switching each fs over to generate a s_uuid seems the prudent thing
-> > to do. Doing it the hard way also forces us to make sure that each
-> > filesystem can deal with this.
-> >
-> > It seems that for pseudo fses we can just allocate a new s_uuid for each
-> > instance. So each tmpfs instance - like your patch did - would just get
-> > a new s_uuid.
-> >
-> > For kernel internal filesystems - mostly those that use init_pseudo -
-> > the s_uuid would remain stable until the next reboot when it is
-> > regenerated.
-> >
-> 
-> I am fine with opt-in for every fs as long as we do not duplicate
-> boilerplate code.
-> An FS_ flag could be a simple way to opt-in for this generic behavior.
-> 
-> > Looking around just a little there's some block-backed fses like fat
-> > that have an f_fsid but no s_uuid. So if we give those s_uuid then it'll
-> > mean that the f_fsid isn't generated based on the s_uuid. That should be
-> > ok though and shouldn't matter to userspace.
-> >
-> > Afterwards we could probably lift the ext4 and xfs specific ioctls to
-> > retrieve the s_uuid into a generic ioctl to allow userspace to get the
-> > s_uuid.
-> >
-> > That's my thinking without having crawled to all possible corner
-> > cases... Also needs documenting that s_uuid is not optional anymore and
-> > explain the difference between pseudo and device-backed fses. I hope
-> > that's not completely naive...
-> >
-> 
-> I don't think that the dichotomy of device-backed vs. pseudo is enough
-> to describe the situation.
-> 
-> I think what needs to be better documented and annotated is what type
-> of fsnotify services can be expected to work on a given fs.
+From: Carlos Maiolino <cmaiolino@dhat.com>
 
-You're looking at this solely from the angle of fanotify. In my earier
-message I was looking at this as something that is generally useful.
-Fanotify uses the s_uuid and f_fsid but they have value independent of
-this.
+Hello folks.
 
-> 
-> Jan has already introduced FS_DISALLOW_NOTIFY_PERM to opt-out
-> of permission events (for procfs).
+This is the version 2 of the quota support from tmpfs addressing some issues
+discussed on V1 and a few extra things, details are within each patch. Original
+cover-letter below.
 
-That sounds like a decent solution.
+Hi folks. this work has been done originally by Lukas, but he left the company,
+so I'm taking over his work from where he left it of. This series is virtually
+done, and he had updated it with comments from the last version, but, I'm
+initially posting it as a RFC because it's been a while since he posted the
+last version.
+Most of what I did here was rebase his last work on top of current Linus's tree.
 
-> 
-> Perhaps this could be generalized to s_type->fs_notify_supported_events
-> or s_type->fs_notify_supported_features.
-> 
-> For example, if an fs opts-in to FAN_REPORT_FID, then it gets an auto
-> allocated s_uuid and f_fsid if it did not fill them in fill_super and in statfs
+Honza, there is one patch from you in this series, which I believe you had it
+suggested to Lukas on a previous version.
 
-This appears a layering violation to me. The s_uuid should be allocated
-when the superblock is created just like tmpfs does it and not
-retroactively/lazily when fanotify on the filesystem is reported.
+The original cover-letter follows...
+
+people have been asking for quota support in tmpfs many times in the past
+mostly to avoid one malicious user, or misbehaving user/program to consume
+all of the system memory. This has been partially solved with the size
+mount option, but some problems still prevail.
+
+One of the problems is the fact that /dev/shm is still generally unprotected
+with this and another is administration overhead of managing multiple tmpfs
+mounts and lack of more fine grained control.
+
+Quota support can solve all these problems in a somewhat standard way
+people are already familiar with from regular file systems. It can give us
+more fine grained control over how much memory user/groups can consume.
+Additionally it can also control number of inodes and with special quota
+mount options introduced with a second patch we can set global limits
+allowing us to replace the size mount option with quota entirely.
+
+Currently the standard userspace quota tools (quota, xfs_quota) are only
+using quotactl ioctl which is expecting a block device. I patched quota [1]
+and xfs_quota [2] to use quotactl_fd in case we want to run the tools on
+mount point directory to work nicely with tmpfs.
+
+The implementation was tested on patched version of xfstests [3].
+
+[1] https://github.com/lczerner/quota/tree/quotactl_fd_support
+[2] https://github.com/lczerner/xfsprogs/tree/quotactl_fd_support
+[3] https://github.com/lczerner/xfstests/tree/tmpfs_quota_support
+
+Jan Kara (1):
+  quota: Check presence of quota operation structures instead of
+    ->quota_read and ->quota_write callbacks
+
+Lukas Czerner (5):
+  shmem: make shmem_inode_acct_block() return error
+  shmem: make shmem_get_inode() return ERR_PTR instead of NULL
+  shmem: prepare shmem quota infrastructure
+  shmem: quota support
+  Add default quota limit mount options
+
+ Documentation/filesystems/tmpfs.rst |  31 ++
+ fs/Kconfig                          |  12 +
+ fs/quota/dquot.c                    |   2 +-
+ include/linux/shmem_fs.h            |  28 ++
+ include/uapi/linux/quota.h          |   1 +
+ mm/Makefile                         |   2 +-
+ mm/shmem.c                          | 473 +++++++++++++++++++++-------
+ mm/shmem_quota.c                    | 327 +++++++++++++++++++
+ 8 files changed, 768 insertions(+), 108 deletions(-)
+ create mode 100644 mm/shmem_quota.c
+
+Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+
+-- 
+2.30.2
+
