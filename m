@@ -2,108 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C28BB6E8629
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 02:05:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C376E86D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 02:49:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230163AbjDTAFQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 20:05:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56268 "EHLO
+        id S232489AbjDTAtB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 20:49:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229580AbjDTAFO (ORCPT
+        with ESMTP id S232095AbjDTAs5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 20:05:14 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6D5146BD
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 17:05:13 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id 38308e7fff4ca-2a8ad872ea5so1582971fa.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 17:05:13 -0700 (PDT)
+        Wed, 19 Apr 2023 20:48:57 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D4AB59E8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 17:48:55 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1a6f0d8cdfeso5284275ad.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Apr 2023 17:48:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681949112; x=1684541112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aYAe4DL6BBolNtAJv/zYI4HfX4uQZVgW355DYethIwg=;
-        b=dBzr5xpyjc9j8TPlxomJFYXi3EtDUrcV3l4m0E/FYCM3P0Ett9qzAJcqieGXVH/w5N
-         w4P4ushMTZmxt4ROas12399eaY0qUve0WiF2qlAfdnY5nhFt4X4obbGget7MJtz63DEZ
-         S84OC73yiqCVxkKuXIn2CCPY8dYYZZTc7nb6jLRW/dKxpowiNCnSDiwCQ5NutKGtUhad
-         bhEsFW5JkS9nAvvPNXDVD3q84fizQSsSYrfihCLFP1N3Xib0WzfG2acK4+pcHc/AFlRW
-         imEtkHgiO2FjTF+98fG42vUslnwg0/4+0fxGg24MnKfpV7hG3j6y2iKssEV5A7ua7z36
-         aqJQ==
+        d=chromium.org; s=google; t=1681951734; x=1684543734;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rF9Var5VZaH4S5EIpXHW6R6bAqiZWgFJai0UoeyTkwE=;
+        b=RsEx3aqjyFopn7F7zL/TWwQWE2vj2KKqrKmn1n6a2Q5eW8WrikILTPDMirUfhOp/G6
+         HopHTQc6FNfefty0a5xobk0bJe8LTeTR1De2vKMOzjzsexf3fScn7kYzzMrvrzbpUNmU
+         QomqppKaOHT6sXBr/Rs1KE9zgLzSGdm8UhDeA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681949112; x=1684541112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aYAe4DL6BBolNtAJv/zYI4HfX4uQZVgW355DYethIwg=;
-        b=gELWOPS7mxKoIvPprQcj6Gg1McahfcedeUsa9rNu/3ybWrM3q2bOq8KoYKhZA4CtPJ
-         gCMS50H2uPyV4278WhUjmCjE+7Rpeebxa1ES6KC8/f60WP+AvTS3pQFYNGniVMgtv4F+
-         cGaWLDMNhDkpls8lYU57GW0ThpjnNKuXGw1XfmuYmsPe9hOPdsiTuc2IUYhQcwwsBGXG
-         hE3vwEH0Jy2MJd7ztMJiyI6Mws1s+ZGLsxrLSBGvaiAzW2yMbgrwiUIBF5EctPLs+Dnu
-         2Csh386zjQyu/odoTzIA8x+YZipYOnGmh8ayhYyO9PmaTXUfpY5kjklc/ZZvv5aFeLy0
-         P2mA==
-X-Gm-Message-State: AAQBX9cZM6mqTJ5bzvDEe93vZe7SzDBfDbiwNS2cIM1xmi0rSDt6K6M8
-        apOdzUqmGCJn3iVkYe7v/c7seCKCArTD5afIpAI=
-X-Google-Smtp-Source: AKy350bNrpKMcQsFr1Mdex7DQUsH2Nl/bCJfLYSaaeMzyLjSV49Hl/9/kEpp1/XNHHqNP+SO4n63iFcuF6z4fhpJCJM=
-X-Received: by 2002:ac2:54b9:0:b0:4ec:7967:9e92 with SMTP id
- w25-20020ac254b9000000b004ec79679e92mr4844283lfk.3.1681949111704; Wed, 19 Apr
- 2023 17:05:11 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1681951734; x=1684543734;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rF9Var5VZaH4S5EIpXHW6R6bAqiZWgFJai0UoeyTkwE=;
+        b=CSiIC4zM8zXR9++8D4x2yrN6z+paZ26t5tLw/UK4AfhK+KYbcH8x6BKpenoVhgk0c1
+         JtiBWbd9yOuTlIvsX1Ewfcm6VzWa2OGN4PBB4vgo4zyLA6Kq3ATCJ/Y/CRZbUFi2nnHr
+         WFsg9xh0n7ml0ZYkhwREEq/QMbHijrrZA98uh5rg10rfYjmIa/pUagrkVTakg32TP3vK
+         vbvUT2WFXmX/NbyTF0Nu2JouY/czHOEMe0URg7pub4jp3My3PcHYFbnjJUOOkFxCRlGh
+         FDgiw9nn7ppMc2Yj/TdaUtPBYyJVzluXZPo57d2ikqo+3JNni2opVbBlRjjhKisBzTiY
+         Ii/g==
+X-Gm-Message-State: AAQBX9cqMFXpWs64A6iKuRCqLTggMS6axonVkUM6/FyX1W2BT27CEOYo
+        OcyFKfCA2SAvHA4ifiAVgvXcJg==
+X-Google-Smtp-Source: AKy350bnjW+rV3sEg0tC2tTj1Uiqplfmhzcjp9WRxYk7355tnhy27//NgU2Ws9tKNLyyUuU4hwqcAA==
+X-Received: by 2002:a17:902:b18b:b0:1a6:a327:67e1 with SMTP id s11-20020a170902b18b00b001a6a32767e1mr6367289plr.57.1681951734635;
+        Wed, 19 Apr 2023 17:48:54 -0700 (PDT)
+Received: from sarthakkukreti-glaptop.corp.google.com ([2620:15c:9d:200:5113:a333:10ce:e2d])
+        by smtp.gmail.com with ESMTPSA id io18-20020a17090312d200b001a65575c13asm74323plb.48.2023.04.19.17.48.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Apr 2023 17:48:54 -0700 (PDT)
+From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
+To:     dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        Daniil Lunev <dlunev@google.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: [PATCH v5 0/5] Introduce block provisioning primitives
+Date:   Wed, 19 Apr 2023 17:48:45 -0700
+Message-ID: <20230420004850.297045-1-sarthakkukreti@chromium.org>
+X-Mailer: git-send-email 2.40.0.634.g4ca3ef3211-goog
+In-Reply-To: <20230414000219.92640-1-sarthakkukreti@chromium.org>
+References: <20230414000219.92640-1-sarthakkukreti@chromium.org>
 MIME-Version: 1.0
-Received: by 2002:a05:651c:203:b0:2a9:b6fc:4808 with HTTP; Wed, 19 Apr 2023
- 17:05:11 -0700 (PDT)
-From:   "Aim Express Securities Inc." <aim.expresssecurities@gmail.com>
-Date:   Wed, 19 Apr 2023 17:05:11 -0700
-Message-ID: <CADw8qP1red+pVT63ne2x835TnD6c544PDUbNe3zLEr7uTBX5iA@mail.gmail.com>
-Subject: Good Business Proposal.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=4.1 required=5.0 tests=ADVANCE_FEE_5_NEW_MONEY,
-        BAYES_00,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FROM,LOTS_OF_MONEY,MONEY_FRAUD_8,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_MONEY_PERCENT,T_SCC_BODY_TEXT_LINE,
-        UNDISC_MONEY autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-STRICTLY CONFIDENTIAL
+Next revision of adding support for block provisioning requests.
 
-TRANSFER OF US$35,500.000.00
+Changes from v4:
+- Add fix for block devices invalidating pagecache if blkdev_fallocate()
+  is called with an invalid mode.
+- s/max_provision_sectors/provision_max_bytes in sysfs.
 
-We are making this contact with you after satisfactory information
-gathered from the Nigerian Chamber of Commerce. Based on this, we are
-convinced that you will provide us with a solution to effect
-remittance of the sum of $35,500.000.00 resulting from over costing of
-job/services done for the Nigerian National Petroleum Corporation
-(NNPC), by foreign companies.
+Sarthak Kukreti (5):
+  block: Don't invalidate pagecache for invalid falloc modes
+  block: Introduce provisioning primitives
+  dm: Add block provisioning support
+  dm-thin: Add REQ_OP_PROVISION support
+  loop: Add support for provision requests
 
-We are top officials of NNPC. We evaluate and secure approvals for
-payment of contracts executed for NNPC. We have tactfully raised
-values to a foreign company for onward disbursement among ourselves
-the Director of Accounts/Finance and Director of Audit. This
-transaction is 100% safe. We are seeking your assistance and
-permission to remit this amount into your account.
+ block/blk-core.c              |  5 +++
+ block/blk-lib.c               | 53 +++++++++++++++++++++++++
+ block/blk-merge.c             | 18 +++++++++
+ block/blk-settings.c          | 19 +++++++++
+ block/blk-sysfs.c             |  9 +++++
+ block/bounce.c                |  1 +
+ block/fops.c                  | 28 +++++++++-----
+ drivers/block/loop.c          | 42 ++++++++++++++++++++
+ drivers/md/dm-crypt.c         |  5 ++-
+ drivers/md/dm-linear.c        |  2 +
+ drivers/md/dm-snap.c          |  8 ++++
+ drivers/md/dm-table.c         | 23 +++++++++++
+ drivers/md/dm-thin.c          | 73 ++++++++++++++++++++++++++++++++---
+ drivers/md/dm.c               |  6 +++
+ include/linux/bio.h           |  6 ++-
+ include/linux/blk_types.h     |  5 ++-
+ include/linux/blkdev.h        | 16 ++++++++
+ include/linux/device-mapper.h | 17 ++++++++
+ 18 files changed, 318 insertions(+), 18 deletions(-)
 
-We have agreed to give you 25% of the total value, while our share
-will be70%. The remaining 5% will be used as refund by both sides to
-off set the cost that must be incurred in the areas of public
-relations, engaging of legal practitioner as attorney, taxation and
-other incidentals in the course of securing the legitimate release of
-the fund into your account.
+-- 
+2.40.0.634.g4ca3ef3211-goog
 
-Please indicate your acceptance to carry out this transaction urgently
-on receipt of this letter. I shall in turn inform you of the
-modalities for a formal application to secure the necessary approvals
-for the immediate legitimate release of this fund into your account.
-
-Please understand that this transaction must be held in absolute
-privacy and confidentiality.Please respond if you are
-
-interested through my alternative address:
-
-
-Thanks for your co-operations.
-
-
-Yours faithfully,
-Mr.Lambert Gwazo
