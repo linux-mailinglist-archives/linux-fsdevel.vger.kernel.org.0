@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF46B6E8F81
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 12:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39E836E8F79
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 12:08:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234684AbjDTKIK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 06:08:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48488 "EHLO
+        id S234691AbjDTKIL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 06:08:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234614AbjDTKGc (ORCPT
+        with ESMTP id S234615AbjDTKGd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 06:06:32 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D1134682;
-        Thu, 20 Apr 2023 03:06:12 -0700 (PDT)
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-2f7c281a015so281274f8f.1;
-        Thu, 20 Apr 2023 03:06:12 -0700 (PDT)
+        Thu, 20 Apr 2023 06:06:33 -0400
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D0C3C32;
+        Thu, 20 Apr 2023 03:06:13 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-3f16b99b936so3347945e9.3;
+        Thu, 20 Apr 2023 03:06:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681985170; x=1684577170;
+        d=1e100.net; s=20221208; t=1681985172; x=1684577172;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NtU3y1Zr3yjzTsE4b676R+MqirB7TojNGzCXkCz9E5c=;
-        b=hjnKVVxyTyC6ht/kNv7/cZsfjl9Ui+1ni0r0DPwAzsdr7RARvBT8s78AYm5vLXi1xO
-         0cMmBAW9q77JHKT3AuQEXKWyxvGJBfoEvycqQleB0TApkFVHOVwWHQkzmXYS5VhokT0I
-         9efnyOKVbTJ1G3liLH3xRh1qsOfikQpowLYc9ASnxQKRkZF1mYcE3jNNn+LE7nrTWfDc
-         FUAxymrpSa7ZAYOlTU38/V+3IfwXqVV9qOz/X/dAPZwTkHhPosOvA7HVwk5SH61EWck5
-         /pHrg4D9T3xw27LX2ymHxS7PplBkozDPrNDF3m7yeYwgPftE1FXsD2vJ/JlFEZmbXM2v
-         L69Q==
-X-Gm-Message-State: AAQBX9dQ07vjBY5M2ppyYcDjRLj0t1XJSC1MmVOc8CjgwQcIu/eaGu9U
-        wrNQFUkQJVw1arhIogkJkxc=
-X-Google-Smtp-Source: AKy350Yf43FTKduuCP1kMcXqJDkEawnut9n4ItV54pfFrm9DNgw20nsuo8ykxVcEagPqAFCwlrvDXw==
-X-Received: by 2002:adf:f4d0:0:b0:2f7:e3aa:677a with SMTP id h16-20020adff4d0000000b002f7e3aa677amr912509wrp.46.1681985170733;
-        Thu, 20 Apr 2023 03:06:10 -0700 (PDT)
+        bh=/zlw+dyGlfnLYWyTWZyG7072cksvgegzTzOhlPnlIpY=;
+        b=SkaE1i5oextJEG5M68xutxi7e7vT+7bXsNTwIXdiJhJfvYhVln6+xJOR2CyPYdwpME
+         fZx9/3c//0aYM3cXEN6rqHDAXs7g9TBS2RQnW9ZR+nXLZUFRQr/1ippNs90A1n6aCqkz
+         TM2q1J8obE3WGi8Knxn/TRlu6iS2Mvb212U/Kr6jz4yo1vZiekAAH0hl21EDnU+F7O5R
+         6HOv4wb6GjFas6WG38OKV6AV2N4mIqMLUSKYsCR4B9I3Whc2WhTuhjcIKKFTO10Fpg+v
+         SVGxCoua2VYxDY+9xYoEsrHn3QQNz1TCLglX1IEndXMDdZCALSPHhpkEfLVvG85mH9cw
+         7eVQ==
+X-Gm-Message-State: AAQBX9dxkDjVk9JnH2JmUJm1Fjy+lYZKWbUQ6WNKKCX6BgO5eYhN6mgu
+        avXAtWcksq3kDttrrNCkpqQ=
+X-Google-Smtp-Source: AKy350b4+pGxVTyaXt7ZP5FpDVVarQnYRrcgBCCIE1KFKr5Sq8P0zgMU35+ypve4Bt1qBgDPW2LUww==
+X-Received: by 2002:a5d:640a:0:b0:2ee:d53b:d9ef with SMTP id z10-20020a5d640a000000b002eed53bd9efmr813643wru.55.1681985171893;
+        Thu, 20 Apr 2023 03:06:11 -0700 (PDT)
 Received: from localhost.localdomain (aftr-62-216-205-208.dynamic.mnet-online.de. [62.216.205.208])
-        by smtp.googlemail.com with ESMTPSA id l11-20020a5d674b000000b0030276f42f08sm201410wrw.88.2023.04.20.03.06.09
+        by smtp.googlemail.com with ESMTPSA id l11-20020a5d674b000000b0030276f42f08sm201410wrw.88.2023.04.20.03.06.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 03:06:10 -0700 (PDT)
+        Thu, 20 Apr 2023 03:06:11 -0700 (PDT)
 From:   Johannes Thumshirn <jth@kernel.org>
 To:     axboe@kernel.dk
 Cc:     johannes.thumshirn@wdc.com, agruenba@redhat.com,
@@ -50,9 +50,9 @@ Cc:     johannes.thumshirn@wdc.com, agruenba@redhat.com,
         rpeterso@redhat.com, shaggy@kernel.org, snitzer@kernel.org,
         song@kernel.org, willy@infradead.org,
         Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Subject: [PATCH v4 17/22] md: raid1: check if adding pages to resync bio fails
-Date:   Thu, 20 Apr 2023 12:04:56 +0200
-Message-Id: <20230420100501.32981-18-jth@kernel.org>
+Subject: [PATCH v4 18/22] dm-crypt: check if adding pages to clone bio fails
+Date:   Thu, 20 Apr 2023 12:04:57 +0200
+Message-Id: <20230420100501.32981-19-jth@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230420100501.32981-1-jth@kernel.org>
 References: <20230420100501.32981-1-jth@kernel.org>
@@ -70,81 +70,38 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Check if adding pages to resync bio fails and if bail out.
-
-As the comment above suggests this cannot happen, WARN if it actually
-happens.
+Check if adding pages to clone bio fails and if it does retry with
+reclaim. This mirrors the behaviour of page allocation in
+crypt_alloc_buffer().
 
 This way we can mark bio_add_pages as __must_check.
 
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Acked-by: Song Liu <song@kernel.org>
 ---
- drivers/md/raid1-10.c | 11 ++++++-----
- drivers/md/raid10.c   | 20 ++++++++++----------
- 2 files changed, 16 insertions(+), 15 deletions(-)
+ drivers/md/dm-crypt.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid1-10.c b/drivers/md/raid1-10.c
-index e61f6cad4e08..cd349e69ed77 100644
---- a/drivers/md/raid1-10.c
-+++ b/drivers/md/raid1-10.c
-@@ -101,11 +101,12 @@ static void md_bio_reset_resync_pages(struct bio *bio, struct resync_pages *rp,
- 		struct page *page = resync_fetch_page(rp, idx);
- 		int len = min_t(int, size, PAGE_SIZE);
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 3ba53dc3cc3f..19f7e087c6df 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -1693,7 +1693,14 @@ static struct bio *crypt_alloc_buffer(struct dm_crypt_io *io, unsigned int size)
  
--		/*
--		 * won't fail because the vec table is big
--		 * enough to hold all these pages
--		 */
--		bio_add_page(bio, page, len, 0);
-+		if (WARN_ON(!bio_add_page(bio, page, len, 0))) {
-+			bio->bi_status = BLK_STS_RESOURCE;
-+			bio_endio(bio);
-+			return;
-+		}
+ 		len = (remaining_size > PAGE_SIZE) ? PAGE_SIZE : remaining_size;
+ 
+-		bio_add_page(clone, page, len, 0);
++		if (!bio_add_page(clone, page, len, 0)) {
++			mempool_free(page, &cc->page_pool);
++			crypt_free_buffer_pages(cc, clone);
++			bio_put(clone);
++			gfp_mask |= __GFP_DIRECT_RECLAIM;
++			goto retry;
 +
- 		size -= len;
- 	} while (idx++ < RESYNC_PAGES && size > 0);
- }
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 6c66357f92f5..59e52cf01569 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -3804,11 +3804,11 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
- 		for (bio= biolist ; bio ; bio=bio->bi_next) {
- 			struct resync_pages *rp = get_resync_pages(bio);
- 			page = resync_fetch_page(rp, page_idx);
--			/*
--			 * won't fail because the vec table is big enough
--			 * to hold all these pages
--			 */
--			bio_add_page(bio, page, len, 0);
-+			if (WARN_ON(!bio_add_page(bio, page, len, 0))) {
-+				bio->bi_status = BLK_STS_RESOURCE;
-+				bio_endio(bio);
-+				goto giveup;
-+			}
- 		}
- 		nr_sectors += len>>9;
- 		sector_nr += len>>9;
-@@ -4985,11 +4985,11 @@ static sector_t reshape_request(struct mddev *mddev, sector_t sector_nr,
- 		if (len > PAGE_SIZE)
- 			len = PAGE_SIZE;
- 		for (bio = blist; bio ; bio = bio->bi_next) {
--			/*
--			 * won't fail because the vec table is big enough
--			 * to hold all these pages
--			 */
--			bio_add_page(bio, page, len, 0);
-+			if (WARN_ON(!bio_add_page(bio, page, len, 0))) {
-+				bio->bi_status = BLK_STS_RESOURCE;
-+				bio_endio(bio);
-+				return sectors_done;
-+			}
- 		}
- 		sector_nr += len >> 9;
- 		nr_sectors += len >> 9;
++		}
+ 
+ 		remaining_size -= len;
+ 	}
 -- 
 2.39.2
 
