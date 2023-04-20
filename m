@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B598A6E8F62
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 12:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89FD66E8F86
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 12:08:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234706AbjDTKI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 06:08:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47386 "EHLO
+        id S234715AbjDTKI3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 06:08:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233972AbjDTKGo (ORCPT
+        with ESMTP id S229729AbjDTKG4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 06:06:44 -0400
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B202430DC;
-        Thu, 20 Apr 2023 03:06:15 -0700 (PDT)
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-3f177cb2c6cso3448475e9.2;
-        Thu, 20 Apr 2023 03:06:15 -0700 (PDT)
+        Thu, 20 Apr 2023 06:06:56 -0400
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C112D5A;
+        Thu, 20 Apr 2023 03:06:17 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-2f833bda191so284642f8f.1;
+        Thu, 20 Apr 2023 03:06:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681985174; x=1684577174;
+        d=1e100.net; s=20221208; t=1681985175; x=1684577175;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ybte8ln4cL1imogQbfLUc6IIuAFaJLWmv8LuzJpUUJE=;
-        b=bpV3K7/z51UhdxmU2aTI1Bjpb4GM92Sn6vynzmK6wh2unGdfiOLQJZPjcKKwqRLuId
-         fuFnbUAZOJMHgveXqd4uqudzfQVqgXU2Svd+mX375bsVkEidDwIn9ejLrELUKxgWbRo6
-         SLj5nCDFVHtwjRDdKfc+jPTbRycpXYPeTFpo4EWvE3Fel7RqhHqgx4l4OzOVIEqkKZWO
-         p7gPzYEv4XxMaXabgn/agIg1IR6IKNrbGAyrzChuYpmRDL6UxcWhNYHzcMIBNE4t4ArS
-         0tvZd9dU5ih4MaA2fgFepGtt/Z1eaJE2imdIvKmCXP8Z0K+Vut6a7PU5bOISfMgT3b7+
-         3oGw==
-X-Gm-Message-State: AAQBX9d8m8nvCfUvipqdZ8m0GcrVld9IvdWHhYXPUEcqYZrrl3AFet+R
-        5R/gtBZcGNvdZjH8pTjwQak=
-X-Google-Smtp-Source: AKy350ZrFHrJO95XpjLsqvNhaT3Lj7em6PpVK0jNKwO81XYdkMaIRUgqMSWWRox8APZBVDphzDkYwQ==
-X-Received: by 2002:adf:f384:0:b0:2f2:9198:f0f with SMTP id m4-20020adff384000000b002f291980f0fmr833210wro.10.1681985174142;
-        Thu, 20 Apr 2023 03:06:14 -0700 (PDT)
+        bh=R6+NeAX2XCjGoXZTYs/vHx8pZBcBY0nCsbbwup4DNoY=;
+        b=eroq0UuL6ABqRZQlB8F8vF7OTfh1p/KlTbcuEPRGiFPcJC0Z7X7NnrHVMedFMdwUgm
+         c7xfh/KDldPoGZ6x9BCUypJE9mJce9als4rQSc8j72gjOKxXwGoF/hMZvD6BWyd0iCJ9
+         i2RYInU+PVfE3AcvX57omqxiy52Sa1sKb94AexK85BSsehahWxQIQ1NIgvboFA9XRAHS
+         OzIaT0evLBlIcqBJMRuqb8ZWIiYH6k45OLzpjTLwgrJhI1IKQi+Mrj4UWHvEchN9uxhP
+         F0FMvgukc91x9P8iYyEZCigfuu8eSxyIJSiqsKeC2CwE7tv0qW+N+NSVfos4fAjrsfo5
+         0N6Q==
+X-Gm-Message-State: AAQBX9ce8H6ppG17L0g+VHYkhI9tgbDjtcCeBG/KjkveXFV7oDPg/xdL
+        86ibqEjQ0phQPjOdu8aWCvA=
+X-Google-Smtp-Source: AKy350aN3PsOr81dbQugpISlk+yjR+a+4/2N8Qu7GaXUJdAVlidoOhFCKUKxX0oN92RzWan4aBS9aQ==
+X-Received: by 2002:a5d:5957:0:b0:2f4:3b2c:1b2e with SMTP id e23-20020a5d5957000000b002f43b2c1b2emr951041wri.31.1681985175440;
+        Thu, 20 Apr 2023 03:06:15 -0700 (PDT)
 Received: from localhost.localdomain (aftr-62-216-205-208.dynamic.mnet-online.de. [62.216.205.208])
-        by smtp.googlemail.com with ESMTPSA id l11-20020a5d674b000000b0030276f42f08sm201410wrw.88.2023.04.20.03.06.13
+        by smtp.googlemail.com with ESMTPSA id l11-20020a5d674b000000b0030276f42f08sm201410wrw.88.2023.04.20.03.06.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 03:06:13 -0700 (PDT)
+        Thu, 20 Apr 2023 03:06:14 -0700 (PDT)
 From:   Johannes Thumshirn <jth@kernel.org>
 To:     axboe@kernel.dk
 Cc:     johannes.thumshirn@wdc.com, agruenba@redhat.com,
@@ -49,9 +49,9 @@ Cc:     johannes.thumshirn@wdc.com, agruenba@redhat.com,
         linux-raid@vger.kernel.org, ming.lei@redhat.com,
         rpeterso@redhat.com, shaggy@kernel.org, snitzer@kernel.org,
         song@kernel.org, willy@infradead.org
-Subject: [PATCH v4 20/22] block: add __bio_add_folio
-Date:   Thu, 20 Apr 2023 12:04:59 +0200
-Message-Id: <20230420100501.32981-21-jth@kernel.org>
+Subject: [PATCH v4 21/22] fs: iomap: use __bio_add_folio where possible
+Date:   Thu, 20 Apr 2023 12:05:00 +0200
+Message-Id: <20230420100501.32981-22-jth@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230420100501.32981-1-jth@kernel.org>
 References: <20230420100501.32981-1-jth@kernel.org>
@@ -69,45 +69,49 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Just like for bio_add_pages() add a no-fail variant for bio_add_folio().
+When the iomap buffered-io code can't add a folio to a bio, it allocates a
+new bio and adds the folio to that one. This is done using bio_add_folio(),
+but doesn't check for errors.
+
+As adding a folio to a newly created bio can't fail, use the newly
+introduced __bio_add_folio() function.
 
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- block/bio.c         | 8 ++++++++
- include/linux/bio.h | 1 +
- 2 files changed, 9 insertions(+)
+ fs/iomap/buffered-io.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index fd11614bba4d..f3a3524b53e4 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1138,6 +1138,14 @@ int bio_add_page(struct bio *bio, struct page *page,
- }
- EXPORT_SYMBOL(bio_add_page);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 6f4c97a6d7e9..473598b68067 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -312,7 +312,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 			ctx->bio->bi_opf |= REQ_RAHEAD;
+ 		ctx->bio->bi_iter.bi_sector = sector;
+ 		ctx->bio->bi_end_io = iomap_read_end_io;
+-		bio_add_folio(ctx->bio, folio, plen, poff);
++		__bio_add_folio(ctx->bio, folio, plen, poff);
+ 	}
  
-+void __bio_add_folio(struct bio *bio, struct folio *folio, size_t len,
-+		     size_t off)
-+{
-+	WARN_ON_ONCE(len > UINT_MAX);
-+	WARN_ON_ONCE(off > UINT_MAX);
-+	__bio_add_page(bio, &folio->page, len, off);
-+}
-+
- /**
-  * bio_add_folio - Attempt to add part of a folio to a bio.
-  * @bio: BIO to add to.
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 0f8a8d7a6384..99fa832db836 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -473,6 +473,7 @@ int bio_add_zone_append_page(struct bio *bio, struct page *page,
- 			     unsigned int len, unsigned int offset);
- void __bio_add_page(struct bio *bio, struct page *page,
- 		unsigned int len, unsigned int off);
-+void __bio_add_folio(struct bio *, struct folio *, size_t len, size_t off);
- int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
- void bio_iov_bvec_set(struct bio *bio, struct iov_iter *iter);
- void __bio_release_pages(struct bio *bio, bool mark_dirty);
+ done:
+@@ -546,7 +546,7 @@ static int iomap_read_folio_sync(loff_t block_start, struct folio *folio,
+ 
+ 	bio_init(&bio, iomap->bdev, &bvec, 1, REQ_OP_READ);
+ 	bio.bi_iter.bi_sector = iomap_sector(iomap, block_start);
+-	bio_add_folio(&bio, folio, plen, poff);
++	__bio_add_folio(&bio, folio, plen, poff);
+ 	return submit_bio_wait(&bio);
+ }
+ 
+@@ -1589,7 +1589,7 @@ iomap_add_to_ioend(struct inode *inode, loff_t pos, struct folio *folio,
+ 
+ 	if (!bio_add_folio(wpc->ioend->io_bio, folio, len, poff)) {
+ 		wpc->ioend->io_bio = iomap_chain_bio(wpc->ioend->io_bio);
+-		bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
++		__bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
+ 	}
+ 
+ 	if (iop)
 -- 
 2.39.2
 
