@@ -2,189 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D15BA6E87C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 04:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 221546E87D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 04:08:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232413AbjDTCDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 22:03:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57432 "EHLO
+        id S232016AbjDTCH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Apr 2023 22:07:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230244AbjDTCDt (ORCPT
+        with ESMTP id S230244AbjDTCH5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 22:03:49 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2CA13A96;
-        Wed, 19 Apr 2023 19:03:47 -0700 (PDT)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33JL4iVo013630;
-        Thu, 20 Apr 2023 02:03:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-03-30;
- bh=aRw9qPNmIzFjhTVzIb2rPmWIioAjH7lOsSmrshYuJ38=;
- b=s5udNpyAvHlSjbY/5snTa4/X3Vryf3ivbhQ/+Kv4LcQQsMBo3FYTQ7QDJJP0W564k4UL
- RsED33sdN6cazHjW3Cu1YI11sytvnRtQTCxjmAH7K4wxqVnsLJcWkjTOvm2MfaplM7Rn
- oXrN+dN7+HuSl33b6jbD+o9JArqWHfgUlXFik/fi9fLTDEFJtp9HONSX6xAoVDH6byQj
- edWWwKj0QfGj4Ci/mP9RDoUEK5Z7MM/eUYTclIY+kc1+Ubn/in8D8B48FbWZqz27Xr2C
- FQrKMez9PnkglnsvjtbLgMXYwHsznuP0Hhhaw/Fmu2hMVXHpQbKRY6gxiqcUVuDhJoSh +A== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3pymfuhpqx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Apr 2023 02:03:28 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 33JNUEEv015677;
-        Thu, 20 Apr 2023 02:03:27 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2105.outbound.protection.outlook.com [104.47.55.105])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3pyjcdpmks-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Apr 2023 02:03:27 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XKsROmTkEmO6qX+LhV71CB0eVT+tLm+FjURbIYRAmqmd05107+vP0Jp1403PPjr3xVP+mrp3SbSoHl3p3SuBpcgBRnYAgeVsPaHV0H5qZ93LD5Iv5zzkosQ9C81Xv0WHalbGmnKjL3tzu9ocpnDB6E+SSRAdAQfNU0bYl4RXPJMlQwQb4vgNhBqlQbBl/MYHLA/loS0FsB87ctRD5TvyM1RNLZ7Os6NPzPbODNKVU7znljNmbGPD8oISML/bSxm0Ykn+R406NLpdgxk4ILvkAIrLpU/2UtSFiHXM6cKlsAYRsXSRoFXlRqzaFz73xfHpG+WpHIkj0LC1se8VB53kEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aRw9qPNmIzFjhTVzIb2rPmWIioAjH7lOsSmrshYuJ38=;
- b=CJmPN/ektyWCU2tD/ia0gFNIfG8o0AjKsQiEmz8jGmVAKOvCWHJ81Lr8tUDPZn53114Rb6lnXZ6Mf3mVoc1zsSpo2P60Vp4LxMkplSwUoUY5Ep4xSr1F0Lf+Koo3cgkdrP8wVBaEhy7vMlo/N6JOSoDmiWxEKIDyEMwvUbbaZo724SJDgDkLs1hCzre6TBJamFgpvkiYlXLpHdO/sTHq7MpdniSS8/0dlN1JB1rUeb5RqEXJOlk5ZDV1NTxvWCXH2Lt6jwp8wWlv6vNgSjLf5tZc2wYwittjvgYHlsogWR2WqGjepiXDb7T/ujITNumLGto/ce2L8bv8tLAqEtpN6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aRw9qPNmIzFjhTVzIb2rPmWIioAjH7lOsSmrshYuJ38=;
- b=qB/EgLeSoEYMXHxMeordHhOx9l2VLUbY/EF/G8RJzkuVnNM2e/olrELzTG7YEq4kNdEBXYKei9pnnNBCa7e5+tB0IoDvagDj82mnuY8fdlxJSQPgunluhZPSzxf8wkZz+c/Xb7XYBG1wdEm7c9XR5mhAqlMU8lwfYyxx1q34XGc=
-Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
- by PH7PR10MB5771.namprd10.prod.outlook.com (2603:10b6:510:127::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.30; Thu, 20 Apr
- 2023 02:03:09 +0000
-Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
- ([fe80::256d:125b:8053:eeb9]) by SJ0PR10MB4429.namprd10.prod.outlook.com
- ([fe80::256d:125b:8053:eeb9%5]) with mapi id 15.20.6298.045; Thu, 20 Apr 2023
- 02:03:09 +0000
-Message-ID: <7d0c38a9-ed2a-a221-0c67-4a2f3945d48b@oracle.com>
-Date:   Wed, 19 Apr 2023 19:03:05 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2] mm: hwpoison: coredump: support recovery from
- dump_user_range()
-Content-Language: en-US
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>
-References: <20230417045323.11054-1-wangkefeng.wang@huawei.com>
- <20230418031243.GA2845864@hori.linux.bs1.fc.nec.co.jp>
- <54d761bb-1bcc-21a2-6b53-9d797a3c076b@huawei.com>
- <20230419072557.GA2926483@hori.linux.bs1.fc.nec.co.jp>
- <9fa67780-c48f-4675-731b-4e9a25cd29a0@huawei.com>
-From:   Jane Chu <jane.chu@oracle.com>
-In-Reply-To: <9fa67780-c48f-4675-731b-4e9a25cd29a0@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: DM6PR03CA0069.namprd03.prod.outlook.com
- (2603:10b6:5:100::46) To SJ0PR10MB4429.namprd10.prod.outlook.com
- (2603:10b6:a03:2d1::14)
+        Wed, 19 Apr 2023 22:07:57 -0400
+Received: from mail1.bemta37.messagelabs.com (mail1.bemta37.messagelabs.com [85.158.142.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A348170A;
+        Wed, 19 Apr 2023 19:07:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1681956473; i=@fujitsu.com;
+        bh=PfWgfbWMhubqztmsyQFlopaTe+XA8QMuhGDUA2zZUbI=;
+        h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+         In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        b=u+xeus85Adzw0Ms8GenUXlFeyOWqSpKnlflp3YH9d1nuyM7PPBwRataCTAZmHsnvq
+         lrmBQblMyXoCU/2RRxYNW72eOAFMlZyO8IHA8wfC+GV/VFK4nE/7SEul77x+L8+hC2
+         aIGHDcPOehiD5LTeSrbyCybhfKiNMtRG/T5aYItdKIGhYuFcWlO4bjr9ugxZZilBH+
+         7s+ViSXp+xjPWuto12axTo/SV45O04wm4xmpKJMgarctWxDL2wqvoaOgPeol0FQSNX
+         D5uUnzdc+malJWEE3hNh+cbRH3zaLJuRBW9SB1CecXLtrs03zZ7yGIu9BfaNxs6oLs
+         IkUT4u7pLgxkw==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRWlGSWpSXmKPExsViZ8ORpFs+zyH
+  FYMN8GYs569ewWUyfeoHR4vITPovZ05uZLPbsPclicW/Nf1aLXX92sFus/PGH1eL3jzlsDpwe
+  m1doeSze85LJY9OqTjaPTZ8msXucmPGbxePF5pmMHmcWHGH3+LxJLoAjijUzLym/IoE1o2HuP
+  KaC6fEVnx78Y2pgvOTTxcjJISSwkVFiaqcChL2USeLkK88uRi4gezujRPf7aWwgCV4BO4mNf/
+  cyg9gsAqoS01ddZIKIC0qcnPmEBcQWFUiWOLapDaxeWCBUYuGfOWA1bAI6EhcW/GUFsUUECiX
+  2LH0HVs8sUCHRuOgfM8TiGonGpxfBejkFXCReLp8BVWMhsfjNQXYIW16ieetssHoJASWJi1/v
+  sELYlRKtH36xQNhqElfPbWKewCg0C8l5s5CMmoVk1AJG5lWM5sWpRWWpRbqGBnpJRZnpGSW5i
+  Zk5eolVuol6qaW6eflFJRm6hnqJ5cV6qcXFesWVuck5KXp5qSWbGIHRl1KcOH8H4+W+v3qHGC
+  U5mJREeZU326cI8SXlp1RmJBZnxBeV5qQWH2KU4eBQkuCtnOGQIiRYlJqeWpGWmQNMBDBpCQ4
+  eJRFe816gNG9xQWJucWY6ROoUoy7H2oYDe5mFWPLy81KlxHmV5wIVCYAUZZTmwY2AJaVLjLJS
+  wryMDAwMQjwFqUW5mSWo8q8YxTkYlYR5i0Cm8GTmlcBtegV0BBPQEQ/FwI4oSURISTUwbd7ur
+  cQnIDzZUWJRmFVKe1T75cP3mfKu6+dq/bdqm5l4y/NE7qwaW6awtTv3/Dp4eN0LuU7vjVtVmZ
+  nUNx5YwLb9mZSV2F7ve/kNXXJJER8vpbDUaMcI3Sn2OFjuU+B2Kqr06CqpV4kaKSfMJmVsjc/
+  KmOHB6a/IdCykaN6Cy7fvXPtp2OB5Yv1KPv+32rsMOTee2KLY0SSccsU79dXRezPKbU+ZCvIE
+  GDaotdu9/2r0YnbVxcX6uiZsSmEHxEO0d73xnpH7se/6rtTgXY+041h/qeeG/ftt/qHy6sst2
+  SpcOxacTjht+YD3vaK44cs9nTpp3RPv3buVvjntwvF999+sU1t+91HPXjfGlo87lViKMxINtZ
+  iLihMBtEJDwcUDAAA=
+X-Env-Sender: ruansy.fnst@fujitsu.com
+X-Msg-Ref: server-6.tower-745.messagelabs.com!1681956471!10184!1
+X-Originating-IP: [62.60.8.98]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.104.2; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 7634 invoked from network); 20 Apr 2023 02:07:51 -0000
+Received: from unknown (HELO n03ukasimr03.n03.fujitsu.local) (62.60.8.98)
+  by server-6.tower-745.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 20 Apr 2023 02:07:51 -0000
+Received: from n03ukasimr03.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTP id C53201C3;
+        Thu, 20 Apr 2023 03:07:50 +0100 (BST)
+Received: from R01UKEXCASM223.r01.fujitsu.local (R01UKEXCASM223 [10.182.185.121])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTPS id B7E671B9;
+        Thu, 20 Apr 2023 03:07:50 +0100 (BST)
+Received: from [192.168.50.5] (10.167.234.230) by
+ R01UKEXCASM223.r01.fujitsu.local (10.182.185.121) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.42; Thu, 20 Apr 2023 03:07:46 +0100
+Message-ID: <0a53ee26-5771-0808-ccdc-d1739c9dacac@fujitsu.com>
+Date:   Thu, 20 Apr 2023 10:07:39 +0800
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB4429:EE_|PH7PR10MB5771:EE_
-X-MS-Office365-Filtering-Correlation-Id: e71f26e2-0fa2-416c-1812-08db41436335
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MBeC1oblcs8BUwiC2xRIuqnmSAfAdoa5LR8vrQ46Rl2K8y/dpA7BJF6AetxN1IVMV3Jo6rumdMdEWiFShu1ASRgk9R4gan3jge4dXtzrKFnDnADeZ/xmKbvCItsOjVjQi8hdPHUDwTA1spMO9fDHGgw12EROuuC6Fv2Ijh+oKVkuyit2mwoeOdCmJOAjfBe2PmTFz5WY/zi5cTIrva70AMtvBEKcuTxDIKGRiqZDOVIuXj6kXltVi62oNvrRQ+RwRDObaSrG5l3zZdLORTpP18MzhQKyMkvM/7hGqgQmL0sw+8kpnUG77OSmbs/KjpO8y+ROeiPfoFtRrDelyh8yJFu7RlTCyiAnY4MtM2p6JWusZHc7kuWBjg4cmYJF670UFbJ4aBhw6VogPH90aw2NgmUoaweOfR1nUvmWjv+ifAw8X8d1Y1dqDu9W7chw+NenY6NaVv+nZrZkHenQCgK1JUC+LNLTOLyfN179h5dkUxWuturdjgyfx3pagQMIcKvbycapPA5pY6CYpJ8TFfH5wiXhkEWTBkUJe9zx1HsUB7YT41RYQbCH3wk5LYRYyoC5LBeXPVlfDvLWm5OrrltIWGc1luPPBP3a7jGF35Yq1xidCQSO5ZGPYQUhg4kV4fYvQ491uUXSoHxmTiPT4z2R8Q==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(39860400002)(376002)(346002)(136003)(396003)(366004)(451199021)(44832011)(54906003)(6506007)(6512007)(186003)(26005)(53546011)(478600001)(110136005)(2906002)(8936002)(8676002)(7416002)(83380400001)(5660300002)(2616005)(86362001)(38100700002)(316002)(4326008)(66556008)(66476007)(66946007)(31696002)(41300700001)(6486002)(31686004)(6666004)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eXVSS0FiTHVYc3FwNWJKV2s1WVhCK1d0Y0tZYnZabmlJK0FYOXd2dWRhLzdv?=
- =?utf-8?B?L0ZCOGpsQk5Qc2Z4dVRRRktjbVlMRmtVQ2kraXVtdWxKVmZuMlNZS3J2TmZW?=
- =?utf-8?B?aXpjYVA2RnFPNmZnT2w2azBqTDNDbURFb2RLUTFtUXVUR0NYK1NwY2k0SlVG?=
- =?utf-8?B?U2N1RXFqTHRnUXVUNkhsSVZaNWtSd0xWbzl6VG1uVEJsZFZmTkp3L0lYT092?=
- =?utf-8?B?Yks4WEZpQm1QS1lUb1lyZHVicVJWa3dCS2lNRkdrVWVieEJNV3BiUVhESEx5?=
- =?utf-8?B?aXJJV29lWE9YSlZNNWVlbVBNSnBIRlMzcG1xZ0JtZFVzaXlMS3lrUjBhYzA0?=
- =?utf-8?B?YzFpbFdxT2tHZGt0OUNkRDNrQWpTVERoRkMzdHhoNjY0QzIxejVVdjVPQXJD?=
- =?utf-8?B?eWE0NFgxVm14Q1ljKzlOSTAwTTl3VEdyeHEzbkdydGdMVXgyRkVvQStPbWlt?=
- =?utf-8?B?NjB4VTM0QlhRZVB4bUMxaUNaTXlITzE0S2VkUHFuMFZoVmNKb1Y0TVUwc1B0?=
- =?utf-8?B?RFdPSFRoWlNVQ2xQcnl5VTlMdHM2VVphYlhrazREWERoTVAvUWhlc2tRRDZR?=
- =?utf-8?B?NmlKdjRVdm5SdHgzZDFWbzVFN054Q0Z6WmkweXRpY0RGYXZnUjJpSVhxeU1p?=
- =?utf-8?B?NlJ2RTFYMEJ3c1RicXBPNDlZY3dpemdhNk5Hb0pvRDRXeFNEbHFJSEFOcTg3?=
- =?utf-8?B?TU5jL25SOUhFNFNPU3VNZWcxZXNhVTZRTUhZSkVhWFp5UlFmS3BkSDFWSmRN?=
- =?utf-8?B?UGtRUFN0SnVOckkvWjdWd0E2QTFUY2NQT2FzczI3ODRMQXZUb2JTQjVZVElx?=
- =?utf-8?B?aWxkalFzeitiNnVEb0Z3NldzT3pnT1dETFlqRVBwOTIwb3VrbjBiVW1pU0Ri?=
- =?utf-8?B?T0RkTHdZZjUxRWpEaHBRbXgrME4zL0RPTW0zb1V2VW9PY2ZtOWhJcWNTMUJa?=
- =?utf-8?B?OWtUNmJhSjRnclc1alpoNTFYaTNOcWtVbFpXVCtrdlh2V201S0xHM3ZqWXl1?=
- =?utf-8?B?WVUvZ0FHMktVdWdPMkpDazdHR0g4dnhIWEJlUDhQZFMzMWVSVFd2bkpienJM?=
- =?utf-8?B?ckwzMXN0L0grbkNSUVVCQ3pWK2pUNUczdldsOVpGdUFhdEtEMTNhem5kU1Yv?=
- =?utf-8?B?N1ZJdzhnd2s2VTlVSHdLTTlya0xpR2h2QUJ6QXZFKzhpK3NtRHVCaGFKblVx?=
- =?utf-8?B?ZnpORDR1Z0d5b09yMnRxQ2xiUGwyaHRycTlGZk9vSkFxS2t1Y1lqWlFlWTdE?=
- =?utf-8?B?UUlkNWlibDNCQndoS28zbk1Rb29FaG1WTWNmNzlBNE16NHdrTURBUlNTeW43?=
- =?utf-8?B?RTRFbHcvYlZISGsyT2lBdFhtcmdBSnZNRHRoQkUzQmxFTStRdUJOWEQ5Ukxh?=
- =?utf-8?B?S1VCUU54TlJnYWh6dUFzekRwVjBQTnhJOC9wT3JqM1NUekpDR01pTnlPdWhx?=
- =?utf-8?B?bU5wQ3lraUR6SHBLdW1GdEQ1Z1M3ZVI3V2haSEdLanRPY0ZjWE1UamlsWnkr?=
- =?utf-8?B?Y3RSb1I5TXNoUTBlWmo1VG9Oa0duanBaRFRqTlViMkQ4MGVpZWpkUjVzSy9z?=
- =?utf-8?B?S3k0SUVWOVVMYzJHaG1yVUVnVXhsb3FJR0xYQ0V4Ky9ubjFjZ1dwcVF4Q3VI?=
- =?utf-8?B?bm1lblhqekFNZ2VjeEp3VEZwb2UwT3NJN01jYmNiOXppV2J2bGV2Qm1keEdC?=
- =?utf-8?B?ZlpsTG5PK2pWRHlRZXg5UnVZeXc4UHEzVHYzUlVucWlqMEJVN2ZxOXZWWlgr?=
- =?utf-8?B?Tks5K0o5eCs2UGZFNEMxUHhBRmQ5WlNGOFVBSWFvaC9uQ2hVbFFWSFhRY3Bl?=
- =?utf-8?B?MHN1U2M4OUp3Mmh2WHNaUXM4bmpNWnFhODFFbzMyZ0tJTnArVndqSjZLUHY2?=
- =?utf-8?B?MHRncXF0RVBzSHgzU09sSTRYTnNqNXJDRG1ZK2NNVi9neWYwSzc3WWREeFJD?=
- =?utf-8?B?ZzBVSEoxdGsxOGdheFdEOGpwZWhUWEUyY2lNaXdpWVZKVy93QWpqZmVYMHBL?=
- =?utf-8?B?VFVnK2dkcmo5clBmSVlHNFdFaklEckFSVUM5R3doQ3VuR3grUkQzMWY5WGlC?=
- =?utf-8?B?SjVRMFNPbzc1dm5zY3UxL3J1NUs0N3JPbUwzTU1EN3pLaHl2Z3lPZVlGZjNq?=
- =?utf-8?Q?sA2Lx8xCTc9b9H6FxeP90VLCg?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?enNzemg2SEJ4QlZTdUxSTzJQTlJZblpkZHJVWGZSMVRrZVFqUDFQSExEZjJk?=
- =?utf-8?B?Vy9RK1ZqYSt0dXVwZVc4QWpaUkd6S2gzaFBZK3lZWXpTcHJBTmtZQUZ0UEor?=
- =?utf-8?B?UkZJbDVEUFBNOEFOODFpdlB4dWJPZG55NFZOK0YwbWRkZVk0SnN5cU1aS0hk?=
- =?utf-8?B?Y01nSFZJTEFyQ01FSyszV3JwdHJmdFU3dVdKZm5wVE5nZGhZWVFBVWY1dHd3?=
- =?utf-8?B?SVB3SHd1aUV0YTZFLzV3OERuTmsxbjZkamdpTlE3SXN4UzBWZURnZ2lGdlZZ?=
- =?utf-8?B?L1BxRDhLWFI2UEJOVVB4YUtPUTBMRHBQOUVJSXVDV1YyMzlpQ1NYMGpVZXRs?=
- =?utf-8?B?L0VMNE83TFYrRkpQRzVkcXVkNy9qaU5lZzg3Ty9DbjYxTVlTbTBwZ0J3eE4r?=
- =?utf-8?B?TzdSc210aE1VRVZCWko1TUg5RXhraXdPMVFWYmNXQndCaVJFWG5aYkkwa1A4?=
- =?utf-8?B?Y0M4QnRXdVdKQVV0UHFoM01Wb0RRaHduYnkveFh6d0hDUnFOajN4cUxFcHdD?=
- =?utf-8?B?dStIY0ZLM2Y1YWRjNUZDN0VqRzJPbmZ6TEVmOC9HaWo5dmFZekF0ZlVINGRo?=
- =?utf-8?B?MGZOK3RVZEY4Rjk1V0xZaEtMeFgxbHAwQzZxeWpLVTR2Vy8xMVZOL09jclI4?=
- =?utf-8?B?RDRmUjNqaEh0NW9uUnFBSzVkU0ZrOGNuYklHaUxTWkE2Y0tUL05vc2J2cWZm?=
- =?utf-8?B?bTZPU1FINUJNSjRJZUVpTzJNazZNUjRVQ2ZvYnpOWnhmUzc0WEJob1JBSWYr?=
- =?utf-8?B?NXRxcnR6dFFuc3BsQTZ2OElqaDgvVnY1T0VjV3hIRkY0MWRXRXpjMEdEd0Fp?=
- =?utf-8?B?WjZQdk5tL2FaL1Zqd1Z4MndiVzFQMVA5YXZjb1F1dm1nblUrbUlQamdjR2hl?=
- =?utf-8?B?RWNwajhLYjh4Smw3dTNXWEtuSVZjN0RLZE4wbzYrU1VXbytsYmtVdXRCNG5y?=
- =?utf-8?B?ZHlORzlyRUcwRHpZZXA2L2RXRmJaSmIzalRQRU4rT0JQTFZ3YXdMRHRFcHI3?=
- =?utf-8?B?K2JOTmdudjFydXU0S0taTFJsWGhXQUlGTFFwbVUzRUNXMGNkY2c4cDE4WlVj?=
- =?utf-8?B?UGhzYlZNNUtjYXhxSXBlNDB1enFySldzN0sycEVGQXA5bzl2QS9iWEdoNXQ0?=
- =?utf-8?B?MTdoaVEwdDFVNDNDb1lNQlowV1dYeE5rMTV5eXhpWEx6Q1Vkejg1ZDBVZm1a?=
- =?utf-8?B?VWN3Y0FhRHhtOUFScmY5dHFjZThnL2I5TGlmczZJa3Z3M1E1UTZLdG8zd2Rn?=
- =?utf-8?B?QnZsako0Y2FyUG5sdjhvVFJOUUNZYTYrVU5xOC82NDhXdDhKY09zVjZ5MnNt?=
- =?utf-8?Q?ao+0IvtudNZiuoDXoikOqAbes6UhEKDVgf?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e71f26e2-0fa2-416c-1812-08db41436335
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Apr 2023 02:03:08.9963
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i1kq34NGtMbUfYFyDi8tawjHdwpHB0PVMqLOANcqW6oWU2SU95P2lYVp04x2t7wanUIe7CxCM7t2vsF9iFUpqg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5771
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-19_16,2023-04-18_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304200014
-X-Proofpoint-GUID: 3ciNLUwP5UTxViD_9uHCC-qpnWnZ5Elu
-X-Proofpoint-ORIG-GUID: 3ciNLUwP5UTxViD_9uHCC-qpnWnZ5Elu
-X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [RFC PATCH v11.1 2/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for
+ unbind
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux-xfs@vger.kernel.org>, <linux-mm@kvack.org>
+CC:     <dan.j.williams@intel.com>, <willy@infradead.org>, <jack@suse.cz>,
+        <akpm@linux-foundation.org>, <djwong@kernel.org>
+References: <1679996506-2-3-git-send-email-ruansy.fnst@fujitsu.com>
+ <1681296735-2-1-git-send-email-ruansy.fnst@fujitsu.com>
+In-Reply-To: <1681296735-2-1-git-send-email-ruansy.fnst@fujitsu.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.234.230]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM223.r01.fujitsu.local (10.182.185.121)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -193,201 +95,367 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Ping~
 
-On 4/19/2023 5:03 AM, Kefeng Wang wrote:
+在 2023/4/12 18:52, Shiyang Ruan 写道:
+> This is a RFC HOTFIX.
+> 
+> This hotfix adds a exclusive forzen state to make sure any others won't
+> thaw the fs during xfs_dax_notify_failure():
+> 
+>    #define SB_FREEZE_EXCLUSIVE	(SB_FREEZE_COMPLETE + 2)
+> Using +2 here is because Darrick's patch[0] is using +1.  So, should we
+> make these definitions global?
+> 
+> Another thing I can't make up my mind is: when another freezer has freeze
+> the fs, should we wait unitl it finish, or print a warning in dmesg and
+> return -EBUSY?
+> 
+> Since there are at least 2 places needs exclusive forzen state, I think
+> we can refactor helper functions of freeze/thaw for them.  e.g.
+>    int freeze_super_exclusive(struct super_block *sb, int frozen);
+>    int thaw_super_exclusive(struct super_block *sb, int frozen);
+> 
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=repair-fscounters&id=c3a0d1de4d54ffb565dbc7092dfe1fb851940669
 > 
 > 
-> On 2023/4/19 15:25, HORIGUCHI NAOYA(堀口 直也) wrote:
->> On Tue, Apr 18, 2023 at 05:45:06PM +0800, Kefeng Wang wrote:
->>>
->>>
->>> On 2023/4/18 11:13, HORIGUCHI NAOYA(堀口 直也) wrote:
->>>> On Mon, Apr 17, 2023 at 12:53:23PM +0800, Kefeng Wang wrote:
->>>>> The dump_user_range() is used to copy the user page to a coredump 
->>>>> file,
->>>>> but if a hardware memory error occurred during copy, which called from
->>>>> __kernel_write_iter() in dump_user_range(), it crashes,
->>>>>
->>>>>     CPU: 112 PID: 7014 Comm: mca-recover Not tainted 6.3.0-rc2 #425
->>>>>     pc : __memcpy+0x110/0x260
->>>>>     lr : _copy_from_iter+0x3bc/0x4c8
->>>>>     ...
->>>>>     Call trace:
->>>>>      __memcpy+0x110/0x260
->>>>>      copy_page_from_iter+0xcc/0x130
->>>>>      pipe_write+0x164/0x6d8
->>>>>      __kernel_write_iter+0x9c/0x210
->>>>>      dump_user_range+0xc8/0x1d8
->>>>>      elf_core_dump+0x308/0x368
->>>>>      do_coredump+0x2e8/0xa40
->>>>>      get_signal+0x59c/0x788
->>>>>      do_signal+0x118/0x1f8
->>>>>      do_notify_resume+0xf0/0x280
->>>>>      el0_da+0x130/0x138
->>>>>      el0t_64_sync_handler+0x68/0xc0
->>>>>      el0t_64_sync+0x188/0x190
->>>>>
->>>>> Generally, the '->write_iter' of file ops will use 
->>>>> copy_page_from_iter()
->>>>> and copy_page_from_iter_atomic(), change memcpy() to 
->>>>> copy_mc_to_kernel()
->>>>> in both of them to handle #MC during source read, which stop coredump
->>>>> processing and kill the task instead of kernel panic, but the source
->>>>> address may not always a user address, so introduce a new copy_mc 
->>>>> flag in
->>>>> struct iov_iter{} to indicate that the iter could do a safe memory 
->>>>> copy,
->>>>> also introduce the helpers to set/cleck the flag, for now, it's only
->>>>> used in coredump's dump_user_range(), but it could expand to any other
->>>>> scenarios to fix the similar issue.
->>>>>
->>>>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->>>>> Cc: Christian Brauner <brauner@kernel.org>
->>>>> Cc: Miaohe Lin <linmiaohe@huawei.com>
->>>>> Cc: Naoya Horiguchi <naoya.horiguchi@nec.com>
->>>>> Cc: Tong Tiangen <tongtiangen@huawei.com>
->>>>> Cc: Jens Axboe <axboe@kernel.dk>
->>>>> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->>>>> ---
->>>>> v2:
->>>>> - move the helper functions under pre-existing CONFIG_ARCH_HAS_COPY_MC
->>>>> - reposition the copy_mc in struct iov_iter for easy merge, suggested
->>>>>     by Andrew Morton
->>>>> - drop unnecessary clear flag helper
->>>>> - fix checkpatch warning
->>>>>    fs/coredump.c       |  1 +
->>>>>    include/linux/uio.h | 16 ++++++++++++++++
->>>>>    lib/iov_iter.c      | 17 +++++++++++++++--
->>>>>    3 files changed, 32 insertions(+), 2 deletions(-)
->>>>>
->>>> ...
->>>>> @@ -371,6 +372,14 @@ size_t _copy_mc_to_iter(const void *addr, 
->>>>> size_t bytes, struct iov_iter *i)
->>>>>    EXPORT_SYMBOL_GPL(_copy_mc_to_iter);
->>>>>    #endif /* CONFIG_ARCH_HAS_COPY_MC */
->>>>> +static void *memcpy_from_iter(struct iov_iter *i, void *to, const 
->>>>> void *from,
->>>>> +                 size_t size)
->>>>> +{
->>>>> +    if (iov_iter_is_copy_mc(i))
->>>>> +        return (void *)copy_mc_to_kernel(to, from, size);
->>>>
->>>> Is it helpful to call memory_failure_queue() if copy_mc_to_kernel() 
->>>> fails
->>>> due to a memory error?
->>>
->>> For dump_user_range(), the task is dying, if copy incomplete size, the
->>> coredump will fail and task will exit, also memory_failure will
->>> be called by kill_me_maybe(),
->>>
->>>   CPU: 0 PID: 1418 Comm: test Tainted: G   M               6.3.0-rc5 #29
->>>   Call Trace:
->>>    <TASK>
->>>    dump_stack_lvl+0x37/0x50
->>>    memory_failure+0x51/0x970
->>>    kill_me_maybe+0x5b/0xc0
->>>    task_work_run+0x5a/0x90
->>>    exit_to_user_mode_prepare+0x194/0x1a0
->>>    irqentry_exit_to_user_mode+0x9/0x30
->>>    noist_exc_machine_check+0x40/0x80
->>>    asm_exc_machine_check+0x33/0x40
->>
->> Is this call trace printed out when copy_mc_to_kernel() failed by finding
->> a memory error (or in some testcase using error injection)?
+> --- Original commit message ---
+> This patch is inspired by Dan's "mm, dax, pmem: Introduce
+> dev_pagemap_failure()"[1].  With the help of dax_holder and
+> ->notify_failure() mechanism, the pmem driver is able to ask filesystem
+> (or mapped device) on it to unmap all files in use and notify processes
+> who are using those files.
 > 
-> I add dump_stack() into memory_failure() to check whether the poisoned
-> memory is called or not, and the call trace shows it do call
-> memory_failure()， but I get confused when do the test.
+> Call trace:
+> trigger unbind
+>   -> unbind_store()
+>    -> ... (skip)
+>     -> devres_release_all()
+>      -> kill_dax()
+>       -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
+>        -> xfs_dax_notify_failure()
+>        `-> freeze_super()
+>        `-> do xfs rmap
+>        ` -> mf_dax_kill_procs()
+>        `  -> collect_procs_fsdax()    // all associated
+>        `  -> unmap_and_kill()
+>        ` -> invalidate_inode_pages2() // drop file's cache
+>        `-> thaw_super()
 > 
->> In my understanding, an MCE should not be triggered when MC-safe copy 
->> tries
->> to access to a memory error.  So I feel that we might be talking about
->> different scenarios.
->>
->> When I questioned previously, I thought about the following scenario:
->>
->>    - a process terminates abnormally for any reason like segmentation 
->> fault,
->>    - then, kernel tries to create a coredump,
->>    - during this, the copying routine accesses to corrupted page to read.
->>
-> Yes, we tested like your described,
+> Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+> event.  Also introduce a exclusive freeze/thaw to lock the filesystem to
+> prevent new dax mapping from being created.  And do not shutdown
+> filesystem directly if something not supported, or if failure range
+> includes metadata area.  Make sure all files and processes are handled
+> correctly.  Also drop the cache of associated files before pmem is
+> removed.
 > 
-> 1) inject memory error into a process
-> 2) send a SIGABT/SIGBUS to process to trigger the coredump
+> [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
 > 
-> Without patch, the system panic, and with patch only process exits.
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>   drivers/dax/super.c         |   3 +-
+>   fs/xfs/xfs_notify_failure.c | 151 ++++++++++++++++++++++++++++++++++--
+>   include/linux/mm.h          |   1 +
+>   mm/memory-failure.c         |  17 +++-
+>   4 files changed, 162 insertions(+), 10 deletions(-)
 > 
->> In this case the corrupted page should not be handled by memory_failure()
->> yet (because otherwise properly handled hwpoisoned page should be ignored
->> by coredump process).  The coredump process would exit with failure with
->> your patch, but then, the corrupted page is still left unhandled and can
->> be reused, so any other thread can easily access to it again.
-> 
-> As shown above, the corrupted page will be handled by memory_failure(), 
-> but what I'm wondering,
-> 1) memory_failure() is not always called
-> 2) look at the above call trace, it looks like from asynchronous
->     interrupt, not from synchronous exception, right?
-> 
->>
->> You can find a few other places (like __wp_page_copy_user and 
->> ksm_might_need_to_copy)
->> to call memory_failure_queue() to cope with such unhandled error pages.
->> So does memcpy_from_iter() do the same?
-> 
-> I add some debug print in do_machine_check() on x86:
-> 
-> 1) COW,
->    m.kflags: MCE_IN_KERNEL_RECOV
->    fixup_type: EX_TYPE_DEFAULT_MCE_SAFE
-> 
->    CPU: 11 PID: 2038 Comm: einj_mem_uc
->    Call Trace:
->     <#MC>
->     dump_stack_lvl+0x37/0x50
->     do_machine_check+0x7ad/0x840
->     exc_machine_check+0x5a/0x90
->     asm_exc_machine_check+0x1e/0x40
->    RIP: 0010:copy_mc_fragile+0x35/0x62
-> 
->    if (m.kflags & MCE_IN_KERNEL_RECOV) {
->            if (!fixup_exception(regs, X86_TRAP_MC, 0, 0))
->                    mce_panic("Failed kernel mode recovery", &m, msg);
->    }
-> 
->    if (m.kflags & MCE_IN_KERNEL_COPYIN)
->            queue_task_work(&m, msg, kill_me_never);
-> 
-> There is no memory_failure() called when
-> EX_TYPE_DEFAULT_MCE_SAFE, also EX_TYPE_FAULT_MCE_SAFE too,
-> so we manually add a memory_failure_queue() to handle with
-> the poisoned page.
-> 
-> 2） Coredump,  nothing print about m.kflags and fixup_type,
-> with above check, add a memory_failure_queue() or memory_failure() seems
-> to be needed for memcpy_from_iter(), but it is totally different from
-> the COW scenario
-> 
-> 
-> Another question, other copy_mc_to_kernel() callers, eg,
-> nvdimm/dm-writecache/dax, there are not call memory_failure_queue(),
-> should they need a memory_failure_queue(), if so, why not add it into
-> do_machine_check() ?
-
-In the dax case, if the source address is poisoned, and we do follow up 
-with memory_failure_queue(pfn, flags), what should the value of the 
-'flags' be ?
-
-thanks,
--jane
-
-> 
-> Thanks.
-> 
-> 
-> 
->>
->> Thanks,
->> Naoya Horiguchi
-> 
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index c4c4728a36e4..2e1a35e82fce 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
+>   		return;
+>   
+>   	if (dax_dev->holder_data != NULL)
+> -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
+> +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
+> +				MF_MEM_PRE_REMOVE);
+>   
+>   	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+>   	synchronize_srcu(&dax_srcu);
+> diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+> index 1e2eddb8f90f..796dd954d33a 100644
+> --- a/fs/xfs/xfs_notify_failure.c
+> +++ b/fs/xfs/xfs_notify_failure.c
+> @@ -22,6 +22,7 @@
+>   
+>   #include <linux/mm.h>
+>   #include <linux/dax.h>
+> +#include <linux/fs.h>
+>   
+>   struct xfs_failure_info {
+>   	xfs_agblock_t		startblock;
+> @@ -73,10 +74,16 @@ xfs_dax_failure_fn(
+>   	struct xfs_mount		*mp = cur->bc_mp;
+>   	struct xfs_inode		*ip;
+>   	struct xfs_failure_info		*notify = data;
+> +	struct address_space		*mapping;
+> +	pgoff_t				pgoff;
+> +	unsigned long			pgcnt;
+>   	int				error = 0;
+>   
+>   	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+>   	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
+> +		/* The device is about to be removed.  Not a really failure. */
+> +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
+> +			return 0;
+>   		notify->want_shutdown = true;
+>   		return 0;
+>   	}
+> @@ -92,14 +99,120 @@ xfs_dax_failure_fn(
+>   		return 0;
+>   	}
+>   
+> -	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
+> -				  xfs_failure_pgoff(mp, rec, notify),
+> -				  xfs_failure_pgcnt(mp, rec, notify),
+> -				  notify->mf_flags);
+> +	mapping = VFS_I(ip)->i_mapping;
+> +	pgoff = xfs_failure_pgoff(mp, rec, notify);
+> +	pgcnt = xfs_failure_pgcnt(mp, rec, notify);
+> +
+> +	/* Continue the rmap query if the inode isn't a dax file. */
+> +	if (dax_mapping(mapping))
+> +		error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
+> +				notify->mf_flags);
+> +
+> +	/* Invalidate the cache anyway. */
+> +	invalidate_inode_pages2_range(mapping, pgoff, pgoff + pgcnt - 1);
+> +
+>   	xfs_irele(ip);
+>   	return error;
+>   }
+>   
+> +#define SB_FREEZE_EXCLUSIVE	(SB_FREEZE_COMPLETE + 2)
+> +
+> +static int
+> +xfs_dax_notify_failure_freeze(
+> +	struct xfs_mount	*mp)
+> +{
+> +	struct super_block	*sb = mp->m_super;
+> +	int			error = 0;
+> +	int			level;
+> +
+> +	/* Wait until we're ready to freeze. */
+> +	down_write(&sb->s_umount);
+> +	while (sb->s_writers.frozen != SB_UNFROZEN) {
+> +		up_write(&sb->s_umount);
+> +
+> +		// just wait, or print warning in dmesg then return -EBUSY?
+> +
+> +		delay(HZ / 10);
+> +		down_write(&sb->s_umount);
+> +	}
+> +
+> +	if (sb_rdonly(sb)) {
+> +		sb->s_writers.frozen = SB_FREEZE_EXCLUSIVE;
+> +		goto out;
+> +	}
+> +
+> +	sb->s_writers.frozen = SB_FREEZE_WRITE;
+> +	/* Release s_umount to preserve sb_start_write -> s_umount ordering */
+> +	up_write(&sb->s_umount);
+> +	percpu_down_write(sb->s_writers.rw_sem + SB_FREEZE_WRITE - 1);
+> +	down_write(&sb->s_umount);
+> +
+> +	/* Now we go and block page faults... */
+> +	sb->s_writers.frozen = SB_FREEZE_PAGEFAULT;
+> +	percpu_down_write(sb->s_writers.rw_sem + SB_FREEZE_PAGEFAULT - 1);
+> +
+> +	/* All writers are done so after syncing there won't be dirty data */
+> +	error = sync_filesystem(sb);
+> +	if (error) {
+> +		sb->s_writers.frozen = SB_UNFROZEN;
+> +		for (level = SB_FREEZE_PAGEFAULT - 1; level >= 0; level--)
+> +			percpu_up_write(sb->s_writers.rw_sem + level);
+> +		wake_up(&sb->s_writers.wait_unfrozen);
+> +		goto out;
+> +	}
+> +
+> +	/* Now wait for internal filesystem counter */
+> +	sb->s_writers.frozen = SB_FREEZE_FS;
+> +	percpu_down_write(sb->s_writers.rw_sem + SB_FREEZE_FS - 1);
+> +
+> +	/*
+> +	 * To prevent anyone else from unfreezing us, set the VFS freeze level
+> +	 * to one higher than SB_FREEZE_COMPLETE.
+> +	 */
+> +	sb->s_writers.frozen = SB_FREEZE_EXCLUSIVE;
+> +	for (level = SB_FREEZE_LEVELS - 1; level >= 0; level--)
+> +		percpu_rwsem_release(sb->s_writers.rw_sem + level, 0,
+> +				_THIS_IP_);
+> +
+> +out:
+> +	up_write(&sb->s_umount);
+> +	return error;
+> +}
+> +
+> +static void
+> +xfs_dax_notify_failure_thaw(
+> +	struct xfs_mount	*mp)
+> +{
+> +	struct super_block	*sb = mp->m_super;
+> +	int			level;
+> +
+> +	down_write(&sb->s_umount);
+> +	if (sb->s_writers.frozen != SB_FREEZE_EXCLUSIVE) {
+> +		/* somebody snuck in and unfroze us? */
+> +		ASSERT(0);
+> +		up_write(&sb->s_umount);
+> +		return;
+> +	}
+> +
+> +	if (sb_rdonly(sb)) {
+> +		sb->s_writers.frozen = SB_UNFROZEN;
+> +		goto out;
+> +	}
+> +
+> +	for (level = 0; level < SB_FREEZE_LEVELS; ++level)
+> +		percpu_rwsem_acquire(sb->s_writers.rw_sem + level, 0,
+> +				_THIS_IP_);
+> +
+> +	sb->s_writers.frozen = SB_UNFROZEN;
+> +	for (level = SB_FREEZE_LEVELS - 1; level >= 0; level--)
+> +		percpu_up_write(sb->s_writers.rw_sem + level);
+> +
+> +out:
+> +	wake_up(&sb->s_writers.wait_unfrozen);
+> +	up_write(&sb->s_umount);
+> +}
+> +
+>   static int
+>   xfs_dax_notify_ddev_failure(
+>   	struct xfs_mount	*mp,
+> @@ -164,11 +277,22 @@ xfs_dax_notify_ddev_failure(
+>   	}
+>   
+>   	xfs_trans_cancel(tp);
+> +
+> +	/* Thaw the fs if it is freezed before. */
+> +	if (mf_flags & MF_MEM_PRE_REMOVE)
+> +		xfs_dax_notify_failure_thaw(mp);
+> +
+> +	/*
+> +	 * Determine how to shutdown the filesystem according to the
+> +	 * error code and flags.
+> +	 */
+>   	if (error || notify.want_shutdown) {
+>   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+>   		if (!error)
+>   			error = -EFSCORRUPTED;
+> -	}
+> +	} else if (mf_flags & MF_MEM_PRE_REMOVE)
+> +		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
+> +
+>   	return error;
+>   }
+>   
+> @@ -182,6 +306,7 @@ xfs_dax_notify_failure(
+>   	struct xfs_mount	*mp = dax_holder(dax_dev);
+>   	u64			ddev_start;
+>   	u64			ddev_end;
+> +	int			error;
+>   
+>   	if (!(mp->m_super->s_flags & SB_BORN)) {
+>   		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
+> @@ -196,6 +321,8 @@ xfs_dax_notify_failure(
+>   
+>   	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
+>   	    mp->m_logdev_targp != mp->m_ddev_targp) {
+> +		if (mf_flags & MF_MEM_PRE_REMOVE)
+> +			return 0;
+>   		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
+>   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+>   		return -EFSCORRUPTED;
+> @@ -209,6 +336,12 @@ xfs_dax_notify_failure(
+>   	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
+>   	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
+>   
+> +	/* Notify failure on the whole device. */
+> +	if (offset == 0 && len == U64_MAX) {
+> +		offset = ddev_start;
+> +		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
+> +	}
+> +
+>   	/* Ignore the range out of filesystem area */
+>   	if (offset + len - 1 < ddev_start)
+>   		return -ENXIO;
+> @@ -225,6 +358,14 @@ xfs_dax_notify_failure(
+>   	if (offset + len - 1 > ddev_end)
+>   		len = ddev_end - offset + 1;
+>   
+> +	if (mf_flags & MF_MEM_PRE_REMOVE) {
+> +		xfs_info(mp, "device is about to be removed!");
+> +		/* Freeze fs to prevent new mappings from being created. */
+> +		error = xfs_dax_notify_failure_freeze(mp);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+>   	return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
+>   			mf_flags);
+>   }
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 1f79667824eb..ac3f22c20e1d 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3436,6 +3436,7 @@ enum mf_flags {
+>   	MF_UNPOISON = 1 << 4,
+>   	MF_SW_SIMULATED = 1 << 5,
+>   	MF_NO_RETRY = 1 << 6,
+> +	MF_MEM_PRE_REMOVE = 1 << 7,
+>   };
+>   int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+>   		      unsigned long count, int mf_flags);
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index fae9baf3be16..6e6acec45568 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -623,7 +623,7 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
+>    */
+>   static void collect_procs_fsdax(struct page *page,
+>   		struct address_space *mapping, pgoff_t pgoff,
+> -		struct list_head *to_kill)
+> +		struct list_head *to_kill, bool pre_remove)
+>   {
+>   	struct vm_area_struct *vma;
+>   	struct task_struct *tsk;
+> @@ -631,8 +631,15 @@ static void collect_procs_fsdax(struct page *page,
+>   	i_mmap_lock_read(mapping);
+>   	read_lock(&tasklist_lock);
+>   	for_each_process(tsk) {
+> -		struct task_struct *t = task_early_kill(tsk, true);
+> +		struct task_struct *t = tsk;
+>   
+> +		/*
+> +		 * Search for all tasks while MF_MEM_PRE_REMOVE, because the
+> +		 * current may not be the one accessing the fsdax page.
+> +		 * Otherwise, search for the current task.
+> +		 */
+> +		if (!pre_remove)
+> +			t = task_early_kill(tsk, true);
+>   		if (!t)
+>   			continue;
+>   		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
+> @@ -1732,6 +1739,7 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+>   	dax_entry_t cookie;
+>   	struct page *page;
+>   	size_t end = index + count;
+> +	bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
+>   
+>   	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+>   
+> @@ -1743,9 +1751,10 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+>   		if (!page)
+>   			goto unlock;
+>   
+> -		SetPageHWPoison(page);
+> +		if (!pre_remove)
+> +			SetPageHWPoison(page);
+>   
+> -		collect_procs_fsdax(page, mapping, index, &to_kill);
+> +		collect_procs_fsdax(page, mapping, index, &to_kill, pre_remove);
+>   		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
+>   				index, mf_flags);
+>   unlock:
