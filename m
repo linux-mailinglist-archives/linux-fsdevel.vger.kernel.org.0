@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D21826E8F1A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 12:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACCF56E8F6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 12:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234626AbjDTKGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 06:06:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48030 "EHLO
+        id S234003AbjDTKGr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 06:06:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234518AbjDTKGK (ORCPT
+        with ESMTP id S234525AbjDTKGL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 06:06:10 -0400
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FC4B49EB;
-        Thu, 20 Apr 2023 03:05:57 -0700 (PDT)
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-3f09b9ac51dso15220115e9.0;
-        Thu, 20 Apr 2023 03:05:57 -0700 (PDT)
+        Thu, 20 Apr 2023 06:06:11 -0400
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16AA74C3D;
+        Thu, 20 Apr 2023 03:05:59 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-3f1833c5991so3500295e9.1;
+        Thu, 20 Apr 2023 03:05:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681985156; x=1684577156;
+        d=1e100.net; s=20221208; t=1681985157; x=1684577157;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EWddmUi1sUqAJfDu3vTNgbuTywHhrfsi4XwupHN4WwQ=;
-        b=HMHw7mrsmC+17usjt0VtJimD6d3I/V0+jAQ9FnY09SitmJXx3+jMI7T4HAJmIzSidw
-         m9PANY2LK/z2XhikgxJInhVtD89TpFIAAEcHNIBY75Ft0JKZya+YuM4R+jZ3f2YpV2Xv
-         JuctDYTh2HGhmMzhTcYZhupt/6rx3JcTnKJyijwPwD48RjftinsT2aH7vvwGNmSdz4zv
-         CZePZDm7EuvOJHwJYvbdiwxwCx1jk5FpN3PaySCPtap9w+CPtt5awT5ROQqxb116fjYN
-         zMW9jiEdktfAgPYcYGuvBtqYFgvxPfXVO1sKwUQnm5/Ih4YV8jFKOlJ79TOFVcktCK98
-         u/Cg==
-X-Gm-Message-State: AAQBX9emiULPunBBIWiMCtq13LCHaNnyYaNDefNM0ogOJA7rWPmviioj
-        2234mBOBItYmwPjxpoDDQiI=
-X-Google-Smtp-Source: AKy350ZauLkuXWs6kSjBHCPBBCSAVBhubP5jzpCR4qZ4hYu8gg1Jhd0aZ4abYsMUbuSqsM3DfmG2NQ==
-X-Received: by 2002:adf:f2c8:0:b0:2fc:114c:76e with SMTP id d8-20020adff2c8000000b002fc114c076emr899567wrp.27.1681985155941;
-        Thu, 20 Apr 2023 03:05:55 -0700 (PDT)
+        bh=2Fzr57yVT4AGfP8f/rHc++3o/RNaaVBknK7ki+b7wqg=;
+        b=iNJWtfUoZm3M1WdPvfKmaekuBz73pmk+zGU25UL9V4xm/wrEOshGfFZelYcpiG6lZC
+         WgPJIJ1C1mMnemN2epVQ4O/3TCGqp+7HNKhVrP9844LsryGKsBesbswI28UaV9DwY52r
+         NyH7RECmUgJcawBVGK9WVXiNit1caEEmN4k9GCIW6YpMGZC9n/qAIUcjPiGtegYgHn4T
+         iBDUwLpWI95I6+EEAD52ch2jE899Z8e0UdR+fEN6uvwgrLMvEubetW5JtrN8xZXKeQld
+         7QYm7Qb2eEyF6LImk+sWVVeL7pKpOB7MlWgMNtz+dWxRov7KCMlzrtw7CGJoKJCpkXD9
+         bF5A==
+X-Gm-Message-State: AAQBX9fRUE9PKFBMyZIo7zSzLtQ/aktRe0s0Hi4xOhCTDJe1FJCOwjmA
+        WIA2gM59WKyVIlQMe3HhV+I=
+X-Google-Smtp-Source: AKy350bLyO4KQbV/PoPdUqDGkkMZX7ZfuVuX5huOYxZIzQyFuycseqFdIVwkpU3U96njdfQtavhtJw==
+X-Received: by 2002:a05:6000:1201:b0:2f2:c46b:1eb5 with SMTP id e1-20020a056000120100b002f2c46b1eb5mr939686wrx.59.1681985157174;
+        Thu, 20 Apr 2023 03:05:57 -0700 (PDT)
 Received: from localhost.localdomain (aftr-62-216-205-208.dynamic.mnet-online.de. [62.216.205.208])
-        by smtp.googlemail.com with ESMTPSA id l11-20020a5d674b000000b0030276f42f08sm201410wrw.88.2023.04.20.03.05.54
+        by smtp.googlemail.com with ESMTPSA id l11-20020a5d674b000000b0030276f42f08sm201410wrw.88.2023.04.20.03.05.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 03:05:55 -0700 (PDT)
+        Thu, 20 Apr 2023 03:05:56 -0700 (PDT)
 From:   Johannes Thumshirn <jth@kernel.org>
 To:     axboe@kernel.dk
 Cc:     johannes.thumshirn@wdc.com, agruenba@redhat.com,
@@ -50,9 +50,9 @@ Cc:     johannes.thumshirn@wdc.com, agruenba@redhat.com,
         rpeterso@redhat.com, shaggy@kernel.org, snitzer@kernel.org,
         song@kernel.org, willy@infradead.org,
         Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Subject: [PATCH v4 05/22] md: use __bio_add_page to add single page
-Date:   Thu, 20 Apr 2023 12:04:44 +0200
-Message-Id: <20230420100501.32981-6-jth@kernel.org>
+Subject: [PATCH v4 06/22] md: raid5-log: use __bio_add_page to add single page
+Date:   Thu, 20 Apr 2023 12:04:45 +0200
+Message-Id: <20230420100501.32981-7-jth@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230420100501.32981-1-jth@kernel.org>
 References: <20230420100501.32981-1-jth@kernel.org>
@@ -70,43 +70,34 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-The md-raid superblock writing code uses bio_add_page() to add a page to a
-newly created bio. bio_add_page() can fail, but the return value is never
-checked.
+The raid5 log metadata submission code uses bio_add_page() to add a page
+to a newly created bio. bio_add_page() can fail, but the return value is
+never checked.
 
 Use __bio_add_page() as adding a single page to a newly created bio is
 guaranteed to succeed.
 
 This brings us a step closer to marking bio_add_page() as __must_check.
 
-Signed-of_-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
 Acked-by: Song Liu <song@kernel.org>
 ---
- drivers/md/md.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/raid5-cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 13321dbb5fbc..20b9cd7c2f39 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -958,7 +958,7 @@ void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
- 	atomic_inc(&rdev->nr_pending);
+diff --git a/drivers/md/raid5-cache.c b/drivers/md/raid5-cache.c
+index 46182b955aef..852b265c5db4 100644
+--- a/drivers/md/raid5-cache.c
++++ b/drivers/md/raid5-cache.c
+@@ -792,7 +792,7 @@ static struct r5l_io_unit *r5l_new_meta(struct r5l_log *log)
+ 	io->current_bio = r5l_bio_alloc(log);
+ 	io->current_bio->bi_end_io = r5l_log_endio;
+ 	io->current_bio->bi_private = io;
+-	bio_add_page(io->current_bio, io->meta_page, PAGE_SIZE, 0);
++	__bio_add_page(io->current_bio, io->meta_page, PAGE_SIZE, 0);
  
- 	bio->bi_iter.bi_sector = sector;
--	bio_add_page(bio, page, size, 0);
-+	__bio_add_page(bio, page, size, 0);
- 	bio->bi_private = rdev;
- 	bio->bi_end_io = super_written;
- 
-@@ -999,7 +999,7 @@ int sync_page_io(struct md_rdev *rdev, sector_t sector, int size,
- 		bio.bi_iter.bi_sector = sector + rdev->new_data_offset;
- 	else
- 		bio.bi_iter.bi_sector = sector + rdev->data_offset;
--	bio_add_page(&bio, page, size, 0);
-+	__bio_add_page(&bio, page, size, 0);
- 
- 	submit_bio_wait(&bio);
+ 	r5_reserve_log_entry(log, io);
  
 -- 
 2.39.2
