@@ -2,241 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A30B6E8853
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 05:00:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18ABB6E891F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 06:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233695AbjDTDAA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Apr 2023 23:00:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53492 "EHLO
+        id S233443AbjDTEcT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 00:32:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233065AbjDTC77 (ORCPT
+        with ESMTP id S229812AbjDTEcR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Apr 2023 22:59:59 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95BF11FE5;
-        Wed, 19 Apr 2023 19:59:57 -0700 (PDT)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.56])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Q22Rq2rsnz8xC7;
-        Thu, 20 Apr 2023 10:59:03 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Thu, 20 Apr 2023 10:59:54 +0800
-Message-ID: <6dc1b117-020e-be9e-7e5e-a349ffb7d00a@huawei.com>
-Date:   Thu, 20 Apr 2023 10:59:54 +0800
+        Thu, 20 Apr 2023 00:32:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CFF42D5D;
+        Wed, 19 Apr 2023 21:32:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 97A0863A98;
+        Thu, 20 Apr 2023 04:32:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E41ACC433D2;
+        Thu, 20 Apr 2023 04:32:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681965135;
+        bh=8R4HtSqQRUTLjicHkQSSY5ou4pZTTzXkvITRZgFV+E8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oGlKghtiWpyeSX4KBX/U2YWmljw6ggohuKe1v9sEgvAwJQcAxkxZ+jYm1mwkBe0d8
+         EAj8Jd8w7XE/6YQqbSpPlNlN6j5cWF24HQOT7QgoFAc+LwxdhrxVqG3jD4heisGLin
+         qf2RqZ1oYpiAh6A7bXTK88jnpUomVU9RsxctxA0ckZxxwBE0kWvlCfEa8LoJFmedxo
+         RyJ2fi3eAbQTF4juuLDu3QgD7DjCEWWc+Ld24qreO3Cof3Xe7rIaM/cMD+Q5pDXWPQ
+         7UpZuUVK76dRPGwwRdwmfNxae+NKDXGb2VDtC2JhVOgt1uQkCuYPc3c2OH/KbzsOqw
+         uDJ9jTwmpcpMA==
+Date:   Wed, 19 Apr 2023 21:32:14 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Chandan Babu R <chandan.babu@oracle.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [Lsf-pc] [LSF TOPIC] online repair of filesystems: what next?
+Message-ID: <20230420043214.GF360881@frogsfrogsfrogs>
+References: <Y/5ovz6HI2Z47jbk@magnolia>
+ <CAOQ4uxj6mNbGQBSpg-KpSiDa2UugBFXki4HhM4DPvXeAQMnRWg@mail.gmail.com>
+ <20230418044641.GD360881@frogsfrogsfrogs>
+ <CAOQ4uxgUOuR80jsAE2DkZhMPVNT_WwnsSX8-GSkZO4=k3VbCsw@mail.gmail.com>
+ <20230419021146.GE360889@frogsfrogsfrogs>
+ <CAOQ4uxjmTBi9B=0mMKf6i8usLJ2GrAp88RhxFcQcGFK1LjQ_Lw@mail.gmail.com>
+ <875y9st2lk.fsf@debian-BULLSEYE-live-builder-AMD64>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v2] mm: hwpoison: coredump: support recovery from
- dump_user_range()
-Content-Language: en-US
-To:     Jane Chu <jane.chu@oracle.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>, Thomas Gleixner <tglx@linutronix.de>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>
-References: <20230417045323.11054-1-wangkefeng.wang@huawei.com>
- <20230418031243.GA2845864@hori.linux.bs1.fc.nec.co.jp>
- <54d761bb-1bcc-21a2-6b53-9d797a3c076b@huawei.com>
- <20230419072557.GA2926483@hori.linux.bs1.fc.nec.co.jp>
- <9fa67780-c48f-4675-731b-4e9a25cd29a0@huawei.com>
- <7d0c38a9-ed2a-a221-0c67-4a2f3945d48b@oracle.com>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <7d0c38a9-ed2a-a221-0c67-4a2f3945d48b@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.243]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <875y9st2lk.fsf@debian-BULLSEYE-live-builder-AMD64>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2023/4/20 10:03, Jane Chu wrote:
+On Wed, Apr 19, 2023 at 04:28:48PM +0530, Chandan Babu R wrote:
+> On Wed, Apr 19, 2023 at 07:06:58 AM +0300, Amir Goldstein wrote:
+> > On Wed, Apr 19, 2023 at 5:11 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> >>
+> >> On Tue, Apr 18, 2023 at 10:46:32AM +0300, Amir Goldstein wrote:
+> >> > On Tue, Apr 18, 2023 at 7:46 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> >> > >
+> >> > > On Sat, Apr 15, 2023 at 03:18:05PM +0300, Amir Goldstein wrote:
+> >> > > > On Tue, Feb 28, 2023 at 10:49 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >> > ...
+> >> > > > Darrick,
+> >> > > >
+> >> > > > Quick question.
+> >> > > > You indicated that you would like to discuss the topics:
+> >> > > > Atomic file contents exchange
+> >> > > > Atomic directio writes
+> >> > >
+> >> > > This one ^^^^^^^^ topic should still get its own session, ideally with
+> >> > > Martin Petersen and John Garry running it.  A few cloud vendors'
+> >> > > software defined storage stacks can support multi-lba atomic writes, and
+> >> > > some database software could take advantage of that to reduce nested WAL
+> >> > > overhead.
+> >> > >
+> >> >
+> >> > CC Martin.
+> >> > If you want to lead this session, please schedule it.
+> >> >
+> >> > > > Are those intended to be in a separate session from online fsck?
+> >> > > > Both in the same session?
+> >> > > >
+> >> > > > I know you posted patches for FIEXCHANGE_RANGE [1],
+> >> > > > but they were hiding inside a huge DELUGE and people
+> >> > > > were on New Years holidays, so nobody commented.
+> >> > >
+> >> > > After 3 years of sparse review comments, I decided to withdraw
+> >> > > FIEXCHANGE_RANGE from general consideration after realizing that very
+> >> > > few filesystems actually have the infrastructure to support atomic file
+> >> > > contents exchange, hence there's little to be gained from undertaking
+> >> > > fsdevel bikeshedding.
+> >> > >
+> >> > > > Perhaps you should consider posting an uptodate
+> >> > > > topic suggestion to let people have an opportunity to
+> >> > > > start a discussion before LSFMM.
+> >> > >
+> >> > > TBH, most of my fs complaints these days are managerial problems (Are we
+> >> > > spending too much time on LTS?  How on earth do we prioritize projects
+> >> > > with all these drive by bots??  Why can't we support large engineering
+> >> > > efforts better???) than technical.
+> >> >
+> >> > I penciled one session for "FS stable backporting (and other LTS woes)".
+> >> > I made it a cross FS/IO session so we can have this session in the big room
+> >> > and you are welcome to pull this discussion to any direction you want.
+> >>
+> >> Ok, thank you.  Hopefully we can get all the folks who do backports into
+> >> this one.  That might be a big ask for Chandan, depending on when you
+> >> schedule it.
+> >>
+> >> (Unless it's schedule for 7pm :P)
+> >>
+> >
+> > Oh thanks for reminding me!
+> > I moved it to Wed 9am, so it is more convenient for Chandan.
 > 
-> On 4/19/2023 5:03 AM, Kefeng Wang wrote:
->>
->>
->> On 2023/4/19 15:25, HORIGUCHI NAOYA(堀口 直也) wrote:
->>> On Tue, Apr 18, 2023 at 05:45:06PM +0800, Kefeng Wang wrote:
->>>>
->>>>
-...
->>>>>> @@ -371,6 +372,14 @@ size_t _copy_mc_to_iter(const void *addr, 
->>>>>> size_t bytes, struct iov_iter *i)
->>>>>>    EXPORT_SYMBOL_GPL(_copy_mc_to_iter);
->>>>>>    #endif /* CONFIG_ARCH_HAS_COPY_MC */
->>>>>> +static void *memcpy_from_iter(struct iov_iter *i, void *to, const 
->>>>>> void *from,
->>>>>> +                 size_t size)
->>>>>> +{
->>>>>> +    if (iov_iter_is_copy_mc(i))
->>>>>> +        return (void *)copy_mc_to_kernel(to, from, size);
->>>>>
->>>>> Is it helpful to call memory_failure_queue() if copy_mc_to_kernel() 
->>>>> fails
->>>>> due to a memory error?
->>>>
->>>> For dump_user_range(), the task is dying, if copy incomplete size, the
->>>> coredump will fail and task will exit, also memory_failure will
->>>> be called by kill_me_maybe(),
->>>>
->>>>   CPU: 0 PID: 1418 Comm: test Tainted: G   M               6.3.0-rc5 
->>>> #29
->>>>   Call Trace:
->>>>    <TASK>
->>>>    dump_stack_lvl+0x37/0x50
->>>>    memory_failure+0x51/0x970
->>>>    kill_me_maybe+0x5b/0xc0
->>>>    task_work_run+0x5a/0x90
->>>>    exit_to_user_mode_prepare+0x194/0x1a0
->>>>    irqentry_exit_to_user_mode+0x9/0x30
->>>>    noist_exc_machine_check+0x40/0x80
->>>>    asm_exc_machine_check+0x33/0x40
->>>
->>> Is this call trace printed out when copy_mc_to_kernel() failed by 
->>> finding
->>> a memory error (or in some testcase using error injection)?
->>
->> I add dump_stack() into memory_failure() to check whether the poisoned
->> memory is called or not, and the call trace shows it do call
->> memory_failure()， but I get confused when do the test.
->>
->>> In my understanding, an MCE should not be triggered when MC-safe copy 
->>> tries
->>> to access to a memory error.  So I feel that we might be talking about
->>> different scenarios.
->>>
->>> When I questioned previously, I thought about the following scenario:
->>>
->>>    - a process terminates abnormally for any reason like segmentation 
->>> fault,
->>>    - then, kernel tries to create a coredump,
->>>    - during this, the copying routine accesses to corrupted page to 
->>> read.
->>>
->> Yes, we tested like your described,
->>
->> 1) inject memory error into a process
->> 2) send a SIGABT/SIGBUS to process to trigger the coredump
->>
->> Without patch, the system panic, and with patch only process exits.
->>
->>> In this case the corrupted page should not be handled by 
->>> memory_failure()
->>> yet (because otherwise properly handled hwpoisoned page should be 
->>> ignored
->>> by coredump process).  The coredump process would exit with failure with
->>> your patch, but then, the corrupted page is still left unhandled and can
->>> be reused, so any other thread can easily access to it again.
->>
->> As shown above, the corrupted page will be handled by 
->> memory_failure(), but what I'm wondering,
->> 1) memory_failure() is not always called
->> 2) look at the above call trace, it looks like from asynchronous
->>     interrupt, not from synchronous exception, right?
->>
->>>
->>> You can find a few other places (like __wp_page_copy_user and 
->>> ksm_might_need_to_copy)
->>> to call memory_failure_queue() to cope with such unhandled error pages.
->>> So does memcpy_from_iter() do the same?
->>
->> I add some debug print in do_machine_check() on x86:
->>
->> 1) COW,
->>    m.kflags: MCE_IN_KERNEL_RECOV
->>    fixup_type: EX_TYPE_DEFAULT_MCE_SAFE
->>
->>    CPU: 11 PID: 2038 Comm: einj_mem_uc
->>    Call Trace:
->>     <#MC>
->>     dump_stack_lvl+0x37/0x50
->>     do_machine_check+0x7ad/0x840
->>     exc_machine_check+0x5a/0x90
->>     asm_exc_machine_check+0x1e/0x40
->>    RIP: 0010:copy_mc_fragile+0x35/0x62
->>
->>    if (m.kflags & MCE_IN_KERNEL_RECOV) {
->>            if (!fixup_exception(regs, X86_TRAP_MC, 0, 0))
->>                    mce_panic("Failed kernel mode recovery", &m, msg);
->>    }
->>
->>    if (m.kflags & MCE_IN_KERNEL_COPYIN)
->>            queue_task_work(&m, msg, kill_me_never);
->>
->> There is no memory_failure() called when
->> EX_TYPE_DEFAULT_MCE_SAFE, also EX_TYPE_FAULT_MCE_SAFE too,
->> so we manually add a memory_failure_queue() to handle with
->> the poisoned page.
->>
->> 2） Coredump,  nothing print about m.kflags and fixup_type,
->> with above check, add a memory_failure_queue() or memory_failure() seems
->> to be needed for memcpy_from_iter(), but it is totally different from
->> the COW scenario
->>
->>
->> Another question, other copy_mc_to_kernel() callers, eg,
->> nvdimm/dm-writecache/dax, there are not call memory_failure_queue(),
->> should they need a memory_failure_queue(), if so, why not add it into
->> do_machine_check() ?
-> 
+> This maps to 9:30 AM for me. Thanks for selecting a time which is convenient
+> for me.
 
-What I mean is that EX_TYPE_DEFAULT_MCE_SAFE/EX_TYPE_FAULT_MCE_SAFE
-is designed to identify fixups which allow in kernel #MC recovery,
-that is, the caller of copy_mc_to_kernel() must know the source
-is a user address, so we could add a MCE_IN_KERNEL_COPYIN fro
-the MCE_SAFE type.
+Er... doesn't 9:30am for Chandan map to 9:00*pm* the previous evening
+for those of us in Vancouver?
 
-diff --git a/arch/x86/kernel/cpu/mce/severity.c 
-b/arch/x86/kernel/cpu/mce/severity.c
-index c4477162c07d..63e94484c5d6 100644
---- a/arch/x86/kernel/cpu/mce/severity.c
-+++ b/arch/x86/kernel/cpu/mce/severity.c
-@@ -293,12 +293,11 @@ static noinstr int error_context(struct mce *m, 
-struct pt_regs *regs)
-         case EX_TYPE_COPY:
-                 if (!copy_user)
-                         return IN_KERNEL;
--               m->kflags |= MCE_IN_KERNEL_COPYIN;
-                 fallthrough;
+(Or I guess 9:30pm for Chandan if we actually are having a morning
+session?)
 
-         case EX_TYPE_FAULT_MCE_SAFE:
-         case EX_TYPE_DEFAULT_MCE_SAFE:
--               m->kflags |= MCE_IN_KERNEL_RECOV;
-+               m->kflags |= MCE_IN_KERNEL_RECOV | MCE_IN_KERNEL_COPYIN;
-                 return IN_KERNEL_RECOV;
+Chandan: I'll ask Shirley to cancel our staff meeting so you don't have
+a crazy(er) meeting schedule during LSF.
 
-         default:
+--D
 
-then we could drop memory_failure_queue(pfn, flags) from cow/ksm copy, 
-or every Machine Check safe memory copy will need a memory_failure_xx() 
-call.
-
-+Thomas，who add the two types, could you share some comments about 
-this,thanks.
-
-> In the dax case, if the source address is poisoned, and we do follow up 
-> with memory_failure_queue(pfn, flags), what should the value of the 
-> 'flags' be ?
-
-
-I think flags = 0 is enough to for all copy_mc_xxx to isolate the 
-poisoned page.
-
-Thanks.
+> -- 
+> chandan
