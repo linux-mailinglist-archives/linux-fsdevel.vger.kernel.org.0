@@ -2,117 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 10EE76E9687
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 16:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 801766E969D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 16:06:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231794AbjDTOCk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 10:02:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60474 "EHLO
+        id S231845AbjDTOGV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 10:06:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231641AbjDTOCj (ORCPT
+        with ESMTP id S231666AbjDTOGU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 10:02:39 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E42641728
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 07:02:35 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 9BB1E21903;
-        Thu, 20 Apr 2023 14:02:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1681999354; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Wh1XX+NIsMFChIJFhOmeoghzgkkDTbLXHLLd1wCDovM=;
-        b=Kwq2f9eraPsyISaXQc3iey2GbKD78fz/FETtSkC/hIJSPxcM37J/NmZ+iaCS63dkLxlE++
-        ItSwjoAQilNgk2qmqF/1XbYT7vt7cJhGP6gKuDzDrb2brMOshuwnVu7dPPczWX/cige3O7
-        m+pxMdVQo+ImmOaG1zKOHDxg+UVFWA0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1681999354;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Wh1XX+NIsMFChIJFhOmeoghzgkkDTbLXHLLd1wCDovM=;
-        b=gKEjB7YDO9c0y2ZIH0Boow/P/aFU4IfdbjexfZcX2IBCZhfYRaFZxFaevTL+mjdlhzSGlP
-        eNuFf7alGYezE6Cg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8B44D13584;
-        Thu, 20 Apr 2023 14:02:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id kkL4IfpFQWTOLAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 20 Apr 2023 14:02:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 1FA29A0729; Thu, 20 Apr 2023 16:02:34 +0200 (CEST)
-Date:   Thu, 20 Apr 2023 16:02:34 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     cem@kernel.org
-Cc:     hughd@google.com, jack@suse.cz, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org
-Subject: Re: [PATCH V2 5/6] shmem: quota support
-Message-ID: <20230420140234.5mv5kixwr7bxnu5r@quack3>
-References: <20230420080359.2551150-1-cem@kernel.org>
- <20230420080359.2551150-6-cem@kernel.org>
+        Thu, 20 Apr 2023 10:06:20 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C071BE3;
+        Thu, 20 Apr 2023 07:06:10 -0700 (PDT)
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 33KE5ofI057469;
+        Thu, 20 Apr 2023 23:05:50 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Thu, 20 Apr 2023 23:05:50 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 33KE5nNc057464
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 20 Apr 2023 23:05:49 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b6256ab2-35f8-e5e5-59f5-10ba95a396fb@I-love.SAKURA.ne.jp>
+Date:   Thu, 20 Apr 2023 23:05:46 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230420080359.2551150-6-cem@kernel.org>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] nfsd: don't use GFP_KERNEL from
+ nfsd_getxattr()/nfsd_listxattr()
+Content-Language: en-US
+To:     Chuck Lever III <chuck.lever@oracle.com>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Frank van der Linden <fvdl@google.com>
+References: <72bf692e-bb6b-c1f2-d1ba-3205ab649b43@I-love.SAKURA.ne.jp>
+ <4BC7955B-40E4-4A43-B2D1-2E9302E84337@oracle.com>
+ <b014047a-4a70-b38f-c5bb-01bc3c53d6f2@I-love.SAKURA.ne.jp>
+ <aee35d52ab19e7e95f69742be8329764db72cbf8.camel@kernel.org>
+ <c310695e-4279-b1a7-5c2a-2771cc19aa66@I-love.SAKURA.ne.jp>
+ <7246a80ae33244a4553bbc0ca9e771ce8143d97b.camel@kernel.org>
+ <20230416233758.GD447837@dread.disaster.area>
+ <A23409BB-9BA1-44E5-96A8-C080B417CCB5@oracle.com>
+ <20230419233243.GM447837@dread.disaster.area>
+ <234CFC61-2246-4ECC-9653-E4A3544A1FEA@oracle.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <234CFC61-2246-4ECC-9653-E4A3544A1FEA@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 20-04-23 10:03:58, cem@kernel.org wrote:
-> From: Lukas Czerner <lczerner@redhat.com>
+On 2023/04/20 22:41, Chuck Lever III wrote:
+>> That said, nfsd_listxattr() does:
+>>
+>>        dentry = fhp->fh_dentry;
+>>        inode = d_inode(dentry);
+>>        *lenp = 0;
+>>
+>>        inode_lock_shared(inode);
+>>
+>>        len = vfs_listxattr(dentry, NULL, 0);
+>>
+>> Given that a dentry pointing to an inode *must* hold an active
+>> reference to that inode, I don't see how it is possible this code
+>> path could be using an unreferenced inode.
+>>
+>> nfsd_getxattr() has a similar code fragment to obtain the inode as
+>> well, so same goes for that...
 > 
-> Now the basic infra-structure is in place, enable quota support for tmpfs.
+> Dave, thanks for handling the due diligence! I was not 100% sure
+> about code that handles xattrs rather than the primary byte stream
+> of a file.
 > 
-> This offers user and group quotas to tmpfs (project quotas will be added
-> later). Also, as other filesystems, the tmpfs quota is not supported
-> within user namespaces yet, so idmapping is not translated.
-> 
-> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> Tetsuo, you can send a v2, or just let me know and I will make
+> a patch to correct the GFP flags.
 
-I've found only one typo fix below. Otherwise feel free to add:
+So, this inode_lock_shared() was there with an intention to make sure that
+xattr of inode inside the exported filesystem does not change between
+vfs_listxattr(dentry, NULL, 0) and vfs_listxattr(dentry, buf, len),
+wasn't it?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Then, we can remove this inode_lock_shared() by adding a "goto retry;"
+when vfs_listxattr(dentry, buf, len) failed with out of buffer size
+due to a race condition, can't we?
 
-> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-> index 0408c245785e3..1d4ef4f7cca7e 100644
-> --- a/Documentation/filesystems/tmpfs.rst
-> +++ b/Documentation/filesystems/tmpfs.rst
-> @@ -86,6 +86,21 @@ use up all the memory on the machine; but enhances the scalability of
->  that instance in a system with many CPUs making intensive use of it.
->  
->  
-> +tmpfs also supports quota with the following mount options
-> +
-> +========  =============================================================
-> +quota     User and group quota accounting and enforcement is enabled on
-> +          the mount. Tmpfs is using hidden system quota files that are
-> +          initialized on mount.
-> +usrquota  User quota accounting and enforcement is enabled on the
-> +          mount.
-> +grpquota  Group quota accounting and enforcement is enabled on the
-> +          mount.
-> +========  =============================================================
-> +
-> +Note that tmpfs quotas do not support user namespaces so no uid/gid
-> +translation is done if quotas are enable inside user namespaces.
-					^^ enabled
+I leave replacing inode lock with retry path and removing GFP_NOFS to you.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thank you.
+
