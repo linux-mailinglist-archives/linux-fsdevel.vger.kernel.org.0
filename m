@@ -2,56 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 160CA6E9ABA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 19:28:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ABD36E9B03
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Apr 2023 19:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231553AbjDTR2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 13:28:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34410 "EHLO
+        id S231652AbjDTRmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Apr 2023 13:42:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231527AbjDTR22 (ORCPT
+        with ESMTP id S231643AbjDTRmN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 13:28:28 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1564ED2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 10:28:21 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-63b5c4c769aso1743978b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 10:28:21 -0700 (PDT)
+        Thu, 20 Apr 2023 13:42:13 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5C9110F2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 10:42:10 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-506767f97f8so1204432a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 10:42:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1682011701; x=1684603701;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1682012529; x=1684604529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3x8N7sxsFvg5b0uwbahj+PwbPcqRN9aSzyeMa7PrIzY=;
-        b=PInXabSKPMPkpHkuZFbSfZyAVvTSjLv36Kr/cvSO8TjzWJ6vlXl0FTCM4HkL4ZD4vw
-         aQGfOydJeFSTT7e0EsizobBwWZQwg9OQ166TMTtcAizTmIwmi1rXZ701QcJfeofeXRlS
-         9cUaCm4t2WOGkiOxpO7Yj6DFl8oRlg4ewN0fo=
+        bh=jOShlAmW5KtWyt18VPabl3AojpTzB/52zpa39oAofYI=;
+        b=YmddgtRtW8ICTes0+dab7w6Oem6Kx16VyROeBvQ/nYxGBP5/ZMHSlacbBwi0Ijvq0Z
+         HBwAMMZMA69v0M6/JecoGitZ1Z+oEhnr95tNJhaUhyTkNIF355Sm7sagw0sExkPzRaWQ
+         YaW0R2WKdh8uu6dv0MaNqSyH0IBqw4UGq2EDA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682011701; x=1684603701;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1682012529; x=1684604529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3x8N7sxsFvg5b0uwbahj+PwbPcqRN9aSzyeMa7PrIzY=;
-        b=bZ1kJh1MITAP5yARCwY9w3ZIwOnFZKIHqmGFuxuwHf/epOyUQ4IllJMH6DbPaIvium
-         15sXHB31GYLdHR0Ej3GoxHff+stzmzQuLemkNy49l4TH++sYMSztYlgVfZleevaSzN7a
-         l4SWLSDjtNFs4o1Uj/AVzwZ1HAHcFKyMuhT21EawOLuMnlJxWkT3GtnRkdcrMXhdo+b+
-         TALKrehSW9Z3QqmEvh9vjQF2R/R3iz8dy+xacB1AJGrICqsZ32L7yUqFBazCI6huRKnS
-         xmj/Ty7vB6U+q5vJyCahKJu94SGBJokMenkdYN3xoTqD9e9595VJs2XrASlXIaudbb3p
-         28Pw==
-X-Gm-Message-State: AAQBX9cO4pcuyu08fTTjxBP54VdR4mMK1TLlhmdGhbzT+cjGs1w4XBo5
-        yvmidNGcZCUq23JokkQFI+Q1pA==
-X-Google-Smtp-Source: AKy350aamevL738b4lQu+r4Mb45ADgAjxr+szLfVa8OCWWSr0APnPjIlT0WZwrlfZ+8BR9m9vFOf1A==
-X-Received: by 2002:a05:6a20:d38d:b0:f0:558b:8fbb with SMTP id iq13-20020a056a20d38d00b000f0558b8fbbmr2889057pzb.34.1682011700784;
-        Thu, 20 Apr 2023 10:28:20 -0700 (PDT)
-Received: from sarthakkukreti-glaptop.hsd1.ca.comcast.net ([2601:647:4200:b5b0:42d9:debc:8d41:e6c4])
-        by smtp.gmail.com with ESMTPSA id t9-20020a6549c9000000b0051b3ef1295csm1360372pgs.53.2023.04.20.10.28.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 10:28:20 -0700 (PDT)
+        bh=jOShlAmW5KtWyt18VPabl3AojpTzB/52zpa39oAofYI=;
+        b=S/QN46iGr3K5XJfyc00uukr5DKotNq8HjfZTOEM/RMGNRVFcqTPZdzTtcWeuAtRuIU
+         lvw2NZ+4Lj/3yfxyGvM5C3OUVlncqLOIJF1aK//ff16UUaw3OsCZYXjtimbq7cKdf2LY
+         In8slzRSmiMr+I3ct0tCKVB5fiSUJw573trqBNguis0n8vWpq7VY/ClJkBVwrAZeTbb5
+         1mid1BSef9N/QaYidaOkvo+RvFgzP2YNREPUl9tKmjYVY36Kw5wjDRHI9008K4SWBp3U
+         hnSdZeGX7HkuPGNfQhLTxxZHG15QNbZfGjjlRWjViIfv//5vgjOcmF+ED5eNcuE52Dtg
+         rcDw==
+X-Gm-Message-State: AAQBX9f1QHNmtGfRacC1qrWdhF7HyeME2drV32Y28c4REw+coIjrJ7RC
+        qS0BS/ORR8AOBMNYAvCYlY7ev3gzN57VNMHFfmFYaw==
+X-Google-Smtp-Source: AKy350auT20t6FOb+4AgjUmWFcoyThBQnArWZX8Nl6LqCPFqucTjIuxXlPmzUnAM2Xrg1Nu+DICIWX/ywGGGDp/EAL0=
+X-Received: by 2002:a05:6402:7d8:b0:502:2265:8428 with SMTP id
+ u24-20020a05640207d800b0050222658428mr2195635edy.38.1682012529194; Thu, 20
+ Apr 2023 10:42:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230414000219.92640-1-sarthakkukreti@chromium.org>
+ <20230418221207.244685-1-sarthakkukreti@chromium.org> <20230418221207.244685-2-sarthakkukreti@chromium.org>
+ <b74cc3d8-bfde-8375-3b19-24ea13eb1196@acm.org>
+In-Reply-To: <b74cc3d8-bfde-8375-3b19-24ea13eb1196@acm.org>
 From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
-To:     dm-devel@redhat.com, linux-block@vger.kernel.org,
+Date:   Thu, 20 Apr 2023 10:41:57 -0700
+Message-ID: <CAG9=OMOfpJHB3HbjK46_bh_P6b4vdSfBt1Q39ukuKhZzyscnow@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] block: Introduce provisioning primitives
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         "Michael S. Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
@@ -59,22 +64,16 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         Mike Snitzer <snitzer@kernel.org>,
         Christoph Hellwig <hch@infradead.org>,
         Brian Foster <bfoster@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
+        "Theodore Ts'o" <tytso@mit.edu>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         Bart Van Assche <bvanassche@google.com>,
         Daniil Lunev <dlunev@google.com>,
-        "Darrick J. Wong" <djwong@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH v5-fix 1/5] block: Don't invalidate pagecache for invalid falloc modes
-Date:   Thu, 20 Apr 2023 10:28:07 -0700
-Message-ID: <20230420172807.323150-1-sarthakkukreti@chromium.org>
-X-Mailer: git-send-email 2.40.0.396.gfff15efe05-goog
-In-Reply-To: <ZEFmS9h81Wwlv9+/@redhat.com>
-References: <ZEFmS9h81Wwlv9+/@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        "Darrick J. Wong" <djwong@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,64 +81,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Only call truncate_bdev_range() if the fallocate mode is
-supported. This fixes a bug where data in the pagecache
-could be invalidated if the fallocate() was called on the
-block device with an invalid mode.
+Dropped in v5.
 
-Fixes: 25f4c41415e5 ("block: implement (some of) fallocate for block devices")
-Cc: stable@vger.kernel.org
-Reported-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
----
- block/fops.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+Thanks!
+Sarthak
 
-diff --git a/block/fops.c b/block/fops.c
-index d2e6be4e3d1c..20b1eddcbe25 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -648,24 +648,35 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 
- 	filemap_invalidate_lock(inode->i_mapping);
- 
--	/* Invalidate the page cache, including dirty pages. */
--	error = truncate_bdev_range(bdev, file->f_mode, start, end);
--	if (error)
--		goto fail;
--
-+	/*
-+	 * Invalidate the page cache, including dirty pages, for valid
-+	 * de-allocate mode calls to fallocate().
-+	 */
- 	switch (mode) {
- 	case FALLOC_FL_ZERO_RANGE:
- 	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
-+		error = truncate_bdev_range(bdev, file->f_mode, start, end);
-+		if (error)
-+			goto fail;
-+
- 		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
- 					     len >> SECTOR_SHIFT, GFP_KERNEL,
- 					     BLKDEV_ZERO_NOUNMAP);
- 		break;
- 	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE:
-+		error = truncate_bdev_range(bdev, file->f_mode, start, end);
-+		if (error)
-+			goto fail;
-+
- 		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
- 					     len >> SECTOR_SHIFT, GFP_KERNEL,
- 					     BLKDEV_ZERO_NOFALLBACK);
- 		break;
- 	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE | FALLOC_FL_NO_HIDE_STALE:
-+		error = truncate_bdev_range(bdev, file->f_mode, start, end);
-+		if (!error)
-+			goto fail;
-+
- 		error = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
- 					     len >> SECTOR_SHIFT, GFP_KERNEL);
- 		break;
--- 
-2.40.0.396.gfff15efe05-goog
-
+On Tue, Apr 18, 2023 at 3:43=E2=80=AFPM Bart Van Assche <bvanassche@acm.org=
+> wrote:
+>
+> On 4/18/23 15:12, Sarthak Kukreti wrote:
+> >       /* Fail if we don't recognize the flags. */
+> > -     if (mode & ~BLKDEV_FALLOC_FL_SUPPORTED)
+> > +     if (mode !=3D 0 && mode & ~BLKDEV_FALLOC_FL_SUPPORTED)
+> >               return -EOPNOTSUPP;
+>
+> Is this change necessary? Doesn't (mode & ~BLKDEV_FALLOC_FL_SUPPORTED)
+> !=3D 0 imply that mode !=3D 0?
+>
+> Thanks,
+>
+> Bart.
+>
