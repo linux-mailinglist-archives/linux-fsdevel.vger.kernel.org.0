@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 783C56EA66F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 11:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50CC16EA68C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 11:06:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230105AbjDUJBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 05:01:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49072 "EHLO
+        id S231823AbjDUJGy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 05:06:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230075AbjDUJBa (ORCPT
+        with ESMTP id S231761AbjDUJGk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 05:01:30 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D35066181;
-        Fri, 21 Apr 2023 02:01:28 -0700 (PDT)
+        Fri, 21 Apr 2023 05:06:40 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66F8EAD17;
+        Fri, 21 Apr 2023 02:06:30 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 87037210E6;
-        Fri, 21 Apr 2023 09:01:27 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0C14E1FDE0;
+        Fri, 21 Apr 2023 09:06:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1682067687; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1682067989; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=WNmeuisUtJOS0e4JRe3RCvMm6EO6FFE/WKAiRaEal/E=;
-        b=K+/pMMgMT/1YH1mt+8+9/w2LZ2UD4mCFUAQ1YFU30rAC7mqVOevf8rGc8o17oPSFYr4vdz
-        /i6m2+R4gGR/YhkSLr2womU1tMZhHX1apPj2dTsaT98wpMv/Tpfx/jxqba3JRUendTqmL1
-        Q2R2IT3h05b0AtMLSTKtVzNiu+44O28=
+        bh=HX10+0HDLIsn0cxmTn+6s9NsLefeOwSabewyiDJe+5k=;
+        b=pppH1y8+pFI+CVSu6LPDj+RobOVhVIVsgrrNhZNKPDD6yTftnzjvOKQsF/cAJKV/BsFZmq
+        FDtvMxKBD7MqPp/2f6GgVWeUpW5suvGhF/+IqxGKsA2nme7Z2ACm0j0K+lvz16TPajyn4X
+        yhone20sK04L1gSFgzuryxTlyusdFUo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1682067687;
+        s=susede2_ed25519; t=1682067989;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=WNmeuisUtJOS0e4JRe3RCvMm6EO6FFE/WKAiRaEal/E=;
-        b=IT9nCn+/Ipnkil5UxQDEd2Gknx3JGzCc+mmfcxUbFGvdAp0ttwT4QpaKfbQuUdv3uX/EAQ
-        lpd2Nhg/eOGnTYBw==
+        bh=HX10+0HDLIsn0cxmTn+6s9NsLefeOwSabewyiDJe+5k=;
+        b=H0zEBcWZ/j3jzNziddPjbRDEmEctQ4E+qlP8PZdjtWknCa69iQgmCgPiC/OX6v2WYnd+tU
+        4x6dNUlO3TwzRmCg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6F64413456;
-        Fri, 21 Apr 2023 09:01:27 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F0F1D13456;
+        Fri, 21 Apr 2023 09:06:28 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id EjYjG+dQQmQrQQAAMHmgww
-        (envelope-from <jack@suse.cz>); Fri, 21 Apr 2023 09:01:27 +0000
+        id 7mLOOhRSQmS0QwAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 21 Apr 2023 09:06:28 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id CD5DAA0729; Fri, 21 Apr 2023 11:01:26 +0200 (CEST)
-Date:   Fri, 21 Apr 2023 11:01:26 +0200
+        id 86ED4A0729; Fri, 21 Apr 2023 11:06:28 +0200 (CEST)
+Date:   Fri, 21 Apr 2023 11:06:28 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Lorenzo Stoakes <lstoakes@gmail.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -61,17 +61,18 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [RFC PATCH 0/3] permit write-sealed memfd read-only shared
- mappings
-Message-ID: <20230421090126.tmem27kfqamkdaxo@quack3>
+Subject: Re: [RFC PATCH 3/3] mm: perform the mapping_map_writable() check
+ after call_mmap()
+Message-ID: <20230421090628.347b6qojxvfsgoqk@quack3>
 References: <cover.1680560277.git.lstoakes@gmail.com>
+ <c814a3694f09896e4ec85cbca74069ea6174ebb6.1680560277.git.lstoakes@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1680560277.git.lstoakes@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <c814a3694f09896e4ec85cbca74069ea6174ebb6.1680560277.git.lstoakes@gmail.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,34 +80,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
+On Mon 03-04-23 23:28:32, Lorenzo Stoakes wrote:
+> In order for a F_SEAL_WRITE sealed memfd mapping to have an opportunity to
+> clear VM_MAYWRITE, we must be able to invoke the appropriate vm_ops->mmap()
+> handler to do so. We would otherwise fail the mapping_map_writable() check
+> before we had the opportunity to avoid it.
+> 
+> This patch moves this check after the call_mmap() invocation. Only memfd
+> actively denies write access causing a potential failure here (in
+> memfd_add_seals()), so there should be no impact on non-memfd cases.
+> 
+> This patch makes the userland-visible change that MAP_SHARED, PROT_READ
+> mappings of an F_SEAL_WRITE sealed memfd mapping will now succeed.
+> 
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+>  mm/mmap.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index c96dcce90772..a166e9f3c474 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2596,17 +2596,17 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  	vma->vm_pgoff = pgoff;
+>  
+>  	if (file) {
+> -		if (is_shared_maywrite(vm_flags)) {
+> -			error = mapping_map_writable(file->f_mapping);
+> -			if (error)
+> -				goto free_vma;
+> -		}
+> -
+>  		vma->vm_file = get_file(file);
+>  		error = call_mmap(file, vma);
+>  		if (error)
+>  			goto unmap_and_free_vma;
+>  
+> +		if (vma_is_shared_maywrite(vma)) {
+> +			error = mapping_map_writable(file->f_mapping);
+> +			if (error)
+> +				goto unmap_and_free_vma;
 
-On Mon 03-04-23 23:28:29, Lorenzo Stoakes wrote:
-> This patch series is in two parts:-
-> 
-> 1. Currently there are a number of places in the kernel where we assume
->    VM_SHARED implies that a mapping is writable. Let's be slightly less
->    strict and relax this restriction in the case that VM_MAYWRITE is not
->    set.
-> 
->    This should have no noticeable impact as the lack of VM_MAYWRITE implies
->    that the mapping can not be made writable via mprotect() or any other
->    means.
-> 
-> 2. Align the behaviour of F_SEAL_WRITE and F_SEAL_FUTURE_WRITE on mmap().
->    The latter already clears the VM_MAYWRITE flag for a sealed read-only
->    mapping, we simply extend this to F_SEAL_WRITE too.
-> 
->    For this to have effect, we must also invoke call_mmap() before
->    mapping_map_writable().
-> 
-> As this is quite a fundamental change on the assumptions around VM_SHARED
-> and since this causes a visible change to userland (in permitting read-only
-> shared mappings on F_SEAL_WRITE mappings), I am putting forward as an RFC
-> to see if there is anything terribly wrong with it.
-
-So what I miss in this series is what the motivation is. Is it that you need
-to map F_SEAL_WRITE read-only? Why?
+Shouldn't we rather jump to close_and_free_vma?
 
 								Honza
 -- 
