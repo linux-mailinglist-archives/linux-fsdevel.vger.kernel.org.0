@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8026EABEF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 15:43:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E7B6EABFF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 15:47:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231710AbjDUNnM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 09:43:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58922 "EHLO
+        id S232295AbjDUNq6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 09:46:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232422AbjDUNmt (ORCPT
+        with ESMTP id S232215AbjDUNqb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 09:42:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 201861386C;
-        Fri, 21 Apr 2023 06:42:13 -0700 (PDT)
+        Fri, 21 Apr 2023 09:46:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15087133;
+        Fri, 21 Apr 2023 06:46:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 27E7A616E9;
-        Fri, 21 Apr 2023 13:42:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32791C433EF;
-        Fri, 21 Apr 2023 13:42:00 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A602E6507D;
+        Fri, 21 Apr 2023 13:46:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6FE3C433D2;
+        Fri, 21 Apr 2023 13:46:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682084521;
-        bh=jsN16Cs8YsE77h9jjLEg6GRIme2CQpBrwqLQqDJd2TQ=;
+        s=k20201202; t=1682084789;
+        bh=UoefKGfKhzh10p7jTXglm4Jte6XmHnasaWYjMkPRhrE=;
         h=From:To:Cc:Subject:Date:From;
-        b=JNn1DqAbNx/sCs/osw5eIeOedCZVdloVIQo9EhPsYfTNj3HmFkVv/m43vOH5beif6
-         vaYLCAtdjcIF6mod/8BpKqSg7Dqhpvs9L0+UH68IZ8RGWVv6AdrDEDANMd/x+AdRKL
-         5nwqm4HJRu9y3RLi2PY/NVlciFSQv0+fhS02th9Jw7yMru8lHNc5VSM8tyBN61dCA+
-         usXloyPOuciyHmpABQk8tKSykCsGT8r1MKlaILdk+5zdmIIDso+C8xWz1gfWArJw8V
-         k6qsAopG5fhOlg+QqbjyXJHiR0toLNZCoYbk6RkXQ+c4ntim1hKzj1XLPforMFlEJH
-         SmC/QhxcC0cbQ==
+        b=MrigxdfIDdqoNIV7Ebl7e0uMGs/4lu+/tY/wzhXNtnYtp7nEEpLax/E+X+A0TzgHa
+         RerzLbxrmzminyWpVl67kONUxzn7D2QX7StX6pJDyybYNmT4MWB1m3cvXAAKNyTq+p
+         IgIfDMJRZe9GkLZrsjNlMS8q7lxG9VK7GMYezbUEO59ZkP85bEuNbx7CnsFZ6LKVwF
+         RMIKjs2LYPm8KWAhzpCvvY6NPQDHZNKX8uCtUYGnTUJBIBBxsWWc+pWur2J4x2ZKwj
+         gttFMLg0bzsOAwolJuGpFeH95v9FR3mNj3aXnAHb3zqgH7lBXHQDkCDPh+7c09gvaU
+         9Fvaq14pp7HmQ==
 From:   Christian Brauner <brauner@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] pidfd updates
-Date:   Fri, 21 Apr 2023 15:41:10 +0200
-Message-Id: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
+Subject: [GIT PULL] acl updates
+Date:   Fri, 21 Apr 2023 15:45:57 +0200
+Message-Id: <20230421-kundgeben-filmpreis-0e443f89efe2@brauner>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2760; i=brauner@kernel.org; h=from:subject:message-id; bh=jsN16Cs8YsE77h9jjLEg6GRIme2CQpBrwqLQqDJd2TQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ4Tfy1OuXJjEcvXBwfnbry4m3250vnTTL4LSOr/1+12yez fOLeix2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQATsZNi+O8YtvTPjkVFjsvevOw6c3 pTt8G639cM+X7t77yZKH/UKTaPkeGL1hPBYuHrt37ePcE6wdp4Rc+ilPR3kgd3eRWuW/9mfTQHAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5030; i=brauner@kernel.org; h=from:subject:message-id; bh=CElFwJJsdhb5H3omQYDWvBjwmfUBTfBiJN3iddr8r4U=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ4TY4oO18gplp2mkNx57rYysPtRuEPs1+u6rkXI/twFWPF AYfgjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImwxzIyNORlL83t0Hg8W+qX0ZIkT2 aflV4nza0N1HnmvwutZ758jZFh1mL39TOeZe3vdJ+236Pt3YlOoWkfY/aw5Au7it17MH0aIwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -57,71 +57,119 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 Hey Linus,
 
 /* Summary */
-This adds a new pidfd_prepare() helper which allows the caller to
-reserve a pidfd number and allocates a new pidfd file that stashes the
-provided struct pid.
+After finishing the introduction of the new posix acl api last cycle the
+generic POSIX ACL xattr handlers are still around in the filesystems
+xattr handlers for two reasons:
 
-It should be avoided installing a file descriptor into a task's file
-descriptor table just to close it again via close_fd() in case an
-error occurs. The fd has been visible to userspace and might already be
-in use. Instead, a file descriptor should be reserved but not installed
-into the caller's file descriptor table.
+(1) Because a few filesystems rely on the ->list() method of the generic
+    POSIX ACL xattr handlers in their ->listxattr() inode operation.
+(2) POSIX ACLs are only available if IOP_XATTR is raised. The IOP_XATTR
+    flag is raised in inode_init_always() based on whether the
+    sb->s_xattr pointer is non-NULL. IOW, the registered xattr handlers
+    of the filesystem are used to raise IOP_XATTR.
+    Removing the generic POSIX ACL xattr handlers from all filesystems
+    would risk regressing filesystems that only implement POSIX ACL
+    support and no other xattrs (nfs3 comes to mind).
 
-If another failure path is hit then the reserved file descriptor and
-file can just be put without any userspace visible side-effects. And if
-all failure paths are cleared the file descriptor and file can be
-installed into the task's file descriptor table.
+This pull request contains the work to decouple POSIX ACLs from
+the IOP_XATTR flag as they don't depend on xattr handlers anymore. So
+it's now possible to remove the generic POSIX ACL xattr handlers from
+the sb->s_xattr list of all filesystems. This is a crucial step as the
+generic POSIX ACL xattr handlers aren't used for POSIX ACLs anymore and
+POSIX ACLs don't depend on the xattr infrastructure anymore.
 
-This helper is now used in all places that open coded this functionality
-before. For example, this is currently done during copy_process() and
-fanotify used pidfd_create(), which returns a pidfd that has already
-been made visibile in the caller's file descriptor table, but then
-closed it using close_fd().
+Adressing problem (1) will require more long-term work. It would be best
+to get rid of the ->list() method of xattr handlers completely at some
+point.
 
-In one of the next merge windows there is also new functionality coming
-to unix domain sockets that will have to rely on pidfd_prepare().
+For erofs, ext{2,4}, f2fs, jffs2, ocfs2, and reiserfs the nop POSIX ACL
+xattr handler is kept around so they can continue to use array-based
+xattr handler indexing. The pull request does simplify the ->listxattr()
+implementation of all these filesystems however.
 
 /* Testing */
 clang: Ubuntu clang version 15.0.6
 gcc: (Ubuntu 12.2.0-3ubuntu1) 12.2.0
 
-All patches are based on 6.3-rc4 and have been sitting in linux-next.
+All patches are based on 6.3-rc1 and have been sitting in linux-next.
 No build failures or warnings were observed. All old and new tests in
 fstests, selftests, and LTP pass without regressions.
 
 /* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with
-current mainline.
+The following merge conflict including a proposed conflict resolution
+was reported from linux-next in:
 
-The following changes since commit 197b6b60ae7bc51dd0814953c562833143b292aa:
+(1) linux-next: manual merge of the erofs tree with the vfs-idmapping tree
+    https://lore.kernel.org/linux-next/4f9fdec2-cc2a-4bc7-9ddc-87809395f493@sirena.org.uk
 
-  Linux 6.3-rc4 (2023-03-26 14:40:20 -0700)
+At the time of creating this PR no merge conflicts showed up doing a
+test-merge with current mainline.
+
+The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
+
+  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/v6.4/pidfd.file
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.4/vfs.acl
 
-for you to fetch changes up to eee3a0e93924f2aab8ebaa7f2e26fd0f3b33f9e7:
+for you to fetch changes up to e499214ce3ef50c50522719e753a1ffc928c2ec1:
 
-  fanotify: use pidfd_prepare() (2023-04-03 11:16:57 +0200)
+  acl: don't depend on IOP_XATTR (2023-03-06 09:59:20 +0100)
 
-Please consider pulling these changes from the signed v6.4/pidfd.file tag.
+Please consider pulling these changes from the signed v6.4/vfs.acl tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-v6.4/pidfd.file
+v6.4/vfs.acl
 
 ----------------------------------------------------------------
-Christian Brauner (3):
-      pid: add pidfd_prepare()
-      fork: use pidfd_prepare()
-      fanotify: use pidfd_prepare()
+Christian Brauner (10):
+      xattr: simplify listxattr helpers
+      xattr: add listxattr helper
+      xattr: remove unused argument
+      fs: drop unused posix acl handlers
+      fs: simplify ->listxattr() implementation
+      reiserfs: rework ->listxattr() implementation
+      fs: rename generic posix acl handlers
+      reiserfs: rework priv inode handling
+      ovl: check for ->listxattr() support
+      acl: don't depend on IOP_XATTR
 
- fs/notify/fanotify/fanotify_user.c | 13 +++--
- include/linux/pid.h                |  1 +
- kernel/fork.c                      | 98 +++++++++++++++++++++++++++++++++-----
- kernel/pid.c                       | 19 +++-----
- 4 files changed, 104 insertions(+), 27 deletions(-)
+ fs/9p/xattr.c                   |   4 --
+ fs/btrfs/xattr.c                |   4 --
+ fs/ceph/xattr.c                 |   4 --
+ fs/cifs/xattr.c                 |   4 --
+ fs/ecryptfs/inode.c             |   4 --
+ fs/erofs/xattr.c                |  12 +---
+ fs/erofs/xattr.h                |  20 ++++---
+ fs/ext2/xattr.c                 |  25 ++++----
+ fs/ext4/xattr.c                 |  25 ++++----
+ fs/f2fs/xattr.c                 |  24 ++++----
+ fs/gfs2/xattr.c                 |   2 -
+ fs/jffs2/xattr.c                |  29 +++++-----
+ fs/jfs/xattr.c                  |   4 --
+ fs/nfs/nfs3_fs.h                |   1 -
+ fs/nfs/nfs3acl.c                |   6 --
+ fs/nfs/nfs3super.c              |   3 -
+ fs/nfsd/nfs4xdr.c               |   3 +-
+ fs/ntfs3/xattr.c                |   4 --
+ fs/ocfs2/xattr.c                |  14 ++---
+ fs/orangefs/xattr.c             |   2 -
+ fs/overlayfs/copy_up.c          |   3 +-
+ fs/overlayfs/super.c            |   8 ---
+ fs/posix_acl.c                  |  61 +++++++++++++++-----
+ fs/reiserfs/file.c              |   7 +++
+ fs/reiserfs/inode.c             |   6 +-
+ fs/reiserfs/namei.c             |  50 ++++++++++++++--
+ fs/reiserfs/reiserfs.h          |   2 +
+ fs/reiserfs/xattr.c             |  55 +++++++++---------
+ fs/xattr.c                      | 124 ++++++++++++++++++++--------------------
+ fs/xfs/xfs_xattr.c              |   4 --
+ include/linux/posix_acl.h       |   7 +++
+ include/linux/posix_acl_xattr.h |   5 +-
+ include/linux/xattr.h           |  19 +++++-
+ mm/shmem.c                      |   4 --
+ 34 files changed, 292 insertions(+), 257 deletions(-)
