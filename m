@@ -2,66 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 046AA6EAD99
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 16:59:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C986EADD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 17:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233065AbjDUO7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 10:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41070 "EHLO
+        id S231875AbjDUPPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 11:15:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233081AbjDUO6z (ORCPT
+        with ESMTP id S229877AbjDUPPR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 10:58:55 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 785F3A274;
-        Fri, 21 Apr 2023 07:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=T9LXOdWMRXqaqS22weQhZo+/CD9S/0W7jBzVygMsK3Y=; b=InAJCSPOAlj1EKhhmNXf/r3IkX
-        6oW/gCF1ILhOM4eo3jviU83s+rVoOoIeFKFv57K4WyTkSf7ji0/t7AfrGlT9txK4DdnMOQ571f91R
-        PzYDogvvJM8tmfcZK8Jbs0R2aPa03EPJ41nKD4GbqtXJ6iIkEv1MJ6cvoeZGKKf5bD3dvYhEQ1WtU
-        hHJ4jEilijTsBkM0aC4ShNx+LDVeYYyQGw8R58W/f/HQxssV8lTTBGzu75RSgxi8ztIX8ZCFwlaUi
-        3EHwyEOdSVgiR4aPlsu6fsVJwqZdGVpZmQemafsBk8AQPG6LHdeYyD59Gp9CSUAb6fhrNpIGzJWOQ
-        cyI84C7Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ppsDj-00FLN0-P2; Fri, 21 Apr 2023 14:58:43 +0000
-Date:   Fri, 21 Apr 2023 15:58:43 +0100
-From:   Matthew Wilcox <willy@infradead.org>
+        Fri, 21 Apr 2023 11:15:17 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D15A93F6;
+        Fri, 21 Apr 2023 08:15:16 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-5069097bac7so3080697a12.0;
+        Fri, 21 Apr 2023 08:15:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682090115; x=1684682115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T3PK1qOBFO8P3MzvQZi6m7wgAQpoMs4tfggDeStRvSI=;
+        b=ZyXd8aAAD+thdP7VsfaNJbWGnEkXxaYp037epXaW+svqRpnY/VqWfPdaE7uPRFevqh
+         R0d3kk9sU/egKwXaonJykZHGvWYmGvBq+4Xc++TPMskCSVNRrOchnNo7gn3QlQhI9pxN
+         w8C3ZCxp8IunByN8DQQXpZ7xmQB3y4ezkxMIDPwWh/Vd4PYQmMvO+bWDP1sBcb48Lwza
+         0EOxpVFZAJSgDe0O8T6QXHq1oIny+Tx0WQ2V/izpjU/rwHPltAZHn76PUEeSY9V/SCXB
+         BbVF+lHVnakPXf/cUVwYSw//qxA2xj0NS5Ohtd8IPg7FtxYIJ6kZZypsr/lOWwsFHK2p
+         tgdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682090115; x=1684682115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T3PK1qOBFO8P3MzvQZi6m7wgAQpoMs4tfggDeStRvSI=;
+        b=kjG241qGNN7/nJYMueTT23mPydE3LLh3EG1bW953We+u9EKkJEk33l/Sdzjqw63eTA
+         GSBb1yDssZqvK0DVrMZuCo31419R2svn1SzbQF/5T3StNqXzg+AMXCvTTzF8Z5qXaVk7
+         j5TSRjB/gZHnkODKOm/U2FS+9o4eoyJZ4FDuePXWi5Dws8TzVvmNQxdtlRtY/ox4/fbI
+         O5mWEVgF0Lgu+pOgerdWfjdSKfIPdQj99+L582PAOKw4Po0/fvJRL/PWI8CDcze2Re3P
+         vik1yq1qNo//wP9OPyxEbKt+PdCNTVyjnI8JNt9fNdD/WAWHEp3wOES++BDBg+2jBrAW
+         MbRA==
+X-Gm-Message-State: AAQBX9cGXSXaeZqH61UUx7sB9+bs4obA3O/ABix0IWQQuw4kHTTBU+n/
+        G8wqngV+AMTJqvEa0L+cyBVxgytPNpE6PCUeqRueljzsK34=
+X-Google-Smtp-Source: AKy350axwUWmK8HYFxGgA8KJ8TJI4dhynsXE51W+iUMlvnkT8UxABPq4OUDkqMX6vH0ui0lbXK6N6NKk+Mj3A11Dsqw=
+X-Received: by 2002:aa7:de92:0:b0:506:c096:18a9 with SMTP id
+ j18-20020aa7de92000000b00506c09618a9mr5265190edv.32.1682090114386; Fri, 21
+ Apr 2023 08:15:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <000000000000b9915d05f9d98bdd@google.com> <CACT4Y+a3J0Z2PThebH6UaUWchKLWec8qApuv1ezYGKjf67Xctg@mail.gmail.com>
+In-Reply-To: <CACT4Y+a3J0Z2PThebH6UaUWchKLWec8qApuv1ezYGKjf67Xctg@mail.gmail.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Fri, 21 Apr 2023 08:15:03 -0700
+Message-ID: <CAADnVQL4eJw11oHVqy40-9xUg_nWbQVjfAzoxM1z0RAYmeZ_tw@mail.gmail.com>
+Subject: Re: [syzbot] [ext4?] [mm?] KCSAN: data-race in strscpy / strscpy (3)
 To:     Dmitry Vyukov <dvyukov@google.com>
 Cc:     syzbot <syzbot+c2de99a72baaa06d31f3@syzkaller.appspotmail.com>,
         adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, llvm@lists.linux.dev, nathan@kernel.org,
-        ndesaulniers@google.com, syzkaller-bugs@googlegroups.com,
-        trix@redhat.com, tytso@mit.edu,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        clang-built-linux <llvm@lists.linux.dev>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Tom Rix <trix@redhat.com>, "Theodore Ts'o" <tytso@mit.edu>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, martin.lau@linux.dev,
-        bpf <bpf@vger.kernel.org>, KP Singh <kpsingh@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mike Christie <michael.christie@oracle.com>
-Subject: Re: [syzbot] [ext4?] [mm?] KCSAN: data-race in strscpy / strscpy (3)
-Message-ID: <ZEKko6U2MxfkXgs5@casper.infradead.org>
-References: <000000000000b9915d05f9d98bdd@google.com>
- <CACT4Y+a3J0Z2PThebH6UaUWchKLWec8qApuv1ezYGKjf67Xctg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+a3J0Z2PThebH6UaUWchKLWec8qApuv1ezYGKjf67Xctg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        bpf <bpf@vger.kernel.org>, KP Singh <kpsingh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 04:43:19PM +0200, Dmitry Vyukov wrote:
+On Fri, Apr 21, 2023 at 7:43=E2=80=AFAM Dmitry Vyukov <dvyukov@google.com> =
+wrote:
+>
 > On Fri, 21 Apr 2023 at 16:33, syzbot
 > <syzbot+c2de99a72baaa06d31f3@syzkaller.appspotmail.com> wrote:
 > >
@@ -69,43 +92,53 @@ On Fri, Apr 21, 2023 at 04:43:19PM +0200, Dmitry Vyukov wrote:
 > >
 > > syzbot found the following issue on:
 > >
-> > HEAD commit:    76f598ba7d8e Merge tag 'for-linus' of git://git.kernel.org..
+> > HEAD commit:    76f598ba7d8e Merge tag 'for-linus' of git://git.kernel.=
+org..
 > > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=133bfbedc80000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9c5d44636e91081b
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=c2de99a72baaa06d31f3
-> > compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D133bfbedc80=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9c5d44636e9=
+1081b
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc2de99a72baaa=
+06d31f3
+> > compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for D=
+ebian) 2.35.2
 > >
 > > Unfortunately, I don't have any reproducer for this issue yet.
 > >
 > > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/a3654f5f77b9/disk-76f598ba.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/abfb4aaa5772/vmlinux-76f598ba.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/789fb5546551/bzImage-76f598ba.xz
+> > disk image: https://storage.googleapis.com/syzbot-assets/a3654f5f77b9/d=
+isk-76f598ba.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/abfb4aaa5772/vmli=
+nux-76f598ba.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/789fb5546551=
+/bzImage-76f598ba.xz
 > >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
 > > Reported-by: syzbot+c2de99a72baaa06d31f3@syzkaller.appspotmail.com
-> 
+>
 > +bpf maintainers
-> 
+>
 > If I am reading this correctly, this can cause a leak of kernel memory
 > and/or crash via bpf_get_current_comm helper.
-> 
+>
 > strcpy() can temporary leave comm buffer non-0 terminated as it
 > terminates it only after the copy:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/string.c?id=76f598ba7d8e2bfb4855b5298caedd5af0c374a8#n184
-> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/l=
+ib/string.c?id=3D76f598ba7d8e2bfb4855b5298caedd5af0c374a8#n184
+>
 > If bpf_get_current_comm() observes such non-0-terminated comm, it will
 > start reading off bounds.
 
-Just to be clear, this isn't ext4 at all; ext4 happens to be calling
-kthread_create(), but it's actually a generic kthread problem, right?
+fyi it's using strscpy_pad() in bpf-next.
+See commit f3f213497797 ("bpf: ensure all memory is initialized in
+bpf_get_current_comm")
+but this race might still exist. not sure.
 
-I'm not sure how it is that bpf is able to see the task before comm is
-initialised; that seems to be the real race here, that comm is not set
-before the kthread is a schedulable entity?  Adding the scheduler people.
-
-> > ==================================================================
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > > BUG: KCSAN: data-race in strscpy / strscpy
 > >
 > > write to 0xffff88812ed8b730 of 8 bytes by task 16157 on cpu 1:
@@ -154,9 +187,13 @@ before the kthread is a schedulable entity?  Adding the scheduler people.
 > > value changed: 0x72 -> 0x34
 > >
 > > Reported by Kernel Concurrency Sanitizer on:
-> > CPU: 0 PID: 16161 Comm: ext4lazyinit Not tainted 6.3.0-rc5-syzkaller-00022-g76f598ba7d8e #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
-> > ==================================================================
+> > CPU: 0 PID: 16161 Comm: ext4lazyinit Not tainted 6.3.0-rc5-syzkaller-00=
+022-g76f598ba7d8e #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
+ Google 03/30/2023
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > >
 > >
 > > ---
@@ -166,4 +203,3 @@ before the kthread is a schedulable entity?  Adding the scheduler people.
 > >
 > > syzbot will keep track of this issue. See:
 > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
