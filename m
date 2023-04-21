@@ -2,144 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08BB76EB1E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 20:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6BFB6EB21A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 21:07:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233025AbjDUSzI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 14:55:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56004 "EHLO
+        id S232591AbjDUTHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 15:07:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbjDUSzH (ORCPT
+        with ESMTP id S232311AbjDUTHp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 14:55:07 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89BC31FE3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 11:55:05 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-94a34a14a54so341023066b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 11:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1682103304; x=1684695304;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AyMpFu/gW7V1QrWAD4ujKdEEmizb8dHB+Px9T26Bj7E=;
-        b=isKqoY3MjZ10VkA1kWh+K/1YIbVB4ZAvLYZAyLAJfiirefha06VhT3jDD1NVNvMn8Q
-         J9hQAx4CkqnErz52Kq2lCF6CcQ2DlcWv1SDGLyfzbCLdaOS2m6YvuHyDkbCYi2O3KRzU
-         YxJPXTplFtFOoXZ9rGRR05f8wB2F/PTGdI3KnL86UeQFtPuP5pmvYzlw39z5pkHLEMWv
-         0GYdOXyk3zC7QDBU4hzTaWRiOZIzh7kFLLqwAnDnVcpsKaH+o/o3VaBMuPNQ5xBKNSSB
-         eNGUVOqm2tTMl+uuWvl6lg6RC+1CnCnvJFQ5ePHUUfAnd9D6D/VKsAE1UZh3+ZtCq6Qa
-         HlZQ==
+        Fri, 21 Apr 2023 15:07:45 -0400
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C426718C
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 12:07:43 -0700 (PDT)
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-328f6562564so38082155ab.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 12:07:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682103304; x=1684695304;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AyMpFu/gW7V1QrWAD4ujKdEEmizb8dHB+Px9T26Bj7E=;
-        b=W7GQW4Ki0NUW5+URQtsn/3R+xgLRUZTba8l7W1vbzSTeOfqg4DkmIpALYCXL45vnnh
-         EZ09lDzzJ3xsNalSLhR1TGreCgg+8sPFcZV2/wNDu3npQr1/s0mruwUmgNBmNEk/wvai
-         7StRA0NmDei3Vf3Smt1j6MG+f70uqcZydgdz77//UZSPWYjFFA27W+3CXxyuRFgpb2eB
-         2YJcLJ2/Tfxn8z6ZUTPsxgXjMVHI9pG7jT7zSWOJde+wEDB/lK1wu7bbHJz4fR2GL0ME
-         TECS8ehySIWi2sqUS6peTHbugHrHLdqUX//kguh4nzBtoyeavJ33kroDJ38g9F45PlB+
-         mxZg==
-X-Gm-Message-State: AAQBX9chOdmY1WHkdGMFMmUGLv17ZbByYu9+D6IeNp1HgCpxN/qW/6Sq
-        rO+SsN6Pl57WUOYxfoKM0nv2nILl1kdYIEq1K/GvGA==
-X-Google-Smtp-Source: AKy350YxLnLo1mXDBp40Mi0RKka/emzWbasqRcxBHKJPfX4mUJngZNt7pHCurgMyvOJrufET2RW07qFhCmkYCcgAuSA=
-X-Received: by 2002:a17:906:1b08:b0:94f:9f76:c74d with SMTP id
- o8-20020a1709061b0800b0094f9f76c74dmr3133846ejg.23.1682103303872; Fri, 21 Apr
- 2023 11:55:03 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1682104063; x=1684696063;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C8fSKQFPH5kS6exwTF04tijLARI26+Y3UxxpPHRzKuo=;
+        b=hb7jl6w5/ureh/UPvxJdSLIak0qQe8hnogG3+NCFwvfHgnxR5+CohO/0WomjDukOJY
+         dO+pyzwKHqM80gKExgeLSpdUT9LIZPsmhhyFQ06vMSxjdub/GuG2HV7i7Bq0ZVz9l5Wd
+         YbxvhLCjA6Dkq4Axxm0Qa2oj2t1HUhvbIJkIt0O8XRWobm5XFjr8E1wW7MwlItulGdGM
+         YvjbVbKPtfUqRmJ0BsaipkNqstqDRyWNjH/64AwQTCst5NzYsGhi6YJ6OPSmZHdggnFz
+         PYK3i3z15K6kSpWryljZ+4nXkyOdiAIsyoGD2LM0Sk7Yr9oCWbNYgZqxLsVC0KI2OPM6
+         BK8Q==
+X-Gm-Message-State: AAQBX9d7AYUdYAPQl4ser6dtWpTx+sFRM1AiwRZ9Yrhclz4HFEZZ8wL6
+        zwCVwsdVlMS6fzSL0KbG5GK8OXbeonTb/BnwwlIXLL0O7Ggt
+X-Google-Smtp-Source: AKy350bZfOZP7c87py9gvehAPKMTfhK10b753NDTTeN9IJTAEEx8JH8/J5FFIhC6fgpbRpzqRAok5h7TwBipEPiiRw8YFZtA9+ri
 MIME-Version: 1.0
-References: <20230421174020.2994750-1-yosryahmed@google.com>
-In-Reply-To: <20230421174020.2994750-1-yosryahmed@google.com>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Fri, 21 Apr 2023 11:54:25 -0700
-Message-ID: <CAJD7tkZKBGzBjkTGiVtwA=0VJ_L+UdGXjMWL7RcurQoooHTAUg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/5] cgroup: eliminate atomic rstat flushing
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Shakeel Butt <shakeelb@google.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+X-Received: by 2002:a92:db42:0:b0:32b:3816:772a with SMTP id
+ w2-20020a92db42000000b0032b3816772amr3393249ilq.6.1682104063154; Fri, 21 Apr
+ 2023 12:07:43 -0700 (PDT)
+Date:   Fri, 21 Apr 2023 12:07:43 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000028e2b905f9dd5f51@google.com>
+Subject: [syzbot] [ext4?] WARNING: bad unlock balance in unlock_two_nondirectories
+From:   syzbot <syzbot+6c73bd34311ee489dbf5@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 10:40=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
->
-> A previous patch series ([1] currently in mm-stable) changed most
-> atomic rstat flushing contexts to become non-atomic. This was done to
-> avoid an expensive operation that scales with # cgroups and # cpus to
-> happen with irqs disabled and scheduling not permitted. There were two
-> remaining atomic flushing contexts after that series. This series tries
-> to eliminate them as well, eliminating atomic rstat flushing completely.
->
-> The two remaining atomic flushing contexts are:
-> (a) wb_over_bg_thresh()->mem_cgroup_wb_stats()
-> (b) mem_cgroup_threshold()->mem_cgroup_usage()
->
-> For (a), flushing needs to be atomic as wb_writeback() calls
-> wb_over_bg_thresh() with a spinlock held. However, it seems like the
-> call to wb_over_bg_thresh() doesn't need to be protected by that
-> spinlock, so this series proposes a refactoring that moves the call
-> outside the lock criticial section and makes the stats flushing
-> in mem_cgroup_wb_stats() non-atomic.
->
-> For (b), flushing needs to be atomic as mem_cgroup_threshold() is called
-> with irqs disabled. We only flush the stats when calculating the root
-> usage, as it is approximated as the sum of some memcg stats (file, anon,
-> and optionally swap) instead of the conventional page counter. This
-> series proposes changing this calculation to use the global stats
-> instead, eliminating the need for a memcg stat flush.
->
-> After these 2 contexts are eliminated, we no longer need
-> mem_cgroup_flush_stats_atomic() or cgroup_rstat_flush_atomic(). We can
-> remove them and simplify the code.
->
-> [1] https://lore.kernel.org/linux-mm/20230330191801.1967435-1-yosryahmed@=
-google.com/
->
-> RFC -> v1:
-> - Collected R-b's and A-b's (Thanks everyone!).
-> - Rebased onto mm-stable.
-> - Cosmetic changes to commit logs.
->
-> RFC: https://lore.kernel.org/linux-mm/20230403220337.443510-1-yosryahmed@=
-google.com/
+Hello,
 
-This is v1, not v5. I really suck at sending emails. Sorry.
+syzbot found the following issue on:
 
->
-> Yosry Ahmed (5):
->   writeback: move wb_over_bg_thresh() call outside lock section
->   memcg: flush stats non-atomically in mem_cgroup_wb_stats()
->   memcg: calculate root usage from global state
->   memcg: remove mem_cgroup_flush_stats_atomic()
->   cgroup: remove cgroup_rstat_flush_atomic()
->
->  fs/fs-writeback.c          | 16 +++++++----
->  include/linux/cgroup.h     |  1 -
->  include/linux/memcontrol.h |  5 ----
->  kernel/cgroup/rstat.c      | 26 ++++--------------
->  mm/memcontrol.c            | 54 ++++++++------------------------------
->  5 files changed, 27 insertions(+), 75 deletions(-)
->
-> --
-> 2.40.0.634.g4ca3ef3211-goog
->
+HEAD commit:    cb0856346a60 Merge tag 'mm-hotfixes-stable-2023-04-19-16-3..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=160d85b8280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=11869c60f54496a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=6c73bd34311ee489dbf5
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/03697c95ad2e/disk-cb085634.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9e699bef459f/vmlinux-cb085634.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1be3bc4b60fd/bzImage-cb085634.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6c73bd34311ee489dbf5@syzkaller.appspotmail.com
+
+=====================================
+WARNING: bad unlock balance detected!
+6.3.0-rc7-syzkaller-00089-gcb0856346a60 #0 Not tainted
+-------------------------------------
+syz-executor.3/10999 is trying to release lock (&type->i_mutex_dir_key) at:
+[<ffffffff81ea121d>] inode_unlock include/linux/fs.h:763 [inline]
+[<ffffffff81ea121d>] unlock_two_nondirectories+0xbd/0x100 fs/inode.c:1138
+but there are no more locks to release!
+
+other info that might help us debug this:
+1 lock held by syz-executor.3/10999:
+ #0: ffff88803ff8a460 (sb_writers#4){.+.+}-{0:0}, at: __ext4_ioctl+0x10c9/0x4b00 fs/ext4/ioctl.c:1415
+
+stack backtrace:
+CPU: 1 PID: 10999 Comm: syz-executor.3 Not tainted 6.3.0-rc7-syzkaller-00089-gcb0856346a60 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ __lock_release kernel/locking/lockdep.c:5346 [inline]
+ lock_release+0x4f1/0x670 kernel/locking/lockdep.c:5689
+ up_write+0x2a/0x520 kernel/locking/rwsem.c:1625
+ inode_unlock include/linux/fs.h:763 [inline]
+ unlock_two_nondirectories+0xbd/0x100 fs/inode.c:1138
+ swap_inode_boot_loader fs/ext4/ioctl.c:510 [inline]
+ __ext4_ioctl+0x31d3/0x4b00 fs/ext4/ioctl.c:1418
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl fs/ioctl.c:856 [inline]
+ __x64_sys_ioctl+0x197/0x210 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f9dc1a8c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9dc2726168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f9dc1babf80 RCX: 00007f9dc1a8c169
+RDX: 0000000000000000 RSI: 0000000000006611 RDI: 0000000000000004
+RBP: 00007f9dc1ae7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffd35fd2d0f R14: 00007f9dc2726300 R15: 0000000000022000
+ </TASK>
+------------[ cut here ]------------
+DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff88803e77a1a8, owner = 0x0, curr 0xffff8880842f0000, list empty
+WARNING: CPU: 1 PID: 10999 at kernel/locking/rwsem.c:1369 __up_write kernel/locking/rwsem.c:1369 [inline]
+WARNING: CPU: 1 PID: 10999 at kernel/locking/rwsem.c:1369 up_write+0x425/0x520 kernel/locking/rwsem.c:1626
+Modules linked in:
+CPU: 1 PID: 10999 Comm: syz-executor.3 Not tainted 6.3.0-rc7-syzkaller-00089-gcb0856346a60 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
+RIP: 0010:__up_write kernel/locking/rwsem.c:1369 [inline]
+RIP: 0010:up_write+0x425/0x520 kernel/locking/rwsem.c:1626
+Code: 3c 02 00 0f 85 da 00 00 00 48 8b 55 00 4d 89 f1 53 4d 89 f8 4c 89 e9 48 c7 c6 a0 52 4c 8a 48 c7 c7 40 51 4c 8a e8 bb 22 e8 ff <0f> 0b 59 e9 dd fc ff ff 48 89 df e8 9b ca 70 00 e9 1a fc ff ff 48
+RSP: 0018:ffffc900167afbd8 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffffffff8a4c5080 RCX: ffffc9000b5fa000
+RDX: 0000000000040000 RSI: ffffffff814b6247 RDI: 0000000000000001
+RBP: ffff88803e77a1a8 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 57525f4755424544 R12: ffff88803e77a1b0
+R13: ffff88803e77a1a8 R14: ffff8880842f0000 R15: 0000000000000000
+FS:  00007f9dc2726700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c02174f2f8 CR3: 000000002b502000 CR4: 0000000000350ee0
+Call Trace:
+ <TASK>
+ inode_unlock include/linux/fs.h:763 [inline]
+ unlock_two_nondirectories+0xbd/0x100 fs/inode.c:1138
+ swap_inode_boot_loader fs/ext4/ioctl.c:510 [inline]
+ __ext4_ioctl+0x31d3/0x4b00 fs/ext4/ioctl.c:1418
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl fs/ioctl.c:856 [inline]
+ __x64_sys_ioctl+0x197/0x210 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f9dc1a8c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9dc2726168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f9dc1babf80 RCX: 00007f9dc1a8c169
+RDX: 0000000000000000 RSI: 0000000000006611 RDI: 0000000000000004
+RBP: 00007f9dc1ae7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffd35fd2d0f R14: 00007f9dc2726300 R15: 0000000000022000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
