@@ -2,99 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D05C6EA433
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 08:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C90146EA4A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 09:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230236AbjDUG6G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 02:58:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46608 "EHLO
+        id S229692AbjDUH00 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 03:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230298AbjDUG6D (ORCPT
+        with ESMTP id S230317AbjDUH0Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 02:58:03 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0F9644A9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 23:57:56 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-63d4595d60fso12425909b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Apr 2023 23:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1682060276; x=1684652276;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iCQQOrDHvv7muofgTvhggno9gmpvYe5WVwBD+zXre78=;
-        b=hbF+Bk8ojjiZO6o2ok3vxf1WbShiuo5T081GBEE0UAfUBksGieFJSgkGacjYqBeK8w
-         zt8XcYoWlevrCYjZed9y77ALfx/FxTMIwIwFlhupB/WwZM1Z1umn0C+QVKNQOjZ4t1v4
-         rUbAMrVRBbyd04gOqF9r0veBQA2+tqYWKmYcY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682060276; x=1684652276;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iCQQOrDHvv7muofgTvhggno9gmpvYe5WVwBD+zXre78=;
-        b=M64M6wmh33GKFWZ4Rrsf5Pfj/xUccffsM4fCcMN+lnI4GaicybBolWzgPCkgUIyxq0
-         SBgHi35gcFRRH4QKVNbtvAvLVaCNrithEFlZjUOuxDXYUEGPjIRc6uN1X0ruxiRvjkpT
-         rbPE7EfTwGn6ERdvsvptqbpESoyIGNQhAaoyfnNtf2C3CMZC6xA/QKVKajP/d26T4+GX
-         UzgxYc55Y7jq8TV7SYUJsLGZ5hhWehJrcFDQejsNGSJ7k/l+oPR3xb/oDG7xeivTWFi8
-         KgQb1dYU2mUfd/cmhQFh/9uwImfOQum0pfBRvz0lazUJSTMu53gyUZSB8O7tq+LEYW7a
-         dS0g==
-X-Gm-Message-State: AAQBX9eLw4nv9J6ieQxZYlZUPUE+h7+keB7q20JoKvoUcOYf6jdXglgI
-        KS1CgoU/ofw0dKFwtjWGjNHcKg==
-X-Google-Smtp-Source: AKy350ZEEP/PrU7kYgyyZkKivdaMPHUVf5WGz+Wiu1WQ8mlkUVfjfkCNB7ZnxyH4DOCp4JsT1PbWNg==
-X-Received: by 2002:aa7:8554:0:b0:63d:40bb:a88b with SMTP id y20-20020aa78554000000b0063d40bba88bmr8194787pfn.14.1682060275718;
-        Thu, 20 Apr 2023 23:57:55 -0700 (PDT)
-Received: from google.com (KD124209188001.ppp-bb.dion.ne.jp. [124.209.188.1])
-        by smtp.gmail.com with ESMTPSA id 136-20020a63008e000000b0051806da5cd6sm2038374pga.60.2023.04.20.23.57.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Apr 2023 23:57:54 -0700 (PDT)
-Date:   Fri, 21 Apr 2023 15:57:47 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Johannes Thumshirn <jth@kernel.org>
-Cc:     axboe@kernel.dk, johannes.thumshirn@wdc.com, agruenba@redhat.com,
-        cluster-devel@redhat.com, damien.lemoal@wdc.com,
-        dm-devel@redhat.com, dsterba@suse.com, hare@suse.de, hch@lst.de,
-        jfs-discussion@lists.sourceforge.net, kch@nvidia.com,
-        linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-raid@vger.kernel.org, ming.lei@redhat.com,
-        rpeterso@redhat.com, shaggy@kernel.org, snitzer@kernel.org,
-        song@kernel.org, willy@infradead.org,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Minchan Kim <minchan@kernel.org>
-Subject: Re: [PATCH v4 13/22] zram: use __bio_add_page for adding single page
- to bio
-Message-ID: <20230421065747.GB1496740@google.com>
-References: <20230420100501.32981-1-jth@kernel.org>
- <20230420100501.32981-14-jth@kernel.org>
+        Fri, 21 Apr 2023 03:26:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9672726B5;
+        Fri, 21 Apr 2023 00:26:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 33ECD6116A;
+        Fri, 21 Apr 2023 07:26:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94535C433D2;
+        Fri, 21 Apr 2023 07:26:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682061978;
+        bh=XIZwQxSmdbbbE9ngb3dPfpaMLJHg9URk2JAPiW2tKJ8=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=W6vmAzOCaaQfObpUCun/ED6tnpiS9Dt7t3oBPoBVWgLSkcxztcUdi0xfqef3yUuge
+         qnL3rWrA23bdNXj9FI21jJ/NVr9c/rN5FtRsHOleiqdmX8OLddTw90nBp/ys6+bKg/
+         n4aN4J40O7CkULWTdCl2dLiy1u/rB0dNQAua5wOik4Pvsm0zEh6BU7sseMI89zWMvr
+         YJScra+eMCsFW5kNpqRMnEuo6eCes23XnsSFyyBAH+puhW3zCxyXiG/caQot8ZfRi9
+         zKPrQRX8vT0CLSWNpZytN5CA1CITYqPAB5cHGBiXrP7DXsF0bfSIcdnlZs/GOOm0CH
+         YHupQKPkXdCKg==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-187b70ab997so9555522fac.0;
+        Fri, 21 Apr 2023 00:26:18 -0700 (PDT)
+X-Gm-Message-State: AAQBX9eOihiSOvelv21E6r/QEa86EsL1SCNdtl17nmlf1hbB8iadLGtG
+        z1O6TJZcVPTAjEEkBchc2d1X/RWYZEd5Imaq0bM=
+X-Google-Smtp-Source: AKy350Zn75WAE3Mv5D521UTq38M5bum7e02nfnK8oR1L8O1x7D5DHFpSHOeaqNazXBktHEiqzu8w6NdSOzj+LeFKIfI=
+X-Received: by 2002:a05:6820:1acf:b0:542:2321:658b with SMTP id
+ bu15-20020a0568201acf00b005422321658bmr1030454oob.2.1682061977767; Fri, 21
+ Apr 2023 00:26:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230420100501.32981-14-jth@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Received: by 2002:ac9:53dd:0:b0:4d3:d9bf:b562 with HTTP; Fri, 21 Apr 2023
+ 00:26:17 -0700 (PDT)
+In-Reply-To: <20230421023500.GY3390869@ZenIV>
+References: <20230315223435.5139-1-linkinjeon@kernel.org> <20230421023500.GY3390869@ZenIV>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 21 Apr 2023 16:26:17 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_Swxd4so5MHt8L5sm8tH=DYC2A6O5609=V3b9Ri6L5Zg@mail.gmail.com>
+Message-ID: <CAKYAXd_Swxd4so5MHt8L5sm8tH=DYC2A6O5609=V3b9Ri6L5Zg@mail.gmail.com>
+Subject: Re: [PATCH v8 0/3] ksmbd patches included vfs changes
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        smfrench@gmail.com, senozhatsky@chromium.org, tom@talpey.com,
+        brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+ Minchan
+2023-04-21 11:35 GMT+09:00, Al Viro <viro@zeniv.linux.org.uk>:
+> On Thu, Mar 16, 2023 at 07:34:32AM +0900, Namjae Jeon wrote:
+>
+> OK...  Let's do it that way: I put the first two commits into
+> never-rebased branch (work.lock_rename_child), then you pull
+> it into your tree (and slap the third commit on top of that)
+> while I merge it into #for-next.
+Okay. Can I add your acked-by in third patch ?
 
-On (23/04/20 12:04), Johannes Thumshirn wrote:
-> 
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> 
-> The zram writeback code uses bio_add_page() to add a page to a newly
-> created bio. bio_add_page() can fail, but the return value is never
-> checked.
-> 
-> Use __bio_add_page() as adding a single page to a newly created bio is
-> guaranteed to succeed.
-> 
-> This brings us a step closer to marking bio_add_page() as __must_check.
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Thank you!
+>
