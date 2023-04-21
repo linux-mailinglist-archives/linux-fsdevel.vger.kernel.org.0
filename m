@@ -2,136 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7936E6EB47F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Apr 2023 00:13:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C879A6EB4A8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Apr 2023 00:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233787AbjDUWNq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 18:13:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51926 "EHLO
+        id S233832AbjDUWZD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 18:25:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233778AbjDUWNb (ORCPT
+        with ESMTP id S233835AbjDUWZC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 18:13:31 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F8602D5F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 15:13:30 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-63d2ba63dddso2285426b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 15:13:30 -0700 (PDT)
+        Fri, 21 Apr 2023 18:25:02 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B539E1BEF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 15:25:00 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1a7111e0696so5461785ad.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 15:25:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1682115210; x=1684707210;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dc5jbER8wEc7OW3/IotC+kA2A3o7OZfeQaN33ZlBlP4=;
-        b=Bj7hb2g1Ygk+uI1Xxfx+Lf8COV76humjsOT5sJKw8qFdCUzNXODMPPSgSmVEXfumLP
-         gUzdVnED6ugNaAcG2SKbDhlEqm5/AA1x3lyiaYtvzKe1z+7yY9FeeWZjZ4j8ZGNYMvpT
-         nSEalWU0KsSv7vdtph2qjlryw/U/r62x/nUxA=
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682115900; x=1684707900;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wtOk22wHsRTIJLakW5pQsLDvU50er+NeXN7SxTWy9qk=;
+        b=oerIEMuVGMo3tf7ainFnGShOU4ymhQn2JIZkQ5ZB4LQezPNmDezHZ74CsaeAZJQpD6
+         fBOri4QsdRMaGb2stkX1WSwEZwfrNh9aQZWqyNJoXurA5LawSG0y1G2Xv1oUcyhDfcMp
+         9sbYCkZuE9eli+qnK9IsSiSsdVJHCJSw/W3sMGWPje4NFX463I+v+t7Es1rrOVfCvCrD
+         U9gO5mnakr3a3I+Qu1a4NVVPqGjSfvWoKTJthz4c4dgYea4zYEHowFeYEbZOiF95SR+K
+         Jq4c5WzqI8i0UVXC3OJDP1Rl9oKvaB8DuqRz1pK4f1u8wkRZdFtR2Oi36akQy0CVWjt4
+         77tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682115210; x=1684707210;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dc5jbER8wEc7OW3/IotC+kA2A3o7OZfeQaN33ZlBlP4=;
-        b=ZU8ByIIIQajQt2X6q74RFlkCmizK8ITnStpf/u4Pa8GTylBz1lqvRNsf5/NL5Q0FLS
-         MJ1QjCiN3zbK3bGYhjEtJbFStcm1ahnfmnHy3++p/m+MypEjYxGkiuP+TMXjoM7zyK38
-         bntaW8oDJEC2gwyQoQ8s1a/Pp/0oAXt3SO/lVcFysr0ufEaevnyJdtfEEZ9ZL/CrdQJQ
-         g7QlgDXqBWb5u6UodRUz3sMdQxxZo0+6xQ+jeJEHKWi8JE6Q1w4s/SIj/TgRN4Gsy/YC
-         VzR/ZS6BLdnFBBe6StcJu9Ip6HEMtnI7GcHXhyp9KMUpqJ8oAR26lK2MiwGhRE1fXqdQ
-         f7xQ==
-X-Gm-Message-State: AAQBX9dkO3ZRXfsgV6aPPK++mLZdHcdHS1ciWijKHWiyVskkwgiTWfx1
-        4RfKfOdNS1Rposn1Y6eBC6Gz1g==
-X-Google-Smtp-Source: AKy350aBr9TvmZeKHCBJSqIpG2B/nWcBgQOHXkcvQWceE4r02qrPTXFu3nXc3bs+0O5+8kUMfAUyog==
-X-Received: by 2002:a05:6a00:1a56:b0:63d:3789:733f with SMTP id h22-20020a056a001a5600b0063d3789733fmr8752575pfv.15.1682115209980;
-        Fri, 21 Apr 2023 15:13:29 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:9d:2:87cc:9018:e569:4a27])
-        by smtp.gmail.com with ESMTPSA id y72-20020a62644b000000b006372791d708sm3424715pfb.104.2023.04.21.15.13.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 15:13:29 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>, Ying <ying.huang@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Yu Zhao <yuzhao@google.com>, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH v2 4/4] migrate_pages: Don't wait forever locking buffers in MIGRATE_SYNC_LIGHT
-Date:   Fri, 21 Apr 2023 15:12:48 -0700
-Message-ID: <20230421151135.v2.4.Ic39f0b16516acf4af1ce5d923150f93ee85a9398@changeid>
-X-Mailer: git-send-email 2.40.0.634.g4ca3ef3211-goog
-In-Reply-To: <20230421221249.1616168-1-dianders@chromium.org>
-References: <20230421221249.1616168-1-dianders@chromium.org>
+        d=1e100.net; s=20221208; t=1682115900; x=1684707900;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wtOk22wHsRTIJLakW5pQsLDvU50er+NeXN7SxTWy9qk=;
+        b=GUYwS3aLIRNWzPLWK3sWWt85vLcX+Bsa1YWaEerJh29wwfJhE5++g94kGBOe+xMTk1
+         shg79rE5D8YI53nVbyN4mHFxjJ0z5wI6FUUSUqDvbEn+Oo5X8KevCA8ez/G/SISrkLHO
+         JN1+YiXpdbJX7tGxADMNn9Kf6U0fXYyx0tRv4LgWivegRzS6cw0n88Yrc/wrNsspM9YC
+         oXmRleLCx8Rcz9o8CyEFze3xMiGx5o1x5rUJXkFSlxyUmy8TYPgNxfz2gnMpXG/4ZCr7
+         zwYfSH1Uft/0uGc8pGaWIf6MBocd/NlX4d1zqHYtYE000kqJk3TMuSUi0+AUJTel+5wh
+         7pjQ==
+X-Gm-Message-State: AAQBX9fUhkhkkm59/zKpDbkemdwNTulg/4Kv6Yq2HJDizGTigbFalaKG
+        Gsom+L32OihwzchrWXHgeWUXZw==
+X-Google-Smtp-Source: AKy350ab5zsgqMFX9gmLPlFbJI6JNwFXd5UcuHSryHmhAdUudcIDmmGg6bERrDL3LQkvBwimuDuVEg==
+X-Received: by 2002:a17:902:c94f:b0:1a2:1a52:14b3 with SMTP id i15-20020a170902c94f00b001a21a5214b3mr7699856pla.4.1682115900155;
+        Fri, 21 Apr 2023 15:25:00 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id jn15-20020a170903050f00b001a945e7147asm1657335plb.231.2023.04.21.15.24.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Apr 2023 15:24:59 -0700 (PDT)
+Message-ID: <47688c1d-9cf1-3e08-1f1d-a051b25d010e@kernel.dk>
+Date:   Fri, 21 Apr 2023 16:24:57 -0600
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 3/5] iomap: simplify iomap_init() with PAGE_SECTORS
+Content-Language: en-US
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     agk@redhat.com, snitzer@kernel.org, philipp.reisner@linbit.com,
+        lars.ellenberg@linbit.com, christoph.boehmwalder@linbit.com,
+        hch@infradead.org, djwong@kernel.org, minchan@kernel.org,
+        senozhatsky@chromium.org, patches@lists.linux.dev,
+        linux-block@vger.kernel.org, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
+        linux-kernel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+        da.gomez@samsung.com, kbusch@kernel.org
+References: <20230421195807.2804512-1-mcgrof@kernel.org>
+ <20230421195807.2804512-4-mcgrof@kernel.org>
+ <ZELuiBNNHTk4EdxH@casper.infradead.org>
+ <ZEMH9h/cd9Cp1t+X@bombadil.infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZEMH9h/cd9Cp1t+X@bombadil.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Just as talked about in the patch ("migrate_pages: Don't wait forever
-locking pages in MIGRATE_SYNC_LIGHT"), we don't really want unbounded
-waits when we're running in MIGRATE_SYNC_LIGHT mode. Waiting on the
-buffer lock is a second such unbounded wait. Let's put a timeout on
-it.
+On 4/21/23 4:02 PM, Luis Chamberlain wrote:
+> On Fri, Apr 21, 2023 at 09:14:00PM +0100, Matthew Wilcox wrote:
+>> On Fri, Apr 21, 2023 at 12:58:05PM -0700, Luis Chamberlain wrote:
+>>> Just use the PAGE_SECTORS generic define. This produces no functional
+>>> changes. While at it use left shift to simplify this even further.
+>>
+>> How is FOO << 2 simpler than FOO * 4?
+>>
+>>> -	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+>>> +	return bioset_init(&iomap_ioend_bioset, PAGE_SECTORS << 2,
+> 
+> We could just do:
+> 
+> 
+> -	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+> +	return bioset_init(&iomap_ioend_bioset, 4 * PAGE_SECTORS,
+> 
+> The shift just seemed optimal if we're just going to change it.
 
-While measurement didn't show this wait to be quite as bad as the one
-waiting for the folio lock, it could still be measured to be over a
-second in some cases.
+It's going to generate the same code, but the multiplication is arguably
+easier to read (or harder to misread).
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
-Changes in v2:
-- "Don't wait forever locking buffers in MIGRATE_SYNC_LIGHT" new for v2.
-
- mm/migrate.c | 25 ++++++++-----------------
- 1 file changed, 8 insertions(+), 17 deletions(-)
-
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 60982df71a93..97c93604eb4c 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -715,25 +715,16 @@ static bool buffer_migrate_lock_buffers(struct buffer_head *head,
- 							enum migrate_mode mode)
- {
- 	struct buffer_head *bh = head;
-+	bool locked;
- 
--	/* Simple case, sync compaction */
--	if (mode != MIGRATE_ASYNC) {
--		do {
--			lock_buffer(bh);
--			bh = bh->b_this_page;
--
--		} while (bh != head);
--
--		return true;
--	}
--
--	/* async case, we cannot block on lock_buffer so use trylock_buffer */
- 	do {
--		if (!trylock_buffer(bh)) {
--			/*
--			 * We failed to lock the buffer and cannot stall in
--			 * async migration. Release the taken locks
--			 */
-+		if (mode == MIGRATE_ASYNC)
-+			locked = trylock_buffer(bh);
-+		else
-+			locked = !lock_buffer_timeout(bh, timeout_for_mode(mode));
-+
-+		if (!locked) {
-+			/* We failed to lock the buffer. Release the taken locks. */
- 			struct buffer_head *failed_bh = bh;
- 			bh = head;
- 			while (bh != failed_bh) {
 -- 
-2.40.0.634.g4ca3ef3211-goog
+Jens Axboe
+
 
