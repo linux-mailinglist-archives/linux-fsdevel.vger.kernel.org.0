@@ -2,166 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D47216EB386
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 23:23:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D665D6EB3C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 23:44:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233582AbjDUVXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 17:23:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57128 "EHLO
+        id S233621AbjDUVoW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 17:44:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229808AbjDUVXR (ORCPT
+        with ESMTP id S233381AbjDUVoS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 17:23:17 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1083A2114;
-        Fri, 21 Apr 2023 14:23:16 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f195b164c4so5109865e9.1;
-        Fri, 21 Apr 2023 14:23:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682112194; x=1684704194;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yxnbDIY2T2BXEHeacyyEItpEvQKuaNh4fP8Jz0Ufxk8=;
-        b=Kb2dP46Px5bQVRmYlVGy7ilcCdlu1RdygbnlHAhC2bwm5oKBa/ykrYJOvB0dYQ3obJ
-         R6vd/02nV0NWichc7WyCd1Y0NkmIF7DxPMkzNlIoqHpsg3123RdU0TWX295Jgg1KUwpP
-         bSjjy9WwPQoIihMwv7dH/j/D+45srGCyaZI2JeuLmwMZjuysZBBaCE20UhI+i40TEg/L
-         FbYeYnh6Wi3Sj5AaiY7SLRnMwYSs3Y0GHcQjr/lrJs3v+tFEtlmvqGVVBpDJaZ834e0t
-         eGM0C83aMEoFiSM/nC2nbxf9PfvWGJdlz4zUMXDNKchHFYLAy5HwidmSNXxWZylfUZCY
-         BBiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682112194; x=1684704194;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yxnbDIY2T2BXEHeacyyEItpEvQKuaNh4fP8Jz0Ufxk8=;
-        b=H0sLV9vPxzEVPHS8ZTyyCKaqB5cx3iN9P77FRkUC91qvoMXHhZOkKV44ZZRpdCNQJV
-         8pUg+1yNi87TweSlPYa6uG1IYovv4pcnsLN8I3EgwwQdV6tOQuPA/HSRQJfaQjZeScX8
-         4RY+Fe0aP3JyTkna6rjjLV/OWOJM4o7eOT1El/FD+m0UiuzmKCJBSZSSSBQQNyoEJbYG
-         bLUUqvtgBJeal4YT1DQNnVz4C7uGjOO3P87oYMWwK39oBYR3bJRDrIwVOX3yi51BneKV
-         XGdK6jgY1f7DPV1I0GPi0dz4tY7URiEyJvo8vv3NCN+ONNEH3vj/UjdKyL1P9sHvlUM+
-         alBA==
-X-Gm-Message-State: AAQBX9dJnzvXSiAniGkxSDb6m9BBfyZKiNEhlvjymj7j1LiRgFFcF3Up
-        wMJVWJ6hkjjCeDxKemzLvKk=
-X-Google-Smtp-Source: AKy350Z/sfov6YlCgGxoBDEgNry2GO8OIGvhbzeo/q7/gFS9+kSvunl+s5NTFJ5LbftYF5WwCqov0w==
-X-Received: by 2002:a1c:f715:0:b0:3f0:5887:bea3 with SMTP id v21-20020a1cf715000000b003f05887bea3mr3056263wmh.27.1682112194347;
-        Fri, 21 Apr 2023 14:23:14 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id v15-20020a05600c444f00b003f09cda253esm9304031wmn.34.2023.04.21.14.23.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 14:23:13 -0700 (PDT)
-Date:   Fri, 21 Apr 2023 22:23:12 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [RFC PATCH 0/3] permit write-sealed memfd read-only shared
- mappings
-Message-ID: <b18577f5-86fe-4093-9058-07ba899f7dd6@lucifer.local>
-References: <cover.1680560277.git.lstoakes@gmail.com>
- <20230421090126.tmem27kfqamkdaxo@quack3>
+        Fri, 21 Apr 2023 17:44:18 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E24281BFD;
+        Fri, 21 Apr 2023 14:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=kIm+HajOeoUPf2+lVY4BBZIQ0O/I9EyHtsPMg+rZ0Kc=; b=Len1yzwK9xjx59+qsKo1F+zvmo
+        +aUn2YbUJugrJe8dXSdbxmZlTKxrreA9IzoGdLVdC1eGVczJTAELlOsRwcJUqNaEGPL5rddVTdiuR
+        2paO6yV15AQmkvh/r2vO9b7zoXcIlpl5k+bxfP1tQYU7r0yIo0NJa57GpOa/vmN/iPcfQM25C9axc
+        9fAyhFR1UcdzhDQCHEodaN0a2CLAr7FSbG6HJhhQkhBXWfR0VxRZJhpFpyKBbupNefaohXdKaGvs2
+        iJXFqj+JOo/hz8cLkWi8cBerPGguStJhP3RoX47i5vHERUL+Etq2Peo/JaqIXZEyR3e8KdNnjBCCs
+        VqLXYKLQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1ppyY1-00Btog-1d;
+        Fri, 21 Apr 2023 21:44:05 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     hughd@google.com, akpm@linux-foundation.org, willy@infradead.org,
+        brauner@kernel.org, djwong@kernel.org
+Cc:     p.raghav@samsung.com, da.gomez@samsung.com,
+        a.manzanares@samsung.com, dave@stgolabs.net, yosryahmed@google.com,
+        keescook@chromium.org, hare@suse.de, kbusch@kernel.org,
+        mcgrof@kernel.org, patches@lists.linux.dev,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [RFC 0/8] shmem: add support for blocksize > PAGE_SIZE
+Date:   Fri, 21 Apr 2023 14:43:52 -0700
+Message-Id: <20230421214400.2836131-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230421090126.tmem27kfqamkdaxo@quack3>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 11:01:26AM +0200, Jan Kara wrote:
-> Hi!
->
-> On Mon 03-04-23 23:28:29, Lorenzo Stoakes wrote:
-> > This patch series is in two parts:-
-> >
-> > 1. Currently there are a number of places in the kernel where we assume
-> >    VM_SHARED implies that a mapping is writable. Let's be slightly less
-> >    strict and relax this restriction in the case that VM_MAYWRITE is not
-> >    set.
-> >
-> >    This should have no noticeable impact as the lack of VM_MAYWRITE implies
-> >    that the mapping can not be made writable via mprotect() or any other
-> >    means.
-> >
-> > 2. Align the behaviour of F_SEAL_WRITE and F_SEAL_FUTURE_WRITE on mmap().
-> >    The latter already clears the VM_MAYWRITE flag for a sealed read-only
-> >    mapping, we simply extend this to F_SEAL_WRITE too.
-> >
-> >    For this to have effect, we must also invoke call_mmap() before
-> >    mapping_map_writable().
-> >
-> > As this is quite a fundamental change on the assumptions around VM_SHARED
-> > and since this causes a visible change to userland (in permitting read-only
-> > shared mappings on F_SEAL_WRITE mappings), I am putting forward as an RFC
-> > to see if there is anything terribly wrong with it.
->
-> So what I miss in this series is what the motivation is. Is it that you need
-> to map F_SEAL_WRITE read-only? Why?
->
+This is an initial attempt to add support for block size > PAGE_SIZE for tmpfs.
+Why would you want this? It helps us experiment with higher order folio uses
+with fs APIS and helps us test out corner cases which would likely need
+to be accounted for sooner or later if and when filesystems enable support
+for this. Better review early and burn early than continue on in the wrong
+direction so looking for early feedback.
 
-This originated from the discussion in [1], which refers to the bug
-reported in [2]. Essentially the user is write-sealing a memfd then trying
-to mmap it read-only, but receives an -EPERM error.
+I have other patches to convert shmem_write_begin() and shmem_file_read_iter()
+to folios too but those are not yet working. In the swap world the next
+thing to look at would be to convert swap_cluster_readahead() to folios.
 
-F_SEAL_FUTURE_WRITE _does_ explicitly permit this but F_SEAL_WRITE does not.
+If folks want to experiment with tmpfs, brd or with things related to larger
+block sizes I've put a branch up with this, Hannes's brd patches, and some
+still work-in-progress patches on my large-block-20230421 branch [0]. Similarly
+you can also use kdevops with CONFIG_QEMU_ENABLE_EXTRA_DRIVE_LARGEIO support
+to get everything with just as that branch is used for that:
 
-The fcntl() man page states:
+  make
+  make bringup
+  make linux
 
-    Furthermore, trying to create new shared, writable memory-mappings via
-    mmap(2) will also fail with EPERM.
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=large-block-20230421
+[1] https://github.com/linux-kdevops/kdevops
 
-So the kernel does not behave as the documentation states.
+Luis Chamberlain (8):
+  shmem: replace BLOCKS_PER_PAGE with PAGE_SECTORS
+  shmem: convert to use folio_test_hwpoison()
+  shmem: account for high order folios
+  shmem: add helpers to get block size
+  shmem: account for larger blocks sizes for shmem_default_max_blocks()
+  shmem: consider block size in shmem_default_max_inodes()
+  shmem: add high order page support
+  shmem: add support to customize block size on multiple PAGE_SIZE
 
-I took the user-supplied repro and slightly modified it, enclosed
-below. After this patch series, this code works correctly.
+ include/linux/shmem_fs.h |   3 +
+ mm/shmem.c               | 146 +++++++++++++++++++++++++++++----------
+ 2 files changed, 114 insertions(+), 35 deletions(-)
 
-I think there's definitely a case for the VM_MAYWRITE part of this patch
-series even if the memfd bits are not considered useful, as we do seem to
-make the implicit assumption that MAP_SHARED == writable even if
-!VM_MAYWRITE which seems odd.
+-- 
+2.39.2
 
-Reproducer:-
-
-int main()
-{
-       int fd = memfd_create("test", MFD_ALLOW_SEALING);
-       if (fd == -1) {
-	       perror("memfd_create");
-	       return EXIT_FAILURE;
-       }
-
-       write(fd, "test", 4);
-
-       if (fcntl(fd, F_ADD_SEALS, F_SEAL_WRITE) == -1) {
-	       perror("fcntl");
-	       return EXIT_FAILURE;
-       }
-
-       void *ret = mmap(NULL, 4, PROT_READ, MAP_SHARED, fd, 0);
-       if (ret == MAP_FAILED) {
-	       perror("mmap");
-	       return EXIT_FAILURE;
-       }
-
-       return EXIT_SUCCESS;
-}
-
-[1]:https://lore.kernel.org/all/20230324133646.16101dfa666f253c4715d965@linux-foundation.org/
-[2]:https://bugzilla.kernel.org/show_bug.cgi?id=217238
-
-> 								Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
