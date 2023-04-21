@@ -2,61 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B6366EA893
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 12:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E43C16EA910
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 13:23:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231470AbjDUKsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 06:48:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39228 "EHLO
+        id S231164AbjDULXd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 07:23:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjDUKsB (ORCPT
+        with ESMTP id S230148AbjDULX2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 06:48:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0D283D1;
-        Fri, 21 Apr 2023 03:47:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 21 Apr 2023 07:23:28 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4BB19ECF;
+        Fri, 21 Apr 2023 04:23:26 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1726460B6F;
-        Fri, 21 Apr 2023 10:47:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A37C433EF;
-        Fri, 21 Apr 2023 10:47:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682074078;
-        bh=YMiCd2tn+Kwhq5vt740oxHkL6CrclEtNSKXXgkMDZzc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Hjutz1fvbTbSug9eVUquviL4tAoNlkEh+D8UwRz2EmqxPmD/qIE/1sOTRzmn5mwqx
-         mKM95MWbE5ujOBQHDUryrtj3aqFhc0Q0SATadEGGrZRLjIxBV8nq0lrqpmhmgCTUKh
-         lndHzOw7gLoe3S5beyCwDRSRjL1vX/WylSDNOcfAjn6RKpLfuCoNsC6AMTVf+ZImBs
-         M3cix5G9qaqYVwm89y3tY5ZNdrS3+cNddU1PF9z56nFky4dcJSc1cQmV7aUBD+FE+2
-         Vp7JlPZBRoPkjedQHc7virsAH4OI+StJ+5EdISxvirGszqGIL3Gz4r8XpZo0rZk+Jg
-         biHjSlsBXy5yw==
-Message-ID: <fb17a0931ae29b89d661b7b2295726689c350ae3.camel@kernel.org>
-Subject: Re: [RFC PATCH 1/3] fs: add infrastructure for opportunistic
- high-res ctime/mtime updates
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <david@fromorbit.com>
-Date:   Fri, 21 Apr 2023 06:47:55 -0400
-In-Reply-To: <20230421101331.dlxom6b5e7yds5tn@quack3>
-References: <20230411142708.62475-1-jlayton@kernel.org>
-         <20230411142708.62475-2-jlayton@kernel.org>
-         <20230421101331.dlxom6b5e7yds5tn@quack3>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.0 (3.48.0-1.fc38) 
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 8771F219BB;
+        Fri, 21 Apr 2023 11:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1682076205; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mhMuSBytC1u79ds/SRzprRtVZibTN/coJdP50HWJQVo=;
+        b=GVt4IME2mo9Rn4w1GWHik6DM02ADjg6XAFt4RW7L6yVZBB772fan2FnrciUzGvPSk6towk
+        8b/OLGsG63Yy50neQpDB/KxWkMvZlZhtHug5rU7SbiHSjOR4XO9LK2bDyiOvk5cPDil8xU
+        +K4JsRm3j8lctLd6nUtQEV6L2KLlnV4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1682076205;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mhMuSBytC1u79ds/SRzprRtVZibTN/coJdP50HWJQVo=;
+        b=e1TsdJbyCcrdCPwjbIAZzpkG5dW4wRaIAR2qIDtlEfKs3FGOQpGMV10uHXcV5hN5N4JESb
+        vCchfDjc3Np77fCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6CDD813456;
+        Fri, 21 Apr 2023 11:23:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id PZyCGi1yQmQSEQAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 21 Apr 2023 11:23:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 00A0BA0729; Fri, 21 Apr 2023 13:23:24 +0200 (CEST)
+Date:   Fri, 21 Apr 2023 13:23:24 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>, Ted Tso <tytso@mit.edu>
+Subject: Re: [PATCHv6 0/9] ext2: DIO to use iomap
+Message-ID: <20230421112324.mxrrja2hynshu4b6@quack3>
+References: <cover.1682069716.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1682069716.git.ritesh.list@gmail.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,198 +74,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2023-04-21 at 12:13 +0200, Jan Kara wrote:
-> On Tue 11-04-23 10:27:06, Jeff Layton wrote:
-> > The VFS always uses coarse-grained timestamp updates for filling out th=
-e
-> > ctime and mtime after a change. This has the benefit of allowing
-> > filesystems to optimize away metadata updates.
-> >=20
-> > Unfortunately, this has always been an issue when we're exporting via
-> > NFSv3, which relies on timestamps to validate caches. Even with NFSv4, =
-a
-> > lot of exported filesystems don't properly support a change attribute
-> > and are subject to the same problem of timestamp granularity. Other
-> > applications have similar issues (e.g backup applications).
-> >=20
-> > Switching to always using high resolution timestamps would improve the
-> > situation for NFS, but that becomes rather expensive, as we'd have to
-> > log a lot more metadata updates.
-> >=20
-> > This patch grabs a new i_state bit to use as a flag that filesystems ca=
-n
-> > set in their getattr routine to indicate that the mtime or ctime was
-> > queried since it was last updated.
-> >=20
-> > It then adds a new current_cmtime function that acts like the
-> > current_time helper, but will conditionally grab high-res timestamps
-> > when the i_state flag is set in the inode.
-> >=20
-> > This allows NFS and other applications to reap the benefits of high-res
-> > ctime and mtime timestamps, but at a substantially lower cost than
-> > fetching them every time.
-> >=20
-> > Cc: Dave Chinner <david@fromorbit.com>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/inode.c         | 40 ++++++++++++++++++++++++++++++++++++++--
-> >  fs/stat.c          | 10 ++++++++++
-> >  include/linux/fs.h |  5 ++++-
-> >  3 files changed, 52 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 4558dc2f1355..3630f67fd042 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -2062,6 +2062,42 @@ static int __file_update_time(struct file *file,=
- struct timespec64 *now,
-> >  	return ret;
-> >  }
-> > =20
-> > +/**
-> > + * current_cmtime - Return FS time (possibly high-res)
-> > + * @inode: inode.
-> > + *
-> > + * Return the current time truncated to the time granularity supported=
- by
-> > + * the fs, as suitable for a ctime or mtime change. If something recen=
-tly
-> > + * fetched the ctime or mtime out of the inode via getattr, then get a
-> > + * high-resolution timestamp.
-> > + *
-> > + * Note that inode and inode->sb cannot be NULL.
-> > + * Otherwise, the function warns and returns coarse time without trunc=
-ation.
-> > + */
-> > +struct timespec64 current_cmtime(struct inode *inode)
-> > +{
-> > +	struct timespec64 now;
-> > +
-> > +	if (unlikely(!inode->i_sb)) {
->=20
-> I don't think we can have inodes without a superblock. Did you ever hit
-> this?
->=20
+Hello Ritesh,
 
-No, I copied this from current_time. I've already removed this in my
-working branch. We can probably remove it from current_time too.
+On Fri 21-04-23 15:16:10, Ritesh Harjani (IBM) wrote:
+> Hello All,
+> 
+> Please find the series which rewrites ext2 direct-io path to use modern
+> iomap interface.
 
-> > +		WARN(1, "%s() called with uninitialized super_block in the inode", _=
-_func__);
-> > +		ktime_get_coarse_real_ts64(&now);
-> > +		return now;
-> > +	}
-> > +
-> > +	/* Do a lockless check for the flag before taking the spinlock */
-> > +	if (READ_ONCE(inode->i_state) & I_CMTIME_QUERIED) {
-> > +		ktime_get_real_ts64(&now);
-> > +		spin_lock(&inode->i_lock);
-> > +		inode->i_state &=3D ~I_CMTIME_QUERIED;
->=20
-> Isn't this a bit fragile? If someone does:
->=20
-> 	inode->i_mtime =3D current_cmtime(inode);
-> 	inode->i_ctime =3D current_cmtime(inode);
->=20
-> the ctime update will be coarse although it should be fine-grained.
->=20
+The patches now all look good to me. I'd like to discuss a bit how to merge
+them. The series has an ext4 cleanup (patch 3) and three iomap patches
+(patches 6, 8 and 9). Darrick, do you want to take the iomap patches through
+your tree?
 
-It is a bit. We'll need for users to do something like:
+The only dependency is that patch 7 for ext2 is dependent on definitions
+from patch 6 so I'd have to pull your branch into my tree. Or I can take
+all the iomap patches through my tree but for that it would be nice to have
+Darrick's acks.
 
-    inode->i_mtime =3D inode->i_ctime =3D current_ctime(inode);
+I can take the ext4 patch through my tree unless Ted objects.
 
-Fortunately, most do this already.
+I guess I won't rush this for the coming merge window (unless Linus decides
+to do rc8) but once we settle on the merge strategy I'll push out some
+branch on which we can base further ext2 iomap conversion work.
 
-> > +		spin_unlock(&inode->i_lock);
-> > +	} else {
-> > +		ktime_get_coarse_real_ts64(&now);
-> > +	}
-> > +
-> > +	return timestamp_truncate(now, inode);
->=20
-> I'm a bit confused here. Isn't the point of this series also to give NFS
-> finer grained granularity time stamps than what the filesystem is possibl=
-y
-> able to store on disk?
->=20
+								Honza
 
-No. We actually don't want to hand out timestamps more granular than the
-underlying filesystem can support, as we'd end up having to invalidate
-caches for all of those inodes once the server rebooted and the
-unrecordable bits get zeroed out.
-
-The main idea here is to just ensure that we use fine-grained timestamps
-when someone has queried the mtime or ctime since the last time it was
-updated.
-
-> Hmm, checking XFS it sets 1 ns granularity (as well as tmpfs) so for thes=
-e
-> using the coarser timers indeed gives a performance benefit. And probably
-> you've decided not implement the "better NFS support with coarse grained
-> timestamps" yet.
->=20
-
-Yep. The coarse grained timestamps are a _good_ thing for most
-filesystems as they allow you to skip a lot of metadata updates. My hope
-is that this will end up being like the i_version changes such that the
-extra fine-grained updates should be relatively rare and should
-(hopefully!) not cause noticeable performance blips. We'll see!
-
-> > +}
-> > +EXPORT_SYMBOL(current_cmtime);
-> > +
-> >  /**
-> >   * file_update_time - update mtime and ctime time
-> >   * @file: file accessed
-> > @@ -2080,7 +2116,7 @@ int file_update_time(struct file *file)
-> >  {
-> >  	int ret;
-> >  	struct inode *inode =3D file_inode(file);
-> > -	struct timespec64 now =3D current_time(inode);
-> > +	struct timespec64 now =3D current_cmtime(inode);
-> > =20
-> >  	ret =3D inode_needs_update_time(inode, &now);
-> >  	if (ret <=3D 0)
-> > @@ -2109,7 +2145,7 @@ static int file_modified_flags(struct file *file,=
- int flags)
-> >  {
-> >  	int ret;
-> >  	struct inode *inode =3D file_inode(file);
-> > -	struct timespec64 now =3D current_time(inode);
-> > +	struct timespec64 now =3D current_cmtime(inode);
-> > =20
-> >  	/*
-> >  	 * Clear the security bits if the process is not being run by root.
-> > diff --git a/fs/stat.c b/fs/stat.c
-> > index 7c238da22ef0..d8b80a2e36b7 100644
-> > --- a/fs/stat.c
-> > +++ b/fs/stat.c
-> > @@ -64,6 +64,16 @@ void generic_fillattr(struct mnt_idmap *idmap, struc=
-t inode *inode,
-> >  }
-> >  EXPORT_SYMBOL(generic_fillattr);
-> > =20
-> > +void fill_cmtime_and_mark(struct inode *inode, struct kstat *stat)
-> > +{
-> > +	spin_lock(&inode->i_lock);
-> > +	inode->i_state |=3D I_CMTIME_QUERIED;
-> > +	stat->ctime =3D inode->i_ctime;
-> > +	stat->mtime =3D inode->i_mtime;
-> > +	spin_unlock(&inode->i_lock);
-> > +}
-> > +EXPORT_SYMBOL(fill_cmtime_and_mark);
->=20
-> The name could be better here :). Maybe stat_fill_cmtime_and_mark()?
->=20
-> 							=09
-
-I have a quite different set that I've been working on that I'll
-(hopefully!) post soon. That one uses the least significant bit of the
-tv_nsec field as the QUERIED flag instead of the spinlock.
-
-Still cleaning up the set and need to test it some more though, so it's
-not quite ready to post. Stay tuned!
-
-Thanks for the review!=20
---=20
-Jeff Layton <jlayton@kernel.org>
+> PATCHv5 -> PATCHv6:
+> ===================
+> 1. Patch-2 Added generic_buffers_fsync_noflush() & generic_buffers_fsync() functions.
+> 2. Patch-3 & Patch-4 to use above functions in ext4 & ext2.
+> 3. Added Reviewed-by from Christoph on Patch-9 (iomap: Add DIO tracepoints)
+> 
+> RFCv4 -> PATCHv5:
+> =================
+> 1. Added trace_iomap_dio_rw_begin tracepoint in __iomap_dio_rw()
+> 2. Added Reviewed-by tags from Christoph
+> 
+> RFCv3 -> RFCV4:
+> ===============
+> 1. Renamed __generic_file_fsync_nolock() from libfs to generic_buffer_fsync() in
+>    fs/buffer.c
+>    (Review comment from Christoph)
+> 2. Fixed s/EVENTD/EVENTFD/ in TRACE_IOCB_STRINGS
+> 3. Fixed few data types for parameters in ext2 trace patch (size_t && ssize_t)
+> 4. Killed this patch "Minor refactor of iomap_dio_rw"
+> 5. Changed iomap tracepoint patch and fixed the data types (size_t && ssize_t)
+>    (addressed review comments from Christoph)
+> 
+> RFCv2 -> RFCv3:
+> ===============
+> 1. Addressed minor review comments related to extern, parameter naming in
+>    function declaration, removing not required braces and shorting overly long
+>    lines.
+> 2. Added Reviewed-by from various reviewers.
+> 3. Fixed a warning & couple of compilation errors in Patch-7 (ext2 trace points)
+>    related to CFLAGS_trace & second related to unable to find function
+>    definition for iov_iter_count(). (requires uio.h file)
+>    CFLAGS_trace is required in Makefile so that it can find trace.h file from
+>    tracepoint infrastructure.
+> 4. Changed naming of IOCB_STRINGS TO TRACE_IOCB_STRINGS.
+> 5. Shortened naming of tracepoint events for ext2 dio.
+> 6. Added iomap DIO tracepoint events.
+> 7. Disha tested this series internally against Power with "auto" group for 4k
+>    and 64k blocksize configuration. Added her "Tested-by" tag in all DIO
+>    related patches. No new failures were reported.
+> 
+> Thanks everyone for the review and test. The series is looking good to me now.
+> It has been tested on x86 and Power with different configurations.
+> Please let me know if anything else is required on this.
+> 
+> v2: https://lore.kernel.org/all/ZDTybcM4kjYLSrGI@infradead.org/
+> 
+> Ritesh Harjani (IBM) (9):
+>   ext2/dax: Fix ext2_setsize when len is page aligned
+>   fs/buffer.c: Add generic_buffers_fsync*() implementation
+>   ext4: Use generic_buffers_fsync_noflush() implementation
+>   ext2: Use generic_buffers_fsync() implementation
+>   ext2: Move direct-io to use iomap
+>   fs.h: Add TRACE_IOCB_STRINGS for use in trace points
+>   ext2: Add direct-io trace points
+>   iomap: Remove IOMAP_DIO_NOSYNC unused dio flag
+>   iomap: Add DIO tracepoints
+> 
+>  fs/buffer.c                 |  70 ++++++++++++++++++++
+>  fs/ext2/Makefile            |   5 +-
+>  fs/ext2/ext2.h              |   1 +
+>  fs/ext2/file.c              | 126 +++++++++++++++++++++++++++++++++++-
+>  fs/ext2/inode.c             |  58 ++++++++++-------
+>  fs/ext2/trace.c             |   6 ++
+>  fs/ext2/trace.h             |  94 +++++++++++++++++++++++++++
+>  fs/ext4/fsync.c             |  33 +++++-----
+>  fs/iomap/direct-io.c        |   9 ++-
+>  fs/iomap/trace.c            |   1 +
+>  fs/iomap/trace.h            |  78 ++++++++++++++++++++++
+>  include/linux/buffer_head.h |   4 ++
+>  include/linux/fs.h          |  14 ++++
+>  include/linux/iomap.h       |   6 --
+>  14 files changed, 456 insertions(+), 49 deletions(-)
+>  create mode 100644 fs/ext2/trace.c
+>  create mode 100644 fs/ext2/trace.h
+> 
+> --
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
