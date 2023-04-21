@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D665D6EB3C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 23:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 594576EB3C0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 23:44:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233621AbjDUVoW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 17:44:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36270 "EHLO
+        id S233592AbjDUVoT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 17:44:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233381AbjDUVoS (ORCPT
+        with ESMTP id S229748AbjDUVoS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 21 Apr 2023 17:44:18 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E24281BFD;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26E61FC7;
         Fri, 21 Apr 2023 14:44:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=kIm+HajOeoUPf2+lVY4BBZIQ0O/I9EyHtsPMg+rZ0Kc=; b=Len1yzwK9xjx59+qsKo1F+zvmo
-        +aUn2YbUJugrJe8dXSdbxmZlTKxrreA9IzoGdLVdC1eGVczJTAELlOsRwcJUqNaEGPL5rddVTdiuR
-        2paO6yV15AQmkvh/r2vO9b7zoXcIlpl5k+bxfP1tQYU7r0yIo0NJa57GpOa/vmN/iPcfQM25C9axc
-        9fAyhFR1UcdzhDQCHEodaN0a2CLAr7FSbG6HJhhQkhBXWfR0VxRZJhpFpyKBbupNefaohXdKaGvs2
-        iJXFqj+JOo/hz8cLkWi8cBerPGguStJhP3RoX47i5vHERUL+Etq2Peo/JaqIXZEyR3e8KdNnjBCCs
-        VqLXYKLQ==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=HAZkfNRruAgARTe618ACsQ6wCYRRSd9EZooPKA+qgbw=; b=DnGs3ejEo/+K910m27ugy2zmJh
+        qb5mcLlEfR2wdQNE/p1//CuFDbtuczZKd7j27Gu+GCzFIVBmDmCr5B7yxLhtPcDngNB4k80THHDuR
+        w2DMyrzuDU9msgM7Zy+oghoVKusNkUcBRoJC/pAS7Cc8RxdQEaVjJ+Bd2tc6Z6+C7gpfmYibKo708
+        Vi5Tb7IXkNa4kvn4N3d3BddjBa5cCKcG9E33SvWZ4GkM7ZwxcmNuAPg77qD1HGAf/ilG221q1rmJ5
+        9ejkkgHgonznxoi20BOMaCnyIcdksGRblL0lJg1XSWnZUtylSqq5ykxsRsCRkUyoDucbBY5Vd4B0h
+        p73Bmwcw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1ppyY1-00Btog-1d;
+        id 1ppyY1-00Btoi-1l;
         Fri, 21 Apr 2023 21:44:05 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hughd@google.com, akpm@linux-foundation.org, willy@infradead.org,
@@ -37,10 +37,12 @@ Cc:     p.raghav@samsung.com, da.gomez@samsung.com,
         mcgrof@kernel.org, patches@lists.linux.dev,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [RFC 0/8] shmem: add support for blocksize > PAGE_SIZE
-Date:   Fri, 21 Apr 2023 14:43:52 -0700
-Message-Id: <20230421214400.2836131-1-mcgrof@kernel.org>
+Subject: [RFC 1/8] shmem: replace BLOCKS_PER_PAGE with PAGE_SECTORS
+Date:   Fri, 21 Apr 2023 14:43:53 -0700
+Message-Id: <20230421214400.2836131-2-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230421214400.2836131-1-mcgrof@kernel.org>
+References: <20230421214400.2836131-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
@@ -54,44 +56,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an initial attempt to add support for block size > PAGE_SIZE for tmpfs.
-Why would you want this? It helps us experiment with higher order folio uses
-with fs APIS and helps us test out corner cases which would likely need
-to be accounted for sooner or later if and when filesystems enable support
-for this. Better review early and burn early than continue on in the wrong
-direction so looking for early feedback.
+Instead of having our own macro use the generic PAGE_SECTORS.
+It also makes it clearer what we are trying to compute here on
+the inode->i_blocks. We get the inode size by as define din
+__inode_get_bytes() by:
 
-I have other patches to convert shmem_write_begin() and shmem_file_read_iter()
-to folios too but those are not yet working. In the swap world the next
-thing to look at would be to convert swap_cluster_readahead() to folios.
+(inode->i_blocks << SECTOR_SHIFT) + inode->i_bytes
 
-If folks want to experiment with tmpfs, brd or with things related to larger
-block sizes I've put a branch up with this, Hannes's brd patches, and some
-still work-in-progress patches on my large-block-20230421 branch [0]. Similarly
-you can also use kdevops with CONFIG_QEMU_ENABLE_EXTRA_DRIVE_LARGEIO support
-to get everything with just as that branch is used for that:
+This produces no functional changes.
 
-  make
-  make bringup
-  make linux
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ mm/shmem.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=large-block-20230421
-[1] https://github.com/linux-kdevops/kdevops
-
-Luis Chamberlain (8):
-  shmem: replace BLOCKS_PER_PAGE with PAGE_SECTORS
-  shmem: convert to use folio_test_hwpoison()
-  shmem: account for high order folios
-  shmem: add helpers to get block size
-  shmem: account for larger blocks sizes for shmem_default_max_blocks()
-  shmem: consider block size in shmem_default_max_inodes()
-  shmem: add high order page support
-  shmem: add support to customize block size on multiple PAGE_SIZE
-
- include/linux/shmem_fs.h |   3 +
- mm/shmem.c               | 146 +++++++++++++++++++++++++++++----------
- 2 files changed, 114 insertions(+), 35 deletions(-)
-
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b5d102a2a766..5bf92d571092 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -86,7 +86,6 @@ static struct vfsmount *shm_mnt;
+ 
+ #include "internal.h"
+ 
+-#define BLOCKS_PER_PAGE  (PAGE_SIZE/512)
+ #define VM_ACCT(size)    (PAGE_ALIGN(size) >> PAGE_SHIFT)
+ 
+ /* Pretend that each entry is of this size in directory's i_size */
+@@ -363,7 +362,7 @@ static void shmem_recalc_inode(struct inode *inode)
+ 	freed = info->alloced - info->swapped - inode->i_mapping->nrpages;
+ 	if (freed > 0) {
+ 		info->alloced -= freed;
+-		inode->i_blocks -= freed * BLOCKS_PER_PAGE;
++		inode->i_blocks -= freed * PAGE_SECTORS;
+ 		shmem_inode_unacct_blocks(inode, freed);
+ 	}
+ }
+@@ -381,7 +380,7 @@ bool shmem_charge(struct inode *inode, long pages)
+ 
+ 	spin_lock_irqsave(&info->lock, flags);
+ 	info->alloced += pages;
+-	inode->i_blocks += pages * BLOCKS_PER_PAGE;
++	inode->i_blocks += pages * PAGE_SECTORS;
+ 	shmem_recalc_inode(inode);
+ 	spin_unlock_irqrestore(&info->lock, flags);
+ 
+@@ -397,7 +396,7 @@ void shmem_uncharge(struct inode *inode, long pages)
+ 
+ 	spin_lock_irqsave(&info->lock, flags);
+ 	info->alloced -= pages;
+-	inode->i_blocks -= pages * BLOCKS_PER_PAGE;
++	inode->i_blocks -= pages * PAGE_SECTORS;
+ 	shmem_recalc_inode(inode);
+ 	spin_unlock_irqrestore(&info->lock, flags);
+ 
+@@ -2002,7 +2001,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+ 
+ 	spin_lock_irq(&info->lock);
+ 	info->alloced += folio_nr_pages(folio);
+-	inode->i_blocks += (blkcnt_t)BLOCKS_PER_PAGE << folio_order(folio);
++	inode->i_blocks += (blkcnt_t) PAGE_SECTORS << folio_order(folio);
+ 	shmem_recalc_inode(inode);
+ 	spin_unlock_irq(&info->lock);
+ 	alloced = true;
+@@ -2659,7 +2658,7 @@ int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+ 
+ 	spin_lock_irq(&info->lock);
+ 	info->alloced++;
+-	inode->i_blocks += BLOCKS_PER_PAGE;
++	inode->i_blocks += PAGE_SECTORS;
+ 	shmem_recalc_inode(inode);
+ 	spin_unlock_irq(&info->lock);
+ 
 -- 
 2.39.2
 
