@@ -2,45 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 016EC6EA232
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 05:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E8C6EA34A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 07:43:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233298AbjDUDOI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Apr 2023 23:14:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33898 "EHLO
+        id S231710AbjDUFnr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 01:43:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232540AbjDUDOG (ORCPT
+        with ESMTP id S229451AbjDUFnp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Apr 2023 23:14:06 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2074.outbound.protection.outlook.com [40.107.114.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2656B119;
-        Thu, 20 Apr 2023 20:14:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bJeS0w5CXR/RKUr/W2sXmzsTX8IXNC163Nz58WllFPcEOlia8dbplqncpseqho10Uynmlg37GXKNflvwi1yYzixWsKliVBK8b48EqyIhxEguazddY0u3yLWFSbze+eY9aZK3fp4/0/6gtceV5Vjrb2V6wL2sVomLTtjq0NYPeFcXcXUoGSzZZQSlnuPSMJhZui6Xcls/ud0RiNdjKezHPsexUp1YD/qQAiA3ol267L0iKH+Mzyo8cR6y0WrhWhi2PdOlr4CcDnglHywStWQPuL9TSW5L0FObCDL/afwKDtqoNv+twwcFwj6a6NNEVWm3Vt4P6BfipUdjw6W2MZ1AWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mXL2lZcPuMPZVV6OnbfP7ElxOv9MS1TLEmJ5oYaOLVI=;
- b=NjPGQu9h0V9e09xHMImKXdvpl/dp5JCjPlOXJs++fqe5wVfKq6Hmx8WLmNZDVaQYsx1CUPiGUaMVhW+/pBt2pQQswSziAuzRrzoL7vhWzkZ1l8LgfEy07ClmVFxO/6INFAUnyV12tgS1cLjaChPL6cUT3+0aOeQZl5/TMfBbun70wocUGHDnh3CL7gnQJyj59mPKcebTDkrk6I4GVwkEnI3dCIT5NiKckLTD0QCd1vQnima4JtCn4IWTOUBbPL996ViCGfjZ3N2oogU7jZ7M4S+Lp6aW8pipXg6n2X56hrgMj/1PtxA6wX8dMYiT1sk0yVwYDSretnoM7jUUwuU4jA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nec.com; dmarc=pass action=none header.from=nec.com; dkim=pass
- header.d=nec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nec.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mXL2lZcPuMPZVV6OnbfP7ElxOv9MS1TLEmJ5oYaOLVI=;
- b=fodXP5umcLi1d4yzMprpakKd815YfMHyHNkN8CXjUtFsO6+U3JFUlLVra3Y26AQ/zQ+5ngF1QPv6usBfQTTY9rJzdN7PTm4XPbLibC1L0dorUSkrYaryLEE9q9bIJeb7J0IK1O/CukX1vP0ygE6EFEsdDClIwYiHPbHIhiehx2M=
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com (2603:1096:400:13c::10)
- by TYCPR01MB8470.jpnprd01.prod.outlook.com (2603:1096:400:158::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.22; Fri, 21 Apr
- 2023 03:13:58 +0000
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::15c9:309c:d898:c0f5]) by TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::15c9:309c:d898:c0f5%3]) with mapi id 15.20.6319.022; Fri, 21 Apr 2023
- 03:13:58 +0000
-From:   =?utf-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPo+OAgOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+        Fri, 21 Apr 2023 01:43:45 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC04D1;
+        Thu, 20 Apr 2023 22:43:42 -0700 (PDT)
+Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.56])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Q2k2H41Cpz8xD2;
+        Fri, 21 Apr 2023 13:42:47 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Fri, 21 Apr 2023 13:43:40 +0800
+Message-ID: <1bd6a635-5a3d-c294-38ce-5c6fcff6494f@huawei.com>
+Date:   Fri, 21 Apr 2023 13:43:39 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2] mm: hwpoison: coredump: support recovery from
+ dump_user_range()
+Content-Language: en-US
+To:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>
 CC:     Jane Chu <jane.chu@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -52,13 +44,6 @@ CC:     Jane Chu <jane.chu@oracle.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Tong Tiangen <tongtiangen@huawei.com>,
         Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v2] mm: hwpoison: coredump: support recovery from
- dump_user_range()
-Thread-Topic: [PATCH v2] mm: hwpoison: coredump: support recovery from
- dump_user_range()
-Thread-Index: AQHZcaO0la0PeSJsOESJfU1UoYMpbK8w0aIAgAFrdICAAE1ugIAA6rGAgAAP4ACAAMqmAIAAy5sA
-Date:   Fri, 21 Apr 2023 03:13:58 +0000
-Message-ID: <20230421031356.GA3048466@hori.linux.bs1.fc.nec.co.jp>
 References: <20230417045323.11054-1-wangkefeng.wang@huawei.com>
  <20230418031243.GA2845864@hori.linux.bs1.fc.nec.co.jp>
  <54d761bb-1bcc-21a2-6b53-9d797a3c076b@huawei.com>
@@ -67,235 +52,281 @@ References: <20230417045323.11054-1-wangkefeng.wang@huawei.com>
  <7d0c38a9-ed2a-a221-0c67-4a2f3945d48b@oracle.com>
  <6dc1b117-020e-be9e-7e5e-a349ffb7d00a@huawei.com>
  <9a9876a2-a2fd-40d9-b215-3e6c8207e711@huawei.com>
-In-Reply-To: <9a9876a2-a2fd-40d9-b215-3e6c8207e711@huawei.com>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nec.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB8591:EE_|TYCPR01MB8470:EE_
-x-ms-office365-filtering-correlation-id: c0f0865e-43d4-4c74-c41a-08db4216729f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: jXvmhat1Csaru45ZMBEd+DGbsvYjau8INp5tbhFx6y9/Hot637n+T6RiLR+8N9SwJrARsKi13guvYPElfOVw4pQoIpJWWq1LejZxjSo+zHY5XFHz7oY7gL0VC9vzNyFzdX6rx5784r4pJZcc/B1GN6berO+rNh+AowFWj9wHqk7egdnQSTyAozraQqfcGzpL5sX+ukme2YMa76AnlSFF+byvfyiGF3AvUGJgFkFXSI4BDFd3YfM2JtUqQ2mnNn4p7wUAmiaZ4lwlG2t18LurPjIMNSzNNDsRKRrz8UgP8x4LyCxkPuQ+D328P/57fye158vh14xf7uOrGLoqCHEcDIdgxCXW09Brbwdd9YnFsGimm9EHvsdxdg9zsmuj3BM7VtFNfYKkVc/MaL1isZ8o7FeiSMHNVZ5drTl2cK7gAa4Jy0U17IJciSLQeyigolaeAkBR4lUD3dA3qoHS7flbGUDK83CiMHvGFF1+bW1ExnZleNY6Vobf1gZjJk7nf5FB+8PcKXU3G7BdhZfvcKkdjjYF/7M74f/iP/EE6/nuZcOG89jjD+0NgPt+BH4UqHb4pSqXJsXEB2u5GHywXSrzB0Um0JQmDrpOBrqqpaLbp58=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB8591.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(376002)(366004)(39860400002)(396003)(346002)(451199021)(54906003)(83380400001)(478600001)(86362001)(26005)(9686003)(6506007)(6512007)(1076003)(966005)(53546011)(6486002)(71200400001)(76116006)(66946007)(82960400001)(316002)(6916009)(64756008)(66476007)(4326008)(66446008)(66556008)(186003)(5660300002)(7416002)(8676002)(8936002)(38100700002)(41300700001)(2906002)(38070700005)(122000001)(33656002)(85182001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TGpvYjVIZDdnSnNmRmttVFJmWlB6Q3NMVlRNWGRFeXdWWEtJSVZFUVI1dytF?=
- =?utf-8?B?TFYyZ1JGcUc3dlJId2d3QnhZdjdiYi92NElIUllRMXcyazVEVWljdng0ZUtO?=
- =?utf-8?B?Ky9nU1VQczMvMFo2YjZwZVhlY2hFZXhmblpPR2hBYjZJSUNnL1djVjNYck9M?=
- =?utf-8?B?NEdBZEU3WWFWOFVKY0hyNEhmeFdrQVNjcjBjRnpiUndLWE1sbzluUGZybEtD?=
- =?utf-8?B?b2wzS3JkR3ZGaGtJQ0Mxd0c4YmxUS3p0dXhMNm9yQVN4ek00anRaMFRsN2lK?=
- =?utf-8?B?WWp1a3pzSHU1QTZEdWhlejQ4WWduWkRXdjNIaXV1RFFxRHRZcUlaUTRPOTZk?=
- =?utf-8?B?R3BJRzlHWkIrNGxSV3hQWmg2QU13TDdRWGFDZjZTVUxQRHR5bDh5T1VQS1NK?=
- =?utf-8?B?eUJVVzc3MXJjVWlJaFUveC9NazFsVFlqdi9menpyL3dlSkI0NXNYaEIycWRK?=
- =?utf-8?B?Z0JnWWhCWGgwN3gvZSsvTUZ3UHhucGRDZXlHb1I0VkJ6TEtpNkN6ZHdkWDFz?=
- =?utf-8?B?YXdXY2oycXNwZ2NzNWE0cUZuK2l1eTYyWFcrYzhXQmZHUFp5QkthclM1WDhR?=
- =?utf-8?B?MHEwSUtTV1hlQ1lnRW9IRVZnajEvNjIxU0VSOE9nMm95UlhWZ1VsMHQzUklG?=
- =?utf-8?B?dit0TC94OWZIckFTcHV3Wkhock1TYjNEMmVPeFc4OGdyY1gzZmNFMnc0ZzMr?=
- =?utf-8?B?c2x0aHRRSEQ1N0gyVEErSlhRd2ZYUGJnNjhyaVBwclJwMkRMcHNTeFp6YWhr?=
- =?utf-8?B?V1hmcVdFTS9kdmFOTms2cHZlYUU0U3BWRXcxMjk1SVg5MmhmcUxHUHdKV0pX?=
- =?utf-8?B?RnQyUVNpbWFjWTdVRld5eFJqTEQycjluWkRUZ1F4T09MSmdZbHJpUklXZ2ly?=
- =?utf-8?B?T0tPSjU5THBnNThzd1FXd3YvbWZaNHJrQ3RON0lmK080a3JqL0pGZ1doS2tG?=
- =?utf-8?B?UXEyWHdGanA5YzNrSWdwMmtEenFaZkY2TmtKdzVLQnZ0Q3RjZklkYWZDNENr?=
- =?utf-8?B?RkRSUUxoMWxzazRuWjlHWUIxSGIrbzU0NXpHN2RSMEQvdE45SlB6LzdGV0Jv?=
- =?utf-8?B?Zzd2YUZFUTZXMkdVK2lZUzZoNE9FN3F2ZEhETEVFTUFBTHlad2U3R2c5Z0FL?=
- =?utf-8?B?eENxR0wwempteGhZUXZQdi8ydGFXdC9idnBnU2N5eDhocnFBODRxaXpDTEUx?=
- =?utf-8?B?RTk0T05aOHlORU8vSUxScmcwTW1zbFUycGxIdm1EOVNXZzgwQ1puSDNRZjg5?=
- =?utf-8?B?RVFpNUJmUitBOUpEUWdmb245WGF5YWFMQWhCY1BjczFKQks4SUhCR2gvZDZS?=
- =?utf-8?B?UHhxWDlQb0pjOThBL25pbE80QmhzeWUxUlU4NGpCN2FVNmhwbXJYOEZ4YlE4?=
- =?utf-8?B?QUZ6SzBCd1NlY3FhbXVpdkFGeEZKOWFteUk5SkhCUmVCZFZGaFJnSVQxTE0x?=
- =?utf-8?B?bEFITFY1TVlNeXZrN2xoSXQvckpOYmF4b2RoSmtrZGxaYTVxaTFMc2FOSG9p?=
- =?utf-8?B?eTFEYnNoZ0NuWFNpTmZVVitLejFVSnlzLzhrbkFXK24xSHRQNzAzMzU2QW12?=
- =?utf-8?B?MTdKaTE1aFg0bG1FMVVic2NSd09FRHMwWFBRV3h0SmtxcnVYVHJjTW9sNXV5?=
- =?utf-8?B?MVF4bkpNM1NPSzd0bmNrR3dGQWdIWlBWbE1WNXVpRDdBbzE5K3RhUUZ0dEVM?=
- =?utf-8?B?RDF3ZUw5bkdIQ2s4T21EMnNtb3FReUVtT3JkQThROEpsVGJzNmJSdjV1UVBC?=
- =?utf-8?B?VE1EdWROU1JybzNLaXhDQ1QwUlJuOWZWUXZtYXJqUDc3S21qNlhpcGQ0aGcr?=
- =?utf-8?B?amFhNy8yMDJHSmtKODFqS2FOK3JQMEpFN0VKbjJKaUwvd0FkMzNobmdZakI5?=
- =?utf-8?B?N2M5RFBSc0ZxR3lqbkxxS0U3d2twNHl3NUpzSWhSS3UweklRczZocEZ4QkI5?=
- =?utf-8?B?cXlqaVRKRmcyVXB6K3FQeGNOMTlZemlCYm1pR1IvNllOUEt1Y1NGcUVVbGhU?=
- =?utf-8?B?cEdPcEFpVmQvaUt3T3NlUXdOMHBCZTZlelVTVkR4akxSU1hxL1B0U3BEWUx5?=
- =?utf-8?B?cEUrWnhYYXFhclQ1dVpsUXJkTUtWYTFvVFNpTTdxZUExTnpsRmVQVUZ5TEg5?=
- =?utf-8?B?SFAzcFluU29rQzhTb0xUUTFVam82NHN6Rlhia2RlZldHRkFaWVNTZHBHR3ZJ?=
- =?utf-8?B?bVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E56A50645648284897F5626D0E8EE5E0@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB8591.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0f0865e-43d4-4c74-c41a-08db4216729f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Apr 2023 03:13:58.2290
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e67df547-9d0d-4f4d-9161-51c6ed1f7d11
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MbKjjmaqsA9AkIuM4h4LsOfysrwPr82XIitWrDHl2Bw56Tvj4av7dsgSrN9/iRKxRI1lJqWpzmKGOWKAEjwIVQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8470
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+ <20230421031356.GA3048466@hori.linux.bs1.fc.nec.co.jp>
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20230421031356.GA3048466@hori.linux.bs1.fc.nec.co.jp>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.243]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-5.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gVGh1LCBBcHIgMjAsIDIwMjMgYXQgMTE6MDU6MTJQTSArMDgwMCwgS2VmZW5nIFdhbmcgd3Jv
-dGU6DQo+IA0KPiANCj4gT24gMjAyMy80LzIwIDEwOjU5LCBLZWZlbmcgV2FuZyB3cm90ZToNCj4g
-PiANCj4gPiANCj4gPiBPbiAyMDIzLzQvMjAgMTA6MDMsIEphbmUgQ2h1IHdyb3RlOg0KPiA+ID4g
-DQo+ID4gPiBPbiA0LzE5LzIwMjMgNTowMyBBTSwgS2VmZW5nIFdhbmcgd3JvdGU6DQo+ID4gPiA+
-IA0KPiA+ID4gPiANCj4gPiA+ID4gT24gMjAyMy80LzE5IDE1OjI1LCBIT1JJR1VDSEkgTkFPWUEo
-5aCA5Y+jIOebtOS5nykgd3JvdGU6DQo+ID4gPiA+ID4gT24gVHVlLCBBcHIgMTgsIDIwMjMgYXQg
-MDU6NDU6MDZQTSArMDgwMCwgS2VmZW5nIFdhbmcgd3JvdGU6DQo+ID4gPiA+ID4gPiANCj4gPiA+
-ID4gPiA+IA0KPiA+IC4uLg0KPiA+ID4gPiA+ID4gPiA+IEBAIC0zNzEsNiArMzcyLDE0IEBAIHNp
-emVfdA0KPiA+ID4gPiA+ID4gPiA+IF9jb3B5X21jX3RvX2l0ZXIoY29uc3Qgdm9pZCAqYWRkciwg
-c2l6ZV90IGJ5dGVzLA0KPiA+ID4gPiA+ID4gPiA+IHN0cnVjdCBpb3ZfaXRlciAqaSkNCj4gPiA+
-ID4gPiA+ID4gPiDCoMKgIEVYUE9SVF9TWU1CT0xfR1BMKF9jb3B5X21jX3RvX2l0ZXIpOw0KPiA+
-ID4gPiA+ID4gPiA+IMKgwqAgI2VuZGlmIC8qIENPTkZJR19BUkNIX0hBU19DT1BZX01DICovDQo+
-ID4gPiA+ID4gPiA+ID4gK3N0YXRpYyB2b2lkICptZW1jcHlfZnJvbV9pdGVyKHN0cnVjdCBpb3Zf
-aXRlcg0KPiA+ID4gPiA+ID4gPiA+ICppLCB2b2lkICp0bywgY29uc3Qgdm9pZCAqZnJvbSwNCj4g
-PiA+ID4gPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc2l6ZV90IHNp
-emUpDQo+ID4gPiA+ID4gPiA+ID4gK3sNCj4gPiA+ID4gPiA+ID4gPiArwqDCoMKgIGlmIChpb3Zf
-aXRlcl9pc19jb3B5X21jKGkpKQ0KPiA+ID4gPiA+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoCByZXR1
-cm4gKHZvaWQgKiljb3B5X21jX3RvX2tlcm5lbCh0bywgZnJvbSwgc2l6ZSk7DQo+ID4gPiA+ID4g
-PiA+IA0KPiA+ID4gPiA+ID4gPiBJcyBpdCBoZWxwZnVsIHRvIGNhbGwgbWVtb3J5X2ZhaWx1cmVf
-cXVldWUoKSBpZg0KPiA+ID4gPiA+ID4gPiBjb3B5X21jX3RvX2tlcm5lbCgpIGZhaWxzDQo+ID4g
-PiA+ID4gPiA+IGR1ZSB0byBhIG1lbW9yeSBlcnJvcj8NCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+
-ID4gRm9yIGR1bXBfdXNlcl9yYW5nZSgpLCB0aGUgdGFzayBpcyBkeWluZywgaWYgY29weSBpbmNv
-bXBsZXRlIHNpemUsIHRoZQ0KPiA+ID4gPiA+ID4gY29yZWR1bXAgd2lsbCBmYWlsIGFuZCB0YXNr
-IHdpbGwgZXhpdCwgYWxzbyBtZW1vcnlfZmFpbHVyZSB3aWxsDQo+ID4gPiA+ID4gPiBiZSBjYWxs
-ZWQgYnkga2lsbF9tZV9tYXliZSgpLA0KPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiDCoCBDUFU6
-IDAgUElEOiAxNDE4IENvbW06IHRlc3QgVGFpbnRlZDogR8KgwqAgTQ0KPiA+ID4gPiA+ID4gNi4z
-LjAtcmM1ICMyOQ0KPiA+ID4gPiA+ID4gwqAgQ2FsbCBUcmFjZToNCj4gPiA+ID4gPiA+IMKgwqAg
-PFRBU0s+DQo+ID4gPiA+ID4gPiDCoMKgIGR1bXBfc3RhY2tfbHZsKzB4MzcvMHg1MA0KPiA+ID4g
-PiA+ID4gwqDCoCBtZW1vcnlfZmFpbHVyZSsweDUxLzB4OTcwDQo+ID4gPiA+ID4gPiDCoMKgIGtp
-bGxfbWVfbWF5YmUrMHg1Yi8weGMwDQo+ID4gPiA+ID4gPiDCoMKgIHRhc2tfd29ya19ydW4rMHg1
-YS8weDkwDQo+ID4gPiA+ID4gPiDCoMKgIGV4aXRfdG9fdXNlcl9tb2RlX3ByZXBhcmUrMHgxOTQv
-MHgxYTANCj4gPiA+ID4gPiA+IMKgwqAgaXJxZW50cnlfZXhpdF90b191c2VyX21vZGUrMHg5LzB4
-MzANCj4gPiA+ID4gPiA+IMKgwqAgbm9pc3RfZXhjX21hY2hpbmVfY2hlY2srMHg0MC8weDgwDQo+
-ID4gPiA+ID4gPiDCoMKgIGFzbV9leGNfbWFjaGluZV9jaGVjaysweDMzLzB4NDANCj4gPiA+ID4g
-PiANCj4gPiA+ID4gPiBJcyB0aGlzIGNhbGwgdHJhY2UgcHJpbnRlZCBvdXQgd2hlbiBjb3B5X21j
-X3RvX2tlcm5lbCgpDQo+ID4gPiA+ID4gZmFpbGVkIGJ5IGZpbmRpbmcNCj4gPiA+ID4gPiBhIG1l
-bW9yeSBlcnJvciAob3IgaW4gc29tZSB0ZXN0Y2FzZSB1c2luZyBlcnJvciBpbmplY3Rpb24pPw0K
-PiA+ID4gPiANCj4gPiA+ID4gSSBhZGQgZHVtcF9zdGFjaygpIGludG8gbWVtb3J5X2ZhaWx1cmUo
-KSB0byBjaGVjayB3aGV0aGVyIHRoZSBwb2lzb25lZA0KPiA+ID4gPiBtZW1vcnkgaXMgY2FsbGVk
-IG9yIG5vdCwgYW5kIHRoZSBjYWxsIHRyYWNlIHNob3dzIGl0IGRvIGNhbGwNCj4gPiA+ID4gbWVt
-b3J5X2ZhaWx1cmUoKe+8jCBidXQgSSBnZXQgY29uZnVzZWQgd2hlbiBkbyB0aGUgdGVzdC4NCj4g
-PiA+ID4gDQo+ID4gPiA+ID4gSW4gbXkgdW5kZXJzdGFuZGluZywgYW4gTUNFIHNob3VsZCBub3Qg
-YmUgdHJpZ2dlcmVkIHdoZW4NCj4gPiA+ID4gPiBNQy1zYWZlIGNvcHkgdHJpZXMNCj4gPiA+ID4g
-PiB0byBhY2Nlc3MgdG8gYSBtZW1vcnkgZXJyb3IuwqAgU28gSSBmZWVsIHRoYXQgd2UgbWlnaHQg
-YmUgdGFsa2luZyBhYm91dA0KPiA+ID4gPiA+IGRpZmZlcmVudCBzY2VuYXJpb3MuDQo+ID4gPiA+
-ID4gDQo+ID4gPiA+ID4gV2hlbiBJIHF1ZXN0aW9uZWQgcHJldmlvdXNseSwgSSB0aG91Z2h0IGFi
-b3V0IHRoZSBmb2xsb3dpbmcgc2NlbmFyaW86DQo+ID4gPiA+ID4gDQo+ID4gPiA+ID4gwqDCoCAt
-IGEgcHJvY2VzcyB0ZXJtaW5hdGVzIGFibm9ybWFsbHkgZm9yIGFueSByZWFzb24gbGlrZQ0KPiA+
-ID4gPiA+IHNlZ21lbnRhdGlvbiBmYXVsdCwNCj4gPiA+ID4gPiDCoMKgIC0gdGhlbiwga2VybmVs
-IHRyaWVzIHRvIGNyZWF0ZSBhIGNvcmVkdW1wLA0KPiA+ID4gPiA+IMKgwqAgLSBkdXJpbmcgdGhp
-cywgdGhlIGNvcHlpbmcgcm91dGluZSBhY2Nlc3NlcyB0byBjb3JydXB0ZWQNCj4gPiA+ID4gPiBw
-YWdlIHRvIHJlYWQuDQo+ID4gPiA+ID4gDQo+ID4gPiA+IFllcywgd2UgdGVzdGVkIGxpa2UgeW91
-ciBkZXNjcmliZWQsDQo+ID4gPiA+IA0KPiA+ID4gPiAxKSBpbmplY3QgbWVtb3J5IGVycm9yIGlu
-dG8gYSBwcm9jZXNzDQo+ID4gPiA+IDIpIHNlbmQgYSBTSUdBQlQvU0lHQlVTIHRvIHByb2Nlc3Mg
-dG8gdHJpZ2dlciB0aGUgY29yZWR1bXANCj4gPiA+ID4gDQo+ID4gPiA+IFdpdGhvdXQgcGF0Y2gs
-IHRoZSBzeXN0ZW0gcGFuaWMsIGFuZCB3aXRoIHBhdGNoIG9ubHkgcHJvY2VzcyBleGl0cy4NCj4g
-PiA+ID4gDQo+ID4gPiA+ID4gSW4gdGhpcyBjYXNlIHRoZSBjb3JydXB0ZWQgcGFnZSBzaG91bGQg
-bm90IGJlIGhhbmRsZWQgYnkNCj4gPiA+ID4gPiBtZW1vcnlfZmFpbHVyZSgpDQo+ID4gPiA+ID4g
-eWV0IChiZWNhdXNlIG90aGVyd2lzZSBwcm9wZXJseSBoYW5kbGVkIGh3cG9pc29uZWQgcGFnZQ0K
-PiA+ID4gPiA+IHNob3VsZCBiZSBpZ25vcmVkDQo+ID4gPiA+ID4gYnkgY29yZWR1bXAgcHJvY2Vz
-cykuwqAgVGhlIGNvcmVkdW1wIHByb2Nlc3Mgd291bGQgZXhpdCB3aXRoDQo+ID4gPiA+ID4gZmFp
-bHVyZSB3aXRoDQo+ID4gPiA+ID4geW91ciBwYXRjaCwgYnV0IHRoZW4sIHRoZSBjb3JydXB0ZWQg
-cGFnZSBpcyBzdGlsbCBsZWZ0DQo+ID4gPiA+ID4gdW5oYW5kbGVkIGFuZCBjYW4NCj4gPiA+ID4g
-PiBiZSByZXVzZWQsIHNvIGFueSBvdGhlciB0aHJlYWQgY2FuIGVhc2lseSBhY2Nlc3MgdG8gaXQg
-YWdhaW4uDQo+ID4gPiA+IA0KPiA+ID4gPiBBcyBzaG93biBhYm92ZSwgdGhlIGNvcnJ1cHRlZCBw
-YWdlIHdpbGwgYmUgaGFuZGxlZCBieQ0KPiA+ID4gPiBtZW1vcnlfZmFpbHVyZSgpLCBidXQgd2hh
-dCBJJ20gd29uZGVyaW5nLA0KPiA+ID4gPiAxKSBtZW1vcnlfZmFpbHVyZSgpIGlzIG5vdCBhbHdh
-eXMgY2FsbGVkDQo+ID4gPiA+IDIpIGxvb2sgYXQgdGhlIGFib3ZlIGNhbGwgdHJhY2UsIGl0IGxv
-b2tzIGxpa2UgZnJvbSBhc3luY2hyb25vdXMNCj4gPiA+ID4gwqDCoMKgIGludGVycnVwdCwgbm90
-IGZyb20gc3luY2hyb25vdXMgZXhjZXB0aW9uLCByaWdodD8NCj4gPiA+ID4gDQo+ID4gPiA+ID4g
-DQo+ID4gPiA+ID4gWW91IGNhbiBmaW5kIGEgZmV3IG90aGVyIHBsYWNlcyAobGlrZSBfX3dwX3Bh
-Z2VfY29weV91c2VyDQo+ID4gPiA+ID4gYW5kIGtzbV9taWdodF9uZWVkX3RvX2NvcHkpDQo+ID4g
-PiA+ID4gdG8gY2FsbCBtZW1vcnlfZmFpbHVyZV9xdWV1ZSgpIHRvIGNvcGUgd2l0aCBzdWNoIHVu
-aGFuZGxlZCBlcnJvciBwYWdlcy4NCj4gPiA+ID4gPiBTbyBkb2VzIG1lbWNweV9mcm9tX2l0ZXIo
-KSBkbyB0aGUgc2FtZT8NCj4gPiA+ID4gDQo+ID4gPiA+IEkgYWRkIHNvbWUgZGVidWcgcHJpbnQg
-aW4gZG9fbWFjaGluZV9jaGVjaygpIG9uIHg4NjoNCj4gPiA+ID4gDQo+ID4gPiA+IDEpIENPVywN
-Cj4gPiA+ID4gwqDCoCBtLmtmbGFnczogTUNFX0lOX0tFUk5FTF9SRUNPVg0KPiA+ID4gPiDCoMKg
-IGZpeHVwX3R5cGU6IEVYX1RZUEVfREVGQVVMVF9NQ0VfU0FGRQ0KPiA+ID4gPiANCj4gPiA+ID4g
-wqDCoCBDUFU6IDExIFBJRDogMjAzOCBDb21tOiBlaW5qX21lbV91Yw0KPiA+ID4gPiDCoMKgIENh
-bGwgVHJhY2U6DQo+ID4gPiA+IMKgwqDCoCA8I01DPg0KPiA+ID4gPiDCoMKgwqAgZHVtcF9zdGFj
-a19sdmwrMHgzNy8weDUwDQo+ID4gPiA+IMKgwqDCoCBkb19tYWNoaW5lX2NoZWNrKzB4N2FkLzB4
-ODQwDQo+ID4gPiA+IMKgwqDCoCBleGNfbWFjaGluZV9jaGVjaysweDVhLzB4OTANCj4gPiA+ID4g
-wqDCoMKgIGFzbV9leGNfbWFjaGluZV9jaGVjaysweDFlLzB4NDANCj4gPiA+ID4gwqDCoCBSSVA6
-IDAwMTA6Y29weV9tY19mcmFnaWxlKzB4MzUvMHg2Mg0KPiA+ID4gPiANCj4gPiA+ID4gwqDCoCBp
-ZiAobS5rZmxhZ3MgJiBNQ0VfSU5fS0VSTkVMX1JFQ09WKSB7DQo+ID4gPiA+IMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIGlmICghZml4dXBfZXhjZXB0aW9uKHJlZ3MsIFg4Nl9UUkFQX01DLCAwLCAwKSkN
-Cj4gPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1jZV9wYW5pYygi
-RmFpbGVkIGtlcm5lbCBtb2RlIHJlY292ZXJ5IiwgJm0sIG1zZyk7DQo+ID4gPiA+IMKgwqAgfQ0K
-PiA+ID4gPiANCj4gPiA+ID4gwqDCoCBpZiAobS5rZmxhZ3MgJiBNQ0VfSU5fS0VSTkVMX0NPUFlJ
-TikNCj4gPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqAgcXVldWVfdGFza193b3JrKCZtLCBtc2cs
-IGtpbGxfbWVfbmV2ZXIpOw0KPiA+ID4gPiANCj4gPiA+ID4gVGhlcmUgaXMgbm8gbWVtb3J5X2Zh
-aWx1cmUoKSBjYWxsZWQgd2hlbg0KPiA+ID4gPiBFWF9UWVBFX0RFRkFVTFRfTUNFX1NBRkUsIGFs
-c28gRVhfVFlQRV9GQVVMVF9NQ0VfU0FGRSB0b28sDQo+ID4gPiA+IHNvIHdlIG1hbnVhbGx5IGFk
-ZCBhIG1lbW9yeV9mYWlsdXJlX3F1ZXVlKCkgdG8gaGFuZGxlIHdpdGgNCj4gPiA+ID4gdGhlIHBv
-aXNvbmVkIHBhZ2UuDQo+ID4gPiA+IA0KPiA+ID4gPiAy77yJIENvcmVkdW1wLMKgIG5vdGhpbmcg
-cHJpbnQgYWJvdXQgbS5rZmxhZ3MgYW5kIGZpeHVwX3R5cGUsDQo+IA0KPiBTb3Jyee+8jEkgZm9y
-Z2V0IHRvIHNldCBjb3JlZHVtcCBmaWxlIHNpemUgOigNCj4gDQo+IFRoZSBjb3JlZHVtcCBkbyB0
-cmlnZ2VyIHRoZSBkb19tYWNoaW5lX2NoZWNrKCkgd2l0aCBzYW1lIG0ua2ZsYWdzIGFuZA0KPiBm
-aXh1cF90eXBlIGxpa2UgY293DQo+IA0KPiANCj4gPiA+ID4gd2l0aCBhYm92ZSBjaGVjaywgYWRk
-IGEgbWVtb3J5X2ZhaWx1cmVfcXVldWUoKSBvciBtZW1vcnlfZmFpbHVyZSgpIHNlZW1zDQo+ID4g
-PiA+IHRvIGJlIG5lZWRlZCBmb3IgbWVtY3B5X2Zyb21faXRlcigpLCBidXQgaXQgaXMgdG90YWxs
-eSBkaWZmZXJlbnQgZnJvbQ0KPiA+ID4gPiB0aGUgQ09XIHNjZW5hcmlvDQo+ID4gPiA+IA0KPiAN
-Cj4gc28gdGhlIG1lbWNweV9mcm9tX2l0ZXIoKSBmcm9tIGNvcmVkdW1wIGlzIHNhbWUgYXMgY293
-IHNjZW5hcmlvLg0KDQpPa2F5LCB0aGFuayB5b3UgZm9yIGNvbmZpcm1hdGlvbi4NCg0KPiANCj4g
-PiA+ID4gDQo+ID4gPiA+IEFub3RoZXIgcXVlc3Rpb24sIG90aGVyIGNvcHlfbWNfdG9fa2VybmVs
-KCkgY2FsbGVycywgZWcsDQo+ID4gPiA+IG52ZGltbS9kbS13cml0ZWNhY2hlL2RheCwgdGhlcmUg
-YXJlIG5vdCBjYWxsIG1lbW9yeV9mYWlsdXJlX3F1ZXVlKCksDQo+ID4gPiA+IHNob3VsZCB0aGV5
-IG5lZWQgYSBtZW1vcnlfZmFpbHVyZV9xdWV1ZSgpLCBpZiBzbywgd2h5IG5vdCBhZGQgaXQgaW50
-bw0KPiA+ID4gPiBkb19tYWNoaW5lX2NoZWNrKCkgPw0KPiA+ID4gDQo+ID4gDQo+ID4gV2hhdCBJ
-IG1lYW4gaXMgdGhhdCBFWF9UWVBFX0RFRkFVTFRfTUNFX1NBRkUvRVhfVFlQRV9GQVVMVF9NQ0Vf
-U0FGRQ0KPiA+IGlzIGRlc2lnbmVkIHRvIGlkZW50aWZ5IGZpeHVwcyB3aGljaCBhbGxvdyBpbiBr
-ZXJuZWwgI01DIHJlY292ZXJ5LA0KPiA+IHRoYXQgaXMsIHRoZSBjYWxsZXIgb2YgY29weV9tY190
-b19rZXJuZWwoKSBtdXN0IGtub3cgdGhlIHNvdXJjZQ0KPiA+IGlzIGEgdXNlciBhZGRyZXNzLCBz
-byB3ZSBjb3VsZCBhZGQgYSBNQ0VfSU5fS0VSTkVMX0NPUFlJTiBmcm8NCj4gPiB0aGUgTUNFX1NB
-RkUgdHlwZS4NCj4gDQo+IEFuZCBJIHRoaW5rIHdlIG5lZWQgdGhlIGZvbGxvd2luZyBjaGFuZ2Ug
-Zm9yIE1DRV9TQUZFIGNvcHkgdG8gc2V0DQo+IE1DRV9JTl9LRVJORUxfQ09QWUlOLg0KPiANCj4g
-PiANCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYva2VybmVsL2NwdS9tY2Uvc2V2ZXJpdHkuYw0K
-PiA+IGIvYXJjaC94ODYva2VybmVsL2NwdS9tY2Uvc2V2ZXJpdHkuYw0KPiA+IGluZGV4IGM0NDc3
-MTYyYzA3ZC4uNjNlOTQ0ODRjNWQ2IDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gveDg2L2tlcm5lbC9j
-cHUvbWNlL3NldmVyaXR5LmMNCj4gPiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L21jZS9zZXZl
-cml0eS5jDQo+ID4gQEAgLTI5MywxMiArMjkzLDExIEBAIHN0YXRpYyBub2luc3RyIGludCBlcnJv
-cl9jb250ZXh0KHN0cnVjdCBtY2UgKm0sDQo+ID4gc3RydWN0IHB0X3JlZ3MgKnJlZ3MpDQo+ID4g
-IMKgwqDCoMKgwqDCoMKgIGNhc2UgRVhfVFlQRV9DT1BZOg0KPiA+ICDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgaWYgKCFjb3B5X3VzZXIpDQo+ID4gIMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIElOX0tFUk5FTDsNCj4gPiAtwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBtLT5rZmxhZ3MgfD0gTUNFX0lOX0tFUk5FTF9DT1BZSU47
-DQoNClRoaXMgY2hhbmdlIHNlZW1zIHRvIG5vdCByZWxhdGVkIHRvIHdoYXQgeW91IHRyeSB0byBm
-aXguDQpDb3VsZCB0aGlzIGJyZWFrIHNvbWUgb3RoZXIgd29ya2xvYWRzIGxpa2UgY29weWluZyBm
-cm9tIHVzZXIgYWRkcmVzcz8NCg0KPiA+ICDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-ZmFsbHRocm91Z2g7DQo+ID4gDQo+ID4gIMKgwqDCoMKgwqDCoMKgIGNhc2UgRVhfVFlQRV9GQVVM
-VF9NQ0VfU0FGRToNCj4gPiAgwqDCoMKgwqDCoMKgwqAgY2FzZSBFWF9UWVBFX0RFRkFVTFRfTUNF
-X1NBRkU6DQo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbS0+a2ZsYWdzIHw9IE1D
-RV9JTl9LRVJORUxfUkVDT1Y7DQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbS0+
-a2ZsYWdzIHw9IE1DRV9JTl9LRVJORUxfUkVDT1YgfCBNQ0VfSU5fS0VSTkVMX0NPUFlJTjsNCj4g
-PiAgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiBJTl9LRVJORUxfUkVDT1Y7
-DQo+ID4gDQo+ID4gIMKgwqDCoMKgwqDCoMKgIGRlZmF1bHQ6DQo+ID4gDQo+ID4gdGhlbiB3ZSBj
-b3VsZCBkcm9wIG1lbW9yeV9mYWlsdXJlX3F1ZXVlKHBmbiwgZmxhZ3MpIGZyb20gY293L2tzbSBj
-b3B5LA0KPiA+IG9yIGV2ZXJ5IE1hY2hpbmUgQ2hlY2sgc2FmZSBtZW1vcnkgY29weSB3aWxsIG5l
-ZWQgYSBtZW1vcnlfZmFpbHVyZV94eCgpDQo+ID4gY2FsbC4NCj4gDQo+IHdoaWNoIGhlbHAgdXNl
-IHRvIGtpbGwgdW5uZWVkZWQgbWVtb3J5X2ZhaWx1cmVfcXVldWUoKSBjYWxsLCBhbnkgY29tbWVu
-dHM/DQoNCkknbSBub3QgMTAwJSBzdXJlIHRoYXQgd2UgY2FuIHNhZmVseSB1c2UgcXVldWVfdGFz
-a193b3JrKCkgaW5zdGVhZCBvZg0KbWVtb3J5X2ZhaWx1cmVfcXVldWUoKSAoZHVlIHRvIHRoZSBk
-aWZmZXJlbmNlIGJldHdlZW4gd29ya3F1ZXVlIGFuZCB0YXNrDQp3b3JrLCB3aGljaCBzaG91bGQg
-YmUgcmVjZW50bHkgZGlzY3Vzc2VkIGluIHRocmVhZCBbMV0pLiAgU28gSSBwcmVmZXIgdG8NCmtl
-ZXAgdGhlIGFwcHJvYWNoIG9mIG1lbW9yeV9mYWlsdXJlX3F1ZXVlKCkgdG8ga2VlcCB0aGUgaW1w
-YWN0IG1pbmltdW0uDQoNClsxXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzIwMjMwNDE3
-MDExNDA3LjU4MzE5LTEteHVlc2h1YWlAbGludXguYWxpYmFiYS5jb20vVC8jdQ0KDQpUaGFua3Ms
-DQpOYW95YSBIb3JpZ3VjaGkNCg0KPiANCj4gDQo+ID4gDQo+ID4gK1Rob21hc++8jHdobyBhZGQg
-dGhlIHR3byB0eXBlcywgY291bGQgeW91IHNoYXJlIHNvbWUgY29tbWVudHMgYWJvdXQNCj4gPiB0
-aGlzLHRoYW5rcy4NCj4gPiANCj4gPiA+IEluIHRoZSBkYXggY2FzZSwgaWYgdGhlIHNvdXJjZSBh
-ZGRyZXNzIGlzIHBvaXNvbmVkLCBhbmQgd2UgZG8gZm9sbG93DQo+ID4gPiB1cCB3aXRoIG1lbW9y
-eV9mYWlsdXJlX3F1ZXVlKHBmbiwgZmxhZ3MpLCB3aGF0IHNob3VsZCB0aGUgdmFsdWUgb2YNCj4g
-PiA+IHRoZSAnZmxhZ3MnIGJlID8NCj4gPiANCj4gDQo+IFdpdGggYWJvdmUgZGlmZiBjaGFuZ2Us
-IHdlIGRvbid0IGFkZCBhIG1lbW9yeV9mYWlsdXJlX3F1ZXVlKCkgaW50byBkYXggdG9vLg==
+
+
+On 2023/4/21 11:13, HORIGUCHI NAOYA(堀口 直也) wrote:
+> On Thu, Apr 20, 2023 at 11:05:12PM +0800, Kefeng Wang wrote:
+>>
+>>
+>> On 2023/4/20 10:59, Kefeng Wang wrote:
+>>>
+>>>
+>>> On 2023/4/20 10:03, Jane Chu wrote:
+>>>>
+>>>> On 4/19/2023 5:03 AM, Kefeng Wang wrote:
+>>>>>
+>>>>>
+>>>>> On 2023/4/19 15:25, HORIGUCHI NAOYA(堀口 直也) wrote:
+>>>>>> On Tue, Apr 18, 2023 at 05:45:06PM +0800, Kefeng Wang wrote:
+>>>>>>>
+>>>>>>>
+>>> ...
+>>>>>>>>> @@ -371,6 +372,14 @@ size_t
+>>>>>>>>> _copy_mc_to_iter(const void *addr, size_t bytes,
+>>>>>>>>> struct iov_iter *i)
+>>>>>>>>>     EXPORT_SYMBOL_GPL(_copy_mc_to_iter);
+>>>>>>>>>     #endif /* CONFIG_ARCH_HAS_COPY_MC */
+>>>>>>>>> +static void *memcpy_from_iter(struct iov_iter
+>>>>>>>>> *i, void *to, const void *from,
+>>>>>>>>> +                 size_t size)
+>>>>>>>>> +{
+>>>>>>>>> +    if (iov_iter_is_copy_mc(i))
+>>>>>>>>> +        return (void *)copy_mc_to_kernel(to, from, size);
+>>>>>>>>
+>>>>>>>> Is it helpful to call memory_failure_queue() if
+>>>>>>>> copy_mc_to_kernel() fails
+>>>>>>>> due to a memory error?
+>>>>>>>
+>>>>>>> For dump_user_range(), the task is dying, if copy incomplete size, the
+>>>>>>> coredump will fail and task will exit, also memory_failure will
+>>>>>>> be called by kill_me_maybe(),
+>>>>>>>
+>>>>>>>    CPU: 0 PID: 1418 Comm: test Tainted: G   M
+>>>>>>> 6.3.0-rc5 #29
+>>>>>>>    Call Trace:
+>>>>>>>     <TASK>
+>>>>>>>     dump_stack_lvl+0x37/0x50
+>>>>>>>     memory_failure+0x51/0x970
+>>>>>>>     kill_me_maybe+0x5b/0xc0
+>>>>>>>     task_work_run+0x5a/0x90
+>>>>>>>     exit_to_user_mode_prepare+0x194/0x1a0
+>>>>>>>     irqentry_exit_to_user_mode+0x9/0x30
+>>>>>>>     noist_exc_machine_check+0x40/0x80
+>>>>>>>     asm_exc_machine_check+0x33/0x40
+>>>>>>
+>>>>>> Is this call trace printed out when copy_mc_to_kernel()
+>>>>>> failed by finding
+>>>>>> a memory error (or in some testcase using error injection)?
+>>>>>
+>>>>> I add dump_stack() into memory_failure() to check whether the poisoned
+>>>>> memory is called or not, and the call trace shows it do call
+>>>>> memory_failure()， but I get confused when do the test.
+>>>>>
+>>>>>> In my understanding, an MCE should not be triggered when
+>>>>>> MC-safe copy tries
+>>>>>> to access to a memory error.  So I feel that we might be talking about
+>>>>>> different scenarios.
+>>>>>>
+>>>>>> When I questioned previously, I thought about the following scenario:
+>>>>>>
+>>>>>>     - a process terminates abnormally for any reason like
+>>>>>> segmentation fault,
+>>>>>>     - then, kernel tries to create a coredump,
+>>>>>>     - during this, the copying routine accesses to corrupted
+>>>>>> page to read.
+>>>>>>
+>>>>> Yes, we tested like your described,
+>>>>>
+>>>>> 1) inject memory error into a process
+>>>>> 2) send a SIGABT/SIGBUS to process to trigger the coredump
+>>>>>
+>>>>> Without patch, the system panic, and with patch only process exits.
+>>>>>
+>>>>>> In this case the corrupted page should not be handled by
+>>>>>> memory_failure()
+>>>>>> yet (because otherwise properly handled hwpoisoned page
+>>>>>> should be ignored
+>>>>>> by coredump process).  The coredump process would exit with
+>>>>>> failure with
+>>>>>> your patch, but then, the corrupted page is still left
+>>>>>> unhandled and can
+>>>>>> be reused, so any other thread can easily access to it again.
+>>>>>
+>>>>> As shown above, the corrupted page will be handled by
+>>>>> memory_failure(), but what I'm wondering,
+>>>>> 1) memory_failure() is not always called
+>>>>> 2) look at the above call trace, it looks like from asynchronous
+>>>>>      interrupt, not from synchronous exception, right?
+>>>>>
+>>>>>>
+>>>>>> You can find a few other places (like __wp_page_copy_user
+>>>>>> and ksm_might_need_to_copy)
+>>>>>> to call memory_failure_queue() to cope with such unhandled error pages.
+>>>>>> So does memcpy_from_iter() do the same?
+>>>>>
+>>>>> I add some debug print in do_machine_check() on x86:
+>>>>>
+>>>>> 1) COW,
+>>>>>     m.kflags: MCE_IN_KERNEL_RECOV
+>>>>>     fixup_type: EX_TYPE_DEFAULT_MCE_SAFE
+>>>>>
+>>>>>     CPU: 11 PID: 2038 Comm: einj_mem_uc
+>>>>>     Call Trace:
+>>>>>      <#MC>
+>>>>>      dump_stack_lvl+0x37/0x50
+>>>>>      do_machine_check+0x7ad/0x840
+>>>>>      exc_machine_check+0x5a/0x90
+>>>>>      asm_exc_machine_check+0x1e/0x40
+>>>>>     RIP: 0010:copy_mc_fragile+0x35/0x62
+>>>>>
+>>>>>     if (m.kflags & MCE_IN_KERNEL_RECOV) {
+>>>>>             if (!fixup_exception(regs, X86_TRAP_MC, 0, 0))
+>>>>>                     mce_panic("Failed kernel mode recovery", &m, msg);
+>>>>>     }
+>>>>>
+>>>>>     if (m.kflags & MCE_IN_KERNEL_COPYIN)
+>>>>>             queue_task_work(&m, msg, kill_me_never);
+>>>>>
+>>>>> There is no memory_failure() called when
+>>>>> EX_TYPE_DEFAULT_MCE_SAFE, also EX_TYPE_FAULT_MCE_SAFE too,
+>>>>> so we manually add a memory_failure_queue() to handle with
+>>>>> the poisoned page.
+>>>>>
+>>>>> 2） Coredump,  nothing print about m.kflags and fixup_type,
+>>
+>> Sorry，I forget to set coredump file size :(
+>>
+>> The coredump do trigger the do_machine_check() with same m.kflags and
+>> fixup_type like cow
+>>
+>>
+>>>>> with above check, add a memory_failure_queue() or memory_failure() seems
+>>>>> to be needed for memcpy_from_iter(), but it is totally different from
+>>>>> the COW scenario
+>>>>>
+>>
+>> so the memcpy_from_iter() from coredump is same as cow scenario.
+> 
+> Okay, thank you for confirmation.
+> 
+>>
+>>>>>
+>>>>> Another question, other copy_mc_to_kernel() callers, eg,
+>>>>> nvdimm/dm-writecache/dax, there are not call memory_failure_queue(),
+>>>>> should they need a memory_failure_queue(), if so, why not add it into
+>>>>> do_machine_check() ?
+>>>>
+>>>
+>>> What I mean is that EX_TYPE_DEFAULT_MCE_SAFE/EX_TYPE_FAULT_MCE_SAFE
+>>> is designed to identify fixups which allow in kernel #MC recovery,
+>>> that is, the caller of copy_mc_to_kernel() must know the source
+>>> is a user address, so we could add a MCE_IN_KERNEL_COPYIN fro
+>>> the MCE_SAFE type.
+>>
+>> And I think we need the following change for MCE_SAFE copy to set
+>> MCE_IN_KERNEL_COPYIN.
+>>
+>>>
+>>> diff --git a/arch/x86/kernel/cpu/mce/severity.c
+>>> b/arch/x86/kernel/cpu/mce/severity.c
+>>> index c4477162c07d..63e94484c5d6 100644
+>>> --- a/arch/x86/kernel/cpu/mce/severity.c
+>>> +++ b/arch/x86/kernel/cpu/mce/severity.c
+>>> @@ -293,12 +293,11 @@ static noinstr int error_context(struct mce *m,
+>>> struct pt_regs *regs)
+>>>           case EX_TYPE_COPY:
+>>>                   if (!copy_user)
+>>>                           return IN_KERNEL;
+>>> -               m->kflags |= MCE_IN_KERNEL_COPYIN;
+> 
+> This change seems to not related to what you try to fix.
+> Could this break some other workloads like copying from user address?
+> 
+
+Yes, this move MCE_IN_KERNEL_COPYIN set into next case, both COPY and
+MCE_SAFE type will set MCE_IN_KERNEL_COPYIN, for EX_TYPE_COPY, we don't
+break it.
+
+
+>>>                   fallthrough;
+>>>
+>>>           case EX_TYPE_FAULT_MCE_SAFE:
+>>>           case EX_TYPE_DEFAULT_MCE_SAFE:
+>>> -               m->kflags |= MCE_IN_KERNEL_RECOV;
+>>> +               m->kflags |= MCE_IN_KERNEL_RECOV | MCE_IN_KERNEL_COPYIN;
+>>>                   return IN_KERNEL_RECOV;
+>>>
+>>>           default:
+>>>
+>>> then we could drop memory_failure_queue(pfn, flags) from cow/ksm copy,
+>>> or every Machine Check safe memory copy will need a memory_failure_xx()
+>>> call.
+>>
+>> which help use to kill unneeded memory_failure_queue() call, any comments?
+> 
+> I'm not 100% sure that we can safely use queue_task_work() instead of
+> memory_failure_queue() (due to the difference between workqueue and task
+> work, which should be recently discussed in thread [1]).  So I prefer to
+> keep the approach of memory_failure_queue() to keep the impact minimum.
+> 
+
++tony for x86 mce
+
+The x86 call queue_task_work() for EX_TYPE_COPY, so EX_TYPE_FAULT_MCE_SAFE
+and EX_TYPE_DEFAULT_MCE_SAFE should be similar to EX_TYPE_COPY,
+memcpy_mc_xxx return bytes not copied, let the task to decide
+what to do next, and call memory_failure(pfn, 0) to isolate
+the poisoned page.
+
+1) queue_task_work() will make the memory_failure() called before 
+return-to-user
+2) memory_failure_queue() called in COW will put the work on a specific
+cpu(current task is running), and memory_failure() will be called in
+the work. see more from commit d302c2398ba2 ("mm, hwpoison: when copy-
+on-write hits poison, take page offline"),  "It is important, but not 
+urgent, to mark the source page as h/w poisoned and unmap it from other
+tasks."
+
+Both of them just wants to isolate memory, they shouldn't add action,
+they set flag=0 for memory_failure(). so preliminarily, there are not 
+different.
+
+
+
+> [1] https://lore.kernel.org/lkml/20230417011407.58319-1-xueshuai@linux.alibaba.com/T/#u
+> 
+
+The COPY_MC support on arm64 is still under review[1],  xueshuai's patch
+is only trying to fix the uncorrected si_code of synchronous exceptions
+when memory error occurred, so I think it is not involved the COPY_MC.
+
+
+[1] 
+https://lore.kernel.org/lkml/20221219120008.3818828-1-tongtiangen@huawei.com/
+
+
+Thanks
+
+> Thanks,
+> Naoya Horiguchi
+> 
+>>
+>>
+>>>
+>>> +Thomas，who add the two types, could you share some comments about
+>>> this,thanks.
+>>>
+>>>> In the dax case, if the source address is poisoned, and we do follow
+>>>> up with memory_failure_queue(pfn, flags), what should the value of
+>>>> the 'flags' be ?
+>>>
+>>
+>> With above diff change, we don't add a memory_failure_queue() into dax too.
