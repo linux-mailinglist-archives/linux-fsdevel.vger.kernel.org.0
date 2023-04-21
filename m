@@ -2,248 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB1E26EAE5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 17:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC966EAE75
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Apr 2023 17:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232583AbjDUP46 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 11:56:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46630 "EHLO
+        id S232830AbjDUP51 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 11:57:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231923AbjDUP45 (ORCPT
+        with ESMTP id S232755AbjDUP5Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 11:56:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA14125BD;
-        Fri, 21 Apr 2023 08:56:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A49564EEE;
-        Fri, 21 Apr 2023 15:56:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72AB8C433D2;
-        Fri, 21 Apr 2023 15:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682092614;
-        bh=vBPsMO1nsGTRrGpkMn/Fftt+rshboEXCADhHF/5eXAU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XK/IxkJC0JDOyCyk854AHxmvHiMWFe+3qvnuzkttU/c6CvtiTsqeV6ecBcIvRcXoA
-         rX/IXBN39A0DI4qncSt+Evp/2XHKlsEIMuLBNP2of8WXwS3XFHgJKntGAtGjcviMnw
-         rhyiZ+vrhjWxXKp/1S/Ymt6fzXpcwehIipjjn263JvuucBHEyNO9+Vvc/JMWdsCEKf
-         yI+13x/hCEEcVLsWmR/g5gG8Iq0+lPTmQEfrGxNDlNJaRWSVkomRWwH+VElW2HUqUs
-         qfIZqKh/kqu2UwiESBcz9aLTQCe947tiaeMtKCAS8Gmh7PiNsEG9eS3Z/a1Lr2Ghyl
-         Mk33Dn6mtzTXg==
-Date:   Fri, 21 Apr 2023 08:56:53 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCHv6 9/9] iomap: Add DIO tracepoints
-Message-ID: <20230421155653.GK360881@frogsfrogsfrogs>
-References: <cover.1682069716.git.ritesh.list@gmail.com>
- <67daf0c2a4025b9c80023171bca5c9d1ec9b4341.1682069716.git.ritesh.list@gmail.com>
+        Fri, 21 Apr 2023 11:57:25 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E02A213FB0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 08:57:19 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-63b781c9787so644505b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 08:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682092639; x=1684684639;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kSZLkVrR4znaBU7/34lRloMzkiKioLgkBLFv9+jq45M=;
+        b=g4bXgCh8LuC3ClwDCLrnCk0XQ0qeQ8+OkLvZpxtjzYrZORmg8nhN3RUxO44Kkkuply
+         2uzoyEoYfpmUh28rAxSNTQZglyOFV4uJYxda/1j5YNle//kU+2KxjgNrwxJl9ulpI4FF
+         7HiLJELiaOETqk2CrKziAAdf71lsbulo0yXBeQpzbMG4ku61nobUoKvIwHpwyQpCpAuz
+         q+LuacPxrCzs57vj2UUex3zg0/aU70H5HByVlPD4vtEJb2/KY8GsHjtZGsTPT1L77WNb
+         CEhEjC6kF/7LqtFeTRDheD3Pd8bUSAXP4QPNnFGDDq8xMPW8zZCeDiTK2SzixoxpbXqS
+         F0tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682092639; x=1684684639;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kSZLkVrR4znaBU7/34lRloMzkiKioLgkBLFv9+jq45M=;
+        b=g9mMuk6sZ8LxpbbUy14Oa/60boSrbSe/pRvDahDSSIkg/vjIfjEBdg1+SsOh/CcwAN
+         P75Mzqc8D9+G6pBBc7lHBb84xcWS8HlIH72p3nyiPw8QKnmgFoRozdoasHC76sWdr/si
+         HcBMh3BT8Fd8dFJCvltD0tiUF7Bfars8gzATGXK8/j5ETEiM8gnkPR9CrYxJvfAsyD4f
+         Jp+BRwgmcWWmPPfz2khqRZ8F6zsdHWPb0hFUHqyuXNBrxsCk4DdQ5GSpVUDH3Tq6n7Eq
+         y4nN9E4t9aE3DKWID9FyjHhfaZhm2JjpdVDQI1h6SHWQwboft+ZXOXP3JehYxbScBt4i
+         nDQA==
+X-Gm-Message-State: AAQBX9e3FnrGVBVlSiIOuixdn10di8ZMaIUGAMY2n5MAXr8KABWTMk5Q
+        n3uBoSSUrjwPAWdGv0a6KVoKqA==
+X-Google-Smtp-Source: AKy350bmJO3gBsnB6yY3o4rGG0zrD6tuLB1Xi8207GssvwrIUXDbqDVivrR9GhG8tmYVgSkpJaZ55A==
+X-Received: by 2002:a05:6a20:54a6:b0:cb:af96:9436 with SMTP id i38-20020a056a2054a600b000cbaf969436mr8222809pzk.0.1682092638756;
+        Fri, 21 Apr 2023 08:57:18 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id p8-20020a63e648000000b0051b9e82d6d6sm2780655pgj.40.2023.04.21.08.57.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Apr 2023 08:57:18 -0700 (PDT)
+Message-ID: <26e393fd-ffba-db6a-3a08-eb5aaa70315d@kernel.dk>
+Date:   Fri, 21 Apr 2023 09:57:17 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67daf0c2a4025b9c80023171bca5c9d1ec9b4341.1682069716.git.ritesh.list@gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: Can you drop the splice patches?
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>
+Cc:     Ayush Jain <ayush.jain3@amd.com>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Hildenbrand <david@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Steve French <stfrench@microsoft.com>, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <208643.1682091901@warthog.procyon.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <208643.1682091901@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 03:16:19PM +0530, Ritesh Harjani (IBM) wrote:
-> Add trace_iomap_dio_rw_begin, trace_iomap_dio_rw_queued and
-> trace_iomap_dio_complete tracepoint.
-> trace_iomap_dio_rw_queued is mostly only to know that the request was
-> queued and -EIOCBQUEUED was returned. It is mostly trace_iomap_dio_rw_begin
-> & trace_iomap_dio_complete which has all the details.
+On 4/21/23 9:45 AM, David Howells wrote:
+> Hi Jens,
 > 
-> <example output log>
->       a.out-2073  [006]   134.225717: iomap_dio_rw_begin:   dev 7:7 ino 0xe size 0x0 offset 0x0 length 0x1000 done_before 0x0 flags DIRECT|WRITE dio_flags DIO_FORCE_WAIT aio 1
->       a.out-2073  [006]   134.226234: iomap_dio_complete:   dev 7:7 ino 0xe size 0x1000 offset 0x1000 flags DIRECT|WRITE aio 1 error 0 ret 4096
->       a.out-2074  [006]   136.225975: iomap_dio_rw_begin:   dev 7:7 ino 0xe size 0x1000 offset 0x0 length 0x1000 done_before 0x0 flags DIRECT dio_flags  aio 1
->       a.out-2074  [006]   136.226173: iomap_dio_rw_queued:  dev 7:7 ino 0xe size 0x1000 offset 0x1000 length 0x0
-> ksoftirqd/3-31    [003]   136.226389: iomap_dio_complete:   dev 7:7 ino 0xe size 0x1000 offset 0x1000 flags DIRECT aio 1 error 0 ret 4096
->       a.out-2075  [003]   141.674969: iomap_dio_rw_begin:   dev 7:7 ino 0xe size 0x1000 offset 0x0 length 0x1000 done_before 0x0 flags DIRECT|WRITE dio_flags  aio 1
->       a.out-2075  [003]   141.676085: iomap_dio_rw_queued:  dev 7:7 ino 0xe size 0x1000 offset 0x1000 length 0x0
-> kworker/2:0-27    [002]   141.676432: iomap_dio_complete:   dev 7:7 ino 0xe size 0x1000 offset 0x1000 flags DIRECT|WRITE aio 1 error 0 ret 4096
->       a.out-2077  [006]   143.443746: iomap_dio_rw_begin:   dev 7:7 ino 0xe size 0x1000 offset 0x0 length 0x1000 done_before 0x0 flags DIRECT dio_flags  aio 1
->       a.out-2077  [006]   143.443866: iomap_dio_rw_queued:  dev 7:7 ino 0xe size 0x1000 offset 0x1000 length 0x0
-> ksoftirqd/5-41    [005]   143.444134: iomap_dio_complete:   dev 7:7 ino 0xe size 0x1000 offset 0x1000 flags DIRECT aio 1 error 0 ret 4096
->       a.out-2078  [007]   146.716833: iomap_dio_rw_begin:   dev 7:7 ino 0xe size 0x1000 offset 0x0 length 0x1000 done_before 0x0 flags DIRECT dio_flags  aio 0
->       a.out-2078  [007]   146.717639: iomap_dio_complete:   dev 7:7 ino 0xe size 0x1000 offset 0x1000 flags DIRECT aio 0 error 0 ret 4096
->       a.out-2079  [006]   148.972605: iomap_dio_rw_begin:   dev 7:7 ino 0xe size 0x1000 offset 0x0 length 0x1000 done_before 0x0 flags DIRECT dio_flags  aio 0
->       a.out-2079  [006]   148.973099: iomap_dio_complete:   dev 7:7 ino 0xe size 0x1000 offset 0x1000 flags DIRECT aio 0 error 0 ret 4096
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> ---
->  fs/iomap/direct-io.c |  7 +++-
->  fs/iomap/trace.c     |  1 +
->  fs/iomap/trace.h     | 78 ++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 85 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 36ab1152dbea..019cc87d0fb3 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -130,6 +130,7 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
->  	if (ret > 0)
->  		ret += dio->done_before;
->  
-> +	trace_iomap_dio_complete(iocb, dio->error, ret);
->  	kfree(dio);
->  
->  	return ret;
-> @@ -493,6 +494,8 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	struct blk_plug plug;
->  	struct iomap_dio *dio;
->  
-> +	trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before);
-> +
->  	if (!iomi.len)
->  		return NULL;
->  
-> @@ -650,8 +653,10 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	 */
->  	dio->wait_for_completion = wait_for_completion;
->  	if (!atomic_dec_and_test(&dio->ref)) {
-> -		if (!wait_for_completion)
-> +		if (!wait_for_completion) {
-> +			trace_iomap_dio_rw_queued(inode, iomi.pos, iomi.len);
->  			return ERR_PTR(-EIOCBQUEUED);
-> +		}
->  
->  		for (;;) {
->  			set_current_state(TASK_UNINTERRUPTIBLE);
-> diff --git a/fs/iomap/trace.c b/fs/iomap/trace.c
-> index da217246b1a9..728d5443daf5 100644
-> --- a/fs/iomap/trace.c
-> +++ b/fs/iomap/trace.c
-> @@ -3,6 +3,7 @@
->   * Copyright (c) 2019 Christoph Hellwig
->   */
->  #include <linux/iomap.h>
-> +#include <linux/uio.h>
->  
->  /*
->   * We include this last to have the helpers above available for the trace
-> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-> index f6ea9540d082..448b82d16c0b 100644
-> --- a/fs/iomap/trace.h
-> +++ b/fs/iomap/trace.h
-> @@ -83,6 +83,7 @@ DEFINE_RANGE_EVENT(iomap_writepage);
->  DEFINE_RANGE_EVENT(iomap_release_folio);
->  DEFINE_RANGE_EVENT(iomap_invalidate_folio);
->  DEFINE_RANGE_EVENT(iomap_dio_invalidate_fail);
-> +DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
->  
->  #define IOMAP_TYPE_STRINGS \
->  	{ IOMAP_HOLE,		"HOLE" }, \
-> @@ -107,6 +108,11 @@ DEFINE_RANGE_EVENT(iomap_dio_invalidate_fail);
->  	{ IOMAP_F_BUFFER_HEAD,	"BH" }, \
->  	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }
->  
-> +#define IOMAP_DIO_STRINGS \
-> +	{IOMAP_DIO_FORCE_WAIT, "DIO_FORCE_WAIT" }, \
-> +	{IOMAP_DIO_OVERWRITE_ONLY, "DIO_OVERWRITE_ONLY" }, \
-> +	{IOMAP_DIO_PARTIAL, "DIO_PARTIAL" }
+> Can you drop the splice patches for the moment, please?  Al spotted problems
+> with them.
 
-I'll fix these indentation ^ problems on commit.
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Yep I saw Al's comments, it won't go out this time. I'll drop them from
+for-next as well.
 
---D
+-- 
+Jens Axboe
 
-> +
->  DECLARE_EVENT_CLASS(iomap_class,
->  	TP_PROTO(struct inode *inode, struct iomap *iomap),
->  	TP_ARGS(inode, iomap),
-> @@ -183,6 +189,78 @@ TRACE_EVENT(iomap_iter,
->  		   (void *)__entry->caller)
->  );
->  
-> +TRACE_EVENT(iomap_dio_rw_begin,
-> +	TP_PROTO(struct kiocb *iocb, struct iov_iter *iter,
-> +		 unsigned int dio_flags, size_t done_before),
-> +	TP_ARGS(iocb, iter, dio_flags, done_before),
-> +	TP_STRUCT__entry(
-> +		__field(dev_t,	dev)
-> +		__field(ino_t,	ino)
-> +		__field(loff_t, isize)
-> +		__field(loff_t, pos)
-> +		__field(size_t,	count)
-> +		__field(size_t,	done_before)
-> +		__field(int,	ki_flags)
-> +		__field(unsigned int,	dio_flags)
-> +		__field(bool,	aio)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->dev = file_inode(iocb->ki_filp)->i_sb->s_dev;
-> +		__entry->ino = file_inode(iocb->ki_filp)->i_ino;
-> +		__entry->isize = file_inode(iocb->ki_filp)->i_size;
-> +		__entry->pos = iocb->ki_pos;
-> +		__entry->count = iov_iter_count(iter);
-> +		__entry->done_before = done_before;
-> +		__entry->ki_flags = iocb->ki_flags;
-> +		__entry->dio_flags = dio_flags;
-> +		__entry->aio = !is_sync_kiocb(iocb);
-> +	),
-> +	TP_printk("dev %d:%d ino 0x%lx size 0x%llx offset 0x%llx length 0x%zx done_before 0x%zx flags %s dio_flags %s aio %d",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  __entry->ino,
-> +		  __entry->isize,
-> +		  __entry->pos,
-> +		  __entry->count,
-> +		  __entry->done_before,
-> +		  __print_flags(__entry->ki_flags, "|", TRACE_IOCB_STRINGS),
-> +		  __print_flags(__entry->dio_flags, "|", IOMAP_DIO_STRINGS),
-> +		  __entry->aio)
-> +);
-> +
-> +TRACE_EVENT(iomap_dio_complete,
-> +	TP_PROTO(struct kiocb *iocb, int error, ssize_t ret),
-> +	TP_ARGS(iocb, error, ret),
-> +	TP_STRUCT__entry(
-> +		__field(dev_t,	dev)
-> +		__field(ino_t,	ino)
-> +		__field(loff_t, isize)
-> +		__field(loff_t, pos)
-> +		__field(int,	ki_flags)
-> +		__field(bool,	aio)
-> +		__field(int,	error)
-> +		__field(ssize_t, ret)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->dev = file_inode(iocb->ki_filp)->i_sb->s_dev;
-> +		__entry->ino = file_inode(iocb->ki_filp)->i_ino;
-> +		__entry->isize = file_inode(iocb->ki_filp)->i_size;
-> +		__entry->pos = iocb->ki_pos;
-> +		__entry->ki_flags = iocb->ki_flags;
-> +		__entry->aio = !is_sync_kiocb(iocb);
-> +		__entry->error = error;
-> +		__entry->ret = ret;
-> +	),
-> +	TP_printk("dev %d:%d ino 0x%lx size 0x%llx offset 0x%llx flags %s aio %d error %d ret %zd",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  __entry->ino,
-> +		  __entry->isize,
-> +		  __entry->pos,
-> +		  __print_flags(__entry->ki_flags, "|", TRACE_IOCB_STRINGS),
-> +		  __entry->aio,
-> +		  __entry->error,
-> +		  __entry->ret)
-> +);
-> +
->  #endif /* _IOMAP_TRACE_H */
->  
->  #undef TRACE_INCLUDE_PATH
-> -- 
-> 2.39.2
-> 
+
