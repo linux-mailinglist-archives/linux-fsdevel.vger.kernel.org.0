@@ -2,123 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 17D626EB64F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Apr 2023 02:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A4E6EB6F1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Apr 2023 05:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233975AbjDVAPB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 20:15:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53522 "EHLO
+        id S229656AbjDVDFV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 23:05:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232094AbjDVAPA (ORCPT
+        with ESMTP id S229595AbjDVDFT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 20:15:00 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A27C0E56
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 17:14:57 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-63b51fd2972so2300870b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Apr 2023 17:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1682122497; x=1684714497;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JFKti6NhFrOmzRAC+SHrdFDeKbNA3mUM9FV9DFzwcIY=;
-        b=YFGDGJg+ycE0mNmKO4+mMxKlyNIeLyuiw3BMeu7/FLkdr9I7ue2w6t8LGmkLEryGCq
-         aSueVAqkePVUC2bFRZNHMsqoqTTZapcFXkSWoSxWX5LNi0NEMo3DpFS/DY4BQhUjhZkD
-         ei+0auvF6ES9BqdBcOQ3B7szfVz9qrZTVv1B5d8vvivr4oarGy7gqpUgjECURVPTNOM8
-         b7IraIQW5URwK5J/jVTx6zA/38KMYSXFOhbPYEl2EQvgP+czTYMeKImIfYqvycbGHHUY
-         eXJo646zdyKoWzbYlDgZGjqVsbuE6lv4c2vPTsD7nBXbSme6NRNTTHcSlPZyv0mZhVn0
-         1/5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682122497; x=1684714497;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JFKti6NhFrOmzRAC+SHrdFDeKbNA3mUM9FV9DFzwcIY=;
-        b=NzeICKUbgi4rhXqkrZ/MMQuNQvewvi+IrGVn50Wop/A3B2GdtgWkRAc8OGuAz+zTx+
-         cojX5OkXrxY8Qra/zLkYfaXFD7a8KvT0Ld90+kDB6dGY0xy7zWqFk1olDHwjE7ywp/5F
-         Qd35vSg5Owxs2rH7gXwRteG59DM9+ooxgD0ip6rNnnigyg66bpCttq2FzUWNhB/cRu6B
-         9c//99Ih5dawpT400dqsczNZoIf7ogeHew2nGv7U2zJBr0UO/yIuZ4RrrPqLJBuVEGHV
-         d54B48mIJB2jAH1H7U0cvjuURI+ZJcxd5J+yWd6VDCMCXFF2kYSoKfX2bFdc557grBbi
-         RAcg==
-X-Gm-Message-State: AAQBX9dpyntAj+YNyLjzGs6usMcIOH7demqDJ09gkV/OWty2SnsBDDm4
-        yOo+VFrqzT7dkBsR+zhBqaZKSA==
-X-Google-Smtp-Source: AKy350ZwCB2cO5PjKw8A5mYFxgInZC/72E653X9oHmykJSFde1WXxXFAjEl6WR9nQRZVxGPb1WVXjQ==
-X-Received: by 2002:a05:6a21:3396:b0:f0:6aaf:1abf with SMTP id yy22-20020a056a21339600b000f06aaf1abfmr10590477pzb.4.1682122497145;
-        Fri, 21 Apr 2023 17:14:57 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
-        by smtp.gmail.com with ESMTPSA id b3-20020a631b03000000b0050f93a3586fsm3004610pgb.37.2023.04.21.17.14.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 17:14:56 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pq0ty-006FW0-2f; Sat, 22 Apr 2023 10:14:54 +1000
-Date:   Sat, 22 Apr 2023 10:14:54 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Pankaj Raghav <p.raghav@samsung.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mcgrof@kernel.org, SSDR Gost Dev <gost.dev@samsung.com>
-Subject: Re: [PATCH] mm/filemap: allocate folios according to the blocksize
-Message-ID: <20230422001454.GQ447837@dread.disaster.area>
-References: <CGME20230414134914eucas1p1f0b08409dce8bc946057d0a4fa7f1601@eucas1p1.samsung.com>
- <20230414134908.103932-1-hare@suse.de>
- <2466fa23-a817-1dee-b89f-fcbeaca94a9e@samsung.com>
- <a826abe1-332f-22db-982c-ecec67a40585@suse.de>
- <1c76a3fe-5b7a-6f22-78e1-da4a54497ecd@samsung.com>
- <20230420150355.GG360881@frogsfrogsfrogs>
+        Fri, 21 Apr 2023 23:05:19 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49A26212D;
+        Fri, 21 Apr 2023 20:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=d/drIpsV3nVkI3AWmke+ca/OYDz5JWaoOhQ63wKz7tg=; b=t5z7h+1lNmQrXDkWpzx1/m5Gej
+        XWRSmJq80eCVKtUu4NvPpX0IljSWYYX70YWBIMfZUHqOHWmbJHZyiMNO4Jto8y2JcR/+ANy2OURaN
+        xRrA5kySnWRi8l0RD2t5bcv2w9p5OaP9mH5/5Ft4XedWVuOghAF4GAl15lRBazm5bSya8jIMz0VnF
+        xXRfnfa9LYquFCqzBffOdnpRk58AlUQSlC24kSiMi5pnzvjuVzHTuHiJNLj4gYhmEoxo9X0uy6X6R
+        ggjHKxy1Ctsgv/bs0xuZW8ENhxyLvHPdMSVVlAibXhiM0OZCo1wSlec4K+rzwM/Ve8yqQFI5s2tNN
+        qYijGnzg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pq3Yg-00CHMA-1V;
+        Sat, 22 Apr 2023 03:05:06 +0000
+Date:   Fri, 21 Apr 2023 20:05:06 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     hughd@google.com, akpm@linux-foundation.org, brauner@kernel.org,
+        djwong@kernel.org, p.raghav@samsung.com, da.gomez@samsung.com,
+        a.manzanares@samsung.com, dave@stgolabs.net, yosryahmed@google.com,
+        keescook@chromium.org, hare@suse.de, kbusch@kernel.org,
+        patches@lists.linux.dev, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC 2/8] shmem: convert to use folio_test_hwpoison()
+Message-ID: <ZENO4vZzmN8lJocK@bombadil.infradead.org>
+References: <20230421214400.2836131-1-mcgrof@kernel.org>
+ <20230421214400.2836131-3-mcgrof@kernel.org>
+ <ZEMRbcHSQqyek8Ov@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230420150355.GG360881@frogsfrogsfrogs>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <ZEMRbcHSQqyek8Ov@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 20, 2023 at 08:03:55AM -0700, Darrick J. Wong wrote:
-> On Thu, Apr 20, 2023 at 02:28:36PM +0200, Pankaj Raghav wrote:
-> > On 2023-04-20 14:19, Hannes Reinecke wrote:
-> > >>
-> > >> **Questions on the future work**:
-> > >>
-> > >> As willy pointed out, we have to do this `order = mapping->host->i_blkbits - PAGE_SHIFT` in
-> > >> many places. Should we pursue something that willy suggested: encapsulating order in the
-> > >> mapping->flags as a next step?[1]
-> > >>
-> > >>
-> > >> [1] https://lore.kernel.org/lkml/ZDty+PQfHkrGBojn@casper.infradead.org/
+On Fri, Apr 21, 2023 at 11:42:53PM +0100, Matthew Wilcox wrote:
+> On Fri, Apr 21, 2023 at 02:43:54PM -0700, Luis Chamberlain wrote:
+> > The PageHWPoison() call can be converted over to the respective folio call
+> > folio_test_hwpoison(). This introduces no functional changes.
 > 
-> I wouldn't mind XFS gaining a means to control folio sizes, personally.
-> At least that would make it easier to explore things like copy on write
-> with large weird file allocation unit sizes (2MB, 28k, etc).
+> Um, no.  Nobody should use folio_test_hwpoison(), it's a nonsense.
+> 
+> Individual pages are hwpoisoned.  You're only testing the head page
+> if you use folio_test_hwpoison().  There's folio_has_hwpoisoned() to
+> test if _any_ page in the folio is poisoned.  But blindly converting
+> PageHWPoison to folio_test_hwpoison() is wrong.
 
-[random historical musings follow]
+Thanks! I don't see folio_has_hwpoisoned() though.
 
-Ah, how things go full circle. This is how XFS originally worked on
-Irix - it had read and write IO sizes that it used to control the
-size of buffers allocated ifor caching data in the per-inode chunk
-cache. That stuff was in the original port to Linux, we even had a
-mount option to allow users to determine preferred IO sizes
-(biosize) but that was removed in 2019 ago because it hadn't
-done anything for more than a decade.
-
-That was done around the same time the mp->m_readio_blocks and
-mp->m_writeio_blocks variables that it originally influenced were
-removed.  Extent allocation sizes are still influenced this way by
-the allocsize mount option and m_writeio_blocks was renamed
-m_allocsize_blocks to keep this functionality for extent
-allocation...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+  Luis
