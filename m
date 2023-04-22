@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF0196EB607
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Apr 2023 02:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 758B06EB610
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Apr 2023 02:03:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233844AbjDVADW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Apr 2023 20:03:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45668 "EHLO
+        id S233893AbjDVADe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Apr 2023 20:03:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233792AbjDVADS (ORCPT
+        with ESMTP id S233655AbjDVADV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Apr 2023 20:03:18 -0400
+        Fri, 21 Apr 2023 20:03:21 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC6C2135;
-        Fri, 21 Apr 2023 17:03:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4AF4212D;
+        Fri, 21 Apr 2023 17:03:17 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D809F21A3A;
-        Sat, 22 Apr 2023 00:03:14 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 657AF21A5B;
+        Sat, 22 Apr 2023 00:03:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1682121794; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1682121796; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YqiIBZMQvLV95BFLfxrctu2be5/KPX/uxRWrEBPqc0A=;
-        b=KImKHUVZAOxq5frwDuSjuoEisrZ9H6q/kDQc3aKHPFZBetxORQqSO1UZaFzK0BvYi5IaCw
-        ck67cznjoB4FbpdNQC1Ha+TbT05/HpT7QiX0jd05AxHXf2t5IbXXdJkT4Vcv1MUdz9vGev
-        0zptOvDKTxocbWPB2VSFq9MzAU0KGKI=
+        bh=e/QY3Q5AUsGwoQIvTobRrxWyVBRqL+pLZ7lAXnxVniA=;
+        b=Op+Kfj7XzhSC/JQ5ZdrCSs6iEhM9I/dk6A84frFvXNjAwUT+kJkUlDW66GsQhlRX8sMaGZ
+        DiSLat+3a+O6OVs4xj8BLg7i9W9TQ+kO0MM4AoKFLHiNLeKRIgZhSTPG947vw+5rq68n2O
+        PkHPzYz4yrfykWsVzei31krRywhEkDk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1682121794;
+        s=susede2_ed25519; t=1682121796;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YqiIBZMQvLV95BFLfxrctu2be5/KPX/uxRWrEBPqc0A=;
-        b=TL6v/tiuEimjyYrmZSB/so8og9fCt0PvRh3wrCTxCyl9pFJIx1+ohWkRvU21WlgvwAt1V4
-        zYURTAY1vWdgLgAA==
+        bh=e/QY3Q5AUsGwoQIvTobRrxWyVBRqL+pLZ7lAXnxVniA=;
+        b=rDMOkG17UzGXLEFJ/PefeRg+cEc2AaWZcRH/R1l4/8dZFnlLtDjx4TlwdEt8+i0AvOitBN
+        +Da5xomtTMb2O8Aw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A1E61138F2;
-        Sat, 22 Apr 2023 00:03:14 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2F08E1358E;
+        Sat, 22 Apr 2023 00:03:16 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id 5ATEIUIkQ2TcdwAAMHmgww
-        (envelope-from <krisman@suse.de>); Sat, 22 Apr 2023 00:03:14 +0000
+        id 34TjBUQkQ2TldwAAMHmgww
+        (envelope-from <krisman@suse.de>); Sat, 22 Apr 2023 00:03:16 +0000
 From:   Gabriel Krisman Bertazi <krisman@suse.de>
 To:     viro@zeniv.linux.org.uk, brauner@kernel.org
 Cc:     tytso@mit.edu, jaegeuk@kernel.org, ebiggers@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, krisman@suse.de
-Subject: [PATCH v2 2/7] fs: Add DCACHE_CASEFOLD_LOOKUP flag
-Date:   Fri, 21 Apr 2023 20:03:05 -0400
-Message-Id: <20230422000310.1802-3-krisman@suse.de>
+Subject: [PATCH v2 3/7] libfs: Validate negative dentries in case-insensitive directories
+Date:   Fri, 21 Apr 2023 20:03:06 -0400
+Message-Id: <20230422000310.1802-4-krisman@suse.de>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230422000310.1802-1-krisman@suse.de>
 References: <20230422000310.1802-1-krisman@suse.de>
@@ -64,8 +64,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_PASS,T_FILL_THIS_FORM_SHORT,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -74,62 +74,99 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-This flag marks a negative or positive dentry as being created after a
-case-insensitive lookup operation.  It is useful to differentiate
-dentries this way to detect whether the negative dentry can be trusted
-during a case-insensitive lookup.
+Introduce a dentry revalidation helper to be used by case-insensitive
+filesystems to check if it is safe to reuse a negative dentry.
+
+A negative dentry is safe to be reused on a case-insensitive lookup if
+it was created during a case-insensitive lookup and this is not a lookup
+that will instantiate a dentry. If this is a creation lookup, we also
+need to make sure the name matches sensitively the name under lookup in
+order to assure the name preserving semantics.
+
+dentry->d_name is only checked by the case-insensitive d_revalidate hook
+in the LOOKUP_CREATE/LOOKUP_RENAME_TARGET case since, for these cases,
+d_revalidate is always called with the parent inode locked, and
+therefore the name cannot change from under us.
+
+d_revalidate is only called in 4 places: lookup_dcache, __lookup_slow,
+lookup_open and lookup_fast:
+
+  - lookup_dcache always calls it with zeroed flags, with the exception
+  of when coming from __lookup_hash, which needs the parent locked
+  already, for instance in the open/creation path, which is locked in
+  open_last_lookups.
+
+  - In __lookup_slow, either the parent inode is locked by the
+  caller (lookup_slow), or it is called with no
+  flags (lookup_one/lookup_one_len).
+
+  - lookup_open also requires the parent to be locked in the creation
+  case, which is done in open_last_lookups.
+
+  - lookup_fast will indeed be called with the parent unlocked, but it
+  shouldn't be called with LOOKUP_CREATE.  Either it is called in the
+  link_path_walk, where nd->flags doesn't have LOOKUP_CREATE yet or in
+  open_last_lookups. But, in this case, it also never has LOOKUP_CREATE,
+  because it is only called on the !O_CREAT case, which means op->intent
+  doesn't have LOOKUP_CREAT (set in build_open_flags only if O_CREAT is
+  set).
+
+Finally, for the LOOKUP_RENAME_TARGET, we are doing a rename, so the
+parents inodes are also be locked.
 
 Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 ---
- fs/dcache.c            | 8 ++++++++
- include/linux/dcache.h | 8 ++++++++
- 2 files changed, 16 insertions(+)
+ fs/libfs.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 98521862e58a..05e4c7019e17 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1958,6 +1958,14 @@ void d_set_fallthru(struct dentry *dentry)
- }
- EXPORT_SYMBOL(d_set_fallthru);
- 
-+void d_set_casefold_lookup(struct dentry *dentry)
-+{
-+	spin_lock(&dentry->d_lock);
-+	dentry->d_flags |= DCACHE_CASEFOLD_LOOKUP;
-+	spin_unlock(&dentry->d_lock);
-+}
-+EXPORT_SYMBOL(d_set_casefold_lookup);
-+
- static unsigned d_flags_for_inode(struct inode *inode)
- {
- 	unsigned add_flags = DCACHE_REGULAR_TYPE;
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index b6188f2e8950..457345123cb6 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -209,6 +209,7 @@ struct dentry_operations {
- #define DCACHE_FALLTHRU			0x01000000 /* Fall through to lower layer */
- #define DCACHE_NOKEY_NAME		0x02000000 /* Encrypted name encoded without key */
- #define DCACHE_OP_REAL			0x04000000
-+#define DCACHE_CASEFOLD_LOOKUP		0x08000000 /* Dentry comes from a casefold directory */
- 
- #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
- #define DCACHE_DENTRY_CURSOR		0x20000000
-@@ -497,6 +498,13 @@ static inline bool d_is_fallthru(const struct dentry *dentry)
- 	return dentry->d_flags & DCACHE_FALLTHRU;
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 4eda519c3002..f8881e29c5d5 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1467,9 +1467,43 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ 	return 0;
  }
  
-+extern void d_set_casefold_lookup(struct dentry *dentry);
-+
-+static inline bool d_is_casefold_lookup(const struct dentry *dentry)
++static inline int generic_ci_d_revalidate(struct dentry *dentry,
++					  const struct qstr *name,
++					  unsigned int flags)
 +{
-+	return dentry->d_flags & DCACHE_CASEFOLD_LOOKUP;
++	int is_creation = flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET);
++
++	if (d_is_negative(dentry)) {
++		const struct dentry *parent = READ_ONCE(dentry->d_parent);
++		const struct inode *dir = READ_ONCE(parent->d_inode);
++
++		if (dir && needs_casefold(dir)) {
++			if (!d_is_casefold_lookup(dentry))
++				return 0;
++
++			if (is_creation) {
++				/*
++				 * dentry->d_name won't change from under us in
++				 * the is_creation path only, since d_revalidate
++				 * during creation and renames is always called
++				 * with the parent inode locked.  This isn't the
++				 * case for all lookup callpaths, so it should
++				 * not be accessed outside
++				 * (LOOKUP_CREATE|LOOKUP_RENAME_TARGET) context.
++				 */
++				if (dentry->d_name.len != name->len ||
++				    memcmp(dentry->d_name.name, name->name, name->len))
++					return 0;
++			}
++		}
++	}
++	return 1;
 +}
 +
- 
- extern int sysctl_vfs_cache_pressure;
+ static const struct dentry_operations generic_ci_dentry_ops = {
+ 	.d_hash = generic_ci_d_hash,
+ 	.d_compare = generic_ci_d_compare,
++	.d_revalidate_name = generic_ci_d_revalidate,
+ };
+ #endif
  
 -- 
 2.40.0
