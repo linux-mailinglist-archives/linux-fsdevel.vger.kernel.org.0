@@ -2,194 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 09D9A6EC090
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Apr 2023 16:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 865C66EC20F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Apr 2023 21:38:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230480AbjDWOvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Apr 2023 10:51:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57978 "EHLO
+        id S230011AbjDWTh5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Apr 2023 15:37:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230507AbjDWOvM (ORCPT
+        with ESMTP id S229493AbjDWThy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Apr 2023 10:51:12 -0400
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30C63271C;
-        Sun, 23 Apr 2023 07:51:07 -0700 (PDT)
-Received: by mail-vs1-xe33.google.com with SMTP id ada2fe7eead31-42ff08ab61dso765420137.1;
-        Sun, 23 Apr 2023 07:51:07 -0700 (PDT)
+        Sun, 23 Apr 2023 15:37:54 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on20718.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eab::718])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06E6E10FB;
+        Sun, 23 Apr 2023 12:37:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VdrNQfMXW4BnPsgAU36uAVRGEVprou6dT/7+YmD7qMAxEnZmKtmI8674Wa8mBuqstHrBGKSrO2Q/a3LpYfCKmEE9NsbXJO8qg8xbQWv0/DA7oxnsuICG0mKPSA4yinZXqK7MgXSUNJvzpTnzl+GAyYwye8ohQlixS1Jcy3ROiT7kiLWceD4M7iiv5YmIUMil397C4mbm3m9r1tmpDVDTSCOjnjRkpTzE/DqxCMc3dOVUEg7LrdKEg+NT5FJEF1u1J8szECUrq4h9OsetOo+79JwsWYUtfQ8v7OPEZJGrFOa8C68s16Jz92hfG19ptDBFNbl4MefJKfqGOiKCWkOMSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sRzijtC3r3OzRdihsIEasZUOnkrBMe3AX/H3bgylpds=;
+ b=fP7DVpQErGBk/sKyjegyyA7UdxUK1007ND5zRUOj/0lluS8P4caSpWkVhsPmEdUMIKenFirdSCGceVQCu54esXrPc0JbHfz9LbMHbtzJTi3FxGsfrDR0lWZ6MQNAUMa8J67N0pJBzuGjhz0IrLvTv0QojJFRmaIsGSdewr6zNLnt3g17yYF9oozz5AZzFiPWpCNKtcHkRSuNJsWA6PnW/1K/Pa54lziXWoJ1X92jke+Oasp/xQcpg/nB2XiAg3zBry42/4wkzXsR8FrIAkhOiPUCjOkmGDW+39inZPd8xQehalJ3G9FmDP1ap2J4tM3kMs6jqIFXwRSCvdpfT26sIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682261466; x=1684853466;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Byy5aNIeSbfDla4aJVVFrIzVSy2E3RHqITcEmVo7JRE=;
-        b=RKBXXCzMbPO0c3dNHN4kOwMb50a1vI21F46uM2qNrVGZnxlLgn6ryNiwH1XqALlyv7
-         mZQRQuTDmWR38qNqUA2rrHKP5Uhei0U8KHgtxj0lsz6a2FfEzm3+tYKroNLLgYxBiwKk
-         MLD2rYfWu3b0phFlVaYGkcvgnIFD3jbaMYAPdk5rPRrdzAvXYf7mJJMJ4KGa34iDcPt4
-         5ox0VFI/dPyeyTAhwd0MFh3YbdadxiwI14v1BK4DXfxDmc0mcGoQDdBZXnXi4+2CrscN
-         FyRRXhJW9V/P8Nb0SBdcjBCgwi04HqJfwI20sjH4UMKLdKUutDpCdU1VvKebky04iNnp
-         P9hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682261466; x=1684853466;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Byy5aNIeSbfDla4aJVVFrIzVSy2E3RHqITcEmVo7JRE=;
-        b=GzX2wnZG97WGdB1le7spxvoebd1vJqz9duV/KV+vBz6YU0+OYg+eTUSBpGYixvBwAQ
-         A2ukyAt/8/yvW06Rm1+vRIlYFwtxC+/xSl+/gfSJHcdCYEYRwp6ko4laz+cnKuyibza4
-         cCeJF8NwTckjEhzIDHI1HgnNvnbT8NSvQ+6ew95L124ch4WLugOwFSZRwiKSm156JJAa
-         CPZ1ADB3vEAPWcCkWo0FPQZlEVShSg/XbOXeiFU72bzlLbOnYoExAAG2wHyJaCVjSEiK
-         ir9zJYhB7FQ/HuQfpGw/xsq/NSNFmhGeL9GPeyeug/kH25pTeJbl3v7xdEOxP2BIlwpw
-         /m6w==
-X-Gm-Message-State: AAQBX9ds2/4kjJ7PTkuRS51NclIssKzjw6znnCCVBEMafEsxNJsSPKma
-        v7l+6Mg+6KZBhPVKXSAdx9I1bJq8QCkmKKVo950=
-X-Google-Smtp-Source: AKy350Z5gzn4UWfEtW4Wn7+TaHy7dwqZraT/JdO1pegO5CuBK/GTa8ixWUrBAabB5nkoPrMqhSd1EaFai8Vxlw5iCMg=
-X-Received: by 2002:a67:fe97:0:b0:430:23c2:1c05 with SMTP id
- b23-20020a67fe97000000b0043023c21c05mr4275621vsr.4.1682261466002; Sun, 23 Apr
- 2023 07:51:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230418014037.2412394-1-drosen@google.com> <CAOQ4uxhpFrRVcviQ6bK1ZMtZDSMXRFuqY-d_+uQ1C0YMDtQpLA@mail.gmail.com>
- <CA+PiJmT1wCoGnqtVSfcM-0qKm=Vu-jPf=7Op90vcGo3A7kYr0g@mail.gmail.com>
-In-Reply-To: <CA+PiJmT1wCoGnqtVSfcM-0qKm=Vu-jPf=7Op90vcGo3A7kYr0g@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 23 Apr 2023 17:50:53 +0300
-Message-ID: <CAOQ4uxgwmsAA8b1ApmHh9fKuSyy0-NKgpkDSLk-gUWnaGKXtFQ@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next v3 00/37] FUSE BPF: A Stacked Filesystem
- Extension for FUSE
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, bpf@vger.kernel.org,
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sRzijtC3r3OzRdihsIEasZUOnkrBMe3AX/H3bgylpds=;
+ b=L1JbxueJWtb7mA3YIouSAblWKIFujkmLty+fLA9tXr4cnPvK6tfH2tEPE1oJKMsYMce/ClEeLMcU7/KfU+A7SG8eDFBQc24VQ+2xja4fWZMbg61Ba9gS2ZKtRyDUMN7tc5lQ7UrG+FdqMsZGmtu4h54TcHYYoY1rjRP6H/BWfLc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by BN0PR13MB5167.namprd13.prod.outlook.com (2603:10b6:408:152::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.33; Sun, 23 Apr
+ 2023 19:32:13 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::f416:544d:18b7:bb34]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::f416:544d:18b7:bb34%5]) with mapi id 15.20.6319.033; Sun, 23 Apr 2023
+ 19:32:12 +0000
+Date:   Sun, 23 Apr 2023 21:32:01 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
         Alexei Starovoitov <ast@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
         Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
         John Fastabend <john.fastabend@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joanne Koong <joannelkoong@gmail.com>,
-        Mykola Lysenko <mykolal@fb.com>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] mm/gup: disallow GUP writing to file-backed mappings by
+ default
+Message-ID: <ZEWHsbxhQlrSqnSC@corigine.com>
+References: <f86dc089b460c80805e321747b0898fd1efe93d7.1682168199.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f86dc089b460c80805e321747b0898fd1efe93d7.1682168199.git.lstoakes@gmail.com>
+X-ClientProxiedBy: AM0PR04CA0054.eurprd04.prod.outlook.com
+ (2603:10a6:208:1::31) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|BN0PR13MB5167:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa9b4082-ee29-4fc5-1889-08db44316fdd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: XzWs/2NUR1TtAefCnHvOBHeTRqcNSC6OnsJ2bEoGkSFoBIhsUToo1VVw2+IPtKvV5jEfk3HBahaXEYf02TVGBjhdaj4e5DEEnNfVW9cZ2z6q73kGm9eYlBVuZWlGYikPIA4iFKlSc33X0424KTu69lYQ0Y6+5+Hj1o03iBJspy+3dgV06slw2uFe0xNpkhXtxFaRPHStwjyXeCErOvctMYtWMGQmiWGL+BwCrCHygucXCg55CdAIafOz2FFcZ7Bt2ycgumXY3FzND7DxOLG7lcZNvHc00rXpuxkCF2/vbKQx86bclIedi2Wd3P4eKwf8CSEDfflBQuu2zJt4pqqd2HN5nBKASv6eKrpDB26IL8w6m1yo75Wp9Y+iaDYlFFoxxqtUSL9rfjzfKhPcGQIqPhpX01Szm1BBZwhS1kLDkMfwpn/DW3qjuqyT721J05CPjPN4z0xdpMJayohcpkNdbmqPMpxHpFrZdMtaMknYqyo/E4n/MhDr3SrdRo9VogLvBhFbJXtL4c5vPUGmvAH+U6j7dqQ2ZymHLPrGp72gpRKCOVQ0/cR4itQXX4NKfxe+
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(346002)(136003)(39840400004)(366004)(451199021)(2906002)(6486002)(2616005)(6666004)(6512007)(6506007)(186003)(66946007)(66556008)(66476007)(8676002)(8936002)(316002)(41300700001)(6916009)(4326008)(478600001)(44832011)(7406005)(5660300002)(7416002)(54906003)(38100700002)(36756003)(86362001)(83380400001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?soUJBCApcfQiwe2/wueHCc+O3gLCqZ5gZHGeFPDXIY38IsF7qEnMq7Ojs4dL?=
+ =?us-ascii?Q?eoO/U4r95pOCClO5ZeLkdvlz/85ZoY/UvJPSafyyzbnytcrr+YjG6HEgjDup?=
+ =?us-ascii?Q?Xwc4+rAtFSXQ9eMfFJFNUo04PkF5Qawhej+V9OMEZPMX7L4Bpgj4sFPKcfTJ?=
+ =?us-ascii?Q?k75HNGJJq2xAbY3jCU75YNvrJwulGjZAvj2kO1kjrtpkXbHGYFiZBaijRNGK?=
+ =?us-ascii?Q?HODiG/O+Nvd5Y5bf7qnCs2/V1hnRyBnwn/C6GDLxl5n7N9tLEN8HhLs60896?=
+ =?us-ascii?Q?GEnxQSymou6uc/0PK23+9qdCq33RuDHb39uazAi5nkjLJict9Q+1W+NP+gOA?=
+ =?us-ascii?Q?Tdpsp/5K4GgQ5Cg0+vYgHHz4cpRFd+TEPC1OiGD6jBbtyDX8UCPgEt5rX7r8?=
+ =?us-ascii?Q?0GqPRg0v/CrNaKgm0gmqO8x1vcTXekZa6kTBmf8qBzsmnvZjPNM1W9FCJEbE?=
+ =?us-ascii?Q?EteMIFuCkDYdAM2joWfBdccgho+hTKGI93oRWPa+NcTRQY/I58XTHkUHps3t?=
+ =?us-ascii?Q?ygggRz+nGwsMqhC4O6CcKMeoU1MfoPl1gKp0M2Y9ZhOBV6+opu0Bde7YFHD4?=
+ =?us-ascii?Q?fNiWR/dIZAQjXwoJsamAL8x6DL69SfAmVW3yYydzpyb09Tj3xLsmwdt4LkeX?=
+ =?us-ascii?Q?3YRH72O0cx/OdU0CWaR4BQa+h8rSzlG32DvmTyPJfZwplrcu9e8jYYzgGyGY?=
+ =?us-ascii?Q?gynnQpiFQUQ0Eo1PcDvzlKaH5W/SDqr8fUF6wlkFt3KdXAXJFcla+o2gT7gV?=
+ =?us-ascii?Q?sIH0ld2kRYCIkRO6VymTOwel/m+Ion39Ww4/jFE0ZqWfdie2Lh7ZL8Rog3W2?=
+ =?us-ascii?Q?iExAeCJB6YlCF4sCdj97wewK8lSrbTp1kWfdcG5qfSvUq/5Bnvvfuw0xhB2I?=
+ =?us-ascii?Q?b28hz+RylVKxD0KV7WwxRpk0KVcVub2sTLcRgdRvX3llRKhI3x4ELLiXOmvm?=
+ =?us-ascii?Q?2UG3amCn24f11vTzDJiTxNgJdw8mUPWXZ3QBrzmOERH57oAr2htbo3grkBgJ?=
+ =?us-ascii?Q?g6MGHg2oWbgp5dYZm7/ru4Hm3Z9+5FnOjnN+aTYdK4edI54+pdF6/yaDJAmU?=
+ =?us-ascii?Q?mPvsOZ0TNZyjOBjBOn4ZBXxjUel12AqmQI5D0KP818va0wRd5RfHYnSUMbyu?=
+ =?us-ascii?Q?qVk5o8Wj8yQm6r38JfjYJbO9tITnO8AHXginx64y6nKf6FSCRFbRex9d22V8?=
+ =?us-ascii?Q?j7gilFUc6v6bwjfrn1IqCQ3/NApDbjFru/KrakA+BkElc2JH2FJy1NZuxkap?=
+ =?us-ascii?Q?oTrve9FZWLqEcZ14Jdv2JxIqDKVXdH+OJ+562xbfCwUN8mko27QP9Qz4SDWH?=
+ =?us-ascii?Q?kQIb3cQnaMPcOFPZuLQVo/1IABm/iU6GQw4+vCi+So8zJDqKiT03eTrE9Lyh?=
+ =?us-ascii?Q?junML99Dyoei+ZBN3KH/tVGneN4BodK17cLLJWoQ25RDXwEGIGlnpr3qCbCO?=
+ =?us-ascii?Q?7yqJVhXU/qH7MwlAa7HFFCg8XbLRJR/2rNwJYMV4VcriJaMUxQ7p2Xqh3yyb?=
+ =?us-ascii?Q?UOce6UXTfEzhJoxNfrE+WEht12hiSkAOrE83qFnKgxpXPLR+nA+6Zrcxa7Jw?=
+ =?us-ascii?Q?nQ/2pXagGtZRbk8vMW6a3qKyBPQg+nm5mth4z+ZZod02G957v746gNfZpry8?=
+ =?us-ascii?Q?1+LpMMCMmgJSUp1NTD2tN8BmH3kTxt07P+BSg+8FDPKZMsyQfjp31mqc3Eg/?=
+ =?us-ascii?Q?41Xkxw=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa9b4082-ee29-4fc5-1889-08db44316fdd
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2023 19:32:12.6120
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +OuMxX14iuVMZDcdKLA6Yvyg2x4IqIEeKuBn7df6TpANh9Mmtb/5WPFX4EwIujMoafFJLY2Xf5Nzwj3agMXe7fk1taHjN+UqBIjpOn1ZiRI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR13MB5167
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 4:41=E2=80=AFAM Daniel Rosenberg <drosen@google.com=
-> wrote:
->
-> On Mon, Apr 17, 2023 at 10:33=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
-om> wrote:
-> >
-> >
-> > Which brings me to my biggest concern.
-> > I still do not see how these patches replace Allesio's
-> > FUSE_DEV_IOC_PASSTHROUGH_OPEN patches.
-> >
-> > Is the idea here that ioctl needs to be done at FUSE_LOOKUP
-> > instead or in addition to the ioctl on FUSE_OPEN to setup the
-> > read/write passthrough on the backing file?
-> >
->
-> In these patches, the fuse daemon responds to the lookup request via
-> an ioctl, essentially in the same way it would have to the /dev/fuse
-> node. It just flags the write as coming from an ioctl and calls
-> fuse_dev_do_write. An additional block in the lookup response gives
-> the backing file and what bpf_ops to use. The main difference is that
-> fuse-bpf uses backing inodes, while passthrough uses a file.
+On Sat, Apr 22, 2023 at 02:37:05PM +0100, Lorenzo Stoakes wrote:
+> It isn't safe to write to file-backed mappings as GUP does not ensure that
+> the semantics associated with such a write are performed correctly, for
+> instance filesystems which rely upon write-notify will not be correctly
+> notified.
+> 
+> There are exceptions to this - shmem and hugetlb mappings are (in effect)
+> anonymous mappings by other names so we do permit this operation in these
+> cases.
+> 
+> In addition, if no pinning takes place (neither FOLL_GET nor FOLL_PIN is
+> specified and neither flags gets implicitly set) then no writing can occur
+> so we do not perform the check in this instance.
+> 
+> This is an important exception, as populate_vma_page_range() invokes
+> __get_user_pages() in this way (and thus so does __mm_populate(), used by
+> MAP_POPULATE mmap() and mlock() invocations).
+> 
+> There are GUP users within the kernel that do nevertheless rely upon this
+> behaviour, so we introduce the FOLL_ALLOW_BROKEN_FILE_MAPPING flag to
+> explicitly permit this kind of GUP access.
+> 
+> This is required in order to not break userspace in instances where the
+> uAPI might permit file-mapped addresses - a number of RDMA users require
+> this for instance, as do the process_vm_[read/write]v() system calls,
+> /proc/$pid/mem, ptrace and SDT uprobes. Each of these callers have been
+> updated to use this flag.
+> 
+> Making this change is an important step towards a more reliable GUP, and
+> explicitly indicates which callers might encouter issues moving forward.
 
-Ah right. I wonder if there is benefit in both APIs or if backing inode
-is sufficient to impelelent everything the could be interesting to implemen=
-t
-with a backing file.
-
-> Fuse-bpf's read/write support currently isn't complete, but it does
-> allow for direct passthrough. You could set ops to default to
-> userspace in every case that Allesio's passthrough code does and it
-> should have about the same effect.
-
-What are the subtle differences then?
-
-> With the struct_op change, I did
-> notice that doing something like that is more annoying, and am
-> planning to add a default op which only takes the meta info and runs
-> if the opcode specific op is not present.
->
-
-Sounds interesting. I'll wait to see what you propose.
-
->
-> > I am missing things like the FILESYSTEM_MAX_STACK_DEPTH check that
-> > was added as a result of review on Allesio's patches.
-> >
->
-> I'd definitely want to fix any issues that were fixed there. There's a
-> lot of common code between fuse-bpf and fuse passthrough, so many of
-> the suggestions there will apply here.
->
-
-That's why I suggested trying to implement the passthough file ioctl
-functionality first to make sure that none of the review comments
-in the first round were missed.
-
-But if we need functionality of both ioctls, we can collaborate the
-work on merging them separately.
-
-> > The reason I am concerned about this is that we are using the
-> > FUSE_DEV_IOC_PASSTHROUGH_OPEN patches and I would like
-> > to upstream their functionality sooner rather than later.
-> > These patches have already been running in production for a while
-> > I believe that they are running in Android as well and there is value
-> > in upsteaming well tested patches.
-> >
-> > The API does not need to stay FUSE_DEV_IOC_PASSTHROUGH_OPEN
-> > it should be an API that is extendable to FUSE-BPF, but it would be
-> > useful if the read/write passthrough could be the goal for first merge.
-> >
-> > Does any of this make sense to you?
-> > Can you draw a roadmap for merging FUSE-BPF that starts with
-> > a first (hopefully short term) phase that adds the read/write passthrou=
-gh
-> > functionality?
-> >
-> > I can help with review and testing of that part if needed.
-> > I was planning to discuss this with you on LSFMM anyway,
-> > but better start the discussion beforehand.
-> >
-> > Thanks,
-> > Amir.
->
-> We've been using an earlier version of fuse-bpf on Android, closer to
-> the V1 patches. They fit our current needs but don't cover everything
-> we intend to. The V3 patches switch to a new style of bpf program,
-> which I'm hoping to get some feedback on before I spend too much time
-> fixing up the details. The backing calls themselves can be reviewed
-> separately from that though.
->
-> Without bpf, we're essentially enabling complete passthrough at a
-> directory or file. By default, once you set a backing file fuse-bpf
-> calls by the backing filesystem by default, with no additional
-> userspace interaction apart from if an installed bpf program says
-> otherwise. If we had some commands without others, we'd have behavior
-> changes as we introduce support for additional calls. We'd need a way
-> to set default behavior. Perhaps something like a u64 flag field
-> extension in FUSE_INIT for indicating which opcodes support backing,
-> and a response for what those should default to doing. If there's a
-> bpf_op present for a given opcode, it would be able to override that
-> default. If we had something like that, we'd be able to add support
-> for a subset of opcodes in a sensible way.
-
-So maybe this is something to consider.
-
-Thanks,
-Amir.
+nit: s/encouter/encounter/
