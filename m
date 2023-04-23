@@ -2,147 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DC276EBEA8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Apr 2023 12:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09D9A6EC090
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Apr 2023 16:51:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbjDWKph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Apr 2023 06:45:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47948 "EHLO
+        id S230480AbjDWOvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Apr 2023 10:51:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbjDWKpg (ORCPT
+        with ESMTP id S230507AbjDWOvM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Apr 2023 06:45:36 -0400
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39669171F;
-        Sun, 23 Apr 2023 03:45:34 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Vgjcqv._1682246726;
-Received: from 30.97.49.3(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Vgjcqv._1682246726)
-          by smtp.aliyun-inc.com;
-          Sun, 23 Apr 2023 18:45:28 +0800
-Message-ID: <02f7dcf5-1aad-0f8b-24e7-a22c0685fc42@linux.alibaba.com>
-Date:   Sun, 23 Apr 2023 18:45:25 +0800
+        Sun, 23 Apr 2023 10:51:12 -0400
+Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30C63271C;
+        Sun, 23 Apr 2023 07:51:07 -0700 (PDT)
+Received: by mail-vs1-xe33.google.com with SMTP id ada2fe7eead31-42ff08ab61dso765420137.1;
+        Sun, 23 Apr 2023 07:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682261466; x=1684853466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Byy5aNIeSbfDla4aJVVFrIzVSy2E3RHqITcEmVo7JRE=;
+        b=RKBXXCzMbPO0c3dNHN4kOwMb50a1vI21F46uM2qNrVGZnxlLgn6ryNiwH1XqALlyv7
+         mZQRQuTDmWR38qNqUA2rrHKP5Uhei0U8KHgtxj0lsz6a2FfEzm3+tYKroNLLgYxBiwKk
+         MLD2rYfWu3b0phFlVaYGkcvgnIFD3jbaMYAPdk5rPRrdzAvXYf7mJJMJ4KGa34iDcPt4
+         5ox0VFI/dPyeyTAhwd0MFh3YbdadxiwI14v1BK4DXfxDmc0mcGoQDdBZXnXi4+2CrscN
+         FyRRXhJW9V/P8Nb0SBdcjBCgwi04HqJfwI20sjH4UMKLdKUutDpCdU1VvKebky04iNnp
+         P9hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682261466; x=1684853466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Byy5aNIeSbfDla4aJVVFrIzVSy2E3RHqITcEmVo7JRE=;
+        b=GzX2wnZG97WGdB1le7spxvoebd1vJqz9duV/KV+vBz6YU0+OYg+eTUSBpGYixvBwAQ
+         A2ukyAt/8/yvW06Rm1+vRIlYFwtxC+/xSl+/gfSJHcdCYEYRwp6ko4laz+cnKuyibza4
+         cCeJF8NwTckjEhzIDHI1HgnNvnbT8NSvQ+6ew95L124ch4WLugOwFSZRwiKSm156JJAa
+         CPZ1ADB3vEAPWcCkWo0FPQZlEVShSg/XbOXeiFU72bzlLbOnYoExAAG2wHyJaCVjSEiK
+         ir9zJYhB7FQ/HuQfpGw/xsq/NSNFmhGeL9GPeyeug/kH25pTeJbl3v7xdEOxP2BIlwpw
+         /m6w==
+X-Gm-Message-State: AAQBX9ds2/4kjJ7PTkuRS51NclIssKzjw6znnCCVBEMafEsxNJsSPKma
+        v7l+6Mg+6KZBhPVKXSAdx9I1bJq8QCkmKKVo950=
+X-Google-Smtp-Source: AKy350Z5gzn4UWfEtW4Wn7+TaHy7dwqZraT/JdO1pegO5CuBK/GTa8ixWUrBAabB5nkoPrMqhSd1EaFai8Vxlw5iCMg=
+X-Received: by 2002:a67:fe97:0:b0:430:23c2:1c05 with SMTP id
+ b23-20020a67fe97000000b0043023c21c05mr4275621vsr.4.1682261466002; Sun, 23 Apr
+ 2023 07:51:06 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: [PATCH v2 1/4] mm/filemap: Add folio_lock_timeout()
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Yu Zhao <yuzhao@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, ying.huang@intel.com
-References: <20230421221249.1616168-1-dianders@chromium.org>
- <20230422051858.1696-1-hdanton@sina.com>
- <20230423081203.1812-1-hdanton@sina.com>
- <20230423094901.1867-1-hdanton@sina.com>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20230423094901.1867-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-12.1 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230418014037.2412394-1-drosen@google.com> <CAOQ4uxhpFrRVcviQ6bK1ZMtZDSMXRFuqY-d_+uQ1C0YMDtQpLA@mail.gmail.com>
+ <CA+PiJmT1wCoGnqtVSfcM-0qKm=Vu-jPf=7Op90vcGo3A7kYr0g@mail.gmail.com>
+In-Reply-To: <CA+PiJmT1wCoGnqtVSfcM-0qKm=Vu-jPf=7Op90vcGo3A7kYr0g@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 23 Apr 2023 17:50:53 +0300
+Message-ID: <CAOQ4uxgwmsAA8b1ApmHh9fKuSyy0-NKgpkDSLk-gUWnaGKXtFQ@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next v3 00/37] FUSE BPF: A Stacked Filesystem
+ Extension for FUSE
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, bpf@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Joanne Koong <joannelkoong@gmail.com>,
+        Mykola Lysenko <mykolal@fb.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Apr 21, 2023 at 4:41=E2=80=AFAM Daniel Rosenberg <drosen@google.com=
+> wrote:
+>
+> On Mon, Apr 17, 2023 at 10:33=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
+om> wrote:
+> >
+> >
+> > Which brings me to my biggest concern.
+> > I still do not see how these patches replace Allesio's
+> > FUSE_DEV_IOC_PASSTHROUGH_OPEN patches.
+> >
+> > Is the idea here that ioctl needs to be done at FUSE_LOOKUP
+> > instead or in addition to the ioctl on FUSE_OPEN to setup the
+> > read/write passthrough on the backing file?
+> >
+>
+> In these patches, the fuse daemon responds to the lookup request via
+> an ioctl, essentially in the same way it would have to the /dev/fuse
+> node. It just flags the write as coming from an ioctl and calls
+> fuse_dev_do_write. An additional block in the lookup response gives
+> the backing file and what bpf_ops to use. The main difference is that
+> fuse-bpf uses backing inodes, while passthrough uses a file.
 
+Ah right. I wonder if there is benefit in both APIs or if backing inode
+is sufficient to impelelent everything the could be interesting to implemen=
+t
+with a backing file.
 
-On 2023/4/23 17:49, Hillf Danton wrote:
-> On 23 Apr 2023 16:35:26 +0800 Gao Xiang <hsiangkao@linux.alibaba.com>
->> On 2023/4/23 16:12, Hillf Danton wrote:
->>> On 23 Apr 2023 14:08:49 +0800 Gao Xiang <hsiangkao@linux.alibaba.com>
->>>> On 2023/4/22 13:18, Hillf Danton wrote:
->>>>> On 21 Apr 2023 15:12:45 -0700 Douglas Anderson <dianders@chromium.org>
->>>>>> Add a variant of folio_lock() that can timeout. This is useful to
->>>>>> avoid unbounded waits for the page lock in kcompactd.
->>>>>
->>>>> Given no mutex_lock_timeout() (perhaps because timeout makes no sense for
->>>>> spinlock), I suspect your fix lies in the right layer. If waiting for
->>>>> page under IO causes trouble for you, another simpler option is make
->>>>> IO faster (perhaps all you can do) for instance. If kcompactd is waken
->>>>> up by kswapd, waiting for slow IO is the right thing to do.
->>>>
->>>> A bit out of topic.  That is almost our original inital use scenarios for
->>>
->>> Thanks for taking a look.
->>>
->>>> EROFS [1] although we didn't actually test Chrome OS, there lies four
->>>> points:
->>>>
->>>>     1) 128kb compressed size unit is not suitable for memory constraint
->>>>        workload, especially memory pressure scenarios, that amplify both I/Os
->>>>        and memory footprints (EROFS was initially optimized with 4KiB
->>>>        pclusters);
->>>
->>> Feel free to take another one at 2M THP [1].
->>>
->>> [1] https://lore.kernel.org/lkml/20230418191313.268131-1-hannes@cmpxchg.org/
->>
->> Honestly I don't catch your point here, does THP has some relationship with
-> 
-> THP tests ended without the help of timeout helpers.
-> 
->> this?  Almost all smartphones (but I don't know Chromebook honestly) didn't
->> use THP at that time.
->>>>
->>>>     2) If you turn into a small compressed size (e.g. 4 KiB), some fs behaves
->>>>        ineffective since its on-disk compressed index isn't designed to be
->>>>        random accessed (another in-memory cache for random access) so you have
->>>>        to count one by one to calculate physical data offset if cache miss;
->>>>
->>>>     3) compressed data needs to take extra memory during I/O (especially
->>>>        low-ended devices) that makes the cases worse and our camera app
->>>>        workloads once cannot be properly launched under heavy memory pressure,
->>>>        but in order to keep user best experience we have to keep as many as
->>>>        apps active so that it's hard to kill apps directly.  So inplace I/O +
->>>>        decompression is needed in addition to small compressed sizes for
->>>>        overall performance.
->>>
->>> Frankly nowadays I have no interest in running linux with <16M RAM for example.
->>
->> Our cases are tested on 2016-2018 devices under 3 to 6 GB memory if you
->> take a glance at the original ATC paper, the page 9 (section 5.1) wrote:
->> "However, it costed too much CPU and memory resources, and when trying to
->>   run a camera application, the phone froze for tens of seconds before it
->>   finally failed."
->>
->> I have no idea how 16M RAM here comes from but smartphones doesn't have
->> such limited memory.  In brief, if you runs few app, you have few problem.
->> but as long as you keeps more apps in background (and running), then the
->> memory will eventually suffer pressure.
-> 
-> Given no complaints in case of running 16 apps with 1G RAM for instance,
-> what is the point of running 256 apps with the same RAM? And adding changes
+> Fuse-bpf's read/write support currently isn't complete, but it does
+> allow for direct passthrough. You could set ops to default to
+> userspace in every case that Allesio's passthrough code does and it
+> should have about the same effect.
 
-I don't think the `ill-designed` word is helpful to the overall topic.
+What are the subtle differences then?
 
-I'm not sure if my description is confusing:
+> With the struct_op change, I did
+> notice that doing something like that is more annoying, and am
+> planning to add a default op which only takes the meta info and runs
+> if the opcode specific op is not present.
+>
 
-  1) First, I never said running 256 apps with the same RAM.  In fact, in 2018
-     there are indeed some phones still with 1G RAM, if my memory is correct,
-     such 1G phones couldn't run 16 latest mainstream super apps at the same time
-     smoothly, and, previously compression will lead this worse.  Even such
-     phones cannot use a full Android but a minimized Android Go [1] instead.
-     The worst case I've heard on phones with 1G RAM would be "after you checked
-     a new message from friends on a superapp by switch out, another previous
-     one with some incomplete registeration form could be killed and you have
-     to restart and refill the form."
+Sounds interesting. I'll wait to see what you propose.
 
-  2) apps and baseos can be upgraded over time, especially apps, since Android
-     ecosystem is open.  It's hard to get over it.
+>
+> > I am missing things like the FILESYSTEM_MAX_STACK_DEPTH check that
+> > was added as a result of review on Allesio's patches.
+> >
+>
+> I'd definitely want to fix any issues that were fixed there. There's a
+> lot of common code between fuse-bpf and fuse passthrough, so many of
+> the suggestions there will apply here.
+>
+
+That's why I suggested trying to implement the passthough file ioctl
+functionality first to make sure that none of the review comments
+in the first round were missed.
+
+But if we need functionality of both ioctls, we can collaborate the
+work on merging them separately.
+
+> > The reason I am concerned about this is that we are using the
+> > FUSE_DEV_IOC_PASSTHROUGH_OPEN patches and I would like
+> > to upstream their functionality sooner rather than later.
+> > These patches have already been running in production for a while
+> > I believe that they are running in Android as well and there is value
+> > in upsteaming well tested patches.
+> >
+> > The API does not need to stay FUSE_DEV_IOC_PASSTHROUGH_OPEN
+> > it should be an API that is extendable to FUSE-BPF, but it would be
+> > useful if the read/write passthrough could be the goal for first merge.
+> >
+> > Does any of this make sense to you?
+> > Can you draw a roadmap for merging FUSE-BPF that starts with
+> > a first (hopefully short term) phase that adds the read/write passthrou=
+gh
+> > functionality?
+> >
+> > I can help with review and testing of that part if needed.
+> > I was planning to discuss this with you on LSFMM anyway,
+> > but better start the discussion beforehand.
+> >
+> > Thanks,
+> > Amir.
+>
+> We've been using an earlier version of fuse-bpf on Android, closer to
+> the V1 patches. They fit our current needs but don't cover everything
+> we intend to. The V3 patches switch to a new style of bpf program,
+> which I'm hoping to get some feedback on before I spend too much time
+> fixing up the details. The backing calls themselves can be reviewed
+> separately from that though.
+>
+> Without bpf, we're essentially enabling complete passthrough at a
+> directory or file. By default, once you set a backing file fuse-bpf
+> calls by the backing filesystem by default, with no additional
+> userspace interaction apart from if an installed bpf program says
+> otherwise. If we had some commands without others, we'd have behavior
+> changes as we introduce support for additional calls. We'd need a way
+> to set default behavior. Perhaps something like a u64 flag field
+> extension in FUSE_INIT for indicating which opcodes support backing,
+> and a response for what those should default to doing. If there's a
+> bpf_op present for a given opcode, it would be able to override that
+> default. If we had something like that, we'd be able to add support
+> for a subset of opcodes in a sensible way.
+
+So maybe this is something to consider.
 
 Thanks,
-Gao Xiang
-
-> because of ill designed phone products?
-
-[1] https://developer.android.com/guide/topics/androidgo
+Amir.
