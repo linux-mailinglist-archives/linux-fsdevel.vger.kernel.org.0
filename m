@@ -2,141 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 254506EBE07
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Apr 2023 10:35:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C12606EBE15
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Apr 2023 10:49:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbjDWIfi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Apr 2023 04:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45640 "EHLO
+        id S229780AbjDWItL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Apr 2023 04:49:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbjDWIfg (ORCPT
+        with ESMTP id S229441AbjDWItK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Apr 2023 04:35:36 -0400
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1037B1BD1;
-        Sun, 23 Apr 2023 01:35:33 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R521e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0VgjFNh3_1682238926;
-Received: from 30.97.49.3(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VgjFNh3_1682238926)
-          by smtp.aliyun-inc.com;
-          Sun, 23 Apr 2023 16:35:29 +0800
-Message-ID: <d3ef39e8-3ef4-f6f5-7405-328f72d42bb7@linux.alibaba.com>
-Date:   Sun, 23 Apr 2023 16:35:26 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: [PATCH v2 1/4] mm/filemap: Add folio_lock_timeout()
-To:     Hillf Danton <hdanton@sina.com>
+        Sun, 23 Apr 2023 04:49:10 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 314DB1726;
+        Sun, 23 Apr 2023 01:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1682239749; x=1713775749;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=SVZBxnuP4vBlqDAzvKI6hIM4GkXNlEyFfSy/CkYXJ7w=;
+  b=YxfZlPmJFokwDKZ3WvY6N266OkxHZ9fJF0/7E20kxDNVKOEjgy+htF7+
+   UQA0lOVIOkS81WpSpYw++tvfrV3TwKOHETx7aoAGE1aZAE5Um3czKkrfX
+   kplFXiMkEdKh/9AQe2UpGyx94Lj0Yv0Jd4jWxbbjo9MAdupBY3h5SciG1
+   t9cKY2u/y9ccALPev3tdZbptFOYjHuBx2mNLekAIejXMp5rNLL+XeLvU6
+   INBrbFeQMVDv3EfwLDCSidCRD0iEUuJBmNklO7uvyPOnhaS3wJ+QybT8c
+   KhEByZ/EeY8n9wnFP4Tm+7e3A0mMCbPQQQCkyVhO18RCK6+JrTSt68gv6
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10688"; a="326585497"
+X-IronPort-AV: E=Sophos;i="5.99,220,1677571200"; 
+   d="scan'208";a="326585497"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2023 01:49:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10688"; a="686359883"
+X-IronPort-AV: E=Sophos;i="5.99,220,1677571200"; 
+   d="scan'208";a="686359883"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2023 01:49:02 -0700
+From:   "Huang, Ying" <ying.huang@intel.com>
+To:     Douglas Anderson <dianders@chromium.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Douglas Anderson <dianders@chromium.org>,
         Mel Gorman <mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Yu Zhao <yuzhao@google.com>,
+        Yu Zhao <yuzhao@google.com>, linux-fsdevel@vger.kernel.org,
         Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, ying.huang@intel.com
+        Bart Van Assche <bvanassche@acm.org>,
+        Ben Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Will Deacon <will@kernel.org>, Zhang Yi <yi.zhang@huawei.com>
+Subject: Re: [PATCH v2 2/4] buffer: Add lock_buffer_timeout()
+In-Reply-To: <20230421151135.v2.2.Ie146eec4d41480ebeb15f0cfdfb3bc9095e4ebd9@changeid>
+        (Douglas Anderson's message of "Fri, 21 Apr 2023 15:12:46 -0700")
 References: <20230421221249.1616168-1-dianders@chromium.org>
- <20230422051858.1696-1-hdanton@sina.com>
- <20230423081203.1812-1-hdanton@sina.com>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20230423081203.1812-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-12.1 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        <20230421151135.v2.2.Ie146eec4d41480ebeb15f0cfdfb3bc9095e4ebd9@changeid>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+Date:   Sun, 23 Apr 2023 16:47:58 +0800
+Message-ID: <87bkjfkmrl.fsf@yhuang6-desk2.ccr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Hillf,
+Douglas Anderson <dianders@chromium.org> writes:
 
-On 2023/4/23 16:12, Hillf Danton wrote:
-> On 23 Apr 2023 14:08:49 +0800 Gao Xiang <hsiangkao@linux.alibaba.com>
->> On 2023/4/22 13:18, Hillf Danton wrote:
->>> On 21 Apr 2023 15:12:45 -0700 Douglas Anderson <dianders@chromium.org>
->>>> Add a variant of folio_lock() that can timeout. This is useful to
->>>> avoid unbounded waits for the page lock in kcompactd.
->>>
->>> Given no mutex_lock_timeout() (perhaps because timeout makes no sense for
->>> spinlock), I suspect your fix lies in the right layer. If waiting for
->>> page under IO causes trouble for you, another simpler option is make
->>> IO faster (perhaps all you can do) for instance. If kcompactd is waken
->>> up by kswapd, waiting for slow IO is the right thing to do.
->>
->> A bit out of topic.  That is almost our original inital use scenarios for
-> 
-> Thanks for taking a look.
-> 
->> EROFS [1] although we didn't actually test Chrome OS, there lies four
->> points:
->>
->>    1) 128kb compressed size unit is not suitable for memory constraint
->>       workload, especially memory pressure scenarios, that amplify both I/Os
->>       and memory footprints (EROFS was initially optimized with 4KiB
->>       pclusters);
-> 
-> Feel free to take another one at 2M THP [1].
-> 
-> [1] https://lore.kernel.org/lkml/20230418191313.268131-1-hannes@cmpxchg.org/
+> Add a variant of lock_buffer() that can timeout. This is useful to
+> avoid unbounded waits for the page lock in kcompactd.
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>
+> Changes in v2:
+> - "Add lock_buffer_timeout()" new for v2.
+>
+>  fs/buffer.c                 |  7 +++++++
+>  include/linux/buffer_head.h | 10 ++++++++++
+>  include/linux/wait_bit.h    | 24 ++++++++++++++++++++++++
+>  kernel/sched/wait_bit.c     | 14 ++++++++++++++
+>  4 files changed, 55 insertions(+)
+>
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 9e1e2add541e..fcd19c270024 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -71,6 +71,13 @@ void __lock_buffer(struct buffer_head *bh)
+>  }
+>  EXPORT_SYMBOL(__lock_buffer);
+>  
+> +int __lock_buffer_timeout(struct buffer_head *bh, unsigned long timeout)
+> +{
+> +	return wait_on_bit_lock_io_timeout(&bh->b_state, BH_Lock,
+> +					   TASK_UNINTERRUPTIBLE, timeout);
+> +}
+> +EXPORT_SYMBOL(__lock_buffer_timeout);
+> +
+>  void unlock_buffer(struct buffer_head *bh)
+>  {
+>  	clear_bit_unlock(BH_Lock, &bh->b_state);
+> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+> index 8f14dca5fed7..2bae464f89d5 100644
+> --- a/include/linux/buffer_head.h
+> +++ b/include/linux/buffer_head.h
+> @@ -237,6 +237,7 @@ struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
+>  void free_buffer_head(struct buffer_head * bh);
+>  void unlock_buffer(struct buffer_head *bh);
+>  void __lock_buffer(struct buffer_head *bh);
+> +int __lock_buffer_timeout(struct buffer_head *bh, unsigned long timeout);
+>  int sync_dirty_buffer(struct buffer_head *bh);
+>  int __sync_dirty_buffer(struct buffer_head *bh, blk_opf_t op_flags);
+>  void write_dirty_buffer(struct buffer_head *bh, blk_opf_t op_flags);
+> @@ -400,6 +401,15 @@ static inline void lock_buffer(struct buffer_head *bh)
+>  		__lock_buffer(bh);
+>  }
+>  
+> +static inline int lock_buffer_timeout(struct buffer_head *bh,
+> +				      unsigned long timeout)
+> +{
+> +	might_sleep();
+> +	if (!trylock_buffer(bh))
+> +		return __lock_buffer_timeout(bh, timeout);
+> +	return 0;
+> +}
+> +
 
-Honestly I don't catch your point here, does THP has some relationship with
-this?  Almost all smartphones (but I don't know Chromebook honestly) didn't
-use THP at that time.
+Add document about return value of lock_buffer_timeout()?
 
->>
->>    2) If you turn into a small compressed size (e.g. 4 KiB), some fs behaves
->>       ineffective since its on-disk compressed index isn't designed to be
->>       random accessed (another in-memory cache for random access) so you have
->>       to count one by one to calculate physical data offset if cache miss;
->>
->>    3) compressed data needs to take extra memory during I/O (especially
->>       low-ended devices) that makes the cases worse and our camera app
->>       workloads once cannot be properly launched under heavy memory pressure,
->>       but in order to keep user best experience we have to keep as many as
->>       apps active so that it's hard to kill apps directly.  So inplace I/O +
->>       decompression is needed in addition to small compressed sizes for
->>       overall performance.
-> 
-> Frankly nowadays I have no interest in running linux with <16M RAM for example.
+Otherwise looks good to me.
 
-Our cases are tested on 2016-2018 devices under 3 to 6 GB memory if you
-take a glance at the original ATC paper, the page 9 (section 5.1) wrote:
-"However, it costed too much CPU and memory resources, and when trying to
-  run a camera application, the phone froze for tens of seconds before it
-  finally failed."
+Best Regards,
+Huang, Ying
 
-I have no idea how 16M RAM here comes from but smartphones doesn't have
-such limited memory.  In brief, if you runs few app, you have few problem.
-but as long as you keeps more apps in background (and running), then the
-memory will eventually suffer pressure.
-
->>
->>    4) If considering real-time performance, some algorithms are not quite
->>       suitable for extreme pressure cases;
-> 
-> Neither in considering any perf under extreme memory pressure (16M or 64G RAM)
-> because of crystally pure waste of time.
-
-Personally I don't think so, if you'd like to land an effective compression
-approach for end users and avoid user complaints (app lagging, app frozen,
-etc).  I think these all need to be considered in practice.
-
-Thanks,
-Gao Xiang
-
->>
->>    etc.
->>
->> I could give more details on this year LSF/MM about this, although it's not
->> a new topic and I'm not a Android guy now.
-> 
-> Did you book the air ticket? How many bucks?
->>
->> [1] https://www.usenix.org/conference/atc19/presentation/gao
->>
->> Thanks,
->> Gao Xiang
+>  static inline struct buffer_head *getblk_unmovable(struct block_device *bdev,
+>  						   sector_t block,
+>  						   unsigned size)
+> diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
+> index 7725b7579b78..33f0f60b1c8c 100644
+> --- a/include/linux/wait_bit.h
+> +++ b/include/linux/wait_bit.h
+> @@ -30,6 +30,7 @@ void wake_up_bit(void *word, int bit);
+>  int out_of_line_wait_on_bit(void *word, int, wait_bit_action_f *action, unsigned int mode);
+>  int out_of_line_wait_on_bit_timeout(void *word, int, wait_bit_action_f *action, unsigned int mode, unsigned long timeout);
+>  int out_of_line_wait_on_bit_lock(void *word, int, wait_bit_action_f *action, unsigned int mode);
+> +int out_of_line_wait_on_bit_lock_timeout(void *word, int, wait_bit_action_f *action, unsigned int mode, unsigned long timeout);
+>  struct wait_queue_head *bit_waitqueue(void *word, int bit);
+>  extern void __init wait_bit_init(void);
+>  
+> @@ -208,6 +209,29 @@ wait_on_bit_lock_io(unsigned long *word, int bit, unsigned mode)
+>  	return out_of_line_wait_on_bit_lock(word, bit, bit_wait_io, mode);
+>  }
+>  
+> +/**
+> + * wait_on_bit_lock_io_timeout - wait_on_bit_lock_io() with a timeout
+> + * @word: the word being waited on, a kernel virtual address
+> + * @bit: the bit of the word being waited on
+> + * @mode: the task state to sleep in
+> + * @timeout: the timeout in jiffies; %MAX_SCHEDULE_TIMEOUT means wait forever
+> + *
+> + * Returns zero if the bit was (eventually) found to be clear and was
+> + * set.  Returns non-zero if a timeout happened or a signal was delivered to
+> + * the process and the @mode allows that signal to wake the process.
+> + */
+> +static inline int
+> +wait_on_bit_lock_io_timeout(unsigned long *word, int bit, unsigned mode,
+> +			    unsigned long timeout)
+> +{
+> +	might_sleep();
+> +	if (!test_and_set_bit(bit, word))
+> +		return 0;
+> +	return out_of_line_wait_on_bit_lock_timeout(word, bit,
+> +						    bit_wait_io_timeout,
+> +						    mode, timeout);
+> +}
+> +
+>  /**
+>   * wait_on_bit_lock_action - wait for a bit to be cleared, when wanting to set it
+>   * @word: the word being waited on, a kernel virtual address
+> diff --git a/kernel/sched/wait_bit.c b/kernel/sched/wait_bit.c
+> index 0b1cd985dc27..629acd1c6c79 100644
+> --- a/kernel/sched/wait_bit.c
+> +++ b/kernel/sched/wait_bit.c
+> @@ -118,6 +118,20 @@ int __sched out_of_line_wait_on_bit_lock(void *word, int bit,
+>  }
+>  EXPORT_SYMBOL(out_of_line_wait_on_bit_lock);
+>  
+> +int __sched out_of_line_wait_on_bit_lock_timeout(void *word, int bit,
+> +						 wait_bit_action_f *action,
+> +						 unsigned mode,
+> +						 unsigned long timeout)
+> +{
+> +	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+> +	DEFINE_WAIT_BIT(wq_entry, word, bit);
+> +
+> +	wq_entry.key.timeout = jiffies + timeout;
+> +
+> +	return __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
+> +}
+> +EXPORT_SYMBOL(out_of_line_wait_on_bit_lock_timeout);
+> +
+>  void __wake_up_bit(struct wait_queue_head *wq_head, void *word, int bit)
+>  {
+>  	struct wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
