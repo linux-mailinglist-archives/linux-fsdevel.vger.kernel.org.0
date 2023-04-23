@@ -2,41 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E4566EC227
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Apr 2023 22:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB4626EC2EE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 00:30:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbjDWUCZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Apr 2023 16:02:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42576 "EHLO
+        id S229610AbjDWW3s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Apr 2023 18:29:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjDWUCY (ORCPT
+        with ESMTP id S229478AbjDWW3r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Apr 2023 16:02:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C098E63;
-        Sun, 23 Apr 2023 13:02:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 28D4D60F77;
-        Sun, 23 Apr 2023 20:02:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD654C433D2;
-        Sun, 23 Apr 2023 20:02:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682280142;
-        bh=MXq/43kCze2RO9lP4ptWyt16cAC97gbSKdjUyiZkGe0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TeydC14vXjAcezSvOpLJ6lAgoD7kv4M6u2qpkMik63uNVRdyPydMRXOgOZl8horI+
-         dPMUTeoPcKNY3usBHvTn9wt3MN+OugsRnGr0IsC1oFmhWdpfSaV1Z2ZOlTUucNyFnI
-         Dc7xJ3MsVgfv/9IzUKl8JIOxIGjmFLwo53Sw9q11W9QUhGzAN8aJtxFQ6cy32G+/6J
-         sPWBqLbzeBzmMfJt637Yg3UjirQwtj3SDotLldKjhF9Q47+El15XA9ePt5cvIKvHTl
-         ZLtLr/8hQ5GEStE0bg3XDleDq07tryjP50bYayKFt8JtmZOdkh1eS+Qu0bUY77irUf
-         0LMKZJajGU/pQ==
-Date:   Sun, 23 Apr 2023 22:02:11 +0200
-From:   Simon Horman <horms@kernel.org>
+        Sun, 23 Apr 2023 18:29:47 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2616910D3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Apr 2023 15:29:45 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1a92369761cso31817995ad.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Apr 2023 15:29:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1682288984; x=1684880984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCA3zsna6vFeV798erY3+vSi/BvHgoXGHGGpFGJHBjM=;
+        b=CSv4RH6SXo/8LhDuQi8y+f+aMDFvLryZeZLhrGCIHJ76AP0hsBy9FXFG82OCSDXpdw
+         w8F2b+EujbdmHkHGv/Yp2eXHQ1Q2MYfO8Vu1ERFY1LXyjQpIg0lB+5VlMI/ocJwxnhdc
+         Xr7ocs5kYhWzgrbsToVMuFqmxnhx9PMp/1Es7VJKZagcRT2c06hsYHc4SKreGkyREEPk
+         mCg+asSla1YXUzn1ZIV7XG9Mcyje8X207NucVVd2pMhQOzQUptnWXdlOsGXi/9ALcAP/
+         iq+8gIFu9tNpqRG1e620R+RCQL23t/f9n43Ntbw7lzsRcOiSQ4oQmZOQImEBwjpawJpm
+         dy5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682288984; x=1684880984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WCA3zsna6vFeV798erY3+vSi/BvHgoXGHGGpFGJHBjM=;
+        b=kUI5WfOmN6gPycuWZvuj6Brpj/8beyVHmco2JpsnX92eCKy5LSjUjZ++I/FifEPsSE
+         M1Qnt5iEr3DkGDanNJm4RTJ8QhRNwA8YLW5maImoUPMB5wOTSBLmb9Ue3+F5kMpCE6/y
+         B+CStquL8WYfhw+AFQH31gdKMfE681fDsJ1aVS40l+XpPvtXSvIajt6awuPbBIM2zhaD
+         kX7LRxFIrLygUHKjInTvMEo7+iub3H0AnbEkTAAfRrDKQPbGtF5mwdNM3C7itCZu88Hz
+         FcHjUq/4YF7xIdqYwFnUuANZKNUFJtUbtYdareqyfrE9hye0YEWckaemA9hMhm5UHno+
+         DT9g==
+X-Gm-Message-State: AAQBX9dxZlFoCsVGEJa1RexER81fiGkVvcPllmfInw9oZoLwFBKXzFEk
+        zKvheK7eE+is8X8sNAKdsQ61Iw==
+X-Google-Smtp-Source: AKy350ZR4n3yiJ8OSE0TQKFE8uJrXQJX3r2CnA0Tf9NWbUzvYbwag62F1wj/UfIK9SSx06miuG3AKw==
+X-Received: by 2002:a17:902:e849:b0:1a6:dba5:2e3e with SMTP id t9-20020a170902e84900b001a6dba52e3emr14801275plg.25.1682288984544;
+        Sun, 23 Apr 2023 15:29:44 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-41-174.pa.nsw.optusnet.com.au. [49.180.41.174])
+        by smtp.gmail.com with ESMTPSA id bh8-20020a170902a98800b001a641ea111fsm5444609plb.112.2023.04.23.15.29.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Apr 2023 15:29:44 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pqiDF-0074Ij-4U; Mon, 24 Apr 2023 08:29:41 +1000
+Date:   Mon, 24 Apr 2023 08:29:41 +1000
+From:   Dave Chinner <david@fromorbit.com>
 To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     Simon Horman <simon.horman@corigine.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
         Matthew Wilcox <willy@infradead.org>,
@@ -72,65 +91,105 @@ Cc:     Simon Horman <simon.horman@corigine.com>, linux-mm@kvack.org,
         netdev@vger.kernel.org, bpf@vger.kernel.org
 Subject: Re: [PATCH] mm/gup: disallow GUP writing to file-backed mappings by
  default
-Message-ID: <ZEWOwz/82AKHGrXW@kernel.org>
+Message-ID: <20230423222941.GR447837@dread.disaster.area>
 References: <f86dc089b460c80805e321747b0898fd1efe93d7.1682168199.git.lstoakes@gmail.com>
- <ZEWHsbxhQlrSqnSC@corigine.com>
- <a6ceb82a-1766-4229-ba33-b6f25e111561@lucifer.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a6ceb82a-1766-4229-ba33-b6f25e111561@lucifer.local>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <f86dc089b460c80805e321747b0898fd1efe93d7.1682168199.git.lstoakes@gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 23, 2023 at 08:40:53PM +0100, Lorenzo Stoakes wrote:
-> On Sun, Apr 23, 2023 at 09:32:01PM +0200, Simon Horman wrote:
-> > On Sat, Apr 22, 2023 at 02:37:05PM +0100, Lorenzo Stoakes wrote:
-> > > It isn't safe to write to file-backed mappings as GUP does not ensure that
-> > > the semantics associated with such a write are performed correctly, for
-> > > instance filesystems which rely upon write-notify will not be correctly
-> > > notified.
-> > >
-> > > There are exceptions to this - shmem and hugetlb mappings are (in effect)
-> > > anonymous mappings by other names so we do permit this operation in these
-> > > cases.
-> > >
-> > > In addition, if no pinning takes place (neither FOLL_GET nor FOLL_PIN is
-> > > specified and neither flags gets implicitly set) then no writing can occur
-> > > so we do not perform the check in this instance.
-> > >
-> > > This is an important exception, as populate_vma_page_range() invokes
-> > > __get_user_pages() in this way (and thus so does __mm_populate(), used by
-> > > MAP_POPULATE mmap() and mlock() invocations).
-> > >
-> > > There are GUP users within the kernel that do nevertheless rely upon this
-> > > behaviour, so we introduce the FOLL_ALLOW_BROKEN_FILE_MAPPING flag to
-> > > explicitly permit this kind of GUP access.
-> > >
-> > > This is required in order to not break userspace in instances where the
-> > > uAPI might permit file-mapped addresses - a number of RDMA users require
-> > > this for instance, as do the process_vm_[read/write]v() system calls,
-> > > /proc/$pid/mem, ptrace and SDT uprobes. Each of these callers have been
-> > > updated to use this flag.
-> > >
-> > > Making this change is an important step towards a more reliable GUP, and
-> > > explicitly indicates which callers might encouter issues moving forward.
-> >
-> > nit: s/encouter/encounter/
-> >
-> 
-> Ack, I always seem to leave at least one or two easter egg spelling
-> mistakes in :)
+On Sat, Apr 22, 2023 at 02:37:05PM +0100, Lorenzo Stoakes wrote:
+> +/*
+> + * Writing to file-backed mappings using GUP is a fundamentally broken operation
+> + * as kernel write access to GUP mappings may not adhere to the semantics
+> + * expected by a file system.
+> + *
+> + * In most instances we disallow this broken behaviour, however there are some
+> + * exceptions to this enforced here.
+> + */
+> +static inline bool can_write_file_mapping(struct vm_area_struct *vma,
+> +					  unsigned long gup_flags)
+> +{
+> +	struct file *file = vma->vm_file;
+> +
+> +	/* If we aren't pinning then no problematic write can occur. */
+> +	if (!(gup_flags & (FOLL_GET | FOLL_PIN)))
+> +		return true;
+> +
+> +	/* Special mappings should pose no problem. */
+> +	if (!file)
+> +		return true;
 
-:)
+Ok...
 
-> Will fix up on next respin (in unlikely event of no further review,
-> hopefully Andrew would pick up!)
-> 
+> +
+> +	/* Has the caller explicitly indicated this case is acceptable? */
+> +	if (gup_flags & FOLL_ALLOW_BROKEN_FILE_MAPPING)
+> +		return true;
+> +
+> +	/* shmem and hugetlb mappings do not have problematic semantics. */
+> +	return vma_is_shmem(vma) || is_file_hugepages(file);
+> +}
+
+This looks backwards. We only want the override to occur when the
+target won't otherwise allow it. i.e.  This should be:
+
+	if (vma_is_shmem(vma))
+		return true;
+	if (is_file_hugepages(vma)
+		return true;
+
+	/*
+	 * Issue a warning only if we are allowing a write to a mapping
+	 * that does not support what we are attempting to do functionality.
+	 */
+	if (WARN_ON_ONCE(gup_flags & FOLL_ALLOW_BROKEN_FILE_MAPPING))
+		return true;
+	return false;
+
+i.e. we only want the warning to fire when the override is
+triggered - indicating that the caller is actually using a file
+mapping in a broken way, not when it is being used on
+file/filesystem that actually supports file mappings in this way.
+
+>  static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+>  {
+>  	vm_flags_t vm_flags = vma->vm_flags;
+>  	int write = (gup_flags & FOLL_WRITE);
+>  	int foreign = (gup_flags & FOLL_REMOTE);
+> +	bool vma_anon = vma_is_anonymous(vma);
+>  
+>  	if (vm_flags & (VM_IO | VM_PFNMAP))
+>  		return -EFAULT;
+>  
+> -	if (gup_flags & FOLL_ANON && !vma_is_anonymous(vma))
+> +	if ((gup_flags & FOLL_ANON) && !vma_anon)
+>  		return -EFAULT;
+>  
+>  	if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
+> @@ -978,6 +1008,10 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+>  		return -EFAULT;
+>  
+>  	if (write) {
+> +		if (!vma_anon &&
+> +		    WARN_ON_ONCE(!can_write_file_mapping(vma, gup_flags)))
+> +			return -EFAULT;
+
+Yeah, the warning definitely belongs in the check function when the
+override triggers allow broken behaviour to proceed, not when we
+disallow a write fault because the underlying file/filesystem does
+not support the operation being attempted.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
