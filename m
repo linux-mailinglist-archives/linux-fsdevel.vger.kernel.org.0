@@ -2,197 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 011A06ED535
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 21:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 655006ED546
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 21:22:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232592AbjDXTSr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 15:18:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35256 "EHLO
+        id S232611AbjDXTWj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 15:22:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232103AbjDXTSi (ORCPT
+        with ESMTP id S231967AbjDXTWi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 15:18:38 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE12E6D;
-        Mon, 24 Apr 2023 12:18:37 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f1738d0d4cso31247715e9.1;
-        Mon, 24 Apr 2023 12:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682363916; x=1684955916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P1q/4i2elk3BA3Rj+QoCYnRS4MnuAVuxCMWMhVXymMw=;
-        b=Vxlkf6eXc8hNlYZKosRpWF10A+8sPT/LRwFFpD5gCIgEgQHJBPpwl9XiMM+9uYDKuC
-         YSn4qSHxRINZbV3uwOtC94D3OJm+l367BKSLmUgej0ndLIhkKZCtmFmrkUxlSmVoNLJe
-         GRvJGjJKlxVnK4G0OrmF46tlTXyKPBtRd5H8joCvOh7P0ty5Hfzc4EEEMj+Q9zl/9W3a
-         2u7zMqMYAbF8qwiF8KdyV6Lrl3fV/JR5w2wyzmlnUmeeCGpse4JDmBWv8KwSdBiOfCzT
-         R6s4Y8XFOF0n78/m5pa0JPN8s76eyEnWzqN3PPZdKTQlQArnoA98jmakIPBtAhbCfvpQ
-         Bs/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682363916; x=1684955916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P1q/4i2elk3BA3Rj+QoCYnRS4MnuAVuxCMWMhVXymMw=;
-        b=df0z6N76T4awY3Xt3ePqv5lJp9pL4it6/fpJu5Bn5Dr5EuaTpIVRk74CL1ae/z+4sf
-         RUkwMjzEpieb8hU4lhDKSoGmzNeSzeYHT7gPRZKaVKt/Fkyevo7J0vc7AopTR9Wl/v1Q
-         9CeUZ6u8QGWZEWgWqoUTCChb6sEfIqu6ZU3w72Rinzvu/DJK5yP+b/wWxOpdBX67NDfE
-         LLzLzbrI5j2GPZRnTF7/Ar1I7JdwbkqW9WUEpsfKFJ6i2Ay5AmU81cZIzxpFAdfDD4Sn
-         Z5O2cLbZS5y1TlEtei1Ad1B4nFB32RiC8zuwo5DNrdF2nmIA4b0epGPnsB2a8NobwZuF
-         3w7w==
-X-Gm-Message-State: AAQBX9dITIGKVrLIi/JLFjvhW1gph42p+HyCqqagJt7knxp3JHsVrQ09
-        RCHN/Jw7avFYnIL5JYKNo2A=
-X-Google-Smtp-Source: AKy350ZDhAPYuLEpF8HIpNccA9jbhB9WMePiz/zH6jKMYHFwbOFzbI0LXgErhPvQ+QtiuM8faomL1A==
-X-Received: by 2002:a5d:5962:0:b0:2cf:ee9d:ce2f with SMTP id e34-20020a5d5962000000b002cfee9dce2fmr10085377wri.19.1682363915655;
-        Mon, 24 Apr 2023 12:18:35 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id j14-20020adfea4e000000b002fc3d8c134bsm11397032wrn.74.2023.04.24.12.18.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Apr 2023 12:18:34 -0700 (PDT)
-Date:   Mon, 24 Apr 2023 20:18:33 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v2] mm/gup: disallow GUP writing to file-backed mappings
- by default
-Message-ID: <f00058b8-0397-465f-9db5-ddd30a5efe8e@lucifer.local>
-References: <c8ee7e02d3d4f50bb3e40855c53bda39eec85b7d.1682321768.git.lstoakes@gmail.com>
- <ZEZPXHN4OXIYhP+V@infradead.org>
- <90a54439-5d30-4711-8a86-eba816782a66@lucifer.local>
- <ZEZ117OMCi0dFXqY@nvidia.com>
- <c8fff8b3-ead6-4f52-bf17-f2ef2e752b57@lucifer.local>
- <ZEaGjad50lqRNTWD@nvidia.com>
- <cd488979-d257-42b9-937f-470cc3c57f5e@lucifer.local>
- <ZEa+L5ivNDhCmgj4@nvidia.com>
- <cfb5afaa-8636-4c7d-a1a2-2e0a85f9f3d3@lucifer.local>
- <ZEbQeImOiaXrydBE@nvidia.com>
+        Mon, 24 Apr 2023 15:22:38 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06C5D1;
+        Mon, 24 Apr 2023 12:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=nrJOvD5ki07BgC1+m6zA5u3PXXHEIqqCNZygV4WG4uU=; b=jnaw2GVRUGJ3XgLDcnTm28/EGW
+        I2c3SbIfk7aZCwr+R62bxYgluHATBsXpKHRc3Kd6eZ7X7q4C2PFIRnKN2s2rlLjl0PYv4/SHsIN/P
+        Rj2zV9EqLlkLs/pB1Tdm+dvzQqZ3dxlb0SloO08wS4cUh9bmguHSZK/++Sq79+k4zzVbiIuZ6QX0S
+        G/8MCyWL3hZerN11vkKzieKj7slIpAxQGdYJVp+7U764B2QvlYl7+o1DeyOxzKUG+7D0WMFdPQDdQ
+        HSq8SrEJKQQidA3dpPqgpftvseREm3IU//74IrRNpeEcmqw1SOz1YOqefNqU0PC23jpEwwctyAAtq
+        26XseFOA==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pr1lf-00H3HP-0y;
+        Mon, 24 Apr 2023 19:22:31 +0000
+Message-ID: <5f30b56e-b46b-1d3f-75fb-7f30ff6ca3e9@infradead.org>
+Date:   Mon, 24 Apr 2023 12:22:30 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZEbQeImOiaXrydBE@nvidia.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 02/17] fs: remove the special !CONFIG_BLOCK def_blk_fops
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20230424054926.26927-1-hch@lst.de>
+ <20230424054926.26927-3-hch@lst.de>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230424054926.26927-3-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 03:54:48PM -0300, Jason Gunthorpe wrote:
-> On Mon, Apr 24, 2023 at 07:22:03PM +0100, Lorenzo Stoakes wrote:
->
-> > OK I guess you mean the folio lock :) Well there is
-> > unpin_user_pages_dirty_lock() and unpin_user_page_range_dirty_lock() and
-> > also set_page_dirty_lock() (used by __access_remote_vm()) which should
-> > avoid this.
->
-> It has been a while, but IIRC, these are all basically racy, the
-> comment in front of set_page_dirty_lock() even says it is racy..
->
-> The race is that a FS cleans a page and thinks it cannot become dirty,
-> and then it becomes dirty - and all variations of that..
->
-> Looking around a bit, I suppose what I'd expect to see is a sequence
-> sort of like what do_page_mkwrite() does:
->
->         /* Synchronize with the FS and get the page locked */
->      	ret = vmf->vma->vm_ops->page_mkwrite(vmf);
-> 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE)))
-> 		return ret;
-> 	if (unlikely(!(ret & VM_FAULT_LOCKED))) {
-> 		lock_page(page);
-> 		if (!page->mapping) {
-> 			unlock_page(page);
-> 			return 0; /* retry */
-> 		}
-> 		ret |= VM_FAULT_LOCKED;
-> 	} else
-> 		VM_BUG_ON_PAGE(!PageLocked(page), page);
->
-> 	/* Write to the page with the CPU */
-> 	va = kmap_local_atomic(page);
-> 	memcpy(va, ....);
-> 	kunmap_local_atomic(page);
->
-> 	/* Tell the FS and unlock it. */
-> 	set_page_dirty(page);
-> 	unlock_page(page);
->
-> I don't know if this is is exactly right, but it seems closerish
->
-> So maybe some kind of GUP interfaces that returns single locked pages
-> is the right direction? IDK
->
-> Or maybe we just need to make a memcpy primitive that works while
-> holding the PTLs?
->
+Hi,
 
-I think this patch suggestion has scope crept from 'incremental
-improvement' to 'major rework of GUP' at this point. Also surely you'd want
-to obtain the PTL of all mappings to a file? This seems really unworkable
-and I don't think holding a folio lock over a long period is sensible
-either.
+On 4/23/23 22:49, Christoph Hellwig wrote:
+> def_blk_fops always returns -ENODEV, which dosn't match the return value
+> of a non-existing block device with CONFIG_BLOCK, which is -ENXIO.
+> Just remove the extra implementation and fall back to the default
+> no_open_fops that always returns -ENXIO.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/Makefile   | 10 ++--------
+>  fs/inode.c    |  3 ++-
+>  fs/no-block.c | 19 -------------------
+>  3 files changed, 4 insertions(+), 28 deletions(-)
+>  delete mode 100644 fs/no-block.c
+> 
+> diff --git a/fs/Makefile b/fs/Makefile
+> index 05f89b5c962f88..da21e7d0a1cf37 100644
+> --- a/fs/Makefile
+> +++ b/fs/Makefile
+> @@ -18,14 +18,8 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+>  		fs_types.o fs_context.o fs_parser.o fsopen.o init.o \
+>  		kernel_read_file.o mnt_idmapping.o remap_range.o
+>  
+> -ifeq ($(CONFIG_BLOCK),y)
+> -obj-y +=	buffer.o mpage.o
+> -else
+> -obj-y +=	no-block.o
+> -endif
+> -
+> -obj-$(CONFIG_PROC_FS) += proc_namespace.o
+> -
+> +obj-$(CONFIG_BLOCK)		+= buffer.o mpage.o
+> +obj-$(CONFIG_PROC_FS)		+= proc_namespace.o
+>  obj-$(CONFIG_LEGACY_DIRECT_IO)	+= direct-io.o
+>  obj-y				+= notify/
+>  obj-$(CONFIG_EPOLL)		+= eventpoll.o
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 4558dc2f135573..d43f07f146eb73 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2265,7 +2265,8 @@ void init_special_inode(struct inode *inode, umode_t mode, dev_t rdev)
+>  		inode->i_fop = &def_chr_fops;
+>  		inode->i_rdev = rdev;
+>  	} else if (S_ISBLK(mode)) {
+> -		inode->i_fop = &def_blk_fops;
+> +		if (IS_ENABLED(CONFIG_BLOCK))
+> +			inode->i_fop = &def_blk_fops;
 
-> > We definitely need to keep ptrace and /proc/$pid/mem functioning correctly,
-> > and I given the privilege levels required I don't think there's a security
-> > issue there?
->
-> Even root is not allowed to trigger data corruption or oops inside the
-> kernel.
->
-> Jason
+It looks like def_blk_fops is being removed (commit message and patch
+fragment below), but here (above line) it is being used.
 
-Of course, but isn't this supposed to be an incremental fix? It feels a
-little contradictory to want to introduce a flag intentionally to try to
-highlight brokenness then to not accept any solution that doesn't solve
-that brokenness.
+Am I just confused?
 
-In any case, I feel that this patch isn't going to go anywhere as-is, it's
-insufficiently large to solve the problem as a whole (I think that's a
-bigger problem we can return to later), and there appears to be no taste
-for an incremental improvement, even from the suggester :)
+>  		inode->i_rdev = rdev;
+>  	} else if (S_ISFIFO(mode))
+>  		inode->i_fop = &pipefifo_fops;
+> diff --git a/fs/no-block.c b/fs/no-block.c
+> deleted file mode 100644
+> index 481c0f0ab4bd2c..00000000000000
+> --- a/fs/no-block.c
+> +++ /dev/null
+> @@ -1,19 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0-or-later
+> -/* no-block.c: implementation of routines required for non-BLOCK configuration
+> - *
+> - * Copyright (C) 2006 Red Hat, Inc. All Rights Reserved.
+> - * Written by David Howells (dhowells@redhat.com)
+> - */
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/fs.h>
+> -
+> -static int no_blkdev_open(struct inode * inode, struct file * filp)
+> -{
+> -	return -ENODEV;
+> -}
+> -
+> -const struct file_operations def_blk_fops = {
+> -	.open		= no_blkdev_open,
+> -	.llseek		= noop_llseek,
+> -};
 
-As a result, I suggest we take the cautious route in order to unstick the
-vmas patch series - introduce an OPT-IN flag which allows the check to be
-made, and update io_uring to use this.
-
-That way it defers the larger discussion around this improvement, avoids
-breaking anything, provides some basis in code for this check and is a net,
-incremental small and digestible improvement.
+-- 
+~Randy
