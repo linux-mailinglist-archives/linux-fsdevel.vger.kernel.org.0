@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62CE66EC52D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 07:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC25F6EC553
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 07:51:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbjDXFvQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 01:51:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47650 "EHLO
+        id S231259AbjDXFvh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 01:51:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231131AbjDXFuV (ORCPT
+        with ESMTP id S231232AbjDXFvO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 01:50:21 -0400
+        Mon, 24 Apr 2023 01:51:14 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E42943C3B;
-        Sun, 23 Apr 2023 22:50:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E83D4228;
+        Sun, 23 Apr 2023 22:50:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=OgIbgYEwKQKejMeYOKJTDG1ASpjdjHjMo1Pk1taujZE=; b=YyUrIXOAsfXAxFsM0tPFGM9Qan
-        uPkwIWFjNZRqG+oOXH7PQi1PsPlxfQZlifkTyUEDMKFh5+CU+O7VeR8qiAa6/cLTOcnziGg7FrZdN
-        WHQ80UGCfElD1uMeRdK6iygkWMafy6tsanELOlc6CyYNZDI6bKED31apEBgrrT2rM987Itn8e43SG
-        OMUz8tuWcsyJS+AMMKPPnMB2J6IfA8wNUtc2+Tftlwv0i3hg4/L2GodrSJjuU3MnxwrzjDt9YdQRa
-        BIqOMz0e0+Xfnk0MI6bMMTnZ+tb0QSw5yCUbhjzc6aFqMcLNg7zx5IRNiZyuxF1hS2jGP82Mbj/5v
-        r7PgOY5Q==;
+        bh=pJqF9iLDXxalAZri1sgP4ykwSrvt3ymept2aEtNRU2M=; b=3lxWVAk+3jZfmQD+hx2GXifc+u
+        2uElWR6QJNM63DBT0CyBjHyTQty+aqsqVeci/2v+7iILU2eb3upv78/4g048VSlvmDvh2mJYlZYZ6
+        XOxjp6O39E62ujMQm69yzR/DnVWTniYzJvEiutGiNhDq42IO09RTn0OMm/3Bvn2K6DU3f11ZHTGj3
+        wO/B5SuQ7cosdpF7UlWJdzPfVB+e8gNIg9bicPczX/NjxixXpg3qMzmuu6NLAkDvHL5b74xtnSdgO
+        ZKCt4iYFs6TuqhKmfkfCVG1sm381O08hFBNFhqmsvf5phswa19FEEeAjjvkIomMjBB57KJt2H9laH
+        ncijNsbQ==;
 Received: from [2001:4bb8:189:a74f:e8a5:5f73:6d2:23b8] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1pqp5I-00FOy6-1x;
-        Mon, 24 Apr 2023 05:49:57 +0000
+        id 1pqp5L-00FP1c-2M;
+        Mon, 24 Apr 2023 05:50:00 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Miklos Szeredi <miklos@szeredi.hu>,
@@ -41,9 +41,9 @@ Cc:     Miklos Szeredi <miklos@szeredi.hu>,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/17] fs: factor out a direct_write_fallback helper
-Date:   Mon, 24 Apr 2023 07:49:18 +0200
-Message-Id: <20230424054926.26927-10-hch@lst.de>
+Subject: [PATCH 10/17] iomap: use kiocb_write_and_wait and kiocb_invalidate_pages
+Date:   Mon, 24 Apr 2023 07:49:19 +0200
+Message-Id: <20230424054926.26927-11-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230424054926.26927-1-hch@lst.de>
 References: <20230424054926.26927-1-hch@lst.de>
@@ -60,161 +60,122 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a helper dealing with handling the syncing of a buffered write fallback
-for direct I/O.
+Use the common helpers for direct I/O page invalidation instead of
+open coding the logic.  This leads to a slight reordering of checks
+in __iomap_dio_rw to keep the logic straight.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/libfs.c         | 36 ++++++++++++++++++++++++++++
- include/linux/fs.h |  2 ++
- mm/filemap.c       | 59 ++++++++++------------------------------------
- 3 files changed, 50 insertions(+), 47 deletions(-)
+ fs/iomap/direct-io.c | 55 ++++++++++++++++----------------------------
+ 1 file changed, 20 insertions(+), 35 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 4eda519c30022f..a530d36e0d1a3d 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1618,3 +1618,39 @@ u64 inode_query_iversion(struct inode *inode)
- 	return cur >> I_VERSION_QUERIED_SHIFT;
- }
- EXPORT_SYMBOL(inode_query_iversion);
-+
-+ssize_t direct_write_fallback(struct kiocb *iocb, struct iov_iter *iter,
-+		ssize_t direct_written, ssize_t buffered_written)
-+{
-+	struct address_space *mapping = iocb->ki_filp->f_mapping;
-+	loff_t pos = iocb->ki_pos, end;
-+	int err;
-+
-+	/*
-+	 * If the buffered write fallback returned an error, we want to return
-+	 * the number of bytes which were written by direct I/O, or the error
-+	 * code if that was zero.
-+	 *
-+	 * Note that this differs from normal direct-io semantics, which will
-+	 * return -EFOO even if some bytes were written.
-+	 */
-+	if (unlikely(buffered_written < 0))
-+		return buffered_written;
-+
-+	/*
-+	 * We need to ensure that the page cache pages are written to disk and
-+	 * invalidated to preserve the expected O_DIRECT semantics.
-+	 */
-+	end = pos + buffered_written - 1;
-+	err = filemap_write_and_wait_range(mapping, pos, end);
-+	if (err < 0) {
-+		/*
-+		 * We don't know how much we wrote, so just return the number of
-+		 * bytes which were direct-written
-+		 */
-+		return err;
-+	}
-+	invalidate_mapping_pages(mapping, pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
-+	return direct_written + buffered_written;
-+}
-+EXPORT_SYMBOL_GPL(direct_write_fallback);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b8ca376e606255..337afdb5024dcb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2719,6 +2719,8 @@ extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t generic_file_direct_write(struct kiocb *, struct iov_iter *);
- ssize_t generic_perform_write(struct kiocb *, struct iov_iter *);
-+ssize_t direct_write_fallback(struct kiocb *iocb, struct iov_iter *iter,
-+		ssize_t direct_written, ssize_t buffered_written);
- 
- ssize_t vfs_iter_read(struct file *file, struct iov_iter *iter, loff_t *ppos,
- 		rwf_t flags);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 8c5196cf93a454..bb769746f78b08 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -4009,25 +4009,21 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 2bf8d684675615..10a790f568afca 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -470,7 +470,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+ 		unsigned int dio_flags, void *private, size_t done_before)
  {
- 	struct file *file = iocb->ki_filp;
- 	struct address_space *mapping = file->f_mapping;
--	struct inode 	*inode = mapping->host;
--	ssize_t		written = 0;
--	ssize_t		err;
--	ssize_t		status;
-+	struct inode *inode = mapping->host;
-+	ssize_t ret;
+-	struct address_space *mapping = iocb->ki_filp->f_mapping;
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	struct iomap_iter iomi = {
+ 		.inode		= inode,
+@@ -479,11 +478,11 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		.flags		= IOMAP_DIRECT,
+ 		.private	= private,
+ 	};
+-	loff_t end = iomi.pos + iomi.len - 1, ret = 0;
+ 	bool wait_for_completion =
+ 		is_sync_kiocb(iocb) || (dio_flags & IOMAP_DIO_FORCE_WAIT);
+ 	struct blk_plug plug;
+ 	struct iomap_dio *dio;
++	loff_t ret = 0;
  
- 	/* We can write back this queue in page reclaim */
- 	current->backing_dev_info = inode_to_bdi(inode);
--	err = file_remove_privs(file);
--	if (err)
-+	ret = file_remove_privs(file);
-+	if (ret)
- 		goto out;
+ 	if (!iomi.len)
+ 		return NULL;
+@@ -505,31 +504,29 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	dio->submit.waiter = current;
+ 	dio->submit.poll_bio = NULL;
  
--	err = file_update_time(file);
--	if (err)
-+	ret = file_update_time(file);
-+	if (ret)
- 		goto out;
++	if (iocb->ki_flags & IOCB_NOWAIT)
++		iomi.flags |= IOMAP_NOWAIT;
++
+ 	if (iov_iter_rw(iter) == READ) {
+ 		if (iomi.pos >= dio->i_size)
+ 			goto out_free_dio;
  
- 	if (iocb->ki_flags & IOCB_DIRECT) {
--		loff_t pos, endbyte;
--
--		written = generic_file_direct_write(iocb, from);
-+		ret = generic_file_direct_write(iocb, from);
- 		/*
- 		 * If the write stopped short of completing, fall back to
- 		 * buffered writes.  Some filesystems do this for writes to
-@@ -4035,46 +4031,15 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		 * not succeed (even if it did, DAX does not handle dirty
- 		 * page-cache pages correctly).
- 		 */
--		if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
--			goto out;
--
--		pos = iocb->ki_pos;
--		status = generic_perform_write(iocb, from);
--		/*
--		 * If generic_perform_write() returned a synchronous error
--		 * then we want to return the number of bytes which were
--		 * direct-written, or the error code if that was zero.  Note
--		 * that this differs from normal direct-io semantics, which
--		 * will return -EFOO even if some bytes were written.
--		 */
--		if (unlikely(status < 0)) {
--			err = status;
--			goto out;
+-		if (iocb->ki_flags & IOCB_NOWAIT) {
+-			if (filemap_range_needs_writeback(mapping, iomi.pos,
+-					end)) {
+-				ret = -EAGAIN;
+-				goto out_free_dio;
+-			}
+-			iomi.flags |= IOMAP_NOWAIT;
 -		}
--		/*
--		 * We need to ensure that the page cache pages are written to
--		 * disk and invalidated to preserve the expected O_DIRECT
--		 * semantics.
--		 */
--		endbyte = pos + status - 1;
--		err = filemap_write_and_wait_range(mapping, pos, endbyte);
--		if (err == 0) {
--			written += status;
--			invalidate_mapping_pages(mapping,
--						 pos >> PAGE_SHIFT,
--						 endbyte >> PAGE_SHIFT);
--		} else {
--			/*
--			 * We don't know how much we wrote, so just return
--			 * the number of bytes which were direct-written
--			 */
--		}
-+		if (ret >= 0 && iov_iter_count(from) && !IS_DAX(inode))
-+			ret = direct_write_fallback(iocb, from, ret,
-+					generic_perform_write(iocb, from));
+-
+ 		if (user_backed_iter(iter))
+ 			dio->flags |= IOMAP_DIO_DIRTY;
++
++		ret = kiocb_write_and_wait(iocb, iomi.len);
++		if (ret)
++			goto out_free_dio;
  	} else {
--		written = generic_perform_write(iocb, from);
-+		ret = generic_perform_write(iocb, from);
- 	}
- out:
- 	current->backing_dev_info = NULL;
--	return written ? written : err;
-+	return ret;
- }
- EXPORT_SYMBOL(__generic_file_write_iter);
+ 		iomi.flags |= IOMAP_WRITE;
+ 		dio->flags |= IOMAP_DIO_WRITE;
+ 
+-		if (iocb->ki_flags & IOCB_NOWAIT) {
+-			if (filemap_range_has_page(mapping, iomi.pos, end)) {
+-				ret = -EAGAIN;
++		if (dio_flags & IOMAP_DIO_OVERWRITE_ONLY) {
++			ret = -EAGAIN;
++			if (iomi.pos >= dio->i_size ||
++			    iomi.pos + iomi.len > dio->i_size)
+ 				goto out_free_dio;
+-			}
+-			iomi.flags |= IOMAP_NOWAIT;
++			iomi.flags |= IOMAP_OVERWRITE_ONLY;
+ 		}
+ 
+ 		/* for data sync or sync, we need sync completion processing */
+@@ -545,31 +542,19 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 			if (!(iocb->ki_flags & IOCB_SYNC))
+ 				dio->flags |= IOMAP_DIO_WRITE_FUA;
+ 		}
+-	}
+-
+-	if (dio_flags & IOMAP_DIO_OVERWRITE_ONLY) {
+-		ret = -EAGAIN;
+-		if (iomi.pos >= dio->i_size ||
+-		    iomi.pos + iomi.len > dio->i_size)
+-			goto out_free_dio;
+-		iomi.flags |= IOMAP_OVERWRITE_ONLY;
+-	}
+ 
+-	ret = filemap_write_and_wait_range(mapping, iomi.pos, end);
+-	if (ret)
+-		goto out_free_dio;
+-
+-	if (iov_iter_rw(iter) == WRITE) {
+ 		/*
+ 		 * Try to invalidate cache pages for the range we are writing.
+ 		 * If this invalidation fails, let the caller fall back to
+ 		 * buffered I/O.
+ 		 */
+-		if (invalidate_inode_pages2_range(mapping,
+-				iomi.pos >> PAGE_SHIFT, end >> PAGE_SHIFT)) {
+-			trace_iomap_dio_invalidate_fail(inode, iomi.pos,
+-							iomi.len);
+-			ret = -ENOTBLK;
++		ret = kiocb_invalidate_pages(iocb, iomi.len);
++		if (ret) {
++			if (ret != -EAGAIN) {
++				trace_iomap_dio_invalidate_fail(inode, iomi.pos,
++								iomi.len);
++				ret = -ENOTBLK;
++			}
+ 			goto out_free_dio;
+ 		}
  
 -- 
 2.39.2
