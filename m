@@ -2,69 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC966ED759
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 00:01:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5C7C6ED75C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 00:01:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232338AbjDXWBH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 18:01:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52652 "EHLO
+        id S232439AbjDXWBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 18:01:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231975AbjDXWBG (ORCPT
+        with ESMTP id S232654AbjDXWBo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 18:01:06 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3F55596
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 15:01:05 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-94f910ea993so735120266b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 15:01:04 -0700 (PDT)
+        Mon, 24 Apr 2023 18:01:44 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DCF13C2B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 15:01:43 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-94f3df30043so776011266b.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 15:01:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1682373663; x=1684965663;
+        d=linux-foundation.org; s=google; t=1682373702; x=1684965702;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7jX4WyMbkislXBcF9DSsfnsysTOqMW0k3Anz9dgRCQ8=;
-        b=OSWsanieDlZtpPTwLKcgFCfVKxsI84hwL2UluNI+Xrh6Q/YJZRM+yvu5FuVJTSuYDy
-         K//TLrT75hFSA354IpKdr6MYkjq15PD/8q0iK78ebVLzeBiMzeFFftdgc/81CvlI46Cq
-         CB1mUpGxn22k5b0C2GQRLIVKu91UBCLvpqEf8=
+        bh=Boc+4cJxgn/c5mI/silLMJUPupCybFpIBrGZbLP33Vs=;
+        b=ajUEPxYdb5cnkv/QkqS887ot1XXgKeRnHhs9EpDNItHST29l2mjSwjveeJB3Kk9XLI
+         yeKIW8AdVoQMY18V6MhgTeKgp1K+xgmF/1+Y0zdPUnPYmhFSOSO8m5R0RMpeMJyaPcGg
+         VAKfyAWB3SLtYv4z462LsW2JMQPxRQJaO1qso=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682373663; x=1684965663;
+        d=1e100.net; s=20221208; t=1682373702; x=1684965702;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7jX4WyMbkislXBcF9DSsfnsysTOqMW0k3Anz9dgRCQ8=;
-        b=HwmES3WNKay6zRdIskib/7TNm7iaszCu1LRaBvdMW5CsMhLwSa4g4wZecw8svI2Fbh
-         7guKcXAwIy+TiT/rLlqmK5TowjQGJH+GOOnbUfa1xTtq8z2OOxW0ZvCmUI2ZFqWA21zK
-         h1EJpqobiPLbcJo/fzqSclBpTpvy7m6EWjfkVMlLv2S2VNQ7unXfBGm653QSa6kPb/jp
-         AwKwA0YGiFKeVxxW6iXLMHZO6raho7Be0uhMb8epksZcDU1EGw3bxkWxtAEUQXWpZ/zS
-         t7BaPRkzUL56tyGwA84LTxngszR27IYTBcykSHKRaJf/b2/vro3FVXiI8zqb+a3FvmA4
-         OqbA==
-X-Gm-Message-State: AAQBX9fX9HUopfzKntlW63KB81NZW5u5GIJU0A1X1g8Z2jfxeOCG8S9p
-        rBrGS+7tpZXACYueOjcXZwskXZO39PAKXTCR9td3My3V
-X-Google-Smtp-Source: AKy350burd8F70Rj9JQCn2c64wQf0nCRHgjWbTvDwsZVTvz56Ib/fsOXYU1tKcGzXmUuCmzNW5lCvQ==
-X-Received: by 2002:a17:906:f6c8:b0:947:5acb:920c with SMTP id jo8-20020a170906f6c800b009475acb920cmr10907794ejb.34.1682373663193;
-        Mon, 24 Apr 2023 15:01:03 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id sa16-20020a1709076d1000b00958f6d75a2asm2562638ejc.223.2023.04.24.15.01.02
+        bh=Boc+4cJxgn/c5mI/silLMJUPupCybFpIBrGZbLP33Vs=;
+        b=c10s3DtJ5t2CG2LwrSCnx69+XsCwuqzeebSeYbwB6Zgk8gl561H7R9X+v1y2srIx6m
+         dDr4605k5EvJ10TMzmKegtltD5otpIdQZEbXZcfD1ljXkiByPdXDzpp3H7QIL4iPDO4m
+         31x6TZ0sljkN2WBIaq9Prb36Ev1eYJNVUOgeveeCa8aF3z4OjPt8LTW3gq04NTt/We4j
+         BU6B01v+1TVud7MqVy6ssLDwDOiAEcCx6TJoM58QG+9X9TJhPc7x048PLh3DidyU6/Zw
+         zDAYDEGUvvVrXuZFcsR4Mi+lBHksk6U3q+DALciUlOt7216TMxjV32L00l+AeR26J6Ph
+         nG7w==
+X-Gm-Message-State: AAQBX9c9UhjOpX2JzBUjgqw49faTrZDdqCxF+jsrE3zaeAg3zq571sXG
+        3NUAn/r3vE+sRwvtcGgs5bthRFZuFZGAxBRCoxh3ecv1
+X-Google-Smtp-Source: AKy350YsGkdTcCxM7z+lC/LzCpSSNS7ZlFE37d5k0CRiXF7xnQ4gJ/weLaPnHsr7f5WA12QLQgVpyw==
+X-Received: by 2002:a50:eb43:0:b0:504:b64d:759c with SMTP id z3-20020a50eb43000000b00504b64d759cmr13560842edp.35.1682373701972;
+        Mon, 24 Apr 2023 15:01:41 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id q3-20020a056402032300b004af6c5f1805sm5026025edw.52.2023.04.24.15.01.41
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Apr 2023 15:01:02 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-506b8c6bbdbso7515475a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 15:01:02 -0700 (PDT)
-X-Received: by 2002:aa7:d887:0:b0:4fa:4a27:adba with SMTP id
- u7-20020aa7d887000000b004fa4a27adbamr14146345edq.22.1682373662196; Mon, 24
- Apr 2023 15:01:02 -0700 (PDT)
+        Mon, 24 Apr 2023 15:01:41 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5055141a8fdso7287249a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 15:01:41 -0700 (PDT)
+X-Received: by 2002:a05:6402:31f3:b0:4fb:aa0a:5b72 with SMTP id
+ dy19-20020a05640231f300b004fbaa0a5b72mr12425701edb.5.1682373701099; Mon, 24
+ Apr 2023 15:01:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230421-seilbahn-vorpreschen-bd73ac3c88d7@brauner>
- <CAHk-=wgyL9OujQ72er7oXt_VsMeno4bMKCTydBT1WSaagZ_5CA@mail.gmail.com>
- <6882b74e-874a-c116-62ac-564104c5ad34@kernel.dk> <CAHk-=wiQ8g+B0bCPJ9fxZ+Oa0LPAUAyryw9i+-fBUe72LoA+QQ@mail.gmail.com>
- <ae8ee8f3-9960-1fd9-5471-433acacb6521@kernel.dk>
-In-Reply-To: <ae8ee8f3-9960-1fd9-5471-433acacb6521@kernel.dk>
+References: <20230421-freimachen-handhaben-7c7a5e83ba0c@brauner>
+ <CAHk-=whykVNoCGj3UC=b0O7V0P-MWDaKz_2r+_yGxyXoEMmL8w@mail.gmail.com> <874jp5lzb2.fsf@meer.lwn.net>
+In-Reply-To: <874jp5lzb2.fsf@meer.lwn.net>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 24 Apr 2023 15:00:45 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiQ+S79vjAJf92TE8PqCie4xZPAhRgVchHnPesVHZPO0g@mail.gmail.com>
-Message-ID: <CAHk-=wiQ+S79vjAJf92TE8PqCie4xZPAhRgVchHnPesVHZPO0g@mail.gmail.com>
-Subject: Re: [GIT PULL] pipe: nonblocking rw for io_uring
-To:     Jens Axboe <axboe@kernel.dk>
+Date:   Mon, 24 Apr 2023 15:01:23 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi2NiwU-SPNnFvuZ9-LNk5J_iW-SvQHJdbSu_spT5Oq_A@mail.gmail.com>
+Message-ID: <CAHk-=wi2NiwU-SPNnFvuZ9-LNk5J_iW-SvQHJdbSu_spT5Oq_A@mail.gmail.com>
+Subject: Re: [GIT PULL] open: fix O_DIRECTORY | O_CREAT
+To:     Jonathan Corbet <corbet@lwn.net>
 Cc:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
@@ -79,19 +77,11 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 2:55=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+On Mon, Apr 24, 2023 at 2:56=E2=80=AFPM Jonathan Corbet <corbet@lwn.net> wr=
+ote:
 >
-> I took another look at this, and the main issue is in fact splice
-> confirming buffers. So I do think that we can make this work by simply
-> having the non-block nature of it being passed down the ->confirm()
-> callback as that's the one that'll be waiting for IO. If we have that,
-> then we can disregard the pipe locking as we won't be holding it over
-> IO.
+> The paywall goes away on Thursday, so this is a short-lived problem.
 
-Ok, that part looks fine to me.
+Sounds good, thanks.
 
-The pipe_buf_confirm() part of the series I don't find problematic,
-it's really conditional locking that I absolutely detest and has
-always been a sign of problems elsewhere.
-
-             Linus
+               Linus
