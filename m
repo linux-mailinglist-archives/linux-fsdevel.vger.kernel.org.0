@@ -2,244 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 70E0C6EC7E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 10:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89C7C6EC7D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 10:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231267AbjDXI2T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 04:28:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57712 "EHLO
+        id S231166AbjDXIZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 04:25:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbjDXI2S (ORCPT
+        with ESMTP id S230416AbjDXIZY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 04:28:18 -0400
-X-Greylist: delayed 317 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 24 Apr 2023 01:28:15 PDT
-Received: from outbound-smtp19.blacknight.com (outbound-smtp19.blacknight.com [46.22.139.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3372719AE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 01:28:14 -0700 (PDT)
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp19.blacknight.com (Postfix) with ESMTPS id E2D571C4335
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 09:22:56 +0100 (IST)
-Received: (qmail 6814 invoked from network); 24 Apr 2023 08:22:56 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.21.103])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 24 Apr 2023 08:22:56 -0000
-Date:   Mon, 24 Apr 2023 09:22:54 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Ying <ying.huang@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Yu Zhao <yuzhao@google.com>, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2 1/4] mm/filemap: Add folio_lock_timeout()
-Message-ID: <20230424082254.gopb4y2c7d65icpl@techsingularity.net>
-References: <20230421221249.1616168-1-dianders@chromium.org>
- <20230421151135.v2.1.I2b71e11264c5c214bc59744b9e13e4c353bc5714@changeid>
+        Mon, 24 Apr 2023 04:25:24 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66F61BD6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 01:25:15 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4efd5e4d302so4120e87.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 01:25:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1682324713; x=1684916713;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=j18LTPw/0ZiwBV/EQmierqo28H2NNyEAjpLUZMbxn80=;
+        b=CesUfe+p8d0dkEmrufChgURYmQzPVsRKB6Z1zq/0m7jQFerLN1vm3sKO5u2K/rl8sJ
+         753Xb1kwNpqsBLPPmYoA5D+gusVtmDUbYgFOfDLoue7QdZQWNHon9ozJTA5RjVwFMkRL
+         AnIoCuhdETOi2d3M+DoGmCRI0qslU+tTb1mfNS7drK8UaW9VeLrCnkq4Fqi2j5alos/A
+         IZikzBkRNKNvM0btTwz4vgI7z6JQ0rR5oqbZStxatygVFvg2zG7l8lGwK2GYsyt17272
+         RWCij0rqF2sPbmgGniN/jpu8ahpeTEhNwAAwPrUPETEnOkOGoHjSz5eh3iai5awtX9jQ
+         I5Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682324713; x=1684916713;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j18LTPw/0ZiwBV/EQmierqo28H2NNyEAjpLUZMbxn80=;
+        b=ayvyHo1amXcd0wQ9ht9CIFB7VdoNHNjJ8Sx0to0jp10Y2d/XvsBGz7guQpI7ywrkLo
+         dtENSV8ZGSRLtNh38FQrREJz8f2GCalI1rUbb7zPvF9DJRSWCgfYJ2dsd6KovgN25evs
+         bjB0N2zLVxZM6Q5Fpqi+V6P3VqYAPC00UB/tuua5NiM/UShgWZ/tAFm7LLClTtTXDZmk
+         lV/jmii0aSk62FNao+HIYY45kvM8ncDq1cpu4rOSw0fcBxign2PAEbI4hpHcjHdYpF+/
+         jzGcCIInLdisjDfzhk2qy/9z+1HvCgbJRW5Y1ty8bZ/AUARTA/WM4MFJ4CfhFVOjpiXA
+         zIDQ==
+X-Gm-Message-State: AAQBX9e05DpgdCr7LjzvZqNgj6MEx0XqQUfmXqeD3RD3Jqtz3IOvcjRM
+        m+Oei/a6eIQfbfwTREarNCidz4dFuJ4My/TcpA03Cw==
+X-Google-Smtp-Source: AKy350a4MUjUHwoBfxED2Pw4cqUKPKubA2JMVCH1vFSwww8z8PN8W5VV4psZGKlLDpTHBQR/gqh8epDpYPGCETmVnoc=
+X-Received: by 2002:a05:6512:239b:b0:4ea:e5e2:c893 with SMTP id
+ c27-20020a056512239b00b004eae5e2c893mr151496lfv.1.1682324713337; Mon, 24 Apr
+ 2023 01:25:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20230421151135.v2.1.I2b71e11264c5c214bc59744b9e13e4c353bc5714@changeid>
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <000000000000b9915d05f9d98bdd@google.com> <CACT4Y+a3J0Z2PThebH6UaUWchKLWec8qApuv1ezYGKjf67Xctg@mail.gmail.com>
+ <ZEKko6U2MxfkXgs5@casper.infradead.org> <13d484d3-d573-cd82-fff0-a35e27b8451e@oracle.com>
+ <20230424-frucht-beneiden-83a8083a973b@brauner>
+In-Reply-To: <20230424-frucht-beneiden-83a8083a973b@brauner>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 24 Apr 2023 10:25:00 +0200
+Message-ID: <CACT4Y+b+4pFtZQxXZLVF8e0OKcEEYgLo+5ExAg_iKZFVERcXrw@mail.gmail.com>
+Subject: Re: [syzbot] [ext4?] [mm?] KCSAN: data-race in strscpy / strscpy (3)
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Mike Christie <michael.christie@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        syzbot <syzbot+c2de99a72baaa06d31f3@syzkaller.appspotmail.com>,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, llvm@lists.linux.dev, nathan@kernel.org,
+        ndesaulniers@google.com, syzkaller-bugs@googlegroups.com,
+        trix@redhat.com, tytso@mit.edu,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, martin.lau@linux.dev,
+        bpf <bpf@vger.kernel.org>, KP Singh <kpsingh@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 03:12:45PM -0700, Douglas Anderson wrote:
-> Add a variant of folio_lock() that can timeout. This is useful to
-> avoid unbounded waits for the page lock in kcompactd.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
-> Changes in v2:
-> - "Add folio_lock_timeout()" new for v2.
-> 
->  include/linux/pagemap.h | 16 ++++++++++++++
->  mm/filemap.c            | 47 +++++++++++++++++++++++++++++------------
->  2 files changed, 50 insertions(+), 13 deletions(-)
-> 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 0acb8e1fb7af..0f3ef9f79300 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -892,6 +892,7 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
->  }
->  
->  void __folio_lock(struct folio *folio);
-> +int __folio_lock_timeout(struct folio *folio, long timeout);
->  int __folio_lock_killable(struct folio *folio);
->  bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
->  				unsigned int flags);
-> @@ -952,6 +953,21 @@ static inline void folio_lock(struct folio *folio)
->  		__folio_lock(folio);
->  }
->  
-> +/**
-> + * folio_lock_timeout() - Lock this folio, with a timeout.
-> + * @folio: The folio to lock.
-> + * @timeout: The timeout in jiffies; %MAX_SCHEDULE_TIMEOUT means wait forever.
-> + *
-> + * Return: 0 upon success; -ETIMEDOUT upon failure.
-> + */
+On Mon, 24 Apr 2023 at 09:59, Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Fri, Apr 21, 2023 at 12:40:45PM -0500, Mike Christie wrote:
+> > cc'ing Christian, because I might have fixed this with a patch in
+> > his tree.
+> >
+> > On 4/21/23 9:58 AM, Matthew Wilcox wrote:
+> > > I'm not sure how it is that bpf is able to see the task before comm is
+> > > initialised; that seems to be the real race here, that comm is not set
+> > > before the kthread is a schedulable entity?  Adding the scheduler people.
+> > >
+> > >>> ==================================================================
+> > >>> BUG: KCSAN: data-race in strscpy / strscpy
+> > >>>
+> > >>> write to 0xffff88812ed8b730 of 8 bytes by task 16157 on cpu 1:
+> > >>>  strscpy+0xa9/0x170 lib/string.c:165
+> > >>>  strscpy_pad+0x27/0x80 lib/string_helpers.c:835
+> > >>>  __set_task_comm+0x46/0x140 fs/exec.c:1232
+> > >>>  set_task_comm include/linux/sched.h:1984 [inline]
+> > >>>  __kthread_create_on_node+0x2b2/0x320 kernel/kthread.c:474
+> > >>>  kthread_create_on_node+0x8a/0xb0 kernel/kthread.c:512
+> > >>>  ext4_run_lazyinit_thread fs/ext4/super.c:3848 [inline]
+> > >>>  ext4_register_li_request+0x407/0x650 fs/ext4/super.c:3983
+> > >>>  __ext4_fill_super fs/ext4/super.c:5480 [inline]
+> > >>>  ext4_fill_super+0x3f4a/0x43f0 fs/ext4/super.c:5637
+> > >>>  get_tree_bdev+0x2b1/0x3a0 fs/super.c:1303
+> > >>>  ext4_get_tree+0x1c/0x20 fs/ext4/super.c:5668
+> > >>>  vfs_get_tree+0x51/0x190 fs/super.c:1510
+> > >>>  do_new_mount+0x200/0x650 fs/namespace.c:3042
+> > >>>  path_mount+0x498/0xb40 fs/namespace.c:3372
+> > >>>  do_mount fs/namespace.c:3385 [inline]
+> > >>>  __do_sys_mount fs/namespace.c:3594 [inline]
+> > >>>  __se_sys_mount+0x27f/0x2d0 fs/namespace.c:3571
+> > >>>  __x64_sys_mount+0x67/0x80 fs/namespace.c:3571
+> > >>>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> > >>>  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+> > >>>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> > >>>
+> > >>> read to 0xffff88812ed8b733 of 1 bytes by task 16161 on cpu 0:
+> > >>>  strscpy+0xde/0x170 lib/string.c:174
+> > >>>  ____bpf_get_current_comm kernel/bpf/helpers.c:260 [inline]
+> > >>>  bpf_get_current_comm+0x45/0x70 kernel/bpf/helpers.c:252
+> > >>>  ___bpf_prog_run+0x281/0x3050 kernel/bpf/core.c:1822
+> > >>>  __bpf_prog_run32+0x74/0xa0 kernel/bpf/core.c:2043
+> > >>>  bpf_dispatcher_nop_func include/linux/bpf.h:1124 [inline]
+> > >>>  __bpf_prog_run include/linux/filter.h:601 [inline]
+> > >>>  bpf_prog_run include/linux/filter.h:608 [inline]
+> > >>>  __bpf_trace_run kernel/trace/bpf_trace.c:2263 [inline]
+> > >>>  bpf_trace_run4+0x9f/0x140 kernel/trace/bpf_trace.c:2304
+> > >>>  __traceiter_sched_switch+0x3a/0x50 include/trace/events/sched.h:222
+> > >>>  trace_sched_switch include/trace/events/sched.h:222 [inline]
+> > >>>  __schedule+0x7e7/0x8e0 kernel/sched/core.c:6622
+> > >>>  schedule+0x51/0x80 kernel/sched/core.c:6701
+> > >>>  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:6760
+> > >>>  kthread+0x11c/0x1e0 kernel/kthread.c:369
+> > >>>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+> > >>>
+> >
+> >
+> > I didn't see the beginning of this thread and I think the part of the
+> > sysbot report that lists the patches/trees being used got cut off so
+> > I'm not 100% sure what's in the kernel.
+> >
+> > In Linus's current tree we do set_task_comm in __kthread_create_on_node
+> > after waiting on the kthread_create_info completion which is completed by
+> > threadd(). At this time, kthread() has already done the complete() on the
+> > kthread_create_info completion and started to run the threadfn function and
+> > that could be running. So we can hit the race that way.
+> >
+> >
+> > In linux next, from
+> > https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=kernel.user_worker
+> > we have:
+> >
+> > commit cf587db2ee0261c74d04f61f39783db88a0b65e4
+> > Author: Mike Christie <michael.christie@oracle.com>
+> > Date:   Fri Mar 10 16:03:23 2023 -0600
+> >
+> >     kernel: Allow a kernel thread's name to be set in copy_process
+> >
+> > and so now copy_process() sets the name before the taskfn is started, so we
+> > shouldn't hit any races like above.
+>
+> Yeah, that looks like it should fix it.
+>
+> Afaict, this has no reproducer so there's no point in letting syzbot
+> test on this. I've sent the pull request for the kernel user worker
+> series on Friday. So I guess we'll see whether it's reproducible on
+> v6.4-rc1.
 
-May return -EINTR?
+To see if it still happens to tell syzbot about the fix, then it will
+remind if it still happens with the fix or not. Otherwise everybody
+will forget about this tomorrow ;)
 
-> +static inline int folio_lock_timeout(struct folio *folio, long timeout)
-> +{
-> +	might_sleep();
-> +	if (!folio_trylock(folio))
-> +		return __folio_lock_timeout(folio, timeout);
-> +	return 0;
-> +}
-> +
->  /**
->   * lock_page() - Lock the folio containing this page.
->   * @page: The page to lock.
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 2723104cc06a..c6056ec41284 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1220,7 +1220,7 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
->  int sysctl_page_lock_unfairness = 5;
->  
->  static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
-> -		int state, enum behavior behavior)
-> +		int state, enum behavior behavior, long timeout)
->  {
->  	wait_queue_head_t *q = folio_waitqueue(folio);
->  	int unfairness = sysctl_page_lock_unfairness;
-> @@ -1229,6 +1229,7 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
->  	bool thrashing = false;
->  	unsigned long pflags;
->  	bool in_thrashing;
-> +	int err;
->  
->  	if (bit_nr == PG_locked &&
->  	    !folio_test_uptodate(folio) && folio_test_workingset(folio)) {
-> @@ -1295,10 +1296,13 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
->  		/* Loop until we've been woken or interrupted */
->  		flags = smp_load_acquire(&wait->flags);
->  		if (!(flags & WQ_FLAG_WOKEN)) {
-> +			if (!timeout)
-> +				break;
-> +
+#syz fix: kernel: Allow a kernel thread's name to be set in copy_process
 
-An io_schedule_timeout of 0 is valid so why the special handling? It's
-negative timeouts that cause schedule_timeout() to complain.
-
->  			if (signal_pending_state(state, current))
->  				break;
->  
-> -			io_schedule();
-> +			timeout = io_schedule_timeout(timeout);
->  			continue;
->  		}
->  
-> @@ -1324,10 +1328,10 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
->  	}
->  
->  	/*
-> -	 * If a signal happened, this 'finish_wait()' may remove the last
-> -	 * waiter from the wait-queues, but the folio waiters bit will remain
-> -	 * set. That's ok. The next wakeup will take care of it, and trying
-> -	 * to do it here would be difficult and prone to races.
-> +	 * If a signal/timeout happened, this 'finish_wait()' may remove the
-> +	 * last waiter from the wait-queues, but the folio waiters bit will
-> +	 * remain set. That's ok. The next wakeup will take care of it, and
-> +	 * trying to do it here would be difficult and prone to races.
->  	 */
->  	finish_wait(q, wait);
->  
-> @@ -1336,6 +1340,13 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
->  		psi_memstall_leave(&pflags);
->  	}
->  
-> +	/*
-> +	 * If we don't meet the success criteria below then we've got an error
-> +	 * of some sort. Differentiate between the two error cases. If there's
-> +	 * no time left it must have been a timeout.
-> +	 */
-> +	err = !timeout ? -ETIMEDOUT : -EINTR;
-> +
->  	/*
->  	 * NOTE! The wait->flags weren't stable until we've done the
->  	 * 'finish_wait()', and we could have exited the loop above due
-> @@ -1350,9 +1361,9 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
->  	 * waiter, but an exclusive one requires WQ_FLAG_DONE.
->  	 */
->  	if (behavior == EXCLUSIVE)
-> -		return wait->flags & WQ_FLAG_DONE ? 0 : -EINTR;
-> +		return wait->flags & WQ_FLAG_DONE ? 0 : err;
->  
-> -	return wait->flags & WQ_FLAG_WOKEN ? 0 : -EINTR;
-> +	return wait->flags & WQ_FLAG_WOKEN ? 0 : err;
->  }
->  
->  #ifdef CONFIG_MIGRATION
-> @@ -1442,13 +1453,15 @@ void migration_entry_wait_on_locked(swp_entry_t entry, pte_t *ptep,
->  
->  void folio_wait_bit(struct folio *folio, int bit_nr)
->  {
-> -	folio_wait_bit_common(folio, bit_nr, TASK_UNINTERRUPTIBLE, SHARED);
-> +	folio_wait_bit_common(folio, bit_nr, TASK_UNINTERRUPTIBLE, SHARED,
-> +			      MAX_SCHEDULE_TIMEOUT);
->  }
->  EXPORT_SYMBOL(folio_wait_bit);
->  
->  int folio_wait_bit_killable(struct folio *folio, int bit_nr)
->  {
-> -	return folio_wait_bit_common(folio, bit_nr, TASK_KILLABLE, SHARED);
-> +	return folio_wait_bit_common(folio, bit_nr, TASK_KILLABLE, SHARED,
-> +				     MAX_SCHEDULE_TIMEOUT);
->  }
->  EXPORT_SYMBOL(folio_wait_bit_killable);
->  
-> @@ -1467,7 +1480,8 @@ EXPORT_SYMBOL(folio_wait_bit_killable);
->   */
->  static int folio_put_wait_locked(struct folio *folio, int state)
->  {
-> -	return folio_wait_bit_common(folio, PG_locked, state, DROP);
-> +	return folio_wait_bit_common(folio, PG_locked, state, DROP,
-> +				     MAX_SCHEDULE_TIMEOUT);
->  }
->  
->  /**
-> @@ -1662,17 +1676,24 @@ EXPORT_SYMBOL_GPL(page_endio);
->  void __folio_lock(struct folio *folio)
->  {
->  	folio_wait_bit_common(folio, PG_locked, TASK_UNINTERRUPTIBLE,
-> -				EXCLUSIVE);
-> +				EXCLUSIVE, MAX_SCHEDULE_TIMEOUT);
->  }
->  EXPORT_SYMBOL(__folio_lock);
->  
->  int __folio_lock_killable(struct folio *folio)
->  {
->  	return folio_wait_bit_common(folio, PG_locked, TASK_KILLABLE,
-> -					EXCLUSIVE);
-> +					EXCLUSIVE, MAX_SCHEDULE_TIMEOUT);
->  }
->  EXPORT_SYMBOL_GPL(__folio_lock_killable);
->  
-> +int __folio_lock_timeout(struct folio *folio, long timeout)
-> +{
-> +	return folio_wait_bit_common(folio, PG_locked, TASK_KILLABLE,
-> +					EXCLUSIVE, timeout);
-> +}
-> +EXPORT_SYMBOL_GPL(__folio_lock_timeout);
-> +
->  static int __folio_lock_async(struct folio *folio, struct wait_page_queue *wait)
->  {
->  	struct wait_queue_head *q = folio_waitqueue(folio);
-> -- 
-> 2.40.0.634.g4ca3ef3211-goog
-> 
-
--- 
-Mel Gorman
-SUSE Labs
+Btw, a similar race will still be possible b/c it's possible to change
+the name at any point by writing to /proc/self/task/[tid]/comm. But I
+am not sure how provably dangerous it will be and there is a different
+attitude towards fixing races proactively for different kernel
+subsystems, so we will probably not report it.
