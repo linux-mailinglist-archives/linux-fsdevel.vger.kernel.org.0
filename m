@@ -2,68 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E0736ED683
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 23:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EC826ED698
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 23:12:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232369AbjDXVFj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 17:05:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57372 "EHLO
+        id S232617AbjDXVMI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 17:12:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230355AbjDXVFi (ORCPT
+        with ESMTP id S232071AbjDXVMH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 17:05:38 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A1B6184
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:05:36 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-5050497df77so7587781a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:05:36 -0700 (PDT)
+        Mon, 24 Apr 2023 17:12:07 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB3249E4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:12:05 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-5052caa1e32so8821505a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:12:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1682370335; x=1684962335;
+        d=linux-foundation.org; s=google; t=1682370723; x=1684962723;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N8tba+uDpkEW7dJT6XcMTrVp0OQq/mPaxrVBHBih1WQ=;
-        b=VX8v4h3N/14yvstAMpfQ/TxNsG6TZa2MTPUeVu66hXV8uwCYMq5vGq+feQ1yaUQgJO
-         Vq52tfGGw549jFbJJ/sDwZrM5Y1LjW9jzrrMKR4fDFc11IXc70/FRo8oqmYKIhP7mIgY
-         kkvbjGEWVf/FraDkCD+AXyi8chYjXjDI68PJY=
+        bh=0flSybpT7aXUdx24UhagQw7vrZguz1V40kdNmALOE5o=;
+        b=fAqPJPpPvaW8/dtXVRaoTRpLJVvlHJpiYTXU8HWdSLAOMrxIXuYEWVMQhn4Qk67HVc
+         7e+h+9qAOyQRe57t9KglGAw/H0KroCnOUc/R4wWLah5+LdCqaFcH8MG4zpGx8GFlkuKT
+         Qc0VWt0xsSE6hxDgp6mRIf6MrdCbKaAHo2BUA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682370335; x=1684962335;
+        d=1e100.net; s=20221208; t=1682370723; x=1684962723;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N8tba+uDpkEW7dJT6XcMTrVp0OQq/mPaxrVBHBih1WQ=;
-        b=O+WAQreIn8fIbFE79uP7ovfL6EccXS/Potmj+q7HIyKOTSFdLwfurIchN0PspP/sGA
-         UBMuEjHwU6lrfvByLfF7VGB0bzpuxS2MMH0x1lrTLP2VJkPA2GOfZZA0ZXpXtVIwzKD8
-         /fChRZtEXHpWvX3bHyOxiOSkyGsilyqqqPov9Z7vdakGr2DHs8zd9D36POFrkGnvgZGU
-         5EMWBuJfrJuztT22UK2TnrHa7cmXrnsCiyVDv/jiySZxI5uJcMILzvyPlZNQTFZymdmv
-         F5yIRrGomkQ6U/trwJZLNRoYW/ATrMg/HDvW67O7fvvpBkoFt9DK5smBsoHp3v65xfIs
-         4CZQ==
-X-Gm-Message-State: AAQBX9d6EitmnNrSEkwsaQ8avDDqg0eVej7D7haQPVdmKQYWEPcz5IvJ
-        /2Uf6htqY2nVL6PPANmZAJDdrEphBGuFChIiEAzZQEOr
-X-Google-Smtp-Source: AKy350bqYMCyDg8aQ7H3IJCxi11H+AhWTcls41ZgYRRhYLnvwIAwftrzdnjT4wHvsX8WZlwhaZHSrw==
-X-Received: by 2002:a17:906:e097:b0:94f:1b9d:f5ba with SMTP id gh23-20020a170906e09700b0094f1b9df5bamr11941815ejb.62.1682370335090;
-        Mon, 24 Apr 2023 14:05:35 -0700 (PDT)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id v10-20020a1709063bca00b0094ee3e4c934sm5946178ejf.221.2023.04.24.14.05.34
+        bh=0flSybpT7aXUdx24UhagQw7vrZguz1V40kdNmALOE5o=;
+        b=lQMfSqP+oxiizKmBjoiGiVQ3XtQIjS0vtECJUWaI5JjgoE35abfbNwHsIukklC/LAE
+         64fnuIEujXtBouWbrpD1T72WohMGiLhyagvyKi6fMNyadmqYEKExYO44dct+MyG1y8EN
+         FuzfN7K1B5pGoWCb+Y2OXANRGOvrOz9fhC2hPFqzIvFx4WhpSuwenQl75mZJLxsSY9O5
+         kZ8g1PIlijJrAuRYYx9pS+8YckxJj27MoLuANx5R7inKwWJW0wmlHG54jRWxA7UDrc4r
+         VjDUR28BszY2P9wGDj6J1TneLAEk+40B9MiwcMFtrc43cwfR2ehk9OPEKtd36wZl3UcU
+         WozQ==
+X-Gm-Message-State: AAQBX9fls4yo07eGIcnDiY+hECTBF1rPS6ZH5xrvjgUiTEF717gOtVi0
+        kpuFikFMC4lkyKtp8GJ/V9J2rmVMzQxrBrYG/Csw4d2p
+X-Google-Smtp-Source: AKy350bfqZ58Bvm/SggANzo7wPCBZzqR001ctYQmEKGD4R9ZOckG60vDkS6A6H/qR0AzLqRc2yUGfA==
+X-Received: by 2002:a05:6402:641:b0:504:921b:825 with SMTP id u1-20020a056402064100b00504921b0825mr13071264edx.36.1682370723418;
+        Mon, 24 Apr 2023 14:12:03 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id t25-20020a17090616d900b009534603453dsm5853733ejd.131.2023.04.24.14.12.02
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Apr 2023 14:05:34 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-50674656309so7593067a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:05:34 -0700 (PDT)
-X-Received: by 2002:a05:6402:151:b0:508:41df:b276 with SMTP id
- s17-20020a056402015100b0050841dfb276mr13756695edu.22.1682370334079; Mon, 24
- Apr 2023 14:05:34 -0700 (PDT)
+        Mon, 24 Apr 2023 14:12:02 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5052caa1e32so8821459a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:12:02 -0700 (PDT)
+X-Received: by 2002:aa7:d5d4:0:b0:504:ba4f:3450 with SMTP id
+ d20-20020aa7d5d4000000b00504ba4f3450mr11017273eds.30.1682370722384; Mon, 24
+ Apr 2023 14:12:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230421-seilbahn-vorpreschen-bd73ac3c88d7@brauner>
-In-Reply-To: <20230421-seilbahn-vorpreschen-bd73ac3c88d7@brauner>
+References: <20230421-freimachen-handhaben-7c7a5e83ba0c@brauner>
+In-Reply-To: <20230421-freimachen-handhaben-7c7a5e83ba0c@brauner>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 24 Apr 2023 14:05:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgyL9OujQ72er7oXt_VsMeno4bMKCTydBT1WSaagZ_5CA@mail.gmail.com>
-Message-ID: <CAHk-=wgyL9OujQ72er7oXt_VsMeno4bMKCTydBT1WSaagZ_5CA@mail.gmail.com>
-Subject: Re: [GIT PULL] pipe: nonblocking rw for io_uring
+Date:   Mon, 24 Apr 2023 14:11:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whykVNoCGj3UC=b0O7V0P-MWDaKz_2r+_yGxyXoEMmL8w@mail.gmail.com>
+Message-ID: <CAHk-=whykVNoCGj3UC=b0O7V0P-MWDaKz_2r+_yGxyXoEMmL8w@mail.gmail.com>
+Subject: Re: [GIT PULL] open: fix O_DIRECTORY | O_CREAT
 To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -76,59 +75,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 7:02=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+On Fri, Apr 21, 2023 at 7:03=E2=80=AFAM Christian Brauner <brauner@kernel.o=
 rg> wrote:
 >
-> This contains Jens' work to support FMODE_NOWAIT and thus IOCB_NOWAIT
-> for pipes ensuring that all places can deal with non-blocking requests.
+> EINVAL ist keinmal: This contains the changes to make O_DIRECTORY when
+> specified together with O_CREAT an invalid request.
+
+Ok, that intro makes little sense unless you speak German ;)
+
+I cut the explanation down radically, it's there in the original
+commit, I don't think we need quite this much detail for a merge
+commit for a change that is ~10 lines of code and not _that_ complex.
+
+I did keep this link:
+
+> This has also been covered in
 >
-> To this end, pass down the information that this is a nonblocking
-> request so that pipe locking, allocation, and buffer checking correctly
-> deal with those.
+>         https://lwn.net/Articles/926782/
+>
+> which should be publicly available by now. It provides an excellent
+> summary of the discussion.
 
-Ok, I pulled this, but then I unpulled it again.
+although it's behind a paywall, which isn't optimal.
 
-Doing conditional locking for O_NONBLOCK and friends is not ok. Yes,
-it's been done, and I may even have let some slip through, but it's
-just WRONG.
-
-There is absolutely no situation where a "ok, so the lock on this data
-structure was taken, we'll go to some async model" is worth it.
-
-Every single time I've seen this, it's been some developer who thinks
-that O_NONBLOCk is somehow some absolute "this cannot schedule" thing.
-And every single time it's been broken and horrid crap that just made
-everything more complicated and slowed things down.
-
-If some lock wait is a real problem, then the lock needs to be just
-fixed. Not "ok, let's make a non-blocking version and fall back if
-it's held".
-
-Note that FMODE_NOWAIT does not mean (and *CANNOT* mean) that you'd
-somehow be able to do the IO in some atomic context anyway. Many of
-our kernel locks don't even support that (eg mutexes).
-
-So thinking that FMODE_NOWAIT is that kind of absolute is the wrong
-kind of thinking entirely.
-
-FMODE_NOWAIT should mean that no *IO* gets done. And yes, that might
-mean that allocations fail too. But not this kind of "let's turn
-locking into 'trylock' stuff".
-
-The whoe flag is misnamed. It should have been FMODE_NOIO, the same
-way we have IOCB_NOIO.
-
-If you want FMODE_ATOMIC, then that is something entirely and
-completely different, and is probably crazy.
-
-We have done it in one area (RCU pathname lookup), and it was worth it
-there, and it was a *huge* undertaking. It was worth it, but it was
-worth it because it was a serious thing with some serious design and a
-critical area.
-
-Not this kind of "conditional trylock" garbage which just means that
-people will require 'poll()' to now add the lock to the waitqueue, or
-make all callers go into some "let's use a different thread instead"
-logic.
-
-                             Linus
+              Linus
