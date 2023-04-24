@@ -2,231 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4648A6ED81A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 00:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63F0E6ED82A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 00:53:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232544AbjDXWpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 18:45:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55656 "EHLO
+        id S233077AbjDXWxh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 18:53:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbjDXWpG (ORCPT
+        with ESMTP id S231438AbjDXWxg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 18:45:06 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEB026A41
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 15:45:03 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-63b8b927f62so1176304b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 15:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682376303; x=1684968303;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XyAyZvkBYkEc712cEMV3mpROJFIG+zAeVUV4dUXDvuI=;
-        b=Lhx5LzsaBaoqEWqnxNW38qntF9QqpPCXaBk64MUOpxQbjWzyKsvYTPDddk5jyU5jdS
-         C/unHMsPnxQqtOTk3Cl1OGQ6bEdKkQlmy+M2bwW/kGU495ZPC8MR0uEFwrLMmL9Rl0/W
-         738a+UTY898TmTjE7uyG0cbllvHey6ampnGHQ0gGd60vM8+stt+PTc4R/bsvfdrOYLy1
-         Wf1DtYcIM4zZJcCGfPBeacKH20QAiU7lccNAXvvJmMpZs8hESAeKOMw52KSxl1wjha8y
-         GIYmAdIehEOAIuHZech7ZbiHVXrPuoDvjeZ1gY2jH19xY3uPxEtei+pJG6CS7qAVZsvQ
-         x9yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682376303; x=1684968303;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XyAyZvkBYkEc712cEMV3mpROJFIG+zAeVUV4dUXDvuI=;
-        b=Qnl5fBCuV+7nw7r9o/5XIZEY7TfneFv3w2eOmZUuOMpkF8vQMCOMWRMdyStsYZt/iC
-         QrlSVU0LgYq2z8CXXr4lRJDXZsGQA9TsnvhiBbdv0D6CctrVGT1e3+cwXGVVQ8lts+fH
-         MuzvoT9QuRUITqaAp8Ie4EqLQdnlad+qU5CQxt573L/5K6Ftu9L86wSbMBabjcPeEmfP
-         RwTrQXtdssaO/SfEPo6bUxd5Ha98BmeePRFXvKoLM4DuuulnNYXlTykCNMdhG/ogrd08
-         Jiu0SoQ04vvmzgV4OH4CEJCnDQ/WjdodlAQqgnkcL+ap3Mef/4LeZIBN8fSut55BW5OR
-         Vlfw==
-X-Gm-Message-State: AAQBX9eBXlf56OOL8SkbI+ZhkOxVwT1zPr0+K10ymCYD79kvl05hoaJl
-        Xh59dxBDvnA49VfNBv7U+zBm2A==
-X-Google-Smtp-Source: AKy350Zpt2t30t66DD9GxrwuipngBmDrdC/PFh7ol9LvVK9zpSzmcnQQeCkc0Nbggd9FVMC4bP4v3g==
-X-Received: by 2002:a17:902:f690:b0:1a6:e00b:c3e5 with SMTP id l16-20020a170902f69000b001a6e00bc3e5mr18310958plg.4.1682376303317;
-        Mon, 24 Apr 2023 15:45:03 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id jw4-20020a170903278400b001a975b64c38sm2329910plb.68.2023.04.24.15.45.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Apr 2023 15:45:02 -0700 (PDT)
-Message-ID: <69ec222c-1b75-cdc1-ac1b-0e9e504db6cb@kernel.dk>
-Date:   Mon, 24 Apr 2023 16:44:56 -0600
+        Mon, 24 Apr 2023 18:53:36 -0400
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2087.outbound.protection.outlook.com [40.107.212.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472B9900D;
+        Mon, 24 Apr 2023 15:53:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YTzt31VDdhaKHRIpPk0MUGsEi6KBpNMrdhZXCUbeR1+eB78b8JpiP0/wzvv4UR3TTLpV4jIkDEvmR2W2USb7s+ddZqpccsIutq40Mg9M7CuC/pwSJv01gH+25AN3kCgOhdKwetl/DkRl2JerpyDOFFhl7PtQq0QOX1uTaSKsEda3bXzdxsauq/Lk6TOBCm7S+5hAZb5h62zWZi/D3ot+6GyhppnNDBv5snB/ekYJ35t25alnX6NNuZiuFfQi6CZNdzBlqN+FANv98w1abyaWbiG97/1vwoNw79k8SQN7/lG/rGKLsJbzSlfpyP95zljkXqNe/5x9Ma71YvS0dV+VTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+gMjttjyVWGIkGTsOTDAB5kkziD272xbAfNnCdW1+rA=;
+ b=fV3bYZzz6TtS1qGHRVV3R9gh0+t8Rs4JgGmHMTTMlt+RHaHGpYKpG/204hTS3H8y5oqwcOyzFKGhwZMH4fRHzdMp2N1/2zkvt3WrWDlqqMn9bGljlCoNroD2R5nkuQaFSwomrcPQx8Q/bx7tl84iJut/z3u5oEDFyQM01BumSww1v71ikV1F91Iltm5HSJYgsKiioxoa5yl9cfk8acruEXFqE6k26v/2sZDILOL5/YwPD87tsMLiy1TnyNNwUM8662ZvQXMBtDg46+XVswHi1V0pUF28GAvc8p4qXebCn5THnZU7m5mOVEVuiMeeIYGjbUadRZ5sek+0jxnvfw3Isw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+gMjttjyVWGIkGTsOTDAB5kkziD272xbAfNnCdW1+rA=;
+ b=EKu5smBzYrnz4oWmc5xMY1oT5LCStxJukR/4dxPlKhyCTFH78363a4JFsmjqk/rqIAqTk6Ncf69i26xfJdkGkQq/x4C5IWMD/Cl3FExlIk18gE5RGuFGzNKRmwH3lRGMN0E4BW0SqHWLlk/Qmokz4Grptn4kh/BX72P0b6X81zYEGsMumJUoanTPMekXCJoqJNXn9ITGaNFohZp+drpRXAUIXL8bgHPs+Enh5gv0OCtwpBFN1ooALI4K0rQoBkgVe59seaxJNzpwHpSwre4pEHJybSxX2az59+xy0ZwyECOx3BbgHuVQXNBdC93XX09Epo0pCEqtcIIt7bbUJwKpDw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by MN0PR12MB6269.namprd12.prod.outlook.com (2603:10b6:208:3c3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.22; Mon, 24 Apr
+ 2023 22:53:28 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%5]) with mapi id 15.20.6319.033; Mon, 24 Apr 2023
+ 22:53:28 +0000
+Date:   Mon, 24 Apr 2023 19:53:26 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v2] mm/gup: disallow GUP writing to file-backed mappings
+ by default
+Message-ID: <ZEcIZspUwWUzH15L@nvidia.com>
+References: <ZEZPXHN4OXIYhP+V@infradead.org>
+ <90a54439-5d30-4711-8a86-eba816782a66@lucifer.local>
+ <ZEZ117OMCi0dFXqY@nvidia.com>
+ <c8fff8b3-ead6-4f52-bf17-f2ef2e752b57@lucifer.local>
+ <ZEaGjad50lqRNTWD@nvidia.com>
+ <cd488979-d257-42b9-937f-470cc3c57f5e@lucifer.local>
+ <ZEa+L5ivNDhCmgj4@nvidia.com>
+ <cfb5afaa-8636-4c7d-a1a2-2e0a85f9f3d3@lucifer.local>
+ <ZEbQeImOiaXrydBE@nvidia.com>
+ <f00058b8-0397-465f-9db5-ddd30a5efe8e@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f00058b8-0397-465f-9db5-ddd30a5efe8e@lucifer.local>
+X-ClientProxiedBy: BLAPR03CA0150.namprd03.prod.outlook.com
+ (2603:10b6:208:32e::35) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [GIT PULL] pipe: nonblocking rw for io_uring
-Content-Language: en-US
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230421-seilbahn-vorpreschen-bd73ac3c88d7@brauner>
- <CAHk-=wgyL9OujQ72er7oXt_VsMeno4bMKCTydBT1WSaagZ_5CA@mail.gmail.com>
- <6882b74e-874a-c116-62ac-564104c5ad34@kernel.dk>
- <CAHk-=wiQ8g+B0bCPJ9fxZ+Oa0LPAUAyryw9i+-fBUe72LoA+QQ@mail.gmail.com>
- <CAHk-=wgGzwaz2yGO9_PFv4O1ke_uHg25Ab0UndK+G9vJ9V4=hw@mail.gmail.com>
- <2e7d4f63-7ddd-e4a6-e7eb-fd2a305d442e@kernel.dk>
-In-Reply-To: <2e7d4f63-7ddd-e4a6-e7eb-fd2a305d442e@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=0.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|MN0PR12MB6269:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6c033db-f2ce-473b-96f1-08db4516b7aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2CX1YcVODM7u8wia4NmuuanB44MCuOfBER4zJmFV5sBCQ9yW7FuoZO0m/8T3mxdK4AVAOUx7dpcI1jw5jIjdtUK1EXU27obXht8zG+ZKy1/8sb+zDsXrw3FM+f6OMBX/AtVf74UzCHdImIADG0jPgKBYEmFygctinDperNT+ms2R5RJTbQRW5G3SKvqSOQjlaI1ztE+sOn1T81WzHGTStmS58+me2cZxUBZUsDIHw3tgsm8ZkPiFnnoCcv1q7ydwGHNb0NSSPFq9xcWAO4xeCaAreJ+Z3tGLdfG1YGLu0xweo/ZIWkg9dUPSo/s/0+7zVTKkroOA59UaWnNiRFUENffdlaJlyZcrSvRIssL+6kc0HUL0e7Jhmt55E3vJSlYHbNuDECmMiBM1m3CijLEZaY8ZTYk8qUjav2dvkAEX9Uj63dtYKLAXOQCAeCNxVtTnUEL+hsc6KqOUv/lDDjIgrM52H2K+yHKKIrpI/STNQJP1FwW6QPhwl3IYyXqegnYYsJ9/Ccq5FWCBRssGl4j8RbH9MWUPjc2j+nvl476mjxb6I2srfznBUKbpeKatM/cQ
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(136003)(39860400002)(376002)(366004)(451199021)(186003)(6506007)(26005)(6512007)(6486002)(4744005)(66556008)(5660300002)(66946007)(2616005)(38100700002)(6916009)(4326008)(41300700001)(7416002)(8676002)(8936002)(66476007)(7406005)(2906002)(54906003)(478600001)(316002)(86362001)(36756003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EcRyB6RaRLMENvnfrGriy0+hRLoo+38zLtuHUjuX9gdIXbMiHpeLnF8xhEAU?=
+ =?us-ascii?Q?yF9v/r+Y1Dr5DAMfzYntmB+xLt3GBUr1di8TS053Ctly12dQ+ObI+auT4m+n?=
+ =?us-ascii?Q?05ewclsn+00IS7Whydil4sIS6nh/RejQ3TYQxwAGAQ9c69SBV4na6kAVioVw?=
+ =?us-ascii?Q?PFutE33tjyDnoAyvekTiKkd6YCcFq3VubozoOb6+lAedptZ/AjBQIwWY9WkZ?=
+ =?us-ascii?Q?sIkHXSsxkAM2n4sG8QT6vrbjP5i7xq0Qy72wzdlhtoFDuxwxJeVKV2oCQfwI?=
+ =?us-ascii?Q?s3hI6P420ITze8DIG/OLdEeXsTDKfArY050HhP5Ox8yfwb3LSeoUkuzFtjmu?=
+ =?us-ascii?Q?Trjy829l9bz72uVqlulMycg0xdlw1kaQjall/sX0oYMavzRrSFBpKnorPTTJ?=
+ =?us-ascii?Q?dUgKinueEbTgZhyjcRYqVZ6o4jd7kH8ksltIPKGRWlixLE3U8ICvSwcSI87F?=
+ =?us-ascii?Q?Lg3odLHq499TaFg8QTSKmxAq/l65XHoOHyYirZCw8W4wazlbDEWrjmAyuc5d?=
+ =?us-ascii?Q?tyxbgspa4lz5Nej8S0zUg83zOJ/bmNYHayJnCwY1PDl1cmi37D5sTap0T4Ia?=
+ =?us-ascii?Q?EsbrtdCMSdQvAMAom/8j+yA8+c5onbrgRBvYf2Ty/fMTAVJ+Wpv8ADadbrEK?=
+ =?us-ascii?Q?SLDfK0pBO8uH3B2uachFWeYFjODq1m7/1LUt4wk8Ozuy4i/0g2Jt7wDflPtQ?=
+ =?us-ascii?Q?F4YCka2q+rFz9Uk+dMXiap1//3M3xPOZAIKltWch07BXg5ojm3+I7xbiZ21G?=
+ =?us-ascii?Q?N1CfIoKqnPClh2YH3Ew1rcJontdpoEBfjC+3ztMlc7B1sUxvcWkm2AMeyC3R?=
+ =?us-ascii?Q?xRnLKqAxmeNb2hC3ULlRzgub11utC7H7FF3yPDM3y6MibZLOh5rwdyJq6Owl?=
+ =?us-ascii?Q?EO3nmmWSwSCEmFvpm57apLrByOfUPnFMNGFCKeHvpqtMNA3rsQxmFBATH+jA?=
+ =?us-ascii?Q?a4h+N3C2WWQWvPW/upVGNlgrl5U1bS5f8yNjLCANyuY8T8gzmZ/JjKJlya9j?=
+ =?us-ascii?Q?60aIJCKGj9WrGkMn5lM80DdkJe6b3XF4P3r3Vt3tYvzMjUDe3QdDQf7koaI/?=
+ =?us-ascii?Q?dctAslhOr4p6/BiBvkci98aZxanskgbE2bED9GBvNlX83fLhmcCTUdSaCBi5?=
+ =?us-ascii?Q?zNXpuki89tzzWtmvHj2yrMGXLIG7QBrv9aJbtxNzNwtq/pAM8gKj72l0Z0RS?=
+ =?us-ascii?Q?4JdSeaWF9Q5XmvBmpVLoYx4Y9UGG63F605zpaNNrXLRQNe37JS/quyf1M+ja?=
+ =?us-ascii?Q?GaDPUVlBov3Fw8I9iJyNCjzuK+dPuyLTUlg5xCCxIp0Jr43MG5Mq9dpEbQ88?=
+ =?us-ascii?Q?Zy4P6KzHRcy+63UqKoHllf82oO1BGUu53B2Z50r5OrOdVn4dQRz1dV9OOQcg?=
+ =?us-ascii?Q?qm4vAAz63fivi5MJ0w3pthyJv1Zmi7WhRoqAnslrNI/MAVJN/zstdUp1eg6I?=
+ =?us-ascii?Q?mh1Xf2BkVilHVRk7+YIvONAvj4b24DJ481TSC0PqxRBPdYUDHRai0WqIrGol?=
+ =?us-ascii?Q?PCcAWru8dMg/Sf5IP2nk66OmKwqr8FawwZTN5BZF+SoiQ5EB0t9UyMCbujDl?=
+ =?us-ascii?Q?7ynNcQBgmYsgXdpjLijAa4RO9EkOMAndB+wF9l6Z?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6c033db-f2ce-473b-96f1-08db4516b7aa
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2023 22:53:27.9604
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: e2qaO/vQ9CmG46IZKDQOC76JaRXEzK3LP4Af7oS2U693mi56h3E+x6qP9midZSmC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6269
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/24/23 4:07?PM, Jens Axboe wrote:
-> On 4/24/23 3:58?PM, Linus Torvalds wrote:
->> On Mon, Apr 24, 2023 at 2:37?PM Linus Torvalds
->> <torvalds@linux-foundation.org> wrote:
->>>
->>> And I completely refuse to add that trylock hack to paper that over.
->>> The pipe lock is *not* meant for IO.
->>
->> If you want to paper it over, do it other ways.
->>
->> I'd love to just magically fix splice, but hey, that might not be possible.
-> 
-> Don't think it is... At least not trivially.
-> 
->> But possible fixes papering this over might be to make splice "poison
->> a pipe, and make io_uring falls back on io workers only on pipes that
->> do splice. Make any normal pipe read/write load sane.
->>
->> And no, don't worry about races. If you have the same pipe used for
->> io_uring IO *and* somebody else then doing splice on it and racing,
->> just take the loss and tell people that they might hit a slow case if
->> they do stupid things.
->>
->> Basically, the patch might look like something like
->>
->>  - do_pipe() sets FMODE_NOWAIT by default when creating a pipe
->>
->>  - splice then clears FMODE_NOWAIT on pipes as they are used
->>
->> and now io_uring sees whether the pipe is playing nice or not.
->>
->> As far as I can tell, something like that would make the
->> 'pipe_buf_confirm()' part unnecessary too, since that's only relevant
->> for splice.
->>
->> A fancier version might be to only do that "splice then clears
->> FMODE_NOWAIT" thing if the other side of the splice has not set
->> FMODE_NOWAIT.
->>
->> Honestly, if the problem is "pipe IO is slow", then splice should not
->> be the thing you optimize for.
-> 
-> I think that'd be an acceptable approach, and would at least fix the
-> pure pipe case which I suspect is 99.9% of them, if not more. And yes,
-> it'd mean that we don't need to do the ->confirm() change either, as the
-> pipe is already tainted at that point.
-> 
-> I'll respin a v2, post, and send in later this merge window.
+On Mon, Apr 24, 2023 at 08:18:33PM +0100, Lorenzo Stoakes wrote:
 
-Something like this. Not tested yet, but wanted to get your feedback
-early to avoid issues down the line. Really just the first hunk, as
-we're not really expecting f_mode to change and hence could just use
-an xchg(). Seems saner to use a cmpxchg though, but maybe that's
-too much of both belt and suspenders?
+> I think this patch suggestion has scope crept from 'incremental
+> improvement' to 'major rework of GUP' at this point. 
 
-commit f10cbebf4dd7f77b0e87c77bb0191a5a07d5e7ac
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Mon Apr 24 16:32:55 2023 -0600
+I don't really expect to you clean up all the callers - but we are
+trying to understand what is actually wrong here to come up with the
+right FOLL_ names and overall strategy. Leave behind a comment, for
+instance.
 
-    splice: clear FMODE_NOWAIT on file if splice/vmsplice is used
-    
-    In preparation for pipes setting FMODE_NOWAIT on pipes to indicate that
-    RWF_NOWAIT/IOCB_NOWAIT is fully supported, have splice and vmsplice
-    clear that file flag. Splice holds the pipe lock around IO and cannot
-    easily be refactored to avoid that, as splice and pipes are inherently
-    tied together.
-    
-    By clearing FMODE_NOWAIT if splice is being used on a pipe, other users
-    of the pipe will know that the pipe is no longer safe for RWF_NOWAIT
-    and friends.
-    
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+I don't think anyone has really thought about the ptrace users too
+much till now, we were all thinking about DMA use cases, it shows we
+still have some areas that need attention.
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 2c3dec2b6dfa..3ce7c07621e2 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -37,6 +37,29 @@
- 
- #include "internal.h"
- 
-+/*
-+ * Splice doesn't support FMODE_NOWAIT. Since pipes may set this flag to
-+ * indicate they support non-blocking reads or writes, we must clear it
-+ * here if set to avoid blocking other users of this pipe if splice is
-+ * being done on it.
-+ */
-+static void pipe_clear_nowait(struct file *file)
-+{
-+	fmode_t new_fmode, old_fmode;
-+
-+	/*
-+	 * We could get by with just doing an xchg() here as f_mode should
-+	 * not change in the file's lifetime, but let's be safe and use
-+	 * a cmpxchg() instead.
-+	 */
-+	do {
-+		old_fmode = READ_ONCE(file->f_mode);
-+		if (!(old_fmode & FMODE_NOWAIT))
-+			break;
-+		new_fmode = old_fmode & ~FMODE_NOWAIT;
-+	} while (!try_cmpxchg(&file->f_mode, &old_fmode, new_fmode));
-+}
-+
- /*
-  * Attempt to steal a page from a pipe buffer. This should perhaps go into
-  * a vm helper function, it's already simplified quite a bit by the
-@@ -1211,10 +1234,16 @@ static long __do_splice(struct file *in, loff_t __user *off_in,
- 	ipipe = get_pipe_info(in, true);
- 	opipe = get_pipe_info(out, true);
- 
--	if (ipipe && off_in)
--		return -ESPIPE;
--	if (opipe && off_out)
--		return -ESPIPE;
-+	if (ipipe) {
-+		if (off_in)
-+			return -ESPIPE;
-+		pipe_clear_nowait(in);
-+	}
-+	if (opipe) {
-+		if (off_out)
-+			return -ESPIPE;
-+		pipe_clear_nowait(out);
-+	}
- 
- 	if (off_out) {
- 		if (copy_from_user(&offset, off_out, sizeof(loff_t)))
-@@ -1311,6 +1340,8 @@ static long vmsplice_to_user(struct file *file, struct iov_iter *iter,
- 	if (!pipe)
- 		return -EBADF;
- 
-+	pipe_clear_nowait(file);
-+
- 	if (sd.total_len) {
- 		pipe_lock(pipe);
- 		ret = __splice_from_pipe(pipe, &sd, pipe_to_user);
-@@ -1339,6 +1370,8 @@ static long vmsplice_to_pipe(struct file *file, struct iov_iter *iter,
- 	if (!pipe)
- 		return -EBADF;
- 
-+	pipe_clear_nowait(file);
-+
- 	pipe_lock(pipe);
- 	ret = wait_for_space(pipe, flags);
- 	if (!ret)
+> Also surely you'd want to obtain the PTL of all mappings to a file?
 
--- 
-Jens Axboe
+No, just one is fine. If you do the memcpy under a single PTL that
+points at a writable copy of the page then everything is trivially
+fine because it is very similar to what the CPU itself would do, which
+is fine by definition..
 
+Jason
