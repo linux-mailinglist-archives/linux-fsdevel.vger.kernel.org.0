@@ -2,255 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 80D446ED1CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 17:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C67216ED20A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 18:07:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232130AbjDXPzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 11:55:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56094 "EHLO
+        id S232116AbjDXQG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 12:06:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232136AbjDXPzD (ORCPT
+        with ESMTP id S232090AbjDXQG4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 11:55:03 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27DB559E5;
-        Mon, 24 Apr 2023 08:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1682351699; x=1713887699;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=twLeidi/BX59r6A18B0nMQG8GWRGkRGcWglppQmN5Lc=;
-  b=Ijrke6fODRsoQSwDv+0uXqfLP+6SNdOk9boAHrm6cDBvyXSFCw17yo7x
-   GBfcl1UsnvRDeJlA69NOLfibPxVpaHheRUsrHNJAYFDQOiO7XgjmbAJ/T
-   lYVOGqvDeHYNNjFxJXDSN+ZdXUg1NMdzJujDISFgenWHfsYc96ZD4J626
-   lD3yKCxQjm16ccm7sr1dgIOKljOBKd7Lg6axKuy63PGcQ/JVkBH++DcbF
-   579UwGWq9d5DZF6awVXyYNliCffbD0GdKHTkm629qrkvjGiyeAHJdHFfo
-   FmhU3Yox+LqpTI4OrB5RwkAiZ1IrLST1CuhOyv+PXFtfOJDN7ZXtt77Oz
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="345244381"
-X-IronPort-AV: E=Sophos;i="5.99,223,1677571200"; 
-   d="scan'208";a="345244381"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2023 08:54:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="804667850"
-X-IronPort-AV: E=Sophos;i="5.99,223,1677571200"; 
-   d="scan'208";a="804667850"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 24 Apr 2023 08:54:53 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pqyWi-000iUi-2i;
-        Mon, 24 Apr 2023 15:54:52 +0000
-Date:   Mon, 24 Apr 2023 23:54:28 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Sarthak Kukreti <sarthakkukreti@chromium.org>, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Jens Axboe <axboe@kernel.dk>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Bart Van Assche <bvanassche@google.com>,
-        Daniil Lunev <dlunev@google.com>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [PATCH v5 1/5] block: Don't invalidate pagecache for invalid
- falloc modes
-Message-ID: <202304242302.5zYRfUub-lkp@intel.com>
-References: <20230420004850.297045-2-sarthakkukreti@chromium.org>
+        Mon, 24 Apr 2023 12:06:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4949C6A63
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 09:06:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1682352366;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=UvD4N29l/ZIppjDRrnUsGmGtNacE+xibdoS17eqPvOQ=;
+        b=DD4jc1GUdNzaOX9qbO+m7uYTqE+fgdXweKs8XwABFKCBE/tFj6M2MbV3sDVQxxizfuHk/U
+        v/Y4x5G8Y4Tu0Zr2dzP0pYoH8Yn/qHRph1F7DxLkotoeLlkRHGYlV6QTDl1UwdVed0vSob
+        LXwr5kkAfv90ODwHhzDJkzVahLkNwHA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-373-fw-hO7gKOXiCYc7jHZzciQ-1; Mon, 24 Apr 2023 12:06:02 -0400
+X-MC-Unique: fw-hO7gKOXiCYc7jHZzciQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DEEBA29AB3E1;
+        Mon, 24 Apr 2023 16:06:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.62])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 075232027043;
+        Mon, 24 Apr 2023 16:05:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CACT4Y+YajDb5QpSziTazoyn587JXwXet2w7Jkqkj9v31HZtJxw@mail.gmail.com>
+References: <CACT4Y+YajDb5QpSziTazoyn587JXwXet2w7Jkqkj9v31HZtJxw@mail.gmail.com> <000000000000e7c6d205fa10a3cd@google.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     dhowells@redhat.com,
+        syzbot <syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com>,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, marc.dionne@auristor.com,
+        netdev@vger.kernel.org, pabeni@redhat.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [afs?] [net?] KCSAN: data-race in rxrpc_send_data / rxrpc_set_call_completion
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230420004850.297045-2-sarthakkukreti@chromium.org>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <457893.1682352358.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 24 Apr 2023 17:05:58 +0100
+Message-ID: <457894.1682352358@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Sarthak,
+Dmitry Vyukov <dvyukov@google.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> If I am reading this correctly, rxrpc_send_data() can read wrong
+> call->completion and state and incorrectly exit with an error if
+> rxrpc_wait_to_be_connected() exists early right after observing error
+> set here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+net/rxrpc/sendmsg.c?id=3D148341f0a2f53b5e8808d093333d85170586a15d#n58
+> The code seems to assume that at that point all writes done by
+> rxrpc_set_call_completion() are already finished, but it's not
+> necessarily the case.
 
-[auto build test WARNING on device-mapper-dm/for-next]
-[also build test WARNING on linus/master v6.3 next-20230421]
-[cannot apply to axboe-block/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I'm not sure it matters.  call->error can only be set by the I/O thread an=
+d
+only if a call fails - in which case the call state will be set shortly
+thereafter - plus a couple of places where we fail to set the call up, in
+which case we're under the call's user_mutex or didn't even manage to full=
+y
+allocate it.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sarthak-Kukreti/block-Introduce-provisioning-primitives/20230420-095025
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git for-next
-patch link:    https://lore.kernel.org/r/20230420004850.297045-2-sarthakkukreti%40chromium.org
-patch subject: [PATCH v5 1/5] block: Don't invalidate pagecache for invalid falloc modes
-config: hexagon-randconfig-r006-20230424 (https://download.01.org/0day-ci/archive/20230424/202304242302.5zYRfUub-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 437b7602e4a998220871de78afcb020b9c14a661)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/8bd0744b438be1722c5f8c1fe077e9dcef0e81b7
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Sarthak-Kukreti/block-Introduce-provisioning-primitives/20230420-095025
-        git checkout 8bd0744b438be1722c5f8c1fe077e9dcef0e81b7
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash
+That said, I probably should check the call state first.  I might also wan=
+t to
+ignore any signal if the call did manage to get connected, lest I leave it
+dangling - a problem might come if userspace issues a single sendmsg() to =
+set
+up the call and supply data to be transmitted.  I need to have a ponder on
+that one.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304242302.5zYRfUub-lkp@intel.com/
+David
 
-All warnings (new ones prefixed by >>):
-
-   In file included from block/fops.c:9:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:334:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-                                                     ^
-   In file included from block/fops.c:9:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:334:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-                                                     ^
-   In file included from block/fops.c:9:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:334:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
->> block/fops.c:678:2: warning: unused label 'fail' [-Wunused-label]
-    fail:
-    ^~~~~
-   7 warnings generated.
-
-
-vim +/fail +678 block/fops.c
-
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  613  
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  614  #define	BLKDEV_FALLOC_FL_SUPPORTED					\
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  615  		(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |		\
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  616  		 FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE)
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  617  
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  618  static long blkdev_fallocate(struct file *file, int mode, loff_t start,
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  619  			     loff_t len)
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  620  {
-f278eb3d8178f9 Ming Lei          2021-09-23  621  	struct inode *inode = bdev_file_inode(file);
-f278eb3d8178f9 Ming Lei          2021-09-23  622  	struct block_device *bdev = I_BDEV(inode);
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  623  	loff_t end = start + len - 1;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  624  	loff_t isize;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  625  	int error;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  626  
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  627  	/* Fail if we don't recognize the flags. */
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  628  	if (mode & ~BLKDEV_FALLOC_FL_SUPPORTED)
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  629  		return -EOPNOTSUPP;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  630  
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  631  	/* Don't go off the end of the device. */
-2a93ad8fcb377b Christoph Hellwig 2021-10-18  632  	isize = bdev_nr_bytes(bdev);
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  633  	if (start >= isize)
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  634  		return -EINVAL;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  635  	if (end >= isize) {
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  636  		if (mode & FALLOC_FL_KEEP_SIZE) {
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  637  			len = isize - start;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  638  			end = start + len - 1;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  639  		} else
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  640  			return -EINVAL;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  641  	}
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  642  
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  643  	/*
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  644  	 * Don't allow IO that isn't aligned to logical block size.
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  645  	 */
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  646  	if ((start | len) & (bdev_logical_block_size(bdev) - 1))
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  647  		return -EINVAL;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  648  
-f278eb3d8178f9 Ming Lei          2021-09-23  649  	filemap_invalidate_lock(inode->i_mapping);
-f278eb3d8178f9 Ming Lei          2021-09-23  650  
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  651  	/*
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  652  	 * Invalidate the page cache, including dirty pages, for valid
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  653  	 * de-allocate mode calls to fallocate().
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  654  	 */
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  655  	switch (mode) {
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  656  	case FALLOC_FL_ZERO_RANGE:
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  657  	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  658  		error = truncate_bdev_range(bdev, file->f_mode, start, end) ||
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  659  			blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
-6549a874fb65e7 Pavel Begunkov    2021-10-20  660  					     len >> SECTOR_SHIFT, GFP_KERNEL,
-6549a874fb65e7 Pavel Begunkov    2021-10-20  661  					     BLKDEV_ZERO_NOUNMAP);
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  662  		break;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  663  	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE:
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  664  		error = truncate_bdev_range(bdev, file->f_mode, start, end) ||
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  665  			blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
-6549a874fb65e7 Pavel Begunkov    2021-10-20  666  					     len >> SECTOR_SHIFT, GFP_KERNEL,
-6549a874fb65e7 Pavel Begunkov    2021-10-20  667  					     BLKDEV_ZERO_NOFALLBACK);
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  668  		break;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  669  	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE | FALLOC_FL_NO_HIDE_STALE:
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  670  		error = truncate_bdev_range(bdev, file->f_mode, start, end) ||
-8bd0744b438be1 Sarthak Kukreti   2023-04-19  671  			blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
-44abff2c0b970a Christoph Hellwig 2022-04-15  672  					     len >> SECTOR_SHIFT, GFP_KERNEL);
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  673  		break;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  674  	default:
-f278eb3d8178f9 Ming Lei          2021-09-23  675  		error = -EOPNOTSUPP;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  676  	}
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  677  
-f278eb3d8178f9 Ming Lei          2021-09-23 @678   fail:
-f278eb3d8178f9 Ming Lei          2021-09-23  679  	filemap_invalidate_unlock(inode->i_mapping);
-f278eb3d8178f9 Ming Lei          2021-09-23  680  	return error;
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  681  }
-cd82cca7ebfe9c Christoph Hellwig 2021-09-07  682  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
