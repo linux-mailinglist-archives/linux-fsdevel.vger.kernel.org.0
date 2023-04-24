@@ -2,100 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC826ED698
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 23:12:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCBF36ED6A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 23:17:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232617AbjDXVMI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 17:12:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60348 "EHLO
+        id S232660AbjDXVR0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 17:17:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232071AbjDXVMH (ORCPT
+        with ESMTP id S229872AbjDXVRZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 17:12:07 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB3249E4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:12:05 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-5052caa1e32so8821505a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:12:05 -0700 (PDT)
+        Mon, 24 Apr 2023 17:17:25 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF8840FB;
+        Mon, 24 Apr 2023 14:17:24 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-63b73203e0aso31025535b3a.1;
+        Mon, 24 Apr 2023 14:17:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1682370723; x=1684962723;
+        d=gmail.com; s=20221208; t=1682371043; x=1684963043;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0flSybpT7aXUdx24UhagQw7vrZguz1V40kdNmALOE5o=;
-        b=fAqPJPpPvaW8/dtXVRaoTRpLJVvlHJpiYTXU8HWdSLAOMrxIXuYEWVMQhn4Qk67HVc
-         7e+h+9qAOyQRe57t9KglGAw/H0KroCnOUc/R4wWLah5+LdCqaFcH8MG4zpGx8GFlkuKT
-         Qc0VWt0xsSE6hxDgp6mRIf6MrdCbKaAHo2BUA=
+        bh=1IQmgFRWemEvXJC88T/rDku0y6B5K+c+6E1l1xk0hYI=;
+        b=h8yqfVmnsIsaOgvfBMfP0TfIF8rf0Dt0iGWSoJ5hqw0IM/Nes78I2QLmPVreVrQ00b
+         iXv+uSHM4guXlcbktd8ejSXbIVhL27z1tOKY2+jiI5kLCvr/LzFEASO+VDDR9oM8lvjm
+         3pO3gfXvWCUMYtyOIG0SCXiNIv8mfz22kBS9z3bcOUZetecWnhB/UaCtYzVU5izrOOLf
+         RTGTpDLEvq7OdOMY+HkCejVxtRZF3XnVnMadlmZ0YgpcykE4a/negmZAHhTWyDcrfYdv
+         9vEykl+NyaYGSpXYpuFV0FH5y5U628FesWSTx3IFrbKl4FfE2z5TNwU6SYMoRl5kqGIx
+         /2XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682370723; x=1684962723;
+        d=1e100.net; s=20221208; t=1682371043; x=1684963043;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0flSybpT7aXUdx24UhagQw7vrZguz1V40kdNmALOE5o=;
-        b=lQMfSqP+oxiizKmBjoiGiVQ3XtQIjS0vtECJUWaI5JjgoE35abfbNwHsIukklC/LAE
-         64fnuIEujXtBouWbrpD1T72WohMGiLhyagvyKi6fMNyadmqYEKExYO44dct+MyG1y8EN
-         FuzfN7K1B5pGoWCb+Y2OXANRGOvrOz9fhC2hPFqzIvFx4WhpSuwenQl75mZJLxsSY9O5
-         kZ8g1PIlijJrAuRYYx9pS+8YckxJj27MoLuANx5R7inKwWJW0wmlHG54jRWxA7UDrc4r
-         VjDUR28BszY2P9wGDj6J1TneLAEk+40B9MiwcMFtrc43cwfR2ehk9OPEKtd36wZl3UcU
-         WozQ==
-X-Gm-Message-State: AAQBX9fls4yo07eGIcnDiY+hECTBF1rPS6ZH5xrvjgUiTEF717gOtVi0
-        kpuFikFMC4lkyKtp8GJ/V9J2rmVMzQxrBrYG/Csw4d2p
-X-Google-Smtp-Source: AKy350bfqZ58Bvm/SggANzo7wPCBZzqR001ctYQmEKGD4R9ZOckG60vDkS6A6H/qR0AzLqRc2yUGfA==
-X-Received: by 2002:a05:6402:641:b0:504:921b:825 with SMTP id u1-20020a056402064100b00504921b0825mr13071264edx.36.1682370723418;
-        Mon, 24 Apr 2023 14:12:03 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id t25-20020a17090616d900b009534603453dsm5853733ejd.131.2023.04.24.14.12.02
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Apr 2023 14:12:02 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5052caa1e32so8821459a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:12:02 -0700 (PDT)
-X-Received: by 2002:aa7:d5d4:0:b0:504:ba4f:3450 with SMTP id
- d20-20020aa7d5d4000000b00504ba4f3450mr11017273eds.30.1682370722384; Mon, 24
- Apr 2023 14:12:02 -0700 (PDT)
+        bh=1IQmgFRWemEvXJC88T/rDku0y6B5K+c+6E1l1xk0hYI=;
+        b=lUqxiEuIaIl0lrOgVaqMya0QMGS+Z+zgxFbmFCWEKpE9yWJDscP9Ayx3FFmI+nM+4M
+         z+IgESSNRJtAWqkZSAlfIHHntR3KtNTE0xx+uE+J6jd0e0HlrDC5G42ugbGW6XR70yAY
+         CVJfNj+cvuVd5lq4Ne9NjSoJ9luAbB93F9ibYqCgcXwOdGYb7Dy2tylIItYpJMcVvt/W
+         yTb/BEe2jZxb9eNBxxi/IQpsSPE8DM2eXHjHUYP1TGOFKN2N5OnI9TfIKQVGS0zeUkHd
+         eH1iwq2qb5b3wk1HNBPjgGNRdTmy5FdyMNqjcLSkJn0SeIjMDPQ3Ytszw2/eRbchRuqi
+         6T/w==
+X-Gm-Message-State: AAQBX9cJj5pke9Mpp3tA231Z+xcNjTv/Q8lLY0JkFEa0Bp3P5r0TvD8U
+        UIG3InAAeJl1sXogdSdr9K89xGg0lES2oisSFU4=
+X-Google-Smtp-Source: AKy350YdosoMK29+Sw0J+vSpOOdKm+Y6k32RQnY43Hcu+sK/jdkLswUFO7t02Rwt6i53F7WTakMbOvGEF6qngQP/Gdc=
+X-Received: by 2002:a17:90b:1106:b0:247:5c00:10 with SMTP id
+ gi6-20020a17090b110600b002475c000010mr21067746pjb.2.1682371043441; Mon, 24
+ Apr 2023 14:17:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230421-freimachen-handhaben-7c7a5e83ba0c@brauner>
-In-Reply-To: <20230421-freimachen-handhaben-7c7a5e83ba0c@brauner>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 24 Apr 2023 14:11:45 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whykVNoCGj3UC=b0O7V0P-MWDaKz_2r+_yGxyXoEMmL8w@mail.gmail.com>
-Message-ID: <CAHk-=whykVNoCGj3UC=b0O7V0P-MWDaKz_2r+_yGxyXoEMmL8w@mail.gmail.com>
-Subject: Re: [GIT PULL] open: fix O_DIRECTORY | O_CREAT
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230421214400.2836131-1-mcgrof@kernel.org> <20230421214400.2836131-3-mcgrof@kernel.org>
+ <ZEMRbcHSQqyek8Ov@casper.infradead.org> <ZENO4vZzmN8lJocK@bombadil.infradead.org>
+In-Reply-To: <ZENO4vZzmN8lJocK@bombadil.infradead.org>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Mon, 24 Apr 2023 14:17:12 -0700
+Message-ID: <CAHbLzkoEAJhz8GG91MSM9+wCYVqseSFzBQdVAP78W5WPq26GHQ@mail.gmail.com>
+Subject: Re: [RFC 2/8] shmem: convert to use folio_test_hwpoison()
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, hughd@google.com,
+        akpm@linux-foundation.org, brauner@kernel.org, djwong@kernel.org,
+        p.raghav@samsung.com, da.gomez@samsung.com,
+        a.manzanares@samsung.com, dave@stgolabs.net, yosryahmed@google.com,
+        keescook@chromium.org, hare@suse.de, kbusch@kernel.org,
+        patches@lists.linux.dev, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 7:03=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
+On Fri, Apr 21, 2023 at 8:05=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
+> wrote:
 >
-> EINVAL ist keinmal: This contains the changes to make O_DIRECTORY when
-> specified together with O_CREAT an invalid request.
-
-Ok, that intro makes little sense unless you speak German ;)
-
-I cut the explanation down radically, it's there in the original
-commit, I don't think we need quite this much detail for a merge
-commit for a change that is ~10 lines of code and not _that_ complex.
-
-I did keep this link:
-
-> This has also been covered in
+> On Fri, Apr 21, 2023 at 11:42:53PM +0100, Matthew Wilcox wrote:
+> > On Fri, Apr 21, 2023 at 02:43:54PM -0700, Luis Chamberlain wrote:
+> > > The PageHWPoison() call can be converted over to the respective folio=
+ call
+> > > folio_test_hwpoison(). This introduces no functional changes.
+> >
+> > Um, no.  Nobody should use folio_test_hwpoison(), it's a nonsense.
+> >
+> > Individual pages are hwpoisoned.  You're only testing the head page
+> > if you use folio_test_hwpoison().  There's folio_has_hwpoisoned() to
+> > test if _any_ page in the folio is poisoned.  But blindly converting
+> > PageHWPoison to folio_test_hwpoison() is wrong.
 >
->         https://lwn.net/Articles/926782/
+> Thanks! I don't see folio_has_hwpoisoned() though.
+
+We do have PageHasHWPoisoned(), which indicates at least one subpage
+is hwpoisoned in the huge page.
+
+You may need to add a folio variant.
+
 >
-> which should be publicly available by now. It provides an excellent
-> summary of the discussion.
-
-although it's behind a paywall, which isn't optimal.
-
-              Linus
+>   Luis
+>
