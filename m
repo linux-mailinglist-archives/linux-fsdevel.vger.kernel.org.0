@@ -2,273 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D69BF6ED29A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 18:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8B166ED355
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 19:16:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231411AbjDXQhz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 12:37:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53724 "EHLO
+        id S231687AbjDXRQs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 13:16:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbjDXQhy (ORCPT
+        with ESMTP id S230343AbjDXRQr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 12:37:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2A783A8C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 09:37:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 900A561EF7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 16:37:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC090C4339B;
-        Mon, 24 Apr 2023 16:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682354272;
-        bh=cGbeNAccoSO90UoZhchcy7oVqTIJOEUQ/nmBz8uEKL4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WDWuJ8LG4P0/NcjHrZGbkSQySkNL1vXdnEmXBBGK1zLRCe9Q5OU+qYUP6gMaUK+qw
-         KKVG9tUrnvoBJTdvJqYNTim7a2NVL/VCdVf7huFC76OgAUJJGzpXE3cqeOcXziUTHF
-         xidN3spbx9qfXQzduSWC93gKSUS4iNyHZKk3cIa6qei1lfDnrBCtTbQx6vobSEJSNy
-         E7Yrh4547E0BEKblRhCGFFFCZ4uiZGorMk1Sp/bK0NSj8ZRLSe/TjyhmU4wWP9rcPC
-         95BJPUCAN/ghni6hfcDHg940DhdymVnjfiLj1oxWvZveSLRudQGEBnTUCkZIHeE0bp
-         2OpFpiNZfIxHg==
-Date:   Mon, 24 Apr 2023 18:37:47 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Seth Forshee <sforshee@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 3/5] fs: fix __lookup_mnt() documentation
-Message-ID: <20230424-wertminderung-primitiv-114cb1409828@brauner>
-References: <20230202-fs-move-mount-replace-v1-0-9b73026d5f10@kernel.org>
- <20230202-fs-move-mount-replace-v1-3-9b73026d5f10@kernel.org>
- <20230421062838.GD3390869@ZenIV>
+        Mon, 24 Apr 2023 13:16:47 -0400
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6DA6185
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 10:16:46 -0700 (PDT)
+Received: by mail-qt1-x835.google.com with SMTP id d75a77b69052e-3f0a2f8216fso209151cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 10:16:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1682356605; x=1684948605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GFrKoxBHGprwgkyWOKkqPAUbe8SAzISHnkMGiiR8Aro=;
+        b=UfBxvwVKYODQclpyyYmaFw+7g6vxWtp7h7eOLJzSO+Z4ZTIFraL2+ZKsSs2aXXuwsh
+         HbDf5lyhZa88b5+PXxEI3xiuHA63r0DZqaOTUAqjEiIyw3u7d736t+fN1KOyOsXqKSIA
+         8X2Inx/COF34us2GlZKK5Cq3jAC6buT8baXyjzFdKs6GK//FxdZnoqKt3AevOqfjcddu
+         LL0kCTlD6IvZg2NLITGh0pBzvgbkj8R0+iJtApNuZe+MvXkMU3T07tEhupSemhWHOECT
+         MHOXbbv5i4QMRJGaUVdL+h3BdxuFWUXKUd9nXpgbJQoa3sgZX7tViIMGFDFh0eeD47kC
+         nrlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682356605; x=1684948605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GFrKoxBHGprwgkyWOKkqPAUbe8SAzISHnkMGiiR8Aro=;
+        b=MVyW2lb6WPP4JueBpgv1HC/7t6vOgzq9LYPymby4Msoskg0Y3TyJaOodPFtySVL1TR
+         rpU3wIDelfhq+vuZQe33cCJFeCw+EMz4LyI+Uy+F7OAzu6TSaYwCRyKcK7YNvC5QQn/n
+         D37BMG/YOR+v0IxXplQARHzDpy2NDLV5wYdPqYO2SvCKlj7ZStkeD+07fzAv5MFjOy8l
+         qfqg+xncozBG7Vm01ct8JCnAR0EasPMq6Ky93WpE3Lmlpz+VZTAzUMXTA+/6XGJQz/G+
+         mtU9Kpdg+TKTUUZN1S2II/FrvLKrrK6kNkYO/wQVteDbMfxJxKnFPayUyQkzWahcpgBV
+         Apmg==
+X-Gm-Message-State: AAQBX9cSxb4cz/XaUkYkUmy3y/2FFTbA69QI2Mq0wgMxCI1sREUd5pIa
+        jX9PlwhFSqwSsgklMaLtg9b5wFM0QuKVuzirpS9YcA==
+X-Google-Smtp-Source: AKy350ZnDr71CnPlS6YKCwTlmx4svJxw+adqlJzgwBem4WSs9tOuhtikeDKT3A7ezbeWXxpF8wg8qSWtoeT7Hro+Uj0=
+X-Received: by 2002:a05:622a:1353:b0:3e3:8c75:461 with SMTP id
+ w19-20020a05622a135300b003e38c750461mr2244qtk.6.1682356605323; Mon, 24 Apr
+ 2023 10:16:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230421062838.GD3390869@ZenIV>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230421174020.2994750-1-yosryahmed@google.com> <20230421174020.2994750-2-yosryahmed@google.com>
+In-Reply-To: <20230421174020.2994750-2-yosryahmed@google.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Mon, 24 Apr 2023 10:16:34 -0700
+Message-ID: <CALvZod5g9MYjYB5eY4Z9rX5goyh7xSU_b3nfCpJCoUrzmHpyAg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/5] writeback: move wb_over_bg_thresh() call outside
+ lock section
+To:     Yosry Ahmed <yosryahmed@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>,
+        =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 07:28:38AM +0100, Al Viro wrote:
-> On Sat, Mar 18, 2023 at 04:51:59PM +0100, Christian Brauner wrote:
-> > The comment on top of __lookup_mnt() states that it finds the first
-> > mount implying that there could be multiple mounts mounted at the same
-> > dentry with the same parent.
-> > 
-> > This was true on old kernels where __lookup_mnt() could encounter a
-> > stack of child mounts such that each child had the same parent mount and
-> > was mounted at the same dentry. These were called "shadow mounts" and
-> > were created during mount propagation. So back then if a mount @m in the
-> > destination propagation tree already had a child mount @p mounted at
-> > @mp then any mount @n we propagated to @m at the same @mp would be
-> > appended after the preexisting mount @p in @mount_hashtable.
-> > 
-> > This hasn't been the case for quite a while now and I don't see an
-> > obvious way how such mount stacks could be created in another way.
-> 
-> Not quite, actually - there's a nasty corner case where mnt_change_mountpoint()
-> would create those.  And your subsequent patch steps into the same fun.
-> Look: suppose the root of the tree you are feeding to attach_recursive_mnt()
-> has managed to grow a mount right on top of its root.  The same will be
-> reproduced in all its copies created by propagate_mnt().  Now, suppose
-> one of the slaves of the place where we are trying to mount it on already
-> has something mounted on it.  Well, we hit this:
->                 q = __lookup_mnt(&child->mnt_parent->mnt,
-> 				 child->mnt_mountpoint);
-> 		if (q)
-> 			mnt_change_mountpoint(child, smp, q);
-> which will tuck the child (a copy we'd made) under q (existing mount on
-> top of the place that copy is for).  Result: 'q' overmounts the root of
-> 'child' now.  So does the copy of whatever had been overmounting the
-> root of 'source_mnt'...
-> 
-> And yes, it can happen.  Consider e.g. do_loopback(); we have looked
-> up the mountpoint ('path'), we have looked up the subtree to copy
-> ('old_path'), we had lock_mount(path) made sure that namespace_sem
-> is held *and* path is not overmounted (followed into whatever
-> overmounts that might have happened since we looked the mountpoint
-> up).  Now, think what happens if 'old_path' is also overmounted while
-> we are trying to get namespace_sem...
+On Fri, Apr 21, 2023 at 10:40=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
+> wrote:
+>
+> wb_over_bg_thresh() calls mem_cgroup_wb_stats() which invokes an rstat
+> flush, which can be expensive on large systems. Currently,
+> wb_writeback() calls wb_over_bg_thresh() within a lock section, so we
+> have to do the rstat flush atomically. On systems with a lot of
+> cpus and/or cgroups, this can cause us to disable irqs for a long time,
+> potentially causing problems.
+>
+> Move the call to wb_over_bg_thresh() outside the lock section in
+> preparation to make the rstat flush in mem_cgroup_wb_stats() non-atomic.
+> The list_empty(&wb->work_list) check should be okay outside the lock
+> section of wb->list_lock as it is protected by a separate lock
+> (wb->work_lock), and wb_over_bg_thresh() doesn't seem like it is
+> modifying any of wb->b_* lists the wb->list_lock is protecting.
+> Also, the loop seems to be already releasing and reacquring the
+> lock, so this refactoring looks safe.
+>
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> Reviewed-by: Michal Koutn=C3=BD <mkoutny@suse.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-So I think I understand what you're saying and here's one example:
-
-        (1) mount --bind /mnt /opt
-        (2) fd_from = open_tree("/opt", OPEN_TREE_CLONE)
-        (3) mount --bind /tmp /opt
-        (4) mount_move(fd_from, fd_somewhere_else, ...)
-
-Where the mount of (3) happens:
-
-* after path lookup for fd_from in (2)
-* before namespace_lock() is acquired by (2) and open_detached_copy()
-  is called
-
-So then open_detached_copy() and consequently __do_loopack() will see
-and copy both (1) and (3) mounted on top of it. So roughly:
-
-           (0) mnt->mnt_root                   = "/"
-            |  real_mount(mnt)->mnt_mountpoint = "/"
-            |  real_mount(mnt)->mnt_id         = 10
-            |
-fd_from ----└─ (1) mnt->mnt_root                       = "/mnt"
-                |  real_mount(mnt)->mnt_mountpoint     = "/opt"
-                |  real_mount(mnt)->mnt_id             = 20
-                |  real_mount(mnt)->mnt_parent->mnt_id = 10
-                |
-                |      /* overmounted */
-                └─ (3) mnt->mnt_root                       = "/tmp"
-                       real_mount(mnt)->mnt_mountpoint     = "/mnt"
-                       real_mount(mnt)->mnt_id             = 30
-                       real_mount(mnt)->mnt_parent->mnt_id = 20
-
-Then, if mount propagation were to happen into e.g., another mount
-namespace as part of (4) where there's another mount (5) already mounted
-at our mountpoint:
-
-        (5) mount --bind /mnt /opt
-
-        (0') mnt->mnt_root                  = "/"
-         |  real_mount(mnt)->mnt_mountpoint = "/"
-         |  real_mount(mnt)->mnt_id         = 100
-         |
-         └─ (5) mnt->mnt_root                       = "/mnt";
-                real_mount(mnt)->mnt_mountpoint     = "/opt";
-                real_mount(mnt)->mnt_id             = 50
-                real_mount(mnt)->mnt_parent->mnt_id = 100
-
-then we'd create a new copy (1') of the mount tree at (1):
-
-        (0') mnt->mnt_root                   = "/"
-         |   real_mount(mnt)->mnt_mountpoint = "/"
-         |   real_mount(mnt)->mnt_id         = 100
-         |                                               
-         └─ (1') mnt->mnt_root                        = "/mnt"
-             ||   real_mount(mnt)->mnt_mountpoint     = "/opt"
-             ||   real_mount(mnt)->mnt_id             = 200
-             ||   real_mount(mnt)->mnt_parent->mnt_id = 100
-             ||                                              
-             |└─ (3') mnt->mnt_root                       = "/tmp"
-             |        real_mount(mnt)->mnt_mountpoint     = "/mnt"
-             |        real_mount(mnt)->mnt_id             = 300
-             |        real_mount(mnt)->mnt_parent->mnt_id = 200
-             |                                               
-             └─- (5)  mnt->mnt_root                       = "/mnt";
-                      real_mount(mnt)->mnt_mountpoint     = "/mnt";
-                      real_mount(mnt)->mnt_id             = 50
-                      real_mount(mnt)->mnt_parent->mnt_id = 200
-
-So remounting (5) on top of (1') aka tucking (1') beneath (5).
-Afterwards we will have both (3') and (5) with (1') as parent at the
-same mountpoint. Ugh...
-
-However, I think that this is only possible with attached source mounts
-that get moved? For anonymous mounts we know that there cannot be any
-mounts on top of them since neither direct mounts nor indirect mounts
-aka mount propagation onto anonymous mounts is possible unless you have
-automounts triggered on them, I think.
-
-> 
-> A similar scenario exists for do_move_mount(), and there it's in
-> a sense worse - there we have to cope with the possibility that
-> from_dfd is an O_PATH descriptor created by fsmount().  And I'm
-> not at all convinced that we can't arrange for automount point
-> to be there and be triggered by the time of move_mount(2)...
-
-Thanks for the pointers about automounts. That was very helpful.
-
-So right now, any file descriptor returned from fsmount() will refer to
-an anonymous mount and will thus have an anonymous mount namespace
-attached to mnt->mnt_ns.
-
-Any explicit attempt to use move_mount(2) or mount(2) to add a mount on
-top of an O_PATH file descriptor gotten from fsmount() will fail in
-check_mnt(). And any implicit attempt to add a mount on top of an
-anonymous mount
-file descriptor/mount via mount propagation will fail as well on
-anonymous mounts.
-
-This is behavior that userspace explicitly relies upon (I know of at
-least 4 big projects.) as they use fsmount() and
-open_tree(OPEN_TREE_CLONE) file descriptors in security sensitive
-contexts where they can't risk suddenly have mounts appear in locations
-where they don't expect them.
-
-Reading through the code right now, I think it's clear that automounts
-can be triggered on fsmount() or open_tree(OPEN_TREE_CLONE) fds even
-before such mounts have been attached via move_mount(2).
-
-So when we stumble upon an automount point that is located in an
-anonymous mount we call finish_automount(->d_automount(), path).
-
-So we end up in do_add_mount():
-
-        struct mount *parent = real_mount(path->mnt);
-
-(Ignoring for a second that "parent" is a misleading name here...)
-and we know that parent->mnt_ns is an anonymous mount namespace, so we
-fail:
-
-          if (unlikely(!check_mnt(parent))) {
-
-but then succeed and get past the next check:
-
-                  /* ... and for those we'd better have mountpoint still alive */
-                  if (!parent->mnt_ns)
-                          return -EINVAL;
-
-I'm not sure if that's intentional.
-
-In any case, I would very much prefer if we were to simply refuse
-automounts on top of anonymous mounts as well.
-
-Not just is it extremly unlikely to be a use-case but it would also be
-consistent in refusing mounting on top of anonymous mounts as mentioned
-above:
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 6836e937ee61..bf9f4d36ab98 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3095,6 +3095,11 @@ int finish_automount(struct vfsmount *m, const struct path *path)
-                goto discard_locked;
-        }
-
-+       if (!is_anon_ns(real_mount(path->mnt)->mnt_ns)) {
-+               err = -EINVAL;
-+               goto discard_locked;
-+       }
-+
-        err = do_add_mount(mnt, mp, path, path->mnt->mnt_flags | MNT_SHRINKABLE);
-        unlock_mount(mp);
-        if (unlikely(err))
-
-So we would require that automounts can only be triggered if the mount
-they'll be mounted upon has been made visible in the filesystem.
-
-This would also continue to provide guarantees to userspace when
-operating on private mounts. What do you think?
-
-> The reason it's worse is that here we can't just follow mounts
-> all the way down - we want to take the entire mount tree associated
-> with that descriptor.
-
-I'm not clear yet why this is an issue. finish_automount() will call
-__lookup_mount() and if anything is mounted on top path->mnt,dentry then
-the automount is silently discarded under namespace_lock(), no? So there
-should be mutual exclusion here, between move_mount(2) and
-finish_automount().
-
-> 
-> > And
-> > if that's possible it would invalidate assumptions made in other parts
-> > of the code.
-> 
-> Details?  I'm not saying it's impossible - we might have a real bug in
-> that area.
+Acked-by: Shakeel Butt <shakeelb@google.com>
