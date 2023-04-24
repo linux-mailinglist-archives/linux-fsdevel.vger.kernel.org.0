@@ -2,153 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D11D66ECBF3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 14:24:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE2E6ECBFD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 14:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230525AbjDXMYF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 08:24:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34258 "EHLO
+        id S231666AbjDXM2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 08:28:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjDXMYD (ORCPT
+        with ESMTP id S230454AbjDXM2N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 08:24:03 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B09B42D48;
-        Mon, 24 Apr 2023 05:24:02 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-2f917585b26so4009331f8f.0;
-        Mon, 24 Apr 2023 05:24:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682339041; x=1684931041;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9JPB0GklpBQlKrjPHy6vp/0sbrD8fwt4RwTkZmksDdw=;
-        b=MpbmRdOjwrELouTgY8GUq9LxMaeMBPHKir7+SHb6NJ6MSfT2N3+1F98Y4iwkfNChLK
-         fb5xTQ6o6rgiNps/OlljdNmMSxi7u7YUJ4EYCTeYWLj29F5dI+yplOV8xJ0Zn24yh0y0
-         bIKFPaw88PQ0JqzyFXKnWw97TdDumbe5fvtIZaOfJsPSRVEUvl5YVSIvOF9ni9lORwo0
-         WzVVjMjavCDTw1kqO8CP54ES94/3cyOFflusjOnXik9zQpvEwU5nY722rQK4/6J5jmQj
-         HdYRYXrqSvSG0o9K4m2BssbiW3Q5mHWLgSO8RRHWU+nbcDCiD1EEPybU98c7ZEXAIqiL
-         DaOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682339041; x=1684931041;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9JPB0GklpBQlKrjPHy6vp/0sbrD8fwt4RwTkZmksDdw=;
-        b=UTmUvWUMs7ykkHHhJaeAm7vV9dhqJmbfeJYlgwqDmikOQobWVaUqnmRWVLs6v+BAAr
-         vB6jxYYDFwnQ+DdxWRKHAmOdavlAhBr3YlmNCdBgPs/7y0gZyQTr8deelIOUj5cwUwJs
-         eQt0VEVKd59SwdbYv6i1yJ3tGz+0QIDeny/Tn2sqxMuhBCR47TY4Diig8EWXlV0LNh7R
-         ysDh1gpBotkpmf/6eB5DJEXP/7Cw1HRr5RMKRn23T1WDH4qZCT4Wx4G/oISoCadFfvpw
-         7LeyIiqwGNfVCSUYIPvd6dPLUQ41YzAYQxH4iRUsAH07Wsstf5HsxRWNdBVXNu+lzWrX
-         WgMA==
-X-Gm-Message-State: AAQBX9d+1ci5lOl6oGpL7Vx9eh/zuOnzIQ4imgtJ1yEese/wZCmJkbk2
-        T/oDa+Bv4GkSzp0qmH9e1Dk=
-X-Google-Smtp-Source: AKy350YYt5GFR3Zroi/O1GdhfbNtv34k83vpHgqOeHlMCioTCatt1FyZN68v9PGyurIvxLluScsn/g==
-X-Received: by 2002:a05:6000:12c1:b0:2db:bca:ac7d with SMTP id l1-20020a05600012c100b002db0bcaac7dmr9146698wrx.67.1682339041014;
-        Mon, 24 Apr 2023 05:24:01 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id b5-20020a056000054500b002e5ff05765esm10752214wrf.73.2023.04.24.05.24.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Apr 2023 05:24:00 -0700 (PDT)
-Date:   Mon, 24 Apr 2023 13:23:59 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
+        Mon, 24 Apr 2023 08:28:13 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2075.outbound.protection.outlook.com [40.107.237.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EDFDC5;
+        Mon, 24 Apr 2023 05:28:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iLwT8ouulF/tPAm6209wUXHekVdE9w+n8mV98cMBq1kXdvgwQTvmG2Dj1CDlMvFOLjEw7yyY7A+BQd/x15vHkIFGz6oWUdox3GrEwTGdUnoxT1zIas9W2Os3mpB7h2fsEB991tPBOh5OUcodf8L2LSUtEdK1OH1jRQXFS7aZS/TAZEkHu8xOOrrB6KfrrkkUchW9dycIq9sc87NnsqiIpSwfXDlkEEoR+87SNR33/uoltnVrmQor9+9A92jKFvHNko+VjO5xoVOUUgP9SM5PH1pyeCwJ3AhxUVGt1dAsugKkCnuT91ra1NL2RELqkDpRa+evgVxZt+ghmOzs4QW1uw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3Yywi1v4yxEyvAeodHfSd7JjtRF1MOcdgR30iZgKri8=;
+ b=kbWIiFakVqSwZAM8z9j/GE0sms8OkCflcYL+wkTcC4/JEOKIAnMkdrcMyda3s0Su4XoWe7Oi8jaWN/3wD844G4pMjMMIrflrBSW1/AAmHvxKdUULA94UvXd2uX97wGhH9c8FOSBlvdGqD1PivTmC+WNEs9q8eYDDFzgzSFTTNe/C1bw7qWuCbw4ao8N0H6o4YC1DYDAK3LPofTerYCVB49CxUZZj5mf9LkE2UMZ0hL4U9HrUl/nu/taiCdHLMVwY7LVBQfhPG1CvbKtgujG1nc320fcyvlIxeA3A0RQ8egPIUXaZnSLx8PM6Bslrx0I4rd//cPZ9d9zsl32caqzyLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3Yywi1v4yxEyvAeodHfSd7JjtRF1MOcdgR30iZgKri8=;
+ b=rdDgs3HaB/Pn/fW5jYI+rH7bfX3pR99hSYjMe7qd/ccrCFUi1OgPL5uVCigaWSRcmdgqb8WcaYjIzfvaftb8Yk4H/l8JplBzhXozpgO9R7g8bdGH7LLgdBIda0TsL8Uc4x6nVtO7MTEgLws1NO3TrG7wwGHfPi2fObDQUkVCkKafDNjvcwR7C5fkr6vEDjSzLrq/Mp8Rq8OrEaIz8RCBU52FXfjI4jQW52F46/u0i8jqRe/YWjAz7JNKIoZkYWJ62k3eP8apxrWWgAaMiHy20qtyD26a2/+dovQnptZ1gi4z6Dz2awVXKbVcIrQKB4lZq7TjlL66hidBE452JOrMAg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by SN7PR12MB7323.namprd12.prod.outlook.com (2603:10b6:806:29a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.33; Mon, 24 Apr
+ 2023 12:28:09 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%5]) with mapi id 15.20.6319.033; Mon, 24 Apr 2023
+ 12:28:09 +0000
+Date:   Mon, 24 Apr 2023 09:28:07 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
         Christian Brauner <brauner@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [RFC PATCH 0/3] permit write-sealed memfd read-only shared
- mappings
-Message-ID: <990a5367-c1ba-4451-856e-be81792e0dba@lucifer.local>
-References: <cover.1680560277.git.lstoakes@gmail.com>
- <20230421090126.tmem27kfqamkdaxo@quack3>
- <b18577f5-86fe-4093-9058-07ba899f7dd6@lucifer.local>
- <20230424121936.lwgqty6hifs7eecp@quack3>
-MIME-Version: 1.0
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v2] mm/gup: disallow GUP writing to file-backed mappings
+ by default
+Message-ID: <ZEZ117OMCi0dFXqY@nvidia.com>
+References: <c8ee7e02d3d4f50bb3e40855c53bda39eec85b7d.1682321768.git.lstoakes@gmail.com>
+ <ZEZPXHN4OXIYhP+V@infradead.org>
+ <90a54439-5d30-4711-8a86-eba816782a66@lucifer.local>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230424121936.lwgqty6hifs7eecp@quack3>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <90a54439-5d30-4711-8a86-eba816782a66@lucifer.local>
+X-ClientProxiedBy: MN2PR01CA0032.prod.exchangelabs.com (2603:10b6:208:10c::45)
+ To LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|SN7PR12MB7323:EE_
+X-MS-Office365-Filtering-Correlation-Id: d3f43c0a-5527-469d-bb84-08db44bf5cd6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wf7gcm6tA5NbF+SAUsUeLCOl8p9tspDKE7TeWv2z3iyliupkH4mMahFAmzKP0sWj/jUbZ1znRaqFKMiU2VZMCcDWMS+cdyVaFciLyY+FDLO+TYVdeg9+yooE9LwLUXKakUVe+bx2PbFWkwm90XWN47maHZQayqkiXMmQItuOYMdKCLSXjkZ4sSLQwUeHhlvyFoQhVe+cVCn6hFMXC/nikmxeghRmXwe9LbnQFvBB0j19/FymIusDnMQKAb4I3PNqrnMvNqkwZFDoUjyqi+lxi1TdbfaDL/HuP/eIKxZFKv+7tVDQWQEm6XOmSb7gQtKJGy06zVQdaDgCiloSyecYN79l4GOrB07M7/qSyf1jLDZx+hvOd5ayeSeCHcfpHIWPQjyqCG8C0zhcSPKeTIfoccwAMiXFWV300u1t7IeVnkr43LYzig8LytKbW9ygaaK3gzxnUQ/ETGhYrYmF6ynM5znkyVizkGS6eGKyCg5FTUL4jq9+j2/LSioVshVoEz9uDJed6C2zx7yWCLUynVBchcRqINvPhJf/D5/iH6lzSVlyuTFTHqxfIZuW+2c6v76n
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(366004)(136003)(39860400002)(376002)(396003)(451199021)(6486002)(66556008)(66476007)(66946007)(6916009)(2906002)(6506007)(8936002)(83380400001)(186003)(8676002)(2616005)(41300700001)(26005)(6512007)(5660300002)(316002)(7406005)(7416002)(86362001)(54906003)(36756003)(38100700002)(4326008)(478600001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?j174vHmSMr+YHea+C1ouuWHGwxBl3a3p+cxK1v2QKinaIDzLRQHJbfVNiahu?=
+ =?us-ascii?Q?njtpR5R9zJLW1Ki9R0J65DljOVRWZ4OzFGRC10wqaTK2Yj0mFG7/SWS0kVer?=
+ =?us-ascii?Q?QZNbdm9UOV/nR7ni3tPj5LHBjFUsw12n2oZm8OsyXyIN+tmBP5CykqbiWuS0?=
+ =?us-ascii?Q?+jVYRRvwg0p31JxHcczmWaErFTNmeYZsf/3/W+YpopVnaXn14JEN3uBPKQPc?=
+ =?us-ascii?Q?EOqa6WBAwWwEPdoiDYE5n3zk9MM2FwIY8nNZDjZXteVeGAwUFiAWx16XYh04?=
+ =?us-ascii?Q?UvWRRyI8tOT9bcYcGpGUv6IMQSGbMIcxtosaF6Y6ejyv4yr8NR1SoJ8jeMGH?=
+ =?us-ascii?Q?hZ/YfQH5SY/NNStJpgowmdbWT1aLh3egn5DcUQyRYfXxG0jiK1WUYHsScI5F?=
+ =?us-ascii?Q?TSAjyg6AGLDh0jtj2w5oz4XuYw6XOS0a7sO/Ui05677mqYh4rBasNXC9MXET?=
+ =?us-ascii?Q?mlx/dex+lF9HVYgT/NpMd9Y1F2Lw/eEVw3DWdw+tYTNF45YAENd5rXwAj8gg?=
+ =?us-ascii?Q?9yOhgmQPe8VDidaHrfcXqqbv3aWzNm8AmT8dswdH6Heuc8TBYLTmh79933DG?=
+ =?us-ascii?Q?dlIoM20A15wYSPT5T1Df+Of9OkR11ytzXCkyKHFVYBoeaK964DSF+CSW3ewi?=
+ =?us-ascii?Q?tYE7mWqbye0nsax0p3B8//U7WN1Xig1Unr1mOAqIQ0j5n+viEppjVUKklIEf?=
+ =?us-ascii?Q?IdkcuOvlWtO1aUoWa3qdNoHyv+sYsbDrGdvuRmb3m8Ds0cpvfJt49Q7MIhtn?=
+ =?us-ascii?Q?o27Y+siSvNeSWYelOmgId18XLE0ItVT2QoTwLfrEUAV0PV2OiCP93TYYKlnE?=
+ =?us-ascii?Q?x4pYA6Ygs7NVzoiQnxd8ZJCBqiftebsOhqznssEBc1UugzPU6YjlF/aTZ4nb?=
+ =?us-ascii?Q?RetgkwQdHcV9+l7h1yaKkCNcNPD2jord8CLflmO/v/w3/Be31yGhb5RbAG8J?=
+ =?us-ascii?Q?8gT+AuiUNXfpRYAFs6uDBdMgmoAsAzXgso/KSxAm2ICTomAPxJ96h8cTynso?=
+ =?us-ascii?Q?D3tvGq4QOZnfEpaX81gPr5RfSlrdAILsj3Ola41uHU3DBz0Aro6FYDUvRW6C?=
+ =?us-ascii?Q?eD0f1RS9DzNSx12TQVoxkaiXimiYrkiEw5rbRp+RlhkRDeP0lJNhpxTpCeza?=
+ =?us-ascii?Q?AkFVni10KinokSuA2hWjR3dbEbCPrGpYzCA6W23U49G7EBTfLdveKF3spnId?=
+ =?us-ascii?Q?oLzxtIUGaHnhB+zOhfVnIR+NPkdIPzWU5ysC6VuAGuXa+ayz0shiyMT5tvfQ?=
+ =?us-ascii?Q?RI/xvNgALI4e+qOWXKJF6/g8gcYDSQ83mxLpLZcABKh1swngkwpwa+oYW18x?=
+ =?us-ascii?Q?M46taJR68G0D6oBfGYvP0TN2jJlj7zRBkQrr+QJKghrMLI2KZw9Z6Zdpp5wx?=
+ =?us-ascii?Q?Q8UWtYcAG4l+c9uImn2GF7bCCBnkjuYtEjEpSzpIAsB6NGR+eNXgXub3LWxM?=
+ =?us-ascii?Q?MMM11MfT5bHfzmkq2uZI4PM91Hr01B5eLETqNBIt1SqcP52txLClMuSMBw+b?=
+ =?us-ascii?Q?cTfYiCpWq/D9ubIrZytcfdMFYkW2zb3QSnlmJqu5a+3MThEla5T1bpaRt3eR?=
+ =?us-ascii?Q?2vVbd9wrEmya/uJjQX8=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3f43c0a-5527-469d-bb84-08db44bf5cd6
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2023 12:28:09.2049
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KKRODEFt0zDz2AFUpABDX0IKQuqU3lU5UpVwX9KwKM2jUfy+BXGxn9rxcj4tPMIK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7323
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 02:19:36PM +0200, Jan Kara wrote:
-> On Fri 21-04-23 22:23:12, Lorenzo Stoakes wrote:
-> > On Fri, Apr 21, 2023 at 11:01:26AM +0200, Jan Kara wrote:
-> > > Hi!
-> > >
-> > > On Mon 03-04-23 23:28:29, Lorenzo Stoakes wrote:
-> > > > This patch series is in two parts:-
-> > > >
-> > > > 1. Currently there are a number of places in the kernel where we assume
-> > > >    VM_SHARED implies that a mapping is writable. Let's be slightly less
-> > > >    strict and relax this restriction in the case that VM_MAYWRITE is not
-> > > >    set.
-> > > >
-> > > >    This should have no noticeable impact as the lack of VM_MAYWRITE implies
-> > > >    that the mapping can not be made writable via mprotect() or any other
-> > > >    means.
-> > > >
-> > > > 2. Align the behaviour of F_SEAL_WRITE and F_SEAL_FUTURE_WRITE on mmap().
-> > > >    The latter already clears the VM_MAYWRITE flag for a sealed read-only
-> > > >    mapping, we simply extend this to F_SEAL_WRITE too.
-> > > >
-> > > >    For this to have effect, we must also invoke call_mmap() before
-> > > >    mapping_map_writable().
-> > > >
-> > > > As this is quite a fundamental change on the assumptions around VM_SHARED
-> > > > and since this causes a visible change to userland (in permitting read-only
-> > > > shared mappings on F_SEAL_WRITE mappings), I am putting forward as an RFC
-> > > > to see if there is anything terribly wrong with it.
-> > >
-> > > So what I miss in this series is what the motivation is. Is it that you need
-> > > to map F_SEAL_WRITE read-only? Why?
-> > >
-> >
-> > This originated from the discussion in [1], which refers to the bug
-> > reported in [2]. Essentially the user is write-sealing a memfd then trying
-> > to mmap it read-only, but receives an -EPERM error.
-> >
-> > F_SEAL_FUTURE_WRITE _does_ explicitly permit this but F_SEAL_WRITE does not.
-> >
-> > The fcntl() man page states:
-> >
-> >     Furthermore, trying to create new shared, writable memory-mappings via
-> >     mmap(2) will also fail with EPERM.
-> >
-> > So the kernel does not behave as the documentation states.
-> >
-> > I took the user-supplied repro and slightly modified it, enclosed
-> > below. After this patch series, this code works correctly.
-> >
-> > I think there's definitely a case for the VM_MAYWRITE part of this patch
-> > series even if the memfd bits are not considered useful, as we do seem to
-> > make the implicit assumption that MAP_SHARED == writable even if
-> > !VM_MAYWRITE which seems odd.
->
-> Thanks for the explanation! Could you please include this information in
-> the cover letter (perhaps in a form of a short note and reference to the
-> mailing list) for future reference? Thanks!
->
-> 								Honza
->
+On Mon, Apr 24, 2023 at 11:17:55AM +0100, Lorenzo Stoakes wrote:
+> On Mon, Apr 24, 2023 at 02:43:56AM -0700, Christoph Hellwig wrote:
+> > I'm pretty sure DIRECT I/O reads that write into file backed mappings
+> > are out there in the wild.
 
-Sure, apologies for not being clear about that :)
+I wonder if that is really the case? I know people tried this with
+RDMA and it didn't get very far before testing uncovered data
+corruption and kernel crashes.. Maybe O_DIRECT has a much smaller race
+window so people can get away with it?
 
-I may respin this as a non-RFC (with updated description of course) as its
-received very little attention as an RFC and I don't think it's so
-insane/huge a concept as to warrant remaining one.
+> I know Jason is keen on fixing this at a fundamental level and this flag is
+> ultimately his suggestion, so it certainly doesn't stand in the way of this
+> work moving forward.
 
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Yeah, the point is to close it off, because while we wish it was
+fixed properly, it isn't. We are still who knows how far away from it.
+
+In the mean time this is a fairly simple way to oops the kernel,
+especially with cases like io_uring and RDMA. So, I view it as a
+security problem.
+
+My general dislike was that io_uring protected itself from the
+security problem and we left all the rest of the GUP users out to dry.
+
+So, my suggestion was to mark the places where we want to allow this,
+eg O_DIRECT, and block everwhere else. Lorenzo, I would significantly
+par back the list you have.
+
+I also suggest we force block it at some kernel lockdown level..
+
+Alternatively, perhaps we abuse FOLL_LONGTERM and prevent it from
+working with filebacked pages since, I think, the ease of triggering a
+bug goes up the longer the pages are pinned.
+
+Jason
