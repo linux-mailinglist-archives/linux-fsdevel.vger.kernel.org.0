@@ -2,349 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A350C6EC689
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 08:51:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C08756EC6DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 09:18:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231164AbjDXGvq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 02:51:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55514 "EHLO
+        id S231270AbjDXHSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 03:18:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231145AbjDXGvp (ORCPT
+        with ESMTP id S229516AbjDXHSj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 02:51:45 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 159B926A3;
-        Sun, 23 Apr 2023 23:51:43 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f173af665fso24963195e9.3;
-        Sun, 23 Apr 2023 23:51:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682319101; x=1684911101;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bpg9oYb+78qUrnYZwDEGvn854L618wBnXXbfmiz3zNo=;
-        b=VmcFknFwfUTacZeP8SNbm4iVcUYo+yv6oJjyWVAOsaCwms6qtrbmYFnq4zwpVLBcg1
-         7tyNIQcttY5KUXi2pWXg5/IiqsgETEFoltxSD6olC0ua6hEEYQbBtuhYpRXTBdAE0+X3
-         u+PbwBwwvYS5yPhd9gVLWKtMA2yFc4TXDoWIf2CJejTLrVwVFa8GaCZ5hxL8s7rWPzG7
-         PUuBSfsYo7zLxHJl0q2nPzW4gUM09MFYtQhxrZH7YsyJE2N1kkBkk2zNsFq5AgWyGYxJ
-         77qWsTyNgOHnzQYKIVbyRLdqSeBeOJRwhuJd/UcPFPlbIsRI3C+QZeM0KV2MXrFOBHLU
-         9UoQ==
+        Mon, 24 Apr 2023 03:18:39 -0400
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41066E56
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 00:18:38 -0700 (PDT)
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-763997ab8cdso503573439f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 00:18:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682319101; x=1684911101;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bpg9oYb+78qUrnYZwDEGvn854L618wBnXXbfmiz3zNo=;
-        b=VqZVLb8Eo9jHWSCY8VKvihzJtrNfYRtxkGSUnZczEcOoAMgrt2dNybVRO5DlGdH8LC
-         TVPOUiTM1RELLgtmeHDsq5BoqxbXlPaVbzufAi4OOUMYaW4s4al1WJf/zhlPpURx2B1F
-         3FxIBLVyePoAQCqTOKmRr3kFbjPMwRyZGCdUG7Fb2FE/lN7bkoUxSIg65W+MJsiCnAoq
-         4+GN2vLO1rxcqAQosRlYxMX8c7wUqLU8lXsBnBfXKxeOacCiVnEdvPDp+PwrjpGx101n
-         TwcURC4xeqXTKtxOdfjye6j+jUsnkh8aXpOpnuXj4cU+tKQn1f3zYNvSjikdxAwRvTbk
-         C5XQ==
-X-Gm-Message-State: AAQBX9c08QILdbOK9wovYDxlz9iQEynvgHy568kFOTez1qEhFkg73vcM
-        TCLh4CwpDbfpzy5PtO+uyr0=
-X-Google-Smtp-Source: AKy350akafbRRaGy0JE/WdzcFbEx/fIkm2tRt5f4cumr9DWWaMBObhUvrryfF88FQg7nzw7H6qIltQ==
-X-Received: by 2002:a05:600c:24cd:b0:3f1:6ef6:c9d0 with SMTP id 13-20020a05600c24cd00b003f16ef6c9d0mr6311844wmu.17.1682319100951;
-        Sun, 23 Apr 2023 23:51:40 -0700 (PDT)
-Received: from localhost ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.gmail.com with ESMTPSA id c9-20020a7bc009000000b003ede3e54ed7sm11366725wmb.6.2023.04.23.23.51.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Apr 2023 23:51:40 -0700 (PDT)
-Date:   Mon, 24 Apr 2023 07:51:39 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH] mm/gup: disallow GUP writing to file-backed mappings by
- default
-Message-ID: <cc42e3d5-ccc0-46ed-a7dd-cc7d6a82eb8b@lucifer.local>
-References: <f86dc089b460c80805e321747b0898fd1efe93d7.1682168199.git.lstoakes@gmail.com>
- <4b599782-3512-a177-c5b5-c562a22886c7@redhat.com>
+        d=1e100.net; s=20221208; t=1682320717; x=1684912717;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GFjHqVN3r9rl/Ity1RCKxPqQxir+BteuTQ6+Y+6jxlM=;
+        b=Ny50pdXyxxcgSudm6Qijzlk6jVSpgtaOYJPepkE/9/kx2ehWsZy9Upcqbeqp8sRu8b
+         uoSof67QVbHgdLO7HEFZfYJkR4k/0bp3/u1k9RF1WvfPJ7my9RuT+VfUZ8PtoWGRg5CW
+         UT7MEVopQanRHr08sva1d31qfysh3pYHqL1lURLwxBM/Pw12Wxd26uOJAKt0ROAMsfYy
+         fgZWSwdbInQgrGWpeWb631jodJvszlk3Yo3E1eC22WR8YWEDakYFOJzu6zo7NJtalrIn
+         gTmZXyon2vfjMbqL4iWKo8jkJ2IH9ij1ZQzJ8yD3mtOdWXIg7U3fm9hXqWnKhk6aTIGq
+         P39g==
+X-Gm-Message-State: AAQBX9fAI3WUJbrf6k6lRhfqnqhglviWe3ddLa03fBtlTGolLXQ3OK2D
+        cW6i7Zdt7ES3r2El/SpC7lgqOB0WICsTQXqwMYzmsfAw21zP
+X-Google-Smtp-Source: AKy350bAo9JTXvd2enneani5sy24Vu3xEuBPm4YkaZ+jncpTkWnE8xP3quj3/LCXVSrS1c7GDPuy6KcTQ3qk7ee0vFo/s+Ec0Kzn
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4b599782-3512-a177-c5b5-c562a22886c7@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:a112:0:b0:40f:99ae:dba8 with SMTP id
+ f18-20020a02a112000000b0040f99aedba8mr4370090jag.1.1682320717603; Mon, 24 Apr
+ 2023 00:18:37 -0700 (PDT)
+Date:   Mon, 24 Apr 2023 00:18:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c5681205fa0fd089@google.com>
+Subject: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer dereference
+ in filemap_read_folio (2)
+From:   syzbot <syzbot+41ee2d2dcc4fc2f2f60c@syzkaller.appspotmail.com>
+To:     anton@tuxera.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 06:41:38AM +0300, Mika Penttilä wrote:
->
-> Hi,
->
->
-> On 22.4.2023 16.37, Lorenzo Stoakes wrote:
-> > It isn't safe to write to file-backed mappings as GUP does not ensure that
-> > the semantics associated with such a write are performed correctly, for
-> > instance filesystems which rely upon write-notify will not be correctly
-> > notified.
-> >
-> > There are exceptions to this - shmem and hugetlb mappings are (in effect)
-> > anonymous mappings by other names so we do permit this operation in these
-> > cases.
-> >
-> > In addition, if no pinning takes place (neither FOLL_GET nor FOLL_PIN is
-> > specified and neither flags gets implicitly set) then no writing can occur
-> > so we do not perform the check in this instance.
-> >
-> > This is an important exception, as populate_vma_page_range() invokes
-> > __get_user_pages() in this way (and thus so does __mm_populate(), used by
-> > MAP_POPULATE mmap() and mlock() invocations).
-> >
-> > There are GUP users within the kernel that do nevertheless rely upon this
-> > behaviour, so we introduce the FOLL_ALLOW_BROKEN_FILE_MAPPING flag to
-> > explicitly permit this kind of GUP access.
-> >
-> > This is required in order to not break userspace in instances where the
-> > uAPI might permit file-mapped addresses - a number of RDMA users require
-> > this for instance, as do the process_vm_[read/write]v() system calls,
-> > /proc/$pid/mem, ptrace and SDT uprobes. Each of these callers have been
-> > updated to use this flag.
-> >
-> > Making this change is an important step towards a more reliable GUP, and
-> > explicitly indicates which callers might encouter issues moving forward.
-> >
-> > Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> > ---
-> >   drivers/infiniband/hw/qib/qib_user_pages.c |  3 +-
-> >   drivers/infiniband/hw/usnic/usnic_uiom.c   |  2 +-
-> >   drivers/infiniband/sw/siw/siw_mem.c        |  3 +-
-> >   fs/proc/base.c                             |  3 +-
-> >   include/linux/mm_types.h                   |  8 +++++
-> >   kernel/events/uprobes.c                    |  3 +-
-> >   mm/gup.c                                   | 36 +++++++++++++++++++++-
-> >   mm/memory.c                                |  3 +-
-> >   mm/process_vm_access.c                     |  2 +-
-> >   net/xdp/xdp_umem.c                         |  2 +-
-> >   10 files changed, 56 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
-> > index f693bc753b6b..b9019dad8008 100644
-> > --- a/drivers/infiniband/hw/qib/qib_user_pages.c
-> > +++ b/drivers/infiniband/hw/qib/qib_user_pages.c
-> > @@ -110,7 +110,8 @@ int qib_get_user_pages(unsigned long start_page, size_t num_pages,
-> >   	for (got = 0; got < num_pages; got += ret) {
-> >   		ret = pin_user_pages(start_page + got * PAGE_SIZE,
-> >   				     num_pages - got,
-> > -				     FOLL_LONGTERM | FOLL_WRITE,
-> > +				     FOLL_LONGTERM | FOLL_WRITE |
-> > +				     FOLL_ALLOW_BROKEN_FILE_MAPPING,
-> >   				     p + got, NULL);
-> >   		if (ret < 0) {
-> >   			mmap_read_unlock(current->mm);
-> > diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
-> > index 2a5cac2658ec..33cf79b248a9 100644
-> > --- a/drivers/infiniband/hw/usnic/usnic_uiom.c
-> > +++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
-> > @@ -85,7 +85,7 @@ static int usnic_uiom_get_pages(unsigned long addr, size_t size, int writable,
-> >   				int dmasync, struct usnic_uiom_reg *uiomr)
-> >   {
-> >   	struct list_head *chunk_list = &uiomr->chunk_list;
-> > -	unsigned int gup_flags = FOLL_LONGTERM;
-> > +	unsigned int gup_flags = FOLL_LONGTERM | FOLL_ALLOW_BROKEN_FILE_MAPPING;
-> >   	struct page **page_list;
-> >   	struct scatterlist *sg;
-> >   	struct usnic_uiom_chunk *chunk;
-> > diff --git a/drivers/infiniband/sw/siw/siw_mem.c b/drivers/infiniband/sw/siw/siw_mem.c
-> > index f51ab2ccf151..bc3e8c0898e5 100644
-> > --- a/drivers/infiniband/sw/siw/siw_mem.c
-> > +++ b/drivers/infiniband/sw/siw/siw_mem.c
-> > @@ -368,7 +368,8 @@ struct siw_umem *siw_umem_get(u64 start, u64 len, bool writable)
-> >   	struct mm_struct *mm_s;
-> >   	u64 first_page_va;
-> >   	unsigned long mlock_limit;
-> > -	unsigned int foll_flags = FOLL_LONGTERM;
-> > +	unsigned int foll_flags =
-> > +		FOLL_LONGTERM | FOLL_ALLOW_BROKEN_FILE_MAPPING;
-> >   	int num_pages, num_chunks, i, rv = 0;
-> >   	if (!can_do_mlock())
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index 96a6a08c8235..3e3f5ea9849f 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -855,7 +855,8 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
-> >   	if (!mmget_not_zero(mm))
-> >   		goto free;
-> > -	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
-> > +	flags = FOLL_FORCE | FOLL_ALLOW_BROKEN_FILE_MAPPING |
-> > +		(write ? FOLL_WRITE : 0);
-> >   	while (count > 0) {
-> >   		size_t this_len = min_t(size_t, count, PAGE_SIZE);
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index 3fc9e680f174..e76637b4c78f 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -1185,6 +1185,14 @@ enum {
-> >   	FOLL_PCI_P2PDMA = 1 << 10,
-> >   	/* allow interrupts from generic signals */
-> >   	FOLL_INTERRUPTIBLE = 1 << 11,
-> > +	/*
-> > +	 * By default we disallow write access to known broken file-backed
-> > +	 * memory mappings (i.e. anything other than hugetlb/shmem
-> > +	 * mappings). Some code may rely upon being able to access this
-> > +	 * regardless for legacy reasons, thus we provide a flag to indicate
-> > +	 * this.
-> > +	 */
-> > +	FOLL_ALLOW_BROKEN_FILE_MAPPING = 1 << 12,
-> >   	/* See also internal only FOLL flags in mm/internal.h */
-> >   };
-> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > index 59887c69d54c..ec330d3b0218 100644
-> > --- a/kernel/events/uprobes.c
-> > +++ b/kernel/events/uprobes.c
-> > @@ -373,7 +373,8 @@ __update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
-> >   		return -EINVAL;
-> >   	ret = get_user_pages_remote(mm, vaddr, 1,
-> > -			FOLL_WRITE, &page, &vma, NULL);
-> > +				    FOLL_WRITE | FOLL_ALLOW_BROKEN_FILE_MAPPING,
-> > +				    &page, &vma, NULL);
-> >   	if (unlikely(ret <= 0)) {
-> >   		/*
-> >   		 * We are asking for 1 page. If get_user_pages_remote() fails,
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index 1f72a717232b..68d5570c0bae 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -959,16 +959,46 @@ static int faultin_page(struct vm_area_struct *vma,
-> >   	return 0;
-> >   }
-> > +/*
-> > + * Writing to file-backed mappings using GUP is a fundamentally broken operation
-> > + * as kernel write access to GUP mappings may not adhere to the semantics
-> > + * expected by a file system.
-> > + *
-> > + * In most instances we disallow this broken behaviour, however there are some
-> > + * exceptions to this enforced here.
-> > + */
-> > +static inline bool can_write_file_mapping(struct vm_area_struct *vma,
-> > +					  unsigned long gup_flags)
-> > +{
-> > +	struct file *file = vma->vm_file;
-> > +
-> > +	/* If we aren't pinning then no problematic write can occur. */
-> > +	if (!(gup_flags & (FOLL_GET | FOLL_PIN)))
-> > +		return true;
-> > +
-> > +	/* Special mappings should pose no problem. */
-> > +	if (!file)
-> > +		return true;
-> > +
-> > +	/* Has the caller explicitly indicated this case is acceptable? */
-> > +	if (gup_flags & FOLL_ALLOW_BROKEN_FILE_MAPPING)
-> > +		return true;
-> > +
-> > +	/* shmem and hugetlb mappings do not have problematic semantics. */
-> > +	return vma_is_shmem(vma) || is_file_hugepages(file);
-> > +}
-> > +
-> >   static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
-> >   {
-> >   	vm_flags_t vm_flags = vma->vm_flags;
-> >   	int write = (gup_flags & FOLL_WRITE);
-> >   	int foreign = (gup_flags & FOLL_REMOTE);
-> > +	bool vma_anon = vma_is_anonymous(vma);
-> >   	if (vm_flags & (VM_IO | VM_PFNMAP))
-> >   		return -EFAULT;
-> > -	if (gup_flags & FOLL_ANON && !vma_is_anonymous(vma))
-> > +	if ((gup_flags & FOLL_ANON) && !vma_anon)
-> >   		return -EFAULT;
-> >   	if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
-> > @@ -978,6 +1008,10 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
-> >   		return -EFAULT;
-> >   	if (write) {
-> > +		if (!vma_anon &&
-> > +		    WARN_ON_ONCE(!can_write_file_mapping(vma, gup_flags)))
-> > +			return -EFAULT;
-> > +
-> >   		if (!(vm_flags & VM_WRITE)) {
-> >   			if (!(gup_flags & FOLL_FORCE))
-> >   				return -EFAULT;
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 146bb94764f8..e3d535991548 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -5683,7 +5683,8 @@ int access_process_vm(struct task_struct *tsk, unsigned long addr,
-> >   	if (!mm)
-> >   		return 0;
-> > -	ret = __access_remote_vm(mm, addr, buf, len, gup_flags);
-> > +	ret = __access_remote_vm(mm, addr, buf, len,
-> > +				 gup_flags | FOLL_ALLOW_BROKEN_FILE_MAPPING);
-> >   	mmput(mm);
-> > diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
-> > index 78dfaf9e8990..ef126c08e89c 100644
-> > --- a/mm/process_vm_access.c
-> > +++ b/mm/process_vm_access.c
-> > @@ -81,7 +81,7 @@ static int process_vm_rw_single_vec(unsigned long addr,
-> >   	ssize_t rc = 0;
-> >   	unsigned long max_pages_per_loop = PVM_MAX_KMALLOC_PAGES
-> >   		/ sizeof(struct pages *);
-> > -	unsigned int flags = 0;
-> > +	unsigned int flags = FOLL_ALLOW_BROKEN_FILE_MAPPING;
-> >   	/* Work out address and page range required */
-> >   	if (len == 0)
-> > diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
-> > index 02207e852d79..b93cfcaccb0d 100644
-> > --- a/net/xdp/xdp_umem.c
-> > +++ b/net/xdp/xdp_umem.c
-> > @@ -93,7 +93,7 @@ void xdp_put_umem(struct xdp_umem *umem, bool defer_cleanup)
-> >   static int xdp_umem_pin_pages(struct xdp_umem *umem, unsigned long address)
-> >   {
-> > -	unsigned int gup_flags = FOLL_WRITE;
-> > +	unsigned int gup_flags = FOLL_WRITE | FOLL_ALLOW_BROKEN_FILE_MAPPING;
-> >   	long npgs;
-> >   	int err;
->
-> Not sure about this in general, but seemss at least ptrace
-> (ptrace_access_vm()) seems to be broken here..
+Hello,
 
-Ah thanks, that was an oversight as it uses __access_remote_vm() rather
-than access_process_vm(). I had carefully examined both (and all other GUP
-callers) but in supplying the flag for the latter I in typically squeezy
-brained human fashion forgot to also do so for the former, will respin
-accordingly.
+syzbot found the following issue on:
 
->
->
-> --Mika
->
->
+HEAD commit:    8e41e0a57566 Revert "ACPICA: Events: Support fixed PCIe wa..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ba50f0280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4afb87f3ec27b7fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=41ee2d2dcc4fc2f2f60c
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/69cc9a5732ed/disk-8e41e0a5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f32a5c8e9e68/vmlinux-8e41e0a5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0b56460ca80d/bzImage-8e41e0a5.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+41ee2d2dcc4fc2f2f60c@syzkaller.appspotmail.com
+
+ntfs: (device loop1): ntfs_mapping_pairs_decompress(): Corrupt attribute.
+ntfs: (device loop1): ntfs_read_block(): Failed to read from inode 0xa, attribute type 0x80, vcn 0x1, offset 0x0 because its location on disk could not be determined even after retrying (error code -5).
+ntfs: (device loop1): ntfs_mapping_pairs_decompress(): Corrupt attribute.
+ntfs: volume version 3.1.
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+#PF: supervisor instruction fetch in kernel mode
+#PF: error_code(0x0010) - not-present page
+PGD 29114067 P4D 29114067 PUD 2776f067 PMD 0 
+Oops: 0010 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 19582 Comm: syz-executor.1 Not tainted 6.3.0-rc7-syzkaller-00181-g8e41e0a57566 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+RSP: 0018:ffffc900125ff618 EFLAGS: 00010283
+RAX: ffffffff81ba3fa1 RBX: 0000000000000000 RCX: 0000000000040000
+RDX: ffffc90014e2c000 RSI: ffffea0001781100 RDI: 0000000000000000
+RBP: ffffc900125ff6f0 R08: dffffc0000000000 R09: fffff940002f0221
+R10: 0000000000000000 R11: dffffc0000000001 R12: ffffea0001781100
+R13: 1ffffd40002f0221 R14: 0000000000000000 R15: ffffea0001781108
+FS:  00007f75f3998700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 00000000393e4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ filemap_read_folio+0x19d/0x7a0 mm/filemap.c:2424
+ do_read_cache_folio+0x2ee/0x820 mm/filemap.c:3683
+ do_read_cache_page+0x32/0x230 mm/filemap.c:3749
+ read_mapping_page include/linux/pagemap.h:769 [inline]
+ ntfs_map_page fs/ntfs/aops.h:75 [inline]
+ ntfs_check_logfile+0x3e1/0x28b0 fs/ntfs/logfile.c:532
+ load_and_check_logfile+0x6f/0xd0 fs/ntfs/super.c:1223
+ load_system_files+0x32fb/0x4840 fs/ntfs/super.c:1949
+ ntfs_fill_super+0x19b4/0x2bd0 fs/ntfs/super.c:2900
+ mount_bdev+0x271/0x3a0 fs/super.c:1380
+ legacy_get_tree+0xef/0x190 fs/fs_context.c:610
+ vfs_get_tree+0x8c/0x270 fs/super.c:1510
+ do_new_mount+0x28f/0xae0 fs/namespace.c:3042
+ do_mount fs/namespace.c:3385 [inline]
+ __do_sys_mount fs/namespace.c:3594 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3571
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f75f2c8d69a
+Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f75f3997f88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 000000000001ec6a RCX: 00007f75f2c8d69a
+RDX: 0000000020000100 RSI: 000000002001ecc0 RDI: 00007f75f3997fe0
+RBP: 00007f75f3998020 R08: 00007f75f3998020 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000100
+R13: 000000002001ecc0 R14: 00007f75f3997fe0 R15: 0000000020000140
+ </TASK>
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace 0000000000000000 ]---
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+RSP: 0018:ffffc900125ff618 EFLAGS: 00010283
+RAX: ffffffff81ba3fa1 RBX: 0000000000000000 RCX: 0000000000040000
+RDX: ffffc90014e2c000 RSI: ffffea0001781100 RDI: 0000000000000000
+RBP: ffffc900125ff6f0 R08: dffffc0000000000 R09: fffff940002f0221
+R10: 0000000000000000 R11: dffffc0000000001 R12: ffffea0001781100
+R13: 1ffffd40002f0221 R14: 0000000000000000 R15: ffffea0001781108
+FS:  00007f75f3998700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 00000000393e4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
