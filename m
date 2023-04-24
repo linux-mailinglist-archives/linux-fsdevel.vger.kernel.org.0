@@ -2,174 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EB946ED843
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 01:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F0B6ED84B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 01:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232338AbjDXXDm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 19:03:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
+        id S233178AbjDXXFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 19:05:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229755AbjDXXDl (ORCPT
+        with ESMTP id S232021AbjDXXFp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 19:03:41 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65B3093E6;
-        Mon, 24 Apr 2023 16:03:38 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f18335a870so32544805e9.0;
-        Mon, 24 Apr 2023 16:03:38 -0700 (PDT)
+        Mon, 24 Apr 2023 19:05:45 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE24393E6;
+        Mon, 24 Apr 2023 16:05:44 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-2478485fd76so3539788a91.2;
+        Mon, 24 Apr 2023 16:05:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682377416; x=1684969416;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P0nMjLjJ2Ejf4Gum9iKdCO8GGAzyEOx1mv4U4DYV4qE=;
-        b=EuHX7Z/vAZocfhu4Vgyz49xCCl2q92HT9jd7KAaQxRyLHLUDRyT1hLjdT5+bk3UXb0
-         RFVUJ3ICo+HD9jfBMqoShj5ln64HLYckW5U9H24eAMXOLV1BEJbCwqLJuTDq6xty7NGx
-         cGvpM8DB3RDh7Anccmdge6TYaiqUOxvmmyhgkXDnFgOqaphLKnqe1pFzz2iZPuivObec
-         d6L6S3mBEuw6NA3pUpIwzfSFUsz6ErK0neRJMH6NkT5PpgVYsoczXw7CprHX7Pi5SDm4
-         QRRzJc/IHUy0nKhvW1yl2PtKcHCvXN4Y9BysJ8M0UHc3XfJiEv7dAKHcYsyju0hSDT73
-         Tekw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682377416; x=1684969416;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1682377544; x=1684969544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P0nMjLjJ2Ejf4Gum9iKdCO8GGAzyEOx1mv4U4DYV4qE=;
-        b=MccwXko8v9gSHAxdQKamrW1aF9wjwMrfnXdvypNTHncwwAOwDYFFkLgCjmH3K4qnV1
-         aj75trVEtdL5E+M2uzs7WeYTaiuXajU0z8u6+tRXqEiiw6wROwKBkfdO92BnO/+VW1Fx
-         jHBHySLsrt0WNzc5jHGfMtzYAYFR5oHPXbPi7/S/J5uE3a1gcANxcZxhwGqtW0C9G857
-         7Wy4LpAdhtSXsqV300T7jGpLEELmJj0YPMxHozglBNdkf/H1qKxLj57FbwMKLFu4/Rjx
-         G6WcuO5NJjjxlnIGbkouHSdzeAhskABaM/ETTjznUgRcVYh/4WCnG4w/J7RKXBt87Jy/
-         TN9g==
-X-Gm-Message-State: AAQBX9d09d9NIRWaj6ZgrwKckY6Yif+PIsuvHeER6chBSabOm2PKdKbl
-        7sJKSXb56SPRBRN79mMbQGk=
-X-Google-Smtp-Source: AKy350bEw1oYBxZ1aQpLH2RCWXylid0vlvZ0fQa3JAem1BWm3uFPUGdsWn5khS006UqQkx6YbrWY7A==
-X-Received: by 2002:adf:f185:0:b0:2f4:cfb4:57f7 with SMTP id h5-20020adff185000000b002f4cfb457f7mr9983848wro.61.1682377416362;
-        Mon, 24 Apr 2023 16:03:36 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id g3-20020a5d5543000000b002fe254f6c33sm11648252wrw.92.2023.04.24.16.03.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Apr 2023 16:03:35 -0700 (PDT)
-Date:   Tue, 25 Apr 2023 00:03:34 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v2] mm/gup: disallow GUP writing to file-backed mappings
- by default
-Message-ID: <4f16b1fc-6bc5-4e41-8e94-151c336fcf69@lucifer.local>
-References: <90a54439-5d30-4711-8a86-eba816782a66@lucifer.local>
- <ZEZ117OMCi0dFXqY@nvidia.com>
- <c8fff8b3-ead6-4f52-bf17-f2ef2e752b57@lucifer.local>
- <ZEaGjad50lqRNTWD@nvidia.com>
- <cd488979-d257-42b9-937f-470cc3c57f5e@lucifer.local>
- <ZEa+L5ivNDhCmgj4@nvidia.com>
- <cfb5afaa-8636-4c7d-a1a2-2e0a85f9f3d3@lucifer.local>
- <ZEbQeImOiaXrydBE@nvidia.com>
- <f00058b8-0397-465f-9db5-ddd30a5efe8e@lucifer.local>
- <ZEcIZspUwWUzH15L@nvidia.com>
+        bh=VQ8sFzZ9vlAXommM0w2/PXvGSOKBNi6JzIA9K33bVAU=;
+        b=WD+ceziX6bq4nghbfbXLNklOmtmN9i6mL4/A14bPp9VINUyoFGGw8A0p3dQ34YR+WV
+         V9UR0Cc1hxLra/AnBrIM2gSUcmRFtrM5vgBmxBXyH5v7k/iTTDcarBsO+NVHuUmNRLqk
+         dSPFhIKxc3ozN6inFnMIifOSp0RHJ/2bfCVGkAJqyAaWeKXijbsqYI4AwyageV940smm
+         vD8mw7+iTiazzzJQjSbKJtwtb48sO7QbkT+1hYFzC/8SxrZf/CzoX0kZPwM3nS41A+6/
+         q+e/CJ8lPeZJCI19Jmmuvmazx2ljqsBXJIf6qkom4c4wGxwyamVIDb5oE81/KJI0NGbi
+         vljw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682377544; x=1684969544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VQ8sFzZ9vlAXommM0w2/PXvGSOKBNi6JzIA9K33bVAU=;
+        b=L/9LOQi4DBAyEho/2CVm3H+08wddazlRfGzRcaqU84uswt9BXSdtKk1i4wHcrSmGbD
+         w1j5pS+z3mQxflev2ipqPE+jCDq/AQ+wR/tJiK4nyuxveiHCsHcgGImSoP9r/KfPDiw3
+         U3Mtdb9d0OwgqUUEZ0tq7B+AhmHS4uN1JwLvmyM3rve1eyCBnslZiKCRfEUDqXFxQOGi
+         3whQDwq2u0oSkjQplvxNGIAnSNi7MJdTAhdlCqtmAEjkG02wxwbuS22Vujj8hBHSFZRt
+         su7mgX7jEWPnK6d3I0SRdW4P1dpsHRLGcTJjfFcZCwTHW7TT7T38kMJwWURBaByrlySP
+         Wuyg==
+X-Gm-Message-State: AAQBX9c47wHNYsVAaTSSqnLLcAEMDjQlRq5dfsw6Yt6vQrmgPvcnIRxQ
+        oyRxyYnXmBfVzU6rCLhuHAxL2yYiIliF/ZaCIKs=
+X-Google-Smtp-Source: AKy350YiJuL4duFP78n+ItNB+lUpN4w+zRdMWcrBiJgXD2Qk753AS4CLImpFJFw1UHLIr+HVloJCI3jyLWK4zIDEzVY=
+X-Received: by 2002:a17:90a:fd17:b0:247:1de8:8263 with SMTP id
+ cv23-20020a17090afd1700b002471de88263mr16233416pjb.4.1682377544182; Mon, 24
+ Apr 2023 16:05:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZEcIZspUwWUzH15L@nvidia.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230421214400.2836131-1-mcgrof@kernel.org> <20230421214400.2836131-3-mcgrof@kernel.org>
+ <ZEMRbcHSQqyek8Ov@casper.infradead.org> <ZENO4vZzmN8lJocK@bombadil.infradead.org>
+ <CAHbLzkoEAJhz8GG91MSM9+wCYVqseSFzBQdVAP78W5WPq26GHQ@mail.gmail.com> <ZEb2eYX5btfLrUtQ@casper.infradead.org>
+In-Reply-To: <ZEb2eYX5btfLrUtQ@casper.infradead.org>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Mon, 24 Apr 2023 16:05:32 -0700
+Message-ID: <CAHbLzkqk2+woBTHEdkYcae6No40S6QXFPQk6hE+_C=7UHbe+Zg@mail.gmail.com>
+Subject: Re: [RFC 2/8] shmem: convert to use folio_test_hwpoison()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, hughd@google.com,
+        akpm@linux-foundation.org, brauner@kernel.org, djwong@kernel.org,
+        p.raghav@samsung.com, da.gomez@samsung.com,
+        a.manzanares@samsung.com, dave@stgolabs.net, yosryahmed@google.com,
+        keescook@chromium.org, hare@suse.de, kbusch@kernel.org,
+        patches@lists.linux.dev, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 07:53:26PM -0300, Jason Gunthorpe wrote:
-> On Mon, Apr 24, 2023 at 08:18:33PM +0100, Lorenzo Stoakes wrote:
+On Mon, Apr 24, 2023 at 2:37=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
 >
-> > I think this patch suggestion has scope crept from 'incremental
-> > improvement' to 'major rework of GUP' at this point.
+> On Mon, Apr 24, 2023 at 02:17:12PM -0700, Yang Shi wrote:
+> > On Fri, Apr 21, 2023 at 8:05=E2=80=AFPM Luis Chamberlain <mcgrof@kernel=
+.org> wrote:
+> > >
+> > > On Fri, Apr 21, 2023 at 11:42:53PM +0100, Matthew Wilcox wrote:
+> > > > On Fri, Apr 21, 2023 at 02:43:54PM -0700, Luis Chamberlain wrote:
+> > > > > The PageHWPoison() call can be converted over to the respective f=
+olio call
+> > > > > folio_test_hwpoison(). This introduces no functional changes.
+> > > >
+> > > > Um, no.  Nobody should use folio_test_hwpoison(), it's a nonsense.
+> > > >
+> > > > Individual pages are hwpoisoned.  You're only testing the head page
+> > > > if you use folio_test_hwpoison().  There's folio_has_hwpoisoned() t=
+o
+> > > > test if _any_ page in the folio is poisoned.  But blindly convertin=
+g
+> > > > PageHWPoison to folio_test_hwpoison() is wrong.
+> > >
+> > > Thanks! I don't see folio_has_hwpoisoned() though.
+> >
+> > We do have PageHasHWPoisoned(), which indicates at least one subpage
+> > is hwpoisoned in the huge page.
+> >
+> > You may need to add a folio variant.
 >
-> I don't really expect to you clean up all the callers - but we are
-> trying to understand what is actually wrong here to come up with the
-> right FOLL_ names and overall strategy. Leave behind a comment, for
-> instance.
+> PAGEFLAG(HasHWPoisoned, has_hwpoisoned, PF_SECOND)
+>         TESTSCFLAG(HasHWPoisoned, has_hwpoisoned, PF_SECOND)
 >
+> That generates folio_has_hwpoisoned() along with
+> folio_set_has_hwpoisoned(), folio_clear_has_hwpoisoned(),
+> folio_test_set_has_hwpoisoned() and folio_test_clear_has_hwpoisoned().
 
-Right, but you are suggesting introducing a whole new GUP interface holding
-the right locks etc. which is really scope-creeping from the original
-intent.
-
-I'm not disagreeing that we need an interface that can return things in a
-state where the dirtying can be done correctly, I just don't think _this_
-patch series is the place for it.
-
-> I don't think anyone has really thought about the ptrace users too
-> much till now, we were all thinking about DMA use cases, it shows we
-> still have some areas that need attention.
-
-I do like to feel that my recent glut of GUP activity, even if noisy and
-frustrating, has at least helped give some insights into usage and
-semantics :)
-
->
-> > Also surely you'd want to obtain the PTL of all mappings to a file?
->
-> No, just one is fine. If you do the memcpy under a single PTL that
-> points at a writable copy of the page then everything is trivially
-> fine because it is very similar to what the CPU itself would do, which
-> is fine by definition..
->
-> Jason
-
-Except you dirty a page that is mapped elsewhere that thought everything
-was cleaned and... not sure the PTLs really help you much?
-
-Anyway I feel we're digressing into the broader discussion which needs to
-be had, but not when trying to unstick the vmas series :)
-
-I am going to put forward an opt-in variant of this change that explicitly
-checks whether any VMA in the range requires dirty page tracking, if not
-failing the GUP operation.
-
-This can then form the basis of the opt-OUT variant (it'll be the same
-check code right?) and help provide a basis for the additional work that
-clearly needs to be done.
-
-It will also replace the open-coded VMA check in io_uring so has utility
-and justification just from that.
-
-If we want to be more adventerous the opt-in variant could default to on
-for FOLL_LONGTERM too, but that discussion can be had over on that patch
-series.
+Oh, yeah, I missed that part. Thanks.
