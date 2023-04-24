@@ -2,46 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DECA6EC920
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 11:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49ED86EC935
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 11:43:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230373AbjDXJi2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 05:38:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36392 "EHLO
+        id S231180AbjDXJna (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 05:43:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbjDXJiY (ORCPT
+        with ESMTP id S231169AbjDXJn1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 05:38:24 -0400
-Received: from outbound-smtp41.blacknight.com (outbound-smtp41.blacknight.com [46.22.139.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB8FB10FB
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 02:38:21 -0700 (PDT)
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp41.blacknight.com (Postfix) with ESMTPS id 123A21D35
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 10:38:20 +0100 (IST)
-Received: (qmail 14803 invoked from network); 24 Apr 2023 09:38:19 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.21.103])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 24 Apr 2023 09:38:19 -0000
-Date:   Mon, 24 Apr 2023 10:38:17 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Ying <ying.huang@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Yu Zhao <yuzhao@google.com>, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2 3/4] migrate_pages: Don't wait forever locking pages
- in MIGRATE_SYNC_LIGHT
-Message-ID: <20230424093817.am3qpsba35yrhmow@techsingularity.net>
-References: <20230421221249.1616168-1-dianders@chromium.org>
- <20230421151135.v2.3.Ia86ccac02a303154a0b8bc60567e7a95d34c96d3@changeid>
+        Mon, 24 Apr 2023 05:43:27 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F23B2D47;
+        Mon, 24 Apr 2023 02:43:26 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 3D9B621A29;
+        Mon, 24 Apr 2023 09:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1682329405; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WC/dt75N+hDAUmu++Ih6NqVKD/ape2sN09upWYqvvfo=;
+        b=TRaPh3HUNIJm4RO5srNYjWR1XL8WPw2ah4eR5HM5KI0tK0V5SCC8qnGp7afJiRC1R7fZq0
+        H+K7jkbv/4YTCKkq3Bd4AertN+vdduNBfx6wHAT/KQhIKvexhPt7YamXMA1kPFV0fby2hK
+        sCV73/xAGPjK8ByJHJQfNPUEKm7WAg0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1682329405;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WC/dt75N+hDAUmu++Ih6NqVKD/ape2sN09upWYqvvfo=;
+        b=V8iYK5XudnGEWXXgq6h3xm6CIK86/WnCQQ/FrxKS12kTRprpL6SwfDCkwqkIUQdEl+SXAf
+        XIu8u2neAk+lEEDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2DDD61390E;
+        Mon, 24 Apr 2023 09:43:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id k/wpCz1PRmRpFQAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 24 Apr 2023 09:43:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id B6625A0729; Mon, 24 Apr 2023 11:43:24 +0200 (CEST)
+Date:   Mon, 24 Apr 2023 11:43:24 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Ritesh Harjani <ritesh.list@gmail.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>, Ted Tso <tytso@mit.edu>
+Subject: Re: [PATCHv6 0/9] ext2: DIO to use iomap
+Message-ID: <20230424094324.lq3nqfj54hocm423@quack3>
+References: <20230421112324.mxrrja2hynshu4b6@quack3>
+ <87edodigo4.fsf@doe.com>
+ <20230421154058.GH360881@frogsfrogsfrogs>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230421151135.v2.3.Ia86ccac02a303154a0b8bc60567e7a95d34c96d3@changeid>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+In-Reply-To: <20230421154058.GH360881@frogsfrogsfrogs>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -49,111 +76,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 03:12:47PM -0700, Douglas Anderson wrote:
-> The MIGRATE_SYNC_LIGHT mode is intended to block for things that will
-> finish quickly but not for things that will take a long time. Exactly
-> how long is too long is not well defined, but waits of tens of
-> milliseconds is likely non-ideal.
+On Fri 21-04-23 08:40:58, Darrick J. Wong wrote:
+> On Fri, Apr 21, 2023 at 05:35:47PM +0530, Ritesh Harjani wrote:
+> > Jan Kara <jack@suse.cz> writes:
+> > 
+> > > Hello Ritesh,
+> > >
+> > > On Fri 21-04-23 15:16:10, Ritesh Harjani (IBM) wrote:
+> > >> Hello All,
+> > >>
+> > >> Please find the series which rewrites ext2 direct-io path to use modern
+> > >> iomap interface.
+> > >
+> > > The patches now all look good to me. I'd like to discuss a bit how to merge
+> > 
+> > Thanks Jan,
+> > 
+> > 
+> > > them. The series has an ext4 cleanup (patch 3) and three iomap patches
+> > 
+> > Also Patch-3 is on top of ext4 journalled data patch series of yours,
+> > otheriwse we might see a minor merge conflict.
+> > 
+> > https://lore.kernel.org/all/20230329154950.19720-6-jack@suse.cz/
+> > 
+> > > (patches 6, 8 and 9). Darrick, do you want to take the iomap patches through
+> > > your tree?
 > 
-> Waiting on the folio lock in isolate_movable_page() is something that
-> usually is pretty quick, but is not officially bounded. Nothing stops
-> another process from holding a folio lock while doing an expensive
-> operation. Having an unbounded wait like this is not within the design
-> goals of MIGRATE_SYNC_LIGHT.
-> 
-> When putting a Chromebook under memory pressure (opening over 90 tabs
-> on a 4GB machine) it was fairly easy to see delays waiting for the
-> lock of > 100 ms. While the laptop wasn't amazingly usable in this
-> state, it was still limping along and this state isn't something
-> artificial. Sometimes we simply end up with a lot of memory pressure.
-> 
-> Putting the same Chromebook under memory pressure while it was running
-> Android apps (though not stressing them) showed a much worse result
-> (NOTE: this was on a older kernel but the codepaths here are
-> similar). Android apps on ChromeOS currently run from a 128K-block,
-> zlib-compressed, loopback-mounted squashfs disk. If we get a page
-> fault from something backed by the squashfs filesystem we could end up
-> holding a folio lock while reading enough from disk to decompress 128K
-> (and then decompressing it using the somewhat slow zlib algorithms).
-> That reading goes through the ext4 subsystem (because it's a loopback
-> mount) before eventually ending up in the block subsystem. This extra
-> jaunt adds extra overhead. Without much work I could see cases where
-> we ended up blocked on a folio lock for over a second. With more
-> more extreme memory pressure I could see up to 25 seconds.
-> 
-> Let's bound the amount of time we can wait for the folio lock. The
-> SYNC_LIGHT migration mode can already handle failure for things that
-> are slow, so adding this timeout in is fairly straightforward.
-> 
-> With this timeout, it can be seen that kcompactd can move on to more
-> productive tasks if it's taking a long time to acquire a lock.
-> 
-> NOTE: The reason I stated digging into this isn't because some
-> benchmark had gone awry, but because we've received in-the-field crash
-> reports where we have a hung task waiting on the page lock (which is
-> the equivalent code path on old kernels). While the root cause of
-> those crashes is likely unrelated and won't be fixed by this patch,
-> analyzing those crash reports did point out this unbounded wait and it
-> seemed like something good to fix.
-> 
-> ALSO NOTE: the timeout mechanism used here uses "jiffies" and we also
-> will retry up to 7 times. That doesn't give us much accuracy in
-> specifying the timeout. On 1000 Hz machines we'll end up timing out in
-> 7-14 ms. On 100 Hz machines we'll end up in 70-140 ms. Given that we
-> don't have a strong definition of how long "too long" is, this is
-> probably OK.
-> 
-> Suggested-by: Mel Gorman <mgorman@techsingularity.net>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
-> Changes in v2:
-> - Keep unbounded delay in "SYNC", delay with a timeout in "SYNC_LIGHT"
-> 
->  mm/migrate.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index db3f154446af..60982df71a93 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -58,6 +58,23 @@
->  
->  #include "internal.h"
->  
-> +/* Returns the schedule timeout for a non-async mode */
-> +static long timeout_for_mode(enum migrate_mode mode)
-> +{
-> +	/*
-> +	 * We'll always return 1 jiffy as the timeout. Since all places using
-> +	 * this timeout are in a retry loop this means that the maximum time
-> +	 * we might block is actually NR_MAX_MIGRATE_SYNC_RETRY jiffies.
-> +	 * If a jiffy is 1 ms that's 7 ms, though with the accuracy of the
-> +	 * timeouts it often ends up more like 14 ms; if a jiffy is 10 ms
-> +	 * that's 70-140 ms.
-> +	 */
-> +	if (mode == MIGRATE_SYNC_LIGHT)
-> +		return 1;
-> +
+> Hmm.  I could do that for 6.4 since the first one should be trivially
+> verifiable and so far Linus hasn't objected to patches that add
+> tracepoints being thrown into for-next right at the start of the merge
+> window.
 
-Use switch and WARN_ON_ONCE if MIGRATE_ASYNC with a fallthrough to
-MIGRATE_SYNC_LIGHT?
+Great! Then I'll wait a bit until rc1 when your iomap tree + Ted's ext4
+tree should have landed in Linus' tree and push the ext2+ext4 patches into
+my tree to a branch based on rc1 which should deal with all the merge
+troubles.
 
-> +	return MAX_SCHEDULE_TIMEOUT;
-> +}
-> +
-
-Even though HZ is defined at compile time, it is underdesirable to use
-a constant timeout unrelated to HZ because it's normal case is variable
-depending on CONFIG_HZ.  Please use a value like DIV_ROUND_UP(HZ/250) or
-DIV_ROUND_UP(HZ/1000) for a 4ms or 1ms timeout respectively. Even though
-it's still potentially variable, it would make any hypothetical transition
-to [milli|micro|nano]seconds easier in the future as the intent would be
-known. While there are no plans for change as such, working in jiffies is
-occasionally problematic in kernel/sched/. At OSPM this year, the notion
-of dynamic HZ was brought up (it would be hard) and a preliminary step
-would be converting all uses of HZ to normal time.
-
+								Honza
 -- 
-Mel Gorman
-SUSE Labs
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
