@@ -2,171 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 076B76EC8A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 11:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DECA6EC920
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 11:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231597AbjDXJVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 05:21:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53836 "EHLO
+        id S230373AbjDXJi2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 05:38:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231237AbjDXJVU (ORCPT
+        with ESMTP id S229610AbjDXJiY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 05:21:20 -0400
-Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A918F10C4;
-        Mon, 24 Apr 2023 02:20:58 -0700 (PDT)
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 8EF64821035;
-        Mon, 24 Apr 2023 09:20:57 +0000 (UTC)
-Received: from pdx1-sub0-mail-a207.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 09D8F820EED;
-        Mon, 24 Apr 2023 09:20:57 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1682328057; a=rsa-sha256;
-        cv=none;
-        b=UKh2FHwa4Dlzrt2piIsvUgWs8eN93okAgK2eDKBBW0eG/0zzxSTHsgDbmo3/0+GYcqd5IY
-        Jgh90Sm96qFxX5FE/BzQPpDpLrkY98yo+b6n4FFnRRTMg/N+0JMu/HHhNDZN4O+/cMCPvX
-        qJmkH3woBDf3JVkREFqio9YDBhwVxzSSRv1XgP4hX4Ug8V5p4gKvrsHtPwLbihjT/mU87H
-        1twW1NgcUiXYboeiv8LXzMIZTuQcnq22CWBYAPn/KSWH864udw+s/YIyul9eWfgBoZQCfg
-        E7IzPqhFqJ0tYpTLU+4GVHD9kJy7k4mODmFdYn2quZkgAnVDdmuRp1dUVhrLTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-        s=arc-2022; t=1682328057;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references:dkim-signature;
-        bh=dFTksCPBklYyeO0qe+SmB5HBVs7ypW6/hxmTTDYRClI=;
-        b=tI8fpMBY+fviYnPWavzlcPF40iTTMyb1QcKiBMPhKy5g3jhFvnOc6Ww2oCUf3/snuAVVU6
-        R+73MCmZ3EQBecaLBzOhQW6gRomNTOMRVgE3RRd/oh+wgmpHxhl4j0CjY2ZQKmQy8NwPzP
-        UdizsohTMALebIc9pOrSQNBX33/5Rl7cSqvI75jdJY5QkqY4Hj/PoYFW5Tf+BcxfLMxXBT
-        hD2X/Vhx9dUtyLV38qlgsoITCofISnRUAK7RsM3FIIILWYib8EUWsAc8A799dmeU797kGD
-        8NhFnL8Wno1uErtqDi83VBfj5sbc3KtopKpDML3l1ndUIpRyKz+hwPvNQ3ZTvA==
-ARC-Authentication-Results: i=1;
-        rspamd-548d6c8f77-hk64m;
-        auth=pass smtp.auth=dreamhost smtp.mailfrom=bugs@claycon.org
-X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
-X-MailChannels-Auth-Id: dreamhost
-X-Celery-Wipe: 7b9ac1932e539c02_1682328057391_2825378695
-X-MC-Loop-Signature: 1682328057391:3806234663
-X-MC-Ingress-Time: 1682328057391
-Received: from pdx1-sub0-mail-a207.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.97.48.69 (trex/6.7.2);
-        Mon, 24 Apr 2023 09:20:57 +0000
-Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cosmos@claycon.org)
-        by pdx1-sub0-mail-a207.dreamhost.com (Postfix) with ESMTPSA id 4Q4fkc51x0zJF;
-        Mon, 24 Apr 2023 02:20:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=claycon.org;
-        s=dreamhost; t=1682328056;
-        bh=dFTksCPBklYyeO0qe+SmB5HBVs7ypW6/hxmTTDYRClI=;
-        h=Date:From:To:Cc:Subject:Content-Type;
-        b=ZYtLkz7b40TS9uIuptBvrL3aRUyKw8PTfNMUcdM//Y6Gou9nCqL1uAZgqgTRr6OTI
-         wPYue2ZOwcyDChtazIGDLO8o8VBz0I7yuPfVh01yW0fEVPwRvEvxtZCw67Gfct6LXV
-         gJYymfcWlrbvwxL655zNoHi8ZCsAZ1/JCgB9j83Vawkt894u7SgpKa7VphKd4K/QWl
-         YoAAd//zWFYrXYOrSvUueef0P6aEhXDvUcxEEvDsNZj7gZgncFc9PCyVb+erWb9WFP
-         9JMzsxBakvdvK2OC8HXJr/XBZ5w+w/rLkk0aXts9jUj5LH0Xb1PPlnJkJuoH0KiIX+
-         TMTDf63DtoILA==
-Date:   Mon, 24 Apr 2023 04:20:55 -0500
-From:   Clay Harris <bugs@claycon.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
+        Mon, 24 Apr 2023 05:38:24 -0400
+Received: from outbound-smtp41.blacknight.com (outbound-smtp41.blacknight.com [46.22.139.224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB8FB10FB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 02:38:21 -0700 (PDT)
+Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
+        by outbound-smtp41.blacknight.com (Postfix) with ESMTPS id 123A21D35
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 10:38:20 +0100 (IST)
+Received: (qmail 14803 invoked from network); 24 Apr 2023 09:38:19 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.21.103])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 24 Apr 2023 09:38:19 -0000
+Date:   Mon, 24 Apr 2023 10:38:17 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Ying <ying.huang@intel.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
-Message-ID: <20230424092054.q6iiqqnrohenr5d2@ps29521.dreamhostps.com>
-References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
- <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
- <20230423224045.GS447837@dread.disaster.area>
- <ZEXChAJfCRPv9vbs@codewreck.org>
- <20230424072946.uuzjvuqrch7m4zuk@ps29521.dreamhostps.com>
- <ZEZArsLzVZnSMG_o@codewreck.org>
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Yu Zhao <yuzhao@google.com>, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 3/4] migrate_pages: Don't wait forever locking pages
+ in MIGRATE_SYNC_LIGHT
+Message-ID: <20230424093817.am3qpsba35yrhmow@techsingularity.net>
+References: <20230421221249.1616168-1-dianders@chromium.org>
+ <20230421151135.v2.3.Ia86ccac02a303154a0b8bc60567e7a95d34c96d3@changeid>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <ZEZArsLzVZnSMG_o@codewreck.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230421151135.v2.3.Ia86ccac02a303154a0b8bc60567e7a95d34c96d3@changeid>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24 2023 at 17:41:18 +0900, Dominique Martinet quoth thus:
+On Fri, Apr 21, 2023 at 03:12:47PM -0700, Douglas Anderson wrote:
+> The MIGRATE_SYNC_LIGHT mode is intended to block for things that will
+> finish quickly but not for things that will take a long time. Exactly
+> how long is too long is not well defined, but waits of tens of
+> milliseconds is likely non-ideal.
+> 
+> Waiting on the folio lock in isolate_movable_page() is something that
+> usually is pretty quick, but is not officially bounded. Nothing stops
+> another process from holding a folio lock while doing an expensive
+> operation. Having an unbounded wait like this is not within the design
+> goals of MIGRATE_SYNC_LIGHT.
+> 
+> When putting a Chromebook under memory pressure (opening over 90 tabs
+> on a 4GB machine) it was fairly easy to see delays waiting for the
+> lock of > 100 ms. While the laptop wasn't amazingly usable in this
+> state, it was still limping along and this state isn't something
+> artificial. Sometimes we simply end up with a lot of memory pressure.
+> 
+> Putting the same Chromebook under memory pressure while it was running
+> Android apps (though not stressing them) showed a much worse result
+> (NOTE: this was on a older kernel but the codepaths here are
+> similar). Android apps on ChromeOS currently run from a 128K-block,
+> zlib-compressed, loopback-mounted squashfs disk. If we get a page
+> fault from something backed by the squashfs filesystem we could end up
+> holding a folio lock while reading enough from disk to decompress 128K
+> (and then decompressing it using the somewhat slow zlib algorithms).
+> That reading goes through the ext4 subsystem (because it's a loopback
+> mount) before eventually ending up in the block subsystem. This extra
+> jaunt adds extra overhead. Without much work I could see cases where
+> we ended up blocked on a folio lock for over a second. With more
+> more extreme memory pressure I could see up to 25 seconds.
+> 
+> Let's bound the amount of time we can wait for the folio lock. The
+> SYNC_LIGHT migration mode can already handle failure for things that
+> are slow, so adding this timeout in is fairly straightforward.
+> 
+> With this timeout, it can be seen that kcompactd can move on to more
+> productive tasks if it's taking a long time to acquire a lock.
+> 
+> NOTE: The reason I stated digging into this isn't because some
+> benchmark had gone awry, but because we've received in-the-field crash
+> reports where we have a hung task waiting on the page lock (which is
+> the equivalent code path on old kernels). While the root cause of
+> those crashes is likely unrelated and won't be fixed by this patch,
+> analyzing those crash reports did point out this unbounded wait and it
+> seemed like something good to fix.
+> 
+> ALSO NOTE: the timeout mechanism used here uses "jiffies" and we also
+> will retry up to 7 times. That doesn't give us much accuracy in
+> specifying the timeout. On 1000 Hz machines we'll end up timing out in
+> 7-14 ms. On 100 Hz machines we'll end up in 70-140 ms. Given that we
+> don't have a strong definition of how long "too long" is, this is
+> probably OK.
+> 
+> Suggested-by: Mel Gorman <mgorman@techsingularity.net>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> 
+> Changes in v2:
+> - Keep unbounded delay in "SYNC", delay with a timeout in "SYNC_LIGHT"
+> 
+>  mm/migrate.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index db3f154446af..60982df71a93 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -58,6 +58,23 @@
+>  
+>  #include "internal.h"
+>  
+> +/* Returns the schedule timeout for a non-async mode */
+> +static long timeout_for_mode(enum migrate_mode mode)
+> +{
+> +	/*
+> +	 * We'll always return 1 jiffy as the timeout. Since all places using
+> +	 * this timeout are in a retry loop this means that the maximum time
+> +	 * we might block is actually NR_MAX_MIGRATE_SYNC_RETRY jiffies.
+> +	 * If a jiffy is 1 ms that's 7 ms, though with the accuracy of the
+> +	 * timeouts it often ends up more like 14 ms; if a jiffy is 10 ms
+> +	 * that's 70-140 ms.
+> +	 */
+> +	if (mode == MIGRATE_SYNC_LIGHT)
+> +		return 1;
+> +
 
-> Thanks!
-> 
-> Clay Harris wrote on Mon, Apr 24, 2023 at 02:29:46AM -0500:
-> > This also seems like a good place to bring up a point I made with
-> > the last attempt at this code.  You're missing an optimization here.
-> > getdents knows whether it is returning a buffer because the next entry
-> > won't fit versus because there are no more entries.  As it doesn't
-> > return that information, callers must always keep calling it back
-> > until EOF.  This means a completely unnecessary call is made for
-> > every open directory.  In other words, for a directory scan where
-> > the buffers are large enough to not overflow, that literally twice
-> > as many calls are made to getdents as necessary.  As io_uring is
-> > in-kernel, it could use an internal interface to getdents which would
-> > return an EOF indicator along with the (probably non-empty) buffer.
-> > io_uring would then return that flag with the CQE.
-> 
-> Sorry I didn't spot that comment in the last iteration of the patch,
-> that sounds interesting.
-> 
-> This isn't straightforward even in-kernel though: the ctx.actor callback
-> (filldir64) isn't called when we're done, so we only know we couldn't
-> fill in the buffer.
-> We could have the callback record 'buffer full' and consider we're done
-> if the buffer is full, or just single-handedly declare we are if we have
-> more than `MAXNAMLEN + sizeof(struct linux_dirent64)` left over, but I
-> assume a filesystem is allowed to return what it has readily available
-> and expect the user to come back later?
-> In which case we cannot use this as an heuristic...
-> 
-> So if we do this, it'll require a way for filesystems to say they're
-> filling in as much as they can, or go the sledgehammer way of adding an
-> extra dir_context dir_context callback, either way I'm not sure I want
-> to deal with all that immediately unless I'm told all filesystems will
-> fill as much as possible without ever failing for any temporary reason
-> in the middle of iterate/iterate_shared().
+Use switch and WARN_ON_ONCE if MIGRATE_ASYNC with a fallthrough to
+MIGRATE_SYNC_LIGHT?
 
-I don't have a complete understanding of this area, but my thought was
-not that we would look for any buffer full condition, but rather that
-an iterator could be tested for next_entry == EOF.
+> +	return MAX_SCHEDULE_TIMEOUT;
+> +}
+> +
 
-> Call me greedy but I believe such a flag in the CQE could also be added
-> later on without any bad side effects (as it's optional to check on it
-> to stop calling early and there's no harm in not setting it)?
+Even though HZ is defined at compile time, it is underdesirable to use
+a constant timeout unrelated to HZ because it's normal case is variable
+depending on CONFIG_HZ.  Please use a value like DIV_ROUND_UP(HZ/250) or
+DIV_ROUND_UP(HZ/1000) for a 4ms or 1ms timeout respectively. Even though
+it's still potentially variable, it would make any hypothetical transition
+to [milli|micro|nano]seconds easier in the future as the intent would be
+known. While there are no plans for change as such, working in jiffies is
+occasionally problematic in kernel/sched/. At OSPM this year, the notion
+of dynamic HZ was brought up (it would be hard) and a preliminary step
+would be converting all uses of HZ to normal time.
 
-Certainly it could be added later, but I wanted to make sure some thought
-was put into it now.  It would be nice to have it sooner rather than later
-though...
-
-> 
-> > (* As an aside, the only place I've ever seen a non-zero lseek on a
-> > directory, is in a very resource limited environment, e.g. too small
-> > open files limit.  In the case of a depth-first directory scan, it
-> > must close directories before completely reading them, and reopen /
-> > lseek to their previous position in order to continue.  This scenario
-> > is certainly not worth bothering with for io_uring.)
-> 
-> (I also thought of userspace NFS/9P servers are these two at least get
-> requests from clients with an arbitrary offset, but I'll be glad to
-> forget about them for now...)
-> 
-> -- 
-> Dominique Martinet | Asmadeus
+-- 
+Mel Gorman
+SUSE Labs
