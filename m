@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78CA26EC458
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 06:25:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6336EC45C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 06:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230382AbjDXEZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 00:25:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51098 "EHLO
+        id S230392AbjDXE0m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 00:26:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjDXEZe (ORCPT
+        with ESMTP id S229477AbjDXE0l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 00:25:34 -0400
+        Mon, 24 Apr 2023 00:26:41 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC27919A4;
-        Sun, 23 Apr 2023 21:25:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2C1819A4;
+        Sun, 23 Apr 2023 21:26:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
         Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To:References;
-        bh=2Qb4zQ9ksN8MuZZ+mD1yaDjq361e0yne8EL9nnCgEYs=; b=V75BRYunrNqwadwy7gWSnNakAf
-        mxgw3trke8W5Cg+rsq5VCWKcqIPAnxF6HiWGMfUH+M0dD+waeVM4yr2iOTYKlG0ITNrA9S1XFw6yZ
-        j7Em9nOpgqlxXvff/2GdTdcEfOlFDZfYRPwO6OxqmrzqGVKRpwf5mHikW5V9tKCknfwIbCFpoj9mz
-        cx/hksa1ClBAp0/nT5gaPsMsWGwrsPqsCugETaXEDCYa9H8WFEgO6pwXWOY6d+/LVmuOecZQYYYYF
-        Aizu4UtfCsqy+3HnC/NX3xm3uXdcdEt2vNA66JqVAIJr8eDQobylnnp+9cIUbrhXy9KRT/78UumfO
-        sKN8pqJQ==;
+        bh=JqDs4xkf7Ug1Jc+sjAC8OMHWtMT118JZ11ZlIoVhBXs=; b=RUITMNzjZPCxNGjv+GxNEhG4e6
+        FxWsW5yXVCTaNFs+/V+LGGjWNrJ4RbCW0c7U0Rs2GuSZMoNy7ZOb9sfY++yTY0NEeCx9XxnnDWR6V
+        GU6+Z2dewSVqeVxQeZE6srme94BtCZO2VAZFYNXRsKYTKJPJB7jk4qS9W1+G+CyKLfKYqWN07rQLL
+        p7L32TU4lTv8Zq6y5rM7OhXcYXo/A1jVyKa/tJeCc/yNc4mi5z8C1hCx2KzEfEm8bOm7y5A0ECrhS
+        SA8FQbJoqdEWjGYIs5yDO/8z7rLWYYQ0zRHa95P8hXm7IIxpGN40Dne7+zMUBP2UsR78wylFO+Xc8
+        Q45bGL+Q==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pqnlZ-00C0Fe-0y;
-        Mon, 24 Apr 2023 04:25:29 +0000
-Date:   Mon, 24 Apr 2023 05:25:29 +0100
+        id 1pqnmg-00C0Ho-0s;
+        Mon, 24 Apr 2023 04:26:38 +0000
+Date:   Mon, 24 Apr 2023 05:26:38 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [git pull] fget() whack-a-mole
-Message-ID: <20230424042529.GI3390869@ZenIV>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [git pull] the rest of write_one_page() series
+Message-ID: <20230424042638.GJ3390869@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -47,42 +47,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
+The following changes since commit eeac8ede17557680855031c6f305ece2378af326:
 
-  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+  Linux 6.3-rc2 (2023-03-12 16:36:44 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fd
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-write-one-page
 
-for you to fetch changes up to 4a892c0fe4bb0546d68a89fa595bd22cb4be2576:
+for you to fetch changes up to 2d683175827171c982f91996fdbef4f3fd8b1b01:
 
-  fuse_dev_ioctl(): switch to fdget() (2023-04-20 22:55:35 -0400)
+  mm,jfs: move write_one_page/folio_write_one to jfs (2023-03-12 20:00:42 -0400)
 
 ----------------------------------------------------------------
-fget() to fdget() conversions
+write_one_page series
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
 ----------------------------------------------------------------
-Al Viro (8):
-      convert setns(2) to fdget()/fdput()
-      convert sgx_set_attribute() to fdget()/fdput()
-      SVM-SEV: convert the rest of fget() uses to fdget() in there
-      kill the last remaining user of proc_ns_fget()
-      build_mount_idmapped(): switch to fdget()
-      bpf: switch to fdget_raw()
-      cgroup_get_from_fd(): switch to fdget_raw()
-      fuse_dev_ioctl(): switch to fdget()
+Christoph Hellwig (3):
+      ufs: don't flush page immediately for DIRSYNC directories
+      ocfs2: don't use write_one_page in ocfs2_duplicate_clusters_by_page
+      mm,jfs: move write_one_page/folio_write_one to jfs
 
- arch/x86/kernel/cpu/sgx/main.c | 11 +++++------
- arch/x86/kvm/svm/sev.c         | 26 ++++++++++++++------------
- fs/fuse/dev.c                  | 41 +++++++++++++++++++++--------------------
- fs/namespace.c                 | 12 ++++++------
- fs/nsfs.c                      | 18 ------------------
- include/linux/proc_ns.h        |  1 -
- kernel/bpf/bpf_inode_storage.c | 38 +++++++++++++++-----------------------
- kernel/cgroup/cgroup.c         | 10 ++++------
- kernel/nsproxy.c               | 17 ++++++++---------
- net/core/net_namespace.c       | 23 +++++++++++------------
- 10 files changed, 84 insertions(+), 113 deletions(-)
+ fs/jfs/jfs_metapage.c   | 39 ++++++++++++++++++++++++++++++++++-----
+ fs/ocfs2/refcounttree.c |  9 +++++----
+ fs/ufs/dir.c            | 29 +++++++++++++++++++----------
+ include/linux/pagemap.h |  6 ------
+ mm/page-writeback.c     | 40 ----------------------------------------
+ 5 files changed, 58 insertions(+), 65 deletions(-)
