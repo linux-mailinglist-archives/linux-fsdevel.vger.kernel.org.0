@@ -2,172 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D01FF6EC70C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 09:27:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9DB16EC713
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 09:30:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231229AbjDXH1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 03:27:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50398 "EHLO
+        id S231363AbjDXHaC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 03:30:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229641AbjDXH1X (ORCPT
+        with ESMTP id S231381AbjDXH36 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 03:27:23 -0400
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F647E53
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 00:27:22 -0700 (PDT)
-Received: by mail-qt1-x834.google.com with SMTP id d75a77b69052e-3ef34c49cb9so1446471cf.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 00:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1682321241; x=1684913241;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ahdEQL93PRhlUbZy1YrzF2+fsjVJoQaMUbVlOD7o0GU=;
-        b=OWHzNKDIh5f/Xv52he3IGOyyQUN9IGcya31DKiyDv/p7ov6b6BETUqTYjlamGM1LMA
-         sEfMzsZt51e4g2a3ZenAv5vilSl9Lv1XGLb2k6gOqRGQ/oiLRGQ2pQwvF02wgdX+yJdC
-         odjLtL8xXhgb253+qBCHC+Vsg4wzAzjWm1Kg3oeRgrDK+/Pmeff3yXaKYi3o/lsBUu6B
-         mLqY1Sbpai89QJKjS8awYi+lwXqV15+vM+giIOiNvTTWPpBZvi+Duql8pZCrq/P1mGgv
-         DPyPNwisFFFVZZFzjPCu9f5fArUVKqFtD3hT4FqoyIT4n9SGaooEUiZ7FKCJEIAk6FvP
-         mxRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682321241; x=1684913241;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ahdEQL93PRhlUbZy1YrzF2+fsjVJoQaMUbVlOD7o0GU=;
-        b=aq0SSakaxQZpSk+9eJq4pXGVhgirkmZfj+/3Yhn1kbTjgZ5eFS5mmhUo2fZ0VXuD3U
-         0KKom8prfwX71/Tnk0ashLNHHhdxJ4CozUlAstuSBCmVcUsiLmk6EIVUqJIfEyd4nTT1
-         +rhlibGoALd6nUZ+BN19bb1iQ0+qvQhxUDZSRs/yCfy8utF+RzzVJuKeg634d48d2xtt
-         1sSf5ch3q/iDofbM4kiSKxYOrAk5R6T5IM/VgL8s06BoDIWgWaSuGKqeglrv6KfzxPM9
-         JdBSBQgMBpWK5lNOjmqpFtAcHgb1wBWetSFp0qXHVjrtAUBlusKSPtdUb8x99TxMpeao
-         FdiQ==
-X-Gm-Message-State: AAQBX9cnKnizHuhAe6lvf7DFr67mpeEXoka2boRfBzHKpjjzu5wzwbTp
-        TASwuooWTnBSZMQageq9LaBj1UU90dV1EbRBgyTASw==
-X-Google-Smtp-Source: AKy350bWGGOREUaO51p6fbDBec9ga2qR/WR5xh9DJosJU0CekJPlwOYwih39WFr3VRQDASYoi0jizEqSf1Higgp57GU=
-X-Received: by 2002:ac8:5c0c:0:b0:3ef:19fe:230d with SMTP id
- i12-20020ac85c0c000000b003ef19fe230dmr423101qti.17.1682321241170; Mon, 24 Apr
- 2023 00:27:21 -0700 (PDT)
+        Mon, 24 Apr 2023 03:29:58 -0400
+Received: from tiger.tulip.relay.mailchannels.net (tiger.tulip.relay.mailchannels.net [23.83.218.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5BECE53;
+        Mon, 24 Apr 2023 00:29:53 -0700 (PDT)
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 274B68C0DA8;
+        Mon, 24 Apr 2023 07:29:49 +0000 (UTC)
+Received: from pdx1-sub0-mail-a231.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 937BC8C0D91;
+        Mon, 24 Apr 2023 07:29:48 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1682321388; a=rsa-sha256;
+        cv=none;
+        b=i1VYIHVqcBq38YFvy6ObTOw3nGZBFrks8Jkp9bMNJlemw9MYMr3+qRcUeJrfrzkLzTeW/H
+        BH4rN4z5LLJTim1JIAb5A5RhG8gA2v+lsAD+9JGz1D+9qSv3TUSWWIdX1SN1yoesfUY2sr
+        ztPwJWIHyroyJnpCyIKKVsWwAUlecVeyul7oFsr3PqiPnBAy8kfgyn1x8m766YD8FEyhPc
+        gCJyr9guBK0lFQYhnRsleNRBa82UAI55NYS5YIx09NXJcOWmmzOvtf0CoQ1L63HwnxaRdD
+        lXdfRZBrsvRMMEJp6FexpPuOrK0WmoC4cRrMbAEBmMLwlznER10MHYN3//ZyFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+        s=arc-2022; t=1682321388;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references:dkim-signature;
+        bh=xkn+0/xEzUELhMvEZfNFaqYe4uOX5uMuyqs9IjhPVzE=;
+        b=mRlXnkJioK+gqIbuLLlHXxv0sKj9alkKRTuDMutYDiarQWW+eACnG/8eojlwMuvGoOHrce
+        nn8TG6rg9MPuhA2J4HTG1vAVsZud5AlM4UK0vF6JtKpHQ4QtgO3yacDfPSZKUwLoflv9hm
+        YBj9ntHIGYZAxQCg3N6tNTo6tZ9BSpcnthOfUULGUJfaTvmi/jHSNj1usmyUMdrEp2aGlb
+        g9EFyv1PsmupifvPPPGdAvCYLwGRRkYl6JGWmFPwj2Edb4hT4H5Z+ux7X/OxR3ztQH8Lp5
+        3h62RwXpsWB3r+X1g4IGeKQ8g3pa93LR4Sk9QFRcMAE6+lXmLwG5kLLK2bh34w==
+ARC-Authentication-Results: i=1;
+        rspamd-548d6c8f77-vc5xk;
+        auth=pass smtp.auth=dreamhost smtp.mailfrom=bugs@claycon.org
+X-Sender-Id: dreamhost|x-authsender|cosmos@claycon.org
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|cosmos@claycon.org
+X-MailChannels-Auth-Id: dreamhost
+X-Supply-Ski: 5099a5e03bb63a7d_1682321388899_1523740686
+X-MC-Loop-Signature: 1682321388899:308728539
+X-MC-Ingress-Time: 1682321388899
+Received: from pdx1-sub0-mail-a231.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.97.48.69 (trex/6.7.2);
+        Mon, 24 Apr 2023 07:29:48 +0000
+Received: from ps29521.dreamhostps.com (ps29521.dreamhostps.com [69.163.186.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cosmos@claycon.org)
+        by pdx1-sub0-mail-a231.dreamhost.com (Postfix) with ESMTPSA id 4Q4cGN2G8Lz3K;
+        Mon, 24 Apr 2023 00:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=claycon.org;
+        s=dreamhost; t=1682321388;
+        bh=xkn+0/xEzUELhMvEZfNFaqYe4uOX5uMuyqs9IjhPVzE=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=SPoanSj/h/pitmFSCkVNu5JJ4uBLBxOEt1chC9h5m8V6oeqZAhJs2HvF4RrYIP/rQ
+         eEcl2XZQviKcBVZCHMLWEoV9uqJr+m43DXRPGBtsM1R9HCWhrBZTTc2CkmPamTKj6l
+         M/NTskKIoLGk+PhGfpuZueXKZy2i/aL+rm3jkT1L1aIf3Q97GdjweJu4/9XjASx0op
+         pcgoOlMnbU5ja36TK3s7WOi9u3D+Bd8sbrF7XMJZlFz2TjxPdoa+fkXmTJEXacRZ4C
+         hpGdrJgYNqgIbYq0GYvVIzmbwcvikmx6b680z7Hkem8w+rWeeBaz7GNeM8ohmNxWTL
+         2f7WnP1wc++xA==
+Date:   Mon, 24 Apr 2023 02:29:46 -0500
+From:   Clay Harris <bugs@claycon.org>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
+Message-ID: <20230424072946.uuzjvuqrch7m4zuk@ps29521.dreamhostps.com>
+References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
+ <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
+ <20230423224045.GS447837@dread.disaster.area>
+ <ZEXChAJfCRPv9vbs@codewreck.org>
 MIME-Version: 1.0
-References: <000000000000d3b33905fa0fd4a6@google.com>
-In-Reply-To: <000000000000d3b33905fa0fd4a6@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 24 Apr 2023 09:27:00 +0200
-Message-ID: <CACT4Y+a20C5kUHRKbFB08QsLbdia+ELCOcKibJVY_v+xmjMPow@mail.gmail.com>
-Subject: Re: [syzbot] [ext4?] KCSAN: data-race in __es_find_extent_range /
- __es_find_extent_range (6)
-To:     syzbot <syzbot+4a03518df1e31b537066@syzkaller.appspotmail.com>
-Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-15.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZEXChAJfCRPv9vbs@codewreck.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 24 Apr 2023 at 09:19, syzbot
-<syzbot+4a03518df1e31b537066@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    44149752e998 Merge tag 'cgroup-for-6.3-rc6-fixes' of git:/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=100db37bc80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=710057cbb8def08c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4a03518df1e31b537066
-> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/7bfa303f05cc/disk-44149752.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/4e8ea8730409/vmlinux-44149752.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e584bce13ba7/bzImage-44149752.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+4a03518df1e31b537066@syzkaller.appspotmail.com
+On Mon, Apr 24 2023 at 08:43:00 +0900, Dominique Martinet quoth thus:
 
-The race is here:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ext4/extents_status.c?id=44149752e9987a9eac5ad78e6d3a20934b5e018d#n271
+> Dave Chinner wrote on Mon, Apr 24, 2023 at 08:40:45AM +1000:
+> > This doesn't actually introduce non-blocking getdents operations, so
+> > what's the point? If it just shuffles the getdents call off to a
+> > background thread, why bother with io_uring in the first place?
+> 
+> As said in the cover letter my main motivation really is simplifying the
+> userspace application:
+>  - style-wise, mixing in plain old getdents(2) or readdir(3) in the
+> middle of an io_uring handling loop just feels wrong; but this may just
+> be my OCD talking.
+>  - in my understanding io_uring has its own thread pool, so even if the
+> actual getdents is blocking other IOs can progress (assuming there is
+> less blocked getdents than threads), without having to build one's own
+> extra thread pool next to the uring handling.
+> Looking at io_uring/fs.c the other "metadata related" calls there also
+> use the synchronous APIs (renameat, unlinkat, mkdirat, symlinkat and
+> linkat all do), so I didn't think of that as a problem in itself.
 
-If I am reading this correctly, it can lead to returning a wrong
-extent if tree->cache_es is re-read after the range check.
-I think tree->cache_es read/write should use READ/WRITE_ONCE.
+Having written code to create additional worker threads in addition
+to using io_uring as a main loop, I'm glad to see this proposal back
+again.  I think the original work was shot down much too hastily based
+on the file positioning issues.  Really only two cases of directory
+position are useful*, which can be expressed either as an off_t
+(0 = rewind, -1 = curpos), or a single bit flag.  As I understand the
+code, the rewind case shouldn't be any problem.  From a practical
+viewpoint, I don't think non-blocking would see a lot of use, but it
+wouldn't hurt.
 
-> ==================================================================
-> BUG: KCSAN: data-race in __es_find_extent_range / __es_find_extent_range
->
-> write to 0xffff88810a5a98a8 of 8 bytes by task 10666 on cpu 0:
->  __es_find_extent_range+0x212/0x300 fs/ext4/extents_status.c:296
->  ext4_es_find_extent_range+0x91/0x260 fs/ext4/extents_status.c:318
->  ext4_ext_put_gap_in_cache fs/ext4/extents.c:2284 [inline]
->  ext4_ext_map_blocks+0x120d/0x36c0 fs/ext4/extents.c:4191
->  ext4_map_blocks+0x2a0/0x1050 fs/ext4/inode.c:576
->  ext4_mpage_readpages+0x699/0x1440 fs/ext4/readpage.c:300
->  ext4_read_folio+0xc5/0x1a0 fs/ext4/inode.c:3308
->  filemap_read_folio+0x2c/0x100 mm/filemap.c:2424
->  filemap_fault+0x66f/0xb20 mm/filemap.c:3367
->  __do_fault mm/memory.c:4155 [inline]
->  do_read_fault mm/memory.c:4506 [inline]
->  do_fault mm/memory.c:4635 [inline]
->  handle_pte_fault mm/memory.c:4923 [inline]
->  __handle_mm_fault mm/memory.c:5065 [inline]
->  handle_mm_fault+0x115d/0x21d0 mm/memory.c:5211
->  faultin_page mm/gup.c:925 [inline]
->  __get_user_pages+0x363/0xc30 mm/gup.c:1147
->  populate_vma_page_range mm/gup.c:1543 [inline]
->  __mm_populate+0x23a/0x360 mm/gup.c:1652
->  mm_populate include/linux/mm.h:3026 [inline]
->  vm_mmap_pgoff+0x174/0x210 mm/util.c:547
->  ksys_mmap_pgoff+0x2ac/0x320 mm/mmap.c:1410
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
->
-> read to 0xffff88810a5a98a8 of 8 bytes by task 10630 on cpu 1:
->  __es_find_extent_range+0x79/0x300 fs/ext4/extents_status.c:270
->  __es_scan_range fs/ext4/extents_status.c:345 [inline]
->  __es_scan_clu fs/ext4/extents_status.c:399 [inline]
->  ext4_es_scan_clu+0xe4/0x190 fs/ext4/extents_status.c:415
->  ext4_insert_delayed_block fs/ext4/inode.c:1694 [inline]
->  ext4_da_map_blocks fs/ext4/inode.c:1806 [inline]
->  ext4_da_get_block_prep+0x575/0xa70 fs/ext4/inode.c:1870
->  __block_write_begin_int+0x349/0xe50 fs/buffer.c:2034
->  __block_write_begin+0x5e/0x110 fs/buffer.c:2084
->  ext4_da_write_begin+0x2fa/0x610 fs/ext4/inode.c:3084
->  generic_perform_write+0x1c3/0x3d0 mm/filemap.c:3926
->  ext4_buffered_write_iter+0x234/0x3e0 fs/ext4/file.c:289
->  ext4_file_write_iter+0xd7/0x10e0
->  call_write_iter include/linux/fs.h:1851 [inline]
->  new_sync_write fs/read_write.c:491 [inline]
->  vfs_write+0x463/0x760 fs/read_write.c:584
->  ksys_write+0xeb/0x1a0 fs/read_write.c:637
->  __do_sys_write fs/read_write.c:649 [inline]
->  __se_sys_write fs/read_write.c:646 [inline]
->  __x64_sys_write+0x42/0x50 fs/read_write.c:646
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
->
-> value changed: 0xffff88810a653dc0 -> 0xffff8881067334d8
->
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 1 PID: 10630 Comm: syz-executor.0 Not tainted 6.3.0-rc6-syzkaller-00138-g44149752e998 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
-> ==================================================================
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+This also seems like a good place to bring up a point I made with
+the last attempt at this code.  You're missing an optimization here.
+getdents knows whether it is returning a buffer because the next entry
+won't fit versus because there are no more entries.  As it doesn't
+return that information, callers must always keep calling it back
+until EOF.  This means a completely unnecessary call is made for
+every open directory.  In other words, for a directory scan where
+the buffers are large enough to not overflow, that literally twice
+as many calls are made to getdents as necessary.  As io_uring is
+in-kernel, it could use an internal interface to getdents which would
+return an EOF indicator along with the (probably non-empty) buffer.
+io_uring would then return that flag with the CQE.
+
+
+(* As an aside, the only place I've ever seen a non-zero lseek on a
+directory, is in a very resource limited environment, e.g. too small
+open files limit.  In the case of a depth-first directory scan, it
+must close directories before completely reading them, and reopen /
+lseek to their previous position in order to continue.  This scenario
+is certainly not worth bothering with for io_uring.)
+
+> > Filesystems like XFS can easily do non-blocking getdents calls - we
+> > just need the NOWAIT plumbing (like we added to the IO path with
+> > IOCB_NOWAIT) to tell the filesystem not to block on locks or IO.
+> > Indeed, filesystems often have async readahead built into their
+> > getdents paths (XFS does), so it seems to me that we really want
+> > non-blocking getdents to allow filesystems to take full advantage of
+> > doing work without blocking and then shuffling the remainder off to
+> > a background thread when it actually needs to wait for IO....
+> 
+> I believe that can be done without any change of this API, so that'll be
+> a very welcome addition when it is ready; I don't think the adding the
+> uring op should wait on this if we can agree a simple wrapper API is
+> good enough (or come up with a better one if someone has a Good Idea)
+> 
+> (looking at io_uring/rw.c for comparison, io_getdents() will "just" need
+> to be adjusted to issue an async req if IO_URING_F_NONBLOCK is set, and
+> the poll/retry logic sorted out)
+> 
+> Thanks,
+> -- 
+> Dominique Martinet | Asmadeus
