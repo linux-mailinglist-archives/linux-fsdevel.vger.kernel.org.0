@@ -2,118 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CB576ED70E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 23:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2EBE6ED70C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 23:58:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233081AbjDXV6l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 17:58:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51898 "EHLO
+        id S233017AbjDXV62 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 17:58:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233074AbjDXV6k (ORCPT
+        with ESMTP id S232490AbjDXV61 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 17:58:40 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E90E5FDB
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:58:38 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-94f3df30043so775460466b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1682373516; x=1684965516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CxDPBm3zzu9au0mdoHab7CA/lqcegVQe6ANH2LAFZKk=;
-        b=PqA2KPwDHGkc1IWHQm1LEVe4oV+uBQo05tonRIJ3hXSM6K+ffBlC3+vw//47cG+Zbn
-         aYuCs5WXoj3AqBHPR18lq63lRm9Hj9HPjSVGHGad85bwh+8mkTKiMVSQ0XWAODG77V3z
-         UhIWOKO0+XVjxCScqVrtxAYxe7G88MOb8MH/0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682373516; x=1684965516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CxDPBm3zzu9au0mdoHab7CA/lqcegVQe6ANH2LAFZKk=;
-        b=luws9mY34OuRf3iAdS7mqD2SfEaDREW4K9V4hDrxvEofYU6tZiiHm7NxtUaf/YAgHT
-         Pba9UAr2vRWpA6oi0AIRgznLKRYELRih3z/dwQD6N1N/dBdRKJI/IBUKJ0M5WcGdvp+3
-         ytVYXfBeshRe7hevp3MS3N01EtveO8N5VVz8dsi3isEDMmk1qQAynGQLx4haDWEIXckE
-         gmF3N8rqhSI0zwKZMF5GnaWEwdKfnQBpcYm5fNZv+r8IjZF2zjT79RfwhOnz9jWWCFC4
-         vE3JrT0GXahXSdISiAwykjlvL6PPuWODNnfMMH1kSuUDiRRm5AUlQd4//O6VkEgn5+ru
-         JnXA==
-X-Gm-Message-State: AAQBX9cYv+FDZ3C2eHYbapKx043y5HtPpXQLHxVTFIOT0rFDlTbgDf0A
-        TZLGyL7fYL3GkOh9pDqRn5q/oBafnVBkI+1K5/XoSDVd
-X-Google-Smtp-Source: AKy350Z2BA/rhENKWA4IljmP2gEusyLN4YjJ2v0ztlUguDDDMq/vH+WWX9qsQ31XP9C/wOkXMNMJyg==
-X-Received: by 2002:a17:906:6009:b0:94d:69e0:6098 with SMTP id o9-20020a170906600900b0094d69e06098mr12517430ejj.45.1682373516429;
-        Mon, 24 Apr 2023 14:58:36 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id d16-20020a1709063ed000b0094f499257f7sm6002611ejj.151.2023.04.24.14.58.35
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Apr 2023 14:58:35 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-94eee951c70so776682166b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 14:58:35 -0700 (PDT)
-X-Received: by 2002:aa7:c44c:0:b0:509:ef47:768 with SMTP id
- n12-20020aa7c44c000000b00509ef470768mr106511edr.30.1682373515386; Mon, 24 Apr
- 2023 14:58:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230421-seilbahn-vorpreschen-bd73ac3c88d7@brauner>
- <CAHk-=wgyL9OujQ72er7oXt_VsMeno4bMKCTydBT1WSaagZ_5CA@mail.gmail.com>
- <6882b74e-874a-c116-62ac-564104c5ad34@kernel.dk> <CAHk-=wiQ8g+B0bCPJ9fxZ+Oa0LPAUAyryw9i+-fBUe72LoA+QQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wiQ8g+B0bCPJ9fxZ+Oa0LPAUAyryw9i+-fBUe72LoA+QQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 24 Apr 2023 14:58:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgGzwaz2yGO9_PFv4O1ke_uHg25Ab0UndK+G9vJ9V4=hw@mail.gmail.com>
-Message-ID: <CAHk-=wgGzwaz2yGO9_PFv4O1ke_uHg25Ab0UndK+G9vJ9V4=hw@mail.gmail.com>
-Subject: Re: [GIT PULL] pipe: nonblocking rw for io_uring
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+        Mon, 24 Apr 2023 17:58:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 048DE5596;
+        Mon, 24 Apr 2023 14:58:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9178E61FEC;
+        Mon, 24 Apr 2023 21:58:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E7A4C433EF;
+        Mon, 24 Apr 2023 21:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1682373505;
+        bh=GGIx+HG4RqLpRpWhwicWsnzwRbRDyOa6ai9UmyBpCL4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DqPKH6tOcxN1rpWBfAP+OHlP6C3ty8wGvGNMxNEcqhAMTpFQWzhRcFgmjvzsD2iST
+         +ayLkP6RlEH6L8SGKkhUoIisHVpcAGErbhUeQaaGMA5PA7AgyrJOFWL/2OLRfMrvoh
+         EMEV/HZgqiOQSuYbsI5/soHCYkUyl3OhcalnvwAs=
+Date:   Mon, 24 Apr 2023 14:58:23 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Yajun Deng <yajun.deng@linux.dev>, david@redhat.com,
+        osalvador@suse.de, gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mmzone: Introduce for_each_populated_zone_pgdat()
+Message-Id: <20230424145823.b8e8435dd3242614371be6d5@linux-foundation.org>
+In-Reply-To: <ZEX8jV/FQm2gL+2j@casper.infradead.org>
+References: <20230424030756.1795926-1-yajun.deng@linux.dev>
+        <ZEX8jV/FQm2gL+2j@casper.infradead.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 2:37=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> And I completely refuse to add that trylock hack to paper that over.
-> The pipe lock is *not* meant for IO.
+On Mon, 24 Apr 2023 04:50:37 +0100 Matthew Wilcox <willy@infradead.org> wrote:
 
-If you want to paper it over, do it other ways.
+> On Mon, Apr 24, 2023 at 11:07:56AM +0800, Yajun Deng wrote:
+> > Instead of define an index and determining if the zone has memory,
+> > introduce for_each_populated_zone_pgdat() helper that can be used
+> > to iterate over each populated zone in pgdat, and convert the most
+> > obvious users to it.
+> 
+> I don't think the complexity of the helper justifies the simplification
+> of the users.
 
-I'd love to just magically fix splice, but hey, that might not be possible.
+Are you sure?
 
-But possible fixes papering this over might be to make splice "poison
-a pipe, and make io_uring falls back on io workers only on pipes that
-do splice. Make any normal pipe read/write load sane.
+> > +++ b/include/linux/mmzone.h
+> > @@ -1580,6 +1580,14 @@ extern struct zone *next_zone(struct zone *zone);
+> >  			; /* do nothing */		\
+> >  		else
+> >  
+> > +#define for_each_populated_zone_pgdat(zone, pgdat, max) \
+> > +	for (zone = pgdat->node_zones;                  \
+> > +	     zone < pgdat->node_zones + max;            \
+> > +	     zone++)                                    \
+> > +		if (!populated_zone(zone))		\
+> > +			; /* do nothing */		\
+> > +		else
+> > +
 
-And no, don't worry about races. If you have the same pipe used for
-io_uring IO *and* somebody else then doing splice on it and racing,
-just take the loss and tell people that they might hit a slow case if
-they do stupid things.
+But each of the call sites is doing this, so at least the complexity is
+now seen in only one place.
 
-Basically, the patch might look like something like
+btw, do we need to do the test that way?  Why won't this work?
 
- - do_pipe() sets FMODE_NOWAIT by default when creating a pipe
+#define for_each_populated_zone_pgdat(zone, pgdat, max) \
+	for (zone = pgdat->node_zones;                  \
+	     zone < pgdat->node_zones + max;            \
+	     zone++)                                    \
+		if (populated_zone(zone))
 
- - splice then clears FMODE_NOWAIT on pipes as they are used
-
-and now io_uring sees whether the pipe is playing nice or not.
-
-As far as I can tell, something like that would make the
-'pipe_buf_confirm()' part unnecessary too, since that's only relevant
-for splice.
-
-A fancier version might be to only do that "splice then clears
-FMODE_NOWAIT" thing if the other side of the splice has not set
-FMODE_NOWAIT.
-
-Honestly, if the problem is "pipe IO is slow", then splice should not
-be the thing you optimize for.
-
-                 Linus
+I suspect it was done the original way in order to save a tabstop,
+which is no longer needed.
