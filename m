@@ -2,160 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A9946EC7EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 10:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 854CE6EC7FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 10:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231312AbjDXIbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 04:31:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59148 "EHLO
+        id S230455AbjDXIlr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 04:41:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbjDXIbI (ORCPT
+        with ESMTP id S229493AbjDXIlp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 04:31:08 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2A7F19F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 01:31:06 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4efea87c578so2307e87.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 01:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1682325065; x=1684917065;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R+OahxMAVmQfev2ZxChkwLH4e1xTOOhd3vvP7QZ00NE=;
-        b=Kf1sD+GUH5ccLoKZlEtdVT0Gp45kr1DeAC2QMBBz/SlJAdlgFOP1Fk/Mvz22XfhHrz
-         yJnkuykq7h/iBuPX0i9HWh2O5uTRZCqs15LYuk7V0FgWGgeBDTAIEmE5YzyK8fPCBZig
-         Z3rsss9yloAPmWnSGh+E91XRnJDZuCdOIc6De6+x8MRng3BdMPhGJv6jyb7GmgCCiEu+
-         gFIHxzrbdYHSCO7a/3ivPnbQb0sScMkpG8xrsqf9jQpkVhZDHKk2zadzcjay+ES9x9Xp
-         WeJNDQosuZkBi85N1Pmz2K1a9ByUz0XnaaoKfgyp2y8IANnjyTInH+bQnrbYl5I2pEkP
-         i6EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682325065; x=1684917065;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R+OahxMAVmQfev2ZxChkwLH4e1xTOOhd3vvP7QZ00NE=;
-        b=c0SAAxgb+xju93toR/MdjuNa3FqdMT6294wMQL+B2JhnynQbG15LL0z4i/er7VbajU
-         mbM37p/6/3mHQzQ30wgwN0p0AmoTL8q/koWPT9yDIODg5OzLQElyAbupCKH3Uq9F3FaL
-         hd+CVgVPgXQPJCGbfd0R6QAS3AzoBDnMUFfzU0Kp6/SMOJGUcZiA2RoLNhHii11Pc3uB
-         DZdL9T6XKnUCND71vjsvwgPxBxA++78Ysrh54KGjnvbas++TxwN+ZxNKRIm+aUpL8487
-         tjtzxtYFTuuv6Cq0s//I59fGSPkmREBwFxQ3LrvfxVhm7jtc+tij1XhvDm35jfI8WwYt
-         ypBQ==
-X-Gm-Message-State: AAQBX9fi80ZlynB2J0BhQ19KKlqIQ6oGBBPXkSGII4z06CUK6c9qEFM1
-        dBIYaF+5JstOVQWVyOaioIxtRfl50A97rIDgNE7i/A==
-X-Google-Smtp-Source: AKy350Ztz0so1N7bmoRmue+lrejsdK+DfVnS8+93q89Js0Ka/JOL8zPDHbyLP6rvGoNcO/VkuGFFDgchYMO7h73f7Uc=
-X-Received: by 2002:a05:6512:12ce:b0:4e8:3f1e:de43 with SMTP id
- p14-20020a05651212ce00b004e83f1ede43mr228809lfg.7.1682325064945; Mon, 24 Apr
- 2023 01:31:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000e7c6d205fa10a3cd@google.com>
-In-Reply-To: <000000000000e7c6d205fa10a3cd@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 24 Apr 2023 10:30:51 +0200
-Message-ID: <CACT4Y+YajDb5QpSziTazoyn587JXwXet2w7Jkqkj9v31HZtJxw@mail.gmail.com>
-Subject: Re: [syzbot] [afs?] [net?] KCSAN: data-race in rxrpc_send_data / rxrpc_set_call_completion
-To:     syzbot <syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, dhowells@redhat.com, edumazet@google.com,
-        kuba@kernel.org, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        marc.dionne@auristor.com, netdev@vger.kernel.org,
-        pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 24 Apr 2023 04:41:45 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A80F0E48;
+        Mon, 24 Apr 2023 01:41:42 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 46BEAC009; Mon, 24 Apr 2023 10:41:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682325701; bh=eico9CA8NETTY0+AtDEEdQCQcAv+OvlCAUKciOQojjw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Tau0J9eSqnJS64en/AQgIDFGmRUWNhYd0ox3xnyQ5zVKfdIpWvC6wAssvaXBp2KzA
+         wT20elrs53lNYrduGVldUJ8xeOLBoL4HIyj41zml15QR4lXGrmeVOFGodCgC/WLmIC
+         mzWTdOoXrBzCca3USZNp7WsJngy2G2UNcLbkWgLSEBPqXLXzAMt16F2USvVMTyjlVp
+         I4s5odRmS2WWzWxSqoinJTehxAGbwQn0eOejgKcg3xXxFHJLG7Iyh/NMEC7pgjo0YX
+         wxdHtj0TMjXQ3xJ+FCwAgXF4RbGvzSIylisLWCqmSkkSWAktNoIAGVPDh/mDpOBF3l
+         Xa+HDa1PILA0g==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 59CB0C009;
+        Mon, 24 Apr 2023 10:41:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682325700; bh=eico9CA8NETTY0+AtDEEdQCQcAv+OvlCAUKciOQojjw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MN9I73+z63Qabgec65lkgNTKom6HV21MWDMdmhLxw/OiLBWNZJSr90Gw5JhA8y1gv
+         3pOzXBXBcHk4ohDcS+LbzAolsRgXYCrIG6pyVlLqY6jkeC99/gGxXBcE5kfp5N3mPs
+         Rr5kCGfk10WsRLxzANY4J4gzOJ5In03ZTPl/WuITJ0j7Ey5YwfRoNlrt5oYNbSIRdx
+         iHJpjsetlYocUMXv3U6GMRJdPtsbICOijw0PMC59rE2ZEwq3Jnf7WYsmdV5p5watE+
+         ve1Np3OCj0m645te0nHhIRRDsUFEUDu97/0wVdyxp2QA/4ayXxa2dIRrIaFJU+Zjew
+         ToAyMDVaqbUqg==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 8c0edd9c;
+        Mon, 24 Apr 2023 08:41:33 +0000 (UTC)
+Date:   Mon, 24 Apr 2023 17:41:18 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Clay Harris <bugs@claycon.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
+Message-ID: <ZEZArsLzVZnSMG_o@codewreck.org>
+References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
+ <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
+ <20230423224045.GS447837@dread.disaster.area>
+ <ZEXChAJfCRPv9vbs@codewreck.org>
+ <20230424072946.uuzjvuqrch7m4zuk@ps29521.dreamhostps.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230424072946.uuzjvuqrch7m4zuk@ps29521.dreamhostps.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 24 Apr 2023 at 10:17, syzbot
-<syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    148341f0a2f5 Merge tag 'vfs.misc.fixes.v6.3-rc6' of git://..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14a62269c80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=54d63ee086ae78d0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ebc945fdb4acd72cba78
-> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/1c557f92a6e1/disk-148341f0.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/f2c85210e1ce/vmlinux-148341f0.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b019d0447709/bzImage-148341f0.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com
+Thanks!
 
-If I am reading this correctly, rxrpc_send_data() can read wrong
-call->completion and state and incorrectly exit with an error if
-rxrpc_wait_to_be_connected() exists early right after observing error
-set here:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/rxrpc/sendmsg.c?id=148341f0a2f53b5e8808d093333d85170586a15d#n58
-The code seems to assume that at that point all writes done by
-rxrpc_set_call_completion() are already finished, but it's not
-necessarily the case.
+Clay Harris wrote on Mon, Apr 24, 2023 at 02:29:46AM -0500:
+> This also seems like a good place to bring up a point I made with
+> the last attempt at this code.  You're missing an optimization here.
+> getdents knows whether it is returning a buffer because the next entry
+> won't fit versus because there are no more entries.  As it doesn't
+> return that information, callers must always keep calling it back
+> until EOF.  This means a completely unnecessary call is made for
+> every open directory.  In other words, for a directory scan where
+> the buffers are large enough to not overflow, that literally twice
+> as many calls are made to getdents as necessary.  As io_uring is
+> in-kernel, it could use an internal interface to getdents which would
+> return an EOF indicator along with the (probably non-empty) buffer.
+> io_uring would then return that flag with the CQE.
+
+Sorry I didn't spot that comment in the last iteration of the patch,
+that sounds interesting.
+
+This isn't straightforward even in-kernel though: the ctx.actor callback
+(filldir64) isn't called when we're done, so we only know we couldn't
+fill in the buffer.
+We could have the callback record 'buffer full' and consider we're done
+if the buffer is full, or just single-handedly declare we are if we have
+more than `MAXNAMLEN + sizeof(struct linux_dirent64)` left over, but I
+assume a filesystem is allowed to return what it has readily available
+and expect the user to come back later?
+In which case we cannot use this as an heuristic...
+
+So if we do this, it'll require a way for filesystems to say they're
+filling in as much as they can, or go the sledgehammer way of adding an
+extra dir_context dir_context callback, either way I'm not sure I want
+to deal with all that immediately unless I'm told all filesystems will
+fill as much as possible without ever failing for any temporary reason
+in the middle of iterate/iterate_shared().
+Call me greedy but I believe such a flag in the CQE could also be added
+later on without any bad side effects (as it's optional to check on it
+to stop calling early and there's no harm in not setting it)?
 
 
+> (* As an aside, the only place I've ever seen a non-zero lseek on a
+> directory, is in a very resource limited environment, e.g. too small
+> open files limit.  In the case of a depth-first directory scan, it
+> must close directories before completely reading them, and reopen /
+> lseek to their previous position in order to continue.  This scenario
+> is certainly not worth bothering with for io_uring.)
 
+(I also thought of userspace NFS/9P servers are these two at least get
+requests from clients with an arbitrary offset, but I'll be glad to
+forget about them for now...)
 
-
-
-> ==================================================================
-> BUG: KCSAN: data-race in rxrpc_send_data / rxrpc_set_call_completion
->
-> write to 0xffff888159cf3c50 of 4 bytes by task 25673 on cpu 1:
->  rxrpc_set_call_completion+0x71/0x1c0 net/rxrpc/call_state.c:22
->  rxrpc_send_data_packet+0xba9/0x1650 net/rxrpc/output.c:479
->  rxrpc_transmit_one+0x1e/0x130 net/rxrpc/output.c:714
->  rxrpc_decant_prepared_tx net/rxrpc/call_event.c:326 [inline]
->  rxrpc_transmit_some_data+0x496/0x600 net/rxrpc/call_event.c:350
->  rxrpc_input_call_event+0x564/0x1220 net/rxrpc/call_event.c:464
->  rxrpc_io_thread+0x307/0x1d80 net/rxrpc/io_thread.c:461
->  kthread+0x1ac/0x1e0 kernel/kthread.c:376
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
->
-> read to 0xffff888159cf3c50 of 4 bytes by task 25672 on cpu 0:
->  rxrpc_send_data+0x29e/0x1950 net/rxrpc/sendmsg.c:296
->  rxrpc_do_sendmsg+0xb7a/0xc20 net/rxrpc/sendmsg.c:726
->  rxrpc_sendmsg+0x413/0x520 net/rxrpc/af_rxrpc.c:565
->  sock_sendmsg_nosec net/socket.c:724 [inline]
->  sock_sendmsg net/socket.c:747 [inline]
->  ____sys_sendmsg+0x375/0x4c0 net/socket.c:2501
->  ___sys_sendmsg net/socket.c:2555 [inline]
->  __sys_sendmmsg+0x263/0x500 net/socket.c:2641
->  __do_sys_sendmmsg net/socket.c:2670 [inline]
->  __se_sys_sendmmsg net/socket.c:2667 [inline]
->  __x64_sys_sendmmsg+0x57/0x60 net/socket.c:2667
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
->
-> value changed: 0x00000000 -> 0xffffffea
->
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 0 PID: 25672 Comm: syz-executor.5 Not tainted 6.3.0-rc5-syzkaller-00005-g148341f0a2f5 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-> ==================================================================
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000e7c6d205fa10a3cd%40google.com.
+-- 
+Dominique Martinet | Asmadeus
