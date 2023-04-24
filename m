@@ -2,126 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6A8F6ED03A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 16:22:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AE166ED059
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 16:30:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231792AbjDXOWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 10:22:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52146 "EHLO
+        id S231245AbjDXOaD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 10:30:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231771AbjDXOV7 (ORCPT
+        with ESMTP id S229907AbjDXOaC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 10:21:59 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCFF8A51
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 07:21:54 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4edc63e066fso12136e87.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 07:21:54 -0700 (PDT)
+        Mon, 24 Apr 2023 10:30:02 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB66D1708;
+        Mon, 24 Apr 2023 07:30:00 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f19323259dso34206845e9.3;
+        Mon, 24 Apr 2023 07:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1682346113; x=1684938113;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=enbgg+lqaw2zyPJZ1pbEEFHlLXGIOHAiWtJzwllHKYk=;
-        b=d/qZRyT5eP+jU3o4eFNHhYxVnfxA6MScMHl7EjDAUKW8eeAqkTfrkneA4vEc9uBXwZ
-         h4ZGQJRzWcXcoXy42qQQAV1i4o0OUT7utHIj2IoI7VFMMkb3DSzd4yHsNk9rQKJ+Q0Ba
-         nMOvmgEa5xIOvPXkoUS0vb2tva2pNXVvMgkmCungv6F2+M0Fwnc1Jl7fLI7rLZaZWeiU
-         o/IcRqlPrSKXcDkM6nZYnx9nYtaTtj80DS33Cf5UiYjI54XuWOklqvx5bm9Ikxcy3ndx
-         QrzsivjDGtZL5voUC900DRzJleGdv4R1Yf5ZDQmV5GoyD/NumwZc188PEi5kVsnKNkNp
-         Ri3g==
+        d=gmail.com; s=20221208; t=1682346599; x=1684938599;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ALXzGJ5JvLTy0+4F2uq1xRRPXqqALEamM+dBHIwr4DU=;
+        b=jN6OPjaHPR+35RVu5HjWm806ZMgHf01oApnLVzOoITrD4+H3+33xZ6dZ5oRf6qOZUP
+         D8hA3Wt44+/uTDeVRl8Ov5vr+CJfATx0OLo0X1EW5HpwpfUNG+UJik3wBieB7KEjsimQ
+         y1HCZNLKGyA7om63+beqZU93mzJXtP5mOtlZ6xytdf2q3oM+pAkAGAUnopDzvWh322W1
+         4P+KbO6x4luVrUwPFIY3Kz+NJFvZi9mRoQERFsgyWpa7xNiB+Kl9hiYh2UGYR8newEsb
+         nNPRnYDg7clTomT3WnhQfQKHmrFMU6VtI4ds5fP3IX5FZTm3u1VX+ZmjErAMXFNfLvTc
+         Gtzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682346113; x=1684938113;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=enbgg+lqaw2zyPJZ1pbEEFHlLXGIOHAiWtJzwllHKYk=;
-        b=JudcNmtjHB9fFXwPjkOthqhDlVVDMFDasoNCXR/j8R24Av9lsSobbvSuRofPYQR/pz
-         KFlrVmChZA9mSHjdUzLUoFINEQXRd5a2j8QrLE6tbGPKwdv61tdV6c4+cgqWOSc1rf4f
-         cC6cHymqlgmtJd0+J5thL9TohnGbiGFoouaIF9HWxQfokxqZXKU2BkJpEah2Qlz/1Efx
-         WkrLOuSZNlWCqMXD0J4xLqf/1hQjeHJvNrxP14RBIf3gC29eSnPootEQdfAqya+Qm+3S
-         jN/urtfbU4cVEWc1uh2ST5OLkAIcRzqz6UrH2w/TkNGntalkGDONx4/0uTq+ozCkuULG
-         EeuA==
-X-Gm-Message-State: AAQBX9fsCW43SpnHNy9cepZF83zWleswDW7oH/Wi66HTZmOmFgyGsRxn
-        l7iyhxWi3BzxZJC65njEs2uXn+oMa/IUgK7uEXg0Jw==
-X-Google-Smtp-Source: AKy350by1ELWJ/CmwHDxqXyCll4tWAI6i/5CdlY/6JgR+z+2K/yBvdGz9oOpWc3MDBoV51yKVHZIfVVj7zO9PkuCDIY=
-X-Received: by 2002:a05:6512:39c4:b0:4ef:ef1d:a97b with SMTP id
- k4-20020a05651239c400b004efef1da97bmr110782lfu.0.1682346112665; Mon, 24 Apr
- 2023 07:21:52 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1682346599; x=1684938599;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ALXzGJ5JvLTy0+4F2uq1xRRPXqqALEamM+dBHIwr4DU=;
+        b=ByQe8uW8hNfq7uYCLF8fGjkAL/ZJDy4u+j4MsyP69zgWvp8O/uctIleoMvcck6KEYf
+         x5/OxMB1BHdjGkrf4wqgA2sTYbVnYU4s+a22oil/ju15f3xqK2L0d35ZNn0ttQpsuCAo
+         O2iuVRWz1Jow+fNgWMX5flycrvOuzYsLBdgW7tpH5yHAekE8y55LRxRAGH72cSYOhcqM
+         fnlgwNNJeugjOKZaRTCzxcTEPkpzBLsESyJVViweI57B2WpDPAsTE8R9wIsIzSkhffci
+         aTCoq0Huo8zhg93b95jOSRuvZGVNtiMxIrnGcKkxzM7eLhMbZHPlVf8CUqJ04nSOAxSy
+         ixRg==
+X-Gm-Message-State: AAQBX9fPmuFe46T++835Srvcs1VLtQ4zu1hGPLX8wcBSYme8/IdzLwZG
+        nsNlvPkDEjwpXyd2OtoAZyw=
+X-Google-Smtp-Source: AKy350b0rBDMlMKwXgslvzplbT1eTTOv7dxTLMhpCvOuA79NqOaO/7KznoKPY9xRsZr4W2xUpEdJIw==
+X-Received: by 2002:a05:600c:2214:b0:3f1:98bd:acec with SMTP id z20-20020a05600c221400b003f198bdacecmr5257735wml.11.1682346598884;
+        Mon, 24 Apr 2023 07:29:58 -0700 (PDT)
+Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
+        by smtp.gmail.com with ESMTPSA id y21-20020a05600c365500b003f182a10106sm12424385wmq.8.2023.04.24.07.29.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Apr 2023 07:29:57 -0700 (PDT)
+Date:   Mon, 24 Apr 2023 15:29:57 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v2] mm/gup: disallow GUP writing to file-backed mappings
+ by default
+Message-ID: <cd488979-d257-42b9-937f-470cc3c57f5e@lucifer.local>
+References: <c8ee7e02d3d4f50bb3e40855c53bda39eec85b7d.1682321768.git.lstoakes@gmail.com>
+ <ZEZPXHN4OXIYhP+V@infradead.org>
+ <90a54439-5d30-4711-8a86-eba816782a66@lucifer.local>
+ <ZEZ117OMCi0dFXqY@nvidia.com>
+ <c8fff8b3-ead6-4f52-bf17-f2ef2e752b57@lucifer.local>
+ <ZEaGjad50lqRNTWD@nvidia.com>
 MIME-Version: 1.0
-References: <000000000000d0737c05fa0fd499@google.com> <CACT4Y+YKt-YvQ5fKimXAP8nsV=X81OymPd3pxVXvmPG-51YjOw@mail.gmail.com>
- <ZEaCSXG4UTGlHDam@casper.infradead.org> <CACT4Y+YeV8zU2x+3dpJJFez5_33ic3q7B2_+KYrcNOQxooRWpw@mail.gmail.com>
- <ZEaN7PP794H2vbe/@casper.infradead.org>
-In-Reply-To: <ZEaN7PP794H2vbe/@casper.infradead.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 24 Apr 2023 16:21:40 +0200
-Message-ID: <CACT4Y+aHoUT22Cd3yfBzW78iiwy-4P-L0=SHJJ5qaN--n-D2Ng@mail.gmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in __filemap_remove_folio /
- folio_mapping (2)
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     syzbot <syzbot+606f94dfeaaa45124c90@syzkaller.appspotmail.com>,
-        djwong@kernel.org, hch@infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZEaGjad50lqRNTWD@nvidia.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 24 Apr 2023 at 16:10, Matthew Wilcox <willy@infradead.org> wrote:
+On Mon, Apr 24, 2023 at 10:39:25AM -0300, Jason Gunthorpe wrote:
+> On Mon, Apr 24, 2023 at 01:38:49PM +0100, Lorenzo Stoakes wrote:
 >
-> On Mon, Apr 24, 2023 at 03:49:04PM +0200, Dmitry Vyukov wrote:
-> > On Mon, 24 Apr 2023 at 15:21, Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Mon, Apr 24, 2023 at 09:38:43AM +0200, Dmitry Vyukov wrote:
-> > > > On Mon, 24 Apr 2023 at 09:19, syzbot
-> > > > <syzbot+606f94dfeaaa45124c90@syzkaller.appspotmail.com> wrote:
-> > > > If I am reading this correctly, it can lead to NULL derefs in
-> > > > folio_mapping() if folio->mapping is read twice. I think
-> > > > folio->mapping reads/writes need to use READ/WRITE_ONCE if racy.
-> > >
-> > > You aren't reading it correctly.
-> > >
-> > >         mapping = folio->mapping;
-> > >         if ((unsigned long)mapping & PAGE_MAPPING_FLAGS)
-> > >                 return NULL;
-> > >
-> > >         return mapping;
-> > >
-> > > The racing write is storing NULL.  So it might return NULL or it might
-> > > return the old mapping, or it might return NULL.  Either way, the caller
-> > > has to be prepared for NULL to be returned.
-> > >
-> > > It's a false posiive, but probably worth silencing with a READ_ONCE().
-> >
-> > Yes, but the end of the function does not limit effects of races. I
+> > I was being fairly conservative in that list, though we certainly need to
+> > set the flag for /proc/$pid/mem and ptrace to avoid breaking this
+> > functionality (I observed breakpoints breaking without it which obviously
+> > is a no go :). I'm not sure if there's a more general way we could check
+> > for this though?
 >
-> I thought it did.  I was under the impression that the compiler was not
-> allowed to extract loads from within the function and move them outside.
-> Maybe that changed since C99.
+> More broadly we should make sure these usages of GUP safe somehow so
+> that it can reliably write to those types of pages without breaking
+> the current FS contract..
 >
-> > to this:
-> >
-> > if (!((unsigned long)folio->mapping & PAGE_MAPPING_FLAGS) && folio->mapping)
-> >    if (test_bit(AS_UNEVICTABLE, &folio->mapping->flags))
-> >
-> > which does crash.
+> I forget exactly, but IIRC, don't you have to hold some kind of page
+> spinlock while writing to the page memory?
 >
-> Yes, if the compiler is allowed to do that, then that's a possibility.
 
-C11/C++11 simply say any data race renders behavior of the whole
-program undefined. There is no discussion about values, functions,
-anything else.
+I think perhaps you're thinking of the mm->mmap_lock? Which will be held
+for the FOLL_GET cases and simply prevent the VMA from disappearing below
+us but not do much else.
 
-Before that there was no notion of data races, so it wasn't possible
-to talk about possible effects and restrict them. But I don't think
-there ever was an intention to do any practical restrictions around
-function boundaries. That would mean that inlining can only run as the
-latest optimization pass, which would inhibit tons of optimizations.
-Users would throw such a compiler away.
+> So, users that do this, or can be fixed to do this, can get file
+> backed pages. It suggests that a flag name is more like
+> FOLL_CALLER_USES_FILE_WRITE_LOCKING
+>
+
+As stated above, I'm not sure what locking you're referring to, but seems
+to me that FOLL_GET already implies what you're thinking?
+
+I wonder whether we should do this check purely for FOLL_PIN to be honest?
+As this indicates medium to long-term access without mmap_lock held. This
+would exclude the /proc/$pid/mem and ptrace paths which use gup_remote().
+
+That and a very specific use of uprobes are the only places that use
+FOLL_GET in this instance and each of them are careful in any case to
+handle setting the dirty page flag.
+
+All PUP cases that do not specify FOLL_LONGTERM also do this, so we could
+atually go so far as to reduce the patch to simply performing the
+vma_wants_writenotify() check if (FOLL_PIN | FOLL_LONGTERM) is specified,
+which covers the io_uring case.
+
+Alternatively if we wanted to be safer, we could add a FOLL_ALLOW_FILE_PIN
+that is checked on FOLL_PIN and ignored on FOLL_LONGTERM?
+
+> > I wouldn't be totally opposed to dropping it for RDMA too, because I
+> > suspect accessing file-backed mappings for that is pretty iffy.
+> >
+> > Do you have a sense of which in the list you feel could be pared back?
+>
+> Anything using FOLL_LONGTERM should not set the flag, GUP should even
+> block the combination.
+
+OK
+
+>
+> And we need to have in mind that the flag indicates the code is
+> buggy, so if you set it then we should understand how is that caller
+> expected to be fixed.
+>
+> Jason
+
+I think we are working towards a much simpler solution in any case!
