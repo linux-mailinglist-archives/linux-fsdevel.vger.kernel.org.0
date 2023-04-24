@@ -2,54 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 101566EC7BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 10:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70E0C6EC7E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 10:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231546AbjDXIRn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 04:17:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52748 "EHLO
+        id S231267AbjDXI2T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 04:28:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231523AbjDXIRm (ORCPT
+        with ESMTP id S230319AbjDXI2S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 04:17:42 -0400
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B7A111A
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 01:17:40 -0700 (PDT)
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-760eead6a4aso309275439f.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 01:17:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682324260; x=1684916260;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tJ6Cu4igdI/nmIrxohYpGuE1NNYUq7Nw0Hy6ZHEHguc=;
-        b=d55LfKZZ/e495WYafSf8C+FtL67Fjdt019KahNyBArYDCa4r36nMLyt4BqQs4HKcKq
-         5TZJkraTMNepKRGNU8wPi6z/uktisUhlYZet4e17hVdA6mYXPq3M5FylEAmnih5XzrcN
-         xY3xCKcsEQrE70lxXV818nwP/fmMq6l2gm9W+77hbPGxqKqF73iwHyxstwuCXjQIQkCH
-         DPv0Lh6BrLtwViX8Y2Ro28syt5MdHmukMNBJhOeITk+RWcE2RL0Peu2UN79f/Axa556K
-         uF1YEb3gT7W44P8OfXD/eMfza9UL2BZb2VLQFY6Y8AbM7GSn4MD/Bi4SaAXjYmBr8080
-         NRSg==
-X-Gm-Message-State: AAQBX9corfUvY3Il/kZ9gbQPOla5F2zSatpp1Cs6DXky9dHkjjMq9ktm
-        5m3LH248f4M/r5nlt6kxqEf/lYBgr0CquH6s7dtON8Wn3LFa
-X-Google-Smtp-Source: AKy350aFzHMV6VFIzD2FSXRqIbFUZLma0gVQ8G9LxOuITHlZvqMWGarEKa80XNdr3DLueyye9FgXQpw6ZKRr1gQItXCIHgxAcEYm
+        Mon, 24 Apr 2023 04:28:18 -0400
+X-Greylist: delayed 317 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 24 Apr 2023 01:28:15 PDT
+Received: from outbound-smtp19.blacknight.com (outbound-smtp19.blacknight.com [46.22.139.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3372719AE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 01:28:14 -0700 (PDT)
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp19.blacknight.com (Postfix) with ESMTPS id E2D571C4335
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 09:22:56 +0100 (IST)
+Received: (qmail 6814 invoked from network); 24 Apr 2023 08:22:56 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.21.103])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 24 Apr 2023 08:22:56 -0000
+Date:   Mon, 24 Apr 2023 09:22:54 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Ying <ying.huang@intel.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Yu Zhao <yuzhao@google.com>, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 1/4] mm/filemap: Add folio_lock_timeout()
+Message-ID: <20230424082254.gopb4y2c7d65icpl@techsingularity.net>
+References: <20230421221249.1616168-1-dianders@chromium.org>
+ <20230421151135.v2.1.I2b71e11264c5c214bc59744b9e13e4c353bc5714@changeid>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2210:b0:760:e9b6:e6de with SMTP id
- n16-20020a056602221000b00760e9b6e6demr3854730ion.0.1682324259846; Mon, 24 Apr
- 2023 01:17:39 -0700 (PDT)
-Date:   Mon, 24 Apr 2023 01:17:39 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e7c6d205fa10a3cd@google.com>
-Subject: [syzbot] [afs?] [net?] KCSAN: data-race in rxrpc_send_data / rxrpc_set_call_completion
-From:   syzbot <syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dhowells@redhat.com, edumazet@google.com,
-        kuba@kernel.org, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        marc.dionne@auristor.com, netdev@vger.kernel.org,
-        pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20230421151135.v2.1.I2b71e11264c5c214bc59744b9e13e4c353bc5714@changeid>
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,69 +49,197 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Apr 21, 2023 at 03:12:45PM -0700, Douglas Anderson wrote:
+> Add a variant of folio_lock() that can timeout. This is useful to
+> avoid unbounded waits for the page lock in kcompactd.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> 
+> Changes in v2:
+> - "Add folio_lock_timeout()" new for v2.
+> 
+>  include/linux/pagemap.h | 16 ++++++++++++++
+>  mm/filemap.c            | 47 +++++++++++++++++++++++++++++------------
+>  2 files changed, 50 insertions(+), 13 deletions(-)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 0acb8e1fb7af..0f3ef9f79300 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -892,6 +892,7 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
+>  }
+>  
+>  void __folio_lock(struct folio *folio);
+> +int __folio_lock_timeout(struct folio *folio, long timeout);
+>  int __folio_lock_killable(struct folio *folio);
+>  bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
+>  				unsigned int flags);
+> @@ -952,6 +953,21 @@ static inline void folio_lock(struct folio *folio)
+>  		__folio_lock(folio);
+>  }
+>  
+> +/**
+> + * folio_lock_timeout() - Lock this folio, with a timeout.
+> + * @folio: The folio to lock.
+> + * @timeout: The timeout in jiffies; %MAX_SCHEDULE_TIMEOUT means wait forever.
+> + *
+> + * Return: 0 upon success; -ETIMEDOUT upon failure.
+> + */
 
-syzbot found the following issue on:
+May return -EINTR?
 
-HEAD commit:    148341f0a2f5 Merge tag 'vfs.misc.fixes.v6.3-rc6' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a62269c80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=54d63ee086ae78d0
-dashboard link: https://syzkaller.appspot.com/bug?extid=ebc945fdb4acd72cba78
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> +static inline int folio_lock_timeout(struct folio *folio, long timeout)
+> +{
+> +	might_sleep();
+> +	if (!folio_trylock(folio))
+> +		return __folio_lock_timeout(folio, timeout);
+> +	return 0;
+> +}
+> +
+>  /**
+>   * lock_page() - Lock the folio containing this page.
+>   * @page: The page to lock.
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 2723104cc06a..c6056ec41284 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1220,7 +1220,7 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
+>  int sysctl_page_lock_unfairness = 5;
+>  
+>  static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+> -		int state, enum behavior behavior)
+> +		int state, enum behavior behavior, long timeout)
+>  {
+>  	wait_queue_head_t *q = folio_waitqueue(folio);
+>  	int unfairness = sysctl_page_lock_unfairness;
+> @@ -1229,6 +1229,7 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+>  	bool thrashing = false;
+>  	unsigned long pflags;
+>  	bool in_thrashing;
+> +	int err;
+>  
+>  	if (bit_nr == PG_locked &&
+>  	    !folio_test_uptodate(folio) && folio_test_workingset(folio)) {
+> @@ -1295,10 +1296,13 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+>  		/* Loop until we've been woken or interrupted */
+>  		flags = smp_load_acquire(&wait->flags);
+>  		if (!(flags & WQ_FLAG_WOKEN)) {
+> +			if (!timeout)
+> +				break;
+> +
 
-Unfortunately, I don't have any reproducer for this issue yet.
+An io_schedule_timeout of 0 is valid so why the special handling? It's
+negative timeouts that cause schedule_timeout() to complain.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1c557f92a6e1/disk-148341f0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f2c85210e1ce/vmlinux-148341f0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b019d0447709/bzImage-148341f0.xz
+>  			if (signal_pending_state(state, current))
+>  				break;
+>  
+> -			io_schedule();
+> +			timeout = io_schedule_timeout(timeout);
+>  			continue;
+>  		}
+>  
+> @@ -1324,10 +1328,10 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+>  	}
+>  
+>  	/*
+> -	 * If a signal happened, this 'finish_wait()' may remove the last
+> -	 * waiter from the wait-queues, but the folio waiters bit will remain
+> -	 * set. That's ok. The next wakeup will take care of it, and trying
+> -	 * to do it here would be difficult and prone to races.
+> +	 * If a signal/timeout happened, this 'finish_wait()' may remove the
+> +	 * last waiter from the wait-queues, but the folio waiters bit will
+> +	 * remain set. That's ok. The next wakeup will take care of it, and
+> +	 * trying to do it here would be difficult and prone to races.
+>  	 */
+>  	finish_wait(q, wait);
+>  
+> @@ -1336,6 +1340,13 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+>  		psi_memstall_leave(&pflags);
+>  	}
+>  
+> +	/*
+> +	 * If we don't meet the success criteria below then we've got an error
+> +	 * of some sort. Differentiate between the two error cases. If there's
+> +	 * no time left it must have been a timeout.
+> +	 */
+> +	err = !timeout ? -ETIMEDOUT : -EINTR;
+> +
+>  	/*
+>  	 * NOTE! The wait->flags weren't stable until we've done the
+>  	 * 'finish_wait()', and we could have exited the loop above due
+> @@ -1350,9 +1361,9 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+>  	 * waiter, but an exclusive one requires WQ_FLAG_DONE.
+>  	 */
+>  	if (behavior == EXCLUSIVE)
+> -		return wait->flags & WQ_FLAG_DONE ? 0 : -EINTR;
+> +		return wait->flags & WQ_FLAG_DONE ? 0 : err;
+>  
+> -	return wait->flags & WQ_FLAG_WOKEN ? 0 : -EINTR;
+> +	return wait->flags & WQ_FLAG_WOKEN ? 0 : err;
+>  }
+>  
+>  #ifdef CONFIG_MIGRATION
+> @@ -1442,13 +1453,15 @@ void migration_entry_wait_on_locked(swp_entry_t entry, pte_t *ptep,
+>  
+>  void folio_wait_bit(struct folio *folio, int bit_nr)
+>  {
+> -	folio_wait_bit_common(folio, bit_nr, TASK_UNINTERRUPTIBLE, SHARED);
+> +	folio_wait_bit_common(folio, bit_nr, TASK_UNINTERRUPTIBLE, SHARED,
+> +			      MAX_SCHEDULE_TIMEOUT);
+>  }
+>  EXPORT_SYMBOL(folio_wait_bit);
+>  
+>  int folio_wait_bit_killable(struct folio *folio, int bit_nr)
+>  {
+> -	return folio_wait_bit_common(folio, bit_nr, TASK_KILLABLE, SHARED);
+> +	return folio_wait_bit_common(folio, bit_nr, TASK_KILLABLE, SHARED,
+> +				     MAX_SCHEDULE_TIMEOUT);
+>  }
+>  EXPORT_SYMBOL(folio_wait_bit_killable);
+>  
+> @@ -1467,7 +1480,8 @@ EXPORT_SYMBOL(folio_wait_bit_killable);
+>   */
+>  static int folio_put_wait_locked(struct folio *folio, int state)
+>  {
+> -	return folio_wait_bit_common(folio, PG_locked, state, DROP);
+> +	return folio_wait_bit_common(folio, PG_locked, state, DROP,
+> +				     MAX_SCHEDULE_TIMEOUT);
+>  }
+>  
+>  /**
+> @@ -1662,17 +1676,24 @@ EXPORT_SYMBOL_GPL(page_endio);
+>  void __folio_lock(struct folio *folio)
+>  {
+>  	folio_wait_bit_common(folio, PG_locked, TASK_UNINTERRUPTIBLE,
+> -				EXCLUSIVE);
+> +				EXCLUSIVE, MAX_SCHEDULE_TIMEOUT);
+>  }
+>  EXPORT_SYMBOL(__folio_lock);
+>  
+>  int __folio_lock_killable(struct folio *folio)
+>  {
+>  	return folio_wait_bit_common(folio, PG_locked, TASK_KILLABLE,
+> -					EXCLUSIVE);
+> +					EXCLUSIVE, MAX_SCHEDULE_TIMEOUT);
+>  }
+>  EXPORT_SYMBOL_GPL(__folio_lock_killable);
+>  
+> +int __folio_lock_timeout(struct folio *folio, long timeout)
+> +{
+> +	return folio_wait_bit_common(folio, PG_locked, TASK_KILLABLE,
+> +					EXCLUSIVE, timeout);
+> +}
+> +EXPORT_SYMBOL_GPL(__folio_lock_timeout);
+> +
+>  static int __folio_lock_async(struct folio *folio, struct wait_page_queue *wait)
+>  {
+>  	struct wait_queue_head *q = folio_waitqueue(folio);
+> -- 
+> 2.40.0.634.g4ca3ef3211-goog
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in rxrpc_send_data / rxrpc_set_call_completion
-
-write to 0xffff888159cf3c50 of 4 bytes by task 25673 on cpu 1:
- rxrpc_set_call_completion+0x71/0x1c0 net/rxrpc/call_state.c:22
- rxrpc_send_data_packet+0xba9/0x1650 net/rxrpc/output.c:479
- rxrpc_transmit_one+0x1e/0x130 net/rxrpc/output.c:714
- rxrpc_decant_prepared_tx net/rxrpc/call_event.c:326 [inline]
- rxrpc_transmit_some_data+0x496/0x600 net/rxrpc/call_event.c:350
- rxrpc_input_call_event+0x564/0x1220 net/rxrpc/call_event.c:464
- rxrpc_io_thread+0x307/0x1d80 net/rxrpc/io_thread.c:461
- kthread+0x1ac/0x1e0 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
-
-read to 0xffff888159cf3c50 of 4 bytes by task 25672 on cpu 0:
- rxrpc_send_data+0x29e/0x1950 net/rxrpc/sendmsg.c:296
- rxrpc_do_sendmsg+0xb7a/0xc20 net/rxrpc/sendmsg.c:726
- rxrpc_sendmsg+0x413/0x520 net/rxrpc/af_rxrpc.c:565
- sock_sendmsg_nosec net/socket.c:724 [inline]
- sock_sendmsg net/socket.c:747 [inline]
- ____sys_sendmsg+0x375/0x4c0 net/socket.c:2501
- ___sys_sendmsg net/socket.c:2555 [inline]
- __sys_sendmmsg+0x263/0x500 net/socket.c:2641
- __do_sys_sendmmsg net/socket.c:2670 [inline]
- __se_sys_sendmmsg net/socket.c:2667 [inline]
- __x64_sys_sendmmsg+0x57/0x60 net/socket.c:2667
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-value changed: 0x00000000 -> 0xffffffea
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 25672 Comm: syz-executor.5 Not tainted 6.3.0-rc5-syzkaller-00005-g148341f0a2f5 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/02/2023
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Mel Gorman
+SUSE Labs
