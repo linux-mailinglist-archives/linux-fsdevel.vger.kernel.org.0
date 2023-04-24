@@ -2,95 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6587C6EC4FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 07:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E47256EC53D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 07:51:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230245AbjDXFoQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 01:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45980 "EHLO
+        id S231127AbjDXFtv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 01:49:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229602AbjDXFoO (ORCPT
+        with ESMTP id S230430AbjDXFtn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 01:44:14 -0400
-Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.214])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9381892;
-        Sun, 23 Apr 2023 22:44:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Content-Type:From:Mime-Version:Subject:Date:
-        Message-Id; bh=/Y8OPyk4aNbiy3q/w0nr6wCvbfpL9Xvjt2hU8ucCgiM=; b=l
-        CY6fYiPhxQsTbDJoH459A7BhOibW5fWdtUTfL/WDMKynGq5d5EDyv2Yp8ivkXEG8
-        5k+qy2MQbAe7WBeMB98PsjicYoINEhDlLRjgfEEdg9SisTssGr48NwOoD1CezvVf
-        ngOWdpPZeBlDbDjrtDg0a97ggk2rzWU51JL+c+DKMU=
-Received: from smtpclient.apple (unknown [223.148.66.180])
-        by zwqz-smtp-mta-g1-4 (Coremail) with SMTP id _____wCH+tgPF0ZkeRhFCQ--.58262S2;
-        Mon, 24 Apr 2023 13:43:44 +0800 (CST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Hao Ge <gehao618@163.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH V2] fs: fix undefined behavior in bit shift for SB_NOUSER
-Date:   Mon, 24 Apr 2023 13:43:33 +0800
-Message-Id: <FA638ECE-96E4-4898-A457-76A621BE1860@163.com>
-References: <20230424050158.GN3390869@ZenIV>
-Cc:     Hao Ge <gehao@kylinos.cn>, brauner@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20230424050158.GN3390869@ZenIV>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-X-Mailer: iPhone Mail (20E252)
-X-CM-TRANSID: _____wCH+tgPF0ZkeRhFCQ--.58262S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WF18Cw1fCry5Aw1DGw4fGrg_yoW8Jw4fpr
-        yfKFnFkayUJwsFvw42qF15J3WvqanxAFyDGr9agw17A3Wj9w12vF4xK3W5uFy2krWrJFy5
-        JFWUCFn5u3yvva7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j2mhrUUUUU=
-X-Originating-IP: [223.148.66.180]
-X-CM-SenderInfo: 5jhkt0qwryqiywtou0bp/1tbiExRbFmE1617+DQAAsY
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 24 Apr 2023 01:49:43 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92D5119B3;
+        Sun, 23 Apr 2023 22:49:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=rxuwauPRwLemTJXwY3VrKMRJhs+GgwhnyBD4s7nm7AY=; b=3MpQEmnJ4id5J1jZ4YFohK5H8q
+        bs7ciFKUIE9sA5F//wk8TThxaPzhLwI6FsUH1vKzNkmpHyq88uhXgF7wTEHMLlqIzGShUjm1tpoQ/
+        V9Tji0dQSyZQM/K5ekDNoH5faw93KpoQQtAuWkTbvGbcl7apn0KwIYdsbsU9S2n8QH5hFEZJO4yZ5
+        yp8GdzGRgc1AHk7t7DD60UmLFSqOCfsXJza1GpGtauNVHkVJvJiQUeDviaHbb72Zouz31uRXC/4XE
+        B+bfmZC/bCU0vqPNw8dnGTB4G0skWpel5LUkS6Ua52Z/N1nKMNRb49n9vt5etsldL20AA2wC69Vmq
+        TVA2auLw==;
+Received: from [2001:4bb8:189:a74f:e8a5:5f73:6d2:23b8] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pqp4s-00FOtV-2G;
+        Mon, 24 Apr 2023 05:49:31 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: RFC: allow building a kernel without buffer_heads
+Date:   Mon, 24 Apr 2023 07:49:09 +0200
+Message-Id: <20230424054926.26927-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi all,
 
+after all the talk about removing buffer_heads, here is a series that
+shows how to build a kernel without buffer_heads.  And how unrealistic
+it is to remove the entirely.
 
-> On Apr 24, 2023, at 13:02, Al Viro <viro@zeniv.linux.org.uk> wrote:
->=20
-> =EF=BB=BFOn Mon, Apr 24, 2023 at 12:51:22PM +0800, Hao Ge wrote:
->> Shifting signed 32-bit value by 31 bits is undefined, so changing
->> significant bit to unsigned. The UBSAN warning calltrace like below:
->=20
->> UBSAN: shift-out-of-bounds in fs/nsfs.c:306:32
->> left shift of 1 by 31 places cannot be represented in type 'int'
->> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.3.0-rc4+ #2
->> Call trace:
->> <TASK>
->> dump_backtrace+0x134/0x1e0
->> show_stack+0x2c/0x3c
->> dump_stack_lvl+0xb0/0xd4
->> dump_stack+0x14/0x1c
->> ubsan_epilogue+0xc/0x3c
->> __ubsan_handle_shift_out_of_bounds+0xb0/0x14c
->> nsfs_init+0x4c/0xb0
->> start_kernel+0x38c/0x738
->> __primary_switched+0xbc/0xc4
->> </TASK>
->>=20
->> Fixes: e462ec50cb5f ("VFS: Differentiate mount flags (MS_*) from internal=
- superblock flags")
->> Signed-off-by: Hao Ge <gehao@kylinos.cn>
->=20
-> *snort*
->=20
-> IMO something like "spotted by UBSAN" is more than enough here -
-> stack trace is completely pointless.
->=20
-> Otherwise, no problems with the patch - it's obviously safe.
-Thanks for taking time to review this patch.
-I fully agree with your suggestion, as it is not just this one place that re=
-ported this error, although they are the same reason.
-I will remove stack trace and send v3.
+Most of the series refactors some common code to make implementing direct
+I/O easier without use of the ->direct_IO method and the helpers based
+around it.  It then switches buffered writes (but not writeback) for
+block devices to use iomap unconditionally, but still using buffer_heads.
 
+The final patch then adds a CONFIG_BUFFER_HEAD selected by all file
+systems that need it (which is most block based file systems), makes the
+buffer_head support in iomap optional, and adds an alternative
+implementation of the block device address_operations using iomap.
 
+With this you can build a kernel with block device support, but without
+buffer_heads.  This kernel supports xfs and btrfs as full blown block
+based filesystems, and a bunch of read-only ones like cramfs, erofs and
+squashfs.  Note that the md software raid drivers is also disabled as it
+has some (rather questionable) buffer_head usage in the unconditionally
+built bitmap code.
+
+The series is based on Linux 6.3 and will need some rebasing before it
+can be fed to the maintainers incrementally.  All but the last patch
+definitively seem useful for me.  The last one I think is just to avoid
+introducing new buffer_head dependencies, even if I suspect the real
+life usefulness of a !CONFIG_BUFFER_HEAD kernel might be rather limited.
