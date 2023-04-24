@@ -2,135 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFBAA6ECA07
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 12:18:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F28E66ECAA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 12:51:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231515AbjDXKSB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 06:18:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43382 "EHLO
+        id S231382AbjDXKvz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 06:51:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231131AbjDXKSA (ORCPT
+        with ESMTP id S231223AbjDXKvy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 06:18:00 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE03B7;
-        Mon, 24 Apr 2023 03:17:58 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-2f3fe12de15so2499252f8f.3;
-        Mon, 24 Apr 2023 03:17:58 -0700 (PDT)
+        Mon, 24 Apr 2023 06:51:54 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED366268C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 03:51:51 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-54fe08015c1so50675217b3.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 03:51:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682331477; x=1684923477;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sFd3GouLvmJwZXxGkUryj0wCtEPdyUrIZGRi3VcHFcY=;
-        b=TqsT5bDLQhdBasdYkLmm+ue2xSgsEVBAjc5YTj++1vp6A3jb/eAm2ISqbClYNA/bN3
-         Bm0Qobi1sk/79zsr5IujFFPFlbsGzbAi1EJzMSmku+dNUifDgkAbCbcM8YUtWcBVvZOy
-         SVPpWE5OWQfTe1GQr8ZTxOp6tt3VCUbd2OuOAC/DfDigTp0Uj1Rx+xCoGvzmour5y5R+
-         4Hu3Tw5p+fFJfRaY5cfLbeLqTcGzpFGk6nHgmtiTQqRoAbl4T73JR4lVcu+fut660/g4
-         rcTw4Qo24E64xvf+zM2d8K0I3IEMc/kusIdXVd5+7w3YBNQEVSY8dQymZOSt9O+uppQ5
-         sLHw==
+        d=gmail.com; s=20221208; t=1682333511; x=1684925511;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dQlu0Oc2Q0nPMBCNq5iTPUZpwrRZlsMdPt2zjra8+VI=;
+        b=BDOU7+6CjKGfGxohfwPSUG5dvZEz+JIUkSiwN2TDnXREO1m7tnshm1ywQFqtwjCtuy
+         sdc62qMh2n/GKkLEd6inRVKNj3gr719YRClRe48cHw3AS8uelP+ymyFB0srKimerVisT
+         13Xtkz0SBiM8bJqS0byCbOX7vMjZt1uP8WbY7Dvmdpvz4bea0qvNLSFK3Fpq3xaNdk1A
+         qM5VVSk6ocRnmhVuQME3HxgmrkTm+A9wuvOqJRe5jylGoGOAUFMgmutSHMerkJpOSlvK
+         vk/P+3RIGhTNsyHCwljHvfrhHmReD3nCq/AILJxglY3kVglksym9zePn5jHaXsmq1bcD
+         nsfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682331477; x=1684923477;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sFd3GouLvmJwZXxGkUryj0wCtEPdyUrIZGRi3VcHFcY=;
-        b=KZaSb58DixHsITFjpPEvqU4J0LBuP7xZMkG3CbbRBKM0SJKRExNXRphnSRCcX1abvc
-         41oYyyUWrBATXhImhA6s725xOeMTBQlTJqrHy6nE3h+ZUfHjXpjP95s8DjytFolKE3qC
-         cBpD2xdt1vWvaRneEAQTlwJ7yFfjotElTX3VgwWWy5I/cUugozQ1L2xGcbV3ckWsNDqS
-         MRvUNRPQa9bN8FlvDO6GZ/9LUiP0WbX4WagwjWudFQEsLSBAhFrc6R3EnX6rVuOmY1kS
-         uIi5UUs1ZZoTF7lO9b4hyITfkXMP0CUW9u0MoRk5zmM2MYpvyBL0xnasHSrtw14PH9XJ
-         CDAg==
-X-Gm-Message-State: AAQBX9dwqPpNnEJRgCJWwK2GhFORrF+JPh2WF/K5ZhpYolM0LPRLdwyj
-        m1zyH32GKWYI4NAFTokEiuiOpsiAuHGGVw==
-X-Google-Smtp-Source: AKy350as+uWvZB1UDA0rClSPEJZ9KJctRGU6UJ7yZVRqXBfMpnr1bm8yMh1ziKuQa5ocG0CjKQw7XQ==
-X-Received: by 2002:adf:ec46:0:b0:2ce:9fb8:b560 with SMTP id w6-20020adfec46000000b002ce9fb8b560mr9761836wrn.8.1682331476919;
-        Mon, 24 Apr 2023 03:17:56 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id a14-20020adfe5ce000000b002fbe0772ab1sm10448840wrn.16.2023.04.24.03.17.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Apr 2023 03:17:55 -0700 (PDT)
-Date:   Mon, 24 Apr 2023 11:17:55 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v2] mm/gup: disallow GUP writing to file-backed mappings
- by default
-Message-ID: <90a54439-5d30-4711-8a86-eba816782a66@lucifer.local>
-References: <c8ee7e02d3d4f50bb3e40855c53bda39eec85b7d.1682321768.git.lstoakes@gmail.com>
- <ZEZPXHN4OXIYhP+V@infradead.org>
+        d=1e100.net; s=20221208; t=1682333511; x=1684925511;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dQlu0Oc2Q0nPMBCNq5iTPUZpwrRZlsMdPt2zjra8+VI=;
+        b=lD6D5kB34qsxfttYzIQkBikZ7QO9RUS8hlcBpZFJVcDg2mjsmyn/bdw+Ji7kK2hEM1
+         kvXylq7ovlBr2M43EnHQPdO6dw/r2BtEtiWO42lAOqyfwnlXOrlnrP6rtYAikGubKl48
+         Xja2gjI+5VjjIxKaMmNKVsoUtNBMb1W3MFQGcGSAlqKbMp2G8enHVeLXFOVlqVreuoYk
+         yAMaiTGVH+VO1D/iKkcfpPhlj++HVO6cxrf+mOqEH+PFHVHcbcgRdLd/VJS4bzrFgV90
+         pQUz06G0/0ZhtSmB51AQ9jvVsGcMaDXCifkW+YnHJqROhm5dc50dBithyJtE4s4yTRaS
+         vjNg==
+X-Gm-Message-State: AAQBX9eNLOnYHMc2AhovT1K/VnzsrMyGlp/gJCAeeUjuuTLGnmrfaaej
+        yaN16S6MmLAYzXfniKs+HOYMhwtO4VQZzK6XGuc=
+X-Google-Smtp-Source: AKy350YG4FdHU8gQxPU2msbtN2QdEjv9b6BhW9wIbc0BoX66FKTBxxpsjwaRJQwRDUNbtvTNf1tLcLROs6TnCelMCbI=
+X-Received: by 2002:a81:4809:0:b0:533:9fa7:bbe9 with SMTP id
+ v9-20020a814809000000b005339fa7bbe9mr7936227ywa.8.1682333511052; Mon, 24 Apr
+ 2023 03:51:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZEZPXHN4OXIYhP+V@infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a05:7010:7499:b0:32d:e51f:dee8 with HTTP; Mon, 24 Apr 2023
+ 03:51:50 -0700 (PDT)
+Reply-To: mariamkouame.info@myself.com
+From:   Mariam Kouame <mariamkouame1990@gmail.com>
+Date:   Mon, 24 Apr 2023 03:51:50 -0700
+Message-ID: <CAKXL+w08stRVVXkGQO0pBQ1x_ozGpGTcLNjscr9ZhQ3xnJgTTA@mail.gmail.com>
+Subject: from mariam kouame
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 02:43:56AM -0700, Christoph Hellwig wrote:
-> I'm pretty sure DIRECT I/O reads that write into file backed mappings
-> are out there in the wild.
->
-> So while I wish we had never allowed this, the exercise seems futile and
-> instead we need to work on supporting this usecase, with the FOLL_PIN
-> infrastructure being a big step toward that.
+Dear,
 
-It's not entirely futile, there's at least one specific use case, which is
-io_uring which is currently open coding an equivalent check themselves. By
-introducing this change we prevent them from having to do so and provide a
-means by which other callers who implicitly need this do not have to do so
-either.
+Please grant me permission to share a very crucial discussion with
+you. I am looking forward to hearing from you at your earliest
+convenience.
 
-In addition, this change frees up a blocked patch series intending to clean
-up GUP which should help open the door to further improvements across the
-system.
-
-So I would argue certainly not futile.
-
-In addition, I think it's useful to explicitly document that this is a
-broken case and, through use of the flag, highlight places which are
-problematic (although perhaps not exhaustively).
-
-I know Jason is keen on fixing this at a fundamental level and this flag is
-ultimately his suggestion, so it certainly doesn't stand in the way of this
-work moving forward.
+Mrs. Mariam Kouame
