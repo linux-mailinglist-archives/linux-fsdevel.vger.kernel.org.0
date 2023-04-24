@@ -2,140 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5C36EC676
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 08:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19EAC6EC67C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 08:46:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230505AbjDXGpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 02:45:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51898 "EHLO
+        id S230199AbjDXGqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 02:46:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbjDXGpq (ORCPT
+        with ESMTP id S230513AbjDXGqu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 02:45:46 -0400
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75E13AAE;
-        Sun, 23 Apr 2023 23:45:43 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.153])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Q4bHP1fyXz4f3tNf;
-        Mon, 24 Apr 2023 14:45:37 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-        by APP2 (Coremail) with SMTP id Syh0CgCnmuiNJUZkr9fFHw--.41710S2;
-        Mon, 24 Apr 2023 14:45:34 +0800 (CST)
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] bpf iterator for file-system
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     lsf-pc@lists.linux-foundation.org, Nhat Pham <nphamcs@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Yonghong Song <yhs@fb.com>,
-        bpf <bpf@vger.kernel.org>
-References: <0a6f0513-b4b3-9349-cee5-b0ad38c81d2e@huaweicloud.com>
- <CAOQ4uxggt_je51t0MWSfRS0o7UFSYj7GDHSJd026kMfF9TvLiA@mail.gmail.com>
-From:   Hou Tao <houtao@huaweicloud.com>
-Message-ID: <a1e5d6e0-4772-f42a-96b8-eccefdb6127e@huaweicloud.com>
-Date:   Mon, 24 Apr 2023 14:45:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Mon, 24 Apr 2023 02:46:50 -0400
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691E030D0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Apr 2023 23:46:47 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7606d443ba6so342830339f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Apr 2023 23:46:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682318806; x=1684910806;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LRMi+JfSh6yZ91hofDyo0Na+ODnFcV8g+AkFtNbuPzE=;
+        b=iCH2LXDziPRaj138I6YP95BWqfAEsLoODWPTnLFyOpH9ypi1ZKnUr5HzjjsonVqP5V
+         GxJ+Bk1oBMi8hf+6fUi8h4N1187//H0nw0uhSriIhQAwI49yy1Gs1jctvwG/Ns4F1ziv
+         Mis0+CMwTTB/owI/UieC3LeQQBr1Lx8BcsqBegdRuJAnwA97aCtAVxLkh3jiNvvwrjfW
+         6ruLQIpz/g8FYrsMa9lgdMUXy3+ZD/WMZ3+xX4LIyDCdsIc4gKsXP3TIXBE56vRUip1w
+         kAcJHdEDTcMoIxtx/o8M9i/mhlZVS6NN1ZxrNl3baV4aDUvlM5FNqmU1Yt6KhkfYFRMb
+         uASQ==
+X-Gm-Message-State: AAQBX9ekpv9L5HwZ+2dcGofwd+dxZbWpT81feB9o3qCodTbYE5pxbNWe
+        R5BFysN0vq/21T2a3PmGJoNA+2pRqXCRWhNUGAhA+LBQuL7yaOasEw==
+X-Google-Smtp-Source: AKy350bxcbxzCwG5NCWho4d9sXWau3tZRzplDSK+nP/4CGaoOULM3njmADhtML4wZtQv9n8pT7I1ncSMXt9TBxDYaIvghRduu4pW
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxggt_je51t0MWSfRS0o7UFSYj7GDHSJd026kMfF9TvLiA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID: Syh0CgCnmuiNJUZkr9fFHw--.41710S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuryUZrW7WFyUZF4kKF17KFg_yoW5KFW7pF
-        WruF4rKr4kJw48Aw4vyayxXay0v34fuF47X3s5XrW5urWUZFna9wn7Kr15ZFyDCrs8CF1a
-        vF4qk3s5tF98XrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-        0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
-        MAY_BE_FORGED,NICE_REPLY_A,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a5d:968d:0:b0:758:3c0e:f331 with SMTP id
+ m13-20020a5d968d000000b007583c0ef331mr3853525ion.4.1682318806679; Sun, 23 Apr
+ 2023 23:46:46 -0700 (PDT)
+Date:   Sun, 23 Apr 2023 23:46:46 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000df076505fa0f5e84@google.com>
+Subject: [syzbot] [reiserfs?] possible deadlock in chmod_common
+From:   syzbot <syzbot+dc5bf13993c4b32ec0cb@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hello,
 
-On 4/16/2023 3:55 PM, Amir Goldstein wrote:
-> On Tue, Feb 28, 2023 at 5:47 AM Hou Tao <houtao@huaweicloud.com> wrote:
->> From time to time, new syscalls have been proposed to gain more observability
->> for file-system:
->>
->> (1) getvalues() [0]. It uses a hierarchical namespace API to gather and return
->> multiple values in single syscall.
->> (2) cachestat() [1].  It returns the cache status (e.g., number of dirty pages)
->> of a given file in a scalable way.
->>
->> All these proposals requires adding a new syscall. Here I would like to propose
->> another solution for file system observability: bpf iterator for file system
->> object. The initial idea came when I was trying to implement a filefrag-like
->> page cache tool with support for multi-order folio, so that we can know the
->> number of multi-order folios and the orders of those folios in page cache. After
->> developing a demo for it, I realized that we could use it to provide more
->> observability for file system objects. e.g., dumping the per-cpu iostat for a
->> super block [2],  iterating all inodes in a super-block to dump info for
->> specific inodes (e.g., unlinked but pinned inode), or displaying the flags of a
->> specific mount.
->>
->> The BPF iterator was introduced in v5.8 [3] to support flexible content dumping
->> for kernel objects. It works by creating bpf iterator file [4], which is a
->> seq-like read-only file, and the content of the bpf iterator file is determined
->> by a previously loaded bpf program, so userspace can read the bpf iterator file
->> to get the information it needs. However there are some unresolved issues:
->> (1) The privilege.
->> Loading the bpf program requires CAP_ADMIN or CAP_BPF. This means that the
->> observability will be available to the privileged process. Maybe we can load the
->> bpf program through a privileged process and make the bpf iterator file being
->> readable for normal users.
->> (2) Prevent pinning the super-block
->> In the current naive implementation, the bpf iterator simply pins the
->> super-block of the passed fd and prevents the super-block from being destroyed.
->> Perhaps fs-pin is a better choice, so the bpf iterator can be deactivated after
->> the filesystem is umounted.
->>
->> I hope to send out an RFC soon before LSF/MM/BPF for further discussion.
-> Hi Hou,
->
-> IIUC, there is not much value in making this a cross track session.
-> Seems like an FS track session that has not much to do with BPF
-> development.
->
-> Am I understanding correctly or are there any cross subsystem
-> interactions that need to be discussed?
-Yes. Although the patchset for file-system iterator is still not ready, but I
-think the BPF mechanisms for file-system iterator is ready, so a cross track
-session maybe unnecessary.
->
-> Perhaps we can join you as co-speaker for Miklos' traditional
-> "fsinfo" session?
-Thanks. I am glad to be a co-speaker for fsinfo session.
->
-> Thanks,
-> Amir.
->
->> [0]:
->> https://lore.kernel.org/linux-fsdevel/YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com/
->> [1]: https://lore.kernel.org/linux-mm/20230219073318.366189-1-nphamcs@gmail.com/
->> [2]:
->> https://lore.kernel.org/linux-fsdevel/CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA0DT66GFH2ZanspA@mail.gmail.com/
->> [3]: https://lore.kernel.org/bpf/20200509175859.2474608-1-yhs@fb.com/
->> [4]: https://docs.kernel.org/bpf/bpf_iterators.html
->>
->> _______________________________________________
->> Lsf-pc mailing list
->> Lsf-pc@lists.linux-foundation.org
->> https://lists.linuxfoundation.org/mailman/listinfo/lsf-pc
+syzbot found the following issue on:
 
+HEAD commit:    2caeeb9d4a1b Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=109cffafc80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4afb87f3ec27b7fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=dc5bf13993c4b32ec0cb
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/187205513d6f/disk-2caeeb9d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ae84a1e0cbd0/vmlinux-2caeeb9d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0f0ff6d2e1aa/bzImage-2caeeb9d.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dc5bf13993c4b32ec0cb@syzkaller.appspotmail.com
+
+REISERFS warning (device loop2): jdm-20006 create_privroot: xattrs/ACLs enabled and couldn't find/create .reiserfs_priv. Failing mount.
+======================================================
+WARNING: possible circular locking dependency detected
+6.3.0-rc7-syzkaller-00189-g2caeeb9d4a1b #0 Not tainted
+------------------------------------------------------
+syz-executor.2/13499 is trying to acquire lock:
+ffff88803a019020 (&type->i_mutex_dir_key#25){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:758 [inline]
+ffff88803a019020 (&type->i_mutex_dir_key#25){+.+.}-{3:3}, at: chmod_common+0x1bb/0x4c0 fs/open.c:637
+
+but task is already holding lock:
+ffff8880281c2460 (sb_writers#30){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (sb_writers#30){.+.+}-{0:0}:
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1477 [inline]
+       sb_start_write+0x4d/0x1c0 include/linux/fs.h:1552
+       mnt_want_write_file+0x5e/0x1f0 fs/namespace.c:438
+       reiserfs_ioctl+0x174/0x340 fs/reiserfs/ioctl.c:103
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:870 [inline]
+       __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:856
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #1 (&sbi->lock){+.+.}-{3:3}:
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       __mutex_lock_common+0x1d8/0x2530 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:799
+       reiserfs_write_lock+0x7a/0xd0 fs/reiserfs/lock.c:27
+       reiserfs_lookup+0x160/0x4b0 fs/reiserfs/namei.c:364
+       __lookup_slow+0x282/0x3e0 fs/namei.c:1686
+       lookup_one_len+0x18b/0x2d0 fs/namei.c:2712
+       reiserfs_lookup_privroot+0x89/0x1e0 fs/reiserfs/xattr.c:973
+       reiserfs_fill_super+0x195b/0x2620 fs/reiserfs/super.c:2192
+       mount_bdev+0x271/0x3a0 fs/super.c:1380
+       legacy_get_tree+0xef/0x190 fs/fs_context.c:610
+       vfs_get_tree+0x8c/0x270 fs/super.c:1510
+       do_new_mount+0x28f/0xae0 fs/namespace.c:3042
+       do_mount fs/namespace.c:3385 [inline]
+       __do_sys_mount fs/namespace.c:3594 [inline]
+       __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3571
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #0 (&type->i_mutex_dir_key#25){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3098 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+       validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+       __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+       lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+       down_write+0x3a/0x50 kernel/locking/rwsem.c:1573
+       inode_lock include/linux/fs.h:758 [inline]
+       chmod_common+0x1bb/0x4c0 fs/open.c:637
+       vfs_fchmod fs/open.c:659 [inline]
+       __do_sys_fchmod fs/open.c:668 [inline]
+       __se_sys_fchmod fs/open.c:662 [inline]
+       __x64_sys_fchmod+0xf0/0x150 fs/open.c:662
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+other info that might help us debug this:
+
+Chain exists of:
+  &type->i_mutex_dir_key#25 --> &sbi->lock --> sb_writers#30
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(sb_writers#30);
+                               lock(&sbi->lock);
+                               lock(sb_writers#30);
+  lock(&type->i_mutex_dir_key#25);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.2/13499:
+ #0: ffff8880281c2460 (sb_writers#30){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:394
+
+stack backtrace:
+CPU: 0 PID: 13499 Comm: syz-executor.2 Not tainted 6.3.0-rc7-syzkaller-00189-g2caeeb9d4a1b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ check_noncircular+0x2fe/0x3b0 kernel/locking/lockdep.c:2178
+ check_prev_add kernel/locking/lockdep.c:3098 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3217 [inline]
+ validate_chain+0x166b/0x58e0 kernel/locking/lockdep.c:3832
+ __lock_acquire+0x125b/0x1f80 kernel/locking/lockdep.c:5056
+ lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+ down_write+0x3a/0x50 kernel/locking/rwsem.c:1573
+ inode_lock include/linux/fs.h:758 [inline]
+ chmod_common+0x1bb/0x4c0 fs/open.c:637
+ vfs_fchmod fs/open.c:659 [inline]
+ __do_sys_fchmod fs/open.c:668 [inline]
+ __se_sys_fchmod fs/open.c:662 [inline]
+ __x64_sys_fchmod+0xf0/0x150 fs/open.c:662
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f94a988c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f94aa5e0168 EFLAGS: 00000246 ORIG_RAX: 000000000000005b
+RAX: ffffffffffffffda RBX: 00007f94a99abf80 RCX: 00007f94a988c169
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 00007f94a98e7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe4c3619af R14: 00007f94aa5e0300 R15: 0000000000022000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
