@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D2096EC5AC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 07:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EEAC6EC599
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 07:53:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230415AbjDXFwR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 01:52:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47944 "EHLO
+        id S231383AbjDXFw1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 01:52:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231273AbjDXFvq (ORCPT
+        with ESMTP id S230470AbjDXFvs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 01:51:46 -0400
+        Mon, 24 Apr 2023 01:51:48 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56FD044BD;
-        Sun, 23 Apr 2023 22:50:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1B7E46AD;
+        Sun, 23 Apr 2023 22:50:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=sTswUsG7V37q4lilbMJoCzI78FMLYPHsnKSU4tW14rI=; b=UoeSfGuoni8M8v/l7vB42i2THY
-        zMcmd34OOElv7F+mrbgD/ShZRx4itRpkQwFSxTkpmii613jhNw9WyxCQjGj7MQShQbt7WqJjepuL4
-        LBmWnG81igFVQQjFpE39ugSY4dTF5078Y+qk64oapXEUft128WQk3P7Es40nmDd7R0F2d0XieesAO
-        j5XAkEb++llO3yox0Qy5icXKSxnxY5rP++XJ6RqFTM31wvcDtrVuuPtN/xpgA7bZCD3wVcAXdYXYo
-        jxEebVm9CoZwe3Xf0PTdYWQayQAZxQ3W9FEGkn51muLlMnnlGjCx9TQHWQLhKUkUJmMWkZDYDkloT
-        v7jNugbA==;
+        bh=ygZamnLPppSKQbVI2TYtcZ1SuuieTgm7wFWt/6s68PI=; b=wpOqw6FzWnc2w4juTchLC7VO9t
+        ir9ELtuxBb0jOKnL07jIkpyJF+L1nWBSzPVGIhqVdKTgVpv8nsOhz6XqjGvbC4V9beDfWCniIGswt
+        O9bKd9P+QqRipzQOTI8TmgW/aUC2QEQw/GLLlogXyX29WSz+zFQVPjQfpsqKsOQNqIIlcpMnx4i9l
+        eK8Ns7AAgVVLldGZlqGnxg0NNJ4YeF6tqzIBhBzJQw7Kon0F3ruc0VhAPDYUTJO+38G7SJ6XlYNkX
+        v0ncA0oNgduUMDrajW3dXaIsa/P7DAZvC/IznI7HvWu6OsI4XjPKJ/KK+z4OqYXElqnES62wVc7FU
+        cqsVOn2Q==;
 Received: from [2001:4bb8:189:a74f:e8a5:5f73:6d2:23b8] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1pqp5X-00FP9P-1d;
-        Mon, 24 Apr 2023 05:50:12 +0000
+        id 1pqp5b-00FPB8-1e;
+        Mon, 24 Apr 2023 05:50:16 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Miklos Szeredi <miklos@szeredi.hu>,
@@ -41,9 +41,9 @@ Cc:     Miklos Szeredi <miklos@szeredi.hu>,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 14/17] block: open code __generic_file_write_iter for blkdev writes
-Date:   Mon, 24 Apr 2023 07:49:23 +0200
-Message-Id: <20230424054926.26927-15-hch@lst.de>
+Subject: [PATCH 15/17] block: stop setting ->direct_IO
+Date:   Mon, 24 Apr 2023 07:49:24 +0200
+Message-Id: <20230424054926.26927-16-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230424054926.26927-1-hch@lst.de>
 References: <20230424054926.26927-1-hch@lst.de>
@@ -60,91 +60,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Open code __generic_file_write_iter to remove the indirect call into
-->direct_IO and to prepare using the iomap based write code.
+Direct I/O on block devices now nevers goes through aops->direct_IO.
+Stop setting it and set the FMODE_CAN_ODIRECT in ->open instead.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/fops.c | 46 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+ block/fops.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/block/fops.c b/block/fops.c
-index b670aa7c5bb745..fd510b6142bd57 100644
+index fd510b6142bd57..318247832a7bcf 100644
 --- a/block/fops.c
 +++ b/block/fops.c
-@@ -508,6 +508,29 @@ static int blkdev_close(struct inode *inode, struct file *filp)
- 	return 0;
- }
+@@ -428,7 +428,6 @@ const struct address_space_operations def_blk_aops = {
+ 	.writepage	= blkdev_writepage,
+ 	.write_begin	= blkdev_write_begin,
+ 	.write_end	= blkdev_write_end,
+-	.direct_IO	= blkdev_direct_IO,
+ 	.migrate_folio	= buffer_migrate_folio_norefs,
+ 	.is_dirty_writeback = buffer_check_dirty_writeback,
+ };
+@@ -481,7 +480,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
+ 	 * during an unstable branch.
+ 	 */
+ 	filp->f_flags |= O_LARGEFILE;
+-	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
++	filp->f_mode |= FMODE_CAN_ODIRECT | FMODE_NOWAIT | FMODE_BUF_RASYNC;
  
-+static ssize_t
-+blkdev_direct_write(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	size_t count = iov_iter_count(from);
-+	ssize_t written;
-+
-+	written = kiocb_invalidate_pages(iocb, count);
-+	if (written) {
-+		if (written == -EBUSY)
-+			return 0;
-+		return written;
-+	}
-+
-+	written = blkdev_direct_IO(iocb, from);
-+	if (written > 0) {
-+		kiocb_invalidate_post_write(iocb, count);
-+		iocb->ki_pos += written;
-+	}
-+	if (written != -EIOCBQUEUED)
-+		iov_iter_revert(from, count - written - iov_iter_count(from));
-+	return written;
-+}
-+
- /*
-  * Write data to the block device.  Only intended for the block device itself
-  * and the raw driver which basically is a fake block device.
-@@ -517,7 +540,8 @@ static int blkdev_close(struct inode *inode, struct file *filp)
-  */
- static ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
- {
--	struct block_device *bdev = iocb->ki_filp->private_data;
-+	struct file *file = iocb->ki_filp;
-+	struct block_device *bdev = file->private_data;
- 	struct inode *bd_inode = bdev->bd_inode;
- 	loff_t size = bdev_nr_bytes(bdev);
- 	size_t shorted = 0;
-@@ -538,13 +562,31 @@ static ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
- 		return -EOPNOTSUPP;
- 
-+	ret = file_remove_privs(file);
-+	if (ret)
-+		return ret;
-+
-+	ret = file_update_time(file);
-+	if (ret)
-+		return ret;
-+
- 	size -= iocb->ki_pos;
- 	if (iov_iter_count(from) > size) {
- 		shorted = iov_iter_count(from) - size;
- 		iov_iter_truncate(from, size);
- 	}
- 
--	ret = __generic_file_write_iter(iocb, from);
-+	current->backing_dev_info = bdev->bd_disk->bdi;
-+	if (iocb->ki_flags & IOCB_DIRECT) {
-+		ret = blkdev_direct_write(iocb, from);
-+		if (ret >= 0 && iov_iter_count(from))
-+			ret = direct_write_fallback(iocb, from, ret,
-+					generic_perform_write(iocb, from));
-+	} else {
-+		ret = generic_perform_write(iocb, from);
-+	}
-+	current->backing_dev_info = NULL;
-+
- 	if (ret > 0)
- 		ret = generic_write_sync(iocb, ret);
- 	iov_iter_reexpand(from, iov_iter_count(from) + shorted);
+ 	if (filp->f_flags & O_NDELAY)
+ 		filp->f_mode |= FMODE_NDELAY;
 -- 
 2.39.2
 
