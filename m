@@ -2,58 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF1F46ED109
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 17:11:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6508D6ED167
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Apr 2023 17:33:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232057AbjDXPLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Apr 2023 11:11:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54004 "EHLO
+        id S231977AbjDXPdI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Apr 2023 11:33:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231667AbjDXPLP (ORCPT
+        with ESMTP id S231794AbjDXPdG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Apr 2023 11:11:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13C35449E;
-        Mon, 24 Apr 2023 08:11:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9F5CA625E1;
-        Mon, 24 Apr 2023 15:11:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C104DC433EF;
-        Mon, 24 Apr 2023 15:11:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682349073;
-        bh=CH5ETGl1VCk5J+tPCp/iNHJe4ToABvcdm5xjv9j3lBA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eGQWsqzImKJ+8lpWetGzUbqVKVCqOyNDACZBvfubmDwpHAUKkWDsXk6wIc8LfJqaK
-         nyLaJYE9kP1DiwLE8yaDX0eQraEuY6HWKq7r5Hl+BvOmqNN+F/w7jjvUIyotvhxmcc
-         AJVuX2xkwrs7BQ/+8D1nH7+PqP0vMBxxrlILiu1rnTe8WBdUM7PrlmX14WU6IGGZVc
-         r4s0mGlEBEyV3aQTHdCOSFpyCYTtCoG1k6sm2tQQfPTTcF+xOsdbflSU/ocxbICwO/
-         vXjykC6ZZq/0vC+9egeYOjg6yCY+jYo40zseLcQwn6hk0xmlQjWcJW5rNCfvHZp0fi
-         I8ql5Fgb0amOg==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Chuck Lever <chuck.lever@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org
-Subject: [PATCH v2 3/3] xfs: mark the inode for high-res timestamp update in getattr
-Date:   Mon, 24 Apr 2023 11:11:04 -0400
-Message-Id: <20230424151104.175456-4-jlayton@kernel.org>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230424151104.175456-1-jlayton@kernel.org>
-References: <20230424151104.175456-1-jlayton@kernel.org>
+        Mon, 24 Apr 2023 11:33:06 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7DD9559E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 08:32:55 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-504eb1155d3so34345087a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Apr 2023 08:32:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1682350374; x=1684942374;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uAia9ZoCM3Ngt40DYLr2QLseOj/p7pPYWNkC2fjWJmw=;
+        b=qWrSGUzCxRq8qH9ciyQYay96/ootXHgah+P6qqyhGbCAQ2pJ8/OxJrzulk56To27uy
+         09RLg/kTfw37Y4n+Y6DBPHrqNJM86jTGeI+B59T2u0X1ivH2gkzn4r7IIy7tcMBPzleL
+         451KVjoReU+5shixxVPasIdCw/4ump/BEaTRo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682350374; x=1684942374;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uAia9ZoCM3Ngt40DYLr2QLseOj/p7pPYWNkC2fjWJmw=;
+        b=VT4/4+m2noapN3qeHsh1Z0ugkeZ8l4RETaY3h0rNjnMMckowgb2HPdRmQWzbsgJrta
+         nOdYuUfypqpctzST1RfqfbNrDAvxtXnLyWw9svcJ0BJRk1euC+GwuFop2sAQlSfbn+rA
+         +bVEKbXhUVGkxSf79Swtxo04pCSbCeaJET70Kcgs5YO5t/KPT8lPqfeq6QKIf38WWTin
+         7rmaCuYgtkm+bK3sElHALOZM7kHw4lrHiyk1xiJsGM/5UHl+DrC6GWgjnaagOJbZzSn4
+         YZHc3B+DPxPUMjsOlu8fU18mudc2SpftS2uilMKFb/fyVJRUqhzgnpEgqj2QVQ20ouyb
+         EGjA==
+X-Gm-Message-State: AAQBX9creSK/vbHIC1i23UNmomJYLajLkG7KgxKXnsElG0zCLzk1+jiZ
+        mutQ1EgvfoH4z1xNBqfyGx60B7g6X+o6IxUMEDbl7g==
+X-Google-Smtp-Source: AKy350ZlEFYElE3Cz+YrZZbx+udm5MYxX+58hoksQpdxqtGw8JQgjq/51zlo+VJfHxiyRLGkhE1nZhNtsXCZO/Kgvz0=
+X-Received: by 2002:a17:906:d1cb:b0:957:9ddd:8809 with SMTP id
+ bs11-20020a170906d1cb00b009579ddd8809mr8178755ejb.35.1682350374328; Mon, 24
+ Apr 2023 08:32:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+References: <20230418014037.2412394-1-drosen@google.com>
+In-Reply-To: <20230418014037.2412394-1-drosen@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 24 Apr 2023 17:32:42 +0200
+Message-ID: <CAJfpegtuNgbZfLiKnpzdEP0sNtCt=83NjGtBnmtvMaon2avv2w@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next v3 00/37] FUSE BPF: A Stacked Filesystem
+ Extension for FUSE
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Joanne Koong <joannelkoong@gmail.com>,
+        Mykola Lysenko <mykolal@fb.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -62,122 +79,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When the mtime or ctime is being queried via getattr, ensure that we
-mark the inode for a high-res timestamp update on the next pass. Also,
-switch to current_cmtime for other c/mtime updates.
+On Tue, 18 Apr 2023 at 03:40, Daniel Rosenberg <drosen@google.com> wrote:
+>
+> These patches extend FUSE to be able to act as a stacked filesystem. This
+> allows pure passthrough, where the fuse file system simply reflects the lower
+> filesystem, and also allows optional pre and post filtering in BPF and/or the
+> userspace daemon as needed. This can dramatically reduce or even eliminate
+> transitions to and from userspace.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/xfs/libxfs/xfs_trans_inode.c | 2 +-
- fs/xfs/xfs_acl.c                | 2 +-
- fs/xfs/xfs_inode.c              | 2 +-
- fs/xfs/xfs_inode_item.c         | 2 +-
- fs/xfs/xfs_iops.c               | 9 ++++++---
- fs/xfs/xfs_super.c              | 5 ++++-
- 6 files changed, 14 insertions(+), 8 deletions(-)
+I'll ignore BPF for now and concentrate on the passthrough aspect,
+which I understand better.
 
-diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-index 8b5547073379..c08be3aa3339 100644
---- a/fs/xfs/libxfs/xfs_trans_inode.c
-+++ b/fs/xfs/libxfs/xfs_trans_inode.c
-@@ -63,7 +63,7 @@ xfs_trans_ichgtime(
- 	ASSERT(tp);
- 	ASSERT(xfs_isilocked(ip, XFS_ILOCK_EXCL));
- 
--	tv = current_time(inode);
-+	tv = current_ctime(inode);
- 
- 	if (flags & XFS_ICHGTIME_MOD)
- 		inode->i_mtime = tv;
-diff --git a/fs/xfs/xfs_acl.c b/fs/xfs/xfs_acl.c
-index 791db7d9c849..85353e6e9004 100644
---- a/fs/xfs/xfs_acl.c
-+++ b/fs/xfs/xfs_acl.c
-@@ -233,7 +233,7 @@ xfs_acl_set_mode(
- 	xfs_ilock(ip, XFS_ILOCK_EXCL);
- 	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
- 	inode->i_mode = mode;
--	inode->i_ctime = current_time(inode);
-+	inode->i_ctime = current_ctime(inode);
- 	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
- 
- 	if (xfs_has_wsync(mp))
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 5808abab786c..ac299c1a9838 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -843,7 +843,7 @@ xfs_init_new_inode(
- 	ip->i_df.if_nextents = 0;
- 	ASSERT(ip->i_nblocks == 0);
- 
--	tv = current_time(inode);
-+	tv = current_ctime(inode);
- 	inode->i_mtime = tv;
- 	inode->i_atime = tv;
- 	inode->i_ctime = tv;
-diff --git a/fs/xfs/xfs_inode_item.c b/fs/xfs/xfs_inode_item.c
-index ca2941ab6cbc..dc33f495f4fa 100644
---- a/fs/xfs/xfs_inode_item.c
-+++ b/fs/xfs/xfs_inode_item.c
-@@ -381,7 +381,7 @@ xfs_inode_to_log_dinode(
- 	memset(to->di_pad3, 0, sizeof(to->di_pad3));
- 	to->di_atime = xfs_inode_to_log_dinode_ts(ip, inode->i_atime);
- 	to->di_mtime = xfs_inode_to_log_dinode_ts(ip, inode->i_mtime);
--	to->di_ctime = xfs_inode_to_log_dinode_ts(ip, inode->i_ctime);
-+	to->di_ctime = xfs_inode_to_log_dinode_ts(ip, timestamp_truncate(inode->i_ctime, inode));
- 	to->di_nlink = inode->i_nlink;
- 	to->di_gen = inode->i_generation;
- 	to->di_mode = inode->i_mode;
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 24718adb3c16..b0490e46e825 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -573,8 +573,11 @@ xfs_vn_getattr(
- 	stat->gid = vfsgid_into_kgid(vfsgid);
- 	stat->ino = ip->i_ino;
- 	stat->atime = inode->i_atime;
--	stat->mtime = inode->i_mtime;
--	stat->ctime = inode->i_ctime;
-+	if (request_mask & (STATX_MTIME|STATX_CTIME))
-+		generic_fill_multigrain_cmtime(inode, stat);
-+	else
-+		stat->result_mask &= ~(STATX_CTIME|STATX_MTIME);
-+
- 	stat->blocks = XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks);
- 
- 	if (xfs_has_v3inodes(mp)) {
-@@ -917,7 +920,7 @@ xfs_setattr_size(
- 	if (newsize != oldsize &&
- 	    !(iattr->ia_valid & (ATTR_CTIME | ATTR_MTIME))) {
- 		iattr->ia_ctime = iattr->ia_mtime =
--			current_time(inode);
-+			current_ctime(inode);
- 		iattr->ia_valid |= ATTR_CTIME | ATTR_MTIME;
- 	}
- 
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 4f814f9e12ab..ee9d0b43bf15 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1620,7 +1620,7 @@ xfs_fs_fill_super(
- 	sb->s_blocksize_bits = ffs(sb->s_blocksize) - 1;
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
- 	sb->s_max_links = XFS_MAXLINK;
--	sb->s_time_gran = 1;
-+	sb->s_time_gran = 2;
- 	if (xfs_has_bigtime(mp)) {
- 		sb->s_time_min = xfs_bigtime_to_unix(XFS_BIGTIME_TIME_MIN);
- 		sb->s_time_max = xfs_bigtime_to_unix(XFS_BIGTIME_TIME_MAX);
-@@ -1633,6 +1633,9 @@ xfs_fs_fill_super(
- 
- 	set_posix_acl_flag(sb);
- 
-+	/* Enable multigrain timestamps */
-+	sb->s_flags |= SB_MULTIGRAIN_TS;
-+
- 	/* version 5 superblocks support inode version counters. */
- 	if (xfs_has_crc(mp))
- 		sb->s_flags |= SB_I_VERSION;
--- 
-2.40.0
+The security model needs to be thought about and documented.  Think
+about this: the fuse server now delegates operations it would itself
+perform to the passthrough code in fuse.  The permissions that would
+have been checked in the context of the fuse server are now checked in
+the context of the task performing the operation.  The server may be
+able to bypass seccomp restrictions.  Files that are open on the
+backing filesystem are now hidden (e.g. lsof won't find these), which
+allows the server to obfuscate accesses to backing files.  Etc.
 
+These are not particularly worrying if the server is privileged, but
+fuse comes with the history of supporting unprivileged servers, so we
+should look at supporting passthrough with unprivileged servers as
+well.
+
+My other generic comment is that you should add justification for
+doing this in the first place.  I guess it's mainly performance.  So
+how performance can be won in real life cases?   It would also be good
+to measure the contribution of individual ops to that win.   Is there
+another reason for this besides performance?
+
+Thanks,
+Miklos
