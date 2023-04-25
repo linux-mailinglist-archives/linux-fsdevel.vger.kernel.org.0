@@ -2,125 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41D826EDB79
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 08:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB806EDB97
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 08:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233170AbjDYGEg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 02:04:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37408 "EHLO
+        id S233401AbjDYGY7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 02:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232617AbjDYGEf (ORCPT
+        with ESMTP id S232430AbjDYGY6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 02:04:35 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE321AD28;
-        Mon, 24 Apr 2023 23:04:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9Mao8Fd980ctu+JkZbtOuyLu6ZD3b3EkMiAg/6KGfDU=; b=LgOnoI/Ajcu7DGP9ey7GeYfZ1L
-        tfzP97YQdEf+ZYu+Aa3Le7w+bzTFDg241DQmWFVxyNVo6AhS/iTNs1cuANOPuaZtDb9C11f9gtnAW
-        cpzr6Z8Gx+h9k7i/xmXBgeUvF7e7H07sHhOpKoG++xm3KAUi0YXk01tTkWxpB3embzxKhcOTlP0pc
-        SLMkfQ/64+D5oSw0BXRw5tHmj6wvH8ZzdFJq/N0VrEvwB9wsaGiNXs5AVW2gO6rH089MpUVRILOkJ
-        VT1N4lUmRdKqfe5DHemucTVhFDCUWdEUBq/Eh4kJQ+ElHpoaShzns0CxyFA7H5UAbwvisDcvNJgcB
-        K/c3LOkw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1prBmt-00CKtN-2v;
-        Tue, 25 Apr 2023 06:04:28 +0000
-Date:   Tue, 25 Apr 2023 07:04:27 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
+        Tue, 25 Apr 2023 02:24:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12577B453;
+        Mon, 24 Apr 2023 23:24:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A186462266;
+        Tue, 25 Apr 2023 06:24:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C10C433EF;
+        Tue, 25 Apr 2023 06:24:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682403893;
+        bh=Mi+ZKZMKXNwM0BSVBqcBzXImZhMGe19r2+9wf6AKP00=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qd2YARxdhCnp9zDPfkwAGEymJRl22vpunNo7D6Kf94aHzlXEpuO/4SdSqZG5QocUE
+         zICDdZyivpfrjT+bffR2bdluSh0nNof8xll2IDnACD8iFk729k9ehWHZxa8ioMbNCS
+         UalK0uZzNzc7SpK7FyIaPXlXv0yb9nAwVbn9mcvcc6zXf6u/ieEpH7X4q3nCpy4N3Q
+         qwxtd66nDEN8HBjvkcbNiYc/rWsLaNQ5oVz4mM5Q7h2KPOirEKUN7S/BiCj/3sSpmH
+         ahP1Zl5I8NR4FQ0rYzSZ7YbNntPm18d1w9r7FTck3rMg+Al5j0f4HKOL8DR3Vr2uI8
+         ykujtVvntBHcg==
+Date:   Mon, 24 Apr 2023 23:24:51 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] pidfd updates
-Message-ID: <20230425060427.GP3390869@ZenIV>
-References: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
- <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] fscrypt updates for 6.4
+Message-ID: <20230425062451.GA77408@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 01:24:24PM -0700, Linus Torvalds wrote:
+The following changes since commit 197b6b60ae7bc51dd0814953c562833143b292aa:
 
-> But I really think a potentially much nicer model would have been to
-> extend our "get_unused_fd_flags()" model.
-> 
-> IOW, we could have instead marked the 'struct file *' in the file
-> descriptor table as being "not ready yet".
-> 
-> I wonder how nasty it would have been to have the low bit of the
-> 'struct file *' mark "not ready to be used yet" or something similar.
-> You already can't just access the 'fdt->fd[]' array willy-nilly since
-> we have both normal RCU issues _and_ the somewhat unusual spectre
-> array indexing issues.
-> 
-> So looking around with
-> 
->     git grep -e '->fd\['
-> 
-> we seem to be pretty good about that and it probably wouldn't be too
-> horrid to add a "check low bit isn't set" to the rules.
-> 
-> Then pidfd_prepare() could actually install the file pointer in the fd
-> table, just marked as "not ready", and then instead of "fd_install()",
-> yuo'd have "fd_expose(fd)" or something.
-> 
-> I dislike interfaces that return two different things. Particularly
-> ones that are supposed to be there to make things easy for the user. I
-> think your pidfd_prepare() helper fails that "make it easy to use"
-> test.
-> 
-> Hmm?
+  Linux 6.3-rc4 (2023-03-26 14:40:20 -0700)
 
-I'm not fond of "return two things" kind of helpers, but I'm even less
-fond of "return fd, file is already there" ones, TBH.  {__,}pidfd_prepare()
-users are thankfully very limited in the things they do to the file that
-had been returned, but that really invites abuse.
+are available in the Git repository at:
 
-The deeper in call chain we mess with descriptor table, the more painful it
-gets, IME.
+  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
 
-Speaking of {__,}pidfd_prepare(), I wonder if we wouldn't be better off
-with get_unused_fd_flags() lifted into the callers - all three of those
-(fanotify copy_event_to_user(), copy_process() and pidfd_create()).
-Switch from anon_inode_getfd() to anon_inode_getfile() certainly
-made sense, ditto for combining it with get_pid(), but mixing
-get_unused_fd_flags() into that is a mistake, IMO.
+for you to fetch changes up to 83e57e47906ce0e99bd61c70fae514e69960d274:
 
-As for your suggestion... let's see what it leads to.
+  fscrypt: optimize fscrypt_initialize() (2023-04-06 11:16:39 -0700)
 
-	Suppose we add such entries (reserved, hold a reference to file,
-marked "not yet available" in the LSB).  From the current tree POV those
-would be equivalent to descriptor already reserved, but fd_install() not
-done.  So behaviour of existing primitives should be the same as for this
-situation, except for fd_install() and put_unused_fd().
+----------------------------------------------------------------
 
-	* pick_file(), __fget_files_rcu(), iterate_fd(), files_lookup_fd_raw(),
-	  loop in dup_fd(), io_close() - treat odd pointers as NULL.
-	* close_files() should, AFAICS, treat an odd pointer as "should never
-happen" (and that xchg() in there needs to go anyway - it's pointless, since
-we are freeing the the array immediately afterwards.
-	* do_close_on_exec() should probably treat them as "should never happen".
-	* do_dup2() - odd value should be treated as -EBUSY.
+A few cleanups for fs/crypto/, and another patch to prepare for the
+upcoming CephFS encryption support.
 
-The interesting part, of course, is how to legitimize (or dispose of) such
-a beast.  The former is your "fd_expose()" - parallel to fd_install(),
-AFAICS.  The latter... another primitive that would
-	grab ->files_lock
-	pick_file() variant that *expects* an odd value
-	drop ->files_lock
-	clear LSB and pass to fput().
+----------------------------------------------------------------
+Eric Biggers (3):
+      fs/buffer.c: use b_folio for fscrypt work
+      fscrypt: use WARN_ON_ONCE instead of WARN_ON
+      fscrypt: optimize fscrypt_initialize()
 
-It's doable, but AFAICS doesn't make callers all that happier...
+Luís Henriques (1):
+      fscrypt: new helper function - fscrypt_prepare_lookup_partial()
+
+ fs/buffer.c                 |  4 ++--
+ fs/crypto/bio.c             |  6 +++---
+ fs/crypto/crypto.c          | 19 ++++++++++++-------
+ fs/crypto/fname.c           |  4 ++--
+ fs/crypto/fscrypt_private.h |  6 +++---
+ fs/crypto/hkdf.c            |  4 ++--
+ fs/crypto/hooks.c           | 32 +++++++++++++++++++++++++++++++-
+ fs/crypto/keyring.c         | 14 +++++++-------
+ fs/crypto/keysetup.c        | 14 +++++++-------
+ fs/crypto/policy.c          |  4 ++--
+ include/linux/fscrypt.h     |  7 +++++++
+ 11 files changed, 78 insertions(+), 36 deletions(-)
