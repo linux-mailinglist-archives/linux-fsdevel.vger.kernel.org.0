@@ -2,148 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB6EB6EE5B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 18:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E3C6EE5FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 18:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234750AbjDYQ3R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 12:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60542 "EHLO
+        id S234800AbjDYQpr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 12:45:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234488AbjDYQ3Q (ORCPT
+        with ESMTP id S234794AbjDYQpq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 12:29:16 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A97269022
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 09:29:14 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-504eac2f0b2so10359224a12.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 09:29:14 -0700 (PDT)
+        Tue, 25 Apr 2023 12:45:46 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763A8D32E;
+        Tue, 25 Apr 2023 09:45:40 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f19b9d5358so37403675e9.1;
+        Tue, 25 Apr 2023 09:45:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1682440153; x=1685032153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VXJ9yzP7r10T1ZjT07mC8uDa4HlfNL4ir5xqCtJ+4tY=;
-        b=YRZuBoR9HymRaxJ/xpYsZre4rPO61gav+O/ySlKfsepC5WElLCw00E41w0VjKzb9IN
-         FmkLX8a43VacQfFDVPsACCwZxiaoqMONlzntdcMQ9INnrhJ9smAX14HX2e5W4sqdswrr
-         YkHsCNuIdEgRwUJHGzEm0w4HWDMQKz0PpLFSU=
+        d=gmail.com; s=20221208; t=1682441139; x=1685033139;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DQgl8loxAa0veEtZSLtrUvcvIyw2BmuwVPdtNPCihQg=;
+        b=sIcEl1Tq3fwrs5UA5d0jX7GXW2Kr1kzevC2acB6kGpDEHKhEr1s9Nv64aQTPCMYV3b
+         8ogebBHtokSZSmEB38ASPWmJFv8VhO9CXDIGJ7A3a0jSniormcYUo170KQJgaZ/9ZNhH
+         cOfQjXRcRLByvhH8UPAVLiw4tMzfQCtNEO1KMn6VCHOdb3sKSnbH/IcHPKhOeMrChhNv
+         JMb0WcLeiws5HqMPX8V0OIa1fx6cu4d4gQ0O1QMNmcSGGMhIWpJ6dE602GjSAh8KDHHy
+         /ei4tBSGhgulm1GTAscNu1bTIhOBVZ+E3mup8DtyVPaVcm5IQ6WVGGr4ObkkwKUvTf5L
+         XsHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682440153; x=1685032153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VXJ9yzP7r10T1ZjT07mC8uDa4HlfNL4ir5xqCtJ+4tY=;
-        b=P9fC1Kv6v9PNzKSv13oqXUv6D3vLHZluXuY2AKkT5Vy2t3QvScS3k7zQ37CUsSKTVs
-         w2ss9PAdzMYsMom1bob7etZquqRVD877rRcHq6faA5LcEWCxJWsATp/gUcry0FmUy5/Q
-         aX2F8IDiLBsnnC8YaiY8rBRprrGYxuYmoc37mjuYBW4h35NL2Pyz5lZZF/n8wMSfPCJa
-         1Kcx/+cagBY3u02vms+tE5GOsz8oz82F68HYmoV/jPpbWW7MHdhcSExrxP+6fYkfppP7
-         HjDRHvurQuNkLVuLHR10/cuTLXlChzqm46lPB3fO/WsgzFTyrn98v9cEMnCtmTXsbhOa
-         4lDA==
-X-Gm-Message-State: AAQBX9ccgSMnVkGN2pJkLO/sMDX/wFuOjxYtpUccVgOiLq2uqRciQYxC
-        kSzIEys4vjEIj4bqU5mnrWCySt3X1dg0Qo1HOwKOw1t+
-X-Google-Smtp-Source: AKy350ZUeWp3skpNWzX9AvPQutCtvaFks+9EAcoR1NDTmpcW5abhecaqgTvQ9Za2FImGgaatzn65qg==
-X-Received: by 2002:aa7:c0c4:0:b0:504:71a7:1c69 with SMTP id j4-20020aa7c0c4000000b0050471a71c69mr15144887edp.26.1682440152826;
-        Tue, 25 Apr 2023 09:29:12 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id by14-20020a0564021b0e00b0050844e1c98fsm5849971edb.82.2023.04.25.09.29.12
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Apr 2023 09:29:12 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5067736607fso10390023a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 09:29:12 -0700 (PDT)
-X-Received: by 2002:a05:6402:327:b0:506:73a7:ce12 with SMTP id
- q7-20020a056402032700b0050673a7ce12mr14926793edw.36.1682440151945; Tue, 25
- Apr 2023 09:29:11 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1682441139; x=1685033139;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DQgl8loxAa0veEtZSLtrUvcvIyw2BmuwVPdtNPCihQg=;
+        b=Npba7R5Ulyw1NJmOI0dLq0Pav1PO1rgUSuQT97E/01eUIUfgPbhQLwn553zyy9JHA+
+         dpj2myvkI3KbVeA9A/K1xthmSqD8Nl3zZlW2LZ6amQuVa2YqzlkgMBg6AAiRN2+mwjeL
+         8gKhZ8JwarN09X8Lkq5QELVm4ZY38fbaLBGn4yoVraC6pG0UHfAnp5ix1jbakXL/5kXN
+         qqFdT+abj9+ybsMiJlHZjhbCBkkJG0Be9evW5tepHNCuMNzjkGoGyucwfoGO9nNb4O5C
+         d5Kjyk1pEgDgfydswa+o1/Q3rqK9UNO87P0GVJZVeyeyoK8p64E6cUniqNZJbH871m6k
+         e5OQ==
+X-Gm-Message-State: AAQBX9dZRMkVToc0ge+tqj2FGLO+SSfcjT87nwsCWSeqk4Zb4rSeSYUc
+        pUbdz0IM4gxaQZB39NoloBw=
+X-Google-Smtp-Source: AKy350bhH1kCJAVU7jh/SMJsu6YcMsWKt9KQNik/pi2ziZhXf7/st499uGWpq4b1M825P+kzcwiSwA==
+X-Received: by 2002:a05:600c:3783:b0:3f1:6fb4:44cf with SMTP id o3-20020a05600c378300b003f16fb444cfmr10814511wmr.28.1682441138560;
+        Tue, 25 Apr 2023 09:45:38 -0700 (PDT)
+Received: from localhost ([208.34.186.1])
+        by smtp.gmail.com with ESMTPSA id p10-20020a1c544a000000b003f03d483966sm18820138wmi.44.2023.04.25.09.45.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Apr 2023 09:45:37 -0700 (PDT)
+Date:   Tue, 25 Apr 2023 17:45:36 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     "Kirill A . Shutemov" <kirill@shutemov.name>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH v3] mm/gup: disallow GUP writing to file-backed mappings
+ by default
+Message-ID: <ZEgDsOlIW1xhuQXv@murray>
+References: <23c19e27ef0745f6d3125976e047ee0da62569d4.1682406295.git.lstoakes@gmail.com>
+ <20230425101153.xxi4arpwkz7ijnvm@box.shutemov.name>
 MIME-Version: 1.0
-References: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
- <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
- <20230425060427.GP3390869@ZenIV> <20230425-sturheit-jungautor-97d92d7861e2@brauner>
-In-Reply-To: <20230425-sturheit-jungautor-97d92d7861e2@brauner>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 25 Apr 2023 09:28:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjpBq2D97ih_AA0D7+KJ8ihT6WW_cn1BQc43wVgUioH2w@mail.gmail.com>
-Message-ID: <CAHk-=wjpBq2D97ih_AA0D7+KJ8ihT6WW_cn1BQc43wVgUioH2w@mail.gmail.com>
-Subject: Re: [GIT PULL] pidfd updates
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230425101153.xxi4arpwkz7ijnvm@box.shutemov.name>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 25, 2023 at 5:34=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
+On Tue, Apr 25, 2023 at 01:11:53PM +0300, Kirill A . Shutemov wrote:
+> On Tue, Apr 25, 2023 at 08:14:14AM +0100, Lorenzo Stoakes wrote:
+> > GUP does not correctly implement write-notify semantics, nor does it
+> > guarantee that the underlying pages are correctly dirtied, which could lead
+> > to a kernel oops or data corruption when writing to file-backed mappings.
+> >
+> > This is only relevant when the mappings are file-backed and the underlying
+> > file system requires folio dirty tracking. File systems which do not, such
+> > as shmem or hugetlb, are not at risk and therefore can be written to
+> > without issue.
+> >
+> > Unfortunately this limitation of GUP has been present for some time and
+> > requires future rework of the GUP API in order to provide correct write
+> > access to such mappings.
+> >
+> > In the meantime, we add a check for the most broken GUP case -
+> > FOLL_LONGTERM - which really under no circumstances can safely access
+> > dirty-tracked file mappings.
+> >
+> > Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> > ---
+> > v3:
+> > - Rebased on latest mm-unstable as of 24th April 2023.
+> > - Explicitly check whether file system requires folio dirtying. Note that
+> >   vma_wants_writenotify() could not be used directly as it is very much focused
+> >   on determining if the PTE r/w should be set (e.g. assuming private mapping
+> >   does not require it as already set, soft dirty considerations).
 >
-> Hell, you could even extend that proposal below to wrap the
-> put_user()...
+> Hm. Okay. Have you considered having a common base for your case and
+> vma_wants_writenotify()? Code duplication doesn't look good.
 >
-> struct fd_file {
->         struct file *file;
->         int fd;
->         int __user *fd_user;
-> };
 
-So I don't like this extended version, but your proposal patch below
-looks good to me.
+I did and I actually started implementing something for the same reason,
+however I wondered whether it was worth it for essentially 3 clauses that
+are shared between the two.
 
-Why? Simply because the "two-word struct" is actually a good way to
-return two values. But a three-word one would be passed on the stack.
+On second thoughts, it is painful to have this duplicated, so let me take
+another look.
 
-Both gcc and clang return small structs (where "small" is literally
-just two words) in registers, and it's part of most (all?) ABIs and
-we've relied on that before.
-
-It's kind of the same thing as returning a "long long" in two
-registers, except it works with structs too.
-
-We've relied on that for ages, with things like 'struct pte' often
-being that kind of two-word struct (going back a *loong* time to the
-bad old days of 32-bit x86 and PAE).
-
-And in the vfs layer we actually also do it for 'struct fd', which is
-a very similar construct.
-
-So yes, doing something like this:
-
-> +struct fd_file {
-> +       struct file *file;
-> +       int fd;
-> +};
-
-would make me happy, and still return just "one" value, it's just that
-the value now is both of those things we need.
-
-And then your helpers:
-
-> +static inline void fd_publish(struct fd_file *fdf)
-> +static inline void fd_discard(struct fd_file *fdf)
-
-solves my other issue, except I'd literally make it pass those structs
-by value, exactly like fdget/fdput does.
-
-Now, since they are inline functions, the code generation doesn't
-really change (compilers are smart enough to not actually generate any
-pointer stuff), but I prefer to make things like that expliict, and
-have source code that matches the code generation.
-
-(Which is also why I do *not* endorse passing bigger structs by value,
-because then the compiler will just pass it as a "pointer to a copy"
-instead, again violating the whole concept of "source matches what
-happens in reality")
-
-I think the above helper could be improved further with Al's
-suggestion to make 'fd_publish()' return an error code, and allow the
-file pointer (and maybe even the fd index) to be an error pointer (and
-error number), so that you could often unify the error/success paths.
-
-IOW, I like this, and I think it's superior to my stupid original suggestio=
-n.
-
-                  Linus
+>
+> --
+>   Kiryl Shutsemau / Kirill A. Shutemov
