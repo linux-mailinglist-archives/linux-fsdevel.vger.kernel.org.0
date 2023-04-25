@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E35EB6EE164
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 13:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C056EE17F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 13:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233259AbjDYLyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 07:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
+        id S233778AbjDYL56 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 07:57:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233013AbjDYLyh (ORCPT
+        with ESMTP id S233999AbjDYL5r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 07:54:37 -0400
+        Tue, 25 Apr 2023 07:57:47 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 511321444C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 04:54:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52EB649E2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 04:57:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F0D0E615F8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 11:54:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD5A3C4339B;
-        Tue, 25 Apr 2023 11:54:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CD9CB62C6E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 11:57:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98BC5C433D2;
+        Tue, 25 Apr 2023 11:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682423650;
-        bh=iwf2HoLbDyzI0Dv9trymYEBOQcMnRpliC54/xkRO1uI=;
+        s=k20201202; t=1682423860;
+        bh=iIQEiFEtmIme0PX+Bw27oA3fIIZKEiaItf7uVg+h7/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KI6vU4E3HQq1Vi7qncGqQkrLFDGRzj1KnmHPyQ32KzXexalfrKvQxMv7Jhz6AQz8M
-         Is/xTKYc7FW5+jQHlz+NPuCnWVI1v6aTVsPSensqDMQmw6Cs+l+CVqBfTuAOgEStZ9
-         DAk1Pv9lrkGGLiXfjINcQdmojrjpC8Lhzzw4SpDUOzq/p9uIBYFwMZWq2sZjcoSXop
-         Jwyfwp/dJLF7wQYhaVmR6wbmYBG+3RUqM1zQhYSd/0Yt5Zg3GKHHBuHd1r+oBOCfiE
-         yyLAog/YVbzJuEYMkwQJx4gKUPx6FSIOYgUsIsjBdsPWQV7funVpuyWch8KNMKxeFM
-         MKuf/fRFaiVyg==
+        b=eQQe8Qe75RNdOZpmTpj7kSbXGlzalZkuRSlxUcnPOatMJcYxm7lYkDlbcuyz/EimL
+         1MFdU9gW+1FB5wtIv0SROASZCfHvmsUO4FsnYS57nJ/nfnGPF30uyr6qr7Gh55TfNh
+         RR98d+ZryCLIrSvnK284qC4NArfonGTqwBk05/I1k67Jexe40SbV3BluzVijjAUjoe
+         AJmCc5ZwAd1EyniwEB6eoIUyVuQDXeOQr0si/J2TVYao4JrEeKK3KE+jd0IOJdG6ET
+         MAWPRIuvgYHVCin9blklvr74dz4xOJ+7mxPHmFA9Iut1TFXUumAN9oyx/UecS2xDu0
+         u5J1QNYnjeOGw==
 From:   cem@kernel.org
 To:     hughd@google.com
 Cc:     jack@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         djwong@kernel.org
-Subject: [PATCH V3 2/6] shmem: make shmem_get_inode() return ERR_PTR instead of NULL
-Date:   Tue, 25 Apr 2023 13:54:00 +0200
-Message-Id: <20230425115400.2913497-1-cem@kernel.org>
+Subject: [PATCH V3 6/6] Add default quota limit mount options
+Date:   Tue, 25 Apr 2023 13:57:25 +0200
+Message-Id: <20230425115725.2913656-1-cem@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230420080359.2551150-3-cem@kernel.org>
-References: <20230420080359.2551150-3-cem@kernel.org>
+In-Reply-To: <20230420080359.2551150-7-cem@kernel.org>
+References: <20230420080359.2551150-7-cem@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -56,322 +56,270 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Lukas Czerner <lczerner@redhat.com>
 
-Make shmem_get_inode() return ERR_PTR instead of NULL on error. This will be
-useful later when we introduce quota support.
-
-There should be no functional change.
+Allow system administrator to set default global quota limits at tmpfs
+mount time.
 
 Signed-off-by: Lukas Czerner <lczerner@redhat.com>
 Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
 ---
-
 V3:
-	- Fix shmem_get_inode() definition when CONFIG_SHMEM is not enabled
-
+	- Do not enable quotas if usrquota or grpquota options are not
+	  explicitly set.
+	- shmem_release_dquot() now also free up quota_info if there is
+	  no usage and there are no custom limits set.
 V2:
-	- Fix error handling logic in shmem_tmpfile()
-	- Add missing idmap argument to the ramfs version of
-	  shmem_get_inode(), reported by Intel's
-	  kernel test robot <lkp@intel.com>
+	- Fix documentation phrasing
 
- mm/shmem.c | 206 ++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 116 insertions(+), 90 deletions(-)
+ Documentation/filesystems/tmpfs.rst | 34 +++++++++++-----
+ include/linux/shmem_fs.h            |  8 ++++
+ mm/shmem.c                          | 61 +++++++++++++++++++++++++++++
+ mm/shmem_quota.c                    | 34 +++++++++++++++-
+ 4 files changed, 127 insertions(+), 10 deletions(-)
 
+diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+index 595e607274afb..0c7bfba34baa6 100644
+--- a/Documentation/filesystems/tmpfs.rst
++++ b/Documentation/filesystems/tmpfs.rst
+@@ -88,15 +88,31 @@ that instance in a system with many CPUs making intensive use of it.
+ 
+ tmpfs also supports quota with the following mount options
+ 
+-========  =============================================================
+-quota     User and group quota accounting and enforcement is enabled on
+-          the mount. Tmpfs is using hidden system quota files that are
+-          initialized on mount.
+-usrquota  User quota accounting and enforcement is enabled on the
+-          mount.
+-grpquota  Group quota accounting and enforcement is enabled on the
+-          mount.
+-========  =============================================================
++======================== =================================================
++quota                    User and group quota accounting and enforcement
++                         is enabled on the mount. Tmpfs is using hidden
++                         system quota files that are initialized on mount.
++usrquota                 User quota accounting and enforcement is enabled
++                         on the mount.
++grpquota                 Group quota accounting and enforcement is enabled
++                         on the mount.
++usrquota_block_hardlimit Set global user quota block hard limit.
++usrquota_inode_hardlimit Set global user quota inode hard limit.
++grpquota_block_hardlimit Set global group quota block hard limit.
++grpquota_inode_hardlimit Set global group quota inode hard limit.
++======================== =================================================
++
++None of the quota related mount options can be set or changed on remount.
++
++Quota limit parameters accept a suffix k, m or g for kilo, mega and giga
++and can't be changed on remount. Default global quota limits are taking
++effect for any and all user/group/project except root the first time the
++quota entry for user/group/project id is being accessed - typically the
++first time an inode with a particular id ownership is being created after
++the mount. In other words, instead of the limits being initialized to zero,
++they are initialized with the particular value provided with these mount
++options. The limits can be changed for any user/group id at any time as they
++normally can be.
+ 
+ Note that tmpfs quotas do not support user namespaces so no uid/gid
+ translation is done if quotas are enabled inside user namespaces.
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index b8e421e349868..8ca5e969f00fc 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -41,6 +41,13 @@ struct shmem_inode_info {
+ 	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
+ #define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
+ 
++struct shmem_quota_limits {
++	qsize_t usrquota_bhardlimit; /* Default user quota block hard limit */
++	qsize_t usrquota_ihardlimit; /* Default user quota inode hard limit */
++	qsize_t grpquota_bhardlimit; /* Default group quota block hard limit */
++	qsize_t grpquota_ihardlimit; /* Default group quota inode hard limit */
++};
++
+ struct shmem_sb_info {
+ 	unsigned long max_blocks;   /* How many blocks are allowed */
+ 	struct percpu_counter used_blocks;  /* How many are allocated */
+@@ -58,6 +65,7 @@ struct shmem_sb_info {
+ 	spinlock_t shrinklist_lock;   /* Protects shrinklist */
+ 	struct list_head shrinklist;  /* List of shinkable inodes */
+ 	unsigned long shrinklist_len; /* Length of shrinklist */
++	struct shmem_quota_limits qlimits; /* Default quota limits */
+ };
+ 
+ static inline struct shmem_inode_info *SHMEM_I(struct inode *inode)
 diff --git a/mm/shmem.c b/mm/shmem.c
-index b1b3b826f6189..09a44f1b2c954 100644
+index 623d258af39f8..24bcb374ad27b 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -2354,65 +2354,71 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
- 	struct shmem_inode_info *info;
- 	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
- 	ino_t ino;
-+	int err;
-+
-+	err = shmem_reserve_inode(sb, &ino);
-+	if (err)
-+		return ERR_PTR(err);
+@@ -118,6 +118,7 @@ struct shmem_options {
+ 	int huge;
+ 	int seen;
+ 	unsigned short quota_types;
++	struct shmem_quota_limits qlimits;
+ #define SHMEM_SEEN_BLOCKS 1
+ #define SHMEM_SEEN_INODES 2
+ #define SHMEM_SEEN_HUGE 4
+@@ -3593,6 +3594,10 @@ enum shmem_param {
+ 	Opt_quota,
+ 	Opt_usrquota,
+ 	Opt_grpquota,
++	Opt_usrquota_block_hardlimit,
++	Opt_usrquota_inode_hardlimit,
++	Opt_grpquota_block_hardlimit,
++	Opt_grpquota_inode_hardlimit,
+ };
  
--	if (shmem_reserve_inode(sb, &ino))
--		return NULL;
- 
- 	inode = new_inode(sb);
--	if (inode) {
--		inode->i_ino = ino;
--		inode_init_owner(idmap, inode, dir, mode);
--		inode->i_blocks = 0;
--		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
--		inode->i_generation = get_random_u32();
--		info = SHMEM_I(inode);
--		memset(info, 0, (char *)inode - (char *)info);
--		spin_lock_init(&info->lock);
--		atomic_set(&info->stop_eviction, 0);
--		info->seals = F_SEAL_SEAL;
--		info->flags = flags & VM_NORESERVE;
--		info->i_crtime = inode->i_mtime;
--		info->fsflags = (dir == NULL) ? 0 :
--			SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
--		if (info->fsflags)
--			shmem_set_inode_flags(inode, info->fsflags);
--		INIT_LIST_HEAD(&info->shrinklist);
--		INIT_LIST_HEAD(&info->swaplist);
--		simple_xattrs_init(&info->xattrs);
--		cache_no_acl(inode);
--		mapping_set_large_folios(inode->i_mapping);
--
--		switch (mode & S_IFMT) {
--		default:
--			inode->i_op = &shmem_special_inode_operations;
--			init_special_inode(inode, mode, dev);
--			break;
--		case S_IFREG:
--			inode->i_mapping->a_ops = &shmem_aops;
--			inode->i_op = &shmem_inode_operations;
--			inode->i_fop = &shmem_file_operations;
--			mpol_shared_policy_init(&info->policy,
--						 shmem_get_sbmpol(sbinfo));
--			break;
--		case S_IFDIR:
--			inc_nlink(inode);
--			/* Some things misbehave if size == 0 on a directory */
--			inode->i_size = 2 * BOGO_DIRENT_SIZE;
--			inode->i_op = &shmem_dir_inode_operations;
--			inode->i_fop = &simple_dir_operations;
--			break;
--		case S_IFLNK:
--			/*
--			 * Must not load anything in the rbtree,
--			 * mpol_free_shared_policy will not be called.
--			 */
--			mpol_shared_policy_init(&info->policy, NULL);
--			break;
--		}
- 
--		lockdep_annotate_inode_mutex_key(inode);
--	} else
-+	if (!inode) {
- 		shmem_free_inode(sb);
-+		return ERR_PTR(-ENOSPC);
-+	}
-+
-+	inode->i_ino = ino;
-+	inode_init_owner(idmap, inode, dir, mode);
-+	inode->i_blocks = 0;
-+	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
-+	inode->i_generation = get_random_u32();
-+	info = SHMEM_I(inode);
-+	memset(info, 0, (char *)inode - (char *)info);
-+	spin_lock_init(&info->lock);
-+	atomic_set(&info->stop_eviction, 0);
-+	info->seals = F_SEAL_SEAL;
-+	info->flags = flags & VM_NORESERVE;
-+	info->i_crtime = inode->i_mtime;
-+	info->fsflags = (dir == NULL) ? 0 :
-+		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
-+	if (info->fsflags)
-+		shmem_set_inode_flags(inode, info->fsflags);
-+	INIT_LIST_HEAD(&info->shrinklist);
-+	INIT_LIST_HEAD(&info->swaplist);
-+	simple_xattrs_init(&info->xattrs);
-+	cache_no_acl(inode);
-+	mapping_set_large_folios(inode->i_mapping);
-+
-+	switch (mode & S_IFMT) {
-+	default:
-+		inode->i_op = &shmem_special_inode_operations;
-+		init_special_inode(inode, mode, dev);
+ static const struct constant_table shmem_param_enums_huge[] = {
+@@ -3618,6 +3623,10 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
+ 	fsparam_flag  ("quota",		Opt_quota),
+ 	fsparam_flag  ("usrquota",	Opt_usrquota),
+ 	fsparam_flag  ("grpquota",	Opt_grpquota),
++	fsparam_string("usrquota_block_hardlimit", Opt_usrquota_block_hardlimit),
++	fsparam_string("usrquota_inode_hardlimit", Opt_usrquota_inode_hardlimit),
++	fsparam_string("grpquota_block_hardlimit", Opt_grpquota_block_hardlimit),
++	fsparam_string("grpquota_inode_hardlimit", Opt_grpquota_inode_hardlimit),
+ #endif
+ 	{}
+ };
+@@ -3714,6 +3723,42 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 		ctx->seen |= SHMEM_SEEN_QUOTA;
+ 		ctx->quota_types |= QTYPE_MASK_GRP;
+ 		break;
++	case Opt_usrquota_block_hardlimit:
++		size = memparse(param->string, &rest);
++		if (*rest || !size)
++			goto bad_value;
++		if (size > SHMEM_QUOTA_MAX_SPC_LIMIT)
++			return invalfc(fc,
++				       "User quota block hardlimit too large.");
++		ctx->qlimits.usrquota_bhardlimit = size;
 +		break;
-+	case S_IFREG:
-+		inode->i_mapping->a_ops = &shmem_aops;
-+		inode->i_op = &shmem_inode_operations;
-+		inode->i_fop = &shmem_file_operations;
-+		mpol_shared_policy_init(&info->policy,
-+					 shmem_get_sbmpol(sbinfo));
++	case Opt_grpquota_block_hardlimit:
++		size = memparse(param->string, &rest);
++		if (*rest || !size)
++			goto bad_value;
++		if (size > SHMEM_QUOTA_MAX_SPC_LIMIT)
++			return invalfc(fc,
++				       "Group quota block hardlimit too large.");
++		ctx->qlimits.grpquota_bhardlimit = size;
 +		break;
-+	case S_IFDIR:
-+		inc_nlink(inode);
-+		/* Some things misbehave if size == 0 on a directory */
-+		inode->i_size = 2 * BOGO_DIRENT_SIZE;
-+		inode->i_op = &shmem_dir_inode_operations;
-+		inode->i_fop = &simple_dir_operations;
++	case Opt_usrquota_inode_hardlimit:
++		size = memparse(param->string, &rest);
++		if (*rest || !size)
++			goto bad_value;
++		if (size > SHMEM_QUOTA_MAX_INO_LIMIT)
++			return invalfc(fc,
++				       "User quota inode hardlimit too large.");
++		ctx->qlimits.usrquota_ihardlimit = size;
 +		break;
-+	case S_IFLNK:
-+		/*
-+		 * Must not load anything in the rbtree,
-+		 * mpol_free_shared_policy will not be called.
-+		 */
-+		mpol_shared_policy_init(&info->policy, NULL);
++	case Opt_grpquota_inode_hardlimit:
++		size = memparse(param->string, &rest);
++		if (*rest || !size)
++			goto bad_value;
++		if (size > SHMEM_QUOTA_MAX_INO_LIMIT)
++			return invalfc(fc,
++				       "Group quota inode hardlimit too large.");
++		ctx->qlimits.grpquota_ihardlimit = size;
 +		break;
-+	}
-+
-+	lockdep_annotate_inode_mutex_key(inode);
- 	return inode;
- }
- 
-@@ -2927,27 +2933,30 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	    struct dentry *dentry, umode_t mode, dev_t dev)
- {
- 	struct inode *inode;
--	int error = -ENOSPC;
-+	int error;
- 
- 	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, dev, VM_NORESERVE);
--	if (inode) {
--		error = simple_acl_create(dir, inode);
--		if (error)
--			goto out_iput;
--		error = security_inode_init_security(inode, dir,
--						     &dentry->d_name,
--						     shmem_initxattrs, NULL);
--		if (error && error != -EOPNOTSUPP)
--			goto out_iput;
- 
--		error = 0;
--		dir->i_size += BOGO_DIRENT_SIZE;
--		dir->i_ctime = dir->i_mtime = current_time(dir);
--		inode_inc_iversion(dir);
--		d_instantiate(dentry, inode);
--		dget(dentry); /* Extra count - pin the dentry in core */
--	}
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
-+
-+	error = simple_acl_create(dir, inode);
-+	if (error)
-+		goto out_iput;
-+	error = security_inode_init_security(inode, dir,
-+					     &dentry->d_name,
-+					     shmem_initxattrs, NULL);
-+	if (error && error != -EOPNOTSUPP)
-+		goto out_iput;
-+
-+	error = 0;
-+	dir->i_size += BOGO_DIRENT_SIZE;
-+	dir->i_ctime = dir->i_mtime = current_time(dir);
-+	inode_inc_iversion(dir);
-+	d_instantiate(dentry, inode);
-+	dget(dentry); /* Extra count - pin the dentry in core */
- 	return error;
-+
- out_iput:
- 	iput(inode);
- 	return error;
-@@ -2958,20 +2967,26 @@ shmem_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 	      struct file *file, umode_t mode)
- {
- 	struct inode *inode;
--	int error = -ENOSPC;
-+	int error;
- 
- 	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, 0, VM_NORESERVE);
--	if (inode) {
--		error = security_inode_init_security(inode, dir,
--						     NULL,
--						     shmem_initxattrs, NULL);
--		if (error && error != -EOPNOTSUPP)
--			goto out_iput;
--		error = simple_acl_create(dir, inode);
--		if (error)
--			goto out_iput;
--		d_tmpfile(file, inode);
-+
-+	if (IS_ERR(inode)) {
-+		error = PTR_ERR(inode);
-+		goto err_out;
  	}
+ 	return 0;
+ 
+@@ -3819,6 +3864,18 @@ static int shmem_reconfigure(struct fs_context *fc)
+ 		goto out;
+ 	}
+ 
++#ifdef CONFIG_TMPFS_QUOTA
++#define CHANGED_LIMIT(name)						\
++	(ctx->qlimits.name## hardlimit &&				\
++	(ctx->qlimits.name## hardlimit != sbinfo->qlimits.name## hardlimit))
 +
-+	error = security_inode_init_security(inode, dir,
-+					     NULL,
-+					     shmem_initxattrs, NULL);
-+	if (error && error != -EOPNOTSUPP)
-+		goto out_iput;
-+	error = simple_acl_create(dir, inode);
-+	if (error)
-+		goto out_iput;
-+	d_tmpfile(file, inode);
-+
-+err_out:
- 	return finish_open_simple(file, error);
- out_iput:
- 	iput(inode);
-@@ -3146,8 +3161,9 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	inode = shmem_get_inode(idmap, dir->i_sb, dir, S_IFLNK | 0777, 0,
- 				VM_NORESERVE);
--	if (!inode)
--		return -ENOSPC;
-+
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
- 
- 	error = security_inode_init_security(inode, dir, &dentry->d_name,
- 					     shmem_initxattrs, NULL);
-@@ -3762,12 +3778,13 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 	struct shmem_options *ctx = fc->fs_private;
- 	struct inode *inode;
- 	struct shmem_sb_info *sbinfo;
-+	int error = -ENOMEM;
- 
- 	/* Round up to L1_CACHE_BYTES to resist false sharing */
- 	sbinfo = kzalloc(max((int)sizeof(struct shmem_sb_info),
- 				L1_CACHE_BYTES), GFP_KERNEL);
- 	if (!sbinfo)
--		return -ENOMEM;
-+		return error;
- 
- 	sb->s_fs_info = sbinfo;
- 
-@@ -3829,8 +3846,10 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL, S_IFDIR | sbinfo->mode, 0,
- 				VM_NORESERVE);
--	if (!inode)
-+	if (IS_ERR(inode)) {
-+		error = PTR_ERR(inode);
- 		goto failed;
++	if (CHANGED_LIMIT(usrquota_b) || CHANGED_LIMIT(usrquota_i) ||
++	    CHANGED_LIMIT(grpquota_b) || CHANGED_LIMIT(grpquota_i)) {
++		err = "Cannot change global quota limit on remount";
++		goto out;
 +	}
- 	inode->i_uid = sbinfo->uid;
- 	inode->i_gid = sbinfo->gid;
- 	sb->s_root = d_make_root(inode);
-@@ -3840,7 +3859,7 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
++#endif /* CONFIG_TMPFS_QUOTA */
++
+ 	if (ctx->seen & SHMEM_SEEN_HUGE)
+ 		sbinfo->huge = ctx->huge;
+ 	if (ctx->seen & SHMEM_SEEN_INUMS)
+@@ -3988,6 +4045,10 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		sb->s_qcop = &dquot_quotactl_sysfile_ops;
+ 		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
  
- failed:
- 	shmem_put_super(sb);
--	return -ENOMEM;
-+	return error;
++		/* Copy the default limits from ctx into sbinfo */
++		memcpy(&sbinfo->qlimits, &ctx->qlimits,
++		       sizeof(struct shmem_quota_limits));
++
+ 		if (shmem_enable_quotas(sb, ctx->quota_types))
+ 			goto failed;
+ 	}
+diff --git a/mm/shmem_quota.c b/mm/shmem_quota.c
+index c0b531e2ef688..9d4c6545949e1 100644
+--- a/mm/shmem_quota.c
++++ b/mm/shmem_quota.c
+@@ -166,6 +166,7 @@ static int shmem_acquire_dquot(struct dquot *dquot)
+ {
+ 	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
+ 	struct rb_node **n = &((struct rb_root *)info->dqi_priv)->rb_node;
++	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
+ 	struct rb_node *parent = NULL, *new_node = NULL;
+ 	struct quota_id *new_entry, *entry;
+ 	qid_t id = from_kqid(&init_user_ns, dquot->dq_id);
+@@ -195,6 +196,14 @@ static int shmem_acquire_dquot(struct dquot *dquot)
+ 	}
+ 
+ 	new_entry->id = id;
++	if (dquot->dq_id.type == USRQUOTA) {
++		new_entry->bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
++		new_entry->ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
++	} else if (dquot->dq_id.type == GRPQUOTA) {
++		new_entry->bhardlimit = sbinfo->qlimits.grpquota_bhardlimit;
++		new_entry->ihardlimit = sbinfo->qlimits.grpquota_ihardlimit;
++	}
++
+ 	new_node = &new_entry->node;
+ 	rb_link_node(new_node, parent, n);
+ 	rb_insert_color(new_node, (struct rb_root *)info->dqi_priv);
+@@ -224,6 +233,29 @@ static int shmem_acquire_dquot(struct dquot *dquot)
+ 	return ret;
  }
  
- static int shmem_get_tree(struct fs_context *fc)
-@@ -4209,10 +4228,16 @@ EXPORT_SYMBOL_GPL(shmem_truncate_range);
- #define shmem_vm_ops				generic_file_vm_ops
- #define shmem_anon_vm_ops			generic_file_vm_ops
- #define shmem_file_operations			ramfs_file_operations
--#define shmem_get_inode(idmap, sb, dir, mode, dev, flags) ramfs_get_inode(sb, dir, mode, dev)
- #define shmem_acct_size(flags, size)		0
- #define shmem_unacct_size(flags, size)		do {} while (0)
- 
-+static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb, struct inode *dir,
-+					    umode_t mode, dev_t dev, unsigned long flags)
++static bool shmem_is_empty_dquot(struct dquot *dquot)
 +{
-+	struct inode *inode = ramfs_get_inode(sb, dir, mode, dev);
-+	return inode ? inode : ERR_PTR(-ENOSPC);
++	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
++	qsize_t bhardlimit;
++	qsize_t ihardlimit;
++
++	if (dquot->dq_id.type == USRQUOTA) {
++		bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
++		ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
++	} else if (dquot->dq_id.type == GRPQUOTA) {
++		bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
++		ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
++	}
++
++	if (test_bit(DQ_FAKE_B, &dquot->dq_flags) ||
++		(dquot->dq_dqb.dqb_curspace == 0 &&
++		 dquot->dq_dqb.dqb_curinodes == 0 &&
++		 dquot->dq_dqb.dqb_bhardlimit == bhardlimit &&
++		 dquot->dq_dqb.dqb_ihardlimit == ihardlimit))
++		return true;
++
++	return false;
 +}
-+
- #endif /* CONFIG_SHMEM */
+ /*
+  * Store limits from dquot in the tree unless it's fake. If it is fake
+  * remove the id from the tree since there is no useful information in
+@@ -261,7 +293,7 @@ static int shmem_release_dquot(struct dquot *dquot)
+ 	return -ENOENT;
  
- /* common code */
-@@ -4237,9 +4262,10 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, l
- 
- 	inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
- 				S_IFREG | S_IRWXUGO, 0, flags);
--	if (unlikely(!inode)) {
-+
-+	if (IS_ERR(inode)) {
- 		shmem_unacct_size(flags, size);
--		return ERR_PTR(-ENOSPC);
-+		return ERR_CAST(inode);
- 	}
- 	inode->i_flags |= i_flags;
- 	inode->i_size = size;
+ found:
+-	if (test_bit(DQ_FAKE_B, &dquot->dq_flags)) {
++	if (shmem_is_empty_dquot(dquot)) {
+ 		/* Remove entry from the tree */
+ 		rb_erase(&entry->node, info->dqi_priv);
+ 		kfree(entry);
 -- 
 2.30.2
 
