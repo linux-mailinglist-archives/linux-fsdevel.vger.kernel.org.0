@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A8346EE2D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 15:22:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 665946EE2D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 15:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234115AbjDYNWq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 09:22:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50568 "EHLO
+        id S234156AbjDYNWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 09:22:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234130AbjDYNWo (ORCPT
+        with ESMTP id S234150AbjDYNWp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 09:22:44 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D45113F90;
-        Tue, 25 Apr 2023 06:22:35 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-2f58125b957so5203824f8f.3;
-        Tue, 25 Apr 2023 06:22:35 -0700 (PDT)
+        Tue, 25 Apr 2023 09:22:45 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 390AE13C1F;
+        Tue, 25 Apr 2023 06:22:36 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-2febac9cacdso3498551f8f.1;
+        Tue, 25 Apr 2023 06:22:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682428953; x=1685020953;
+        d=gmail.com; s=20221208; t=1682428954; x=1685020954;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AjLMXge+2mf0xXFP7MCpTynY/YZV3qiu6nTsi+ti2D4=;
-        b=d21+AH9HAhSReroXW1vWvpy6mlg7tU4iUA31n9dyh6g/fMA8XyTrMKr96uW5nEEcOa
-         +hQbUekY5BUzvT00IZA2maRjfJ1qsTsstQbTsy0We032kEy3d5A5EC9tong3olhtVTQZ
-         R/sngae06Mh6UMaMjbS285LhzLgnETantpBE/P8hCl5LDAkjjIpaR6pYqhBmFCGSzUn6
-         RAvN5BJb/wiDZinWP6ku3Ua4PWQ2XJmBKp6q5yBcuH0HHSPgKgGZCV0vGjiycHZbNq9q
-         62xj0PqjfE5ZtfuTfnc1j21JZOiZrlNGmqFSUEVDZsBBCNNzqZq2vwJpF+JThucqu//D
-         VLgQ==
+        bh=k8rtXwAOvwWhj9+w9vh8bXBpUv7WQrAKy9uaYdSbf6A=;
+        b=RPQ6oXXsgdWvs7D+BjdFHSuDeQ1Dbgow1h5nMxjk0T2CbxxVVh1QwmBW5jPblCUFzx
+         vmY8H6j0SazAHG4OBsGbHBwMZ2AB2RyrZwCgKcJa78m2UHqtwthqq1LIp7+DBmV7wtcJ
+         E9rtEbuicAdxL5j1KBGsk/BoBornD0mrA3cVb8ysfdxI3AVmuDpAEI5idnyU1g5pYSED
+         C23KsIZQIoke1BTexVKXjM53JxFN7VSKPHonT6/stwf0ZkQSP8DxlYu3PB9NJiG9S+FZ
+         cwnH63j3C50P+or2JLWweC84XhKvUkMa+564bFC95zH2kUXUSVUEiY4X0P/hjhAEQGQU
+         obbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682428953; x=1685020953;
+        d=1e100.net; s=20221208; t=1682428954; x=1685020954;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AjLMXge+2mf0xXFP7MCpTynY/YZV3qiu6nTsi+ti2D4=;
-        b=YOduxwtBUOgwn9sOCSuOCG5Ge3foQ+jQ+V/niWmMMMEBOBdMF8RQA9ytJRNcCI9liZ
-         BzM/aiW8/rSAZxYX1xawJX+Yo3O+TME87ygWIeu2/o0NUdU5GF1x/dq1TKwwypt2PyQT
-         kJMRFtQWM+2B13mUMV2nva1R4rMCLH2No2zS8VzMweSDivIyrqp7BejodoLkvo8zNepr
-         11lG/MVA00FAM/sNVmPLjo/wiUs4xzbgW2pZIRacxELwhcO7YoEXrdaG/+ApxXYs/TQU
-         Oz5GOlzxTvXDs8Y7OgG6c2ImMXGuNjKCazERdkxXIskNhM9y84P8LV4QT75Q+D3Yc29e
-         0wIQ==
-X-Gm-Message-State: AC+VfDxGEfQI4i29sxrlD6veKlblrnq3GkZQoCDlf5r8OyuSitNnWYzK
-        2ugkYma4LdyA+gcNoeqx/ec=
-X-Google-Smtp-Source: ACHHUZ5h/QFLUb+zWv7UZrV2E5+gv0NX8/EFJlUv5eNCX0UzzCiy849qLC7y68EJJsTtR4hBTFC0Gw==
-X-Received: by 2002:adf:ee8a:0:b0:304:8e4f:4666 with SMTP id b10-20020adfee8a000000b003048e4f4666mr1610537wro.7.1682428953218;
-        Tue, 25 Apr 2023 06:22:33 -0700 (PDT)
+        bh=k8rtXwAOvwWhj9+w9vh8bXBpUv7WQrAKy9uaYdSbf6A=;
+        b=mF1FOt9LbLoAUQyhqc7lZFIJ29jdrMnTJokhjlI9mnx0OXZMGCucev5f5E7NXSniu6
+         hKKX/nQQL/m/+p/wU95DxVxzIqiHwjKkovk6kUbU6xzTYblxSyORV8NDzvSwEwi4nREq
+         4uM6EZAqO/28SqQ9C13VQl6nzBNPzjVEgKwADCJ8hEc9+bowlg4BUDBDd02CYYp5zMSd
+         Y4CtZEqRaA6WEfUqCNiG8nqFm9CYuow9MMY0FTc5ByAelc1D5hb4WEMXJBtVq5r5uEV3
+         njxqNLTsp94pb+EFA0Bq547kQTluDF4zWX4Tr/ZL0Cbf5AqCd7TRRy3oldyz4ro9XXp/
+         RVzA==
+X-Gm-Message-State: AAQBX9cPiNklr50OrH1GWEKo5+xqp+9nd8EpHskjPdYC1SjOQJ4LVYR7
+        LLGw3iTiOZdWDei9H9MKpFY=
+X-Google-Smtp-Source: AKy350aSWuoVwaSqvDF5d2453qX5a9nWQuRqywd1cdA4dJP7+UHHSbA8FVTFftepust71sSTaMoBcw==
+X-Received: by 2002:a5d:4acb:0:b0:2f7:80d9:bb2f with SMTP id y11-20020a5d4acb000000b002f780d9bb2fmr11945213wrs.22.1682428954431;
+        Tue, 25 Apr 2023 06:22:34 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id f12-20020adfdb4c000000b002f9ff443184sm13076973wrj.24.2023.04.25.06.22.32
+        by smtp.gmail.com with ESMTPSA id f12-20020adfdb4c000000b002f9ff443184sm13076973wrj.24.2023.04.25.06.22.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Apr 2023 06:22:32 -0700 (PDT)
+        Tue, 25 Apr 2023 06:22:34 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>
 Cc:     Christian Brauner <brauner@kernel.org>,
         linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC][PATCH 2/3] ovl: report a per-instance f_fsid by default
-Date:   Tue, 25 Apr 2023 16:22:22 +0300
-Message-Id: <20230425132223.2608226-3-amir73il@gmail.com>
+Subject: [RFC][PATCH 3/3] ovl: use persistent s_uuid with index=on
+Date:   Tue, 25 Apr 2023 16:22:23 +0300
+Message-Id: <20230425132223.2608226-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230425132223.2608226-1-amir73il@gmail.com>
 References: <20230425132223.2608226-1-amir73il@gmail.com>
@@ -72,191 +72,137 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ovl_statfs() reports the f_fsid filled by underlying upper fs.
-This fsid is not unique among overlayfs instances on the same upper fs.
+With index=on, overlayfs instances are non-migratable, meaning that
+the layers cannot be copied without breaking the index.
 
-Generate a non-persistent uuid per overlayfs instance and use it as the
-seed for f_fsid, similar to tmpfs instance uuid/fsid.
+So when indexdir exists, store a persistent uuid in xattr on the
+indexdir to give the overlayfs instance a persistent identifier.
 
-The old behavior can be restored with mount option uuid=nogen.
+This also makes f_fsid persistent and more reliable for reporting
+fid info in fanotify events.
+
+With mount option uuid=nogen, a persistent uuid is not be initialized
+on indexdir, but if a persistent uuid already exists, it will be used.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- Documentation/filesystems/overlayfs.rst | 10 +++---
- fs/overlayfs/overlayfs.h                |  6 ++++
- fs/overlayfs/ovl_entry.h                |  2 +-
- fs/overlayfs/super.c                    | 46 +++++++++++++++++++++----
- 4 files changed, 52 insertions(+), 12 deletions(-)
+ fs/overlayfs/overlayfs.h |  3 +++
+ fs/overlayfs/super.c     |  7 +++++++
+ fs/overlayfs/util.c      | 41 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
 
-diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
-index 4c76fda07645..ad48ae9d3c43 100644
---- a/Documentation/filesystems/overlayfs.rst
-+++ b/Documentation/filesystems/overlayfs.rst
-@@ -571,10 +571,12 @@ Note: the mount options index=off,nfs_export=on are conflicting for a
- read-write mount and will result in an error.
- 
- Note: the mount option uuid=off can be used to replace UUID of the underlying
--filesystem in file handles with null, and effectively disable UUID checks. This
--can be useful in case the underlying disk is copied and the UUID of this copy
--is changed. This is only applicable if all lower/upper/work directories are on
--the same filesystem, otherwise it will fallback to normal behaviour.
-+filesystem in file handles with null, and effectively disable UUID checks.
-+This can be useful in case the underlying disk is copied and the UUID of this
-+copy is changed.  This is only applicable if all lower/upper/work directories
-+are on the same filesystem, otherwise it will fallback to normal behaviour.
-+The mount option uuid=nogen can be used to disable UUID generation for the
-+overlay filesystem itself.  The two mount options are mutually exclusive.
- 
- Volatile mount
- --------------
 diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 87d44b889129..dcdb02d0ddf8 100644
+index dcdb02d0ddf8..9927472a3aaa 100644
 --- a/fs/overlayfs/overlayfs.h
 +++ b/fs/overlayfs/overlayfs.h
-@@ -63,6 +63,12 @@ enum {
- 	OVL_XINO_ON,
+@@ -36,6 +36,7 @@ enum ovl_xattr {
+ 	OVL_XATTR_IMPURE,
+ 	OVL_XATTR_NLINK,
+ 	OVL_XATTR_UPPER,
++	OVL_XATTR_UUID,
+ 	OVL_XATTR_METACOPY,
+ 	OVL_XATTR_PROTATTR,
  };
+@@ -431,6 +432,8 @@ bool ovl_already_copied_up(struct dentry *dentry, int flags);
+ bool ovl_path_check_dir_xattr(struct ovl_fs *ofs, const struct path *path,
+ 			      enum ovl_xattr ox);
+ bool ovl_path_check_origin_xattr(struct ovl_fs *ofs, const struct path *path);
++bool ovl_init_uuid_xattr(struct super_block *sb, struct ovl_fs *ofs,
++			 struct dentry *upperdentry, bool set);
  
-+enum {
-+	OVL_UUID_OFF,
-+	OVL_UUID_NOGEN,
-+	OVL_UUID_ON,
-+};
-+
- /*
-  * The tuple (fh,uuid) is a universal unique identifier for a copy up origin,
-  * where:
-diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-index 5cc0b6e65488..4f396b1ce2fb 100644
---- a/fs/overlayfs/ovl_entry.h
-+++ b/fs/overlayfs/ovl_entry.h
-@@ -14,7 +14,7 @@ struct ovl_config {
- 	bool redirect_follow;
- 	const char *redirect_mode;
- 	bool index;
--	bool uuid;
-+	int uuid;
- 	bool nfs_export;
- 	int xino;
- 	bool metacopy;
+ static inline bool ovl_check_origin_xattr(struct ovl_fs *ofs,
+ 					  struct dentry *upperdentry)
 diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 5ed8c2650293..ad2250f98b38 100644
+index ad2250f98b38..8364620e8722 100644
 --- a/fs/overlayfs/super.c
 +++ b/fs/overlayfs/super.c
-@@ -317,6 +317,7 @@ static int ovl_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
- 	struct ovl_fs *ofs = dentry->d_sb->s_fs_info;
- 	struct dentry *root_dentry = dentry->d_sb->s_root;
-+	uuid_t *uuid = &dentry->d_sb->s_uuid;
- 	struct path path;
- 	int err;
+@@ -1535,6 +1535,9 @@ static int ovl_get_indexdir(struct super_block *sb, struct ovl_fs *ofs,
+ 		if (err)
+ 			pr_err("failed to verify index dir 'upper' xattr\n");
  
-@@ -326,6 +327,8 @@ static int ovl_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	if (!err) {
- 		buf->f_namelen = ofs->namelen;
- 		buf->f_type = OVERLAYFS_SUPER_MAGIC;
-+		if (!uuid_is_null(uuid))
-+			buf->f_fsid = uuid_to_fsid(uuid->b);
++		/* Best effort get or set persistent uuid */
++		ovl_init_uuid_xattr(sb, ofs, ofs->indexdir, true);
++
+ 		/* Cleanup bad/stale/orphan index entries */
+ 		if (!err)
+ 			err = ovl_indexdir_cleanup(ofs);
+@@ -2052,6 +2055,10 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+ 			ovl_uuid_str[ofs->config.uuid]);
  	}
  
- 	return err;
-@@ -353,6 +356,25 @@ static inline int ovl_xino_def(void)
- 	return ovl_xino_auto_def ? OVL_XINO_AUTO : OVL_XINO_OFF;
++	/*
++	 * This uuid may be overridden by a persistent uuid stored in xattr on
++	 * index dir and it may be persisted in xattr on first index=on mount.
++	 */
+ 	if (ovl_want_uuid_gen(ofs))
+ 		uuid_gen(&sb->s_uuid);
+ 
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 923d66d131c1..8902db4b2975 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -589,6 +589,45 @@ bool ovl_path_check_origin_xattr(struct ovl_fs *ofs, const struct path *path)
+ 	return false;
  }
  
-+static const char * const ovl_uuid_str[] = {
-+	"off",
-+	"nogen",
-+	"on",
-+};
-+
-+/* XXX: do we need a config for this? */
-+static const bool ovl_uuid_gen_def = true;
-+
-+static inline int ovl_uuid_def(void)
++/*
++ * Load persistent uuid from xattr into s_uuid if found, possibly overriding
++ * the random generated value in s_uuid.
++ * Otherwise, if @set is true and s_uuid contains a valid value, store this
++ * value in xattr.
++ */
++bool ovl_init_uuid_xattr(struct super_block *sb, struct ovl_fs *ofs,
++			 struct dentry *upperdentry, bool set)
 +{
-+	return ovl_uuid_gen_def ? OVL_UUID_ON : OVL_UUID_NOGEN;
++	struct path path = {
++		.dentry = upperdentry,
++		.mnt = ovl_upper_mnt(ofs),
++	};
++	uuid_t uuid;
++	int res;
++
++	res = ovl_path_getxattr(ofs, &path, OVL_XATTR_UUID, uuid.b, UUID_SIZE);
++	if (res == UUID_SIZE) {
++		uuid_copy(&sb->s_uuid, &uuid);
++		return true;
++	}
++
++	if (res == -ENODATA) {
++		if (!set || uuid_is_null(&sb->s_uuid))
++			return false;
++
++		res = ovl_setxattr(ofs, upperdentry, OVL_XATTR_UUID,
++				   sb->s_uuid.b, UUID_SIZE);
++		if (res == 0)
++			return true;
++	} else {
++		set = false;
++	}
++
++	pr_warn("failed to %s uuid (%pd2, err=%i)\n",
++		set ? "set" : "get", upperdentry, res);
++	return false;
 +}
 +
-+static inline int ovl_want_uuid_gen(struct ovl_fs *ofs)
-+{
-+	return ofs->config.uuid != OVL_UUID_NOGEN;
-+}
-+
- /**
-  * ovl_show_options
-  * @m: the seq_file handle
-@@ -377,8 +399,8 @@ static int ovl_show_options(struct seq_file *m, struct dentry *dentry)
- 		seq_printf(m, ",redirect_dir=%s", ofs->config.redirect_mode);
- 	if (ofs->config.index != ovl_index_def)
- 		seq_printf(m, ",index=%s", ofs->config.index ? "on" : "off");
--	if (!ofs->config.uuid)
--		seq_puts(m, ",uuid=off");
-+	if (ofs->config.uuid != ovl_uuid_def())
-+		seq_printf(m, ",uuid=%s", ovl_uuid_str[ofs->config.uuid]);
- 	if (ofs->config.nfs_export != ovl_nfs_export_def)
- 		seq_printf(m, ",nfs_export=%s", ofs->config.nfs_export ?
- 						"on" : "off");
-@@ -437,6 +459,7 @@ enum {
- 	OPT_INDEX_OFF,
- 	OPT_UUID_ON,
- 	OPT_UUID_OFF,
-+	OPT_UUID_NOGEN,
- 	OPT_NFS_EXPORT_ON,
- 	OPT_USERXATTR,
- 	OPT_NFS_EXPORT_OFF,
-@@ -460,6 +483,7 @@ static const match_table_t ovl_tokens = {
- 	{OPT_USERXATTR,			"userxattr"},
- 	{OPT_UUID_ON,			"uuid=on"},
- 	{OPT_UUID_OFF,			"uuid=off"},
-+	{OPT_UUID_NOGEN,		"uuid=nogen"},
- 	{OPT_NFS_EXPORT_ON,		"nfs_export=on"},
- 	{OPT_NFS_EXPORT_OFF,		"nfs_export=off"},
- 	{OPT_XINO_ON,			"xino=on"},
-@@ -581,11 +605,15 @@ static int ovl_parse_opt(char *opt, struct ovl_config *config)
- 			break;
+ bool ovl_path_check_dir_xattr(struct ovl_fs *ofs, const struct path *path,
+ 			       enum ovl_xattr ox)
+ {
+@@ -611,6 +650,7 @@ bool ovl_path_check_dir_xattr(struct ovl_fs *ofs, const struct path *path,
+ #define OVL_XATTR_IMPURE_POSTFIX	"impure"
+ #define OVL_XATTR_NLINK_POSTFIX		"nlink"
+ #define OVL_XATTR_UPPER_POSTFIX		"upper"
++#define OVL_XATTR_UUID_POSTFIX		"uuid"
+ #define OVL_XATTR_METACOPY_POSTFIX	"metacopy"
+ #define OVL_XATTR_PROTATTR_POSTFIX	"protattr"
  
- 		case OPT_UUID_ON:
--			config->uuid = true;
-+			config->uuid = OVL_UUID_ON;
- 			break;
- 
- 		case OPT_UUID_OFF:
--			config->uuid = false;
-+			config->uuid = OVL_UUID_OFF;
-+			break;
-+
-+		case OPT_UUID_NOGEN:
-+			config->uuid = OVL_UUID_NOGEN;
- 			break;
- 
- 		case OPT_NFS_EXPORT_ON:
-@@ -1924,7 +1952,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
- 	ofs->share_whiteout = true;
- 
- 	ofs->config.index = ovl_index_def;
--	ofs->config.uuid = true;
-+	ofs->config.uuid = ovl_uuid_def();
- 	ofs->config.nfs_export = ovl_nfs_export_def;
- 	ofs->config.xino = ovl_xino_def();
- 	ofs->config.metacopy = ovl_metacopy_def;
-@@ -2019,10 +2047,14 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
- 		sb->s_flags |= SB_RDONLY;
- 
- 	if (!ofs->config.uuid && ofs->numfs > 1) {
--		pr_warn("The uuid=off requires a single fs for lower and upper, falling back to uuid=on.\n");
--		ofs->config.uuid = true;
-+		ofs->config.uuid = ovl_uuid_def();
-+		pr_warn("The uuid=off requires a single fs for lower and upper, falling back to uuid=%s.\n",
-+			ovl_uuid_str[ofs->config.uuid]);
- 	}
- 
-+	if (ovl_want_uuid_gen(ofs))
-+		uuid_gen(&sb->s_uuid);
-+
- 	if (!ovl_force_readonly(ofs) && ofs->config.index) {
- 		err = ovl_get_indexdir(sb, ofs, oe, &upperpath);
- 		if (err)
+@@ -625,6 +665,7 @@ const char *const ovl_xattr_table[][2] = {
+ 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_IMPURE),
+ 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_NLINK),
+ 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_UPPER),
++	OVL_XATTR_TAB_ENTRY(OVL_XATTR_UUID),
+ 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_METACOPY),
+ 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_PROTATTR),
+ };
 -- 
 2.34.1
 
