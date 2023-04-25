@@ -2,53 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A28D76EE1A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 14:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA7D6EE1E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 14:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233755AbjDYMJC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 08:09:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37722 "EHLO
+        id S234089AbjDYMar (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 08:30:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233655AbjDYMJB (ORCPT
+        with ESMTP id S229653AbjDYMap (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 08:09:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CAB24EDF;
-        Tue, 25 Apr 2023 05:09:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 25 Apr 2023 08:30:45 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 832D7133
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 05:30:44 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C2F562363;
-        Tue, 25 Apr 2023 12:09:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 589D4C433EF;
-        Tue, 25 Apr 2023 12:08:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682424539;
-        bh=QFaQ3a5JdgyAlWcYXx4avxLN05OkSnBdW7e+aeMmq3I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KAWRjHoVQn6c/Zg21sEjOsH7d6hcrzNZTnSJaeVCk9U52Ouwj1elXOl+8hEA0/XsI
-         R9eyHJiacojuVOrg90rj22CF6fsF66z6HhmQOImlGDvFrITUaJFg8qf1OcS/7EW17I
-         fQYmYqMhbqjglyd9ob4up7XyitEr4YAi+0Ew3O8sCR4nUSs3l7pDq/QRhgDQ5J95pn
-         dpjdE8fsdL8b9xB5DP2N+Hwk6cnXV1QyewDxo3DwOySWjehW0hqK7wbu/YsqOwJ8wV
-         m/JNX0OsNKVjrJKomVdgyOnJFnLJa4OtSDhiK0kXYzHcribQOv2TVJD3gL5WjnAyYU
-         UjAORhK84ZhAw==
-Date:   Tue, 25 Apr 2023 14:08:54 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] pidfd updates
-Message-ID: <20230425-sardinen-bespannt-c19a6bb8e74e@brauner>
-References: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
- <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
- <CAHk-=wgFt+rPoEH1bPG2A9K3GNebraLNcbnDiKK=Wp0i6D_0Ww@mail.gmail.com>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2FB901FDA5;
+        Tue, 25 Apr 2023 12:30:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1682425843; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=f/eMe0Yi26O4GgnxAzwKKj8+VaObX0RFaPTN5QrSbSM=;
+        b=pbfmxOo4TAaQIk6drgeO52YWU2cdDpUoo+17MLTrMfHTVRaV1R1936FvwkqERu5mPCxFnw
+        3ZY3RmfALMvpMHtpibbcW5UJHQ1+UWtcBeV1BxjRAtrdJwcxpZ82frDoXp3sTY+iCTPoTk
+        FmOWws5EYVs5Jxbi95Vd7gIBmDaSRXk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1682425843;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=f/eMe0Yi26O4GgnxAzwKKj8+VaObX0RFaPTN5QrSbSM=;
+        b=wxsbKQyZTzxh3hh91vMNeCPuyGYKzDzVKT5wqgpR0ca+Q3wWh/783LNPz9jdTkg7lsFTp0
+        0KCywCWZqyXFOBBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 140BA138E3;
+        Tue, 25 Apr 2023 12:30:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id gt/gBPPHR2Q6cAAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 25 Apr 2023 12:30:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 8B799A0729; Tue, 25 Apr 2023 14:30:42 +0200 (CEST)
+Date:   Tue, 25 Apr 2023 14:30:42 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     cem@kernel.org
+Cc:     hughd@google.com, jack@suse.cz, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org
+Subject: Re: [PATCH V3 6/6] Add default quota limit mount options
+Message-ID: <20230425123042.ja6oab6yhtzqnwyl@quack3>
+References: <20230420080359.2551150-7-cem@kernel.org>
+ <20230425115725.2913656-1-cem@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wgFt+rPoEH1bPG2A9K3GNebraLNcbnDiKK=Wp0i6D_0Ww@mail.gmail.com>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20230425115725.2913656-1-cem@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,31 +72,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 01:35:03PM -0700, Linus Torvalds wrote:
-> On Mon, Apr 24, 2023 at 1:24 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > But I really think a potentially much nicer model would have been to
-> > extend our "get_unused_fd_flags()" model.
-> >
-> > IOW, we could have instead marked the 'struct file *' in the file
-> > descriptor table as being "not ready yet".
+On Tue 25-04-23 13:57:25, cem@kernel.org wrote:
+> From: Lukas Czerner <lczerner@redhat.com>
 > 
-> Maybe that isn't worth it just for pdfd, but I have this feeling that
-> it might make some other code simpler too.
+> Allow system administrator to set default global quota limits at tmpfs
+> mount time.
 > 
-> That pidfd case isn't the only one that has to carry both a file
-> pointer and a fd around.
-> 
-> Looking around, I get the feeling that quite a lot of users of
-> "fd_install()" might actually have been happier if they could just
-> install it early, and then just have a "fd_expose(fd)" for the success
-> case, and for the error cases have "put_unused_fd(fd)" also do the
-> fput on the file descriptor even if the low bit was set. One less
-> thing to worry about.
-> 
-> I dunno. Maybe not worth it. That "two return values" just made me go "Eww".
+> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+...
+> @@ -224,6 +233,29 @@ static int shmem_acquire_dquot(struct dquot *dquot)
+>  	return ret;
+>  }
+>  
+> +static bool shmem_is_empty_dquot(struct dquot *dquot)
+> +{
+> +	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
+> +	qsize_t bhardlimit;
+> +	qsize_t ihardlimit;
+> +
+> +	if (dquot->dq_id.type == USRQUOTA) {
+> +		bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
+> +		ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
+> +	} else if (dquot->dq_id.type == GRPQUOTA) {
+> +		bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
+> +		ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
 
-I'm not fond of "two return values" - in C at least - as well I think
-open-coding get_unused_fd() is pretty nasty as well...
-Let me see...
+There should be grpquota in the above two lines. Otherwise the patch looks
+good to me.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
