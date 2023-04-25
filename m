@@ -2,207 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 665946EE2D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 15:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4C886EE2E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 15:23:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234156AbjDYNWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 09:22:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50574 "EHLO
+        id S234007AbjDYNXW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 09:23:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234150AbjDYNWp (ORCPT
+        with ESMTP id S233967AbjDYNXV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 09:22:45 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 390AE13C1F;
-        Tue, 25 Apr 2023 06:22:36 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-2febac9cacdso3498551f8f.1;
-        Tue, 25 Apr 2023 06:22:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682428954; x=1685020954;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k8rtXwAOvwWhj9+w9vh8bXBpUv7WQrAKy9uaYdSbf6A=;
-        b=RPQ6oXXsgdWvs7D+BjdFHSuDeQ1Dbgow1h5nMxjk0T2CbxxVVh1QwmBW5jPblCUFzx
-         vmY8H6j0SazAHG4OBsGbHBwMZ2AB2RyrZwCgKcJa78m2UHqtwthqq1LIp7+DBmV7wtcJ
-         E9rtEbuicAdxL5j1KBGsk/BoBornD0mrA3cVb8ysfdxI3AVmuDpAEI5idnyU1g5pYSED
-         C23KsIZQIoke1BTexVKXjM53JxFN7VSKPHonT6/stwf0ZkQSP8DxlYu3PB9NJiG9S+FZ
-         cwnH63j3C50P+or2JLWweC84XhKvUkMa+564bFC95zH2kUXUSVUEiY4X0P/hjhAEQGQU
-         obbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682428954; x=1685020954;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k8rtXwAOvwWhj9+w9vh8bXBpUv7WQrAKy9uaYdSbf6A=;
-        b=mF1FOt9LbLoAUQyhqc7lZFIJ29jdrMnTJokhjlI9mnx0OXZMGCucev5f5E7NXSniu6
-         hKKX/nQQL/m/+p/wU95DxVxzIqiHwjKkovk6kUbU6xzTYblxSyORV8NDzvSwEwi4nREq
-         4uM6EZAqO/28SqQ9C13VQl6nzBNPzjVEgKwADCJ8hEc9+bowlg4BUDBDd02CYYp5zMSd
-         Y4CtZEqRaA6WEfUqCNiG8nqFm9CYuow9MMY0FTc5ByAelc1D5hb4WEMXJBtVq5r5uEV3
-         njxqNLTsp94pb+EFA0Bq547kQTluDF4zWX4Tr/ZL0Cbf5AqCd7TRRy3oldyz4ro9XXp/
-         RVzA==
-X-Gm-Message-State: AAQBX9cPiNklr50OrH1GWEKo5+xqp+9nd8EpHskjPdYC1SjOQJ4LVYR7
-        LLGw3iTiOZdWDei9H9MKpFY=
-X-Google-Smtp-Source: AKy350aSWuoVwaSqvDF5d2453qX5a9nWQuRqywd1cdA4dJP7+UHHSbA8FVTFftepust71sSTaMoBcw==
-X-Received: by 2002:a5d:4acb:0:b0:2f7:80d9:bb2f with SMTP id y11-20020a5d4acb000000b002f780d9bb2fmr11945213wrs.22.1682428954431;
-        Tue, 25 Apr 2023 06:22:34 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id f12-20020adfdb4c000000b002f9ff443184sm13076973wrj.24.2023.04.25.06.22.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Apr 2023 06:22:34 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC][PATCH 3/3] ovl: use persistent s_uuid with index=on
-Date:   Tue, 25 Apr 2023 16:22:23 +0300
-Message-Id: <20230425132223.2608226-4-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230425132223.2608226-1-amir73il@gmail.com>
-References: <20230425132223.2608226-1-amir73il@gmail.com>
+        Tue, 25 Apr 2023 09:23:21 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D882113C1B;
+        Tue, 25 Apr 2023 06:23:17 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 74FB91FD9D;
+        Tue, 25 Apr 2023 13:23:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1682428996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q2T/Y7qFdCUy3re4ctXa9sRrn9+mZ7IugqZ9aq6o34k=;
+        b=H5RfPmr5xbyO42qx+ZpGkRUj4c5qyh3489DrJZCn0bCZCHarr9ITUocACe2p9hpNO4DjSS
+        I3z5Mo9Scj2JMheTyoFt4x5R1/Qn79qJ3eUzSMfYiOmEpEXjQi1GRNYfGXNs0dZcIA1kSj
+        Z6PSBP3KAuGFl2cD/TbSR4YODdQbzwc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1682428996;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q2T/Y7qFdCUy3re4ctXa9sRrn9+mZ7IugqZ9aq6o34k=;
+        b=3CbBzZyWb+srmnqcSy2+VdX9IAWZmiyyj1hNABq5DBj/WsGr2Y+J12K9Mqh+LOIqmTzs3m
+        dRxsR5GpIV4WdPBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6633713466;
+        Tue, 25 Apr 2023 13:23:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Jw3kGETUR2S8EwAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 25 Apr 2023 13:23:16 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id EE3D9A0729; Tue, 25 Apr 2023 15:23:15 +0200 (CEST)
+Date:   Tue, 25 Apr 2023 15:23:15 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     Jan Kara <jack@suse.cz>, djwong@kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        dan.j.williams@intel.com, willy@infradead.org,
+        akpm@linux-foundation.org
+Subject: Re: [RFC PATCH v11.1 2/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for
+ unbind
+Message-ID: <20230425132315.u5ocvbneeqzzbifl@quack3>
+References: <1679996506-2-3-git-send-email-ruansy.fnst@fujitsu.com>
+ <1681296735-2-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <0a53ee26-5771-0808-ccdc-d1739c9dacac@fujitsu.com>
+ <20230420120956.cdxcwojckiw36kfg@quack3>
+ <d557c0cb-e244-6238-2df4-01ce75ededdf@fujitsu.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <d557c0cb-e244-6238-2df4-01ce75ededdf@fujitsu.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With index=on, overlayfs instances are non-migratable, meaning that
-the layers cannot be copied without breaking the index.
+On Tue 25-04-23 20:47:35, Shiyang Ruan wrote:
+> 
+> 
+> 在 2023/4/20 20:09, Jan Kara 写道:
+> > On Thu 20-04-23 10:07:39, Shiyang Ruan wrote:
+> > > 在 2023/4/12 18:52, Shiyang Ruan 写道:
+> > > > This is a RFC HOTFIX.
+> > > > 
+> > > > This hotfix adds a exclusive forzen state to make sure any others won't
+> > > > thaw the fs during xfs_dax_notify_failure():
+> > > > 
+> > > >     #define SB_FREEZE_EXCLUSIVE	(SB_FREEZE_COMPLETE + 2)
+> > > > Using +2 here is because Darrick's patch[0] is using +1.  So, should we
+> > > > make these definitions global?
+> > > > 
+> > > > Another thing I can't make up my mind is: when another freezer has freeze
+> > > > the fs, should we wait unitl it finish, or print a warning in dmesg and
+> > > > return -EBUSY?
+> > > > 
+> > > > Since there are at least 2 places needs exclusive forzen state, I think
+> > > > we can refactor helper functions of freeze/thaw for them.  e.g.
+> > > >     int freeze_super_exclusive(struct super_block *sb, int frozen);
+> > > >     int thaw_super_exclusive(struct super_block *sb, int frozen);
+> > > > 
+> > > > [0] https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=repair-fscounters&id=c3a0d1de4d54ffb565dbc7092dfe1fb851940669
+> > 
+> > I'm OK with the idea of new freeze state that does not allow userspace to
+> > thaw the filesystem. But I don't really like the guts of filesystem
+> > freezing being replicated inside XFS. It is bad enough that they are
+> > replicated in [0], replicating them *once more* in another XFS file shows
+> > we are definitely doing something wrong. And Luis will need yet another
+> > incantation of the exlusive freeze for suspend-to-disk. So please guys get
+> > together and reorganize the generic freezing code so that it supports
+> > exclusive freeze (for in-kernel users) and works for your usecases instead
+> > of replicating it inside XFS...
+> 
+> I agree that too much replicating code is not good.  It's necessary to
+> create a generic exclusive freeze/thaw for all users.  But for me, I don't
+> have the confidence to do it well, because it requires good design and code
+> changes will involve other filesystems.  It's diffcult.
+> 
+> However, I hope to be able to make progress on this unbind feature. Thus, I
+> tend to refactor a common helper function for xfs first, and update the code
+> later when the generic freeze is done.
 
-So when indexdir exists, store a persistent uuid in xattr on the
-indexdir to give the overlayfs instance a persistent identifier.
+I think Darrick was thinking about working on a proper generic interface.
+So please coordinate with him.
 
-This also makes f_fsid persistent and more reliable for reporting
-fid info in fanotify events.
+								Honza
 
-With mount option uuid=nogen, a persistent uuid is not be initialized
-on indexdir, but if a persistent uuid already exists, it will be used.
-
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/overlayfs/overlayfs.h |  3 +++
- fs/overlayfs/super.c     |  7 +++++++
- fs/overlayfs/util.c      | 41 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 51 insertions(+)
-
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index dcdb02d0ddf8..9927472a3aaa 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -36,6 +36,7 @@ enum ovl_xattr {
- 	OVL_XATTR_IMPURE,
- 	OVL_XATTR_NLINK,
- 	OVL_XATTR_UPPER,
-+	OVL_XATTR_UUID,
- 	OVL_XATTR_METACOPY,
- 	OVL_XATTR_PROTATTR,
- };
-@@ -431,6 +432,8 @@ bool ovl_already_copied_up(struct dentry *dentry, int flags);
- bool ovl_path_check_dir_xattr(struct ovl_fs *ofs, const struct path *path,
- 			      enum ovl_xattr ox);
- bool ovl_path_check_origin_xattr(struct ovl_fs *ofs, const struct path *path);
-+bool ovl_init_uuid_xattr(struct super_block *sb, struct ovl_fs *ofs,
-+			 struct dentry *upperdentry, bool set);
- 
- static inline bool ovl_check_origin_xattr(struct ovl_fs *ofs,
- 					  struct dentry *upperdentry)
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index ad2250f98b38..8364620e8722 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -1535,6 +1535,9 @@ static int ovl_get_indexdir(struct super_block *sb, struct ovl_fs *ofs,
- 		if (err)
- 			pr_err("failed to verify index dir 'upper' xattr\n");
- 
-+		/* Best effort get or set persistent uuid */
-+		ovl_init_uuid_xattr(sb, ofs, ofs->indexdir, true);
-+
- 		/* Cleanup bad/stale/orphan index entries */
- 		if (!err)
- 			err = ovl_indexdir_cleanup(ofs);
-@@ -2052,6 +2055,10 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
- 			ovl_uuid_str[ofs->config.uuid]);
- 	}
- 
-+	/*
-+	 * This uuid may be overridden by a persistent uuid stored in xattr on
-+	 * index dir and it may be persisted in xattr on first index=on mount.
-+	 */
- 	if (ovl_want_uuid_gen(ofs))
- 		uuid_gen(&sb->s_uuid);
- 
-diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-index 923d66d131c1..8902db4b2975 100644
---- a/fs/overlayfs/util.c
-+++ b/fs/overlayfs/util.c
-@@ -589,6 +589,45 @@ bool ovl_path_check_origin_xattr(struct ovl_fs *ofs, const struct path *path)
- 	return false;
- }
- 
-+/*
-+ * Load persistent uuid from xattr into s_uuid if found, possibly overriding
-+ * the random generated value in s_uuid.
-+ * Otherwise, if @set is true and s_uuid contains a valid value, store this
-+ * value in xattr.
-+ */
-+bool ovl_init_uuid_xattr(struct super_block *sb, struct ovl_fs *ofs,
-+			 struct dentry *upperdentry, bool set)
-+{
-+	struct path path = {
-+		.dentry = upperdentry,
-+		.mnt = ovl_upper_mnt(ofs),
-+	};
-+	uuid_t uuid;
-+	int res;
-+
-+	res = ovl_path_getxattr(ofs, &path, OVL_XATTR_UUID, uuid.b, UUID_SIZE);
-+	if (res == UUID_SIZE) {
-+		uuid_copy(&sb->s_uuid, &uuid);
-+		return true;
-+	}
-+
-+	if (res == -ENODATA) {
-+		if (!set || uuid_is_null(&sb->s_uuid))
-+			return false;
-+
-+		res = ovl_setxattr(ofs, upperdentry, OVL_XATTR_UUID,
-+				   sb->s_uuid.b, UUID_SIZE);
-+		if (res == 0)
-+			return true;
-+	} else {
-+		set = false;
-+	}
-+
-+	pr_warn("failed to %s uuid (%pd2, err=%i)\n",
-+		set ? "set" : "get", upperdentry, res);
-+	return false;
-+}
-+
- bool ovl_path_check_dir_xattr(struct ovl_fs *ofs, const struct path *path,
- 			       enum ovl_xattr ox)
- {
-@@ -611,6 +650,7 @@ bool ovl_path_check_dir_xattr(struct ovl_fs *ofs, const struct path *path,
- #define OVL_XATTR_IMPURE_POSTFIX	"impure"
- #define OVL_XATTR_NLINK_POSTFIX		"nlink"
- #define OVL_XATTR_UPPER_POSTFIX		"upper"
-+#define OVL_XATTR_UUID_POSTFIX		"uuid"
- #define OVL_XATTR_METACOPY_POSTFIX	"metacopy"
- #define OVL_XATTR_PROTATTR_POSTFIX	"protattr"
- 
-@@ -625,6 +665,7 @@ const char *const ovl_xattr_table[][2] = {
- 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_IMPURE),
- 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_NLINK),
- 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_UPPER),
-+	OVL_XATTR_TAB_ENTRY(OVL_XATTR_UUID),
- 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_METACOPY),
- 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_PROTATTR),
- };
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
