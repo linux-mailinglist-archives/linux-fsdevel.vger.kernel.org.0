@@ -2,123 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E128C6EDB60
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 07:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A43B66EDB73
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 08:01:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233196AbjDYFxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 01:53:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60666 "EHLO
+        id S233271AbjDYGBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 02:01:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232290AbjDYFxF (ORCPT
+        with ESMTP id S232823AbjDYGBe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 01:53:05 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E7AF4C15;
-        Mon, 24 Apr 2023 22:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1682401985; x=1713937985;
-  h=from:to:cc:subject:references:date:in-reply-to:
-   message-id:mime-version;
-  bh=yEFEZaCGdPu5BAzE+GbFl7dn/Sse2du6ZjLBsJ1OM2s=;
-  b=c2mz6GzswSIBjy2g1CWsKRhzZ3fh9GLP+QI2aLFA2TgsQH+YvQCAYzMA
-   Jp7r0dRkQTPOt85J2EveBnKYgSYle0gTqxnXyaK3rdAgrG4dn6kTUbhi+
-   7hZgydAK17q+iAh1m4rjD9o2yOALpK2n1pFUQ5vrjrM49uETU982CCJYv
-   rUZR80KW+1KQI1aszQGqdeMpBZHN5tZV7yPwGYBxJlJ27VKMgLm73GbU3
-   H0eJ+TsJEPDRexeTP2150OUt3uJ9E3VRLV3oWlEKM1Q/7Qfa1O/2NgTUq
-   NPYZ0U5X88d06L35E985YBH9saf+KGKeGum6MWqsFD2WjI3sEyBrPlNyX
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="348579489"
-X-IronPort-AV: E=Sophos;i="5.99,224,1677571200"; 
-   d="scan'208";a="348579489"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2023 22:53:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="1023003065"
-X-IronPort-AV: E=Sophos;i="5.99,224,1677571200"; 
-   d="scan'208";a="1023003065"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2023 22:53:02 -0700
-From:   "Huang, Ying" <ying.huang@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Yajun Deng <yajun.deng@linux.dev>, david@redhat.com,
-        osalvador@suse.de, gregkh@linuxfoundation.org, rafael@kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mmzone: Introduce for_each_populated_zone_pgdat()
-References: <20230424030756.1795926-1-yajun.deng@linux.dev>
-        <ZEX8jV/FQm2gL+2j@casper.infradead.org>
-        <20230424145823.b8e8435dd3242614371be6d5@linux-foundation.org>
-Date:   Tue, 25 Apr 2023 13:51:51 +0800
-In-Reply-To: <20230424145823.b8e8435dd3242614371be6d5@linux-foundation.org>
-        (Andrew Morton's message of "Mon, 24 Apr 2023 14:58:23 -0700")
-Message-ID: <875y9kfr0o.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 25 Apr 2023 02:01:34 -0400
+Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AFC5768A;
+        Mon, 24 Apr 2023 23:01:32 -0700 (PDT)
+Received: by mail-ua1-x934.google.com with SMTP id a1e0cc1a2514c-77115450b8fso3059734241.0;
+        Mon, 24 Apr 2023 23:01:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682402491; x=1684994491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u/QtXOE0evN6u5nDYY+j79dys0ARBBBVTD6zTkUWl1o=;
+        b=VyBLHzI3lbUTEeTSQWQ2Qwyub1Gd3J9MoMG+UanYep4hgcvGQwxw8wNQRr0yhUlOjL
+         YuEIkJenm/JM4AG+C0yrKmB6G/4tFrH+z+k2uGWvj7R8TG5ITsuONfqP1hggYq1x+A+c
+         0b2e85PT4+NkS0lwmN7FGLlfV34fMirKkGiiepRV1EEgw7WlO2CoGpb4BFL8qz0Lk5mU
+         uxguja9QRhqsKlHOTHqudMfuuCy0vwPvPuWy01PkEZ8mEL9Z7fQa3vLuSNz75Tv/0CJn
+         mvSvEWoj8tDmPEqFt1RMOE256Zsu5HoBD+wA5OOVG0N+9u5t89ULYSiKRqdmSSVPRozl
+         S+sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682402491; x=1684994491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u/QtXOE0evN6u5nDYY+j79dys0ARBBBVTD6zTkUWl1o=;
+        b=leIpchaWlHVPkT3eVbo/vb4eIbFwE5xNDq/5wFxo/1eoIkEFsPY+MK10QP00N+Kmu6
+         nLOzWE14Qrgc9rdD7nBOUsuCjN6fdjV6Dd3psfLjoD0PGv27pN4XQZWvfSS5dShlfO/z
+         C2uu62Q9GNBK+1bovnfeqty+YAN+v4GZGvDFaZ1V7+VHUeEa6AulEb0/zWGUCvbLGu2c
+         KLMr36+JsYRXCBiMI7yJgznoyxTvvqf2otHGyqQ1+JdNxpmaNG6Wf0tKW4g6nlIX4UGL
+         sqfnt++pEBoVi+mfE0ttNv4RdKqLHCwQMs1qTTyzxWKqh29/s+wXLAzxW7lUjkuliADz
+         /caQ==
+X-Gm-Message-State: AAQBX9dUM1DyQ1sngIjpv4WW4ezzX59hh0m1DDfghgqdSFoPmcwayZtD
+        lwWNerG4UqOHct11c/QR4R1TiRBUTHEuy2vimF8=
+X-Google-Smtp-Source: AKy350aVfd3f4Es5Xsk1ghtpikyrFPuFZfLEQ2g1D2pgZ/Ep9mpheYWenLWKLdpRoKqtDD4IFfE2q955uxwRd5KmJOY=
+X-Received: by 2002:a05:6102:14a:b0:42c:543a:ab2a with SMTP id
+ a10-20020a056102014a00b0042c543aab2amr6296411vsr.35.1682402491632; Mon, 24
+ Apr 2023 23:01:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230424163219.9250-1-jack@suse.cz>
+In-Reply-To: <20230424163219.9250-1-jack@suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 25 Apr 2023 09:01:20 +0300
+Message-ID: <CAOQ4uxjamwMxOXb3j7D8j_KkHLosayn3dnRbGfso9SFfzkSdDg@mail.gmail.com>
+Subject: Re: [PATCH] inotify: Avoid reporting event with invalid wd
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        syzbot+4a06d4373fd52f0b2f9c@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Andrew Morton <akpm@linux-foundation.org> writes:
+On Mon, Apr 24, 2023 at 7:32=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> When inotify_freeing_mark() races with inotify_handle_inode_event() it
+> can happen that inotify_handle_inode_event() sees that i_mark->wd got
+> already reset to -1 and reports this value to userspace which can
+> confuse the inotify listener. Avoid the problem by validating that wd is
+> sensible (and pretend the mark got removed before the event got
+> generated otherwise).
+>
+> CC: stable@vger.kernel.org
+> Fixes: 7e790dd5fc93 ("inotify: fix error paths in inotify_update_watch")
+> Reported-by: syzbot+4a06d4373fd52f0b2f9c@syzkaller.appspotmail.com
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
-> On Mon, 24 Apr 2023 04:50:37 +0100 Matthew Wilcox <willy@infradead.org> wrote:
->
->> On Mon, Apr 24, 2023 at 11:07:56AM +0800, Yajun Deng wrote:
->> > Instead of define an index and determining if the zone has memory,
->> > introduce for_each_populated_zone_pgdat() helper that can be used
->> > to iterate over each populated zone in pgdat, and convert the most
->> > obvious users to it.
->> 
->> I don't think the complexity of the helper justifies the simplification
->> of the users.
->
-> Are you sure?
->
->> > +++ b/include/linux/mmzone.h
->> > @@ -1580,6 +1580,14 @@ extern struct zone *next_zone(struct zone *zone);
->> >  			; /* do nothing */		\
->> >  		else
->> >  
->> > +#define for_each_populated_zone_pgdat(zone, pgdat, max) \
->> > +	for (zone = pgdat->node_zones;                  \
->> > +	     zone < pgdat->node_zones + max;            \
->> > +	     zone++)                                    \
->> > +		if (!populated_zone(zone))		\
->> > +			; /* do nothing */		\
->> > +		else
->> > +
->
-> But each of the call sites is doing this, so at least the complexity is
-> now seen in only one place.
->
-> btw, do we need to do the test that way?  Why won't this work?
->
-> #define for_each_populated_zone_pgdat(zone, pgdat, max) \
-> 	for (zone = pgdat->node_zones;                  \
-> 	     zone < pgdat->node_zones + max;            \
-> 	     zone++)                                    \
-> 		if (populated_zone(zone))
->
-> I suspect it was done the original way in order to save a tabstop,
-> which is no longer needed.
+Makes sense.
 
-This may cause unexpected effect when used with "if" statement.  For
-example,
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-        if (something)
-                for_each_populated_zone_pgdat(zone, pgdat, max)
-                        total += zone->present_pages;
-        else
-                pr_info("something is false!\n");
-
-Best Regards,
-Huang, Ying
+> ---
+>  fs/notify/inotify/inotify_fsnotify.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>
+> I plan to merge this fix through my tree.
+>
+> diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/ino=
+tify_fsnotify.c
+> index 49cfe2ae6d23..f86d12790cb1 100644
+> --- a/fs/notify/inotify/inotify_fsnotify.c
+> +++ b/fs/notify/inotify/inotify_fsnotify.c
+> @@ -65,7 +65,7 @@ int inotify_handle_inode_event(struct fsnotify_mark *in=
+ode_mark, u32 mask,
+>         struct fsnotify_event *fsn_event;
+>         struct fsnotify_group *group =3D inode_mark->group;
+>         int ret;
+> -       int len =3D 0;
+> +       int len =3D 0, wd;
+>         int alloc_len =3D sizeof(struct inotify_event_info);
+>         struct mem_cgroup *old_memcg;
+>
+> @@ -80,6 +80,13 @@ int inotify_handle_inode_event(struct fsnotify_mark *i=
+node_mark, u32 mask,
+>         i_mark =3D container_of(inode_mark, struct inotify_inode_mark,
+>                               fsn_mark);
+>
+> +       /*
+> +        * We can be racing with mark being detached. Don't report event =
+with
+> +        * invalid wd.
+> +        */
+> +       wd =3D READ_ONCE(i_mark->wd);
+> +       if (wd =3D=3D -1)
+> +               return 0;
+>         /*
+>          * Whoever is interested in the event, pays for the allocation. D=
+o not
+>          * trigger OOM killer in the target monitoring memcg as it may ha=
+ve
+> @@ -110,7 +117,7 @@ int inotify_handle_inode_event(struct fsnotify_mark *=
+inode_mark, u32 mask,
+>         fsn_event =3D &event->fse;
+>         fsnotify_init_event(fsn_event);
+>         event->mask =3D mask;
+> -       event->wd =3D i_mark->wd;
+> +       event->wd =3D wd;
+>         event->sync_cookie =3D cookie;
+>         event->name_len =3D len;
+>         if (len)
+> --
+> 2.35.3
+>
