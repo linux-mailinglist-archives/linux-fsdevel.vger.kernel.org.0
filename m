@@ -2,153 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31E3C6EE5FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 18:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDC16EE610
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 18:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234800AbjDYQpr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 12:45:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39140 "EHLO
+        id S234590AbjDYQtI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 12:49:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234794AbjDYQpq (ORCPT
+        with ESMTP id S234701AbjDYQtH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 12:45:46 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763A8D32E;
-        Tue, 25 Apr 2023 09:45:40 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f19b9d5358so37403675e9.1;
-        Tue, 25 Apr 2023 09:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682441139; x=1685033139;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DQgl8loxAa0veEtZSLtrUvcvIyw2BmuwVPdtNPCihQg=;
-        b=sIcEl1Tq3fwrs5UA5d0jX7GXW2Kr1kzevC2acB6kGpDEHKhEr1s9Nv64aQTPCMYV3b
-         8ogebBHtokSZSmEB38ASPWmJFv8VhO9CXDIGJ7A3a0jSniormcYUo170KQJgaZ/9ZNhH
-         cOfQjXRcRLByvhH8UPAVLiw4tMzfQCtNEO1KMn6VCHOdb3sKSnbH/IcHPKhOeMrChhNv
-         JMb0WcLeiws5HqMPX8V0OIa1fx6cu4d4gQ0O1QMNmcSGGMhIWpJ6dE602GjSAh8KDHHy
-         /ei4tBSGhgulm1GTAscNu1bTIhOBVZ+E3mup8DtyVPaVcm5IQ6WVGGr4ObkkwKUvTf5L
-         XsHw==
+        Tue, 25 Apr 2023 12:49:07 -0400
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A13161B7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 09:49:02 -0700 (PDT)
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-76359b8d29dso956655239f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 09:49:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682441139; x=1685033139;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DQgl8loxAa0veEtZSLtrUvcvIyw2BmuwVPdtNPCihQg=;
-        b=Npba7R5Ulyw1NJmOI0dLq0Pav1PO1rgUSuQT97E/01eUIUfgPbhQLwn553zyy9JHA+
-         dpj2myvkI3KbVeA9A/K1xthmSqD8Nl3zZlW2LZ6amQuVa2YqzlkgMBg6AAiRN2+mwjeL
-         8gKhZ8JwarN09X8Lkq5QELVm4ZY38fbaLBGn4yoVraC6pG0UHfAnp5ix1jbakXL/5kXN
-         qqFdT+abj9+ybsMiJlHZjhbCBkkJG0Be9evW5tepHNCuMNzjkGoGyucwfoGO9nNb4O5C
-         d5Kjyk1pEgDgfydswa+o1/Q3rqK9UNO87P0GVJZVeyeyoK8p64E6cUniqNZJbH871m6k
-         e5OQ==
-X-Gm-Message-State: AAQBX9dZRMkVToc0ge+tqj2FGLO+SSfcjT87nwsCWSeqk4Zb4rSeSYUc
-        pUbdz0IM4gxaQZB39NoloBw=
-X-Google-Smtp-Source: AKy350bhH1kCJAVU7jh/SMJsu6YcMsWKt9KQNik/pi2ziZhXf7/st499uGWpq4b1M825P+kzcwiSwA==
-X-Received: by 2002:a05:600c:3783:b0:3f1:6fb4:44cf with SMTP id o3-20020a05600c378300b003f16fb444cfmr10814511wmr.28.1682441138560;
-        Tue, 25 Apr 2023 09:45:38 -0700 (PDT)
-Received: from localhost ([208.34.186.1])
-        by smtp.gmail.com with ESMTPSA id p10-20020a1c544a000000b003f03d483966sm18820138wmi.44.2023.04.25.09.45.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Apr 2023 09:45:37 -0700 (PDT)
-Date:   Tue, 25 Apr 2023 17:45:36 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     "Kirill A . Shutemov" <kirill@shutemov.name>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH v3] mm/gup: disallow GUP writing to file-backed mappings
- by default
-Message-ID: <ZEgDsOlIW1xhuQXv@murray>
-References: <23c19e27ef0745f6d3125976e047ee0da62569d4.1682406295.git.lstoakes@gmail.com>
- <20230425101153.xxi4arpwkz7ijnvm@box.shutemov.name>
+        d=1e100.net; s=20221208; t=1682441342; x=1685033342;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mvlu2S6IOj0P66TUGmZILlb9E1nqtEeM3M9ymLjgqa0=;
+        b=AKTVZE+604AsJyvE08oWBnlhz1YkkDt13W0J12/k7EyqV1NA0E7c2pGlLpuf/hTmJj
+         Tv/plcTi+GMoWhgp1xL74dZcL2mls1rRL16Kcph5uGx2RPOCS+h2smq2huoOPu+QXwfE
+         //tLmolMMtUxcbx+2tGlr7A57pTAniD6j3frSTuQyUrQG6FQc74oZN9LiHkaoXbU/Uek
+         X3M1tD5GeetB2PDekgljOhIbKK2yOZg0KEGb8zH9mafj1z0hUKGd0KiHGxgskvIWvF2k
+         df20fGK+X1p/NfZBQfOeiiF3cQRcTJOTLzMPS0uwDqJmss2E/nbM5A31p2Y2pkE4v/00
+         I/WA==
+X-Gm-Message-State: AAQBX9dDhOtiwZOJECDclWY7QiSNJbK9zJeLUaKhhApRlyTETcWH529G
+        pexq2xZioJCGphw2tz0vSa3FGIVrYuLpnvO4JRG8MCAZ2+G/
+X-Google-Smtp-Source: AKy350b+GZPyDeJcZB0TQ5O5WE7vay9NPoF6gobFS/+212QAsO0QFx6Pr3opvz59pXBSW+RUWoYoLJf2arXpwRJmoAtf75RDaf/I
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230425101153.xxi4arpwkz7ijnvm@box.shutemov.name>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6602:3285:b0:761:22af:1e3f with SMTP id
+ d5-20020a056602328500b0076122af1e3fmr7113021ioz.3.1682441341846; Tue, 25 Apr
+ 2023 09:49:01 -0700 (PDT)
+Date:   Tue, 25 Apr 2023 09:49:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000894c7e05fa2be628@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in evict
+From:   syzbot <syzbot+6310a7df6baca255f9cc@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
+        trix@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 25, 2023 at 01:11:53PM +0300, Kirill A . Shutemov wrote:
-> On Tue, Apr 25, 2023 at 08:14:14AM +0100, Lorenzo Stoakes wrote:
-> > GUP does not correctly implement write-notify semantics, nor does it
-> > guarantee that the underlying pages are correctly dirtied, which could lead
-> > to a kernel oops or data corruption when writing to file-backed mappings.
-> >
-> > This is only relevant when the mappings are file-backed and the underlying
-> > file system requires folio dirty tracking. File systems which do not, such
-> > as shmem or hugetlb, are not at risk and therefore can be written to
-> > without issue.
-> >
-> > Unfortunately this limitation of GUP has been present for some time and
-> > requires future rework of the GUP API in order to provide correct write
-> > access to such mappings.
-> >
-> > In the meantime, we add a check for the most broken GUP case -
-> > FOLL_LONGTERM - which really under no circumstances can safely access
-> > dirty-tracked file mappings.
-> >
-> > Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> > ---
-> > v3:
-> > - Rebased on latest mm-unstable as of 24th April 2023.
-> > - Explicitly check whether file system requires folio dirtying. Note that
-> >   vma_wants_writenotify() could not be used directly as it is very much focused
-> >   on determining if the PTE r/w should be set (e.g. assuming private mapping
-> >   does not require it as already set, soft dirty considerations).
->
-> Hm. Okay. Have you considered having a common base for your case and
-> vma_wants_writenotify()? Code duplication doesn't look good.
->
+Hello,
 
-I did and I actually started implementing something for the same reason,
-however I wondered whether it was worth it for essentially 3 clauses that
-are shared between the two.
+syzbot found the following issue on:
 
-On second thoughts, it is painful to have this duplicated, so let me take
-another look.
+HEAD commit:    2af3e53a4dc0 Merge tag 'drm-fixes-2023-04-21' of git://ano..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f3bf57c80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4afb87f3ec27b7fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=6310a7df6baca255f9cc
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
 
->
-> --
->   Kiryl Shutsemau / Kirill A. Shutemov
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/845f21360f64/disk-2af3e53a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3b9925dc3504/vmlinux-2af3e53a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/021758261c12/bzImage-2af3e53a.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6310a7df6baca255f9cc@syzkaller.appspotmail.com
+
+loop5: detected capacity change from 0 to 4096
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 0 PID: 4955 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
+WARNING: CPU: 0 PID: 4955 at kernel/locking/lockdep.c:232 mark_lock+0x14c/0x340 kernel/locking/lockdep.c:4613
+Modules linked in:
+CPU: 0 PID: 4955 Comm: syz-executor.5 Not tainted 6.3.0-rc7-syzkaller-00152-g2af3e53a4dc0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/30/2023
+RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
+RIP: 0010:mark_lock+0x14c/0x340 kernel/locking/lockdep.c:4613
+Code: 03 42 0f b6 04 28 84 c0 0f 85 d2 01 00 00 83 3d 01 fd e8 0c 00 75 9d 48 c7 c7 40 7c ea 8a 48 c7 c6 e0 7e ea 8a e8 14 fb e7 ff <0f> 0b eb 86 e8 7b 47 ff ff 85 c0 0f 84 33 01 00 00 45 89 f6 4c 89
+RSP: 0000:ffffc90005487778 EFLAGS: 00010046
+RAX: 15fb29a09693de00 RBX: 0000000000001b00 RCX: 0000000000040000
+RDX: ffffc9000e3ef000 RSI: 0000000000007ab5 RDI: 0000000000007ab6
+RBP: 0000000000000002 R08: ffffffff81528022 R09: ffffed101730515b
+R10: 0000000000000000 R11: dffffc0000000001 R12: ffff888046b9c4b0
+R13: dffffc0000000000 R14: 0000000000000004 R15: ffff888046b9c4df
+FS:  00007f42a5e55700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7ddc767000 CR3: 0000000053d39000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ mark_usage kernel/locking/lockdep.c:4544 [inline]
+ __lock_acquire+0xc0d/0x1f80 kernel/locking/lockdep.c:5010
+ lock_acquire+0x1e1/0x520 kernel/locking/lockdep.c:5669
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:350 [inline]
+ inode_sb_list_del fs/inode.c:503 [inline]
+ evict+0x161/0x620 fs/inode.c:654
+ ntfs_fill_super+0x3ffc/0x47f0 fs/ntfs3/super.c:1239
+ get_tree_bdev+0x402/0x620 fs/super.c:1303
+ vfs_get_tree+0x8c/0x270 fs/super.c:1510
+ do_new_mount+0x28f/0xae0 fs/namespace.c:3042
+ do_mount fs/namespace.c:3385 [inline]
+ __do_sys_mount fs/namespace.c:3594 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3571
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f42a508d69a
+Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f42a5e54f88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 000000000001f6cc RCX: 00007f42a508d69a
+RDX: 000000002001f700 RSI: 000000002001f740 RDI: 00007f42a5e54fe0
+RBP: 00007f42a5e55020 R08: 00007f42a5e55020 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 000000002001f700
+R13: 000000002001f740 R14: 00007f42a5e54fe0 R15: 000000002001f780
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
