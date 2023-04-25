@@ -2,89 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 350116EE811
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 21:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C356EE81A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 21:16:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234826AbjDYTMi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 15:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36810 "EHLO
+        id S234312AbjDYTQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 15:16:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234802AbjDYTMg (ORCPT
+        with ESMTP id S234084AbjDYTQ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 15:12:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE2D416F00;
-        Tue, 25 Apr 2023 12:12:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D41463107;
-        Tue, 25 Apr 2023 19:12:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51489C433EF;
-        Tue, 25 Apr 2023 19:12:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682449953;
-        bh=lMDAKv+dWFO6VkWUCnMr163Sk2UkfZaflcg85AFNg4o=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=hNysl+t5lkcBFn5CSWQ8toXWyK/+6AVSyIsFdzKmdx2nrRruksUKDv2q+kkco8ldw
-         AatdU65HJvfsAWGaXB3bDdvB8Iyl/lNyjI3HnssP1fPjRZT4BL7xQRpNy+OFjPxyWp
-         R3KEfAr8Pokc522ah0tFu5zUA6wFTCaDiJhgU7wP4eJkStWO7sA5DdiJUAyav5OsqP
-         5ItJNMp+T+9EZczVDYT+HEAxszUHJgYR9XlJ+m6d7Rl6L8PnRlakPeMx8ArQahyHTt
-         rGKx6HvWdwqt86iZ7RQpBFrO5y3wRJgoq6qmLouQnQtwBQWcxEbbW7iBFlKP4rN1yX
-         z9gGYrOyUWxXA==
-Message-ID: <fa38f7a8e6f60753d5cb7f8949263f435cf613ec.camel@kernel.org>
-Subject: Re: [PATCH v2 1/3] fs: add infrastructure for multigrain inode
- i_m/ctime
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     NeilBrown <neilb@suse.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org
-Date:   Tue, 25 Apr 2023 15:12:30 -0400
-In-Reply-To: <ZEgUSw15g4Wbo91Z@casper.infradead.org>
-References: <20230424151104.175456-1-jlayton@kernel.org>
-         <20230424151104.175456-2-jlayton@kernel.org>
-         <168237287734.24821.11016713590413362200@noble.neil.brown.name>
-         <404a9a8066b0735c9f355214d4eadf0d975b3188.camel@kernel.org>
-         <168237601955.24821.11999779095797667429@noble.neil.brown.name>
-         <aa60b0fa23c1d582cfad0da5b771d427d00c4316.camel@kernel.org>
-         <ZEgUSw15g4Wbo91Z@casper.infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.0 (3.48.0-1.fc38) 
+        Tue, 25 Apr 2023 15:16:27 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFDA813C28
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 12:16:25 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-94f3df30043so978421166b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 12:16:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682450184; x=1685042184;
+        h=to:subject:message-id:date:from:sender:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QnKFL26C96VIgV6J+JP4Ljyq4pSmVr5ajTDLJ4C8iVQ=;
+        b=AqwZ7OSMZLog3qGGpsBlXBUOiczpKZvSHve+rhm++l/798NXu2n0/2gufjv6jKoygI
+         /zqG/eo1p9/Y+p38YQpEFzpWZW1iooCak7LQJlSv2O+F2N2UjDX1gatwDtUjwlBhfefE
+         g2Fg/CjDjjgcsetvCM48P6k0xLyiQ8DZ0nB83GzcvsAFRY3VIWH2/rFkopWUKJfy7Iha
+         xViIUEGSTeCs3mNd7497EihLNZsx94gkFmb6vIlI83aeoRbLO1Wc5Z8sbVmSgBRvqujV
+         FnKeBmv0mtRnHlpsCpR24p0SEUTloEGz8EDymoEGhHUkJ8C2my/6629OkE/EJi+TBMQh
+         cIOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682450184; x=1685042184;
+        h=to:subject:message-id:date:from:sender:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QnKFL26C96VIgV6J+JP4Ljyq4pSmVr5ajTDLJ4C8iVQ=;
+        b=j1BO9ztKO8ezEuou71M4ENsvOSW8hCEboY5gqKBNA7QJ8+2/ZTk6HdhidRItrAacqq
+         6tIrmNn3imYPhuJxaLbBLcEoQDUOsumZSsLAFZ63gOe4X1zfjTfi4XWfj6aUrI3g/841
+         b7QYeNaKSa08IBnn5FC1ZgbtyvB/4LnRGJ+OqgGn3TFxw91rY8VP2wjBUHVAIJO5e78F
+         l9GN0tzlHDX7FoHwEIDPrtQ9xM7aVAVH0AiA7Nbe2eFZD3Mbz/mz59zmEchfDEF432uB
+         NWOTMJZ+yV+qGoojUeGoHQvyq1Pv/1UnPyJagkNJaoAyj/fmcBpgUxKV3xSeLTHjCdMe
+         yHcg==
+X-Gm-Message-State: AAQBX9ec29pqfjtkWCUTcxaZ93OHoYt2YRZraLM1Zs0AGxq3KGrtiTE+
+        nNq031JfRHI+30Ncl+Q7kyCzXgoiLEPqLawiK6U=
+X-Google-Smtp-Source: AKy350Y5V5U+kqSEmeE4/wcbrt9LiSgJFXXGjEwbpiOzCLlizN+d4W6KaK9f7qD65Me7MKA9+Vc67cPGONiCs0B4byI=
+X-Received: by 2002:a17:906:34c8:b0:94f:2249:61d4 with SMTP id
+ h8-20020a17090634c800b0094f224961d4mr14704304ejb.34.1682450183864; Tue, 25
+ Apr 2023 12:16:23 -0700 (PDT)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Sender: munniralhassanmunniralhassan@gmail.com
+Received: by 2002:a05:7208:c04f:b0:68:3a3f:3968 with HTTP; Tue, 25 Apr 2023
+ 12:16:23 -0700 (PDT)
+From:   "Mrs. Margaret Christopher" <mrsmargaretchristopher001@gmail.com>
+Date:   Tue, 25 Apr 2023 13:16:23 -0600
+X-Google-Sender-Auth: cG4zKUgZzxjjHbGgrZF6EKMT0p4
+Message-ID: <CALefQgPp1drfWu-ELiojkJJGwRbtbtaMj8W+r4s23KLFk1nOtw@mail.gmail.com>
+Subject: Humanitarian Project For Less Privileged.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=1.3 required=5.0 tests=BAYES_20,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_NAME_FM_MR_MRS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-04-25 at 18:56 +0100, Matthew Wilcox wrote:
-> On Tue, Apr 25, 2023 at 01:45:19PM -0400, Jeff Layton wrote:
-> > Erm...it may be an unpopular opinion, but I find that more confusing
-> > than just ensuring that the s_time_gran > 1. I keep wondering if we
-> > might want to carve out other low-order bits too for some later purpose=
-,
-> > at which point trying to check this using flags wouldn't work right. I
-> > think I might just stick with what I have here, at least for now.
->=20
-> But what if I set s_time_gran to 3 or 5?  You'd really want a warning
-> about that.
+-- 
+Hello Dear
 
-Ugh, I hadn't considered that. I don't see anyone that sets an odd
-s_time_gran that isn't 1, but OK, good point. I'll change it.
---=20
-Jeff Layton <jlayton@kernel.org>
+  Am a dying woman here in the hospital, i was diagnose as a
+Coronavirus patient over 2 months ago. I am A business woman who is
+dealing with Gold Exportation, I Am 59 year old from USA California i
+have a charitable and unfufilling  project that am about to handover
+to you, if you are interested to know more about this project please reply me.
+
+ Hope to hear from you
+
+Regard
