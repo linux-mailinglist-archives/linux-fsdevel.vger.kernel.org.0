@@ -2,54 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CAF96EE405
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 16:37:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E90E96EE49F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 17:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234007AbjDYOgn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 10:36:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45494 "EHLO
+        id S234376AbjDYPSE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 11:18:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234337AbjDYOgj (ORCPT
+        with ESMTP id S234186AbjDYPSD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 10:36:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E45E13FAD;
-        Tue, 25 Apr 2023 07:36:33 -0700 (PDT)
+        Tue, 25 Apr 2023 11:18:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E48127;
+        Tue, 25 Apr 2023 08:18:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0EE7562616;
-        Tue, 25 Apr 2023 14:36:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A0F5C433EF;
-        Tue, 25 Apr 2023 14:36:30 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BC6AB6136C;
+        Tue, 25 Apr 2023 15:18:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C680C433EF;
+        Tue, 25 Apr 2023 15:18:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682433392;
-        bh=+kk30ThPWVCr+ufa0kwWhG4W22jpqiL839hXy4+jZEE=;
+        s=k20201202; t=1682435881;
+        bh=OZVtwFWo7+1hR1E/XFg8v7jLksChEj4wIb247kHrI2I=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jsv+wWj1fuIfDk5+XpldOqPiBFqDj6vBgwXDRxsE1Qq39ZYTiUYlT2tpTIuYTQHg/
-         1WNGfsoQdBM7G23lvOTO2ybM8mQk0zDAjeYDdoZySMl2zTwZFGlQ2DOk43zKVCEp6M
-         CtFMa5F6fSY0JMWp1QTIgtqSRbwUnoWOzNL7TdaJg+OnNYhYXnvP7gN8TwEurN5U8g
-         HixenrRfVLlA0HyiSpiebfUp5Dap255dcIBRcHQ02GlpOZ+FnVQBP51C5r4zEg+IUJ
-         UyS6PP9xQIA5I8Rq5g8L2VQ8OPWmNbUCo+bDcwa29a9aOd0CUOd6J9+B8lfzoG/NMN
-         2lnA1melEr5YQ==
-Date:   Tue, 25 Apr 2023 16:36:27 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] pidfd updates
-Message-ID: <20230425-mulmig-wandschmuck-75699afb1ecc@brauner>
-References: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
- <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
- <20230425060427.GP3390869@ZenIV>
- <20230425-sturheit-jungautor-97d92d7861e2@brauner>
- <20230425135429.GQ3390869@ZenIV>
+        b=JwuiYzoE9l78rA8VNEL7AMkMtYghXYh1MhzRtXMnCSRA9FgM/K0NzCyfCHGaNdnVt
+         aIeHzHmeqbLKat4hJ1Oq7PBAve2s18Wh05BcH+6o+l3mw/nfuKNmuoUu4rx6nq7g+I
+         Z4YGADE1utvo86K7C8mGq3AvAeE0iCJ9R1GozHBCQej9h/5kUxhnzH27StZlEJBXyg
+         5fq/WsC893YV8eOQcHWIFwJmnaio0ljNHnr2lGifbygRZQE0lQDHbdRUnBQdkJGtWm
+         sLdv/HCbVAk0eywgGBVhF0anUGlHajCypKtFawvQrMWdKWhSWY4jjHwGsCYJ5avSc0
+         Gc1cfGvS7qmlw==
+Date:   Tue, 25 Apr 2023 08:18:00 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        dan.j.williams@intel.com, willy@infradead.org,
+        akpm@linux-foundation.org
+Subject: Re: [RFC PATCH v11.1 2/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for
+ unbind
+Message-ID: <20230425151800.GS360889@frogsfrogsfrogs>
+References: <1679996506-2-3-git-send-email-ruansy.fnst@fujitsu.com>
+ <1681296735-2-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <0a53ee26-5771-0808-ccdc-d1739c9dacac@fujitsu.com>
+ <20230420120956.cdxcwojckiw36kfg@quack3>
+ <d557c0cb-e244-6238-2df4-01ce75ededdf@fujitsu.com>
+ <20230425132315.u5ocvbneeqzzbifl@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230425135429.GQ3390869@ZenIV>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230425132315.u5ocvbneeqzzbifl@quack3>
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -58,74 +65,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 25, 2023 at 02:54:29PM +0100, Al Viro wrote:
-> On Tue, Apr 25, 2023 at 02:34:15PM +0200, Christian Brauner wrote:
-> 
-> > It is rife with misunderstandings just looking at what we did in
-> > kernel/fork.c earlier:
+On Tue, Apr 25, 2023 at 03:23:15PM +0200, Jan Kara wrote:
+> On Tue 25-04-23 20:47:35, Shiyang Ruan wrote:
 > > 
-> > 	retval = get_unused_fd_flags(O_RDWR | O_CLOEXEC);
-> >         [...]
-> >         pidfile = anon_inode_getfile("[pidfd]", &pidfd_fops, pid,
-> >                                      O_RDWR | O_CLOEXEC);
 > > 
-> > seeing where both get_unused_fd_flags() and both *_getfile() take flag
-> > arguments. Sure, for us this is pretty straightforward since we've seen
-> > that code a million times. For others it's confusing why there's two
-> > flag arguments. Sure, we could use one flags argument but it still be
-> > weird to look at.
-> 
-> First of all, get_unused_fd_flags() doesn't give a damn about O_RDWR and
-> anon_inode_getfile() - about O_CLOEXEC.  Duplicating the expression in
-> places like that is cargo-culting.
-
-I distinctly remember us having that conversation about how to do this
-nicely back then and fwiw this is your patch... ;)
-6fd2fe494b17 ("copy_process(): don't use ksys_close() on cleanups")
-
-So sure, that was my point: people are confused why there's two flag
-arguments and what exactly has to go into them and just copy-paste
-whatever other users already have.
-
->  
-> > But with this api we also force all users to remember that they need to
-> > cleanup the fd and the file - but definitely one - depending on where
-> > they fail.
+> > 在 2023/4/20 20:09, Jan Kara 写道:
+> > > On Thu 20-04-23 10:07:39, Shiyang Ruan wrote:
+> > > > 在 2023/4/12 18:52, Shiyang Ruan 写道:
+> > > > > This is a RFC HOTFIX.
+> > > > > 
+> > > > > This hotfix adds a exclusive forzen state to make sure any others won't
+> > > > > thaw the fs during xfs_dax_notify_failure():
+> > > > > 
+> > > > >     #define SB_FREEZE_EXCLUSIVE	(SB_FREEZE_COMPLETE + 2)
+> > > > > Using +2 here is because Darrick's patch[0] is using +1.  So, should we
+> > > > > make these definitions global?
+> > > > > 
+> > > > > Another thing I can't make up my mind is: when another freezer has freeze
+> > > > > the fs, should we wait unitl it finish, or print a warning in dmesg and
+> > > > > return -EBUSY?
+> > > > > 
+> > > > > Since there are at least 2 places needs exclusive forzen state, I think
+> > > > > we can refactor helper functions of freeze/thaw for them.  e.g.
+> > > > >     int freeze_super_exclusive(struct super_block *sb, int frozen);
+> > > > >     int thaw_super_exclusive(struct super_block *sb, int frozen);
+> > > > > 
+> > > > > [0] https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=repair-fscounters&id=c3a0d1de4d54ffb565dbc7092dfe1fb851940669
+> > > 
+> > > I'm OK with the idea of new freeze state that does not allow userspace to
+> > > thaw the filesystem. But I don't really like the guts of filesystem
+> > > freezing being replicated inside XFS. It is bad enough that they are
+> > > replicated in [0], replicating them *once more* in another XFS file shows
+> > > we are definitely doing something wrong. And Luis will need yet another
+> > > incantation of the exlusive freeze for suspend-to-disk. So please guys get
+> > > together and reorganize the generic freezing code so that it supports
+> > > exclusive freeze (for in-kernel users) and works for your usecases instead
+> > > of replicating it inside XFS...
 > > 
-> > But conceptually the fd and the file belong together. After all it's the
-> > file we're about to make that reserved fd refer to.
+> > I agree that too much replicating code is not good.  It's necessary to
+> > create a generic exclusive freeze/thaw for all users.  But for me, I don't
+> > have the confidence to do it well, because it requires good design and code
+> > changes will involve other filesystems.  It's diffcult.
+> > 
+> > However, I hope to be able to make progress on this unbind feature. Thus, I
+> > tend to refactor a common helper function for xfs first, and update the code
+> > later when the generic freeze is done.
 > 
-> Why?  The common pattern is
-> 	* reserve the descriptor
-> 	* do some work that might fail
-> 	* get struct file set up (which also might fail)
-> 	* do more work (possibly including copyout, etc.)
-> 	* install file into descriptor table
+> I think Darrick was thinking about working on a proper generic interface.
+> So please coordinate with him.
+
+I'll post a vfs generic kernelfreeze series later today.
+
+One thing I haven't figured out yet is what's supposed to happen when
+PREREMOVE is called on a frozen filesystem.  We don't want userspace to
+be able to thaw the fs while PREREMOVE is running, so I /guess/ that
+means we need some method for the kernel to take over a userspace
+freeze and then put it back when we're done?
+
+--D
+
+> 								Honza
 > 
-> We want to reserve the descriptor early, since it's about the easiest
-> thing to undo.  Why bother doing it next to file setup?  That can be
-> pretty deep in call chain and doing it that way comes with headache
-> about passing the damn thing around.  And cleanup rules with your
-> variant end up being more complicated.
-> 
-> Keep the manipulations of descriptor table as close to the surface
-> as possible.  The real work is with file references; descriptors
-> belong in userland and passing them around kernel-side is asking
-> for headache.
-
-Imho, there's different use-cases.
-
-There's definitely one where people allocate a file descriptor early on
-and then sometimes maybe way later allocate a struct file and install
-it. And that's where exposing and using get_unused_fd_flags() and
-fd_install() is great and works fine.
-
-But there's also users that do the reserve an fd and allocate a file at
-the same time or receive both at the same time as the seccomp notifier,
-scm creds, or pidfds. The receive_fd* stuff is basically a version of
-the sketch I did without the ability to simply use a struct and not
-having to open-code everything multiple times.
-
-I never expected excitement around this as it was difficult enough to
-get that receive_fd* thing going so I'm not arguing for this to be the
-ultima ratio...
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
