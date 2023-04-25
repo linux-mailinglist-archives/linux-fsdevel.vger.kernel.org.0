@@ -2,184 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E976EE245
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 14:57:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E266A6EE25C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Apr 2023 15:01:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234066AbjDYM5d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 08:57:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60102 "EHLO
+        id S229653AbjDYNBW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 09:01:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233800AbjDYM5c (ORCPT
+        with ESMTP id S234081AbjDYNBT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 08:57:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F9AD317
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 05:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1682427403;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=YARZYYD8kywX+uZX3azGfX2IIahTfzqdbDAK8+7O+cc=;
-        b=XQYiezNKEkPqxgEUDVHhPPYHpCi1nhyYhdjgFlhR2z4+dnytgEK//WDZ9G+tbYt93x+TMp
-        9cDN066kEMJPoLXXQuwID/MUCA+3yv6TLZFOlaLRfrHZ4R0RmEvcDRI6J3uXPkhxzLe/IZ
-        8XKPtVg0xXpudpo2D93Z1cN/4t7g5XA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-633-adOwmTlRPaGPOM5R12Qxwg-1; Tue, 25 Apr 2023 08:56:40 -0400
-X-MC-Unique: adOwmTlRPaGPOM5R12Qxwg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A1C503801F5E;
-        Tue, 25 Apr 2023 12:56:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1AD402027043;
-        Tue, 25 Apr 2023 12:56:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-cc:     dhowells@redhat.com,
-        syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net] rxrpc: Fix potential data race in rxrpc_wait_to_be_connected()
+        Tue, 25 Apr 2023 09:01:19 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19F5D315;
+        Tue, 25 Apr 2023 06:01:15 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-2f55ffdbaedso3611729f8f.2;
+        Tue, 25 Apr 2023 06:01:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682427674; x=1685019674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gGePo+323IAj5uoeF7RJtIA7ttlt5KyRYR7yLs+0X/s=;
+        b=eIwu+SPFhBEvDEA6AUndh6gllmC6ap6HqhGKayQ7oZIa5OoxOprc9w9Qu9ZJ7I6uDt
+         Gpa5Oxg3kBBa1cETzgwkJA0bq7mFLlaPeqAeMxyDME0LopsBTs+56lIA9WFLyOhAIcN0
+         vHSkbOouH7xinu37wGluUrb0SM7m/j5uR+TzxEPCoOwDkEv2JRJjYD5D4Y/9YhnrowXi
+         14JhM697QCWA6onB2mdF6KseK3+L89F5IPJr8UJNWem36oxw4lcqBIgKibc2stNSlP5l
+         oUiMQo8RDwv3vuT9IgzPNqzwmFcl+CSVM1oOlKOP0MzYvCyicDctuhF6TNGDp/rImDwB
+         LzpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682427674; x=1685019674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gGePo+323IAj5uoeF7RJtIA7ttlt5KyRYR7yLs+0X/s=;
+        b=fY2XfEmJvIjOpexrup1WzjwcO+MJlx29hLeg2orqHhM7LLyGFoINH0+rXMFkS8u8YO
+         F1BnqVNZrbEY97CxWlJ8jMks1Wh9sCvPLzt2iI2ZZJvbTQ3D9OkqYjpAPrPOolYGimB4
+         34c1airzqQVI9Fv1ZWTNYKLz6YkHwdH39Awi60IhXOS5EYACyO0sv6Ji+VHcI3HHo88O
+         12H+QFvVpNDD2yDbES2qhCef2oanfvEsyXRGr0Crifde/9UxmTIiseJeX0lOE4zbD9B8
+         RaCy0YqTT+pnRUSroQJ+HF//MrwSKtArNMFxSt4/2CNmLZJruwaqRFAMvijofH266Tki
+         symw==
+X-Gm-Message-State: AAQBX9f2/E52FcIKbOBPa2ktocZ0i6f63obvw5RBaCYy2IkFCYwd3dyK
+        1Dav89DSYRZYFUxYJifwI0Q=
+X-Google-Smtp-Source: AKy350bBFdtqGR/HCdXtKYXl75p64JMBisk/rq1s5bzeqqu/2BVcB3VNlW5sT9m1GWuQ2/LK//HI4g==
+X-Received: by 2002:adf:e590:0:b0:2fb:1f34:dc6d with SMTP id l16-20020adfe590000000b002fb1f34dc6dmr10969089wrm.64.1682427671425;
+        Tue, 25 Apr 2023 06:01:11 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id s1-20020adff801000000b00300aee6c9cesm13103447wrp.20.2023.04.25.06.01.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Apr 2023 06:01:11 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: [RFC][PATCH 0/4] Prepare for supporting more filesystems with fanotify
+Date:   Tue, 25 Apr 2023 16:01:01 +0300
+Message-Id: <20230425130105.2606684-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <508132.1682427395.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 25 Apr 2023 13:56:35 +0100
-Message-ID: <508133.1682427395@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-    =
+Jan,
 
-Inside the loop in rxrpc_wait_to_be_connected() it checks call->error to
-see if it should exit the loop without first checking the call state.  Thi=
-s
-is probably safe as if call->error is set, the call is dead anyway, but we
-should probably wait for the call state to have been set to completion
-first, lest it cause surprise on the way out.
+Following up on the FAN_REPORT_ANY_FID proposal [1], here is a shot at an
+alternative proposal to seamlessly support more filesystems.
 
-Fix this by only accessing call->error if the call is complete.  We don't
-actually need to access the error inside the loop as we'll do that after.
+While fanotify relaxes the requirements for filesystems to support
+reporting fid to require only the ->encode_fh() operation, there are
+currently no new filesystems that meet the relaxed requirements.
 
-This caused the following report:
+I will shortly post patches that allow overlayfs to meet the new
+requirements with default overlay configurations.
 
-    BUG: KCSAN: data-race in rxrpc_send_data / rxrpc_set_call_completion
+The overlay and vfs/fanotify patch sets are completely independent.
+The are both available on my github branch [2] and there is a simple
+LTP test variant that tests reporting fid from overlayfs [3], which
+also demonstrates the minor UAPI change of name_to_handle_at(2) for
+requesting a non-decodeable file handle by userspace.
 
-    write to 0xffff888159cf3c50 of 4 bytes by task 25673 on cpu 1:
-     rxrpc_set_call_completion+0x71/0x1c0 net/rxrpc/call_state.c:22
-     rxrpc_send_data_packet+0xba9/0x1650 net/rxrpc/output.c:479
-     rxrpc_transmit_one+0x1e/0x130 net/rxrpc/output.c:714
-     rxrpc_decant_prepared_tx net/rxrpc/call_event.c:326 [inline]
-     rxrpc_transmit_some_data+0x496/0x600 net/rxrpc/call_event.c:350
-     rxrpc_input_call_event+0x564/0x1220 net/rxrpc/call_event.c:464
-     rxrpc_io_thread+0x307/0x1d80 net/rxrpc/io_thread.c:461
-     kthread+0x1ac/0x1e0 kernel/kthread.c:376
-     ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+Thanks,
+Amir.
 
-    read to 0xffff888159cf3c50 of 4 bytes by task 25672 on cpu 0:
-     rxrpc_send_data+0x29e/0x1950 net/rxrpc/sendmsg.c:296
-     rxrpc_do_sendmsg+0xb7a/0xc20 net/rxrpc/sendmsg.c:726
-     rxrpc_sendmsg+0x413/0x520 net/rxrpc/af_rxrpc.c:565
-     sock_sendmsg_nosec net/socket.c:724 [inline]
-     sock_sendmsg net/socket.c:747 [inline]
-     ____sys_sendmsg+0x375/0x4c0 net/socket.c:2501
-     ___sys_sendmsg net/socket.c:2555 [inline]
-     __sys_sendmmsg+0x263/0x500 net/socket.c:2641
-     __do_sys_sendmmsg net/socket.c:2670 [inline]
-     __se_sys_sendmmsg net/socket.c:2667 [inline]
-     __x64_sys_sendmmsg+0x57/0x60 net/socket.c:2667
-     do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-     do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
-     entry_SYSCALL_64_after_hwframe+0x63/0xcd
+[1] https://lore.kernel.org/linux-fsdevel/20230417162721.ouzs33oh6mb7vtft@quack3/
+[2] https://github.com/amir73il/linux/commits/exportfs_encode_fid
+[3] https://github.com/amir73il/ltp/commits/exportfs_encode_fid
 
-    value changed: 0x00000000 -> 0xffffffea
+Amir Goldstein (4):
+  exportfs: change connectable argument to bit flags
+  exportfs: add explicit flag to request non-decodeable file handles
+  exportfs: allow exporting non-decodeable file handles to userspace
+  fanotify: support reporting non-decodeable file handles
 
-Fixes: 9d35d880e0e4 ("rxrpc: Move client call connection to the I/O thread=
-")
-Reported-by: syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/r/000000000000e7c6d205fa10a3cd@google.com/
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Dmitry Vyukov <dvyukov@google.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-fsdevel@vger.kernel.org
-cc: netdev@vger.kernel.org
----
- net/rxrpc/sendmsg.c |   12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ Documentation/filesystems/nfs/exporting.rst |  4 +--
+ fs/exportfs/expfs.c                         | 29 ++++++++++++++++++---
+ fs/fhandle.c                                | 20 ++++++++------
+ fs/nfsd/nfsfh.c                             |  5 ++--
+ fs/notify/fanotify/fanotify.c               |  4 +--
+ fs/notify/fanotify/fanotify_user.c          |  6 ++---
+ fs/notify/fdinfo.c                          |  2 +-
+ include/linux/exportfs.h                    | 18 ++++++++++---
+ include/uapi/linux/fcntl.h                  |  5 ++++
+ 9 files changed, 67 insertions(+), 26 deletions(-)
 
-diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
-index da49fcf1c456..6caa47d352ed 100644
---- a/net/rxrpc/sendmsg.c
-+++ b/net/rxrpc/sendmsg.c
-@@ -50,15 +50,11 @@ static int rxrpc_wait_to_be_connected(struct rxrpc_cal=
-l *call, long *timeo)
- 	_enter("%d", call->debug_id);
- =
-
- 	if (rxrpc_call_state(call) !=3D RXRPC_CALL_CLIENT_AWAIT_CONN)
--		return call->error;
-+		goto no_wait;
- =
-
- 	add_wait_queue_exclusive(&call->waitq, &myself);
- =
-
- 	for (;;) {
--		ret =3D call->error;
--		if (ret < 0)
--			break;
--
- 		switch (call->interruptibility) {
- 		case RXRPC_INTERRUPTIBLE:
- 		case RXRPC_PREINTERRUPTIBLE:
-@@ -69,10 +65,9 @@ static int rxrpc_wait_to_be_connected(struct rxrpc_call=
- *call, long *timeo)
- 			set_current_state(TASK_UNINTERRUPTIBLE);
- 			break;
- 		}
--		if (rxrpc_call_state(call) !=3D RXRPC_CALL_CLIENT_AWAIT_CONN) {
--			ret =3D call->error;
-+
-+		if (rxrpc_call_state(call) !=3D RXRPC_CALL_CLIENT_AWAIT_CONN)
- 			break;
--		}
- 		if ((call->interruptibility =3D=3D RXRPC_INTERRUPTIBLE ||
- 		     call->interruptibility =3D=3D RXRPC_PREINTERRUPTIBLE) &&
- 		    signal_pending(current)) {
-@@ -85,6 +80,7 @@ static int rxrpc_wait_to_be_connected(struct rxrpc_call =
-*call, long *timeo)
- 	remove_wait_queue(&call->waitq, &myself);
- 	__set_current_state(TASK_RUNNING);
- =
-
-+no_wait:
- 	if (ret =3D=3D 0 && rxrpc_call_is_complete(call))
- 		ret =3D call->error;
- =
+-- 
+2.34.1
 
