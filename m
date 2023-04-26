@@ -2,174 +2,334 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B6C86EEC6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 04:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A52A6EECAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 05:19:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239102AbjDZChT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Apr 2023 22:37:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36788 "EHLO
+        id S239144AbjDZDTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Apr 2023 23:19:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230435AbjDZChS (ORCPT
+        with ESMTP id S239093AbjDZDT3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Apr 2023 22:37:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BBDC185;
-        Tue, 25 Apr 2023 19:37:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D83CA611EC;
-        Wed, 26 Apr 2023 02:37:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C95CC433EF;
-        Wed, 26 Apr 2023 02:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682476636;
-        bh=QQLblGEacILjgXIqymBXeQ4m3vNonM/22q1B7+2JnGM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BHhTcAN+ORMlfpnk+1ZdNmVfn8moJOuGjhJ4EckwYW54v+bnGgqi31edzuZY9xhEA
-         JIyakRbNkSiKZVz74XnX79GcAqHYxriZeBa6fMi3CkuNXs75Mc5Cry3MyRJDlPAiaI
-         2N3jgFFjuRO1DMJKiMwGir9l3Zc1Nupk0NVnzdeVWmtcjQb2Q+bj6QcWGeRGKweOxq
-         mw9nfMTZb10fqpbnIiVt0nznvcu7i+0FbSoQ4R+TzI4Lc0l6o85CppunfmOYNMZZjf
-         mv6BlL3nPhPO+x/eJ1HA2o7YI0AjdPNLMtIMl7C2YqVByDjn5OMVGe8z+5DZ1zzCF8
-         wR31niEr0w4lA==
-Date:   Tue, 25 Apr 2023 19:37:15 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     Jan Kara <jack@suse.cz>, Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        dan.j.williams@intel.com, willy@infradead.org,
-        akpm@linux-foundation.org
-Subject: Re: [RFC PATCH v11.1 2/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for
- unbind
-Message-ID: <20230426023715.GA59245@frogsfrogsfrogs>
-References: <1679996506-2-3-git-send-email-ruansy.fnst@fujitsu.com>
- <1681296735-2-1-git-send-email-ruansy.fnst@fujitsu.com>
- <0a53ee26-5771-0808-ccdc-d1739c9dacac@fujitsu.com>
- <20230420120956.cdxcwojckiw36kfg@quack3>
- <d557c0cb-e244-6238-2df4-01ce75ededdf@fujitsu.com>
- <20230425132315.u5ocvbneeqzzbifl@quack3>
- <20230425151800.GS360889@frogsfrogsfrogs>
- <baabaf6d-151b-9667-c766-bf3e89b085cb@fujitsu.com>
+        Tue, 25 Apr 2023 23:19:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8179E5E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 20:18:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1682479124;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KtkS8QZe/o00VB0DHK7QzgrrGugl8akH2mYVPDK5a8k=;
+        b=H6wA2aUu0ukLTqYHOKQGXmUrhdQ6f9OGdRLbYbowcrEJ5I1CAHEkbhAsERkFUIgBBuqu/h
+        iq+BSBjFga82/m8agXpzdy+kt8dFNyzaHtaeyudqP0TLXS1cMZCIEPK3c4OTEkEGpaC9Il
+        Sayl5HttPBZfIMwJrz+BxWsnD132RHM=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-554-Eai_xZo4NrK_NOjfqRO0fg-1; Tue, 25 Apr 2023 23:18:42 -0400
+X-MC-Unique: Eai_xZo4NrK_NOjfqRO0fg-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-4ec9e0761c6so7921269e87.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Apr 2023 20:18:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682479121; x=1685071121;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KtkS8QZe/o00VB0DHK7QzgrrGugl8akH2mYVPDK5a8k=;
+        b=SZ9RrDgEoe24OkjA38fa28gxEI+04ZOmX3lJJzYrsrQZUYpI2hnW4x1rv5Ymf9aJ94
+         ggeLDnpp2MGNuRwQ3EkKHLFBeBqPL0K1APU2Oy8oS2h5xYqiOLa0tKNih/5mOkO/+peH
+         /Kf61b1Bjd3moSurtghbfP2XTaACYQegM7BaEaO9c/c/IphQzsWwMfQGCalWLo5z9M9v
+         oTeXO175h5kpoj/a7iMsBX9uxLOH/fiVwSQbQBiRX5XIm0eNpG2Be2EHXS100LARYeY9
+         8PFlt6BdAjmSMwBpZMFZ4E1d1IP2p+3grnIAjuD+gx3I6wftXg7VwmXzUWgHyMJm5h5P
+         ruow==
+X-Gm-Message-State: AC+VfDw30wEuIFkTsdslkXqq2jTL+9KfBBzWeKpPa4MbInirXIgFuYRk
+        9Y7XA9WHHNBpG4WF4UQHY5xDr5oPLgTgwKMnmhdynhWhgeT1+E96gpKYy0x4krXkw4/fIpA1RMO
+        HHh9J8Qx+ChaWygyCr52Fg51z
+X-Received: by 2002:a05:6512:11ec:b0:4ef:ed90:1f3a with SMTP id p12-20020a05651211ec00b004efed901f3amr210404lfs.0.1682479120968;
+        Tue, 25 Apr 2023 20:18:40 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6Dw3RqruaPelklsbGwUGKPyyyX+X2gawZomjV+ANDWFBwBLmycH3J29SHyb3v8a+8L3O6asg==
+X-Received: by 2002:a05:6512:11ec:b0:4ef:ed90:1f3a with SMTP id p12-20020a05651211ec00b004efed901f3amr210375lfs.0.1682479120575;
+        Tue, 25 Apr 2023 20:18:40 -0700 (PDT)
+Received: from [192.168.1.121] (85-23-48-202.bb.dnainternet.fi. [85.23.48.202])
+        by smtp.gmail.com with ESMTPSA id p13-20020a19f00d000000b004efd57c198dsm1779335lfc.53.2023.04.25.20.18.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Apr 2023 20:18:39 -0700 (PDT)
+Message-ID: <a68fa8f2-8619-63ff-3525-ede7ed1f0a9f@redhat.com>
+Date:   Wed, 26 Apr 2023 06:18:38 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <baabaf6d-151b-9667-c766-bf3e89b085cb@fujitsu.com>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v4] mm/gup: disallow GUP writing to file-backed mappings
+ by default
+Content-Language: en-US
+To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>
+References: <3b92d56f55671a0389252379237703df6e86ea48.1682464032.git.lstoakes@gmail.com>
+From:   =?UTF-8?Q?Mika_Penttil=c3=a4?= <mpenttil@redhat.com>
+In-Reply-To: <3b92d56f55671a0389252379237703df6e86ea48.1682464032.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 26, 2023 at 10:27:43AM +0800, Shiyang Ruan wrote:
-> 
-> 
-> 在 2023/4/25 23:18, Darrick J. Wong 写道:
-> > On Tue, Apr 25, 2023 at 03:23:15PM +0200, Jan Kara wrote:
-> > > On Tue 25-04-23 20:47:35, Shiyang Ruan wrote:
-> > > > 
-> > > > 
-> > > > 在 2023/4/20 20:09, Jan Kara 写道:
-> > > > > On Thu 20-04-23 10:07:39, Shiyang Ruan wrote:
-> > > > > > 在 2023/4/12 18:52, Shiyang Ruan 写道:
-> > > > > > > This is a RFC HOTFIX.
-> > > > > > > 
-> > > > > > > This hotfix adds a exclusive forzen state to make sure any others won't
-> > > > > > > thaw the fs during xfs_dax_notify_failure():
-> > > > > > > 
-> > > > > > >      #define SB_FREEZE_EXCLUSIVE	(SB_FREEZE_COMPLETE + 2)
-> > > > > > > Using +2 here is because Darrick's patch[0] is using +1.  So, should we
-> > > > > > > make these definitions global?
-> > > > > > > 
-> > > > > > > Another thing I can't make up my mind is: when another freezer has freeze
-> > > > > > > the fs, should we wait unitl it finish, or print a warning in dmesg and
-> > > > > > > return -EBUSY?
-> > > > > > > 
-> > > > > > > Since there are at least 2 places needs exclusive forzen state, I think
-> > > > > > > we can refactor helper functions of freeze/thaw for them.  e.g.
-> > > > > > >      int freeze_super_exclusive(struct super_block *sb, int frozen);
-> > > > > > >      int thaw_super_exclusive(struct super_block *sb, int frozen);
-> > > > > > > 
-> > > > > > > [0] https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=repair-fscounters&id=c3a0d1de4d54ffb565dbc7092dfe1fb851940669
-> > > > > 
-> > > > > I'm OK with the idea of new freeze state that does not allow userspace to
-> > > > > thaw the filesystem. But I don't really like the guts of filesystem
-> > > > > freezing being replicated inside XFS. It is bad enough that they are
-> > > > > replicated in [0], replicating them *once more* in another XFS file shows
-> > > > > we are definitely doing something wrong. And Luis will need yet another
-> > > > > incantation of the exlusive freeze for suspend-to-disk. So please guys get
-> > > > > together and reorganize the generic freezing code so that it supports
-> > > > > exclusive freeze (for in-kernel users) and works for your usecases instead
-> > > > > of replicating it inside XFS...
-> > > > 
-> > > > I agree that too much replicating code is not good.  It's necessary to
-> > > > create a generic exclusive freeze/thaw for all users.  But for me, I don't
-> > > > have the confidence to do it well, because it requires good design and code
-> > > > changes will involve other filesystems.  It's diffcult.
-> > > > 
-> > > > However, I hope to be able to make progress on this unbind feature. Thus, I
-> > > > tend to refactor a common helper function for xfs first, and update the code
-> > > > later when the generic freeze is done.
-> > > 
-> > > I think Darrick was thinking about working on a proper generic interface.
-> > > So please coordinate with him.
-> > 
-> > I'll post a vfs generic kernelfreeze series later today.
-> > 
-> > One thing I haven't figured out yet is what's supposed to happen when
-> > PREREMOVE is called on a frozen filesystem.
-> 
-> call PREREMOVE when:
-> 1. freezed by kernel:    we wait unitl kernel thaws -> not sure
-> 2. freezed by userspace: we take over the control of freeze state:
->      a. userspace can't thaw before PREREMOVE is done
->      b. kernel keeps freeze state after PREREMOVE is done and before
-> userspace thaws
-> 
-> Since the unbind interface doesn't return any other errcode except -ENODEV,
-> the only thing I can think of to do is wait for the other one done?  If
-> another one doesn't thaw after a long time waitting, we print a "waitting
-> too long" warning in dmesg.  But I'm not sure if this is good.
-> 
-> > We don't want userspace to
-> > be able to thaw the fs while PREREMOVE is running, so I /guess/ that
-> > means we need some method for the kernel to take over a userspace
-> > freeze and then put it back when we're done?
-> 
-> As is designed by Luis, we can add sb->s_writers.frozen_by_user flag to
-> distinguish whether current freeze state is initiated by kernel or
-> userspace.  In his patch, userspace can take over kernel's freeze.  We just
-> need to switch the order.
+Hi,
 
-<nod> How does this patchset
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=djwong-wtf&id=a97da76ed5256d692a02ece01b4032dbf68cbf89
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=djwong-wtf&id=93310faf77480265b3bc784f6883f5af9ccfce3b
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=djwong-wtf&id=a68cea1aa317775046372840ee4f0ba5bdb75d9f
 
-strike you?
-
-I think for #2 above I could write a freeze_super_excl variant that
-turns a userspace freeze into a kernel freeze, and a thaw_super_excl
-variant that changes it back.
-
---D
-
+On 26.4.2023 2.15, Lorenzo Stoakes wrote:
+> GUP does not correctly implement write-notify semantics, nor does it
+> guarantee that the underlying pages are correctly dirtied, which could lead
+> to a kernel oops or data corruption when writing to file-backed mappings.
 > 
+> This is only relevant when the mappings are file-backed and the underlying
+> file system requires folio dirty tracking. File systems which do not, such
+> as shmem or hugetlb, are not at risk and therefore can be written to
+> without issue.
 > 
-> --
-> Thanks,
-> Ruan.
+> Unfortunately this limitation of GUP has been present for some time and
+> requires future rework of the GUP API in order to provide correct write
+> access to such mappings.
 > 
-> > 
-> > --D
-> > 
-> > > 								Honza
-> > > 
-> > > -- 
-> > > Jan Kara <jack@suse.com>
-> > > SUSE Labs, CR
+> In the meantime, we add a check for the most broken GUP case -
+> FOLL_LONGTERM - which really under no circumstances can safely access
+> dirty-tracked file mappings.
+> 
+> As part of this change we separate out vma_needs_dirty_tracking() as a
+> helper function to determine this, which is distinct from
+> vma_wants_writenotify() which is specific to determining which PTE flags to
+> set.
+> 
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+> v4:
+> - Split out vma_needs_dirty_tracking() from vma_wants_writenotify() to reduce
+>    duplication and update to use this in the GUP check. Note that both separately
+>    check vm_ops_needs_writenotify() as the latter needs to test this before the
+>    vm_pgprot_modify() test, resulting in vma_wants_writenotify() checking this
+>    twice, however it is such a small check this should not be egregious.
+> 
+> v3:
+> - Rebased on latest mm-unstable as of 24th April 2023.
+> - Explicitly check whether file system requires folio dirtying. Note that
+>    vma_wants_writenotify() could not be used directly as it is very much focused
+>    on determining if the PTE r/w should be set (e.g. assuming private mapping
+>    does not require it as already set, soft dirty considerations).
+> - Tested code against shmem and hugetlb mappings - confirmed that these are not
+>    disallowed by the check.
+> - Eliminate FOLL_ALLOW_BROKEN_FILE_MAPPING flag and instead perform check only
+>    for FOLL_LONGTERM pins.
+> - As a result, limit check to internal GUP code.
+>   https://lore.kernel.org/all/23c19e27ef0745f6d3125976e047ee0da62569d4.1682406295.git.lstoakes@gmail.com/
+> 
+> v2:
+> - Add accidentally excluded ptrace_access_vm() use of
+>    FOLL_ALLOW_BROKEN_FILE_MAPPING.
+> - Tweak commit message.
+> https://lore.kernel.org/all/c8ee7e02d3d4f50bb3e40855c53bda39eec85b7d.1682321768.git.lstoakes@gmail.com/
+> 
+> v1:
+> https://lore.kernel.org/all/f86dc089b460c80805e321747b0898fd1efe93d7.1682168199.git.lstoakes@gmail.com/
+> 
+>   include/linux/mm.h |  1 +
+>   mm/gup.c           | 26 +++++++++++++++++++++++++-
+>   mm/mmap.c          | 37 ++++++++++++++++++++++++++++---------
+>   3 files changed, 54 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 37554b08bb28..f7da02fc89c6 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2433,6 +2433,7 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
+>   #define  MM_CP_UFFD_WP_ALL                 (MM_CP_UFFD_WP | \
+>   					    MM_CP_UFFD_WP_RESOLVE)
+>   
+> +bool vma_needs_dirty_tracking(struct vm_area_struct *vma);
+>   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot);
+>   static inline bool vma_wants_manual_pte_write_upgrade(struct vm_area_struct *vma)
+>   {
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 1f72a717232b..53652453037c 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -959,16 +959,37 @@ static int faultin_page(struct vm_area_struct *vma,
+>   	return 0;
+>   }
+>   
+> +/*
+> + * Writing to file-backed mappings which require folio dirty tracking using GUP
+> + * is a fundamentally broken operation as kernel write access to GUP mappings
+> + * may not adhere to the semantics expected by a file system.
+> + */
+> +static inline bool can_write_file_mapping(struct vm_area_struct *vma,
+> +					  unsigned long gup_flags)
+> +{
+> +	/* If we aren't pinning then no problematic write can occur. */
+> +	if (!(gup_flags & (FOLL_GET | FOLL_PIN)))
+> +		return true;
+> +
+> +	/* We limit this check to the most egregious case - a long term pin. */
+> +	if (!(gup_flags & FOLL_LONGTERM))
+> +		return true;
+> +
+> +	/* If the VMA requires dirty tracking then GUP will be problematic. */
+> +	return vma_needs_dirty_tracking(vma);
+> +}
+> +
+>   static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+>   {
+>   	vm_flags_t vm_flags = vma->vm_flags;
+>   	int write = (gup_flags & FOLL_WRITE);
+>   	int foreign = (gup_flags & FOLL_REMOTE);
+> +	bool vma_anon = vma_is_anonymous(vma);
+>   
+>   	if (vm_flags & (VM_IO | VM_PFNMAP))
+>   		return -EFAULT;
+>   
+> -	if (gup_flags & FOLL_ANON && !vma_is_anonymous(vma))
+> +	if ((gup_flags & FOLL_ANON) && !vma_anon)
+>   		return -EFAULT;
+>   
+>   	if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
+> @@ -978,6 +999,9 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+>   		return -EFAULT;
+>   
+>   	if (write) {
+> +		if (!vma_anon && !can_write_file_mapping(vma, gup_flags))
+> +			return -EFAULT;
+> +
+>   		if (!(vm_flags & VM_WRITE)) {
+>   			if (!(gup_flags & FOLL_FORCE))
+>   				return -EFAULT;
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 536bbb8fa0ae..aac638dd22cf 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1475,6 +1475,32 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
+>   }
+>   #endif /* __ARCH_WANT_SYS_OLD_MMAP */
+>   
+> +/* Do VMA operations imply write notify is required? */
+> +static inline bool vm_ops_needs_writenotify(
+> +	const struct vm_operations_struct *vm_ops)
+> +{
+> +	return vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite);
+> +}
+> +
+> +/*
+> + * Does this VMA require the underlying folios to have their dirty state
+> + * tracked?
+> + */
+> +bool vma_needs_dirty_tracking(struct vm_area_struct *vma)
+> +{
+> +	/* Does the filesystem need to be notified? */
+> +	if (vm_ops_needs_writenotify(vma->vm_ops))
+> +		return true;
+> +
+> +	/* Specialty mapping? */
+> +	if (vma->vm_flags & VM_PFNMAP)
+> +		return false;
+> +
+> +	/* Can the mapping track the dirty pages? */
+> +	return vma->vm_file && vma->vm_file->f_mapping &&
+> +		mapping_can_writeback(vma->vm_file->f_mapping);
+> +}
+> +
+
+What would be the exact reproducer of the problem? AFAIK writenotify is 
+handled (by handle_mm_fault()) for non cow mappings (shared), where it 
+only matters.
+
+GUP will only allow FOLL_FORCE without faulting for PageAnonExclusive 
+pages. So if you want something beyond normal cow semantics you have 
+custom vm_ops (and mmap() and fault())
+
+Also for longterm pinning gups vs fork vs swap there has been fixes by 
+david recently.
+
+
+
+>   /*
+>    * Some shared mappings will want the pages marked read-only
+>    * to track write events. If so, we'll downgrade vm_page_prot
+> @@ -1484,14 +1510,13 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
+>   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
+>   {
+>   	vm_flags_t vm_flags = vma->vm_flags;
+> -	const struct vm_operations_struct *vm_ops = vma->vm_ops;
+>   
+>   	/* If it was private or non-writable, the write bit is already clear */
+>   	if ((vm_flags & (VM_WRITE|VM_SHARED)) != ((VM_WRITE|VM_SHARED)))
+>   		return 0;
+>   
+>   	/* The backer wishes to know when pages are first written to? */
+> -	if (vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite))
+> +	if (vm_ops_needs_writenotify(vma->vm_ops))
+>   		return 1;
+>   
+>   	/* The open routine did something to the protections that pgprot_modify
+> @@ -1511,13 +1536,7 @@ int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
+>   	if (userfaultfd_wp(vma))
+>   		return 1;
+>   
+> -	/* Specialty mapping? */
+> -	if (vm_flags & VM_PFNMAP)
+> -		return 0;
+> -
+> -	/* Can the mapping track the dirty pages? */
+> -	return vma->vm_file && vma->vm_file->f_mapping &&
+> -		mapping_can_writeback(vma->vm_file->f_mapping);
+> +	return vma_needs_dirty_tracking(vma);
+>   }
+>   
+>   /*
+
+
+--Mika
+
