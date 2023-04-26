@@ -2,215 +2,338 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E87306EEE9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 08:54:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F4B26EEEB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 09:01:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239603AbjDZGyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Apr 2023 02:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34654 "EHLO
+        id S239693AbjDZHBS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Apr 2023 03:01:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239309AbjDZGyD (ORCPT
+        with ESMTP id S239664AbjDZHBL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Apr 2023 02:54:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808E42693;
-        Tue, 25 Apr 2023 23:53:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1F6BB62963;
-        Wed, 26 Apr 2023 06:53:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 219EDC433D2;
-        Wed, 26 Apr 2023 06:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682492032;
-        bh=QIhBfq3ajoFrTFgvdAxQ5iAO7C3Q5qspZKjzhdSkFDw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G8fiQSngd2qR//FFL6mNV7TiZ0hHExG3DHtksT8WRTQ2IEiiKvj+87IE8fz1JCSPk
-         90pfbu1IicetwgG1l3aeiX9kJjBtMjGh1LXIqVpFrDM8aGqCoY8i1gBQU6gX3U32v+
-         p8ukg9m7oelvw396eLvBAvui7OT7Mp5GBk02ebdaHLPQa1L2e6mP0pm64b5PO6XIoq
-         V1sYIBnXBSv7l646PNYYrpOpUAZfrlZXdPcBZNiy4dv+J3MjQi1Kz6ThTJ456rw0SM
-         GF6+JDokL6O9FnKDuLQi0zOhbeOeaFwXbZEICIku8KX9fFBatJSDz5eLozlDnJNEft
-         CpWXdnfqp2WkA==
-Date:   Wed, 26 Apr 2023 08:53:45 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
+        Wed, 26 Apr 2023 03:01:11 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDF652102;
+        Wed, 26 Apr 2023 00:00:57 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-2f55ffdbaedso4196550f8f.2;
+        Wed, 26 Apr 2023 00:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682492456; x=1685084456;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7/YWmwgvXwDCheOphPVsxeQwjXr2X0sXbZUbiV8/qiY=;
+        b=Y0C7ltP0MmwYGVOj6/3WhOxUn/325ozQ8Ule72oKYnXxtERDk5+GyiV+7wTDdc5Xvf
+         spsIpcZ2d8vhPriSlMN0AFd5ayiPbKuv9ZgcaMlhmtguNx//Dj1XH5BtP3GfDqQroHfv
+         T3l3kqKPhJtkg68e8GYONnIDkoXY1AUeZbbPTdfg2QreGEnlWHjJ+cgFhwbSyuP5dYPP
+         FiUh64wygVHIG77LmDu+JjGv339aib6vMOSkF7RurhMQRgOdTUgQ0GLH9HdrG65PLScq
+         x/5hoas/Gehy/WEV+GYqMfaIul+dfsFAnz4tOh5I5+iMehGf3Ovk8TAciNgu4ZRiABop
+         Fq2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682492456; x=1685084456;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7/YWmwgvXwDCheOphPVsxeQwjXr2X0sXbZUbiV8/qiY=;
+        b=M0yuXsxarG+OKNo3RFwTnnMLiaR/qQkixGrrIxzvM9AMDunV7qzlipwXa5YOMFNqDH
+         QSfUK08thc6PmC0tVDu0y0orWzJrRlAuUZahMgJcwH3QZmFjxUpP6odBzsM7/G4Jhk7b
+         TzP0nAAaguSHcGcQjusSjSgg/Z34MYd2J4RAj32rvdhFqSLlK9hNSsvI81GKUorFo4fN
+         T0NLujr7yVu3q/HNmU6I6iQU3LYhliQU/BegOXec4DMLT7jMAhtqh5MavsvjnyL8KxNe
+         XNgwfnpVpw02Zjsb/ZGuuYW0Shw4wr05Zeqs6bCdLaGcQT93eFWYPkKhw4uwkDeEuYeA
+         oC+g==
+X-Gm-Message-State: AAQBX9cBIYLWB65nycRh0Z9oV3h07SWarQeOnc1mjrlaX/BuYSMpN9z+
+        dB/OX5OoQHjS+L3cMwXjJPo=
+X-Google-Smtp-Source: AKy350bY4MEOjK1YDo3fYvDL+vTKok3nznnxqs8hfDObulF1FU+17WKszasxGr5S5JXMNPiLy4hyFw==
+X-Received: by 2002:adf:f7c5:0:b0:2fb:87f7:3812 with SMTP id a5-20020adff7c5000000b002fb87f73812mr13025211wrq.1.1682492455885;
+        Wed, 26 Apr 2023 00:00:55 -0700 (PDT)
+Received: from localhost ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
+        by smtp.gmail.com with ESMTPSA id m7-20020adfe0c7000000b003048477729asm4738407wri.81.2023.04.26.00.00.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Apr 2023 00:00:54 -0700 (PDT)
+Date:   Wed, 26 Apr 2023 08:00:53 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] fs: add infrastructure for multigrain inode
- i_m/ctime
-Message-ID: <20230426-meerblick-tortur-c6606f6126fa@brauner>
-References: <20230424151104.175456-1-jlayton@kernel.org>
- <20230424151104.175456-2-jlayton@kernel.org>
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v4] mm/gup: disallow GUP writing to file-backed mappings
+ by default
+Message-ID: <5ffd7f32-d236-4da4-93f7-c2fe39a6e035@lucifer.local>
+References: <3b92d56f55671a0389252379237703df6e86ea48.1682464032.git.lstoakes@gmail.com>
+ <a68fa8f2-8619-63ff-3525-ede7ed1f0a9f@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20230424151104.175456-2-jlayton@kernel.org>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a68fa8f2-8619-63ff-3525-ede7ed1f0a9f@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 11:11:02AM -0400, Jeff Layton wrote:
-> The VFS always uses coarse-grained timestamp updates for filling out the
-> ctime and mtime after a change. This has the benefit of allowing
-> filesystems to optimize away a lot metaupdates, to around once per
-> jiffy, even when a file is under heavy writes.
-> 
-> Unfortunately, this has always been an issue when we're exporting via
-> NFSv3, which relies on timestamps to validate caches. Even with NFSv4, a
-> lot of exported filesystems don't properly support a change attribute
-> and are subject to the same problems with timestamp granularity. Other
-> applications have similar issues (e.g backup applications).
-> 
-> Switching to always using fine-grained timestamps would improve the
-> situation for NFS, but that becomes rather expensive, as the underlying
-> filesystem will have to log a lot more metadata updates.
-> 
-> What we need is a way to only use fine-grained timestamps when they are
-> being actively queried:
-> 
-> Whenever the mtime changes, the ctime must also change since we're
-> changing the metadata. When a superblock has a s_time_gran >1, we can
-> use the lowest-order bit of the inode->i_ctime as a flag to indicate
-> that the value has been queried. Then on the next write, we'll fetch a
-> fine-grained timestamp instead of the usual coarse-grained one.
-> 
-> We could enable this for any filesystem that has a s_time_gran >1, but
-> for now, this patch adds a new SB_MULTIGRAIN_TS flag to allow filesystems
-> to opt-in to this behavior.
-> 
-> It then adds a new current_ctime function that acts like the
-> current_time helper, but will conditionally grab fine-grained timestamps
-> when the flag is set in the current ctime. Also, there is a new
-> generic_fill_multigrain_cmtime for grabbing the c/mtime out of the inode
-> and atomically marking the ctime as queried.
-> 
-> Later patches will convert filesystems over to this new scheme.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/inode.c         | 57 +++++++++++++++++++++++++++++++++++++++---
->  fs/stat.c          | 24 ++++++++++++++++++
->  include/linux/fs.h | 62 ++++++++++++++++++++++++++++++++--------------
->  3 files changed, 121 insertions(+), 22 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 4558dc2f1355..4bd11bdb46d4 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2030,6 +2030,7 @@ EXPORT_SYMBOL(file_remove_privs);
->  static int inode_needs_update_time(struct inode *inode, struct timespec64 *now)
->  {
->  	int sync_it = 0;
-> +	struct timespec64 ctime = inode->i_ctime;
->  
->  	/* First try to exhaust all avenues to not sync */
->  	if (IS_NOCMTIME(inode))
-> @@ -2038,7 +2039,9 @@ static int inode_needs_update_time(struct inode *inode, struct timespec64 *now)
->  	if (!timespec64_equal(&inode->i_mtime, now))
->  		sync_it = S_MTIME;
->  
-> -	if (!timespec64_equal(&inode->i_ctime, now))
-> +	if (is_multigrain_ts(inode))
-> +		ctime.tv_nsec &= ~I_CTIME_QUERIED;
-> +	if (!timespec64_equal(&ctime, now))
->  		sync_it |= S_CTIME;
->  
->  	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
-> @@ -2062,6 +2065,50 @@ static int __file_update_time(struct file *file, struct timespec64 *now,
->  	return ret;
->  }
->  
-> +/**
-> + * current_ctime - Return FS time (possibly high-res)
-> + * @inode: inode.
-> + *
-> + * Return the current time truncated to the time granularity supported by
-> + * the fs, as suitable for a ctime/mtime change.
-> + *
-> + * For a multigrain timestamp, if the timestamp is flagged as having been
-> + * QUERIED, then get a fine-grained timestamp.
-> + */
-> +struct timespec64 current_ctime(struct inode *inode)
-> +{
-> +	struct timespec64 now;
-> +	long nsec = 0;
-> +	bool multigrain = is_multigrain_ts(inode);
-> +
-> +	if (multigrain) {
-> +		atomic_long_t *pnsec = (atomic_long_t *)&inode->i_ctime.tv_nsec;
-> +
-> +		nsec = atomic_long_fetch_and(~I_CTIME_QUERIED, pnsec);
-> +	}
-> +
-> +	if (nsec & I_CTIME_QUERIED) {
-> +		ktime_get_real_ts64(&now);
-> +	} else {
-> +		ktime_get_coarse_real_ts64(&now);
-> +
-> +		if (multigrain) {
-> +			/*
-> +			 * If we've recently fetched a fine-grained timestamp
-> +			 * then the coarse-grained one may be earlier than the
-> +			 * existing one. Just keep the existing ctime if so.
-> +			 */
-> +			struct timespec64 ctime = inode->i_ctime;
-> +
-> +			if (timespec64_compare(&ctime, &now) > 0)
-> +				now = ctime;
-> +		}
-> +	}
-> +
-> +	return timestamp_truncate(now, inode);
-> +}
-> +EXPORT_SYMBOL(current_ctime);
-> +
->  /**
->   * file_update_time - update mtime and ctime time
->   * @file: file accessed
-> @@ -2080,7 +2127,7 @@ int file_update_time(struct file *file)
->  {
->  	int ret;
->  	struct inode *inode = file_inode(file);
-> -	struct timespec64 now = current_time(inode);
-> +	struct timespec64 now = current_ctime(inode);
->  
->  	ret = inode_needs_update_time(inode, &now);
->  	if (ret <= 0)
-> @@ -2109,7 +2156,7 @@ static int file_modified_flags(struct file *file, int flags)
->  {
->  	int ret;
->  	struct inode *inode = file_inode(file);
-> -	struct timespec64 now = current_time(inode);
-> +	struct timespec64 now = current_ctime(inode);
->  
->  	/*
->  	 * Clear the security bits if the process is not being run by root.
-> @@ -2419,9 +2466,11 @@ struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode)
->  	if (unlikely(t.tv_sec == sb->s_time_max || t.tv_sec == sb->s_time_min))
->  		t.tv_nsec = 0;
->  
-> -	/* Avoid division in the common cases 1 ns and 1 s. */
-> +	/* Avoid division in the common cases 1 ns, 2 ns and 1 s. */
->  	if (gran == 1)
->  		; /* nothing */
-> +	else if (gran == 2)
-> +		t.tv_nsec &= ~1L;
+On Wed, Apr 26, 2023 at 06:18:38AM +0300, Mika Penttilä wrote:
+> Hi,
+>
+>
+> On 26.4.2023 2.15, Lorenzo Stoakes wrote:
+> > GUP does not correctly implement write-notify semantics, nor does it
+> > guarantee that the underlying pages are correctly dirtied, which could lead
+> > to a kernel oops or data corruption when writing to file-backed mappings.
+> >
+> > This is only relevant when the mappings are file-backed and the underlying
+> > file system requires folio dirty tracking. File systems which do not, such
+> > as shmem or hugetlb, are not at risk and therefore can be written to
+> > without issue.
+> >
+> > Unfortunately this limitation of GUP has been present for some time and
+> > requires future rework of the GUP API in order to provide correct write
+> > access to such mappings.
+> >
+> > In the meantime, we add a check for the most broken GUP case -
+> > FOLL_LONGTERM - which really under no circumstances can safely access
+> > dirty-tracked file mappings.
+> >
+> > As part of this change we separate out vma_needs_dirty_tracking() as a
+> > helper function to determine this, which is distinct from
+> > vma_wants_writenotify() which is specific to determining which PTE flags to
+> > set.
+> >
+> > Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> > ---
+> > v4:
+> > - Split out vma_needs_dirty_tracking() from vma_wants_writenotify() to reduce
+> >    duplication and update to use this in the GUP check. Note that both separately
+> >    check vm_ops_needs_writenotify() as the latter needs to test this before the
+> >    vm_pgprot_modify() test, resulting in vma_wants_writenotify() checking this
+> >    twice, however it is such a small check this should not be egregious.
+> >
+> > v3:
+> > - Rebased on latest mm-unstable as of 24th April 2023.
+> > - Explicitly check whether file system requires folio dirtying. Note that
+> >    vma_wants_writenotify() could not be used directly as it is very much focused
+> >    on determining if the PTE r/w should be set (e.g. assuming private mapping
+> >    does not require it as already set, soft dirty considerations).
+> > - Tested code against shmem and hugetlb mappings - confirmed that these are not
+> >    disallowed by the check.
+> > - Eliminate FOLL_ALLOW_BROKEN_FILE_MAPPING flag and instead perform check only
+> >    for FOLL_LONGTERM pins.
+> > - As a result, limit check to internal GUP code.
+> >   https://lore.kernel.org/all/23c19e27ef0745f6d3125976e047ee0da62569d4.1682406295.git.lstoakes@gmail.com/
+> >
+> > v2:
+> > - Add accidentally excluded ptrace_access_vm() use of
+> >    FOLL_ALLOW_BROKEN_FILE_MAPPING.
+> > - Tweak commit message.
+> > https://lore.kernel.org/all/c8ee7e02d3d4f50bb3e40855c53bda39eec85b7d.1682321768.git.lstoakes@gmail.com/
+> >
+> > v1:
+> > https://lore.kernel.org/all/f86dc089b460c80805e321747b0898fd1efe93d7.1682168199.git.lstoakes@gmail.com/
+> >
+> >   include/linux/mm.h |  1 +
+> >   mm/gup.c           | 26 +++++++++++++++++++++++++-
+> >   mm/mmap.c          | 37 ++++++++++++++++++++++++++++---------
+> >   3 files changed, 54 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 37554b08bb28..f7da02fc89c6 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -2433,6 +2433,7 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
+> >   #define  MM_CP_UFFD_WP_ALL                 (MM_CP_UFFD_WP | \
+> >   					    MM_CP_UFFD_WP_RESOLVE)
+> > +bool vma_needs_dirty_tracking(struct vm_area_struct *vma);
+> >   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot);
+> >   static inline bool vma_wants_manual_pte_write_upgrade(struct vm_area_struct *vma)
+> >   {
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index 1f72a717232b..53652453037c 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -959,16 +959,37 @@ static int faultin_page(struct vm_area_struct *vma,
+> >   	return 0;
+> >   }
+> > +/*
+> > + * Writing to file-backed mappings which require folio dirty tracking using GUP
+> > + * is a fundamentally broken operation as kernel write access to GUP mappings
+> > + * may not adhere to the semantics expected by a file system.
+> > + */
+> > +static inline bool can_write_file_mapping(struct vm_area_struct *vma,
+> > +					  unsigned long gup_flags)
+> > +{
+> > +	/* If we aren't pinning then no problematic write can occur. */
+> > +	if (!(gup_flags & (FOLL_GET | FOLL_PIN)))
+> > +		return true;
+> > +
+> > +	/* We limit this check to the most egregious case - a long term pin. */
+> > +	if (!(gup_flags & FOLL_LONGTERM))
+> > +		return true;
+> > +
+> > +	/* If the VMA requires dirty tracking then GUP will be problematic. */
+> > +	return vma_needs_dirty_tracking(vma);
+> > +}
+> > +
+> >   static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+> >   {
+> >   	vm_flags_t vm_flags = vma->vm_flags;
+> >   	int write = (gup_flags & FOLL_WRITE);
+> >   	int foreign = (gup_flags & FOLL_REMOTE);
+> > +	bool vma_anon = vma_is_anonymous(vma);
+> >   	if (vm_flags & (VM_IO | VM_PFNMAP))
+> >   		return -EFAULT;
+> > -	if (gup_flags & FOLL_ANON && !vma_is_anonymous(vma))
+> > +	if ((gup_flags & FOLL_ANON) && !vma_anon)
+> >   		return -EFAULT;
+> >   	if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
+> > @@ -978,6 +999,9 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+> >   		return -EFAULT;
+> >   	if (write) {
+> > +		if (!vma_anon && !can_write_file_mapping(vma, gup_flags))
+> > +			return -EFAULT;
+> > +
+> >   		if (!(vm_flags & VM_WRITE)) {
+> >   			if (!(gup_flags & FOLL_FORCE))
+> >   				return -EFAULT;
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > index 536bbb8fa0ae..aac638dd22cf 100644
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -1475,6 +1475,32 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
+> >   }
+> >   #endif /* __ARCH_WANT_SYS_OLD_MMAP */
+> > +/* Do VMA operations imply write notify is required? */
+> > +static inline bool vm_ops_needs_writenotify(
+> > +	const struct vm_operations_struct *vm_ops)
+> > +{
+> > +	return vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite);
+> > +}
+> > +
+> > +/*
+> > + * Does this VMA require the underlying folios to have their dirty state
+> > + * tracked?
+> > + */
+> > +bool vma_needs_dirty_tracking(struct vm_area_struct *vma)
+> > +{
+> > +	/* Does the filesystem need to be notified? */
+> > +	if (vm_ops_needs_writenotify(vma->vm_ops))
+> > +		return true;
+> > +
+> > +	/* Specialty mapping? */
+> > +	if (vma->vm_flags & VM_PFNMAP)
+> > +		return false;
+> > +
+> > +	/* Can the mapping track the dirty pages? */
+> > +	return vma->vm_file && vma->vm_file->f_mapping &&
+> > +		mapping_can_writeback(vma->vm_file->f_mapping);
+> > +}
+> > +
+>
+> What would be the exact reproducer of the problem? AFAIK writenotify is
+> handled (by handle_mm_fault()) for non cow mappings (shared), where it only
+> matters.
 
-Is that trying to mask off I_CTIME_QUERIED?
-If so, can we please use that constant as raw constants tend to be
-confusing in the long run.
+The issue is reproduced simply by page_to_virt(pinned_page)[0] = 'x' :)
+
+The problem is that no faulting actually occurs, so no writenotify, and no
+PG_dirty tracking does either. Unexpected page dirtying can occur even
+after they are cleaned in folio_clear_dirty_for_io(), because the caller
+might manually mark the page dirty at an unexpected time as with the
+unpin_*dirty*() helpers.
+
+I think the long-term solution is to provide a different interface where
+pages are passed back briefly with locks held and with a manual invocation
+of writeprotect, or perhaps some kthread_use_mm() thing so we actually
+trigger the faulting logic, but in the meantime this change helps restore
+some sanity.
+
+>
+> GUP will only allow FOLL_FORCE without faulting for PageAnonExclusive pages.
+> So if you want something beyond normal cow semantics you have custom vm_ops
+> (and mmap() and fault())
+
+This has nothing to do with FOLL_FORCE.
+
+>
+> Also for longterm pinning gups vs fork vs swap there has been fixes by david
+> recently.
+
+I don't think these are relevant in any way to this issue.
+
+>
+>
+>
+> >   /*
+> >    * Some shared mappings will want the pages marked read-only
+> >    * to track write events. If so, we'll downgrade vm_page_prot
+> > @@ -1484,14 +1510,13 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
+> >   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
+> >   {
+> >   	vm_flags_t vm_flags = vma->vm_flags;
+> > -	const struct vm_operations_struct *vm_ops = vma->vm_ops;
+> >   	/* If it was private or non-writable, the write bit is already clear */
+> >   	if ((vm_flags & (VM_WRITE|VM_SHARED)) != ((VM_WRITE|VM_SHARED)))
+> >   		return 0;
+> >   	/* The backer wishes to know when pages are first written to? */
+> > -	if (vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite))
+> > +	if (vm_ops_needs_writenotify(vma->vm_ops))
+> >   		return 1;
+> >   	/* The open routine did something to the protections that pgprot_modify
+> > @@ -1511,13 +1536,7 @@ int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
+> >   	if (userfaultfd_wp(vma))
+> >   		return 1;
+> > -	/* Specialty mapping? */
+> > -	if (vm_flags & VM_PFNMAP)
+> > -		return 0;
+> > -
+> > -	/* Can the mapping track the dirty pages? */
+> > -	return vma->vm_file && vma->vm_file->f_mapping &&
+> > -		mapping_can_writeback(vma->vm_file->f_mapping);
+> > +	return vma_needs_dirty_tracking(vma);
+> >   }
+> >   /*
+>
+>
+> --Mika
+>
