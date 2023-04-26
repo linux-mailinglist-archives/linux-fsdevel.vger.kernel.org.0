@@ -2,80 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D5FF6EEEF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 09:10:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D25566EEF17
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 09:18:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239490AbjDZHK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Apr 2023 03:10:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45902 "EHLO
+        id S239994AbjDZHSZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Apr 2023 03:18:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239739AbjDZHJg (ORCPT
+        with ESMTP id S239876AbjDZHSU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Apr 2023 03:09:36 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9943C4216;
-        Wed, 26 Apr 2023 00:07:49 -0700 (PDT)
-Received: from [192.168.10.39] (unknown [39.37.187.173])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Wed, 26 Apr 2023 03:18:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58F523A84;
+        Wed, 26 Apr 2023 00:17:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8740F6603009;
-        Wed, 26 Apr 2023 08:06:28 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1682492797;
-        bh=T3Dk0jGRz9/2fOegjbJqSPN2JZCavQCXqoVb+ayBtjw=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-        b=heHwYz8FI2HL0QOQtQqZjCTQl3/ivGoc0Ks5vyxH99Br7r7OLOLSOXPnE/vYxkSLx
-         84ErM1CHSxywdPQkwCtYpH+KoalbTt7IdzZheQnlJ9aREA5Gb47T3/W4Ywx3Je+UAE
-         uvdWjFNtKe/V/xNiIjo9ok9vGa33L0x9VPg0sx5kwwPL9ncSczi0a0JfewVO39ZtR5
-         3pbzi0yJh0DagVoQWIeX/9p+rS9X6VHA3fjCvW3gyIxandOjYAKl1oh5LB0uBuUZQx
-         rXgd7QPkDz6mgBqyjIOxu1nrr2BUse87YkLax+frWKhT+6jSkTLft7YLpN2FY+3fnT
-         o9hd6hEebRQIw==
-Message-ID: <fd9ddd43-6737-88bd-4054-3d5b94534271@collabora.com>
-Date:   Wed, 26 Apr 2023 12:06:23 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: Re: [PATCH RESEND v15 2/5] fs/proc/task_mmu: Implement IOCTL to get
- and optionally clear info about PTEs
-To:     Peter Xu <peterx@redhat.com>, Paul Gofman <pgofman@codeweavers.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9169662B5F;
+        Wed, 26 Apr 2023 07:07:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95666C433EF;
+        Wed, 26 Apr 2023 07:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682492868;
+        bh=2o6kaGsCFO97KPH7lPad22AOk5j+21G5SxH089QMJIQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dNtuA6Zwr2oC++Hau2Eev6ellEt8Arrfgv2YyDVHEkR2gFZuwQ/Yig3nYyNE3h8FW
+         juPQH+WF6aUh/Cfijao/pYEmv8x5xgELnE8uzJsxMB9lQf6O0DNO47ZqIvwWSEG5UA
+         3eTP+oL6u2BAG93O++dZpkXCidaUifWDg1UzIg4hPJs7Mx7ZFr9SJf4I68q7ip1PTm
+         qIyO6+94cKoYMEbeoaPxNrXk+qB9Z6jrUNGw2Gu8pXpH0re151vMOLCGEgI55mZxbN
+         jfzt0KZXKVUH/tvji8A8XfmRgjFgUim8D5FS8/pmdHnlsVMTkJ10vT6Net2usqKU6T
+         Yr9mxEp05W9Rg==
+Date:   Wed, 26 Apr 2023 09:07:41 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
-        Nadav Amit <namit@vmware.com>
-References: <20230420060156.895881-1-usama.anjum@collabora.com>
- <20230420060156.895881-3-usama.anjum@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20230420060156.895881-3-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        Dave Chinner <david@fromorbit.com>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] fs: add infrastructure for multigrain inode
+ i_m/ctime
+Message-ID: <20230426-bahnanlagen-ausmusterung-4877cbf40d4c@brauner>
+References: <20230424151104.175456-1-jlayton@kernel.org>
+ <20230424151104.175456-2-jlayton@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230424151104.175456-2-jlayton@kernel.org>
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,41 +64,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/20/23 11:01 AM, Muhammad Usama Anjum wrote:
-> +/* Supported flags */
-> +#define PM_SCAN_OP_GET	(1 << 0)
-> +#define PM_SCAN_OP_WP	(1 << 1)
-We have only these flag options available in PAGEMAP_SCAN IOCTL.
-PM_SCAN_OP_GET must always be specified for this IOCTL. PM_SCAN_OP_WP can
-be specified as need. But PM_SCAN_OP_WP cannot be specified without
-PM_SCAN_OP_GET. (This was removed after you had asked me to not duplicate
-functionality which can be achieved by UFFDIO_WRITEPROTECT.)
+On Mon, Apr 24, 2023 at 11:11:02AM -0400, Jeff Layton wrote:
+> The VFS always uses coarse-grained timestamp updates for filling out the
+> ctime and mtime after a change. This has the benefit of allowing
+> filesystems to optimize away a lot metaupdates, to around once per
+> jiffy, even when a file is under heavy writes.
+> 
+> Unfortunately, this has always been an issue when we're exporting via
+> NFSv3, which relies on timestamps to validate caches. Even with NFSv4, a
+> lot of exported filesystems don't properly support a change attribute
+> and are subject to the same problems with timestamp granularity. Other
+> applications have similar issues (e.g backup applications).
+> 
+> Switching to always using fine-grained timestamps would improve the
+> situation for NFS, but that becomes rather expensive, as the underlying
+> filesystem will have to log a lot more metadata updates.
+> 
+> What we need is a way to only use fine-grained timestamps when they are
+> being actively queried:
+> 
+> Whenever the mtime changes, the ctime must also change since we're
+> changing the metadata. When a superblock has a s_time_gran >1, we can
+> use the lowest-order bit of the inode->i_ctime as a flag to indicate
+> that the value has been queried. Then on the next write, we'll fetch a
+> fine-grained timestamp instead of the usual coarse-grained one.
+> 
+> We could enable this for any filesystem that has a s_time_gran >1, but
+> for now, this patch adds a new SB_MULTIGRAIN_TS flag to allow filesystems
+> to opt-in to this behavior.
 
-1) PM_SCAN_OP_GET | PM_SCAN_OP_WP
-vs
-2) UFFDIO_WRITEPROTECT
+Hm, the patch raises the flag in s_flags. Please at least move this to
+s_iflags as SB_I_MULTIGRAIN and treat this as an internal flag. There's
+no need to give the impression that this will become a mount option.
 
-After removing the usage of uffd_wp_range() from PAGEMAP_SCAN IOCTL, we are
-getting really good performance which is comparable just like we are
-depending on SOFT_DIRTY flags in the PTE. But when we want to perform wp,
-PM_SCAN_OP_GET | PM_SCAN_OP_WP is more desirable than UFFDIO_WRITEPROTECT
-performance and behavior wise.
-
-I've got the results from someone else that UFFDIO_WRITEPROTECT block
-pagefaults somehow which PAGEMAP_IOCTL doesn't. I still need to verify this
-as I don't have tests comparing them one-to-one.
-
-What are your thoughts about it? Have you thought about making
-UFFDIO_WRITEPROTECT perform better?
-
-I'm sorry to mention the word "performance" here. Actually we want better
-performance to emulate Windows syscall. That is why we are adding this
-functionality. So either we need to see what can be improved in
-UFFDIO_WRITEPROTECT or can I please add only PM_SCAN_OP_WP back in
-pagemap_ioctl?
-
-Thank you so much for the help.
-
--- 
-BR,
-Muhammad Usama Anjum
+Also, this looks like it's a filesystem property not a superblock
+property as the granularity isn't changeable. So shouldn't this be an
+FS_* flag instead?
