@@ -2,176 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D58B66EF08A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 10:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FCC96EF163
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 11:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240185AbjDZI6b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Apr 2023 04:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58500 "EHLO
+        id S240349AbjDZJqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Apr 2023 05:46:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239750AbjDZI63 (ORCPT
+        with ESMTP id S239464AbjDZJqa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Apr 2023 04:58:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E6240D1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Apr 2023 01:57:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1682499461;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qRhtGeXRPBB+p4cr9w0INOAc893fzDgBw6gSZ9r4K6o=;
-        b=a/75T1GFpRzl1Z+jnp1c8vfEAAmvoM6nz//Vqf/CpG6jniPqbdbcDSDTkQ0IsvxWHfH802
-        TEvCS6h+58xDEelPQcT9K8IsRUwNsQBS3D3QFw/zEm6fzmqkb3agAHDE6TYvJs5VmLFyfO
-        FSOIMZPHqjPXd/4sr1rc/lmzSOwRuAo=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-313-ZZQ7ketTP9CcSFbZXIORjA-1; Wed, 26 Apr 2023 04:57:40 -0400
-X-MC-Unique: ZZQ7ketTP9CcSFbZXIORjA-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2a8b03ec360so29018991fa.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Apr 2023 01:57:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682499459; x=1685091459;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qRhtGeXRPBB+p4cr9w0INOAc893fzDgBw6gSZ9r4K6o=;
-        b=EUvj+MF0+dhGQa24XbB2wgXUxHU/Qp93h1uUO8RdzuIcpxDWS/p5u78LIG66NCnKFu
-         hmktV31m5M5dq9GBY2ayRnQAwN1DjS6jnuXrDJ/55pEEJyFMIoTpwTFbKBjH60Jg/IpV
-         ONf2Tuj8YKgy2Rk6a2D+0NM5Riloe6jIdY7cMYYG5TXK94NfpDN4+TajwslRIpeXQqnx
-         jKrk0nQ39JB76o40YBHseLb+iBUXDZlOQO4IqGnRSPY2V0rGJM5t70gFBbBmrljActNY
-         Ne/lalW/od3H/auOE8Tg7vZcmXdOdzyoE0KIQJsX1gLz2EF84bs5nQI9si8Aoy+pUPPN
-         rqpA==
-X-Gm-Message-State: AAQBX9diYsRdA7+7ZwFr0mIk6nT2hrtytdI+iXhpxJUeIEvAo0zSyF83
-        8nVed/4qRWGl6Qtw4yF091fKnspGWxAxjJiKomdgAo99RRCe2KWNjP3mzi0+ns986sx5XH9wdrd
-        PZxpVhEOGkqQEhXCvIExNbBvb
-X-Received: by 2002:a2e:6a14:0:b0:29b:d2f1:de9b with SMTP id f20-20020a2e6a14000000b0029bd2f1de9bmr4142468ljc.47.1682499458889;
-        Wed, 26 Apr 2023 01:57:38 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Yx9BB81vQR6fLd3lXwJ35Cz4Jj1Udt07gGaFpg1cOTHMdrnGmkcWc2ganLveGb7dCQC1foHQ==
-X-Received: by 2002:a2e:6a14:0:b0:29b:d2f1:de9b with SMTP id f20-20020a2e6a14000000b0029bd2f1de9bmr4142423ljc.47.1682499458568;
-        Wed, 26 Apr 2023 01:57:38 -0700 (PDT)
-Received: from [192.168.1.121] (85-23-48-202.bb.dnainternet.fi. [85.23.48.202])
-        by smtp.gmail.com with ESMTPSA id y4-20020a2e9d44000000b002aa4713b925sm1793633ljj.21.2023.04.26.01.57.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Apr 2023 01:57:37 -0700 (PDT)
-Message-ID: <3562046e-1625-8536-910c-111d38acc346@redhat.com>
-Date:   Wed, 26 Apr 2023 11:57:36 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v4] mm/gup: disallow GUP writing to file-backed mappings
- by default
-Content-Language: en-US
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Wed, 26 Apr 2023 05:46:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1389E10EB;
+        Wed, 26 Apr 2023 02:46:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A211F61354;
+        Wed, 26 Apr 2023 09:46:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B839DC433D2;
+        Wed, 26 Apr 2023 09:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682502388;
+        bh=rDe2by0ajB34Y2WsvbYRxmpIIZ9tpBbzMPKl/R/dPsc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=pbSUKk6J+JCYKTTws6wQA3iwvxBMm1Kcyd7LTfo8JVPI6kOKuBaFj8eFPYkO+lLR/
+         8EdhPW7cEEjGZP4u7tIi+Dt/3Hp2cD51viyQkO3TEViZeYvoM6YStCBb/luEl94oHz
+         SHMigSdcSpPjHA62s0AKOi6gQ8JKQ1qBgUykW0NhBFbggvxMs1TITesAMvBirRnr2w
+         6vq/mcW76riKFgy51nuTHNSjatfTbEvQYmIkBIL3ZtsVBAFniRSAli2UPvRxI5mq6V
+         Ky/xAQiPV+Gh3bY/MINAo6ywbwll7eq1Zh6tehLb9T7ZIjVzmVO7xIPaYeJeMSlmQ1
+         7XGrZO68OAnSQ==
+Message-ID: <07ce85763471a5964c9311792aa7e2f2d1696798.camel@kernel.org>
+Subject: Re: [PATCH v2 1/3] fs: add infrastructure for multigrain inode
+ i_m/ctime
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        David Hildenbrand <david@redhat.com>
-References: <3b92d56f55671a0389252379237703df6e86ea48.1682464032.git.lstoakes@gmail.com>
- <a68fa8f2-8619-63ff-3525-ede7ed1f0a9f@redhat.com>
- <5ffd7f32-d236-4da4-93f7-c2fe39a6e035@lucifer.local>
- <aa0d9a98-7dd1-0188-d382-5835cf1ddf3a@redhat.com>
- <b7f8daba-1250-4a45-895e-cbb20cc6c2dd@lucifer.local>
- <831f0d02-7671-97bf-a968-e2e5bf92dfd7@redhat.com> <ZEjjz_zqynWj0Kcc@murray>
-From:   =?UTF-8?Q?Mika_Penttil=c3=a4?= <mpenttil@redhat.com>
-In-Reply-To: <ZEjjz_zqynWj0Kcc@murray>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Dave Chinner <david@fromorbit.com>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org
+Date:   Wed, 26 Apr 2023 05:46:25 -0400
+In-Reply-To: <20230426-meerblick-tortur-c6606f6126fa@brauner>
+References: <20230424151104.175456-1-jlayton@kernel.org>
+         <20230424151104.175456-2-jlayton@kernel.org>
+         <20230426-meerblick-tortur-c6606f6126fa@brauner>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.0 (3.48.0-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, 2023-04-26 at 08:53 +0200, Christian Brauner wrote:
+> On Mon, Apr 24, 2023 at 11:11:02AM -0400, Jeff Layton wrote:
+> > The VFS always uses coarse-grained timestamp updates for filling out th=
+e
+> > ctime and mtime after a change. This has the benefit of allowing
+> > filesystems to optimize away a lot metaupdates, to around once per
+> > jiffy, even when a file is under heavy writes.
+> >=20
+> > Unfortunately, this has always been an issue when we're exporting via
+> > NFSv3, which relies on timestamps to validate caches. Even with NFSv4, =
+a
+> > lot of exported filesystems don't properly support a change attribute
+> > and are subject to the same problems with timestamp granularity. Other
+> > applications have similar issues (e.g backup applications).
+> >=20
+> > Switching to always using fine-grained timestamps would improve the
+> > situation for NFS, but that becomes rather expensive, as the underlying
+> > filesystem will have to log a lot more metadata updates.
+> >=20
+> > What we need is a way to only use fine-grained timestamps when they are
+> > being actively queried:
+> >=20
+> > Whenever the mtime changes, the ctime must also change since we're
+> > changing the metadata. When a superblock has a s_time_gran >1, we can
+> > use the lowest-order bit of the inode->i_ctime as a flag to indicate
+> > that the value has been queried. Then on the next write, we'll fetch a
+> > fine-grained timestamp instead of the usual coarse-grained one.
+> >=20
+> > We could enable this for any filesystem that has a s_time_gran >1, but
+> > for now, this patch adds a new SB_MULTIGRAIN_TS flag to allow filesyste=
+ms
+> > to opt-in to this behavior.
+> >=20
+> > It then adds a new current_ctime function that acts like the
+> > current_time helper, but will conditionally grab fine-grained timestamp=
+s
+> > when the flag is set in the current ctime. Also, there is a new
+> > generic_fill_multigrain_cmtime for grabbing the c/mtime out of the inod=
+e
+> > and atomically marking the ctime as queried.
+> >=20
+> > Later patches will convert filesystems over to this new scheme.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/inode.c         | 57 +++++++++++++++++++++++++++++++++++++++---
+> >  fs/stat.c          | 24 ++++++++++++++++++
+> >  include/linux/fs.h | 62 ++++++++++++++++++++++++++++++++--------------
+> >  3 files changed, 121 insertions(+), 22 deletions(-)
+> >=20
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 4558dc2f1355..4bd11bdb46d4 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -2030,6 +2030,7 @@ EXPORT_SYMBOL(file_remove_privs);
+> >  static int inode_needs_update_time(struct inode *inode, struct timespe=
+c64 *now)
+> >  {
+> >  	int sync_it =3D 0;
+> > +	struct timespec64 ctime =3D inode->i_ctime;
+> > =20
+> >  	/* First try to exhaust all avenues to not sync */
+> >  	if (IS_NOCMTIME(inode))
+> > @@ -2038,7 +2039,9 @@ static int inode_needs_update_time(struct inode *=
+inode, struct timespec64 *now)
+> >  	if (!timespec64_equal(&inode->i_mtime, now))
+> >  		sync_it =3D S_MTIME;
+> > =20
+> > -	if (!timespec64_equal(&inode->i_ctime, now))
+> > +	if (is_multigrain_ts(inode))
+> > +		ctime.tv_nsec &=3D ~I_CTIME_QUERIED;
+> > +	if (!timespec64_equal(&ctime, now))
+> >  		sync_it |=3D S_CTIME;
+> > =20
+> >  	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
+> > @@ -2062,6 +2065,50 @@ static int __file_update_time(struct file *file,=
+ struct timespec64 *now,
+> >  	return ret;
+> >  }
+> > =20
+> > +/**
+> > + * current_ctime - Return FS time (possibly high-res)
+> > + * @inode: inode.
+> > + *
+> > + * Return the current time truncated to the time granularity supported=
+ by
+> > + * the fs, as suitable for a ctime/mtime change.
+> > + *
+> > + * For a multigrain timestamp, if the timestamp is flagged as having b=
+een
+> > + * QUERIED, then get a fine-grained timestamp.
+> > + */
+> > +struct timespec64 current_ctime(struct inode *inode)
+> > +{
+> > +	struct timespec64 now;
+> > +	long nsec =3D 0;
+> > +	bool multigrain =3D is_multigrain_ts(inode);
+> > +
+> > +	if (multigrain) {
+> > +		atomic_long_t *pnsec =3D (atomic_long_t *)&inode->i_ctime.tv_nsec;
+> > +
+> > +		nsec =3D atomic_long_fetch_and(~I_CTIME_QUERIED, pnsec);
+> > +	}
+> > +
+> > +	if (nsec & I_CTIME_QUERIED) {
+> > +		ktime_get_real_ts64(&now);
+> > +	} else {
+> > +		ktime_get_coarse_real_ts64(&now);
+> > +
+> > +		if (multigrain) {
+> > +			/*
+> > +			 * If we've recently fetched a fine-grained timestamp
+> > +			 * then the coarse-grained one may be earlier than the
+> > +			 * existing one. Just keep the existing ctime if so.
+> > +			 */
+> > +			struct timespec64 ctime =3D inode->i_ctime;
+> > +
+> > +			if (timespec64_compare(&ctime, &now) > 0)
+> > +				now =3D ctime;
+> > +		}
+> > +	}
+> > +
+> > +	return timestamp_truncate(now, inode);
+> > +}
+> > +EXPORT_SYMBOL(current_ctime);
+> > +
+> >  /**
+> >   * file_update_time - update mtime and ctime time
+> >   * @file: file accessed
+> > @@ -2080,7 +2127,7 @@ int file_update_time(struct file *file)
+> >  {
+> >  	int ret;
+> >  	struct inode *inode =3D file_inode(file);
+> > -	struct timespec64 now =3D current_time(inode);
+> > +	struct timespec64 now =3D current_ctime(inode);
+> > =20
+> >  	ret =3D inode_needs_update_time(inode, &now);
+> >  	if (ret <=3D 0)
+> > @@ -2109,7 +2156,7 @@ static int file_modified_flags(struct file *file,=
+ int flags)
+> >  {
+> >  	int ret;
+> >  	struct inode *inode =3D file_inode(file);
+> > -	struct timespec64 now =3D current_time(inode);
+> > +	struct timespec64 now =3D current_ctime(inode);
+> > =20
+> >  	/*
+> >  	 * Clear the security bits if the process is not being run by root.
+> > @@ -2419,9 +2466,11 @@ struct timespec64 timestamp_truncate(struct time=
+spec64 t, struct inode *inode)
+> >  	if (unlikely(t.tv_sec =3D=3D sb->s_time_max || t.tv_sec =3D=3D sb->s_=
+time_min))
+> >  		t.tv_nsec =3D 0;
+> > =20
+> > -	/* Avoid division in the common cases 1 ns and 1 s. */
+> > +	/* Avoid division in the common cases 1 ns, 2 ns and 1 s. */
+> >  	if (gran =3D=3D 1)
+> >  		; /* nothing */
+> > +	else if (gran =3D=3D 2)
+> > +		t.tv_nsec &=3D ~1L;
+>=20
+> Is that trying to mask off I_CTIME_QUERIED?
+> If so, can we please use that constant as raw constants tend to be
+> confusing in the long run.
 
+Sort of. In principle you could set s_time_gran to 2 without setting
+SB_MULTIGRAIN_TS. In that case, would it be correct to use the flag
+there?
 
-On 26.4.2023 11.41, Lorenzo Stoakes wrote:
-> On Wed, Apr 26, 2023 at 10:30:03AM +0300, Mika Penttilä wrote:
-> 
-> [snip]
-> 
->>> The issue is how dirtying works. Typically for a dirty-tracking mapping the
->>> kernel makes the mapping read-only, then when a write fault occurs,
->>> writenotify is called and the folio is marked dirty. This way the file
->>> system knows which files to writeback, then after writeback it 'cleans'
->>> them, restoring the read-only mapping and relying on the NEXT write marking
->>> write notifying and marking the folio dirty again.
->>>
->>
->> I know how the dirty tracking works :). And gup itself actually triggers the
->> _first_ fault on a read only pte.
-> 
-> I'm sure you don't mean to, but this comes off as sarcastic, 'I know how X
-> works :)' is not a helpful comment. However, equally apologies if I seemed
-> patronising, not intentional, I am just trying to be as clear as possible,
-> which always risks sounding that way :)
-
-Absolutely didn't mean that way, and thanks for being clear here!
-> 
-> Regardless, this is a very good point! I think I was a little too implicit
-> in the whole 'at any time the kernel chooses to write to this writenotify
-> won't happen', and you are absolutely right in that we are not clear enough
-> about that.
-> 
->>
->> So the problem is accessing the page after that, somewehere in future. I
->> think this is something you should write on the description. Because,
->> technically, GUP itself works and does invoke the write notify. So the
->> misleading part is you say in the description it doesn't. While you mean a
->> later write, from a driver or such, doesn't.
->>
-> 
-> Ack, agreed this would be a useful improvement. Will fix on next spin!
-
-Yes thanks, think so, at least found myself going thru and wondering 
-what's wrong with the gup code itself, and not the later usage scenario...
-
-> 
-> [snip]
-> 
-
-
---Mika
-
+In any case, I can certainly make it use that constant though if that's
+what you'd prefer.
+--=20
+Jeff Layton <jlayton@kernel.org>
