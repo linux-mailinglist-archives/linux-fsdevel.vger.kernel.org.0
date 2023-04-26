@@ -2,107 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 071EF6EF529
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 15:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC856EF5BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Apr 2023 15:47:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241012AbjDZNKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Apr 2023 09:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44570 "EHLO
+        id S241208AbjDZNrv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Apr 2023 09:47:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbjDZNKa (ORCPT
+        with ESMTP id S241217AbjDZNrt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Apr 2023 09:10:30 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B1A5B8D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Apr 2023 06:10:26 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id 98e67ed59e1d1-247296def99so4972733a91.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Apr 2023 06:10:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ixsystems.com; s=google; t=1682514626; x=1685106626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VFPfcznNavRel3v/2Xb0sNmLucdjhMS4TB31OODj9eQ=;
-        b=SXpo9VgkpDl0hHJLrJEN9WNOhkaEetHoZiCXRCTjOT8FFbE8/K9AMAtgrWqcuwp6Tz
-         4d9MIWedfBbveT+f+rigCkmTgGFn/ystU/yyLMkn/143no8GS/oeZrb6Ybmg8EFRoZBN
-         3gYQJcp3F3A2ymwLp42xXAPX575qOBgLQNRUAhIVyel7ZGn6tPSTAZPz36A4Vd1YqBRA
-         V+MK14VNhPwi8zPFMA55zi0XSjUkkBVnEagz17PWp1OM0iafjcj5oruVjOIYF3C+iC6P
-         4T+oTc/+9ER3ZqP6XwqbLcc9kqMlPqTD2Q+387mMl93EgVuG9dJc5qLQpjKdgPeQ1pwN
-         FbYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682514626; x=1685106626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VFPfcznNavRel3v/2Xb0sNmLucdjhMS4TB31OODj9eQ=;
-        b=JnnvIl+QH0PetYWVObckcTMerkhw52bGzveD5ldpqRbFDywriUtELtKP0iF21uCj8y
-         EgvcQmKSMVivGyix0vMpZhmRl3kqs23pzcIayFzku9trkM+U9GnPzmRELImboeArBIeR
-         xo1c3bk8WkLWMQEoAp8OFK+tu7a8MMYcu1TBftieZ9CJGzoQQivkmG5s/Ewl662wJ2Fj
-         6Qjv6yzCYp1Y1nS8x7rENoQ3TueRATzoeUcU1jK1Jg3yho3MwYYy3vkHeogJ1h8QVgAL
-         2C5/wZyv03sf5I6i55dq6z+G5iZMUmRQCn7ltBQ/mdpWrbo4/16GPQFEyKOS3CbAVgz6
-         XfUQ==
-X-Gm-Message-State: AAQBX9ccN2h7kkq/2I854YGHFPqqpOQQOmDeusbfNFAiWBDWyy8g3MAN
-        38tfqOac+UPlvwIsAFfOBmN+G3KMt2/6J+UgArulnQ==
-X-Google-Smtp-Source: AKy350bGt8dPLv0jDwC73a+QwasYP2hRe8jvOSnGkd5BHaoZ5lFcdtvx8ciHOzJ5UMxa9KFBync7KlvVO5wENcx4hiQ=
-X-Received: by 2002:a17:90a:630a:b0:249:748b:a232 with SMTP id
- e10-20020a17090a630a00b00249748ba232mr19303629pjj.25.1682514625952; Wed, 26
- Apr 2023 06:10:25 -0700 (PDT)
+        Wed, 26 Apr 2023 09:47:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1CF12108;
+        Wed, 26 Apr 2023 06:47:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 55E7862C99;
+        Wed, 26 Apr 2023 13:47:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6EAFC433D2;
+        Wed, 26 Apr 2023 13:47:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682516864;
+        bh=BeQTHSgn73mgmnwOUhFvCFWNIQI7Fzt95A2oYI6JAVU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hGIBv6jgEkOMCRHIO2QoFmdaFfllJS5HHYOEltqpcJDSiMJDYbfbdz0YoqhuieIit
+         4MbhvwfQFB2AnICy+pWO4vP/JcvQRxovDM5V09Ee9HmXesFUoJ0DjwMsxyMZqPy9lZ
+         3E1c/3Txqs0+trwliJIpplhKByGavEAgHpnA7iEFKPUiwfvZeNMdvjqCZdD7kUiCKZ
+         L18+gOq7p+V2QmcNutl4pgiIsaIVfOks6rmgUUqqbb6f2zO15Y1cJtIEr6OQ/1CtIu
+         hETi+o+0IuJKnx31EHUSeK1sQQDbsb8TGmgSnsefo247RF85bwA9Y6PFZWwZzIiNgm
+         jQdMBe8wh4W1A==
+Date:   Wed, 26 Apr 2023 09:47:41 -0400
+From:   Chuck Lever <cel@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-nfs@vger.kernel.org,
+        jlayton@kernel.org
+Subject: Re: [RFC][PATCH 0/4] Prepare for supporting more filesystems with
+ fanotify
+Message-ID: <ZEkrfVEQ8EkmUcxK@manet.1015granger.net>
+References: <20230425130105.2606684-1-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <20221228160249.428399-1-ahamza@ixsystems.com> <20230106130651.vxz7pjtu5gvchdgt@wittgenstein>
- <ZD9AsWMnNKJ4dpjm@hamza-pc> <05845c12eab34567ae61466db36a0cef@AcuMS.aculab.com>
-In-Reply-To: <05845c12eab34567ae61466db36a0cef@AcuMS.aculab.com>
-From:   Andrew Walker <awalker@ixsystems.com>
-Date:   Wed, 26 Apr 2023 08:10:15 -0500
-Message-ID: <CAB5c7xquuk7-kWZBY7fVmKiGh0_YxR=UhLjMUpdTx=2rF+PuzA@mail.gmail.com>
-Subject: Re: [PATCH] Add new open(2) flag - O_EMPTY_PATH
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Ameer Hamza <ahamza@ixsystems.com>,
-        Christian Brauner <brauner@kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "guoren@kernel.org" <guoren@kernel.org>,
-        "palmer@rivosinc.com" <palmer@rivosinc.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "slark_xiao@163.com" <slark_xiao@163.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230425130105.2606684-1-amir73il@gmail.com>
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 19, 2023 at 4:29=E2=80=AFPM David Laight <David.Laight@aculab.c=
-om> wrote:
-> ISTM that reopening a file READ_WRITE shouldn't be unconditionally allowe=
-d.
-> Checking the inode permissions of the file isn't enough to ensure
-> that the process is allowed to open it.
-> The 'x' (search) permissions on all the parent directories needs to
-> be checked (going back as far as some directory the process has open).
->
-> If a full pathname is generated this check is done.
-> But the proposed O_EMTPY_PATH won't be doing it.
->
-> This all matters if a system is using restricted directory
-> permissions to block a process from opening files in some
-> part of the filesystem, but is also being passed an open
-> fd (for reading) in that part of the filesystem.
-> I'm sure there are systems that will be doing this.
->
->         David
->
+On Tue, Apr 25, 2023 at 04:01:01PM +0300, Amir Goldstein wrote:
+> Jan,
+> 
+> Following up on the FAN_REPORT_ANY_FID proposal [1], here is a shot at an
+> alternative proposal to seamlessly support more filesystems.
+> 
+> While fanotify relaxes the requirements for filesystems to support
+> reporting fid to require only the ->encode_fh() operation, there are
+> currently no new filesystems that meet the relaxed requirements.
+> 
+> I will shortly post patches that allow overlayfs to meet the new
+> requirements with default overlay configurations.
+> 
+> The overlay and vfs/fanotify patch sets are completely independent.
+> The are both available on my github branch [2] and there is a simple
+> LTP test variant that tests reporting fid from overlayfs [3], which
+> also demonstrates the minor UAPI change of name_to_handle_at(2) for
+> requesting a non-decodeable file handle by userspace.
+> 
+> Thanks,
+> Amir.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20230417162721.ouzs33oh6mb7vtft@quack3/
+> [2] https://github.com/amir73il/linux/commits/exportfs_encode_fid
+> [3] https://github.com/amir73il/ltp/commits/exportfs_encode_fid
+> 
+> Amir Goldstein (4):
+>   exportfs: change connectable argument to bit flags
+>   exportfs: add explicit flag to request non-decodeable file handles
+>   exportfs: allow exporting non-decodeable file handles to userspace
+>   fanotify: support reporting non-decodeable file handles
+> 
+>  Documentation/filesystems/nfs/exporting.rst |  4 +--
+>  fs/exportfs/expfs.c                         | 29 ++++++++++++++++++---
+>  fs/fhandle.c                                | 20 ++++++++------
+>  fs/nfsd/nfsfh.c                             |  5 ++--
+>  fs/notify/fanotify/fanotify.c               |  4 +--
+>  fs/notify/fanotify/fanotify_user.c          |  6 ++---
+>  fs/notify/fdinfo.c                          |  2 +-
+>  include/linux/exportfs.h                    | 18 ++++++++++---
+>  include/uapi/linux/fcntl.h                  |  5 ++++
+>  9 files changed, 67 insertions(+), 26 deletions(-)
 
-So to be safe, hypothetically, the caller should be required to have
-CAP_DAC_READ_SEARCH like with open_by_handle_at(2)?
+Hello Amir-
 
-Andrew
+Note that the maintainers of exportfs are Jeff and myself. Please
+copy us on future versions of this patch series. Thanks!
+
+[cel@klimt even-releases]$ scripts/get_maintainer.pl fs/exportfs/
+Chuck Lever <chuck.lever@oracle.com> (supporter:KERNEL NFSD, SUNRPC, AND LOCKD SERVERS)
+Jeff Layton <jlayton@kernel.org> (supporter:KERNEL NFSD, SUNRPC, AND LOCKD SERVERS)
+linux-nfs@vger.kernel.org (open list:KERNEL NFSD, SUNRPC, AND LOCKD SERVERS)
+linux-kernel@vger.kernel.org (open list)
+
