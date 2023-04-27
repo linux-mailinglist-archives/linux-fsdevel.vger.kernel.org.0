@@ -2,111 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FF36F005D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 07:18:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58F266F00D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 08:37:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232094AbjD0FSD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 01:18:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46830 "EHLO
+        id S242951AbjD0GhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 02:37:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjD0FSC (ORCPT
+        with ESMTP id S242907AbjD0GhK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 01:18:02 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838CC1FCA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Apr 2023 22:18:00 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-63b67a26069so10131815b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Apr 2023 22:18:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1682572680; x=1685164680;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GMaPzJXWrSlkjaxg9I3D2+BQ3FkGijEWz0HmGH4ctBg=;
-        b=K8Ar7FjGTpx9OUTYuvFL8WOi2JYgRtANCY+k0zhV++uZlFYfg1dv2kzq6tPqv4V++e
-         ohR6AHy7h2lfsx104z40E8MmhPD7vAtzVo93Id0EeA2ndo4QgWycBGroBI6FCC0nR5WZ
-         1H3nrbYRRwa9yww+/GwXkMDJeYxz0zLPsGiFlH+Pqh1Q5ajqQ/Ll7yDnAbhKJ/agGr2d
-         7vau+aJ7N4K1IJz7io/UzmQfMEkl1uRsHnVh8dGIZdvaRpxloPhDyij3sklcPpblRAA8
-         hMK9F6dnjYNup9A9M0Eo6OFqxlOl7BmvqxzEnWkWIOPPKDV+tld31O1Om7XBqgD3naLd
-         KgZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682572680; x=1685164680;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GMaPzJXWrSlkjaxg9I3D2+BQ3FkGijEWz0HmGH4ctBg=;
-        b=EkQUMYqUpVptw1nQzXF6X5OvYZBb6FsEdC3JiUH0cI1iJP4ZUWO1ZckSLtCV/mikbS
-         zrzLoSaWQhRrZy9vg/o1Ppgqon+5wP9xC31d/CpKYo2MA9wAnWnOufFRQN34ruyt/OrS
-         c724T0Hh/6Bj5/Dz1hixCYucpJtjGXw0uuhO+AhwXQYIJ4ipAlH+zXHIAY4jzIwWMme0
-         btiSM6MW2O80y0NgyKEWxkshA/4vf0nGUHs2A9f7b+FbSCnwksBHoqrHTAqxRYnf1Ezx
-         iBhESCK1fdngr3NjGhdnz7sBewgOpzE/8jvB0tmXyG51iNn/pdpv3rspMCTxtojNYUJI
-         3iBg==
-X-Gm-Message-State: AC+VfDyOkqoRt6/ONyv+D/Dn2PmO+V/9uytufWAm+SrvFDJOtqq81XBV
-        ZIrZngu5giLYPC6iv8kVhL3CFA==
-X-Google-Smtp-Source: ACHHUZ6dMpsvHqTKYBR1bclPnIJa3Hb0cd8DQ0u1EuX8+QOryRHNOKFNSfUKpJmSLfW2IWk6sObczw==
-X-Received: by 2002:a05:6a21:3945:b0:ee:d553:5cee with SMTP id ac5-20020a056a21394500b000eed5535ceemr407699pzc.16.1682572680001;
-        Wed, 26 Apr 2023 22:18:00 -0700 (PDT)
-Received: from [10.2.117.253] ([61.213.176.6])
-        by smtp.gmail.com with ESMTPSA id w68-20020a636247000000b00520f4ecd71esm10529815pgb.93.2023.04.26.22.17.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Apr 2023 22:17:59 -0700 (PDT)
-Message-ID: <9ba3577b-0098-86da-ff2e-636cb5a8ae1a@bytedance.com>
-Date:   Thu, 27 Apr 2023 13:17:52 +0800
+        Thu, 27 Apr 2023 02:37:10 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 358204497;
+        Wed, 26 Apr 2023 23:37:09 -0700 (PDT)
+Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Q6QwJ0kWnzsR8d;
+        Thu, 27 Apr 2023 14:35:28 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Thu, 27 Apr 2023 14:37:06 +0800
+Message-ID: <dbb8d8a7-3a80-34cc-5033-18d25e545ed1@huawei.com>
+Date:   Thu, 27 Apr 2023 14:36:51 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: [PATCH v6 0/2] sched/numa: add per-process numa_balancing
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [ext4 io hang] buffered write io hang in balance_dirty_pages
+To:     Ming Lei <ming.lei@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>
+CC:     Theodore Ts'o <tytso@mit.edu>, <linux-ext4@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        <linux-block@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Zhang Yi <yi.zhang@redhat.com>,
+        yangerkun <yangerkun@huawei.com>,
+        Baokun Li <libaokun1@huawei.com>
+References: <ZEnb7KuOWmu5P+V9@ovpn-8-24.pek2.redhat.com>
+ <ZEny7Izr8iOc/23B@casper.infradead.org>
+ <ZEn/KB0fZj8S1NTK@ovpn-8-24.pek2.redhat.com>
 Content-Language: en-US
-To:     Peter Zijlstra <peterz@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Mel Gorman <mgorman@suse.de>
-Cc:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>
-References: <20230412140701.58337-1-ligang.bdlg@bytedance.com>
-From:   Gang Li <ligang.bdlg@bytedance.com>
-In-Reply-To: <20230412140701.58337-1-ligang.bdlg@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+From:   Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <ZEn/KB0fZj8S1NTK@ovpn-8-24.pek2.redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.174]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On 2023/4/27 12:50, Ming Lei wrote:
+> Hello Matthew,
+>
+> On Thu, Apr 27, 2023 at 04:58:36AM +0100, Matthew Wilcox wrote:
+>> On Thu, Apr 27, 2023 at 10:20:28AM +0800, Ming Lei wrote:
+>>> Hello Guys,
+>>>
+>>> I got one report in which buffered write IO hangs in balance_dirty_pages,
+>>> after one nvme block device is unplugged physically, then umount can't
+>>> succeed.
+>> That's a feature, not a bug ... the dd should continue indefinitely?
+> Can you explain what the feature is? And not see such 'issue' or 'feature'
+> on xfs.
+>
+> The device has been gone, so IMO it is reasonable to see FS buffered write IO
+> failed. Actually dmesg has shown that 'EXT4-fs (nvme0n1): Remounting
+> filesystem read-only'. Seems these things may confuse user.
 
-Looks like there are no objections or comments. Do you have any ideas?
 
-Can we merge this patch in the next merge window.
+The reason for this difference is that ext4 and xfs handle errors 
+differently.
 
-Thanks!
+ext4 remounts the filesystem as read-only or even just continues, 
+vfs_write does not check for these.
 
-On 2023/4/12 22:06, Gang Li wrote:
-> # Introduce
-> Add PR_NUMA_BALANCING in prctl.
-> 
-> A large number of page faults will cause performance loss when numa
-> balancing is performing. Thus those processes which care about worst-case
-> performance need numa balancing disabled. Others, on the contrary, allow a
-> temporary performance loss in exchange for higher average performance, so
-> enable numa balancing is better for them.
-> 
-> Numa balancing can only be controlled globally by
-> /proc/sys/kernel/numa_balancing. Due to the above case, we want to
-> disable/enable numa_balancing per-process instead.
-> 
+xfs shuts down the filesystem, so it returns a failure at 
+xfs_file_write_iter when it finds an error.
+
+
+``` ext4
+ksys_write
+  vfs_write
+   ext4_file_write_iter
+    ext4_buffered_write_iter
+     ext4_write_checks
+      file_modified
+       file_modified_flags
+        __file_update_time
+         inode_update_time
+          generic_update_time
+           __mark_inode_dirty
+            ext4_dirty_inode ---> 2. void func, No propagating errors out
+             __ext4_journal_start_sb
+              ext4_journal_check_start ---> 1. Error found, remount-ro
+     generic_perform_write ---> 3. No error sensed, continue
+      balance_dirty_pages_ratelimited
+       balance_dirty_pages_ratelimited_flags
+        balance_dirty_pages
+         // 4. Sleeping waiting for dirty pages to be freed
+         __set_current_state(TASK_KILLABLE)
+         io_schedule_timeout(pause);
+```
+
+``` xfs
+ksys_write
+  vfs_write
+   xfs_file_write_iter
+    if (xfs_is_shutdown(ip->i_mount))
+      return -EIO;    ---> dd fail
+```
+>> balance_dirty_pages() is sleeping in KILLABLE state, so kill -9 of
+>> the dd process should succeed.
+> Yeah, dd can be killed, however it may be any application(s), :-)
+>
+> Fortunately it won't cause trouble during reboot/power off, given
+> userspace will be killed at that time.
+>
+>
+>
+> Thanks,
+> Ming
+>
+Don't worry about that, we always set the current thread to TASK_KILLABLE
+
+while waiting in balance_dirty_pages().
+
+
+-- 
+With Best Regards,
+Baokun Li
+.
