@@ -2,56 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 163A76F0257
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 10:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 479EE6F0259
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 10:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242803AbjD0IKV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 04:10:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36290 "EHLO
+        id S242899AbjD0ILr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 04:11:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232094AbjD0IKV (ORCPT
+        with ESMTP id S242675AbjD0ILq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 04:10:21 -0400
+        Thu, 27 Apr 2023 04:11:46 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 584A22D71;
-        Thu, 27 Apr 2023 01:10:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97FEE30C5;
+        Thu, 27 Apr 2023 01:11:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E42D263AED;
-        Thu, 27 Apr 2023 08:10:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 409C9C4339B;
-        Thu, 27 Apr 2023 08:10:19 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 318F463AED;
+        Thu, 27 Apr 2023 08:11:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6819FC433EF;
+        Thu, 27 Apr 2023 08:11:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682583019;
-        bh=3SWEG4ZM5mURpRa/lQ43ANg4nKi9ibLJ1sNHY2sKVik=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=czoPbmwFmg+8B8xuRTnQFbfROi1zo+bgPvADca0WQlSIElJUDZvkC8K81DQg8lu8I
-         tHCqoelHLhe3scK1hjpg7KjCbzhCzCvTWow7R/L1YfDaeXf5EKEZ1T/mxGIji8EQUB
-         sxdXFO6PwOFe6pTj2bl16DGRSMCNnGBRrCTxh6L+RDiNuaWBaZFCeJx5NnkYxnZJZc
-         qlO2DN+7x89e2hnvZg88WCea6iC8Ov3TDFQ14mqyLpv/Tq07ioYtasip9GJCQHjyLE
-         4eE/Nir/IrKOlNxwUT25a4Bo67E3kGAaEmne2cs1bEi9aVCa718v2HfBMY4aUyBck3
-         j638igLdJ3jjw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 26E91E5FFC8;
-        Thu, 27 Apr 2023 08:10:19 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1682583104;
+        bh=pb4bckBSRPc/CTexeqHXV1WvIia8nZi/q4H647lbl4U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V6HHrcDyR2aMi24XI2PD4NDKDxsAuff6P1UFwrUY52obJwMDL8sp1hhUdx4GO/ONL
+         fPObh/pS99RJa0R2yd2kbhBSXirEWwWsEDcudeQudKFlIlWsEvhPQf1WAcgmxN+DUP
+         5Fj5hSNOAbUR/hvtIzd6y1+aJKFP5cE7B0GpKv9WN6bygwq8S+o+Ec9Xj4gfL28J5d
+         kJnihYBBeAoWfZn7ZEEozpxHMbMWHyZ0dP667Jgbm5KpNAxU0VSP9TmO85HSSdcIQ+
+         FYw4dxbTmk8fKieCiIYHGH+Kvzu5jHokZxkBZ0SLZkz20/9DRDRRNS1zHCKcHOMIdo
+         KMu8iqDbJKRvQ==
+Date:   Thu, 27 Apr 2023 10:11:40 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] pidfd updates
+Message-ID: <20230427-abgesackt-gedruckt-aff2d3398369@brauner>
+References: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
+ <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
+ <20230425060427.GP3390869@ZenIV>
+ <20230425-sturheit-jungautor-97d92d7861e2@brauner>
+ <20230427010715.GX3390869@ZenIV>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] rxrpc: Fix potential data race in
- rxrpc_wait_to_be_connected()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168258301915.27262.1188523901051859504.git-patchwork-notify@kernel.org>
-Date:   Thu, 27 Apr 2023 08:10:19 +0000
-References: <508133.1682427395@warthog.procyon.org.uk>
-In-Reply-To: <508133.1682427395@warthog.procyon.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org,
-        syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com,
-        marc.dionne@auristor.com, dvyukov@google.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230427010715.GX3390869@ZenIV>
 X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -62,30 +58,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue, 25 Apr 2023 13:56:35 +0100 you wrote:
-> Inside the loop in rxrpc_wait_to_be_connected() it checks call->error to
-> see if it should exit the loop without first checking the call state.  This
-> is probably safe as if call->error is set, the call is dead anyway, but we
-> should probably wait for the call state to have been set to completion
-> first, lest it cause surprise on the way out.
+On Thu, Apr 27, 2023 at 02:07:15AM +0100, Al Viro wrote:
+> On Tue, Apr 25, 2023 at 02:34:15PM +0200, Christian Brauner wrote:
 > 
-> Fix this by only accessing call->error if the call is complete.  We don't
-> actually need to access the error inside the loop as we'll do that after.
 > 
-> [...]
+> > struct fd_file {
+> > 	struct file *file;
+> > 	int fd;
+> > 	int __user *fd_user;
+> 
+> Why is it an int?  Because your case has it that way?
+> 
+> We have a bunch of places where we have an ioctl with
+> a field in some structure filled that way; any primitive
+> that combines put_user() with descriptor handling is
+> going to cause trouble as soon as somebody deals with
+> a structure where such member is unsigned long.  Gets
+> especially funny on 64bit big-endian...
+> 
+> And that objection is orthogonal to that 3-member structure -
+> even if you pass int __user * as an explicit argument into
+> your helper, the same trouble will be there.
 
-Here is the summary with links:
-  - [net] rxrpc: Fix potential data race in rxrpc_wait_to_be_connected()
-    https://git.kernel.org/netdev/net/c/2b5fdc0f5caa
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Ignoring for a second that there are other ways to achieve this. This is
+literally the sketch on top of a sketch to encompass an api that _we do
+already have today_...
