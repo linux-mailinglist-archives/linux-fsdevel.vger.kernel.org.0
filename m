@@ -2,171 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA0C16F078E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 16:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 225776F07C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 17:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243883AbjD0Oe3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 10:34:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55120 "EHLO
+        id S243780AbjD0PAe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 11:00:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243466AbjD0Oe2 (ORCPT
+        with ESMTP id S232698AbjD0PAd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 10:34:28 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51EC51BF9;
-        Thu, 27 Apr 2023 07:34:27 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id ada2fe7eead31-43278f6d551so173760137.1;
-        Thu, 27 Apr 2023 07:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682606066; x=1685198066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ghkJg/SBYWrrJ/Yr0EU7fpo3jGyK1p4tvs7lO0HzOsE=;
-        b=nwIuEX3dAoRnsr1srxXP1Pp15n8Yiy5r0tIBkCNmsAYiM3RGw1BGXD5rroFCPlcuwJ
-         pyISDGaV4mne8OzIlTM7GLYPWCIcry3p4EQFyJ3Q6pqMKf+QUu3dqPcaKwlYgaLN5uA4
-         sXT65PP2+9n+m15+gjdWKfKnquECx2a/pn+PlfuH3tqnIBnmcO0PvV21DAwV98+A/IdJ
-         YoFbl1V4Sd6G0NCU1fB7cq4p6k01AdDCAImhxxMWfn7zNl5kSFiSSL8bMNr82gwTkddR
-         gUy5cxj5P4RobG9NyYk/8i0Q77eb5bJRSSH5xmCsr94uGUk9nlbhxmd/Nx0LYfwj/BUb
-         vzuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682606066; x=1685198066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ghkJg/SBYWrrJ/Yr0EU7fpo3jGyK1p4tvs7lO0HzOsE=;
-        b=jabugJwla3nxYlkUMg+wrYRbfqwOJ3Wcd2l0wRsAZJRZPB+/frDs3XdizkWIyoxv4H
-         XD3uY1HX7p/CzBb+O03qA+qx4gCvzf5Gjof4SwLeOpyGNeqTwdVXJg2Pjyxgi6M67TCg
-         YRuA8xlZTjmb6qqyh48L8OeCCpGTCiUD5f+Rsw/JEH9q2wc5x2y6R1Io07EBG+eOFlYT
-         TGxH0BEyNcCwPAFMWI3nAGoRl/LdoVbTajkA2ACUVFP1GM/KEUC8TmkgOUQDJxsIAb+9
-         2svy9voW+Vh7bQn019Ih+L1RqCOjdC5bEsNK8UOC0n9mOLPChrhnuyb2YB+RSaKUU1o6
-         d7jw==
-X-Gm-Message-State: AC+VfDwqYXcrJCjGQNJgFU2n64oRbXLJiQabNA5nU6nhUrxrW7ctThYf
-        NLc+D8flg2yHgnMN8b5oa3WlxSR/8nQfGTYFthlheGj1gBU=
-X-Google-Smtp-Source: ACHHUZ7qloGjLp00svzfuX20gElKoePosakZQACAS1YIoOhBgT2kHahYwIU+/6WprIoTrQquwSVWmdDTomRNsPF+Ol4=
-X-Received: by 2002:a67:b10c:0:b0:42e:5aa9:406e with SMTP id
- w12-20020a67b10c000000b0042e5aa9406emr930268vsl.10.1682606066231; Thu, 27 Apr
- 2023 07:34:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230425130105.2606684-1-amir73il@gmail.com> <20230425130105.2606684-5-amir73il@gmail.com>
- <20230427114849.cv3kzxk7rvxpohjc@quack3> <CAOQ4uxhBaZ4_c5Ko6jZ6UzqtB-4spE_xiRC=TNMO8+bwnYMSnA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhBaZ4_c5Ko6jZ6UzqtB-4spE_xiRC=TNMO8+bwnYMSnA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 27 Apr 2023 17:34:15 +0300
-Message-ID: <CAOQ4uxjHOXX-gsEZTiRwXVbeqvyKi=O--hZxn9cRoVoPmf=zsg@mail.gmail.com>
-Subject: Re: [RFC][PATCH 4/4] fanotify: support reporting non-decodeable file handles
-To:     Jan Kara <jack@suse.cz>
+        Thu, 27 Apr 2023 11:00:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8FBD2D4A;
+        Thu, 27 Apr 2023 08:00:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 53E5263925;
+        Thu, 27 Apr 2023 15:00:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05955C433EF;
+        Thu, 27 Apr 2023 15:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682607630;
+        bh=XXP+z3UyWGI1qgqsAozaeSSVzIprZmLNdP3zak0bBJg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=tYq2w2l5oCoXHvtivjbBO96mFI+A2IfR4ESQ/klc3GZeS3VQL2PEhQNsXfVGsBJbh
+         GdAXf4MwpTfkvcvyQdsyiq4aqmjzUviPdu81+RtbXcnyRsvR8EMtCjmIp+TxOGyZSS
+         ol0rZ1xvVdsdfJKWmQdlTbCdmCm6KN0dJFtPkNd6Cb6obUNUC0TGtTfy4T4JvsdeXL
+         FYLtnoRbP954IdPo2fpzKdyZd7CeslM1drzhTyksKbCv33ELl2GJX0LSd66rL3gC9g
+         BxpLQkGPfJEi8YBjj+Shz+Lj/9kQ+5qGzf65vRw3quOQcW1XBF+52sEgKdMZjCY/eh
+         yVlC8eaRSfOOg==
+Message-ID: <9118c0e6b03357942d38b9f2badb5be2708bdb5b.camel@kernel.org>
+Subject: Re: [RFC][PATCH 2/4] exportfs: add explicit flag to request
+ non-decodeable file handles
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
 Cc:     Christian Brauner <brauner@kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, Chuck Lever <cel@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-api@vger.kernel.org
+Date:   Thu, 27 Apr 2023 11:00:28 -0400
+In-Reply-To: <20230425130105.2606684-3-amir73il@gmail.com>
+References: <20230425130105.2606684-1-amir73il@gmail.com>
+         <20230425130105.2606684-3-amir73il@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 27, 2023 at 3:28=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> s_export_op
->
-> On Thu, Apr 27, 2023 at 2:48=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Tue 25-04-23 16:01:05, Amir Goldstein wrote:
-> > > fanotify users do not always need to decode the file handles reported
-> > > with FAN_REPORT_FID.
-> > >
-> > > Relax the restriction that filesystem needs to support NFS export and
-> > > allow reporting file handles from filesystems that only support ecodi=
-ng
-> > > unique file handles.
-> > >
-> > > For such filesystems, users will have to use the AT_HANDLE_FID of
-> > > name_to_handle_at(2) if they want to compare the object in path to th=
-e
-> > > object fid reported in an event.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ...
-> > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/=
-fanotify_user.c
-> > > index 8f430bfad487..a5af84cbb30d 100644
-> > > --- a/fs/notify/fanotify/fanotify_user.c
-> > > +++ b/fs/notify/fanotify/fanotify_user.c
-> > > @@ -1586,11 +1586,9 @@ static int fanotify_test_fid(struct dentry *de=
-ntry)
-> > >        * We need to make sure that the file system supports at least
-> > >        * encoding a file handle so user can use name_to_handle_at() t=
-o
-> > >        * compare fid returned with event to the file handle of watche=
-d
-> > > -      * objects. However, name_to_handle_at() requires that the
-> > > -      * filesystem also supports decoding file handles.
-> > > +      * objects, but it does not need to support decoding file handl=
-es.
-> > >        */
-> > > -     if (!dentry->d_sb->s_export_op ||
-> > > -         !dentry->d_sb->s_export_op->fh_to_dentry)
-> > > +     if (!dentry->d_sb->s_export_op)
-> > >               return -EOPNOTSUPP;
-> >
-> > So AFAICS the only thing you require is that s_export_op is set to
-> > *something* as exportfs_encode_inode_fh() can deal with NULL ->encode_f=
-h
-> > just fine without any filesystem cooperation. What is the reasoning beh=
-ind
-> > the dentry->d_sb->s_export_op check? Is there an implicit expectation t=
-hat
-> > if s_export_op is set to something, the filesystem has sensible
-> > i_generation? Or is it just a caution that you don't want the functiona=
-lity
-> > to be enabled for unexpected filesystems?
->
-> A little bit of both.
-> Essentially, I do not want to use the generic encoding unless the filesys=
-tem
-> opted-in to say "This is how objects should be identified".
->
-> The current fs that have s_export_op && !s_export_op->encode_fh
-> practically make that statement because they support NFS export
-> (i.e. they implement fh_to_dentry()).
->
-> I don't like the implicit fallback to generic encoding, especially when
-> introducing this new functionality of encode_fid().
->
-> Before posting this patch set I had two earlier revisions.
-> One that changed the encode_fh() to mandatory and converted
-> all the INO32_GEN fs to explicitly set
-> s_export_op.encode_fh =3D generic_encode_ino32_fh,
-> And one that marked all the INO32_GEN fs with
-> s_export_op.flags =3D EXPORT_OP_ENCODE_INO32_GEN
-> in both cases there was no blind fallback to INO32_GEN.
->
-> But in the end, these added noise without actual value so
-> I dropped them, because the d_sb->s_export_op check is anyway
-> a pretty strong indication for opt-in to export fids.
->
-> CC exportfs maintainers in case they have an opinion one
-> way or the other.
->
+On Tue, 2023-04-25 at 16:01 +0300, Amir Goldstein wrote:
+> So far, all callers of exportfs_encode_inode_fh(), except for fsnotify's
+> show_mark_fhandle(), check that filesystem can decode file handles, but
+> we would like to add more callers that do not require a file handle that
+> can be decoded.
+>=20
+> Introduce a flag to explicitly request a file handle that may not to be
+> decoded later and a wrapper exportfs_encode_fid() that sets this flag
+> and convert show_mark_fhandle() to use the new wrapper.
+>=20
+> This will be used to allow adding fanotify support to filesystems that
+> do not support NFS export.
+>=20
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  Documentation/filesystems/nfs/exporting.rst |  4 ++--
+>  fs/exportfs/expfs.c                         | 18 ++++++++++++++++--
+>  fs/notify/fanotify/fanotify.c               |  4 ++--
+>  fs/notify/fdinfo.c                          |  2 +-
+>  include/linux/exportfs.h                    | 12 +++++++++++-
+>  5 files changed, 32 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/Documentation/filesystems/nfs/exporting.rst b/Documentation/=
+filesystems/nfs/exporting.rst
+> index 0e98edd353b5..3d97b8d8f735 100644
+> --- a/Documentation/filesystems/nfs/exporting.rst
+> +++ b/Documentation/filesystems/nfs/exporting.rst
+> @@ -122,8 +122,8 @@ are exportable by setting the s_export_op field in th=
+e struct
+>  super_block.  This field must point to a "struct export_operations"
+>  struct which has the following members:
+> =20
+> - encode_fh  (optional)
+> -    Takes a dentry and creates a filehandle fragment which can later be =
+used
+> +  encode_fh (optional)
+> +    Takes a dentry and creates a filehandle fragment which may later be =
+used
+>      to find or create a dentry for the same object.  The default
+>      implementation creates a filehandle fragment that encodes a 32bit in=
+ode
+>      and generation number for the inode encoded, and if necessary the
+> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> index bf1b4925fedd..1b35dda5bdda 100644
+> --- a/fs/exportfs/expfs.c
+> +++ b/fs/exportfs/expfs.c
+> @@ -381,11 +381,25 @@ static int export_encode_fh(struct inode *inode, st=
+ruct fid *fid,
+>  	return type;
+>  }
+> =20
+> +/**
+> + * exportfs_encode_inode_fh - encode a file handle from inode
+> + * @inode:   the object to encode
+> + * @fid:     where to store the file handle fragment
+> + * @max_len: maximum length to store there
+> + * @flags:   properties of the requrested file handle
+> + */
+>  int exportfs_encode_inode_fh(struct inode *inode, struct fid *fid,
+> -			     int *max_len, struct inode *parent)
+> +			     int *max_len, struct inode *parent, int flags)
+>  {
+>  	const struct export_operations *nop =3D inode->i_sb->s_export_op;
+> =20
+> +	/*
+> +	 * If a decodeable file handle was requested, we need to make sure that
+> +	 * filesystem can decode file handles.
+> +	 */
+> +	if (nop && !(flags & EXPORT_FH_FID) && !nop->fh_to_dentry)
+> +		return -EOPNOTSUPP;
+> +
 
-BTW, the other reason I chose this requirement is circular -
-this is the same requirement for exporting fids to user with
-AT_HANDLE_FID and the two FAN_REPORT_FID should be
-aligned with users ability to get fid with name_to_handle_at().
+If you're moving this check into this function, then it might be good to
+remove the same check from the callers that are doing this check now.
 
-Another reasonable requirement would have been:
-* !AT_HANDLE_FID requires ->fh_to_dentry (as current code)
-* AT_HANDLE_FID requires either ->fh_to_dentry or encode_fh
+>  	if (nop && nop->encode_fh)
+>  		return nop->encode_fh(inode, fid->raw, max_len, parent);
+> =20
+> @@ -416,7 +430,7 @@ int exportfs_encode_fh(struct dentry *dentry, struct =
+fid *fid, int *max_len,
+>  		parent =3D p->d_inode;
+>  	}
+> =20
+> -	error =3D exportfs_encode_inode_fh(inode, fid, max_len, parent);
+> +	error =3D exportfs_encode_inode_fh(inode, fid, max_len, parent, flags);
+>  	dput(p);
+> =20
+>  	return error;
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.=
+c
+> index 29bdd99b29fa..d1a49f5b6e6d 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -380,7 +380,7 @@ static int fanotify_encode_fh_len(struct inode *inode=
+)
+>  	if (!inode)
+>  		return 0;
+> =20
+> -	exportfs_encode_inode_fh(inode, NULL, &dwords, NULL);
+> +	exportfs_encode_inode_fh(inode, NULL, &dwords, NULL, 0);
+>  	fh_len =3D dwords << 2;
+> =20
+>  	/*
+> @@ -443,7 +443,7 @@ static int fanotify_encode_fh(struct fanotify_fh *fh,=
+ struct inode *inode,
+>  	}
+> =20
+>  	dwords =3D fh_len >> 2;
+> -	type =3D exportfs_encode_inode_fh(inode, buf, &dwords, NULL);
+> +	type =3D exportfs_encode_inode_fh(inode, buf, &dwords, NULL, 0);
+>  	err =3D -EINVAL;
+>  	if (!type || type =3D=3D FILEID_INVALID || fh_len !=3D dwords << 2)
+>  		goto out_err;
+> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+> index 55081ae3a6ec..5c430736ec12 100644
+> --- a/fs/notify/fdinfo.c
+> +++ b/fs/notify/fdinfo.c
+> @@ -50,7 +50,7 @@ static void show_mark_fhandle(struct seq_file *m, struc=
+t inode *inode)
+>  	f.handle.handle_bytes =3D sizeof(f.pad);
+>  	size =3D f.handle.handle_bytes >> 2;
+> =20
+> -	ret =3D exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle=
+, &size, NULL);
+> +	ret =3D exportfs_encode_fid(inode, (struct fid *)f.handle.f_handle, &si=
+ze);
+>  	if ((ret =3D=3D FILEID_INVALID) || (ret < 0)) {
+>  		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
+>  		return;
+> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> index 2b1048238170..635e89e1dae7 100644
+> --- a/include/linux/exportfs.h
+> +++ b/include/linux/exportfs.h
+> @@ -136,6 +136,7 @@ struct fid {
+>  };
+> =20
+>  #define EXPORT_FH_CONNECTABLE	0x1
+> +#define EXPORT_FH_FID		0x2
 
-Thanks,
-Amir.
+Please add comments about what these flags are intended to indicate.
+
+> =20
+>  /**
+>   * struct export_operations - for nfsd to communicate with file systems
+> @@ -226,9 +227,18 @@ struct export_operations {
+>  };
+> =20
+>  extern int exportfs_encode_inode_fh(struct inode *inode, struct fid *fid=
+,
+> -				    int *max_len, struct inode *parent);
+> +				    int *max_len, struct inode *parent,
+> +				    int flags);
+>  extern int exportfs_encode_fh(struct dentry *dentry, struct fid *fid,
+>  			      int *max_len, int flags);
+> +
+> +static inline int exportfs_encode_fid(struct inode *inode, struct fid *f=
+id,
+> +				      int *max_len)
+> +{
+> +	return exportfs_encode_inode_fh(inode, fid, max_len, NULL,
+> +					EXPORT_FH_FID);
+> +}
+> +
+>  extern struct dentry *exportfs_decode_fh_raw(struct vfsmount *mnt,
+>  					     struct fid *fid, int fh_len,
+>  					     int fileid_type,
+
+--=20
+Jeff Layton <jlayton@kernel.org>
