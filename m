@@ -2,48 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A91F96F044C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 12:39:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 315236F047B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 12:49:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243509AbjD0Kjm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 06:39:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36678 "EHLO
+        id S243409AbjD0Kt4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 06:49:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243258AbjD0Kjk (ORCPT
+        with ESMTP id S243583AbjD0Ktz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 06:39:40 -0400
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B591E7B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:39:39 -0700 (PDT)
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-32f240747cdso25566815ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:39:39 -0700 (PDT)
+        Thu, 27 Apr 2023 06:49:55 -0400
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ACDA19AF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:49:53 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-760ebd1bc25so621267339f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:49:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682591978; x=1685183978;
+        d=1e100.net; s=20221208; t=1682592593; x=1685184593;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tW3lXjwwvfoDVqxWAf7Y3WOKVF4KqvvCL69ImettA3o=;
-        b=VMhZZyco7TTybZ+Us75ER5qMTu4KXhLNpwKcBnaBmY/pG+UMOqV81QcOE/hmU/HU9K
-         YZI58OHQyu4nQyEJn+3htJLVYzLeeoS2lQbvybhjWnNp/m5IDwcfsPnZYPzut9xoTUfg
-         Nr16prvcDe5DcgbF5F6JwYANQYHyGQjkNBYHGIY4p49sTbVUmX5F/FDghny46pTqJ5I7
-         7a1n+wLZReSStBQl0DtqaJw+/Wrvo3wPbaClF4cQ3beeQXNZqE5kYRwQE+X6e+WJLDUK
-         HYYa/BjmlhS7K97lyNG4oldSYI5w1gKpGc4DbAT6h92lUHfGVhuGzw/9ZAgPWnQyFyOK
-         UzXw==
-X-Gm-Message-State: AC+VfDz3FMY5RMsovflIC7JJx7xRRpzZhWLt1u3S2QdVZqIbQMhvF1re
-        sPzMr6IEHb/fxBKvNQn9cRaXhgfn4IvcKKYLDkZpKqR0dq2w
-X-Google-Smtp-Source: ACHHUZ7UuotYn7/Qzw/4dXAbuxUIl2RCcVpdBNfl5F7f81acWzI1cipma/pIr/+4zaRJCADT1SoJG+S2vLZkF8iW0eH2CUHi5OEA
+        bh=GiIfLQ6dLtU0hX1A5GYhyA80hhpYSI0OZdPLxA4mnvo=;
+        b=gPggDkkpXlEDkX8hNOl8tyNsK2h56SySeqATr8xTJVStpmwcbBhce7m3z4bd/y7Ccv
+         wjtM105gSP7HpEQnbLJM7hHvuCJoaxZ0fE3gKHJdTqkpLQRtn+ZGguFyfnqZhVeQjYJ5
+         DKIQEti9E0NBm/rIxbeZRppb1ZJDqUu5MaVl41Olf27yBMysKIlcM1kG/vLZypQS95Mm
+         I5PA7I1MSjg6/JflDxAxv3tWBw0oKA93TN1m0JnQzmnw0ETOAlvCWg8CkSa3skWtC0UJ
+         fItyTgbd1bWEZFk16YUZxfghDp/QNZ1im361g0jzfO39Aq4/JBQPxhPqOzz8GuzLOXiM
+         WXUw==
+X-Gm-Message-State: AC+VfDyj/pE+qkLNb9Is2ShETZe3b65dhRE8xBIhxA23p1dZlSCKuITS
+        MIDkabpOgDzXVvQT5DgY9gqFDr8pPInbbfeo4cZ05Hy6/E/SGiY=
+X-Google-Smtp-Source: ACHHUZ4LAhd6QA4pZcumLe181rVz3axBOoF8fs4PeqElz7mCuFNDLCcK7qTBhYew+1ukf+8aMqEkLwiaLHyfBpzrNy6CUmGAg6jv
 MIME-Version: 1.0
-X-Received: by 2002:a92:c90e:0:b0:32f:ea0:785e with SMTP id
- t14-20020a92c90e000000b0032f0ea0785emr1077533ilp.2.1682591978799; Thu, 27 Apr
- 2023 03:39:38 -0700 (PDT)
-Date:   Thu, 27 Apr 2023 03:39:38 -0700
+X-Received: by 2002:a02:b101:0:b0:40f:89f9:3ce7 with SMTP id
+ r1-20020a02b101000000b0040f89f93ce7mr505836jah.3.1682592592853; Thu, 27 Apr
+ 2023 03:49:52 -0700 (PDT)
+Date:   Thu, 27 Apr 2023 03:49:52 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000032c8c505fa4ef9cc@google.com>
-Subject: [syzbot] Monthly nilfs report (Apr 2023)
-From:   syzbot <syzbot+listf919ad9f1f609cd7cf5d@syzkaller.appspotmail.com>
-To:     konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000cc835005fa4f1dd6@google.com>
+Subject: [syzbot] Monthly reiserfs report (Apr 2023)
+From:   syzbot <syzbot+list516ba74fcec3023779ae@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
@@ -55,38 +54,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello nilfs maintainers/developers,
+Hello reiserfs maintainers/developers,
 
-This is a 31-day syzbot report for the nilfs subsystem.
+This is a 31-day syzbot report for the reiserfs subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/nilfs
+https://syzkaller.appspot.com/upstream/s/reiserfs
 
-During the period, 1 new issues were detected and 3 were fixed.
-In total, 17 issues are still open and 24 have been fixed so far.
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 72 issues are still open and 15 have been fixed so far.
 
 Some of the still happening issues:
 
 Ref  Crashes Repro Title
-<1>  1238    Yes   INFO: task hung in lock_mount
-                   https://syzkaller.appspot.com/bug?extid=221d75710bde87fa0e97
-<2>  605     Yes   WARNING in nilfs_btree_assign
-                   https://syzkaller.appspot.com/bug?extid=31837fe952932efc8fb9
-<3>  321     Yes   WARNING in nilfs_sufile_set_segment_usage
-                   https://syzkaller.appspot.com/bug?extid=14e9f834f6ddecece094
-<4>  241     Yes   INFO: task hung in sync_inodes_sb (4)
-                   https://syzkaller.appspot.com/bug?extid=7d50f1e54a12ba3aeae2
-<5>  195     No    INFO: task hung in path_openat (7)
-                   https://syzkaller.appspot.com/bug?extid=950a0cdaa2fdd14f5bdc
-<6>  55      Yes   INFO: task hung in nilfs_detach_log_writer
-                   https://syzkaller.appspot.com/bug?extid=e3973c409251e136fdd0
-<7>  28      Yes   kernel BUG in folio_end_writeback
-                   https://syzkaller.appspot.com/bug?extid=7e5cf1d80677ec185e63
-<8>  21      No    KASAN: slab-out-of-bounds Read in nilfs_iget_test
-                   https://syzkaller.appspot.com/bug?extid=cac676135771fc8f1eb2
-<9>  6       No    BUG: unable to handle kernel NULL pointer dereference in nilfs_segctor_do_construct
-                   https://syzkaller.appspot.com/bug?extid=5afc832d6dbb2fd17538
-<10> 3       No    WARNING in nilfs_btree_propagate
-                   https://syzkaller.appspot.com/bug?extid=527641d191abe35993c1
+<1>  1439    Yes   kernel BUG in do_journal_begin_r
+                   https://syzkaller.appspot.com/bug?extid=2da5e132dd0268a9c0e4
+<2>  1235    No    KASAN: slab-out-of-bounds Read in search_by_key (2)
+                   https://syzkaller.appspot.com/bug?extid=b3b14fb9f8a14c5d0267
+<3>  1191    Yes   kernel BUG at fs/reiserfs/journal.c:LINE!
+                   https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
+<4>  1172    Yes   WARNING in reiserfs_lookup
+                   https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
+<5>  439     Yes   possible deadlock in mnt_want_write_file
+                   https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
+<6>  210     Yes   possible deadlock in reiserfs_ioctl
+                   https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
+<7>  152     Yes   KASAN: out-of-bounds Read in leaf_paste_entries (2)
+                   https://syzkaller.appspot.com/bug?extid=38b79774b6c990637f95
+<8>  124     Yes   WARNING in reiserfs_readdir_inode
+                   https://syzkaller.appspot.com/bug?extid=798ffe5fe3e88235db59
+<9>  96      No    KASAN: slab-out-of-bounds Read in reiserfs_xattr_get
+                   https://syzkaller.appspot.com/bug?extid=72ba979b6681c3369db4
+<10> 88      Yes   WARNING in journal_end
+                   https://syzkaller.appspot.com/bug?extid=d43f346675e449548021
 
 ---
 This report is generated by a bot. It may contain errors.
