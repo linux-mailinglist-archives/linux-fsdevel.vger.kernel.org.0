@@ -2,84 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 479EE6F0259
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 10:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F51D6F0289
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 10:28:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242899AbjD0ILr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 04:11:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37052 "EHLO
+        id S243091AbjD0I1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 04:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242675AbjD0ILq (ORCPT
+        with ESMTP id S229665AbjD0I1m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 04:11:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97FEE30C5;
-        Thu, 27 Apr 2023 01:11:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 27 Apr 2023 04:27:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534C349D5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 01:26:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1682584017;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=l6syDLggRiYjAStI+X0+pQOosy+q7w0nb4goYRoZwCE=;
+        b=FOk/g0ZhAf/spVgB2y/8N0I9bvV1LJvAQLy8Afj8UhcZ6Qlj5L2JrjOUMPmp0gEQneddc/
+        PeCytoZp+rE0rCSVMlxP+rGn4GUP278c/OXWSmDkMps8hM+AXhylvo+rGP5+GwFRlElRNj
+        MMS7ri3lSHriWDEAsuVLoLe0xKh32q8=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-372-dI1KEEV-NJOdULEjrzKuFQ-1; Thu, 27 Apr 2023 04:26:56 -0400
+X-MC-Unique: dI1KEEV-NJOdULEjrzKuFQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 318F463AED;
-        Thu, 27 Apr 2023 08:11:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6819FC433EF;
-        Thu, 27 Apr 2023 08:11:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682583104;
-        bh=pb4bckBSRPc/CTexeqHXV1WvIia8nZi/q4H647lbl4U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V6HHrcDyR2aMi24XI2PD4NDKDxsAuff6P1UFwrUY52obJwMDL8sp1hhUdx4GO/ONL
-         fPObh/pS99RJa0R2yd2kbhBSXirEWwWsEDcudeQudKFlIlWsEvhPQf1WAcgmxN+DUP
-         5Fj5hSNOAbUR/hvtIzd6y1+aJKFP5cE7B0GpKv9WN6bygwq8S+o+Ec9Xj4gfL28J5d
-         kJnihYBBeAoWfZn7ZEEozpxHMbMWHyZ0dP667Jgbm5KpNAxU0VSP9TmO85HSSdcIQ+
-         FYw4dxbTmk8fKieCiIYHGH+Kvzu5jHokZxkBZ0SLZkz20/9DRDRRNS1zHCKcHOMIdo
-         KMu8iqDbJKRvQ==
-Date:   Thu, 27 Apr 2023 10:11:40 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] pidfd updates
-Message-ID: <20230427-abgesackt-gedruckt-aff2d3398369@brauner>
-References: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
- <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
- <20230425060427.GP3390869@ZenIV>
- <20230425-sturheit-jungautor-97d92d7861e2@brauner>
- <20230427010715.GX3390869@ZenIV>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CA5773C10C74;
+        Thu, 27 Apr 2023 08:26:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E1951121314;
+        Thu, 27 Apr 2023 08:26:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     Steve French <sfrench@samba.org>
+cc:     dhowells@redhat.com, fstests@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Weird behaviour with cifs in xfstests shutdown tests
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230427010715.GX3390869@ZenIV>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <971804.1682584013.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 27 Apr 2023 09:26:53 +0100
+Message-ID: <971805.1682584013@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 27, 2023 at 02:07:15AM +0100, Al Viro wrote:
-> On Tue, Apr 25, 2023 at 02:34:15PM +0200, Christian Brauner wrote:
-> 
-> 
-> > struct fd_file {
-> > 	struct file *file;
-> > 	int fd;
-> > 	int __user *fd_user;
-> 
-> Why is it an int?  Because your case has it that way?
-> 
-> We have a bunch of places where we have an ioctl with
-> a field in some structure filled that way; any primitive
-> that combines put_user() with descriptor handling is
-> going to cause trouble as soon as somebody deals with
-> a structure where such member is unsigned long.  Gets
-> especially funny on 64bit big-endian...
-> 
-> And that objection is orthogonal to that 3-member structure -
-> even if you pass int __user * as an explicit argument into
-> your helper, the same trouble will be there.
+I'm seeing some failures running xfstests on cifs when it comes to tests t=
+hat
+do a shutdown of the filesystem, generic/392 for example:
 
-Ignoring for a second that there are other ways to achieve this. This is
-literally the sketch on top of a sketch to encompass an api that _we do
-already have today_...
+generic/392       [failed, exit status 1]- output mismatch (see /root/xfst=
+ests-dev/results//smb3/generic/392.out.bad)
+    --- tests/generic/392.out   2021-05-25 13:27:50.000000000 +0100
+    +++ /root/xfstests-dev/results//smb3/generic/392.out.bad    2023-04-27=
+ 09:07:42.402657080 +0100
+    @@ -1,11 +1,67 @@
+     QA output created by 392
+     =3D=3D=3D=3D i_size 1024 test with fsync =3D=3D=3D=3D
+    +stat: cannot statx '/xfstest.scratch/testfile': Input/output error
+    +Before:  "b: 8194 s: 4195328 a: 2023-04-27 09:07:39.410675400 +0100 m=
+: 2023-04-27 09:07:39.410675400 +0100 c: 2023-04-27 09:07:39.410675400 +01=
+00"
+    +After : =
+
+    +rm: cannot remove '/xfstest.scratch/testfile': Input/output error
+     =3D=3D=3D=3D i_size 4096 test with fsync =3D=3D=3D=3D
+    ...
+    (Run 'diff -u /root/xfstests-dev/tests/generic/392.out /root/xfstests-=
+dev/results//smb3/generic/392.out.bad'  to see the entire diff)
+
+The problem appears to be that the CIFS_MOUNT_SHUTDOWN persists if there's
+another cifs mount from the same server present.  So in generic/392 it doe=
+s:
+
+	before=3D`stat "$stat_opt" $testfile`
+
+	$XFS_IO_PROG -c "$sync_mode" $testfile | _filter_xfs_io
+	_scratch_shutdown | tee -a $seqres.full
+	_scratch_cycle_mount
+
+	after=3D`stat "$stat_opt" $testfile`
+
+which cycles the *scratch* mount, but leaves the test mount still mounted =
+and
+then the 'after' stat fails with EIO.
+
+Testing this by hand:
+
+  mount //192.168.6.1/scratch /xfstest.scratch/ -o user=3Dshares,pass=3D..=
+.;\
+  touch /xfstest.scratch/testfile; \
+  stat /xfstest.scratch/testfile; \
+  ./src/godown /xfstest.scratch/; \
+  umount /xfstest.scratch/; \
+  mount //192.168.6.1/scratch /xfstest.scratch/ -o user=3Dshares,pass=3D..=
+.; \
+  stat /xfstest.scratch/testfile
+
+works, but will fail if I do:
+
+  mount //192.168.6.1/test /xfstest.test/ -o user=3Dshares,pass=3D...;
+
+first.
+
+Interestingly, the two mounts have different device numbers according to s=
+tat,
+so they would appear to have different superblocks.
+
+David
+
