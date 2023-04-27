@@ -2,76 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54E286EFEC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 03:07:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACCD46EFF3B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 04:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242847AbjD0BHY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Apr 2023 21:07:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38714 "EHLO
+        id S242868AbjD0CNC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Apr 2023 22:13:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242796AbjD0BHU (ORCPT
+        with ESMTP id S242874AbjD0CMw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Apr 2023 21:07:20 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AF3740DA;
-        Wed, 26 Apr 2023 18:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GvxnR8MPCmUoOfdv2T2CD0H/aNBye/VKFi19iEtdpXI=; b=OMroB+M3Nw2KHns0+C/KHJlqBO
-        6rfNKp45iB/7FtK827V+jj0PbfEqMpJfViU6z0mHwPw+K+1lQE+ZlcHVySvn6t5ld9Okw5P2ci6qs
-        gXkCnXFvKZDxWWtrkpjnRVINUIYHRSThyyjipxg6BZw/M+E2MehZKiOiJ7zc1aHc48nKKNqKK9Zzf
-        wFtDX2lArpaEpGMObR4eMb3TFzHz8NTZWs4S9LKSAFkMSw9TNfKya26eJzgS2kQ6r7Cq6ij8YsymG
-        tv4hFukD1F8xeIu75jg1dCn3PWyhLGSMnoMmEsplUczRSX/2BKPzloVdBobfxODMvfwEhgIDlgeoi
-        T4wEfIAw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1prq6N-00D0lJ-32;
-        Thu, 27 Apr 2023 01:07:16 +0000
-Date:   Thu, 27 Apr 2023 02:07:15 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] pidfd updates
-Message-ID: <20230427010715.GX3390869@ZenIV>
-References: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
- <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
- <20230425060427.GP3390869@ZenIV>
- <20230425-sturheit-jungautor-97d92d7861e2@brauner>
+        Wed, 26 Apr 2023 22:12:52 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D18EB44A5;
+        Wed, 26 Apr 2023 19:11:57 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4eed764a10cso8479270e87.0;
+        Wed, 26 Apr 2023 19:11:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682561516; x=1685153516;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Hum//s9wp/d/vZQZ3TUzzOd236Vap8ceFppkKBF0ayg=;
+        b=sRqdWmXFEZvDdeSxhb3VktQ169LxDzStTGy68Tl/0cqDrzgrP+y9bWUOASeUcFqbDZ
+         zmUTOYvyxB1oUxg5lVjRnneIQfmspJt+Z4ponTA723KhiyOTe1BXb8Et1xeDrqRhCyx0
+         D3gLhLsehqvgYtVNgHZhSt5e2ZDoO2Oy6wNb6KIkCH5CmqW0pf7gFvGfxHWN/8oJJR2t
+         e7UG6BbVPPZs/AAq1AgbsneGlZ9+q6sXe4TlSoAdZGqyJMAJOo384BrfGAuiatNMbbmA
+         SQ1CrCMzUGHQ+tLUsqWtIJghUOnXaYuOJDW3X108PoBZiI/u4ZYvrovIa0VH/D7G+hNd
+         tSjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682561516; x=1685153516;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hum//s9wp/d/vZQZ3TUzzOd236Vap8ceFppkKBF0ayg=;
+        b=hI4OaomhMQhSMwd0t7lGZPAGMTZRmI8BCDmjFsF0FQa8P9xB6ejjbls0CRnQCsVsKQ
+         8REpvFtDtQGcl9XXXt/HuIoE8DDu5k0M8FPUEEXaYWiRfQAmKNyfAFlJeTYthb6B+RfU
+         J7CMLz5IQanWXIUbvh/q91KiRobnS3LTVdeq7u/EHZjanlKz6wrFIuh3FsWjH1pPpQOM
+         XOOqC324qbVygMel0xGlpvgV06Tfi9eWtkF+YTGNneD7/ZUcqxXEHqU5JHZhwN35DBIt
+         or3y8v7njAFZN692w91NkjW7SV0u7BjbPx2rw3e5Bug0RO8ZixlR2T++mOSNteQR4bN3
+         FE+w==
+X-Gm-Message-State: AC+VfDyGz02ZrS9pUuvX0Yii0rLhqqKox4Sw1gUY0556vBxj7jKjYlXa
+        t71Ss6a07DtnNz5yLgvLeLyTj4BNSmSIb01CfGA=
+X-Google-Smtp-Source: ACHHUZ47hunrOnjeuejaLhVQHd5z4Pf39tsm1w5eLJAk0uh2vZdVAqIbPHxk7NXjYwVMdaYYQCUZy6szRmWt5tsvbzE=
+X-Received: by 2002:a19:f617:0:b0:4de:6973:82aa with SMTP id
+ x23-20020a19f617000000b004de697382aamr13074lfe.68.1682561515881; Wed, 26 Apr
+ 2023 19:11:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230425-sturheit-jungautor-97d92d7861e2@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 26 Apr 2023 21:11:44 -0500
+Message-ID: <CAH2r5mtsYPer65Fjm7BFhsjKt-g4XMCtk8siYAZxXg4qpyRKXw@mail.gmail.com>
+Subject: [GIT PULL] ksmbd server fixes
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 25, 2023 at 02:34:15PM +0200, Christian Brauner wrote:
+Please pull the following changes since commit
+457391b0380335d5e9a5babdec90ac53928b23b4:
 
+  Linux 6.3 (2023-04-23 12:02:52 -0700)
 
-> struct fd_file {
-> 	struct file *file;
-> 	int fd;
-> 	int __user *fd_user;
+are available in the Git repository at:
 
-Why is it an int?  Because your case has it that way?
+  git://git.samba.org/ksmbd.git tags/6.4-rc-ksmbd-server-fixes
 
-We have a bunch of places where we have an ioctl with
-a field in some structure filled that way; any primitive
-that combines put_user() with descriptor handling is
-going to cause trouble as soon as somebody deals with
-a structure where such member is unsigned long.  Gets
-especially funny on 64bit big-endian...
+for you to fetch changes up to 74d7970febf7e9005375aeda0df821d2edffc9f7:
 
-And that objection is orthogonal to that 3-member structure -
-even if you pass int __user * as an explicit argument into
-your helper, the same trouble will be there.
+  ksmbd: fix racy issue from using ->d_parent and ->d_name (2023-04-24
+00:09:20 -0500)
 
-Al, still going through that zoo...
+----------------------------------------------------------------
+- three SMB3.1.1 negotiate context fixes and cleanup
+- new lock_rename_child VFS helper
+- ksmbd fix to avoid unlink race and to use the new VFS helper to
+avoid rename race
+----------------------------------------------------------------
+Al Viro (1):
+      fs: introduce lock_rename_child() helper
+
+David Disseldorp (3):
+      ksmbd: set NegotiateContextCount once instead of every inc
+      ksmbd: avoid duplicate negotiate ctx offset increments
+      ksmbd: remove unused compression negotiate ctx packing
+
+Namjae Jeon (2):
+      ksmbd: remove internal.h include
+      ksmbd: fix racy issue from using ->d_parent and ->d_name
+
+Steve French (1):
+      Merge tag 'pull-lock_rename_child' of
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs into
+ksmbd-for-next
+
+ fs/internal.h         |   2 -
+ fs/ksmbd/smb2pdu.c    | 203 ++++++++++++--------------------------------------
+ fs/ksmbd/vfs.c        | 437
+++++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------------------------
+ fs/ksmbd/vfs.h        |  19 ++---
+ fs/ksmbd/vfs_cache.c  |   5 +-
+ fs/namei.c            | 125 +++++++++++++++++++++++++------
+ include/linux/namei.h |   9 +++
+ 7 files changed, 357 insertions(+), 443 deletions(-)
+
+-- 
+Thanks,
+
+Steve
