@@ -2,100 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D07A6F0BA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 19:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37BB86F0BCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 20:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243767AbjD0R4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 13:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34372 "EHLO
+        id S243858AbjD0STA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 14:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244437AbjD0R4G (ORCPT
+        with ESMTP id S231577AbjD0SS7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 13:56:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34EFD4C01;
-        Thu, 27 Apr 2023 10:55:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 40A3F63ECA;
-        Thu, 27 Apr 2023 17:55:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 982F7C433EF;
-        Thu, 27 Apr 2023 17:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682618143;
-        bh=LW8ReAjWtMU1W40NwcyyuwROoutMsV4ckgReAUyGQ5M=;
-        h=Date:From:To:Cc:Subject:From;
-        b=KMKH2ZahPaIV78ix0gW5xNQ8yWowZ9o8+pDZil7yEgIlKcpXF9U6ObbOyOUtgMf+J
-         1JwmUgkL/Q15D3MzrIy/dVApc1bngZpw2WjQpf1oFNM8Zc4w+jLDFFh0Ea6LRiMcQM
-         FU8XJPqBLay2FvKc0m026fpfbFzv0F+yrf7teL863u4Rk/mjnxCNgDCNkpzSl2uTDn
-         stdx6nBLzLpSLW89Q5+jZLMumiXnvz1MObtNSFx5CaTsOEbJOTG4QGtsr9lEAkVCsJ
-         n+DkhVtJLZEEGAB/mXaq13Wobtax4hIV8+V4IlQ7mCkPZomzYcrPdMJnCE0uneAkB8
-         F7IHWFB4Vhr8g==
-Date:   Thu, 27 Apr 2023 10:55:43 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     hch@lst.de, torvalds@linux-foundation.org
-Cc:     david@fromorbit.com, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, ritesh.list@gmail.com,
-        disgoel@linux.ibm.com, jack@suse.cz
-Subject: [GIT PULL] iomap: new code for 6.4
-Message-ID: <20230427175543.GA59213@frogsfrogsfrogs>
+        Thu, 27 Apr 2023 14:18:59 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47AEB30F6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 11:18:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=p0yGWz9XwtwnxlJG+iIcspl1aNoYxGcRh5vzES5LHZY=; b=I/d2T4mz16OKCkRiCshveMRc+r
+        RakrVkSzrY5zF5e2RzRmLFeKQK6lNyE8bDs+ZPNpn/knhXJZaIzyBPoV0AHdo6WI0wNxMAmnkkvPJ
+        Om/EN7mIREoRZwboEEdTXkFw7H6VGaYra9QMxS4lhCdQHwYDwewCLgr6U2ej3pnyq0I1RH1UQ91xy
+        E4HiibXtyVmKGNyZnqm75wY1hN6Jrq2Uw9ptdPL3CF3hweYHr/mbz4APvzzrPVCU57hKjvb0cZ6P9
+        enbPEqMrOQAGCVL4gcBXBEXZJqMpFCi9KZ8WDIBgbb9ajAZdlRYB0axlekJXw2XG313wKlVZg1dGH
+        fPKayhPg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ps6Cf-003oVu-6T; Thu, 27 Apr 2023 18:18:49 +0000
+Date:   Thu, 27 Apr 2023 19:18:49 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kernel.org Bugbot" <bugbot@kernel.org>
+Cc:     bugs@lists.linux.dev, brauner@kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: large pause when opening file descriptor which is power of 2
+Message-ID: <ZEq8iSl985aqEy4+@casper.infradead.org>
+References: <ZEl34WthS8UNJnNd@casper.infradead.org>
+ <20230426-b217366c6-4f880518247a@bugzilla.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230426-b217366c6-4f880518247a@bugzilla.kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Wed, Apr 26, 2023 at 11:42:01PM +0000, Kernel.org Bugbot wrote:
+> Yes. I'm using using sockets for IPC. Specifically haproxy with its
+> SPOE protocol. Low latency is important. Normally a call (including
+> optional connect if a new connection is needed) will easily complete
+> in under 100us. So I want to set a timeout of 1ms to avoid blocking
+> traffic. However because this issue effectively randomly pops up,
+> that 1ms timeout is too low, and the issue can actually impact
+> multiple in-flight requests because haproxy tries to share that one
+> IPC connection for them all. But if I raise the timeout (and I'd have
+> to raise it to something like 100ms, as I've seen delays up to 47ms in
+> just light testing), then I run the risk of significantly impacting
+> traffic if there is a legitimate slowdown. While a low timeout and
+> the occasional failure is probably the better of the two options,
+> I'd prefer not to fail at all.
 
-Please pull this branch with changes for iomap for 6.4-rc1.  The only
-changes for this cycle are the addition of tracepoints to the iomap
-directio code so that Ritesh (who is working on porting ext2 to iomap)
-can observe the io flows more easily.  Dave will be sending you a pull
-request for xfs code for this cycle.
-
-As usual, I did a test-merge with the main upstream branch as of a few
-minutes ago, and didn't see any conflicts.  Please let me know if you
-encounter any problems.
-
---D
-
-The following changes since commit 09a9639e56c01c7a00d6c0ca63f4c7c41abe075d:
-
-  Linux 6.3-rc6 (2023-04-09 11:15:57 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-6.4-merge-1
-
-for you to fetch changes up to 3fd41721cd5c30af37c860e6201c98db0a568fd2:
-
-  iomap: Add DIO tracepoints (2023-04-21 08:54:47 -0700)
-
-----------------------------------------------------------------
-New code for 6.4:
-
- * Remove an unused symbol.
- * Add tracepoints for the directio code.
-
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-
-----------------------------------------------------------------
-Ritesh Harjani (IBM) (3):
-      fs.h: Add TRACE_IOCB_STRINGS for use in trace points
-      iomap: Remove IOMAP_DIO_NOSYNC unused dio flag
-      iomap: Add DIO tracepoints
-
- fs/iomap/direct-io.c  |  9 ++++--
- fs/iomap/trace.c      |  1 +
- fs/iomap/trace.h      | 78 +++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h    | 14 +++++++++
- include/linux/iomap.h |  6 ----
- 5 files changed, 100 insertions(+), 8 deletions(-)
+A quick workaround for this might be to use dup2() to open a newfd
+that is larger than you think your process will ever use.  ulimit -n
+is 1024 (on my system), so choosing 1023 might be a good idea.
+It'll waste a little memory, but ensures the fd array will never need to
+expand.
