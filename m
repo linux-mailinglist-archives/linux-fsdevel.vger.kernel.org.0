@@ -2,107 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 798D26F0826
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 17:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4806E6F086A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 17:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244052AbjD0PWK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 11:22:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50054 "EHLO
+        id S243991AbjD0PcA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 11:32:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243741AbjD0PWI (ORCPT
+        with ESMTP id S243708AbjD0Pb6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 11:22:08 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83BD84EF4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 08:21:54 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-959a3e2dd27so1007572066b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 08:21:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1682608912; x=1685200912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qwewOZK7JBxGabnXdHhR1rBDIN8G0aMcI1DZlXZ+li0=;
-        b=g2A6QM0BDUoUqE0IeGiIMb66AZcDuDEzbh8NnUSrTk9Y4Jqq2BZ4N2rqALEc9qWHkc
-         UO4dT6+2nZLmN0BpS5GOp0cQf1DwuKFIyY8US3/JZG5N3sIcGzXqXDTAO9GYPqZP2n0e
-         QHKKaRSyBJoMUgMstqZnPa5+w6oUXLX4GsjpU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682608912; x=1685200912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qwewOZK7JBxGabnXdHhR1rBDIN8G0aMcI1DZlXZ+li0=;
-        b=EnsPpao8JU3Lax1aDfbfSnNQ4NzaIynLYzYjF4SrWr8vKKZe1PHw4ppp+tjk2npCKl
-         QJhN/BsZcFlT7JpvcveaR7VYHWffUmHjOV5ytuhviyPc9jIOIV2TRe9LeBgcSMMiJBxs
-         MEKyRMLj5aEE0Og54rsN5dsLobzCX9Uv9Q1nEZQycTB5IEM7qO+Nj1UCEaZXOIr/xIfC
-         uUz03V7jhmFeij3kUcjQ0X03kyVLn5OI98wUTDtpHcy8Tnn/w4ZIG3VCzgfNIEOEtWhB
-         eTYVLJff3e9b0OgGRSLM6sUhElDszTy6ZF1llxYqpaVdLAtwwGIBoslYJ+mms3k+lNys
-         AcPQ==
-X-Gm-Message-State: AC+VfDyX5J8phMdvgyEuFfKyjsD2P37Gz7YlGgdaQO7Wfcwk2Oa3MIhP
-        6E//ZaWcOV5O+hJb8igmS0p6eJ3IV0jwNK7jt/qRSw==
-X-Google-Smtp-Source: ACHHUZ54LMtm7ppDPuQtQPaYpU0nkHSVwqaf1hq0SibDoNASRD+c0VOapJ4OFXvZZ2JUyxckx1/C1Q==
-X-Received: by 2002:a17:906:dac8:b0:94f:123:fb83 with SMTP id xi8-20020a170906dac800b0094f0123fb83mr1864241ejb.73.1682608912558;
-        Thu, 27 Apr 2023 08:21:52 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id z15-20020aa7cf8f000000b005067d6b06efsm7954480edx.17.2023.04.27.08.21.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Apr 2023 08:21:52 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-506b2a08877so14982523a12.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 08:21:51 -0700 (PDT)
-X-Received: by 2002:aa7:d407:0:b0:506:c2b2:72fc with SMTP id
- z7-20020aa7d407000000b00506c2b272fcmr1606707edq.7.1682608911570; Thu, 27 Apr
- 2023 08:21:51 -0700 (PDT)
+        Thu, 27 Apr 2023 11:31:58 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3099A44A5;
+        Thu, 27 Apr 2023 08:31:56 -0700 (PDT)
+Received: from [192.168.10.39] (unknown [39.37.187.173])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 10DEC66032AF;
+        Thu, 27 Apr 2023 16:31:47 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1682609514;
+        bh=KoGFNi6Ux69ouLblk9JDPK/y+Lhn3C/lc39znm8aab4=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=H6cVRF1lvmwSwmk7zlIoJjYhmY1v+mYohV9Y854Q2jQL8NUb27m1q8K5acNVKPuy4
+         AIvo0YPKiRlsvUyT5EX9vnmX5HAdWy2iGnrm4amCKF+PWTc+YIfEq3WZhYw6hg2+gW
+         klotyXDcR49jf1bJVqBx1ECqHh8I8ElPdxvGwIbD2axDO2LK+wXhNwcborn0xz8McU
+         8UQp2eEqEt6jF2O4uApndjUxmOVJxm14mclEibkBXr+sRbOTFL8FNEzDapWVxI2Jo0
+         JgIMUL8n5/nxS8S5rvohe5JZhU7smKMef4TXFs/lAGtsmb2cLjRlIndsEkf+ZX4ZhZ
+         JyFsBgW2EOs0w==
+Message-ID: <abb83033-c4b7-e417-5398-a32428d25956@collabora.com>
+Date:   Thu, 27 Apr 2023 20:31:43 +0500
 MIME-Version: 1.0
-References: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
- <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
- <20230425060427.GP3390869@ZenIV> <20230425-sturheit-jungautor-97d92d7861e2@brauner>
- <20230427010715.GX3390869@ZenIV> <20230427073908.GA3390869@ZenIV>
-In-Reply-To: <20230427073908.GA3390869@ZenIV>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 27 Apr 2023 08:21:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whHbXMF142EGVu4=8bi8=JdexBL--d5FK4gx=x+SUgyaQ@mail.gmail.com>
-Message-ID: <CAHk-=whHbXMF142EGVu4=8bi8=JdexBL--d5FK4gx=x+SUgyaQ@mail.gmail.com>
-Subject: Re: [GIT PULL] pidfd updates
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        Nadav Amit <namit@vmware.com>
+Subject: Re: [PATCH RESEND v15 2/5] fs/proc/task_mmu: Implement IOCTL to get
+ and optionally clear info about PTEs
+Content-Language: en-US
+To:     Peter Xu <peterx@redhat.com>
+References: <20230420060156.895881-1-usama.anjum@collabora.com>
+ <20230420060156.895881-3-usama.anjum@collabora.com>
+ <fd9ddd43-6737-88bd-4054-3d5b94534271@collabora.com> <ZEkxh6dbnAOuYuJj@x1n>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <ZEkxh6dbnAOuYuJj@x1n>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 27, 2023 at 12:39=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
->
-> int delayed_dup(struct file *file, unsigned flags)
+Hi Peter,
 
-Ok, this is strange. Let me think about it.
+Thank you for your reply.
 
-But even without thinking about it, this part I hate:
+On 4/26/23 7:13 PM, Peter Xu wrote:
+> Hi, Muhammad,
+> 
+> On Wed, Apr 26, 2023 at 12:06:23PM +0500, Muhammad Usama Anjum wrote:
+>> On 4/20/23 11:01 AM, Muhammad Usama Anjum wrote:
+>>> +/* Supported flags */
+>>> +#define PM_SCAN_OP_GET	(1 << 0)
+>>> +#define PM_SCAN_OP_WP	(1 << 1)
+>> We have only these flag options available in PAGEMAP_SCAN IOCTL.
+>> PM_SCAN_OP_GET must always be specified for this IOCTL. PM_SCAN_OP_WP can
+>> be specified as need. But PM_SCAN_OP_WP cannot be specified without
+>> PM_SCAN_OP_GET. (This was removed after you had asked me to not duplicate
+>> functionality which can be achieved by UFFDIO_WRITEPROTECT.)
+>>
+>> 1) PM_SCAN_OP_GET | PM_SCAN_OP_WP
+>> vs
+>> 2) UFFDIO_WRITEPROTECT
+>>
+>> After removing the usage of uffd_wp_range() from PAGEMAP_SCAN IOCTL, we are
+>> getting really good performance which is comparable just like we are
+>> depending on SOFT_DIRTY flags in the PTE. But when we want to perform wp,
+>> PM_SCAN_OP_GET | PM_SCAN_OP_WP is more desirable than UFFDIO_WRITEPROTECT
+>> performance and behavior wise.
+>>
+>> I've got the results from someone else that UFFDIO_WRITEPROTECT block
+>> pagefaults somehow which PAGEMAP_IOCTL doesn't. I still need to verify this
+>> as I don't have tests comparing them one-to-one.
+>>
+>> What are your thoughts about it? Have you thought about making
+>> UFFDIO_WRITEPROTECT perform better?
+>>
+>> I'm sorry to mention the word "performance" here. Actually we want better
+>> performance to emulate Windows syscall. That is why we are adding this
+>> functionality. So either we need to see what can be improved in
+>> UFFDIO_WRITEPROTECT or can I please add only PM_SCAN_OP_WP back in
+>> pagemap_ioctl?
+> 
+> I'm fine if you want to add it back if it works for you.  Though before
+> that, could you remind me why there can be a difference on performance?
+The only difference can be that UFFDIO_WRITEPROTECT acquires read mm lock
+once for entire duration. But for PAGEMAP_SCAN IOCTL, we acquire and
+release for each PMD to keep intermediate buffer short.
 
->         struct delayed_dup *p =3D kmalloc(sizeof(struct delayed_dup), GFP=
-_KERNEL);
+This must be hard to convince you. So I'll write some test to see what is
+the exact difference and show you the numbers.
 
-Sure, if this is only used in unimportant code where performance
-doesn't matter, doing a kmalloc is fine.
+> 
+> Thanks,
+> 
 
-But if that is the only use, I think this is too subtle an interface.
-
-Could we instead limit it to "we only have one pending delayed dup",
-and make this all be more like the restart-block thing, and be part of
-struct task_struct?
-
-I think it's conceptually quite similar to restart_block, ie a "some
-pending system call state" thing.
-
-(Obviously it's entirely different in details).
-
-          Linus
+-- 
+BR,
+Muhammad Usama Anjum
