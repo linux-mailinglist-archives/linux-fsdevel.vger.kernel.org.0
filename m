@@ -2,64 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ACCD46EFF3B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 04:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 929E16EFF4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 04:21:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242868AbjD0CNC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Apr 2023 22:13:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
+        id S242876AbjD0CVj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Apr 2023 22:21:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242874AbjD0CMw (ORCPT
+        with ESMTP id S242557AbjD0CVi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Apr 2023 22:12:52 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D18EB44A5;
-        Wed, 26 Apr 2023 19:11:57 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4eed764a10cso8479270e87.0;
-        Wed, 26 Apr 2023 19:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682561516; x=1685153516;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Hum//s9wp/d/vZQZ3TUzzOd236Vap8ceFppkKBF0ayg=;
-        b=sRqdWmXFEZvDdeSxhb3VktQ169LxDzStTGy68Tl/0cqDrzgrP+y9bWUOASeUcFqbDZ
-         zmUTOYvyxB1oUxg5lVjRnneIQfmspJt+Z4ponTA723KhiyOTe1BXb8Et1xeDrqRhCyx0
-         D3gLhLsehqvgYtVNgHZhSt5e2ZDoO2Oy6wNb6KIkCH5CmqW0pf7gFvGfxHWN/8oJJR2t
-         e7UG6BbVPPZs/AAq1AgbsneGlZ9+q6sXe4TlSoAdZGqyJMAJOo384BrfGAuiatNMbbmA
-         SQ1CrCMzUGHQ+tLUsqWtIJghUOnXaYuOJDW3X108PoBZiI/u4ZYvrovIa0VH/D7G+hNd
-         tSjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682561516; x=1685153516;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hum//s9wp/d/vZQZ3TUzzOd236Vap8ceFppkKBF0ayg=;
-        b=hI4OaomhMQhSMwd0t7lGZPAGMTZRmI8BCDmjFsF0FQa8P9xB6ejjbls0CRnQCsVsKQ
-         8REpvFtDtQGcl9XXXt/HuIoE8DDu5k0M8FPUEEXaYWiRfQAmKNyfAFlJeTYthb6B+RfU
-         J7CMLz5IQanWXIUbvh/q91KiRobnS3LTVdeq7u/EHZjanlKz6wrFIuh3FsWjH1pPpQOM
-         XOOqC324qbVygMel0xGlpvgV06Tfi9eWtkF+YTGNneD7/ZUcqxXEHqU5JHZhwN35DBIt
-         or3y8v7njAFZN692w91NkjW7SV0u7BjbPx2rw3e5Bug0RO8ZixlR2T++mOSNteQR4bN3
-         FE+w==
-X-Gm-Message-State: AC+VfDyGz02ZrS9pUuvX0Yii0rLhqqKox4Sw1gUY0556vBxj7jKjYlXa
-        t71Ss6a07DtnNz5yLgvLeLyTj4BNSmSIb01CfGA=
-X-Google-Smtp-Source: ACHHUZ47hunrOnjeuejaLhVQHd5z4Pf39tsm1w5eLJAk0uh2vZdVAqIbPHxk7NXjYwVMdaYYQCUZy6szRmWt5tsvbzE=
-X-Received: by 2002:a19:f617:0:b0:4de:6973:82aa with SMTP id
- x23-20020a19f617000000b004de697382aamr13074lfe.68.1682561515881; Wed, 26 Apr
- 2023 19:11:55 -0700 (PDT)
+        Wed, 26 Apr 2023 22:21:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BF03A87
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Apr 2023 19:20:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1682562042;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=GCPcaFdJ9SvoZ93cdbG0lFwwi9Thl1ubA5vESylOj3g=;
+        b=AZ0A3vaUSsHAiYC/hS1pNni0HQ/kEMZXoWg027oDxcjYye4xBa5FdzBNDL1YW2V2C9MEyU
+        S5gI86ZsuGKAXgIoDv/kpI7sDYmK189q1hGrVGEucMPxwVE+PZZ81DCdsaN6vaUyMH+CZ+
+        qQ8yOu2fr3Uqaf9WLnAsMZiAm93Raw4=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-605-aRep1uVGPCu1PlVejb15nA-1; Wed, 26 Apr 2023 22:20:40 -0400
+X-MC-Unique: aRep1uVGPCu1PlVejb15nA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5842B29A9D28;
+        Thu, 27 Apr 2023 02:20:40 +0000 (UTC)
+Received: from ovpn-8-24.pek2.redhat.com (ovpn-8-24.pek2.redhat.com [10.72.8.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C35681121314;
+        Thu, 27 Apr 2023 02:20:33 +0000 (UTC)
+Date:   Thu, 27 Apr 2023 10:20:28 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org
+Cc:     ming.lei@redhat.com, Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Zhang Yi <yi.zhang@redhat.com>
+Subject: [ext4 io hang] buffered write io hang in balance_dirty_pages
+Message-ID: <ZEnb7KuOWmu5P+V9@ovpn-8-24.pek2.redhat.com>
 MIME-Version: 1.0
-From:   Steve French <smfrench@gmail.com>
-Date:   Wed, 26 Apr 2023 21:11:44 -0500
-Message-ID: <CAH2r5mtsYPer65Fjm7BFhsjKt-g4XMCtk8siYAZxXg4qpyRKXw@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Namjae Jeon <linkinjeon@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,54 +62,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Please pull the following changes since commit
-457391b0380335d5e9a5babdec90ac53928b23b4:
+Hello Guys,
 
-  Linux 6.3 (2023-04-23 12:02:52 -0700)
+I got one report in which buffered write IO hangs in balance_dirty_pages,
+after one nvme block device is unplugged physically, then umount can't
+succeed.
 
-are available in the Git repository at:
+Turns out it is one long-term issue, and it can be triggered at least
+since v5.14 until the latest v6.3.
 
-  git://git.samba.org/ksmbd.git tags/6.4-rc-ksmbd-server-fixes
+And the issue can be reproduced reliably in KVM guest:
 
-for you to fetch changes up to 74d7970febf7e9005375aeda0df821d2edffc9f7:
+1) run the following script inside guest:
 
-  ksmbd: fix racy issue from using ->d_parent and ->d_name (2023-04-24
-00:09:20 -0500)
+mkfs.ext4 -F /dev/nvme0n1
+mount /dev/nvme0n1 /mnt
+dd if=/dev/zero of=/mnt/z.img&
+sleep 10
+echo 1 > /sys/block/nvme0n1/device/device/remove
 
-----------------------------------------------------------------
-- three SMB3.1.1 negotiate context fixes and cleanup
-- new lock_rename_child VFS helper
-- ksmbd fix to avoid unlink race and to use the new VFS helper to
-avoid rename race
-----------------------------------------------------------------
-Al Viro (1):
-      fs: introduce lock_rename_child() helper
+2) dd hang is observed and /dev/nvme0n1 is gone actually
 
-David Disseldorp (3):
-      ksmbd: set NegotiateContextCount once instead of every inc
-      ksmbd: avoid duplicate negotiate ctx offset increments
-      ksmbd: remove unused compression negotiate ctx packing
+[root@ktest-09 ~]# ps -ax | grep dd
+   1348 pts/0    D      0:33 dd if=/dev/zero of=/mnt/z.img
+   1365 pts/0    S+     0:00 grep --color=auto dd
 
-Namjae Jeon (2):
-      ksmbd: remove internal.h include
-      ksmbd: fix racy issue from using ->d_parent and ->d_name
+[root@ktest-09 ~]# cat /proc/1348/stack
+[<0>] balance_dirty_pages+0x649/0x2500
+[<0>] balance_dirty_pages_ratelimited_flags+0x4c6/0x5d0
+[<0>] generic_perform_write+0x310/0x4c0
+[<0>] ext4_buffered_write_iter+0x130/0x2c0 [ext4]
+[<0>] new_sync_write+0x28e/0x4a0
+[<0>] vfs_write+0x62a/0x920
+[<0>] ksys_write+0xf9/0x1d0
+[<0>] do_syscall_64+0x59/0x90
+[<0>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-Steve French (1):
-      Merge tag 'pull-lock_rename_child' of
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs into
-ksmbd-for-next
 
- fs/internal.h         |   2 -
- fs/ksmbd/smb2pdu.c    | 203 ++++++++++++--------------------------------------
- fs/ksmbd/vfs.c        | 437
-++++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------------------------
- fs/ksmbd/vfs.h        |  19 ++---
- fs/ksmbd/vfs_cache.c  |   5 +-
- fs/namei.c            | 125 +++++++++++++++++++++++++------
- include/linux/namei.h |   9 +++
- 7 files changed, 357 insertions(+), 443 deletions(-)
+[root@ktest-09 ~]# lsblk | grep nvme
+[root@ktest-09 ~]#
 
--- 
+BTW, my VM sets 2G ram, and the nvme disk size is 40GB.
+
+So far only observed on ext4 FS, not see it on XFS. I guess it isn't
+related with disk type, and not tried such test on other type of disks yet,
+but will do.
+
+Seems like dirty pages aren't cleaned after ext4 bio is failed in this
+situation?
+
+
 Thanks,
+Ming
 
-Steve
