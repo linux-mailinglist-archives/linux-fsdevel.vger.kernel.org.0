@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 144AF6F03FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 12:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7B136F0442
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 12:37:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243499AbjD0KNv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 06:13:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50944 "EHLO
+        id S243575AbjD0KhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 06:37:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243449AbjD0KNt (ORCPT
+        with ESMTP id S242817AbjD0KhB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 06:13:49 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869E24ED0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:13:48 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-32ad0d95fdbso61342815ab.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:13:48 -0700 (PDT)
+        Thu, 27 Apr 2023 06:37:01 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 727494EDC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:36:58 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-32a86b6ab85so58951275ab.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:36:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682590428; x=1685182428;
+        d=1e100.net; s=20221208; t=1682591817; x=1685183817;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TIASw9GSY2Of7dAiuTmEdRXJa7/4ehqzLcUcuOFsD+o=;
-        b=lSzLL+GPgbnB+LSWKUksa9kwy08BZkdpiA4zcVbsDUVxeP51IQB2TqvyTncs+4JHKM
-         lCNqckzhvoKhlzuKPJrjQmhUq+NHowBW6zryNPQBzmIcMm6JXB8U8l0HOpIYocnYnBHB
-         nHeTpEjZ+ezBBYSIa50swoy9m/V/iZp4i+RGmMyaCWn2loezmkE3c0JBNxsZC6cKX2+F
-         XHqW/p0ykOiStIFppqECkpkV9rIcES2k1iNERrv4aEWm0OBPalOB+0wOxdX5zjrSOIRi
-         XvN5t0YeLMSiZrGkh3ae0BXKmaLm529iileP14QeuAvihZUo7zSF+qvYsl62thLEK2WI
-         zLrg==
-X-Gm-Message-State: AC+VfDxSZKUBiERrUVt8asD0TdMTzGHsxptNQUYv5DnnZuYIlGLsZK5M
-        LxQC8gLv+v2UzhSte5873CY4FqrrHUzfMsq7SDZcV87NojDM
-X-Google-Smtp-Source: ACHHUZ56RFAeCriTAKSh7aExBM934wOdE8tuJWkeAOdKypKxxbZl9RB+VyRBFcAIdtQYvhEFy3z9AqWvUyNz6CChrajmXxlHxL+W
+        bh=RnKvJRGuTj19/qeFfCObJ1mKSwbZtyjNqHI5nsZidCI=;
+        b=Gi4jpqkZKCrswh9WMvPoiD8cfvUf3RwM5qBs83u4PIOkVyWKyBj7gHUzGL6fAxfS8z
+         HM8isa1ePEqzFUo/fw5g84tO3/WggKyDJjUGqdsSOfeuOlJFCcTTe10uz9qY9uZN15js
+         7kdS1OVuYl1z8o7W8/ctnTESOEFNLwJr4kUMTvLRa0L2qJ4EZWRjYQQpDodtq/j9PVf8
+         7nDKeK4h4bE43XPhHY2wKIYnFf71mBOyZWPMyvLpU1/H0dmwXb/V9mKT6sd9KXbgyC1A
+         X4zSA5jB1ZwpOUtH2+BjABdtqyrPm4hNpQmU8RfWFFCXMXLY5cUQwiiclrwXJfTSqnWN
+         W84w==
+X-Gm-Message-State: AC+VfDxlOxdJsyMdq4HZfV2p6E8sTO3yUpMVO8KfsVvSK41xnuYzxB69
+        ALwUpZl44oF3rEVFAPrC5lYt2H3lefXTyC5ob6v1Q6bW1bEi
+X-Google-Smtp-Source: ACHHUZ6SwoeQT/XLmwNrFtRoV/YVN3rzG4Cw/+wZIzYcGxb+fsStPZfJnPBiq+lGfhD2+Ahvdv2JuYGT2BXSEPie7N6Dbd3PO8G1
 MIME-Version: 1.0
-X-Received: by 2002:a02:6345:0:b0:40f:83e7:a965 with SMTP id
- j66-20020a026345000000b0040f83e7a965mr484047jac.4.1682590427848; Thu, 27 Apr
- 2023 03:13:47 -0700 (PDT)
-Date:   Thu, 27 Apr 2023 03:13:47 -0700
+X-Received: by 2002:a05:6e02:548:b0:32a:9e86:242f with SMTP id
+ i8-20020a056e02054800b0032a9e86242fmr996137ils.6.1682591817801; Thu, 27 Apr
+ 2023 03:36:57 -0700 (PDT)
+Date:   Thu, 27 Apr 2023 03:36:57 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c122fa05fa4e9c55@google.com>
-Subject: [syzbot] Monthly btrfs report (Apr 2023)
-From:   syzbot <syzbot+list8d625089c709215832c5@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000009a2a1b05fa4eef8f@google.com>
+Subject: [syzbot] Monthly jfs report (Apr 2023)
+From:   syzbot <syzbot+listfa7b6ec26861d7b6f193@syzkaller.appspotmail.com>
+To:     jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,38 +55,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello btrfs maintainers/developers,
+Hello jfs maintainers/developers,
 
-This is a 31-day syzbot report for the btrfs subsystem.
+This is a 31-day syzbot report for the jfs subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/btrfs
+https://syzkaller.appspot.com/upstream/s/jfs
 
-During the period, 8 new issues were detected and 0 were fixed.
-In total, 52 issues are still open and 25 have been fixed so far.
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 63 issues are still open and 9 have been fixed so far.
 
 Some of the still happening issues:
 
 Ref  Crashes Repro Title
-<1>  2242    Yes   kernel BUG in close_ctree
-                   https://syzkaller.appspot.com/bug?extid=2665d678fffcc4608e18
-<2>  486     Yes   VFS: Busy inodes after unmount (use-after-free)
-                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
-<3>  365     Yes   WARNING in btrfs_block_rsv_release
-                   https://syzkaller.appspot.com/bug?extid=dde7e853812ed57835ea
-<4>  319     Yes   WARNING in __kernel_write_iter
-                   https://syzkaller.appspot.com/bug?extid=12e098239d20385264d3
-<5>  274     Yes   WARNING in btrfs_space_info_update_bytes_may_use
-                   https://syzkaller.appspot.com/bug?extid=8edfa01e46fd9fe3fbfb
-<6>  190     Yes   WARNING in btrfs_remove_chunk
-                   https://syzkaller.appspot.com/bug?extid=e8582cc16881ec70a430
-<7>  181     Yes   WARNING in btrfs_chunk_alloc
-                   https://syzkaller.appspot.com/bug?extid=e8e56d5d31d38b5b47e7
-<8>  180     Yes   possible deadlock in btrfs_search_slot
-                   https://syzkaller.appspot.com/bug?extid=c06034aecf9f5eab1ac1
-<9>  162     Yes   WARNING in lookup_inline_extent_backref
-                   https://syzkaller.appspot.com/bug?extid=d6f9ff86c1d804ba2bc6
-<10> 138     Yes   kernel BUG in assertfail (2)
-                   https://syzkaller.appspot.com/bug?extid=c4614eae20a166c25bf0
+<1>  4032    Yes   UBSAN: shift-out-of-bounds in extAlloc
+                   https://syzkaller.appspot.com/bug?extid=5f088f29593e6b4c8db8
+<2>  940     Yes   KASAN: slab-out-of-bounds Read in hex_dump_to_buffer
+                   https://syzkaller.appspot.com/bug?extid=489783e0c22fbb27d8e9
+<3>  871     Yes   UBSAN: array-index-out-of-bounds in xtInsert
+                   https://syzkaller.appspot.com/bug?extid=55a7541cfd25df68109e
+<4>  594     Yes   general protection fault in lmLogSync (2)
+                   https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
+<5>  455     Yes   kernel BUG in jfs_evict_inode
+                   https://syzkaller.appspot.com/bug?extid=9c0c58ea2e4887ab502e
+<6>  306     Yes   general protection fault in write_special_inodes
+                   https://syzkaller.appspot.com/bug?extid=c732e285f8fc38d15916
+<7>  229     Yes   kernel BUG in txUnlock
+                   https://syzkaller.appspot.com/bug?extid=a63afa301d1258d09267
+<8>  221     Yes   UBSAN: array-index-out-of-bounds in dbAllocBits
+                   https://syzkaller.appspot.com/bug?extid=ae2f5a27a07ae44b0f17
+<9>  202     Yes   UBSAN: array-index-out-of-bounds in txCommit
+                   https://syzkaller.appspot.com/bug?extid=0558d19c373e44da3c18
+<10> 136     Yes   general protection fault in jfs_flush_journal
+                   https://syzkaller.appspot.com/bug?extid=194bfe3476f96782c0b6
 
 ---
 This report is generated by a bot. It may contain errors.
