@@ -2,162 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C336F09EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 18:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC716F09FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 18:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244205AbjD0Qeh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 12:34:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32974 "EHLO
+        id S244248AbjD0Qgh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 12:36:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243284AbjD0Qeg (ORCPT
+        with ESMTP id S243284AbjD0Qgf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 12:34:36 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F88146BE;
-        Thu, 27 Apr 2023 09:34:34 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 27 Apr 2023 12:36:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 221244C03;
+        Thu, 27 Apr 2023 09:36:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A4D3821C0C;
-        Thu, 27 Apr 2023 16:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1682613272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Wmth4alCSERvbUxN8itO1bBdqjrbePJcRRiASYpuefg=;
-        b=N+H7rNV5TR1kkSt+Pt2fFhVCX5g3/KGe34ja7R5U5iZSXsi/t+V4vNzMunQJp9Jiy0KtKU
-        h5RWrdUPLix8+f0jcFBkbGiO5FRDWBZSENTWfEegyGiUIqLDHFAf1ozSIwLnQc86CdWIgw
-        +CtWEyqkxZTxNKHaL4R4I03cpr1VwV4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1682613272;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Wmth4alCSERvbUxN8itO1bBdqjrbePJcRRiASYpuefg=;
-        b=c97+0kpHj1vO46+6chAlHjo2vadkqmUhok9b1kF4ptixPiwvttSpSE+9rry89dlXtv2l91
-        jZulZ1xAsP8EPyCw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8D6E613910;
-        Thu, 27 Apr 2023 16:34:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id sll1IhikSmQMXQAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 27 Apr 2023 16:34:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id E1A57A0729; Thu, 27 Apr 2023 18:34:31 +0200 (CEST)
-Date:   Thu, 27 Apr 2023 18:34:31 +0200
-From:   Jan Kara <jack@suse.cz>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A162B60C11;
+        Thu, 27 Apr 2023 16:36:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52C78C433EF;
+        Thu, 27 Apr 2023 16:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682613393;
+        bh=NK9ShzjIwWFJFvl4S+tgaxQhD/QPtKHv3Jo+GnfBb+U=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=UjDFpJZoT48prhNYEjw5dEOwMhWF7S44SIUuN4OmLrtQ0Wp4Xo+JCZwTZjytFWli+
+         xOcJUGLITZqsrbXF1DpI+rhTDKL7eZke9o6MfdOlrkI1bG+T1fW/gU9/iK/wFK5500
+         mhMimazuDWJ4QFkg7Ru7ITEtrOtL9lQ5Zj6koermvzLx4TgaAbbNuXcShfskfaIq05
+         k8NmaaZs/G7mHADteyOhZNvfVBx9x0Glp4/Ti3KZBBazdjyrvoWO1b7B4uxKe8Hoe5
+         18AcDllwtR61V01N1DaY1eCWcN8SzAZ4vt2Q8hkwHe0nxlu4KryIPcgr8qPAe5iIo2
+         63vdsPh6KReaw==
+Message-ID: <df31058f662fe9ec9ad1cc59838f288b8aff10f0.camel@kernel.org>
+Subject: Re: [RFC][PATCH 0/4] Prepare for supporting more filesystems with
+ fanotify
+From:   Jeff Layton <jlayton@kernel.org>
 To:     Amir Goldstein <amir73il@gmail.com>
 Cc:     Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, Chuck Lever <cel@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: [RFC][PATCH 4/4] fanotify: support reporting non-decodeable file
- handles
-Message-ID: <20230427163431.ndw3r5spjs2nbber@quack3>
+        linux-api@vger.kernel.org
+Date:   Thu, 27 Apr 2023 12:36:30 -0400
+In-Reply-To: <CAOQ4uxjR0cdjW1Pr1DWAn+dkTd3SbV7CUqeGRh2FeDVBGAdtRw@mail.gmail.com>
 References: <20230425130105.2606684-1-amir73il@gmail.com>
- <20230425130105.2606684-5-amir73il@gmail.com>
- <20230427114849.cv3kzxk7rvxpohjc@quack3>
- <CAOQ4uxhBaZ4_c5Ko6jZ6UzqtB-4spE_xiRC=TNMO8+bwnYMSnA@mail.gmail.com>
+         <dafbff6baa201b8af862ee3faf7fe948d2a026ab.camel@kernel.org>
+         <CAOQ4uxjR0cdjW1Pr1DWAn+dkTd3SbV7CUqeGRh2FeDVBGAdtRw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhBaZ4_c5Ko6jZ6UzqtB-4spE_xiRC=TNMO8+bwnYMSnA@mail.gmail.com>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 27-04-23 15:28:23, Amir Goldstein wrote:
-> s_export_op
-> 
-> On Thu, Apr 27, 2023 at 2:48 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Tue 25-04-23 16:01:05, Amir Goldstein wrote:
-> > > fanotify users do not always need to decode the file handles reported
-> > > with FAN_REPORT_FID.
-> > >
-> > > Relax the restriction that filesystem needs to support NFS export and
-> > > allow reporting file handles from filesystems that only support ecoding
-> > > unique file handles.
-> > >
-> > > For such filesystems, users will have to use the AT_HANDLE_FID of
-> > > name_to_handle_at(2) if they want to compare the object in path to the
-> > > object fid reported in an event.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ...
-> > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > > index 8f430bfad487..a5af84cbb30d 100644
-> > > --- a/fs/notify/fanotify/fanotify_user.c
-> > > +++ b/fs/notify/fanotify/fanotify_user.c
-> > > @@ -1586,11 +1586,9 @@ static int fanotify_test_fid(struct dentry *dentry)
-> > >        * We need to make sure that the file system supports at least
-> > >        * encoding a file handle so user can use name_to_handle_at() to
-> > >        * compare fid returned with event to the file handle of watched
-> > > -      * objects. However, name_to_handle_at() requires that the
-> > > -      * filesystem also supports decoding file handles.
-> > > +      * objects, but it does not need to support decoding file handles.
-> > >        */
-> > > -     if (!dentry->d_sb->s_export_op ||
-> > > -         !dentry->d_sb->s_export_op->fh_to_dentry)
-> > > +     if (!dentry->d_sb->s_export_op)
-> > >               return -EOPNOTSUPP;
-> >
-> > So AFAICS the only thing you require is that s_export_op is set to
-> > *something* as exportfs_encode_inode_fh() can deal with NULL ->encode_fh
-> > just fine without any filesystem cooperation. What is the reasoning behind
-> > the dentry->d_sb->s_export_op check? Is there an implicit expectation that
-> > if s_export_op is set to something, the filesystem has sensible
-> > i_generation? Or is it just a caution that you don't want the functionality
-> > to be enabled for unexpected filesystems?
-> 
-> A little bit of both.
-> Essentially, I do not want to use the generic encoding unless the filesystem
-> opted-in to say "This is how objects should be identified".
-> 
-> The current fs that have s_export_op && !s_export_op->encode_fh
-> practically make that statement because they support NFS export
-> (i.e. they implement fh_to_dentry()).
+On Thu, 2023-04-27 at 18:52 +0300, Amir Goldstein wrote:
+> On Thu, Apr 27, 2023 at 6:13=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
+wrote:
+> >=20
+> > On Tue, 2023-04-25 at 16:01 +0300, Amir Goldstein wrote:
+> > > Jan,
+> > >=20
+> > > Following up on the FAN_REPORT_ANY_FID proposal [1], here is a shot a=
+t an
+> > > alternative proposal to seamlessly support more filesystems.
+> > >=20
+> > > While fanotify relaxes the requirements for filesystems to support
+> > > reporting fid to require only the ->encode_fh() operation, there are
+> > > currently no new filesystems that meet the relaxed requirements.
+> > >=20
+> > > I will shortly post patches that allow overlayfs to meet the new
+> > > requirements with default overlay configurations.
+> > >=20
+> > > The overlay and vfs/fanotify patch sets are completely independent.
+> > > The are both available on my github branch [2] and there is a simple
+> > > LTP test variant that tests reporting fid from overlayfs [3], which
+> > > also demonstrates the minor UAPI change of name_to_handle_at(2) for
+> > > requesting a non-decodeable file handle by userspace.
+> > >=20
+> > > Thanks,
+> > > Amir.
+> > >=20
+> > > [1] https://lore.kernel.org/linux-fsdevel/20230417162721.ouzs33oh6mb7=
+vtft@quack3/
+> > > [2] https://github.com/amir73il/linux/commits/exportfs_encode_fid
+> > > [3] https://github.com/amir73il/ltp/commits/exportfs_encode_fid
+> > >=20
+> > > Amir Goldstein (4):
+> > >   exportfs: change connectable argument to bit flags
+> > >   exportfs: add explicit flag to request non-decodeable file handles
+> > >   exportfs: allow exporting non-decodeable file handles to userspace
+> > >   fanotify: support reporting non-decodeable file handles
+> > >=20
+> > >  Documentation/filesystems/nfs/exporting.rst |  4 +--
+> > >  fs/exportfs/expfs.c                         | 29 ++++++++++++++++++-=
+--
+> > >  fs/fhandle.c                                | 20 ++++++++------
+> > >  fs/nfsd/nfsfh.c                             |  5 ++--
+> > >  fs/notify/fanotify/fanotify.c               |  4 +--
+> > >  fs/notify/fanotify/fanotify_user.c          |  6 ++---
+> > >  fs/notify/fdinfo.c                          |  2 +-
+> > >  include/linux/exportfs.h                    | 18 ++++++++++---
+> > >  include/uapi/linux/fcntl.h                  |  5 ++++
+> > >  9 files changed, 67 insertions(+), 26 deletions(-)
+> > >=20
+> >=20
+> > This set looks fairly benign to me, so ACK on the general concept.
+>=20
+> Thanks!
+>=20
+> >=20
+> > I am starting to dislike how the AT_* flags are turning into a bunch of
+> > flags that only have meanings on certain syscalls. I don't see a cleane=
+r
+> > way to handle it though.
+>=20
+> Yeh, it's not great.
+>=20
+> There is also a way to extend the existing API with:
+>=20
+> Perhstruct file_handle {
+>         unsigned int handle_bytes:8;
+>         unsigned int handle_flags:24;
+>         int handle_type;
+>         unsigned char f_handle[];
+> };
+>=20
+> AFAICT, this is guaranteed to be backward compat
+> with old kernels and old applications.
+>=20
 
-Makes sense.
+That could work. It would probably look cleaner as a union though.
+Something like this maybe?
 
-> I don't like the implicit fallback to generic encoding, especially when
-> introducing this new functionality of encode_fid().
-> 
-> Before posting this patch set I had two earlier revisions.
-> One that changed the encode_fh() to mandatory and converted
-> all the INO32_GEN fs to explicitly set
-> s_export_op.encode_fh = generic_encode_ino32_fh,
-> And one that marked all the INO32_GEN fs with
-> s_export_op.flags = EXPORT_OP_ENCODE_INO32_GEN
-> in both cases there was no blind fallback to INO32_GEN.
-> 
-> But in the end, these added noise without actual value so
-> I dropped them, because the d_sb->s_export_op check is anyway
-> a pretty strong indication for opt-in to export fids.
-> 
-> CC exportfs maintainers in case they have an opinion one
-> way or the other.
+union {
+	unsigned int legacy_handle_bytes;
+	struct {
+		u8	handle_bytes;
+		u8	__reserved;
+		u16	handle_flags;
+	};
+}
 
-Yeah, I agree with your judgement. I just wanted to make sure I understand
-everything properly.
+__reserved must be zeroed (for now). You could consider using it for
+some other purpose later.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+It's a little ugly as an API but it would be backward compatible, given
+that we never use the high bits today anyway.
+
+Callers might need to deal with an -EINVAL when they try to pass non-
+zero handle_flags to existing kernels, since you'd trip the
+MAX_HANDLE_SZ check that's there today.
+
+> It also may not be a bad idea that the handle_flags could
+> be used to request specific fh properties (FID) and can also
+> describe the properties of the returned fh (i.e. non-decodeable)
+> that could also be respected by open_by_handle_at().
+>=20
+> For backward compact, kernel will only set handle_flags in
+> response if new flags were set in the request.
+>=20
+> Do you consider this extension better than AT_HANDLE_FID
+> or worse? At least it is an API change that is contained within the
+> exportfs subsystem, without polluting the AT_ flags global namespace.
+>=20
+
+Personally, yes. I think adding a struct file_handle_v2 would be cleaner
+and allows for expanding the API later through new flags.
+--=20
+Jeff Layton <jlayton@kernel.org>
