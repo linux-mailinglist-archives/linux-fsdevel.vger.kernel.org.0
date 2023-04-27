@@ -2,100 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8EC6F06A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 15:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9F686F0754
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 16:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243507AbjD0NcC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 09:32:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44592 "EHLO
+        id S243824AbjD0O0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 10:26:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230332AbjD0NcB (ORCPT
+        with ESMTP id S244055AbjD0O0e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 09:32:01 -0400
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEFAAE48
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 06:32:00 -0700 (PDT)
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-32f23e2018fso31685095ab.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 06:32:00 -0700 (PDT)
+        Thu, 27 Apr 2023 10:26:34 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089B444BA
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 07:26:30 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-63b4a64c72bso6635349b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 07:26:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682605590; x=1685197590;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
+        b=A5lwNTG69yFzidvl/3XrDDQYHx4VblJWuc968Cm16a7zfcw5sZJkx/IenPGHx4Ru5V
+         FD8FN7iwRPlABkyI4umTiFBT/RcVE+2+JnXwn11LiS6E/SEkx0sb/dPOA4T0f8ZAv6em
+         KSUwA0DaqCDHjOCE5EFQke3p1Wvw1cCDtepNTwI7HF/dToLnCKi3zSEl9sB5HVKs8sBN
+         pJhRBoYNFhkEvfrHRaqE2fyzYfgqKJX6VfLJWkF0lrdgcn51Bn9M+s4TDCS0Rg+xMYex
+         uu6QZuVlLxqZLw8oWHSSm/+5TOmVtjkSrx9BvlVHju8eKb4esqTxu7eQiLY3vQ+TGPpH
+         H9uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682602320; x=1685194320;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cYNDkNlssYeEvJ/nZkTIpRa6vWKXHqLzLEeL2il8mag=;
-        b=QLsiAGFvNcxI5aIwmiwvkp8WQ/v8KTfH620JhiALOgUSmjmUSdMFwp8Y+Vi3KREeX/
-         4a6uXzFuukMttM0fW9D9jCLo4UTU/Y+6VVrTBs4TUd/L7J2pZajOFh2cs/DGOXsXwTEU
-         as84bMikVerM94UUamApCL/7LV64WjoCNmG/llsf3yHWoSQqCLf8hP4lnp+rYtgchik3
-         UqWyik9IcM9s90R3+4NVJsoU5ocCGP4FoGP99Kypny9V6qmpQhTuetoocxsMUNf9H+xa
-         6FB5cP1TIgcuAG5eimAQIvap0VeDgFmeRcvwdOQvI2XSKjE77dl4pv0aUw5kNtgsNBUL
-         7ueg==
-X-Gm-Message-State: AC+VfDyP4GZAVXv8+uzsnAhCl2TtKr1p/ydlGz11F9I47WZ4RVZrV7Kq
-        /19XPl2nkx3g7MHwMWLASHQ8z8y8RiWDEfArjM3GjdN0yM/EsF0=
-X-Google-Smtp-Source: ACHHUZ7esXps7Py0UcgkwpWuy4MH3u19lAcFOhGa6rQvnORb9swol5LQffTpND8nK5FaUh+nOm5EFIrTlwnAkTkAWBLPAcI6432w
+        d=1e100.net; s=20221208; t=1682605590; x=1685197590;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
+        b=HlfsIfOMuMwYgq8zhnaWyHCJutrl8S2A09YGWg9DBbkDLeWekjRCj9TKxM48Lc6H1P
+         kK0XCBNNbfW2ign/sJprA8hIhrLvOowJ9dj0oaPPMhDKAaXtkmssrPCrfelqwQvfA7e4
+         jh5cN1rq3gw3U5KoIyBa5DnIbCyZm7ZWysTm0J7yDTA6+WoG2rnJEksqJzm5J8ybusLv
+         jEmqy9aSJ56arStVIjw/ZIDU8EGPgFY3mLso6a2Y/SFlerV8KcWguBevkIFB/pNI8Drt
+         Zwccf8YblTpYPZ4+8MrJX+XQzDkGxuc4ZvnIfSXe2WhRVZpKTGL4nL9DTYrd8A3HdpVe
+         4w3g==
+X-Gm-Message-State: AC+VfDx6bMyzHfCv4eenEOs7H4VSSOOUxYqpZ9XziwuPwbpo4tFCtyyL
+        4XC5v2C4AdTyBBTbTalys0I12Yp8OgF+4Xu20Zc=
+X-Google-Smtp-Source: ACHHUZ42P1fbTQRh9tnYZ0ZL3cpnhYbKLObGZXRp6ZlQkJZofiC6CnqxLHlc1i0ROXHKdbXQe/llqsGwWJWVfUkiCNs=
+X-Received: by 2002:a17:90a:94c6:b0:247:471:143b with SMTP id
+ j6-20020a17090a94c600b002470471143bmr2190753pjw.26.1682605590257; Thu, 27 Apr
+ 2023 07:26:30 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a92:da42:0:b0:326:534c:9d47 with SMTP id
- p2-20020a92da42000000b00326534c9d47mr1386776ilq.0.1682602320160; Thu, 27 Apr
- 2023 06:32:00 -0700 (PDT)
-Date:   Thu, 27 Apr 2023 06:32:00 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000097715305fa51613f@google.com>
-Subject: [syzbot] Monthly hfs report (Apr 2023)
-From:   syzbot <syzbot+list9a789e30a426b947eb30@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+Received: by 2002:a05:6a10:2d10:b0:473:2c3b:1f92 with HTTP; Thu, 27 Apr 2023
+ 07:26:29 -0700 (PDT)
+Reply-To: dravasmith27@gmail.com
+From:   Dr Ava Smith <avasmt002@gmail.com>
+Date:   Thu, 27 Apr 2023 07:26:29 -0700
+Message-ID: <CAGJq2vv6ia9f6JmN7e6n+9HZ=U2jj+feppo3W9ikhJUv3Jp-Jw@mail.gmail.com>
+Subject: GREETINGS FROM DR AVA SMITH
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: Yes, score=5.5 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,SUBJ_ALL_CAPS,
+        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:42f listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4435]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [avasmt002[at]gmail.com]
+        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [dravasmith27[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [avasmt002[at]gmail.com]
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello hfs maintainers/developers,
-
-This is a 31-day syzbot report for the hfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/hfs
-
-During the period, 6 new issues were detected and 2 were fixed.
-In total, 44 issues are still open and 12 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  2412    Yes   possible deadlock in hfsplus_file_extend
-                   https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
-<2>  2196    Yes   possible deadlock in hfsplus_get_block
-                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
-<3>  2098    Yes   possible deadlock in hfsplus_file_truncate
-                   https://syzkaller.appspot.com/bug?extid=6030b3b1b9bf70e538c4
-<4>  1084    Yes   KMSAN: uninit-value in hfs_revalidate_dentry
-                   https://syzkaller.appspot.com/bug?extid=3ae6be33a50b5aae4dab
-<5>  511     Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
-                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
-<6>  408     Yes   kernel BUG in __hfsplus_setxattr
-                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-<7>  401     Yes   kernel BUG in hfs_write_inode
-                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-<8>  222     Yes   WARNING in hfs_bnode_create
-                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
-<9>  205     Yes   general protection fault in hfs_find_init
-                   https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
-<10> 146     Yes   possible deadlock in hfsplus_find_init
-                   https://syzkaller.appspot.com/bug?extid=f8ce6c197125ab9d72ce
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+-- 
+Hello Dear,
+how are you today?hope you are fine
+My name is Dr Ava Smith ,Am an English and French nationalities.
+I will give you pictures and more details about me as soon as i hear from you
+Thanks
+Ava
