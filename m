@@ -2,100 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 315236F047B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 12:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F006F04DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Apr 2023 13:19:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243409AbjD0Kt4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 06:49:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43378 "EHLO
+        id S242972AbjD0LTw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 07:19:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243583AbjD0Ktz (ORCPT
+        with ESMTP id S243459AbjD0LTr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 06:49:55 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ACDA19AF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:49:53 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-760ebd1bc25so621267339f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 03:49:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682592593; x=1685184593;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GiIfLQ6dLtU0hX1A5GYhyA80hhpYSI0OZdPLxA4mnvo=;
-        b=gPggDkkpXlEDkX8hNOl8tyNsK2h56SySeqATr8xTJVStpmwcbBhce7m3z4bd/y7Ccv
-         wjtM105gSP7HpEQnbLJM7hHvuCJoaxZ0fE3gKHJdTqkpLQRtn+ZGguFyfnqZhVeQjYJ5
-         DKIQEti9E0NBm/rIxbeZRppb1ZJDqUu5MaVl41Olf27yBMysKIlcM1kG/vLZypQS95Mm
-         I5PA7I1MSjg6/JflDxAxv3tWBw0oKA93TN1m0JnQzmnw0ETOAlvCWg8CkSa3skWtC0UJ
-         fItyTgbd1bWEZFk16YUZxfghDp/QNZ1im361g0jzfO39Aq4/JBQPxhPqOzz8GuzLOXiM
-         WXUw==
-X-Gm-Message-State: AC+VfDyj/pE+qkLNb9Is2ShETZe3b65dhRE8xBIhxA23p1dZlSCKuITS
-        MIDkabpOgDzXVvQT5DgY9gqFDr8pPInbbfeo4cZ05Hy6/E/SGiY=
-X-Google-Smtp-Source: ACHHUZ4LAhd6QA4pZcumLe181rVz3axBOoF8fs4PeqElz7mCuFNDLCcK7qTBhYew+1ukf+8aMqEkLwiaLHyfBpzrNy6CUmGAg6jv
+        Thu, 27 Apr 2023 07:19:47 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A31C4C0B;
+        Thu, 27 Apr 2023 04:19:41 -0700 (PDT)
+Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Q6Y8z5xJ0zLnnY;
+        Thu, 27 Apr 2023 19:16:51 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Thu, 27 Apr 2023 19:19:35 +0800
+Message-ID: <663b10eb-4b61-c445-c07c-90c99f629c74@huawei.com>
+Date:   Thu, 27 Apr 2023 19:19:35 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a02:b101:0:b0:40f:89f9:3ce7 with SMTP id
- r1-20020a02b101000000b0040f89f93ce7mr505836jah.3.1682592592853; Thu, 27 Apr
- 2023 03:49:52 -0700 (PDT)
-Date:   Thu, 27 Apr 2023 03:49:52 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cc835005fa4f1dd6@google.com>
-Subject: [syzbot] Monthly reiserfs report (Apr 2023)
-From:   syzbot <syzbot+list516ba74fcec3023779ae@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [ext4 io hang] buffered write io hang in balance_dirty_pages
+Content-Language: en-US
+To:     Ming Lei <ming.lei@redhat.com>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>, <linux-ext4@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        <linux-block@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Zhang Yi <yi.zhang@redhat.com>,
+        yangerkun <yangerkun@huawei.com>,
+        Baokun Li <libaokun1@huawei.com>
+References: <ZEnb7KuOWmu5P+V9@ovpn-8-24.pek2.redhat.com>
+ <ZEny7Izr8iOc/23B@casper.infradead.org>
+ <ZEn/KB0fZj8S1NTK@ovpn-8-24.pek2.redhat.com>
+ <dbb8d8a7-3a80-34cc-5033-18d25e545ed1@huawei.com>
+ <ZEpH+GEj33aUGoAD@ovpn-8-26.pek2.redhat.com>
+From:   Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <ZEpH+GEj33aUGoAD@ovpn-8-26.pek2.redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.174]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello reiserfs maintainers/developers,
+On 2023/4/27 18:01, Ming Lei wrote:
+> On Thu, Apr 27, 2023 at 02:36:51PM +0800, Baokun Li wrote:
+>> On 2023/4/27 12:50, Ming Lei wrote:
+>>> Hello Matthew,
+>>>
+>>> On Thu, Apr 27, 2023 at 04:58:36AM +0100, Matthew Wilcox wrote:
+>>>> On Thu, Apr 27, 2023 at 10:20:28AM +0800, Ming Lei wrote:
+>>>>> Hello Guys,
+>>>>>
+>>>>> I got one report in which buffered write IO hangs in balance_dirty_pages,
+>>>>> after one nvme block device is unplugged physically, then umount can't
+>>>>> succeed.
+>>>> That's a feature, not a bug ... the dd should continue indefinitely?
+>>> Can you explain what the feature is? And not see such 'issue' or 'feature'
+>>> on xfs.
+>>>
+>>> The device has been gone, so IMO it is reasonable to see FS buffered write IO
+>>> failed. Actually dmesg has shown that 'EXT4-fs (nvme0n1): Remounting
+>>> filesystem read-only'. Seems these things may confuse user.
+>>
+>> The reason for this difference is that ext4 and xfs handle errors
+>> differently.
+>>
+>> ext4 remounts the filesystem as read-only or even just continues, vfs_write
+>> does not check for these.
+> vfs_write may not find anything wrong, but ext4 remount could see that
+> disk is gone, which might happen during or after remount, however.
+>
+>> xfs shuts down the filesystem, so it returns a failure at
+>> xfs_file_write_iter when it finds an error.
+>>
+>>
+>> ``` ext4
+>> ksys_write
+>>   vfs_write
+>>    ext4_file_write_iter
+>>     ext4_buffered_write_iter
+>>      ext4_write_checks
+>>       file_modified
+>>        file_modified_flags
+>>         __file_update_time
+>>          inode_update_time
+>>           generic_update_time
+>>            __mark_inode_dirty
+>>             ext4_dirty_inode ---> 2. void func, No propagating errors out
+>>              __ext4_journal_start_sb
+>>               ext4_journal_check_start ---> 1. Error found, remount-ro
+>>      generic_perform_write ---> 3. No error sensed, continue
+>>       balance_dirty_pages_ratelimited
+>>        balance_dirty_pages_ratelimited_flags
+>>         balance_dirty_pages
+>>          // 4. Sleeping waiting for dirty pages to be freed
+>>          __set_current_state(TASK_KILLABLE)
+>>          io_schedule_timeout(pause);
+>> ```
+>>
+>> ``` xfs
+>> ksys_write
+>>   vfs_write
+>>    xfs_file_write_iter
+>>     if (xfs_is_shutdown(ip->i_mount))
+>>       return -EIO;    ---> dd fail
+>> ```
+> Thanks for the info which is really helpful for me to understand the
+> problem.
+>
+>>>> balance_dirty_pages() is sleeping in KILLABLE state, so kill -9 of
+>>>> the dd process should succeed.
+>>> Yeah, dd can be killed, however it may be any application(s), :-)
+>>>
+>>> Fortunately it won't cause trouble during reboot/power off, given
+>>> userspace will be killed at that time.
+>>>
+>>>
+>>>
+>>> Thanks,
+>>> Ming
+>>>
+>> Don't worry about that, we always set the current thread to TASK_KILLABLE
+>>
+>> while waiting in balance_dirty_pages().
+> I have another concern, if 'dd' isn't killed, dirty pages won't be cleaned, and
+> these (big amount)memory becomes not usable, and typical scenario could be USB HDD
+> unplugged.
+>
+>
+> thanks,
+> Ming
+Yes, it is unreasonable to continue writing data with the previously 
+opened fd after
+the file system becomes read-only, resulting in dirty page accumulation.
 
-This is a 31-day syzbot report for the reiserfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/reiserfs
+I provided a patch in another reply.
+Could you help test if it can solve your problem?
+If it can indeed solve your problem, I will officially send it to the 
+email list.
 
-During the period, 3 new issues were detected and 0 were fixed.
-In total, 72 issues are still open and 15 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  1439    Yes   kernel BUG in do_journal_begin_r
-                   https://syzkaller.appspot.com/bug?extid=2da5e132dd0268a9c0e4
-<2>  1235    No    KASAN: slab-out-of-bounds Read in search_by_key (2)
-                   https://syzkaller.appspot.com/bug?extid=b3b14fb9f8a14c5d0267
-<3>  1191    Yes   kernel BUG at fs/reiserfs/journal.c:LINE!
-                   https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
-<4>  1172    Yes   WARNING in reiserfs_lookup
-                   https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
-<5>  439     Yes   possible deadlock in mnt_want_write_file
-                   https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
-<6>  210     Yes   possible deadlock in reiserfs_ioctl
-                   https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
-<7>  152     Yes   KASAN: out-of-bounds Read in leaf_paste_entries (2)
-                   https://syzkaller.appspot.com/bug?extid=38b79774b6c990637f95
-<8>  124     Yes   WARNING in reiserfs_readdir_inode
-                   https://syzkaller.appspot.com/bug?extid=798ffe5fe3e88235db59
-<9>  96      No    KASAN: slab-out-of-bounds Read in reiserfs_xattr_get
-                   https://syzkaller.appspot.com/bug?extid=72ba979b6681c3369db4
-<10> 88      Yes   WARNING in journal_end
-                   https://syzkaller.appspot.com/bug?extid=d43f346675e449548021
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+-- 
+With Best Regards,
+Baokun Li
+.
