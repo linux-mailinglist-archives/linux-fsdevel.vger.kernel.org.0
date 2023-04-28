@@ -2,229 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 153D76F10B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 05:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B1BD6F10E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 05:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345297AbjD1DMt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Apr 2023 23:12:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48588 "EHLO
+        id S1344947AbjD1Drd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Apr 2023 23:47:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345321AbjD1DMN (ORCPT
+        with ESMTP id S230002AbjD1Drc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Apr 2023 23:12:13 -0400
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C31A3A86;
-        Thu, 27 Apr 2023 20:12:10 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R371e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=alibuda@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0Vh9lpN8_1682651524;
-Received: from 30.221.146.237(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0Vh9lpN8_1682651524)
-          by smtp.aliyun-inc.com;
-          Fri, 28 Apr 2023 11:12:05 +0800
-Message-ID: <b9a15afe-c65d-5cf3-e6c7-eaec46cc99c1@linux.alibaba.com>
-Date:   Fri, 28 Apr 2023 11:12:03 +0800
+        Thu, 27 Apr 2023 23:47:32 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6418A269D;
+        Thu, 27 Apr 2023 20:47:29 -0700 (PDT)
+Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Q6z3R4R2vzpTMg;
+        Fri, 28 Apr 2023 11:43:31 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Fri, 28 Apr 2023 11:47:26 +0800
+Message-ID: <fb127775-bbe4-eb50-4b9d-45a8e0e26ae7@huawei.com>
+Date:   Fri, 28 Apr 2023 11:47:26 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: [PATCH v3 51/55] smc: Drop smc_sendpage() in favour of
- smc_sendmsg() + MSG_SPLICE_PAGES
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [ext4 io hang] buffered write io hang in balance_dirty_pages
 Content-Language: en-US
-From:   "D. Wythe" <alibuda@linux.alibaba.com>
-To:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Karsten Graul <kgraul@linux.ibm.com>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Jan Karcher <jaka@linux.ibm.com>, linux-s390@vger.kernel.org
-References: <20230331160914.1608208-1-dhowells@redhat.com>
- <20230331160914.1608208-52-dhowells@redhat.com>
- <4253f27c-2c5e-3033-14b3-6e31ee344e8b@linux.alibaba.com>
-In-Reply-To: <4253f27c-2c5e-3033-14b3-6e31ee344e8b@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Ming Lei <ming.lei@redhat.com>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>, <linux-ext4@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        <linux-block@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Zhang Yi <yi.zhang@redhat.com>,
+        yangerkun <yangerkun@huawei.com>,
+        Baokun Li <libaokun1@huawei.com>
+References: <ZEnb7KuOWmu5P+V9@ovpn-8-24.pek2.redhat.com>
+ <ZEny7Izr8iOc/23B@casper.infradead.org>
+ <ZEn/KB0fZj8S1NTK@ovpn-8-24.pek2.redhat.com>
+ <dbb8d8a7-3a80-34cc-5033-18d25e545ed1@huawei.com>
+ <ZEpH+GEj33aUGoAD@ovpn-8-26.pek2.redhat.com>
+ <663b10eb-4b61-c445-c07c-90c99f629c74@huawei.com>
+ <ZEpcCOCNDhdMHQyY@ovpn-8-26.pek2.redhat.com>
+ <ZEskO8md8FjFqQhv@ovpn-8-24.pek2.redhat.com>
+From:   Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <ZEskO8md8FjFqQhv@ovpn-8-24.pek2.redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-11.3 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Originating-IP: [10.174.177.174]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 2023/4/28 9:41, Ming Lei wrote:
+> On Thu, Apr 27, 2023 at 07:27:04PM +0800, Ming Lei wrote:
+>> On Thu, Apr 27, 2023 at 07:19:35PM +0800, Baokun Li wrote:
+>>> On 2023/4/27 18:01, Ming Lei wrote:
+>>>> On Thu, Apr 27, 2023 at 02:36:51PM +0800, Baokun Li wrote:
+>>>>> On 2023/4/27 12:50, Ming Lei wrote:
+>>>>>> Hello Matthew,
+>>>>>>
+>>>>>> On Thu, Apr 27, 2023 at 04:58:36AM +0100, Matthew Wilcox wrote:
+>>>>>>> On Thu, Apr 27, 2023 at 10:20:28AM +0800, Ming Lei wrote:
+>>>>>>>> Hello Guys,
+>>>>>>>>
+>>>>>>>> I got one report in which buffered write IO hangs in balance_dirty_pages,
+>>>>>>>> after one nvme block device is unplugged physically, then umount can't
+>>>>>>>> succeed.
+>>>>>>> That's a feature, not a bug ... the dd should continue indefinitely?
+>>>>>> Can you explain what the feature is? And not see such 'issue' or 'feature'
+>>>>>> on xfs.
+>>>>>>
+>>>>>> The device has been gone, so IMO it is reasonable to see FS buffered write IO
+>>>>>> failed. Actually dmesg has shown that 'EXT4-fs (nvme0n1): Remounting
+>>>>>> filesystem read-only'. Seems these things may confuse user.
+>>>>> The reason for this difference is that ext4 and xfs handle errors
+>>>>> differently.
+>>>>>
+>>>>> ext4 remounts the filesystem as read-only or even just continues, vfs_write
+>>>>> does not check for these.
+>>>> vfs_write may not find anything wrong, but ext4 remount could see that
+>>>> disk is gone, which might happen during or after remount, however.
+>>>>
+>>>>> xfs shuts down the filesystem, so it returns a failure at
+>>>>> xfs_file_write_iter when it finds an error.
+>>>>>
+>>>>>
+>>>>> ``` ext4
+>>>>> ksys_write
+>>>>>    vfs_write
+>>>>>     ext4_file_write_iter
+>>>>>      ext4_buffered_write_iter
+>>>>>       ext4_write_checks
+>>>>>        file_modified
+>>>>>         file_modified_flags
+>>>>>          __file_update_time
+>>>>>           inode_update_time
+>>>>>            generic_update_time
+>>>>>             __mark_inode_dirty
+>>>>>              ext4_dirty_inode ---> 2. void func, No propagating errors out
+>>>>>               __ext4_journal_start_sb
+>>>>>                ext4_journal_check_start ---> 1. Error found, remount-ro
+>>>>>       generic_perform_write ---> 3. No error sensed, continue
+>>>>>        balance_dirty_pages_ratelimited
+>>>>>         balance_dirty_pages_ratelimited_flags
+>>>>>          balance_dirty_pages
+>>>>>           // 4. Sleeping waiting for dirty pages to be freed
+>>>>>           __set_current_state(TASK_KILLABLE)
+>>>>>           io_schedule_timeout(pause);
+>>>>> ```
+>>>>>
+>>>>> ``` xfs
+>>>>> ksys_write
+>>>>>    vfs_write
+>>>>>     xfs_file_write_iter
+>>>>>      if (xfs_is_shutdown(ip->i_mount))
+>>>>>        return -EIO;    ---> dd fail
+>>>>> ```
+>>>> Thanks for the info which is really helpful for me to understand the
+>>>> problem.
+>>>>
+>>>>>>> balance_dirty_pages() is sleeping in KILLABLE state, so kill -9 of
+>>>>>>> the dd process should succeed.
+>>>>>> Yeah, dd can be killed, however it may be any application(s), :-)
+>>>>>>
+>>>>>> Fortunately it won't cause trouble during reboot/power off, given
+>>>>>> userspace will be killed at that time.
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Thanks,
+>>>>>> Ming
+>>>>>>
+>>>>> Don't worry about that, we always set the current thread to TASK_KILLABLE
+>>>>>
+>>>>> while waiting in balance_dirty_pages().
+>>>> I have another concern, if 'dd' isn't killed, dirty pages won't be cleaned, and
+>>>> these (big amount)memory becomes not usable, and typical scenario could be USB HDD
+>>>> unplugged.
+>>>>
+>>>>
+>>>> thanks,
+>>>> Ming
+>>> Yes, it is unreasonable to continue writing data with the previously opened
+>>> fd after
+>>> the file system becomes read-only, resulting in dirty page accumulation.
+>>>
+>>> I provided a patch in another reply.
+>>> Could you help test if it can solve your problem?
+>>> If it can indeed solve your problem, I will officially send it to the email
+>>> list.
+>> OK, I will test it tomorrow.
+> Your patch can avoid dd hang when bs is 512 at default, but if bs is
+> increased to 1G and more 'dd' tasks are started, the dd hang issue
+> still can be observed.
+
+Thank you for your testing!
+
+Yes, my patch only prevents the adding of new dirty pages, but it 
+doesn't clear
+the dirty pages that already exist. The reason why it doesn't work after 
+bs grows
+is that there are already enough dirty pages to trigger 
+balance_dirty_pages().
+Executing drop_caches at this point may make dd fail and exit. But the 
+dirty pages
+are still not cleared, nor is the shutdown implemented by ext4. These 
+dirty pages
+will not be cleared until the filesystem is unmounted.
+
+This is the result of my test at bs=512:
+
+ext4 -- remount read-only
+OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+313872 313872 100%    0.10K   8048   39 32192K buffer_head   ---> wait 
+to max
+82602  82465  99%     0.10K   2118   39  8472K buffer_head   ---> kill 
+dd && drop_caches
+897    741    82%     0.10K     23   39    92K buffer_head   ---> umount
+
+patched:
+25233  25051  99%    0.10K    647     39     2588K buffer_head
+>
+> The reason should be the next paragraph I posted.
+>
+> Another thing is that if remount read-only makes sense on one dead
+> disk? Yeah, block layer doesn't export such interface for querying
+> if bdev is dead. However, I think it is reasonable to export such
+> interface if FS needs that.
+Ext4 just detects I/O Error and remounts it as read-only, it doesn't know
+if the current disk is dead or not.
+
+I asked Yu Kuai and he said that disk_live() can be used to determine 
+whether
+a disk has been removed based on the status of the inode corresponding to
+the block device, but this is generally not done in file systems.
+>
+>> But I am afraid if it can avoid the issue completely because the
+>> old write task hang in balance_dirty_pages() may still write/dirty pages
+>> if it is one very big size write IO.
+>
+> thanks,
+> Ming
+>
+Those dirty pages that are already there are piling up and can't be 
+written back,
+which I think is a real problem. Can the block layer clear those dirty 
+pages when
+it detects that the disk is deleted?
 
 
-On 4/26/23 9:07 PM, D. Wythe wrote:
->
-> Hi David,
->
-> Fallback is one of the most important features of SMC, which 
-> automatically downgrades to TCP
-> when SMC discovers that the peer does not support SMC. After fallback, 
-> SMC hopes the the ability can be
-> consistent with that of TCP sock. If you delete the smc_sendpage, when 
-> fallback occurs, it means that the sock after the fallback
-> loses the ability of  sendpage( tcp_sendpage).
->
-> Thanks
-> D. Wythe
-
-Sorry, I missed the key email context. The problem mentioned here does 
-not exist ...
-
->
-> On 4/1/23 12:09 AM, David Howells wrote:
->> Drop the smc_sendpage() code as smc_sendmsg() just passes the call 
->> down to
->> the underlying TCP socket and smc_tx_sendpage() is just a wrapper around
->> its sendmsg implementation.
->> Signed-off-by: David Howells <dhowells@redhat.com>
->> cc: Karsten Graul <kgraul@linux.ibm.com>
->> cc: Wenjia Zhang <wenjia@linux.ibm.com>
->> cc: Jan Karcher <jaka@linux.ibm.com>
->> cc: "David S. Miller" <davem@davemloft.net>
->> cc: Eric Dumazet <edumazet@google.com>
->> cc: Jakub Kicinski <kuba@kernel.org>
->> cc: Paolo Abeni <pabeni@redhat.com>
->> cc: Jens Axboe <axboe@kernel.dk>
->> cc: Matthew Wilcox <willy@infradead.org>
->> cc: linux-s390@vger.kernel.org
->> cc: netdev@vger.kernel.org
->> ---
->>   net/smc/af_smc.c    | 29 -----------------------------
->>   net/smc/smc_stats.c |  2 +-
->>   net/smc/smc_stats.h |  1 -
->>   net/smc/smc_tx.c    | 16 ----------------
->>   net/smc/smc_tx.h    |  2 --
->>   5 files changed, 1 insertion(+), 49 deletions(-)
->>
->> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
->> index a4cccdfdc00a..d4113c8a7cda 100644
->> --- a/net/smc/af_smc.c
->> +++ b/net/smc/af_smc.c
->> @@ -3125,34 +3125,6 @@ static int smc_ioctl(struct socket *sock, 
->> unsigned int cmd,
->>       return put_user(answ, (int __user *)arg);
->>   }
->>   -static ssize_t smc_sendpage(struct socket *sock, struct page *page,
->> -                int offset, size_t size, int flags)
->> -{
->> -    struct sock *sk = sock->sk;
->> -    struct smc_sock *smc;
->> -    int rc = -EPIPE;
->> -
->> -    smc = smc_sk(sk);
->> -    lock_sock(sk);
->> -    if (sk->sk_state != SMC_ACTIVE) {
->> -        release_sock(sk);
->> -        goto out;
->> -    }
->> -    release_sock(sk);
->> -    if (smc->use_fallback) {
->> -        rc = kernel_sendpage(smc->clcsock, page, offset,
->> -                     size, flags);
->> -    } else {
->> -        lock_sock(sk);
->> -        rc = smc_tx_sendpage(smc, page, offset, size, flags);
->> -        release_sock(sk);
->> -        SMC_STAT_INC(smc, sendpage_cnt);
->> -    }
->> -
->> -out:
->> -    return rc;
->> -}
->> -
->>   /* Map the affected portions of the rmbe into an spd, note the 
->> number of bytes
->>    * to splice in conn->splice_pending, and press 'go'. Delays 
->> consumer cursor
->>    * updates till whenever a respective page has been fully processed.
->> @@ -3224,7 +3196,6 @@ static const struct proto_ops smc_sock_ops = {
->>       .sendmsg    = smc_sendmsg,
->>       .recvmsg    = smc_recvmsg,
->>       .mmap        = sock_no_mmap,
->> -    .sendpage    = smc_sendpage,
->>       .splice_read    = smc_splice_read,
->>   };
->>   diff --git a/net/smc/smc_stats.c b/net/smc/smc_stats.c
->> index e80e34f7ac15..ca14c0f3a07d 100644
->> --- a/net/smc/smc_stats.c
->> +++ b/net/smc/smc_stats.c
->> @@ -227,7 +227,7 @@ static int smc_nl_fill_stats_tech_data(struct 
->> sk_buff *skb,
->>                     SMC_NLA_STATS_PAD))
->>           goto errattr;
->>       if (nla_put_u64_64bit(skb, SMC_NLA_STATS_T_SENDPAGE_CNT,
->> -                  smc_tech->sendpage_cnt,
->> +                  0,
->>                     SMC_NLA_STATS_PAD))
->>           goto errattr;
->>       if (nla_put_u64_64bit(skb, SMC_NLA_STATS_T_CORK_CNT,
->> diff --git a/net/smc/smc_stats.h b/net/smc/smc_stats.h
->> index 84b7ecd8c05c..b60fe1eb37ab 100644
->> --- a/net/smc/smc_stats.h
->> +++ b/net/smc/smc_stats.h
->> @@ -71,7 +71,6 @@ struct smc_stats_tech {
->>       u64            clnt_v2_succ_cnt;
->>       u64            srv_v1_succ_cnt;
->>       u64            srv_v2_succ_cnt;
->> -    u64            sendpage_cnt;
->>       u64            urg_data_cnt;
->>       u64            splice_cnt;
->>       u64            cork_cnt;
->> diff --git a/net/smc/smc_tx.c b/net/smc/smc_tx.c
->> index f4b6a71ac488..d31ce8209fa2 100644
->> --- a/net/smc/smc_tx.c
->> +++ b/net/smc/smc_tx.c
->> @@ -298,22 +298,6 @@ int smc_tx_sendmsg(struct smc_sock *smc, struct 
->> msghdr *msg, size_t len)
->>       return rc;
->>   }
->>   -int smc_tx_sendpage(struct smc_sock *smc, struct page *page, int 
->> offset,
->> -            size_t size, int flags)
->> -{
->> -    struct msghdr msg = {.msg_flags = flags};
->> -    char *kaddr = kmap(page);
->> -    struct kvec iov;
->> -    int rc;
->> -
->> -    iov.iov_base = kaddr + offset;
->> -    iov.iov_len = size;
->> -    iov_iter_kvec(&msg.msg_iter, ITER_SOURCE, &iov, 1, size);
->> -    rc = smc_tx_sendmsg(smc, &msg, size);
->> -    kunmap(page);
->> -    return rc;
->> -}
->> -
->>   /***************************** sndbuf consumer 
->> *******************************/
->>     /* sndbuf consumer: actual data transfer of one target chunk with 
->> ISM write */
->> diff --git a/net/smc/smc_tx.h b/net/smc/smc_tx.h
->> index 34b578498b1f..a59f370b8b43 100644
->> --- a/net/smc/smc_tx.h
->> +++ b/net/smc/smc_tx.h
->> @@ -31,8 +31,6 @@ void smc_tx_pending(struct smc_connection *conn);
->>   void smc_tx_work(struct work_struct *work);
->>   void smc_tx_init(struct smc_sock *smc);
->>   int smc_tx_sendmsg(struct smc_sock *smc, struct msghdr *msg, size_t 
->> len);
->> -int smc_tx_sendpage(struct smc_sock *smc, struct page *page, int 
->> offset,
->> -            size_t size, int flags);
->>   int smc_tx_sndbuf_nonempty(struct smc_connection *conn);
->>   void smc_tx_sndbuf_nonfull(struct smc_sock *smc);
->>   void smc_tx_consumer_update(struct smc_connection *conn, bool force);
->
-
+-- 
+With Best Regards,
+Baokun Li
+.
