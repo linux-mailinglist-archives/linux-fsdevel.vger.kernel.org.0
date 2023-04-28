@@ -2,103 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0365A6F13BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 11:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC026F1694
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 13:28:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345353AbjD1JAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Apr 2023 05:00:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39354 "EHLO
+        id S240436AbjD1L2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Apr 2023 07:28:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345600AbjD1I74 (ORCPT
+        with ESMTP id S234872AbjD1L2X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Apr 2023 04:59:56 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70CD110C6;
-        Fri, 28 Apr 2023 01:59:54 -0700 (PDT)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Q75zQ3mPvzSv36;
-        Fri, 28 Apr 2023 16:55:30 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Fri, 28 Apr 2023 16:59:49 +0800
-Message-ID: <5bab3a6d-62e7-21d1-df18-6d0f6b031216@huawei.com>
-Date:   Fri, 28 Apr 2023 16:59:49 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v2] mm: hwpoison: coredump: support recovery from
- dump_user_range()
-Content-Language: en-US
-To:     "Luck, Tony" <tony.luck@intel.com>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>
-CC:     "chu, jane" <jane.chu@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tong Tiangen <tongtiangen@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>
-References: <9a9876a2-a2fd-40d9-b215-3e6c8207e711@huawei.com>
- <20230421031356.GA3048466@hori.linux.bs1.fc.nec.co.jp>
- <1bd6a635-5a3d-c294-38ce-5c6fcff6494f@huawei.com>
- <20230424064427.GA3267052@hori.linux.bs1.fc.nec.co.jp>
- <SJ1PR11MB60833E08F3C3028F7463FE19FC679@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <316b5a9e-5d5f-3bcf-57c1-86fafe6681c3@huawei.com>
- <SJ1PR11MB6083452F5EB3F1812C0D2DFEFC649@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <6b350187-a9a5-fb37-79b1-bf69068f0182@huawei.com>
- <SJ1PR11MB60833517FCAA19AC5F20FC3CFC659@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <f345b2b4-73e5-a88d-6cff-767827ab57d0@huawei.com>
- <20230427023045.GA3499768@hori.linux.bs1.fc.nec.co.jp>
- <SJ1PR11MB6083E48452A7FE8D874F5CF0FC6A9@SJ1PR11MB6083.namprd11.prod.outlook.com>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <SJ1PR11MB6083E48452A7FE8D874F5CF0FC6A9@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.243]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 28 Apr 2023 07:28:23 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C552F4ECD;
+        Fri, 28 Apr 2023 04:28:19 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 545A9C01C; Fri, 28 Apr 2023 13:28:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682681296; bh=OxVs+X25hHVqwJowVcFwN1ACu7t2ri8zooDOLSkhFz0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cGbIet42WfZdwF6rAWTpbheaM4GWpIHLI5Brfm0TQjZBJxbbSVYMpEQYi1v2EgLKO
+         xKjYTLGr3azJjRlRP1IemMMTXFBP97lAuB8xktn3TNJYFT3oiFbxqrQtJZ9yZo7OF4
+         1gZNjuKoc2BDrHhwbjw/o10IIqbQ1Ojoro4JfuCDqm+yjLJQlBWh8DfeMuGA/va6Fj
+         a1yK69WCVybtJg+uRV3ASt7maKkFg8KAPsL4eCA7SgqrWR1WQ6cTKoayz7rofnQusG
+         LGzJLnQ0UVh1Uq2e1RGP4TqH4PrbRqskGTse10F6DdJF1eda7TCsTr/reg2dS/N/2g
+         lrAZLbulOU1GA==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 95F15C009;
+        Fri, 28 Apr 2023 13:28:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682681295; bh=OxVs+X25hHVqwJowVcFwN1ACu7t2ri8zooDOLSkhFz0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LoGUL+lMPl+njrYxiE4BVjc2glW8XPsIAxixyUyHoLtelHM4UD7+JyyBfifrC6XOu
+         pMAa4iuX0/8mqvqwESCj5wTkbUPmbCn2vqgPU2lKQUgefQY2UiiS0pAcpjrTdm3Pe7
+         fFCQeLsWYHaAXKNv7GGgy0jbnaXoOVwcx5Ly8BWRoIjEC7mzMWjrZcHRR/Kk8HSWX9
+         254Xhdg15GEzB3RhDz+t1cW1T7J24O4mYkPYtS3NWGJiWeyAbidQtWXSPbJ2NZFE9l
+         qXVHgxC9IsqhBU+k63cuTmrGpmTydqqPSJcPLN20oKrNHhSFMiZz8N9FVtPABXSt2H
+         18SLq4YHA7Ztw==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 549ff8b9;
+        Fri, 28 Apr 2023 11:28:08 +0000 (UTC)
+Date:   Fri, 28 Apr 2023 20:27:53 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
+Message-ID: <ZEutuerMIcKpWAfP@codewreck.org>
+References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
+ <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
+ <20230423224045.GS447837@dread.disaster.area>
+ <ZEXChAJfCRPv9vbs@codewreck.org>
+ <20230428050640.GA1969623@dread.disaster.area>
+ <ZEtkXJ1vMsFR3tkN@codewreck.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZEtkXJ1vMsFR3tkN@codewreck.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2023/4/28 0:45, Luck, Tony wrote:
->>> But in the core dump case there is no return to user. The process is being
->>> terminated by the signal that leads to this core dump. So even though you
->>> may consider the page being accessed to be a "user" page, you can't fix
->>> it by queueing work to run on return to user.
->>
->> For coredump，the task work will be called too, see following code,
->>
->> get_signal
->> 	sig_kernel_coredump
->> 		elf_core_dump
->> 			dump_user_range
->> 				_copy_from_iter // with MC-safe copy, return without panic
->> 	do_group_exit(ksig->info.si_signo);
->> 		do_exit
->> 			exit_task_work
->> 				task_work_run
->> 					kill_me_never
->> 						memory_failure
->>
+Dominique Martinet wrote on Fri, Apr 28, 2023 at 03:14:52PM +0900:
+> > We already pass a struct dir_context to ->iterate_shared(), so we
+> > have a simple way to add context specific flags down the filesystem
+> > from iterate_dir(). This is similar to the iocb for file data IO
+> > that contains the flags field that holds the IOCB_NOWAIT context for
+> > io_uring based IO. So the infrastructure to plumb it all the way
+> > down the fs implementation of ->iterate_shared is already there.
 > 
-> Nice. I didn't realize that the exit code path would clear any pending task_work() requests.
-> But it makes sense that this happens. Thanks for filling a gap in my knowledge.
-> 
-Yep, we could be benefit from it to unify memory failure handling :)
+> Sure, that sounds like a good approach that isn't breaking the API (not
+> breaking iterate/iterate_shared implementations that don't look at the
+> flags and allowing the fs that want to look at it to do so)
 
-> -Tony
+Hmm actually I said that, but io_getdents() needs to know if the flag
+will be honored or not (if it will be honored, we can call this when
+issue_flags & IO_URING_F_NONBLOCK but if we're not sure the fs handles
+it then we risk blocking)
+
+I'm not familiar with this part of the VFS, but I do not see any kind of
+flags for the filesystem to signal if it'll handle it or not -- this is
+actually similar to iterate vs. iterate_shared so that'll mean adding
+iterate_shared_hasnonblock or something, which is getting silly.
+
+I'm sure you understand this better than me and I'm missing something
+obvious here, but I don't think I'll be able to make something I'm happy
+with here (in a reasonable timeframe anyway).
+
+
+Thanks,
+-- 
+Dominique Martinet | Asmadeus
