@@ -2,70 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F5466F1A68
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 16:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AB916F1A89
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 16:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346075AbjD1OVr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Apr 2023 10:21:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36552 "EHLO
+        id S1345941AbjD1Ofk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Apr 2023 10:35:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346036AbjD1OVl (ORCPT
+        with ESMTP id S230313AbjD1Ofh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Apr 2023 10:21:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D2BB1992
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 07:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1682691653;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gv0P60I1m+zx490TNpqDLMm/gN26L3C73hsWxl2z9Eg=;
-        b=Ks4BYZkJ+QdbQmvMnrhgGLw2PXJ8BOaGOy0An/6fYyqi3Z7JApbNKkI/mw+gnPZngBYMlf
-        h0KNCV3w+yRPSqoA5lqn+P6q/UzStbMBiBjTxae9W+v/KaMQ0CDIZFyDt+aDIsFLftYzrR
-        Q0Y9V2DY/LxdDZ4q6ax9VzEkxjkGefo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-576-b1LCOfHIOhKFl3qi1jqpuA-1; Fri, 28 Apr 2023 10:20:51 -0400
-X-MC-Unique: b1LCOfHIOhKFl3qi1jqpuA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-3f065208a64so60974405e9.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 07:20:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682691650; x=1685283650;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :content-language:references:cc:to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gv0P60I1m+zx490TNpqDLMm/gN26L3C73hsWxl2z9Eg=;
-        b=iuM6VTjbaEHP3YI/ZFZrzTflX/PvBw7eioT+Kq8OWXgPgDalmxE6ZpGPXDgUxs2/4J
-         9dqy/BR9ab17JykKKFzxL4e6YnCg0uKoHeyykLlATAg5cgGmUfpbxxdIFLzl5nh5Wktr
-         CK7Y0RGW5UcaW2fxFU7p05KzElB1zzIdiAwHAY9scTo/Xc6ZXt+oDKZNdZLXCPm8RzxT
-         eZP3HI8k7ahaEyaGEccegEjDajFackQ+XPhjD68I3Emc3bILsdlCOdrOLi1fh9lpcIxN
-         7ARdbGub4/+Q1yRkPkM600reIJZQh4eV60AWjC8beKKOh4QeXa0Lc/onetWZJ+gTYuEu
-         ih4g==
-X-Gm-Message-State: AC+VfDzkrDL8NiXvVK2MK+X5nTZc8yhD4LNWVEgtMMxzaJgMplR1eQKl
-        nZ0mcZi2r4Ml9d9qzFwIn1krzbG2rHyg1BJwcNgMfMsVpH6rYME8hb6/b7vmqZ06SjuMPOOKl9a
-        gejsQcv9OmgDlAP8Wy6BZS2n/Gg==
-X-Received: by 2002:a1c:f706:0:b0:3f2:5028:a54d with SMTP id v6-20020a1cf706000000b003f25028a54dmr4286853wmh.0.1682691649674;
-        Fri, 28 Apr 2023 07:20:49 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5Ef+6JXTWHdAiFME6ae0mlQwifNq9sneotXxTQMRQu6YRP1y3jjdZfpGN/dZmsrEadhA0T1g==
-X-Received: by 2002:a1c:f706:0:b0:3f2:5028:a54d with SMTP id v6-20020a1cf706000000b003f25028a54dmr4286805wmh.0.1682691649225;
-        Fri, 28 Apr 2023 07:20:49 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c726:9300:1711:356:6550:7502? (p200300cbc72693001711035665507502.dip0.t-ipconnect.de. [2003:cb:c726:9300:1711:356:6550:7502])
-        by smtp.gmail.com with ESMTPSA id z4-20020a05600c0a0400b003ef4cd057f5sm28589070wmp.4.2023.04.28.07.20.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Apr 2023 07:20:48 -0700 (PDT)
-Message-ID: <afcc124e-7a9b-879c-dfdf-200426b84e24@redhat.com>
-Date:   Fri, 28 Apr 2023 16:20:46 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        Fri, 28 Apr 2023 10:35:37 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2072.outbound.protection.outlook.com [40.107.220.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C2484690;
+        Fri, 28 Apr 2023 07:35:36 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VunCsV18USN9/sZ80QN84NeBBB8A8P7HnZLIgxTWs4tqFe6fcxJSNYoDew+xCDKMhAJ5t+2oLbR8sTQqWL6Z0jX/OQJiG9oXZCvY2BLOCEKDvmi3GMzjBSi4bZEtJYLIUb8M8ttP3SDSRPApspZyDkCMFdgObqFvs7lJt/Bsj5GvDjvU4LiY0DWEuvMhEIFyjHvDC+FI9LV8Hz9HUGQ4nAMw6MK+Ez72cNAnmEryKGB9ZhRKGphCd1XsAxn185h45DYR0me1UOexwfh4vzL4IqF5RW9UkSqzDXrzGV10ryCy8unHZor759P8Aq9PWSxQjoF0HipjAcgsMIkATRF6kA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cXtX5qwjE0B7nOiXRFSGK1eSaOsv/+YmLYapCdL3dfg=;
+ b=EWosFxgeKZOggQMNstTD0ntnlOTu5ivyrvfrWI/GgGvUfildukBn4AfmQvE6hhoCWLUBELrvHnCKPIpykPNaHn6GY9F/8EDAc2N0pimJP4oaVwrSV7JC9lnS9C+r2WcQNbKjehsxZmRLcP21+522SN5goEpSGQLpK2nqviRUNkDlepwRizXDV1GQw3M6I850LSalI4lZkyT0Fs8sptJDAZTUdHZRmqj1nlP0pFdxhMKLOVxrOY7pdPQNreGKpufysh11yFA0rV8uQXV2ix+EmSCFuZ+TIgNiQV7DvqUxxlWBzq/mQ1jPRCiDqWzXNpxjHqz6I0jDJhP8HQn8rxKc2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cXtX5qwjE0B7nOiXRFSGK1eSaOsv/+YmLYapCdL3dfg=;
+ b=b7luDXoo00uI6EiKz1VFjbDe9NcpIG62eF8Kt/fNj9++1TajRDdw5HpPbkk8KD9nWlNOyaNdfltlyJVHjomnz15NyJSNd7jc5g3apW226OIYt7yoz4cvNt+I6+SitB/3rJWo1xjhjQyjFG94To21RcSv0OOfq60mozNVQ6CPR49I04IgCA9IoO+8W+BMCMHeGowfqqIij7hpHWLNI/0RFzY9iLa/uJFbQ1EYYBFwlf+seDAbQ6ZJVBn9VJiY59TjjqUNff7akLo3wMEjzAcgLlf2iHVwWMDG++LBsGBHQSRRmiFO8lU6MadhcbeJbh0jkk9icroxlgpazLKZO8bZng==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by BY5PR12MB4968.namprd12.prod.outlook.com (2603:10b6:a03:1d2::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.22; Fri, 28 Apr
+ 2023 14:35:33 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6340.024; Fri, 28 Apr 2023
+ 14:35:33 +0000
+Date:   Fri, 28 Apr 2023 11:35:32 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Matthew Wilcox <willy@infradead.org>,
         Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
         Leon Romanovsky <leon@kernel.org>,
@@ -98,26 +80,75 @@ Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         netdev@vger.kernel.org, bpf@vger.kernel.org,
         Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
         John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
         "Kirill A . Shutemov" <kirill@shutemov.name>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Mika Penttila <mpenttil@redhat.com>,
         David Howells <dhowells@redhat.com>,
         Christoph Hellwig <hch@lst.de>
-References: <6b73e692c2929dc4613af711bdf92e2ec1956a66.1682638385.git.lstoakes@gmail.com>
-Content-Language: en-US
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
 Subject: Re: [PATCH v5] mm/gup: disallow GUP writing to file-backed mappings
  by default
-In-Reply-To: <6b73e692c2929dc4613af711bdf92e2ec1956a66.1682638385.git.lstoakes@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+Message-ID: <ZEvZtIb2EDb/WudP@nvidia.com>
+References: <6b73e692c2929dc4613af711bdf92e2ec1956a66.1682638385.git.lstoakes@gmail.com>
+ <afcc124e-7a9b-879c-dfdf-200426b84e24@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afcc124e-7a9b-879c-dfdf-200426b84e24@redhat.com>
+X-ClientProxiedBy: BL1PR13CA0434.namprd13.prod.outlook.com
+ (2603:10b6:208:2c3::19) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|BY5PR12MB4968:EE_
+X-MS-Office365-Filtering-Correlation-Id: faaa790d-c0f9-4044-7ffe-08db47f5d2df
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2xrGEShKDMnyq4gy8vWxoUrB+AbUU4ROS7JN42w2NMuz1sedxjecD1FiFySjWOEigMQ4vJaQL1QVErKdxxf9DpZx4U7s7TIHj5teIvyEc6JS1R1+H+E31WQr49VRyxvPENuU/1ac/1FynqQOr9CCE/meY2yvr6Fo9n+XVb31ylkSNuRBM/Vpp0w0SqxFmPmCrruim5RcbpW+LKfOn81JILyR+38x2f7OMxHloRorb6SPClplkEIH7h5eaYBC+UbhhW3x0mdYDMzmG8XR9It2cO7TBF7sl3At1w8V5E0Hmb8JVL33m5B9sGWwl9t8JTQwZSHouL6C9g1yUEVhNFRDF/ZTU/fun0qidRmAagmzrzvWzpONAneqHE9NfRVIYZsuRnnWWOBYPR7785RDWVlEUgMj8jspuKpFezZX1fDGczWPUOdkwv55irm+0U5vz047zyUK8eDyFvATnQk7q/7eS9A/tBw5qtS+0yB2lZaM6r8bbGwB0IYqOFxtGkWWHKaIVEY1KXOpglb5a3zHVPVvIWgtHTFPcZjdIbBSp90QOh+XjjfP7aBzM5KxFbuKPfOZ
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(39860400002)(346002)(366004)(136003)(396003)(451199021)(316002)(54906003)(6916009)(66946007)(66556008)(66476007)(4326008)(36756003)(6506007)(186003)(6512007)(26005)(53546011)(38100700002)(2616005)(83380400001)(86362001)(8936002)(8676002)(5660300002)(478600001)(6486002)(41300700001)(7406005)(7416002)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Tz1P2s5YdrLLv5ePaM9oRAbbEtoIH4OfGWrnU1KP3+BfxJUwqNbbM9upRdxq?=
+ =?us-ascii?Q?q4H1zYCQ2MJ9+SAx1IDiigbx/asFYvHDhbS4HojnICYPOpGcr0wSlUAz4uu1?=
+ =?us-ascii?Q?Y7vppBbaRRK9u6WOpbc5bardTuXxEYoZQE6//KapmnaOkWPSRhhp9JE5DU2/?=
+ =?us-ascii?Q?dKogWYNbstrJdM2JbZD54pnW6rBbh+1iije25OYnkh2sOwmALdnX53QNKHNI?=
+ =?us-ascii?Q?gWm4Cm/AYqAfqYFPmi2/dE3oSc+oL/iJhcF2DuIR4OZ9AJXkx3YOT2yztpqF?=
+ =?us-ascii?Q?7H7HvqfApHoA/h3lCK2pqfdQ6SKvU0nKeTBF8rtKHoevsJoYZxnI86XzjxR8?=
+ =?us-ascii?Q?s67cfT7hSG+bgkadISsatemfIDjoLZRlKY8wORr23ScxUiN7DQLDSN3mNQtU?=
+ =?us-ascii?Q?kFe7BUyKsgTevn1WbfoWWWJUuajwZIIrNguqwArraU7udFfKWGAM2G2GbXHe?=
+ =?us-ascii?Q?jiAcZmB1UjMqjWVG50bHraK7KGtFa2KS7rQCj20x8IjnFC/O257XlJdtI2/j?=
+ =?us-ascii?Q?Xdu1zMJWPbacmLy3GC3uOFCZhXBg3LQOMH3o09NS4gv36X7drdDyvbZYntzB?=
+ =?us-ascii?Q?Ti8Q0PmqKKxq67OgqcFPSsI936JXXWYBqpst5DACBe1epZV6OYGSj75xK6dZ?=
+ =?us-ascii?Q?h1hxDsa+DUjrRJWl+ICUwgdtUk/t9TJptSZ89hVCAIwfh8dfrXRtYnvWmMXR?=
+ =?us-ascii?Q?KTzoJvNJPmUCJJZUrVb975lpK7ks1XQYCBztu840APcz2OKMfiY3/B2783rt?=
+ =?us-ascii?Q?pMFfHOSMTH67iiHa3peb3BmhdnWvjv3vdaUgHuy1qHrJv5llOjYQ/NS8JKRC?=
+ =?us-ascii?Q?msGQg4kNnR2WzPoAylRLwYGp1/BCQw1Cm3fxMqfKxxBDZpZ0BbjEMMgquY/N?=
+ =?us-ascii?Q?7qBBEe6x83l5Bun/THI7Nk7ciNE39Lxu2U0IwCQlGX/99wVeLdSlfCSaMUlb?=
+ =?us-ascii?Q?J7lfahT6Awqhn2JrU1aCbQkNjvNPMbp67vB4jYF1YdGUpsFHuwg48Ym5EhlK?=
+ =?us-ascii?Q?HMhqiJcpad3RTMnpQfWfPoYKKjMdXlJ5Tbeq92jYQ+uSqT1XhsOn7PijIHev?=
+ =?us-ascii?Q?sASuVHc0fdBbsrGAwod5ykdPlfMdSKdOixOl+xggpTZ5LMzrVw1NZU06P1VE?=
+ =?us-ascii?Q?VsKCYHd+ug2pehThvsesbkKPhhd+BIvPnft8HH15IU/7g5dlAJnw7o76ILej?=
+ =?us-ascii?Q?0nc8r3gpT6jnAcVB7MJo8nCH5Isy0FDMNUvuNZff4CnBaciOTf7BWmQeC7r0?=
+ =?us-ascii?Q?5O6984+gwGK6Y+w8PZO1bHNDOU8MbIUdQ1oBznY9yQiXo8uV52wVbVFiPjWB?=
+ =?us-ascii?Q?S0etCCLEeRZ330lXiJD/pimIcFuytufkPJHfm3kVGd/vhfciN8DepbrjXICf?=
+ =?us-ascii?Q?CSunR2cN7TPNe7Q+RYVVpB3w3/MdJsRQBKISbo1Nn4u+YImm+IFsMlKpnw+Y?=
+ =?us-ascii?Q?eUVBeJC6SheWhQJLSLHFYyXtsy2e1kmdIMM9PCIQTZ08BARM1wfuKHmizeyw?=
+ =?us-ascii?Q?mIkIMgSZGljr7rfuP2rKt+N+SR9jDi457xyTlQuAO54Y56oAw8Zn2cjAo2Ai?=
+ =?us-ascii?Q?xaxrYxXj8zPTANq+NnBjNuT83jgF5KjqkmmsNJ9s?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: faaa790d-c0f9-4044-7ffe-08db47f5d2df
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2023 14:35:33.5768
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ez8ZgkzkNMBJO52wCHIjUWtV2aTU5dEftcEz3kLOaKTC58UfCBHWQpqW0L0UhiSS
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4968
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -125,213 +156,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sorry for jumping in late, I'm on vacation :)
-
-On 28.04.23 01:42, Lorenzo Stoakes wrote:
-> Writing to file-backed mappings which require folio dirty tracking using
-> GUP is a fundamentally broken operation, as kernel write access to GUP
-> mappings do not adhere to the semantics expected by a file system.
+On Fri, Apr 28, 2023 at 04:20:46PM +0200, David Hildenbrand wrote:
+> Sorry for jumping in late, I'm on vacation :)
 > 
-> A GUP caller uses the direct mapping to access the folio, which does not
-> cause write notify to trigger, nor does it enforce that the caller marks
-> the folio dirty.
-
-How should we enforce it? It would be a BUG in the GUP user.
-
+> On 28.04.23 01:42, Lorenzo Stoakes wrote:
+> > Writing to file-backed mappings which require folio dirty tracking using
+> > GUP is a fundamentally broken operation, as kernel write access to GUP
+> > mappings do not adhere to the semantics expected by a file system.
+> > 
+> > A GUP caller uses the direct mapping to access the folio, which does not
+> > cause write notify to trigger, nor does it enforce that the caller marks
+> > the folio dirty.
 > 
-> The problem arises when, after an initial write to the folio, writeback
-> results in the folio being cleaned and then the caller, via the GUP
-> interface, writes to the folio again.
-> 
-> As a result of the use of this secondary, direct, mapping to the folio no
-> write notify will occur, and if the caller does mark the folio dirty, this
-> will be done so unexpectedly.
+> How should we enforce it? It would be a BUG in the GUP user.
 
-Right, in mprotect() code we only allow upgrading write permissions in 
-this case if the pte is dirty, so we always go via the pagefault path.
+I hope we don't have these kinds of mistakes.. hard to enforce by
+code.
 
-> 
-> For example, consider the following scenario:-
-> 
-> 1. A folio is written to via GUP which write-faults the memory, notifying
->     the file system and dirtying the folio.
-> 2. Later, writeback is triggered, resulting in the folio being cleaned and
->     the PTE being marked read-only.
+> This change has the potential to break existing setups. Simple example:
+> libvirt domains configured for file-backed VM memory that also has a vfio
+> device configured. It can easily be configured by users (evolving VM
+> configuration, copy-paste etc.). And it works from a VM perspective, because
+> the guest memory is essentially stale once the VM is shutdown and the pages
+> were unpinned. At least we're not concerned about stale data on
+> disk.
 
+I think this is broken today and we should block it. We know from
+experiments with RDMA that doing exactly this triggers kernel oop's.
 
-How would that be triggered? Would that writeback triggered by e.g., 
-fsync that Jan tried to tackle recently?
+Run your qemu config once, all the pages in the file become dirty.
 
+Run your qmeu config again and now all the dirty pages are longterm
+pinned.
 
-> 3. The GUP caller writes to the folio, as it is mapped read/write via the
->     direct mapping.
-> 4. The GUP caller, now done with the page, unpins it and sets it dirty
->     (though it does not have to).
-> 
-> This results in both data being written to a folio without writenotify, and
-> the folio being dirtied unexpectedly (if the caller decides to do so).
-> 
-> This issue was first reported by Jan Kara [1] in 2018, where the problem
-> resulted in file system crashes.
-> 
-> This is only relevant when the mappings are file-backed and the underlying
-> file system requires folio dirty tracking. File systems which do not, such
-> as shmem or hugetlb, are not at risk and therefore can be written to
-> without issue.
-> 
-> Unfortunately this limitation of GUP has been present for some time and
-> requires future rework of the GUP API in order to provide correct write
-> access to such mappings.
-> 
-> However, for the time being we introduce this check to prevent the most
-> egregious case of this occurring, use of the FOLL_LONGTERM pin.
-> 
-> These mappings are considerably more likely to be written to after
-> folios are cleaned and thus simply must not be permitted to do so.
-> 
-> As part of this change we separate out vma_needs_dirty_tracking() as a
-> helper function to determine this which is distinct from
-> vma_wants_writenotify() which is specific to determining which PTE flags to
-> set.
-> 
-> [1]:https://lore.kernel.org/linux-mm/20180103100430.GE4911@quack2.suse.cz/
-> 
+Something eventually does writeback and FS cleans the page.
 
+Now close your VM and the page is dirtied without make write. FS is
+inconsistent with the MM, kernel will eventually oops.
 
-This change has the potential to break existing setups. Simple example: 
-libvirt domains configured for file-backed VM memory that also has a 
-vfio device configured. It can easily be configured by users (evolving 
-VM configuration, copy-paste etc.). And it works from a VM perspective, 
-because the guest memory is essentially stale once the VM is shutdown 
-and the pages were unpinned. At least we're not concerned about stale 
-data on disk.
+I'm skeptical that anyone can actually do this combination of things
+successfully without getting kernel crashes or file data corruption -
+ie there is no real user to break.
 
-With your changes, such VMs would no longer start, breaking existing 
-user setups with a kernel update.
+> With your changes, such VMs would no longer start, breaking existing user
+> setups with a kernel update.
 
-I don't really see a lot of reasons to perform this change now. It's 
-been known to be problematic for a long time. People are working on a 
-fix (I see Jan is already CCed, CCing Dave and Christop). FOLL_LONGTERM 
-check is only handling some of the problematic cases, so it's not even a 
-complete blocker.
+Yes, as a matter of security we should break it.
 
-I know, Jason und John will disagree, but I don't think we want to be 
-very careful with changing the default.
+Earlier I suggested making this contingent on kernel lockdown >=
+integrity, if actual users come and complain we should go to that
+option.
 
-Sure, we could warn, or convert individual users using a flag 
-(io_uring). But maybe we should invest more energy on a fix?
+> Sure, we could warn, or convert individual users using a flag (io_uring).
+> But maybe we should invest more energy on a fix?
 
+It has been years now, I think we need to admit a fix is still years
+away. Blocking the security problem may even motivate more people to
+work on a fix.
 
+Security is the primary case where we have historically closed uAPI
+items.
 
-
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> ---
->   include/linux/mm.h |  1 +
->   mm/gup.c           | 41 ++++++++++++++++++++++++++++++++++++++++-
->   mm/mmap.c          | 36 +++++++++++++++++++++++++++---------
->   3 files changed, 68 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 37554b08bb28..f7da02fc89c6 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2433,6 +2433,7 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
->   #define  MM_CP_UFFD_WP_ALL                 (MM_CP_UFFD_WP | \
->   					    MM_CP_UFFD_WP_RESOLVE)
-> 
-> +bool vma_needs_dirty_tracking(struct vm_area_struct *vma);
->   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot);
->   static inline bool vma_wants_manual_pte_write_upgrade(struct vm_area_struct *vma)
->   {
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 1f72a717232b..d36a5db9feb1 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -959,16 +959,51 @@ static int faultin_page(struct vm_area_struct *vma,
->   	return 0;
->   }
-> 
-> +/*
-> + * Writing to file-backed mappings which require folio dirty tracking using GUP
-> + * is a fundamentally broken operation, as kernel write access to GUP mappings
-> + * do not adhere to the semantics expected by a file system.
-> + *
-> + * Consider the following scenario:-
-> + *
-> + * 1. A folio is written to via GUP which write-faults the memory, notifying
-> + *    the file system and dirtying the folio.
-> + * 2. Later, writeback is triggered, resulting in the folio being cleaned and
-> + *    the PTE being marked read-only.
-> + * 3. The GUP caller writes to the folio, as it is mapped read/write via the
-> + *    direct mapping.
-> + * 4. The GUP caller, now done with the page, unpins it and sets it dirty
-> + *    (though it does not have to).
-> + *
-> + * This results in both data being written to a folio without writenotify, and
-> + * the folio being dirtied unexpectedly (if the caller decides to do so).
-> + */
-> +static bool writeable_file_mapping_allowed(struct vm_area_struct *vma,
-> +					   unsigned long gup_flags)
-> +{
-> +	/* If we aren't pinning then no problematic write can occur. */
-> +	if (!(gup_flags & (FOLL_GET | FOLL_PIN)))
-> +		return true;
-
-FOLL_LONGTERM only applies to FOLL_PIN. This check can be dropped.
-
-> +
-> +	/* We limit this check to the most egregious case - a long term pin. */
-> +	if (!(gup_flags & FOLL_LONGTERM))
-> +		return true;
-> +
-> +	/* If the VMA requires dirty tracking then GUP will be problematic. */
-> +	return vma_needs_dirty_tracking(vma);
-> +}
-> +
->   static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
->   {
->   	vm_flags_t vm_flags = vma->vm_flags;
->   	int write = (gup_flags & FOLL_WRITE);
->   	int foreign = (gup_flags & FOLL_REMOTE);
-> +	bool vma_anon = vma_is_anonymous(vma);
-> 
->   	if (vm_flags & (VM_IO | VM_PFNMAP))
->   		return -EFAULT;
-> 
-> -	if (gup_flags & FOLL_ANON && !vma_is_anonymous(vma))
-> +	if ((gup_flags & FOLL_ANON) && !vma_anon)
->   		return -EFAULT;
-> 
->   	if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
-> @@ -978,6 +1013,10 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
->   		return -EFAULT;
-> 
->   	if (write) {
-> +		if (!vma_anon &&
-> +		    !writeable_file_mapping_allowed(vma, gup_flags))
-> +			return -EFAULT;
-> +
->   		if (!(vm_flags & VM_WRITE)) {
->   			if (!(gup_flags & FOLL_FORCE))
->   				return -EFAULT;
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 536bbb8fa0ae..7b6344d1832a 100644
-> --- a/mm/mmap.c
-
-
-I'm probably missing something, why don't we have to handle GUP-fast 
-(having said that, it's hard to handle ;) )? The sequence you describe 
-above should apply to GUP-fast as well, no?
-
-1) Pin writable mapped page using GUP-fast
-2) Trigger writeback
-3) Write to page via pin
-4) Unpin and set dirty
-
-
--- 
-Thanks,
-
-David / dhildenb
-
+Jason
