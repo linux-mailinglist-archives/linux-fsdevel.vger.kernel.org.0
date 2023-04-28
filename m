@@ -2,116 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE4736F10F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 06:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 664106F113D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 07:06:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345246AbjD1EVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Apr 2023 00:21:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36688 "EHLO
+        id S1345296AbjD1FGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Apr 2023 01:06:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345240AbjD1EVw (ORCPT
+        with ESMTP id S229680AbjD1FGr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Apr 2023 00:21:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6148272C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 21:21:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1682655670;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HUpymbe2RGMA86yPaoLtY13w/BGrFU5diMfKlivoc0Q=;
-        b=QGUiAcKgR8rRzEofNB2zJi5OJ5aeJz0B/ZFghU8niLpgU61m7YHPaPNxaiIr/slqRH4Qy5
-        LXmgvT02Qq69o8g0ZbkFgkRDCeRb5PMoPyk1798oDkIuvVpB3mijvbhBCl3qoau9R4lAe8
-        oGyhpMkxaC2QGMaVKmKWsfIPIS7T0Dk=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-323-FA3fK-ylMEKtIypZBp7jIQ-1; Fri, 28 Apr 2023 00:21:08 -0400
-X-MC-Unique: FA3fK-ylMEKtIypZBp7jIQ-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-4f00d3f91a3so4096439e87.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 21:21:08 -0700 (PDT)
+        Fri, 28 Apr 2023 01:06:47 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3950026A2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 22:06:45 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1a682eee3baso69463505ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 22:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1682658404; x=1685250404;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K+priwgVTI5G9m2IAcDviTBaPANz0KSFOmw49YgGUdI=;
+        b=DdoVOedUxUiBDMPss2+elnVBPyCyJNeO8QeLYntRLaBFlrFnUj55nnP40KvPb/QaAr
+         maZi1ZZfOQWs2UfwLn2KK6ptXfIYAl+vkpoN2pBTcXDhEbJfyum8KYEGrgUAFTB3AGQW
+         0zUK6RP+MghQbeuKlwuyrYjV3AM+lTf8yutDYyhNp3xJrZVCkukxfHC6BanumEniBhyG
+         YOGPbHdOOFhvz4j65V6ArQqZupnSWlmPapfcjS2u/5jTHCZMIW4gZcJ5jsTvrgZdFmVo
+         1TPgDCV+xMiaeNdwt1RUTXybDDc/2d+VZSxN350zQhp7JynKdPV2wewFf1Oic96zDZpb
+         tLew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682655667; x=1685247667;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HUpymbe2RGMA86yPaoLtY13w/BGrFU5diMfKlivoc0Q=;
-        b=Nscqwl5Hqa1PHN7dHf5WpoXTTsuLy35TT8K5D+H588VQTsGZqxQcyi7WsnkpGJCWXx
-         zkMiyqT5GKAesUWZgmGaYJM/UVPzRmrFOnY96ExGWUcn88wHf2p+tB+SvrxjMhSG9bpp
-         ClBkMJbjOQGtGIzWyTktBsEvZ6KN2JGBjWuZsPyC2FNUBF8EFdF5ht0w1yuw8YZaMbmx
-         Il//sGsOE43kTgljH4neF/08GM2Euybl8UiwmF3x/aeYJRWVBT2Gho8DdI8LeCdX6D9T
-         k5HKEzeeFxIXzuhSP6yYgZ/6FWyE51xDpXqDbbplKRKeabjgWrZZsEnUlO6BkjeDooC6
-         aAbQ==
-X-Gm-Message-State: AC+VfDxJFlJPGuR/l3RHb90CHXBGzUhYJIaQjB/MaTd1N6zgFJsLdYHk
-        MO8VKlvACz0rmEO9bz7tvXxg9SboGIPgyExa7QD27hrBOJLwkzmmy1rFv/oRnjFdFWq2vZiebad
-        Qh/XRgkSS4XJ9Y3orSSS4GrcN
-X-Received: by 2002:a2e:9f05:0:b0:2ab:2c7c:507f with SMTP id u5-20020a2e9f05000000b002ab2c7c507fmr1057056ljk.15.1682655667264;
-        Thu, 27 Apr 2023 21:21:07 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4xYYyesjptJcHcm8yBwlV8SIBaW191/q6NabvCec2b1etZ3S1kKdDOZy7gcBfgds3uQvPBSw==
-X-Received: by 2002:a2e:9f05:0:b0:2ab:2c7c:507f with SMTP id u5-20020a2e9f05000000b002ab2c7c507fmr1057046ljk.15.1682655666887;
-        Thu, 27 Apr 2023 21:21:06 -0700 (PDT)
-Received: from [192.168.1.121] (85-23-48-202.bb.dnainternet.fi. [85.23.48.202])
-        by smtp.gmail.com with ESMTPSA id j21-20020a2e8255000000b002ab0d1c9412sm1953021ljh.139.2023.04.27.21.21.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Apr 2023 21:21:06 -0700 (PDT)
-Message-ID: <3024df40-4c20-867d-8b88-b32aaa04501d@redhat.com>
-Date:   Fri, 28 Apr 2023 07:21:04 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v5] mm/gup: disallow GUP writing to file-backed mappings
- by default
-Content-Language: en-US
-To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
+        d=1e100.net; s=20221208; t=1682658404; x=1685250404;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K+priwgVTI5G9m2IAcDviTBaPANz0KSFOmw49YgGUdI=;
+        b=g7snjtfp0oQVd365hdSeMbTEmNibbM1nijqpD9b/VsQ5Tfxcc7cnQL+uyx6g+D9sIV
+         ByEytdNOCq3lpumdCheFUbKKUsCETVHyt/RfDoa67GgtFoEl02nRsj5gl0G5EfqxWyLB
+         CcPEY3+GVWgqtCyd0DvIg6haDBvIGYn8JELxp9tH9S+WqpG1W0Mz4aM3hBHRlYn8tHMy
+         rKgGNiHzS3zMxJTj2TEUv3/8Aj/zqKqYoc5rCOspl4y/qaC/T209AE7u+eiulaTQkwUS
+         NH7d5vNcbXDD0W+a6jCI4sNng8in1vQyOABxnCK6JS7iuozciYYjxSbY/dA+ddiip2+K
+         VuOQ==
+X-Gm-Message-State: AC+VfDzy6/Hyyhhy/Ri605ypA5a4SuWGGhbG/Ce39uFG8HM2dhzbjuhX
+        XX2k+HnbASqpun9RW++0rkHuVQ==
+X-Google-Smtp-Source: ACHHUZ4335WaLJ0IvStVlJSpeRvka4TYtBqleZr3zv6nyrNafUFSz86H7cUtmDNEwU72UdEYNQQMuQ==
+X-Received: by 2002:a17:902:b702:b0:1a6:c595:d7c3 with SMTP id d2-20020a170902b70200b001a6c595d7c3mr3692487pls.22.1682658404604;
+        Thu, 27 Apr 2023 22:06:44 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
+        by smtp.gmail.com with ESMTPSA id a9-20020a170902900900b001a514d75d16sm12405984plp.13.2023.04.27.22.06.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Apr 2023 22:06:44 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1psGJc-008kwW-Oy; Fri, 28 Apr 2023 15:06:40 +1000
+Date:   Fri, 28 Apr 2023 15:06:40 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <6b73e692c2929dc4613af711bdf92e2ec1956a66.1682638385.git.lstoakes@gmail.com>
-From:   =?UTF-8?Q?Mika_Penttil=c3=a4?= <mpenttil@redhat.com>
-In-Reply-To: <6b73e692c2929dc4613af711bdf92e2ec1956a66.1682638385.git.lstoakes@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
+Message-ID: <20230428050640.GA1969623@dread.disaster.area>
+References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
+ <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
+ <20230423224045.GS447837@dread.disaster.area>
+ <ZEXChAJfCRPv9vbs@codewreck.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZEXChAJfCRPv9vbs@codewreck.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -119,226 +80,125 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Apr 24, 2023 at 08:43:00AM +0900, Dominique Martinet wrote:
+> Dave Chinner wrote on Mon, Apr 24, 2023 at 08:40:45AM +1000:
+> > This doesn't actually introduce non-blocking getdents operations, so
+> > what's the point? If it just shuffles the getdents call off to a
+> > background thread, why bother with io_uring in the first place?
+> 
+> As said in the cover letter my main motivation really is simplifying the
+> userspace application:
+>  - style-wise, mixing in plain old getdents(2) or readdir(3) in the
+> middle of an io_uring handling loop just feels wrong; but this may just
+> be my OCD talking.
+>  - in my understanding io_uring has its own thread pool, so even if the
+> actual getdents is blocking other IOs can progress (assuming there is
+> less blocked getdents than threads), without having to build one's own
+> extra thread pool next to the uring handling.
+> Looking at io_uring/fs.c the other "metadata related" calls there also
+> use the synchronous APIs (renameat, unlinkat, mkdirat, symlinkat and
+> linkat all do), so I didn't think of that as a problem in itself.
 
+I think you missed the point. getdents is not an exclusive operation
+- it is run under shared locking unlike all the other direcotry
+modification operations you cite above. They use exclusive locking
+so there's no real benefit by trying to run them non-blocking or
+as an async operation as they are single threaded and will consume
+a single thread context from start to end.
 
-On 28.4.2023 2.42, Lorenzo Stoakes wrote:
-> Writing to file-backed mappings which require folio dirty tracking using
-> GUP is a fundamentally broken operation, as kernel write access to GUP
-> mappings do not adhere to the semantics expected by a file system.
-> 
-> A GUP caller uses the direct mapping to access the folio, which does not
-> cause write notify to trigger, nor does it enforce that the caller marks
-> the folio dirty.
-> 
-> The problem arises when, after an initial write to the folio, writeback
-> results in the folio being cleaned and then the caller, via the GUP
-> interface, writes to the folio again.
-> 
-> As a result of the use of this secondary, direct, mapping to the folio no
-> write notify will occur, and if the caller does mark the folio dirty, this
-> will be done so unexpectedly.
-> 
-> For example, consider the following scenario:-
-> 
-> 1. A folio is written to via GUP which write-faults the memory, notifying
->     the file system and dirtying the folio.
-> 2. Later, writeback is triggered, resulting in the folio being cleaned and
->     the PTE being marked read-only.
-> 3. The GUP caller writes to the folio, as it is mapped read/write via the
->     direct mapping.
-> 4. The GUP caller, now done with the page, unpins it and sets it dirty
->     (though it does not have to).
-> 
-> This results in both data being written to a folio without writenotify, and
-> the folio being dirtied unexpectedly (if the caller decides to do so).
-> 
-> This issue was first reported by Jan Kara [1] in 2018, where the problem
-> resulted in file system crashes.
-> 
-> This is only relevant when the mappings are file-backed and the underlying
-> file system requires folio dirty tracking. File systems which do not, such
-> as shmem or hugetlb, are not at risk and therefore can be written to
-> without issue.
-> 
-> Unfortunately this limitation of GUP has been present for some time and
-> requires future rework of the GUP API in order to provide correct write
-> access to such mappings.
-> 
-> However, for the time being we introduce this check to prevent the most
-> egregious case of this occurring, use of the FOLL_LONGTERM pin.
-> 
-> These mappings are considerably more likely to be written to after
-> folios are cleaned and thus simply must not be permitted to do so.
-> 
-> As part of this change we separate out vma_needs_dirty_tracking() as a
-> helper function to determine this which is distinct from
-> vma_wants_writenotify() which is specific to determining which PTE flags to
-> set.
-> 
-> [1]:https://lore.kernel.org/linux-mm/20180103100430.GE4911@quack2.suse.cz/
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> ---
->   include/linux/mm.h |  1 +
->   mm/gup.c           | 41 ++++++++++++++++++++++++++++++++++++++++-
->   mm/mmap.c          | 36 +++++++++++++++++++++++++++---------
->   3 files changed, 68 insertions(+), 10 deletions(-)
-> 
-Thanks Lorenzo for the added patch descriptions!
+Further, one of the main reasons they get punted to the per-thread
+pool is so that io_uring can optimise away the lock contention
+caused by running multiple work threads on exclusively locked
+objects; it does this by only running one work item per inode at a
+time.
 
-Reviewed-by: Mika Penttilä <mpenttil@redhat.com>
+This is exactly what we don't want with getdents - we want to be
+able to run as many concurrent getdents and lookup operations in
+parallel as we can as both all use shared locking. IOWs, getdents
+and inode lookups are much closer in behaviour and application use
+to concurrent buffered data reads than they are to directory
+modification operations.
 
+We can already do concurrent getdents/lookup operations on a single
+directory from userspace with multiple threads, but the way this
+series adds support to io_uring somewhat prevents concurrent
+getdents/lookup operations on the same directory inode via io_uring.
+IOWs, adding getdents support to io_uring like this is not a step
+forwards for applications that use/need concurrency in directory
+lookup operations.
 
+Keep in mind that if the directory is small enough to fit in the
+inode, XFS can return all the getdents information immediately as it
+is guaranteed to be in memory without doing any IO at all. Why
+should that fast path that is commonly hit get punted to a work
+queue and suddenly cost an application at least two extra context
+switches?
 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 37554b08bb28..f7da02fc89c6 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2433,6 +2433,7 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
->   #define  MM_CP_UFFD_WP_ALL                 (MM_CP_UFFD_WP | \
->   					    MM_CP_UFFD_WP_RESOLVE)
+> > Filesystems like XFS can easily do non-blocking getdents calls - we
+> > just need the NOWAIT plumbing (like we added to the IO path with
+> > IOCB_NOWAIT) to tell the filesystem not to block on locks or IO.
+> > Indeed, filesystems often have async readahead built into their
+> > getdents paths (XFS does), so it seems to me that we really want
+> > non-blocking getdents to allow filesystems to take full advantage of
+> > doing work without blocking and then shuffling the remainder off to
+> > a background thread when it actually needs to wait for IO....
 > 
-> +bool vma_needs_dirty_tracking(struct vm_area_struct *vma);
->   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot);
->   static inline bool vma_wants_manual_pte_write_upgrade(struct vm_area_struct *vma)
->   {
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 1f72a717232b..d36a5db9feb1 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -959,16 +959,51 @@ static int faultin_page(struct vm_area_struct *vma,
->   	return 0;
->   }
-> 
-> +/*
-> + * Writing to file-backed mappings which require folio dirty tracking using GUP
-> + * is a fundamentally broken operation, as kernel write access to GUP mappings
-> + * do not adhere to the semantics expected by a file system.
-> + *
-> + * Consider the following scenario:-
-> + *
-> + * 1. A folio is written to via GUP which write-faults the memory, notifying
-> + *    the file system and dirtying the folio.
-> + * 2. Later, writeback is triggered, resulting in the folio being cleaned and
-> + *    the PTE being marked read-only.
-> + * 3. The GUP caller writes to the folio, as it is mapped read/write via the
-> + *    direct mapping.
-> + * 4. The GUP caller, now done with the page, unpins it and sets it dirty
-> + *    (though it does not have to).
-> + *
-> + * This results in both data being written to a folio without writenotify, and
-> + * the folio being dirtied unexpectedly (if the caller decides to do so).
-> + */
-> +static bool writeable_file_mapping_allowed(struct vm_area_struct *vma,
-> +					   unsigned long gup_flags)
-> +{
-> +	/* If we aren't pinning then no problematic write can occur. */
-> +	if (!(gup_flags & (FOLL_GET | FOLL_PIN)))
-> +		return true;
-> +
-> +	/* We limit this check to the most egregious case - a long term pin. */
-> +	if (!(gup_flags & FOLL_LONGTERM))
-> +		return true;
-> +
-> +	/* If the VMA requires dirty tracking then GUP will be problematic. */
-> +	return vma_needs_dirty_tracking(vma);
-> +}
-> +
->   static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
->   {
->   	vm_flags_t vm_flags = vma->vm_flags;
->   	int write = (gup_flags & FOLL_WRITE);
->   	int foreign = (gup_flags & FOLL_REMOTE);
-> +	bool vma_anon = vma_is_anonymous(vma);
-> 
->   	if (vm_flags & (VM_IO | VM_PFNMAP))
->   		return -EFAULT;
-> 
-> -	if (gup_flags & FOLL_ANON && !vma_is_anonymous(vma))
-> +	if ((gup_flags & FOLL_ANON) && !vma_anon)
->   		return -EFAULT;
-> 
->   	if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
-> @@ -978,6 +1013,10 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
->   		return -EFAULT;
-> 
->   	if (write) {
-> +		if (!vma_anon &&
-> +		    !writeable_file_mapping_allowed(vma, gup_flags))
-> +			return -EFAULT;
-> +
->   		if (!(vm_flags & VM_WRITE)) {
->   			if (!(gup_flags & FOLL_FORCE))
->   				return -EFAULT;
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 536bbb8fa0ae..7b6344d1832a 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1475,6 +1475,31 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
->   }
->   #endif /* __ARCH_WANT_SYS_OLD_MMAP */
-> 
-> +/* Do VMA operations imply write notify is required? */
-> +static bool vm_ops_needs_writenotify(const struct vm_operations_struct *vm_ops)
-> +{
-> +	return vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite);
-> +}
-> +
-> +/*
-> + * Does this VMA require the underlying folios to have their dirty state
-> + * tracked?
-> + */
-> +bool vma_needs_dirty_tracking(struct vm_area_struct *vma)
-> +{
-> +	/* Does the filesystem need to be notified? */
-> +	if (vm_ops_needs_writenotify(vma->vm_ops))
-> +		return true;
-> +
-> +	/* Specialty mapping? */
-> +	if (vma->vm_flags & VM_PFNMAP)
-> +		return false;
-> +
-> +	/* Can the mapping track the dirty pages? */
-> +	return vma->vm_file && vma->vm_file->f_mapping &&
-> +		mapping_can_writeback(vma->vm_file->f_mapping);
-> +}
-> +
->   /*
->    * Some shared mappings will want the pages marked read-only
->    * to track write events. If so, we'll downgrade vm_page_prot
-> @@ -1484,14 +1509,13 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
->   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
->   {
->   	vm_flags_t vm_flags = vma->vm_flags;
-> -	const struct vm_operations_struct *vm_ops = vma->vm_ops;
-> 
->   	/* If it was private or non-writable, the write bit is already clear */
->   	if ((vm_flags & (VM_WRITE|VM_SHARED)) != ((VM_WRITE|VM_SHARED)))
->   		return 0;
-> 
->   	/* The backer wishes to know when pages are first written to? */
-> -	if (vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite))
-> +	if (vm_ops_needs_writenotify(vma->vm_ops))
->   		return 1;
-> 
->   	/* The open routine did something to the protections that pgprot_modify
-> @@ -1511,13 +1535,7 @@ int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
->   	if (userfaultfd_wp(vma))
->   		return 1;
-> 
-> -	/* Specialty mapping? */
-> -	if (vm_flags & VM_PFNMAP)
-> -		return 0;
-> -
-> -	/* Can the mapping track the dirty pages? */
-> -	return vma->vm_file && vma->vm_file->f_mapping &&
-> -		mapping_can_writeback(vma->vm_file->f_mapping);
-> +	return vma_needs_dirty_tracking(vma);
->   }
-> 
->   /*
-> --
-> 2.40.0
-> 
+> I believe that can be done without any change of this API, so that'll be
+> a very welcome addition when it is ready;
 
+Again, I think you miss the point.
+
+Non blocking data IO came before io_uring and we had the
+infrastructure in place before io_uring took advantage of it.
+Application developers asked the fs developers to add support for
+non-blocking direct IO operations and because we pretty much had all
+the infrastructure to support already in place it got done quickly
+via preadv2/pwritev2 via RWF_NOWAIT flags.
+
+We already pass a struct dir_context to ->iterate_shared(), so we
+have a simple way to add context specific flags down the filesystem
+from iterate_dir(). This is similar to the iocb for file data IO
+that contains the flags field that holds the IOCB_NOWAIT context for
+io_uring based IO. So the infrastructure to plumb it all the way
+down the fs implementation of ->iterate_shared is already there.
+
+XFS also has async metadata IO capability and we use that for
+readahead in the xfs_readdir() implementation. hence we've got all
+the parts we need to do non-blocking readdir already in place. This
+is very similar to how we already had all the pieces in the IO path
+ready to do non-block IO well before anyone asked for IOCB_NOWAIT
+functionality....
+
+AFAICT, the io_uring code wouldn't need to do much more other than
+punt to the work queue if it receives a -EAGAIN result. Otherwise
+the what the filesystem returns doesn't need to change, and I don't
+see that we need to change how the filldir callbacks work, either.
+We just keep filling the user buffer until we either run out of
+cached directory data or the user buffer is full.
+
+And as I've already implied, several filesystems perform async
+readahead from their ->iterate_shared methods, so there's every
+chance they will return some data while there is readahead IO in
+progress. By the time the io_uring processing loop gets back to
+issue another getdents operation, that IO will have completed and the
+application will be able to read more dirents without blocking. The
+filesystem will issue more readahead while processing what it
+already has available, and around the loop we go.
+
+> I don't think the adding the
+> uring op should wait on this if we can agree a simple wrapper API is
+> good enough (or come up with a better one if someone has a Good Idea)
+
+It doesn't look at all hard to me. If you add a NOWAIT context flag
+to the dir_context it should be relatively trivial to connect all
+the parts together. If you do all the VFS, io_uring and userspace
+testing infrastructure work, I should be able to sort out the
+changes needed to xfs_readdir() to support nonblocking
+->iterate_shared() behaviour.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
