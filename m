@@ -2,108 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11D426F12CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 09:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C33356F1361
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 10:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345924AbjD1Hsx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Apr 2023 03:48:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55136 "EHLO
+        id S1345508AbjD1Ikk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Apr 2023 04:40:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345846AbjD1Hsa (ORCPT
+        with ESMTP id S1345297AbjD1Ikj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Apr 2023 03:48:30 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71EF5FFC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 00:46:32 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1a9253d4551so73544155ad.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 00:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1682667925; x=1685259925;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xoe5HpGF9vZnqLd03J3yds9FnNAjqjJWeyLDyyNqms4=;
-        b=gy5+wiMc32xSHzrr0S2/8xoO/E0Nq2p8Kd9U8o1eaNVb2oeiLMK99wCeuoEirqa12w
-         J8sD50eYLyVgX3jMKuJe9EkXUCP4m33HE2q+QCZ4C7jXAg8PGT59JJsRthLKRTUandO9
-         1fE8JTl5Xkrkys6V94qGl6dspIzpWi3cpqVx29YhfmkC/WHUuGUvFj2tKY8WVhyYZ5HE
-         69FZ7jR75TGeLS0Sm/TZgeyJ/7Gus1EW3wIjjRNe7nLBuhFY/GSGBlZwxOlkVFxa4bSI
-         MG24ZylaDijVesM/+ON79Lgz7N4sNz7uO1Ch2vjrv9hTJ89+VpZyE/r7TJHWPdhtOsnX
-         V7jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682667925; x=1685259925;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xoe5HpGF9vZnqLd03J3yds9FnNAjqjJWeyLDyyNqms4=;
-        b=T6C4dt8NRuYMhv39ywRkvTqLSe1EgaJZR5Sr24ULsxq6CaAUtyYMbbkHQENYsg5Vq+
-         Wuq+Pia6Stu8+b/3o3UhcnpShHSS/YluC4x8FSn9ADMJGYugJqqvL+eYGbjhBmK7q1Dn
-         fbLNE0eHMM11/0ezro4DkfNTh84Sox4wMu/DL2Hq7xf9WP8dOv5knupwBlxhrED15cHO
-         Vg1x5CZ0r2vVYfB+4nSTjkRURAZ5oJhg7IXBxObopMQ4/J1cTxESTtB6a3UFEk6LJTzf
-         SXkejVuz4aIUtPpSSVwzTAhvoXqfVRlDOL7igUDFWA7+ugoGgwQg033tqEoLgj9tCmx/
-         8gUw==
-X-Gm-Message-State: AC+VfDzFILlnbw33uwAUWMWwPuFNv7m3sxLA3jpgYlMCC97InnRbfAQV
-        V4V5aGUyyy/EMRK0hDnk65xPWA==
-X-Google-Smtp-Source: ACHHUZ6ZESvfhR8LIslq4fdn2ZOXMRlLNtFud+KKn77WEJxdYrYtyMuMDIFr0dPVM+ApZg6vGhOUIw==
-X-Received: by 2002:a17:903:2348:b0:1a6:7ed0:147e with SMTP id c8-20020a170903234800b001a67ed0147emr5026755plh.33.1682667925031;
-        Fri, 28 Apr 2023 00:45:25 -0700 (PDT)
-Received: from [10.2.117.253] ([61.213.176.8])
-        by smtp.gmail.com with ESMTPSA id q16-20020a170902dad000b00194caf3e975sm12693998plx.208.2023.04.28.00.45.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Apr 2023 00:45:24 -0700 (PDT)
-Message-ID: <9befca58-2425-5b4f-2dab-98b3ed4037ac@bytedance.com>
-Date:   Fri, 28 Apr 2023 15:45:18 +0800
+        Fri, 28 Apr 2023 04:40:39 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D686E3AAC
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 01:40:34 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-214-fJcAo6zoM7-VoaW85-dBPw-1; Fri, 28 Apr 2023 09:40:32 +0100
+X-MC-Unique: fJcAo6zoM7-VoaW85-dBPw-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 28 Apr
+ 2023 09:40:31 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 28 Apr 2023 09:40:31 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [GIT PULL] pidfd updates
+Thread-Topic: [GIT PULL] pidfd updates
+Thread-Index: AQHZd5MX9MAWlQde30y10AgREU+GGK9AaFPw
+Date:   Fri, 28 Apr 2023 08:40:31 +0000
+Message-ID: <eb05bc4e50464579a60b80ddfd596a6a@AcuMS.aculab.com>
+References: <20230421-kurstadt-stempeln-3459a64aef0c@brauner>
+ <CAHk-=whOE+wXrxykHK0GimbNmxyr4a07kTpG8dzoceowTz1Yxg@mail.gmail.com>
+ <20230425060427.GP3390869@ZenIV>
+ <20230425-sturheit-jungautor-97d92d7861e2@brauner>
+ <CAHk-=wjpBq2D97ih_AA0D7+KJ8ihT6WW_cn1BQc43wVgUioH2w@mail.gmail.com>
+In-Reply-To: <CAHk-=wjpBq2D97ih_AA0D7+KJ8ihT6WW_cn1BQc43wVgUioH2w@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: Re: [PATCH v6 0/2] sched/numa: add per-process numa_balancing
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-To:     Bagas Sanjaya <bagasdotme@gmail.com>
-Cc:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>
-References: <20230412140701.58337-1-ligang.bdlg@bytedance.com>
- <9ba3577b-0098-86da-ff2e-636cb5a8ae1a@bytedance.com>
- <76534699-e270-b450-c18e-f7c35c325bcf@gmail.com>
-From:   Gang Li <ligang.bdlg@bytedance.com>
-In-Reply-To: <76534699-e270-b450-c18e-f7c35c325bcf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thank you.
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjUgQXByaWwgMjAyMyAxNzoyOQ0KPiANCj4g
+T24gVHVlLCBBcHIgMjUsIDIwMjMgYXQgNTozNOKAr0FNIENocmlzdGlhbiBCcmF1bmVyIDxicmF1
+bmVyQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiA+DQo+ID4gSGVsbCwgeW91IGNvdWxkIGV2ZW4gZXh0
+ZW5kIHRoYXQgcHJvcG9zYWwgYmVsb3cgdG8gd3JhcCB0aGUNCj4gPiBwdXRfdXNlcigpLi4uDQo+
+ID4NCj4gPiBzdHJ1Y3QgZmRfZmlsZSB7DQo+ID4gICAgICAgICBzdHJ1Y3QgZmlsZSAqZmlsZTsN
+Cj4gPiAgICAgICAgIGludCBmZDsNCj4gPiAgICAgICAgIGludCBfX3VzZXIgKmZkX3VzZXI7DQo+
+ID4gfTsNCj4gDQo+IFNvIEkgZG9uJ3QgbGlrZSB0aGlzIGV4dGVuZGVkIHZlcnNpb24sIGJ1dCB5
+b3VyIHByb3Bvc2FsIHBhdGNoIGJlbG93DQo+IGxvb2tzIGdvb2QgdG8gbWUuDQo+IA0KPiBXaHk/
+IFNpbXBseSBiZWNhdXNlIHRoZSAidHdvLXdvcmQgc3RydWN0IiBpcyBhY3R1YWxseSBhIGdvb2Qg
+d2F5IHRvDQo+IHJldHVybiB0d28gdmFsdWVzLiBCdXQgYSB0aHJlZS13b3JkIG9uZSB3b3VsZCBi
+ZSBwYXNzZWQgb24gdGhlIHN0YWNrLg0KPiANCj4gQm90aCBnY2MgYW5kIGNsYW5nIHJldHVybiBz
+bWFsbCBzdHJ1Y3RzICh3aGVyZSAic21hbGwiIGlzIGxpdGVyYWxseQ0KPiBqdXN0IHR3byB3b3Jk
+cykgaW4gcmVnaXN0ZXJzLCBhbmQgaXQncyBwYXJ0IG9mIG1vc3QgKGFsbD8pIEFCSXMgYW5kDQo+
+IHdlJ3ZlIHJlbGllZCBvbiB0aGF0IGJlZm9yZS4NCg0KSXQgaXMgZGVmaW5pdGVseSBhcmNoaXRl
+Y3R1cmUgZGVwZW5kYW50Lg0KeDg2LTY0IGFuZCBhcm0tNjQgd2lsbCByZXR1cm4gdHdvIDY0Yml0
+IHZhbHVlcyBpbiByZWdpc3RlcnMuDQp4ODYtMzIgYW5kIGFybS0zMiByZXR1cm4gdHdvIDMyYml0
+IHZhbHVlcyBvbiBzdGFjay4NCg0KUHJldHR5IG11Y2ggZXZlcnl0aGluZyBwYXNzZXMgc2hvcnQg
+c3RydWN0dXJlcyBkaXJlY3RseSBieSB2YWx1ZS4NCihJJ20gbm90IHN1cmUgYWJvdXQgc3BhcmMt
+MzIgdGhvdWdoLCBJJ20gc3VyZSBpdCBwYXNzZWQgYWxsDQpzdHJ1Y3R1cmVzIGJ5IHJlZmVyZW5j
+ZSBiYWNrIGluIHRoZSAxOTgwcykNCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBM
+YWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBU
+LCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-I'll keep an eye on the progress.
-
-On 2023/4/28 15:40, Bagas Sanjaya wrote:
-> On 4/27/23 12:17, Gang Li wrote:
->> Hi,
->>
->> Looks like there are no objections or comments. Do you have any ideas?
->>
->> Can we merge this patch in the next merge window.
->>
-> 
-> We're at 6.4 merge window, so the maintainer focus is to send PR updates
-> to Linus. And this series didn't get applied before this merge window.
-> Wait until 6.4-rc1 is out and reroll.
-> 
-> Thanks.
-> 
