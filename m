@@ -2,73 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 850D36F1D73
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 19:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6914D6F1D76
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 19:31:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346239AbjD1Rag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Apr 2023 13:30:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58292 "EHLO
+        id S1346346AbjD1Rbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Apr 2023 13:31:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346262AbjD1Ra3 (ORCPT
+        with ESMTP id S229996AbjD1Rbr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Apr 2023 13:30:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3E0213C
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 10:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1682702980;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EIIwH7T02AjnTsmSMt7UxStS64AfVcp0/yWRRkLLOC0=;
-        b=aCY2SKw31EMEilRsPZAXUqCUJizuAIExHYRqDwdp73WupGOKFqT058O60RoVBUo7CyvZyi
-        1fHs0SMSpMdYZNnA10YoAXjmn8XaD3dCANgw4tBNdaTD3s0YKkC/kL8KsMM48ZqjIbOqyo
-        /etQjhIzCNdzKGVKI0mACkbIpTsY/Dk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-396-kVgXDzmsNRypZO3r0wVD5A-1; Fri, 28 Apr 2023 13:29:39 -0400
-X-MC-Unique: kVgXDzmsNRypZO3r0wVD5A-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-3f1749c63c9so36638745e9.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 10:29:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682702978; x=1685294978;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EIIwH7T02AjnTsmSMt7UxStS64AfVcp0/yWRRkLLOC0=;
-        b=A0wUGPdkf831jiA6pPNLNE+rJUHQmvUAOJZFTCtgggW+6nWwLQR31on8QLZMLhipPE
-         aD2P830+erCw8Lzylxdnd66reVOzxvuJ814B7g37td3Fm6cgO2nPA614PrMHLyk6NGmX
-         DgRbhS3ZriCTsqF56iy7v/KK5jgsNieSklngwbDNLqElw5NQlXy0ac1R+l/c7MRxga8/
-         5HLhEL9HZOsIJVimrl9XVC1Ag/xBVoV696hCUXyaXCMOZ/Th8EtMsVcdtM+G3DHBrXt2
-         blmY3oNnhl0DP+HIJANq0zlkMW7UO5iH00f7pRCC2Z6s4NG9fliFEQjP8Se++z8+Z0iI
-         K3Aw==
-X-Gm-Message-State: AC+VfDxEYN1G/AHi655HFwjQdSqqX382O5Fo0ODWosYJsgPmtC/PKCSm
-        B/edkirdNGr94VYZNUt9qGNA2xaF6DLpD+ug4SqV2k1U3JVdkxcUJB+Z+hZU4JKezeF9LDsTKzq
-        dQLMez6Xbkqk4BZDSsazGfVYX7Q==
-X-Received: by 2002:a7b:c015:0:b0:3f1:662a:93d0 with SMTP id c21-20020a7bc015000000b003f1662a93d0mr4869034wmb.15.1682702978228;
-        Fri, 28 Apr 2023 10:29:38 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4h9gBJBIx2ZQJ+gm3oOoE/Rgj9KykEapquC53KsgU6XwysYEqKUCcp5L2ysNH2brGQpGxgmQ==
-X-Received: by 2002:a7b:c015:0:b0:3f1:662a:93d0 with SMTP id c21-20020a7bc015000000b003f1662a93d0mr4869002wmb.15.1682702977813;
-        Fri, 28 Apr 2023 10:29:37 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c726:9300:1711:356:6550:7502? (p200300cbc72693001711035665507502.dip0.t-ipconnect.de. [2003:cb:c726:9300:1711:356:6550:7502])
-        by smtp.gmail.com with ESMTPSA id q16-20020a7bce90000000b003f09d7b6e20sm25059003wmj.2.2023.04.28.10.29.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Apr 2023 10:29:37 -0700 (PDT)
-Message-ID: <7e096879-4578-36df-4809-3b04f4c20587@redhat.com>
-Date:   Fri, 28 Apr 2023 19:29:35 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v5] mm/gup: disallow GUP writing to file-backed mappings
- by default
-Content-Language: en-US
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     Peter Xu <peterx@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Jason Gunthorpe <jgg@nvidia.com>, linux-mm@kvack.org,
+        Fri, 28 Apr 2023 13:31:47 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2041.outbound.protection.outlook.com [40.107.93.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D371C2735;
+        Fri, 28 Apr 2023 10:31:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AzBPScrY5O4KQ7zUXgCWw+sB+tFk4U2ct9qnm0RFL1Xag9SrHTHQxfmteyiiWx5e0TiCOSESg/lN99jPuoGdkHYfnUEURN2eFV+jC1GAwc3BizCWL8umzhRvPewA/chrb9AAXSe+BTuqzuWU+hYHogLxXvVShSJLu0ILqg5pq5msCnf72x/5kRyeJkp4KBjSNGs3joV5RhoVbSYMXeDpIyE3eqBy2UWKhNvRXSkk9lgcxR+ew2ZGT97jA1JzZq+LVARP3MwLk9m7k9YKw+mpfU0YLUd9KoLXIDifSTcOAQQTkAfPtyRZ8HzfTQlXlnlASY5XEYIQ+AAJyDisX3uNvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i9hCcmYGCg54hor/n3ruFVsyc9Dilaz6NuMi9Qyu3FE=;
+ b=E5mzoRb3KeZzTsXdfA+GmKXJ/W4WTV1G70QTSXXcgyhF5zA5e5BC1sy8UarXrMFgm4co/ZjQTNC/jgw8ic0+9ibWjQ5U5rdADsw1hu+mgFmY7EynFFTnfH6J5dEsJlCuzstZvL8NybEpRZjykqqItY8Bbj1cxTvd9Hn50ckZAewv7ntoXBfTI5Dxen7vDD/HR2Sb7MLrfna6mjQSBFjCKYkYfjS+Zi2XYq8QpQb0bDZ4t7AFGdn55n4Kft3bHZw1Ny1HEzLZzbupkow3ftvU9dSMxpc+XbP0L4dCElzYaihALsbP2mdYxNiX/+YdTmW3KYnOI66dvg83R5cWW50kUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i9hCcmYGCg54hor/n3ruFVsyc9Dilaz6NuMi9Qyu3FE=;
+ b=HjtpwrQrMO2V+8KKVd9ghOmkFV5+DJhDHSKQCsqw6JXlZ8YPzDljtYRbGQ+kGQeN7O5gdKslibs/XSFh6//MtKxdl/Sux7WUPi55BnuNce8i+XhHc7DDu2z7F7MF+TuAaa/eAz7WpQ+wl8yEhHQ5m2ToFMzeSqFBr549VN0SEHdWLmuv0ffcSjxLsbV46gjBoDFJJUfoqB/mGIhFbm/d4/KqXYQqV/alJiFQIVkXXeV5Wh6BYWK79jJRFopWU/ZyIcCOr9nWyJ/yhYmF+ywl1T1cyyMx/VtS2OZ0+tMGPRmDs9rV1TBDGlogONTpGavpy+L6zwxAASjIOTN4NFhVaw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by MW3PR12MB4572.namprd12.prod.outlook.com (2603:10b6:303:5e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.23; Fri, 28 Apr
+ 2023 17:31:39 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6340.024; Fri, 28 Apr 2023
+ 17:31:39 +0000
+Date:   Fri, 28 Apr 2023 14:31:38 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Peter Xu <peterx@redhat.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>,
@@ -109,25 +87,77 @@ Cc:     Peter Xu <peterx@redhat.com>,
         Mika Penttila <mpenttil@redhat.com>,
         David Howells <dhowells@redhat.com>,
         Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v5] mm/gup: disallow GUP writing to file-backed mappings
+ by default
+Message-ID: <ZEwC+viAMJ0vEpgU@nvidia.com>
 References: <077c4b21-8806-455f-be98-d7052a584259@lucifer.local>
  <62ec50da-5f73-559c-c4b3-bde4eb215e08@redhat.com>
  <6ddc7ac4-4091-632a-7b2c-df2005438ec4@redhat.com>
  <20230428160925.5medjfxkyvmzfyhq@box.shutemov.name>
  <39cc0f26-8fc2-79dd-2e84-62238d27fd98@redhat.com>
- <20230428162207.o3ejmcz7rzezpt6n@box.shutemov.name> <ZEv2196tk5yWvgW5@x1n>
+ <20230428162207.o3ejmcz7rzezpt6n@box.shutemov.name>
+ <ZEv2196tk5yWvgW5@x1n>
  <173337c0-14f4-3246-15ff-7fbf03861c94@redhat.com>
- <40fc128f-1978-42db-b9c1-77ac3c2cebfe@lucifer.local>
- <3d7fcfab-e445-1dc7-f000-9fbe7bea04c0@redhat.com>
- <bd470e63-e2e0-4532-8aab-cffe326688b6@lucifer.local>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <bd470e63-e2e0-4532-8aab-cffe326688b6@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+ <20230428165623.pqchgi5gtfhxd5b5@box.shutemov.name>
+ <1039c830-acec-d99b-b315-c2a6e26c34ca@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1039c830-acec-d99b-b315-c2a6e26c34ca@redhat.com>
+X-ClientProxiedBy: MN2PR06CA0021.namprd06.prod.outlook.com
+ (2603:10b6:208:23d::26) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|MW3PR12MB4572:EE_
+X-MS-Office365-Filtering-Correlation-Id: 825fa88c-3a99-4e9f-47dc-08db480e6c5c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OFL7dmUGX+wlp52zW/bRakCIhJIx/p0j5LEnRPbAPyur2lN1MsMgjxhFq/bUaIusG7uyXHBouLPupKdYNeBewE46t0JBbJSpjn8oQrSM2oEw6kBug0mCgtXhF4ZV/WK/0PMH1jMhbes/3xaG5ELA1mQT2HuGVn1pHYj4tnK7gDGuxQ94N5q424kKexdtcbtcydRSlMWS7vCGaZbDnw8k93RKFdxh/F5bCwYer3MTfqlnZqm/F7NeFLSo3/bYWWOBBnrKbx02IEL4S8kxH8l4P39mxHGe6xcAvrmHrX1EgsV8Ziq3ZoMr4rADnc710+lC/GR07nTeEEr3woyNCQwNQpu8SCidUXr+0iqWAETT4yPSbHq4AnJPVFx8ACDU17ldY2uS4g5i+puqvWKpQll2cSrOH4/MrSfNApKj1zlEXV3DumAvOQ3A2QSjSU4CSX8dMNfQ2JeGBGzy9Rw5AHahmiulI1LcNNyfuSXV/sjMZqunYn5E2t4ph/IA10YhNtMpigTH5tEdNIL/4v5xyKMgU8JC76yP0JFwcZm04cYSk4qctMBkUbCOZtLKJ/xzdfJ3RfjQmVZ21sTH6iymDDdiR/oCczeToaPYpVgSg1AyGt0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(39860400002)(366004)(346002)(376002)(451199021)(36756003)(26005)(6512007)(6506007)(186003)(6916009)(66476007)(66946007)(66556008)(4326008)(316002)(86362001)(478600001)(54906003)(8676002)(8936002)(5660300002)(7406005)(7416002)(38100700002)(4744005)(2906002)(83380400001)(41300700001)(6486002)(2616005)(67856001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ee0JtRZuqJKCdBeARMtykk9oBzZKOq2HgTV9G1G2/o/hgiKUIoAYRk18eJxv?=
+ =?us-ascii?Q?EKTp03kJOjub6oxnnPCMyxxo7aycZif7xKF/zoLiPVMe9r3b8QEcDHFTwLD1?=
+ =?us-ascii?Q?c8N9/t5vD+2H/n8dmKqRh5Jgh1mT0Hb7Kk/5lbgtNTApW905fZ2axSsoXf0Y?=
+ =?us-ascii?Q?Z7geNNml5Br5QCynDM1RQVgQKmGR8JqLNuSdQ3yqakGYJzCneP24T4jhmc49?=
+ =?us-ascii?Q?om1OO25LN4DdK2GxY6sZcsRxr9c9jjY6s75mkzJLrYD+WD8eYbGSpgeU/m7K?=
+ =?us-ascii?Q?0z2s8h4LMSSsxS1ZmhqPBvQaW0ggxMpbZFubiext4IBmd++IuXmLMr5NtkKQ?=
+ =?us-ascii?Q?ADlp3BIemmznuplj9HCN0EqxtT4blceKaJ8oUFJaKXMq2lQSCDwnzTtYXmJa?=
+ =?us-ascii?Q?69NPUNwQ8wXTz9Tb61TSR48CiKzZLXO2S1mXZWoUbwTNvFjTk2ElZzBmVkmr?=
+ =?us-ascii?Q?qzg7nvQ0V0E0Sy7B6X9bweb8/cNq3y8gmTcDx471wwhoEvXfJRBLlb8g/GA1?=
+ =?us-ascii?Q?Lws4ymdjoQ6NgqaVUE67CF5P35UMdt1qd3KlUgZHC4ncY0YBrmLjS8uZudnF?=
+ =?us-ascii?Q?myFhDEYaEGkjiD0pj97k2joVTgGRqjd8inGnmY+h5i9H6zthZSmZyv0RNgLx?=
+ =?us-ascii?Q?GadnPvjivQrWNGXR0YMeuhwwZ779utb/QunuoterJSQH0Xkw8aJLuCtov+gt?=
+ =?us-ascii?Q?5QtKKPPIpzkVRk0PDccFGeupdsmMBpaZjCZuK6RqnVrqtPzjpQ6tsoyxzWvP?=
+ =?us-ascii?Q?toCS/m0sU1EeHsXzCqdBj36izPnq7DraYZgtaT0Dcp1oioXvvNoRhqAq+BWo?=
+ =?us-ascii?Q?nh8BOCSj5O0Kmzl3SyUxjojukejesHbQ16N0kmxwW0Z1PK1BY9A3sPQ0LJyA?=
+ =?us-ascii?Q?PBdTfpYdcZCFNjD/49Rrctm7vcDoFN+NurCngD40xgW8QD0YBGglFquktYx9?=
+ =?us-ascii?Q?Gjgpu1ecW668JWJZpLrdFUiS6W0iaPM51Rj8B2gRTdF8CEie5XWl5em4Sx9f?=
+ =?us-ascii?Q?5pq24yZKjDH6vzqHFcO7Lv/Hqhmeu+jZ7cOYiPPI0nXH3yH/8sFfrHQrJCkz?=
+ =?us-ascii?Q?oFd4gxySiTzIOVbhWQnXYmSvYjwbzJxgUWv8+HCxsvTunK26OJzpl9DksVc2?=
+ =?us-ascii?Q?NVjhGvmDyVTyjpzTOjZ9CFiUyfAcg80uTHjoRmCe7hrxmOEOvoi963GdIXw3?=
+ =?us-ascii?Q?/wEMhLc5xKtgOLbl2mfGTWy3MI9dvPvj6xf5JdtEkoykRKNPIJBO/ZpoDBBM?=
+ =?us-ascii?Q?4KF6iKKtEQx5HgoBZXnOSGAn5fUc/OVBS2HLOencR1XWKzmOioHhxiI2eLSt?=
+ =?us-ascii?Q?ZEj9Gyi8jLfzl3Xqr83Hoe5IY7qep4TU3S6Nx7F6lfngueIypNn9F0GMg7Eo?=
+ =?us-ascii?Q?uiHOAELHS4eaHOIgdJFq2blPs0FZS2rh4p1JMR8PlbfykVvfAnILgRYzwLPd?=
+ =?us-ascii?Q?Lg3dfaK2szpRTlKNFEfg1ckZfG5ELBzRgvp1/0mNMMUFBSqE/eNngpSnYz52?=
+ =?us-ascii?Q?f1qfI56pB7dJTpfJNveHTQkjE8QbW0AImFODr0/VEY8NHa/urIn9vMA5N510?=
+ =?us-ascii?Q?TFFlw5o3I7N76nXSCzZTWkmI7wQAHrTcNVYbWDpw?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 825fa88c-3a99-4e9f-47dc-08db480e6c5c
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2023 17:31:39.0038
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FJaeHR315wTSR8xP4rEn/se47RvBNZoHussyWkQ3zGOT8li5XAQghXYcya+aiQVl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4572
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -135,107 +165,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28.04.23 19:13, Lorenzo Stoakes wrote:
-> On Fri, Apr 28, 2023 at 07:05:38PM +0200, David Hildenbrand wrote:
->> On 28.04.23 19:01, Lorenzo Stoakes wrote:
->>> On Fri, Apr 28, 2023 at 06:51:46PM +0200, David Hildenbrand wrote:
->>>> On 28.04.23 18:39, Peter Xu wrote:
->>>>> On Fri, Apr 28, 2023 at 07:22:07PM +0300, Kirill A . Shutemov wrote:
->>>>>> On Fri, Apr 28, 2023 at 06:13:03PM +0200, David Hildenbrand wrote:
->>>>>>> On 28.04.23 18:09, Kirill A . Shutemov wrote:
->>>>>>>> On Fri, Apr 28, 2023 at 05:43:52PM +0200, David Hildenbrand wrote:
->>>>>>>>> On 28.04.23 17:34, David Hildenbrand wrote:
->>>>>>>>>> On 28.04.23 17:33, Lorenzo Stoakes wrote:
->>>>>>>>>>> On Fri, Apr 28, 2023 at 05:23:29PM +0200, David Hildenbrand wrote:
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Security is the primary case where we have historically closed uAPI
->>>>>>>>>>>>>> items.
->>>>>>>>>>>>>
->>>>>>>>>>>>> As this patch
->>>>>>>>>>>>>
->>>>>>>>>>>>> 1) Does not tackle GUP-fast
->>>>>>>>>>>>> 2) Does not take care of !FOLL_LONGTERM
->>>>>>>>>>>>>
->>>>>>>>>>>>> I am not convinced by the security argument in regard to this patch.
->>>>>>>>>>>>>
->>>>>>>>>>>>>
->>>>>>>>>>>>> If we want to sells this as a security thing, we have to block it
->>>>>>>>>>>>> *completely* and then CC stable.
->>>>>>>>>>>>
->>>>>>>>>>>> Regarding GUP-fast, to fix the issue there as well, I guess we could do
->>>>>>>>>>>> something similar as I did in gup_must_unshare():
->>>>>>>>>>>>
->>>>>>>>>>>> If we're in GUP-fast (no VMA), and want to pin a !anon page writable,
->>>>>>>>>>>> fallback to ordinary GUP. IOW, if we don't know, better be safe.
->>>>>>>>>>>
->>>>>>>>>>> How do we determine it's non-anon in the first place? The check is on the
->>>>>>>>>>> VMA. We could do it by following page tables down to folio and checking
->>>>>>>>>>> folio->mapping for PAGE_MAPPING_ANON I suppose?
->>>>>>>>>>
->>>>>>>>>> PageAnon(page) can be called from GUP-fast after grabbing a reference.
->>>>>>>>>> See gup_must_unshare().
->>>>>>>>>
->>>>>>>>> IIRC, PageHuge() can also be called from GUP-fast and could special-case
->>>>>>>>> hugetlb eventually, as it's table while we hold a (temporary) reference.
->>>>>>>>> Shmem might be not so easy ...
->>>>>>>>
->>>>>>>> page->mapping->a_ops should be enough to whitelist whatever fs you want.
->>>>>>>>
->>>>>>>
->>>>>>> The issue is how to stabilize that from GUP-fast, such that we can safely
->>>>>>> dereference the mapping. Any idea?
->>>>>>>
->>>>>>> At least for anon page I know that page->mapping only gets cleared when
->>>>>>> freeing the page, and we don't dereference the mapping but only check a
->>>>>>> single flag stored alongside the mapping. Therefore, PageAnon() is fine in
->>>>>>> GUP-fast context.
->>>>>>
->>>>>> What codepath you are worry about that clears ->mapping on pages with
->>>>>> non-zero refcount?
->>>>>>
->>>>>> I can only think of truncate (and punch hole). READ_ONCE(page->mapping)
->>>>>> and fail GUP_fast if it is NULL should be fine, no?
->>>>>>
->>>>>> I guess we should consider if the inode can be freed from under us and the
->>>>>> mapping pointer becomes dangling. But I think we should be fine here too:
->>>>>> VMA pins inode and VMA cannot go away from under GUP.
->>>>>
->>>>> Can vma still go away if during a fast-gup?
->>>>>
->>>>
->>>> So, after we grabbed the page and made sure the the PTE didn't change (IOW,
->>>> the PTE was stable while we processed it), the page can get unmapped (but
->>>> not freed, because we hold a reference) and the VMA can theoretically go
->>>> away (and as far as I understand, nothing stops the file from getting
->>>> deleted, truncated etc).
->>>>
->>>> So we might be looking at folio->mapping and the VMA is no longer there.
->>>> Maybe even the file is no longer there.
->>>>
->>>
->>> This shouldn't be an issue though right? Because after a pup call unlocks the
->>> mmap_lock we're in the same situation anyway. GUP doesn't generally guarantee
->>> the mapping remains valid, only pinning the underlying folio.
->>
->> Yes. But the issue here is rather dereferencing something that has already
->> been freed, eventually leading to undefined behavior.
->>
-> 
-> Is that an issue with interrupts disabled though? Will block page tables being
-> removed and as Kirill says (sorry I maybe misinterpreted you) we should be ok.
+On Fri, Apr 28, 2023 at 07:02:22PM +0200, David Hildenbrand wrote:
 
-Let's rule out page table freeing. If our VMA only spans a single page 
-and falls into the same PMD as another VMA, an munmap() would not even 
-free a single page table.
+> > No. VMA cannot get away before PTEs are unmapped and TLB is flushed. And
+> > TLB flushing is serialized against GUP_fast().
+>
+> The whole CONFIG_MMU_GATHER_RCU_TABLE_FREE handling makes the situation more
+> complicated.
 
-However, if unmapping a page (flushing the TLB) would imply an IPI as 
-Kirill said, we'd be fine. I recall that that's not the case for all 
-architectures, but I might be just wrong.
+Yeah, you have to think of gup_fast as RCU with a hacky pre-RCU implementation
+on most architectures.
 
-... and now I'll stop reading mails until Tuesday :)
+We could make page->mapping safe under RCU, for instance.
 
--- 
-Thanks,
-
-David / dhildenb
-
+Jason
