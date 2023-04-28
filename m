@@ -2,79 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14D436F1149
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 07:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC756F1180
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 07:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345321AbjD1FYa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Apr 2023 01:24:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50844 "EHLO
+        id S1345285AbjD1FvY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Apr 2023 01:51:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345203AbjD1FY3 (ORCPT
+        with ESMTP id S229768AbjD1FvV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Apr 2023 01:24:29 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCED01BFA
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 22:24:26 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1a68d61579bso70561195ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 22:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1682659466; x=1685251466;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5tT+FnXXVAfiL2lANfau8hR1k0QdF35mbhRvcLTl8f8=;
-        b=tyZtkQYqVjHIc1EEnxVQCQG4Tldpi8hGhievTL1QX2Rkc71hGXqhO9HENHkeUSKGnc
-         B61ELQorVwh5O7/rO7z5fQk8mrRW0cvfCtxYqgxvqsi5u0BxK6zAKnGpq5NAkGP/VD/V
-         YcgarWZGxc2icbaGM3rZ5saUPcmMyaRB04AUDhEy+jo1UICcdQ8mgRmIalPW0J3ZEMDF
-         mxLLYpUJsDW/xrgPFLUGzMg3fv13ONzzBYPG4W+dEZXJlh6fYHvFQEaM+tknxaB24AmI
-         xmvwdHeqM776thiHX7JFp2Dxwaf7lEGabm8M7boBdeZJsFFkdhlrl0FkGUSvbHnrZO9G
-         5nkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682659466; x=1685251466;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5tT+FnXXVAfiL2lANfau8hR1k0QdF35mbhRvcLTl8f8=;
-        b=HblnWsh8rLE97Z/Hk+9wINlfA1iyiZ4ii1tdloDZsM5hoCIHQdSNFuHtuDEaqrnbQk
-         pjmxTXaTDIgpLl2jwlWc6+H2dDQxNK+iJp5gl+BUd405kkTO8Oipf1qVW5QfqFl7qHOQ
-         bld/CRd7Ue7zMLMxPKtX5ZYIMRKz5Qm7Lihy9EcyNSdzNOgYZ+7BXCJ6lKm1hQg+nZrd
-         nUcFn+QY81YHaRBIOgtTz0nOQULvzaNZMi44xaYKCz/qZGHRC5JTwXhtNSHGMYWmtrl2
-         rcYnoTbT9MqLmCDMq7NhYmRyOF+zKlTLXBfAOQgWvHbUxGc5YTWYCzAJNFS/NmZ5W2c+
-         P1Ng==
-X-Gm-Message-State: AC+VfDzgFZLsj4DABE0OJ38gEV2fvF1lA2C+zwz9mc2PVgDcJNTi3jlH
-        yWw4noGRhgFwkArKr6WaxAGGNAjA8PLtcO+YM64=
-X-Google-Smtp-Source: ACHHUZ510rI5TRspLV3WEivPBLF6owNABSCj5GOJiTfryVmfvTBWvFbt5DnvD96jcRuz8RSV72EplQ==
-X-Received: by 2002:a17:902:fb8f:b0:1a1:defc:30d8 with SMTP id lg15-20020a170902fb8f00b001a1defc30d8mr3489595plb.32.1682659465786;
-        Thu, 27 Apr 2023 22:24:25 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
-        by smtp.gmail.com with ESMTPSA id s13-20020a170902a50d00b001a64ce7b18dsm12476240plq.165.2023.04.27.22.24.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Apr 2023 22:24:25 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1psGak-008l7h-7i; Fri, 28 Apr 2023 15:24:22 +1000
-Date:   Fri, 28 Apr 2023 15:24:22 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dave Chinner <dchinner@redhat.com>, Ming Lei <ming.lei@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Fri, 28 Apr 2023 01:51:21 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E2D2D65
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Apr 2023 22:51:20 -0700 (PDT)
+Received: from letrec.thunk.org ([76.150.80.181])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 33S5lMlM026990
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 28 Apr 2023 01:47:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1682660846; bh=n45cV6emPGhOhWVrM3aPDXulvuQpgauHWb0nGls0bOE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=HdOr1NcmCK3MvPO2flI/Eva8KXzuIVfF5D3UOs5MkdFFBoUxAslYlHnX2IUEEGUmg
+         dcw7Zved6ZgTRwJw3fO/GEQBxgRKwQy986GY+v3jl6XgEpqrsNHyH3e18DjI3gTBpM
+         4J3jqLQAJ3gnOgxeweK4gZbDact/GWtxUHMpOciVtFAcv6mSTup4dQRkrDyrVY8vXY
+         5UNs20kH3oBnNCJljcpMWHSw5NgJ82Xp2aqUF7Hoh5MdUZBY1LfxHtHhe7slW6iAYM
+         0nHIgyBJogWvJ3XbAhzJy5SkWAqswP/A+yi7Q0GGJxoB5KuJg0v+5rx6W4hmZxrWcK
+         AEfZtOOyql9zA==
+Received: by letrec.thunk.org (Postfix, from userid 15806)
+        id 0C1D48C0208; Fri, 28 Apr 2023 01:47:22 -0400 (EDT)
+Date:   Fri, 28 Apr 2023 01:47:22 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Baokun Li <libaokun1@huawei.com>
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-ext4@vger.kernel.org,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         linux-block@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
         Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Zhang Yi <yi.zhang@redhat.com>
+        Christoph Hellwig <hch@lst.de>, Zhang Yi <yi.zhang@redhat.com>,
+        yangerkun <yangerkun@huawei.com>
 Subject: Re: [ext4 io hang] buffered write io hang in balance_dirty_pages
-Message-ID: <20230428052422.GB1969623@dread.disaster.area>
+Message-ID: <ZEtd6qZOgRxYnNq9@mit.edu>
 References: <ZEnb7KuOWmu5P+V9@ovpn-8-24.pek2.redhat.com>
- <ZEsGQFN4Pd12r+Nt@rh>
- <ZEs1za7Q0U4bY08w@casper.infradead.org>
+ <ZEny7Izr8iOc/23B@casper.infradead.org>
+ <ZEn/KB0fZj8S1NTK@ovpn-8-24.pek2.redhat.com>
+ <dbb8d8a7-3a80-34cc-5033-18d25e545ed1@huawei.com>
+ <ZEpH+GEj33aUGoAD@ovpn-8-26.pek2.redhat.com>
+ <663b10eb-4b61-c445-c07c-90c99f629c74@huawei.com>
+ <ZEpcCOCNDhdMHQyY@ovpn-8-26.pek2.redhat.com>
+ <ZEskO8md8FjFqQhv@ovpn-8-24.pek2.redhat.com>
+ <fb127775-bbe4-eb50-4b9d-45a8e0e26ae7@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZEs1za7Q0U4bY08w@casper.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+In-Reply-To: <fb127775-bbe4-eb50-4b9d-45a8e0e26ae7@huawei.com>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,56 +71,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 28, 2023 at 03:56:13AM +0100, Matthew Wilcox wrote:
-> On Fri, Apr 28, 2023 at 09:33:20AM +1000, Dave Chinner wrote:
-> > The block device needs to be shutting down the filesystem when it
-> > has some sort of fatal, unrecoverable error like this (e.g. hot
-> > unplug). We have the XFS_IOC_GOINGDOWN ioctl for telling the
-> > filesystem it can't function anymore. This ioctl
-> > (_IOR('X',125,__u32)) has also been replicated into ext4, f2fs and
-> > CIFS and it gets exercised heavily by fstests. Hence this isn't XFS
-> > specific functionality, nor is it untested functionality.
-> > 
-> > The ioctl should be lifted to the VFS as FS_IOC_SHUTDOWN and a
-> > super_operations method added to trigger a filesystem shutdown.
-> > That way the block device removal code could simply call
-> > sb->s_ops->shutdown(sb, REASON) if it exists rather than
-> > sync_filesystem(sb) if there's a superblock associated with the
-> > block device. Then all these 
+On Fri, Apr 28, 2023 at 11:47:26AM +0800, Baokun Li wrote:
+> Ext4 just detects I/O Error and remounts it as read-only, it doesn't know
+> if the current disk is dead or not.
 > 
-> I think this is the wrong approach.  Not that I've had any time to
-> work on my alternative approach:
-> 
-> https://www.infradead.org/~willy/banbury.html
+> I asked Yu Kuai and he said that disk_live() can be used to determine
+> whether
+> a disk has been removed based on the status of the inode corresponding to
+> the block device, but this is generally not done in file systems.
 
-While that looks interesting, I'm going to say straight out that
-re-attaching a storage device that was hot-unplugged from under a
-running filesystem and then resuming service as if nothing happened
-is going to be both a filesystem corruption vector and a major
-security hole.
+What really needs to happen is that del_gendisk() needs to inform file
+systems that the disk is gone, so that the file system can shutdown
+the file system and tear everything down.
 
-The moment a mounted device is unexpectedly unplugged, it becomes an
-untrusted device.  We cannot trust that it's contents when plugged
-back in are identical to when it was unplugged.  I can't wait for
-syzbot to learn that it can mount a filesystem, hot-unplug the
-device, fuzz the image on the device and then plug it back in and
-expect the filesystem to handle the in-memory vs on-disk
-inconsistencies that result from the fuzzing. it's basically no
-different to allowing someone to write to the block device while the
-filesystem is mounted. You do that, you get to keep all the broken
-bits to yourself.
+disk_live() is relatively new; it was added in August 2021.  Back in
+2015, I had added the following in fs/ext4/super.c:
 
-Even without image tampering considerations, there's no guarantee
-that the device caches are flushed properly when someone just pulls
-the plug on a storage device. Hence even without tampering, we
-cannot trust the image on the device to match what the in-memory
-state of the filesystem expects it to be.
+/*
+ * The del_gendisk() function uninitializes the disk-specific data
+ * structures, including the bdi structure, without telling anyone
+ * else.  Once this happens, any attempt to call mark_buffer_dirty()
+ * (for example, by ext4_commit_super), will cause a kernel OOPS.
+ * This is a kludge to prevent these oops until we can put in a proper
+ * hook in del_gendisk() to inform the VFS and file system layers.
+ */
+static int block_device_ejected(struct super_block *sb)
+{
+	struct inode *bd_inode = sb->s_bdev->bd_inode;
+	struct backing_dev_info *bdi = inode_to_bdi(bd_inode);
 
-So, yeah, I just don't see this ever being something we'd support
-with filesystems like XFS - there's just too much risk associated
-with untrusted devices...
+	return bdi->dev == NULL;
+}
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+As the comment states, it's rather awkward to have the file system
+check to see if the block device is dead in various places; the real
+problem is that the block device shouldn't just *vanish*, with the
+block device structures egetting partially de-initialized, without the
+block layer being polite enough to let the file system know.
+
+> Those dirty pages that are already there are piling up and can't be
+> written back, which I think is a real problem. Can the block layer
+> clear those dirty pages when it detects that the disk is deleted?
+
+Well, the dirty pages belong to the file system, and so it needs to be
+up to the file system to clear out the dirty pages.  But I'll also
+what the right thing to do when a disk gets removed is not necessarily
+obvious.
+
+For example, suppose some process has a file mmap'ed into its address
+space, and that file is on the disk which the user has rudely yanked
+out from their laptop; what is the right thing to do?  Do we kill the
+process?  Do we let the process write to the mmap'ed region, and
+silently let the modified data go *poof* when the process exits?  What
+if there is an executable file on the removable disk, and there are
+one or more processes running that executable when the device
+disappears?  Do we kill the process?  Do we let the process run unti
+it tries to access a page which hasn't been paged in and then kill the
+process?
+
+We should design a proper solution for What Should Happen when a
+removable disk gets removed unceremoniously without unmounting the
+file system first.  It's not just a matter of making some tests go
+green....
+
+						- Ted
+						
