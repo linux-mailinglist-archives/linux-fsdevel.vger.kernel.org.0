@@ -2,101 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A4AC6F1376
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 10:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7732E6F13B8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Apr 2023 10:57:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345515AbjD1Irw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Apr 2023 04:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57290 "EHLO
+        id S1345808AbjD1I5b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Apr 2023 04:57:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345225AbjD1Iru (ORCPT
+        with ESMTP id S1345790AbjD1I5O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Apr 2023 04:47:50 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95EF52728
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 01:47:47 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-329326caa4aso68724635ab.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 01:47:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682671667; x=1685263667;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QeuIWsyfE8QRzGIA3wUsHQCHj888JIoXAHIN3OdB9K0=;
-        b=atbxIXuaXO1ukP105LEn6DNzuAP1TfJaVh3rFe5cMvegLjaM3PobwCNQ/yHVDFGkKF
-         rudFlHHrS6OM67poZ+D3IXX6SNgRZjjC8CLe5V2VbTg0TivmIPLPqYaVIwJnI+ifN+GV
-         qRe8tcSEQ1cw3ixe791UGcjdnO0y0fTDiwpLt+mX+LiM1l2zgsKHSopRCf5p1msDXCfV
-         u105fHmw73IJybLZTly2qhh2mPIftNAy9TX64ZzPRTv8ZvhjRw2NSaeF9KNvQdDr3MKu
-         kRSyMmLjohgtylLRvDCZ1VkXdVfxk6vbqeGh4Fij/aGhBTqdBA/5GHbQhnwxOowIRskE
-         krpw==
-X-Gm-Message-State: AC+VfDyCjxMpZMVNSMFGDnsMXPPKO41mMjidNWBeozl3y78Yl9dgClqH
-        rIKfL9FF1puIQGiqifkKQ+fGFn0s3pD5QKrCaM4TD3lNrAgv
-X-Google-Smtp-Source: ACHHUZ7s6abN+81ptcOqufkCU1xVEq3ObpiyN0LRdnzVgEL2H0zSA9O8g1YLLv6Cedw91IRSkN+kBZoArcjC7p3MXSArJEzW8smo
+        Fri, 28 Apr 2023 04:57:14 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FBC32D65;
+        Fri, 28 Apr 2023 01:56:53 -0700 (PDT)
+Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Q75zn3Zk8z8wyT;
+        Fri, 28 Apr 2023 16:55:49 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Fri, 28 Apr 2023 16:56:49 +0800
+Message-ID: <c7eb49e4-2382-00d4-01e5-aac114ad9931@huawei.com>
+Date:   Fri, 28 Apr 2023 16:56:49 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a02:a14a:0:b0:3c5:1971:1b7f with SMTP id
- m10-20020a02a14a000000b003c519711b7fmr2433851jah.6.1682671666917; Fri, 28 Apr
- 2023 01:47:46 -0700 (PDT)
-Date:   Fri, 28 Apr 2023 01:47:46 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000faf54f05fa6186db@google.com>
-Subject: [syzbot] Monthly ntfs3 report (Apr 2023)
-From:   syzbot <syzbot+list1d8e27291d051da3b6be@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2] mm: hwpoison: coredump: support recovery from
+ dump_user_range()
+Content-Language: en-US
+To:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>
+CC:     "Luck, Tony" <tony.luck@intel.com>,
+        "chu, jane" <jane.chu@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tong Tiangen <tongtiangen@huawei.com>,
+        Jens Axboe <axboe@kernel.dk>
+References: <9a9876a2-a2fd-40d9-b215-3e6c8207e711@huawei.com>
+ <20230421031356.GA3048466@hori.linux.bs1.fc.nec.co.jp>
+ <1bd6a635-5a3d-c294-38ce-5c6fcff6494f@huawei.com>
+ <20230424064427.GA3267052@hori.linux.bs1.fc.nec.co.jp>
+ <SJ1PR11MB60833E08F3C3028F7463FE19FC679@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <316b5a9e-5d5f-3bcf-57c1-86fafe6681c3@huawei.com>
+ <SJ1PR11MB6083452F5EB3F1812C0D2DFEFC649@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <6b350187-a9a5-fb37-79b1-bf69068f0182@huawei.com>
+ <SJ1PR11MB60833517FCAA19AC5F20FC3CFC659@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <f345b2b4-73e5-a88d-6cff-767827ab57d0@huawei.com>
+ <20230427023045.GA3499768@hori.linux.bs1.fc.nec.co.jp>
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20230427023045.GA3499768@hori.linux.bs1.fc.nec.co.jp>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.243]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500001.china.huawei.com (7.185.36.107)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ntfs3 maintainers/developers,
 
-This is a 31-day syzbot report for the ntfs3 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs3
 
-During the period, 8 new issues were detected and 0 were fixed.
-In total, 62 issues are still open and 21 have been fixed so far.
+On 2023/4/27 10:31, HORIGUCHI NAOYA(堀口 直也) wrote:
+> On Thu, Apr 27, 2023 at 09:06:46AM +0800, Kefeng Wang wrote:
+>>
+>>
+...
+>> For coredump，the task work will be called too, see following code,
+>>
+>> get_signal
+>> 	sig_kernel_coredump
+>> 		elf_core_dump
+>> 			dump_user_range
+>> 				_copy_from_iter // with MC-safe copy, return without panic
+>> 	do_group_exit(ksig->info.si_signo);
+>> 		do_exit
+>> 			exit_task_work
+>> 				task_work_run
+>> 					kill_me_never
+>> 						memory_failure
+>>
+>> I also add debug print to check the memory_failure() processing after
+>> add MCE_IN_KERNEL_COPYIN to MCE_SAFE exception type, also tested CoW of
+>> normal page and huge page, it works too.
+> 
+> Sounds nice to me.
+> Maybe this information is worth documenting in the patch description.
+> 
 
-Some of the still happening issues:
+Sure, will make a formal patch and send out, thanks.
 
-Ref  Crashes Repro Title
-<1>  3546    Yes   KASAN: slab-out-of-bounds Read in ntfs_iget5
-                   https://syzkaller.appspot.com/bug?extid=b4084c18420f9fad0b4f
-<2>  1835    Yes   UBSAN: shift-out-of-bounds in ntfs_fill_super (2)
-                   https://syzkaller.appspot.com/bug?extid=478c1bf0e6bf4a8f3a04
-<3>  1013    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
-                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
-<4>  843     Yes   possible deadlock in attr_data_get_block
-                   https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
-<5>  388     Yes   possible deadlock in ntfs_set_state
-                   https://syzkaller.appspot.com/bug?extid=f91c29a5d5a01ada051a
-<6>  352     Yes   possible deadlock in mi_read
-                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
-<7>  242     No    possible deadlock in ntfs_mark_rec_free
-                   https://syzkaller.appspot.com/bug?extid=f83f0dbef763c426e3cf
-<8>  65      Yes   WARNING in do_symlinkat
-                   https://syzkaller.appspot.com/bug?extid=e78eab0c1cf4649256ed
-<9>  58      Yes   KASAN: vmalloc-out-of-bounds Write in find_lock_entries
-                   https://syzkaller.appspot.com/bug?extid=e498ebacfd2fd78cf7b2
-<10> 51      Yes   WARNING in do_mkdirat
-                   https://syzkaller.appspot.com/bug?extid=919c5a9be8433b8bf201
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+> Thanks,
+> Naoya Horiguchi
