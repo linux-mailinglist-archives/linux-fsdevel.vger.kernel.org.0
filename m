@@ -2,328 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69C1C6F2345
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Apr 2023 07:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 845736F23AB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Apr 2023 10:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231129AbjD2Fut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Apr 2023 01:50:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54794 "EHLO
+        id S230310AbjD2IIF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Apr 2023 04:08:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347395AbjD2Fuq (ORCPT
+        with ESMTP id S230138AbjD2IID (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Apr 2023 01:50:46 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DA7046AE;
-        Fri, 28 Apr 2023 22:50:14 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1a7111e0696so1124815ad.1;
-        Fri, 28 Apr 2023 22:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682747405; x=1685339405;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZbKAx6UUwJ9mLm57lrt++FILTK7yRebUgLuTTeWfqoQ=;
-        b=ZZowK1U5CoX3hs7UlB6a3NU5j1wPtSzDC44+x5Q+efEczIZz97T+3ZAJpAmdUIRmbE
-         Hf/nLZ9SbG8nMcMW14LISHLWwRlyt2MEJF2v4tWSc0xMocaur+tHrNit7e56du+p6Ros
-         SKzqrwEAhM96Geyygv8+9pnnW+8R0V12aFqxWTJlcylhWpm1HNs1Tr01Y1Wb/vyZIlzY
-         8sK7AyBP8PDb/8ELr5t0k9N6TbIoxWG9r2fJ/Dk8qo8JZoILO+lcsSmojyD8BJMf3Cd1
-         6AHq4Vz4gn2k3eOQ/htPWBqbRIPELyD9mUcOaOa0rRe2Bi/q0C9F2AIr0D/lSPoUEv/H
-         YSnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682747405; x=1685339405;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZbKAx6UUwJ9mLm57lrt++FILTK7yRebUgLuTTeWfqoQ=;
-        b=YBMeFHcaLebdw8cG9czOyOUR9/PvRuBFN0XEKQWq02u64K/xLu9Ned/mT2ZyVmF7qS
-         onoCnlJIhx6h1LkAYx6GjAfyXWknFg8n26ekjbNa8vEadL5byix6tGatDiKzWURKrRtM
-         TD3RsiM0dkh5YMXOvbMRwdC0c5gaCME48GNgRAbJR8dW/3iPd2WyYLp1opuFdVYMTlpM
-         OviYp2JktL+g/Vt/hTvE6tpkd6oE3O4MyvqWssG7I958LBgOYZsnOkc+E2TsZ9+XoBO+
-         XhKq02PzcXVkV13jCRWvtXaZnP44MAA7lJipxhvCng586/K+oGnPi7vXGXnAdWGrQZuq
-         3X5w==
-X-Gm-Message-State: AC+VfDyF32J/iaLdBoezkAxPfKxat07H9tNXcrrIuTYb5aDGci0NQWa3
-        g//oiCKfWWahwSmbUJvMl/U=
-X-Google-Smtp-Source: ACHHUZ5x404EY6u2qmnXkB1KoKwmrj4VoJvUAHHzElV+qEL77YN78b2QJHRoXVKyhEA60T3guLNKYw==
-X-Received: by 2002:a05:6a20:440d:b0:f8:ea21:7c4f with SMTP id ce13-20020a056a20440d00b000f8ea217c4fmr8804482pzb.5.1682747404812;
-        Fri, 28 Apr 2023 22:50:04 -0700 (PDT)
-Received: from ip-172-31-38-16.us-west-2.compute.internal (ec2-52-37-71-140.us-west-2.compute.amazonaws.com. [52.37.71.140])
-        by smtp.gmail.com with ESMTPSA id 20-20020a630514000000b005142206430fsm14126045pgf.36.2023.04.28.22.50.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Apr 2023 22:50:04 -0700 (PDT)
-From:   aloktiagi <aloktiagi@gmail.com>
-To:     viro@zeniv.linux.org.uk, willy@infradead.org, brauner@kernel.org,
-        David.Laight@ACULAB.COM, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     keescook@chromium.org, hch@infradead.org, tycho@tycho.pizza,
-        aloktiagi@gmail.com
-Subject: [RFC v5 2/2] seccomp: replace existing file in the epoll interface by a new file injected by the syscall supervisor.
-Date:   Sat, 29 Apr 2023 05:49:55 +0000
-Message-Id: <20230429054955.1957024-2-aloktiagi@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230429054955.1957024-1-aloktiagi@gmail.com>
-References: <20230429054955.1957024-1-aloktiagi@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        Sat, 29 Apr 2023 04:08:03 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A749D;
+        Sat, 29 Apr 2023 01:08:00 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id A622AC020; Sat, 29 Apr 2023 10:07:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682755675; bh=DmRpe2Il38TnK4sApoIi7xcpmjSwMJq7MXIke/ZT6ac=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OwfifKgW3lPCsCcBzi0Cfnz7NR9y7XYtFvHbIjiIA4D1w71mtKg9/JCYL33SJ1xKT
+         Ig3Xx37tqDsF55AgzYgjg9eLrhwrgr5Qba7Fv7q9P7gcWeSQRh0D3jIxD6Cp4KJgwX
+         lyLixZvm3FMOSAgr52mNXP5aSGsYpWc6OCiKzRvPXKLfwuYGoPzH5xZMlUATH2uap0
+         CRDperPfVMvDYIoPA1elcZ7UYsHNsYWNHwtkP68MkIth0Hdk9QAEyspiwlYjbSHdwk
+         9seuSStKy9JhMmGB+/SVufJHg2GEOC1EOE0P6I2/E40vnnBowMxExVx3R6MEeFhpqr
+         LTJoxyBT1swCg==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id A69E9C009;
+        Sat, 29 Apr 2023 10:07:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1682755674; bh=DmRpe2Il38TnK4sApoIi7xcpmjSwMJq7MXIke/ZT6ac=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=W+JXrOsOwX0OeC3hoq8L1edpV2APOkX/DyA3O+/MUBofJe+Aj4ZODZfLhe1B+XKU8
+         JHMauX23dBpfYZZ0iW8jH6Pwg//wLHN2kvGRszE0S4fvc2munmY7Ovw4gWR5dlMUbf
+         JhBBvalGPqC7cbMRv19kvZIANNqqhbt6JjKXWGlPSJfgSk/lskf9iIje53Y+fm8hdX
+         k00dPKpx50OnesXNC8dzOaa8krMloOJ936nrvRP5g9tW86pKh8Qm7BbAsdbd6xjA4f
+         NK95odKTnRYiG0HByAxWivIYPD7TTa6F3zSKLino5cQQ2FweaX83x0HkuSv9+9OiXF
+         ymOs3KKDg2HUg==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id adcfa885;
+        Sat, 29 Apr 2023 08:07:47 +0000 (UTC)
+Date:   Sat, 29 Apr 2023 17:07:32 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
+Message-ID: <ZEzQRLUnlix1GvbA@codewreck.org>
+References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
+ <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
+ <20230423224045.GS447837@dread.disaster.area>
+ <ZEXChAJfCRPv9vbs@codewreck.org>
+ <20230428050640.GA1969623@dread.disaster.area>
+ <ZEtkXJ1vMsFR3tkN@codewreck.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZEtkXJ1vMsFR3tkN@codewreck.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce a mechanism to replace a file linked in the epoll interface by a new
-file injected by the syscall supervisor by using the epoll provided
-eventpoll_replace_file() api.
+Dominique Martinet wrote on Fri, Apr 28, 2023 at 03:14:52PM +0900:
+> > AFAICT, the io_uring code wouldn't need to do much more other than
+> > punt to the work queue if it receives a -EAGAIN result. Otherwise
+> > the what the filesystem returns doesn't need to change, and I don't
+> > see that we need to change how the filldir callbacks work, either.
+> > We just keep filling the user buffer until we either run out of
+> > cached directory data or the user buffer is full.
+> 
+> [...] I'd like to confirm what the uring
+> side needs to do before proceeding -- looking at the read/write path
+> there seems to be a polling mechanism in place to tell uring when to
+> look again, and I haven't looked at this part of the code yet to see
+> what happens if no such polling is in place (does uring just retry
+> periodically?)
 
-Also introduce a new addfd flag SECCOMP_ADDFD_FLAG_REPLACE_REF to allow the supervisor
-to indicate that it is interested in getting the original file replaced by the
-new injected file.
+Ok so this part can work out as you said, I hadn't understood what you
+meant by "punt to the work queue" but that should work from my new
+understanding of the ring; we can just return EAGAIN if the non-blocking
+variant doesn't have immediate results and call the blocking variant
+when we're called again without IO_URING_F_NONBLOCK in flags.
+(So there's no need to try to add a form of polling, although that is
+possible if we ever become able to do that; I'll just forget about this
+and be happy this part is easy)
 
-We have a use case where multiple IPv6 only network namespaces can use a single
-IPv4 network namespace for IPv4 only egress connectivity by switching their
-sockets from IPv6 to IPv4 network namespace. This allows for migration of
-systems to IPv6 only while keeping their connectivity to IPv4 only destinations
-intact.
 
-Today, we achieve this by setting up seccomp filter to intercept network system
-calls like connect() from a container in a syscall supervisor which runs in an
-IPv4 only network namespace. The syscall supervisor creates a new IPv4 connection
-and injects the new file descriptor through SECCOMP_NOTIFY_IOCTL_ADDFD replacing
-the original file descriptor from the connect() call. This does not work for
-cases where the original file descriptor is handed off to a system like epoll
-before the connect() call. After a new file descriptor is injected the original
-file descriptor being referenced by the epoll fd is not longer valid leading to
-failures. As a workaround the syscall supervisor when intercepting connect()
-loops through all open socket file descriptors to check if they are referencing
-the socket attempting the connect() and replace the reference with the to be
-injected file descriptor. This workaround is cumbersome and makes the solution
-prone to similar yet to be discovered issues.
+That just leaves deciding if a filesystem handles the blocking variant
+or not; ideally if we can know early (prep time) we can even mark
+REQ_F_FORCE_ASYNC in flags to skip the non-blocking call for filesystems
+that don't handle that and we get the best of both worlds.
 
-The above change will enable us remove the workaround in the syscall supervisor
-and let the kernel handle the replacement correctly.
+I've had a second look and I still don't see anything obvious though;
+I'd rather avoid adding a new variant of iterate()/iterate_shared() --
+we could use that as a chance to add a flag to struct file_operation
+instead? e.g., something like mmap_supported_flags:
+-----
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c85916e9f7db..2ebbf48ee18b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1761,7 +1761,7 @@ struct file_operations {
+ 	int (*iopoll)(struct kiocb *kiocb, struct io_comp_batch *,
+ 			unsigned int flags);
+ 	int (*iterate) (struct file *, struct dir_context *);
+-	int (*iterate_shared) (struct file *, struct dir_context *);
++	unsigned long iterate_supported_flags;
+ 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
+ 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+ 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
+@@ -1797,6 +1797,10 @@ struct file_operations {
+ 				unsigned int poll_flags);
+ } __randomize_layout;
+ 
++/** iterate_supported_flags */
++#define ITERATE_SHARED 0x1
++#define ITERATE_NOWAIT 0x2
++
+ struct inode_operations {
+ 	struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);
+ 	const char * (*get_link) (struct dentry *, struct inode *, struct delayed_call *);
+-----
 
-Signed-off-by: aloktiagi <aloktiagi@gmail.com>
----
- include/uapi/linux/seccomp.h                  |   1 +
- kernel/seccomp.c                              |  35 +++++-
- tools/testing/selftests/seccomp/seccomp_bpf.c | 102 ++++++++++++++++++
- 3 files changed, 136 insertions(+), 2 deletions(-)
+and fix all usages of iterate_shared.
 
-diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-index 0fdc6ef02b94..0a74dc5d967f 100644
---- a/include/uapi/linux/seccomp.h
-+++ b/include/uapi/linux/seccomp.h
-@@ -118,6 +118,7 @@ struct seccomp_notif_resp {
- /* valid flags for seccomp_notif_addfd */
- #define SECCOMP_ADDFD_FLAG_SETFD	(1UL << 0) /* Specify remote fd */
- #define SECCOMP_ADDFD_FLAG_SEND		(1UL << 1) /* Addfd and return it, atomically */
-+#define SECCOMP_ADDFD_FLAG_REPLACE_REF	(1UL << 2) /* Update replace references */
- 
- /**
-  * struct seccomp_notif_addfd
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index cebf26445f9e..5b1b265b30d9 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -19,6 +19,7 @@
- #include <linux/audit.h>
- #include <linux/compat.h>
- #include <linux/coredump.h>
-+#include <linux/eventpoll.h>
- #include <linux/kmemleak.h>
- #include <linux/nospec.h>
- #include <linux/prctl.h>
-@@ -1056,6 +1057,7 @@ static u64 seccomp_next_notify_id(struct seccomp_filter *filter)
- static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_knotif *n)
- {
- 	int fd;
-+	struct file *old_file = NULL;
- 
- 	/*
- 	 * Remove the notification, and reset the list pointers, indicating
-@@ -1064,8 +1066,30 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
- 	list_del_init(&addfd->list);
- 	if (!addfd->setfd)
- 		fd = receive_fd(addfd->file, addfd->flags);
--	else
-+	else {
-+		int ret = 0;
-+		if (addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_REPLACE_REF) {
-+			old_file = fget(addfd->fd);
-+			if (!old_file) {
-+				fd = -EBADF;
-+				goto error;
-+			}
-+			ret = eventpoll_replace_file(old_file, addfd->file, addfd->fd);
-+			if (ret < 0) {
-+				fd = ret;
-+				goto error;
-+			}
-+		}
- 		fd = receive_fd_replace(addfd->fd, addfd->file, addfd->flags);
-+		/* In case of error restore all references */
-+		if (fd < 0 && addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_REPLACE_REF) {
-+			ret = eventpoll_replace_file(addfd->file, old_file, addfd->fd);
-+			if (ret < 0) {
-+				fd = ret;
-+			}
-+		}
-+	}
-+error:
- 	addfd->ret = fd;
- 
- 	if (addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_SEND) {
-@@ -1080,6 +1104,9 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
- 		}
- 	}
- 
-+	if (old_file)
-+		fput(old_file);
-+
- 	/*
- 	 * Mark the notification as completed. From this point, addfd mem
- 	 * might be invalidated and we can't safely read it anymore.
-@@ -1613,12 +1640,16 @@ static long seccomp_notify_addfd(struct seccomp_filter *filter,
- 	if (addfd.newfd_flags & ~O_CLOEXEC)
- 		return -EINVAL;
- 
--	if (addfd.flags & ~(SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_SEND))
-+	if (addfd.flags & ~(SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_SEND |
-+			    SECCOMP_ADDFD_FLAG_REPLACE_REF))
- 		return -EINVAL;
- 
- 	if (addfd.newfd && !(addfd.flags & SECCOMP_ADDFD_FLAG_SETFD))
- 		return -EINVAL;
- 
-+	if (!addfd.newfd && (addfd.flags & SECCOMP_ADDFD_FLAG_REPLACE_REF))
-+		return -EINVAL;
-+
- 	kaddfd.file = fget(addfd.srcfd);
- 	if (!kaddfd.file)
- 		return -EBADF;
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 61386e499b77..3ece9407c6a9 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -47,6 +47,7 @@
- #include <linux/kcmp.h>
- #include <sys/resource.h>
- #include <sys/capability.h>
-+#include <sys/epoll.h>
- 
- #include <unistd.h>
- #include <sys/syscall.h>
-@@ -4179,6 +4180,107 @@ TEST(user_notification_addfd)
- 	close(memfd);
- }
- 
-+TEST(user_notification_addfd_with_epoll_replace)
-+{
-+	char c;
-+	pid_t pid;
-+	long ret;
-+	int optval;
-+	socklen_t optlen = sizeof(optval);
-+	int status, listener, fd;
-+	int efd, sfd[4];
-+	struct epoll_event e;
-+	struct seccomp_notif_addfd addfd = {};
-+	struct seccomp_notif req = {};
-+	struct seccomp_notif_resp resp = {};
-+
-+	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+	ASSERT_EQ(0, ret) {
-+		TH_LOG("Kernel does not support PR_SET_NO_NEW_PRIVS!");
-+	}
-+
-+	listener = user_notif_syscall(__NR_getsockopt,
-+				      SECCOMP_FILTER_FLAG_NEW_LISTENER);
-+
-+	/* Create two socket pairs sfd[0] <-> sfd[1] and sfd[2] <-> sfd[3] */
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[2]), 0);
-+
-+	pid = fork();
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		if (socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[0]) != 0)
-+			exit(1);
-+
-+		efd = epoll_create(1);
-+		if (efd == -1)
-+			exit(1);
-+
-+		e.events = EPOLLIN;
-+		if (epoll_ctl(efd, EPOLL_CTL_ADD, sfd[0], &e) != 0)
-+			exit(1);
-+
-+		/*
-+		 * fd will be added here to replace an existing one linked
-+		 * in the epoll interface.
-+		 */
-+		if (getsockopt(sfd[0], SOL_SOCKET, SO_DOMAIN, &optval,
-+		       &optlen) != USER_NOTIF_MAGIC)
-+			exit(1);
-+
-+		/*
-+		 * Write data to the sfd[3] connected to sfd[2], but due to
-+		 * the swap, we should see data on sfd[0]
-+		 */
-+		if (write(sfd[3], "w", 1) != 1)
-+			exit(1);
-+
-+		if (epoll_wait(efd, &e, 1, 0) != 1)
-+			exit(1);
-+
-+		if (read(sfd[0], &c, 1) != 1)
-+			exit(1);
-+
-+		if ('w' != c)
-+			exit(1);
-+
-+		if (epoll_ctl(efd, EPOLL_CTL_DEL, sfd[0], &e) != 0)
-+			exit(1);
-+
-+		close(efd);
-+		close(sfd[0]);
-+		close(sfd[1]);
-+		close(sfd[2]);
-+		close(sfd[3]);
-+		exit(0);
-+	}
-+
-+	ASSERT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, &req), 0);
-+
-+	addfd.srcfd = sfd[2];
-+	addfd.newfd = req.data.args[0];
-+	addfd.id = req.id;
-+	addfd.flags = SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_REPLACE_REF;
-+	addfd.newfd_flags = O_CLOEXEC;
-+
-+	/*
-+	 * Verfiy we can install and replace a file that is linked in the
-+	 * epoll interface. Replace the socket sfd[0] with sfd[2]
-+	 */
-+	fd = ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd);
-+	EXPECT_EQ(fd, req.data.args[0]);
-+
-+	resp.id = req.id;
-+	resp.error = 0;
-+	resp.val = USER_NOTIF_MAGIC;
-+	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_SEND, &resp), 0);
-+
-+	/* Wait for child to finish. */
-+	EXPECT_EQ(waitpid(pid, &status, 0), pid);
-+	EXPECT_EQ(true, WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+}
-+
- TEST(user_notification_addfd_rlimit)
- {
- 	pid_t pid;
+I guess at this rate it might make sense to rename mmap_supported_flags
+to some more generic supported_flags instead?...
+
+It's a bit more than I have signed up for, but I guess it's still
+reasonable enough. I'll wait for feedback before doing it though; please
+say if this sounds good to you and I'll send a v2 with such a flag, as
+well as adding flags to dir_context as you had suggested.
+
+Thanks,
 -- 
-2.34.1
-
+Dominique Martinet | Asmadeus
