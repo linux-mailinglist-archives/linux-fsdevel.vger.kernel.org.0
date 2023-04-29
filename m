@@ -2,148 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 845736F23AB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Apr 2023 10:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 433FA6F251A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Apr 2023 16:45:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230310AbjD2IIF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Apr 2023 04:08:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56838 "EHLO
+        id S230479AbjD2OpU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Apr 2023 10:45:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230138AbjD2IID (ORCPT
+        with ESMTP id S231383AbjD2OpT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Apr 2023 04:08:03 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A749D;
-        Sat, 29 Apr 2023 01:08:00 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id A622AC020; Sat, 29 Apr 2023 10:07:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1682755675; bh=DmRpe2Il38TnK4sApoIi7xcpmjSwMJq7MXIke/ZT6ac=;
+        Sat, 29 Apr 2023 10:45:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9B1171B;
+        Sat, 29 Apr 2023 07:45:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5814C60B88;
+        Sat, 29 Apr 2023 14:45:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 153C1C433EF;
+        Sat, 29 Apr 2023 14:45:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682779517;
+        bh=mF8d7P+Q4t5U+pNZXsUVOqHPGIKb0mpLg9o9u/1wQfk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OwfifKgW3lPCsCcBzi0Cfnz7NR9y7XYtFvHbIjiIA4D1w71mtKg9/JCYL33SJ1xKT
-         Ig3Xx37tqDsF55AgzYgjg9eLrhwrgr5Qba7Fv7q9P7gcWeSQRh0D3jIxD6Cp4KJgwX
-         lyLixZvm3FMOSAgr52mNXP5aSGsYpWc6OCiKzRvPXKLfwuYGoPzH5xZMlUATH2uap0
-         CRDperPfVMvDYIoPA1elcZ7UYsHNsYWNHwtkP68MkIth0Hdk9QAEyspiwlYjbSHdwk
-         9seuSStKy9JhMmGB+/SVufJHg2GEOC1EOE0P6I2/E40vnnBowMxExVx3R6MEeFhpqr
-         LTJoxyBT1swCg==
+        b=BGhFgtwir8bS7+ebXlrQIQTvLZ3VhhaW+k2NPXmYS8VEncAhRLrf5JW78KTNBEgjk
+         ffg7xWHRxYv3R3JzTE5o5TNzU671aPixEGtYdAbKGqCzkTOIEHme/2Ay5Ad0KrVIGu
+         IRpTm+j0tDaJOonsBqQ7iYcbsEElOnRRnA+IhAx23Za8uDmZQPbyU3FE7FUBytw8O1
+         5iKzcrOkq1c6Fnr6v2n2airc/5wEAPMfH2zOu0spvRwHJUpQhgDq5JkOF0+7QFMFti
+         2XdY3e5INt8lgDs7qrAjbbc/nSbMxm+cDEFDn/gf1uAhVR4ADBCdEgWqZtdZMIpuRe
+         iwFPBLIld5LuA==
+Date:   Sat, 29 Apr 2023 10:45:14 -0400
+From:   Chuck Lever <cel@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC][PATCH 0/4] Prepare for supporting more filesystems with
+ fanotify
+Message-ID: <ZE0teudDjXJFz+1b@manet.1015granger.net>
+References: <20230425130105.2606684-1-amir73il@gmail.com>
+ <dafbff6baa201b8af862ee3faf7fe948d2a026ab.camel@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dafbff6baa201b8af862ee3faf7fe948d2a026ab.camel@kernel.org>
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id A69E9C009;
-        Sat, 29 Apr 2023 10:07:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1682755674; bh=DmRpe2Il38TnK4sApoIi7xcpmjSwMJq7MXIke/ZT6ac=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W+JXrOsOwX0OeC3hoq8L1edpV2APOkX/DyA3O+/MUBofJe+Aj4ZODZfLhe1B+XKU8
-         JHMauX23dBpfYZZ0iW8jH6Pwg//wLHN2kvGRszE0S4fvc2munmY7Ovw4gWR5dlMUbf
-         JhBBvalGPqC7cbMRv19kvZIANNqqhbt6JjKXWGlPSJfgSk/lskf9iIje53Y+fm8hdX
-         k00dPKpx50OnesXNC8dzOaa8krMloOJ936nrvRP5g9tW86pKh8Qm7BbAsdbd6xjA4f
-         NK95odKTnRYiG0HByAxWivIYPD7TTa6F3zSKLino5cQQ2FweaX83x0HkuSv9+9OiXF
-         ymOs3KKDg2HUg==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id adcfa885;
-        Sat, 29 Apr 2023 08:07:47 +0000 (UTC)
-Date:   Sat, 29 Apr 2023 17:07:32 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Roesch <shr@fb.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH RFC 2/2] io_uring: add support for getdents
-Message-ID: <ZEzQRLUnlix1GvbA@codewreck.org>
-References: <20230422-uring-getdents-v1-0-14c1db36e98c@codewreck.org>
- <20230422-uring-getdents-v1-2-14c1db36e98c@codewreck.org>
- <20230423224045.GS447837@dread.disaster.area>
- <ZEXChAJfCRPv9vbs@codewreck.org>
- <20230428050640.GA1969623@dread.disaster.area>
- <ZEtkXJ1vMsFR3tkN@codewreck.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZEtkXJ1vMsFR3tkN@codewreck.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dominique Martinet wrote on Fri, Apr 28, 2023 at 03:14:52PM +0900:
-> > AFAICT, the io_uring code wouldn't need to do much more other than
-> > punt to the work queue if it receives a -EAGAIN result. Otherwise
-> > the what the filesystem returns doesn't need to change, and I don't
-> > see that we need to change how the filldir callbacks work, either.
-> > We just keep filling the user buffer until we either run out of
-> > cached directory data or the user buffer is full.
+On Thu, Apr 27, 2023 at 11:13:33AM -0400, Jeff Layton wrote:
+> On Tue, 2023-04-25 at 16:01 +0300, Amir Goldstein wrote:
+> > Jan,
+> > 
+> > Following up on the FAN_REPORT_ANY_FID proposal [1], here is a shot at an
+> > alternative proposal to seamlessly support more filesystems.
+> > 
+> > While fanotify relaxes the requirements for filesystems to support
+> > reporting fid to require only the ->encode_fh() operation, there are
+> > currently no new filesystems that meet the relaxed requirements.
+> > 
+> > I will shortly post patches that allow overlayfs to meet the new
+> > requirements with default overlay configurations.
+> > 
+> > The overlay and vfs/fanotify patch sets are completely independent.
+> > The are both available on my github branch [2] and there is a simple
+> > LTP test variant that tests reporting fid from overlayfs [3], which
+> > also demonstrates the minor UAPI change of name_to_handle_at(2) for
+> > requesting a non-decodeable file handle by userspace.
+> > 
+> > Thanks,
+> > Amir.
+> > 
+> > [1] https://lore.kernel.org/linux-fsdevel/20230417162721.ouzs33oh6mb7vtft@quack3/
+> > [2] https://github.com/amir73il/linux/commits/exportfs_encode_fid
+> > [3] https://github.com/amir73il/ltp/commits/exportfs_encode_fid
+> > 
+> > Amir Goldstein (4):
+> >   exportfs: change connectable argument to bit flags
+> >   exportfs: add explicit flag to request non-decodeable file handles
+> >   exportfs: allow exporting non-decodeable file handles to userspace
+> >   fanotify: support reporting non-decodeable file handles
+> > 
+> >  Documentation/filesystems/nfs/exporting.rst |  4 +--
+> >  fs/exportfs/expfs.c                         | 29 ++++++++++++++++++---
+> >  fs/fhandle.c                                | 20 ++++++++------
+> >  fs/nfsd/nfsfh.c                             |  5 ++--
+> >  fs/notify/fanotify/fanotify.c               |  4 +--
+> >  fs/notify/fanotify/fanotify_user.c          |  6 ++---
+> >  fs/notify/fdinfo.c                          |  2 +-
+> >  include/linux/exportfs.h                    | 18 ++++++++++---
+> >  include/uapi/linux/fcntl.h                  |  5 ++++
+> >  9 files changed, 67 insertions(+), 26 deletions(-)
+> > 
 > 
-> [...] I'd like to confirm what the uring
-> side needs to do before proceeding -- looking at the read/write path
-> there seems to be a polling mechanism in place to tell uring when to
-> look again, and I haven't looked at this part of the code yet to see
-> what happens if no such polling is in place (does uring just retry
-> periodically?)
+> This set looks fairly benign to me, so ACK on the general concept.
 
-Ok so this part can work out as you said, I hadn't understood what you
-meant by "punt to the work queue" but that should work from my new
-understanding of the ring; we can just return EAGAIN if the non-blocking
-variant doesn't have immediate results and call the blocking variant
-when we're called again without IO_URING_F_NONBLOCK in flags.
-(So there's no need to try to add a form of polling, although that is
-possible if we ever become able to do that; I'll just forget about this
-and be happy this part is easy)
+Me also (modulo previous review comments), so
+
+  Acked-by: Chuck Lever <chuck.lever@oracle.com>
+
+I assume either Amir or Jeff will take these when they are ready.
+If I'm wrong, please do let me know and I can take them via the
+NFSD tree.
 
 
-That just leaves deciding if a filesystem handles the blocking variant
-or not; ideally if we can know early (prep time) we can even mark
-REQ_F_FORCE_ASYNC in flags to skip the non-blocking call for filesystems
-that don't handle that and we get the best of both worlds.
-
-I've had a second look and I still don't see anything obvious though;
-I'd rather avoid adding a new variant of iterate()/iterate_shared() --
-we could use that as a chance to add a flag to struct file_operation
-instead? e.g., something like mmap_supported_flags:
------
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c85916e9f7db..2ebbf48ee18b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1761,7 +1761,7 @@ struct file_operations {
- 	int (*iopoll)(struct kiocb *kiocb, struct io_comp_batch *,
- 			unsigned int flags);
- 	int (*iterate) (struct file *, struct dir_context *);
--	int (*iterate_shared) (struct file *, struct dir_context *);
-+	unsigned long iterate_supported_flags;
- 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
- 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
- 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
-@@ -1797,6 +1797,10 @@ struct file_operations {
- 				unsigned int poll_flags);
- } __randomize_layout;
- 
-+/** iterate_supported_flags */
-+#define ITERATE_SHARED 0x1
-+#define ITERATE_NOWAIT 0x2
-+
- struct inode_operations {
- 	struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);
- 	const char * (*get_link) (struct dentry *, struct inode *, struct delayed_call *);
------
-
-and fix all usages of iterate_shared.
-
-I guess at this rate it might make sense to rename mmap_supported_flags
-to some more generic supported_flags instead?...
-
-It's a bit more than I have signed up for, but I guess it's still
-reasonable enough. I'll wait for feedback before doing it though; please
-say if this sounds good to you and I'll send a v2 with such a flag, as
-well as adding flags to dir_context as you had suggested.
-
-Thanks,
--- 
-Dominique Martinet | Asmadeus
+> I am starting to dislike how the AT_* flags are turning into a bunch of
+> flags that only have meanings on certain syscalls. I don't see a cleaner
+> way to handle it though.
+> -- 
+> Jeff Layton <jlayton@kernel.org>
