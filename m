@@ -2,97 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F8D16F22DF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Apr 2023 06:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E2846F22F2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Apr 2023 06:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbjD2EW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Apr 2023 00:22:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54750 "EHLO
+        id S230324AbjD2Eko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Apr 2023 00:40:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230119AbjD2EW4 (ORCPT
+        with ESMTP id S229563AbjD2Ekn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Apr 2023 00:22:56 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C26D30C5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Apr 2023 21:22:55 -0700 (PDT)
-Received: from letrec.thunk.org ([76.150.80.181])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 33T4LADR028231
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 29 Apr 2023 00:21:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1682742083; bh=x35IJH2Kq57CenRp9XDYUfeb7XaZg8EW3MY2fyeE+60=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=XS8yR23bvao+hUGNsieKp+k9HHEALUC5GU00GcmAg3HvyJBiEA4Pf7P/ZI4AVQ/4m
-         DLsCymUXNURENk/BhLWJGBnSPN3z+hE+GUlBzE0/vn++JMO6ZbYi47/vZ6sz69dJPP
-         dD4T4XIq7/aIS7FJ5s0yWFeUKKqC16QwHnalBpfk4TSzBNznHp5ekdmDaJZYJAWvEo
-         aRNHWwjxwsCOYFn3dqKsxnWxYbJpYvC97hHCygeOb8wNnIIYN4XmlXjK2edXAQqOOc
-         NPi52OLJIF7HFuTRa1DdZThhZTGTOzIODXOHAGl9VpSeq/INVRfHPhguvb7UhY4OSr
-         wmO4iJOBFZj8g==
-Received: by letrec.thunk.org (Postfix, from userid 15806)
-        id A53098C01B4; Sat, 29 Apr 2023 00:21:09 -0400 (EDT)
-Date:   Sat, 29 Apr 2023 00:21:09 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        Sat, 29 Apr 2023 00:40:43 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF4A30D2;
+        Fri, 28 Apr 2023 21:40:42 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 9BE0268D13; Sat, 29 Apr 2023 06:40:38 +0200 (CEST)
+Date:   Sat, 29 Apr 2023 06:40:38 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, Baokun Li <libaokun1@huawei.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5] mm/gup: disallow GUP writing to file-backed mappings
- by default
-Message-ID: <ZEybNZ7Rev+XM4GU@mit.edu>
-References: <6b73e692c2929dc4613af711bdf92e2ec1956a66.1682638385.git.lstoakes@gmail.com>
- <afcc124e-7a9b-879c-dfdf-200426b84e24@redhat.com>
- <ZEvZtIb2EDb/WudP@nvidia.com>
- <ZEwPscQu68kx32zF@mit.edu>
- <ZEwVbPM2OPSeY21R@nvidia.com>
+        linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Zhang Yi <yi.zhang@redhat.com>,
+        yangerkun <yangerkun@huawei.com>
+Subject: Re: [ext4 io hang] buffered write io hang in balance_dirty_pages
+Message-ID: <20230429044038.GA7561@lst.de>
+References: <ZEny7Izr8iOc/23B@casper.infradead.org> <ZEn/KB0fZj8S1NTK@ovpn-8-24.pek2.redhat.com> <dbb8d8a7-3a80-34cc-5033-18d25e545ed1@huawei.com> <ZEpH+GEj33aUGoAD@ovpn-8-26.pek2.redhat.com> <663b10eb-4b61-c445-c07c-90c99f629c74@huawei.com> <ZEpcCOCNDhdMHQyY@ovpn-8-26.pek2.redhat.com> <ZEskO8md8FjFqQhv@ovpn-8-24.pek2.redhat.com> <fb127775-bbe4-eb50-4b9d-45a8e0e26ae7@huawei.com> <ZEtd6qZOgRxYnNq9@mit.edu> <ZEyL/sjVeW88XpIn@ovpn-8-24.pek2.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZEwVbPM2OPSeY21R@nvidia.com>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+In-Reply-To: <ZEyL/sjVeW88XpIn@ovpn-8-24.pek2.redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -100,34 +48,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 28, 2023 at 03:50:20PM -0300, Jason Gunthorpe wrote:
-> > Do we think we can still trigger a kernel crash, or maybe even some
-> > more exciting like an arbitrary buffer overrun, via the
-> > process_vm_writev(2) system call into a file-backed mmap'ed region?
+On Sat, Apr 29, 2023 at 11:16:14AM +0800, Ming Lei wrote:
+> OK, looks both Dave and you have same suggestion, and IMO, it isn't hard to
+> add one interface for notifying FS, and it can be either one s_ops->shutdown()
+> or shutdown_filesystem(struct super_block *sb).
 
-I paged back into my memory the details, and (un)fortunately(?) it
-probably can't be turned into high severity security exploit; it's
-"just" a silent case of data loss.  (Which is *so* much better.... :-)
+It's not that simple.  You need to be able to do that for any device used
+by a file system, not just s_bdev.  This means it needs go into ops
+passed by the bdev owner, which is also needed to propagate this through
+stackable devices.
 
-There was a reliable reproducer which was found by Syzkaller, that
-didn't require any kind of exotic hardware or setup[1], and we
-ultimately kluged a workaround in commit cc5095747edf ("ext4: don't
-BUG if someone dirty pages without asking ext4 first").
+I have some work on that, but the way how blkdev_get is called in the
+generic mount helpers is a such a mess that I've not been happy with
+the result yet.  Let me see if spending extra time with it will allow
+me to come up with something that doesn't suck.
 
-[1] https://lore.kernel.org/all/Yg0m6IjcNmfaSokM@google.com/
+> But the main job should be how this interface is implemented in FS/VFS side,
+> so it looks one more FS job, and block layer can call shutdown_filesystem()
+> from del_gendisk() simply.
 
-Commit cc5095747edf had the (un)fortunate(?) side effect that GUP
-writes to ext4 file-backed mappings no longer would cause random
-low-probability crashes on large installations using RDMA, which has
-apparently removed some of the motivation of really fixing the problem
-instead of papering over it.  The good news is that I'm no longer
-getting complaints from syzbot for this issue, and *I* don't have to
-support anyone trying to use RDMA into file-backed mappings.  :-)
-
-In any case, the file system maintainers' position (mine and I doubt
-Dave Chinner's position has changed) is that if you write to
-file-backed mappings via GUP/RDMA/process_vm_writev, and it causes
-silent data corruption, you get to keep both pieces, and don't go
-looking for us for anything other than sympathy...
-
-						- Ted
+This needs to be called from blk_mark_disk_dead for drivers using that,
+and from del_gendisk only if GD_DEAD isn't set yet.
