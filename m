@@ -2,58 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E2D6F28B6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Apr 2023 14:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 850C26F28B7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Apr 2023 14:13:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230483AbjD3MNX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Apr 2023 08:13:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46812 "EHLO
+        id S231132AbjD3MNY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Apr 2023 08:13:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230390AbjD3MNK (ORCPT
+        with ESMTP id S230445AbjD3MNW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Apr 2023 08:13:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCD2D19A2;
-        Sun, 30 Apr 2023 05:13:08 -0700 (PDT)
+        Sun, 30 Apr 2023 08:13:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3207930DF;
+        Sun, 30 Apr 2023 05:13:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 74C4760B47;
-        Sun, 30 Apr 2023 12:13:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F16C433D2;
-        Sun, 30 Apr 2023 12:13:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A58A460B00;
+        Sun, 30 Apr 2023 12:13:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5C3CC433D2;
+        Sun, 30 Apr 2023 12:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682856787;
-        bh=YZo0radRhw7c6WXwv3dQGDwj2+t/0O6Bwt6ngQV31VY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OngSO29Px5ZBkh+HrtlyPFLfng0bS7J00AAx0ZhFXDvoW7Qkwfugo2IucklKNXgNL
-         J/d4hHKQbwHDP7Z1blmdC4DEAcuqWWQMjyYu2aDt4T7Gm6CdQg3sRyl/Ls0pnC8UyH
-         t0OCm0yzRtTMsmGXN0gNhhEwVknFBpbFXynIi1MABneqBUJGcGYvXAVmJk4VdQzfpC
-         S71vfEy1w8CWopylITsZzebtb07iXRih+jy87quRrwMEpz9k2sGXjjxK50F01huqEY
-         A7HgZxJzdsSGK/1TSEfI9EaJ6oIaW3MbIteyokELFzlGIcp4hAQiiIelq5s7HqfX78
-         Irf0D7fzXSnlA==
+        s=k20201202; t=1682856793;
+        bh=KYQzf6EKflHNo4wUvHc388TM+PtVsT42BkLurY40DSg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oPFC72hY39s1lBEUJ/q19io67CMgUd/jzgFNzM4YjfnaE3RO4wJ/GZbRhcLfgL4uJ
+         2S907Gv7OYMRnDHK+IOXa6rwf/ekK4hUzrN1XEErMaA1YJm0yQk6nuggT3AKgDU2jj
+         jy4un6mOKsv5FbaJL9nBh4hr6Ga4jq2Ci+svImAdV2sGej2aoE2gtOmL96BRTVgRNX
+         8VJTs5/GZ2MVvZyVIvHHIvkLphWwWc3jmkjnGMhtxqwB0t90S59PE8AuMKytYjfM55
+         bBUpBYpCwqn7Dm4C6k2fMcof/tXerForVIHArYXG4wBdORmljhzKYfHfJ+SnloyWJM
+         D2A2f1J9rLI7w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+e2787430e752a92b8750@syzkaller.appspotmail.com>,
-        syzbot <syzbot+4913dca2ea6e4d43f3f1@syzkaller.appspotmail.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, willy@infradead.org,
-        dchinner@redhat.com, akpm@linux-foundation.org, jlayton@kernel.org,
-        gargaditya08@live.com, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.3 2/2] fs: hfsplus: remove WARN_ON() from hfsplus_cat_{read,write}_inode()
-Date:   Sun, 30 Apr 2023 08:12:58 -0400
-Message-Id: <20230430121301.3197608-2-sashal@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Pedro Falcato <pedro.falcato@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
+        slark_xiao@163.com, f.fainelli@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.2 1/2] open: return EINVAL for O_DIRECTORY | O_CREAT
+Date:   Sun, 30 Apr 2023 08:13:07 -0400
+Message-Id: <20230430121309.3197648-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230430121301.3197608-1-sashal@kernel.org>
-References: <20230430121301.3197608-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -62,108 +59,194 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Christian Brauner <brauner@kernel.org>
 
-[ Upstream commit 81b21c0f0138ff5a499eafc3eb0578ad2a99622c ]
+[ Upstream commit 43b450632676fb60e9faeddff285d9fac94a4f58 ]
 
-syzbot is hitting WARN_ON() in hfsplus_cat_{read,write}_inode(), for
-crafted filesystem image can contain bogus length. There conditions are
-not kernel bugs that can justify kernel to panic.
+After a couple of years and multiple LTS releases we received a report
+that the behavior of O_DIRECTORY | O_CREAT changed starting with v5.7.
 
-Reported-by: syzbot <syzbot+e2787430e752a92b8750@syzkaller.appspotmail.com>
-Link: https://syzkaller.appspot.com/bug?extid=e2787430e752a92b8750
-Reported-by: syzbot <syzbot+4913dca2ea6e4d43f3f1@syzkaller.appspotmail.com>
-Link: https://syzkaller.appspot.com/bug?extid=4913dca2ea6e4d43f3f1
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Message-Id: <15308173-5252-d6a3-ae3b-e96d46cb6f41@I-love.SAKURA.ne.jp>
+On kernels prior to v5.7 combinations of O_DIRECTORY, O_CREAT, O_EXCL
+had the following semantics:
+
+(1) open("/tmp/d", O_DIRECTORY | O_CREAT)
+    * d doesn't exist:                create regular file
+    * d exists and is a regular file: ENOTDIR
+    * d exists and is a directory:    EISDIR
+
+(2) open("/tmp/d", O_DIRECTORY | O_CREAT | O_EXCL)
+    * d doesn't exist:                create regular file
+    * d exists and is a regular file: EEXIST
+    * d exists and is a directory:    EEXIST
+
+(3) open("/tmp/d", O_DIRECTORY | O_EXCL)
+    * d doesn't exist:                ENOENT
+    * d exists and is a regular file: ENOTDIR
+    * d exists and is a directory:    open directory
+
+On kernels since to v5.7 combinations of O_DIRECTORY, O_CREAT, O_EXCL
+have the following semantics:
+
+(1) open("/tmp/d", O_DIRECTORY | O_CREAT)
+    * d doesn't exist:                ENOTDIR (create regular file)
+    * d exists and is a regular file: ENOTDIR
+    * d exists and is a directory:    EISDIR
+
+(2) open("/tmp/d", O_DIRECTORY | O_CREAT | O_EXCL)
+    * d doesn't exist:                ENOTDIR (create regular file)
+    * d exists and is a regular file: EEXIST
+    * d exists and is a directory:    EEXIST
+
+(3) open("/tmp/d", O_DIRECTORY | O_EXCL)
+    * d doesn't exist:                ENOENT
+    * d exists and is a regular file: ENOTDIR
+    * d exists and is a directory:    open directory
+
+This is a fairly substantial semantic change that userspace didn't
+notice until Pedro took the time to deliberately figure out corner
+cases. Since no one noticed this breakage we can somewhat safely assume
+that O_DIRECTORY | O_CREAT combinations are likely unused.
+
+The v5.7 breakage is especially weird because while ENOTDIR is returned
+indicating failure a regular file is actually created. This doesn't make
+a lot of sense.
+
+Time was spent finding potential users of this combination. Searching on
+codesearch.debian.net showed that codebases often express semantical
+expectations about O_DIRECTORY | O_CREAT which are completely contrary
+to what our code has done and currently does.
+
+The expectation often is that this particular combination would create
+and open a directory. This suggests users who tried to use that
+combination would stumble upon the counterintuitive behavior no matter
+if pre-v5.7 or post v5.7 and quickly realize neither semantics give them
+what they want. For some examples see the code examples in [1] to [3]
+and the discussion in [4].
+
+There are various ways to address this issue. The lazy/simple option
+would be to restore the pre-v5.7 behavior and to just live with that bug
+forever. But since there's a real chance that the O_DIRECTORY | O_CREAT
+quirk isn't relied upon we should try to get away with murder(ing bad
+semantics) first. If we need to Frankenstein pre-v5.7 behavior later so
+be it.
+
+So let's simply return EINVAL categorically for O_DIRECTORY | O_CREAT
+combinations. In addition to cleaning up the old bug this also opens up
+the possiblity to make that flag combination do something more intuitive
+in the future.
+
+Starting with this commit the following semantics apply:
+
+(1) open("/tmp/d", O_DIRECTORY | O_CREAT)
+    * d doesn't exist:                EINVAL
+    * d exists and is a regular file: EINVAL
+    * d exists and is a directory:    EINVAL
+
+(2) open("/tmp/d", O_DIRECTORY | O_CREAT | O_EXCL)
+    * d doesn't exist:                EINVAL
+    * d exists and is a regular file: EINVAL
+    * d exists and is a directory:    EINVAL
+
+(3) open("/tmp/d", O_DIRECTORY | O_EXCL)
+    * d doesn't exist:                ENOENT
+    * d exists and is a regular file: ENOTDIR
+    * d exists and is a directory:    open directory
+
+One additional note, O_TMPFILE is implemented as:
+
+    #define __O_TMPFILE    020000000
+    #define O_TMPFILE      (__O_TMPFILE | O_DIRECTORY)
+    #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)
+
+For older kernels it was important to return an explicit error when
+O_TMPFILE wasn't supported. So O_TMPFILE requires that O_DIRECTORY is
+raised alongside __O_TMPFILE. It also enforced that O_CREAT wasn't
+specified. Since O_DIRECTORY | O_CREAT could be used to create a regular
+allowing that combination together with __O_TMPFILE would've meant that
+false positives were possible, i.e., that a regular file was created
+instead of a O_TMPFILE. This could've been used to trick userspace into
+thinking it operated on a O_TMPFILE when it wasn't.
+
+Now that we block O_DIRECTORY | O_CREAT completely the check for O_CREAT
+in the __O_TMPFILE branch via if ((flags & O_TMPFILE_MASK) != O_TMPFILE)
+can be dropped. Instead we can simply check verify that O_DIRECTORY is
+raised via if (!(flags & O_DIRECTORY)) and explain this in two comments.
+
+As Aleksa pointed out O_PATH is unaffected by this change since it
+always returned EINVAL if O_CREAT was specified - with or without
+O_DIRECTORY.
+
+Link: https://lore.kernel.org/lkml/20230320071442.172228-1-pedro.falcato@gmail.com
+Link: https://sources.debian.org/src/flatpak/1.14.4-1/subprojects/libglnx/glnx-dirfd.c/?hl=324#L324 [1]
+Link: https://sources.debian.org/src/flatpak-builder/1.2.3-1/subprojects/libglnx/glnx-shutil.c/?hl=251#L251 [2]
+Link: https://sources.debian.org/src/ostree/2022.7-2/libglnx/glnx-dirfd.c/?hl=324#L324 [3]
+Link: https://www.openwall.com/lists/oss-security/2014/11/26/14 [4]
+Reported-by: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfsplus/inode.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+ fs/open.c                              | 18 +++++++++++++-----
+ include/uapi/asm-generic/fcntl.h       |  1 -
+ tools/include/uapi/asm-generic/fcntl.h |  1 -
+ 3 files changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index abb91f5fae921..b21660475ac1c 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -511,7 +511,11 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- 	if (type == HFSPLUS_FOLDER) {
- 		struct hfsplus_cat_folder *folder = &entry.folder;
- 
--		WARN_ON(fd->entrylength < sizeof(struct hfsplus_cat_folder));
-+		if (fd->entrylength < sizeof(struct hfsplus_cat_folder)) {
-+			pr_err("bad catalog folder entry\n");
-+			res = -EIO;
-+			goto out;
-+		}
- 		hfs_bnode_read(fd->bnode, &entry, fd->entryoffset,
- 					sizeof(struct hfsplus_cat_folder));
- 		hfsplus_get_perms(inode, &folder->permissions, 1);
-@@ -531,7 +535,11 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- 	} else if (type == HFSPLUS_FILE) {
- 		struct hfsplus_cat_file *file = &entry.file;
- 
--		WARN_ON(fd->entrylength < sizeof(struct hfsplus_cat_file));
-+		if (fd->entrylength < sizeof(struct hfsplus_cat_file)) {
-+			pr_err("bad catalog file entry\n");
-+			res = -EIO;
-+			goto out;
-+		}
- 		hfs_bnode_read(fd->bnode, &entry, fd->entryoffset,
- 					sizeof(struct hfsplus_cat_file));
- 
-@@ -562,6 +570,7 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- 		pr_err("bad catalog entry used to create inode\n");
- 		res = -EIO;
+diff --git a/fs/open.c b/fs/open.c
+index ceb88ac0ca3b2..f652833feffb5 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1158,13 +1158,21 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
  	}
-+out:
- 	return res;
- }
  
-@@ -570,6 +579,7 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 	struct inode *main_inode = inode;
- 	struct hfs_find_data fd;
- 	hfsplus_cat_entry entry;
-+	int res = 0;
+ 	/*
+-	 * In order to ensure programs get explicit errors when trying to use
+-	 * O_TMPFILE on old kernels, O_TMPFILE is implemented such that it
+-	 * looks like (O_DIRECTORY|O_RDWR & ~O_CREAT) to old kernels. But we
+-	 * have to require userspace to explicitly set it.
++	 * Block bugs where O_DIRECTORY | O_CREAT created regular files.
++	 * Note, that blocking O_DIRECTORY | O_CREAT here also protects
++	 * O_TMPFILE below which requires O_DIRECTORY being raised.
+ 	 */
++	if ((flags & (O_DIRECTORY | O_CREAT)) == (O_DIRECTORY | O_CREAT))
++		return -EINVAL;
++
++	/* Now handle the creative implementation of O_TMPFILE. */
+ 	if (flags & __O_TMPFILE) {
+-		if ((flags & O_TMPFILE_MASK) != O_TMPFILE)
++		/*
++		 * In order to ensure programs get explicit errors when trying
++		 * to use O_TMPFILE on old kernels we enforce that O_DIRECTORY
++		 * is raised alongside __O_TMPFILE.
++		 */
++		if (!(flags & O_DIRECTORY))
+ 			return -EINVAL;
+ 		if (!(acc_mode & MAY_WRITE))
+ 			return -EINVAL;
+diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+index 1ecdb911add8d..80f37a0d40d7d 100644
+--- a/include/uapi/asm-generic/fcntl.h
++++ b/include/uapi/asm-generic/fcntl.h
+@@ -91,7 +91,6 @@
  
- 	if (HFSPLUS_IS_RSRC(inode))
- 		main_inode = HFSPLUS_I(inode)->rsrc_inode;
-@@ -588,7 +598,11 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 	if (S_ISDIR(main_inode->i_mode)) {
- 		struct hfsplus_cat_folder *folder = &entry.folder;
+ /* a horrid kludge trying to make sure that this will fail on old kernels */
+ #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
+-#define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
  
--		WARN_ON(fd.entrylength < sizeof(struct hfsplus_cat_folder));
-+		if (fd.entrylength < sizeof(struct hfsplus_cat_folder)) {
-+			pr_err("bad catalog folder entry\n");
-+			res = -EIO;
-+			goto out;
-+		}
- 		hfs_bnode_read(fd.bnode, &entry, fd.entryoffset,
- 					sizeof(struct hfsplus_cat_folder));
- 		/* simple node checks? */
-@@ -613,7 +627,11 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 	} else {
- 		struct hfsplus_cat_file *file = &entry.file;
+ #ifndef O_NDELAY
+ #define O_NDELAY	O_NONBLOCK
+diff --git a/tools/include/uapi/asm-generic/fcntl.h b/tools/include/uapi/asm-generic/fcntl.h
+index b02c8e0f40575..1c7a0f6632c09 100644
+--- a/tools/include/uapi/asm-generic/fcntl.h
++++ b/tools/include/uapi/asm-generic/fcntl.h
+@@ -91,7 +91,6 @@
  
--		WARN_ON(fd.entrylength < sizeof(struct hfsplus_cat_file));
-+		if (fd.entrylength < sizeof(struct hfsplus_cat_file)) {
-+			pr_err("bad catalog file entry\n");
-+			res = -EIO;
-+			goto out;
-+		}
- 		hfs_bnode_read(fd.bnode, &entry, fd.entryoffset,
- 					sizeof(struct hfsplus_cat_file));
- 		hfsplus_inode_write_fork(inode, &file->data_fork);
-@@ -634,7 +652,7 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 	set_bit(HFSPLUS_I_CAT_DIRTY, &HFSPLUS_I(inode)->flags);
- out:
- 	hfs_find_exit(&fd);
--	return 0;
-+	return res;
- }
+ /* a horrid kludge trying to make sure that this will fail on old kernels */
+ #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
+-#define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
  
- int hfsplus_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+ #ifndef O_NDELAY
+ #define O_NDELAY	O_NONBLOCK
 -- 
 2.39.2
 
