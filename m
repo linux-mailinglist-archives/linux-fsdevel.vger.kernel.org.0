@@ -2,64 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4BF66F2974
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Apr 2023 18:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB6076F2A75
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Apr 2023 21:31:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230317AbjD3QNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Apr 2023 12:13:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58010 "EHLO
+        id S230512AbjD3TbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Apr 2023 15:31:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbjD3QNF (ORCPT
+        with ESMTP id S229481AbjD3TbI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Apr 2023 12:13:05 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25F9DE4E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Apr 2023 09:13:04 -0700 (PDT)
-Received: from letrec.thunk.org ([76.150.80.181])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 33UGCnlL009113
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 30 Apr 2023 12:12:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1682871172; bh=nHD7XK7HRUbCzAD1Qp3+raTGPLH0kufM08uKe4zuaWM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=d9xtTrzZlS1jJkdhDcu9bscLaOdVLUgfATJqmcM2FU3curK9urZ9nv5NKCmuTvlpT
-         pZo93MzkpvawhVwytXmXhjYefPx9S9S4QMomJoIYcp0xS1tpKhPi0QKsC7vsDhP9ng
-         cbr4HjtQ22599ZX1rpHEYru7NTmTEDtYQB83MUoIOZxmxjv1xLEX6qxrhvNQR2CLpe
-         KfRfezjtuXzR3NYyQuH4VrQApcM5UBTBCSdFQugjHfrp5yC2ZBiZEev3FyYjWz861o
-         EKKoH+QM+DiuSnCZun+NUSdeZiB1Aammh8CruvEsQdREAJb9DQQCw54QzvnxeBxosr
-         NQ+qMaMBnyFWQ==
-Received: by letrec.thunk.org (Postfix, from userid 15806)
-        id 9A4818C023E; Sun, 30 Apr 2023 12:12:49 -0400 (EDT)
-Date:   Sun, 30 Apr 2023 12:12:49 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     syzbot <syzbot+9743a41f74f00e50fc77@syzkaller.appspotmail.com>
-Cc:     hch@infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [sysv?] [vfs?] WARNING in invalidate_bh_lru
-Message-ID: <ZE6TgcjJX46FO4bW@mit.edu>
-References: <000000000000eccdc505f061d47f@google.com>
- <ZE4NVo6rTOeGQdK+@mit.edu>
+        Sun, 30 Apr 2023 15:31:08 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5763171F;
+        Sun, 30 Apr 2023 12:31:07 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-64115e652eeso22988239b3a.0;
+        Sun, 30 Apr 2023 12:31:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682883067; x=1685475067;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GlsJcu/owJRrewoN2aRAwgzKM6GWcL4oq43DrBBCLyg=;
+        b=e1gXWRJ+lF5vAfKGBUYK74U9MMM91eT1I3BSLNVRvuY7BZ7sy26hFR6sMBUv1L6e7i
+         WfP8oDcKCy/zq/kGN9idkc7TmQT8cYCkppBirtSAaNEvzUen6OsI3Tu8RUd2nVkHllpC
+         PGbfj10Lti5yebEYTXfHrbcjSD0olULKbRWPhIDXUUGHadgzKFAjvQ9/8/J/fMTBnZR5
+         P/UqnTOcGV/4caKKKQtSQ2efnZqrDTYdA9Ruvvi1LzkVWVKysDMYJXI+D3SOqUL4Zw8f
+         LRmPz28XUE3Wmddr7DoPYsg9slogv4PGBnC0OowyQFMZmADMX6NEUQeut3hBpvoMovdr
+         gRcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682883067; x=1685475067;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GlsJcu/owJRrewoN2aRAwgzKM6GWcL4oq43DrBBCLyg=;
+        b=NqanS2UwSlPb98UgH/zup5fbIFmwpm6jQD0XPu2n7xx5aUjabva9tNe2myvx/gj/FC
+         PIkl8PDutkWzE0wUKyh1ro5eUiBHkmNet0hC+Buf4G8UdJqB2s645DWZ2CrGp9ILcaUI
+         HI+4mkGSzNJIyzhMtWsk4uFGNBQoZ4Jv0//2C92Q5CpTu2rdiIw+tlsHfDabtkqQJ6fL
+         +wvpN6p9PfSBKxrta3vci/aPITnPxhbSoufmZAGO9MBkhCvXy28G2UV925kLhiYAj11j
+         cA26IK7XCU3ExSKPg9e5bGIJ1NA7Hs1XO+NSwbSzOSnNH3n81iaTG10rZ4Y4JnJXfke+
+         c89w==
+X-Gm-Message-State: AC+VfDyGZ+P8CafIDUoQvmDx48DsM9QKtqnLEHP1KwK2/0flpVQXqOlk
+        YLo82+JJ7offmVok96diSGjunkbUX6U=
+X-Google-Smtp-Source: ACHHUZ6zijDOZL09bSk0eJh4hiiopxGIRuA8zUOXtIQzDFvFXCcnOOAB5ah1wyH9z2wrfsPaz9ojcg==
+X-Received: by 2002:a17:90b:f8f:b0:24d:e504:c475 with SMTP id ft15-20020a17090b0f8f00b0024de504c475mr5186813pjb.21.1682883066788;
+        Sun, 30 Apr 2023 12:31:06 -0700 (PDT)
+Received: from carrot.. (i220-108-176-245.s42.a014.ap.plala.or.jp. [220.108.176.245])
+        by smtp.gmail.com with ESMTPSA id c24-20020a17090ad91800b0023d0d50edf2sm17898386pjv.42.2023.04.30.12.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Apr 2023 12:31:05 -0700 (PDT)
+From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-nilfs <linux-nilfs@vger.kernel.org>,
+        syzbot <syzbot+221d75710bde87fa0e97@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH] nilfs2: fix infinite loop in nilfs_mdt_get_block()
+Date:   Mon,  1 May 2023 04:30:46 +0900
+Message-Id: <20230430193046.6769-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAKFNMonK2VcZx=KEG8cz61bhwMvChEJ=T+FecxpGg1QiRCcZhA@mail.gmail.com>
+References: <CAKFNMonK2VcZx=KEG8cz61bhwMvChEJ=T+FecxpGg1QiRCcZhA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZE4NVo6rTOeGQdK+@mit.edu>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-#syz set subsystems: udf
+If the disk image that nilfs2 mounts is corrupted and a virtual block
+address obtained by block lookup for a metadata file is invalid,
+nilfs_bmap_lookup_at_level() may return the same internal return code
+as -ENOENT, meaning the block does not exist in the metadata file.
 
-There are two reproducers, one that mounts a sysv file system, and the
-other which mounts a udf file system.  There is no mention of ext4 in
-the stack trace, and yet syzbot has assigned this to the ext4
-subsystem for some unknown reason.
+This duplication of return codes confuses nilfs_mdt_get_block(), causing
+it to read and create a metadata block indefinitely.
 
-					- Ted
+In particular, if this happens to the inode metadata file, ifile,
+semaphore i_rwsem can be left held, causing task hangs in lock_mount.
+
+Fix this issue by making nilfs_bmap_lookup_at_level() treat virtual
+block address translation failures with -ENOENT as metadata corruption
+instead of returning the error code.
+
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Reported-by: syzbot+221d75710bde87fa0e97@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=221d75710bde87fa0e97
+Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: stable@vger.kernel.org
+---
+ fs/nilfs2/bmap.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/fs/nilfs2/bmap.c b/fs/nilfs2/bmap.c
+index 798a2c1b38c6..7a8f166f2c8d 100644
+--- a/fs/nilfs2/bmap.c
++++ b/fs/nilfs2/bmap.c
+@@ -67,20 +67,28 @@ int nilfs_bmap_lookup_at_level(struct nilfs_bmap *bmap, __u64 key, int level,
+ 
+ 	down_read(&bmap->b_sem);
+ 	ret = bmap->b_ops->bop_lookup(bmap, key, level, ptrp);
+-	if (ret < 0) {
+-		ret = nilfs_bmap_convert_error(bmap, __func__, ret);
++	if (ret < 0)
+ 		goto out;
+-	}
++
+ 	if (NILFS_BMAP_USE_VBN(bmap)) {
+ 		ret = nilfs_dat_translate(nilfs_bmap_get_dat(bmap), *ptrp,
+ 					  &blocknr);
+ 		if (!ret)
+ 			*ptrp = blocknr;
++		else if (ret == -ENOENT) {
++			/*
++			 * If there was no valid entry in DAT for the block
++			 * address obtained by b_ops->bop_lookup, then pass
++			 * internal code -EINVAL to nilfs_bmap_convert_error
++			 * to treat it as metadata corruption.
++			 */
++			ret = -EINVAL;
++		}
+ 	}
+ 
+  out:
+ 	up_read(&bmap->b_sem);
+-	return ret;
++	return nilfs_bmap_convert_error(bmap, __func__, ret);
+ }
+ 
+ int nilfs_bmap_lookup_contig(struct nilfs_bmap *bmap, __u64 key, __u64 *ptrp,
+-- 
+2.34.1
+
