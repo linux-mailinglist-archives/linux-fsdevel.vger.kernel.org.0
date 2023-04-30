@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFBD46F28D0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Apr 2023 14:14:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87696F28D3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Apr 2023 14:14:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231177AbjD3MOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Apr 2023 08:14:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47846 "EHLO
+        id S231804AbjD3MOx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Apr 2023 08:14:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231297AbjD3MOR (ORCPT
+        with ESMTP id S231420AbjD3MO1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Apr 2023 08:14:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A61230D7;
-        Sun, 30 Apr 2023 05:13:47 -0700 (PDT)
+        Sun, 30 Apr 2023 08:14:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AD9E35A9;
+        Sun, 30 Apr 2023 05:13:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F3C5C60B00;
-        Sun, 30 Apr 2023 12:13:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19F07C433EF;
-        Sun, 30 Apr 2023 12:13:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 291B361358;
+        Sun, 30 Apr 2023 12:13:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2494AC433EF;
+        Sun, 30 Apr 2023 12:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682856826;
-        bh=fdUSmWXHaNzdbd3OlIrshPSwQvWoG8v3CjFVT7OtFI0=;
+        s=k20201202; t=1682856831;
+        bh=6oshVciF23uQHCikDHNmKnGQsl2XchcwdwEeZTu0m3Y=;
         h=From:To:Cc:Subject:Date:From;
-        b=DkAkzWudpOkGljvdOo72ssfXF7+e+nnhrtxGlEske03xmEJiqIWTjh89zXG6zbSUp
-         MtnouK83IkpVKS3WgkcHjYY28y1YqVZn/Ynw9zSaiT6l30H8WPSqxOIEUzl+5JPUJA
-         cza6h21sw019ksWJoZorb0HkBpcNDCWY5t4IPlQMJN0RPrUFZDv6HXa8lCqY8oBYBD
-         ygoa86a/wDNecOnKcFTqZtyikuxuTDlaBBEAD+MGDo+HxYt8IaIirrKAoTNTTNRgpy
-         O9IG3pwyuIJ+PQQHshRw96ScgPtZ97+fpA2KRzm3bgwlNPNTy7v9RBQBiiZJu69Vsn
-         Yx6ScH8Lj6Kzw==
+        b=gRLYYP8TjNVj60BaMA/mtfRupit9Wf4tOMFGHSKOnpcNo/yJ56nNn7zOBGtdx3J+G
+         YvJYbUsXZoTXAn7PzWaVxPfJSW+gyU9EZG0tYi8yw9vOyTZ7RjB5Oa0ALS3SZfZZmh
+         GixypqYr9CoEmk20YJOdj52bGvDMURvjzXcV/OIbtgbECrTwVYjMQVzIE39luRRPVS
+         KpKcZG/GzMru8LzjPqygx80amC98OFCjyrCUx1flK8NeyyQlKPC2Gwmr2LdumzC/jX
+         jt8TmGVIM5B3yw3ydqz8EYMs6kxUEmMuKR9XWBrj+asAXh2QwxJw/ZOAIR9dnJcgZq
+         Tb6FjchS/c5lg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
@@ -40,18 +40,18 @@ Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Viacheslav Dubeyko <slava@dubeyko.com>,
         Christian Brauner <brauner@kernel.org>,
         Sasha Levin <sashal@kernel.org>, willy@infradead.org,
-        dchinner@redhat.com, jlayton@kernel.org, gargaditya08@live.com,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19] fs: hfsplus: remove WARN_ON() from hfsplus_cat_{read,write}_inode()
-Date:   Sun, 30 Apr 2023 08:13:41 -0400
-Message-Id: <20230430121343.3197893-1-sashal@kernel.org>
+        dchinner@redhat.com, jlayton@kernel.org, akpm@linux-foundation.org,
+        gargaditya08@live.com, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14] fs: hfsplus: remove WARN_ON() from hfsplus_cat_{read,write}_inode()
+Date:   Sun, 30 Apr 2023 08:13:46 -0400
+Message-Id: <20230430121348.3197920-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -82,10 +82,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 23 insertions(+), 5 deletions(-)
 
 diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index c7073a1517d68..a1d4ad584b105 100644
+index ccb2a94c2032a..4924a489c8ac0 100644
 --- a/fs/hfsplus/inode.c
 +++ b/fs/hfsplus/inode.c
-@@ -476,7 +476,11 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
+@@ -488,7 +488,11 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
  	if (type == HFSPLUS_FOLDER) {
  		struct hfsplus_cat_folder *folder = &entry.folder;
  
@@ -98,7 +98,7 @@ index c7073a1517d68..a1d4ad584b105 100644
  		hfs_bnode_read(fd->bnode, &entry, fd->entryoffset,
  					sizeof(struct hfsplus_cat_folder));
  		hfsplus_get_perms(inode, &folder->permissions, 1);
-@@ -496,7 +500,11 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
+@@ -508,7 +512,11 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
  	} else if (type == HFSPLUS_FILE) {
  		struct hfsplus_cat_file *file = &entry.file;
  
@@ -111,7 +111,7 @@ index c7073a1517d68..a1d4ad584b105 100644
  		hfs_bnode_read(fd->bnode, &entry, fd->entryoffset,
  					sizeof(struct hfsplus_cat_file));
  
-@@ -527,6 +535,7 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
+@@ -539,6 +547,7 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
  		pr_err("bad catalog entry used to create inode\n");
  		res = -EIO;
  	}
@@ -119,7 +119,7 @@ index c7073a1517d68..a1d4ad584b105 100644
  	return res;
  }
  
-@@ -535,6 +544,7 @@ int hfsplus_cat_write_inode(struct inode *inode)
+@@ -547,6 +556,7 @@ int hfsplus_cat_write_inode(struct inode *inode)
  	struct inode *main_inode = inode;
  	struct hfs_find_data fd;
  	hfsplus_cat_entry entry;
@@ -127,7 +127,7 @@ index c7073a1517d68..a1d4ad584b105 100644
  
  	if (HFSPLUS_IS_RSRC(inode))
  		main_inode = HFSPLUS_I(inode)->rsrc_inode;
-@@ -553,7 +563,11 @@ int hfsplus_cat_write_inode(struct inode *inode)
+@@ -565,7 +575,11 @@ int hfsplus_cat_write_inode(struct inode *inode)
  	if (S_ISDIR(main_inode->i_mode)) {
  		struct hfsplus_cat_folder *folder = &entry.folder;
  
@@ -140,7 +140,7 @@ index c7073a1517d68..a1d4ad584b105 100644
  		hfs_bnode_read(fd.bnode, &entry, fd.entryoffset,
  					sizeof(struct hfsplus_cat_folder));
  		/* simple node checks? */
-@@ -578,7 +592,11 @@ int hfsplus_cat_write_inode(struct inode *inode)
+@@ -590,7 +604,11 @@ int hfsplus_cat_write_inode(struct inode *inode)
  	} else {
  		struct hfsplus_cat_file *file = &entry.file;
  
@@ -153,7 +153,7 @@ index c7073a1517d68..a1d4ad584b105 100644
  		hfs_bnode_read(fd.bnode, &entry, fd.entryoffset,
  					sizeof(struct hfsplus_cat_file));
  		hfsplus_inode_write_fork(inode, &file->data_fork);
-@@ -599,5 +617,5 @@ int hfsplus_cat_write_inode(struct inode *inode)
+@@ -611,5 +629,5 @@ int hfsplus_cat_write_inode(struct inode *inode)
  	set_bit(HFSPLUS_I_CAT_DIRTY, &HFSPLUS_I(inode)->flags);
  out:
  	hfs_find_exit(&fd);
