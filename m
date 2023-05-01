@@ -2,37 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E6736F39EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 23:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 495CC6F39A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 23:18:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbjEAVni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 17:43:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50234 "EHLO
+        id S232754AbjEAVSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 17:18:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232200AbjEAVnh (ORCPT
+        with ESMTP id S229744AbjEAVSl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 17:43:37 -0400
-X-Greylist: delayed 1579 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 01 May 2023 14:43:35 PDT
-Received: from out-59.mta0.migadu.com (out-59.mta0.migadu.com [91.218.175.59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EEA2198E
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 14:43:35 -0700 (PDT)
-Date:   Mon, 1 May 2023 17:16:59 -0400
+        Mon, 1 May 2023 17:18:41 -0400
+Received: from out-45.mta1.migadu.com (out-45.mta1.migadu.com [95.215.58.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0EAE1FEB
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 14:18:38 -0700 (PDT)
+Date:   Mon, 1 May 2023 14:18:19 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1682975831;
+        t=1682975916;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WS5IfKwTPa1bKv8dROPMPn7bpsB6bxr/+mMUnulbyXo=;
-        b=lW6pMkkITA3yRW/sjDAKtYtv7Nl+AYeAS5qW1/WcLz5hQIZOXhmptquOd9Uo4YjlLQagEj
-        l8KwsV9hdfnmKeThBO+Hem6g0VYZI6AYnyFLRYZNX5+S78AIIBPNkxPLEdu52Lb7u0ovlq
-        VCSzQAFEVndS+FYqBuYKLLIDbnpmrsU=
+        bh=ESr9I0e8zhQfwnabaXWJmwqboN5UgcpvA4HHb+DuoSo=;
+        b=X8e/zveM3y8evn6iXFP1GQo9OkihBkN8WMX+PdxDnY3z/6lrHLFpCsMAkSpjJKhXXfOrwF
+        IUeI4bLp/6VHOK8l63qdJcQBLJJOOe6I4c1Q3m33D6EX2Iby3DxkSkgglbdgCL1yyraxZj
+        BHxkRt89pPHeAAb7NZCRpzeOKMHy5No=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+From:   Roman Gushchin <roman.gushchin@linux.dev>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
 Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
         mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, willy@infradead.org,
+        mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
         liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
         peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
         catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
@@ -56,27 +54,18 @@ Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
         linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Noralf =?utf-8?B?VHLDr8K/wr1ubmVz?= <noralf@tronnes.org>
-Subject: Re: [PATCH 01/40] lib/string_helpers: Drop space in
- string_get_size's output
-Message-ID: <ZFAsS5f6eGSyxF/+@moria.home.lan>
+        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH 00/40] Memory allocation profiling
+Message-ID: <ZFAsm0XTqC//f4FP@P9FQF9L96D>
 References: <20230501165450.15352-1-surenb@google.com>
- <20230501165450.15352-2-surenb@google.com>
- <ouuidemyregstrijempvhv357ggp4tgnv6cijhasnungsovokm@jkgvyuyw2fti>
- <ZFAUj+Q+hP7cWs4w@moria.home.lan>
- <CAHp75VeJ_a6j3uweLN5-woSQUtN5u36c2gkoiXhnJa1HXJdoyQ@mail.gmail.com>
+ <ZE/7FZbd31qIzrOc@P9FQF9L96D>
+ <CAJuCfpHU3ZMsNuqi1gSxzAWKr2D3VkiaTY0BEUQgM-QHNxRtSg@mail.gmail.com>
+ <ZFABlUB/RZM6lUyl@P9FQF9L96D>
+ <ZFAVFlrRtpVgxJ0q@moria.home.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VeJ_a6j3uweLN5-woSQUtN5u36c2gkoiXhnJa1HXJdoyQ@mail.gmail.com>
+In-Reply-To: <ZFAVFlrRtpVgxJ0q@moria.home.lan>
 X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
@@ -88,41 +77,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 01, 2023 at 10:57:07PM +0300, Andy Shevchenko wrote:
-> On Mon, May 1, 2023 at 10:36 PM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > On Mon, May 01, 2023 at 11:13:15AM -0700, Davidlohr Bueso wrote:
-> > > On Mon, 01 May 2023, Suren Baghdasaryan wrote:
-> > >
-> > > > From: Kent Overstreet <kent.overstreet@linux.dev>
-> > > >
-> > > > Previously, string_get_size() outputted a space between the number and
-> > > > the units, i.e.
-> > > >  9.88 MiB
-> > > >
-> > > > This changes it to
-> > > >  9.88MiB
-> > > >
-> > > > which allows it to be parsed correctly by the 'sort -h' command.
+On Mon, May 01, 2023 at 03:37:58PM -0400, Kent Overstreet wrote:
+> On Mon, May 01, 2023 at 11:14:45AM -0700, Roman Gushchin wrote:
+> > It's a good idea and I generally think that +25-35% for kmalloc/pgalloc
+> > should be ok for the production use, which is great!
+> > In the reality, most workloads are not that sensitive to the speed of
+> > memory allocation.
 > 
-> But why do we need that? What's the use case?
-
-As was in the commit message: to produce output that sort -h knows how
-to parse.
-
-> > > Wouldn't this break users that already parse it the current way?
-> >
-> > It's not impossible - but it's not used in very many places and we
-> > wouldn't be printing in human-readable units if it was meant to be
-> > parsed - it's mainly used for debug output currently.
-> >
-> > If someone raises a specific objection we'll do something different,
-> > otherwise I think standardizing on what userspace tooling already parses
-> > is a good idea.
+> :)
 > 
-> Yes, I NAK this on the basis of
-> https://english.stackexchange.com/a/2911/153144
+> My main takeaway has been "the slub fast path is _really_ fast". No
+> disabling of preemption, no atomic instructions, just a non locked
+> double word cmpxchg - it's a slick piece of work.
+> 
+> > > For kmalloc, the overhead is low because after we create the vector of
+> > > slab_ext objects (which is the same as what memcg_kmem does), memory
+> > > profiling just increments a lazy counter (which in many cases would be
+> > > a per-cpu counter).
+> > 
+> > So does kmem (this is why I'm somewhat surprised by the difference).
+> > 
+> > > memcg_kmem operates on cgroup hierarchy with
+> > > additional overhead associated with that. I'm guessing that's the
+> > > reason for the big difference between these mechanisms but, I didn't
+> > > look into the details to understand memcg_kmem performance.
+> > 
+> > I suspect recent rt-related changes and also the wide usage of
+> > rcu primitives in the kmem code. I'll try to look closer as well.
+> 
+> Happy to give you something to compare against :)
 
-Not sure I find a style guide on stackexchange more compelling than
-interop with a tool everyone already has installed :)
+To be fair, it's not an apple-to-apple comparison, because:
+1) memcgs are organized in a tree, these days usually with at least 3 layers,
+2) memcgs are dynamic. In theory a task can be moved to a different
+   memcg while performing a (very slow) allocation, and the original
+   memcg can be released. To prevent this we have to perform a lot
+   of operations which you can happily avoid.
+
+That said, there is clearly a place for optimization, so thank you
+for indirectly bringing this up.
+
+Thanks!
