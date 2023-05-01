@@ -2,156 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E3EF6F34D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 19:03:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C96D6F34EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 19:16:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233329AbjEARDy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 13:03:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40152 "EHLO
+        id S233076AbjEARMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 13:12:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232882AbjEARCe (ORCPT
+        with ESMTP id S232579AbjEARJk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 13:02:34 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B33126
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 09:57:12 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-559f48c530eso34098197b3.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 09:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1682960200; x=1685552200;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=voe2xx017YXPnsPA1F569u968pU4cdVPLrVyFh58V3A=;
-        b=XY3g0fA5IrJ+YzYe2wUQ0ftZyFUg7ny2GrTo3NPiBlk4iPlMC/kY+SH8g6iLrwV+KV
-         Xw+if+jca7PJgAtbAXeVriY1aFJ/EteLLOMZx1AdK6gJrXbG1uRZWDO/40Axb4AODOAW
-         bu8B0l1k4HzrQxgM9N1NQnABkM6L6EHe4PLk5Qr9MgkaJ72bwWRTz68SbwPhkOTfAlCN
-         aIInpOCqjYNQr/7r19P8lUnDyjtSJAnNSRwk6D0bpZ0QASPWz9H1GwXTn8bC79Kr3VsJ
-         to3IBoyJHWuDBBn4X4nEQDSitAsGc5WJp6sVno05l5o1QoTuKQpKB8qBzlmM5zczDq7s
-         CPoA==
+        Mon, 1 May 2023 13:09:40 -0400
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3311930D7
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 10:06:08 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-760ed929d24so363043139f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 10:06:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682960200; x=1685552200;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=voe2xx017YXPnsPA1F569u968pU4cdVPLrVyFh58V3A=;
-        b=jOpkpgjsDE+7x3u8YIeO7+Me2C2eN21H5lJ6sSG5TASjVdHfWZww8cy4ICTIbSs9RT
-         33zVP2NSm3F4EVYRkeUWOM0O912+qCAaytGdXHwI+Vt8CNZ9S+4sGMX/HN2E/WDpbocO
-         HXIAcy4gXpQkD/7g29YXhCU6CgAnb3Iy6Y2GdWGrc0CoxXQ7zhB5WV7XHghO3phnigvy
-         Izd57VPn9YPKMN5k9RVcCs0AJG0nFmvxzHqOUwWWezVhGpwn36ABlFGw60CYEfM50U15
-         eZ2uV21fdOSA7FIeXsjBS7mjvd/ML8HHlUSai1AeVbwZXnHouz1W+c5iUfHBdo/0b+sa
-         fBKA==
-X-Gm-Message-State: AC+VfDwKicIG7UhLAlP4epNrwCK85yxVlrl93bnH8ytY65g3Ikl7egN4
-        ilSI+5qqZAA7JBykvpaTAnRFYe1uxh8=
-X-Google-Smtp-Source: ACHHUZ7TphX74FdXdGj2KrrIAly5W9cbCjXqr70LC9E11i/xFawgHPr35IiqOdTvLYzAxeQM5sfRxSe2CSI=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:6d24:3efd:facc:7ac4])
- (user=surenb job=sendgmr) by 2002:a81:de0c:0:b0:559:e97a:cb21 with SMTP id
- k12-20020a81de0c000000b00559e97acb21mr4262900ywj.9.1682960199781; Mon, 01 May
- 2023 09:56:39 -0700 (PDT)
-Date:   Mon,  1 May 2023 09:54:50 -0700
-In-Reply-To: <20230501165450.15352-1-surenb@google.com>
-Mime-Version: 1.0
-References: <20230501165450.15352-1-surenb@google.com>
-X-Mailer: git-send-email 2.40.1.495.gc816e09b53d-goog
-Message-ID: <20230501165450.15352-41-surenb@google.com>
-Subject: [PATCH 40/40] MAINTAINERS: Add entries for code tagging and memory
- allocation profiling
-From:   Suren Baghdasaryan <surenb@google.com>
-To:     akpm@linux-foundation.org
-Cc:     kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
-        hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
-        dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
-        corbet@lwn.net, void@manifault.com, peterz@infradead.org,
-        juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        surenb@google.com, kernel-team@android.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
-        cgroups@vger.kernel.org
+        d=1e100.net; s=20221208; t=1682960705; x=1685552705;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c7hKOKbJMl2YcfkxcJZJbcJ0r0WbQba+Lj4vLNvcKOE=;
+        b=HjnFpKj0A79asFLWDQmlLTrWYUIbtTZmawjQ6P9+Oi1kD3DHwjqpw/KPjOuqcSgnGC
+         2gtOmU3+O3kbPOajXcr47ua9itKXTMBk8z01/bp8LLL9pZ3wh/OCB7MopPs6EkGUqaEU
+         J/GB5y0p79El8/HGwTzYmgIWAUJuH8ROUtNtIHAE8P8rAsa1HPx4QowpSpj3fR5BkK0E
+         3gKr/aLam4ZMnCKyEBO5JeX2slrhUtyO/L7HGh0HRPgEjsc729bAeuppbMDTTwKhF4qa
+         ioStfWKYEQv1Ge4XTOmibUUSBPLZJqQdhxqYacnxVC3W7juAACxHVbZqybGO9KNi5KzT
+         xF/w==
+X-Gm-Message-State: AC+VfDyRohNtxYBW2kgkiFE4Kfi36LbY0Rf7Qru9n9Gyk4KkHiM8DvFn
+        fqUwFvJrTUL4pqZOJNWUh4ZS9VCbLPB6CXrOW0dvEDQZSq+n
+X-Google-Smtp-Source: ACHHUZ5FVEo4YIYIOxSOTqYoStsO2FMW1fltRzaNlRIlAPBCKX6aQmNn7FN7CSNEMFtrbbLgQtxJDHAg67n5/kE75ozY5FZzLBwM
+MIME-Version: 1.0
+X-Received: by 2002:a02:6207:0:b0:40f:9262:b588 with SMTP id
+ d7-20020a026207000000b0040f9262b588mr5871886jac.6.1682960705456; Mon, 01 May
+ 2023 10:05:05 -0700 (PDT)
+Date:   Mon, 01 May 2023 10:05:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000534da05faa4d3d4@google.com>
+Subject: [syzbot] [f2fs?] WARNING: lock held when returning to user space in f2fs_write_single_data_page
+From:   syzbot <syzbot+eb6201248f684e99b9f8@syzkaller.appspotmail.com>
+To:     chao@kernel.org, jaegeuk@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Kent Overstreet <kent.overstreet@linux.dev>
+Hello,
 
-The new code & libraries added are being maintained - mark them as such.
+syzbot found the following issue on:
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+HEAD commit:    58390c8ce1bd Merge tag 'iommu-updates-v6.4' of git://git.k..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=136e6ef8280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5eadbf0d3c2ece89
+dashboard link: https://syzkaller.appspot.com/bug?extid=eb6201248f684e99b9f8
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16bbb03c280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140d36f8280000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/60130779f509/disk-58390c8c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d7f0cdd29b71/vmlinux-58390c8c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/de415ad52ae4/bzImage-58390c8c.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/dc89d01cd6e9/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+eb6201248f684e99b9f8@syzkaller.appspotmail.com
+
+syz-executor768: attempt to access beyond end of device
+loop0: rw=2049, sector=77824, nr_sectors = 2048 limit=63271
+syz-executor768: attempt to access beyond end of device
+loop0: rw=2049, sector=79872, nr_sectors = 2048 limit=63271
+================================================
+WARNING: lock held when returning to user space!
+6.3.0-syzkaller-12049-g58390c8ce1bd #0 Not tainted
+------------------------------------------------
+syz-executor768/4998 is leaving the kernel with locks still held!
+1 lock held by syz-executor768/4998:
+ #0: ffff88807e800448 (&sbi->node_write){++++}-{3:3}, at: f2fs_down_read fs/f2fs/f2fs.h:2087 [inline]
+ #0: ffff88807e800448 (&sbi->node_write){++++}-{3:3}, at: f2fs_write_single_data_page+0xa10/0x1d50 fs/f2fs/data.c:2842
+
+
 ---
- MAINTAINERS | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3889d1adf71f..6f3b79266204 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5116,6 +5116,13 @@ S:	Supported
- F:	Documentation/process/code-of-conduct-interpretation.rst
- F:	Documentation/process/code-of-conduct.rst
- 
-+CODE TAGGING
-+M:	Suren Baghdasaryan <surenb@google.com>
-+M:	Kent Overstreet <kent.overstreet@linux.dev>
-+S:	Maintained
-+F:	include/linux/codetag.h
-+F:	lib/codetag.c
-+
- COMEDI DRIVERS
- M:	Ian Abbott <abbotti@mev.co.uk>
- M:	H Hartley Sweeten <hsweeten@visionengravers.com>
-@@ -11658,6 +11665,12 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/leds/backlight/kinetic,ktz8866.yaml
- F:	drivers/video/backlight/ktz8866.c
- 
-+LAZY PERCPU COUNTERS
-+M:	Kent Overstreet <kent.overstreet@linux.dev>
-+S:	Maintained
-+F:	include/linux/lazy-percpu-counter.h
-+F:	lib/lazy-percpu-counter.c
-+
- L3MDEV
- M:	David Ahern <dsahern@kernel.org>
- L:	netdev@vger.kernel.org
-@@ -13468,6 +13481,15 @@ F:	mm/memblock.c
- F:	mm/mm_init.c
- F:	tools/testing/memblock/
- 
-+MEMORY ALLOCATION PROFILING
-+M:	Suren Baghdasaryan <surenb@google.com>
-+M:	Kent Overstreet <kent.overstreet@linux.dev>
-+S:	Maintained
-+F:	include/linux/alloc_tag.h
-+F:	include/linux/codetag_ctx.h
-+F:	lib/alloc_tag.c
-+F:	lib/pgalloc_tag.c
-+
- MEMORY CONTROLLER DRIVERS
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-kernel@vger.kernel.org
--- 
-2.40.1.495.gc816e09b53d-goog
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
