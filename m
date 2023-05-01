@@ -2,132 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4CF6F2FD9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 11:18:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58EAA6F3017
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 12:13:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231896AbjEAJSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 05:18:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40762 "EHLO
+        id S232323AbjEAKNS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 06:13:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbjEAJSl (ORCPT
+        with ESMTP id S229688AbjEAKNQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 05:18:41 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CF3131
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 02:18:40 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id e9e14a558f8ab-330ec047d3bso38435ab.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 02:18:40 -0700 (PDT)
+        Mon, 1 May 2023 06:13:16 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1855C195
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 03:13:14 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9505214c47fso481902966b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 03:13:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1682932719; x=1685524719;
+        d=google.com; s=20221208; t=1682935992; x=1685527992;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O86laohwidt7Bpepl03li3jzMB4EXmXzNejm8wi6V84=;
-        b=jvs7kr4VxgxyccvQgBhbQK9IwARcESd2U3pKgjhOVP4NNOFXTd7usmhNIpWhGDQYUv
-         X9/zszV9c9VElnowdKqA2s7mBjXZgA1dMPT6GMvUQ0EQvfeRH76UG9N+ZNQ92v9BNr8Q
-         FEar4Nl2LalrM7wLcoemncbZ4eS+YLyaaweWkyOy3wybB6clODU8itjhoBqIDtr/9z2U
-         G/0qZbBY+iuKkNZXmT+LWf5TpVIqLCxfONNUIOO2SRzQxkuiIdnqBnUICFHYmrW6p93q
-         0GuRhRc/ewB6u/i+e0glrufgN1R1+e3Z+O0XTAyoZLybYJFo8/v+bgBKQe39iFrK2SGP
-         SWBg==
+        bh=Q8lhfypd62FTx15FUrLgQ9Jnn3JuzKJA2np2M0uDQxQ=;
+        b=VaFrUpClBFo29v9l4Djcb79DHfwoOettCa5PtHL9yYH6qyblJ0B4m6QuPFSuGIlXhk
+         HoVhrhtsiER0i35ICq11i5bRuzT3jaBt4ehpszIDZZ4/K1SE7gnW+uBKOb7vi+pd4F7b
+         aznnjkVukqkQq/9/WjqDyLA2Z8JGMGvjyrf+BamTY416e2TJHbFFp/14+7WVy3X+3TEi
+         213PXFoPSPk5v1KYzmd6hDzLSS1CS6fWP1GiXcWIdUTdGyBWR7QHWEMnR7FcDwBOlJ+O
+         5YRRduFfYbGGpDl1AGuaCCaAKwWhMdGOiqtCu/aGfDKIZyQgThXUq91xQZqs79+cTLRe
+         t30Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682932719; x=1685524719;
+        d=1e100.net; s=20221208; t=1682935992; x=1685527992;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O86laohwidt7Bpepl03li3jzMB4EXmXzNejm8wi6V84=;
-        b=kYqAxHVslf7J8a74DsfmM45Hr4q8mmmVRb1DYaAnKywhSO+agQuWo69d/fCq+Jte2d
-         miYOQxbYuFYAFJj2LGMVTY2Ncca8WnbduzvW3yXIPTXgMMNVxgOHtVUP0P1w2DbCktRe
-         mCDg87AZMHgYcN2jnFzOy2bUhbweKKMSN/P2TZn8MNoOKu0nTFYpbcwFvcF6bmvI6iVr
-         D7QHfQbI/TkrsykztrABZuK8TW+37j45HKsg0pmpwJTpKrC/Tt4SpRrlNKAkpA8X8heV
-         18G9maMC+qCS10uelCdhUh3L5dTsNOOydSrPngGnlg0cCTVW5vnGYjs5sk9OKerVsdKC
-         LYwA==
-X-Gm-Message-State: AC+VfDxtHB615CMnq/7icdUQGAXpI2S3KpZJsoIyb+/5lgZu1kl3hIK+
-        INaVDiMJiZFa3TCVwvBzKep4k43A1jtQB+v9csMvZw==
-X-Google-Smtp-Source: ACHHUZ5ngfNanfrhJTCmcKjegKker9g3iRo8IO02+ZEh/87VQJgz1tmGSQF+THePU63x3ALCCiPcmgXXSt2jenW6ZvI=
-X-Received: by 2002:a05:6e02:b49:b0:32a:642d:2a13 with SMTP id
- f9-20020a056e020b4900b0032a642d2a13mr440333ilu.6.1682932719586; Mon, 01 May
- 2023 02:18:39 -0700 (PDT)
+        bh=Q8lhfypd62FTx15FUrLgQ9Jnn3JuzKJA2np2M0uDQxQ=;
+        b=O4xzPCFVtG3ZXdjm6kBCogMtfnRC34MVAT+z+CosV9IskE/6Q8hMzvgEU9yqRXJAd9
+         +1RokEONCtVkCdWFv++5XZgY06zKL0xbel04FoSUfp1BntnSDf0kbsMRb18bMsfGNvy7
+         3NY/9Ej+0FadRGrgm8hR4rbfqYgmfUAncdg7QvGdogo0sk8wSveIXcIt0QQPjqlPQkT+
+         5siU+AozboCJVNPnoIh/76Jh3eQfaCcXhlb09dz66a9v+71Qo8p1yN+qk07AKBGAzf4A
+         v7RluU0Spd/AxdyjB5Y8JBx1IvRRqITfXgwa8ZesulU5lHh3HEyFajooT+YQhThxa0Fv
+         UQwQ==
+X-Gm-Message-State: AC+VfDzdJ3JA4VBuOML5ToDKlfWOmOxxld5tRiTl7xrv5KWTCBoK9QyZ
+        QL5fXSMFAMFQ8rsJ/b5d+whpvvrEpdajwD/WrFBm2w==
+X-Google-Smtp-Source: ACHHUZ5FHHpuX/K+BNP8YqIzaDjBHp8LYmuwyxZrxNRQg7Tb0947e3YdeSix/a/OfzGmnQs+mspTQb/7MGE010+WRJ8=
+X-Received: by 2002:a17:906:dc8c:b0:933:4d37:82b2 with SMTP id
+ cs12-20020a170906dc8c00b009334d3782b2mr15295040ejc.57.1682935992353; Mon, 01
+ May 2023 03:13:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <000000000000eccdc505f061d47f@google.com> <ZE4NVo6rTOeGQdK+@mit.edu>
-In-Reply-To: <ZE4NVo6rTOeGQdK+@mit.edu>
-From:   Aleksandr Nogikh <nogikh@google.com>
-Date:   Mon, 1 May 2023 11:18:28 +0200
-Message-ID: <CANp29Y7dG3Z11Bt99rS0y8epdXfaKk+HJfXt=ePbm29vYF88Gg@mail.gmail.com>
-Subject: Re: [syzbot] [sysv?] [vfs?] WARNING in invalidate_bh_lru
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     syzbot <syzbot+9743a41f74f00e50fc77@syzkaller.appspotmail.com>,
-        hch@infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
+References: <20230413104034.1086717-1-yosryahmed@google.com> <20230413104034.1086717-2-yosryahmed@google.com>
+In-Reply-To: <20230413104034.1086717-2-yosryahmed@google.com>
+From:   Yosry Ahmed <yosryahmed@google.com>
+Date:   Mon, 1 May 2023 03:12:36 -0700
+Message-ID: <CAJD7tkaJRNhMQ_dJWs82OsOEyr86LNSitOHV0i12zydDMgoVxw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/3] mm: vmscan: ignore non-LRU-based reclaim in memcg reclaim
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Xu <peterx@redhat.com>, NeilBrown <neilb@suse.de>,
+        Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@kernel.org>, Yu Zhao <yuzhao@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        Sergey Senozhatsky <senozhatsky@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Ted,
-
-On Sun, Apr 30, 2023 at 8:40=E2=80=AFAM Theodore Ts'o <tytso@mit.edu> wrote=
-:
+On Thu, Apr 13, 2023 at 3:40=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
 >
-> On Wed, Dec 21, 2022 at 06:57:38PM -0800, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    a5541c0811a0 Merge branch 'for-next/core' into for-kern=
-elci
-> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/lin=
-ux.git for-kernelci
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1560b830480=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dcbd4e584773=
-e9397
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D9743a41f74f00=
-e50fc77
-> > compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2=
-da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> > userspace arch: arm64
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15e320b38=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D147c0577880=
-000
+> We keep track of different types of reclaimed pages through
+> reclaim_state->reclaimed_slab, and we add them to the reported number
+> of reclaimed pages.  For non-memcg reclaim, this makes sense. For memcg
+> reclaim, we have no clue if those pages are charged to the memcg under
+> reclaim.
 >
-> #syz set subsystems: sysv, udf
+> Slab pages are shared by different memcgs, so a freed slab page may have
+> only been partially charged to the memcg under reclaim.  The same goes fo=
+r
+> clean file pages from pruned inodes (on highmem systems) or xfs buffer
+> pages, there is no simple way to currently link them to the memcg under
+> reclaim.
 >
-> There are two reproducers, one that mounts a sysv file system, and the
-> other which mounts a udf file system.  There is no mention of ext4 in
-> the stack trace, and yet syzbot has assigned this to the ext4
-> subsystem for some unknown reason.
-
-In this particular case, there were two ext4-related crashes as well:
-
-https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D14c7dd1b480000
-https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D1153a07f480000
-
-I think syzbot picked a too generic frame as a bug title and it just
-got confused by crashes belonging to different filesystems.
-Maybe we need to display subsystems for individual crashes as well, so
-that it's easier for a human to understand what's going on..
-
---
-Aleksandr
-
-
+> Stop reporting those freed pages as reclaimed pages during memcg reclaim.
+> This should make the return value of writing to memory.reclaim, and may
+> help reduce unnecessary reclaim retries during memcg charging.  Writing t=
+o
+> memory.reclaim on the root memcg is considered as cgroup_reclaim(), but
+> for this case we want to include any freed pages, so use the
+> global_reclaim() check instead of !cgroup_reclaim().
 >
->                                         - Ted
+> Generally, this should make the return value of
+> try_to_free_mem_cgroup_pages() more accurate. In some limited cases (e.g.
+> freed a slab page that was mostly charged to the memcg under reclaim),
+> the return value of try_to_free_mem_cgroup_pages() can be underestimated,
+> but this should be fine. The freed pages will be uncharged anyway, and we
+> can charge the memcg the next time around as we usually do memcg reclaim
+> in a retry loop.
 >
+> Fixes: f2fe7b09a52b ("mm: memcg/slab: charge individual slab objects
+> instead of pages")
+>
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> ---
+>  mm/vmscan.c | 49 ++++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 42 insertions(+), 7 deletions(-)
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 9c1c5e8b24b8..be657832be48 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -511,6 +511,46 @@ static bool writeback_throttling_sane(struct scan_co=
+ntrol *sc)
+>  }
+>  #endif
+>
+> +/*
+> + * flush_reclaim_state(): add pages reclaimed outside of LRU-based recla=
+im to
+> + * scan_control->nr_reclaimed.
+> + */
+> +static void flush_reclaim_state(struct scan_control *sc)
+> +{
+> +       /*
+> +        * Currently, reclaim_state->reclaimed includes three types of pa=
+ges
+> +        * freed outside of vmscan:
+> +        * (1) Slab pages.
+> +        * (2) Clean file pages from pruned inodes (on highmem systems).
+> +        * (3) XFS freed buffer pages.
+> +        *
+> +        * For all of these cases, we cannot universally link the pages t=
+o a
+> +        * single memcg. For example, a memcg-aware shrinker can free one=
+ object
+> +        * charged to the target memcg, causing an entire page to be free=
+d.
+> +        * If we count the entire page as reclaimed from the memcg, we en=
+d up
+> +        * overestimating the reclaimed amount (potentially under-reclaim=
+ing).
+> +        *
+> +        * Only count such pages for global reclaim to prevent under-recl=
+aiming
+> +        * from the target memcg; preventing unnecessary retries during m=
+emcg
+> +        * charging and false positives from proactive reclaim.
+> +        *
+> +        * For uncommon cases where the freed pages were actually mostly
+> +        * charged to the target memcg, we end up underestimating the rec=
+laimed
+> +        * amount. This should be fine. The freed pages will be uncharged
+> +        * anyway, even if they are not counted here properly, and we wil=
+l be
+> +        * able to make forward progress in charging (which is usually in=
+ a
+> +        * retry loop).
+> +        *
+> +        * We can go one step further, and report the uncharged objcg pag=
+es in
+> +        * memcg reclaim, to make reporting more accurate and reduce
+> +        * underestimation, but it's probably not worth the complexity fo=
+r now.
+> +        */
+> +       if (current->reclaim_state && global_reclaim(sc)) {
+> +               sc->nr_reclaimed +=3D current->reclaim_state->reclaimed;
+> +               current->reclaim_state->reclaimed =3D 0;
+
+Ugh.. this breaks the build. This should have been
+current->reclaim_state->reclaimed_slab. It doesn't get renamed from
+"reclaimed_slab" to "reclaim" until the next patch. When I moved
+flush_reclaim_state() from patch 2 to patch 1 I forgot to augment it.
+My bad.
+
+The break is fixed by the very next patch, and the patches have
+already landed in Linus's tree, so there isn't much that can be done
+at this point. Sorry about that. Just wondering, why wouldn't this
+breakage be caught by any of the build bots?
+
+> +       }
+> +}
+> +
+>  static long xchg_nr_deferred(struct shrinker *shrinker,
+>                              struct shrink_control *sc)
+>  {
+> @@ -5346,8 +5386,7 @@ static int shrink_one(struct lruvec *lruvec, struct=
+ scan_control *sc)
+>                 vmpressure(sc->gfp_mask, memcg, false, sc->nr_scanned - s=
+canned,
+>                            sc->nr_reclaimed - reclaimed);
+>
+> -       sc->nr_reclaimed +=3D current->reclaim_state->reclaimed_slab;
+> -       current->reclaim_state->reclaimed_slab =3D 0;
+> +       flush_reclaim_state(sc);
+>
+>         return success ? MEMCG_LRU_YOUNG : 0;
+>  }
+> @@ -6450,7 +6489,6 @@ static void shrink_node_memcgs(pg_data_t *pgdat, st=
+ruct scan_control *sc)
+>
+>  static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>  {
+> -       struct reclaim_state *reclaim_state =3D current->reclaim_state;
+>         unsigned long nr_reclaimed, nr_scanned;
+>         struct lruvec *target_lruvec;
+>         bool reclaimable =3D false;
+> @@ -6472,10 +6510,7 @@ static void shrink_node(pg_data_t *pgdat, struct s=
+can_control *sc)
+>
+>         shrink_node_memcgs(pgdat, sc);
+>
+> -       if (reclaim_state) {
+> -               sc->nr_reclaimed +=3D reclaim_state->reclaimed_slab;
+> -               reclaim_state->reclaimed_slab =3D 0;
+> -       }
+> +       flush_reclaim_state(sc);
+>
+>         /* Record the subtree's reclaim efficiency */
+>         if (!sc->proactive)
 > --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/ZE4NVo6rTOeGQdK%2B%40mit.edu.
+> 2.40.0.577.gac1e443424-goog
+>
