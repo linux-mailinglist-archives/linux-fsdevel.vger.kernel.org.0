@@ -2,91 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E90846F2FC1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 11:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4CF6F2FD9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 11:18:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232234AbjEAJGU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 05:06:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33950 "EHLO
+        id S231896AbjEAJSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 05:18:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232491AbjEAJGB (ORCPT
+        with ESMTP id S229537AbjEAJSl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 05:06:01 -0400
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 159931FC6
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 02:05:51 -0700 (PDT)
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-32f240747cdso153452725ab.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 02:05:51 -0700 (PDT)
+        Mon, 1 May 2023 05:18:41 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CF3131
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 02:18:40 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id e9e14a558f8ab-330ec047d3bso38435ab.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 02:18:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1682932719; x=1685524719;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O86laohwidt7Bpepl03li3jzMB4EXmXzNejm8wi6V84=;
+        b=jvs7kr4VxgxyccvQgBhbQK9IwARcESd2U3pKgjhOVP4NNOFXTd7usmhNIpWhGDQYUv
+         X9/zszV9c9VElnowdKqA2s7mBjXZgA1dMPT6GMvUQ0EQvfeRH76UG9N+ZNQ92v9BNr8Q
+         FEar4Nl2LalrM7wLcoemncbZ4eS+YLyaaweWkyOy3wybB6clODU8itjhoBqIDtr/9z2U
+         G/0qZbBY+iuKkNZXmT+LWf5TpVIqLCxfONNUIOO2SRzQxkuiIdnqBnUICFHYmrW6p93q
+         0GuRhRc/ewB6u/i+e0glrufgN1R1+e3Z+O0XTAyoZLybYJFo8/v+bgBKQe39iFrK2SGP
+         SWBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682931951; x=1685523951;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PD1DEFBL8RKVqAOYf8QQiBIb4VTIPxGPtzpEUcFOS5I=;
-        b=MOaxDjJ0MVhZ5NPX4OOPa8uPt+/R3QdEUfTczCkfh5EW+SYvKzt53Ido22Iar15NCb
-         B1QQD9IcbFe3KL9EfzAFDHZeJqWcywiRK2WOYoWG/Yr0v9x0hcJIAZofTygmfD1TPdPH
-         tmiuV3j+kH+zoZfvc5m5u3iLI/jyyrIFWkuMwnhumQlkJ/OdokRsIrkP4ZCWWGg9uTfV
-         ZzS9na9Nsy7w2hcvnsnjpGADWxoNAB8Nsn6RPZ4oI2IqvQ70RAEWHbBfC3s6MP4FEtKo
-         +LIVcj8yd6T+d4D+b91jDen4l87nwv0hNQ/JdE3WN7b2XJvtW052rqggw51cGTgDth+r
-         inSw==
-X-Gm-Message-State: AC+VfDwDts4uTEmkBuRIF8lM+MCuTORRv4ix7Rpx31zMqbSBcQ85atdT
-        hnuSunJIRL9Ycg0ve7DNtoZgMBgA4UPEakeZGVIV9ovKdbu5
-X-Google-Smtp-Source: ACHHUZ5vwqiQEzZXlvGjC1hTeMpt4z16+mztKKLrIWO0oPR7L1EgOtSRNiUZXSu3WH7v7GVLXbVEZPCpemoJ8430TgBu3iS7sHlV
+        d=1e100.net; s=20221208; t=1682932719; x=1685524719;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O86laohwidt7Bpepl03li3jzMB4EXmXzNejm8wi6V84=;
+        b=kYqAxHVslf7J8a74DsfmM45Hr4q8mmmVRb1DYaAnKywhSO+agQuWo69d/fCq+Jte2d
+         miYOQxbYuFYAFJj2LGMVTY2Ncca8WnbduzvW3yXIPTXgMMNVxgOHtVUP0P1w2DbCktRe
+         mCDg87AZMHgYcN2jnFzOy2bUhbweKKMSN/P2TZn8MNoOKu0nTFYpbcwFvcF6bmvI6iVr
+         D7QHfQbI/TkrsykztrABZuK8TW+37j45HKsg0pmpwJTpKrC/Tt4SpRrlNKAkpA8X8heV
+         18G9maMC+qCS10uelCdhUh3L5dTsNOOydSrPngGnlg0cCTVW5vnGYjs5sk9OKerVsdKC
+         LYwA==
+X-Gm-Message-State: AC+VfDxtHB615CMnq/7icdUQGAXpI2S3KpZJsoIyb+/5lgZu1kl3hIK+
+        INaVDiMJiZFa3TCVwvBzKep4k43A1jtQB+v9csMvZw==
+X-Google-Smtp-Source: ACHHUZ5ngfNanfrhJTCmcKjegKker9g3iRo8IO02+ZEh/87VQJgz1tmGSQF+THePU63x3ALCCiPcmgXXSt2jenW6ZvI=
+X-Received: by 2002:a05:6e02:b49:b0:32a:642d:2a13 with SMTP id
+ f9-20020a056e020b4900b0032a642d2a13mr440333ilu.6.1682932719586; Mon, 01 May
+ 2023 02:18:39 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa2:b0:32b:fc:52b1 with SMTP id
- l2-20020a056e021aa200b0032b00fc52b1mr11621236ilv.0.1682931951304; Mon, 01 May
- 2023 02:05:51 -0700 (PDT)
-Date:   Mon, 01 May 2023 02:05:51 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000023886305fa9e217b@google.com>
-Subject: [syzbot] Monthly fat report (Apr 2023)
-From:   syzbot <syzbot+listb47f5484a202b1d1532d@syzkaller.appspotmail.com>
-To:     linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
-        syzkaller-bugs@googlegroups.com
+References: <000000000000eccdc505f061d47f@google.com> <ZE4NVo6rTOeGQdK+@mit.edu>
+In-Reply-To: <ZE4NVo6rTOeGQdK+@mit.edu>
+From:   Aleksandr Nogikh <nogikh@google.com>
+Date:   Mon, 1 May 2023 11:18:28 +0200
+Message-ID: <CANp29Y7dG3Z11Bt99rS0y8epdXfaKk+HJfXt=ePbm29vYF88Gg@mail.gmail.com>
+Subject: Re: [syzbot] [sysv?] [vfs?] WARNING in invalidate_bh_lru
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     syzbot <syzbot+9743a41f74f00e50fc77@syzkaller.appspotmail.com>,
+        hch@infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello fat maintainers/developers,
+Hi Ted,
 
-This is a 31-day syzbot report for the fat subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/fat
+On Sun, Apr 30, 2023 at 8:40=E2=80=AFAM Theodore Ts'o <tytso@mit.edu> wrote=
+:
+>
+> On Wed, Dec 21, 2022 at 06:57:38PM -0800, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    a5541c0811a0 Merge branch 'for-next/core' into for-kern=
+elci
+> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/lin=
+ux.git for-kernelci
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1560b830480=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dcbd4e584773=
+e9397
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D9743a41f74f00=
+e50fc77
+> > compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2=
+da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+> > userspace arch: arm64
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15e320b38=
+80000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D147c0577880=
+000
+>
+> #syz set subsystems: sysv, udf
+>
+> There are two reproducers, one that mounts a sysv file system, and the
+> other which mounts a udf file system.  There is no mention of ext4 in
+> the stack trace, and yet syzbot has assigned this to the ext4
+> subsystem for some unknown reason.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 10 issues are still open and 20 have been fixed so far.
+In this particular case, there were two ext4-related crashes as well:
 
-Some of the still happening issues:
+https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D14c7dd1b480000
+https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D1153a07f480000
 
-Ref Crashes Repro Title
-<1> 248     Yes   possible deadlock in filemap_fault
-                  https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
-<2> 202     Yes   kernel BUG at fs/buffer.c:LINE!
-                  https://syzkaller.appspot.com/bug?extid=cfed5b56649bddf80d6e
-<3> 197     Yes   possible deadlock in exfat_get_block
-                  https://syzkaller.appspot.com/bug?extid=247e66a2c3ea756332c7
-<4> 149     Yes   possible deadlock in exfat_iterate
-                  https://syzkaller.appspot.com/bug?extid=38655f1298fefc58a904
-<5> 74      Yes   possible deadlock in exc_page_fault
-                  https://syzkaller.appspot.com/bug?extid=6d274a5dc4fa0974d4ad
+I think syzbot picked a too generic frame as a bug title and it just
+got confused by crashes belonging to different filesystems.
+Maybe we need to display subsystems for individual crashes as well, so
+that it's easier for a human to understand what's going on..
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--
+Aleksandr
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+>
+>                                         - Ted
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/ZE4NVo6rTOeGQdK%2B%40mit.edu.
