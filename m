@@ -2,313 +2,262 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B02A96F2BEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 04:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7676A6F2E55
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 06:22:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229992AbjEACG0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Apr 2023 22:06:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41654 "EHLO
+        id S230139AbjEAEW2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 00:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbjEACGY (ORCPT
+        with ESMTP id S229772AbjEAEW0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Apr 2023 22:06:24 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223FFE52
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Apr 2023 19:06:23 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-63b70ca0a84so2446647b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Apr 2023 19:06:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1682906782; x=1685498782;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=znM2E4gIVmPbqaHKPAok5KWXVI4I8gH5qEPvg831RO0=;
-        b=OGCvREmjyIoVoTOo+kZudb2tWoe+QIpJ28NIXPFfOaeI4x2OA3P5MK9cDDxS+5SNhg
-         P3snzcZ8fFuqvvvyfVlgQAZ4o6IhZ+su+4VV+DlD8PZ3hzVuxnlV13bEUerZ0HmZOGJr
-         GI19Jgmgwa4DDPGE1ckHgyxfBGoQdz2eqnYDjWsrfG70cYypoFEbmCRqWhpF0TsoH23Z
-         hfwGAYBmbLP/zvjwhp4oVkK9vIpytsjQgbTGH0YeC1xmJcGA1HZfFO4kDTzxW41LEQ7C
-         ohgKXQyh1LcSrGPYt7yy387wEdlod/DVUqKxTToZ0Ht+NV0dDQOOSJa0jqyYN+NfZw5a
-         VVGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682906782; x=1685498782;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=znM2E4gIVmPbqaHKPAok5KWXVI4I8gH5qEPvg831RO0=;
-        b=a66jlRZd3c5bHakQxrawMfy0Zg/rcT72DM4Wqi+oySlvMeJVA1/D3nuQAGv0Q1m4rm
-         Ea4Sc/PvEEjXtTYQnkTZtOjmaEC4ePkL5N6FvHwjHtZTULvjRiHM0/LUsx72JSOikGTV
-         lwZiqNRkQxrHe1tHiaifqWsn06ZtxhEVBzkfijX+2f1TDeikOHFOCVVDqwVmKHMmTdHo
-         /lUkoYxNcIbPRCvx2PWn1yUbfz2ZwSNhsq/H2EFh3oR3wAFYswn56H9iTkscl1GcMNHJ
-         HNLg0uqZzzTL9OD3pN6Ioof4wIlu/CIgvy0T0lJVyA/NVLH/mmv6LJFLaQntF5GtARPY
-         4zPQ==
-X-Gm-Message-State: AC+VfDwaMAk6slNQUr+pGJnqxNgPssFNVventwHdMg4V9pZ2Q+a0mnwv
-        A/Fy6LeGyPoobiJN7muSeyyh+w==
-X-Google-Smtp-Source: ACHHUZ769BNFg/pkbOm+IJp8cuzfUYEw5n0Bk4fMRkxMz6MabsohUyKRBjisP2jC95bYKmM2HDcPSQ==
-X-Received: by 2002:a05:6a00:b84:b0:63d:3a18:4a03 with SMTP id g4-20020a056a000b8400b0063d3a184a03mr18408589pfj.5.1682906782544;
-        Sun, 30 Apr 2023 19:06:22 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
-        by smtp.gmail.com with ESMTPSA id 2-20020a621802000000b0063d24d5f9b6sm18938752pfy.210.2023.04.30.19.06.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Apr 2023 19:06:22 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ptIvh-009t8e-GL; Mon, 01 May 2023 12:06:17 +1000
-Date:   Mon, 1 May 2023 12:06:17 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Ming Lei <ming.lei@redhat.com>, Baokun Li <libaokun1@huawei.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-ext4@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-block@vger.kernel.org,
+        Mon, 1 May 2023 00:22:26 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 778F61B4;
+        Sun, 30 Apr 2023 21:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=AkJl0tFqtRHi9AGRk0MSBLVfjZO+jM952c9eQV2BcB8=; b=JhHSEEQPfjKvVQ+rrWGeXbR5Iw
+        dpqFd38ICY6Wgg8C/+vEQhaLPROke1zV16ZNQ1xIG0Uq2O999RGBqRcQ08S7Y8G98kowaRMq00L2i
+        Wailu9iQ+uNRZsy1h+ptTgg0tRZE7bc2YO61KjE82BHeAxV+Q8WW+y6WbGZHYtEXx4C+q2mAhCnaY
+        7ZY52Z3rvy/uwShJj0SxGNkDL00K0yxkevUBa8/5bBlj+SS4w7EIU2xH549sMti/O2UmSqaNCOeWw
+        aA6IvzNOK+M7BI6pjKmDVj+PJmKK2UL6RE0fzq6VkotIRt5dkGEYwHxJlzABn/lxNZzxVFQdxtdda
+        Qvz/fyQQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1ptJzH-00FB2K-1S;
+        Mon, 01 May 2023 03:14:03 +0000
+Date:   Sun, 30 Apr 2023 20:14:03 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        Daniel Gomez <da.gomez@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Zhang Yi <yi.zhang@redhat.com>,
-        yangerkun <yangerkun@huawei.com>
-Subject: Re: [ext4 io hang] buffered write io hang in balance_dirty_pages
-Message-ID: <20230501020617.GD2155823@dread.disaster.area>
-References: <ZEn/KB0fZj8S1NTK@ovpn-8-24.pek2.redhat.com>
- <dbb8d8a7-3a80-34cc-5033-18d25e545ed1@huawei.com>
- <ZEpH+GEj33aUGoAD@ovpn-8-26.pek2.redhat.com>
- <663b10eb-4b61-c445-c07c-90c99f629c74@huawei.com>
- <ZEpcCOCNDhdMHQyY@ovpn-8-26.pek2.redhat.com>
- <ZEskO8md8FjFqQhv@ovpn-8-24.pek2.redhat.com>
- <fb127775-bbe4-eb50-4b9d-45a8e0e26ae7@huawei.com>
- <ZEtd6qZOgRxYnNq9@mit.edu>
- <ZEyL/sjVeW88XpIn@ovpn-8-24.pek2.redhat.com>
- <ZEyjY0W+8zafPAoh@mit.edu>
+        David Howells <dhowells@redhat.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 17/17] fs: add CONFIG_BUFFER_HEAD
+Message-ID: <ZE8ue9Mx6n2T0yn6@bombadil.infradead.org>
+References: <20230424054926.26927-1-hch@lst.de>
+ <20230424054926.26927-18-hch@lst.de>
+ <ZExgzbBCbdC1y9Wk@bombadil.infradead.org>
+ <ZExw0eW52lYj2R1m@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZEyjY0W+8zafPAoh@mit.edu>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZExw0eW52lYj2R1m@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 29, 2023 at 12:56:03AM -0400, Theodore Ts'o wrote:
-> On Sat, Apr 29, 2023 at 11:16:14AM +0800, Ming Lei wrote:
-> > 
-> > bdi_unregister() is called in del_gendisk(), since bdi_register() has
-> > to be called in add_disk() where major/minor is figured out.
-> > 
-> > > problem is that the block device shouldn't just *vanish*, with the
-> > 
-> > That looks not realistic, removable disk can be gone any time, and device
-> > driver error handler often deletes disk as the last straw, and it shouldn't
-> > be hard to observe such error.
+On Sat, Apr 29, 2023 at 02:20:17AM +0100, Matthew Wilcox wrote:
+> On Fri, Apr 28, 2023 at 05:11:57PM -0700, Luis Chamberlain wrote:
+> > [   11.245248] BUG: kernel NULL pointer dereference, address: 0000000000000000
+> > [   11.254581] #PF: supervisor read access in kernel mode
+> > [   11.257387] #PF: error_code(0x0000) - not-present page
+> > [   11.260921] PGD 0 P4D 0
+> > [   11.262600] Oops: 0000 [#1] PREEMPT SMP PTI
+> > [   11.264993] CPU: 7 PID: 198 Comm: (udev-worker) Not tainted 6.3.0-large-block-20230426 #2
+> > [   11.269385] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.0-debian-1.16.0-5 04/01/2014
+> > [   11.275054] RIP: 0010:iomap_page_create.isra.0+0xc/0xd0
+> > [   11.277924] Code: 41 5e 41 5f c3 cc cc cc cc 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 41 54 55 48 89 f5 53 <48> 8b 06 48 c1 e8 0d 89 c6 83 e6 01 0f 84 a1 00 00 00 4c 8b 65 28
+> > [   11.287293] RSP: 0018:ffffb0f0805ef9d8 EFLAGS: 00010293
+> > [   11.289964] RAX: ffff9de3c1fa8388 RBX: ffffb0f0805efa78 RCX: 000000037ffe0000
+> > [   11.293212] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000000000d
+> > [   11.296485] RBP: 0000000000000000 R08: 0000000000021000 R09: ffffffff9c733b20
+> > [   11.299724] R10: 0000000000000001 R11: 000000000000c000 R12: 0000000000000000
+> > [   11.302974] R13: ffffffff9be96260 R14: ffffb0f0805efa58 R15: 0000000000000000
 > 
-> It's not realistic to think that the file system can write back any
-> dirty pages, sure.  At this point, the user has already yanked out the
-> thumb drive, and the physical device is gone.  However, various fields
-> like bdi->dev shouldn't get deinitialized until after the
-> s_ops->shutdown() function has returned.
+> RSI is argument 2, which is folio.
 > 
-> We need to give the file system a chance to shutdown any pending
-> writebacks; otherwise, we could be racing with writeback happening in
-> some other kernel thread, and while the I/O is certainly not going to
-> suceed, it would be nice if attempts to write to the block device
-> return an error, intead potentially causing the kernel to crash.
+> Code starting with the faulting instruction
+> ===========================================
+>    0:	48 8b 06             	mov    (%rsi),%rax
+>    3:	48 c1 e8 0d          	shr    $0xd,%rax
 > 
-> The shutdown function might need to sleep while it waits for
-> workqueues or kernel threads to exit, or while it iterates over all
-> inodes and clears all of the dirty bits and/or drop all of the pages
-> associated with the file system on the disconnected block device.  So
-> while this happens, I/O should just fail, and not result in a kernel
-> BUG or oops.
+> Looks to me like a NULL folio was passed into iomap_page_create().
 > 
-> Once the s_ops->shutdown() has returned, then del_gendisk can shutdown
-> and/or deallocate anything it wants, and if the file system tries to
-> use the bdi after s_ops->shutdown() has returned, well, it deserves
-> anything it gets.
+> > [   11.306206] FS:  00007f03ea8368c0(0000) GS:ffff9de43bdc0000(0000) knlGS:0000000000000000
+> > [   11.309949] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   11.312464] CR2: 0000000000000000 CR3: 0000000117ec6006 CR4: 0000000000770ee0
+> > [   11.315442] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > [   11.318310] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > [   11.321010] PKRU: 55555554
+> > [   11.322212] Call Trace:
+> > [   11.323224]  <TASK>
+> > [   11.324146]  iomap_readpage_iter+0x96/0x300
+> > [   11.325694]  iomap_readahead+0x174/0x2d0
+> > [   11.327129]  read_pages+0x69/0x1f0
+> > [   11.329751]  page_cache_ra_unbounded+0x187/0x1d0
 > 
-> (Well, it would be nice if things didn't bug/oops in fs/buffer.c if
-> there is no s_ops->shutdown() function, since there are a lot of
-> legacy file systems that use the buffer cache and until we can add
-> some kind of generic shutdown function to fs/libfs.c and make sure
-> that all of the legacy file systems that are likely to be used on a
-> USB thumb drive are fixed, it would be nice if they were protected.
-> At the very least, we should make that things are no worse than they
-> currently are.)
+> ... that shouldn't be possible.  read_pages() allocates pages, puts them
+> in the page cache and tells the filesystem to fill them in.
 > 
->        	    	 	       	     	  - Ted
-> 
-> P.S.  Note that the semantics I've described here for
-> s_ops->shutdown() are slightly different than what the FS_IOC_SHUTDOWN
-> ioctl currently does.  For example, after FS_IOC_SHUTDOWN, writes to
-> files will fail, but read to already open files will succeed.  I know
-> this because the original ext4 shutdown implementation did actually
-> prevent reads from going through, but we got objections from those
-> that wanted ext4's FS_IOC_SHUTDOWN to work the same way as xfs's.
+> In your patches, did you call mapping_set_large_folios() anywhere?
 
-<blink>
+No but the only place to add that would be in the block cache. Adding
+that alone to the block cache doesn't fix the issue. The below patch
+however does get us by.
 
-Wot?
+From my readings it does't seem like readahead_folio() should always
+return non-NULL, and also I couldn't easily verify the math is right.
+The max cap I see is for the backing device io_size, but there are
+some other heuristics which will take me some time to try to grok
+to understand if they are correct.
 
-The current XFS read IO path does this as it's first check:
+diff --git a/block/bdev.c b/block/bdev.c
+index 21c63bfef323..afa0c5ebd364 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -411,6 +411,7 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
+ 	inode->i_rdev = 0;
+ 	inode->i_data.a_ops = &def_blk_aops;
+ 	mapping_set_gfp_mask(&inode->i_data, GFP_USER);
++	mapping_set_large_folios(inode->i_mapping);
+ 
+ 	bdev = I_BDEV(inode);
+ 	mutex_init(&bdev->bd_fsfreeze_mutex);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 8115b0d9a85a..d3c9e16a7066 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -384,7 +384,10 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
+ 		}
+ 		if (!ctx->cur_folio) {
+ 			ctx->cur_folio = readahead_folio(ctx->rac);
+-			ctx->cur_folio_in_bio = false;
++			if (ctx->cur_folio)
++				ctx->cur_folio_in_bio = false;
++			else
++				continue;
+ 		}
+ 		ret = iomap_readpage_iter(iter, ctx, done);
+ 		if (ret <= 0)
 
-STATIC ssize_t
-xfs_file_read_iter(
-        struct kiocb            *iocb,
-        struct iov_iter         *to)
-{
-        struct inode            *inode = file_inode(iocb->ki_filp);
-        struct xfs_mount        *mp = XFS_I(inode)->i_mount;
-        ssize_t                 ret = 0;
+We still see:
 
-        XFS_STATS_INC(mp, xs_read_calls);
+Apr 30 19:54:21 iomap kernel: ------------[ cut here ]------------
+Apr 30 19:54:21 iomap kernel: WARNING: CPU: 4 PID: 197 at block/fops.c:389 blkdev_iomap_begin+0x80/0x90
+Apr 30 19:54:21 iomap kernel: Modules linked in: psmouse virtio_blk failover nvme nvme_core crc32c_intel t10_pi virtio_pci
+virtio_pci_legacy_dev virtio_pci_modern_dev virtio crc64_rocksoft >
+Apr 30 19:54:21 iomap kernel: CPU: 4 PID: 197 Comm: (udev-worker) Not tainted 6.3.0-large-block-20230426-dirty #7
+Apr 30 19:54:21 iomap kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.0-debian-1.16.0-5 04/01/2014
+Apr 30 19:54:21 iomap kernel: RIP: 0010:blkdev_iomap_begin+0x80/0x90
+Apr 30 19:54:21 iomap kernel: Code: c0 48 89 53 10 5b 5d 41 5c c3 cc cc
+cc cc 89 c6 83 e8 01 48 8d 6c 2e ff 48 f7 de 48 29 c5 48 21 ee 48 89 73
+08 48 39 d6 7c c6 <0f> 0b b8 fb ff ff ff 5b 5>
+Apr 30 19:54:21 iomap kernel: RSP: 0018:ffffa437c0723a08 EFLAGS: 00010246
+Apr 30 19:54:21 iomap kernel: RAX: 0000000000007fff RBX: ffffa437c0723aa0 RCX: 0000000000000000
+Apr 30 19:54:21 iomap kernel: RDX: 0000000400000000 RSI: 0000000400000000 RDI: ffff92f9c23c5788
+Apr 30 19:54:21 iomap kernel: RBP: 0000000400000000 R08: ffffa437c0723aa0 R09: ffffa437c0723af0
+Apr 30 19:54:21 iomap kernel: R10: 0000000000000001 R11: 000000000000c000 R12: ffff92f9c23c5788
+Apr 30 19:54:21 iomap kernel: R13: ffffa437c0723af0 R14: ffffffff828962e0 R15: ffffa437c0723cc8
+Apr 30 19:54:21 iomap kernel: FS:  00007febee04b8c0(0000) GS:ffff92fa3bd00000(0000) knlGS:0000000000000000
+Apr 30 19:54:21 iomap kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Apr 30 19:54:21 iomap kernel: CR2: 00007ffd68325108 CR3: 0000000102a9a005 CR4: 0000000000770ee0
+Apr 30 19:54:21 iomap kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+Apr 30 19:54:21 iomap kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Apr 30 19:54:21 iomap kernel: PKRU: 55555554
+Apr 30 19:54:21 iomap kernel: Call Trace:
+Apr 30 19:54:21 iomap kernel:  <TASK>
+Apr 30 19:54:21 iomap kernel:  iomap_iter+0x179/0x350
+Apr 30 19:54:21 iomap kernel:  iomap_readahead+0x200/0x2e0
+Apr 30 19:54:21 iomap kernel:  read_pages+0x69/0x1f0
+Apr 30 19:54:21 iomap kernel:  ? folio_add_lru+0x7e/0xe0
+Apr 30 19:54:21 iomap kernel:  page_cache_ra_unbounded+0x187/0x1d0
+Apr 30 19:54:21 iomap kernel:  force_page_cache_ra+0x94/0xb0
+Apr 30 19:54:21 iomap kernel:  filemap_get_pages+0x10e/0x650
+Apr 30 19:54:21 iomap kernel:  ? _raw_spin_lock+0x13/0x40
+Apr 30 19:54:21 iomap kernel:  ? _raw_spin_unlock+0x15/0x30
+Apr 30 19:54:21 iomap kernel:  ? __mark_inode_dirty+0x155/0x380
+Apr 30 19:54:21 iomap kernel:  filemap_read+0xbf/0x340
+Apr 30 19:54:21 iomap kernel:  ? aa_file_perm+0x117/0x4b0
+Apr 30 19:54:21 iomap kernel:  ? generic_fillattr+0x45/0xf0
+Apr 30 19:54:21 iomap kernel:  ? _copy_to_user+0x22/0x30
+Apr 30 19:54:21 iomap kernel:  ? cp_new_stat+0x150/0x180
+Apr 30 19:54:21 iomap kernel:  blkdev_read_iter+0x5e/0x140
+Apr 30 19:54:21 iomap kernel:  vfs_read+0x1f0/0x2c0
+Apr 30 19:54:21 iomap kernel:  ksys_read+0x63/0xe0
+Apr 30 19:54:21 iomap kernel:  do_syscall_64+0x37/0x90
+Apr 30 19:54:21 iomap kernel:  entry_SYSCALL_64_after_hwframe+0x72/0xdc
+Apr 30 19:54:21 iomap kernel: RIP: 0033:0x7febee74e03d
+Apr 30 19:54:21 iomap kernel: Code: 31 c0 e9 c6 fe ff ff 50 48 8d 3d a6
+55 0a 00 e8 39 fe 01 00 66 0f 1f 84 00 00 00 00 00 80 3d a1 25 0e 00 00
+74 17 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 5b c>
+Apr 30 19:54:21 iomap kernel: RSP: 002b:00007ffd68329148 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+Apr 30 19:54:21 iomap kernel: RAX: ffffffffffffffda RBX: 000055b30a902020 RCX: 00007febee74e03d
+Apr 30 19:54:21 iomap kernel: RDX: 0000000000000100 RSI: 000055b30a905138 RDI: 000000000000000c
+Apr 30 19:54:21 iomap kernel: RBP: 00000003ffffe000 R08: 00007febee828d40 R09: 00007febee828d40
+Apr 30 19:54:21 iomap kernel: R10: 0000000000000000 R11: 0000000000000246 R12: 000055b30a905110
+Apr 30 19:54:21 iomap kernel: R13: 0000000000000100 R14: 000055b30a902078 R15: 000055b30a905128
+Apr 30 19:54:21 iomap kernel:  </TASK>
+Apr 30 19:54:21 iomap kernel: ---[ end trace 0000000000000000 ]---
 
-        if (xfs_is_shutdown(mp))
-                return -EIO;
-....
+And then also:
 
-It's been this way since .... 1997 on Irix when forced shutdowns
-were introduced with this commit:
+Apr 30 19:54:21 iomap kernel: ------------[ cut here ]------------
+Apr 30 19:54:21 iomap kernel: WARNING: CPU: 4 PID: 197 at fs/iomap/iter.c:32 iomap_iter+0x335/0x350
+Apr 30 19:54:21 iomap kernel: Modules linked in: psmouse virtio_blk failover nvme nvme_core crc32c_intel t10_pi virtio_pci
+virtio_pci_legacy_dev virtio_pci_modern_dev virtio crc64_rocksoft >
+Apr 30 19:54:21 iomap kernel: CPU: 4 PID: 197 Comm: (udev-worker) Tainted: G        W          6.3.0-large-block-20230426-dirty #7
+Apr 30 19:54:21 iomap kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.0-debian-1.16.0-5 04/01/2014
+Apr 30 19:54:21 iomap kernel: RIP: 0010:iomap_iter+0x335/0x350
+Apr 30 19:54:21 iomap kernel: Code: b8 fe ff ff e8 dc 29 c0 ff e9 ae fe
+ff ff 0f 0b e9 71 fe ff ff 0f 0b e9 77 fe ff ff 0f 0b e9 7c fe ff ff 0f
+0b e9 7f fe ff ff <0f> 0b b8 fb ff ff ff e9 8>
+Apr 30 19:54:21 iomap kernel: RSP: 0018:ffffa437c0723a28 EFLAGS: 00010287
+Apr 30 19:54:21 iomap kernel: RAX: 0000000000008000 RBX: ffffa437c0723a78 RCX: 0000000000008000
+Apr 30 19:54:21 iomap kernel: RDX: 000000000000a000 RSI:00000003fffab000 RDI: ffffa437c0723a78
+Apr 30 19:54:21 iomap kernel: RBP: ffffffff828962e0 R08: 0000000000005000 R09: ffffffff83133b20
+Apr 30 19:54:21 iomap kernel: R10: 0000000000000001 R11: 000000000000c000 R12: 0000000000008000
+Apr 30 19:54:21 iomap kernel: R13: ffffa437c0723a78 R14: ffffffff828962e0 R15: ffffa437c0723cc8
+Apr 30 19:54:21 iomap kernel: FS:  00007febee04b8c0(0000) GS:ffff92fa3bd00000(0000) knlGS:0000000000000000
+Apr 30 19:54:21 iomap kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Apr 30 19:54:21 iomap kernel: CR2: 00007ffd68325108 CR3: 0000000102a9a005 CR4: 0000000000770ee0
+Apr 30 19:54:21 iomap kernel: DR0: 0000000000000000 DR1:0000000000000000 DR2: 0000000000000000
+Apr 30 19:54:21 iomap kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Apr 30 19:54:21 iomap kernel: PKRU: 55555554
+Apr 30 19:54:21 iomap kernel: Call Trace:
+Apr 30 19:54:21 iomap kernel:  <TASK>
+Apr 30 19:54:21 iomap kernel:  iomap_readahead+0x200/0x2e0
+Apr 30 19:54:21 iomap kernel:  read_pages+0x69/0x1f0
+Apr 30 19:54:21 iomap kernel:  ? folio_add_lru+0x7e/0xe0
+Apr 30 19:54:21 iomap kernel:  page_cache_ra_unbounded+0x187/0x1d0
+Apr 30 19:54:21 iomap kernel:  force_page_cache_ra+0x94/0xb0
+Apr 30 19:54:21 iomap kernel:  filemap_get_pages+0x10e/0x650
+Apr 30 19:54:21 iomap kernel:  filemap_read+0xbf/0x340
+Apr 30 19:54:21 iomap kernel:  ? tomoyo_path_number_perm+0x68/0x1d0
+Apr 30 19:54:21 iomap kernel:  ? aa_file_perm+0x117/0x4b0
+Apr 30 19:54:21 iomap kernel:  blkdev_read_iter+0x5e/0x140
+Apr 30 19:54:21 iomap kernel:  vfs_read+0x1f0/0x2c0
+Apr 30 19:54:21 iomap kernel:  ksys_read+0x63/0xe0
+Apr 30 19:54:21 iomap kernel:  do_syscall_64+0x37/0x90
+Apr 30 19:54:21 iomap kernel:  entry_SYSCALL_64_after_hwframe+0x72/0xdc
+Apr 30 19:54:21 iomap kernel: RIP: 0033:0x7febee74e03d
+Apr 30 19:54:21 iomap kernel: Code: 31 c0 e9 c6 fe ff ff 50 48 8d 3d a6
+55 0a 00 e8 39 fe 01 00 66 0f 1f 84 00 00 00 00 00 80 3d a1 25 0e 00 00
+74 17 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 5b c>
+Apr 30 19:54:21 iomap kernel: RSP: 002b:00007ffd68329198 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+Apr 30 19:54:21 iomap kernel: RAX: ffffffffffffffda RBX: 000055b30a902020 RCX: 00007febee74e03d
+Apr 30 19:54:21 iomap kernel: RDX: 0000000000000018 RSI:i 000055b30a8fe518 RDI: 000000000000000c
+Apr 30 19:54:21 iomap kernel: RBP: 00000003fffaba00 R08: 00007febee828cc0 R09: 0000000000000070
+Apr 30 19:54:21 iomap kernel: R10: 0000000000000000 R11:0000000000000246 R12: 000055b30a8fe4f0
+Apr 30 19:54:21 iomap kernel: R13: 0000000000000018 R14: 000055b30a902078 R15: 000055b30a8fe508
+Apr 30 19:54:21 iomap kernel:  </TASK>
+Apr 30 19:54:21 iomap kernel: ---[ end trace 0000000000000000 ]---
 
-commit a96958f0891133f2731094b455465e88c03a13fb
-Author: Supriya Wickrematillake <sup@sgi.com>
-Date:   Sat Jan 25 02:55:04 1997 +0000
-
-    First cut of XFS I/O error handling changes.
-
-So, yeah, XFS *always* errors out user read IO after a shutdown.
-
-/me wonders what ext4 does
-
-
-static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-{
-        struct inode *inode = file_inode(iocb->ki_filp);
-
-        if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
-                return -EIO;
-
-Huh. It does the same thing as XFS. I now have no idea what
-you are talking about now, Ted.
-
-Ah:
-
-https://lore.kernel.org/linux-ext4/20170203022224.idwexzwnqmbyskbj@thunk.org/
-
-You explicitly mention readpage/readpages, which was the page
-fault IO path (address space ops, not file ops). These days we have
-xfs_vm_read_folio(), which goes through iomap, which then asks the
-filesystem to map the folio to the underlying storage for IO, which
-then calls xfs_read_iomap_begin(), and that does:
-
-static int
-xfs_read_iomap_begin(
-        struct inode            *inode,
-        loff_t                  offset,
-        loff_t                  length,
-        unsigned                flags,
-        struct iomap            *iomap,
-        struct iomap            *srcmap)
-{
-        struct xfs_inode        *ip = XFS_I(inode);
-        struct xfs_mount        *mp = ip->i_mount;
-        struct xfs_bmbt_irec    imap;
-        xfs_fileoff_t           offset_fsb = XFS_B_TO_FSBT(mp, offset);
-        xfs_fileoff_t           end_fsb = xfs_iomap_end_fsb(mp, offset, length);
-        int                     nimaps = 1, error = 0;
-        bool                    shared = false;
-        unsigned int            lockmode = XFS_ILOCK_SHARED;
-        u64                     seq;
-
-        ASSERT(!(flags & (IOMAP_WRITE | IOMAP_ZERO)));
-
-        if (xfs_is_shutdown(mp))
-                return -EIO;
-
-.... a shutdown check as it's first operation.
-
-I'm pretty sure that this has always been the case - for reading
-pages/folios through page faults, we've always errored those out in
-the block mapping callback function, not in the high level VFS
-interfacing functions. Yeah, looking at the old page based path
-from 2008:
-
-
-STATIC int
-xfs_vm_readpage(
-        struct file             *unused,
-        struct page             *page)
-{
-        return mpage_readpage(page, xfs_get_blocks);
-}
-
-Call chain:
-
-mpage_readpage
-  xfs_get_blocks
-    __xfs_get_blocks
-      xfs_iomap
-
-int
-xfs_iomap(
-....
-{
-        xfs_mount_t     *mp = ip->i_mount;
-....
-        int             iomap_flags = 0;
-
-        ASSERT((ip->i_d.di_mode & S_IFMT) == S_IFREG);
-
-        if (XFS_FORCED_SHUTDOWN(mp))
-                return XFS_ERROR(EIO);
-
-Yup, there's the shutdown check way back in the 2008 code base for
-the pagefault IO path. IOWs, we've always errored out any attempt to
-do IO via page faults after a shutdown, too.
-
-The XFS ->page_mkwrite() path also does a shutdown check as it's
-first operation, which leaves just read faults through filemap_fault
-as skipping the shutdown check.
-
-Yeah, so if the page is uptodate in the page cache, the fault still
-succeeds. This was left in place so that root filesystems might
-still be able to execute a system shutdown after the root filesystem
-was shut down. Sometimes it works, sometimes it doesn't, but it
-doesn't hurt anything to let read page faults for cached data to
-succeed after a shutdown...
-
-That's trivial to change - just add a shutdown check before calling
-filemap_fault(). I just don't see a need to change that for XFS, and
-I don't care one way or another if other filesystems do something
-different here, either, as long as they don't issue read IO to the
-underlying device....
-
-> So we have an out of tree patch for ext4's FS_IOC_SHUTDOWN
-> implementation in our kernels at $WORK, because we were using it when
-> we knew that the back-end server providing the iSCSI or remote block
-> had died, and we wanted to make sure our borg (think Kubernetes) jobs
-> would fast fail when they tried reading from the dead file system, as
-> opposed to failing only after some timeout had elapsed.
-
-Well, yeah. That's pretty much why XFS has failed all physical I/O
-attempts (read or write) after a shutdown for the past 25 years.
-Shutdowns on root filesystems are a bit nasty, though, because if
-you don't allow cached executables to run, the whole system dies
-instantly with no warning or ability to safely shutdown applications
-at all.
-
-> To avoid confusion, we should probably either use a different name
-> than s_ops->shutdown(), or add a new mode to FS_IOC_SHUTDOWN which
-> corresponds to "the block device is gone, shut *everything* down:
-> reads, writes, everything.
-
-Yup, that's pretty much what we already do for a shutdown, so I'm
-not sure what you are advocating for, Ted. If you add the shutdown
-check to the filemap_fault() path then even that last little "allow
-cached executables to still run on a shutdown root fs" helper goes
-away and then you have what you want...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
