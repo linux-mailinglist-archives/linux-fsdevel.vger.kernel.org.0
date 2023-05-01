@@ -2,169 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EAD96F3633
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 20:48:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4E046F363C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 20:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232535AbjEASsw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 14:48:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34380 "EHLO
+        id S232772AbjEASuT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 14:50:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232467AbjEASst (ORCPT
+        with ESMTP id S229816AbjEASuS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 14:48:49 -0400
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8967DE65;
-        Mon,  1 May 2023 11:48:22 -0700 (PDT)
-Received: by mail-vs1-xe2c.google.com with SMTP id ada2fe7eead31-42ca0c08aa9so962622137.2;
-        Mon, 01 May 2023 11:48:22 -0700 (PDT)
+        Mon, 1 May 2023 14:50:18 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35A14129
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 11:50:16 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-94f109b1808so570051466b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 11:50:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682966894; x=1685558894;
+        d=linux-foundation.org; s=google; t=1682967014; x=1685559014;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tKVQwJa5t0eCyrACkPbSAhR6esPfeMb3yfCd45qddgk=;
-        b=sGK41Ul01upKR24d9eXIIetBsjW99C0LOtlgakWWlXmv+QzeTMZb9pD6+wZGHIybnR
-         mXgTUwbrT1iDvs4Y5LeGGkxfBSwU5Jdf8rZZX+hP6lkSnO2sdk1HZNwG9/eGJcQtQrYf
-         /zKQ4R89cCBl7rj832OhuDiwOIf9v0KdHrtFP69vB4fWs5Ff4TabONd6v+kDCvpOR77k
-         pZCOgiBzjamnj6dXWsczWlcnYHwfoiqIIXh+3jRIpUyieU6g0gyv0ahFG1Px+96Tgn6E
-         g/IBISxQS5RIzF+P8xcAUmm4V1SnyvWqv5WOXWJXPwN9stmjvzSsl8T35GLVNBcqTbTG
-         OF7A==
+        bh=QJsDytAkzpo1N72CvaRaEHpBmg/KeBVFFxmvg3mMNXA=;
+        b=adBwuu89iCtYiMyq/Oqh8jtUUMQ30inGM2uqK/ZHob/SJ4G1/fYcRRHlo3Ur28aqjG
+         7Bbs3fkzZ+xptL3cAD+rvmD2wBUaCCGlfQXnvpatD4jFv4WpOqtMZdzS3wmt7gma7jsF
+         Zjkw9PDgEj0xOgyf3JGDXm48Y2XoOEnOGDaBM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682966894; x=1685558894;
+        d=1e100.net; s=20221208; t=1682967014; x=1685559014;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tKVQwJa5t0eCyrACkPbSAhR6esPfeMb3yfCd45qddgk=;
-        b=mEfNOI/cagVI3I9VltqknzUPrEhZlpGEziBmIscafefn/a4tbL6i82PN+cPSoDH/KX
-         /373hpy1I8XGEWyOvQle5gPYlQYoUCb2mblsJSH7ktlE+mbRMuq+ItnRuXAtGSbyOgCx
-         RcLqNOccTcmJexX8ItzpOwFOszdJTIsMzlcvZSZ2LaqxFtA1LZ+VDq9UAVO/5UJGIKcA
-         oVeRml1ry0sBl9SalH47f2F7RnO9ZxKrxICI4vELDUlRVjDz/uyNNYwSBVMLQ2fgX28x
-         77GklJG9J/RvECV8V5wiulZ9M4MEgTOj1JX5W4LuWZZYodytTk7/V8s4PvU4giq+DdGN
-         q9kw==
-X-Gm-Message-State: AC+VfDzKn8sDqVbIIPaS7lRs0I8hztv5HIuld1SLjZdw36NNGFP5+JFb
-        8Bs0EtwVSqp7XL6Vfjusnb9OpY030e2ba7R1K9n3TCO+8yg=
-X-Google-Smtp-Source: ACHHUZ5anjqIupPqMHtGBlrEJyuK4EuO6dOYCEi5tH3W7e38LxPaJ2OTR73mWRaHssIQGUa5drtnEjypZIeDjse6Wb4=
-X-Received: by 2002:a67:eb16:0:b0:42c:761a:90ed with SMTP id
- a22-20020a67eb16000000b0042c761a90edmr6389721vso.6.1682966894656; Mon, 01 May
- 2023 11:48:14 -0700 (PDT)
+        bh=QJsDytAkzpo1N72CvaRaEHpBmg/KeBVFFxmvg3mMNXA=;
+        b=ZWQnW5zjQGGXYkZZVAca8OEjO3bbyw9heCLG1414bZt3ZUTJhp7EAZie58ptnriywK
+         lRYp1cBvxuvPbpil2rNQtkL6aaggAS3B9U+oqXiGwvFgvNDtBwVlGHqO1/lwzbq0Ua0O
+         p5tIFf38vJ//9qT5HhqeNHVDcxMrMrfpQah5ObifP1yfGwNou2IMlgdEjFLuv8StKQHi
+         yVAsb7HBLeGEbdLkOPdciJzsogc6c//Hql2dHcoalYFxPat9rrGrJe0ytwJWOk6WzeJg
+         UnkMtRjhYESisCdA8hJ6PNzzEV6Vvhjqng1RazlBg0TthbXirhpLPzaie3X+JBEdejzo
+         5zvg==
+X-Gm-Message-State: AC+VfDyWZazk/2V1nASRZcidkBdVVnYR07TQmzG59XyFlsMthBeSVgqV
+        kWAq4YtQDX2ReJib1Uhh2ZlisXyH73b1vaYTpzXAxg==
+X-Google-Smtp-Source: ACHHUZ5zbfSUJOZYEovt8mEfkL70H8LYcpX3H7VoNfxfKIJcM85m1OxdWJ4jIIUki/RROaKkKgJ2lw==
+X-Received: by 2002:a17:906:6a28:b0:93e:8791:7d8e with SMTP id qw40-20020a1709066a2800b0093e87917d8emr13196037ejc.2.1682967014324;
+        Mon, 01 May 2023 11:50:14 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id gz19-20020a170907a05300b0095076890fc1sm15127620ejc.1.2023.05.01.11.50.12
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 May 2023 11:50:13 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-50bceaf07b8so393332a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 11:50:12 -0700 (PDT)
+X-Received: by 2002:aa7:d8cb:0:b0:50b:cff8:ff1f with SMTP id
+ k11-20020aa7d8cb000000b0050bcff8ff1fmr310706eds.42.1682967012421; Mon, 01 May
+ 2023 11:50:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230425130105.2606684-1-amir73il@gmail.com> <dafbff6baa201b8af862ee3faf7fe948d2a026ab.camel@kernel.org>
- <ZE0teudDjXJFz+1b@manet.1015granger.net> <CAOQ4uxi6-fZp8WzQAR7wbv+0c-xncFTsAa=U=9ZCcdcT3vQpgg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxi6-fZp8WzQAR7wbv+0c-xncFTsAa=U=9ZCcdcT3vQpgg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 1 May 2023 21:48:03 +0300
-Message-ID: <CAOQ4uxhEXJ2j7WzwVa1v9zH-4Tm72SsyjJ=RiJcOghViE-mGQg@mail.gmail.com>
-Subject: Re: [RFC][PATCH 0/4] Prepare for supporting more filesystems with fanotify
-To:     Chuck Lever <cel@kernel.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
-        Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
+References: <000000000000de34bd05f3c6fe19@google.com> <0000000000001ec6ce05fa9a4bf7@google.com>
+In-Reply-To: <0000000000001ec6ce05fa9a4bf7@google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 1 May 2023 11:49:55 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whWUZyiFvHpkC35DXo713GKFjqCWwY1uCs3tbMJ6QXeWg@mail.gmail.com>
+Message-ID: <CAHk-=whWUZyiFvHpkC35DXo713GKFjqCWwY1uCs3tbMJ6QXeWg@mail.gmail.com>
+Subject: Re: [syzbot] [xfs?] BUG: unable to handle kernel paging request in clear_user_rep_good
+To:     syzbot <syzbot+401145a9a237779feb26@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@suse.de>, stable <stable@vger.kernel.org>
+Cc:     almaz.alexandrovich@paragon-software.com, clm@fb.com,
+        djwong@kernel.org, dsterba@suse.com, hch@infradead.org,
+        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 29, 2023 at 8:26=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Sat, Apr 29, 2023 at 5:45=E2=80=AFPM Chuck Lever <cel@kernel.org> wrot=
-e:
-> >
-> > On Thu, Apr 27, 2023 at 11:13:33AM -0400, Jeff Layton wrote:
-> > > On Tue, 2023-04-25 at 16:01 +0300, Amir Goldstein wrote:
-> > > > Jan,
-> > > >
-> > > > Following up on the FAN_REPORT_ANY_FID proposal [1], here is a shot=
- at an
-> > > > alternative proposal to seamlessly support more filesystems.
-> > > >
-> > > > While fanotify relaxes the requirements for filesystems to support
-> > > > reporting fid to require only the ->encode_fh() operation, there ar=
-e
-> > > > currently no new filesystems that meet the relaxed requirements.
-> > > >
-> > > > I will shortly post patches that allow overlayfs to meet the new
-> > > > requirements with default overlay configurations.
-> > > >
-> > > > The overlay and vfs/fanotify patch sets are completely independent.
-> > > > The are both available on my github branch [2] and there is a simpl=
-e
-> > > > LTP test variant that tests reporting fid from overlayfs [3], which
-> > > > also demonstrates the minor UAPI change of name_to_handle_at(2) for
-> > > > requesting a non-decodeable file handle by userspace.
-> > > >
-> > > > Thanks,
-> > > > Amir.
-> > > >
-> > > > [1] https://lore.kernel.org/linux-fsdevel/20230417162721.ouzs33oh6m=
-b7vtft@quack3/
-> > > > [2] https://github.com/amir73il/linux/commits/exportfs_encode_fid
-> > > > [3] https://github.com/amir73il/ltp/commits/exportfs_encode_fid
-> > > >
-> > > > Amir Goldstein (4):
-> > > >   exportfs: change connectable argument to bit flags
-> > > >   exportfs: add explicit flag to request non-decodeable file handle=
-s
-> > > >   exportfs: allow exporting non-decodeable file handles to userspac=
-e
-> > > >   fanotify: support reporting non-decodeable file handles
-> > > >
-> > > >  Documentation/filesystems/nfs/exporting.rst |  4 +--
-> > > >  fs/exportfs/expfs.c                         | 29 +++++++++++++++++=
-+---
-> > > >  fs/fhandle.c                                | 20 ++++++++------
-> > > >  fs/nfsd/nfsfh.c                             |  5 ++--
-> > > >  fs/notify/fanotify/fanotify.c               |  4 +--
-> > > >  fs/notify/fanotify/fanotify_user.c          |  6 ++---
-> > > >  fs/notify/fdinfo.c                          |  2 +-
-> > > >  include/linux/exportfs.h                    | 18 ++++++++++---
-> > > >  include/uapi/linux/fcntl.h                  |  5 ++++
-> > > >  9 files changed, 67 insertions(+), 26 deletions(-)
-> > > >
-> > >
-> > > This set looks fairly benign to me, so ACK on the general concept.
-> >
-> > Me also (modulo previous review comments), so
-> >
-> >   Acked-by: Chuck Lever <chuck.lever@oracle.com>
-> >
-> > I assume either Amir or Jeff will take these when they are ready.
-> > If I'm wrong, please do let me know and I can take them via the
-> > NFSD tree.
-> >
->
-> With your and Jeff's ACKs I think it would be best if Jan takes
-> these changes through the fsnotify tree, because they are only
-> meant to improve fanotify at this point.
->
-> >
-> > > I am starting to dislike how the AT_* flags are turning into a bunch =
-of
-> > > flags that only have meanings on certain syscalls. I don't see a clea=
-ner
-> > > way to handle it though.
->
-> With all the various proposals of file_handle_v2, I still think that the
-> AT_HANDLE_FID is the cleanest in terms of API simplicity.
->
-> Just trying to document file_handle_v2 and backward compat with
-> file_handle_v1 gives me a headache and documenting AT_HANDLE_FID
-> is a no brainer.
->
+[ Added Borislav and stable people ]
 
-To prove my point, here is the man page draft for AT_HANDLE_FID:
+On Sun, Apr 30, 2023 at 9:31=E2=80=AFPM syzbot
+<syzbot+401145a9a237779feb26@syzkaller.appspotmail.com> wrote:
+>
+> syzbot suspects this issue was fixed by commit:
 
-https://github.com/amir73il/man-pages/commit/da7e8dc4749ced85ba692073a42724=
-f2bbe5fe3b
+Indeed.
 
-Thanks,
-Amir.
+My initial reaction was "no, that didn't fix anything, it just cleaned
+stuff up", but it turns out that yes, it did in fact fix a real bug in
+the process.
+
+The fix was not intentional, but the cleanup actually got rid of buggy code=
+.
+
+So here's the automatic marker for syzbot:
+
+#syz fix: x86: don't use REP_GOOD or ERMS for user memory clearing
+
+and the reason for the bug - in case people care - is that the old
+clear_user_rep_good (which no longer exists after that commit) had the
+exception entry pointing to the wrong instruction.
+
+The buggy code did:
+
+    .Lrep_good_bytes:
+            mov %edx, %ecx
+            rep stosb
+
+and the exception entry weas
+
+        _ASM_EXTABLE_UA(.Lrep_good_bytes, .Lrep_good_exit)
+
+so the exception entry pointed at the register move instruction, not
+at the actual "rep stosb" that does the user space store.
+
+End result: if you had a situation where you *should* return -EFAULT,
+and you triggered that "last final bytes" case, instead of the
+exception handling dealing with it properly and fixing it up, you got
+that kernel oops.
+
+The bug goes back to commit 0db7058e8e23 ("x86/clear_user: Make it
+faster") from about a year ago, which made it into v6.1.
+
+It only affects old hardware that doesn't have the ERMS capability
+flag, which *probably* means that it's mostly only triggerable in
+virtualization (since pretty much any CPU from the last decade has
+ERMS, afaik).
+
+Borislav - opinions? This needs fixing for v6.1..v6.3, and the options are:
+
+ (1) just fix up the exception entry. I think this is literally this
+one-liner, but somebody should double-check me. I did *not* actually
+test this:
+
+    --- a/arch/x86/lib/clear_page_64.S
+    +++ b/arch/x86/lib/clear_page_64.S
+    @@ -142,8 +142,8 @@ SYM_FUNC_START(clear_user_rep_good)
+            and $7, %edx
+            jz .Lrep_good_exit
+
+    -.Lrep_good_bytes:
+            mov %edx, %ecx
+    +.Lrep_good_bytes:
+            rep stosb
+
+     .Lrep_good_exit:
+
+   because the only use of '.Lrep_good_bytes' is that exception table entry=
+.
+
+ (2) backport just that one commit for clear_user
+
+     In this case we should probably do commit e046fe5a36a9 ("x86: set
+FSRS automatically on AMD CPUs that have FSRM") too, since that commit
+changes the decision to use 'rep stosb' to check FSRS.
+
+ (3) backport the entire series of commits:
+
+        git log --oneline v6.3..034ff37d3407
+
+Or we could even revert that commit 0db7058e8e23, but it seems silly
+to revert when we have so many ways to fix it, including a one-line
+code movement.
+
+Borislav / stable people? Opinions?
+
+                         Linus
