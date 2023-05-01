@@ -2,225 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8F3A6F334E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 18:01:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BAE16F3361
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 18:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232688AbjEAQBI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 12:01:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41678 "EHLO
+        id S232498AbjEAQFX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 12:05:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232606AbjEAQBD (ORCPT
+        with ESMTP id S231229AbjEAQFW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 12:01:03 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9D54E43
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 09:00:58 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230501160056euoutp028019869d6ae0fcdd3f0d0497535b28d4~bEFgIhxR70496604966euoutp02q
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 16:00:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230501160056euoutp028019869d6ae0fcdd3f0d0497535b28d4~bEFgIhxR70496604966euoutp02q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1682956856;
-        bh=5bPsp2g0VrYtWLji3rbRewaAYsdPIfyZMtsPhsv1sbI=;
-        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-        b=tTmKA/fekwc01cr/2d+EY/ip/WsHT2VkebkpLF/wmjaXpP6VDG7AoZcIvEpdwmcVl
-         nLB7Yc6yol6Rp/hwvPo6Q0o1CkN0fBQxHZMQVEKRsF0TeXJnLxIhUvR+Fbi2juXpRj
-         KEELYea7KK1YllEWzdM6c3+dWNJc7WmwPxdcnC6g=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230501160054eucas1p2215c8b65b65a2b6e83d32e9760f172f7~bEFe6oP7k1454814548eucas1p2I;
-        Mon,  1 May 2023 16:00:54 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id FC.98.42423.632EF446; Mon,  1
-        May 2023 17:00:54 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230501160054eucas1p13f970393e34ba354e9cc0f8d4d730873~bEFehod0e1104711047eucas1p1l;
-        Mon,  1 May 2023 16:00:54 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230501160054eusmtrp26dd77538775ce6d394c1cc85cf621753~bEFefz-OM1544915449eusmtrp2I;
-        Mon,  1 May 2023 16:00:54 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-07-644fe236b3c6
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E6.CB.14344.632EF446; Mon,  1
-        May 2023 17:00:54 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230501160054eusmtip26faf98cd3d8de1b1aebc0c3abf9fa111~bEFeTEYl01679116791eusmtip2z;
-        Mon,  1 May 2023 16:00:54 +0000 (GMT)
-Received: from [106.110.32.65] (106.110.32.65) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Mon, 1 May 2023 17:00:52 +0100
-Message-ID: <6dcf69ee-21cd-ae06-c250-e991652989ac@samsung.com>
-Date:   Mon, 1 May 2023 18:00:52 +0200
+        Mon, 1 May 2023 12:05:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 521EC1B3;
+        Mon,  1 May 2023 09:05:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E2B9661DD8;
+        Mon,  1 May 2023 16:05:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7F7C433EF;
+        Mon,  1 May 2023 16:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682957119;
+        bh=7FribDT9SJ/YDiHEbJbcbFVmncjfH516wIysqkoawmI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=BM17fRuQqkErjgt9KD3XT1M0sPeo7p502r37c2iLmtEFceXfctgbkHy7R//xbaHvk
+         h1uUThmKKefzE3XB7nIsoiawCyXbvao9pNnc1hbZDxpTEWSHuJ9Nbize6ZnwWFqPp1
+         A22gvHOXKPoU60zdUhUzPNIG+5cPQ0tb+JWBgZRK8XQGNx0CkcrDZY3zdqu2E8FICg
+         ujNlmyWEQyKZOJuEiavo8yyjnUkPZE4Ux2Tn83KAZJ5YJ1M6cRB2vGRUPwADI1+U/p
+         fSZV1X4kzWel2p2hO4s8P2gnE3SC3ZvmaA6t2M1LRPPNBIeW1SzjvSKMXWAncWmRee
+         3BBPBHG01oNYw==
+Message-ID: <0dc1a9d7f2b99d2bfdcabb7adc51d7c0b0c81457.camel@kernel.org>
+Subject: Re: [jlayton:ctime] [ext4]  ff9aaf58e8: ltp.statx06.fail
+From:   Jeff Layton <jlayton@kernel.org>
+To:     kernel test robot <oliver.sang@intel.com>
+Cc:     oe-lkp@lists.linux.dev, lkp@intel.com, linux-ext4@vger.kernel.org,
+        ltp@lists.linux.it, Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Mon, 01 May 2023 12:05:17 -0400
+In-Reply-To: <202305012130.cc1e2351-oliver.sang@intel.com>
+References: <202305012130.cc1e2351-oliver.sang@intel.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
-        Thunderbird/102.10.0
-Subject: Re: [PATCH 17/17] fs: add CONFIG_BUFFER_HEAD
-To:     Matthew Wilcox <willy@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Daniel Gomez <da.gomez@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <ceph-devel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <cluster-devel@redhat.com>, <linux-xfs@vger.kernel.org>,
-        <linux-nfs@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Content-Language: en-US
-From:   Pankaj Raghav <p.raghav@samsung.com>
-In-Reply-To: <ZE/ew1VpU/a1gqQP@casper.infradead.org>
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [106.110.32.65]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGKsWRmVeSWpSXmKPExsWy7djP87pmj/xTDC49VLOYs34Nm8Xqu/1s
-        Fh9uTmKyOLn6MZvFu6bfLBaXn/BZrFx9lMli7y1ti5nz7rBZXFrkbrFn70mg1K45bBb31vxn
-        tbhw4DSrxa4/O9gtbkx4ymjxbPdGZovfP+awOQh5bF6h5XH5bKnHplWdbB6bPk1i9zgx4zeL
-        x+4Fn5k8dt9sYPN4v+8qm8eKaReZPD5vkgvgiuKySUnNySxLLdK3S+DK+NP4gbVgrUxFx7PM
-        BsYnIl2MHBwSAiYSP++qdTFycQgJrGCUOPF7GiuE84VRYuOyuSwQzmdGib72PWxdjJxgHS1d
-        7VBVyxklJnz9yQhXNefQTKjMDkaJQ8sfsoK08ArYSfz42gXWziKgInHwRycbRFxQ4uTMJywg
-        tqhAtMTifVPAbGEBU4k/V9+B2SICARLTp10Fm8MscIhF4shDEQhbXOLWk/lMIE+wCWhJNHay
-        g4Q5ga6bfHc7VLm8xPa3c5ghrlaUmHTzPSuEXStxasstJpA7JQTecUp8+NjHBJFwkXh8/Ao7
-        hC0s8er4FihbRuL/zvlQNdUST2/8ZoZobmGU6N+5ng0SktYSfWdyQExmAU2J9bv0IaKOEjNv
-        aUGYfBI33gpCXMYnMWnbdOYJjKqzkMJhFpK/ZiF5YBbCzAWMLKsYxVNLi3PTU4sN81LL9YoT
-        c4tL89L1kvNzNzECk+Lpf8c/7WCc++qj3iFGJg7GQ4wSHMxKIrwfCv1ShHhTEiurUovy44tK
-        c1KLDzFKc7AoifNq255MFhJITyxJzU5NLUgtgskycXBKNTCxBBq6+35Q+rtS8cXhS/IaXyJL
-        nHa9ef/Y4LRFnO7UIy8MnMUvN2xhfcQjKK8Y8OHA/uQnR3daz672PZk2T1HqvdKZNa91mUL0
-        z6u8WPGpax/LlYZ1F9QFn1Q0rWNkP/LtqtWjPbUKh1zU31jzaS+dxjHlntL/KvPkpwWxe7b/
-        09f6d8qsP3HSjKf5h3Ry1u2Vbl1v+Kdg/WoWiY1h+aXNBl9bPk3269KSOlNYnctbsipZav6c
-        NGXmxTx76gvZHt8r+Vha+efe6anKFhmKZx9Epf1PW6V3puP6bkaP5EPR8y/y6NmsUCk5asWy
-        surS7WlMpqdFTJQMhMqWrlsZu/PkxJ6QPqGnUat9ha++vBuuxFKckWioxVxUnAgA/vdctfkD
-        AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsVy+t/xe7pmj/xTDP7f4LaYs34Nm8Xqu/1s
-        Fh9uTmKyOLn6MZvFu6bfLBaXn/BZrFx9lMli7y1ti5nz7rBZXFrkbrFn70mg1K45bBb31vxn
-        tbhw4DSrxa4/O9gtbkx4ymjxbPdGZovfP+awOQh5bF6h5XH5bKnHplWdbB6bPk1i9zgx4zeL
-        x+4Fn5k8dt9sYPN4v+8qm8eKaReZPD5vkgvgitKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx
-        1DM0No+1MjJV0rezSUnNySxLLdK3S9DL+NP4gbVgrUxFx7PMBsYnIl2MnBwSAiYSLV3trF2M
-        XBxCAksZJd6tPsEOkZCR2PjlKiuELSzx51oXG0TRR0aJ7vuvWSCcHYwS83oXgFXxCthJ/PgK
-        UsXJwSKgInHwRycbRFxQ4uTMJywgtqhAtMSN5d+YQGxhAVOJP1ffAcU5OEQE/CRmvQoGCTML
-        HGKR2HAxHGL+NSaJ/4cns0EkxCVuPZnPBFLPJqAl0dgJdign0AeT725nhSjRlGjd/psdwpaX
-        2P52DjPEA4oSk26+h3qmVuLz32eMExhFZyG5bhaSDbOQjJqFZNQCRpZVjCKppcW56bnFRnrF
-        ibnFpXnpesn5uZsYgQll27GfW3Ywrnz1Ue8QIxMH4yFGCQ5mJRHeD4V+KUK8KYmVValF+fFF
-        pTmpxYcYTYFBNJFZSjQ5H5jS8kriDc0MTA1NzCwNTC3NjJXEeT0LOhKFBNITS1KzU1MLUotg
-        +pg4OKUamNSLL+lJ5BoHKriueHfcQ0FA2uBak/bkST+uPgraEPbsRvKOcIVrd7p89aNvLU+T
-        1MsOqN0aYHZxq8zqBQaTJ29+ZaT1ZULD5jiGy+/36q2e/dKNb+s2u8U/DkeFtS0zmab/Zsfx
-        0Jn55Q3B7lG8N8sEGVLuCC07wWV7+cKCF9fT/k1Kn7dKNXxKBQOn0TH5sPNlffFP94beuzfh
-        3e+enZztGzweJMydWjFB/LL78zSZ/8emzlgo0JBzVrVk/SamzOrLLltPvIw9vUrg3MvtQUHe
-        vafzv4ewKy+6Oy/fNkHbOLk4xqM+R3BzQ+tHm8BPwi9nzlfmr+6+2vvAdNXusg49qZ6HH2b/
-        Ub02a+dnl3YlluKMREMt5qLiRAAR06BPsQMAAA==
-X-CMS-MailID: 20230501160054eucas1p13f970393e34ba354e9cc0f8d4d730873
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230501154622eucas1p2d9dea99a75a8b2ccc347fc6e8ca7decb
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230501154622eucas1p2d9dea99a75a8b2ccc347fc6e8ca7decb
-References: <20230424054926.26927-1-hch@lst.de>
-        <20230424054926.26927-18-hch@lst.de>
-        <ZExgzbBCbdC1y9Wk@bombadil.infradead.org>
-        <ZExw0eW52lYj2R1m@casper.infradead.org>
-        <ZE8ue9Mx6n2T0yn6@bombadil.infradead.org>
-        <CGME20230501154622eucas1p2d9dea99a75a8b2ccc347fc6e8ca7decb@eucas1p2.samsung.com>
-        <ZE/ew1VpU/a1gqQP@casper.infradead.org>
-X-Spam-Status: No, score=-8.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> No but the only place to add that would be in the block cache. Adding
->> that alone to the block cache doesn't fix the issue. The below patch
->> however does get us by.
-> 
-> That's "working around the error", not fixing it ... probably the same
-> root cause as your other errors; at least I'm not diving into them until
-> the obvious one is fixed.
-> 
->> >From my readings it does't seem like readahead_folio() should always
->> return non-NULL, and also I couldn't easily verify the math is right.
-> 
-> readahead_folio() always returns non-NULL.  That's guaranteed by how
-> page_cache_ra_unbounded() and page_cache_ra_order() work.  It allocates
-> folios, until it can't (already-present folio, ENOMEM, EOF, max batch
-> size) and then calls the filesystem to make those folios uptodate,
-> telling it how many folios it put in the page cache, where they start.
-> 
-> Hm.  The fact that it's coming from page_cache_ra_unbounded() makes
-> me wonder if you updated this line:
-> 
->                 folio = filemap_alloc_folio(gfp_mask, 0);
-> 
-> without updating this line:
-> 
->                 ractl->_nr_pages++;
-> 
-> This is actually number of pages, not number of folios, so needs to be
-> 		ractl->_nr_pages += 1 << order;
-> 
+On Mon, 2023-05-01 at 22:09 +0800, kernel test robot wrote:
+> Hello,
+>=20
+> kernel test robot noticed "ltp.statx06.fail" on:
+>=20
+> commit: ff9aaf58e816635c454fbe9e9ece94b0eee6f0b1 ("ext4: convert to multi=
+grain timestamps")
+> https://git.kernel.org/cgit/linux/kernel/git/jlayton/linux.git ctime
+>=20
+> in testcase: ltp
+> version: ltp-x86_64-14c1f76-1_20230429
+> with following parameters:
+>=20
+> 	disk: 1HDD
+> 	fs: xfs
+> 	test: syscalls-04
+>=20
+> test-description: The LTP testsuite contains a collection of tools for te=
+sting the Linux kernel and related features.
+> test-url: http://linux-test-project.github.io/
+>=20
+>=20
+> compiler: gcc-11
+> test machine: 4 threads Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz (Skylake)=
+ with 32G memory
+>=20
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>=20
+>=20
+>=20
+>=20
+> If you fix the issue, kindly add following tag
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Link: https://lore.kernel.org/oe-lkp/202305012130.cc1e2351-oliver.sang@=
+intel.com
+>=20
+>=20
+>=20
+> <<<test_start>>>
+> tag=3Dstatx06 stime=3D1682919030
+> cmdline=3D"statx06"
+> contacts=3D""
+> analysis=3Dexit
+> <<<test_output>>>
+> tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+> tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'-I 256' e=
+xtra opts=3D''
+> mke2fs 1.46.6-rc1 (12-Sep-2022)
+> tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+> statx06.c:136: TFAIL: Birth time < before time
+> statx06.c:138: TFAIL: Modified time > after_time
+> statx06.c:136: TFAIL: Access time < before time
+> statx06.c:136: TFAIL: Change time < before time
+>=20
+> Summary:
+> passed   0
+> failed   4
+> broken   0
+> skipped  0
+> warnings 0
+> incrementing stop
+> <<<execution_status>>>
+> initiation_status=3D"ok"
+> duration=3D1 termination_type=3Dexited termination_id=3D1 corefile=3Dno
+> cutime=3D0 cstime=3D5
+> <<<test_end>>>
+> INFO: ltp-pan reported some tests FAIL
+> LTP Version: 20230127-165-gbd512e733
+>=20
+>        ###############################################################
+>=20
+>             Done executing testcases.
+>             LTP Version:  20230127-165-gbd512e733
+>        ###############################################################
+>=20
+>=20
+>=20
+>=20
+> To reproduce:
+>=20
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         sudo bin/lkp install job.yaml           # job file is attached in=
+ this email
+>         bin/lkp split-job --compatible job.yaml # generate the yaml file =
+for lkp run
+>         sudo bin/lkp run generated-yaml-file
+>=20
+>         # if come across any failure that blocks the test,
+>         # please remove ~/.lkp and /lkp dir to run from a clean state.
+>=20
+>=20
+>=20
 
-I already had a patch which did the following:
+(adding linux-fsdevel and a few other folks who have shown interest in
+the multigrain ctime patches)
 
-ractl->_nr_pages += folio_nr_pages(folio);
+I haven't posted the ext4 patch for this yet since I'm still testing it,
+but this is an interesting test result. The upshot is that we'll
+probably not be able to pass this testcase without modifying it if we go
+with multigrain ctimes.
 
-but the variable `i` in the loop was not updated properly (assumption of zero order folio). This now
-fixes the crash:
+The test does this:
 
-@@ -210,7 +210,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-        unsigned long index = readahead_index(ractl);
-        gfp_t gfp_mask = readahead_gfp_mask(mapping);
-        unsigned long i;
--
-+       int order = 0;
-        /*
-         * Partway through the readahead operation, we will have added
-         * locked pages to the page cache, but will not yet have submitted
-@@ -223,6 +223,9 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-         */
-        unsigned int nofs = memalloc_nofs_save();
+        SAFE_CLOCK_GETTIME(CLOCK_REALTIME_COARSE, &before_time);
+        clock_wait_tick();
+        tc->operation();
+        clock_wait_tick();
+        SAFE_CLOCK_GETTIME(CLOCK_REALTIME_COARSE, &after_time);
 
-+       if (mapping->host->i_blkbits > PAGE_SHIFT)
-+               order = mapping->host->i_blkbits - PAGE_SHIFT;
-+
-        filemap_invalidate_lock_shared(mapping);
-        /*
-         * Preallocate as many pages as we will need.
-@@ -245,7 +248,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-                        continue;
-                }
+...and with that, I usually end up with before/after_times that are 1ns
+apart, since my machine is reporting a 1ns granularity.
 
--               folio = filemap_alloc_folio(gfp_mask, 0);
-+               folio = filemap_alloc_folio(gfp_mask, order);
-                if (!folio)
-                        break;
-                if (filemap_add_folio(mapping, folio, index + i,
-@@ -259,7 +262,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-                if (i == nr_to_read - lookahead_size)
-                        folio_set_readahead(folio);
-                ractl->_workingset |= folio_test_workingset(folio);
--               ractl->_nr_pages++;
-+               ractl->_nr_pages += folio_nr_pages(folio);
-+               i += folio_nr_pages(folio) - 1;
-        }
+The first problem is that the coarse grained timestamps represent the
+lower bound of what time could end up in the inode. With multigrain
+ctimes, we can end up grabbing a fine-grained timestamp to store in the
+inode that will be later than either coarse grained time that was
+fetched.
 
-> various other parts of page_cache_ra_unbounded() need to be examined
-> carefully for assumptions of order-0; it's never been used for that
-> before.  all the large folio work has concentrated on
-> page_cache_ra_order()
+That's easy enough to fix -- grab a coarse time for "before" and a fine-
+grained time for "after".
 
-As you have noted here, this needs to be examined more carefully. Even though the patches fix the
-crash, fio with verify option fails (i.e write and read are not giving the same output).
+The clock_getres function though returns that it has a 1ns granularity
+(since it does). With multigrain ctimes, we no longer have that at the
+filesystem level. It's a 2ns granularity now (as we need the lowest bit
+for the flag).
 
-I think it is better to send an RFC patch series on top of Christoph's work with optional
-BUFFER_HEAD to iron out some core issues/bugs.
+The following patch to the testcase fixes it for me, but I'm not sure if
+it'll be acceptable. Maybe we need some way to indicate to userland that
+multigrain timestamps are in effect, for "applications" like this that
+care about such things?
+--=20
+Jeff Layton <jlayton@kernel.org>
+
+diff --git a/testcases/kernel/syscalls/statx/statx06.c b/testcases/kernel/s=
+yscalls/statx/statx06.c
+index ce82b905b..1f5367583 100644
+--- a/testcases/kernel/syscalls/statx/statx06.c
++++ b/testcases/kernel/syscalls/statx/statx06.c
+@@ -107,9 +107,11 @@ static void test_statx(unsigned int test_nr)
+=20
+        SAFE_CLOCK_GETTIME(CLOCK_REALTIME_COARSE, &before_time);
+        clock_wait_tick();
++       clock_wait_tick();
+        tc->operation();
+        clock_wait_tick();
+-       SAFE_CLOCK_GETTIME(CLOCK_REALTIME_COARSE, &after_time);
++       clock_wait_tick();
++       SAFE_CLOCK_GETTIME(CLOCK_REALTIME, &after_time);
+=20
+        TEST(statx(AT_FDCWD, TEST_FILE, 0, STATX_ALL, &buff));
+        if (TST_RET !=3D 0) {
+
