@@ -2,249 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C4086F353B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 19:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C29FD6F3544
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 19:55:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232466AbjEARun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 13:50:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40454 "EHLO
+        id S232267AbjEARzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 13:55:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232535AbjEARug (ORCPT
+        with ESMTP id S231779AbjEARzL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 13:50:36 -0400
-Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693011BFF
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 10:50:35 -0700 (PDT)
-Received: by mail-pf1-x449.google.com with SMTP id d2e1a72fcca58-64115e69e1eso23582544b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 10:50:35 -0700 (PDT)
+        Mon, 1 May 2023 13:55:11 -0400
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E87EBE43
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 10:55:09 -0700 (PDT)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5529f3b8623so26088177b3.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 10:55:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1682963435; x=1685555435;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oNrjh4NDZfCOCA+XspYc7I9kB51AWPXlbM0N3pX4I38=;
-        b=Kbw2vWgfaNr9wwaOaALtstqdWrM8vexXN61YFf/VngXG0KW+KOPVkcePNZuJ8BunHG
-         4fpSDYYnv+oGNFNonvZma1sxd7lY+pamluLU1rV2cF//+7bWNniJgJBWEyyKJ8Vh7+6F
-         9iUtSaPHWAZ9eK6TXIhhIoxbL87AdOepwayQg5RNHhsGMUhaXjd/xW95LMnIJV5qHKsT
-         ZO0KE701s1k305YVP18qbfaonF6MXOH89tuj3WV3vRzavu+9Gwau1Sh80hFUZAu7ob7d
-         posHsah7zh+ARWr8FuaWg+eUdTnxNa8x9N/3HBaa0SrwutIbbkwlqTQY4bXjTqb8TVCJ
-         gauQ==
+        d=google.com; s=20221208; t=1682963708; x=1685555708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K1weW95EDkyvCe/cwOd0PB4zhkheUJ8J7X9stA1ol6Q=;
+        b=lP6cll0z5vbj6X6IJg7KZRDM+XxjC5Ngg8DG7vvrNCivjyJ9kDOBXO1WuWwCXQLHBn
+         1E2BcPfZg3mWljCec9RRGGmDeqX0YL+xrRiyufqAyVMDGg5mVTBIxino6+wyW+n3ryxi
+         yrKIUOeNmF2b1D7OcQWhZucW46kMKOfOgsrSy92HHWLwiz6f7YjnQcs9EKULAb6y0GRs
+         Vb54uSol9NsKc6zWrFK+mvrqu9PnOjW2BqKrfeTE297ljHqs8Dn+hsyJalVG888MMiqo
+         50pjicv54BL6AISuVbz8ViY8whn2Ac/9umlOC18eVGvnZyT2xscjWtebXKSHbTHF/n9T
+         NTKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682963435; x=1685555435;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oNrjh4NDZfCOCA+XspYc7I9kB51AWPXlbM0N3pX4I38=;
-        b=cFfmUGqI/Z7NTtc3PSOZgPE077NieSKg9RfGtSX0WAhi4o08xIMw8ZIG1YcCNXf4g8
-         W9IkN18WhW8iVnkOowp+HmwIlY+8dWL8UCbCV40lFPspgyjsZztkwT1bUbKSGc/ApTi4
-         CpY2xekRBWORgWDi+17GQx1WCMYtn0aCQC7AYVGJbYiT4bHSKh1U/iMe4mnAuJywbwZ8
-         cb+irqz55yrz2188nt22dlXaNqpVXUOS3R9KwIVAHJ59gjBEiLmy7zjJMJnP/yTnVPFX
-         aTdjRFQ6Wytz3ZWG9XZHxnOzAeDxH2wW4PX7nBAZUjPLhEt5Ejt/ZUNAnBu4vtQmxlxJ
-         ui8Q==
-X-Gm-Message-State: AC+VfDx5Ao2CpMVPpgT/vJnaWKaGoCvHvpr0xn2VKC3WEllER58vSnv1
-        2pXywJxmZKspJgwVMmwRLFUiCZNYYuA=
-X-Google-Smtp-Source: ACHHUZ6EimADaT391MpwBUkL6hz/B/GfVS5bvY+TKbOxuncQS8LbI8CgIxJ7ch0/4tBeArriD6dOerX5ZI8=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:6d24:3efd:facc:7ac4])
- (user=surenb job=sendgmr) by 2002:a17:90a:72cc:b0:24d:e14a:6361 with SMTP id
- l12-20020a17090a72cc00b0024de14a6361mr1794469pjk.3.1682963434788; Mon, 01 May
- 2023 10:50:34 -0700 (PDT)
-Date:   Mon,  1 May 2023 10:50:25 -0700
-In-Reply-To: <20230501175025.36233-1-surenb@google.com>
-Mime-Version: 1.0
-References: <20230501175025.36233-1-surenb@google.com>
-X-Mailer: git-send-email 2.40.1.495.gc816e09b53d-goog
-Message-ID: <20230501175025.36233-3-surenb@google.com>
-Subject: [PATCH 3/3] mm: implement folio wait under VMA lock
+        d=1e100.net; s=20221208; t=1682963708; x=1685555708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K1weW95EDkyvCe/cwOd0PB4zhkheUJ8J7X9stA1ol6Q=;
+        b=HZfvqru/wmLPK5GylUGFacMJZSU5icY1k0C27orKncV3w8GUEzPDdRx5z99VzBSroE
+         08K0D1s/xTQ05Z7xR5XUhx1in3gVhmGJYtb0KErBkUKC1rQEO6EAiwyO8u9wU4EXDEkQ
+         MwkMCdkO5PiTVx/4sedNc91Hupqks7b2/cJ1yljE/qmX10XKtEtUIBxnQkPMlapNdX7y
+         9WfQ1SM4e5GzYIOMoB8ae5EzYj7wufXr9tgGTxhVKxsEeKvyqk4cUKLwrA7R9yJjMwoj
+         uO/26oMpmxDxKhuD4D0fliYx12YAJ+L8BzuUwXDOf94FU/DpiwlvXetUywwhIDlYsyad
+         fRDw==
+X-Gm-Message-State: AC+VfDy4dTIcfJyWsFjdAmW3mTYYyDGw4srjhw+wEgQG4aF8gIyTnGpm
+        D6mWFqi/93vw4bZdwOPagNNtGFKx7bWkLmiZK1yw8g==
+X-Google-Smtp-Source: ACHHUZ7hjXzhbIK1lFI88VY95LtZ84gfi8LXLoxdp40GiU3x23472skHcwg4uViuJvkrj1tcHIY697aV+7pvRDqs4eA=
+X-Received: by 2002:a81:8787:0:b0:556:1065:e6a8 with SMTP id
+ x129-20020a818787000000b005561065e6a8mr12344466ywf.2.1682963708480; Mon, 01
+ May 2023 10:55:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230414180043.1839745-1-surenb@google.com> <ZDmetaUdmlEz/W8Q@casper.infradead.org>
+ <87sfczuxkc.fsf@nvidia.com> <CAJuCfpEV1OiM423bykYQTxDC1=bQAqhAwd5fiKYifsk=seP6yw@mail.gmail.com>
+ <877cuaulrm.fsf@nvidia.com> <CAJuCfpFEwdnpTXGRpKtXaZ+F4RW4+DkxaRRTiBVy4jE9cG=TEw@mail.gmail.com>
+ <CAJuCfpHpnOevnuQSAK2WwtambXqiaoS8gpSFQsi9=O=szKe8vg@mail.gmail.com>
+In-Reply-To: <CAJuCfpHpnOevnuQSAK2WwtambXqiaoS8gpSFQsi9=O=szKe8vg@mail.gmail.com>
 From:   Suren Baghdasaryan <surenb@google.com>
-To:     akpm@linux-foundation.org
-Cc:     willy@infradead.org, hannes@cmpxchg.org, mhocko@suse.com,
-        josef@toxicpanda.com, jack@suse.cz, ldufour@linux.ibm.com,
-        laurent.dufour@fr.ibm.com, michel@lespinasse.org,
-        liam.howlett@oracle.com, jglisse@google.com, vbabka@suse.cz,
-        minchan@google.com, dave@stgolabs.net, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, hdanton@sina.com, apopple@nvidia.com,
-        surenb@google.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
+Date:   Mon, 1 May 2023 10:54:57 -0700
+Message-ID: <CAJuCfpEMKv5Twk=V49cpCTpT5+-6bEP5gH=hk8VQKXi_OVPsng@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm: handle swap page faults if the faulting page can
+ be locked
+To:     Alistair Popple <apopple@nvidia.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+        hannes@cmpxchg.org, mhocko@suse.com, josef@toxicpanda.com,
+        jack@suse.cz, ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Follow the same pattern as mmap_lock when waiting for folio by dropping
-VMA lock before the wait and retrying once folio is available.
+On Mon, Apr 17, 2023 at 6:07=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Mon, Apr 17, 2023 at 4:50=E2=80=AFPM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> >
+> > On Mon, Apr 17, 2023 at 4:33=E2=80=AFPM Alistair Popple <apopple@nvidia=
+.com> wrote:
+> > >
+> > >
+> > > Suren Baghdasaryan <surenb@google.com> writes:
+> > >
+> > > > On Sun, Apr 16, 2023 at 6:06=E2=80=AFPM Alistair Popple <apopple@nv=
+idia.com> wrote:
+> > > >>
+> > > >>
+> > > >> Matthew Wilcox <willy@infradead.org> writes:
+> > > >>
+> > > >> > On Fri, Apr 14, 2023 at 11:00:43AM -0700, Suren Baghdasaryan wro=
+te:
+> > > >> >> When page fault is handled under VMA lock protection, all swap =
+page
+> > > >> >> faults are retried with mmap_lock because folio_lock_or_retry
+> > > >> >> implementation has to drop and reacquire mmap_lock if folio cou=
+ld
+> > > >> >> not be immediately locked.
+> > > >> >> Instead of retrying all swapped page faults, retry only when fo=
+lio
+> > > >> >> locking fails.
+> > > >> >
+> > > >> > Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > >> >
+> > > >> > Let's just review what can now be handled under the VMA lock ins=
+tead of
+> > > >> > the mmap_lock, in case somebody knows better than me that it's n=
+ot safe.
+> > > >> >
+> > > >> >  - We can call migration_entry_wait().  This will wait for PG_lo=
+cked to
+> > > >> >    become clear (in migration_entry_wait_on_locked()).  As previ=
+ously
+> > > >> >    discussed offline, I think this is safe to do while holding t=
+he VMA
+> > > >> >    locked.
+> > > >>
+> > > >> Do we even need to be holding the VMA locked while in
+> > > >> migration_entry_wait()? My understanding is we're just waiting for
+> > > >> PG_locked to be cleared so we can return with a reasonable chance =
+the
+> > > >> migration entry is gone. If for example it has been unmapped or
+> > > >> protections downgraded we will simply refault.
+> > > >
+> > > > If we drop VMA lock before migration_entry_wait() then we would nee=
+d
+> > > > to lock_vma_under_rcu again after the wait. In which case it might =
+be
+> > > > simpler to retry the fault with some special return code to indicat=
+e
+> > > > that VMA lock is not held anymore and we want to retry without taki=
+ng
+> > > > mmap_lock. I think it's similar to the last options Matthew suggest=
+ed
+> > > > earlier. In which case we can reuse the same retry mechanism for bo=
+th
+> > > > cases, here and in __folio_lock_or_retry.
+> > >
+> > > Good point. Agree there is no reason to re-take the VMA lock after th=
+e
+> > > wait, although in this case we shouldn't need to retry the fault
+> > > (ie. return VM_FAULT_RETRY). Just skip calling vma_end_read() on the =
+way
+> > > out to userspace.
+> >
+> > Actually, __collapse_huge_page_swapin() which calls do_swap_page() can
+> > use VMA reference again inside its loop unless we return
+> > VM_FAULT_RETRY or VM_FAULT_ERROR. That is not safe since we dropped
+> > the VMA lock and stability of the VMA is not guaranteed at that point.
+> > So, we do need to return VM_FAULT_RETRY maybe with another bit
+> > indicating that retry does not need to fallback to mmap_lock. Smth
+> > like "return VM_FAULT_RETRY | VM_FAULT_USE_VMA_LOCK".
+>
+> False alarm. __collapse_huge_page_swapin is always called under
+> mmap_lock protection. I'll go over the code once more to make sure
+> nothing else would use VMA after we drop the VMA lock in page fault
+> path.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- include/linux/pagemap.h | 14 ++++++++++----
- mm/filemap.c            | 43 ++++++++++++++++++++++-------------------
- mm/memory.c             | 13 +++++++++----
- 3 files changed, 42 insertions(+), 28 deletions(-)
+I posted a new series at
+https://lore.kernel.org/all/20230501175025.36233-1-surenb@google.com/
+It implements suggestions discussed in this thread. Feedback is
+appreciated! Thanks!
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index a56308a9d1a4..6c9493314c21 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -896,8 +896,8 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
- 
- void __folio_lock(struct folio *folio);
- int __folio_lock_killable(struct folio *folio);
--bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
--				unsigned int flags);
-+bool __folio_lock_or_retry(struct folio *folio, struct vm_area_struct *vma,
-+			   unsigned int flags, bool *lock_dropped);
- void unlock_page(struct page *page);
- void folio_unlock(struct folio *folio);
- 
-@@ -1002,10 +1002,16 @@ static inline int folio_lock_killable(struct folio *folio)
-  * __folio_lock_or_retry().
-  */
- static inline bool folio_lock_or_retry(struct folio *folio,
--		struct mm_struct *mm, unsigned int flags)
-+		struct vm_area_struct *vma, unsigned int flags,
-+		bool *lock_dropped)
- {
- 	might_sleep();
--	return folio_trylock(folio) || __folio_lock_or_retry(folio, mm, flags);
-+	if (folio_trylock(folio)) {
-+		*lock_dropped = false;
-+		return true;
-+	}
-+
-+	return __folio_lock_or_retry(folio, vma, flags, lock_dropped);
- }
- 
- /*
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 84f39114d4de..9c0fa8578b2f 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1701,37 +1701,35 @@ static int __folio_lock_async(struct folio *folio, struct wait_page_queue *wait)
- 
- /*
-  * Return values:
-- * true - folio is locked; mmap_lock is still held.
-+ * true - folio is locked.
-  * false - folio is not locked.
-- *     mmap_lock has been released (mmap_read_unlock(), unless flags had both
-- *     FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_RETRY_NOWAIT set, in
-- *     which case mmap_lock is still held.
-- *     If flags had FAULT_FLAG_VMA_LOCK set, meaning the operation is performed
-- *     with VMA lock only, the VMA lock is still held.
-+ *
-+ * lock_dropped indicates whether mmap_lock/VMA lock got dropped.
-+ *     mmap_lock/VMA lock is dropped when function fails to lock the folio,
-+ *     unless flags had both FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_RETRY_NOWAIT
-+ *     set, in which case mmap_lock/VMA lock is still held.
-  *
-  * If neither ALLOW_RETRY nor KILLABLE are set, will always return true
-- * with the folio locked and the mmap_lock unperturbed.
-+ * with the folio locked and the mmap_lock/VMA lock unperturbed.
-  */
--bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
--			 unsigned int flags)
-+bool __folio_lock_or_retry(struct folio *folio, struct vm_area_struct *vma,
-+			 unsigned int flags, bool *lock_dropped)
- {
--	/* Can't do this if not holding mmap_lock */
--	if (flags & FAULT_FLAG_VMA_LOCK)
--		return false;
--
- 	if (fault_flag_allow_retry_first(flags)) {
--		/*
--		 * CAUTION! In this case, mmap_lock is not released
--		 * even though return 0.
--		 */
--		if (flags & FAULT_FLAG_RETRY_NOWAIT)
-+		if (flags & FAULT_FLAG_RETRY_NOWAIT) {
-+			*lock_dropped = false;
- 			return false;
-+		}
- 
--		mmap_read_unlock(mm);
-+		if (flags & FAULT_FLAG_VMA_LOCK)
-+			vma_end_read(vma);
-+		else
-+			mmap_read_unlock(vma->vm_mm);
- 		if (flags & FAULT_FLAG_KILLABLE)
- 			folio_wait_locked_killable(folio);
- 		else
- 			folio_wait_locked(folio);
-+		*lock_dropped = true;
- 		return false;
- 	}
- 	if (flags & FAULT_FLAG_KILLABLE) {
-@@ -1739,13 +1737,18 @@ bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
- 
- 		ret = __folio_lock_killable(folio);
- 		if (ret) {
--			mmap_read_unlock(mm);
-+			if (flags & FAULT_FLAG_VMA_LOCK)
-+				vma_end_read(vma);
-+			else
-+				mmap_read_unlock(vma->vm_mm);
-+			*lock_dropped = true;
- 			return false;
- 		}
- 	} else {
- 		__folio_lock(folio);
- 	}
- 
-+	*lock_dropped = false;
- 	return true;
- }
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 8222acf74fd3..e1cd39f00756 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3568,6 +3568,7 @@ static vm_fault_t remove_device_exclusive_entry(struct vm_fault *vmf)
- 	struct folio *folio = page_folio(vmf->page);
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct mmu_notifier_range range;
-+	bool lock_dropped;
- 
- 	/*
- 	 * We need a reference to lock the folio because we don't hold
-@@ -3580,8 +3581,10 @@ static vm_fault_t remove_device_exclusive_entry(struct vm_fault *vmf)
- 	if (!folio_try_get(folio))
- 		return 0;
- 
--	if (!folio_lock_or_retry(folio, vma->vm_mm, vmf->flags)) {
-+	if (!folio_lock_or_retry(folio, vma, vmf->flags, &lock_dropped)) {
- 		folio_put(folio);
-+		if (lock_dropped && vmf->flags & FAULT_FLAG_VMA_LOCK)
-+			return VM_FAULT_VMA_UNLOCKED | VM_FAULT_RETRY;
- 		return VM_FAULT_RETRY;
- 	}
- 	mmu_notifier_range_init_owner(&range, MMU_NOTIFY_EXCLUSIVE, 0,
-@@ -3704,7 +3707,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	bool exclusive = false;
- 	swp_entry_t entry;
- 	pte_t pte;
--	int locked;
-+	bool locked;
-+	bool lock_dropped;
- 	vm_fault_t ret = 0;
- 	void *shadow = NULL;
- 
-@@ -3837,9 +3841,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 		goto out_release;
- 	}
- 
--	locked = folio_lock_or_retry(folio, vma->vm_mm, vmf->flags);
--
-+	locked = folio_lock_or_retry(folio, vma, vmf->flags, &lock_dropped);
- 	if (!locked) {
-+		if (lock_dropped && vmf->flags & FAULT_FLAG_VMA_LOCK)
-+			ret |= VM_FAULT_VMA_UNLOCKED;
- 		ret |= VM_FAULT_RETRY;
- 		goto out_release;
- 	}
--- 
-2.40.1.495.gc816e09b53d-goog
-
+>
+>
+> >
+> > >
+> > > >>
+> > > >> >  - We can call remove_device_exclusive_entry().  That calls
+> > > >> >    folio_lock_or_retry(), which will fail if it can't get the VM=
+A lock.
+> > > >>
+> > > >> Looks ok to me.
+> > > >>
+> > > >> >  - We can call pgmap->ops->migrate_to_ram().  Perhaps somebody f=
+amiliar
+> > > >> >    with Nouveau and amdkfd could comment on how safe this is?
+> > > >>
+> > > >> Currently this won't work because drives assume mmap_lock is held =
+during
+> > > >> pgmap->ops->migrate_to_ram(). Primarily this is because
+> > > >> migrate_vma_setup()/migrate_vma_pages() is used to handle the faul=
+t and
+> > > >> that asserts mmap_lock is taken in walk_page_range() and also
+> > > >> migrate_vma_insert_page().
+> > > >>
+> > > >> So I don't think we can call that case without mmap_lock.
+> > > >>
+> > > >> At a glance it seems it should be relatively easy to move to using
+> > > >> lock_vma_under_rcu(). Drivers will need updating as well though be=
+cause
+> > > >> migrate_vma_setup() is called outside of fault handling paths so d=
+rivers
+> > > >> will currently take mmap_lock rather than vma lock when looking up=
+ the
+> > > >> vma. See for example nouveau_svmm_bind().
+> > > >
+> > > > Thanks for the pointers, Alistair! It does look like we need to be
+> > > > more careful with the migrate_to_ram() path. For now I can fallback=
+ to
+> > > > retrying with mmap_lock for this case, like with do with all cases
+> > > > today. Afterwards this path can be made ready for working under VMA
+> > > > lock and we can remove that retry. Does that sound good?
+> > >
+> > > Sounds good to me. Fixing that shouldn't be too difficult but will ne=
+ed
+> > > changes to at least Nouveau and amdkfd (and hmm-tests obviously). Hap=
+py
+> > > to look at doing that if/when this change makes it in. Thanks.
+> > >
+> > > >>
+> > > >> >  - I believe we can't call handle_pte_marker() because we exclud=
+e UFFD
+> > > >> >    VMAs earlier.
+> > > >> >  - We can call swap_readpage() if we allocate a new folio.  I ha=
+ven't
+> > > >> >    traced through all this code to tell if it's OK.
+> > > >> >
+> > > >> > So ... I believe this is all OK, but we're definitely now willin=
+g to
+> > > >> > wait for I/O from the swap device while holding the VMA lock whe=
+n we
+> > > >> > weren't before.  And maybe we should make a bigger deal of it in=
+ the
+> > > >> > changelog.
+> > > >> >
+> > > >> > And maybe we shouldn't just be failing the folio_lock_or_retry()=
+,
+> > > >> > maybe we should be waiting for the folio lock with the VMA locke=
+d.
+> > > >>
+> > >
