@@ -2,153 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 586E66F2F26
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 09:27:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E90846F2FC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 May 2023 11:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232173AbjEAH11 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 03:27:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36976 "EHLO
+        id S232234AbjEAJGU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 05:06:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbjEAH10 (ORCPT
+        with ESMTP id S232491AbjEAJGB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 03:27:26 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F55E69
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 00:27:22 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-64115eef620so25138862b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 00:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1682926042; x=1685518042;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibXuk7FbYrowdFzsiIEHtgPKzlyAO+Sfsye0fqZ102E=;
-        b=IKlhLUer77vP+NjL6egKLZ4SBjsZvxj/D3clB+asMNMvxbEKZVyD67jL8L+HgQcTZP
-         bx2+VCvjy6HeCWRCAKSjdVeCtOUPiNZOnarnxDf2Ay6KT0thLI2fnISAw3lEGAFT3jl2
-         kDsM3kvKxVx4yCWkUsfVNm1hwj4coNk2oyMCtjatrEV3EX4+4UoJMiPf3zbEvc9Jjg1m
-         0bcMJvDlbUEMRKu34+4Ed5M78tX9h6w4sQUUsnBU8Gli1HsSt1NKbMvyBp/4K2SrmTSi
-         DEZoHLZVnAjL+yBP9KaRc6NDRzIuI950QrEuS8Jegk9aH6BmTEHBRYboZ8q0GghNqhi2
-         OyTA==
+        Mon, 1 May 2023 05:06:01 -0400
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 159931FC6
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 02:05:51 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-32f240747cdso153452725ab.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 02:05:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682926042; x=1685518042;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ibXuk7FbYrowdFzsiIEHtgPKzlyAO+Sfsye0fqZ102E=;
-        b=V4GXeioBs0GQHyK16lWnOBciI1AdYBUeY9ug337igruuPzvNmFemOaDZC3Ns4bgJCi
-         EydGo+esoYldRGcELiW233ug0VAwur4HD7FHIvvk865hVxed0vmRabZww5ap8UPuwYSJ
-         AexxDQlPNf1FZ8EgWV+zBDYK31XMdDBLQu7eRohpFhoVaLsBuCtUx2bVIkkfjVl8Ozyw
-         NhLlR3IO0i/gyJMofNEKUC6FlWa7WobHHay/6WCJJQPFQOeaqOqlHw0PqBw9NaQR4bx1
-         gN70muYSZBrCjXsBQx8L39JY8M2amWxWBgIyqUskQlhn3yYzKIvDMdqK2cVDTNZExsr/
-         3fiw==
-X-Gm-Message-State: AC+VfDyUEbqUGxSRmyRnWeQ7M0wcADyONnU8KwczLLMkKHWeqe3qrXbL
-        7l4pHrao/8iE3UR3pqkzNWifgA==
-X-Google-Smtp-Source: ACHHUZ4UvG80mxUfpvf1acfCnS2H3KC6jDEcSFVNzFYuXXy+v/xi65gkE5IdZ0bX/96Zq1X5x+FUpg==
-X-Received: by 2002:a05:6a00:a16:b0:63d:3c39:ecc2 with SMTP id p22-20020a056a000a1600b0063d3c39ecc2mr17292848pfh.12.1682926041931;
-        Mon, 01 May 2023 00:27:21 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
-        by smtp.gmail.com with ESMTPSA id t40-20020a056a0013a800b0063d29df1589sm19371079pfg.136.2023.05.01.00.27.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 May 2023 00:27:21 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ptNwM-009yXy-1S; Mon, 01 May 2023 17:27:18 +1000
-Date:   Mon, 1 May 2023 17:27:18 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5] mm/gup: disallow GUP writing to file-backed mappings
- by default
-Message-ID: <20230501072718.GF2155823@dread.disaster.area>
-References: <6b73e692c2929dc4613af711bdf92e2ec1956a66.1682638385.git.lstoakes@gmail.com>
- <afcc124e-7a9b-879c-dfdf-200426b84e24@redhat.com>
- <ZEvZtIb2EDb/WudP@nvidia.com>
- <ZEwPscQu68kx32zF@mit.edu>
- <ZEwVbPM2OPSeY21R@nvidia.com>
- <ZEybNZ7Rev+XM4GU@mit.edu>
- <ZE2ht9AGx321j0+s@nvidia.com>
+        d=1e100.net; s=20221208; t=1682931951; x=1685523951;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PD1DEFBL8RKVqAOYf8QQiBIb4VTIPxGPtzpEUcFOS5I=;
+        b=MOaxDjJ0MVhZ5NPX4OOPa8uPt+/R3QdEUfTczCkfh5EW+SYvKzt53Ido22Iar15NCb
+         B1QQD9IcbFe3KL9EfzAFDHZeJqWcywiRK2WOYoWG/Yr0v9x0hcJIAZofTygmfD1TPdPH
+         tmiuV3j+kH+zoZfvc5m5u3iLI/jyyrIFWkuMwnhumQlkJ/OdokRsIrkP4ZCWWGg9uTfV
+         ZzS9na9Nsy7w2hcvnsnjpGADWxoNAB8Nsn6RPZ4oI2IqvQ70RAEWHbBfC3s6MP4FEtKo
+         +LIVcj8yd6T+d4D+b91jDen4l87nwv0hNQ/JdE3WN7b2XJvtW052rqggw51cGTgDth+r
+         inSw==
+X-Gm-Message-State: AC+VfDwDts4uTEmkBuRIF8lM+MCuTORRv4ix7Rpx31zMqbSBcQ85atdT
+        hnuSunJIRL9Ycg0ve7DNtoZgMBgA4UPEakeZGVIV9ovKdbu5
+X-Google-Smtp-Source: ACHHUZ5vwqiQEzZXlvGjC1hTeMpt4z16+mztKKLrIWO0oPR7L1EgOtSRNiUZXSu3WH7v7GVLXbVEZPCpemoJ8430TgBu3iS7sHlV
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZE2ht9AGx321j0+s@nvidia.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a05:6e02:1aa2:b0:32b:fc:52b1 with SMTP id
+ l2-20020a056e021aa200b0032b00fc52b1mr11621236ilv.0.1682931951304; Mon, 01 May
+ 2023 02:05:51 -0700 (PDT)
+Date:   Mon, 01 May 2023 02:05:51 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000023886305fa9e217b@google.com>
+Subject: [syzbot] Monthly fat report (Apr 2023)
+From:   syzbot <syzbot+listb47f5484a202b1d1532d@syzkaller.appspotmail.com>
+To:     linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 29, 2023 at 08:01:11PM -0300, Jason Gunthorpe wrote:
-> On Sat, Apr 29, 2023 at 12:21:09AM -0400, Theodore Ts'o wrote:
-> 
-> > In any case, the file system maintainers' position (mine and I doubt
-> > Dave Chinner's position has changed) is that if you write to
-> > file-backed mappings via GUP/RDMA/process_vm_writev, and it causes
-> > silent data corruption, you get to keep both pieces, and don't go
-> > looking for us for anything other than sympathy...
-> 
-> This alone is enough reason to block it. I'm tired of this round and
-> round and I think we should just say enough, the mm will work to
-> enforce this view point. Files can only be written through PTEs.
+Hello fat maintainers/developers,
 
-It has to be at least 5 years ago now that we were told that the
-next-gen RDMA hardware would be able to trigger hardware page faults
-when remote systems dirtied local pages.  This would enable
-->page-mkwrite to be run on file backed pages mapped pages just like
-local CPU write faults and everything would be fine.
+This is a 31-day syzbot report for the fat subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/fat
 
-Whatever happened to that? Are we still waiting for hardware that
-can trigger page faults from remote DMA transfers, or have hardware
-vendors given up on this?
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 10 issues are still open and 20 have been fixed so far.
 
-Cheers,
+Some of the still happening issues:
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Ref Crashes Repro Title
+<1> 248     Yes   possible deadlock in filemap_fault
+                  https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
+<2> 202     Yes   kernel BUG at fs/buffer.c:LINE!
+                  https://syzkaller.appspot.com/bug?extid=cfed5b56649bddf80d6e
+<3> 197     Yes   possible deadlock in exfat_get_block
+                  https://syzkaller.appspot.com/bug?extid=247e66a2c3ea756332c7
+<4> 149     Yes   possible deadlock in exfat_iterate
+                  https://syzkaller.appspot.com/bug?extid=38655f1298fefc58a904
+<5> 74      Yes   possible deadlock in exc_page_fault
+                  https://syzkaller.appspot.com/bug?extid=6d274a5dc4fa0974d4ad
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
