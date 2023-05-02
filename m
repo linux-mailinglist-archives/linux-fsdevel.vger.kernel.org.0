@@ -2,159 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B8886F42F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 13:43:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EE0A6F4310
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 13:51:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233898AbjEBLnM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 07:43:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51130 "EHLO
+        id S233934AbjEBLvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 07:51:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233618AbjEBLnL (ORCPT
+        with ESMTP id S230004AbjEBLvs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 07:43:11 -0400
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15FBB2123;
-        Tue,  2 May 2023 04:43:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1683027787;
-        bh=VIXlwaAodrWp8Vhxz+WDa3KoUpXUVVhKJac+yTw3JPY=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=Jhl+sztrOwEDjtwmne5HQU6aXLKSFxkGsV+GqvMXCULQnVptmMOy46lcJn8TJD2nV
-         Cz4FiICRD0fpyV2EVDrJ/+oCA0F64UjfFbcIL0QFb5f/iutLKwDLAAC08nsVf2C0sW
-         PW2yXp5dIH6OPPlm4jB3q1u314n26v1FRt3YM0EM=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5D7531285DD9;
-        Tue,  2 May 2023 07:43:07 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id WKKGlZO_O65L; Tue,  2 May 2023 07:43:07 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1683027787;
-        bh=VIXlwaAodrWp8Vhxz+WDa3KoUpXUVVhKJac+yTw3JPY=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=Jhl+sztrOwEDjtwmne5HQU6aXLKSFxkGsV+GqvMXCULQnVptmMOy46lcJn8TJD2nV
-         Cz4FiICRD0fpyV2EVDrJ/+oCA0F64UjfFbcIL0QFb5f/iutLKwDLAAC08nsVf2C0sW
-         PW2yXp5dIH6OPPlm4jB3q1u314n26v1FRt3YM0EM=
-Received: from [IPv6:2601:5c4:4302:c21::a774] (unknown [IPv6:2601:5c4:4302:c21::a774])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 32CE21285C64;
-        Tue,  2 May 2023 07:43:01 -0400 (EDT)
-Message-ID: <2f5ebe8a9ce8471906a85ef092c1e50cfd7ddecd.camel@HansenPartnership.com>
-Subject: Re: [PATCH 01/40] lib/string_helpers: Drop space in
- string_get_size's output
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, willy@infradead.org,
-        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Noralf =?ISO-8859-1?Q?Tr=EF=BF=BDnnes?= <noralf@tronnes.org>
-Date:   Tue, 02 May 2023 07:42:59 -0400
-In-Reply-To: <ZFCA2FF+9MI8LI5i@moria.home.lan>
-References: <20230501165450.15352-1-surenb@google.com>
-         <20230501165450.15352-2-surenb@google.com>
-         <ouuidemyregstrijempvhv357ggp4tgnv6cijhasnungsovokm@jkgvyuyw2fti>
-         <ZFAUj+Q+hP7cWs4w@moria.home.lan>
-         <b6b472b65b76e95bb4c7fc7eac1ee296fdbb64fd.camel@HansenPartnership.com>
-         <ZFCA2FF+9MI8LI5i@moria.home.lan>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+        Tue, 2 May 2023 07:51:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 700594EFA
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 04:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683028265;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kdZho8b0P96S/DuDI1xyFnU41Cvk0heUauLxuFmvVg0=;
+        b=eslnCZOxn9i4zvt8htQONJui7EQDjN3EOBPUH+V1UMpPuxCJ0c8YdF8qSwFm++Qg0aSafh
+        Ebz3nJ0eZipBjXI1Ga2hXma7ttUqMcGV+ETxBqjW2ZLiiWVzJOf4KYa5q9N6XQ6fINe5iH
+        X26N3cqYwRejGwoE7zjBUuAyUmH90oQ=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-94-JF21HUJDP7aEaXHs7FZRyQ-1; Tue, 02 May 2023 07:51:04 -0400
+X-MC-Unique: JF21HUJDP7aEaXHs7FZRyQ-1
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-3f17f39d3deso49220421cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 04:51:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683028264; x=1685620264;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kdZho8b0P96S/DuDI1xyFnU41Cvk0heUauLxuFmvVg0=;
+        b=TxBK8ggehY/qLJ/dxhHGBaor9O7ofFRC1ibDXToTPW/2KtvW8OUCifLKBbYSIdnaMS
+         myE1fhrtNTXyTl48WkfJhYVHZ/Tev1mekaAGg5fyMB4ArWQmJc12jAlnbsc1/kgoMkhm
+         ZB51h6+38IdfRMq5zG7k4CQ9v7/uTyDN28HM1AR2al97GXyDmD9AkSlVmivH0v+E+omZ
+         Yf66KPgXfEOH/ouy7IH8FtRmdXDqWC5qUItWl8DTCXVDDAmCb6kvqmtTYraUA3IkxjUs
+         BTGjzNiWEbMMMhKlpAZnMZACq0SkM6J347psBiiTDLBxOiiHix4gnCjzrYAMFL28h8Gd
+         pzJw==
+X-Gm-Message-State: AC+VfDyATX2YVRBMIfRnwex8qtmRpKC51CpatP5dTvIMw+6f1CcmEVXd
+        P3U3/BTxaRCNC+csWNbts1sjJbDlaQUSyjxQ09BUq0BORhF4LFyLRNLJQ9jjtbNKakUil0cZMTv
+        GID8NY2zbAKyPUjJPsVjoD+NBPA==
+X-Received: by 2002:a05:622a:30f:b0:3ef:337b:4fcb with SMTP id q15-20020a05622a030f00b003ef337b4fcbmr28295415qtw.64.1683028264044;
+        Tue, 02 May 2023 04:51:04 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5Vrqw+pKj/0O/fsSqYR2NNR+qseAedVJ76NoenSc8LVgBigL4KUU+oPaikQc4zPyJmE8NtjQ==
+X-Received: by 2002:a05:622a:30f:b0:3ef:337b:4fcb with SMTP id q15-20020a05622a030f00b003ef337b4fcbmr28295396qtw.64.1683028263837;
+        Tue, 02 May 2023 04:51:03 -0700 (PDT)
+Received: from ?IPV6:2601:883:c200:210:6ae9:ce2:24c9:b87b? ([2601:883:c200:210:6ae9:ce2:24c9:b87b])
+        by smtp.gmail.com with ESMTPSA id fd9-20020a05622a4d0900b003d65e257f10sm6632958qtb.79.2023.05.02.04.51.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 May 2023 04:51:02 -0700 (PDT)
+Message-ID: <5f3ddda1-2c7d-811c-ffd5-5fc237def2eb@redhat.com>
+Date:   Tue, 2 May 2023 07:51:00 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v5 09/20] gfs2: use __bio_add_page for adding single page
+ to bio
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        "axboe @ kernel . dk" <axboe@kernel.dk>
+Cc:     agruenba@redhat.com, cluster-devel@redhat.com,
+        damien.lemoal@wdc.com, dm-devel@redhat.com, hare@suse.de,
+        hch@lst.de, jfs-discussion@lists.sourceforge.net, kch@nvidia.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-raid@vger.kernel.org,
+        ming.lei@redhat.com, shaggy@kernel.org, snitzer@kernel.org,
+        song@kernel.org, willy@infradead.org,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>
+References: <20230502101934.24901-1-johannes.thumshirn@wdc.com>
+ <20230502101934.24901-10-johannes.thumshirn@wdc.com>
+Content-Language: en-US
+From:   Bob Peterson <rpeterso@redhat.com>
+In-Reply-To: <20230502101934.24901-10-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-05-01 at 23:17 -0400, Kent Overstreet wrote:
-> On Mon, May 01, 2023 at 10:22:18PM -0400, James Bottomley wrote:
-> > It is not used just for debug.  It's used all over the kernel for
-> > printing out device sizes.  The output mostly goes to the kernel
-> > print buffer, so it's anyone's guess as to what, if any, tools are
-> > parsing it, but the concern about breaking log parsers seems to be
-> > a valid one.
+On 5/2/23 6:19 AM, Johannes Thumshirn wrote:
+> The GFS2 superblock reading code uses bio_add_page() to add a page to a
+> newly created bio. bio_add_page() can fail, but the return value is never
+> checked.
 > 
-> Ok, there is sd_print_capacity() - but who in their right mind would
-> be trying to scrape device sizes, in human readable units,
-
-If you bother to google "kernel log parser", you'll discover it's quite
-an active area which supports a load of company business models.
-
->  from log messages when it's available in sysfs/procfs (actually, is
-> it in sysfs? if not, that's an oversight) in more reasonable units?
-
-It's not in sysfs, no.  As aren't a lot of things, which is why log
-parsing for system monitoring is big business.
-
-> Correct me if I'm wrong, but I've yet to hear about kernel log
-> messages being consider a stable interface, and this seems a bit out
-> there.
-
-It might not be listed as stable, but when it's known there's a large
-ecosystem out there consuming it we shouldn't break it just because you
-feel like it.  You should have a good reason and the break should be
-unavoidable.  I wanted my output in a particular form so I thought I'd
-change everyone else's output as well isn't a good reason and it only
-costs a couple of lines to avoid.
-
-> But, you did write the code :)
+> Use __bio_add_page() as adding a single page to a newly created bio is
+> guaranteed to succeed.
 > 
-> > > If someone raises a specific objection we'll do something
-> > > different, otherwise I think standardizing on what userspace
-> > > tooling already parses is a good idea.
-> > 
-> > If you want to omit the space, why not simply add your own
-> > variant?  A string_get_size_nospace() which would use most of the
-> > body of this one as a helper function but give its own snprintf
-> > format string at the end.  It's only a couple of lines longer as a
-> > patch and has the bonus that it definitely wouldn't break anything
-> > by altering an existing output.
+> This brings us a step closer to marking bio_add_page() as __must_check.
 > 
-> I'm happy to do that - I just wanted to post this version first to
-> see if we can avoid the fragmentation and do a bit of standardizing
-> with how everything else seems to do that.
+> Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+> Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>   fs/gfs2/ops_fstype.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+> index 9af9ddb61ca0..cd962985b058 100644
+> --- a/fs/gfs2/ops_fstype.c
+> +++ b/fs/gfs2/ops_fstype.c
+> @@ -254,7 +254,7 @@ static int gfs2_read_super(struct gfs2_sbd *sdp, sector_t sector, int silent)
+>   
+>   	bio = bio_alloc(sb->s_bdev, 1, REQ_OP_READ | REQ_META, GFP_NOFS);
+>   	bio->bi_iter.bi_sector = sector * (sb->s_blocksize >> 9);
+> -	bio_add_page(bio, page, PAGE_SIZE, 0);
+> +	__bio_add_page(bio, page, PAGE_SIZE, 0);
+>   
+>   	bio->bi_end_io = end_bio_io_page;
+>   	bio->bi_private = page;
+Hi Johannes,
 
-What fragmentation?  To do this properly you move the whole of the
-current function to a helper which takes a format sting, say with a
-double underscore prefix, then the existing function and what you want
-become one line additions calling the helper with their specific format
-string.  There's no fragmentation of the base function at all.
+So...I see 6 different calls to bio_add_page() in gfs2.
+Why change this particular bio_add_page() to __bio_add_page() and not 
+the other five?
 
-James
+Regards,
 
+Bob Peterson
 
