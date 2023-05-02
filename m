@@ -2,83 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5AA6F3B37
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 02:13:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC9866F3B71
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 02:39:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232958AbjEBAMw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 20:12:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35574 "EHLO
+        id S233245AbjEBAjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 20:39:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233394AbjEBALT (ORCPT
+        with ESMTP id S230391AbjEBAjf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 20:11:19 -0400
-Received: from out-56.mta1.migadu.com (out-56.mta1.migadu.com [95.215.58.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEDF035B0
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 17:11:17 -0700 (PDT)
-Date:   Mon, 1 May 2023 20:11:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1682986273;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LGkXxcXbL3GK/fmGgSEfCfzDoWKBFDwYj9o6aWx8/Qk=;
-        b=Gmp5ZD9nZN0dN2JWve8TuEsBbpH3Qw6wtBbE0JR/AgDkC56d01L5iQ46Mavw7py6Vk9DfT
-        amxHtlJ45eMzW84A+uK5Hfr4ox7Dnev1oJ2Yy8A+2WvibSyj4uUhf9gi+dGElANV/CAdFq
-        T6mFJogh6K/S0EnKKXjo3GhiYGvkFTg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
-        hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
-        willy@infradead.org, corbet@lwn.net, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Noralf =?utf-8?B?VHLDr8K/wr1ubmVz?= <noralf@tronnes.org>
-Subject: Re: [PATCH 01/40] lib/string_helpers: Drop space in
- string_get_size's output
-Message-ID: <ZFBVFfNo3OHd3izd@moria.home.lan>
-References: <20230501165450.15352-1-surenb@google.com>
- <20230501165450.15352-2-surenb@google.com>
- <ouuidemyregstrijempvhv357ggp4tgnv6cijhasnungsovokm@jkgvyuyw2fti>
- <ZFAUj+Q+hP7cWs4w@moria.home.lan>
- <CAHp75VeJ_a6j3uweLN5-woSQUtN5u36c2gkoiXhnJa1HXJdoyQ@mail.gmail.com>
- <20230501213349.bvbf6i72eepcd56m@revolver>
+        Mon, 1 May 2023 20:39:35 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 959A6173D
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 17:39:34 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1aad5245632so18890005ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 17:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1682987974; x=1685579974;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PwZqPVfdD98RGGdgHpZ/AzPHiqQjK6f8LQEk0yK0Zco=;
+        b=rXB2JJkiTu4hICfIG4uv6uiV1xCmwftlY++WfORFpcseumSePfSrV6GkobqFSHMGwv
+         8/tpLOL92wN+ea7V0SyV5Ii94EIkMav2jlegjcBELANssj3Pipph2H4zlGaxwGf7Hdeq
+         68cNQbVzn0FzlED8v4yh64p+FSuSyIxT+qzvBELLjIN931Fbf3YldkX/kcuaTCqrlRrI
+         SSoU2QOTcLaRumrJXi/l1SXAZtQe5kqbWQlBpfLchglrMzK07fHyGMlJZ6ynuT4ogAaq
+         ki07HzmGoiWXrYJ24DoIkzdTa3STAn9BxEXosx7z/sC79gcMuK5PvmPM3PgbLd2lIIs5
+         RQgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682987974; x=1685579974;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PwZqPVfdD98RGGdgHpZ/AzPHiqQjK6f8LQEk0yK0Zco=;
+        b=ApeoF7tB1HkZ87mZETHsXqR7oS2CfZI9oJoFzmF8bG1yrpeVNRAq2kR8XicK+zEavO
+         lerPfo/JF4aXZkIBUEMLZR1SxiscwovtfeATDDoTSRuCZTPF83TPiZrNg66Tl0U8/x6X
+         ffytJvtJ3hEYggNvt1QiEaoscW9bRvUqw66kaZg/7Uagb5cjCrCRS4iHhcczuj9fg1yp
+         IXlvIhKy0/q72JMU+WvERz66TbcCpe2gtE94Ojb5a16ntrBfBYTmaXBwdG7kmDihfh1w
+         jEgXrRKZnbPmWFHefb4uzr3A8FWOebFYG31KceM0S26sQTr1snjA6AbLTiyg2HxgchIu
+         JwHw==
+X-Gm-Message-State: AC+VfDwatxt1+v4MFzS2YZJ8OoaKTIo6G26OJjG5t8ApCjPZv6f3tvUj
+        3aBMNMZMWG9XN96aUCgs1rxtWw==
+X-Google-Smtp-Source: ACHHUZ5rNxN5VmHZ5p3Ayr0pXCHpUS5ZR8fFEU6KCZl5Ev01KAbw9hBMo2NXzR3u23sSG+cU9T+h5Q==
+X-Received: by 2002:a17:902:f78a:b0:1a9:b62f:9338 with SMTP id q10-20020a170902f78a00b001a9b62f9338mr14109356pln.45.1682987974087;
+        Mon, 01 May 2023 17:39:34 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
+        by smtp.gmail.com with ESMTPSA id j2-20020a17090adc8200b0024dfb08da87sm2614399pjv.33.2023.05.01.17.39.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 May 2023 17:39:33 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pte3F-00AG9K-Tc; Tue, 02 May 2023 10:39:29 +1000
+Date:   Tue, 2 May 2023 10:39:29 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+        lkp@intel.com, linux-ext4@vger.kernel.org, ltp@lists.linux.it,
+        Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [jlayton:ctime] [ext4]  ff9aaf58e8: ltp.statx06.fail
+Message-ID: <20230502003929.GG2155823@dread.disaster.area>
+References: <202305012130.cc1e2351-oliver.sang@intel.com>
+ <0dc1a9d7f2b99d2bfdcabb7adc51d7c0b0c81457.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230501213349.bvbf6i72eepcd56m@revolver>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+In-Reply-To: <0dc1a9d7f2b99d2bfdcabb7adc51d7c0b0c81457.camel@kernel.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -87,26 +78,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 01, 2023 at 05:33:49PM -0400, Liam R. Howlett wrote:
-> * Andy Shevchenko <andy.shevchenko@gmail.com> [230501 15:57]:
-> This fixes the output to be better aligned with:
-> the output of ls -sh
-> the input expected by find -size
+On Mon, May 01, 2023 at 12:05:17PM -0400, Jeff Layton wrote:
+> On Mon, 2023-05-01 at 22:09 +0800, kernel test robot wrote:
+> The test does this:
 > 
-> Are there counter-examples of commands that follow the SI Brochure?
+>         SAFE_CLOCK_GETTIME(CLOCK_REALTIME_COARSE, &before_time);
+>         clock_wait_tick();
+>         tc->operation();
+>         clock_wait_tick();
+>         SAFE_CLOCK_GETTIME(CLOCK_REALTIME_COARSE, &after_time);
+> 
+> ...and with that, I usually end up with before/after_times that are 1ns
+> apart, since my machine is reporting a 1ns granularity.
+> 
+> The first problem is that the coarse grained timestamps represent the
+> lower bound of what time could end up in the inode. With multigrain
+> ctimes, we can end up grabbing a fine-grained timestamp to store in the
+> inode that will be later than either coarse grained time that was
+> fetched.
+> 
+> That's easy enough to fix -- grab a coarse time for "before" and a fine-
+> grained time for "after".
+> 
+> The clock_getres function though returns that it has a 1ns granularity
+> (since it does). With multigrain ctimes, we no longer have that at the
+> filesystem level. It's a 2ns granularity now (as we need the lowest bit
+> for the flag).
 
-Even perf, which is included in the kernel tree, doesn't include the
-space - example perf top output:
+Why are you even using the low bit for this? Nanosecond resolution
+only uses 30 bits, leaving the upper two bits of a 32 bit tv_nsec
+field available for internal status bits. As long as we mask out the
+internal bits when reading the VFS timestamp tv_nsec field, then
+we don't need to change the timestamp resolution, right?
 
-0 bcachefs:move_extent_fail
-0 bcachefs:move_extent_alloc_mem_fail
-3 bcachefs:move_data
-0 bcachefs:evacuate_bucket
-0 bcachefs:copygc
-2 bcachefs:copygc_wait
-195K bcachefs:transaction_commit
-0 bcachefs:trans_restart_injected
+Cheers,
 
-(I'm also going to need to submit a patch that deletes or makes optional
-the B suffix, just because we're using human readable units doesn't mean
-it's bytes).
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
