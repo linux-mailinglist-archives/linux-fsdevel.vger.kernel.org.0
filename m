@@ -2,230 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DE906F49CF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 20:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00EE46F49DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 20:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233764AbjEBSjF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 14:39:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33276 "EHLO
+        id S229481AbjEBSpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 14:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232598AbjEBSjD (ORCPT
+        with ESMTP id S229441AbjEBSps (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 14:39:03 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23BE21988
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 11:39:01 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-b9d9dad9edfso5358284276.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 11:39:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683052740; x=1685644740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7OMnp8U2QsJWbp6tha1jAHM6ardwied5yoCJwV56xmU=;
-        b=3ehzpeirHytbRrfF5r15fGVpzpJxZb0E9v2Om0wdN+yxZYUTa6qWTLOkd2mbDRoF7W
-         pnmov0ApI+qMvdAzFDA6SgZGTRYRpWWsYOopta6Rj30LnCXbPu9oQBdK0uh0n1fbuy01
-         vsylwS4eNoSnK4OdPa0qDxCeqjOu7PunOoJTEi+RY4izp9SK5YNPQKHVdbCsFRn4WM2A
-         p7jtWEQHZwcMmuy2lRysHMVwpnEcRz/iqKNa76N07gsayvlYQtmcsOsujw7J6qYIBTdy
-         xedsqCxK32iKWHMMSwGqO7eBE4zSMlkGqF+0tcmMmy368s/N5nkgeAf/BqbdsSOgzCG8
-         xgHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683052740; x=1685644740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7OMnp8U2QsJWbp6tha1jAHM6ardwied5yoCJwV56xmU=;
-        b=Ucm3xRrXEuSc5GnjNqdOgHX4BsB+XkStfA59x4QPUAsMCmXGGDhla5mOcE/I01Igog
-         oqDDUHO2TdMbVs+44yp6S6dzDNfzXPEVVfdghZIcRjb00IYGm9pizOV3hzBMtNhJdMIp
-         cjaWoQj5orGxav09Jkpyo2cK9wg+7wX7Hrdsu2uMnqsir3dM4Wg3+m76QaAgp/0orApL
-         af4KH9mn4BvA+DaJmU81lCBLxN1hOSlOgiU4tQDO0JG9EJUtOpgcs/x5kXqiJ+K2UzE/
-         HIe2v9hfxVpeDql8tMTm7Y/fm1FQd4pzrmzgcuCQOHun1SypkYXe3oB6ZT8YYf2H4IOe
-         xGjg==
-X-Gm-Message-State: AC+VfDy3sNnQ+zEeexKUjWRBbmR5W7cXEkzaiKjlZraj1c5ZmDG83tPe
-        L0oPlcdY0VV3DX69rAMq9nf6KwR1M0X/B0w/4A1Aow==
-X-Google-Smtp-Source: ACHHUZ45HYLTxHMIOq01xnBNZQQ3FvjzAGWMuhj5eqXhI0sjJMLvrbYm8scdp84P5QMdOuWonlr1sN9pxx8UWuINaFw=
-X-Received: by 2002:a25:420f:0:b0:b9e:4fbc:8a7f with SMTP id
- p15-20020a25420f000000b00b9e4fbc8a7fmr5707930yba.1.1683052740029; Tue, 02 May
- 2023 11:39:00 -0700 (PDT)
+        Tue, 2 May 2023 14:45:48 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F911E73;
+        Tue,  2 May 2023 11:45:46 -0700 (PDT)
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 342Ielmu020038;
+        Tue, 2 May 2023 18:45:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=Y5zlNEwOG2ptRaoZlX8s256Y2ftpFkpYD9yVgsF0Q28=;
+ b=ciPQzlbQ2rl3+1dUFCETd8dc5/GXxssBrbewrHBqTWF1M71UEFxCv3sBwmYux9LCiaqp
+ vYlxBJ5L9ymErmtVhV2vw0AK/1RUfBOkp58J4jDog8J+kPzVcCRAZPbAmZ3kY137aqUW
+ 1a1r8PO7iDmnzJ3wio9rkgd3XYETKP5MPrxYpuz9l/9fboeN26lYhvTmYpM43VRsCyCL
+ VSRatTmA29wduAFqdIO1pFM38wMMSTwvhq3UHZ73MM3N/ocb+aXIpqhAub69V/Dyon+d
+ BXBoQWlNcmMYpfdmX8RBCLZBHmUvnsLPTCqb/KAIQCR8lYVhLeMwMqVwX/eES/cq1bxP VQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb767sk1m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 18:45:10 +0000
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 342IfQG8022079;
+        Tue, 2 May 2023 18:45:10 GMT
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb767sk0c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 18:45:09 +0000
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 342Hthea003792;
+        Tue, 2 May 2023 18:45:08 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([9.208.130.98])
+        by ppma05wdc.us.ibm.com (PPS) with ESMTPS id 3q8tv7rs0w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 18:45:08 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+        by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 342Ij5NV44368258
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 2 May 2023 18:45:05 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB0185803F;
+        Tue,  2 May 2023 18:45:04 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 711F358068;
+        Tue,  2 May 2023 18:45:01 +0000 (GMT)
+Received: from [9.60.89.243] (unknown [9.60.89.243])
+        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  2 May 2023 18:45:01 +0000 (GMT)
+Message-ID: <ce86e956-173f-848a-a1f3-f102134ccd94@linux.ibm.com>
+Date:   Tue, 2 May 2023 14:45:01 -0400
 MIME-Version: 1.0
-References: <20230501165450.15352-1-surenb@google.com> <20230501165450.15352-20-surenb@google.com>
- <20230502175052.43814202@meshulam.tesarici.cz>
-In-Reply-To: <20230502175052.43814202@meshulam.tesarici.cz>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 2 May 2023 11:38:49 -0700
-Message-ID: <CAJuCfpGSLK50eKQ2-CE41qz1oDPM6kC8RmqF=usZKwFXgTBe8g@mail.gmail.com>
-Subject: Re: [PATCH 19/40] change alloc_pages name in dma_map_ops to avoid
- name conflicts
-To:     =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>
-Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
-        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
-        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-        paulmck@kernel.org, pasha.tatashin@soleen.com,
-        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v7 0/3] mm/gup: disallow GUP writing to file-backed
+ mappings by default
+Content-Language: en-US
+To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+References: <cover.1683044162.git.lstoakes@gmail.com>
+From:   Matthew Rosato <mjrosato@linux.ibm.com>
+In-Reply-To: <cover.1683044162.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 2LCoG5Unst8UUEzla8ABjD356N8l43rZ
+X-Proofpoint-ORIG-GUID: cSQj8we2iuCB-VjCHpIHGE97SoRPJ3ys
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-02_10,2023-04-27_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 mlxscore=0 clxscore=1011
+ spamscore=0 impostorscore=0 adultscore=0 bulkscore=0 mlxlogscore=733
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2305020160
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 2, 2023 at 8:50=E2=80=AFAM Petr Tesa=C5=99=C3=ADk <petr@tesaric=
-i.cz> wrote:
->
-> On Mon,  1 May 2023 09:54:29 -0700
-> Suren Baghdasaryan <surenb@google.com> wrote:
->
-> > After redefining alloc_pages, all uses of that name are being replaced.
-> > Change the conflicting names to prevent preprocessor from replacing the=
-m
-> > when it's not intended.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  arch/x86/kernel/amd_gart_64.c | 2 +-
-> >  drivers/iommu/dma-iommu.c     | 2 +-
-> >  drivers/xen/grant-dma-ops.c   | 2 +-
-> >  drivers/xen/swiotlb-xen.c     | 2 +-
-> >  include/linux/dma-map-ops.h   | 2 +-
-> >  kernel/dma/mapping.c          | 4 ++--
-> >  6 files changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_6=
-4.c
-> > index 56a917df410d..842a0ec5eaa9 100644
-> > --- a/arch/x86/kernel/amd_gart_64.c
-> > +++ b/arch/x86/kernel/amd_gart_64.c
-> > @@ -676,7 +676,7 @@ static const struct dma_map_ops gart_dma_ops =3D {
-> >       .get_sgtable                    =3D dma_common_get_sgtable,
-> >       .dma_supported                  =3D dma_direct_supported,
-> >       .get_required_mask              =3D dma_direct_get_required_mask,
-> > -     .alloc_pages                    =3D dma_direct_alloc_pages,
-> > +     .alloc_pages_op                 =3D dma_direct_alloc_pages,
-> >       .free_pages                     =3D dma_direct_free_pages,
-> >  };
-> >
-> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > index 7a9f0b0bddbd..76a9d5ca4eee 100644
-> > --- a/drivers/iommu/dma-iommu.c
-> > +++ b/drivers/iommu/dma-iommu.c
-> > @@ -1556,7 +1556,7 @@ static const struct dma_map_ops iommu_dma_ops =3D=
- {
-> >       .flags                  =3D DMA_F_PCI_P2PDMA_SUPPORTED,
-> >       .alloc                  =3D iommu_dma_alloc,
-> >       .free                   =3D iommu_dma_free,
-> > -     .alloc_pages            =3D dma_common_alloc_pages,
-> > +     .alloc_pages_op         =3D dma_common_alloc_pages,
-> >       .free_pages             =3D dma_common_free_pages,
-> >       .alloc_noncontiguous    =3D iommu_dma_alloc_noncontiguous,
-> >       .free_noncontiguous     =3D iommu_dma_free_noncontiguous,
-> > diff --git a/drivers/xen/grant-dma-ops.c b/drivers/xen/grant-dma-ops.c
-> > index 9784a77fa3c9..6c7d984f164d 100644
-> > --- a/drivers/xen/grant-dma-ops.c
-> > +++ b/drivers/xen/grant-dma-ops.c
-> > @@ -282,7 +282,7 @@ static int xen_grant_dma_supported(struct device *d=
-ev, u64 mask)
-> >  static const struct dma_map_ops xen_grant_dma_ops =3D {
-> >       .alloc =3D xen_grant_dma_alloc,
-> >       .free =3D xen_grant_dma_free,
-> > -     .alloc_pages =3D xen_grant_dma_alloc_pages,
-> > +     .alloc_pages_op =3D xen_grant_dma_alloc_pages,
-> >       .free_pages =3D xen_grant_dma_free_pages,
-> >       .mmap =3D dma_common_mmap,
-> >       .get_sgtable =3D dma_common_get_sgtable,
-> > diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-> > index 67aa74d20162..5ab2616153f0 100644
-> > --- a/drivers/xen/swiotlb-xen.c
-> > +++ b/drivers/xen/swiotlb-xen.c
-> > @@ -403,6 +403,6 @@ const struct dma_map_ops xen_swiotlb_dma_ops =3D {
-> >       .dma_supported =3D xen_swiotlb_dma_supported,
-> >       .mmap =3D dma_common_mmap,
-> >       .get_sgtable =3D dma_common_get_sgtable,
-> > -     .alloc_pages =3D dma_common_alloc_pages,
-> > +     .alloc_pages_op =3D dma_common_alloc_pages,
-> >       .free_pages =3D dma_common_free_pages,
-> >  };
-> > diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-map-ops.h
-> > index 31f114f486c4..d741940dcb3b 100644
-> > --- a/include/linux/dma-map-ops.h
-> > +++ b/include/linux/dma-map-ops.h
-> > @@ -27,7 +27,7 @@ struct dma_map_ops {
-> >                       unsigned long attrs);
-> >       void (*free)(struct device *dev, size_t size, void *vaddr,
-> >                       dma_addr_t dma_handle, unsigned long attrs);
-> > -     struct page *(*alloc_pages)(struct device *dev, size_t size,
-> > +     struct page *(*alloc_pages_op)(struct device *dev, size_t size,
-> >                       dma_addr_t *dma_handle, enum dma_data_direction d=
-ir,
-> >                       gfp_t gfp);
-> >       void (*free_pages)(struct device *dev, size_t size, struct page *=
-vaddr,
-> > diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> > index 9a4db5cce600..fc42930af14b 100644
-> > --- a/kernel/dma/mapping.c
-> > +++ b/kernel/dma/mapping.c
-> > @@ -570,9 +570,9 @@ static struct page *__dma_alloc_pages(struct device=
- *dev, size_t size,
-> >       size =3D PAGE_ALIGN(size);
-> >       if (dma_alloc_direct(dev, ops))
-> >               return dma_direct_alloc_pages(dev, size, dma_handle, dir,=
- gfp);
-> > -     if (!ops->alloc_pages)
-> > +     if (!ops->alloc_pages_op)
-> >               return NULL;
-> > -     return ops->alloc_pages(dev, size, dma_handle, dir, gfp);
-> > +     return ops->alloc_pages_op(dev, size, dma_handle, dir, gfp);
-> >  }
-> >
-> >  struct page *dma_alloc_pages(struct device *dev, size_t size,
->
-> I'm not impressed. This patch increases churn for code which does not
-> (directly) benefit from the change, and that for limitations in your
-> tooling?
->
-> Why not just rename the conflicting uses in your local tree, but then
-> remove the rename from the final patch series?
+On 5/2/23 12:34 PM, Lorenzo Stoakes wrote:
+> Writing to file-backed mappings which require folio dirty tracking using
+> GUP is a fundamentally broken operation, as kernel write access to GUP
+> mappings do not adhere to the semantics expected by a file system.
+> 
+> A GUP caller uses the direct mapping to access the folio, which does not
+> cause write notify to trigger, nor does it enforce that the caller marks
+> the folio dirty.
+> 
+> The problem arises when, after an initial write to the folio, writeback
+> results in the folio being cleaned and then the caller, via the GUP
+> interface, writes to the folio again.
+> 
+> As a result of the use of this secondary, direct, mapping to the folio no
+> write notify will occur, and if the caller does mark the folio dirty, this
+> will be done so unexpectedly.
+> 
+> For example, consider the following scenario:-
+> 
+> 1. A folio is written to via GUP which write-faults the memory, notifying
+>    the file system and dirtying the folio.
+> 2. Later, writeback is triggered, resulting in the folio being cleaned and
+>    the PTE being marked read-only.
+> 3. The GUP caller writes to the folio, as it is mapped read/write via the
+>    direct mapping.
+> 4. The GUP caller, now done with the page, unpins it and sets it dirty
+>    (though it does not have to).
+> 
+> This change updates both the PUP FOLL_LONGTERM slow and fast APIs. As
+> pin_user_pages_fast_only() does not exist, we can rely on a slightly
+> imperfect whitelisting in the PUP-fast case and fall back to the slow case
+> should this fail.
+> 
+> v7:
+> - Fixed very silly bug in writeable_file_mapping_allowed() inverting the
+>   logic.
+> - Removed unnecessary RCU lock code and replaced with adaptation of Peter's
+>   idea.
+> - Removed unnecessary open-coded folio_test_anon() in
+>   folio_longterm_write_pin_allowed() and restructured to generally permit
+>   NULL folio_mapping().
+> 
 
-With alloc_pages function becoming a macro, the preprocessor ends up
-replacing all instances of that name, even when it's not used as a
-function. That what necessitates this change. If there is a way to
-work around this issue without changing all alloc_pages() calls in the
-source base I would love to learn it but I'm not quite clear about
-your suggestion and if it solves the issue. Could you please provide
-more details?
+FWIW, I realize you are planning another respin, but I went and tried this version out on s390 -- Now when using a memory backend file and vfio-pci on s390 I see vfio_pin_pages_remote failing consistently.  However, the pin_user_pages_fast(FOLL_WRITE | FOLL_LONGTERM) in kvm_s390_pci_aif_enable will still return positive.  
 
->
-> Just my two cents,
-> Petr T
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
