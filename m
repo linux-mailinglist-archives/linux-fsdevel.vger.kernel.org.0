@@ -2,114 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D096F43DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D28D96F43EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:32:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbjEBM1s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 08:27:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51402 "EHLO
+        id S234198AbjEBMcx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 08:32:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233537AbjEBM1r (ORCPT
+        with ESMTP id S234151AbjEBMcv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 08:27:47 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921AE55B2;
-        Tue,  2 May 2023 05:27:45 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f178da219bso36034405e9.1;
-        Tue, 02 May 2023 05:27:45 -0700 (PDT)
+        Tue, 2 May 2023 08:32:51 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E61C94EDB
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 05:32:48 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4efea87c578so2259e87.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 05:32:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683030464; x=1685622464;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZN+pooP8nd+FXQmX2bQBwmYVFsxwnGNnZBxQw0pqYZA=;
-        b=pnedyj4oEvrOpSDxWQpNYOPf1Yxqe5RF0zu0rC20hWNl+D3yv7xKL1usMcIfA/yM4S
-         /8BfK39477afR6q8Z3jp3yG3WXJMcYTUaLo2KsuOC6f315SSD233kSRZneWMBB9KLyQe
-         vpgLMgDAUd2LzM9S4J8FnfcPv7I/hodf1mBBHPrDJfi82uqdzC3I8/2+jCU3JwfAh9Ok
-         ViL9nuzGqA7IAFWkBweZCMgVTyuIZWzwXbUMPT3yQWBlqoS12JyHgpWmysya2Q+9swPc
-         AScrvbJgA15fgZa/qWiMoyj4XrARkayt4lWa8EFFZyT+kloFfeLF1MNUOv0RBDCmrj3S
-         1qLg==
+        d=google.com; s=20221208; t=1683030767; x=1685622767;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=b11YksFEu6PgjT+MJOW8bSJDjgzeS7/ur2nvzYYOxU4=;
+        b=2ibLB0dKSgfI+tsQ10RqeRBoPLEfmYVZHdYboemLTAqY2NxWjkOY9efjyu7eprry8x
+         wGaqyTcDuBELcazJAtsdsHLZlFpAMl6TMgGPCQN1g8B5ws4q5BkepUuKvfSkmS4M3SpH
+         4EMzwpoIUAlvs/gVjv4LyN3mkY067p1bX6zWOhRB+zib9OsRHNx21lFLpILegltNRrp9
+         2scxyeSc8xFWnPsBfhlyZP4XP3oo4tPfTq78eoqTLUrwvYh7HYUhzzn9l2Q1sS7Y4T0P
+         BfcNPt8dRqdPEIht78vUSIJRWQeUkSHfr1rz5nn5a6datnNtV8fktjwRNeLhdS5z6AXs
+         yRuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683030464; x=1685622464;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZN+pooP8nd+FXQmX2bQBwmYVFsxwnGNnZBxQw0pqYZA=;
-        b=NCTU9ymcz9rV8DsFcQXzgpcmr6teArPYV3Ac5FFBAz9n8+do0VijQLpI8jZDye/5v0
-         P+EzbFSJzJAMPP6PR5KIbLRyMw+Ht7zIQE3v3V75lWFY40mGhAiBwEgum3n43CtVbsLq
-         qG3QTywzRvO7tIaj9/A5jPnRVn2Ot3lc2tI9TAiXeDmJrffk0ulYcgp/yJ1wUvLMV1SJ
-         0tGOIczozIprMckJu3wzGgwU8GWXqAPFwuGIa51r0cO5ukSeMbiA4hD9gqU0BrSOU5jg
-         YfRPlydT81+sEHuHT0Ts4wPZ7N0y0EcNgJ2/sUXgepDmO+p/7bIpU48PaS4ht1hfJQLt
-         dEtw==
-X-Gm-Message-State: AC+VfDwO3kviWLVgjNRZOGfpzK2SGsqWZKv1HqdEABy1hZdnEAYk+ikp
-        t69VOZcMSnLPVU8h04iovhzZ7BvWt4kkcg==
-X-Google-Smtp-Source: ACHHUZ4+DQOWWJ1+EFDDG7oTmHd8+g/1rY3vrIA73s5XXOKVAggQWkPQcEm0YidgqeEZ5RK9+IFzLw==
-X-Received: by 2002:a05:600c:2309:b0:3ea:f73e:9d8a with SMTP id 9-20020a05600c230900b003eaf73e9d8amr12689569wmo.30.1683030463792;
-        Tue, 02 May 2023 05:27:43 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id p5-20020a05600c468500b003f18141a016sm38543498wmo.18.2023.05.02.05.27.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 May 2023 05:27:43 -0700 (PDT)
-Date:   Tue, 2 May 2023 13:27:42 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Paul McKenney <paulmck@kernel.org>
-Subject: Re: [PATCH v6 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing
- to file-backed mappings
-Message-ID: <44ee78e9-6cc9-4aee-92fd-e5335576a55c@lucifer.local>
-References: <cover.1682981880.git.lstoakes@gmail.com>
- <dee4f4ad6532b0f94d073da263526de334d5d7e0.1682981880.git.lstoakes@gmail.com>
- <20230502111334.GP1597476@hirez.programming.kicks-ass.net>
- <ab66d15a-acd0-4d9b-aa12-49cddd12c6a5@lucifer.local>
- <20230502120810.GD1597538@hirez.programming.kicks-ass.net>
+        d=1e100.net; s=20221208; t=1683030767; x=1685622767;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b11YksFEu6PgjT+MJOW8bSJDjgzeS7/ur2nvzYYOxU4=;
+        b=W6X3UJdUiPoZRwaSeKkSPMNhJ95HXshyPnCpkRUjqQWHN3UxaVCN3RbCU8t4g6/icW
+         a8Cs8zVgaAd03qY0e9t+R8a8+6H4tX5jbK4HTD/B2aHjvNQtSYt9bYFOuPI0O9xhL3aM
+         136oMXZQIJ03brgq3EJkOSrY7+jDLyl5K3a57xcsp/IrBqSlLVp0PraZpMqeb3QY3gk1
+         IM6jtkw/bDCT48inst9ooPGcs6HXTbCJ5p8+zei0htHWmvCp5m6zIx60QFpWt63FcC1J
+         bC6pHd2e/D5aOI9HjkoTjbB/qw2+/ObtpTSCWRBdmzGUj0NMY/ulxOSDk54o7rwGuDq6
+         ipmQ==
+X-Gm-Message-State: AC+VfDzrWu2woWEjyrN1/a263350lI6sJapXIIatfHXsQWV4hXfXM0jA
+        O7xvb8nZyqwjNUuJPkVoGlMLo8IIgTFKdJ9RFm5wUA==
+X-Google-Smtp-Source: ACHHUZ591xXYVU3XxtWqFZU44CMN4U4rLIcjTZ2qy+f7mo1oVyfdcvRbKsvqu5s/60aSJyOQ9942jTDDARN17pkuy6w=
+X-Received: by 2002:a05:6512:118d:b0:4e8:5117:71ae with SMTP id
+ g13-20020a056512118d00b004e8511771aemr110789lfr.3.1683030766952; Tue, 02 May
+ 2023 05:32:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230502120810.GD1597538@hirez.programming.kicks-ass.net>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+References: <00000000000084706805fab08e27@google.com> <CACT4Y+aGfOE7R+LoocX7aW2XObY4aCAsAydwvL+Ni_NUt6JfJA@mail.gmail.com>
+ <83578cb3-2528-cfab-21bc-cfeccd8124dd@ghiti.fr>
+In-Reply-To: <83578cb3-2528-cfab-21bc-cfeccd8124dd@ghiti.fr>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 2 May 2023 14:32:33 +0200
+Message-ID: <CACT4Y+ZGsMCqsaV9DQDsTFWH7cCMY9GCtdZTGdVBPqOERPRQzw@mail.gmail.com>
+Subject: Re: [syzbot] [fs?] KASAN: stack-out-of-bounds Read in proc_pid_stack
+To:     Alexandre Ghiti <alex@ghiti.fr>
+Cc:     syzbot <syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com>,
+        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        alexghiti@rivosinc.com, Palmer Dabbelt <palmer@dabbelt.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -117,198 +72,172 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 02, 2023 at 02:08:10PM +0200, Peter Zijlstra wrote:
-> On Tue, May 02, 2023 at 12:25:54PM +0100, Lorenzo Stoakes wrote:
-> > On Tue, May 02, 2023 at 01:13:34PM +0200, Peter Zijlstra wrote:
-> > > On Tue, May 02, 2023 at 12:11:49AM +0100, Lorenzo Stoakes wrote:
-> > > > @@ -95,6 +96,77 @@ static inline struct folio *try_get_folio(struct page *page, int refs)
-> > > >  	return folio;
-> > > >  }
-> > > >
-> > > > +#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
-> > > > +static bool stabilise_mapping_rcu(struct folio *folio)
-> > > > +{
-> > > > +	struct address_space *mapping = READ_ONCE(folio->mapping);
-> > > > +
-> > > > +	rcu_read_lock();
-> > > > +
-> > > > +	return mapping == READ_ONCE(folio->mapping);
-> > >
-> > > This doesn't make sense; why bother reading the same thing twice?
+On Tue, 2 May 2023 at 14:02, Alexandre Ghiti <alex@ghiti.fr> wrote:
+>
+> On 5/2/23 09:15, Dmitry Vyukov wrote:
+> > On Tue, 2 May 2023 at 09:05, syzbot
+> > <syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com> wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following issue on:
+> >>
+> >> HEAD commit:    950b879b7f02 riscv: Fixup race condition on PG_dcache_clea..
+> >> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=10c4c1f7c80000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=ecebece1b90c0342
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=01e9a564dc6b3289cea3
+> >> compiler:       riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> >> userspace arch: riscv64
+> >>
+> >> Unfortunately, I don't have any reproducer for this issue yet.
+> >>
+> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >> Reported-by: syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com
+> >>
+> >> ==================================================================
+> >> BUG: KASAN: stack-out-of-bounds in walk_stackframe+0x128/0x2fe arch/riscv/kernel/stacktrace.c:58
+> >> Read of size 8 at addr ff200000030a79b0 by task syz-executor.1/7894
+> >>
+> >> CPU: 0 PID: 7894 Comm: syz-executor.1 Tainted: G        W          6.2.0-rc1-syzkaller #0
+> >> Hardware name: riscv-virtio,qemu (DT)
+> >> Call Trace:
+> >> [<ffffffff8000b9ea>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:121
+> >> [<ffffffff83402b96>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:127
+> >> [<ffffffff83442726>] __dump_stack lib/dump_stack.c:88 [inline]
+> >> [<ffffffff83442726>] dump_stack_lvl+0xe0/0x14c lib/dump_stack.c:106
+> >> [<ffffffff83409674>] print_address_description mm/kasan/report.c:306 [inline]
+> >> [<ffffffff83409674>] print_report+0x1e4/0x4c0 mm/kasan/report.c:417
+> >> [<ffffffff804ead14>] kasan_report+0xb8/0xe6 mm/kasan/report.c:517
+> >> [<ffffffff804ebea4>] check_region_inline mm/kasan/generic.c:183 [inline]
+> >> [<ffffffff804ebea4>] __asan_load8+0x7e/0xa6 mm/kasan/generic.c:256
+> >> [<ffffffff8000b782>] walk_stackframe+0x128/0x2fe arch/riscv/kernel/stacktrace.c:58
+> > +riscv maintainers
 > >
-> > The intent is to see whether the folio->mapping has been truncated from
-> > underneath us, as per the futex code that Kirill referred to which does
-> > something similar [1].
->
-> Yeah, but per that 3rd load you got nothing here. Also that futex code
-> did the early load to deal with the !mapping case, but you're not doing
-> that.
->
-
-OK I drafted a response three times then deleted which shows you how this
-stuff messes with your mind :)
-
-I realise now that literally it is checking whether the previous !mapping
-case and lack of action taken on that was valid for futex, rendering this
-pointless for the logic here.
-
-We do check !mapping later but obviously with the 'stable' mapping whose
-relation to pre-rcu lock is irrelevant.
-
-Thanks for patiently explaining this :) RCU remains an area I need to take
-a closer look at generally.
-
-> > > Who cares if the thing changes from before; what you care about is that
-> > > the value you see has stable storage, this doesn't help with that.
-> > >
-> > > > +}
-> > > > +
-> > > > +static void unlock_rcu(void)
-> > > > +{
-> > > > +	rcu_read_unlock();
-> > > > +}
-> > > > +#else
-> > > > +static bool stabilise_mapping_rcu(struct folio *)
-> > > > +{
-> > > > +	return true;
-> > > > +}
-> > > > +
-> > > > +static void unlock_rcu(void)
-> > > > +{
-> > > > +}
-> > > > +#endif
-> > >
-> > > Anyway, this all can go away. RCU can't progress while you have
-> > > interrupts disabled anyway.
+> > I think this is an issue in riscv stack walking.
+> > If it's imprecise or walks stacks of running tasks, it needs to use
+> > READ_ONCE_NOCHECK.
 > >
-> > There seems to be other code in the kernel that assumes that this is not
-> > the case,
+> > #syz set subsystems: riscv
 >
-> Yeah, so Paul went back on forth on that a bit. It used to be true in
-> the good old days when everything was simple. Then Paul made things
-> complicated by separating out sched-RCU bh-RCU and 'regular' RCU
-> flavours.
 >
-> At that point disabling IRQs would only (officially) inhibit sched and
-> bh RCU flavours, but not the regular RCU.
->
-> But then some years ago Linus convinced Paul that having all these
-> separate RCU flavours with separate QS rules was a big pain in the
-> backside and Paul munged them all together again.
->
-> So now, anything that inhibits any of the RCU flavours inhibits them
-> all. So disabling IRQs is sufficient.
->
-> > i.e. the futex code, though not sure if that's being run with
-> > IRQs disabled...
->
-> That futex code runs in preemptible context, per the lock_page() that
-> can sleep etc.. :-)
+> This fix was merged in 6.3: commit 76950340cf03 ("riscv: Use
+> READ_ONCE_NOCHECK in imprecise unwinding stack mode").
 
-OK I am actually really happy to hear this because this means I can go
-simplify this code significantly!
+Oh, I see, syzbot riscv build is still broken due to:
+https://syzkaller.appspot.com/bug?id=502e4cca2c3c985c2125ffa945b8e636b7b100d7
+https://lore.kernel.org/all/00000000000049382505ebef4a0c@google.com/T/#md2075a04dd463fefe31f73e098672a69d948a1ce
 
->
-> > > > +/*
-> > > > + * Used in the GUP-fast path to determine whether a FOLL_PIN | FOLL_LONGTERM |
-> > > > + * FOLL_WRITE pin is permitted for a specific folio.
-> > > > + *
-> > > > + * This assumes the folio is stable and pinned.
-> > > > + *
-> > > > + * Writing to pinned file-backed dirty tracked folios is inherently problematic
-> > > > + * (see comment describing the writeable_file_mapping_allowed() function). We
-> > > > + * therefore try to avoid the most egregious case of a long-term mapping doing
-> > > > + * so.
-> > > > + *
-> > > > + * This function cannot be as thorough as that one as the VMA is not available
-> > > > + * in the fast path, so instead we whitelist known good cases.
-> > > > + *
-> > > > + * The folio is stable, but the mapping might not be. When truncating for
-> > > > + * instance, a zap is performed which triggers TLB shootdown. IRQs are disabled
-> > > > + * so we are safe from an IPI, but some architectures use an RCU lock for this
-> > > > + * operation, so we acquire an RCU lock to ensure the mapping is stable.
-> > > > + */
-> > > > +static bool folio_longterm_write_pin_allowed(struct folio *folio)
-> > > > +{
-> > > > +	bool ret;
-> > > > +
-> > > > +	/* hugetlb mappings do not require dirty tracking. */
-> > > > +	if (folio_test_hugetlb(folio))
-> > > > +		return true;
-> > > > +
-> > >
-> > > This:
-> > >
-> > > > +	if (stabilise_mapping_rcu(folio)) {
-> > > > +		struct address_space *mapping = folio_mapping(folio);
-> > >
-> > > And this is 3rd read of folio->mapping, just for giggles?
-> >
-> > I like to giggle :)
-> >
-> > Actually this is to handle the various cases in which the mapping might not
-> > be what we want (i.e. have PAGE_MAPPING_FLAGS set) which doesn't appear to
-> > have a helper exposed for a check. Given previous review about duplication
-> > I felt best to reuse this even though it does access again... yes I felt
-> > weird about doing that.
->
-> Right, I had a peek inside folio_mapping(), but the point is that this
-> 3rd load might see yet *another* value of mapping from the prior two
-> loads, rendering them somewhat worthless.
->
-> > > > +
-> > > > +		/*
-> > > > +		 * Neither anonymous nor shmem-backed folios require
-> > > > +		 * dirty tracking.
-> > > > +		 */
-> > > > +		ret = folio_test_anon(folio) ||
-> > > > +			(mapping && shmem_mapping(mapping));
-> > > > +	} else {
-> > > > +		/* If the mapping is unstable, fallback to the slow path. */
-> > > > +		ret = false;
-> > > > +	}
-> > > > +
-> > > > +	unlock_rcu();
-> > > > +
-> > > > +	return ret;
-> > >
-> > > then becomes:
-> > >
-> > >
-> > > 	if (folio_test_anon(folio))
-> > > 		return true;
-> >
-> > This relies on the mapping so belongs below the lockdep assert imo.
->
-> Oh, right you are.
->
-> > >
-> > > 	/*
-> > > 	 * Having IRQs disabled (as per GUP-fast) also inhibits RCU
-> > > 	 * grace periods from making progress, IOW. they imply
-> > > 	 * rcu_read_lock().
-> > > 	 */
-> > > 	lockdep_assert_irqs_disabled();
-> > >
-> > > 	/*
-> > > 	 * Inodes and thus address_space are RCU freed and thus safe to
-> > > 	 * access at this point.
-> > > 	 */
-> > > 	mapping = folio_mapping(folio);
-> > > 	if (mapping && shmem_mapping(mapping))
-> > > 		return true;
-> > >
-> > > 	return false;
-> > >
-> > > > +}
-> >
-> > I'm more than happy to do this (I'd rather drop the RCU bits if possible)
-> > but need to be sure it's safe.
->
-> GUP-fast as a whole relies on it :-)
+so it still tests an older build.
 
-Indeed, the only question was what happened with
-CONFIG_MMU_GATHER_RCU_TABLE_FREE arches which appeared to require special
-handling, but I'm very happy to hear they don't!
+#syz fix:
+riscv: Use READ_ONCE_NOCHECK in imprecise unwinding stack mode
 
-Will respin along the lines of your suggestion.
+> >> [<ffffffff8000bc66>] arch_stack_walk+0x2c/0x3c arch/riscv/kernel/stacktrace.c:154
+> >> [<ffffffff80190822>] stack_trace_save_tsk+0x14a/0x1bc kernel/stacktrace.c:150
+> >> [<ffffffff80697822>] proc_pid_stack+0x146/0x1ee fs/proc/base.c:456
+> >> [<ffffffff80698bb0>] proc_single_show+0x9c/0x148 fs/proc/base.c:777
+> >> [<ffffffff805af580>] traverse.part.0+0x74/0x2ca fs/seq_file.c:111
+> >> [<ffffffff805aff02>] traverse fs/seq_file.c:101 [inline]
+> >> [<ffffffff805aff02>] seq_read_iter+0x72c/0x934 fs/seq_file.c:195
+> >> [<ffffffff805b0224>] seq_read+0x11a/0x16e fs/seq_file.c:162
+> >> [<ffffffff805453ea>] do_loop_readv_writev fs/read_write.c:756 [inline]
+> >> [<ffffffff805453ea>] do_loop_readv_writev fs/read_write.c:743 [inline]
+> >> [<ffffffff805453ea>] do_iter_read+0x324/0x3c2 fs/read_write.c:798
+> >> [<ffffffff805455f8>] vfs_readv+0xfe/0x166 fs/read_write.c:916
+> >> [<ffffffff80549c66>] do_preadv fs/read_write.c:1008 [inline]
+> >> [<ffffffff80549c66>] __do_sys_preadv fs/read_write.c:1058 [inline]
+> >> [<ffffffff80549c66>] sys_preadv+0x182/0x1fa fs/read_write.c:1053
+> >> [<ffffffff80005ff6>] ret_from_syscall+0x0/0x2
+> >>
+> >> The buggy address belongs to the virtual mapping at
+> >>   [ff200000030a0000, ff200000030a9000) created by:
+> >>   kernel_clone+0xee/0x914 kernel/fork.c:2681
+> >>
+> >> The buggy address belongs to the physical page:
+> >> page:ff1c0000024e5f00 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x9397c
+> >> memcg:ff6000000ffd7202
+> >> flags: 0xffe000000000000(node=0|zone=0|lastcpupid=0x7ff)
+> >> raw: 0ffe000000000000 0000000000000000 0000000000000122 0000000000000000
+> >> raw: 0000000000000000 0000000000000000 00000001ffffffff ff6000000ffd7202
+> >> page dumped because: kasan: bad access detected
+> >> page_owner tracks the page as allocated
+> >> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x102dc2(GFP_HIGHUSER|__GFP_NOWARN|__GFP_ZERO), pid 7873, tgid 7873 (syz-executor.1), ts 4012100669800, free_ts 4010400733200
+> >>   __set_page_owner+0x32/0x182 mm/page_owner.c:190
+> >>   set_page_owner include/linux/page_owner.h:31 [inline]
+> >>   post_alloc_hook+0xf8/0x11a mm/page_alloc.c:2524
+> >>   prep_new_page mm/page_alloc.c:2531 [inline]
+> >>   get_page_from_freelist+0xc0e/0x1118 mm/page_alloc.c:4283
+> >>   __alloc_pages+0x1b0/0x165a mm/page_alloc.c:5549
+> >>   alloc_pages+0x132/0x25e mm/mempolicy.c:2286
+> >>   vm_area_alloc_pages mm/vmalloc.c:2989 [inline]
+> >>   __vmalloc_area_node mm/vmalloc.c:3057 [inline]
+> >>   __vmalloc_node_range+0x81c/0xdb4 mm/vmalloc.c:3227
+> >>   alloc_thread_stack_node kernel/fork.c:311 [inline]
+> >>   dup_task_struct kernel/fork.c:987 [inline]
+> >>   copy_process+0x210e/0x4068 kernel/fork.c:2097
+> >>   kernel_clone+0xee/0x914 kernel/fork.c:2681
+> >>   __do_sys_clone+0xec/0x120 kernel/fork.c:2822
+> >>   sys_clone+0x32/0x44 kernel/fork.c:2790
+> >>   ret_from_syscall+0x0/0x2
+> >> page last free stack trace:
+> >>   __reset_page_owner+0x4a/0xf8 mm/page_owner.c:148
+> >>   reset_page_owner include/linux/page_owner.h:24 [inline]
+> >>   free_pages_prepare mm/page_alloc.c:1446 [inline]
+> >>   free_pcp_prepare+0x254/0x48e mm/page_alloc.c:1496
+> >>   free_unref_page_prepare mm/page_alloc.c:3369 [inline]
+> >>   free_unref_page_list+0x11e/0x736 mm/page_alloc.c:3510
+> >>   release_pages+0x85a/0xbb2 mm/swap.c:1076
+> >>   free_pages_and_swap_cache+0x76/0x88 mm/swap_state.c:311
+> >>   tlb_batch_pages_flush+0x86/0x10c mm/mmu_gather.c:97
+> >>   tlb_flush_mmu_free mm/mmu_gather.c:292 [inline]
+> >>   tlb_flush_mmu mm/mmu_gather.c:299 [inline]
+> >>   tlb_finish_mmu+0xcc/0x280 mm/mmu_gather.c:391
+> >>   exit_mmap+0x190/0x686 mm/mmap.c:3096
+> >>   __mmput+0x98/0x290 kernel/fork.c:1207
+> >>   mmput+0x74/0x88 kernel/fork.c:1229
+> >>   exit_mm kernel/exit.c:563 [inline]
+> >>   do_exit+0x602/0x17be kernel/exit.c:854
+> >>   do_group_exit+0x8e/0x15e kernel/exit.c:1012
+> >>   __do_sys_exit_group kernel/exit.c:1023 [inline]
+> >>   __wake_up_parent+0x0/0x4a kernel/exit.c:1021
+> >>   ret_from_syscall+0x0/0x2
+> >>
+> >> Memory state around the buggy address:
+> >>   ff200000030a7880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> >>   ff200000030a7900: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 00 f2 f2
+> >>> ff200000030a7980: 00 00 00 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
+> >>                                       ^
+> >>   ff200000030a7a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> >>   ff200000030a7a80: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
+> >> ==================================================================
+> >>
+> >>
+> >> ---
+> >> This report is generated by a bot. It may contain errors.
+> >> See https://goo.gl/tpsmEJ for more information about syzbot.
+> >> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >>
+> >> syzbot will keep track of this issue. See:
+> >> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >>
+> >> If the bug is already fixed, let syzbot know by replying with:
+> >> #syz fix: exact-commit-title
+> >>
+> >> If you want to change bug's subsystems, reply with:
+> >> #syz set subsystems: new-subsystem
+> >> (See the list of subsystem names on the web dashboard)
+> >>
+> >> If the bug is a duplicate of another bug, reply with:
+> >> #syz dup: exact-subject-of-another-report
+> >>
+> >> If you want to undo deduplication, reply with:
+> >> #syz undup
+> >>
+> >> --
+> >> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> >> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> >> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000084706805fab08e27%40google.com.
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
