@@ -2,142 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A64D96F3C75
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 05:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60D806F3C87
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 06:07:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233379AbjEBDie (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 23:38:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33546 "EHLO
+        id S230031AbjEBEHY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 00:07:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232790AbjEBDib (ORCPT
+        with ESMTP id S229379AbjEBEHW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 23:38:31 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934053581;
-        Mon,  1 May 2023 20:38:30 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-63b67a26069so3803050b3a.0;
-        Mon, 01 May 2023 20:38:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682998710; x=1685590710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9jeK1WbiwcypTGmla3kWNgoIrfPhM6KWaPpZ6YT+Bk=;
-        b=XsJPAfcFHefELfP+zLqKYwE+euLdjM+gOZ9eOAFebg2yP4yAWVVVJUo8P83IgFURLf
-         9N9J6k7rvDDFBs7rHQrBkE+h8BdPRT8CmImoNyrxoIQCbTk9XgoErMDmvIGIgOScSSgw
-         ACsGCRj3OUZqa3wcWIScaAzruMtubAehdERyfwgtTbslvkuF5CaEcE/nItizOr1psEbV
-         6AtVyN0wed3KM65+K9WuJNi6GzMy0uuvgHN/sZMP4Waj/61mNYfBOS1jj/8qu+zsJLMT
-         RGCmC9yFjbCXRH7PpXmOallFPBEDb0+Gn3u/dyxGyo82YcOpg5yHSxm6bVYF7Hwxt4dR
-         Z0lw==
+        Tue, 2 May 2023 00:07:22 -0400
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA97630EF
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 21:07:19 -0700 (PDT)
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7606e3c6c8aso191894839f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 May 2023 21:07:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682998710; x=1685590710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w9jeK1WbiwcypTGmla3kWNgoIrfPhM6KWaPpZ6YT+Bk=;
-        b=OcApiRmmG8nCk1vza7NQOqc36fg1P429OhPNadLsSzNp2nFmwWEJ1PU4k6eK8oJgMx
-         9G+MH9cweTYGTaE6ntUFzs1m/KbS/MuMAR9Dwpky6ptmihDuVYTVMbG70gQwoyF0EStH
-         kLfDmgyDIHyzUH4rCrvU3lKsfPuxnGWApsmreOVGFRjUEAirDp5rhQNDjm9vgFn2ZDg4
-         eGsQpEbcEvZ2cwu+d3H7/GY0OfPvFze+0EQoQqDp90peVkodAIMopIfF6kmPQ+CSVjfD
-         D+dO/ZDtrLHnjVWSjrU1ppx2zM6MOmxiGq7VAUOgVuiuGvXKpALXjQ2g7nPKGN3tmBNQ
-         5yNw==
-X-Gm-Message-State: AC+VfDwpodrO3dhDwaP3NYWd6xozeHR2Yl8hnBUNDd24ivy20lf846J1
-        wg0PUyWeKCUBcDjZmPOLAMWnnamPAw4=
-X-Google-Smtp-Source: ACHHUZ68Q+sZJie50x8IkLzjGYZzCLAtUYbmqpoSIQ9PXxasFWP1mYSN3aOVLlxZN7rEd+blBqIflg==
-X-Received: by 2002:a05:6a00:2ea6:b0:63f:24f1:adac with SMTP id fd38-20020a056a002ea600b0063f24f1adacmr24849208pfb.25.1682998709655;
-        Mon, 01 May 2023 20:38:29 -0700 (PDT)
-Received: from dhcp-172-26-102-232.dhcp.thefacebook.com ([2620:10d:c090:400::5:c9f6])
-        by smtp.gmail.com with ESMTPSA id d16-20020a056a00199000b0063f1a27f2c9sm18778284pfl.70.2023.05.01.20.38.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 May 2023 20:38:29 -0700 (PDT)
-Date:   Mon, 1 May 2023 20:38:25 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, bpf@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joanne Koong <joannelkoong@gmail.com>,
-        Mykola Lysenko <mykolal@fb.com>, kernel-team@android.com,
-        Paul Lawrence <paullawrence@google.com>,
-        Alessio Balsini <balsini@google.com>
-Subject: Re: [RFC PATCH v3 08/37] fuse: Add fuse-bpf, a stacked fs extension
- for FUSE
-Message-ID: <20230502033825.ofcxttuquoanhe7b@dhcp-172-26-102-232.dhcp.thefacebook.com>
-References: <20230418014037.2412394-1-drosen@google.com>
- <20230418014037.2412394-9-drosen@google.com>
+        d=1e100.net; s=20221208; t=1683000439; x=1685592439;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1sun8IGOZKfcXnn6ZeN9QAEArnmcog0Uu2cpeM9kwUI=;
+        b=cZVqXn0Ou7nUqVv3RQoM8T3KUODe3aVWgcLzsoCmPFNye7sCBQkkgEz75SoWJFCSt2
+         KMK5emLiYAqiw24CesLVS1b54OhFFRqFbbxZmwnGPHGKcA9ivFbIVb+kBud4QniCJqKl
+         7XpM+qIOwlnC6uuMngn2qej4hpHoK6Jws6mtooVtXztO22+OugHhc471i7CBAcuomidc
+         zBLCO2FCuqqqS2y6KJuhZhUGfVSaGmWDXXhGz51gFoeXijQVqRd4pYXq5bxe5a0I3eNs
+         j0ElD/AOAREb3yDqsbVHXN1+2Pu5TT1qDASO6K9/eapTHMKab25P6QpgFLIKedeJGW6f
+         yOCw==
+X-Gm-Message-State: AC+VfDxvMxhz6K/oW6s1jGYSU9+gNkHrviBs7BloZmASJQ9iJw9qFijx
+        LdnO+QxW4jl5ha+oRYdQrstjM7bJcTdmw1k9iQYcCtwkCiAc
+X-Google-Smtp-Source: ACHHUZ6HteCvjq8AgQxcAHWcEz8BI0SGep+xEoEPUn42TgCm6UnDnPtPQMvVh6TaW82nUTZSDkGQJ9vcsdO4VFR616JuAkgADzru
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230418014037.2412394-9-drosen@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:b1ca:0:b0:40f:7193:87dd with SMTP id
+ u10-20020a02b1ca000000b0040f719387ddmr7128974jah.5.1683000439247; Mon, 01 May
+ 2023 21:07:19 -0700 (PDT)
+Date:   Mon, 01 May 2023 21:07:19 -0700
+In-Reply-To: <000000000000c5beb705faa6577d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000569d3405faae13db@google.com>
+Subject: Re: [syzbot] [xfs?] KASAN: slab-out-of-bounds Read in xfs_getbmap
+From:   syzbot <syzbot+c103d3808a0de5faaf80@syzkaller.appspotmail.com>
+To:     david@fromorbit.com, dchinner@redhat.com, djwong@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        yebin10@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 17, 2023 at 06:40:08PM -0700, Daniel Rosenberg wrote:
-> Fuse-bpf provides a short circuit path for Fuse implementations that act
-> as a stacked filesystem. For cases that are directly unchanged,
-> operations are passed directly to the backing filesystem. Small
-> adjustments can be handled by bpf prefilters or postfilters, with the
-> option to fall back to userspace as needed.
+syzbot has bisected this issue to:
 
-Here is my understanding of fuse-bpf design:
-- bpf progs can mostly read-only access fuse_args before and after proper vfs
-  operation on a backing path/file/inode.
-- args are unconditionally prepared for bpf prog consumption, but progs won't
-  be doing anything with them most of the time.
-- progs unfortunately cannot do any real work. they're nothing but simple filters.
-  They can give 'green light' for a fuse_FOO op to be delegated to proper vfs_FOO
-  in backing file. The logic in this patch keeps track of backing_path/file/inode.
-- in other words bpf side is "dumb", but it's telling kernel what to do with
-  real things like path/file/inode and the kernel is doing real work and calling vfs_*.
+commit 8ee81ed581ff35882b006a5205100db0b57bf070
+Author: Ye Bin <yebin10@huawei.com>
+Date:   Wed Apr 12 05:49:44 2023 +0000
 
-This design adds non-negligible overhead to fuse when CONFIG_FUSE_BPF is set.
-Comparing to trip to user space it's close to zero, but the cost of
-initialize_in/out + backing + finalize is not free.
-The patch 33 is especially odd.
-fuse has a traditional mechanism to upcall to user space with fuse_simple_request.
-The patch 33 allows bpf prog to return special return value and trigger two more
-fuse_bpf_simple_request-s to user space. Not clear why.
-It seems to me that the main assumption of the fuse bpf design is that bpf prog
-has to stay short and simple. It cannot do much other than reading and comparing
-strings with the help of dynptr.
-How about we allow bpf attach to fuse_simple_request and nothing else?
-All fuse ops call it anyway and cmd is already encoded in the args.
-Then let bpf prog read fuse_args as-is (without converting them to bpf_fuse_args)
-and avoid doing actual fuse_req to user space.
-Also allow bpf prog acquire and remember path/file/inode.
-The verifier is already smart enough to track that the prog is doing it safely
-without leaking references and what not.
-And, of course, allow bpf prog call vfs_* via kfuncs.
-In other words, instead of hard coding
- +#define bpf_fuse_backing(inode, io, out,                             \
- +                      initialize_in, initialize_out,                 \
- +                      backing, finalize, args...)                    \
-one for each fuse_ops in the kernel let bpf prog do the same but on demand.
-The biggest advantage is that this patch set instead of 95% on fuse side and 5% on bpf
-will become 5% addition to fuse code. All the logic will be handled purely by bpf.
-Right now you're limiting it to one backing_file per fuse_file.
-With bpf prog driving it the prog can keep multiple backing_files and shuffle
-access to them as prog decides.
-Instead of doing 'return BPF_FUSE_CONTINUE' the bpf progs will
-pass 'path' to kfunc bpf_vfs_open, than stash 'struct bpf_file*', etc.
-Probably will be easier to white board this idea during lsfmmbpf.
+    xfs: fix BUG_ON in xfs_getbmap()
 
-First 3 patches look fine. Thank you for resending them separately.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1235f544280000
+start commit:   58390c8ce1bd Merge tag 'iommu-updates-v6.4' of git://git.k..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1135f544280000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1635f544280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5eadbf0d3c2ece89
+dashboard link: https://syzkaller.appspot.com/bug?extid=c103d3808a0de5faaf80
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e25f2c280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14945d10280000
+
+Reported-by: syzbot+c103d3808a0de5faaf80@syzkaller.appspotmail.com
+Fixes: 8ee81ed581ff ("xfs: fix BUG_ON in xfs_getbmap()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
