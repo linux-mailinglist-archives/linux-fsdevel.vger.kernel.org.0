@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCE436F4162
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 12:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17FF36F4165
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 12:23:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233865AbjEBKXJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 06:23:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60792 "EHLO
+        id S233972AbjEBKXT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 06:23:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233864AbjEBKWH (ORCPT
+        with ESMTP id S233927AbjEBKWJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 06:22:07 -0400
+        Tue, 2 May 2023 06:22:09 -0400
 Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 328705273;
-        Tue,  2 May 2023 03:21:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30683559B;
+        Tue,  2 May 2023 03:21:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1683022893; x=1714558893;
+  t=1683022896; x=1714558896;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=lM+HCnb2fRYqmeoa2+i+xDIe68f4nLZ6E3joh0Z1hsQ=;
-  b=Io3WyacJhZ9mIryW+WdWq1nDKXWyK4V7bH0cNwu4leqcK1smtjOJ4WTP
-   fFz62xG/Ccqy0gZn5T8DkqUpReLzlgqm0uZo4RxEoiepAC/vWylqj2DgD
-   dw8mJqf0Sdy1nOGLpiy2wHVrI4GCgcJf2op0DscD/+iBF0shiKJD8SZyD
-   tHi6msOLqgTT7tj2F9OBxdGrnFyLznJaj1bBT25neiEDNsnSCKl93a8Qf
-   PZxkiL5RLqWiIY0XkavCiX1b4HiV4TZ0A1CDjwBiGyOVzZgpTkZp+VJ5B
-   inYwc+LklTxyFnn1iJP37HTVlEJeLqDWF2yulfCv+GjphnftGLWGIM1y4
-   g==;
+  bh=DzvJ6wZ3Sui4RZ9TAlD4OlMyP4gDTchzDlmODiRTaA8=;
+  b=kiE0VOEiZCMvpmsGqwZ1SOiWQ7eGRNkc4Hfc+rFAns65/r/EGEWPQCns
+   fKMEDu1gVsij48tUzQL1MaFyjh+ArIwjfOwKb7dg+3fIzJBP4q+Eni9Bh
+   qnBOXkqC446eEtaNK+wW4ZSWIu2/QAaWzqYpGtZPZTWanUFKrurTx3lsY
+   sHa82uwA8jjFnVcOpXXznwNUwNo+8YK+M8AYvPg2HHAB9bbZQDzxrqTZO
+   A5+IG4FAMdN+OqibZ0Sd5uAdwekWHzZP50nJtS6ZOjYo58HYsU8pE77Pr
+   zLQ/mjMLk5v2yxFq/WJvv2mq8as0X573bILuO27iOPFyGK29uGylGgFjB
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.99,243,1677513600"; 
-   d="scan'208";a="229597934"
+   d="scan'208";a="229597941"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 02 May 2023 18:21:33 +0800
-IronPort-SDR: k+yV9PKNBDlL5ygw4ANVGDC1OtcE77nERFyGC1kfoAt8l9eHDXHbnLBRHYeLCiV8TWoRUKELV1
- iDk3JyeQ7mtr3cfMrvM1qzPAUYoqPTyYRU13w1KGlmuzULkOBp9je3QyBRfQ7oUYt3L5j01NB9
- 3o56mW15b4hVE6UKsgbBgnHcMTRn0WKfb0KgIG766oUKO2J8bDJmph+JmankTHgK9jJ/XxjgNO
- GKG9e971/kUHzfqPvNvorVN8LuE4xvYzlgdXpmtVvN1T2MMPBhbMhuMNbKrNbXKNccwZkHOPy9
- YQw=
+  by ob1.hgst.iphmx.com with ESMTP; 02 May 2023 18:21:36 +0800
+IronPort-SDR: gBHQ6IaE0gdLFCEddNDbFZVOwnZB0OZh5d8/GQOoeaVp4NJbEPs9ArfCzb6BOxvTtIrSgZCbll
+ 8bFc3eRA0VMLUHw0+2ac/ummwGRbtIQnOxjtWStuhv5toyvVch6nK9ewA1r5y2JUFV6D4meNH2
+ J+PkrXykXk4fLwfH71+YnMCLLTKtjX/+U7DM8dHFVeVGc9sU4o+O3LxhANFAPEsEJFd6Ndy2hS
+ Q3rnrXOLWQRibwIhK+MZDX4ItqRmA4jDnkSW+tueaFh/DNNifHkH9KSYbe5l5aiaf2pFVX83n4
+ qww=
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 May 2023 02:31:20 -0700
-IronPort-SDR: TkiaafEvpeoB5UVbk6lYF+MYIKTW0x1TS2RRFIsFup5dg77OzPOoA5o4aAAos3PeRXd1TAf24l
- JlqeganwqRXCePrMzLLQEwqwOlT9adKZ9UM/6C0SJSTqBI7//XMecxlqe0zSjF0DpZR+H3rbbZ
- XfOqZl2WmlO21QDDTnBVjbgyy0RtJrgM6I1boLg5EX+OGdLvmaW0Ll6RgEcSoJodKWqqflGCKs
- Tu8A1VT6jrxtAAfmzI+1Km/Qb4+fbicaPop5zyn8h+LvanboVG81oLtfNfwngSXAbDiAnyp6YK
- ZDE=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 May 2023 02:31:23 -0700
+IronPort-SDR: uGIw254wyz5xW63y6mKPruYBxsDCJBiWJn5HyxXEKlHH3a6WQB95MJD2gL1U37MsE73pDlkDfH
+ XrAQKE0o1trWaMuwmkCjZxReOE6bQKTuwcjttjZub9Fo2NWOrlg+l+x9Li4fpCvU8smOVgdBJe
+ iX9LTVSMXZH6O+ImhKiOGTSlNSVog/dyr5RquJMBmwgwChPCFkHcE06ByPGE2sBKs5rW/DQtzK
+ T5Xxpb54D4Yuz40YIDXaPoJ+wQXNcche+tu3/6iWe/RHtJ7xSAUbzgyNSPsRVFjywOIFjhKDZt
+ 2iU=
 WDCIronportException: Internal
 Received: from myd008205.ad.shared (HELO localhost.localdomain) ([10.225.1.100])
-  by uls-op-cesaip02.wdc.com with ESMTP; 02 May 2023 03:21:28 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 02 May 2023 03:21:32 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     "axboe @ kernel . dk" <axboe@kernel.dk>
 Cc:     agruenba@redhat.com, cluster-devel@redhat.com,
@@ -58,9 +58,9 @@ Cc:     agruenba@redhat.com, cluster-devel@redhat.com,
         snitzer@kernel.org, song@kernel.org, willy@infradead.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Subject: [PATCH v5 12/20] floppy: use __bio_add_page for adding single page to bio
-Date:   Tue,  2 May 2023 12:19:26 +0200
-Message-Id: <20230502101934.24901-13-johannes.thumshirn@wdc.com>
+Subject: [PATCH v5 13/20] md: check for failure when adding pages in alloc_behind_master_bio
+Date:   Tue,  2 May 2023 12:19:27 +0200
+Message-Id: <20230502101934.24901-14-johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230502101934.24901-1-johannes.thumshirn@wdc.com>
 References: <20230502101934.24901-1-johannes.thumshirn@wdc.com>
@@ -76,33 +76,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The floppy code uses bio_add_page() to add a page to a newly created bio.
-bio_add_page() can fail, but the return value is never checked.
+alloc_behind_master_bio() can possibly add multiple pages to a bio, but it
+is not checking for the return value of bio_add_page() if adding really
+succeeded.
 
-Use __bio_add_page() as adding a single page to a newly created bio is
-guaranteed to succeed.
-
-This brings us a step closer to marking bio_add_page() as __must_check.
+Check if the page adding succeeded and if not bail out.
 
 Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- drivers/block/floppy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid1.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index cec2c20f5e59..28ec6b442e9c 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -4147,7 +4147,7 @@ static int __floppy_read_block_0(struct block_device *bdev, int drive)
- 	cbdata.drive = drive;
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 68a9e2d9985b..8283ef177f6c 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1147,7 +1147,10 @@ static void alloc_behind_master_bio(struct r1bio *r1_bio,
+ 		if (unlikely(!page))
+ 			goto free_pages;
  
- 	bio_init(&bio, bdev, &bio_vec, 1, REQ_OP_READ);
--	bio_add_page(&bio, page, block_size(bdev), 0);
-+	__bio_add_page(&bio, page, block_size(bdev), 0);
+-		bio_add_page(behind_bio, page, len, 0);
++		if (!bio_add_page(behind_bio, page, len, 0)) {
++			free_page(page);
++			goto free_pages;
++		}
  
- 	bio.bi_iter.bi_sector = 0;
- 	bio.bi_flags |= (1 << BIO_QUIET);
+ 		size -= len;
+ 		i++;
 -- 
 2.40.0
 
