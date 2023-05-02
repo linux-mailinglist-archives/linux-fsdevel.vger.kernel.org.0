@@ -2,83 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D41D26F3C50
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 05:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 242CD6F3C58
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 05:23:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233286AbjEBDSM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 May 2023 23:18:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57372 "EHLO
+        id S233333AbjEBDXR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 May 2023 23:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233202AbjEBDSH (ORCPT
+        with ESMTP id S230202AbjEBDXP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 May 2023 23:18:07 -0400
-X-Greylist: delayed 11209 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 01 May 2023 20:18:04 PDT
-Received: from out-5.mta1.migadu.com (out-5.mta1.migadu.com [IPv6:2001:41d0:203:375::5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ADC73A93
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 May 2023 20:18:04 -0700 (PDT)
-Date:   Mon, 1 May 2023 23:17:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1682997481;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NNVXUMOZeoGpfLU/g3IFEb1hzaUHRqGWiLOTQQBIzYs=;
-        b=L9EjkbdltRch9MgagDXpSmI/SQ+kmTNwjzD2kEN8waOF/RCt31vTo+jIgPhW0KLguu62G7
-        jZKDOwsdNq/VcE+v4jYF6hx3mSb878eUweleN/RRxaVLz4V86Oi14XqlhSq7SRWchtaboC
-        hzokkApB+A0wqzQja9W/cxeTQjw0qp4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, willy@infradead.org,
-        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Noralf =?utf-8?B?VHLDr8K/wr1ubmVz?= <noralf@tronnes.org>
-Subject: Re: [PATCH 01/40] lib/string_helpers: Drop space in
- string_get_size's output
-Message-ID: <ZFCA2FF+9MI8LI5i@moria.home.lan>
-References: <20230501165450.15352-1-surenb@google.com>
- <20230501165450.15352-2-surenb@google.com>
- <ouuidemyregstrijempvhv357ggp4tgnv6cijhasnungsovokm@jkgvyuyw2fti>
- <ZFAUj+Q+hP7cWs4w@moria.home.lan>
- <b6b472b65b76e95bb4c7fc7eac1ee296fdbb64fd.camel@HansenPartnership.com>
+        Mon, 1 May 2023 23:23:15 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 656DA30FB;
+        Mon,  1 May 2023 20:23:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=nXmf0Oq3hf/xcZYM/3kRmIN8D01IMk38tYjoW66T3NY=; b=GzRXVt0QN1kSn5nmjZq6AFgAAJ
+        Pui33jCvlrbmp7hG351ObI6AbFlVgohdWAIeNp7x7F4CTECjTisr78jIPJGGLx6nUJfg4wbde/3eh
+        kQET8VP233fNOd5CZMpq/WDxzrH0Y/CErIvzC5gQCflnseANAiBWyDI1YLtycN7Qdlb68o13+ionH
+        hfw1GqRsSjt84fb7crwkNpLcAoIREVB/GSIWISdvddcQYptG2xHdjCr0m+YEBC8bG/NEkykmXlKuG
+        yIVMNL5kULJoFDRQ6g/xohHCQG5HkjZRFhQbR6VT6xJ/hUUQL/0IK9xkkCWdWorsEeRGq+foXdeTN
+        aSHi96ZQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ptgb2-007wdp-Md; Tue, 02 May 2023 03:22:32 +0000
+Date:   Tue, 2 May 2023 04:22:32 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@suse.com,
+        josef@toxicpanda.com, jack@suse.cz, ldufour@linux.ibm.com,
+        laurent.dufour@fr.ibm.com, michel@lespinasse.org,
+        liam.howlett@oracle.com, jglisse@google.com, vbabka@suse.cz,
+        minchan@google.com, dave@stgolabs.net, punit.agrawal@bytedance.com,
+        lstoakes@gmail.com, hdanton@sina.com, apopple@nvidia.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 1/3] mm: handle swap page faults under VMA lock if page
+ is uncontended
+Message-ID: <ZFCB+G9KSNE+J9cZ@casper.infradead.org>
+References: <20230501175025.36233-1-surenb@google.com>
+ <ZFBvOh8r5WbTVyA8@casper.infradead.org>
+ <CAJuCfpHfAFx9rjv0gHK77LbP-8gd-kFnWw=aqfQTP6pH=zvMNg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b6b472b65b76e95bb4c7fc7eac1ee296fdbb64fd.camel@HansenPartnership.com>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpHfAFx9rjv0gHK77LbP-8gd-kFnWw=aqfQTP6pH=zvMNg@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,33 +59,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 01, 2023 at 10:22:18PM -0400, James Bottomley wrote:
-> It is not used just for debug.  It's used all over the kernel for
-> printing out device sizes.  The output mostly goes to the kernel print
-> buffer, so it's anyone's guess as to what, if any, tools are parsing
-> it, but the concern about breaking log parsers seems to be a valid one.
-
-Ok, there is sd_print_capacity() - but who in their right mind would be
-trying to scrape device sizes, in human readable units, from log
-messages when it's available in sysfs/procfs (actually, is it in sysfs?
-if not, that's an oversight) in more reasonable units?
-
-Correct me if I'm wrong, but I've yet to hear about kernel log messages
-being consider a stable interface, and this seems a bit out there.
-
-But, you did write the code :)
-
-> > If someone raises a specific objection we'll do something different,
-> > otherwise I think standardizing on what userspace tooling already
-> > parses is a good idea.
+On Mon, May 01, 2023 at 07:30:13PM -0700, Suren Baghdasaryan wrote:
+> On Mon, May 1, 2023 at 7:02 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Mon, May 01, 2023 at 10:50:23AM -0700, Suren Baghdasaryan wrote:
+> > > +++ b/mm/memory.c
+> > > @@ -3711,11 +3711,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> > >       if (!pte_unmap_same(vmf))
+> > >               goto out;
+> > >
+> > > -     if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+> > > -             ret = VM_FAULT_RETRY;
+> > > -             goto out;
+> > > -     }
+> > > -
+> > >       entry = pte_to_swp_entry(vmf->orig_pte);
+> > >       if (unlikely(non_swap_entry(entry))) {
+> > >               if (is_migration_entry(entry)) {
+> >
+> > You're missing the necessary fallback in the (!folio) case.
+> > swap_readpage() is synchronous and will sleep.
 > 
-> If you want to omit the space, why not simply add your own variant?  A
-> string_get_size_nospace() which would use most of the body of this one
-> as a helper function but give its own snprintf format string at the
-> end.  It's only a couple of lines longer as a patch and has the bonus
-> that it definitely wouldn't break anything by altering an existing
-> output.
+> True, but is it unsafe to do that under VMA lock and has to be done
+> under mmap_lock?
 
-I'm happy to do that - I just wanted to post this version first to see
-if we can avoid the fragmentation and do a bit of standardizing with
-how everything else seems to do that.
+... you were the one arguing that we didn't want to wait for I/O with
+the VMA lock held?
