@@ -2,125 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C78906F46EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 17:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF486F46F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 17:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234401AbjEBPUM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 11:20:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37812 "EHLO
+        id S234560AbjEBPV2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 11:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234127AbjEBPUL (ORCPT
+        with ESMTP id S234556AbjEBPVP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 11:20:11 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58D912114;
-        Tue,  2 May 2023 08:20:04 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id af79cd13be357-74e3899037cso187389385a.2;
-        Tue, 02 May 2023 08:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683040803; x=1685632803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2UFtU6oUaOr0vAs1hqgYmpK0GvH9Lqd4XIp3l76+ytw=;
-        b=fQDTcAPBcFMm48S9mQhBubJHQt6Rf9v6Z4dCuVwj56NHh0dP3ICDHdXuGTZQ7fhY6f
-         NVwsf2cgqzJ2oTH5E3+K89qprKrCbOGTByhEvyoyI4jzL38CLohj4Pemx6+zekp7fjIC
-         C0wfN5ZD3wmwhLkep7s0ZqbRXr8rVSrCyB0q6Z4CQD4ucuL/biAEe5lz0MuYDAeeY6uB
-         gtH3nfcpQt9FqSzoPBxOU/XU4QDMDDdYIjdcF09D6jE8LNvs6UBNJcq1K4MKCbG+pFI5
-         zN03kdFjS2HNT9cI3ETBPM+TTHt6uAO2dPGj9O13t7gNwcK/SiD5lyjyY8em9DO5HFop
-         7wkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683040803; x=1685632803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2UFtU6oUaOr0vAs1hqgYmpK0GvH9Lqd4XIp3l76+ytw=;
-        b=cn6TO0mZsjLEH7tRgcj+3OQGGY9LeOLGzK3NNWay1fymCvq3XCf9ZD8yBjjz+Qu+eA
-         tQq/+uAfVQExLBOp1JPOeHKhm9lgH/EUh14TaaSlw+4RKTXYlR5IUIaD48PAcx90c+bd
-         h5jT+B8v1xyGAghqhDfWUlfAR7XvTlUmHWH7k9DFbOTGBq9SZfJOt98WlIp44y5NXs7q
-         uJAgGL2ZnO3cU7x6szMXKssyZKEfP+u9UlsowkSZf/U/+c1QUZCGVBueJdmEM2SJ0DqQ
-         5cTkFi2kgKG2JXPE8hSD8Ts40tG4AjETgGUL8YHjP1ZMz6PSm6T2f3Ae7/CVZj27LfSs
-         BePg==
-X-Gm-Message-State: AC+VfDyGm0Wp0wHaHbShejfq35RiPFhZlXK8GepEDJVwJJvxt2ajAz0S
-        b72qOisAJKJT3ymWB1YV3y1xzOWGYmVawsuT22M=
-X-Google-Smtp-Source: ACHHUZ67Igwm6oW+sm04elsLKOyKN7r+O3KyU1vf/G+3Yx3wp2o4Cnb08XQGYvjqZI+LStbSVoSMitBc6Z9kx2rMSo8=
-X-Received: by 2002:a05:6214:124a:b0:5f1:6892:7449 with SMTP id
- r10-20020a056214124a00b005f168927449mr5506301qvv.28.1683040803341; Tue, 02
- May 2023 08:20:03 -0700 (PDT)
+        Tue, 2 May 2023 11:21:15 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD9A930FA;
+        Tue,  2 May 2023 08:21:13 -0700 (PDT)
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 342F6tap025185;
+        Tue, 2 May 2023 15:20:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=Hj/s3lR6nyUy7ypNUNRgynKQ3Lb4T+V5ldc2OLzY79g=;
+ b=n0wSkVDp2ncJdEUX4yvqIhZ3wk3W9ANXK1sSt0SqsFg5rur8tzwQFyagFz5f5fW+Wo7S
+ E96G1QcuZ2/fBCiG44qbmvNBD3WCZwa2dJDoNdunzRt2CmFItiEFDmTzr3OIK5FDxojp
+ 9nuFk1Ta/Tjec50WIQaII8yHRXvvxYXHLVQaRyTW5izOToLr/fIR4JE10aq3wm3hg6Sn
+ qrA490r03JbeDtArVhHiEEBG+TtpIjKkwURBo4zC4K497oaPBuAMQT4+WMd6N1wvbdgM
+ Q3rBjMRZLgxK+SehqplsYG+31Zwe7h6D0da4j/vIHI4DATOYuLQAlwmx2orw68HqV4rr Jg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb2s3dfc2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 15:20:34 +0000
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 342F7LOY027877;
+        Tue, 2 May 2023 15:20:33 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb2s3dfar-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 15:20:33 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 342DOa5S005193;
+        Tue, 2 May 2023 15:20:31 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([9.208.130.97])
+        by ppma03dal.us.ibm.com (PPS) with ESMTPS id 3q8tv83wsv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 15:20:31 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 342FKSsB31195544
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 2 May 2023 15:20:28 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DB10D58062;
+        Tue,  2 May 2023 15:20:27 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4C6A15803F;
+        Tue,  2 May 2023 15:20:23 +0000 (GMT)
+Received: from [9.60.89.243] (unknown [9.60.89.243])
+        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  2 May 2023 15:20:23 +0000 (GMT)
+Message-ID: <e59f14d0-4fbf-b8e4-bdf0-19eac3db540f@linux.ibm.com>
+Date:   Tue, 2 May 2023 11:20:22 -0400
 MIME-Version: 1.0
-References: <20230501165450.15352-1-surenb@google.com> <20230501165450.15352-2-surenb@google.com>
- <ouuidemyregstrijempvhv357ggp4tgnv6cijhasnungsovokm@jkgvyuyw2fti>
- <ZFAUj+Q+hP7cWs4w@moria.home.lan> <b6b472b65b76e95bb4c7fc7eac1ee296fdbb64fd.camel@HansenPartnership.com>
- <ZFCA2FF+9MI8LI5i@moria.home.lan> <CAHp75VdK2bgU8P+-np7ScVWTEpLrz+muG-R15SXm=ETXnjaiZg@mail.gmail.com>
- <ZFCsAZFMhPWIQIpk@moria.home.lan>
-In-Reply-To: <ZFCsAZFMhPWIQIpk@moria.home.lan>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 2 May 2023 18:19:27 +0300
-Message-ID: <CAHp75VdvRshCthpFOjtmajVgCS_8YoJBGbLVukPwU+t79Jgmww@mail.gmail.com>
-Subject: Re: [PATCH 01/40] lib/string_helpers: Drop space in string_get_size's output
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
-        hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
-        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
-        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-        paulmck@kernel.org, pasha.tatashin@soleen.com,
-        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        =?UTF-8?B?Tm9yYWxmIFRyw6/Cv8K9bm5lcw==?= <noralf@tronnes.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v6 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing to
+ file-backed mappings
+Content-Language: en-US
+To:     Lorenzo Stoakes <lstoakes@gmail.com>,
+        David Hildenbrand <david@redhat.com>
+Cc:     Jason Gunthorpe <jgg@nvidia.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Peter Xu <peterx@redhat.com>
+References: <a6bb0334-9aba-9fd8-6a9a-9d4a931b6da2@linux.ibm.com>
+ <ZFEL20GQdomXGxko@nvidia.com>
+ <c4f790fb-b18a-341a-6965-455163ec06d1@redhat.com>
+ <ZFER5ROgCUyywvfe@nvidia.com>
+ <ce3aa7b9-723c-6ad3-3f03-3f1736e1c253@redhat.com>
+ <ff99f2d8-804d-924f-3c60-b342ffc2173c@linux.ibm.com>
+ <ad60d5d2-cfdf-df9f-aef1-7a0d3facbece@redhat.com>
+ <ZFEVQmFGL3GxZMaf@nvidia.com>
+ <1d4c9258-9423-7411-e722-8f6865b18886@linux.ibm.com>
+ <1f3231c0-34b2-1e78-0bf0-f32d5b67811d@redhat.com>
+ <25b7aa40-fad0-4886-90b2-c5d68d75d28b@lucifer.local>
+From:   Matthew Rosato <mjrosato@linux.ibm.com>
+In-Reply-To: <25b7aa40-fad0-4886-90b2-c5d68d75d28b@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: rfLAjTTulw13fKXOtGjGnm_aAOkuBqYu
+X-Proofpoint-GUID: oVBVbBc-uzNloCzKkffN5Y7ublV-eC2P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-02_09,2023-04-27_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 suspectscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=611 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2303200000 definitions=main-2305020128
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 2, 2023 at 9:22=E2=80=AFAM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
-> On Tue, May 02, 2023 at 08:33:57AM +0300, Andy Shevchenko wrote:
-> > Actually instead of producing zillions of variants, do a %p extension
-> > to the printf() and that's it. We have, for example, %pt with T and
-> > with space to follow users that want one or the other variant. Same
-> > can be done with string_get_size().
->
-> God no.
+On 5/2/23 11:19 AM, Lorenzo Stoakes wrote:
+> On Tue, May 02, 2023 at 05:09:06PM +0200, David Hildenbrand wrote:
+>> On 02.05.23 15:56, Matthew Rosato wrote:
+>>> On 5/2/23 9:50 AM, Jason Gunthorpe wrote:
+>>>> On Tue, May 02, 2023 at 03:47:43PM +0200, David Hildenbrand wrote:
+>>>>>> Eventually we want to implement a mechanism where we can dynamically pin in response to RPCIT.
+>>>>>
+>>>>> Okay, so IIRC we'll fail starting the domain early, that's good. And if we
+>>>>> pin all guest memory (instead of small pieces dynamically), there is little
+>>>>> existing use for file-backed RAM in such zPCI configurations (because memory
+>>>>> cannot be reclaimed either way if it's all pinned), so likely there are no
+>>>>> real existing users.
+>>>>
+>>>> Right, this is VFIO, the physical HW can't tolerate not having pinned
+>>>> memory, so something somewhere is always pinning it.
+>>>
+>>> I might have mis-explained above.
+>>>
+>>> With iommufd nesting, we will pin everything upfront as a starting point.
+>>>
+>>> The current usage of vfio type1 iommu for s390 does not pin the entirety of guest memory upfront, it happens as guest RPCITs occur / type1 mappings are made.
+>>
+>> ... so, after the domain started successfully on the libvirt/QEMU side ? :/
+>>
+>> It would be great to confirm that. There might be a BUG in patch #2 (see my
+>> reply to patch #2) that might not allow you to reproduce it right now.
+>>
+> 
+> Yes apologies - thank you VERY much for doing this Matthew, but apologies, I
+> made rather a clanger in patch 2 which would mean fast patch degrading to slow
+> path would pass even for file-backed.
+> 
+> Will respin a v7 + cc you on that, if you could be so kind as to test that?
+> 
 
-Any elaboration what's wrong with that?
+Sure, will do!
 
-God no for zillion APIs for almost the same. Today you want space,
-tomorrow some other (special) delimiter.
-
---=20
-With Best Regards,
-Andy Shevchenko
