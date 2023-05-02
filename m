@@ -2,297 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C1CA6F4B86
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 22:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F77C6F4BA8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 22:54:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbjEBUmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 16:42:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34174 "EHLO
+        id S229830AbjEBUyr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 16:54:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229822AbjEBUmF (ORCPT
+        with ESMTP id S229665AbjEBUyq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 16:42:05 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02E191BDF
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 13:42:02 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-b9a6f17f2b6so27754276.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 13:42:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683060121; x=1685652121;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jeq6+nx3g2wrW78uPfEerLbf18qIDqHe8kQ7v5/JI60=;
-        b=USgXLop66yK89JWxFP/fxzpFn6QCWIJ873ogcbMDaInHtoy86T0N+nDV3beDNUkq/4
-         7c06Jya3MtjCRVJM+uNiMRs8RsEjcuOOGWIJrQZZueHpb8sE4DfQf9CM/q0ZS2jcLOLw
-         Zxz0Iz+Ftxu+bdb4q4rBZ/RbfwNX8QwPVZ0QhmH+LWE19e3eVerx9UKRt0gEIZVUeoQU
-         bQ9rPDFBUQenVP8rXbU2Tw3/ndUSRGc8QMnj9BCeiemAFsvcZKGpt9grfpkHrYcao6rB
-         iJHXwyF5Ilbx83HWZbdXNDDSJARcklUlVWFftnhagZVtN2T4a20Nb9A365j2QrPSNgF4
-         B25Q==
+        Tue, 2 May 2023 16:54:46 -0400
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3865F19BE
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 13:54:44 -0700 (PDT)
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-33154d104a6so254515ab.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 13:54:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683060121; x=1685652121;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jeq6+nx3g2wrW78uPfEerLbf18qIDqHe8kQ7v5/JI60=;
-        b=I7j2qzrpWB+Dtdv13eWvnDgK9phQR7O0+pz+1+ZJJ/Bj5c8wzj8w6HMfH9NYnSAZqD
-         +HE62FByOrSkHyc5SozwP1T2vJV+uqjT1bhWho+y0yRu8V/1Stwk98CEjb1/s5VE8YFN
-         KYp6B6l3nLjcCRRxGU8GnO51Jpyxp7k7N3hOabgRzrJ+ytbl3i7hD0b70q7hvxb6fNoO
-         XARPZOh3za9aX0Bh+L6V65EOE8Lo4Lp4Zxyku/qlgV22Lvpjx5U+Mo51aeb367fs8mk1
-         MxAQk7Ym1JvbruTqxAi1q6WaQdhs5zEh7L4jCSF3n4MeGdKCzMGHeyCHA2GB5Ouw3lBu
-         vx5g==
-X-Gm-Message-State: AC+VfDxX4jaUaoDYtyZu5jbQ+OyHVpFMPSB6FNvBQTrESlkx7HCmHSpV
-        GZcB3VaxYVsqCRwHDN1KHEyS9TfIWAznc4YOWsA0PA==
-X-Google-Smtp-Source: ACHHUZ5z82SFE/PhvG4ajlwJ05a6eit0o1Z0+SeptnZWzVgvcEwXXhJXalbNVj9VFFQTqZovBYcxLn2M5RryyqnhyFQ=
-X-Received: by 2002:a25:e78d:0:b0:b9a:6a19:8153 with SMTP id
- e135-20020a25e78d000000b00b9a6a198153mr17807199ybh.5.1683060120872; Tue, 02
- May 2023 13:42:00 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683060883; x=1685652883;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jkYVUFuKh9nwdXQ926QybofeOdFAJ5WNJPZtBiCzT74=;
+        b=FoIXMrPHwvHb1fXAaySzHiljx+UeA8A7N8Wz8DSokXbqT/sMyprRrcpX9wC0oHeRE/
+         tkvAaM9wGt5xq9z3KyJapFYbQOiZ44ibeixuiOYgtDd6nbSDYu9ifkZ74mUfzGn2qtHX
+         8pq9GHu1V2qrnYZuglgbgNmf17/KZwun64+LOSUKwU30dUxqv6F1hdk/YO1oW5ixJocI
+         sBHr+S5ilSdQcjQD44mJy0i6G9TaKDTSs461aabrfoFyq7PWQmJlcfzWgFuJKhYfMPzP
+         Z4Ie/xZH0rEQ68/prDoQVJLhkhDuIJErv4a7tnWwrBCUMUOj5L2QSRJyyG5xLIXdDrTQ
+         Zkug==
+X-Gm-Message-State: AC+VfDyP62KnPTG/DUDxySf/IHsul0yBzePQHiDJFcUEqgko/NlPmjSB
+        gP1uWbO/BL40wIKC7Yii/gt/L6zjFtEp2gl1Vqbym54f5Fz8
+X-Google-Smtp-Source: ACHHUZ7gMKcA/e1mhBJO5h64lGGqWVK5gWi5dkamH+zB3ROaDPhMjAFZGXN9VPQCal4It55twEyYZW0nCWlsBSMQCqKBnbC3hVZv
 MIME-Version: 1.0
-References: <20230501165450.15352-1-surenb@google.com> <20230501165450.15352-20-surenb@google.com>
- <20230502175052.43814202@meshulam.tesarici.cz> <CAJuCfpGSLK50eKQ2-CE41qz1oDPM6kC8RmqF=usZKwFXgTBe8g@mail.gmail.com>
- <20230502220909.3f55ae41@meshulam.tesarici.cz> <CAJuCfpGGB204PKuqjjkPBn_XHL-xLPkn0bF6xc12Bfj8=Qzcrw@mail.gmail.com>
- <20230502223915.6b38f8c4@meshulam.tesarici.cz>
-In-Reply-To: <20230502223915.6b38f8c4@meshulam.tesarici.cz>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 2 May 2023 13:41:49 -0700
-Message-ID: <CAJuCfpE2wBnekxOTNpCaHRwnMznPgBkSUJNHk5y1-togkAtkHw@mail.gmail.com>
-Subject: Re: [PATCH 19/40] change alloc_pages name in dma_map_ops to avoid
- name conflicts
-To:     =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>
-Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
-        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
-        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-        paulmck@kernel.org, pasha.tatashin@soleen.com,
-        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+X-Received: by 2002:a92:d08a:0:b0:329:5faf:cbc0 with SMTP id
+ h10-20020a92d08a000000b003295fafcbc0mr10098702ilh.2.1683060883542; Tue, 02
+ May 2023 13:54:43 -0700 (PDT)
+Date:   Tue, 02 May 2023 13:54:43 -0700
+In-Reply-To: <00000000000090900c05fa656913@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001958d505fabc269f@google.com>
+Subject: Re: [syzbot] [mm?] [udf?] KASAN: null-ptr-deref Read in filemap_fault
+From:   syzbot <syzbot+48011b86c8ea329af1b9@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, jack@suse.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 2, 2023 at 1:39=E2=80=AFPM Petr Tesa=C5=99=C3=ADk <petr@tesaric=
-i.cz> wrote:
->
-> On Tue, 2 May 2023 13:24:37 -0700
-> Suren Baghdasaryan <surenb@google.com> wrote:
->
-> > On Tue, May 2, 2023 at 1:09=E2=80=AFPM Petr Tesa=C5=99=C3=ADk <petr@tes=
-arici.cz> wrote:
-> > >
-> > > On Tue, 2 May 2023 11:38:49 -0700
-> > > Suren Baghdasaryan <surenb@google.com> wrote:
-> > >
-> > > > On Tue, May 2, 2023 at 8:50=E2=80=AFAM Petr Tesa=C5=99=C3=ADk <petr=
-@tesarici.cz> wrote:
-> > > > >
-> > > > > On Mon,  1 May 2023 09:54:29 -0700
-> > > > > Suren Baghdasaryan <surenb@google.com> wrote:
-> > > > >
-> > > > > > After redefining alloc_pages, all uses of that name are being r=
-eplaced.
-> > > > > > Change the conflicting names to prevent preprocessor from repla=
-cing them
-> > > > > > when it's not intended.
-> > > > > >
-> > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > > > ---
-> > > > > >  arch/x86/kernel/amd_gart_64.c | 2 +-
-> > > > > >  drivers/iommu/dma-iommu.c     | 2 +-
-> > > > > >  drivers/xen/grant-dma-ops.c   | 2 +-
-> > > > > >  drivers/xen/swiotlb-xen.c     | 2 +-
-> > > > > >  include/linux/dma-map-ops.h   | 2 +-
-> > > > > >  kernel/dma/mapping.c          | 4 ++--
-> > > > > >  6 files changed, 7 insertions(+), 7 deletions(-)
-> > > > > >
-> > > > > > diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/am=
-d_gart_64.c
-> > > > > > index 56a917df410d..842a0ec5eaa9 100644
-> > > > > > --- a/arch/x86/kernel/amd_gart_64.c
-> > > > > > +++ b/arch/x86/kernel/amd_gart_64.c
-> > > > > > @@ -676,7 +676,7 @@ static const struct dma_map_ops gart_dma_op=
-s =3D {
-> > > > > >       .get_sgtable                    =3D dma_common_get_sgtabl=
-e,
-> > > > > >       .dma_supported                  =3D dma_direct_supported,
-> > > > > >       .get_required_mask              =3D dma_direct_get_requir=
-ed_mask,
-> > > > > > -     .alloc_pages                    =3D dma_direct_alloc_page=
-s,
-> > > > > > +     .alloc_pages_op                 =3D dma_direct_alloc_page=
-s,
-> > > > > >       .free_pages                     =3D dma_direct_free_pages=
-,
-> > > > > >  };
-> > > > > >
-> > > > > > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iomm=
-u.c
-> > > > > > index 7a9f0b0bddbd..76a9d5ca4eee 100644
-> > > > > > --- a/drivers/iommu/dma-iommu.c
-> > > > > > +++ b/drivers/iommu/dma-iommu.c
-> > > > > > @@ -1556,7 +1556,7 @@ static const struct dma_map_ops iommu_dma=
-_ops =3D {
-> > > > > >       .flags                  =3D DMA_F_PCI_P2PDMA_SUPPORTED,
-> > > > > >       .alloc                  =3D iommu_dma_alloc,
-> > > > > >       .free                   =3D iommu_dma_free,
-> > > > > > -     .alloc_pages            =3D dma_common_alloc_pages,
-> > > > > > +     .alloc_pages_op         =3D dma_common_alloc_pages,
-> > > > > >       .free_pages             =3D dma_common_free_pages,
-> > > > > >       .alloc_noncontiguous    =3D iommu_dma_alloc_noncontiguous=
-,
-> > > > > >       .free_noncontiguous     =3D iommu_dma_free_noncontiguous,
-> > > > > > diff --git a/drivers/xen/grant-dma-ops.c b/drivers/xen/grant-dm=
-a-ops.c
-> > > > > > index 9784a77fa3c9..6c7d984f164d 100644
-> > > > > > --- a/drivers/xen/grant-dma-ops.c
-> > > > > > +++ b/drivers/xen/grant-dma-ops.c
-> > > > > > @@ -282,7 +282,7 @@ static int xen_grant_dma_supported(struct d=
-evice *dev, u64 mask)
-> > > > > >  static const struct dma_map_ops xen_grant_dma_ops =3D {
-> > > > > >       .alloc =3D xen_grant_dma_alloc,
-> > > > > >       .free =3D xen_grant_dma_free,
-> > > > > > -     .alloc_pages =3D xen_grant_dma_alloc_pages,
-> > > > > > +     .alloc_pages_op =3D xen_grant_dma_alloc_pages,
-> > > > > >       .free_pages =3D xen_grant_dma_free_pages,
-> > > > > >       .mmap =3D dma_common_mmap,
-> > > > > >       .get_sgtable =3D dma_common_get_sgtable,
-> > > > > > diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xe=
-n.c
-> > > > > > index 67aa74d20162..5ab2616153f0 100644
-> > > > > > --- a/drivers/xen/swiotlb-xen.c
-> > > > > > +++ b/drivers/xen/swiotlb-xen.c
-> > > > > > @@ -403,6 +403,6 @@ const struct dma_map_ops xen_swiotlb_dma_op=
-s =3D {
-> > > > > >       .dma_supported =3D xen_swiotlb_dma_supported,
-> > > > > >       .mmap =3D dma_common_mmap,
-> > > > > >       .get_sgtable =3D dma_common_get_sgtable,
-> > > > > > -     .alloc_pages =3D dma_common_alloc_pages,
-> > > > > > +     .alloc_pages_op =3D dma_common_alloc_pages,
-> > > > > >       .free_pages =3D dma_common_free_pages,
-> > > > > >  };
-> > > > > > diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-ma=
-p-ops.h
-> > > > > > index 31f114f486c4..d741940dcb3b 100644
-> > > > > > --- a/include/linux/dma-map-ops.h
-> > > > > > +++ b/include/linux/dma-map-ops.h
-> > > > > > @@ -27,7 +27,7 @@ struct dma_map_ops {
-> > > > > >                       unsigned long attrs);
-> > > > > >       void (*free)(struct device *dev, size_t size, void *vaddr=
-,
-> > > > > >                       dma_addr_t dma_handle, unsigned long attr=
-s);
-> > > > > > -     struct page *(*alloc_pages)(struct device *dev, size_t si=
-ze,
-> > > > > > +     struct page *(*alloc_pages_op)(struct device *dev, size_t=
- size,
-> > > > > >                       dma_addr_t *dma_handle, enum dma_data_dir=
-ection dir,
-> > > > > >                       gfp_t gfp);
-> > > > > >       void (*free_pages)(struct device *dev, size_t size, struc=
-t page *vaddr,
-> > > > > > diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> > > > > > index 9a4db5cce600..fc42930af14b 100644
-> > > > > > --- a/kernel/dma/mapping.c
-> > > > > > +++ b/kernel/dma/mapping.c
-> > > > > > @@ -570,9 +570,9 @@ static struct page *__dma_alloc_pages(struc=
-t device *dev, size_t size,
-> > > > > >       size =3D PAGE_ALIGN(size);
-> > > > > >       if (dma_alloc_direct(dev, ops))
-> > > > > >               return dma_direct_alloc_pages(dev, size, dma_hand=
-le, dir, gfp);
-> > > > > > -     if (!ops->alloc_pages)
-> > > > > > +     if (!ops->alloc_pages_op)
-> > > > > >               return NULL;
-> > > > > > -     return ops->alloc_pages(dev, size, dma_handle, dir, gfp);
-> > > > > > +     return ops->alloc_pages_op(dev, size, dma_handle, dir, gf=
-p);
-> > > > > >  }
-> > > > > >
-> > > > > >  struct page *dma_alloc_pages(struct device *dev, size_t size,
-> > > > >
-> > > > > I'm not impressed. This patch increases churn for code which does=
- not
-> > > > > (directly) benefit from the change, and that for limitations in y=
-our
-> > > > > tooling?
-> > > > >
-> > > > > Why not just rename the conflicting uses in your local tree, but =
-then
-> > > > > remove the rename from the final patch series?
-> > > >
-> > > > With alloc_pages function becoming a macro, the preprocessor ends u=
-p
-> > > > replacing all instances of that name, even when it's not used as a
-> > > > function. That what necessitates this change. If there is a way to
-> > > > work around this issue without changing all alloc_pages() calls in =
-the
-> > > > source base I would love to learn it but I'm not quite clear about
-> > > > your suggestion and if it solves the issue. Could you please provid=
-e
-> > > > more details?
-> > >
-> > > Ah, right, I admit I did not quite understand why this change is
-> > > needed. However, this is exactly what I don't like about preprocessor
-> > > macros. Each macro effectively adds a new keyword to the language.
-> > >
-> > > I believe everything can be solved with inline functions. What exactl=
-y
-> > > does not work if you rename alloc_pages() to e.g. alloc_pages_caller(=
-)
-> > > and then add an alloc_pages() inline function which calls
-> > > alloc_pages_caller() with _RET_IP_ as a parameter?
-> >
-> > I don't think that would work because we need to inject the codetag at
-> > the file/line of the actual allocation call. If we pass _REP_IT_ then
-> > we would have to lookup the codetag associated with that _RET_IP_
-> > which results in additional runtime overhead.
->
-> OK. If the reference to source code itself must be recorded in the
-> kernel, and not resolved later (either by the debugfs read fops, or by
-> a tool which reads the file), then this information can only be
-> obtained with a preprocessor macro.
->
-> I was hoping that a debugging feature could be less intrusive. OTOH
-> it's not my call to balance the tradeoffs.
->
-> Thank you for your patient explanations.
+syzbot has found a reproducer for the following issue on:
 
-Thanks for reviewing and the suggestions! I'll address the actionable
-ones in the next version.
-Suren.
+HEAD commit:    865fdb08197e Merge tag 'input-for-v6.4-rc0' of git://git.k..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=133efa8c280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d1c8518c09009bad
+dashboard link: https://syzkaller.appspot.com/bug?extid=48011b86c8ea329af1b9
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137594c4280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10cfd602280000
 
->
-> Petr T
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c667de87f318/disk-865fdb08.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f5d4a94eb2fa/vmlinux-865fdb08.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2b0950e1688b/bzImage-865fdb08.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/21df08f169b8/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+48011b86c8ea329af1b9@syzkaller.appspotmail.com
+
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb7ca8738 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f56c0f9bd69
+RDX: 000000000208e24b RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 00007ffdb7ca8740 R08: 0000000000000001 R09: 00007f56c0f50032
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000007
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
+BUG: KASAN: null-ptr-deref in page_ref_count include/linux/page_ref.h:67 [inline]
+BUG: KASAN: null-ptr-deref in put_page_testzero include/linux/mm.h:996 [inline]
+BUG: KASAN: null-ptr-deref in folio_put_testzero include/linux/mm.h:1002 [inline]
+BUG: KASAN: null-ptr-deref in folio_put include/linux/mm.h:1429 [inline]
+BUG: KASAN: null-ptr-deref in filemap_fault+0x121e/0x1810 mm/filemap.c:3382
+Read of size 4 at addr 0000000000000028 by task syz-executor223/4990
+
+CPU: 0 PID: 4990 Comm: syz-executor223 Not tainted 6.3.0-syzkaller-12423-g865fdb08197e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_report+0xe6/0x540 mm/kasan/report.c:465
+ kasan_report+0x176/0x1b0 mm/kasan/report.c:572
+ kasan_check_range+0x283/0x290 mm/kasan/generic.c:187
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
+ page_ref_count include/linux/page_ref.h:67 [inline]
+ put_page_testzero include/linux/mm.h:996 [inline]
+ folio_put_testzero include/linux/mm.h:1002 [inline]
+ folio_put include/linux/mm.h:1429 [inline]
+ filemap_fault+0x121e/0x1810 mm/filemap.c:3382
+ __do_fault+0x136/0x500 mm/memory.c:4176
+ do_read_fault mm/memory.c:4530 [inline]
+ do_fault mm/memory.c:4659 [inline]
+ do_pte_missing mm/memory.c:3647 [inline]
+ handle_pte_fault mm/memory.c:4947 [inline]
+ __handle_mm_fault mm/memory.c:5089 [inline]
+ handle_mm_fault+0x41a8/0x5860 mm/memory.c:5243
+ do_user_addr_fault arch/x86/mm/fault.c:1440 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1534 [inline]
+ exc_page_fault+0x7d2/0x910 arch/x86/mm/fault.c:1590
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+RIP: 0010:fault_in_readable+0x1db/0x350 mm/gup.c:1863
+Code: bf ff 48 89 d8 4c 8d ab ff 0f 00 00 4d 01 e5 49 81 e5 00 f0 ff ff 49 39 c5 72 70 e8 6f b5 bf ff 4c 39 eb 74 73 4c 89 64 24 10 <44> 8a 23 43 0f b6 04 3e 84 c0 75 18 44 88 64 24 40 48 81 c3 00 10
+RSP: 0018:ffffc90003aaf9c0 EFLAGS: 00050287
+RAX: ffffffff81cbda01 RBX: 0000000020000000 RCX: ffff888027d3bb80
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003aafa78 R08: ffffffff81cbd9a3 R09: ffffffff84310069
+R10: 0000000000000002 R11: ffff888027d3bb80 R12: 0000000000001000
+R13: 0000000020001000 R14: 1ffff92000755f40 R15: dffffc0000000000
+ fault_in_iov_iter_readable+0xdf/0x280 lib/iov_iter.c:362
+ generic_perform_write+0x20b/0x5e0 mm/filemap.c:3913
+ __generic_file_write_iter+0x17a/0x400 mm/filemap.c:4051
+ udf_file_write_iter+0x2fc/0x660 fs/udf/file.c:115
+ call_write_iter include/linux/fs.h:1868 [inline]
+ new_sync_write fs/read_write.c:491 [inline]
+ vfs_write+0x7ec/0xc10 fs/read_write.c:584
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:637
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f56c0f9bd69
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb7ca8738 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f56c0f9bd69
+RDX: 000000000208e24b RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 00007ffdb7ca8740 R08: 0000000000000001 R09: 00007f56c0f50032
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000007
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+==================================================================
+----------------
+Code disassembly (best guess):
+   0:	28 00                	sub    %al,(%rax)
+   2:	00 00                	add    %al,(%rax)
+   4:	75 05                	jne    0xb
+   6:	48 83 c4 28          	add    $0x28,%rsp
+   a:	c3                   	retq
+   b:	e8 51 14 00 00       	callq  0x1461
+  10:	90                   	nop
+  11:	48 89 f8             	mov    %rdi,%rax
+  14:	48 89 f7             	mov    %rsi,%rdi
+  17:	48 89 d6             	mov    %rdx,%rsi
+  1a:	48 89 ca             	mov    %rcx,%rdx
+  1d:	4d 89 c2             	mov    %r8,%r10
+  20:	4d 89 c8             	mov    %r9,%r8
+  23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+  28:	0f 05                	syscall
+* 2a:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax <-- trapping instruction
+  30:	73 01                	jae    0x33
+  32:	c3                   	retq
+  33:	48 c7 c1 c0 ff ff ff 	mov    $0xffffffffffffffc0,%rcx
+  3a:	f7 d8                	neg    %eax
+  3c:	64 89 01             	mov    %eax,%fs:(%rcx)
+  3f:	48                   	rex.W
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
