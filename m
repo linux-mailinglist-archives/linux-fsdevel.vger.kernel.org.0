@@ -2,136 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11FB56F464C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 16:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B2626F4674
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 16:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234380AbjEBOp5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 10:45:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48212 "EHLO
+        id S234496AbjEBO5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 10:57:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233548AbjEBOp4 (ORCPT
+        with ESMTP id S233656AbjEBO5Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 10:45:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FAB310E6
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 07:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1683038709;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wmfp1uOHfPwbBl+JqKPBUsZRmSRNfYpuSbCFI1y1Krs=;
-        b=LPNTL8z49Yo0GbfSuboRw9ymfY6mpYmjRpOs97JuzKsG1RyVXfsD7L9ydQ2iHX/TkGrnIt
-        lWYxaPFeaKFDkPRBCtKVZcvIzl32UfuvS30jBBO6VBqF+vbo7P2BIGEPC+8rJgHm4IgJAH
-        L+cD0FzU9KGiElAZ7IwX6/1Y3ybYaNU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-145--wpejwZDNBKOfdZiTnoVJg-1; Tue, 02 May 2023 10:45:07 -0400
-X-MC-Unique: -wpejwZDNBKOfdZiTnoVJg-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-2f479aeddc4so2446423f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 07:45:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683038706; x=1685630706;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wmfp1uOHfPwbBl+JqKPBUsZRmSRNfYpuSbCFI1y1Krs=;
-        b=kuNLZXAwTh2Gxrb5Uoofi/5I462dxtlMcs0xmO1nawJZMkhnMn/fSkWFczl74XewI7
-         mto80F+Ne4PIbLGEU8CWXem5IdpMwkbop2tU/PfOTK+j1NgwXI4KcHF5+uPc5QVVxmnu
-         OnpyXPcZuPgYozk4ppI3UbTee7YzaUNV/8U19XOZnO9iT6xyVx4UC5WflABaAV1rpli8
-         WA86INda6IZZ6iGSJWpjNVdi7mqdoXuNWKOmAd0TE1JD8Zodad3AH5PBk/M2v3F5h7sV
-         0f83t3KDJzYv6m+JGmbkQOdHMLaQzB7sU5PzFAUFElUqK98IW/ogWjAfmJey+mrfOXdj
-         Wthw==
-X-Gm-Message-State: AC+VfDxqyvnPuKXurhl5Rh+aSjja1UiSRjc18UPVbXSGhkVMdOSbe0j/
-        ub0MfXjptIzDsPjbm6gDJKlaEfi5kiEjMwx7MqPuu+bO9hCtLgMiJg2egRPlzKYP6ikzYcfk6Iy
-        FiJCeJTDArMgqDPc/FA7O+TsWKT+wThmqOQ==
-X-Received: by 2002:a5d:4d0b:0:b0:306:2aac:4b84 with SMTP id z11-20020a5d4d0b000000b003062aac4b84mr5558784wrt.30.1683038706082;
-        Tue, 02 May 2023 07:45:06 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5FmPSYsICeYdI3SjPAAR5svhA8LjCk8FRH773XKQRr/KAQPQa/z4ZMR1Bpqbf598bBVgLHNA==
-X-Received: by 2002:a5d:4d0b:0:b0:306:2aac:4b84 with SMTP id z11-20020a5d4d0b000000b003062aac4b84mr5558761wrt.30.1683038705749;
-        Tue, 02 May 2023 07:45:05 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c700:2400:6b79:2aa:9602:7016? (p200300cbc70024006b7902aa96027016.dip0.t-ipconnect.de. [2003:cb:c700:2400:6b79:2aa:9602:7016])
-        by smtp.gmail.com with ESMTPSA id z16-20020a5d4410000000b002fb0c5a0458sm31160407wrq.91.2023.05.02.07.45.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 May 2023 07:45:05 -0700 (PDT)
-Message-ID: <2bca2e69-6108-5595-3f5e-fbac3a93bab5@redhat.com>
-Date:   Tue, 2 May 2023 16:45:04 +0200
+        Tue, 2 May 2023 10:57:24 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D95213B;
+        Tue,  2 May 2023 07:57:23 -0700 (PDT)
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 342Ee516012859;
+        Tue, 2 May 2023 14:54:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=32y/nZeIEZmOi40iSqF/tJSaM/6yk3pyClxTBL1CuRM=;
+ b=pzEkjajBsqQK2aUX4AyPJSGIOPFiAn65gKlCk/dI1aTd9VrKwFHbRV9BZ+5JV9BIYe9c
+ TP5qassSUSpB5UHJ8PgfOd+IQpT/k5BctPPOPd+F3r7/cW51wWM+xdKpfqCaSFizH/0l
+ dt4+trmvVscrWQnQbqHeZb7T1Oa8cWzSkRnY8kvKz4zEkeD31h8xzy8cklCk1Rqqex4A
+ 2BCpqLQODg+LWaFcdxR7tcdJ5VJL6KHipFlBUh8A+UCsiJLRTDhKj/DzJs2ENZPhVg4L
+ Y1bX9wfihMhkVbTTh/eYJi/vA3ZPyKkQe0JdxY/TIFCghNBCM71NTm0bU6wurcJCr+9D SA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb43shfdh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 14:54:50 +0000
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 342EomgO020546;
+        Tue, 2 May 2023 14:54:48 GMT
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb43shf8f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 14:54:48 +0000
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 342DWDbf011286;
+        Tue, 2 May 2023 14:54:44 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([9.208.130.97])
+        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3q8tv7uskc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 14:54:44 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 342Ese1H23920954
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 2 May 2023 14:54:40 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 76AAD5804E;
+        Tue,  2 May 2023 14:54:40 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DDAD958056;
+        Tue,  2 May 2023 14:54:35 +0000 (GMT)
+Received: from [9.60.89.243] (unknown [9.60.89.243])
+        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  2 May 2023 14:54:35 +0000 (GMT)
+Message-ID: <3c17e07a-a7f9-18fc-fa99-fa55a5920803@linux.ibm.com>
+Date:   Tue, 2 May 2023 10:54:35 -0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH] mm: Do not reclaim private data from pinned page
+Subject: Re: [PATCH v6 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing to
+ file-backed mappings
 Content-Language: en-US
-To:     Jan Kara <jack@suse.cz>, linux-mm@kvack.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        Lorenzo Stoakes <lstoakes@gmail.com>,
+To:     David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>
-References: <20230428124140.30166-1-jack@suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230428124140.30166-1-jack@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Peter Xu <peterx@redhat.com>
+References: <7d56b424-ba79-4b21-b02c-c89705533852@lucifer.local>
+ <a6bb0334-9aba-9fd8-6a9a-9d4a931b6da2@linux.ibm.com>
+ <ZFEL20GQdomXGxko@nvidia.com>
+ <c4f790fb-b18a-341a-6965-455163ec06d1@redhat.com>
+ <ZFER5ROgCUyywvfe@nvidia.com>
+ <ce3aa7b9-723c-6ad3-3f03-3f1736e1c253@redhat.com>
+ <ff99f2d8-804d-924f-3c60-b342ffc2173c@linux.ibm.com>
+ <ad60d5d2-cfdf-df9f-aef1-7a0d3facbece@redhat.com>
+ <ZFEVQmFGL3GxZMaf@nvidia.com>
+ <1ffbbfb7-6bca-0ab0-1a96-9ca81d5fa373@redhat.com>
+ <ZFEYblElll3pWtn5@nvidia.com>
+ <f0acd8e4-8df8-dfae-b6b2-30eea3b14609@redhat.com>
+From:   Matthew Rosato <mjrosato@linux.ibm.com>
+In-Reply-To: <f0acd8e4-8df8-dfae-b6b2-30eea3b14609@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: CxJFWMTr1AwlmvE516RFOxxqp85_cQ7r
+X-Proofpoint-ORIG-GUID: uXjpuXEqJyPIOFcBwIU_BPTS0bXnzkZb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-02_09,2023-04-27_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ phishscore=0 spamscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
+ mlxscore=0 priorityscore=1501 mlxlogscore=842 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2305020124
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28.04.23 14:41, Jan Kara wrote:
-> If the page is pinned, there's no point in trying to reclaim it.
-> Furthermore if the page is from the page cache we don't want to reclaim
-> fs-private data from the page because the pinning process may be writing
-> to the page at any time and reclaiming fs private info on a dirty page
-> can upset the filesystem (see link below).
+On 5/2/23 10:15 AM, David Hildenbrand wrote:
+> On 02.05.23 16:04, Jason Gunthorpe wrote:
+>> On Tue, May 02, 2023 at 03:57:30PM +0200, David Hildenbrand wrote:
+>>> On 02.05.23 15:50, Jason Gunthorpe wrote:
+>>>> On Tue, May 02, 2023 at 03:47:43PM +0200, David Hildenbrand wrote:
+>>>>>> Eventually we want to implement a mechanism where we can dynamically pin in response to RPCIT.
+>>>>>
+>>>>> Okay, so IIRC we'll fail starting the domain early, that's good. And if we
+>>>>> pin all guest memory (instead of small pieces dynamically), there is little
+>>>>> existing use for file-backed RAM in such zPCI configurations (because memory
+>>>>> cannot be reclaimed either way if it's all pinned), so likely there are no
+>>>>> real existing users.
+>>>>
+>>>> Right, this is VFIO, the physical HW can't tolerate not having pinned
+>>>> memory, so something somewhere is always pinning it.
+>>>>
+>>>> Which, again, makes it weird/wrong that this KVM code is pinning it
+>>>> again :\
+>>>
+>>> IIUC, that pinning is not for ordinary IOMMU / KVM memory access. It's for
+>>> passthrough of (adapter) interrupts.
+>>>
+>>> I have to speculate, but I guess for hardware to forward interrupts to the
+>>> VM, it has to pin the special guest memory page that will receive the
+>>> indications, to then configure (interrupt) hardware to target the interrupt
+>>> indications to that special guest page (using a host physical address).
+>>
+>> Either the emulated access is "CPU" based happening through the KVM
+>> page table so it should use mmu_notifier locking.
+>>
+>> Or it is "DMA" and should go through an IOVA through iommufd pinning
+>> and locking.
+>>
+>> There is no other ground, nothing in KVM should be inventing its own
+>> access methodology.
 > 
-> Link: https://lore.kernel.org/linux-mm/20180103100430.GE4911@quack2.suse.cz
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->   mm/vmscan.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> I might be wrong, but this seems to be a bit different.
 > 
-> This was the non-controversial part of my series [1] dealing with pinned pages
-> in filesystems. It is already a win as it avoids crashes in the filesystem and
-> we can drop workarounds for this in ext4. Can we merge it please?
+> It cannot tolerate page faults (needs a host physical address), so memory notifiers don't really apply. (as a side note, KVM on s390x does not use mmu notifiers as we know them)
+
+The host physical address is one shared between underlying firmware and the host kvm.  Either might make changes to the referenced page and then issue an alert to the guest via a mechanism called GISA, giving impetus to the guest to look at that page and process the event.  As you say, firmware can't tolerate the page being unavailable; it's expecting that once we feed it that location it's always available until we remove it (kvm_s390_pci_aif_disable).
+
 > 
-> [1] https://lore.kernel.org/all/20230209121046.25360-1-jack@suse.cz/
+> It's kind-of like DMA, but it's not really DMA.  It's the CPU delivering interrupts for a specific device. So we're configuring the interrupt controller I guess to target a guest memory page.
 > 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index bf3eedf0209c..401a379ea99a 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1901,6 +1901,16 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
->   			}
->   		}
->   
-> +		/*
-> +		 * Folio is unmapped now so it cannot be newly pinned anymore.
-> +		 * No point in trying to reclaim folio if it is pinned.
-> +		 * Furthermore we don't want to reclaim underlying fs metadata
-> +		 * if the folio is pinned and thus potentially modified by the
-> +		 * pinning process as that may upset the filesystem.
-> +		 */
-> +		if (folio_maybe_dma_pinned(folio))
-> +			goto activate_locked;
-> +
->   		mapping = folio_mapping(folio);
->   		if (folio_test_dirty(folio)) {
->   			/*
+> But I have way too little knowledge about zPCI and the code in question here. And if it could be converted to iommufd (and if that's really the right mechanism to use here).
+> 	
+> Hopefully Matthew knows the details and if this really needs to be special :)
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
-Thanks!
-
--- 
-Thanks,
-
-David / dhildenb
+I think I need to have a look at mmu_notifiers to understand that better, but in the end firmware still needs a reliable page to deliver events to.
+ 
 
