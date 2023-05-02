@@ -2,69 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 15CB06F4408
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C9E6F440D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:46:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233743AbjEBMoR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 08:44:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58908 "EHLO
+        id S233857AbjEBMqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 08:46:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjEBMoQ (ORCPT
+        with ESMTP id S229457AbjEBMqn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 08:44:16 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80CFF1B1;
-        Tue,  2 May 2023 05:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1683031454; x=1714567454;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=InrOY9XROSP5bNLty28ctanon3D3B/GOkXN1HogdqtU=;
-  b=nIQoKCv2PPAgb/Vhv+h5Hz4VJwV2RctFdh+2uOSwWvb+mbx7CYokSyRs
-   csV8bsLXO8wqX9znwRPHIF4BCFRmKlEi86dJeF6c7tw7NuOlAl0GAc6Wi
-   oIBxi0tExoSIBV2KPIUl+M8Vh8q0vjrhPnmej95m/r2+hn3yfVOsB7XG0
-   kXpnmnWgwrJa9su9BJVY4XUMljjY0/d2tftXoObX5pG1KhM4bt2K+jf5n
-   zVnRzV9mdu7ojeQOmRZMQgZvGa4fnHaZM4SQ+W3rLJ2078CV8uUHlHDxt
-   v58xDX1OJ2r7y/9yZeKBTXdkZKwGuXad4DgjuLOBgtAB0VB+lgNeM3xs4
-   g==;
-X-IronPort-AV: E=Sophos;i="5.99,244,1677567600"; 
-   d="asc'?scan'208";a="213255279"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 May 2023 05:44:13 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 2 May 2023 05:44:13 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Tue, 2 May 2023 05:44:11 -0700
-Date:   Tue, 2 May 2023 13:43:52 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-CC:     Alexandre Ghiti <alex@ghiti.fr>,
-        syzbot <syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com>,
-        <brauner@kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        <alexghiti@rivosinc.com>, Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [syzbot] [fs?] KASAN: stack-out-of-bounds Read in proc_pid_stack
-Message-ID: <20230502-gallows-disarm-e8f3ae1f6291@wendy>
-References: <00000000000084706805fab08e27@google.com>
- <CACT4Y+aGfOE7R+LoocX7aW2XObY4aCAsAydwvL+Ni_NUt6JfJA@mail.gmail.com>
- <83578cb3-2528-cfab-21bc-cfeccd8124dd@ghiti.fr>
- <CACT4Y+ZGsMCqsaV9DQDsTFWH7cCMY9GCtdZTGdVBPqOERPRQzw@mail.gmail.com>
+        Tue, 2 May 2023 08:46:43 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB4D51B1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 05:46:40 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f192c23fffso22568095e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 05:46:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20221208.gappssmtp.com; s=20221208; t=1683031599; x=1685623599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zUtmI1MjmF93WMGShwlGylo001x44X0S/ZnCTRKPB98=;
+        b=yYACiJhhjiJ1Q5u/pcYuXNkrNCSNQza14SVrwZ4+admSLJwYUyjgZ47Uwpf8rpD8Uk
+         dQICh/CSFaKKZkkXu76Xr/YL4FS6yHivTz+3gEtPquvKer9fMPI3CaqGhtrB0OWcvMxT
+         JwlcCOADJdmHDp4k+CjvC9t+TFmqVreCleGeiai1eyLafmKNu52mne8x305L8se1enZb
+         3F5IbLAMe8TM+4UixK4YlPBYDt0NZHycGvMA9x1c0O5pZAP0WrTh44rlV52HEyR/VyfL
+         wX5VVc+a+N314sFLEmCHsHTk4O5Gyz3BroCrINPU70QhjmDAJM0lHfqSTb5XAonMjLNn
+         a44A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683031599; x=1685623599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zUtmI1MjmF93WMGShwlGylo001x44X0S/ZnCTRKPB98=;
+        b=K3lJofY6QC/wunRgwUNlOsAtznKkdYaf1OgZ8UgSH1lgReRfSJKEW/7EVcBmBxKtw0
+         H2xGR/pDLGTNWjqm3t+XGCaRONchDLki7vwOR7DRIj091Oqa0fpp7EXYS+j6JREBnJIx
+         hQoArqFqtO/TKcfZo2zkOTTn2e9CD+di10QGGUEIQ1U2o7Mz/XicOF0DNtQxjDegi3n+
+         Oxg4q+l/p4W+vbzyL/XUlSiH55fv8drqLYTuChyLTiz+zNGCUQNwvbp8GxNlMrc59sUx
+         UQP6qf7xgOAM1hh+0MX3r746jZ28kDU3W/bbepwjeowKt7ElWMbTtwqs4C+gimYDWGjx
+         BHzQ==
+X-Gm-Message-State: AC+VfDwwsdhyeyw596s5qEcCM37RwQKRqbrycd/bUyfYE82VQt0DDw3o
+        SoEu2jk0GJKVGQ5tfxSF4lcY+T50WkATwvqTSb9AK0bFvUxbwagZ
+X-Google-Smtp-Source: ACHHUZ6fFWr9ekF2w+Lo2QKt7EZHxuHYYy1Km73mHG0lk6lP0USIpvMkAr/7SysT8uoEmUL9RwEXC8OpBweSHLTPz3k=
+X-Received: by 2002:a5d:5345:0:b0:303:2115:1b11 with SMTP id
+ t5-20020a5d5345000000b0030321151b11mr12380449wrv.39.1683031599051; Tue, 02
+ May 2023 05:46:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1kzdKSBjOLM4btyt"
-Content-Disposition: inline
+References: <00000000000084706805fab08e27@google.com> <CACT4Y+aGfOE7R+LoocX7aW2XObY4aCAsAydwvL+Ni_NUt6JfJA@mail.gmail.com>
+ <83578cb3-2528-cfab-21bc-cfeccd8124dd@ghiti.fr> <CACT4Y+ZGsMCqsaV9DQDsTFWH7cCMY9GCtdZTGdVBPqOERPRQzw@mail.gmail.com>
 In-Reply-To: <CACT4Y+ZGsMCqsaV9DQDsTFWH7cCMY9GCtdZTGdVBPqOERPRQzw@mail.gmail.com>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,T_PDS_SHORTFWD_URISHRT_QP,
+From:   Alexandre Ghiti <alexghiti@rivosinc.com>
+Date:   Tue, 2 May 2023 14:46:28 +0200
+Message-ID: <CAHVXubiNbmcv=87gkMsUOFvmdKt5i-osvnuuEkju6gMqzwOBVw@mail.gmail.com>
+Subject: Re: [syzbot] [fs?] KASAN: stack-out-of-bounds Read in proc_pid_stack
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Alexandre Ghiti <alex@ghiti.fr>,
+        syzbot <syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com>,
+        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,12 +73,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---1kzdKSBjOLM4btyt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, May 02, 2023 at 02:32:33PM +0200, Dmitry Vyukov wrote:
+On Tue, May 2, 2023 at 2:32=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com> w=
+rote:
+>
 > On Tue, 2 May 2023 at 14:02, Alexandre Ghiti <alex@ghiti.fr> wrote:
 > >
 > > On 5/2/23 09:15, Dmitry Vyukov wrote:
@@ -115,7 +113,7 @@ riscv/kernel/stacktrace.c:58
 > > >> Read of size 8 at addr ff200000030a79b0 by task syz-executor.1/7894
 > > >>
 > > >> CPU: 0 PID: 7894 Comm: syz-executor.1 Tainted: G        W          6=
-=2E2.0-rc1-syzkaller #0
+.2.0-rc1-syzkaller #0
 > > >> Hardware name: riscv-virtio,qemu (DT)
 > > >> Call Trace:
 > > >> [<ffffffff8000b9ea>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stac=
@@ -144,36 +142,35 @@ tacktrace.c:58
 > >
 > > This fix was merged in 6.3: commit 76950340cf03 ("riscv: Use
 > > READ_ONCE_NOCHECK in imprecise unwinding stack mode").
->=20
+>
 > Oh, I see, syzbot riscv build is still broken due to:
 > https://syzkaller.appspot.com/bug?id=3D502e4cca2c3c985c2125ffa945b8e636b7=
 b100d7
 
-I think this one is correct, but
+The fix for that was merged in 6.3-rc2 too (commit 2d311f480b52
+("riscv, bpf: Fix patch_text implicit declaration")): but the fixes
+branch is still based on top of Linux 6.3-rc1 (Aleksandr mentioned
+that already).
 
 > https://lore.kernel.org/all/00000000000049382505ebef4a0c@google.com/T/#md=
 2075a04dd463fefe31f73e098672a69d948a1ce
 
-this isn't the right lore link. I think you meant:
-https://lore.kernel.org/linux-riscv/CANp29Y5dbsSjd5q2TNJYgO5U1d6wu+XSSWR3PH=
-WTX_efg7VyEA@mail.gmail.com/
+That's weird, I think this one was merged in v6.1-rc2 (commit
+5c20a3a9df19 ("RISC-V: Fix compilation without RISCV_ISA_ZICBOM")).
 
-The fix for that went through the bpf tree though:
-https://lore.kernel.org/bpf/871qkh9zj8.fsf@all.your.base.are.belong.to.us/T/
-
-Perhaps that is now fixed in mainline? I think riscv/fixes just needs to
-be updated (it normally is after -rc1 I think) and things should be
-good to go, no?
-
-Cheers,
-Conor.
-
->=20
+>
 > so it still tests an older build.
->=20
+
+FYI, the latest fixes for KASAN were merged in 6.4 (or are about to).
+
+Thanks,
+
+Alex
+
+>
 > #syz fix:
 > riscv: Use READ_ONCE_NOCHECK in imprecise unwinding stack mode
->=20
+>
 > > >> [<ffffffff8000bc66>] arch_stack_walk+0x2c/0x3c arch/riscv/kernel/sta=
 cktrace.c:154
 > > >> [<ffffffff80190822>] stack_trace_save_tsk+0x14a/0x1bc kernel/stacktr=
@@ -297,16 +294,3 @@ nd an email to syzkaller-bugs+unsubscribe@googlegroups.com.
 > > > linux-riscv mailing list
 > > > linux-riscv@lists.infradead.org
 > > > http://lists.infradead.org/mailman/listinfo/linux-riscv
-
---1kzdKSBjOLM4btyt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZFEFiAAKCRB4tDGHoIJi
-0o1PAP9mZTcyGc43jWkgbe0oX508pyek7WOipDbXwlCU8oRzNwD/cF3G7NVlMCaY
-q2BvnJIfuFyrVlIpVGfKhBNRK6qqzgs=
-=WsVE
------END PGP SIGNATURE-----
-
---1kzdKSBjOLM4btyt--
