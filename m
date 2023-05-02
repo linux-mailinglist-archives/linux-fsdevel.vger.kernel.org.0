@@ -2,223 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 867366F3E4C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 09:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 723EF6F3E50
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 09:18:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233450AbjEBHQP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 03:16:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36968 "EHLO
+        id S233495AbjEBHSF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 03:18:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjEBHQO (ORCPT
+        with ESMTP id S233062AbjEBHSE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 03:16:14 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64C130C6
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 00:16:12 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f1217f16e9so1142e87.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 00:16:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683011771; x=1685603771;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=frxBoEeJNDB+d2pXfCOD/oCy09nPTGWCy5xHMtID2dw=;
-        b=nKP1bphkBwXDScEsXIpjLiCJzdJSuMZB2/hvYXwUAzGYUJLa6UIjcjh4h4h+dK06kh
-         +7j5kX9h8W9vvrmCqLMUsSUEF5Dk/9QPqI+Mi6dQqTLYU73F5wuqPj/grXLm8+ddcFaY
-         OvVD/6jVhcTXjIRVINdumGNy3pzRuJAJmVTf0MJck0soXrOzXUo+dETxKJEiIJhwjBMp
-         VbSNCz35G6EpCRsjdp+q1kFU6+voRpXUXCeS1RGxyPLla9N85oMrYbMDxWpYrhC+SqzZ
-         FZP0TGiNgbKuUdDjW4p7k2gvjzvmWv1a68Q9TInGczO6/Zuu31PxIfrlfjGq6FaVEFEJ
-         jy2A==
+        Tue, 2 May 2023 03:18:04 -0400
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D44F199C
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 00:18:03 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-32b5ec09cffso21225385ab.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 00:18:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683011771; x=1685603771;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=frxBoEeJNDB+d2pXfCOD/oCy09nPTGWCy5xHMtID2dw=;
-        b=SzRGKZ76Pg+kbSqmVHxPnYDzSz6PVwLiGvvuHV4L/kxfFyEP+oUE9Aa6FkmEHdraVf
-         Qt7r6RmK1zwjwYKNWBq5FPRE2Y/M56RGB3vsg518mO6xLrS0x7gsuJhuyHOq1l/5NeAs
-         +Nw22Hh0rcpbFohWDFSw4x66amS/m86kFkRZRFj7y2SOI7qr9UijuuPUDebMnbV58pQa
-         XGY36KhDUmL+lxM4xXw/0fHzi2G0OLYRm9280vI365CFnGNo0FH+WdGs81t48kUsDLIW
-         EI+K4q8AladqlZnhVAFcTgMblBwffKQElLFKn7iZh4XmPdNE67ly435CYK4ww09eb+tz
-         4p3g==
-X-Gm-Message-State: AC+VfDwgKzpD/Qt/Q4hfZkjpL7hfOmkpXeVzqxY6EbxvAt+KKssP9sb1
-        NKArzL0ovA2/EMSzpMSgIDwHSKPxVX+2mwxO8zrILw==
-X-Google-Smtp-Source: ACHHUZ7nia9SJx252ioVT1htKwOLOmX1xqJ9CLrjMe8StMcqYw4XgK7bFhz0VhYRw3zGSdmDxWRoEzEDTj4TBkvV/jE=
-X-Received: by 2002:a05:6512:33c6:b0:4f1:21a2:9003 with SMTP id
- d6-20020a05651233c600b004f121a29003mr126680lfg.6.1683011770564; Tue, 02 May
- 2023 00:16:10 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683011882; x=1685603882;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bGDIlkDxxFqSuivhjP+N46X1p0czCiK1PSmGIY0DZuY=;
+        b=MaxilJLgz4wY4tSDrhEtMi2vbL6LkwRDTOZgCdTQUf4dNqIN3cr6AoWx/TeXIqP4QA
+         x0usWZtrh3Z8t0gHEwa7UvHJBKUZKnzDNMcuqsvh7sXsakCfRMA71D/MB7Q55hBtEY+2
+         kbqIPEjyw/PQM02NMtqanLxAoemzqB1K8pPJC1JpGRacCnh9Obn42cM85XFaj2LQBl3z
+         CeOAhmhOcZWmH/LRS8epgKFc+TdPWCXC5al71wPfcn9c/TTqEnnv4cjWGqn9Dca+xcvt
+         E/tD16KEAEd6yxDIP7GGezmE2hxgFn4OKWwI9Hk4qnVKGH17L7UPvcOfBt0BEZmnopdm
+         2uFw==
+X-Gm-Message-State: AC+VfDyJrdwbA1JFhG8oOfGzCOYX7r/fzLfi+BJN0zkzpYeGaqnd6Nkq
+        z1RRjJdBXo9ToduR6H6ssBsnnV8+Y4WlS4GE4batLCfvufWD
+X-Google-Smtp-Source: ACHHUZ5WdXTPrltbDa9DEpV9Woa+A1fHqQv3s/WzHfp08bhmG4pdlcoMjcCRsUqw1JKwjYmAajbeaffbFalVoe4jQFBYU2fsAq4h
 MIME-Version: 1.0
-References: <00000000000084706805fab08e27@google.com>
-In-Reply-To: <00000000000084706805fab08e27@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 2 May 2023 09:15:57 +0200
-Message-ID: <CACT4Y+aGfOE7R+LoocX7aW2XObY4aCAsAydwvL+Ni_NUt6JfJA@mail.gmail.com>
-Subject: Re: [syzbot] [fs?] KASAN: stack-out-of-bounds Read in proc_pid_stack
-To:     syzbot <syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com>
-Cc:     brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        alexghiti@rivosinc.com, Palmer Dabbelt <palmer@dabbelt.com>
+X-Received: by 2002:a92:d983:0:b0:331:339b:c3e1 with SMTP id
+ r3-20020a92d983000000b00331339bc3e1mr185576iln.3.1683011882590; Tue, 02 May
+ 2023 00:18:02 -0700 (PDT)
+Date:   Tue, 02 May 2023 00:18:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006a2b9a05fab0bdfa@google.com>
+Subject: [syzbot] Monthly ntfs report (May 2023)
+From:   syzbot <syzbot+listf90b51a0db1f57e4ab2b@syzkaller.appspotmail.com>
+To:     anton@tuxera.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2 May 2023 at 09:05, syzbot
-<syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    950b879b7f02 riscv: Fixup race condition on PG_dcache_clea..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10c4c1f7c80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ecebece1b90c0342
-> dashboard link: https://syzkaller.appspot.com/bug?extid=01e9a564dc6b3289cea3
-> compiler:       riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> userspace arch: riscv64
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: stack-out-of-bounds in walk_stackframe+0x128/0x2fe arch/riscv/kernel/stacktrace.c:58
-> Read of size 8 at addr ff200000030a79b0 by task syz-executor.1/7894
->
-> CPU: 0 PID: 7894 Comm: syz-executor.1 Tainted: G        W          6.2.0-rc1-syzkaller #0
-> Hardware name: riscv-virtio,qemu (DT)
-> Call Trace:
-> [<ffffffff8000b9ea>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:121
-> [<ffffffff83402b96>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:127
-> [<ffffffff83442726>] __dump_stack lib/dump_stack.c:88 [inline]
-> [<ffffffff83442726>] dump_stack_lvl+0xe0/0x14c lib/dump_stack.c:106
-> [<ffffffff83409674>] print_address_description mm/kasan/report.c:306 [inline]
-> [<ffffffff83409674>] print_report+0x1e4/0x4c0 mm/kasan/report.c:417
-> [<ffffffff804ead14>] kasan_report+0xb8/0xe6 mm/kasan/report.c:517
-> [<ffffffff804ebea4>] check_region_inline mm/kasan/generic.c:183 [inline]
-> [<ffffffff804ebea4>] __asan_load8+0x7e/0xa6 mm/kasan/generic.c:256
-> [<ffffffff8000b782>] walk_stackframe+0x128/0x2fe arch/riscv/kernel/stacktrace.c:58
+Hello ntfs maintainers/developers,
 
-+riscv maintainers
+This is a 31-day syzbot report for the ntfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ntfs
 
-I think this is an issue in riscv stack walking.
-If it's imprecise or walks stacks of running tasks, it needs to use
-READ_ONCE_NOCHECK.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 24 issues are still open and 7 have been fixed so far.
 
-#syz set subsystems: riscv
+Some of the still happening issues:
 
+Ref Crashes Repro Title
+<1> 1983    Yes   kernel BUG at fs/ntfs/aops.c:LINE!
+                  https://syzkaller.appspot.com/bug?extid=6a5a7672f663cce8b156
+<2> 1317    Yes   possible deadlock in ntfs_read_folio
+                  https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
+<3> 763     Yes   kernel BUG in __ntfs_grab_cache_pages
+                  https://syzkaller.appspot.com/bug?extid=01b3ade7c86f7dd584d7
+<4> 281     No    KASAN: use-after-free Read in ntfs_test_inode
+                  https://syzkaller.appspot.com/bug?extid=2751da923b5eb8307b0b
+<5> 238     Yes   possible deadlock in map_mft_record
+                  https://syzkaller.appspot.com/bug?extid=cb1fdea540b46f0ce394
+<6> 134     No    possible deadlock in __ntfs_clear_inode
+                  https://syzkaller.appspot.com/bug?extid=5ebb8d0e9b8c47867596
+<7> 24      Yes   KASAN: slab-out-of-bounds Read in ntfs_readdir
+                  https://syzkaller.appspot.com/bug?extid=d36761079ac1b585a6df
+<8> 6       Yes   KASAN: use-after-free Read in ntfs_attr_find (2)
+                  https://syzkaller.appspot.com/bug?extid=ef50f8eb00b54feb7ba2
+<9> 4       Yes   KASAN: use-after-free Read in ntfs_lookup_inode_by_name
+                  https://syzkaller.appspot.com/bug?extid=3625b78845a725e80f61
 
-> [<ffffffff8000bc66>] arch_stack_walk+0x2c/0x3c arch/riscv/kernel/stacktrace.c:154
-> [<ffffffff80190822>] stack_trace_save_tsk+0x14a/0x1bc kernel/stacktrace.c:150
-> [<ffffffff80697822>] proc_pid_stack+0x146/0x1ee fs/proc/base.c:456
-> [<ffffffff80698bb0>] proc_single_show+0x9c/0x148 fs/proc/base.c:777
-> [<ffffffff805af580>] traverse.part.0+0x74/0x2ca fs/seq_file.c:111
-> [<ffffffff805aff02>] traverse fs/seq_file.c:101 [inline]
-> [<ffffffff805aff02>] seq_read_iter+0x72c/0x934 fs/seq_file.c:195
-> [<ffffffff805b0224>] seq_read+0x11a/0x16e fs/seq_file.c:162
-> [<ffffffff805453ea>] do_loop_readv_writev fs/read_write.c:756 [inline]
-> [<ffffffff805453ea>] do_loop_readv_writev fs/read_write.c:743 [inline]
-> [<ffffffff805453ea>] do_iter_read+0x324/0x3c2 fs/read_write.c:798
-> [<ffffffff805455f8>] vfs_readv+0xfe/0x166 fs/read_write.c:916
-> [<ffffffff80549c66>] do_preadv fs/read_write.c:1008 [inline]
-> [<ffffffff80549c66>] __do_sys_preadv fs/read_write.c:1058 [inline]
-> [<ffffffff80549c66>] sys_preadv+0x182/0x1fa fs/read_write.c:1053
-> [<ffffffff80005ff6>] ret_from_syscall+0x0/0x2
->
-> The buggy address belongs to the virtual mapping at
->  [ff200000030a0000, ff200000030a9000) created by:
->  kernel_clone+0xee/0x914 kernel/fork.c:2681
->
-> The buggy address belongs to the physical page:
-> page:ff1c0000024e5f00 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x9397c
-> memcg:ff6000000ffd7202
-> flags: 0xffe000000000000(node=0|zone=0|lastcpupid=0x7ff)
-> raw: 0ffe000000000000 0000000000000000 0000000000000122 0000000000000000
-> raw: 0000000000000000 0000000000000000 00000001ffffffff ff6000000ffd7202
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x102dc2(GFP_HIGHUSER|__GFP_NOWARN|__GFP_ZERO), pid 7873, tgid 7873 (syz-executor.1), ts 4012100669800, free_ts 4010400733200
->  __set_page_owner+0x32/0x182 mm/page_owner.c:190
->  set_page_owner include/linux/page_owner.h:31 [inline]
->  post_alloc_hook+0xf8/0x11a mm/page_alloc.c:2524
->  prep_new_page mm/page_alloc.c:2531 [inline]
->  get_page_from_freelist+0xc0e/0x1118 mm/page_alloc.c:4283
->  __alloc_pages+0x1b0/0x165a mm/page_alloc.c:5549
->  alloc_pages+0x132/0x25e mm/mempolicy.c:2286
->  vm_area_alloc_pages mm/vmalloc.c:2989 [inline]
->  __vmalloc_area_node mm/vmalloc.c:3057 [inline]
->  __vmalloc_node_range+0x81c/0xdb4 mm/vmalloc.c:3227
->  alloc_thread_stack_node kernel/fork.c:311 [inline]
->  dup_task_struct kernel/fork.c:987 [inline]
->  copy_process+0x210e/0x4068 kernel/fork.c:2097
->  kernel_clone+0xee/0x914 kernel/fork.c:2681
->  __do_sys_clone+0xec/0x120 kernel/fork.c:2822
->  sys_clone+0x32/0x44 kernel/fork.c:2790
->  ret_from_syscall+0x0/0x2
-> page last free stack trace:
->  __reset_page_owner+0x4a/0xf8 mm/page_owner.c:148
->  reset_page_owner include/linux/page_owner.h:24 [inline]
->  free_pages_prepare mm/page_alloc.c:1446 [inline]
->  free_pcp_prepare+0x254/0x48e mm/page_alloc.c:1496
->  free_unref_page_prepare mm/page_alloc.c:3369 [inline]
->  free_unref_page_list+0x11e/0x736 mm/page_alloc.c:3510
->  release_pages+0x85a/0xbb2 mm/swap.c:1076
->  free_pages_and_swap_cache+0x76/0x88 mm/swap_state.c:311
->  tlb_batch_pages_flush+0x86/0x10c mm/mmu_gather.c:97
->  tlb_flush_mmu_free mm/mmu_gather.c:292 [inline]
->  tlb_flush_mmu mm/mmu_gather.c:299 [inline]
->  tlb_finish_mmu+0xcc/0x280 mm/mmu_gather.c:391
->  exit_mmap+0x190/0x686 mm/mmap.c:3096
->  __mmput+0x98/0x290 kernel/fork.c:1207
->  mmput+0x74/0x88 kernel/fork.c:1229
->  exit_mm kernel/exit.c:563 [inline]
->  do_exit+0x602/0x17be kernel/exit.c:854
->  do_group_exit+0x8e/0x15e kernel/exit.c:1012
->  __do_sys_exit_group kernel/exit.c:1023 [inline]
->  __wake_up_parent+0x0/0x4a kernel/exit.c:1021
->  ret_from_syscall+0x0/0x2
->
-> Memory state around the buggy address:
->  ff200000030a7880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ff200000030a7900: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 00 f2 f2
-> >ff200000030a7980: 00 00 00 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
->                                      ^
->  ff200000030a7a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ff200000030a7a80: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
-> ==================================================================
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the bug is already fixed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to change bug's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the bug is a duplicate of another bug, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000084706805fab08e27%40google.com.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
