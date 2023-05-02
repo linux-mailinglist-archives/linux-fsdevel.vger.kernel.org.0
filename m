@@ -2,122 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 501A56F3E73
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 09:37:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE98E6F3EA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 09:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233670AbjEBHhy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 03:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44214 "EHLO
+        id S233657AbjEBH4N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 03:56:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233496AbjEBHhw (ORCPT
+        with ESMTP id S229822AbjEBH4L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 03:37:52 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE90749F8
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 00:37:51 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 308005C0231;
-        Tue,  2 May 2023 03:37:51 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 02 May 2023 03:37:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1683013071; x=1683099471; bh=N5D51x02atDA8ao1QjnAlT3mY0aScBY+//0
-        AiRoDkq0=; b=Jih2pr3gTd6dMSvgYScbYvth2GJsyXGi5bX7i7UQf6weDgamU55
-        CZHlfxvlWgIhSGqKAcRpmXDOC2eoBuAG3/dXFIyTu+x8rT4ikn3brLLxzond7T78
-        LlEvuCOrySfL4vkpq264HV7bq3kF6XSG8C9HwHlCvyIvKJ+TshM2ICa706lwPLkP
-        Dyp1CfGKmWFNuJBZ9aej8Ox3EkAZcN2nMdPGJtEXID/INITGolwl1e76qk5Sp5Xd
-        N+bn8q8mX9PmGHD++hJQdfKqNYm/LS+vfcYQpHmPqEqTwIT6E8+X/fDwiH4xL9XH
-        HgwVnzgfrbcNFwwz0xVva8kxwUvjOd8uNHQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683013071; x=1683099471; bh=N5D51x02atDA8ao1QjnAlT3mY0aScBY+//0
-        AiRoDkq0=; b=ZFYlPQ80SSqVXZkaTvtbOCvn/XHbG45kTOmO5XOqbxdnOG6A/dD
-        0PVANUSNIUdfoy1SvOuizpWYMuegpy8JtQ6byJiNAc1ereUAAebGqsYhFD8PHGtB
-        RuRkpYocpsT2b4Cfyo/rTz/r1v1WTKQRxdzYGyyVQxmO39wMUdj8riRD7aahwT2v
-        H4F7Ug2LSycZjjpJTTPgKbpjorsPjJs9YZw01lq0z+lWtGhdtbuhdguklVZMBnhN
-        LBLVbhNzCuD3rZAInD8IEise5w6nGIuAhG3Qb1dslzPkSzAOymIUow7TyTEN1k6I
-        97LeqX1Kibzw7zoKbOKk70c/cr6Fr90zRVg==
-X-ME-Sender: <xms:zr1QZDOAE6IEwslIRDvqa3WZUNz60kJfZRxrwleCsP9D56zxFzpwYQ>
-    <xme:zr1QZN-DdTiufijXQZrFPnWEoFeCQcaVGYDWKUONSSeqDxN23bJ33aoBHOP8hQ9JR
-    Y5JFM_WsB6dmEGu>
-X-ME-Received: <xmr:zr1QZCTYd4m4JqKXCU6TIMyisg5WO9Eub6LI-MjaRtRefeCW9JPxOMhYXZ_Lp2lgrvVZJjU4b6WtgcU2tJR8WikXuxvDlkfAgQBbTEjyXlxwxbYvmSOs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfedvhedguddvudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepuegv
-    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeekheevkeelkeekjefhheegfedtffduudej
-    jeeiheehudeuleelgefhueekfeevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
-    rdhfmh
-X-ME-Proxy: <xmx:zr1QZHvLSvLApHlUXdekRlndJV_MfRR5JS9rf9vUK_RoP8B7vaqqYg>
-    <xmx:zr1QZLfpUNgv7lddzyXLFjpI0O8dP-YPntY_KtmQ_5gdZ9waanMIfw>
-    <xmx:zr1QZD2JCHRru36vz6F3iNPfKUtmL4sh-g8-jzaqZOfz-ahQpu4jng>
-    <xmx:z71QZH75z-DcFryfwPj1jATUU5bZyETb1vavLPVPzjiDtfbL_pV5KA>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 May 2023 03:37:49 -0400 (EDT)
-Message-ID: <45ad47ae-5471-3d44-d3d6-2760dee0945d@fastmail.fm>
-Date:   Tue, 2 May 2023 09:37:47 +0200
+        Tue, 2 May 2023 03:56:11 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BEF430F9;
+        Tue,  2 May 2023 00:56:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1683014170; x=1714550170;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=nrkr4HYmMNERiR03z1fTM4+8ZBGmodVVyRAkn4iTZe4=;
+  b=iA1CKD9QN/r5BedDyY96UN8tEqmADQ8p/7gWi0GV/hZg/dWYsvbDKHMq
+   33vb2IpxrE1rAveWR9F7Z1IYquO5t65yUi9FLPwi9LRq3f06Sosy/sqoR
+   a6+HAEYb/2sJC5u5rv4iUAuURiqvgxGYB4nMevSeNFn6gUsl6pxIZMVBF
+   M1jkSVzwLlGtyBRb3TUyT9qHHp32yL9v+hHMAyERpTAN5q+0q8yDFxBHk
+   Xo/es4qt5ZESY7ksYC9Z8pqSYfuuSxyWRlPzg7MjeRsEKnFGtDdb3ZGzd
+   7rT9sPR44NwgT5PZGYcjIMbeQOX06tmfleBeXBPDeTc99TD6PKVof79XY
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10697"; a="332689690"
+X-IronPort-AV: E=Sophos;i="5.99,243,1677571200"; 
+   d="scan'208";a="332689690"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2023 00:56:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10697"; a="807752489"
+X-IronPort-AV: E=Sophos;i="5.99,243,1677571200"; 
+   d="scan'208";a="807752489"
+Received: from xinpan-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.35.163])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2023 00:55:50 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc:     kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
+        dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
+        corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+        juri.lelli@redhat.com, ldufour@linux.ibm.com,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        x86@kernel.org, peterx@redhat.com, david@redhat.com,
+        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
+        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+        pasha.tatashin@soleen.com, yosryahmed@google.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        andreyknvl@gmail.com, keescook@chromium.org,
+        ndesaulniers@google.com, gregkh@linuxfoundation.org,
+        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+        surenb@google.com, kernel-team@android.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+        cgroups@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>
+Subject: Re: [PATCH 01/40] lib/string_helpers: Drop space in
+ string_get_size's output
+In-Reply-To: <20230501165450.15352-2-surenb@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230501165450.15352-1-surenb@google.com>
+ <20230501165450.15352-2-surenb@google.com>
+Date:   Tue, 02 May 2023 10:55:47 +0300
+Message-ID: <877ctr2mm4.fsf@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC] FUSE: add another flag to support shared mmap in
- FOPEN_DIRECT_IO mode
-To:     Hao Xu <hao.xu@linux.dev>,
-        "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>,
-        miklos@szeredi.hu
-Cc:     Antonio SJ Musumeci <trapexit@spawn.link>,
-        linux-fsdevel@vger.kernel.org
-References: <5683716d-9b1d-83d6-9dd1-a7ad3d05cbb1@linux.dev>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <5683716d-9b1d-83d6-9dd1-a7ad3d05cbb1@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Hao,
+On Mon, 01 May 2023, Suren Baghdasaryan <surenb@google.com> wrote:
+> From: Kent Overstreet <kent.overstreet@linux.dev>
+>
+> Previously, string_get_size() outputted a space between the number and
+> the units, i.e.
+>   9.88 MiB
+>
+> This changes it to
+>   9.88MiB
+>
+> which allows it to be parsed correctly by the 'sort -h' command.
 
-On 5/2/23 09:28, Hao Xu wrote:
-> Hi all,
-> 
->  From discussion with Bernd, I get that FOPEN_DIRECT_IO is designed for 
-> those user cases where users want strong coherency like network 
-> filesystems, where one server serves multiple remote clients. And thus 
-> shared mmap is disabled since local page cache existence breaks this 
-> kind of coherency.
-> 
-> But here our use case is one virtiofs daemon serve one guest vm, We use 
-> FOPEN_DIRECT_IO to reduce memory footprint not for coherency. So we 
-> expect shared mmap works in this case. Here I suggest/am implementing 
-> adding another flag to indicate this kind of cases----use 
-> FOPEN_DIRECT_IO not for coherency----so that shared mmap works.
+The former is easier for humans to parse, and that should be
+preferred. 'sort -h' is supposed to compare "human readable numbers", so
+arguably sort does not do its job here.
 
-Yeah it should work, but I think what you want is "DAX" - can you try to 
-enable it?
+BR,
+Jani.
 
-fuse_i.h:	FUSE_DAX_ALWAYS,	/* "-o dax=always" */
-fuse_i.h:	FUSE_DAX_NEVER,		/* "-o dax=never" */
-fuse_i.h:	FUSE_DAX_INODE_USER,	/* "-o dax=inode" */
+>
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Cc: Jason Wang <jasowang@redhat.com>
+> Cc: "Noralf Tr=C3=B8nnes" <noralf@tronnes.org>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> ---
+>  lib/string_helpers.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+> index 230020a2e076..593b29fece32 100644
+> --- a/lib/string_helpers.c
+> +++ b/lib/string_helpers.c
+> @@ -126,8 +126,7 @@ void string_get_size(u64 size, u64 blk_size, const en=
+um string_size_units units,
+>  	else
+>  		unit =3D units_str[units][i];
+>=20=20
+> -	snprintf(buf, len, "%u%s %s", (u32)size,
+> -		 tmp, unit);
+> +	snprintf(buf, len, "%u%s%s", (u32)size, tmp, unit);
+>  }
+>  EXPORT_SYMBOL(string_get_size);
 
-
-
-Hope it helps,
-Bernd
+--=20
+Jani Nikula, Intel Open Source Graphics Center
