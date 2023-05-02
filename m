@@ -2,166 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AC346F4D64
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 01:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61DE16F4D8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 01:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbjEBXFY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 19:05:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54430 "EHLO
+        id S229843AbjEBXWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 19:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229784AbjEBXFX (ORCPT
+        with ESMTP id S229792AbjEBXWR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 19:05:23 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F25BD40D9
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 16:05:11 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-b9da6374fa2so5504813276.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 16:05:11 -0700 (PDT)
+        Tue, 2 May 2023 19:22:17 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F8632128;
+        Tue,  2 May 2023 16:22:16 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1aaf70676b6so22033025ad.3;
+        Tue, 02 May 2023 16:22:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683068711; x=1685660711;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TUKDQYPWqgHcO1XQ1Dc3esJ/u5Dg98+S6HrK92DBIP4=;
-        b=irnUbCMInaRspFhs3sQBArEm1VLRoaQ9dsFTug/GipTofQOyfj68J22hJg25cBpCFa
-         neyxbrNX9aQ9z5xXk15pWRUaUwR+5QgJM8TqriRmL8ztfmvqQCN4MiiWE1B0wFHGiiHx
-         4GM4VR0O4EVzRz0QvQBpwHUEvFYxjOBbz5Hcn165JzmykAzr96NDzGbVwj/GDj8htxHG
-         r8qhF1b9SyF6Tuk3/OUl6CvUBQYyDi5DzhjLXkL+YkHMWIjVDlJ1JSl5Ewmicn8HBlTm
-         CjRhSDMWUV8w9jW9ymx/+nARIPsvY6dtlPmlqwsOWMivijJCRtT8eYEiUldUJT2XQDZW
-         GYrA==
+        d=gmail.com; s=20221208; t=1683069736; x=1685661736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lgMQUkd3KBDP4s/1XVkXehFFe7sxYiQlnhryYVxOB2g=;
+        b=LWUbpa+uQUvwwOdRlC0Pk8VuQuXmYewaovZXseTz+3OTIOpNQVPsyFmtKmg+mQflnf
+         6CJjEYFqEU1oQwEprovsS3r+IFbWbUlDL29RCSIiSunLp/6K3ir45sl4ED4kijVHXeJv
+         ynUn6JBn5eM2K9LEL3vEFUuNT4JfDpQoTrzjceyayADfyrbtAc88FdPS5YpmXf4KcKi3
+         0tudcbM5NyucVvb4cmIzW+zaPT0WZVLVSQWDhcoSfqx7YrniVedMp6gFRlxmo6aROglp
+         XAVWn+ogeeQB+3h2xKJROvCpfQMJOenMQla30Nc7GgQIXxsgX5EuzKRjzTyDnGGv9iDH
+         OUVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683068711; x=1685660711;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TUKDQYPWqgHcO1XQ1Dc3esJ/u5Dg98+S6HrK92DBIP4=;
-        b=FJtvX3dNBDfO2/yM1uzIe0lWwAnJfzJ/unb8WKJuOjhPUvM6e0onk/WCu4+VsFgl9q
-         zz6XghZznld8j1L92hg7jARZGBclmh0EgyrMmKjbTrOAsFTCVy7NiTxAyMsKkp8otKB2
-         uDb+VsHYXdhVqOpAQ0/fnm67IILlgPNJqYIndjF66RtvueKXEbX+njRCNI5JHCixxEaC
-         /HdNWJl6USDLkIPWG7pT7cnM4/18CqUOH1bbsPYaBIu7ekYRh05Ckeyx7WH/FX9Ci93c
-         Jehgk+2G3TmXogMXl9E7lirxt0EquxxwtWgx7w0dbcSXTFmQmqBsEbbQr0cR04aqluEj
-         h8CA==
-X-Gm-Message-State: AC+VfDyUYen0aEgHI7NSVmFVJZBBAZ+cvVmdDIV/hbdlYBNRF4JGWk9b
-        S+4cgqQfWX776/HV+h9O4PlPSBVH6HliQDNy3ALNtlgFSRfyVo/ap9T/71JT
-X-Google-Smtp-Source: ACHHUZ7jsYrkoiEy4cySESG4HDKDzMYd6UFgrTHZJlXYGIrBwQiXUk/zzGx2KyuHlp7BIdqF6rvzDKznYWKiH5AXqvU=
-X-Received: by 2002:a25:e792:0:b0:b9d:8613:6936 with SMTP id
- e140-20020a25e792000000b00b9d86136936mr14622784ybh.50.1683068710692; Tue, 02
- May 2023 16:05:10 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683069736; x=1685661736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lgMQUkd3KBDP4s/1XVkXehFFe7sxYiQlnhryYVxOB2g=;
+        b=MnEhx1xswGPUr/oRD19ESR+WVVJjumnt+20v26buUP7fmkZcwV6QdCLd5248NX3Jo3
+         OLz2n17v5xGrfNRzXkx9oFKVxUyzVl3ufvvRqujOp2swkpS+LkTXceRF70uEpIN3k/Bg
+         KSBquRQWpGdn9Z/oghwtbJowDYZ4SWxtox6nPxRM06zqBnavsrXJsOFb6MGB5uhOCEjm
+         2+s0jjxdCA4CcabyEZQSoo5XXCfegpsTRs9GL7mKqYkVxE4Xg9PCdAKf7zUFWvvD+dMt
+         wc/IKeE867SejbFLE548lC6FkH8ybpPOAHmc1h5Rq3MIL1yy3YYWRpyTvILjAcd9vcou
+         jhGQ==
+X-Gm-Message-State: AC+VfDydCTwxQ58mG0BiPmeBJ7t2zo0qUF824HuYaE77sYgQ1N3171JP
+        LPqde25ifx0Nz36Vw8eIaC4=
+X-Google-Smtp-Source: ACHHUZ5DMcJ8Ahx9RqFPEqh7DOK/oauMWI1cqqdWGQgaKPvztWrt/1/A0htAGrVIMuVYpSe559X3TQ==
+X-Received: by 2002:a17:902:b78a:b0:1a6:d4cb:eeb3 with SMTP id e10-20020a170902b78a00b001a6d4cbeeb3mr94494pls.63.1683069735961;
+        Tue, 02 May 2023 16:22:15 -0700 (PDT)
+Received: from ubuntu777.domain.name (36-228-87-104.dynamic-ip.hinet.net. [36.228.87.104])
+        by smtp.gmail.com with ESMTPSA id q16-20020a170902dad000b00194caf3e975sm20261704plx.208.2023.05.02.16.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 May 2023 16:22:15 -0700 (PDT)
+From:   Min-Hua Chen <minhuadotchen@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Min-Hua Chen <minhuadotchen@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [PATCH] fs: fix incorrect fmode_t casts
+Date:   Wed,  3 May 2023 07:22:08 +0800
+Message-Id: <20230502232210.119063-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230501175025.36233-1-surenb@google.com> <ZFBvOh8r5WbTVyA8@casper.infradead.org>
- <CAJuCfpHfAFx9rjv0gHK77LbP-8gd-kFnWw=aqfQTP6pH=zvMNg@mail.gmail.com>
- <ZFCB+G9KSNE+J9cZ@casper.infradead.org> <CAJuCfpES=G8i99yYXWoeJq9+JVUjX5Bkq_5VNVTVX7QT+Wkfxg@mail.gmail.com>
- <ZFEmN6G7WRy59Mum@casper.infradead.org> <CAJuCfpFs+Rgpu8v+ddHFwtOx33W5k1sKDdXHM2ej1Upyo_9y4g@mail.gmail.com>
- <ZFGPLXIis6tl1QWX@casper.infradead.org>
-In-Reply-To: <ZFGPLXIis6tl1QWX@casper.infradead.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 2 May 2023 16:04:59 -0700
-Message-ID: <CAJuCfpGgc_bCEAE5LrhYPk=qXMU=owgiABTO9ZNqaBx-xfrOuQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mm: handle swap page faults under VMA lock if page is uncontended
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@suse.com,
-        josef@toxicpanda.com, jack@suse.cz, ldufour@linux.ibm.com,
-        laurent.dufour@fr.ibm.com, michel@lespinasse.org,
-        liam.howlett@oracle.com, jglisse@google.com, vbabka@suse.cz,
-        minchan@google.com, dave@stgolabs.net, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, hdanton@sina.com, apopple@nvidia.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 2, 2023 at 3:31=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
- wrote:
->
-> On Tue, May 02, 2023 at 09:36:03AM -0700, Suren Baghdasaryan wrote:
-> > On Tue, May 2, 2023 at 8:03=E2=80=AFAM Matthew Wilcox <willy@infradead.=
-org> wrote:
-> > >
-> > > On Mon, May 01, 2023 at 10:04:56PM -0700, Suren Baghdasaryan wrote:
-> > > > On Mon, May 1, 2023 at 8:22=E2=80=AFPM Matthew Wilcox <willy@infrad=
-ead.org> wrote:
-> > > > >
-> > > > > On Mon, May 01, 2023 at 07:30:13PM -0700, Suren Baghdasaryan wrot=
-e:
-> > > > > > On Mon, May 1, 2023 at 7:02=E2=80=AFPM Matthew Wilcox <willy@in=
-fradead.org> wrote:
-> > > > > > >
-> > > > > > > On Mon, May 01, 2023 at 10:50:23AM -0700, Suren Baghdasaryan =
-wrote:
-> > > > > > > > +++ b/mm/memory.c
-> > > > > > > > @@ -3711,11 +3711,6 @@ vm_fault_t do_swap_page(struct vm_fa=
-ult *vmf)
-> > > > > > > >       if (!pte_unmap_same(vmf))
-> > > > > > > >               goto out;
-> > > > > > > >
-> > > > > > > > -     if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-> > > > > > > > -             ret =3D VM_FAULT_RETRY;
-> > > > > > > > -             goto out;
-> > > > > > > > -     }
-> > > > > > > > -
-> > > > > > > >       entry =3D pte_to_swp_entry(vmf->orig_pte);
-> > > > > > > >       if (unlikely(non_swap_entry(entry))) {
-> > > > > > > >               if (is_migration_entry(entry)) {
-> > > > > > >
-> > > > > > > You're missing the necessary fallback in the (!folio) case.
-> > > > > > > swap_readpage() is synchronous and will sleep.
-> > > > > >
-> > > > > > True, but is it unsafe to do that under VMA lock and has to be =
-done
-> > > > > > under mmap_lock?
-> > > > >
-> > > > > ... you were the one arguing that we didn't want to wait for I/O =
-with
-> > > > > the VMA lock held?
-> > > >
-> > > > Well, that discussion was about waiting in folio_lock_or_retry() wi=
-th
-> > > > the lock being held. I argued against it because currently we drop
-> > > > mmap_lock lock before waiting, so if we don't drop VMA lock we woul=
-d
-> > > > be changing the current behavior which might introduce new
-> > > > regressions. In the case of swap_readpage and swapin_readahead we
-> > > > already wait with mmap_lock held, so waiting with VMA lock held doe=
-s
-> > > > not introduce new problems (unless there is a need to hold mmap_loc=
-k).
-> > > >
-> > > > That said, you are absolutely correct that this situation can be
-> > > > improved by dropping the lock in these cases too. I just didn't wan=
-t
-> > > > to attack everything at once. I believe after we agree on the appro=
-ach
-> > > > implemented in https://lore.kernel.org/all/20230501175025.36233-3-s=
-urenb@google.com
-> > > > for dropping the VMA lock before waiting, these cases can be added
-> > > > easier. Does that make sense?
-> > >
-> > > OK, I looked at this path some more, and I think we're fine.  This
-> > > patch is only called for SWP_SYNCHRONOUS_IO which is only set for
-> > > QUEUE_FLAG_SYNCHRONOUS devices, which are brd, zram and nvdimms
-> > > (both btt and pmem).  So the answer is that we don't sleep in this
-> > > path, and there's no need to drop the lock.
-> >
-> > Yes but swapin_readahead does sleep, so I'll have to handle that case
-> > too after this.
->
-> Sleeping is OK, we do that in pXd_alloc()!  Do we block on I/O anywhere
-> in swapin_readahead()?  It all looks like async I/O to me.
+Use __FMODE_NONOTIFY instead of FMODE_NONOTIFY to fixes
+the following sparce warnings:
+fs/overlayfs/file.c:48:37: sparse: warning: restricted fmode_t degrades to integer
+fs/overlayfs/file.c:128:13: sparse: warning: restricted fmode_t degrades to integer
+fs/open.c:1159:21: sparse: warning: restricted fmode_t degrades to integer
 
-Hmm. I thought that we have synchronous I/O in the following paths:
-    swapin_readahead()->swap_cluster_readahead()->swap_readpage()
-    swapin_readahead()->swap_vma_readahead()->swap_readpage()
-but just noticed that in both cases swap_readpage() is called with the
-synchronous parameter being false. So you are probably right here...
-Does that mean swapin_readahead() might return a page which does not
-have its content swapped-in yet?
+Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+---
+ fs/open.c           | 2 +-
+ fs/overlayfs/file.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index 4478adcc4f3a..9d5edcedcbb7 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1156,7 +1156,7 @@ inline struct open_how build_open_how(int flags, umode_t mode)
+ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ {
+ 	u64 flags = how->flags;
+-	u64 strip = FMODE_NONOTIFY | O_CLOEXEC;
++	u64 strip = __FMODE_NONOTIFY | O_CLOEXEC;
+ 	int lookup_flags = 0;
+ 	int acc_mode = ACC_MODE(flags);
+ 
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 7c04f033aadd..0801917f932e 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -35,7 +35,7 @@ static char ovl_whatisit(struct inode *inode, struct inode *realinode)
+ }
+ 
+ /* No atime modification nor notify on underlying */
+-#define OVL_OPEN_FLAGS (O_NOATIME | FMODE_NONOTIFY)
++#define OVL_OPEN_FLAGS (O_NOATIME | __FMODE_NONOTIFY)
+ 
+ static struct file *ovl_open_realfile(const struct file *file,
+ 				      const struct path *realpath)
+-- 
+2.34.1
+
