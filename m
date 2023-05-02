@@ -2,113 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CCBB6F4871
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 18:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D2E6F4865
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 18:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233464AbjEBQhx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 12:37:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57540 "EHLO
+        id S234267AbjEBQg5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 12:36:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234074AbjEBQhX (ORCPT
+        with ESMTP id S234301AbjEBQgl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 12:37:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0EFF44A5
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 09:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1683045345;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CZoekTna0zWXws8EaTSEoCtu55gwMy5uNJXIGmQIy0w=;
-        b=a+baZ9n7cuAMsylvO8n+fIaD5nhiXv2E2v9duFOnaOGIWao6a035/Qg+9FEo/rbsnh+56x
-        MNnOvJCyoPyd3ahe2H6WRbd4umBcY8PaFg5qQSSoQn4fFNcFZ97gL6AjBQiFHpXzKtBpEb
-        n8hwdknqa+2Y+w3Sd7UGH/qH1PUaz+w=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-665-NezWOwQXMZa1ygaArBVR1g-1; Tue, 02 May 2023 12:35:41 -0400
-X-MC-Unique: NezWOwQXMZa1ygaArBVR1g-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 429371C0432C;
-        Tue,  2 May 2023 16:35:41 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 346DA2166B26;
-        Tue,  2 May 2023 16:35:40 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] afs: Avoid endless loop if file is larger than expected
-Date:   Tue,  2 May 2023 17:35:28 +0100
-Message-Id: <20230502163528.1564398-4-dhowells@redhat.com>
-In-Reply-To: <20230502163528.1564398-1-dhowells@redhat.com>
-References: <20230502163528.1564398-1-dhowells@redhat.com>
+        Tue, 2 May 2023 12:36:41 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E96573A86
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 09:36:15 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-55a8e9e2c53so12379047b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 09:36:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1683045375; x=1685637375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PtHOXsoZHVHTmGblvz+PcxSG2DNLj2mPGHa/Jp7hssk=;
+        b=b++Vx6hWqbLjpG9pnp5Ijs00NxZ1mHvxjgv1ePpwdZx2ULh2lbwRETeHpoJq0keTl1
+         CDQHvn4OX37rIDwpXen1KFevJ0EcM7ietpn5afxAn27BQAPRoX4jmGjKGx+gZ91c4zph
+         7D8QwN0qu6fhoe5vtUQU7vYVq/dAcwBcdQ8V54c8LxkZ2b4Vo2+IcIc2qNsJdaBaYUFs
+         NYiPXrJRcYiwXtB4gihMnOTQCmvyeYrYPVieyZLwhhb9KwC0t7s5IIo53/J+dNVMQrrk
+         ALJpCPG/A+NV3VOe7EfJIKwejwuAf29e4p2u/Ss6sQYZHKyEP2h4QpAvgdplxvbVgLVu
+         5AWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683045375; x=1685637375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PtHOXsoZHVHTmGblvz+PcxSG2DNLj2mPGHa/Jp7hssk=;
+        b=KP4NgJ4c42tFRX+16Ije+NLedCmAst+8CEtKIcRW5H2JQtYkESmQ3+8z1wQCFyjK1r
+         PvwyuvXMsEZs9GfGEMHxl8GsEwPDInnXBvRAeSqwGfb/UIs32rcur4vC8YzzoIch216m
+         m7bffjR1vKZ3xmVeXIUds3DoO/ezD6BSGeAYOBfH2fqOL+iZ0DnQJTmjfrtQ+EEOTvrz
+         qCE4DIG+jiwGR0TKV4ctoGoKaBuTMl7fWNm+/LN/R9soXV+3r6QwZ3xyDkxxxiNqkJPX
+         DsFuHGiQQ19/1GgYIB4EW3SEXS5gXQfwJfJPX0i2uVS/CQI8nLYAAyRns9IrJ4hs62VB
+         1IqQ==
+X-Gm-Message-State: AC+VfDxcC3qrQ+YndO3HdSk37UNdUpdiw1qYy5yvs1meJOIJAkMPMhjc
+        0Qg9e/SIJmCLHn7cnk3zk4/FswVFekMYhNsBGzOjqQ==
+X-Google-Smtp-Source: ACHHUZ73XlgT3bgGX5m8siCZEgkQHLsvJiAYZQGGcfObRt8oITj9J8UmuFb+PbbPPfobFj5Vtk4gYJaOsQYYHPRraxQ=
+X-Received: by 2002:a05:6902:110e:b0:b99:36ff:d530 with SMTP id
+ o14-20020a056902110e00b00b9936ffd530mr21584727ybu.30.1683045374954; Tue, 02
+ May 2023 09:36:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230501175025.36233-1-surenb@google.com> <ZFBvOh8r5WbTVyA8@casper.infradead.org>
+ <CAJuCfpHfAFx9rjv0gHK77LbP-8gd-kFnWw=aqfQTP6pH=zvMNg@mail.gmail.com>
+ <ZFCB+G9KSNE+J9cZ@casper.infradead.org> <CAJuCfpES=G8i99yYXWoeJq9+JVUjX5Bkq_5VNVTVX7QT+Wkfxg@mail.gmail.com>
+ <ZFEmN6G7WRy59Mum@casper.infradead.org>
+In-Reply-To: <ZFEmN6G7WRy59Mum@casper.infradead.org>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 2 May 2023 09:36:03 -0700
+Message-ID: <CAJuCfpFs+Rgpu8v+ddHFwtOx33W5k1sKDdXHM2ej1Upyo_9y4g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mm: handle swap page faults under VMA lock if page is uncontended
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@suse.com,
+        josef@toxicpanda.com, jack@suse.cz, ldufour@linux.ibm.com,
+        laurent.dufour@fr.ibm.com, michel@lespinasse.org,
+        liam.howlett@oracle.com, jglisse@google.com, vbabka@suse.cz,
+        minchan@google.com, dave@stgolabs.net, punit.agrawal@bytedance.com,
+        lstoakes@gmail.com, hdanton@sina.com, apopple@nvidia.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Marc Dionne <marc.dionne@auristor.com>
+On Tue, May 2, 2023 at 8:03=E2=80=AFAM Matthew Wilcox <willy@infradead.org>=
+ wrote:
+>
+> On Mon, May 01, 2023 at 10:04:56PM -0700, Suren Baghdasaryan wrote:
+> > On Mon, May 1, 2023 at 8:22=E2=80=AFPM Matthew Wilcox <willy@infradead.=
+org> wrote:
+> > >
+> > > On Mon, May 01, 2023 at 07:30:13PM -0700, Suren Baghdasaryan wrote:
+> > > > On Mon, May 1, 2023 at 7:02=E2=80=AFPM Matthew Wilcox <willy@infrad=
+ead.org> wrote:
+> > > > >
+> > > > > On Mon, May 01, 2023 at 10:50:23AM -0700, Suren Baghdasaryan wrot=
+e:
+> > > > > > +++ b/mm/memory.c
+> > > > > > @@ -3711,11 +3711,6 @@ vm_fault_t do_swap_page(struct vm_fault =
+*vmf)
+> > > > > >       if (!pte_unmap_same(vmf))
+> > > > > >               goto out;
+> > > > > >
+> > > > > > -     if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+> > > > > > -             ret =3D VM_FAULT_RETRY;
+> > > > > > -             goto out;
+> > > > > > -     }
+> > > > > > -
+> > > > > >       entry =3D pte_to_swp_entry(vmf->orig_pte);
+> > > > > >       if (unlikely(non_swap_entry(entry))) {
+> > > > > >               if (is_migration_entry(entry)) {
+> > > > >
+> > > > > You're missing the necessary fallback in the (!folio) case.
+> > > > > swap_readpage() is synchronous and will sleep.
+> > > >
+> > > > True, but is it unsafe to do that under VMA lock and has to be done
+> > > > under mmap_lock?
+> > >
+> > > ... you were the one arguing that we didn't want to wait for I/O with
+> > > the VMA lock held?
+> >
+> > Well, that discussion was about waiting in folio_lock_or_retry() with
+> > the lock being held. I argued against it because currently we drop
+> > mmap_lock lock before waiting, so if we don't drop VMA lock we would
+> > be changing the current behavior which might introduce new
+> > regressions. In the case of swap_readpage and swapin_readahead we
+> > already wait with mmap_lock held, so waiting with VMA lock held does
+> > not introduce new problems (unless there is a need to hold mmap_lock).
+> >
+> > That said, you are absolutely correct that this situation can be
+> > improved by dropping the lock in these cases too. I just didn't want
+> > to attack everything at once. I believe after we agree on the approach
+> > implemented in https://lore.kernel.org/all/20230501175025.36233-3-suren=
+b@google.com
+> > for dropping the VMA lock before waiting, these cases can be added
+> > easier. Does that make sense?
+>
+> OK, I looked at this path some more, and I think we're fine.  This
+> patch is only called for SWP_SYNCHRONOUS_IO which is only set for
+> QUEUE_FLAG_SYNCHRONOUS devices, which are brd, zram and nvdimms
+> (both btt and pmem).  So the answer is that we don't sleep in this
+> path, and there's no need to drop the lock.
 
-afs_read_dir fetches an amount of data that's based on what the inode
-size is thought to be.  If the file on the server is larger than what
-was fetched, the code rechecks i_size and retries.  If the local i_size
-was not properly updated, this can lead to an endless loop of fetching
-i_size from the server and noticing each time that the size is larger on
-the server.
-
-If it is known that the remote size is larger than i_size, bump up the
-fetch size to that size.
-
-Fixes: f3ddee8dc4e2 ("afs: Fix directory handling")
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-afs@lists.infradead.org
----
- fs/afs/dir.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index f92b9e62d567..4dd97afa536c 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -275,6 +275,7 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
- 	loff_t i_size;
- 	int nr_pages, i;
- 	int ret;
-+	loff_t remote_size = 0;
- 
- 	_enter("");
- 
-@@ -289,6 +290,8 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
- 
- expand:
- 	i_size = i_size_read(&dvnode->netfs.inode);
-+	if (i_size < remote_size)
-+	    i_size = remote_size;
- 	if (i_size < 2048) {
- 		ret = afs_bad(dvnode, afs_file_error_dir_small);
- 		goto error;
-@@ -364,6 +367,7 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
- 			 * buffer.
- 			 */
- 			up_write(&dvnode->validate_lock);
-+			remote_size = req->file_size;
- 			goto expand;
- 		}
- 
-
+Yes but swapin_readahead does sleep, so I'll have to handle that case
+too after this.
