@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5425D6F4424
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54A8B6F442E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:48:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234149AbjEBMsg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 08:48:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33318 "EHLO
+        id S234109AbjEBMsl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 08:48:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234150AbjEBMsa (ORCPT
+        with ESMTP id S234175AbjEBMsb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 08:48:30 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 128965FD9;
-        Tue,  2 May 2023 05:48:28 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-2f7db354092so2284658f8f.2;
-        Tue, 02 May 2023 05:48:27 -0700 (PDT)
+        Tue, 2 May 2023 08:48:31 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C35759E5;
+        Tue,  2 May 2023 05:48:29 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f199696149so23104855e9.0;
+        Tue, 02 May 2023 05:48:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683031706; x=1685623706;
+        d=gmail.com; s=20221208; t=1683031708; x=1685623708;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H5eU89oHST/7fvITjEeMaKb7E2zwQgt9tUDlip0QRSg=;
-        b=o+UEpohY74fcEJiG8P+67E+mLiuCU2d0fV84RfcfQJkM0uOfetuuTHO8b67SK2e2Xp
-         DsUbGzgc2TDvomNaYWa7xvpqmlBorBf9s0dcWVw8nK12EWMnukS0POs9sBoJb35fS9Du
-         Yuj9FeAmC+ZfA+nZ1cpdNtBQCCOtwXuHrD7WJ9TzYZqDh921wFNVkCZbchpTeyy9qIbC
-         pyW93PTkMarctKPhvCafJCh2CGYNCU9ch8Ww1fVBatBhvV6dXecbF3judlWwtzO94l9C
-         nQvbSmy8rJxX56ElHdJbDsRQDR84lcNC8Vm4Cc0osU5BRiQRVMDnB38xYMQhWoAu+Rsa
-         QqYQ==
+        bh=h8BXJ75gYzzYprFFZm4HHrpNV5bb1uDaD8X/yAOq6xE=;
+        b=Vej277/uvg5RtQa7PfkAJ+kQyYGnCl/VM/mlzVewXkVZX5bK/5RECW12tqaon7FHfc
+         xxj99UwAfDgh89FtLZuvt9zFkZYN3t3dUZp9RVx6iBX0EDpEDTViMiIs5BhFUh0FNZ7C
+         p7BvE01KWlL8GTleGJHiAfytwUyqbzIspLU0qutOyWmcNtREhCBvdXGqZgSqSj95jqz/
+         6+toPvturMJBjhMzDuSdJiTjfHSMxCz+dMCDE+Z/Ywe2agm5xJmJOc7UseofNGN45b1w
+         hvX0/SO48kkX4UhLUY7JshpNWz7qc44sL8ByZ9yW77RUszLaWPqtpjxe+0V17rWwAqdx
+         GQJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683031706; x=1685623706;
+        d=1e100.net; s=20221208; t=1683031708; x=1685623708;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H5eU89oHST/7fvITjEeMaKb7E2zwQgt9tUDlip0QRSg=;
-        b=Hk/OP4/364WucQlukhxY8GUtZ3H6S4qoDnDYEwMAgg3Ur8JI3V9J9QhNF8ilb4Zdk6
-         G00FOyFuV5keZ3XRi3qhcnMWafL/u4SCD47UU1fcebiDqUBfjZHcRFUiE7vlL9Lf9rtt
-         5vW6yOHf0I7iywe033E02m9Dz3Iqbk2NSo74DlvsiX7gCqdhPB2CAECOO4Xaqn/7rXb/
-         Z3UZ4UDP7CjBk4FQp+hb5izjUoemys03j+YpAjs9aVtAwSgc58/c3EbGatfNwLIb/Fam
-         hMUGGPyMXn8mnFIyChbh6xtLS07Rkrv6w52Knoe0bqShcje2t/RbJzp53z19I02kAc4H
-         5gRw==
-X-Gm-Message-State: AC+VfDzscwTToZVe1DZwX8YPpou8BpLjjE/vTrAzgNPPAJnAGGARzKYX
-        IL0cqToH/dlCtm2d8PUYtcKUaLMgCEQ=
-X-Google-Smtp-Source: ACHHUZ5IJscLTLN+QUx5LvObb1s7wrOlbQnauB/Od2TkLY9KPcJA7WL/v56SFC0m3dxVitK+cNM2lw==
-X-Received: by 2002:adf:e647:0:b0:306:3153:d2fe with SMTP id b7-20020adfe647000000b003063153d2femr3170243wrn.27.1683031706531;
-        Tue, 02 May 2023 05:48:26 -0700 (PDT)
+        bh=h8BXJ75gYzzYprFFZm4HHrpNV5bb1uDaD8X/yAOq6xE=;
+        b=g4jTTpMTiIh0xqGmEOkTy6d1cgZNMqiiRssv9i8a1hIz7Ii41FbwBG5fk4byPT3ekS
+         L3tzcuYqEPyEzkBhL02Cq4/pwNqR37N6WUyK8+DyJg4QiDR+00DMVrOmtoYLhrGL6QwG
+         2S7ZyzHS9UEkT2/H5oRFhaoYWA8+aj+14d8LBcNzPzy2bus/K+wjW4Hs6sxZtVQ/rmjA
+         i2WRiun6tem90TNyaGPqUJPY3a3xj3RaOdsV6Ky0/3kAm7BRIWKL7OTFyhtQ1HMQ3kYs
+         eikMOlUCIn88TIESnnrN8Lw6KGdsOeSl0Ih9G4ke1u2UWzeZhf/UtZHIM6O7ykWKNo+O
+         Ba+w==
+X-Gm-Message-State: AC+VfDyPVrbSkQydBkLbA/NwCZNvjrnbz4TkUletOp377r9DjYX1IZCC
+        xQGItuUy8lii3Wd3/la+QrU=
+X-Google-Smtp-Source: ACHHUZ56mV1h2noLhrpy/lUrHlFJl3n9dlxIoFIg3BmoUKvwGkC67UZ83WZ4LmMv/hkbK5kUXT+iYw==
+X-Received: by 2002:a05:600c:257:b0:3f0:5887:bea3 with SMTP id 23-20020a05600c025700b003f05887bea3mr12229044wmj.27.1683031707995;
+        Tue, 02 May 2023 05:48:27 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id d9-20020a5d6dc9000000b00304adbeeabbsm14226259wrz.99.2023.05.02.05.48.25
+        by smtp.gmail.com with ESMTPSA id d9-20020a5d6dc9000000b00304adbeeabbsm14226259wrz.99.2023.05.02.05.48.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 May 2023 05:48:26 -0700 (PDT)
+        Tue, 02 May 2023 05:48:27 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -58,9 +58,9 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Chuck Lever <chuck.lever@oracle.com>,
         linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH v2 2/4] exportfs: add explicit flag to request non-decodeable file handles
-Date:   Tue,  2 May 2023 15:48:15 +0300
-Message-Id: <20230502124817.3070545-3-amir73il@gmail.com>
+Subject: [PATCH v2 3/4] exportfs: allow exporting non-decodeable file handles to userspace
+Date:   Tue,  2 May 2023 15:48:16 +0300
+Message-Id: <20230502124817.3070545-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230502124817.3070545-1-amir73il@gmail.com>
 References: <20230502124817.3070545-1-amir73il@gmail.com>
@@ -76,153 +76,123 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-So far, all callers of exportfs_encode_inode_fh(), except for fsnotify's
-show_mark_fhandle(), check that filesystem can decode file handles, but
-we would like to add more callers that do not require a file handle that
-can be decoded.
+Some userspace programs use st_ino as a unique object identifier, even
+though inode numbers may be recycable.
 
-Introduce a flag to explicitly request a file handle that may not to be
-decoded later and a wrapper exportfs_encode_fid() that sets this flag
-and convert show_mark_fhandle() to use the new wrapper.
+This issue has been addressed for NFS export long ago using the exportfs
+file handle API and the unique file handle identifiers are also exported
+to userspace via name_to_handle_at(2).
 
-This will be used to allow adding fanotify support to filesystems that
-do not support NFS export.
+fanotify also uses file handles to identify objects in events, but only
+for filesystems that support NFS export.
+
+Relax the requirement for NFS export support and allow more filesystems
+to export a unique object identifier via name_to_handle_at(2) with the
+flag AT_HANDLE_FID.
+
+A file handle requested with the AT_HANDLE_FID flag, may or may not be
+usable as an argument to open_by_handle_at(2).
+
+To allow filesystems to opt-in to supporting AT_HANDLE_FID, a struct
+export_operations is required, but even an empty struct is sufficient
+for encoding FIDs.
 
 Acked-by: Jeff Layton <jlayton@kernel.org>
 Acked-by: Chuck Lever <chuck.lever@oracle.com>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- Documentation/filesystems/nfs/exporting.rst |  4 ++--
- fs/exportfs/expfs.c                         | 20 ++++++++++++++++++--
- fs/notify/fanotify/fanotify.c               |  4 ++--
- fs/notify/fdinfo.c                          |  2 +-
- include/linux/exportfs.h                    | 12 +++++++++++-
- 5 files changed, 34 insertions(+), 8 deletions(-)
+ fs/fhandle.c               | 22 ++++++++++++++--------
+ include/uapi/linux/fcntl.h |  5 +++++
+ 2 files changed, 19 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/filesystems/nfs/exporting.rst b/Documentation/filesystems/nfs/exporting.rst
-index 0e98edd353b5..3d97b8d8f735 100644
---- a/Documentation/filesystems/nfs/exporting.rst
-+++ b/Documentation/filesystems/nfs/exporting.rst
-@@ -122,8 +122,8 @@ are exportable by setting the s_export_op field in the struct
- super_block.  This field must point to a "struct export_operations"
- struct which has the following members:
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index f2bc27d1975e..4a635cf787fc 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -16,7 +16,7 @@
  
-- encode_fh  (optional)
--    Takes a dentry and creates a filehandle fragment which can later be used
-+  encode_fh (optional)
-+    Takes a dentry and creates a filehandle fragment which may later be used
-     to find or create a dentry for the same object.  The default
-     implementation creates a filehandle fragment that encodes a 32bit inode
-     and generation number for the inode encoded, and if necessary the
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index ab7feffe2d19..40e624cf7e92 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -381,11 +381,27 @@ static int export_encode_fh(struct inode *inode, struct fid *fid,
- 	return type;
- }
- 
-+/**
-+ * exportfs_encode_inode_fh - encode a file handle from inode
-+ * @inode:   the object to encode
-+ * @fid:     where to store the file handle fragment
-+ * @max_len: maximum length to store there
-+ * @flags:   properties of the requested file handle
-+ *
-+ * Returns an enum fid_type or a negative errno.
-+ */
- int exportfs_encode_inode_fh(struct inode *inode, struct fid *fid,
--			     int *max_len, struct inode *parent)
-+			     int *max_len, struct inode *parent, int flags)
+ static long do_sys_name_to_handle(const struct path *path,
+ 				  struct file_handle __user *ufh,
+-				  int __user *mnt_id)
++				  int __user *mnt_id, int fh_flags)
  {
- 	const struct export_operations *nop = inode->i_sb->s_export_op;
- 
-+	/*
-+	 * If a decodeable file handle was requested, we need to make sure that
-+	 * filesystem can decode file handles.
-+	 */
-+	if (nop && !(flags & EXPORT_FH_FID) && !nop->fh_to_dentry)
-+		return -EOPNOTSUPP;
-+
- 	if (nop && nop->encode_fh)
- 		return nop->encode_fh(inode, fid->raw, max_len, parent);
- 
-@@ -418,7 +434,7 @@ int exportfs_encode_fh(struct dentry *dentry, struct fid *fid, int *max_len,
- 		parent = p->d_inode;
- 	}
- 
--	error = exportfs_encode_inode_fh(inode, fid, max_len, parent);
-+	error = exportfs_encode_inode_fh(inode, fid, max_len, parent, flags);
- 	dput(p);
- 
- 	return error;
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 29bdd99b29fa..d1a49f5b6e6d 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -380,7 +380,7 @@ static int fanotify_encode_fh_len(struct inode *inode)
- 	if (!inode)
- 		return 0;
- 
--	exportfs_encode_inode_fh(inode, NULL, &dwords, NULL);
-+	exportfs_encode_inode_fh(inode, NULL, &dwords, NULL, 0);
- 	fh_len = dwords << 2;
+ 	long retval;
+ 	struct file_handle f_handle;
+@@ -24,11 +24,14 @@ static long do_sys_name_to_handle(const struct path *path,
+ 	struct file_handle *handle = NULL;
  
  	/*
-@@ -443,7 +443,7 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
+-	 * We need to make sure whether the file system
+-	 * support decoding of the file handle
++	 * We need to make sure whether the file system support decoding of
++	 * the file handle if decodeable file handle was requested.
++	 * Otherwise, even empty export_operations are sufficient to opt-in
++	 * to encoding FIDs.
+ 	 */
+ 	if (!path->dentry->d_sb->s_export_op ||
+-	    !path->dentry->d_sb->s_export_op->fh_to_dentry)
++	    (!(fh_flags & EXPORT_FH_FID) &&
++	     !path->dentry->d_sb->s_export_op->fh_to_dentry))
+ 		return -EOPNOTSUPP;
+ 
+ 	if (copy_from_user(&f_handle, ufh, sizeof(struct file_handle)))
+@@ -45,10 +48,10 @@ static long do_sys_name_to_handle(const struct path *path,
+ 	/* convert handle size to multiple of sizeof(u32) */
+ 	handle_dwords = f_handle.handle_bytes >> 2;
+ 
+-	/* we ask for a non connected handle */
++	/* we ask for a non connectable maybe decodeable file handle */
+ 	retval = exportfs_encode_fh(path->dentry,
+ 				    (struct fid *)handle->f_handle,
+-				    &handle_dwords,  0);
++				    &handle_dwords, fh_flags);
+ 	handle->handle_type = retval;
+ 	/* convert handle size to bytes */
+ 	handle_bytes = handle_dwords * sizeof(u32);
+@@ -84,6 +87,7 @@ static long do_sys_name_to_handle(const struct path *path,
+  * @handle: resulting file handle
+  * @mnt_id: mount id of the file system containing the file
+  * @flag: flag value to indicate whether to follow symlink or not
++ *        and whether a decodable file handle is required.
+  *
+  * @handle->handle_size indicate the space available to store the
+  * variable part of the file handle in bytes. If there is not
+@@ -96,17 +100,19 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+ {
+ 	struct path path;
+ 	int lookup_flags;
++	int fh_flags;
+ 	int err;
+ 
+-	if ((flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
++	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID))
+ 		return -EINVAL;
+ 
+ 	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
++	fh_flags = (flag & AT_HANDLE_FID) ? EXPORT_FH_FID : 0;
+ 	if (flag & AT_EMPTY_PATH)
+ 		lookup_flags |= LOOKUP_EMPTY;
+ 	err = user_path_at(dfd, name, lookup_flags, &path);
+ 	if (!err) {
+-		err = do_sys_name_to_handle(&path, handle, mnt_id);
++		err = do_sys_name_to_handle(&path, handle, mnt_id, fh_flags);
+ 		path_put(&path);
  	}
+ 	return err;
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index e8c07da58c9f..3091080db069 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -112,4 +112,9 @@
  
- 	dwords = fh_len >> 2;
--	type = exportfs_encode_inode_fh(inode, buf, &dwords, NULL);
-+	type = exportfs_encode_inode_fh(inode, buf, &dwords, NULL, 0);
- 	err = -EINVAL;
- 	if (!type || type == FILEID_INVALID || fh_len != dwords << 2)
- 		goto out_err;
-diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-index 55081ae3a6ec..5c430736ec12 100644
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -50,7 +50,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
- 	f.handle.handle_bytes = sizeof(f.pad);
- 	size = f.handle.handle_bytes >> 2;
+ #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
  
--	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, NULL);
-+	ret = exportfs_encode_fid(inode, (struct fid *)f.handle.f_handle, &size);
- 	if ((ret == FILEID_INVALID) || (ret < 0)) {
- 		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
- 		return;
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index 66e16022cc3d..ec86ea4fa5c1 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -136,6 +136,7 @@ struct fid {
- };
- 
- #define EXPORT_FH_CONNECTABLE	0x1 /* Encode file handle with parent */
-+#define EXPORT_FH_FID		0x2 /* File handle may be non-decodeable */
- 
- /**
-  * struct export_operations - for nfsd to communicate with file systems
-@@ -226,9 +227,18 @@ struct export_operations {
- };
- 
- extern int exportfs_encode_inode_fh(struct inode *inode, struct fid *fid,
--				    int *max_len, struct inode *parent);
-+				    int *max_len, struct inode *parent,
-+				    int flags);
- extern int exportfs_encode_fh(struct dentry *dentry, struct fid *fid,
- 			      int *max_len, int flags);
++/* Flags for name_to_handle_at(2) */
++#define AT_HANDLE_FID		0x10000	/* file handle is needed to compare
++					   object indentity and may not be
++					   usable to open_by_handle_at(2) */
 +
-+static inline int exportfs_encode_fid(struct inode *inode, struct fid *fid,
-+				      int *max_len)
-+{
-+	return exportfs_encode_inode_fh(inode, fid, max_len, NULL,
-+					EXPORT_FH_FID);
-+}
-+
- extern struct dentry *exportfs_decode_fh_raw(struct vfsmount *mnt,
- 					     struct fid *fid, int fh_len,
- 					     int fileid_type,
+ #endif /* _UAPI_LINUX_FCNTL_H */
 -- 
 2.34.1
 
