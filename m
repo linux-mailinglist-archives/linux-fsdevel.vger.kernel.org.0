@@ -2,58 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB7D6F4A4C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 21:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 985256F4A6B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 21:34:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbjEBT0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 15:26:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49098 "EHLO
+        id S229461AbjEBTej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 15:34:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbjEBT0F (ORCPT
+        with ESMTP id S229441AbjEBTeh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 15:26:05 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 514EC1BD4;
-        Tue,  2 May 2023 12:26:01 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f19b9d5358so42459315e9.1;
-        Tue, 02 May 2023 12:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683055560; x=1685647560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/AUSUmrI+P7/+99Qu6phENx8nWverUMMhzCM0iScMBs=;
-        b=A8IPl7XSjnSBORcWZdF+wrp4liindlsj/EFJuQ667TQjLSd0VNOtM03C+cX2d0Xkx0
-         yT3w4a7ZWvvaIHGji/U1kDoPlYYXfz5B0jaVp3duDNcIwp9WOjYLqVhGESANFpy51BnH
-         NzB2+W9lOFUoH1Jl07+CYDfTfERa7FYirtn+Bxe+yjV8hV44R+k7O1bN76p641pr2Ymb
-         QO15obXh5w8ppB56iyY8Xy3AoJb5X7330ozrt5xVKG1CBvjsUzwkYCvE0rfKnizwDYzu
-         sh2VD2syoE3U0pJf/7E8YqKqaj/o3il5kaXtv5UnY051GaeGafOzq6vhQ9KdZVoDfXuw
-         YpgA==
+        Tue, 2 May 2023 15:34:37 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34BE1BFA
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 12:33:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683056031;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L7V+bKkAFuye2MRxx4y1CCTYTgcYyMX5mEQB4XsE6J8=;
+        b=fJrd81Il5UmX1hMmuvxumbz+3uVvaQHcOMdhlc28R1SXrzgXdnmc46/QCCSL33DOCD0P9e
+        2oDd3yfw+qd/rU1tO5n2sJUrhorWRaHxuqfOcAvfAAHzgCmErFe+UMoRmp6DBvLEFGwaRr
+        dkBoRBm0WT0aT2P+SQl0HhSyhsa6/10=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-115-HasZVr6UNdSfVptlP3cpKQ-1; Tue, 02 May 2023 15:33:49 -0400
+X-MC-Unique: HasZVr6UNdSfVptlP3cpKQ-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3f17afcf99cso13370835e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 12:33:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683055560; x=1685647560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/AUSUmrI+P7/+99Qu6phENx8nWverUMMhzCM0iScMBs=;
-        b=MYevraMQh94BBesEJWkzm+EpI7Sx8jYuujJk0i8xFZkpsrGKQW/lXiMON9KJRh4Swf
-         L5h0KXeRcRHAw+SaVSPWRfjxJPNOc2PMVoG2L0gXbLltUU6sPeyERKwxuw7ema5bzLkS
-         AFA87/Gr8uR/DEhnJvohtEVQnTREeWgG9UCDFYjyHtOgkhktsPf+8omw96XrZ+HYLRDm
-         NAEzX24Bwc6IqmrmL+FF2/JZO4nXXKzCwRSsHcIDyI59qONebq4H31zqX0VOHKJQheCj
-         cnAnuZQ+Qu5BAp3/H2gHa0bUfaKM9loBWRwZC/RNF1iRn1sARQg0z7ezFIrQquPQ9gJn
-         8jzA==
-X-Gm-Message-State: AC+VfDxPxNIkJyAcm9APqMr98aqc2LDqu/7AvhywChFH2Kja679NLr7L
-        E8mf1qaA/cbycGcMYsI2lNDNeHNEZuFOBQ==
-X-Google-Smtp-Source: ACHHUZ6ht0Ch0aOBCvqee5y4/fBW9GOhRmD+e/rpLLfvnS/wbCTyo4hCAQdlm7a2k3NJP1zBT6EnUg==
-X-Received: by 2002:a05:600c:2212:b0:3f1:6ebe:d598 with SMTP id z18-20020a05600c221200b003f16ebed598mr12463201wml.7.1683055559416;
-        Tue, 02 May 2023 12:25:59 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id 13-20020a05600c230d00b003f31da39b62sm15329343wmo.18.2023.05.02.12.25.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 May 2023 12:25:58 -0700 (PDT)
-Date:   Tue, 2 May 2023 20:25:57 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
+        d=1e100.net; s=20221208; t=1683056028; x=1685648028;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L7V+bKkAFuye2MRxx4y1CCTYTgcYyMX5mEQB4XsE6J8=;
+        b=Ij78LtvuEEV+4fLW6GKYI75uCkU1b7LqbpkSMPTzyHQZRkQ+HouNrqgbF2Np7DW5p+
+         zKuGkSWYaTXGQUqb2faAh+cTGDopEF5B7sm64VQBkIhBQMCtaAqj57vFxdw7hFteSllI
+         HucxeAyvgS3y3hvGlchLZzALTreq+Yry25FzWZwJ9mTRL/IhxpJQI7/Hd3TRUdAZ4Lv0
+         0lESzOK641ZVP4gxfEx4j/0VKPmEIppwrz7kp3QV3JuQRVrR6FOoDH1uOhVwAubiw9zu
+         ZHMhSKw6CIELQ04NMmPyXar6bZdqDE0TkVew8d8rxWHC9im5SW/Pv7h4EDFDV2okEg5E
+         jXtQ==
+X-Gm-Message-State: AC+VfDzEheAm72aE51E4wPfH+yepBPXz+e09o9/w3VKr9KThVXFkikdf
+        5mXWVdzMfvehMW3GAhwc7aF10cjydx5YMNorZyuH+gZVu7TO7WIbXY0ASmrXElbVnvAk6EGbFeQ
+        gajcLZKYaluujHNp2QHocYR73jA==
+X-Received: by 2002:a1c:7718:0:b0:3ef:8b0:dbb1 with SMTP id t24-20020a1c7718000000b003ef08b0dbb1mr12952291wmi.7.1683056028364;
+        Tue, 02 May 2023 12:33:48 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4DkkBXktcp2fh05x309qPmU18lpfJUGbCKcyUtssYv4FJqdb9r1N5Pi5T6sFgBVeds17Epsw==
+X-Received: by 2002:a1c:7718:0:b0:3ef:8b0:dbb1 with SMTP id t24-20020a1c7718000000b003ef08b0dbb1mr12952237wmi.7.1683056028021;
+        Tue, 02 May 2023 12:33:48 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c700:2400:6b79:2aa:9602:7016? (p200300cbc70024006b7902aa96027016.dip0.t-ipconnect.de. [2003:cb:c700:2400:6b79:2aa:9602:7016])
+        by smtp.gmail.com with ESMTPSA id 3-20020a05600c22c300b003f31d44f0cbsm15442227wmg.29.2023.05.02.12.33.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 May 2023 12:33:47 -0700 (PDT)
+Message-ID: <434c60e6-7ac4-229b-5db0-5175afbcfff5@redhat.com>
+Date:   Tue, 2 May 2023 21:33:45 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v7 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing to
+ file-backed mappings
+Content-Language: en-US
+To:     Lorenzo Stoakes <lstoakes@gmail.com>,
+        Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>,
@@ -98,9 +112,6 @@ Cc:     David Hildenbrand <david@redhat.com>,
         "Paul E . McKenney" <paulmck@kernel.org>,
         Christian Borntraeger <borntraeger@linux.ibm.com>,
         Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH v7 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing
- to file-backed mappings
-Message-ID: <968fa174-6720-4adf-9107-c777ee0d8da4@lucifer.local>
 References: <cover.1683044162.git.lstoakes@gmail.com>
  <b3a4441cade9770e00d24f5ecb75c8f4481785a4.1683044162.git.lstoakes@gmail.com>
  <1691115d-dba4-636b-d736-6a20359a67c3@redhat.com>
@@ -108,135 +119,82 @@ References: <cover.1683044162.git.lstoakes@gmail.com>
  <406fd43a-a051-5fbe-6f66-a43f5e7e7573@redhat.com>
  <3a8c672d-4e6c-4705-9d6c-509d3733eb05@lucifer.local>
  <ZFFfhhwibxHKwDbZ@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZFFfhhwibxHKwDbZ@nvidia.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+ <968fa174-6720-4adf-9107-c777ee0d8da4@lucifer.local>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <968fa174-6720-4adf-9107-c777ee0d8da4@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 02, 2023 at 04:07:50PM -0300, Jason Gunthorpe wrote:
-> On Tue, May 02, 2023 at 07:17:14PM +0100, Lorenzo Stoakes wrote:
->
-> > On a specific point - if mapping turns out to be NULL after we confirm
-> > stable PTE, I'd be inclined to reject and let the slow path take care of
-> > it, would you agree that that's the correct approach?
->
-> I think in general if GUP fast detects any kind of race it should bail
-> to the slow path.
->
-> The races it tries to resolve itself should have really safe and
-> obvious solutions.
->
-> I think this comment is misleading:
->
-> > +	/*
-> > +	 * GUP-fast disables IRQs - this prevents IPIs from causing page tables
-> > +	 * to disappear from under us, as well as preventing RCU grace periods
-> > +	 * from making progress (i.e. implying rcu_read_lock()).
->
-> True, but that is not important here since we are not reading page
-> tables
->
-> > +	 * This means we can rely on the folio remaining stable for all
-> > +	 * architectures, both those that set CONFIG_MMU_GATHER_RCU_TABLE_FREE
-> > +	 * and those that do not.
->
-> Not really clear. We have a valid folio refcount here, that is all.
+On 02.05.23 21:25, Lorenzo Stoakes wrote:
+> On Tue, May 02, 2023 at 04:07:50PM -0300, Jason Gunthorpe wrote:
+>> On Tue, May 02, 2023 at 07:17:14PM +0100, Lorenzo Stoakes wrote:
+>>
+>>> On a specific point - if mapping turns out to be NULL after we confirm
+>>> stable PTE, I'd be inclined to reject and let the slow path take care of
+>>> it, would you agree that that's the correct approach?
+>>
+>> I think in general if GUP fast detects any kind of race it should bail
+>> to the slow path.
+>>
+>> The races it tries to resolve itself should have really safe and
+>> obvious solutions.
+>>
+>> I think this comment is misleading:
+>>
+>>> +	/*
+>>> +	 * GUP-fast disables IRQs - this prevents IPIs from causing page tables
+>>> +	 * to disappear from under us, as well as preventing RCU grace periods
+>>> +	 * from making progress (i.e. implying rcu_read_lock()).
+>>
+>> True, but that is not important here since we are not reading page
+>> tables
+>>
+>>> +	 * This means we can rely on the folio remaining stable for all
+>>> +	 * architectures, both those that set CONFIG_MMU_GATHER_RCU_TABLE_FREE
+>>> +	 * and those that do not.
+>>
+>> Not really clear. We have a valid folio refcount here, that is all.
+> 
+> Some of this is a product of mixed signals from different commenters and
+> my being perhaps a little _too_ willing to just go with the flow.
+> 
+> With interrupts disabled and IPI blocked, plus the assurances that
+> interrupts being disabled implied the RCU version of page table
+> manipulation is also blocked, my understanding was that remapping in this
+> process to another page could not occur.
+> 
+> Of course the folio is 'stable' in the sense we have a refcount on it, but
+> it is unlocked so things can change.
+> 
+> I'm guessing the RCU guarantees in the TLB logic are not as solid as IPI,
+> because in the IPI case it seems to me you couldn't even clear the PTE
+> entry before getting to the page table case.
+> 
+> Otherwise, I'm a bit uncertain actually as to how we can get to the point
+> where the folio->mapping is being manipulated. Is this why?
 
-Some of this is a product of mixed signals from different commenters and
-my being perhaps a little _too_ willing to just go with the flow.
+I'll just stress again that I think there are cases where we unmap and 
+free a page without synchronizing against GUP-fast using an IPI or RCU.
 
-With interrupts disabled and IPI blocked, plus the assurances that
-interrupts being disabled implied the RCU version of page table
-manipulation is also blocked, my understanding was that remapping in this
-process to another page could not occur.
+That's one of the reasons why we recheck if the PTE changed to back off, 
+so I've been told.
 
-Of course the folio is 'stable' in the sense we have a refcount on it, but
-it is unlocked so things can change.
+I'm happy if someone proves me wrong and a page we just (temporarily) 
+pinned cannot have been freed+reused in the meantime.
 
-I'm guessing the RCU guarantees in the TLB logic are not as solid as IPI,
-because in the IPI case it seems to me you couldn't even clear the PTE
-entry before getting to the page table case.
+-- 
+Thanks,
 
-Otherwise, I'm a bit uncertain actually as to how we can get to the point
-where the folio->mapping is being manipulated. Is this why?
+David / dhildenb
 
->
-> > +	 * We get the added benefit that given inodes, and thus address_space,
-> > +	 * objects are RCU freed, we can rely on the mapping remaining stable
-> > +	 * here with no risk of a truncation or similar race.
->
-> Which is the real point:
->
-> 1) GUP-fast disables IRQs which means this is the same context as rcu_read_lock()
-> 2) We have a valid ref on the folio due to normal GUP fast operation
->    Thus derefing struct folio is OK
-> 3) folio->mapping can be deref'd safely under RCU since mapping is RCU free'd
->    It may be zero if we are racing a page free path
->    Can it be zero for other reasons?
-
-Zero? You mean NULL?
-
-In any case, I will try to clarify these, I do agree the _key_ point is
-that we can rely on safely derefing the mapping, at least READ_ONCE()'d, as
-use-after-free or dereffing garbage is the fear here.
-
->
-> If it can't be zero for any other reason then go to GUP slow and let
-> it sort it out
->
-> Otherwise you have to treat NULL as a success.
->
-
-Well that was literally the question :) and I've got somewhat contradictory
-feedback. My instinct aligns with yours in that, just fallback to slow
-path, so that's what I'll do. But just wanted to confirm.
-
-> Really what you are trying to do here is remove the folio lock which
-> would normally protect folio->mapping. Ie this test really boils down
-> to just 'folio_get_mapping_a_ops_rcu() == shmem_aops'
->
-> The hugetlb test is done on a page flag which should be stable under
-> the pageref.
->
-> So.. Your function really ought to be doing this logic:
->
->         // Should be impossible for a slab page to be in a VMA
-> 	if (unlikely(folio_test_slab(folio)))
-> 	   return do gup slow;
->
-> 	// Can a present PTE even be a swap cache?
->    	if (unlikely(folio_test_swapcache(folio)))
-> 	   return do gup slow;
->
-> 	if (folio_test_hugetlb(folio))
-> 	   return safe for fast
->
-> 	// Safe without the folio lock ?
->    	struct address_space *mapping = READ_ONCE(folio->mapping)
-> 	if ((mapping & PAGE_MAPPING_FLAGS) == PAGE_MAPPING_ANON)
-> 	   return safe for fast
-> 	if ((mapping & PAGE_MAPPING_FLAGS) == 0 && mapping)
-> 	   return mapping->a_ops == shmem_aops;
->
->         // Depends on what mapping = NULL means
-> 	return do gup slow
->
-
-Yeah this is how I was planning to implement it, or something along these
-lines. The only question was whether my own view aligned with others to
-avoid more spam :)
-
-The READ_ONCE() approach is precisely how I wanted to do it in thet first
-instance, but feared feedback about duplication and wondered if it made
-much difference, but now it's clear this is ther ight way.
-
-> Jason
