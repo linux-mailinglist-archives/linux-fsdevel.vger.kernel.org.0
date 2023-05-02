@@ -2,122 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D68D56F4416
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1543F6F4401
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233998AbjEBMro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 08:47:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60946 "EHLO
+        id S234072AbjEBMmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 08:42:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjEBMrm (ORCPT
+        with ESMTP id S229533AbjEBMmI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 08:47:42 -0400
-X-Greylist: delayed 597 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 02 May 2023 05:47:40 PDT
-Received: from bee.tesarici.cz (bee.tesarici.cz [IPv6:2a03:3b40:fe:2d4::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93F76A3;
-        Tue,  2 May 2023 05:47:40 -0700 (PDT)
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
+        Tue, 2 May 2023 08:42:08 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30B8659CF;
+        Tue,  2 May 2023 05:42:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=fgFCgKRt+dSv63SBQS0EqzIPjjsNgS5iABtgfP8KMvY=; b=Aptl0C9YZtVHhIGcqwN9psA40r
+        S+G1CNNeqHBhJQCPyxq8JTFXrIC20oKv3sunDSOsd9zMFsFzTHjtJ4CsBZ6fPZJ9Fw97dzhOQkR6+
+        sA6Qpx8UwumRQzMSrCbASWhI8qrfpguY0OMXsvQ70o9rTcpsAPZZjvbqrSSxvzgJPR1S4D4W0npH3
+        w4nNuBkWL7Q9i/HqJgT5Z3cz+f2PzWKV7TdovHV7w5pdECflKTwy6Al+2ErY/vOjCg3YGmjyh4os3
+        kpxblnvQPN/ZGuQQycvMxD3KXzI5YbnQ1+FGHmUmlZl+0aypr5sF9KDduv3PIftxymNZ2vLshSC+K
+        /6KVXkHQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1ptpJW-00GJ5B-34;
+        Tue, 02 May 2023 12:41:04 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by bee.tesarici.cz (Postfix) with ESMTPSA id 2CF8014D08D;
-        Tue,  2 May 2023 14:37:38 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=none dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tesarici.cz; s=mail;
-        t=1683031059; bh=Qr2tHIsVv3G7WfyCHA01MAqL8W2MA7ATI0zo3p6+vZU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IfEosdQDdG0KdbWIE2Mw4kYzXULwRWeCrunMA9KeSj7bgHgVvejlazncQaRUsj4mk
-         cPzKmfMyWBF/pneu0+Wz1Tc79OAteXzmBVIF+laGLG7fMedy5/+rKBRUG4JXa0brek
-         j/mHCba0NDf+g5QrNCJ9oA++o7fZWNj5XJR8Ww/uOsU1/r1cRL+Ym3szeVpEkot+SQ
-         CPmLY5/NwlfZlklEXZtJMyzmEttSqfpVGGYiYbY1oZJU5at7AavuZZVsxFPid36vj1
-         A5riKtEpBa2mW2yWvT3lFoq/3exjrCXn7nmPFY3STEqu5coB+Uro028za0ObQL3JYi
-         4+VPt2d2SqCBg==
-Date:   Tue, 2 May 2023 14:37:37 +0200
-From:   Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
-        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
-        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-        paulmck@kernel.org, pasha.tatashin@soleen.com,
-        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH 06/40] lib/string.c: strsep_no_empty()
-Message-ID: <20230502143737.1e11f1ac@meshulam.tesarici.cz>
-In-Reply-To: <20230501165450.15352-7-surenb@google.com>
-References: <20230501165450.15352-1-surenb@google.com>
-        <20230501165450.15352-7-surenb@google.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-suse-linux-gnu)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 00898300237;
+        Tue,  2 May 2023 14:40:58 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BB0FB23C5C34C; Tue,  2 May 2023 14:40:58 +0200 (CEST)
+Date:   Tue, 2 May 2023 14:40:58 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Paul McKenney <paulmck@kernel.org>
+Subject: Re: [PATCH v6 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing
+ to file-backed mappings
+Message-ID: <20230502124058.GB1597602@hirez.programming.kicks-ass.net>
+References: <cover.1682981880.git.lstoakes@gmail.com>
+ <dee4f4ad6532b0f94d073da263526de334d5d7e0.1682981880.git.lstoakes@gmail.com>
+ <20230502111334.GP1597476@hirez.programming.kicks-ass.net>
+ <ab66d15a-acd0-4d9b-aa12-49cddd12c6a5@lucifer.local>
+ <20230502120810.GD1597538@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230502120810.GD1597538@hirez.programming.kicks-ass.net>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon,  1 May 2023 09:54:16 -0700
-Suren Baghdasaryan <surenb@google.com> wrote:
+On Tue, May 02, 2023 at 02:08:10PM +0200, Peter Zijlstra wrote:
 
-> From: Kent Overstreet <kent.overstreet@linux.dev>
+> > >
+> > >
+> > > 	if (folio_test_anon(folio))
+> > > 		return true;
+> > 
+> > This relies on the mapping so belongs below the lockdep assert imo.
 > 
-> This adds a new helper which is like strsep, except that it skips empty
-> tokens.
+> Oh, right you are.
 > 
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  include/linux/string.h |  1 +
->  lib/string.c           | 19 +++++++++++++++++++
->  2 files changed, 20 insertions(+)
-> 
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index c062c581a98b..6cd5451c262c 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -96,6 +96,7 @@ extern char * strpbrk(const char *,const char *);
->  #ifndef __HAVE_ARCH_STRSEP
->  extern char * strsep(char **,const char *);
->  #endif
-> +extern char *strsep_no_empty(char **, const char *);
->  #ifndef __HAVE_ARCH_STRSPN
->  extern __kernel_size_t strspn(const char *,const char *);
->  #endif
-> diff --git a/lib/string.c b/lib/string.c
-> index 3d55ef890106..dd4914baf45a 100644
-> --- a/lib/string.c
-> +++ b/lib/string.c
-> @@ -520,6 +520,25 @@ char *strsep(char **s, const char *ct)
->  EXPORT_SYMBOL(strsep);
->  #endif
->  
-> +/**
-> + * strsep_no_empt - Split a string into tokens, but don't return empty tokens
-                ^^^^
-Typo: strsep_no_empty
+> > >
+> > > 	/*
+> > > 	 * Having IRQs disabled (as per GUP-fast) also inhibits RCU
+> > > 	 * grace periods from making progress, IOW. they imply
+> > > 	 * rcu_read_lock().
+> > > 	 */
+> > > 	lockdep_assert_irqs_disabled();
+> > >
+> > > 	/*
+> > > 	 * Inodes and thus address_space are RCU freed and thus safe to
+> > > 	 * access at this point.
+> > > 	 */
+> > > 	mapping = folio_mapping(folio);
+> > > 	if (mapping && shmem_mapping(mapping))
+> > > 		return true;
+> > >
+> > > 	return false;
+> > >
+> > > > +}
 
-Petr T
+So arguably you should do *one* READ_ONCE() load of mapping and
+consistently use that, this means open-coding both folio_test_anon() and
+folio_mapping().
+
