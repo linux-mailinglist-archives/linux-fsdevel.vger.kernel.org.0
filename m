@@ -2,295 +2,317 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66C9E6F440D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:46:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F2A06F4430
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233857AbjEBMqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 08:46:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59844 "EHLO
+        id S234072AbjEBMtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 08:49:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjEBMqn (ORCPT
+        with ESMTP id S233856AbjEBMta (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 08:46:43 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB4D51B1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 05:46:40 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3f192c23fffso22568095e9.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 05:46:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20221208.gappssmtp.com; s=20221208; t=1683031599; x=1685623599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zUtmI1MjmF93WMGShwlGylo001x44X0S/ZnCTRKPB98=;
-        b=yYACiJhhjiJ1Q5u/pcYuXNkrNCSNQza14SVrwZ4+admSLJwYUyjgZ47Uwpf8rpD8Uk
-         dQICh/CSFaKKZkkXu76Xr/YL4FS6yHivTz+3gEtPquvKer9fMPI3CaqGhtrB0OWcvMxT
-         JwlcCOADJdmHDp4k+CjvC9t+TFmqVreCleGeiai1eyLafmKNu52mne8x305L8se1enZb
-         3F5IbLAMe8TM+4UixK4YlPBYDt0NZHycGvMA9x1c0O5pZAP0WrTh44rlV52HEyR/VyfL
-         wX5VVc+a+N314sFLEmCHsHTk4O5Gyz3BroCrINPU70QhjmDAJM0lHfqSTb5XAonMjLNn
-         a44A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683031599; x=1685623599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zUtmI1MjmF93WMGShwlGylo001x44X0S/ZnCTRKPB98=;
-        b=K3lJofY6QC/wunRgwUNlOsAtznKkdYaf1OgZ8UgSH1lgReRfSJKEW/7EVcBmBxKtw0
-         H2xGR/pDLGTNWjqm3t+XGCaRONchDLki7vwOR7DRIj091Oqa0fpp7EXYS+j6JREBnJIx
-         hQoArqFqtO/TKcfZo2zkOTTn2e9CD+di10QGGUEIQ1U2o7Mz/XicOF0DNtQxjDegi3n+
-         Oxg4q+l/p4W+vbzyL/XUlSiH55fv8drqLYTuChyLTiz+zNGCUQNwvbp8GxNlMrc59sUx
-         UQP6qf7xgOAM1hh+0MX3r746jZ28kDU3W/bbepwjeowKt7ElWMbTtwqs4C+gimYDWGjx
-         BHzQ==
-X-Gm-Message-State: AC+VfDwwsdhyeyw596s5qEcCM37RwQKRqbrycd/bUyfYE82VQt0DDw3o
-        SoEu2jk0GJKVGQ5tfxSF4lcY+T50WkATwvqTSb9AK0bFvUxbwagZ
-X-Google-Smtp-Source: ACHHUZ6fFWr9ekF2w+Lo2QKt7EZHxuHYYy1Km73mHG0lk6lP0USIpvMkAr/7SysT8uoEmUL9RwEXC8OpBweSHLTPz3k=
-X-Received: by 2002:a5d:5345:0:b0:303:2115:1b11 with SMTP id
- t5-20020a5d5345000000b0030321151b11mr12380449wrv.39.1683031599051; Tue, 02
- May 2023 05:46:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <00000000000084706805fab08e27@google.com> <CACT4Y+aGfOE7R+LoocX7aW2XObY4aCAsAydwvL+Ni_NUt6JfJA@mail.gmail.com>
- <83578cb3-2528-cfab-21bc-cfeccd8124dd@ghiti.fr> <CACT4Y+ZGsMCqsaV9DQDsTFWH7cCMY9GCtdZTGdVBPqOERPRQzw@mail.gmail.com>
-In-Reply-To: <CACT4Y+ZGsMCqsaV9DQDsTFWH7cCMY9GCtdZTGdVBPqOERPRQzw@mail.gmail.com>
-From:   Alexandre Ghiti <alexghiti@rivosinc.com>
+        Tue, 2 May 2023 08:49:30 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB181AE;
+        Tue,  2 May 2023 05:49:27 -0700 (PDT)
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 342ChaNi011400;
+        Tue, 2 May 2023 12:46:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=FN9vBZ8d7br8HP0KhHzVVSNO3Yq7pGTSNXKbLmga7xI=;
+ b=V2CPNyCZx6qTQPTh7W73X3Uv9f0ldrm423iwf9YtSO8pA3ev4ulBXhXGqv10Whxyn/jA
+ TNiXX5sQDq00h1w9mnj/b0w8NnxV9NpQnxWEniEPaZwEHo9Uv2NDjfJns+KCrNqrOfWY
+ iA6hsEtYnwde5ShItZMV2Gw827lQlcmGJzHhqfO+e0ua6vm6BQakHZbJzBU9OJpnWmYq
+ XsnThQZpSl3wLeuF6Cne+cQLHOBNk1YQAALMq0zLo4u6mMzZHXQmHXBtxW9pBgBY5KmA
+ w2B24pE/zJAhHCcnv8R/Bx+ZCSJAjAu9J6qSG4pJzYw6K52ww3/4OffDiObNVgvcB4GG Kg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb1wh9ute-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 12:46:36 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 342CkBc7023597;
+        Tue, 2 May 2023 12:46:35 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qb1wh9urn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 12:46:35 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3424Pupe010273;
+        Tue, 2 May 2023 12:46:32 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma04ams.nl.ibm.com (PPS) with ESMTPS id 3q8tv6sk96-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 12:46:32 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 342CkT51262880
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 2 May 2023 12:46:29 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B7B8220043;
+        Tue,  2 May 2023 12:46:29 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CD7D32005A;
+        Tue,  2 May 2023 12:46:28 +0000 (GMT)
+Received: from [9.152.224.114] (unknown [9.152.224.114])
+        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  2 May 2023 12:46:28 +0000 (GMT)
+Message-ID: <fbad9e18-f727-9703-33cf-545a2d33af76@linux.ibm.com>
 Date:   Tue, 2 May 2023 14:46:28 +0200
-Message-ID: <CAHVXubiNbmcv=87gkMsUOFvmdKt5i-osvnuuEkju6gMqzwOBVw@mail.gmail.com>
-Subject: Re: [syzbot] [fs?] KASAN: stack-out-of-bounds Read in proc_pid_stack
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Alexandre Ghiti <alex@ghiti.fr>,
-        syzbot <syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com>,
-        brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v6 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing to
+ file-backed mappings
+Content-Language: en-US
+To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>
+References: <cover.1682981880.git.lstoakes@gmail.com>
+ <dee4f4ad6532b0f94d073da263526de334d5d7e0.1682981880.git.lstoakes@gmail.com>
+From:   Christian Borntraeger <borntraeger@linux.ibm.com>
+In-Reply-To: <dee4f4ad6532b0f94d073da263526de334d5d7e0.1682981880.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 0nEiGzh6Zlpvn55uhGAwq8jgdRV-4CdJ
+X-Proofpoint-GUID: bqU3cKQwFu1adb2MpL3Bqes67JUjKJIy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-02_07,2023-04-27_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ mlxlogscore=523 adultscore=0 clxscore=1011 phishscore=0 priorityscore=1501
+ mlxscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2305020108
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 2, 2023 at 2:32=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com> w=
-rote:
->
-> On Tue, 2 May 2023 at 14:02, Alexandre Ghiti <alex@ghiti.fr> wrote:
-> >
-> > On 5/2/23 09:15, Dmitry Vyukov wrote:
-> > > On Tue, 2 May 2023 at 09:05, syzbot
-> > > <syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com> wrote:
-> > >> Hello,
-> > >>
-> > >> syzbot found the following issue on:
-> > >>
-> > >> HEAD commit:    950b879b7f02 riscv: Fixup race condition on PG_dcach=
-e_clea..
-> > >> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/=
-linux.git fixes
-> > >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D10c4c1f7=
-c80000
-> > >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Decebece1=
-b90c0342
-> > >> dashboard link: https://syzkaller.appspot.com/bug?extid=3D01e9a564dc=
-6b3289cea3
-> > >> compiler:       riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > >> userspace arch: riscv64
-> > >>
-> > >> Unfortunately, I don't have any reproducer for this issue yet.
-> > >>
-> > >> IMPORTANT: if you fix the issue, please add the following tag to the=
- commit:
-> > >> Reported-by: syzbot+01e9a564dc6b3289cea3@syzkaller.appspotmail.com
-> > >>
-> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >> BUG: KASAN: stack-out-of-bounds in walk_stackframe+0x128/0x2fe arch/=
-riscv/kernel/stacktrace.c:58
-> > >> Read of size 8 at addr ff200000030a79b0 by task syz-executor.1/7894
-> > >>
-> > >> CPU: 0 PID: 7894 Comm: syz-executor.1 Tainted: G        W          6=
-.2.0-rc1-syzkaller #0
-> > >> Hardware name: riscv-virtio,qemu (DT)
-> > >> Call Trace:
-> > >> [<ffffffff8000b9ea>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stac=
-ktrace.c:121
-> > >> [<ffffffff83402b96>] show_stack+0x34/0x40 arch/riscv/kernel/stacktra=
-ce.c:127
-> > >> [<ffffffff83442726>] __dump_stack lib/dump_stack.c:88 [inline]
-> > >> [<ffffffff83442726>] dump_stack_lvl+0xe0/0x14c lib/dump_stack.c:106
-> > >> [<ffffffff83409674>] print_address_description mm/kasan/report.c:306=
- [inline]
-> > >> [<ffffffff83409674>] print_report+0x1e4/0x4c0 mm/kasan/report.c:417
-> > >> [<ffffffff804ead14>] kasan_report+0xb8/0xe6 mm/kasan/report.c:517
-> > >> [<ffffffff804ebea4>] check_region_inline mm/kasan/generic.c:183 [inl=
-ine]
-> > >> [<ffffffff804ebea4>] __asan_load8+0x7e/0xa6 mm/kasan/generic.c:256
-> > >> [<ffffffff8000b782>] walk_stackframe+0x128/0x2fe arch/riscv/kernel/s=
-tacktrace.c:58
-> > > +riscv maintainers
-> > >
-> > > I think this is an issue in riscv stack walking.
-> > > If it's imprecise or walks stacks of running tasks, it needs to use
-> > > READ_ONCE_NOCHECK.
-> > >
-> > > #syz set subsystems: riscv
-> >
-> >
-> > This fix was merged in 6.3: commit 76950340cf03 ("riscv: Use
-> > READ_ONCE_NOCHECK in imprecise unwinding stack mode").
->
-> Oh, I see, syzbot riscv build is still broken due to:
-> https://syzkaller.appspot.com/bug?id=3D502e4cca2c3c985c2125ffa945b8e636b7=
-b100d7
+Am 02.05.23 um 01:11 schrieb Lorenzo Stoakes:
+> Writing to file-backed dirty-tracked mappings via GUP is inherently broken
+> as we cannot rule out folios being cleaned and then a GUP user writing to
+> them again and possibly marking them dirty unexpectedly.
+> 
+> This is especially egregious for long-term mappings (as indicated by the
+> use of the FOLL_LONGTERM flag), so we disallow this case in GUP-fast as
+> we have already done in the slow path.
 
-The fix for that was merged in 6.3-rc2 too (commit 2d311f480b52
-("riscv, bpf: Fix patch_text implicit declaration")): but the fixes
-branch is still based on top of Linux 6.3-rc1 (Aleksandr mentioned
-that already).
+Hmm, does this interfer with KVM on s390 and PCI interpretion of interrupt delivery?
+It would no longer work with file backed memory, correct?
 
-> https://lore.kernel.org/all/00000000000049382505ebef4a0c@google.com/T/#md=
-2075a04dd463fefe31f73e098672a69d948a1ce
+See
+arch/s390/kvm/pci.c
 
-That's weird, I think this one was merged in v6.1-rc2 (commit
-5c20a3a9df19 ("RISC-V: Fix compilation without RISCV_ISA_ZICBOM")).
+kvm_s390_pci_aif_enable
+which does have
+FOLL_WRITE | FOLL_LONGTERM
+to
 
->
-> so it still tests an older build.
-
-FYI, the latest fixes for KASAN were merged in 6.4 (or are about to).
-
-Thanks,
-
-Alex
-
->
-> #syz fix:
-> riscv: Use READ_ONCE_NOCHECK in imprecise unwinding stack mode
->
-> > >> [<ffffffff8000bc66>] arch_stack_walk+0x2c/0x3c arch/riscv/kernel/sta=
-cktrace.c:154
-> > >> [<ffffffff80190822>] stack_trace_save_tsk+0x14a/0x1bc kernel/stacktr=
-ace.c:150
-> > >> [<ffffffff80697822>] proc_pid_stack+0x146/0x1ee fs/proc/base.c:456
-> > >> [<ffffffff80698bb0>] proc_single_show+0x9c/0x148 fs/proc/base.c:777
-> > >> [<ffffffff805af580>] traverse.part.0+0x74/0x2ca fs/seq_file.c:111
-> > >> [<ffffffff805aff02>] traverse fs/seq_file.c:101 [inline]
-> > >> [<ffffffff805aff02>] seq_read_iter+0x72c/0x934 fs/seq_file.c:195
-> > >> [<ffffffff805b0224>] seq_read+0x11a/0x16e fs/seq_file.c:162
-> > >> [<ffffffff805453ea>] do_loop_readv_writev fs/read_write.c:756 [inlin=
-e]
-> > >> [<ffffffff805453ea>] do_loop_readv_writev fs/read_write.c:743 [inlin=
-e]
-> > >> [<ffffffff805453ea>] do_iter_read+0x324/0x3c2 fs/read_write.c:798
-> > >> [<ffffffff805455f8>] vfs_readv+0xfe/0x166 fs/read_write.c:916
-> > >> [<ffffffff80549c66>] do_preadv fs/read_write.c:1008 [inline]
-> > >> [<ffffffff80549c66>] __do_sys_preadv fs/read_write.c:1058 [inline]
-> > >> [<ffffffff80549c66>] sys_preadv+0x182/0x1fa fs/read_write.c:1053
-> > >> [<ffffffff80005ff6>] ret_from_syscall+0x0/0x2
-> > >>
-> > >> The buggy address belongs to the virtual mapping at
-> > >>   [ff200000030a0000, ff200000030a9000) created by:
-> > >>   kernel_clone+0xee/0x914 kernel/fork.c:2681
-> > >>
-> > >> The buggy address belongs to the physical page:
-> > >> page:ff1c0000024e5f00 refcount:1 mapcount:0 mapping:0000000000000000=
- index:0x0 pfn:0x9397c
-> > >> memcg:ff6000000ffd7202
-> > >> flags: 0xffe000000000000(node=3D0|zone=3D0|lastcpupid=3D0x7ff)
-> > >> raw: 0ffe000000000000 0000000000000000 0000000000000122 000000000000=
-0000
-> > >> raw: 0000000000000000 0000000000000000 00000001ffffffff ff6000000ffd=
-7202
-> > >> page dumped because: kasan: bad access detected
-> > >> page_owner tracks the page as allocated
-> > >> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x1=
-02dc2(GFP_HIGHUSER|__GFP_NOWARN|__GFP_ZERO), pid 7873, tgid 7873 (syz-execu=
-tor.1), ts 4012100669800, free_ts 4010400733200
-> > >>   __set_page_owner+0x32/0x182 mm/page_owner.c:190
-> > >>   set_page_owner include/linux/page_owner.h:31 [inline]
-> > >>   post_alloc_hook+0xf8/0x11a mm/page_alloc.c:2524
-> > >>   prep_new_page mm/page_alloc.c:2531 [inline]
-> > >>   get_page_from_freelist+0xc0e/0x1118 mm/page_alloc.c:4283
-> > >>   __alloc_pages+0x1b0/0x165a mm/page_alloc.c:5549
-> > >>   alloc_pages+0x132/0x25e mm/mempolicy.c:2286
-> > >>   vm_area_alloc_pages mm/vmalloc.c:2989 [inline]
-> > >>   __vmalloc_area_node mm/vmalloc.c:3057 [inline]
-> > >>   __vmalloc_node_range+0x81c/0xdb4 mm/vmalloc.c:3227
-> > >>   alloc_thread_stack_node kernel/fork.c:311 [inline]
-> > >>   dup_task_struct kernel/fork.c:987 [inline]
-> > >>   copy_process+0x210e/0x4068 kernel/fork.c:2097
-> > >>   kernel_clone+0xee/0x914 kernel/fork.c:2681
-> > >>   __do_sys_clone+0xec/0x120 kernel/fork.c:2822
-> > >>   sys_clone+0x32/0x44 kernel/fork.c:2790
-> > >>   ret_from_syscall+0x0/0x2
-> > >> page last free stack trace:
-> > >>   __reset_page_owner+0x4a/0xf8 mm/page_owner.c:148
-> > >>   reset_page_owner include/linux/page_owner.h:24 [inline]
-> > >>   free_pages_prepare mm/page_alloc.c:1446 [inline]
-> > >>   free_pcp_prepare+0x254/0x48e mm/page_alloc.c:1496
-> > >>   free_unref_page_prepare mm/page_alloc.c:3369 [inline]
-> > >>   free_unref_page_list+0x11e/0x736 mm/page_alloc.c:3510
-> > >>   release_pages+0x85a/0xbb2 mm/swap.c:1076
-> > >>   free_pages_and_swap_cache+0x76/0x88 mm/swap_state.c:311
-> > >>   tlb_batch_pages_flush+0x86/0x10c mm/mmu_gather.c:97
-> > >>   tlb_flush_mmu_free mm/mmu_gather.c:292 [inline]
-> > >>   tlb_flush_mmu mm/mmu_gather.c:299 [inline]
-> > >>   tlb_finish_mmu+0xcc/0x280 mm/mmu_gather.c:391
-> > >>   exit_mmap+0x190/0x686 mm/mmap.c:3096
-> > >>   __mmput+0x98/0x290 kernel/fork.c:1207
-> > >>   mmput+0x74/0x88 kernel/fork.c:1229
-> > >>   exit_mm kernel/exit.c:563 [inline]
-> > >>   do_exit+0x602/0x17be kernel/exit.c:854
-> > >>   do_group_exit+0x8e/0x15e kernel/exit.c:1012
-> > >>   __do_sys_exit_group kernel/exit.c:1023 [inline]
-> > >>   __wake_up_parent+0x0/0x4a kernel/exit.c:1021
-> > >>   ret_from_syscall+0x0/0x2
-> > >>
-> > >> Memory state around the buggy address:
-> > >>   ff200000030a7880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > >>   ff200000030a7900: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 00 f2 f2
-> > >>> ff200000030a7980: 00 00 00 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
-> > >>                                       ^
-> > >>   ff200000030a7a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > >>   ff200000030a7a80: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
-> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >>
-> > >>
-> > >> ---
-> > >> This report is generated by a bot. It may contain errors.
-> > >> See https://goo.gl/tpsmEJ for more information about syzbot.
-> > >> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > >>
-> > >> syzbot will keep track of this issue. See:
-> > >> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > >>
-> > >> If the bug is already fixed, let syzbot know by replying with:
-> > >> #syz fix: exact-commit-title
-> > >>
-> > >> If you want to change bug's subsystems, reply with:
-> > >> #syz set subsystems: new-subsystem
-> > >> (See the list of subsystem names on the web dashboard)
-> > >>
-> > >> If the bug is a duplicate of another bug, reply with:
-> > >> #syz dup: exact-subject-of-another-report
-> > >>
-> > >> If you want to undo deduplication, reply with:
-> > >> #syz undup
-> > >>
-> > >> --
-> > >> You received this message because you are subscribed to the Google G=
-roups "syzkaller-bugs" group.
-> > >> To unsubscribe from this group and stop receiving emails from it, se=
-nd an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> > >> To view this discussion on the web visit https://groups.google.com/d=
-/msgid/syzkaller-bugs/00000000000084706805fab08e27%40google.com.
-> > > _______________________________________________
-> > > linux-riscv mailing list
-> > > linux-riscv@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
+> We have access to less information in the fast path as we cannot examine
+> the VMA containing the mapping, however we can determine whether the folio
+> is anonymous and then whitelist known-good mappings - specifically hugetlb
+> and shmem mappings.
+> 
+> While we obtain a stable folio for this check, the mapping might not be, as
+> a truncate could nullify it at any time. Since doing so requires mappings
+> to be zapped, we can synchronise against a TLB shootdown operation.
+> 
+> For some architectures TLB shootdown is synchronised by IPI, against which
+> we are protected as the GUP-fast operation is performed with interrupts
+> disabled. However, other architectures which specify
+> CONFIG_MMU_GATHER_RCU_TABLE_FREE use an RCU lock for this operation.
+> 
+> In these instances, we acquire an RCU lock while performing our checks. If
+> we cannot get a stable mapping, we fall back to the slow path, as otherwise
+> we'd have to walk the page tables again and it's simpler and more effective
+> to just fall back.
+> 
+> It's important to note that there are no APIs allowing users to specify
+> FOLL_FAST_ONLY for a PUP-fast let alone with FOLL_LONGTERM, so we can
+> always rely on the fact that if we fail to pin on the fast path, the code
+> will fall back to the slow path which can perform the more thorough check.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Suggested-by: Kirill A . Shutemov <kirill@shutemov.name>
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+>   mm/gup.c | 87 ++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+>   1 file changed, 85 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 0f09dec0906c..431618048a03 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -18,6 +18,7 @@
+>   #include <linux/migrate.h>
+>   #include <linux/mm_inline.h>
+>   #include <linux/sched/mm.h>
+> +#include <linux/shmem_fs.h>
+>   
+>   #include <asm/mmu_context.h>
+>   #include <asm/tlbflush.h>
+> @@ -95,6 +96,77 @@ static inline struct folio *try_get_folio(struct page *page, int refs)
+>   	return folio;
+>   }
+>   
+> +#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
+> +static bool stabilise_mapping_rcu(struct folio *folio)
+> +{
+> +	struct address_space *mapping = READ_ONCE(folio->mapping);
+> +
+> +	rcu_read_lock();
+> +
+> +	return mapping == READ_ONCE(folio->mapping);
+> +}
+> +
+> +static void unlock_rcu(void)
+> +{
+> +	rcu_read_unlock();
+> +}
+> +#else
+> +static bool stabilise_mapping_rcu(struct folio *)
+> +{
+> +	return true;
+> +}
+> +
+> +static void unlock_rcu(void)
+> +{
+> +}
+> +#endif
+> +
+> +/*
+> + * Used in the GUP-fast path to determine whether a FOLL_PIN | FOLL_LONGTERM |
+> + * FOLL_WRITE pin is permitted for a specific folio.
+> + *
+> + * This assumes the folio is stable and pinned.
+> + *
+> + * Writing to pinned file-backed dirty tracked folios is inherently problematic
+> + * (see comment describing the writeable_file_mapping_allowed() function). We
+> + * therefore try to avoid the most egregious case of a long-term mapping doing
+> + * so.
+> + *
+> + * This function cannot be as thorough as that one as the VMA is not available
+> + * in the fast path, so instead we whitelist known good cases.
+> + *
+> + * The folio is stable, but the mapping might not be. When truncating for
+> + * instance, a zap is performed which triggers TLB shootdown. IRQs are disabled
+> + * so we are safe from an IPI, but some architectures use an RCU lock for this
+> + * operation, so we acquire an RCU lock to ensure the mapping is stable.
+> + */
+> +static bool folio_longterm_write_pin_allowed(struct folio *folio)
+> +{
+> +	bool ret;
+> +
+> +	/* hugetlb mappings do not require dirty tracking. */
+> +	if (folio_test_hugetlb(folio))
+> +		return true;
+> +
+> +	if (stabilise_mapping_rcu(folio)) {
+> +		struct address_space *mapping = folio_mapping(folio);
+> +
+> +		/*
+> +		 * Neither anonymous nor shmem-backed folios require
+> +		 * dirty tracking.
+> +		 */
+> +		ret = folio_test_anon(folio) ||
+> +			(mapping && shmem_mapping(mapping));
+> +	} else {
+> +		/* If the mapping is unstable, fallback to the slow path. */
+> +		ret = false;
+> +	}
+> +
+> +	unlock_rcu();
+> +
+> +	return ret;
+> +}
+> +
+>   /**
+>    * try_grab_folio() - Attempt to get or pin a folio.
+>    * @page:  pointer to page to be grabbed
+> @@ -123,6 +195,8 @@ static inline struct folio *try_get_folio(struct page *page, int refs)
+>    */
+>   struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+>   {
+> +	bool is_longterm = flags & FOLL_LONGTERM;
+> +
+>   	if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)))
+>   		return NULL;
+>   
+> @@ -136,8 +210,7 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+>   		 * right zone, so fail and let the caller fall back to the slow
+>   		 * path.
+>   		 */
+> -		if (unlikely((flags & FOLL_LONGTERM) &&
+> -			     !is_longterm_pinnable_page(page)))
+> +		if (unlikely(is_longterm && !is_longterm_pinnable_page(page)))
+>   			return NULL;
+>   
+>   		/*
+> @@ -148,6 +221,16 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+>   		if (!folio)
+>   			return NULL;
+>   
+> +		/*
+> +		 * Can this folio be safely pinned? We need to perform this
+> +		 * check after the folio is stabilised.
+> +		 */
+> +		if ((flags & FOLL_WRITE) && is_longterm &&
+> +		    !folio_longterm_write_pin_allowed(folio)) {
+> +			folio_put_refs(folio, refs);
+> +			return NULL;
+> +		}
+> +
+>   		/*
+>   		 * When pinning a large folio, use an exact count to track it.
+>   		 *
