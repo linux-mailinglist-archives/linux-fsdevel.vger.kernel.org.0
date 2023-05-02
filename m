@@ -2,180 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB8EF6F4418
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E63706F441C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 May 2023 14:48:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234094AbjEBMsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 08:48:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60928 "EHLO
+        id S234221AbjEBMsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 08:48:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjEBMsW (ORCPT
+        with ESMTP id S234138AbjEBMs0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 08:48:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF981B9
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 05:47:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1683031648;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=noovJtisV3i3/mJ6ypDDQD/CpIY5Kq1JwfcpAQCR0K0=;
-        b=f24/9+EW8TfpivyXYHYw7+4FosRT3YVIdb1qL7PeBu9fvxfB/gvFsuMeb/Ppyd6SL6heGi
-        nCIki0zH6IT9aVQmbPGuS3Awvnx3hF5dqXpl7EA+oX+EFJARK8YYSoIR9vzEAuY9Lb0cXG
-        xyzEUGaPcdAvqNOtIQT4SC1Hi54QoRk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-128-rcbTCZrcM7-WeGKR0VYu5Q-1; Tue, 02 May 2023 08:47:27 -0400
-X-MC-Unique: rcbTCZrcM7-WeGKR0VYu5Q-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-3f171d38db3so23093105e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 05:47:26 -0700 (PDT)
+        Tue, 2 May 2023 08:48:26 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1310D59D8;
+        Tue,  2 May 2023 05:48:25 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3062db220a3so1417276f8f.0;
+        Tue, 02 May 2023 05:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683031703; x=1685623703;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JooDqQHtb6tzP9frEgY2kAPOSpeIW6/2YPfInBxKMsI=;
+        b=fxp9GBxOUXAYc9XvyjEQt1VV3L7DXkzp/o9k8tN6ufqmPR3+p7mc/zqiNT+6fDujqr
+         dwViXaREasIX6+ZtPTUy4P8PRiFFiAFNfcuIFvjj+uRSEy9q2eT7TUBWirPu8FtVC+wi
+         iXupLRxKw693p4XXmNuacYjttMDNmr1YhcP4E0JOM/MXrzlXCxKXXddDX1oIMmqG3Ref
+         U6gJYszGYjCJuS1rWM0ISxnAzwYw/H3hs2itjHNKDuc+YKV6O2RQMBuc+obL5MIlRZjb
+         W9COsueOSAwIxhC9Ig0RuVgw/aUn22CcirwhFv2/9Kys+SevUQB4/zlSQHATzm3qG6TK
+         Jcxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683031646; x=1685623646;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20221208; t=1683031703; x=1685623703;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=noovJtisV3i3/mJ6ypDDQD/CpIY5Kq1JwfcpAQCR0K0=;
-        b=NL/LFdN0xCINH9xxTrlD6/KgyOhudaFz76aMf+sLetxIHkp5c08V9h4fkHUb3834Ql
-         c1s7IyXQrvwFnvuJES4C2J+Vk+QdikLjd+0iLniQUbKzTvdtpnbAlI3OY/hagEIMmmLx
-         hNEQ4Y3j9v9CoyWUT2dOfNX2C9dUa8FIuVt7iV0RoXQ7PzPGXTYMeonSiPDHd0aWvXP3
-         pWMlO8LFLd81md8W3aBuAsUbID+0gwLHYYb5Yu4dz4AZiJN1463T5DeGF/ZZfnjvqMN2
-         uDFUgj7C1UG1hkynniuM6Ne2G3fVyol2MH43P6+cfJQdh+ywAs8GDfFGD6pyBikpK6nG
-         zp/g==
-X-Gm-Message-State: AC+VfDyk5oltBw5cRKEbPncMaKESU1E0NzJi5ZBtQP4d7agwDAe4jUk1
-        mhK981hl2nderg1sbQQMcn5Syx46VtmYF6Lw5dR/BSnD1lfGZUs6yD006DTx+ifGZ9a/P815cTv
-        GyOGmaE+kx/OX/SiJ+Qs4/qQTdA==
-X-Received: by 2002:a05:600c:2248:b0:3f1:6fb4:44cf with SMTP id a8-20020a05600c224800b003f16fb444cfmr12040742wmm.28.1683031645994;
-        Tue, 02 May 2023 05:47:25 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ78NzuiYve0rFZCzvbVf8NBNHLrbCADw3oH0ofO5ShJ4Vs4xjCq1x1GvDm/UPbam9KHLtRM0w==
-X-Received: by 2002:a05:600c:2248:b0:3f1:6fb4:44cf with SMTP id a8-20020a05600c224800b003f16fb444cfmr12040725wmm.28.1683031645619;
-        Tue, 02 May 2023 05:47:25 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c700:2400:6b79:2aa:9602:7016? (p200300cbc70024006b7902aa96027016.dip0.t-ipconnect.de. [2003:cb:c700:2400:6b79:2aa:9602:7016])
-        by smtp.gmail.com with ESMTPSA id e14-20020adfef0e000000b003063938bf7bsm1389765wro.86.2023.05.02.05.47.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 May 2023 05:47:25 -0700 (PDT)
-Message-ID: <a597947b-6aba-bd8d-7a97-582fa7f88ad2@redhat.com>
-Date:   Tue, 2 May 2023 14:47:22 +0200
+        bh=JooDqQHtb6tzP9frEgY2kAPOSpeIW6/2YPfInBxKMsI=;
+        b=hjNIbS8KFJAHdMBDp0VGGzdtZmOGxqyuhp49Zjb3jngC6b1sPgOcyOU/Eh1TAEYVtx
+         5mQZ3QC8pUqSFj2t4BeCJXL6pTmwzdaVth+9L2FWPsOWhuoqZ3e9XZn81+wINMogr7lg
+         6aQ0+EtrXxoLhXcM8SVK1ufj9J7kJRqE9HhCvpntUu7Lhx46lZ+X5tWeqxpqM1wHXTel
+         6kr9bGWHvyUFDfpISTYTfQXeXH92z3Hdt4iWVcU95uIJRUvpopFuEstFTgSFSQ9xkWSI
+         HhFPAQfP0kPI7ag0zgclq9jeydhVwaWb4R8YsPGl/HEIqj5BIyasNUZ/Ce0z90bG2hhm
+         1iIg==
+X-Gm-Message-State: AC+VfDxL9xEEgmtAxjPKhq4uQosTBHEwN0q1NT+xlAnuGO04FosVpVuZ
+        kJZt3pfqJ/lilVJv/N66GUs=
+X-Google-Smtp-Source: ACHHUZ64f4ZE78idc6pi+50aWLIFmp6qAgX12q2FScHycyYGhjhEYZGkqYT/kkqxAfcLu5f/GQIsHg==
+X-Received: by 2002:adf:e30f:0:b0:2f6:9368:63c5 with SMTP id b15-20020adfe30f000000b002f6936863c5mr11708964wrj.10.1683031703199;
+        Tue, 02 May 2023 05:48:23 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id d9-20020a5d6dc9000000b00304adbeeabbsm14226259wrz.99.2023.05.02.05.48.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 May 2023 05:48:22 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-api@vger.kernel.org
+Subject: [PATCH v2 0/4] Prepare for supporting more filesystems with fanotify
+Date:   Tue,  2 May 2023 15:48:13 +0300
+Message-Id: <20230502124817.3070545-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v6 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing to
- file-backed mappings
-Content-Language: en-US
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Paul McKenney <paulmck@kernel.org>
-References: <cover.1682981880.git.lstoakes@gmail.com>
- <dee4f4ad6532b0f94d073da263526de334d5d7e0.1682981880.git.lstoakes@gmail.com>
- <20230502111334.GP1597476@hirez.programming.kicks-ass.net>
- <ab66d15a-acd0-4d9b-aa12-49cddd12c6a5@lucifer.local>
- <20230502120810.GD1597538@hirez.programming.kicks-ass.net>
- <20230502124058.GB1597602@hirez.programming.kicks-ass.net>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230502124058.GB1597602@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 02.05.23 14:40, Peter Zijlstra wrote:
-> On Tue, May 02, 2023 at 02:08:10PM +0200, Peter Zijlstra wrote:
-> 
->>>>
->>>>
->>>> 	if (folio_test_anon(folio))
->>>> 		return true;
->>>
->>> This relies on the mapping so belongs below the lockdep assert imo.
->>
->> Oh, right you are.
->>
->>>>
->>>> 	/*
->>>> 	 * Having IRQs disabled (as per GUP-fast) also inhibits RCU
->>>> 	 * grace periods from making progress, IOW. they imply
->>>> 	 * rcu_read_lock().
->>>> 	 */
->>>> 	lockdep_assert_irqs_disabled();
->>>>
->>>> 	/*
->>>> 	 * Inodes and thus address_space are RCU freed and thus safe to
->>>> 	 * access at this point.
->>>> 	 */
->>>> 	mapping = folio_mapping(folio);
->>>> 	if (mapping && shmem_mapping(mapping))
->>>> 		return true;
->>>>
->>>> 	return false;
->>>>
->>>>> +}
-> 
-> So arguably you should do *one* READ_ONCE() load of mapping and
-> consistently use that, this means open-coding both folio_test_anon() and
-> folio_mapping().
+Jan,
 
-Open-coding folio_test_anon() should not be required. We only care about 
-PAGE_MAPPING_FLAGS stored alongside folio->mapping, that will stick 
-around until the anon page was freed.
+Following v2 incorporates a few fixes and ACKs from review of v1 [1].
 
-@Lorenzo, you might also want to special-case hugetlb directly using 
-folio_test_hugetlb().
+While fanotify relaxes the requirements for filesystems to support
+reporting fid to require only the ->encode_fh() operation, there are
+currently no new filesystems that meet the relaxed requirements.
+
+Patches to add ->encode_fh() to overlay with default configuation
+are available on my github branch [2].  I will re-post them after
+this patch set will be approved.
+
+Based on the discussion on the UAPI alternatives, I kept the
+AT_HANDLE_FID UAPI, which seems the simplest of them all.
+
+There is an LTP test [3] that tests reporting fid from overlayfs,
+which also demonstrates the use of AT_HANDLE_FID for requesting a
+non-decodeable file handle by userspace and there is a man page
+draft [4] for the documentation of the AT_HANDLE_FID flags.
+
+Thanks,
+Amir.
+
+Changes since v1:
+- Fixes to Kerneldoc (Chuck)
+- Added ACKs (Chuck,Jeff)
+- Explain the logic of requiring ->s_export_op (Jan)
+- Added man page draft
+
+[1] https://lore.kernel.org/linux-fsdevel/20230425130105.2606684-1-amir73il@gmail.com/
+[2] https://github.com/amir73il/linux/commits/exportfs_encode_fid
+[3] https://github.com/amir73il/ltp/commits/exportfs_encode_fid
+[4] https://github.com/amir73il/man-pages/commits/exportfs_encode_fid
+
+Amir Goldstein (4):
+  exportfs: change connectable argument to bit flags
+  exportfs: add explicit flag to request non-decodeable file handles
+  exportfs: allow exporting non-decodeable file handles to userspace
+  fanotify: support reporting non-decodeable file handles
+
+ Documentation/filesystems/nfs/exporting.rst |  4 +--
+ fs/exportfs/expfs.c                         | 33 ++++++++++++++++++---
+ fs/fhandle.c                                | 22 +++++++++-----
+ fs/nfsd/nfsfh.c                             |  5 ++--
+ fs/notify/fanotify/fanotify.c               |  4 +--
+ fs/notify/fanotify/fanotify_user.c          |  7 ++---
+ fs/notify/fdinfo.c                          |  2 +-
+ include/linux/exportfs.h                    | 18 +++++++++--
+ include/uapi/linux/fcntl.h                  |  5 ++++
+ 9 files changed, 74 insertions(+), 26 deletions(-)
 
 -- 
-Thanks,
-
-David / dhildenb
+2.34.1
 
