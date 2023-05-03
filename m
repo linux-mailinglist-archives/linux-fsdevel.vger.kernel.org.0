@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E5B6F59CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 16:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 668ED6F59D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 16:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230311AbjECOVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 10:21:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42752 "EHLO
+        id S230055AbjECOVj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 10:21:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230199AbjECOU4 (ORCPT
+        with ESMTP id S230082AbjECOVT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 10:20:56 -0400
+        Wed, 3 May 2023 10:21:19 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E8D565BE;
-        Wed,  3 May 2023 07:20:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 988216A48;
+        Wed,  3 May 2023 07:20:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9C6D760B74;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EE3B362DDD;
+        Wed,  3 May 2023 14:20:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51515C4339B;
         Wed,  3 May 2023 14:20:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05107C4339C;
-        Wed,  3 May 2023 14:20:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683123652;
-        bh=r5kglyqnyJ7YcajVROoa4v4ejMgPkJhwiuOixesg33U=;
+        s=k20201202; t=1683123654;
+        bh=GxZT1sND+VdxzFxlia5wDDrXoToc3H/KuZm7CetwY60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T+LjYtJ5oYeNyriIgs8PjG8NY0mBWxXXjTjMov5iYUkXP9JCNLCIGD9UVAhSTbTNK
-         mVL7JtM9+xaOsNxTx1iH7qUvVS/ZmcYrEKUo+LUwYvWrEid4BqSmAkmipoekcyG4L8
-         QPsPXtjnB3KP3NRV/IK9b9aQvav7A6Dh1vOxsk96YDfzunuX8wmNQyFmo1UVBCuhGv
-         EtG1hq5082tsDwhroQOmlexV/jpF03MqZp0TtY21BIJpF57+R/3PAVcs2jwzQQhcrK
-         qehPc0i88lluWZ8FCfpQf+cXC2wWgsWh1rxIJkZlBL4MMKjclYInV8uneSonRnbUGg
-         shQH/07/XUffg==
+        b=cj5oM7cH+wDZS0lA21ceV3QcQRaj6SD49K7PbUUYYesubx5qnO4L6e3EFfUK4XrTn
+         vL3kH6eOpOvxeVKRnsNxygdwXUeCEr4DJQABZzUSX2gVUR8cttJ7COHQ9PGBdlWRG1
+         EL4xf8Xpv40Fn983fudsWAr5X5xR+0TX8MpKyRja/Soa7N2wiPMONBLzdeu8jLR1+1
+         5yjVLV1dLekk5e7pxl2LVgKNkeVqFI0uC5ZT40qp7DBlRMebKxcz8Th1dm5Qo5tus0
+         vhlhMXklC5FKTDgxw4E3XPNf5QHHZ3XVwTF3/x0+sla4CTEJcQVSvRzc0kJd3AEonh
+         02XI6JedXmoTw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
@@ -51,9 +51,9 @@ Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
         linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Subject: [PATCH v3 5/6] ext4: convert to multigrain timestamps
-Date:   Wed,  3 May 2023 10:20:36 -0400
-Message-Id: <20230503142037.153531-6-jlayton@kernel.org>
+Subject: [PATCH v3 6/6] btrfs: convert to multigrain timestamps
+Date:   Wed,  3 May 2023 10:20:37 -0400
+Message-Id: <20230503142037.153531-7-jlayton@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230503142037.153531-1-jlayton@kernel.org>
 References: <20230503142037.153531-1-jlayton@kernel.org>
@@ -71,354 +71,328 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ext4/acl.c     |  2 +-
- fs/ext4/extents.c | 10 +++++-----
- fs/ext4/ialloc.c  |  2 +-
- fs/ext4/inline.c  |  4 ++--
- fs/ext4/inode.c   | 24 +++++++++++++++++++-----
- fs/ext4/ioctl.c   |  8 ++++----
- fs/ext4/namei.c   | 20 ++++++++++----------
- fs/ext4/super.c   |  4 ++--
- fs/ext4/xattr.c   |  2 +-
- 9 files changed, 45 insertions(+), 31 deletions(-)
+ fs/btrfs/delayed-inode.c |  2 +-
+ fs/btrfs/file.c          | 10 +++++-----
+ fs/btrfs/inode.c         | 25 +++++++++++++------------
+ fs/btrfs/ioctl.c         |  6 +++---
+ fs/btrfs/reflink.c       |  2 +-
+ fs/btrfs/super.c         |  5 +++--
+ fs/btrfs/transaction.c   |  2 +-
+ fs/btrfs/tree-log.c      |  2 +-
+ fs/btrfs/volumes.c       |  2 +-
+ fs/btrfs/xattr.c         |  4 ++--
+ 10 files changed, 31 insertions(+), 29 deletions(-)
 
-diff --git a/fs/ext4/acl.c b/fs/ext4/acl.c
-index 27fcbddfb148..1f9cf0bdbd3f 100644
---- a/fs/ext4/acl.c
-+++ b/fs/ext4/acl.c
-@@ -259,7 +259,7 @@ ext4_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 	error = __ext4_set_acl(handle, inode, type, acl, 0 /* xattr_flags */);
- 	if (!error && update_mode) {
- 		inode->i_mode = mode;
--		inode->i_ctime = current_time(inode);
-+		inode->i_ctime = current_ctime(inode);
- 		error = ext4_mark_inode_dirty(handle, inode);
- 	}
- out_stop:
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 3559ea6b0781..76ac6790869e 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4484,7 +4484,7 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 		map.m_lblk += ret;
- 		map.m_len = len = len - ret;
- 		epos = (loff_t)map.m_lblk << inode->i_blkbits;
--		inode->i_ctime = current_time(inode);
-+		inode->i_ctime = current_ctime(inode);
- 		if (new_size) {
- 			if (epos > new_size)
- 				epos = new_size;
-@@ -4618,7 +4618,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
+index 6b457b010cbc..8307fd69da43 100644
+--- a/fs/btrfs/delayed-inode.c
++++ b/fs/btrfs/delayed-inode.c
+@@ -1810,7 +1810,7 @@ static void fill_stack_inode_item(struct btrfs_trans_handle *trans,
+ 	btrfs_set_stack_timespec_sec(&inode_item->ctime,
+ 				     inode->i_ctime.tv_sec);
+ 	btrfs_set_stack_timespec_nsec(&inode_item->ctime,
+-				      inode->i_ctime.tv_nsec);
++				      ctime_nsec_peek(inode));
+ 
+ 	btrfs_set_stack_timespec_sec(&inode_item->otime,
+ 				     BTRFS_I(inode)->i_otime.tv_sec);
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 5cc5a1faaef5..3344f64f58dc 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1113,7 +1113,7 @@ static void update_time_for_write(struct inode *inode)
+ 	if (IS_NOCMTIME(inode))
+ 		return;
+ 
+-	now = current_time(inode);
++	now = current_ctime(inode);
+ 	if (!timespec64_equal(&inode->i_mtime, &now))
+ 		inode->i_mtime = now;
+ 
+@@ -2473,7 +2473,7 @@ int btrfs_replace_file_extents(struct btrfs_inode *inode,
+ 		inode_inc_iversion(&inode->vfs_inode);
+ 
+ 		if (!extent_info || extent_info->update_times) {
+-			inode->vfs_inode.i_mtime = current_time(&inode->vfs_inode);
++			inode->vfs_inode.i_mtime = current_ctime(&inode->vfs_inode);
+ 			inode->vfs_inode.i_ctime = inode->vfs_inode.i_mtime;
  		}
- 		/* Now release the pages and zero block aligned part of pages */
- 		truncate_pagecache_range(inode, start, end - 1);
--		inode->i_mtime = inode->i_ctime = current_time(inode);
-+		inode->i_mtime = inode->i_ctime = current_ctime(inode);
  
- 		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
- 					     flags);
-@@ -4643,7 +4643,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 		goto out_mutex;
- 	}
+@@ -2716,7 +2716,7 @@ static int btrfs_punch_hole(struct file *file, loff_t offset, loff_t len)
  
--	inode->i_mtime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_ctime = current_ctime(inode);
- 	if (new_size)
- 		ext4_update_inode_size(inode, new_size);
- 	ret = ext4_mark_inode_dirty(handle, inode);
-@@ -5392,7 +5392,7 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
- 	up_write(&EXT4_I(inode)->i_data_sem);
- 	if (IS_SYNC(inode))
- 		ext4_handle_sync(handle);
--	inode->i_mtime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_ctime = current_ctime(inode);
- 	ret = ext4_mark_inode_dirty(handle, inode);
- 	ext4_update_inode_fsync_trans(handle, inode, 1);
+ 	ASSERT(trans != NULL);
+ 	inode_inc_iversion(inode);
+-	inode->i_mtime = current_time(inode);
++	inode->i_mtime = current_ctime(inode);
+ 	inode->i_ctime = inode->i_mtime;
+ 	ret = btrfs_update_inode(trans, root, BTRFS_I(inode));
+ 	updated_inode = true;
+@@ -2734,7 +2734,7 @@ static int btrfs_punch_hole(struct file *file, loff_t offset, loff_t len)
+ 		 * for detecting, at fsync time, if the inode isn't yet in the
+ 		 * log tree or it's there but not up to date.
+ 		 */
+-		struct timespec64 now = current_time(inode);
++		struct timespec64 now = current_ctime(inode);
  
-@@ -5509,7 +5509,7 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
- 	/* Expand file to avoid data loss if there is error while shifting */
- 	inode->i_size += len;
- 	EXT4_I(inode)->i_disksize += len;
--	inode->i_mtime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_ctime = current_ctime(inode);
- 	ret = ext4_mark_inode_dirty(handle, inode);
+ 		inode_inc_iversion(inode);
+ 		inode->i_mtime = now;
+@@ -2809,7 +2809,7 @@ static int btrfs_fallocate_update_isize(struct inode *inode,
+ 	if (IS_ERR(trans))
+ 		return PTR_ERR(trans);
+ 
+-	inode->i_ctime = current_time(inode);
++	inode->i_ctime = current_ctime(inode);
+ 	i_size_write(inode, end);
+ 	btrfs_inode_safe_disk_i_size_write(BTRFS_I(inode), 0);
+ 	ret = btrfs_update_inode(trans, root, BTRFS_I(inode));
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 957e4d76a7b6..889ff97d9595 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -4029,7 +4029,7 @@ static void fill_inode_item(struct btrfs_trans_handle *trans,
+ 	btrfs_set_token_timespec_sec(&token, &item->ctime,
+ 				     inode->i_ctime.tv_sec);
+ 	btrfs_set_token_timespec_nsec(&token, &item->ctime,
+-				      inode->i_ctime.tv_nsec);
++				      ctime_nsec_peek(inode));
+ 
+ 	btrfs_set_token_timespec_sec(&token, &item->otime,
+ 				     BTRFS_I(inode)->i_otime.tv_sec);
+@@ -4227,7 +4227,7 @@ static int __btrfs_unlink_inode(struct btrfs_trans_handle *trans,
+ 	btrfs_i_size_write(dir, dir->vfs_inode.i_size - name->len * 2);
+ 	inode_inc_iversion(&inode->vfs_inode);
+ 	inode_inc_iversion(&dir->vfs_inode);
+-	inode->vfs_inode.i_ctime = current_time(&inode->vfs_inode);
++	inode->vfs_inode.i_ctime = current_ctime(&inode->vfs_inode);
+ 	dir->vfs_inode.i_mtime = inode->vfs_inode.i_ctime;
+ 	dir->vfs_inode.i_ctime = inode->vfs_inode.i_ctime;
+ 	ret = btrfs_update_inode(trans, root, dir);
+@@ -4409,7 +4409,7 @@ static int btrfs_unlink_subvol(struct btrfs_trans_handle *trans,
+ 
+ 	btrfs_i_size_write(dir, dir->vfs_inode.i_size - fname.disk_name.len * 2);
+ 	inode_inc_iversion(&dir->vfs_inode);
+-	dir->vfs_inode.i_mtime = current_time(&dir->vfs_inode);
++	dir->vfs_inode.i_mtime = current_ctime(&dir->vfs_inode);
+ 	dir->vfs_inode.i_ctime = dir->vfs_inode.i_mtime;
+ 	ret = btrfs_update_inode_fallback(trans, root, dir);
  	if (ret)
- 		goto out_stop;
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 157663031f8c..cf6973286acc 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -1248,7 +1248,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
- 	inode->i_ino = ino + group * EXT4_INODES_PER_GROUP(sb);
- 	/* This is the optimal IO size (for stat), not the fs block size */
- 	inode->i_blocks = 0;
--	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_atime = inode->i_ctime = current_ctime(inode);
- 	ei->i_crtime = inode->i_mtime;
- 
- 	memset(ei->i_data, 0, sizeof(ei->i_data));
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 1602d74b5eeb..6dbbd1a31fbe 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -1054,7 +1054,7 @@ static int ext4_add_dirent_to_inline(handle_t *handle,
- 	 * happen is that the times are slightly out of date
- 	 * and/or different from the directory change time.
- 	 */
--	dir->i_mtime = dir->i_ctime = current_time(dir);
-+	dir->i_mtime = dir->i_ctime = current_ctime(dir);
- 	ext4_update_dx_flag(dir);
- 	inode_inc_iversion(dir);
- 	return 1;
-@@ -2015,7 +2015,7 @@ int ext4_inline_data_truncate(struct inode *inode, int *has_inline)
- 		ext4_orphan_del(handle, inode);
- 
- 	if (err == 0) {
--		inode->i_mtime = inode->i_ctime = current_time(inode);
-+		inode->i_mtime = inode->i_ctime = current_ctime(inode);
- 		err = ext4_mark_inode_dirty(handle, inode);
- 		if (IS_SYNC(inode))
- 			ext4_handle_sync(handle);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index bf0b7dea4900..135fa0bf445c 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4201,7 +4201,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
- 	if (IS_SYNC(inode))
- 		ext4_handle_sync(handle);
- 
--	inode->i_mtime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_ctime = current_ctime(inode);
- 	ret2 = ext4_mark_inode_dirty(handle, inode);
- 	if (unlikely(ret2))
- 		ret = ret2;
-@@ -4361,7 +4361,7 @@ int ext4_truncate(struct inode *inode)
- 	if (inode->i_nlink)
- 		ext4_orphan_del(handle, inode);
- 
--	inode->i_mtime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_ctime = current_ctime(inode);
- 	err2 = ext4_mark_inode_dirty(handle, inode);
- 	if (unlikely(err2 && !err))
- 		err = err2;
-@@ -4424,6 +4424,19 @@ static int ext4_inode_blocks_set(struct ext4_inode *raw_inode,
- 	return 0;
- }
- 
-+static void ext4_inode_set_ctime(struct inode *inode, struct ext4_inode *raw_inode)
-+{
-+	struct timespec64 ctime = ctime_peek(inode);
-+
-+	if (EXT4_FITS_IN_INODE(raw_inode, EXT4_I(inode), i_ctime_extra)) {
-+		raw_inode->i_ctime = cpu_to_le32(ctime.tv_sec);
-+		raw_inode->i_ctime_extra = ext4_encode_extra_time(&ctime);
-+	} else {
-+		raw_inode->i_ctime = cpu_to_le32(clamp_t(int32_t,
-+					ctime.tv_sec, S32_MIN, S32_MAX));
-+	}
-+}
-+
- static int ext4_fill_raw_inode(struct inode *inode, struct ext4_inode *raw_inode)
- {
- 	struct ext4_inode_info *ei = EXT4_I(inode);
-@@ -4464,7 +4477,7 @@ static int ext4_fill_raw_inode(struct inode *inode, struct ext4_inode *raw_inode
+@@ -5052,7 +5052,7 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
+ 	if (newsize != oldsize) {
+ 		inode_inc_iversion(inode);
+ 		if (!(mask & (ATTR_CTIME | ATTR_MTIME))) {
+-			inode->i_mtime = current_time(inode);
++			inode->i_mtime = current_ctime(inode);
+ 			inode->i_ctime = inode->i_mtime;
+ 		}
  	}
- 	raw_inode->i_links_count = cpu_to_le16(inode->i_nlink);
+@@ -5693,7 +5693,7 @@ static struct inode *new_simple_dir(struct super_block *s,
+ 	inode->i_opflags &= ~IOP_XATTR;
+ 	inode->i_fop = &simple_dir_operations;
+ 	inode->i_mode = S_IFDIR | S_IRUGO | S_IWUSR | S_IXUGO;
+-	inode->i_mtime = current_time(inode);
++	inode->i_mtime = current_ctime(inode);
+ 	inode->i_atime = inode->i_mtime;
+ 	inode->i_ctime = inode->i_mtime;
+ 	BTRFS_I(inode)->i_otime = inode->i_mtime;
+@@ -6335,7 +6335,7 @@ int btrfs_create_new_inode(struct btrfs_trans_handle *trans,
+ 		goto discard;
+ 	}
  
--	EXT4_INODE_SET_XTIME(i_ctime, inode, raw_inode);
-+	ext4_inode_set_ctime(inode, raw_inode);
- 	EXT4_INODE_SET_XTIME(i_mtime, inode, raw_inode);
- 	EXT4_INODE_SET_XTIME(i_atime, inode, raw_inode);
- 	EXT4_EINODE_SET_XTIME(i_crtime, ei, raw_inode);
-@@ -5172,7 +5185,7 @@ static void __ext4_update_other_inode_time(struct super_block *sb,
- 		spin_unlock(&inode->i_lock);
+-	inode->i_mtime = current_time(inode);
++	inode->i_mtime = current_ctime(inode);
+ 	inode->i_atime = inode->i_mtime;
+ 	inode->i_ctime = inode->i_mtime;
+ 	BTRFS_I(inode)->i_otime = inode->i_mtime;
+@@ -6503,7 +6503,7 @@ int btrfs_add_link(struct btrfs_trans_handle *trans,
+ 	 * values (the ones it had when the fsync was done).
+ 	 */
+ 	if (!test_bit(BTRFS_FS_LOG_RECOVERING, &root->fs_info->flags)) {
+-		struct timespec64 now = current_time(&parent_inode->vfs_inode);
++		struct timespec64 now = current_ctime(&parent_inode->vfs_inode);
  
- 		spin_lock(&ei->i_raw_lock);
--		EXT4_INODE_SET_XTIME(i_ctime, inode, raw_inode);
-+		ext4_inode_set_ctime(inode, raw_inode);
- 		EXT4_INODE_SET_XTIME(i_mtime, inode, raw_inode);
- 		EXT4_INODE_SET_XTIME(i_atime, inode, raw_inode);
- 		ext4_inode_csum_set(inode, raw_inode, ei);
-@@ -5568,7 +5581,7 @@ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 			 * update c/mtime in shrink case below
- 			 */
- 			if (!shrink) {
--				inode->i_mtime = current_time(inode);
-+				inode->i_mtime = current_ctime(inode);
- 				inode->i_ctime = inode->i_mtime;
- 			}
+ 		parent_inode->vfs_inode.i_mtime = now;
+ 		parent_inode->vfs_inode.i_ctime = now;
+@@ -6647,7 +6647,7 @@ static int btrfs_link(struct dentry *old_dentry, struct inode *dir,
+ 	BTRFS_I(inode)->dir_index = 0ULL;
+ 	inc_nlink(inode);
+ 	inode_inc_iversion(inode);
+-	inode->i_ctime = current_time(inode);
++	inode->i_ctime = current_ctime(inode);
+ 	ihold(inode);
+ 	set_bit(BTRFS_INODE_COPY_EVERYTHING, &BTRFS_I(inode)->runtime_flags);
  
-@@ -5729,6 +5742,7 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
- 				  STATX_ATTR_VERITY);
+@@ -8659,6 +8659,7 @@ static int btrfs_getattr(struct mnt_idmap *idmap,
+ 				  STATX_ATTR_NODUMP);
  
  	generic_fillattr(idmap, inode, stat);
 +	generic_fill_multigrain_cmtime(request_mask, inode, stat);
- 	return 0;
- }
+ 	stat->dev = BTRFS_I(inode)->root->anon_dev;
  
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index f9a430152063..4244ea049065 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -449,7 +449,7 @@ static long swap_inode_boot_loader(struct super_block *sb,
- 	diff = size - size_bl;
- 	swap_inode_data(inode, inode_bl);
+ 	spin_lock(&BTRFS_I(inode)->lock);
+@@ -8682,7 +8683,7 @@ static int btrfs_rename_exchange(struct inode *old_dir,
+ 	struct btrfs_root *dest = BTRFS_I(new_dir)->root;
+ 	struct inode *new_inode = new_dentry->d_inode;
+ 	struct inode *old_inode = old_dentry->d_inode;
+-	struct timespec64 ctime = current_time(old_inode);
++	struct timespec64 ctime = current_ctime(old_inode);
+ 	struct btrfs_rename_ctx old_rename_ctx;
+ 	struct btrfs_rename_ctx new_rename_ctx;
+ 	u64 old_ino = btrfs_ino(BTRFS_I(old_inode));
+@@ -9082,7 +9083,7 @@ static int btrfs_rename(struct mnt_idmap *idmap,
+ 	inode_inc_iversion(old_dir);
+ 	inode_inc_iversion(new_dir);
+ 	inode_inc_iversion(old_inode);
+-	old_dir->i_mtime = current_time(old_dir);
++	old_dir->i_mtime = current_ctime(old_dir);
+ 	old_dir->i_ctime = old_dir->i_mtime;
+ 	new_dir->i_mtime = old_dir->i_mtime;
+ 	new_dir->i_ctime = old_dir->i_mtime;
+@@ -9108,7 +9109,7 @@ static int btrfs_rename(struct mnt_idmap *idmap,
  
--	inode->i_ctime = inode_bl->i_ctime = current_time(inode);
-+	inode->i_ctime = inode_bl->i_ctime = current_ctime(inode);
- 	inode_inc_iversion(inode);
+ 	if (new_inode) {
+ 		inode_inc_iversion(new_inode);
+-		new_inode->i_ctime = current_time(new_inode);
++		new_inode->i_ctime = current_ctime(new_inode);
+ 		if (unlikely(btrfs_ino(BTRFS_I(new_inode)) ==
+ 			     BTRFS_EMPTY_SUBVOL_DIR_OBJECTID)) {
+ 			ret = btrfs_unlink_subvol(trans, BTRFS_I(new_dir), new_dentry);
+@@ -9648,7 +9649,7 @@ static int __btrfs_prealloc_file_range(struct inode *inode, int mode,
+ 		*alloc_hint = ins.objectid + ins.offset;
  
- 	inode->i_generation = get_random_u32();
-@@ -663,7 +663,7 @@ static int ext4_ioctl_setflags(struct inode *inode,
- 
- 	ext4_set_inode_flags(inode, false);
- 
--	inode->i_ctime = current_time(inode);
-+	inode->i_ctime = current_ctime(inode);
- 	inode_inc_iversion(inode);
- 
- 	err = ext4_mark_iloc_dirty(handle, inode, &iloc);
-@@ -774,7 +774,7 @@ static int ext4_ioctl_setproject(struct inode *inode, __u32 projid)
- 	}
- 
- 	EXT4_I(inode)->i_projid = kprojid;
--	inode->i_ctime = current_time(inode);
-+	inode->i_ctime = current_ctime(inode);
- 	inode_inc_iversion(inode);
- out_dirty:
- 	rc = ext4_mark_iloc_dirty(handle, inode, &iloc);
-@@ -1257,7 +1257,7 @@ static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		}
- 		err = ext4_reserve_inode_write(handle, inode, &iloc);
- 		if (err == 0) {
--			inode->i_ctime = current_time(inode);
-+			inode->i_ctime = current_ctime(inode);
- 			inode_inc_iversion(inode);
- 			inode->i_generation = generation;
- 			err = ext4_mark_iloc_dirty(handle, inode, &iloc);
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index a5010b5b8a8c..1615ae8f8026 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2187,7 +2187,7 @@ static int add_dirent_to_buf(handle_t *handle, struct ext4_filename *fname,
- 	 * happen is that the times are slightly out of date
- 	 * and/or different from the directory change time.
- 	 */
--	dir->i_mtime = dir->i_ctime = current_time(dir);
-+	dir->i_mtime = dir->i_ctime = current_ctime(dir);
- 	ext4_update_dx_flag(dir);
- 	inode_inc_iversion(dir);
- 	err2 = ext4_mark_inode_dirty(handle, dir);
-@@ -3176,7 +3176,7 @@ static int ext4_rmdir(struct inode *dir, struct dentry *dentry)
- 	 * recovery. */
- 	inode->i_size = 0;
- 	ext4_orphan_add(handle, inode);
--	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
-+	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_ctime(inode);
- 	retval = ext4_mark_inode_dirty(handle, inode);
- 	if (retval)
- 		goto end_rmdir;
-@@ -3250,7 +3250,7 @@ int __ext4_unlink(struct inode *dir, const struct qstr *d_name,
- 		retval = ext4_delete_entry(handle, dir, de, bh);
- 		if (retval)
- 			goto out_handle;
--		dir->i_ctime = dir->i_mtime = current_time(dir);
-+		dir->i_ctime = dir->i_mtime = current_ctime(dir);
- 		ext4_update_dx_flag(dir);
- 		retval = ext4_mark_inode_dirty(handle, dir);
- 		if (retval)
-@@ -3265,7 +3265,7 @@ int __ext4_unlink(struct inode *dir, const struct qstr *d_name,
- 		drop_nlink(inode);
- 	if (!inode->i_nlink)
- 		ext4_orphan_add(handle, inode);
--	inode->i_ctime = current_time(inode);
-+	inode->i_ctime = current_ctime(inode);
- 	retval = ext4_mark_inode_dirty(handle, inode);
- 	if (dentry && !retval)
- 		ext4_fc_track_unlink(handle, dentry);
-@@ -3442,7 +3442,7 @@ int __ext4_link(struct inode *dir, struct inode *inode, struct dentry *dentry)
- 	if (IS_DIRSYNC(dir))
- 		ext4_handle_sync(handle);
- 
--	inode->i_ctime = current_time(inode);
-+	inode->i_ctime = current_ctime(inode);
- 	ext4_inc_count(inode);
- 	ihold(inode);
- 
-@@ -3621,7 +3621,7 @@ static int ext4_setent(handle_t *handle, struct ext4_renament *ent,
- 		ent->de->file_type = file_type;
- 	inode_inc_iversion(ent->dir);
- 	ent->dir->i_ctime = ent->dir->i_mtime =
--		current_time(ent->dir);
-+		current_ctime(ent->dir);
- 	retval = ext4_mark_inode_dirty(handle, ent->dir);
- 	BUFFER_TRACE(ent->bh, "call ext4_handle_dirty_metadata");
- 	if (!ent->inlined) {
-@@ -3929,7 +3929,7 @@ static int ext4_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	 * Like most other Unix systems, set the ctime for inodes on a
- 	 * rename.
- 	 */
--	old.inode->i_ctime = current_time(old.inode);
-+	old.inode->i_ctime = current_ctime(old.inode);
- 	retval = ext4_mark_inode_dirty(handle, old.inode);
- 	if (unlikely(retval))
- 		goto end_rename;
-@@ -3943,9 +3943,9 @@ static int ext4_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 
- 	if (new.inode) {
- 		ext4_dec_count(new.inode);
--		new.inode->i_ctime = current_time(new.inode);
-+		new.inode->i_ctime = current_ctime(new.inode);
- 	}
--	old.dir->i_ctime = old.dir->i_mtime = current_time(old.dir);
-+	old.dir->i_ctime = old.dir->i_mtime = current_ctime(old.dir);
- 	ext4_update_dx_flag(old.dir);
- 	if (old.dir_bh) {
- 		retval = ext4_rename_dir_finish(handle, &old, new.dir->i_ino);
-@@ -4139,7 +4139,7 @@ static int ext4_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	 * Like most other Unix systems, set the ctime for inodes on a
- 	 * rename.
- 	 */
--	ctime = current_time(old.inode);
-+	ctime = current_ctime(old.inode);
- 	old.inode->i_ctime = ctime;
- 	new.inode->i_ctime = ctime;
- 	retval = ext4_mark_inode_dirty(handle, old.inode);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index f43e526112ae..cca7726eceff 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -7051,7 +7051,7 @@ static int ext4_quota_off(struct super_block *sb, int type)
- 	}
- 	EXT4_I(inode)->i_flags &= ~(EXT4_NOATIME_FL | EXT4_IMMUTABLE_FL);
- 	inode_set_flags(inode, 0, S_NOATIME | S_IMMUTABLE);
--	inode->i_mtime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime = inode->i_ctime = current_ctime(inode);
- 	err = ext4_mark_inode_dirty(handle, inode);
- 	ext4_journal_stop(handle);
- out_unlock:
-@@ -7227,7 +7227,7 @@ static struct file_system_type ext4_fs_type = {
- 	.init_fs_context	= ext4_init_fs_context,
- 	.parameters		= ext4_param_specs,
- 	.kill_sb		= kill_block_super,
--	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MULTIGRAIN_TS,
- };
- MODULE_ALIAS_FS("ext4");
- 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 767454d74cd6..160f203d211e 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2475,7 +2475,7 @@ ext4_xattr_set_handle(handle_t *handle, struct inode *inode, int name_index,
- 	}
- 	if (!error) {
- 		ext4_xattr_update_super_block(handle, inode->i_sb);
+ 		inode_inc_iversion(inode);
 -		inode->i_ctime = current_time(inode);
 +		inode->i_ctime = current_ctime(inode);
+ 		BTRFS_I(inode)->flags |= BTRFS_INODE_PREALLOC;
+ 		if (!(mode & FALLOC_FL_KEEP_SIZE) &&
+ 		    (actual_len > inode->i_size) &&
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index ba769a1eb87a..4b862d777fa7 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -384,7 +384,7 @@ int btrfs_fileattr_set(struct mnt_idmap *idmap,
+ 	binode->flags = binode_flags;
+ 	btrfs_sync_inode_flags_to_i_flags(inode);
+ 	inode_inc_iversion(inode);
+-	inode->i_ctime = current_time(inode);
++	inode->i_ctime = current_ctime(inode);
+ 	ret = btrfs_update_inode(trans, root, BTRFS_I(inode));
+ 
+  out_end_trans:
+@@ -591,7 +591,7 @@ static noinline int create_subvol(struct mnt_idmap *idmap,
+ 	struct btrfs_root *root = BTRFS_I(dir)->root;
+ 	struct btrfs_root *new_root;
+ 	struct btrfs_block_rsv block_rsv;
+-	struct timespec64 cur_time = current_time(dir);
++	struct timespec64 cur_time = current_ctime(dir);
+ 	struct btrfs_new_inode_args new_inode_args = {
+ 		.dir = dir,
+ 		.dentry = dentry,
+@@ -3918,7 +3918,7 @@ static long _btrfs_ioctl_set_received_subvol(struct file *file,
+ 	struct btrfs_root *root = BTRFS_I(inode)->root;
+ 	struct btrfs_root_item *root_item = &root->root_item;
+ 	struct btrfs_trans_handle *trans;
+-	struct timespec64 ct = current_time(inode);
++	struct timespec64 ct = current_ctime(inode);
+ 	int ret = 0;
+ 	int received_uuid_changed;
+ 
+diff --git a/fs/btrfs/reflink.c b/fs/btrfs/reflink.c
+index 0474bbe39da7..59d3ce505098 100644
+--- a/fs/btrfs/reflink.c
++++ b/fs/btrfs/reflink.c
+@@ -30,7 +30,7 @@ static int clone_finish_inode_update(struct btrfs_trans_handle *trans,
+ 
+ 	inode_inc_iversion(inode);
+ 	if (!no_time_update) {
+-		inode->i_mtime = current_time(inode);
++		inode->i_mtime = current_ctime(inode);
+ 		inode->i_ctime = inode->i_mtime;
+ 	}
+ 	/*
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 366fb4cde145..dc8dddbc12b9 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2139,7 +2139,7 @@ static struct file_system_type btrfs_fs_type = {
+ 	.name		= "btrfs",
+ 	.mount		= btrfs_mount,
+ 	.kill_sb	= btrfs_kill_super,
+-	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA,
++	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_MULTIGRAIN_TS,
+ };
+ 
+ static struct file_system_type btrfs_root_fs_type = {
+@@ -2147,7 +2147,8 @@ static struct file_system_type btrfs_root_fs_type = {
+ 	.name		= "btrfs",
+ 	.mount		= btrfs_mount_root,
+ 	.kill_sb	= btrfs_kill_super,
+-	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_ALLOW_IDMAP,
++	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA |
++			  FS_ALLOW_IDMAP | FS_MULTIGRAIN_TS,
+ };
+ 
+ MODULE_ALIAS_FS("btrfs");
+diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+index b8d5b1fa9a03..277aedfce808 100644
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -1838,7 +1838,7 @@ static noinline int create_pending_snapshot(struct btrfs_trans_handle *trans,
+ 
+ 	btrfs_i_size_write(BTRFS_I(parent_inode), parent_inode->i_size +
+ 						  fname.disk_name.len * 2);
+-	parent_inode->i_mtime = current_time(parent_inode);
++	parent_inode->i_mtime = current_ctime(parent_inode);
+ 	parent_inode->i_ctime = parent_inode->i_mtime;
+ 	ret = btrfs_update_inode_fallback(trans, parent_root, BTRFS_I(parent_inode));
+ 	if (ret) {
+diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+index 200cea6e49e5..1e0e25dafa47 100644
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -4177,7 +4177,7 @@ static void fill_inode_item(struct btrfs_trans_handle *trans,
+ 	btrfs_set_token_timespec_sec(&token, &item->ctime,
+ 				     inode->i_ctime.tv_sec);
+ 	btrfs_set_token_timespec_nsec(&token, &item->ctime,
+-				      inode->i_ctime.tv_nsec);
++				      ctime_nsec_peek(inode));
+ 
+ 	/*
+ 	 * We do not need to set the nbytes field, in fact during a fast fsync
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index c6d592870400..d89f1afde366 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -1917,7 +1917,7 @@ static void update_dev_time(const char *device_path)
+ 	if (ret)
+ 		return;
+ 
+-	now = current_time(d_inode(path.dentry));
++	now = current_ctime(d_inode(path.dentry));
+ 	inode_update_time(d_inode(path.dentry), &now, S_MTIME | S_CTIME);
+ 	path_put(&path);
+ }
+diff --git a/fs/btrfs/xattr.c b/fs/btrfs/xattr.c
+index 0ebeaf4e81f9..30a37333e92a 100644
+--- a/fs/btrfs/xattr.c
++++ b/fs/btrfs/xattr.c
+@@ -264,7 +264,7 @@ int btrfs_setxattr_trans(struct inode *inode, const char *name,
+ 		goto out;
+ 
+ 	inode_inc_iversion(inode);
+-	inode->i_ctime = current_time(inode);
++	inode->i_ctime = current_ctime(inode);
+ 	ret = btrfs_update_inode(trans, root, BTRFS_I(inode));
+ 	if (ret)
+ 		btrfs_abort_transaction(trans, ret);
+@@ -407,7 +407,7 @@ static int btrfs_xattr_handler_set_prop(const struct xattr_handler *handler,
+ 	ret = btrfs_set_prop(trans, inode, name, value, size, flags);
+ 	if (!ret) {
  		inode_inc_iversion(inode);
- 		if (!value)
- 			no_expand = 0;
+-		inode->i_ctime = current_time(inode);
++		inode->i_ctime = current_ctime(inode);
+ 		ret = btrfs_update_inode(trans, root, BTRFS_I(inode));
+ 		if (ret)
+ 			btrfs_abort_transaction(trans, ret);
 -- 
 2.40.1
 
