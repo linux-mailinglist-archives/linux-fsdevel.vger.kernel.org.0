@@ -2,67 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 551E06F4DEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 01:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8EE16F4E03
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 02:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230040AbjEBX4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 19:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42130 "EHLO
+        id S229784AbjECAMc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 20:12:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbjEBX4w (ORCPT
+        with ESMTP id S229539AbjECAMb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 19:56:52 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DAD63A9A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 16:56:33 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-b9a8023ccf1so8810469276.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 May 2023 16:56:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683071792; x=1685663792;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VTfG7F65o0oFg67+X6WxPMuxEdDT/M2lH43dZvx+e04=;
-        b=c02k0bI/rvnso3tOW89PkXkbHVcOqnqtz/00RV+zglFTuL3AV5vA/JoKSNHXrhMxG9
-         +LZbpUPZXFVoVQSziSRHpEdmft/gnRjoj88wWvi7L3QqqtQLPo/bTT9KlqUe7FEZrkmT
-         kGRk8qzYo+aZdpDYL+VamZFw9iAGIVJRiPI6zv15Q2xrkqDjBi8jP9NS7Dbu8bdZK2F7
-         KEJ2wKk3UtPulyyjlsZpP3fIL2NFuQldZ2lmIa+b3C2DxvEaMQUrhg17UOZSdvvjzx+B
-         ZPjjwHFYiiaZmKrHPUjRp9V+c1NbfhSytafwBjb3vd+XSDdVfZYD8U0Yn4pTZyIRQ4R/
-         2xUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683071792; x=1685663792;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VTfG7F65o0oFg67+X6WxPMuxEdDT/M2lH43dZvx+e04=;
-        b=DrGBo36QlvJlFu7R/X869rg00rKnQWPpPFeUdSqpT2DXVamJNQ4SE92n7JGmNNteo2
-         Tdz1eCiIOuaRc6IEuTey187GCMC4l6xMAyCMLguMMQGZ0xZn+yfcnW0W3iUobuXbT+Mf
-         mW+sKWXqKPdVzAtqx2nNvnnodRQe+jb192amFvlPX7OL/6C6H8DhbI44Cd8WhxvWGol6
-         jnYXT9Gq3UOY7NVSTZ6r/I4k5jkBu9cVH+yyz/hbzXyrKbvQivtpVoF57cq8Aj9r8719
-         /VyJXTVdi+N4Fx4klXepAskDcREQPPsYzUNjEpnMO+kvRNBr0kmVYU4I8crf721hH5l5
-         FTUg==
-X-Gm-Message-State: AC+VfDzJGZMo4vbc25ei7eB39QJ6NBmS14WsL8uZ5smzQF/jhMMnFS6O
-        Y70Qavi7FafGH8+1Lv+BBfn5pVhgSgsTQUNc+w==
-X-Google-Smtp-Source: ACHHUZ48PCyKBqXvRaNrp+9TLDB21cvKYwuAMRuGxA5xQuupd0isU49vzdMgfnH965aUyYs8rAuSZBdYGckJj4CLgw==
-X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a25:50c1:0:b0:b9d:94eb:fa4c with SMTP
- id e184-20020a2550c1000000b00b9d94ebfa4cmr7441408ybb.6.1683071792300; Tue, 02
- May 2023 16:56:32 -0700 (PDT)
-Date:   Tue,  2 May 2023 23:56:22 +0000
+        Tue, 2 May 2023 20:12:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 651232D61
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 May 2023 17:12:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDCBA62929
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 00:12:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FEFFC433D2;
+        Wed,  3 May 2023 00:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1683072749;
+        bh=avUvPtIVtB/TgmXReTnIalPcBkf63SdC57To7FuyNtM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=2v4kUGIUxes1my6Kq0/DzY8zVtStIlikdS/ChE9NYuls6DQvpD3WlSm7hjJiKbEpB
+         aVcddTO5bq/7GLH1BRcAlPEfPFbQnmdrIOYAcKeqwQRnNQVsXW8DW7IT/m3k5hLMVj
+         t44lvhrD6uT97Xm+tP86M3eOG5ISvbDlEhlja8FM=
+Date:   Tue, 2 May 2023 17:12:28 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Chuck Lever <cel@kernel.org>
+Cc:     hughd@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] shmem: stable directory cookies
+Message-Id: <20230502171228.57a906a259172d39542e92fb@linux-foundation.org>
+In-Reply-To: <168175931561.2843.16288612382874559384.stgit@manet.1015granger.net>
+References: <168175931561.2843.16288612382874559384.stgit@manet.1015granger.net>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.40.1.495.gc816e09b53d-goog
-Message-ID: <20230502235622.3652586-1-ackerleytng@google.com>
-Subject: [PATCH] fs: hugetlbfs: Set vma policy only when needed for allocating folio
-From:   Ackerley Tng <ackerleytng@google.com>
-To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mike.kravetz@oracle.com, muchun.song@linux.dev,
-        willy@infradead.org, sidhartha.kumar@oracle.com,
-        jhubbard@nvidia.com
-Cc:     vannapurve@google.com, erdemaktas@google.com,
-        Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,44 +51,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Calling hugetlb_set_vma_policy() later avoids setting the vma policy
-and then dropping it on a page cache hit.
+On Mon, 17 Apr 2023 15:23:10 -0400 Chuck Lever <cel@kernel.org> wrote:
 
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
----
- fs/hugetlbfs/inode.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> From: Chuck Lever <chuck.lever@oracle.com>
+> 
+> The current cursor-based directory cookie mechanism doesn't work
+> when a tmpfs filesystem is exported via NFS. This is because NFS
+> clients do not open directories: each READDIR operation has to open
+> the directory on the server, read it, then close it. The cursor
+> state for that directory, being associated strictly with the opened
+> struct file, is then discarded.
+> 
+> Directory cookies are cached not only by NFS clients, but also by
+> user space libraries on those clients. Essentially there is no way
+> to invalidate those caches when directory offsets have changed on
+> an NFS server after the offset-to-dentry mapping changes.
+> 
+> The solution we've come up with is to make the directory cookie for
+> each file in a tmpfs filesystem stable for the life of the directory
+> entry it represents.
+> 
+> Add a per-directory xarray. shmem_readdir() uses this to map each
+> directory offset (an loff_t integer) to the memory address of a
+> struct dentry.
+> 
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index f640cff1bbce..380b1cd6c93f 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -833,9 +833,6 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 			break;
- 		}
- 
--		/* Set numa allocation policy based on index */
--		hugetlb_set_vma_policy(&pseudo_vma, inode, index);
--
- 		/* addr is the offset within the file (zero based) */
- 		addr = index * hpage_size;
- 
-@@ -846,7 +843,6 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 		/* See if already present in mapping to avoid alloc/free */
- 		if (filemap_has_folio(mapping, index)) {
- 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
--			hugetlb_drop_vma_policy(&pseudo_vma);
- 			continue;
- 		}
- 
-@@ -858,6 +854,7 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 		 * folios in these areas, we need to consume the reserves
- 		 * to keep reservation accounting consistent.
- 		 */
-+		hugetlb_set_vma_policy(&pseudo_vma, inode, index);
- 		folio = alloc_hugetlb_folio(&pseudo_vma, addr, 0);
- 		hugetlb_drop_vma_policy(&pseudo_vma);
- 		if (IS_ERR(folio)) {
--- 
-2.40.1.495.gc816e09b53d-goog
+How have people survived for this long with this problem?
+
+It's a lot of new code - can we get away with simply disallowing
+exports of tmpfs?
+
+How can we maintain this?  Is it possible to come up with a test
+harness for inclusion in kernel selftests?
 
