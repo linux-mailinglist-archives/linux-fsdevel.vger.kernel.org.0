@@ -2,78 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABFA36F5EA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:56:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15BEF6F5EAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbjECS4C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 14:56:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57710 "EHLO
+        id S229966AbjECS5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 14:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229934AbjECSzz (ORCPT
+        with ESMTP id S229734AbjECS5H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 14:55:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB68219A8
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 11:55:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1683140110;
+        Wed, 3 May 2023 14:57:07 -0400
+Received: from out-4.mta0.migadu.com (out-4.mta0.migadu.com [IPv6:2001:41d0:1004:224b::4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27D66190
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 11:56:59 -0700 (PDT)
+Date:   Wed, 3 May 2023 14:56:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1683140217;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=0wQvdyQB5pPdHshJ2DLccYdmYWvyKpPO5JRJ2uuF8Xo=;
-        b=YZuCEMvlEoQVscpoykchxRHhECkchtP+r2giBuFtY5IbEPWk7uVKezn3YpPvKYSnakIX2a
-        TV/1hpI9E5qmhrotUfYpSIJm3DjuIoQvgBsOsVPwVhfE2AksU5fNotnovHHF1xUwVAgOff
-        ufhXcw1I2ZLFu+RV470qR+cxSLbXrac=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-132-8tND3QyKMRCvOu967A9VsQ-1; Wed, 03 May 2023 14:55:06 -0400
-X-MC-Unique: 8tND3QyKMRCvOu967A9VsQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 179CA800B35;
-        Wed,  3 May 2023 18:55:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.191])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C9ECC15BAE;
-        Wed,  3 May 2023 18:55:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230503154526.1223095-2-hch@lst.de>
-References: <20230503154526.1223095-2-hch@lst.de> <20230503154526.1223095-1-hch@lst.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com, akpm@linux-foundation.org, jack@suse.cz,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        marc.dionne@auristor.com, linux-afs@lists.infradead.org
-Subject: Re: [PATCH 2/2] afs: fix the afs_dir_get_folio return value
+        bh=kvDb7bxJfzE9KfjpQKTTQijQZOsAXNXH2iadfpJ44Yc=;
+        b=h1g4T3QhYib2nBdpUAXTn+2qQD9ejDw6IFQM/FKbwPTcpONEOGJug9IN/JkcPzWXJb7WMP
+        26usKy4n6B80sjCITIgILHgS1JbDUF0CHEgjPjZCLkcCdcNgTyG39f1X0AAT4O4tYbSzBt
+        CqImMwnUyz+b+HgDx7XUNM9L7g1vdag=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        akpm@linux-foundation.org, vbabka@suse.cz,
+        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
+        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+        pasha.tatashin@soleen.com, yosryahmed@google.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        andreyknvl@gmail.com, keescook@chromium.org,
+        ndesaulniers@google.com, gregkh@linuxfoundation.org,
+        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-modules@vger.kernel.org,
+        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH 00/40] Memory allocation profiling
+Message-ID: <ZFKubD/lq7oB4svV@moria.home.lan>
+References: <20230501165450.15352-1-surenb@google.com>
+ <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+ <ZFIOfb6/jHwLqg6M@moria.home.lan>
+ <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
+ <ZFIVtB8JyKk0ddA5@moria.home.lan>
+ <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
+ <20230503180726.GA196054@cmpxchg.org>
+ <ZFKlrP7nLn93iIRf@slm.duckdns.org>
+ <ZFKqh5Dh93UULdse@slm.duckdns.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1916966.1683140103.1@warthog.procyon.org.uk>
-Date:   Wed, 03 May 2023 19:55:03 +0100
-Message-ID: <1916967.1683140103@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZFKqh5Dh93UULdse@slm.duckdns.org>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> wrote:
-
-> Keep returning NULL on failure instead of letting an ERR_PTR escape to
-> callers that don't expect it.
+On Wed, May 03, 2023 at 08:40:07AM -1000, Tejun Heo wrote:
+> > Yeah, easy / default visibility argument does make sense to me.
 > 
-> Fixes: 66dabbb65d67 ("mm: return an ERR_PTR from __filemap_get_folio")
-> Reported-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> So, a bit of addition here. If this is the thrust, the debugfs part seems
+> rather redundant, right? That's trivially obtainable with tracing / bpf and
+> in a more flexible and performant manner. Also, are we happy with recording
+> just single depth for persistent tracking?
 
-Reviewed-by: David Howells <dhowells@redhat.com>
-Tested-by: David Howells <dhowells@redhat.com>
+Not sure what you're envisioning?
 
+I'd consider the debugfs interface pretty integral; it's much more
+discoverable for users, and it's hardly any code out of the whole
+patchset.
+
+Single depth was discussed previously. It's what makes it cheap enough
+to be always-on (saving stack traces is expensive!), and I find the
+output much more usable than e.g. page owner.
