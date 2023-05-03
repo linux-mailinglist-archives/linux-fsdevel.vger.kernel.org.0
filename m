@@ -2,307 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C77036F4ECA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 04:18:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C7CB6F4EDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 04:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbjECCSg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 22:18:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41800 "EHLO
+        id S229560AbjECCdt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 22:33:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbjECCSe (ORCPT
+        with ESMTP id S229478AbjECCdr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 22:18:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 041393A9B;
-        Tue,  2 May 2023 19:18:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 94D556222B;
-        Wed,  3 May 2023 02:18:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C81C433D2;
-        Wed,  3 May 2023 02:18:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1683080304;
-        bh=Xmt51HxGX9w7I26oXyzXEA9RUwzh1L+7hsYlH4OpXLE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=f39fPxBDGnTUgpaTxjZQeKkZ/zVq1v4h9KI/nLBuGHAWPh0cfBRqLnxPBrGGeq5Xx
-         MuO0qydl1QN6zffGi617yVLvREx5SmNpZLWAiZcik9b+NZNIlX/3zDhzOPcC773irR
-         iOis4Hz6xH16ikl/K7F7qUn7Hj3rSznIi4h8HDeE=
-Date:   Tue, 2 May 2023 19:18:21 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH v8 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing
- to file-backed mappings
-Message-Id: <20230502191821.71c86a2c25f19fe342aa72db@linux-foundation.org>
-In-Reply-To: <a690186fc37e1ea92556a7dbd0887fe201fcc709.1683067198.git.lstoakes@gmail.com>
-References: <cover.1683067198.git.lstoakes@gmail.com>
-        <a690186fc37e1ea92556a7dbd0887fe201fcc709.1683067198.git.lstoakes@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 2 May 2023 22:33:47 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B84C30E2;
+        Tue,  2 May 2023 19:33:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=pkPRiNpgcA+BA4XuLGFxUCQunbLSHZaA3tE3Dh0LC9s=; b=FouYfGdYkd5pD47/llJH/3W9f1
+        kHN8sMMmiVL1RPjgTpRQcLmxriPr5K0FKc3gwbncG9+slHPjZazlQq/IHKNQRFRMVqFy2hzfPJ7HW
+        x1qFvRUuskRpBrE8alYulmTaUIj90gAo+h9Z2jZm9BFPZumuynrwlwVb9ZI+nhYHuNz4aqTlKjASb
+        d8gVhcAFKFEd2xI/lXLR6uoDdxYMekV3ywcgIMbIM/ckXa6AlWOv0765DgNr/CWhoN6hClj1eJL6r
+        Z0FW1FpGR1N4gL6VrPcE/Ks+WI9Ut5ErDAg+YGTbl1d5nTvsxY81bfIOIfd6oALnnLCEjsPwYCyCV
+        R/csgQnw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pu2J8-0039fF-2N;
+        Wed, 03 May 2023 02:33:30 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     torvalds@linux-foundation.org
+Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        j.granados@samsung.com, patches@lists.linux.dev,
+        ebiggers@kernel.org, jeffxu@google.com, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 0/2] sysctl: death to register_sysctl_paths()
+Date:   Tue,  2 May 2023 19:33:27 -0700
+Message-Id: <20230503023329.752123-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.38.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue,  2 May 2023 23:51:35 +0100 Lorenzo Stoakes <lstoakes@gmail.com> wrote:
+Linus,
 
-> Writing to file-backed dirty-tracked mappings via GUP is inherently broken
-> as we cannot rule out folios being cleaned and then a GUP user writing to
-> them again and possibly marking them dirty unexpectedly.
-> 
-> This is especially egregious for long-term mappings (as indicated by the
-> use of the FOLL_LONGTERM flag), so we disallow this case in GUP-fast as
-> we have already done in the slow path.
-> 
-> We have access to less information in the fast path as we cannot examine
-> the VMA containing the mapping, however we can determine whether the folio
-> is anonymous or belonging to a whitelisted filesystem - specifically
-> hugetlb and shmem mappings.
-> 
-> We take special care to ensure that both the folio and mapping are safe to
-> access when performing these checks and document folio_fast_pin_allowed()
-> accordingly.
-> 
-> It's important to note that there are no APIs allowing users to specify
-> FOLL_FAST_ONLY for a PUP-fast let alone with FOLL_LONGTERM, so we can
-> always rely on the fact that if we fail to pin on the fast path, the code
-> will fall back to the slow path which can perform the more thorough check.
+As mentioned on my first pull request for sysctl-next, for v6.4-rc1
+we're very close to being able to deprecating register_sysctl_paths().
+I was going to assess the situation after the first week of the merge
+window.
 
-arm allnoconfig said
+That time is now and things are looking good. We only have one stragglers
+on the patch which had already an ACK for so I'm picking this up here now and
+the last patch is the one that uses an axe. Some careful eyeballing would
+be appreciated by others. If this doesn't get properly reviewed I can also
+just hold off on this in my tree for the next merge window. Either way is
+fine by me.
 
-mm/gup.c:115:13: warning: 'folio_fast_pin_allowed' defined but not used [-Wunused-function]
-  115 | static bool folio_fast_pin_allowed(struct folio *folio, unsigned int flags)
-      |             ^~~~~~~~~~~~~~~~~~~~~~
+I have boot tested the last patch and 0-day build is ongoing. You can give
+it a day for a warm fuzzy build test result.
 
-so I moved the definition inside CONFIG_ARCH_HAS_PTE_SPECIAL.
+Luis Chamberlain (2):
+  kernel: pid_namespace: simplify sysctls with register_sysctl()
+  sysctl: remove register_sysctl_paths()
 
+ fs/proc/proc_sysctl.c     | 55 +++------------------------------------
+ include/linux/sysctl.h    | 12 ---------
+ kernel/pid_namespace.c    |  3 +--
+ kernel/pid_sysctl.h       |  3 +--
+ scripts/check-sysctl-docs | 16 ------------
+ 5 files changed, 6 insertions(+), 83 deletions(-)
 
-
- mm/gup.c |  154 ++++++++++++++++++++++++++---------------------------
- 1 file changed, 77 insertions(+), 77 deletions(-)
-
---- a/mm/gup.c~mm-gup-disallow-foll_longterm-gup-fast-writing-to-file-backed-mappings-fix
-+++ a/mm/gup.c
-@@ -96,83 +96,6 @@ retry:
- 	return folio;
- }
- 
--/*
-- * Used in the GUP-fast path to determine whether a pin is permitted for a
-- * specific folio.
-- *
-- * This call assumes the caller has pinned the folio, that the lowest page table
-- * level still points to this folio, and that interrupts have been disabled.
-- *
-- * Writing to pinned file-backed dirty tracked folios is inherently problematic
-- * (see comment describing the writable_file_mapping_allowed() function). We
-- * therefore try to avoid the most egregious case of a long-term mapping doing
-- * so.
-- *
-- * This function cannot be as thorough as that one as the VMA is not available
-- * in the fast path, so instead we whitelist known good cases and if in doubt,
-- * fall back to the slow path.
-- */
--static bool folio_fast_pin_allowed(struct folio *folio, unsigned int flags)
--{
--	struct address_space *mapping;
--	unsigned long mapping_flags;
--
--	/*
--	 * If we aren't pinning then no problematic write can occur. A long term
--	 * pin is the most egregious case so this is the one we disallow.
--	 */
--	if ((flags & (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)) !=
--	    (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE))
--		return true;
--
--	/* The folio is pinned, so we can safely access folio fields. */
--
--	/* Neither of these should be possible, but check to be sure. */
--	if (unlikely(folio_test_slab(folio) || folio_test_swapcache(folio)))
--		return false;
--
--	/* hugetlb mappings do not require dirty-tracking. */
--	if (folio_test_hugetlb(folio))
--		return true;
--
--	/*
--	 * GUP-fast disables IRQs. When IRQS are disabled, RCU grace periods
--	 * cannot proceed, which means no actions performed under RCU can
--	 * proceed either.
--	 *
--	 * inodes and thus their mappings are freed under RCU, which means the
--	 * mapping cannot be freed beneath us and thus we can safely dereference
--	 * it.
--	 */
--	lockdep_assert_irqs_disabled();
--
--	/*
--	 * However, there may be operations which _alter_ the mapping, so ensure
--	 * we read it once and only once.
--	 */
--	mapping = READ_ONCE(folio->mapping);
--
--	/*
--	 * The mapping may have been truncated, in any case we cannot determine
--	 * if this mapping is safe - fall back to slow path to determine how to
--	 * proceed.
--	 */
--	if (!mapping)
--		return false;
--
--	/* Anonymous folios are fine, other non-file backed cases are not. */
--	mapping_flags = (unsigned long)mapping & PAGE_MAPPING_FLAGS;
--	if (mapping_flags)
--		return mapping_flags == PAGE_MAPPING_ANON;
--
--	/*
--	 * At this point, we know the mapping is non-null and points to an
--	 * address_space object. The only remaining whitelisted file system is
--	 * shmem.
--	 */
--	return shmem_mapping(mapping);
--}
--
- /**
-  * try_grab_folio() - Attempt to get or pin a folio.
-  * @page:  pointer to page to be grabbed
-@@ -2474,6 +2397,83 @@ static void __maybe_unused undo_dev_page
- 
- #ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
- /*
-+ * Used in the GUP-fast path to determine whether a pin is permitted for a
-+ * specific folio.
-+ *
-+ * This call assumes the caller has pinned the folio, that the lowest page table
-+ * level still points to this folio, and that interrupts have been disabled.
-+ *
-+ * Writing to pinned file-backed dirty tracked folios is inherently problematic
-+ * (see comment describing the writable_file_mapping_allowed() function). We
-+ * therefore try to avoid the most egregious case of a long-term mapping doing
-+ * so.
-+ *
-+ * This function cannot be as thorough as that one as the VMA is not available
-+ * in the fast path, so instead we whitelist known good cases and if in doubt,
-+ * fall back to the slow path.
-+ */
-+static bool folio_fast_pin_allowed(struct folio *folio, unsigned int flags)
-+{
-+	struct address_space *mapping;
-+	unsigned long mapping_flags;
-+
-+	/*
-+	 * If we aren't pinning then no problematic write can occur. A long term
-+	 * pin is the most egregious case so this is the one we disallow.
-+	 */
-+	if ((flags & (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)) !=
-+	    (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE))
-+		return true;
-+
-+	/* The folio is pinned, so we can safely access folio fields. */
-+
-+	/* Neither of these should be possible, but check to be sure. */
-+	if (unlikely(folio_test_slab(folio) || folio_test_swapcache(folio)))
-+		return false;
-+
-+	/* hugetlb mappings do not require dirty-tracking. */
-+	if (folio_test_hugetlb(folio))
-+		return true;
-+
-+	/*
-+	 * GUP-fast disables IRQs. When IRQS are disabled, RCU grace periods
-+	 * cannot proceed, which means no actions performed under RCU can
-+	 * proceed either.
-+	 *
-+	 * inodes and thus their mappings are freed under RCU, which means the
-+	 * mapping cannot be freed beneath us and thus we can safely dereference
-+	 * it.
-+	 */
-+	lockdep_assert_irqs_disabled();
-+
-+	/*
-+	 * However, there may be operations which _alter_ the mapping, so ensure
-+	 * we read it once and only once.
-+	 */
-+	mapping = READ_ONCE(folio->mapping);
-+
-+	/*
-+	 * The mapping may have been truncated, in any case we cannot determine
-+	 * if this mapping is safe - fall back to slow path to determine how to
-+	 * proceed.
-+	 */
-+	if (!mapping)
-+		return false;
-+
-+	/* Anonymous folios are fine, other non-file backed cases are not. */
-+	mapping_flags = (unsigned long)mapping & PAGE_MAPPING_FLAGS;
-+	if (mapping_flags)
-+		return mapping_flags == PAGE_MAPPING_ANON;
-+
-+	/*
-+	 * At this point, we know the mapping is non-null and points to an
-+	 * address_space object. The only remaining whitelisted file system is
-+	 * shmem.
-+	 */
-+	return shmem_mapping(mapping);
-+}
-+
-+/*
-  * Fast-gup relies on pte change detection to avoid concurrent pgtable
-  * operations.
-  *
-_
+-- 
+2.39.2
 
