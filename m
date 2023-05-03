@@ -2,63 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 922256F5D6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 746546F5D78
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:03:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbjECSDp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 14:03:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48564 "EHLO
+        id S230102AbjECSDw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 14:03:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjECSDo (ORCPT
+        with ESMTP id S229519AbjECSDs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 14:03:44 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FDEE2D63
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 11:03:42 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-55a5a830238so36379287b3.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 11:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683137021; x=1685729021;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v9bphnAMm9U7G1bEITi+0ZLO/l3WQ/XqMzpkJeT7kyk=;
-        b=L5MD7LDE53jR/3ptlXQOOTiI++wR1fxND5ifICgXfZ2hIWF0RB5i7Cbf3y8nlEohAG
-         Clh+QMTpMVHznpV/HAd4dl/nTAteOJlo9pbsv1YpgR/WSnTsEaig6E+CihdksMC7+1jq
-         6Z1XsGfjbwRGEha4Xholgwx49ZNbR3yyNtq3l6EeDu4stoYLEOoSm+lZCgitaF8qHB+G
-         aMVYQbQoJuHDRRMDleBxwSfQuKLPGBerL3yL63wdl8g8U8bu8+X2Cp3t0DvaZ1xR1kyJ
-         azu3inhuljuw1kRnH+qDgCm878e8KG06FyLYG9vQjwOhW5SbMlJY+LCsM4c30rFxv+Mb
-         ZPgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683137021; x=1685729021;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v9bphnAMm9U7G1bEITi+0ZLO/l3WQ/XqMzpkJeT7kyk=;
-        b=k+FLC3IPIi1tt9zIXJA0LHciTW8h92pDfd58VM+Vfbns0o+T2bLtwfODR7lZB4+cA5
-         EdEQSyRBD2vAFLfAGmb6n1RRHErGYKhaKgN9PvAKIygq9+B62ED2f/2t+M+SoKZLW1RY
-         /3S71zxnZfbOz5Bxqwtu1/A9shi4gEeRCYzFyqpO02RZzsy3WotUqM7FG1hOidn+S1rM
-         0Dys9ogQQrQDQ/gVvPKPiJ8sbi/xkONQuj7QjM+WaOyyOWXF4hjTck6cpfB2j0F2XaIP
-         +CBPw8xPWY/9mnWBAoicsJJDq4beiLr+sECK3k0XSiHos13MiSteSV//fgUFL2lRsox8
-         jDLA==
-X-Gm-Message-State: AC+VfDz6g7kPTkh+RQoUCHzPDOy22/QcR33dkyiE+/LA/kcjFffZzdXA
-        lhDYjakTVAPCB+PT+SQqiomV/CdxyxGOuvEcGlpBzw==
-X-Google-Smtp-Source: ACHHUZ4lvIgzIVoqBzi+ZqkC84PohxQDTMhCUsBRrb1hVuiEkZ49Yye5mAE/xSMdKBlLzt8OPesXOTpbgWw93u9GuoU=
-X-Received: by 2002:a25:b18e:0:b0:b9d:b774:3aa2 with SMTP id
- h14-20020a25b18e000000b00b9db7743aa2mr16215719ybj.9.1683137021290; Wed, 03
- May 2023 11:03:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230501165450.15352-1-surenb@google.com> <20230501165450.15352-20-surenb@google.com>
- <20230503122529.44ef2d56@gandalf.local.home>
-In-Reply-To: <20230503122529.44ef2d56@gandalf.local.home>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 3 May 2023 11:03:30 -0700
-Message-ID: <CAJuCfpGPVWQ1RYVSZOiXe2xDVbgMFAxVf2x=2xbgor=YqpntzQ@mail.gmail.com>
-Subject: Re: [PATCH 19/40] change alloc_pages name in dma_map_ops to avoid
- name conflicts
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
-        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+        Wed, 3 May 2023 14:03:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5495E4C13;
+        Wed,  3 May 2023 11:03:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E440362F38;
+        Wed,  3 May 2023 18:03:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04F9CC433EF;
+        Wed,  3 May 2023 18:03:38 +0000 (UTC)
+Date:   Wed, 3 May 2023 14:03:37 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+        kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
         roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
         willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
         void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
@@ -84,51 +52,44 @@ Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-modules@vger.kernel.org,
         kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Subject: Re: [PATCH 00/40] Memory allocation profiling
+Message-ID: <20230503140337.0f7127b2@gandalf.local.home>
+In-Reply-To: <CAJuCfpFYq7CZS4y2ZiF+AJHRKwnyhmZCk_uuTwFse26DxGh-qQ@mail.gmail.com>
+References: <20230501165450.15352-1-surenb@google.com>
+        <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+        <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
+        <20230503122839.0d9934c5@gandalf.local.home>
+        <CAJuCfpFYq7CZS4y2ZiF+AJHRKwnyhmZCk_uuTwFse26DxGh-qQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 3, 2023 at 9:25=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
- wrote:
->
-> On Mon,  1 May 2023 09:54:29 -0700
-> Suren Baghdasaryan <surenb@google.com> wrote:
->
-> > After redefining alloc_pages, all uses of that name are being replaced.
-> > Change the conflicting names to prevent preprocessor from replacing the=
-m
-> > when it's not intended.
->
-> Note, every change log should have enough information in it to know why i=
-t
-> is being done. This says what the patch does, but does not fully explain
-> "why". It should never be assumed that one must read other patches to get
-> the context. A year from now, investigating git history, this may be the
-> only thing someone sees for why this change occurred.
->
-> The "why" above is simply "prevent preprocessor from replacing them
-> when it's not intended". What does that mean?
+On Wed, 3 May 2023 10:40:42 -0700
+Suren Baghdasaryan <surenb@google.com> wrote:
 
-Thanks for the feedback, Steve. I'll make appropriate modifications to
-the description.
+> > This approach is actually quite common, especially since tagging every
+> > instance is usually overkill, as if you trace function calls in a running
+> > kernel, you will find that only a small percentage of the kernel ever
+> > executes. It's possible that you will be allocating a lot of tags that will
+> > never be used. If run time allocation is possible, that is usually the
+> > better approach.  
+> 
+> True but the memory overhead should not be prohibitive here. As a
+> ballpark number, on my machine I see there are 4838 individual
+> allocation locations and each codetag structure is 32 bytes, so that's
+> 152KB.
 
->
-> -- Steve
->
->
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
+If it's not that big, then allocating at runtime should not be an issue
+either. If runtime allocation can make it less intrusive to the code, that
+would be more rationale to do so.
+
+-- Steve
