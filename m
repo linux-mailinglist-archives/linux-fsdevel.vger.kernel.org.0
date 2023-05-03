@@ -2,72 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB616F5D80
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:06:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EE5F6F5D87
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:07:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229730AbjECSGQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 14:06:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50090 "EHLO
+        id S230106AbjECSHd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 14:07:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjECSGO (ORCPT
+        with ESMTP id S229970AbjECSHb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 14:06:14 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D83CE4F;
-        Wed,  3 May 2023 11:06:13 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id 98e67ed59e1d1-24de2954bc5so3464447a91.1;
-        Wed, 03 May 2023 11:06:13 -0700 (PDT)
+        Wed, 3 May 2023 14:07:31 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D496640C6
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 11:07:28 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id af79cd13be357-74e13e46cb9so248472485a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 11:07:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683137173; x=1685729173;
+        d=cmpxchg-org.20221208.gappssmtp.com; s=20221208; t=1683137247; x=1685729247;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4cv7r3p/uGjVZzfVGJD3+oUJmj97nEyjDPWByIKN3z4=;
-        b=kBIOUh53OZR1fn3Tl9vhMiJMS2FInFLP+lUhlPMor7jTDMLunrtCSmTdzMWMH2FwCJ
-         YVGqfGBLCcFxyEZqWGvgdtkqh7q9mW9TITc2zQ1MEl9Z4dyRAIRBQgQ/GqXqe64yJJJD
-         jtv1N2E+Q8wb/Xz4JW2RS+0z2DdUghhXRvmD4NcDBMi7YahwOEPgg0vNKS60VKG0vC0s
-         rVXB8P21/jbXTCpjmQQRTHqlVfjdnNcak2Qa/aW6mlFKobaN4n+shXYE6Y3F+F5hgEAG
-         f9bKyMjVy+ACvR4cf5kNhW2+TZwy4NkBNj9YXF9ja+6/87G38J+6YdFn2/3Ki55ZW1Z2
-         6s2A==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2w9A9pnL0O0lFcU+PAMU7GlOP92xLISlqVzvjl6lgs=;
+        b=PO1zbleTRcn7/zJUq5fpzWyIVOtx3gGn49YYpfEl2F4FWxhiJ5fgQAqy5Gv8Rl7t4b
+         4T1zNQ9CTD0v6Fcr+COWEcCatJ8vzRlvWG8SkcACjHLxntxzZs/gG82CwJJWHpWUEONd
+         cGLPZ7cNpnCc/t8QVWPqgWnDicnuHXilHjvFQDv/HFMyExCqGPXkMsAxP0THwRZzjpwt
+         tJTBaDGCLYadHAPw6twVE7Wlb44jFKBpznb67ElZ6MS4BbXOLmkcX6xIuqSjfiyuXQLI
+         RIkz3zaf2yZ3/uiFHSg4JYLFzIuSo/Bm5ju3koRWEJWCC+FYZXCAKhsuD1K2JclzBVmN
+         XWuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683137173; x=1685729173;
+        d=1e100.net; s=20221208; t=1683137247; x=1685729247;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4cv7r3p/uGjVZzfVGJD3+oUJmj97nEyjDPWByIKN3z4=;
-        b=IdecMYrgn5HnKH2bBZyz7SItyN3h3g5UQgqubjJZW49ajMWU76Ru4Tzb7SJ+o63R+B
-         g15R2C9jw9dojo+Naqx68ySzis4D0XJUsJq0Kt2Zvbe6RYepCLtJjnSVUiYaAxGxBROu
-         1QjcuMy4OuEUAfCzxejxihfbR91lOr7/EO48X6aVl86XXexNeuTQuvJktrwa8IswxRr4
-         rmvJ5vhZXHFXLLAKCdkXQ3pzT3INFzVFyoVb2hmS96mws7WixrQ1z9gwPGMFI/02izE7
-         nH9JuwtoIoF7aBALNiG5uAiuDrhgesGjA8NyjDyz79CFtSxNP1I1K4Wsmnt0UFKpVt5h
-         WZKg==
-X-Gm-Message-State: AC+VfDyTTD/c7MDpASy356D/Nu8PUk6U6LdnDdmGoL6YfxJ2Xh/0CnpL
-        cTVVLVSXje7ao4yw7PISbzg=
-X-Google-Smtp-Source: ACHHUZ6Ys0BQM8tQyYEoKSFpV2WCvnyoLhkkNSy/RU10JosALh+3fJA0w6WaI2GGSjVNqyUuFYx0fQ==
-X-Received: by 2002:a17:90a:850a:b0:24e:1f8:b786 with SMTP id l10-20020a17090a850a00b0024e01f8b786mr11008096pjn.19.1683137172717;
-        Wed, 03 May 2023 11:06:12 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::5:6454])
-        by smtp.gmail.com with ESMTPSA id g4-20020a1709026b4400b001a183ade911sm21931204plt.56.2023.05.03.11.06.11
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M2w9A9pnL0O0lFcU+PAMU7GlOP92xLISlqVzvjl6lgs=;
+        b=XVgLN2RBRPczC7HcmuV3GCe699LV/Ok3VnLKJEAjHJnFdtDwcS2xZ9rfhKPwBjFAe5
+         I/V4jjZlVB59bulmyXTdH1rz0N3r3DXQpzzwRUhU2viHnDW5ES9cfTbUMGFJSUfi9g8m
+         yq+DRVn525lPZaro8PJeQ2t6irhEtJQ3+Q6PAAnKOvwyFr19RAMJrJ12Wm4oEaRf8J3U
+         oUQcITa2iZXNDYV3V2i8pg4V/ZeemZGhVcpYsm9TJPP6bJ83VU/M9ZdgOv9lWqlj2F5w
+         vrl91DIZ8S54ft4PMm40QmMynRwYXvmmKBy/5AKoyj1c7h2klwryGeUJwqHoH3MeNM6c
+         vGTg==
+X-Gm-Message-State: AC+VfDwFEYNVSl9qofGFT5qLRuYTK24cUYifuDLQ0vIiKCi1AS992tnA
+        A1FtWAXtYqpLKfqv6017QJ/cyw==
+X-Google-Smtp-Source: ACHHUZ4vn0FuCMnCG+kySd2u32Zv4GyyAo20GhKuXAT2/CW7e9UZn2KKViRjxDmYGZnFqwGpJOgsdA==
+X-Received: by 2002:a05:6214:20c1:b0:619:4232:aa87 with SMTP id 1-20020a05621420c100b006194232aa87mr11224719qve.24.1683137247516;
+        Wed, 03 May 2023 11:07:27 -0700 (PDT)
+Received: from localhost (2603-7000-0c01-2716-8f57-5681-ccd3-4a2e.res6.spectrum.com. [2603:7000:c01:2716:8f57:5681:ccd3:4a2e])
+        by smtp.gmail.com with ESMTPSA id a9-20020a0cca89000000b0061b59bcc3edsm1473657qvk.44.2023.05.03.11.07.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 May 2023 11:06:12 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 3 May 2023 08:06:10 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Suren Baghdasaryan <surenb@google.com>
+        Wed, 03 May 2023 11:07:27 -0700 (PDT)
+Date:   Wed, 3 May 2023 14:07:26 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Tejun Heo <tj@kernel.org>
 Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
-        vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-        mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
-        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, muchun.song@linux.dev,
-        rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
-        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+        Michal Hocko <mhocko@suse.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        akpm@linux-foundation.org, vbabka@suse.cz,
+        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
+        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+        pasha.tatashin@soleen.com, yosryahmed@google.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        andreyknvl@gmail.com, keescook@chromium.org,
         ndesaulniers@google.com, gregkh@linuxfoundation.org,
         ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
         dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
@@ -80,26 +80,22 @@ Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
         linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>
+        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
 Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <ZFKikp0Poqen1kNv@slm.duckdns.org>
+Message-ID: <20230503180726.GA196054@cmpxchg.org>
 References: <20230501165450.15352-1-surenb@google.com>
  <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
  <ZFIOfb6/jHwLqg6M@moria.home.lan>
  <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
  <ZFIVtB8JyKk0ddA5@moria.home.lan>
  <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
- <CAJuCfpEFV7ZB4pvnf6n0bVpTCDWCVQup9PtrHuAayrf3GrQskg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJuCfpEFV7ZB4pvnf6n0bVpTCDWCVQup9PtrHuAayrf3GrQskg@mail.gmail.com>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+In-Reply-To: <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -107,51 +103,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello, Suren.
-
-On Wed, May 03, 2023 at 10:42:11AM -0700, Suren Baghdasaryan wrote:
-> > * The framework doesn't really have any runtime overhead, so we can have it
-> >   deployed in the entire fleet and debug wherever problem is.
+On Wed, May 03, 2023 at 06:35:49AM -1000, Tejun Heo wrote:
+> Hello, Kent.
 > 
-> Do you mean it has no runtime overhead when disabled?
+> On Wed, May 03, 2023 at 04:05:08AM -0400, Kent Overstreet wrote:
+> > No, we're still waiting on the tracing people to _demonstrate_, not
+> > claim, that this is at all possible in a comparable way with tracing. 
+> 
+> So, we (meta) happen to do stuff like this all the time in the fleet to hunt
+> down tricky persistent problems like memory leaks, ref leaks, what-have-you.
+> In recent kernels, with kprobe and BPF, our ability to debug these sorts of
+> problems has improved a great deal. Below, I'm attaching a bcc script I used
+> to hunt down, IIRC, a double vfree. It's not exactly for a leak but leaks
+> can follow the same pattern.
+> 
+> There are of course some pros and cons to this approach:
+> 
+> Pros:
+> 
+> * The framework doesn't really have any runtime overhead, so we can have it
+>   deployed in the entire fleet and debug wherever problem is.
+> 
+> * It's fully flexible and programmable which enables non-trivial filtering
+>   and summarizing to be done inside kernel w/ BPF as necessary, which is
+>   pretty handy for tracking high frequency events.
+> 
+> * BPF is pretty performant. Dedicated built-in kernel code can do better of
+>   course but BPF's jit compiled code & its data structures are fast enough.
+>   I don't remember any time this was a problem.
+> 
+> Cons:
+> 
+> * BPF has some learning curve. Also the fact that what it provides is a wide
+>   open field rather than something scoped out for a specific problem can
+>   make it seem a bit daunting at the beginning.
+> 
+> * Because tracking starts when the script starts running, it doesn't know
+>   anything which has happened upto that point, so you gotta pay attention to
+>   handling e.g. handling frees which don't match allocs. It's kinda annoying
+>   but not a huge problem usually. There are ways to build in BPF progs into
+>   the kernel and load it early but I haven't experiemnted with it yet
+>   personally.
 
-Yes, that's what I meant.
+Yeah, early loading is definitely important, especially before module
+loading etc.
 
-> If so, do you know what's the overhead when enabled? I want to
-> understand if that's truly a viable solution to track all allocations
-> (including slab) all the time.
+One common usecase is that we see a machine in the wild with a high
+amount of kernel memory disappearing somewhere that isn't voluntarily
+reported in vmstat/meminfo. Reproducing it isn't always
+practical. Something that records early and always (with acceptable
+runtime overhead) would be the holy grail.
 
-(cc'ing Alexei and Andrii who know a lot better than me)
+Matching allocs to frees is doable using the pfn as the key for pages,
+and virtual addresses for slab objects.
 
-I don't have enough concrete benchmark data on the hand to answer
-definitively but hopefully what my general impresison would help. We attach
-BPF programs to both per-packet and per-IO paths. They obviously aren't free
-but their overhead isn't signficantly higher than building in the same thing
-in C code. Once loaded, BPF progs are jit compiled into native code. The
-generated code will be a bit worse than regularly compiled C code but those
-are really micro differences. There's some bridging code to jump into BPF
-but again negligible / acceptable even in the hottest paths.
+The biggest issue I had when I tried with bpf was losing updates to
+the map. IIRC there is some trylocking going on to avoid deadlocks
+from nested contexts (alloc interrupted, interrupt frees). It doesn't
+sound like an unsolvable problem, though.
 
-In terms of execution overhead, I don't think there is a signficant
-disadvantage to doing these things in BPF. Bigger differences would likely
-be in tracking data structures and locking around them. One can definitely
-better integrate tracking into alloc / free paths piggybacking on existing
-locking and whatnot. That said, BPF hashtable is pretty fast and BPF is
-constantly improving in terms of data structure support.
+Another minor thing was the stack trace map exploding on a basically
+infinite number of unique interrupt stacks. This could probably also
+be solved by extending the trace extraction API to cut the frames off
+at the context switch boundary.
 
-It really depends on the workload and how much overhead one considers
-acceptable and I'm sure persistent global tracking can be done more
-efficiently with built-in C code. That said, done right, the overhead
-difference most likely isn't gonna be orders of magnitude but more like in
-the realm of tens of percents, if that.
-
-So, it doesn't nullify the benefits a dedicated mechansim can bring but does
-change the conversation quite a bit. Is the extra code justifiable given
-that most of what it enables is already possible using a more generic
-mechanism, albeit at a bit higher cost? That may well be the case but it
-does raise the bar.
-
-Thanks.
-
--- 
-tejun
+Taking a step back though, given the multitude of allocation sites in
+the kernel, it's a bit odd that the only accounting we do is the tiny
+fraction of voluntary vmstat/meminfo reporting. We try to cover the
+biggest consumers with this of course, but it's always going to be
+incomplete and is maintenance overhead too. There are on average
+several gigabytes in unknown memory (total - known vmstats) on our
+machines. It's difficult to detect regressions easily. And it's per
+definition the unexpected cornercases that are the trickiest to track
+down. So it might be doable with BPF, but it does feel like the kernel
+should do a better job of tracking out of the box and without
+requiring too much plumbing and somewhat fragile kernel allocation API
+tracking and probing from userspace.
