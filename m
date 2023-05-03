@@ -2,214 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A52F6F605F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 22:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B74D56F606D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 23:08:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229706AbjECU6Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 16:58:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33202 "EHLO
+        id S229612AbjECVId (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 17:08:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjECU6X (ORCPT
+        with ESMTP id S229574AbjECVIc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 16:58:23 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F06CD8A52
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 13:58:05 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-959a626b622so878549966b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 13:58:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683147482; x=1685739482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fOKjucXS3bLNlM0zdkAZGUqfwQjiAxpZxAhc5U8CzHU=;
-        b=M76iV/Cp1NdgRUq/sw7nrkkQZ1f5OQw/FLMsnaaaGZ9WDv4dmUFRbQJ7/aaMVURbXH
-         jtw5XjZVNFYAGal1iu1GucmpcCJ0CgdZf5Dbshiuo8AvHjIdf0WWbQM1167FJbGBLOVb
-         +m1nnTAklcYmPuroSxwm4K/URkI9jq+Kt+7F8TF3u4xM52Qw3iUGnjjoffhghD/7aHOY
-         ZqstTs/T4J5k1rFcbF9bu5rwKRDcjvJp9ImpLerVMoag/moEHoqxkO/YcyexIo1OJITP
-         UPEfOHgdeHnqeQ1WiBjWWHnrzmC9+Io4K3aoUpIz3h6fXx4MOAIJD5q5jVcoAjZcEg/c
-         i7NA==
+        Wed, 3 May 2023 17:08:32 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0D57DB0
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 14:08:31 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-331514f5626so10318235ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 14:08:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683147482; x=1685739482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fOKjucXS3bLNlM0zdkAZGUqfwQjiAxpZxAhc5U8CzHU=;
-        b=JdwejKnqnYg26EiI1Fz14WfeWyzVMX7cL7DtmltBkDSvvNyMoIETWscfzHh7uqqNci
-         vWoNHtaG3rY9brqYONqV0kilaIDCEt3yC7/s3Es26aKhq3ra44QKXIp8kNMIRxJ68sgO
-         8bf5trMpTdVO5m87DuCCEM6vzEcT26rsseqIPjAOyYTuoXZHGOizu+1vclNlfatq5yZU
-         TkewIBuSzYYMAoT0sUvKDKci9sW+46fGtF1vnijeEdQ0KzNviRAbzwdk9V2D1rjnsNnv
-         oCwDvaFlN28Wkpqjc9LmXRDwa8qJ9bQ9cPk7SHl3V75drsTxiyknrCYcGsPw8szMWAnm
-         rMCg==
-X-Gm-Message-State: AC+VfDxtkYp6CVpgQBVDC9/Fqtj8aKiQ7f6kiCyyua5VoVjUhc2B+YRz
-        8dSV/15+PJ2ujONlvKhSfK2Jg0HHwIGre7cm2Z0kAA==
-X-Google-Smtp-Source: ACHHUZ7bG8Xn1LjA65SfnlqTNN22QeCgktHev9DSXBWTCamKtyQdrW7/6BUqHXApnZNL4m4+BsdZL7Rw4nFGoBYOPAM=
-X-Received: by 2002:a17:906:6a14:b0:953:7be7:91de with SMTP id
- qw20-20020a1709066a1400b009537be791demr4660114ejc.20.1683147481570; Wed, 03
- May 2023 13:58:01 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683148110; x=1685740110;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VWE1gUaPEDvuP8/sfMbQHu/lPf0Q2rOkFlhahb64iww=;
+        b=XOhbqhz5sLuucG5nDWicLE5qdqXGoXMzFIk4pDT+96wA2VU/wCoOxR5uxuGqe919Oh
+         9MBaN2Fg2HpcI1A84fbqiuDGjj0ojlVMzq1c5t617zdOg4h5a8TdN50gkL6LhnQ1MwcZ
+         3mDBdQ8i1/Soq43k9at4+pIYUyztzYR6GUWFarBNmN/fZ2bleVAEiXcDgOg6c4SSsW0F
+         G9u7MpfTBlNGbiZdXJVdG5hEcV8Q8zSRKq5Fr676F9EI6dKIrRcPkZMs3Qk5kxxnwUc/
+         DEcrdlnzDopT9wT0xum3WuPwkQ4x//5dRnatvAA96oiZACw1zzyGeLuOEgKuFXjxIz15
+         eMzQ==
+X-Gm-Message-State: AC+VfDw8FHM0O5zmcLvY75aagIVZnwVHm7Jbsnuy6e+aSHIPmviMEoGG
+        deKRNbS7wDm2H6Cibj5mwLmtDxd84zaqwFHzkPuP5TmcNN3x
+X-Google-Smtp-Source: ACHHUZ4WpLZO2iMXuzM0V0IXlmGQCYHmfrK1UAGjTIIXWvC+8nje63WdB4rpHJsYrFY/EFNbKgQVwk4zDOAJ67ZGE6FzoWrCU6QC
 MIME-Version: 1.0
-References: <20230501175025.36233-1-surenb@google.com> <ZFBvOh8r5WbTVyA8@casper.infradead.org>
- <CAJuCfpHfAFx9rjv0gHK77LbP-8gd-kFnWw=aqfQTP6pH=zvMNg@mail.gmail.com>
- <ZFCB+G9KSNE+J9cZ@casper.infradead.org> <CAJuCfpES=G8i99yYXWoeJq9+JVUjX5Bkq_5VNVTVX7QT+Wkfxg@mail.gmail.com>
- <ZFEmN6G7WRy59Mum@casper.infradead.org> <CAJuCfpFs+Rgpu8v+ddHFwtOx33W5k1sKDdXHM2ej1Upyo_9y4g@mail.gmail.com>
- <ZFGPLXIis6tl1QWX@casper.infradead.org> <CAJuCfpGgc_bCEAE5LrhYPk=qXMU=owgiABTO9ZNqaBx-xfrOuQ@mail.gmail.com>
- <CAJD7tkZJ1VPB+bA0cjHHcehoMW2fT96-h=C5pRHD=Z+SJXYosA@mail.gmail.com> <CAJuCfpE9dVK01c-aNT_uwTC=m8RSdEiXsoe6XBR48GjL=ezsmg@mail.gmail.com>
-In-Reply-To: <CAJuCfpE9dVK01c-aNT_uwTC=m8RSdEiXsoe6XBR48GjL=ezsmg@mail.gmail.com>
-From:   Yosry Ahmed <yosryahmed@google.com>
-Date:   Wed, 3 May 2023 13:57:17 -0700
-Message-ID: <CAJD7tkadk9=-PT1daXQyA=X_qz60XOEciXOkXWwPqxYJOaWRXQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mm: handle swap page faults under VMA lock if page is uncontended
-To:     Suren Baghdasaryan <surenb@google.com>, Ying <ying.huang@intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, mhocko@suse.com, josef@toxicpanda.com,
-        jack@suse.cz, ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
-        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
-        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
-        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
-        apopple@nvidia.com, linux-mm@kvack.org,
+X-Received: by 2002:a92:d94a:0:b0:331:310c:658b with SMTP id
+ l10-20020a92d94a000000b00331310c658bmr4371363ilq.2.1683148110649; Wed, 03 May
+ 2023 14:08:30 -0700 (PDT)
+Date:   Wed, 03 May 2023 14:08:30 -0700
+In-Reply-To: <20230503202830.GA695988@mit.edu>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003d606105fad075eb@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING in ext4_xattr_block_set (2)
+From:   syzbot <syzbot+6385d7d3065524c5ca6d@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 3, 2023 at 12:57=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Wed, May 3, 2023 at 1:34=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
-> >
-> > On Tue, May 2, 2023 at 4:05=E2=80=AFPM Suren Baghdasaryan <surenb@googl=
-e.com> wrote:
-> > >
-> > > On Tue, May 2, 2023 at 3:31=E2=80=AFPM Matthew Wilcox <willy@infradea=
-d.org> wrote:
-> > > >
-> > > > On Tue, May 02, 2023 at 09:36:03AM -0700, Suren Baghdasaryan wrote:
-> > > > > On Tue, May 2, 2023 at 8:03=E2=80=AFAM Matthew Wilcox <willy@infr=
-adead.org> wrote:
-> > > > > >
-> > > > > > On Mon, May 01, 2023 at 10:04:56PM -0700, Suren Baghdasaryan wr=
-ote:
-> > > > > > > On Mon, May 1, 2023 at 8:22=E2=80=AFPM Matthew Wilcox <willy@=
-infradead.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, May 01, 2023 at 07:30:13PM -0700, Suren Baghdasarya=
-n wrote:
-> > > > > > > > > On Mon, May 1, 2023 at 7:02=E2=80=AFPM Matthew Wilcox <wi=
-lly@infradead.org> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Mon, May 01, 2023 at 10:50:23AM -0700, Suren Baghdas=
-aryan wrote:
-> > > > > > > > > > > +++ b/mm/memory.c
-> > > > > > > > > > > @@ -3711,11 +3711,6 @@ vm_fault_t do_swap_page(struct=
- vm_fault *vmf)
-> > > > > > > > > > >       if (!pte_unmap_same(vmf))
-> > > > > > > > > > >               goto out;
-> > > > > > > > > > >
-> > > > > > > > > > > -     if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-> > > > > > > > > > > -             ret =3D VM_FAULT_RETRY;
-> > > > > > > > > > > -             goto out;
-> > > > > > > > > > > -     }
-> > > > > > > > > > > -
-> > > > > > > > > > >       entry =3D pte_to_swp_entry(vmf->orig_pte);
-> > > > > > > > > > >       if (unlikely(non_swap_entry(entry))) {
-> > > > > > > > > > >               if (is_migration_entry(entry)) {
-> > > > > > > > > >
-> > > > > > > > > > You're missing the necessary fallback in the (!folio) c=
-ase.
-> > > > > > > > > > swap_readpage() is synchronous and will sleep.
-> > > > > > > > >
-> > > > > > > > > True, but is it unsafe to do that under VMA lock and has =
-to be done
-> > > > > > > > > under mmap_lock?
-> > > > > > > >
-> > > > > > > > ... you were the one arguing that we didn't want to wait fo=
-r I/O with
-> > > > > > > > the VMA lock held?
-> > > > > > >
-> > > > > > > Well, that discussion was about waiting in folio_lock_or_retr=
-y() with
-> > > > > > > the lock being held. I argued against it because currently we=
- drop
-> > > > > > > mmap_lock lock before waiting, so if we don't drop VMA lock w=
-e would
-> > > > > > > be changing the current behavior which might introduce new
-> > > > > > > regressions. In the case of swap_readpage and swapin_readahea=
-d we
-> > > > > > > already wait with mmap_lock held, so waiting with VMA lock he=
-ld does
-> > > > > > > not introduce new problems (unless there is a need to hold mm=
-ap_lock).
-> > > > > > >
-> > > > > > > That said, you are absolutely correct that this situation can=
- be
-> > > > > > > improved by dropping the lock in these cases too. I just didn=
-'t want
-> > > > > > > to attack everything at once. I believe after we agree on the=
- approach
-> > > > > > > implemented in https://lore.kernel.org/all/20230501175025.362=
-33-3-surenb@google.com
-> > > > > > > for dropping the VMA lock before waiting, these cases can be =
-added
-> > > > > > > easier. Does that make sense?
-> > > > > >
-> > > > > > OK, I looked at this path some more, and I think we're fine.  T=
-his
-> > > > > > patch is only called for SWP_SYNCHRONOUS_IO which is only set f=
-or
-> > > > > > QUEUE_FLAG_SYNCHRONOUS devices, which are brd, zram and nvdimms
-> > > > > > (both btt and pmem).  So the answer is that we don't sleep in t=
-his
-> > > > > > path, and there's no need to drop the lock.
-> > > > >
-> > > > > Yes but swapin_readahead does sleep, so I'll have to handle that =
-case
-> > > > > too after this.
-> > > >
-> > > > Sleeping is OK, we do that in pXd_alloc()!  Do we block on I/O anyw=
-here
-> > > > in swapin_readahead()?  It all looks like async I/O to me.
-> > >
-> > > Hmm. I thought that we have synchronous I/O in the following paths:
-> > >     swapin_readahead()->swap_cluster_readahead()->swap_readpage()
-> > >     swapin_readahead()->swap_vma_readahead()->swap_readpage()
-> > > but just noticed that in both cases swap_readpage() is called with th=
-e
-> > > synchronous parameter being false. So you are probably right here...
-> >
-> > In both swap_cluster_readahead() and swap_vma_readahead() it looks
-> > like if the readahead window is 1 (aka we are not reading ahead), then
-> > we jump to directly calling read_swap_cache_async() passing do_poll =3D
-> > true, which means we may end up calling swap_readpage() passing
-> > synchronous =3D true.
-> >
-> > I am not familiar with readahead heuristics, so I am not sure how
-> > common this is, but it's something to think about.
->
-> Uh, you are correct. If this branch is common, we could use the same
-> "drop the lock and retry" pattern inside read_swap_cache_async(). That
-> would be quite easy to implement.
-> Thanks for checking on it!
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in ext4_xattr_block_set
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5863 at fs/ext4/xattr.c:2141 ext4_xattr_block_set+0x2ef2/0x3680
+Modules linked in:
+CPU: 1 PID: 5863 Comm: syz-executor.1 Not tainted 6.3.0-rc3-syzkaller-00111-gd4fab7b28e2f-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+RIP: 0010:ext4_xattr_block_set+0x2ef2/0x3680 fs/ext4/xattr.c:2141
+Code: da 3f ff 48 8b 7c 24 50 4c 89 ee e8 98 36 c2 ff 45 31 ed e9 86 f4 ff ff e8 2b da 3f ff 45 31 ed e9 79 f4 ff ff e8 1e da 3f ff <0f> 0b e9 5d f2 ff ff e8 12 da 3f ff 0f 0b 43 80 3c 26 00 0f 85 6f
+RSP: 0018:ffffc900062df4a0 EFLAGS: 00010293
+RAX: ffffffff824a9302 RBX: 1ffff92000c5bf11 RCX: ffff888077008000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000001
+RBP: ffffc900062df6d0 R08: ffffffff82103f70 R09: ffffed100d986aae
+R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffc900062df860
+FS:  00007faf2d136700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1f5413f440 CR3: 000000006a2a8000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ext4_xattr_set_handle+0xcd4/0x15c0 fs/ext4/xattr.c:2458
+ ext4_initxattrs+0xa3/0x110 fs/ext4/xattr_security.c:44
+ security_inode_init_security+0x2df/0x3f0 security/security.c:1147
+ __ext4_new_inode+0x341c/0x42e0 fs/ext4/ialloc.c:1322
+ ext4_mkdir+0x425/0xce0 fs/ext4/namei.c:2991
+ vfs_mkdir+0x29d/0x450 fs/namei.c:4038
+ do_mkdirat+0x264/0x520 fs/namei.c:4061
+ __do_sys_mkdirat fs/namei.c:4076 [inline]
+ __se_sys_mkdirat fs/namei.c:4074 [inline]
+ __x64_sys_mkdirat+0x89/0xa0 fs/namei.c:4074
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7faf2c48c0f9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007faf2d136168 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
+RAX: ffffffffffffffda RBX: 00007faf2c5abf80 RCX: 00007faf2c48c0f9
+RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000005
+RBP: 00007faf2c4e7ae9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffd76b57a0f R14: 00007faf2d136300 R15: 0000000000022000
+ </TASK>
 
 
-I am honestly not sure how common this is.
+Tested on:
 
-+Ying who might have a better idea.
+commit:         d4fab7b2 ext4: clean up error handling in __ext4_fill_..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+console output: https://syzkaller.appspot.com/x/log.txt?x=16366e18280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=acdb62bf488a8fe5
+dashboard link: https://syzkaller.appspot.com/bug?extid=6385d7d3065524c5ca6d
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10c9cef2280000
 
-
->
->
-> >
-> > > Does that mean swapin_readahead() might return a page which does not
-> > > have its content swapped-in yet?
-> > >
