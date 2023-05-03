@@ -2,180 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD1E6F5F55
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 21:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D9D96F5F5C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 21:45:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbjECTmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 15:42:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57802 "EHLO
+        id S229713AbjECTpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 15:45:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjECTmY (ORCPT
+        with ESMTP id S229562AbjECTpm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 15:42:24 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F3607EC6
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 12:42:18 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id 3f1490d57ef6-b9a6f17f2b6so5265457276.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 12:42:18 -0700 (PDT)
+        Wed, 3 May 2023 15:45:42 -0400
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65EF67AA0
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 12:45:41 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-b9e66ce80acso3619587276.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 12:45:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683142937; x=1685734937;
+        d=google.com; s=20221208; t=1683143140; x=1685735140;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F66tG72rxj01tEzIhohJuuSFN+mKdDXWP8TmCLCAdWE=;
-        b=a1iLtOUtpMBcudAp+MYHhMRaSRYiAr+weHUc65uhkIL2DNMGQ4IBjRTGTgiuONBiYP
-         vVLg4kXeD/y1TobXMImkPRFkLEFDyMkBVj3chwGbyMjyT9KueDI0t4jM83JCb+nZbNpg
-         J/yqZcdlmdpM/XRaQRoaLiOpk1HFwAcDjRzKVbq5BFCOAsv/q1gn9XZ0OlwEgx5E1tmU
-         fxlkLjvH2QJSr3ZA/JpgsJ2ZaifRyNlvg3Y4opQ8LDqYGzRs1E/gkPa2ITSKhitCTkxP
-         RHQTvW0O6XD7HwIA3/vCkni+jxq3ADu+NHijnoNlKzGv0ZxiRdAZ2H1lDLOMmwB7AWW9
-         D6Gw==
+        bh=bq44fWKfzB7azpC5445h4zSgjB+E0XG23Sx5k3P/Wrs=;
+        b=mNn8mOJ969yUibKfAWrXgatuIFi6FVIM4EsSSH9KQ1Go4d1sYzKZHUi8VHjbX6pfWa
+         OlJ16nZGAbvURg1kkDTdEvJDfJPD2YhA8jF3Bo81PkL1ob0v9cS2gkR4gCqMlpmjnr/s
+         tWs9Fu3MohlaypLe2rIvRSkpy7E5gp65K6pp8163QEUwdmBPDYTBTVK0GaffIx+/jWG1
+         GkJ4oD48JkxrW+rrbEhXrrnBxumK3LN05X4J4kXdI0k+pYkkAnfDQi3ANZniOpY63cWz
+         Q+VUnUlPsKkbZjKcze+vAukdxm3Nrif9W+zvOKGcMfCU5FAKE+MOBW4LpPVOFpo/QEqA
+         mUdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683142937; x=1685734937;
+        d=1e100.net; s=20221208; t=1683143140; x=1685735140;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F66tG72rxj01tEzIhohJuuSFN+mKdDXWP8TmCLCAdWE=;
-        b=TPZRec+Wsm41FZ/pHR8Y2djXCQPCxnZckQBObAc8c/MFPO0wAKkvTQDODV9xn/7Pgb
-         OvGmVmWgqcL2pH6qZXtROe1++gvMG3MDHVI0tqz1njnaXmkxjzH/nFY6hAQotrzYrp02
-         O62vptE6SWg3YbBgUx+KrhOK0A0Na+9rSQJX3qKZAPm8+IWdhvckIWFFz523ykQIGM4Z
-         i9HWffIgZlUa/FssvA3M0xDz9ehyPe+6Gt/RyuizZtwDG/Rz+GmLlzJsqdhfvbfwvjIr
-         9gNB2xYayvGhSwoF5OMtMtY7vk94NTqifkwUv1k2Y4wq2JRbaMaxEScbk4+h62Y1i7/0
-         IX5A==
-X-Gm-Message-State: AC+VfDzjtEA5cOArE4Q1bLV5A33mVdvXKqcFxvsPFG3etcfv36R865tz
-        yu8ALKt5UYG+ymx27LItF3+HaYSY+gnDgqcns2S//A==
-X-Google-Smtp-Source: ACHHUZ7Ugm6qsRSsxxL6fdJKCJyNFCrHQQaJjzCEXBLpYUK3FrDKBJdA46z3aMrfSb8XYxo7SGFzTHbMdrXAHFSGYjM=
-X-Received: by 2002:a25:4ac2:0:b0:b3d:5a52:5c6b with SMTP id
- x185-20020a254ac2000000b00b3d5a525c6bmr3354631yba.21.1683142937398; Wed, 03
- May 2023 12:42:17 -0700 (PDT)
+        bh=bq44fWKfzB7azpC5445h4zSgjB+E0XG23Sx5k3P/Wrs=;
+        b=A9Qg/DjYH5lVlb4Mco6TcDr1Jyvw1DN5h3a7AqyvIsOxASJUILoWawKe9HJUBh7fBN
+         HcBw3mqhOreLA6cLxF3TRlM+SH1eumWTUnt//FB5T18PItpWQlGas6+c5IGivZxR1G0v
+         9qHkHS4G45lvNy6fR8NMGODigSkFlMe+sSCXITDCZfLzLVu9+/kaeeuKhbIF+YD/pVl/
+         wkvU9Tba63nBXrbOHyjRKrMGyR2bYu7yyt6PMYi+2X8yGkeq+OpYYhJceIwWYC3gxxyq
+         T2DastoJgSqSePUwi/zFRZGhYYZCETwZRpcbTrRB5E9DoFTCdvNp80sYenero9GJCcSL
+         /K7A==
+X-Gm-Message-State: AC+VfDxEx4OrTNsZTvLdbr8H+Mdcw7HtrmoXfkheg7DEQ1U77I4PqCt1
+        u95l6fer9E6cd3AKTkTBVN1sE+et8v01rFZ2uxXw3g==
+X-Google-Smtp-Source: ACHHUZ611vK/8POrb92/ZC137MJ/7lfkX+qvV2x7CR/VSAZxV6421Yhl76g7YvjnquNOZJwUgKJzKQx8X6OL1TqAAdQ=
+X-Received: by 2002:a25:4f86:0:b0:b9a:9ad4:1d3 with SMTP id
+ d128-20020a254f86000000b00b9a9ad401d3mr18494816ybb.5.1683143140255; Wed, 03
+ May 2023 12:45:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230501175025.36233-1-surenb@google.com> <20230501175025.36233-2-surenb@google.com>
- <875y9aj23u.fsf@nvidia.com> <CAJuCfpGprqXcjjUmN_Vx7Uqa8aPrSZAq9WLV0W9=sKNBUe3Cvg@mail.gmail.com>
- <87lei5zhsr.fsf@nvidia.com>
-In-Reply-To: <87lei5zhsr.fsf@nvidia.com>
+References: <20230501165450.15352-1-surenb@google.com> <20230501165450.15352-35-surenb@google.com>
+ <ZFIO3tXCbmTn53uv@dhcp22.suse.cz> <CAJuCfpHrZ4kWYFPvA3W9J+CmNMuOtGa_ZMXE9fOmKsPQeNt2tg@mail.gmail.com>
+ <b8ab89e6-0456-969d-ed31-fa64be0a0fd0@intel.com>
+In-Reply-To: <b8ab89e6-0456-969d-ed31-fa64be0a0fd0@intel.com>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 3 May 2023 12:42:06 -0700
-Message-ID: <CAJuCfpEy9DBAEQw9H3CvF8MaX0NZTvY_+uCPiZqW+k0KjktECw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mm: drop VMA lock before waiting for migration
-To:     Alistair Popple <apopple@nvidia.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
-        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
-        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
-        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
-        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
-        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@android.com
+Date:   Wed, 3 May 2023 12:45:29 -0700
+Message-ID: <CAJuCfpGq4CjFLJ=QdQZUJPN72ecvWhVi_vUKrOz5_DvMAM07EQ@mail.gmail.com>
+Subject: Re: [PATCH 34/40] lib: code tagging context capture support
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+        kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
+        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
+        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+        paulmck@kernel.org, pasha.tatashin@soleen.com,
+        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+        ndesaulniers@google.com, gregkh@linuxfoundation.org,
+        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-modules@vger.kernel.org,
+        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 3, 2023 at 6:05=E2=80=AFAM Alistair Popple <apopple@nvidia.com>=
- wrote:
+On Wed, May 3, 2023 at 8:26=E2=80=AFAM Dave Hansen <dave.hansen@intel.com> =
+wrote:
 >
+> On 5/3/23 08:18, Suren Baghdasaryan wrote:
+> >>> +static inline void rem_ctx(struct codetag_ctx *ctx,
+> >>> +                        void (*free_ctx)(struct kref *refcount))
+> >>> +{
+> >>> +     struct codetag_with_ctx *ctc =3D ctx->ctc;
+> >>> +
+> >>> +     spin_lock(&ctc->ctx_lock);
+> >> This could deadlock when allocator is called from the IRQ context.
+> > I see. spin_lock_irqsave() then?
 >
-> Suren Baghdasaryan <surenb@google.com> writes:
+> Yes.  But, even better, please turn on lockdep when you are testing.  It
+> will find these for you.  If you're on x86, we have a set of handy-dandy
+> debug options that you can add to an existing config with:
 >
-> > On Tue, May 2, 2023 at 6:26=E2=80=AFAM 'Alistair Popple' via kernel-tea=
-m
-> > <kernel-team@android.com> wrote:
-> >>
-> >>
-> >> Suren Baghdasaryan <surenb@google.com> writes:
-> >>
-> >> [...]
-> >>
-> >> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> >> > index 306a3d1a0fa6..b3b57c6da0e1 100644
-> >> > --- a/include/linux/mm_types.h
-> >> > +++ b/include/linux/mm_types.h
-> >> > @@ -1030,6 +1030,7 @@ typedef __bitwise unsigned int vm_fault_t;
-> >> >   *                           fsync() to complete (for synchronous p=
-age faults
-> >> >   *                           in DAX)
-> >> >   * @VM_FAULT_COMPLETED:              ->fault completed, meanwhile m=
-map lock released
-> >> > + * @VM_FAULT_VMA_UNLOCKED:   VMA lock was released
-> >>
-> >> A note here saying vmf->vma should no longer be accessed would be nice=
-.
-> >
-> > Good idea. Will add in the next version. Thanks!
-> >
-> >>
-> >> >   * @VM_FAULT_HINDEX_MASK:    mask HINDEX value
-> >> >   *
-> >> >   */
-> >> > @@ -1047,6 +1048,7 @@ enum vm_fault_reason {
-> >> >       VM_FAULT_DONE_COW       =3D (__force vm_fault_t)0x001000,
-> >> >       VM_FAULT_NEEDDSYNC      =3D (__force vm_fault_t)0x002000,
-> >> >       VM_FAULT_COMPLETED      =3D (__force vm_fault_t)0x004000,
-> >> > +     VM_FAULT_VMA_UNLOCKED   =3D (__force vm_fault_t)0x008000,
-> >> >       VM_FAULT_HINDEX_MASK    =3D (__force vm_fault_t)0x0f0000,
-> >> >  };
-> >> >
-> >> > @@ -1070,7 +1072,9 @@ enum vm_fault_reason {
-> >> >       { VM_FAULT_RETRY,               "RETRY" },      \
-> >> >       { VM_FAULT_FALLBACK,            "FALLBACK" },   \
-> >> >       { VM_FAULT_DONE_COW,            "DONE_COW" },   \
-> >> > -     { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
-> >> > +     { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" },  \
-> >> > +     { VM_FAULT_COMPLETED,           "COMPLETED" },  \
-> >>
-> >> VM_FAULT_COMPLETED isn't used in this patch, guessing that's snuck in
-> >> from one of the other patches in the series?
-> >
-> > I noticed that an entry for VM_FAULT_COMPLETED was missing and wanted
-> > to fix that... Should I drop that?
->
-> Oh ok. It would certainly be good to add but really it should be it's
-> own patch.
+>         make x86_debug.config
 
-Ack. Will split in the next version. Thanks!
+Nice!
+I thought I tested with lockdep enabled but I might be wrong. The
+beauty of working on multiple patchsets in parallel is that I can't
+remember what I did for each one :)
 
 >
-> >>
-> >> > +     { VM_FAULT_VMA_UNLOCKED,        "VMA_UNLOCKED" }
-> >> >
-> >> >  struct vm_special_mapping {
-> >> >       const char *name;       /* The name, e.g. "[vdso]". */
-> >> > diff --git a/mm/memory.c b/mm/memory.c
-> >> > index 41f45819a923..8222acf74fd3 100644
-> >> > --- a/mm/memory.c
-> >> > +++ b/mm/memory.c
-> >> > @@ -3714,8 +3714,16 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >> >       entry =3D pte_to_swp_entry(vmf->orig_pte);
-> >> >       if (unlikely(non_swap_entry(entry))) {
-> >> >               if (is_migration_entry(entry)) {
-> >> > -                     migration_entry_wait(vma->vm_mm, vmf->pmd,
-> >> > -                                          vmf->address);
-> >> > +                     /* Save mm in case VMA lock is dropped */
-> >> > +                     struct mm_struct *mm =3D vma->vm_mm;
-> >> > +
-> >> > +                     if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-> >> > +                             /* No need to hold VMA lock for migrat=
-ion */
-> >> > +                             vma_end_read(vma);
-> >> > +                             /* CAUTION! VMA can't be used after th=
-is */
-> >> > +                             ret |=3D VM_FAULT_VMA_UNLOCKED;
-> >> > +                     }
-> >> > +                     migration_entry_wait(mm, vmf->pmd, vmf->addres=
-s);
-> >> >               } else if (is_device_exclusive_entry(entry)) {
-> >> >                       vmf->page =3D pfn_swap_entry_to_page(entry);
-> >> >                       ret =3D remove_device_exclusive_entry(vmf);
-> >>
-> >> --
-> >> To unsubscribe from this group and stop receiving emails from it, send=
- an email to kernel-team+unsubscribe@android.com.
-> >>
+> That said, I'm as concerned as everyone else that this is all "new" code
+> and doesn't lean on existing tracing or things like PAGE_OWNER enough.
+
+Yeah, that's being actively discussed.
+
 >
