@@ -2,285 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 610E86F5A1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 16:32:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC4166F5A13
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 16:32:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbjECOcj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 10:32:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52912 "EHLO
+        id S230322AbjECOcY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 10:32:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbjECOc1 (ORCPT
+        with ESMTP id S230261AbjECOcX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 10:32:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E00E6180
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 07:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1683124302;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jwgVjcmprHBa8NpoaXgJYiwFaH2ANM6d4RKcdmTha7o=;
-        b=Q6GVcGKPxt+rIoCcPh5uo49BjKX5nle7EeNLjtrzy0yxPZ3f5jPupRmoQ4sjnEjtaZtXk6
-        mzvojxlSlCryN10ACBb1NlaA6Et8TmHEWYQLbQVHXfyhh6E32tBTw3j9281u/PwsVJyu4u
-        PDKMB8NxxzhVQJCVQRJ8obrTKTH8jAo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-9WblaIteNaWLAC92LJizKQ-1; Wed, 03 May 2023 10:31:41 -0400
-X-MC-Unique: 9WblaIteNaWLAC92LJizKQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-3f348182ffcso12284665e9.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 07:31:40 -0700 (PDT)
+        Wed, 3 May 2023 10:32:23 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3810265BD
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 07:32:10 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-b9e2f227640so4287417276.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 07:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1683124329; x=1685716329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HEvcpQRFstUtOR1Eu0GIXU3Feju4Sch+HPMbK8t4eZw=;
+        b=YYnwd/M3xcBLc1VRnRyKFD9vkc0d2D3qgDDL79EsNRxNCa7TxdjY6Vm/bTYHRcE7zH
+         T2JnRgsSoDgD7n4yPCSwILW+e/MLYDFGyYpwoik0lQZdi5X0T2moaEEdeGV9ciw/MI5/
+         NOPLZ5QZ+txodD+d3urnPo1XZ7TbBY075JJgIj1bS5xtW/81qQMZFGqCUr2UqiRf22Np
+         dbsSB0cEyq+/tGKFKGpOF1Jek93XjSTP2B0edRqRQbK7PoGDQgU8172qBF8QZwxPtO5N
+         hOZVk15gzUMXIBEGld86wkoLF3lnnLnX9ksExP2peH7/jtY9tNGoj+EOq+rXAzkp7Swk
+         j/fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683124300; x=1685716300;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jwgVjcmprHBa8NpoaXgJYiwFaH2ANM6d4RKcdmTha7o=;
-        b=lK32+/2PGlIKx0gAxFnHdsMy9SslQh6fWz7k5DPqapOrRaWSz7fjNhW944Ytkl2SPk
-         Dpjmrx+pjK9tpe3i3s/xM54J+DS711jpIxWmqrNcGP2P8mRkhFDbdqdp/40l+Ecp3SFK
-         KnHJFONSd94FO7ru6twtf2ZurFkcDr7aPFdyV7mnsVPqWz/enRmtH0lZoDILTIam2dNZ
-         ekhtBq+p9VhiGj/Zxje/R6qgiEof4Et9Al//eNjVYwn5KQdvh6RlP+rt+ck9Wa/Ra019
-         5LedQb1K5uQ0IlWz9yaMCkTkKKvNtGNUpUTfbTXHXj3xxfBho1MmWaDLI4ssRhiTvY3m
-         NDTw==
-X-Gm-Message-State: AC+VfDz36H3zbMxfG8OTibf3SETq8Yn7Dwz62JtdlX4niZ14Rk7+Unko
-        x/9znvK9WdnGNz/qnfYEb0xJDW/LpfEFEThC4NFUUmVjP+k8brs6XtOrijksVEFnwAzgJSm0UZK
-        jgxm04xXWt0o0GwTeCGjMwcLM/w==
-X-Received: by 2002:a05:600c:2212:b0:3f1:6ebe:d598 with SMTP id z18-20020a05600c221200b003f16ebed598mr14513950wml.7.1683124299686;
-        Wed, 03 May 2023 07:31:39 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4p6NwKtGvfJuosY5ZRZTEXkZFFMya7KCf1fgffm+RPeC5ZQYEbm68OqBiXftYqckyaEdvrXA==
-X-Received: by 2002:a05:600c:2212:b0:3f1:6ebe:d598 with SMTP id z18-20020a05600c221200b003f16ebed598mr14513907wml.7.1683124299231;
-        Wed, 03 May 2023 07:31:39 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c711:6a00:9109:6424:1804:a441? (p200300cbc7116a00910964241804a441.dip0.t-ipconnect.de. [2003:cb:c711:6a00:9109:6424:1804:a441])
-        by smtp.gmail.com with ESMTPSA id n3-20020a7bc5c3000000b003f0b1b8cd9bsm2116716wmk.4.2023.05.03.07.31.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 May 2023 07:31:38 -0700 (PDT)
-Message-ID: <aa326283-468f-6c40-4c47-de7cf7cc5994@redhat.com>
-Date:   Wed, 3 May 2023 16:31:36 +0200
+        d=1e100.net; s=20221208; t=1683124329; x=1685716329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HEvcpQRFstUtOR1Eu0GIXU3Feju4Sch+HPMbK8t4eZw=;
+        b=Iclg0/J+RNtqJZZPv7bZcxzUb7afZweZ0nMvUetNujXNlUfHBVUp4lb+aMAuDDj9TI
+         7FvpB6LmYVYLwcN92Pu02khv86y4OdmS+7cppcKF8EPjor7OALU3yPqVJyuEdclagexS
+         UjgFDqXN7+JyPvbu9RCVBfnt31IrhiNI70A0+jufzUQfgXKBidkP3zd3g44F1DFEIu/J
+         dS0PjAd+OCx91B0mYZ5joBABmqcRGoouXMd7zMr1xDpMjjkHOq9s5mjTWX5aX/eXB38z
+         WBM9UrhJ+VYQbpWd8fM8xJF0FW1kta2ur1AeWFLHH9ou+pI3sq9u6TR8bjEeenRg4uFS
+         JRPQ==
+X-Gm-Message-State: AC+VfDwnhJzTjbmUUQJuFQDKtpvEshZyaS3BVVWvcu6hzNphf5JBPWqY
+        SC3jkksFJn5zQYMWgsEG0ic7olBKRaL5/h/QDL3Cxw==
+X-Google-Smtp-Source: ACHHUZ62ugyZVwsnHBXMYjdbiWqDWizXIg764GF6n5Kz8ZrSC3IwTZiC2PVdnW1kxB49Xblr0EH+rbJRRflkUY+jBA4=
+X-Received: by 2002:a25:7356:0:b0:b9d:de23:3c27 with SMTP id
+ o83-20020a257356000000b00b9dde233c27mr12904071ybc.9.1683124329016; Wed, 03
+ May 2023 07:32:09 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Content-Language: en-US
-To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-References: <cover.1683067198.git.lstoakes@gmail.com>
- <7ac8bb557517bcdc9225b4e4893a2ca7f603fcc4.1683067198.git.lstoakes@gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v8 1/3] mm/mmap: separate writenotify and dirty tracking
- logic
-In-Reply-To: <7ac8bb557517bcdc9225b4e4893a2ca7f603fcc4.1683067198.git.lstoakes@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20230501165450.15352-1-surenb@google.com> <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+ <ZFIOfb6/jHwLqg6M@moria.home.lan> <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
+ <20230503115051.30b8a97f@meshulam.tesarici.cz> <ZFIv+30UH7+ySCZr@moria.home.lan>
+ <25a1ea786712df5111d7d1db42490624ac63651e.camel@HansenPartnership.com>
+In-Reply-To: <25a1ea786712df5111d7d1db42490624ac63651e.camel@HansenPartnership.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 3 May 2023 07:31:57 -0700
+Message-ID: <CAJuCfpFZHOLxhrimPbLg+MjyzLR7U=C2Nk+i5Jc+-ZaNvnVu8Q@mail.gmail.com>
+Subject: Re: [PATCH 00/40] Memory allocation profiling
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>,
+        Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+        vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+        mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
+        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
+        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        x86@kernel.org, peterx@redhat.com, david@redhat.com,
+        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
+        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+        pasha.tatashin@soleen.com, yosryahmed@google.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        andreyknvl@gmail.com, keescook@chromium.org,
+        ndesaulniers@google.com, gregkh@linuxfoundation.org,
+        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-modules@vger.kernel.org,
+        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03.05.23 00:51, Lorenzo Stoakes wrote:
-> vma_wants_writenotify() is specifically intended for setting PTE page table
-> flags, accounting for existing page table flag state and whether the
-> filesystem performs dirty tracking.
-> 
-> Separate out the notions of dirty tracking and PTE write notify checking in
-> order that we can invoke the dirty tracking check from elsewhere.
-> 
-> Note that this change introduces a very small duplicate check of the
-> separated out vm_ops_needs_writenotify() and vma_is_shared_writable()
-> functions. This is necessary to avoid making vma_needs_dirty_tracking()
-> needlessly complicated (e.g. passing flags or having it assume checks were
-> already performed). This is small enough that it doesn't seem too
-> egregious.
-> 
-> We check to ensure the mapping is shared writable, as any GUP caller will
-> be safe - MAP_PRIVATE mappings will be CoW'd and read-only file-backed
-> shared mappings are not permitted access, even with FOLL_FORCE.
-> 
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> Reviewed-by: Mika Penttilä <mpenttil@redhat.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->   include/linux/mm.h |  1 +
->   mm/mmap.c          | 53 ++++++++++++++++++++++++++++++++++------------
->   2 files changed, 41 insertions(+), 13 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 27ce77080c79..7b1d4e7393ef 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2422,6 +2422,7 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
->   #define  MM_CP_UFFD_WP_ALL                 (MM_CP_UFFD_WP | \
->   					    MM_CP_UFFD_WP_RESOLVE)
->   
-> +bool vma_needs_dirty_tracking(struct vm_area_struct *vma);
->   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot);
->   static inline bool vma_wants_manual_pte_write_upgrade(struct vm_area_struct *vma)
->   {
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 5522130ae606..fa7442e44cc2 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1475,6 +1475,42 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
->   }
->   #endif /* __ARCH_WANT_SYS_OLD_MMAP */
->   
-> +/* Do VMA operations imply write notify is required? */
+On Wed, May 3, 2023 at 5:34=E2=80=AFAM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> On Wed, 2023-05-03 at 05:57 -0400, Kent Overstreet wrote:
+> > On Wed, May 03, 2023 at 11:50:51AM +0200, Petr Tesa=C5=99=C3=ADk wrote:
+> > > If anyone ever wants to use this code tagging framework for
+> > > something
+> > > else, they will also have to convert relevant functions to macros,
+> > > slowly changing the kernel to a minefield where local identifiers,
+> > > struct, union and enum tags, field names and labels must avoid name
+> > > conflict with a tagged function. For now, I have to remember that
+> > > alloc_pages is forbidden, but the list may grow.
+> >
+> > Also, since you're not actually a kernel contributor yet...
+>
+> You have an amazing talent for being wrong.  But even if you were
+> actually right about this, it would be an ad hominem personal attack on
+> a new contributor which crosses the line into unacceptable behaviour on
+> the list and runs counter to our code of conduct.
 
-Nit: comment is superfluous, this is already self-documenting code.
+Kent, I asked you before and I'm asking you again. Please focus on the
+technical discussion and stop personal attacks. That is extremely
+counter-productive.
 
-> +static bool vm_ops_needs_writenotify(const struct vm_operations_struct *vm_ops)
-> +{
-> +	return vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite);
-> +}
-> +
-> +/* Is this VMA shared and writable? */
-
-Nit: dito
-
-> +static bool vma_is_shared_writable(struct vm_area_struct *vma)
-> +{
-> +	return (vma->vm_flags & (VM_WRITE | VM_SHARED)) ==
-> +		(VM_WRITE | VM_SHARED);
-> +}
-> +
-> +/*
-> + * Does this VMA require the underlying folios to have their dirty state
-> + * tracked?
-> + */
-
-Nit: dito
-
-> +bool vma_needs_dirty_tracking(struct vm_area_struct *vma)
-> +{
-> +	/* Only shared, writable VMAs require dirty tracking. */
-> +	if (!vma_is_shared_writable(vma))
-> +		return false;
-> +
-> +	/* Does the filesystem need to be notified? */
-> +	if (vm_ops_needs_writenotify(vma->vm_ops))
-> +		return true;
-> +
-> +	/* Specialty mapping? */
-> +	if (vma->vm_flags & VM_PFNMAP)
-> +		return false;
-> +
-> +	/* Can the mapping track the dirty pages? */
-> +	return vma->vm_file && vma->vm_file->f_mapping &&
-> +		mapping_can_writeback(vma->vm_file->f_mapping);
-> +}
-> +
->   /*
->    * Some shared mappings will want the pages marked read-only
->    * to track write events. If so, we'll downgrade vm_page_prot
-> @@ -1483,21 +1519,18 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
->    */
->   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
->   {
-> -	vm_flags_t vm_flags = vma->vm_flags;
-> -	const struct vm_operations_struct *vm_ops = vma->vm_ops;
-> -
->   	/* If it was private or non-writable, the write bit is already clear */
-> -	if ((vm_flags & (VM_WRITE|VM_SHARED)) != ((VM_WRITE|VM_SHARED)))
-> +	if (!vma_is_shared_writable(vma))
->   		return 0;
->   
->   	/* The backer wishes to know when pages are first written to? */
-> -	if (vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite))
-> +	if (vm_ops_needs_writenotify(vma->vm_ops))
->   		return 1;
->   
->   	/* The open routine did something to the protections that pgprot_modify
->   	 * won't preserve? */
->   	if (pgprot_val(vm_page_prot) !=
-> -	    pgprot_val(vm_pgprot_modify(vm_page_prot, vm_flags)))
-> +	    pgprot_val(vm_pgprot_modify(vm_page_prot, vma->vm_flags)))
->   		return 0;
->   
->   	/*
-> @@ -1511,13 +1544,7 @@ int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
->   	if (userfaultfd_wp(vma))
->   		return 1;
->   
-> -	/* Specialty mapping? */
-> -	if (vm_flags & VM_PFNMAP)
-> -		return 0;
-> -
-> -	/* Can the mapping track the dirty pages? */
-> -	return vma->vm_file && vma->vm_file->f_mapping &&
-> -		mapping_can_writeback(vma->vm_file->f_mapping);
-> +	return vma_needs_dirty_tracking(vma);
->   }
->   
->   /*
-
-We now have duplicate vma_is_shared_writable() and 
-vm_ops_needs_writenotify() checks ...
-
-
-Maybe move the VM_PFNMAP and "/* Can the mapping track the dirty pages? 
-*/" checks into a separate helper and call that from both, 
-vma_wants_writenotify() and vma_needs_dirty_tracking() ?
-
-
-In any case
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Thanks,
-
-David / dhildenb
-
+>
+> James
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kernel-team+unsubscribe@android.com.
+>
