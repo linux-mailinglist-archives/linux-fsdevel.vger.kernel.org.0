@@ -2,93 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B511B6F5F06
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 21:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83B476F5F0F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 21:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229703AbjECTSL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 15:18:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44306 "EHLO
+        id S229840AbjECTYL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 15:24:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229631AbjECTSK (ORCPT
+        with ESMTP id S229459AbjECTYK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 15:18:10 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB0D410D2;
-        Wed,  3 May 2023 12:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=4ZmM4HTiK/znMvvowe1LUd4PXCYNKLo7UX2p4qgTXGU=; b=VOJAVkEssu13qwWK2bqnx1KNc1
-        GZOztv8i2scsmcBqy1XJuLA7jOp8fZ5iN9T0EgmHYFXY0yTYipLKabV+U2edQrMvVEaN1TAVLpjeb
-        J6u02nSaz1f6pUu/q13fENzJCV/2VrXRNRRZquKp5PlaZ0BSYwTA6A/X6ph81tFdjzGSPNmI+jsPW
-        H0J5Cog8m3/n8MlP8061pfzaWc5+YdXBOhOE99YdAYPr+1luMCswGomVXPmxeUgUUK3ieEsZYMd4X
-        Sp+Z5Vg3WaBmIj77MONOGh37xsRghjira2MU4x7F/n01heKmwQohqL6ouIdyLpmT16BaLavGhgqpw
-        7ltG5cEQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1puHzB-005ZOl-2h;
-        Wed, 03 May 2023 19:17:57 +0000
-Date:   Wed, 3 May 2023 12:17:57 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Wed, 3 May 2023 15:24:10 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3ADE59F1
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 12:24:09 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so10028395a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 12:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1683141848; x=1685733848;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lnk0azjKtvGmutcc0sPTCISsVHec16NyojRU9ojJrvg=;
+        b=YlhkUv7SObfAaRnJ7XfbPdseLmuLZeaBqb8t1qGSK4Mn1z/quP8XfCCUQbPKEmguM+
+         SPx0HGQBOFZlOlHqyNwY+/GvkHv9G9CiRs+Rkd9j/4URGfBLVO4x8/0O8VEA+QHZWN+O
+         HEykXtLO+DMYdnFT4AE1ETzt+yKvBXm/VlKxk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683141848; x=1685733848;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lnk0azjKtvGmutcc0sPTCISsVHec16NyojRU9ojJrvg=;
+        b=WBS9S08i1CP214HwtgSGVxAmQxF745g2J2pyye5u3dr4DrVLU4QSL6fAfZFIsLOCoZ
+         jgKVM5AgDEpB0eS8Juiyn37CbJRbHpkhf22Fn1cCNaTxAlcWIJcJqizKXRSaH4CBWqDz
+         +LPbWFav+mtEfxhnIqRgfqAGqH6ZXZ6/u0jXv+p0msUrCakvnFya1mbh2psy1iQljtsz
+         zX08LT9LWgcaWmf9N76Z60Y09RerrOFJY0gYHUPAuNiu7ivtCF8pZWnc1zriO30YiTUQ
+         vaJuV8wY1Rob/FbRXPu7atwknmPbNIIbG2YvQ8XzxrqlY1+oAK3hhBEbRCSh9SRcw2RQ
+         i/2w==
+X-Gm-Message-State: AC+VfDz/koPyV8APYqdiaHbGHWaIjJO2G/tz9f1ChmHJbLqomDV7CDYX
+        w2ihlplhAxizjCKJDOVJ7Q9Hz8OzPIBPEa71Wy9xXQ==
+X-Google-Smtp-Source: ACHHUZ626npmqq3Ke12y9sEtTUaTnBVIdke+mc0DgvA6fyTg+85Aq2tOfz/TR2MM+ESahXnKp0mu3A==
+X-Received: by 2002:a05:6402:1d4a:b0:506:b94f:3d8f with SMTP id dz10-20020a0564021d4a00b00506b94f3d8fmr1715227edb.5.1683141848103;
+        Wed, 03 May 2023 12:24:08 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id o10-20020aa7c50a000000b0050bce352dc5sm1017758edq.85.2023.05.03.12.24.07
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 May 2023 12:24:07 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so10028126a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 12:24:07 -0700 (PDT)
+X-Received: by 2002:a17:907:98c:b0:95f:969e:dc5a with SMTP id
+ bf12-20020a170907098c00b0095f969edc5amr2502183ejc.30.1683141846992; Wed, 03
+ May 2023 12:24:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230503023329.752123-1-mcgrof@kernel.org> <ZFKKpQdx4nO8gWUT@bombadil.infradead.org>
+ <CAHk-=whGT-jpLRH_W+k-WP=VghAVa7wRfULg=KWhpxiVofsn0Q@mail.gmail.com> <ZFKxl2d+kqYN0ohG@bombadil.infradead.org>
+In-Reply-To: <ZFKxl2d+kqYN0ohG@bombadil.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 3 May 2023 12:23:50 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgUizDLEhvHdM=7yUmdGMB--CGV1ynMSQrd0r7C06ALUA@mail.gmail.com>
+Message-ID: <CAHk-=wgUizDLEhvHdM=7yUmdGMB--CGV1ynMSQrd0r7C06ALUA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] sysctl: death to register_sysctl_paths()
+To:     Luis Chamberlain <mcgrof@kernel.org>
 Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
         j.granados@samsung.com, patches@lists.linux.dev,
         ebiggers@kernel.org, jeffxu@google.com, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mcgrof@kernel.org
-Subject: [GIT PULL] sysctl changes for v6.4-rc4 v2
-Message-ID: <ZFKzZeAs5Mdfv5ha@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 348551ddaf311c76b01cdcbaf61b6fef06a49144:
+On Wed, May 3, 2023 at 12:10=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
+> wrote:
+>
+> Sorry thought you don't mind a few patches, so ditched the formalities
+> for the pull.
 
-  Merge tag 'pinctrl-v6.4-1' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl (2023-05-02 15:40:41 -0700)
+So I don't mind patches per se, and when there's a reason for them I
+have no problem at all taking them.
 
-are available in the Git repository at:
+The reason is typically something like "let's short-circuit the normal
+channels just to get this trivial thing sorted out and we can forget
+about it", but it can also be just a practical thing like "I'm
+traveling so it would be easier if you'd just pick up this patch
+directly from the mailing list".
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/ tags/sysctl-6.4-rc1-v2
+Or it could be "I don't have a git tree since I'm not a main
+developer, so I just send patches".
 
-for you to fetch changes up to 0199849acd07d07e2a8e42757653ca8b14a122f5:
+All of those are situations where I'll happily take patches directly.
 
-  sysctl: remove register_sysctl_paths() (2023-05-02 19:24:16 -0700)
+But on the whole, when there isn't any real reason to avoid a pull
+request, I'd much rather have the full thing with signature and
+everything...
 
-----------------------------------------------------------------
-sysctl-6.4-rc1-v2
-
-As mentioned on my first pull request for sysctl-next, for v6.4-rc1
-we're very close to being able to deprecating register_sysctl_paths().
-I was going to assess the situation after the first week of the merge
-window.
-
-That time is now and things are looking good. We only have one stragglers
-on the patch which had already an ACK for so I'm picking this up here now and
-the last patch is the one that uses an axe. Some careful eyeballing would
-be appreciated by others. If this doesn't get properly reviewed I can also
-just hold off on this in my tree for the next merge window. Either way is
-fine by me.
-
-I have boot tested the last patch and 0-day build completed successfully.
-
-----------------------------------------------------------------
-Luis Chamberlain (2):
-      kernel: pid_namespace: simplify sysctls with register_sysctl()
-      sysctl: remove register_sysctl_paths()
-
- fs/proc/proc_sysctl.c     | 55 ++++-------------------------------------------
- include/linux/sysctl.h    | 12 -----------
- kernel/pid_namespace.c    |  3 +--
- kernel/pid_sysctl.h       |  3 +--
- scripts/check-sysctl-docs | 16 --------------
- 5 files changed, 6 insertions(+), 83 deletions(-)
+               Linus
