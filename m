@@ -2,223 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA3886F4E19
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 02:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B2B56F4E1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 02:23:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbjECARG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 20:17:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45630 "EHLO
+        id S229532AbjECAXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 20:23:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjECARF (ORCPT
+        with ESMTP id S229498AbjECAW6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 20:17:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 402AF10F3;
-        Tue,  2 May 2023 17:17:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C3D13629B5;
-        Wed,  3 May 2023 00:17:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E440C433D2;
-        Wed,  3 May 2023 00:17:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1683073023;
-        bh=RfDOeDsGFxYxjiI7IRZxMRztQTdLLKz16tE3Qr+W10o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=joMY8SoBtviFKYc9T4BL7h9AzWrC2UiPDu8r2wsPdWyqqzTTVfZrY5nfc+zRo2hqn
-         6NqHgct6TndejGQZSl/CNOIl/5sPO0x1WQZdJngT3clqeKTNykXNYn9XT7on62xTFR
-         arj7qo96aSk8w2r5Tu9JEAVoPR+uXxUwaE9bHzrU=
-Date:   Tue, 2 May 2023 17:17:01 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Baokun Li <libaokun1@huawei.com>
-Cc:     <linux-fsdevel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
-        <brauner@kernel.org>, <jack@suse.cz>, <tj@kernel.org>,
-        <dennis@kernel.org>, <adilger.kernel@dilger.ca>,
-        <linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
-        <yangerkun@huawei.com>, <houtao1@huawei.com>,
-        <stable@vger.kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [PATCH v2] writeback, cgroup: fix null-ptr-deref write in
- bdi_split_work_to_wbs
-Message-Id: <20230502171701.58465d422e94cf038178dc51@linux-foundation.org>
-In-Reply-To: <20230410130826.1492525-1-libaokun1@huawei.com>
-References: <20230410130826.1492525-1-libaokun1@huawei.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 2 May 2023 20:22:58 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2042.outbound.protection.outlook.com [40.107.94.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E909710E3;
+        Tue,  2 May 2023 17:22:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lqBIOxtUDFHev3gTO8A3nV4lIye3BJBdhpmu0IoRjhw8fzVkUmE6+D3M3X29ioBlkcjJzHX5JoNDsrpWVXiggkBIR47zZBURcHpVWiCeFKq9ufH9au2IfZ9FDFvGzVzKsWxScCygglO60VleS7O62vro/0URzdYaP43+X8tum48xQdRdaU5k9ldXgVWBG4OYGpu21MmMHg9L+0vMlQg9KkmnyhFdQchJAlU/o3ka2BfjT5bMi8St8K5tbpUPb8PtBB3pKyeUsfCkdF42h8a8yp9c0yhuMlijHIYM2zI0jOjeuirQNgKaICOKV+P3TEmODS6ZFCmcTAw+tcj/zwFJKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EFtEgonXmXxlxN7z6GpX+BzZHLM0EWGeyG4LVPEbNpQ=;
+ b=RmFsjlMrFOV3yatTOm4utpaTjFr5rd32AW1tdLZsJxF8no576bn4lbnGc2ul/M4O/6k/4FqYcVDdu4gdRWUdmlJj1Lpg3dVi6yCf69OC4bdHny69iqgWHOb/DjeBfbpL1tbnmmRBp3hjZstEOYj4d1sJHkvnI7Crvv/Zc5xgP6gS2UGLRNA9VQG16VgvI7yNW05fzZgNjsES2kQ65pwfhnbB/qzYVH691Giy30LJYRRJkoiOdn3Cecoc92J9hDL21q5gIa01UKegjifQeE1EXh3U/yu4m9QDd2+2uaUhm7oX1hIO5xkB5mfZT1zK1fewxOjpaUBuCUF+yG5GKYBA8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EFtEgonXmXxlxN7z6GpX+BzZHLM0EWGeyG4LVPEbNpQ=;
+ b=I1oix9VKLtIbIcDEeJmU9ogA03S2dRSB4gEj+BXVX0OM0qNSGgc2UzNikCVJk1FJCtlnpa6qyrEs9KN2qFL2znfETcNR1Jm4Latb40kFAuVgm5cGdxxhf3K8FEYP2bYmJXs9M52/kOrb5GdlYB5lihZc2fN0XqAR3C4T5Tt0qHMi+ezZhCAB0W9HLZiA0Ebl1BwEW+HrdKbzd9PXTJSUZzLSd1q7F7Nd2i6K9GpaAYcUOaBoiEe/3cRhvZ6KSbk++VK2h5lN7iYpo7YsqgnrEjrv3S7t4zwu0MZyxXv+We+wJ1Yi7GRwkz6UwYq78N/+uwq0Gf8rONNiIPPS2XBpMA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by PH7PR12MB7281.namprd12.prod.outlook.com (2603:10b6:510:208::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.20; Wed, 3 May
+ 2023 00:22:53 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6340.030; Wed, 3 May 2023
+ 00:22:53 +0000
+Date:   Tue, 2 May 2023 21:22:52 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v7 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing
+ to file-backed mappings
+Message-ID: <ZFGpXOWzgMifZpaJ@nvidia.com>
+References: <cover.1683044162.git.lstoakes@gmail.com>
+ <b3a4441cade9770e00d24f5ecb75c8f4481785a4.1683044162.git.lstoakes@gmail.com>
+ <1691115d-dba4-636b-d736-6a20359a67c3@redhat.com>
+ <20230502172231.GH1597538@hirez.programming.kicks-ass.net>
+ <406fd43a-a051-5fbe-6f66-a43f5e7e7573@redhat.com>
+ <3a8c672d-4e6c-4705-9d6c-509d3733eb05@lucifer.local>
+ <ZFFfhhwibxHKwDbZ@nvidia.com>
+ <968fa174-6720-4adf-9107-c777ee0d8da4@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <968fa174-6720-4adf-9107-c777ee0d8da4@lucifer.local>
+X-ClientProxiedBy: BLAP220CA0002.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:208:32c::7) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|PH7PR12MB7281:EE_
+X-MS-Office365-Filtering-Correlation-Id: ea6e30c0-a7da-4e79-7758-08db4b6c88e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: W4lVW67PF4e7R/fks303MA5TMNSZoSYuaO5YnS/8FM/4xt1w/QbjjBP9kwTRrLY+IWvMqO8SsYi9S1TvNoEAVphDX4JlP7fkU+FWrs8F3iTb8puaVeMiX6/zY/hh3MGFHo89yOeO/jf1goQ66+FP2GWbGhu037XwfM9jbuW2dOZKJLbc4RPc9fbnvq+7DsYFdM0xQW+6JkqFO739IxAS79vfFvJu0FUGHq+DzjDk4hL89hXO5003EUSO9j7OQTaJBmWCKIIPCZKxjZ+eI/1lx6vLXYZ2PDEuHKFfup315MkkUGTJVvpfLqosaRfx1U0Sep1nXwbg8miZRS6w0IILrNSOne6I3ZLLEul/rC44tei0zlO7ouuTIF1edq/iSiJN/L2LSfLDrPSzVT3aNXpMYvHkKbYj/+VBY99s8FzHFbe1SyEMJSaIrTl4QcZTbM44B6FaYjfertGS/aLkFWDTM6iqvQlGc4YVzG+p1O3nAcUeztl1ABRSSWa7QTa1qrc/jc6D8za3zVy3hu2PM/TMa5P+ZhXaiaJpZIliUNDkWNdyLoXAjTeLkTnOHKM+Hbbh
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(346002)(376002)(396003)(136003)(451199021)(7416002)(7406005)(5660300002)(7366002)(86362001)(2616005)(83380400001)(6506007)(26005)(186003)(6512007)(38100700002)(8676002)(8936002)(41300700001)(478600001)(54906003)(6486002)(316002)(6916009)(4326008)(36756003)(66946007)(66556008)(66476007)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LHMnBbWudC/3yu9M6VZzgxkWdLtddNdhxjLnmF48b1Vv26JtoSvk8r7saTAf?=
+ =?us-ascii?Q?aT+57Kz3ecuGWUqpz2TVZmrgcCXYI4Wvf1flRP4CWFIHbLxwVgbUr7qQpMEX?=
+ =?us-ascii?Q?4/8JRawG1Rfhdpc4exyiRHFiMZSSeXkQZNXXxrJ6ouyeFOatgvgXUIQZg1R3?=
+ =?us-ascii?Q?MAvUBkCmJaRH445o426PQ+/F4qVmWwwHdUZLKAZatE/g9QgByjq2+kkeJKhR?=
+ =?us-ascii?Q?c4A/R7MfXvHl/mLMiTLIwz7nzzK9lZ6vag+v9C8i1VDLGXjDcSWD9lxe5+h2?=
+ =?us-ascii?Q?34fmJ+DmFiOmCjdN/WvRffXkcE9CgOorvDU88MQYfjkaKvIBFvQdwalauAZW?=
+ =?us-ascii?Q?VaxehGgckEMALdg9igG29BS/RuGKAafnME/5Z8LwsEPrf6VV1/i9BnFwO8vh?=
+ =?us-ascii?Q?sjhdsP50LZB/HfyW6+ZCZ/OLJYMPZoSW172jLU+HF5KKWNxrMqJy7pz/lfcA?=
+ =?us-ascii?Q?DwKVNGF6GKUQZ+ordpg9xGhXHV4EyKHcnwxNE+SIahj/6dsJ0AN5cQxtVE+C?=
+ =?us-ascii?Q?4uHTTcYIVZp1gMLe2fw9sL6Zv8Q/1QdJ/LXiRtohiGTP0TmReIiYhSo01EO+?=
+ =?us-ascii?Q?/RczQRHHiw/ya/7Iuvapkq7xcyepXlk9oo3m8xZj4t/NBiMCclk66rKs+CTk?=
+ =?us-ascii?Q?qA0p2n+g4IvYPGvZmvT11J9EiEyksFmL9eAUi1TN7Lt3ify9zPbe6oriqxR5?=
+ =?us-ascii?Q?KH2cXP5UY8zfY520hs3mRGYj/7hKNX3kRo7zdbORF52mbz65ajb8/WoVJSG5?=
+ =?us-ascii?Q?qfy1lF3nrS3od1ZzFIQCB5a/FKwOlYWdvPbj6dQbZF+cGwKAeix5RePJpL+X?=
+ =?us-ascii?Q?ZX1faW+8ula9ojSM4GYtyT3iHPBvzQFMT80HYdoQ+EEMCVapGQcOC2laVGb2?=
+ =?us-ascii?Q?GsK+BA60d3ZlUS3dQ2UrsrLCv6KLlpVaQFuYm82pdKpDIknXI3a82rQeFJNb?=
+ =?us-ascii?Q?W3kOIRr4nW5znvkV5m6rC1Q7SaIO5AY+aZQr2erXZygPlIZBk5fMzluh8An3?=
+ =?us-ascii?Q?rzx0IwoTNl5QCz8pa7ZMZnNpciph28TOWU9RkaKlKIG/OIBegABViueio2G+?=
+ =?us-ascii?Q?N5g5daiuf/DXgHFMqsMh6oE+DV7EZWph4zTA7g+ucDu8raLkFz8vInfMy6Qr?=
+ =?us-ascii?Q?ZymLBCU1tsH9Dx/CNDnM9rYf7YG0gNZ+LUbXZWZyQMhDxNmCh+BKKUAMu0je?=
+ =?us-ascii?Q?OIyPwAh72IPiS/m4j1PvyfoAaSXzKgxgQDqzkW8DIju6ZffzuvSR7cmMrS4D?=
+ =?us-ascii?Q?kjVzS1xmtyxyBwZR6sKEMavCTfAiLRupoiN/bRQ9tUzt3jw+Uy/nFDaEi/lA?=
+ =?us-ascii?Q?y9Kf/0i8sM3DhZXhRvXeovyNVdJfWzsISVKDf+Y9IKFpd5fC6J2hGg88OAMb?=
+ =?us-ascii?Q?xPXg8KFzIt06tPjdqpCO4vTzEXt5jdRv3exWlRQlnVWqWvxKp+l6VhTntMCF?=
+ =?us-ascii?Q?eBhvA5mqem4m5IAT6zDqhsDL1IwX5du4tG1rDox4qJKV+K3kghwt6Ft8QVw6?=
+ =?us-ascii?Q?U756Od85TedjKuRIR8rb6qtNVeIYsXDHnOibVxsHdHK7xiVrvsSoogwHxLIy?=
+ =?us-ascii?Q?2odiLNvAzYq4MZqSlE6608VzLcFstL3z+h6Zhvk5?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea6e30c0-a7da-4e79-7758-08db4b6c88e8
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2023 00:22:53.0880
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xil1LJrAYpp51sIyeF4aEqz99k0dsg3xorbGWj41cVWAF7II2INhzlBIIFLUWo9E
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7281
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 10 Apr 2023 21:08:26 +0800 Baokun Li <libaokun1@huawei.com> wrote:
+On Tue, May 02, 2023 at 08:25:57PM +0100, Lorenzo Stoakes wrote:
 
-> KASAN report null-ptr-deref:
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in bdi_split_work_to_wbs+0x5c5/0x7b0
-> Write of size 8 at addr 0000000000000000 by task sync/943
-> CPU: 5 PID: 943 Comm: sync Tainted: 6.3.0-rc5-next-20230406-dirty #461
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x7f/0xc0
->  print_report+0x2ba/0x340
->  kasan_report+0xc4/0x120
->  kasan_check_range+0x1b7/0x2e0
->  __kasan_check_write+0x24/0x40
->  bdi_split_work_to_wbs+0x5c5/0x7b0
->  sync_inodes_sb+0x195/0x630
->  sync_inodes_one_sb+0x3a/0x50
->  iterate_supers+0x106/0x1b0
->  ksys_sync+0x98/0x160
-> [...]
-> ==================================================================
-> 
-> The race that causes the above issue is as follows:
-> 
->            cpu1                     cpu2
-> -------------------------|-------------------------
-> inode_switch_wbs
->  INIT_WORK(&isw->work, inode_switch_wbs_work_fn)
->  queue_rcu_work(isw_wq, &isw->work)
->  // queue_work async
->   inode_switch_wbs_work_fn
->    wb_put_many(old_wb, nr_switched)
->     percpu_ref_put_many
->      ref->data->release(ref)
->      cgwb_release
->       queue_work(cgwb_release_wq, &wb->release_work)
->       // queue_work async
->        &wb->release_work
->        cgwb_release_workfn
->                             ksys_sync
->                              iterate_supers
->                               sync_inodes_one_sb
->                                sync_inodes_sb
->                                 bdi_split_work_to_wbs
->                                  kmalloc(sizeof(*work), GFP_ATOMIC)
->                                  // alloc memory failed
->         percpu_ref_exit
->          ref->data = NULL
->          kfree(data)
->                                  wb_get(wb)
->                                   percpu_ref_get(&wb->refcnt)
->                                    percpu_ref_get_many(ref, 1)
->                                     atomic_long_add(nr, &ref->data->count)
->                                      atomic64_add(i, v)
->                                      // trigger null-ptr-deref
-> 
-> bdi_split_work_to_wbs() traverses &bdi->wb_list to split work into all wbs.
-> If the allocation of new work fails, the on-stack fallback will be used and
-> the reference count of the current wb is increased afterwards. If cgroup
-> writeback membership switches occur before getting the reference count and
-> the current wb is released as old_wd, then calling wb_get() or wb_put()
-> will trigger the null pointer dereference above.
-> 
-> This issue was introduced in v4.3-rc7 (see fix tag1). Both sync_inodes_sb()
-> and __writeback_inodes_sb_nr() calls to bdi_split_work_to_wbs() can trigger
-> this issue. For scenarios called via sync_inodes_sb(), originally commit
-> 7fc5854f8c6e ("writeback: synchronize sync(2) against cgroup writeback
-> membership switches") reduced the possibility of the issue by adding
-> wb_switch_rwsem, but in v5.14-rc1 (see fix tag2) removed the
-> "inode_io_list_del_locked(inode, old_wb)" from inode_switch_wbs_work_fn()
-> so that wb->state contains WB_has_dirty_io, thus old_wb is not skipped
-> when traversing wbs in bdi_split_work_to_wbs(), and the issue becomes
-> easily reproducible again.
-> 
-> To solve this problem, percpu_ref_exit() is called under RCU protection
-> to avoid race between cgwb_release_workfn() and bdi_split_work_to_wbs().
-> Moreover, replace wb_get() with wb_tryget() in bdi_split_work_to_wbs(),
-> and skip the current wb if wb_tryget() fails because the wb has already
-> been shutdown.
-> 
-> Fixes: b817525a4a80 ("writeback: bdi_writeback iteration must not skip dying ones")
-> Fixes: f3b6a6df38aa ("writeback, cgroup: keep list of inodes attached to bdi_writeback")
+> Otherwise, I'm a bit uncertain actually as to how we can get to the point
+> where the folio->mapping is being manipulated. Is this why?
 
-Cc Roman for this second commit.
+On RCU architectures another thread zap's the PTEs and proceeds to
+teardown and free the page. Part of that is clearing folio->mapping
+under the folio lock.
 
-> Cc: stable@vger.kernel.org
+The IPI approach would not get there, but we can't think in terms of
+IPI since we have RCU architectures.
 
-Having two Fixes: is awkward.  These serve as a guide to tell -stable
-maintainers which kernels need the fix.  Can we be more precise?
+> In any case, I will try to clarify these, I do agree the _key_ point is
+> that we can rely on safely derefing the mapping, at least READ_ONCE()'d, as
+> use-after-free or dereffing garbage is the fear here.
 
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -978,6 +978,16 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
->  			continue;
->  		}
->  
-> +		/*
-> +		 * If wb_tryget fails, the wb has been shutdown, skip it.
-> +		 *
-> +		 * Pin @wb so that it stays on @bdi->wb_list.  This allows
-> +		 * continuing iteration from @wb after dropping and
-> +		 * regrabbing rcu read lock.
-> +		 */
-> +		if (!wb_tryget(wb))
-> +			continue;
-> +
->  		/* alloc failed, execute synchronously using on-stack fallback */
->  		work = &fallback_work;
->  		*work = *base_work;
-> @@ -986,13 +996,6 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
->  		work->done = &fallback_work_done;
->  
->  		wb_queue_work(wb, work);
-> -
-> -		/*
-> -		 * Pin @wb so that it stays on @bdi->wb_list.  This allows
-> -		 * continuing iteration from @wb after dropping and
-> -		 * regrabbing rcu read lock.
-> -		 */
-> -		wb_get(wb);
->  		last_wb = wb;
->  
->  		rcu_read_unlock();
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index ad011308cebe..43b48750b491 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -507,6 +507,15 @@ static LIST_HEAD(offline_cgwbs);
->  static void cleanup_offline_cgwbs_workfn(struct work_struct *work);
->  static DECLARE_WORK(cleanup_offline_cgwbs_work, cleanup_offline_cgwbs_workfn);
->  
-> +static void cgwb_free_rcu(struct rcu_head *rcu_head)
-> +{
-> +	struct bdi_writeback *wb = container_of(rcu_head,
-> +			struct bdi_writeback, rcu);
+I didn't chase it down, but as long as folio->mapping is always set to
+something that is RCU free'd then this would be OK.
+ 
+> Well that was literally the question :) and I've got somewhat contradictory
+> feedback. My instinct aligns with yours in that, just fallback to slow
+> path, so that's what I'll do. But just wanted to confirm.
 
-nit:
+I don't know it well enough to say, it looks like folio->mapping is
+almost always set to something from what I can see.. At least NULL
+pointer and the anon bits set for instance.
 
-	struct bdi_writeback *wb;
+In any case fall back to fast is always safe, I'd just go to the
+trouble to check with testing that in normal process cases we don't
+hit it.
 
-	wb = container_of(rcu_head, struct bdi_writeback, rcu);
+> The READ_ONCE() approach is precisely how I wanted to do it in thet first
+> instance, but feared feedback about duplication and wondered if it made
+> much difference, but now it's clear this is ther ight way.
 
-looks nicer, no?
+The duplication is bad, and maybe we need more functions to counter
+it, but GUP needs to know some of the details a little more, eg a NULL
+return from folio_mapping() could inidicate the anon bits being set
+which should not flow down to slow.
 
-> +	percpu_ref_exit(&wb->refcnt);
-> +	kfree(wb);
-> +}
-> +
->  static void cgwb_release_workfn(struct work_struct *work)
->  {
->  	struct bdi_writeback *wb = container_of(work, struct bdi_writeback,
-> @@ -529,11 +538,10 @@ static void cgwb_release_workfn(struct work_struct *work)
->  	list_del(&wb->offline_node);
->  	spin_unlock_irq(&cgwb_lock);
->  
-> -	percpu_ref_exit(&wb->refcnt);
->  	wb_exit(wb);
->  	bdi_put(bdi);
->  	WARN_ON_ONCE(!list_empty(&wb->b_attached));
-> -	kfree_rcu(wb, rcu);
-> +	call_rcu(&wb->rcu, cgwb_free_rcu);
->  }
->  
->  static void cgwb_release(struct percpu_ref *refcnt)
-
+Jason
