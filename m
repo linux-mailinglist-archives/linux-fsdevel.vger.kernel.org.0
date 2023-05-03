@@ -2,142 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF7D56F52CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 10:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8B56F52CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 10:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbjECILK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 04:11:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40390 "EHLO
+        id S229953AbjECIK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 04:10:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbjECILI (ORCPT
+        with ESMTP id S229950AbjECIKM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 04:11:08 -0400
-Received: from out-13.mta1.migadu.com (out-13.mta1.migadu.com [IPv6:2001:41d0:203:375::d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4895198E
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 01:10:37 -0700 (PDT)
-Date:   Wed, 3 May 2023 04:05:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1683101119;
+        Wed, 3 May 2023 04:10:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11BB64ED6
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 01:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683101263;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Af+2O/2Jo9IC9XECoO60Ibec+DnzA9yRBnuv4Bp8O9Y=;
-        b=rqHkCee1X71Oj3G6VysOrsK/rdJHy9B0yyXfZMJ4T4TWGYp3bKIJl27dUenlhtN0eAw3EY
-        9wtRJDXX0Vxp+Xc6ZM2YYwJwQELwnDdfgbU2buAGO1Vb841r/qxmb4h0I2pylWL1m2aZFQ
-        DMBUFXd/kgyZZl04aMULTG8rjWs+sv0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-        vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-        mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
-        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <ZFIVtB8JyKk0ddA5@moria.home.lan>
-References: <20230501165450.15352-1-surenb@google.com>
- <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
- <ZFIOfb6/jHwLqg6M@moria.home.lan>
- <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
+        bh=gAItFTPlViLA5pqMw1tfLrN9/2fArVuO7Mw/NYUVWFo=;
+        b=bQdo5e+xJ7grSB6joR6BXdq6u2QyqpKi9AjGO7kngNkgBDj26Qv39YlS5Wn2BcTsqJnw8z
+        KwjcgXM+Zd+snBFGAxfq2Vnox9Q/dW30HgIi5/AEDgdlUYofWhsYTg2qm9/DgDIrTrsfjN
+        AExVcvkZaa8XNa8Fg3YUbGBVa8xJuLE=
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
+ [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-502-PCqOry57NaenluX8yICd7Q-1; Wed, 03 May 2023 04:07:40 -0400
+X-MC-Unique: PCqOry57NaenluX8yICd7Q-1
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-42f8d8ff18eso50300137.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 01:07:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683101259; x=1685693259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gAItFTPlViLA5pqMw1tfLrN9/2fArVuO7Mw/NYUVWFo=;
+        b=Zm5iEE7xThcCzQyA20Nw3+v7azPQjFjPt8JC6kRSkKCLJwr2Xqji3f1Ksn7Oe274mm
+         GbZIsQu6P+HicphVN2EMSX/P46La8ZUTwyvuMGsHxQDnrzOK3stphoD9s0DczEhbK3g+
+         s+lv7OjY5/71jsqO10OXXeQhLac7d3ZEC6RVTuRKyh/3zLhOSF9seVtHyP1UP8LoQjNh
+         YbgDmWCvBlxIBLsaIOxyqiwanTCKSQOBqiHkhHAEIsQYREZdT7r3trljSYUxoCgveso6
+         5kxCyK1W9avtifW8JnQMqIUY7vQ5+RmjafK61cqrZXZCDHz/wdv9Wn4mQHECXup2Bkfw
+         ATBw==
+X-Gm-Message-State: AC+VfDyGU8Rd2aCotpNaAxS0mMhqAiiQC1g1ycgpP21nnPsqjOQuq9Cl
+        Sb81aWBgC5d5Fh4iJCUrraU5C39NfRmBQ4nHn3vbHJ6CHS+K5UqrmNu7OWH/bNfDWvb7PX3m+5Q
+        psNT+l+V1vHjhe+cX3yfbDEskfZ3W/4zahQ3Hg9YNew==
+X-Received: by 2002:a05:6102:4423:b0:425:cf4e:f58 with SMTP id df35-20020a056102442300b00425cf4e0f58mr5826610vsb.2.1683101259595;
+        Wed, 03 May 2023 01:07:39 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4gxwahabBGCrNHNF6s+lz4ioJ9i0off0x3X7IY8Rl43m4GKL65v9RDPFIN5Ni52UaiJ5vDPD2ER12791dZuv8=
+X-Received: by 2002:a05:6102:4423:b0:425:cf4e:f58 with SMTP id
+ df35-20020a056102442300b00425cf4e0f58mr5826607vsb.2.1683101259381; Wed, 03
+ May 2023 01:07:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <20230503060450.GC3223426@dread.disaster.area>
+In-Reply-To: <20230503060450.GC3223426@dread.disaster.area>
+From:   Ming Lei <ming.lei@redhat.com>
+Date:   Wed, 3 May 2023 16:07:28 +0800
+Message-ID: <CAFj5m9+xC7ojwz-gA5T+PEiN9NEyUi+bp4D3XuEPD7hoPrZe-g@mail.gmail.com>
+Subject: Re: [6.4-current oops] null ptr deref in blk_mq_sched_bio_merge()
+ from blkdev readahead
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 03, 2023 at 09:51:49AM +0200, Michal Hocko wrote:
-> Your answers have shown your insight into tracing is very limited. I
-> have a clear recollection there were many suggestions on how to get what
-> you need and willingness to help out. Repeating your previous position
-> will not help much to be honest with you.
+On Wed, May 3, 2023 at 2:06=E2=80=AFPM Dave Chinner <david@fromorbit.com> w=
+rote:
+>
+> Hi folks,
+>
+> fstests running shared/032 on XFS with a default mkfs and mount
+> config causes a panic in the block layer when userspace is operating
+> directly on the block device like this:
+>
+> SECTION       -- xfs
+> FSTYP         -- xfs (debug)
+> PLATFORM      -- Linux/x86_64 test3 6.3.0-dgc+ #1792 SMP PREEMPT_DYNAMIC =
+Wed May  3 15:20:20 AEST 2023
+> MKFS_OPTIONS  -- -f -m rmapbt=3D1 /dev/pmem1
+> MOUNT_OPTIONS -- -o dax=3Dnever -o context=3Dsystem_u:object_r:root_t:s0 =
+/dev/pmem1 /mnt/scratch
+>
+> ....
+>
+> [   56.070695] run fstests shared/032 at 2023-05-03 15:21:55
+> [   56.768890] BTRFS: device fsid 355df15c-7bc5-49b0-9b5d-dc25ce855a9d de=
+vid 1 transid 6 /dev/pmem1 scanned by mkfs.btrfs (5836)
+> [   57.285879]  pmem1: p1
+> [   57.301845] BUG: kernel NULL pointer dereference, address: 00000000000=
+000a8
+> [   57.304562] #PF: supervisor read access in kernel mode
+> [   57.306499] #PF: error_code(0x0000) - not-present page
+> [   57.308414] PGD 0 P4D 0
+> [   57.309401] Oops: 0000 [#1] PREEMPT SMP
+> [   57.310876] CPU: 3 PID: 4478 Comm: (udev-worker) Not tainted 6.3.0-dgc=
++ #1792
+> [   57.313517] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S 1.16.2-debian-1.16.2-1 04/01/2014
+> [   57.317089] RIP: 0010:blk_mq_sched_bio_merge+0x7b/0x100
 
-Please enlighten us, oh wise one.
+Hi Dave,
 
-> > > - It has been brought up that this is duplicating functionality already
-> > >   available via existing tracing infrastructure. You should make it very
-> > >   clear why that is not suitable for the job
-> > 
-> > Tracing people _claimed_ this, but never demonstrated it.
-> 
-> The burden is on you and Suren. You are proposing the implement an
-> alternative tracing infrastructure.
+It is fixed by:
 
-No, we're still waiting on the tracing people to _demonstrate_, not
-claim, that this is at all possible in a comparable way with tracing. 
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commi=
+t/?h=3Dfor-6.4/block&id=3D38c8e3dfb2a1be863b7f5aad7755d5e9727da8a5
 
-It's not on us to make your argument for you, and before making
-accusations about honesty you should try to be more honest yourself.
+Thanks,
+Ming
 
-The expectations you're trying to level have never been the norm in the
-kernel community, sorry. When there's a technical argument about the
-best way to do something, _code wins_ and we've got working code to do
-something that hasn't been possible previously.
-
-There's absolutely no rule that "tracing has to be the one and only tool
-for kernel visibility".
-
-I'm considering the tracing discussion closed until someone in the
-pro-tracing camp shows something new.
-
-> > > - We already have page_owner infrastructure that provides allocation
-> > >   tracking data. Why it cannot be used/extended?
-> > 
-> > Page owner is also very high overhead,
-> 
-> Is there any data to prove that claim? I would be really surprised that
-> page_owner would give higher overhead than page tagging with profiling
-> enabled (there is an allocation for each allocation request!!!). We can
-> discuss the bare bone page tagging comparision to page_owner because of
-> the full stack unwinding but is that overhead really prohibitively costly?
-> Can we reduce that by trimming the unwinder information?
-
-Honestly, this isn't terribly relevant, because as noted before page
-owner is limited to just page allocations.
-
-> 
-> > and the output is not very user
-> > friendly (tracking full call stack means many related overhead gets
-> > split, not generally what you want), and it doesn't cover slab.
-> 
-> Is this something we cannot do anything about? Have you explored any
-> potential ways?
-> 
-> > This tracks _all_ memory allocations - slab, page, vmalloc, percpu.
-
-Michel, the discussions with you seem to perpetually go in circles; it's
-clear you're negative on the patchset, you keep raising the same
-objections while refusing to concede a single point.
-
-I believe I've answered enough, so I'll leave off further discussions
-with you.
