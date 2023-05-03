@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D327F6F4EF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 05:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B594D6F4EF8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 05:02:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjECDCk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 May 2023 23:02:40 -0400
+        id S229674AbjECDCt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 May 2023 23:02:49 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbjECDCe (ORCPT
+        with ESMTP id S229455AbjECDCj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 May 2023 23:02:34 -0400
+        Tue, 2 May 2023 23:02:39 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4767F1FDB;
-        Tue,  2 May 2023 20:02:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A08D1FE3;
+        Tue,  2 May 2023 20:02:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6D8D062A21;
-        Wed,  3 May 2023 03:02:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA8D5C433EF;
-        Wed,  3 May 2023 03:02:30 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 044D1629E8;
+        Wed,  3 May 2023 03:02:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB9EC433D2;
+        Wed,  3 May 2023 03:02:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683082950;
-        bh=mdJqxmrhSvp4N2bb5+TBGlv4WEZJJLhBebQmIs4kHKk=;
+        s=k20201202; t=1683082956;
+        bh=FDSD3npohSAOStE6XTBYxPJuVdYmgwtcSanKqtLFSWo=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=W5q/MJlJ7E7JdWOB40dz7oq52V45kHnlHn6JrUY0ZoALrhJiMfrrjI9RdV8ygj2in
-         o/Uda3oMPkRfTIy4qs9C8rFaHWkSoZb2MUUmNgkqSGcHDAptQW9KsrEnYiomUsRUW+
-         nkV2XzoqHjntqHO9/nYRXP5eqYoCYgbe2LnF+xe8A6YlnGa6otneMo3wdRyDtOczFQ
-         VDXa/IwsX4l56NsH0opUNUo1icvyu/ZI+fPkIU2XUT6qibtvzPT2mo4KZt2dnkutf3
-         rT2jROGKnMM0nnCnBjl9ucUlS5alimZUDIL57uZaG0v4c0Q50NHVIj54QG6tly/hDo
-         QCWfvTgtaOjww==
-Subject: [PATCH 3/4] xfs: stabilize fs summary counters for online fsck
+        b=SLFUKUMofWDRWAbOavtdQehPzwf4OLHN1CHd96LrQPXQOEnJjVAc+M02poXEQ21lc
+         sLfH8W+qMUS4TfC/S8Jyd8bfU+qCWzVshE0EGiKI2ibw0+Tl2dr6ctWAuQ2dFZJkbG
+         GzLqtHZoBd8WBYLeZ5XEPbpMl1sM0OVD61DG/udwLRcVTmgUQZaB8jpkZ36rkI2HIF
+         mDIZJyMsjNwmJwK3jC1YAAstOnEp5MY2evpgMYlh4R/hfGyyXD4tvdmiZbpPMxXWBc
+         QZDtYn83d88MOUnxrCpuVSHQWF2v0v9fa3v5bmcEanj5NMUC8muLsAon8fCrR/wXVC
+         V1w9FQpOfTcTQ==
+Subject: [PATCH 4/4] xfs: repair summary counters
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, mcgrof@kernel.org,
         ruansy.fnst@fujitsu.com, linux-fsdevel@vger.kernel.org
-Date:   Tue, 02 May 2023 20:02:30 -0700
-Message-ID: <168308295032.734377.7215586839709622075.stgit@frogsfrogsfrogs>
+Date:   Tue, 02 May 2023 20:02:36 -0700
+Message-ID: <168308295599.734377.17056485056121118166.stgit@frogsfrogsfrogs>
 In-Reply-To: <168308293319.734377.10454919162350827812.stgit@frogsfrogsfrogs>
 References: <168308293319.734377.10454919162350827812.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -57,449 +57,243 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-If the fscounters scrubber notices incorrect summary counters, it's
-entirely possible that scrub is simply racing with other threads that
-are updating the incore counters.  There isn't a good way to stabilize
-percpu counters or set ourselves up to observe live updates with hooks
-like we do for the quotacheck or nlinks scanners, so we instead choose
-to freeze the filesystem long enough to walk the incore per-AG
-structures.
-
-Past me thought that it was going to be commonplace to have to freeze
-the filesystem to perform some kind of repair and set up a whole
-separate infrastructure to freeze the filesystem in such a way that
-userspace could not unfreeze while we were running.  This involved
-adding a mutex and freeze_super/thaw_super functions and dealing with
-the fact that the VFS freeze/thaw functions can free the VFS superblock
-references on return.
-
-This was all very overwrought, since fscounters turned out to be the
-only user of scrub freezes, and it doesn't require the log to quiesce,
-only the incore superblock counters.  We prevent other threads from
-changing the freeze level by calling freeze_super_excl with a custom
-freeze cookie to keep everyone else out of the filesystem.
-
-The end result is that fscounters should be much more efficient.  When
-we're checking a busy system and we can't stabilize the counters, the
-custom freeze will do less work, which should result in less downtime.
-Repair should be similarly speedy, but that's in the next patch.
+Use the same summary counter calculation infrastructure to generate new
+values for the in-core summary counters.   The difference between the
+scrubber and the repairer is that the repairer will freeze the fs during
+setup, which means that the values should match exactly.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/scrub/fscounters.c |  172 +++++++++++++++++++++++++++++++++------------
- fs/xfs/scrub/fscounters.h |   20 +++++
- fs/xfs/scrub/scrub.c      |    6 +-
- fs/xfs/scrub/scrub.h      |    1 
- fs/xfs/scrub/trace.h      |    1 
- fs/xfs/xfs_super.c        |   20 +++++
- fs/xfs/xfs_super.h        |    2 +
- 7 files changed, 172 insertions(+), 50 deletions(-)
- create mode 100644 fs/xfs/scrub/fscounters.h
+ fs/xfs/Makefile                  |    1 +
+ fs/xfs/scrub/fscounters.c        |   15 +++++++-
+ fs/xfs/scrub/fscounters_repair.c |   72 ++++++++++++++++++++++++++++++++++++++
+ fs/xfs/scrub/repair.h            |    2 +
+ fs/xfs/scrub/scrub.c             |    2 +
+ fs/xfs/scrub/trace.c             |    1 +
+ fs/xfs/scrub/trace.h             |   21 +++++++++--
+ 7 files changed, 107 insertions(+), 7 deletions(-)
+ create mode 100644 fs/xfs/scrub/fscounters_repair.c
 
 
+diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+index b97b7ea74109..ea90abdd9941 100644
+--- a/fs/xfs/Makefile
++++ b/fs/xfs/Makefile
+@@ -188,6 +188,7 @@ xfs-y				+= $(addprefix scrub/, \
+ 				   alloc_repair.o \
+ 				   bmap_repair.o \
+ 				   cow_repair.o \
++				   fscounters_repair.o \
+ 				   ialloc_repair.o \
+ 				   inode_repair.o \
+ 				   newbt.o \
 diff --git a/fs/xfs/scrub/fscounters.c b/fs/xfs/scrub/fscounters.c
-index e382a35e98d8..93498eb38216 100644
+index 93498eb38216..913ef40ad7ee 100644
 --- a/fs/xfs/scrub/fscounters.c
 +++ b/fs/xfs/scrub/fscounters.c
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+// SPDX-License-Identifier: GPL-2.0-or-later
- /*
-  * Copyright (C) 2019-2023 Oracle.  All Rights Reserved.
-  * Author: Darrick J. Wong <djwong@kernel.org>
-@@ -16,9 +16,11 @@
- #include "xfs_ag.h"
- #include "xfs_rtalloc.h"
- #include "xfs_inode.h"
-+#include "xfs_icache.h"
- #include "scrub/scrub.h"
- #include "scrub/common.h"
- #include "scrub/trace.h"
-+#include "scrub/fscounters.h"
- 
- /*
-  * FS Summary Counters
-@@ -45,16 +47,6 @@
-  * our tolerance for mismatch between expected and actual counter values.
+@@ -199,8 +199,13 @@ xchk_setup_fscounters(
+ 	 * Pause all writer activity in the filesystem while we're scrubbing to
+ 	 * reduce the likelihood of background perturbations to the counters
+ 	 * throwing off our calculations.
++	 *
++	 * If we're repairing, we need to prevent any other thread from
++	 * changing the global fs summary counters while we're repairing them.
++	 * This requires the fs to be frozen, which will disable background
++	 * reclaim and purge all inactive inodes.
+ 	 */
+-	if (sc->flags & XCHK_TRY_HARDER) {
++	if ((sc->flags & XCHK_TRY_HARDER) || xchk_could_repair(sc)) {
+ 		error = xchk_fscounters_freeze(sc);
+ 		if (error)
+ 			return error;
+@@ -218,7 +223,9 @@ xchk_setup_fscounters(
+  * set the INCOMPLETE flag even when a negative errno is returned.  This care
+  * must be taken with certain errno values (i.e. EFSBADCRC, EFSCORRUPTED,
+  * ECANCELED) that are absorbed into a scrub state flag update by
+- * xchk_*_process_error.
++ * xchk_*_process_error.  Scrub and repair share the same incore data
++ * structures, so the INCOMPLETE flag is critical to prevent a repair based on
++ * insufficient information.
   */
  
--struct xchk_fscounters {
--	struct xfs_scrub	*sc;
--	uint64_t		icount;
--	uint64_t		ifree;
--	uint64_t		fdblocks;
--	uint64_t		frextents;
--	unsigned long long	icount_min;
--	unsigned long long	icount_max;
--};
--
- /*
-  * Since the expected value computation is lockless but only browses incore
-  * values, the percpu counters should be fairly close to each other.  However,
-@@ -123,6 +115,58 @@ xchk_fscount_warmup(
- 	return error;
- }
- 
-+/*
-+ * We couldn't stabilize the filesystem long enough to sample all the variables
-+ * that comprise the summary counters and compare them to the percpu counters.
-+ * We need to disable all writer threads, which means taking the first two
-+ * freeze levels to put userspace to sleep, and the third freeze level to
-+ * prevent background threads from starting new transactions.  Take one level
-+ * more to prevent other callers from unfreezing the filesystem while we run.
-+ */
-+STATIC int
-+xchk_fscounters_freeze(
-+	struct xfs_scrub	*sc)
-+{
-+	struct xchk_fscounters	*fsc = sc->buf;
-+	struct xfs_mount	*mp = sc->mp;
-+	int			error = 0;
-+
-+	if (sc->flags & XCHK_HAVE_FREEZE_PROT) {
-+		sc->flags &= ~XCHK_HAVE_FREEZE_PROT;
-+		mnt_drop_write_file(sc->file);
-+	}
-+
-+	/* Wait until we're ready to freeze or give up. */
-+	while (freeze_super_excl(mp->m_super, XFS_FREEZE_SCRUB_COOKIE(mp))) {
-+		if (xchk_should_terminate(sc, &error))
-+			return error;
-+
-+		delay(HZ / 10);
-+	}
-+
-+	fsc->frozen = true;
-+	return 0;
-+}
-+
-+/* Thaw the filesystem after checking or repairing fscounters. */
-+STATIC void
-+xchk_fscounters_cleanup(
-+	void			*buf)
-+{
-+	struct xchk_fscounters	*fsc = buf;
-+	struct xfs_scrub	*sc = fsc->sc;
-+	struct xfs_mount	*mp = sc->mp;
-+	int			error;
-+
-+	if (!fsc->frozen)
-+		return;
-+
-+	/* This should always succeed, we froze the fs exclusively. */
-+	error = thaw_super_excl(mp->m_super, XFS_FREEZE_SCRUB_COOKIE(mp));
-+	if (error)
-+		xfs_emerg(mp, "still frozen after scrub, err=%d", error);
-+}
-+
- int
- xchk_setup_fscounters(
- 	struct xfs_scrub	*sc)
-@@ -140,6 +184,7 @@ xchk_setup_fscounters(
- 	sc->buf = kzalloc(sizeof(struct xchk_fscounters), XCHK_GFP_FLAGS);
- 	if (!sc->buf)
- 		return -ENOMEM;
-+	sc->buf_cleanup = xchk_fscounters_cleanup;
- 	fsc = sc->buf;
- 	fsc->sc = sc;
- 
-@@ -150,7 +195,18 @@ xchk_setup_fscounters(
- 	if (error)
- 		return error;
- 
--	return xchk_trans_alloc(sc, 0);
-+	/*
-+	 * Pause all writer activity in the filesystem while we're scrubbing to
-+	 * reduce the likelihood of background perturbations to the counters
-+	 * throwing off our calculations.
-+	 */
-+	if (sc->flags & XCHK_TRY_HARDER) {
-+		error = xchk_fscounters_freeze(sc);
-+		if (error)
-+			return error;
-+	}
-+
-+	return xchk_trans_alloc_empty(sc);
- }
- 
- /*
-@@ -290,8 +346,7 @@ xchk_fscount_aggregate_agcounts(
- 	if (fsc->ifree > fsc->icount) {
- 		if (tries--)
- 			goto retry;
--		xchk_set_incomplete(sc);
--		return 0;
-+		return -EDEADLOCK;
- 	}
- 
- 	return 0;
-@@ -367,6 +422,8 @@ xchk_fscount_count_frextents(
-  * Otherwise, we /might/ have a problem.  If the change in the summations is
-  * more than we want to tolerate, the filesystem is probably busy and we should
-  * just send back INCOMPLETE and see if userspace will try again.
-+ *
-+ * If we're repairing then we require an exact match.
-  */
- static inline bool
- xchk_fscount_within_range(
-@@ -396,21 +453,7 @@ xchk_fscount_within_range(
- 	if (expected >= min_value && expected <= max_value)
+ /* Count free space btree blocks manually for pre-lazysbcount filesystems. */
+@@ -446,6 +453,10 @@ xchk_fscount_within_range(
+ 	if (curr_value == expected)
  		return true;
  
--	/*
--	 * If the difference between the two summations is too large, the fs
--	 * might just be busy and so we'll mark the scrub incomplete.  Return
--	 * true here so that we don't mark the counter corrupt.
--	 *
--	 * XXX: In the future when userspace can grant scrub permission to
--	 * quiesce the filesystem to solve the outsized variance problem, this
--	 * check should be moved up and the return code changed to signal to
--	 * userspace that we need quiesce permission.
--	 */
--	if (max_value - min_value >= XCHK_FSCOUNT_MIN_VARIANCE) {
--		xchk_set_incomplete(sc);
--		return true;
--	}
--
-+	/* Everything else is bad. */
- 	return false;
- }
- 
-@@ -422,6 +465,7 @@ xchk_fscounters(
- 	struct xfs_mount	*mp = sc->mp;
- 	struct xchk_fscounters	*fsc = sc->buf;
- 	int64_t			icount, ifree, fdblocks, frextents;
-+	bool			try_again = false;
- 	int			error;
- 
- 	/* Snapshot the percpu counters. */
-@@ -431,9 +475,26 @@ xchk_fscounters(
- 	frextents = percpu_counter_sum(&mp->m_frextents);
- 
- 	/* No negative values, please! */
--	if (icount < 0 || ifree < 0 || fdblocks < 0 || frextents < 0)
-+	if (icount < 0 || ifree < 0)
- 		xchk_set_corrupt(sc);
- 
-+	/*
-+	 * If the filesystem is not frozen, the counter summation calls above
-+	 * can race with xfs_mod_freecounter, which subtracts a requested space
-+	 * reservation from the counter and undoes the subtraction if that made
-+	 * the counter go negative.  Therefore, it's possible to see negative
-+	 * values here, and we should only flag that as a corruption if we
-+	 * froze the fs.  This is much more likely to happen with frextents
-+	 * since there are no reserved pools.
-+	 */
-+	if (fdblocks < 0 || frextents < 0) {
-+		if (!fsc->frozen)
-+			return -EDEADLOCK;
++	/* We require exact matches when repair is running. */
++	if (sc->sm->sm_flags & XFS_SCRUB_IFLAG_REPAIR)
++		return false;
 +
-+		xchk_set_corrupt(sc);
-+		return 0;
-+	}
-+
- 	/* See if icount is obviously wrong. */
- 	if (icount < fsc->icount_min || icount > fsc->icount_max)
- 		xchk_set_corrupt(sc);
-@@ -446,12 +507,6 @@ xchk_fscounters(
- 	if (frextents > mp->m_sb.sb_rextents)
- 		xchk_set_corrupt(sc);
+ 	min_value = min(old_value, curr_value);
+ 	max_value = max(old_value, curr_value);
  
--	/*
--	 * XXX: We can't quiesce percpu counter updates, so exit early.
--	 * This can be re-enabled when we gain exclusive freeze functionality.
--	 */
--	return 0;
--
- 	/*
- 	 * If ifree exceeds icount by more than the minimum variance then
- 	 * something's probably wrong with the counters.
-@@ -463,8 +518,6 @@ xchk_fscounters(
- 	error = xchk_fscount_aggregate_agcounts(sc, fsc);
- 	if (!xchk_process_error(sc, 0, XFS_SB_BLOCK(mp), &error))
- 		return error;
--	if (sc->sm->sm_flags & XFS_SCRUB_OFLAG_INCOMPLETE)
--		return 0;
- 
- 	/* Count the free extents counter for rt volumes. */
- 	error = xchk_fscount_count_frextents(sc, fsc);
-@@ -473,20 +526,45 @@ xchk_fscounters(
- 	if (sc->sm->sm_flags & XFS_SCRUB_OFLAG_INCOMPLETE)
- 		return 0;
- 
--	/* Compare the in-core counters with whatever we counted. */
--	if (!xchk_fscount_within_range(sc, icount, &mp->m_icount, fsc->icount))
--		xchk_set_corrupt(sc);
-+	/*
-+	 * Compare the in-core counters with whatever we counted.  If the fs is
-+	 * frozen, we treat the discrepancy as a corruption because the freeze
-+	 * should have stabilized the counter values.  Otherwise, we need
-+	 * userspace to call us back having granted us freeze permission.
-+	 */
-+	if (!xchk_fscount_within_range(sc, icount, &mp->m_icount,
-+				fsc->icount)) {
-+		if (fsc->frozen)
-+			xchk_set_corrupt(sc);
-+		else
-+			try_again = true;
-+	}
- 
--	if (!xchk_fscount_within_range(sc, ifree, &mp->m_ifree, fsc->ifree))
--		xchk_set_corrupt(sc);
-+	if (!xchk_fscount_within_range(sc, ifree, &mp->m_ifree, fsc->ifree)) {
-+		if (fsc->frozen)
-+			xchk_set_corrupt(sc);
-+		else
-+			try_again = true;
-+	}
- 
- 	if (!xchk_fscount_within_range(sc, fdblocks, &mp->m_fdblocks,
--			fsc->fdblocks))
--		xchk_set_corrupt(sc);
-+			fsc->fdblocks)) {
-+		if (fsc->frozen)
-+			xchk_set_corrupt(sc);
-+		else
-+			try_again = true;
-+	}
- 
- 	if (!xchk_fscount_within_range(sc, frextents, &mp->m_frextents,
--			fsc->frextents))
--		xchk_set_corrupt(sc);
-+			fsc->frextents)) {
-+		if (fsc->frozen)
-+			xchk_set_corrupt(sc);
-+		else
-+			try_again = true;
-+	}
-+
-+	if (try_again)
-+		return -EDEADLOCK;
- 
- 	return 0;
- }
-diff --git a/fs/xfs/scrub/fscounters.h b/fs/xfs/scrub/fscounters.h
+diff --git a/fs/xfs/scrub/fscounters_repair.c b/fs/xfs/scrub/fscounters_repair.c
 new file mode 100644
-index 000000000000..b36f7157986f
+index 000000000000..abd281dcb344
 --- /dev/null
-+++ b/fs/xfs/scrub/fscounters.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
++++ b/fs/xfs/scrub/fscounters_repair.c
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Copyright (C) 2021-2023 Oracle.  All Rights Reserved.
++ * Copyright (C) 2018-2023 Oracle.  All Rights Reserved.
 + * Author: Darrick J. Wong <djwong@kernel.org>
 + */
-+#ifndef __XFS_SCRUB_FSCOUNTERS_H__
-+#define __XFS_SCRUB_FSCOUNTERS_H__
++#include "xfs.h"
++#include "xfs_fs.h"
++#include "xfs_shared.h"
++#include "xfs_format.h"
++#include "xfs_trans_resv.h"
++#include "xfs_mount.h"
++#include "xfs_defer.h"
++#include "xfs_btree.h"
++#include "xfs_bit.h"
++#include "xfs_log_format.h"
++#include "xfs_trans.h"
++#include "xfs_sb.h"
++#include "xfs_inode.h"
++#include "xfs_alloc.h"
++#include "xfs_ialloc.h"
++#include "xfs_rmap.h"
++#include "xfs_health.h"
++#include "scrub/xfs_scrub.h"
++#include "scrub/scrub.h"
++#include "scrub/common.h"
++#include "scrub/trace.h"
++#include "scrub/repair.h"
++#include "scrub/fscounters.h"
 +
-+struct xchk_fscounters {
-+	struct xfs_scrub	*sc;
-+	uint64_t		icount;
-+	uint64_t		ifree;
-+	uint64_t		fdblocks;
-+	uint64_t		frextents;
-+	unsigned long long	icount_min;
-+	unsigned long long	icount_max;
-+	bool			frozen;
-+};
++/*
++ * FS Summary Counters
++ * ===================
++ *
++ * We correct errors in the filesystem summary counters by setting them to the
++ * values computed during the obligatory scrub phase.  However, we must be
++ * careful not to allow any other thread to change the counters while we're
++ * computing and setting new values.  To achieve this, we freeze the
++ * filesystem for the whole operation if the REPAIR flag is set.  The checking
++ * function is stricter when we've frozen the fs.
++ */
 +
-+#endif /* __XFS_SCRUB_FSCOUNTERS_H__ */
++/*
++ * Reset the superblock counters.  Caller is responsible for freezing the
++ * filesystem during the calculation and reset phases.
++ */
++int
++xrep_fscounters(
++	struct xfs_scrub	*sc)
++{
++	struct xfs_mount	*mp = sc->mp;
++	struct xchk_fscounters	*fsc = sc->buf;
++
++	/*
++	 * Reinitialize the in-core counters from what we computed.  We froze
++	 * the filesystem, so there shouldn't be anyone else trying to modify
++	 * these counters.
++	 */
++	if (!fsc->frozen) {
++		ASSERT(fsc->frozen);
++		return -EFSCORRUPTED;
++	}
++
++	trace_xrep_reset_counters(mp, fsc);
++
++	percpu_counter_set(&mp->m_icount, fsc->icount);
++	percpu_counter_set(&mp->m_ifree, fsc->ifree);
++	percpu_counter_set(&mp->m_fdblocks, fsc->fdblocks);
++	percpu_counter_set(&mp->m_frextents, fsc->frextents);
++	mp->m_sb.sb_frextents = fsc->frextents;
++
++	return 0;
++}
+diff --git a/fs/xfs/scrub/repair.h b/fs/xfs/scrub/repair.h
+index e70b3afde39d..2e72b2557f65 100644
+--- a/fs/xfs/scrub/repair.h
++++ b/fs/xfs/scrub/repair.h
+@@ -109,6 +109,7 @@ int xrep_bmap_data(struct xfs_scrub *sc);
+ int xrep_bmap_attr(struct xfs_scrub *sc);
+ int xrep_bmap_cow(struct xfs_scrub *sc);
+ int xrep_nlinks(struct xfs_scrub *sc);
++int xrep_fscounters(struct xfs_scrub *sc);
+ 
+ #ifdef CONFIG_XFS_RT
+ int xrep_rtbitmap(struct xfs_scrub *sc);
+@@ -194,6 +195,7 @@ static inline int xrep_setup_rtbitmap(struct xfs_scrub *sc, unsigned int *x)
+ #define xrep_quota			xrep_notsupported
+ #define xrep_quotacheck			xrep_notsupported
+ #define xrep_nlinks			xrep_notsupported
++#define xrep_fscounters			xrep_notsupported
+ 
+ #endif /* CONFIG_XFS_ONLINE_REPAIR */
+ 
 diff --git a/fs/xfs/scrub/scrub.c b/fs/xfs/scrub/scrub.c
-index d4396c351373..e487b424b12b 100644
+index e487b424b12b..cf8e78c16670 100644
 --- a/fs/xfs/scrub/scrub.c
 +++ b/fs/xfs/scrub/scrub.c
-@@ -187,8 +187,10 @@ xchk_teardown(
- 		xchk_irele(sc, sc->ip);
- 		sc->ip = NULL;
- 	}
--	if (sc->sm->sm_flags & XFS_SCRUB_IFLAG_REPAIR)
-+	if (sc->flags & XCHK_HAVE_FREEZE_PROT) {
-+		sc->flags &= ~XCHK_HAVE_FREEZE_PROT;
- 		mnt_drop_write_file(sc->file);
-+	}
- 	if (sc->xfile) {
- 		xfile_destroy(sc->xfile);
- 		sc->xfile = NULL;
-@@ -539,6 +541,8 @@ xfs_scrub_metadata(
- 		error = mnt_want_write_file(sc->file);
- 		if (error)
- 			goto out_sc;
-+
-+		sc->flags |= XCHK_HAVE_FREEZE_PROT;
- 	}
+@@ -367,7 +367,7 @@ static const struct xchk_meta_ops meta_scrub_ops[] = {
+ 		.type	= ST_FS,
+ 		.setup	= xchk_setup_fscounters,
+ 		.scrub	= xchk_fscounters,
+-		.repair	= xrep_notsupported,
++		.repair	= xrep_fscounters,
+ 	},
+ 	[XFS_SCRUB_TYPE_QUOTACHECK] = {	/* quota counters */
+ 		.type	= ST_FS,
+diff --git a/fs/xfs/scrub/trace.c b/fs/xfs/scrub/trace.c
+index a2511bdc5dba..1fe5c5a9a1ba 100644
+--- a/fs/xfs/scrub/trace.c
++++ b/fs/xfs/scrub/trace.c
+@@ -20,6 +20,7 @@
+ #include "scrub/xfarray.h"
+ #include "scrub/iscan.h"
+ #include "scrub/nlinks.h"
++#include "scrub/fscounters.h"
  
- 	/* Set up for the operation. */
-diff --git a/fs/xfs/scrub/scrub.h b/fs/xfs/scrub/scrub.h
-index 99b48e996d51..a41ba8d319b6 100644
---- a/fs/xfs/scrub/scrub.h
-+++ b/fs/xfs/scrub/scrub.h
-@@ -118,6 +118,7 @@ struct xfs_scrub {
- 
- /* XCHK state flags grow up from zero, XREP state flags grown down from 2^31 */
- #define XCHK_TRY_HARDER		(1 << 0)  /* can't get resources, try again */
-+#define XCHK_HAVE_FREEZE_PROT	(1 << 1)  /* do we have freeze protection? */
- #define XCHK_FSGATES_DRAIN	(1 << 2)  /* defer ops draining enabled */
- #define XCHK_NEED_DRAIN		(1 << 3)  /* scrub needs to drain defer ops */
- #define XCHK_FSGATES_QUOTA	(1 << 4)  /* quota live update enabled */
+ /* Figure out which block the btree cursor was pointing to. */
+ static inline xfs_fsblock_t
 diff --git a/fs/xfs/scrub/trace.h b/fs/xfs/scrub/trace.h
-index d4f142929518..6a50e6c89195 100644
+index 6a50e6c89195..4aefa0533a12 100644
 --- a/fs/xfs/scrub/trace.h
 +++ b/fs/xfs/scrub/trace.h
-@@ -113,6 +113,7 @@ TRACE_DEFINE_ENUM(XFS_SCRUB_TYPE_HEALTHY);
+@@ -23,6 +23,7 @@ struct xfarray;
+ struct xfarray_sortinfo;
+ struct xchk_iscan;
+ struct xchk_nlink;
++struct xchk_fscounters;
  
- #define XFS_SCRUB_STATE_STRINGS \
- 	{ XCHK_TRY_HARDER,			"try_harder" }, \
-+	{ XCHK_HAVE_FREEZE_PROT,		"nofreeze" }, \
- 	{ XCHK_FSGATES_DRAIN,			"fsgates_drain" }, \
- 	{ XCHK_NEED_DRAIN,			"need_drain" }, \
- 	{ XCHK_FSGATES_QUOTA,			"fsgates_quota" }, \
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 67ebb9d5ed21..cb13b087dcde 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -915,6 +915,15 @@ xfs_fs_freeze(
- 	unsigned int		flags;
- 	int			ret;
+ /*
+  * ftrace's __print_symbolic requires that all enum values be wrapped in the
+@@ -1671,16 +1672,28 @@ TRACE_EVENT(xrep_calc_ag_resblks_btsize,
+ 		  __entry->refcbt_sz)
+ )
+ TRACE_EVENT(xrep_reset_counters,
+-	TP_PROTO(struct xfs_mount *mp),
+-	TP_ARGS(mp),
++	TP_PROTO(struct xfs_mount *mp, struct xchk_fscounters *fsc),
++	TP_ARGS(mp, fsc),
+ 	TP_STRUCT__entry(
+ 		__field(dev_t, dev)
++		__field(uint64_t, icount)
++		__field(uint64_t, ifree)
++		__field(uint64_t, fdblocks)
++		__field(uint64_t, frextents)
+ 	),
+ 	TP_fast_assign(
+ 		__entry->dev = mp->m_super->s_dev;
++		__entry->icount = fsc->icount;
++		__entry->ifree = fsc->ifree;
++		__entry->fdblocks = fsc->fdblocks;
++		__entry->frextents = fsc->frextents;
+ 	),
+-	TP_printk("dev %d:%d",
+-		  MAJOR(__entry->dev), MINOR(__entry->dev))
++	TP_printk("dev %d:%d icount %llu ifree %llu fdblocks %llu frextents %llu",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __entry->icount,
++		  __entry->ifree,
++		  __entry->fdblocks,
++		  __entry->frextents)
+ )
  
-+	/*
-+	 * Online fsck freezes the filesystem to pause writer threads and
-+	 * background garbage collection so that the free space counters do not
-+	 * change.  The gc threads are already paused, so return without
-+	 * changing the space reservations or flushing the log.
-+	 */
-+	if (sb->s_writers.freeze_cookie == XFS_FREEZE_SCRUB_COOKIE(mp))
-+		return 0;
-+
- 	/*
- 	 * The filesystem is now frozen far enough that memory reclaim
- 	 * cannot safely operate on the filesystem. Hence we need to
-@@ -946,8 +955,15 @@ xfs_fs_unfreeze(
- {
- 	struct xfs_mount	*mp = XFS_M(sb);
- 
--	xfs_restore_resvblks(mp);
--	xfs_log_work_queue(mp);
-+	/*
-+	 * Online fsck froze the filesystem to pause writer threads to check
-+	 * the free space counters.  We didn't pause the log or touch the
-+	 * reserve pool, so we only need to reactivate the gc threads.
-+	 */
-+	if (sb->s_writers.freeze_cookie != XFS_FREEZE_SCRUB_COOKIE(mp)) {
-+		xfs_restore_resvblks(mp);
-+		xfs_log_work_queue(mp);
-+	}
- 
- 	/*
- 	 * Don't reactivate the inodegc worker on a readonly filesystem because
-diff --git a/fs/xfs/xfs_super.h b/fs/xfs/xfs_super.h
-index 364e2c2648a8..328d8701eae3 100644
---- a/fs/xfs/xfs_super.h
-+++ b/fs/xfs/xfs_super.h
-@@ -100,4 +100,6 @@ extern struct workqueue_struct *xfs_discard_wq;
- 
- #define XFS_M(sb)		((struct xfs_mount *)((sb)->s_fs_info))
- 
-+#define XFS_FREEZE_SCRUB_COOKIE(mp)	((unsigned long)(mp) | 1)
-+
- #endif	/* __XFS_SUPER_H__ */
+ DECLARE_EVENT_CLASS(xrep_newbt_extent_class,
 
