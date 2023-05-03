@@ -2,58 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A9EE6F5AAE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 17:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F656F5ACB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 17:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230358AbjECPJp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 11:09:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42232 "EHLO
+        id S230325AbjECPS7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 11:18:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230345AbjECPJo (ORCPT
+        with ESMTP id S229490AbjECPS5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 11:09:44 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5504C01
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 08:09:41 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-b9e66ce80acso3183049276.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 08:09:41 -0700 (PDT)
+        Wed, 3 May 2023 11:18:57 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A7D6E86
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 08:18:53 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-b9e27684b53so3020560276.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 08:18:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683126580; x=1685718580;
+        d=google.com; s=20221208; t=1683127132; x=1685719132;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=njkpY9V26txLi7xPErO/sERUlWcV1pHNyq5uOqiF2eY=;
-        b=VExKdzK5WEHsMwlEvyXIbTAR60TSGl0weEuYF33kbqADYhPEKMB5BFVn748WX7nHdJ
-         1ZlyCGGXJGu0YiWNCyZl5XyfyFi2tpLKda0+fB339jPRw/X0v46Au/FFd5+OD8pJxpRY
-         +KkUzelDcKShio3avgpuSPMVkLeLPhlOjJQMnrVxm4Zf0u/pZ6cnJgNCbvz6qY3fWGrt
-         1Vm4vafoXe+OM0WR4hPTdkalQ5gy1bMCwNEAd6xNhQ1f8Ie8DIosbbc/QS5C38of78Fb
-         mqBoNYXzOBoZSmrx1Vo6JKftamzpTKOZAz7AVyV44cWc+5yFoj7tdjzyxk27OuKklV1Q
-         3kgg==
+        bh=i4wxKwRBUKexs/Rpj6bBCWyCDPYyPPHlLlNupBtzYaw=;
+        b=uY9LZ4++hkvUyhbn5c4syfgYI214i342bZOqq7w3PZ5UnX1WOR8kP1Dd5DgdTFpHBZ
+         YFrejpNwEwyVtgjJ2h7DJZZwM3wlarwFrdmlWF4/IbYdcLzhZu9eWfASeY3cBcMIJeWN
+         TmMwBt2giD3P+L/dV8xN4DWdOteVRuLxU576D+QIIYn5IEbMmRqCsDy6wH6RisaS2En+
+         77gau1VuW9LbpE+De59atSjH+/wZB+Rihg2dpbAxr/rgo94K50BySclFMG/5QR1qXpJU
+         YHFq9FmHNI3H6tgkwrY1pQTOJWYJg3qmXEmnIBPxV25YxcUtyGvErDZS2P4I8lHhi3Z5
+         NkBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683126580; x=1685718580;
+        d=1e100.net; s=20221208; t=1683127132; x=1685719132;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=njkpY9V26txLi7xPErO/sERUlWcV1pHNyq5uOqiF2eY=;
-        b=HHMh8Ie6i+68uFE51RpM5mBSeb/kvIAcCKIFcxsZJiIQZkVOcuzL2x7JdgAAwrk0d7
-         Bgm3fwrWRcA/le+m6VW46kKCsW6cV48zCrN7Nu3TaGCukIB4Ea/jlDe3n53NNKcxBuzz
-         Jg89kBLYPuBOJ5C2RIY0L71wBX4TMRbA0qCxR85qxpZUcUp7Vj3E9JWAyxjR9CA+U6dF
-         A/uYoCUP3rM5ZlyAYYLLSn+jQPKWAmJBLnvmnERW4hCDYXLvFPVUE2tb/vqnWjRuEqPo
-         YxytdvO8AR8GuUmvXQoMjui0ayG9iTwQ2C+tqROKyLMzXRqWDc6AFXixh+9YSbst+nCI
-         aBEg==
-X-Gm-Message-State: AC+VfDzVEowjM3TENLAFXNBiDOI4Y6WQ9hsVXmy8lxF9YYU6m/mAsY35
-        xFXkGAlXmPpja0kmouxG53uU6lSM6AHOADMw+LEdyQ==
-X-Google-Smtp-Source: ACHHUZ7hchC+rRk961tvHRqEu26jTqqMGmIvsUJgIGP7Wi8Xmqgc6hTnmpP8bu8bBbAHqpv8p0ou1nAieiF4VLsALvc=
-X-Received: by 2002:a25:dc4a:0:b0:b9f:1992:112e with SMTP id
- y71-20020a25dc4a000000b00b9f1992112emr4038060ybe.9.1683126580275; Wed, 03 May
- 2023 08:09:40 -0700 (PDT)
+        bh=i4wxKwRBUKexs/Rpj6bBCWyCDPYyPPHlLlNupBtzYaw=;
+        b=J4oSO/tDCFMJrvWzlrghuI5Xb+54OYPNOIe4JfKGfu0CH/hP3VH+CGQLcK4n3J2epc
+         2kRmwQBiZO4OxMOQuei+lWWAa2Q0NpNY3HDvqiHVDw+U37oQos+RNvU7ScsCHXXtd61G
+         Youf5e0/0ND3vkcZgDkzzejb/3sTKXIgdYF4ReaJW25Cu3tTx6eZwXT47jTin2CcRvpN
+         NqaaFGLy31czFg0BYCiXhkNSikronFTjVNrnfc+YBBAhxl/IFWi1Bpq6+MvHEtsuEkrP
+         cy/H4JQywVAf8aQqyNRZNbeCt0V3qMDgjVA28rCJoLw3CGVUa7+K4qErb7Or09SXwnLE
+         S1Sw==
+X-Gm-Message-State: AC+VfDzNYBjvZz54pgZO9p29zfjf0frWx9ksJ7MD003UqlzfWRYi7QMX
+        Z8nDLIkYDacXbG+4rLJa/k3PiCnMSz/Ji30OqkCdhQ==
+X-Google-Smtp-Source: ACHHUZ4K+d9eu2MhiXikUKkPbraytc5q+SB8DjlC4OAFlU81ddI4JrxvOKqNrFRbhuXyiN7N0776W6I4xeufDIeaumw=
+X-Received: by 2002:a25:6844:0:b0:b9d:90d1:6301 with SMTP id
+ d65-20020a256844000000b00b9d90d16301mr17445969ybc.47.1683127131990; Wed, 03
+ May 2023 08:18:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230501165450.15352-1-surenb@google.com> <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
-In-Reply-To: <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+References: <20230501165450.15352-1-surenb@google.com> <20230501165450.15352-35-surenb@google.com>
+ <ZFIO3tXCbmTn53uv@dhcp22.suse.cz>
+In-Reply-To: <ZFIO3tXCbmTn53uv@dhcp22.suse.cz>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 3 May 2023 08:09:28 -0700
-Message-ID: <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
-Subject: Re: [PATCH 00/40] Memory allocation profiling
+Date:   Wed, 3 May 2023 08:18:39 -0700
+Message-ID: <CAJuCfpHrZ4kWYFPvA3W9J+CmNMuOtGa_ZMXE9fOmKsPQeNt2tg@mail.gmail.com>
+Subject: Re: [PATCH 34/40] lib: code tagging context capture support
 To:     Michal Hocko <mhocko@suse.com>
 Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
         vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
@@ -95,133 +96,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 3, 2023 at 12:25=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
+On Wed, May 3, 2023 at 12:36=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrot=
 e:
 >
-> On Mon 01-05-23 09:54:10, Suren Baghdasaryan wrote:
-> > Memory allocation profiling infrastructure provides a low overhead
-> > mechanism to make all kernel allocations in the system visible. It can =
-be
-> > used to monitor memory usage, track memory hotspots, detect memory leak=
-s,
-> > identify memory regressions.
-> >
-> > To keep the overhead to the minimum, we record only allocation sizes fo=
-r
-> > every allocation in the codebase. With that information, if users are
-> > interested in more detailed context for a specific allocation, they can
-> > enable in-depth context tracking, which includes capturing the pid, tgi=
-d,
-> > task name, allocation size, timestamp and call stack for every allocati=
-on
-> > at the specified code location.
+> On Mon 01-05-23 09:54:44, Suren Baghdasaryan wrote:
 > [...]
-> > Implementation utilizes a more generic concept of code tagging, introdu=
-ced
-> > as part of this patchset. Code tag is a structure identifying a specifi=
-c
-> > location in the source code which is generated at compile time and can =
-be
-> > embedded in an application-specific structure. A number of applications
-> > for code tagging have been presented in the original RFC [1].
-> > Code tagging uses the old trick of "define a special elf section for
-> > objects of a given type so that we can iterate over them at runtime" an=
-d
-> > creates a proper library for it.
-> >
-> > To profile memory allocations, we instrument page, slab and percpu
-> > allocators to record total memory allocated in the associated code tag =
-at
-> > every allocation in the codebase. Every time an allocation is performed=
- by
-> > an instrumented allocator, the code tag at that location increments its
-> > counter by allocation size. Every time the memory is freed the counter =
-is
-> > decremented. To decrement the counter upon freeing, allocated object ne=
-eds
-> > a reference to its code tag. Page allocators use page_ext to record thi=
-s
-> > reference while slab allocators use memcg_data (renamed into more gener=
-ic
-> > slabobj_ext) of the slab page.
-> [...]
-> > [1] https://lore.kernel.org/all/20220830214919.53220-1-surenb@google.co=
-m/
-> [...]
-> >  70 files changed, 2765 insertions(+), 554 deletions(-)
+> > +static inline void add_ctx(struct codetag_ctx *ctx,
+> > +                        struct codetag_with_ctx *ctc)
+> > +{
+> > +     kref_init(&ctx->refcount);
+> > +     spin_lock(&ctc->ctx_lock);
+> > +     ctx->flags =3D CTC_FLAG_CTX_PTR;
+> > +     ctx->ctc =3D ctc;
+> > +     list_add_tail(&ctx->node, &ctc->ctx_head);
+> > +     spin_unlock(&ctc->ctx_lock);
 >
-> Sorry for cutting the cover considerably but I believe I have quoted the
-> most important/interesting parts here. The approach is not fundamentally
-> different from the previous version [1] and there was a significant
-> discussion around this approach. The cover letter doesn't summarize nor
-> deal with concerns expressed previous AFAICS. So let me bring those up
-> back.
+> AFAIU every single tracked allocation will get its own codetag_ctx.
+> There is no aggregation per allocation site or anything else. This looks
+> like a scalability and a memory overhead red flag to me.
 
-Thanks for summarizing!
+True. The allocations here would not be limited. We could introduce a
+global limit to the amount of memory that we can use to store contexts
+and maybe reuse the oldest entry (in LRU fashion) when we hit that
+limit?
 
-> At least those I find the most important:
-> - This is a big change and it adds a significant maintenance burden
->   because each allocation entry point needs to be handled specifically.
->   The cost will grow with the intended coverage especially there when
->   allocation is hidden in a library code.
+>
+> > +}
+> > +
+> > +static inline void rem_ctx(struct codetag_ctx *ctx,
+> > +                        void (*free_ctx)(struct kref *refcount))
+> > +{
+> > +     struct codetag_with_ctx *ctc =3D ctx->ctc;
+> > +
+> > +     spin_lock(&ctc->ctx_lock);
+>
+> This could deadlock when allocator is called from the IRQ context.
 
-Do you mean with more allocations in the codebase more codetags will
-be generated? Is that the concern? Or maybe as you commented in
-another patch that context capturing feature does not limit how many
-stacks will be captured?
+I see. spin_lock_irqsave() then?
 
-> - It has been brought up that this is duplicating functionality already
->   available via existing tracing infrastructure. You should make it very
->   clear why that is not suitable for the job
-
-I experimented with using tracing with _RET_IP_ to implement this
-accounting. The major issue is the _RET_IP_ to codetag lookup runtime
-overhead which is orders of magnitude higher than proposed code
-tagging approach. With code tagging proposal, that link is resolved at
-compile time. Since we want this mechanism deployed in production, we
-want to keep the overhead to the absolute minimum.
-You asked me before how much overhead would be tolerable and the
-answer will always be "as small as possible". This is especially true
-for slab allocators which are ridiculously fast and regressing them
-would be very noticable (due to the frequent use).
-
-There is another issue, which I think can be solved in a smart way but
-will either affect performance or would require more memory. With the
-tracing approach we don't know beforehand how many individual
-allocation sites exist, so we have to allocate code tags (or similar
-structures for counting) at runtime vs compile time. We can be smart
-about it and allocate in batches or even preallocate more than we need
-beforehand but, as I said, it will require some kind of compromise.
-
-I understand that code tagging creates additional maintenance burdens
-but I hope it also produces enough benefits that people will want
-this. The cost is also hopefully amortized when additional
-applications like the ones we presented in RFC [1] are built using the
-same framework.
-
-> - We already have page_owner infrastructure that provides allocation
->   tracking data. Why it cannot be used/extended?
-
-1. The overhead.
-2. Covers only page allocators.
-
-I didn't think about extending the page_owner approach to slab
-allocators but I suspect it would not be trivial. I don't see
-attaching an owner to every slab object to be a scalable solution. The
-overhead would again be of concern here.
-
-I should point out that there was one important technical concern
-about lack of a kill switch for this feature, which was an issue for
-distributions that can't disable the CONFIG flag. In this series we
-addressed that concern.
-
-[1] https://lore.kernel.org/all/20220830214919.53220-1-surenb@google.com/
-
-Thanks,
+Thanks for the feedback!
 Suren.
 
 >
-> Thanks!
+> > +     /* ctx might have been removed while we were using it */
+> > +     if (!list_empty(&ctx->node))
+> > +             list_del_init(&ctx->node);
+> > +     spin_unlock(&ctc->ctx_lock);
+> > +     kref_put(&ctx->refcount, free_ctx);
 > --
 > Michal Hocko
 > SUSE Labs
