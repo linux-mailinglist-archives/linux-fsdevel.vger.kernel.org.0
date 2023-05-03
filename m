@@ -2,60 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EE5F6F5D87
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:07:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD766F5D8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:08:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbjECSHd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 14:07:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50662 "EHLO
+        id S229768AbjECSIP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 14:08:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbjECSHb (ORCPT
+        with ESMTP id S229711AbjECSIO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 14:07:31 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D496640C6
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 11:07:28 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id af79cd13be357-74e13e46cb9so248472485a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 11:07:28 -0700 (PDT)
+        Wed, 3 May 2023 14:08:14 -0400
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D34991FDB
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 11:07:55 -0700 (PDT)
+Received: by mail-yb1-xb2a.google.com with SMTP id 3f1490d57ef6-b9e27684b53so3221624276.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 11:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20221208.gappssmtp.com; s=20221208; t=1683137247; x=1685729247;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2w9A9pnL0O0lFcU+PAMU7GlOP92xLISlqVzvjl6lgs=;
-        b=PO1zbleTRcn7/zJUq5fpzWyIVOtx3gGn49YYpfEl2F4FWxhiJ5fgQAqy5Gv8Rl7t4b
-         4T1zNQ9CTD0v6Fcr+COWEcCatJ8vzRlvWG8SkcACjHLxntxzZs/gG82CwJJWHpWUEONd
-         cGLPZ7cNpnCc/t8QVWPqgWnDicnuHXilHjvFQDv/HFMyExCqGPXkMsAxP0THwRZzjpwt
-         tJTBaDGCLYadHAPw6twVE7Wlb44jFKBpznb67ElZ6MS4BbXOLmkcX6xIuqSjfiyuXQLI
-         RIkz3zaf2yZ3/uiFHSg4JYLFzIuSo/Bm5ju3koRWEJWCC+FYZXCAKhsuD1K2JclzBVmN
-         XWuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683137247; x=1685729247;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20221208; t=1683137275; x=1685729275;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M2w9A9pnL0O0lFcU+PAMU7GlOP92xLISlqVzvjl6lgs=;
-        b=XVgLN2RBRPczC7HcmuV3GCe699LV/Ok3VnLKJEAjHJnFdtDwcS2xZ9rfhKPwBjFAe5
-         I/V4jjZlVB59bulmyXTdH1rz0N3r3DXQpzzwRUhU2viHnDW5ES9cfTbUMGFJSUfi9g8m
-         yq+DRVn525lPZaro8PJeQ2t6irhEtJQ3+Q6PAAnKOvwyFr19RAMJrJ12Wm4oEaRf8J3U
-         oUQcITa2iZXNDYV3V2i8pg4V/ZeemZGhVcpYsm9TJPP6bJ83VU/M9ZdgOv9lWqlj2F5w
-         vrl91DIZ8S54ft4PMm40QmMynRwYXvmmKBy/5AKoyj1c7h2klwryGeUJwqHoH3MeNM6c
-         vGTg==
-X-Gm-Message-State: AC+VfDwFEYNVSl9qofGFT5qLRuYTK24cUYifuDLQ0vIiKCi1AS992tnA
-        A1FtWAXtYqpLKfqv6017QJ/cyw==
-X-Google-Smtp-Source: ACHHUZ4vn0FuCMnCG+kySd2u32Zv4GyyAo20GhKuXAT2/CW7e9UZn2KKViRjxDmYGZnFqwGpJOgsdA==
-X-Received: by 2002:a05:6214:20c1:b0:619:4232:aa87 with SMTP id 1-20020a05621420c100b006194232aa87mr11224719qve.24.1683137247516;
-        Wed, 03 May 2023 11:07:27 -0700 (PDT)
-Received: from localhost (2603-7000-0c01-2716-8f57-5681-ccd3-4a2e.res6.spectrum.com. [2603:7000:c01:2716:8f57:5681:ccd3:4a2e])
-        by smtp.gmail.com with ESMTPSA id a9-20020a0cca89000000b0061b59bcc3edsm1473657qvk.44.2023.05.03.11.07.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 May 2023 11:07:27 -0700 (PDT)
-Date:   Wed, 3 May 2023 14:07:26 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        Michal Hocko <mhocko@suse.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, vbabka@suse.cz,
+        bh=lYpn5fAZ9k+tc7itapEv1evmei0G939nEHfVs4IvTnU=;
+        b=CiPRLrpSjqW+fOh4MZzhage7DRZ0A4p0DiZA5jkP6SoRdijKTb12IH8HPYoav3LVEG
+         UxuWUsJ8XzpNsPDm/IXDURhwANLIszVcD7BHVZWpxKR8Cw0scnMG0+3659JdLK1Cnzbt
+         gTx327NEx/KsnLGXWD2bm6c3nHMqUhK1ehp/AZAyLh+gV85XesNeu4FfbGmllcRcS3lj
+         8b1rxia0KH86OKF4Rdr+PF90kA/tWE7FmwRSBvJAJbjNt9nt9Qc9maZ0a63/0iDWxZfb
+         BP/YCRNb1VC6qYWZToRLJOzAfLm4sCL3eqAVGEOxe8HA1U7xEqqPmLc8gyCiBCpRmk5A
+         q7WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683137275; x=1685729275;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lYpn5fAZ9k+tc7itapEv1evmei0G939nEHfVs4IvTnU=;
+        b=I0pKS89/CBKLwG7wZ0BOR5dbA4qhSiyaYNfYJeei0QDoAfGXW9baQ3wJhsxGXSa2WR
+         i+qoIJA4wTCvzA8SP6Zhm+w07udePkIVkmiCn5+RCfp5zDNT55JYxE3iga4XndR533Df
+         jMc5O/4Z3ZrQZTWahfwr5A0SAdZ2Ngwu98GGcTi0LibXdrn/dFQ0QUrFDCmRD9twGqVq
+         yXl36M6zsMGtE4/Fh6O5QWoWwf+pdbTFmgnfaK1KCVyRsseLxr7Wetsx8GGWogOBF0on
+         sPCQoMEf1xI2jI93cXsEA+ZaTwC1SyMdMFi7aEwtTnyi3USyGZaroIiLGmzAmvFixPYs
+         GI4Q==
+X-Gm-Message-State: AC+VfDwCv4UddSW/jzvz8WB3O0VADBUx4vGYER2MdtJ6e3r9TYvXcEOr
+        A7Fx1E91rImHTjSUrWB2ajDeEwQGOAwAkpf/iAQbNA==
+X-Google-Smtp-Source: ACHHUZ6ziLHqDMkaJeUajgwvpj2QvaNH2BhqMrvwwDmHlXu07PkkROglIzhY18q19oBr8s5xwayGmOGDhyIKmdbKiGw=
+X-Received: by 2002:a25:160a:0:b0:b9e:2697:9d96 with SMTP id
+ 10-20020a25160a000000b00b9e26979d96mr9339675ybw.3.1683137274526; Wed, 03 May
+ 2023 11:07:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230501165450.15352-1-surenb@google.com> <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+ <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
+ <20230503122839.0d9934c5@gandalf.local.home> <CAJuCfpFYq7CZS4y2ZiF+AJHRKwnyhmZCk_uuTwFse26DxGh-qQ@mail.gmail.com>
+ <20230503140337.0f7127b2@gandalf.local.home>
+In-Reply-To: <20230503140337.0f7127b2@gandalf.local.home>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 3 May 2023 11:07:43 -0700
+Message-ID: <CAJuCfpFZsPibxrj163ypZQFOMmRTQe+=qJbZ8=o2kd1g0p=QQw@mail.gmail.com>
+Subject: Re: [PATCH 00/40] Memory allocation profiling
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+        kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
         roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
         willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
         void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
@@ -64,118 +68,69 @@ Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
         dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
         david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
         masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
+        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+        paulmck@kernel.org, pasha.tatashin@soleen.com,
+        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
         ndesaulniers@google.com, gregkh@linuxfoundation.org,
         ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+        dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com,
+        vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+        iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+        elver@google.com, dvyukov@google.com, shakeelb@google.com,
+        songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+        minchan@google.com, kaleshsingh@google.com,
         kernel-team@android.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-modules@vger.kernel.org,
         kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <20230503180726.GA196054@cmpxchg.org>
-References: <20230501165450.15352-1-surenb@google.com>
- <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
- <ZFIOfb6/jHwLqg6M@moria.home.lan>
- <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
- <ZFIVtB8JyKk0ddA5@moria.home.lan>
- <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 03, 2023 at 06:35:49AM -1000, Tejun Heo wrote:
-> Hello, Kent.
-> 
-> On Wed, May 03, 2023 at 04:05:08AM -0400, Kent Overstreet wrote:
-> > No, we're still waiting on the tracing people to _demonstrate_, not
-> > claim, that this is at all possible in a comparable way with tracing. 
-> 
-> So, we (meta) happen to do stuff like this all the time in the fleet to hunt
-> down tricky persistent problems like memory leaks, ref leaks, what-have-you.
-> In recent kernels, with kprobe and BPF, our ability to debug these sorts of
-> problems has improved a great deal. Below, I'm attaching a bcc script I used
-> to hunt down, IIRC, a double vfree. It's not exactly for a leak but leaks
-> can follow the same pattern.
-> 
-> There are of course some pros and cons to this approach:
-> 
-> Pros:
-> 
-> * The framework doesn't really have any runtime overhead, so we can have it
->   deployed in the entire fleet and debug wherever problem is.
-> 
-> * It's fully flexible and programmable which enables non-trivial filtering
->   and summarizing to be done inside kernel w/ BPF as necessary, which is
->   pretty handy for tracking high frequency events.
-> 
-> * BPF is pretty performant. Dedicated built-in kernel code can do better of
->   course but BPF's jit compiled code & its data structures are fast enough.
->   I don't remember any time this was a problem.
-> 
-> Cons:
-> 
-> * BPF has some learning curve. Also the fact that what it provides is a wide
->   open field rather than something scoped out for a specific problem can
->   make it seem a bit daunting at the beginning.
-> 
-> * Because tracking starts when the script starts running, it doesn't know
->   anything which has happened upto that point, so you gotta pay attention to
->   handling e.g. handling frees which don't match allocs. It's kinda annoying
->   but not a huge problem usually. There are ways to build in BPF progs into
->   the kernel and load it early but I haven't experiemnted with it yet
->   personally.
+On Wed, May 3, 2023 at 11:03=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Wed, 3 May 2023 10:40:42 -0700
+> Suren Baghdasaryan <surenb@google.com> wrote:
+>
+> > > This approach is actually quite common, especially since tagging ever=
+y
+> > > instance is usually overkill, as if you trace function calls in a run=
+ning
+> > > kernel, you will find that only a small percentage of the kernel ever
+> > > executes. It's possible that you will be allocating a lot of tags tha=
+t will
+> > > never be used. If run time allocation is possible, that is usually th=
+e
+> > > better approach.
+> >
+> > True but the memory overhead should not be prohibitive here. As a
+> > ballpark number, on my machine I see there are 4838 individual
+> > allocation locations and each codetag structure is 32 bytes, so that's
+> > 152KB.
+>
+> If it's not that big, then allocating at runtime should not be an issue
+> either. If runtime allocation can make it less intrusive to the code, tha=
+t
+> would be more rationale to do so.
 
-Yeah, early loading is definitely important, especially before module
-loading etc.
+As I noted, this issue is minor since we can be smart about how we
+allocate these entries. The main issue is the performance overhead.
+The kmalloc path is extremely fast and very hot. Even adding a per-cpu
+increment in our patchset has a 35% overhead. Adding an additional
+lookup here would prevent us from having it enabled all the time in
+production.
 
-One common usecase is that we see a machine in the wild with a high
-amount of kernel memory disappearing somewhere that isn't voluntarily
-reported in vmstat/meminfo. Reproducing it isn't always
-practical. Something that records early and always (with acceptable
-runtime overhead) would be the holy grail.
-
-Matching allocs to frees is doable using the pfn as the key for pages,
-and virtual addresses for slab objects.
-
-The biggest issue I had when I tried with bpf was losing updates to
-the map. IIRC there is some trylocking going on to avoid deadlocks
-from nested contexts (alloc interrupted, interrupt frees). It doesn't
-sound like an unsolvable problem, though.
-
-Another minor thing was the stack trace map exploding on a basically
-infinite number of unique interrupt stacks. This could probably also
-be solved by extending the trace extraction API to cut the frames off
-at the context switch boundary.
-
-Taking a step back though, given the multitude of allocation sites in
-the kernel, it's a bit odd that the only accounting we do is the tiny
-fraction of voluntary vmstat/meminfo reporting. We try to cover the
-biggest consumers with this of course, but it's always going to be
-incomplete and is maintenance overhead too. There are on average
-several gigabytes in unknown memory (total - known vmstats) on our
-machines. It's difficult to detect regressions easily. And it's per
-definition the unexpected cornercases that are the trickiest to track
-down. So it might be doable with BPF, but it does feel like the kernel
-should do a better job of tracking out of the box and without
-requiring too much plumbing and somewhat fragile kernel allocation API
-tracking and probing from userspace.
+>
+> -- Steve
