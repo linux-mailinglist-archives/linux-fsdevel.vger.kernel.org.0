@@ -2,241 +2,412 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C93266F5906
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 15:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 243D86F595E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 15:53:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbjECNZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 09:25:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46060 "EHLO
+        id S229995AbjECNxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 09:53:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbjECNZC (ORCPT
+        with ESMTP id S229803AbjECNxy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 09:25:02 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC82E5264;
-        Wed,  3 May 2023 06:25:00 -0700 (PDT)
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 343DLiYp026377;
-        Wed, 3 May 2023 13:24:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=t7Z4GyVofl8KH3R21cSalBDAwo0cz6K18KiapRYFmk0=;
- b=YTahdXHZ9DCOaPJBHL5p3suGYwh5W+ixnWjdslkKzhwc5k+XtxGshINN/kF3W7r4WWIX
- 6ZgsmHsfdrefkhAnJ4negVLnhkiGNC6502w7rL5x2UPgVPtYTvpKa+AufaacO+PA/E/y
- Uy8bIuQSm8rD0Xun0yNYesGuH0Dh9GqkNE1hx7+5CIe7FFbScORvseZv/ZyZUuf8Qw3k
- /lmqU9KgkczXTQHUno7tgFoNnQbr7YlUDDINMwHfOVQZpI6z7AuP1DC7UDQkFA6xuai1
- EvFrwtFTbR0z67ksMoSjyEwoSGgBkuL3sZxNaKFmgmbxPyz8+w86frDkCNxhhc6Snt2h jQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qbr9h8nwe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 May 2023 13:24:25 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 343DBqHf024587;
-        Wed, 3 May 2023 13:24:23 GMT
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qbr9h8nug-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 May 2023 13:24:23 +0000
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 343CUqk5026692;
-        Wed, 3 May 2023 13:24:20 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([9.208.129.116])
-        by ppma01dal.us.ibm.com (PPS) with ESMTPS id 3q8tv99qcw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 May 2023 13:24:20 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-        by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 343DOG0i16581142
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 3 May 2023 13:24:16 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B23CF58055;
-        Wed,  3 May 2023 13:24:16 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3AEDA5804E;
-        Wed,  3 May 2023 13:24:09 +0000 (GMT)
-Received: from [9.160.35.135] (unknown [9.160.35.135])
-        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  3 May 2023 13:24:09 +0000 (GMT)
-Message-ID: <0cb48a73-db45-1207-2150-821086eab5df@linux.ibm.com>
-Date:   Wed, 3 May 2023 09:24:08 -0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v8 0/3] mm/gup: disallow GUP writing to file-backed
- mappings by default
-Content-Language: en-US
-To:     David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Wed, 3 May 2023 09:53:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99CA459F7
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 06:53:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683121985;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IXVN9njL58i0gdsYraIjStXx8q1dlH84VTerQaHWg8E=;
+        b=SUc55hwUdaHwyMfFUF9FMEBIrie/MHL+7CY8GnefM+OGO7r6GXd7uRVjgRmyT0fK5t+Mpj
+        kAMnyrBKsGsQaSEikyUacnYX+cFljycSbQaODTFNalC/FNRjG2SzkjEZIX9bHqhqn8EOn+
+        9UekJQc+bzUH4EDvYpxediMsmdPklmc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-569-b2ch48CAOYKYY3aTTnc_8Q-1; Wed, 03 May 2023 09:53:00 -0400
+X-MC-Unique: b2ch48CAOYKYY3aTTnc_8Q-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F60E103B7EA;
+        Wed,  3 May 2023 13:53:00 +0000 (UTC)
+Received: from tpad.localdomain (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8049F1410DD7;
+        Wed,  3 May 2023 13:52:59 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+        id 8011C426F3D60; Wed,  3 May 2023 10:52:36 -0300 (-03)
+Date:   Wed, 3 May 2023 10:52:36 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-References: <cover.1683067198.git.lstoakes@gmail.com>
- <20d078c5-4ee6-18dc-d3a5-d76b6a68f64e@linux.ibm.com>
- <1b34e9a4-83c0-2f44-1457-dd8800b9287a@redhat.com>
- <80e3b8ee-c16d-062f-f483-06e21282e59c@linux.ibm.com>
- <976fcec0-d132-3a27-bbd2-01b21571bca2@redhat.com>
-From:   Matthew Rosato <mjrosato@linux.ibm.com>
-In-Reply-To: <976fcec0-d132-3a27-bbd2-01b21571bca2@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Leonardo Bras <leobras@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
+Subject: Re: [PATCH v4] fs/buffer.c: update per-CPU bh_lru cache via RCU
+Message-ID: <ZFJnJFxzfshWJQEz@tpad>
+References: <ZCXipBvmhAC1+eRi@tpad>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bBGbjL1BT7NUlN6uohu087clNiuGmNkf
-X-Proofpoint-GUID: Dn-rOS0FmD-1OwpBDUptu9MfNXcH6pk3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-03_08,2023-05-03_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=814 bulkscore=0
- adultscore=0 phishscore=0 spamscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 impostorscore=0 mlxscore=0 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2305030110
-X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <ZCXipBvmhAC1+eRi@tpad>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/3/23 8:53 AM, David Hildenbrand wrote:
-> On 03.05.23 13:25, Matthew Rosato wrote:
->> On 5/3/23 3:08 AM, David Hildenbrand wrote:
->>> On 03.05.23 02:31, Matthew Rosato wrote:
->>>> On 5/2/23 6:51 PM, Lorenzo Stoakes wrote:
->>>>> Writing to file-backed mappings which require folio dirty tracking using
->>>>> GUP is a fundamentally broken operation, as kernel write access to GUP
->>>>> mappings do not adhere to the semantics expected by a file system.
->>>>>
->>>>> A GUP caller uses the direct mapping to access the folio, which does not
->>>>> cause write notify to trigger, nor does it enforce that the caller marks
->>>>> the folio dirty.
->>>>>
->>>>> The problem arises when, after an initial write to the folio, writeback
->>>>> results in the folio being cleaned and then the caller, via the GUP
->>>>> interface, writes to the folio again.
->>>>>
->>>>> As a result of the use of this secondary, direct, mapping to the folio no
->>>>> write notify will occur, and if the caller does mark the folio dirty, this
->>>>> will be done so unexpectedly.
->>>>>
->>>>> For example, consider the following scenario:-
->>>>>
->>>>> 1. A folio is written to via GUP which write-faults the memory, notifying
->>>>>      the file system and dirtying the folio.
->>>>> 2. Later, writeback is triggered, resulting in the folio being cleaned and
->>>>>      the PTE being marked read-only.
->>>>> 3. The GUP caller writes to the folio, as it is mapped read/write via the
->>>>>      direct mapping.
->>>>> 4. The GUP caller, now done with the page, unpins it and sets it dirty
->>>>>      (though it does not have to).
->>>>>
->>>>> This change updates both the PUP FOLL_LONGTERM slow and fast APIs. As
->>>>> pin_user_pages_fast_only() does not exist, we can rely on a slightly
->>>>> imperfect whitelisting in the PUP-fast case and fall back to the slow case
->>>>> should this fail.
->>>>>
->>>>> v8:
->>>>> - Fixed typo writeable -> writable.
->>>>> - Fixed bug in writable_file_mapping_allowed() - must check combination of
->>>>>     FOLL_PIN AND FOLL_LONGTERM not either/or.
->>>>> - Updated vma_needs_dirty_tracking() to include write/shared to account for
->>>>>     MAP_PRIVATE mappings.
->>>>> - Move to open-coding the checks in folio_pin_allowed() so we can
->>>>>     READ_ONCE() the mapping and avoid unexpected compiler loads. Rename to
->>>>>     account for fact we now check flags here.
->>>>> - Disallow mapping == NULL or mapping & PAGE_MAPPING_FLAGS other than
->>>>>     anon. Defer to slow path.
->>>>> - Perform GUP-fast check _after_ the lowest page table level is confirmed to
->>>>>     be stable.
->>>>> - Updated comments and commit message for final patch as per Jason's
->>>>>     suggestions.
->>>>
->>>> Tested again on s390 using QEMU with a memory backend file (on ext4) and vfio-pci -- This time both vfio_pin_pages_remote (which will call pin_user_pages_remote(flags | FOLL_LONGTERM)) and the pin_user_pages_fast(FOLL_WRITE | FOLL_LONGTERM) in kvm_s390_pci_aif_enable are being allowed (e.g. returning positive pin count)
->>>
->>> At least it's consistent now ;) And it might be working as expected ...
->>>
->>> In v7:
->>> * pin_user_pages_fast() succeeded
->>> * vfio_pin_pages_remote() failed
->>>
->>> But also in v7:
->>> * GUP-fast allows pinning (anonymous) pages in MAP_PRIVATE file
->>>    mappings
->>> * Ordinary GUP allows pinning pages in MAP_PRIVATE file mappings
->>>
->>> In v8:
->>> * pin_user_pages_fast() succeeds
->>> * vfio_pin_pages_remote() succeeds
->>>
->>> But also in v8:
->>> * GUP-fast allows pinning (anonymous) pages in MAP_PRIVATE file
->>>    mappings
->>> * Ordinary GUP allows pinning pages in MAP_PRIVATE file mappings
->>>
->>>
->>> I have to speculate, but ... could it be that you are using a private mapping?
->>>
->>> In QEMU, unfortunately, the default for memory-backend-file is "share=off" (private) ... for memory-backend-memfd it is "share=on" (shared). The default is stupid ...
->>>
->>> If you invoke QEMU manually, can you specify "share=on" for the memory-backend-file? I thought libvirt would always default to "share=on" for file mappings (everything else doesn't make much sense) ... but you might have to specify
->>>      <access mode="shared"/>
->>> in addition to
->>>      <source type="file"/>
->>>
->>
->> Ah, there we go.  Yes, I was using the default of share=off.  When I instead specify share=on, now the pins will fail in both cases.
->>
-> 
-> Out of curiosity, how does that manifest?
-> 
-> I assume the VM is successfully created and as Linux tries initializing and using the device, we get a bunch of errors inside the VM, correct?
-> 
 
-Yes, that's correct.
+Friendly ping ?
 
-Which error comes first (an attempt at mapping something via type1 iommu or an attempt to register AEN) depends on the device type and the order of operations of the associated driver.  But in either case, you're going to see guest errors associated with that action.  mlx5 and ism give up rather quickly and just fail their probe. nvme in the guest is persistent and its actions keep re-attempting to setup AEN by issuing the associated instruction; but the associated blockdev will never show up. 
+On Thu, Mar 30, 2023 at 04:27:32PM -0300, Marcelo Tosatti wrote:
+> 
+> For certain types of applications (for example PLC software or
+> RAN processing), upon occurrence of an event, it is necessary to
+> complete a certain task in a maximum amount of time (deadline).
+> 
+> One way to express this requirement is with a pair of numbers, 
+> deadline time and execution time, where:
+> 
+> 	* deadline time: length of time between event and deadline.
+> 	* execution time: length of time it takes for processing of event
+> 			  to occur on a particular hardware platform
+> 			  (uninterrupted).
+> 
+> The particular values depend on use-case. For the case
+> where the realtime application executes in a virtualized
+> guest, an IPI which must be serviced in the host will cause 
+> the following sequence of events:
+> 
+> 	1) VM-exit
+> 	2) execution of IPI (and function call)
+> 	3) VM-entry
+> 
+> Which causes an excess of 50us latency as observed by cyclictest
+> (this violates the latency requirement of vRAN application with 1ms TTI,
+> for example).
+> 
+> invalidate_bh_lrus calls an IPI on each CPU that has non empty
+> per-CPU cache:
+> 
+> 	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
+> 
+> To avoid the IPI, free the per-CPU caches remotely via RCU.
+> Two bh_lrus structures for each CPU are allocated: one is being
+> used (assigned to per-CPU bh_lru pointer), and the other is
+> being freed (or idle).
+> 
+> An alternative solution would be to protect the fast path 
+> (__find_get_block) with a per-CPU spinlock. Then grab the 
+> lock from invalidate_bh_lru, when evaluating whether a given
+> CPUs buffer_head cache should be invalidated.
+> This solution would slow down the fast path.
+> 
+> Numbers (16 vCPU guest) for the following test:
+> 
+> for i in `seq 0 50`;
+> 	mount -o loop alpine-standard-3.17.1-x86_64.iso /mnt/loop
+> 	umount /mnt/loop
+> done
+> 
+> Where the time being measured is time between invalidate_bh_lrus 
+> function call start and return.
+> 
+> Unpatched: average is 2us
+> 	     ┌                                        ┐
+> [ 0.0,  2.0) ┤████████████████████████▊ 53
+> [ 2.0,  4.0) ┤████████████████████████████████████  77
+> [ 4.0,  6.0) ┤████████▍ 18
+> [ 6.0,  8.0) ┤▌ 1
+> [ 8.0, 10.0) ┤  0
+> [10.0, 12.0) ┤  0
+> [12.0, 14.0) ┤▌ 1
+> [14.0, 16.0) ┤  0
+> [16.0, 18.0) ┤▌ 1
+> 	     └                                        ┘
+> 			   Frequency
+> 
+> Patched: average is 16us
+> 
+> 	     ┌                                        ┐
+> [ 0.0, 10.0) ┤██████████████████▍ 35
+> [10.0, 20.0) ┤████████████████████████████████████  69
+> [20.0, 30.0) ┤██████████████████▍ 35
+> [30.0, 40.0) ┤████▎ 8
+> [40.0, 50.0) ┤█▌ 3
+> [50.0, 60.0) ┤█▏ 2
+> 	     └                                        ┘
+> 			   Frequency
+> 
+> The fact that invalidate_bh_lru() is now serialized should not be 
+> an issue, since invalidate_bdev does:
+> 
+> /* Invalidate clean unused buffers and pagecache. */
+> void invalidate_bdev(struct block_device *bdev)
+> {
+> 	struct address_space *mapping = bdev->bd_inode->i_mapping;
+> 
+> 	if (mapping->nrpages) {
+> 		invalidate_bh_lrus();
+> 		lru_add_drain_all();    /* make sure all lru add caches are flushed */
+> 		invalidate_mapping_pages(mapping, 0, -1);
+> 	}
+> }
+> 
+> Where lru_add_drain_all() is serialized by a single mutex lock
+> (and there have been no reported use cases where this
+> serialization is an issue).
+> 
+> Regarding scalability, considering the results above where 
+> it takes 16us to execute invalidate_bh_lrus on 16 CPUs
+> (where 8us are taken by synchronize_rcu_expedited),
+> we can assume 500ns per CPU. For a system with 
+> 1024 CPUs, we can infer 8us + 1024*500ns ~= 500us
+> (which seems acceptable).
+> 
+> Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+> 
+> ---
+> 
+> v4: improved changelog, no code change	(Dave Chinner)
+> v3: fix CPU hotplug
+> v2: fix sparse warnings (kernel test robot)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 9e1e2add541e..e9b4d579eff0 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -1246,7 +1246,21 @@ struct bh_lru {
+>  	struct buffer_head *bhs[BH_LRU_SIZE];
+>  };
+>  
+> -static DEFINE_PER_CPU(struct bh_lru, bh_lrus) = {{ NULL }};
+> +
+> +/*
+> + * Allocate two bh_lrus structures for each CPU. bh_lru points to the
+> + * one that is currently in use, and the update path does
+> + * (consider cpu->bh_lru = bh_lrus[0]).
+> + *
+> + * cpu->bh_lrup = bh_lrus[1]
+> + * synchronize_rcu()
+> + * free bh's in bh_lrus[0]
+> + */
+> +static unsigned int bh_lru_idx;
+> +static DEFINE_PER_CPU(struct bh_lru, bh_lrus[2]) = {{{ NULL }}, {{NULL}}};
+> +static DEFINE_PER_CPU(struct bh_lru __rcu *, bh_lrup);
+> +
+> +static DEFINE_MUTEX(bh_lru_invalidate_mutex);
+>  
+>  #ifdef CONFIG_SMP
+>  #define bh_lru_lock()	local_irq_disable()
+> @@ -1288,16 +1302,19 @@ static void bh_lru_install(struct buffer_head *bh)
+>  		return;
+>  	}
+>  
+> -	b = this_cpu_ptr(&bh_lrus);
+> +	rcu_read_lock();
+> +	b = rcu_dereference(per_cpu(bh_lrup, smp_processor_id()));
+>  	for (i = 0; i < BH_LRU_SIZE; i++) {
+>  		swap(evictee, b->bhs[i]);
+>  		if (evictee == bh) {
+> +			rcu_read_unlock();
+>  			bh_lru_unlock();
+>  			return;
+>  		}
+>  	}
+>  
+>  	get_bh(bh);
+> +	rcu_read_unlock();
+>  	bh_lru_unlock();
+>  	brelse(evictee);
+>  }
+> @@ -1309,28 +1326,32 @@ static struct buffer_head *
+>  lookup_bh_lru(struct block_device *bdev, sector_t block, unsigned size)
+>  {
+>  	struct buffer_head *ret = NULL;
+> +	struct bh_lru *lru;
+>  	unsigned int i;
+>  
+>  	check_irqs_on();
+>  	bh_lru_lock();
+> +	rcu_read_lock();
+> +
+> +	lru = rcu_dereference(per_cpu(bh_lrup, smp_processor_id()));
+>  	for (i = 0; i < BH_LRU_SIZE; i++) {
+> -		struct buffer_head *bh = __this_cpu_read(bh_lrus.bhs[i]);
+> +		struct buffer_head *bh = lru->bhs[i];
+>  
+>  		if (bh && bh->b_blocknr == block && bh->b_bdev == bdev &&
+>  		    bh->b_size == size) {
+>  			if (i) {
+>  				while (i) {
+> -					__this_cpu_write(bh_lrus.bhs[i],
+> -						__this_cpu_read(bh_lrus.bhs[i - 1]));
+> +					lru->bhs[i] = lru->bhs[i - 1];
+>  					i--;
+>  				}
+> -				__this_cpu_write(bh_lrus.bhs[0], bh);
+> +				lru->bhs[0] = bh;
+>  			}
+>  			get_bh(bh);
+>  			ret = bh;
+>  			break;
+>  		}
+>  	}
+> +	rcu_read_unlock();
+>  	bh_lru_unlock();
+>  	return ret;
+>  }
+> @@ -1424,35 +1445,54 @@ static void __invalidate_bh_lrus(struct bh_lru *b)
+>  		b->bhs[i] = NULL;
+>  	}
+>  }
+> -/*
+> - * invalidate_bh_lrus() is called rarely - but not only at unmount.
+> - * This doesn't race because it runs in each cpu either in irq
+> - * or with preempt disabled.
+> - */
+> -static void invalidate_bh_lru(void *arg)
+> -{
+> -	struct bh_lru *b = &get_cpu_var(bh_lrus);
+> -
+> -	__invalidate_bh_lrus(b);
+> -	put_cpu_var(bh_lrus);
+> -}
+>  
+>  bool has_bh_in_lru(int cpu, void *dummy)
+>  {
+> -	struct bh_lru *b = per_cpu_ptr(&bh_lrus, cpu);
+> +	struct bh_lru *b;
+>  	int i;
+> -	
+> +
+> +	rcu_read_lock();
+> +	b = rcu_dereference(per_cpu(bh_lrup, cpu));
+>  	for (i = 0; i < BH_LRU_SIZE; i++) {
+> -		if (b->bhs[i])
+> +		if (b->bhs[i]) {
+> +			rcu_read_unlock();
+>  			return true;
+> +		}
+>  	}
+>  
+> +	rcu_read_unlock();
+>  	return false;
+>  }
+>  
+> +/*
+> + * invalidate_bh_lrus() is called rarely - but not only at unmount.
+> + */
+>  void invalidate_bh_lrus(void)
+>  {
+> -	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
+> +	int cpu, oidx;
+> +
+> +	mutex_lock(&bh_lru_invalidate_mutex);
+> +	cpus_read_lock();
+> +	oidx = bh_lru_idx;
+> +	bh_lru_idx++;
+> +	if (bh_lru_idx >= 2)
+> +		bh_lru_idx = 0;
+> +
+> +	/* Assign the per-CPU bh_lru pointer */
+> +	for_each_online_cpu(cpu)
+> +		rcu_assign_pointer(per_cpu(bh_lrup, cpu),
+> +				   per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
+> +	synchronize_rcu_expedited();
+> +
+> +	for_each_online_cpu(cpu) {
+> +		struct bh_lru *b = per_cpu_ptr(&bh_lrus[oidx], cpu);
+> +
+> +		bh_lru_lock();
+> +		__invalidate_bh_lrus(b);
+> +		bh_lru_unlock();
+> +	}
+> +	cpus_read_unlock();
+> +	mutex_unlock(&bh_lru_invalidate_mutex);
+>  }
+>  EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
+>  
+> @@ -1465,8 +1505,10 @@ void invalidate_bh_lrus_cpu(void)
+>  	struct bh_lru *b;
+>  
+>  	bh_lru_lock();
+> -	b = this_cpu_ptr(&bh_lrus);
+> +	rcu_read_lock();
+> +	b = rcu_dereference(per_cpu(bh_lrup, smp_processor_id()));
+>  	__invalidate_bh_lrus(b);
+> +	rcu_read_unlock();
+>  	bh_lru_unlock();
+>  }
+>  
+> @@ -2968,15 +3010,25 @@ void free_buffer_head(struct buffer_head *bh)
+>  }
+>  EXPORT_SYMBOL(free_buffer_head);
+>  
+> +static int buffer_cpu_online(unsigned int cpu)
+> +{
+> +	rcu_assign_pointer(per_cpu(bh_lrup, cpu),
+> +			   per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
+> +	return 0;
+> +}
+> +
+>  static int buffer_exit_cpu_dead(unsigned int cpu)
+>  {
+>  	int i;
+> -	struct bh_lru *b = &per_cpu(bh_lrus, cpu);
+> +	struct bh_lru *b;
+>  
+> +	rcu_read_lock();
+> +	b = rcu_dereference(per_cpu(bh_lrup, cpu));
+>  	for (i = 0; i < BH_LRU_SIZE; i++) {
+>  		brelse(b->bhs[i]);
+>  		b->bhs[i] = NULL;
+>  	}
+> +	rcu_read_unlock();
+>  	this_cpu_add(bh_accounting.nr, per_cpu(bh_accounting, cpu).nr);
+>  	per_cpu(bh_accounting, cpu).nr = 0;
+>  	return 0;
+> @@ -3069,7 +3121,7 @@ EXPORT_SYMBOL(__bh_read_batch);
+>  void __init buffer_init(void)
+>  {
+>  	unsigned long nrpages;
+> -	int ret;
+> +	int ret, cpu;
+>  
+>  	bh_cachep = kmem_cache_create("buffer_head",
+>  			sizeof(struct buffer_head), 0,
+> @@ -3077,6 +3129,11 @@ void __init buffer_init(void)
+>  				SLAB_MEM_SPREAD),
+>  				NULL);
+>  
+> +	cpus_read_lock();
+> +	for_each_online_cpu(cpu)
+> +		rcu_assign_pointer(per_cpu(bh_lrup, cpu), per_cpu_ptr(&bh_lrus[0], cpu));
+> +	cpus_read_unlock();
+> +
+>  	/*
+>  	 * Limit the bh occupancy to 10% of ZONE_NORMAL
+>  	 */
+> @@ -3085,4 +3142,7 @@ void __init buffer_init(void)
+>  	ret = cpuhp_setup_state_nocalls(CPUHP_FS_BUFF_DEAD, "fs/buffer:dead",
+>  					NULL, buffer_exit_cpu_dead);
+>  	WARN_ON(ret < 0);
+> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "fs/buffer:online",
+> +					NULL, buffer_cpu_online);
+> +	WARN_ON(ret < 0);
+>  }
+> 
+> 
 
