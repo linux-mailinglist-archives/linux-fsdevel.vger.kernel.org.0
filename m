@@ -2,81 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A306F561C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 12:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E73516F563B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 12:31:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229997AbjECK0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 06:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41658 "EHLO
+        id S230075AbjECKbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 06:31:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbjECK0e (ORCPT
+        with ESMTP id S230053AbjECKbf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 06:26:34 -0400
-Received: from bee.tesarici.cz (bee.tesarici.cz [IPv6:2a03:3b40:fe:2d4::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD530E43;
-        Wed,  3 May 2023 03:26:32 -0700 (PDT)
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Wed, 3 May 2023 06:31:35 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [5.9.137.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EF934EC9;
+        Wed,  3 May 2023 03:31:30 -0700 (PDT)
+Received: from zn.tnic (p5de8e8ea.dip0.t-ipconnect.de [93.232.232.234])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bee.tesarici.cz (Postfix) with ESMTPSA id D9EB814F410;
-        Wed,  3 May 2023 12:26:28 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=none dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tesarici.cz; s=mail;
-        t=1683109589; bh=9W2wun4Zj44NWzwdlLkMFEunLnmomS6UpnHu7fqlUvw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RY1nRufpXdiSJQ6rfVk/v4uXA2nZbsCbrGxRIhqVdNwr8SIfDdtDY4wpCe25wFasl
-         w1BqEtqFdb98ncldz5L5BfdQOK+IXjg4m5WZXUipUraWgQ4LLS5Gz4bTdhA7osONxZ
-         brJ4ucZmtLQyFnfvdAZ/2DlN8eiuApZyh0ThEGxdVpqahbsNeXkBtQm8i8/xxb5K96
-         Lr9b6WGCJuYJeJTYx3TLMB66ZuisUQiGZ+/TINACO6wao1Sy5Fcc7O7Q9nQonYabtj
-         9YchQQBbTEKrFokXu+MNG5CEj9cmbPrhJUEj7whSRU/w3oH5u/ir9+J7QPH/q3iyEo
-         YhK1QSLkJNUkg==
-Date:   Wed, 3 May 2023 12:26:27 +0200
-From:   Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
-        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-        paulmck@kernel.org, pasha.tatashin@soleen.com,
-        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <20230503122627.594ac4d9@meshulam.tesarici.cz>
-In-Reply-To: <ZFIv+30UH7+ySCZr@moria.home.lan>
-References: <20230501165450.15352-1-surenb@google.com>
-        <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
-        <ZFIOfb6/jHwLqg6M@moria.home.lan>
-        <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
-        <20230503115051.30b8a97f@meshulam.tesarici.cz>
-        <ZFIv+30UH7+ySCZr@moria.home.lan>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-suse-linux-gnu)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3CF251EC0691;
+        Wed,  3 May 2023 12:31:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1683109889;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Y99VkdVeSo9ELb0eveqnrxLTnOl5aHHav/scgPvIOtM=;
+        b=ouXeturJBz5ifBkVBBhldgieqd8FYUQCI77ZvbbfE9SLgn89VNIIgLYv0fO/Yk86K3AgNy
+        Pxq6jm6FAYD5LkAXSgiatQwdsjHQtG5vWjtHqTSXYwVT3EsaesKguGSma2544s5DCf0Ch9
+        3rjcgLcDMCJ4RjZtdRS316g+z8+zLh0=
+Date:   Wed, 3 May 2023 12:31:28 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     syzbot <syzbot+401145a9a237779feb26@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@suse.de>, stable <stable@vger.kernel.org>,
+        almaz.alexandrovich@paragon-software.com, clm@fb.com,
+        djwong@kernel.org, dsterba@suse.com, hch@infradead.org,
+        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org
+Subject: Re: [syzbot] [xfs?] BUG: unable to handle kernel paging request in
+ clear_user_rep_good
+Message-ID: <20230503103128.GAZFI4AEyPcP4bCemf@fat_crate.local>
+References: <000000000000de34bd05f3c6fe19@google.com>
+ <0000000000001ec6ce05fa9a4bf7@google.com>
+ <CAHk-=whWUZyiFvHpkC35DXo713GKFjqCWwY1uCs3tbMJ6QXeWg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whWUZyiFvHpkC35DXo713GKFjqCWwY1uCs3tbMJ6QXeWg@mail.gmail.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -85,22 +61,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 3 May 2023 05:57:15 -0400
-Kent Overstreet <kent.overstreet@linux.dev> wrote:
+On Mon, May 01, 2023 at 11:49:55AM -0700, Linus Torvalds wrote:
+> The bug goes back to commit 0db7058e8e23 ("x86/clear_user: Make it
+> faster") from about a year ago, which made it into v6.1.
 
-> On Wed, May 03, 2023 at 11:50:51AM +0200, Petr Tesa=C5=99=C3=ADk wrote:
-> > If anyone ever wants to use this code tagging framework for something
-> > else, they will also have to convert relevant functions to macros,
-> > slowly changing the kernel to a minefield where local identifiers,
-> > struct, union and enum tags, field names and labels must avoid name
-> > conflict with a tagged function. For now, I have to remember that
-> > alloc_pages is forbidden, but the list may grow. =20
->=20
-> Also, since you're not actually a kernel contributor yet...
+Gah, sorry about that. :-\
 
-I see, I've been around only since 2007...
+> It only affects old hardware that doesn't have the ERMS capability
+> flag, which *probably* means that it's mostly only triggerable in
+> virtualization (since pretty much any CPU from the last decade has
+> ERMS, afaik).
+> 
+> Borislav - opinions? This needs fixing for v6.1..v6.3, and the options are:
+> 
+>  (1) just fix up the exception entry. I think this is literally this
+> one-liner, but somebody should double-check me. I did *not* actually
+> test this:
+> 
+>     --- a/arch/x86/lib/clear_page_64.S
+>     +++ b/arch/x86/lib/clear_page_64.S
+>     @@ -142,8 +142,8 @@ SYM_FUNC_START(clear_user_rep_good)
+>             and $7, %edx
+>             jz .Lrep_good_exit
+> 
+>     -.Lrep_good_bytes:
+>             mov %edx, %ecx
+>     +.Lrep_good_bytes:
+>             rep stosb
+> 
+>      .Lrep_good_exit:
+> 
+>    because the only use of '.Lrep_good_bytes' is that exception table entry.
+> 
+>  (2) backport just that one commit for clear_user
+> 
+>      In this case we should probably do commit e046fe5a36a9 ("x86: set
+> FSRS automatically on AMD CPUs that have FSRM") too, since that commit
+> changes the decision to use 'rep stosb' to check FSRS.
+> 
+>  (3) backport the entire series of commits:
+> 
+>         git log --oneline v6.3..034ff37d3407
+> 
+> Or we could even revert that commit 0db7058e8e23, but it seems silly
+> to revert when we have so many ways to fix it, including a one-line
+> code movement.
+> 
+> Borislav / stable people? Opinions?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D2a97468024fb5b6eccee2a67a7796485c829343a
+So right now I feel like (3) would be the right thing to do. Because
+then stable and upstream will be on the same "level" wrt user-accessing
+primitives. And it's not like your series depend on anything from
+mainline (that I know of) so backporting them should be relatively easy.
 
-Petr T
+But (1) is definitely a lot easier for stable people modulo the fact
+that it won't be an upstream commit but a special stable-only fix.
+
+So yeah, in that order.
+
+I guess I'd let stable people decide here what they wanna do.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
