@@ -2,66 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5AA6F5B15
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 17:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85E586F5B1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 17:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230467AbjECP0r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 11:26:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52154 "EHLO
+        id S230475AbjECP20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 11:28:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230289AbjECP0q (ORCPT
+        with ESMTP id S230313AbjECP2Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 11:26:46 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 999441730;
-        Wed,  3 May 2023 08:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1683127605; x=1714663605;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JW32feYIw7XcNCp0X+HS3CFsBn68Px3L2hSYcXUbWmk=;
-  b=PT6Tf3+ASWtq19/6hMEa+jPQ0ZVD0jARTYMjwUKenjA7A/kU7l6vFLZE
-   9t53840o7oJXHlK4Ut64rUdq/LFDOaR1NG4yvaXryaV7MfnoUb7CkUbKp
-   NCn6LNbt6HG3fR+Nt9YzZiNe4rwxx0KffSFgAwzgc4wshHmr0EDuuMNvI
-   XM8jPeWbslJBLoHwPxmiV8sqV0CumCWvZCKV43eBEmaOy4f9vaVYSLGx1
-   XuPtZf8AXWtK2Nb1+EqLqSbVcQfHtdh6rrGRHPHIg2lbvZlrgf1tWAW/O
-   Mf/23L+lao3oyVGzsIwRiUOtCJpkpio9tUIp99X6lo8fJKwFhyX7dWPRb
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10699"; a="347502744"
-X-IronPort-AV: E=Sophos;i="5.99,247,1677571200"; 
-   d="scan'208";a="347502744"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2023 08:26:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10699"; a="766174780"
-X-IronPort-AV: E=Sophos;i="5.99,247,1677571200"; 
-   d="scan'208";a="766174780"
-Received: from hrizk-mobl.amr.corp.intel.com (HELO [10.212.127.167]) ([10.212.127.167])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2023 08:26:41 -0700
-Message-ID: <b8ab89e6-0456-969d-ed31-fa64be0a0fd0@intel.com>
-Date:   Wed, 3 May 2023 08:26:40 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 34/40] lib: code tagging context capture support
-Content-Language: en-US
-To:     Suren Baghdasaryan <surenb@google.com>,
-        Michal Hocko <mhocko@suse.com>
-Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
-        vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-        mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
-        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
+        Wed, 3 May 2023 11:28:24 -0400
+Received: from out-1.mta1.migadu.com (out-1.mta1.migadu.com [95.215.58.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A7C59F0
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 08:28:21 -0700 (PDT)
+Date:   Wed, 3 May 2023 11:28:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1683127699;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rFYIJmhJAvKFo5pe5s/5UJk4QkyDXcesgOEFEoMRDNY=;
+        b=boB83q/e6dPpScD3oLrI6VUwakIoR3LUhGCnyQMCxASyO8r2l7zqVdmDFRo6uwurhNcS1T
+        cRfqdo7eOirckrWyHsy41sri7bXWHG3o1Yaz8fCtLlrA1TZnZIeBqJQBjgDeSjUqnZVKbs
+        djBS6eWHow6oQykPfZoNtjmwnPDbnB8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        akpm@linux-foundation.org, vbabka@suse.cz, hannes@cmpxchg.org,
+        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
+        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+        paulmck@kernel.org, pasha.tatashin@soleen.com,
+        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
         ndesaulniers@google.com, gregkh@linuxfoundation.org,
         ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
         dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
@@ -75,38 +58,57 @@ Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-modules@vger.kernel.org,
         kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH 00/40] Memory allocation profiling
+Message-ID: <ZFJ9hlQ3ZIU1XYCY@moria.home.lan>
 References: <20230501165450.15352-1-surenb@google.com>
- <20230501165450.15352-35-surenb@google.com> <ZFIO3tXCbmTn53uv@dhcp22.suse.cz>
- <CAJuCfpHrZ4kWYFPvA3W9J+CmNMuOtGa_ZMXE9fOmKsPQeNt2tg@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <CAJuCfpHrZ4kWYFPvA3W9J+CmNMuOtGa_ZMXE9fOmKsPQeNt2tg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+ <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+ <ZFIOfb6/jHwLqg6M@moria.home.lan>
+ <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
+ <20230503115051.30b8a97f@meshulam.tesarici.cz>
+ <ZFIv+30UH7+ySCZr@moria.home.lan>
+ <25a1ea786712df5111d7d1db42490624ac63651e.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <25a1ea786712df5111d7d1db42490624ac63651e.camel@HansenPartnership.com>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/3/23 08:18, Suren Baghdasaryan wrote:
->>> +static inline void rem_ctx(struct codetag_ctx *ctx,
->>> +                        void (*free_ctx)(struct kref *refcount))
->>> +{
->>> +     struct codetag_with_ctx *ctc = ctx->ctc;
->>> +
->>> +     spin_lock(&ctc->ctx_lock);
->> This could deadlock when allocator is called from the IRQ context.
-> I see. spin_lock_irqsave() then?
+On Wed, May 03, 2023 at 08:33:48AM -0400, James Bottomley wrote:
+> On Wed, 2023-05-03 at 05:57 -0400, Kent Overstreet wrote:
+> > On Wed, May 03, 2023 at 11:50:51AM +0200, Petr Tesařík wrote:
+> > > If anyone ever wants to use this code tagging framework for
+> > > something
+> > > else, they will also have to convert relevant functions to macros,
+> > > slowly changing the kernel to a minefield where local identifiers,
+> > > struct, union and enum tags, field names and labels must avoid name
+> > > conflict with a tagged function. For now, I have to remember that
+> > > alloc_pages is forbidden, but the list may grow.
+> > 
+> > Also, since you're not actually a kernel contributor yet...
+> 
+> You have an amazing talent for being wrong.  But even if you were
+> actually right about this, it would be an ad hominem personal attack on
+> a new contributor which crosses the line into unacceptable behaviour on
+> the list and runs counter to our code of conduct.
 
-Yes.  But, even better, please turn on lockdep when you are testing.  It
-will find these for you.  If you're on x86, we have a set of handy-dandy
-debug options that you can add to an existing config with:
+...Err, what? That was intended _in no way_ as a personal attack.
 
-	make x86_debug.config
+If I was mistaken I do apologize, but lately I've run across quite a lot
+of people offering review feedback to patches I post that turn out to
+have 0 or 10 patches in the kernel, and - to be blunt - a pattern of
+offering feedback in strong language with a presumption of experience
+that takes a lot to respond to adequately on a technical basis.
 
-That said, I'm as concerned as everyone else that this is all "new" code
-and doesn't lean on existing tracing or things like PAGE_OWNER enough.
+I don't think a suggestion to spend a bit more time reading code instead
+of speculating is out of order! We could all, put more effort into how
+we offer review feedback.
