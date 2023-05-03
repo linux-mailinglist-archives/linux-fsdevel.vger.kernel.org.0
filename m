@@ -2,139 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADEF56F5EEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 21:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B99FC6F5EEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 21:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229553AbjECTJm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 15:09:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39140 "EHLO
+        id S229619AbjECTK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 15:10:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjECTJl (ORCPT
+        with ESMTP id S229441AbjECTK1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 15:09:41 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A2910EF;
-        Wed,  3 May 2023 12:09:40 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1aaec9ad820so42315785ad.0;
-        Wed, 03 May 2023 12:09:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683140980; x=1685732980;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m2prCTdjzaiRiaqQtudLpWKutHCUVL/OSWsxsk3W0H0=;
-        b=DgGf/RDPAqWGHut8/ffMPgzzhFJ9XYYSPgLBeni/aHHvM33hoTyZ2z1/iWZrJfEq83
-         XC8cOYLwo2w4awuIxnl0cMADE/m0XmY+wPpkMbjZhRe/h0OTU4R7JHORw6cp3ebvPJPs
-         fVMtj4scXOewOp4pOg6Y+bLDbTCONtNkC6uKe3XQm4/tjkELGZ7bx+BlGycvwgcMZTg3
-         diw26d57mAXbzMIEL2R9owFYzXiYqv54fGxd86cbz1pWBKa8UI2AhEJ1f1/yiknBF/PK
-         kJgW8kCwMV9OQVIdn/sPBvqc9vOmLsLdyI/c/vfOx43vpU0ufO13PA0zEYN9tJjBA8qt
-         Rc3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683140980; x=1685732980;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m2prCTdjzaiRiaqQtudLpWKutHCUVL/OSWsxsk3W0H0=;
-        b=E2YA0TqhzZp35FEAt4xVK4Kqbdw3NaRI99dGYNohYt7qO+yejCQW0e2X0spRqCJvc0
-         VH4At6rGptt5fDObl112xgbM7WNKTvq7uoRuA0FcsuPpMbSycHNYkCBkr83GaPVD/pBD
-         TOXgbzse8c3vYll3B6rK7ui3ca/vBvCNUenag2b4LwVegXhp+t+YKd7zBaC/JGv3lOt6
-         ofBCXKKnVSgpcYwkpnzPxPq1Ag/CnKvHCwg34T9gpeYvSaiBD/VxXt/irM1qiNbzaM9l
-         WLs6zZ3CbZiQlXSyBUz201Het2p44aadgwWCRALMp2VzWcN5j8XocyZj9E8+QzcxVwC/
-         mKQw==
-X-Gm-Message-State: AC+VfDzF6PYo+zuINTsLZ2sTYPKszLmc07XLqGQ2kUEWXhPvlzSeG137
-        qWDwW6qUmIjzzjE3bxNSeNk=
-X-Google-Smtp-Source: ACHHUZ6YDYrRsQdW8TjDTlSuUDEQ8ByWIKmmy8KfjMdCubXv22qMvWwsp2IFNMqrmPGjqUc8LtNL9Q==
-X-Received: by 2002:a17:902:8d8a:b0:1ab:5b0:6f16 with SMTP id v10-20020a1709028d8a00b001ab05b06f16mr1059467plo.43.1683140979705;
-        Wed, 03 May 2023 12:09:39 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::5:6454])
-        by smtp.gmail.com with ESMTPSA id 12-20020a170902c24c00b001a69d1bc32csm21999335plg.238.2023.05.03.12.09.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 May 2023 12:09:39 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 3 May 2023 09:09:37 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, vbabka@suse.cz,
-        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
-        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <ZFKxcfqkUQ60zBB_@slm.duckdns.org>
-References: <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
- <ZFIOfb6/jHwLqg6M@moria.home.lan>
- <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
- <ZFIVtB8JyKk0ddA5@moria.home.lan>
- <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
- <20230503180726.GA196054@cmpxchg.org>
- <ZFKlrP7nLn93iIRf@slm.duckdns.org>
- <ZFKqh5Dh93UULdse@slm.duckdns.org>
- <ZFKubD/lq7oB4svV@moria.home.lan>
- <ZFKu6zWA00AzArMF@slm.duckdns.org>
+        Wed, 3 May 2023 15:10:27 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44C3610FE;
+        Wed,  3 May 2023 12:10:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=yVZFBajLG2Ccr5ofun2l+j34TQq7wWP4t6HjopGH8GY=; b=MnqLRCMk2UYC0BAym+TcMZaQjA
+        yoCgJbJwN1wHF4QU2BvfsesT1WPXAkpQKwEYh6SWJTJ860dmt95ENmQUfGEW4HrxFJnb51KeT3XFa
+        mvfXNRrD766mowX57z3YFCInWRnVZh4tNqbOM21c1EjxXi0kTBtKaMsYny3gfg0UJNOty6uW+NtTS
+        UDg0dBdQ4bznl4YEQ91AIPRhDjKCXSN2sd0w2TKIJ5o5+HARvGGmW6G8UaYaVG9CAMlD5rJCzaWSt
+        epEt2tEVBaLEHUn6dOm/TukmfZbum1mf5CODR4hMruwP42EfAQRzJ0AHt1CMoiCRJRmMfAbwB/ahv
+        PxBrlj+w==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1puHrj-005YD5-2W;
+        Wed, 03 May 2023 19:10:15 +0000
+Date:   Wed, 3 May 2023 12:10:15 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        j.granados@samsung.com, patches@lists.linux.dev,
+        ebiggers@kernel.org, jeffxu@google.com, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] sysctl: death to register_sysctl_paths()
+Message-ID: <ZFKxl2d+kqYN0ohG@bombadil.infradead.org>
+References: <20230503023329.752123-1-mcgrof@kernel.org>
+ <ZFKKpQdx4nO8gWUT@bombadil.infradead.org>
+ <CAHk-=whGT-jpLRH_W+k-WP=VghAVa7wRfULg=KWhpxiVofsn0Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZFKu6zWA00AzArMF@slm.duckdns.org>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=whGT-jpLRH_W+k-WP=VghAVa7wRfULg=KWhpxiVofsn0Q@mail.gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 03, 2023 at 08:58:51AM -1000, Tejun Heo wrote:
-> On Wed, May 03, 2023 at 02:56:44PM -0400, Kent Overstreet wrote:
-> > On Wed, May 03, 2023 at 08:40:07AM -1000, Tejun Heo wrote:
-> > > > Yeah, easy / default visibility argument does make sense to me.
-> > > 
-> > > So, a bit of addition here. If this is the thrust, the debugfs part seems
-> > > rather redundant, right? That's trivially obtainable with tracing / bpf and
-> > > in a more flexible and performant manner. Also, are we happy with recording
-> > > just single depth for persistent tracking?
-> > 
-> > Not sure what you're envisioning?
-> > 
-> > I'd consider the debugfs interface pretty integral; it's much more
-> > discoverable for users, and it's hardly any code out of the whole
-> > patchset.
+On Wed, May 03, 2023 at 11:29:10AM -0700, Linus Torvalds wrote:
+> On Wed, May 3, 2023 at 9:24 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > On Tue, May 02, 2023 at 07:33:27PM -0700, Luis Chamberlain wrote:
+> > > You can give it a day for a warm fuzzy build test result.
+> >
+> > 0-day gives its blessings.
 > 
-> You can do the same thing with a bpftrace one liner tho. That's rather
-> difficult to beat.
+> Well, it's not like I can pull anyway, since you didn't actually say
+> where to pull *from*. And I don't want to randomly apply patches when
+> I know you have a git tree for this.
+> 
+> So please do a proper pull request.
 
-Ah, shit, I'm an idiot. Sorry. I thought allocations was under /proc and
-allocations.ctx under debugfs. I meant allocations.ctx is redundant.
+Sorry thought you don't mind a few patches, so ditched the formalities
+for the pull. Now I know you prefer to pull over a couple of patches,
+will send up next!
 
-Thanks.
-
--- 
-tejun
+  Luis
