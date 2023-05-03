@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 929B06F5BED
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 18:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 881A56F5BFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 18:28:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229619AbjECQZn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 12:25:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51474 "EHLO
+        id S229559AbjECQ2y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 12:28:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbjECQZk (ORCPT
+        with ESMTP id S229449AbjECQ2w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 12:25:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 933805258;
-        Wed,  3 May 2023 09:25:39 -0700 (PDT)
+        Wed, 3 May 2023 12:28:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB57310FF;
+        Wed,  3 May 2023 09:28:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1CBA362EA8;
-        Wed,  3 May 2023 16:25:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5712FC433EF;
-        Wed,  3 May 2023 16:25:31 +0000 (UTC)
-Date:   Wed, 3 May 2023 12:25:29 -0400
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 84C686257F;
+        Wed,  3 May 2023 16:28:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C43EDC433EF;
+        Wed,  3 May 2023 16:28:41 +0000 (UTC)
+Date:   Wed, 3 May 2023 12:28:39 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
-        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+Cc:     Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+        kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
         roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
         willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
         void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
@@ -52,18 +52,18 @@ Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-modules@vger.kernel.org,
         kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH 19/40] change alloc_pages name in dma_map_ops to avoid
- name conflicts
-Message-ID: <20230503122529.44ef2d56@gandalf.local.home>
-In-Reply-To: <20230501165450.15352-20-surenb@google.com>
+Subject: Re: [PATCH 00/40] Memory allocation profiling
+Message-ID: <20230503122839.0d9934c5@gandalf.local.home>
+In-Reply-To: <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
 References: <20230501165450.15352-1-surenb@google.com>
-        <20230501165450.15352-20-surenb@google.com>
+        <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+        <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,24 +71,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon,  1 May 2023 09:54:29 -0700
+On Wed, 3 May 2023 08:09:28 -0700
 Suren Baghdasaryan <surenb@google.com> wrote:
 
-> After redefining alloc_pages, all uses of that name are being replaced.
-> Change the conflicting names to prevent preprocessor from replacing them
-> when it's not intended.
+> There is another issue, which I think can be solved in a smart way but
+> will either affect performance or would require more memory. With the
+> tracing approach we don't know beforehand how many individual
+> allocation sites exist, so we have to allocate code tags (or similar
+> structures for counting) at runtime vs compile time. We can be smart
+> about it and allocate in batches or even preallocate more than we need
+> beforehand but, as I said, it will require some kind of compromise.
 
-Note, every change log should have enough information in it to know why it
-is being done. This says what the patch does, but does not fully explain
-"why". It should never be assumed that one must read other patches to get
-the context. A year from now, investigating git history, this may be the
-only thing someone sees for why this change occurred.
-
-The "why" above is simply "prevent preprocessor from replacing them
-when it's not intended". What does that mean?
+This approach is actually quite common, especially since tagging every
+instance is usually overkill, as if you trace function calls in a running
+kernel, you will find that only a small percentage of the kernel ever
+executes. It's possible that you will be allocating a lot of tags that will
+never be used. If run time allocation is possible, that is usually the
+better approach.
 
 -- Steve
-
-
-> 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
