@@ -2,116 +2,386 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B74D56F606D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 23:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F3736F6097
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 23:39:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbjECVId (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 17:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36786 "EHLO
+        id S229680AbjECVjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 17:39:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbjECVIc (ORCPT
+        with ESMTP id S229626AbjECVjf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 17:08:32 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0D57DB0
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 14:08:31 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-331514f5626so10318235ab.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 14:08:31 -0700 (PDT)
+        Wed, 3 May 2023 17:39:35 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3CDF4EC9
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 14:39:30 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-6434e263962so789318b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 14:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1683149970; x=1685741970;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzAhAYHfPiOiW4LGzVRyyrVTgIaQhjrhkrdgvGxpiyM=;
+        b=IhF1wixOaSL/x8TlU2RExxY7cJSSZaroN+UxW8vl7cR9l23m0lsThaG0Tea8DON128
+         ps3dQt0jnqtLV6sgxnYS8EQrdj9H3j6pXLtmsQdF6LLgDIJngN1ezjwLb0Uhu61JCLc9
+         jT0kF8peKcL8FlrOUKxCfAeGoidm+h4TUG5+pKrM2Yew5GctCXxqz4pZeUhjptSUY8Qy
+         jMO8TJPDDU/sSzrlAvNFZsxacLg9E7hVWO24oQMJpIAtxV0FPPYHh35IL8wTpnYlq/V/
+         QqO9XBTJsEjnoj2NBDmgiXzKqjBT6M5CpdQIQBOHk4tVRQt8N4OAapTxtPzTShctlGgv
+         GMfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683148110; x=1685740110;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VWE1gUaPEDvuP8/sfMbQHu/lPf0Q2rOkFlhahb64iww=;
-        b=XOhbqhz5sLuucG5nDWicLE5qdqXGoXMzFIk4pDT+96wA2VU/wCoOxR5uxuGqe919Oh
-         9MBaN2Fg2HpcI1A84fbqiuDGjj0ojlVMzq1c5t617zdOg4h5a8TdN50gkL6LhnQ1MwcZ
-         3mDBdQ8i1/Soq43k9at4+pIYUyztzYR6GUWFarBNmN/fZ2bleVAEiXcDgOg6c4SSsW0F
-         G9u7MpfTBlNGbiZdXJVdG5hEcV8Q8zSRKq5Fr676F9EI6dKIrRcPkZMs3Qk5kxxnwUc/
-         DEcrdlnzDopT9wT0xum3WuPwkQ4x//5dRnatvAA96oiZACw1zzyGeLuOEgKuFXjxIz15
-         eMzQ==
-X-Gm-Message-State: AC+VfDw8FHM0O5zmcLvY75aagIVZnwVHm7Jbsnuy6e+aSHIPmviMEoGG
-        deKRNbS7wDm2H6Cibj5mwLmtDxd84zaqwFHzkPuP5TmcNN3x
-X-Google-Smtp-Source: ACHHUZ4WpLZO2iMXuzM0V0IXlmGQCYHmfrK1UAGjTIIXWvC+8nje63WdB4rpHJsYrFY/EFNbKgQVwk4zDOAJ67ZGE6FzoWrCU6QC
+        d=1e100.net; s=20221208; t=1683149970; x=1685741970;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JzAhAYHfPiOiW4LGzVRyyrVTgIaQhjrhkrdgvGxpiyM=;
+        b=dncRl5kyJLSFnQNwe2t1Iy+usHBAGD6ArxESTs+wo0cc6ShgG6auOB2S0wWrqEalIZ
+         1+jKrtj8ywINoQA25iVm3H+DB+sGrDG3fRu+o6+uTTDPFL5TD9uJCOs9KJuCYe9NdNQT
+         939dv6xyn8jqwPNYM5JMrIgULMRcalyeSdBzzBp+h2COYOFd8+VzT7yMcQt/k5SzTm2s
+         boz1BiYMWxade/HV4RXCC27csI0u64j2uNQcfLo8iXq7H8Zog+bc9Q+kaCyEI/HmqYsS
+         twFhCx+8JtlLlk+Dm0oNyOY0pwyDVe3gOZ1luSw1LFv/YnYm/+VCSnpJaYKuK0bE37BA
+         VZxQ==
+X-Gm-Message-State: AC+VfDweyNGQLEqxlwECFZL2f+EjV9vlIPH3VnsRzbrOdQlXxAuCU+1w
+        aHm7UYQrMZlN3DFBUgW7DzeT9Q==
+X-Google-Smtp-Source: ACHHUZ7c8+1LMq/ab4C/efQsoxMs8u6vlVF2UalA9iWyU2ItPHceCK3E3VPgAKJ7NiuiSI8HPHPgHw==
+X-Received: by 2002:a05:6a00:10c7:b0:641:2927:985b with SMTP id d7-20020a056a0010c700b006412927985bmr64703pfu.4.1683149970354;
+        Wed, 03 May 2023 14:39:30 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
+        by smtp.gmail.com with ESMTPSA id u3-20020a056a00158300b0063f3aac78b9sm19474124pfk.79.2023.05.03.14.39.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 May 2023 14:39:29 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1puKC5-00B0Kz-U6; Thu, 04 May 2023 07:39:25 +1000
+Date:   Thu, 4 May 2023 07:39:25 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     John Garry <john.g.garry@oracle.com>
+Cc:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        martin.petersen@oracle.com, djwong@kernel.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+        jejb@linux.ibm.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com,
+        Himanshu Madhani <himanshu.madhani@oracle.com>
+Subject: Re: [PATCH RFC 01/16] block: Add atomic write operations to
+ request_queue limits
+Message-ID: <20230503213925.GD3223426@dread.disaster.area>
+References: <20230503183821.1473305-1-john.g.garry@oracle.com>
+ <20230503183821.1473305-2-john.g.garry@oracle.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d94a:0:b0:331:310c:658b with SMTP id
- l10-20020a92d94a000000b00331310c658bmr4371363ilq.2.1683148110649; Wed, 03 May
- 2023 14:08:30 -0700 (PDT)
-Date:   Wed, 03 May 2023 14:08:30 -0700
-In-Reply-To: <20230503202830.GA695988@mit.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003d606105fad075eb@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in ext4_xattr_block_set (2)
-From:   syzbot <syzbot+6385d7d3065524c5ca6d@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230503183821.1473305-2-john.g.garry@oracle.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, May 03, 2023 at 06:38:06PM +0000, John Garry wrote:
+> From: Himanshu Madhani <himanshu.madhani@oracle.com>
+> 
+> Add the following limits:
+> - atomic_write_boundary
+> - atomic_write_max_bytes
+> - atomic_write_unit_max
+> - atomic_write_unit_min
+> 
+> Signed-off-by: Himanshu Madhani <himanshu.madhani@oracle.com>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  Documentation/ABI/stable/sysfs-block | 42 +++++++++++++++++++++
+>  block/blk-settings.c                 | 56 ++++++++++++++++++++++++++++
+>  block/blk-sysfs.c                    | 33 ++++++++++++++++
+>  include/linux/blkdev.h               | 23 ++++++++++++
+>  4 files changed, 154 insertions(+)
+> 
+> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
+> index 282de3680367..f3ed9890e03b 100644
+> --- a/Documentation/ABI/stable/sysfs-block
+> +++ b/Documentation/ABI/stable/sysfs-block
+> @@ -21,6 +21,48 @@ Description:
+>  		device is offset from the internal allocation unit's
+>  		natural alignment.
+>  
+> +What:		/sys/block/<disk>/atomic_write_max_bytes
+> +Date:		May 2023
+> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
+> +Description:
+> +		[RO] This parameter specifies the maximum atomic write
+> +		size reported by the device. An atomic write operation
+> +		must not exceed this number of bytes.
+> +
+> +
+> +What:		/sys/block/<disk>/atomic_write_unit_min
+> +Date:		May 2023
+> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
+> +Description:
+> +		[RO] This parameter specifies the smallest block which can
+> +		be written atomically with an atomic write operation. All
+> +		atomic write operations must begin at a
+> +		atomic_write_unit_min boundary and must be multiples of
+> +		atomic_write_unit_min. This value must be a power-of-two.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in ext4_xattr_block_set
+What units is this defined to use? Bytes?
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5863 at fs/ext4/xattr.c:2141 ext4_xattr_block_set+0x2ef2/0x3680
-Modules linked in:
-CPU: 1 PID: 5863 Comm: syz-executor.1 Not tainted 6.3.0-rc3-syzkaller-00111-gd4fab7b28e2f-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
-RIP: 0010:ext4_xattr_block_set+0x2ef2/0x3680 fs/ext4/xattr.c:2141
-Code: da 3f ff 48 8b 7c 24 50 4c 89 ee e8 98 36 c2 ff 45 31 ed e9 86 f4 ff ff e8 2b da 3f ff 45 31 ed e9 79 f4 ff ff e8 1e da 3f ff <0f> 0b e9 5d f2 ff ff e8 12 da 3f ff 0f 0b 43 80 3c 26 00 0f 85 6f
-RSP: 0018:ffffc900062df4a0 EFLAGS: 00010293
-RAX: ffffffff824a9302 RBX: 1ffff92000c5bf11 RCX: ffff888077008000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000001
-RBP: ffffc900062df6d0 R08: ffffffff82103f70 R09: ffffed100d986aae
-R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffffc900062df860
-FS:  00007faf2d136700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1f5413f440 CR3: 000000006a2a8000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ext4_xattr_set_handle+0xcd4/0x15c0 fs/ext4/xattr.c:2458
- ext4_initxattrs+0xa3/0x110 fs/ext4/xattr_security.c:44
- security_inode_init_security+0x2df/0x3f0 security/security.c:1147
- __ext4_new_inode+0x341c/0x42e0 fs/ext4/ialloc.c:1322
- ext4_mkdir+0x425/0xce0 fs/ext4/namei.c:2991
- vfs_mkdir+0x29d/0x450 fs/namei.c:4038
- do_mkdirat+0x264/0x520 fs/namei.c:4061
- __do_sys_mkdirat fs/namei.c:4076 [inline]
- __se_sys_mkdirat fs/namei.c:4074 [inline]
- __x64_sys_mkdirat+0x89/0xa0 fs/namei.c:4074
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7faf2c48c0f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007faf2d136168 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
-RAX: ffffffffffffffda RBX: 00007faf2c5abf80 RCX: 00007faf2c48c0f9
-RDX: 0000000000000000 RSI: 0000000020000180 RDI: 0000000000000005
-RBP: 00007faf2c4e7ae9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffd76b57a0f R14: 00007faf2d136300 R15: 0000000000022000
- </TASK>
+> +
+> +
+> +What:		/sys/block/<disk>/atomic_write_unit_max
+> +Date:		January 2023
+> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
+> +Description:
+> +		[RO] This parameter defines the largest block which can be
+> +		written atomically with an atomic write operation. This
+> +		value must be a multiple of atomic_write_unit_min and must
+> +		be a power-of-two.
 
+Same question. Also, how is this different to
+atomic_write_max_bytes?
 
-Tested on:
+> +
+> +
+> +What:		/sys/block/<disk>/atomic_write_boundary
+> +Date:		May 2023
+> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
+> +Description:
+> +		[RO] A device may need to internally split I/Os which
+> +		straddle a given logical block address boundary. In that
+> +		case a single atomic write operation will be processed as
+> +		one of more sub-operations which each complete atomically.
+> +		This parameter specifies the size in bytes of the atomic
+> +		boundary if one is reported by the device. This value must
+> +		be a power-of-two.
 
-commit:         d4fab7b2 ext4: clean up error handling in __ext4_fill_..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-console output: https://syzkaller.appspot.com/x/log.txt?x=16366e18280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=acdb62bf488a8fe5
-dashboard link: https://syzkaller.appspot.com/bug?extid=6385d7d3065524c5ca6d
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10c9cef2280000
+How are users/filesystems supposed to use this?
 
+> +
+>  
+>  What:		/sys/block/<disk>/diskseq
+>  Date:		February 2021
+> diff --git a/block/blk-settings.c b/block/blk-settings.c
+> index 896b4654ab00..e21731715a12 100644
+> --- a/block/blk-settings.c
+> +++ b/block/blk-settings.c
+> @@ -59,6 +59,9 @@ void blk_set_default_limits(struct queue_limits *lim)
+>  	lim->zoned = BLK_ZONED_NONE;
+>  	lim->zone_write_granularity = 0;
+>  	lim->dma_alignment = 511;
+> +	lim->atomic_write_unit_min = lim->atomic_write_unit_max = 1;
+
+A value of "1" isn't obviously a power of 2, nor does it tell me
+what units these values use.
+
+> +	lim->atomic_write_max_bytes = 512;
+> +	lim->atomic_write_boundary = 0;
+
+The behaviour when the value is zero is not defined by the syfs
+description above.
+
+>  }
+>  
+>  /**
+> @@ -183,6 +186,59 @@ void blk_queue_max_discard_sectors(struct request_queue *q,
+>  }
+>  EXPORT_SYMBOL(blk_queue_max_discard_sectors);
+>  
+> +/**
+> + * blk_queue_atomic_write_max_bytes - set max bytes supported by
+> + * the device for atomic write operations.
+> + * @q:  the request queue for the device
+> + * @size: maximum bytes supported
+> + */
+> +void blk_queue_atomic_write_max_bytes(struct request_queue *q,
+> +				      unsigned int size)
+> +{
+> +	q->limits.atomic_write_max_bytes = size;
+> +}
+> +EXPORT_SYMBOL(blk_queue_atomic_write_max_bytes);
+> +
+> +/**
+> + * blk_queue_atomic_write_boundary - Device's logical block address space
+> + * which an atomic write should not cross.
+
+I have no idea what "logical block address space which an atomic
+write should not cross" means, especially as the unit is in bytes
+and not in sectors (which are the units LBAs are expressed in).
+
+> + * @q:  the request queue for the device
+> + * @size: size in bytes. Must be a power-of-two.
+> + */
+> +void blk_queue_atomic_write_boundary(struct request_queue *q,
+> +				     unsigned int size)
+> +{
+> +	q->limits.atomic_write_boundary = size;
+> +}
+> +EXPORT_SYMBOL(blk_queue_atomic_write_boundary);
+> +
+> +/**
+> + * blk_queue_atomic_write_unit_min - smallest unit that can be written
+> + *				     atomically to the device.
+> + * @q:  the request queue for the device
+> + * @sectors: must be a power-of-two.
+> + */
+> +void blk_queue_atomic_write_unit_min(struct request_queue *q,
+> +				     unsigned int sectors)
+> +{
+> +	q->limits.atomic_write_unit_min = sectors;
+> +}
+> +EXPORT_SYMBOL(blk_queue_atomic_write_unit_min);
+
+Oh, these are sectors?
+
+What size sector? Are we talking about fixed size 512 byte basic
+block units, or are we talking about physical device sector sizes
+(e.g. 4kB, maybe larger in future?)
+
+These really should be in bytes, as they are directly exposed to
+userspace applications via statx and applications will have no idea
+what the sector size actually is without having to query the block
+device directly...
+
+> +
+> +/*
+> + * blk_queue_atomic_write_unit_max - largest unit that can be written
+> + * atomically to the device.
+> + * @q: the reqeust queue for the device
+> + * @sectors: must be a power-of-two.
+> + */
+> +void blk_queue_atomic_write_unit_max(struct request_queue *q,
+> +				     unsigned int sectors)
+> +{
+> +	struct queue_limits *limits = &q->limits;
+> +	limits->atomic_write_unit_max = sectors;
+> +}
+> +EXPORT_SYMBOL(blk_queue_atomic_write_unit_max);
+> +
+>  /**
+>   * blk_queue_max_secure_erase_sectors - set max sectors for a secure erase
+>   * @q:  the request queue for the device
+> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> index f1fce1c7fa44..1025beff2281 100644
+> --- a/block/blk-sysfs.c
+> +++ b/block/blk-sysfs.c
+> @@ -132,6 +132,30 @@ static ssize_t queue_max_discard_segments_show(struct request_queue *q,
+>  	return queue_var_show(queue_max_discard_segments(q), page);
+>  }
+>  
+> +static ssize_t queue_atomic_write_max_bytes_show(struct request_queue *q,
+> +						char *page)
+> +{
+> +	return queue_var_show(q->limits.atomic_write_max_bytes, page);
+> +}
+> +
+> +static ssize_t queue_atomic_write_boundary_show(struct request_queue *q,
+> +						char *page)
+> +{
+> +	return queue_var_show(q->limits.atomic_write_boundary, page);
+> +}
+> +
+> +static ssize_t queue_atomic_write_unit_min_show(struct request_queue *q,
+> +						char *page)
+> +{
+> +	return queue_var_show(queue_atomic_write_unit_min(q), page);
+> +}
+> +
+> +static ssize_t queue_atomic_write_unit_max_show(struct request_queue *q,
+> +						char *page)
+> +{
+> +	return queue_var_show(queue_atomic_write_unit_max(q), page);
+> +}
+> +
+>  static ssize_t queue_max_integrity_segments_show(struct request_queue *q, char *page)
+>  {
+>  	return queue_var_show(q->limits.max_integrity_segments, page);
+> @@ -604,6 +628,11 @@ QUEUE_RO_ENTRY(queue_discard_max_hw, "discard_max_hw_bytes");
+>  QUEUE_RW_ENTRY(queue_discard_max, "discard_max_bytes");
+>  QUEUE_RO_ENTRY(queue_discard_zeroes_data, "discard_zeroes_data");
+>  
+> +QUEUE_RO_ENTRY(queue_atomic_write_max_bytes, "atomic_write_max_bytes");
+> +QUEUE_RO_ENTRY(queue_atomic_write_boundary, "atomic_write_boundary");
+> +QUEUE_RO_ENTRY(queue_atomic_write_unit_max, "atomic_write_unit_max");
+> +QUEUE_RO_ENTRY(queue_atomic_write_unit_min, "atomic_write_unit_min");
+> +
+>  QUEUE_RO_ENTRY(queue_write_same_max, "write_same_max_bytes");
+>  QUEUE_RO_ENTRY(queue_write_zeroes_max, "write_zeroes_max_bytes");
+>  QUEUE_RO_ENTRY(queue_zone_append_max, "zone_append_max_bytes");
+> @@ -661,6 +690,10 @@ static struct attribute *queue_attrs[] = {
+>  	&queue_discard_max_entry.attr,
+>  	&queue_discard_max_hw_entry.attr,
+>  	&queue_discard_zeroes_data_entry.attr,
+> +	&queue_atomic_write_max_bytes_entry.attr,
+> +	&queue_atomic_write_boundary_entry.attr,
+> +	&queue_atomic_write_unit_min_entry.attr,
+> +	&queue_atomic_write_unit_max_entry.attr,
+>  	&queue_write_same_max_entry.attr,
+>  	&queue_write_zeroes_max_entry.attr,
+>  	&queue_zone_append_max_entry.attr,
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 941304f17492..6b6f2992338c 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -304,6 +304,11 @@ struct queue_limits {
+>  	unsigned int		discard_alignment;
+>  	unsigned int		zone_write_granularity;
+>  
+> +	unsigned int		atomic_write_boundary;
+> +	unsigned int		atomic_write_max_bytes;
+> +	unsigned int		atomic_write_unit_min;
+> +	unsigned int		atomic_write_unit_max;
+> +
+>  	unsigned short		max_segments;
+>  	unsigned short		max_integrity_segments;
+>  	unsigned short		max_discard_segments;
+> @@ -929,6 +934,14 @@ void blk_queue_zone_write_granularity(struct request_queue *q,
+>  				      unsigned int size);
+>  extern void blk_queue_alignment_offset(struct request_queue *q,
+>  				       unsigned int alignment);
+> +extern void blk_queue_atomic_write_max_bytes(struct request_queue *q,
+> +					     unsigned int size);
+> +extern void blk_queue_atomic_write_unit_max(struct request_queue *q,
+> +					    unsigned int sectors);
+> +extern void blk_queue_atomic_write_unit_min(struct request_queue *q,
+> +					    unsigned int sectors);
+> +extern void blk_queue_atomic_write_boundary(struct request_queue *q,
+> +					    unsigned int size);
+>  void disk_update_readahead(struct gendisk *disk);
+>  extern void blk_limits_io_min(struct queue_limits *limits, unsigned int min);
+>  extern void blk_queue_io_min(struct request_queue *q, unsigned int min);
+> @@ -1331,6 +1344,16 @@ static inline int queue_dma_alignment(const struct request_queue *q)
+>  	return q ? q->limits.dma_alignment : 511;
+>  }
+>  
+> +static inline unsigned int queue_atomic_write_unit_max(const struct request_queue *q)
+> +{
+> +	return q->limits.atomic_write_unit_max << SECTOR_SHIFT;
+> +}
+> +
+> +static inline unsigned int queue_atomic_write_unit_min(const struct request_queue *q)
+> +{
+> +	return q->limits.atomic_write_unit_min << SECTOR_SHIFT;
+> +}
+
+Ah, what? This undocumented interface reports "unit limits" in
+bytes, but it's not using the physical device sector size to convert
+between sector units and bytes. This really needs some more
+documentation and work to make it present all units consistently and
+not result in confusion when devices have 4kB sector sizes and not
+512 byte sectors...
+
+Also, I think all the byte ranges should support full 64 bit values,
+otherwise there will be silent overflows in converting 32 bit sector
+counts to byte ranges. And, eventually, something will want to do
+larger than 4GB atomic IOs
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
