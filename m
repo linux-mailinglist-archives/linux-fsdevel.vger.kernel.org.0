@@ -2,210 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8754A6F5D03
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 19:23:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D8A46F5D23
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 19:41:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229957AbjECRXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 13:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58136 "EHLO
+        id S229522AbjECRk7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 13:40:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229620AbjECRXU (ORCPT
+        with ESMTP id S229532AbjECRk5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 13:23:20 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46AAFCF;
-        Wed,  3 May 2023 10:23:18 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D719E22A5C;
-        Wed,  3 May 2023 17:23:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1683134596; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Cv+elkPAiL0b6M6X4eQlejQvMyx1+5dv0hzsbr3+9TM=;
-        b=MlgMW4tvVsQvcAo+shbio7jBTif5IhTW0QlfnP5U1nj/RSYKW+ouwrPVbnSdIgzoOOpZpd
-        btTCsYBKF1CsJjUYxLyMScP4+hbYPBrK+kExA4SOZE8PfaKAKnGhO7/fVjcYvYOmFJ1Wvx
-        711ZhJLVihIGluy9M63xTIMVPFmPGas=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1683134596;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Cv+elkPAiL0b6M6X4eQlejQvMyx1+5dv0hzsbr3+9TM=;
-        b=05ae4LPwCgmpiXLOXGry/DPZhFPAs4Tdq44z7A9LHk53ByR5nxuq6hthy2Jdg9fOCy5LmQ
-        Qb69+RUDyWba+SDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BA6F51331F;
-        Wed,  3 May 2023 17:23:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id VHZ3LYSYUmT3IQAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 03 May 2023 17:23:16 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id B79EDA0744; Wed,  3 May 2023 19:23:14 +0200 (CEST)
-Date:   Wed, 3 May 2023 19:23:14 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-api@vger.kernel.org,
-        Amir Goldstein <amir73il@gmail.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH v2 3/4] exportfs: allow exporting non-decodeable file
- handles to userspace
-Message-ID: <20230503172314.kptbcaluwd6xiamz@quack3>
-References: <20230502124817.3070545-1-amir73il@gmail.com>
- <20230502124817.3070545-4-amir73il@gmail.com>
+        Wed, 3 May 2023 13:40:57 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0385FD9
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 10:40:55 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-b99489836aaso4638383276.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 10:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1683135654; x=1685727654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VnWJwoqbKS+XkHViPIVupavn1s9FL+9QLrnitzrqP5g=;
+        b=eK3o90MKtG0sAxJkQzBjjPPdgC8Naf0DW8LSnzzFyGy7r2iplN6tx8LRS+K1pesqQ/
+         +dlPpm9XhI5MpmbmybPkhrAEcSQe8jXQWxke9zLF0oWZbujbmGNiLr16iUXkN33UUHSx
+         XBXGIEWcktzdHazuLFLqwBuOkd1R9zqRh1rR05EQP6mEIW+Y870cMvkQ+YZdkTbO3EXe
+         JnQPUyB6BIyM6BqPoFJBWX+ubIIjmGY6Y6TRZTV6HlKG9bq6FA2QoEZiVTg495moZLJm
+         8j7J7Vy9fMLWKuo3JHmpkQUMBoO2kqt3hu+UuR0WJjg5iixGZu5y4Lvke1eQTwl5WZQa
+         NpXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683135654; x=1685727654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VnWJwoqbKS+XkHViPIVupavn1s9FL+9QLrnitzrqP5g=;
+        b=fe0MUV5k+p2QJgS2oES2GxidKKdY4kMla+tZzMyZUui8iLPfY/qhNZ7NwLaSd/PdeN
+         wVNzXCDgqQ2iDb7VdSnnaTcgzCeuUP3/c6fAU+OocPOFTwQ94WnKtlo1IwZPNViTH2WH
+         dtkj1BF9LqxrDXtsowALyd0gR+jtZ5iFvDUITdaCeDvXhOXc6A8L2gcZ+u4T96cHfKkK
+         ZK1N/ZPps5Tsp0er47RttMS7CKwQxanuVPpL5Sv2u5iPXs4sy+eUiwrkUYKQslMn7GZH
+         kWpKPn0x3BQDPoaf0nm0kiAFKA/hATYH6Hrp/GDLRmCCIjQnqJv4YDUFCTSfji/o8fba
+         rabQ==
+X-Gm-Message-State: AC+VfDy4qPk7d9ho1Lbc6Jh6wbBTROKm6OANE1Si+UkpaDDps9OLK8MI
+        LPjUbsKRaOVRnlt0pYqukRR9+4SMjOBswRtFQXC7ew==
+X-Google-Smtp-Source: ACHHUZ5+xgmBEFDJhkEbV6hOZk2BeNhUs5riMMl8CEWVIZEPl5lRwY7k05WxOPH80Nz6y5uKgnKRw8/1iWaKnQTfG2Y=
+X-Received: by 2002:a25:1885:0:b0:b92:3f59:26e with SMTP id
+ 127-20020a251885000000b00b923f59026emr18942712yby.41.1683135654167; Wed, 03
+ May 2023 10:40:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230502124817.3070545-4-amir73il@gmail.com>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230501165450.15352-1-surenb@google.com> <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+ <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com> <20230503122839.0d9934c5@gandalf.local.home>
+In-Reply-To: <20230503122839.0d9934c5@gandalf.local.home>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 3 May 2023 10:40:42 -0700
+Message-ID: <CAJuCfpFYq7CZS4y2ZiF+AJHRKwnyhmZCk_uuTwFse26DxGh-qQ@mail.gmail.com>
+Subject: Re: [PATCH 00/40] Memory allocation profiling
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+        kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
+        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
+        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+        paulmck@kernel.org, pasha.tatashin@soleen.com,
+        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+        ndesaulniers@google.com, gregkh@linuxfoundation.org,
+        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com,
+        vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+        iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+        elver@google.com, dvyukov@google.com, shakeelb@google.com,
+        songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+        minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-modules@vger.kernel.org,
+        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 02-05-23 15:48:16, Amir Goldstein wrote:
-> Some userspace programs use st_ino as a unique object identifier, even
-> though inode numbers may be recycable.
-> 
-> This issue has been addressed for NFS export long ago using the exportfs
-> file handle API and the unique file handle identifiers are also exported
-> to userspace via name_to_handle_at(2).
-> 
-> fanotify also uses file handles to identify objects in events, but only
-> for filesystems that support NFS export.
-> 
-> Relax the requirement for NFS export support and allow more filesystems
-> to export a unique object identifier via name_to_handle_at(2) with the
-> flag AT_HANDLE_FID.
-> 
-> A file handle requested with the AT_HANDLE_FID flag, may or may not be
-> usable as an argument to open_by_handle_at(2).
-> 
-> To allow filesystems to opt-in to supporting AT_HANDLE_FID, a struct
-> export_operations is required, but even an empty struct is sufficient
-> for encoding FIDs.
+On Wed, May 3, 2023 at 9:28=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
+ wrote:
+>
+> On Wed, 3 May 2023 08:09:28 -0700
+> Suren Baghdasaryan <surenb@google.com> wrote:
+>
+> > There is another issue, which I think can be solved in a smart way but
+> > will either affect performance or would require more memory. With the
+> > tracing approach we don't know beforehand how many individual
+> > allocation sites exist, so we have to allocate code tags (or similar
+> > structures for counting) at runtime vs compile time. We can be smart
+> > about it and allocate in batches or even preallocate more than we need
+> > beforehand but, as I said, it will require some kind of compromise.
+>
+> This approach is actually quite common, especially since tagging every
+> instance is usually overkill, as if you trace function calls in a running
+> kernel, you will find that only a small percentage of the kernel ever
+> executes. It's possible that you will be allocating a lot of tags that wi=
+ll
+> never be used. If run time allocation is possible, that is usually the
+> better approach.
 
-Christian (or Al), are you OK with sparing one AT_ flag for this
-functionality? Otherwise the patch series looks fine to me so I'd like to
-queue it into my tree. Thanks!
+True but the memory overhead should not be prohibitive here. As a
+ballpark number, on my machine I see there are 4838 individual
+allocation locations and each codetag structure is 32 bytes, so that's
+152KB.
 
-								Honza
-
-> 
-> Acked-by: Jeff Layton <jlayton@kernel.org>
-> Acked-by: Chuck Lever <chuck.lever@oracle.com>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/fhandle.c               | 22 ++++++++++++++--------
->  include/uapi/linux/fcntl.h |  5 +++++
->  2 files changed, 19 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index f2bc27d1975e..4a635cf787fc 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -16,7 +16,7 @@
->  
->  static long do_sys_name_to_handle(const struct path *path,
->  				  struct file_handle __user *ufh,
-> -				  int __user *mnt_id)
-> +				  int __user *mnt_id, int fh_flags)
->  {
->  	long retval;
->  	struct file_handle f_handle;
-> @@ -24,11 +24,14 @@ static long do_sys_name_to_handle(const struct path *path,
->  	struct file_handle *handle = NULL;
->  
->  	/*
-> -	 * We need to make sure whether the file system
-> -	 * support decoding of the file handle
-> +	 * We need to make sure whether the file system support decoding of
-> +	 * the file handle if decodeable file handle was requested.
-> +	 * Otherwise, even empty export_operations are sufficient to opt-in
-> +	 * to encoding FIDs.
->  	 */
->  	if (!path->dentry->d_sb->s_export_op ||
-> -	    !path->dentry->d_sb->s_export_op->fh_to_dentry)
-> +	    (!(fh_flags & EXPORT_FH_FID) &&
-> +	     !path->dentry->d_sb->s_export_op->fh_to_dentry))
->  		return -EOPNOTSUPP;
->  
->  	if (copy_from_user(&f_handle, ufh, sizeof(struct file_handle)))
-> @@ -45,10 +48,10 @@ static long do_sys_name_to_handle(const struct path *path,
->  	/* convert handle size to multiple of sizeof(u32) */
->  	handle_dwords = f_handle.handle_bytes >> 2;
->  
-> -	/* we ask for a non connected handle */
-> +	/* we ask for a non connectable maybe decodeable file handle */
->  	retval = exportfs_encode_fh(path->dentry,
->  				    (struct fid *)handle->f_handle,
-> -				    &handle_dwords,  0);
-> +				    &handle_dwords, fh_flags);
->  	handle->handle_type = retval;
->  	/* convert handle size to bytes */
->  	handle_bytes = handle_dwords * sizeof(u32);
-> @@ -84,6 +87,7 @@ static long do_sys_name_to_handle(const struct path *path,
->   * @handle: resulting file handle
->   * @mnt_id: mount id of the file system containing the file
->   * @flag: flag value to indicate whether to follow symlink or not
-> + *        and whether a decodable file handle is required.
->   *
->   * @handle->handle_size indicate the space available to store the
->   * variable part of the file handle in bytes. If there is not
-> @@ -96,17 +100,19 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
->  {
->  	struct path path;
->  	int lookup_flags;
-> +	int fh_flags;
->  	int err;
->  
-> -	if ((flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
-> +	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID))
->  		return -EINVAL;
->  
->  	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
-> +	fh_flags = (flag & AT_HANDLE_FID) ? EXPORT_FH_FID : 0;
->  	if (flag & AT_EMPTY_PATH)
->  		lookup_flags |= LOOKUP_EMPTY;
->  	err = user_path_at(dfd, name, lookup_flags, &path);
->  	if (!err) {
-> -		err = do_sys_name_to_handle(&path, handle, mnt_id);
-> +		err = do_sys_name_to_handle(&path, handle, mnt_id, fh_flags);
->  		path_put(&path);
->  	}
->  	return err;
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index e8c07da58c9f..3091080db069 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -112,4 +112,9 @@
->  
->  #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
->  
-> +/* Flags for name_to_handle_at(2) */
-> +#define AT_HANDLE_FID		0x10000	/* file handle is needed to compare
-> +					   object indentity and may not be
-> +					   usable to open_by_handle_at(2) */
-> +
->  #endif /* _UAPI_LINUX_FCNTL_H */
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> -- Steve
