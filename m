@@ -2,181 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E53D6F5F6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 21:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D08A96F5F7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 21:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbjECTtA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 15:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60602 "EHLO
+        id S229986AbjECT50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 15:57:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbjECTs7 (ORCPT
+        with ESMTP id S229562AbjECT5Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 15:48:59 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0987AA0;
-        Wed,  3 May 2023 12:48:58 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-63b5465fc13so4281480b3a.3;
-        Wed, 03 May 2023 12:48:58 -0700 (PDT)
+        Wed, 3 May 2023 15:57:25 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C0083E1
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 12:57:21 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-b983027d0faso8119571276.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 12:57:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683143337; x=1685735337;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X0rUD0Br2hVe3zymEpoVc3T4TI1iG6AHKLcBxAchx6c=;
-        b=WRBBKM6Ry5r7jdgtwiYn+VkQZ8oJVQRWR7eY6Q4gywAy/AIvKMLTc5lvr+I7cWBcM8
-         TVhHYYvOx67ydwBdoukq9sxuHpDbTIx22fG3/FumxSshOm9pmxX92bnYtvASSZ4zbmzc
-         16xIn+Y67YCqR06ozsQt3kblulDkmNtdmkspoxukxm7NEnp7dppq9zXv9usUpK/QejVj
-         uG3paayH7MDDf0m/MWp/ZvWKY2r+v95ayLq3zeaaad/ime6aEDAhxIb3bCUzDcMlE+HN
-         t35RGIt3UP+SFV37LJD1LcRWQFcEBQWiLoyXLJmQezSeP5APJKrU5xq4XYO73ImZOIXL
-         Vu0w==
+        d=google.com; s=20221208; t=1683143840; x=1685735840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Ox1/516ZvGWiy6XQzvdYM7/gH/XZHZIVHoP8inhzxM=;
+        b=tRO5/vsXmgz8bVUiKFCXTV8aovuqnpc72ZftAjAmKaHKUf97DDZm/88QvfymfWreye
+         9t68UwHLaPnIKrub9j6Uh3xDEzv32OfM52MVZU5n2roAEMLmNGL5OgnkuwpX473CFnhE
+         Q224qoZ9m0ei5qlLmUFmbz4acl3XMEWtwAyAq6pPi1lB4p9Mrd7Baw78EtRNJdYVkcvG
+         D5WtsIugC6jkpwf9NZ1EZKUfSJyaLOnAJx5TgAasi0iBHbse8rj94z/kDqfv+sqddCPJ
+         AWbxexAHZRDHXnRqbhJpejXPxipykhlLNVvttdrlypKH19n9HWGhOj23xTTvOI2T4CP9
+         L2zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683143337; x=1685735337;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X0rUD0Br2hVe3zymEpoVc3T4TI1iG6AHKLcBxAchx6c=;
-        b=Zc05avD7vDx3W4vWNqPQgUXyYHNTO6EFJGI6V6ddGu8U9S0rR3afScUtXiOVo4nlY5
-         hcRhWnSIYeN11SX5CiUbvs6QJNJ8bReunBUrkXxTxnyTotrk/rXW4aDxyzExE6mtipws
-         P6Nqfs1fYPPwDE9S7pwRKssDCdFiZXLbcwUIxPTfSXBvuNXVQSil4Kt7qwkOAL/rgJP4
-         NdHBS34P2aa3FHZC6xtjJRy+qh8KRjGm7MU7TG09B7k9J0HAvBbRawyCWXoCQDJZFtqe
-         kT6sr0YJo5hzwZria8oiKkwVdvIYW0A/tpjaAeTl4XFxiFfRAi9wXQItMeTTUJT49I/5
-         1jcQ==
-X-Gm-Message-State: AC+VfDw4dJXMYF3H3U/aTfgVPOFu1uZhW2D4YtxZ32KD5w7ARrDV7sZv
-        TXB7MSo6PVdyMsVmfdK8x6E=
-X-Google-Smtp-Source: ACHHUZ7PCAia8qenUZjVuL3CxoAfpPOTz+pVitg644DoS55sSsvwsR0a2zZvJ1yLsyH/3euEv2JSdw==
-X-Received: by 2002:a05:6a00:16ca:b0:641:23df:e914 with SMTP id l10-20020a056a0016ca00b0064123dfe914mr31263008pfc.13.1683143337337;
-        Wed, 03 May 2023 12:48:57 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::5:6454])
-        by smtp.gmail.com with ESMTPSA id s12-20020a056a00178c00b0062e12f945adsm23909517pfg.135.2023.05.03.12.48.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 May 2023 12:48:56 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 3 May 2023 09:48:55 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
-        vbabka@suse.cz, roman.gushchin@linux.dev, mgorman@suse.de,
-        dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
-        corbet@lwn.net, void@manifault.com, peterz@infradead.org,
-        juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, muchun.song@linux.dev,
-        rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
-        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <ZFK6pwOelIlhV8Bm@slm.duckdns.org>
-References: <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
- <ZFIVtB8JyKk0ddA5@moria.home.lan>
- <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
- <20230503180726.GA196054@cmpxchg.org>
- <ZFKlrP7nLn93iIRf@slm.duckdns.org>
- <ZFKqh5Dh93UULdse@slm.duckdns.org>
- <ZFKubD/lq7oB4svV@moria.home.lan>
- <ZFKu6zWA00AzArMF@slm.duckdns.org>
- <ZFKxcfqkUQ60zBB_@slm.duckdns.org>
- <CAJuCfpEPkCJZO2svT-GfmpJ+V-jSLyFDKM_atnqPVRBKtzgtnQ@mail.gmail.com>
+        d=1e100.net; s=20221208; t=1683143840; x=1685735840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Ox1/516ZvGWiy6XQzvdYM7/gH/XZHZIVHoP8inhzxM=;
+        b=lUb1E2NLt7W5thZZRwGu9kCf5rk8y4QVyWaLrdnl8ZBCwqYXCsE7w2B3oyZZ0Hx+iv
+         007aBKVsR/qeOXS4Zq6memrT2KM721rphOQfRJb55eqIBFGmvzDibHZMMM6ZT2aVmx0l
+         RsecOb5p3Bmqih2Bv9kBJVepbRYLGytkblqK6zhdnkecNOV56PYRZSsOF6wfPS97pDql
+         wSfOYsA0c4/Vr1RnIX36mQdZKHTvARPlzd+yk0v8UYiHPelOkCg5H+6b9P5pU+Cug1v9
+         diFfBf4Wo0K98YMHQZB6mU67qc1ECaTjvViG3nCtMIwf3XHy0jsY12lulA715wSqH1cj
+         s6rQ==
+X-Gm-Message-State: AC+VfDxEQjom8y+GEiQbK87YjaGiSL/BFZrPC99LZdXFpT2Hg4pJP2Rq
+        W6nAjSNVBvgEqH8U2/d0GY9ImaPcXipdg2cu/D/lYA==
+X-Google-Smtp-Source: ACHHUZ7ABw610g4pAAup3sgwroFeEko5dVILAFx3nQjtdd9Aki/WRsMXwrfgPFiTJCmml2TfA6W46q0XZ5s6cGLvQ/g=
+X-Received: by 2002:a25:f46:0:b0:b9d:f4df:b0ef with SMTP id
+ 67-20020a250f46000000b00b9df4dfb0efmr13111149ybp.42.1683143840443; Wed, 03
+ May 2023 12:57:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpEPkCJZO2svT-GfmpJ+V-jSLyFDKM_atnqPVRBKtzgtnQ@mail.gmail.com>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+References: <20230501175025.36233-1-surenb@google.com> <ZFBvOh8r5WbTVyA8@casper.infradead.org>
+ <CAJuCfpHfAFx9rjv0gHK77LbP-8gd-kFnWw=aqfQTP6pH=zvMNg@mail.gmail.com>
+ <ZFCB+G9KSNE+J9cZ@casper.infradead.org> <CAJuCfpES=G8i99yYXWoeJq9+JVUjX5Bkq_5VNVTVX7QT+Wkfxg@mail.gmail.com>
+ <ZFEmN6G7WRy59Mum@casper.infradead.org> <CAJuCfpFs+Rgpu8v+ddHFwtOx33W5k1sKDdXHM2ej1Upyo_9y4g@mail.gmail.com>
+ <ZFGPLXIis6tl1QWX@casper.infradead.org> <CAJuCfpGgc_bCEAE5LrhYPk=qXMU=owgiABTO9ZNqaBx-xfrOuQ@mail.gmail.com>
+ <CAJD7tkZJ1VPB+bA0cjHHcehoMW2fT96-h=C5pRHD=Z+SJXYosA@mail.gmail.com>
+In-Reply-To: <CAJD7tkZJ1VPB+bA0cjHHcehoMW2fT96-h=C5pRHD=Z+SJXYosA@mail.gmail.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 3 May 2023 12:57:09 -0700
+Message-ID: <CAJuCfpE9dVK01c-aNT_uwTC=m8RSdEiXsoe6XBR48GjL=ezsmg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mm: handle swap page faults under VMA lock if page is uncontended
+To:     Yosry Ahmed <yosryahmed@google.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+        hannes@cmpxchg.org, mhocko@suse.com, josef@toxicpanda.com,
+        jack@suse.cz, ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        apopple@nvidia.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-
-On Wed, May 03, 2023 at 12:41:08PM -0700, Suren Baghdasaryan wrote:
-> On Wed, May 3, 2023 at 12:09 PM Tejun Heo <tj@kernel.org> wrote:
+On Wed, May 3, 2023 at 1:34=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
+wrote:
+>
+> On Tue, May 2, 2023 at 4:05=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
+com> wrote:
 > >
-> > On Wed, May 03, 2023 at 08:58:51AM -1000, Tejun Heo wrote:
-> > > On Wed, May 03, 2023 at 02:56:44PM -0400, Kent Overstreet wrote:
-> > > > On Wed, May 03, 2023 at 08:40:07AM -1000, Tejun Heo wrote:
-> > > > > > Yeah, easy / default visibility argument does make sense to me.
-> > > > >
-> > > > > So, a bit of addition here. If this is the thrust, the debugfs part seems
-> > > > > rather redundant, right? That's trivially obtainable with tracing / bpf and
-> > > > > in a more flexible and performant manner. Also, are we happy with recording
-> > > > > just single depth for persistent tracking?
-> 
-> IIUC, by single depth you mean no call stack capturing?
-
-Yes.
-
-> If so, that's the idea behind the context capture feature so that we
-> can enable it on specific allocations only after we determine there is
-> something interesting there. So, with low-cost persistent tracking we
-> can determine the suspects and then pay some more to investigate those
-> suspects in more detail.
-
-Yeah, I was wondering whether it'd be useful to have that configurable so
-that it'd be possible for a user to say "I'm okay with the cost, please
-track more context per allocation". Given that tracking the immediate caller
-is already a huge improvement and narrowing it down from there using
-existing tools shouldn't be that difficult, I don't think this is a blocker
-in any way. It just bothers me a bit that the code is structured so that
-source line is the main abstraction.
-
-> > > > Not sure what you're envisioning?
-> > > >
-> > > > I'd consider the debugfs interface pretty integral; it's much more
-> > > > discoverable for users, and it's hardly any code out of the whole
-> > > > patchset.
+> > On Tue, May 2, 2023 at 3:31=E2=80=AFPM Matthew Wilcox <willy@infradead.=
+org> wrote:
 > > >
-> > > You can do the same thing with a bpftrace one liner tho. That's rather
-> > > difficult to beat.
-> 
-> debugfs seemed like a natural choice for such information. If another
-> interface is more appropriate I'm happy to explore that.
-> 
+> > > On Tue, May 02, 2023 at 09:36:03AM -0700, Suren Baghdasaryan wrote:
+> > > > On Tue, May 2, 2023 at 8:03=E2=80=AFAM Matthew Wilcox <willy@infrad=
+ead.org> wrote:
+> > > > >
+> > > > > On Mon, May 01, 2023 at 10:04:56PM -0700, Suren Baghdasaryan wrot=
+e:
+> > > > > > On Mon, May 1, 2023 at 8:22=E2=80=AFPM Matthew Wilcox <willy@in=
+fradead.org> wrote:
+> > > > > > >
+> > > > > > > On Mon, May 01, 2023 at 07:30:13PM -0700, Suren Baghdasaryan =
+wrote:
+> > > > > > > > On Mon, May 1, 2023 at 7:02=E2=80=AFPM Matthew Wilcox <will=
+y@infradead.org> wrote:
+> > > > > > > > >
+> > > > > > > > > On Mon, May 01, 2023 at 10:50:23AM -0700, Suren Baghdasar=
+yan wrote:
+> > > > > > > > > > +++ b/mm/memory.c
+> > > > > > > > > > @@ -3711,11 +3711,6 @@ vm_fault_t do_swap_page(struct v=
+m_fault *vmf)
+> > > > > > > > > >       if (!pte_unmap_same(vmf))
+> > > > > > > > > >               goto out;
+> > > > > > > > > >
+> > > > > > > > > > -     if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+> > > > > > > > > > -             ret =3D VM_FAULT_RETRY;
+> > > > > > > > > > -             goto out;
+> > > > > > > > > > -     }
+> > > > > > > > > > -
+> > > > > > > > > >       entry =3D pte_to_swp_entry(vmf->orig_pte);
+> > > > > > > > > >       if (unlikely(non_swap_entry(entry))) {
+> > > > > > > > > >               if (is_migration_entry(entry)) {
+> > > > > > > > >
+> > > > > > > > > You're missing the necessary fallback in the (!folio) cas=
+e.
+> > > > > > > > > swap_readpage() is synchronous and will sleep.
+> > > > > > > >
+> > > > > > > > True, but is it unsafe to do that under VMA lock and has to=
+ be done
+> > > > > > > > under mmap_lock?
+> > > > > > >
+> > > > > > > ... you were the one arguing that we didn't want to wait for =
+I/O with
+> > > > > > > the VMA lock held?
+> > > > > >
+> > > > > > Well, that discussion was about waiting in folio_lock_or_retry(=
+) with
+> > > > > > the lock being held. I argued against it because currently we d=
+rop
+> > > > > > mmap_lock lock before waiting, so if we don't drop VMA lock we =
+would
+> > > > > > be changing the current behavior which might introduce new
+> > > > > > regressions. In the case of swap_readpage and swapin_readahead =
+we
+> > > > > > already wait with mmap_lock held, so waiting with VMA lock held=
+ does
+> > > > > > not introduce new problems (unless there is a need to hold mmap=
+_lock).
+> > > > > >
+> > > > > > That said, you are absolutely correct that this situation can b=
+e
+> > > > > > improved by dropping the lock in these cases too. I just didn't=
+ want
+> > > > > > to attack everything at once. I believe after we agree on the a=
+pproach
+> > > > > > implemented in https://lore.kernel.org/all/20230501175025.36233=
+-3-surenb@google.com
+> > > > > > for dropping the VMA lock before waiting, these cases can be ad=
+ded
+> > > > > > easier. Does that make sense?
+> > > > >
+> > > > > OK, I looked at this path some more, and I think we're fine.  Thi=
+s
+> > > > > patch is only called for SWP_SYNCHRONOUS_IO which is only set for
+> > > > > QUEUE_FLAG_SYNCHRONOUS devices, which are brd, zram and nvdimms
+> > > > > (both btt and pmem).  So the answer is that we don't sleep in thi=
+s
+> > > > > path, and there's no need to drop the lock.
+> > > >
+> > > > Yes but swapin_readahead does sleep, so I'll have to handle that ca=
+se
+> > > > too after this.
+> > >
+> > > Sleeping is OK, we do that in pXd_alloc()!  Do we block on I/O anywhe=
+re
+> > > in swapin_readahead()?  It all looks like async I/O to me.
 > >
-> > Ah, shit, I'm an idiot. Sorry. I thought allocations was under /proc and
-> > allocations.ctx under debugfs. I meant allocations.ctx is redundant.
-> 
-> Do you mean that we could display allocation context in
-> debugfs/allocations file (for the allocations which we explicitly
-> enabled context capturing)?
+> > Hmm. I thought that we have synchronous I/O in the following paths:
+> >     swapin_readahead()->swap_cluster_readahead()->swap_readpage()
+> >     swapin_readahead()->swap_vma_readahead()->swap_readpage()
+> > but just noticed that in both cases swap_readpage() is called with the
+> > synchronous parameter being false. So you are probably right here...
+>
+> In both swap_cluster_readahead() and swap_vma_readahead() it looks
+> like if the readahead window is 1 (aka we are not reading ahead), then
+> we jump to directly calling read_swap_cache_async() passing do_poll =3D
+> true, which means we may end up calling swap_readpage() passing
+> synchronous =3D true.
+>
+> I am not familiar with readahead heuristics, so I am not sure how
+> common this is, but it's something to think about.
 
-Sorry about the fumbled communication. Here's what I mean:
+Uh, you are correct. If this branch is common, we could use the same
+"drop the lock and retry" pattern inside read_swap_cache_async(). That
+would be quite easy to implement.
+Thanks for checking on it!
 
-* Improving memory allocation visibility makes sense to me. To me, a more
-  natural place for that feels like /proc/allocations next to other memory
-  info files rather than under debugfs.
-
-* The default visibility provided by "allocations" provides something which
-  is more difficult or at least cumbersome to obtain using existing tracing
-  tools. However, what's provided by "allocations.ctx" can be trivially
-  obtained using kprobe and BPF and seems redundant.
-
-Thanks.
-
--- 
-tejun
+>
+> > Does that mean swapin_readahead() might return a page which does not
+> > have its content swapped-in yet?
+> >
