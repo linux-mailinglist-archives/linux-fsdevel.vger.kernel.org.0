@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7DA16F59C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 16:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5306B6F59CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 16:21:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230045AbjECOVD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 10:21:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42752 "EHLO
+        id S229959AbjECOVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 10:21:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230241AbjECOUu (ORCPT
+        with ESMTP id S230264AbjECOUw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 10:20:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7088C5FD9;
-        Wed,  3 May 2023 07:20:48 -0700 (PDT)
+        Wed, 3 May 2023 10:20:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7206A4E;
+        Wed,  3 May 2023 07:20:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B16F62DE7;
-        Wed,  3 May 2023 14:20:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 639D7C433A1;
-        Wed,  3 May 2023 14:20:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5468062DE2;
+        Wed,  3 May 2023 14:20:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0121C4339E;
+        Wed,  3 May 2023 14:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683123647;
-        bh=woIUOU498nUTE5btDBpQ1yKRVkawRsDiB5Yp3W19NdI=;
+        s=k20201202; t=1683123649;
+        bh=C94uikGnRmREVRqdFg93IJBOCnOyg04cXTwa8d6XodU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Om8LVt4K3N9F7622+ejSixfyVUyOVVN6dY1egeJahkO7AzyqPpfLj75J1pHWJN8TO
-         uGx0EIW9bi4lqI8I0geWzqdm30RQ4XN3f0DFx1Lyp2EpoV32o9/T9/ndRxDRBgC04x
-         Pn6UVxX5s2T+EcX2TyeEn/TxgZ3z4V9TTHzOc5Ywt09oTCz+6ngFkqLKHF0ynFds9D
-         blpr2OAwWV2CkXyHMAtN6SFCtVezRKhvJFPvncyGcXfFHvxge4l8rjK81QZ4MIuG5Q
-         dyO6Yvyr5VQmzzCvvzMZYKzMenuOib53gQz2A0JUpJBgD2ixGqjrabRFpCDpAhG95U
-         PQAuYPRQ5nD8w==
+        b=OGf/0QEqpDQZXTu068wUFLNOWy8Vw2aFrmUS39Sk+aS9M1h+fmSuhqkfeMURIG4yw
+         g79R4PVRxITnfMa/zkhMXp5ythzx5gBA/0BRSYUuClaLmAm9cN/nKGhQPaplj7KnFg
+         LElnkLRm8+5f/u3dVMWvAcFq72UEYQVA1BZ3YsimYJO2tL/8qfIQa9hK0wiS+kZ7df
+         ikAJp72Luz2gcgOD8gw24cGJOOTD1aRbEdaql7/ErG9Fatd7zZUh9nOyzfMK5iFRGg
+         ntUj12LtHZr0E2DPSc6+h0GwppCRxw1uvtT0XbIlmNKQI7e+BfWMh7ijWOXWFvfB4d
+         970UyWItdJc/w==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
@@ -51,16 +51,16 @@ Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
         linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Subject: [PATCH v3 3/6] shmem: convert to multigrain timestamps
-Date:   Wed,  3 May 2023 10:20:34 -0400
-Message-Id: <20230503142037.153531-4-jlayton@kernel.org>
+Subject: [PATCH v3 4/6] xfs: convert to multigrain timestamps
+Date:   Wed,  3 May 2023 10:20:35 -0400
+Message-Id: <20230503142037.153531-5-jlayton@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230503142037.153531-1-jlayton@kernel.org>
 References: <20230503142037.153531-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -69,124 +69,144 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+With this change, also have XFS stop reporting a STATX_CHANGE_COOKIE, so
+that nfsd will use the ctime instead.
+
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- mm/shmem.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ fs/xfs/libxfs/xfs_inode_buf.c   |  2 +-
+ fs/xfs/libxfs/xfs_trans_inode.c |  2 +-
+ fs/xfs/xfs_acl.c                |  2 +-
+ fs/xfs/xfs_bmap_util.c          |  2 +-
+ fs/xfs/xfs_inode.c              |  2 +-
+ fs/xfs/xfs_inode_item.c         |  2 +-
+ fs/xfs/xfs_iops.c               | 15 ++++++++++++---
+ fs/xfs/xfs_super.c              |  2 +-
+ 8 files changed, 19 insertions(+), 10 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 448f393d8ab2..40c794a7baa8 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1039,7 +1039,7 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
- void shmem_truncate_range(struct inode *inode, loff_t lstart, loff_t lend)
- {
- 	shmem_undo_range(inode, lstart, lend, false);
--	inode->i_ctime = inode->i_mtime = current_time(inode);
-+	inode->i_ctime = inode->i_mtime = current_ctime(inode);
- 	inode_inc_iversion(inode);
- }
- EXPORT_SYMBOL_GPL(shmem_truncate_range);
-@@ -1066,6 +1066,7 @@ static int shmem_getattr(struct mnt_idmap *idmap,
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
- 	generic_fillattr(idmap, inode, stat);
-+	generic_fill_multigrain_cmtime(request_mask, inode, stat);
+diff --git a/fs/xfs/libxfs/xfs_inode_buf.c b/fs/xfs/libxfs/xfs_inode_buf.c
+index 758aacd8166b..c29e961fac34 100644
+--- a/fs/xfs/libxfs/xfs_inode_buf.c
++++ b/fs/xfs/libxfs/xfs_inode_buf.c
+@@ -316,7 +316,7 @@ xfs_inode_to_disk(
  
- 	if (shmem_is_huge(inode, 0, false, NULL, 0))
- 		stat->blksize = HPAGE_PMD_SIZE;
-@@ -1136,7 +1137,7 @@ static int shmem_setattr(struct mnt_idmap *idmap,
- 	if (attr->ia_valid & ATTR_MODE)
- 		error = posix_acl_chmod(idmap, dentry, inode->i_mode);
- 	if (!error && update_ctime) {
--		inode->i_ctime = current_time(inode);
-+		inode->i_ctime = current_ctime(inode);
- 		if (update_mtime)
- 			inode->i_mtime = inode->i_ctime;
- 		inode_inc_iversion(inode);
-@@ -2361,7 +2362,7 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
- 		inode->i_ino = ino;
- 		inode_init_owner(idmap, inode, dir, mode);
- 		inode->i_blocks = 0;
--		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
-+		inode->i_atime = inode->i_mtime = inode->i_ctime = current_ctime(inode);
- 		inode->i_generation = get_random_u32();
- 		info = SHMEM_I(inode);
- 		memset(info, 0, (char *)inode - (char *)info);
-@@ -2940,7 +2941,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	to->di_atime = xfs_inode_to_disk_ts(ip, inode->i_atime);
+ 	to->di_mtime = xfs_inode_to_disk_ts(ip, inode->i_mtime);
+-	to->di_ctime = xfs_inode_to_disk_ts(ip, inode->i_ctime);
++	to->di_ctime = xfs_inode_to_disk_ts(ip, ctime_peek(inode));
+ 	to->di_nlink = cpu_to_be32(inode->i_nlink);
+ 	to->di_gen = cpu_to_be32(inode->i_generation);
+ 	to->di_mode = cpu_to_be16(inode->i_mode);
+diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
+index 8b5547073379..c08be3aa3339 100644
+--- a/fs/xfs/libxfs/xfs_trans_inode.c
++++ b/fs/xfs/libxfs/xfs_trans_inode.c
+@@ -63,7 +63,7 @@ xfs_trans_ichgtime(
+ 	ASSERT(tp);
+ 	ASSERT(xfs_isilocked(ip, XFS_ILOCK_EXCL));
  
- 		error = 0;
- 		dir->i_size += BOGO_DIRENT_SIZE;
--		dir->i_ctime = dir->i_mtime = current_time(dir);
-+		dir->i_ctime = dir->i_mtime = current_ctime(dir);
- 		inode_inc_iversion(dir);
- 		d_instantiate(dentry, inode);
- 		dget(dentry); /* Extra count - pin the dentry in core */
-@@ -3016,7 +3017,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
- 	}
+-	tv = current_time(inode);
++	tv = current_ctime(inode);
  
- 	dir->i_size += BOGO_DIRENT_SIZE;
--	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
-+	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_ctime(inode);
- 	inode_inc_iversion(dir);
- 	inc_nlink(inode);
- 	ihold(inode);	/* New dentry reference */
-@@ -3034,7 +3035,7 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
- 		shmem_free_inode(inode->i_sb);
- 
- 	dir->i_size -= BOGO_DIRENT_SIZE;
--	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
-+	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_ctime(inode);
- 	inode_inc_iversion(dir);
- 	drop_nlink(inode);
- 	dput(dentry);	/* Undo the count from "create" - this does all the work */
-@@ -3124,7 +3125,7 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- 	new_dir->i_size += BOGO_DIRENT_SIZE;
- 	old_dir->i_ctime = old_dir->i_mtime =
- 	new_dir->i_ctime = new_dir->i_mtime =
--	inode->i_ctime = current_time(old_dir);
-+	inode->i_ctime = current_ctime(old_dir);
- 	inode_inc_iversion(old_dir);
- 	inode_inc_iversion(new_dir);
- 	return 0;
-@@ -3178,7 +3179,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 		folio_put(folio);
- 	}
- 	dir->i_size += BOGO_DIRENT_SIZE;
--	dir->i_ctime = dir->i_mtime = current_time(dir);
-+	dir->i_ctime = dir->i_mtime = current_ctime(dir);
- 	inode_inc_iversion(dir);
- 	d_instantiate(dentry, inode);
- 	dget(dentry);
-@@ -3250,7 +3251,7 @@ static int shmem_fileattr_set(struct mnt_idmap *idmap,
- 		(fa->flags & SHMEM_FL_USER_MODIFIABLE);
- 
- 	shmem_set_inode_flags(inode, info->fsflags);
+ 	if (flags & XFS_ICHGTIME_MOD)
+ 		inode->i_mtime = tv;
+diff --git a/fs/xfs/xfs_acl.c b/fs/xfs/xfs_acl.c
+index 791db7d9c849..85353e6e9004 100644
+--- a/fs/xfs/xfs_acl.c
++++ b/fs/xfs/xfs_acl.c
+@@ -233,7 +233,7 @@ xfs_acl_set_mode(
+ 	xfs_ilock(ip, XFS_ILOCK_EXCL);
+ 	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
+ 	inode->i_mode = mode;
 -	inode->i_ctime = current_time(inode);
 +	inode->i_ctime = current_ctime(inode);
- 	inode_inc_iversion(inode);
- 	return 0;
- }
-@@ -3320,7 +3321,7 @@ static int shmem_xattr_handler_set(const struct xattr_handler *handler,
- 	name = xattr_full_name(handler, name);
- 	err = simple_xattr_set(&info->xattrs, name, value, size, flags, NULL);
- 	if (!err) {
--		inode->i_ctime = current_time(inode);
-+		inode->i_ctime = current_ctime(inode);
- 		inode_inc_iversion(inode);
+ 	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
+ 
+ 	if (xfs_has_wsync(mp))
+diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+index a09dd2606479..e9cb1bfb9574 100644
+--- a/fs/xfs/xfs_bmap_util.c
++++ b/fs/xfs/xfs_bmap_util.c
+@@ -1757,7 +1757,7 @@ xfs_swap_extents(
+ 	 * under it.
+ 	 */
+ 	if ((sbp->bs_ctime.tv_sec != VFS_I(ip)->i_ctime.tv_sec) ||
+-	    (sbp->bs_ctime.tv_nsec != VFS_I(ip)->i_ctime.tv_nsec) ||
++	    (sbp->bs_ctime.tv_nsec != ctime_nsec_peek(VFS_I(ip))) ||
+ 	    (sbp->bs_mtime.tv_sec != VFS_I(ip)->i_mtime.tv_sec) ||
+ 	    (sbp->bs_mtime.tv_nsec != VFS_I(ip)->i_mtime.tv_nsec)) {
+ 		error = -EBUSY;
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 5808abab786c..ac299c1a9838 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -843,7 +843,7 @@ xfs_init_new_inode(
+ 	ip->i_df.if_nextents = 0;
+ 	ASSERT(ip->i_nblocks == 0);
+ 
+-	tv = current_time(inode);
++	tv = current_ctime(inode);
+ 	inode->i_mtime = tv;
+ 	inode->i_atime = tv;
+ 	inode->i_ctime = tv;
+diff --git a/fs/xfs/xfs_inode_item.c b/fs/xfs/xfs_inode_item.c
+index ca2941ab6cbc..018f187387f0 100644
+--- a/fs/xfs/xfs_inode_item.c
++++ b/fs/xfs/xfs_inode_item.c
+@@ -381,7 +381,7 @@ xfs_inode_to_log_dinode(
+ 	memset(to->di_pad3, 0, sizeof(to->di_pad3));
+ 	to->di_atime = xfs_inode_to_log_dinode_ts(ip, inode->i_atime);
+ 	to->di_mtime = xfs_inode_to_log_dinode_ts(ip, inode->i_mtime);
+-	to->di_ctime = xfs_inode_to_log_dinode_ts(ip, inode->i_ctime);
++	to->di_ctime = xfs_inode_to_log_dinode_ts(ip, ctime_peek(inode));
+ 	to->di_nlink = inode->i_nlink;
+ 	to->di_gen = inode->i_generation;
+ 	to->di_mode = inode->i_mode;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 24718adb3c16..f41155cfbbe2 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -573,8 +573,17 @@ xfs_vn_getattr(
+ 	stat->gid = vfsgid_into_kgid(vfsgid);
+ 	stat->ino = ip->i_ino;
+ 	stat->atime = inode->i_atime;
+-	stat->mtime = inode->i_mtime;
+-	stat->ctime = inode->i_ctime;
++	generic_fill_multigrain_cmtime(request_mask, inode, stat);
++
++	/*
++	 * XFS's i_version counter doesn't conform to the rules that other
++	 * filesystems live by. In particular, it changes the version on atime
++	 * updates which leads to excess cache invalidations on NFS. Just clear
++	 * the STATX_CHANGE_COOKIE flag so that nfsd (and others) use the
++	 * (multigrain) ctime instead.
++	 */
++	stat->result_mask &= ~STATX_CHANGE_COOKIE;
++
+ 	stat->blocks = XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks);
+ 
+ 	if (xfs_has_v3inodes(mp)) {
+@@ -917,7 +926,7 @@ xfs_setattr_size(
+ 	if (newsize != oldsize &&
+ 	    !(iattr->ia_valid & (ATTR_CTIME | ATTR_MTIME))) {
+ 		iattr->ia_ctime = iattr->ia_mtime =
+-			current_time(inode);
++			current_ctime(inode);
+ 		iattr->ia_valid |= ATTR_CTIME | ATTR_MTIME;
  	}
- 	return err;
-@@ -4052,9 +4053,9 @@ static struct file_system_type shmem_fs_type = {
- #endif
- 	.kill_sb	= kill_litter_super,
- #ifdef CONFIG_SHMEM
--	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
-+	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MULTIGRAIN_TS
- #else
--	.fs_flags	= FS_USERNS_MOUNT,
-+	.fs_flags	= FS_USERNS_MOUNT | FS_MULTIGRAIN_TS,
- #endif
+ 
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 4f814f9e12ab..db3943d09532 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1976,7 +1976,7 @@ static struct file_system_type xfs_fs_type = {
+ 	.init_fs_context	= xfs_init_fs_context,
+ 	.parameters		= xfs_fs_parameters,
+ 	.kill_sb		= kill_block_super,
+-	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
++	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MULTIGRAIN_TS,
  };
+ MODULE_ALIAS_FS("xfs");
  
 -- 
 2.40.1
