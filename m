@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2340C6F570F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 13:19:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02F536F5710
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 13:19:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229916AbjECLTG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 07:19:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40790 "EHLO
+        id S229922AbjECLTS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 07:19:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbjECLTE (ORCPT
+        with ESMTP id S229920AbjECLTK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 07:19:04 -0400
+        Wed, 3 May 2023 07:19:10 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65C240F3
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 04:19:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661604C10
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 04:19:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4DB9E62CDB
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 11:19:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1F45C433EF;
-        Wed,  3 May 2023 11:19:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D48F862CDC
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 11:19:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B7F2C433A0;
+        Wed,  3 May 2023 11:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683112742;
-        bh=fopvhTmvStaaaW9Fq0s5+eQXa7o4Pgy8eptPT1y3dhk=;
+        s=k20201202; t=1683112744;
+        bh=+H2uoHBRPrXcx6mJgUvlb8yV9COECnza2Yeoyvucuqg=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=Jq00SuAtyhgVkVrgrlJIeTlY8hBxsGoXwD5IlYJdcj9La4Yv76mx4xjbPRq3gnV05
-         NVZMnTCOijg/brmERMXpwVn2NkM3oKpnWT5JmtZOkNrDoMehffDDjdPZ+mghx6cyzR
-         ooJxbTqghpfVeMRxxWg9Q0W5kGRbsPunrZn/Szf0nDRM/vUGhZo5mDml3KsZTsh3RR
-         TZpSiS6CjU27Y5MSCAvgfmchj5l5ZuPXN9Gza6sYkYM2PE14OHzjgxWcm/bfy52fE0
-         auJv0+tz4ZNQTAcrs/VlmpxmXcrSg9Hd+Qy+bB2uRADlVOwO9RKJ3L2/ohpDc38DJD
-         O03ZJlCnDH78w==
+        b=jkoF0Tmi9GZx5WIvit4WlOo62rhzDCcgIK02yaHzWKXzlPQ1QPV2LASGLrZIZO7Mv
+         qQCKERteCEyMSznHJ0lRfTby74QEidPId0Ak0rxC8gdAH7NQiMSbkZT16iC17cSsOH
+         hwCeidD5r09oZW/9rVsvfz/bSqVVrLZ00p6ytQv3+oGS4ONkGfnoQJPCpbU5+xOR5G
+         xpNlOV13JgCg6eF7yK8XiZle7Gug5IgYgd5exAAnMVmkEThl0+rxCwheWgxF/cTht8
+         yDwsaM48b10po+iiksmO+6UxcbMfJfnJZTGPN+VZO5k82hKifEmQobs3AgkiIwXbmz
+         qrs08BGXXbDkw==
 From:   Christian Brauner <brauner@kernel.org>
-Date:   Wed, 03 May 2023 13:18:41 +0200
-Subject: [PATCH v4 3/4] fs: use a for loop when locking a mount
+Date:   Wed, 03 May 2023 13:18:42 +0200
+Subject: [PATCH v4 4/4] fs: allow to mount beneath top mount
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230202-fs-move-mount-replace-v4-3-98f3d80d7eaa@kernel.org>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230202-fs-move-mount-replace-v4-4-98f3d80d7eaa@kernel.org>
 References: <20230202-fs-move-mount-replace-v4-0-98f3d80d7eaa@kernel.org>
 In-Reply-To: <20230202-fs-move-mount-replace-v4-0-98f3d80d7eaa@kernel.org>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
@@ -46,102 +46,1036 @@ To:     Al Viro <viro@zeniv.linux.org.uk>,
 Cc:     linux-fsdevel@vger.kernel.org,
         Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-bfdf5
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2238; i=brauner@kernel.org;
- h=from:subject:message-id; bh=fopvhTmvStaaaW9Fq0s5+eQXa7o4Pgy8eptPT1y3dhk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQEOStuTlHdneg4o0+wfrbcTsNzXzXvvOc5Yf4yZcnxE5+Z
- pjXUdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkpiTDP+O3lS2Zd7s4mtf8UJpY/H
- 2Cxw3TtIyFeu7fA/nqghl02Bn+yjQ5PX/84nPfjAmNTbuTXNrzczwF8o5Nr2m9p710Ve4bNgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=40714; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=+H2uoHBRPrXcx6mJgUvlb8yV9COECnza2Yeoyvucuqg=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQEOSs67mXr9/u8IFS73G/9qu9tU2eHh+WseaqybT/LzB9v
+ ds1831HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRJD9Ght9itfuPvYuwbuYzsVk7Z/
+ JJOU3L9tyJPt940xfsSoi3Y2dkuG2/4GXcmgOvyhZrLbX5bB5UmZ67bM82i9NTk2wZ57NWsgEA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently, lock_mount() uses a goto to retry the lookup until it
-succeeded in acquiring the namespace_lock() preventing the top mount
-from being overmounted. While that's perfectly fine we want to lookup
-the mountpoint on the parent of the top mount in later patches. So adapt
-the code to make this easier to implement. Also, the for loop is
-arguably a little cleaner and makes the code easier to follow. No
-functional changes intended.
+Various distributions are adding or are in the process of adding support
+for system extensions and in the future configuration extensions through
+various tools. A more detailed explanation on system and configuration
+extensions can be found on the manpage which is listed below at [1].
+
+System extension images may – dynamically at runtime — extend the /usr/
+and /opt/ directory hierarchies with additional files. This is
+particularly useful on immutable system images where a /usr/ and/or
+/opt/ hierarchy residing on a read-only file system shall be extended
+temporarily at runtime without making any persistent modifications.
+
+When one or more system extension images are activated, their /usr/ and
+/opt/ hierarchies are combined via overlayfs with the same hierarchies
+of the host OS, and the host /usr/ and /opt/ overmounted with it
+("merging"). When they are deactivated, the mount point is disassembled
+— again revealing the unmodified original host version of the hierarchy
+("unmerging"). Merging thus makes the extension's resources suddenly
+appear below the /usr/ and /opt/ hierarchies as if they were included in
+the base OS image itself. Unmerging makes them disappear again, leaving
+in place only the files that were shipped with the base OS image itself.
+
+System configuration images are similar but operate on directories
+containing system or service configuration.
+
+On nearly all modern distributions mount propagation plays a crucial
+role and the rootfs of the OS is a shared mount in a peer group (usually
+with peer group id 1):
+
+       TARGET  SOURCE  FSTYPE  PROPAGATION  MNT_ID  PARENT_ID
+       /       /       ext4    shared:1     29      1
+
+On such systems all services and containers run in a separate mount
+namespace and are pivot_root()ed into their rootfs. A separate mount
+namespace is almost always used as it is the minimal isolation mechanism
+services have. But usually they are even much more isolated up to the
+point where they almost become indistinguishable from containers.
+
+Mount propagation again plays a crucial role here. The rootfs of all
+these services is a slave mount to the peer group of the host rootfs.
+This is done so the service will receive mount propagation events from
+the host when certain files or directories are updated.
+
+In addition, the rootfs of each service, container, and sandbox is also
+a shared mount in its separate peer group:
+
+       TARGET  SOURCE  FSTYPE  PROPAGATION         MNT_ID  PARENT_ID
+       /       /       ext4    shared:24 master:1  71      47
+
+For people not too familiar with mount propagation, the master:1 means
+that this is a slave mount to peer group 1. Which as one can see is the
+host rootfs as indicated by shared:1 above. The shared:24 indicates that
+the service rootfs is a shared mount in a separate peer group with peer
+group id 24.
+
+A service may run other services. Such nested services will also have a
+rootfs mount that is a slave to the peer group of the outer service
+rootfs mount.
+
+For containers things are just slighly different. A container's rootfs
+isn't a slave to the service's or host rootfs' peer group. The rootfs
+mount of a container is simply a shared mount in its own peer group:
+
+       TARGET                    SOURCE  FSTYPE  PROPAGATION  MNT_ID  PARENT_ID
+       /home/ubuntu/debian-tree  /       ext4    shared:99    61      60
+
+So whereas services are isolated OS components a container is treated
+like a separate world and mount propagation into it is restricted to a
+single well known mount that is a slave to the peer group of the shared
+mount /run on the host:
+
+       TARGET                  SOURCE              FSTYPE  PROPAGATION  MNT_ID  PARENT_ID
+       /propagate/debian-tree  /run/host/incoming  tmpfs   master:5     71      68
+
+Here, the master:5 indicates that this mount is a slave to the peer
+group with peer group id 5. This allows to propagate mounts into the
+container and served as a workaround for not being able to insert mounts
+into mount namespaces directly. But the new mount api does support
+inserting mounts directly. For the interested reader the blogpost in [2]
+might be worth reading where I explain the old and the new approach to
+inserting mounts into mount namespaces.
+
+Containers of course, can themselves be run as services. They often run
+full systems themselves which means they again run services and
+containers with the exact same propagation settings explained above.
+
+The whole system is designed so that it can be easily updated, including
+all services in various fine-grained ways without having to enter every
+single service's mount namespace which would be prohibitively expensive.
+The mount propagation layout has been carefully chosen so it is possible
+to propagate updates for system extensions and configurations from the
+host into all services.
+
+The simplest model to update the whole system is to mount on top of
+/usr, /opt, or /etc on the host. The new mount on /usr, /opt, or /etc
+will then propagate into every service. This works cleanly the first
+time. However, when the system is updated multiple times it becomes
+necessary to unmount the first update on /opt, /usr, /etc and then
+propagate the new update. But this means, there's an interval where the
+old base system is accessible. This has to be avoided to protect against
+downgrade attacks.
+
+The vfs already exposes a mechanism to userspace whereby mounts can be
+mounted beneath an existing mount. Such mounts are internally referred
+to as "tucked". The patch series exposes the ability to mount beneath a
+top mount through the new MOVE_MOUNT_BENEATH flag for the move_mount()
+system call. This allows userspace to seamlessly upgrade mounts. After
+this series the only thing that will have changed is that mounting
+beneath an existing mount can be done explicitly instead of just
+implicitly.
+
+Today, there are two scenarios where a mount can be mounted beneath an
+existing mount instead of on top of it:
+
+(1) When a service or container is started in a new mount namespace and
+    pivot_root()s into its new rootfs. The way this is done is by
+    mounting the new rootfs beneath the old rootfs:
+
+            fd_newroot = open("/var/lib/machines/fedora", ...);
+            fd_oldroot = open("/", ...);
+            fchdir(fd_newroot);
+            pivot_root(".", ".");
+
+    After the pivot_root(".", ".") call the new rootfs is mounted
+    beneath the old rootfs which can then be unmounted to reveal the
+    underlying mount:
+
+            fchdir(fd_oldroot);
+            umount2(".", MNT_DETACH);
+
+    Since pivot_root() moves the caller into a new rootfs no mounts must
+    be propagated out of the new rootfs as a consequence of the
+    pivot_root() call. Thus, the mounts cannot be shared.
+
+(2) When a mount is propagated to a mount that already has another mount
+    mounted on the same dentry.
+
+    The easiest example for this is to create a new mount namespace. The
+    following commands will create a mount namespace where the rootfs
+    mount / will be a slave to the peer group of the host rootfs /
+    mount's peer group. IOW, it will receive propagation from the host:
+
+            mount --make-shared /
+            unshare --mount --propagation=slave
+
+    Now a new mount on the /mnt dentry in that mount namespace is
+    created. (As it can be confusing it should be spelled out that the
+    tmpfs mount on the /mnt dentry that was just created doesn't
+    propagate back to the host because the rootfs mount / of the mount
+    namespace isn't a peer of the host rootfs.):
+
+            mount -t tmpfs tmpfs /mnt
+
+            TARGET  SOURCE  FSTYPE  PROPAGATION
+            └─/mnt  tmpfs   tmpfs
+
+    Now another terminal in the host mount namespace can observe that
+    the mount indeed hasn't propagated back to into the host mount
+    namespace. A new mount can now be created on top of the /mnt dentry
+    with the rootfs mount / as its parent:
+
+            mount --bind /opt /mnt
+
+            TARGET  SOURCE           FSTYPE  PROPAGATION
+            └─/mnt  /dev/sda2[/opt]  ext4    shared:1
+
+    The mount namespace that was created earlier can now observe that
+    the bind mount created on the host has propagated into it:
+
+            TARGET    SOURCE           FSTYPE  PROPAGATION
+            └─/mnt    /dev/sda2[/opt]  ext4    master:1
+              └─/mnt  tmpfs            tmpfs
+
+    But instead of having been mounted on top of the tmpfs mount at the
+    /mnt dentry the /opt mount has been mounted on top of the rootfs
+    mount at the /mnt dentry. And the tmpfs mount has been remounted on
+    top of the propagated /opt mount at the /opt dentry. So in other
+    words, the propagated mount has been mounted beneath the preexisting
+    mount in that mount namespace.
+
+    Mount namespaces make this easy to illustrate but it's also easy to
+    mount beneath an existing mount in the same mount namespace
+    (The following example assumes a shared rootfs mount / with peer
+     group id 1):
+
+            mount --bind /opt /opt
+
+            TARGET   SOURCE          FSTYPE  MNT_ID  PARENT_ID  PROPAGATION
+            └─/opt  /dev/sda2[/opt]  ext4    188     29         shared:1
+
+    If another mount is mounted on top of the /opt mount at the /opt
+    dentry:
+
+            mount --bind /tmp /opt
+
+    The following clunky mount tree will result:
+
+            TARGET      SOURCE           FSTYPE  MNT_ID  PARENT_ID  PROPAGATION
+            └─/opt      /dev/sda2[/tmp]  ext4    405      29        shared:1
+              └─/opt    /dev/sda2[/opt]  ext4    188     405        shared:1
+                └─/opt  /dev/sda2[/tmp]  ext4    404     188        shared:1
+
+    The /tmp mount is mounted beneath the /opt mount and another copy is
+    mounted on top of the /opt mount. This happens because the rootfs /
+    and the /opt mount are shared mounts in the same peer group.
+
+    When the new /tmp mount is supposed to be mounted at the /opt dentry
+    then the /tmp mount first propagates to the root mount at the /opt
+    dentry. But there already is the /opt mount mounted at the /opt
+    dentry. So the old /opt mount at the /opt dentry will be mounted on
+    top of the new /tmp mount at the /tmp dentry, i.e. @opt->mnt_parent
+    is @tmp and @opt->mnt_mountpoint is /tmp (Note that @opt->mnt_root
+    is /opt which is what shows up as /opt under SOURCE). So again, a
+    mount will be mounted beneath a preexisting mount.
+
+    (Fwiw, a few iterations of mount --bind /opt /opt in a loop on a
+     shared rootfs is a good example of what could be referred to as
+     mount explosion.)
+
+The main point is that such mounts allows userspace to umount a top
+mount and reveal an underlying mount. So for example, umounting the
+tmpfs mount on /mnt that was created in example (1) using mount
+namespaces reveals the /opt mount which was mounted beneath it.
+
+In (2) where a mount was mounted beneath the top mount in the same mount
+namespace unmounting the top mount would unmount both the top mount and
+the mount beneath. In the process the original mount would be remounted
+on top of the rootfs mount / at the /opt dentry again.
+
+This again, is a result of mount propagation only this time it's umount
+propagation. However, this can be avoided by simply making the parent
+mount / of the @opt mount a private or slave mount. Then the top mount
+and the original mount can be unmounted to reveal the mount beneath.
+
+These two examples are fairly arcane and are merely added to make it
+clear how mount propagation has effects on current and future features.
+
+More common use-cases will just be things like:
+
+        mount -t btrfs /dev/sdA /mnt
+        mount -t xfs   /dev/sdB --beneath /mnt
+        umount /mnt
+
+after which we'll have updated from a btrfs filesystem to a xfs
+filesystem without ever revealing the underlying mountpoint.
+
+The crux is that the proposed mechanism already exists and that it is so
+powerful as to cover cases where mounts are supposed to be updated with
+new versions. Crucially, it offers an important flexibility. Namely that
+updates to a system may either be forced or can be delayed and the
+umount of the top mount be left to a service if it is a cooperative one.
+
+This adds a new flag to move_mount() that allows to explicitly move a
+beneath the top mount adhering to the following semantics:
+
+* Mounts cannot be mounted beneath the rootfs. This restriction
+  encompasses the rootfs but also chroots via chroot() and pivot_root().
+  To mount a mount beneath the rootfs or a chroot, pivot_root() can be
+  used as illustrated above.
+* The source mount must be a private mount to force the kernel to
+  allocate a new, unused peer group id. This isn't a required
+  restriction but a voluntary one. It avoids repeating a semantical
+  quirk that already exists today. If bind mounts which already have a
+  peer group id are inserted into mount trees that have the same peer
+  group id this can cause a lot of mount propagation events to be
+  generated (For example, consider running mount --bind /opt /opt in a
+  loop where the parent mount is a shared mount.).
+* Avoid getting rid of the top mount in the kernel. Cooperative services
+  need to be able to unmount the top mount themselves.
+  This also avoids a good deal of additional complexity. The umount
+  would have to be propagated which would be another rather expensive
+  operation. So namespace_lock() and lock_mount_hash() would potentially
+  have to be held for a long time for both a mount and umount
+  propagation. That should be avoided.
+* The path to mount beneath must be mounted and attached.
+* The top mount and its parent must be in the caller's mount namespace
+  and the caller must be able to mount in that mount namespace.
+* The caller must be able to unmount the top mount to prove that they
+  could reveal the underlying mount.
+* The propagation tree is calculated based on the destination mount's
+  parent mount and the destination mount's mountpoint on the parent
+  mount. Of course, if the parent of the destination mount and the
+  destination mount are shared mounts in the same peer group and the
+  mountpoint of the new mount to be mounted is a subdir of their
+  ->mnt_root then both will receive a mount of /opt. That's probably
+  easier to understand with an example. Assuming a standard shared
+  rootfs /:
+
+          mount --bind /opt /opt
+          mount --bind /tmp /opt
+
+  will cause the same mount tree as:
+
+          mount --bind /opt /opt
+          mount --beneath /tmp /opt
+
+  because both / and /opt are shared mounts/peers in the same peer
+  group and the /opt dentry is a subdirectory of both the parent's and
+  the child's ->mnt_root. If a mount tree like that is created it almost
+  always is an accident or abuse of mount propagation. Realistically
+  what most people probably mean in this scenarios is:
+
+          mount --bind /opt /opt
+          mount --make-private /opt
+          mount --make-shared /opt
+
+  This forces the allocation of a new separate peer group for the /opt
+  mount. Aferwards a mount --bind or mount --beneath actually makes
+  sense as the / and /opt mount belong to different peer groups. Before
+  that it's likely just confusion about what the user wanted to achieve.
+* Refuse MOVE_MOUNT_BENEATH if:
+  (1) the @mnt_from has been overmounted in between path resolution and
+      acquiring @namespace_sem when locking @mnt_to. This avoids the
+      proliferation of shadow mounts.
+  (2) if @to_mnt is moved to a different mountpoint while acquiring
+      @namespace_sem to lock @to_mnt.
+  (3) if @to_mnt is unmounted while acquiring @namespace_sem to lock
+      @to_mnt.
+  (4) if the parent of the target mount propagates to the target mount
+      at the same mountpoint.
+      This would mean mounting @mnt_from on @mnt_to->mnt_parent and then
+      propagating a copy @c of @mnt_from onto @mnt_to. This defeats the
+      whole purpose of mounting @mnt_from beneath @mnt_to.
+  (5) if the parent mount @mnt_to->mnt_parent propagates to @mnt_from at
+      the same mountpoint.
+      If @mnt_to->mnt_parent propagates to @mnt_from this would mean
+      propagating a copy @c of @mnt_from on top of @mnt_from. Afterwards
+      @mnt_from would be mounted on top of @mnt_to->mnt_parent and
+      @mnt_to would be unmounted from @mnt->mnt_parent and remounted on
+      @mnt_from. But since @c is already mounted on @mnt_from, @mnt_to
+      would ultimately be remounted on top of @c. Afterwards, @mnt_from
+      would be covered by a copy @c of @mnt_from and @c would be covered
+      by @mnt_from itself. This defeats the whole purpose of mounting
+      @mnt_from beneath @mnt_to.
+  Cases (1) to (3) are required as they deal with races that would cause
+  bugs or unexpected behavior for users. Cases (4) and (5) refuse
+  semantical quirks that would not be a bug but would cause weird mount
+  trees to be created. While they can already be created via other means
+  (mount --bind /opt /opt x n) there's no reason to repeat past mistakes
+  in new features.
+
+Link: https://man7.org/linux/man-pages/man8/systemd-sysext.8.html [1]
+Link: https://brauner.io/2023/02/28/mounting-into-mount-namespaces.html [2]
+Link: https://github.com/flatcar/sysext-bakery
+Link: https://fedoraproject.org/wiki/Changes/Unified_Kernel_Support_Phase_1
+Link: https://fedoraproject.org/wiki/Changes/Unified_Kernel_Support_Phase_2
+Link: https://github.com/systemd/systemd/pull/26013
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
+Changes in v4:
+- Replace would_propagate() helper with propagation_would_overmount()
+  helper that determines whether a mount would be overmounted in one
+  shot.
+
 Changes in v3:
-- Remove unused assignment to @mnt.
+- Acquire a stable reference on $realmnt->mnt_mountpoint when
+  locking the destination mount tree. Ensure that the mountpoint is
+  still valid after we acquired $namespace_sem.
+- Refuse to mount source trees whose root has been overmounted after
+  path resolution of the source path has finished but before we grabbed
+  the namespace semaphore. This avoids the creation of shadow mounts.
+- Refuse to mount if the mount we're mounting beneath has been moved to
+  a different mountpoint before we grabbed the namespace semaphore.
+- Refuse to mount if the mount we're mounting beneath has been unmounted
+  before we grabbed the namespace semaphore.
+- Remove attach_mnt_beneath() and simply extend attach_mnt() to take a
+  boolean argument.
+- Ensure that the root of the source mount tree hasn't been overmounted.
+- Don't duplicate checks by calling can_umount(). Just move the required
+  checks into can_move_mount_beneath().
+
+Changes in v2:
+- Fix kernel documentation of attach_mnt_beneath().
 ---
- fs/namespace.c | 49 ++++++++++++++++++++++++++++---------------------
- 1 file changed, 28 insertions(+), 21 deletions(-)
+ fs/namespace.c             | 352 ++++++++++++++++++++++++++++++++++++++-------
+ fs/pnode.c                 |  42 +++++-
+ fs/pnode.h                 |   3 +
+ include/uapi/linux/mount.h |   3 +-
+ 4 files changed, 350 insertions(+), 50 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 89297744ccf8..11157d0abe8f 100644
+index 11157d0abe8f..daa823906c20 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -2318,30 +2318,37 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- static struct mountpoint *lock_mount(struct path *path)
- {
- 	struct vfsmount *mnt;
--	struct dentry *dentry = path->dentry;
--retry:
--	inode_lock(dentry->d_inode);
--	if (unlikely(cant_mount(dentry))) {
--		inode_unlock(dentry->d_inode);
--		return ERR_PTR(-ENOENT);
--	}
--	namespace_lock();
--	mnt = lookup_mnt(path);
--	if (likely(!mnt)) {
--		struct mountpoint *mp = get_mountpoint(dentry);
--		if (IS_ERR(mp)) {
--			namespace_unlock();
-+	struct dentry *dentry;
-+	struct mountpoint *mp;
-+
-+	for (;;) {
-+		dentry = path->dentry;
-+		inode_lock(dentry->d_inode);
-+		if (unlikely(cant_mount(dentry))) {
- 			inode_unlock(dentry->d_inode);
--			return mp;
-+			return ERR_PTR(-ENOENT);
- 		}
--		return mp;
-+
-+		namespace_lock();
-+
-+		mnt = lookup_mnt(path);
-+		if (likely(!mnt))
-+			break;
-+
-+		namespace_unlock();
-+		inode_unlock(dentry->d_inode);
-+		path_put(path);
-+		path->mnt = mnt;
-+		path->dentry = dget(mnt->mnt_root);
- 	}
--	namespace_unlock();
--	inode_unlock(path->dentry->d_inode);
--	path_put(path);
--	path->mnt = mnt;
--	dentry = path->dentry = dget(mnt->mnt_root);
--	goto retry;
-+
-+	mp = get_mountpoint(dentry);
-+	if (IS_ERR(mp)) {
-+		namespace_unlock();
-+		inode_unlock(dentry->d_inode);
-+	}
-+
-+	return mp;
+@@ -926,6 +926,33 @@ void mnt_set_mountpoint(struct mount *mnt,
+ 	hlist_add_head(&child_mnt->mnt_mp_list, &mp->m_list);
  }
  
++/**
++ * mnt_set_mountpoint_beneath - mount a mount beneath another one
++ *
++ * @new_parent: the source mount
++ * @top_mnt:    the mount beneath which @new_parent is mounted
++ * @new_mp:     the new mountpoint of @top_mnt on @new_parent
++ *
++ * Remove @top_mnt from its current mountpoint @top_mnt->mnt_mp and
++ * parent @top_mnt->mnt_parent and mount it on top of @new_parent at
++ * @new_mp. And mount @new_parent on the old parent and old
++ * mountpoint of @top_mnt.
++ *
++ * Context: This function expects namespace_lock() and lock_mount_hash()
++ *          to have been acquired in that order.
++ */
++static void mnt_set_mountpoint_beneath(struct mount *new_parent,
++				       struct mount *top_mnt,
++				       struct mountpoint *new_mp)
++{
++	struct mount *old_top_parent = top_mnt->mnt_parent;
++	struct mountpoint *old_top_mp = top_mnt->mnt_mp;
++
++	mnt_set_mountpoint(old_top_parent, old_top_mp, new_parent);
++	mnt_change_mountpoint(new_parent, new_mp, top_mnt);
++}
++
++
+ static void __attach_mnt(struct mount *mnt, struct mount *parent)
+ {
+ 	hlist_add_head_rcu(&mnt->mnt_hash,
+@@ -933,15 +960,42 @@ static void __attach_mnt(struct mount *mnt, struct mount *parent)
+ 	list_add_tail(&mnt->mnt_child, &parent->mnt_mounts);
+ }
+ 
+-/*
+- * vfsmount lock must be held for write
++/**
++ * attach_mnt - mount a mount, attach to @mount_hashtable and parent's
++ *              list of child mounts
++ * @parent:  the parent
++ * @mnt:     the new mount
++ * @mp:      the new mountpoint
++ * @beneath: whether to mount @mnt beneath or on top of @parent
++ *
++ * If @beneath is false, mount @mnt at @mp on @parent. Then attach @mnt
++ * to @parent's child mount list and to @mount_hashtable.
++ *
++ * If @beneath is true, remove @mnt from its current parent and
++ * mountpoint and mount it on @mp on @parent, and mount @parent on the
++ * old parent and old mountpoint of @mnt. Finally, attach @parent to
++ * @mnt_hashtable and @parent->mnt_parent->mnt_mounts.
++ *
++ * Note, when __attach_mnt() is called @mnt->mnt_parent already points
++ * to the correct parent.
++ *
++ * Context: This function expects namespace_lock() and lock_mount_hash()
++ *          to have been acquired in that order.
+  */
+-static void attach_mnt(struct mount *mnt,
+-			struct mount *parent,
+-			struct mountpoint *mp)
++static void attach_mnt(struct mount *mnt, struct mount *parent,
++		       struct mountpoint *mp, bool beneath)
+ {
+-	mnt_set_mountpoint(parent, mp, mnt);
+-	__attach_mnt(mnt, parent);
++	if (beneath)
++		mnt_set_mountpoint_beneath(mnt, parent, mp);
++	else
++		mnt_set_mountpoint(parent, mp, mnt);
++	/*
++	 * Note, @mnt->mnt_parent has to be used. If @mnt was mounted
++	 * beneath @parent then @mnt will need to be attached to
++	 * @parent's old parent, not @parent. IOW, @mnt->mnt_parent
++	 * isn't the same mount as @parent.
++	 */
++	__attach_mnt(mnt, mnt->mnt_parent);
+ }
+ 
+ void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp, struct mount *mnt)
+@@ -953,7 +1007,7 @@ void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp, struct m
+ 	hlist_del_init(&mnt->mnt_mp_list);
+ 	hlist_del_init_rcu(&mnt->mnt_hash);
+ 
+-	attach_mnt(mnt, parent, mp);
++	attach_mnt(mnt, parent, mp, false);
+ 
+ 	put_mountpoint(old_mp);
+ 	mnt_add_count(old_parent, -1);
+@@ -1954,7 +2008,7 @@ struct mount *copy_tree(struct mount *mnt, struct dentry *dentry,
+ 				goto out;
+ 			lock_mount_hash();
+ 			list_add_tail(&q->mnt_list, &res->mnt_list);
+-			attach_mnt(q, parent, p->mnt_mp);
++			attach_mnt(q, parent, p->mnt_mp, false);
+ 			unlock_mount_hash();
+ 		}
+ 	}
+@@ -2163,12 +2217,17 @@ int count_mounts(struct mnt_namespace *ns, struct mount *mnt)
+ 	return 0;
+ }
+ 
+-/*
+- *  @source_mnt : mount tree to be attached
+- *  @nd         : place the mount tree @source_mnt is attached
+- *  @parent_nd  : if non-null, detach the source_mnt from its parent and
+- *  		   store the parent mount and mountpoint dentry.
+- *  		   (done when source_mnt is moved)
++enum mnt_tree_flags_t {
++	MNT_TREE_MOVE = BIT(0),
++	MNT_TREE_BENEATH = BIT(1),
++};
++
++/**
++ * attach_recursive_mnt - attach a source mount tree
++ * @source_mnt: mount tree to be attached
++ * @top_mnt:    mount that @source_mnt will be mounted on or mounted beneath
++ * @dest_mp:    the mountpoint @source_mnt will be mounted at
++ * @flags:      modify how @source_mnt is supposed to be attached
+  *
+  *  NOTE: in the table below explains the semantics when a source mount
+  *  of a given type is attached to a destination mount of a given type.
+@@ -2225,22 +2284,28 @@ int count_mounts(struct mnt_namespace *ns, struct mount *mnt)
+  * applied to each mount in the tree.
+  * Must be called without spinlocks held, since this function can sleep
+  * in allocations.
++ *
++ * Context: The function expects namespace_lock() to be held.
++ * Return: If @source_mnt was successfully attached 0 is returned.
++ *         Otherwise a negative error code is returned.
+  */
+ static int attach_recursive_mnt(struct mount *source_mnt,
+-			struct mount *dest_mnt,
+-			struct mountpoint *dest_mp,
+-			bool moving)
++				struct mount *top_mnt,
++				struct mountpoint *dest_mp,
++				enum mnt_tree_flags_t flags)
+ {
+ 	struct user_namespace *user_ns = current->nsproxy->mnt_ns->user_ns;
+ 	HLIST_HEAD(tree_list);
+-	struct mnt_namespace *ns = dest_mnt->mnt_ns;
++	struct mnt_namespace *ns = top_mnt->mnt_ns;
+ 	struct mountpoint *smp;
+-	struct mount *child, *p;
++	struct mount *child, *dest_mnt, *p;
+ 	struct hlist_node *n;
+-	int err;
++	int err = 0;
++	bool moving = flags & MNT_TREE_MOVE, beneath = flags & MNT_TREE_BENEATH;
+ 
+-	/* Preallocate a mountpoint in case the new mounts need
+-	 * to be tucked under other mounts.
++	/*
++	 * Preallocate a mountpoint in case the new mounts need to be
++	 * mounted beneath mounts on the same mountpoint.
+ 	 */
+ 	smp = get_mountpoint(source_mnt->mnt.mnt_root);
+ 	if (IS_ERR(smp))
+@@ -2253,29 +2318,41 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 			goto out;
+ 	}
+ 
++	if (beneath)
++		dest_mnt = top_mnt->mnt_parent;
++	else
++		dest_mnt = top_mnt;
++
+ 	if (IS_MNT_SHARED(dest_mnt)) {
+ 		err = invent_group_ids(source_mnt, true);
+ 		if (err)
+ 			goto out;
+ 		err = propagate_mnt(dest_mnt, dest_mp, source_mnt, &tree_list);
+-		lock_mount_hash();
+-		if (err)
+-			goto out_cleanup_ids;
++	}
++	lock_mount_hash();
++	if (err)
++		goto out_cleanup_ids;
++
++	if (IS_MNT_SHARED(dest_mnt)) {
+ 		for (p = source_mnt; p; p = next_mnt(p, source_mnt))
+ 			set_mnt_shared(p);
+-	} else {
+-		lock_mount_hash();
+ 	}
++
+ 	if (moving) {
++		if (beneath)
++			dest_mp = smp;
+ 		unhash_mnt(source_mnt);
+-		attach_mnt(source_mnt, dest_mnt, dest_mp);
++		attach_mnt(source_mnt, top_mnt, dest_mp, beneath);
+ 		touch_mnt_namespace(source_mnt->mnt_ns);
+ 	} else {
+ 		if (source_mnt->mnt_ns) {
+ 			/* move from anon - the caller will destroy */
+ 			list_del_init(&source_mnt->mnt_ns->list);
+ 		}
+-		mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
++		if (beneath)
++			mnt_set_mountpoint_beneath(source_mnt, top_mnt, smp);
++		else
++			mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
+ 		commit_tree(source_mnt);
+ 	}
+ 
+@@ -2315,28 +2392,80 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 	return err;
+ }
+ 
+-static struct mountpoint *lock_mount(struct path *path)
++/**
++ * do_lock_mount - lock mount and mountpoint
++ * @path:    target path
++ * @beneath: whether the intention is to mount beneath @path
++ *
++ * Follow the mount stack on @path until the top mount @mnt is found. If
++ * the initial @path->{mnt,dentry} is a mountpoint lookup the first
++ * mount stacked on top of it. Then simply follow @{mnt,mnt->mnt_root}
++ * until nothing is stacked on top of it anymore.
++ *
++ * Acquire the inode_lock() on the top mount's ->mnt_root to protect
++ * against concurrent removal of the new mountpoint from another mount
++ * namespace.
++ *
++ * If @beneath is requested, acquire inode_lock() on @mnt's mountpoint
++ * @mp on @mnt->mnt_parent must be acquired. This protects against a
++ * concurrent unlink of @mp->mnt_dentry from another mount namespace
++ * where @mnt doesn't have a child mount mounted @mp. A concurrent
++ * removal of @mnt->mnt_root doesn't matter as nothing will be mounted
++ * on top of it for @beneath.
++ *
++ * In addition, @beneath needs to make sure that @mnt hasn't been
++ * unmounted or moved from its current mountpoint in between dropping
++ * @mount_lock and acquiring @namespace_sem. For the !@beneath case @mnt
++ * being unmounted would be detected later by e.g., calling
++ * check_mnt(mnt) in the function it's called from. For the @beneath
++ * case however, it's useful to detect it directly in do_lock_mount().
++ * If @mnt hasn't been unmounted then @mnt->mnt_mountpoint still points
++ * to @mnt->mnt_mp->m_dentry. But if @mnt has been unmounted it will
++ * point to @mnt->mnt_root and @mnt->mnt_mp will be NULL.
++ *
++ * Return: Either the target mountpoint on the top mount or the top
++ *         mount's mountpoint.
++ */
++static struct mountpoint *do_lock_mount(struct path *path, bool beneath)
+ {
+-	struct vfsmount *mnt;
++	struct vfsmount *mnt = path->mnt;
+ 	struct dentry *dentry;
+-	struct mountpoint *mp;
++	struct mountpoint *mp = ERR_PTR(-ENOENT);
+ 
+ 	for (;;) {
+-		dentry = path->dentry;
++		struct mount *m;
++
++		if (beneath) {
++			m = real_mount(mnt);
++			read_seqlock_excl(&mount_lock);
++			dentry = dget(m->mnt_mountpoint);
++			read_sequnlock_excl(&mount_lock);
++		} else {
++			dentry = path->dentry;
++		}
++
+ 		inode_lock(dentry->d_inode);
+ 		if (unlikely(cant_mount(dentry))) {
+ 			inode_unlock(dentry->d_inode);
+-			return ERR_PTR(-ENOENT);
++			goto out;
+ 		}
+ 
+ 		namespace_lock();
+ 
++		if (beneath && (!is_mounted(mnt) || m->mnt_mountpoint != dentry)) {
++			namespace_unlock();
++			inode_unlock(dentry->d_inode);
++			goto out;
++		}
++
+ 		mnt = lookup_mnt(path);
+ 		if (likely(!mnt))
+ 			break;
+ 
+ 		namespace_unlock();
+ 		inode_unlock(dentry->d_inode);
++		if (beneath)
++			dput(dentry);
+ 		path_put(path);
+ 		path->mnt = mnt;
+ 		path->dentry = dget(mnt->mnt_root);
+@@ -2348,9 +2477,18 @@ static struct mountpoint *lock_mount(struct path *path)
+ 		inode_unlock(dentry->d_inode);
+ 	}
+ 
++out:
++	if (beneath)
++		dput(dentry);
++
+ 	return mp;
+ }
+ 
++static inline struct mountpoint *lock_mount(struct path *path)
++{
++	return do_lock_mount(path, false);
++}
++
  static void unlock_mount(struct mountpoint *where)
+ {
+ 	struct dentry *dentry = where->m_dentry;
+@@ -2372,7 +2510,7 @@ static int graft_tree(struct mount *mnt, struct mount *p, struct mountpoint *mp)
+ 	      d_is_dir(mnt->mnt.mnt_root))
+ 		return -ENOTDIR;
+ 
+-	return attach_recursive_mnt(mnt, p, mp, false);
++	return attach_recursive_mnt(mnt, p, mp, 0);
+ }
+ 
+ /*
+@@ -2857,7 +2995,110 @@ static int do_set_group(struct path *from_path, struct path *to_path)
+ 	return err;
+ }
+ 
+-static int do_move_mount(struct path *old_path, struct path *new_path)
++/**
++ * path_overmounted - check if path is overmounted
++ * @path: path to check
++ *
++ * Check if path is overmounted, i.e., if there's a mount on top of
++ * @path->mnt with @path->dentry as mountpoint.
++ *
++ * Context: This function expects namespace_lock() to be held.
++ * Return: If path is overmounted true is returned, false if not.
++ */
++static inline bool path_overmounted(const struct path *path)
++{
++	rcu_read_lock();
++	if (unlikely(__lookup_mnt(path->mnt, path->dentry))) {
++		rcu_read_unlock();
++		return true;
++	}
++	rcu_read_unlock();
++	return false;
++}
++
++/**
++ * can_move_mount_beneath - check that we can mount beneath the top mount
++ * @from: mount to mount beneath
++ * @to:   mount under which to mount
++ *
++ * - Make sure that @to->dentry is actually the root of a mount under
++ *   which we can mount another mount.
++ * - Make sure that nothing can be mounted beneath the caller's current
++ *   root or the rootfs of the namespace.
++ * - Make sure that the caller can unmount the topmost mount ensuring
++ *   that the caller could reveal the underlying mountpoint.
++ * - Ensure that nothing has been mounted on top of @from before we
++ *   grabbed @namespace_sem to avoid creating pointless shadow mounts.
++ * - Prevent mounting beneath a mount if the propagation relationship
++ *   between the source mount, parent mount, and top mount would lead to
++ *   nonsensical mount trees.
++ *
++ * Context: This function expects namespace_lock() to be held.
++ * Return: On success 0, and on error a negative error code is returned.
++ */
++static int can_move_mount_beneath(const struct path *from,
++				  const struct path *to,
++				  const struct mountpoint *mp)
++{
++	struct mount *mnt_from = real_mount(from->mnt),
++		     *mnt_to = real_mount(to->mnt),
++		     *parent_mnt_to = mnt_to->mnt_parent;
++
++	if (!mnt_has_parent(mnt_to))
++		return -EINVAL;
++
++	if (!path_mounted(to))
++		return -EINVAL;
++
++	if (IS_MNT_LOCKED(mnt_to))
++		return -EINVAL;
++
++	/* Avoid creating shadow mounts during mount propagation. */
++	if (path_overmounted(from))
++		return -EINVAL;
++
++	/*
++	 * Mounting beneath the rootfs only makes sense when the
++	 * semantics of pivot_root(".", ".") are used.
++	 */
++	if (&mnt_to->mnt == current->fs->root.mnt)
++		return -EINVAL;
++	if (parent_mnt_to == current->nsproxy->mnt_ns->root)
++		return -EINVAL;
++
++	for (struct mount *p = mnt_from; mnt_has_parent(p); p = p->mnt_parent)
++		if (p == mnt_to)
++			return -EINVAL;
++
++	/*
++	 * If the parent mount propagates to the child mount this would
++	 * mean mounting @mnt_from on @mnt_to->mnt_parent and then
++	 * propagating a copy @c of @mnt_from on top of @mnt_to. This
++	 * defeats the whole purpose of mounting beneath another mount.
++	 */
++	if (propagation_would_overmount(parent_mnt_to, mnt_to, mp))
++		return -EINVAL;
++
++	/*
++	 * If @mnt_to->mnt_parent propagates to @mnt_from this would
++	 * mean propagating a copy @c of @mnt_from on top of @mnt_from.
++	 * Afterwards @mnt_from would be mounted on top of
++	 * @mnt_to->mnt_parent and @mnt_to would be unmounted from
++	 * @mnt->mnt_parent and remounted on @mnt_from. But since @c is
++	 * already mounted on @mnt_from, @mnt_to would ultimately be
++	 * remounted on top of @c. Afterwards, @mnt_from would be
++	 * covered by a copy @c of @mnt_from and @c would be covered by
++	 * @mnt_from itself. This defeats the whole purpose of mounting
++	 * @mnt_from beneath @mnt_to.
++	 */
++	if (propagation_would_overmount(parent_mnt_to, mnt_from, mp))
++		return -EINVAL;
++
++	return 0;
++}
++
++static int do_move_mount(struct path *old_path, struct path *new_path,
++			 bool beneath)
+ {
+ 	struct mnt_namespace *ns;
+ 	struct mount *p;
+@@ -2866,8 +3107,9 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	struct mountpoint *mp, *old_mp;
+ 	int err;
+ 	bool attached;
++	enum mnt_tree_flags_t flags = 0;
+ 
+-	mp = lock_mount(new_path);
++	mp = do_lock_mount(new_path, beneath);
+ 	if (IS_ERR(mp))
+ 		return PTR_ERR(mp);
+ 
+@@ -2875,6 +3117,8 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	p = real_mount(new_path->mnt);
+ 	parent = old->mnt_parent;
+ 	attached = mnt_has_parent(old);
++	if (attached)
++		flags |= MNT_TREE_MOVE;
+ 	old_mp = old->mnt_mp;
+ 	ns = old->mnt_ns;
+ 
+@@ -2905,6 +3149,17 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	 */
+ 	if (attached && IS_MNT_SHARED(parent))
+ 		goto out;
++
++	if (beneath) {
++		err = can_move_mount_beneath(old_path, new_path, mp);
++		if (err)
++			goto out;
++
++		err = -EINVAL;
++		p = p->mnt_parent;
++		flags |= MNT_TREE_BENEATH;
++	}
++
+ 	/*
+ 	 * Don't move a mount tree containing unbindable mounts to a destination
+ 	 * mount which is shared.
+@@ -2918,8 +3173,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 		if (p == old)
+ 			goto out;
+ 
+-	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
+-				   attached);
++	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp, flags);
+ 	if (err)
+ 		goto out;
+ 
+@@ -2951,7 +3205,7 @@ static int do_move_mount_old(struct path *path, const char *old_name)
+ 	if (err)
+ 		return err;
+ 
+-	err = do_move_mount(&old_path, path);
++	err = do_move_mount(&old_path, path, false);
+ 	path_put(&old_path);
+ 	return err;
+ }
+@@ -3117,13 +3371,10 @@ int finish_automount(struct vfsmount *m, const struct path *path)
+ 		err = -ENOENT;
+ 		goto discard_locked;
+ 	}
+-	rcu_read_lock();
+-	if (unlikely(__lookup_mnt(path->mnt, dentry))) {
+-		rcu_read_unlock();
++	if (path_overmounted(path)) {
+ 		err = 0;
+ 		goto discard_locked;
+ 	}
+-	rcu_read_unlock();
+ 	mp = get_mountpoint(dentry);
+ 	if (IS_ERR(mp)) {
+ 		err = PTR_ERR(mp);
+@@ -3815,6 +4066,10 @@ SYSCALL_DEFINE5(move_mount,
+ 	if (flags & ~MOVE_MOUNT__MASK)
+ 		return -EINVAL;
+ 
++	if ((flags & (MOVE_MOUNT_BENEATH | MOVE_MOUNT_SET_GROUP)) ==
++	    (MOVE_MOUNT_BENEATH | MOVE_MOUNT_SET_GROUP))
++		return -EINVAL;
++
+ 	/* If someone gives a pathname, they aren't permitted to move
+ 	 * from an fd that requires unmount as we can't get at the flag
+ 	 * to clear it afterwards.
+@@ -3844,7 +4099,8 @@ SYSCALL_DEFINE5(move_mount,
+ 	if (flags & MOVE_MOUNT_SET_GROUP)
+ 		ret = do_set_group(&from_path, &to_path);
+ 	else
+-		ret = do_move_mount(&from_path, &to_path);
++		ret = do_move_mount(&from_path, &to_path,
++				    (flags & MOVE_MOUNT_BENEATH));
+ 
+ out_to:
+ 	path_put(&to_path);
+@@ -3977,9 +4233,9 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
+ 		root_mnt->mnt.mnt_flags &= ~MNT_LOCKED;
+ 	}
+ 	/* mount old root on put_old */
+-	attach_mnt(root_mnt, old_mnt, old_mp);
++	attach_mnt(root_mnt, old_mnt, old_mp, false);
+ 	/* mount new_root on / */
+-	attach_mnt(new_mnt, root_parent, root_mp);
++	attach_mnt(new_mnt, root_parent, root_mp, false);
+ 	mnt_add_count(root_parent, -1);
+ 	touch_mnt_namespace(current->nsproxy->mnt_ns);
+ 	/* A moved mount should not expire automatically */
+diff --git a/fs/pnode.c b/fs/pnode.c
+index 468e4e65a615..598c01ff670f 100644
+--- a/fs/pnode.c
++++ b/fs/pnode.c
+@@ -217,7 +217,7 @@ static struct mount *last_dest, *first_source, *last_source, *dest_master;
+ static struct mountpoint *mp;
+ static struct hlist_head *list;
+ 
+-static inline bool peers(struct mount *m1, struct mount *m2)
++static inline bool peers(const struct mount *m1, const struct mount *m2)
+ {
+ 	return m1->mnt_group_id == m2->mnt_group_id && m1->mnt_group_id;
+ }
+@@ -356,6 +356,46 @@ static inline int do_refcount_check(struct mount *mnt, int count)
+ 	return mnt_get_count(mnt) > count;
+ }
+ 
++/**
++ * propagation_would_overmount - check whether propagation from @from
++ *                               would overmount @to
++ * @from: shared mount
++ * @to:   mount to check
++ * @mp:   future mountpoint of @to on @from
++ *
++ * If @from propagates mounts to @to, @from and @to must either be peers
++ * or one of the masters in the hierarchy of masters of @to must be a
++ * peer of @from.
++ *
++ * If the root of the @to mount is equal to the future mountpoint @mp of
++ * the @to mount on @from then @to will be overmounted by whatever is
++ * propagated to it.
++ *
++ * Context: This function expects namespace_lock() to be held and that
++ *          @mp is stable.
++ * Return: If @from overmounts @to, true is returned, false if not.
++ */
++bool propagation_would_overmount(const struct mount *from,
++				 const struct mount *to,
++				 const struct mountpoint *mp)
++{
++	if (!IS_MNT_SHARED(from))
++		return false;
++
++	if (IS_MNT_NEW(to))
++		return false;
++
++	if (to->mnt.mnt_root != mp->m_dentry)
++		return false;
++
++	for (const struct mount *m = to; m; m = m->mnt_master) {
++		if (peers(from, m))
++			return true;
++	}
++
++	return false;
++}
++
+ /*
+  * check if the mount 'mnt' can be unmounted successfully.
+  * @mnt: the mount to be checked for unmount
+diff --git a/fs/pnode.h b/fs/pnode.h
+index 988f1aa9b02a..0b02a6393891 100644
+--- a/fs/pnode.h
++++ b/fs/pnode.h
+@@ -53,4 +53,7 @@ struct mount *copy_tree(struct mount *, struct dentry *, int);
+ bool is_path_reachable(struct mount *, struct dentry *,
+ 			 const struct path *root);
+ int count_mounts(struct mnt_namespace *ns, struct mount *mnt);
++bool propagation_would_overmount(const struct mount *from,
++				 const struct mount *to,
++				 const struct mountpoint *mp);
+ #endif /* _LINUX_PNODE_H */
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index 4d93967f8aea..8eb0d7b758d2 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -74,7 +74,8 @@
+ #define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
+ #define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
+ #define MOVE_MOUNT_SET_GROUP		0x00000100 /* Set sharing group instead */
+-#define MOVE_MOUNT__MASK		0x00000177
++#define MOVE_MOUNT_BENEATH		0x00000200 /* Mount beneath top mount */
++#define MOVE_MOUNT__MASK		0x00000377
+ 
+ /*
+  * fsopen() flags.
 
 -- 
 2.34.1
