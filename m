@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63AA06F5D38
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 19:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 718C56F5D4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 19:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230010AbjECRpS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 13:45:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38624 "EHLO
+        id S229865AbjECRvl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 13:51:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229990AbjECRpO (ORCPT
+        with ESMTP id S229539AbjECRvk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 13:45:14 -0400
-Received: from out-29.mta0.migadu.com (out-29.mta0.migadu.com [IPv6:2001:41d0:1004:224b::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F01276BF
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 10:45:11 -0700 (PDT)
-Date:   Wed, 3 May 2023 13:44:56 -0400
+        Wed, 3 May 2023 13:51:40 -0400
+Received: from out-25.mta0.migadu.com (out-25.mta0.migadu.com [IPv6:2001:41d0:1004:224b::19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CCDF6A57;
+        Wed,  3 May 2023 10:51:37 -0700 (PDT)
+Date:   Wed, 3 May 2023 13:51:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1683135908;
+        t=1683136295;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=VLjEZmUZdVYCB3vahsC4N4RlfMUKbdvDvHs1QSrBbkc=;
-        b=Bqk+D3wkDUmlYZ1as8gRsPGcBGwt1SpSgZ4HIXBomyou3scD9fsxFx8d9Pi9i0plH0MlvB
-        Wz5W7oioStPfXkk2kiF/4sAZhv4YdHhahVNxY2sEvKz1jU0Q3fpXkK6JN4TWTcevaEcWHI
-        xj1ZN9ZDwCFrzS5sVFM3Iqdhgz6ddic=
+        bh=/8YhiaEwKxHE5nN6YeY/72JOBihWRYRCXK0QvEQ+Qv4=;
+        b=Jly2gSOTge1iO+BeCp9KJ0ZW8ODyKqKj/7GANaWuFp3dPaClfWwyMC5BLYot5DJO7a2FFf
+        YyYI10zIBhCz11qKXQtTYVH3uRaoKIrlrIHjDrmNc87rMsL2sQdREfYAXhrBfufag5HVF+
+        u8SjeEjj/nsMRlWo9oQA/L4PFnEpZqQ=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From:   Kent Overstreet <kent.overstreet@linux.dev>
 To:     Tejun Heo <tj@kernel.org>
@@ -57,7 +57,7 @@ Cc:     Michal Hocko <mhocko@suse.com>,
         linux-mm@kvack.org, linux-modules@vger.kernel.org,
         kasan-dev@googlegroups.com, cgroups@vger.kernel.org
 Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <ZFKdmMe21U3LqGGD@moria.home.lan>
+Message-ID: <ZFKfG7bVuOAk27yP@moria.home.lan>
 References: <20230501165450.15352-1-surenb@google.com>
  <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
  <ZFIOfb6/jHwLqg6M@moria.home.lan>
@@ -107,10 +107,32 @@ On Wed, May 03, 2023 at 06:35:49AM -1000, Tejun Heo wrote:
 > * BPF is pretty performant. Dedicated built-in kernel code can do better of
 >   course but BPF's jit compiled code & its data structures are fast enough.
 >   I don't remember any time this was a problem.
+> 
+> Cons:
+> 
+> * BPF has some learning curve. Also the fact that what it provides is a wide
+>   open field rather than something scoped out for a specific problem can
+>   make it seem a bit daunting at the beginning.
+> 
+> * Because tracking starts when the script starts running, it doesn't know
+>   anything which has happened upto that point, so you gotta pay attention to
+>   handling e.g. handling frees which don't match allocs. It's kinda annoying
+>   but not a huge problem usually. There are ways to build in BPF progs into
+>   the kernel and load it early but I haven't experiemnted with it yet
+>   personally.
+> 
+> I'm not necessarily against adding dedicated memory debugging mechanism but
+> do wonder whether the extra benefits would be enough to justify the code and
+> maintenance overhead.
+> 
+> Oh, a bit of delta but for anyone who's more interested in debugging
+> problems like this, while I tend to go for bcc
+> (https://github.com/iovisor/bcc) for this sort of problems. Others prefer to
+> write against libbpf directly or use bpftrace
+> (https://github.com/iovisor/bpftrace).
 
-You're still going to have the inherent overhead a separate index of
-outstanding memory allocations, so that frees can be decremented to the
-correct callsite.
+Do you have example output?
 
-The BPF approach is going to be _way_ higher overhead if you try to use
-it as a general profiler, like this is.
+TBH I'm skeptical that it's even possible to do full memory allocation
+profiling with tracing/bpf, due to recursive memory allocations and
+needing an index of outstanding allcations.
