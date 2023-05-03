@@ -2,82 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D8A46F5D23
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 19:41:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AF1A6F5D2B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 19:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229522AbjECRk7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 13:40:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
+        id S229871AbjECRm3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 13:42:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbjECRk5 (ORCPT
+        with ESMTP id S229813AbjECRm1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 13:40:57 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0385FD9
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 10:40:55 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-b99489836aaso4638383276.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 10:40:55 -0700 (PDT)
+        Wed, 3 May 2023 13:42:27 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EDDB5FD9
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 10:42:24 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-b9d8730fe5aso7954724276.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 10:42:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683135654; x=1685727654;
+        d=google.com; s=20221208; t=1683135744; x=1685727744;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VnWJwoqbKS+XkHViPIVupavn1s9FL+9QLrnitzrqP5g=;
-        b=eK3o90MKtG0sAxJkQzBjjPPdgC8Naf0DW8LSnzzFyGy7r2iplN6tx8LRS+K1pesqQ/
-         +dlPpm9XhI5MpmbmybPkhrAEcSQe8jXQWxke9zLF0oWZbujbmGNiLr16iUXkN33UUHSx
-         XBXGIEWcktzdHazuLFLqwBuOkd1R9zqRh1rR05EQP6mEIW+Y870cMvkQ+YZdkTbO3EXe
-         JnQPUyB6BIyM6BqPoFJBWX+ubIIjmGY6Y6TRZTV6HlKG9bq6FA2QoEZiVTg495moZLJm
-         8j7J7Vy9fMLWKuo3JHmpkQUMBoO2kqt3hu+UuR0WJjg5iixGZu5y4Lvke1eQTwl5WZQa
-         NpXA==
+        bh=CyWASKhXrRNVBOOq8h+mxQvWE1hyBqHS7EnIBAfoYzo=;
+        b=lILby+6OTcd6uGew9Gqa7pI7NZDERobvBEoUxW0HhFyA1BRI3IbjTEpaxJY5cI5dqK
+         DA1zSIWnr7NZMDeUF05eCVuGGh2CT9vrOAzryneu8JduHDYkP6FYutQNmyLESxSwuuGA
+         QuyLAcoDwkidYgw1urIbr/7WmePlI+jjpkr/y8SQuG47YOMKyQjyUqQZLY1V6cSIQnsN
+         gF8ibE844UGbtwqhvwKyiswwRZ5DNj7ChXG/ByW2u3EBE9OETY+04pa10/S8xbX8Bwfw
+         LuAtgmQvuglHVzqT12ntCD4oe90ZORyd/+eYUAlMEp51urNfjxmt4VM8J4BfTDsPwJJU
+         u65A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683135654; x=1685727654;
+        d=1e100.net; s=20221208; t=1683135744; x=1685727744;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VnWJwoqbKS+XkHViPIVupavn1s9FL+9QLrnitzrqP5g=;
-        b=fe0MUV5k+p2QJgS2oES2GxidKKdY4kMla+tZzMyZUui8iLPfY/qhNZ7NwLaSd/PdeN
-         wVNzXCDgqQ2iDb7VdSnnaTcgzCeuUP3/c6fAU+OocPOFTwQ94WnKtlo1IwZPNViTH2WH
-         dtkj1BF9LqxrDXtsowALyd0gR+jtZ5iFvDUITdaCeDvXhOXc6A8L2gcZ+u4T96cHfKkK
-         ZK1N/ZPps5Tsp0er47RttMS7CKwQxanuVPpL5Sv2u5iPXs4sy+eUiwrkUYKQslMn7GZH
-         kWpKPn0x3BQDPoaf0nm0kiAFKA/hATYH6Hrp/GDLRmCCIjQnqJv4YDUFCTSfji/o8fba
-         rabQ==
-X-Gm-Message-State: AC+VfDy4qPk7d9ho1Lbc6Jh6wbBTROKm6OANE1Si+UkpaDDps9OLK8MI
-        LPjUbsKRaOVRnlt0pYqukRR9+4SMjOBswRtFQXC7ew==
-X-Google-Smtp-Source: ACHHUZ5+xgmBEFDJhkEbV6hOZk2BeNhUs5riMMl8CEWVIZEPl5lRwY7k05WxOPH80Nz6y5uKgnKRw8/1iWaKnQTfG2Y=
-X-Received: by 2002:a25:1885:0:b0:b92:3f59:26e with SMTP id
- 127-20020a251885000000b00b923f59026emr18942712yby.41.1683135654167; Wed, 03
- May 2023 10:40:54 -0700 (PDT)
+        bh=CyWASKhXrRNVBOOq8h+mxQvWE1hyBqHS7EnIBAfoYzo=;
+        b=GOLINXq1AYjpFpirimlPJCgMFBj4AB3wYHiirhqNhOomSSQ0All+o9Po75l0M+k20k
+         uSZZDHosrpYbBo0QpPvQqkc3nAiTxTXQSidpxIU2b24pdsHxjSBZwmuSQTbmTxMdzm0L
+         HZrXokyzPhPqF6qVmJ8ZrQv2nA5UmA/oAv4j/828/iTQB8+PXgDlArvk2X8sLtpbjCT9
+         kWc2dKaYQuq2lwTJ11mNq3ggESdJ1qJ8fvH7EcWhU9Z6LDZ//q/cJ3HykATskfmvNGWA
+         Zs9mV97D+Yv8gtk7z1iQAxSwJbrGa99eZwiSz5vaptfxz3f6VF4tchU9MEcMcMSKfKOU
+         Wqmg==
+X-Gm-Message-State: AC+VfDz+9nXhZX9hnMdZCPRVmBNzKnA7PYCXvOIVxGU3qtJ1uh5tWQGs
+        La0g/Y2AUYuhyDm+gLTPo6lsE3lmLPovZcsVmCFPkg==
+X-Google-Smtp-Source: ACHHUZ6HYcPlZ5XV5ms52xY8zbnWoIv3zn5EqbRVrrcEPiOmdQ5uGEsqCqZVvbNEmhoG/dl+nd9SSzxveD8s4GLGz9w=
+X-Received: by 2002:a25:b782:0:b0:b95:2bd5:8f86 with SMTP id
+ n2-20020a25b782000000b00b952bd58f86mr19664721ybh.26.1683135743488; Wed, 03
+ May 2023 10:42:23 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230501165450.15352-1-surenb@google.com> <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
- <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com> <20230503122839.0d9934c5@gandalf.local.home>
-In-Reply-To: <20230503122839.0d9934c5@gandalf.local.home>
+ <ZFIOfb6/jHwLqg6M@moria.home.lan> <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
+ <ZFIVtB8JyKk0ddA5@moria.home.lan> <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
+In-Reply-To: <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 3 May 2023 10:40:42 -0700
-Message-ID: <CAJuCfpFYq7CZS4y2ZiF+AJHRKwnyhmZCk_uuTwFse26DxGh-qQ@mail.gmail.com>
+Date:   Wed, 3 May 2023 10:42:11 -0700
+Message-ID: <CAJuCfpEFV7ZB4pvnf6n0bVpTCDWCVQup9PtrHuAayrf3GrQskg@mail.gmail.com>
 Subject: Re: [PATCH 00/40] Memory allocation profiling
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
-        kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
-        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-        paulmck@kernel.org, pasha.tatashin@soleen.com,
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+        vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+        mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
+        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
+        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        x86@kernel.org, peterx@redhat.com, david@redhat.com,
+        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+        nathan@kernel.org, dennis@kernel.org, muchun.song@linux.dev,
+        rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
         yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
         hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
         ndesaulniers@google.com, gregkh@linuxfoundation.org,
         ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com,
-        vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
-        iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
-        elver@google.com, dvyukov@google.com, shakeelb@google.com,
-        songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
-        minchan@google.com, kaleshsingh@google.com,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
         kernel-team@android.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -96,32 +97,205 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 3, 2023 at 9:28=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
- wrote:
+On Wed, May 3, 2023 at 9:35=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
 >
-> On Wed, 3 May 2023 08:09:28 -0700
-> Suren Baghdasaryan <surenb@google.com> wrote:
+> Hello, Kent.
 >
-> > There is another issue, which I think can be solved in a smart way but
-> > will either affect performance or would require more memory. With the
-> > tracing approach we don't know beforehand how many individual
-> > allocation sites exist, so we have to allocate code tags (or similar
-> > structures for counting) at runtime vs compile time. We can be smart
-> > about it and allocate in batches or even preallocate more than we need
-> > beforehand but, as I said, it will require some kind of compromise.
+> On Wed, May 03, 2023 at 04:05:08AM -0400, Kent Overstreet wrote:
+> > No, we're still waiting on the tracing people to _demonstrate_, not
+> > claim, that this is at all possible in a comparable way with tracing.
 >
-> This approach is actually quite common, especially since tagging every
-> instance is usually overkill, as if you trace function calls in a running
-> kernel, you will find that only a small percentage of the kernel ever
-> executes. It's possible that you will be allocating a lot of tags that wi=
-ll
-> never be used. If run time allocation is possible, that is usually the
-> better approach.
+> So, we (meta) happen to do stuff like this all the time in the fleet to h=
+unt
+> down tricky persistent problems like memory leaks, ref leaks, what-have-y=
+ou.
+> In recent kernels, with kprobe and BPF, our ability to debug these sorts =
+of
+> problems has improved a great deal. Below, I'm attaching a bcc script I u=
+sed
+> to hunt down, IIRC, a double vfree. It's not exactly for a leak but leaks
+> can follow the same pattern.
 
-True but the memory overhead should not be prohibitive here. As a
-ballpark number, on my machine I see there are 4838 individual
-allocation locations and each codetag structure is 32 bytes, so that's
-152KB.
+Thanks for sharing, Tejun!
 
 >
-> -- Steve
+> There are of course some pros and cons to this approach:
+>
+> Pros:
+>
+> * The framework doesn't really have any runtime overhead, so we can have =
+it
+>   deployed in the entire fleet and debug wherever problem is.
+
+Do you mean it has no runtime overhead when disabled?
+If so, do you know what's the overhead when enabled? I want to
+understand if that's truly a viable solution to track all allocations
+(including slab) all the time.
+Thanks,
+Suren.
+
+>
+> * It's fully flexible and programmable which enables non-trivial filterin=
+g
+>   and summarizing to be done inside kernel w/ BPF as necessary, which is
+>   pretty handy for tracking high frequency events.
+>
+> * BPF is pretty performant. Dedicated built-in kernel code can do better =
+of
+>   course but BPF's jit compiled code & its data structures are fast enoug=
+h.
+>   I don't remember any time this was a problem.
+>
+> Cons:
+>
+> * BPF has some learning curve. Also the fact that what it provides is a w=
+ide
+>   open field rather than something scoped out for a specific problem can
+>   make it seem a bit daunting at the beginning.
+>
+> * Because tracking starts when the script starts running, it doesn't know
+>   anything which has happened upto that point, so you gotta pay attention=
+ to
+>   handling e.g. handling frees which don't match allocs. It's kinda annoy=
+ing
+>   but not a huge problem usually. There are ways to build in BPF progs in=
+to
+>   the kernel and load it early but I haven't experiemnted with it yet
+>   personally.
+>
+> I'm not necessarily against adding dedicated memory debugging mechanism b=
+ut
+> do wonder whether the extra benefits would be enough to justify the code =
+and
+> maintenance overhead.
+>
+> Oh, a bit of delta but for anyone who's more interested in debugging
+> problems like this, while I tend to go for bcc
+> (https://github.com/iovisor/bcc) for this sort of problems. Others prefer=
+ to
+> write against libbpf directly or use bpftrace
+> (https://github.com/iovisor/bpftrace).
+>
+> Thanks.
+>
+> #!/usr/bin/env bcc-py
+>
+> import bcc
+> import time
+> import datetime
+> import argparse
+> import os
+> import sys
+> import errno
+>
+> description =3D """
+> Record vmalloc/vfrees and trigger on unmatched vfree
+> """
+>
+> bpf_source =3D """
+> #include <uapi/linux/ptrace.h>
+> #include <linux/vmalloc.h>
+>
+> struct vmalloc_rec {
+>         unsigned long           ptr;
+>         int                     last_alloc_stkid;
+>         int                     last_free_stkid;
+>         int                     this_stkid;
+>         bool                    allocated;
+> };
+>
+> BPF_STACK_TRACE(stacks, 8192);
+> BPF_HASH(vmallocs, unsigned long, struct vmalloc_rec, 131072);
+> BPF_ARRAY(dup_free, struct vmalloc_rec, 1);
+>
+> int kpret_vmalloc_node_range(struct pt_regs *ctx)
+> {
+>         unsigned long ptr =3D PT_REGS_RC(ctx);
+>         uint32_t zkey =3D 0;
+>         struct vmalloc_rec rec_init =3D { };
+>         struct vmalloc_rec *rec;
+>         int stkid;
+>
+>         if (!ptr)
+>                 return 0;
+>
+>         stkid =3D stacks.get_stackid(ctx, 0);
+>
+>         rec_init.ptr =3D ptr;
+>         rec_init.last_alloc_stkid =3D -1;
+>         rec_init.last_free_stkid =3D -1;
+>         rec_init.this_stkid =3D -1;
+>
+>         rec =3D vmallocs.lookup_or_init(&ptr, &rec_init);
+>         rec->allocated =3D true;
+>         rec->last_alloc_stkid =3D stkid;
+>         return 0;
+> }
+>
+> int kp_vfree(struct pt_regs *ctx, const void *addr)
+> {
+>         unsigned long ptr =3D (unsigned long)addr;
+>         uint32_t zkey =3D 0;
+>         struct vmalloc_rec rec_init =3D { };
+>         struct vmalloc_rec *rec;
+>         int stkid;
+>
+>         stkid =3D stacks.get_stackid(ctx, 0);
+>
+>         rec_init.ptr =3D ptr;
+>         rec_init.last_alloc_stkid =3D -1;
+>         rec_init.last_free_stkid =3D -1;
+>         rec_init.this_stkid =3D -1;
+>
+>         rec =3D vmallocs.lookup_or_init(&ptr, &rec_init);
+>         if (!rec->allocated && rec->last_alloc_stkid >=3D 0) {
+>                 rec->this_stkid =3D stkid;
+>                 dup_free.update(&zkey, rec);
+>         }
+>
+>         rec->allocated =3D false;
+>         rec->last_free_stkid =3D stkid;
+>         return 0;
+> }
+> """
+>
+> bpf =3D bcc.BPF(text=3Dbpf_source)
+> bpf.attach_kretprobe(event=3D"__vmalloc_node_range", fn_name=3D"kpret_vma=
+lloc_node_range");
+> bpf.attach_kprobe(event=3D"vfree", fn_name=3D"kp_vfree");
+> bpf.attach_kprobe(event=3D"vfree_atomic", fn_name=3D"kp_vfree");
+>
+> stacks =3D bpf["stacks"]
+> vmallocs =3D bpf["vmallocs"]
+> dup_free =3D bpf["dup_free"]
+> last_dup_free_ptr =3D dup_free[0].ptr
+>
+> def print_stack(stkid):
+>     for addr in stacks.walk(stkid):
+>         sym =3D bpf.ksym(addr)
+>         print('  {}'.format(sym))
+>
+> def print_dup(dup):
+>     print('allocated=3D{} ptr=3D{}'.format(dup.allocated, hex(dup.ptr)))
+>     if (dup.last_alloc_stkid >=3D 0):
+>         print('last_alloc_stack: ')
+>         print_stack(dup.last_alloc_stkid)
+>     if (dup.last_free_stkid >=3D 0):
+>         print('last_free_stack: ')
+>         print_stack(dup.last_free_stkid)
+>     if (dup.this_stkid >=3D 0):
+>         print('this_stack: ')
+>         print_stack(dup.this_stkid)
+>
+> while True:
+>     time.sleep(1)
+>
+>     if dup_free[0].ptr !=3D last_dup_free_ptr:
+>         print('\nDUP_FREE:')
+>         print_dup(dup_free[0])
+>         last_dup_free_ptr =3D dup_free[0].ptr
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kernel-team+unsubscribe@android.com.
+>
