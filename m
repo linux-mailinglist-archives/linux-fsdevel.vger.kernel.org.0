@@ -2,239 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82A606F5E53
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB616F5E16
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 May 2023 20:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230140AbjECSnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 14:43:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44244 "EHLO
+        id S229759AbjECSkP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 14:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbjECSmb (ORCPT
+        with ESMTP id S229622AbjECSkN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 14:42:31 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFFFE7DB6;
-        Wed,  3 May 2023 11:40:42 -0700 (PDT)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 343HpRov003935;
-        Wed, 3 May 2023 18:40:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references :
- content-transfer-encoding : content-type : mime-version;
- s=corp-2023-03-30; bh=7d+s/0M45qtUO3zYE7BS+D09AQElSGIfbhoIoUYOSpA=;
- b=i+fnpszbJ9CSlVzJ3kgr7FKCwWHAilr03+8Ct4f9MBDCGuvpnCJGgrKVmk7Rhg56M2B6
- KzuQDf/UAi8zd6tR6+0w6Bf7G8mR3Mb3RLGppQhwPiE4bTq5LII6qG8lRaRQT4RPIvR2
- p7vRz3A36xGe6p7Tjeu75kGQkrd+OyeWFEv+WdpGRwRCiXFmmWwrMiEC5YTdd1oqkvAe
- +EbeybNkP2eBzhWAJ1cWtdJmiuvj1QCnuB/gcSREqKwpTWWof/t+EF71jcREASx8RePL
- OF4sBST+4tzCF1DhJdzROBZY269ZAW0FkFP1AcYVAHysTpkerKqf6TDIjPMcpU9WXfcv iw== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q8u9d07pd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 03 May 2023 18:40:16 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 343HKboM027453;
-        Wed, 3 May 2023 18:40:15 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3q8spdsjpy-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 03 May 2023 18:40:15 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OUFHlp2ZltwMglcdTDfK8ZSHh/toFB6hMn9/w1rTl3kqOR9pbPIlBNF8M1BzWgs9nQFnA2fBIgBGO2fh04VAP5rcqQLKVMHMh4KvwxiI4RWiqoTRAjdlXQcADWdsngct3x7rOvTj1yw1pYQV9QSJyH9JP82nye5nLCUbi4Wlo81NiJ3aU5bcIS0C0RWxAnDhLLuQGhI2sH7GbFZx9FrYsuaOVUmiCDILPhImzvRHYgZ5mybNR9+x18/oAnjChiBvqAqFHmsEQ1Y8yD3jtSI4QFPumcFSnLm0bWykSXK3HPyD+Rexqkn8MIECNJTbSVemQyAQ1vriUFmh/pzbUaLgnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7d+s/0M45qtUO3zYE7BS+D09AQElSGIfbhoIoUYOSpA=;
- b=eskqH3JaXFQlRwJH7lpzIhBmsVeQSgjuoFDo0bB4b5tmP6t4UsXyhRFgaxwzEKIrJFmHSn/PZVyEfXKMZBsEZHFlou89zTfs4wGPzilKz0ublTHIfl0Rw5C3Y1v19Xz5yBhiR+JqSKsbzgf2Qhd0C8VhKwbFZj+eDzZqQ33XIed/9HKM88NBJdPPcGD/1WEamla4xrtomZUn+JP9yXZVVtZVJeiRbQSwpvIKof9axou0/DOsz7qTSpWmi/ST2XnHo/4VKu7nDHMm/oo0YHLrvHflUNPtBYj2iSKWfcumNW9S6DVIjHz4+oQSmJMUlwE4Svd+zhsh73AicxO8uj+ToQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Wed, 3 May 2023 14:40:13 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A2B8658E;
+        Wed,  3 May 2023 11:40:10 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id 41be03b00d2f7-52c62a71541so761147a12.3;
+        Wed, 03 May 2023 11:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7d+s/0M45qtUO3zYE7BS+D09AQElSGIfbhoIoUYOSpA=;
- b=DFlcEn/oKAZIztivd2ZwT0wwKO84gYn1g1a9P0sgovaF8MjdiYn5PRmslHZck1en8GP/xJgmtydLVsNdih6odw5fJLpiXwq0fqc8wKjKpZVAKARgJ7vQmAli4mfcPShGJt+drA8mVg9FmTVXwKfBP3kKvarJE77lvaPPe/TlT5k=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by IA1PR10MB6171.namprd10.prod.outlook.com (2603:10b6:208:3a5::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.22; Wed, 3 May
- 2023 18:40:13 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::8456:ba59:80ec:d804]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::8456:ba59:80ec:d804%7]) with mapi id 15.20.6340.031; Wed, 3 May 2023
- 18:40:13 +0000
-From:   John Garry <john.g.garry@oracle.com>
-To:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jejb@linux.ibm.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        Alan Adamson <alan.adamson@oracle.com>,
-        John Garry <john.g.garry@oracle.com>
-Subject: [PATCH RFC 16/16] nvme: Support atomic writes
-Date:   Wed,  3 May 2023 18:38:21 +0000
-Message-Id: <20230503183821.1473305-17-john.g.garry@oracle.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20230503183821.1473305-1-john.g.garry@oracle.com>
-References: <20230503183821.1473305-1-john.g.garry@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SA1P222CA0190.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:3c4::27) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=gmail.com; s=20221208; t=1683139209; x=1685731209;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sQ2ADeO1XgOmj5DxbzjpzikYpUTn+B695qqaLQsTl4A=;
+        b=FAsEakodIYGZZ49hzhHq8Do+4wt23WK6jVIu98FKgEcC2IC28Yv1qcpIguYdAHmL41
+         K6QXYVXYY9e0ydYBW/QaYBQ4kV1sgRKD0Z8m7VqP9eoT6OyuI2TEKLTHxSnuPoZ0/P86
+         Ak//1N2uQgFgtt5vHB1OZ1Yr9lZGqpMPiXmn0PLHivzD9gD6C3pgBiZeck/EvcUad+D9
+         AIqIEi6ySYiJEa/rjzcr1BnwS0cO5uVLCgZHYd00/2Qp62J0+g0bDyAUjzMrqC8es9RR
+         PvNP8hKoKyN1VyTkZlWwEOSIbNVu+bisxPnpdL40o9ZuYAjxbUCiGJrKy44Q/i6wCbvS
+         6MJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683139209; x=1685731209;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sQ2ADeO1XgOmj5DxbzjpzikYpUTn+B695qqaLQsTl4A=;
+        b=BvoRPokoSMiVkbPlmALA8hIQW0hWkF3BGtAu3Whene693AAih2RPESqRgP9aO3X3wG
+         youYRS9jUoIPpTqC/k45VBMmpds/sXb2OY5BDLIrRiyK6jHqPmCcHaBiWZYN7gZV5ZHr
+         b7Cs9nIDJpdRLLmouDPWU+pUpS1arKk9lDmbCuvthKKckqvkeFLejrTePCsU6GWcVxRH
+         iD8Txo/yYwibavRal1PSN5TGBADpMjKOhUVDHQayB+SwafDV4c1PxoUiVHjqsQo/Cz9A
+         nNugKaMvBgsS2QhRLXTuw8Rh0caR2/ahG/5f+t4AAjzKnSJ/A4o/BOixSFrekxbWXbeF
+         vUCg==
+X-Gm-Message-State: AC+VfDxdx6rv5/vxaJT9N1OkMtov+3uywXA5fICrcvDYyDTdMtbE12dh
+        oA6SrYnEtMhbXeyWNwJa7ng=
+X-Google-Smtp-Source: ACHHUZ5HrlmzzWxl9cdU7mNdLYfBeR7MIFjXh85oRNOW13gF1ERuxzszMtMYq8KFsJoY0P2G/zpWtw==
+X-Received: by 2002:a05:6a20:4286:b0:dd:7661:fb34 with SMTP id o6-20020a056a20428600b000dd7661fb34mr28426673pzj.51.1683139209307;
+        Wed, 03 May 2023 11:40:09 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::5:6454])
+        by smtp.gmail.com with ESMTPSA id u22-20020a634556000000b005287b22ea8esm12540790pgk.88.2023.05.03.11.40.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 May 2023 11:40:08 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Wed, 3 May 2023 08:40:07 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        Michal Hocko <mhocko@suse.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        akpm@linux-foundation.org, vbabka@suse.cz,
+        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
+        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+        pasha.tatashin@soleen.com, yosryahmed@google.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        andreyknvl@gmail.com, keescook@chromium.org,
+        ndesaulniers@google.com, gregkh@linuxfoundation.org,
+        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-modules@vger.kernel.org,
+        kasan-dev@googlegroups.com, cgroups@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH 00/40] Memory allocation profiling
+Message-ID: <ZFKqh5Dh93UULdse@slm.duckdns.org>
+References: <20230501165450.15352-1-surenb@google.com>
+ <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+ <ZFIOfb6/jHwLqg6M@moria.home.lan>
+ <ZFISlX+mSx4QJDK6@dhcp22.suse.cz>
+ <ZFIVtB8JyKk0ddA5@moria.home.lan>
+ <ZFKNZZwC8EUbOLMv@slm.duckdns.org>
+ <20230503180726.GA196054@cmpxchg.org>
+ <ZFKlrP7nLn93iIRf@slm.duckdns.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|IA1PR10MB6171:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71087c64-35e8-4373-d526-08db4c05d4f9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5jNUHJ3Z4b7xdJ/QTh53jrdGGqCvwNeFZxks8J+rn0y7mDGjIgNUhSuw8hDkPebdkyPgmYXhjez7rGnVC25ulFFzp8GyMJZPVMVia2moU6vaPWPbUUM/NADNAIzYIrR/r34hF1Za1j+QaMyafWjKLrRBeB786dhotlw9jfYzRFPGOnTS4RMgnDWbq7fO0lrkIFyDJ2LJedYftbSHcgBUuRkqXiW7EpCk/2vcU2zuhNcjX30MwVAddCq3ja+2qd/fo9qdVHPAv3foM/xUoKCbOMtk9lQZkmhWxjqoiCcBqLk973mTajRpd6FT1w/u0uM4szAZrhac69eaSmxcpJliGPVR6nRCNQIEjveNYik7y4jzopWEl4OinocgAKbYeF8r5WXWY4etAuOkVj5os3HrCfvtX3OMeB8Ah+XwpOpT3Id50eCXFaq6yQl1it9yKePXGNxSR43jK1fwty7z8PKKl764qvuYxr6CVvkD3Mz91zLoI/3XhA0je+ZAMn/tNAOzDTyHRzgxDsPMbW9whibt50rYtRUT3Vm6AbivEVseuGV1uuO5LHp60UQ2is+eoB10dPpoHIKwuyP7VNnKnQUQdiskaVUl5Eq6eb0ihk3CSn4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(346002)(136003)(376002)(396003)(39860400002)(366004)(451199021)(2616005)(186003)(4326008)(103116003)(921005)(36756003)(38100700002)(83380400001)(66556008)(7416002)(66476007)(86362001)(41300700001)(8676002)(2906002)(107886003)(54906003)(5660300002)(6666004)(478600001)(8936002)(6486002)(6506007)(316002)(26005)(6512007)(1076003)(66946007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZXe+uQFa6Qkoq5Ku++78nnO4sBQtUCZvBThnhDTdyedttQgBtL4f/qwnzjhX?=
- =?us-ascii?Q?NWWQSJrY2lSqvA+mRpF4DtPWTfzlaiYXL7ggn17TOHH2XCPub8cbWj8LGxgS?=
- =?us-ascii?Q?u4Av44dsGB/iPLhT343BEGNYepIDJ/UMS4WXl9nWIxhabHvZCNnPrjj4RNQF?=
- =?us-ascii?Q?03YGwqaghX8ZlUfubDURH5z53ESwn5zL0bHNxX1C77yNw2HoE7K5W+1wncxN?=
- =?us-ascii?Q?oku61BK4A80+9g1ecedGMNX3IHj76fD3G855ouFODG3395ZolzZbSRPREMwQ?=
- =?us-ascii?Q?n8vDc2hVKN8sgo2ZTBJ8e9Wey8kZsZqDaMibUW0Bt6+IDnCmZcJSP2lpeF6H?=
- =?us-ascii?Q?8kvMzC9845dbPsCRJIB45NeguMo2HJ3eXlj98sIo9mLvpWFoxkHdqHlf90N+?=
- =?us-ascii?Q?OV62x77PaQRo12AJEPLFG9vJs+XrbA/WQ/neUd2Vryt2PJR50kJq0YpWD4dX?=
- =?us-ascii?Q?nSa9JslA8Pay9P7mD1MUwyJ4+GOw5XN062QTkOiPALXQ95Zi0NZeFe+w9Xul?=
- =?us-ascii?Q?73TVCLv0M9sHTfU4ULE7VZw5ytawJ+vqCwTBHjseR/Lagi5JmWblmiWI7q/1?=
- =?us-ascii?Q?oGmcuxz8LK+FySbL+U500Ns16Y3b38pX1RC3DiQZqL/+2Ie4sVqJ1+8SDDuJ?=
- =?us-ascii?Q?A4mVcYXbD9CpQcoT10J+tCxXDQ7y03cfbByD9beHg0uOPIeYPy7QD08x7+h4?=
- =?us-ascii?Q?5LMd0ljl2Qon4+4VJ1ZhH4pEcXyv95UWOZE2/vAwbw+ANce3C0UxeKeUZxG0?=
- =?us-ascii?Q?tAewbtkfqZ0HB5z6fHPXP4fMLJHGN6f7ojHWnuvcMxBHlF86L8IGbg+dM5lc?=
- =?us-ascii?Q?ZKiYr2XAUzbZBta8hfB2Dhi2BiUW51EhSVXIOloVYUqjXsrV5bviDvnmIXkq?=
- =?us-ascii?Q?OoNIqgltnIfcDOKPvVfgNMb5/OGELUOclUsTXxySboyxgvYS9PaaHuRAjl1D?=
- =?us-ascii?Q?tL8yE9ZDyJHhCxRhjnNjPdYTgxdOovmynsnky6eJoTKMsJqFwTq4IVapljDf?=
- =?us-ascii?Q?pOBfpUSt8hCxeICdrEj+XRnMQac0mYoE+MUcR838qg5zP7kj3hhwGSpSjj1S?=
- =?us-ascii?Q?G2fwLfz9ON1kAf7utp8qY57K8GLXEVGmEJk3IISxVB7qXT4C10WZuxF0HjiF?=
- =?us-ascii?Q?aIa/fyLzUNaSrOPtcN8hZvyytM01TxxLm/mi6Epyse6fd0vwr0IQGKRATESP?=
- =?us-ascii?Q?NXBS6AdG4F8Eu+OxiBeTiK0ArL1+Yzqtc8MINEbO/S1qoLSpWlKMOb8CVG1W?=
- =?us-ascii?Q?wwEPwAZMrDC1unWpw6n6WOT5Gjk97OWcdXN2miiwHk/cl8/1gbYXN9MTQcnB?=
- =?us-ascii?Q?8dXiBkoSvIdqHsxZByIKzTo1BE7Fw9WbhT4T9cc/DSFr6a7nMJ8gkbxMG+7X?=
- =?us-ascii?Q?T30xA2GP6ed85cib21SJ+7ZnuAzZSYQfqg+WBDhIJtSZq4DJJOH8zr6r3pQf?=
- =?us-ascii?Q?av7f+iHoBYoxXShswsIvQ2I+6Q/oimVKSsq5ZxJRaHCPIbX4zZbJpLcFEn6t?=
- =?us-ascii?Q?kYrdgPqi/w156uFVnDAOC6OPdWVN3AKR0hQq3+RLz+re+G9lTZtp2SdL3EAQ?=
- =?us-ascii?Q?XdFIm8O8YA9spnidw7yyC5t6DkHko4z3xMT3+QGy8RcInb8x3m0Yp+l1Ozjl?=
- =?us-ascii?Q?jQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?hyeGoreAlAQq0A8Vb9466Lc8Gz6CQ85rXaUDQlq0BJMqAoviPI6wMS5RaZPj?=
- =?us-ascii?Q?9K4wj8cVIBKh96PeXGqKPQY1s+sdbt29U4EZvGXrQLOz1oChsQA3uKrdA9/l?=
- =?us-ascii?Q?DgMBKTCxQ3XCDGiMWk1lNDlaNYO6w4t6Mt/LARQbohUrkq9SIzpV+uzob1IO?=
- =?us-ascii?Q?fg5xB2mefvDE0NrQhF0f/jHqt85TPc3UjOjyJleY+WHpw6GCFeIpiJQyPi6g?=
- =?us-ascii?Q?9jTZANOZ8NXXqu07xQsj/1DJZQkCTUmYgh49KTVvg79vpLtWAdIhU2cKmKPM?=
- =?us-ascii?Q?ByCaUEfSr9RcAwSndAiKPERJqbH96FSBoUcIAOFRNLdZrtCYktOinxsN/N0W?=
- =?us-ascii?Q?VaW6KBhieNPL7wG13sdfOP4fKkFOUB9mUktqIGyKWaWcAC0vSbYtfsnInWgI?=
- =?us-ascii?Q?5R8la0uIDgKBbpVFuoYOstvGS3udj+olSYQUPkbdX8fZ1OrczypwBsOjddW8?=
- =?us-ascii?Q?9nxOtGQFfKGLpYmrHGKtbcHeDBjbhVUsyn1qtJQ8Tm+aaXkh/cszGFNBjNWM?=
- =?us-ascii?Q?dLKdvkU76s9Zfad649OdT+756yeLHCgQ3E1/W7uPpwVPyV2I1HE1vCm80Sof?=
- =?us-ascii?Q?LdbJ+eOIU0Eh2dCjb/lVr0j6xOwBnKmzqupMWJHdx+J9XvCx9jOxP0Z2r5Oq?=
- =?us-ascii?Q?mcvQE/Z+0hki7WFQDDRABOSVJOjdx5In+qk4kpPYVUlb+Ufkv99aKz2Qtant?=
- =?us-ascii?Q?mi6iiUQsrfdDWpSx39PxPtW7eozLET+7OWPJi5ILHmuypsZOQyAuEURS3HbQ?=
- =?us-ascii?Q?1p91ondKCTN+snJ/t73RjYxfNSGmGL1ShhbCf/gAgUBzxOWVAeu+UE3Ntk9h?=
- =?us-ascii?Q?yfEsiAdBpv3vhXC0Rrcv/1ZJhegMIZL/CAMNM4vqH1/wjMfXpLcn17Gy2UVV?=
- =?us-ascii?Q?IpqNioY7WlKx0m10jkxIAC5jqsZipzzUkyE4oNnO93k3uJIzMmBJyxFhgrwz?=
- =?us-ascii?Q?d0FCMQRXJHJa38BiZUm7REPfeZratcDYVpxjyAxh0t5zGb9oBiorSluVyvob?=
- =?us-ascii?Q?CeeJXy0EvjL5WXszrIimlSgalDnryvvag10bKV79fn24MtiR4Xmh7cOaQGbL?=
- =?us-ascii?Q?ZmY+pRS2aNT0KzQHWU7lVvi4otodRrbixgFE2mv6Y/wJReW90OQ+z7ah/L1h?=
- =?us-ascii?Q?9VUHnWLTGAyf?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71087c64-35e8-4373-d526-08db4c05d4f9
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2023 18:40:13.6603
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7/Ptbx0+9iNRhWjbGo89NWiDxm2pbPaTcZCOsNJg0+xxSaYMbGF0QUCaNom46x5zPQ6UuqVpbBi7E5AIRjn4lA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6171
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-03_13,2023-05-03_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 mlxscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2305030160
-X-Proofpoint-GUID: zQ5jglPpdDNq2kpiiIF0x9YXSnyOTnt_
-X-Proofpoint-ORIG-GUID: zQ5jglPpdDNq2kpiiIF0x9YXSnyOTnt_
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZFKlrP7nLn93iIRf@slm.duckdns.org>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Alan Adamson <alan.adamson@oracle.com>
+On Wed, May 03, 2023 at 08:19:24AM -1000, Tejun Heo wrote:
+> > Taking a step back though, given the multitude of allocation sites in
+> > the kernel, it's a bit odd that the only accounting we do is the tiny
+> > fraction of voluntary vmstat/meminfo reporting. We try to cover the
+> > biggest consumers with this of course, but it's always going to be
+> > incomplete and is maintenance overhead too. There are on average
+> > several gigabytes in unknown memory (total - known vmstats) on our
+> > machines. It's difficult to detect regressions easily. And it's per
+> > definition the unexpected cornercases that are the trickiest to track
+> > down. So it might be doable with BPF, but it does feel like the kernel
+> > should do a better job of tracking out of the box and without
+> > requiring too much plumbing and somewhat fragile kernel allocation API
+> > tracking and probing from userspace.
+> 
+> Yeah, easy / default visibility argument does make sense to me.
 
-Support reading atomic write registers to fill in request_queue
-properties.
+So, a bit of addition here. If this is the thrust, the debugfs part seems
+rather redundant, right? That's trivially obtainable with tracing / bpf and
+in a more flexible and performant manner. Also, are we happy with recording
+just single depth for persistent tracking?
 
-Use following method to calculate limits:
-atomic_write_max_bytes = flp2(NAWUPF ?: AWUPF)
-atomic_write_unit_min = logical_block_size
-atomic_write_unit_max = flp2(NAWUPF ?: AWUPF)
-atomic_write_boundary = NABSPF
+Thanks.
 
-Signed-off-by: Alan Adamson <alan.adamson@oracle.com>
-Signed-off-by: John Garry <john.g.garry@oracle.com>
----
- drivers/nvme/host/core.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index d6a9bac91a4c..289561915ad3 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1879,6 +1879,39 @@ static void nvme_update_disk_info(struct gendisk *disk,
- 	blk_queue_io_min(disk->queue, phys_bs);
- 	blk_queue_io_opt(disk->queue, io_opt);
- 
-+	atomic_bs = rounddown_pow_of_two(atomic_bs);
-+	if (id->nsfeat & NVME_NS_FEAT_ATOMICS && id->nawupf) {
-+		if (id->nabo) {
-+			dev_err(ns->ctrl->device, "Support atomic NABO=%x\n",
-+				id->nabo);
-+		} else {
-+			u32 boundary = 0;
-+
-+			if (le16_to_cpu(id->nabspf))
-+				boundary = (le16_to_cpu(id->nabspf) + 1) * bs;
-+
-+			if (!(boundary & (boundary - 1))) {
-+				blk_queue_atomic_write_max_bytes(disk->queue,
-+							atomic_bs);
-+				blk_queue_atomic_write_unit_min(disk->queue, 1);
-+				blk_queue_atomic_write_unit_max(disk->queue,
-+					atomic_bs / bs);
-+				blk_queue_atomic_write_boundary(disk->queue,
-+								boundary);
-+			} else {
-+				dev_err(ns->ctrl->device, "Unsupported atomic boundary=0x%x\n",
-+					boundary);
-+			}
-+		}
-+	} else if (ns->ctrl->subsys->awupf) {
-+		blk_queue_atomic_write_max_bytes(disk->queue,
-+				atomic_bs);
-+		blk_queue_atomic_write_unit_min(disk->queue, 1);
-+		blk_queue_atomic_write_unit_max(disk->queue,
-+				atomic_bs / bs);
-+		blk_queue_atomic_write_boundary(disk->queue, 0);
-+	}
-+
- 	/*
- 	 * Register a metadata profile for PI, or the plain non-integrity NVMe
- 	 * metadata masquerading as Type 0 if supported, otherwise reject block
 -- 
-2.31.1
-
+tejun
