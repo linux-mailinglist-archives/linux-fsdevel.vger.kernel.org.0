@@ -2,234 +2,288 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5513B6F7077
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 19:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A47046F70B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 19:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbjEDRIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 May 2023 13:08:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41324 "EHLO
+        id S229978AbjEDRRU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 May 2023 13:17:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbjEDRIr (ORCPT
+        with ESMTP id S229697AbjEDRRT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 May 2023 13:08:47 -0400
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E0E4225;
-        Thu,  4 May 2023 10:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=pmckdOpDeH35/MapFJ+LqwY/p5loLTbra3jToW/0uZc=; b=rmnTEa8ubCFmYx5Uk5gbg4DrQi
-        c8/yqDC6lg00Rk7ch2cAuQ5zJUHJaCsx+Tk3fEkA5k/EJDoig+IgW+wO/cpL9LxocKFHjYVrl36Fc
-        m3o6Hpi2H1NNhYjniewLIE+wNNxMdsIBvCWTvRsqs2Gi+C5sN6YW9OPcvsuvO9MMBgMMD5HIZdNaR
-        s30OYKNKnxxaBFX7wQRbDwk4EWRE+a6PWDCIIvLjAiDxRTDh8TeQEO9NrkhYg9LX2tqutclRpwWdL
-        b53sLXk3UGXiScVqGtvXEtml/F9q6i59xJVUQpgmD5K1v2DoGD9H54vWhNTBPDyI0+l2crrumO7D/
-        ETokcUEw==;
-Received: from [177.189.3.64] (helo=localhost)
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-        id 1pucRe-001H7p-Oi; Thu, 04 May 2023 19:08:44 +0200
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-To:     linux-btrfs@vger.kernel.org
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
-        kernel-dev@igalia.com, vivek@collabora.com,
-        ludovico.denittis@collabora.com, johns@valvesoftware.com,
-        nborisov@suse.com, "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Subject: [PATCH 2/2] btrfs: Add module parameter to enable non-mount scan skipping
-Date:   Thu,  4 May 2023 14:07:08 -0300
-Message-Id: <20230504170708.787361-3-gpiccoli@igalia.com>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230504170708.787361-1-gpiccoli@igalia.com>
-References: <20230504170708.787361-1-gpiccoli@igalia.com>
+        Thu, 4 May 2023 13:17:19 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE1E74225;
+        Thu,  4 May 2023 10:17:17 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-50bcb00a4c2so1255348a12.1;
+        Thu, 04 May 2023 10:17:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683220636; x=1685812636;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=U2WuUou8YNL9Xp5WPJi0n6sPZ6G3kepjeD9YD/gQ+RQ=;
+        b=I4tkKjcK+DCRLRIlqzczRjordUh+ogvbdiMmZfqh502Thdtfi/q7aT76ekiU4iHRdZ
+         t1qVdUm0eYnur4o4d/BlTW8GiV9O6MJmiZigOqKlA4IT1Za7YOCjgc4lEvyyPPFNfT0S
+         y3+SV7UjlabcX1EAKJhbDB4QrxqS2f20o6yFKxlVBQcgEJUTmzcxrxkS3sZ3WvseR/Pe
+         Zl5fslr3SlxUnjd/Zup3Mijs3tlwakD0ubIfURE5AVo+V3qtwfWJ0oM1rXhjsOHZ3i+0
+         dtWfq17zIiCZFJtalZQp1oNrmh0p2DvSzGHyV4WLoKaBR2DtUfDBLLbjghuLSbrFuwms
+         xz7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683220636; x=1685812636;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U2WuUou8YNL9Xp5WPJi0n6sPZ6G3kepjeD9YD/gQ+RQ=;
+        b=cHFOCKJZFp7t8FjXrvmSdYac39m+0I0WFCADNAlOAj/SbMsYV7Cl2crF/lqHze6Mco
+         QkP/dhfor5tJRIoU3oibAFyNgmOH/TnmaN9ij4z8Xjj9fYem4EtbnqIcZ/FS8V+3/7GN
+         9a3inFReZB/EcsFwWXmdn8rmOCb+bDqi2pQn3UE/mCODxR8OxEcseXzm5BIgWTWHMEUo
+         WgUgk74mD2YZKeVAn3529u9mNWFTqyNo3Do5rbd29njFIJC3u2BBUZLgHII+IUf53Wre
+         Nnls9IE3kSymJ8UDZqJmtPm35rfTzsC4iXtlRPyZ09YPkexdAL7Ftm07HqlzZ/J/oPPY
+         MDTg==
+X-Gm-Message-State: AC+VfDx80R5bAZzwaQnzWIgYdMxBoXl08HEnTAdF8anRiUZ+3s+fe+ri
+        oqUiIkQ8+xDxiHpZF9gporA=
+X-Google-Smtp-Source: ACHHUZ7hS0chlKJeb03YkuEHvrnLPRAC5OTXgIMbm4mSuuciM4Jg7fOaKJrWsPZEeSVaDWtycXLbRw==
+X-Received: by 2002:a17:907:a426:b0:94a:9c9e:6885 with SMTP id sg38-20020a170907a42600b0094a9c9e6885mr7729969ejc.58.1683220635964;
+        Thu, 04 May 2023 10:17:15 -0700 (PDT)
+Received: from localhost ([2a00:23ee:19a0:5577:d26d:e6d:b920:1ba2])
+        by smtp.gmail.com with ESMTPSA id fx21-20020a170906b75500b009531d9efcc4sm18900677ejb.133.2023.05.04.10.17.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 May 2023 10:17:14 -0700 (PDT)
+Date:   Thu, 4 May 2023 18:17:13 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH v8 1/3] mm/mmap: separate writenotify and dirty tracking
+ logic
+Message-ID: <ZFPomZbCUSmoLIid@murray>
+References: <cover.1683067198.git.lstoakes@gmail.com>
+ <7ac8bb557517bcdc9225b4e4893a2ca7f603fcc4.1683067198.git.lstoakes@gmail.com>
+ <aa326283-468f-6c40-4c47-de7cf7cc5994@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aa326283-468f-6c40-4c47-de7cf7cc5994@redhat.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In case there are 2 btrfs filesystems holding the same fsid but in
-different block devices, the ioctl-based scanning prevents their
-peaceful coexistence, due to checks during the device add to the fsid
-list. Imagine an A/B partitioned OS, like in mobile devices or the Steam
-Deck - if we have both partitions holding the exact same image, depending
-on the order that udev triggers the scan and the filesystem generation
-number, the users potentially won't be able to mount one of them, even
-if the other was never mounted.
+On Wed, May 03, 2023 at 04:31:36PM +0200, David Hildenbrand wrote:
+> On 03.05.23 00:51, Lorenzo Stoakes wrote:
+> > vma_wants_writenotify() is specifically intended for setting PTE page table
+> > flags, accounting for existing page table flag state and whether the
+> > filesystem performs dirty tracking.
+> >
+> > Separate out the notions of dirty tracking and PTE write notify checking in
+> > order that we can invoke the dirty tracking check from elsewhere.
+> >
+> > Note that this change introduces a very small duplicate check of the
+> > separated out vm_ops_needs_writenotify() and vma_is_shared_writable()
+> > functions. This is necessary to avoid making vma_needs_dirty_tracking()
+> > needlessly complicated (e.g. passing flags or having it assume checks were
+> > already performed). This is small enough that it doesn't seem too
+> > egregious.
+> >
+> > We check to ensure the mapping is shared writable, as any GUP caller will
+> > be safe - MAP_PRIVATE mappings will be CoW'd and read-only file-backed
+> > shared mappings are not permitted access, even with FOLL_FORCE.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> > Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> > Reviewed-by: Mika Penttilä <mpenttil@redhat.com>
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> > ---
+> >   include/linux/mm.h |  1 +
+> >   mm/mmap.c          | 53 ++++++++++++++++++++++++++++++++++------------
+> >   2 files changed, 41 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 27ce77080c79..7b1d4e7393ef 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -2422,6 +2422,7 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
+> >   #define  MM_CP_UFFD_WP_ALL                 (MM_CP_UFFD_WP | \
+> >   					    MM_CP_UFFD_WP_RESOLVE)
+> > +bool vma_needs_dirty_tracking(struct vm_area_struct *vma);
+> >   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot);
+> >   static inline bool vma_wants_manual_pte_write_upgrade(struct vm_area_struct *vma)
+> >   {
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > index 5522130ae606..fa7442e44cc2 100644
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -1475,6 +1475,42 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
+> >   }
+> >   #endif /* __ARCH_WANT_SYS_OLD_MMAP */
+> > +/* Do VMA operations imply write notify is required? */
+>
+> Nit: comment is superfluous, this is already self-documenting code.
+>
+> > +static bool vm_ops_needs_writenotify(const struct vm_operations_struct *vm_ops)
+> > +{
+> > +	return vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite);
+> > +}
+> > +
+> > +/* Is this VMA shared and writable? */
+>
+> Nit: dito
+>
+> > +static bool vma_is_shared_writable(struct vm_area_struct *vma)
+> > +{
+> > +	return (vma->vm_flags & (VM_WRITE | VM_SHARED)) ==
+> > +		(VM_WRITE | VM_SHARED);
+> > +}
+> > +
+> > +/*
+> > + * Does this VMA require the underlying folios to have their dirty state
+> > + * tracked?
+> > + */
+>
+> Nit: dito
+>
 
-To avoid this case, introduce a btrfs parameter to allow users to select
-devices to be excluded of non-mount scanning. The module parameter
-"skip_scan=%s" accepts full device paths comma-separated, the same paths
-passed as a parameter to btrfs_scan_one_device(). If a scan procedure
-wasn't triggered from the mount path (meaning it was ioctl-based) and
-the "skip_scan" parameter contains a valid device path, such device
-scanning is skipped and this is informed on dmesg.
+Ack, was just trying to follow the pattern of comments on these helpers but
+you're right, these aren't adding anything will strip.
 
-Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> > +bool vma_needs_dirty_tracking(struct vm_area_struct *vma)
+> > +{
+> > +	/* Only shared, writable VMAs require dirty tracking. */
+> > +	if (!vma_is_shared_writable(vma))
+> > +		return false;
+> > +
+> > +	/* Does the filesystem need to be notified? */
+> > +	if (vm_ops_needs_writenotify(vma->vm_ops))
+> > +		return true;
+> > +
+> > +	/* Specialty mapping? */
+> > +	if (vma->vm_flags & VM_PFNMAP)
+> > +		return false;
+> > +
+> > +	/* Can the mapping track the dirty pages? */
+> > +	return vma->vm_file && vma->vm_file->f_mapping &&
+> > +		mapping_can_writeback(vma->vm_file->f_mapping);
+> > +}
+> > +
+> >   /*
+> >    * Some shared mappings will want the pages marked read-only
+> >    * to track write events. If so, we'll downgrade vm_page_prot
+> > @@ -1483,21 +1519,18 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
+> >    */
+> >   int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
+> >   {
+> > -	vm_flags_t vm_flags = vma->vm_flags;
+> > -	const struct vm_operations_struct *vm_ops = vma->vm_ops;
+> > -
+> >   	/* If it was private or non-writable, the write bit is already clear */
+> > -	if ((vm_flags & (VM_WRITE|VM_SHARED)) != ((VM_WRITE|VM_SHARED)))
+> > +	if (!vma_is_shared_writable(vma))
+> >   		return 0;
+> >   	/* The backer wishes to know when pages are first written to? */
+> > -	if (vm_ops && (vm_ops->page_mkwrite || vm_ops->pfn_mkwrite))
+> > +	if (vm_ops_needs_writenotify(vma->vm_ops))
+> >   		return 1;
+> >   	/* The open routine did something to the protections that pgprot_modify
+> >   	 * won't preserve? */
+> >   	if (pgprot_val(vm_page_prot) !=
+> > -	    pgprot_val(vm_pgprot_modify(vm_page_prot, vm_flags)))
+> > +	    pgprot_val(vm_pgprot_modify(vm_page_prot, vma->vm_flags)))
+> >   		return 0;
+> >   	/*
+> > @@ -1511,13 +1544,7 @@ int vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot)
+> >   	if (userfaultfd_wp(vma))
+> >   		return 1;
+> > -	/* Specialty mapping? */
+> > -	if (vm_flags & VM_PFNMAP)
+> > -		return 0;
+> > -
+> > -	/* Can the mapping track the dirty pages? */
+> > -	return vma->vm_file && vma->vm_file->f_mapping &&
+> > -		mapping_can_writeback(vma->vm_file->f_mapping);
+> > +	return vma_needs_dirty_tracking(vma);
+> >   }
+> >   /*
+>
+> We now have duplicate vma_is_shared_writable() and
+> vm_ops_needs_writenotify() checks ...
+>
 
----
+Yes, this is noted in the commit message.
 
-Some design choices that should be discussed here:
+>
+> Maybe move the VM_PFNMAP and "/* Can the mapping track the dirty pages? */"
+> checks into a separate helper and call that from both,
+> vma_wants_writenotify() and vma_needs_dirty_tracking() ?
 
-(1) We could either have it as a parameter, or a flag in the superblock
-(like the metadata_uuid) - the parameter approach seemed easier / less
-invasive, but I might be wrong - appreciate feedback on this.
+I'll try to juggle it a bit more, the whole reason I'm doing these very
+annoying duplications is because of the ordering and precedence of the
+checks in both and wanting to avoid some hideious passing of flags or
+splitting into too many bits or returning a non-bool value etc.
 
-(2) The parameter name of course is irrelevant and if somebody has a
-better idea for the name, I'm upfront okay with that =)
+Will try to improve it in respin.
 
-(3) Again, no documentation is provided here - appreciate suggestions
-on how to proper document changes to btrfs (wiki, I assume?).
+>
+>
+> In any case
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
+>
 
-Thanks in advance for reviews and suggestions,
+Thanks!
 
-Guilherme
-
-
- fs/btrfs/super.c   | 13 +++++++++----
- fs/btrfs/super.h   |  1 +
- fs/btrfs/volumes.c | 27 ++++++++++++++++++++++++++-
- fs/btrfs/volumes.h |  3 ++-
- 4 files changed, 38 insertions(+), 6 deletions(-)
-
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 8d9df169107a..4532cbc2bb57 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -62,6 +62,11 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/btrfs.h>
- 
-+char *skip_scan;
-+module_param(skip_scan, charp, 0444);
-+MODULE_PARM_DESC(skip_scan,
-+		 "User list of devices to be skipped in non mount induced scans (comma separated)");
-+
- static const struct super_operations btrfs_super_ops;
- 
- /*
-@@ -889,7 +894,7 @@ static int btrfs_parse_early_options(const char *options, fmode_t flags,
- 				goto out;
- 			}
- 			info.path = device_name;
--			device = btrfs_scan_one_device(&info, flags, holder);
-+			device = btrfs_scan_one_device(&info, flags, holder, true);
- 			kfree(device_name);
- 			if (IS_ERR(device)) {
- 				error = PTR_ERR(device);
-@@ -1488,7 +1493,7 @@ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
- 	}
- 
- 	info.path = device_name;
--	device = btrfs_scan_one_device(&info, mode, fs_type);
-+	device = btrfs_scan_one_device(&info, mode, fs_type, true);
- 	if (IS_ERR(device)) {
- 		mutex_unlock(&uuid_mutex);
- 		error = PTR_ERR(device);
-@@ -2198,7 +2203,7 @@ static long btrfs_control_ioctl(struct file *file, unsigned int cmd,
- 	case BTRFS_IOC_SCAN_DEV:
- 		mutex_lock(&uuid_mutex);
- 		device = btrfs_scan_one_device(&info, FMODE_READ,
--					       &btrfs_root_fs_type);
-+					       &btrfs_root_fs_type, false);
- 		ret = PTR_ERR_OR_ZERO(device);
- 		mutex_unlock(&uuid_mutex);
- 		break;
-@@ -2213,7 +2218,7 @@ static long btrfs_control_ioctl(struct file *file, unsigned int cmd,
- 	case BTRFS_IOC_DEVICES_READY:
- 		mutex_lock(&uuid_mutex);
- 		device = btrfs_scan_one_device(&info, FMODE_READ,
--					       &btrfs_root_fs_type);
-+					       &btrfs_root_fs_type, false);
- 		if (IS_ERR(device)) {
- 			mutex_unlock(&uuid_mutex);
- 			ret = PTR_ERR(device);
-diff --git a/fs/btrfs/super.h b/fs/btrfs/super.h
-index 8dbb909b364f..6eddd196bb51 100644
---- a/fs/btrfs/super.h
-+++ b/fs/btrfs/super.h
-@@ -3,6 +3,7 @@
- #ifndef BTRFS_SUPER_H
- #define BTRFS_SUPER_H
- 
-+extern char *skip_scan;
- int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
- 			unsigned long new_flags);
- int btrfs_sync_fs(struct super_block *sb, int wait);
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 5a38b3482ec5..53da2ebb246c 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -12,6 +12,7 @@
- #include <linux/uuid.h>
- #include <linux/list_sort.h>
- #include <linux/namei.h>
-+#include <linux/string.h>
- #include "misc.h"
- #include "ctree.h"
- #include "extent_map.h"
-@@ -1403,7 +1404,8 @@ int btrfs_forget_devices(dev_t devt)
-  * is read via pagecache
-  */
- struct btrfs_device *btrfs_scan_one_device(const struct btrfs_scan_info *info,
--					   fmode_t flags, void *holder)
-+					   fmode_t flags, void *holder,
-+					   bool mounting)
- {
- 	struct btrfs_super_block *disk_super;
- 	bool new_device_added = false;
-@@ -1414,6 +1416,29 @@ struct btrfs_device *btrfs_scan_one_device(const struct btrfs_scan_info *info,
- 
- 	lockdep_assert_held(&uuid_mutex);
- 
-+	if (!mounting && skip_scan) {
-+		char *p, *skip_devs, *orig;
-+
-+		skip_devs = kstrdup(skip_scan, GFP_KERNEL);
-+		if (!skip_devs)
-+			return ERR_PTR(-ENOMEM);
-+
-+		orig = skip_devs;
-+		while ((p = strsep(&skip_devs, ",")) != NULL) {
-+			if (!*p)
-+				continue;
-+
-+			if (!strcmp(p, info->path)) {
-+				pr_info(
-+	"BTRFS: skipped non-mount scan on device %s due to module parameter\n",
-+					info->path);
-+				kfree(orig);
-+				return ERR_PTR(-EINVAL);
-+			}
-+		}
-+		kfree(orig);
-+	}
-+
- 	/*
- 	 * we would like to check all the supers, but that would make
- 	 * a btrfs mount succeed after a mkfs from a different FS.
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index f2354e8288f9..3e83565b326a 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -544,7 +544,8 @@ void btrfs_mapping_tree_free(struct extent_map_tree *tree);
- int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
- 		       fmode_t flags, void *holder);
- struct btrfs_device *btrfs_scan_one_device(const struct btrfs_scan_info *info,
--					   fmode_t flags, void *holder);
-+					   fmode_t flags, void *holder,
-+					   bool mounting);
- int btrfs_forget_devices(dev_t devt);
- void btrfs_close_devices(struct btrfs_fs_devices *fs_devices);
- void btrfs_free_extra_devids(struct btrfs_fs_devices *fs_devices);
--- 
-2.40.0
-
+> --
+> Thanks,
+>
+> David / dhildenb
+>
