@@ -2,217 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 758CE6F6211
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 01:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB7D96F624D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 02:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbjECX0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 19:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34538 "EHLO
+        id S229660AbjEDAOa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 20:14:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjECX0d (ORCPT
+        with ESMTP id S229602AbjEDAO3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 19:26:33 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6489A902E
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 16:26:22 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-6433c243287so895853b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 16:26:22 -0700 (PDT)
+        Wed, 3 May 2023 20:14:29 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95FB372A2;
+        Wed,  3 May 2023 17:14:28 -0700 (PDT)
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 343Housx016649;
+        Thu, 4 May 2023 00:14:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-03-30;
+ bh=lzk10u8Z8/6pwlgNG7KJNZEjE2BdZ4fGJDhNQwNTIWc=;
+ b=4LOW1OiNBSrqN5XeDB5WmfSP83USmlAYzo/6+dZ2S7vAKfuWfO6dzXNcMIEfEOb4nLGa
+ 29RI/fEs2kCFJP82t8BCyWuD4vz37Ep9D4h7VLSFFmXoAx9xZrqQaOlOh5W6Q15kwKeE
+ Y5BiBTIXejhkA6IGOhrEdB14UnjXYJoDnva8HOt6uEOv5FBeEP6MOlfzHhUCJQhyNHgM
+ 4Gkgp8EPJ+f3gWyU+iyHkjW06F++jrZUcY1idWKa32cgbUKfuOlab/pq70Gl8JglYVPJ
+ A3eWKt+QQ2hNFH3bkYyKf5KSSmqy//w3gzPBoRiOgGK3Wh3RXolijZXpdiPascU/9s2O rA== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q8t5frn7b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 May 2023 00:14:16 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3440Adb5009902;
+        Thu, 4 May 2023 00:14:15 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2049.outbound.protection.outlook.com [104.47.74.49])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3q8sp89wkn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 May 2023 00:14:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Rt44lkKRLvSDMlNNyZngKNXuM6PU41XxAnpliqWS69nNuTrbO8NXakw35oU6uncyj9BnMsmiY19ollYB12YZ+cp7nxFUzNM9Jl8L9m0b8lDVUmXlvABZCTN+y2FgO/QxZUWwf8UC7cK74htYE8mwZKXPQy4VUdw667St0PT5uatxrMqppkYfMCFwFJcYKBzrPZbJEUtyrI6lXMTrsvJg7g0H12tsDZ9X63j/XCMF9DIEHeQW1YRGB0ovpsZ+9ADZqcEf1Li/0Z2loeUwSuX2/ahVcBQyJPWSEL1PUzY/iK5I7BudWi6BSwKcRPdea0fTxf+YQeiM/k2Z50tucCYlkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lzk10u8Z8/6pwlgNG7KJNZEjE2BdZ4fGJDhNQwNTIWc=;
+ b=eokRBmKkZ/tTTA84w1A8ua7Q/wp9qv3CDslsx/+TIZ7l7IhXaUqs07/3t/a3hU2C8SeIXSGIjcToWgpLrmpYK8EfZfymGxq2kIgD89amy1M8vvfFGblN4MFYNYyZotQwPQcrwBJjgdITMPq2PiSbMDcD5Qun0y5qoW5X2iEjqu9wrJ/Zg46zTCFBHyEB1d/xeLgPPFvqh0WjjmdDY/8QsKln7nSdJlfQuvY/sxevAdhozGP0LTlnQpdSZDfmrT+FUVBtaszKnnRT3qmtqnSfpHpZivoht2RbVLOHOgf6NS1qJKG5uwYJyk9PY3vKajWYPy6qRZWMTxwnkHC7iSESgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1683156382; x=1685748382;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hLF/XohEcFNqvnvCqaB5Hm1eLX3Ize1KonQ+CQXKJVw=;
-        b=v9zPd7ZSzrmH/Z4pdXJn4iiTbRR4V72z8ItrQELaVnaXm47NYtVdQ46I7/Qk5prqEc
-         SvmsN6cg+UQ4XtgAwtt+OiO7S91zyGgFjC/aDEM9LHSH4Q5dQ4Ty4kRvbsb+itqGhm4g
-         1sCraGR1Ddlhtj0eX3OGftB0gMwadfkndLGTxbdhHzCpG6hw8CoiGKrZDqUnixDniOqf
-         z8qUvRiqVU17m8TdkaQsjz8bL5sPpOO3h7xY5NmMWB+aQueIRrI73TJwdgDpDP0RvRuq
-         iwdFlRlW0SegH/SfaNLK/EevvpWaahLVTD7fI90l1hFc7N0r0kfqEOAjRAktTc+MxF2Z
-         L3rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683156382; x=1685748382;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hLF/XohEcFNqvnvCqaB5Hm1eLX3Ize1KonQ+CQXKJVw=;
-        b=DHE3ToJropjlBrTf8/NNQxjIR4wjnN3PIR8IVHTwfVRApkZhRnz78wS7ElwMxb5Vb8
-         K692pLhO4fLmcRCVsFlZWYsW/doOtTfucvzsTNwEXOoIyC06IuNGVuPlEQkOrtFb1nBq
-         Tb0iJPEP2sAKjo1ev7qzYscUi2tfui3pJGqTwiLexY+rSVI3gzCtQ4f6zXa0OHeR5poY
-         cxXpNRZnCz8KeXcMjeHIh1HJ7FwOP1ip30dw6dffq3QtCCrgtJgZv0ozyeOzh7XDBBwb
-         JzWjKqFb52bAmg1RvD3V2xRRTKAuO4oANRzwWQddWlvADFePTVGzqghyw1PWNjmaWybs
-         HGvQ==
-X-Gm-Message-State: AC+VfDzknQpHC+H+Tz+JpPaWDIJpnyA2Y2AQ+OQ8HsIGQD0/sYehRrgC
-        HI8B5jJgI8Znb4gXl3by4ktHPQ==
-X-Google-Smtp-Source: ACHHUZ5diKOfcpQ90loaTCwsAsNfI6e6FAnNwsQgCdTnnAlLLXDPm/yrGxfBJffrbIMoxrXjvtw2Gg==
-X-Received: by 2002:a05:6a20:938a:b0:f2:1a72:2a8d with SMTP id x10-20020a056a20938a00b000f21a722a8dmr362232pzh.14.1683156381837;
-        Wed, 03 May 2023 16:26:21 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
-        by smtp.gmail.com with ESMTPSA id lx11-20020a17090b4b0b00b00246cc751c6bsm1886965pjb.46.2023.05.03.16.26.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 May 2023 16:26:21 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1puLrU-00B2Ad-T8; Thu, 04 May 2023 09:26:16 +1000
-Date:   Thu, 4 May 2023 09:26:16 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     John Garry <john.g.garry@oracle.com>
-Cc:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jejb@linux.ibm.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        Allison Henderson <allison.henderson@oracle.com>,
-        Catherine Hoang <catherine.hoang@oracle.com>
-Subject: Re: [PATCH RFC 12/16] xfs: Add support for fallocate2
-Message-ID: <20230503232616.GG3223426@dread.disaster.area>
-References: <20230503183821.1473305-1-john.g.garry@oracle.com>
- <20230503183821.1473305-13-john.g.garry@oracle.com>
-MIME-Version: 1.0
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lzk10u8Z8/6pwlgNG7KJNZEjE2BdZ4fGJDhNQwNTIWc=;
+ b=WRVMmCDhXuT5oShzuBS/8S793FhEF5I7RTHmYuuWtdl8UL7cdWIJBpKhjq2x1+KO/q/qj0z1920y3WogISttnWVMTjyDY7n6xukC3wRYENaXENgfLThzXj9sbKCn5tejMuFj4Xm0Oq3/BkAu+nc8MtzM/NVkcu7y+W+/7CK/5dY=
+Received: from BY5PR10MB4196.namprd10.prod.outlook.com (2603:10b6:a03:20d::23)
+ by IA0PR10MB7383.namprd10.prod.outlook.com (2603:10b6:208:43e::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.22; Thu, 4 May
+ 2023 00:14:12 +0000
+Received: from BY5PR10MB4196.namprd10.prod.outlook.com
+ ([fe80::ffb:de39:b76b:52eb]) by BY5PR10MB4196.namprd10.prod.outlook.com
+ ([fe80::ffb:de39:b76b:52eb%3]) with mapi id 15.20.6363.022; Thu, 4 May 2023
+ 00:14:12 +0000
+Date:   Wed, 3 May 2023 17:14:09 -0700
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     Ackerley Tng <ackerleytng@google.com>, willy@infradead.org,
+        sidhartha.kumar@oracle.com
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        muchun.song@linux.dev, jhubbard@nvidia.com, vannapurve@google.com,
+        erdemaktas@google.com
+Subject: Re: [PATCH 2/2] fs: hugetlbfs: Fix logic to skip allocation on hit
+ in page cache
+Message-ID: <20230504001409.GA104105@monkey>
+References: <cover.1683069252.git.ackerleytng@google.com>
+ <f15f57def8e69cf288f0646f819b784fe15fabe2.1683069252.git.ackerleytng@google.com>
+ <20230503030528.GC3873@monkey>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230503183821.1473305-13-john.g.garry@oracle.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20230503030528.GC3873@monkey>
+X-ClientProxiedBy: MW4PR03CA0098.namprd03.prod.outlook.com
+ (2603:10b6:303:b7::13) To BY5PR10MB4196.namprd10.prod.outlook.com
+ (2603:10b6:a03:20d::23)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR10MB4196:EE_|IA0PR10MB7383:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8cbf87cb-e32c-4d76-0fea-08db4c347d2f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: sD3ujwFqy9lbghmD9Pzvo9mPqDZuw/3IybCtu5omEubWvRan+Vm7DnyEF582zLgYkiLqSycKRNqVU8n/eobM53TT2Rs3dRZZmUnfvgVRARJbrBlAY84oUrOKiLCnaPHFzOiOAgljlGwm2RZCjcKZkMB6Wtaz6dbL03lmFuJBDNrOATvKYpg8o9Ri87hZzKgZDXth6DIqwCY56rJuqg15XIN/ybSR/1WWTuc16CzxybMgv6fqSeqzNlLsVz491TM3/66MjmIjRa6tkEvV3XZ2GgkBTbMr6r79RBvbFY3SO32h9HMilUw9xUUHrJYPD/xc8p1W4zl6PEPZKo+SE+f9Dzp8/fNCmqpsYLJxOIT7KwoZP/LeaIdjlQkAO7er8x2ngRAgzWg+98w38nCVVT/dhBErGGPmV9x32co/9Yj+VlU07b0QxChQsYoeMTEWFV6lsqMz5HuuG48MaktZRPK20t6/W2WwzXZxVEQDgZJxV5L5HKDW+8tJAun2WMmmEuOWDU/znAmITBPoJYUm+LOqGBLbJQaHXVZfuEuc6FJA0y9boXYD0U5rlzUtHaLXjB/v
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4196.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(39860400002)(346002)(376002)(396003)(366004)(136003)(451199021)(478600001)(2906002)(316002)(6636002)(66946007)(66556008)(66476007)(4326008)(6486002)(6666004)(33656002)(33716001)(41300700001)(6506007)(6512007)(9686003)(53546011)(26005)(1076003)(86362001)(83380400001)(38100700002)(7416002)(8676002)(8936002)(186003)(44832011)(5660300002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9PZ/acYfqpYEfSVYkvG8Iv/b8xABg/iKl/5tCBrto9fVtQhKPK7rAfXjYmba?=
+ =?us-ascii?Q?hhZbzTLGIObZKyCFS6BkAs3QDaYzf9JAc/oBIWjRAh9UZAqe9quQdCTu6x/J?=
+ =?us-ascii?Q?5TOzrULczYFyW12olsgiqI23doObGmpQIoGXq/HhA/esC4yAEh0VnsLQ3rxW?=
+ =?us-ascii?Q?VOvEio4qGylHoyXv49wjKAkHSKdjkib+Ku+mFc4q6l33JgrpBDvoajyPfCUr?=
+ =?us-ascii?Q?TjlnCanEiElhsvrqcXk4KQBIY3OM6769ruclpbUIHYPS0GrbLZaQz2nZa+P8?=
+ =?us-ascii?Q?U2GaCZ8i3uxHGrlmSjUuxXRss/ZL28hlntIvjYTBYzGPHwHeTTN8iYUiJGVi?=
+ =?us-ascii?Q?gwkfBUtogqk13Nfy/cibG88DT+xeULv6zg9k3/wyOv5OAZ3BPmyYwCn35fT8?=
+ =?us-ascii?Q?bntchkSoXvXbX/HoQC+bqcHYd89RFrelbxyfcvg2HYn3xoQx9VE1kTMfmrAd?=
+ =?us-ascii?Q?1P2GsNYoWFkBcgM2o37q0eIHE70DpTnHZQr3QKebUZGyCnbH47Q/qrkIzWmD?=
+ =?us-ascii?Q?IVe1lkv6a/dWzseuHY21Qkax/InLhSLD/evtHz5HK3wGhWXrmiD1J5dGllfd?=
+ =?us-ascii?Q?JvsaRWZZVTgPuAqrNN8U6arN8S+acPMRbK9LfKrHkB2G3ko7C5HGr67vll1Z?=
+ =?us-ascii?Q?2UCVUvO8ILF2nA1GSEIgqN8oJNSaXmnZKpf14WejW65l7uyUXw91vScHD6T4?=
+ =?us-ascii?Q?ibn2Dgs/bgbXrVxS6PDzlbXDGcQvDkwAm5vW7cN9bGBYdftHAVaFI3cwtfyc?=
+ =?us-ascii?Q?ttzV+33V8VqktUbAgJsSN699pOXMa3ibJO77bPN5HZQU2Vwd/sgNBfLgR4RS?=
+ =?us-ascii?Q?ZVCxGetGMIFufunMIAPlR2F4Nv6Kx2N0WqVGc/qlu/oKTeSgJDKTZ3IkDZFz?=
+ =?us-ascii?Q?dsqGs3NA2TKESlBLTEd2Hzc7MgPxzvJd41jgaY57IqrsJpwl83/jSj2j7c7p?=
+ =?us-ascii?Q?cRzCekfgnJWuEaoAEo01RW3tFovZ1dKIDqYhrr+w2uUvCwlOaTcHYQrl9YW1?=
+ =?us-ascii?Q?td+nFAk+2B8A1JVIdFJmG+kVgVU9x5Eoel67m/OlkYKeamQh+g8ImM7s6tji?=
+ =?us-ascii?Q?ekMxVX+6biWWMDUNulGT4P4FYyHStFVTJJwUJf7UNa9A4hABPyfzud+UXeDX?=
+ =?us-ascii?Q?p+zVlkP2/QzGRX3lhvvENZoce5RHCPKvIF714Kx/TQ+k2Vgp9UAgupe+B4A2?=
+ =?us-ascii?Q?Fr+To0vjmE+JfCEdVlKjbcGKnMmeqAmXzkYcEcvYfMUEXJkrT9GnJ2zV8cTR?=
+ =?us-ascii?Q?A8dfRSEhugWwICUWGdxZaUFMRTZaURbkVogFgltxEq5wONB1NAUaOFzqnl+n?=
+ =?us-ascii?Q?DPP1Bz63EH/FzqxdNP2JVLEu5NPo2AvWdutziNNQPlAjIootsg7bEZ0IPIkZ?=
+ =?us-ascii?Q?S3oZL60aQfZhQ6RKVGJIXQMaiFc08OVt+lK64TVnmfFZ6DAft3HoEMovyg4L?=
+ =?us-ascii?Q?g3wLN4A+/e14jmzIY0FIzEh7pDKK2WWrA+qNdoEU2xtm7e3SHmDEvuYhDkW0?=
+ =?us-ascii?Q?1EDDW+MRV3TvWAG1nc1d3Xo9n1eCzT+JbTNYlcwAap4xOmfS4X/mq+sgP8If?=
+ =?us-ascii?Q?s4MlGEY0NffzGdbflDVmuk4jiv+hGiA3pwqU4VV2?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?8QyZEGXzfaFb5PN2G37jpBjaHlHea4ktOevHv6QKWkI8YNKp73mjqMIrAQII?=
+ =?us-ascii?Q?J7Jw+kq5ni2MpNIjPJfidnel+RngOYnEuXkvTe1rBi7A5ahLv3YgtCSRrV6T?=
+ =?us-ascii?Q?YKjJmQQua10vlblbWORLSdAZTmBdIn9lV6DpaKQnyPRK4BhFliV0LrA49l1m?=
+ =?us-ascii?Q?AQSFMvkFtXrp/iJSQOQkRq8MbmNCBgjcK/+5s6S/wPQK8DoHn8EdPS1M9/PJ?=
+ =?us-ascii?Q?edsSsvnsZskwFBg0i5xmzfzmQPag6bpavvClFZcJk7D9S+R/fs0iYpVFf+q8?=
+ =?us-ascii?Q?BI86pRg6LxOrMw2W1FXVMiKGl4iB1+hs1owQxJ/Sa+s9k0pIWnlfXi3njS3R?=
+ =?us-ascii?Q?LBIpMwrQwcbIdGOUfN4tzkf5WcFTqfmQK8LaOekNfUPCxRxtsZ3eZL7oqQim?=
+ =?us-ascii?Q?uy9HWDGgd94sVduJsCZxuy4DS8zKCI/1xBdzbzY1csvDyykFrwmJRrisffor?=
+ =?us-ascii?Q?egbNCx0kk1dJLMl7VEKC7/N+iF02lb9NtwXkgg/Fsr9dkRONxDvT/FrcuIG5?=
+ =?us-ascii?Q?j8uHTsrUNq5/eOSMYm1fgUlEMDPXWn7v841r2v4V94toM/VmHINjNTuQ0iio?=
+ =?us-ascii?Q?yWVToeriBRLxxmX7cW0otliR5+SDEjKk1vNU0obLGe5sSjkeMMZTsTZk1W8T?=
+ =?us-ascii?Q?WAevNoshYftnfPmbwa2SgnSNlqafSHJTY641QVD6FruB7irRrJmYlM14NNvg?=
+ =?us-ascii?Q?Uiu0zJRzCIucIqg/pzQpAbLbBZpRsQDDjw3zJXo62sj03Ix7+e8tFEPNsF+Q?=
+ =?us-ascii?Q?VG0gVPaCfA4jl7Y0Q+Gbx6d1klWu5tMwFsMjiK2Ltgqs7RtGIuYhZ/ShIIVk?=
+ =?us-ascii?Q?c49htCrUI4j2GRgHXJx5c4kW1wovwB9tcvtr69UPuiOTOxJ5S+BHAIvNT3St?=
+ =?us-ascii?Q?u+yjtlgBuvyRiLi/oXK5+BM+JSMBZoCkJeIwiUyWhVGRVe2bGEay6jwfEmM6?=
+ =?us-ascii?Q?XKSnRyRFsin/wbrz4K8LlQ=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cbf87cb-e32c-4d76-0fea-08db4c347d2f
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4196.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2023 00:14:12.7720
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MjsN761FYyzjAt7bueI4RW4JxbAbtsg0XyMSX45YaxgSAGOMsd3wXUgRbWZZDtw0nmkoQCJb6X7INE9LeFCCbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7383
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-03_15,2023-05-03_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 spamscore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2305040000
+X-Proofpoint-GUID: dQ9ze36Ga6DZVvhNInLfezWpobwM0XlC
+X-Proofpoint-ORIG-GUID: dQ9ze36Ga6DZVvhNInLfezWpobwM0XlC
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 03, 2023 at 06:38:17PM +0000, John Garry wrote:
-> From: Allison Henderson <allison.henderson@oracle.com>
+On 05/02/23 20:05, Mike Kravetz wrote:
+> On 05/02/23 23:56, Ackerley Tng wrote:
+> > When fallocate() is called twice on the same offset in the file, the
+> > second fallocate() should succeed.
+> > 
+> > page_cache_next_miss() always advances index before returning, so even
+> > on a page cache hit, the check would set present to false.
 > 
-> Add support for fallocate2 ioctl, which is xfs' own version of fallocate.
-> Struct xfs_fallocate2 is passed in the ioctl, and xfs_fallocate2.alignment
-> allows the user to specify required extent alignment. This is key for
-> atomic write support, as we expect extents to be aligned on
-> atomic_write_unit_max boundaries.
+> Thank you Ackerley for finding this!
+> 
+> When I read the description of page_cache_next_miss(), I assumed
+> 
+> 	present = page_cache_next_miss(mapping, index, 1) != index;
+> 
+> would tell us if there was a page at index in the cache.
+> 
+> However, when looking closer at the code it does not check for a page
+> at index, but rather starts looking at index+1.  Perhaps that is why
+> it is named next?
+> 
+> Matthew, I think the use of the above statement was your suggestion.
+> And you know the xarray code better than anyone.  I just want to make
+> sure page_cache_next_miss is operating as designed/expected.  If so,
+> then the changes suggested here make sense.
 
-This approach of adding filesystem specific ioctls for minor behavioural
-modifiers to existing syscalls is not a sustainable development
-model.
+I took a closer look at the code today.
 
-If we want fallocate() operations to apply filesystem atomic write
-constraints to operations, then add a new modifier flag to
-fallocate(), say FALLOC_FL_ATOMIC. The filesystem can then
-look up it's atomic write alignment constraints and apply them to
-the operation being performed appropriately.
+page_cache_next_miss has a 'special case' for index 0.  The function
+description says:
 
-> The alignment flag is not sticky, so further extent mutation will not
-> obey this original alignment request.
+ * Return: The index of the gap if found, otherwise an index outside the
+ * range specified (in which case 'return - index >= max_scan' will be true).
+ * In the rare case of index wrap-around, 0 will be returned.
 
-IOWs, you want the specific allocation to behave exactly as if an
-extent size hint of the given alignment had been set on that inode.
-Which could be done with:
+And, the loop in the routine does:
 
-	ioctl(FS_IOC_FSGETXATTR, &fsx)
-	old_extsize = fsx.fsx_extsize;
-	fsx.fsx_extsize = atomic_align_size;
-	ioctl(FS_IOC_FSSETXATTR, &fsx)
-	fallocate(....)
-	fsx.fsx_extsize = old_extsize;
-	ioctl(FS_IOC_FSSETXATTR, &fsx)
+	while (max_scan--) {
+		void *entry = xas_next(&xas);
+		if (!entry || xa_is_value(entry))
+			break;
+		if (xas.xa_index == 0)
+			break;
+	}
 
-Yeah, messy, but if an application is going to use atomic writes,
-then setting an extent size hint of the atomic write granularity the
-application will use at file create time makes a whole lot of sense.
-This will largely guarantee that any allocation will be aligned to
-atomic IO constraints even when non atomic IO operations are
-performed on that inode. Hence when the application needs to do an
-atomic IO, it's not going to fail because previous allocation was
-not correctly aligned.
+At first glance, I thought xas_next always went to the next entry but
+now see that is not the case here because this is a new state with
+xa_node = XAS_RESTART.  So, xas_next is effectively a xas_load.
 
-All that we'd then need to do for atomic IO is ensure that we fail
-the allocation early if we can't allocate fully sized and aligned
-extents rather than falling back to unaligned extents when there are
-no large enough contiguous free spaces for aligned extents to be
-allocated. i.e. when RWF_ATOMIC or FALLOC_FL_ATOMIC are set by the
-application...
+This means in the case were index == 0,
 
-> In addition, extent lengths should
-> always be a multiple of atomic_write_unit_max,
+	page_cache_next_miss(mapping, index, 1)
 
-Yup, that's what extent size hint based allocation does - it rounds
-both down and up to hint alignment...
+will ALWAYS return zero even if a page is present.
 
-....
-
-> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index 34de6e6898c4..52a6e2b61228 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.c
-> +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -3275,7 +3275,9 @@ xfs_bmap_compute_alignments(
->  	struct xfs_alloc_arg	*args)
->  {
->  	struct xfs_mount	*mp = args->mp;
-> -	xfs_extlen_t		align = 0; /* minimum allocation alignment */
-> +
-> +	/* minimum allocation alignment */
-> +	xfs_extlen_t		align = args->alignment;
->  	int			stripe_align = 0;
-
-
-This doesn't do what you think it should. For one, it will get
-overwritten by extent size hints that are set, hence the user will
-not get the alignment they expected in that case.
-
-Secondly, args->alignment is an internal alignment control for
-stripe alignment used later in the allocator when doing file
-extenstion allocations.  Overloading it to pass a user alignment
-here means that initial data allocations will have alignments set
-without actually having set up the allocator parameters for aligned
-allocation correctly.
-
-This will lead to unexpected allocation failure as the filesystem
-fills as the reservations needed for allocation to succeed won't
-match what is actually required for allocation to succeed. It will
-also cause problematic behaviour for fallback allocation algorithms
-that expect only to be called with args->alignment = 1...
-
->  	/* stripe alignment for allocation is determined by mount parameters */
-> @@ -3652,6 +3654,7 @@ xfs_bmap_btalloc(
->  		.datatype	= ap->datatype,
->  		.alignment	= 1,
->  		.minalignslop	= 0,
-> +		.alignment	= ap->align,
->  	};
->  	xfs_fileoff_t		orig_offset;
->  	xfs_extlen_t		orig_length;
-
-> @@ -4279,12 +4282,14 @@ xfs_bmapi_write(
->  	uint32_t		flags,		/* XFS_BMAPI_... */
->  	xfs_extlen_t		total,		/* total blocks needed */
->  	struct xfs_bmbt_irec	*mval,		/* output: map values */
-> -	int			*nmap)		/* i/o: mval size/count */
-> +	int			*nmap,
-> +	xfs_extlen_t		align)		/* i/o: mval size/count */
-
-
-As per above - IMO this is not the right way to specify aligment for
-atomic IO. A XFS_BMAPI_ATOMIC flag is probably the right thing to
-add from the caller - this also communicates the specific allocation
-failure behaviour required, too.
-
-Then xfs_bmap_compute_alignments() can pull the alignment
-from the relevant buftarg similar to how it already pulls preset
-alignments for extent size hints and/or realtime devices. And then
-the allocator can attempt exact aligned allocation for maxlen, then
-if that fails an exact aligned allocation for minlen, and if both of
-those fail then we return ENOSPC without attempting any unaligned
-allocations...
-
-This also gets rid of the need to pass another parameter to
-xfs_bmapi_write(), and it's trivial to plumb into the XFS iomap and
-fallocate code paths....
-
-Cheers,
-
-Dave.
+I need to look at the xarray code and this rare index wrap-around case
+to see if we can somehow modify that check for xas.xa_index == 0 in
+page_cache_next_miss.
 -- 
-Dave Chinner
-david@fromorbit.com
+Mike Kravetz
