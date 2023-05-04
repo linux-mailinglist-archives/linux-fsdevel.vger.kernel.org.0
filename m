@@ -2,68 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ACD26F6F86
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 18:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6BF86F6FB9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 18:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231386AbjEDQBu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 May 2023 12:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36192 "EHLO
+        id S229639AbjEDQRA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 May 2023 12:17:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230270AbjEDQBs (ORCPT
+        with ESMTP id S229564AbjEDQQ6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 May 2023 12:01:48 -0400
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [IPv6:2001:1600:3:17::42a9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DD4644A5
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 May 2023 09:01:46 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QBz8Q5N6szMrLwX;
-        Thu,  4 May 2023 18:01:42 +0200 (CEST)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QBz8N2pJJz1KT;
-        Thu,  4 May 2023 18:01:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1683216102;
-        bh=dialvkrEAVQAFxQGrtELfEYjCv+jfvjYJX0K1jjADPE=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=czlPYxfVvpb9lJJZJZDdwLTnctbTzvWaGQFItDHL1Y8oW5ODmqA7x4bNcl8So4oyE
-         cmhkeGu84kkuh8WtACtT3jhSNYDYVJt+403nZ5VgFCW7YbgK0T8o0RrZ/gEfHGiO8y
-         PTVHFHIJuiO95WzEZv8zmiXsgQXwg8ovIHcL6eKw=
-Message-ID: <e4d1cfc8-6d50-57be-fd64-8c648acacaf5@digikod.net>
-Date:   Thu, 4 May 2023 18:01:39 +0200
+        Thu, 4 May 2023 12:16:58 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C84981FC3;
+        Thu,  4 May 2023 09:16:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zFZTZFGHSAaSaRqnlF9L7Mtetmpu66yO8W+jO7gZ4I8=; b=j9+9AV0iknIZd5Bxy8jMMN7joo
+        KgIOfrpe2djpey8XRz8Eb3d3iK4yT0wVCClkbuOK/N5PBQrKLEHoZabloBoe7IzblwMeik9NylOl4
+        06FlUKctHO5+LU9jWJOHJolNiRBJx1oWezv7u9WvXW2eqCvtEBVwjga8j/oh7a/ZtmfOutpjP2Eia
+        xqUnK5byNVUUH2iVpxBg7ORKCYWZUm+zyWJiFdE2x9AxfblMmMSyPFOk63OWz1PE6lL3io2wHK2UF
+        sT9PQjNjCR60MlYbGjiBfceJ+YnxuOP1f8Dff1k8Q2b9VA88H3R9MCTbN6QsvAmVeV5iP8qW/vffd
+        +PfS0YdQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pubdQ-00Akfm-Hg; Thu, 04 May 2023 16:16:48 +0000
+Date:   Thu, 4 May 2023 17:16:48 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>, Ilya Dryomov <idryomov@gmail.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: always respect QUEUE_FLAG_STABLE_WRITES on the block
+ device
+Message-ID: <ZFPacOW6XMq+o4YU@casper.infradead.org>
+References: <20230504105624.9789-1-idryomov@gmail.com>
+ <20230504135515.GA17048@lst.de>
+ <ZFO+R0Ud6Yx546Tc@casper.infradead.org>
+ <20230504155556.t6byee6shgb27pw5@quack3>
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v1 0/5] Landlock support for UML
-Content-Language: en-US
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        kuba <kuba@kernel.org>, James Morris <jmorris@namei.org>,
-        Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Ritesh Raj Sarraf <ritesh@collabora.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sjoerd Simons <sjoerd@collabora.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-References: <20230309165455.175131-1-mic@digikod.net>
- <cb7e6a4b-63d9-ddba-e0fc-d6352df2b3b6@digikod.net>
- <1227008149.272858.1679434728169.JavaMail.zimbra@nod.at>
- <1f347bdf-a3da-981c-bfee-d6a1f7f51b85@digikod.net>
-In-Reply-To: <1f347bdf-a3da-981c-bfee-d6a1f7f51b85@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230504155556.t6byee6shgb27pw5@quack3>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,19 +56,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Richard, any news?
+On Thu, May 04, 2023 at 05:55:56PM +0200, Jan Kara wrote:
+> For bdev address_space that's easy but what Ilya also mentioned is a
+> problem when 'stable_write' flag gets toggled on the device and in that
+> case having to propagate the flag update to all the address_space
+> structures is a nightmare...
 
-On 04/04/2023 15:52, Mickaël Salaün wrote:
-> 
-> On 21/03/2023 22:38, Richard Weinberger wrote:
->> ----- Ursprüngliche Mail -----
->>> Von: "Mickaël Salaün" <mic@digikod.net>
->>> Richard, Anton, Johannes, what do you think about these UML changes?
->>
->> I like them but didn't had a chance for a deeper look so far. :-S
-> 
-> Good! Do you think it could make it for v6.4?  Should we push it in
-> -next for testing?
-> 
-> Thanks,
->    Mickaël
+We have a number of flags which don't take effect when modified on a
+block device with a mounted filesystem on it.  For example, modifying
+the readahead settings do not change existing files, only new ones.
+Since this flag is only modifiable for debugging purposes, I think I'm
+OK with it not affecting already-mounted filesystems.  It feels like a
+decision that reasonable people could disagree on, though.
