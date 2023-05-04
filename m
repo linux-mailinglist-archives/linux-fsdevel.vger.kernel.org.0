@@ -2,227 +2,290 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB7D96F624D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 02:14:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E9C16F62C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 04:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229660AbjEDAOa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 May 2023 20:14:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49398 "EHLO
+        id S229645AbjEDCB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 May 2023 22:01:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229602AbjEDAO3 (ORCPT
+        with ESMTP id S229617AbjEDCBz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 May 2023 20:14:29 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95FB372A2;
-        Wed,  3 May 2023 17:14:28 -0700 (PDT)
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 343Housx016649;
-        Thu, 4 May 2023 00:14:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2023-03-30;
- bh=lzk10u8Z8/6pwlgNG7KJNZEjE2BdZ4fGJDhNQwNTIWc=;
- b=4LOW1OiNBSrqN5XeDB5WmfSP83USmlAYzo/6+dZ2S7vAKfuWfO6dzXNcMIEfEOb4nLGa
- 29RI/fEs2kCFJP82t8BCyWuD4vz37Ep9D4h7VLSFFmXoAx9xZrqQaOlOh5W6Q15kwKeE
- Y5BiBTIXejhkA6IGOhrEdB14UnjXYJoDnva8HOt6uEOv5FBeEP6MOlfzHhUCJQhyNHgM
- 4Gkgp8EPJ+f3gWyU+iyHkjW06F++jrZUcY1idWKa32cgbUKfuOlab/pq70Gl8JglYVPJ
- A3eWKt+QQ2hNFH3bkYyKf5KSSmqy//w3gzPBoRiOgGK3Wh3RXolijZXpdiPascU/9s2O rA== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q8t5frn7b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 May 2023 00:14:16 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3440Adb5009902;
-        Thu, 4 May 2023 00:14:15 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2049.outbound.protection.outlook.com [104.47.74.49])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3q8sp89wkn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 04 May 2023 00:14:15 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Rt44lkKRLvSDMlNNyZngKNXuM6PU41XxAnpliqWS69nNuTrbO8NXakw35oU6uncyj9BnMsmiY19ollYB12YZ+cp7nxFUzNM9Jl8L9m0b8lDVUmXlvABZCTN+y2FgO/QxZUWwf8UC7cK74htYE8mwZKXPQy4VUdw667St0PT5uatxrMqppkYfMCFwFJcYKBzrPZbJEUtyrI6lXMTrsvJg7g0H12tsDZ9X63j/XCMF9DIEHeQW1YRGB0ovpsZ+9ADZqcEf1Li/0Z2loeUwSuX2/ahVcBQyJPWSEL1PUzY/iK5I7BudWi6BSwKcRPdea0fTxf+YQeiM/k2Z50tucCYlkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lzk10u8Z8/6pwlgNG7KJNZEjE2BdZ4fGJDhNQwNTIWc=;
- b=eokRBmKkZ/tTTA84w1A8ua7Q/wp9qv3CDslsx/+TIZ7l7IhXaUqs07/3t/a3hU2C8SeIXSGIjcToWgpLrmpYK8EfZfymGxq2kIgD89amy1M8vvfFGblN4MFYNYyZotQwPQcrwBJjgdITMPq2PiSbMDcD5Qun0y5qoW5X2iEjqu9wrJ/Zg46zTCFBHyEB1d/xeLgPPFvqh0WjjmdDY/8QsKln7nSdJlfQuvY/sxevAdhozGP0LTlnQpdSZDfmrT+FUVBtaszKnnRT3qmtqnSfpHpZivoht2RbVLOHOgf6NS1qJKG5uwYJyk9PY3vKajWYPy6qRZWMTxwnkHC7iSESgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lzk10u8Z8/6pwlgNG7KJNZEjE2BdZ4fGJDhNQwNTIWc=;
- b=WRVMmCDhXuT5oShzuBS/8S793FhEF5I7RTHmYuuWtdl8UL7cdWIJBpKhjq2x1+KO/q/qj0z1920y3WogISttnWVMTjyDY7n6xukC3wRYENaXENgfLThzXj9sbKCn5tejMuFj4Xm0Oq3/BkAu+nc8MtzM/NVkcu7y+W+/7CK/5dY=
-Received: from BY5PR10MB4196.namprd10.prod.outlook.com (2603:10b6:a03:20d::23)
- by IA0PR10MB7383.namprd10.prod.outlook.com (2603:10b6:208:43e::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.22; Thu, 4 May
- 2023 00:14:12 +0000
-Received: from BY5PR10MB4196.namprd10.prod.outlook.com
- ([fe80::ffb:de39:b76b:52eb]) by BY5PR10MB4196.namprd10.prod.outlook.com
- ([fe80::ffb:de39:b76b:52eb%3]) with mapi id 15.20.6363.022; Thu, 4 May 2023
- 00:14:12 +0000
-Date:   Wed, 3 May 2023 17:14:09 -0700
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     Ackerley Tng <ackerleytng@google.com>, willy@infradead.org,
-        sidhartha.kumar@oracle.com
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        muchun.song@linux.dev, jhubbard@nvidia.com, vannapurve@google.com,
-        erdemaktas@google.com
-Subject: Re: [PATCH 2/2] fs: hugetlbfs: Fix logic to skip allocation on hit
- in page cache
-Message-ID: <20230504001409.GA104105@monkey>
-References: <cover.1683069252.git.ackerleytng@google.com>
- <f15f57def8e69cf288f0646f819b784fe15fabe2.1683069252.git.ackerleytng@google.com>
- <20230503030528.GC3873@monkey>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230503030528.GC3873@monkey>
-X-ClientProxiedBy: MW4PR03CA0098.namprd03.prod.outlook.com
- (2603:10b6:303:b7::13) To BY5PR10MB4196.namprd10.prod.outlook.com
- (2603:10b6:a03:20d::23)
+        Wed, 3 May 2023 22:01:55 -0400
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6EF711A
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 May 2023 19:01:51 -0700 (PDT)
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3314c25ae45so25809655ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 May 2023 19:01:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683165711; x=1685757711;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MRK5jTft3BrTiKwZWh1WJtul0v0zFeRYHVWPAass0oY=;
+        b=Uk+mUpszGIs3LDPLD5OOZ0oXYe5AQHFX5kJtDp1R1H8YP44v+rTqxYgKz8W+yR30lp
+         cOjjgEMpT2iNqEGELPYw2pN5k7PnHXsMRv5eAsE3L3KVKzuvligik6bzBY0SkdIUEPr7
+         6uyrwxvQI4lsrR8+r5Ks1qW2UmMaZk2lWgyXHwgQqgQextJQbs328jgXkqZEC7GL3z6k
+         5qm+O1bYvptWJhyN4BXNizl8lPZUuR4+6euz+roKmAeUO0U+ZOF2UZeEhDmdL5DFAuBU
+         pXUWUVx6EBtmJMOLvvGqS0iGkCnIbGqmWSix0gdR0q27xsX/NsnvngswCCQ3suHLllRm
+         i0Pg==
+X-Gm-Message-State: AC+VfDy9YPUdJEZW9gVeQWxrS7zMe8YJAy+X3Ll/VobhTRFWfmM/UTtF
+        xln/bcIp8HKZ68MSYuE/RL9lQJmslOl8L9xjDmhCtXunLGn5
+X-Google-Smtp-Source: ACHHUZ7a+i/5539Z99itMjElna3F55TT5GZ0n0Y64lg1c2AgUJAvGrzU5w7K372oYHks8JcNvj1MO7ZGwo7TpGggc0tKMANac8G2
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR10MB4196:EE_|IA0PR10MB7383:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8cbf87cb-e32c-4d76-0fea-08db4c347d2f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: sD3ujwFqy9lbghmD9Pzvo9mPqDZuw/3IybCtu5omEubWvRan+Vm7DnyEF582zLgYkiLqSycKRNqVU8n/eobM53TT2Rs3dRZZmUnfvgVRARJbrBlAY84oUrOKiLCnaPHFzOiOAgljlGwm2RZCjcKZkMB6Wtaz6dbL03lmFuJBDNrOATvKYpg8o9Ri87hZzKgZDXth6DIqwCY56rJuqg15XIN/ybSR/1WWTuc16CzxybMgv6fqSeqzNlLsVz491TM3/66MjmIjRa6tkEvV3XZ2GgkBTbMr6r79RBvbFY3SO32h9HMilUw9xUUHrJYPD/xc8p1W4zl6PEPZKo+SE+f9Dzp8/fNCmqpsYLJxOIT7KwoZP/LeaIdjlQkAO7er8x2ngRAgzWg+98w38nCVVT/dhBErGGPmV9x32co/9Yj+VlU07b0QxChQsYoeMTEWFV6lsqMz5HuuG48MaktZRPK20t6/W2WwzXZxVEQDgZJxV5L5HKDW+8tJAun2WMmmEuOWDU/znAmITBPoJYUm+LOqGBLbJQaHXVZfuEuc6FJA0y9boXYD0U5rlzUtHaLXjB/v
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4196.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(39860400002)(346002)(376002)(396003)(366004)(136003)(451199021)(478600001)(2906002)(316002)(6636002)(66946007)(66556008)(66476007)(4326008)(6486002)(6666004)(33656002)(33716001)(41300700001)(6506007)(6512007)(9686003)(53546011)(26005)(1076003)(86362001)(83380400001)(38100700002)(7416002)(8676002)(8936002)(186003)(44832011)(5660300002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9PZ/acYfqpYEfSVYkvG8Iv/b8xABg/iKl/5tCBrto9fVtQhKPK7rAfXjYmba?=
- =?us-ascii?Q?hhZbzTLGIObZKyCFS6BkAs3QDaYzf9JAc/oBIWjRAh9UZAqe9quQdCTu6x/J?=
- =?us-ascii?Q?5TOzrULczYFyW12olsgiqI23doObGmpQIoGXq/HhA/esC4yAEh0VnsLQ3rxW?=
- =?us-ascii?Q?VOvEio4qGylHoyXv49wjKAkHSKdjkib+Ku+mFc4q6l33JgrpBDvoajyPfCUr?=
- =?us-ascii?Q?TjlnCanEiElhsvrqcXk4KQBIY3OM6769ruclpbUIHYPS0GrbLZaQz2nZa+P8?=
- =?us-ascii?Q?U2GaCZ8i3uxHGrlmSjUuxXRss/ZL28hlntIvjYTBYzGPHwHeTTN8iYUiJGVi?=
- =?us-ascii?Q?gwkfBUtogqk13Nfy/cibG88DT+xeULv6zg9k3/wyOv5OAZ3BPmyYwCn35fT8?=
- =?us-ascii?Q?bntchkSoXvXbX/HoQC+bqcHYd89RFrelbxyfcvg2HYn3xoQx9VE1kTMfmrAd?=
- =?us-ascii?Q?1P2GsNYoWFkBcgM2o37q0eIHE70DpTnHZQr3QKebUZGyCnbH47Q/qrkIzWmD?=
- =?us-ascii?Q?IVe1lkv6a/dWzseuHY21Qkax/InLhSLD/evtHz5HK3wGhWXrmiD1J5dGllfd?=
- =?us-ascii?Q?JvsaRWZZVTgPuAqrNN8U6arN8S+acPMRbK9LfKrHkB2G3ko7C5HGr67vll1Z?=
- =?us-ascii?Q?2UCVUvO8ILF2nA1GSEIgqN8oJNSaXmnZKpf14WejW65l7uyUXw91vScHD6T4?=
- =?us-ascii?Q?ibn2Dgs/bgbXrVxS6PDzlbXDGcQvDkwAm5vW7cN9bGBYdftHAVaFI3cwtfyc?=
- =?us-ascii?Q?ttzV+33V8VqktUbAgJsSN699pOXMa3ibJO77bPN5HZQU2Vwd/sgNBfLgR4RS?=
- =?us-ascii?Q?ZVCxGetGMIFufunMIAPlR2F4Nv6Kx2N0WqVGc/qlu/oKTeSgJDKTZ3IkDZFz?=
- =?us-ascii?Q?dsqGs3NA2TKESlBLTEd2Hzc7MgPxzvJd41jgaY57IqrsJpwl83/jSj2j7c7p?=
- =?us-ascii?Q?cRzCekfgnJWuEaoAEo01RW3tFovZ1dKIDqYhrr+w2uUvCwlOaTcHYQrl9YW1?=
- =?us-ascii?Q?td+nFAk+2B8A1JVIdFJmG+kVgVU9x5Eoel67m/OlkYKeamQh+g8ImM7s6tji?=
- =?us-ascii?Q?ekMxVX+6biWWMDUNulGT4P4FYyHStFVTJJwUJf7UNa9A4hABPyfzud+UXeDX?=
- =?us-ascii?Q?p+zVlkP2/QzGRX3lhvvENZoce5RHCPKvIF714Kx/TQ+k2Vgp9UAgupe+B4A2?=
- =?us-ascii?Q?Fr+To0vjmE+JfCEdVlKjbcGKnMmeqAmXzkYcEcvYfMUEXJkrT9GnJ2zV8cTR?=
- =?us-ascii?Q?A8dfRSEhugWwICUWGdxZaUFMRTZaURbkVogFgltxEq5wONB1NAUaOFzqnl+n?=
- =?us-ascii?Q?DPP1Bz63EH/FzqxdNP2JVLEu5NPo2AvWdutziNNQPlAjIootsg7bEZ0IPIkZ?=
- =?us-ascii?Q?S3oZL60aQfZhQ6RKVGJIXQMaiFc08OVt+lK64TVnmfFZ6DAft3HoEMovyg4L?=
- =?us-ascii?Q?g3wLN4A+/e14jmzIY0FIzEh7pDKK2WWrA+qNdoEU2xtm7e3SHmDEvuYhDkW0?=
- =?us-ascii?Q?1EDDW+MRV3TvWAG1nc1d3Xo9n1eCzT+JbTNYlcwAap4xOmfS4X/mq+sgP8If?=
- =?us-ascii?Q?s4MlGEY0NffzGdbflDVmuk4jiv+hGiA3pwqU4VV2?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?8QyZEGXzfaFb5PN2G37jpBjaHlHea4ktOevHv6QKWkI8YNKp73mjqMIrAQII?=
- =?us-ascii?Q?J7Jw+kq5ni2MpNIjPJfidnel+RngOYnEuXkvTe1rBi7A5ahLv3YgtCSRrV6T?=
- =?us-ascii?Q?YKjJmQQua10vlblbWORLSdAZTmBdIn9lV6DpaKQnyPRK4BhFliV0LrA49l1m?=
- =?us-ascii?Q?AQSFMvkFtXrp/iJSQOQkRq8MbmNCBgjcK/+5s6S/wPQK8DoHn8EdPS1M9/PJ?=
- =?us-ascii?Q?edsSsvnsZskwFBg0i5xmzfzmQPag6bpavvClFZcJk7D9S+R/fs0iYpVFf+q8?=
- =?us-ascii?Q?BI86pRg6LxOrMw2W1FXVMiKGl4iB1+hs1owQxJ/Sa+s9k0pIWnlfXi3njS3R?=
- =?us-ascii?Q?LBIpMwrQwcbIdGOUfN4tzkf5WcFTqfmQK8LaOekNfUPCxRxtsZ3eZL7oqQim?=
- =?us-ascii?Q?uy9HWDGgd94sVduJsCZxuy4DS8zKCI/1xBdzbzY1csvDyykFrwmJRrisffor?=
- =?us-ascii?Q?egbNCx0kk1dJLMl7VEKC7/N+iF02lb9NtwXkgg/Fsr9dkRONxDvT/FrcuIG5?=
- =?us-ascii?Q?j8uHTsrUNq5/eOSMYm1fgUlEMDPXWn7v841r2v4V94toM/VmHINjNTuQ0iio?=
- =?us-ascii?Q?yWVToeriBRLxxmX7cW0otliR5+SDEjKk1vNU0obLGe5sSjkeMMZTsTZk1W8T?=
- =?us-ascii?Q?WAevNoshYftnfPmbwa2SgnSNlqafSHJTY641QVD6FruB7irRrJmYlM14NNvg?=
- =?us-ascii?Q?Uiu0zJRzCIucIqg/pzQpAbLbBZpRsQDDjw3zJXo62sj03Ix7+e8tFEPNsF+Q?=
- =?us-ascii?Q?VG0gVPaCfA4jl7Y0Q+Gbx6d1klWu5tMwFsMjiK2Ltgqs7RtGIuYhZ/ShIIVk?=
- =?us-ascii?Q?c49htCrUI4j2GRgHXJx5c4kW1wovwB9tcvtr69UPuiOTOxJ5S+BHAIvNT3St?=
- =?us-ascii?Q?u+yjtlgBuvyRiLi/oXK5+BM+JSMBZoCkJeIwiUyWhVGRVe2bGEay6jwfEmM6?=
- =?us-ascii?Q?XKSnRyRFsin/wbrz4K8LlQ=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8cbf87cb-e32c-4d76-0fea-08db4c347d2f
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4196.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2023 00:14:12.7720
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MjsN761FYyzjAt7bueI4RW4JxbAbtsg0XyMSX45YaxgSAGOMsd3wXUgRbWZZDtw0nmkoQCJb6X7INE9LeFCCbA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7383
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-03_15,2023-05-03_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2305040000
-X-Proofpoint-GUID: dQ9ze36Ga6DZVvhNInLfezWpobwM0XlC
-X-Proofpoint-ORIG-GUID: dQ9ze36Ga6DZVvhNInLfezWpobwM0XlC
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:c90e:0:b0:329:4c5e:15d8 with SMTP id
+ t14-20020a92c90e000000b003294c5e15d8mr13005665ilp.2.1683165711140; Wed, 03
+ May 2023 19:01:51 -0700 (PDT)
+Date:   Wed, 03 May 2023 19:01:51 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004f938b05fad48ee6@google.com>
+Subject: [syzbot] [fs?] INFO: task hung in synchronize_rcu (4)
+From:   syzbot <syzbot+222aa26d0a5dbc2e84fe@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, daniel@iogearbox.net, jack@suse.cz,
+        kafai@fb.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/02/23 20:05, Mike Kravetz wrote:
-> On 05/02/23 23:56, Ackerley Tng wrote:
-> > When fallocate() is called twice on the same offset in the file, the
-> > second fallocate() should succeed.
-> > 
-> > page_cache_next_miss() always advances index before returning, so even
-> > on a page cache hit, the check would set present to false.
-> 
-> Thank you Ackerley for finding this!
-> 
-> When I read the description of page_cache_next_miss(), I assumed
-> 
-> 	present = page_cache_next_miss(mapping, index, 1) != index;
-> 
-> would tell us if there was a page at index in the cache.
-> 
-> However, when looking closer at the code it does not check for a page
-> at index, but rather starts looking at index+1.  Perhaps that is why
-> it is named next?
-> 
-> Matthew, I think the use of the above statement was your suggestion.
-> And you know the xarray code better than anyone.  I just want to make
-> sure page_cache_next_miss is operating as designed/expected.  If so,
-> then the changes suggested here make sense.
+Hello,
 
-I took a closer look at the code today.
+syzbot found the following issue on:
 
-page_cache_next_miss has a 'special case' for index 0.  The function
-description says:
+HEAD commit:    6686317855c6 net: dsa: mv88e6xxx: add mv88e6321 rsvd2cpu
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=1457a594280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7205cdba522fe4bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=222aa26d0a5dbc2e84fe
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ede410280000
 
- * Return: The index of the gap if found, otherwise an index outside the
- * range specified (in which case 'return - index >= max_scan' will be true).
- * In the rare case of index wrap-around, 0 will be returned.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/48685f457043/disk-66863178.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7e1798ecf070/vmlinux-66863178.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/cc77fb901221/bzImage-66863178.xz
 
-And, the loop in the routine does:
+The issue was bisected to:
 
-	while (max_scan--) {
-		void *entry = xas_next(&xas);
-		if (!entry || xa_is_value(entry))
-			break;
-		if (xas.xa_index == 0)
-			break;
-	}
+commit 3b5d4ddf8fe1f60082513f94bae586ac80188a03
+Author: Martin KaFai Lau <kafai@fb.com>
+Date:   Wed Mar 9 09:04:50 2022 +0000
 
-At first glance, I thought xas_next always went to the next entry but
-now see that is not the case here because this is a new state with
-xa_node = XAS_RESTART.  So, xas_next is effectively a xas_load.
+    bpf: net: Remove TC_AT_INGRESS_OFFSET and SKB_MONO_DELIVERY_TIME_OFFSET macro
 
-This means in the case were index == 0,
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=153459d7c80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=173459d7c80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=133459d7c80000
 
-	page_cache_next_miss(mapping, index, 1)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+222aa26d0a5dbc2e84fe@syzkaller.appspotmail.com
+Fixes: 3b5d4ddf8fe1 ("bpf: net: Remove TC_AT_INGRESS_OFFSET and SKB_MONO_DELIVERY_TIME_OFFSET macro")
 
-will ALWAYS return zero even if a page is present.
+INFO: task kworker/u4:1:12 blocked for more than 145 seconds.
+      Not tainted 6.3.0-syzkaller-07940-g6686317855c6 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u4:1    state:D stack:26288 pid:12    ppid:2      flags:0x00004000
+Workqueue: events_unbound fsnotify_connector_destroy_workfn
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5307 [inline]
+ __schedule+0xc91/0x5770 kernel/sched/core.c:6625
+ schedule+0xde/0x1a0 kernel/sched/core.c:6701
+ schedule_timeout+0x276/0x2b0 kernel/time/timer.c:2143
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common+0x1ce/0x5c0 kernel/sched/completion.c:106
+ __synchronize_srcu+0x1be/0x2c0 kernel/rcu/srcutree.c:1360
+ fsnotify_connector_destroy_workfn+0x4d/0xa0 fs/notify/mark.c:208
+ process_one_work+0x991/0x15c0 kernel/workqueue.c:2390
+ worker_thread+0x669/0x1090 kernel/workqueue.c:2537
+ kthread+0x344/0x440 kernel/kthread.c:379
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
+INFO: task kworker/u4:4:5134 blocked for more than 146 seconds.
+      Not tainted 6.3.0-syzkaller-07940-g6686317855c6 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u4:4    state:D stack:26344 pid:5134  ppid:2      flags:0x00004000
+Workqueue: events_unbound fsnotify_mark_destroy_workfn
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5307 [inline]
+ __schedule+0xc91/0x5770 kernel/sched/core.c:6625
+ schedule+0xde/0x1a0 kernel/sched/core.c:6701
+ schedule_timeout+0x276/0x2b0 kernel/time/timer.c:2143
+ do_wait_for_common kernel/sched/completion.c:85 [inline]
+ __wait_for_common+0x1ce/0x5c0 kernel/sched/completion.c:106
+ __synchronize_srcu+0x1be/0x2c0 kernel/rcu/srcutree.c:1360
+ fsnotify_mark_destroy_workfn+0x101/0x3c0 fs/notify/mark.c:898
+ process_one_work+0x991/0x15c0 kernel/workqueue.c:2390
+ worker_thread+0x669/0x1090 kernel/workqueue.c:2537
+ kthread+0x344/0x440 kernel/kthread.c:379
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
 
-I need to look at the xarray code and this rare index wrap-around case
-to see if we can somehow modify that check for xas.xa_index == 0 in
-page_cache_next_miss.
--- 
-Mike Kravetz
+Showing all locks held in the system:
+2 locks held by kworker/u4:1/12:
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic_long_set include/linux/atomic/atomic-long.h:41 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/linux/atomic/atomic-instrumented.h:1324 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:639 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:666 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x87a/0x15c0 kernel/workqueue.c:2361
+ #1: ffffc90000117da8 (connector_reaper_work){+.+.}-{0:0}, at: process_one_work+0x8ae/0x15c0 kernel/workqueue.c:2365
+1 lock held by rcu_tasks_kthre/13:
+ #0: ffffffff8c7962f0 (rcu_tasks.tasks_gp_mutex){+.+.}-{3:3}, at: rcu_tasks_one_gp+0x31/0xd80 kernel/rcu/tasks.h:518
+1 lock held by rcu_tasks_trace/14:
+ #0: ffffffff8c795ff0 (rcu_tasks_trace.tasks_gp_mutex){+.+.}-{3:3}, at: rcu_tasks_one_gp+0x31/0xd80 kernel/rcu/tasks.h:518
+3 locks held by kworker/1:0/22:
+1 lock held by khungtaskd/28:
+ #0: ffffffff8c796f00 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x340 kernel/locking/lockdep.c:6545
+1 lock held by khugepaged/34:
+ #0: ffffffff8c896708 (lock#3){+.+.}-{3:3}, at: __lru_add_drain_all+0x62/0x6a0 mm/swap.c:852
+2 locks held by getty/4759:
+ #0: ffff88814c1e0098 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x26/0x80 drivers/tty/tty_ldisc.c:244
+ #1: ffffc900015a02f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xef4/0x13e0 drivers/tty/n_tty.c:2177
+4 locks held by syz-executor.2/5077:
+ #0: ffff8880b993c2d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2f/0x120 kernel/sched/core.c:539
+ #1: ffff88802296aef0 (&mm->cid_lock#2){....}-{2:2}, at: mm_cid_get kernel/sched/sched.h:3280 [inline]
+ #1: ffff88802296aef0 (&mm->cid_lock#2){....}-{2:2}, at: switch_mm_cid kernel/sched/sched.h:3302 [inline]
+ #1: ffff88802296aef0 (&mm->cid_lock#2){....}-{2:2}, at: prepare_task_switch kernel/sched/core.c:5117 [inline]
+ #1: ffff88802296aef0 (&mm->cid_lock#2){....}-{2:2}, at: context_switch kernel/sched/core.c:5258 [inline]
+ #1: ffff88802296aef0 (&mm->cid_lock#2){....}-{2:2}, at: __schedule+0x2802/0x5770 kernel/sched/core.c:6625
+ #2: ffff8880b9929698 (&base->lock){-.-.}-{2:2}, at: lock_timer_base+0x5a/0x1f0 kernel/time/timer.c:999
+ #3: ffffffff91fb4ac8 (&obj_hash[i].lock){-.-.}-{2:2}, at: debug_object_activate+0x134/0x3f0 lib/debugobjects.c:690
+1 lock held by syz-executor.5/5080:
+2 locks held by kworker/u4:4/5134:
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic_long_set include/linux/atomic/atomic-long.h:41 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/linux/atomic/atomic-instrumented.h:1324 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:639 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:666 [inline]
+ #0: ffff888012479138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x87a/0x15c0 kernel/workqueue.c:2361
+ #1: ffffc9000433fda8 ((reaper_work).work){+.+.}-{0:0}, at: process_one_work+0x8ae/0x15c0 kernel/workqueue.c:2365
+2 locks held by dhcpcd/5583:
+ #0: ffff88802b7e0130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1697 [inline]
+ #0: ffff88802b7e0130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x2f/0xe30 net/packet/af_packet.c:3204
+ #1: ffffffff8c7a2378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:293 [inline]
+ #1: ffffffff8c7a2378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x64a/0x770 kernel/rcu/tree_exp.h:992
+2 locks held by dhcpcd/5586:
+ #0: ffff88806919e130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1697 [inline]
+ #0: ffff88806919e130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x2f/0xe30 net/packet/af_packet.c:3204
+ #1: ffffffff8c7a2378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:325 [inline]
+ #1: ffffffff8c7a2378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x3e8/0x770 kernel/rcu/tree_exp.h:992
+1 lock held by dhcpcd/5587:
+ #0: ffff88802cca0130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1697 [inline]
+ #0: ffff88802cca0130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x2f/0xe30 net/packet/af_packet.c:3204
+1 lock held by dhcpcd/5598:
+ #0: ffff88807be2c130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1697 [inline]
+ #0: ffff88807be2c130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x2f/0xe30 net/packet/af_packet.c:3204
+1 lock held by dhcpcd/5621:
+ #0: ffff88805f706130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1697 [inline]
+ #0: ffff88805f706130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x2f/0xe30 net/packet/af_packet.c:3204
+1 lock held by dhcpcd/5622:
+ #0: ffff88807e98e130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1697 [inline]
+ #0: ffff88807e98e130 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x2f/0xe30 net/packet/af_packet.c:3204
+2 locks held by syz-executor.5/6144:
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 28 Comm: khungtaskd Not tainted 6.3.0-syzkaller-07940-g6686317855c6 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ nmi_cpu_backtrace+0x29c/0x350 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x2a4/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:148 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
+ watchdog+0xe16/0x1090 kernel/hung_task.c:379
+ kthread+0x344/0x440 kernel/kthread.c:379
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 6146 Comm: syz-executor.1 Not tainted 6.3.0-syzkaller-07940-g6686317855c6 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+RIP: 0010:get_page_from_freelist+0x2f5/0x2e20 mm/page_alloc.c:4281
+Code: e8 03 42 80 3c 28 00 0f 85 25 1d 00 00 48 8b 04 24 4d 03 67 20 48 8d 48 1c 48 89 c8 48 89 4c 24 38 48 c1 e8 03 42 0f b6 14 28 <48> 89 c8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c2 1c 00 00 48
+RSP: 0018:ffffc9000392f408 EFLAGS: 00000a07
+RAX: 1ffff92000725ec9 RBX: 0000000000000001 RCX: ffffc9000392f64c
+RDX: 0000000000000000 RSI: ffffffffffffffff RDI: ffff88813fffae08
+RBP: ffff88813fffc300 R08: 0000000000000000 R09: ffff88802581b0b7
+R10: ffffed1004b03616 R11: 0000000000000000 R12: 0000000000000006
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88813fffae00
+FS:  00007f7b6a98a700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5f54fa8000 CR3: 0000000191236000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __alloc_pages+0x1cb/0x4a0 mm/page_alloc.c:5592
+ alloc_pages+0x1aa/0x270 mm/mempolicy.c:2277
+ __get_free_pages+0xc/0x40 mm/page_alloc.c:5642
+ kasan_populate_vmalloc_pte mm/kasan/shadow.c:323 [inline]
+ kasan_populate_vmalloc_pte+0x2e/0x180 mm/kasan/shadow.c:314
+ apply_to_pte_range mm/memory.c:2578 [inline]
+ apply_to_pmd_range mm/memory.c:2622 [inline]
+ apply_to_pud_range mm/memory.c:2658 [inline]
+ apply_to_p4d_range mm/memory.c:2694 [inline]
+ __apply_to_page_range+0x68c/0x1030 mm/memory.c:2728
+ alloc_vmap_area+0x500/0x1e00 mm/vmalloc.c:1642
+ __get_vm_area_node+0x145/0x3f0 mm/vmalloc.c:2499
+ __vmalloc_node_range+0x252/0x14a0 mm/vmalloc.c:3165
+ __bpf_map_area_alloc+0xe5/0x180 kernel/bpf/syscall.c:336
+ bloom_map_alloc+0x303/0x560 kernel/bpf/bloom_filter.c:137
+ find_and_alloc_map kernel/bpf/syscall.c:135 [inline]
+ map_create+0x508/0x1860 kernel/bpf/syscall.c:1161
+ __sys_bpf+0x127f/0x5420 kernel/bpf/syscall.c:5040
+ __do_sys_bpf kernel/bpf/syscall.c:5162 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5160 [inline]
+ __x64_sys_bpf+0x79/0xc0 kernel/bpf/syscall.c:5160
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f7b69c8c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7b6a98a168 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007f7b69dabf80 RCX: 00007f7b69c8c169
+RDX: 0000000000000048 RSI: 0000000020000180 RDI: 0000000000000000
+RBP: 00007f7b69ce7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffd1b79d6ff R14: 00007f7b6a98a300 R15: 0000000000022000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
