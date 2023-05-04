@@ -2,87 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 935A76F67F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 11:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA1656F6853
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 11:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbjEDJH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 May 2023 05:07:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33432 "EHLO
+        id S229938AbjEDJcf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 May 2023 05:32:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbjEDJH1 (ORCPT
+        with ESMTP id S229845AbjEDJcE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 May 2023 05:07:27 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 076C78F;
-        Thu,  4 May 2023 02:07:24 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 9956B33923;
-        Thu,  4 May 2023 09:07:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1683191243; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+qJXmRqw+FfGzaNlkZLDu9Le9CEnkyHeMqv8Le5oQts=;
-        b=ANDPuuGSLrqGeihHM91AJqPDxRdii3XkVbscUjditUheMtvnk8aFBqZLYzfGOSm4Wpep5y
-        MN0JxYMPYvRX9Ro+qxZW6USNL5DsbvnuexjUyhsNUQ1F8AiMfWl8V+BA7+Nj2/Wdmi4sGz
-        dYzHf3+YdyqXWoFquZFW6OeAMIcZ5Gc=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6EB8613444;
-        Thu,  4 May 2023 09:07:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id zaOgGst1U2SVTAAAMHmgww
-        (envelope-from <mhocko@suse.com>); Thu, 04 May 2023 09:07:23 +0000
-Date:   Thu, 4 May 2023 11:07:22 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
-        vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-        mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
-        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <ZFN1yswCd9wRgYPR@dhcp22.suse.cz>
-References: <20230501165450.15352-1-surenb@google.com>
- <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
- <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
+        Thu, 4 May 2023 05:32:04 -0400
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4ED44AD
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 May 2023 02:32:03 -0700 (PDT)
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-33177659771so1580895ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 May 2023 02:32:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683192722; x=1685784722;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C8fFZy2M9CRWNQT/qQ4rHsUOD+ZlazMxTl8QpIseuL8=;
+        b=SmZJBvmWMinIZLngCAgSUS6sduiNNT2LW1HWLgNH3yM2fc4Qlx/IGQ9ejJZAtOj3CN
+         dh5pUCItRvP6EJDeCX0pBgnbWO5TkwgTI9FGesbyaUohyHagRaxw62yOLKp56f4cZ9tX
+         tldqfeKbKsZb7yNc/TtMytPBUYevYbUSJYVhstx5YgnYe70JnZjZNrEDr4FEAuflH8CE
+         El6cicksO7TGM6wQU8kWi7zmaXYM9ReqDXGKLdyjLxhTwN8r/WRxG6ay5A5shGAYYaiy
+         Hd2B/Lt6RZhgAvOB6jBzaQa+LcGffSKFgKQedq22syYDp6xRu/YjzsOtwGgVxoepOS29
+         eEOw==
+X-Gm-Message-State: AC+VfDwwGI+siBC7Z5YQkokRkZ2AonhEtWUVLIJwfiMt+KAVBlX2CFWs
+        frSb144Qe89Z+9fmYBNARxXrVH4rbktLP8VBptboEiViW5bP
+X-Google-Smtp-Source: ACHHUZ5F0rrP+Fpyvw8MhPHceX+zZzy+lIokl7i/4c8QOsPPUdo5FhTd5mZSgg2APXXXZ2qNseR/5f8Nmmb4O7HGpPRGTfe7rWXm
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+X-Received: by 2002:a92:d08a:0:b0:329:5faf:cbc0 with SMTP id
+ h10-20020a92d08a000000b003295fafcbc0mr13341297ilh.2.1683192722605; Thu, 04
+ May 2023 02:32:02 -0700 (PDT)
+Date:   Thu, 04 May 2023 02:32:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000051d14405fadad8cc@google.com>
+Subject: [syzbot] [jfs?] KASAN: user-memory-access Write in __destroy_inode
+From:   syzbot <syzbot+dcc068159182a4c31ca3@syzkaller.appspotmail.com>
+To:     brauner@kernel.org, jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shaggy@kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -90,136 +56,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 03-05-23 08:09:28, Suren Baghdasaryan wrote:
-> On Wed, May 3, 2023 at 12:25 AM Michal Hocko <mhocko@suse.com> wrote:
-[...]
-> Thanks for summarizing!
-> 
-> > At least those I find the most important:
-> > - This is a big change and it adds a significant maintenance burden
-> >   because each allocation entry point needs to be handled specifically.
-> >   The cost will grow with the intended coverage especially there when
-> >   allocation is hidden in a library code.
-> 
-> Do you mean with more allocations in the codebase more codetags will
-> be generated? Is that the concern?
+Hello,
 
-No. I am mostly concerned about the _maintenance_ overhead. For the
-bare tracking (without profiling and thus stack traces) only those
-allocations that are directly inlined into the consumer are really
-of any use. That increases the code impact of the tracing because any
-relevant allocation location has to go through the micro surgery. 
+syzbot found the following issue on:
 
-e.g. is it really interesting to know that there is a likely memory
-leak in seq_file proper doing and allocation? No as it is the specific
-implementation using seq_file that is leaking most likely. There are
-other examples like that See?
+HEAD commit:    fa31fc82fb77 Merge tag 'pm-6.4-rc1-2' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=176f146c280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=73a06f6ef2d5b492
+dashboard link: https://syzkaller.appspot.com/bug?extid=dcc068159182a4c31ca3
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13a40690280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156b965c280000
 
-> Or maybe as you commented in
-> another patch that context capturing feature does not limit how many
-> stacks will be captured?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/47047382df87/disk-fa31fc82.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1fd540f5f80a/vmlinux-fa31fc82.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/21da1f9e2c23/bzImage-fa31fc82.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/058ce906b620/mount_0.gz
 
-That is a memory overhead which can be really huge and it would be nice
-to be more explicit about that in the cover letter. It is a downside for
-sure but not something that has a code maintenance impact and it is an
-opt-in so it can be enabled only when necessary.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dcc068159182a4c31ca3@syzkaller.appspotmail.com
 
-Quite honestly, though, the more I look into context capturing part it
-seems to me that there is much more to be reconsidered there and if you
-really want to move forward with the code tagging part then you should
-drop that for now. It would make the whole series smaller and easier to
-digest.
+ERROR: (device loop0): jfs_readdir: JFS:Dtree error: ino = 2, bn=0, index = 6
+ERROR: (device loop0): jfs_readdir: JFS:Dtree error: ino = 2, bn=0, index = 7
+==================================================================
+BUG: KASAN: user-memory-access in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: user-memory-access in atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:176 [inline]
+BUG: KASAN: user-memory-access in __refcount_sub_and_test include/linux/refcount.h:272 [inline]
+BUG: KASAN: user-memory-access in __refcount_dec_and_test include/linux/refcount.h:315 [inline]
+BUG: KASAN: user-memory-access in refcount_dec_and_test include/linux/refcount.h:333 [inline]
+BUG: KASAN: user-memory-access in posix_acl_release include/linux/posix_acl.h:57 [inline]
+BUG: KASAN: user-memory-access in __destroy_inode+0x426/0x5e0 fs/inode.c:297
+Write of size 4 at addr 0000000b00000000 by task syz-executor374/4998
 
-> > - It has been brought up that this is duplicating functionality already
-> >   available via existing tracing infrastructure. You should make it very
-> >   clear why that is not suitable for the job
-> 
-> I experimented with using tracing with _RET_IP_ to implement this
-> accounting. The major issue is the _RET_IP_ to codetag lookup runtime
-> overhead which is orders of magnitude higher than proposed code
-> tagging approach. With code tagging proposal, that link is resolved at
-> compile time. Since we want this mechanism deployed in production, we
-> want to keep the overhead to the absolute minimum.
-> You asked me before how much overhead would be tolerable and the
-> answer will always be "as small as possible". This is especially true
-> for slab allocators which are ridiculously fast and regressing them
-> would be very noticable (due to the frequent use).
+CPU: 0 PID: 4998 Comm: syz-executor374 Not tainted 6.3.0-syzkaller-12999-gfa31fc82fb77 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_report+0xe6/0x540 mm/kasan/report.c:465
+ kasan_report+0x176/0x1b0 mm/kasan/report.c:572
+ kasan_check_range+0x283/0x290 mm/kasan/generic.c:187
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:176 [inline]
+ __refcount_sub_and_test include/linux/refcount.h:272 [inline]
+ __refcount_dec_and_test include/linux/refcount.h:315 [inline]
+ refcount_dec_and_test include/linux/refcount.h:333 [inline]
+ posix_acl_release include/linux/posix_acl.h:57 [inline]
+ __destroy_inode+0x426/0x5e0 fs/inode.c:297
+ destroy_inode fs/inode.c:308 [inline]
+ evict+0x51b/0x620 fs/inode.c:680
+ dispose_list fs/inode.c:698 [inline]
+ evict_inodes+0x5f8/0x690 fs/inode.c:748
+ generic_shutdown_super+0x98/0x340 fs/super.c:479
+ kill_block_super+0x84/0xf0 fs/super.c:1407
+ deactivate_locked_super+0xa4/0x110 fs/super.c:331
+ cleanup_mnt+0x426/0x4c0 fs/namespace.c:1177
+ task_work_run+0x24a/0x300 kernel/task_work.c:179
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0x68f/0x2290 kernel/exit.c:871
+ do_group_exit+0x206/0x2c0 kernel/exit.c:1021
+ __do_sys_exit_group kernel/exit.c:1032 [inline]
+ __se_sys_exit_group kernel/exit.c:1030 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1030
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f696702ea49
+Code: Unable to access opcode bytes at 0x7f696702ea1f.
+RSP: 002b:00007ffcc25baa18 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f69670a9330 RCX: 00007f696702ea49
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
+RBP: 0000000000000001 R08: ffffffffffffffc0 R09: 00007f69670a3e40
+R10: 00007f69670a3e40 R11: 0000000000000246 R12: 00007f69670a9330
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+ </TASK>
+==================================================================
 
-It would have been more convincing if you had some numbers at hands.
-E.g. this is a typical workload we are dealing with. With the compile
-time tags we are able to learn this with that much of cost. With a dynamic
-tracing we are able to learn this much with that cost. See? As small as
-possible is a rather vague term that different people will have a very
-different idea about.
 
-> There is another issue, which I think can be solved in a smart way but
-> will either affect performance or would require more memory. With the
-> tracing approach we don't know beforehand how many individual
-> allocation sites exist, so we have to allocate code tags (or similar
-> structures for counting) at runtime vs compile time. We can be smart
-> about it and allocate in batches or even preallocate more than we need
-> beforehand but, as I said, it will require some kind of compromise.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I have tried our usual distribution config (only vmlinux without modules
-so the real impact will be larger as we build a lot of stuff into
-modules) just to get an idea:
-   text    data     bss     dec     hex filename
-28755345        17040322        19845124        65640791        3e99957 vmlinux.before
-28867168        17571838        19386372        65825378        3ec6a62 vmlinux.after
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Less than 1% for text 3% for data.  This is not all that terrible
-for an initial submission and a more dynamic approach could be added
-later. E.g. with a smaller pre-allocated hash table that could be
-expanded lazily. Anyway not something I would be losing sleep over. This
-can always be improved later on.
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> I understand that code tagging creates additional maintenance burdens
-> but I hope it also produces enough benefits that people will want
-> this. The cost is also hopefully amortized when additional
-> applications like the ones we presented in RFC [1] are built using the
-> same framework.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-TBH I am much more concerned about the maintenance burden on the MM side
-than the actual code tagging itslef which is much more self contained. I
-haven't seen other potential applications of the same infrastructure and
-maybe the code impact would be much smaller than in the MM proper. Our
-allocator API is really hairy and convoluted.
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-> > - We already have page_owner infrastructure that provides allocation
-> >   tracking data. Why it cannot be used/extended?
-> 
-> 1. The overhead.
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
-Do you have any numbers?
-
-> 2. Covers only page allocators.
-
-Yes this sucks.
-> 
-> I didn't think about extending the page_owner approach to slab
-> allocators but I suspect it would not be trivial. I don't see
-> attaching an owner to every slab object to be a scalable solution. The
-> overhead would again be of concern here.
-
-This would have been a nice argument to mention in the changelog so that
-we know that you have considered that option at least. Why should I (as
-a reviewer) wild guess that?
-
-> I should point out that there was one important technical concern
-> about lack of a kill switch for this feature, which was an issue for
-> distributions that can't disable the CONFIG flag. In this series we
-> addressed that concern.
-
-Thanks, that is certainly appreciated. I haven't looked deeper into that
-part but from the cover letter I have understood that CONFIG_MEM_ALLOC_PROFILING
-implies unconditional page_ext and therefore the memory overhead
-assosiated with that. There seems to be a killswitch nomem_profiling but
-from a quick look it doesn't seem to disable page_ext allocations. I
-might be missing something there of course. Having a highlevel
-describtion for that would be really nice as well.
-
-> [1] https://lore.kernel.org/all/20220830214919.53220-1-surenb@google.com/
-
--- 
-Michal Hocko
-SUSE Labs
+If you want to undo deduplication, reply with:
+#syz undup
