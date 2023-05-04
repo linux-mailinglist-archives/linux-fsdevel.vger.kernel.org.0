@@ -2,285 +2,333 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96FD36F6EA5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 17:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 046756F6EEF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 May 2023 17:32:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231251AbjEDPIf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 May 2023 11:08:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34478 "EHLO
+        id S231414AbjEDPc2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 May 2023 11:32:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231237AbjEDPId (ORCPT
+        with ESMTP id S229638AbjEDPc1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 May 2023 11:08:33 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7FD4227
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 May 2023 08:08:26 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-b99f0a0052fso873457276.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 May 2023 08:08:26 -0700 (PDT)
+        Thu, 4 May 2023 11:32:27 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D73F81BE4;
+        Thu,  4 May 2023 08:32:25 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f315712406so69127605e9.0;
+        Thu, 04 May 2023 08:32:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683212905; x=1685804905;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vpI3TgDyhkti03RqKX4aJ+LI47o/coVvQYc1czzI8zs=;
-        b=FNofsLdv/+7cq18LESbrv72DxTOtLR7I9kjhPi1qP4Q3LOJM6z2Qwy4LxmeVOSRV1Z
-         xK+g4AMIJhpry6DKZYI++Pk/k+tIoKY5MDlKbzPcxFqtpsTF9KyhL/CnMcUvTRQFU1XW
-         s77y30fDpMQ0IAed3GmRXiG0b/uvK6WqPwJdfl0zE1KIt9+luKSvRC/QVW5PpatI86J1
-         8Lleqs+mqleJV9W3YvOGElVKE+XmHEyvUzWjfiQlhf68dkmkvTC9QVzwaCMHP6HyYov0
-         fyMfje9piFOaym+JTibnTPFGqcqfJtpyIPdeKRtc5PVjhwHQRxzmBvCsLDjcVSYkRaxf
-         RH/Q==
+        d=gmail.com; s=20221208; t=1683214344; x=1685806344;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wnn3Z2r+lFHXKksIlWpTLs2B1eO1Er3x3c/HupLr4bc=;
+        b=dwnpLfo50BT5hHNk9jnWE38ERO0DRbwYZm/URMIWA6G940My8VvPt4z2D13nRxCa9s
+         4OK0d9RICRsztjKVALvBVbiwrgmiSSS3J7dkfJLX8LHaWY1c70EukIWfJR6jti/2VraM
+         OYLup3Txmvf0NXrn6z6Hp+Q83mhcXQRPp5NWxBtYfUwDf+iQwNHdOly7CtYiA5qBmvIM
+         nBstxCe//cbyChshUFLZ81DXivj5FyEDgcIrkbhc4USdhYJpzYw9Z0KeDAuhU02FjDQC
+         EzDWdfyao/2M7ND+BGDgGSZv/Ct2MQ8FyQkO4DTsAspF7kR3tfXu7GHjNL+fUlpuiLsT
+         B2PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683212905; x=1685804905;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vpI3TgDyhkti03RqKX4aJ+LI47o/coVvQYc1czzI8zs=;
-        b=Xmsz98iM3LT7IiEUgheg20KaAsFeaB+LIIGWzhz00DTfntvqk2Hwsjt2X1ep1Z3wXt
-         FhDG6XKKnnsb2zbg0Gsh6V2yuWk2StqesD2EVXWLR7lfCeZzmDTHxI6Q7Cz1X/n/Djzn
-         jS5Db2Efdh+rcwX4ERg60aS0576f09wMDaiQyjHdsV6tUFDG3y89P+S6mW18iRIgXfrl
-         1ifbUoW8unvSXNFy20Uw1F+T/ZlS9gfIX+1htqC4OViqoEhT9aFy31VghiU3Zz/KSx2d
-         o8Ns36ctN6AvH5F4oLfbIm+revFZaN2zUK7e84GZY0beNGLjW0lOfwW5m9/2vgpiTgND
-         KxNw==
-X-Gm-Message-State: AC+VfDzZyn8g1edgAJqsA/952KBYg1tWANtDypRhXU5EbgX+N7RXUdWS
-        wwDezb+8Mzj3/QHpeXwN1Co2+tMVjpqe+XE1ASftvQ==
-X-Google-Smtp-Source: ACHHUZ7hI7Vxo4JFi305ipzfOlYOUrc5ajrRHXdhnDh4eBp5Mjy+UHcFwOsphq83i8E2EemKBiNMD3DduEPsVwVmGlE=
-X-Received: by 2002:a25:b21f:0:b0:ba1:78df:20fc with SMTP id
- i31-20020a25b21f000000b00ba178df20fcmr253521ybj.21.1683212905109; Thu, 04 May
- 2023 08:08:25 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683214344; x=1685806344;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wnn3Z2r+lFHXKksIlWpTLs2B1eO1Er3x3c/HupLr4bc=;
+        b=ErI1QV8SsGClV2mxM8angL7kusZ8lAxCFJ+LE9i8VKrmLs4W55/5Fm/66GjZA85A5u
+         wFxZOu5QKGtxZINi2Jul2B7x7oHFinLPwG5jP3v0Y8XztvZRkknTOXAN7OmIscAo+LQY
+         4MD+KxUQ2ks6/kdaV8i480eFCelsJKsWr/JQJcewozaleoBXmOPwnlyGOsOVyyFVey2h
+         SA+Ij4LcErwIyHFGkZzeP/BMk6qWwhLLhVHglnw369wq154G16CQ5rHrhrNftexaF4mx
+         NGkZdUShwAZHcolBADVf36k4j5b8HrO6wGPcnCAlNp1dD6jQh3kA7QcsUHvkqfvyiXFV
+         7+BQ==
+X-Gm-Message-State: AC+VfDzeZTpYxwN8OHUT4QMAiPUwAeUskqNx+l67S3z+B4zPKzLtQYBp
+        MjF0e3D71PcTj2ldHQpjRIk=
+X-Google-Smtp-Source: ACHHUZ47xEIEY6txCFEU4tzKRxuuyjsv54AxD2UyOD7Cffq5V8k8HMVv+/KgOzTuV243U0l/LshP9Q==
+X-Received: by 2002:a5d:6547:0:b0:2f6:1a6d:a6c3 with SMTP id z7-20020a5d6547000000b002f61a6da6c3mr2874471wrv.21.1683214344084;
+        Thu, 04 May 2023 08:32:24 -0700 (PDT)
+Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
+        by smtp.gmail.com with ESMTPSA id b5-20020a056000054500b002e5ff05765esm37615426wrf.73.2023.05.04.08.32.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 May 2023 08:32:23 -0700 (PDT)
+Date:   Thu, 4 May 2023 16:32:22 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH v8 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing
+ to file-backed mappings
+Message-ID: <f4746d6e-b0c4-421f-b21d-212619ca6803@lucifer.local>
+References: <cover.1683067198.git.lstoakes@gmail.com>
+ <a690186fc37e1ea92556a7dbd0887fe201fcc709.1683067198.git.lstoakes@gmail.com>
+ <20230502191821.71c86a2c25f19fe342aa72db@linux-foundation.org>
 MIME-Version: 1.0
-References: <20230501165450.15352-1-surenb@google.com> <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
- <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com> <ZFN1yswCd9wRgYPR@dhcp22.suse.cz>
-In-Reply-To: <ZFN1yswCd9wRgYPR@dhcp22.suse.cz>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 4 May 2023 08:08:13 -0700
-Message-ID: <CAJuCfpEkV_+pAjxyEpMqY+x7buZhSpj5qDF6KubsS=ObrQKUZg@mail.gmail.com>
-Subject: Re: [PATCH 00/40] Memory allocation profiling
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
-        vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-        mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
-        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
-        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-        pasha.tatashin@soleen.com, yosryahmed@google.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230502191821.71c86a2c25f19fe342aa72db@linux-foundation.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 4, 2023 at 2:07=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrote=
-:
+On Tue, May 02, 2023 at 07:18:21PM -0700, Andrew Morton wrote:
+> On Tue,  2 May 2023 23:51:35 +0100 Lorenzo Stoakes <lstoakes@gmail.com> wrote:
 >
-> On Wed 03-05-23 08:09:28, Suren Baghdasaryan wrote:
-> > On Wed, May 3, 2023 at 12:25=E2=80=AFAM Michal Hocko <mhocko@suse.com> =
-wrote:
-> [...]
-> > Thanks for summarizing!
+> > Writing to file-backed dirty-tracked mappings via GUP is inherently broken
+> > as we cannot rule out folios being cleaned and then a GUP user writing to
+> > them again and possibly marking them dirty unexpectedly.
 > >
-> > > At least those I find the most important:
-> > > - This is a big change and it adds a significant maintenance burden
-> > >   because each allocation entry point needs to be handled specificall=
-y.
-> > >   The cost will grow with the intended coverage especially there when
-> > >   allocation is hidden in a library code.
+> > This is especially egregious for long-term mappings (as indicated by the
+> > use of the FOLL_LONGTERM flag), so we disallow this case in GUP-fast as
+> > we have already done in the slow path.
 > >
-> > Do you mean with more allocations in the codebase more codetags will
-> > be generated? Is that the concern?
->
-> No. I am mostly concerned about the _maintenance_ overhead. For the
-> bare tracking (without profiling and thus stack traces) only those
-> allocations that are directly inlined into the consumer are really
-> of any use. That increases the code impact of the tracing because any
-> relevant allocation location has to go through the micro surgery.
->
-> e.g. is it really interesting to know that there is a likely memory
-> leak in seq_file proper doing and allocation? No as it is the specific
-> implementation using seq_file that is leaking most likely. There are
-> other examples like that See?
-
-Yes, I see that. One level tracking does not provide all the
-information needed to track such issues. Something more informative
-would cost more. That's why our proposal is to have a light-weight
-mechanism to get a high level picture and then be able to zoom into a
-specific area using context capture. If you have ideas to improve
-this, I'm open to suggestions.
-
->
-> > Or maybe as you commented in
-> > another patch that context capturing feature does not limit how many
-> > stacks will be captured?
->
-> That is a memory overhead which can be really huge and it would be nice
-> to be more explicit about that in the cover letter. It is a downside for
-> sure but not something that has a code maintenance impact and it is an
-> opt-in so it can be enabled only when necessary.
-
-You are right, I'll add that into the cover letter.
-
->
-> Quite honestly, though, the more I look into context capturing part it
-> seems to me that there is much more to be reconsidered there and if you
-> really want to move forward with the code tagging part then you should
-> drop that for now. It would make the whole series smaller and easier to
-> digest.
-
-Sure, I don't see an issue with removing that for now and refining the
-mechanism before posting again.
-
->
-> > > - It has been brought up that this is duplicating functionality alrea=
-dy
-> > >   available via existing tracing infrastructure. You should make it v=
-ery
-> > >   clear why that is not suitable for the job
+> > We have access to less information in the fast path as we cannot examine
+> > the VMA containing the mapping, however we can determine whether the folio
+> > is anonymous or belonging to a whitelisted filesystem - specifically
+> > hugetlb and shmem mappings.
 > >
-> > I experimented with using tracing with _RET_IP_ to implement this
-> > accounting. The major issue is the _RET_IP_ to codetag lookup runtime
-> > overhead which is orders of magnitude higher than proposed code
-> > tagging approach. With code tagging proposal, that link is resolved at
-> > compile time. Since we want this mechanism deployed in production, we
-> > want to keep the overhead to the absolute minimum.
-> > You asked me before how much overhead would be tolerable and the
-> > answer will always be "as small as possible". This is especially true
-> > for slab allocators which are ridiculously fast and regressing them
-> > would be very noticable (due to the frequent use).
->
-> It would have been more convincing if you had some numbers at hands.
-> E.g. this is a typical workload we are dealing with. With the compile
-> time tags we are able to learn this with that much of cost. With a dynami=
-c
-> tracing we are able to learn this much with that cost. See? As small as
-> possible is a rather vague term that different people will have a very
-> different idea about.
-
-I'm rerunning my tests with the latest kernel to collect the
-comparison data. I profiled these solutions before but the kernel
-changed since then, so I need to update them.
-
->
-> > There is another issue, which I think can be solved in a smart way but
-> > will either affect performance or would require more memory. With the
-> > tracing approach we don't know beforehand how many individual
-> > allocation sites exist, so we have to allocate code tags (or similar
-> > structures for counting) at runtime vs compile time. We can be smart
-> > about it and allocate in batches or even preallocate more than we need
-> > beforehand but, as I said, it will require some kind of compromise.
->
-> I have tried our usual distribution config (only vmlinux without modules
-> so the real impact will be larger as we build a lot of stuff into
-> modules) just to get an idea:
->    text    data     bss     dec     hex filename
-> 28755345        17040322        19845124        65640791        3e99957 v=
-mlinux.before
-> 28867168        17571838        19386372        65825378        3ec6a62 v=
-mlinux.after
->
-> Less than 1% for text 3% for data.  This is not all that terrible
-> for an initial submission and a more dynamic approach could be added
-> later. E.g. with a smaller pre-allocated hash table that could be
-> expanded lazily. Anyway not something I would be losing sleep over. This
-> can always be improved later on.
-
-Ah, right. I should have mentioned this overhead too. Thanks for
-keeping me honest.
-
-> > I understand that code tagging creates additional maintenance burdens
-> > but I hope it also produces enough benefits that people will want
-> > this. The cost is also hopefully amortized when additional
-> > applications like the ones we presented in RFC [1] are built using the
-> > same framework.
->
-> TBH I am much more concerned about the maintenance burden on the MM side
-> than the actual code tagging itslef which is much more self contained. I
-> haven't seen other potential applications of the same infrastructure and
-> maybe the code impact would be much smaller than in the MM proper. Our
-> allocator API is really hairy and convoluted.
-
-Yes, other applications are much smaller and cleaner. MM allocation
-code is quite complex indeed.
-
->
-> > > - We already have page_owner infrastructure that provides allocation
-> > >   tracking data. Why it cannot be used/extended?
+> > We take special care to ensure that both the folio and mapping are safe to
+> > access when performing these checks and document folio_fast_pin_allowed()
+> > accordingly.
 > >
-> > 1. The overhead.
+> > It's important to note that there are no APIs allowing users to specify
+> > FOLL_FAST_ONLY for a PUP-fast let alone with FOLL_LONGTERM, so we can
+> > always rely on the fact that if we fail to pin on the fast path, the code
+> > will fall back to the slow path which can perform the more thorough check.
 >
-> Do you have any numbers?
+> arm allnoconfig said
+>
+> mm/gup.c:115:13: warning: 'folio_fast_pin_allowed' defined but not used [-Wunused-function]
+>   115 | static bool folio_fast_pin_allowed(struct folio *folio, unsigned int flags)
+>       |             ^~~~~~~~~~~~~~~~~~~~~~
+>
+> so I moved the definition inside CONFIG_ARCH_HAS_PTE_SPECIAL.
+>
+>
+>
+>  mm/gup.c |  154 ++++++++++++++++++++++++++---------------------------
+>  1 file changed, 77 insertions(+), 77 deletions(-)
+>
+> --- a/mm/gup.c~mm-gup-disallow-foll_longterm-gup-fast-writing-to-file-backed-mappings-fix
+> +++ a/mm/gup.c
+> @@ -96,83 +96,6 @@ retry:
+>  	return folio;
+>  }
+>
+> -/*
+> - * Used in the GUP-fast path to determine whether a pin is permitted for a
+> - * specific folio.
+> - *
+> - * This call assumes the caller has pinned the folio, that the lowest page table
+> - * level still points to this folio, and that interrupts have been disabled.
+> - *
+> - * Writing to pinned file-backed dirty tracked folios is inherently problematic
+> - * (see comment describing the writable_file_mapping_allowed() function). We
+> - * therefore try to avoid the most egregious case of a long-term mapping doing
+> - * so.
+> - *
+> - * This function cannot be as thorough as that one as the VMA is not available
+> - * in the fast path, so instead we whitelist known good cases and if in doubt,
+> - * fall back to the slow path.
+> - */
+> -static bool folio_fast_pin_allowed(struct folio *folio, unsigned int flags)
+> -{
+> -	struct address_space *mapping;
+> -	unsigned long mapping_flags;
+> -
+> -	/*
+> -	 * If we aren't pinning then no problematic write can occur. A long term
+> -	 * pin is the most egregious case so this is the one we disallow.
+> -	 */
+> -	if ((flags & (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)) !=
+> -	    (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE))
+> -		return true;
+> -
+> -	/* The folio is pinned, so we can safely access folio fields. */
+> -
+> -	/* Neither of these should be possible, but check to be sure. */
+> -	if (unlikely(folio_test_slab(folio) || folio_test_swapcache(folio)))
+> -		return false;
+> -
+> -	/* hugetlb mappings do not require dirty-tracking. */
+> -	if (folio_test_hugetlb(folio))
+> -		return true;
+> -
+> -	/*
+> -	 * GUP-fast disables IRQs. When IRQS are disabled, RCU grace periods
+> -	 * cannot proceed, which means no actions performed under RCU can
+> -	 * proceed either.
+> -	 *
+> -	 * inodes and thus their mappings are freed under RCU, which means the
+> -	 * mapping cannot be freed beneath us and thus we can safely dereference
+> -	 * it.
+> -	 */
+> -	lockdep_assert_irqs_disabled();
+> -
+> -	/*
+> -	 * However, there may be operations which _alter_ the mapping, so ensure
+> -	 * we read it once and only once.
+> -	 */
+> -	mapping = READ_ONCE(folio->mapping);
+> -
+> -	/*
+> -	 * The mapping may have been truncated, in any case we cannot determine
+> -	 * if this mapping is safe - fall back to slow path to determine how to
+> -	 * proceed.
+> -	 */
+> -	if (!mapping)
+> -		return false;
+> -
+> -	/* Anonymous folios are fine, other non-file backed cases are not. */
+> -	mapping_flags = (unsigned long)mapping & PAGE_MAPPING_FLAGS;
+> -	if (mapping_flags)
+> -		return mapping_flags == PAGE_MAPPING_ANON;
+> -
+> -	/*
+> -	 * At this point, we know the mapping is non-null and points to an
+> -	 * address_space object. The only remaining whitelisted file system is
+> -	 * shmem.
+> -	 */
+> -	return shmem_mapping(mapping);
+> -}
+> -
+>  /**
+>   * try_grab_folio() - Attempt to get or pin a folio.
+>   * @page:  pointer to page to be grabbed
+> @@ -2474,6 +2397,83 @@ static void __maybe_unused undo_dev_page
+>
+>  #ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
+>  /*
+> + * Used in the GUP-fast path to determine whether a pin is permitted for a
+> + * specific folio.
+> + *
+> + * This call assumes the caller has pinned the folio, that the lowest page table
+> + * level still points to this folio, and that interrupts have been disabled.
+> + *
+> + * Writing to pinned file-backed dirty tracked folios is inherently problematic
+> + * (see comment describing the writable_file_mapping_allowed() function). We
+> + * therefore try to avoid the most egregious case of a long-term mapping doing
+> + * so.
+> + *
+> + * This function cannot be as thorough as that one as the VMA is not available
+> + * in the fast path, so instead we whitelist known good cases and if in doubt,
+> + * fall back to the slow path.
+> + */
+> +static bool folio_fast_pin_allowed(struct folio *folio, unsigned int flags)
+> +{
+> +	struct address_space *mapping;
+> +	unsigned long mapping_flags;
+> +
+> +	/*
+> +	 * If we aren't pinning then no problematic write can occur. A long term
+> +	 * pin is the most egregious case so this is the one we disallow.
+> +	 */
+> +	if ((flags & (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)) !=
+> +	    (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE))
+> +		return true;
+> +
+> +	/* The folio is pinned, so we can safely access folio fields. */
+> +
+> +	/* Neither of these should be possible, but check to be sure. */
+> +	if (unlikely(folio_test_slab(folio) || folio_test_swapcache(folio)))
+> +		return false;
+> +
+> +	/* hugetlb mappings do not require dirty-tracking. */
+> +	if (folio_test_hugetlb(folio))
+> +		return true;
+> +
+> +	/*
+> +	 * GUP-fast disables IRQs. When IRQS are disabled, RCU grace periods
+> +	 * cannot proceed, which means no actions performed under RCU can
+> +	 * proceed either.
+> +	 *
+> +	 * inodes and thus their mappings are freed under RCU, which means the
+> +	 * mapping cannot be freed beneath us and thus we can safely dereference
+> +	 * it.
+> +	 */
+> +	lockdep_assert_irqs_disabled();
+> +
+> +	/*
+> +	 * However, there may be operations which _alter_ the mapping, so ensure
+> +	 * we read it once and only once.
+> +	 */
+> +	mapping = READ_ONCE(folio->mapping);
+> +
+> +	/*
+> +	 * The mapping may have been truncated, in any case we cannot determine
+> +	 * if this mapping is safe - fall back to slow path to determine how to
+> +	 * proceed.
+> +	 */
+> +	if (!mapping)
+> +		return false;
+> +
+> +	/* Anonymous folios are fine, other non-file backed cases are not. */
+> +	mapping_flags = (unsigned long)mapping & PAGE_MAPPING_FLAGS;
+> +	if (mapping_flags)
+> +		return mapping_flags == PAGE_MAPPING_ANON;
+> +
+> +	/*
+> +	 * At this point, we know the mapping is non-null and points to an
+> +	 * address_space object. The only remaining whitelisted file system is
+> +	 * shmem.
+> +	 */
+> +	return shmem_mapping(mapping);
+> +}
+> +
+> +/*
+>   * Fast-gup relies on pte change detection to avoid concurrent pgtable
+>   * operations.
+>   *
+> _
+>
 
-Will post once my tests are completed.
-
->
-> > 2. Covers only page allocators.
->
-> Yes this sucks.
-> >
-> > I didn't think about extending the page_owner approach to slab
-> > allocators but I suspect it would not be trivial. I don't see
-> > attaching an owner to every slab object to be a scalable solution. The
-> > overhead would again be of concern here.
->
-> This would have been a nice argument to mention in the changelog so that
-> we know that you have considered that option at least. Why should I (as
-> a reviewer) wild guess that?
-
-Sorry, It's hard to remember all the decisions, discussions and
-conclusions when working on a feature over a long time period. I'll
-include more information about that.
-
->
-> > I should point out that there was one important technical concern
-> > about lack of a kill switch for this feature, which was an issue for
-> > distributions that can't disable the CONFIG flag. In this series we
-> > addressed that concern.
->
-> Thanks, that is certainly appreciated. I haven't looked deeper into that
-> part but from the cover letter I have understood that CONFIG_MEM_ALLOC_PR=
-OFILING
-> implies unconditional page_ext and therefore the memory overhead
-> assosiated with that. There seems to be a killswitch nomem_profiling but
-> from a quick look it doesn't seem to disable page_ext allocations. I
-> might be missing something there of course. Having a highlevel
-> describtion for that would be really nice as well.
-
-Right, will add a description of that as well.
-We eliminate the runtime overhead but not the memory one. However I
-believe it's also doable using page_ext_operations.need callback. Will
-look into it.
-Thanks,
-Suren.
-
->
-> > [1] https://lore.kernel.org/all/20220830214919.53220-1-surenb@google.co=
-m/
->
-> --
-> Michal Hocko
-> SUSE Labs
+Ack thanks for this, I think it doesn't quite cover all cases (kernel bot
+moaning on -next for mips), needs some more fiddly #ifdef stuff, I will
+spin a v9 shortly anyway to fix this up and address a few other minor
+things.
