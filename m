@@ -2,123 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D3D6F83FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 15:28:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05DEC6F844C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 15:44:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232528AbjEEN2I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 09:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52372 "EHLO
+        id S232698AbjEENoM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 09:44:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232201AbjEEN2C (ORCPT
+        with ESMTP id S232201AbjEENoK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 09:28:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E883821556;
-        Fri,  5 May 2023 06:27:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 5 May 2023 09:44:10 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9C5D20776;
+        Fri,  5 May 2023 06:44:08 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 57B2063E26;
-        Fri,  5 May 2023 13:27:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B6EEC433EF;
-        Fri,  5 May 2023 13:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683293266;
-        bh=d3kRte1MpgDiOaz1OXedDsZaqaH5ZvGBYD4hjy22AkI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u8WpmSAAFXJs7+8TpPQvf/O5iKrp/Vfn82gzylXfJXwE/6EkmdpifEeL9tatQ6CB7
-         BiiwpfuGISYRSD78J2kLUj1pr0k8Kv2i0jFCLoG65EMS7TD+MF5yw3BaHTSWJiUWP1
-         J10CN7gSIOJR2kr4/onVEKEB9TG7jCmlUybZFBHfxH9OEeE73HaUdPCaQLTgsb49eW
-         8vUudK8ug1FUifsUMSnYo62E42bGPXJeKIJlnoWET2oXYxVzmSeGBlfqkgQbWl9IGW
-         dZEy+qV1dejT62cudqwkX5deWxvealp3hCBnn+9BVUCJ8dNjp0Hj/CtVl7ebvPo7gx
-         fXtIwYhxdEZOQ==
-Date:   Fri, 5 May 2023 22:27:44 +0900
-From:   Mark Brown <broonie@kernel.org>
-To:     Tzung-Bi Shih <tzungbi@kernel.org>
-Cc:     syzbot <syzbot+630f83b42d801d922b8b@syzkaller.appspotmail.com>,
-        davem@davemloft.net, edumazet@google.com, groeck@chromium.org,
-        jiri@resnulli.us, kuba@kernel.org, linmq006@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [net?] WARNING in print_bfs_bug (2)
-Message-ID: <ZFUEUH6ZEE/2/Ds4@finisterre.sirena.org.uk>
-References: <000000000000e5ee7305f0f975e8@google.com>
- <000000000000db8c6605fa8178df@google.com>
- <ZFHLu13XQZpOn/8T@google.com>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 8461320081;
+        Fri,  5 May 2023 13:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1683294247;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vug7OuHHJxYhqTe/hchnDkSEzi3FMqu37uMJZ7/e8c0=;
+        b=QvuWR7cqt+4DqYmk+yJmT5jpRejCoReqITGykA/KkMykVcKsCi3zcid4VLFgnN5+jYJoY6
+        5AEuGn/Wmd/EPQFzYn+bejVr5XQIC0upy4OLrC1zmczNV2Uzr2gJcX7m0tKCihC5S5z+1i
+        bcbD42TJv6Ylwom0yZOK0MXC0wa7LaU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1683294247;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vug7OuHHJxYhqTe/hchnDkSEzi3FMqu37uMJZ7/e8c0=;
+        b=PYyGnY7qHC7A4ku9uRBFcjj2IunXpDCek4F+TxQuwK9NvYnqZ8XLorwe3dmbQZvsGUgD4Y
+        JrON8eZ7ENultoAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3AB7F13488;
+        Fri,  5 May 2023 13:44:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id dAZ/DScIVWQ5XgAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Fri, 05 May 2023 13:44:07 +0000
+Date:   Fri, 5 May 2023 15:38:10 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, linux-fsdevel@vger.kernel.org,
+        kernel@gpiccoli.net, kernel-dev@igalia.com, vivek@collabora.com,
+        ludovico.denittis@collabora.com, johns@valvesoftware.com,
+        nborisov@suse.com
+Subject: Re: [PATCH 1/2] btrfs: Introduce the virtual_fsid feature
+Message-ID: <20230505133810.GO6373@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20230504170708.787361-1-gpiccoli@igalia.com>
+ <20230504170708.787361-2-gpiccoli@igalia.com>
+ <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oGYsn4n4gVx7MRWk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZFHLu13XQZpOn/8T@google.com>
-X-Cookie: Avoid contact with eyes.
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, May 05, 2023 at 03:21:35PM +0800, Qu Wenruo wrote:
+> On 2023/5/5 01:07, Guilherme G. Piccoli wrote:
+> > Btrfs doesn't currently support to mount 2 different devices holding the
+> > same filesystem - the fsid is used as a unique identifier in the driver.
+> > This case is supported though in some other common filesystems, like
+> > ext4; one of the reasons for which is not trivial supporting this case
+> > on btrfs is due to its multi-device filesystem nature, native RAID, etc.
+> 
+> Exactly, the biggest problem is the multi-device support.
+> 
+> Btrfs needs to search and assemble all devices of a multi-device
+> filesystem, which is normally handled by things like LVM/DMraid, thus
+> other traditional fses won't need to bother that.
+> 
+> >
+> > Supporting the same-fsid mounts has the advantage of allowing btrfs to
+> > be used in A/B partitioned devices, like mobile phones or the Steam Deck
+> > for example. Without this support, it's not safe for users to keep the
+> > same "image version" in both A and B partitions, a setup that is quite
+> > common for development, for example. Also, as a big bonus, it allows fs
+> > integrity check based on block devices for RO devices (whereas currently
+> > it is required that both have different fsid, breaking the block device
+> > hash comparison).
+> >
+> > Such same-fsid mounting is hereby added through the usage of the
+> > mount option "virtual_fsid" - when such option is used, btrfs generates
+> > a random fsid for the filesystem and leverages the metadata_uuid
+> > infrastructure (introduced by [0]) to enable the usage of this secondary
+> > virtual fsid. But differently from the regular metadata_uuid flag, this
+> > is not written into the disk superblock - effectively, this is a spoofed
+> > fsid approach that enables the same filesystem in different devices to
+> > appear as different filesystems to btrfs on runtime.
+> 
+> I would prefer a much simpler but more explicit method.
+> 
+> Just introduce a new compat_ro feature, maybe call it SINGLE_DEV.
+> 
+> By this, we can avoid multiple meanings of the same super member, nor
+> need any special mount option.
+> Remember, mount option is never a good way to enable/disable a new feature.
+> 
+> The better method to enable/disable a feature should be mkfs and btrfstune.
+> 
+> Then go mostly the same of your patch, but maybe with something extra:
+> 
+> - Disbale multi-dev code
+>    Include device add/replace/removal, this is already done in your
+>    patch.
+> 
+> - Completely skip device scanning
+>    I see no reason to keep btrfs with SINGLE_DEV feature to be added to
+>    the device list at all.
+>    It only needs to be scanned at mount time, and never be kept in the
+>    in-memory device list.
 
---oGYsn4n4gVx7MRWk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, May 03, 2023 at 10:49:31AM +0800, Tzung-Bi Shih wrote:
-> On Sat, Apr 29, 2023 at 03:54:28PM -0700, syzbot wrote:
-> > syzbot has bisected this issue to:
-> >=20
-> > commit 0a034d93ee929a9ea89f3fa5f1d8492435b9ee6e
-> > Author: Miaoqian Lin <linmq006@gmail.com>
-> > Date:   Fri Jun 3 13:10:43 2022 +0000
-> >=20
-> >     ASoC: cros_ec_codec: Fix refcount leak in cros_ec_codec_platform_pr=
-obe
-> >=20
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D13d40608=
-280000
-> > start commit:   042334a8d424 atlantic:hw_atl2:hw_atl2_utils_fw: Remove =
-unn..
-> > git tree:       net-next
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D10340608=
-280000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D17d40608280=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D7205cdba522=
-fe4bc
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D630f83b42d801=
-d922b8b
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D147328f82=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1665151c280=
-000
-> >=20
-> > Reported-by: syzbot+630f83b42d801d922b8b@syzkaller.appspotmail.com
-> > Fixes: 0a034d93ee92 ("ASoC: cros_ec_codec: Fix refcount leak in cros_ec=
-_codec_platform_probe")
-
-> I failed to see the connection between the oops and commit 0a034d93ee92.
-
-syzbot seems to generate a *lot* of false positives, this looks like one
-of them so it's probably safe to ignore the bisection.
-
---oGYsn4n4gVx7MRWk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmRVBE8ACgkQJNaLcl1U
-h9B0lQf/VKJ282l9taOsX67wWq9qpLyTG1VV2PxzyVSvwFyPzlHz6D538HlDniR/
-WjZ0OApHXvNki/qSjBNj6NVuOKcRyeRI8hKpsKOWZSgNLQ09uJAA2U2rwAj6cFwC
-liYUms5wvLj5HP+y/CjSHaspgvYt4kZoT8lCZdzc1C7F+3t0WawaA71JSgndgW6F
-+IYz1aBVkZefRgjb+Od7uOiRHlg8WpIEtE43eYWFgdypBK1Xn3ptBzzR6I+PK8E5
-96c1nf87TzaBxgYquUa4Gc19pciF3rsITBgPA3o//Cmvw7KKwjx/Vi1MbdnIjIlQ
-XSwlRT8oJJgalw4jnXEipIqHa7Hkng==
-=0d//
------END PGP SIGNATURE-----
-
---oGYsn4n4gVx7MRWk--
+This is actually a good point, we can do that already. As a conterpart
+to 5f58d783fd7823 ("btrfs: free device in btrfs_close_devices for a
+single device filesystem") that drops single device from the list,
+single fs devices wouldn't be added to the list but some checks could be
+still done like superblock validation for eventual error reporting.
