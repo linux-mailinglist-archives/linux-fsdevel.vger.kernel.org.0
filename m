@@ -2,148 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB5F36F8C41
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 00:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E7F56F8C4B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 00:16:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232541AbjEEWKw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 18:10:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38452 "EHLO
+        id S232873AbjEEWP6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 18:15:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbjEEWKv (ORCPT
+        with ESMTP id S231556AbjEEWP5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 18:10:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A48D2723;
-        Fri,  5 May 2023 15:10:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 987DB6411F;
-        Fri,  5 May 2023 22:10:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1B7C433EF;
-        Fri,  5 May 2023 22:10:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683324649;
-        bh=k6oMc0o9wbKE3MMyK5Z0jVFz6s5S3LZAMgBD25Npdew=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O1xy3ZEqtX7AjkfWmtzEaUO3L0PrSeHA63SSFHopVTw+bkamc3KH6AFOtMTEQrQIi
-         Ch4gCMX3UMDxIatxR+5AOk7ZdANA+CRiByOZq+lUlNShjej/To9Z/zWISpEahN8mFc
-         fvRSeEUaD07OwqvKAvqWoWY84Qg51kCXh+DOaC5ufw6MtznuKcjn4dkG3VQW9nLj8e
-         e/m5qrU/NsqSZTnTPzGPWkd60jaXoIrueA5R11g/RM8fMFvnBpLoHDoldoQrVRleRL
-         B8QXGobhn8rAMthGTTyY9MwtiPoBjiRB5OgGxkg3/LLt96m+s4hSK3eI7W2qFkvC9F
-         6j4lCfSx5W3wQ==
-Date:   Fri, 5 May 2023 15:10:48 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, dchinner@redhat.com, jejb@linux.ibm.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com
-Subject: Re: [PATCH RFC 03/16] xfs: Support atomic write for statx
-Message-ID: <20230505221048.GL15394@frogsfrogsfrogs>
-References: <20230503183821.1473305-1-john.g.garry@oracle.com>
- <20230503183821.1473305-4-john.g.garry@oracle.com>
- <20230503221749.GF3223426@dread.disaster.area>
+        Fri, 5 May 2023 18:15:57 -0400
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2078.outbound.protection.outlook.com [40.107.105.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6228A49F2;
+        Fri,  5 May 2023 15:15:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Bc1xUBjdH+n+ror6fRN6joXyB8oMD8I5qzdwwVVV6tP7tP3NjjhoHKB8/i3gRd3i+dYNnN7XB5c95aTbQ32ORdB8gZlWAbQxcOdNVHk2xClTe/p6mwIgLz+IUVUP9Laj+TFp4IkSuvgLKHN0zDBCHETItGnsdr011l0KPBkcEtlUIQDQ+f38zcBMT00I3YskQPPzTqle/xBiyXbzvaBHV0Pwx6KNRZ16/H06ZuYFeDkUQsvJ1S0XxMn7U/X0vmgtFA+Z/PqFOWsm2sqZGWUe8UHfNuu+pWHIt8a0NDyouOGT24XJGI1gtbuhGQ3heDGl8kRZRWiJwhbG0+Tvffwklw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u18VGQfMKvOQyx9xf4QoEGqwUy5Ng9DvF6gBqhfkRj0=;
+ b=PCfcNDSKRO3ieUNwdykBBnSfasfgQx8mLP+uffgMGrV3dVRkqez9u+ye6bQl2AXlsokARk8RH2ouLfNIY64y28hLNdUsJ86UsnmwNmNQVk9JNxrekz4ldxOAQO9fvcd9n44911o1ybLaY49tdGM8dIzkUCedNkvrlYYuZ616fGTkArv4nfnqi7RmDDz/HzvHx7FMrB/inV7VbWsEkR++scFkZRxIJ7st4q0HwR9v01cndtfQROMZR2mXx+IQPoK2u0Jr6QrQ9gWdHRMmh6xduKTnBFPtLk5EWnSc9TpafpVFv/9hiQLJCB/6ygdsbkzwfMP4jmJ4gzVWvEhJW49IzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u18VGQfMKvOQyx9xf4QoEGqwUy5Ng9DvF6gBqhfkRj0=;
+ b=tSbAaHabAOldOA98bZYe04M5F/3afMQCBTpKOsUhphj2uFmbT42lDIUB/LohqnRBBLjqDAzg12xmlsHgGvFoL+H8bfk3wuCyJVcAsF8cOEmsdysV+yUon3P/iiLliepwOtOBr9cZbKfuAcP7+Ku/lyKRDut8uDFjf8mT5PafrNNknm/dZrmNW/UMhOdqlcTfr9pgCNZ6IhEaM2tfZkVMg44MMDu1QSdQzwkSFAwHBXpSt8t/2Xpcppx20ZgLOFeEVHv8bCAnW3YrrX/6jgyqtFR2VvZwub7GEb2Qqbc5u62pr5lQ/0J+7KHFux2Iz+9v7gwuLDo1DdsnLYi3B+Q+Hw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=suse.com;
+Received: from AS8PR04MB8465.eurprd04.prod.outlook.com (2603:10a6:20b:348::19)
+ by AM8PR04MB7217.eurprd04.prod.outlook.com (2603:10a6:20b:1db::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.27; Fri, 5 May
+ 2023 22:15:48 +0000
+Received: from AS8PR04MB8465.eurprd04.prod.outlook.com
+ ([fe80::79ff:9640:3ffc:75f2]) by AS8PR04MB8465.eurprd04.prod.outlook.com
+ ([fe80::79ff:9640:3ffc:75f2%5]) with mapi id 15.20.6363.029; Fri, 5 May 2023
+ 22:15:48 +0000
+Message-ID: <4b9b1a6e-fce0-4371-980b-497400582e37@suse.com>
+Date:   Sat, 6 May 2023 06:15:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Content-Language: en-US
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Qu Wenruo <quwenruo.btrfs@gmx.com>, linux-btrfs@vger.kernel.org
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
+        kernel-dev@igalia.com, vivek@collabora.com,
+        ludovico.denittis@collabora.com, johns@valvesoftware.com,
+        nborisov@suse.com
+References: <20230504170708.787361-1-gpiccoli@igalia.com>
+ <20230504170708.787361-2-gpiccoli@igalia.com>
+ <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
+ <12aa446b-39c7-c9fb-c3a4-70bfb57d9bbc@igalia.com>
+From:   Qu Wenruo <wqu@suse.com>
+Subject: Re: [PATCH 1/2] btrfs: Introduce the virtual_fsid feature
+In-Reply-To: <12aa446b-39c7-c9fb-c3a4-70bfb57d9bbc@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR01CA0008.prod.exchangelabs.com (2603:10b6:a02:80::21)
+ To AS8PR04MB8465.eurprd04.prod.outlook.com (2603:10a6:20b:348::19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230503221749.GF3223426@dread.disaster.area>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8465:EE_|AM8PR04MB7217:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6535b1ce-53d7-4eda-861c-08db4db64788
+X-LD-Processed: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba,ExtFwd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jDeYAjFlQb8Q5wfK6gsiROLxftToG6M7tV3aBjU3rBvFSi6gPX5YIzLMxh24RZwSmqbtQ9uCB4HcWEmAWox5yDis/dVrWJoVdBC8v07u1lIgTMMMUjE0XEgepKq2FkTVCqss3RLldMRorSfIowQ2a+Ndh3AHGm4F3eSv8VhDwbH2vqMA10iAZJbXYsCu0NWJac5VIZIj0Bz6g7kIKs3JiLvXJvBbDDAWhVREPjoolwQr9uVc7a18lxAyFea6i8t/M1xtUdVaG0IT18uVh9hQ+WZTAooF6GuRpryk1jTok5e3QQ27OeToCa9AH27S+ECqsc4mHulylw64eVzkCsM7WkLounXRzuWd8YxTb0TJb+N8OhlGUkdJPIUu35mH62uBO/UykRiRK+SNOz9Fp9R0GKuefDrmda9LA+AlzcFPqKN9kjQFwDGGbo9i+5MrmJV3By7M1pQ4JpWoAEJuL15G8YxvOZMjrNO5SAiK5YJ/gXQ/tRDi2HML8mvTR2uvFMjpLoMYqArLxnaLk2JC8E+LiAKvQaIyWNaHxAIWj1XNFuv6arSmtLqYiof6oUO6OqD5TpDL68DS7lkPcu1GXzNGlD6AiNOff/IkhHlNGobEUc9aesiSAaJ3uBy4cRD18oN5qKpW0bLr/mIjCZwqO/DK2A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8465.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(39860400002)(366004)(136003)(346002)(376002)(451199021)(31686004)(66476007)(66556008)(4326008)(66946007)(478600001)(316002)(110136005)(86362001)(6666004)(36756003)(6486002)(31696002)(83380400001)(6512007)(107886003)(53546011)(6506007)(2616005)(8936002)(5660300002)(8676002)(2906002)(7416002)(41300700001)(186003)(38100700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RVNpbmI4V3FVelNtcEN4WHlQK0ZpMm5vS3FLMytxSHNGVmtrazRvTk5FZzVm?=
+ =?utf-8?B?YUIzL25KMTBOUTZ1UWxWNHdKSGZnNFUyYTN1emx1ZWkzOHZrUEdTSTRsZjU1?=
+ =?utf-8?B?WkZCSlltbGE4SUcvVnVWRmNoYzJUUGdBMVc3VTNPQ0NDbis1U0xuWHF4cnBh?=
+ =?utf-8?B?NlpGZ2JQb2xpUEYvVW1MZW5GZWVKUllCMUI4SEdvLzJFazA1dmNtTDN1bE5v?=
+ =?utf-8?B?QnJ1NlFkdlZlS3FwTVp2SlBzdERDeDQrRXo1N05CODhoNStTcVpWQkoxNGdI?=
+ =?utf-8?B?WmcybDI4NU9EeFBmMEhWbHhXRXloSWFJQk1PRm9lWFBTcHFiQ3VoMXp4WnFV?=
+ =?utf-8?B?eE9wOG1GSTRLMmlSR2F2dXpsZVArTmhxQUcydU1FeHo5dTM1QS93aEV3U1o2?=
+ =?utf-8?B?Z3kyU1EvUVUxSmpMTmRZeC9UbEtJS1J4SmxBMk5NUDBoa0ZKQTRwVVlNa0Nx?=
+ =?utf-8?B?NHkvb0xQNzVBSFc0MFljcVI0Q3dLVmF1V0pvdFJYdUxDNGZzb3czd1oyN2pZ?=
+ =?utf-8?B?c0lTeDdjd1hYRkxzRG03L3NxNXppL25GZlE4cGJKcjFjZndJem92bTU0YXJJ?=
+ =?utf-8?B?TnRaMEYwMkpBbWZsR2xXQlZwa0R4dGVFVms4Tk8yTlFGR1M3a1Q0cXRkQ2c1?=
+ =?utf-8?B?QitlVmx0NDNhSWVkVzVBRnRVcllSdzBSWHVpbG5zbk41NVF6RTZTdU0vcGlT?=
+ =?utf-8?B?NXF6bjBONzI3VWE0bGMvNTlBMWxFZU9Gdm0rY1pzZFZsVTdBbTRzRDdiSW1P?=
+ =?utf-8?B?ZVNaMndjdm9uOTBWUUMrT0NWS3RsdVhrRXpzeGZCM1NGZDVyZDdRbnEwNXZZ?=
+ =?utf-8?B?WlpnWGNPVWtiS242Mm1hSU92Z0hBR1VUdTRaT1ZSRjNJa3RCUENIQ3Rvcnhz?=
+ =?utf-8?B?eHRMTXh5OUpuNm1UcC9LTFNtTWdYMExlcG5wZW1xTU5YMTVncVZHd0VoVmtW?=
+ =?utf-8?B?ZnExMmczMzZka0kxRHB4SHAyNDdhTXJXU0xUa29jcFVUMzJZbWY5aHBLTHVa?=
+ =?utf-8?B?eDdsWm1JbjgrUUpHVkJpWElxZXVVVFZyeWRKbmY0U2NtcitQdE5NbUpSdzJ1?=
+ =?utf-8?B?dXVFMHZnc3JGanIrQTVCRmJ1TDJZQ2pVK3ZYTUtLalgyeFoyYXI3WkdpUEJz?=
+ =?utf-8?B?SHBVMXBqQnRaRTVlMHBVMVowT3lVRmpHbXVLamNTa2xnRGFzc21haEFvNldv?=
+ =?utf-8?B?K1VYL2NtRUs1eGJyQ0c2SkVtbTl1cHhFd1hsMXpJSCtQL3F4R1h6QlQvb1hP?=
+ =?utf-8?B?UUt5QjZJL1c5UXhrL2FmZ3ByMHVmdUxrWEpFT0NuYVVpdmtGV1NDRGNzNVBZ?=
+ =?utf-8?B?VXpNUEIvcTBCTld5NTRIRE9pN3FtTExtR2d4Y2VKckg2S3RZK1oza3dBRGZU?=
+ =?utf-8?B?KzZjZHNoM01zdlZoOHhTRG5YWTlpQi9RdWlwVk5ldlFnNXdJSkxNcTN2NC9K?=
+ =?utf-8?B?OVhRZ1Q0SlRJOFN2M0VOaFAxSlRMcHFZc3FaMHZJU3ZuR2ZUV213M05KcHVr?=
+ =?utf-8?B?ampXbU9FTXl3eVdxNzVNOWpRUkdxMTRzcEZrcnN0SDVEeDBaQk9OWjNnS0R6?=
+ =?utf-8?B?YUFSbmdtMEFiOVoxS3ZicFZxMjZlKzhNK1VPYlkvck5LdGF0T3kwQkxoc2lS?=
+ =?utf-8?B?MU5lQjVOcmFWemVIUFNvN3lwcWVIR25QZzkyUS96L1FjTXIrV01POEJtT2Zi?=
+ =?utf-8?B?SEFta1JLVzRnWG9nNXR5OU5kYlBCcmN0ZERscTZBK1N5cU50d1c5V1ZHYk94?=
+ =?utf-8?B?U3N3NmZzNU40NnFtVW9ydGRIQ25XZSt2UkN4SFVpNmZzY3RnVEh6b3cyN1pO?=
+ =?utf-8?B?RTAwMGJGSHZLeUhXd21RZnlua0JmWUNzbVpqUkVPczJNWmpMa2pHTTRQdFNG?=
+ =?utf-8?B?cmtJbU90aVgyWnN2SFVMMTJ5Zy9ERDRPMjhwcGQralZJQW9HLzAyODQ2aWRX?=
+ =?utf-8?B?eldxTmRKOUI0SjZJN0YyRUlwVWZFRFQrU0U5alpoc2FlVTlCeXU3RkJUM21k?=
+ =?utf-8?B?NDI0RGtJWUI3cGZYOU9DYSthK1F6dlhaVmhuaWltdk94bkVGM0xYMnY3Tll6?=
+ =?utf-8?B?QjVtQ0JaS3RKSm5IQWtFM0ZuL01sL2xFMitWWVA2aHVjWDNGNGlIZUZoS25O?=
+ =?utf-8?B?dm5QL1NHWmd2bkR6NUFqb1hwQjJnNk1SQUJaRk9VWjl3MzQ0UmREelNPLy9J?=
+ =?utf-8?Q?foYPxSrbWRhxH60yUf4vGIQ=3D?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6535b1ce-53d7-4eda-861c-08db4db64788
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8465.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2023 22:15:48.4414
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l/PyvD7B3yH1o2JH7QYyOX3XCBQkU4E9VHArdxchD3NUyBnuYsD3ZxWcR4jU858Z
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7217
+X-Spam-Status: No, score=-6.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 04, 2023 at 08:17:49AM +1000, Dave Chinner wrote:
-> On Wed, May 03, 2023 at 06:38:08PM +0000, John Garry wrote:
-> > Support providing info on atomic write unit min and max.
-> > 
-> > Darrick Wong originally authored this change.
-> > 
-> > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > ---
-> >  fs/xfs/xfs_iops.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > index 24718adb3c16..e542077704aa 100644
-> > --- a/fs/xfs/xfs_iops.c
-> > +++ b/fs/xfs/xfs_iops.c
-> > @@ -614,6 +614,16 @@ xfs_vn_getattr(
-> >  			stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
-> >  			stat->dio_offset_align = bdev_logical_block_size(bdev);
-> >  		}
-> > +		if (request_mask & STATX_WRITE_ATOMIC) {
-> > +			struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
-> > +			struct block_device	*bdev = target->bt_bdev;
-> > +
-> > +			stat->atomic_write_unit_min = queue_atomic_write_unit_min(bdev->bd_queue);
-> > +			stat->atomic_write_unit_max = queue_atomic_write_unit_max(bdev->bd_queue);
+
+
+On 2023/5/5 23:51, Guilherme G. Piccoli wrote:
+> On 05/05/2023 04:21, Qu Wenruo wrote:
+>> [...]
+>> Exactly, the biggest problem is the multi-device support.
+>>
+>> Btrfs needs to search and assemble all devices of a multi-device
+>> filesystem, which is normally handled by things like LVM/DMraid, thus
+>> other traditional fses won't need to bother that.
 > 
-> I'm not sure this is right.
+> Hi Qu, thanks a bunch for your feedback, and for validating my
+> understanding of the issue!
 > 
-> Given that we may have a 4kB physical sector device, XFS will not
-> allow IOs smaller than physical sector size. The initial values of
-> queue_atomic_write_unit_min/max() will be (1 << SECTOR_SIZE) which
-> is 512 bytes. IOs done with 4kB sector size devices will fail in
-> this case.
 > 
-> Further, XFS has a software sector size - it can define the sector
-> size for the filesystem to be 4KB on a 512 byte sector device. And
-> in that case, the filesystem will reject 512 byte sized/aligned IOs
-> as they are smaller than the filesystem sector size (i.e. a config
-> that prevents sub-physical sector IO for 512 logical/4kB physical
-> devices).
-
-Yep.  I'd forgotten about those.
-
-> There may other filesystem constraints - realtime devices have fixed
-> minimum allocation sizes which may be larger than atomic write
-> limits, which means that IO completion needs to split extents into
-> multiple unwritten/written extents, extent size hints might be in
-> use meaning we have different allocation alignment constraints to
-> atomic write constraints, stripe alignment of extent allocation may
-> through out atomic write alignment, etc.
+>>   [...]
+>>
+>> I would prefer a much simpler but more explicit method.
+>>
+>> Just introduce a new compat_ro feature, maybe call it SINGLE_DEV.
+>>
+>> By this, we can avoid multiple meanings of the same super member, nor
+>> need any special mount option.
+>> Remember, mount option is never a good way to enable/disable a new feature.
+>>
+>> The better method to enable/disable a feature should be mkfs and btrfstune.
+>>
+>> Then go mostly the same of your patch, but maybe with something extra:
+>>
+>> - Disbale multi-dev code
+>>     Include device add/replace/removal, this is already done in your
+>>     patch.
+>>
+>> - Completely skip device scanning
+>>     I see no reason to keep btrfs with SINGLE_DEV feature to be added to
+>>     the device list at all.
+>>     It only needs to be scanned at mount time, and never be kept in the
+>>     in-memory device list.
+>>
 > 
-> These are all solvable, but we need to make sure here that the
-> filesystem constraints are taken into account here, not just the
-> block device limits.
+> This seems very interesting, but I'm a bit confused on how that would
+> work with 2 identical filesystem images mounted at the same time.
 > 
-> As such, it is probably better to query these limits at filesystem
-> mount time and add them to the xfs buftarg (same as we do for
-> logical and physical sector sizes) and then use the xfs buftarg
+> Imagine you have 2 devices, /dev/sda1 and /dev/sda2 holding the exact
+> same image, with the SINGLE_DEV feature set. They are identical, and
+> IIUC no matter if we skip scanning or disable any multi-device approach,
+> in the end both have the *same* fsid. How do we track this in the btrfs
+> code now? Once we try to mount the second one, it'll try to add the same
+> entity to the fs_uuids list...
 
-I'm not sure that's right either.  device mapper can switch the
-underlying storage out from under us, yes?  That would be a dirty thing
-to do in my book, but I've long wondered if we need to be more resilient
-to that kind of evilness.
+My bad, I forgot to mention that, if we hit such SINGLE_DEV fses, we 
+should also not add them to the fs_uuids list either.
 
-> values rather than having to go all the way to the device queue
-> here. That way we can ensure at mount time that atomic write limits
-> don't conflict with logical/physical IO limits, and we can further
-> constrain atomic limits during mount without always having to
-> recalculate those limits from first principles on every stat()
-> call...
+So the fs_uuids list conflicts would not be a problem at all.
 
-With Christoph's recent patchset to allow block devices to call back
-into filesystems, we could add one for "device queue limits changed"
-that would cause recomputation of those elements, solving what I was
-just mumbling about above.
-
---D
-
-> Cheers,
 > 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> That's the problem I faced when investigating the code and why the
+> proposal is to "spoof" the fsid with some random generated one.
+> 
+> Also, one more question: why do you say "Remember, mount option is never
+> a good way to enable/disable a new feature"? I'm not expert in
+> filesystems (by far heh), so I'm curious to fully understand your
+> point-of-view.
+
+We had a bad example in the past, free space tree (aka, v2 space cache).
+
+It's initially a pretty convenient way to enable the new feature, but 
+now it's making a lot of new features, which can depend on v2 cache, 
+more complex to handle those old mount options.
+
+The compatibility matrix would only grow, and all the (mostly one-time) 
+logic need to be implemented in kernel.
+
+So in the long run, we prefer offline convert tool.
+
+Thanks,
+Qu
+
+> 
+>  From my naive viewpoint, seems a mount option is "cheaper" than
+> introducing a new feature in the OS that requires changes on btrfs
+> userspace applications as well as to track incompatibilities in
+> different kernel versions.
+> 
+> Thanks again,
+> 
+> 
+> Guilherme
