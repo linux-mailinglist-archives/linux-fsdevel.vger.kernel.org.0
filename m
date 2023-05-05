@@ -2,266 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 203E26F8C3B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 00:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB5F36F8C41
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 00:10:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232230AbjEEWIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 18:08:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37082 "EHLO
+        id S232541AbjEEWKw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 18:10:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231863AbjEEWIL (ORCPT
+        with ESMTP id S229877AbjEEWKv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 18:08:11 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A945599;
-        Fri,  5 May 2023 15:08:01 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f4000ec6ecso23411115e9.0;
-        Fri, 05 May 2023 15:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683324479; x=1685916479;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hTk40pEIa6sggozNPGL/VTk1LAwsz/xKnNcnmk0Uw40=;
-        b=qUXPIJOEcmVya4t4Z8BVExBOKsEpEyw/+X5BvfMyQWS4PlaTFXXK19eB3j72mNNlXx
-         5KwlgukleyM6txF/8ewbTiGaIVAL0aS5iPiL2DguJHX1EKvTqQeBFw9kNcGNauP4Rmnq
-         N53ZSsL+dWBOp24Ek5DYYwdR+UEXfMDCZWNDAvOZAZHqaeE4rpT6pLpAIKnPiKqG8wEN
-         /tUv8TLuf2pvomk+ViSv52atgQ6+iy8lhTHOt6WBz7zIPkomsTHnPv5yCkfCgX1fE956
-         foFDLn8x4GwP8/4sRIH7I2dBPzR4l0uV0HdkxC8YxRxom0JmqU7dC872WFhKm6lwVuYL
-         umag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683324479; x=1685916479;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hTk40pEIa6sggozNPGL/VTk1LAwsz/xKnNcnmk0Uw40=;
-        b=Wh2R/Eer+dPWFZP/yTT/NU3V4rnFcqVkn0P9OA/iuAV+8YfJY+sSIvZ70Yrefc3b6G
-         G29ePhymbo1LMPSRdVtH6HkL4DMyLoStMP4ylG8xiF0GQKHKmamy2YEjTtCKmEYMBsW1
-         FqjwVRcadby1eP7qOK+qr+xmtcMH0Wr4MEpwo39962g/YVCRlgK0dsNRNyFuorLh83eR
-         jqsl4nvf3Pg72N/O+/IMbm1tFdf6VdKHXFNDPgxsK4vXu4LTMQAvBnxa5ZRJ0Wwjrb8J
-         O8atZGBL6n7Ar28uolEapDpLBLHh5T4f6Nl6a/waLXwW5SeLNYGxF6esdxjt55FfzK2J
-         oVVg==
-X-Gm-Message-State: AC+VfDx7LSA4WMNcMeUNRAzNwBf0p9wz2yA1SFjEzJsEpyFfwMVMmnrg
-        EgsdW0r4+SpwVP/FsIhiGpE=
-X-Google-Smtp-Source: ACHHUZ4mH83mCyTOoGWHtxkKNT6uM9KmncozyTwpylz+11m1DNl/kRNCToS5r+sQq24bid7g2GcEDw==
-X-Received: by 2002:a05:600c:218f:b0:3f0:a0bb:58ef with SMTP id e15-20020a05600c218f00b003f0a0bb58efmr2184588wme.25.1683324479379;
-        Fri, 05 May 2023 15:07:59 -0700 (PDT)
-Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
-        by smtp.gmail.com with ESMTPSA id a20-20020a1cf014000000b003f173c566b5sm9137978wmb.5.2023.05.05.15.07.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 May 2023 15:07:58 -0700 (PDT)
-Date:   Fri, 5 May 2023 23:07:57 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH v8 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing
- to file-backed mappings
-Message-ID: <52ac98ca-378e-452c-9dbf-93ea39bb5583@lucifer.local>
-References: <cover.1683067198.git.lstoakes@gmail.com>
- <a690186fc37e1ea92556a7dbd0887fe201fcc709.1683067198.git.lstoakes@gmail.com>
- <e4c92510-9756-d9a1-0055-4cd64a0c76d9@redhat.com>
- <c2a6311c-7fdc-4d12-9a3f-d2eed954c468@lucifer.local>
- <ae9a1134-4f5b-4c26-6822-adff838c8702@redhat.com>
+        Fri, 5 May 2023 18:10:51 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A48D2723;
+        Fri,  5 May 2023 15:10:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 987DB6411F;
+        Fri,  5 May 2023 22:10:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1B7C433EF;
+        Fri,  5 May 2023 22:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683324649;
+        bh=k6oMc0o9wbKE3MMyK5Z0jVFz6s5S3LZAMgBD25Npdew=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O1xy3ZEqtX7AjkfWmtzEaUO3L0PrSeHA63SSFHopVTw+bkamc3KH6AFOtMTEQrQIi
+         Ch4gCMX3UMDxIatxR+5AOk7ZdANA+CRiByOZq+lUlNShjej/To9Z/zWISpEahN8mFc
+         fvRSeEUaD07OwqvKAvqWoWY84Qg51kCXh+DOaC5ufw6MtznuKcjn4dkG3VQW9nLj8e
+         e/m5qrU/NsqSZTnTPzGPWkd60jaXoIrueA5R11g/RM8fMFvnBpLoHDoldoQrVRleRL
+         B8QXGobhn8rAMthGTTyY9MwtiPoBjiRB5OgGxkg3/LLt96m+s4hSK3eI7W2qFkvC9F
+         6j4lCfSx5W3wQ==
+Date:   Fri, 5 May 2023 15:10:48 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
+        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, dchinner@redhat.com, jejb@linux.ibm.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com
+Subject: Re: [PATCH RFC 03/16] xfs: Support atomic write for statx
+Message-ID: <20230505221048.GL15394@frogsfrogsfrogs>
+References: <20230503183821.1473305-1-john.g.garry@oracle.com>
+ <20230503183821.1473305-4-john.g.garry@oracle.com>
+ <20230503221749.GF3223426@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae9a1134-4f5b-4c26-6822-adff838c8702@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230503221749.GF3223426@dread.disaster.area>
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 05, 2023 at 04:17:38PM +0200, David Hildenbrand wrote:
-> > > And there is nothing wrong about pinning an anon page that's still in the
-> > > swapcache. The following folio_test_anon() check will allow them.
-> > >
-> > > The check made sense in page_mapping(), but here it's not required.
-> >
-> > Waaaaaaaaaait a second, you were saying before:-
-> >
-> >    "Folios in the swap cache return the swap mapping" -- you might disallow
-> >    pinning anonymous pages that are in the swap cache.
-> >
-> >    I recall that there are corner cases where we can end up with an anon
-> >    page that's mapped writable but still in the swap cache ... so you'd
-> >    fallback to the GUP slow path (acceptable for these corner cases, I
-> >    guess), however especially the comment is a bit misleading then.
-> >
-> > So are we allowing or disallowing pinning anon swap cache pages? :P
->
-> If we have an exclusive anon page that's still in the swap cache, sure! :)
->
-> I think there are ways that can be done, and nothing would actually break.
-> (I even wrote selftests in the cow selftests for that to amke sure it works
-> as expected)
->
-> >
-> > I mean slow path would allow them if they are just marked anon so I'm inclined
-> > to allow them.
->
-> Exactly my reasoning.
->
-> The less checks the better (especially if ordinary GUP just allows for
-> pinning it) :)
+On Thu, May 04, 2023 at 08:17:49AM +1000, Dave Chinner wrote:
+> On Wed, May 03, 2023 at 06:38:08PM +0000, John Garry wrote:
+> > Support providing info on atomic write unit min and max.
+> > 
+> > Darrick Wong originally authored this change.
+> > 
+> > Signed-off-by: John Garry <john.g.garry@oracle.com>
+> > ---
+> >  fs/xfs/xfs_iops.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > index 24718adb3c16..e542077704aa 100644
+> > --- a/fs/xfs/xfs_iops.c
+> > +++ b/fs/xfs/xfs_iops.c
+> > @@ -614,6 +614,16 @@ xfs_vn_getattr(
+> >  			stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
+> >  			stat->dio_offset_align = bdev_logical_block_size(bdev);
+> >  		}
+> > +		if (request_mask & STATX_WRITE_ATOMIC) {
+> > +			struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+> > +			struct block_device	*bdev = target->bt_bdev;
+> > +
+> > +			stat->atomic_write_unit_min = queue_atomic_write_unit_min(bdev->bd_queue);
+> > +			stat->atomic_write_unit_max = queue_atomic_write_unit_max(bdev->bd_queue);
+> 
+> I'm not sure this is right.
+> 
+> Given that we may have a 4kB physical sector device, XFS will not
+> allow IOs smaller than physical sector size. The initial values of
+> queue_atomic_write_unit_min/max() will be (1 << SECTOR_SIZE) which
+> is 512 bytes. IOs done with 4kB sector size devices will fail in
+> this case.
+> 
+> Further, XFS has a software sector size - it can define the sector
+> size for the filesystem to be 4KB on a 512 byte sector device. And
+> in that case, the filesystem will reject 512 byte sized/aligned IOs
+> as they are smaller than the filesystem sector size (i.e. a config
+> that prevents sub-physical sector IO for 512 logical/4kB physical
+> devices).
 
-Yeah a lot of my decision making on this has been trying to be conservative
-about what we filter for but you get this weird inversion whereby if you're
-too conservative about what you allow, you are actually being more
-outlandish about what you disallow and vice-versa.
+Yep.  I'd forgotten about those.
 
->
-> >
-> > >
-> > > I do agree regarding folio_test_slab(), though. Should we WARN in case we
-> > > would have one?
-> > >
-> > > if (WARN_ON_ONCE(folio_test_slab(folio)))
-> > > 	return false;
-> > >
-> >
-> > God help us if we have a slab page at this point, so agreed worth doing, it
-> > would surely have to arise from some dreadful bug/memory corruption.
-> >
->
-> Or some nasty race condition that we managed to ignore with rechecking if
-> the PTEs/PMDs changed :)
+> There may other filesystem constraints - realtime devices have fixed
+> minimum allocation sizes which may be larger than atomic write
+> limits, which means that IO completion needs to split extents into
+> multiple unwritten/written extents, extent size hints might be in
+> use meaning we have different allocation alignment constraints to
+> atomic write constraints, stripe alignment of extent allocation may
+> through out atomic write alignment, etc.
+> 
+> These are all solvable, but we need to make sure here that the
+> filesystem constraints are taken into account here, not just the
+> block device limits.
+> 
+> As such, it is probably better to query these limits at filesystem
+> mount time and add them to the xfs buftarg (same as we do for
+> logical and physical sector sizes) and then use the xfs buftarg
 
-Well that should be sorted now :)
+I'm not sure that's right either.  device mapper can switch the
+underlying storage out from under us, yes?  That would be a dirty thing
+to do in my book, but I've long wondered if we need to be more resilient
+to that kind of evilness.
 
->
-> > > > +	if (unlikely(folio_test_slab(folio) || folio_test_swapcache(folio)))
-> > > > +		return false;
-> > > > +
-> > > > +	/* hugetlb mappings do not require dirty-tracking. */
-> > > > +	if (folio_test_hugetlb(folio))
-> > > > +		return true;
-> > > > +
-> > > > +	/*
-> > > > +	 * GUP-fast disables IRQs. When IRQS are disabled, RCU grace periods
-> > > > +	 * cannot proceed, which means no actions performed under RCU can
-> > > > +	 * proceed either.
-> > > > +	 *
-> > > > +	 * inodes and thus their mappings are freed under RCU, which means the
-> > > > +	 * mapping cannot be freed beneath us and thus we can safely dereference
-> > > > +	 * it.
-> > > > +	 */
-> > > > +	lockdep_assert_irqs_disabled();
-> > > > +
-> > > > +	/*
-> > > > +	 * However, there may be operations which _alter_ the mapping, so ensure
-> > > > +	 * we read it once and only once.
-> > > > +	 */
-> > > > +	mapping = READ_ONCE(folio->mapping);
-> > > > +
-> > > > +	/*
-> > > > +	 * The mapping may have been truncated, in any case we cannot determine
-> > > > +	 * if this mapping is safe - fall back to slow path to determine how to
-> > > > +	 * proceed.
-> > > > +	 */
-> > > > +	if (!mapping)
-> > > > +		return false;
-> > > > +
-> > > > +	/* Anonymous folios are fine, other non-file backed cases are not. */
-> > > > +	mapping_flags = (unsigned long)mapping & PAGE_MAPPING_FLAGS;
-> > > > +	if (mapping_flags)
-> > > > +		return mapping_flags == PAGE_MAPPING_ANON;
-> > >
-> > > KSM pages are also (shared) anonymous folios, and that check would fail --
-> > > which is ok (the following unsharing checks rejects long-term pinning them),
-> > > but a bit inconstent with your comment and folio_test_anon().
-> > >
-> > > It would be more consistent (with your comment and also the folio_test_anon
-> > > implementation) to have here:
-> > >
-> > > 	return mapping_flags & PAGE_MAPPING_ANON;
-> > >
-> >
-> > I explicitly excluded KSM out of fear that could be some breakage given they're
-> > wrprotect'd + expected to CoW though? But I guess you mean they'd get picked up
-> > by the unshare and so it doesn't matter + we wouldn't want to exclude an
-> > PG_anon_exclusive case?
->
-> Yes, unsharing handles that in the ordinary GUP and GUP-fast case. And
-> unsharing is neither GUP-fast nor even longterm specific (for anon pages).
->
-> Reason I'm brining this up is that I think it's best if we let
-> folio_fast_pin_allowed() just check for what's absolutely GUP-fast specific.
+> values rather than having to go all the way to the device queue
+> here. That way we can ensure at mount time that atomic write limits
+> don't conflict with logical/physical IO limits, and we can further
+> constrain atomic limits during mount without always having to
+> recalculate those limits from first principles on every stat()
+> call...
 
-Ack, indeed it's a separate thing, see above for the contradictory nature
-of wanting to be cautious but then accidentally making your change _more
-radical_ than you intended...!
+With Christoph's recent patchset to allow block devices to call back
+into filesystems, we could add one for "device queue limits changed"
+that would cause recomputation of those elements, solving what I was
+just mumbling about above.
 
->
-> >
-> > I'll make the change in any case given the unshare check!
-> >
-> > I notice the gup_huge_pgd() doesn't do an unshare but I mean, a PGD-sized huge
-> > page probably isn't going to be CoW'd :P
->
-> I spotted exactly the same thing and wondered about that (after all I added
-> all that unsharing logic ... so I should know). I'm sure there must be a
-> reason I didn't add it ;)
->
-> ... probably we should just add it even though it might essentially be dead
-> code for now (at least the cow selftests would try with each and every
-> hugetlb size and eventually reveal the problem on whatever arch ends up
-> using that code ... ).
->
-> Do you want to send a patch to add unsharing to gup_huge_pgd() as well?
->
+--D
 
-Sure will do!
-
-> --
-> Thanks,
->
-> David / dhildenb
->
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
