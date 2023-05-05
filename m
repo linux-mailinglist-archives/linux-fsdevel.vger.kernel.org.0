@@ -2,117 +2,266 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C27786F8C35
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 00:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 203E26F8C3B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 00:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232231AbjEEWFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 18:05:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34358 "EHLO
+        id S232230AbjEEWIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 18:08:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbjEEWFt (ORCPT
+        with ESMTP id S231863AbjEEWIL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 18:05:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E026A618C;
-        Fri,  5 May 2023 15:05:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E429D6410B;
-        Fri,  5 May 2023 22:04:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A297C433D2;
-        Fri,  5 May 2023 22:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683324280;
-        bh=f1jvZDrF9Qn33CLcZ4WNk/v3Df+AvMJXxv7DwWGW0QQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OkpKowf89TZVFXs+kZPV9yhxvlS1WPcn+RJAUjhk+F+NdGsM3DowjGujTCVspntEk
-         cjONoTzL+Mbd5t+9AKB6wfFG/v2mMcL4zUbTCd68MALmZ0bvdAsdyqB1NiUPsHURQx
-         Pb+EiF47Gw2FrzOLU0+uch5xJIwNkrwQ88DqtgRjz2heN6tSAyMM3taWJ6o/co195G
-         InfdsysxEKZtg6MGDEsuLv05bAtcsJBM0d3KZPxDWL0S6H+Cc+wgMhp3zHymC2qu4N
-         b7tWMZGshPp0ERKEWKp+Mkk6aHJZ+zyeGly/ASTr+Ej/LlVg2ok1XVQwXyBr+Dr0m5
-         X42vWMe7zA2bg==
-Date:   Fri, 5 May 2023 15:04:39 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     John Garry <john.g.garry@oracle.com>
-Cc:     Dave Chinner <david@fromorbit.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, dchinner@redhat.com, jejb@linux.ibm.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        Prasad Singamsetty <prasad.singamsetty@oracle.com>
-Subject: Re: [PATCH RFC 02/16] fs/bdev: Add atomic write support info to statx
-Message-ID: <20230505220439.GK15394@frogsfrogsfrogs>
-References: <20230503183821.1473305-1-john.g.garry@oracle.com>
- <20230503183821.1473305-3-john.g.garry@oracle.com>
- <20230503215846.GE3223426@dread.disaster.area>
- <96a2f875-7f99-cd36-e9c3-abbadeb9833b@oracle.com>
- <20230504224033.GJ3223426@dread.disaster.area>
- <644fe4aa-cb89-0c14-4c90-cc93bcc6bbc2@oracle.com>
+        Fri, 5 May 2023 18:08:11 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A945599;
+        Fri,  5 May 2023 15:08:01 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f4000ec6ecso23411115e9.0;
+        Fri, 05 May 2023 15:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683324479; x=1685916479;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hTk40pEIa6sggozNPGL/VTk1LAwsz/xKnNcnmk0Uw40=;
+        b=qUXPIJOEcmVya4t4Z8BVExBOKsEpEyw/+X5BvfMyQWS4PlaTFXXK19eB3j72mNNlXx
+         5KwlgukleyM6txF/8ewbTiGaIVAL0aS5iPiL2DguJHX1EKvTqQeBFw9kNcGNauP4Rmnq
+         N53ZSsL+dWBOp24Ek5DYYwdR+UEXfMDCZWNDAvOZAZHqaeE4rpT6pLpAIKnPiKqG8wEN
+         /tUv8TLuf2pvomk+ViSv52atgQ6+iy8lhTHOt6WBz7zIPkomsTHnPv5yCkfCgX1fE956
+         foFDLn8x4GwP8/4sRIH7I2dBPzR4l0uV0HdkxC8YxRxom0JmqU7dC872WFhKm6lwVuYL
+         umag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683324479; x=1685916479;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hTk40pEIa6sggozNPGL/VTk1LAwsz/xKnNcnmk0Uw40=;
+        b=Wh2R/Eer+dPWFZP/yTT/NU3V4rnFcqVkn0P9OA/iuAV+8YfJY+sSIvZ70Yrefc3b6G
+         G29ePhymbo1LMPSRdVtH6HkL4DMyLoStMP4ylG8xiF0GQKHKmamy2YEjTtCKmEYMBsW1
+         FqjwVRcadby1eP7qOK+qr+xmtcMH0Wr4MEpwo39962g/YVCRlgK0dsNRNyFuorLh83eR
+         jqsl4nvf3Pg72N/O+/IMbm1tFdf6VdKHXFNDPgxsK4vXu4LTMQAvBnxa5ZRJ0Wwjrb8J
+         O8atZGBL6n7Ar28uolEapDpLBLHh5T4f6Nl6a/waLXwW5SeLNYGxF6esdxjt55FfzK2J
+         oVVg==
+X-Gm-Message-State: AC+VfDx7LSA4WMNcMeUNRAzNwBf0p9wz2yA1SFjEzJsEpyFfwMVMmnrg
+        EgsdW0r4+SpwVP/FsIhiGpE=
+X-Google-Smtp-Source: ACHHUZ4mH83mCyTOoGWHtxkKNT6uM9KmncozyTwpylz+11m1DNl/kRNCToS5r+sQq24bid7g2GcEDw==
+X-Received: by 2002:a05:600c:218f:b0:3f0:a0bb:58ef with SMTP id e15-20020a05600c218f00b003f0a0bb58efmr2184588wme.25.1683324479379;
+        Fri, 05 May 2023 15:07:59 -0700 (PDT)
+Received: from localhost (host86-156-84-164.range86-156.btcentralplus.com. [86.156.84.164])
+        by smtp.gmail.com with ESMTPSA id a20-20020a1cf014000000b003f173c566b5sm9137978wmb.5.2023.05.05.15.07.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 May 2023 15:07:58 -0700 (PDT)
+Date:   Fri, 5 May 2023 23:07:57 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH v8 3/3] mm/gup: disallow FOLL_LONGTERM GUP-fast writing
+ to file-backed mappings
+Message-ID: <52ac98ca-378e-452c-9dbf-93ea39bb5583@lucifer.local>
+References: <cover.1683067198.git.lstoakes@gmail.com>
+ <a690186fc37e1ea92556a7dbd0887fe201fcc709.1683067198.git.lstoakes@gmail.com>
+ <e4c92510-9756-d9a1-0055-4cd64a0c76d9@redhat.com>
+ <c2a6311c-7fdc-4d12-9a3f-d2eed954c468@lucifer.local>
+ <ae9a1134-4f5b-4c26-6822-adff838c8702@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <644fe4aa-cb89-0c14-4c90-cc93bcc6bbc2@oracle.com>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <ae9a1134-4f5b-4c26-6822-adff838c8702@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 05, 2023 at 09:01:58AM +0100, John Garry wrote:
-> On 04/05/2023 23:40, Dave Chinner wrote:
-> 
-> Hi Dave,
-> 
-> > > No, not yet. Is it normally expected to provide a proposed man page update
-> > > in parallel? Or somewhat later, when the kernel API change has some
-> > > appreciable level of agreement?
-> > Normally we ask for man page updates to be presented at the same
-> > time, as the man page defines the user interface that is being
-> > implemented. In this case, we need updates for the pwritev2() man
-> > page to document RWF_ATOMIC semantics, and the statx() man page to
-> > document what the variables being exposed mean w.r.t. RWF_ATOMIC.
-> > 
-> > The pwritev2() man page is probably the most important one right now
-> > - it needs to explain the guarantees that RWF_ATOMIC is supposed to
-> > provide w.r.t. data integrity, IO ordering, persistence, etc.
-> > Indeed, it will need to explain exactly how this "multi-atomic-unit
-> > mulit-bio non-atomic RWF_ATOMIC" IO thing can be used safely and
-> > reliably, especially w.r.t. IO ordering and persistence guarantees
-> > in the face of crashes and power failures. Not to mention
-> > documenting error conditions specific to RWF_ATOMIC...
-> > 
-> > It's all well and good to have some implementation, but without
-> > actually defining and documenting the*guarantees*  that RWF_ATOMIC
-> > provides userspace it is completely useless for application
-> > developers. And from the perspective of a reviewer, without the
-> > documentation stating what the infrastructure actually guarantees
-> > applications, we can't determine if the implementation being
-> > presented is fit for purpose....
-> 
-> ok, understood. Obviously from any discussion so far there are many details
-> which the user needs to know about how to use this interface and what to
-> expect.
-> 
-> We'll look to start working on those man page details now.
+On Fri, May 05, 2023 at 04:17:38PM +0200, David Hildenbrand wrote:
+> > > And there is nothing wrong about pinning an anon page that's still in the
+> > > swapcache. The following folio_test_anon() check will allow them.
+> > >
+> > > The check made sense in page_mapping(), but here it's not required.
+> >
+> > Waaaaaaaaaait a second, you were saying before:-
+> >
+> >    "Folios in the swap cache return the swap mapping" -- you might disallow
+> >    pinning anonymous pages that are in the swap cache.
+> >
+> >    I recall that there are corner cases where we can end up with an anon
+> >    page that's mapped writable but still in the swap cache ... so you'd
+> >    fallback to the GUP slow path (acceptable for these corner cases, I
+> >    guess), however especially the comment is a bit misleading then.
+> >
+> > So are we allowing or disallowing pinning anon swap cache pages? :P
+>
+> If we have an exclusive anon page that's still in the swap cache, sure! :)
+>
+> I think there are ways that can be done, and nothing would actually break.
+> (I even wrote selftests in the cow selftests for that to amke sure it works
+> as expected)
+>
+> >
+> > I mean slow path would allow them if they are just marked anon so I'm inclined
+> > to allow them.
+>
+> Exactly my reasoning.
+>
+> The less checks the better (especially if ordinary GUP just allows for
+> pinning it) :)
 
-Agreed.  The manpage contents are what needs to get worked on at LSFMM
-where you'll have various block/fs/storage device people in the same
-room with which to discuss various issues and try to smooth out the
-misundertandings.
+Yeah a lot of my decision making on this has been trying to be conservative
+about what we filter for but you get this weird inversion whereby if you're
+too conservative about what you allow, you are actually being more
+outlandish about what you disallow and vice-versa.
 
-(Also: I've decided to cancel my in-person attendance due to a sudden
-health issue.   I'll still be in the room, just virtually now. :()
+>
+> >
+> > >
+> > > I do agree regarding folio_test_slab(), though. Should we WARN in case we
+> > > would have one?
+> > >
+> > > if (WARN_ON_ONCE(folio_test_slab(folio)))
+> > > 	return false;
+> > >
+> >
+> > God help us if we have a slab page at this point, so agreed worth doing, it
+> > would surely have to arise from some dreadful bug/memory corruption.
+> >
+>
+> Or some nasty race condition that we managed to ignore with rechecking if
+> the PTEs/PMDs changed :)
 
---D
+Well that should be sorted now :)
 
+>
+> > > > +	if (unlikely(folio_test_slab(folio) || folio_test_swapcache(folio)))
+> > > > +		return false;
+> > > > +
+> > > > +	/* hugetlb mappings do not require dirty-tracking. */
+> > > > +	if (folio_test_hugetlb(folio))
+> > > > +		return true;
+> > > > +
+> > > > +	/*
+> > > > +	 * GUP-fast disables IRQs. When IRQS are disabled, RCU grace periods
+> > > > +	 * cannot proceed, which means no actions performed under RCU can
+> > > > +	 * proceed either.
+> > > > +	 *
+> > > > +	 * inodes and thus their mappings are freed under RCU, which means the
+> > > > +	 * mapping cannot be freed beneath us and thus we can safely dereference
+> > > > +	 * it.
+> > > > +	 */
+> > > > +	lockdep_assert_irqs_disabled();
+> > > > +
+> > > > +	/*
+> > > > +	 * However, there may be operations which _alter_ the mapping, so ensure
+> > > > +	 * we read it once and only once.
+> > > > +	 */
+> > > > +	mapping = READ_ONCE(folio->mapping);
+> > > > +
+> > > > +	/*
+> > > > +	 * The mapping may have been truncated, in any case we cannot determine
+> > > > +	 * if this mapping is safe - fall back to slow path to determine how to
+> > > > +	 * proceed.
+> > > > +	 */
+> > > > +	if (!mapping)
+> > > > +		return false;
+> > > > +
+> > > > +	/* Anonymous folios are fine, other non-file backed cases are not. */
+> > > > +	mapping_flags = (unsigned long)mapping & PAGE_MAPPING_FLAGS;
+> > > > +	if (mapping_flags)
+> > > > +		return mapping_flags == PAGE_MAPPING_ANON;
+> > >
+> > > KSM pages are also (shared) anonymous folios, and that check would fail --
+> > > which is ok (the following unsharing checks rejects long-term pinning them),
+> > > but a bit inconstent with your comment and folio_test_anon().
+> > >
+> > > It would be more consistent (with your comment and also the folio_test_anon
+> > > implementation) to have here:
+> > >
+> > > 	return mapping_flags & PAGE_MAPPING_ANON;
+> > >
+> >
+> > I explicitly excluded KSM out of fear that could be some breakage given they're
+> > wrprotect'd + expected to CoW though? But I guess you mean they'd get picked up
+> > by the unshare and so it doesn't matter + we wouldn't want to exclude an
+> > PG_anon_exclusive case?
+>
+> Yes, unsharing handles that in the ordinary GUP and GUP-fast case. And
+> unsharing is neither GUP-fast nor even longterm specific (for anon pages).
+>
+> Reason I'm brining this up is that I think it's best if we let
+> folio_fast_pin_allowed() just check for what's absolutely GUP-fast specific.
+
+Ack, indeed it's a separate thing, see above for the contradictory nature
+of wanting to be cautious but then accidentally making your change _more
+radical_ than you intended...!
+
+>
+> >
+> > I'll make the change in any case given the unshare check!
+> >
+> > I notice the gup_huge_pgd() doesn't do an unshare but I mean, a PGD-sized huge
+> > page probably isn't going to be CoW'd :P
+>
+> I spotted exactly the same thing and wondered about that (after all I added
+> all that unsharing logic ... so I should know). I'm sure there must be a
+> reason I didn't add it ;)
+>
+> ... probably we should just add it even though it might essentially be dead
+> code for now (at least the cow selftests would try with each and every
+> hugetlb size and eventually reveal the problem on whatever arch ends up
+> using that code ... ).
+>
+> Do you want to send a patch to add unsharing to gup_huge_pgd() as well?
+>
+
+Sure will do!
+
+> --
 > Thanks,
-> John
+>
+> David / dhildenb
+>
