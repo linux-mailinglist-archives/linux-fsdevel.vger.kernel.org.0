@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 562876F8811
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 19:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C0CE6F8814
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 19:52:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232695AbjEERwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 13:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50992 "EHLO
+        id S233210AbjEERw5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 13:52:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233209AbjEERwu (ORCPT
+        with ESMTP id S233201AbjEERww (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 13:52:50 -0400
+        Fri, 5 May 2023 13:52:52 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949BA203E0;
-        Fri,  5 May 2023 10:52:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6945E191CD;
+        Fri,  5 May 2023 10:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Mo1wG2ZHhDRN2Kxva783ZntuoaR3kzM5rBfQE5yUx54=; b=xLtgYqsmC3jS+RKpzPYzBT6rPm
-        G0nkxiInGyV7RrQ4Ex3T3JJAG+byGYwQvp52v5jf1BMFR6eLW9I8ngzSNOdAgjGgPVm8cEVeZ4o7n
-        lMXyu+QfQ8IFei2OvAJnIXjFWwVr22HWIOpGWVxJA6fe72EQRNF7iyO9nbkmKoLx9gGSi+aJLFSQU
-        djA6Cn+EteRI+RzEoQxQyYZEKKwb22YqxsaMjmVwEQksGxdz29lKKHfF9pzvzbWgkQ9nkILyfcm/w
-        C2/UW7eq6fDOjH7rwaPTZhjz3+bCAyoarIDj/Luif6FBZBbg2BgNE5SyOkr/9djxDpfsF+C2CVmKo
-        Th+hYNqQ==;
+        bh=g0rV437tY8dOCjqBKssMb5KnN1Lw3wQoRxKKU/UO4Aw=; b=QUiYU3BRfbawH7skOJcRhQIoxz
+        e1FQWgPXZhADCeF+0PV72Qk6g0s7KWoMfkjZjj+7Z5aQsN8MtwAP5vuK7DB4tU6SBtnTM8mycrpbA
+        LrgGAM+xDXVuIYE7IlHcNjc3jNk+CobQu8tGNGxddgYjEM6sZ0C6FlPjuAA4uoITZgUOoQLnF+0xV
+        HqaWMEFkAMkxpV+2Y1LX2+2YFI6SSVuv5y6sAxqaMrK3sxw177QY2rckvQ90kwSfwkYVBC3RulNb/
+        HiQacRpOl4zD8jgTt0yWrKpRpg4LOKLVT24draVg84i82rvXZGl2DLUMkA1VD85u/n/K5BOjbUjU+
+        7BZNTOPQ==;
 Received: from 66-46-223-221.dedicated.allstream.net ([66.46.223.221] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1puzau-00BSx5-0k;
-        Fri, 05 May 2023 17:51:48 +0000
+        id 1puzav-00BSxE-1L;
+        Fri, 05 May 2023 17:51:49 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: [PATCH 1/9] block: consolidate the shutdown logic in blk_mark_disk_dead and del_gendisk
-Date:   Fri,  5 May 2023 13:51:24 -0400
-Message-Id: <20230505175132.2236632-2-hch@lst.de>
+Subject: [PATCH 2/9] block: avoid repeated work in blk_mark_disk_dead
+Date:   Fri,  5 May 2023 13:51:25 -0400
+Message-Id: <20230505175132.2236632-3-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230505175132.2236632-1-hch@lst.de>
 References: <20230505175132.2236632-1-hch@lst.de>
@@ -54,73 +54,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-blk_mark_disk_dead does very similar work a a section of del_gendisk:
-
- - set the GD_DEAD flag
- - set the capacity to zero
- - start a queue drain
-
-but del_gendisk also sets QUEUE_FLAG_DYING on the queue if it is owned by
-the disk, sets the capacity to zero before starting the drain, and both
-with sending a uevent and kernel message for this fake capacity change.
-
-Move the exact logic from the more heavily used del_gendisk into
-blk_mark_disk_dead and then call blk_mark_disk_dead from del_gendisk.
+Check if GD_DEAD is already set in blk_mark_disk_dead, and don't
+duplicate the work already done.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/genhd.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ block/genhd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/block/genhd.c b/block/genhd.c
-index 90c402771bb570..461999e9489937 100644
+index 461999e9489937..9a35b8443f0b5f 100644
 --- a/block/genhd.c
 +++ b/block/genhd.c
-@@ -583,13 +583,22 @@ EXPORT_SYMBOL(device_add_disk);
-  */
- void blk_mark_disk_dead(struct gendisk *disk)
- {
-+	/*
-+	 * Fail any new I/O.
-+	 */
- 	set_bit(GD_DEAD, &disk->state);
--	blk_queue_start_drain(disk->queue);
-+	if (test_bit(GD_OWNS_QUEUE, &disk->state))
-+		blk_queue_flag_set(QUEUE_FLAG_DYING, disk->queue);
- 
+@@ -586,7 +586,9 @@ void blk_mark_disk_dead(struct gendisk *disk)
  	/*
- 	 * Stop buffered writers from dirtying pages that can't be written out.
+ 	 * Fail any new I/O.
  	 */
--	set_capacity_and_notify(disk, 0);
-+	set_capacity(disk, 0);
-+
-+	/*
-+	 * Prevent new I/O from crossing bio_queue_enter().
-+	 */
-+	blk_queue_start_drain(disk->queue);
- }
- EXPORT_SYMBOL_GPL(blk_mark_disk_dead);
- 
-@@ -632,18 +641,7 @@ void del_gendisk(struct gendisk *disk)
- 	fsync_bdev(disk->part0);
- 	__invalidate_device(disk->part0, true);
- 
--	/*
--	 * Fail any new I/O.
--	 */
 -	set_bit(GD_DEAD, &disk->state);
--	if (test_bit(GD_OWNS_QUEUE, &disk->state))
--		blk_queue_flag_set(QUEUE_FLAG_DYING, q);
--	set_capacity(disk, 0);
--
--	/*
--	 * Prevent new I/O from crossing bio_queue_enter().
--	 */
--	blk_queue_start_drain(q);
-+	blk_mark_disk_dead(disk);
++	if (test_and_set_bit(GD_DEAD, &disk->state))
++		return;
++
+ 	if (test_bit(GD_OWNS_QUEUE, &disk->state))
+ 		blk_queue_flag_set(QUEUE_FLAG_DYING, disk->queue);
  
- 	if (!(disk->flags & GENHD_FL_HIDDEN)) {
- 		sysfs_remove_link(&disk_to_dev(disk)->kobj, "bdi");
 -- 
 2.39.2
 
