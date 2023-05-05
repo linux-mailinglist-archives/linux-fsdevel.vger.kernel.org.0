@@ -2,61 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 415F96F7A97
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 03:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C7516F7AC9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 04:07:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229816AbjEEBSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 May 2023 21:18:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47522 "EHLO
+        id S229675AbjEECH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 May 2023 22:07:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjEEBSa (ORCPT
+        with ESMTP id S229446AbjEECH2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 May 2023 21:18:30 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084CC12494;
-        Thu,  4 May 2023 18:18:28 -0700 (PDT)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 344LwpWM000776;
-        Fri, 5 May 2023 01:18:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id; s=corp-2023-03-30;
- bh=2wYkjBDt1hBOZQJuPalAgsuRCkMbwfLqlGTFy2J9KjI=;
- b=NC9caCb6iQGuv+7gEcCP/YuUwU7qkFLzQj/MgFYyjq6MLp6AbA5dPo9U+6EuWd4itCJn
- 33xV1OmiA0J6CaQlHu7ErghWw0c1nlnr5ylGujEEVSgY9eqcikP11eUx2rqopIvELeJ6
- 7L0pxYsj/ymBJHRyEmSetLxOKVjRq4uLexSp2JLnBLqkIVQUFMzNAqiK7vDYADLD2AkW
- qEq+1aE1lWTJSXSDIcT8cI6E/p5xCdb8K7eU4e/JM+7kUq3i4a/3czPV2BxgYos5hmYh
- Y/0mubBkoSzjghdXYxTkp8z8tER0A7VoK/V6Dbmbmw2Fl6XQJzZASJuz3SmNljb99z+1 xg== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q8u9d3pkf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 05 May 2023 01:18:00 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34510RKd009860;
-        Fri, 5 May 2023 01:17:59 GMT
-Received: from brm-x62-16.us.oracle.com (brm-x62-16.us.oracle.com [10.80.150.37])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3q8sp9rvpe-1;
-        Fri, 05 May 2023 01:17:59 +0000
-From:   Jane Chu <jane.chu@oracle.com>
-To:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
-        dave.jiang@intel.com, ira.weiny@intel.com, willy@infradead.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3] dax: enable dax fault handler to report VM_FAULT_HWPOISON
-Date:   Thu,  4 May 2023 19:17:47 -0600
-Message-Id: <20230505011747.956945-1-jane.chu@oracle.com>
-X-Mailer: git-send-email 2.18.4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-04_15,2023-05-04_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2305050009
-X-Proofpoint-GUID: aiXFBile4Qv6bbV8wTMcalz3Cdbuc7eb
-X-Proofpoint-ORIG-GUID: aiXFBile4Qv6bbV8wTMcalz3Cdbuc7eb
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        Thu, 4 May 2023 22:07:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75A4E67
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 May 2023 19:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683252404;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+1lZHH9cJOkUnL6+SkM6O5cU5HIeggOc99mIe6aElrU=;
+        b=beyFxSaNFaIUWm5qGaT2IPEvsftFPdSlvC6nQ9mL4SoJOtlAg3r8YfKTLfdK0jPlA1aVUB
+        vyuN3ghbBShmIP2SR7fABW0xoKLsRzBOOWu4yueMeL7RhDM68wz473Dct4/2CVDa06eB40
+        MnScbb0+V7fMqusCsizo6R4FKXzSm1U=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-130-vimcqaoUNs6Ig5aKRDdcoA-1; Thu, 04 May 2023 22:06:41 -0400
+X-MC-Unique: vimcqaoUNs6Ig5aKRDdcoA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F118A85A5B1;
+        Fri,  5 May 2023 02:06:40 +0000 (UTC)
+Received: from ovpn-8-16.pek2.redhat.com (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C782B2026D16;
+        Fri,  5 May 2023 02:06:33 +0000 (UTC)
+Date:   Fri, 5 May 2023 10:06:28 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Zhang Yi <yi.zhang@redhat.com>,
+        ming.lei@redhat.com
+Subject: Re: [ext4 io hang] buffered write io hang in balance_dirty_pages
+Message-ID: <ZFRkpKrhKDgi/lmf@ovpn-8-16.pek2.redhat.com>
+References: <ZEnb7KuOWmu5P+V9@ovpn-8-24.pek2.redhat.com>
+ <ZFPWeOg5xJ7CbCD0@kbusch-mbp.dhcp.thefacebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZFPWeOg5xJ7CbCD0@kbusch-mbp.dhcp.thefacebook.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -65,80 +68,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When multiple processes mmap() a dax file, then at some point,
-a process issues a 'load' and consumes a hwpoison, the process
-receives a SIGBUS with si_code = BUS_MCEERR_AR and with si_lsb
-set for the poison scope. Soon after, any other process issues
-a 'load' to the poisoned page (that is unmapped from the kernel
-side by memory_failure), it receives a SIGBUS with
-si_code = BUS_ADRERR and without valid si_lsb.
+On Thu, May 04, 2023 at 09:59:52AM -0600, Keith Busch wrote:
+> On Thu, Apr 27, 2023 at 10:20:28AM +0800, Ming Lei wrote:
+> > Hello Guys,
+> > 
+> > I got one report in which buffered write IO hangs in balance_dirty_pages,
+> > after one nvme block device is unplugged physically, then umount can't
+> > succeed.
+> > 
+> > Turns out it is one long-term issue, and it can be triggered at least
+> > since v5.14 until the latest v6.3.
+> > 
+> > And the issue can be reproduced reliably in KVM guest:
+> > 
+> > 1) run the following script inside guest:
+> > 
+> > mkfs.ext4 -F /dev/nvme0n1
+> > mount /dev/nvme0n1 /mnt
+> > dd if=/dev/zero of=/mnt/z.img&
+> > sleep 10
+> > echo 1 > /sys/block/nvme0n1/device/device/remove
+> > 
+> > 2) dd hang is observed and /dev/nvme0n1 is gone actually
+> 
+> Sorry to jump in so late.
+> 
+> For an ungraceful nvme removal, like a surpirse hot unplug, the driver
+> sets the capacity to 0 and that effectively ends all dirty page writers
+> that could stall forward progress on the removal. And that 0 capacity
+> should also cause 'dd' to exit.
 
-This is confusing to user, and is different from page fault due
-to poison in RAM memory, also some helpful information is lost.
+Actually nvme device has been gone, and the hang just happens in
+balance_dirty_pages() from generic_perform_write().
 
-Channel dax backend driver's poison detection to the filesystem
-such that instead of reporting VM_FAULT_SIGBUS, it could report
-VM_FAULT_HWPOISON.
+The issue should be triggered on all kinds of disks which can be hot-unplug,
+and it can be duplicated on both ublk and nvme easily.
 
-Change from v2:
-  Convert -EHWPOISON to -EIO to prevent EHWPOISON errno from leaking
-out to block read(2) - suggested by Matthew.
+> 
+> But this is not an ungraceful removal, so we're not getting that forced
+> behavior. Could we use the same capacity trick here after flushing any
+> outstanding dirty pages?
 
-Signed-off-by: Jane Chu <jane.chu@oracle.com>
----
- drivers/nvdimm/pmem.c | 2 +-
- fs/dax.c              | 4 ++--
- include/linux/mm.h    | 2 ++
- 3 files changed, 5 insertions(+), 3 deletions(-)
+set_capacity(0) has been called in del_gendisk() after fsync_bdev() &
+__invalidate_device(), but I understand FS code just try best to flush dirty
+pages. And when the bdev is gone, these un-flushed dirty pages need cleanup,
+otherwise they can't be used any more.
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index ceea55f621cc..46e094e56159 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -260,7 +260,7 @@ __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
- 		long actual_nr;
- 
- 		if (mode != DAX_RECOVERY_WRITE)
--			return -EIO;
-+			return -EHWPOISON;
- 
- 		/*
- 		 * Set the recovery stride is set to kernel page size because
-diff --git a/fs/dax.c b/fs/dax.c
-index 2ababb89918d..18f9598951f1 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1498,7 +1498,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
- 
- 		map_len = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size),
- 				DAX_ACCESS, &kaddr, NULL);
--		if (map_len == -EIO && iov_iter_rw(iter) == WRITE) {
-+		if (map_len == -EHWPOISON && iov_iter_rw(iter) == WRITE) {
- 			map_len = dax_direct_access(dax_dev, pgoff,
- 					PHYS_PFN(size), DAX_RECOVERY_WRITE,
- 					&kaddr, NULL);
-@@ -1506,7 +1506,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
- 				recovery = true;
- 		}
- 		if (map_len < 0) {
--			ret = map_len;
-+			ret = (map_len == -EHWPOISON) ? -EIO : map_len;
- 			break;
- 		}
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1f79667824eb..e4c974587659 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3217,6 +3217,8 @@ static inline vm_fault_t vmf_error(int err)
- {
- 	if (err == -ENOMEM)
- 		return VM_FAULT_OOM;
-+	else if (err == -EHWPOISON)
-+		return VM_FAULT_HWPOISON;
- 	return VM_FAULT_SIGBUS;
- }
- 
--- 
-2.18.4
+
+Thanks,
+Ming
 
