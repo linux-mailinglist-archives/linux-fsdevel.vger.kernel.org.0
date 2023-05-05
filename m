@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A77336F8821
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 19:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4916E6F8826
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 19:53:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233238AbjEERxS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 13:53:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50818 "EHLO
+        id S233288AbjEERxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 13:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233240AbjEERxF (ORCPT
+        with ESMTP id S233244AbjEERxG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 13:53:05 -0400
+        Fri, 5 May 2023 13:53:06 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E39AB1CFC3;
-        Fri,  5 May 2023 10:52:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE3071E982;
+        Fri,  5 May 2023 10:52:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=tRPpby2rMu2NLvHtx5ki6m3gwlYWmaps8hx8ma/FO2U=; b=VBwbQgwe2nF6iZeSoL8vN8xpol
-        q/UY52aJzbLL3/VFfTI1Gw1jjSqxRQjmjQu4lAePa8ezVwrzQ2TdnXZtxAd/tP8DS7GZvxQ+G0tLg
-        okkAHJyv9OaO6Zpfl0z107RnG8VvV5oGU+1V/Is0eLgLwv6TM1y/rxPfv+G/V3kXvGJ+0ErKQ0ipt
-        BZRJ80H71CSDhnH8ZKf/9O6/eNGGHZ44LFxpWrmn25SGydZ7rYC7rZth2w3oblDhKTO8IUAGKAmHE
-        f1gp8WdlDICtK5C0qi0a8mjiSEjO8DuZqzFLXAKzM9RZTvSHrkpUXg/WGD3pTkb50gfwQy4Ns3pjb
-        qTNvZGtQ==;
+        bh=PftJAtevBIpcdkQlFxHSahqWE3P7x4yJYsMQeUWHuyI=; b=28VL/MdfYUsZt3JCE2mLtReXyd
+        dZjn3IRD07fpiMxt5+i68e5e9vWajtQfU5Cn3f+sPBvGH5OIOSPDGei2cwGzlb18Wj7Fhk3dVw9OA
+        E9BpoYGC1Qa8phgLBXxBXnhJq+5Z2f+QtQzE2pX9Coj+cZmXLfJw6G9qGW6hfcoP8pUIXkRJsr0zC
+        eCAk23auQIeAby2dTFPMcCinBqsPuWzsagD72eXLfDyKO6M2Xa5QnBTquD/XLaxSloZYQENOxNSmx
+        ajJaSoLDpoJL+zD7+3vzyBV+25V2IsnhYuiQH4HS3Cru/A3mgGo8JLwH3Mloj1flf/eb+b3VKTPoS
+        Pz4cOGtg==;
 Received: from 66-46-223-221.dedicated.allstream.net ([66.46.223.221] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1puzb0-00BSyB-34;
-        Fri, 05 May 2023 17:51:55 +0000
+        id 1puzb2-00BSyO-08;
+        Fri, 05 May 2023 17:51:56 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: [PATCH 7/9] fs: add a method to shut down the file system
-Date:   Fri,  5 May 2023 13:51:30 -0400
-Message-Id: <20230505175132.2236632-8-hch@lst.de>
+Subject: [PATCH 8/9] xfs: wire up sops->shutdown
+Date:   Fri,  5 May 2023 13:51:31 -0400
+Message-Id: <20230505175132.2236632-9-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230505175132.2236632-1-hch@lst.de>
 References: <20230505175132.2236632-1-hch@lst.de>
@@ -54,79 +54,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a new ->shutdown super operation that can be used to tell the file
-system to shut down, and call it from newly created holder ops when the
-block device under a file system shuts down.
-
-This only covers the main block device for "simple" file systems using
-get_tree_bdev / mount_bdev.  File systems their own get_tree method
-or opening additional devices will need to set up their own
-blk_holder_ops.
+Wire up the shutdown method to shut down the file system when the
+underlying block device is marked dead.  Add a new message to
+clearly distinguish this shutdown reason from other shutdowns.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/super.c         | 21 +++++++++++++++++++--
- include/linux/fs.h |  1 +
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ fs/xfs/xfs_fsops.c | 3 +++
+ fs/xfs/xfs_mount.h | 1 +
+ fs/xfs/xfs_super.c | 8 ++++++++
+ 3 files changed, 12 insertions(+)
 
-diff --git a/fs/super.c b/fs/super.c
-index 012ce140080375..f127589700ab25 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1206,6 +1206,22 @@ int get_tree_keyed(struct fs_context *fc,
- EXPORT_SYMBOL(get_tree_keyed);
+diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
+index 13851c0d640bc8..9ebb8333a30800 100644
+--- a/fs/xfs/xfs_fsops.c
++++ b/fs/xfs/xfs_fsops.c
+@@ -534,6 +534,9 @@ xfs_do_force_shutdown(
+ 	} else if (flags & SHUTDOWN_CORRUPT_ONDISK) {
+ 		tag = XFS_PTAG_SHUTDOWN_CORRUPT;
+ 		why = "Corruption of on-disk metadata";
++	} else if (flags & SHUTDOWN_DEVICE_REMOVED) {
++		tag = XFS_PTAG_SHUTDOWN_IOERROR;
++		why = "Block device removal";
+ 	} else {
+ 		tag = XFS_PTAG_SHUTDOWN_IOERROR;
+ 		why = "Metadata I/O Error";
+diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+index f3269c0626f057..a3aa954477d0dc 100644
+--- a/fs/xfs/xfs_mount.h
++++ b/fs/xfs/xfs_mount.h
+@@ -454,6 +454,7 @@ void xfs_do_force_shutdown(struct xfs_mount *mp, uint32_t flags, char *fname,
+ #define SHUTDOWN_FORCE_UMOUNT	(1u << 2) /* shutdown from a forced unmount */
+ #define SHUTDOWN_CORRUPT_INCORE	(1u << 3) /* corrupt in-memory structures */
+ #define SHUTDOWN_CORRUPT_ONDISK	(1u << 4)  /* corrupt metadata on device */
++#define SHUTDOWN_DEVICE_REMOVED	(1u << 5) /* device removed underneath us */
  
- #ifdef CONFIG_BLOCK
-+static void fs_mark_dead(struct block_device *bdev)
+ #define XFS_SHUTDOWN_STRINGS \
+ 	{ SHUTDOWN_META_IO_ERROR,	"metadata_io" }, \
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index bc17ad350aea5a..3abe5ae96cc59b 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1156,6 +1156,13 @@ xfs_fs_free_cached_objects(
+ 	return xfs_reclaim_inodes_nr(XFS_M(sb), sc->nr_to_scan);
+ }
+ 
++static void
++xfs_fs_shutdown(
++	struct super_block	*sb)
 +{
-+	struct super_block *sb;
-+
-+	sb = get_super(bdev);
-+	if (!sb)
-+		return;
-+
-+	if (sb->s_op->shutdown)
-+		sb->s_op->shutdown(sb);
-+	drop_super(sb);
++	xfs_force_shutdown(XFS_M(sb), SHUTDOWN_DEVICE_REMOVED);
 +}
 +
-+static const struct blk_holder_ops fs_holder_ops = {
-+	.mark_dead		= fs_mark_dead,
-+};
- 
- static int set_bdev_super(struct super_block *s, void *data)
- {
-@@ -1248,7 +1264,8 @@ int get_tree_bdev(struct fs_context *fc,
- 	if (!fc->source)
- 		return invalf(fc, "No source specified");
- 
--	bdev = blkdev_get_by_path(fc->source, mode, fc->fs_type, NULL);
-+	bdev = blkdev_get_by_path(fc->source, mode, fc->fs_type,
-+				  &fs_holder_ops);
- 	if (IS_ERR(bdev)) {
- 		errorf(fc, "%s: Can't open blockdev", fc->source);
- 		return PTR_ERR(bdev);
-@@ -1333,7 +1350,7 @@ struct dentry *mount_bdev(struct file_system_type *fs_type,
- 	if (!(flags & SB_RDONLY))
- 		mode |= FMODE_WRITE;
- 
--	bdev = blkdev_get_by_path(dev_name, mode, fs_type, NULL);
-+	bdev = blkdev_get_by_path(dev_name, mode, fs_type, &fs_holder_ops);
- 	if (IS_ERR(bdev))
- 		return ERR_CAST(bdev);
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 21a98168085641..cf3042641b9b30 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1932,6 +1932,7 @@ struct super_operations {
- 				  struct shrink_control *);
- 	long (*free_cached_objects)(struct super_block *,
- 				    struct shrink_control *);
-+	void (*shutdown)(struct super_block *sb);
+ static const struct super_operations xfs_super_operations = {
+ 	.alloc_inode		= xfs_fs_alloc_inode,
+ 	.destroy_inode		= xfs_fs_destroy_inode,
+@@ -1169,6 +1176,7 @@ static const struct super_operations xfs_super_operations = {
+ 	.show_options		= xfs_fs_show_options,
+ 	.nr_cached_objects	= xfs_fs_nr_cached_objects,
+ 	.free_cached_objects	= xfs_fs_free_cached_objects,
++	.shutdown		= xfs_fs_shutdown,
  };
  
- /*
+ static int
 -- 
 2.39.2
 
