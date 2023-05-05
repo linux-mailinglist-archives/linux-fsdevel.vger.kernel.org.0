@@ -2,80 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DF526F8619
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 17:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A92AE6F8632
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 17:51:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232934AbjEEPqD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 11:46:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43164 "EHLO
+        id S232946AbjEEPv5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 11:51:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232060AbjEEPqC (ORCPT
+        with ESMTP id S232934AbjEEPv4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 11:46:02 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36D541490D;
-        Fri,  5 May 2023 08:46:01 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id 98e67ed59e1d1-24e2bbec3d5so1431854a91.3;
-        Fri, 05 May 2023 08:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683301560; x=1685893560;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PeJDF4qNyObb/6dnFVDbh66VJOaqj9OlNV5gVoC6Lw0=;
-        b=ebChKD9JPNufACPPpce7Y36WdoKdtJnEgc472nYmg+3STxvplm1sSK2Xx8kf83TcqL
-         BX1o46mJB9gs4k9aj9vd8GvU6FG8zcgR+80Q7iHHHzt5sSoCQxrha8ZWrAVqiGYh9kwj
-         jRksz39E3pzbBJ5N2IDtOTzNvK2K/RKWSxhWND9eNT+dFhw7pRclnkyE8WeBjGW1h20k
-         Soz/FUBG8C0R4v+N9JsPibT1rsEK6yyTIxOOIagO9CXo40nRo4WXSHDczqSAIKqr/lIc
-         k5vhf5ImNmDMCRXfs8M/V9qzMJxpq4KH8r9EwqBZ/+zM9ZTjGXdj32TRVawJM7uQUCD8
-         l/tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683301560; x=1685893560;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PeJDF4qNyObb/6dnFVDbh66VJOaqj9OlNV5gVoC6Lw0=;
-        b=DNdtjZxrQdKLF73G/LnK4bpbAS0Qnmz1loUUk1sFa3ybkHk8JljVI2UFqv7fvSh3Us
-         1owpc5Gm3ESBarAdDmHYHvQ60lGXGpCIioMh9DSvKA5v0xBkGAtLbEcPYfsVDDUalmzs
-         Y36fnBYZztIz7GAHZtbAzgqAXeb+qs3gCY8Ol5UAxd2sunIXezpw+X55UbOwe4mmwtDz
-         m0ZLP3nAFhLQEkGg+yOPn05z+Ny+uJB6EJe0z14t3t35csqUuogH7OLGhNXF3lfiK8DK
-         suByD4uVIiFYJk+2n5IMJWCwO3EZT5JLFNH63R5R8Kty0t46JS1S57xg7OWutJuZ8I15
-         HtmQ==
-X-Gm-Message-State: AC+VfDx8F42hYM8H7Wb7gvUhfOGYlJgXEAzq2kcm844zI3APLKFeeMsw
-        PNsXX6ur/YEZx8O3lUpSCck=
-X-Google-Smtp-Source: ACHHUZ7M2wd6LkEFeDGvz3O5vsG8s4it92wRRoKH04Hgq6XGzWSlObPg43+1PTuNxpYTkjmKJyq69g==
-X-Received: by 2002:a17:90a:d498:b0:24e:10b3:c9cc with SMTP id s24-20020a17090ad49800b0024e10b3c9ccmr1992324pju.14.1683301560335;
-        Fri, 05 May 2023 08:46:00 -0700 (PDT)
-Received: from localhost (2603-800c-1a02-1bae-a7fa-157f-969a-4cde.res6.spectrum.com. [2603:800c:1a02:1bae:a7fa:157f:969a:4cde])
-        by smtp.gmail.com with ESMTPSA id ja18-20020a170902efd200b001a64c4023aesm1966839plb.36.2023.05.05.08.45.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 May 2023 08:45:59 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Fri, 5 May 2023 05:45:58 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Jiri Wiesner <jwiesner@suse.de>
-Subject: Re: [RFC PATCH 3/3] cgroup: Do not take css_set_lock in
- cgroup_show_path
-Message-ID: <ZFUktg4Yxa30jRBX@slm.duckdns.org>
-References: <20230502133847.14570-1-mkoutny@suse.com>
- <20230502133847.14570-4-mkoutny@suse.com>
+        Fri, 5 May 2023 11:51:56 -0400
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1BAB19B3;
+        Fri,  5 May 2023 08:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=D3eQNN+vnOPT9R19W492S4vuaEu+35M7RtDV7XczIYg=; b=MeZjr3d0iFRlF+pPnv4sE+ANOQ
+        OkAItowNJrYfdfCtTjna3CFNHCy9a4hMMbQlXSKj3aXaWDoCF1yVhEKpEmHJdMAcILnSslrqacZxZ
+        jWqyB0xfwHenaJn5b+ypP3jJIm2yuHRBPSHOrt8HCHJreXX+RiuHYWVRq+xKrCUTIz9TiqmE4oQ+W
+        Tl2NXBQ1VwUEV1gAASJ+hChoQx3tmLTqlGOSny/AwkTV+Ddre46TcmzQczx1TAcKu9Wpjxje0K/VM
+        yHP31fvmYDkxcwLSWbMnLvmAY63uaQXV9Iy3Ieda4qXI/yAnbSqg8HvhdeYWoz8oQ99jurqK5wy4M
+        ni+IeCyg==;
+Received: from [177.189.3.64] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1puxil-001weL-Bp; Fri, 05 May 2023 17:51:48 +0200
+Message-ID: <12aa446b-39c7-c9fb-c3a4-70bfb57d9bbc@igalia.com>
+Date:   Fri, 5 May 2023 12:51:41 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230502133847.14570-4-mkoutny@suse.com>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 1/2] btrfs: Introduce the virtual_fsid feature
+Content-Language: en-US
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>, linux-btrfs@vger.kernel.org
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
+        kernel-dev@igalia.com, vivek@collabora.com,
+        ludovico.denittis@collabora.com, johns@valvesoftware.com,
+        nborisov@suse.com
+References: <20230504170708.787361-1-gpiccoli@igalia.com>
+ <20230504170708.787361-2-gpiccoli@igalia.com>
+ <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,33 +61,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-
-On Tue, May 02, 2023 at 03:38:47PM +0200, Michal Koutný wrote:
-> /proc/$pid/mountinfo may accumulate lots of entries (causing frequent
-> re-reads of whole file) or lots cgroupfs entries alone.
-> The cgroupfs entries rendered with cgroup_show_path() may increase/be
-> subject of css_set_lock contention causing further slowdown -- not only
-> mountinfo rendering but any other css_set_lock user.
+On 05/05/2023 04:21, Qu Wenruo wrote:
+> [...]
+> Exactly, the biggest problem is the multi-device support.
 > 
-> We leverage the fact that mountinfo reading happens with namespace_sem
-> taken and hierarchy roots thus cannot be freed concurrently.
-> 
-> There are three relevant nodes for each cgroupfs entry:
-> 
->         R ... cgroup hierarchy root
->         M ... mount root
->         C ... reader's cgroup NS root
-> 
-> mountinfo is supposed to show path from C to M.
+> Btrfs needs to search and assemble all devices of a multi-device
+> filesystem, which is normally handled by things like LVM/DMraid, thus
+> other traditional fses won't need to bother that.
 
-At least for cgroup2, the path from C to M isn't gonna change once NS is
-established, right? Nothing can be moved or renamed while the NS root is
-there. If so, can't we just cache the formatted path and return the same
-thing without any locking? The proposed changes seem a bit too brittle to
-me.
+Hi Qu, thanks a bunch for your feedback, and for validating my
+understanding of the issue!
 
-Thanks.
 
--- 
-tejun
+>  [...]
+> 
+> I would prefer a much simpler but more explicit method.
+> 
+> Just introduce a new compat_ro feature, maybe call it SINGLE_DEV.
+> 
+> By this, we can avoid multiple meanings of the same super member, nor
+> need any special mount option.
+> Remember, mount option is never a good way to enable/disable a new feature.
+> 
+> The better method to enable/disable a feature should be mkfs and btrfstune.
+> 
+> Then go mostly the same of your patch, but maybe with something extra:
+> 
+> - Disbale multi-dev code
+>    Include device add/replace/removal, this is already done in your
+>    patch.
+> 
+> - Completely skip device scanning
+>    I see no reason to keep btrfs with SINGLE_DEV feature to be added to
+>    the device list at all.
+>    It only needs to be scanned at mount time, and never be kept in the
+>    in-memory device list.
+> 
+
+This seems very interesting, but I'm a bit confused on how that would
+work with 2 identical filesystem images mounted at the same time.
+
+Imagine you have 2 devices, /dev/sda1 and /dev/sda2 holding the exact
+same image, with the SINGLE_DEV feature set. They are identical, and
+IIUC no matter if we skip scanning or disable any multi-device approach,
+in the end both have the *same* fsid. How do we track this in the btrfs
+code now? Once we try to mount the second one, it'll try to add the same
+entity to the fs_uuids list...
+
+That's the problem I faced when investigating the code and why the
+proposal is to "spoof" the fsid with some random generated one.
+
+Also, one more question: why do you say "Remember, mount option is never
+a good way to enable/disable a new feature"? I'm not expert in
+filesystems (by far heh), so I'm curious to fully understand your
+point-of-view.
+
+From my naive viewpoint, seems a mount option is "cheaper" than
+introducing a new feature in the OS that requires changes on btrfs
+userspace applications as well as to track incompatibilities in
+different kernel versions.
+
+Thanks again,
+
+
+Guilherme
