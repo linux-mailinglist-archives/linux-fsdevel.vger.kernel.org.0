@@ -2,43 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AAEF6F880E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 19:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 562876F8811
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 19:52:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233221AbjEERwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 13:52:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50618 "EHLO
+        id S232695AbjEERwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 13:52:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233205AbjEERwt (ORCPT
+        with ESMTP id S233209AbjEERwu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 13:52:49 -0400
+        Fri, 5 May 2023 13:52:50 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B397F1F4BF;
-        Fri,  5 May 2023 10:52:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949BA203E0;
+        Fri,  5 May 2023 10:52:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=ifMkRij8nI82A7W3OrolnA1MZaZFLCyCuCFDtjFdqjg=; b=MHYRypZnxHGI6bvB89Ag3pPZ8M
-        yHXC3IpteaKJGX/ZHiNjV698TU13wfd4xYcTnl7o4i55gGyms5+VTsaXdWGoCthKvx0DMFNjkyDuO
-        h8w3+IaDhgXuqI8CLHkt8MQoc+BkSYhHp9eNQbHdfjhVyNEs3tVaS3v9XqR1fYoEAZrgeym6DiGX4
-        4xu5ffXD+GhRcTs5mG1jfCRI0F/qO4Te6GAD3kXwXjk5haXFyQv189iDmOJKqRlJcdwW/dW/NqVlv
-        +sGjWUa5Ez3B1/lKvxyTZJaA6QYiQEwPsMb3IR/wF9jskxppePnf/YiAFV7NRQXEF3zjxJhEE8Y9H
-        zPm9Ev5A==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=Mo1wG2ZHhDRN2Kxva783ZntuoaR3kzM5rBfQE5yUx54=; b=xLtgYqsmC3jS+RKpzPYzBT6rPm
+        G0nkxiInGyV7RrQ4Ex3T3JJAG+byGYwQvp52v5jf1BMFR6eLW9I8ngzSNOdAgjGgPVm8cEVeZ4o7n
+        lMXyu+QfQ8IFei2OvAJnIXjFWwVr22HWIOpGWVxJA6fe72EQRNF7iyO9nbkmKoLx9gGSi+aJLFSQU
+        djA6Cn+EteRI+RzEoQxQyYZEKKwb22YqxsaMjmVwEQksGxdz29lKKHfF9pzvzbWgkQ9nkILyfcm/w
+        C2/UW7eq6fDOjH7rwaPTZhjz3+bCAyoarIDj/Luif6FBZBbg2BgNE5SyOkr/9djxDpfsF+C2CVmKo
+        Th+hYNqQ==;
 Received: from 66-46-223-221.dedicated.allstream.net ([66.46.223.221] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1puzao-00BSwG-0H;
-        Fri, 05 May 2023 17:51:42 +0000
+        id 1puzau-00BSx5-0k;
+        Fri, 05 May 2023 17:51:48 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: introduce bdev holder ops and a file system shutdown method
-Date:   Fri,  5 May 2023 13:51:23 -0400
-Message-Id: <20230505175132.2236632-1-hch@lst.de>
+Subject: [PATCH 1/9] block: consolidate the shutdown logic in blk_mark_disk_dead and del_gendisk
+Date:   Fri,  5 May 2023 13:51:24 -0400
+Message-Id: <20230505175132.2236632-2-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230505175132.2236632-1-hch@lst.de>
+References: <20230505175132.2236632-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
@@ -52,51 +54,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+blk_mark_disk_dead does very similar work a a section of del_gendisk:
 
-this series fixes the long standing problem that we never had a good way
-to communicate block device events to the user of the block device.
+ - set the GD_DEAD flag
+ - set the capacity to zero
+ - start a queue drain
 
-It fixes this by introducing a new set of holder ops registered at
-blkdev_get_by_* time for the exclusive holder, and then wire that up
-to a shutdown super operation to report the block device remove to the
-file systems.
+but del_gendisk also sets QUEUE_FLAG_DYING on the queue if it is owned by
+the disk, sets the capacity to zero before starting the drain, and both
+with sending a uevent and kernel message for this fake capacity change.
 
-Diffstat:
- block/bdev.c                        |  106 ++++++++++++++++++++----------------
- block/fops.c                        |    2 
- block/genhd.c                       |   57 +++++++++++++------
- block/ioctl.c                       |    3 -
- drivers/block/drbd/drbd_nl.c        |    3 -
- drivers/block/pktcdvd.c             |    5 +
- drivers/block/rnbd/rnbd-srv.c       |    2 
- drivers/block/xen-blkback/xenbus.c  |    2 
- drivers/block/zram/zram_drv.c       |    2 
- drivers/md/bcache/super.c           |    2 
- drivers/md/dm.c                     |    2 
- drivers/md/md.c                     |    2 
- drivers/mtd/devices/block2mtd.c     |    4 -
- drivers/nvme/target/io-cmd-bdev.c   |    2 
- drivers/s390/block/dasd_genhd.c     |    2 
- drivers/target/target_core_iblock.c |    2 
- drivers/target/target_core_pscsi.c  |    3 -
- fs/btrfs/dev-replace.c              |    2 
- fs/btrfs/volumes.c                  |    6 +-
- fs/erofs/super.c                    |    2 
- fs/ext4/super.c                     |    3 -
- fs/f2fs/super.c                     |    4 -
- fs/jfs/jfs_logmgr.c                 |    2 
- fs/nfs/blocklayout/dev.c            |    5 +
- fs/nilfs2/super.c                   |    2 
- fs/ocfs2/cluster/heartbeat.c        |    2 
- fs/reiserfs/journal.c               |    5 +
- fs/super.c                          |   21 ++++++-
- fs/xfs/xfs_fsops.c                  |    3 +
- fs/xfs/xfs_mount.h                  |    1 
- fs/xfs/xfs_super.c                  |   21 ++++++-
- include/linux/blk_types.h           |    2 
- include/linux/blkdev.h              |    9 ++-
- include/linux/fs.h                  |    1 
- kernel/power/swap.c                 |    4 -
- mm/swapfile.c                       |    3 -
- 36 files changed, 196 insertions(+), 103 deletions(-)
+Move the exact logic from the more heavily used del_gendisk into
+blk_mark_disk_dead and then call blk_mark_disk_dead from del_gendisk.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ block/genhd.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
+
+diff --git a/block/genhd.c b/block/genhd.c
+index 90c402771bb570..461999e9489937 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -583,13 +583,22 @@ EXPORT_SYMBOL(device_add_disk);
+  */
+ void blk_mark_disk_dead(struct gendisk *disk)
+ {
++	/*
++	 * Fail any new I/O.
++	 */
+ 	set_bit(GD_DEAD, &disk->state);
+-	blk_queue_start_drain(disk->queue);
++	if (test_bit(GD_OWNS_QUEUE, &disk->state))
++		blk_queue_flag_set(QUEUE_FLAG_DYING, disk->queue);
+ 
+ 	/*
+ 	 * Stop buffered writers from dirtying pages that can't be written out.
+ 	 */
+-	set_capacity_and_notify(disk, 0);
++	set_capacity(disk, 0);
++
++	/*
++	 * Prevent new I/O from crossing bio_queue_enter().
++	 */
++	blk_queue_start_drain(disk->queue);
+ }
+ EXPORT_SYMBOL_GPL(blk_mark_disk_dead);
+ 
+@@ -632,18 +641,7 @@ void del_gendisk(struct gendisk *disk)
+ 	fsync_bdev(disk->part0);
+ 	__invalidate_device(disk->part0, true);
+ 
+-	/*
+-	 * Fail any new I/O.
+-	 */
+-	set_bit(GD_DEAD, &disk->state);
+-	if (test_bit(GD_OWNS_QUEUE, &disk->state))
+-		blk_queue_flag_set(QUEUE_FLAG_DYING, q);
+-	set_capacity(disk, 0);
+-
+-	/*
+-	 * Prevent new I/O from crossing bio_queue_enter().
+-	 */
+-	blk_queue_start_drain(q);
++	blk_mark_disk_dead(disk);
+ 
+ 	if (!(disk->flags & GENHD_FL_HIDDEN)) {
+ 		sysfs_remove_link(&disk_to_dev(disk)->kobj, "bdi");
+-- 
+2.39.2
+
