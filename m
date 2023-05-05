@@ -2,93 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B34B86F87BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 19:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AAEF6F880E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 19:52:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232892AbjEERha (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 13:37:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37480 "EHLO
+        id S233221AbjEERwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 13:52:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230297AbjEERh3 (ORCPT
+        with ESMTP id S233205AbjEERwt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 13:37:29 -0400
-Received: from libero.it (smtp-18.italiaonline.it [213.209.10.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8744D1A497
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 10:37:23 -0700 (PDT)
-Received: from [192.168.1.27] ([84.220.135.124])
-        by smtp-18.iol.local with ESMTPA
-        id uzMvpOVFunRXQuzMvp9fjg; Fri, 05 May 2023 19:37:21 +0200
-x-libjamoibt: 1601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;
-        t=1683308242; bh=T/9mLaDxPYIUtdStdPhJ5kTqDrjvgqe6d1DkCQBtGRU=;
-        h=From;
-        b=GD3FwoYxy/t8EPVYa9ZrxjlfEzRQuty1bheBDpOb1agltRuw5tXveIyYRuTwfW3zU
-         +vkg0EipHM9GVq8ur8CMWMmw/gVcJ3RpzO2GxjK57gCFlhiQpHZQcUNo3PMgRyH+Q3
-         xVfUteG/63USKQ/ciiPlLFKbQfSDmOJbHnCXl/VKaXh7rxL+mApyWCOw7Z6tcx3mWp
-         oecRka8bNCyf9dTuRmao9PZe1OSMRh72WCE0iU9Sl4gG7DLLBB1jqpmEvPsz5hDRQe
-         diW0DExbLHfRjJ+Q3ezy44iEJ98ZHvzEzgD/vstXf762sx0yw4cIi4tLyJoQ9fuWzB
-         q/BpkkS2CRoVQ==
-X-CNFS-Analysis: v=2.4 cv=P678xAMu c=1 sm=1 tr=0 ts=64553ed2 cx=a_exe
- a=qXvG/jU0CoArVbjQAwGUAg==:117 a=qXvG/jU0CoArVbjQAwGUAg==:17
- a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=V2sgnzSHAAAA:8 a=dysqGvRpkUls-atsRrIA:9
- a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Z31ocT7rh6aUJxSkT1EX:22
-Message-ID: <d804ac0a-57f5-f06b-432c-c053a1109020@libero.it>
-Date:   Fri, 5 May 2023 19:37:21 +0200
+        Fri, 5 May 2023 13:52:49 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B397F1F4BF;
+        Fri,  5 May 2023 10:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=ifMkRij8nI82A7W3OrolnA1MZaZFLCyCuCFDtjFdqjg=; b=MHYRypZnxHGI6bvB89Ag3pPZ8M
+        yHXC3IpteaKJGX/ZHiNjV698TU13wfd4xYcTnl7o4i55gGyms5+VTsaXdWGoCthKvx0DMFNjkyDuO
+        h8w3+IaDhgXuqI8CLHkt8MQoc+BkSYhHp9eNQbHdfjhVyNEs3tVaS3v9XqR1fYoEAZrgeym6DiGX4
+        4xu5ffXD+GhRcTs5mG1jfCRI0F/qO4Te6GAD3kXwXjk5haXFyQv189iDmOJKqRlJcdwW/dW/NqVlv
+        +sGjWUa5Ez3B1/lKvxyTZJaA6QYiQEwPsMb3IR/wF9jskxppePnf/YiAFV7NRQXEF3zjxJhEE8Y9H
+        zPm9Ev5A==;
+Received: from 66-46-223-221.dedicated.allstream.net ([66.46.223.221] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1puzao-00BSwG-0H;
+        Fri, 05 May 2023 17:51:42 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: introduce bdev holder ops and a file system shutdown method
+Date:   Fri,  5 May 2023 13:51:23 -0400
+Message-Id: <20230505175132.2236632-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Reply-To: kreijack@inwind.it
-Subject: Re: [PATCH 0/2] Supporting same fsid filesystems mounting on btrfs
-Content-Language: en-US
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        Anand Jain <anand.jain@oracle.com>, johns@valvesoftware.com,
-        vivek@collabora.com, ludovico.denittis@collabora.com
-Cc:     clm@fb.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-        dsterba@suse.com, linux-fsdevel@vger.kernel.org,
-        kernel@gpiccoli.net, kernel-dev@igalia.com
-References: <20230504170708.787361-1-gpiccoli@igalia.com>
- <b8f55fc3-80b3-be46-933a-4cfbd3c76a71@oracle.com>
- <7320368b-fd62-1482-1043-2f9cb1e2a5b9@igalia.com>
-From:   Goffredo Baroncelli <kreijack@libero.it>
-In-Reply-To: <7320368b-fd62-1482-1043-2f9cb1e2a5b9@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfAt5J0GWzvIAl+bMcWqkZzVYv31JrSim+wKKU6Iivwh+VFNaTRP6l6rrkFhtmtRspOmxIm+f/+dSydJoUSVPOTYTALsF+hVW7GuJOD5BLjSpxCs/Ag/D
- VWffa53wlLAN76xz1BRu1SYZcIE7JMvlExAzqUElmxaPnJ6x6J2ishloXDHkirP6iX8Oa1H6BAVC9VapmPXp/dO0O549WBl0UEJxtBpiPWoGLVDwTzQWyxo9
- NhWKYdsCZacuLQN1DxU1YpoGUENj7VV3l7reWT6rr3Hc++vARr1lhvNePKQ4+q7vgd5f3k2zXMjn3UxsDQv7L4jEP1JibvQfdZC8+nXwy86YCOPiHs5V1IB5
- vmCAZWdY0goEPOHa83mgo/cMlnlV+EPklxTRfjPxH7FPWy7G4LlspX+dmm8qIeZpdmy8pHWkV+YTCklhItSKbdUw2kj6sdSidHKKMpV6V2zgxu5Z7R3xNK2E
- IAYJGOl/jGMWhYEwBMOHqP7iPU2nuvdUjZOQGMmnifJEae/outx7Yt3xhZMHCmLGRZPT/uuUNUENo+HbW0neD2S9S+uUJyJtCQwwPw==
-X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/05/2023 18.27, Guilherme G. Piccoli wrote:
-> On 05/05/2023 02:16, Anand Jain wrote:
->> [...]
->>>
->>> https://lore.kernel.org/linux-btrfs/c702fe27-8da9-505b-6e27-713edacf723a@igalia.com/
->>
->> Confused about your requirement: 2 identical filesystems mounted
->> simultaneously or just one at a time? Latter works. Bugs were fixed.
-> 
-> Hi Anand, apologies - in fact, in this old-ish thread I mentioned we
-> need to mount one at a time, and this corresponds for the majority of
-> the use case. BUT...it seems that for the installing step we require to
-> have *both* mounted at the same time for a while, so it was a change in
-> the requirement since last analysis, and this is really what we
-> implemented here.
+Hi all,
 
-What if the different images have different uuid from the begin ?
+this series fixes the long standing problem that we never had a good way
+to communicate block device events to the user of the block device.
 
+It fixes this by introducing a new set of holder ops registered at
+blkdev_get_by_* time for the exclusive holder, and then wire that up
+to a shutdown super operation to report the block device remove to the
+file systems.
 
--- 
-gpg @keyserver.linux.it: Goffredo Baroncelli <kreijackATinwind.it>
-Key fingerprint BBF5 1610 0B64 DAC6 5F7D  17B2 0EDA 9B37 8B82 E0B5
-
+Diffstat:
+ block/bdev.c                        |  106 ++++++++++++++++++++----------------
+ block/fops.c                        |    2 
+ block/genhd.c                       |   57 +++++++++++++------
+ block/ioctl.c                       |    3 -
+ drivers/block/drbd/drbd_nl.c        |    3 -
+ drivers/block/pktcdvd.c             |    5 +
+ drivers/block/rnbd/rnbd-srv.c       |    2 
+ drivers/block/xen-blkback/xenbus.c  |    2 
+ drivers/block/zram/zram_drv.c       |    2 
+ drivers/md/bcache/super.c           |    2 
+ drivers/md/dm.c                     |    2 
+ drivers/md/md.c                     |    2 
+ drivers/mtd/devices/block2mtd.c     |    4 -
+ drivers/nvme/target/io-cmd-bdev.c   |    2 
+ drivers/s390/block/dasd_genhd.c     |    2 
+ drivers/target/target_core_iblock.c |    2 
+ drivers/target/target_core_pscsi.c  |    3 -
+ fs/btrfs/dev-replace.c              |    2 
+ fs/btrfs/volumes.c                  |    6 +-
+ fs/erofs/super.c                    |    2 
+ fs/ext4/super.c                     |    3 -
+ fs/f2fs/super.c                     |    4 -
+ fs/jfs/jfs_logmgr.c                 |    2 
+ fs/nfs/blocklayout/dev.c            |    5 +
+ fs/nilfs2/super.c                   |    2 
+ fs/ocfs2/cluster/heartbeat.c        |    2 
+ fs/reiserfs/journal.c               |    5 +
+ fs/super.c                          |   21 ++++++-
+ fs/xfs/xfs_fsops.c                  |    3 +
+ fs/xfs/xfs_mount.h                  |    1 
+ fs/xfs/xfs_super.c                  |   21 ++++++-
+ include/linux/blk_types.h           |    2 
+ include/linux/blkdev.h              |    9 ++-
+ include/linux/fs.h                  |    1 
+ kernel/power/swap.c                 |    4 -
+ mm/swapfile.c                       |    3 -
+ 36 files changed, 196 insertions(+), 103 deletions(-)
