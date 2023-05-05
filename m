@@ -2,98 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 95A716F882A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 19:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F02A6F8877
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 20:10:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233257AbjEERxb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 13:53:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50778 "EHLO
+        id S233254AbjEESKl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 14:10:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233254AbjEERxH (ORCPT
+        with ESMTP id S233206AbjEESKh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 13:53:07 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 517491A614;
-        Fri,  5 May 2023 10:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=2SmGIpoDx0Ds5vs7kDwnN/QWoJfhRzBJ9mJDaeg/+bk=; b=haNSkBRxXecHMPmvns4lB4M/Xa
-        QMRkLTeIgQzH13hTk8Ha3ZumDptcETH0RMgQghByd4StNvkWMEKih3fTZv2Wfe1sYvs78oI35w4aa
-        IHYCpBJ9j5QOP5WRS+ZMtRG5iQVbsl1b5UhPR+1GLPbNa05t7108KsoTpHi9Er32/f5qP7vjA6U9y
-        X8Q1roWrIHXtLx5xePRDArLOwVH2cpt9bD1A2BM9Ow6jm3tPFa3f/5p2e2cGoOO4BNqzORWy3KCz5
-        EIojBxbljkNE/5d9MYWuwvT1SsMuG/KhpnUjVhQZW9LyOyw0iPpp3RksxJAAFa0pZCL0jRw+JrJc8
-        SDiFy5oA==;
-Received: from 66-46-223-221.dedicated.allstream.net ([66.46.223.221] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1puzb3-00BSyZ-0j;
-        Fri, 05 May 2023 17:51:57 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: [PATCH 9/9] xfs: wire up the ->mark_dead holder operation for log and RT devices
-Date:   Fri,  5 May 2023 13:51:32 -0400
-Message-Id: <20230505175132.2236632-10-hch@lst.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230505175132.2236632-1-hch@lst.de>
-References: <20230505175132.2236632-1-hch@lst.de>
+        Fri, 5 May 2023 14:10:37 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E229519D5F
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 11:10:32 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-b9d8b458e10so2742228276.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 May 2023 11:10:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1683310232; x=1685902232;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QVZYG1JecNO86jzNV6C/AMNw6VQt+fJvqwCxq5mp/Nc=;
+        b=JuehaV/RJK9Y4fUOdxkcZEuqDGAuEF/acJdDqJ45XbKARUoqq4czDg4ZH8mqWvQs0W
+         C3cMUZ3VtCr6q/eI+6qJp58nulUMjZvQdZpvpUFXRdmOfRfhasZuNayk1xVHyGVy9Mwz
+         ItoP45q/KUOjBJ5HUc+Vlm240zAnqes7cusDh4wsBFNSxkmDsbQVgr1QY7ENaCb2Pf+o
+         stmyjKNibly7r3/lcAzIGX4ZSS4stgbgtYjMfq5c0cI/ZADNQtKt98fqV/f8MiQv11Tt
+         rfeoXeDHmM1lnkcbyLTsW9UrOEazY/VwbfsLiL1Vyfp7oqXyyedjHeSP3hv1vKGbwqQn
+         8juQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683310232; x=1685902232;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QVZYG1JecNO86jzNV6C/AMNw6VQt+fJvqwCxq5mp/Nc=;
+        b=JF0lZwjD0Ttk78SMLQX8wQ6Kinx1KLrWibiyQuiIte73SvUzoHuuCeDd3uVkNgHfK3
+         lBsfcseOByXEou5j61DffEgGeUvti7YoT+QPPmlmM5T3Spquk3CqcfUzbsaxJuxb+vke
+         3rKlEc5omCxnKM8fPfmIVrLJvttlmW+k56qsT5jEhyrG1Fl42ATFNSwgOZS8yPMoO5rb
+         qGpxem7JqCKgYhkip8LMwC4RDv/js34enOfBtbyMe4/fy2JWpVroS+E5fSZZ0eHq7L29
+         BwcMYfjhyZKTDBWBDSStMPlmJ/o/COVEv5Hd8a0T/ET1d13w8t9y6eWXn3a6oy/ik/0G
+         KBTg==
+X-Gm-Message-State: AC+VfDzis3I8aKD2TXFpkIAnnuLMST0FJJNYMgnTdvcIy9OXul5SWZXQ
+        BZx7vc8OPf929w4100ANEMa4+Sq2ejNob/Y39mWV+g==
+X-Google-Smtp-Source: ACHHUZ7QHqfeTFCV6iTpJ174mK2XnlUcdiV6R/LWDFZ2cFLepn3d5BnEaLb2X1/400R6vZerp7fSwFYV9RLQ6kw5Ucs=
+X-Received: by 2002:a25:19d7:0:b0:b97:1e2e:a4e5 with SMTP id
+ 206-20020a2519d7000000b00b971e2ea4e5mr2351347ybz.40.1683310231779; Fri, 05
+ May 2023 11:10:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230501165450.15352-1-surenb@google.com> <20230501165450.15352-36-surenb@google.com>
+ <ZFIPmnrSIdJ5yusM@dhcp22.suse.cz> <CAJuCfpGsvWupMbasqvwcMYsOOPxTQqi1ed5+=vyu-yoPQwwybg@mail.gmail.com>
+ <ZFNoVfb+1W4NAh74@dhcp22.suse.cz> <CAJuCfpGUtw6cbjLsksGJKATZfTV0FEYRXwXT0pZV83XqQydBgg@mail.gmail.com>
+ <ZFTA8xVzxWc345Ug@dhcp22.suse.cz>
+In-Reply-To: <ZFTA8xVzxWc345Ug@dhcp22.suse.cz>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 5 May 2023 11:10:20 -0700
+Message-ID: <CAJuCfpFOLyZKvtqHuukOZvegxGHVUcAtbh3Egt+01yZ9kcEAew@mail.gmail.com>
+Subject: Re: [PATCH 35/40] lib: implement context capture support for tagged allocations
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     akpm@linux-foundation.org, kent.overstreet@linux.dev,
+        vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+        mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
+        liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
+        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        x86@kernel.org, peterx@redhat.com, david@redhat.com,
+        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+        nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
+        muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+        pasha.tatashin@soleen.com, yosryahmed@google.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        andreyknvl@gmail.com, keescook@chromium.org,
+        ndesaulniers@google.com, gregkh@linuxfoundation.org,
+        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-modules@vger.kernel.org,
+        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement a set of holder_ops that shut down the file system when the
-block device used as log or RT device is removed undeneath the file
-system.
+On Fri, May 5, 2023 at 1:40=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrote=
+:
+>
+> On Thu 04-05-23 09:22:07, Suren Baghdasaryan wrote:
+> [...]
+> > > But even then I really detest an additional allocation from this cont=
+ext
+> > > for every single allocation request. There GFP_NOWAIT allocation for
+> > > steckdepot but that is at least cached and generally not allocating.
+> > > This will allocate for every single allocation.
+> >
+> > A small correction here. alloc_tag_create_ctx() is used only for
+> > allocations which we requested to capture the context. So, this last
+> > sentence is true for allocations we specifically marked to capture the
+> > context, not in general.
+>
+> Ohh, right. I have misunderstood that part. Slightly better, still
+> potentially a scalability issue because hard to debug memory leaks
+> usually use a generic caches (for kmalloc). So this might be still a lot
+> of objects to track.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/xfs/xfs_super.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Yes, generally speaking, if a single code location is allocating very
+frequently then enabling context capture for it will generate many
+callstack buffers.
 
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 3abe5ae96cc59b..9c2401d9548d83 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -377,6 +377,17 @@ xfs_setup_dax_always(
- 	return 0;
- }
- 
-+static void
-+xfs_hop_mark_dead(
-+	struct block_device	*bdev)
-+{
-+	xfs_force_shutdown(bdev->bd_holder, SHUTDOWN_DEVICE_REMOVED);
-+}
-+
-+static const struct blk_holder_ops xfs_holder_ops = {
-+	.mark_dead		= xfs_hop_mark_dead,
-+};
-+
- STATIC int
- xfs_blkdev_get(
- 	xfs_mount_t		*mp,
-@@ -386,7 +397,7 @@ xfs_blkdev_get(
- 	int			error = 0;
- 
- 	*bdevp = blkdev_get_by_path(name, FMODE_READ|FMODE_WRITE|FMODE_EXCL,
--				    mp, NULL);
-+				    mp, &xfs_holder_ops);
- 	if (IS_ERR(*bdevp)) {
- 		error = PTR_ERR(*bdevp);
- 		xfs_warn(mp, "Invalid device [%s], error=%d", name, error);
--- 
-2.39.2
+Your note about use of generic caches makes me think we still have a
+small misunderstanding. We tag at the allocation call site, not based
+on which cache is used. Two kmalloc calls from different code
+locations will have unique codetags for each, so enabling context
+capture for one would not result in context capturing for the other
+one.
 
+>
+> > > There must be a better way.
+> >
+> > Yeah, agree, it would be good to avoid allocations in this path. Any
+> > specific ideas on how to improve this? Pooling/caching perhaps? I
+> > think kmem_cache does some of that already but maybe something else?
+>
+> The best I can come up with is a preallocated hash table to store
+> references to stack depots with some additional data associated. The
+> memory overhead could be still quite big but the hash tables could be
+> resized lazily.
+
+Ok, that seems like the continuation of you suggestion in another
+thread to combine identical callstack traces. That's an excellent
+idea! I think it would not be hard to implement. Thanks!
+
+> --
+> Michal Hocko
+> SUSE Labs
