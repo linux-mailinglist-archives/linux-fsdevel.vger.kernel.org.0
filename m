@@ -2,168 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B8F6F84ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 16:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED0046F855E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 17:16:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232218AbjEEOjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 10:39:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34008 "EHLO
+        id S232552AbjEEPQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 11:16:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231764AbjEEOjT (ORCPT
+        with ESMTP id S232557AbjEEPQF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 10:39:19 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30983C38
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 07:39:17 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 78CE85C0313;
-        Fri,  5 May 2023 10:39:15 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 05 May 2023 10:39:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1683297555; x=1683383955; bh=wVa/J106VvsZqfC08p7UYupOdc0cKf0b/WA
-        ttADbguk=; b=M0RIXS2xW9Nn6GB5oZlJI80LIN4xOMMfdmWjXLGaZfZGcBmY0fE
-        6a0F8UENNBmpcCNbDtgAux3GSQtBcRbX1bPsVAbnUOwaE3DdUok0TWTnleEKRK+Y
-        hfxMOBlkuB8fKeLBUca4971lBKjuuxo8xwUFutyS7+ROlkpHWdX9/iWG9xrkU6uC
-        XAgoMGKFyvr2b37uNjPF3D3jeBnUZGorZcNlzh9Gwzj09ffOO5Jn/V4Bg5dLcodL
-        rInlI7UWLCT1LmAm1zUwkRxZ832ETmysUPYzAMi8+Tfy+6CaUoGFPjnt+axed7J1
-        WUOUkGvpUI7NuZwpmYw3eS0BfIWAnNMSY6Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683297555; x=1683383955; bh=wVa/J106VvsZqfC08p7UYupOdc0cKf0b/WA
-        ttADbguk=; b=H2tguZ6I15X6RnWajp1sgGL1uZBS9i+oOv1a2VnpIldu8fKDZ7P
-        bmxe6wWGFC0pFKDQXSlJVb7AtR/NASy1ScWLWH5zPnssV7hoqmJJWMfXjZBMFV5X
-        tmi534YVD4l80mLsLl+6pP36kDwXe9sUj/4v35Es84y24PWHMCo7ovOtmUre8cRi
-        MDQzsdAMHk6anIWlHaKvX3CgkfDgyNXrLx6jY7M567T1jJ7EXNpeEX+GaaFpJ8Y9
-        K/Qm9SaZkz6K1sdxR1VHudNUDhnSl+/m1Gjr+ilCXlUzEYQ/8kfOzCZr34+oKY3R
-        gGqDf1oDd+Upy8jv6D1fetlz8+YNHzWvGTA==
-X-ME-Sender: <xms:ExVVZOZphQgOnovgAX5FyR8nA-1rhaGYEe5-OuLS4q5Rvlr4iZZFTQ>
-    <xme:ExVVZBbX8NlGUrOMzfh6Q1vT7AHSfAfxDeDVHuvToavssAqXIfdWAzaDb0QeMKJsn
-    SyAMkJVhXTnoSef>
-X-ME-Received: <xmr:ExVVZI-wcYBNzbJiSXeEnYE-bHaD9ZQ4Jyg-dt0hFhAaOsDkeWEc7OLw_DDfppGlKyIBhXwmmcDsB_VlpCiX5MXJY549uSuYmeD_JZLQRWKmCYGUJ2na>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeefvddgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepkeehveekleekkeejhfehgeeftdffuddujeej
-    ieehheduueelleeghfeukeefvedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:ExVVZAoTwN9G_0CWNVkMQ-EQP_MhOA4XZyqROsAwjSjb_okw3rEY4w>
-    <xmx:ExVVZJrbXkvhF1rH_kTSFoZxxCu6pyN3qdRnbYuzaRns0Mz4uUth4Q>
-    <xmx:ExVVZOR4js9FjvfIzJmvaYTwOCxgEfP_SILTOlRWT59ZhzmzK106Tw>
-    <xmx:ExVVZA0CrMGzYxVyjrGHa9CiKlyl0StX8O9EhMf-xagT64Vbj_QNyg>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 May 2023 10:39:14 -0400 (EDT)
-Message-ID: <fc6fe539-64ae-aa35-8b6e-3b22e07af31f@fastmail.fm>
-Date:   Fri, 5 May 2023 16:39:12 +0200
+        Fri, 5 May 2023 11:16:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323392719
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 08:15:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683299719;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kkrG6TrT6vUt7l/1yAEGc4UPeZE85BI5/e7CQ9gxkxM=;
+        b=bPMVmpuW8pXu0KfXPhgVpE9pu6zWngKu5a5omHVvF6fPTLJ9TehIybYlw7iTiKUBExjUaO
+        0oNP7x1GiHnn+gow4SlCvuPsTGoqokJoNrnuqnLnuRVMca+ngR2KjW6inUoAoLy7A4NpJu
+        E2e9NCA2tF+89wENlv3QrQRMhOKrku4=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-322-SW1QOOFqOTKdHqFwfzjR0Q-1; Fri, 05 May 2023 11:15:18 -0400
+X-MC-Unique: SW1QOOFqOTKdHqFwfzjR0Q-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3064d0b726fso690776f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 May 2023 08:15:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683299717; x=1685891717;
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :references:cc:to:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kkrG6TrT6vUt7l/1yAEGc4UPeZE85BI5/e7CQ9gxkxM=;
+        b=hG0lwSHF3e2szp+ygbF0ydDoQ++dbj4uXiJRvFbcDoXHHhiaOD4b6T9Y4W5e27W9sM
+         iVvtrkhspiKgQdcc8nPyDaV4Ja1XDWYmttXoa76HGvU6n/qHFd9+FSWmVxryMU6q273i
+         HdTZ89u8GKOp0ZcvC7lNlMtknXzQewmkGPxfQnQEldizG01W2kYHwRHEq2n/4129rZVL
+         DtihLHsJCug1q+U8pkUEgAVxwQ767nSQTRgQt8l3ON9OcA/u1DriKorIbO+p2RIy06tt
+         kW615QNeQYQcLH469wE8uujs8WDqjrI/43bdUz2AXiirzhnb5Ya3Beid5y5Z7J0yOovV
+         pn/g==
+X-Gm-Message-State: AC+VfDx1otOvhXZtJ64UVNOGLPQpdvIxZs0Kc7xwrDZzN5yBuAVN7CUT
+        bvC0XvZjZhNpYw3fBIOPUOanT8icz5sjrcLAc00aTssZRPbS/ZLeJmcIQ6peYvDCCJZCLgS2X+F
+        +Rw/jUv+eR/5HxntGyzbu+btsaQ==
+X-Received: by 2002:adf:e852:0:b0:2f2:783f:ae4a with SMTP id d18-20020adfe852000000b002f2783fae4amr1565323wrn.32.1683299717085;
+        Fri, 05 May 2023 08:15:17 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5JphXg6YSvIF6EBsByLfX+Q1TzMx3ezx0pIYW00N+N1esYSq7PB5q/K6U1CiU7dEnLsZInQg==
+X-Received: by 2002:adf:e852:0:b0:2f2:783f:ae4a with SMTP id d18-20020adfe852000000b002f2783fae4amr1565295wrn.32.1683299716737;
+        Fri, 05 May 2023 08:15:16 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c71f:6900:2b25:fc69:599e:3986? (p200300cbc71f69002b25fc69599e3986.dip0.t-ipconnect.de. [2003:cb:c71f:6900:2b25:fc69:599e:3986])
+        by smtp.gmail.com with ESMTPSA id k17-20020adfe3d1000000b00301a351a8d6sm2704788wrm.84.2023.05.05.08.15.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 May 2023 08:15:16 -0700 (PDT)
+Message-ID: <c50ac5e4-3f84-c52a-561d-de6530e617d7@redhat.com>
+Date:   Fri, 5 May 2023 17:15:15 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [fuse-devel] [PATCH] fuse: add a new flag to allow shared mmap in
- FOPEN_DIRECT_IO mode
-To:     Hao Xu <hao.xu@linux.dev>, fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-References: <20230505081652.43008-1-hao.xu@linux.dev>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <20230505081652.43008-1-hao.xu@linux.dev>
+ Thunderbird/102.10.0
+Content-Language: en-US
+To:     Sam James <sam@gentoo.org>
+Cc:     Michael McCracken <michael.mccracken@gmail.com>,
+        linux-kernel@vger.kernel.org, serge@hallyn.com, tycho@tycho.pizza,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-hardening@lists.openwall.com
+References: <20230504213002.56803-1-michael.mccracken@gmail.com>
+ <fbf37518-328d-c08c-7140-5d09d7a2674f@redhat.com> <87pm7f9q3q.fsf@gentoo.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH] sysctl: add config to make randomize_va_space RO
+In-Reply-To: <87pm7f9q3q.fsf@gentoo.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-6.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 5/5/23 10:16, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
+On 05.05.23 09:46, Sam James wrote:
 > 
-> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
-> coherency, e.g. network filesystems. Thus shared mmap is disabled since
-> it leverages page cache and may write to it, which may cause
-> inconsistence. But FOPEN_DIRECT_IO can be used not for coherency but to
-> reduce memory footprint as well, e.g. reduce guest memory usage with
-> virtiofs. Therefore, add a new flag FOPEN_DIRECT_IO_SHARED_MMAP to allow
-> shared mmap for these cases.
+> David Hildenbrand <david@redhat.com> writes:
 > 
-> Signed-off-by: Hao Xu <howeyxu@tencent.com>
-> ---
->   fs/fuse/file.c            | 11 ++++++++---
->   include/uapi/linux/fuse.h |  2 ++
->   2 files changed, 10 insertions(+), 3 deletions(-)
+>> On 04.05.23 23:30, Michael McCracken wrote:
+>>> Add config RO_RANDMAP_SYSCTL to set the mode of the randomize_va_space
+>>> sysctl to 0444 to disallow all runtime changes. This will prevent
+>>> accidental changing of this value by a root service.
+>>> The config is disabled by default to avoid surprises.
+>>
+>> Can you elaborate why we care about "accidental changing of this value
+>> by a root service"?
+>>
+>> We cannot really stop root from doing a lot of stupid things (e.g.,
+>> erase the root fs), so why do we particularly care here?
 > 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 89d97f6188e0..655896bdb0d5 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -161,7 +161,8 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
->   	}
->   
->   	if (isdir)
-> -		ff->open_flags &= ~FOPEN_DIRECT_IO;
-> +		ff->open_flags &=
-> +			~(FOPEN_DIRECT_IO | FOPEN_DIRECT_IO_SHARED_MMAP);
->   
->   	ff->nodeid = nodeid;
->   
-> @@ -2509,8 +2510,12 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
->   		return fuse_dax_mmap(file, vma);
->   
->   	if (ff->open_flags & FOPEN_DIRECT_IO) {
-> -		/* Can't provide the coherency needed for MAP_SHARED */
-> -		if (vma->vm_flags & VM_MAYSHARE)
-> +		/* Can't provide the coherency needed for MAP_SHARED.
-> +		 * So disable it if FOPEN_DIRECT_IO_SHARED_MMAP is not
-> +		 * set, which means we do need strong coherency.
-> +		 */
-> +		if (!(ff->open_flags & FOPEN_DIRECT_IO_SHARED_MMAP) &&
-> +		    vma->vm_flags & VM_MAYSHARE)
->   			return -ENODEV;
->   
->   		invalidate_inode_pages2(file->f_mapping);
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 1b9d0dfae72d..003dcf42e8c2 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -314,6 +314,7 @@ struct fuse_file_lock {
->    * FOPEN_STREAM: the file is stream-like (no file position at all)
->    * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
->    * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on the same inode
-> + * FOPEN_DIRECT_IO_SHARED_MMAP: allow shared mmap when FOPEN_DIRECT_IO is set
->    */
->   #define FOPEN_DIRECT_IO		(1 << 0)
->   #define FOPEN_KEEP_CACHE	(1 << 1)
-> @@ -322,6 +323,7 @@ struct fuse_file_lock {
->   #define FOPEN_STREAM		(1 << 4)
->   #define FOPEN_NOFLUSH		(1 << 5)
->   #define FOPEN_PARALLEL_DIRECT_WRITES	(1 << 6)
-> +#define FOPEN_DIRECT_IO_SHARED_MMAP	(1 << 7)
+> (I'm really not defending the utility of this, fwiw).
+> 
+> In the past, I've seen fuzzing tools and other debuggers try to set
+> it, and it might be that an admin doesn't realise that. But they could
+> easily set other dangerous settings unsuitable for production, so...
 
-Thanks, that is what I had in my mind as well.
+At least fuzzing tools randomly toggling it could actually find real 
+problems. Debugging tools ... makes sense that they might be using it.
 
-I don't have a strong opinion on it (so don't change it before Miklos 
-commented), but maybe FOPEN_DIRECT_IO_WEAK? Just in case there would be 
-later on other conditions that need to be weakened? The comment would 
-say then something like
-"Weakens FOPEN_DIRECT_IO enforcement, allows MAP_SHARED mmap"
+What I understand is, that it's more of a problem that the system 
+continues running and the disabled randomization isn't revealed to an 
+admin easily.
 
+If we really care, not sure what's better: maybe we want to disallow 
+disabling it only in a security lockdown kernel? Or at least warn the 
+user when disabling it? (WARN_TAINT?)
+
+-- 
 Thanks,
-Bernd
+
+David / dhildenb
 
