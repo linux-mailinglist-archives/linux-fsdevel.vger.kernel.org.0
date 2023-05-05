@@ -2,286 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1005F6F79FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 02:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 415F96F7A97
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 03:18:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbjEEAKu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 May 2023 20:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35864 "EHLO
+        id S229816AbjEEBSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 May 2023 21:18:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229997AbjEEAKr (ORCPT
+        with ESMTP id S229459AbjEEBSa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 May 2023 20:10:47 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD121328B
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 May 2023 17:10:44 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id 41be03b00d2f7-5191796a483so785825a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 May 2023 17:10:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1683245444; x=1685837444;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D8O5/MWGnrN/HKZ6iCIcOlLCZpNsEHpNrNhu83CyTnE=;
-        b=Ji0/fNIKPzOGoEPnZErf7BsAxIz54Y4D47kCHJLPzmtZqvf8AfVu6fE0O/57tqhlG/
-         BpsA3MHBhVH04xTSyCanoshSHk1Vd4eNpQPqZ/dPBlYV80MsDo1PwwLuHQMWvtxYzbSK
-         TlBXBBXG0XjNR1NRTD7KzZbuYQZKvHufoe8GFNm9kDK/OfDYSYEu1V3okXJUjLyfPQn+
-         r7jmPxFU8Pm/PKD+2KI/i00U4MK9EE1TFifAJOvJBUHAarimzoFLLS4tiDYL2OzvfWfk
-         SsW75ymP/FxB9G2PZ/zKz0oltBaflFNieleClDbHQZLFVQwcH2hYizVOZdP35Ispkxkr
-         JqsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683245444; x=1685837444;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D8O5/MWGnrN/HKZ6iCIcOlLCZpNsEHpNrNhu83CyTnE=;
-        b=ec+bBJYykwR5krZ8Al7yiIh9eUxolfcs4LwATMsJkFSRC/2yQ6Ai6lh/FnI6ulhBjZ
-         6y2Fx22ljNYHTSmfZFfBWMZ4K24j5odgVnBgW/vlw7kD6h633Yh1dPSfiZOOFGCnp7/6
-         npzGk9Hk9qPSumrlijAUbIeaxa0O6M3mWBhedPiv7kZqWXYQ4dHzVtQLsTewx5HV8OEr
-         HaQ4hmVjbJx1wnyPtAhM5jT+G2ZfA5pbU4tZ6q2tYtxuqcc+JhPizpW0k6H3wkgnbOTG
-         trC9051FP2Rm21YcsQ5ctjbl8HZvQM4m5v1pWQl7K7SoVXSSQ3Z6WZTcAqCU2IpZmgk+
-         J58w==
-X-Gm-Message-State: AC+VfDwS7mgx8JjOVMMHpcsEHQSi9wjiIUJhGIVzeIypufDC8/71ecxz
-        moQgeMsuxTPTHA7xl7ZO0EPqTQ==
-X-Google-Smtp-Source: ACHHUZ7z+JA9nzv+3mJ3KYYHotTw7V86SXzf1wg9+Gu98bWmRaKAr2pIwEoeGjWXhWiIrAH+cIxkxg==
-X-Received: by 2002:a17:902:f691:b0:1ac:2cc6:296d with SMTP id l17-20020a170902f69100b001ac2cc6296dmr4284993plg.34.1683245444236;
-        Thu, 04 May 2023 17:10:44 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
-        by smtp.gmail.com with ESMTPSA id b7-20020a170902d50700b001a19f3a661esm147731plg.138.2023.05.04.17.10.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 May 2023 17:10:43 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1puj20-00BROo-FR; Fri, 05 May 2023 10:10:40 +1000
-Date:   Fri, 5 May 2023 10:10:40 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Neil Brown <neilb@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Theodore T'so <tytso@mit.edu>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] fs: add infrastructure for multigrain inode
- i_m/ctime
-Message-ID: <20230505001040.GL3223426@dread.disaster.area>
-References: <20230503142037.153531-1-jlayton@kernel.org>
- <20230503142037.153531-2-jlayton@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230503142037.153531-2-jlayton@kernel.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Thu, 4 May 2023 21:18:30 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084CC12494;
+        Thu,  4 May 2023 18:18:28 -0700 (PDT)
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 344LwpWM000776;
+        Fri, 5 May 2023 01:18:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id; s=corp-2023-03-30;
+ bh=2wYkjBDt1hBOZQJuPalAgsuRCkMbwfLqlGTFy2J9KjI=;
+ b=NC9caCb6iQGuv+7gEcCP/YuUwU7qkFLzQj/MgFYyjq6MLp6AbA5dPo9U+6EuWd4itCJn
+ 33xV1OmiA0J6CaQlHu7ErghWw0c1nlnr5ylGujEEVSgY9eqcikP11eUx2rqopIvELeJ6
+ 7L0pxYsj/ymBJHRyEmSetLxOKVjRq4uLexSp2JLnBLqkIVQUFMzNAqiK7vDYADLD2AkW
+ qEq+1aE1lWTJSXSDIcT8cI6E/p5xCdb8K7eU4e/JM+7kUq3i4a/3czPV2BxgYos5hmYh
+ Y/0mubBkoSzjghdXYxTkp8z8tER0A7VoK/V6Dbmbmw2Fl6XQJzZASJuz3SmNljb99z+1 xg== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3q8u9d3pkf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 05 May 2023 01:18:00 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34510RKd009860;
+        Fri, 5 May 2023 01:17:59 GMT
+Received: from brm-x62-16.us.oracle.com (brm-x62-16.us.oracle.com [10.80.150.37])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3q8sp9rvpe-1;
+        Fri, 05 May 2023 01:17:59 +0000
+From:   Jane Chu <jane.chu@oracle.com>
+To:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, ira.weiny@intel.com, willy@infradead.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3] dax: enable dax fault handler to report VM_FAULT_HWPOISON
+Date:   Thu,  4 May 2023 19:17:47 -0600
+Message-Id: <20230505011747.956945-1-jane.chu@oracle.com>
+X-Mailer: git-send-email 2.18.4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-04_15,2023-05-04_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 spamscore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2305050009
+X-Proofpoint-GUID: aiXFBile4Qv6bbV8wTMcalz3Cdbuc7eb
+X-Proofpoint-ORIG-GUID: aiXFBile4Qv6bbV8wTMcalz3Cdbuc7eb
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 03, 2023 at 10:20:32AM -0400, Jeff Layton wrote:
-> The VFS always uses coarse-grained timestamp updates for filling out the
-> ctime and mtime after a change. This has the benefit of allowing
-> filesystems to optimize away a lot metadata updates, down to around 1
-> per jiffy, even when a file is under heavy writes.
-> 
-> Unfortunately, this has always been an issue when we're exporting via
-> NFSv3, which relies on timestamps to validate caches. Even with NFSv4, a
-> lot of exported filesystems don't properly support a change attribute
-> and are subject to the same problems with timestamp granularity. Other
-> applications have similar issues (e.g backup applications).
-> 
-> Switching to always using fine-grained timestamps would improve the
-> situation, but that becomes rather expensive, as the underlying
-> filesystem will have to log a lot more metadata updates.
-> 
-> What we need is a way to only use fine-grained timestamps when they are
-> being actively queried.
-> 
-> The kernel always stores normalized ctime values, so only the first 30
-> bits of the tv_nsec field are ever used. Whenever the mtime changes, the
-> ctime must also change.
-> 
-> Use the 31st bit of the tv_nsec field to indicate that something has
-> queried the inode for the i_mtime or i_ctime. When this flag is set, on
-> the next timestamp update, the kernel can fetch a fine-grained timestamp
-> instead of the usual coarse-grained one.
-> 
-> This patch adds the infrastructure this scheme. Filesytems can opt
-> into it by setting the FS_MULTIGRAIN_TS flag in the fstype.
-> 
-> Later patches will convert individual filesystems over to use it.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/inode.c         | 52 ++++++++++++++++++++++++++++++++++++---
->  fs/stat.c          | 32 ++++++++++++++++++++++++
->  include/linux/fs.h | 61 +++++++++++++++++++++++++++++++++++++++++++++-
->  3 files changed, 141 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 4558dc2f1355..7f6189961d6a 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2030,6 +2030,7 @@ EXPORT_SYMBOL(file_remove_privs);
->  static int inode_needs_update_time(struct inode *inode, struct timespec64 *now)
->  {
->  	int sync_it = 0;
-> +	struct timespec64 ctime;
->  
->  	/* First try to exhaust all avenues to not sync */
->  	if (IS_NOCMTIME(inode))
-> @@ -2038,7 +2039,8 @@ static int inode_needs_update_time(struct inode *inode, struct timespec64 *now)
->  	if (!timespec64_equal(&inode->i_mtime, now))
->  		sync_it = S_MTIME;
->  
-> -	if (!timespec64_equal(&inode->i_ctime, now))
-> +	ctime = ctime_peek(inode);
-> +	if (!timespec64_equal(&ctime, now))
->  		sync_it |= S_CTIME;
->  
->  	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
-> @@ -2062,6 +2064,50 @@ static int __file_update_time(struct file *file, struct timespec64 *now,
->  	return ret;
->  }
->  
-> +/**
-> + * current_ctime - Return FS time (possibly fine-grained)
-> + * @inode: inode.
-> + *
-> + * Return the current time truncated to the time granularity supported by
-> + * the fs, as suitable for a ctime/mtime change.
-> + *
-> + * For a multigrain timestamp, if the ctime is flagged as having been
-> + * QUERIED, get a fine-grained timestamp.
-> + */
-> +struct timespec64 current_ctime(struct inode *inode)
-> +{
-> +	bool multigrain = is_multigrain_ts(inode);
-> +	struct timespec64 now;
-> +	long nsec = 0;
-> +
-> +	if (multigrain) {
-> +		atomic_long_t *pnsec = (atomic_long_t *)&inode->i_ctime.tv_nsec;
-> +
-> +		nsec = atomic_long_fetch_andnot(I_CTIME_QUERIED, pnsec);
-> +	}
-> +
-> +	if (nsec & I_CTIME_QUERIED) {
-> +		ktime_get_real_ts64(&now);
-> +	} else {
-> +		ktime_get_coarse_real_ts64(&now);
-> +
-> +		if (multigrain) {
-> +			/*
-> +			 * If we've recently fetched a fine-grained timestamp
-> +			 * then the coarse-grained one may be earlier than the
-> +			 * existing one. Just keep the existing ctime if so.
-> +			 */
-> +			struct timespec64 ctime = ctime_peek(inode);
-> +
-> +			if (timespec64_compare(&ctime, &now) > 0)
-> +				now = ctime;
-> +		}
-> +	}
-> +
-> +	return timestamp_truncate(now, inode);
-> +}
-> +EXPORT_SYMBOL(current_ctime);
+When multiple processes mmap() a dax file, then at some point,
+a process issues a 'load' and consumes a hwpoison, the process
+receives a SIGBUS with si_code = BUS_MCEERR_AR and with si_lsb
+set for the poison scope. Soon after, any other process issues
+a 'load' to the poisoned page (that is unmapped from the kernel
+side by memory_failure), it receives a SIGBUS with
+si_code = BUS_ADRERR and without valid si_lsb.
 
-I can't help but think this is easier to read/follow when structured
-to separate multigrain vs coarse logic completely like so:
+This is confusing to user, and is different from page fault due
+to poison in RAM memory, also some helpful information is lost.
 
-struct timespec64 current_ctime(struct inode *inode)
-{
-	struct timespec64 now, ctime;
-	long nsec;
+Channel dax backend driver's poison detection to the filesystem
+such that instead of reporting VM_FAULT_SIGBUS, it could report
+VM_FAULT_HWPOISON.
 
-	if (!is_multigrain_ts(inode)) {
-		ktime_get_coarse_real_ts64(&now);
-		goto out_truncate;
-	}
+Change from v2:
+  Convert -EHWPOISON to -EIO to prevent EHWPOISON errno from leaking
+out to block read(2) - suggested by Matthew.
 
-	nsec = atomic_long_fetch_andnot(I_CTIME_QUERIED,
-			(atomic_long_t *)&inode->i_ctime.tv_nsec);
+Signed-off-by: Jane Chu <jane.chu@oracle.com>
+---
+ drivers/nvdimm/pmem.c | 2 +-
+ fs/dax.c              | 4 ++--
+ include/linux/mm.h    | 2 ++
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
-	if (nsec & I_CTIME_QUERIED) {
-		ktime_get_real_ts64(&now);
-		goto out_truncate;
-	}
-
-	/*
-	 * If we've recently fetched a fine-grained timestamp then
-	 * the coarse-grained one may be earlier than the existing
-	 * one. Just keep the existing ctime if so.
-	 */
-	ktime_get_coarse_real_ts64(&now);
-	ctime = ctime_peek(inode);
-	if (timespec64_compare(&ctime, &now) > 0)
-		now = ctime;
-
-out_truncate:
-	return timestamp_truncate(now, inode);
-}
-
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 7c238da22ef0..11a7e277f53e 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -26,6 +26,38 @@
->  #include "internal.h"
->  #include "mount.h"
->  
-> +/**
-> + * generic_fill_multigrain_cmtime - Fill in the mtime and ctime and flag ctime as QUERIED
-> + * @request_mask: STATX_* values requested
-> + * @inode: inode from which to grab the c/mtime
-> + * @stat: where to store the resulting values
-> + *
-> + * Given @inode, grab the ctime and mtime out if it and store the result
-> + * in @stat. When fetching the value, flag it as queried so the next write
-> + * will use a fine-grained timestamp.
-> + */
-> +void generic_fill_multigrain_cmtime(u32 request_mask,struct inode *inode,
-> +					struct kstat *stat)
-> +{
-> +	atomic_long_t *pnsec = (atomic_long_t *)&inode->i_ctime.tv_nsec;
-> +
-> +	/* If neither time was requested, then just don't report it */
-> +	if (!(request_mask & (STATX_CTIME|STATX_MTIME))) {
-> +		stat->result_mask &= ~(STATX_CTIME|STATX_MTIME);
-> +		return;
-> +	}
-> +
-> +	stat->mtime = inode->i_mtime;
-> +	stat->ctime.tv_sec = inode->i_ctime.tv_sec;
-> +	/*
-> +	 * Atomically set the QUERIED flag and fetch the new value with
-> +	 * the flag masked off.
-> +	 */
-> +	stat->ctime.tv_nsec = atomic_long_fetch_or(I_CTIME_QUERIED, pnsec) &
-> +					~I_CTIME_QUERIED;
-> +}
-> +EXPORT_SYMBOL(generic_fill_multigrain_cmtime);
-
-Hmmm - why not just have a generic_fill_cmtime() function that hides
-multigrain behaviour from all the statx callers?
-
-Cheers,
-
-Dave.
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index ceea55f621cc..46e094e56159 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -260,7 +260,7 @@ __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
+ 		long actual_nr;
+ 
+ 		if (mode != DAX_RECOVERY_WRITE)
+-			return -EIO;
++			return -EHWPOISON;
+ 
+ 		/*
+ 		 * Set the recovery stride is set to kernel page size because
+diff --git a/fs/dax.c b/fs/dax.c
+index 2ababb89918d..18f9598951f1 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1498,7 +1498,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+ 
+ 		map_len = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size),
+ 				DAX_ACCESS, &kaddr, NULL);
+-		if (map_len == -EIO && iov_iter_rw(iter) == WRITE) {
++		if (map_len == -EHWPOISON && iov_iter_rw(iter) == WRITE) {
+ 			map_len = dax_direct_access(dax_dev, pgoff,
+ 					PHYS_PFN(size), DAX_RECOVERY_WRITE,
+ 					&kaddr, NULL);
+@@ -1506,7 +1506,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+ 				recovery = true;
+ 		}
+ 		if (map_len < 0) {
+-			ret = map_len;
++			ret = (map_len == -EHWPOISON) ? -EIO : map_len;
+ 			break;
+ 		}
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1f79667824eb..e4c974587659 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3217,6 +3217,8 @@ static inline vm_fault_t vmf_error(int err)
+ {
+ 	if (err == -ENOMEM)
+ 		return VM_FAULT_OOM;
++	else if (err == -EHWPOISON)
++		return VM_FAULT_HWPOISON;
+ 	return VM_FAULT_SIGBUS;
+ }
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.18.4
+
