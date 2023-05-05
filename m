@@ -2,50 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B3A166F88B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 20:39:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A529C6F88B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 20:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232218AbjEESjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 14:39:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47592 "EHLO
+        id S233284AbjEESjl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 14:39:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231580AbjEESjV (ORCPT
+        with ESMTP id S233254AbjEESjj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 14:39:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 327DC14E55
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 11:39:20 -0700 (PDT)
+        Fri, 5 May 2023 14:39:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E3BA1E996;
+        Fri,  5 May 2023 11:39:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BBE64612A1
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 18:39:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A46C433D2;
-        Fri,  5 May 2023 18:39:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 02AC8612A1;
+        Fri,  5 May 2023 18:39:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60143C433D2;
+        Fri,  5 May 2023 18:39:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683311959;
-        bh=jG5QsAgQy5Mjew+JAoL0OfLKEJrcHnLf8qAY4PJvrrE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=p9GDQu+vZszpETOyvfR4rHyQa1kwd6uFM8dbwfuK7e/KOge9Me3RcbD0r5s9CEEgI
-         2V9AOmfXwJhcVU871H3wbRE8s76IAWFArmonrcfdKCFPM3FMrwnMHpMmMdwhzvDTaD
-         VYuLBvTmIboasavp31nosHMD+Qnp8PS4gYDZdQlYc49geuoQFU8/0U8atgvy2Eh1+h
-         oTJqsknyjv2wBvh/cxXhCeSsQ1WNnPPwIhEaaOtJLwWC978+uUGZoJY+chewonkuxM
-         PRlBAnw+oyd9X7rp+Tu/Qkp5qLc0WlIuet91L2T9KJZsoP/wrhM1LLoD0EekA4RNDy
-         4/e+QwLTLgNPw==
-Subject: [PATCH v2 3/5] shmem: Add a per-directory xarray
-From:   Chuck Lever <cel@kernel.org>
-To:     hughd@google.com, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Date:   Fri, 05 May 2023 14:39:07 -0400
-Message-ID: <168331193783.20728.5584061722473821745.stgit@oracle-102.nfsv4bat.org>
-In-Reply-To: <168331111400.20728.2327812215536431362.stgit@oracle-102.nfsv4bat.org>
-References: <168331111400.20728.2327812215536431362.stgit@oracle-102.nfsv4bat.org>
-User-Agent: StGit/1.5
+        s=k20201202; t=1683311975;
+        bh=K/Y08sTCTSnRoZgjb16tDaF0uh6/O7C3F9BZfsmlEug=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vAI25Pqes2oc/YXzsbgTjpK1lOHAOBZzubxbrrbKnPrxL1srLXYw+IXxxMGi7koMM
+         fT5owlpm4xzf2xtwgMzeHwoFdpd/dZICCv2B2jml8B8BMjVWxogHtAUdpZXL2OeqOH
+         0VCfBBz102w5H5Act9Zr6zOhurMGPlKnAVW7xrI8DuGm/nEZVA7SSxBmGP3baSFHRQ
+         r5qnAGZGjZD4Pc/7nwE7l9s8HLOjKL1nN0SQuKvJFsvo9WgySG1LQtdIEWkuFuPpKj
+         6onOPa1+e9YQHzpLg+/8Fq6bYWZ9A5d18EcZWy71jbPLYIFgwZmY2NaG4A8An5nKWv
+         /eP8TF/+lhQqw==
+Date:   Fri, 5 May 2023 11:39:34 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 7/9] fs: add a method to shut down the file system
+Message-ID: <20230505183934.GH15394@frogsfrogsfrogs>
+References: <20230505175132.2236632-1-hch@lst.de>
+ <20230505175132.2236632-8-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230505175132.2236632-8-hch@lst.de>
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -54,96 +57,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
+On Fri, May 05, 2023 at 01:51:30PM -0400, Christoph Hellwig wrote:
+> Add a new ->shutdown super operation that can be used to tell the file
+> system to shut down, and call it from newly created holder ops when the
+> block device under a file system shuts down.
+> 
+> This only covers the main block device for "simple" file systems using
+> get_tree_bdev / mount_bdev.  File systems their own get_tree method
+> or opening additional devices will need to set up their own
+> blk_holder_ops.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Add the infrastructure for managing a per-directory
-directory-offset-to-dentry map. For the moment it is unused.
+Looks good,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- include/linux/shmem_fs.h |    2 ++
- mm/shmem.c               |   28 ++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
+--D
 
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 9029abd29b1c..c1a12eac778d 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -27,6 +27,8 @@ struct shmem_inode_info {
- 	atomic_t		stop_eviction;	/* hold when working on inode */
- 	struct timespec64	i_crtime;	/* file creation time */
- 	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
-+	struct xarray		doff_map;	/* dir offset to entry mapping */
-+	u32			next_doff;
- 	struct inode		vfs_inode;
- };
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index e48a0947bcaf..b78253996108 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -40,6 +40,8 @@
- #include <linux/fs_parser.h>
- #include <linux/swapfile.h>
- #include <linux/iversion.h>
-+#include <linux/xarray.h>
-+
- #include "swap.h"
- 
- static struct vfsmount *shm_mnt;
-@@ -2412,6 +2414,8 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
- 			inode->i_size = 2 * BOGO_DIRENT_SIZE;
- 			inode->i_op = &shmem_dir_inode_operations;
- 			inode->i_fop = &shmem_dir_operations;
-+			xa_init_flags(&info->doff_map, XA_FLAGS_ALLOC1);
-+			info->next_doff = 0;
- 			break;
- 		case S_IFLNK:
- 			/*
-@@ -2930,6 +2934,22 @@ static int shmem_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	return 0;
- }
- 
-+static struct xarray *shmem_doff_map(struct inode *dir)
-+{
-+	return &SHMEM_I(dir)->doff_map;
-+}
-+
-+/*
-+ * During fs teardown (eg. umount), a directory's doff_map might still
-+ * contain entries. xa_destroy() cleans out anything that remains.
-+ */
-+static void shmem_doff_map_destroy(struct inode *inode)
-+{
-+	struct xarray *xa = shmem_doff_map(inode);
-+
-+	xa_destroy(xa);
-+}
-+
- /*
-  * File creation. Allocate an inode, and we're done..
-  */
-@@ -3905,6 +3925,12 @@ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
- 	return 0;
- }
- 
-+#else /* CONFIG_TMPFS */
-+
-+static inline void shmem_doff_map_destroy(struct inode *dir)
-+{
-+}
-+
- #endif /* CONFIG_TMPFS */
- 
- static void shmem_put_super(struct super_block *sb)
-@@ -4052,6 +4078,8 @@ static void shmem_destroy_inode(struct inode *inode)
- {
- 	if (S_ISREG(inode->i_mode))
- 		mpol_free_shared_policy(&SHMEM_I(inode)->policy);
-+	if (S_ISDIR(inode->i_mode))
-+		shmem_doff_map_destroy(inode);
- }
- 
- static void shmem_init_inode(void *foo)
-
-
+> ---
+>  fs/super.c         | 21 +++++++++++++++++++--
+>  include/linux/fs.h |  1 +
+>  2 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 012ce140080375..f127589700ab25 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1206,6 +1206,22 @@ int get_tree_keyed(struct fs_context *fc,
+>  EXPORT_SYMBOL(get_tree_keyed);
+>  
+>  #ifdef CONFIG_BLOCK
+> +static void fs_mark_dead(struct block_device *bdev)
+> +{
+> +	struct super_block *sb;
+> +
+> +	sb = get_super(bdev);
+> +	if (!sb)
+> +		return;
+> +
+> +	if (sb->s_op->shutdown)
+> +		sb->s_op->shutdown(sb);
+> +	drop_super(sb);
+> +}
+> +
+> +static const struct blk_holder_ops fs_holder_ops = {
+> +	.mark_dead		= fs_mark_dead,
+> +};
+>  
+>  static int set_bdev_super(struct super_block *s, void *data)
+>  {
+> @@ -1248,7 +1264,8 @@ int get_tree_bdev(struct fs_context *fc,
+>  	if (!fc->source)
+>  		return invalf(fc, "No source specified");
+>  
+> -	bdev = blkdev_get_by_path(fc->source, mode, fc->fs_type, NULL);
+> +	bdev = blkdev_get_by_path(fc->source, mode, fc->fs_type,
+> +				  &fs_holder_ops);
+>  	if (IS_ERR(bdev)) {
+>  		errorf(fc, "%s: Can't open blockdev", fc->source);
+>  		return PTR_ERR(bdev);
+> @@ -1333,7 +1350,7 @@ struct dentry *mount_bdev(struct file_system_type *fs_type,
+>  	if (!(flags & SB_RDONLY))
+>  		mode |= FMODE_WRITE;
+>  
+> -	bdev = blkdev_get_by_path(dev_name, mode, fs_type, NULL);
+> +	bdev = blkdev_get_by_path(dev_name, mode, fs_type, &fs_holder_ops);
+>  	if (IS_ERR(bdev))
+>  		return ERR_CAST(bdev);
+>  
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 21a98168085641..cf3042641b9b30 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1932,6 +1932,7 @@ struct super_operations {
+  				  struct shrink_control *);
+>  	long (*free_cached_objects)(struct super_block *,
+>  				    struct shrink_control *);
+> +	void (*shutdown)(struct super_block *sb);
+>  };
+>  
+>  /*
+> -- 
+> 2.39.2
+> 
