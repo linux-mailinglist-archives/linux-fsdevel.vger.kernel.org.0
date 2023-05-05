@@ -2,154 +2,316 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6DF76F89B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 21:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D69C6F8A1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 22:22:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233435AbjEEToQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 15:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36322 "EHLO
+        id S232779AbjEEUWQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 16:22:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233443AbjEEToO (ORCPT
+        with ESMTP id S232588AbjEEUWO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 15:44:14 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5170F2699
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 12:44:12 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-b9e2b65d006so3320904276.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 May 2023 12:44:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683315851; x=1685907851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RvDT8zkuC4gVi0fnTc8i/Bkqd4YLxVEG0sioBwkCD+U=;
-        b=CIPVHcOLQdhTXogN62Mw/fCOLjlOwNM45thZp55/G0Y+4E4NexnUvB3vOtM2suLjdz
-         T1rh3EKQF9Q7DLBvkrQA96HMuJKK6ljz6sUoadVwmvME6+Lo2jBkjnaE4Kk2rVIFv44B
-         GTEHr7cll/pqo289odi2h8zMjdKiN7hEFK7aVA5CoC+HI1oO5ICufh8JDIXrvRDAevnP
-         hUDV1hbROSBKB8pVoWmLqfwYKVjSxXq1DDuUre5iez9QOh1dhd88hO/po3v9f9cizadN
-         32jf30WJaDhnMzH+nura2GGWCByQoFHbfZBMyldKQhm6BHH1vM5Us1DoF2dmrL50knMa
-         moaw==
+        Fri, 5 May 2023 16:22:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6D644A4
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 13:21:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683318087;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fsggkaMmsBvOy5xyONdITFWw/iHmRz4dl3tGfhzjtDI=;
+        b=AsFjbdPgh+Wyv+dUSCHG+cSIT9hLp+oJwF4hPJY2dVon5WDio+pwNGjk+unG7FAgvlM4IQ
+        ziM3qZQPg5Tn2FVyf044sYxkLxz7CiktUkFs1DRSRcPLwSs6xh0sihQk3diC05DRR/tFlC
+        KECQzO7obsc3ZKb/H5PrvPPlARgxFfA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-26-D5XTZotPOfSgXmSZwScdTw-1; Fri, 05 May 2023 16:21:26 -0400
+X-MC-Unique: D5XTZotPOfSgXmSZwScdTw-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-2f8c2258b48so785004f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 May 2023 13:21:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683315851; x=1685907851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RvDT8zkuC4gVi0fnTc8i/Bkqd4YLxVEG0sioBwkCD+U=;
-        b=P91rXTa1hFhmb8EdhS5jutF5UXpmGCO3K31d1zvnIH9/HaUyg0pNHHbg/owkxMVoen
-         7xihPVakPEIGYTeQMLqFljACwHi2CaNVMNj5A5wTgOLH/1lhi1P54PX81MkZ9ndSRVH5
-         UMn6dKV/JVIK0vDuoaQDFw7r2nW8Ct4uEGdmKvaVXN63OcJW2JmLNi3u/yUdknwmP9tY
-         eitRNzCvuQ9BIh8bMIox/XgiObyH9/YfmcKpfR39UUUkFpK8BY7fTTo2Lc0HkQQctsa4
-         w8Q9KupP5OFGUq2W1gHAcs68iyP38rVhPnKVxyMkLetM8m1vCxTpsJcsxiZeUlMv3Ayg
-         djLg==
-X-Gm-Message-State: AC+VfDxifCVMNfusIOqxYc/KIHUc+2JTpTa3Cnz2Kk5xlYa0LBKC9MuT
-        fSzTucJUSp9d+STR9OS4b34R0/1mcvO+zeGP7+Z8zg==
-X-Google-Smtp-Source: ACHHUZ47iup2wUFCWjaUVQFxudnhr3YZeYNUuAbCUUGTy47k/MsRgf5289v6Uo7/8hYFN/Owo0us95zjRkpUK8gmZes=
-X-Received: by 2002:a05:6902:100e:b0:b9e:5008:1773 with SMTP id
- w14-20020a056902100e00b00b9e50081773mr3418662ybt.15.1683315851287; Fri, 05
- May 2023 12:44:11 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683318085; x=1685910085;
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :references:cc:to:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fsggkaMmsBvOy5xyONdITFWw/iHmRz4dl3tGfhzjtDI=;
+        b=YDQh5HKZQj/JNnBKlTmRyg0aoeKHzb3T9vi+gNotZq9DfDqV7MAUQ3x2SVkh14nTD4
+         FQsV29Z26XBIDaPDqFg1/Ct7gv9qDW1rvUMsbW2OGlxL4QfoemwGrxauntZC1C9cFu8A
+         Nv3JsvYE+itBC+jD7Am+98/cWVAzmso3KJpdHtLIlymAZDW4zXka5J95QH4wlZ1lTBPT
+         1rfzLqWjoCm0+vp21gf1R81EXVhDaLORH4nBTiDiKOVY1Lr1DWx+vyuIeY336voZwGTz
+         CXpwyJm/k+vs3GCchcipL6Pe6aZnZi6a+pnDz6XY4Vnx3yPBRMhlq+QIwdiXkGh3vJUM
+         dSqA==
+X-Gm-Message-State: AC+VfDzSDkOtiMFLpXbQYkBw9Kpi3fpNn0TRLu238fv7k0boF86UHRjz
+        amyd8fqwIubVPmhsnnZoa7XYBCJg0xsPRSJ5htso5dmGe99Ehzo2jOkQFfgpc4fhAqy/VxmVc5n
+        qoNyBR5qskRnpu/Sbo8dJbjhn9g==
+X-Received: by 2002:a5d:4570:0:b0:2fe:c0ea:18b5 with SMTP id a16-20020a5d4570000000b002fec0ea18b5mr2183562wrc.35.1683318085030;
+        Fri, 05 May 2023 13:21:25 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7FviCLOGbcNtThAkyINVmphT4Em0kBlGhMilbIRI+JzZwkEaqvefxxGYCQlWMeGdaho0noZA==
+X-Received: by 2002:a5d:4570:0:b0:2fe:c0ea:18b5 with SMTP id a16-20020a5d4570000000b002fec0ea18b5mr2183541wrc.35.1683318084651;
+        Fri, 05 May 2023 13:21:24 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c71f:6900:2b25:fc69:599e:3986? (p200300cbc71f69002b25fc69599e3986.dip0.t-ipconnect.de. [2003:cb:c71f:6900:2b25:fc69:599e:3986])
+        by smtp.gmail.com with ESMTPSA id q18-20020a056000137200b003063176ef09sm3377323wrz.6.2023.05.05.13.21.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 May 2023 13:21:24 -0700 (PDT)
+Message-ID: <6e96358e-bcb5-cc36-18c3-ec5153867b9a@redhat.com>
+Date:   Fri, 5 May 2023 22:21:21 +0200
 MIME-Version: 1.0
-References: <4b9fc9c6-b48c-198f-5f80-811a44737e5f@suse.cz> <CAANmLtwGS75WJ9AXfmqZv73pNdHJn6zfrrCCWjKK_6jPk9pWRg@mail.gmail.com>
- <951d364a-05c0-b290-8abe-7cbfcaeb2df7@suse.cz> <CAANmLtzQmVN_EWLv1UxXwZu5X=TwpcMQMYArKNUxAJL3PnfO2Q@mail.gmail.com>
- <19acbdbb-fc2f-e198-3d31-850ef53f544e@suse.cz>
-In-Reply-To: <19acbdbb-fc2f-e198-3d31-850ef53f544e@suse.cz>
-From:   Binder Makin <merimus@google.com>
-Date:   Fri, 5 May 2023 15:44:00 -0400
-Message-ID: <CAANmLty+yVqN74p_w8VX6=LBTioVKS+b6SHMwoJonoUXgqeXng@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] SLOB+SLAB allocators removal and future SLUB improvements
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org,
-        bpf@vger.kernel.org, linux-xfs@vger.kernel.org,
-        David Rientjes <rientjes@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Content-Language: en-US
+To:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+References: <cover.1683235180.git.lstoakes@gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
+ mappings by default
+In-Reply-To: <cover.1683235180.git.lstoakes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Here are the results of my research.
-One doc is an overview fo the data and the other is a pdf of the raw data.
+On 04.05.23 23:27, Lorenzo Stoakes wrote:
+> Writing to file-backed mappings which require folio dirty tracking using
+> GUP is a fundamentally broken operation, as kernel write access to GUP
+> mappings do not adhere to the semantics expected by a file system.
+> 
+> A GUP caller uses the direct mapping to access the folio, which does not
+> cause write notify to trigger, nor does it enforce that the caller marks
+> the folio dirty.
+> 
+> The problem arises when, after an initial write to the folio, writeback
+> results in the folio being cleaned and then the caller, via the GUP
+> interface, writes to the folio again.
+> 
+> As a result of the use of this secondary, direct, mapping to the folio no
+> write notify will occur, and if the caller does mark the folio dirty, this
+> will be done so unexpectedly.
+> 
+> For example, consider the following scenario:-
+> 
+> 1. A folio is written to via GUP which write-faults the memory, notifying
+>     the file system and dirtying the folio.
+> 2. Later, writeback is triggered, resulting in the folio being cleaned and
+>     the PTE being marked read-only.
+> 3. The GUP caller writes to the folio, as it is mapped read/write via the
+>     direct mapping.
+> 4. The GUP caller, now done with the page, unpins it and sets it dirty
+>     (though it does not have to).
+> 
+> This change updates both the PUP FOLL_LONGTERM slow and fast APIs. As
+> pin_user_pages_fast_only() does not exist, we can rely on a slightly
+> imperfect whitelisting in the PUP-fast case and fall back to the slow case
+> should this fail.
+> 
+>
 
-https://drive.google.com/file/d/1DE8QMri1Rsr7L27fORHFCmwgrMtdfPfu/view?usp=
-=3Dshare_link
+Thanks a lot, this looks pretty good to me!
 
-https://drive.google.com/file/d/1UwnTeqsKB0jgpnZodJ0_cM2bOHx5aR_v/view?usp=
-=3Dshare_link
+I started writing some selftests (assuming none would be in the works) using
+iouring and and the gup_tests interface. So far, no real surprises for the general
+GUP interaction [1].
 
-On Thu, Apr 27, 2023 at 4:29=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 4/5/23 21:54, Binder Makin wrote:
-> > I'm still running tests to explore some of these questions.
-> > The machines I am using are roughly as follows.
-> >
-> > Intel dual socket 56 total cores
-> > 192-384GB ram
-> > LEVEL1_ICACHE_SIZE                 32768
-> > LEVEL1_DCACHE_SIZE                 32768
-> > LEVEL2_CACHE_SIZE                  1048576
-> > LEVEL3_CACHE_SIZE                  40370176
-> >
-> > Amd dual socket 128 total cores
-> > 1TB ram
-> > LEVEL1_ICACHE_SIZE                 32768
-> > LEVEL1_DCACHE_SIZE                 32768
-> > LEVEL2_CACHE_SIZE                  524288
-> > LEVEL3_CACHE_SIZE                  268435456
-> >
-> > Arm single socket 64 total cores
-> > 256GB rma
-> > LEVEL1_ICACHE_SIZE                 65536
-> > LEVEL1_DCACHE_SIZE                 65536
-> > LEVEL2_CACHE_SIZE                  1048576
-> > LEVEL3_CACHE_SIZE                  33554432
->
-> So with "some artifact of different cache layout" I didn't mean the
-> different cache sizes of the processors, but possible differences how
-> objects end up placed in memory by SLAB vs SLUB causing them to collide i=
-n
-> the cache of cause false sharing less or more. This kind of interference =
-can
-> make interpreting (micro)benchmark results hard.
->
-> Anyway, how I'd hope to approach this topic would be that SLAB removal is
-> proposed, and anyone who opposes that because they can't switch from SLAB=
- to
-> SLUB would describe why they can't. I'd hope the "why" to be based on
-> testing with actual workloads, not just benchmarks. Benchmarks are then o=
-f
-> course useful if they can indeed distill the reason why the actual worklo=
-ad
-> regresses, as then anyone can reproduce that locally and develop/test fix=
-es
-> etc. My hope is that if some kind of regression is found (e.g. due to lac=
-k
-> of percpu array in SLUB), it can be dealt with by improving SLUB.
->
-> Historically I recall that we (SUSE) objected somwhat to SLAB removal as =
-our
-> distro kernels were using it, but we have switched since. Then networking
-> had concerns (possibly related to the lack percpu array) but seems bulk
-> allocations helped and they use SLUB these days [1]. And IIRC Google was
-> also sticking to SLAB, which led to some attempts to augment SLUB for tho=
-se
-> workloads years ago, but those were never finished. So I'd be curious if =
-we
-> should restart those effors or can just remove SLAB now.
->
-> [1] https://lore.kernel.org/all/93665604-5420-be5d-2104-17850288b955@redh=
-at.com/
->
->
+
+There are two things I noticed when registering an iouring fixed buffer (that differ
+now from generic gup_test usage):
+
+
+(1) Registering a fixed buffer targeting an unsupported MAP_SHARED FS file now fails with
+     EFAULT (from pin_user_pages()) instead of EOPNOTSUPP (from io_pin_pages()).
+
+The man page for io_uring_register documents:
+
+        EOPNOTSUPP
+               User buffers point to file-backed memory.
+
+... we'd have to do some kind of errno translation in io_pin_pages(). But the
+translation is not simple (sometimes we want to forward EOPNOTSUPP). That also
+applies once we remove that special-casing in io_uring code.
+
+... maybe we can simply update the manpage (stating that older kernels returned
+EOPNOTSUPP) and start returning EFAULT?
+
+
+(2) Registering a fixed buffer targeting a MAP_PRIVATE FS file fails with EOPNOTSUPP
+     (from io_pin_pages()). As discussed, there is nothing wrong with pinning all-anon
+     pages (resulting from breaking COW).
+
+That could be easily be handled (allow any !VM_MAYSHARE), and would automatically be
+handled once removing the iouring special-casing.
+
+
+[1]
+
+# ./pin_longterm
+# [INFO] detected hugetlb size: 2048 KiB
+# [INFO] detected hugetlb size: 1048576 KiB
+TAP version 13
+1..50
+# [RUN] R/W longterm GUP pin in MAP_SHARED file mapping ... with memfd
+ok 1 Pinning succeeded as expected
+# [RUN] R/W longterm GUP pin in MAP_SHARED file mapping ... with tmpfile
+ok 2 Pinning succeeded as expected
+# [RUN] R/W longterm GUP pin in MAP_SHARED file mapping ... with local tmpfile
+ok 3 Pinning failed as expected
+# [RUN] R/W longterm GUP pin in MAP_SHARED file mapping ... with memfd hugetlb (2048 kB)
+ok 4 # SKIP need more free huge pages
+# [RUN] R/W longterm GUP pin in MAP_SHARED file mapping ... with memfd hugetlb (1048576 kB)
+ok 5 Pinning succeeded as expected
+# [RUN] R/W longterm GUP-fast pin in MAP_SHARED file mapping ... with memfd
+ok 6 Pinning succeeded as expected
+# [RUN] R/W longterm GUP-fast pin in MAP_SHARED file mapping ... with tmpfile
+ok 7 Pinning succeeded as expected
+# [RUN] R/W longterm GUP-fast pin in MAP_SHARED file mapping ... with local tmpfile
+ok 8 Pinning failed as expected
+# [RUN] R/W longterm GUP-fast pin in MAP_SHARED file mapping ... with memfd hugetlb (2048 kB)
+ok 9 # SKIP need more free huge pages
+# [RUN] R/W longterm GUP-fast pin in MAP_SHARED file mapping ... with memfd hugetlb (1048576 kB)
+ok 10 Pinning succeeded as expected
+# [RUN] R/O longterm GUP pin in MAP_SHARED file mapping ... with memfd
+ok 11 Pinning succeeded as expected
+# [RUN] R/O longterm GUP pin in MAP_SHARED file mapping ... with tmpfile
+ok 12 Pinning succeeded as expected
+# [RUN] R/O longterm GUP pin in MAP_SHARED file mapping ... with local tmpfile
+ok 13 Pinning succeeded as expected
+# [RUN] R/O longterm GUP pin in MAP_SHARED file mapping ... with memfd hugetlb (2048 kB)
+ok 14 # SKIP need more free huge pages
+# [RUN] R/O longterm GUP pin in MAP_SHARED file mapping ... with memfd hugetlb (1048576 kB)
+ok 15 Pinning succeeded as expected
+# [RUN] R/O longterm GUP-fast pin in MAP_SHARED file mapping ... with memfd
+ok 16 Pinning succeeded as expected
+# [RUN] R/O longterm GUP-fast pin in MAP_SHARED file mapping ... with tmpfile
+ok 17 Pinning succeeded as expected
+# [RUN] R/O longterm GUP-fast pin in MAP_SHARED file mapping ... with local tmpfile
+ok 18 Pinning succeeded as expected
+# [RUN] R/O longterm GUP-fast pin in MAP_SHARED file mapping ... with memfd hugetlb (2048 kB)
+ok 19 # SKIP need more free huge pages
+# [RUN] R/O longterm GUP-fast pin in MAP_SHARED file mapping ... with memfd hugetlb (1048576 kB)
+ok 20 Pinning succeeded as expected
+# [RUN] R/W longterm GUP pin in MAP_PRIVATE file mapping ... with memfd
+ok 21 Pinning succeeded as expected
+# [RUN] R/W longterm GUP pin in MAP_PRIVATE file mapping ... with tmpfile
+ok 22 Pinning succeeded as expected
+# [RUN] R/W longterm GUP pin in MAP_PRIVATE file mapping ... with local tmpfile
+ok 23 Pinning succeeded as expected
+# [RUN] R/W longterm GUP pin in MAP_PRIVATE file mapping ... with memfd hugetlb (2048 kB)
+ok 24 # SKIP need more free huge pages
+# [RUN] R/W longterm GUP pin in MAP_PRIVATE file mapping ... with memfd hugetlb (1048576 kB)
+ok 25 Pinning succeeded as expected
+# [RUN] R/W longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd
+ok 26 Pinning succeeded as expected
+# [RUN] R/W longterm GUP-fast pin in MAP_PRIVATE file mapping ... with tmpfile
+ok 27 Pinning succeeded as expected
+# [RUN] R/W longterm GUP-fast pin in MAP_PRIVATE file mapping ... with local tmpfile
+ok 28 Pinning succeeded as expected
+# [RUN] R/W longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd hugetlb (2048 kB)
+ok 29 # SKIP need more free huge pages
+# [RUN] R/W longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd hugetlb (1048576 kB)
+ok 30 Pinning succeeded as expected
+# [RUN] R/O longterm GUP pin in MAP_PRIVATE file mapping ... with memfd
+ok 31 Pinning succeeded as expected
+# [RUN] R/O longterm GUP pin in MAP_PRIVATE file mapping ... with tmpfile
+ok 32 Pinning succeeded as expected
+# [RUN] R/O longterm GUP pin in MAP_PRIVATE file mapping ... with local tmpfile
+ok 33 Pinning succeeded as expected
+# [RUN] R/O longterm GUP pin in MAP_PRIVATE file mapping ... with memfd hugetlb (2048 kB)
+ok 34 # SKIP need more free huge pages
+# [RUN] R/O longterm GUP pin in MAP_PRIVATE file mapping ... with memfd hugetlb (1048576 kB)
+ok 35 Pinning succeeded as expected
+# [RUN] R/O longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd
+ok 36 Pinning succeeded as expected
+# [RUN] R/O longterm GUP-fast pin in MAP_PRIVATE file mapping ... with tmpfile
+ok 37 Pinning succeeded as expected
+# [RUN] R/O longterm GUP-fast pin in MAP_PRIVATE file mapping ... with local tmpfile
+ok 38 Pinning succeeded as expected
+# [RUN] R/O longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd hugetlb (2048 kB)
+ok 39 # SKIP need more free huge pages
+# [RUN] R/O longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd hugetlb (1048576 kB)
+ok 40 Pinning succeeded as expected
+# [RUN] iouring fixed buffer with MAP_SHARED file mapping ... with memfd
+ok 41 Pinning succeeded as expected
+# [RUN] iouring fixed buffer with MAP_SHARED file mapping ... with tmpfile
+ok 42 Pinning succeeded as expected
+# [RUN] iouring fixed buffer with MAP_SHARED file mapping ... with local tmpfile
+ok 43 Pinning failed as expected
+# [RUN] iouring fixed buffer with MAP_SHARED file mapping ... with memfd hugetlb (2048 kB)
+ok 44 # SKIP need more free huge pages
+# [RUN] iouring fixed buffer with MAP_SHARED file mapping ... with memfd hugetlb (1048576 kB)
+ok 45 Pinning succeeded as expected
+# [RUN] iouring fixed buffer with MAP_PRIVATE file mapping ... with memfd
+ok 46 Pinning succeeded as expected
+# [RUN] iouring fixed buffer with MAP_PRIVATE file mapping ... with tmpfile
+ok 47 Pinning succeeded as expected
+# [RUN] iouring fixed buffer with MAP_PRIVATE file mapping ... with local tmpfile
+not ok 48 Pinning failed as expected
+# [RUN] iouring fixed buffer with MAP_PRIVATE file mapping ... with memfd hugetlb (2048 kB)
+ok 49 # SKIP need more free huge pages
+# [RUN] iouring fixed buffer with MAP_PRIVATE file mapping ... with memfd hugetlb (1048576 kB)
+ok 50 Pinning succeeded as expected
+Bail out! 1 out of 50 tests failed
+# Totals: pass:39 fail:1 xfail:0 xpass:0 skip:10 error:0
+
+
+-- 
+Thanks,
+
+David / dhildenb
+
