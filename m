@@ -2,67 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D676F8B1C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 23:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BF26F8B52
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 May 2023 23:41:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233563AbjEEVgi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 17:36:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36796 "EHLO
+        id S233603AbjEEVlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 17:41:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233551AbjEEVgh (ORCPT
+        with ESMTP id S233604AbjEEVlV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 17:36:37 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2122FF4
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 14:36:36 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-b9a6ab9ede3so3053384276.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 May 2023 14:36:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1683322595; x=1685914595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V0JfIlTqaeXlyEjv8OL6VI/Norerpq4Zpq5DUaY96vQ=;
-        b=HFIJtI/kpmdLq8nRaDpAzU/Clt1/UJxLL8jrzJIQ3nN3zf4fqNv+ZtaSmm9nZ9WSxL
-         Fsdmz6Yg244MrJudDafdQdsz6UxENZYEXFzrOoHjOR1sy7cP5A+nj6c8BeRafdgdzmKW
-         EXxDU+bc0GuwPIFHgZLrSGRMNZGd68ZC038in7IflWIaQ4+gF9uANMqT/6PCnj4G7msL
-         Kp2821yv0nosKv0gQkf2+0iNHig/foynW4QCkBRYd1xWQZdSnHzLEuAnSGn0FWzJ2/pw
-         JhUAS6Nd8jaQw0XJpJHlYYBttFdbB9ggrTzlZlYeFD/4Fdu7rWzcXyK1NwEpIMGB8CWy
-         CKWQ==
+        Fri, 5 May 2023 17:41:21 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C5A84215
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 14:40:41 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7638744ba8cso145896439f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 May 2023 14:40:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683322595; x=1685914595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V0JfIlTqaeXlyEjv8OL6VI/Norerpq4Zpq5DUaY96vQ=;
-        b=dnluwtJHNIWy4HX4TUxnyaQdVDf9W3CxySd1hN6e8iOtJ700OXXLiS7+sa1/eb1iq7
-         Us5B1RoxKTQuU/azxuR6vBFPpj1nVx8nR/tjFgE0WWiWuMvV78WtxE6kCnwpJBTrvhBV
-         thaHPnM114F0c6aVHYfv4XvufEWeGdm2/2ZpmIrVkoaYB3i54P07ScACnt/x/Ap/Ze9y
-         l61kNF7a5pf06szr3XoUp4R9/M0o842UJ7vVk1OZVteMnYz2kyYOjjQsCTfcbCmio4mH
-         ZQLILz4YMfTLOlHMRt8uMsT7WeyCeUa+qTTyqywVPxGnxET7XnGwz3rTIoH2HUip1QiA
-         oi/A==
-X-Gm-Message-State: AC+VfDzhd282VKYJPHWkLEzFgB6RMEvvNR1AWTj4zhLbmWHjnuR6clsb
-        cYVEzNW0YSKlNK4Oj1eYCW2Hw2S0DpVJ5oi7XcP3
-X-Google-Smtp-Source: ACHHUZ5mePxZSEmEoU+z772wuUV1h4yYiZ/D6Jn5MdbMYmXXJG0E7mS81yf5C+0NpsiFgG2/Nu/3hoJojsTP4keEGNQ=
-X-Received: by 2002:a05:6902:702:b0:b9e:5aad:edda with SMTP id
- k2-20020a056902070200b00b9e5aadeddamr3593877ybt.4.1683322595278; Fri, 05 May
- 2023 14:36:35 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683322840; x=1685914840;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6r1fpOCe4Fv1EAxhDcJy4IoI32U0TyXXfS1pn3Vn3eM=;
+        b=lng/3wGwh7BnFD/VgojInhzusH/i3FJJddQJUh0epgxJSTQ4uKNlAlSXDzZCIltuzx
+         mZFg8aIj5Vko1JqJ4HVrvZJZeExvwSs9OjcoTG3iQiNAHxPiU+tuoMhBr4Vya8DQ4PE0
+         0qKM84AC/ubt6m03TdsV5joku2uQoGwxubFF1AwH7mrg0GR9rekQbR7qr3+8j7LxxjUB
+         gAV/A4MYkK1xjco8hhVNacCQmItKK3RB8Mw1qKmEeM/IjmpGB5IMEcObYYm3o4XTwT+j
+         drungcS0YuZk5srwh1i0IfjO87SbunwyjGus6IAI/AspARS9ETFHwGhv8wyI972euKXl
+         1yvA==
+X-Gm-Message-State: AC+VfDx3vaJHkma1icpmICdbNntKBm0yc4EN+nmA3izgJr04e3XhcfVf
+        z2w1SFcWLVHqTgbpz2sayjR3SMeZDeMxwAIZEnzAfGHLNE8m
+X-Google-Smtp-Source: ACHHUZ4+W5iAMTzlHsI1iNuw3ugVX93iXPox7IbLl9VrL3MAAawXiPp4lY9sMEiE9DjeZp8P3C8leyIKIlMbCyYfumOH3/6InX69
 MIME-Version: 1.0
-References: <0000000000007bedb605f119ed9f@google.com> <00000000000000964605faf87416@google.com>
-In-Reply-To: <00000000000000964605faf87416@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 5 May 2023 17:36:24 -0400
-Message-ID: <CAHC9VhTZ=Esk+JxgAjch2J44WuLixe-SZMXW2iGHpLdrdMKQ=g@mail.gmail.com>
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in open_xa_dir
-To:     syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>
-Cc:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org,
-        roberto.sassu@huawei.com, syzkaller-bugs@googlegroups.com
+X-Received: by 2002:a92:d4ce:0:b0:32a:9e86:242f with SMTP id
+ o14-20020a92d4ce000000b0032a9e86242fmr1369094ilm.6.1683322840521; Fri, 05 May
+ 2023 14:40:40 -0700 (PDT)
+Date:   Fri, 05 May 2023 14:40:40 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f3a4ee05faf923fa@google.com>
+Subject: [syzbot] Monthly f2fs report (May 2023)
+From:   syzbot <syzbot+list4594bdd613fc4b2a114c@syzkaller.appspotmail.com>
+To:     chao@kernel.org, jaegeuk@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,50 +56,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 5, 2023 at 4:51=E2=80=AFPM syzbot
-<syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com> wrote:
->
-> syzbot has bisected this issue to:
->
-> commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
-> Author: Roberto Sassu <roberto.sassu@huawei.com>
-> Date:   Fri Mar 31 12:32:18 2023 +0000
->
->     reiserfs: Add security prefix to xattr name in reiserfs_security_writ=
-e()
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1440318228=
-0000
-> start commit:   3c4aa4434377 Merge tag 'ceph-for-6.4-rc1' of https://gith=
-u..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1640318228=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1240318228000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D73a06f6ef2d5b=
-492
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D8fb64a61fdd96b5=
-0f3b8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12442414280=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D176a731828000=
-0
->
-> Reported-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
-> Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reis=
-erfs_security_write()")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
+Hello f2fs maintainers/developers,
 
-I don't think Roberto's patch identified above is the actual root
-cause of this problem as reiserfs_xattr_set_handle() is called in
-reiserfs_security_write() both before and after the patch.  However,
-due to some bad logic in reiserfs_security_write() which Roberto
-corrected, I'm thinking that it is possible this code is being
-exercised for the first time and syzbot is starting to trigger a
-locking issue in the reiserfs code ... ?
+This is a 31-day syzbot report for the f2fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/f2fs
 
---=20
-paul-moore.com
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 20 issues are still open and 28 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 173     Yes   INFO: task hung in f2fs_balance_fs
+                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+<2> 49      Yes   kernel BUG in f2fs_evict_inode
+                  https://syzkaller.appspot.com/bug?extid=e1246909d526a9d470fa
+<3> 7       No    general protection fault in __replace_atomic_write_block
+                  https://syzkaller.appspot.com/bug?extid=4420fa19a8667ff0b057
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
