@@ -2,143 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AE406F8D06
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 02:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6F856F8DB4
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 03:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230400AbjEFAI1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 May 2023 20:08:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52936 "EHLO
+        id S232679AbjEFBn7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 May 2023 21:43:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229803AbjEFAI0 (ORCPT
+        with ESMTP id S231569AbjEFBn6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 May 2023 20:08:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60CD419B0;
-        Fri,  5 May 2023 17:08:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EFD6563C72;
-        Sat,  6 May 2023 00:08:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAD13C433EF;
-        Sat,  6 May 2023 00:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683331704;
-        bh=7+4RZ/Snpwvb0zzhi2RjjXRKKk3ABC6o+jcKXRjDTg4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uJ4CUV1iru3AnzNtA79biymZMjwlHUzSgyfnsWmqGPjDok6TGCQSj9uC7b3O3oPJJ
-         7hYekNdQmu7P41mSRVxUZKoW7l4b2DBxXauxvQJ5VcutuHeMtpvZQrN2ZvYFBY8C0w
-         cFwasIhIocEciWso+pgv0fKmhODCmMTdicFt3Zbm+IEEHYWZteSMzg5HUaEWh1wYsS
-         n6woXHFNKHnn6crfiO3t2IWj/U18s5SnVAkRwJYqfkT4yzROMYiHzuA22rvffXunMJ
-         gSApl7UVcU5tNNRz9aag+tq4sRGFtmNYW7vA1PrXzNDpkEpBxiGadFRA0LlgL6wbC/
-         NAGXWNH4WT4Sw==
-Date:   Sat, 6 May 2023 00:08:22 +0000
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jejb@linux.ibm.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com,
-        Himanshu Madhani <himanshu.madhani@oracle.com>
-Subject: Re: [PATCH RFC 01/16] block: Add atomic write operations to
- request_queue limits
-Message-ID: <ZFWadsMT0xck9lYQ@gmail.com>
-References: <20230503183821.1473305-1-john.g.garry@oracle.com>
- <20230503183821.1473305-2-john.g.garry@oracle.com>
- <20230503213925.GD3223426@dread.disaster.area>
- <fc91aa12-1707-9825-a77e-9d5a41d97808@oracle.com>
- <20230504222623.GI3223426@dread.disaster.area>
- <ZFWHdxgWie/C02OA@gmail.com>
- <20230505233152.GN3223426@dread.disaster.area>
+        Fri, 5 May 2023 21:43:58 -0400
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A9E649E2
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 18:43:56 -0700 (PDT)
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3340a320b8bso11029955ab.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 May 2023 18:43:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683337436; x=1685929436;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GEAVY+G+dyIbuZjjPxrcrCEx2E1ib4FojCVjLcKiTGM=;
+        b=Ge0dJ7swgs3X+06K2MvSeATQFC3EsYonrLuwVDDfIoD4ltZKrbSl1CJtk4uNy42uCR
+         /Hf4aNckHiT/LqLSnBXWsK0+Acvpl0K5qXDKlmQ6+ey+huaqRrDAipNRmxcGcwHM7RRP
+         YCMFNKyby7dCHItroPte/w5AjGpmtUBEwK9drjh9pwpmIgHd/3fM9wpd3dUWThfEWsze
+         YWuyDHBdMv55pE3qcTOz1DQdL2+yxCFWxmVxUjqrjErsXFOmLUDDsFpoERC8Cyvmx/IV
+         Anv15xSYW6sc5rQAiEXe1ZypQlPAdj40PMKjqTiNfCFkFF39dBQaQDGFCgXZo6XPBimL
+         2Q9A==
+X-Gm-Message-State: AC+VfDy1jIY1RYoFMaoCLSemp6DVU2a+IxOYTkY55WaK3Z3b41XCEKLu
+        Pq8pcuJf9FAGqJ7h7qt5gDbxKHQJHXuv92mmPuCv6CbcqahE
+X-Google-Smtp-Source: ACHHUZ40r2kaXH+BdAcVW2IrF2fQz/wl0ztSgOji8xFrvl6Nr86JnqB8W8mKq8kyxy3Df6TYZbXqDfgrF5+Rb0GcYZGqsOqdPfSQ
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230505233152.GN3223426@dread.disaster.area>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:84c1:0:b0:40f:ae69:a144 with SMTP id
+ f59-20020a0284c1000000b0040fae69a144mr1384969jai.5.1683337435893; Fri, 05 May
+ 2023 18:43:55 -0700 (PDT)
+Date:   Fri, 05 May 2023 18:43:55 -0700
+In-Reply-To: <000000000000725cab05f55f1bb0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e7582c05fafc8901@google.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_exclop_balance (2)
+From:   syzbot <syzbot+5e466383663438b99b44@syzkaller.appspotmail.com>
+To:     chris@chrisdown.name, clm@fb.com, dsterba@suse.com,
+        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_DIGITS,
+        FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 06, 2023 at 09:31:52AM +1000, Dave Chinner wrote:
-> On Fri, May 05, 2023 at 10:47:19PM +0000, Eric Biggers wrote:
-> > On Fri, May 05, 2023 at 08:26:23AM +1000, Dave Chinner wrote:
-> > > > ok, we can do that but would also then make statx field 64b. I'm fine with
-> > > > that if it is wise to do so - I don't don't want to wastefully use up an
-> > > > extra 2 x 32b in struct statx.
-> > > 
-> > > Why do we need specific varibles for DIO atomic write alignment
-> > > limits? We already have direct IO alignment and size constraints in statx(),
-> > > so why wouldn't we just reuse those variables when the user requests
-> > > atomic limits for DIO?
-> > > 
-> > > i.e. if STATX_DIOALIGN is set, we return normal DIO alignment
-> > > constraints. If STATX_DIOALIGN_ATOMIC is set, we return the atomic
-> > > DIO alignment requirements in those variables.....
-> > > 
-> > > Yes, we probably need the dio max size to be added to statx for
-> > > this. Historically speaking, I wanted statx to support this in the
-> > > first place because that's what we were already giving userspace
-> > > with XFS_IOC_DIOINFO and we already knew that atomic IO when it came
-> > > along would require a bound maximum IO size much smaller than normal
-> > > DIO limits.  i.e.:
-> > > 
-> > > struct dioattr {
-> > >         __u32           d_mem;          /* data buffer memory alignment */
-> > >         __u32           d_miniosz;      /* min xfer size                */
-> > >         __u32           d_maxiosz;      /* max xfer size                */
-> > > };
-> > > 
-> > > where d_miniosz defined the alignment and size constraints for DIOs.
-> > > 
-> > > If we simply document that STATX_DIOALIGN_ATOMIC returns minimum
-> > > (unit) atomic IO size and alignment in statx->dio_offset_align (as
-> > > per STATX_DIOALIGN) and the maximum atomic IO size in
-> > > statx->dio_max_iosize, then we don't burn up anywhere near as much
-> > > space in the statx structure....
-> > 
-> > I don't think that's how statx() is meant to work.  The request mask is a bitmask, and the user can
-> > request an arbitrary combination of different items.  For example, the user could request both
-> > STATX_DIOALIGN and STATX_WRITE_ATOMIC at the same time.  That doesn't work if different items share
-> > the same fields.
-> 
-> Sure it does - what is contained in the field on return is defined
-> by the result mask. In this case, whatever the filesystem puts in
-> the DIO fields will match which flag it asserts in the result mask.
-> 
-> i.e. if the application wants RWF_ATOMIC and so asks for STATX_DIOALIGN |
-> STATX_DIOALIGN_ATOMIC in the request mask then:
-> 
-> - if the filesystem does not support RWF_ATOMIC it fills in the
->   normal DIO alingment values and puts STATX_DIOALIGN in the result
->   mask.
-> 
->   Now the application knows that it can't use RWF_ATOMIC, and it
->   doesn't need to do another statx() call to get the dio alignment
->   values it needs.
-> 
-> - if the filesystem supports RWF_ATOMIC, it fills in the values with
->   the atomic DIO constraints and puts STATX_DIOALIGN_ATOMIC in the
->   result mask.
-> 
->   Now the application knows it can use RWF_ATOMIC and has the atomic
->   DIO constraints in the dio alignment fields returned.
-> 
-> This uses the request/result masks exactly as intended, yes?
-> 
+syzbot has found a reproducer for the following issue on:
 
-We could certainly implement some scheme like that, but I don't think that was
-how statx() was intended to work.  I think that each bit in the mask was
-intended to correspond to an independent piece of information.
+HEAD commit:    7163a2111f6c Merge tag 'acpi-6.4-rc1-3' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=175bb84c280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=73a06f6ef2d5b492
+dashboard link: https://syzkaller.appspot.com/bug?extid=5e466383663438b99b44
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12048338280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ff7314280000
 
-- Eric
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/01051811f2fe/disk-7163a211.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a26c68e4c8a6/vmlinux-7163a211.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/17380fb8dad4/bzImage-7163a211.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b30a249e8609/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5e466383663438b99b44@syzkaller.appspotmail.com
+
+assertion failed: fs_info->exclusive_operation == BTRFS_EXCLOP_BALANCE_PAUSED, in fs/btrfs/ioctl.c:463
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/messages.c:259!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 8630 Comm: syz-executor102 Not tainted 6.3.0-syzkaller-13225-g7163a2111f6c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
+Code: df e8 2c 05 36 f7 e9 50 fb ff ff e8 b2 90 01 00 66 90 66 0f 1f 00 89 d1 48 89 f2 48 89 fe 48 c7 c7 80 32 2c 8b e8 c8 60 ff ff <0f> 0b 66 0f 1f 44 00 00 66 0f 1f 00 53 48 89 fb e8 73 31 de f6 48
+RSP: 0018:ffffc9000ae27e48 EFLAGS: 00010246
+RAX: 0000000000000066 RBX: 1ffff1100fa13c18 RCX: e812ce05a9b3c300
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000002 R08: ffffffff816f0fec R09: fffff520015c4f7d
+R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88807d09e0c0
+R13: ffff88807d09c000 R14: ffff88807d09c678 R15: dffffc0000000000
+FS:  00007f2bb10a8700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2bb0c90000 CR3: 0000000028447000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ btrfs_exclop_balance+0x153/0x1f0 fs/btrfs/ioctl.c:463
+ btrfs_ioctl_balance+0x482/0x7c0 fs/btrfs/ioctl.c:3562
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f2bb853ec69
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2bb10a82f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f2bb85c87c0 RCX: 00007f2bb853ec69
+RDX: 0000000020000540 RSI: 00000000c4009420 RDI: 0000000000000004
+RBP: 00007f2bb85951d0 R08: 00007f2bb10a8700 R09: 0000000000000000
+R10: 00007f2bb10a8700 R11: 0000000000000246 R12: 7fffffffffffffff
+R13: 0000000100000001 R14: 8000000000000001 R15: 00007f2bb85c87c8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
+Code: df e8 2c 05 36 f7 e9 50 fb ff ff e8 b2 90 01 00 66 90 66 0f 1f 00 89 d1 48 89 f2 48 89 fe 48 c7 c7 80 32 2c 8b e8 c8 60 ff ff <0f> 0b 66 0f 1f 44 00 00 66 0f 1f 00 53 48 89 fb e8 73 31 de f6 48
+RSP: 0018:ffffc9000ae27e48 EFLAGS: 00010246
+RAX: 0000000000000066 RBX: 1ffff1100fa13c18 RCX: e812ce05a9b3c300
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000002 R08: ffffffff816f0fec R09: fffff520015c4f7d
+R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88807d09e0c0
+R13: ffff88807d09c000 R14: ffff88807d09c678 R15: dffffc0000000000
+FS:  00007f2bb10a8700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2bb0c90000 CR3: 0000000028447000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
