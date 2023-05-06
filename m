@@ -2,193 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C48886F9456
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 23:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C746F94C2
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 May 2023 00:28:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbjEFV7y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 17:59:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52266 "EHLO
+        id S230090AbjEFW20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 18:28:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229887AbjEFV7u (ORCPT
+        with ESMTP id S229446AbjEFW2Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 17:59:50 -0400
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB37F23A0C
-        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 14:59:40 -0700 (PDT)
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-331663d8509so45450455ab.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 14:59:40 -0700 (PDT)
+        Sat, 6 May 2023 18:28:25 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E27C714348
+        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 15:28:23 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-ba1ddf79e4eso374349276.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 15:28:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683412103; x=1686004103;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2PNtuRTNF7GqPddA849m36EOAEkX/j0itEuTgY2OGns=;
+        b=ymLgs23pGn0y31E1zv0R6T1pdESTKoNHL6sWfZ1tjEZhu6a/Q8HGG8Izn1Ndu47urg
+         QGNOryjeFW1fQcFbBxEY2uLjXDVeP3ZTIWgdHb4GwNGbgD75f3G57WjG5LPBe39gQkuI
+         7ap146VNBVcX67Qqq/fJtYTeD/Jww9zxdiCtZ0VFNEUBc53GyqXPxxBbu0U30AU9Qxfi
+         96w9jt/cW//cs5pB9oPF46MoFAPw6IQ0ij1ANmFYI9UKCux5jmCkQJZjyxgTPURiPYWX
+         WlwcoBp5w2F1x6UZ61G1bYvWWT3Fw+GjVldDko4ANde/rFSPMMivfQs0kzElXHf8QIkX
+         WHqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683410380; x=1686002380;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20221208; t=1683412103; x=1686004103;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PgYZjWeLjexrGnFDmI0IYPb/iqEp6EDD1WBE5yqbwfk=;
-        b=S4W361qH46Bk5AIauAUUPf9TUQboQnpINz65ydXiQYsuGfinVqNsHM1y0u9bgLFyH/
-         E83JcWymBr4eo/TbtFcQP2/nxyGgiJlW1GWpHPg7RRFxPKFwzwmj4JwXqAin6v1S0e5y
-         zImD/sxMl/wH+DqFkdXzDsbZthi7PsPze8dBbMsv07c/1U/wBvsm5Gxmo0Rc8J62HaDq
-         UxcGrRwSCgqP35ROP0WVFjdl2TPgJ0v1/HYmknU5YdlMSNrwYl6t2uDYYEJ6dtdxVkvr
-         gB6nG8JNavLLvmSDThBrLtyC2iq363q2OltvfKoZGg2Y4lo4rMkh/EDqJtJrtJq4McaR
-         z1/Q==
-X-Gm-Message-State: AC+VfDx9CaGST+Deh2bgonufL1X7B0OPsXV9ECq+pTL9UzgolDdxP/Kt
-        ORZOHDGOYEhnGCen8DwoxKS7e2bGZjIyO+nLqd82X6cighH4
-X-Google-Smtp-Source: ACHHUZ79bcqBI6KLTxLPX4YDc4m+OwynPMVcrzLLhxpu5GX95K2MtFfkS7G2xtc0kDPArCkLdXOkqPxlgvbCLNiQ5+zVaQcQEaSY
+        bh=2PNtuRTNF7GqPddA849m36EOAEkX/j0itEuTgY2OGns=;
+        b=KR0ebFxjhdBHJ0MvR/heKC7oUxibTVyhfa16qXd7O+pFimnTZGHIBj2fZLp8DEdFM5
+         hdOdONe59BULGAGsezYhlQhMCWGV+Gzo4RbPQbBb1VoShSANASFr1iY/MJXrvbBcBiwe
+         prrLZHtvDK/tvWNbNQ+vqmq4M/sYhN475Plfm9iAIKkD0C++lj0f8zYNr6bOTXIlj9F9
+         ndFf/94Mxwf+6hbZH9DpAVLqPSb94PXi6khOpnbHl+eH3BKIOS8hlPf+4CxrelIBxGKW
+         QfOysiIEVVeGz8I+3fj2RoJuJenMC55iTLtHeDhGtaZKhgm5Uq+6dzGouh0nJQBlv5EV
+         w1ig==
+X-Gm-Message-State: AC+VfDyeg14CPBv8YmVMwjHj8+XNEQL5K6fnjL+zoKtdLbBPw/f4esd8
+        HJhqMBvSMKtsnwjgDmI2h1sTi0HsuHfo6jFfcvE=
+X-Google-Smtp-Source: ACHHUZ6IKH5ve5oYE+iYKdrfQG7SgCNq9Ctlt7/21fA4us2kQOtR8diWs/j6A9dlM18qj+W/RtPB9Q==
+X-Received: by 2002:a81:1e52:0:b0:55d:9ad7:87a4 with SMTP id e79-20020a811e52000000b0055d9ad787a4mr5697287ywe.2.1683412103083;
+        Sat, 06 May 2023 15:28:23 -0700 (PDT)
+Received: from [172.20.2.186] ([12.153.103.3])
+        by smtp.gmail.com with ESMTPSA id y1-20020a81a101000000b0055a07585a91sm1440675ywg.11.2023.05.06.15.28.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 May 2023 15:28:21 -0700 (PDT)
+Message-ID: <6be969d0-e941-c8fa-aca7-c6c96f2c1ba2@kernel.dk>
+Date:   Sat, 6 May 2023 16:28:21 -0600
 MIME-Version: 1.0
-X-Received: by 2002:a92:cb42:0:b0:331:e520:8631 with SMTP id
- f2-20020a92cb42000000b00331e5208631mr2917061ilq.2.1683410379943; Sat, 06 May
- 2023 14:59:39 -0700 (PDT)
-Date:   Sat, 06 May 2023 14:59:39 -0700
-In-Reply-To: <00000000000075fe1b05f6f415f7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b5386505fb0d854c@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in kvfree (2)
-From:   syzbot <syzbot+64b645917ce07d89bde5@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [GIT PULL] Pipe FMODE_NOWAIT support
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <26aba1b5-8393-a20a-3ce9-f82425673f4d@kernel.dk>
+ <CAHk-=wj=LwLDYrjHpMM+QnE2T+u4P9-UXhXGkAMXiyfGjGnNEA@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHk-=wj=LwLDYrjHpMM+QnE2T+u4P9-UXhXGkAMXiyfGjGnNEA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On 5/6/23 9:27?AM, Linus Torvalds wrote:
+> On Sat, May 6, 2023 at 3:33?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> Here's the revised edition of the FMODE_NOWAIT support for pipes, in
+>> which we just flag it as such supporting FMODE_NOWAIT unconditionally,
+>> but clear it if we ever end up using splice/vmsplice on the pipe. The
+>> pipe read/write side is perfectly fine for nonblocking IO, however
+>> splice and vmsplice can potentially wait for IO with the pipe lock held.
+> 
+> Ok, pulled.
+> 
+> It does strike me that one of the (few) users is the io_uring
+> __io_file_supports_nowait() thing, and that thing is *disgusting*.
 
-HEAD commit:    14f8db1c0f9a Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b08d88280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a837a8ba7e88bb45
-dashboard link: https://syzkaller.appspot.com/bug?extid=64b645917ce07d89bde5
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17eb3df2280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a6af18280000
+Hah yes, will not claim that's a thing of beauty. It has been getting
+better though, at least.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ad6ce516eed3/disk-14f8db1c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1f38c2cc7667/vmlinux-14f8db1c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d795115eee39/Image-14f8db1c.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/66c0bf3e4f09/mount_0.gz
+> Wouldn't it be much nicer if FMODE_NOWAIT ended up working
+> automatically on a block file descriptor too? You did all this "make
+> pipes set FMODE_NOWAIT", but then that io_uring code does
+> 
+>         if (S_ISBLK(mode)) {
+>                 if (IS_ENABLED(CONFIG_BLOCK) &&
+>                     io_bdev_nowait(I_BDEV(file->f_mapping->host)))
+>                         return true;
+>                 return false;
+>         }
+> 
+> rather than just rely on FMODE_NOWAIT for block devices too...
+> 
+> And it's a bit odd in other ways, because the kiocb code for
+> RWF_NOWAIT - which is the other user of FMODE_NOWAIT - does *not* seem
+> to do any of those bdev games. So that other user does seem to just
+> rely on the file mode bit having been set up by open.
+> 
+> In fact, I see 'blkdev_open()' doing
+> 
+>         filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
+> 
+> so I really don't see why __io_file_supports_nowait() then does that
+> special check for S_ISBLK().
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+64b645917ce07d89bde5@syzkaller.appspotmail.com
+I need to double check if we can just do the io_bdev_nowait() check
+early and in the block code, so we cn make FMODE_NOWAIT reliable there.
+With that, yeah we could totally get rid of that odd checking and move
+it to the slower open path instead which would obviously be better.
 
-EXT4-fs (loop0): 1 truncate cleaned up
-EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 without journal. Quota mode: writeback.
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5931 at mm/slab_common.c:935 free_large_kmalloc+0x34/0x12c mm/slab_common.c:936
-Modules linked in:
-CPU: 1 PID: 5931 Comm: syz-executor235 Not tainted 6.3.0-rc7-syzkaller-g14f8db1c0f9a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : free_large_kmalloc+0x34/0x12c mm/slab_common.c:936
-lr : kfree+0xf8/0x19c mm/slab_common.c:1013
-sp : ffff80001e5a74e0
-x29: ffff80001e5a74e0 x28: ffff0000deac34d8 x27: ffff0000e23195a4
-x26: dfff800000000000 x25: 0000000000000020 x24: ffff0000c7a3ad00
-x23: ffff0000c7a3a400 x22: 0000000000000000 x21: ffff800008809968
-x20: ffff0000e23195a4 x19: fffffc000388c640 x18: ffff80001e5a6e80
-x17: ffff800015d6d000 x16: ffff80001236e294 x15: ffff800008a6cf5c
-x14: ffff800008a6cb2c x13: ffff800008062fb8 x12: 0000000000000003
-x11: 0000000000000000 x10: 0000000000000000 x9 : 05ffc0000000202a
-x8 : ffff800018986000 x7 : ffff800008063224 x6 : ffff800008063434
-x5 : ffff0000d182bf38 x4 : ffff80001e5a72b0 x3 : 0000000000000000
-x2 : 0000000000000006 x1 : ffff0000e23195a4 x0 : fffffc000388c640
-Call trace:
- free_large_kmalloc+0x34/0x12c mm/slab_common.c:936
- kfree+0xf8/0x19c mm/slab_common.c:1013
- kvfree+0x40/0x50 mm/util.c:649
- ext4_xattr_move_to_block fs/ext4/xattr.c:2680 [inline]
- ext4_xattr_make_inode_space fs/ext4/xattr.c:2743 [inline]
- ext4_expand_extra_isize_ea+0xcec/0x16b4 fs/ext4/xattr.c:2835
- __ext4_expand_extra_isize+0x290/0x348 fs/ext4/inode.c:5960
- ext4_try_to_expand_extra_isize fs/ext4/inode.c:6003 [inline]
- __ext4_mark_inode_dirty+0x448/0x848 fs/ext4/inode.c:6081
- __ext4_unlink+0x768/0x998 fs/ext4/namei.c:3255
- ext4_unlink+0x1b4/0x6a0 fs/ext4/namei.c:3298
- vfs_unlink+0x2f0/0x508 fs/namei.c:4250
- do_unlinkat+0x4c8/0x82c fs/namei.c:4316
- __do_sys_unlinkat fs/namei.c:4359 [inline]
- __se_sys_unlinkat fs/namei.c:4352 [inline]
- __arm64_sys_unlinkat+0xcc/0xfc fs/namei.c:4352
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
- el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-irq event stamp: 16132
-hardirqs last  enabled at (16131): [<ffff80000896749c>] kasan_quarantine_put+0x1a0/0x1c8 mm/kasan/quarantine.c:242
-hardirqs last disabled at (16132): [<ffff800012369e90>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
-softirqs last  enabled at (15474): [<ffff800008033374>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (15472): [<ffff800008033340>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-object pointer: 0x000000001bcaf4ec
-==================================================================
-BUG: KASAN: invalid-free in kfree+0xf8/0x19c mm/slab_common.c:1013
-Free of addr ffff0000e23195a4 by task syz-executor235/5931
+We should just set it for socket as well and just ultimately end up
+with:
 
-CPU: 1 PID: 5931 Comm: syz-executor235 Tainted: G        W          6.3.0-rc7-syzkaller-g14f8db1c0f9a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:233
- show_stack+0x2c/0x44 arch/arm64/kernel/stacktrace.c:240
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:319 [inline]
- print_report+0x174/0x514 mm/kasan/report.c:430
- kasan_report_invalid_free+0xc4/0x114 mm/kasan/report.c:501
- __kasan_kfree_large+0xa4/0xc0 mm/kasan/common.c:272
- kasan_kfree_large include/linux/kasan.h:170 [inline]
- free_large_kmalloc+0x64/0x12c mm/slab_common.c:939
- kfree+0xf8/0x19c mm/slab_common.c:1013
- kvfree+0x40/0x50 mm/util.c:649
- ext4_xattr_move_to_block fs/ext4/xattr.c:2680 [inline]
- ext4_xattr_make_inode_space fs/ext4/xattr.c:2743 [inline]
- ext4_expand_extra_isize_ea+0xcec/0x16b4 fs/ext4/xattr.c:2835
- __ext4_expand_extra_isize+0x290/0x348 fs/ext4/inode.c:5960
- ext4_try_to_expand_extra_isize fs/ext4/inode.c:6003 [inline]
- __ext4_mark_inode_dirty+0x448/0x848 fs/ext4/inode.c:6081
- __ext4_unlink+0x768/0x998 fs/ext4/namei.c:3255
- ext4_unlink+0x1b4/0x6a0 fs/ext4/namei.c:3298
- vfs_unlink+0x2f0/0x508 fs/namei.c:4250
- do_unlinkat+0x4c8/0x82c fs/namei.c:4316
- __do_sys_unlinkat fs/namei.c:4359 [inline]
- __se_sys_unlinkat fs/namei.c:4352 [inline]
- __arm64_sys_unlinkat+0xcc/0xfc fs/namei.c:4352
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
- el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+static bool __io_file_supports_nowait(struct file *file)
+{
+	if (file->f_flags & O_NONBLOCK)
+		return true;
+	return file->f_mode & FMODE_NOWAIT;
+}
 
-The buggy address belongs to the physical page:
-page:00000000c0a5c392 refcount:2 mapcount:0 mapping:0000000007c227a9 index:0x1 pfn:0x122319
-memcg:ffff0000c1964000
-aops:def_blk_aops ino:700000
-flags: 0x5ffc0000002203e(referenced|uptodate|dirty|lru|active|private|mappedtodisk|node=0|zone=2|lastcpupid=0x7ff)
-raw: 05ffc0000002203e fffffc00061e7788 ffff0000c0036030 ffff0000c149ca10
-raw: 0000000000000001 ffff0000e1554570 00000002ffffffff ffff0000c1964000
-page dumped because: kasan: bad access detected
+and be done with it. Then we could also stop caching this state in the
+io_kiocb flags.
 
-Memory state around the buggy address:
- ffff0000e2319480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff0000e2319500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff0000e2319580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-                               ^
- ffff0000e2319600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff0000e2319680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
+> Something is very rotten in the state of Denmark.
 
+It's the Norwegians, always troublesome.
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> But that's all independent of this pipe side, which now looks fine to me.
+
+Thanks, I'll give the nowait side a once-over for the next kernel
+release and we can get that looking better too.
+
+-- 
+Jens Axboe
+
