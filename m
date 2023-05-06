@@ -2,148 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8C746F94C2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 May 2023 00:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AE0C6F94DA
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 May 2023 01:01:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbjEFW20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 18:28:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58016 "EHLO
+        id S229658AbjEFXBO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 19:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjEFW2Z (ORCPT
+        with ESMTP id S229454AbjEFXBN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 18:28:25 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E27C714348
-        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 15:28:23 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-ba1ddf79e4eso374349276.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 15:28:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1683412103; x=1686004103;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2PNtuRTNF7GqPddA849m36EOAEkX/j0itEuTgY2OGns=;
-        b=ymLgs23pGn0y31E1zv0R6T1pdESTKoNHL6sWfZ1tjEZhu6a/Q8HGG8Izn1Ndu47urg
-         QGNOryjeFW1fQcFbBxEY2uLjXDVeP3ZTIWgdHb4GwNGbgD75f3G57WjG5LPBe39gQkuI
-         7ap146VNBVcX67Qqq/fJtYTeD/Jww9zxdiCtZ0VFNEUBc53GyqXPxxBbu0U30AU9Qxfi
-         96w9jt/cW//cs5pB9oPF46MoFAPw6IQ0ij1ANmFYI9UKCux5jmCkQJZjyxgTPURiPYWX
-         WlwcoBp5w2F1x6UZ61G1bYvWWT3Fw+GjVldDko4ANde/rFSPMMivfQs0kzElXHf8QIkX
-         WHqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683412103; x=1686004103;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2PNtuRTNF7GqPddA849m36EOAEkX/j0itEuTgY2OGns=;
-        b=KR0ebFxjhdBHJ0MvR/heKC7oUxibTVyhfa16qXd7O+pFimnTZGHIBj2fZLp8DEdFM5
-         hdOdONe59BULGAGsezYhlQhMCWGV+Gzo4RbPQbBb1VoShSANASFr1iY/MJXrvbBcBiwe
-         prrLZHtvDK/tvWNbNQ+vqmq4M/sYhN475Plfm9iAIKkD0C++lj0f8zYNr6bOTXIlj9F9
-         ndFf/94Mxwf+6hbZH9DpAVLqPSb94PXi6khOpnbHl+eH3BKIOS8hlPf+4CxrelIBxGKW
-         QfOysiIEVVeGz8I+3fj2RoJuJenMC55iTLtHeDhGtaZKhgm5Uq+6dzGouh0nJQBlv5EV
-         w1ig==
-X-Gm-Message-State: AC+VfDyeg14CPBv8YmVMwjHj8+XNEQL5K6fnjL+zoKtdLbBPw/f4esd8
-        HJhqMBvSMKtsnwjgDmI2h1sTi0HsuHfo6jFfcvE=
-X-Google-Smtp-Source: ACHHUZ6IKH5ve5oYE+iYKdrfQG7SgCNq9Ctlt7/21fA4us2kQOtR8diWs/j6A9dlM18qj+W/RtPB9Q==
-X-Received: by 2002:a81:1e52:0:b0:55d:9ad7:87a4 with SMTP id e79-20020a811e52000000b0055d9ad787a4mr5697287ywe.2.1683412103083;
-        Sat, 06 May 2023 15:28:23 -0700 (PDT)
-Received: from [172.20.2.186] ([12.153.103.3])
-        by smtp.gmail.com with ESMTPSA id y1-20020a81a101000000b0055a07585a91sm1440675ywg.11.2023.05.06.15.28.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 May 2023 15:28:21 -0700 (PDT)
-Message-ID: <6be969d0-e941-c8fa-aca7-c6c96f2c1ba2@kernel.dk>
-Date:   Sat, 6 May 2023 16:28:21 -0600
+        Sat, 6 May 2023 19:01:13 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A373D19D4E;
+        Sat,  6 May 2023 16:01:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com; s=s31663417;
+        t=1683414050; i=quwenruo.btrfs@gmx.com;
+        bh=onm5rCQaDvEvaJNyNpTYEGH/jagb6snfPqiOO/wI2x0=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=qxZxo+DZZd6aNlXSLeMtkBYYnpnnhZx6jdt2hTCunczzEvD2mPe1GUJUqZStb3BOZ
+         M9Ln1gNt6893Q6Ol54C9BDilGUTbkUxkLa2JXlFw3tusnnf5C3VroUzdk1tURyKh8Q
+         RPnon3bL6Ta/MKzpSaBBnpuMd6ii1DtA4Q/wYyBhf6a4EViKpJ8bpFIVyN8mlSVj2G
+         zWQIGiIOQZW8o7J9iuQ3y2qH4h9mbeo3tWfYicIW53ZCSiyFa0Ex0wbdldBV+98Uoy
+         wPWCnPj2GH1UgvoSX+q66dMHhDkoW/tro3yV6GBCgdWOFIASccBIknsjsBzp0bFNbA
+         2xR0HUudTkUOA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mk0NU-1qfWDB31BI-00kMcr; Sun, 07
+ May 2023 01:00:50 +0200
+Message-ID: <9002b4a5-47f8-c96f-4b89-2a88af61e4ba@gmx.com>
+Date:   Sun, 7 May 2023 07:00:40 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [GIT PULL] Pipe FMODE_NOWAIT support
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH 1/2] btrfs: Introduce the virtual_fsid feature
+To:     kreijack@inwind.it, Qu Wenruo <wqu@suse.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        linux-btrfs@vger.kernel.org
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
+        kernel-dev@igalia.com, vivek@collabora.com,
+        ludovico.denittis@collabora.com, johns@valvesoftware.com,
+        nborisov@suse.com
+References: <20230504170708.787361-1-gpiccoli@igalia.com>
+ <20230504170708.787361-2-gpiccoli@igalia.com>
+ <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
+ <26e62159-8df9-862a-8c14-7871b2cba961@libero.it>
+ <9e12da58-3c53-79a4-c3fc-733346578965@suse.com>
+ <a440cc5b-6dd0-19a7-9fd6-f940d3f72927@inwind.it>
 Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <26aba1b5-8393-a20a-3ce9-f82425673f4d@kernel.dk>
- <CAHk-=wj=LwLDYrjHpMM+QnE2T+u4P9-UXhXGkAMXiyfGjGnNEA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=wj=LwLDYrjHpMM+QnE2T+u4P9-UXhXGkAMXiyfGjGnNEA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+In-Reply-To: <a440cc5b-6dd0-19a7-9fd6-f940d3f72927@inwind.it>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:EmvQ3GoUHpC29V0a5okhD72QJotRjt+Ee/JuTkpPsmqtJ9noxfj
+ YtRWP4te1fbe3kL8oo6T5xAKJSONdQL+j4PJ/hO1uBaHSpBcC83dFllNGTrQcDmuETSksG7
+ bYfARYY5UneahLJAOoXlUxdMaSgYwK0f1saLH8jzPU4Ub2F8VYjQrV8tV5iimmlcmVv1g3u
+ p5teORuSbBbMGLHUDgn2A==
+UI-OutboundReport: notjunk:1;M01:P0:bpY//nPPEAM=;5B4CtOzqymbmv4m4sm9ihEaR+Sb
+ q0TDA1d8inESng7iC4YmgajnNLzCEO1zOK/cjtCp41st7/eBvPFuJG7Bn+P+zWKaWF+KuXESi
+ dqKmCciPkaJX4HHbnYmh91swyPAnC0INwlBLIvZtqa45OSzbnna1UXCECnUATwOJUe/QSdYg9
+ NzyKbhVkqgPdHnf0ERAQX9TZOstRUsFV30gXcUlaNvH1joDx1s/Na+j712ViJeBA8TYnbmsyd
+ AaPLaq5EyfWlsFnDPkUD/wh/+LZr0chb5XTwckILJqOMkjtgh//i3ahjzz2SWfjtFw7qpxQqa
+ kwvlM59MBoPWXNhiUAM/0+gCDQXe8Eqf3Z/dcDgLWAqVxicZFhCPpJFHbWx9EzOOlxAlMLWFZ
+ mLfFoZYJu5UblLCSaF27pOtNfY2+udkX5OASP9dQxk0umI9KKfobE+9E1ciiAEcsNtRoBjJHF
+ QyOSq1c9w8YNB4DZB8K8OqGdDssfXwLvMKWWeVviCVbWvnEA4NeD2h9W8YYfXwum5QHGL0lxC
+ 1D8VouCP881wEvOlOfJGTD6Iyg8IH3F5nEHe291+NjXWLjMx3l6+4I1Kw80SpblyiW9XFBrFL
+ kaAZK9BgFSOciLfLZwrCwk3vZeuDIlQGf/YAY2WRrQZ5kTmCX3Z+s5I9GG9l3CQcZIpIMFlJu
+ ctAHO2NG0l6Z7IPKEng9MRBtT5+Az26lejOu1+AnrOZ7SQUQPm6F1viXIxt+VTWOWlJEy3OOn
+ e/AZNpOqgaLs1OM5b4DMd7ZdbOxDkpG8ByrDzc9JgIoj9PzzeAdOyzNzpui3DNikhLR9ct8jO
+ CAWry47IwVGarjd/GLHC6twLmdD9NblkaEVI1AMeerTmeEHZiYjIZrbYjXLrWYZRTkEdcRDse
+ OWkBCJbre4mTyG8clHpIvSzx5aXf3HCnmD7z00D/hblu5GUxnDopuIxgpEeIbA20CitZL3Dv/
+ aNL7Mg2/cgOdH6mL6odNSnZpqHs=
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/6/23 9:27?AM, Linus Torvalds wrote:
-> On Sat, May 6, 2023 at 3:33?AM Jens Axboe <axboe@kernel.dk> wrote:
+
+
+On 2023/5/7 01:30, Goffredo Baroncelli wrote:
+> On 06/05/2023 00.31, Qu Wenruo wrote:
 >>
->> Here's the revised edition of the FMODE_NOWAIT support for pipes, in
->> which we just flag it as such supporting FMODE_NOWAIT unconditionally,
->> but clear it if we ever end up using splice/vmsplice on the pipe. The
->> pipe read/write side is perfectly fine for nonblocking IO, however
->> splice and vmsplice can potentially wait for IO with the pipe lock held.
-> 
-> Ok, pulled.
-> 
-> It does strike me that one of the (few) users is the io_uring
-> __io_file_supports_nowait() thing, and that thing is *disgusting*.
+>>
+>> On 2023/5/6 01:34, Goffredo Baroncelli wrote:
+>>> On 05/05/2023 09.21, Qu Wenruo wrote:
+>>>>
+>>>> I would prefer a much simpler but more explicit method.
+>>>>
+>>>> Just introduce a new compat_ro feature, maybe call it SINGLE_DEV.
+>>>
+>>> It is not clear to me if we need that.
+>>>
+>>> I don't understand in what checking for SINGLE_DEV is different from
+>>> btrfs_super_block.disks_num =3D=3D 1.
+>>
+>> Because disks_num =3D=3D 1 doesn't exclude the ability to add new disks=
+ in
+>> the future.
+>>
+>> Without that new SINGLE_DEV compat_ro, we should still do the regular
+>> device scan.
+>>
+>>>
+>>> Let me to argument:
+>>>
+>>> I see two scenarios:
+>>> 1) mount two different fs with the same UUID NOT at the same time:
+>>> This could be done now with small change in the kernel:
+>>> - we need to NOT store the data of a filesystem when a disk is
+>>> =C2=A0=C2=A0 scanned IF it is composed by only one disk
+>>> - after the unmount we need to discard the data too (checking again
+>>> =C2=A0=C2=A0 that the filesystem is composed by only one disk)
+>>>
+>>> No limit is needed to add/replace a disk. Of course after a disk is
+>>> added a filesystem with the same UUID cannot be mounted without a
+>>> full cycle of --forget.
+>>
+>> The problem is, what if:
+>>
+>> - Both btrfs have single disk
+>> - Both btrfs have the same fsid
+>> - Both btrfs have been mounted
+>> - Then one of btrfs is going to add a new disk
+>>
+>
+> Why the user should be prevented to add a disk. It may
+> a aware user that want to do that, knowing the possible consequence.
+>
+>
+> [...]
+>
+>>
+>> - Scan and record the fsid/device at device add time
+>> =C2=A0=C2=A0 This means we should reject the device add.
+>> =C2=A0=C2=A0 This can sometimes cause confusion to the end user, just b=
+ecause they
+>> =C2=A0=C2=A0 have mounted another fs, now they can not add a new device=
+.
+>
+> I agree about the confusion. But not about the cause.
+> The confusion is due to the poor communication between the kernel (where
+> the error is
+> detected) and the user. Now the only solution is to look at dmesg.
+>
+> Allowing to mount two filesystem with the same UUID is technically
+> possible.
+> There are some constraints bat are well defined; there are some corner c=
+ase
+> but are well defined (like add a device to a single device filesystem).
+>
+> However when we hit one of these corner case, now it is difficult to inf=
+orm
+> the user about the problem. Because now the user has to look at the dmes=
+g
+> to understand what is the problem.
+>
+> This is the real problem. The communication. And we have a lot of these
+> problem (like mount a multi device filesystem without some disk, or with=
+ a
+> brain slip problem, or better inform the user if it is possible the
+> mount -o degraded).
+>
+> Look this in another way; what if we had a mount.btrfs helper that:
+>
+> - look for the devices which compose the filesystem at mounting time
+> - check if these devices are consistent:
+>  =C2=A0=C2=A0=C2=A0=C2=A0- if the fs is one-device, we don't need furthe=
+r check; otherwise
+> check
+>  =C2=A0=C2=A0=C2=A0=C2=A0- if all the devices are present
+>  =C2=A0=C2=A0=C2=A0=C2=A0- if all the device have the same transaction i=
+d
+>  =C2=A0=C2=A0=C2=A0=C2=A0- if ...
+>  =C2=A0 if any of the check above fails, write an error message; otherwi=
+se
+> - register the device(s) in the kernel or (better) pass it in the mount
+> command
+>  =C2=A0 line
+> - finally mount the filesystem
+>
+>
+> No need of strange flag; all the corner case can be handle safely and av=
+oid
+> any confusion to the user.
 
-Hah yes, will not claim that's a thing of beauty. It has been getting
-better though, at least.
+Just handling corner cases is not good for maintaining already.
 
-> Wouldn't it be much nicer if FMODE_NOWAIT ended up working
-> automatically on a block file descriptor too? You did all this "make
-> pipes set FMODE_NOWAIT", but then that io_uring code does
-> 
->         if (S_ISBLK(mode)) {
->                 if (IS_ENABLED(CONFIG_BLOCK) &&
->                     io_bdev_nowait(I_BDEV(file->f_mapping->host)))
->                         return true;
->                 return false;
->         }
-> 
-> rather than just rely on FMODE_NOWAIT for block devices too...
-> 
-> And it's a bit odd in other ways, because the kiocb code for
-> RWF_NOWAIT - which is the other user of FMODE_NOWAIT - does *not* seem
-> to do any of those bdev games. So that other user does seem to just
-> rely on the file mode bit having been set up by open.
-> 
-> In fact, I see 'blkdev_open()' doing
-> 
->         filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
-> 
-> so I really don't see why __io_file_supports_nowait() then does that
-> special check for S_ISBLK().
+So nope, I don't believe this is the good way to go.
 
-I need to double check if we can just do the io_bdev_nowait() check
-early and in the block code, so we cn make FMODE_NOWAIT reliable there.
-With that, yeah we could totally get rid of that odd checking and move
-it to the slower open path instead which would obviously be better.
+Furthermore, if someone really found the same fsid limits is a problem,
+they should go with the SINGLE_DEV features, not relying on some extra
+corner cases handling, which may or may not be supported on certain kernel=
+s.
 
-We should just set it for socket as well and just ultimately end up
-with:
+On the other handle, a compat_ro flag is clear dedicated way to tell the
+compatibility.
 
-static bool __io_file_supports_nowait(struct file *file)
-{
-	if (file->f_flags & O_NONBLOCK)
-		return true;
-	return file->f_mode & FMODE_NOWAIT;
-}
+In fact, if you're going to introduce an unexpected behavior change,
+it's way more strange to do without any compat_ro/ro/incompact flags.
 
-and be done with it. Then we could also stop caching this state in the
-io_kiocb flags.
-
-> Something is very rotten in the state of Denmark.
-
-It's the Norwegians, always troublesome.
-
-> But that's all independent of this pipe side, which now looks fine to me.
-
-Thanks, I'll give the nowait side a once-over for the next kernel
-release and we can get that looking better too.
-
--- 
-Jens Axboe
-
+Thanks,
+Qu
+>
+>
+>
+>
+>
+>
+>>
+>> =C2=A0=C2=A0 And this is going to change device add code path quite hug=
+ely.
+>> =C2=A0=C2=A0 We currently expects all device scan/trace thing done way =
+before
+>> =C2=A0=C2=A0 mount.
+>> =C2=A0=C2=A0 Such huge change can lead to hidden bugs.
+>>
+>> To me, neither is good to the end users.
+>>
+>> A SINGLE_DEV feature would reject the corner case in a way more
+>> user-friendly and clear way.
+>>
+>> =C2=A0=C2=A0 With SINGLE_DEV feature, just no dev add/replace/delete no=
+ matter
+>> =C2=A0=C2=A0 what.
+>>
+>>
+>>>
+>>> I have to point out that this problem would be easily solved in
+>>> userspace if we switch from the current model where the disks are
+>>> scanned asynchronously (udev which call btrfs dev scan) to a model
+>>> where the disk are scanned at mount time by a mount.btrfs helper.
+>>>
+>>> A mount.btrfs helper, also could be a place to put some more clear err=
+or
+>>> message like "we cannot mount this filesystem because one disk of a
+>>> raid5 is missing, try passing -o degraded"
+>>> or "we cannot mount this filesystem because we detect a brain split
+>>> problem" ....
+>>>
+>>> 2) mount two different fs with the same UUID at the SAME time:
+>>> This is a bit more complicated; we need to store a virtual UUID
+>>> somewhere.
+>>>
+>>> However sometime we need to use the real fsid (during a write),
+>>> and sometime we need to use the virtual_uuid (e.g. for
+>>> /sys/fs/btrfs/<uuid>)
+>>
+>> Another thing is, we already have too many uuids.
+>>
+>> Some are unavoidable like fsid and device uuid.
+>>
+>> But I still prefer not to add a new layer of unnecessary uuids.
+>>
+>> Thanks,
+>> Qu
+>>
+>>>
+>>> Both in 1) and 2) we need to/it is enough to have
+>>> btrfs_super_block.disks_num =3D=3D 1
+>>> In the case 2) using a virtual_uuid mount option will prevent
+>>> to add a disk.
+>>
+>
