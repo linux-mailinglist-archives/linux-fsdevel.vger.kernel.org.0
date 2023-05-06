@@ -2,84 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4255A6F907F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 10:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 825D26F907E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 10:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230209AbjEFIT5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 04:19:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58912 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229965AbjEFIT4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S230039AbjEFIT4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Sat, 6 May 2023 04:19:56 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0585FA5C1
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58906 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229655AbjEFITz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 6 May 2023 04:19:55 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6625A262
         for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 01:19:54 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-331581c2b13so37838205ab.2
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-760c58747cdso348621339f.0
         for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 01:19:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20221208; t=1683361194; x=1685953194;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jVUJ5yG+yy8draRFo1pcX9bGZ/Mvz/sfGKW74HVuV1Q=;
-        b=EKjiMRBgV9pksymCKvNMwBnSb17wR53U5uuRfwqCr3QjWnEWvoQgxiNpeNzmk3bPEb
-         tLNCeKB3kXbbeoWwDeE9+g1QNZiXGB2vdhRtEYQyjYubxFBkAYOcNZ/P8E9A8d6qIPfE
-         IfcCyxTkD45T/+4CJQb5tXP47kM5fEisKeVZUppaw5dGVeAPeCegA9aJo7ojiBCxpaZ+
-         428oWcs4FqE06NxEe5I5j+PGHiHHn5Tvb7uqOazhKsPchraO1c+dUjR7xGYjlhtmQe2J
-         fIf20MtrfRAyM5vjPBHAj3N9blAZUVEmCL+zwL3kkiixCfeHjkSdSrq9dNr8Ws2elrWt
-         duWQ==
-X-Gm-Message-State: AC+VfDwTMPPmbp2dAEroP1DlE2Eex0McuJ3IWHOJ4CV4UgZpQl1zv0b6
-        YNoOg+jjy9mEeGnd0AezWtNpRXgJKigfH8QOmAe3mTmUz5SY
-X-Google-Smtp-Source: ACHHUZ4VBdG1zjQGZ617sj8Bw/i7tXt6yY8hh6Z24NVuWlo5XFGQKzSsDb7RK6Ukfe5fXvjbb23RbgpeXV0th38mBUQNJyoOvKrP
+        bh=dxjhaxm6GBE/XMOpkcvP97PdcQPLqpc3Xf8xBua2VM4=;
+        b=iM2eeiK+nnN996YaB2fjTAad8sZ2LrZUjSCQJrY0GqI7Xw+oA6oGiNZTkaHWCgLxEN
+         qOPMAGXE8zl2VsUvU+7poQD3Vst0apDnXMFXtqqL9aBXJ4oVzm1zHNXT/MzFj2CS/VXC
+         UJzVy/cAqfsxQay1yI6q5FD0BPG5jY0iisfpksHzK04WxFQAbcA3zPcpAEFk5w3c0uBV
+         ADi0T6NkTaH+ZW00TEHP89SqPyQakwxu9is+CURoIN1XuUEwc6hE2IFOicv9dhLFjjIA
+         JuVfk7XE303qnl9YwU0JiORASkoFjCA4TQjQo9jkfAPyf/oD0f4SgNUtdLBoQJ33g9DZ
+         hWKg==
+X-Gm-Message-State: AC+VfDxKF/mb7xYGXFfq3ZyiJNksfs9dfStHhcEhoM6ut/WXY1g/3td8
+        QZF3XuFrj3HbYCN5bIFTLs9oKpN3rMHghdIYBt9mO8cBsoS1kTU=
+X-Google-Smtp-Source: ACHHUZ7semmDEWx645iiKGoGBqb7lAqZH7eSWehlU7XhOXmQEsVxAUxMo0XFEPLflKjZvdHefluWOsTCA32UhQrxYOQ5eFylT8N/
 MIME-Version: 1.0
-X-Received: by 2002:a92:2911:0:b0:331:ac80:cca0 with SMTP id
- l17-20020a922911000000b00331ac80cca0mr1989329ilg.6.1683361194299; Sat, 06 May
+X-Received: by 2002:a02:954c:0:b0:416:4db7:4651 with SMTP id
+ y70-20020a02954c000000b004164db74651mr1756359jah.0.1683361194067; Sat, 06 May
  2023 01:19:54 -0700 (PDT)
 Date:   Sat, 06 May 2023 01:19:54 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000003d83d05fb021241@google.com>
-Subject: [syzbot] Monthly udf report (May 2023)
-From:   syzbot <syzbot+list03daa6f834f1662cd871@syzkaller.appspotmail.com>
-To:     jack@suse.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000004ee205fb02120c@google.com>
+Subject: [syzbot] Monthly overlayfs report (May 2023)
+From:   syzbot <syzbot+list16475954899e04aa22d2@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_DIGITS,
+        FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello udf maintainers/developers,
+Hello overlayfs maintainers/developers,
 
-This is a 31-day syzbot report for the udf subsystem.
+This is a 31-day syzbot report for the overlayfs subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/udf
+https://syzkaller.appspot.com/upstream/s/overlayfs
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 14 issues are still open and 17 have been fixed so far.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 7 issues are still open and 17 have been fixed so far.
 
 Some of the still happening issues:
 
 Ref Crashes Repro Title
-<1> 481     Yes   WARNING in udf_truncate_extents
-                  https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
-<2> 37      Yes   KASAN: use-after-free Read in crc_itu_t
-                  https://syzkaller.appspot.com/bug?extid=d8fc21bfa138a5ae916d
-<3> 36      Yes   KASAN: use-after-free Write in udf_close_lvid
-                  https://syzkaller.appspot.com/bug?extid=60864ed35b1073540d57
-<4> 11      No    WARNING in udf_new_block
-                  https://syzkaller.appspot.com/bug?extid=cc717c6c5fee9ed6e41d
-<5> 5       No    WARNING in udf_prealloc_blocks
-                  https://syzkaller.appspot.com/bug?extid=a637b18b4c36f9892829
-<6> 2       No    WARNING in udf_free_blocks
-                  https://syzkaller.appspot.com/bug?extid=80d8e23d89e3b1222382
-<7> 1       No    BUG: unable to handle kernel paging request in udf_add_fid_counter
-                  https://syzkaller.appspot.com/bug?extid=363633e9b96ffd442134
+<1> 797     Yes   possible deadlock in ovl_maybe_copy_up
+                  https://syzkaller.appspot.com/bug?extid=c18f2f6a7b08c51e3025
+<2> 546     Yes   possible deadlock in mnt_want_write (2)
+                  https://syzkaller.appspot.com/bug?extid=b42fe626038981fb7bfa
+<3> 25      Yes   BUG: unable to handle kernel paging request in take_dentry_name_snapshot
+                  https://syzkaller.appspot.com/bug?extid=90392eaed540afcc8fc3
 
 ---
 This report is generated by a bot. It may contain errors.
