@@ -2,45 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A03226F8EA0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 07:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A44886F8EA1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 07:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbjEFFCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 01:02:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52628 "EHLO
+        id S230145AbjEFFEV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 01:04:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229822AbjEFFCB (ORCPT
+        with ESMTP id S229822AbjEFFET (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 01:02:01 -0400
-Received: from out-57.mta1.migadu.com (out-57.mta1.migadu.com [95.215.58.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A072E76A8
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 22:01:59 -0700 (PDT)
-Message-ID: <ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev>
+        Sat, 6 May 2023 01:04:19 -0400
+X-Greylist: delayed 74837 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 05 May 2023 22:04:18 PDT
+Received: from out-56.mta0.migadu.com (out-56.mta0.migadu.com [91.218.175.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C40476A8
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 22:04:18 -0700 (PDT)
+Message-ID: <69015d62-a2c0-3baf-413f-5e229e632a1e@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1683349317;
+        t=1683349455;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=GENMLDgdQMgD8gcVExBMpc4braNEHEN9i49jwrn54aU=;
-        b=hxH/wDReyqtFfDzHWoOtzXHT2YM3Aj2mfbdeioZ5jd+7bNvq1lW2HgaS36ewY9XMCOZoEw
-        1OEH1mun+Oi6SfMJ+8Xd+UCeOjzM4OVHvC9lb9r9B2k7acwusNOUKMAkhkQHnVc9Wk/0fM
-        HUf8OTdGWmFpaj7774xJPfUXeqq3sHU=
-Date:   Sat, 6 May 2023 13:01:49 +0800
+        bh=4G/ZI0YL6xio/ZFaV1IxerxiXyXJZiWM4v7ZJaWcgNk=;
+        b=ZYkHeYRu8M2iMWbd/puJD4AVtl83wdNHhu6QNYMadDihEBSJEMclUFO40ceGcUp+gr0KtX
+        lkia8lZBekhQ0Dh7JA4JTEqeJEcqYECLLF6Lrq5ZFhSXjWQBgiXMoHdQSN26nhdYOz+CmD
+        kRje4dGKqIM9T1AuNOAuvFBua7spxgA=
+Date:   Sat, 6 May 2023 13:04:10 +0800
 MIME-Version: 1.0
-Subject: Re: [PATCH] fuse: add a new flag to allow shared mmap in
+Subject: Re: [fuse-devel] [PATCH] fuse: add a new flag to allow shared mmap in
  FOPEN_DIRECT_IO mode
 Content-Language: en-US
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     fuse-devel@lists.sourceforge.net, miklos@szeredi.hu,
-        bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
+        fuse-devel@lists.sourceforge.net
+Cc:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
 References: <20230505081652.43008-1-hao.xu@linux.dev>
- <ZFVpH1n0VzNe7iVE@redhat.com>
+ <fc6fe539-64ae-aa35-8b6e-3b22e07af31f@fastmail.fm>
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <ZFVpH1n0VzNe7iVE@redhat.com>
+In-Reply-To: <fc6fe539-64ae-aa35-8b6e-3b22e07af31f@fastmail.fm>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
@@ -52,10 +53,10 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Vivek,
-
-On 5/6/23 04:37, Vivek Goyal wrote:
-> On Fri, May 05, 2023 at 04:16:52PM +0800, Hao Xu wrote:
+On 5/5/23 22:39, Bernd Schubert wrote:
+> 
+> 
+> On 5/5/23 10:16, Hao Xu wrote:
 >> From: Hao Xu <howeyxu@tencent.com>
 >>
 >> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
@@ -68,90 +69,69 @@ On 5/6/23 04:37, Vivek Goyal wrote:
 >>
 >> Signed-off-by: Hao Xu <howeyxu@tencent.com>
 >> ---
->>   fs/fuse/file.c            | 11 ++++++++---
->>   include/uapi/linux/fuse.h |  2 ++
->>   2 files changed, 10 insertions(+), 3 deletions(-)
+>>   fs/fuse/file.c            | 11 ++++++++---
+>>   include/uapi/linux/fuse.h |  2 ++
+>>   2 files changed, 10 insertions(+), 3 deletions(-)
 >>
 >> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
 >> index 89d97f6188e0..655896bdb0d5 100644
 >> --- a/fs/fuse/file.c
 >> +++ b/fs/fuse/file.c
->> @@ -161,7 +161,8 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
->>   	}
->>   
->>   	if (isdir)
->> -		ff->open_flags &= ~FOPEN_DIRECT_IO;
->> +		ff->open_flags &=
->> +			~(FOPEN_DIRECT_IO | FOPEN_DIRECT_IO_SHARED_MMAP);
->>   
->>   	ff->nodeid = nodeid;
->>   
->> @@ -2509,8 +2510,12 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
->>   		return fuse_dax_mmap(file, vma);
->>   
->>   	if (ff->open_flags & FOPEN_DIRECT_IO) {
->> -		/* Can't provide the coherency needed for MAP_SHARED */
->> -		if (vma->vm_flags & VM_MAYSHARE)
->> +		/* Can't provide the coherency needed for MAP_SHARED.
->> +		 * So disable it if FOPEN_DIRECT_IO_SHARED_MMAP is not
->> +		 * set, which means we do need strong coherency.
->> +		 */
->> +		if (!(ff->open_flags & FOPEN_DIRECT_IO_SHARED_MMAP) &&
->> +		    vma->vm_flags & VM_MAYSHARE)
->>   			return -ENODEV;
+>> @@ -161,7 +161,8 @@ struct fuse_file *fuse_file_open(struct fuse_mount 
+>> *fm, u64 nodeid,
+>>       }
+>>       if (isdir)
+>> -        ff->open_flags &= ~FOPEN_DIRECT_IO;
+>> +        ff->open_flags &=
+>> +            ~(FOPEN_DIRECT_IO | FOPEN_DIRECT_IO_SHARED_MMAP);
+>>       ff->nodeid = nodeid;
+>> @@ -2509,8 +2510,12 @@ static int fuse_file_mmap(struct file *file, 
+>> struct vm_area_struct *vma)
+>>           return fuse_dax_mmap(file, vma);
+>>       if (ff->open_flags & FOPEN_DIRECT_IO) {
+>> -        /* Can't provide the coherency needed for MAP_SHARED */
+>> -        if (vma->vm_flags & VM_MAYSHARE)
+>> +        /* Can't provide the coherency needed for MAP_SHARED.
+>> +         * So disable it if FOPEN_DIRECT_IO_SHARED_MMAP is not
+>> +         * set, which means we do need strong coherency.
+>> +         */
+>> +        if (!(ff->open_flags & FOPEN_DIRECT_IO_SHARED_MMAP) &&
+>> +            vma->vm_flags & VM_MAYSHARE)
+>>               return -ENODEV;
+>>           invalidate_inode_pages2(file->f_mapping);
+>> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+>> index 1b9d0dfae72d..003dcf42e8c2 100644
+>> --- a/include/uapi/linux/fuse.h
+>> +++ b/include/uapi/linux/fuse.h
+>> @@ -314,6 +314,7 @@ struct fuse_file_lock {
+>>    * FOPEN_STREAM: the file is stream-like (no file position at all)
+>>    * FOPEN_NOFLUSH: don't flush data cache on close (unless 
+>> FUSE_WRITEBACK_CACHE)
+>>    * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on 
+>> the same inode
+>> + * FOPEN_DIRECT_IO_SHARED_MMAP: allow shared mmap when 
+>> FOPEN_DIRECT_IO is set
+>>    */
+>>   #define FOPEN_DIRECT_IO        (1 << 0)
+>>   #define FOPEN_KEEP_CACHE    (1 << 1)
+>> @@ -322,6 +323,7 @@ struct fuse_file_lock {
+>>   #define FOPEN_STREAM        (1 << 4)
+>>   #define FOPEN_NOFLUSH        (1 << 5)
+>>   #define FOPEN_PARALLEL_DIRECT_WRITES    (1 << 6)
+>> +#define FOPEN_DIRECT_IO_SHARED_MMAP    (1 << 7)
 > 
-> Can you give an example how this is useful and how do you plan to
-> use it?
+> Thanks, that is what I had in my mind as well.
 > 
-> If goal is not using guest cache (either for saving memory or for cache
-> coherency with other clients) and hence you used FOPEN_DIRECT_IO,
-> then by allowing page cache for mmap(), we are contracting that goal.
-> We are neither saving memory and at the same time we are not
-> cache coherent.
-
-We use it to reduce guest memory "as possible as we can", which means we 
-first have to ensure the functionality so shared mmap should work when 
-users call it, then second reduce memory when users use read/write 
-(from/to other files).
-
-In cases where users do read/write in most time and calls shared mmap 
-sometimes, disabling shared mmap makes this case out of service, but
-with this flag we still reduce memory and the application works.
-
+> I don't have a strong opinion on it (so don't change it before Miklos 
+> commented), but maybe FOPEN_DIRECT_IO_WEAK? Just in case there would be 
+> later on other conditions that need to be weakened? The comment would 
+> say then something like
+> "Weakens FOPEN_DIRECT_IO enforcement, allows MAP_SHARED mmap"
 > 
-> IIUC, for virtiofs, you want to use cache=none but at the same time
-> allow guest applications to do shared mmap() hence you are introducing
-> this change. There have been folks who have complained about it
-> and I think 9pfs offers a mode which does this. So solving this
-> problem will be nice.
+
+make sense for me, thanks, I'll update it in v2 sent after Miklos' review.
+
+> Thanks,
+> Bernd
 > 
-> BTW, if "-o dax" is used, it solves this problem. But unfortunately qemu
-> does not have DAX support yet and we also have issues with page truncation
-> on host and MCE not travelling into the guest. So DAX is not a perfect
-> option yet.
-
-Yea, just like I relied in another mail, users' IO pattern may be a 
-bunch of small IO to a bunch of small files, dax may help but not so 
-much in that case.
-
-> 
-> I agree that solving this problem will be nice. Just trying to
-> understand the behavior better. How these cache pages will
-> interact with read/write?
-
-I went through the code, it looks like there are issues when users mmap
-a file and then write to it, this may cause coherency problem between 
-the backend file and the frontend page cache.
-I think this problem exists before this patchset: when we private mmap
-a file and then write to it in FOPEN_DIRECT_IO mode, the change doesn't
-update to the page cache because we falsely assume there is no page 
-cache under FOPEN_DIRECT_IO mode. I need to go over the code and do some
-test to see if it is really there and to solve it.
-
-Thanks,
-Hao
-
-> 
-> Thanks
-> Vivek
 
