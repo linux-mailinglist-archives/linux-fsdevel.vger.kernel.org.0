@@ -2,75 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C75D6F92D5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 17:46:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE0A6F92FF
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 18:04:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233319AbjEFPqM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 11:46:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55424 "EHLO
+        id S229530AbjEFQEh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 12:04:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233232AbjEFPqH (ORCPT
+        with ESMTP id S229527AbjEFQEh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 11:46:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5662D1A1EE;
-        Sat,  6 May 2023 08:46:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 36FFD6103C;
-        Sat,  6 May 2023 15:46:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9B9C1C4339B;
-        Sat,  6 May 2023 15:46:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683387964;
-        bh=gJiabGseQmuYgZafSb6SWwlitqRWvem2Cby0eDbSweU=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=pI5ep2KQ8E9x/CeHbwIBgBkmAmFZIox/yMVgZF73J0td5jZ7j1v/Zl+OoxetQSUqh
-         lQv4OoAzOh2a1MSzuUOvvTLi8clNO5ZDqBR6bWUWEzIBVIxoPqrSz0+Eg3drrrx5Wy
-         Mg8kIMqeM/kpXIqk7lYRhIbtJ2sG+nMU+JL0rOjYuoXEhmrnN0OQnGd587XRtEeX+j
-         bAegWtBByOuOGSCpw0DB3yRTjM3GpA0c0TvF6U6s1FtZsGgjfAO8M+c53dI3flFcna
-         +cJhIa782nTvVY7wdRVjC+pr5jktNzUWo/LxZOF2fwKkKP2MM+RNl7cW6/Klh0Rz2H
-         WKopaA519iJww==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 884A2C41677;
-        Sat,  6 May 2023 15:46:04 +0000 (UTC)
-Subject: Re: [GIT PULL] Pipe FMODE_NOWAIT support
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <26aba1b5-8393-a20a-3ce9-f82425673f4d@kernel.dk>
-References: <26aba1b5-8393-a20a-3ce9-f82425673f4d@kernel.dk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <26aba1b5-8393-a20a-3ce9-f82425673f4d@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/pipe-nonblock-2023-05-06
-X-PR-Tracked-Commit-Id: afed6271f5b0d78ca1a3739c1da4aa3629b26bba
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7644c8231987288e7aae378d2ff3c56a980d1988
-Message-Id: <168338796454.28822.4066762564187422370.pr-tracker-bot@kernel.org>
-Date:   Sat, 06 May 2023 15:46:04 +0000
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        Sat, 6 May 2023 12:04:37 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B79BD8685
+        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 09:04:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=behTiREaMc5g42beO1FZ84CdMnER08mqJB7qg1qhoeA=; b=BFolmZ/DBV0UdxhzRYlJ6x+qKv
+        Qx1c/U7tYvCG9w1ZotIRaWd0y5e9iQUR1gUmeszrWARl7xlaef96EHB+jcsxef+z9QpNgk+w7RIop
+        5ZbSBFaWoe6kw6jwQbAHMSWF7iGYYaaRvUvC+jUtC8CqXyiCpiP5OS1dKqmjVLOOAAUtLrA9PSDml
+        /bLjFi6BgutwYxxZ7F4SKd87pKu8CHd7dDMjwefXbUq+h3uHiBsG36DtGZsSWeGRbBkn+lgawU+O6
+        TFDG+3oVF/Hh6WfcnL3QC7GJXBjWRCKVe75T4oig9jBPdrpL2HEdim6Yx29OTTrvE74NU8rt3R5lv
+        vJglS7sA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pvKOa-00CYNk-Kf; Sat, 06 May 2023 16:04:28 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        syzbot+48011b86c8ea329af1b9@syzkaller.appspotmail.com,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH] filemap: Handle error return from __filemap_get_folio()
+Date:   Sat,  6 May 2023 17:04:14 +0100
+Message-Id: <20230506160415.2992089-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Sat, 6 May 2023 04:33:17 -0600:
+Smatch reports that filemap_fault() was missed in the conversion of
+__filemap_get_folio() error returns from NULL to ERR_PTR.
 
-> git://git.kernel.dk/linux.git tags/pipe-nonblock-2023-05-06
+Fixes: 66dabbb65d67 ("mm: return an ERR_PTR from __filemap_get_folio")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reported-by: syzbot+48011b86c8ea329af1b9@syzkaller.appspotmail.com
+Reported-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ mm/filemap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7644c8231987288e7aae378d2ff3c56a980d1988
-
-Thank you!
-
+diff --git a/mm/filemap.c b/mm/filemap.c
+index a34abfe8c654..b4c9bd368b7e 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3378,7 +3378,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	 * re-find the vma and come back and find our hopefully still populated
+ 	 * page.
+ 	 */
+-	if (folio)
++	if (!IS_ERR(folio))
+ 		folio_put(folio);
+ 	if (mapping_locked)
+ 		filemap_invalidate_unlock_shared(mapping);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.39.2
+
