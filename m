@@ -2,66 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7ED66F931F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 18:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A7466F933C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 19:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbjEFQfz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 12:35:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43328 "EHLO
+        id S229782AbjEFRFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 13:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjEFQfy (ORCPT
+        with ESMTP id S229460AbjEFRFK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 12:35:54 -0400
+        Sat, 6 May 2023 13:05:10 -0400
 Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00FF018907
-        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 09:35:52 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-50be0d835aaso5341116a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 09:35:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6CF18174
+        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 10:05:09 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-50bc3a2d333so4523874a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 10:05:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1683390951; x=1685982951;
+        d=linux-foundation.org; s=google; t=1683392707; x=1685984707;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iqqqXb22we8OKwm1xpjpxee+QM1A6+Xg9qamTaplXFs=;
-        b=A8DCHkFWUzXdsail7vwybg9mK5VvGIri9rsoNiKAJFar9bylTKMA0jF9anL2QGpTVr
-         0jXTLxUJukk8P6A/Lcr4EqDeNJ4HRX3saa+RBpJuaPRgQyFIAo3lkI0DflS27CiZKHmk
-         qudhg848Dwf/Qwec/bVWOdbhVOXSafcVN9jo4=
+        bh=BohPGjhU0MW7cH+kq6sMfSx9As3zddOMBgwyOGlEMPA=;
+        b=SFCveER3zj+YX4DQ0uYSH4XrGZaZLvB1GmseaA1Lc0ZsMUQMVa7u7IoNmZ2K0N9CAl
+         UcBAtFZtQJkN+n4IGOgQ/Qxq3HpfpGrG47MfMn4ihgdjAnZnwO3xktw6tXFp5TPvSgPL
+         xLntvXC/WMPutJN+Pf6Lfaw9+4ivwsDxOEQIs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683390951; x=1685982951;
+        d=1e100.net; s=20221208; t=1683392707; x=1685984707;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iqqqXb22we8OKwm1xpjpxee+QM1A6+Xg9qamTaplXFs=;
-        b=Az6vIIe6q6SR9+G62+/pZPIr796tO8UU+Yik3YSJsGHTIUeXcXZGCMsFkUJEOPy91A
-         2IHM+du/zUloYFxB1PNOqUyueH3qq9ezhiC09ArYHVVMqbp+xAU/bKS3QaNFy5VFF8u6
-         s2FJhWURxr9JY69WeNCf1JEZyvEKmBRRmDGtD08tG4zDgHJF9VPRaI+lWn1Mz3CR5MXa
-         UIjqSjlRA9h8l+7BaCB/0DCU8grkQccr8ILgE/5lPBRdGUJOv+zAYDrasjJltkhMna4t
-         zCXXIkeuxdg96dKgy+Y5nfha54JSsvbCgPD1fP4ylOhC0AVJpY1N3AyvqW1tb9FCaIjj
-         MWSg==
-X-Gm-Message-State: AC+VfDwne+vlQV9LiDZhKsdOWF9Y9Foq8TWMxHJaoPMhA+mYO9N6Hf3N
-        n385yjHa9heg65kz+XAi27qgh9qXDX8LsRBDcbZVpA==
-X-Google-Smtp-Source: ACHHUZ72MxnZMSbXY2TVcK/16h3X0yhZjd38bzVXseaGcBGC8tY1TVv00arJC2+cf+DbXeWKzlyFZg==
-X-Received: by 2002:a17:907:70e:b0:965:6199:cf60 with SMTP id xb14-20020a170907070e00b009656199cf60mr3623979ejb.42.1683390951131;
-        Sat, 06 May 2023 09:35:51 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id k1-20020a170906970100b00965b439027csm2502055ejx.195.2023.05.06.09.35.50
+        bh=BohPGjhU0MW7cH+kq6sMfSx9As3zddOMBgwyOGlEMPA=;
+        b=aH/VfTU9C3rsD/itTqj0HQkE2iVuet17+c3ppRJBlM63O5BhawsxdKMsZIqLVprg9P
+         M/YFTgCD6E+do1zRBbdh3y42uUYlKdWK67HkpsjmNqfVjqchEsaefLXG2NDSTEfakhNe
+         Bels14st2/mW1IK8RvG60psv+CevNI2Y5f9G+jAxP2pmRi0Trvhdjogcmz2ajKmZqn2V
+         x0WV7edNxKr1nDtphIHTRx/5eIZUtdfiQzyqHjZX2LM+ymL18uxQSf7zcrJuedqiVi4R
+         3HgNwXJIqcMwtB/v2b8H4nb7Xpkzy7r+qGBOx6TMP//FXPY3SgqnY7ctoVBc7LXfyT3U
+         qQlw==
+X-Gm-Message-State: AC+VfDzcAoXO5hDLnOr8wUe/M4nVGx7ekYEvmkLFRAcGXLiazPFozY4O
+        XhgwR0j3gfwvml70Cjxwb1IWpaDlhrDOw6Xy10Dqhg==
+X-Google-Smtp-Source: ACHHUZ6LJ4MPFvcrIYa/H0BwoX60JttVen1StlQiHa5t5CLWa67n9LnqLEcXwP46bJGaJYWCpnRfmQ==
+X-Received: by 2002:a17:907:31c7:b0:965:d18b:f03a with SMTP id xf7-20020a17090731c700b00965d18bf03amr4000997ejb.58.1683392707446;
+        Sat, 06 May 2023 10:05:07 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id n13-20020a170906088d00b0094f1d0bad81sm2523369eje.139.2023.05.06.10.05.05
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 May 2023 09:35:50 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-956ff2399b1so555845366b.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 09:35:50 -0700 (PDT)
-X-Received: by 2002:a17:907:628c:b0:94f:2a13:4e01 with SMTP id
- nd12-20020a170907628c00b0094f2a134e01mr4183212ejc.74.1683390949920; Sat, 06
- May 2023 09:35:49 -0700 (PDT)
+        Sat, 06 May 2023 10:05:05 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-94f1d0d2e03so470125066b.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 10:05:05 -0700 (PDT)
+X-Received: by 2002:a17:906:fd8c:b0:94f:3cf5:6d7f with SMTP id
+ xa12-20020a170906fd8c00b0094f3cf56d7fmr4182892ejb.46.1683392704861; Sat, 06
+ May 2023 10:05:04 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230506160415.2992089-1-willy@infradead.org> <CAHk-=winrN4jsysShx0kWKVzmSMu7Pp3nz_6+aps9CP+v-qHWQ@mail.gmail.com>
-In-Reply-To: <CAHk-=winrN4jsysShx0kWKVzmSMu7Pp3nz_6+aps9CP+v-qHWQ@mail.gmail.com>
+ <CAHk-=winai-5i6E1oMk7hXPfbP+SCssk5+TOLCJ3koaDrn7Bzg@mail.gmail.com>
+In-Reply-To: <CAHk-=winai-5i6E1oMk7hXPfbP+SCssk5+TOLCJ3koaDrn7Bzg@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 6 May 2023 09:35:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=winai-5i6E1oMk7hXPfbP+SCssk5+TOLCJ3koaDrn7Bzg@mail.gmail.com>
-Message-ID: <CAHk-=winai-5i6E1oMk7hXPfbP+SCssk5+TOLCJ3koaDrn7Bzg@mail.gmail.com>
+Date:   Sat, 6 May 2023 10:04:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiZ0GaAdqyke-egjBRaqP-QdLcX=8gNk7m6Hx7rXjcXVQ@mail.gmail.com>
+Message-ID: <CAHk-=wiZ0GaAdqyke-egjBRaqP-QdLcX=8gNk7m6Hx7rXjcXVQ@mail.gmail.com>
 Subject: Re: [PATCH] filemap: Handle error return from __filemap_get_folio()
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Dan Carpenter <dan.carpenter@linaro.org>,
@@ -79,89 +82,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 6, 2023 at 9:09=E2=80=AFAM Linus Torvalds
+On Sat, May 6, 2023 at 9:35=E2=80=AFAM Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> Thanks, applied directly.
+> And yes, the simplest fix for the "wrong test" would be to just add a
+> new "out_nofolio" error case after "out_retry", and use that.
+>
+> However, even that seems wrong, because the return value for that path
+> is the wrong one.
 
-Actually, I take that back.
+Actually, my suggested patch is _also_ wrong.
 
-I applied it, and then I looked at the context some more, and decided
-that I hated it.
+The problem is that we do need to return VM_FAULT_RETRY to let the
+caller know that we released the mmap_lock.
 
-It's not that the patch itself was wrong, but the whole original
+And once we return VM_FAULT_RETRY, the other error bits don't even matter.
 
-        if (folio)
-                folio_put(folio);
+So while I think the *right* thing to do is to return VM_FAULT_OOM |
+VM_FAULT_RETRY, that doesn't actually end up working, because if
+VM_FAULT_RETRY is set, the caller will know that "yes, mmap_lock was
+dropped", but the callers will also just ignore the other bits and
+unconditionally retry.
 
-was wrong in that context, and shouldn't have been done that way.
+How very very annoying.
 
-Converting the conditional to use !IS_ERR() fixes a conversion error,
-but doesn't fix the original problem with the code.
+This was introduced several years ago by commit 6b4c9f446981
+("filemap: drop the mmap_sem for all blocking operations").
 
-The only path that triggered that "we have no folio" was wrong to jump
-to that "should I drop this folio" code sequence in the first place.
+Looking at that, we have at least one other similar error case wrong
+too: the "page_not_uptodate" case carefully checks for IO errors and
+retries only if there was no error (or for the AOP_TRUNCATED_PAGE)
+case.
 
-So the fix is to not use "out_retry" at all for the IS_ERR(folio) case.
+For an actual IO error on page reading, it returns VM_FAULT_SIGBUS.
 
-Yes, yes, compilers can do jump threading, and in a perfect world
-might realize that there are two consecutive tests for IS_ERR(folio)
-and just do this kind of conversion automatically.
+Except - again - for that "if (fpin) goto out_retry" case, which will
+just return VM_FAULT_RETRY and retry the fault.
 
-But the fact that compilers *might* fix out our code to do the right
-thing doesn't mean that the code shouldn't have been written to just
-have the proper error handling nesting in the first place.
+I do not believe that retrying the fault is the right thing to do when
+we ran out of memory, or when we had an IO error, and I do not think
+it was intentional that the error handling was changed.
 
-And yes, the simplest fix for the "wrong test" would be to just add a
-new "out_nofolio" error case after "out_retry", and use that.
+But I  think this is all just a mistake from how that VM_FAULT_RETRY
+works in the callers.
 
-However, even that seems wrong, because the return value for that path
-is the wrong one.
+How very very annoying.
 
-So the "goto out_retry" was actually *doubly* wrong.
+So scratch that patch suggestion of mine, but let's bring in some
+people involved with the original fpin code, and see if we can find
+some solution that honors that error case too.
 
-If the __filemap_get_folio(FGP_CREAT) failed, then we should not
-return VM_FAULT_RETRY at all. We should return VM_FAULT_OOM, like it
-does for the no-fpin case.
-
-So the whole
-
-                if (IS_ERR(folio)) {
-                        if (fpin)
-                                goto out_retry;
-
-sequence seems to be completely wrong in several ways. It shouldn't go
-to "out_retry" at all, because this is simply not a "retry" case.
-
-And that in turn means that "out_retry" shouldn't be testing folio at
-all (whether for IS_ERR() _or_ for NULL).
-
-So i really think the proper fix is this (whitespace-damaged) patch instead=
-:
-
-    --- a/mm/filemap.c
-    +++ b/mm/filemap.c
-    @@ -3291,7 +3291,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
-                                              vmf->gfp_mask);
-                    if (IS_ERR(folio)) {
-    -                       if (fpin)
-    -                               goto out_retry;
-                            filemap_invalidate_unlock_shared(mapping);
-    +                       if (fpin)
-    +                               fput(fpin);
-                            return VM_FAULT_OOM;
-                    }
-    @@ -3379,6 +3379,5 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
-             * page.
-             */
-    -       if (folio)
-    -               folio_put(folio);
-    +       folio_put(folio);
-            if (mapping_locked)
-                    filemap_invalidate_unlock_shared(mapping);
-
-which fixes both problems by simply avoiding a bogus 'goto' entirely.
-
-Hmm?
-
-                      Linus
+               Linus
