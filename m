@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A7466F933C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 19:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C0BF6F9340
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 19:10:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbjEFRFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 13:05:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46530 "EHLO
+        id S229460AbjEFRKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 13:10:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjEFRFK (ORCPT
+        with ESMTP id S229441AbjEFRKv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 13:05:10 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6CF18174
-        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 10:05:09 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-50bc3a2d333so4523874a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 10:05:09 -0700 (PDT)
+        Sat, 6 May 2023 13:10:51 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76FC31CFDD
+        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 10:10:47 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-965d73eb65fso369050366b.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 10:10:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1683392707; x=1685984707;
+        d=linux-foundation.org; s=google; t=1683393046; x=1685985046;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BohPGjhU0MW7cH+kq6sMfSx9As3zddOMBgwyOGlEMPA=;
-        b=SFCveER3zj+YX4DQ0uYSH4XrGZaZLvB1GmseaA1Lc0ZsMUQMVa7u7IoNmZ2K0N9CAl
-         UcBAtFZtQJkN+n4IGOgQ/Qxq3HpfpGrG47MfMn4ihgdjAnZnwO3xktw6tXFp5TPvSgPL
-         xLntvXC/WMPutJN+Pf6Lfaw9+4ivwsDxOEQIs=
+        bh=ep2eFTjXkhewcCNr0bmXM2Y/3o4NieTjicG14F04RRo=;
+        b=CGy8Ct67kPfMBD32CeTOeucyvnK79GBDaBmBGh6+HrniyxCmUbbvrSQCVsj+nnp4Aa
+         nJHCOQfXFJJa9xSoLWsOzCTU9SMa7Rte7J+4VI5d7vExbWRPis/VuCHpEwv2ekXGS8Ru
+         3riE/CpokxA1d9o0MqP5pZn2EM5CD9mkHBv1E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683392707; x=1685984707;
+        d=1e100.net; s=20221208; t=1683393046; x=1685985046;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BohPGjhU0MW7cH+kq6sMfSx9As3zddOMBgwyOGlEMPA=;
-        b=aH/VfTU9C3rsD/itTqj0HQkE2iVuet17+c3ppRJBlM63O5BhawsxdKMsZIqLVprg9P
-         M/YFTgCD6E+do1zRBbdh3y42uUYlKdWK67HkpsjmNqfVjqchEsaefLXG2NDSTEfakhNe
-         Bels14st2/mW1IK8RvG60psv+CevNI2Y5f9G+jAxP2pmRi0Trvhdjogcmz2ajKmZqn2V
-         x0WV7edNxKr1nDtphIHTRx/5eIZUtdfiQzyqHjZX2LM+ymL18uxQSf7zcrJuedqiVi4R
-         3HgNwXJIqcMwtB/v2b8H4nb7Xpkzy7r+qGBOx6TMP//FXPY3SgqnY7ctoVBc7LXfyT3U
-         qQlw==
-X-Gm-Message-State: AC+VfDzcAoXO5hDLnOr8wUe/M4nVGx7ekYEvmkLFRAcGXLiazPFozY4O
-        XhgwR0j3gfwvml70Cjxwb1IWpaDlhrDOw6Xy10Dqhg==
-X-Google-Smtp-Source: ACHHUZ6LJ4MPFvcrIYa/H0BwoX60JttVen1StlQiHa5t5CLWa67n9LnqLEcXwP46bJGaJYWCpnRfmQ==
-X-Received: by 2002:a17:907:31c7:b0:965:d18b:f03a with SMTP id xf7-20020a17090731c700b00965d18bf03amr4000997ejb.58.1683392707446;
-        Sat, 06 May 2023 10:05:07 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id n13-20020a170906088d00b0094f1d0bad81sm2523369eje.139.2023.05.06.10.05.05
+        bh=ep2eFTjXkhewcCNr0bmXM2Y/3o4NieTjicG14F04RRo=;
+        b=EmBdxqmVqZFXoO+Qg3zl1ReHoIqXMWYKWkQMqLe/DoUrpkR3mZYZO/2KH4klN2BDse
+         9KVhLHtSsPkDrebJkKYNeIvwPjqZcfsyCLUGJUMWScq0EmuTUnDc1wt7X9EZa9ErQNeG
+         CF866GBnfYqY6NWs4YN45I1KSF59qqhbxZORNoCsWLc1fwXoXZ1U92XtgfUa85au4pGC
+         i/X3vapwQfibrZn6GkZLPNw3kWeJ43nDeQW+cVcMBEKzXwFwYAu1L+TnLmz/R/+n9mti
+         /tYSSBPKoJRVOO3YaJsNck03thleWTlVOLm8JBRwSvan6sH3qp5JJ2L6ORbj/uJtf/Dm
+         f8tw==
+X-Gm-Message-State: AC+VfDzEh2e+0UtLVWZu0nBovKMoAs2TeaP15hDg8nsxabTsqn8la2ab
+        P80S2MyejSGBg/Y5TrJ8VTjsYk7S+LkCN98LFMhCNw==
+X-Google-Smtp-Source: ACHHUZ6GhbKZnyuMSD7aUaZ0oZz7b9fswnbExc6hu8ZtrwLClvXHoKNY5zCTLh9MDoJ9J3sQ+LSAUg==
+X-Received: by 2002:a17:907:7ea2:b0:954:c085:56b3 with SMTP id qb34-20020a1709077ea200b00954c08556b3mr4870631ejc.53.1683393045846;
+        Sat, 06 May 2023 10:10:45 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id m15-20020a1709066d0f00b0094f124a37c4sm2545478ejr.18.2023.05.06.10.10.44
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 May 2023 10:05:05 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-94f1d0d2e03so470125066b.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 10:05:05 -0700 (PDT)
-X-Received: by 2002:a17:906:fd8c:b0:94f:3cf5:6d7f with SMTP id
- xa12-20020a170906fd8c00b0094f3cf56d7fmr4182892ejb.46.1683392704861; Sat, 06
- May 2023 10:05:04 -0700 (PDT)
+        Sat, 06 May 2023 10:10:44 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-94a342f7c4cso522548166b.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 10:10:44 -0700 (PDT)
+X-Received: by 2002:a17:907:3f90:b0:953:9899:d9c1 with SMTP id
+ hr16-20020a1709073f9000b009539899d9c1mr5635228ejc.1.1683393044055; Sat, 06
+ May 2023 10:10:44 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230506160415.2992089-1-willy@infradead.org> <CAHk-=winrN4jsysShx0kWKVzmSMu7Pp3nz_6+aps9CP+v-qHWQ@mail.gmail.com>
- <CAHk-=winai-5i6E1oMk7hXPfbP+SCssk5+TOLCJ3koaDrn7Bzg@mail.gmail.com>
-In-Reply-To: <CAHk-=winai-5i6E1oMk7hXPfbP+SCssk5+TOLCJ3koaDrn7Bzg@mail.gmail.com>
+ <CAHk-=winai-5i6E1oMk7hXPfbP+SCssk5+TOLCJ3koaDrn7Bzg@mail.gmail.com> <CAHk-=wiZ0GaAdqyke-egjBRaqP-QdLcX=8gNk7m6Hx7rXjcXVQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wiZ0GaAdqyke-egjBRaqP-QdLcX=8gNk7m6Hx7rXjcXVQ@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 6 May 2023 10:04:48 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiZ0GaAdqyke-egjBRaqP-QdLcX=8gNk7m6Hx7rXjcXVQ@mail.gmail.com>
-Message-ID: <CAHk-=wiZ0GaAdqyke-egjBRaqP-QdLcX=8gNk7m6Hx7rXjcXVQ@mail.gmail.com>
+Date:   Sat, 6 May 2023 10:10:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whfNqsZVjy1EWAA=h7D0K2o4D8MSdnK8Qytj2BBhhFrSQ@mail.gmail.com>
+Message-ID: <CAHk-=whfNqsZVjy1EWAA=h7D0K2o4D8MSdnK8Qytj2BBhhFrSQ@mail.gmail.com>
 Subject: Re: [PATCH] filemap: Handle error return from __filemap_get_folio()
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Josef Bacik <josef@toxicpanda.com>,
@@ -82,54 +82,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 6, 2023 at 9:35=E2=80=AFAM Linus Torvalds
+On Sat, May 6, 2023 at 10:04=E2=80=AFAM Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> And yes, the simplest fix for the "wrong test" would be to just add a
-> new "out_nofolio" error case after "out_retry", and use that.
->
-> However, even that seems wrong, because the return value for that path
-> is the wrong one.
+> So scratch that patch suggestion of mine, but let's bring in some
+> people involved with the original fpin code, and see if we can find
+> some solution that honors that error case too.
 
-Actually, my suggested patch is _also_ wrong.
+.. in the meantime, I did end up applying your patch.
 
-The problem is that we do need to return VM_FAULT_RETRY to let the
-caller know that we released the mmap_lock.
+I still don't like the code around it, but let's fix the conversion
+error and worry about the other issues later.
 
-And once we return VM_FAULT_RETRY, the other error bits don't even matter.
-
-So while I think the *right* thing to do is to return VM_FAULT_OOM |
-VM_FAULT_RETRY, that doesn't actually end up working, because if
-VM_FAULT_RETRY is set, the caller will know that "yes, mmap_lock was
-dropped", but the callers will also just ignore the other bits and
-unconditionally retry.
-
-How very very annoying.
-
-This was introduced several years ago by commit 6b4c9f446981
-("filemap: drop the mmap_sem for all blocking operations").
-
-Looking at that, we have at least one other similar error case wrong
-too: the "page_not_uptodate" case carefully checks for IO errors and
-retries only if there was no error (or for the AOP_TRUNCATED_PAGE)
-case.
-
-For an actual IO error on page reading, it returns VM_FAULT_SIGBUS.
-
-Except - again - for that "if (fpin) goto out_retry" case, which will
-just return VM_FAULT_RETRY and retry the fault.
-
-I do not believe that retrying the fault is the right thing to do when
-we ran out of memory, or when we had an IO error, and I do not think
-it was intentional that the error handling was changed.
-
-But I  think this is all just a mistake from how that VM_FAULT_RETRY
-works in the callers.
-
-How very very annoying.
-
-So scratch that patch suggestion of mine, but let's bring in some
-people involved with the original fpin code, and see if we can find
-some solution that honors that error case too.
-
-               Linus
+                  Linus
