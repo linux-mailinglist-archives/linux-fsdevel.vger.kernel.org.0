@@ -2,179 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C686F9284
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 16:27:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 280DF6F92B4
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 17:28:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232621AbjEFO12 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 10:27:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39344 "EHLO
+        id S232935AbjEFP2B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 11:28:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232243AbjEFO10 (ORCPT
+        with ESMTP id S232921AbjEFP2A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 10:27:26 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799C019936;
-        Sat,  6 May 2023 07:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1683383245; x=1714919245;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1CM9sz3xyD29vV94S0eoChIFsorjvoMRR3Da8zuVnF4=;
-  b=LYIxqVd95isXWzUD7qg6HeqbAc+p3SORCfxHFfHNQh784mvMtGo/z96X
-   if9qDa91Ikzqv2uvIIO0BXp2JrrTtg6G3t2WfM3HlnB8OQLkdFizGjH0C
-   ljjIBZ5XqNiKY2nmQxuTycGWFfXuFm4v6KaB4vLUw4WVBHOVgWFLxVfI4
-   mf1fv+BqQhGrb3rqGLZx2GS9URZ4HWmg1U4jlMVttygW0AD6tk03P9cEe
-   /7Vf3dqvj+mUiDDlsyOrBLjb4v/Q+PUmhx2F2Vb99ATNP0F0FmCdtm64q
-   Bo4dEGLDrtLgXie+qs+bWLA3QEY46MGnxik//cNWRLzmK0gyS0FE/0fAq
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10702"; a="338596535"
-X-IronPort-AV: E=Sophos;i="5.99,255,1677571200"; 
-   d="scan'208";a="338596535"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2023 07:27:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10702"; a="730733076"
-X-IronPort-AV: E=Sophos;i="5.99,255,1677571200"; 
-   d="scan'208";a="730733076"
-Received: from lkp-server01.sh.intel.com (HELO dea6d5a4f140) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 06 May 2023 07:27:17 -0700
-Received: from kbuild by dea6d5a4f140 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pvIsW-0000Lp-2f;
-        Sat, 06 May 2023 14:27:16 +0000
-Date:   Sat, 6 May 2023 22:27:12 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     chengkaitao <chengkaitao@didiglobal.com>, tj@kernel.org,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, corbet@lwn.net,
-        mhocko@kernel.org, roman.gushchin@linux.dev, shakeelb@google.com,
-        akpm@linux-foundation.org, brauner@kernel.org,
-        muchun.song@linux.dev
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        viro@zeniv.linux.org.uk, zhengqi.arch@bytedance.com,
-        ebiederm@xmission.com, Liam.Howlett@oracle.com,
-        chengzhihao1@huawei.com, pilgrimtao@gmail.com,
-        haolee.swjtu@gmail.com, yuzhao@google.com, willy@infradead.org,
-        vasily.averin@linux.dev, vbabka@suse.cz, surenb@google.com,
-        sfr@canb.auug.org.au, mcgrof@kernel.org, sujiaxun@uniontech.com,
-        feng.tang@intel.com, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] mm: memcontrol: protect the memory in cgroup from
- being oom killed
-Message-ID: <202305062204.ob5SRKVX-lkp@intel.com>
-References: <20230506114948.6862-2-chengkaitao@didiglobal.com>
+        Sat, 6 May 2023 11:28:00 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890151AED6
+        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 08:27:58 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so35885480a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 08:27:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1683386876; x=1685978876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LJ+BiRzn20Hnf7yT5l2P5uHgKRHU8zL2d2lFy4380qU=;
+        b=aHqoWbUrjdhO0y/0ZVV6cUmC8R1pIO7r71UXID9+vQeDSxTdrDC3KQ+EcXpCHXDyBZ
+         qiElfPFZwsHVPOkGUc7Dj0sXovdAn01QXiFo0mx4ABcsGaGtbG0HQ6h7qx1JvnW0secw
+         2ZfJLKaiNfrOZNnxGZ27wHwsuafQFTFhSGnEU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683386876; x=1685978876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LJ+BiRzn20Hnf7yT5l2P5uHgKRHU8zL2d2lFy4380qU=;
+        b=Q0VeyM4JG2fE3HKqBzhkueFWQ2C9SPDShuvtGam/sO+Ddx1xbA7Q1+9QJJ5M9qysxe
+         MyiWfjrtwBPLqJGpDxErtmid2v78hQ+zfExV8vb4wKL86gMnme7vkR0xIqAVOXvqcMu7
+         SDsepypZIqNktGGrfqaJSzaAXeGlZWZtnAVIRkY3WiQQmwW2gUjRpucqsxtpSvSyjYHr
+         a3s8v7b952m0PM9vVY/icaYqgLOpsloBxWe+fvQo9GllPz0X0EMPHUdS6h8mitVeyjn2
+         GcwtB1zCr0py6nok53ekb+fh3DQ4Ma9uYLxoVLPD+rAIIOc8gg8kGRyE/taWHNUx4KEY
+         vRYw==
+X-Gm-Message-State: AC+VfDzik9HWM7SelEOO2ro6z1znvqotiP+FVrzeiY+tDHmNIBkTwC4T
+        F2GpiTAWH1hO0xN/kun1ANolvxI9Pm5HywU7iGEQOg==
+X-Google-Smtp-Source: ACHHUZ6mPKOeYh9JdKz3HSVVvVw3j/0QGxgrtNec2IUc3fWta0T2ytbDLO7NvKKouyQmnslLSDxd5Q==
+X-Received: by 2002:a17:907:1622:b0:965:aa65:233f with SMTP id hb34-20020a170907162200b00965aa65233fmr4755285ejc.2.1683386876649;
+        Sat, 06 May 2023 08:27:56 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id jl3-20020a17090775c300b009655eb8be26sm2476276ejc.73.2023.05.06.08.27.56
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 May 2023 08:27:56 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so35885353a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 08:27:56 -0700 (PDT)
+X-Received: by 2002:a17:907:9306:b0:932:f88c:c2ff with SMTP id
+ bu6-20020a170907930600b00932f88cc2ffmr4529244ejc.34.1683386875820; Sat, 06
+ May 2023 08:27:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230506114948.6862-2-chengkaitao@didiglobal.com>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <26aba1b5-8393-a20a-3ce9-f82425673f4d@kernel.dk>
+In-Reply-To: <26aba1b5-8393-a20a-3ce9-f82425673f4d@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 6 May 2023 08:27:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj=LwLDYrjHpMM+QnE2T+u4P9-UXhXGkAMXiyfGjGnNEA@mail.gmail.com>
+Message-ID: <CAHk-=wj=LwLDYrjHpMM+QnE2T+u4P9-UXhXGkAMXiyfGjGnNEA@mail.gmail.com>
+Subject: Re: [GIT PULL] Pipe FMODE_NOWAIT support
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi chengkaitao,
+On Sat, May 6, 2023 at 3:33=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Here's the revised edition of the FMODE_NOWAIT support for pipes, in
+> which we just flag it as such supporting FMODE_NOWAIT unconditionally,
+> but clear it if we ever end up using splice/vmsplice on the pipe. The
+> pipe read/write side is perfectly fine for nonblocking IO, however
+> splice and vmsplice can potentially wait for IO with the pipe lock held.
 
-kernel test robot noticed the following build warnings:
+Ok, pulled.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on tj-cgroup/for-next linus/master v6.3 next-20230505]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+It does strike me that one of the (few) users is the io_uring
+__io_file_supports_nowait() thing, and that thing is *disgusting*.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/chengkaitao/mm-memcontrol-protect-the-memory-in-cgroup-from-being-oom-killed/20230506-195043
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20230506114948.6862-2-chengkaitao%40didiglobal.com
-patch subject: [PATCH v3 1/2] mm: memcontrol: protect the memory in cgroup from being oom killed
-config: i386-randconfig-a011-20230501 (https://download.01.org/0day-ci/archive/20230506/202305062204.ob5SRKVX-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/a2779b308166286f77728f04043cb7a17a16dd46
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review chengkaitao/mm-memcontrol-protect-the-memory-in-cgroup-from-being-oom-killed/20230506-195043
-        git checkout a2779b308166286f77728f04043cb7a17a16dd46
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+Wouldn't it be much nicer if FMODE_NOWAIT ended up working
+automatically on a block file descriptor too? You did all this "make
+pipes set FMODE_NOWAIT", but then that io_uring code does
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202305062204.ob5SRKVX-lkp@intel.com/
+        if (S_ISBLK(mode)) {
+                if (IS_ENABLED(CONFIG_BLOCK) &&
+                    io_bdev_nowait(I_BDEV(file->f_mapping->host)))
+                        return true;
+                return false;
+        }
 
-All warnings (new ones prefixed by >>):
+rather than just rely on FMODE_NOWAIT for block devices too...
 
->> mm/page_counter.c:44:36: warning: overflow in expression; result is -2147483648 with type 'long' [-Winteger-overflow]
-           if (protected == PAGE_COUNTER_MAX + 1)
-                                             ^
-   1 warning generated.
---
-   mm/memcontrol.c:1739:2: error: implicit declaration of function 'seq_buf_do_printk' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           seq_buf_do_printk(&s, KERN_INFO);
-           ^
->> mm/memcontrol.c:6445:37: warning: overflow in expression; result is -2147483648 with type 'long' [-Winteger-overflow]
-           else if (value == PAGE_COUNTER_MAX + 1)
-                                              ^
-   mm/memcontrol.c:6743:34: warning: overflow in expression; result is -2147483648 with type 'long' [-Winteger-overflow]
-                   oom_protect = PAGE_COUNTER_MAX + 1;
-                                                  ^
-   2 warnings and 1 error generated.
+And it's a bit odd in other ways, because the kiocb code for
+RWF_NOWAIT - which is the other user of FMODE_NOWAIT - does *not* seem
+to do any of those bdev games. So that other user does seem to just
+rely on the file mode bit having been set up by open.
 
+In fact, I see 'blkdev_open()' doing
 
-vim +/long +44 mm/page_counter.c
+        filp->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC;
 
-    15	
-    16	static void propagate_protected_usage(struct page_counter *c,
-    17					      unsigned long usage)
-    18	{
-    19		unsigned long protected, old_protected;
-    20		long delta;
-    21	
-    22		if (!c->parent)
-    23			return;
-    24	
-    25		protected = min(usage, READ_ONCE(c->min));
-    26		old_protected = atomic_long_read(&c->min_usage);
-    27		if (protected != old_protected) {
-    28			old_protected = atomic_long_xchg(&c->min_usage, protected);
-    29			delta = protected - old_protected;
-    30			if (delta)
-    31				atomic_long_add(delta, &c->parent->children_min_usage);
-    32		}
-    33	
-    34		protected = min(usage, READ_ONCE(c->low));
-    35		old_protected = atomic_long_read(&c->low_usage);
-    36		if (protected != old_protected) {
-    37			old_protected = atomic_long_xchg(&c->low_usage, protected);
-    38			delta = protected - old_protected;
-    39			if (delta)
-    40				atomic_long_add(delta, &c->parent->children_low_usage);
-    41		}
-    42	
-    43		protected = READ_ONCE(c->oom_protect);
-  > 44		if (protected == PAGE_COUNTER_MAX + 1)
-    45			protected = atomic_long_read(&c->children_oom_protect_usage);
-    46		else
-    47			protected = min(usage, protected);
-    48		old_protected = atomic_long_read(&c->oom_protect_usage);
-    49		if (protected != old_protected) {
-    50			old_protected = atomic_long_xchg(&c->oom_protect_usage, protected);
-    51			delta = protected - old_protected;
-    52			if (delta)
-    53				atomic_long_add(delta, &c->parent->children_oom_protect_usage);
-    54		}
-    55	}
-    56	
+so I really don't see why __io_file_supports_nowait() then does that
+special check for S_ISBLK().
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Something is very rotten in the state of Denmark.
+
+But that's all independent of this pipe side, which now looks fine to me.
+
+              Linus
