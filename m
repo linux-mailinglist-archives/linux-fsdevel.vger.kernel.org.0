@@ -2,128 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 032276F8F31
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 08:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A56516F8F9C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 09:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbjEFGco (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 02:32:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43950 "EHLO
+        id S229823AbjEFHDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 03:03:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230313AbjEFGce (ORCPT
+        with ESMTP id S229460AbjEFHDu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 02:32:34 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21B0A267
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 23:32:16 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-9660af2499dso93155066b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 May 2023 23:32:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1683354734; x=1685946734;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dh+rLv64T/XKdExtopYbn1p2e3mwdhjXoRnI90UeXPc=;
-        b=Cw0ZoCrla02smvOEcplDOfZp3uMEhtdCu5BQfK22OXgCeI2LrkCiqDj7uFJRqGZl0W
-         yWRmT4X1Ave0TGei0TcIxSB/wUIisf5cuRMf7KHnabqeb3kFz6lC4BIBK7Dxkv97jgAM
-         Bn9wzpVHObuoOZWHG6zsKpVa8nvwgwLgt9/5Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683354734; x=1685946734;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dh+rLv64T/XKdExtopYbn1p2e3mwdhjXoRnI90UeXPc=;
-        b=OfA4nIDUUv30TzXczl0xWKE0TuTHMvo9rbQxgxvoSg0YAz9IAweLrJTGvZC6PJRc/f
-         JunCwnCHpEJxjltndY14UmpZujMW4FM4At/0YzuHiAnw9G2ir/eu+/HqM3LG/nde09bg
-         JL65TloM8H0FBfq9Zwhw7XE2n7xn6S4MvddRAbDZsiTneYRB28RCZ5T/DfZ8pRQPxeRl
-         bkNE4hlhwzubNNpf80yoVmUWPh+jENrvyXlFIdIEQWc82SlPU3NoMKLcIxLeM9yTCLd8
-         QLuAnrOeJwsWPRf5r1PqVk+0LZvGRhE12ejYuiV0qex/Pcu6+a1QeaEvSacm1HDJc7zN
-         iJXQ==
-X-Gm-Message-State: AC+VfDwmXu4/esL2rewbp6G7NKTJY5DvBHFfCCO51//peINGu+1nPRZO
-        nbrEwriAJR/4K8ZzZuKi6woCN8ZkYd0P9EO8FclfIw==
-X-Google-Smtp-Source: ACHHUZ49lLaiO0buFBePac28VZVZZ5J4y63mNd4+sXRBHhN0wwrJ6PD3jFK0pFSF8IgYJk2lmVOifSuBIwb8CLlZkRk=
-X-Received: by 2002:a17:907:9605:b0:93e:fa12:aa1a with SMTP id
- gb5-20020a170907960500b0093efa12aa1amr3601469ejc.1.1683354733732; Fri, 05 May
- 2023 23:32:13 -0700 (PDT)
+        Sat, 6 May 2023 03:03:50 -0400
+Received: from out-45.mta0.migadu.com (out-45.mta0.migadu.com [91.218.175.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2482AAD18
+        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 00:03:47 -0700 (PDT)
+Message-ID: <92595369-f378-b6ac-915f-f046921f1d59@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1683356625;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=deTRnT6majvqIcbAA4+aeFpwQgLJ+x+hzmknl6pAYWg=;
+        b=lpXoWT8Rgg5cYt9zL3+V07fUC7Hyok/3z3LrVWFQKpd2sZAfPWoPj+7s6kdUjdGr39ETrP
+        FwAJ7xjCvaHdyiGC/nKrWxRvg7ulpePQJpH7kBSm9/HFfolu4qY2atbbwqYl9zVkexNtWH
+        MAeOoJLJIr73C6FEREQ7R1+zp2fR7T8=
+Date:   Sat, 6 May 2023 15:03:38 +0800
 MIME-Version: 1.0
-References: <20230414000219.92640-1-sarthakkukreti@chromium.org>
- <20230420004850.297045-1-sarthakkukreti@chromium.org> <20230420004850.297045-5-sarthakkukreti@chromium.org>
- <ZFAP5yQ0mwE4F6Vg@redhat.com>
-In-Reply-To: <ZFAP5yQ0mwE4F6Vg@redhat.com>
-From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
-Date:   Fri, 5 May 2023 23:32:02 -0700
-Message-ID: <CAG9=OMNh8w9hmkU6ZHBm8bN0NGCL4NaKv7XAEQrFvTKKNcXLLg@mail.gmail.com>
-Subject: Re: [PATCH v5 4/5] dm-thin: Add REQ_OP_PROVISION support
-To:     Mike Snitzer <snitzer@kernel.org>
-Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Bart Van Assche <bvanassche@google.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Daniil Lunev <dlunev@google.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>, ejt@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Subject: Re: [fuse-devel] [PATCH] fuse: add a new flag to allow shared mmap in
+ FOPEN_DIRECT_IO mode
+Content-Language: en-US
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
+        fuse-devel@lists.sourceforge.net
+Cc:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
+References: <20230505081652.43008-1-hao.xu@linux.dev>
+ <fc6fe539-64ae-aa35-8b6e-3b22e07af31f@fastmail.fm>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <fc6fe539-64ae-aa35-8b6e-3b22e07af31f@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 1, 2023 at 12:15=E2=80=AFPM Mike Snitzer <snitzer@kernel.org> w=
-rote:
->
-> On Wed, Apr 19 2023 at  8:48P -0400,
-> Sarthak Kukreti <sarthakkukreti@chromium.org> wrote:
->
-> > dm-thinpool uses the provision request to provision
-> > blocks for a dm-thin device. dm-thinpool currently does not
-> > pass through REQ_OP_PROVISION to underlying devices.
-> >
-> > For shared blocks, provision requests will break sharing and copy the
-> > contents of the entire block. Additionally, if 'skip_block_zeroing'
-> > is not set, dm-thin will opt to zero out the entire range as a part
-> > of provisioning.
-> >
-> > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
-> > ---
-> >  drivers/md/dm-thin.c | 73 +++++++++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 68 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-> > index 2b13c949bd72..58d633f5c928 100644
-> > --- a/drivers/md/dm-thin.c
-> > +++ b/drivers/md/dm-thin.c
-> > @@ -1891,7 +1893,8 @@ static void process_shared_bio(struct thin_c *tc,=
- struct bio *bio,
-> >
-> >       if (bio_data_dir(bio) =3D=3D WRITE && bio->bi_iter.bi_size) {
-> >               break_sharing(tc, bio, block, &key, lookup_result, data_c=
-ell);
-> > -             cell_defer_no_holder(tc, virt_cell);
-> > +             if (bio_op(bio) !=3D REQ_OP_PROVISION)
-> > +                     cell_defer_no_holder(tc, virt_cell);
->
-> Can you please explain why cell_defer_no_holder() is skipped for REQ_OP_P=
-ROVISION here?
->
-I recalled seeing a BUG in dm-prison-v1 if I allowed
-cell_defer_no_holder() for REQ_OP_PROVISION, but from additional
-testing, it looks like it was left behind from a cleanup in v4.
-Dropped in v6.
+Hi Bernd,
 
-Thanks
-Sarthak
 
+On 5/5/23 22:39, Bernd Schubert wrote:
+>
+>
+> On 5/5/23 10:16, Hao Xu wrote:
+>> From: Hao Xu <howeyxu@tencent.com>
+>>
+>> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
+>> coherency, e.g. network filesystems. Thus shared mmap is disabled since
+>> it leverages page cache and may write to it, which may cause
+>> inconsistence. But FOPEN_DIRECT_IO can be used not for coherency but to
+>> reduce memory footprint as well, e.g. reduce guest memory usage with
+>> virtiofs. Therefore, add a new flag FOPEN_DIRECT_IO_SHARED_MMAP to allow
+>> shared mmap for these cases.
+>>
+>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>> ---
+>>   fs/fuse/file.c            | 11 ++++++++---
+>>   include/uapi/linux/fuse.h |  2 ++
+>>   2 files changed, 10 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>> index 89d97f6188e0..655896bdb0d5 100644
+>> --- a/fs/fuse/file.c
+>> +++ b/fs/fuse/file.c
+>> @@ -161,7 +161,8 @@ struct fuse_file *fuse_file_open(struct 
+>> fuse_mount *fm, u64 nodeid,
+>>       }
+>>         if (isdir)
+>> -        ff->open_flags &= ~FOPEN_DIRECT_IO;
+>> +        ff->open_flags &=
+>> +            ~(FOPEN_DIRECT_IO | FOPEN_DIRECT_IO_SHARED_MMAP);
+>>         ff->nodeid = nodeid;
+>>   @@ -2509,8 +2510,12 @@ static int fuse_file_mmap(struct file *file, 
+>> struct vm_area_struct *vma)
+>>           return fuse_dax_mmap(file, vma);
+>>         if (ff->open_flags & FOPEN_DIRECT_IO) {
+>> -        /* Can't provide the coherency needed for MAP_SHARED */
+>> -        if (vma->vm_flags & VM_MAYSHARE)
+>> +        /* Can't provide the coherency needed for MAP_SHARED.
+>> +         * So disable it if FOPEN_DIRECT_IO_SHARED_MMAP is not
+>> +         * set, which means we do need strong coherency.
+>> +         */
+>> +        if (!(ff->open_flags & FOPEN_DIRECT_IO_SHARED_MMAP) &&
+>> +            vma->vm_flags & VM_MAYSHARE)
+>>               return -ENODEV;
+>>             invalidate_inode_pages2(file->f_mapping);
+>> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+>> index 1b9d0dfae72d..003dcf42e8c2 100644
+>> --- a/include/uapi/linux/fuse.h
+>> +++ b/include/uapi/linux/fuse.h
+>> @@ -314,6 +314,7 @@ struct fuse_file_lock {
+>>    * FOPEN_STREAM: the file is stream-like (no file position at all)
+>>    * FOPEN_NOFLUSH: don't flush data cache on close (unless 
+>> FUSE_WRITEBACK_CACHE)
+>>    * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on 
+>> the same inode
+>> + * FOPEN_DIRECT_IO_SHARED_MMAP: allow shared mmap when 
+>> FOPEN_DIRECT_IO is set
+>>    */
+>>   #define FOPEN_DIRECT_IO        (1 << 0)
+>>   #define FOPEN_KEEP_CACHE    (1 << 1)
+>> @@ -322,6 +323,7 @@ struct fuse_file_lock {
+>>   #define FOPEN_STREAM        (1 << 4)
+>>   #define FOPEN_NOFLUSH        (1 << 5)
+>>   #define FOPEN_PARALLEL_DIRECT_WRITES    (1 << 6)
+>> +#define FOPEN_DIRECT_IO_SHARED_MMAP    (1 << 7)
+>
+> Thanks, that is what I had in my mind as well.
+>
+> I don't have a strong opinion on it (so don't change it before Miklos 
+> commented), but maybe FOPEN_DIRECT_IO_WEAK? Just in case there would 
+> be later on other conditions that need to be weakened? The comment 
+> would say then something like
+> "Weakens FOPEN_DIRECT_IO enforcement, allows MAP_SHARED mmap"
+>
 > Thanks,
-> Mike
+> Bernd
+>
+
+Hi Bernd,
+
+BTW, I have another question:
+
+```
+
+   static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
+{
+           struct fuse_file *ff = file->private_data;
+
+           /* DAX mmap is superior to direct_io mmap */
+           if (FUSE_IS_DAX(file_inode(file)))
+                   return fuse_dax_mmap(file, vma);
+
+           if (ff->open_flags & FOPEN_DIRECT_IO) {
+                   /* Can't provide the coherency needed for MAP_SHARED */
+                   if (vma->vm_flags & VM_MAYSHARE)
+                           return -ENODEV;
+
+invalidate_inode_pages2(file->f_mapping);
+
+                   return generic_file_mmap(file, vma);
+}
+
+           if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & 
+VM_MAYWRITE))
+fuse_link_write_file(file);
+
+file_accessed(file);
+           vma->vm_ops = &fuse_file_vm_ops;
+           return 0;
+}
+
+```
+
+For FOPEN_DIRECT_IO and !FOPEN_DIRECT_IO case, the former set vm_ops to 
+generic_file_vm_ops
+
+while the latter set it to fuse_file_vm_ops, and also it does the 
+fuse_link_write_file() stuff. Why is so?
+
+What causes the difference here?
+
+
+Thanks,
+
+Hao
+
