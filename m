@@ -2,136 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A44886F8EA1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 07:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52FC46F8F0F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 May 2023 08:29:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230145AbjEFFEV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 01:04:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52814 "EHLO
+        id S229823AbjEFG3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 02:29:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229822AbjEFFET (ORCPT
+        with ESMTP id S229712AbjEFG3W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 01:04:19 -0400
-X-Greylist: delayed 74837 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 05 May 2023 22:04:18 PDT
-Received: from out-56.mta0.migadu.com (out-56.mta0.migadu.com [91.218.175.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C40476A8
-        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 22:04:18 -0700 (PDT)
-Message-ID: <69015d62-a2c0-3baf-413f-5e229e632a1e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1683349455;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4G/ZI0YL6xio/ZFaV1IxerxiXyXJZiWM4v7ZJaWcgNk=;
-        b=ZYkHeYRu8M2iMWbd/puJD4AVtl83wdNHhu6QNYMadDihEBSJEMclUFO40ceGcUp+gr0KtX
-        lkia8lZBekhQ0Dh7JA4JTEqeJEcqYECLLF6Lrq5ZFhSXjWQBgiXMoHdQSN26nhdYOz+CmD
-        kRje4dGKqIM9T1AuNOAuvFBua7spxgA=
-Date:   Sat, 6 May 2023 13:04:10 +0800
+        Sat, 6 May 2023 02:29:22 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E326900B
+        for <linux-fsdevel@vger.kernel.org>; Fri,  5 May 2023 23:29:21 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id 41be03b00d2f7-518d325b8a2so2313258a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 May 2023 23:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1683354560; x=1685946560;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QzUNeo8AaNnB2TIGkih7468jv3ib2GmUiAAiulb8HSg=;
+        b=BZEtsQk1eDY6hs4GRnP5P6GOQk3ymlCkXhW6QzXu6GIPp1ZShDBnC8dv3S7B4jbB37
+         wLqPTd1a8Knjh04tv6w3Ce54uaFFtxUEqwA+v6hbIeWchc/pG5cHcJf87mGORpe2D9bk
+         CPI4Bh73qYzNmgnoqy6/e4ivE75pIdcQaVYN0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683354560; x=1685946560;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QzUNeo8AaNnB2TIGkih7468jv3ib2GmUiAAiulb8HSg=;
+        b=A0ttxRm3752kYDq9js3i9oCoxw81n+iGTPjobWyLVdDxM9em1b3colBFwFLMXwiYrt
+         Dbu4iEowr9f9VEslK9dhzYsHNDb3vsEpfuRHALkzNv+ljOacaCikbbrwH61/geYQI9oa
+         FzHR42vEmZKKLlFAd3seqkfN9a8BMKjixh2hX8dvOs52Kiuxq9iE8LGnm5nKmClbiS6b
+         m0SC7yjeFkEIWyW9iL8JCvbt7dJ4jMij5mYoLVUuvDt6pp2hntcqpkOfRtyUXM6ZojgE
+         D5kXTKen2WRmJWG99ef/KlBhMi69FxUYC28ecjO4jhbXk6yqi4qa5WOQe2d2XXZLxjkD
+         4xxA==
+X-Gm-Message-State: AC+VfDzOcixuCBH8wtysq5b4xeRyxpe9P2i6bgOlgs5+NKQ8hh6w6KLN
+        uAdplKFId8RfOs0Q4I+RSF1YTQ==
+X-Google-Smtp-Source: ACHHUZ6jokL+0JA0+CBbmC7mx4pCawIF14Bio4r2MNA9EuX2SoeIteB8Nzv9VY3ha0KGEbV0N1b/Qg==
+X-Received: by 2002:a17:902:ea0f:b0:1ab:13bd:5f96 with SMTP id s15-20020a170902ea0f00b001ab13bd5f96mr4894008plg.4.1683354560544;
+        Fri, 05 May 2023 23:29:20 -0700 (PDT)
+Received: from sarthakkukreti-glaptop.hsd1.ca.comcast.net ([2601:647:4200:b5b0:f19c:a713:5517:ed4])
+        by smtp.gmail.com with ESMTPSA id q16-20020a170902dad000b001ac381f1ce9sm2793598plx.185.2023.05.05.23.29.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 May 2023 23:29:20 -0700 (PDT)
+From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
+To:     dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: [PATCH v6 0/5] Introduce block provisioning primitives
+Date:   Fri,  5 May 2023 23:29:04 -0700
+Message-ID: <20230506062909.74601-1-sarthakkukreti@chromium.org>
+X-Mailer: git-send-email 2.40.1.521.gf1e218fcd8-goog
+In-Reply-To: <20230420004850.297045-1-sarthakkukreti@chromium.org>
+References: <20230420004850.297045-1-sarthakkukreti@chromium.org>
 MIME-Version: 1.0
-Subject: Re: [fuse-devel] [PATCH] fuse: add a new flag to allow shared mmap in
- FOPEN_DIRECT_IO mode
-Content-Language: en-US
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
-        fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-References: <20230505081652.43008-1-hao.xu@linux.dev>
- <fc6fe539-64ae-aa35-8b6e-3b22e07af31f@fastmail.fm>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <fc6fe539-64ae-aa35-8b6e-3b22e07af31f@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/5/23 22:39, Bernd Schubert wrote:
-> 
-> 
-> On 5/5/23 10:16, Hao Xu wrote:
->> From: Hao Xu <howeyxu@tencent.com>
->>
->> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
->> coherency, e.g. network filesystems. Thus shared mmap is disabled since
->> it leverages page cache and may write to it, which may cause
->> inconsistence. But FOPEN_DIRECT_IO can be used not for coherency but to
->> reduce memory footprint as well, e.g. reduce guest memory usage with
->> virtiofs. Therefore, add a new flag FOPEN_DIRECT_IO_SHARED_MMAP to allow
->> shared mmap for these cases.
->>
->> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->> ---
->>   fs/fuse/file.c            | 11 ++++++++---
->>   include/uapi/linux/fuse.h |  2 ++
->>   2 files changed, 10 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->> index 89d97f6188e0..655896bdb0d5 100644
->> --- a/fs/fuse/file.c
->> +++ b/fs/fuse/file.c
->> @@ -161,7 +161,8 @@ struct fuse_file *fuse_file_open(struct fuse_mount 
->> *fm, u64 nodeid,
->>       }
->>       if (isdir)
->> -        ff->open_flags &= ~FOPEN_DIRECT_IO;
->> +        ff->open_flags &=
->> +            ~(FOPEN_DIRECT_IO | FOPEN_DIRECT_IO_SHARED_MMAP);
->>       ff->nodeid = nodeid;
->> @@ -2509,8 +2510,12 @@ static int fuse_file_mmap(struct file *file, 
->> struct vm_area_struct *vma)
->>           return fuse_dax_mmap(file, vma);
->>       if (ff->open_flags & FOPEN_DIRECT_IO) {
->> -        /* Can't provide the coherency needed for MAP_SHARED */
->> -        if (vma->vm_flags & VM_MAYSHARE)
->> +        /* Can't provide the coherency needed for MAP_SHARED.
->> +         * So disable it if FOPEN_DIRECT_IO_SHARED_MMAP is not
->> +         * set, which means we do need strong coherency.
->> +         */
->> +        if (!(ff->open_flags & FOPEN_DIRECT_IO_SHARED_MMAP) &&
->> +            vma->vm_flags & VM_MAYSHARE)
->>               return -ENODEV;
->>           invalidate_inode_pages2(file->f_mapping);
->> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
->> index 1b9d0dfae72d..003dcf42e8c2 100644
->> --- a/include/uapi/linux/fuse.h
->> +++ b/include/uapi/linux/fuse.h
->> @@ -314,6 +314,7 @@ struct fuse_file_lock {
->>    * FOPEN_STREAM: the file is stream-like (no file position at all)
->>    * FOPEN_NOFLUSH: don't flush data cache on close (unless 
->> FUSE_WRITEBACK_CACHE)
->>    * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on 
->> the same inode
->> + * FOPEN_DIRECT_IO_SHARED_MMAP: allow shared mmap when 
->> FOPEN_DIRECT_IO is set
->>    */
->>   #define FOPEN_DIRECT_IO        (1 << 0)
->>   #define FOPEN_KEEP_CACHE    (1 << 1)
->> @@ -322,6 +323,7 @@ struct fuse_file_lock {
->>   #define FOPEN_STREAM        (1 << 4)
->>   #define FOPEN_NOFLUSH        (1 << 5)
->>   #define FOPEN_PARALLEL_DIRECT_WRITES    (1 << 6)
->> +#define FOPEN_DIRECT_IO_SHARED_MMAP    (1 << 7)
-> 
-> Thanks, that is what I had in my mind as well.
-> 
-> I don't have a strong opinion on it (so don't change it before Miklos 
-> commented), but maybe FOPEN_DIRECT_IO_WEAK? Just in case there would be 
-> later on other conditions that need to be weakened? The comment would 
-> say then something like
-> "Weakens FOPEN_DIRECT_IO enforcement, allows MAP_SHARED mmap"
-> 
+Hi,
 
-make sense for me, thanks, I'll update it in v2 sent after Miklos' review.
+This patch series covers iteration 6 of adding support for block
+provisioning requests.
 
-> Thanks,
-> Bernd
-> 
+Changes from v5:
+- Remove explicit supports_provision from dm devices.
+- Move provision sectors io hint to pool_io_hint. Other devices
+  will derive the provisioning limits from the stack.
+- Remove artifact from v4 to omit cell_defer_no_holder for
+  REQ_OP_PROVISION.
+- Fix blkdev_fallocate() called with invalid fallocate
+  modes to propagate errors correctly.
+
+Sarthak Kukreti (5):
+  block: Don't invalidate pagecache for invalid falloc modes
+  block: Introduce provisioning primitives
+  dm: Add block provisioning support
+  dm-thin: Add REQ_OP_PROVISION support
+  loop: Add support for provision requests
+
+ block/blk-core.c              |  5 +++
+ block/blk-lib.c               | 53 ++++++++++++++++++++++++++
+ block/blk-merge.c             | 18 +++++++++
+ block/blk-settings.c          | 19 ++++++++++
+ block/blk-sysfs.c             |  9 +++++
+ block/bounce.c                |  1 +
+ block/fops.c                  | 31 +++++++++++++---
+ drivers/block/loop.c          | 42 +++++++++++++++++++++
+ drivers/md/dm-crypt.c         |  4 +-
+ drivers/md/dm-linear.c        |  1 +
+ drivers/md/dm-snap.c          |  7 ++++
+ drivers/md/dm-table.c         | 23 ++++++++++++
+ drivers/md/dm-thin.c          | 70 +++++++++++++++++++++++++++++++++--
+ drivers/md/dm.c               |  6 +++
+ include/linux/bio.h           |  6 ++-
+ include/linux/blk_types.h     |  5 ++-
+ include/linux/blkdev.h        | 16 ++++++++
+ include/linux/device-mapper.h | 17 +++++++++
+ 18 files changed, 319 insertions(+), 14 deletions(-)
+
+-- 
+2.40.1.521.gf1e218fcd8-goog
 
