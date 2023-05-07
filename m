@@ -2,156 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2447F6F96F4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 May 2023 07:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54E286F9705
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 May 2023 07:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230238AbjEGFRm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 May 2023 01:17:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53062 "EHLO
+        id S230238AbjEGFXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 May 2023 01:23:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230118AbjEGFRk (ORCPT
+        with ESMTP id S230090AbjEGFXT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 May 2023 01:17:40 -0400
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31F4E6598
-        for <linux-fsdevel@vger.kernel.org>; Sat,  6 May 2023 22:17:39 -0700 (PDT)
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-32b5ec09cffso20442595ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 06 May 2023 22:17:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683436658; x=1686028658;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nQEIoXH7rI2rkjwK+Q3rGkXe8qUJqhRvHYWEBWQWkwQ=;
-        b=NyRxmMZwq/qIGFt9JM3QqwxUfYji/aGQBINTT3rRLWRPy1h6DpfD0QHE0Q9m6D5LGK
-         +6gMuDTcMYGC6Hrn4ay0T4kcAAWvw2IsU9rkP7sB9NudJtGC3J4JEGwBiC9uEXxxRuTc
-         RMFkhh+N+y/Qiz9qM8U9T/j4HorOcmGHxbIUWWm9eMrFcb4ls4o6EfMOCpgr+Y8cnZSj
-         nxPWaKXiqFtSexbJpzHOEHfDXQTbmTvhKrIyJVt/zBA1xAlPyO2hLVK3jv3ZeSD0eHzD
-         0Eu+MQlmWELWSPraT9v0neoKvCKCx5bf86+EUeQsFx8v1fv6N/0r4V4+AC7Nc3FegoTV
-         iY8g==
-X-Gm-Message-State: AC+VfDxbvKDyULhyFhKeuBvDtanSA6lQls2T7lErXmZ5ZxlrO+VPyeEA
-        rpzq1Hxpq8bQJRkihp1Kbh3msgFcbg9dSwuSL6E2GYQqK8Ib
-X-Google-Smtp-Source: ACHHUZ6q0fO6ZGps2gW9lc74ojab2R1y51uBFIbGNd0dwIWcAhHZZNiEPiixMxE4UQxQ5JZv4TxmdO/W5HdhDIibMNHfJDx+nfvQ
+        Sun, 7 May 2023 01:23:19 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D078D1492D;
+        Sat,  6 May 2023 22:23:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xuzESVVLNb7QkJGI1Thl+QLL/s7Vu/C5GPtuTXotrYg=; b=v7nbqkCiIxkImQ5gjtugRz7ADK
+        wrYNytawxQXivWGFDMVaJfk8DO1gPpC6B8KLCDUTQT2l8YKL8npzpdlumhh5uewuuykN7MFqcAr6W
+        eyAa4xIn2BA+KTAsqMuw723j+EPcb+J9sPEaIKPclARlWCkHZT79ooNEON4nGXA88xXohH8b6Y/yO
+        SngUVgjeBeUd8gzarISVrwMPVIiHJHDLhK1yEvOvEDPIHWLhq51nnaw0wzlGeePtLib7Bk7o0sx36
+        LLg5wHEbz9Lm9iLgytLtQhdLkaS+hkP/JafD7E343vjjnf3VhwPvxomnIRPMTHP4I6Fu+5yXTi7gh
+        xFM6UONg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pvWrZ-00FDtv-2S;
+        Sun, 07 May 2023 05:23:13 +0000
+Date:   Sat, 6 May 2023 22:23:13 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, ruansy.fnst@fujitsu.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/4] vfs: allow filesystem freeze callers to denote who
+ froze the fs
+Message-ID: <ZFc1wVFeHsi7rK01@bombadil.infradead.org>
+References: <168308293319.734377.10454919162350827812.stgit@frogsfrogsfrogs>
+ <168308293892.734377.10931394426623343285.stgit@frogsfrogsfrogs>
 MIME-Version: 1.0
-X-Received: by 2002:a02:2a89:0:b0:40b:c2f7:1ef9 with SMTP id
- w131-20020a022a89000000b0040bc2f71ef9mr2863548jaw.0.1683436658534; Sat, 06
- May 2023 22:17:38 -0700 (PDT)
-Date:   Sat, 06 May 2023 22:17:38 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000008aee505fb13a425@google.com>
-Subject: [syzbot] [mm?] [ntfs3?] kernel panic: stack is corrupted in save_stack
-From:   syzbot <syzbot+b58594b2f7f31155af24@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org,
-        almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, ntfs3@lists.linux.dev,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <168308293892.734377.10931394426623343285.stgit@frogsfrogsfrogs>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, May 02, 2023 at 08:02:18PM -0700, Darrick J. Wong wrote:
+> diff --git a/fs/super.c b/fs/super.c
+> index 04bc62ab7dfe..01891f9e6d5e 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1736,18 +1747,33 @@ int freeze_super(struct super_block *sb)
+>  	up_write(&sb->s_umount);
+>  	return 0;
+>  }
+> +
+> +/*
+> + * freeze_super - lock the filesystem and force it into a consistent state
+> + * @sb: the super to lock
+> + *
+> + * Syncs the super to make sure the filesystem is consistent and calls the fs's
+> + * freeze_fs.  Subsequent calls to this without first thawing the fs will return
+> + * -EBUSY.  See the comment for __freeze_super for more information.
+> + */
+> +int freeze_super(struct super_block *sb)
+> +{
+> +	return __freeze_super(sb, USERSPACE_FREEZE_COOKIE);
+> +}
+>  EXPORT_SYMBOL(freeze_super);
+>  
+> -static int thaw_super_locked(struct super_block *sb)
+> +static int thaw_super_locked(struct super_block *sb, unsigned long cookie)
+>  {
+>  	int error;
+>  
+> -	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE) {
+> +	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE ||
+> +	    sb->s_writers.freeze_cookie != cookie) {
+>  		up_write(&sb->s_umount);
+>  		return -EINVAL;
 
-syzbot found the following issue on:
+We get the same by just having drivers use freeze_super(sb, true) in the
+patches I have, ie, we treat it a user-initiated.
 
-HEAD commit:    92e815cf07ed Add linux-next specific files for 20230428
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1732ed8c280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c8c8ae4d47d23592
-dashboard link: https://syzkaller.appspot.com/bug?extid=b58594b2f7f31155af24
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122a8fdbc80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ed8e2c280000
+On freeze() we have:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c9e94856e6c9/disk-92e815cf.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4c1c05a548a7/vmlinux-92e815cf.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2a1bff6a133b/bzImage-92e815cf.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/91d376f7ef76/mount_0.gz
+int freeze_super(struct super_block *sb, bool usercall)                                              
+{                                                                                                    
+	int ret;                                                                                     
+	
+	if(!usercall && sb_is_frozen(sb))                                                           
+		return 0;                                                                            
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b58594b2f7f31155af24@syzkaller.appspotmail.com
+	if (!sb_is_unfrozen(sb))
+	return -EBUSY;
+	...
+}
 
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: save_stack+0x1c8/0x1e0 mm/page_owner.c:135
-CPU: 1 PID: 5038 Comm: syz-executor216 Not tainted 6.3.0-next-20230428-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
- panic+0x686/0x730 kernel/panic.c:340
- __stack_chk_fail+0x19/0x20 kernel/panic.c:759
- save_stack+0x1c8/0x1e0 mm/page_owner.c:135
- __set_page_owner+0x1f/0x60 mm/page_owner.c:192
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x2db/0x350 mm/page_alloc.c:1731
- prep_new_page mm/page_alloc.c:1738 [inline]
- get_page_from_freelist+0xf7c/0x2aa0 mm/page_alloc.c:3502
- __alloc_pages+0x1cb/0x4a0 mm/page_alloc.c:4768
- alloc_pages+0x1aa/0x270 mm/mempolicy.c:2277
- push_anon lib/iov_iter.c:245 [inline]
- append_pipe+0x19a/0x660 lib/iov_iter.c:302
- copy_pipe_to_iter lib/iov_iter.c:479 [inline]
- _copy_to_iter+0x463/0x1370 lib/iov_iter.c:533
- copy_page_to_iter lib/iov_iter.c:740 [inline]
- copy_page_to_iter+0xe8/0x170 lib/iov_iter.c:727
- copy_folio_to_iter include/linux/uio.h:197 [inline]
- filemap_read+0x682/0xc70 mm/filemap.c:2742
- generic_file_read_iter+0x3ad/0x5b0 mm/filemap.c:2837
- ntfs_file_read_iter+0x1b8/0x270 fs/ntfs3/file.c:744
- call_read_iter include/linux/fs.h:1862 [inline]
- generic_file_splice_read+0x182/0x4b0 fs/splice.c:422
- do_splice_to+0x1b9/0x240 fs/splice.c:905
- splice_direct_to_actor+0x2ab/0x8a0 fs/splice.c:976
- do_splice_direct+0x1ab/0x280 fs/splice.c:1085
- do_sendfile+0xb19/0x12c0 fs/read_write.c:1254
- __do_sys_sendfile64 fs/read_write.c:1322 [inline]
- __se_sys_sendfile64 fs/read_write.c:1308 [inline]
- __x64_sys_sendfile64+0x1d0/0x210 fs/read_write.c:1308
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f5c56defc49
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff58272038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 000000000001419a RCX: 00007f5c56defc49
-RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 00007fff58272060 R09: 00007fff58272060
-R10: 00008400fffffffa R11: 0000000000000246 R12: 00007fff5827205c
-R13: 00007fff58272090 R14: 00007fff58272070 R15: 0000000000000004
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+On thaw we end up with:
 
+int thaw_super(struct super_block *sb, bool usercall)
+{
+	int error;
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+	if (!usercall) {
+		/*
+		 * If userspace initiated the freeze don't let the kernel
+		 *  thaw it on return from a kernel initiated freeze.
+		 */
+		 if (sb_is_unfrozen(sb) || sb_is_frozen_by_user(sb))
+		 	return 0;
+	}
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+	if (!sb_is_frozen(sb))
+		return -EINVAL;
+	...
+}
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+As I had it, I had made the drivers and the bdev freeze use the usercall as
+true and so there is no change.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+In case there is a filesystem already frozen then which was initiated by
+the filesystem, for whatever reason, the filesystem the kernel auto-freeze
+will chug on happy with the system freeze, it bails out withour error
+and moves on to the next filesystem to freeze.
 
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Upon thaw, the kernel auto-thaw will detect that the filesystem was
+frozen by user on sb_is_frozen_by_user() and so will just bail and not
+thaw it.
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+If the mechanism you want to introduce is to allow a filesystem to even
+prevent kernel auto-freeze with -EBUSY it begs the question if that
+shouldn't also prevent suspend. Because it would anyway as you have it
+right now with your patch but it would return -EINVAL. I also ask because of
+the possible issues with the filesystem not going to suspend but the backing
+or other possible related devices going to suspend.
 
-If you want to undo deduplication, reply with:
-#syz undup
+Since I think the goal is to prevent the kernel auto-freeze due to
+online fsck to complete, then I think you *do* want to prevent full
+system suspend from moving forward. In that case, why not just have
+the filesystem check for that and return -EBUSY on its respective
+filesystem sb->s_op->freeze_fs(sb) callback?
+
+  Luis
