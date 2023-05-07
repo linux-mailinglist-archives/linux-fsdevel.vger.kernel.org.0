@@ -2,30 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 692506F9A60
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 May 2023 19:02:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6C306F9A86
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 May 2023 19:21:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231194AbjEGRCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 May 2023 13:02:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52656 "EHLO
+        id S230527AbjEGRVN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 May 2023 13:21:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229920AbjEGRCQ (ORCPT
+        with ESMTP id S229619AbjEGRVM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 May 2023 13:02:16 -0400
-Received: from out-12.mta1.migadu.com (out-12.mta1.migadu.com [IPv6:2001:41d0:203:375::c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D70046B2
-        for <linux-fsdevel@vger.kernel.org>; Sun,  7 May 2023 10:02:14 -0700 (PDT)
-Date:   Sun, 7 May 2023 13:01:57 -0400
+        Sun, 7 May 2023 13:21:12 -0400
+Received: from out-14.mta0.migadu.com (out-14.mta0.migadu.com [91.218.175.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01D0611559
+        for <linux-fsdevel@vger.kernel.org>; Sun,  7 May 2023 10:21:10 -0700 (PDT)
+Date:   Sun, 7 May 2023 13:20:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1683478930;
+        t=1683480068;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=K2IKs9gP6n8AwGF/yIy3vUTevnAld9lGncsxDoAPz7I=;
-        b=RBllo5SEteiXdDXnxk7cvHhWc/ZZh0WQhZDZBnP+ByAnv8lRSeIbU166BGu3cTiWFAlwdB
-        nBFEChtqdNB9Z3bo6qijnMaFFiQ4D4cogj6akL7Hso38B4dGgPNp5YpE0GoUhkJAbR1zsk
-        SwoHfdcoAv3j3qWwaVk8QGGqXSvbXYE=
+        bh=hurdbnJwUJqK07Lm+4BMc/GcG+c58gJSfQAtVR+cBkY=;
+        b=t9HPg37zepSR1RnzhSUKFRxBUu28FVu1Yi23jFUki7ZMbwLSC/NiT3n7wFBZNUFaL6UoyB
+        zJPC7zS/i2KkcdGtaRgLAJgrWe5jboQdCOvInvXLMeR4wfr6JjMe/ufK6pDB5akkqqXdTQ
+        ldiDYd0e9CxSI40mvUKNrcXC5Ki5rqQ=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From:   Kent Overstreet <kent.overstreet@linux.dev>
 To:     Michal Hocko <mhocko@suse.com>
@@ -57,54 +56,90 @@ Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
         linux-mm@kvack.org, linux-modules@vger.kernel.org,
         kasan-dev@googlegroups.com, cgroups@vger.kernel.org
 Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <ZFfZhTiXqeV1enD4@moria.home.lan>
+Message-ID: <ZFfd99w9vFTftB8D@moria.home.lan>
 References: <20230501165450.15352-1-surenb@google.com>
  <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
  <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
  <ZFN1yswCd9wRgYPR@dhcp22.suse.cz>
- <CAJuCfpEkV_+pAjxyEpMqY+x7buZhSpj5qDF6KubsS=ObrQKUZg@mail.gmail.com>
- <ZFd9BiSorMldWiff@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZFd9BiSorMldWiff@dhcp22.suse.cz>
+In-Reply-To: <ZFN1yswCd9wRgYPR@dhcp22.suse.cz>
 X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 07, 2023 at 12:27:18PM +0200, Michal Hocko wrote:
-> On Thu 04-05-23 08:08:13, Suren Baghdasaryan wrote:
-> > On Thu, May 4, 2023 at 2:07 AM Michal Hocko <mhocko@suse.com> wrote:
-> [...]
-> > > e.g. is it really interesting to know that there is a likely memory
-> > > leak in seq_file proper doing and allocation? No as it is the specific
-> > > implementation using seq_file that is leaking most likely. There are
-> > > other examples like that See?
-> > 
-> > Yes, I see that. One level tracking does not provide all the
-> > information needed to track such issues. Something more informative
-> > would cost more. That's why our proposal is to have a light-weight
-> > mechanism to get a high level picture and then be able to zoom into a
-> > specific area using context capture. If you have ideas to improve
-> > this, I'm open to suggestions.
+On Thu, May 04, 2023 at 11:07:22AM +0200, Michal Hocko wrote:
+> No. I am mostly concerned about the _maintenance_ overhead. For the
+> bare tracking (without profiling and thus stack traces) only those
+> allocations that are directly inlined into the consumer are really
+> of any use. That increases the code impact of the tracing because any
+> relevant allocation location has to go through the micro surgery. 
 > 
-> Well, I think that a more scalable approach would be to not track in
-> callers but in the allocator itself. The full stack trace might not be
-> all that important or interesting and maybe even increase the overall
-> overhead but a partial one with a configurable depth would sound more
-> interesting to me. A per cache hastable indexed by stack trace reference
-> and extending slab metadata to store the reference for kfree path won't
-> be free but the overhead might be just acceptable.
+> e.g. is it really interesting to know that there is a likely memory
+> leak in seq_file proper doing and allocation? No as it is the specific
+> implementation using seq_file that is leaking most likely. There are
+> other examples like that See?
 
-How would you propose to annotate what call chains need what depth of
-stack trace recorded?
+So this is a rather strange usage of "maintenance overhead" :)
 
-How would you propose to make this performant?
+But it's something we thought of. If we had to plumb around a _RET_IP_
+parameter, or a codetag pointer, it would be a hassle annotating the
+correct callsite.
+
+Instead, alloc_hooks() wraps a memory allocation function and stashes a
+pointer to a codetag in task_struct for use by the core slub/buddy
+allocator code.
+
+That means that in your example, to move tracking to a given seq_file
+function, we just:
+ - hook the seq_file function with alloc_hooks
+ - change the seq_file function to call non-hooked memory allocation
+   functions.
+
+> It would have been more convincing if you had some numbers at hands.
+> E.g. this is a typical workload we are dealing with. With the compile
+> time tags we are able to learn this with that much of cost. With a dynamic
+> tracing we are able to learn this much with that cost. See? As small as
+> possible is a rather vague term that different people will have a very
+> different idea about.
+
+Engineers don't prototype and benchmark everything as a matter of
+course, we're expected to have the rough equivealent of a CS education
+and an understanding of big O notation, cache architecture, etc.
+
+The slub fast path is _really_ fast - double word non locked cmpxchg.
+That's what we're trying to compete with. Adding a big globally
+accessible hash table is going to tank performance compared to that.
+
+I believe the numbers we already posted speak for themselves. We're
+considerably faster than memcg, fast enough to run in production.
+
+I'm not going to be switching to a design that significantly regresses
+performance, sorry :)
+
+> TBH I am much more concerned about the maintenance burden on the MM side
+> than the actual code tagging itslef which is much more self contained. I
+> haven't seen other potential applications of the same infrastructure and
+> maybe the code impact would be much smaller than in the MM proper. Our
+> allocator API is really hairy and convoluted.
+
+You keep saying "maintenance burden", but this is a criticism that can
+be directed at _any_ patchset that adds new code; it's generally
+understood that that is the accepted cost for new functionality.
+
+If you have specific concerns where you think we did something that
+makes the code harder to maintain, _please point them out in the
+appropriate patch_. I don't think you'll find too much - the
+instrumentation in the allocators simply generalizes what memcg was
+already doing, and the hooks themselves are a bit boilerplaty but hardly
+the sort of thing people will be tripping over later.
+
+TL;DR - put up or shut up :)
