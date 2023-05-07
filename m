@@ -2,163 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B438B6F96BF
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 May 2023 05:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 816196F96B1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 May 2023 05:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231451AbjEGDuN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 May 2023 23:50:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39432 "EHLO
+        id S230203AbjEGDa0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 6 May 2023 23:30:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231374AbjEGDtn (ORCPT
+        with ESMTP id S229753AbjEGDaY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 May 2023 23:49:43 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF5424531;
-        Sat,  6 May 2023 20:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ep7EoMOoXMCq/skLpIelkWlzzgwjPy8ry18J0SW0lZA=; b=igZJPXwyVI+7Jqaiqbow/2/KGW
-        mhV8bsAgA31yH20uaY72oHS1r6GuGii9wT7YBFj6YvRqJB9Jdj+y8ToI2smz0orb7P6uK3pmfqLTD
-        6SRgIKrv1yiAVZDDH2fRW3mUC8eSQZm0skBG3oTP1BDACxsfAb7AqR4AN9PMExBwYIDVDvnmScjtH
-        uA6A3hzp3W2unVoqz2Z2+U36irf6N12aPH3SUCZnq4n468T4MmgV/rRRQIJrHCfrZgoLgQkWiBqt+
-        ZCpb/78Tl0ThijaahyS5vB3DwVR055qYBzHKnTlp4DqrW6wMJC7N94YcaJggOImhbNcr2BYisoRCC
-        HMeIk8Ew==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pvVMU-00F5XF-2a;
-        Sun, 07 May 2023 03:47:02 +0000
-Date:   Sat, 6 May 2023 20:47:02 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     hch@infradead.org, djwong@kernel.org, song@kernel.org,
-        rafael@kernel.org, gregkh@linuxfoundation.org,
-        viro@zeniv.linux.org.uk, bvanassche@acm.org, ebiederm@xmission.com,
-        mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
-        linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 01/24] fs: unify locking semantics for fs freeze / thaw
-Message-ID: <ZFcfNslrktWdIpaW@bombadil.infradead.org>
-References: <20230114003409.1168311-1-mcgrof@kernel.org>
- <20230114003409.1168311-2-mcgrof@kernel.org>
- <20230116151455.lsggdn64jecwh36o@quack3>
+        Sat, 6 May 2023 23:30:24 -0400
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9D311607;
+        Sat,  6 May 2023 20:30:22 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4QDVL11gRwz4f3nqq;
+        Sun,  7 May 2023 11:30:17 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+        by APP4 (Coremail) with SMTP id gCh0CgAHcLNHG1dkjIawIw--.21328S4;
+        Sun, 07 May 2023 11:30:16 +0800 (CST)
+From:   Hou Tao <houtao@huaweicloud.com>
+To:     bpf@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Amir Goldstein <amir73il@gmail.com>, houtao1@huawei.com
+Subject: [RFC PATCH bpf-next 0/4] Introduce bpf iterators for file-system
+Date:   Sun,  7 May 2023 12:01:03 +0800
+Message-Id: <20230507040107.3755166-1-houtao@huaweicloud.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230116151455.lsggdn64jecwh36o@quack3>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: gCh0CgAHcLNHG1dkjIawIw--.21328S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxArykAr13CryUuFW5AFykuFg_yoW5XFW5pF
+        Z5J3yayr1xAFW7Arn3Can3u34rt3ykJFW5GasrXry5u3yYvr929w10kr15u3sxAryUAr1S
+        vr42k3s09a4kZFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUgKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+        0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
+        c4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
+        CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
+        MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJV
+        Cq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBI
+        daVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 04:14:55PM +0100, Jan Kara wrote:
-> So I  think we may need to also block attempts to unmount frozen filesystem -
-> actually GFS2 needs this as well [1].
-> 
-> [1] lore.kernel.org/r/20221129230736.3462830-1-agruenba@redhat.com
+From: Hou Tao <houtao1@huawei.com>
 
-Yes, I reviewed Andreas's patch and I think we end up just complicating
-things by allowing us to continue to "support" unmounting frozen
-filesystems. Instead it is easier for us to just block that insanity.
+Hi,
 
-Current attempt / non-boot tested or anything.
+The patchset is in a hurry and far from complete, but it is better to
+provide some code/demo first for disussion in LSF/MM/BPF.
 
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Sat, 6 May 2023 20:13:49 -0700
-Subject: [RFC] fs: prevent mount / umount of frozen filesystems
+The patchset attempts to provide more observability for the file-system
+as proposed in [0]. Compared to drgn [1], the bpf iterator for file-system
+has fewer dependencies (e.g., no need for vmlinux) and more accurate
+results.
 
-Today you can unmount a frozen filesystem. Doing that turns it into
-a zombie filesystem, you cannot shut it down until first you remounting
-it and then unthawing it.
+Two types of file-system iterator are provided: fs_inode and fs_mnt.
+fs_inode is for a specific inode and fs_mnt is for a specifc mount. More
+type (e.g., all inodes in a file-system) could be added if in need. Both
+of these two iterators work by getting a file-description and a bpf
+program as the input. BPF iterator will pass the fd-related inode or
+mount to the bpf program, the bpf program can dump the needed
+information of the inode or mount to a seq_file owned by iterator fd
+by using all kinds of bpf helpers and the user can read the iterator fd
+to get the final information. The following is an example when trying to
+dump the detailed information of a XFS inode:
 
-Enabling this sort of behaviour is madness.
+  sb: bsize 4096 s_op xfs_super_operations s_type xfs_fs_type name xfs
+  ino: inode nlink 1 inum 131 size 10485760, name inode.test
+  cache: cached 2560 dirty 0 wb 0 evicted 0
+  orders:
+    page offset 0 order 2
+    page offset 4 order 2
+    page offset 8 order 2
+    page offset 12 order 2
+    page offset 16 order 4
+    page offset 32 order 4
+    page offset 48 order 4
+    page offset 64 order 5
+    page offset 96 order 4
+    page offset 112 order 4
+    page offset 128 order 5
+    page offset 160 order 4
+    page offset 176 order 0
+    ...
 
-Simplify this by instead just preventing us to unmount frozen
-filesystems, and likewise prevent mounting frozen filesystems.
+More details can be found in the individual patches. And suggestions and
+comments are always welcome.
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Reported-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- fs/namespace.c |  3 +++
- fs/super.c     | 14 ++++++++++++++
- 2 files changed, 17 insertions(+)
+[0]: https://lore.kernel.org/bpf/0a6f0513-b4b3-9349-cee5-b0ad38c81d2e@huaweicloud.com
+[1]: https://github.com/osandov/drgn
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 54847db5b819..9c21d8662fc8 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1636,6 +1636,9 @@ static int do_umount(struct mount *mnt, int flags)
- 	if (retval)
- 		return retval;
- 
-+	if (!(sb_is_unfrozen(sb)))
-+		return -EBUSY;
-+
- 	/*
- 	 * Allow userspace to request a mountpoint be expired rather than
- 	 * unmounting unconditionally. Unmount only happens if:
-diff --git a/fs/super.c b/fs/super.c
-index 34afe411cf2b..55f5728f5090 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -441,6 +441,7 @@ void retire_super(struct super_block *sb)
- {
- 	WARN_ON(!sb->s_bdev);
- 	down_write(&sb->s_umount);
-+	WARN_ON_ONCE(!(sb_is_unfrozen(sb)));
- 	if (sb->s_iflags & SB_I_PERSB_BDI) {
- 		bdi_unregister(sb->s_bdi);
- 		sb->s_iflags &= ~SB_I_PERSB_BDI;
-@@ -468,6 +469,7 @@ void generic_shutdown_super(struct super_block *sb)
- {
- 	const struct super_operations *sop = sb->s_op;
- 
-+	WARN_ON_ONCE(!(sb_is_unfrozen(sb)));
- 	if (sb->s_root) {
- 		shrink_dcache_for_umount(sb);
- 		sync_filesystem(sb);
-@@ -1354,6 +1356,12 @@ struct dentry *mount_bdev(struct file_system_type *fs_type,
- 	if (IS_ERR(s))
- 		goto error_s;
- 
-+	if (!(sb_is_unfrozen(sb))) {
-+			deactivate_locked_super(s);
-+			error = -EBUSY;
-+			goto error_bdev;
-+	}
-+
- 	if (s->s_root) {
- 		if ((flags ^ s->s_flags) & SB_RDONLY) {
- 			deactivate_locked_super(s);
-@@ -1473,6 +1481,10 @@ struct dentry *mount_single(struct file_system_type *fs_type,
- 	s = sget(fs_type, compare_single, set_anon_super, flags, NULL);
- 	if (IS_ERR(s))
- 		return ERR_CAST(s);
-+	if (!(sb_is_unfrozen(sb))) {
-+		deactivate_locked_super(s);
-+		return ERR_PTR(-EBUSY);
-+	}
- 	if (!s->s_root) {
- 		error = fill_super(s, data, flags & SB_SILENT ? 1 : 0);
- 		if (!error)
-@@ -1522,6 +1534,8 @@ int vfs_get_tree(struct fs_context *fc)
- 
- 	sb = fc->root->d_sb;
- 	WARN_ON(!sb->s_bdi);
-+	if (!(sb_is_unfrozen(sb)))
-+		return -EBUSY;
- 
- 	/*
- 	 * Write barrier is for super_cache_count(). We place it before setting
+Hou Tao (4):
+  bpf: Introduce bpf iterator for file-system inode
+  bpf: Add three kfunc helpers for bpf fs inode iterator
+  bpf: Introduce bpf iterator for file system mount
+  selftests/bpf: Add test cases for bpf file-system iterator
+
+ include/linux/bpf.h                           |   2 +
+ include/linux/btf_ids.h                       |   6 +-
+ include/linux/fs.h                            |   4 +
+ include/uapi/linux/bpf.h                      |   9 +
+ include/uapi/linux/mman.h                     |   8 +
+ kernel/bpf/Makefile                           |   1 +
+ kernel/bpf/fs_iter.c                          | 216 ++++++++++++++++++
+ kernel/bpf/helpers.c                          |  26 +++
+ mm/filemap.c                                  |  77 +++++++
+ tools/include/uapi/linux/bpf.h                |   9 +
+ .../selftests/bpf/prog_tests/bpf_iter_fs.c    | 184 +++++++++++++++
+ .../testing/selftests/bpf/progs/bpf_iter_fs.c | 122 ++++++++++
+ 12 files changed, 663 insertions(+), 1 deletion(-)
+ create mode 100644 kernel/bpf/fs_iter.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/bpf_iter_fs.c
+ create mode 100644 tools/testing/selftests/bpf/progs/bpf_iter_fs.c
+
 -- 
-2.39.2
+2.29.2
 
