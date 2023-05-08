@@ -2,38 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 481496FB469
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 17:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD30C6FB47E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 17:57:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234727AbjEHPwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 May 2023 11:52:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35722 "EHLO
+        id S234669AbjEHP53 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 May 2023 11:57:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234711AbjEHPwf (ORCPT
+        with ESMTP id S234233AbjEHP52 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 May 2023 11:52:35 -0400
-Received: from bee.tesarici.cz (bee.tesarici.cz [77.93.223.253])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EC91A4;
-        Mon,  8 May 2023 08:52:11 -0700 (PDT)
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by bee.tesarici.cz (Postfix) with ESMTPSA id 9C16C1551B1;
-        Mon,  8 May 2023 17:52:07 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=none dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tesarici.cz; s=mail;
-        t=1683561128; bh=BFn9Tracp9VxaZM60yLgxkOrsr3APEY/DMe++D00LuQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Jzw6i+az4cd3ysej2exGEA4kISOYgjbh0ENPJCJyWdn/0A10t6Pwyho5Uw7WFybg9
-         SXVB1YptnELAS3czSaqsGA3S1Fc4c5saIHHPysqmr9y1rU2b9ljk6jfQ8rlOCkNwim
-         cHj4eyMx/pCZRE9brw036NLsIsxchE7n/wjhjOGiw5wl7R2Zyki+tLjWQvstofwtVk
-         6fHcDmm+z3+deHDYoIGmgjSNkg7ik8nuHfaQDWnO8HZ09aHNDa2h+YtEFDLlKmYrxk
-         sHKw8YWpCbC9atcnvI460v9AD07H/ZnY9enHVTTj1R8M4WAtbTa7GZFPo1ADZKB47X
-         GYGs0qHAIF2xw==
-Date:   Mon, 8 May 2023 17:52:06 +0200
-From:   Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
+        Mon, 8 May 2023 11:57:28 -0400
+Received: from out-8.mta1.migadu.com (out-8.mta1.migadu.com [IPv6:2001:41d0:203:375::8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DBDD6A54
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 May 2023 08:57:26 -0700 (PDT)
+Date:   Mon, 8 May 2023 11:57:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1683561443;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=647sHPv4B7hFuK57ZzB2dzj7RoLmpQ+nMy5wXGAldL0=;
+        b=pAEukJarAZ9zfpJQyxkLYirHPfIniZoUfqNC9brusyZBZ09sv28sxhM4k4em4nlQvaS5Do
+        IxU3+yZoRUn8u1GNjUqpuj/xVZafV+nob5RQGwT3otweRNMnXRavTo5ic8BMQRHWe2z5mG
+        jLofy7PdFoubJwBsB9N6rzDM0Y35kcU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
 Cc:     Michal Hocko <mhocko@suse.com>,
         Suren Baghdasaryan <surenb@google.com>,
         akpm@linux-foundation.org, vbabka@suse.cz, hannes@cmpxchg.org,
@@ -63,61 +58,65 @@ Cc:     Michal Hocko <mhocko@suse.com>,
         linux-mm@kvack.org, linux-modules@vger.kernel.org,
         kasan-dev@googlegroups.com, cgroups@vger.kernel.org
 Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <20230508175206.7dc3f87c@meshulam.tesarici.cz>
-In-Reply-To: <ZFfd99w9vFTftB8D@moria.home.lan>
+Message-ID: <ZFkb1p80vq19rieI@moria.home.lan>
 References: <20230501165450.15352-1-surenb@google.com>
-        <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
-        <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
-        <ZFN1yswCd9wRgYPR@dhcp22.suse.cz>
-        <ZFfd99w9vFTftB8D@moria.home.lan>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-suse-linux-gnu)
+ <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
+ <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
+ <ZFN1yswCd9wRgYPR@dhcp22.suse.cz>
+ <ZFfd99w9vFTftB8D@moria.home.lan>
+ <20230508175206.7dc3f87c@meshulam.tesarici.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230508175206.7dc3f87c@meshulam.tesarici.cz>
+X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 7 May 2023 13:20:55 -0400
-Kent Overstreet <kent.overstreet@linux.dev> wrote:
-
-> On Thu, May 04, 2023 at 11:07:22AM +0200, Michal Hocko wrote:
-> > No. I am mostly concerned about the _maintenance_ overhead. For the
-> > bare tracking (without profiling and thus stack traces) only those
-> > allocations that are directly inlined into the consumer are really
-> > of any use. That increases the code impact of the tracing because any
-> > relevant allocation location has to go through the micro surgery. 
+On Mon, May 08, 2023 at 05:52:06PM +0200, Petr Tesařík wrote:
+> On Sun, 7 May 2023 13:20:55 -0400
+> Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> 
+> > On Thu, May 04, 2023 at 11:07:22AM +0200, Michal Hocko wrote:
+> > > No. I am mostly concerned about the _maintenance_ overhead. For the
+> > > bare tracking (without profiling and thus stack traces) only those
+> > > allocations that are directly inlined into the consumer are really
+> > > of any use. That increases the code impact of the tracing because any
+> > > relevant allocation location has to go through the micro surgery. 
+> > > 
+> > > e.g. is it really interesting to know that there is a likely memory
+> > > leak in seq_file proper doing and allocation? No as it is the specific
+> > > implementation using seq_file that is leaking most likely. There are
+> > > other examples like that See?  
 > > 
-> > e.g. is it really interesting to know that there is a likely memory
-> > leak in seq_file proper doing and allocation? No as it is the specific
-> > implementation using seq_file that is leaking most likely. There are
-> > other examples like that See?  
+> > So this is a rather strange usage of "maintenance overhead" :)
+> > 
+> > But it's something we thought of. If we had to plumb around a _RET_IP_
+> > parameter, or a codetag pointer, it would be a hassle annotating the
+> > correct callsite.
+> > 
+> > Instead, alloc_hooks() wraps a memory allocation function and stashes a
+> > pointer to a codetag in task_struct for use by the core slub/buddy
+> > allocator code.
+> > 
+> > That means that in your example, to move tracking to a given seq_file
+> > function, we just:
+> >  - hook the seq_file function with alloc_hooks
 > 
-> So this is a rather strange usage of "maintenance overhead" :)
-> 
-> But it's something we thought of. If we had to plumb around a _RET_IP_
-> parameter, or a codetag pointer, it would be a hassle annotating the
-> correct callsite.
-> 
-> Instead, alloc_hooks() wraps a memory allocation function and stashes a
-> pointer to a codetag in task_struct for use by the core slub/buddy
-> allocator code.
-> 
-> That means that in your example, to move tracking to a given seq_file
-> function, we just:
->  - hook the seq_file function with alloc_hooks
+> Thank you. That's exactly what I was trying to point out. So you hook
+> seq_buf_alloc(), just to find out it's called from traverse(), which
+> is not very helpful either. So, you hook traverse(), which sounds quite
+> generic. Yes, you're lucky, because it is a static function, and the
+> identifier is not actually used anywhere else (right now), but each
+> time you want to hook something, you must make sure it does not
+> conflict with any other identifier in the kernel...
 
-Thank you. That's exactly what I was trying to point out. So you hook
-seq_buf_alloc(), just to find out it's called from traverse(), which
-is not very helpful either. So, you hook traverse(), which sounds quite
-generic. Yes, you're lucky, because it is a static function, and the
-identifier is not actually used anywhere else (right now), but each
-time you want to hook something, you must make sure it does not
-conflict with any other identifier in the kernel...
-
-Petr T
+Cscope makes quick and easy work of this kind of stuff.
