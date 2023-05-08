@@ -2,162 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4296F6FA375
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 11:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9247B6FA62B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 12:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233786AbjEHJgy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 May 2023 05:36:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38688 "EHLO
+        id S234339AbjEHKRA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 8 May 2023 06:17:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233765AbjEHJgs (ORCPT
+        with ESMTP id S234334AbjEHKQ6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 May 2023 05:36:48 -0400
-Received: from out-7.mta1.migadu.com (out-7.mta1.migadu.com [95.215.58.7])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4E4234A2
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 May 2023 02:36:44 -0700 (PDT)
-Message-ID: <2098f4ba-5b36-9df9-4808-531ff1301723@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1683538601;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GfZjgDP3qOsYzh+80NzUpeT9QjjHP7iQhKbjnDyMq5s=;
-        b=OjXXp44MdsjfLCuhbn+ON8U37ykEO59nd8x5C6BOM+Tqr/Y1I0ErCcifIIOqESKJ0zLn9q
-        CpdBwA7hHwJHM3bl/OVnj0Ja4HgfY4dG6IsLwyW1HC2OtsepeE1n03WodKRjNp+J8yvoqu
-        4v3j43t/csF6XEqpbATxai3iNHeZc6g=
-Date:   Mon, 8 May 2023 17:36:32 +0800
+        Mon, 8 May 2023 06:16:58 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61BDB198A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 May 2023 03:16:57 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-262-zOQH_hTdOyKBqVginv_Wrg-1; Mon, 08 May 2023 11:16:54 +0100
+X-MC-Unique: zOQH_hTdOyKBqVginv_Wrg-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 8 May
+ 2023 11:16:53 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Mon, 8 May 2023 11:16:53 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Peter Zijlstra' <peterz@infradead.org>,
+        Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: RE: [GIT PULL] pipe: nonblocking rw for io_uring
+Thread-Topic: [GIT PULL] pipe: nonblocking rw for io_uring
+Thread-Index: AQHZgYiwlyUplQwnoEaMYF5kgipU769QJzcQ
+Date:   Mon, 8 May 2023 10:16:53 +0000
+Message-ID: <cdc5a86a8e6549ff90bb09b99d4cb651@AcuMS.aculab.com>
+References: <6882b74e-874a-c116-62ac-564104c5ad34@kernel.dk>
+ <CAHk-=wiQ8g+B0bCPJ9fxZ+Oa0LPAUAyryw9i+-fBUe72LoA+QQ@mail.gmail.com>
+ <CAHk-=wgGzwaz2yGO9_PFv4O1ke_uHg25Ab0UndK+G9vJ9V4=hw@mail.gmail.com>
+ <2e7d4f63-7ddd-e4a6-e7eb-fd2a305d442e@kernel.dk>
+ <69ec222c-1b75-cdc1-ac1b-0e9e504db6cb@kernel.dk>
+ <CAHk-=wiaFUoHpztu6Zf_4pyzH-gzeJhdCU0MYNw9LzVg1-kx8g@mail.gmail.com>
+ <CAHk-=wjSuGTLrmygUSNh==u81iWUtVzJ5GNSz0A-jbr4WGoZyw@mail.gmail.com>
+ <20230425194910.GA1350354@hirez.programming.kicks-ass.net>
+ <CAHk-=wjNfkT1oVLGbe2=Vymp66Ht=tk+YKa9gUL4T=_hA_JLjg@mail.gmail.com>
+ <978690c4-1d25-46e8-3375-45940ec1ea51@huaweicloud.com>
+ <20230508083929.GT83892@hirez.programming.kicks-ass.net>
+In-Reply-To: <20230508083929.GT83892@hirez.programming.kicks-ass.net>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Subject: Re: [PATCH] fuse: add a new flag to allow shared mmap in
- FOPEN_DIRECT_IO mode
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     fuse-devel@lists.sourceforge.net, miklos@szeredi.hu,
-        bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org
-References: <20230505081652.43008-1-hao.xu@linux.dev>
- <ZFVpH1n0VzNe7iVE@redhat.com>
- <ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev>
-In-Reply-To: <ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,PDS_BAD_THREAD_QP_64,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/6/23 13:01, Hao Xu wrote:
-> Hi Vivek,
+From: Peter Zijlstra
+> Sent: 08 May 2023 09:39
 > 
-> On 5/6/23 04:37, Vivek Goyal wrote:
->> On Fri, May 05, 2023 at 04:16:52PM +0800, Hao Xu wrote:
->>> From: Hao Xu <howeyxu@tencent.com>
->>>
->>> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
->>> coherency, e.g. network filesystems. Thus shared mmap is disabled since
->>> it leverages page cache and may write to it, which may cause
->>> inconsistence. But FOPEN_DIRECT_IO can be used not for coherency but to
->>> reduce memory footprint as well, e.g. reduce guest memory usage with
->>> virtiofs. Therefore, add a new flag FOPEN_DIRECT_IO_SHARED_MMAP to allow
->>> shared mmap for these cases.
->>>
->>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->>> ---
->>>   fs/fuse/file.c            | 11 ++++++++---
->>>   include/uapi/linux/fuse.h |  2 ++
->>>   2 files changed, 10 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>> index 89d97f6188e0..655896bdb0d5 100644
->>> --- a/fs/fuse/file.c
->>> +++ b/fs/fuse/file.c
->>> @@ -161,7 +161,8 @@ struct fuse_file *fuse_file_open(struct 
->>> fuse_mount *fm, u64 nodeid,
->>>       }
->>>       if (isdir)
->>> -        ff->open_flags &= ~FOPEN_DIRECT_IO;
->>> +        ff->open_flags &=
->>> +            ~(FOPEN_DIRECT_IO | FOPEN_DIRECT_IO_SHARED_MMAP);
->>>       ff->nodeid = nodeid;
->>> @@ -2509,8 +2510,12 @@ static int fuse_file_mmap(struct file *file, 
->>> struct vm_area_struct *vma)
->>>           return fuse_dax_mmap(file, vma);
->>>       if (ff->open_flags & FOPEN_DIRECT_IO) {
->>> -        /* Can't provide the coherency needed for MAP_SHARED */
->>> -        if (vma->vm_flags & VM_MAYSHARE)
->>> +        /* Can't provide the coherency needed for MAP_SHARED.
->>> +         * So disable it if FOPEN_DIRECT_IO_SHARED_MMAP is not
->>> +         * set, which means we do need strong coherency.
->>> +         */
->>> +        if (!(ff->open_flags & FOPEN_DIRECT_IO_SHARED_MMAP) &&
->>> +            vma->vm_flags & VM_MAYSHARE)
->>>               return -ENODEV;
->>
->> Can you give an example how this is useful and how do you plan to
->> use it?
->>
->> If goal is not using guest cache (either for saving memory or for cache
->> coherency with other clients) and hence you used FOPEN_DIRECT_IO,
->> then by allowing page cache for mmap(), we are contracting that goal.
->> We are neither saving memory and at the same time we are not
->> cache coherent.
+> On Sun, May 07, 2023 at 04:04:23PM +0200, Jonas Oberhauser wrote:
+> >
+> > Am 4/25/2023 um 9:58 PM schrieb Linus Torvalds:
+> > > Yes, I think Mark is right. It's not that 'old' might be wrong - that
+> > > doesn't matter because cmpxchg will work it out - it's just that 'new'
+> > > might not be consistent with the old value we then use.
+> >
+> > In the general pattern, besides the potential issue raised by Mark, tearing
+> > may also be an issue (longer example inspired by a case we met at the end of
+> > the mail) where 'old' being wrong matters.
 > 
-> We use it to reduce guest memory "as possible as we can", which means we 
-> first have to ensure the functionality so shared mmap should work when 
-> users call it, then second reduce memory when users use read/write 
-> (from/to other files).
+> There is yet another pattern where it actually matters:
 > 
-> In cases where users do read/write in most time and calls shared mmap 
-> sometimes, disabling shared mmap makes this case out of service, but
-> with this flag we still reduce memory and the application works.
+> 	old = READ_ONCE(*ptr);
+> 	do {
+> 		if (cond(old))
+> 			return false;
 > 
->>
->> IIUC, for virtiofs, you want to use cache=none but at the same time
->> allow guest applications to do shared mmap() hence you are introducing
->> this change. There have been folks who have complained about it
->> and I think 9pfs offers a mode which does this. So solving this
->> problem will be nice.
->>
->> BTW, if "-o dax" is used, it solves this problem. But unfortunately qemu
->> does not have DAX support yet and we also have issues with page 
->> truncation
->> on host and MCE not travelling into the guest. So DAX is not a perfect
->> option yet.
+> 		new = func(old);
+> 	} while (!try_cmpxchg(ptr, &old, new));
 > 
-> Yea, just like I relied in another mail, users' IO pattern may be a 
-> bunch of small IO to a bunch of small files, dax may help but not so 
-> much in that case.
+> 	return true;
 > 
->>
->> I agree that solving this problem will be nice. Just trying to
->> understand the behavior better. How these cache pages will
->> interact with read/write?
-> 
-> I went through the code, it looks like there are issues when users mmap
-> a file and then write to it, this may cause coherency problem between 
-> the backend file and the frontend page cache.
-> I think this problem exists before this patchset: when we private mmap
-> a file and then write to it in FOPEN_DIRECT_IO mode, the change doesn't
-> update to the page cache because we falsely assume there is no page 
-> cache under FOPEN_DIRECT_IO mode. I need to go over the code and do some
-> test to see if it is really there and to solve it.
+> In this case we rely on old being 'coherent'. The more obvious case is
+> where it returns old (also not uncommon), but even if it just checks a
+> (multi-bit) condition on old you don't want tearing.
 
-Bug confirmed, in FOPEN_DIRECT_IO mode, if we first private mmap a file,
-then do write() syscall to the same file, the page cache page is stale. 
-fuse forgets to invalidate page cache page before write().
+It isn't as though READ_ONCE() is expensive.
 
-> 
-> Thanks,
-> Hao
-> 
->>
->> Thanks
->> Vivek
-> 
+For kernel/device driver code, while CSE is useful, you pretty
+much always want the compiler to always do loads into local
+variables.
+It is rather a shame there isn't a compiler option that
+avoids these unusual any annoying operations.
+
+Since the current 'rules' seem to require READ_ONCE() and
+WRITE_ONCE() be used as pairs, why not make the data 'volatile'?
+That ought to be the same as using volatile casts on all accesses.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
