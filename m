@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1333F6FA049
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 08:55:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 856E96FA04E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 08:55:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233089AbjEHGzN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 May 2023 02:55:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37232 "EHLO
+        id S233115AbjEHGzT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 May 2023 02:55:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232778AbjEHGy4 (ORCPT
+        with ESMTP id S233041AbjEHGzF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 May 2023 02:54:56 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 666DAA5FC;
+        Mon, 8 May 2023 02:55:05 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79B691634D;
         Sun,  7 May 2023 23:54:54 -0700 (PDT)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.54])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4QFBpD6xQ9zpW6Q;
-        Mon,  8 May 2023 14:53:40 +0800 (CST)
+Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4QFBmM4PprzLpV9;
+        Mon,  8 May 2023 14:52:03 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Mon, 8 May 2023 14:54:51 +0800
+ 15.1.2507.23; Mon, 8 May 2023 14:54:52 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Mike Rapoport <rppt@kernel.org>, <linux-mm@kvack.org>
@@ -35,9 +35,9 @@ CC:     David Hildenbrand <david@redhat.com>,
         <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>,
         Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH 09/12] mm: page_alloc: move mark_free_page() into snapshot.c
-Date:   Mon, 8 May 2023 15:11:57 +0800
-Message-ID: <20230508071200.123962-10-wangkefeng.wang@huawei.com>
+Subject: [PATCH 10/12] mm: page_alloc: move pm_* function into power
+Date:   Mon, 8 May 2023 15:11:58 +0800
+Message-ID: <20230508071200.123962-11-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230508071200.123962-1-wangkefeng.wang@huawei.com>
 References: <20230508071200.123962-1-wangkefeng.wang@huawei.com>
@@ -57,159 +57,191 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mark_free_page() is only used in kernel/power/snapshot.c,
-move it out to reduce a bit of page_alloc.c
+pm_restrict_gfp_mask()/pm_restore_gfp_mask() only used in power,
+let's move them out of page_alloc.c.
+
+Adding a general gfp_has_io_fs() function which return true if
+gfp with both __GFP_IO and __GFP_FS flags, then use it inside of
+pm_suspended_storage(), also the pm_suspended_storage() is moved
+into suspend.h.
 
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- include/linux/suspend.h |  3 ---
- kernel/power/snapshot.c | 52 ++++++++++++++++++++++++++++++++++++++
- mm/page_alloc.c         | 55 -----------------------------------------
- 3 files changed, 52 insertions(+), 58 deletions(-)
+ include/linux/gfp.h     | 15 ++++-----------
+ include/linux/suspend.h |  6 ++++++
+ kernel/power/main.c     | 27 +++++++++++++++++++++++++++
+ kernel/power/power.h    |  5 +++++
+ mm/page_alloc.c         | 38 --------------------------------------
+ mm/swapfile.c           |  1 +
+ 6 files changed, 43 insertions(+), 49 deletions(-)
 
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index ed8cb537c6a7..665f06675c83 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -338,19 +338,12 @@ extern gfp_t gfp_allowed_mask;
+ /* Returns true if the gfp_mask allows use of ALLOC_NO_WATERMARK */
+ bool gfp_pfmemalloc_allowed(gfp_t gfp_mask);
+ 
+-extern void pm_restrict_gfp_mask(void);
+-extern void pm_restore_gfp_mask(void);
+-
+-extern gfp_t vma_thp_gfp_mask(struct vm_area_struct *vma);
+-
+-#ifdef CONFIG_PM_SLEEP
+-extern bool pm_suspended_storage(void);
+-#else
+-static inline bool pm_suspended_storage(void)
++static inline bool gfp_has_io_fs(gfp_t gfp)
+ {
+-	return false;
++	return (gfp & (__GFP_IO | __GFP_FS)) == (__GFP_IO | __GFP_FS);
+ }
+-#endif /* CONFIG_PM_SLEEP */
++
++extern gfp_t vma_thp_gfp_mask(struct vm_area_struct *vma);
+ 
+ #ifdef CONFIG_CONTIG_ALLOC
+ /* The below functions must be run on a range from a single zone. */
 diff --git a/include/linux/suspend.h b/include/linux/suspend.h
-index d0d4598a7b3f..3950a7bf33ae 100644
+index 3950a7bf33ae..76923051c03d 100644
 --- a/include/linux/suspend.h
 +++ b/include/linux/suspend.h
-@@ -364,9 +364,6 @@ struct pbe {
- 	struct pbe *next;
- };
+@@ -502,6 +502,11 @@ extern void pm_report_max_hw_sleep(u64 t);
+ extern bool events_check_enabled;
+ extern suspend_state_t pm_suspend_target_state;
  
--/* mm/page_alloc.c */
--extern void mark_free_pages(struct zone *zone);
--
- /**
-  * struct platform_hibernation_ops - hibernation platform support
-  *
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index cd8b7b35f1e8..45ef0bf81c85 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -1228,6 +1228,58 @@ unsigned int snapshot_additional_pages(struct zone *zone)
- 	return 2 * rtree;
- }
- 
-+/*
-+ * Touch the watchdog for every WD_PAGE_COUNT pages.
-+ */
-+#define WD_PAGE_COUNT	(128*1024)
-+
-+static void mark_free_pages(struct zone *zone)
++static inline bool pm_suspended_storage(void)
 +{
-+	unsigned long pfn, max_zone_pfn, page_count = WD_PAGE_COUNT;
-+	unsigned long flags;
-+	unsigned int order, t;
-+	struct page *page;
-+
-+	if (zone_is_empty(zone))
-+		return;
-+
-+	spin_lock_irqsave(&zone->lock, flags);
-+
-+	max_zone_pfn = zone_end_pfn(zone);
-+	for (pfn = zone->zone_start_pfn; pfn < max_zone_pfn; pfn++)
-+		if (pfn_valid(pfn)) {
-+			page = pfn_to_page(pfn);
-+
-+			if (!--page_count) {
-+				touch_nmi_watchdog();
-+				page_count = WD_PAGE_COUNT;
-+			}
-+
-+			if (page_zone(page) != zone)
-+				continue;
-+
-+			if (!swsusp_page_is_forbidden(page))
-+				swsusp_unset_page_free(page);
-+		}
-+
-+	for_each_migratetype_order(order, t) {
-+		list_for_each_entry(page,
-+				&zone->free_area[order].free_list[t], buddy_list) {
-+			unsigned long i;
-+
-+			pfn = page_to_pfn(page);
-+			for (i = 0; i < (1UL << order); i++) {
-+				if (!--page_count) {
-+					touch_nmi_watchdog();
-+					page_count = WD_PAGE_COUNT;
-+				}
-+				swsusp_set_page_free(pfn_to_page(pfn + i));
-+			}
-+		}
-+	}
-+	spin_unlock_irqrestore(&zone->lock, flags);
++	return !gfp_has_io_fs(gfp_allowed_mask);
 +}
 +
+ extern bool pm_wakeup_pending(void);
+ extern void pm_system_wakeup(void);
+ extern void pm_system_cancel_wakeup(void);
+@@ -535,6 +540,7 @@ static inline void ksys_sync_helper(void) {}
+ 
+ #define pm_notifier(fn, pri)	do { (void)(fn); } while (0)
+ 
++static inline bool pm_suspended_storage(void) { return false; }
+ static inline bool pm_wakeup_pending(void) { return false; }
+ static inline void pm_system_wakeup(void) {}
+ static inline void pm_wakeup_clear(bool reset) {}
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 3113ec2f1db4..34fc8359145b 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -21,6 +21,33 @@
+ #include "power.h"
+ 
+ #ifdef CONFIG_PM_SLEEP
++/*
++ * The following functions are used by the suspend/hibernate code to temporarily
++ * change gfp_allowed_mask in order to avoid using I/O during memory allocations
++ * while devices are suspended.  To avoid races with the suspend/hibernate code,
++ * they should always be called with system_transition_mutex held
++ * (gfp_allowed_mask also should only be modified with system_transition_mutex
++ * held, unless the suspend/hibernate code is guaranteed not to run in parallel
++ * with that modification).
++ */
++static gfp_t saved_gfp_mask;
++
++void pm_restore_gfp_mask(void)
++{
++	WARN_ON(!mutex_is_locked(&system_transition_mutex));
++	if (saved_gfp_mask) {
++		gfp_allowed_mask = saved_gfp_mask;
++		saved_gfp_mask = 0;
++	}
++}
++
++void pm_restrict_gfp_mask(void)
++{
++	WARN_ON(!mutex_is_locked(&system_transition_mutex));
++	WARN_ON(saved_gfp_mask);
++	saved_gfp_mask = gfp_allowed_mask;
++	gfp_allowed_mask &= ~(__GFP_IO | __GFP_FS);
++}
+ 
+ unsigned int lock_system_sleep(void)
+ {
+diff --git a/kernel/power/power.h b/kernel/power/power.h
+index b83c8d5e188d..ac14d1b463d1 100644
+--- a/kernel/power/power.h
++++ b/kernel/power/power.h
+@@ -216,6 +216,11 @@ static inline void suspend_test_finish(const char *label) {}
+ /* kernel/power/main.c */
+ extern int pm_notifier_call_chain_robust(unsigned long val_up, unsigned long val_down);
+ extern int pm_notifier_call_chain(unsigned long val);
++void pm_restrict_gfp_mask(void);
++void pm_restore_gfp_mask(void);
++#else
++static inline void pm_restrict_gfp_mask(void) {}
++static inline void pm_restore_gfp_mask(void) {}
+ #endif
+ 
  #ifdef CONFIG_HIGHMEM
- /**
-  * count_free_highmem_pages - Compute the total number of free highmem pages.
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 78d8a59f2afa..9284edf0259b 100644
+index 9284edf0259b..aa4e4af9fc88 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -2313,61 +2313,6 @@ void drain_all_pages(struct zone *zone)
- 	__drain_all_pages(zone, false);
+@@ -227,44 +227,6 @@ static inline void set_pcppage_migratetype(struct page *page, int migratetype)
+ 	page->index = migratetype;
  }
  
--#ifdef CONFIG_HIBERNATION
--
+-#ifdef CONFIG_PM_SLEEP
 -/*
-- * Touch the watchdog for every WD_PAGE_COUNT pages.
+- * The following functions are used by the suspend/hibernate code to temporarily
+- * change gfp_allowed_mask in order to avoid using I/O during memory allocations
+- * while devices are suspended.  To avoid races with the suspend/hibernate code,
+- * they should always be called with system_transition_mutex held
+- * (gfp_allowed_mask also should only be modified with system_transition_mutex
+- * held, unless the suspend/hibernate code is guaranteed not to run in parallel
+- * with that modification).
 - */
--#define WD_PAGE_COUNT	(128*1024)
 -
--void mark_free_pages(struct zone *zone)
+-static gfp_t saved_gfp_mask;
+-
+-void pm_restore_gfp_mask(void)
 -{
--	unsigned long pfn, max_zone_pfn, page_count = WD_PAGE_COUNT;
--	unsigned long flags;
--	unsigned int order, t;
--	struct page *page;
--
--	if (zone_is_empty(zone))
--		return;
--
--	spin_lock_irqsave(&zone->lock, flags);
--
--	max_zone_pfn = zone_end_pfn(zone);
--	for (pfn = zone->zone_start_pfn; pfn < max_zone_pfn; pfn++)
--		if (pfn_valid(pfn)) {
--			page = pfn_to_page(pfn);
--
--			if (!--page_count) {
--				touch_nmi_watchdog();
--				page_count = WD_PAGE_COUNT;
--			}
--
--			if (page_zone(page) != zone)
--				continue;
--
--			if (!swsusp_page_is_forbidden(page))
--				swsusp_unset_page_free(page);
--		}
--
--	for_each_migratetype_order(order, t) {
--		list_for_each_entry(page,
--				&zone->free_area[order].free_list[t], buddy_list) {
--			unsigned long i;
--
--			pfn = page_to_pfn(page);
--			for (i = 0; i < (1UL << order); i++) {
--				if (!--page_count) {
--					touch_nmi_watchdog();
--					page_count = WD_PAGE_COUNT;
--				}
--				swsusp_set_page_free(pfn_to_page(pfn + i));
--			}
--		}
+-	WARN_ON(!mutex_is_locked(&system_transition_mutex));
+-	if (saved_gfp_mask) {
+-		gfp_allowed_mask = saved_gfp_mask;
+-		saved_gfp_mask = 0;
 -	}
--	spin_unlock_irqrestore(&zone->lock, flags);
 -}
--#endif /* CONFIG_PM */
 -
- static bool free_unref_page_prepare(struct page *page, unsigned long pfn,
- 							unsigned int order)
- {
+-void pm_restrict_gfp_mask(void)
+-{
+-	WARN_ON(!mutex_is_locked(&system_transition_mutex));
+-	WARN_ON(saved_gfp_mask);
+-	saved_gfp_mask = gfp_allowed_mask;
+-	gfp_allowed_mask &= ~(__GFP_IO | __GFP_FS);
+-}
+-
+-bool pm_suspended_storage(void)
+-{
+-	if ((gfp_allowed_mask & (__GFP_IO | __GFP_FS)) == (__GFP_IO | __GFP_FS))
+-		return false;
+-	return true;
+-}
+-#endif /* CONFIG_PM_SLEEP */
+-
+ #ifdef CONFIG_HUGETLB_PAGE_SIZE_VARIABLE
+ unsigned int pageblock_order __read_mostly;
+ #endif
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 274bbf797480..c74259001d5e 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -41,6 +41,7 @@
+ #include <linux/swap_slots.h>
+ #include <linux/sort.h>
+ #include <linux/completion.h>
++#include <linux/suspend.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <linux/swapops.h>
 -- 
 2.35.3
 
