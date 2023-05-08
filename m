@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7768C6F9D54
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 03:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61CF26F9D52
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 03:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232447AbjEHBTq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 May 2023 21:19:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39522 "EHLO
+        id S232430AbjEHBTo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 May 2023 21:19:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232291AbjEHBTl (ORCPT
+        with ESMTP id S232442AbjEHBTl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 7 May 2023 21:19:41 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04996124B3;
-        Sun,  7 May 2023 18:19:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0079120BC;
+        Sun,  7 May 2023 18:19:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Iq+GJy0SYT3EQ729uzX+WNTK2VcOhGS7edVn1rT+bXU=; b=cxcuXLswjH61dwpHVdEYkT59Qa
-        pleqlWyhX5duQKH30dhD/5GI2gFJvg2gpVm0Rr5DVj5BXtEU/UO4Cg6LLvBM4E1hmPL9aPqBxl/mz
-        yLDtJZ3SgJRQ2PFgkf4vcnRyx4MTml7DGYxXqi9AwyzDmrdOZsJIX9ozSAhtBneTGZc9nJNxwGmT7
-        vZ2hkNH7dKAFjsV2UZFx/Q4U6QTTA0avlF9shdGnT4P1g/iHcEXuC96K33DnDeHR6BAeMet7Yh37d
-        ZSDEURcJ8nazX9pHqEE70ymf9kQ31FdLezxqKVp2boGJXFaTsFCmMyww4rP8l5oZIA7tFlgaY6pXl
-        dRPsB6Cw==;
+        bh=EsvFyZdxKR9Xo2oUHLItivX9RP06VANJ3BHs/qzrgb8=; b=NtUMcEp2/YdBVpX/d7jO0SgEsc
+        JY+bficTtXU0MiAkClFvxXTn1N3z4sKyVhGFd8KWbwfbGDTT7SmBZI61a1xuJuZqtMsJ5h6QMXGv0
+        AEgWEFOFfAV6Hp9L0Ead0gG+eyH/YOElBM5q00Ufhb4tcxiYaIjuwi+PmxHs2CbcbIPAO/2iMjiG/
+        cGPC8od2t7HSuhQGXLey4F5JnRqXYVUselIg/VW+jxIYeg+nR+8MoKVNfOXkF47vOrLKwaxZzjNCj
+        6jiGtCIukSBekGHbw4Mluj26qO48ty3HroFFQp7pLE1WKBUW3pyJYapuAOpjpgWfbmlzHfMdhnzwZ
+        gUxYPydw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pvpXE-00Gw8O-1P;
+        id 1pvpXE-00Gw8b-1Y;
         Mon, 08 May 2023 01:19:28 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hch@infradead.org, djwong@kernel.org, sandeen@sandeen.net,
@@ -37,9 +37,9 @@ Cc:     mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
         da.gomez@samsung.com, linux-fsdevel@vger.kernel.org,
         kernel@tuxforce.de, kexec@lists.infradead.org,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 1/3] ext4: replace kthread freezing with auto fs freezing
-Date:   Sun,  7 May 2023 18:19:25 -0700
-Message-Id: <20230508011927.4036707-2-mcgrof@kernel.org>
+Subject: [PATCH 2/3] btrfs: replace kthread freezing with auto fs freezing
+Date:   Sun,  7 May 2023 18:19:26 -0700
+Message-Id: <20230508011927.4036707-3-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230508011927.4036707-1-mcgrof@kernel.org>
 References: <20230508011927.4036707-1-mcgrof@kernel.org>
@@ -70,7 +70,7 @@ it knows better than how the VFS handles it.
 The following Coccinelle rule was used as to remove the now superfluous
 freezer calls:
 
-make coccicheck MODE=patch SPFLAGS="--in-place --no-show-diff" COCCI=./fs-freeze-cleanup.cocci M=fs/ext4
+make coccicheck MODE=patch SPFLAGS="--in-place --no-show-diff" COCCI=./fs-freeze-cleanup.cocci M=fs/btrfs
 
 virtual patch
 
@@ -167,57 +167,68 @@ struct file_system_type fs_type = {
 Generated-by: Coccinelle SmPL
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/ext4/super.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ fs/btrfs/disk-io.c | 4 ++--
+ fs/btrfs/scrub.c   | 2 +-
+ fs/btrfs/super.c   | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index d39f386e9baf..1f436938d8be 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -136,7 +136,7 @@ static struct file_system_type ext2_fs_type = {
- 	.init_fs_context	= ext4_init_fs_context,
- 	.parameters		= ext4_param_specs,
- 	.kill_sb		= kill_block_super,
--	.fs_flags		= FS_REQUIRES_DEV,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_AUTOFREEZE,
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 59ea049fe7ee..6552ade25ef2 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2176,7 +2176,7 @@ static void btrfs_init_qgroup(struct btrfs_fs_info *fs_info)
+ static int btrfs_init_workqueues(struct btrfs_fs_info *fs_info)
+ {
+ 	u32 max_active = fs_info->thread_pool_size;
+-	unsigned int flags = WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_UNBOUND;
++	unsigned int flags = WQ_MEM_RECLAIM | WQ_UNBOUND;
+ 
+ 	fs_info->workers =
+ 		btrfs_alloc_workqueue(fs_info, "worker", flags, max_active, 16);
+@@ -2217,7 +2217,7 @@ static int btrfs_init_workqueues(struct btrfs_fs_info *fs_info)
+ 	fs_info->qgroup_rescan_workers =
+ 		btrfs_alloc_workqueue(fs_info, "qgroup-rescan", flags, 1, 0);
+ 	fs_info->discard_ctl.discard_workers =
+-		alloc_workqueue("btrfs_discard", WQ_UNBOUND | WQ_FREEZABLE, 1);
++		alloc_workqueue("btrfs_discard", WQ_UNBOUND, 1);
+ 
+ 	if (!(fs_info->workers && fs_info->hipri_workers &&
+ 	      fs_info->delalloc_workers && fs_info->flush_workers &&
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index 836725a19661..55b82a55de19 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -2727,7 +2727,7 @@ static noinline_for_stack int scrub_workers_get(struct btrfs_fs_info *fs_info,
+ {
+ 	struct workqueue_struct *scrub_workers = NULL;
+ 	struct workqueue_struct *scrub_wr_comp = NULL;
+-	unsigned int flags = WQ_FREEZABLE | WQ_UNBOUND;
++	unsigned int flags = WQ_UNBOUND;
+ 	int max_active = fs_info->thread_pool_size;
+ 	int ret = -ENOMEM;
+ 
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 0f2f915e42b0..2c08c2a37b8b 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2145,7 +2145,7 @@ static struct file_system_type btrfs_fs_type = {
+ 	.name		= "btrfs",
+ 	.mount		= btrfs_mount,
+ 	.kill_sb	= btrfs_kill_super,
+-	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA,
++	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_AUTOFREEZE,
  };
- MODULE_ALIAS_FS("ext2");
- MODULE_ALIAS("ext2");
-@@ -152,7 +152,7 @@ static struct file_system_type ext3_fs_type = {
- 	.init_fs_context	= ext4_init_fs_context,
- 	.parameters		= ext4_param_specs,
- 	.kill_sb		= kill_block_super,
--	.fs_flags		= FS_REQUIRES_DEV,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_AUTOFREEZE,
+ 
+ static struct file_system_type btrfs_root_fs_type = {
+@@ -2153,7 +2153,7 @@ static struct file_system_type btrfs_root_fs_type = {
+ 	.name		= "btrfs",
+ 	.mount		= btrfs_mount_root,
+ 	.kill_sb	= btrfs_kill_super,
+-	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_ALLOW_IDMAP,
++	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_ALLOW_IDMAP | FS_AUTOFREEZE,
  };
- MODULE_ALIAS_FS("ext3");
- MODULE_ALIAS("ext3");
-@@ -3790,7 +3790,6 @@ static int ext4_lazyinit_thread(void *arg)
- 	unsigned long next_wakeup, cur;
  
- 	BUG_ON(NULL == eli);
--	set_freezable();
- 
- cont_thread:
- 	while (true) {
-@@ -3842,8 +3841,6 @@ static int ext4_lazyinit_thread(void *arg)
- 		}
- 		mutex_unlock(&eli->li_list_mtx);
- 
--		try_to_freeze();
--
- 		cur = jiffies;
- 		if ((time_after_eq(cur, next_wakeup)) ||
- 		    (MAX_JIFFY_OFFSET == next_wakeup)) {
-@@ -7245,7 +7242,7 @@ static struct file_system_type ext4_fs_type = {
- 	.init_fs_context	= ext4_init_fs_context,
- 	.parameters		= ext4_param_specs,
- 	.kill_sb		= kill_block_super,
--	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_AUTOFREEZE,
- };
- MODULE_ALIAS_FS("ext4");
- 
+ MODULE_ALIAS_FS("btrfs");
 -- 
 2.39.2
 
