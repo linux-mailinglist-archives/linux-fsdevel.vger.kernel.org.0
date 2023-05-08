@@ -2,211 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C17DC6FB270
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 16:18:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 933566FB32A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 16:44:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234267AbjEHOS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 May 2023 10:18:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55990 "EHLO
+        id S230198AbjEHOoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 May 2023 10:44:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233491AbjEHOSZ (ORCPT
+        with ESMTP id S233783AbjEHOoJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 May 2023 10:18:25 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1121A0;
-        Mon,  8 May 2023 07:18:22 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5B1801FF40;
-        Mon,  8 May 2023 14:18:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1683555501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=T5lxbwwkgegSAFfxW6WBB5ZioSoqo06SKF1oFOPKNV8=;
-        b=QhPg/7/l3dn9YKEJHp+3Q9S5X4xDGjO+PMTw/QsUjMM5aiqIPpw1tOTBO51QZq0HVoSdEw
-        XRMjUh4ZbrAfZwJtYwbR+BdrEwzZ3mP3mFuiRXIL+Xh2XJOl7qHAwIHPva/nveawIJQKvO
-        D197PO+w12kXlGQIT7W+lD0s4MeOXkY=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 990431346B;
-        Mon,  8 May 2023 14:18:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id iEk/JawEWWTYBwAAMHmgww
-        (envelope-from <mhocko@suse.com>); Mon, 08 May 2023 14:18:20 +0000
-Date:   Mon, 8 May 2023 16:18:18 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     =?utf-8?B?56iL5Z6y5rab?= Chengkaitao Cheng 
-        <chengkaitao@didiglobal.com>
-Cc:     "tj@kernel.org" <tj@kernel.org>,
-        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
-        "shakeelb@google.com" <shakeelb@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "muchun.song@linux.dev" <muchun.song@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-        "pilgrimtao@gmail.com" <pilgrimtao@gmail.com>,
-        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
-        "yuzhao@google.com" <yuzhao@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "surenb@google.com" <surenb@google.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH v3 0/2] memcontrol: support cgroup level OOM protection
-Message-ID: <ZFkEqhAs7FELUO3a@dhcp22.suse.cz>
-References: <ZFd5bpfYc3nPEVie@dhcp22.suse.cz>
- <66F9BB37-3BE1-4B0F-8DE1-97085AF4BED2@didiglobal.com>
+        Mon, 8 May 2023 10:44:09 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724A826AD;
+        Mon,  8 May 2023 07:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=4kuu4gBwsJnGnwZXLqP9nf/S9Djc87/bItwQ4iUImwo=; b=QZyfqMk4eQEDtPi9vCHi7Ag4qx
+        Xp1ecG+OCrFaBVyEGKLsKvuUbwL/VMgPYvCj+gNC/as92GM6zBw5+UMWnvDPwqxODeE33TrEGYS1w
+        xOb1C7OgriKJQvze/2rnb39kyMEXCMISkAKg87W+0QJVBETqwHxoAVdozoFBN0gEf2WRh8SQoT1qK
+        DtPCXMGjXAiB/KUIYaDxCQav6xZGFtRhnP9+Eq+IX2Ug6rRmwAXkT/kLnnH+PrIUlEruhSe3QJPpk
+        wjp8w59qZgbkBytZSVw5Z+qwZfRVkx7oPnxX3kwZSnMVX0tVa/GhdGIWHR0sxkdfo3QRLNqlzG651
+        g5fCVuuw==;
+Received: from [208.98.210.70] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pw25t-000n0F-30;
+        Mon, 08 May 2023 14:44:06 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     axboe@kernel.dk
+Cc:     dhowells@redhat.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: remove the special !CONFIG_BLOCK def_blk_fops
+Date:   Mon,  8 May 2023 07:44:05 -0700
+Message-Id: <20230508144405.41792-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <66F9BB37-3BE1-4B0F-8DE1-97085AF4BED2@didiglobal.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 08-05-23 09:08:25, 程垲涛 Chengkaitao Cheng wrote:
-> At 2023-05-07 18:11:58, "Michal Hocko" <mhocko@suse.com> wrote:
-> >On Sat 06-05-23 19:49:46, chengkaitao wrote:
-> >> Establish a new OOM score algorithm, supports the cgroup level OOM
-> >> protection mechanism. When an global/memcg oom event occurs, we treat
-> >> all processes in the cgroup as a whole, and OOM killers need to select
-> >> the process to kill based on the protection quota of the cgroup
-> >
-> >Although your patch 1 briefly touches on some advantages of this
-> >interface there is a lack of actual usecase. Arguing that oom_score_adj
-> >is hard because it needs a parent process is rather weak to be honest.
-> >It is just trivial to create a thin wrapper, use systemd to launch
-> >important services or simply update the value after the fact. Now
-> >oom_score_adj has its own downsides of course (most notably a
-> >granularity and a lack of group protection.
-> >
-> >That being said, make sure you describe your usecase more thoroughly.
-> >Please also make sure you describe the intended heuristic of the knob.
-> >It is not really clear from the description how this fits hierarchical
-> >behavior of cgroups. I would be especially interested in the semantics
-> >of non-leaf memcgs protection as they do not have any actual processes
-> >to protect.
-> >
-> >Also there have been concerns mentioned in v2 discussion and it would be
-> >really appreciated to summarize how you have dealt with them.
-> >
-> >Please also note that many people are going to be slow in responding
-> >this week because of LSFMM conference
-> >(https://events.linuxfoundation.org/lsfmm/)
-> 
-> Here is a more detailed comparison and introduction of the old oom_score_adj
-> mechanism and the new oom_protect mechanism,
-> 1. The regulating granularity of oom_protect is smaller than that of oom_score_adj.
-> On a 512G physical machine, the minimum granularity adjusted by oom_score_adj
-> is 512M, and the minimum granularity adjusted by oom_protect is one page (4K).
-> 2. It may be simple to create a lightweight parent process and uniformly set the 
-> oom_score_adj of some important processes, but it is not a simple matter to make 
-> multi-level settings for tens of thousands of processes on the physical machine 
-> through the lightweight parent processes. We may need a huge table to record the 
-> value of oom_score_adj maintained by all lightweight parent processes, and the 
-> user process limited by the parent process has no ability to change its own 
-> oom_score_adj, because it does not know the details of the huge table. The new 
-> patch adopts the cgroup mechanism. It does not need any parent process to manage 
-> oom_score_adj. the settings between each memcg are independent of each other, 
-> making it easier to plan the OOM order of all processes. Due to the unique nature 
-> of memory resources, current Service cloud vendors are not oversold in memory 
-> planning. I would like to use the new patch to try to achieve the possibility of 
-> oversold memory resources.
+def_blk_fops always returns -ENODEV, which dosn't match the return value
+of a non-existing block device with CONFIG_BLOCK, which is -ENXIO.
+Just remove the extra implementation and fall back to the default
+no_open_fops that always returns -ENXIO.
 
-OK, this is more specific about the usecase. Thanks! So essentially what
-it boils down to is that you are handling many containers (memcgs from
-our POV) and they have different priorities. You want to overcommit the
-memory to the extend that global ooms are not an unexpected event. Once
-that happens the total memory consumption of a specific memcg is less
-important than its "priority". You define that priority by the excess of
-the memory usage above a user defined threshold. Correct?
+Fixes: 9361401eb761 ("[PATCH] BLOCK: Make it possible to disable the block layer [try #6]")
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/Makefile   | 10 ++--------
+ fs/inode.c    |  3 ++-
+ fs/no-block.c | 19 -------------------
+ 3 files changed, 4 insertions(+), 28 deletions(-)
+ delete mode 100644 fs/no-block.c
 
-Your cover letter mentions that then "all processes in the cgroup as a
-whole". That to me reads as oom.group oom killer policy. But a brief
-look into the patch suggests you are still looking at specific tasks and
-this has been a concern in the previous version of the patch because
-memcg accounting and per-process accounting are detached.
-
-> 3. I conducted a test and deployed an excessive number of containers on a physical 
-> machine, By setting the oom_score_adj value of all processes in the container to 
-> a positive number through dockerinit, even processes that occupy very little memory 
-> in the container are easily killed, resulting in a large number of invalid kill behaviors. 
-> If dockerinit is also killed unfortunately, it will trigger container self-healing, and the 
-> container will rebuild, resulting in more severe memory oscillations. The new patch 
-> abandons the behavior of adding an equal amount of oom_score_adj to each process 
-> in the container and adopts a shared oom_protect quota for all processes in the container. 
-> If a process in the container is killed, the remaining other processes will receive more 
-> oom_protect quota, making it more difficult for the remaining processes to be killed.
-> In my test case, the new patch reduced the number of invalid kill behaviors by 70%.
-> 4. oom_score_adj is a global configuration that cannot achieve a kill order that only 
-> affects a certain memcg-oom-killer. However, the oom_protect mechanism inherits 
-> downwards, and user can only change the kill order of its own memcg oom, but the 
-> kill order of their parent memcg-oom-killer or global-oom-killer will not be affected
-
-Yes oom_score_adj has shortcomings.
-
-> In the final discussion of patch v2, we discussed that although the adjustment range 
-> of oom_score_adj is [-1000,1000], but essentially it only allows two usecases
-> (OOM_SCORE_ADJ_MIN, OOM_SCORE_ADJ_MAX) reliably. Everything in between is 
-> clumsy at best. In order to solve this problem in the new patch, I introduced a new 
-> indicator oom_kill_inherit, which counts the number of times the local and child 
-> cgroups have been selected by the OOM killer of the ancestor cgroup. By observing 
-> the proportion of oom_kill_inherit in the parent cgroup, I can effectively adjust the 
-> value of oom_protect to achieve the best.
-
-What does the best mean in this context?
-
-> about the semantics of non-leaf memcgs protection,
-> If a non-leaf memcg's oom_protect quota is set, its leaf memcg will proportionally 
-> calculate the new effective oom_protect quota based on non-leaf memcg's quota.
-
-So the non-leaf memcg is never used as a target? What if the workload is
-distributed over several sub-groups? Our current oom.group
-implementation traverses the tree to find a common ancestor in the oom
-domain with the oom.group.
-
-All that being said and with the usecase described more specifically. I
-can see that memcg based oom victim selection makes some sense. That
-menas that it is always a memcg selected and all tasks withing killed.
-Memcg based protection can be used to evaluate which memcg to choose and
-the overall scheme should be still manageable. It would indeed resemble
-memory protection for the regular reclaim.
-
-One thing that is still not really clear to me is to how group vs.
-non-group ooms could be handled gracefully. Right now we can handle that
-because the oom selection is still process based but with the protection
-this will become more problematic as explained previously. Essentially
-we would need to enforce the oom selection to be memcg based for all
-memcgs. Maybe a mount knob? What do you think?
+diff --git a/fs/Makefile b/fs/Makefile
+index 834f1c3dba4642..4709eba1303c60 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -17,14 +17,8 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		fs_types.o fs_context.o fs_parser.o fsopen.o init.o \
+ 		kernel_read_file.o mnt_idmapping.o remap_range.o
+ 
+-ifeq ($(CONFIG_BLOCK),y)
+-obj-y +=	buffer.o mpage.o
+-else
+-obj-y +=	no-block.o
+-endif
+-
+-obj-$(CONFIG_PROC_FS) += proc_namespace.o
+-
++obj-$(CONFIG_BLOCK)		+= buffer.o mpage.o
++obj-$(CONFIG_PROC_FS)		+= proc_namespace.o
+ obj-$(CONFIG_LEGACY_DIRECT_IO)	+= direct-io.o
+ obj-y				+= notify/
+ obj-$(CONFIG_EPOLL)		+= eventpoll.o
+diff --git a/fs/inode.c b/fs/inode.c
+index 577799b7855f6f..4d6a1544e95b7f 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2264,7 +2264,8 @@ void init_special_inode(struct inode *inode, umode_t mode, dev_t rdev)
+ 		inode->i_fop = &def_chr_fops;
+ 		inode->i_rdev = rdev;
+ 	} else if (S_ISBLK(mode)) {
+-		inode->i_fop = &def_blk_fops;
++		if (IS_ENABLED(CONFIG_BLOCK))
++			inode->i_fop = &def_blk_fops;
+ 		inode->i_rdev = rdev;
+ 	} else if (S_ISFIFO(mode))
+ 		inode->i_fop = &pipefifo_fops;
+diff --git a/fs/no-block.c b/fs/no-block.c
+deleted file mode 100644
+index 481c0f0ab4bd2c..00000000000000
+--- a/fs/no-block.c
++++ /dev/null
+@@ -1,19 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/* no-block.c: implementation of routines required for non-BLOCK configuration
+- *
+- * Copyright (C) 2006 Red Hat, Inc. All Rights Reserved.
+- * Written by David Howells (dhowells@redhat.com)
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/fs.h>
+-
+-static int no_blkdev_open(struct inode * inode, struct file * filp)
+-{
+-	return -ENODEV;
+-}
+-
+-const struct file_operations def_blk_fops = {
+-	.open		= no_blkdev_open,
+-	.llseek		= noop_llseek,
+-};
 -- 
-Michal Hocko
-SUSE Labs
+2.39.2
+
