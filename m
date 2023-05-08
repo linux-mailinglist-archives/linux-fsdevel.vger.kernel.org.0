@@ -2,175 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBAF6FA2F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 11:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4296F6FA375
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 11:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233483AbjEHJId (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 May 2023 05:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50104 "EHLO
+        id S233786AbjEHJgy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 May 2023 05:36:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233228AbjEHJIc (ORCPT
+        with ESMTP id S233765AbjEHJgs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 May 2023 05:08:32 -0400
-Received: from mx6.didiglobal.com (mx6.didiglobal.com [111.202.70.123])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 3E20F6583;
-        Mon,  8 May 2023 02:08:29 -0700 (PDT)
-Received: from mail.didiglobal.com (unknown [10.79.71.36])
-        by mx6.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id B97C1110052C16;
-        Mon,  8 May 2023 17:08:25 +0800 (CST)
-Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
- ZJY03-ACTMBX-06.didichuxing.com (10.79.71.36) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 8 May 2023 17:08:25 +0800
-Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::7d7d:d727:7a02:e909])
- by ZJY03-ACTMBX-05.didichuxing.com ([fe80::7d7d:d727:7a02:e909%7]) with mapi
- id 15.01.2507.021; Mon, 8 May 2023 17:08:25 +0800
-X-MD-Sfrom: chengkaitao@didiglobal.com
-X-MD-SrcIP: 10.79.71.36
-From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
-        <chengkaitao@didiglobal.com>
-To:     Michal Hocko <mhocko@suse.com>
-CC:     "tj@kernel.org" <tj@kernel.org>,
-        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
-        "shakeelb@google.com" <shakeelb@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "muchun.song@linux.dev" <muchun.song@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-        "pilgrimtao@gmail.com" <pilgrimtao@gmail.com>,
-        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
-        "yuzhao@google.com" <yuzhao@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "surenb@google.com" <surenb@google.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH v3 0/2] memcontrol: support cgroup level OOM protection
-Thread-Topic: [PATCH v3 0/2] memcontrol: support cgroup level OOM protection
-Thread-Index: AQHZgBDkVfbL1Z6yKEKz1c3DJxWsna9OEngAgAIGrwA=
-Date:   Mon, 8 May 2023 09:08:25 +0000
-Message-ID: <66F9BB37-3BE1-4B0F-8DE1-97085AF4BED2@didiglobal.com>
-In-Reply-To: <ZFd5bpfYc3nPEVie@dhcp22.suse.cz>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.79.65.102]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6DABA74779717A4397036B76658557EB@didichuxing.com>
-Content-Transfer-Encoding: base64
+        Mon, 8 May 2023 05:36:48 -0400
+Received: from out-7.mta1.migadu.com (out-7.mta1.migadu.com [95.215.58.7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4E4234A2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 May 2023 02:36:44 -0700 (PDT)
+Message-ID: <2098f4ba-5b36-9df9-4808-531ff1301723@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1683538601;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GfZjgDP3qOsYzh+80NzUpeT9QjjHP7iQhKbjnDyMq5s=;
+        b=OjXXp44MdsjfLCuhbn+ON8U37ykEO59nd8x5C6BOM+Tqr/Y1I0ErCcifIIOqESKJ0zLn9q
+        CpdBwA7hHwJHM3bl/OVnj0Ja4HgfY4dG6IsLwyW1HC2OtsepeE1n03WodKRjNp+J8yvoqu
+        4v3j43t/csF6XEqpbATxai3iNHeZc6g=
+Date:   Mon, 8 May 2023 17:36:32 +0800
 MIME-Version: 1.0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Subject: Re: [PATCH] fuse: add a new flag to allow shared mmap in
+ FOPEN_DIRECT_IO mode
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     fuse-devel@lists.sourceforge.net, miklos@szeredi.hu,
+        bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org
+References: <20230505081652.43008-1-hao.xu@linux.dev>
+ <ZFVpH1n0VzNe7iVE@redhat.com>
+ <ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev>
+In-Reply-To: <ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-QXQgMjAyMy0wNS0wNyAxODoxMTo1OCwgIk1pY2hhbCBIb2NrbyIgPG1ob2Nrb0BzdXNlLmNvbT4g
-d3JvdGU6DQo+T24gU2F0IDA2LTA1LTIzIDE5OjQ5OjQ2LCBjaGVuZ2thaXRhbyB3cm90ZToNCj4+
-IEVzdGFibGlzaCBhIG5ldyBPT00gc2NvcmUgYWxnb3JpdGhtLCBzdXBwb3J0cyB0aGUgY2dyb3Vw
-IGxldmVsIE9PTQ0KPj4gcHJvdGVjdGlvbiBtZWNoYW5pc20uIFdoZW4gYW4gZ2xvYmFsL21lbWNn
-IG9vbSBldmVudCBvY2N1cnMsIHdlIHRyZWF0DQo+PiBhbGwgcHJvY2Vzc2VzIGluIHRoZSBjZ3Jv
-dXAgYXMgYSB3aG9sZSwgYW5kIE9PTSBraWxsZXJzIG5lZWQgdG8gc2VsZWN0DQo+PiB0aGUgcHJv
-Y2VzcyB0byBraWxsIGJhc2VkIG9uIHRoZSBwcm90ZWN0aW9uIHF1b3RhIG9mIHRoZSBjZ3JvdXAN
-Cj4NCj5BbHRob3VnaCB5b3VyIHBhdGNoIDEgYnJpZWZseSB0b3VjaGVzIG9uIHNvbWUgYWR2YW50
-YWdlcyBvZiB0aGlzDQo+aW50ZXJmYWNlIHRoZXJlIGlzIGEgbGFjayBvZiBhY3R1YWwgdXNlY2Fz
-ZS4gQXJndWluZyB0aGF0IG9vbV9zY29yZV9hZGoNCj5pcyBoYXJkIGJlY2F1c2UgaXQgbmVlZHMg
-YSBwYXJlbnQgcHJvY2VzcyBpcyByYXRoZXIgd2VhayB0byBiZSBob25lc3QuDQo+SXQgaXMganVz
-dCB0cml2aWFsIHRvIGNyZWF0ZSBhIHRoaW4gd3JhcHBlciwgdXNlIHN5c3RlbWQgdG8gbGF1bmNo
-DQo+aW1wb3J0YW50IHNlcnZpY2VzIG9yIHNpbXBseSB1cGRhdGUgdGhlIHZhbHVlIGFmdGVyIHRo
-ZSBmYWN0LiBOb3cNCj5vb21fc2NvcmVfYWRqIGhhcyBpdHMgb3duIGRvd25zaWRlcyBvZiBjb3Vy
-c2UgKG1vc3Qgbm90YWJseSBhDQo+Z3JhbnVsYXJpdHkgYW5kIGEgbGFjayBvZiBncm91cCBwcm90
-ZWN0aW9uLg0KPg0KPlRoYXQgYmVpbmcgc2FpZCwgbWFrZSBzdXJlIHlvdSBkZXNjcmliZSB5b3Vy
-IHVzZWNhc2UgbW9yZSB0aG9yb3VnaGx5Lg0KPlBsZWFzZSBhbHNvIG1ha2Ugc3VyZSB5b3UgZGVz
-Y3JpYmUgdGhlIGludGVuZGVkIGhldXJpc3RpYyBvZiB0aGUga25vYi4NCj5JdCBpcyBub3QgcmVh
-bGx5IGNsZWFyIGZyb20gdGhlIGRlc2NyaXB0aW9uIGhvdyB0aGlzIGZpdHMgaGllcmFyY2hpY2Fs
-DQo+YmVoYXZpb3Igb2YgY2dyb3Vwcy4gSSB3b3VsZCBiZSBlc3BlY2lhbGx5IGludGVyZXN0ZWQg
-aW4gdGhlIHNlbWFudGljcw0KPm9mIG5vbi1sZWFmIG1lbWNncyBwcm90ZWN0aW9uIGFzIHRoZXkg
-ZG8gbm90IGhhdmUgYW55IGFjdHVhbCBwcm9jZXNzZXMNCj50byBwcm90ZWN0Lg0KPg0KPkFsc28g
-dGhlcmUgaGF2ZSBiZWVuIGNvbmNlcm5zIG1lbnRpb25lZCBpbiB2MiBkaXNjdXNzaW9uIGFuZCBp
-dCB3b3VsZCBiZQ0KPnJlYWxseSBhcHByZWNpYXRlZCB0byBzdW1tYXJpemUgaG93IHlvdSBoYXZl
-IGRlYWx0IHdpdGggdGhlbS4NCj4NCj5QbGVhc2UgYWxzbyBub3RlIHRoYXQgbWFueSBwZW9wbGUg
-YXJlIGdvaW5nIHRvIGJlIHNsb3cgaW4gcmVzcG9uZGluZw0KPnRoaXMgd2VlayBiZWNhdXNlIG9m
-IExTRk1NIGNvbmZlcmVuY2UNCj4oaHR0cHM6Ly9ldmVudHMubGludXhmb3VuZGF0aW9uLm9yZy9s
-c2ZtbS8pDQoNCkhlcmUgaXMgYSBtb3JlIGRldGFpbGVkIGNvbXBhcmlzb24gYW5kIGludHJvZHVj
-dGlvbiBvZiB0aGUgb2xkIG9vbV9zY29yZV9hZGoNCm1lY2hhbmlzbSBhbmQgdGhlIG5ldyBvb21f
-cHJvdGVjdCBtZWNoYW5pc20sDQoxLiBUaGUgcmVndWxhdGluZyBncmFudWxhcml0eSBvZiBvb21f
-cHJvdGVjdCBpcyBzbWFsbGVyIHRoYW4gdGhhdCBvZiBvb21fc2NvcmVfYWRqLg0KT24gYSA1MTJH
-IHBoeXNpY2FsIG1hY2hpbmUsIHRoZSBtaW5pbXVtIGdyYW51bGFyaXR5IGFkanVzdGVkIGJ5IG9v
-bV9zY29yZV9hZGoNCmlzIDUxMk0sIGFuZCB0aGUgbWluaW11bSBncmFudWxhcml0eSBhZGp1c3Rl
-ZCBieSBvb21fcHJvdGVjdCBpcyBvbmUgcGFnZSAoNEspLg0KMi4gSXQgbWF5IGJlIHNpbXBsZSB0
-byBjcmVhdGUgYSBsaWdodHdlaWdodCBwYXJlbnQgcHJvY2VzcyBhbmQgdW5pZm9ybWx5IHNldCB0
-aGUgDQpvb21fc2NvcmVfYWRqIG9mIHNvbWUgaW1wb3J0YW50IHByb2Nlc3NlcywgYnV0IGl0IGlz
-IG5vdCBhIHNpbXBsZSBtYXR0ZXIgdG8gbWFrZSANCm11bHRpLWxldmVsIHNldHRpbmdzIGZvciB0
-ZW5zIG9mIHRob3VzYW5kcyBvZiBwcm9jZXNzZXMgb24gdGhlIHBoeXNpY2FsIG1hY2hpbmUgDQp0
-aHJvdWdoIHRoZSBsaWdodHdlaWdodCBwYXJlbnQgcHJvY2Vzc2VzLiBXZSBtYXkgbmVlZCBhIGh1
-Z2UgdGFibGUgdG8gcmVjb3JkIHRoZSANCnZhbHVlIG9mIG9vbV9zY29yZV9hZGogbWFpbnRhaW5l
-ZCBieSBhbGwgbGlnaHR3ZWlnaHQgcGFyZW50IHByb2Nlc3NlcywgYW5kIHRoZSANCnVzZXIgcHJv
-Y2VzcyBsaW1pdGVkIGJ5IHRoZSBwYXJlbnQgcHJvY2VzcyBoYXMgbm8gYWJpbGl0eSB0byBjaGFu
-Z2UgaXRzIG93biANCm9vbV9zY29yZV9hZGosIGJlY2F1c2UgaXQgZG9lcyBub3Qga25vdyB0aGUg
-ZGV0YWlscyBvZiB0aGUgaHVnZSB0YWJsZS4gVGhlIG5ldyANCnBhdGNoIGFkb3B0cyB0aGUgY2dy
-b3VwIG1lY2hhbmlzbS4gSXQgZG9lcyBub3QgbmVlZCBhbnkgcGFyZW50IHByb2Nlc3MgdG8gbWFu
-YWdlIA0Kb29tX3Njb3JlX2Fkai4gdGhlIHNldHRpbmdzIGJldHdlZW4gZWFjaCBtZW1jZyBhcmUg
-aW5kZXBlbmRlbnQgb2YgZWFjaCBvdGhlciwgDQptYWtpbmcgaXQgZWFzaWVyIHRvIHBsYW4gdGhl
-IE9PTSBvcmRlciBvZiBhbGwgcHJvY2Vzc2VzLiBEdWUgdG8gdGhlIHVuaXF1ZSBuYXR1cmUgDQpv
-ZiBtZW1vcnkgcmVzb3VyY2VzLCBjdXJyZW50IFNlcnZpY2UgY2xvdWQgdmVuZG9ycyBhcmUgbm90
-IG92ZXJzb2xkIGluIG1lbW9yeSANCnBsYW5uaW5nLiBJIHdvdWxkIGxpa2UgdG8gdXNlIHRoZSBu
-ZXcgcGF0Y2ggdG8gdHJ5IHRvIGFjaGlldmUgdGhlIHBvc3NpYmlsaXR5IG9mIA0Kb3ZlcnNvbGQg
-bWVtb3J5IHJlc291cmNlcy4NCjMuIEkgY29uZHVjdGVkIGEgdGVzdCBhbmQgZGVwbG95ZWQgYW4g
-ZXhjZXNzaXZlIG51bWJlciBvZiBjb250YWluZXJzIG9uIGEgcGh5c2ljYWwgDQptYWNoaW5lLCBC
-eSBzZXR0aW5nIHRoZSBvb21fc2NvcmVfYWRqIHZhbHVlIG9mIGFsbCBwcm9jZXNzZXMgaW4gdGhl
-IGNvbnRhaW5lciB0byANCmEgcG9zaXRpdmUgbnVtYmVyIHRocm91Z2ggZG9ja2VyaW5pdCwgZXZl
-biBwcm9jZXNzZXMgdGhhdCBvY2N1cHkgdmVyeSBsaXR0bGUgbWVtb3J5IA0KaW4gdGhlIGNvbnRh
-aW5lciBhcmUgZWFzaWx5IGtpbGxlZCwgcmVzdWx0aW5nIGluIGEgbGFyZ2UgbnVtYmVyIG9mIGlu
-dmFsaWQga2lsbCBiZWhhdmlvcnMuIA0KSWYgZG9ja2VyaW5pdCBpcyBhbHNvIGtpbGxlZCB1bmZv
-cnR1bmF0ZWx5LCBpdCB3aWxsIHRyaWdnZXIgY29udGFpbmVyIHNlbGYtaGVhbGluZywgYW5kIHRo
-ZSANCmNvbnRhaW5lciB3aWxsIHJlYnVpbGQsIHJlc3VsdGluZyBpbiBtb3JlIHNldmVyZSBtZW1v
-cnkgb3NjaWxsYXRpb25zLiBUaGUgbmV3IHBhdGNoIA0KYWJhbmRvbnMgdGhlIGJlaGF2aW9yIG9m
-IGFkZGluZyBhbiBlcXVhbCBhbW91bnQgb2Ygb29tX3Njb3JlX2FkaiB0byBlYWNoIHByb2Nlc3Mg
-DQppbiB0aGUgY29udGFpbmVyIGFuZCBhZG9wdHMgYSBzaGFyZWQgb29tX3Byb3RlY3QgcXVvdGEg
-Zm9yIGFsbCBwcm9jZXNzZXMgaW4gdGhlIGNvbnRhaW5lci4gDQpJZiBhIHByb2Nlc3MgaW4gdGhl
-IGNvbnRhaW5lciBpcyBraWxsZWQsIHRoZSByZW1haW5pbmcgb3RoZXIgcHJvY2Vzc2VzIHdpbGwg
-cmVjZWl2ZSBtb3JlIA0Kb29tX3Byb3RlY3QgcXVvdGEsIG1ha2luZyBpdCBtb3JlIGRpZmZpY3Vs
-dCBmb3IgdGhlIHJlbWFpbmluZyBwcm9jZXNzZXMgdG8gYmUga2lsbGVkLg0KSW4gbXkgdGVzdCBj
-YXNlLCB0aGUgbmV3IHBhdGNoIHJlZHVjZWQgdGhlIG51bWJlciBvZiBpbnZhbGlkIGtpbGwgYmVo
-YXZpb3JzIGJ5IDcwJS4NCjQuIG9vbV9zY29yZV9hZGogaXMgYSBnbG9iYWwgY29uZmlndXJhdGlv
-biB0aGF0IGNhbm5vdCBhY2hpZXZlIGEga2lsbCBvcmRlciB0aGF0IG9ubHkgDQphZmZlY3RzIGEg
-Y2VydGFpbiBtZW1jZy1vb20ta2lsbGVyLiBIb3dldmVyLCB0aGUgb29tX3Byb3RlY3QgbWVjaGFu
-aXNtIGluaGVyaXRzIA0KZG93bndhcmRzLCBhbmQgdXNlciBjYW4gb25seSBjaGFuZ2UgdGhlIGtp
-bGwgb3JkZXIgb2YgaXRzIG93biBtZW1jZyBvb20sIGJ1dCB0aGUgDQpraWxsIG9yZGVyIG9mIHRo
-ZWlyIHBhcmVudCBtZW1jZy1vb20ta2lsbGVyIG9yIGdsb2JhbC1vb20ta2lsbGVyIHdpbGwgbm90
-IGJlIGFmZmVjdGVkDQoNCkluIHRoZSBmaW5hbCBkaXNjdXNzaW9uIG9mIHBhdGNoIHYyLCB3ZSBk
-aXNjdXNzZWQgdGhhdCBhbHRob3VnaCB0aGUgYWRqdXN0bWVudCByYW5nZSANCm9mIG9vbV9zY29y
-ZV9hZGogaXMgWy0xMDAwLDEwMDBdLCBidXQgZXNzZW50aWFsbHkgaXQgb25seSBhbGxvd3MgdHdv
-IHVzZWNhc2VzDQooT09NX1NDT1JFX0FESl9NSU4sIE9PTV9TQ09SRV9BREpfTUFYKSByZWxpYWJs
-eS4gRXZlcnl0aGluZyBpbiBiZXR3ZWVuIGlzIA0KY2x1bXN5IGF0IGJlc3QuIEluIG9yZGVyIHRv
-IHNvbHZlIHRoaXMgcHJvYmxlbSBpbiB0aGUgbmV3IHBhdGNoLCBJIGludHJvZHVjZWQgYSBuZXcg
-DQppbmRpY2F0b3Igb29tX2tpbGxfaW5oZXJpdCwgd2hpY2ggY291bnRzIHRoZSBudW1iZXIgb2Yg
-dGltZXMgdGhlIGxvY2FsIGFuZCBjaGlsZCANCmNncm91cHMgaGF2ZSBiZWVuIHNlbGVjdGVkIGJ5
-IHRoZSBPT00ga2lsbGVyIG9mIHRoZSBhbmNlc3RvciBjZ3JvdXAuIEJ5IG9ic2VydmluZyANCnRo
-ZSBwcm9wb3J0aW9uIG9mIG9vbV9raWxsX2luaGVyaXQgaW4gdGhlIHBhcmVudCBjZ3JvdXAsIEkg
-Y2FuIGVmZmVjdGl2ZWx5IGFkanVzdCB0aGUgDQp2YWx1ZSBvZiBvb21fcHJvdGVjdCB0byBhY2hp
-ZXZlIHRoZSBiZXN0Lg0KDQphYm91dCB0aGUgc2VtYW50aWNzIG9mIG5vbi1sZWFmIG1lbWNncyBw
-cm90ZWN0aW9uLA0KSWYgYSBub24tbGVhZiBtZW1jZydzIG9vbV9wcm90ZWN0IHF1b3RhIGlzIHNl
-dCwgaXRzIGxlYWYgbWVtY2cgd2lsbCBwcm9wb3J0aW9uYWxseSANCmNhbGN1bGF0ZSB0aGUgbmV3
-IGVmZmVjdGl2ZSBvb21fcHJvdGVjdCBxdW90YSBiYXNlZCBvbiBub24tbGVhZiBtZW1jZydzIHF1
-b3RhLg0KDQotLSANClRoYW5rcyBmb3IgeW91ciBjb21tZW50IQ0KY2hlbmdrYWl0YW8NCg0K
+On 5/6/23 13:01, Hao Xu wrote:
+> Hi Vivek,
+> 
+> On 5/6/23 04:37, Vivek Goyal wrote:
+>> On Fri, May 05, 2023 at 04:16:52PM +0800, Hao Xu wrote:
+>>> From: Hao Xu <howeyxu@tencent.com>
+>>>
+>>> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
+>>> coherency, e.g. network filesystems. Thus shared mmap is disabled since
+>>> it leverages page cache and may write to it, which may cause
+>>> inconsistence. But FOPEN_DIRECT_IO can be used not for coherency but to
+>>> reduce memory footprint as well, e.g. reduce guest memory usage with
+>>> virtiofs. Therefore, add a new flag FOPEN_DIRECT_IO_SHARED_MMAP to allow
+>>> shared mmap for these cases.
+>>>
+>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>>> ---
+>>>   fs/fuse/file.c            | 11 ++++++++---
+>>>   include/uapi/linux/fuse.h |  2 ++
+>>>   2 files changed, 10 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>> index 89d97f6188e0..655896bdb0d5 100644
+>>> --- a/fs/fuse/file.c
+>>> +++ b/fs/fuse/file.c
+>>> @@ -161,7 +161,8 @@ struct fuse_file *fuse_file_open(struct 
+>>> fuse_mount *fm, u64 nodeid,
+>>>       }
+>>>       if (isdir)
+>>> -        ff->open_flags &= ~FOPEN_DIRECT_IO;
+>>> +        ff->open_flags &=
+>>> +            ~(FOPEN_DIRECT_IO | FOPEN_DIRECT_IO_SHARED_MMAP);
+>>>       ff->nodeid = nodeid;
+>>> @@ -2509,8 +2510,12 @@ static int fuse_file_mmap(struct file *file, 
+>>> struct vm_area_struct *vma)
+>>>           return fuse_dax_mmap(file, vma);
+>>>       if (ff->open_flags & FOPEN_DIRECT_IO) {
+>>> -        /* Can't provide the coherency needed for MAP_SHARED */
+>>> -        if (vma->vm_flags & VM_MAYSHARE)
+>>> +        /* Can't provide the coherency needed for MAP_SHARED.
+>>> +         * So disable it if FOPEN_DIRECT_IO_SHARED_MMAP is not
+>>> +         * set, which means we do need strong coherency.
+>>> +         */
+>>> +        if (!(ff->open_flags & FOPEN_DIRECT_IO_SHARED_MMAP) &&
+>>> +            vma->vm_flags & VM_MAYSHARE)
+>>>               return -ENODEV;
+>>
+>> Can you give an example how this is useful and how do you plan to
+>> use it?
+>>
+>> If goal is not using guest cache (either for saving memory or for cache
+>> coherency with other clients) and hence you used FOPEN_DIRECT_IO,
+>> then by allowing page cache for mmap(), we are contracting that goal.
+>> We are neither saving memory and at the same time we are not
+>> cache coherent.
+> 
+> We use it to reduce guest memory "as possible as we can", which means we 
+> first have to ensure the functionality so shared mmap should work when 
+> users call it, then second reduce memory when users use read/write 
+> (from/to other files).
+> 
+> In cases where users do read/write in most time and calls shared mmap 
+> sometimes, disabling shared mmap makes this case out of service, but
+> with this flag we still reduce memory and the application works.
+> 
+>>
+>> IIUC, for virtiofs, you want to use cache=none but at the same time
+>> allow guest applications to do shared mmap() hence you are introducing
+>> this change. There have been folks who have complained about it
+>> and I think 9pfs offers a mode which does this. So solving this
+>> problem will be nice.
+>>
+>> BTW, if "-o dax" is used, it solves this problem. But unfortunately qemu
+>> does not have DAX support yet and we also have issues with page 
+>> truncation
+>> on host and MCE not travelling into the guest. So DAX is not a perfect
+>> option yet.
+> 
+> Yea, just like I relied in another mail, users' IO pattern may be a 
+> bunch of small IO to a bunch of small files, dax may help but not so 
+> much in that case.
+> 
+>>
+>> I agree that solving this problem will be nice. Just trying to
+>> understand the behavior better. How these cache pages will
+>> interact with read/write?
+> 
+> I went through the code, it looks like there are issues when users mmap
+> a file and then write to it, this may cause coherency problem between 
+> the backend file and the frontend page cache.
+> I think this problem exists before this patchset: when we private mmap
+> a file and then write to it in FOPEN_DIRECT_IO mode, the change doesn't
+> update to the page cache because we falsely assume there is no page 
+> cache under FOPEN_DIRECT_IO mode. I need to go over the code and do some
+> test to see if it is really there and to solve it.
+
+Bug confirmed, in FOPEN_DIRECT_IO mode, if we first private mmap a file,
+then do write() syscall to the same file, the page cache page is stale. 
+fuse forgets to invalidate page cache page before write().
+
+> 
+> Thanks,
+> Hao
+> 
+>>
+>> Thanks
+>> Vivek
+> 
+
