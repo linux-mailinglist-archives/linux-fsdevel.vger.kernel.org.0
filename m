@@ -2,123 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43C416FB68F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 20:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFBFB6FB861
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 22:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232904AbjEHS7u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 May 2023 14:59:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42066 "EHLO
+        id S233588AbjEHUkM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 May 2023 16:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjEHS7r (ORCPT
+        with ESMTP id S232784AbjEHUkK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 May 2023 14:59:47 -0400
-Received: from bee.tesarici.cz (bee.tesarici.cz [IPv6:2a03:3b40:fe:2d4::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E9F76187;
-        Mon,  8 May 2023 11:59:45 -0700 (PDT)
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by bee.tesarici.cz (Postfix) with ESMTPSA id 46D7A15660F;
-        Mon,  8 May 2023 20:59:41 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=none dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tesarici.cz; s=mail;
-        t=1683572382; bh=uZkqx7aKUtaW85glkXkWc2KSVWl1+jLzvm0vqmvOK4k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oMA1JDBfpJw4sW7xwHIesfwzVvuWGRfEibImYMO8MGVZr8iRllWIfuu/0e/mR8S35
-         iSTkGom3l2vCdobWQ2bfVa6nZe4sueYcQ8TRCacsjjA5CE1u6g+C6TnyFwqEgekR80
-         QJhrpkc85RcLvfsJty39syGBqRtbVmBD8gRTuYp0lKs/3I0TMuZAwoFEzyxCISt87Q
-         jFclnxrFT242I64DoHaTh7hEShSdJRQAi3f8B9Gi+6bMke4t3VWU3TXk/2b2p3mKb+
-         ZKQmv+XMh4jxUtnY4XLyIY3pSmPZPhKIaboj506ssLQOCqeMss+Ypkje+lMahARxZd
-         uaDOOK7Oe/wvA==
-Date:   Mon, 8 May 2023 20:59:39 +0200
-From:   Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
-        void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
-        ldufour@linux.ibm.com, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-        tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-        paulmck@kernel.org, pasha.tatashin@soleen.com,
-        yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-        hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-        ndesaulniers@google.com, gregkh@linuxfoundation.org,
-        ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-        rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-modules@vger.kernel.org,
-        kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH 00/40] Memory allocation profiling
-Message-ID: <20230508205939.0b5b485c@meshulam.tesarici.cz>
-In-Reply-To: <ZFkjRBCExpXfI+O5@moria.home.lan>
-References: <20230501165450.15352-1-surenb@google.com>
-        <ZFIMaflxeHS3uR/A@dhcp22.suse.cz>
-        <CAJuCfpHxbYFxDENYFfnggh1D8ot4s493PQX0C7kD-JLvixC-Vg@mail.gmail.com>
-        <ZFN1yswCd9wRgYPR@dhcp22.suse.cz>
-        <ZFfd99w9vFTftB8D@moria.home.lan>
-        <20230508175206.7dc3f87c@meshulam.tesarici.cz>
-        <ZFkb1p80vq19rieI@moria.home.lan>
-        <20230508180913.6a018b21@meshulam.tesarici.cz>
-        <ZFkjRBCExpXfI+O5@moria.home.lan>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.37; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 8 May 2023 16:40:10 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A96059F5
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 May 2023 13:40:09 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-b9a6f15287eso36655713276.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 May 2023 13:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1683578408; x=1686170408;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Zp9MF4afK7LOvc1F2U5JVnBUybefUQdIksarawJ2o+k=;
+        b=HGgJ4D5cDpYlkabNRd1PNopWqWAJ436/Ae803Xn1AOz7pwbztYV2/Tl/mrT6SBh+pI
+         j0RI67jevmzkktR8gSWIFEXFTUvvw4K866R2Uthrqz2dQYNtIqGCOeviEQkYWBo7KlJq
+         7/+BmWM5owKUlDUm1b0FDW9Z989glOz5nPUAxilSrGyENKKqR3ZOwHB/xzJBH+z5oA5P
+         OpW2NiJLSJAJ9S+ltwAfV4afVKO1RQ9qRwTrSi4hysguEfpj4czRiRvBrjrbcVX6mFVI
+         IKQjm0+TMHIsQklQddq0AlyGV5fN99oewNxdUDPoBQFiJ0Hzwa4SsVAz16gjjJghKrDV
+         JZpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683578408; x=1686170408;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zp9MF4afK7LOvc1F2U5JVnBUybefUQdIksarawJ2o+k=;
+        b=PfQ4Wk7Ayky0lFCyLc0RyxSOO/Cf9bYFLpaJyecwlOKN1f3BjIqpDZiruO1Amwv733
+         NLPyGb5++AZYxPNNXWwPXv5VdTDOsL2AT/u3HbpD7DUYl81D04trGlM5xPM5QN+TGF8A
+         M/5B5Cq4K0DY+EdqKIguCkaasEv61w+gbUDTmLTlJmDdLcmnd5HOjRwd2o06vHYG/a14
+         JW6tKplDRvyioVhd0Brbia1TtmdUhSwb9DLh9rjstW0SMEnU9Tq4TwxCPlampHNIblgC
+         lcMnJy7PurOVsqY0z0bEHCuYNO0McxgGs8RhobQ076RIJ9sny58RPJGR2J5wgcGDsLRX
+         IH0w==
+X-Gm-Message-State: AC+VfDxKZqiuPWtD1Ju37INUE4n/8cdUdamcLOh/Hie+zSnP2Ka05jQg
+        RbhH7HXjURbJvoRoPplL/+1P2PvQsMLXovb2HQ==
+X-Google-Smtp-Source: ACHHUZ6UCLfD1sTZmb/EWhwwc/INAhyN/1c7ic2WE25k5j68yRheUtzOOBb/+fOVm4BYPuVNYnr1CfTSC+f5iScc5w==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a05:6902:990:b0:b8f:5b11:6d6c with
+ SMTP id bv16-20020a056902099000b00b8f5b116d6cmr7998217ybb.1.1683578408608;
+ Mon, 08 May 2023 13:40:08 -0700 (PDT)
+Date:   Mon, 08 May 2023 20:40:07 +0000
+In-Reply-To: <diqz5y92g51y.fsf@ackerleytng-ctop.c.googlers.com> (message from
+ Ackerley Tng on Mon, 08 May 2023 16:29:29 +0000)
+Mime-Version: 1.0
+Message-ID: <diqz3546ftg8.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [PATCH 2/2] fs: hugetlbfs: Fix logic to skip allocation on hit in
+ page cache
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Ackerley Tng <ackerleytng@google.com>
+Cc:     mike.kravetz@oracle.com, willy@infradead.org,
+        sidhartha.kumar@oracle.com, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, muchun.song@linux.dev, jhubbard@nvidia.com,
+        vannapurve@google.com, erdemaktas@google.com, rientjes@google.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 8 May 2023 12:28:52 -0400
-Kent Overstreet <kent.overstreet@linux.dev> wrote:
 
-> On Mon, May 08, 2023 at 06:09:13PM +0200, Petr Tesa=C5=99=C3=ADk wrote:
-> > Sure, although AFAIK the index does not cover all possible config
-> > options (so non-x86 arch code is often forgotten). However, that's the
-> > less important part.
-> >=20
-> > What do you do if you need to hook something that does conflict with an
-> > existing identifier? =20
->=20
-> As already happens in this patchset, rename the other identifier.
->=20
-> But this is C, we avoid these kinds of conflicts already because the
-> language has no namespacing
+I figured it out, the bug is still in the use of page_cache_next_miss(),
+but my earlier suggestion that xas_next always advances the pointer is
+wrong.
 
-This statement is not accurate, but I agree there's not much. Refer to
-section 6.2.3 of ISO/IEC9899:2018 (Name spaces of identifiers).
+Mike is right in that xas_next() is effectively xas_load() for the first
+call after an XA_STATE() initialiation.
 
-More importantly, macros also interfere with identifier scoping, e.g.
-you cannot even have a local variable with the same name as a macro.
-That's why I dislike macros so much.
+However, when max_scan is set to 1, xas.xa_index has no chance to be
+advanced since the loop condition while(max_scan--) terminates the loop
+after 1 iteration.
 
-But since there's no clear policy regarding macros in the kernel, I'm
-merely showing a downside; it's perfectly fine to write kernel code
-like this as long as the maintainers agree that the limitation is
-acceptable and outweighed by the benefits.
+Hence, after loading happens with xas_next() regardless of the checks
+within the loop (!entry, or xa_is_value(entry), etc), xa.xas_index is
+not advanced, and the index returned always == the index passed in to
+page_cache_next_miss().
 
-Petr T
+Hence, in hugetlb_fallocate(), it always appears to be a page cache
+miss.
 
-> it's going to be a pretty rare situtaion
-> going forward. Most of the hooking that will be done is done with this
-> patchset, and there was only one identifier that needed to be renamed.
->=20
+Here's code from a selftest that can be added to lib/test_xarray.c:
 
+/* Modified from page_cache_next_miss() */
+static unsigned long xa_next_empty(struct xarray *xa, unsigned long start,  
+unsigned long max_scan)
+{
+	XA_STATE(xas, xa, start);
+
+	while (max_scan--) {
+		void *entry = xas_next(&xas);
+		if (!entry) {
+			printk("entry not present");
+			break;
+		}
+		if (xa_is_value(entry)) {
+			printk("xa_is_value instead of pointer");
+		}
+		if (xas.xa_index == 0) {
+			printk("wraparound");
+			break;
+		}
+	}
+
+	if (max_scan == -1)
+		printk("exceeded max_scan");
+
+	return xas.xa_index;
+}
+
+/* Replace this function in lib/test_xarray.c to run */
+static noinline void check_find(struct xarray *xa)
+{
+	unsigned long max_scan;
+
+	xa_init(&xa);
+	xa_store_range(&xa, 3, 5, malloc(10), GFP_KERNEL);
+
+	max_scan = 1;
+	for (int i = 1; i < 8; i++)
+		printk(" => xa_next_empty(xa, %d, %ld): %ld\n", i, max_scan,  
+xa_next_empty(&xa, i, max_scan));
+
+	printk("\n");
+
+	max_scan = 2;
+	for (int i = 1; i < 8; i++)
+		printk(" => xa_next_empty(xa, %d, %ld): %ld\n", i, max_scan,  
+xa_next_empty(&xa, i, max_scan));
+}
+
+Result:
+
+entry not present => xa_next_empty(xa, 1, 1): 1
+entry not present => xa_next_empty(xa, 2, 1): 2
+exceeded max_scan => xa_next_empty(xa, 3, 1): 3
+exceeded max_scan => xa_next_empty(xa, 4, 1): 4
+exceeded max_scan => xa_next_empty(xa, 5, 1): 5
+entry not present => xa_next_empty(xa, 6, 1): 6
+entry not present => xa_next_empty(xa, 7, 1): 7
+
+entry not present => xa_next_empty(xa, 1, 2): 1
+entry not present => xa_next_empty(xa, 2, 2): 2
+exceeded max_scan => xa_next_empty(xa, 3, 2): 4
+exceeded max_scan => xa_next_empty(xa, 4, 2): 5
+exceeded max_scan => xa_next_empty(xa, 5, 2): 6
+entry not present => xa_next_empty(xa, 6, 2): 6
+entry not present => xa_next_empty(xa, 7, 2): 7
+
+Since the xarray was set up with pointers in indices 3, 4 and 5, we
+expect xa_next_empty() or page_cache_next_miss() to return the next
+index (4, 5 and 6 respectively), but when used with a max_scan of 1, we
+just get the index passed in.
+
+While max_scan could be increased to fix this bug, I feel that having a
+separate function like filemap_has_folio() makes the intent more
+explicit and is less reliant on internal values of struct xa_state.
+
+xas.xa_index could take other values to indicate wraparound or sibling
+nodes and I think it is better to use a higher level abstraction like
+xa_load() (used in filemap_has_folio()). In addition xa_load() also
+takes the locks it needs, which helps :).
+
+I could refactor the other usage of page_cache_next_miss() in
+hugetlbfs_pagecache_present() if you'd like!
+
+On this note, the docstring of page_cache_next_miss() is also
+inaccurate. The return value is not always outside the range specified
+if max_scan is too small.
