@@ -2,130 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CBAD6FB20E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 15:56:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C17DC6FB270
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 May 2023 16:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234171AbjEHN4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 May 2023 09:56:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39540 "EHLO
+        id S234267AbjEHOS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 May 2023 10:18:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbjEHN4a (ORCPT
+        with ESMTP id S233491AbjEHOSZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 May 2023 09:56:30 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B3436550
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 May 2023 06:56:29 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f41d087b24so13269345e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 May 2023 06:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683554188; x=1686146188;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=19DXl8Cwep38RZYqA5V880Y84eA06vdWD+RdS89kIwI=;
-        b=IM/Li4tQnctEvBZh4oCQjtD2S9HXII5srZDmexgQ9NoiUkuflTBSCScJ45Davd4Fip
-         8xPJSKjPcZgfPGtTn5k9vYIuoXLki8ka/RmskSFmCqkXEpIoE/ZQxMzXNfvkQV0iVK+B
-         PSVrmE6Jb6FKpy45HvEloo7Ot4O9wAP6nJ0NGTOoHNdzxt2GouD4hb32d/fyT/60venS
-         SJzkFTf6CDA5i0tzASHBQeERoAW+ZTXUGXDURhH0D1ogVO/0yTd2OWJ6B6mHhkAxk+po
-         KAyALZDE8kh4nq+uFzAPRbkU3NOoxUesaFWgOZz5oNmKu6mOIZ7mrQEPr63AqgfcxgLv
-         yDrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683554188; x=1686146188;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=19DXl8Cwep38RZYqA5V880Y84eA06vdWD+RdS89kIwI=;
-        b=PARfEIMxtcTdOSmT6aok80wj6WHmVczMJ5eQ+AS+dp08/tH7jkTc9QhNWABQpxNAhH
-         jKrt4/y4Mw6sUFXKClmWaneS9gSnPl2LZVDO9WQp6w+7O4vyiqgmaG4uLWtkfMcslUjs
-         xFglJcKNXIGGWC6YjaPC65MUpMA9+Mxeue68tXYOod8wHmZYaQPADdzeHrh9rqL8JgXo
-         VO8CfKKX+tJHRyGYrMNRETVCltQNJGnFhQa41xzDF/f9LosAm9hU5PFdo4va6wNLY3Gr
-         PqSrvjoRb/WUpPyLRTYNZjczGSyJ1JDKXMIkxAndelRRqtaM3XBDldfU3bNcsqmMwJ/d
-         GY0A==
-X-Gm-Message-State: AC+VfDylAfkqnz0hmmSz0dnlofHfNr4dYevqMy/8O5/5UlsEdvHWHiAe
-        /JJDXt6RWEW4088QU+dR6RHFeQ==
-X-Google-Smtp-Source: ACHHUZ5S+Sjuq/JaIdy19cG3DkzAGZ/DgPbwOzlGd4hs3OiK6fImSIKlZtG8kQghbUgkcfcfS66nxA==
-X-Received: by 2002:a05:600c:218:b0:3f4:28fd:83e0 with SMTP id 24-20020a05600c021800b003f428fd83e0mr653771wmi.31.1683554187831;
-        Mon, 08 May 2023 06:56:27 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z24-20020a1cf418000000b003f3e50eb606sm16741700wma.13.2023.05.08.06.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 May 2023 06:56:25 -0700 (PDT)
-Date:   Mon, 8 May 2023 16:56:20 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        syzbot+48011b86c8ea329af1b9@syzkaller.appspotmail.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] filemap: Handle error return from __filemap_get_folio()
-Message-ID: <7bd22265-f46c-4347-a856-eecd1429dcce@kili.mountain>
-References: <20230506160415.2992089-1-willy@infradead.org>
- <CAHk-=winrN4jsysShx0kWKVzmSMu7Pp3nz_6+aps9CP+v-qHWQ@mail.gmail.com>
- <CAHk-=winai-5i6E1oMk7hXPfbP+SCssk5+TOLCJ3koaDrn7Bzg@mail.gmail.com>
- <CAHk-=wiZ0GaAdqyke-egjBRaqP-QdLcX=8gNk7m6Hx7rXjcXVQ@mail.gmail.com>
- <CAHk-=whfNqsZVjy1EWAA=h7D0K2o4D8MSdnK8Qytj2BBhhFrSQ@mail.gmail.com>
- <CAHk-=wjzs7jHyp_SmT6h1Hnwu39Vuc0DuUxndwf2kL3zhyiCcw@mail.gmail.com>
- <20230506104122.e9ab27f59fd3d8294cb1356d@linux-foundation.org>
+        Mon, 8 May 2023 10:18:25 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1121A0;
+        Mon,  8 May 2023 07:18:22 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 5B1801FF40;
+        Mon,  8 May 2023 14:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1683555501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=T5lxbwwkgegSAFfxW6WBB5ZioSoqo06SKF1oFOPKNV8=;
+        b=QhPg/7/l3dn9YKEJHp+3Q9S5X4xDGjO+PMTw/QsUjMM5aiqIPpw1tOTBO51QZq0HVoSdEw
+        XRMjUh4ZbrAfZwJtYwbR+BdrEwzZ3mP3mFuiRXIL+Xh2XJOl7qHAwIHPva/nveawIJQKvO
+        D197PO+w12kXlGQIT7W+lD0s4MeOXkY=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 990431346B;
+        Mon,  8 May 2023 14:18:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id iEk/JawEWWTYBwAAMHmgww
+        (envelope-from <mhocko@suse.com>); Mon, 08 May 2023 14:18:20 +0000
+Date:   Mon, 8 May 2023 16:18:18 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     =?utf-8?B?56iL5Z6y5rab?= Chengkaitao Cheng 
+        <chengkaitao@didiglobal.com>
+Cc:     "tj@kernel.org" <tj@kernel.org>,
+        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
+        "shakeelb@google.com" <shakeelb@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "muchun.song@linux.dev" <muchun.song@linux.dev>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+        "pilgrimtao@gmail.com" <pilgrimtao@gmail.com>,
+        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
+        "yuzhao@google.com" <yuzhao@google.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "surenb@google.com" <surenb@google.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
+        "feng.tang@intel.com" <feng.tang@intel.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH v3 0/2] memcontrol: support cgroup level OOM protection
+Message-ID: <ZFkEqhAs7FELUO3a@dhcp22.suse.cz>
+References: <ZFd5bpfYc3nPEVie@dhcp22.suse.cz>
+ <66F9BB37-3BE1-4B0F-8DE1-97085AF4BED2@didiglobal.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230506104122.e9ab27f59fd3d8294cb1356d@linux-foundation.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <66F9BB37-3BE1-4B0F-8DE1-97085AF4BED2@didiglobal.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 06, 2023 at 10:41:22AM -0700, Andrew Morton wrote:
-> --- a/fs/afs/dir_edit.c~afs-fix-the-afs_dir_get_folio-return-value
-> +++ a/fs/afs/dir_edit.c
-> @@ -115,11 +115,12 @@ static struct folio *afs_dir_get_folio(s
->  	folio = __filemap_get_folio(mapping, index,
->  				    FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
->  				    mapping->gfp_mask);
-> -	if (IS_ERR(folio))
-> +	if (IS_ERR(folio)) {
->  		clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-> -	else if (folio && !folio_test_private(folio))
-> +		return NULL;
-> +	}
-> +	if (!folio_test_private(folio))
->  		folio_attach_private(folio, (void *)1);
-> -
->  	return folio;
->  }
+On Mon 08-05-23 09:08:25, 程垲涛 Chengkaitao Cheng wrote:
+> At 2023-05-07 18:11:58, "Michal Hocko" <mhocko@suse.com> wrote:
+> >On Sat 06-05-23 19:49:46, chengkaitao wrote:
+> >> Establish a new OOM score algorithm, supports the cgroup level OOM
+> >> protection mechanism. When an global/memcg oom event occurs, we treat
+> >> all processes in the cgroup as a whole, and OOM killers need to select
+> >> the process to kill based on the protection quota of the cgroup
+> >
+> >Although your patch 1 briefly touches on some advantages of this
+> >interface there is a lack of actual usecase. Arguing that oom_score_adj
+> >is hard because it needs a parent process is rather weak to be honest.
+> >It is just trivial to create a thin wrapper, use systemd to launch
+> >important services or simply update the value after the fact. Now
+> >oom_score_adj has its own downsides of course (most notably a
+> >granularity and a lack of group protection.
+> >
+> >That being said, make sure you describe your usecase more thoroughly.
+> >Please also make sure you describe the intended heuristic of the knob.
+> >It is not really clear from the description how this fits hierarchical
+> >behavior of cgroups. I would be especially interested in the semantics
+> >of non-leaf memcgs protection as they do not have any actual processes
+> >to protect.
+> >
+> >Also there have been concerns mentioned in v2 discussion and it would be
+> >really appreciated to summarize how you have dealt with them.
+> >
+> >Please also note that many people are going to be slow in responding
+> >this week because of LSFMM conference
+> >(https://events.linuxfoundation.org/lsfmm/)
+> 
+> Here is a more detailed comparison and introduction of the old oom_score_adj
+> mechanism and the new oom_protect mechanism,
+> 1. The regulating granularity of oom_protect is smaller than that of oom_score_adj.
+> On a 512G physical machine, the minimum granularity adjusted by oom_score_adj
+> is 512M, and the minimum granularity adjusted by oom_protect is one page (4K).
+> 2. It may be simple to create a lightweight parent process and uniformly set the 
+> oom_score_adj of some important processes, but it is not a simple matter to make 
+> multi-level settings for tens of thousands of processes on the physical machine 
+> through the lightweight parent processes. We may need a huge table to record the 
+> value of oom_score_adj maintained by all lightweight parent processes, and the 
+> user process limited by the parent process has no ability to change its own 
+> oom_score_adj, because it does not know the details of the huge table. The new 
+> patch adopts the cgroup mechanism. It does not need any parent process to manage 
+> oom_score_adj. the settings between each memcg are independent of each other, 
+> making it easier to plan the OOM order of all processes. Due to the unique nature 
+> of memory resources, current Service cloud vendors are not oversold in memory 
+> planning. I would like to use the new patch to try to achieve the possibility of 
+> oversold memory resources.
 
-This one is quite tricky for Smatch.  I mentioned earlier that the
-existing Smatch check for error pointer dereferences has some stupid
-stuff going on.  I've replaced some of the stupid and I'll testing it
-tonight.
+OK, this is more specific about the usecase. Thanks! So essentially what
+it boils down to is that you are handling many containers (memcgs from
+our POV) and they have different priorities. You want to overcommit the
+memory to the extend that global ooms are not an unexpected event. Once
+that happens the total memory consumption of a specific memcg is less
+important than its "priority". You define that priority by the excess of
+the memory usage above a user defined threshold. Correct?
 
-1)  There is an existing check which complains if you have "if (p) "
-    where p can be an error pointer, but not NULL.  If I revert the fix,
-    I get the correct warning now.
+Your cover letter mentions that then "all processes in the cgroup as a
+whole". That to me reads as oom.group oom killer policy. But a brief
+look into the patch suggests you are still looking at specific tasks and
+this has been a concern in the previous version of the patch because
+memcg accounting and per-process accounting are detached.
 
-    fs/afs/dir_edit.c:242 afs_edit_dir_add()
-    warn: 'folio0' is an error pointer or valid *NEW*
+> 3. I conducted a test and deployed an excessive number of containers on a physical 
+> machine, By setting the oom_score_adj value of all processes in the container to 
+> a positive number through dockerinit, even processes that occupy very little memory 
+> in the container are easily killed, resulting in a large number of invalid kill behaviors. 
+> If dockerinit is also killed unfortunately, it will trigger container self-healing, and the 
+> container will rebuild, resulting in more severe memory oscillations. The new patch 
+> abandons the behavior of adding an equal amount of oom_score_adj to each process 
+> in the container and adopts a shared oom_protect quota for all processes in the container. 
+> If a process in the container is killed, the remaining other processes will receive more 
+> oom_protect quota, making it more difficult for the remaining processes to be killed.
+> In my test case, the new patch reduced the number of invalid kill behaviors by 70%.
+> 4. oom_score_adj is a global configuration that cannot achieve a kill order that only 
+> affects a certain memcg-oom-killer. However, the oom_protect mechanism inherits 
+> downwards, and user can only change the kill order of its own memcg oom, but the 
+> kill order of their parent memcg-oom-killer or global-oom-killer will not be affected
 
-2) There is an existing check for dereferencing error pointers.  However,
-   I don't think kmap_local_folio() actually  dereferences the folio.
-   The folio_nr_pages() function does, but depending on the .config,
-   it's kind of complicated and buried inside a READ_ONCE().  I've
-   improved the Smatch code for this but I don't have a solution yet.
+Yes oom_score_adj has shortcomings.
 
-3) I've created a new warning which generally complains about passing
-   error pointers.  Obviously there are functions where that's normal,
-   like passing error pointers to IS_ERR() and dev_err_probe().  It
-   may or may not be useful.  I'll look at the warnings tomorrow.
+> In the final discussion of patch v2, we discussed that although the adjustment range 
+> of oom_score_adj is [-1000,1000], but essentially it only allows two usecases
+> (OOM_SCORE_ADJ_MIN, OOM_SCORE_ADJ_MAX) reliably. Everything in between is 
+> clumsy at best. In order to solve this problem in the new patch, I introduced a new 
+> indicator oom_kill_inherit, which counts the number of times the local and child 
+> cgroups have been selected by the OOM killer of the ancestor cgroup. By observing 
+> the proportion of oom_kill_inherit in the parent cgroup, I can effectively adjust the 
+> value of oom_protect to achieve the best.
 
-    fs/afs/dir_edit.c:265 afs_edit_dir_add()
-    warn: passing error pointer 'folio0' to folio_nr_pages()
+What does the best mean in this context?
 
-regards,
-dan carpenter
+> about the semantics of non-leaf memcgs protection,
+> If a non-leaf memcg's oom_protect quota is set, its leaf memcg will proportionally 
+> calculate the new effective oom_protect quota based on non-leaf memcg's quota.
+
+So the non-leaf memcg is never used as a target? What if the workload is
+distributed over several sub-groups? Our current oom.group
+implementation traverses the tree to find a common ancestor in the oom
+domain with the oom.group.
+
+All that being said and with the usecase described more specifically. I
+can see that memcg based oom victim selection makes some sense. That
+menas that it is always a memcg selected and all tasks withing killed.
+Memcg based protection can be used to evaluate which memcg to choose and
+the overall scheme should be still manageable. It would indeed resemble
+memory protection for the regular reclaim.
+
+One thing that is still not really clear to me is to how group vs.
+non-group ooms could be handled gracefully. Right now we can handle that
+because the oom selection is still process based but with the protection
+this will become more problematic as explained previously. Essentially
+we would need to enforce the oom selection to be memcg based for all
+memcgs. Maybe a mount knob? What do you think?
+-- 
+Michal Hocko
+SUSE Labs
