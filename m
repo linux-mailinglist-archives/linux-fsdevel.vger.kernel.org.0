@@ -2,52 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19BAF6FBB21
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 00:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05EF66FBB29
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 00:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232643AbjEHWpU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 May 2023 18:45:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34586 "EHLO
+        id S233821AbjEHWtu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 May 2023 18:49:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229621AbjEHWpT (ORCPT
+        with ESMTP id S229621AbjEHWts (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 May 2023 18:45:19 -0400
+        Mon, 8 May 2023 18:49:48 -0400
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28B9A7AB0;
-        Mon,  8 May 2023 15:45:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A60B07ED2;
+        Mon,  8 May 2023 15:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
         s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
         References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Gq6D7L47RtdyebzKe33l+EIiTTRSb6YOvwr3VpemPMU=; b=msEGK6+zszt/WI2OhmshzxJGHz
-        UHj1IXOnjbisIFaqeK+lN1B7fONUAHGntP8rzba/qHK5e83BnbLD4ibjGKVWkhXBKO157ItL7CeRd
-        fv9eM/jQPZtiHpJTCA0B1qi6/WzneeYHxgomqWDelCdx8xrt/ogQ03G3cG7W5o1V8SD9KdlXMwOr4
-        BgdMZFeft3YhvGDs9fkDPpZvozI7zyW7NJn6pH8CjsnEJ5uLKgMsv25m8j5hzlh3ut7PfsF4l0an1
-        817Ikt9AEncgVnIq3OXoCj083gNcr5IytPW4XpRDNNT7p3bkZdt+4UZTZNf0wMXA98E1ro0oLRDXM
-        a9mm996Q==;
+        bh=rrzvNmc45EPtlwPtRTJz4hiS8irgdSiTJDkUJPTYZ1M=; b=WX30lwFq/QJQd5r72zdx9g2zTW
+        Ikw/T59HGtYcnF+fFnruWdPGtP7S9ci/Cn7vSGPP8aMqsaerPbzqe8+dKeX6gQ9hPowmAkeZ7YIou
+        /U78jSUclsDXYOTbL/XLDTqZ6ZspqR8w93cLeOmT/O7z78pvmI0o579BEgmZSpHwAdflCiHxEbcI5
+        zwAEnxmtVjD4GAhvUVITr3kZ25j2cf8z6HEKf209rOn9u0TayMblLUK/CtaIZ3LtFg/9b7o07Mc1J
+        CX2xssMh6HUJhPPDx1WMZ1Bs7bhbspw2QcDJmJqbda5EQfgIkla0GNchwRunru47YhZspjU9a5v4y
+        8LQQFizw==;
 Received: from [177.189.3.64] (helo=[192.168.1.60])
         by fanzine2.igalia.com with esmtpsa 
         (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1pw9bR-004H1F-Eb; Tue, 09 May 2023 00:45:09 +0200
-Message-ID: <53d57890-b655-1f14-5536-95311ee68118@igalia.com>
-Date:   Mon, 8 May 2023 19:45:03 -0300
+        id 1pw9fr-004H9K-TP; Tue, 09 May 2023 00:49:44 +0200
+Message-ID: <e492df43-a623-479f-9f1b-b4af6e506ca5@igalia.com>
+Date:   Mon, 8 May 2023 19:49:37 -0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH 0/2] Supporting same fsid filesystems mounting on btrfs
-To:     Dave Chinner <david@fromorbit.com>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>, dsterba@suse.com
-Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
-        kernel-dev@igalia.com, vivek@collabora.com,
-        ludovico.denittis@collabora.com, johns@valvesoftware.com
-References: <20230504170708.787361-1-gpiccoli@igalia.com>
- <20230507231011.GC2651828@dread.disaster.area>
+Subject: Re: [PATCH 1/2] btrfs: Introduce the virtual_fsid feature
 Content-Language: en-US
+To:     Qu Wenruo <wqu@suse.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        linux-btrfs@vger.kernel.org, dsterba@suse.com
+Cc:     clm@fb.com, josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+        kernel@gpiccoli.net, kernel-dev@igalia.com, vivek@collabora.com,
+        ludovico.denittis@collabora.com, johns@valvesoftware.com,
+        nborisov@suse.com
+References: <20230504170708.787361-1-gpiccoli@igalia.com>
+ <20230504170708.787361-2-gpiccoli@igalia.com>
+ <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
+ <12aa446b-39c7-c9fb-c3a4-70bfb57d9bbc@igalia.com>
+ <4b9b1a6e-fce0-4371-980b-497400582e37@suse.com>
 From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20230507231011.GC2651828@dread.disaster.area>
+In-Reply-To: <4b9b1a6e-fce0-4371-980b-497400582e37@suse.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -60,36 +63,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/05/2023 20:10, Dave Chinner wrote:
+On 05/05/2023 19:15, Qu Wenruo wrote:
+> [...] 
+>> Imagine you have 2 devices, /dev/sda1 and /dev/sda2 holding the exact
+>> same image, with the SINGLE_DEV feature set. They are identical, and
+>> IIUC no matter if we skip scanning or disable any multi-device approach,
+>> in the end both have the *same* fsid. How do we track this in the btrfs
+>> code now? Once we try to mount the second one, it'll try to add the same
+>> entity to the fs_uuids list...
+> 
+> My bad, I forgot to mention that, if we hit such SINGLE_DEV fses, we 
+> should also not add them to the fs_uuids list either.
+> 
+> So the fs_uuids list conflicts would not be a problem at all.
+
+Awesome, thanks for clarifying Qu! Now I understand it =)
+
 > [...]
-> So how does this work if someone needs to mount 3 copies of the same
-> filesystem at the same time?
+>> Also, one more question: why do you say "Remember, mount option is never
+>> a good way to enable/disable a new feature"? I'm not expert in
+>> filesystems (by far heh), so I'm curious to fully understand your
+>> point-of-view.
 > 
-> On XFS, we have the "nouuid" mount option which skips the duplicate
-> UUID checking done at mount time so that multiple snapshots or
-> images of the same filesystem can be mounted at the same time. This
-> means we don't get the same filesystem mounted by accident, but also
-> allows all the cases we know about where multiple versions of the
-> filesystem need to be mounted at the same time.
+> We had a bad example in the past, free space tree (aka, v2 space cache).
 > 
-> I know, fs UUIDs are used differently in btrfs vs XFS, but it would
-> be nice for users if filesystems shared the same interfaces for
-> doing the same sort of management operations...
+> It's initially a pretty convenient way to enable the new feature, but 
+> now it's making a lot of new features, which can depend on v2 cache, 
+> more complex to handle those old mount options.
 > 
-> Cheers,
+> The compatibility matrix would only grow, and all the (mostly one-time) 
+> logic need to be implemented in kernel.
 > 
-> Dave.
+> So in the long run, we prefer offline convert tool.
 
-Hi Dave, thanks for the information / suggestion.
+OK, I understand your point. I guess I could rewrite it to make use of
+such compat_ro flag, it'd be fine. *Personally* (thinking as an user), I
+much rather have mount options, I think it's consistent with other
+filesystems and doesn't require specific btrfs tooling usage...
 
-I see no reason for the virtual_fsid fails with 3 or more devices; the
-idea is that it creates random fsids for the every device in which you
-mount with the flag, so shouldn't be a problem.
-
-Of course renaming to "nouuid" would be completely fine (at least for
-me) to keep consistency among filesystems; the only question that
-remains is if we should go with a mount option or the compat_ro flag as
-strongly suggest by Qu.
+But of course I'll defer the decision to the maintainers!
 
 Cheers,
 
