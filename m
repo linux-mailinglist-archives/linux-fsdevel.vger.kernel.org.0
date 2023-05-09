@@ -2,134 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3365C6FCCDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 19:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D10EC6FCD9A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 20:19:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbjEIRhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 May 2023 13:37:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47474 "EHLO
+        id S230078AbjEISTm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 May 2023 14:19:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjEIRhe (ORCPT
+        with ESMTP id S229741AbjEISTl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 May 2023 13:37:34 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD93D2D53
-        for <linux-fsdevel@vger.kernel.org>; Tue,  9 May 2023 10:37:33 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-953343581a4so950046366b.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 May 2023 10:37:33 -0700 (PDT)
+        Tue, 9 May 2023 14:19:41 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C717E56;
+        Tue,  9 May 2023 11:19:40 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-643990c5319so4369403b3a.2;
+        Tue, 09 May 2023 11:19:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1683653852; x=1686245852;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RM2fcsPFrEudeR9j/MWzHsva1jmiluw7ikgnqGCbGAc=;
-        b=JgT304oBsl+sIrPtAWAiS8blGhvHaTi4/qUXfNVkQIgDyaGnVjfotxXs2dWEauuL+G
-         +70eGlH5BkaHl7SA9+QpH1OF6C4zLrIdNTiwDQ1tPgBC+dmA9yhPZ4EbPi3ZKca2xBtg
-         dPmSlN/3223sWeJ6DDK/b0MzRftqtgugd+bh8=
+        d=gmail.com; s=20221208; t=1683656380; x=1686248380;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yr7aYgFfnebTNe43NSbQgISdpDw8C+mxTxNrTLAJ2Kk=;
+        b=ENRi9U7dHBzfbj5dYi+GdPIUl/OjAXCC4Rwdfcx2K43OeLVCpBVCKuRJX22b9IYZY6
+         5oQFvlMJapMGSNqZLbRGyH1WX6HywEiTl9f5hBZmVyiTC1zshKefrcBeearnH1YY7OZd
+         8G6KsRsMwqHm6uWcrEQcVUkBh3PyXz9+3IC3IehUxfomD2hD7odbZWkYL6OEF3CTYpaW
+         uNjkm7yDdYRsyjR1VLzNivJBRyE3vufUOadgKVtmTKdilP2tvhd2QE6+QbK0pO7XDJjA
+         3CEdkK4YBFBoZM/yhak9LtdlKdSZ4rSwx5wW3k3KQAlhFMFKI2z9+kuem99EYirBiY7Z
+         6Z3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683653852; x=1686245852;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RM2fcsPFrEudeR9j/MWzHsva1jmiluw7ikgnqGCbGAc=;
-        b=LRNGbgf5/ENg39EK/ZxJRgGVd4Ti01OFf0qspLWP41EehUbPSOkEGMK1B16OsjmMkZ
-         QmfUgkOTgJiMWYlmgRFGq6f88S1ZixFLvN3AUNrYuI113W26ywdlhk1Fb759XKdOYayA
-         W8v/D7LTide6WxZH52q8XIFi+vLXqYEeJhd7z8sEG2uktWY6eHD+hvkQJVvfEtJAhQIT
-         utBMvXKsviu62KOdz8eaFKGVBkvaM0rFtHE6fbK6G3j/Slv9sNkrfyUqe32r/VBugNpG
-         bVITn28g4sKPaHNXBi4ddkG5/69PA46mhlojrXOj+V/Io2yXh0aEGpiBv4YYKzkU1+hq
-         BbLQ==
-X-Gm-Message-State: AC+VfDxdtDKm/zMeQ9+HmKfIe0w36fkm1/iGGCtGPbGVbvVv0jz/28yr
-        wFukLH94+uv/BJpeLUgFJj4anIMS3Q+DK49+/uMmlg==
-X-Google-Smtp-Source: ACHHUZ7XO0xBohmWncPnUSkA8u5U0unHQjT5yj00WONIrZvwWHbXDhVbNdhPZIrLFp5EcUYIjDs8cQ==
-X-Received: by 2002:a17:906:9c83:b0:94f:3074:14fe with SMTP id fj3-20020a1709069c8300b0094f307414femr14728836ejc.17.1683653852093;
-        Tue, 09 May 2023 10:37:32 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id t17-20020a1709061bf100b00965f1f4bac5sm1545880ejg.124.2023.05.09.10.37.30
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 May 2023 10:37:30 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-965c3f9af2aso904378566b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 May 2023 10:37:30 -0700 (PDT)
-X-Received: by 2002:a17:906:9b96:b0:958:4b79:b214 with SMTP id
- dd22-20020a1709069b9600b009584b79b214mr13940109ejc.18.1683653849929; Tue, 09
- May 2023 10:37:29 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683656380; x=1686248380;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yr7aYgFfnebTNe43NSbQgISdpDw8C+mxTxNrTLAJ2Kk=;
+        b=lsODb/HpVwYqQylrUO3EpB728y/CdzDeYRMqdHNgoaQ0h1EQ/cq19DJWl/oydl6BBK
+         HeV38arI1JkweUGKMBbHqGlzI6uZCfNZQ5EM0xK91DgdVAPje1lvOQ5X7k52gtGtuwL6
+         VhKOdISE5CriHmNtyIDgt7bVjDrkd2AXEOoDE7I8ezLT0Pq3blYhD1oED1w/rzXh7Z1m
+         Qf6NZ8c3By79o3fVM1TtlOzTTwlLCXmsDwvOOV+86J51syTyl/4naWX+eSt0r0+i46LD
+         ZA5YrSvCVFWRUzrCl804OfdCzE/G1+8+blOqL7RB4cyfEDo+w4i598tQ4fXo1Yx/Bdry
+         oK1Q==
+X-Gm-Message-State: AC+VfDyuGOY1LQKZ2y+ZZz1f6khkpKVtcrZHul3+/3qOc5Ay8KpMZavR
+        4iQ1iOS83kaEc3VsWZf+9XQ=
+X-Google-Smtp-Source: ACHHUZ41jqjPjF2CraRnJ3hPLebjg5fr6OD0bBojCpKd7hrN5OidIm8BVjgmxkS7Hgbmodb7kk8pXg==
+X-Received: by 2002:a05:6a20:548a:b0:101:a9b4:a4b8 with SMTP id i10-20020a056a20548a00b00101a9b4a4b8mr1279435pzk.57.1683656379762;
+        Tue, 09 May 2023 11:19:39 -0700 (PDT)
+Received: from localhost ([2001:4958:15a0:30:3c22:a6a6:f3a4:12ce])
+        by smtp.gmail.com with ESMTPSA id v6-20020a63d546000000b004fbd91d9716sm1656756pgi.15.2023.05.09.11.19.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 May 2023 11:19:39 -0700 (PDT)
+Date:   Tue, 9 May 2023 11:19:38 -0700
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org
+Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
+Message-ID: <ZFqOukfefifbfHMb@murray>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-8-kent.overstreet@linux.dev>
 MIME-Version: 1.0
-References: <20230506160415.2992089-1-willy@infradead.org> <CAHk-=winrN4jsysShx0kWKVzmSMu7Pp3nz_6+aps9CP+v-qHWQ@mail.gmail.com>
- <CAHk-=winai-5i6E1oMk7hXPfbP+SCssk5+TOLCJ3koaDrn7Bzg@mail.gmail.com>
- <CAHk-=wiZ0GaAdqyke-egjBRaqP-QdLcX=8gNk7m6Hx7rXjcXVQ@mail.gmail.com>
- <CAHk-=whfNqsZVjy1EWAA=h7D0K2o4D8MSdnK8Qytj2BBhhFrSQ@mail.gmail.com>
- <CAHk-=wjzs7jHyp_SmT6h1Hnwu39Vuc0DuUxndwf2kL3zhyiCcw@mail.gmail.com>
- <20230506104122.e9ab27f59fd3d8294cb1356d@linux-foundation.org>
- <7bd22265-f46c-4347-a856-eecd1429dcce@kili.mountain> <d98acf2e-04bd-4824-81e4-64e91a26537c@kili.mountain>
-In-Reply-To: <d98acf2e-04bd-4824-81e4-64e91a26537c@kili.mountain>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 9 May 2023 10:37:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whD=py2eMXFNOEQyDUobAXBJ3O0eFAG6yjC=EN4iZrhKw@mail.gmail.com>
-Message-ID: <CAHk-=whD=py2eMXFNOEQyDUobAXBJ3O0eFAG6yjC=EN4iZrhKw@mail.gmail.com>
-Subject: Re: [PATCH] filemap: Handle error return from __filemap_get_folio()
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Anna Schumaker <anna@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        syzbot+48011b86c8ea329af1b9@syzkaller.appspotmail.com,
-        Christoph Hellwig <hch@lst.de>,
-        David Sterba <dsterba@suse.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230509165657.1735798-8-kent.overstreet@linux.dev>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 9, 2023 at 12:43=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+On Tue, May 09, 2023 at 12:56:32PM -0400, Kent Overstreet wrote:
+> From: Kent Overstreet <kent.overstreet@gmail.com>
 >
-> I ran the new code last night.  There was one more folio bug (but every
-> function in the call tree triggers a warning).
+> This is needed for bcachefs, which dynamically generates per-btree node
+> unpack functions.
+
+Small nits -
+
+Would be good to refer to the original patch that removed it,
+i.e. 7a0e27b2a0ce ("mm: remove vmalloc_exec") something like 'patch
+... folded vmalloc_exec() into its one user, however bcachefs requires this
+as well so revert'.
+
+Would also be good to mention that you are now exporting the function which
+the original didn't appear to do.
+
 >
-> fs/nfs/dir.c:405 nfs_readdir_folio_get_locked() warn: 'folio' is an error=
- pointer or valid
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Uladzislau Rezki <urezki@gmail.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: linux-mm@kvack.org
 
-Thanks. I fixed that one up too.
+Another nit: I'm a vmalloc reviewer so would be good to get cc'd too :)
+(forgivable mistake as very recent change!)
 
-In the process I ended up grepping for the other wrappers around
-__filemap_get_folio() that also return ERR_PTR's for errors.
+> ---
+>  include/linux/vmalloc.h |  1 +
+>  kernel/module/main.c    |  4 +---
+>  mm/nommu.c              | 18 ++++++++++++++++++
+>  mm/vmalloc.c            | 21 +++++++++++++++++++++
+>  4 files changed, 41 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> index 69250efa03..ff147fe115 100644
+> --- a/include/linux/vmalloc.h
+> +++ b/include/linux/vmalloc.h
+> @@ -145,6 +145,7 @@ extern void *vzalloc(unsigned long size) __alloc_size(1);
+>  extern void *vmalloc_user(unsigned long size) __alloc_size(1);
+>  extern void *vmalloc_node(unsigned long size, int node) __alloc_size(1);
+>  extern void *vzalloc_node(unsigned long size, int node) __alloc_size(1);
+> +extern void *vmalloc_exec(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
+>  extern void *vmalloc_32(unsigned long size) __alloc_size(1);
+>  extern void *vmalloc_32_user(unsigned long size) __alloc_size(1);
+>  extern void *__vmalloc(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index d3be89de70..9eaa89e84c 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -1607,9 +1607,7 @@ static void dynamic_debug_remove(struct module *mod, struct _ddebug_info *dyndbg
+>
+>  void * __weak module_alloc(unsigned long size)
+>  {
+> -	return __vmalloc_node_range(size, 1, VMALLOC_START, VMALLOC_END,
+> -			GFP_KERNEL, PAGE_KERNEL_EXEC, VM_FLUSH_RESET_PERMS,
+> -			NUMA_NO_NODE, __builtin_return_address(0));
+> +	return vmalloc_exec(size, GFP_KERNEL);
+>  }
+>
+>  bool __weak module_init_section(const char *name)
+> diff --git a/mm/nommu.c b/mm/nommu.c
+> index 57ba243c6a..8d9ab19e39 100644
+> --- a/mm/nommu.c
+> +++ b/mm/nommu.c
+> @@ -280,6 +280,24 @@ void *vzalloc_node(unsigned long size, int node)
+>  }
+>  EXPORT_SYMBOL(vzalloc_node);
+>
+> +/**
+> + *	vmalloc_exec  -  allocate virtually contiguous, executable memory
+> + *	@size:		allocation size
+> + *
+> + *	Kernel-internal function to allocate enough pages to cover @size
+> + *	the page level allocator and map them into contiguous and
+> + *	executable kernel virtual space.
+> + *
+> + *	For tight control over page level allocator and protection flags
+> + *	use __vmalloc() instead.
+> + */
+> +
+> +void *vmalloc_exec(unsigned long size, gfp_t gfp_mask)
+> +{
+> +	return __vmalloc(size, gfp_mask);
+> +}
+> +EXPORT_SYMBOL_GPL(vmalloc_exec);
+> +
+>  /**
+>   * vmalloc_32  -  allocate virtually contiguous memory (32bit addressable)
+>   *	@size:		allocation size
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 31ff782d36..2ebb9ea7f0 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3401,6 +3401,27 @@ void *vzalloc_node(unsigned long size, int node)
+>  }
+>  EXPORT_SYMBOL(vzalloc_node);
+>
+> +/**
+> + * vmalloc_exec - allocate virtually contiguous, executable memory
+> + * @size:	  allocation size
+> + *
+> + * Kernel-internal function to allocate enough pages to cover @size
+> + * the page level allocator and map them into contiguous and
+> + * executable kernel virtual space.
+> + *
+> + * For tight control over page level allocator and protection flags
+> + * use __vmalloc() instead.
+> + *
+> + * Return: pointer to the allocated memory or %NULL on error
+> + */
+> +void *vmalloc_exec(unsigned long size, gfp_t gfp_mask)
+> +{
+> +	return __vmalloc_node_range(size, 1, VMALLOC_START, VMALLOC_END,
+> +			gfp_mask, PAGE_KERNEL_EXEC, VM_FLUSH_RESET_PERMS,
+> +			NUMA_NO_NODE, __builtin_return_address(0));
+> +}
+> +EXPORT_SYMBOL_GPL(vmalloc_exec);
+> +
+>  #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
+>  #define GFP_VMALLOC32 (GFP_DMA32 | GFP_KERNEL)
+>  #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
+> --
+> 2.40.1
+>
 
-I might have missed some - this was just manual, after all - but while
-I'm sure smatch finds those NULL pointer confusions, what I *did* find
-was a lack of testing the result at all.
+Otherwise lgtm, feel free to add:
 
-In fs/btrfs/extent_io.c, we have
-
-    while (index <=3D end_index) {
-        folio =3D filemap_get_folio(mapping, index);
-        filemap_dirty_folio(mapping, folio);
-
-and in fs/gfs2/lops.c we have a similar case of filemap_get_folio ->
-folio_wait_locked use without checking for any errors.
-
-I assume it's probably hard to trigger errors in those paths, but it
-does look dodgy.
-
-Added some relevant people to the participants to let them know...
-
-I wonder if smatch can figure out automatically when error pointers do
-*not* work, and need checking for.
-
-A lot of places do not need to check for them, because they just
-return the error pointer further up the call chain, but anything that
-then actually dereferences it should have checked for them (same as
-for NULL, of course).
-
-               Linus
+Acked-by: Lorenzo Stoakes <lstoakes@gmail.com>
