@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C2EB6FCC08
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 18:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7C056FCC0C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 18:58:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234919AbjEIQ6m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 May 2023 12:58:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41902 "EHLO
+        id S235134AbjEIQ6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 May 2023 12:58:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234941AbjEIQ6E (ORCPT
+        with ESMTP id S234948AbjEIQ6H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 May 2023 12:58:04 -0400
-Received: from out-24.mta1.migadu.com (out-24.mta1.migadu.com [95.215.58.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A415B84
-        for <linux-fsdevel@vger.kernel.org>; Tue,  9 May 2023 09:57:25 -0700 (PDT)
+        Tue, 9 May 2023 12:58:07 -0400
+Received: from out-38.mta1.migadu.com (out-38.mta1.migadu.com [95.215.58.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C99545592
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 May 2023 09:57:26 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
         t=1683651444;
@@ -22,17 +22,19 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Bsc+1yI/guH+T2KE4bJnNuVNfNr1pSTLs0rK/pjjSAI=;
-        b=Reg17E4hxC/htV66caDP4mIg8lk7TjjhYySdYeFxLdwU4L7ySzXsxSI3IE/jxUtwJLdQ6e
-        geU1GuZFaJRSE+vUsNzOEQAHx8GKD9SxSVp/CscftZ+vi6/DaJin7NUQrUWOWUGTu7OsO7
-        iSaIQhOKsdg5do0xv0BevZNBx62CTAM=
+        bh=aFpAUdd6YceND8Z+9Ovo7o0lDo/i7abO9dGwiynsQMo=;
+        b=YD9COKA+IAd9H4LdPcSWdpB2IIbw6IWd437dPvp6Yad9eeznBqXnIuyLzzF7tD4D6rKEPL
+        A6OHTjd4KHrQioFYDSpvjl82KOg3gF57iatX0Pn5jOxXjU/4KlG72uUyHlEboZvxcasXkZ
+        Euc9DchkVx5xrUMNFtVxbPMdnRiXQEA=
 From:   Kent Overstreet <kent.overstreet@linux.dev>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-bcachefs@vger.kernel.org
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 14/32] block: Don't block on s_umount from __invalidate_super()
-Date:   Tue,  9 May 2023 12:56:39 -0400
-Message-Id: <20230509165657.1735798-15-kent.overstreet@linux.dev>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 15/32] bcache: move closures to lib/
+Date:   Tue,  9 May 2023 12:56:40 -0400
+Message-Id: <20230509165657.1735798-16-kent.overstreet@linux.dev>
 In-Reply-To: <20230509165657.1735798-1-kent.overstreet@linux.dev>
 References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
 MIME-Version: 1.0
@@ -48,138 +50,369 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-__invalidate_super() is used to flush any filesystem mounted on a
-device, generally on some sort of media change event.
+From: Kent Overstreet <kent.overstreet@gmail.com>
 
-However, when unmounting a filesystem and closing the underlying block
-devices, we can deadlock if the block driver then calls
-__invalidate_device() (e.g. because the block device goes away when it
-is no longer in use).
-
-This happens with bcachefs on top of loopback, and can be triggered by
-fstests generic/042:
-
-  put_super
-    -> blkdev_put
-    -> lo_release
-    -> disk_force_media_change
-    -> __invalidate_device
-    -> get_super
-
-This isn't inherently specific to bcachefs - it hasn't shown up with
-other filesystems before because most other filesystems use the sget()
-mechanism for opening/closing block devices (and enforcing exclusion),
-however sget() has its own downsides and weird/sketchy behaviour w.r.t.
-block device open lifetime - if that ever gets fixed more code will run
-into this issue.
-
-The __invalidate_device() call here is really a best effort "I just
-yanked the device for a mounted filesystem, please try not to lose my
-data" - if it's ever actually needed the user has already done something
-crazy, and we probably shouldn't make things worse by deadlocking.
-Switching to a trylock seems in keeping with what the code is trying to
-do.
-
-If we ever get revoke() at the block layer, perhaps we would look at
-rearchitecting to use that instead.
+Prep work for bcachefs - being a fork of bcache it also uses closures
 
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Acked-by: Coly Li <colyli@suse.de>
 ---
- block/bdev.c       |  2 +-
- fs/super.c         | 40 +++++++++++++++++++++++++++++++---------
- include/linux/fs.h |  1 +
- 3 files changed, 33 insertions(+), 10 deletions(-)
+ drivers/md/bcache/Kconfig                     | 10 +-----
+ drivers/md/bcache/Makefile                    |  4 +--
+ drivers/md/bcache/bcache.h                    |  2 +-
+ drivers/md/bcache/super.c                     |  1 -
+ drivers/md/bcache/util.h                      |  3 +-
+ .../md/bcache => include/linux}/closure.h     | 17 +++++----
+ lib/Kconfig                                   |  3 ++
+ lib/Kconfig.debug                             |  9 +++++
+ lib/Makefile                                  |  2 ++
+ {drivers/md/bcache => lib}/closure.c          | 35 +++++++++----------
+ 10 files changed, 43 insertions(+), 43 deletions(-)
+ rename {drivers/md/bcache => include/linux}/closure.h (97%)
+ rename {drivers/md/bcache => lib}/closure.c (88%)
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 1795c7d4b9..743e969b7b 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -922,7 +922,7 @@ EXPORT_SYMBOL(lookup_bdev);
+diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
+index 529c9d04e9..b2d10063d3 100644
+--- a/drivers/md/bcache/Kconfig
++++ b/drivers/md/bcache/Kconfig
+@@ -4,6 +4,7 @@ config BCACHE
+ 	tristate "Block device as cache"
+ 	select BLOCK_HOLDER_DEPRECATED if SYSFS
+ 	select CRC64
++	select CLOSURES
+ 	help
+ 	Allows a block device to be used as cache for other devices; uses
+ 	a btree for indexing and the layout is optimized for SSDs.
+@@ -19,15 +20,6 @@ config BCACHE_DEBUG
+ 	Enables extra debugging tools, allows expensive runtime checks to be
+ 	turned on.
  
- int __invalidate_device(struct block_device *bdev, bool kill_dirty)
- {
--	struct super_block *sb = get_super(bdev);
-+	struct super_block *sb = try_get_super(bdev);
- 	int res = 0;
+-config BCACHE_CLOSURES_DEBUG
+-	bool "Debug closures"
+-	depends on BCACHE
+-	select DEBUG_FS
+-	help
+-	Keeps all active closures in a linked list and provides a debugfs
+-	interface to list them, which makes it possible to see asynchronous
+-	operations that get stuck.
+-
+ config BCACHE_ASYNC_REGISTRATION
+ 	bool "Asynchronous device registration"
+ 	depends on BCACHE
+diff --git a/drivers/md/bcache/Makefile b/drivers/md/bcache/Makefile
+index 5b87e59676..054e8a33a7 100644
+--- a/drivers/md/bcache/Makefile
++++ b/drivers/md/bcache/Makefile
+@@ -2,6 +2,6 @@
  
- 	if (sb) {
-diff --git a/fs/super.c b/fs/super.c
-index 04bc62ab7d..a2decce02f 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -791,14 +791,7 @@ void iterate_supers_type(struct file_system_type *type,
+ obj-$(CONFIG_BCACHE)	+= bcache.o
  
- EXPORT_SYMBOL(iterate_supers_type);
+-bcache-y		:= alloc.o bset.o btree.o closure.o debug.o extents.o\
+-	io.o journal.o movinggc.o request.o stats.o super.o sysfs.o trace.o\
++bcache-y		:= alloc.o bset.o btree.o debug.o extents.o io.o\
++	journal.o movinggc.o request.o stats.o super.o sysfs.o trace.o\
+ 	util.o writeback.o features.o
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index aebb7ef10e..c8b4914ad8 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -179,6 +179,7 @@
+ #define pr_fmt(fmt) "bcache: %s() " fmt, __func__
  
--/**
-- * get_super - get the superblock of a device
-- * @bdev: device to get the superblock for
-- *
-- * Scans the superblock list and finds the superblock of the file system
-- * mounted on the device given. %NULL is returned if no match is found.
-- */
--struct super_block *get_super(struct block_device *bdev)
-+static struct super_block *__get_super(struct block_device *bdev, bool try)
- {
- 	struct super_block *sb;
+ #include <linux/bio.h>
++#include <linux/closure.h>
+ #include <linux/kobject.h>
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+@@ -192,7 +193,6 @@
+ #include "bcache_ondisk.h"
+ #include "bset.h"
+ #include "util.h"
+-#include "closure.h"
  
-@@ -813,7 +806,12 @@ struct super_block *get_super(struct block_device *bdev)
- 		if (sb->s_bdev == bdev) {
- 			sb->s_count++;
- 			spin_unlock(&sb_lock);
--			down_read(&sb->s_umount);
-+
-+			if (!try)
-+				down_read(&sb->s_umount);
-+			else if (!down_read_trylock(&sb->s_umount))
-+				return NULL;
-+
- 			/* still alive? */
- 			if (sb->s_root && (sb->s_flags & SB_BORN))
- 				return sb;
-@@ -828,6 +826,30 @@ struct super_block *get_super(struct block_device *bdev)
- 	return NULL;
+ struct bucket {
+ 	atomic_t	pin;
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index ba3909bb6b..31b68a1b87 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2912,7 +2912,6 @@ static int __init bcache_init(void)
+ 		goto err;
+ 
+ 	bch_debug_init();
+-	closure_debug_init();
+ 
+ 	bcache_is_reboot = false;
+ 
+diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
+index 6f3cb7c921..f61ab1bada 100644
+--- a/drivers/md/bcache/util.h
++++ b/drivers/md/bcache/util.h
+@@ -4,6 +4,7 @@
+ #define _BCACHE_UTIL_H
+ 
+ #include <linux/blkdev.h>
++#include <linux/closure.h>
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+ #include <linux/sched/clock.h>
+@@ -13,8 +14,6 @@
+ #include <linux/workqueue.h>
+ #include <linux/crc64.h>
+ 
+-#include "closure.h"
+-
+ struct closure;
+ 
+ #ifdef CONFIG_BCACHE_DEBUG
+diff --git a/drivers/md/bcache/closure.h b/include/linux/closure.h
+similarity index 97%
+rename from drivers/md/bcache/closure.h
+rename to include/linux/closure.h
+index c88cdc4ae4..0ec9e7bc8d 100644
+--- a/drivers/md/bcache/closure.h
++++ b/include/linux/closure.h
+@@ -155,7 +155,7 @@ struct closure {
+ 
+ 	atomic_t		remaining;
+ 
+-#ifdef CONFIG_BCACHE_CLOSURES_DEBUG
++#ifdef CONFIG_DEBUG_CLOSURES
+ #define CLOSURE_MAGIC_DEAD	0xc054dead
+ #define CLOSURE_MAGIC_ALIVE	0xc054a11e
+ 
+@@ -184,15 +184,13 @@ static inline void closure_sync(struct closure *cl)
+ 		__closure_sync(cl);
  }
  
-+/**
-+ * get_super - get the superblock of a device
-+ * @bdev: device to get the superblock for
-+ *
-+ * Scans the superblock list and finds the superblock of the file system
-+ * mounted on the device given. %NULL is returned if no match is found.
-+ */
-+struct super_block *get_super(struct block_device *bdev)
-+{
-+	return __get_super(bdev, false);
-+}
+-#ifdef CONFIG_BCACHE_CLOSURES_DEBUG
++#ifdef CONFIG_DEBUG_CLOSURES
+ 
+-void closure_debug_init(void);
+ void closure_debug_create(struct closure *cl);
+ void closure_debug_destroy(struct closure *cl);
+ 
+ #else
+ 
+-static inline void closure_debug_init(void) {}
+ static inline void closure_debug_create(struct closure *cl) {}
+ static inline void closure_debug_destroy(struct closure *cl) {}
+ 
+@@ -200,21 +198,21 @@ static inline void closure_debug_destroy(struct closure *cl) {}
+ 
+ static inline void closure_set_ip(struct closure *cl)
+ {
+-#ifdef CONFIG_BCACHE_CLOSURES_DEBUG
++#ifdef CONFIG_DEBUG_CLOSURES
+ 	cl->ip = _THIS_IP_;
+ #endif
+ }
+ 
+ static inline void closure_set_ret_ip(struct closure *cl)
+ {
+-#ifdef CONFIG_BCACHE_CLOSURES_DEBUG
++#ifdef CONFIG_DEBUG_CLOSURES
+ 	cl->ip = _RET_IP_;
+ #endif
+ }
+ 
+ static inline void closure_set_waiting(struct closure *cl, unsigned long f)
+ {
+-#ifdef CONFIG_BCACHE_CLOSURES_DEBUG
++#ifdef CONFIG_DEBUG_CLOSURES
+ 	cl->waiting_on = f;
+ #endif
+ }
+@@ -243,6 +241,7 @@ static inline void closure_queue(struct closure *cl)
+ 	 */
+ 	BUILD_BUG_ON(offsetof(struct closure, fn)
+ 		     != offsetof(struct work_struct, func));
 +
-+/**
-+ * try_get_super - get the superblock of a device, using trylock on sb->s_umount
-+ * @bdev: device to get the superblock for
-+ *
-+ * Scans the superblock list and finds the superblock of the file system
-+ * mounted on the device given. %NULL is returned if no match is found.
-+ */
-+struct super_block *try_get_super(struct block_device *bdev)
-+{
-+	return __get_super(bdev, true);
-+}
+ 	if (wq) {
+ 		INIT_WORK(&cl->work, cl->work.func);
+ 		BUG_ON(!queue_work(wq, &cl->work));
+@@ -255,7 +254,7 @@ static inline void closure_queue(struct closure *cl)
+  */
+ static inline void closure_get(struct closure *cl)
+ {
+-#ifdef CONFIG_BCACHE_CLOSURES_DEBUG
++#ifdef CONFIG_DEBUG_CLOSURES
+ 	BUG_ON((atomic_inc_return(&cl->remaining) &
+ 		CLOSURE_REMAINING_MASK) <= 1);
+ #else
+@@ -271,7 +270,7 @@ static inline void closure_get(struct closure *cl)
+  */
+ static inline void closure_init(struct closure *cl, struct closure *parent)
+ {
+-	memset(cl, 0, sizeof(struct closure));
++	cl->fn = NULL;
+ 	cl->parent = parent;
+ 	if (parent)
+ 		closure_get(parent);
+diff --git a/lib/Kconfig b/lib/Kconfig
+index ce2abffb9e..1aa1c15a83 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -504,6 +504,9 @@ config ASSOCIATIVE_ARRAY
+ 
+ 	  for more information.
+ 
++config CLOSURES
++	bool
 +
+ config HAS_IOMEM
+ 	bool
+ 	depends on !NO_IOMEM
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 39d1d93164..3dba7a9aff 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1618,6 +1618,15 @@ config DEBUG_NOTIFIERS
+ 	  This is a relatively cheap check but if you care about maximum
+ 	  performance, say N.
+ 
++config DEBUG_CLOSURES
++	bool "Debug closures (bcache async widgits)"
++	depends on CLOSURES
++	select DEBUG_FS
++	help
++	Keeps all active closures in a linked list and provides a debugfs
++	interface to list them, which makes it possible to see asynchronous
++	operations that get stuck.
++
+ config BUG_ON_DATA_CORRUPTION
+ 	bool "Trigger a BUG when data corruption is detected"
+ 	select DEBUG_LIST
+diff --git a/lib/Makefile b/lib/Makefile
+index baf2821f7a..fd13ca6e0e 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -245,6 +245,8 @@ obj-$(CONFIG_ATOMIC64_SELFTEST) += atomic64_test.o
+ 
+ obj-$(CONFIG_CPU_RMAP) += cpu_rmap.o
+ 
++obj-$(CONFIG_CLOSURES) += closure.o
++
+ obj-$(CONFIG_DQL) += dynamic_queue_limits.o
+ 
+ obj-$(CONFIG_GLOB) += glob.o
+diff --git a/drivers/md/bcache/closure.c b/lib/closure.c
+similarity index 88%
+rename from drivers/md/bcache/closure.c
+rename to lib/closure.c
+index d8d9394a6b..b38ded00b9 100644
+--- a/drivers/md/bcache/closure.c
++++ b/lib/closure.c
+@@ -6,13 +6,12 @@
+  * Copyright 2012 Google, Inc.
+  */
+ 
++#include <linux/closure.h>
+ #include <linux/debugfs.h>
+-#include <linux/module.h>
++#include <linux/export.h>
+ #include <linux/seq_file.h>
+ #include <linux/sched/debug.h>
+ 
+-#include "closure.h"
+-
+ static inline void closure_put_after_sub(struct closure *cl, int flags)
+ {
+ 	int r = flags & CLOSURE_REMAINING_MASK;
+@@ -45,6 +44,7 @@ void closure_sub(struct closure *cl, int v)
+ {
+ 	closure_put_after_sub(cl, atomic_sub_return(v, &cl->remaining));
+ }
++EXPORT_SYMBOL(closure_sub);
+ 
+ /*
+  * closure_put - decrement a closure's refcount
+@@ -53,6 +53,7 @@ void closure_put(struct closure *cl)
+ {
+ 	closure_put_after_sub(cl, atomic_dec_return(&cl->remaining));
+ }
++EXPORT_SYMBOL(closure_put);
+ 
+ /*
+  * closure_wake_up - wake up all closures on a wait list, without memory barrier
+@@ -74,6 +75,7 @@ void __closure_wake_up(struct closure_waitlist *wait_list)
+ 		closure_sub(cl, CLOSURE_WAITING + 1);
+ 	}
+ }
++EXPORT_SYMBOL(__closure_wake_up);
+ 
  /**
-  * get_active_super - get an active reference to the superblock of a device
-  * @bdev: device to get the superblock for
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c85916e9f7..1a6f951942 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2878,6 +2878,7 @@ extern struct file_system_type *get_filesystem(struct file_system_type *fs);
- extern void put_filesystem(struct file_system_type *fs);
- extern struct file_system_type *get_fs_type(const char *name);
- extern struct super_block *get_super(struct block_device *);
-+extern struct super_block *try_get_super(struct block_device *);
- extern struct super_block *get_active_super(struct block_device *bdev);
- extern void drop_super(struct super_block *sb);
- extern void drop_super_exclusive(struct super_block *sb);
+  * closure_wait - add a closure to a waitlist
+@@ -93,6 +95,7 @@ bool closure_wait(struct closure_waitlist *waitlist, struct closure *cl)
+ 
+ 	return true;
+ }
++EXPORT_SYMBOL(closure_wait);
+ 
+ struct closure_syncer {
+ 	struct task_struct	*task;
+@@ -127,8 +130,9 @@ void __sched __closure_sync(struct closure *cl)
+ 
+ 	__set_current_state(TASK_RUNNING);
+ }
++EXPORT_SYMBOL(__closure_sync);
+ 
+-#ifdef CONFIG_BCACHE_CLOSURES_DEBUG
++#ifdef CONFIG_DEBUG_CLOSURES
+ 
+ static LIST_HEAD(closure_list);
+ static DEFINE_SPINLOCK(closure_list_lock);
+@@ -144,6 +148,7 @@ void closure_debug_create(struct closure *cl)
+ 	list_add(&cl->all, &closure_list);
+ 	spin_unlock_irqrestore(&closure_list_lock, flags);
+ }
++EXPORT_SYMBOL(closure_debug_create);
+ 
+ void closure_debug_destroy(struct closure *cl)
+ {
+@@ -156,8 +161,7 @@ void closure_debug_destroy(struct closure *cl)
+ 	list_del(&cl->all);
+ 	spin_unlock_irqrestore(&closure_list_lock, flags);
+ }
+-
+-static struct dentry *closure_debug;
++EXPORT_SYMBOL(closure_debug_destroy);
+ 
+ static int debug_show(struct seq_file *f, void *data)
+ {
+@@ -181,7 +185,7 @@ static int debug_show(struct seq_file *f, void *data)
+ 			seq_printf(f, " W %pS\n",
+ 				   (void *) cl->waiting_on);
+ 
+-		seq_printf(f, "\n");
++		seq_puts(f, "\n");
+ 	}
+ 
+ 	spin_unlock_irq(&closure_list_lock);
+@@ -190,18 +194,11 @@ static int debug_show(struct seq_file *f, void *data)
+ 
+ DEFINE_SHOW_ATTRIBUTE(debug);
+ 
+-void  __init closure_debug_init(void)
++static int __init closure_debug_init(void)
+ {
+-	if (!IS_ERR_OR_NULL(bcache_debug))
+-		/*
+-		 * it is unnecessary to check return value of
+-		 * debugfs_create_file(), we should not care
+-		 * about this.
+-		 */
+-		closure_debug = debugfs_create_file(
+-			"closures", 0400, bcache_debug, NULL, &debug_fops);
++	debugfs_create_file("closures", 0400, NULL, NULL, &debug_fops);
++	return 0;
+ }
+-#endif
++late_initcall(closure_debug_init)
+ 
+-MODULE_AUTHOR("Kent Overstreet <koverstreet@google.com>");
+-MODULE_LICENSE("GPL");
++#endif
 -- 
 2.40.1
 
