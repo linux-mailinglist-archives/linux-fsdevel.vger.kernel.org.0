@@ -2,76 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 489EA6FCF51
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 22:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C646FCF76
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 22:28:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234609AbjEIUTG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 May 2023 16:19:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53406 "EHLO
+        id S229561AbjEIU2h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 May 2023 16:28:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjEIUTF (ORCPT
+        with ESMTP id S229498AbjEIU2f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 May 2023 16:19:05 -0400
-Received: from out-3.mta0.migadu.com (out-3.mta0.migadu.com [91.218.175.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 024E53AAE
-        for <linux-fsdevel@vger.kernel.org>; Tue,  9 May 2023 13:19:03 -0700 (PDT)
-Date:   Tue, 9 May 2023 16:18:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1683663542;
+        Tue, 9 May 2023 16:28:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4D6640E4
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 May 2023 13:27:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683664072;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=3NB9UVIxBGJqWtZGB1ALQW3U92XErZENLAn8qk7xNIM=;
-        b=q5sPvgkBW++VRojipgY8KW+2lpXFtMiia21SScukswTn4rwBnEpdMkNzUrm6+sZ+5cH6ZX
-        6uNK6pOdWdmnNxPRrbBUmdrPhQROwqSSfWH0ihSZjx22vZ9ev/hhXiwllYyQiJjSVY5e5h
-        WaPw1UVUFJn1+g0/r51dh8LdwRgHAtQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Peter Zijlstra <peterz@infradead.org>
+        bh=lxZpyzEfcn2FNFCbnX4Bm747Ok1kXJdow2Un/gyXnX8=;
+        b=IL90DED0fhhF9I/NIw7eMI0lvs9GrJeEDSJMetvxKT78Dagd4kBqa/ioZai13PVcHEyjpZ
+        Ty3yboW/Ga8S4BBNpHpzdv+Ed2B+noKfG+h1VHc9oXPMM04tA1Zfw9VlCWzZ0NYw+RJIVN
+        Ax4oiCz6gb+RR6IXRoRgoawMNZObzB0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-621-xbO7DSw7MRmHYo0FHuzFMw-1; Tue, 09 May 2023 16:27:47 -0400
+X-MC-Unique: xbO7DSw7MRmHYo0FHuzFMw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1691E185A79C;
+        Tue,  9 May 2023 20:27:47 +0000 (UTC)
+Received: from [10.18.17.153] (dhcp-17-153.bos.redhat.com [10.18.17.153])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D51B92026D16;
+        Tue,  9 May 2023 20:27:46 +0000 (UTC)
+Message-ID: <d5b65b01-62a9-e483-dea8-5e2bb65be278@redhat.com>
+Date:   Tue, 9 May 2023 16:27:46 -0400
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 03/32] locking/lockdep: lockdep_set_no_check_recursion()
+Content-Language: en-US
+To:     Kent Overstreet <kent.overstreet@linux.dev>,
+        Peter Zijlstra <peterz@infradead.org>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-bcachefs@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
         Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
         Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH 03/32] locking/lockdep: lockdep_set_no_check_recursion()
-Message-ID: <ZFqqsyDpatgb77Vh@moria.home.lan>
 References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
  <20230509165657.1735798-4-kent.overstreet@linux.dev>
  <20230509193147.GC2148518@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230509193147.GC2148518@hirez.programming.kicks-ass.net>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+ <ZFqqsyDpatgb77Vh@moria.home.lan>
+From:   Waiman Long <longman@redhat.com>
+In-Reply-To: <ZFqqsyDpatgb77Vh@moria.home.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 09, 2023 at 09:31:47PM +0200, Peter Zijlstra wrote:
-> On Tue, May 09, 2023 at 12:56:28PM -0400, Kent Overstreet wrote:
-> > This adds a method to tell lockdep not to check lock ordering within a
-> > lock class - but to still check lock ordering w.r.t. other lock types.
-> > 
-> > This is for bcachefs, where for btree node locks we have our own
-> > deadlock avoidance strategy w.r.t. other btree node locks (cycle
-> > detection), but we still want lockdep to check lock ordering w.r.t.
-> > other lock types.
-> > 
-> 
-> ISTR you had a much nicer version of this where you gave a custom order
-> function -- what happend to that?
 
-Actually, I spoke too soon; this patch and the other series with the
-comparison function solve different problems.
+On 5/9/23 16:18, Kent Overstreet wrote:
+> On Tue, May 09, 2023 at 09:31:47PM +0200, Peter Zijlstra wrote:
+>> On Tue, May 09, 2023 at 12:56:28PM -0400, Kent Overstreet wrote:
+>>> This adds a method to tell lockdep not to check lock ordering within a
+>>> lock class - but to still check lock ordering w.r.t. other lock types.
+>>>
+>>> This is for bcachefs, where for btree node locks we have our own
+>>> deadlock avoidance strategy w.r.t. other btree node locks (cycle
+>>> detection), but we still want lockdep to check lock ordering w.r.t.
+>>> other lock types.
+>>>
+>> ISTR you had a much nicer version of this where you gave a custom order
+>> function -- what happend to that?
+> Actually, I spoke too soon; this patch and the other series with the
+> comparison function solve different problems.
+>
+> For bcachefs btree node locks, we don't have a defined lock ordering at
+> all - we do full runtime cycle detection, so we don't want lockdep
+> checking for self deadlock because we're handling that but we _do_ want
+> lockdep checking lock ordering of btree node locks w.r.t. other locks in
+> the system.
 
-For bcachefs btree node locks, we don't have a defined lock ordering at
-all - we do full runtime cycle detection, so we don't want lockdep
-checking for self deadlock because we're handling that but we _do_ want
-lockdep checking lock ordering of btree node locks w.r.t. other locks in
-the system.
+Maybe you can use lock_set_novalidate_class() instead.
+
+Cheers,
+Longman
+
