@@ -2,174 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 851C06FBC6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 03:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80B976FBEDA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 07:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233588AbjEIBUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 May 2023 21:20:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57722 "EHLO
+        id S234557AbjEIFrs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 May 2023 01:47:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233513AbjEIBUT (ORCPT
+        with ESMTP id S234542AbjEIFrp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 May 2023 21:20:19 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E0A76E9E
-        for <linux-fsdevel@vger.kernel.org>; Mon,  8 May 2023 18:20:17 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-6439d505274so2842157b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 May 2023 18:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1683595217; x=1686187217;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qvnKgDrLdGbPYsBYq8JxxD98sZ+MraP0qApL2fP5if4=;
-        b=iufZEJq7q54DB+83WSv76z5TKf12tRvtuirtcVl8etOYO+KDFOgEs5HzHXV8UXRpls
-         Gx1bclRmOPbq+s8Vfe44vd84pPXampuZyNEXwvmXDrBKdl2YExdkv4IRON39ESkJqC2i
-         8Ot/Te9Xub2Tw9BnsW4b0h5PTrp1lvtA2B6Jm9kTB5uaoeemy8aI2Ju2wLN5k1aL5Tf2
-         Bdvfs2SrGIHa91GTNbUcSC6537zXPmsiQgjjQPs79KsNpop9jDK11NwrITU9pCV8ObdZ
-         W+69n1y8r7o6Kka1hCH0e6prx2fs+MbbbodjeFMOQK2sbc7ULVJKnKKg/gWK0LBJO080
-         f3tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683595217; x=1686187217;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qvnKgDrLdGbPYsBYq8JxxD98sZ+MraP0qApL2fP5if4=;
-        b=kbXpOnxDAnN6+E/aVqAbs6oJnlNmRcmZIaoFUZPw2dAe397x+ovlWDM5YueeXo9mQu
-         f5Cg4vz+yGsMG5pSqGbZG/JSkJ2yXNnJIucMK2vMGwihuP4eutPPekTzVaWaA2n2nEC0
-         Gv65rgFSghSOmNwK606GiiGDdNNZ62HACrxbrcp68+npVcqXSO0Sqp1NMwQGNOqZZCL5
-         b6edfVz9TBhIKVAFcAkpwiijktb/K8KYq++fde72jyPtR7cpNd/qJOLwMTjRqSqMomQD
-         gbJIiZq3npBwnn3ey2MIxdFHcelznhvsmxSr/O/75TwucN7md+r5WOIJ70DxPoUv2JKv
-         tWMQ==
-X-Gm-Message-State: AC+VfDxgltfXNH4xWwODdFYeBOI77qPcqjTveXaZqJqLzNDsaJXQb1ln
-        wsfmEAJBvEJ1k8NLadg3gvrrbg==
-X-Google-Smtp-Source: ACHHUZ5h+1TgYj4KujZCQwdLTfcSFgNpCbTRC56j2A0dOjVoakdhu4USEX4rOpq23HrAkNhxodPAaw==
-X-Received: by 2002:a05:6a00:2343:b0:644:d775:60bb with SMTP id j3-20020a056a00234300b00644d77560bbmr10814865pfj.20.1683595216924;
-        Mon, 08 May 2023 18:20:16 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-88-204.pa.nsw.optusnet.com.au. [49.181.88.204])
-        by smtp.gmail.com with ESMTPSA id 17-20020aa79251000000b006468222af91sm581010pfp.48.2023.05.08.18.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 May 2023 18:20:16 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pwC1V-00D2Im-7t; Tue, 09 May 2023 11:20:13 +1000
-Date:   Tue, 9 May 2023 11:20:13 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     hch@infradead.org, djwong@kernel.org, sandeen@sandeen.net,
-        song@kernel.org, rafael@kernel.org, gregkh@linuxfoundation.org,
-        viro@zeniv.linux.org.uk, jack@suse.cz, jikos@kernel.org,
-        bvanassche@acm.org, ebiederm@xmission.com, mchehab@kernel.org,
-        keescook@chromium.org, p.raghav@samsung.com, da.gomez@samsung.com,
-        linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] fs: add automatic kernel fs freeze / thaw and remove
- kthread freezing
-Message-ID: <20230509012013.GD2651828@dread.disaster.area>
-References: <20230508011717.4034511-1-mcgrof@kernel.org>
- <20230508011717.4034511-7-mcgrof@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230508011717.4034511-7-mcgrof@kernel.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Tue, 9 May 2023 01:47:45 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702099028;
+        Mon,  8 May 2023 22:47:44 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 348NxdMe024126;
+        Tue, 9 May 2023 05:47:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id; s=corp-2023-03-30;
+ bh=50u2xjNWdhe8Y8dEnyMSIRqp+jBEMtcSls+BAFjd/Vk=;
+ b=DD9G7sGFFb5aqhSUmCAmi7UB79Qh0bmg8nVZ7OfuO9VDJC/QxuOFjoLAdfTd6ZaexgsU
+ UkG9Anckr1HQ2BRuJuEIKQ2dDuUj28Yc3TgU5ZuREjO91lVjJq/75aqp/1lkhh3ZTaDJ
+ OshpJaqQoduqZsKindLXXbrpwsKQJekBRgEIzVHL9w56WieizzH+HumGiJ/CO/lrtqdP
+ q40hthDLjxLSCNHoWX6uTQtrnL80LLmkDvInLPjW8geV5k6BZy59PmvL6FrOaWXXSlmv
+ Xjm8tUFId5RBUo5dxmo1Fz/DZ6Z1GBvhkXPc23JAkOIeRWkF8lOuYER+J1kp0vAl1WsV Rw== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qf77c0we1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 May 2023 05:47:25 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3495JB4T001645;
+        Tue, 9 May 2023 05:47:24 GMT
+Received: from brm-x62-16.us.oracle.com (brm-x62-16.us.oracle.com [10.80.150.37])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3qf82v5m4u-1;
+        Tue, 09 May 2023 05:47:24 +0000
+From:   Jane Chu <jane.chu@oracle.com>
+To:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, ira.weiny@intel.com, willy@infradead.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 0/1] dax: enable dax fault handler to report VM_FAULT_HWPOISON 
+Date:   Mon,  8 May 2023 23:47:13 -0600
+Message-Id: <20230509054714.1746956-1-jane.chu@oracle.com>
+X-Mailer: git-send-email 2.18.4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-09_02,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=751 malwarescore=0
+ adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305090043
+X-Proofpoint-GUID: HsApzT22YVGaDpzF_HEaS5RLcoOczj-A
+X-Proofpoint-ORIG-GUID: HsApzT22YVGaDpzF_HEaS5RLcoOczj-A
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 07, 2023 at 06:17:17PM -0700, Luis Chamberlain wrote:
-> Add support to automatically handle freezing and thawing filesystems
-> during the kernel's suspend/resume cycle.
-> 
-> This is needed so that we properly really stop IO in flight without
-> races after userspace has been frozen. Without this we rely on
-> kthread freezing and its semantics are loose and error prone.
-> For instance, even though a kthread may use try_to_freeze() and end
-> up being frozen we have no way of being sure that everything that
-> has been spawned asynchronously from it (such as timers) have also
-> been stopped as well.
-> 
-> A long term advantage of also adding filesystem freeze / thawing
-> supporting during suspend / hibernation is that long term we may
-> be able to eventually drop the kernel's thread freezing completely
-> as it was originally added to stop disk IO in flight as we hibernate
-> or suspend.
-> 
-> This does not remove the superfluous freezer calls on all filesystems.
-> Each filesystem must remove all the kthread freezer stuff and peg
-> the fs_type flags as supporting auto-freezing with the FS_AUTOFREEZE
-> flag.
-> 
-> Subsequent patches remove the kthread freezer usage from each
-> filesystem, one at a time to make all this work bisectable.
-> Once all filesystems remove the usage of the kthread freezer we
-> can remove the FS_AUTOFREEZE flag.
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  fs/super.c             | 50 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h     | 14 ++++++++++++
->  kernel/power/process.c | 15 ++++++++++++-
->  3 files changed, 78 insertions(+), 1 deletion(-)
+Change from v3:
+Prevent leaking EHWPOISON to user level block IO calls such as
+zero_range_range, and truncate.  Suggested by Dan.
 
-.....
+Change from v2:
+Convert EHWPOISON to EIO to prevent EHWPOISON errno from leaking
+out to block read(2). Suggested by Matthew.
 
-> diff --git a/kernel/power/process.c b/kernel/power/process.c
-> index cae81a87cc91..7ca7688f0b5d 100644
-> --- a/kernel/power/process.c
-> +++ b/kernel/power/process.c
-> @@ -140,6 +140,16 @@ int freeze_processes(void)
->  
->  	BUG_ON(in_atomic());
->  
-> +	pr_info("Freezing filesystems ... ");
-> +	error = iterate_supers_reverse_excl(fs_suspend_freeze_sb, NULL);
-> +	if (error) {
-> +		pr_cont("failed\n");
-> +		iterate_supers_excl(fs_suspend_thaw_sb, NULL);
-> +		thaw_processes();
-> +		return error;
+Jane Chu (1):
+  dax: enable dax fault handler to report VM_FAULT_HWPOISON
 
-That looks wrong. i.e. if the sb iteration fails to freeze a
-filesystem (for whatever reason) then every userspace frozen
-filesystem will be thawed by this call, right? i.e. it will thaw
-more than just the filesystems frozen by the suspend freeze
-iteration before it failed.
+ drivers/dax/super.c          |  5 ++++-
+ drivers/nvdimm/pmem.c        |  2 +-
+ drivers/s390/block/dcssblk.c |  3 ++-
+ fs/dax.c                     | 11 ++++++-----
+ fs/fuse/virtio_fs.c          |  3 ++-
+ include/linux/dax.h          |  5 +++++
+ include/linux/mm.h           |  2 ++
+ 7 files changed, 22 insertions(+), 9 deletions(-)
 
-Don't we only want to thaw the superblocks we froze before the
-failure occurred? i.e. the "undo" iteration needs to start from the
-last superblock we successfully froze and then only walk to the tail
-of the list we started from?
-
-> +	}
-> +	pr_cont("done.\n");
-> +
->  	/*
->  	 * Now that the whole userspace is frozen we need to disable
->  	 * the OOM killer to disallow any further interference with
-> @@ -149,8 +159,10 @@ int freeze_processes(void)
->  	if (!error && !oom_killer_disable(msecs_to_jiffies(freeze_timeout_msecs)))
->  		error = -EBUSY;
->  
-> -	if (error)
-> +	if (error) {
-> +		iterate_supers_excl(fs_suspend_thaw_sb, NULL);
->  		thaw_processes();
-> +	}
-
-Does this also have the same problem? i.e. if fs_suspend_freeze_sb()
-skips over superblocks that are already userspace frozen without any
-error, then this will incorrectly thaw those userspace frozen
-filesystems.
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.18.4
+
