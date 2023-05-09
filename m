@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8026FCB76
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 18:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87D196FCB79
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 18:39:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231228AbjEIQjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 May 2023 12:39:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53918 "EHLO
+        id S233064AbjEIQjB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 May 2023 12:39:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233820AbjEIQim (ORCPT
+        with ESMTP id S230060AbjEIQjA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 May 2023 12:38:42 -0400
+        Tue, 9 May 2023 12:39:00 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 184B13AAE;
-        Tue,  9 May 2023 09:38:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 212E940CE;
+        Tue,  9 May 2023 09:38:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D2EE62906;
-        Tue,  9 May 2023 16:38:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96F06C433EF;
-        Tue,  9 May 2023 16:38:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9EB0E62906;
+        Tue,  9 May 2023 16:38:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E537C433D2;
+        Tue,  9 May 2023 16:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683650319;
-        bh=rUhrsUno5UKglRVnTSvs0i9Sqtx8GYNijNMIbG+2KZw=;
+        s=k20201202; t=1683650336;
+        bh=CNIoMSTpu9Fo0eEfWNQNIpTO1qX87mPTP8s97bQPs98=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tYIPeqQC8eQvgj6sCmgYFlKvVU6IQn7QeOxFA9EZLH8Ca9JeyfzS3jJYSHpl0E2cB
-         IGhCIX4JkIE0U4UuqU2X6H4fWUyoTbGywdal+kK8GjhTaTFdjo95GKyqAKvabQ2YQg
-         xMA0+dIoolZQO3aV5XT56GGpHKROYtxiBrDM4e8ammq4rLfCHkrnP8yov9HUA+BVEi
-         i2Wl6nOfRzjcPXiGqqlF4Eb9jfRwJm4jAaQuvjU1JKkLrdW8z5pHILDQWrmnp5A3I2
-         FfNU50o3L6Q6Y397uv/s87GErb4jxeb15+6pqneInPDZNqxrEpfoMLbNUupGtZxWmW
-         8kyikRGNNay8g==
-Date:   Tue, 9 May 2023 09:38:37 -0700
+        b=OYFk8gZtCaUB0GFVyA5nY2s6X6XAUcoBMqiiEPrWaxX20vmTkcN36Z9hNaCqa8e9F
+         KFRlXdWA9a5Fqib0SKZEI8Va0aCzwr25HaZdj3HiFHP+hRK3GuoSRgOffpg1iY7UES
+         yQMj/+ro7KyYSw4v0MqnRnKf07fEFz7qsVvVwGavLZqlc2DUMqqFCXzWdKW5SDgbNI
+         U0M9PyPEpi3gGZppjIyijComU7HywJ/O52d+zYQbX/NMmeASZFdY13ZodyKNIiF5nK
+         vAjsOkIGwDN6wXDgvSlvb4nn6NUp3T9H3teuWJUNV92VCEkQFHYGQGW033Fjxbdm7a
+         SkEKmOv/I9HUw==
+Date:   Tue, 9 May 2023 09:38:54 -0700
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Kefeng Wang <wangkefeng.wang@huawei.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
@@ -45,15 +45,15 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         Iurii Zaikin <yzaikin@google.com>,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 02/12] mm: page_alloc: move init_on_alloc/free() into
+Subject: Re: [PATCH 01/12] mm: page_alloc: move mirrored_kernelcore into
  mm_init.c
-Message-ID: <20230509163837.GA4135@kernel.org>
+Message-ID: <20230509163854.GB4135@kernel.org>
 References: <20230508071200.123962-1-wangkefeng.wang@huawei.com>
- <20230508071200.123962-3-wangkefeng.wang@huawei.com>
+ <20230508071200.123962-2-wangkefeng.wang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230508071200.123962-3-wangkefeng.wang@huawei.com>
+In-Reply-To: <20230508071200.123962-2-wangkefeng.wang@huawei.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -64,53 +64,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 08, 2023 at 03:11:50PM +0800, Kefeng Wang wrote:
-> Since commit f2fc4b44ec2b ("mm: move init_mem_debugging_and_hardening()
-> to mm/mm_init.c"), the init_on_alloc() and init_on_free() define is
-> better to move there too.
+On Mon, May 08, 2023 at 03:11:49PM +0800, Kefeng Wang wrote:
+> Since commit 9420f89db2dd ("mm: move most of core MM initialization
+> to mm/mm_init.c"), mirrored_kernelcore should be moved into mm_init.c,
+> as most related codes are already there.
 > 
 > Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 
 Reviewed-by: Mike Rapoport (IBM) <rppt@kernel.org>
 
 > ---
->  mm/mm_init.c    | 6 ++++++
->  mm/page_alloc.c | 5 -----
->  2 files changed, 6 insertions(+), 5 deletions(-)
+>  mm/mm_init.c    | 2 ++
+>  mm/page_alloc.c | 3 ---
+>  2 files changed, 2 insertions(+), 3 deletions(-)
 > 
 > diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index da162b7a044c..15201887f8e0 100644
+> index 7f7f9c677854..da162b7a044c 100644
 > --- a/mm/mm_init.c
 > +++ b/mm/mm_init.c
-> @@ -2543,6 +2543,12 @@ void __init memblock_free_pages(struct page *page, unsigned long pfn,
->  	__free_pages_core(page, order);
+> @@ -259,6 +259,8 @@ static int __init cmdline_parse_core(char *p, unsigned long *core,
+>  	return 0;
 >  }
 >  
-> +DEFINE_STATIC_KEY_MAYBE(CONFIG_INIT_ON_ALLOC_DEFAULT_ON, init_on_alloc);
-> +EXPORT_SYMBOL(init_on_alloc);
+> +bool mirrored_kernelcore __initdata_memblock;
 > +
-> +DEFINE_STATIC_KEY_MAYBE(CONFIG_INIT_ON_FREE_DEFAULT_ON, init_on_free);
-> +EXPORT_SYMBOL(init_on_free);
-> +
->  static bool _init_on_alloc_enabled_early __read_mostly
->  				= IS_ENABLED(CONFIG_INIT_ON_ALLOC_DEFAULT_ON);
->  static int __init early_init_on_alloc(char *buf)
+>  /*
+>   * kernelcore=size sets the amount of memory for use for allocations that
+>   * cannot be reclaimed or migrated.
 > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index d1086aeca8f2..4f094ba7c8fb 100644
+> index af9c995d3c1e..d1086aeca8f2 100644
 > --- a/mm/page_alloc.c
 > +++ b/mm/page_alloc.c
-> @@ -233,11 +233,6 @@ unsigned long totalcma_pages __read_mostly;
+> @@ -23,7 +23,6 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/jiffies.h>
+> -#include <linux/memblock.h>
+>  #include <linux/compiler.h>
+>  #include <linux/kernel.h>
+>  #include <linux/kasan.h>
+> @@ -374,8 +373,6 @@ int user_min_free_kbytes = -1;
+>  int watermark_boost_factor __read_mostly = 15000;
+>  int watermark_scale_factor = 10;
 >  
->  int percpu_pagelist_high_fraction;
->  gfp_t gfp_allowed_mask __read_mostly = GFP_BOOT_MASK;
-> -DEFINE_STATIC_KEY_MAYBE(CONFIG_INIT_ON_ALLOC_DEFAULT_ON, init_on_alloc);
-> -EXPORT_SYMBOL(init_on_alloc);
+> -bool mirrored_kernelcore __initdata_memblock;
 > -
-> -DEFINE_STATIC_KEY_MAYBE(CONFIG_INIT_ON_FREE_DEFAULT_ON, init_on_free);
-> -EXPORT_SYMBOL(init_on_free);
->  
->  /*
->   * A cached value of the page's pageblock's migratetype, used when the page is
+>  /* movable_zone is the "real" zone pages in ZONE_MOVABLE are taken from */
+>  int movable_zone;
+>  EXPORT_SYMBOL(movable_zone);
 > -- 
 > 2.35.3
 > 
