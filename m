@@ -2,41 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1464F6FCBF5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 18:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1054F6FCBF7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 May 2023 18:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234931AbjEIQ6E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 May 2023 12:58:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41806 "EHLO
+        id S234880AbjEIQ6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 May 2023 12:58:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234758AbjEIQ53 (ORCPT
+        with ESMTP id S234814AbjEIQ5b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 May 2023 12:57:29 -0400
-Received: from out-59.mta1.migadu.com (out-59.mta1.migadu.com [IPv6:2001:41d0:203:375::3b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 040E230EC
-        for <linux-fsdevel@vger.kernel.org>; Tue,  9 May 2023 09:57:18 -0700 (PDT)
+        Tue, 9 May 2023 12:57:31 -0400
+Received: from out-35.mta1.migadu.com (out-35.mta1.migadu.com [IPv6:2001:41d0:203:375::23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC09A2D67
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 May 2023 09:57:19 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1683651436;
+        t=1683651437;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SY6fXe4pdNkKgId+Z2KcjRoSaHIjUmN9p3hLtNQFQOM=;
-        b=E343AoWginlmYA0XNC7JmuE92IbwRHmxwqnCWVBaeQu8jZ05EtSZ5jzp35SoalYgdAyVi2
-        mGxFIQ5f5mTuLhPjrCK1pmI755V80kOd3XnWhwPE3Gk3/WusCJYaQLjuq0KStuhsVRV+f0
-        42/iLxS5+Ar2E2XYNjjpc2Zygm9+MFY=
+        bh=3fmI1GsqhKc/VjkbsmLsO1lPQkBpUyPyeZNLX2gLM4A=;
+        b=HxbPD30d9PS44l4BFocC7+4W53wukqnTMPxPn1K1Dbc9Y/EsxCrjkf4QSlJqxIFFlazBMT
+        6SVHA9CXL8xpVGqkipFpzj13Ez5vDhN2yCAlYAdQpq1Cff2u9KY26LppoRnsIuiZKmD0eD
+        klJFD5WmmOeWr9WGDK7h91hyWwK5z5I=
 From:   Kent Overstreet <kent.overstreet@linux.dev>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-bcachefs@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
         Kent Overstreet <kent.overstreet@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org
-Subject: [PATCH 07/32] mm: Bring back vmalloc_exec
-Date:   Tue,  9 May 2023 12:56:32 -0400
-Message-Id: <20230509165657.1735798-8-kent.overstreet@linux.dev>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 08/32] fs: factor out d_mark_tmpfile()
+Date:   Tue,  9 May 2023 12:56:33 -0400
+Message-Id: <20230509165657.1735798-9-kent.overstreet@linux.dev>
 In-Reply-To: <20230509165657.1735798-1-kent.overstreet@linux.dev>
 References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
 MIME-Version: 1.0
@@ -44,8 +43,8 @@ Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -54,109 +53,64 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Kent Overstreet <kent.overstreet@gmail.com>
 
-This is needed for bcachefs, which dynamically generates per-btree node
-unpack functions.
+New helper for bcachefs - bcachefs doesn't want the
+inode_dec_link_count() call that d_tmpfile does, it handles i_nlink on
+its own atomically with other btree updates
 
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: linux-mm@kvack.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
 ---
- include/linux/vmalloc.h |  1 +
- kernel/module/main.c    |  4 +---
- mm/nommu.c              | 18 ++++++++++++++++++
- mm/vmalloc.c            | 21 +++++++++++++++++++++
- 4 files changed, 41 insertions(+), 3 deletions(-)
+ fs/dcache.c            | 12 ++++++++++--
+ include/linux/dcache.h |  1 +
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 69250efa03..ff147fe115 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -145,6 +145,7 @@ extern void *vzalloc(unsigned long size) __alloc_size(1);
- extern void *vmalloc_user(unsigned long size) __alloc_size(1);
- extern void *vmalloc_node(unsigned long size, int node) __alloc_size(1);
- extern void *vzalloc_node(unsigned long size, int node) __alloc_size(1);
-+extern void *vmalloc_exec(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
- extern void *vmalloc_32(unsigned long size) __alloc_size(1);
- extern void *vmalloc_32_user(unsigned long size) __alloc_size(1);
- extern void *__vmalloc(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index d3be89de70..9eaa89e84c 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -1607,9 +1607,7 @@ static void dynamic_debug_remove(struct module *mod, struct _ddebug_info *dyndbg
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 52e6d5fdab..dbdafa2617 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3249,11 +3249,10 @@ void d_genocide(struct dentry *parent)
  
- void * __weak module_alloc(unsigned long size)
+ EXPORT_SYMBOL(d_genocide);
+ 
+-void d_tmpfile(struct file *file, struct inode *inode)
++void d_mark_tmpfile(struct file *file, struct inode *inode)
  {
--	return __vmalloc_node_range(size, 1, VMALLOC_START, VMALLOC_END,
--			GFP_KERNEL, PAGE_KERNEL_EXEC, VM_FLUSH_RESET_PERMS,
--			NUMA_NO_NODE, __builtin_return_address(0));
-+	return vmalloc_exec(size, GFP_KERNEL);
- }
+ 	struct dentry *dentry = file->f_path.dentry;
  
- bool __weak module_init_section(const char *name)
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 57ba243c6a..8d9ab19e39 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -280,6 +280,24 @@ void *vzalloc_node(unsigned long size, int node)
- }
- EXPORT_SYMBOL(vzalloc_node);
- 
-+/**
-+ *	vmalloc_exec  -  allocate virtually contiguous, executable memory
-+ *	@size:		allocation size
-+ *
-+ *	Kernel-internal function to allocate enough pages to cover @size
-+ *	the page level allocator and map them into contiguous and
-+ *	executable kernel virtual space.
-+ *
-+ *	For tight control over page level allocator and protection flags
-+ *	use __vmalloc() instead.
-+ */
-+
-+void *vmalloc_exec(unsigned long size, gfp_t gfp_mask)
-+{
-+	return __vmalloc(size, gfp_mask);
+-	inode_dec_link_count(inode);
+ 	BUG_ON(dentry->d_name.name != dentry->d_iname ||
+ 		!hlist_unhashed(&dentry->d_u.d_alias) ||
+ 		!d_unlinked(dentry));
+@@ -3263,6 +3262,15 @@ void d_tmpfile(struct file *file, struct inode *inode)
+ 				(unsigned long long)inode->i_ino);
+ 	spin_unlock(&dentry->d_lock);
+ 	spin_unlock(&dentry->d_parent->d_lock);
 +}
-+EXPORT_SYMBOL_GPL(vmalloc_exec);
++EXPORT_SYMBOL(d_mark_tmpfile);
 +
- /**
-  * vmalloc_32  -  allocate virtually contiguous memory (32bit addressable)
-  *	@size:		allocation size
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 31ff782d36..2ebb9ea7f0 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3401,6 +3401,27 @@ void *vzalloc_node(unsigned long size, int node)
- }
- EXPORT_SYMBOL(vzalloc_node);
- 
-+/**
-+ * vmalloc_exec - allocate virtually contiguous, executable memory
-+ * @size:	  allocation size
-+ *
-+ * Kernel-internal function to allocate enough pages to cover @size
-+ * the page level allocator and map them into contiguous and
-+ * executable kernel virtual space.
-+ *
-+ * For tight control over page level allocator and protection flags
-+ * use __vmalloc() instead.
-+ *
-+ * Return: pointer to the allocated memory or %NULL on error
-+ */
-+void *vmalloc_exec(unsigned long size, gfp_t gfp_mask)
++void d_tmpfile(struct file *file, struct inode *inode)
 +{
-+	return __vmalloc_node_range(size, 1, VMALLOC_START, VMALLOC_END,
-+			gfp_mask, PAGE_KERNEL_EXEC, VM_FLUSH_RESET_PERMS,
-+			NUMA_NO_NODE, __builtin_return_address(0));
-+}
-+EXPORT_SYMBOL_GPL(vmalloc_exec);
++	struct dentry *dentry = file->f_path.dentry;
 +
- #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
- #define GFP_VMALLOC32 (GFP_DMA32 | GFP_KERNEL)
- #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
++	inode_dec_link_count(inode);
++	d_mark_tmpfile(file, inode);
+ 	d_instantiate(dentry, inode);
+ }
+ EXPORT_SYMBOL(d_tmpfile);
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 6b351e009f..3da2f0545d 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -251,6 +251,7 @@ extern struct dentry * d_make_root(struct inode *);
+ /* <clickety>-<click> the ramfs-type tree */
+ extern void d_genocide(struct dentry *);
+ 
++extern void d_mark_tmpfile(struct file *, struct inode *);
+ extern void d_tmpfile(struct file *, struct inode *);
+ 
+ extern struct dentry *d_find_alias(struct inode *);
 -- 
 2.40.1
 
