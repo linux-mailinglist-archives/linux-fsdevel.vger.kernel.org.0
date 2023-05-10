@@ -2,118 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35DE36FE788
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 00:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED2BD6FE82A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 01:43:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235731AbjEJWv6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 May 2023 18:51:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50514 "EHLO
+        id S236963AbjEJXnC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 May 2023 19:43:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230467AbjEJWv5 (ORCPT
+        with ESMTP id S236313AbjEJXnB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 May 2023 18:51:57 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56BEA4488;
-        Wed, 10 May 2023 15:51:55 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4f139de8cefso42789897e87.0;
-        Wed, 10 May 2023 15:51:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683759113; x=1686351113;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ohs3T3NdbbBRfBPZoviqythlTyCVKHR7HNnzdiYYugg=;
-        b=UZcIdCcS9GRr82mG/CdB3huJwhDoxQIzvsmnyFbvvmquGJg4EQuA2UEmpC49ODEitw
-         9vAgM6uM3DM7uSpET+bjLVEqgrLIaFrHLgV6tEYyjN8qLYwRgPkoC7JddtTcss2iSn+N
-         O4Ic6SZzG/SJ6mFkVy7Y0kHE49H8ECiJBGW8quvIQTrBVC0YAyJb9SkrzNfENLbL3TeY
-         O9c3LRdhg18EZ7YMdJfHUi/1wnXsl9wNMDVDKXVPoUwS8Ry7klVlPUU3FVKsBHlo4nfK
-         nNQuv2lX7qaQeap8/ZF0KD+c3nXN6fBBoY585/0v9PCIq7xZk6Lp7ExMDTnvLSAK2+RC
-         Fevg==
+        Wed, 10 May 2023 19:43:01 -0400
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E75272A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 May 2023 16:42:59 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-331828cdc2dso52224845ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 May 2023 16:42:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683759113; x=1686351113;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ohs3T3NdbbBRfBPZoviqythlTyCVKHR7HNnzdiYYugg=;
-        b=fnFoHsww106QeMPSZB/ZXBujYJxQskHgzYX3LgWlS9olFXgVrc3VcKjMBzhSoW2f/E
-         dUWvzDhQgBmzxBFj2hWFL+lxzW2/ZASHVxVin3AZngrh0eh2g2gOY0lZVqBYdGWmJ9KG
-         Rsjii6tpjOAA+BMaATXIjxGDj3pAlldmWvPj6ntzC1VDalUuKyI8l3O9tVoD8a8B5AA1
-         NSmtY4jMzGtuiMwxO1lZCi+hzEiEP1IA0e8VoQt25vuT0PzAA+mMU5YcVG9glWXHryRX
-         qZaiyn6rr8CU4XU8gpybX1SUJh6Oi/jq19HzIlFk+begBt8g6fwJtIUPwA9iGEuqGcoW
-         0j+w==
-X-Gm-Message-State: AC+VfDz7kdFLCHBfCy7OhneP51dzkr8bHDmdq8UbfrRCo106gA5STdIi
-        kPrtq0uIGTFODeKM2zAqxFAvZkMKuNQiT3Xb6SCahfDBNkcb/eJR
-X-Google-Smtp-Source: ACHHUZ6pFQA0UQwdD2HgKoqbtWxg3G+c05xilomwWIM3CxOrp3RcYZSBfnwod4YVRpJnf3J/cH3r1pgeRS3YN/Dz05k=
-X-Received: by 2002:a05:6512:2806:b0:4eb:4258:bf62 with SMTP id
- cf6-20020a056512280600b004eb4258bf62mr1882701lfb.8.1683759113049; Wed, 10 May
- 2023 15:51:53 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683762178; x=1686354178;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wJ2CjbqO9Wez5R1+ZFtUTiE12GfQcm0Zdhi4kchA1wg=;
+        b=ejZ1shecNEFFCAGqGxB7XEpjlLYmmuJ6DbxrhPEywX+r/LDYpT/a+9RIEj/9U3321p
+         s6hMcPBc3CX7IEZAsncsCC2MARmCyG4y7PD8b1zbVwISS8DX4edhGhKBPgj4CQ+oRTqk
+         f216LBXHMeDomspzk7/Ph/tDXI3iRAwMuz0dCqK9yNKi2G5t82Bqh6y24j198c3GbhT1
+         /fik6G5c3ZQ0FhGYv0cdolUaTg1RH0yzYXzt/IrcYXVhVBdeCZGDx0cj9sWpruXV6FoE
+         ZBRLMDfD/Q1KnDTFqco+OEjdW5tk1vQgRVdfHhU5Bke/KDcr2HJhuKt4A9MAFvObtAIJ
+         YwYQ==
+X-Gm-Message-State: AC+VfDxe0MsAS3DPjGeVkjafSiJSEIvsl/HZnfGvSZI93VROCOeIF1Ss
+        u5dS1vUer0/0ASsuWNk0CupJ/puM4LGV+BUswdpPqhDUigsk
+X-Google-Smtp-Source: ACHHUZ5LNoilAFvV3sFHQlHsVmf0YatUr2a6Qpv/JMq7Frzzno5x2oH7xX908WD+ruJvnzypjCg8md7r8F67qpllhYF2KtTW+xsj
 MIME-Version: 1.0
-From:   Steve French <smfrench@gmail.com>
-Date:   Wed, 10 May 2023 17:51:41 -0500
-Message-ID: <CAH2r5mtcjLkmWqRTZnZaXzvXZWHka_73nN1nSq0a=KQZ4hA4eA@mail.gmail.com>
-Subject: [PATCH] cifs: release leases for deferred close handles when freezing
-To:     CIFS <linux-cifs@vger.kernel.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000d22d8205fb5eb705"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:6b01:0:b0:335:7a0a:3cbd with SMTP id
+ g1-20020a926b01000000b003357a0a3cbdmr4726911ilc.3.1683762178707; Wed, 10 May
+ 2023 16:42:58 -0700 (PDT)
+Date:   Wed, 10 May 2023 16:42:58 -0700
+In-Reply-To: <0000000000009b5b5705fb5dfda0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008c5bed05fb5f6e00@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING in __ext4fs_dirhash
+From:   syzbot <syzbot+344aaa8697ebd232bfc8@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000d22d8205fb5eb705
-Content-Type: text/plain; charset="UTF-8"
+syzbot has found a reproducer for the following issue on:
 
-We should not be caching closed files when freeze is invoked on an fs
-so we can release resources more gracefully).
+HEAD commit:    578215f3e21c Add linux-next specific files for 20230510
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15d567ea280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bb5a64fc61c29c5f
+dashboard link: https://syzkaller.appspot.com/bug?extid=344aaa8697ebd232bfc8
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b80e32280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=113f582a280000
 
-Fixes xfstests generic/068 generic/390 generic/491
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/61ae2512b5cb/disk-578215f3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e16190a5b183/vmlinux-578215f3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/04000a0b9ddf/bzImage-578215f3.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/dbdccddcf7e8/mount_0.gz
 
-See attached.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+344aaa8697ebd232bfc8@syzkaller.appspotmail.com
+
+EXT4-fs error (device loop0): ext4_orphan_get:1397: comm syz-executor380: couldn't read orphan inode 15 (err -117)
+EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 without journal. Quota mode: writeback.
+EXT4-fs warning (device loop0): __ext4fs_dirhash:281: invalid/unsupported hash tree version 135
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5007 at fs/ext4/hash.c:284 __ext4fs_dirhash+0xa34/0xb40 fs/ext4/hash.c:281
+Modules linked in:
+CPU: 0 PID: 5007 Comm: syz-executor380 Not tainted 6.4.0-rc1-next-20230510-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+RIP: 0010:__ext4fs_dirhash+0xa34/0xb40 fs/ext4/hash.c:284
+Code: 00 0f 85 16 01 00 00 48 8b 04 24 41 89 d8 48 c7 c1 60 d2 62 8a ba 19 01 00 00 48 c7 c6 80 d3 62 8a 48 8b 78 28 e8 9c 7a 12 00 <0f> 0b 41 bc ea ff ff ff e9 2a fd ff ff e8 aa 94 5a ff 8b 9c 24 88
+RSP: 0018:ffffc900039cf768 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000087 RCX: 0000000000000000
+RDX: ffff88801ed61dc0 RSI: ffffffff823bfd38 RDI: 0000000000000005
+RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000001 R12: 000000005948191c
+R13: 0000000000000001 R14: dffffc0000000000 R15: ffff88807c0ba0c4
+FS:  00005555571d4300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000045ede0 CR3: 0000000073ff4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ext4fs_dirhash+0x13e/0x2e0 fs/ext4/hash.c:323
+ htree_dirblock_to_tree+0x81e/0xc90 fs/ext4/namei.c:1122
+ ext4_htree_fill_tree+0x327/0xc40 fs/ext4/namei.c:1217
+ ext4_dx_readdir fs/ext4/dir.c:597 [inline]
+ ext4_readdir+0x1d18/0x35f0 fs/ext4/dir.c:142
+ iterate_dir+0x56e/0x6f0 fs/readdir.c:65
+ __do_sys_getdents64 fs/readdir.c:369 [inline]
+ __se_sys_getdents64 fs/readdir.c:354 [inline]
+ __x64_sys_getdents64+0x13e/0x2c0 fs/readdir.c:354
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f74ba642749
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff0b1f4e88 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f74ba642749
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007f74ba602010 R08: 000000000000044b R09: 0000000000000000
+R10: 00007fff0b1f4d40 R11: 0000000000000246 R12: 00007f74ba6020a0
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
 
 
-
-
--- 
-Thanks,
-
-Steve
-
---000000000000d22d8205fb5eb705
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-cifs-release-leases-for-deferred-close-handles-when-.patch"
-Content-Disposition: attachment; 
-	filename="0001-cifs-release-leases-for-deferred-close-handles-when-.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lhiaozqt0>
-X-Attachment-Id: f_lhiaozqt0
-
-RnJvbSBkMzlmYzU5MmVmOGFlOWE4OWM1ZTg1YzhkOWY3NjA5MzdhNTdkNWJhIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTdGV2ZSBGcmVuY2ggPHN0ZnJlbmNoQG1pY3Jvc29mdC5jb20+
-CkRhdGU6IFdlZCwgMTAgTWF5IDIwMjMgMTc6NDI6MjEgLTA1MDAKU3ViamVjdDogW1BBVENIXSBj
-aWZzOiByZWxlYXNlIGxlYXNlcyBmb3IgZGVmZXJyZWQgY2xvc2UgaGFuZGxlcyB3aGVuIGZyZWV6
-aW5nCgpXZSBzaG91bGQgbm90IGJlIGNhY2hpbmcgY2xvc2VkIGZpbGVzIHdoZW4gZnJlZXplIGlz
-IGludm9rZWQgb24gYW4gZnMKKHNvIHdlIGNhbiByZWxlYXNlIHJlc291cmNlcyBtb3JlIGdyYWNl
-ZnVsbHkpLgoKRml4ZXMgeGZzdGVzdHMgZ2VuZXJpYy8wNjggZ2VuZXJpYy8zOTAgZ2VuZXJpYy80
-OTEKClJldmlld2VkLWJ5OiBEYXZpZCBIb3dlbGxzIDxkaG93ZWxsc0ByZWRoYXQuY29tPgpDYzog
-PHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmc+ClNpZ25lZC1vZmYtYnk6IFN0ZXZlIEZyZW5jaCA8c3Rm
-cmVuY2hAbWljcm9zb2Z0LmNvbT4KLS0tCiBmcy9jaWZzL2NpZnNmcy5jIHwgMTUgKysrKysrKysr
-KysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2Zz
-L2NpZnMvY2lmc2ZzLmMgYi9mcy9jaWZzL2NpZnNmcy5jCmluZGV4IDhiNmIzYjY5ODVmMy4uNDNh
-NGQ4NjAzZGIzIDEwMDY0NAotLS0gYS9mcy9jaWZzL2NpZnNmcy5jCisrKyBiL2ZzL2NpZnMvY2lm
-c2ZzLmMKQEAgLTc2MCw2ICs3NjAsMjAgQEAgc3RhdGljIHZvaWQgY2lmc191bW91bnRfYmVnaW4o
-c3RydWN0IHN1cGVyX2Jsb2NrICpzYikKIAlyZXR1cm47CiB9CiAKK3N0YXRpYyBpbnQgY2lmc19m
-cmVlemUoc3RydWN0IHN1cGVyX2Jsb2NrICpzYikKK3sKKwlzdHJ1Y3QgY2lmc19zYl9pbmZvICpj
-aWZzX3NiID0gQ0lGU19TQihzYik7CisJc3RydWN0IGNpZnNfdGNvbiAqdGNvbjsKKworCWlmIChj
-aWZzX3NiID09IE5VTEwpCisJCXJldHVybiAwOworCisJdGNvbiA9IGNpZnNfc2JfbWFzdGVyX3Rj
-b24oY2lmc19zYik7CisKKwljaWZzX2Nsb3NlX2FsbF9kZWZlcnJlZF9maWxlcyh0Y29uKTsKKwly
-ZXR1cm4gMDsKK30KKwogI2lmZGVmIENPTkZJR19DSUZTX1NUQVRTMgogc3RhdGljIGludCBjaWZz
-X3Nob3dfc3RhdHMoc3RydWN0IHNlcV9maWxlICpzLCBzdHJ1Y3QgZGVudHJ5ICpyb290KQogewpA
-QCAtNzk4LDYgKzgxMiw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc3VwZXJfb3BlcmF0aW9ucyBj
-aWZzX3N1cGVyX29wcyA9IHsKIAlhcyBvcGVucyAqLwogCS5zaG93X29wdGlvbnMgPSBjaWZzX3No
-b3dfb3B0aW9ucywKIAkudW1vdW50X2JlZ2luICAgPSBjaWZzX3Vtb3VudF9iZWdpbiwKKwkuZnJl
-ZXplX2ZzICAgICAgPSBjaWZzX2ZyZWV6ZSwKICNpZmRlZiBDT05GSUdfQ0lGU19TVEFUUzIKIAku
-c2hvd19zdGF0cyA9IGNpZnNfc2hvd19zdGF0cywKICNlbmRpZgotLSAKMi4zNC4xCgo=
---000000000000d22d8205fb5eb705--
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
