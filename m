@@ -2,159 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74AE16FD3CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 May 2023 04:21:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3DE26FD3DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 May 2023 04:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230316AbjEJCVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 May 2023 22:21:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41200 "EHLO
+        id S229773AbjEJCe5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 May 2023 22:34:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbjEJCVK (ORCPT
+        with ESMTP id S229501AbjEJCe4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 May 2023 22:21:10 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F85C213C;
-        Tue,  9 May 2023 19:21:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1683685269; x=1715221269;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f1qxuEs9rOJZLXdhY8DESS0tHY5WoChvDBSB1yM2b64=;
-  b=f4QDqgxotd8XYvqeVmvUfu3hefLpF3KivdtWuecn21+aNkEWbz6r1IvW
-   NVVrnsMuoIdN0N6o1C47iyB2IKKx+DiBINg77R5KD5HztWhEi5cgtrZOy
-   TVZ3h6EW6ssRfP20CGTmauVRC8yZjvxGsYQ/zcrvJt2eHGKw/bbopA26J
-   P7PhKSpxIgMr0Vg+ctI/SFNlLmZRxxuqCY8WkocNPKaF0cYtTNH57PmD3
-   JMJNw9SVJ8Ky10cvVKVx4hsfPH+y4aQk8l1FiSXoXC5kX0daYzdgv5Dzk
-   lrfcZHE+gE8lJKL5188G0SB8djMZHOlEoxTQ8fcscxnstrB6HY1gZGQ3d
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="350142898"
-X-IronPort-AV: E=Sophos;i="5.99,263,1677571200"; 
-   d="scan'208";a="350142898"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2023 19:21:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10705"; a="764120841"
-X-IronPort-AV: E=Sophos;i="5.99,263,1677571200"; 
-   d="scan'208";a="764120841"
-Received: from lkp-server01.sh.intel.com (HELO dea6d5a4f140) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 09 May 2023 19:21:07 -0700
-Received: from kbuild by dea6d5a4f140 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pwZRy-0002n6-0l;
-        Wed, 10 May 2023 02:21:06 +0000
-Date:   Wed, 10 May 2023 10:20:11 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Kent Overstreet <kmo@daterainc.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Kent Overstreet <kmo@daterainc.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 23/32] iov_iter: copy_folio_from_iter_atomic()
-Message-ID: <202305101003.uncpRKqA-lkp@intel.com>
-References: <20230509165657.1735798-24-kent.overstreet@linux.dev>
+        Tue, 9 May 2023 22:34:56 -0400
+X-Greylist: delayed 453 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 09 May 2023 19:34:55 PDT
+Received: from mx5.didiglobal.com (mx5.didiglobal.com [111.202.70.122])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 190D8273C
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 May 2023 19:34:54 -0700 (PDT)
+Received: from mail.didiglobal.com (unknown [10.79.64.19])
+        by mx5.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id 86CE2B0017A40;
+        Wed, 10 May 2023 10:25:18 +0800 (CST)
+Received: from localhost (10.79.71.101) by ZJY01-ACTMBX-06.didichuxing.com
+ (10.79.64.19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Wed, 10 May
+ 2023 10:25:18 +0800
+X-MD-Sfrom: houweitao@didiglobal.com
+X-MD-SrcIP: 10.79.64.19
+From:   houweitao <houweitao@didiglobal.com>
+To:     <akpm@linux-foudation.org>, <houweitao@didiglobal.com>,
+        <xupengfei@nfschina.com>, <brauner@kernel.org>,
+        <dchinner@redhat.com>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <royliyueyi@didiglobal.com>
+Subject: [PATCH] fs: hfsplus: fix uninit-value bug in hfsplus_listxattr
+Date:   Wed, 10 May 2023 10:25:15 +0800
+Message-ID: <20230510022515.9368-1-houweitao@didiglobal.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230509165657.1735798-24-kent.overstreet@linux.dev>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Originating-IP: [10.79.71.101]
+X-ClientProxiedBy: ZJY03-PUBMBX-01.didichuxing.com (10.79.71.12) To
+ ZJY01-ACTMBX-06.didichuxing.com (10.79.64.19)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Kent,
+BUG: KMSAN: uninit-value in strncmp+0x11e/0x180 lib/string.c:307
+ strncmp+0x11e/0x180 lib/string.c:307
+ is_known_namespace fs/hfsplus/xattr.c:45 [inline]
+ name_len fs/hfsplus/xattr.c:397 [inline]
+ hfsplus_listxattr+0xe61/0x1aa0 fs/hfsplus/xattr.c:746
+ vfs_listxattr fs/xattr.c:473 [inline]
+ listxattr+0x700/0x780 fs/xattr.c:820
+ path_listxattr fs/xattr.c:844 [inline]
+ __do_sys_llistxattr fs/xattr.c:862 [inline]
+ __se_sys_llistxattr fs/xattr.c:859 [inline]
+ __ia32_sys_llistxattr+0x171/0x300 fs/xattr.c:859
+ do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+ __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+ do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
+ entry_SYSENTER_compat_after_hwframe+0x70/0x82
 
-kernel test robot noticed the following build warnings:
+Reported-by: syzbot <syzbot+92ef9ee419803871020e@syzkaller.appspotmail.com>
+Link: https://syzkaller.appspot.com/bug?extid=92ef9ee419803871020e
+Signed-off-by: houweitao <houweitao@didiglobal.com>
+---
+ fs/hfsplus/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[auto build test WARNING on tip/locking/core]
-[cannot apply to axboe-block/for-next akpm-mm/mm-everything kdave/for-next linus/master v6.4-rc1 next-20230509]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kent-Overstreet/Compiler-Attributes-add-__flatten/20230510-010302
-base:   tip/locking/core
-patch link:    https://lore.kernel.org/r/20230509165657.1735798-24-kent.overstreet%40linux.dev
-patch subject: [PATCH 23/32] iov_iter: copy_folio_from_iter_atomic()
-config: i386-randconfig-a002 (https://download.01.org/0day-ci/archive/20230510/202305101003.uncpRKqA-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/0e5d4229f5e7671dabba56ea36583b1ca20a9a18
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Kent-Overstreet/Compiler-Attributes-add-__flatten/20230510-010302
-        git checkout 0e5d4229f5e7671dabba56ea36583b1ca20a9a18
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202305101003.uncpRKqA-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> lib/iov_iter.c:839:16: warning: comparison of distinct pointer types ('typeof (bytes) *' (aka 'unsigned int *') and 'typeof (((1UL) << 12) - (offset & (~(((1UL) << 12) - 1)))) *' (aka 'unsigned long *')) [-Wcompare-distinct-pointer-types]
-                   unsigned b = min(bytes, PAGE_SIZE - (offset & PAGE_MASK));
-                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:67:19: note: expanded from macro 'min'
-   #define min(x, y)       __careful_cmp(x, y, <)
-                           ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:36:24: note: expanded from macro '__careful_cmp'
-           __builtin_choose_expr(__safe_cmp(x, y), \
-                                 ^~~~~~~~~~~~~~~~
-   include/linux/minmax.h:26:4: note: expanded from macro '__safe_cmp'
-                   (__typecheck(x, y) && __no_side_effects(x, y))
-                    ^~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:20:28: note: expanded from macro '__typecheck'
-           (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                      ~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +839 lib/iov_iter.c
-
-   825	
-   826	size_t copy_folio_from_iter_atomic(struct folio *folio, size_t offset,
-   827					   size_t bytes, struct iov_iter *i)
-   828	{
-   829		size_t ret = 0;
-   830	
-   831		if (WARN_ON(offset + bytes > folio_size(folio)))
-   832			return 0;
-   833		if (WARN_ON_ONCE(!i->data_source))
-   834			return 0;
-   835	
-   836	#ifdef CONFIG_HIGHMEM
-   837		while (bytes) {
-   838			struct page *page = folio_page(folio, offset >> PAGE_SHIFT);
- > 839			unsigned b = min(bytes, PAGE_SIZE - (offset & PAGE_MASK));
-   840			unsigned r = __copy_page_from_iter_atomic(page, offset, b, i);
-   841	
-   842			offset	+= r;
-   843			bytes	-= r;
-   844			ret	+= r;
-   845	
-   846			if (r != b)
-   847				break;
-   848		}
-   849	#else
-   850		ret = __copy_page_from_iter_atomic(&folio->page, offset, bytes, i);
-   851	#endif
-   852	
-   853		return ret;
-   854	}
-   855	EXPORT_SYMBOL(copy_folio_from_iter_atomic);
-   856	
-
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index 58021e73c00b..f7f9d0889df3 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -698,7 +698,7 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
+ 		return err;
+ 	}
+ 
+-	strbuf = kmalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN +
++	strbuf = kzalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN +
+ 			XATTR_MAC_OSX_PREFIX_LEN + 1, GFP_KERNEL);
+ 	if (!strbuf) {
+ 		res = -ENOMEM;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.17.1
+
