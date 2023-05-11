@@ -2,150 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A7EA6FF320
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 15:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B802A6FF3CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 16:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238362AbjEKNhf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 May 2023 09:37:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53692 "EHLO
+        id S238362AbjEKOP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 May 2023 10:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238407AbjEKNgO (ORCPT
+        with ESMTP id S238186AbjEKOP0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 May 2023 09:36:14 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04F6A106C1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 May 2023 06:35:00 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3358657b57aso53757135ab.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 May 2023 06:35:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683812100; x=1686404100;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YEtKPqXPc8KwjQyplWNpVUtXydk8COJxQKJbi5Nsyvo=;
-        b=guspJRXj1S4E8oOEdt5n8uduzj8gTSrDxuAiEf5kNvuDMddgvIAPxG6IG1HtDOSuwm
-         EfuKKn09oyu4OQ0GH8y6elJ9+jxac92pKl2xOmudsbl0tFE/CrtkUIZOBzdfSioU5Up8
-         EqiI5aflCZfWfYUsEyG9flmzo2tEg9fyN7vNOuuxnV+UsZ5M5TSx5tcMCS1REiueklzK
-         r+af8N17ydFNjTDEIG1KL1kdjw1Hz3yXM5pfPsaO5ALM5xufgyxY81ObIPA4a6wuAwc6
-         PMsVi/7QIvQ4s7/qwixElWuJQrbQ8cSd6cRnAzd6cDKuhzXDIOSqNR3jiLf1fIE7AwfW
-         kskg==
-X-Gm-Message-State: AC+VfDy89ABGqX9NEVoT5jSZg45fU05wkZ/QEIG+6ASuDVjCYk7PZ42o
-        /vB8FqTYlcZNNhOQAeuu60qMc/eUKjNG+rVWtxUk4cj48qHW
-X-Google-Smtp-Source: ACHHUZ6qcDTWku63SrxWIveG39qSJbRmc55sb0oQ/h2PLZ3REUH9VGDGcu3/x5ZFjx4lgB+7xhDtRaP1O9WIbEodeikrbJCfID09
+        Thu, 11 May 2023 10:15:26 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D85DDB1;
+        Thu, 11 May 2023 07:15:06 -0700 (PDT)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34BDwwLC027079;
+        Thu, 11 May 2023 14:13:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-03-30;
+ bh=By/DaJErkEslB9LAMa4QWUN4ypA+0K9nJyrxf06BNxA=;
+ b=y3GrcubuVB6y9Cz0Vo8xqmXTnAKg6LmqqI5MIhmIIr3K1oNwEQEmMk/u8boDdSiQRH+F
+ hABpwzpYCH6IozcLTjPyeID1KKIedDibqVJbcAVorMT4TKU5zviPSRbCt8xh305n0P6f
+ VRwMmE7TI22LAS5pkjGj3U1aI+YMYwcHubTim/C0NX6ZvsAVzlsV2MP2ItmV/Fs6WxiD
+ V/dRgxiqLuY1Vyhzs4iuHLnR7TDHDULxq+EM847KZMuFoqbqGpW8Rv4uQWlBKNpc+Wv2
+ Knc1qfTKWQjo0ZkVBKvMtUWFP6vjxsefkhXGpkdv9fcq15mZkyJGNiOUEvPHrKP/O04c Lg== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qf77g7bta-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 May 2023 14:13:55 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34BDCelF011546;
+        Thu, 11 May 2023 14:13:54 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2044.outbound.protection.outlook.com [104.47.56.44])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qf813g2p9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 May 2023 14:13:54 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fyARP9+drh9mv7mqYWFdssQ2C9DRlkubx+W55H4/+tgCaNIBnAbHiGdb4+FSGtwaRQ7Sk5zlhPbk27usauyMZ4IiEzsw49Qjpif75cjLvn2ZpcpDp0NRQxepuYgAbI1atisOhGa/WuoDhbA1YA54wADpWK25XYl8Ai+y58bA19Bn4xs1KPnAcgznvhNEzE6lhsZBEyrISAMf/T6NX/4zuwgzt2qVVzEvbKzFelU4loOSHwP7PrvYNAEMY+h61VT3horjbkwLE0NscFldvuC1/aR2FKYM6CMAso5F1yZzc/E0PbRRRzf99SMHIyR4WAF9w1KXQbSACwnke+80gg/iPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=By/DaJErkEslB9LAMa4QWUN4ypA+0K9nJyrxf06BNxA=;
+ b=OANG6EeecKewhTsZxgSn8C8iiRxp32hFkjY9NiqP4tVmLPqE2DwqmbR5di1NtqvqAySP5LDe3j2p8VOmOIJ7o0dqCt1KwGY6zXmqvs83FVK2MfqHi/HxZbaleMC8eMvKK6EDovkuCb3AJOMb1Nwa0651wIqCzv9eea4UAnaqnLqKleGNomuUy8cXxl7/Y4Tenm3SGyjHkpu6uvyokOlwuWEppWkpuE8o+5KvlNyeLr9s1jQycpoPO7BGtK69ndQTSaonQ8tkaaefm9qtsu03+agv2w+n7H4NfHgzXA7NBDfz5O6gBXiTRSJshAQ1ba6MQ7ddNNX1QKLaU1V5wp4kkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=By/DaJErkEslB9LAMa4QWUN4ypA+0K9nJyrxf06BNxA=;
+ b=dQFzrUyi1qa7twqqbbqXnD2OC3DvjjWcr0WcWF4joEmrtdHcT1lf7sks9500THzoBXjij/F3o71efssIhnlR9eKU+/elH5TTAKfrhSWsIbyaFnV50+k6e8YSmYjsOuaNIbR4qjqaxN6ydJG34VwlPmZxG+IHxt58dDQdQJd3C9Q=
+Received: from PH0PR10MB5706.namprd10.prod.outlook.com (2603:10b6:510:148::10)
+ by PH0PR10MB4405.namprd10.prod.outlook.com (2603:10b6:510:40::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.22; Thu, 11 May
+ 2023 14:13:52 +0000
+Received: from PH0PR10MB5706.namprd10.prod.outlook.com
+ ([fe80::bc67:ac75:2c91:757e]) by PH0PR10MB5706.namprd10.prod.outlook.com
+ ([fe80::bc67:ac75:2c91:757e%6]) with mapi id 15.20.6387.020; Thu, 11 May 2023
+ 14:13:52 +0000
+Message-ID: <2bab0cae-d249-376f-1a5d-bd4fa4c95309@oracle.com>
+Date:   Thu, 11 May 2023 22:12:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH 1/2] btrfs: Introduce the virtual_fsid feature
+To:     dsterba@suse.cz, Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, linux-fsdevel@vger.kernel.org,
+        kernel@gpiccoli.net, kernel-dev@igalia.com, vivek@collabora.com,
+        ludovico.denittis@collabora.com, johns@valvesoftware.com,
+        nborisov@suse.com
+References: <20230504170708.787361-1-gpiccoli@igalia.com>
+ <20230504170708.787361-2-gpiccoli@igalia.com>
+ <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
+ <20230505133810.GO6373@twin.jikos.cz>
+ <9839c86a-10e9-9c3c-0ddb-fc8011717221@oracle.com>
+ <7eaf251e-2369-1a07-a81f-87e4da8b6780@gmx.com>
+ <20230511115150.GX32559@suse.cz>
+Content-Language: en-US
+From:   Anand Jain <anand.jain@oracle.com>
+In-Reply-To: <20230511115150.GX32559@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR02CA0005.apcprd02.prod.outlook.com
+ (2603:1096:3:17::17) To PH0PR10MB5706.namprd10.prod.outlook.com
+ (2603:10b6:510:148::10)
 MIME-Version: 1.0
-X-Received: by 2002:a92:c686:0:b0:317:9096:e80f with SMTP id
- o6-20020a92c686000000b003179096e80fmr11324593ilg.4.1683812100231; Thu, 11 May
- 2023 06:35:00 -0700 (PDT)
-Date:   Thu, 11 May 2023 06:35:00 -0700
-In-Reply-To: <000000000000602c0e05f55d793c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001a583a05fb6b0e76@google.com>
-Subject: Re: [syzbot] [ntfs?] kernel BUG in ntfs_iget
-From:   syzbot <syzbot+d62e6bd2a2d05103d105@syzkaller.appspotmail.com>
-To:     anton@tuxera.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5706:EE_|PH0PR10MB4405:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b52c8dc-2fe2-4c74-fa95-08db5229f262
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 4RWykIohsYvMvTi5hEjSaeNAl+VD4MlG1ZOUZMdMnO6kdTogjYFNqMBH4ol1AnWW1qYLocRDWQNQrM3NWw5HrZf5TlFTT/K/ppYBn5ewGiikjXjAYsI/cqt81goCjgU4OQ/DcYAdH43puysdzFKEykvcYyM1qYWaHNHVZoOGjJQEO66cvuNVSupf6eoziKdlqXtvGzIDKoxEGIO57PcKsrdz++57sWGywhmTg1WgUvXhteRsrK3yif01nYJYLPevG0vHsVc0LfzW5CbS7j/0BgWN63U92MtJR0BAwpB5GFWGcrOZ3FevsVQon4UIBt2vK4AIYdJwRWfjspB5AvVTHsFF85VsJyOFNEwIQ99R7shKBiAWb3z9+OkHie5eGKDDAgyFtnsUM4OZbtfkeSkInVgoiT/ND3bC1p3mpYmtmDDpRj1SvJx/iB0L8Ie1znCr7/UE/AtRIx3ulCOPh80sWYZL6eu4UEN7wp0MBnn1vczstiFwuAmwPI2RD1sc7Ni1RrMbSTl+YnH6CGkgrI/E4ozfghrGQkyZiPl6p9rR35dU8cwe0jliEosuCvk/xCA49uKJgLZNcAC8oEpUEs7R5nKbTzf42UTQjwl3JLUWFCr1vPtWjzmmt5a0c5Zfmlmy9cP2GHzJwK45gbCDo961fA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5706.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(136003)(376002)(346002)(39860400002)(396003)(451199021)(31686004)(66946007)(66556008)(6916009)(4326008)(66476007)(478600001)(6486002)(316002)(36756003)(86362001)(31696002)(83380400001)(6506007)(186003)(26005)(53546011)(6512007)(2616005)(41300700001)(5660300002)(8676002)(44832011)(7416002)(8936002)(2906002)(6666004)(38100700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?czkydXcvQjkvUlhLNHFmWWVCL2I4a1RvTjc2NWFPelJlbVdyQkJ0MjMwNHE2?=
+ =?utf-8?B?VUdPNDhQVTFrWEluUk1hd2RDbUFLZ3VmZTFLakNpcVRISDFGK3EyQ21ZRUc0?=
+ =?utf-8?B?M2k3WmMwVko5aVBib3RncEowOVUzVmYxTkhTdmtFQnJ5dmN0TyswNHhTOHE1?=
+ =?utf-8?B?bHQzQ3JKN21YZ2U1SFZuZkxmUStkK0RFZWJMdjVuajB3RXA1YXJKdFdmbk95?=
+ =?utf-8?B?dExvZU0vNUhWUXFMbVM1Y1ZkMDQwUXhBV05SRk41dWZyc1JPRmVLZitsRmZD?=
+ =?utf-8?B?UXNqeW83cldMRnV0RFhSNUtaSmQrRzJnY0RZYmdXTzJBK1BoMWhhZUpLUGI2?=
+ =?utf-8?B?WTJtMzFHUmpPR0RCQ055emF1eGJrVG9XWmxIMkRWUkd4T09wZGl0b3dzNVBP?=
+ =?utf-8?B?K0J4dlV2akhuVVFkcVNpc3J2cjBEWlVzb0ordHpQOU4zR1MySUxTZnZFYW92?=
+ =?utf-8?B?Y0FPbjZ4c0JnUlA0VzZsTnlTM25VVlJxOWZXd1hIVlJzbklraFhJTy95UURv?=
+ =?utf-8?B?Z0VvMG5jS1ZZSmEwaXA0SXFtT09uNUtiT29aTHdrMG9rYkRFVWpwTFk4RTFo?=
+ =?utf-8?B?UXB2UzdCUi9ZemdGdExqanNmZVhseEsyL1pxVHNtd0JmdlNzeEYwMjdHS2pp?=
+ =?utf-8?B?ZXFoeGcvcFR0bHlPQUd5djhDaWd4dUdaekpaMHdld3l4cEJuREl0aHNMempL?=
+ =?utf-8?B?dUlMQzR0ZVU0UmJlaXhLTmNFVjJXaFFYbHdvT0xHQUFSSGV2eW9KQnE3ajEx?=
+ =?utf-8?B?eEswdmliQ21BS3I5YU5IclptWGZpa2ptYTRqL1ROZm0zT2pFV1JkRkszNHRk?=
+ =?utf-8?B?Q2lsZnZNRnpycDd1dDlxTVh1OTl2d2luT01CeEczM1NPUGdDd2c2M0ozZUIy?=
+ =?utf-8?B?V3hpSWtMRnYwcnJqcjAvMklDTi9RTjJMK2lyUWc3UlZFOTcxUmtyb3FxUHRu?=
+ =?utf-8?B?R09rZ2ZMeGhOaDJhYU9GMjN5UUhicU9jT3h1d0QvbFNFcGw5eHNDeEFFZUlx?=
+ =?utf-8?B?ZktWUXVhQ1pEdDFWNmNCRzN3MWJZeDZTK2luNktzT0lweEFLWWtjZU84WGlr?=
+ =?utf-8?B?SVRUZGJNd3RwSlladlZZR1YreUJaRXV2S2xhVy9LK0dSZUFFdjhyVmVDWDNq?=
+ =?utf-8?B?MzRTQmVNalIwYWhWWDg0ZE91SDl4WEZpUzlQd25ONEpvWmZtQ1JaRENacHY2?=
+ =?utf-8?B?UmlaMk1RT0hHbEdzUEdQUXAxZmpHWGwwdmp3VFNYbEphQUhjQk9RMGh3WnVj?=
+ =?utf-8?B?aTh2ZytUcThndlYvcStPa1dMTXp4bnBPODViak1kYjhKM0h5N0VBSUFrV2VI?=
+ =?utf-8?B?bC9TWlZ2MDJVSjZiaG83Zk1nY2JmMFJZeXFDYTNXTmE0TVFpMEZsZWQrbXdD?=
+ =?utf-8?B?WHFJekovczV4bkpuNjRpT0J0TEVsd3lITkN2bTRnUnNSQ2RGNGtyS1FJblhY?=
+ =?utf-8?B?Zit6M1ZUV0VCTGdTOFpHeXZmWkhnV2tCOFB2SElxcVJuYzZjOS82cGdzejdj?=
+ =?utf-8?B?Qm9wd3dZS0FqV3A0eUdESlRBMzlXSmZTTk5NcXV2VmZybkJyUytsSE9JYjN5?=
+ =?utf-8?B?V3B0SzFVK2kxZHVZQWJjTkpRRU5udUk1bVoyVW1nTFQwekhoTWhCM2gzR09P?=
+ =?utf-8?B?TTZqdTAzT2NPeVRGMmxmUXZ0ME8yYytVZFR2QWJSV3FYNEhLemVOTUozY2h6?=
+ =?utf-8?B?amJVRGs0OW5sdEkzc25ZV2g2SjM2QkZmcUZLVUpPZ2NyRUF1OUd0M2NoV1pq?=
+ =?utf-8?B?RWh4Z1J4cjJFemowbkRqejJBSEY3WHhSSkN1YlZhZC9qUE8wQldrR0t5WGhE?=
+ =?utf-8?B?Z245NlBmQXZlN2I4UUNnbzRGN2pzS3FzY25hSERaK0lsYU1SMnVyeHNlQ0k2?=
+ =?utf-8?B?SHE3ZlpNK0VWSG5YTWVCTExEQmNtK1hLOGJBT20wQnpQTHlSZzJMN2pYMi91?=
+ =?utf-8?B?dDlJcmhsclFRY1Z0VlJxZTlFUDN6TnFralpFcE9nd3k2MW0waENZUFRva1NH?=
+ =?utf-8?B?QTVaU2owaE9DKzM2UlN4T09DSEZWcE52UWhjZDQzeE9jSmxvZGRqQmRmaUpB?=
+ =?utf-8?B?L1hDWTJmVUpTTTAzZHVRcW02VjI1K2htRU5Lcno3akhJUFVSY1RtQU5xMHgr?=
+ =?utf-8?Q?rkf2NUpGVrliMbtYwp1/CRpLz?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?Mmlvb255b2dheloycTFURGFvbU5xQmJJZnZWSGxWVXlrN1A4VHU0L2ZsRWZk?=
+ =?utf-8?B?QUFhODF0MU5BZkVxVDRoWGZydDQ4RFExWmo1cE1paUM4MkQzYlduY1Z5MVBa?=
+ =?utf-8?B?MmpLK0hFcU9uN011K01uQjFUK3hOcmtxZTBCenpzbk5lcEg2aVo0SHFpQjRm?=
+ =?utf-8?B?L2JMaUVXL1NWNjMyeXF3NnJISWdWQk5JQWRkWGoydE00SWZ4S3NVUUtqNmZz?=
+ =?utf-8?B?cDY2bG8yZS9uM2l0R3R0R1lPQlBDTXd6QTJQamxlOVlLNVVFT1kwdHFBNW8w?=
+ =?utf-8?B?VGZDRzRZZmk5SGxWMnVKdDIvTlorSGt2ekNTODFHU2xBb3VITDJXZEd4eTYz?=
+ =?utf-8?B?blY0QXl5STNMbURvbFlrUnZsSTBLMVlQbnF4MGJjZG5iaFBhdFNhZWNmMlZK?=
+ =?utf-8?B?U1lhendtbmlGRUZ6YzhnY1ZERlRmTHBwT1h0d1d0ZEdxUjdrTk9KeVdmaDBW?=
+ =?utf-8?B?SFplaFQ4ajcwMFJrNTc4NGhQNXYxTVVwV2ZEM05XQmNsQmR1UzV6S3BPTVJG?=
+ =?utf-8?B?YkNPWUxDbXYzYVlsYmhvK1JpKy9zcVpnYjlUV0lpdFo2MHZmOEMycDh3QkE1?=
+ =?utf-8?B?Y1Y5eGxNU2NlTkxiWTBSRE0zMGpQbVZqb3lwSGRUZ3VHcFlaZUMwaEhaY1Vv?=
+ =?utf-8?B?dnVNbEtaOHFkRis2WTBLaGExdmJLRWxGUVoxckw3OW5ycUZWaDFpZ25LSERX?=
+ =?utf-8?B?ZTF3NzVaTHc5bERSVHBQN2tGbmtFM3RuSjl5cG5GRldkY281ZDc0c21KUVlO?=
+ =?utf-8?B?azVQZ2NsOFFYTDVGT3hCaGdNVUVqTWN6NjlYa3RlZlhSMFNxRUdWR0tGZkw2?=
+ =?utf-8?B?cmtJSzRDei85Uk1jTkxhQU9rS1UvcWVRTDJXbElBVHBPaU5MclVHYXduR0NR?=
+ =?utf-8?B?bXN6Wm5XSTM0NFV3ZGF0bGU0NEd1V09vLzNxQnZPdkN0ZDQrN0FqQ1Npajg1?=
+ =?utf-8?B?cTk0OHE1dHlvM1Z4KzBoc3ZGQ1FKNFJtUWltTnM5R1VkQWJqcVIwNGxJT2JV?=
+ =?utf-8?B?cFJ2N1kreVJHSDE0V1J3R21mams4aTkwV0NuMmJzTzlWQllUUGtlTWxMSEZ4?=
+ =?utf-8?B?ellidHBDWW9KYTlPd0EzU1lUZTBGcUxKY0FJOFVZWXRGblB3T2RxcXltMnRW?=
+ =?utf-8?B?R0dab1BqQnByejFTNVFJVnFnNGkzUm03VVNkZkpoQXBCd3ZiYkVxK2h0UUtK?=
+ =?utf-8?B?OS85eEtGRFRnVU9qZHAzazE2UTRtK0dKOFdURnViWllLMmgwMG5Dd0NWM3RC?=
+ =?utf-8?B?RE9kQ3lNRmNMQ2NCbnoyQWJBWW1oaDgzdzBveFpzODR5OWFsbnp6blBNOW1t?=
+ =?utf-8?B?bkpxU2xBTGFPWkhPRVpyUDBoZzRCRmxNQ3RZWU9vZThRNkpWTzFaTFc0d1lP?=
+ =?utf-8?Q?fSqnJHcLp9tAYoexl8qH7odtY4dENEHg=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b52c8dc-2fe2-4c74-fa95-08db5229f262
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5706.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2023 14:13:52.1096
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: R4btCmFlPMrRo8f9RseW45Tlo7ohIlsQUOzdj33B8rzvGVO7OOkA+yEkQaaDwXsaL4bS7w2tBha0pZMSWkky4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4405
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-11_11,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ adultscore=0 spamscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305110123
+X-Proofpoint-GUID: CNti9T7QL6NmgyZu6kDxGuNRoNRXXpxb
+X-Proofpoint-ORIG-GUID: CNti9T7QL6NmgyZu6kDxGuNRoNRXXpxb
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On 11/5/23 19:51, David Sterba wrote:
+> On Mon, May 08, 2023 at 07:50:55PM +0800, Qu Wenruo wrote:
+>> On 2023/5/8 19:27, Anand Jain wrote:
+>>> On 05/05/2023 21:38, David Sterba wrote:
+>>>> On Fri, May 05, 2023 at 03:21:35PM +0800, Qu Wenruo wrote:
+>>>>> On 2023/5/5 01:07, Guilherme G. Piccoli wrote:
+>>>> This is actually a good point, we can do that already. As a conterpart
+>>>> to 5f58d783fd7823 ("btrfs: free device in btrfs_close_devices for a
+>>>> single device filesystem") that drops single device from the list,
+>>>> single fs devices wouldn't be added to the list but some checks could be
+>>>> still done like superblock validation for eventual error reporting.
+>>>
+>>> Something similar occurred to me earlier. However, even for a single
+>>> device, we need to perform the scan because there may be an unfinished
+>>> replace target from a previous reboot, or a sprout Btrfs filesystem may
+>>> have a single seed device. If we were to make an exception for replace
+>>> targets and seed devices, it would only complicate the scan logic, which
+>>> goes against our attempt to simplify it.
+>>
+>> If we go SINGLE_DEV compat_ro flags, then no such problem at all, we can
+>> easily reject any multi-dev features from such SINGLE_DEV fs.
+> 
 
-HEAD commit:    d295b66a7b66 Merge tag 'fsnotify_for_v6.4-rc2' of git://gi..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1438109e280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=38526bf24c8d961b
-dashboard link: https://syzkaller.appspot.com/bug?extid=d62e6bd2a2d05103d105
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ba9dec280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ef95fa280000
+For a single device, if we remove device replacement and seeding for a
+specific flag, scanning is unnecessary.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/95f1878df2f4/disk-d295b66a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6d18d65ddcb5/vmlinux-d295b66a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6a59b1fdff8e/bzImage-d295b66a.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/eee641006b52/mount_0.gz
+> With the scanning complications that Anand mentions the compat_ro flag
+> might make more sense, with all the limitations but allowing a safe use
+> of the duplicated UUIDs.
+> 
+> The flag would have to be set at mkfs time or by btrfsune on an
+> unmounted filesystem. Doing that on a mounted filesystem is possible too
+> but brings problems with updating the state of scanned device,
+> potentially ongoing operations like dev-replace and more.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d62e6bd2a2d05103d105@syzkaller.appspotmail.com
+Setting the flag at mkfs time is preferable, in my opinion. We could
+still support the btrfstune method and/or online method later.
 
-loop0: detected capacity change from 0 to 190
-ntfs: (device loop0): is_boot_sector_ntfs(): Invalid boot sector checksum.
-ntfs: (device loop0): map_mft_record_page(): Mft record 0x1 is corrupt.  Run chkdsk.
-ntfs: (device loop0): map_mft_record(): Failed with error code 5.
-ntfs: (device loop0): ntfs_read_locked_inode(): Failed with error code -5.  Marking corrupt inode 0x1 as bad.  Run chkdsk.
-ntfs: (device loop0): load_system_files(): Failed to load $MFTMirr.  Mounting read-only.  Run ntfsfix and/or chkdsk.
-------------[ cut here ]------------
-kernel BUG at fs/ntfs/malloc.h:31!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 4993 Comm: syz-executor320 Not tainted 6.4.0-rc1-syzkaller-00025-gd295b66a7b66 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
-RIP: 0010:__ntfs_malloc fs/ntfs/malloc.h:31 [inline]
-RIP: 0010:ntfs_malloc_nofs+0xfd/0x100 fs/ntfs/malloc.h:52
-Code: 17 e8 d7 1e c7 fe 48 89 df be 42 0c 00 00 5b 41 5e 41 5f e9 a5 f2 10 ff e8 c0 1e c7 fe 31 c0 5b 41 5e 41 5f c3 e8 b3 1e c7 fe <0f> 0b 90 66 0f 1f 00 55 41 57 41 56 41 55 41 54 53 49 89 fe 49 bc
-RSP: 0018:ffffc90003a3f818 EFLAGS: 00010293
-RAX: ffffffff82c4488d RBX: 0000000000000000 RCX: ffff88802476bb80
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff888073a05118 R08: ffffffff82c447bd R09: ffffed100e9c5323
-R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
-R13: ffff888074e29be0 R14: ffff888073a05147 R15: dffffc0000000000
-FS:  000055555752e300(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f02336e6000 CR3: 000000007a170000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ntfs_read_locked_inode+0x1fd5/0x49c0 fs/ntfs/inode.c:703
- ntfs_iget+0x113/0x190 fs/ntfs/inode.c:177
- load_and_init_upcase fs/ntfs/super.c:1663 [inline]
- load_system_files+0x151c/0x4840 fs/ntfs/super.c:1818
- ntfs_fill_super+0x19b3/0x2bd0 fs/ntfs/super.c:2900
- mount_bdev+0x274/0x3a0 fs/super.c:1380
- legacy_get_tree+0xef/0x190 fs/fs_context.c:610
- vfs_get_tree+0x8c/0x270 fs/super.c:1510
- do_new_mount+0x28f/0xae0 fs/namespace.c:3039
- do_mount fs/namespace.c:3382 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f023bb1cafa
-Code: 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffebbdb6c8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f023bb1cafa
-RDX: 000000002001f1c0 RSI: 000000002001f200 RDI: 00007fffebbdb6e0
-RBP: 00007fffebbdb6e0 R08: 00007fffebbdb720 R09: 0000000000000987
-R10: 0000000000000000 R11: 0000000000000286 R12: 0000000000000004
-R13: 000055555752e2c0 R14: 0000000000000000 R15: 00007fffebbdb720
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__ntfs_malloc fs/ntfs/malloc.h:31 [inline]
-RIP: 0010:ntfs_malloc_nofs+0xfd/0x100 fs/ntfs/malloc.h:52
-Code: 17 e8 d7 1e c7 fe 48 89 df be 42 0c 00 00 5b 41 5e 41 5f e9 a5 f2 10 ff e8 c0 1e c7 fe 31 c0 5b 41 5e 41 5f c3 e8 b3 1e c7 fe <0f> 0b 90 66 0f 1f 00 55 41 57 41 56 41 55 41 54 53 49 89 fe 49 bc
-RSP: 0018:ffffc90003a3f818 EFLAGS: 00010293
-RAX: ffffffff82c4488d RBX: 0000000000000000 RCX: ffff88802476bb80
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff888073a05118 R08: ffffffff82c447bd R09: ffffed100e9c5323
-R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
-R13: ffff888074e29be0 R14: ffff888073a05147 R15: dffffc0000000000
-FS:  000055555752e300(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f02336e6000 CR3: 000000007a170000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+While we are here, I'm taking the opportunity to consolidate the
+scattered metadata UUID checking, which has been a long-standing
+goal of mine to clean up. This will make adding multi-UUID support
+cleaner. If you have any ideas, please share.
 
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Thanks, Anand
