@@ -2,126 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 372996FEDCE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 10:23:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F15586FEDD2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 10:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234431AbjEKIXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 May 2023 04:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42740 "EHLO
+        id S235611AbjEKIZ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 May 2023 04:25:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234239AbjEKIXT (ORCPT
+        with ESMTP id S234431AbjEKIZx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 May 2023 04:23:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6C230CD
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 May 2023 01:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1683793349;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gk+R+YkjF963S2SpF4BsdMdE47AkKmd4xwPaX4Oi4+k=;
-        b=jRWL/k4f5CslsaWj22QP6Rsh4zJ2YmKgfCShbyOo4iWEWo4jyKyXQ4h7n/6ZXL/ChDAbkb
-        FcWHXs0QQrpSt8mSDXrj88zBYtGW8LST7vWJlxfadbuseABqTs1IbrdD1hYrSynBo22aGC
-        8yO5Xrg/4tSD6J7mtLiu79+D5GSDvkc=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-369-4MQFJaBMN5mqwDaAoKYPsA-1; Thu, 11 May 2023 04:22:28 -0400
-X-MC-Unique: 4MQFJaBMN5mqwDaAoKYPsA-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-95f6f291b9aso1033464066b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 May 2023 01:22:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683793347; x=1686385347;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gk+R+YkjF963S2SpF4BsdMdE47AkKmd4xwPaX4Oi4+k=;
-        b=XyOJfKMYDguXyZNYP3v9J+vmKsUrxEHUfY+hwxBwW7GOnc7NFtlDe9BCtPsj95krTn
-         Y9B3grUDf+oBN1jVFwt6yP2laqhHaI5nBBKvq9Mvskw9Q4OO8wgwjhzTe0xu5MCPafJQ
-         tyEnB0elaYJ7Ega3wYk9LwGVjTBEVF9VD7cHGMwHkyra/0ElpKZYdVbeYUI1wtZVVza4
-         nPfeIJdPM/j9OUctzpJCzxbA5zammbwlZDa3McMV3NqjpNALWQFUDkoUPXaIijVavmqS
-         GyTEayypXiFEyIxRjl4cxqBysO72fRv+ama0db11JyKm7YXky6rpnnu0ZpxOrz+OggN/
-         mkow==
-X-Gm-Message-State: AC+VfDy3nSvnoTPFdQ+6wRbZATzVttYqpOlil3MKbQyz55rRUGTpdPDa
-        Nrwpbuuud7cW2n8MnlvSVlVYL6D3RQY3HmWL/DktxH6RSBSsAcu4ZqkydxAUjdx+Rj399TLe3X7
-        VhR1P9H0h0LR2fuYeYnzEjnSBZvajcnAGUQ==
-X-Received: by 2002:a17:906:478f:b0:96a:3b67:40bb with SMTP id cw15-20020a170906478f00b0096a3b6740bbmr4004891ejc.40.1683793346900;
-        Thu, 11 May 2023 01:22:26 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6zc4nyULHOnur3f+oxT8ygqFitbgjgoYUQJ4s85VdQCqWOCPEtYkKW/BM86bhB+vNheUGeNg==
-X-Received: by 2002:a17:906:478f:b0:96a:3b67:40bb with SMTP id cw15-20020a170906478f00b0096a3b6740bbmr4004876ejc.40.1683793346524;
-        Thu, 11 May 2023 01:22:26 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id s25-20020a170906285900b0096a5d341b50sm582560ejc.111.2023.05.11.01.22.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 May 2023 01:22:26 -0700 (PDT)
-Message-ID: <7b406485-83dd-f3d9-4e82-6ca42d2f4b5a@redhat.com>
-Date:   Thu, 11 May 2023 10:22:25 +0200
+        Thu, 11 May 2023 04:25:53 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8472510C9;
+        Thu, 11 May 2023 01:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=wZpbxpR/RwY9sqwxsSyrWRiWe8/6Lg93oKafl0bZX8E=; b=Qg/LWjpBqHOBF3P7TcpTYxs4F9
+        6JKjmU8x1TYMlI7RYZ0EtAdx6mvXg1xgmS2dk5LJp8cna5pg0yf42UXSMQXQ5481DXZC3qeLtKEXT
+        8KGxZAtU7p3Xf0JtELvcMjxQg2r7aE99P/jpvSa/NNbH6wbUkG94QZcioNtzZdw/KfDh9D8QMOvqv
+        8ICM2QQr84c1Xl5WiMR5jIsWaXA2DNnv4xRZA8u+IxU3E09XUJKihEXSdmKx4tbh47v8MhfjExx3Z
+        /9ff6/2ug8Y3buZuATxa105RCSQaJ1jglJ9NoSvivv29PduL1m6tcCFUgos4BYvqfghkg2J4j/tVE
+        zm7PCaWg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1px1cP-00H1wb-NZ; Thu, 11 May 2023 08:25:45 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2343C300338;
+        Thu, 11 May 2023 10:25:45 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 01D10235CC450; Thu, 11 May 2023 10:25:44 +0200 (CEST)
+Date:   Thu, 11 May 2023 10:25:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH 03/32] locking/lockdep: lockdep_set_no_check_recursion()
+Message-ID: <20230511082544.GS4253@hirez.programming.kicks-ass.net>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-4-kent.overstreet@linux.dev>
+ <20230509193147.GC2148518@hirez.programming.kicks-ass.net>
+ <ZFqqsyDpatgb77Vh@moria.home.lan>
+ <20230510085905.GJ4253@hirez.programming.kicks-ass.net>
+ <ZFwAtwIrKyJ9GJ/U@moria.home.lan>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] vboxsf: Replace all non-returning strlcpy with strscpy
-To:     Azeem Shaikh <azeemshaikh38@gmail.com>
-Cc:     linux-hardening@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230510211146.3486600-1-azeemshaikh38@gmail.com>
-Content-Language: en-US, nl
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20230510211146.3486600-1-azeemshaikh38@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZFwAtwIrKyJ9GJ/U@moria.home.lan>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, May 10, 2023 at 04:38:15PM -0400, Kent Overstreet wrote:
+> On Wed, May 10, 2023 at 10:59:05AM +0200, Peter Zijlstra wrote:
 
-On 5/10/23 23:11, Azeem Shaikh wrote:
-> strlcpy() reads the entire source buffer first.
-> This read may exceed the destination size limit.
-> This is both inefficient and can lead to linear read
-> overflows if a source string is not NUL-terminated [1].
-> In an effort to remove strlcpy() completely [2], replace
-> strlcpy() here with strscpy().
-> No return values were used, so direct replacement is safe.
+> > Have you read the ww_mutex code? If not, please do so, it does similar
+> > things.
+> > 
+> > The way it gets around the self-nesting check is by using the nest_lock
+> > annotation, the acquire context itself also has a dep_map for this
+> > purpose.
 > 
-> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strlcpy
-> [2] https://github.com/KSPP/linux/issues/89
+> This might work.
 > 
-> Signed-off-by: Azeem Shaikh <azeemshaikh38@gmail.com>
+> I was confused for a good bit when reading tho code to figure out how
+> it works - nest_lock seems to be a pretty bad name, it's really not a
+> lock. acquire_ctx?
 
-Thanks, patch looks good to me:
+That's just how ww_mutex uses it, the annotation itself comes from
+mm_take_all_locks() where mm->mmap_lock (the lock formerly known as
+mmap_sem) is used to serialize multi acquisition of vma locks.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+That is, no other code takes multiple vma locks (be it i_mmap_rwsem or
+anonvma->root->rwsem) in any order. These locks nest inside mmap_lock
+and therefore by holding mmap_lock you serialize the whole thing and can
+take them in any order you like.
 
-Regards,
-
-Hans
-
-
-
-> ---
->  fs/vboxsf/super.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index d2f6df69f611..1fb8f4df60cb 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -176,7 +176,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  	}
->  	folder_name->size = size;
->  	folder_name->length = size - 1;
-> -	strlcpy(folder_name->string.utf8, fc->source, size);
-> +	strscpy(folder_name->string.utf8, fc->source, size);
->  	err = vboxsf_map_folder(folder_name, &sbi->root);
->  	kfree(folder_name);
->  	if (err) {
-
+Perhaps, now, all these many years later another name would've made more
+sense, but I don't think it's worth the hassle of the tree-wide rename
+(there's a few other users since).
