@@ -2,229 +2,423 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A19A76FF816
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 19:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 019B26FF973
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 20:24:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238792AbjEKRGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 May 2023 13:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44884 "EHLO
+        id S238866AbjEKSYj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 May 2023 14:24:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229756AbjEKRGr (ORCPT
+        with ESMTP id S238673AbjEKSYh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 May 2023 13:06:47 -0400
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84932FA;
-        Thu, 11 May 2023 10:06:45 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id CD5CB32008C3;
-        Thu, 11 May 2023 13:06:44 -0400 (EDT)
-Received: from imap50 ([10.202.2.100])
-  by compute5.internal (MEProxy); Thu, 11 May 2023 13:06:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        colorremedies.com; h=cc:content-type:content-type:date:date:from
-        :from:in-reply-to:message-id:mime-version:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1683824804; x=1683911204; bh=A5
-        jTFtJOtctoZaxC3gTjHWmQRsjq8+d+7S7Z9ZyMZY8=; b=kUR9vThFK6NnPQWCgv
-        si0KhvA4LvM7qfHTBtgyuOzVLZusvKggoSM9/8Ox6o6FKe6/USSgZbTvQK/t/Rgr
-        Vd04+To7BxOPY38DNyOTEWCBa/bUh2tRgaiIIG5VBUjQsvZgLWryXq5BqJCdtSPT
-        KAmyQWxxiBWX/jOcr7LSToHUENfGpXyZcdDzoGkBEyh32UNNHbmRhg2WN4UaiCRc
-        sRMHjvmnFsHX/5cfWZw/lzXbEXHtRGgJBITNLf/GI/gBh4dCE7KElGAZQTH4NZPg
-        S6ye08GV4py0G29GmkVBzn4RNodABb2qfpSCVtf/TjJHJgHYuCS/iQrbvtUa9Oky
-        JNMg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:message-id
-        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683824804; x=1683911204; bh=A5jTFtJOtctoZaxC3gTjHWmQRsjq8+d+7S7
-        Z9ZyMZY8=; b=hSCBN13IeyVjF6iIdaRrgVfQnSHE1/Wi2jmQqFsgNTJzgtlvc3U
-        5BRIDE8TineOa0odDSb7JQFhOpcziJiUI2HrhKRqI+OBFcBtMgxw923JRnhSMqSZ
-        kbxOS7zdolEGp2oL8QBg6WvAwEZ7t0UUdqk1MAFnFwMWknYqjvBYXnQJkQxVNYJ/
-        04hv5Vtp7sCU2gIe5ETRWGNTltS4/wE5IJG0Qh7bSreRyAM932CuV6Vsa8Ah0LrY
-        f1KmILe8Qq6LHYnwzMto1bAcVibqWIlL2DU9b9oDwxtjQW7v3mFlBQd3rUAzgn64
-        Yn0yyQgbzSyl9RlUfVDz4Go3WPVArSzXWGA==
-X-ME-Sender: <xms:pCBdZFa9NvYswapJocfqu6ZX0M5Sn1E8FtTlD6GH9I35l20B3yGmFw>
-    <xme:pCBdZMb9p2o_zmkgl7nxPI2k9KLD8O0iaoBhzgEdpRBvyjg2dkJ_3lotP7kcze7F8
-    gx9mhRqYfVy9fJ4syM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeegkedguddutdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfffhffvufgtsehttdertderredtnecuhfhrohhmpedfvehhrhhi
-    shcuofhurhhphhihfdcuoehlihhsthhssegtohhlohhrrhgvmhgvughivghsrdgtohhmqe
-    enucggtffrrghtthgvrhhnpeeffeeltdejheefudetjedvleffvdevieegueegffdvffev
-    ffevkeeivdfhkeeikeenucffohhmrghinheprhgvughhrghtrdgtohhmnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhishhtshestgholhho
-    rhhrvghmvgguihgvshdrtghomh
-X-ME-Proxy: <xmx:pCBdZH9Jb_UrRPk52bHxznXhJWps41v-UwZ64qxfgfCL1CvAlWEnLw>
-    <xmx:pCBdZDrRYaQxyUjA5k3ZppLZ4_tgKoED3f0XPEbjNVDxUcUZUPDLBQ>
-    <xmx:pCBdZAr2W0l6UpCdY_wLSqocw7QhLa_naA8K1UprNXJyx1TGlDRWTA>
-    <xmx:pCBdZNAJSFBppXG1Z50bsRltM2fxuHkXaUY529LMuRXf4uoJU6-3Ng>
-Feedback-ID: i06494636:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id F42061700168; Thu, 11 May 2023 13:06:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-415-gf2b17fe6c3-fm-20230503.001-gf2b17fe6
+        Thu, 11 May 2023 14:24:37 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 629151FEE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 May 2023 11:24:34 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-b9e2b65f2eeso16114385276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 May 2023 11:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1683829473; x=1686421473;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pi6QoZ5SCLGgP2sxC+MkaEgbY1VXhaAz9TEP3dwrDPs=;
+        b=zpyNZKJdhGrBM4FCCCFdLJNUeHu7VB5x1zBza86yuRYT//8gc05k3M+A1XAjXeHYQU
+         XsEPOjhIWX936abY0RAnUz756Co2yEtSnUBul6v6sCxjIPkPJgNCvPmNFhIN62HuVOE1
+         irkrkZ4ocjIKKQeR0IfXiH2yEHFBjv0I6mZrVd3b7aEQFXXsYHEuLzZoJ1h6qn/7NkBG
+         Kjw+bEIhpmgecGP8AQgNQNhH64/X0SBEYMkbt0iVzYsNyZ87+y4B+sEecTBCV4ftXZHx
+         CwAYGbE8i4Tg39vPlkbL8N9Ogy15Z6Fr4rHTurnmFTOuV0J1qAkQm721UxKaMxjwzdwc
+         hf5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683829473; x=1686421473;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pi6QoZ5SCLGgP2sxC+MkaEgbY1VXhaAz9TEP3dwrDPs=;
+        b=S1PJiTgXvUdBWVgtrfucQXShSX3Tw15dHN7LVlqoRgUfdgixw3phI1ybzXFG01eCsV
+         /cTzyX1FH5acwdJ6hGcgaXyIsOJUMB2PMsakbd+Fm3D4l/Or2fsOSBv2nIbiJSjmfVIw
+         DMkoaF33nVxd3c73zSAZenMYNrmMvoS+S3FbGPFVCoX/bb5OiZhbb4faNZ/DDahPscP1
+         J3+nHZxORwjWyTdUaxl/mNJQ2/0aBvJqKlOF5yuScsOfi5vITY8oyyXhlVih3gikPvr4
+         3npSW7cipVKw5wG/zqQn63azn82PGK2XhAH6WqyqshT9vOgTKrTijP8GD79vdB6WXNmQ
+         /muA==
+X-Gm-Message-State: AC+VfDypZOiZwVGJuvSlWz4ot8OO13O2KlZ5WQlKAfB4ntEOYlIvkhit
+        xMJQQkeBYb+LJJ4oCEbMA4b2VGzRhWXTTeQRLjiC
+X-Google-Smtp-Source: ACHHUZ7u4hIr1abfAjSfObToFMnjaZ5a7i67wz1z8K+AHbBfqmL+8z0DeI0fgjzjTRoAf5zNOgmTizL/c3RRg3dEL+oU
+X-Received: from axel.svl.corp.google.com ([2620:15c:2d4:203:1119:8675:ddb3:1e7a])
+ (user=axelrasmussen job=sendgmr) by 2002:a05:6902:114e:b0:b4a:3896:bc17 with
+ SMTP id p14-20020a056902114e00b00b4a3896bc17mr9915594ybu.0.1683829473641;
+ Thu, 11 May 2023 11:24:33 -0700 (PDT)
+Date:   Thu, 11 May 2023 11:24:24 -0700
 Mime-Version: 1.0
-Message-Id: <715c18c5-ee46-41e1-a115-203c88335e50@app.fastmail.com>
-Date:   Thu, 11 May 2023 13:06:22 -0400
-From:   "Chris Murphy" <lists@colorremedies.com>
-To:     "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>,
-        "Linux Devel" <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        Linux-RAID <linux-raid@vger.kernel.org>
-Subject: 6.2 series regression, transient stalls during write intensive workloads
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Mailer: git-send-email 2.40.1.606.ga4b1b128d6-goog
+Message-ID: <20230511182426.1898675-1-axelrasmussen@google.com>
+Subject: [PATCH 1/3] mm: userfaultfd: add new UFFDIO_SIGBUS ioctl
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Hongchen Zhang <zhanghongchen@loongson.cn>,
+        Huang Ying <ying.huang@intel.com>,
+        James Houghton <jthoughton@google.com>,
+        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Nadav Amit <namit@vmware.com>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        ZhangPeng <zhangpeng362@huawei.com>
+Cc:     Axel Rasmussen <axelrasmussen@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-kernel 6.2.14-300.fc38.x86_64
+The basic idea here is to "simulate" memory poisoning for VMs. A VM
+running on some host might encounter a memory error, after which some
+page(s) are poisoned (i.e., future accesses SIGBUS). They expect that
+once poisoned, pages can never become "un-poisoned". So, when we live
+migrate the VM, we need to preserve the poisoned status of these pages.
 
-Summary: User with LSI MegaRAID SAS 2108 in raid5 with Btrfs is reporting transient (but reproducible) stalls about 10s at a time, during which time the system UI is unresponsive both CLI and GUI. PSI reports no memory or CPU pressure, but light IO pressure ~10%. Some blocked tasks are captured with sysrq+w. The IO scheduler is BFQ, changing to mq-deadline might relieve some of the stalls but is inconclusive because the problem still happens. The problem does not occur with kernel 6.1.18.
+When live migrating, we try to get the guest running on its new host as
+quickly as possible. So, we start it running before all memory has been
+copied, and before we're certain which pages should be poisoned or not.
 
-Downstream bug report:
-regression - transient stalls during write-intensive workload (edit) 
-https://bugzilla.redhat.com/show_bug.cgi?id=2193259
+So the basic way to use this new feature is:
 
-Attachment, output from "(cd /sys/kernel/debug/block/sda && find . -type f -exec grep -aH . {} \;)"
-https://bugzilla-attachments.redhat.com/attachment.cgi?id=1962546
+- On the new host, the guest's memory is registered with userfaultfd, in
+  either MISSING or MINOR mode (doesn't really matter for this purpose).
+- On any first access, we get a userfaultfd event. At this point we can
+  communicate with the old host to find out if the page was poisoned.
+- If so, we can respond with a UFFDIO_SIGBUS - this places a swap marker
+  so any future accesses will SIGBUS. Because the pte is now "present",
+  future accesses won't generate more userfaultfd events, they'll just
+  SIGBUS directly.
 
-sysrq+w excerpt:
+UFFDIO_SIGBUS does not handle unmapping previously-present PTEs. This
+isn't needed, because during live migration we want to intercept
+all accesses with userfaultfd (not just writes, so WP mode isn't useful
+for this). So whether minor or missing mode is being used (or both), the
+PTE won't be present in any case, so handling that case isn't needed.
 
-[21672.537148] sysrq: Show Blocked State
-[21672.537553] task:worker          state:D stack:0     pid:9723  ppid:1      flags:0x00004002
-[21672.537562] Call Trace:
-[21672.537565]  <TASK>
-[21672.537570]  __schedule+0x3cc/0x13e0
-[21672.537585]  schedule+0x5d/0xe0
-[21672.537590]  io_schedule+0x42/0x70
-[21672.537595]  folio_wait_bit_common+0x13d/0x370
-[21672.537605]  ? __pfx_wake_page_function+0x10/0x10
-[21672.537611]  folio_wait_writeback+0x28/0x80
-[21672.537618]  extent_write_cache_pages+0x3ac/0x540
-[21672.537628]  extent_writepages+0x5a/0x120
-[21672.537633]  ? __pfx_end_bio_extent_writepage+0x10/0x10
-[21672.537637]  do_writepages+0xc0/0x1d0
-[21672.537644]  ? hrtimer_cancel+0x11/0x20
-[21672.537650]  filemap_fdatawrite_wbc+0x5f/0x80
-[21672.537654]  __filemap_fdatawrite_range+0x58/0x80
-[21672.537662]  start_ordered_ops.constprop.0+0x73/0xd0
-[21672.537668]  btrfs_sync_file+0xbc/0x580
-[21672.537672]  ? __seccomp_filter+0x333/0x500
-[21672.537681]  __x64_sys_fdatasync+0x4b/0x90
-[21672.537689]  do_syscall_64+0x5c/0x90
-[21672.537696]  ? syscall_exit_to_user_mode+0x17/0x40
-[21672.537701]  ? do_syscall_64+0x68/0x90
-[21672.537704]  ? syscall_exit_to_user_mode+0x17/0x40
-[21672.537708]  ? do_syscall_64+0x68/0x90
-[21672.537712]  ? syscall_exit_to_user_mode+0x17/0x40
-[21672.537715]  ? do_syscall_64+0x68/0x90
-[21672.537718]  ? do_syscall_64+0x68/0x90
-[21672.537722]  entry_SYSCALL_64_after_hwframe+0x72/0xdc
-[21672.537729] RIP: 0033:0x7f899579ae9c
-[21672.537749] RSP: 002b:00007f78a57f9650 EFLAGS: 00000293 ORIG_RAX: 000000000000004b
-[21672.537754] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f899579ae9c
-[21672.537757] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000010
-[21672.537759] RBP: 00007f78a57f9660 R08: 0000000000000000 R09: 0000000000000001
-[21672.537761] R10: 0000000000000000 R11: 0000000000000293 R12: 000055d1291be230
-[21672.537764] R13: 000055d128f6f1b0 R14: 000055d1287843d8 R15: 000055d128f6f218
-[21672.537771]  </TASK>
-[21699.524273] sysrq: Show Blocked State
-[21715.167298] sysrq: Show Blocked State
-[21715.167633] task:worker          state:D stack:0     pid:9723  ppid:1      flags:0x00004002
-[21715.167639] Call Trace:
-[21715.167642]  <TASK>
-[21715.167647]  __schedule+0x3cc/0x13e0
-[21715.167657]  ? __schedule+0x3d4/0x13e0
-[21715.167662]  schedule+0x5d/0xe0
-[21715.167665]  io_schedule+0x42/0x70
-[21715.167668]  folio_wait_bit_common+0x13d/0x370
-[21715.167676]  ? __pfx_wake_page_function+0x10/0x10
-[21715.167680]  folio_wait_writeback+0x28/0x80
-[21715.167685]  extent_write_cache_pages+0x3ac/0x540
-[21715.167692]  extent_writepages+0x5a/0x120
-[21715.167694]  ? ttwu_queue_wakelist+0xbf/0x110
-[21715.167700]  ? __pfx_end_bio_extent_writepage+0x10/0x10
-[21715.167703]  do_writepages+0xc0/0x1d0
-[21715.167707]  ? __remove_hrtimer+0x39/0x90
-[21715.167711]  filemap_fdatawrite_wbc+0x5f/0x80
-[21715.167714]  __filemap_fdatawrite_range+0x58/0x80
-[21715.167719]  start_ordered_ops.constprop.0+0x73/0xd0
-[21715.167723]  btrfs_sync_file+0xbc/0x580
-[21715.167726]  ? __seccomp_filter+0x333/0x500
-[21715.167732]  __x64_sys_fdatasync+0x4b/0x90
-[21715.167738]  do_syscall_64+0x5c/0x90
-[21715.167743]  ? syscall_exit_to_user_mode+0x17/0x40
-[21715.167747]  ? do_syscall_64+0x68/0x90
-[21715.167749]  ? syscall_exit_to_user_mode+0x17/0x40
-[21715.167751]  ? do_syscall_64+0x68/0x90
-[21715.167753]  ? syscall_exit_to_user_mode+0x17/0x40
-[21715.167755]  ? do_syscall_64+0x68/0x90
-[21715.167757]  ? do_syscall_64+0x68/0x90
-[21715.167760]  entry_SYSCALL_64_after_hwframe+0x72/0xdc
-[21715.167765] RIP: 0033:0x7f899579ae9c
-[21715.167782] RSP: 002b:00007f78a57f9650 EFLAGS: 00000293 ORIG_RAX: 000000000000004b
-[21715.167785] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f899579ae9c
-[21715.167787] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000010
-[21715.167789] RBP: 00007f78a57f9660 R08: 0000000000000000 R09: 0000000000000001
-[21715.167790] R10: 0000000000000000 R11: 0000000000000293 R12: 000055d1291be230
-[21715.167792] R13: 000055d128f6f1b0 R14: 000055d1287843d8 R15: 000055d128f6f218
-[21715.167797]  </TASK>
-[21715.167822] task:kworker/u48:5   state:D stack:0     pid:9080  ppid:2      flags:0x00004000
-[21715.167826] Workqueue: writeback wb_workfn (flush-btrfs-1)
-[21715.167830] Call Trace:
-[21715.167832]  <TASK>
-[21715.167833]  __schedule+0x3cc/0x13e0
-[21715.167839]  schedule+0x5d/0xe0
-[21715.167842]  io_schedule+0x42/0x70
-[21715.167845]  blk_mq_get_tag+0x11a/0x2a0
-[21715.167850]  ? __pfx_autoremove_wake_function+0x10/0x10
-[21715.167855]  __blk_mq_alloc_requests+0x18e/0x2e0
-[21715.167861]  blk_mq_submit_bio+0x2fb/0x5f0
-[21715.167867]  __submit_bio+0xf5/0x180
-[21715.167872]  submit_bio_noacct_nocheck+0x32e/0x370
-[21715.167876]  ? submit_bio_noacct+0x71/0x4e0
-[21715.167880]  btrfs_submit_bio+0x247/0x270
-[21715.167887]  submit_one_bio+0xfa/0x120
-[21715.167893]  submit_extent_page+0x15f/0x500
-[21715.167898]  ? __pfx_page_mkclean_one+0x10/0x10
-[21715.167905]  ? __pfx_invalid_mkclean_vma+0x10/0x10
-[21715.167909]  __extent_writepage_io.constprop.0+0x273/0x590
-[21715.167914]  ? writepage_delalloc+0x20/0x180
-[21715.167918]  __extent_writepage+0x124/0x440
-[21715.167922]  extent_write_cache_pages+0x15f/0x540
-[21715.167927]  extent_writepages+0x5a/0x120
-[21715.167930]  ? __pfx_end_bio_extent_writepage+0x10/0x10
-[21715.167933]  do_writepages+0xc0/0x1d0
-[21715.167936]  ? __pfx_stack_trace_consume_entry+0x10/0x10
-[21715.167942]  __writeback_single_inode+0x3d/0x360
-[21715.167945]  ? _raw_spin_lock+0x13/0x40
-[21715.167950]  writeback_sb_inodes+0x1ed/0x4b0
-[21715.167955]  __writeback_inodes_wb+0x4c/0xf0
-[21715.167958]  wb_writeback+0x172/0x2f0
-[21715.167962]  wb_workfn+0x357/0x510
-[21715.167964]  ? __schedule+0x3d4/0x13e0
-[21715.167969]  process_one_work+0x1c7/0x3d0
-[21715.167974]  worker_thread+0x4d/0x380
-[21715.167978]  ? __pfx_worker_thread+0x10/0x10
-[21715.167981]  kthread+0xe9/0x110
-[21715.167985]  ? __pfx_kthread+0x10/0x10
-[21715.167988]  ret_from_fork+0x2c/0x50
-[21715.167996]  </TASK>
+Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+---
+ fs/userfaultfd.c                 | 63 ++++++++++++++++++++++++++++++++
+ include/linux/swapops.h          |  3 +-
+ include/linux/userfaultfd_k.h    |  4 ++
+ include/uapi/linux/userfaultfd.h | 25 +++++++++++--
+ mm/memory.c                      |  4 ++
+ mm/userfaultfd.c                 | 62 ++++++++++++++++++++++++++++++-
+ 6 files changed, 156 insertions(+), 5 deletions(-)
 
-full dmesg attachment
-https://bugzilla-attachments.redhat.com/attachment.cgi?id=1962385
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 0fd96d6e39ce..edc2928dae2b 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -1966,6 +1966,66 @@ static int userfaultfd_continue(struct userfaultfd_ctx *ctx, unsigned long arg)
+ 	return ret;
+ }
+ 
++static inline int userfaultfd_sigbus(struct userfaultfd_ctx *ctx, unsigned long arg)
++{
++	__s64 ret;
++	struct uffdio_sigbus uffdio_sigbus;
++	struct uffdio_sigbus __user *user_uffdio_sigbus;
++	struct userfaultfd_wake_range range;
++
++	user_uffdio_sigbus = (struct uffdio_sigbus __user *)arg;
++
++	ret = -EAGAIN;
++	if (atomic_read(&ctx->mmap_changing))
++		goto out;
++
++	ret = -EFAULT;
++	if (copy_from_user(&uffdio_sigbus, user_uffdio_sigbus,
++			   /* don't copy the output fields */
++			   sizeof(uffdio_sigbus) - (sizeof(__s64))))
++		goto out;
++
++	ret = validate_range(ctx->mm, uffdio_sigbus.range.start,
++			     uffdio_sigbus.range.len);
++	if (ret)
++		goto out;
++
++	ret = -EINVAL;
++	/* double check for wraparound just in case. */
++	if (uffdio_sigbus.range.start + uffdio_sigbus.range.len <=
++	    uffdio_sigbus.range.start) {
++		goto out;
++	}
++	if (uffdio_sigbus.mode & ~UFFDIO_SIGBUS_MODE_DONTWAKE)
++		goto out;
++
++	if (mmget_not_zero(ctx->mm)) {
++		ret = mfill_atomic_sigbus(ctx->mm, uffdio_sigbus.range.start,
++					  uffdio_sigbus.range.len,
++					  &ctx->mmap_changing, 0);
++		mmput(ctx->mm);
++	} else {
++		return -ESRCH;
++	}
++
++	if (unlikely(put_user(ret, &user_uffdio_sigbus->updated)))
++		return -EFAULT;
++	if (ret < 0)
++		goto out;
++
++	/* len == 0 would wake all */
++	BUG_ON(!ret);
++	range.len = ret;
++	if (!(uffdio_sigbus.mode & UFFDIO_SIGBUS_MODE_DONTWAKE)) {
++		range.start = uffdio_sigbus.range.start;
++		wake_userfault(ctx, &range);
++	}
++	ret = range.len == uffdio_sigbus.range.len ? 0 : -EAGAIN;
++
++out:
++	return ret;
++}
++
+ static inline unsigned int uffd_ctx_features(__u64 user_features)
+ {
+ 	/*
+@@ -2067,6 +2127,9 @@ static long userfaultfd_ioctl(struct file *file, unsigned cmd,
+ 	case UFFDIO_CONTINUE:
+ 		ret = userfaultfd_continue(ctx, arg);
+ 		break;
++	case UFFDIO_SIGBUS:
++		ret = userfaultfd_sigbus(ctx, arg);
++		break;
+ 	}
+ 	return ret;
+ }
+diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+index 3a451b7afcb3..fa778a0ae730 100644
+--- a/include/linux/swapops.h
++++ b/include/linux/swapops.h
+@@ -405,7 +405,8 @@ typedef unsigned long pte_marker;
+ 
+ #define  PTE_MARKER_UFFD_WP			BIT(0)
+ #define  PTE_MARKER_SWAPIN_ERROR		BIT(1)
+-#define  PTE_MARKER_MASK			(BIT(2) - 1)
++#define  PTE_MARKER_UFFD_SIGBUS			BIT(2)
++#define  PTE_MARKER_MASK			(BIT(3) - 1)
+ 
+ static inline swp_entry_t make_pte_marker_entry(pte_marker marker)
+ {
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index d78b01524349..6de1084939c5 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -46,6 +46,7 @@ enum mfill_atomic_mode {
+ 	MFILL_ATOMIC_COPY,
+ 	MFILL_ATOMIC_ZEROPAGE,
+ 	MFILL_ATOMIC_CONTINUE,
++	MFILL_ATOMIC_SIGBUS,
+ 	NR_MFILL_ATOMIC_MODES,
+ };
+ 
+@@ -83,6 +84,9 @@ extern ssize_t mfill_atomic_zeropage(struct mm_struct *dst_mm,
+ extern ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long dst_start,
+ 				     unsigned long len, atomic_t *mmap_changing,
+ 				     uffd_flags_t flags);
++extern ssize_t mfill_atomic_sigbus(struct mm_struct *dst_mm, unsigned long start,
++				   unsigned long len, atomic_t *mmap_changing,
++				   uffd_flags_t flags);
+ extern int mwriteprotect_range(struct mm_struct *dst_mm,
+ 			       unsigned long start, unsigned long len,
+ 			       bool enable_wp, atomic_t *mmap_changing);
+diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
+index 66dd4cd277bd..616e33d3db97 100644
+--- a/include/uapi/linux/userfaultfd.h
++++ b/include/uapi/linux/userfaultfd.h
+@@ -39,7 +39,8 @@
+ 			   UFFD_FEATURE_MINOR_SHMEM |		\
+ 			   UFFD_FEATURE_EXACT_ADDRESS |		\
+ 			   UFFD_FEATURE_WP_HUGETLBFS_SHMEM |	\
+-			   UFFD_FEATURE_WP_UNPOPULATED)
++			   UFFD_FEATURE_WP_UNPOPULATED |	\
++			   UFFD_FEATURE_SIGBUS_IOCTL)
+ #define UFFD_API_IOCTLS				\
+ 	((__u64)1 << _UFFDIO_REGISTER |		\
+ 	 (__u64)1 << _UFFDIO_UNREGISTER |	\
+@@ -49,12 +50,14 @@
+ 	 (__u64)1 << _UFFDIO_COPY |		\
+ 	 (__u64)1 << _UFFDIO_ZEROPAGE |		\
+ 	 (__u64)1 << _UFFDIO_WRITEPROTECT |	\
+-	 (__u64)1 << _UFFDIO_CONTINUE)
++	 (__u64)1 << _UFFDIO_CONTINUE |		\
++	 (__u64)1 << _UFFDIO_SIGBUS)
+ #define UFFD_API_RANGE_IOCTLS_BASIC		\
+ 	((__u64)1 << _UFFDIO_WAKE |		\
+ 	 (__u64)1 << _UFFDIO_COPY |		\
++	 (__u64)1 << _UFFDIO_WRITEPROTECT |	\
+ 	 (__u64)1 << _UFFDIO_CONTINUE |		\
+-	 (__u64)1 << _UFFDIO_WRITEPROTECT)
++	 (__u64)1 << _UFFDIO_SIGBUS)
+ 
+ /*
+  * Valid ioctl command number range with this API is from 0x00 to
+@@ -71,6 +74,7 @@
+ #define _UFFDIO_ZEROPAGE		(0x04)
+ #define _UFFDIO_WRITEPROTECT		(0x06)
+ #define _UFFDIO_CONTINUE		(0x07)
++#define _UFFDIO_SIGBUS			(0x08)
+ #define _UFFDIO_API			(0x3F)
+ 
+ /* userfaultfd ioctl ids */
+@@ -91,6 +95,8 @@
+ 				      struct uffdio_writeprotect)
+ #define UFFDIO_CONTINUE		_IOWR(UFFDIO, _UFFDIO_CONTINUE,	\
+ 				      struct uffdio_continue)
++#define UFFDIO_SIGBUS		_IOWR(UFFDIO, _UFFDIO_SIGBUS, \
++				      struct uffdio_sigbus)
+ 
+ /* read() structure */
+ struct uffd_msg {
+@@ -225,6 +231,7 @@ struct uffdio_api {
+ #define UFFD_FEATURE_EXACT_ADDRESS		(1<<11)
+ #define UFFD_FEATURE_WP_HUGETLBFS_SHMEM		(1<<12)
+ #define UFFD_FEATURE_WP_UNPOPULATED		(1<<13)
++#define UFFD_FEATURE_SIGBUS_IOCTL		(1<<14)
+ 	__u64 features;
+ 
+ 	__u64 ioctls;
+@@ -321,6 +328,18 @@ struct uffdio_continue {
+ 	__s64 mapped;
+ };
+ 
++struct uffdio_sigbus {
++	struct uffdio_range range;
++#define UFFDIO_SIGBUS_MODE_DONTWAKE		((__u64)1<<0)
++	__u64 mode;
++
++	/*
++	 * Fields below here are written by the ioctl and must be at the end:
++	 * the copy_from_user will not read past here.
++	 */
++	__s64 updated;
++};
++
+ /*
+  * Flags for the userfaultfd(2) system call itself.
+  */
+diff --git a/mm/memory.c b/mm/memory.c
+index f69fbc251198..e4b4207c2590 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3675,6 +3675,10 @@ static vm_fault_t handle_pte_marker(struct vm_fault *vmf)
+ 	if (WARN_ON_ONCE(!marker))
+ 		return VM_FAULT_SIGBUS;
+ 
++	/* SIGBUS explicitly requested for this PTE. */
++	if (marker & PTE_MARKER_UFFD_SIGBUS)
++		return VM_FAULT_SIGBUS;
++
+ 	/* Higher priority than uffd-wp when data corrupted */
+ 	if (marker & PTE_MARKER_SWAPIN_ERROR)
+ 		return VM_FAULT_SIGBUS;
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index e97a0b4889fc..933587eebd5d 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -278,6 +278,51 @@ static int mfill_atomic_pte_continue(pmd_t *dst_pmd,
+ 	goto out;
+ }
+ 
++/* Handles UFFDIO_SIGBUS for all non-hugetlb VMAs. */
++static int mfill_atomic_pte_sigbus(pmd_t *dst_pmd,
++				   struct vm_area_struct *dst_vma,
++				   unsigned long dst_addr,
++				   uffd_flags_t flags)
++{
++	int ret;
++	struct mm_struct *dst_mm = dst_vma->vm_mm;
++	pte_t _dst_pte, *dst_pte;
++	spinlock_t *ptl;
++
++	_dst_pte = make_pte_marker(PTE_MARKER_UFFD_SIGBUS);
++	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
++
++	if (vma_is_shmem(dst_vma)) {
++		struct inode *inode;
++		pgoff_t offset, max_off;
++
++		/* serialize against truncate with the page table lock */
++		inode = dst_vma->vm_file->f_inode;
++		offset = linear_page_index(dst_vma, dst_addr);
++		max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
++		ret = -EFAULT;
++		if (unlikely(offset >= max_off))
++			goto out_unlock;
++	}
++
++	ret = -EEXIST;
++	/*
++	 * For now, we don't handle unmapping pages, so only support filling in
++	 * none PTEs, or replacing PTE markers.
++	 */
++	if (!pte_none_mostly(*dst_pte))
++		goto out_unlock;
++
++	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
++
++	/* No need to invalidate - it was non-present before */
++	update_mmu_cache(dst_vma, dst_addr, dst_pte);
++	ret = 0;
++out_unlock:
++	pte_unmap_unlock(dst_pte, ptl);
++	return ret;
++}
++
+ static pmd_t *mm_alloc_pmd(struct mm_struct *mm, unsigned long address)
+ {
+ 	pgd_t *pgd;
+@@ -328,8 +373,12 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 	 * supported by hugetlb.  A PMD_SIZE huge pages may exist as used
+ 	 * by THP.  Since we can not reliably insert a zero page, this
+ 	 * feature is not supported.
++	 *
++	 * PTE marker handling for hugetlb is a bit special, so for now
++	 * UFFDIO_SIGBUS is not supported.
+ 	 */
+-	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE)) {
++	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE) ||
++	    uffd_flags_mode_is(flags, MFILL_ATOMIC_SIGBUS)) {
+ 		mmap_read_unlock(dst_mm);
+ 		return -EINVAL;
+ 	}
+@@ -473,6 +522,9 @@ static __always_inline ssize_t mfill_atomic_pte(pmd_t *dst_pmd,
+ 	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE)) {
+ 		return mfill_atomic_pte_continue(dst_pmd, dst_vma,
+ 						 dst_addr, flags);
++	} else if (uffd_flags_mode_is(flags, MFILL_ATOMIC_SIGBUS)) {
++		return mfill_atomic_pte_sigbus(dst_pmd, dst_vma,
++					       dst_addr, flags);
+ 	}
+ 
+ 	/*
+@@ -694,6 +746,14 @@ ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long start,
+ 			    uffd_flags_set_mode(flags, MFILL_ATOMIC_CONTINUE));
+ }
+ 
++ssize_t mfill_atomic_sigbus(struct mm_struct *dst_mm, unsigned long start,
++			    unsigned long len, atomic_t *mmap_changing,
++			    uffd_flags_t flags)
++{
++	return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
++			    uffd_flags_set_mode(flags, MFILL_ATOMIC_SIGBUS));
++}
++
+ long uffd_wp_range(struct vm_area_struct *dst_vma,
+ 		   unsigned long start, unsigned long len, bool enable_wp)
+ {
+-- 
+2.40.1.606.ga4b1b128d6-goog
 
-
-Thanks,
-
-
-
---
-Chris Murphy
