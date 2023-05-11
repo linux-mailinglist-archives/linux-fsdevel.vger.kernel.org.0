@@ -2,306 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D86AF6FFB00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 22:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEBE96FFB50
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 May 2023 22:30:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239599AbjEKUDj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 May 2023 16:03:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53006 "EHLO
+        id S239415AbjEKUaR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 May 2023 16:30:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238811AbjEKUDi (ORCPT
+        with ESMTP id S229611AbjEKUaP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 May 2023 16:03:38 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1903C8A72
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 May 2023 13:03:36 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-50db91640d3so5984776a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 May 2023 13:03:36 -0700 (PDT)
+        Thu, 11 May 2023 16:30:15 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 296A149DB;
+        Thu, 11 May 2023 13:30:14 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34BDx1B2014467;
+        Thu, 11 May 2023 20:29:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-03-30;
+ bh=/Yp5qhHn4keQAkPCibr3+CTO7+NJTOeNPP0TQK5YpZM=;
+ b=1OMgsVUVnMs6q8waCgTMFCmMa3iUC17xrls77PtXopnqCUICXyoERlyxG3NT+s96WE6W
+ w6OK2USD9npihz2N2dBeQ9uuDAmPvKDk6AV0Rooi9g7DEUT9lEt0ACRh09KONzYQRzAa
+ JWdBtROYD0lZMJTQ7t6jUszMOObBqQINmIy9tYTSs0clEcWjx7vwXdYYBN2syrCfSQtO
+ g9ixBZ8AOEVl0zdhCTN+UIVbIR4S2tPZ6O6GPWCTstM9dAhq59hJ4Pgg5gWos84IWCFP
+ 0V3GE0TFVe+Dj77thggQhLubp/s6MKQMABIU3NagZ70POWj6zIgICwdtQGY5/vkO0lX+ EQ== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qf77c86mr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 May 2023 20:29:50 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34BIdVWX011717;
+        Thu, 11 May 2023 20:29:50 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2042.outbound.protection.outlook.com [104.47.51.42])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qf813xa2n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 11 May 2023 20:29:50 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dExiWOCW8wMbs8IykCui6ORcENUzaUe+5rRHtcD8VSwo1S1b8tIBmNAL2wxN5/DhtbnmuIwul14u8/DxIIpBq8l3qthRouGXHt/1EcPec8UWY7GSNpX/jsFxv/QQ2D7yeXx2g9DiBEJ/1wztUfW6VXkRpDX8G0OS/Oh9fm6CkVkAgTfPxV5zAIKJ6IL9HLaa/GrxjyNsdwS0Kbl+cQZ2cJYbIFxYxJLu84LxSo9WsezQJ78oxqxwEs6EONl0X1m0jVMiJba3qmoah2vigY12XJTlKeyI1WtxIq2yZwKkc8od8SmjxOMXYMnPJie445mRhFt6d7caBma1qHQD87+vww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/Yp5qhHn4keQAkPCibr3+CTO7+NJTOeNPP0TQK5YpZM=;
+ b=EuFdF0o3YYr8QQvpT6DBXmQ5EN+AHnAwhOQUOA/gf8FWHSI5X9blURMY/G4xiKeJ3soYwmHVcrIGD3Xt82XoIE8pzd/Zd2bcqVcadaC9bOJOKdrfav8CQy+TmxZMRwBx4wwhPER3OUd4xT0Em1L41o+Nc3OgjJjymh7BcfWyPvFtDQV+HkQZJ7QgSMuEjgSIHyIPl0WioBGpcf3rql+eSWgiEeZLPvmDR0jzRlPV5Yw4png36G117f9BeqLjqghv0RsHf6+PMT6P5MrLjMu5IGTVhp4mTo14QoP9Akc5G05QIEBfDkWbhNWuU01ph3tedZ9+E09Jnmmf2LfdCvFvvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1683835414; x=1686427414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U8xH7zGQzzRbqK6D4Oqhm3xKHhC25ViGnrUjwC/gsSw=;
-        b=MW5xkfBKg7R27pQpq6VOVNVFJBGddm5iGtOfa0k1cfyLC9VX049iC1rmEI6Fl/GVrk
-         7KKp7M8jRu3u4zh+yk6X15HS11ERm6dMK4kr50yDNyZFYvNqTYalyzCbsc1AAdQimZEp
-         nSfhnGrqTLLb7MBOSSUVZ5FhH2Rqs6nIRmhZ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683835414; x=1686427414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U8xH7zGQzzRbqK6D4Oqhm3xKHhC25ViGnrUjwC/gsSw=;
-        b=Zcd69++7q58esiqWk6qjyTUs6FTsDm6PpXAZM2kOOjnYo5N3WcbC9l+JJVDBhnxXuQ
-         rkPd038v6epKi0BA107+ntS/7Z619bw1Nwn+ZWTAjJ1CUbPVm8kqQwJklEnugULdnynj
-         5+AGnbxMAWfFDJKmNyNbkR8X2kb/nxNRzg30S1uLBdq1pEuq3/E9OQcYdWHanMzqgkEF
-         JoTatWgUjWk5no8Glu6yTWZ5KMBX8ikvsm8Q6SdZ8OMc8goHBcTT6BB46yiz+IjQx5/S
-         bEotU8v64EoivuI+bVcp5g1YxRhac9pU/QZnLqMin/8fwW7JHPpN6Ux/r45M31jT+QRR
-         pjOA==
-X-Gm-Message-State: AC+VfDw++BDVVT/13Bk72Z89Jj2vE89tztNOOePCtU2dNoCP5ShvbLOY
-        p4WxAzlzb9t1pXW5gvIPcU2UwGMk9DLPRQbI3F1kuQ==
-X-Google-Smtp-Source: ACHHUZ79IojXfbkX6DfE2MLOr1tErOiC5hf30sNWjiHWJExQyVXKxDUaQO3ACK/0ZNMxUV3252rL9e3+SLQj4skO4N0=
-X-Received: by 2002:a17:907:9694:b0:969:ba95:a3a0 with SMTP id
- hd20-20020a170907969400b00969ba95a3a0mr12334138ejc.23.1683835414423; Thu, 11
- May 2023 13:03:34 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/Yp5qhHn4keQAkPCibr3+CTO7+NJTOeNPP0TQK5YpZM=;
+ b=H4vS6iPvn/lkJ2uZ74yRKih4OrQ0rkiZABi66I+4cLW+ZW5mznUSzRUCEvAASdL6WVF/7k0kcq67iCJbmrWSdV1anXfgVflJWkbAU8KQ59+c5LtJ9Mq0uTx2Y+jqD11+dsQzNUzZYcCHDRpbgDY8RUgAhyTDW5df+1px0moqTA4=
+Received: from BY5PR10MB4196.namprd10.prod.outlook.com (2603:10b6:a03:20d::23)
+ by SJ2PR10MB7760.namprd10.prod.outlook.com (2603:10b6:a03:574::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.21; Thu, 11 May
+ 2023 20:22:47 +0000
+Received: from BY5PR10MB4196.namprd10.prod.outlook.com
+ ([fe80::ffb:de39:b76b:52eb]) by BY5PR10MB4196.namprd10.prod.outlook.com
+ ([fe80::ffb:de39:b76b:52eb%3]) with mapi id 15.20.6387.022; Thu, 11 May 2023
+ 20:22:47 +0000
+Date:   Thu, 11 May 2023 13:22:43 -0700
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Hongchen Zhang <zhanghongchen@loongson.cn>,
+        Huang Ying <ying.huang@intel.com>,
+        James Houghton <jthoughton@google.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Nadav Amit <namit@vmware.com>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        ZhangPeng <zhangpeng362@huawei.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm: userfaultfd: add new UFFDIO_SIGBUS ioctl
+Message-ID: <20230511202243.GA5466@monkey>
+References: <20230511182426.1898675-1-axelrasmussen@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230511182426.1898675-1-axelrasmussen@google.com>
+X-ClientProxiedBy: MW4PR03CA0140.namprd03.prod.outlook.com
+ (2603:10b6:303:8c::25) To BY5PR10MB4196.namprd10.prod.outlook.com
+ (2603:10b6:a03:20d::23)
 MIME-Version: 1.0
-References: <20230420004850.297045-1-sarthakkukreti@chromium.org>
- <20230506062909.74601-1-sarthakkukreti@chromium.org> <20230506062909.74601-5-sarthakkukreti@chromium.org>
- <ZFp7ykxGFUbPG1ON@redhat.com>
-In-Reply-To: <ZFp7ykxGFUbPG1ON@redhat.com>
-From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
-Date:   Thu, 11 May 2023 13:03:23 -0700
-Message-ID: <CAG9=OMOMrFcy6UdL8-3wZGwOr1nqLm1bpvL+G1g2dvBhJWU2Kw@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] dm-thin: Add REQ_OP_PROVISION support
-To:     Mike Snitzer <snitzer@kernel.org>
-Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Bart Van Assche <bvanassche@google.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR10MB4196:EE_|SJ2PR10MB7760:EE_
+X-MS-Office365-Filtering-Correlation-Id: c98e1d6f-f5f9-4f37-6630-08db525d7c10
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 6dTwhewEaNLp+NR3+PTdBiwFfwZ6JCGQc6leOTJ9F9tYlYJZDSLcdpz5+ZwRCKNz7gbp0jcqLpRNRCp0H8rTU2753acuDihsXaigXH9QWk9Hn5l+8X2h7SbRLvEmOZIxkmy2rx8oZCQfQnZgs+xXgSSqfmRUP5mQkEIQ+SV1X+MIpeQ+l5tgxosTkUtCO/AoJBzSP1OIeDQP+DCzouOni93yz6kn904XSZkh0Lnjejkf+wLS0Auw8ykSjoyoj0/jKW/ne5Bj+1osH/ryWI/wb5d+yqBPGdmSCVi5GtZweoZNj9bymOM0oIsvAwlhmXB2LjHda5T1rAWga+AolDqSTb5H37iisVcQfpXg0kgzD7qeosXiGIE84PcwsClkmHHB82xFqtcA2MacjEKdfEBxOLy3UtICh+dfjhJ9S7RyiOy+QMc65CbX00Pgp28YMhoJl4slRW0HRz/aLhEKAxC0xB/mr0swCnlg8C+rA5e8xH2lhXXdjyQC2rxEeLuzGItSr6kCviiYkU+ct7f/OXKij0Tr7K9KcwWnWF3CO8aeygUTxlNy15+Yo1W1T4V/rmRF
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4196.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(396003)(136003)(376002)(346002)(39860400002)(366004)(451199021)(4326008)(66556008)(66476007)(6916009)(478600001)(66946007)(316002)(54906003)(6486002)(33656002)(86362001)(83380400001)(6506007)(26005)(186003)(1076003)(9686003)(6512007)(53546011)(6666004)(8936002)(5660300002)(7416002)(8676002)(44832011)(33716001)(41300700001)(2906002)(38100700002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wANhYg5M50O6+W8w9ro63Y8i2v5TpeYoK8wV6NxYzSwNjQOnEkNBL8UerdE7?=
+ =?us-ascii?Q?lX0QTFy06XtK/b/OQBNgnsesiwmeezHycKipiQMHP3bwLpyvOiyxFVrxEBYJ?=
+ =?us-ascii?Q?5f9Ce6vBaloFb/2DLF2TuHdIHWB30gRhmcyahQzSFpWi+++q4inOo4mon9K7?=
+ =?us-ascii?Q?vVG9fIldp7AtQcEeA+s8roJazMrIM0jwcxxnma5I82brW3kGOCVu32sMXdq+?=
+ =?us-ascii?Q?mb8ZGaCoVhk1YEIgoWTqRQ0OjkN4tjP2cLeueclDO8p7+WLGYSGqCmCpou7d?=
+ =?us-ascii?Q?oZwsVGHPDU31leJtbJZb06a9b/n0Z3jIIHkk+6bV6E3QvGP3tieRdOZxfpEo?=
+ =?us-ascii?Q?yF/VgVobC5p1czwLiP+iDwQoSht6KZ32tpjiUbMXAOdE+U/+QyeBjjf6ZTRK?=
+ =?us-ascii?Q?C0aQLmeFqBNlJbf6TZIPaN3g9GsBinLC18szpVRMi5CAP9S3FfJrzawQVt4t?=
+ =?us-ascii?Q?7+9lSCaA7msTmZ7XwLJVZtZuwQXaxEKFLKTJAFcscF2pvZIQGCzltlXHag8V?=
+ =?us-ascii?Q?hGHB+s/8gixJbvd9dCHQXn5FVmme1eTxrbYvTjQPhbw2PVi8uXhV7wzARfuq?=
+ =?us-ascii?Q?5ojWmojnva2DMcxXybTk1EyDxFslLnob5onUWNxwCix0iAjZ+fLNthlBq/lw?=
+ =?us-ascii?Q?KKe5ytrViSdLD6fJ9wLAXBGkKgCYjcaBdqwC2TYRYRMtHxKwWRo3J6FbJc+x?=
+ =?us-ascii?Q?EY0gumRtCECkKlHuucfEDcTM7trqR5o8EV0P8c8Pkh6BIqQzyEEUhwFS8tT/?=
+ =?us-ascii?Q?RK7bYpemfPBNmqDS9J2BPz1t5Qa0TTqXXrdNECbdcJ7fFqgz8Qu1kv80UPCW?=
+ =?us-ascii?Q?Hpa7DHSsmLJcKpjJmpuLiBzEJrFC667DDGjcd873wVhRA/Pe3NXBA5LCuDRY?=
+ =?us-ascii?Q?vSy1VwjW9f53zquRKQSZW2Op+SLwCTflBQRMKedjiD9DttZehbZ5hIcDYVYT?=
+ =?us-ascii?Q?QK/4qpi3Ou46tRQSK7eOXthcnFcEVRhWMMC4DYYg1FdtFtowS7cJRs5vcAmC?=
+ =?us-ascii?Q?Zf9/IXIEGyEII2+92nsEtgs6qP3fZeQzni+zVgan4nR5f4ls3aRjH21amHgy?=
+ =?us-ascii?Q?uXjB9QhnfRRTR9EqZnrxe8PhjPFYT4eJeJE3QnW5Bz16gy3xYabnlMhT+tBh?=
+ =?us-ascii?Q?IfdHeVsf18QRc96ty3Ae4jOV077Z2Yfu4HbL0iVLuBerqKXOrQn3fTbO3SIh?=
+ =?us-ascii?Q?Zo9ejdvaOHVhy4r861ARsibm7E9ZWKh+zK6cj9/deY8+J9p143CklGxuLXT8?=
+ =?us-ascii?Q?ZQNOvTueMaZfxBFLXWGypOth4+c6W4bjayi/m9I2DRZZ9f0/Zw8r4NlLcFfz?=
+ =?us-ascii?Q?hcpRx7/QeWuaXEfClP5xKBok1EPQOSgNFYIpA1VqGw9lrCByS6+qtglhW8R2?=
+ =?us-ascii?Q?OnIdVq5q8ouZnMrz5kHYx5ju0wEayNzc3Etf/LSr0t7DrzU5XStng3CcV6aK?=
+ =?us-ascii?Q?39D6Eex5X9X4wRyoI4GV4Mh3DpDedKoqjNesevY/Xo0gPjYODdyKCir+08Zh?=
+ =?us-ascii?Q?A5oqa91a6PwzE0Tp0eyvIYvZmNYdrn7iADMl/WuxoT+8zqiFdwOY2MhcHTSf?=
+ =?us-ascii?Q?lrCadHW/LHP536lTDg1Ou384sRl45YrUj6fO7zn8?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?6vK4Ucuf1ikvnIw2A57soMEU5TYkSoNE8u/8KsfUTnctMQnwM/jizWSo1Fx0?=
+ =?us-ascii?Q?jPEouzJeMXeftLVeTKvXs022/Aa2oieetvlKWLMT9RKPPen2LS/Fy/d65RoY?=
+ =?us-ascii?Q?FnRNt22zc3SrZcJpU1mD+ct5xyGwI6YIBJMH5xkEHSIwxeyVcfMnyxkdqhWH?=
+ =?us-ascii?Q?fjV+wudDWjPAOws21ZjsD73AqNS+rBQaXAKpt4Pnoz1MFWzsISPc421jIQgJ?=
+ =?us-ascii?Q?AVgA2XaekrPj2f4ESWF1mTJOiKdny11CErOdVu7W8H7QBWNpDC4kMGnG5Qiq?=
+ =?us-ascii?Q?f0txR60l8H2qxWGlWx/G5vVBX2Je6DBemWffZB47vSqcWQGXWXkASo0+UVPu?=
+ =?us-ascii?Q?4zVND0MU3DfMJ0MOkgg0rBH483/Zaua80QXQ3dOEAbdleQMkcRZ15xLTjkL4?=
+ =?us-ascii?Q?xO2fxeBGxWJyeceGg8uVe4e7L9HZQGo3Mnuz6h/D9J2s8+odKoTuO181s4oW?=
+ =?us-ascii?Q?rsCKKVU5lITnH+mJxAFrtgW1cElKVLLDAjLEuhywMW9WzEUcDYEv85nLm0Kh?=
+ =?us-ascii?Q?ANTpU3U2hEhEX0zYKHCs8issv9X5JdMITurxgkWVIxhToovQDVNL4T+knhif?=
+ =?us-ascii?Q?c/HVQxVqBKLsGMt+xGTyzJl1QtFX3hvMO1dfNJapVnlfXztL8esOkg/mXww9?=
+ =?us-ascii?Q?dq1No6KgWzRSJIDVe2cIYA+7yVwlDaT1MT/SqpPgqtesndFwmbB4NfQFvIiI?=
+ =?us-ascii?Q?XFK8yulGrD9/nfCau8Zd3ZUA612z/qUbnrt6NB+qNqJ0tljQ1vIdy687WnqO?=
+ =?us-ascii?Q?WZRFuPbfUt0KNyvWV7l5/KoD2o9M6ncdWjXfb+0epb9iWXYftkQ6LHbUW7R1?=
+ =?us-ascii?Q?RSKeVfxUs0VkuTPEIFEbAtNwQgL0feU8+7Da7omcBMX0eQbQQkci5msVtkNo?=
+ =?us-ascii?Q?BSJ9RH1aolH/Q4UEXp6OvlwZhgtD61FILYy8u78zzPdIARXmLbgv1noGBFth?=
+ =?us-ascii?Q?UJxpjuIgkaB8wSA7qOET2D7Rz63TnKTYlEHJyqMG6DPmkeZasVNd5VjjovCh?=
+ =?us-ascii?Q?YRDPDv0R8/kYuXaQ4OwEskQx7tOMuK9WunYV2W63rKq1Bz+buBxsRyMR7mxu?=
+ =?us-ascii?Q?tjp5dEHQPbZaneptvUx5tr234AVyJ5QRHQdigwNu6eEMOINRqhFdaEEZMaDE?=
+ =?us-ascii?Q?hnCcZgSOpx95?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c98e1d6f-f5f9-4f37-6630-08db525d7c10
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4196.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2023 20:22:47.1955
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4AyffKTxDGEmW/EVg4hodBkHPJOzM4xPN/OPNwdQWsasvDDpKJFEelDzZlmtkvsJM9O0Lr8bTldihjNvfNVQzg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7760
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-11_17,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ adultscore=0 spamscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305110174
+X-Proofpoint-GUID: W5GM3WaUrLTtsZp9C3bmFtkxgG9S5cfX
+X-Proofpoint-ORIG-GUID: W5GM3WaUrLTtsZp9C3bmFtkxgG9S5cfX
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 9, 2023 at 9:58=E2=80=AFAM Mike Snitzer <snitzer@kernel.org> wr=
-ote:
->
-> On Sat, May 06 2023 at  2:29P -0400,
-> Sarthak Kukreti <sarthakkukreti@chromium.org> wrote:
->
-> > dm-thinpool uses the provision request to provision
-> > blocks for a dm-thin device. dm-thinpool currently does not
-> > pass through REQ_OP_PROVISION to underlying devices.
-> >
-> > For shared blocks, provision requests will break sharing and copy the
-> > contents of the entire block. Additionally, if 'skip_block_zeroing'
-> > is not set, dm-thin will opt to zero out the entire range as a part
-> > of provisioning.
-> >
-> > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
-> > ---
-> >  drivers/md/dm-thin.c | 70 +++++++++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 66 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-> > index 2b13c949bd72..3f94f53ac956 100644
-> > --- a/drivers/md/dm-thin.c
-> > +++ b/drivers/md/dm-thin.c
-> > @@ -274,6 +274,7 @@ struct pool {
-> >
-> >       process_bio_fn process_bio;
-> >       process_bio_fn process_discard;
-> > +     process_bio_fn process_provision;
-> >
-> >       process_cell_fn process_cell;
-> >       process_cell_fn process_discard_cell;
-> > @@ -913,7 +914,8 @@ static void __inc_remap_and_issue_cell(void *contex=
-t,
-> >       struct bio *bio;
-> >
-> >       while ((bio =3D bio_list_pop(&cell->bios))) {
-> > -             if (op_is_flush(bio->bi_opf) || bio_op(bio) =3D=3D REQ_OP=
-_DISCARD)
-> > +             if (op_is_flush(bio->bi_opf) || bio_op(bio) =3D=3D REQ_OP=
-_DISCARD ||
-> > +                 bio_op(bio) =3D=3D REQ_OP_PROVISION)
-> >                       bio_list_add(&info->defer_bios, bio);
-> >               else {
-> >                       inc_all_io_entry(info->tc->pool, bio);
-> > @@ -1245,8 +1247,8 @@ static int io_overlaps_block(struct pool *pool, s=
-truct bio *bio)
-> >
-> >  static int io_overwrites_block(struct pool *pool, struct bio *bio)
-> >  {
-> > -     return (bio_data_dir(bio) =3D=3D WRITE) &&
-> > -             io_overlaps_block(pool, bio);
-> > +     return (bio_data_dir(bio) =3D=3D WRITE) && io_overlaps_block(pool=
-, bio) &&
-> > +            bio_op(bio) !=3D REQ_OP_PROVISION;
-> >  }
-> >
-> >  static void save_and_set_endio(struct bio *bio, bio_end_io_t **save,
-> > @@ -1953,6 +1955,51 @@ static void provision_block(struct thin_c *tc, s=
-truct bio *bio, dm_block_t block
-> >       }
-> >  }
-> >
-> > +static void process_provision_bio(struct thin_c *tc, struct bio *bio)
-> > +{
-> > +     int r;
-> > +     struct pool *pool =3D tc->pool;
-> > +     dm_block_t block =3D get_bio_block(tc, bio);
-> > +     struct dm_bio_prison_cell *cell;
-> > +     struct dm_cell_key key;
-> > +     struct dm_thin_lookup_result lookup_result;
-> > +
-> > +     /*
-> > +      * If cell is already occupied, then the block is already
-> > +      * being provisioned so we have nothing further to do here.
-> > +      */
-> > +     build_virtual_key(tc->td, block, &key);
-> > +     if (bio_detain(pool, &key, bio, &cell))
-> > +             return;
-> > +
-> > +     if (tc->requeue_mode) {
-> > +             cell_requeue(pool, cell);
-> > +             return;
-> > +     }
-> > +
-> > +     r =3D dm_thin_find_block(tc->td, block, 1, &lookup_result);
-> > +     switch (r) {
-> > +     case 0:
-> > +             if (lookup_result.shared) {
-> > +                     process_shared_bio(tc, bio, block, &lookup_result=
-, cell);
-> > +             } else {
-> > +                     bio_endio(bio);
-> > +                     cell_defer_no_holder(tc, cell);
-> > +             }
-> > +             break;
-> > +     case -ENODATA:
-> > +             provision_block(tc, bio, block, cell);
-> > +             break;
-> > +
-> > +     default:
-> > +             DMERR_LIMIT("%s: dm_thin_find_block() failed: error =3D %=
-d",
-> > +                         __func__, r);
-> > +             cell_defer_no_holder(tc, cell);
-> > +             bio_io_error(bio);
-> > +             break;
-> > +     }
-> > +}
-> > +
-> >  static void process_cell(struct thin_c *tc, struct dm_bio_prison_cell =
-*cell)
-> >  {
-> >       int r;
-> > @@ -2228,6 +2275,8 @@ static void process_thin_deferred_bios(struct thi=
-n_c *tc)
-> >
-> >               if (bio_op(bio) =3D=3D REQ_OP_DISCARD)
-> >                       pool->process_discard(tc, bio);
-> > +             else if (bio_op(bio) =3D=3D REQ_OP_PROVISION)
-> > +                     pool->process_provision(tc, bio);
-> >               else
-> >                       pool->process_bio(tc, bio);
-> >
-> > @@ -2579,6 +2628,7 @@ static void set_pool_mode(struct pool *pool, enum=
- pool_mode new_mode)
-> >               dm_pool_metadata_read_only(pool->pmd);
-> >               pool->process_bio =3D process_bio_fail;
-> >               pool->process_discard =3D process_bio_fail;
-> > +             pool->process_provision =3D process_bio_fail;
-> >               pool->process_cell =3D process_cell_fail;
-> >               pool->process_discard_cell =3D process_cell_fail;
-> >               pool->process_prepared_mapping =3D process_prepared_mappi=
-ng_fail;
-> > @@ -2592,6 +2642,7 @@ static void set_pool_mode(struct pool *pool, enum=
- pool_mode new_mode)
-> >               dm_pool_metadata_read_only(pool->pmd);
-> >               pool->process_bio =3D process_bio_read_only;
-> >               pool->process_discard =3D process_bio_success;
-> > +             pool->process_provision =3D process_bio_fail;
-> >               pool->process_cell =3D process_cell_read_only;
-> >               pool->process_discard_cell =3D process_cell_success;
-> >               pool->process_prepared_mapping =3D process_prepared_mappi=
-ng_fail;
-> > @@ -2612,6 +2663,7 @@ static void set_pool_mode(struct pool *pool, enum=
- pool_mode new_mode)
-> >               pool->out_of_data_space =3D true;
-> >               pool->process_bio =3D process_bio_read_only;
-> >               pool->process_discard =3D process_discard_bio;
-> > +             pool->process_provision =3D process_bio_fail;
-> >               pool->process_cell =3D process_cell_read_only;
-> >               pool->process_prepared_mapping =3D process_prepared_mappi=
-ng;
-> >               set_discard_callbacks(pool);
-> > @@ -2628,6 +2680,7 @@ static void set_pool_mode(struct pool *pool, enum=
- pool_mode new_mode)
-> >               dm_pool_metadata_read_write(pool->pmd);
-> >               pool->process_bio =3D process_bio;
-> >               pool->process_discard =3D process_discard_bio;
-> > +             pool->process_provision =3D process_provision_bio;
-> >               pool->process_cell =3D process_cell;
-> >               pool->process_prepared_mapping =3D process_prepared_mappi=
-ng;
-> >               set_discard_callbacks(pool);
-> > @@ -2749,7 +2802,8 @@ static int thin_bio_map(struct dm_target *ti, str=
-uct bio *bio)
-> >               return DM_MAPIO_SUBMITTED;
-> >       }
-> >
-> > -     if (op_is_flush(bio->bi_opf) || bio_op(bio) =3D=3D REQ_OP_DISCARD=
-) {
-> > +     if (op_is_flush(bio->bi_opf) || bio_op(bio) =3D=3D REQ_OP_DISCARD=
- ||
-> > +         bio_op(bio) =3D=3D REQ_OP_PROVISION) {
-> >               thin_defer_bio_with_throttle(tc, bio);
-> >               return DM_MAPIO_SUBMITTED;
-> >       }
-> > @@ -3396,6 +3450,9 @@ static int pool_ctr(struct dm_target *ti, unsigne=
-d int argc, char **argv)
-> >       pt->adjusted_pf =3D pt->requested_pf =3D pf;
-> >       ti->num_flush_bios =3D 1;
-> >       ti->limit_swap_bios =3D true;
-> > +     ti->num_provision_bios =3D 1;
-> > +     ti->provision_supported =3D true;
-> > +     ti->max_provision_granularity =3D true;
-> >
-> >       /*
-> >        * Only need to enable discards if the pool should pass
-> > @@ -4114,6 +4171,8 @@ static void pool_io_hints(struct dm_target *ti, s=
-truct queue_limits *limits)
-> >        * The pool uses the same discard limits as the underlying data
-> >        * device.  DM core has already set this up.
-> >        */
-> > +
-> > +     limits->max_provision_sectors =3D pool->sectors_per_block;
-> >  }
-> >
-> >  static struct target_type pool_target =3D {
-> > @@ -4288,6 +4347,9 @@ static int thin_ctr(struct dm_target *ti, unsigne=
-d int argc, char **argv)
-> >               ti->max_discard_granularity =3D true;
-> >       }
-> >
-> > +     ti->num_provision_bios =3D 1;
-> > +     ti->provision_supported =3D true;
-> > +
->
-> We need this in thin_ctr: ti->max_provision_granularity =3D true;
->
-> More needed in the thin target than thin-pool; otherwise provision bio
-> issued to thin devices won't be split appropriately.  But I do think
-> its fine to set in both thin_ctr and pool_ctr.
->
-> Otherwise, looks good.
->
-Thanks! I'll add it to the next iteration (in addition to any other
-feedback that's added to v6).
+On 05/11/23 11:24, Axel Rasmussen wrote:
+> The basic idea here is to "simulate" memory poisoning for VMs. A VM
+> running on some host might encounter a memory error, after which some
+> page(s) are poisoned (i.e., future accesses SIGBUS). They expect that
+> once poisoned, pages can never become "un-poisoned". So, when we live
+> migrate the VM, we need to preserve the poisoned status of these pages.
+> 
+> When live migrating, we try to get the guest running on its new host as
+> quickly as possible. So, we start it running before all memory has been
+> copied, and before we're certain which pages should be poisoned or not.
+> 
+> So the basic way to use this new feature is:
+> 
+> - On the new host, the guest's memory is registered with userfaultfd, in
+>   either MISSING or MINOR mode (doesn't really matter for this purpose).
+> - On any first access, we get a userfaultfd event. At this point we can
+>   communicate with the old host to find out if the page was poisoned.
 
-Given that this series covers multiple subsystems, would there be a
-preferred way of queueing this for merge?
+Just curious, what is this communication channel with the old host?
+-- 
+Mike Kravetz
 
-Best
-Sarthak
-
-> Thanks,
-> Mike
+> - If so, we can respond with a UFFDIO_SIGBUS - this places a swap marker
+>   so any future accesses will SIGBUS. Because the pte is now "present",
+>   future accesses won't generate more userfaultfd events, they'll just
+>   SIGBUS directly.
+> 
+> UFFDIO_SIGBUS does not handle unmapping previously-present PTEs. This
+> isn't needed, because during live migration we want to intercept
+> all accesses with userfaultfd (not just writes, so WP mode isn't useful
+> for this). So whether minor or missing mode is being used (or both), the
+> PTE won't be present in any case, so handling that case isn't needed.
+> 
