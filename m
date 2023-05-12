@@ -2,82 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 458267009F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 May 2023 16:07:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75209700A6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 May 2023 16:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241456AbjELOHW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 May 2023 10:07:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43932 "EHLO
+        id S241268AbjELOfZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 May 2023 10:35:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241462AbjELOHV (ORCPT
+        with ESMTP id S241288AbjELOfY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 May 2023 10:07:21 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B4611DB1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 May 2023 07:07:20 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3315da68432so147606765ab.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 May 2023 07:07:20 -0700 (PDT)
+        Fri, 12 May 2023 10:35:24 -0400
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FC4530C0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 May 2023 07:34:34 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-3f3faefc92cso32666511cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 May 2023 07:34:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683900439; x=1686492439;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20221208; t=1683902073; x=1686494073;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jMsA1OvUqk2tsx55m7tIfaPeJf529B0QdbQS7E31h+k=;
-        b=e03i1ICUGzihGOo0ogg7e6iKT8oIK5CBtZdV5BHpptyavrdJJ5eiLXXNX1Oc5GVg96
-         n3EouPIQOmalj2O+wbvv0UNizWBLBAu4rYUy3WIdz/csN3jFlPFIgOvVU8u71lvQesMZ
-         5pnkfkh7Zbe5dZS5IR6YFyi0cy/U9VzfUJnbtYY6V/EiOhWzB0/Mww+do++4pukyNzEJ
-         xysEIM1oq9g5TotWMogcwckgH77yoS6+uGTFGx1Pa+87tJuCuvr7d/RB8qVppSOHHPP/
-         oaomdNYnT/5DLtvx2Ynhf0FxxS7hTcxIE9DPhuj9/KMj8x4RFF6Ep9VgXe5vMqWX7EOd
-         wLfw==
-X-Gm-Message-State: AC+VfDwm+27Z/0KsVioo6W3e6na5cOujqAcG43HFh7oR8z7YaKyZuexX
-        t32SaoSAi/C6i9vXQby3xv1r//YA7n0NxElPrw7iiAbMrhf4
-X-Google-Smtp-Source: ACHHUZ78MXlEJPSlarcif/f+n4E+wXrSeNZwdz4IonDEPpF9krYy99Fg2BkvtT1Pz45rvxB1dwiGb1hHl8Vm/hIK24b49hIDwO07
+        bh=3NI8PblGX09aXcegfRrsRbp5Rk8EB7aSb1Q3zVJjhig=;
+        b=fxXuTpN1g5xeiCXxFKxxbz4ZFtX/WXIQBVfAvMSZlxjfs0Ok6UzrMTcy0xtCctWDSy
+         6FJ6dqAkMytdPnGPAn40mXLcPwDAQdgmu9YXrrdxXAjk1DKZx+trJzdAOyPWbMMyfcE/
+         w2SP3JJzNEMS7sTJt4+dyeHUhxd8/mmPZeIDvFBeGZK4XS3Gc5bsPd2EoyOqZivPH9+i
+         LPz8IHU4DWdupuLiUel5CxRJwdU3oMRRURpAJlHlRtm9nK/YLvXgC0n+Xe8iMnmVVQUQ
+         NCqSROYi6knpUzFjCllFiYpotkFtt+5MefgKWtPFdxPeBHbnMnBaDWzhwnYCr4CxCJU6
+         DzVg==
+X-Gm-Message-State: AC+VfDzS8u9M+QRV10y2lwMLcmvamAies5+MjWJYIO8B8pRwQ+3x6dEI
+        eHe1bq3S4hC8nmkZKUqm9DVH
+X-Google-Smtp-Source: ACHHUZ4M++aZz9x/idwKRxoZtFqzxE+KBfxysydbhwDNajJOH3TAbWPaBDcqWbbuEGec9dZSQIGwHA==
+X-Received: by 2002:ac8:5787:0:b0:3f3:91bd:a46d with SMTP id v7-20020ac85787000000b003f391bda46dmr24764787qta.8.1683902073426;
+        Fri, 12 May 2023 07:34:33 -0700 (PDT)
+Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
+        by smtp.gmail.com with ESMTPSA id f8-20020ae9ea08000000b0074d3233487dsm5387535qkg.114.2023.05.12.07.34.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 May 2023 07:34:32 -0700 (PDT)
+Date:   Fri, 12 May 2023 10:34:31 -0400
+From:   Mike Snitzer <snitzer@kernel.org>
+To:     Sarthak Kukreti <sarthakkukreti@chromium.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Brian Foster <bfoster@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Bart Van Assche <bvanassche@google.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, Andreas Dilger <adilger.kernel@dilger.ca>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Alasdair Kergon <agk@redhat.com>
+Subject: Re: [PATCH v6 4/5] dm-thin: Add REQ_OP_PROVISION support
+Message-ID: <ZF5Od6GY4rsq82qM@redhat.com>
+References: <20230420004850.297045-1-sarthakkukreti@chromium.org>
+ <20230506062909.74601-1-sarthakkukreti@chromium.org>
+ <20230506062909.74601-5-sarthakkukreti@chromium.org>
+ <ZFp7ykxGFUbPG1ON@redhat.com>
+ <CAG9=OMOMrFcy6UdL8-3wZGwOr1nqLm1bpvL+G1g2dvBhJWU2Kw@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:860e:0:b0:40f:7382:e4aa with SMTP id
- e14-20020a02860e000000b0040f7382e4aamr6776856jai.2.1683900439423; Fri, 12 May
- 2023 07:07:19 -0700 (PDT)
-Date:   Fri, 12 May 2023 07:07:19 -0700
-In-Reply-To: <000000000000ea3c3105ef377a12@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000877b2c05fb7f9fd4@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in ntfs_listxattr
-From:   syzbot <syzbot+9fcea5ef6dc4dc72d334@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        clang-built-linux@googlegroups.com, dvyukov@google.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        trix@redhat.com, zengheng4@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG9=OMOMrFcy6UdL8-3wZGwOr1nqLm1bpvL+G1g2dvBhJWU2Kw@mail.gmail.com>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Thu, May 11 2023 at  4:03P -0400,
+Sarthak Kukreti <sarthakkukreti@chromium.org> wrote:
 
-commit 6e5be40d32fb1907285277c02e74493ed43d77fe
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Fri Aug 13 14:21:30 2021 +0000
+> On Tue, May 9, 2023 at 9:58 AM Mike Snitzer <snitzer@kernel.org> wrote:
+> >
+> > On Sat, May 06 2023 at  2:29P -0400,
+> > Sarthak Kukreti <sarthakkukreti@chromium.org> wrote:
+> >
+> > > dm-thinpool uses the provision request to provision
+> > > blocks for a dm-thin device. dm-thinpool currently does not
+> > > pass through REQ_OP_PROVISION to underlying devices.
+> > >
+> > > For shared blocks, provision requests will break sharing and copy the
+> > > contents of the entire block. Additionally, if 'skip_block_zeroing'
+> > > is not set, dm-thin will opt to zero out the entire range as a part
+> > > of provisioning.
+> > >
+> > > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
+> > > ---
+> > >  drivers/md/dm-thin.c | 70 +++++++++++++++++++++++++++++++++++++++++---
+> > >  1 file changed, 66 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+> > > index 2b13c949bd72..3f94f53ac956 100644
+> > > --- a/drivers/md/dm-thin.c
+> > > +++ b/drivers/md/dm-thin.c
+> > > @@ -4288,6 +4347,9 @@ static int thin_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+> > >               ti->max_discard_granularity = true;
+> > >       }
+> > >
+> > > +     ti->num_provision_bios = 1;
+> > > +     ti->provision_supported = true;
+> > > +
+> >
+> > We need this in thin_ctr: ti->max_provision_granularity = true;
+> >
+> > More needed in the thin target than thin-pool; otherwise provision bio
+> > issued to thin devices won't be split appropriately.  But I do think
+> > its fine to set in both thin_ctr and pool_ctr.
+> >
+> > Otherwise, looks good.
+> >
+> Thanks! I'll add it to the next iteration (in addition to any other
+> feedback that's added to v6).
 
-    fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+OK. I'll begin basing dm-thinp's WRITE_ZEROES support ontop of this
+series.
+ 
+> Given that this series covers multiple subsystems, would there be a
+> preferred way of queueing this for merge?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1587a32a280000
-start commit:   8ed710da2873 Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1787a32a280000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1387a32a280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b83f3e90d74765ea
-dashboard link: https://syzkaller.appspot.com/bug?extid=9fcea5ef6dc4dc72d334
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e7ec29880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11829e23880000
+I think it'd be OK for Jens to pick this series up and I'll rebase
+my corresponding DM tree once he does.
 
-Reported-by: syzbot+9fcea5ef6dc4dc72d334@syzkaller.appspotmail.com
-Fixes: 6e5be40d32fb ("fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile")
+In addition to Jens; Brian, Darrick and/or others: any chance you
+could review the block core changes in this series to ensure you're
+cool with them?
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Would be nice to get Sarthak review feedback so that hopefully his v7
+can be the final revision.
+
+Thanks,
+Mike
