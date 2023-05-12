@@ -2,56 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FFAB70045F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 May 2023 11:56:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C356700464
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 May 2023 11:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240482AbjELJ41 convert rfc822-to-8bit (ORCPT
+        id S240090AbjELJ5v convert rfc822-to-8bit (ORCPT
         <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 May 2023 05:56:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49994 "EHLO
+        Fri, 12 May 2023 05:57:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240576AbjELJ4R (ORCPT
+        with ESMTP id S240449AbjELJ5r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 May 2023 05:56:17 -0400
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217D5E70B;
-        Fri, 12 May 2023 02:56:09 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-b9daef8681fso8318324276.1;
-        Fri, 12 May 2023 02:56:08 -0700 (PDT)
+        Fri, 12 May 2023 05:57:47 -0400
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0EE118C;
+        Fri, 12 May 2023 02:57:20 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-b9d8b458e10so12375654276.1;
+        Fri, 12 May 2023 02:57:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683885368; x=1686477368;
+        d=1e100.net; s=20221208; t=1683885440; x=1686477440;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G26aphgD58tBa5cm3UBUurmWT+f5Rv1D2HQTBHZMzO8=;
-        b=MstuOBtGoWvN9ULpvx/fDT1WNIButquFg8dv372BFQsdwA7hRiu4fvgP8zjNQ1X9wh
-         PajQR2QUUPIp55/mmj7JFBPRkT5EO4MgDnP3VqeQC24uu2HBu7yNpAOlw1DXxu4ovOZd
-         5IfTf/MWC7PNXEMPFZKE4DVfr7SKN7R16sm7M/LcEj0nS6oCuJfGiQ5CKtdM6wuLrlAR
-         DiiART5TbnuQbwQtWG2VbRwpUzSQlFYcG/LVCb13x6UIBlFXVhCz7jEsZj2OEZ7VGCw3
-         Tnyi87Mz71/k7jiafDnYbG3U+OEhqDlLikTJ/3IrbmcL8S038aCPtJ5aPlOWNT5q1jDi
-         XA4Q==
-X-Gm-Message-State: AC+VfDwV7SWien3A0ekJKboMoU6M4cJFjzjcOtmOfRO6BYxCP6ub3r7R
-        KdFlCKV7uMGwUYOQQS4167HtN6Vo2JJzFg==
-X-Google-Smtp-Source: ACHHUZ7f7Uyc2ohd3naO9s+qBA8XY05u54CJNbwylSt8gO2t9gCAj2uxfsNLfKHDOSIpKWH836U5ag==
-X-Received: by 2002:a25:16c5:0:b0:ba2:16b6:b128 with SMTP id 188-20020a2516c5000000b00ba216b6b128mr12085378ybw.4.1683885367881;
-        Fri, 12 May 2023 02:56:07 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id w9-20020a0dd409000000b0054f50f71834sm5547073ywd.124.2023.05.12.02.56.06
+        bh=27/Fbt6wOw+aeS9WaGgothEj3OntQ06F+YuUTxkvogA=;
+        b=dbx3Y1x+1axQQiceI8mRcHF3mG3OLNwLg+fpbFOaET0DgQZyGXO7CkO4H8ZG864zpP
+         Q1XIoRsTPm7WmrzNvHfZrJHAbUQbwOA4bMCIRSB/dGAQYWArCUH6tWlRUxbhZDM1jMKo
+         L+kpkhZd8i7+3Z9G0wslPz1Nk0mCM3o/v9XZxorWKviFYRLaDI430iC4eD1VaaRHBNE+
+         pnIvojaFvzsUTfy88FwjqA8GO6WtIdIorfXmHM+8Pi74DIXoa0A8x7+JPbf9BvjETPPE
+         DCSNWuaHdRDZzUpC7hoD4BH5o/LdOan9K7/J/l25sZJGNYZ5x/SIcxln199Mx4zcT3Tz
+         XH2w==
+X-Gm-Message-State: AC+VfDzQP5V/KD1UuPWYeyacAMeyuMwggkVcoipkYp/VU3AZzhEwtK8X
+        pjLxIlz1Bmx6KhuHZM+71vam/vpeqcYwQQ==
+X-Google-Smtp-Source: ACHHUZ4nvxb66LO8i55+ytZu+CRJGw/iJFOOXvDV853cmI5MvRBZdR3yRjlolrljqqZk0DX+5930Lg==
+X-Received: by 2002:a25:844:0:b0:b9d:9f01:770a with SMTP id 65-20020a250844000000b00b9d9f01770amr23732825ybi.37.1683885439871;
+        Fri, 12 May 2023 02:57:19 -0700 (PDT)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id a205-20020a254dd6000000b00b8f54571fc0sm5008404ybb.5.2023.05.12.02.57.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 May 2023 02:56:06 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-55a1462f9f6so94882417b3.3;
-        Fri, 12 May 2023 02:56:06 -0700 (PDT)
-X-Received: by 2002:a81:a012:0:b0:555:f33e:e32e with SMTP id
- x18-20020a81a012000000b00555f33ee32emr22884527ywg.51.1683885366474; Fri, 12
- May 2023 02:56:06 -0700 (PDT)
+        Fri, 12 May 2023 02:57:18 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-55a44a2637bso143308887b3.2;
+        Fri, 12 May 2023 02:57:18 -0700 (PDT)
+X-Received: by 2002:a0d:e209:0:b0:555:cbdc:c6 with SMTP id l9-20020a0de209000000b00555cbdc00c6mr23583778ywe.9.1683885438128;
+ Fri, 12 May 2023 02:57:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230503-virt-to-pfn-v6-4-rc1-v1-0-6c4698dcf9c8@linaro.org> <20230503-virt-to-pfn-v6-4-rc1-v1-2-6c4698dcf9c8@linaro.org>
-In-Reply-To: <20230503-virt-to-pfn-v6-4-rc1-v1-2-6c4698dcf9c8@linaro.org>
+References: <20230503-virt-to-pfn-v6-4-rc1-v1-0-6c4698dcf9c8@linaro.org>
+In-Reply-To: <20230503-virt-to-pfn-v6-4-rc1-v1-0-6c4698dcf9c8@linaro.org>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 12 May 2023 11:55:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVJjjo9TMeow1-i27ybpQOu9-VZYnTkY5p8p_Cm6sW_GA@mail.gmail.com>
-Message-ID: <CAMuHMdVJjjo9TMeow1-i27ybpQOu9-VZYnTkY5p8p_Cm6sW_GA@mail.gmail.com>
-Subject: Re: [PATCH 02/12] m68k: Pass a pointer to virt_to_pfn() virt_to_page()
+Date:   Fri, 12 May 2023 11:57:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVwusgUqBuERm1=y7fwC5CERuX8VPGdaKcJiu3fM1oNuw@mail.gmail.com>
+Message-ID: <CAMuHMdVwusgUqBuERm1=y7fwC5CERuX8VPGdaKcJiu3fM1oNuw@mail.gmail.com>
+Subject: Re: [PATCH 00/12] arch: Make virt_to_pfn into a static inline
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Vineet Gupta <vgupta@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -77,74 +76,37 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 Hi Linus,
 
 On Thu, May 11, 2023 at 1:59 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> Functions that work on a pointer to virtual memory such as
-> virt_to_pfn() and users of that function such as
-> virt_to_page() are supposed to pass a pointer to virtual
-> memory, ideally a (void *) or other pointer. However since
-> many architectures implement virt_to_pfn() as a macro,
-> this function becomes polymorphic and accepts both a
-> (unsigned long) and a (void *).
+> This is an attempt to harden the typing on virt_to_pfn()
+> and pfn_to_virt().
 >
-> Fix up the offending calls in arch/m68k with explicit casts.
+> Making virt_to_pfn() a static inline taking a strongly typed
+> (const void *) makes the contract of a passing a pointer of that
+> type to the function explicit and exposes any misuse of the
+> macro virt_to_pfn() acting polymorphic and accepting many types
+> such as (void *), (unitptr_t) or (unsigned long) as arguments
+> without warnings.
 >
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Add an extra parens around the page argument to the
->   PD_PTABLE() macro, as is normally required.
+> For symmetry, we do the same with pfn_to_virt().
+>
+> The problem with this inconsistent typing was pointed out by
+> Russell King:
+> https://lore.kernel.org/linux-arm-kernel/YoJDKJXc0MJ2QZTb@shell.armlinux.org.uk/
+>
+> And confirmed by Andrew Morton:
+> https://lore.kernel.org/linux-mm/20220701160004.2ffff4e5ab59a55499f4c736@linux-foundation.org/
+>
+> So the recognition of the problem is widespread.
+>
+> These platforms have been chosen as initial conversion targets:
+>
+> - ARC
+> - ARM
+> - ARM64/Aarch64
+> - asm-generic (including for example x86)
+> - m68k
 
-Thanks for the update!
-
-To build sun3_defconfig and m5475evb_defconfig cleanly, you need to
-include the (Gmail-whitespace-damaged) changes below.
-These were compile-tested only.
-
-diff --git a/arch/m68k/include/asm/mcf_pgtable.h
-b/arch/m68k/include/asm/mcf_pgtable.h
-index 96d069829803505c..46ae379bb14d5e05 100644
---- a/arch/m68k/include/asm/mcf_pgtable.h
-+++ b/arch/m68k/include/asm/mcf_pgtable.h
-@@ -135,7 +135,7 @@ static inline void pte_clear(struct mm_struct *mm,
-unsigned long addr,
- }
-
- #define pte_pagenr(pte)        ((__pte_page(pte) - PAGE_OFFSET) >> PAGE_SHIFT)
--#define pte_page(pte)  virt_to_page(__pte_page(pte))
-+#define pte_page(pte)  virt_to_page((void *)__pte_page(pte))
-
- static inline int pmd_none2(pmd_t *pmd) { return !pmd_val(*pmd); }
- #define pmd_none(pmd) pmd_none2(&(pmd))
-diff --git a/arch/m68k/include/asm/sun3_pgtable.h
-b/arch/m68k/include/asm/sun3_pgtable.h
-index e582b0484a55cd82..f3e7728f58cd9dd0 100644
---- a/arch/m68k/include/asm/sun3_pgtable.h
-+++ b/arch/m68k/include/asm/sun3_pgtable.h
-@@ -109,9 +109,9 @@ static inline void pte_clear (struct mm_struct
-*mm, unsigned long addr, pte_t *p
- #define pfn_pte(pfn, pgprot) \
- ({ pte_t __pte; pte_val(__pte) = pfn | pgprot_val(pgprot); __pte; })
-
--#define pte_page(pte)          virt_to_page(__pte_page(pte))
-+#define pte_page(pte)          virt_to_page((void *)__pte_page(pte))
- #define pmd_pfn(pmd)           (pmd_val(pmd) >> PAGE_SHIFT)
--#define pmd_page(pmd)          virt_to_page(pmd_page_vaddr(pmd))
-+#define pmd_page(pmd)          virt_to_page((void *)pmd_page_vaddr(pmd))
-
-
- static inline int pmd_none2 (pmd_t *pmd) { return !pmd_val (*pmd); }
-diff --git a/arch/m68k/mm/mcfmmu.c b/arch/m68k/mm/mcfmmu.c
-index 70aa0979e02710a8..a4c552c7e2c8ca12 100644
---- a/arch/m68k/mm/mcfmmu.c
-+++ b/arch/m68k/mm/mcfmmu.c
-@@ -69,7 +69,7 @@ void __init paging_init(void)
-
-                /* now change pg_table to kernel virtual addresses */
-                for (i = 0; i < PTRS_PER_PTE; ++i, ++pg_table) {
--                       pte_t pte = pfn_pte(virt_to_pfn(address), PAGE_INIT);
-+                       pte_t pte = pfn_pte(virt_to_pfn((void
-*)address), PAGE_INIT);
-                        if (address >= (unsigned long) high_memory)
-                                pte_val(pte) = 0;
+Thanks, builds fine on m68k with MMU, and boots fine on ARAnyM,
+with the extra changes I replied on patch 2/12.
 
 Gr{oetje,eeting}s,
 
