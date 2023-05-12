@@ -2,384 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0002E6FFFB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 May 2023 06:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45B9470011E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 May 2023 09:11:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239603AbjELEuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 May 2023 00:50:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49130 "EHLO
+        id S240272AbjELHL1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 May 2023 03:11:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbjELEuo (ORCPT
+        with ESMTP id S240104AbjELHK5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 May 2023 00:50:44 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9E5510FC;
-        Thu, 11 May 2023 21:50:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1683867042; x=1715403042;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iC5D+xXe0zxzN4xqOa5SMpSOusDzpmsICbpoP7xO44Q=;
-  b=WMxR5dMHCytiwefGiwHnzlXBx+hdsZEeYmtZRGcu+aogfRPDJGBGAuhD
-   CG/9YJmc2jJf+NC7UJXnBQrHtxyKGe64jsPH2ZB8hsFAYDrAa0KDDWraL
-   Jz/aExl/clO40bbve5mCk40EOJXhpExn1C647ZT5RSAKyBNc2E79GWutU
-   z9KoONKdDfk1qGVVoBWsvCSypeCQNWG3h76wY3XPuEfVG2HBxIgTCoIkZ
-   JffNiKFiL6GdLxyQB6TSAcafOz9PHJdafkad/bdkpCUcsnyW0tU91Yv6Z
-   6IH3HCSBZniIgjbI3QYFdfMpJu43Z8+23gKcpWNWx+YBY5QZ+xsamefIu
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10707"; a="330320713"
-X-IronPort-AV: E=Sophos;i="5.99,269,1677571200"; 
-   d="scan'208";a="330320713"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2023 21:50:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10707"; a="732883561"
-X-IronPort-AV: E=Sophos;i="5.99,269,1677571200"; 
-   d="scan'208";a="732883561"
-Received: from lkp-server01.sh.intel.com (HELO dea6d5a4f140) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 11 May 2023 21:50:37 -0700
-Received: from kbuild by dea6d5a4f140 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pxKjk-0004XE-1a;
-        Fri, 12 May 2023 04:50:36 +0000
-Date:   Fri, 12 May 2023 12:49:59 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Peter Xu <peterx@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org, Dan Carpenter <error27@gmail.com>,
-        syzbot+48011b86c8ea329af1b9@syzkaller.appspotmail.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 1/3] mm: handle_mm_fault_one()
-Message-ID: <202305121214.bxn0gOdr-lkp@intel.com>
-References: <ZF2E6i4pqJr7m436@x1n>
+        Fri, 12 May 2023 03:10:57 -0400
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2FF11563
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 May 2023 00:08:44 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-331514f5626so64500805ab.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 May 2023 00:08:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683875324; x=1686467324;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fw+iTBd++BdghLB5KrjvmaOtGJ8PeVVwlEXkInTdymA=;
+        b=b/tjyd4X9JCat44sHJMpXeo8T5x32p8KtJBBoZFsiB+l+WbCsH2iypeQqOzpZ7HC6D
+         M3j2R5+wvYA8dVcmBQU06m6jSaB042k1c5stTT0NZq1dGCY+t4g/c5wVbA56Z6vuJ7bl
+         3+ocvR+XW0e82YLB/GhyvcB/2TsY3ZTi8qW9sOMkzVjUiSEGKFF5ZDRN16Ck9XMsrYKS
+         U2oO4nAShsM4YLIXG/IwbEBkW9dX2ye/acpLySMPiU0udvSDd4g0LFsL8mPtRtoMqNVl
+         4+A4jWj+nkIc+2/E7ChFLgsu+0vAtKnhdldzOwlkEVgHglIoALpZ9OhfmhGoa+hjMEtw
+         N3qw==
+X-Gm-Message-State: AC+VfDw+K0EmFOkyxo187EcD5QPlvRdevkiCcJ0lmtZixHhp8QwWPouC
+        vWeeIXoxTWZ3lDo5OFLRork6WicmV+VYwuG6+PzgTv8HA+DO
+X-Google-Smtp-Source: ACHHUZ55p5GBzJaVAo9gbuEtNkBLab4DOOECD+iWkGVtwzCPd95QfeAb6eXgBfZDE7IiZYtvScB+xyndTuyFNk5RDRbqqxpiUBW1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZF2E6i4pqJr7m436@x1n>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:234b:0:b0:418:733f:513c with SMTP id
+ u72-20020a02234b000000b00418733f513cmr825328jau.2.1683875323826; Fri, 12 May
+ 2023 00:08:43 -0700 (PDT)
+Date:   Fri, 12 May 2023 00:08:43 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000085d81d05fb79c667@google.com>
+Subject: [syzbot] [fs?] [mm?] BUG: sleeping function called from invalid
+ context in mempool_alloc
+From:   syzbot <syzbot+5a5f3b3df8fc04673151@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Peter,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on akpm-mm/mm-everything]
+HEAD commit:    578215f3e21c Add linux-next specific files for 20230510
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17fa43b6280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bb5a64fc61c29c5f
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a5f3b3df8fc04673151
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Xu/mm-handle_mm_fault_one/20230512-081554
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/ZF2E6i4pqJr7m436%40x1n
-patch subject: [PATCH 1/3] mm: handle_mm_fault_one()
-config: hexagon-randconfig-r045-20230511 (https://download.01.org/0day-ci/archive/20230512/202305121214.bxn0gOdr-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project b0fb98227c90adf2536c9ad644a74d5e92961111)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/0a03a4870c8a62e3ba52a0f9b50b307f509acb2b
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Peter-Xu/mm-handle_mm_fault_one/20230512-081554
-        git checkout 0a03a4870c8a62e3ba52a0f9b50b307f509acb2b
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash drivers/net/ethernet/hisilicon/hns/
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202305121214.bxn0gOdr-lkp@intel.com/
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/61ae2512b5cb/disk-578215f3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e16190a5b183/vmlinux-578215f3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/04000a0b9ddf/bzImage-578215f3.xz
 
-All warnings (new ones prefixed by >>):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5a5f3b3df8fc04673151@syzkaller.appspotmail.com
 
-   In file included from drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:334:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-                                                     ^
-   In file included from drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:334:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-                                                     ^
-   In file included from drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:334:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   In file included from drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:12:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:10:
-   include/linux/mm.h:2371:6: error: use of undeclared identifier 'fault'
-           if (fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED))
-               ^
-   include/linux/mm.h:2371:6: error: use of undeclared identifier 'fault'
-   include/linux/mm.h:2371:6: error: use of undeclared identifier 'fault'
-   include/linux/mm.h:2396:20: error: use of undeclared identifier 'mm'
-                   mmap_read_unlock(mm);
-                                    ^
->> drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:200:48: warning: shift count >= width of type [-Wshift-count-overflow]
-           if (!dma_set_mask_and_coherent(dsaf_dev->dev, DMA_BIT_MASK(64ULL)))
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:76:54: note: expanded from macro 'DMA_BIT_MASK'
-   #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-                                                        ^
-   include/linux/compiler.h:56:47: note: expanded from macro 'if'
-   #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
-                              ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler.h:58:52: note: expanded from macro '__trace_if_var'
-   #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-                                                      ^~~~
->> drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:200:48: warning: shift count >= width of type [-Wshift-count-overflow]
-           if (!dma_set_mask_and_coherent(dsaf_dev->dev, DMA_BIT_MASK(64ULL)))
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:76:54: note: expanded from macro 'DMA_BIT_MASK'
-   #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-                                                        ^
-   include/linux/compiler.h:56:47: note: expanded from macro 'if'
-   #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
-                              ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler.h:58:61: note: expanded from macro '__trace_if_var'
-   #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-                                                               ^~~~
->> drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c:200:48: warning: shift count >= width of type [-Wshift-count-overflow]
-           if (!dma_set_mask_and_coherent(dsaf_dev->dev, DMA_BIT_MASK(64ULL)))
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:76:54: note: expanded from macro 'DMA_BIT_MASK'
-   #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-                                                        ^
-   include/linux/compiler.h:56:47: note: expanded from macro 'if'
-   #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
-                              ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler.h:58:86: note: expanded from macro '__trace_if_var'
-   #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-                                                                       ~~~~~~~~~~~~~~~~~^~~~~
-   include/linux/compiler.h:69:3: note: expanded from macro '__trace_if_value'
-           (cond) ?                                        \
-            ^~~~
-   9 warnings and 4 errors generated.
+BUG: sleeping function called from invalid context at include/linux/sched/mm.h:306
+in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 21075, name: udevd
+preempt_count: 0, expected: 0
+RCU nest depth: 1, expected: 0
+2 locks held by udevd/21075:
+ #0: ffff88801a8829b0 (mapping.invalidate_lock#2){.+.+}-{3:3}, at: filemap_invalidate_lock_shared include/linux/fs.h:830 [inline]
+ #0: ffff88801a8829b0 (mapping.invalidate_lock#2){.+.+}-{3:3}, at: page_cache_ra_unbounded+0x153/0x5e0 mm/readahead.c:226
+ #1: ffffffff8c7991c0 (rcu_read_lock){....}-{1:2}, at: lru_gen_refault mm/workingset.c:293 [inline]
+ #1: ffffffff8c7991c0 (rcu_read_lock){....}-{1:2}, at: workingset_refault+0x175/0x11e0 mm/workingset.c:528
+CPU: 1 PID: 21075 Comm: udevd Not tainted 6.4.0-rc1-next-20230510-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x136/0x150 lib/dump_stack.c:106
+ __might_resched+0x358/0x580 kernel/sched/core.c:10148
+ might_alloc include/linux/sched/mm.h:306 [inline]
+ mempool_alloc+0x1c4/0x360 mm/mempool.c:388
+ bio_alloc_bioset+0x41e/0x900 block/bio.c:543
+ bio_alloc include/linux/bio.h:427 [inline]
+ do_mpage_readpage+0xe8c/0x1960 fs/mpage.c:298
+ mpage_readahead+0x344/0x580 fs/mpage.c:382
+ read_pages+0x1a2/0xd40 mm/readahead.c:161
+ page_cache_ra_unbounded+0x477/0x5e0 mm/readahead.c:270
+ do_page_cache_ra mm/readahead.c:300 [inline]
+ force_page_cache_ra+0x333/0x470 mm/readahead.c:331
+ page_cache_sync_ra+0x105/0x200 mm/readahead.c:705
+ page_cache_sync_readahead include/linux/pagemap.h:1211 [inline]
+ filemap_get_pages+0x28d/0x1620 mm/filemap.c:2598
+ filemap_read+0x35e/0xc70 mm/filemap.c:2693
+ blkdev_read_iter+0x3eb/0x760 block/fops.c:609
+ call_read_iter include/linux/fs.h:1862 [inline]
+ new_sync_read fs/read_write.c:389 [inline]
+ vfs_read+0x4b1/0x8a0 fs/read_write.c:470
+ ksys_read+0x12b/0x250 fs/read_write.c:613
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f1805316b6a
+Code: 00 3d 00 00 41 00 75 0d 50 48 8d 3d 2d 08 0a 00 e8 ea 7d 01 00 31 c0 e9 07 ff ff ff 64 8b 04 25 18 00 00 00 85 c0 75 1b 0f 05 <48> 3d 00 f0 ff ff 76 6c 48 8b 15 8f a2 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffccfcc4668 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1805316b6a
+RDX: 0000000000000400 RSI: 000055ca7c932ca8 RDI: 0000000000000009
+RBP: 0000000000000400 R08: 000055ca7c932c80 R09: 0000000000000008
+R10: 0000000000000051 R11: 0000000000000246 R12: 000055ca7c932c80
+R13: 000055ca7c932c98 R14: 000055ca7c92c118 R15: 000055ca7c92c0c0
+ </TASK>
+
+=============================
+[ BUG: Invalid wait context ]
+6.4.0-rc1-next-20230510-syzkaller #0 Tainted: G        W         
+-----------------------------
+udevd/21075 is trying to lock:
+ffff88801a8829b0
+ (mapping.invalidate_lock#2){.+.+}-{3:3}, at: filemap_invalidate_lock_shared include/linux/fs.h:830 [inline]
+ (mapping.invalidate_lock#2){.+.+}-{3:3}, at: filemap_update_page mm/filemap.c:2474 [inline]
+ (mapping.invalidate_lock#2){.+.+}-{3:3}, at: filemap_get_pages+0x743/0x1620 mm/filemap.c:2622
+other info that might help us debug this:
+context-{4:4}
+1 lock held by udevd/21075:
+ #0: ffffffff8c7991c0 (rcu_read_lock){....}-{1:2}, at: lru_gen_refault mm/workingset.c:293 [inline]
+ #0: ffffffff8c7991c0 (rcu_read_lock){....}-{1:2}, at: workingset_refault+0x175/0x11e0 mm/workingset.c:528
+stack backtrace:
+CPU: 1 PID: 21075 Comm: udevd Tainted: G        W          6.4.0-rc1-next-20230510-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4729 [inline]
+ check_wait_context kernel/locking/lockdep.c:4799 [inline]
+ __lock_acquire+0x15d5/0x5f30 kernel/locking/lockdep.c:5038
+ lock_acquire.part.0+0x11c/0x370 kernel/locking/lockdep.c:5705
+ down_read+0x3d/0x50 kernel/locking/rwsem.c:1520
+ filemap_invalidate_lock_shared include/linux/fs.h:830 [inline]
+ filemap_update_page mm/filemap.c:2474 [inline]
+ filemap_get_pages+0x743/0x1620 mm/filemap.c:2622
+ filemap_read+0x35e/0xc70 mm/filemap.c:2693
+ blkdev_read_iter+0x3eb/0x760 block/fops.c:609
+ call_read_iter include/linux/fs.h:1862 [inline]
+ new_sync_read fs/read_write.c:389 [inline]
+ vfs_read+0x4b1/0x8a0 fs/read_write.c:470
+ ksys_read+0x12b/0x250 fs/read_write.c:613
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f1805316b6a
+Code: 00 3d 00 00 41 00 75 0d 50 48 8d 3d 2d 08 0a 00 e8 ea 7d 01 00 31 c0 e9 07 ff ff ff 64 8b 04 25 18 00 00 00 85 c0 75 1b 0f 05 <48> 3d 00 f0 ff ff 76 6c 48 8b 15 8f a2 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffccfcc4668 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1805316b6a
+RDX: 0000000000000400 RSI: 000055ca7c932ca8 RDI: 0000000000000009
+RBP: 0000000000000400 R08: 000055ca7c932c80 R09: 0000000000000008
+R10: 0000000000000051 R11: 0000000000000246 R12: 000055ca7c932c80
+R13: 000055ca7c932c98 R14: 000055ca7c92c118 R15: 000055ca7c92c0c0
+ </TASK>
+BUG: sleeping function called from invalid context at lib/iov_iter.c:535
+in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 21075, name: udevd
+preempt_count: 0, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+CPU: 0 PID: 21075 Comm: udevd Tainted: G        W          6.4.0-rc1-next-20230510-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x136/0x150 lib/dump_stack.c:106
+ __might_resched+0x358/0x580 kernel/sched/core.c:10148
+ __might_fault+0x79/0x190 mm/memory.c:5732
+ _copy_to_iter+0x328/0x1360 lib/iov_iter.c:535
+ copy_page_to_iter lib/iov_iter.c:742 [inline]
+ copy_page_to_iter+0x125/0x1e0 lib/iov_iter.c:727
+ copy_folio_to_iter include/linux/uio.h:197 [inline]
+ filemap_read+0x682/0xc70 mm/filemap.c:2745
+ blkdev_read_iter+0x3eb/0x760 block/fops.c:609
+ call_read_iter include/linux/fs.h:1862 [inline]
+ new_sync_read fs/read_write.c:389 [inline]
+ vfs_read+0x4b1/0x8a0 fs/read_write.c:470
+ ksys_read+0x12b/0x250 fs/read_write.c:613
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f1805316b6a
+Code: 00 3d 00 00 41 00 75 0d 50 48 8d 3d 2d 08 0a 00 e8 ea 7d 01 00 31 c0 e9 07 ff ff ff 64 8b 04 25 18 00 00 00 85 c0 75 1b 0f 05 <48> 3d 00 f0 ff ff 76 6c 48 8b 15 8f a2 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffccfcc4668 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1805316b6a
+RDX: 0000000000000400 RSI: 000055ca7c932ca8 RDI: 0000000000000009
+RBP: 0000000000000400 R08: 000055ca7c932c80 R09: 0000000000000008
+R10: 0000000000000051 R11: 0000000000000246 R12: 000055ca7c932c80
+R13: 000055ca7c932c98 R14: 000055ca7c92c118 R15: 000055ca7c92c0c0
+ </TASK>
+------------[ cut here ]------------
+Voluntary context switch within RCU read-side critical section!
+WARNING: CPU: 0 PID: 21075 at kernel/rcu/tree_plugin.h:320 rcu_note_context_switch+0xbb9/0x1800 kernel/rcu/tree_plugin.h:320
+Modules linked in:
+CPU: 0 PID: 21075 Comm: udevd Tainted: G        W          6.4.0-rc1-next-20230510-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+RIP: 0010:rcu_note_context_switch+0xbb9/0x1800 kernel/rcu/tree_plugin.h:320
+Code: fd 04 68 00 4c 8b 4c 24 30 8b 4c 24 28 48 8b 54 24 20 e9 8f 03 00 00 48 c7 c7 c0 2a 4e 8a c6 05 93 44 f6 0c 01 e8 17 b5 dc ff <0f> 0b e9 4c f5 ff ff 81 e5 ff ff ff 7f 0f 84 d7 f6 ff ff 65 48 8b
+RSP: 0018:ffffc900094f7938 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: ffff8880b983d4c0 RCX: 0000000000000000
+RDX: ffff88802211bb80 RSI: ffffffff814bc477 RDI: 0000000000000001
+RBP: ffff88802211bb80 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 216e6f6974636573 R12: 0000000000000000
+R13: ffff88802211bb80 R14: ffffffff8e7b4130 R15: ffff8880b983c5c0
+FS:  00007f18056c2c80(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c00024b000 CR3: 00000000ace41000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __schedule+0x276/0x5790 kernel/sched/core.c:6569
+ schedule+0xde/0x1a0 kernel/sched/core.c:6745
+ schedule_hrtimeout_range_clock+0x45d/0x4b0 kernel/time/hrtimer.c:2298
+ ep_poll fs/eventpoll.c:1925 [inline]
+ do_epoll_wait+0x1210/0x1900 fs/eventpoll.c:2322
+ __do_sys_epoll_wait fs/eventpoll.c:2334 [inline]
+ __se_sys_epoll_wait fs/eventpoll.c:2329 [inline]
+ __x64_sys_epoll_wait+0x15c/0x280 fs/eventpoll.c:2329
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f1805323457
+Code: 73 01 c3 48 8b 0d d1 d9 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 41 89 ca 64 8b 04 25 18 00 00 00 85 c0 75 20 b8 e8 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 76 48 8b 15 a2 d9 0c 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffccfcc9bf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e8
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1805323457
+RDX: 0000000000000004 RSI: 00007ffccfcc9c38 RDI: 0000000000000004
+RBP: 000055ca7c92cd00 R08: 0000000000000007 R09: 9f790a821dee0ced
+R10: 00000000ffffffff R11: 0000000000000246 R12: 000055ca7c915af0
+R13: 00007ffccfcc9c38 R14: 0000000000000008 R15: 000055ca7c90b910
+ </TASK>
 
 
-vim +200 drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-8413b3be4d77dae Kejian Yan                   2016-06-03   40  
-336a443bd9ddca3 YueHaibing                   2018-07-26   41  static int hns_dsaf_get_cfg(struct dsaf_device *dsaf_dev)
-511e6bc071db148 huangdaode                   2015-09-17   42  {
-511e6bc071db148 huangdaode                   2015-09-17   43  	int ret, i;
-511e6bc071db148 huangdaode                   2015-09-17   44  	u32 desc_num;
-511e6bc071db148 huangdaode                   2015-09-17   45  	u32 buf_size;
-422c3107ed2cc62 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23   46) 	u32 reset_offset = 0;
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23   47) 	u32 res_idx = 0;
-48189d6aaf1ed1b yankejian                    2016-01-20   48  	const char *mode_str;
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23   49) 	struct regmap *syscon;
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23   50) 	struct resource *res;
-453cafbce5bd256 Peter Chen                   2016-08-01   51  	struct device_node *np = dsaf_dev->dev->of_node, *np_temp;
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23   52) 	struct platform_device *pdev = to_platform_device(dsaf_dev->dev);
-511e6bc071db148 huangdaode                   2015-09-17   53  
-8413b3be4d77dae Kejian Yan                   2016-06-03   54  	if (dev_of_node(dsaf_dev->dev)) {
-13ac695e7ea16cb Salil                        2015-12-03   55  		if (of_device_is_compatible(np, "hisilicon,hns-dsaf-v1"))
-511e6bc071db148 huangdaode                   2015-09-17   56  			dsaf_dev->dsaf_ver = AE_VERSION_1;
-13ac695e7ea16cb Salil                        2015-12-03   57  		else
-13ac695e7ea16cb Salil                        2015-12-03   58  			dsaf_dev->dsaf_ver = AE_VERSION_2;
-8413b3be4d77dae Kejian Yan                   2016-06-03   59  	} else if (is_acpi_node(dsaf_dev->dev->fwnode)) {
-8413b3be4d77dae Kejian Yan                   2016-06-03   60  		if (acpi_dev_found(hns_dsaf_acpi_match[0].id))
-8413b3be4d77dae Kejian Yan                   2016-06-03   61  			dsaf_dev->dsaf_ver = AE_VERSION_1;
-8413b3be4d77dae Kejian Yan                   2016-06-03   62  		else if (acpi_dev_found(hns_dsaf_acpi_match[1].id))
-8413b3be4d77dae Kejian Yan                   2016-06-03   63  			dsaf_dev->dsaf_ver = AE_VERSION_2;
-8413b3be4d77dae Kejian Yan                   2016-06-03   64  		else
-8413b3be4d77dae Kejian Yan                   2016-06-03   65  			return -ENXIO;
-8413b3be4d77dae Kejian Yan                   2016-06-03   66  	} else {
-8413b3be4d77dae Kejian Yan                   2016-06-03   67  		dev_err(dsaf_dev->dev, "cannot get cfg data from of or acpi\n");
-8413b3be4d77dae Kejian Yan                   2016-06-03   68  		return -ENXIO;
-8413b3be4d77dae Kejian Yan                   2016-06-03   69  	}
-511e6bc071db148 huangdaode                   2015-09-17   70  
-6162928c76dcba2 Kejian Yan                   2016-06-03   71  	ret = device_property_read_string(dsaf_dev->dev, "mode", &mode_str);
-511e6bc071db148 huangdaode                   2015-09-17   72  	if (ret) {
-511e6bc071db148 huangdaode                   2015-09-17   73  		dev_err(dsaf_dev->dev, "get dsaf mode fail, ret=%d!\n", ret);
-511e6bc071db148 huangdaode                   2015-09-17   74  		return ret;
-511e6bc071db148 huangdaode                   2015-09-17   75  	}
-511e6bc071db148 huangdaode                   2015-09-17   76  	for (i = 0; i < DSAF_MODE_MAX; i++) {
-511e6bc071db148 huangdaode                   2015-09-17   77  		if (g_dsaf_mode_match[i] &&
-511e6bc071db148 huangdaode                   2015-09-17   78  		    !strcmp(mode_str, g_dsaf_mode_match[i]))
-511e6bc071db148 huangdaode                   2015-09-17   79  			break;
-511e6bc071db148 huangdaode                   2015-09-17   80  	}
-511e6bc071db148 huangdaode                   2015-09-17   81  	if (i >= DSAF_MODE_MAX ||
-511e6bc071db148 huangdaode                   2015-09-17   82  	    i == DSAF_MODE_INVALID || i == DSAF_MODE_ENABLE) {
-511e6bc071db148 huangdaode                   2015-09-17   83  		dev_err(dsaf_dev->dev,
-511e6bc071db148 huangdaode                   2015-09-17   84  			"%s prs mode str fail!\n", dsaf_dev->ae_dev.name);
-511e6bc071db148 huangdaode                   2015-09-17   85  		return -EINVAL;
-511e6bc071db148 huangdaode                   2015-09-17   86  	}
-511e6bc071db148 huangdaode                   2015-09-17   87  	dsaf_dev->dsaf_mode = (enum dsaf_mode)i;
-511e6bc071db148 huangdaode                   2015-09-17   88  
-511e6bc071db148 huangdaode                   2015-09-17   89  	if (dsaf_dev->dsaf_mode > DSAF_MODE_ENABLE)
-511e6bc071db148 huangdaode                   2015-09-17   90  		dsaf_dev->dsaf_en = HRD_DSAF_NO_DSAF_MODE;
-511e6bc071db148 huangdaode                   2015-09-17   91  	else
-511e6bc071db148 huangdaode                   2015-09-17   92  		dsaf_dev->dsaf_en = HRD_DSAF_MODE;
-511e6bc071db148 huangdaode                   2015-09-17   93  
-511e6bc071db148 huangdaode                   2015-09-17   94  	if ((i == DSAF_MODE_ENABLE_16VM) ||
-511e6bc071db148 huangdaode                   2015-09-17   95  	    (i == DSAF_MODE_DISABLE_2PORT_8VM) ||
-511e6bc071db148 huangdaode                   2015-09-17   96  	    (i == DSAF_MODE_DISABLE_6PORT_2VM))
-511e6bc071db148 huangdaode                   2015-09-17   97  		dsaf_dev->dsaf_tc_mode = HRD_DSAF_8TC_MODE;
-511e6bc071db148 huangdaode                   2015-09-17   98  	else
-511e6bc071db148 huangdaode                   2015-09-17   99  		dsaf_dev->dsaf_tc_mode = HRD_DSAF_4TC_MODE;
-511e6bc071db148 huangdaode                   2015-09-17  100  
-8413b3be4d77dae Kejian Yan                   2016-06-03  101  	if (dev_of_node(dsaf_dev->dev)) {
-453cafbce5bd256 Peter Chen                   2016-08-01  102  		np_temp = of_parse_phandle(np, "subctrl-syscon", 0);
-453cafbce5bd256 Peter Chen                   2016-08-01  103  		syscon = syscon_node_to_regmap(np_temp);
-453cafbce5bd256 Peter Chen                   2016-08-01  104  		of_node_put(np_temp);
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  105) 		if (IS_ERR_OR_NULL(syscon)) {
-8413b3be4d77dae Kejian Yan                   2016-06-03  106  			res = platform_get_resource(pdev, IORESOURCE_MEM,
-8413b3be4d77dae Kejian Yan                   2016-06-03  107  						    res_idx++);
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  108) 			if (!res) {
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  109) 				dev_err(dsaf_dev->dev, "subctrl info is needed!\n");
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  110) 				return -ENOMEM;
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  111) 			}
-8413b3be4d77dae Kejian Yan                   2016-06-03  112  
-8413b3be4d77dae Kejian Yan                   2016-06-03  113  			dsaf_dev->sc_base = devm_ioremap_resource(&pdev->dev,
-8413b3be4d77dae Kejian Yan                   2016-06-03  114  								  res);
-b3dc93501e34b6e Wei Yongjun                  2016-08-23  115  			if (IS_ERR(dsaf_dev->sc_base))
-96329a181bfbbac Wei Yongjun                  2016-07-05  116  				return PTR_ERR(dsaf_dev->sc_base);
-511e6bc071db148 huangdaode                   2015-09-17  117  
-8413b3be4d77dae Kejian Yan                   2016-06-03  118  			res = platform_get_resource(pdev, IORESOURCE_MEM,
-8413b3be4d77dae Kejian Yan                   2016-06-03  119  						    res_idx++);
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  120) 			if (!res) {
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  121) 				dev_err(dsaf_dev->dev, "serdes-ctrl info is needed!\n");
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  122) 				return -ENOMEM;
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  123) 			}
-8413b3be4d77dae Kejian Yan                   2016-06-03  124  
-8413b3be4d77dae Kejian Yan                   2016-06-03  125  			dsaf_dev->sds_base = devm_ioremap_resource(&pdev->dev,
-8413b3be4d77dae Kejian Yan                   2016-06-03  126  								   res);
-b3dc93501e34b6e Wei Yongjun                  2016-08-23  127  			if (IS_ERR(dsaf_dev->sds_base))
-96329a181bfbbac Wei Yongjun                  2016-07-05  128  				return PTR_ERR(dsaf_dev->sds_base);
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  129) 		} else {
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  130) 			dsaf_dev->sub_ctrl = syscon;
-511e6bc071db148 huangdaode                   2015-09-17  131  		}
-8413b3be4d77dae Kejian Yan                   2016-06-03  132  	}
-511e6bc071db148 huangdaode                   2015-09-17  133  
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  134) 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ppe-base");
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  135) 	if (!res) {
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  136) 		res = platform_get_resource(pdev, IORESOURCE_MEM, res_idx++);
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  137) 		if (!res) {
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  138) 			dev_err(dsaf_dev->dev, "ppe-base info is needed!\n");
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  139) 			return -ENOMEM;
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  140) 		}
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  141) 	}
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  142) 	dsaf_dev->ppe_base = devm_ioremap_resource(&pdev->dev, res);
-b3dc93501e34b6e Wei Yongjun                  2016-08-23  143  	if (IS_ERR(dsaf_dev->ppe_base))
-96329a181bfbbac Wei Yongjun                  2016-07-05  144  		return PTR_ERR(dsaf_dev->ppe_base);
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  145) 	dsaf_dev->ppe_paddr = res->start;
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  146) 
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  147) 	if (!HNS_DSAF_IS_DEBUG(dsaf_dev)) {
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  148) 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  149) 						   "dsaf-base");
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  150) 		if (!res) {
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  151) 			res = platform_get_resource(pdev, IORESOURCE_MEM,
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  152) 						    res_idx);
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  153) 			if (!res) {
-511e6bc071db148 huangdaode                   2015-09-17  154  				dev_err(dsaf_dev->dev,
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  155) 					"dsaf-base info is needed!\n");
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  156) 				return -ENOMEM;
-511e6bc071db148 huangdaode                   2015-09-17  157  			}
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  158) 		}
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  159) 		dsaf_dev->io_base = devm_ioremap_resource(&pdev->dev, res);
-b3dc93501e34b6e Wei Yongjun                  2016-08-23  160  		if (IS_ERR(dsaf_dev->io_base))
-96329a181bfbbac Wei Yongjun                  2016-07-05  161  			return PTR_ERR(dsaf_dev->io_base);
-831d828bf2cc853 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  162) 	}
-511e6bc071db148 huangdaode                   2015-09-17  163  
-6162928c76dcba2 Kejian Yan                   2016-06-03  164  	ret = device_property_read_u32(dsaf_dev->dev, "desc-num", &desc_num);
-511e6bc071db148 huangdaode                   2015-09-17  165  	if (ret < 0 || desc_num < HNS_DSAF_MIN_DESC_CNT ||
-511e6bc071db148 huangdaode                   2015-09-17  166  	    desc_num > HNS_DSAF_MAX_DESC_CNT) {
-511e6bc071db148 huangdaode                   2015-09-17  167  		dev_err(dsaf_dev->dev, "get desc-num(%d) fail, ret=%d!\n",
-511e6bc071db148 huangdaode                   2015-09-17  168  			desc_num, ret);
-f6c2df1e5b913f9 Qianqian Xie                 2016-06-21  169  		return -EINVAL;
-511e6bc071db148 huangdaode                   2015-09-17  170  	}
-511e6bc071db148 huangdaode                   2015-09-17  171  	dsaf_dev->desc_num = desc_num;
-511e6bc071db148 huangdaode                   2015-09-17  172  
-6162928c76dcba2 Kejian Yan                   2016-06-03  173  	ret = device_property_read_u32(dsaf_dev->dev, "reset-field-offset",
-6162928c76dcba2 Kejian Yan                   2016-06-03  174  				       &reset_offset);
-422c3107ed2cc62 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  175) 	if (ret < 0) {
-422c3107ed2cc62 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  176) 		dev_dbg(dsaf_dev->dev,
-422c3107ed2cc62 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  177) 			"get reset-field-offset fail, ret=%d!\r\n", ret);
-422c3107ed2cc62 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  178) 	}
-422c3107ed2cc62 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  179) 	dsaf_dev->reset_offset = reset_offset;
-422c3107ed2cc62 Yisen.Zhuang\(Zhuangyuzeng\  2016-04-23  180) 
-6162928c76dcba2 Kejian Yan                   2016-06-03  181  	ret = device_property_read_u32(dsaf_dev->dev, "buf-size", &buf_size);
-511e6bc071db148 huangdaode                   2015-09-17  182  	if (ret < 0) {
-511e6bc071db148 huangdaode                   2015-09-17  183  		dev_err(dsaf_dev->dev,
-511e6bc071db148 huangdaode                   2015-09-17  184  			"get buf-size fail, ret=%d!\r\n", ret);
-f6c2df1e5b913f9 Qianqian Xie                 2016-06-21  185  		return ret;
-511e6bc071db148 huangdaode                   2015-09-17  186  	}
-511e6bc071db148 huangdaode                   2015-09-17  187  	dsaf_dev->buf_size = buf_size;
-511e6bc071db148 huangdaode                   2015-09-17  188  
-511e6bc071db148 huangdaode                   2015-09-17  189  	dsaf_dev->buf_size_type = hns_rcb_buf_size2type(buf_size);
-511e6bc071db148 huangdaode                   2015-09-17  190  	if (dsaf_dev->buf_size_type < 0) {
-511e6bc071db148 huangdaode                   2015-09-17  191  		dev_err(dsaf_dev->dev,
-511e6bc071db148 huangdaode                   2015-09-17  192  			"buf_size(%d) is wrong!\n", buf_size);
-f6c2df1e5b913f9 Qianqian Xie                 2016-06-21  193  		return -EINVAL;
-511e6bc071db148 huangdaode                   2015-09-17  194  	}
-511e6bc071db148 huangdaode                   2015-09-17  195  
-a24274aa5c2328a Kejian Yan                   2016-06-03  196  	dsaf_dev->misc_op = hns_misc_op_get(dsaf_dev);
-a24274aa5c2328a Kejian Yan                   2016-06-03  197  	if (!dsaf_dev->misc_op)
-a24274aa5c2328a Kejian Yan                   2016-06-03  198  		return -ENOMEM;
-a24274aa5c2328a Kejian Yan                   2016-06-03  199  
-511e6bc071db148 huangdaode                   2015-09-17 @200  	if (!dma_set_mask_and_coherent(dsaf_dev->dev, DMA_BIT_MASK(64ULL)))
-511e6bc071db148 huangdaode                   2015-09-17  201  		dev_dbg(dsaf_dev->dev, "set mask to 64bit\n");
-511e6bc071db148 huangdaode                   2015-09-17  202  	else
-511e6bc071db148 huangdaode                   2015-09-17  203  		dev_err(dsaf_dev->dev, "set mask to 64bit fail!\n");
-511e6bc071db148 huangdaode                   2015-09-17  204  
-511e6bc071db148 huangdaode                   2015-09-17  205  	return 0;
-511e6bc071db148 huangdaode                   2015-09-17  206  }
-511e6bc071db148 huangdaode                   2015-09-17  207  
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
