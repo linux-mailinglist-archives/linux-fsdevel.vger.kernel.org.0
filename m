@@ -2,62 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F09CC7013D5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 May 2023 03:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E20C170153B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 May 2023 10:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240867AbjEMB55 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 May 2023 21:57:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44284 "EHLO
+        id S229688AbjEMIUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 May 2023 04:20:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbjEMB54 (ORCPT
+        with ESMTP id S229463AbjEMIUr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 May 2023 21:57:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2678D559F;
-        Fri, 12 May 2023 18:57:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AAF7660C80;
-        Sat, 13 May 2023 01:57:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCC24C433D2;
-        Sat, 13 May 2023 01:57:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683943074;
-        bh=eFikobi7MSbviz1Fp5uL4fBgaRdT+cxkeTjrebawFcU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uUX2uRiISwv4wnF/caLxPD9c7EdINaQrl3AcnTofcVnLITWh141w9BVcbpbYm+ddn
-         TpiEPmdc6m+PTGksGdUvlj5tPm8yreD+O3n2Km2sx/ja1S5FF3HMye2BbqKMPOicZV
-         +adPoQDfAiQOlqTJbWXeRYVQ0K7MJtHlPLBCy6ro3S02hSTwZMBvXGRxc4wIch6ywf
-         wXZGRhYTs61TI7ktCreUiCrLdONf30uLreYNXoZXiuqjyc5LQg7Ux2pTA//+FPrERY
-         yVn+ZfteA4TqWB886MrUtR6RX0nKp9ioei0YyaXaDVRV0NWckZb86GyEyCzPhnWlbm
-         9HuSxxWigYFjg==
-Date:   Fri, 12 May 2023 18:57:52 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Lorenzo Stoakes <lstoakes@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org
-Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
-Message-ID: <20230513015752.GC3033@quark.localdomain>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-8-kent.overstreet@linux.dev>
- <ZFqxEWqD19eHe353@infradead.org>
- <ZFq3SdSBJ_LWsOgd@murray>
- <ZFq7JhrhyrMTNfd/@moria.home.lan>
- <20230510064849.GC1851@quark.localdomain>
- <ZF6HHRDeUWLNtuL7@moria.home.lan>
+        Sat, 13 May 2023 04:20:47 -0400
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAAB84EFA
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 May 2023 01:20:45 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-76c65f950a8so333334239f.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 May 2023 01:20:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683966045; x=1686558045;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NHsT8aQgofiZEPogCxeuyef7jD7ovpRr7WF45e4OLqo=;
+        b=F9b7Js0hqFb07OvxyZF/R2iDsKQVNuKf/vplnzy5PDfpr9XtdE+Ky7ypwDbiTtvaYH
+         WVwxdQc09Sram0owbAoVpKYNP1rGKuw+MZfsfAAcdTH1xAEjOp00RWxAzpPX/ug8XUJq
+         bVx+z2g58/pJalwecTBBWdz6S0yqeSbNbOUf8Z4hZH/gaTwv0cj8Li8ZuIHJhqXUNckv
+         cAGoinevHQudH8iy3kn7QApHeMFwo3qDNjy94EGfJ6CPd5IK9/H4bGQvoVOVzz0P+3Gd
+         doo08L7mjpCAzu2zOSFzrS9Id4r7WXr4fcjOsxV7tnjIl2C3ABp3SbNV1LgCpdclpu/m
+         HSKw==
+X-Gm-Message-State: AC+VfDzdDvRPYOuiPfIz9cP0DRubpuk56XUp8lIO8ddH2kjkRm0uQcF8
+        mMvNz6iXkbvlyNzLQlmR9G5C7uc9749ae8SwITwXzG60GeSI
+X-Google-Smtp-Source: ACHHUZ4Enq8/ALFZVBHlfZlnhINFRKjOwYgQUHx8KWNaqHXGkJk3PiK03BjwybbZxfQT8C6sV95PHkXToxi1rLc/IHqb3OMoMuzF
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZF6HHRDeUWLNtuL7@moria.home.lan>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Received: by 2002:a02:9387:0:b0:416:7d6c:5e3c with SMTP id
+ z7-20020a029387000000b004167d6c5e3cmr7518342jah.1.1683966044840; Sat, 13 May
+ 2023 01:20:44 -0700 (PDT)
+Date:   Sat, 13 May 2023 01:20:44 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000eaae1e05fb8ee573@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in __virt_to_phys (2)
+From:   syzbot <syzbot+8ca7991ee615756ac1c7@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -65,181 +55,180 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Kent,
+Hello,
 
-On Fri, May 12, 2023 at 02:36:13PM -0400, Kent Overstreet wrote:
-> On Tue, May 09, 2023 at 11:48:49PM -0700, Eric Biggers wrote:
-> > What seems to be missing is any explanation for what we're actually getting from
-> > this extremely unusual solution that cannot be gained any other way.  What is
-> > unique about bcachefs that it really needs something like this?
-> 
-> Ok, as promised:
-> 
-> Background: all metadata in bcachefs is a structured as key/value pairs,
-> and there's a common key format for all keys.
-> 
-> struct bkey {
-> 	/* 3 byte header */
-> 	u8		u64s;		/* size of k/v in u64s */
-> 	u8		format;		/* packed/unpacked, needs_whiteout */
-> 	u8		type;		/* value type */
-> 	u8		pad;
-> 
-> 	/*
-> 	 * Order of fields below is for little endian, they're in
-> 	 * reverse order on big endian (and byte swabbed as necessary
-> 	 * when reading foreign endian metadata)
-> 	 * 
-> 	 * Since field order matches byte order, the key can be treated
-> 	 * as one large multi word integer for doing comparisons:
-> 	 */
-> 	u96		version;	/* nonces, send/recv support */
-> 	u32		size;		/* size of extent keys */
-> 
-> 	/* Below are the field used for ordering/comparison: */
-> 	u32		snapshot;	
-> 	u64		offset;
-> 	u64		inode;
-> 
-> 	/* Value is stored inline with key */
-> 	struct bch_val	v;
-> };
-> 
-> sizeof(struct bkey) == 40.
-> 
-> An extent value that has one pointer and no checksum is 8 bytes, with
-> one pointer and one 32 bit checksum 16 bytes, for 56 bytes total (key
-> included).
-> 
-> But for a given btree node, most of the key fields will typically be
-> redundandant. An extents leaf node might have extents for all one inode
-> number or a small range of inode numbers, snapshots may or may not be in
-> use, etc. - clearly some compression is desirable here.
-> 
-> The key observation is that key compression is possible if we have a
-> compression function that preserves order, and an order-preserving
-> compression function is possible if it's allowed to fail. That means we
-> do comparisons on packed keys, which lets us skip _most_ unpack
-> operations, for btree node resorts and for lookups within a node.
-> 
-> Packing works by defining a format with an offset and a bit width for
-> each field, so e.g. if all keys in a btree node have the same inode
-> number the packed format can specify that inode number and then a field
-> width of 0 bits for the inode field.
-> 
-> Continuing the arithmetic from before, a packed extent key will
-> typically be only 8 or 16 bytes, or 24-32 including the val, which means
-> bkey packing cuts our metadata size roughly in half.
-> 
-> (It also makes our key format somewhat self describing and gives us a
-> mechanism by which we could add or extend fields in the future).
-> 
-> -----------------------------------------------------
-> 
-> As mentioned before, since packed bkeys are still multi-word integers we
-> can do some important operations without unpacking, but to iterate over
-> keys, compare packed & unpacked keys in resort, etc. - we'll still need
-> to unpack, so we need this operation to be as fast as possible.
-> 
-> bkey.c __bch2_bkey_unpack_key() is the unspecialized version written in
-> C, that works on any archictecture. It loops over the fields in a
-> bkey_format, pulling them out of the input words and adding back the
-> field offsets. It's got the absolute minimum number of branches - one
-> per field, when deciding to advance to the next input word - but it
-> can't be branchless and it's a whole ton of shifts and bitops.
-> 
-> dynamic codegen lets us produce unpack functions that are fully
-> branchless and _much_ smaller. For any given btree node we'll have a
-> format where multiple fields have 0 field with - i.e. those fields are
-> always constants. That code goes away, and also if the format can be
-> byte aligned we can eliminate shifts and bitopts. Code size for the
-> dynamically compiled unpack functions is roughly 10% that of the
-> unspecialized C version.
-> 
-> I hope that addresses some of the "what is this even for" questions :)
-> 
-> Cheers,
-> Kent
+syzbot found the following issue on:
 
-I don't think this response addresses all the possibilities for optimizing the C
-implementation, so I'd like to bring up a few and make sure that you've explored
-them.
+HEAD commit:    14f8db1c0f9a Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=163d9c98280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a837a8ba7e88bb45
+dashboard link: https://syzkaller.appspot.com/bug?extid=8ca7991ee615756ac1c7
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11001b7a280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=131f2e32280000
 
-To summarize, you need to decode 6 fields that are each a variable number of
-bits (not known at compile time), and add an offset (also not known at compile
-time) to each field.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ad6ce516eed3/disk-14f8db1c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1f38c2cc7667/vmlinux-14f8db1c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d795115eee39/Image-14f8db1c.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f4b6924b0bd8/mount_0.gz
 
-I don't think the offset is particularly interesting.  Adding an offset to each
-field is very cheap and trivially parallelizable by the CPU.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8ca7991ee615756ac1c7@syzkaller.appspotmail.com
 
-It's really the bit width that's "interesting", as it must be the serialized
-decoding of variable-length fields that slows things down a lot.
+ntfs3: loop0: Different NTFS' sector size (4096) and media sector size (512)
+------------[ cut here ]------------
+virt_to_phys used for non-linear address: 000000005d09f686 (0xdead4ead00000000)
+WARNING: CPU: 1 PID: 5926 at arch/arm64/mm/physaddr.c:15 __virt_to_phys+0x84/0x9c arch/arm64/mm/physaddr.c:17
+Modules linked in:
+CPU: 1 PID: 5926 Comm: syz-executor863 Not tainted 6.3.0-rc7-syzkaller-g14f8db1c0f9a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __virt_to_phys+0x84/0x9c arch/arm64/mm/physaddr.c:17
+lr : __virt_to_phys+0x80/0x9c arch/arm64/mm/physaddr.c:12
+sp : ffff80001e4a74e0
+x29: ffff80001e4a74e0 x28: 1fffe0001bd60433 x27: dfff800000000000
+x26: 1fffe0001bd60431 x25: dfff800000000000 x24: ffff8000127d6740
+x23: ffff8000096bf414 x22: ffff0000deb020a8 x21: 0000000000040000
+x20: deae4ead00000000 x19: dead4ead00000000 x18: ffff80001e4a6e20
+x17: 6564783028203638 x16: ffff80001236e294 x15: 0000000000000002
+x14: 0000000000000000 x13: 0000000000000001 x12: 0000000000000001
+x11: 0000000000000000 x10: 0000000000000000 x9 : 787ed45d7a14e900
+x8 : ffff800015755000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80001e4a6dd8 x4 : ffff800015e4ccc0 x3 : ffff800008584230
+x2 : 0000000000000001 x1 : 0000000100000000 x0 : 0000000000000000
+Call trace:
+ __virt_to_phys+0x84/0x9c arch/arm64/mm/physaddr.c:17
+ virt_to_folio include/linux/mm.h:1057 [inline]
+ kfree+0x7c/0x19c mm/slab_common.c:1011
+ kvfree+0x40/0x50 mm/util.c:649
+ run_close fs/ntfs3/ntfs_fs.h:946 [inline]
+ indx_clear+0x44/0x94 fs/ntfs3/index.c:859
+ ni_clear+0x248/0x4f0 fs/ntfs3/frecord.c:121
+ ntfs_evict_inode+0x90/0xc8 fs/ntfs3/inode.c:1779
+ evict+0x260/0x68c fs/inode.c:665
+ iput_final fs/inode.c:1748 [inline]
+ iput+0x734/0x818 fs/inode.c:1774
+ ntfs_loadlog_and_replay+0x248/0x448 fs/ntfs3/fsntfs.c:325
+ ntfs_fill_super+0x1f7c/0x3b9c fs/ntfs3/super.c:1053
+ get_tree_bdev+0x360/0x54c fs/super.c:1303
+ ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1408
+ vfs_get_tree+0x90/0x274 fs/super.c:1510
+ do_new_mount+0x25c/0x8c8 fs/namespace.c:3042
+ path_mount+0x590/0xe04 fs/namespace.c:3372
+ do_mount fs/namespace.c:3385 [inline]
+ __do_sys_mount fs/namespace.c:3594 [inline]
+ __se_sys_mount fs/namespace.c:3571 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3571
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
+ el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
+ el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+irq event stamp: 24636
+hardirqs last  enabled at (24635): [<ffff8000083416f0>] __up_console_sem+0x60/0xb4 kernel/printk/printk.c:345
+hardirqs last disabled at (24636): [<ffff800012369e90>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:405
+softirqs last  enabled at (24444): [<ffff800008020c1c>] softirq_handle_end kernel/softirq.c:414 [inline]
+softirqs last  enabled at (24444): [<ffff800008020c1c>] __do_softirq+0xac0/0xd54 kernel/softirq.c:600
+softirqs last disabled at (24433): [<ffff80000802a658>] ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:80
+---[ end trace 0000000000000000 ]---
+Unable to handle kernel paging request at virtual address 007ab33ab96b8008
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004
+  CM = 0, WnR = 0
+[007ab33ab96b8008] address between user and kernel address ranges
+Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 5926 Comm: syz-executor863 Tainted: G        W          6.3.0-rc7-syzkaller-g14f8db1c0f9a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : _compound_head include/linux/page-flags.h:251 [inline]
+pc : virt_to_folio include/linux/mm.h:1059 [inline]
+pc : kfree+0x90/0x19c mm/slab_common.c:1011
+lr : virt_to_folio include/linux/mm.h:1057 [inline]
+lr : kfree+0x7c/0x19c mm/slab_common.c:1011
+sp : ffff80001e4a7500
+x29: ffff80001e4a7500 x28: 1fffe0001bd60433 x27: dfff800000000000
+x26: 1fffe0001bd60431 x25: dfff800000000000 x24: ffff8000127d6740
+x23: ffff8000096bf414 x22: ffff0000deb020a8 x21: 0000000000040000
+x20: ffff8000087e5650 x19: dead4ead00000000 x18: ffff80001e4a6e20
+x17: 6564783028203638 x16: ffff80001236e294 x15: 0000000000000002
+x14: 0000000000000000 x13: 0000000000000001 x12: 0000000000000001
+x11: 0000000000000000 x10: 0000000000000000 x9 : 037ab73ab96b8000
+x8 : fffffc0000000000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80001e4a6dd8 x4 : ffff800015e4ccc0 x3 : ffff800008584230
+x2 : 0000000000000001 x1 : 0000000100000000 x0 : 037ab33ab96b8000
+Call trace:
+ virt_to_folio include/linux/mm.h:1057 [inline]
+ kfree+0x90/0x19c mm/slab_common.c:1011
+ kvfree+0x40/0x50 mm/util.c:649
+ run_close fs/ntfs3/ntfs_fs.h:946 [inline]
+ indx_clear+0x44/0x94 fs/ntfs3/index.c:859
+ ni_clear+0x248/0x4f0 fs/ntfs3/frecord.c:121
+ ntfs_evict_inode+0x90/0xc8 fs/ntfs3/inode.c:1779
+ evict+0x260/0x68c fs/inode.c:665
+ iput_final fs/inode.c:1748 [inline]
+ iput+0x734/0x818 fs/inode.c:1774
+ ntfs_loadlog_and_replay+0x248/0x448 fs/ntfs3/fsntfs.c:325
+ ntfs_fill_super+0x1f7c/0x3b9c fs/ntfs3/super.c:1053
+ get_tree_bdev+0x360/0x54c fs/super.c:1303
+ ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1408
+ vfs_get_tree+0x90/0x274 fs/super.c:1510
+ do_new_mount+0x25c/0x8c8 fs/namespace.c:3042
+ path_mount+0x590/0xe04 fs/namespace.c:3372
+ do_mount fs/namespace.c:3385 [inline]
+ __do_sys_mount fs/namespace.c:3594 [inline]
+ __se_sys_mount fs/namespace.c:3571 [inline]
+ __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3571
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
+ el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
+ el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+Code: b25657e8 927acd29 cb151929 8b080120 (f9400408) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	b25657e8 	mov	x8, #0xfffffc0000000000    	// #-4398046511104
+   4:	927acd29 	and	x9, x9, #0x3ffffffffffffc0
+   8:	cb151929 	sub	x9, x9, x21, lsl #6
+   c:	8b080120 	add	x0, x9, x8
+* 10:	f9400408 	ldr	x8, [x0, #8] <-- trapping instruction
 
-First, I wanted to mention that decoding of variable-length fields has been
-extensively studied for decompression algorithms, e.g. for Huffman decoding.
-And it turns out that it can be done branchlessly.  The basic idea is that you
-have a branchless refill step that looks like the following:
 
-#define REFILL_BITS_BRANCHLESS()                    \
-        bitbuf |= get_unaligned_u64(p) << bitsleft; \
-        p += 7 - ((bitsleft >> 3) & 0x7);           \
-        bitsleft |= 56;
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-That branchlessly ensures that 'bitbuf' contains '56 <= bitsleft <= 63' bits.
-Then, the needed number of bits can be removed and returned:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-#define READ_BITS(n)                          \
-        REFILL_BITS_BRANCHLESS();             \
-        tmp = bitbuf & (((u64)1 << (n)) - 1); \
-        bitbuf >>= (n);                       \
-        bitsleft -= (n);                      \
-        tmp
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-If you're interested, I can give you some references about the above method.
-But, I really just wanted to mention it for completeness, since I think you'd
-actually want to go in a slightly different direction, since (a) you have all
-the field widths available from the beginning, as opposed to being interleaved
-into the bitstream itself (as is the case in Huffman decoding for example), so
-you're not limited to serialized decoding of each field, (b) your fields are up
-to 96 bits, and (c) you've selected a bitstream convention that seems to make it
-such that your stream *must* be read in aligned units of u64, so I don't think
-something like REFILL_BITS_BRANCHLESS() could work for you anyway.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-What I would suggest instead is preprocessing the list of 6 field lengths to
-create some information that can be used to extract all 6 fields branchlessly
-with no dependencies between different fields.  (And you clearly *can* add a
-preprocessing step, as you already have one -- the dynamic code generator.)
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-So, something like the following:
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
-    const struct field_info *info = &format->fields[0];
-
-    field0 = (in->u64s[info->word_idx] >> info->shift1) & info->mask;
-    field0 |= in->u64s[info->word_idx - 1] >> info->shift2;
-
-... but with the code for all 6 fields interleaved.
-
-On modern CPUs, I think that would be faster than your current C code.
-
-You could do better by creating variants that are specialized for specific
-common sets of parameters.  During "preprocessing", you would select a variant
-and set an enum accordingly.  During decoding, you would switch on that enum and
-call the appropriate variant.  (This could also be done with a function pointer,
-of course, but indirect calls are slow these days...)
-
-For example, you mentioned that 8-byte packed keys is a common case.  In that
-case there is only a single u64 to decode from, so you could create a function
-that just handles that case:
-
-    field0 = (word >> info->shift) & info->mask;
-
-You could also create other variants, e.g.:
-
-- 16-byte packed keys (which you mentioned are common)
-- Some specific set of fields have zero width so don't need to be extracted
-  (which it sounds like is common, or is it different fields each time?)
-- All fields having specific lengths (are there any particularly common cases?)
-
-Have you considered any of these ideas?
-
-- Eric
+If you want to undo deduplication, reply with:
+#syz undup
