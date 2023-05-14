@@ -2,1187 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B5AE701D3D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 May 2023 14:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E10AB701EFF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 May 2023 20:39:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbjENMP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 May 2023 08:15:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55490 "EHLO
+        id S229929AbjENSjG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 May 2023 14:39:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbjENMP1 (ORCPT
+        with ESMTP id S229585AbjENSjE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 May 2023 08:15:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B08692691;
-        Sun, 14 May 2023 05:15:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 336EB60C07;
-        Sun, 14 May 2023 12:15:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59C3C433EF;
-        Sun, 14 May 2023 12:15:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684066522;
-        bh=Yw2taMtqqQk0CF+hZUHV0QOpU3cc8pORliPFvgC75K8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=QB9Euy8eFyXNFy7b66xSTVHVJth5nALwJdaYDpMcwdmSvHyEnJd+tD2qe8NEAx34B
-         tc5Bx4+/N3/zKHTCNkmOfa2y4CyzORHfbqGCXKZOcqHXniQgxbNRnlIZte4abHS+tO
-         7IhmJrw5C1PjAtJU+loi0t0cpHK6k0TNObOtkMD/Wd7US4Ed460zc/dczaftXJT8xU
-         IALSt8mlYy1aRZIwn9fjG6J68nYDDGMsow3UT96NWTpWJ0rDKJECBTVf3KnEFucetM
-         RWqeOZGoonn/+2nhlvbz0I2xtqnIJcwmy3Sdv7WtzSS8p2No2v6mkcAPIPGc3hoB3P
-         TOafAV8Z/XppQ==
-Message-ID: <e87c74c05e79a01b160ce0ae81a9ef4229670930.camel@kernel.org>
-Subject: Re: [PATCH 04/32] locking: SIX locks (shared/intent/exclusive)
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Date:   Sun, 14 May 2023 08:15:20 -0400
-In-Reply-To: <20230509165657.1735798-5-kent.overstreet@linux.dev>
+        Sun, 14 May 2023 14:39:04 -0400
+Received: from FRA01-MR2-obe.outbound.protection.outlook.com (mail-mr2fra01on2058.outbound.protection.outlook.com [40.107.9.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 289A83593;
+        Sun, 14 May 2023 11:39:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=B47LRVozw5xBpM6O45sFU6YWvOB3DeQtVlM9SzpawiI1YTse7nTU7Za/dQ98KrzVatHtwNBN2MPSu53FpE6oIYN88ZP6vkyTRc4j1AXimkWRohR9oY6pC/MU0DaU5Dzu5IXukjpOQA9ikxasf3wEP1OAKMG9u1vjoMc0+Z7jC8MrJ+/ERpoHOOxHbyHwCaMI9TPKkhhJftz5zU8DFi5pwstZ6hfO7fSjDd0uFmUKIHsnNH4NiuQXBbrhGh30sQsX7DSuYEGfKxX3SDVXy0+P0qp5CFls4sLlNn7peruGnUqhNA4TtKyCfkNXnS5qQjcgyCH9HeQcw2kg+6YTsga5Tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hg7d7NAmCIj1Huk93eec7T5yU+XTC5F3kggTsFB3bF0=;
+ b=l9Oby93xGj752WqdJQ1yix3KCJm5YMCNqaXasedRr0KFWunoRpTeMxLYX2VdBzeuE4ZP7z5f+DiCujbxyQKohi/BehdyMl+AhznQSQpSOd1y1SbV7tLSmBDjTeuAODpTYdIAsre8Z+VF9PJ8DMey+QRuuGdLgi5bT+YR2/ddLti4asVeHZQIO6HGamFrLcfVkdxg4XgSnfo1DigQfvF36+cyPlfyCrlRdgwOSK2vHSzqlCD0h7OrQcReMklnzYqYMoADcIlqplPCPLaJInel8JOHdBIiLS1vC/1GAanvaEDXvsyBNDlAT+gVhWgvKhDA5Z9q8howWhNpqkIbgBD6MA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
+ dkim=pass header.d=csgroup.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hg7d7NAmCIj1Huk93eec7T5yU+XTC5F3kggTsFB3bF0=;
+ b=Sw/9GRcf34b6x/FWkpLdZiGQR/kGYC4ifSWaI9+Rz3H32CYg8TRJFTkd+OQ0Bl0Nr/Vm/loFMBjSq0+mVY0e8uQCTZOoZNi4d/sKEdClcNgD0YaZmGhU5cDqpIbn73OpEdp7n6bH1ZeRMoWLLpzwyJPwqZ4ECAqOpvnIT1a6zZDDL8EAhLdJ1BBFYTI18luJysikZlMPKY5o9iZKIhMqKdEY3UujYM/Wua5fXIVSfd5OEcWOozX7VM5YGE+6Y7buQbE1+an3jPCVT+2PCBZLKVLK3mgEH0hqjM79GIVeoDNeIT8BwF95WMEQ3O3vlgJQ3TUrFgkwB9TpgfJqNgBndg==
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
+ by MRZP264MB1909.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.30; Sun, 14 May
+ 2023 18:39:00 +0000
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::447b:6135:3337:d243]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::447b:6135:3337:d243%3]) with mapi id 15.20.6387.030; Sun, 14 May 2023
+ 18:39:00 +0000
+From:   Christophe Leroy <christophe.leroy@csgroup.eu>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Kent Overstreet <kent.overstreet@linux.dev>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
+Thread-Topic: [PATCH 07/32] mm: Bring back vmalloc_exec
+Thread-Index: AQHZgpdUsgx7flCbUE+3jXS45Hg7zK9SaWKAgAAHaoCABcbjAIAB6dOA
+Date:   Sun, 14 May 2023 18:39:00 +0000
+Message-ID: <ce5125be-464e-44ad-8d9e-7c818f794db1@csgroup.eu>
 References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
-         <20230509165657.1735798-5-kent.overstreet@linux.dev>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+ <20230509165657.1735798-8-kent.overstreet@linux.dev>
+ <ZFqxEWqD19eHe353@infradead.org> <ZFq3SdSBJ_LWsOgd@murray>
+ <8f76b8c2-f59d-43fc-9613-bb094e53fb16@lucifer.local>
+In-Reply-To: <8f76b8c2-f59d-43fc-9613-bb094e53fb16@lucifer.local>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=csgroup.eu;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MRZP264MB2988:EE_|MRZP264MB1909:EE_
+x-ms-office365-filtering-correlation-id: 490fcecb-9bce-42a3-5244-08db54aa7bfb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: w7/xef2PUTR2oleZrkTTp4k2WXmpK2UDvDuuAuq3tjs53JEPbn95ocwlo9BsVCRwb74wmJMQtI428bR4GwE9pB1XRMi11dixJ6I21DNAXJ+ZxrX7WLs9pwWFBI/q60Pi+w/Ba1K3MaoOHtl8uNanzwqsS7GAQtCVLWxVQl5uD5adfrQHQbveXp+99qkssS0MAXKqr0pOjfkQU4KtGZ6RV0g4pyC+Xmlbu8oyeAfRExdFMe9+f46PZ+2TWuklyS0Ube2YHfX4SvgE/VE8sA/afV+Fh8wU8gX9jqXNXdtnTNHnb9MBgD16zC2bRz9+a2bh/XfCd69c6JhMpmm9A3+Gk5VJrnOVQjVTSQ7hW+OdY0rTVezQ+7sBFg2H8ey1KEutfBsX9fmC+ZxQj/+JtQ8M8EjaD2RqTsm1fSZWVOQLOQUCUJmwOh1OvPi6IRBHBt1BW2iBEo8BpCHTUL3GF6SQOAP+orWbligAWukbM0+6wjIWkjjRzLBBzOs3L0DukF8KI02ABYwpwdzi9hZuDOlOrFGN+26QuQ9kfQFA5xHvpiwA4ADQiCOeLIwvsIX/bhW9MezYWlipjSYfjSPCDulVvpoX70sp9hDMa6Nrk8J8mmPKhckozGRGkbtpjYezJupR/nTjHu3KBYWYFKtXg5uSIHOm1KYSeymxl/lBshNiNH3mcvVUz3mhTJ7jELMg1Bae
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(136003)(346002)(39850400004)(376002)(396003)(451199021)(66574015)(83380400001)(64756008)(66446008)(66476007)(66556008)(66946007)(91956017)(76116006)(2616005)(26005)(6486002)(6512007)(6506007)(478600001)(54906003)(110136005)(186003)(71200400001)(86362001)(44832011)(7416002)(2906002)(8676002)(8936002)(31696002)(5660300002)(36756003)(4326008)(41300700001)(38070700005)(38100700002)(122000001)(316002)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MjE4eGtlSFFXVE1hdmlzR1RtUjRSQk1qcG9TSzB1Mk5NbzIySlVuOHE3SFVu?=
+ =?utf-8?B?c1o5VGtCWjBjMzJZb1JvR3BUMlhLK09mSWhqaTRSTzNPaDE3K0E1MmdwQUFO?=
+ =?utf-8?B?K0FyVUdFT1hoQWRRUzRCdk9kdDB1YWJ4R293YjRYd2g3NEtTYUkxQk5NOWlJ?=
+ =?utf-8?B?UTUrZXVEeDl2TUZlSzVXZmZWMi9EL21QeTB6S1VLbDJHRm9zcjJIcm4xcEta?=
+ =?utf-8?B?SWNLMjZZNEFSRkc3L3pRZVQ2bjBZbTVQMzAyeHNFb3ZJUTNEa05ucmZCbFl0?=
+ =?utf-8?B?UVJGWm9ZZUJGTUs4eXhiQWxvcG1kOFJQZXlSb3d5YjFpcXFSQjY5OG9JY01r?=
+ =?utf-8?B?V1hlKzRvdmk3UG9UaEN5UmtJNmdCQW9KTDNKM1BnUVRaMm5IbXY4WitnVUZV?=
+ =?utf-8?B?SEJRd1kzc3V3OUpSdFJocUVmTm1OT3o3Y2paQys5TDk0Wjh3V3Z2aFlWOWND?=
+ =?utf-8?B?Wm9RRzhzRUdOMkdadXNSQU1KWWNOVUlSUlhPRlY2eitKenh6K25MaXpyakNn?=
+ =?utf-8?B?R2F1dmJDNC85bUt5NDdHMFBCakZNZDd0UDlzT291aGJGM2JiOHp4bVJZT3J5?=
+ =?utf-8?B?TFlFYUhsYUE3SVptRHIyZGhyUEQ0Y2plczR0elRPZWw4YjR2bDdsZ3JLZ0Fs?=
+ =?utf-8?B?SDhlaHBCNXZsU2dpS1IrNzRIcjRJQldGVzFRZnNvM3ZyakpYeTNpMWZ2bG02?=
+ =?utf-8?B?cHFwNjNoODVQV21pVU5Mc0hqc0dFeUppSWViRXhJMXJWOVZCTjRwQlp1TWxl?=
+ =?utf-8?B?cCtWc25EMVpIdHZYZVJqaE1XR0R4NFQ4NE84T0VvZEp1OHphRzZ0d29HWGt4?=
+ =?utf-8?B?Q1M5UG45SEVKT2hFWFFjcGJTdlpYM1Q0R05uMldJYnhOVDFUQkVWbG9paUli?=
+ =?utf-8?B?dXVVNzR6NGVxOHJURUlQcmFWUm4yTW1uUUgySHgrN1o1dmR5YjFqWlBYUHRh?=
+ =?utf-8?B?SXVYcDZTZEc4MXl0OVlGWkVjSXh1MHNQZmk3cm5peEt3QUZlTzlNQUxIZ0Ru?=
+ =?utf-8?B?TzgzSkdkRjBnQ1RzRUpHTTJzZXJuNzh3c2NLOWlJbVFxaUY3VWI5OWVSYzQz?=
+ =?utf-8?B?aHpwTnI3dkhPWG9DQ2F6RGhpK3hZSTFqb2FJNkJzYURIanpwSVl2SFRhaHc1?=
+ =?utf-8?B?dUpNd05mdHFmUGxYWDJTaUVLQ2hWN20welFnL0VOcHBuMzJaOGI5RTlkaGxH?=
+ =?utf-8?B?bEszKzIxZDFkdjM0TjN5U3owV3hIWnZ0ekh5a3A2em0ydWVCdHhVY1lmYmdE?=
+ =?utf-8?B?NXkzTWx6MnpHYlNOUGxDLytJTHN6Z09WR1A3bUovR3RseHM3UmpRNHgyOEN3?=
+ =?utf-8?B?Q2NaNzZzR0NkK212aUpzendJT3hnTkhjMkl0VW9QSHA1RDhKTDljemd0UDJi?=
+ =?utf-8?B?ZG8xL0pPN1MrN2dnMGJvYjJOVUZ6TzJpR3FmV25ObnJrbHNiYjl0dS9PdHNK?=
+ =?utf-8?B?ODQyMjNUY3pkR0hzeW9SU1lMS0JNRCs3MVJUQ3prZW1pNXBlTzJFRThGY09L?=
+ =?utf-8?B?MHFId3Z6K2laS2J0WnlJcjNxbTVOVFlYQmREdjhpTDhKZnBIU0txcXUveWdO?=
+ =?utf-8?B?SDkxLzlQRkFFZjhzSFdzU0swV1VNRG52RWUxVkpJVWdCNmtwY2lUcnByakQ0?=
+ =?utf-8?B?UG03Vis0TzUvZ1hzbXJock1EZXM3NkVJMG9hWkg2WXRUT2I1L0orcitMMGc4?=
+ =?utf-8?B?aUJ1U3M1dGp5cU82cEE4UXZUcFczTVY0R0ptbk1FWHhleUJnd2tnZVR6YkVj?=
+ =?utf-8?B?VnV2UVZhak5BOUVyMTJ4UE1pazlhSHUyZklNNmhGcHcrL3U2WFRVb2JxSjRK?=
+ =?utf-8?B?Q0xrY096cGtnWkJiakFsS1pUcXdrZDF5K1RiWkhHZXRrZStxc3NtMEo3aUwx?=
+ =?utf-8?B?VFI4MFNacjRwVlJsblFvMEhKQWtKdXdyemp6VUdCQ1JCWkhnZmp5SFo5RWNO?=
+ =?utf-8?B?b2pBL2xqT1dKUmhxZ2p2elVEdzhPOXlabDVWK1FzR0RFSHYzdHR2aStKd29y?=
+ =?utf-8?B?eGF1WnNVSU9QK2tXa3cxaVR4UWluYnlaNEdoYWhldXhMSlFEYnhmWVJuQXNr?=
+ =?utf-8?B?SnYzK0xKS2E5M0d0SWRGUUdDVjYrSHAwckY2cUFicUtPK3JjL1AzbmIwckJu?=
+ =?utf-8?Q?y0o5jYWNhNzVG405W8kiFYSlc?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B7D3A28A719AFF4E96B25C1FF17F54A4@FRAP264.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-OriginatorOrg: csgroup.eu
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 490fcecb-9bce-42a3-5244-08db54aa7bfb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2023 18:39:00.3699
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Mt1FgbJkZw03SFmg5L35YYbMXzOVmiGxhOVHDe67kDd7qCAztFmj9+iqVjPZgSNovxGnPpFa2Og024kqjOaa6O7ie3k3bDGolxdno4VnceI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRZP264MB1909
+X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-05-09 at 12:56 -0400, Kent Overstreet wrote:
-> From: Kent Overstreet <kent.overstreet@gmail.com>
->=20
-> New lock for bcachefs, like read/write locks but with a third state,
-> intent.
->=20
-> Intent locks conflict with each other, but not with read locks; taking a
-> write lock requires first holding an intent lock.
->=20
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> ---
->  include/linux/six.h     | 210 +++++++++++
->  kernel/Kconfig.locks    |   3 +
->  kernel/locking/Makefile |   1 +
->  kernel/locking/six.c    | 779 ++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 993 insertions(+)
->  create mode 100644 include/linux/six.h
->  create mode 100644 kernel/locking/six.c
->=20
-> diff --git a/include/linux/six.h b/include/linux/six.h
-> new file mode 100644
-> index 0000000000..41ddf63b74
-> --- /dev/null
-> +++ b/include/linux/six.h
-> @@ -0,0 +1,210 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef _LINUX_SIX_H
-> +#define _LINUX_SIX_H
-> +
-> +/*
-> + * Shared/intent/exclusive locks: sleepable read/write locks, much like =
-rw
-> + * semaphores, except with a third intermediate state, intent. Basic ope=
-rations
-> + * are:
-> + *
-> + * six_lock_read(&foo->lock);
-> + * six_unlock_read(&foo->lock);
-> + *
-> + * six_lock_intent(&foo->lock);
-> + * six_unlock_intent(&foo->lock);
-> + *
-> + * six_lock_write(&foo->lock);
-> + * six_unlock_write(&foo->lock);
-> + *
-> + * Intent locks block other intent locks, but do not block read locks, a=
-nd you
-> + * must have an intent lock held before taking a write lock, like so:
-> + *
-> + * six_lock_intent(&foo->lock);
-> + * six_lock_write(&foo->lock);
-> + * six_unlock_write(&foo->lock);
-> + * six_unlock_intent(&foo->lock);
-> + *
-
-So the idea is to create a fundamentally unfair rwsem? One that always
-prefers readers over writers?
-
-> + * Other operations:
-> + *
-> + *   six_trylock_read()
-> + *   six_trylock_intent()
-> + *   six_trylock_write()
-> + *
-> + *   six_lock_downgrade():	convert from intent to read
-> + *   six_lock_tryupgrade():	attempt to convert from read to intent
-> + *
-> + * Locks also embed a sequence number, which is incremented when the loc=
-k is
-> + * locked or unlocked for write. The current sequence number can be grab=
-bed
-> + * while a lock is held from lock->state.seq; then, if you drop the lock=
- you can
-> + * use six_relock_(read|intent_write)(lock, seq) to attempt to retake th=
-e lock
-> + * iff it hasn't been locked for write in the meantime.
-> + *
-
-^^^
-This is a cool idea.
-
-> + * There are also operations that take the lock type as a parameter, whe=
-re the
-> + * type is one of SIX_LOCK_read, SIX_LOCK_intent, or SIX_LOCK_write:
-> + *
-> + *   six_lock_type(lock, type)
-> + *   six_unlock_type(lock, type)
-> + *   six_relock(lock, type, seq)
-> + *   six_trylock_type(lock, type)
-> + *   six_trylock_convert(lock, from, to)
-> + *
-> + * A lock may be held multiple types by the same thread (for read or int=
-ent,
-> + * not write). However, the six locks code does _not_ implement the actu=
-al
-> + * recursive checks itself though - rather, if your code (e.g. btree ite=
-rator
-> + * code) knows that the current thread already has a lock held, and for =
-the
-> + * correct type, six_lock_increment() may be used to bump up the counter=
- for
-> + * that type - the only effect is that one more call to unlock will be r=
-equired
-> + * before the lock is unlocked.
-
-Thse semantics are a bit confusing. Once you hold a read or intent lock,
-you can take it as many times as you like. What happens if I take it in
-one context and release it in another? Say, across a workqueue job for
-instance?
-
-Are intent locks "converted" to write locks, or do they stack? For
-instance, suppose I take the intent lock 3 times and then take a write
-lock. How many times do I have to call unlock to fully release it (3 or
-4)? If I release it just once, do I still hold the write lock or am I
-back to "intent" state?
-
-
-> + */
-> +
-> +#include <linux/lockdep.h>
-> +#include <linux/osq_lock.h>
-> +#include <linux/sched.h>
-> +#include <linux/types.h>
-> +
-> +#define SIX_LOCK_SEPARATE_LOCKFNS
->=20
->=20
-
-Some basic info about the underlying design would be nice here. What
-info is tracked in the union below? When are different members being
-used? How does the code decide which way to cast this thing? etc.
-
-
-> +
-> +union six_lock_state {
-> +	struct {
-> +		atomic64_t	counter;
-> +	};
-> +
-> +	struct {
-> +		u64		v;
-> +	};
-> +
-> +	struct {
-> +		/* for waitlist_bitnr() */
-> +		unsigned long	l;
-> +	};
-> +
-> +	struct {
-> +		unsigned	read_lock:27;
-> +		unsigned	write_locking:1;
-> +		unsigned	intent_lock:1;
-> +		unsigned	waiters:3;
-
-
-Ewww...bitfields. That seems a bit scary in a union. There is no
-guarantee that the underlying arch will even pack that into a single
-word, AIUI. It may be safer to do this with masking and shifting
-instead.
-
-> +		/*
-> +		 * seq works much like in seqlocks: it's incremented every time
-> +		 * we lock and unlock for write.
-> +		 *
-> +		 * If it's odd write lock is held, even unlocked.
-> +		 *
-> +		 * Thus readers can unlock, and then lock again later iff it
-> +		 * hasn't been modified in the meantime.
-> +		 */
-> +		u32		seq;
-> +	};
-> +};
-> +
-> +enum six_lock_type {
-> +	SIX_LOCK_read,
-> +	SIX_LOCK_intent,
-> +	SIX_LOCK_write,
-> +};
-> +
-> +struct six_lock {
-> +	union six_lock_state	state;
-> +	unsigned		intent_lock_recurse;
-> +	struct task_struct	*owner;
-> +	struct optimistic_spin_queue osq;
-> +	unsigned __percpu	*readers;
-> +
-> +	raw_spinlock_t		wait_lock;
-> +	struct list_head	wait_list[2];
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +	struct lockdep_map	dep_map;
-> +#endif
-> +};
-> +
-> +typedef int (*six_lock_should_sleep_fn)(struct six_lock *lock, void *);
-> +
-> +static __always_inline void __six_lock_init(struct six_lock *lock,
-> +					    const char *name,
-> +					    struct lock_class_key *key)
-> +{
-> +	atomic64_set(&lock->state.counter, 0);
-> +	raw_spin_lock_init(&lock->wait_lock);
-> +	INIT_LIST_HEAD(&lock->wait_list[SIX_LOCK_read]);
-> +	INIT_LIST_HEAD(&lock->wait_list[SIX_LOCK_intent]);
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +	debug_check_no_locks_freed((void *) lock, sizeof(*lock));
-> +	lockdep_init_map(&lock->dep_map, name, key, 0);
-> +#endif
-> +}
-> +
-> +#define six_lock_init(lock)						\
-> +do {									\
-> +	static struct lock_class_key __key;				\
-> +									\
-> +	__six_lock_init((lock), #lock, &__key);				\
-> +} while (0)
-> +
-> +#define __SIX_VAL(field, _v)	(((union six_lock_state) { .field =3D _v })=
-.v)
-> +
-> +#define __SIX_LOCK(type)						\
-> +bool six_trylock_##type(struct six_lock *);				\
-> +bool six_relock_##type(struct six_lock *, u32);				\
-> +int six_lock_##type(struct six_lock *, six_lock_should_sleep_fn, void *)=
-;\
-> +void six_unlock_##type(struct six_lock *);
-> +
-> +__SIX_LOCK(read)
-> +__SIX_LOCK(intent)
-> +__SIX_LOCK(write)
-> +#undef __SIX_LOCK
-> +
-> +#define SIX_LOCK_DISPATCH(type, fn, ...)			\
-> +	switch (type) {						\
-> +	case SIX_LOCK_read:					\
-> +		return fn##_read(__VA_ARGS__);			\
-> +	case SIX_LOCK_intent:					\
-> +		return fn##_intent(__VA_ARGS__);		\
-> +	case SIX_LOCK_write:					\
-> +		return fn##_write(__VA_ARGS__);			\
-> +	default:						\
-> +		BUG();						\
-> +	}
-> +
-> +static inline bool six_trylock_type(struct six_lock *lock, enum six_lock=
-_type type)
-> +{
-> +	SIX_LOCK_DISPATCH(type, six_trylock, lock);
-> +}
-> +
-> +static inline bool six_relock_type(struct six_lock *lock, enum six_lock_=
-type type,
-> +				   unsigned seq)
-> +{
-> +	SIX_LOCK_DISPATCH(type, six_relock, lock, seq);
-> +}
-> +
-> +static inline int six_lock_type(struct six_lock *lock, enum six_lock_typ=
-e type,
-> +				six_lock_should_sleep_fn should_sleep_fn, void *p)
-> +{
-> +	SIX_LOCK_DISPATCH(type, six_lock, lock, should_sleep_fn, p);
-> +}
-> +
-> +static inline void six_unlock_type(struct six_lock *lock, enum six_lock_=
-type type)
-> +{
-> +	SIX_LOCK_DISPATCH(type, six_unlock, lock);
-> +}
-> +
-> +void six_lock_downgrade(struct six_lock *);
-> +bool six_lock_tryupgrade(struct six_lock *);
-> +bool six_trylock_convert(struct six_lock *, enum six_lock_type,
-> +			 enum six_lock_type);
-> +
-> +void six_lock_increment(struct six_lock *, enum six_lock_type);
-> +
-> +void six_lock_wakeup_all(struct six_lock *);
-> +
-> +void six_lock_pcpu_free_rcu(struct six_lock *);
-> +void six_lock_pcpu_free(struct six_lock *);
-> +void six_lock_pcpu_alloc(struct six_lock *);
-> +
-> +struct six_lock_count {
-> +	unsigned read;
-> +	unsigned intent;
-> +};
-> +
-> +struct six_lock_count six_lock_counts(struct six_lock *);
-> +
-> +#endif /* _LINUX_SIX_H */
-> diff --git a/kernel/Kconfig.locks b/kernel/Kconfig.locks
-> index 4198f0273e..b2abd9a5d9 100644
-> --- a/kernel/Kconfig.locks
-> +++ b/kernel/Kconfig.locks
-> @@ -259,3 +259,6 @@ config ARCH_HAS_MMIOWB
->  config MMIOWB
->  	def_bool y if ARCH_HAS_MMIOWB
->  	depends on SMP
-> +
-> +config SIXLOCKS
-> +	bool
-> diff --git a/kernel/locking/Makefile b/kernel/locking/Makefile
-> index 0db4093d17..a095dbbf01 100644
-> --- a/kernel/locking/Makefile
-> +++ b/kernel/locking/Makefile
-> @@ -32,3 +32,4 @@ obj-$(CONFIG_QUEUED_RWLOCKS) +=3D qrwlock.o
->  obj-$(CONFIG_LOCK_TORTURE_TEST) +=3D locktorture.o
->  obj-$(CONFIG_WW_MUTEX_SELFTEST) +=3D test-ww_mutex.o
->  obj-$(CONFIG_LOCK_EVENT_COUNTS) +=3D lock_events.o
-> +obj-$(CONFIG_SIXLOCKS) +=3D six.o
-> diff --git a/kernel/locking/six.c b/kernel/locking/six.c
-> new file mode 100644
-> index 0000000000..5b2d92c6e9
-> --- /dev/null
-> +++ b/kernel/locking/six.c
-> @@ -0,0 +1,779 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/export.h>
-> +#include <linux/log2.h>
-> +#include <linux/percpu.h>
-> +#include <linux/preempt.h>
-> +#include <linux/rcupdate.h>
-> +#include <linux/sched.h>
-> +#include <linux/sched/rt.h>
-> +#include <linux/six.h>
-> +#include <linux/slab.h>
-> +
-> +#ifdef DEBUG
-> +#define EBUG_ON(cond)		BUG_ON(cond)
-> +#else
-> +#define EBUG_ON(cond)		do {} while (0)
-> +#endif
-> +
-> +#define six_acquire(l, t)	lock_acquire(l, 0, t, 0, 0, NULL, _RET_IP_)
-> +#define six_release(l)		lock_release(l, _RET_IP_)
-> +
-> +struct six_lock_vals {
-> +	/* Value we add to the lock in order to take the lock: */
-> +	u64			lock_val;
-> +
-> +	/* If the lock has this value (used as a mask), taking the lock fails: =
-*/
-> +	u64			lock_fail;
-> +
-> +	/* Value we add to the lock in order to release the lock: */
-> +	u64			unlock_val;
-> +
-> +	/* Mask that indicates lock is held for this type: */
-> +	u64			held_mask;
-> +
-> +	/* Waitlist we wakeup when releasing the lock: */
-> +	enum six_lock_type	unlock_wakeup;
-> +};
-> +
-> +#define __SIX_LOCK_HELD_read	__SIX_VAL(read_lock, ~0)
-> +#define __SIX_LOCK_HELD_intent	__SIX_VAL(intent_lock, ~0)
-> +#define __SIX_LOCK_HELD_write	__SIX_VAL(seq, 1)
-> +
-> +#define LOCK_VALS {							\
-> +	[SIX_LOCK_read] =3D {						\
-> +		.lock_val	=3D __SIX_VAL(read_lock, 1),		\
-> +		.lock_fail	=3D __SIX_LOCK_HELD_write + __SIX_VAL(write_locking, 1),\
-> +		.unlock_val	=3D -__SIX_VAL(read_lock, 1),		\
-> +		.held_mask	=3D __SIX_LOCK_HELD_read,			\
-> +		.unlock_wakeup	=3D SIX_LOCK_write,			\
-> +	},								\
-> +	[SIX_LOCK_intent] =3D {						\
-> +		.lock_val	=3D __SIX_VAL(intent_lock, 1),		\
-> +		.lock_fail	=3D __SIX_LOCK_HELD_intent,		\
-> +		.unlock_val	=3D -__SIX_VAL(intent_lock, 1),		\
-> +		.held_mask	=3D __SIX_LOCK_HELD_intent,		\
-> +		.unlock_wakeup	=3D SIX_LOCK_intent,			\
-> +	},								\
-> +	[SIX_LOCK_write] =3D {						\
-> +		.lock_val	=3D __SIX_VAL(seq, 1),			\
-> +		.lock_fail	=3D __SIX_LOCK_HELD_read,			\
-> +		.unlock_val	=3D __SIX_VAL(seq, 1),			\
-> +		.held_mask	=3D __SIX_LOCK_HELD_write,		\
-> +		.unlock_wakeup	=3D SIX_LOCK_read,			\
-> +	},								\
-> +}
-> +
-> +static inline void six_set_owner(struct six_lock *lock, enum six_lock_ty=
-pe type,
-> +				 union six_lock_state old)
-> +{
-> +	if (type !=3D SIX_LOCK_intent)
-> +		return;
-> +
-> +	if (!old.intent_lock) {
-> +		EBUG_ON(lock->owner);
-> +		lock->owner =3D current;
-> +	} else {
-> +		EBUG_ON(lock->owner !=3D current);
-> +	}
-> +}
-> +
-> +static inline unsigned pcpu_read_count(struct six_lock *lock)
-> +{
-> +	unsigned read_count =3D 0;
-> +	int cpu;
-> +
-> +	for_each_possible_cpu(cpu)
-> +		read_count +=3D *per_cpu_ptr(lock->readers, cpu);
-> +	return read_count;
-> +}
-> +
-> +struct six_lock_waiter {
-> +	struct list_head	list;
-> +	struct task_struct	*task;
-> +};
-> +
-> +/* This is probably up there with the more evil things I've done */
-> +#define waitlist_bitnr(id) ilog2((((union six_lock_state) { .waiters =3D=
- 1 << (id) }).l))
-> +
-> +static inline void six_lock_wakeup(struct six_lock *lock,
-> +				   union six_lock_state state,
-> +				   unsigned waitlist_id)
-> +{
-> +	if (waitlist_id =3D=3D SIX_LOCK_write) {
-> +		if (state.write_locking && !state.read_lock) {
-> +			struct task_struct *p =3D READ_ONCE(lock->owner);
-> +			if (p)
-> +				wake_up_process(p);
-> +		}
-> +	} else {
-> +		struct list_head *wait_list =3D &lock->wait_list[waitlist_id];
-> +		struct six_lock_waiter *w, *next;
-> +
-> +		if (!(state.waiters & (1 << waitlist_id)))
-> +			return;
-> +
-> +		clear_bit(waitlist_bitnr(waitlist_id),
-> +			  (unsigned long *) &lock->state.v);
-> +
-> +		raw_spin_lock(&lock->wait_lock);
-> +
-> +		list_for_each_entry_safe(w, next, wait_list, list) {
-> +			list_del_init(&w->list);
-> +
-> +			if (wake_up_process(w->task) &&
-> +			    waitlist_id !=3D SIX_LOCK_read) {
-> +				if (!list_empty(wait_list))
-> +					set_bit(waitlist_bitnr(waitlist_id),
-> +						(unsigned long *) &lock->state.v);
-> +				break;
-> +			}
-> +		}
-> +
-> +		raw_spin_unlock(&lock->wait_lock);
-> +	}
-> +}
-> +
-> +static __always_inline bool do_six_trylock_type(struct six_lock *lock,
-> +						enum six_lock_type type,
-> +						bool try)
-> +{
-> +	const struct six_lock_vals l[] =3D LOCK_VALS;
-> +	union six_lock_state old, new;
-> +	bool ret;
-> +	u64 v;
-> +
-> +	EBUG_ON(type =3D=3D SIX_LOCK_write && lock->owner !=3D current);
-> +	EBUG_ON(type =3D=3D SIX_LOCK_write && (lock->state.seq & 1));
-> +
-> +	EBUG_ON(type =3D=3D SIX_LOCK_write && (try !=3D !(lock->state.write_loc=
-king)));
-> +
-> +	/*
-> +	 * Percpu reader mode:
-> +	 *
-> +	 * The basic idea behind this algorithm is that you can implement a loc=
-k
-> +	 * between two threads without any atomics, just memory barriers:
-> +	 *
-> +	 * For two threads you'll need two variables, one variable for "thread =
-a
-> +	 * has the lock" and another for "thread b has the lock".
-> +	 *
-> +	 * To take the lock, a thread sets its variable indicating that it hold=
-s
-> +	 * the lock, then issues a full memory barrier, then reads from the
-> +	 * other thread's variable to check if the other thread thinks it has
-> +	 * the lock. If we raced, we backoff and retry/sleep.
-> +	 */
-> +
-> +	if (type =3D=3D SIX_LOCK_read && lock->readers) {
-> +retry:
-> +		preempt_disable();
-> +		this_cpu_inc(*lock->readers); /* signal that we own lock */
-> +
-> +		smp_mb();
-> +
-> +		old.v =3D READ_ONCE(lock->state.v);
-> +		ret =3D !(old.v & l[type].lock_fail);
-> +
-> +		this_cpu_sub(*lock->readers, !ret);
-> +		preempt_enable();
-> +
-> +		/*
-> +		 * If we failed because a writer was trying to take the
-> +		 * lock, issue a wakeup because we might have caused a
-> +		 * spurious trylock failure:
-> +		 */
-> +		if (old.write_locking) {
-> +			struct task_struct *p =3D READ_ONCE(lock->owner);
-> +
-> +			if (p)
-> +				wake_up_process(p);
-> +		}
-> +
-> +		/*
-> +		 * If we failed from the lock path and the waiting bit wasn't
-> +		 * set, set it:
-> +		 */
-> +		if (!try && !ret) {
-> +			v =3D old.v;
-> +
-> +			do {
-> +				new.v =3D old.v =3D v;
-> +
-> +				if (!(old.v & l[type].lock_fail))
-> +					goto retry;
-> +
-> +				if (new.waiters & (1 << type))
-> +					break;
-> +
-> +				new.waiters |=3D 1 << type;
-> +			} while ((v =3D atomic64_cmpxchg(&lock->state.counter,
-> +						       old.v, new.v)) !=3D old.v);
-> +		}
-> +	} else if (type =3D=3D SIX_LOCK_write && lock->readers) {
-> +		if (try) {
-> +			atomic64_add(__SIX_VAL(write_locking, 1),
-> +				     &lock->state.counter);
-> +			smp_mb__after_atomic();
-> +		}
-> +
-> +		ret =3D !pcpu_read_count(lock);
-> +
-> +		/*
-> +		 * On success, we increment lock->seq; also we clear
-> +		 * write_locking unless we failed from the lock path:
-> +		 */
-> +		v =3D 0;
-> +		if (ret)
-> +			v +=3D __SIX_VAL(seq, 1);
-> +		if (ret || try)
-> +			v -=3D __SIX_VAL(write_locking, 1);
-> +
-> +		if (try && !ret) {
-> +			old.v =3D atomic64_add_return(v, &lock->state.counter);
-> +			six_lock_wakeup(lock, old, SIX_LOCK_read);
-> +		} else {
-> +			atomic64_add(v, &lock->state.counter);
-> +		}
-> +	} else {
-> +		v =3D READ_ONCE(lock->state.v);
-> +		do {
-> +			new.v =3D old.v =3D v;
-> +
-> +			if (!(old.v & l[type].lock_fail)) {
-> +				new.v +=3D l[type].lock_val;
-> +
-> +				if (type =3D=3D SIX_LOCK_write)
-> +					new.write_locking =3D 0;
-> +			} else if (!try && type !=3D SIX_LOCK_write &&
-> +				   !(new.waiters & (1 << type)))
-> +				new.waiters |=3D 1 << type;
-> +			else
-> +				break; /* waiting bit already set */
-> +		} while ((v =3D atomic64_cmpxchg_acquire(&lock->state.counter,
-> +					old.v, new.v)) !=3D old.v);
-> +
-> +		ret =3D !(old.v & l[type].lock_fail);
-> +
-> +		EBUG_ON(ret && !(lock->state.v & l[type].held_mask));
-> +	}
-> +
-> +	if (ret)
-> +		six_set_owner(lock, type, old);
-> +
-> +	EBUG_ON(type =3D=3D SIX_LOCK_write && (try || ret) && (lock->state.writ=
-e_locking));
-> +
-> +	return ret;
-> +}
-> +
-
-^^^
-I'd really like to see some more comments in the code above. It's pretty
-complex.
-
-> +__always_inline __flatten
-> +static bool __six_trylock_type(struct six_lock *lock, enum six_lock_type=
- type)
-> +{
-> +	if (!do_six_trylock_type(lock, type, true))
-> +		return false;
-> +
-> +	if (type !=3D SIX_LOCK_write)
-> +		six_acquire(&lock->dep_map, 1);
-> +	return true;
-> +}
-> +
-> +__always_inline __flatten
-> +static bool __six_relock_type(struct six_lock *lock, enum six_lock_type =
-type,
-> +			      unsigned seq)
-> +{
-> +	const struct six_lock_vals l[] =3D LOCK_VALS;
-> +	union six_lock_state old;
-> +	u64 v;
-> +
-> +	EBUG_ON(type =3D=3D SIX_LOCK_write);
-> +
-> +	if (type =3D=3D SIX_LOCK_read &&
-> +	    lock->readers) {
-> +		bool ret;
-> +
-> +		preempt_disable();
-> +		this_cpu_inc(*lock->readers);
-> +
-> +		smp_mb();
-> +
-> +		old.v =3D READ_ONCE(lock->state.v);
-> +		ret =3D !(old.v & l[type].lock_fail) && old.seq =3D=3D seq;
-> +
-> +		this_cpu_sub(*lock->readers, !ret);
-> +		preempt_enable();
-> +
-> +		/*
-> +		 * Similar to the lock path, we may have caused a spurious write
-> +		 * lock fail and need to issue a wakeup:
-> +		 */
-> +		if (old.write_locking) {
-> +			struct task_struct *p =3D READ_ONCE(lock->owner);
-> +
-> +			if (p)
-> +				wake_up_process(p);
-> +		}
-> +
-> +		if (ret)
-> +			six_acquire(&lock->dep_map, 1);
-> +
-> +		return ret;
-> +	}
-> +
-> +	v =3D READ_ONCE(lock->state.v);
-> +	do {
-> +		old.v =3D v;
-> +
-> +		if (old.seq !=3D seq || old.v & l[type].lock_fail)
-> +			return false;
-> +	} while ((v =3D atomic64_cmpxchg_acquire(&lock->state.counter,
-> +				old.v,
-> +				old.v + l[type].lock_val)) !=3D old.v);
-> +
-> +	six_set_owner(lock, type, old);
-> +	if (type !=3D SIX_LOCK_write)
-> +		six_acquire(&lock->dep_map, 1);
-> +	return true;
-> +}
-> +
-> +#ifdef CONFIG_LOCK_SPIN_ON_OWNER
-> +
-> +static inline int six_can_spin_on_owner(struct six_lock *lock)
-> +{
-> +	struct task_struct *owner;
-> +	int retval =3D 1;
-> +
-> +	if (need_resched())
-> +		return 0;
-> +
-> +	rcu_read_lock();
-> +	owner =3D READ_ONCE(lock->owner);
-> +	if (owner)
-> +		retval =3D owner->on_cpu;
-> +	rcu_read_unlock();
-> +	/*
-> +	 * if lock->owner is not set, the mutex owner may have just acquired
-> +	 * it and not set the owner yet or the mutex has been released.
-> +	 */
-> +	return retval;
-> +}
-> +
-> +static inline bool six_spin_on_owner(struct six_lock *lock,
-> +				     struct task_struct *owner)
-> +{
-> +	bool ret =3D true;
-> +
-> +	rcu_read_lock();
-> +	while (lock->owner =3D=3D owner) {
-> +		/*
-> +		 * Ensure we emit the owner->on_cpu, dereference _after_
-> +		 * checking lock->owner still matches owner. If that fails,
-> +		 * owner might point to freed memory. If it still matches,
-> +		 * the rcu_read_lock() ensures the memory stays valid.
-> +		 */
-> +		barrier();
-> +
-> +		if (!owner->on_cpu || need_resched()) {
-> +			ret =3D false;
-> +			break;
-> +		}
-> +
-> +		cpu_relax();
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	return ret;
-> +}
-> +
-> +static inline bool six_optimistic_spin(struct six_lock *lock, enum six_l=
-ock_type type)
-> +{
-> +	struct task_struct *task =3D current;
-> +
-> +	if (type =3D=3D SIX_LOCK_write)
-> +		return false;
-> +
-> +	preempt_disable();
-> +	if (!six_can_spin_on_owner(lock))
-> +		goto fail;
-> +
-> +	if (!osq_lock(&lock->osq))
-> +		goto fail;
-> +
-> +	while (1) {
-> +		struct task_struct *owner;
-> +
-> +		/*
-> +		 * If there's an owner, wait for it to either
-> +		 * release the lock or go to sleep.
-> +		 */
-> +		owner =3D READ_ONCE(lock->owner);
-> +		if (owner && !six_spin_on_owner(lock, owner))
-> +			break;
-> +
-> +		if (do_six_trylock_type(lock, type, false)) {
-> +			osq_unlock(&lock->osq);
-> +			preempt_enable();
-> +			return true;
-> +		}
-> +
-> +		/*
-> +		 * When there's no owner, we might have preempted between the
-> +		 * owner acquiring the lock and setting the owner field. If
-> +		 * we're an RT task that will live-lock because we won't let
-> +		 * the owner complete.
-> +		 */
-> +		if (!owner && (need_resched() || rt_task(task)))
-> +			break;
-> +
-> +		/*
-> +		 * The cpu_relax() call is a compiler barrier which forces
-> +		 * everything in this loop to be re-loaded. We don't need
-> +		 * memory barriers as we'll eventually observe the right
-> +		 * values at the cost of a few extra spins.
-> +		 */
-> +		cpu_relax();
-> +	}
-> +
-> +	osq_unlock(&lock->osq);
-> +fail:
-> +	preempt_enable();
-> +
-> +	/*
-> +	 * If we fell out of the spin path because of need_resched(),
-> +	 * reschedule now, before we try-lock again. This avoids getting
-> +	 * scheduled out right after we obtained the lock.
-> +	 */
-> +	if (need_resched())
-> +		schedule();
-> +
-> +	return false;
-> +}
-> +
-> +#else /* CONFIG_LOCK_SPIN_ON_OWNER */
-> +
-> +static inline bool six_optimistic_spin(struct six_lock *lock, enum six_l=
-ock_type type)
-> +{
-> +	return false;
-> +}
-> +
-> +#endif
-> +
-> +noinline
-> +static int __six_lock_type_slowpath(struct six_lock *lock, enum six_lock=
-_type type,
-> +				    six_lock_should_sleep_fn should_sleep_fn, void *p)
-> +{
-> +	union six_lock_state old;
-> +	struct six_lock_waiter wait;
-> +	int ret =3D 0;
-> +
-> +	if (type =3D=3D SIX_LOCK_write) {
-> +		EBUG_ON(lock->state.write_locking);
-> +		atomic64_add(__SIX_VAL(write_locking, 1), &lock->state.counter);
-> +		smp_mb__after_atomic();
-> +	}
-> +
-> +	ret =3D should_sleep_fn ? should_sleep_fn(lock, p) : 0;
-> +	if (ret)
-> +		goto out_before_sleep;
-> +
-> +	if (six_optimistic_spin(lock, type))
-> +		goto out_before_sleep;
-> +
-> +	lock_contended(&lock->dep_map, _RET_IP_);
-> +
-> +	INIT_LIST_HEAD(&wait.list);
-> +	wait.task =3D current;
-> +
-> +	while (1) {
-> +		set_current_state(TASK_UNINTERRUPTIBLE);
-> +		if (type =3D=3D SIX_LOCK_write)
-> +			EBUG_ON(lock->owner !=3D current);
-> +		else if (list_empty_careful(&wait.list)) {
-> +			raw_spin_lock(&lock->wait_lock);
-> +			list_add_tail(&wait.list, &lock->wait_list[type]);
-> +			raw_spin_unlock(&lock->wait_lock);
-> +		}
-> +
-> +		if (do_six_trylock_type(lock, type, false))
-> +			break;
-> +
-> +		ret =3D should_sleep_fn ? should_sleep_fn(lock, p) : 0;
-> +		if (ret)
-> +			break;
-> +
-> +		schedule();
-> +	}
-> +
-> +	__set_current_state(TASK_RUNNING);
-> +
-> +	if (!list_empty_careful(&wait.list)) {
-> +		raw_spin_lock(&lock->wait_lock);
-> +		list_del_init(&wait.list);
-> +		raw_spin_unlock(&lock->wait_lock);
-> +	}
-> +out_before_sleep:
-> +	if (ret && type =3D=3D SIX_LOCK_write) {
-> +		old.v =3D atomic64_sub_return(__SIX_VAL(write_locking, 1),
-> +					    &lock->state.counter);
-> +		six_lock_wakeup(lock, old, SIX_LOCK_read);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +__always_inline
-> +static int __six_lock_type(struct six_lock *lock, enum six_lock_type typ=
-e,
-> +			   six_lock_should_sleep_fn should_sleep_fn, void *p)
-> +{
-> +	int ret;
-> +
-> +	if (type !=3D SIX_LOCK_write)
-> +		six_acquire(&lock->dep_map, 0);
-> +
-> +	ret =3D do_six_trylock_type(lock, type, true) ? 0
-> +		: __six_lock_type_slowpath(lock, type, should_sleep_fn, p);
-> +
-> +	if (ret && type !=3D SIX_LOCK_write)
-> +		six_release(&lock->dep_map);
-> +	if (!ret)
-> +		lock_acquired(&lock->dep_map, _RET_IP_);
-> +
-> +	return ret;
-> +}
-> +
-> +__always_inline __flatten
-> +static void __six_unlock_type(struct six_lock *lock, enum six_lock_type =
-type)
-> +{
-> +	const struct six_lock_vals l[] =3D LOCK_VALS;
-> +	union six_lock_state state;
-> +
-> +	EBUG_ON(type =3D=3D SIX_LOCK_write &&
-> +		!(lock->state.v & __SIX_LOCK_HELD_intent));
-> +
-> +	if (type !=3D SIX_LOCK_write)
-> +		six_release(&lock->dep_map);
-> +
-> +	if (type =3D=3D SIX_LOCK_intent) {
-> +		EBUG_ON(lock->owner !=3D current);
-> +
-> +		if (lock->intent_lock_recurse) {
-> +			--lock->intent_lock_recurse;
-> +			return;
-> +		}
-> +
-> +		lock->owner =3D NULL;
-> +	}
-> +
-> +	if (type =3D=3D SIX_LOCK_read &&
-> +	    lock->readers) {
-> +		smp_mb(); /* unlock barrier */
-> +		this_cpu_dec(*lock->readers);
-> +		smp_mb(); /* between unlocking and checking for waiters */
-> +		state.v =3D READ_ONCE(lock->state.v);
-> +	} else {
-> +		EBUG_ON(!(lock->state.v & l[type].held_mask));
-> +		state.v =3D atomic64_add_return_release(l[type].unlock_val,
-> +						      &lock->state.counter);
-> +	}
-> +
-> +	six_lock_wakeup(lock, state, l[type].unlock_wakeup);
-> +}
-> +
-> +#define __SIX_LOCK(type)						\
-> +bool six_trylock_##type(struct six_lock *lock)				\
-> +{									\
-> +	return __six_trylock_type(lock, SIX_LOCK_##type);		\
-> +}									\
-> +EXPORT_SYMBOL_GPL(six_trylock_##type);					\
-> +									\
-> +bool six_relock_##type(struct six_lock *lock, u32 seq)			\
-> +{									\
-> +	return __six_relock_type(lock, SIX_LOCK_##type, seq);		\
-> +}									\
-> +EXPORT_SYMBOL_GPL(six_relock_##type);					\
-> +									\
-> +int six_lock_##type(struct six_lock *lock,				\
-> +		    six_lock_should_sleep_fn should_sleep_fn, void *p)	\
-> +{									\
-> +	return __six_lock_type(lock, SIX_LOCK_##type, should_sleep_fn, p);\
-> +}									\
-> +EXPORT_SYMBOL_GPL(six_lock_##type);					\
-> +									\
-> +void six_unlock_##type(struct six_lock *lock)				\
-> +{									\
-> +	__six_unlock_type(lock, SIX_LOCK_##type);			\
-> +}									\
-> +EXPORT_SYMBOL_GPL(six_unlock_##type);
-> +
-> +__SIX_LOCK(read)
-> +__SIX_LOCK(intent)
-> +__SIX_LOCK(write)
-> +
-> +#undef __SIX_LOCK
-> +
-> +/* Convert from intent to read: */
-> +void six_lock_downgrade(struct six_lock *lock)
-> +{
-> +	six_lock_increment(lock, SIX_LOCK_read);
-> +	six_unlock_intent(lock);
-> +}
-> +EXPORT_SYMBOL_GPL(six_lock_downgrade);
-> +
-> +bool six_lock_tryupgrade(struct six_lock *lock)
-> +{
-> +	union six_lock_state old, new;
-> +	u64 v =3D READ_ONCE(lock->state.v);
-> +
-> +	do {
-> +		new.v =3D old.v =3D v;
-> +
-> +		if (new.intent_lock)
-> +			return false;
-> +
-> +		if (!lock->readers) {
-> +			EBUG_ON(!new.read_lock);
-> +			new.read_lock--;
-> +		}
-> +
-> +		new.intent_lock =3D 1;
-> +	} while ((v =3D atomic64_cmpxchg_acquire(&lock->state.counter,
-> +				old.v, new.v)) !=3D old.v);
-> +
-> +	if (lock->readers)
-> +		this_cpu_dec(*lock->readers);
-> +
-> +	six_set_owner(lock, SIX_LOCK_intent, old);
-> +
-> +	return true;
-> +}
-> +EXPORT_SYMBOL_GPL(six_lock_tryupgrade);
-> +
-> +bool six_trylock_convert(struct six_lock *lock,
-> +			 enum six_lock_type from,
-> +			 enum six_lock_type to)
-> +{
-> +	EBUG_ON(to =3D=3D SIX_LOCK_write || from =3D=3D SIX_LOCK_write);
-> +
-> +	if (to =3D=3D from)
-> +		return true;
-> +
-> +	if (to =3D=3D SIX_LOCK_read) {
-> +		six_lock_downgrade(lock);
-> +		return true;
-> +	} else {
-> +		return six_lock_tryupgrade(lock);
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(six_trylock_convert);
-> +
-> +/*
-> + * Increment read/intent lock count, assuming we already have it read or=
- intent
-> + * locked:
-> + */
-> +void six_lock_increment(struct six_lock *lock, enum six_lock_type type)
-> +{
-> +	const struct six_lock_vals l[] =3D LOCK_VALS;
-> +
-> +	six_acquire(&lock->dep_map, 0);
-> +
-> +	/* XXX: assert already locked, and that we don't overflow: */
-> +
-> +	switch (type) {
-> +	case SIX_LOCK_read:
-> +		if (lock->readers) {
-> +			this_cpu_inc(*lock->readers);
-> +		} else {
-> +			EBUG_ON(!lock->state.read_lock &&
-> +				!lock->state.intent_lock);
-> +			atomic64_add(l[type].lock_val, &lock->state.counter);
-> +		}
-> +		break;
-> +	case SIX_LOCK_intent:
-> +		EBUG_ON(!lock->state.intent_lock);
-> +		lock->intent_lock_recurse++;
-> +		break;
-> +	case SIX_LOCK_write:
-> +		BUG();
-> +		break;
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(six_lock_increment);
-> +
-> +void six_lock_wakeup_all(struct six_lock *lock)
-> +{
-> +	struct six_lock_waiter *w;
-> +
-> +	raw_spin_lock(&lock->wait_lock);
-> +
-> +	list_for_each_entry(w, &lock->wait_list[0], list)
-> +		wake_up_process(w->task);
-> +	list_for_each_entry(w, &lock->wait_list[1], list)
-> +		wake_up_process(w->task);
-> +
-> +	raw_spin_unlock(&lock->wait_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(six_lock_wakeup_all);
-> +
-> +struct free_pcpu_rcu {
-> +	struct rcu_head		rcu;
-> +	void __percpu		*p;
-> +};
-> +
-> +static void free_pcpu_rcu_fn(struct rcu_head *_rcu)
-> +{
-> +	struct free_pcpu_rcu *rcu =3D
-> +		container_of(_rcu, struct free_pcpu_rcu, rcu);
-> +
-> +	free_percpu(rcu->p);
-> +	kfree(rcu);
-> +}
-> +
-> +void six_lock_pcpu_free_rcu(struct six_lock *lock)
-> +{
-> +	struct free_pcpu_rcu *rcu =3D kzalloc(sizeof(*rcu), GFP_KERNEL);
-> +
-> +	if (!rcu)
-> +		return;
-> +
-> +	rcu->p =3D lock->readers;
-> +	lock->readers =3D NULL;
-> +
-> +	call_rcu(&rcu->rcu, free_pcpu_rcu_fn);
-> +}
-> +EXPORT_SYMBOL_GPL(six_lock_pcpu_free_rcu);
-> +
-> +void six_lock_pcpu_free(struct six_lock *lock)
-> +{
-> +	BUG_ON(lock->readers && pcpu_read_count(lock));
-> +	BUG_ON(lock->state.read_lock);
-> +
-> +	free_percpu(lock->readers);
-> +	lock->readers =3D NULL;
-> +}
-> +EXPORT_SYMBOL_GPL(six_lock_pcpu_free);
-> +
-> +void six_lock_pcpu_alloc(struct six_lock *lock)
-> +{
-> +#ifdef __KERNEL__
-> +	if (!lock->readers)
-> +		lock->readers =3D alloc_percpu(unsigned);
-> +#endif
-> +}
-> +EXPORT_SYMBOL_GPL(six_lock_pcpu_alloc);
-> +
-> +/*
-> + * Returns lock held counts, for both read and intent
-> + */
-> +struct six_lock_count six_lock_counts(struct six_lock *lock)
-> +{
-> +	struct six_lock_count ret =3D { 0, lock->state.intent_lock };
-> +
-> +	if (!lock->readers)
-> +		ret.read +=3D lock->state.read_lock;
-> +	else {
-> +		int cpu;
-> +
-> +		for_each_possible_cpu(cpu)
-> +			ret.read +=3D *per_cpu_ptr(lock->readers, cpu);
-> +	}
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(six_lock_counts);
-
---=20
-Jeff Layton <jlayton@kernel.org>
+DQoNCkxlIDEzLzA1LzIwMjMgw6AgMTU6MjUsIExvcmVuem8gU3RvYWtlcyBhIMOpY3JpdMKgOg0K
+PiBPbiBUdWUsIE1heSAwOSwgMjAyMyBhdCAwMjoxMjo0MVBNIC0wNzAwLCBMb3JlbnpvIFN0b2Fr
+ZXMgd3JvdGU6DQo+PiBPbiBUdWUsIE1heSAwOSwgMjAyMyBhdCAwMTo0NjowOVBNIC0wNzAwLCBD
+aHJpc3RvcGggSGVsbHdpZyB3cm90ZToNCj4+PiBPbiBUdWUsIE1heSAwOSwgMjAyMyBhdCAxMjo1
+NjozMlBNIC0wNDAwLCBLZW50IE92ZXJzdHJlZXQgd3JvdGU6DQo+Pj4+IEZyb206IEtlbnQgT3Zl
+cnN0cmVldCA8a2VudC5vdmVyc3RyZWV0QGdtYWlsLmNvbT4NCj4+Pj4NCj4+Pj4gVGhpcyBpcyBu
+ZWVkZWQgZm9yIGJjYWNoZWZzLCB3aGljaCBkeW5hbWljYWxseSBnZW5lcmF0ZXMgcGVyLWJ0cmVl
+IG5vZGUNCj4+Pj4gdW5wYWNrIGZ1bmN0aW9ucy4NCj4+Pg0KPj4+IE5vLCB3ZSB3aWxsIG5ldmVy
+IGFkZCBiYWNrIGEgd2F5IGZvciByYW5kb20gY29kZSBhbGxvY2F0aW5nIGV4ZWN1dGFibGUNCj4+
+PiBtZW1vcnkgaW4ga2VybmVsIHNwYWNlLg0KPj4NCj4+IFllYWggSSB0aGluayBJIGdsb3NzZWQg
+b3ZlciB0aGlzIGFzcGVjdCBhIGJpdCBhcyBpdCBsb29rcyBvc3RlbnNpYmx5IGxpa2Ugc2ltcGx5
+DQo+PiByZWluc3RhdGluZyBhIGhlbHBlciBmdW5jdGlvbiBiZWNhdXNlIHRoZSBjb2RlIGlzIG5v
+dyB1c2VkIGluIG1vcmUgdGhhbiBvbmUNCj4+IHBsYWNlIChhdCBsc2YvbW0gc28gYSBsaXR0bGUg
+ZGlzdHJhY3RlZCA6KQ0KPj4NCj4+IEJ1dCBpdCBiZWluZyBleHBvcnRlZCBpcyBhIHByb2JsZW0u
+IFBlcmhhcHMgdGhlcmUncyBhbm90aGVyIHdheSBvZiBhY2hldmluZyB0aGUNCj4+IHNhbWUgYWlt
+IHdpdGhvdXQgaGF2aW5nIHRvIGRvIHNvPw0KPiANCj4gSnVzdCB0byBiZSBhYnVuZGFudGx5IGNs
+ZWFyLCBteSBvcmlnaW5hbCBhY2sgd2FzIGEgbWlzdGFrZSAoSSBvdmVybG9va2VkDQo+IHRoZSBf
+ZXhwb3J0aW5nXyBvZiB0aGUgZnVuY3Rpb24gYmVpbmcgYXMgc2lnbmlmaWNhbnQgYXMgaXQgaXMg
+YW5kIGFzc3VtZWQNCj4gaW4gYW4gTFNGL01NIGhhemUgdGhhdCBpdCB3YXMgc2ltcGx5IGEgcmVm
+YWN0b3Jpbmcgb2YgX2FscmVhZHkgYXZhaWxhYmxlXw0KPiBmdW5jdGlvbmFsaXR5IHJhdGhlciB0
+aGFuIG5ld2x5IHByb3ZpZGluZyBhIG1lYW5zIHRvIGFsbG9jYXRlIGRpcmVjdGx5DQo+IGV4ZWN1
+dGFibGUga2VybmVsIG1lbW9yeSkuDQo+IA0KPiBFeHBvcnRpbmcgdGhpcyBpcyBob3JyaWJsZSBm
+b3IgdGhlIG51bWVyb3VzIHJlYXNvbnMgZXhwb3VuZGVkIG9uIGluIHRoaXMNCj4gdGhyZWFkLCB3
+ZSBuZWVkIGEgZGlmZmVyZW50IHNvbHV0aW9uLg0KPiANCj4gTmFja2VkLWJ5OiBMb3JlbnpvIFN0
+b2FrZXMgPGxzdG9ha2VzQGdtYWlsLmNvbT4NCj4gDQoNCkkgYWRkaXRpb24gdG8gdGhhdCwgSSBz
+dGlsbCBkb24ndCB1bmRlcnN0YW5kIHdoeSB5b3UgYnJpbmcgYmFjayANCnZtYWxsb2NfZXhlYygp
+IGluc3RlYWQgb2YgdXNpbmcgbW9kdWxlX2FsbG9jKCkuDQoNCkFzIHJlbWluZGVkIGluIGEgcHJl
+dmlvdXMgcmVzcG9uc2UsIHNvbWUgYXJjaGl0ZWN0dXJlcyBsaWtlIHBvd2VycGMvMzJzIA0KY2Fu
+bm90IGFsbG9jYXRlIGV4ZWMgbWVtb3J5IGluIHZtYWxsb2Mgc3BhY2UuIE9uIHBvd2VycGMgdGhp
+cyBpcyBiZWNhdXNlIA0KZXhlYyBwcm90ZWN0aW9uIGlzIHBlcmZvcm1lZCBvbiAyNTZNYnl0ZXMg
+c2VnbWVudHMgYW5kIHZtYWxsb2Mgc3BhY2UgaXMgDQpmbGFnZ2VkIG5vbi1leGVjLiBTb21lIG90
+aGVyIGFyY2hpdGVjdHVyZXMgaGF2ZSBhIGNvbnN0cmFpbnQgb24gZGlzdGFuY2UgDQpiZXR3ZWVu
+IGtlcm5lbCBjb3JlIHRleHQgYW5kIG90aGVyIHRleHQuDQoNClRvZGF5IHlvdSBoYXZlIGZvciBp
+bnN0YW5jZSBrcHJvYmVzIGluIHRoZSBrZXJuZWwgdGhhdCBuZWVkIGR5bmFtaWMgZXhlYyANCm1l
+bW9yeS4gSXQgdXNlcyBtb2R1bGVfYWxsb2MoKSB0byBnZXQgaXQuIE9uIHNvbWUgYXJjaGl0ZWN0
+dXJlcyB5b3UgYWxzbyANCmhhdmUgZnRyYWNlIHRoYXQgZ2V0cyBzb21lIGV4ZWMgbWVtb3J5IHdp
+dGggbW9kdWxlX2FsbG9jKCkuDQoNClNvLCBJIHN0aWxsIGRvbid0IHVuZGVyc3RhbmQgd2h5IHlv
+dSBjYW5ub3QgdXNlIG1vZHVsZV9hbGxvYygpIGFuZCBuZWVkIA0Kdm1hbGxvY19leGVjKCkgaW5z
+dGVhZC4NCg0KVGhhbmtzDQpDaHJpc3RvcGhlDQo=
