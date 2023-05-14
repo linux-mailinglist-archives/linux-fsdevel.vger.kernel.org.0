@@ -2,167 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A424C701F37
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 May 2023 21:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D944701F3F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 May 2023 21:24:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233256AbjENTUN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 May 2023 15:20:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45236 "EHLO
+        id S231493AbjENTYf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 May 2023 15:24:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjENTUL (ORCPT
+        with ESMTP id S229648AbjENTYe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 May 2023 15:20:11 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 260B9E6F;
-        Sun, 14 May 2023 12:20:10 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-30796c0cbcaso8254919f8f.1;
-        Sun, 14 May 2023 12:20:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684092007; x=1686684007;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nODLkN3MsrdfKf/UAkqWHH+G5vP9gT0pKV8dR/DBu4s=;
-        b=RDeF3wZRRt16EUG/SiYqKwSADKhumymGx1P92RXpCWJEihqbIAjCclHt6h5mkTO7pD
-         T5XFBgMo/0pOlgZKSGzUdM5dVZBn6RlZtdNSUILDCuSMt8wMUCADU4uU7tUMV5esO0gN
-         6ZKy02c5iPWnkatFiRS1BtzqwbMqPC03616pW70FyCISKY64mjDDdtYNV61AaCRd8GqE
-         B+Ag52Ac22GWgZum4sdq7Gt3IYJBnwpffpv3Sidbf7VFUuK2E/8wlLhGnjoYccqNCrc8
-         xHUgfuGtmVfJdQTrr/zu09e9f3xi2UKSAjE4ItYpNxeZX7I568I+F7BO6c1BXPtEl6n0
-         c71A==
+        Sun, 14 May 2023 15:24:34 -0400
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C69DE4E
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 May 2023 12:24:33 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-76c3e89c73aso591226939f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 May 2023 12:24:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684092007; x=1686684007;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nODLkN3MsrdfKf/UAkqWHH+G5vP9gT0pKV8dR/DBu4s=;
-        b=AtRp+86RR8sDiqPSh8GUbvDVPSieQBGBvCqj3xH6xz7UHqU2eHVSkWPaTlbwmb8blw
-         Q5SVPVMiwL/rI6yZcpejlb4dYopU927OG8eIILOsDESxNvA9RyTNOmchPq3tPo3qzhQm
-         Fz+5yCvHJFPYQ5qKuxHSKDy9QjCPNg9eLc5a1WgHRRtjTBJI9dl6zqt5WLG5RKYnuARj
-         D6J/7X1SWN5O1ZZyVti3zkF531AWadXcOk9kZEegzlbybURYInt21n+xSjDuZdTu+ZsO
-         3rJWeYnot0C/l8ym9YZ+vwzGz59vaGbB0frfwpi23816jTm9Kl231YsMlFfDCn1cWimE
-         bZFA==
-X-Gm-Message-State: AC+VfDz5c1FzT4p9XdCTnBVzc9r/nxFf5p+vyb3t6dtF61yCG4xjZQ/6
-        T8WpeyzktFusUM2I4U+scG0=
-X-Google-Smtp-Source: ACHHUZ4vkD1FNhCyar5Wr13d+5f42yS2y5SigsQHIIg0eQIr0a/1ANHo564HGxX9Z2ALlM8QkyE/Vw==
-X-Received: by 2002:a5d:4c8c:0:b0:2f5:3dfd:f4d2 with SMTP id z12-20020a5d4c8c000000b002f53dfdf4d2mr22848833wrs.64.1684092006850;
-        Sun, 14 May 2023 12:20:06 -0700 (PDT)
-Received: from localhost ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
-        by smtp.gmail.com with ESMTPSA id w12-20020a05600c474c00b003f07ef4e3e0sm25829024wmo.0.2023.05.14.12.20.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 May 2023 12:20:05 -0700 (PDT)
-Date:   Sun, 14 May 2023 20:20:04 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
- mappings by default
-Message-ID: <0eb31f6f-a122-4a5b-a959-03ed4dee1f3c@lucifer.local>
-References: <cover.1683235180.git.lstoakes@gmail.com>
+        d=1e100.net; s=20221208; t=1684092272; x=1686684272;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gHW0nI6H2FcFpSl0aYh5htCNfRJ7yLNtk6GzE1OYBpI=;
+        b=XbNdgZ57a/sBEtqv1icEpC+BgcO6CZJcLawLthyQfIB571p/ua2yXzqX9Mb8RkdTZU
+         /iTxBPuemm6V7iljKAurFnOnNKN5ILCQrD3vEfsZvaXMuBl5YW7Sukxb/a5slRYI8AY9
+         kp2yX7v7mSTvOF7oqgR61gwy3ElWxUVzKwedf8Q9H6uC8OrlHF1ACN8btX5nyLbA8sQg
+         +9kzwF9BEu7Qwuvo6jVHHlKhmxaVx3hmhf8DeMsX+58IsbQL9IaSDgwG8TchqMW03wzM
+         UwYw6WWD5w+DTQDcACPKDWot2w7ugKODwXxMMWTETU4JsdViM5InYpGM4Aa5d+COThJj
+         VaPw==
+X-Gm-Message-State: AC+VfDyOXgy3Nb4eCcmm7XBqv6k8jKN8v/RHwVZUO9KK8hIlmxwNWelI
+        9FQn/bOz1vq7TTThjGwHCHimNrwRQOpJbLK0x3LVOmjwJOLh
+X-Google-Smtp-Source: ACHHUZ5Y0vzpnp4+DPbYi+I26fxuBeilv3DJXiAqkOqpAKAHbMzQZER1iFukjU83QXz+KdpegjrEexw9ctomDvJw8rYHPH5mvr6Z
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1683235180.git.lstoakes@gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a5d:9852:0:b0:766:655b:37a3 with SMTP id
+ p18-20020a5d9852000000b00766655b37a3mr14007740ios.4.1684092272324; Sun, 14
+ May 2023 12:24:32 -0700 (PDT)
+Date:   Sun, 14 May 2023 12:24:32 -0700
+In-Reply-To: <000000000000a74de505f2349eb1@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a9377e05fbac4945@google.com>
+Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_setattr
+From:   syzbot <syzbot+cbb68193bdb95af4340a@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, elic@nvidia.com, jasowang@redhat.com,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, parav@nvidia.com,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 04, 2023 at 10:27:50PM +0100, Lorenzo Stoakes wrote:
-> Writing to file-backed mappings which require folio dirty tracking using
-> GUP is a fundamentally broken operation, as kernel write access to GUP
-> mappings do not adhere to the semantics expected by a file system.
->
-> A GUP caller uses the direct mapping to access the folio, which does not
-> cause write notify to trigger, nor does it enforce that the caller marks
-> the folio dirty.
->
-> The problem arises when, after an initial write to the folio, writeback
-> results in the folio being cleaned and then the caller, via the GUP
-> interface, writes to the folio again.
->
-> As a result of the use of this secondary, direct, mapping to the folio no
-> write notify will occur, and if the caller does mark the folio dirty, this
-> will be done so unexpectedly.
->
-> For example, consider the following scenario:-
->
-> 1. A folio is written to via GUP which write-faults the memory, notifying
->    the file system and dirtying the folio.
-> 2. Later, writeback is triggered, resulting in the folio being cleaned and
->    the PTE being marked read-only.
-> 3. The GUP caller writes to the folio, as it is mapped read/write via the
->    direct mapping.
-> 4. The GUP caller, now done with the page, unpins it and sets it dirty
->    (though it does not have to).
->
-> This change updates both the PUP FOLL_LONGTERM slow and fast APIs. As
-> pin_user_pages_fast_only() does not exist, we can rely on a slightly
-> imperfect whitelisting in the PUP-fast case and fall back to the slow case
-> should this fail.
-[snip]
+syzbot has bisected this issue to:
 
-As discussed at LSF/MM, on the flight over I wrote a little repro [0] which
-reliably triggers the ext4 warning by recreating the scenario described
-above, using a small userland program and kernel module.
+commit a3c06ae158dd6fa8336157c31d9234689d068d02
+Author: Parav Pandit <parav@nvidia.com>
+Date:   Tue Jan 5 10:32:03 2021 +0000
 
-This code is not perfect (plane code :) but does seem to do the job
-adequately, also obviously this should only be run in a VM environment
-where data loss is acceptable (in my case a small qemu instance).
+    vdpa_sim_net: Add support for user supported devices
 
-Hopefully this is useful in some way. Note that I explicitly use
-pin_user_pages() without FOLL_LONGTERM here in order to not run into the
-mitigation this very patch series provides! Obviously if you revert this
-series you can see the same happening with FOLL_LONGTERM set.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16e372c6280000
+start commit:   e922ba281a8d Add linux-next specific files for 20230512
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15e372c6280000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e372c6280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=17a4c2d44484b62f
+dashboard link: https://syzkaller.appspot.com/bug?extid=cbb68193bdb95af4340a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172a21c6280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b67fc6280000
 
-I have licensed the code as GPLv2 so anybody's free to do with it as they
-will if it's useful in any way!
+Reported-by: syzbot+cbb68193bdb95af4340a@syzkaller.appspotmail.com
+Fixes: a3c06ae158dd ("vdpa_sim_net: Add support for user supported devices")
 
-[0]:https://github.com/lorenzo-stoakes/gup-repro
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
