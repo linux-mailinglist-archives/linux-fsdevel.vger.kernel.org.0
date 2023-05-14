@@ -2,209 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B85E701F0B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 May 2023 20:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A424C701F37
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 May 2023 21:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232685AbjENSnc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 May 2023 14:43:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38828 "EHLO
+        id S233256AbjENTUN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 May 2023 15:20:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbjENSna (ORCPT
+        with ESMTP id S229611AbjENTUL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 May 2023 14:43:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30921BD3;
-        Sun, 14 May 2023 11:43:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D73760C90;
-        Sun, 14 May 2023 18:43:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92277C433EF;
-        Sun, 14 May 2023 18:43:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684089807;
-        bh=Ml1D73OgB6a09DYGjURU+FXwDDBxN+djnvR7hyV+9F0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A2U/h4UC1lJ+/+TsINJXlcGGXwM2KWKtn7CtMQSjOIVu+yQ/6t6hjWIaG/FAweri7
-         H2RRMav2LKvE+bBx7gW8jBfiJkzwlJ90LQaBX/3CgXwqVL0NHYOB9FJ+q2ylSqt4c9
-         +gTlsaj0svT4NGEIKuwVXXrX1hlgjl7MFr7debe3zFqLm5JmQ4oPbHZc+W5y62XAlu
-         6xX8TwUME2Dcokfpp9+5m5ozGSPIN8Gb5l0+8nXWEtgykcTCwMqwKcaCNE9CsUXZx4
-         nCMgUqNWxyUjChh6D4N9/5G/5ocXTte/QVnvsmqYBgZa1PmHoNpFUHl0XyQAMajrrY
-         sdCAr9023sF2w==
-Date:   Sun, 14 May 2023 11:43:25 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Lorenzo Stoakes <lstoakes@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org
-Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
-Message-ID: <20230514184325.GB9528@sol.localdomain>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-8-kent.overstreet@linux.dev>
- <ZFqxEWqD19eHe353@infradead.org>
- <ZFq3SdSBJ_LWsOgd@murray>
- <ZFq7JhrhyrMTNfd/@moria.home.lan>
- <20230510064849.GC1851@quark.localdomain>
- <ZF6HHRDeUWLNtuL7@moria.home.lan>
- <20230513015752.GC3033@quark.localdomain>
- <ZGB1eevk/u2ssIBT@moria.home.lan>
+        Sun, 14 May 2023 15:20:11 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 260B9E6F;
+        Sun, 14 May 2023 12:20:10 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-30796c0cbcaso8254919f8f.1;
+        Sun, 14 May 2023 12:20:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684092007; x=1686684007;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nODLkN3MsrdfKf/UAkqWHH+G5vP9gT0pKV8dR/DBu4s=;
+        b=RDeF3wZRRt16EUG/SiYqKwSADKhumymGx1P92RXpCWJEihqbIAjCclHt6h5mkTO7pD
+         T5XFBgMo/0pOlgZKSGzUdM5dVZBn6RlZtdNSUILDCuSMt8wMUCADU4uU7tUMV5esO0gN
+         6ZKy02c5iPWnkatFiRS1BtzqwbMqPC03616pW70FyCISKY64mjDDdtYNV61AaCRd8GqE
+         B+Ag52Ac22GWgZum4sdq7Gt3IYJBnwpffpv3Sidbf7VFUuK2E/8wlLhGnjoYccqNCrc8
+         xHUgfuGtmVfJdQTrr/zu09e9f3xi2UKSAjE4ItYpNxeZX7I568I+F7BO6c1BXPtEl6n0
+         c71A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684092007; x=1686684007;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nODLkN3MsrdfKf/UAkqWHH+G5vP9gT0pKV8dR/DBu4s=;
+        b=AtRp+86RR8sDiqPSh8GUbvDVPSieQBGBvCqj3xH6xz7UHqU2eHVSkWPaTlbwmb8blw
+         Q5SVPVMiwL/rI6yZcpejlb4dYopU927OG8eIILOsDESxNvA9RyTNOmchPq3tPo3qzhQm
+         Fz+5yCvHJFPYQ5qKuxHSKDy9QjCPNg9eLc5a1WgHRRtjTBJI9dl6zqt5WLG5RKYnuARj
+         D6J/7X1SWN5O1ZZyVti3zkF531AWadXcOk9kZEegzlbybURYInt21n+xSjDuZdTu+ZsO
+         3rJWeYnot0C/l8ym9YZ+vwzGz59vaGbB0frfwpi23816jTm9Kl231YsMlFfDCn1cWimE
+         bZFA==
+X-Gm-Message-State: AC+VfDz5c1FzT4p9XdCTnBVzc9r/nxFf5p+vyb3t6dtF61yCG4xjZQ/6
+        T8WpeyzktFusUM2I4U+scG0=
+X-Google-Smtp-Source: ACHHUZ4vkD1FNhCyar5Wr13d+5f42yS2y5SigsQHIIg0eQIr0a/1ANHo564HGxX9Z2ALlM8QkyE/Vw==
+X-Received: by 2002:a5d:4c8c:0:b0:2f5:3dfd:f4d2 with SMTP id z12-20020a5d4c8c000000b002f53dfdf4d2mr22848833wrs.64.1684092006850;
+        Sun, 14 May 2023 12:20:06 -0700 (PDT)
+Received: from localhost ([2a00:23c5:dc8c:8701:1663:9a35:5a7b:1d76])
+        by smtp.gmail.com with ESMTPSA id w12-20020a05600c474c00b003f07ef4e3e0sm25829024wmo.0.2023.05.14.12.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 May 2023 12:20:05 -0700 (PDT)
+Date:   Sun, 14 May 2023 20:20:04 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
+ mappings by default
+Message-ID: <0eb31f6f-a122-4a5b-a959-03ed4dee1f3c@lucifer.local>
+References: <cover.1683235180.git.lstoakes@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZGB1eevk/u2ssIBT@moria.home.lan>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <cover.1683235180.git.lstoakes@gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 14, 2023 at 01:45:29AM -0400, Kent Overstreet wrote:
-> On Fri, May 12, 2023 at 06:57:52PM -0700, Eric Biggers wrote:
-> > First, I wanted to mention that decoding of variable-length fields has been
-> > extensively studied for decompression algorithms, e.g. for Huffman decoding.
-> > And it turns out that it can be done branchlessly.  The basic idea is that you
-> > have a branchless refill step that looks like the following:
-> > 
-> > #define REFILL_BITS_BRANCHLESS()                    \
-> >         bitbuf |= get_unaligned_u64(p) << bitsleft; \
-> >         p += 7 - ((bitsleft >> 3) & 0x7);           \
-> >         bitsleft |= 56;
-> > 
-> > That branchlessly ensures that 'bitbuf' contains '56 <= bitsleft <= 63' bits.
-> > Then, the needed number of bits can be removed and returned:
-> > 
-> > #define READ_BITS(n)                          \
-> >         REFILL_BITS_BRANCHLESS();             \
-> >         tmp = bitbuf & (((u64)1 << (n)) - 1); \
-> >         bitbuf >>= (n);                       \
-> >         bitsleft -= (n);                      \
-> >         tmp
-> > 
-> > If you're interested, I can give you some references about the above method.
-> 
-> I might be interested in those references, new bit tricks and integer
-> encodings are always fun :)
+On Thu, May 04, 2023 at 10:27:50PM +0100, Lorenzo Stoakes wrote:
+> Writing to file-backed mappings which require folio dirty tracking using
+> GUP is a fundamentally broken operation, as kernel write access to GUP
+> mappings do not adhere to the semantics expected by a file system.
+>
+> A GUP caller uses the direct mapping to access the folio, which does not
+> cause write notify to trigger, nor does it enforce that the caller marks
+> the folio dirty.
+>
+> The problem arises when, after an initial write to the folio, writeback
+> results in the folio being cleaned and then the caller, via the GUP
+> interface, writes to the folio again.
+>
+> As a result of the use of this secondary, direct, mapping to the folio no
+> write notify will occur, and if the caller does mark the folio dirty, this
+> will be done so unexpectedly.
+>
+> For example, consider the following scenario:-
+>
+> 1. A folio is written to via GUP which write-faults the memory, notifying
+>    the file system and dirtying the folio.
+> 2. Later, writeback is triggered, resulting in the folio being cleaned and
+>    the PTE being marked read-only.
+> 3. The GUP caller writes to the folio, as it is mapped read/write via the
+>    direct mapping.
+> 4. The GUP caller, now done with the page, unpins it and sets it dirty
+>    (though it does not have to).
+>
+> This change updates both the PUP FOLL_LONGTERM slow and fast APIs. As
+> pin_user_pages_fast_only() does not exist, we can rely on a slightly
+> imperfect whitelisting in the PUP-fast case and fall back to the slow case
+> should this fail.
+[snip]
 
-There are some good blog posts by Fabian Giese:
+As discussed at LSF/MM, on the flight over I wrote a little repro [0] which
+reliably triggers the ext4 warning by recreating the scenario described
+above, using a small userland program and kernel module.
 
-* https://fgiesen.wordpress.com/2018/02/19/reading-bits-in-far-too-many-ways-part-1/
-* https://fgiesen.wordpress.com/2018/02/20/reading-bits-in-far-too-many-ways-part-2/
-* https://fgiesen.wordpress.com/2018/09/27/reading-bits-in-far-too-many-ways-part-3/
+This code is not perfect (plane code :) but does seem to do the job
+adequately, also obviously this should only be run in a VM environment
+where data loss is acceptable (in my case a small qemu instance).
 
-And the examples I gave above are basically what I use in libdeflate:
-https://github.com/ebiggers/libdeflate/blob/master/lib/deflate_decompress.c
+Hopefully this is useful in some way. Note that I explicitly use
+pin_user_pages() without FOLL_LONGTERM here in order to not run into the
+mitigation this very patch series provides! Obviously if you revert this
+series you can see the same happening with FOLL_LONGTERM set.
 
-> > But, I really just wanted to mention it for completeness, since I think you'd
-> > actually want to go in a slightly different direction, since (a) you have all
-> > the field widths available from the beginning, as opposed to being interleaved
-> > into the bitstream itself (as is the case in Huffman decoding for example), so
-> > you're not limited to serialized decoding of each field, (b) your fields are up
-> > to 96 bits, and (c) you've selected a bitstream convention that seems to make it
-> > such that your stream *must* be read in aligned units of u64, so I don't think
-> > something like REFILL_BITS_BRANCHLESS() could work for you anyway.
-> > 
-> > What I would suggest instead is preprocessing the list of 6 field lengths to
-> > create some information that can be used to extract all 6 fields branchlessly
-> > with no dependencies between different fields.  (And you clearly *can* add a
-> > preprocessing step, as you already have one -- the dynamic code generator.)
-> > 
-> > So, something like the following:
-> > 
-> >     const struct field_info *info = &format->fields[0];
-> > 
-> >     field0 = (in->u64s[info->word_idx] >> info->shift1) & info->mask;
-> >     field0 |= in->u64s[info->word_idx - 1] >> info->shift2;
-> > 
-> > ... but with the code for all 6 fields interleaved.
-> > 
-> > On modern CPUs, I think that would be faster than your current C code.
-> > 
-> > You could do better by creating variants that are specialized for specific
-> > common sets of parameters.  During "preprocessing", you would select a variant
-> > and set an enum accordingly.  During decoding, you would switch on that enum and
-> > call the appropriate variant.  (This could also be done with a function pointer,
-> > of course, but indirect calls are slow these days...)
-> 
-> testing random btree updates:
-> 
-> dynamically generated unpack:
-> rand_insert: 20.0 MiB with 1 threads in    33 sec,  1609 nsec per iter, 607 KiB per sec
-> 
-> old C unpack:
-> rand_insert: 20.0 MiB with 1 threads in    35 sec,  1672 nsec per iter, 584 KiB per sec
-> 
-> the Eric Biggers special:
-> rand_insert: 20.0 MiB with 1 threads in    35 sec,  1676 nsec per iter, 583 KiB per sec
-> 
-> Tested two versions of your approach, one without a shift value, one
-> where we use a shift value to try to avoid unaligned access - second was
-> perhaps 1% faster
-> 
-> so it's not looking good. This benchmark doesn't even hit on
-> unpack_key() quite as much as I thought, so the difference is
-> significant.
-> 
-> diff --git a/fs/bcachefs/bkey.c b/fs/bcachefs/bkey.c
+I have licensed the code as GPLv2 so anybody's free to do with it as they
+will if it's useful in any way!
 
-I don't know what this patch applies to, so I can't properly review it.
-
-I suggest checking the assembly and making sure it is what is expected.
-
-In general, for this type of thing it's also helpful to put together a userspace
-micro-benchmark program so that it's very fast to evaluate different options.
-Building and booting a kernel and doing some I/O benchmark on a bcachefs sounds
-much more time consuming and less precise.
-
-> -struct bkey __bch2_bkey_unpack_key(const struct bkey_format_processed *format_p,
-> +struct bkey __bch2_bkey_unpack_key(const struct bkey_format_processed *format,
->  				   const struct bkey_packed *in)
->  {
-> -	const struct bkey_format *format = &format_p->f;
-> -	struct unpack_state state = unpack_state_init(format, in);
->  	struct bkey out;
->  
-> -	EBUG_ON(format->nr_fields != BKEY_NR_FIELDS);
-> -	EBUG_ON(in->u64s < format->key_u64s);
-> +	EBUG_ON(format->f.nr_fields != BKEY_NR_FIELDS);
-> +	EBUG_ON(in->u64s < format->f.key_u64s);
->  	EBUG_ON(in->format != KEY_FORMAT_LOCAL_BTREE);
-> -	EBUG_ON(in->u64s - format->key_u64s + BKEY_U64s > U8_MAX);
-> +	EBUG_ON(in->u64s - format->f.key_u64s + BKEY_U64s > U8_MAX);
->  
-> -	out.u64s	= BKEY_U64s + in->u64s - format->key_u64s;
-> +	out.u64s	= BKEY_U64s + in->u64s - format->f.key_u64s;
->  	out.format	= KEY_FORMAT_CURRENT;
->  	out.needs_whiteout = in->needs_whiteout;
->  	out.type	= in->type;
->  	out.pad[0]	= 0;
->  
-> +	if (likely(format->aligned)) {
-> +#define x(id, field)	out.field = get_aligned_field(format, in, id);
-> +		bkey_fields()
-> +#undef x
-> +	} else {
-> +		struct unpack_state state = unpack_state_init(&format->f, in);
-> +
->  #define x(id, field)	out.field = get_inc_field(&state, id);
-> -	bkey_fields()
-> +		bkey_fields()
->  #undef x
-> +	}
-
-It looks like you didn't change the !aligned case.  How often is the 'aligned'
-case taken?
-
-I think it would also help if the generated assembly had the handling of the
-fields interleaved.  To achieve that, it might be necessary to interleave the C
-code.
-
-- Eric
+[0]:https://github.com/lorenzo-stoakes/gup-repro
