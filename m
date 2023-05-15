@@ -2,141 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60328702E03
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 15:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F606702EC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 15:52:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242063AbjEONYA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 09:24:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42760 "EHLO
+        id S235289AbjEONwg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 09:52:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242037AbjEONX5 (ORCPT
+        with ESMTP id S234266AbjEONwf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 09:23:57 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C53018E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 06:23:56 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230515132352euoutp01bdb98b56bf7260d62aee81cac9fbfdbf~fU_YB4-FK0415904159euoutp018
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 13:23:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230515132352euoutp01bdb98b56bf7260d62aee81cac9fbfdbf~fU_YB4-FK0415904159euoutp018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1684157033;
-        bh=orhCRSnOAss1dL+QUGz6I3k7rSvikd5R9ejNEKRBfm8=;
-        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-        b=fLu/gDwYCbjQj3xgcW/x++ZwVi5N8xTzHZF20wwdMynl4wpkJySmsSX+wMgU9ihFH
-         UK8KiNKl4WoOc2x3BUUyf7E2m9Am98aQnZcEQDLK9dwOZ0WuKpXP2vgQxNhDHKnJwe
-         l5uXcX5ksp5u4NMqOsvkSKvOnPs7v2eaN+Z1ufzo=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230515132352eucas1p1358cc70b5533d75e364f6bc7539d934a~fU_XUiJZN2059420594eucas1p12;
-        Mon, 15 May 2023 13:23:52 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id F1.D5.42423.86232646; Mon, 15
-        May 2023 14:23:52 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230515132351eucas1p2cb0cdd49c9a69e310fd356532f423fb9~fU_W83Xkn0832908329eucas1p2d;
-        Mon, 15 May 2023 13:23:51 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230515132351eusmtrp2a73007560fa24a5f3b0e7e70abef681a~fU_W8Rsuq1695116951eusmtrp2P;
-        Mon, 15 May 2023 13:23:51 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-d9-646232685ae0
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id EC.19.10549.76232646; Mon, 15
-        May 2023 14:23:51 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230515132351eusmtip1a4547dce31d74bded00ef41bb499d11c~fU_Ww1buA0829508295eusmtip1H;
-        Mon, 15 May 2023 13:23:51 +0000 (GMT)
-Received: from [106.110.32.65] (106.110.32.65) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Mon, 15 May 2023 14:23:50 +0100
-Message-ID: <8dfaac46-e83a-0654-b1b8-974ebfaff421@samsung.com>
-Date:   Mon, 15 May 2023 15:23:50 +0200
+        Mon, 15 May 2023 09:52:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 760C21FE2;
+        Mon, 15 May 2023 06:52:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED4CF61E94;
+        Mon, 15 May 2023 13:52:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5863C433EF;
+        Mon, 15 May 2023 13:52:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684158749;
+        bh=yLHcOQuMOwKl/TYFo2kdsc0eAYysG+im84RLRDZNBd0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OD90Fnua0tBl6Y7Xa5VYKmP56D3PTecnBZKxd6t/NzIbjyvtkj0FCYMKwSiEtCItm
+         FOJxfFG6M+SqBZePsKLSIR0ZPW4mgn7rQihMwZEGM1Y0LT8x8v3xuCpPtttmUVHYd9
+         Rw0sOkNWawXMm1K7SVGmjFitrrb6QBegfPwUWfECuki7kMZqeg4mKRp/qc7KqWwwCz
+         tjZUf8ReIHUIAhWBk8AC1N5GSMad/pfCSv9nZBGYnK5ilmGWyJV349wbDLPVZPNCE5
+         n1/RcwvhrCrwDX9yTR70NM50k1yHTBCmbwBHvPjfwOPT9Bw5JJoWXNoTDwaV2AHJpO
+         WnSHT0ak+v8pA==
+Date:   Mon, 15 May 2023 15:52:20 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>,
+        x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, audit@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, jlayton@kernel.org, cyphar@cyphar.com,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC PATCH v2] fs/xattr: add *at family syscalls
+Message-ID: <20230515-banal-vergab-a7abb53169b5@brauner>
+References: <20230511150802.737477-1-cgzones@googlemail.com>
+ <20230515-kopfgeld-umkurven-f27be4b68a26@brauner>
+ <CAOQ4uxgtxLLfBuVUAT7+N7cox+03wJA3ACGEu76dZd5RqGWXTQ@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
-        Thunderbird/102.10.0
-Subject: Re: [RFCv5 5/5] iomap: Add per-block dirty state tracking to
- improve performance
-Content-Language: en-US
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>,
-        Aravinda Herle <araherle@in.ibm.com>, <mcgrof@kernel.org>
-From:   Pankaj Raghav <p.raghav@samsung.com>
-In-Reply-To: <87v8guhu7n.fsf@doe.com>
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [106.110.32.65]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7djPc7oZRkkpBidPcVl0vt/GbvHuc5XF
-        lmP3GC1OLjrMaLFn70kWi11/drBb3JjwlNFi8cpQi4OnOtgtfv+Yw+bA5XFqkYTHzll32T3e
-        nkvx2LxCy2PTqk42jwmLDjB6vN93lc3j8ya5AI4oLpuU1JzMstQifbsErozT8yoLZrJU9D84
-        ydLAuJi5i5GDQ0LAROLlIpMuRi4OIYEVjBId85cxQzhfGCX6709k62LkBHI+M0rcWe0CYoM0
-        NM5YxwRRtJxR4u7brVAOUNGBxonsEB07GSWW36wAsXkF7CTO/f0Ato5FQFViwQVviLCgxMmZ
-        T1hAbFGBaInF+6aA2cJAduezR2BjmAXEJW49mc8EYosIGEk86F3FCLKLWWA3k8TrxzfYQWay
-        CWhJNHaC1XMCjZ+6/DALRK+8xPa3c5ghjlaUmHTzPSuEXStxasstsJslBOZzSnxoeMIOkXCR
-        OLL4OguELSzx6vgWqLiMxP+dEEdICFRLPL3xmxmiuQUYRDvXs0HC0Vqi70wOiMksoCmxfpc+
-        RLmjRMOZY6wQFXwSN94KQpzGJzFp23TmCYyqs5BCYhaSj2ch+WAWwtAFjCyrGMVTS4tz01OL
-        DfNSy/WKE3OLS/PS9ZLzczcxAtPV6X/HP+1gnPvqo94hRiYOxkOMEhzMSiK87TPjU4R4UxIr
-        q1KL8uOLSnNSiw8xSnOwKInzatueTBYSSE8sSc1OTS1ILYLJMnFwSjUw+SiIPL/7ILjjcdLS
-        AteMCMWdizZs2rW3VW7eTTeHtwJ/N/+P356uX3Fywnbr1n9hV1Z7is39LZhQW2zBd+chx5Nt
-        nF9bxQ9J1K1p/f4j+ESBdaGc95Fpb45MW8M8t/6E5s4Jc99LzOi+qPPrY9qeYNWslNXPVDmn
-        qbavY9/93H5D8AuZ4IC3R7m6BWtlXLJvrIt18vzZdKeQc9ZfU89tW+zaNN849rJ3T/l5xSmQ
-        Lemc6L5GF7vsHXNdFq2zdJ9jNW2N3a4ux4+LVazjRBbYX0v3mK+gcXqBbl3b5ziXT3m8Pkms
-        j8Iq3gceDHRzYHVTPCwb7/ExgvPKRmantwJTo3uqThbd3py39E5wfI2ZEktxRqKhFnNRcSIA
-        wP0tfMYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsVy+t/xu7rpRkkpBrvm6Vl0vt/GbvHuc5XF
-        lmP3GC1OLjrMaLFn70kWi11/drBb3JjwlNFi8cpQi4OnOtgtfv+Yw+bA5XFqkYTHzll32T3e
-        nkvx2LxCy2PTqk42jwmLDjB6vN93lc3j8ya5AI4oPZui/NKSVIWM/OISW6VoQwsjPUNLCz0j
-        E0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYzT8yoLZrJU9D84ydLAuJi5i5GTQ0LARKJxxjqm
-        LkYuDiGBpYwSjxeeYoJIyEhs/HKVFcIWlvhzrYsNougjo8SmHWtYIZydjBLznz0C6+AVsJM4
-        9/cD0FgODhYBVYkFF7whwoISJ2c+YQGxRQWiJW4s/wZWLgxkdzYeYwexmQXEJW49mQ8WFxEw
-        knjQu4oRZD6zwG4miQUP3oAlhAQqJCYcncoEMp9NQEuisROslxNo1dTlh1kg5mhKtG7/DTVT
-        XmL72zlQXypKTLr5HuqZWonPf58xTmAUnYXkvFlIzpiFZNQsJKMWMLKsYhRJLS3OTc8tNtQr
-        TswtLs1L10vOz93ECIz2bcd+bt7BOO/VR71DjEwcjIcYJTiYlUR422fGpwjxpiRWVqUW5ccX
-        leakFh9iNAUG0URmKdHkfGC6ySuJNzQzMDU0MbM0MLU0M1YS5/Us6EgUEkhPLEnNTk0tSC2C
-        6WPi4JRqYGpd6ztBuCE+YpZndqVFFnfnTd2iaV06bSfrTV0+sM58oCF4xMO1glVsZ6pNo/vv
-        D1IHK7lqLYK5eebaWHxlV4stUPGMT575y9PujvzP/rrIF3sOW05ck7XAzXqVcvbV9/3LxKfL
-        nzvjkfdi+eL1MVGcGy3nXVNrym+7zZcRq3LuoN0645cV9dv6hPu45E7E/ci9VVfSEiQ1f0t/
-        Lsui6d9qWE7URQdrKFm9Mqnh0J60f5mfzNJb8+44n2Zn5ZlXFMzltsvmq5/tlL81E9P+Lli6
-        JpdrHltAougvi7BpDZWs+pP4C39FB8fuLKnijHwdsahNuGW2yne7v3WLJF4/Wmty9ILQmoJP
-        /M4dx+uVWIozEg21mIuKEwF20BuOfwMAAA==
-X-CMS-MailID: 20230515132351eucas1p2cb0cdd49c9a69e310fd356532f423fb9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230515083129eucas1p1ffa7194796a9d277274a865401c19a3c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230515083129eucas1p1ffa7194796a9d277274a865401c19a3c
-References: <CGME20230515083129eucas1p1ffa7194796a9d277274a865401c19a3c@eucas1p1.samsung.com>
-        <87v8guhu7n.fsf@doe.com>
-X-Spam-Status: No, score=-10.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgtxLLfBuVUAT7+N7cox+03wJA3ACGEu76dZd5RqGWXTQ@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, May 15, 2023 at 04:04:21PM +0300, Amir Goldstein wrote:
+> On Mon, May 15, 2023 at 1:33 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Thu, May 11, 2023 at 05:08:02PM +0200, Christian Göttsche wrote:
+> > > Add the four syscalls setxattrat(), getxattrat(), listxattrat() and
+> > > removexattrat().  Those can be used to operate on extended attributes,
+> > > especially security related ones, either relative to a pinned directory
+> > > or on a file descriptor without read access, avoiding a
+> > > /proc/<pid>/fd/<fd> detour, requiring a mounted procfs.
+> > >
+> > > One use case will be setfiles(8) setting SELinux file contexts
+> > > ("security.selinux") without race conditions.
+> > >
+> > > Add XATTR flags to the private namespace of AT_* flags.
+> > >
+> > > Use the do_{name}at() pattern from fs/open.c.
+> > >
+> > > Use a single flag parameter for extended attribute flags (currently
+> > > XATTR_CREATE and XATTR_REPLACE) and *at() flags to not exceed six
+> > > syscall arguments in setxattrat().
+> > >
+> > > Previous approach ("f*xattr: allow O_PATH descriptors"): https://lore.kernel.org/all/20220607153139.35588-1-cgzones@googlemail.com/
+> > > v1 discussion: https://lore.kernel.org/all/20220830152858.14866-2-cgzones@googlemail.com/
+> > >
+> > > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> > > CC: x86@kernel.org
+> > > CC: linux-alpha@vger.kernel.org
+> > > CC: linux-kernel@vger.kernel.org
+> > > CC: linux-arm-kernel@lists.infradead.org
+> > > CC: linux-ia64@vger.kernel.org
+> > > CC: linux-m68k@lists.linux-m68k.org
+> > > CC: linux-mips@vger.kernel.org
+> > > CC: linux-parisc@vger.kernel.org
+> > > CC: linuxppc-dev@lists.ozlabs.org
+> > > CC: linux-s390@vger.kernel.org
+> > > CC: linux-sh@vger.kernel.org
+> > > CC: sparclinux@vger.kernel.org
+> > > CC: linux-fsdevel@vger.kernel.org
+> > > CC: audit@vger.kernel.org
+> > > CC: linux-arch@vger.kernel.org
+> > > CC: linux-api@vger.kernel.org
+> > > CC: linux-security-module@vger.kernel.org
+> > > CC: selinux@vger.kernel.org
+> > > ---
+> >
+> > Fwiw, your header doesn't let me see who the mail was directly sent to
+> > so I'm only able to reply to lists which is a bit pointless...
+> >
+> > > v2:
+> > >   - squash syscall introduction and wire up commits
+> > >   - add AT_XATTR_CREATE and AT_XATTR_REPLACE constants
+> >
+> > > +#define AT_XATTR_CREATE              0x1     /* setxattrat(2): set value, fail if attr already exists */
+> > > +#define AT_XATTR_REPLACE     0x2     /* setxattrat(2): set value, fail if attr does not exist */
+> >
+> > We really shouldn't waste any AT_* flags for this. Otherwise we'll run
+> > out of them rather quickly. Two weeks ago we added another AT_* flag
+> > which is up for merging for v6.5 iirc and I've glimpsed another AT_*
+> > flag proposal in one of the talks at last weeks Vancouver conference
+> > extravaganza.
+> >
+> > Even if we reuse 0x200 for AT_XATTR_CREATE (like we did for AT_EACCESS
+> > and AT_REMOVEDIR) we still need another bit for AT_XATTR_REPLACE.
+> >
+> > Plus, this is really ugly since AT_XATTR_{CREATE,REPLACE} really isn't
+> > in any way related to lookup and we're mixing it in with lookup
+> > modifying flags.
+> >
+> > So my proposal for {g,s}etxattrat() would be:
+> >
+> > struct xattr_args {
+> >         __aligned_u64 value;
+> >         __u32 size;
+> >         __u32 cmd;
+> > };
+> >
+> > So everything's nicely 64bit aligned in the struct. Use the @cmd member
+> > to set either XATTR_REPLACE or XATTR_CREATE and treat it as a proper
+> > enum and not as a flag argument like the old calls did.
+> >
+> > So then we'd have:
+> >
+> > setxattrat(int dfd, const char *path, const char __user *name,
+> >            struct xattr_args __user *args, size_t size, unsigned int flags)
+> > getxattrat(int dfd, const char *path, const char __user *name,
+> >            struct xattr_args __user *args, size_t size, unsigned int flags)
+> >
+> > The current in-kernel struct xattr_ctx would be renamed to struct
+> > kernel_xattr_args and then we do the usual copy_struct_from_user()
+> > dance:
+> >
+> > struct xattr_args args;
+> > err = copy_struct_from_user(&args, sizeof(args), uargs, usize);
+> >
+> > and then go on to handle value/size for setxattrat()/getxattrat()
+> > accordingly.
+> >
+> > getxattr()/setxattr() aren't meaningfully filterable by seccomp already
+> > so there's not point in not using a struct.
+> >
+> > If that isn't very appealing then another option is to add a new flag
+> > namespace just for setxattrat() similar to fspick() and move_mount()
+> > duplicating the needed lookup modifying flags.
+> > Thoughts?
 > 
-> We set the per-block dirty status in ->write_begin. The check above happens in the
-> writeback path when we are about to write the dirty data to the disk.
-> What the check is doing is that, it checks if the block state is not dirty
-> then skip it which means the block was not written to in the ->write_begin().
-> Also the block with dirty status always means that the block is uptodate
-> anyways.
+> Here is a thought: I am not sure if I am sorry we did not discuss this API
+> issue in LSFMM or happy that we did not waste our time on this... :-/
 > 
-> Hope it helps!
+> I must say that I dislike redefined flag namespace like FSPICK_*
+> just as much as I dislike overloading the AT_* namespace and TBH,
+> I am not crazy about avoiding this problem with xattr_args either.
 > 
+> A more sane solution IMO could have been:
+> - Use lower word of flags for generic AT_ flags
+> - Use the upper word of flags for syscall specific flags
 
-Definitely. I also checked your 1st RFC version to get more context. Thanks for
-the explanation.
+We'd have 16 lower bits for AT_* flags and upper 16 bits for non-AT_*
+flags. That might be ok but it isn't great because if we ever extend
+AT_* flags into the upper 16 bits that are generally useful for all
+AT_* flag taking system calls we'd not be able to use them. And at the
+rate people keep suggesting new AT_* flags that issue might arise
+quicker than we might think.
+
+And we really don't want 64 bit flag arguments because of 32 bit
+architectures as that gets really ugly to handle cleanly (Arnd has
+talked a lot about issues in this area before).
+
+> 
+> So if it were up to me, I would vote starting this practice:
+> 
+> + /* Start of syscall specific range */
+> + #define AT_XATTR_CREATE       0x10000     /* setxattrat(2): set
+> value, fail if attr already exists */
+> + #define AT_XATTR_REPLACE     0x20000     /* setxattrat(2): set
+> value, fail if attr does not exist */
+> 
+> Which coincidentally happens to be inline with my AT_HANDLE_FID patch...
+
+This is different though. The reason AT_HANDLE_FID is acceptable is
+because we need the ability to extend an existing system call and we're
+reusing a bit that is already used in two other system calls. So we
+avoid adding a new system call just to add another flag argument and
+we're also not using up an additional AT_* bit. This makes it bearable
+imho. But here we're talking about new system calls where we can avoid
+this problem arising in the first place.
+
+> 
+> Sure, we will have some special cases like MOVE_MOUNT_* and
+> legacy pollution to the lower AT_ flags word, but as a generic solution
+> for syscalls that need the common AT_ lookup flags and just a few
+> private flags, that seems like the lesser evil to me.
+
+It is fine to do this in some cases but we shouldn't encourage mixing
+distinct flag namespaces let alone advertising this as a generic
+solution imho. The AT_XATTR_* flags aren't even flags they behave like
+an enum.
