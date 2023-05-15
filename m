@@ -2,100 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27C51702B39
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 13:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 482E9702B37
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 13:16:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241205AbjEOLQ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 07:16:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56872 "EHLO
+        id S241116AbjEOLQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 07:16:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240360AbjEOLQ1 (ORCPT
+        with ESMTP id S237581AbjEOLQ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 15 May 2023 07:16:27 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92B74172B;
-        Mon, 15 May 2023 04:16:26 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-ba7831cc80bso346576276.0;
-        Mon, 15 May 2023 04:16:26 -0700 (PDT)
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7551725;
+        Mon, 15 May 2023 04:16:25 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-965e4be7541so2192559866b.1;
+        Mon, 15 May 2023 04:16:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684149386; x=1686741386;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTbXuYdaoyxAlzcRp/fw5Y/X7Jv1gcBGl293JJcjEdw=;
-        b=rHvms3r0j62HT8lJLCgjCOTVIvfLAuQQowXP8AlPbnL6ZdyWDLMK5IwWZH9as9mBWi
-         pq0PzbvF/mx+rD6DVkQk3fjS477v0OxylXei5cwqQcrzF8gRJiH0GlT4Oox8bYu4GLrB
-         N3+IOgs3o+BqCPUHE9+VAav5BHIGiuKOk3gVX3b1Sfk0yf1BB2u6uiqw2mcyKGd/x1gf
-         xmnyc09sWRSVZoXzSO30cCgzd3imc9NVHznBTuiVFfgJiA12Uh9fMx/gmMffJxzsyDUO
-         RcNyG5WSoSePuBrPVRq1oc/kE2nN0ByBIfb7qGJnsOvLNqlRgyzQnmZCDAkx4wu8gR6a
-         6F2w==
+        d=gmail.com; s=20221208; t=1684149384; x=1686741384;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=knPSlIoi8JJlfvyB9MqyozwzNx+4xRNl0fuueJdn78w=;
+        b=TDrCEU8FuW3hDweQ5bwdycEiJjcobOp3IpmpMjXkU7AaTDL+TdsNmJoEXoMEQMruop
+         GIScUD01CMAgF/1mC0SD1gv77x0WiGT8QjnQz3Ma4Wy//I36ne/NL9Vd6iTB4U/wlThq
+         8bcQj7xmcYxzSNb8+GF2+O52JpZVE3ZVfzvvS9BdKzWQ/h6Hi1zStdC9/TvhYq1OvFiZ
+         yiDCT/F8jkXfyg5LlWU+wYh3CYKCnwZ0lwdXgeg2isHG83ddUTkj5mfHqhUVBQxKGfCR
+         yBPB/bdHdisdWue0ctSmOENHVHpaiuH7A0vEFCI7gdMD9Hhe0ViXPRv77UOveUz2UpaD
+         egdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684149386; x=1686741386;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TTbXuYdaoyxAlzcRp/fw5Y/X7Jv1gcBGl293JJcjEdw=;
-        b=kWDSnbAcyt3iri41976YRRISaim0kKezz0lm012bIeNvZfN5WuMYUi5qSqgG6y0Vlf
-         czQ/1OjlVmUgJoLOczP3CZpH66/sliGFdLSpZYZlbf/r0ANFzpPubtRXo60AUQ9rYOci
-         6GMGd0DuI34q3AAm4E7gb3tCNjONUNG+2PyFHA7J0BGSM1z/+RFHMBok+73Ybpm7Yont
-         Zf4BO9GXwF3lmw/G6QKw9hxrRQVweC0DKzIIb/PnQiOTGXSGGRDE0f9YBmPEhXgQt+2Y
-         FCQ3m2bYbsGliabGHsFXijE25zkrhLxEOigUZtIWXZlk+dPTQyUsVIcpoYALv+sqv2xj
-         nLCw==
-X-Gm-Message-State: AC+VfDxH6NsCAolASxyKCaBzgLQinQeltuIBqc2UudF6tndableCc7pe
-        ZIOjRBk92wXtxnYPjlDDRsjsLy9ivPlBvP8empY=
-X-Google-Smtp-Source: ACHHUZ7QVbn3hySRl+aLqYhn67ydlgatwvX69Pf1I7JU8ZGH/GA9QBvjTHpIba8iZ14uKS84WLqgoGh2gvTDtVFk6K0=
-X-Received: by 2002:a81:1b4e:0:b0:55a:1cdc:2ed3 with SMTP id
- b75-20020a811b4e000000b0055a1cdc2ed3mr19282070ywb.2.1684149385714; Mon, 15
- May 2023 04:16:25 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684149384; x=1686741384;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=knPSlIoi8JJlfvyB9MqyozwzNx+4xRNl0fuueJdn78w=;
+        b=YOZPGPHbI3+bc1mWlznQm85z5ZBg6mNgZtk75WKVHb6y1cFRPyD02mt1nunikmi9Qb
+         Cu2Faa1TjOonCkL2ZXpIrv0b9xHd5s1dJOsWhgMFXwSAEhEhNj6x6dUnbDhHyGklw3vY
+         bKiJWXwYbTQYRTz9mmEMri6GFwyjx2kOP3Pr1eUAO3CwT6xsGss3GSbVN+trZsja1S3H
+         F+9blB7rXOLGh0aqMVyL+jMf3yebULx8e+2N4wKL5pBJNkx0n9yhTa2PO3Q06P6Y9Gef
+         BRgCEPESzvdHYH1nuvAWz+zWe/mfmHsq+IdmJoB/8Ac4lhx3Yfype/4ag/GoRpmGvj6b
+         vTPg==
+X-Gm-Message-State: AC+VfDwhWweuxnl3W1sSZgth6W5xyqjq7IvMR9ZFrFKdSrExAZ1gkTBB
+        Uh73sSk7rDiuPmkODXy8zgY=
+X-Google-Smtp-Source: ACHHUZ7WHM6iw+dCrh6+o/s11/K9CwCF/i+8iSZDcuGO4RTTrbL4NWF45E3g1pqnoenQBo6gAyOXSw==
+X-Received: by 2002:a17:906:9c83:b0:94f:449e:75db with SMTP id fj3-20020a1709069c8300b0094f449e75dbmr32016828ejc.52.1684149383725;
+        Mon, 15 May 2023 04:16:23 -0700 (PDT)
+Received: from localhost ([31.94.21.70])
+        by smtp.gmail.com with ESMTPSA id wi21-20020a170906fd5500b0094edbe5c7ddsm9460583ejb.38.2023.05.15.04.16.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 May 2023 04:16:22 -0700 (PDT)
+Date:   Mon, 15 May 2023 12:16:21 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     "Kirill A . Shutemov" <kirill@shutemov.name>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
+ mappings by default
+Message-ID: <7f6dbe36-88f2-468e-83c1-c97e666d8317@lucifer.local>
+References: <cover.1683235180.git.lstoakes@gmail.com>
+ <20230515110315.uqifqgqkzcrrrubv@box.shutemov.name>
 MIME-Version: 1.0
-From:   Askar Safin <safinaskar@gmail.com>
-Date:   Mon, 15 May 2023 14:15:48 +0300
-Message-ID: <CAPnZJGB5izL9LzLVFHOGt5rNg+V0ZvVghebXS41U7HiGwXoEUg@mail.gmail.com>
-Subject: Re: [PATCH 00/32] bcachefs - a new COW filesystem
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        linux-bcachefs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230515110315.uqifqgqkzcrrrubv@box.shutemov.name>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kent, please, make sure you dealt with problems specific to another
-fs: btrfs: https://arstechnica.com/gadgets/2021/09/examining-btrfs-linuxs-p=
-erpetually-half-finished-filesystem/
-. In particular, I dislike this btrfs problems, mentioned in the
-article:
+On Mon, May 15, 2023 at 02:03:15PM +0300, Kirill A . Shutemov wrote:
+> On Thu, May 04, 2023 at 10:27:50PM +0100, Lorenzo Stoakes wrote:
+> > Writing to file-backed mappings which require folio dirty tracking using
+> > GUP is a fundamentally broken operation, as kernel write access to GUP
+> > mappings do not adhere to the semantics expected by a file system.
+> >
+> > A GUP caller uses the direct mapping to access the folio, which does not
+> > cause write notify to trigger, nor does it enforce that the caller marks
+> > the folio dirty.
+>
+> Okay, problem is clear and the patchset look good to me. But I'm worried
+> breaking existing users.
+>
+> Do we expect the change to be visible to real world users? If yes, are we
+> okay to break them?
 
-- "Yes, you read that correctly=E2=80=94you mount the array using the name =
-of
-any given disk in the array. No, it doesn't matter which one"
-- "Even though our array is technically "redundant," it refuses to
-mount with /dev/vdc missing... In the worst-case scenario=E2=80=94a root
-filesystem that itself is stored "redundantly" on btrfs-raid1 or
-btrfs-raid10=E2=80=94the entire system refuses to boot... If you're thinkin=
-g,
-"Well, the obvious step here is just to always mount degraded," the
-btrfs devs would like to have a word with you... If you lose a drive
-from a conventional RAID array, or an mdraid array, or a ZFS zpool,
-that array keeps on trucking without needing any special flags to
-mount it. If you then add the failed drive back to the array, your
-RAID manager will similarly automatically begin "resilvering" or
-"rebuilding" the array... That, unfortunately, is not the case with
-btrfs-native RAID"
+The general consensus at the moment is that there is no entirely reasonable
+usage of this case and you're already running the riks of a kernel oops if
+you do this, so it's already broken.
 
-I suggest reading the article in full, at least from section "Btrfs
-RAID array management is a mess" till the end.
+>
+> One thing that came to mind is KVM with "qemu -object memory-backend-file,share=on..."
+> It is mostly used for pmem emulation.
+>
+> Do we have plan B?
 
-Please, ensure that bcachefs has no these problems! These problems
-scary me away from btrfs.
+Yes, we can make it opt-in or opt-out via a FOLL_FLAG. This would be easy
+to implement in the event of any issues arising.
 
-Please, CC me when answering
---=20
-Askar Safin
+>
+> Just a random/crazy/broken idea:
+>
+>  - Allow folio_mkclean() (and folio_clear_dirty_for_io()) to fail,
+>    indicating that the page cannot be cleared because it is pinned;
+>
+>  - Introduce a new vm_operations_struct::mkclean() that would be called by
+>    page_vma_mkclean_one() before clearing the range and can fail;
+>
+>  - On GUP, create an in-kernel fake VMA that represents the file, but with
+>    custom vm_ops. The VMA registered in rmap to get notified on
+>    folio_mkclean() and fail it because of GUP.
+>
+>  - folio_clear_dirty_for_io() callers will handle the new failure as
+>    indication that the page can be written back but will stay dirty and
+>    fs-specific data that is associated with the page writeback cannot be
+>    freed.
+>
+> I'm sure the idea is broken on many levels (I have never looked closely at
+> the writeback path). But maybe it is good enough as conversation started?
+>
+
+Yeah there are definitely a few ideas down this road that might be
+possible, I am not sure how a filesystem can be expected to cope or this to
+be reasonably used without dirty/writeback though because you'll just not
+track anything or I guess you mean the mapping would be read-only but
+somehow stay dirty?
+
+I also had ideas along these lines of e.g. having a special vmalloc mode
+which mimics the correct wrprotect settings + does the right thing, but of
+course that does nothing to help DMA writing to a GUP-pinned page.
+
+Though if the issue is at the point of the kernel marking the page dirty
+unexpectedly, perhaps we can just invoke the mkwrite() _there_ before
+marking dirty?
+
+There are probably some sycnhronisation issues there too.
+
+Jason will have some thoughts on this I'm sure. I guess the key question
+here is - is it actually feasible for this to work at all? Once we
+establish that, the rest are details :)
+
+> --
+>   Kiryl Shutsemau / Kirill A. Shutemov
