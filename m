@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19BFF703483
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 18:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4631770370B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 19:16:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243031AbjEOQtT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 12:49:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54138 "EHLO
+        id S243925AbjEORQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 13:16:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243026AbjEOQtL (ORCPT
+        with ESMTP id S243764AbjEORP4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 12:49:11 -0400
+        Mon, 15 May 2023 13:15:56 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4170544A8;
-        Mon, 15 May 2023 09:49:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED203100F3;
+        Mon, 15 May 2023 10:14:44 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BB68662943;
-        Mon, 15 May 2023 16:49:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69DCC4339B;
-        Mon, 15 May 2023 16:49:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 59B6F62BBB;
+        Mon, 15 May 2023 17:14:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 179D0C433EF;
+        Mon, 15 May 2023 17:14:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1684169349;
+        s=korg; t=1684170883;
         bh=4jSls9SEgL+5agkw266mNjGCuZcNspC+bOyWIa1yb6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kk4VFaSRFyahPWxvKpax6/RILTBAey9EVY5YahJj82+jATZik1JejB/+aUEVco+er
-         WMXF2SulHockieY7uZTLLKKKvT6njq0gJ2AiCV0fjLKAeXJcSKFn82nQ5TOOa5+LtI
-         FTMbTWw0IPqSTXl/0zMC+3IVEKXji2x/D6A7mGv8=
+        b=jRYAjJ608jjjiUSdRUie7QQOp8sksSyc0lYCe+rMnhsYqNmfqaPJaGwYKFqEaNJwD
+         Jix+TYhDkHwYlLIEBLWepcRRm2q4KLrkXmoOUlbz5/mSeQlv11/SJIfV95hHYubpxN
+         TYN3I+WedvJaQTxke0ZPSFnlCr60Ti+e6XNpZehg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -43,12 +43,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Paolo Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.3 022/246] rxrpc: Fix potential data race in rxrpc_wait_to_be_connected()
-Date:   Mon, 15 May 2023 18:23:54 +0200
-Message-Id: <20230515161723.275161336@linuxfoundation.org>
+Subject: [PATCH 6.2 031/242] rxrpc: Fix potential data race in rxrpc_wait_to_be_connected()
+Date:   Mon, 15 May 2023 18:25:57 +0200
+Message-Id: <20230515161722.857279092@linuxfoundation.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230515161722.610123835@linuxfoundation.org>
-References: <20230515161722.610123835@linuxfoundation.org>
+In-Reply-To: <20230515161721.802179972@linuxfoundation.org>
+References: <20230515161721.802179972@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
