@@ -2,270 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FCE2702F84
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 16:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C89A703106
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 17:07:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240168AbjEOOVZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 10:21:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49810 "EHLO
+        id S242135AbjEOPHz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 11:07:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239804AbjEOOVV (ORCPT
+        with ESMTP id S242057AbjEOPHy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 10:21:21 -0400
-Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B33403A9B;
-        Mon, 15 May 2023 07:20:58 -0700 (PDT)
-Received: by mail-ua1-x934.google.com with SMTP id a1e0cc1a2514c-783b92ddbb0so358937241.1;
-        Mon, 15 May 2023 07:20:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684160458; x=1686752458;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ppVyFGTleG0uV5qrwyuyzbwOGiTPSdwv0HSD6ZTUdHA=;
-        b=Vqpf0hY1OSXAfbyCkLaVdobIWRo+Ylc5gQ58cvxZijNGVqy8NZM26ONjavWlaIj8hl
-         sxcsZRJDABMIpaHJtnlARir32khiKKlG4bvjIOHJe/Hk4C1CDX2jn84SrtqCxoWMNarW
-         q/2i5Z5oBi4g1qbcXj+EK8G5Xzmh0sC/0gV89Jbq8olaU7IMMr+WDbD7r7gR1VtmK7DU
-         uGvxAodrVsfFlTwT21Qxe6t5xmtzIrWAFCYy8Zknj8Rek+hZGWboK5eXK2+WiI9rirFq
-         6m/16Or+wveWdYVe/dB93HEJAWHq6dgKyfGyLvKPRjhzudSVn5kFdi/E9rW75B2A1HJV
-         hI6w==
+        Mon, 15 May 2023 11:07:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C84173E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 08:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684163224;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OXStdnSGuc4+z/dmbSB5l8N1nXZ+4nBcGjbIe9RKsXQ=;
+        b=eOB3XmeTguraw5aEaC5GKcajo8b7VW2Y+sbXK1mm7qLZpi8G1j0KRWTYcI1U6sz6fbmbEy
+        QZJ4SbvgFVgqmg9PgrAjDGtlykVEj8u8WvwIAidMt9o1u+hB6MOiA2TedlfLeUYy2vWk/D
+        8JVUNAYZgsgExEu5EU/s9KAj2AMBzY0=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-38-cA0-cbRePhexHrfYiIeACA-1; Mon, 15 May 2023 11:07:02 -0400
+X-MC-Unique: cA0-cbRePhexHrfYiIeACA-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-61abb7cd89cso71584506d6.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 08:07:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684160458; x=1686752458;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ppVyFGTleG0uV5qrwyuyzbwOGiTPSdwv0HSD6ZTUdHA=;
-        b=SKxxrHhqib2SeVw/Mt7k4wd3R3sbuUrt61HOvTkW/WM3f44KzCy7Kq5BV7YAWVVRrE
-         KNzxtYUmc6BWSccL3R3etzEcFRSfygCyUiFozQKqIDv9xjDUz7YzPZwQdObBTZCky5c5
-         2dhr8YqINUggswPmbYuiNfJqHB8CbJWptO4n6Ien9APCfEGgSlnKo1nNwrRmT2soPUak
-         ax4i/C080Xg+eUWhJjUawuGY8cb4LBgEilsNqNPcZWwka602+3ia35jlfCOxjI619T7r
-         shnUZOO/HCKSZ3BlEoeD7aixPRjh7YzE0ldv+ozpmf63u8nb2fo0umRctnrvNAtUMKnc
-         RcGQ==
-X-Gm-Message-State: AC+VfDy0NnDkWgqD17Kv62qr+RGcoOaWuPMHY6u8T3lBkqMqIu1gPLVQ
-        tREwbHaIjgXAXL9rjmvSZHOt+8qSp7MPZpaXPgg=
-X-Google-Smtp-Source: ACHHUZ6gafXJQ8R8vy9moJv7MoFwvSmxkXVjguC8wfPwjCRFz0YCIACDk7Z7a3hTxsiInEzIZYlnjfi57rUcM02kT7g=
-X-Received: by 2002:a05:6102:3cd:b0:430:ce0:ae90 with SMTP id
- n13-20020a05610203cd00b004300ce0ae90mr12150065vsq.14.1684160457669; Mon, 15
- May 2023 07:20:57 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684163222; x=1686755222;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OXStdnSGuc4+z/dmbSB5l8N1nXZ+4nBcGjbIe9RKsXQ=;
+        b=djFrfNMY4iwmx5SoGvCMnkoUpX0QrBlptWSau7F1eKlXOsM+yj8L+dBpG/0KbnkVjV
+         8ziiMGVg71Z7EBF2x7tLXyfnO3PbYeVGQk21o+MhDv4z6KB7gtOG3sx9fB6BhLUeo/Dj
+         9mkqZUn7O6gUzg1MzYm1Pn3UjGRtfSxmfvfKmpNtLcbZKpy4r1JeYGXW/R5NRjIN4z2R
+         Kdzzgh4KeypEObUFI2W/ijjEaSZqirWARQ2WuZejy31CGot1tqveGyIR8r8dLgEdO50v
+         TqbL9Km1KjIeUi24ogRootdKYFTEZFbZwbRvoyk0UguDuu67sk9qPfNknFEC8ccuwPwL
+         fBRA==
+X-Gm-Message-State: AC+VfDye/AIlJlmxEXYnhFA697Q/G+RfE3B5QJns9PJLv+sN+cpa1gU4
+        agclwF4unT+XkwHnNztiT53+EiY+D5iiaq6cGhWfeE3Ou/z1hJf6YCZYJ5ypb3PVI2IsTWnxMG9
+        mKlEr92czf67Gp8YeEGEebfDbEg==
+X-Received: by 2002:a05:6214:301a:b0:621:265e:f724 with SMTP id ke26-20020a056214301a00b00621265ef724mr38722743qvb.17.1684163222322;
+        Mon, 15 May 2023 08:07:02 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ60fcNUekYah+Ftvuz0iB83ipDpW638HSzONzdaAq2qw9LCXULQ+MNRy9SPWKCd4QU41qkvyw==
+X-Received: by 2002:a05:6214:301a:b0:621:265e:f724 with SMTP id ke26-20020a056214301a00b00621265ef724mr38722723qvb.17.1684163222023;
+        Mon, 15 May 2023 08:07:02 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id o16-20020a0cf4d0000000b006216809b9efsm3010665qvm.108.2023.05.15.08.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 May 2023 08:07:01 -0700 (PDT)
+Date:   Mon, 15 May 2023 11:09:29 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [RFCv5 2/5] iomap: Refactor iop_set_range_uptodate() function
+Message-ID: <ZGJLKdJeNzAtjSZb@bfoster>
+References: <cover.1683485700.git.ritesh.list@gmail.com>
+ <203a9e25873f6c94c9de89823439aa1f6a7dc714.1683485700.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
-References: <20230511150802.737477-1-cgzones@googlemail.com>
- <20230515-kopfgeld-umkurven-f27be4b68a26@brauner> <CAOQ4uxgtxLLfBuVUAT7+N7cox+03wJA3ACGEu76dZd5RqGWXTQ@mail.gmail.com>
- <20230515-banal-vergab-a7abb53169b5@brauner>
-In-Reply-To: <20230515-banal-vergab-a7abb53169b5@brauner>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 15 May 2023 17:20:46 +0300
-Message-ID: <CAOQ4uxgLT8aae7zo3vNRTO+XKr4Xm5j=yUYPS0L1Fm751RS00A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] fs/xattr: add *at family syscalls
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, audit@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, jlayton@kernel.org, cyphar@cyphar.com,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <203a9e25873f6c94c9de89823439aa1f6a7dc714.1683485700.git.ritesh.list@gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 15, 2023 at 4:52=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Mon, May 15, 2023 at 04:04:21PM +0300, Amir Goldstein wrote:
-> > On Mon, May 15, 2023 at 1:33=E2=80=AFPM Christian Brauner <brauner@kern=
-el.org> wrote:
-> > >
-> > > On Thu, May 11, 2023 at 05:08:02PM +0200, Christian G=C3=B6ttsche wro=
-te:
-> > > > Add the four syscalls setxattrat(), getxattrat(), listxattrat() and
-> > > > removexattrat().  Those can be used to operate on extended attribut=
-es,
-> > > > especially security related ones, either relative to a pinned direc=
-tory
-> > > > or on a file descriptor without read access, avoiding a
-> > > > /proc/<pid>/fd/<fd> detour, requiring a mounted procfs.
-> > > >
-> > > > One use case will be setfiles(8) setting SELinux file contexts
-> > > > ("security.selinux") without race conditions.
-> > > >
-> > > > Add XATTR flags to the private namespace of AT_* flags.
-> > > >
-> > > > Use the do_{name}at() pattern from fs/open.c.
-> > > >
-> > > > Use a single flag parameter for extended attribute flags (currently
-> > > > XATTR_CREATE and XATTR_REPLACE) and *at() flags to not exceed six
-> > > > syscall arguments in setxattrat().
-> > > >
-> > > > Previous approach ("f*xattr: allow O_PATH descriptors"): https://lo=
-re.kernel.org/all/20220607153139.35588-1-cgzones@googlemail.com/
-> > > > v1 discussion: https://lore.kernel.org/all/20220830152858.14866-2-c=
-gzones@googlemail.com/
-> > > >
-> > > > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> > > > CC: x86@kernel.org
-> > > > CC: linux-alpha@vger.kernel.org
-> > > > CC: linux-kernel@vger.kernel.org
-> > > > CC: linux-arm-kernel@lists.infradead.org
-> > > > CC: linux-ia64@vger.kernel.org
-> > > > CC: linux-m68k@lists.linux-m68k.org
-> > > > CC: linux-mips@vger.kernel.org
-> > > > CC: linux-parisc@vger.kernel.org
-> > > > CC: linuxppc-dev@lists.ozlabs.org
-> > > > CC: linux-s390@vger.kernel.org
-> > > > CC: linux-sh@vger.kernel.org
-> > > > CC: sparclinux@vger.kernel.org
-> > > > CC: linux-fsdevel@vger.kernel.org
-> > > > CC: audit@vger.kernel.org
-> > > > CC: linux-arch@vger.kernel.org
-> > > > CC: linux-api@vger.kernel.org
-> > > > CC: linux-security-module@vger.kernel.org
-> > > > CC: selinux@vger.kernel.org
-> > > > ---
-> > >
-> > > Fwiw, your header doesn't let me see who the mail was directly sent t=
-o
-> > > so I'm only able to reply to lists which is a bit pointless...
-> > >
-> > > > v2:
-> > > >   - squash syscall introduction and wire up commits
-> > > >   - add AT_XATTR_CREATE and AT_XATTR_REPLACE constants
-> > >
-> > > > +#define AT_XATTR_CREATE              0x1     /* setxattrat(2): set=
- value, fail if attr already exists */
-> > > > +#define AT_XATTR_REPLACE     0x2     /* setxattrat(2): set value, =
-fail if attr does not exist */
-> > >
-> > > We really shouldn't waste any AT_* flags for this. Otherwise we'll ru=
-n
-> > > out of them rather quickly. Two weeks ago we added another AT_* flag
-> > > which is up for merging for v6.5 iirc and I've glimpsed another AT_*
-> > > flag proposal in one of the talks at last weeks Vancouver conference
-> > > extravaganza.
-> > >
-> > > Even if we reuse 0x200 for AT_XATTR_CREATE (like we did for AT_EACCES=
-S
-> > > and AT_REMOVEDIR) we still need another bit for AT_XATTR_REPLACE.
-> > >
-> > > Plus, this is really ugly since AT_XATTR_{CREATE,REPLACE} really isn'=
-t
-> > > in any way related to lookup and we're mixing it in with lookup
-> > > modifying flags.
-> > >
-> > > So my proposal for {g,s}etxattrat() would be:
-> > >
-> > > struct xattr_args {
-> > >         __aligned_u64 value;
-> > >         __u32 size;
-> > >         __u32 cmd;
-> > > };
-> > >
-> > > So everything's nicely 64bit aligned in the struct. Use the @cmd memb=
-er
-> > > to set either XATTR_REPLACE or XATTR_CREATE and treat it as a proper
-> > > enum and not as a flag argument like the old calls did.
-> > >
-> > > So then we'd have:
-> > >
-> > > setxattrat(int dfd, const char *path, const char __user *name,
-> > >            struct xattr_args __user *args, size_t size, unsigned int =
-flags)
-> > > getxattrat(int dfd, const char *path, const char __user *name,
-> > >            struct xattr_args __user *args, size_t size, unsigned int =
-flags)
-> > >
-> > > The current in-kernel struct xattr_ctx would be renamed to struct
-> > > kernel_xattr_args and then we do the usual copy_struct_from_user()
-> > > dance:
-> > >
-> > > struct xattr_args args;
-> > > err =3D copy_struct_from_user(&args, sizeof(args), uargs, usize);
-> > >
-> > > and then go on to handle value/size for setxattrat()/getxattrat()
-> > > accordingly.
-> > >
-> > > getxattr()/setxattr() aren't meaningfully filterable by seccomp alrea=
-dy
-> > > so there's not point in not using a struct.
-> > >
-> > > If that isn't very appealing then another option is to add a new flag
-> > > namespace just for setxattrat() similar to fspick() and move_mount()
-> > > duplicating the needed lookup modifying flags.
-> > > Thoughts?
-> >
-> > Here is a thought: I am not sure if I am sorry we did not discuss this =
-API
-> > issue in LSFMM or happy that we did not waste our time on this... :-/
-> >
-> > I must say that I dislike redefined flag namespace like FSPICK_*
-> > just as much as I dislike overloading the AT_* namespace and TBH,
-> > I am not crazy about avoiding this problem with xattr_args either.
-> >
-> > A more sane solution IMO could have been:
-> > - Use lower word of flags for generic AT_ flags
-> > - Use the upper word of flags for syscall specific flags
->
-> We'd have 16 lower bits for AT_* flags and upper 16 bits for non-AT_*
-> flags. That might be ok but it isn't great because if we ever extend
-> AT_* flags into the upper 16 bits that are generally useful for all
-> AT_* flag taking system calls we'd not be able to use them. And at the
-> rate people keep suggesting new AT_* flags that issue might arise
-> quicker than we might think.
->
-> And we really don't want 64 bit flag arguments because of 32 bit
-> architectures as that gets really ugly to handle cleanly (Arnd has
-> talked a lot about issues in this area before).
->
-> >
-> > So if it were up to me, I would vote starting this practice:
-> >
-> > + /* Start of syscall specific range */
-> > + #define AT_XATTR_CREATE       0x10000     /* setxattrat(2): set
-> > value, fail if attr already exists */
-> > + #define AT_XATTR_REPLACE     0x20000     /* setxattrat(2): set
-> > value, fail if attr does not exist */
-> >
-> > Which coincidentally happens to be inline with my AT_HANDLE_FID patch..=
-.
->
-> This is different though. The reason AT_HANDLE_FID is acceptable is
-> because we need the ability to extend an existing system call and we're
-> reusing a bit that is already used in two other system calls. So we
-> avoid adding a new system call just to add another flag argument and
-> we're also not using up an additional AT_* bit. This makes it bearable
-> imho. But here we're talking about new system calls where we can avoid
-> this problem arising in the first place.
->
-> >
-> > Sure, we will have some special cases like MOVE_MOUNT_* and
-> > legacy pollution to the lower AT_ flags word, but as a generic solution
-> > for syscalls that need the common AT_ lookup flags and just a few
-> > private flags, that seems like the lesser evil to me.
->
-> It is fine to do this in some cases but we shouldn't encourage mixing
-> distinct flag namespaces let alone advertising this as a generic
-> solution imho. The AT_XATTR_* flags aren't even flags they behave like
-> an enum.
+On Mon, May 08, 2023 at 12:57:57AM +0530, Ritesh Harjani (IBM) wrote:
+> This patch moves up and combine the definitions of two functions
+> (iomap_iop_set_range_uptodate() & iomap_set_range_uptodate()) into
+> iop_set_range_uptodate() & refactors it's arguments a bit.
+> 
+> No functionality change in this patch.
+> 
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
 
-OK. I see your point.
-Also, wrt struct xattr_args, there is sort of a precedent with
-XFS_IOC_ATTRMULTI_BY_HANDLE ioctl, struct xfs_attr_multiop
-and flags XFS_IOC_ATTR_{CREATE,REPLACE}.
+Hi Ritesh,
 
-Just a nit, I would use xattr_args field names that are the
-same as setxattr() arg names, so s/cmd/flags.
+I just have a few random and nitty comments/questions on the series..
 
-Thanks,
-Amir.
+>  fs/iomap/buffered-io.c | 57 ++++++++++++++++++++----------------------
+>  1 file changed, 27 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index cbd945d96584..e732581dc2d4 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -43,6 +43,27 @@ static inline struct iomap_page *to_iomap_page(struct folio *folio)
+> 
+>  static struct bio_set iomap_ioend_bioset;
+> 
+> +static void iop_set_range_uptodate(struct inode *inode, struct folio *folio,
+> +				   size_t off, size_t len)
+> +{
+
+Any particular reason this now takes the inode as a param now instead of
+continuing to use the folio?
+
+Brian
+
+> +	struct iomap_page *iop = to_iomap_page(folio);
+> +	unsigned int first_blk = off >> inode->i_blkbits;
+> +	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
+> +	unsigned int nr_blks = last_blk - first_blk + 1;
+> +	unsigned long flags;
+> +
+> +	if (iop) {
+> +		spin_lock_irqsave(&iop->uptodate_lock, flags);
+> +		bitmap_set(iop->uptodate, first_blk, nr_blks);
+> +		if (bitmap_full(iop->uptodate,
+> +				i_blocks_per_folio(inode, folio)))
+> +			folio_mark_uptodate(folio);
+> +		spin_unlock_irqrestore(&iop->uptodate_lock, flags);
+> +	} else {
+> +		folio_mark_uptodate(folio);
+> +	}
+> +}
+> +
+>  static struct iomap_page *iop_alloc(struct inode *inode, struct folio *folio,
+>  				    unsigned int flags)
+>  {
+> @@ -145,30 +166,6 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+>  	*lenp = plen;
+>  }
+> 
+> -static void iomap_iop_set_range_uptodate(struct folio *folio,
+> -		struct iomap_page *iop, size_t off, size_t len)
+> -{
+> -	struct inode *inode = folio->mapping->host;
+> -	unsigned first = off >> inode->i_blkbits;
+> -	unsigned last = (off + len - 1) >> inode->i_blkbits;
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&iop->uptodate_lock, flags);
+> -	bitmap_set(iop->uptodate, first, last - first + 1);
+> -	if (bitmap_full(iop->uptodate, i_blocks_per_folio(inode, folio)))
+> -		folio_mark_uptodate(folio);
+> -	spin_unlock_irqrestore(&iop->uptodate_lock, flags);
+> -}
+> -
+> -static void iomap_set_range_uptodate(struct folio *folio,
+> -		struct iomap_page *iop, size_t off, size_t len)
+> -{
+> -	if (iop)
+> -		iomap_iop_set_range_uptodate(folio, iop, off, len);
+> -	else
+> -		folio_mark_uptodate(folio);
+> -}
+> -
+>  static void iomap_finish_folio_read(struct folio *folio, size_t offset,
+>  		size_t len, int error)
+>  {
+> @@ -178,7 +175,8 @@ static void iomap_finish_folio_read(struct folio *folio, size_t offset,
+>  		folio_clear_uptodate(folio);
+>  		folio_set_error(folio);
+>  	} else {
+> -		iomap_set_range_uptodate(folio, iop, offset, len);
+> +		iop_set_range_uptodate(folio->mapping->host, folio, offset,
+> +				       len);
+>  	}
+> 
+>  	if (!iop || atomic_sub_and_test(len, &iop->read_bytes_pending))
+> @@ -240,7 +238,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
+>  	memcpy(addr, iomap->inline_data, size);
+>  	memset(addr + size, 0, PAGE_SIZE - poff - size);
+>  	kunmap_local(addr);
+> -	iomap_set_range_uptodate(folio, iop, offset, PAGE_SIZE - poff);
+> +	iop_set_range_uptodate(iter->inode, folio, offset, PAGE_SIZE - poff);
+>  	return 0;
+>  }
+> 
+> @@ -277,7 +275,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+> 
+>  	if (iomap_block_needs_zeroing(iter, pos)) {
+>  		folio_zero_range(folio, poff, plen);
+> -		iomap_set_range_uptodate(folio, iop, poff, plen);
+> +		iop_set_range_uptodate(iter->inode, folio, poff, plen);
+>  		goto done;
+>  	}
+> 
+> @@ -598,7 +596,7 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>  			if (status)
+>  				return status;
+>  		}
+> -		iomap_set_range_uptodate(folio, iop, poff, plen);
+> +		iop_set_range_uptodate(iter->inode, folio, poff, plen);
+>  	} while ((block_start += plen) < block_end);
+> 
+>  	return 0;
+> @@ -705,7 +703,6 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+>  static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  		size_t copied, struct folio *folio)
+>  {
+> -	struct iomap_page *iop = to_iomap_page(folio);
+>  	flush_dcache_folio(folio);
+> 
+>  	/*
+> @@ -721,7 +718,7 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  	 */
+>  	if (unlikely(copied < len && !folio_test_uptodate(folio)))
+>  		return 0;
+> -	iomap_set_range_uptodate(folio, iop, offset_in_folio(folio, pos), len);
+> +	iop_set_range_uptodate(inode, folio, offset_in_folio(folio, pos), len);
+>  	filemap_dirty_folio(inode->i_mapping, folio);
+>  	return copied;
+>  }
+> --
+> 2.39.2
+> 
+
