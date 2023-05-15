@@ -2,173 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 034F6702B03
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 13:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27C51702B39
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 13:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241055AbjEOLD1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 07:03:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48166 "EHLO
+        id S241205AbjEOLQ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 07:16:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232090AbjEOLD0 (ORCPT
+        with ESMTP id S240360AbjEOLQ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 07:03:26 -0400
-Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12C1593;
-        Mon, 15 May 2023 04:03:25 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.west.internal (Postfix) with ESMTP id BF1CA2B05E55;
-        Mon, 15 May 2023 07:03:20 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 15 May 2023 07:03:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-         h=cc:cc:content-type:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm2; t=1684148600; x=
-        1684155800; bh=a/Iydw3E9XYq6OMWXW3TvDHCSGXOvuQLC/4M2+8UgSg=; b=b
-        eqhaz6+aC9XTJDJe/wr3N36+Tj3flpCfHvlOf9y8lXsK+262zaCij702Mejo2+QE
-        Fd2xpeGSZ+xZXcy4D/O2ys6/yeyG+eg9pe7ttAK7rJ4flep8j0NnEuUu/JpgQ2zq
-        +sQYGICk0DOSR7KXB1FGzWMBThhFGROaza2HF5WZTMoyXCpSoGrgyUpv2AwTVyoh
-        MPRAEKadMnnI/sj+LbQEWvTyhwhvfq0KMSmbFHooxdpg4bZ6fN05mjKqs5p5+gMe
-        sDKrBEwm+QstfKvMpg7xfToq9y+QHBotkJ9i3CoJB7tGWQC23VldSFyJYd2XEL4U
-        Gl+2fihoHMbSTuxjVue1g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1684148600; x=1684155800; bh=a/Iydw3E9XYq6
-        OMWXW3TvDHCSGXOvuQLC/4M2+8UgSg=; b=HCOKyUCGguRFf1xsGM0olaZPpyE83
-        QUFg57fXwoOwyQLXQfBrzuMoGa6jxavNDy4hgO/KieahDInTa0sH3/uTA04n9PBd
-        pOkNlIQsSrzizEIjBJ9OClefL/E9/wJWOs6W/BHwQZEkVPX/yhJWt9zeo1XJL8yO
-        Dm7ChPssB/erg2Ti3ewsAZ+Qt8Pig5D5DcQN2IwE1zz0yI1+ld7eJeDoy/HbjJp8
-        Fwwn6gnv5N4GzwOjiaZb1+aSt2I9N4jbT6NnDxfZPC4PkwlZwKP41PP0oJSiwruW
-        x9dW25YtqwNwMjBly/giIjtuqcpmWp+sz3+M1OpAnT7+WPfc354OTJLVA==
-X-ME-Sender: <xms:dhFiZEQbnWm3lInkgea7I7q1loI6EFTX6nzXoxo3EDKGBC7aVf78JQ>
-    <xme:dhFiZBzQCYHtsXc_PNzioGz_LirMx3rzOlJKv2j3XQvwtfi9xBh9nIt-NSbn91mDy
-    GGmyxgBoYxOaSQmTHg>
-X-ME-Received: <xmr:dhFiZB0cV9suhDUtQEAuyjbHbnx9BgFWQsl2ctv7O5xUxZYuVwDGbzehTtid6zfg5GjMnQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeehjedgfeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdttddttddtvdenucfhrhhomhepfdfmihhr
-    ihhllhcutecurdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrd
-    hnrghmvgeqnecuggftrfgrthhtvghrnhepgfdtveeugeethfffffeklefgkeelgfekfedt
-    heeileetuefhkeefleduvddtkeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgv
-X-ME-Proxy: <xmx:dhFiZIBy-PxGx3tPTgENuB_FWVbnaUYJARgJaIETejlMMBmS1qqMqg>
-    <xmx:dhFiZNiE67YhRxNXKSa-apUdVunXaJs_KQHgaZXyYup4bktoBVqs2w>
-    <xmx:dhFiZEo8qMND9yszOfCAsL6QVxCoJx9tsBa5wX9U-MgZ4JdFPa9D8Q>
-    <xmx:eBFiZLGG797U78ccFpNj3KjzIqU78oAjziYTSAnozz3GqFRyt5wx050guAM>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 May 2023 07:03:17 -0400 (EDT)
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id 55AD0103956; Mon, 15 May 2023 14:03:15 +0300 (+03)
-Date:   Mon, 15 May 2023 14:03:15 +0300
-From:   "Kirill A . Shutemov" <kirill@shutemov.name>
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
- mappings by default
-Message-ID: <20230515110315.uqifqgqkzcrrrubv@box.shutemov.name>
-References: <cover.1683235180.git.lstoakes@gmail.com>
+        Mon, 15 May 2023 07:16:27 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92B74172B;
+        Mon, 15 May 2023 04:16:26 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-ba7831cc80bso346576276.0;
+        Mon, 15 May 2023 04:16:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684149386; x=1686741386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TTbXuYdaoyxAlzcRp/fw5Y/X7Jv1gcBGl293JJcjEdw=;
+        b=rHvms3r0j62HT8lJLCgjCOTVIvfLAuQQowXP8AlPbnL6ZdyWDLMK5IwWZH9as9mBWi
+         pq0PzbvF/mx+rD6DVkQk3fjS477v0OxylXei5cwqQcrzF8gRJiH0GlT4Oox8bYu4GLrB
+         N3+IOgs3o+BqCPUHE9+VAav5BHIGiuKOk3gVX3b1Sfk0yf1BB2u6uiqw2mcyKGd/x1gf
+         xmnyc09sWRSVZoXzSO30cCgzd3imc9NVHznBTuiVFfgJiA12Uh9fMx/gmMffJxzsyDUO
+         RcNyG5WSoSePuBrPVRq1oc/kE2nN0ByBIfb7qGJnsOvLNqlRgyzQnmZCDAkx4wu8gR6a
+         6F2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684149386; x=1686741386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TTbXuYdaoyxAlzcRp/fw5Y/X7Jv1gcBGl293JJcjEdw=;
+        b=kWDSnbAcyt3iri41976YRRISaim0kKezz0lm012bIeNvZfN5WuMYUi5qSqgG6y0Vlf
+         czQ/1OjlVmUgJoLOczP3CZpH66/sliGFdLSpZYZlbf/r0ANFzpPubtRXo60AUQ9rYOci
+         6GMGd0DuI34q3AAm4E7gb3tCNjONUNG+2PyFHA7J0BGSM1z/+RFHMBok+73Ybpm7Yont
+         Zf4BO9GXwF3lmw/G6QKw9hxrRQVweC0DKzIIb/PnQiOTGXSGGRDE0f9YBmPEhXgQt+2Y
+         FCQ3m2bYbsGliabGHsFXijE25zkrhLxEOigUZtIWXZlk+dPTQyUsVIcpoYALv+sqv2xj
+         nLCw==
+X-Gm-Message-State: AC+VfDxH6NsCAolASxyKCaBzgLQinQeltuIBqc2UudF6tndableCc7pe
+        ZIOjRBk92wXtxnYPjlDDRsjsLy9ivPlBvP8empY=
+X-Google-Smtp-Source: ACHHUZ7QVbn3hySRl+aLqYhn67ydlgatwvX69Pf1I7JU8ZGH/GA9QBvjTHpIba8iZ14uKS84WLqgoGh2gvTDtVFk6K0=
+X-Received: by 2002:a81:1b4e:0:b0:55a:1cdc:2ed3 with SMTP id
+ b75-20020a811b4e000000b0055a1cdc2ed3mr19282070ywb.2.1684149385714; Mon, 15
+ May 2023 04:16:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1683235180.git.lstoakes@gmail.com>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+From:   Askar Safin <safinaskar@gmail.com>
+Date:   Mon, 15 May 2023 14:15:48 +0300
+Message-ID: <CAPnZJGB5izL9LzLVFHOGt5rNg+V0ZvVghebXS41U7HiGwXoEUg@mail.gmail.com>
+Subject: Re: [PATCH 00/32] bcachefs - a new COW filesystem
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-mm@kvack.org,
+        linux-bcachefs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 04, 2023 at 10:27:50PM +0100, Lorenzo Stoakes wrote:
-> Writing to file-backed mappings which require folio dirty tracking using
-> GUP is a fundamentally broken operation, as kernel write access to GUP
-> mappings do not adhere to the semantics expected by a file system.
-> 
-> A GUP caller uses the direct mapping to access the folio, which does not
-> cause write notify to trigger, nor does it enforce that the caller marks
-> the folio dirty.
+Kent, please, make sure you dealt with problems specific to another
+fs: btrfs: https://arstechnica.com/gadgets/2021/09/examining-btrfs-linuxs-p=
+erpetually-half-finished-filesystem/
+. In particular, I dislike this btrfs problems, mentioned in the
+article:
 
-Okay, problem is clear and the patchset look good to me. But I'm worried
-breaking existing users.
+- "Yes, you read that correctly=E2=80=94you mount the array using the name =
+of
+any given disk in the array. No, it doesn't matter which one"
+- "Even though our array is technically "redundant," it refuses to
+mount with /dev/vdc missing... In the worst-case scenario=E2=80=94a root
+filesystem that itself is stored "redundantly" on btrfs-raid1 or
+btrfs-raid10=E2=80=94the entire system refuses to boot... If you're thinkin=
+g,
+"Well, the obvious step here is just to always mount degraded," the
+btrfs devs would like to have a word with you... If you lose a drive
+from a conventional RAID array, or an mdraid array, or a ZFS zpool,
+that array keeps on trucking without needing any special flags to
+mount it. If you then add the failed drive back to the array, your
+RAID manager will similarly automatically begin "resilvering" or
+"rebuilding" the array... That, unfortunately, is not the case with
+btrfs-native RAID"
 
-Do we expect the change to be visible to real world users? If yes, are we
-okay to break them?
+I suggest reading the article in full, at least from section "Btrfs
+RAID array management is a mess" till the end.
 
-One thing that came to mind is KVM with "qemu -object memory-backend-file,share=on..."
-It is mostly used for pmem emulation.
+Please, ensure that bcachefs has no these problems! These problems
+scary me away from btrfs.
 
-Do we have plan B?
-
-Just a random/crazy/broken idea:
-
- - Allow folio_mkclean() (and folio_clear_dirty_for_io()) to fail,
-   indicating that the page cannot be cleared because it is pinned;
-
- - Introduce a new vm_operations_struct::mkclean() that would be called by
-   page_vma_mkclean_one() before clearing the range and can fail;
-
- - On GUP, create an in-kernel fake VMA that represents the file, but with
-   custom vm_ops. The VMA registered in rmap to get notified on
-   folio_mkclean() and fail it because of GUP.
-
- - folio_clear_dirty_for_io() callers will handle the new failure as
-   indication that the page can be written back but will stay dirty and
-   fs-specific data that is associated with the page writeback cannot be
-   freed.
-
-I'm sure the idea is broken on many levels (I have never looked closely at
-the writeback path). But maybe it is good enough as conversation started?
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Please, CC me when answering
+--=20
+Askar Safin
