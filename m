@@ -2,71 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E07B703F81
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 23:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22417703FD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 23:31:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244744AbjEOVTg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 17:19:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47884 "EHLO
+        id S245593AbjEOVb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 17:31:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236744AbjEOVTe (ORCPT
+        with ESMTP id S244832AbjEOVbz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 17:19:34 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03728D2D5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 14:19:33 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-50bdd7b229cso24003903a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 14:19:32 -0700 (PDT)
+        Mon, 15 May 2023 17:31:55 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E96D5E733
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 14:31:52 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-96598a7c5e0so2157613466b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 14:31:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1684185571; x=1686777571;
+        d=chromium.org; s=google; t=1684186311; x=1686778311;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iCAGJRSZlOdbZk8TJO2+IV5B/w81wFfW9jtMkWpTH+M=;
-        b=Fvz8x0dNvAfi6vn1MsWVsrIVhI0JC8Py8rU64fVV7c1WYzdrPJSFY/nJ5/ha/SBSdW
-         O9Qrv+J04LkWY26V+6ISj9fbwtnonPqRY48vi74RSHlcYaXNOdDEzZhPQlpxhzKkIUJ0
-         9wiJslfn6dHpTu8YNli6Te99vlovWTdFmnEfc=
+        bh=0+97QIKHZALmFiK8g1VXhuSr7RLu+60+zvsYBuHgbGg=;
+        b=RJ43ZLZaLLvaXaU48DAqFaUazi1XdW+GzxWfHJT5XeDgDpzKHeu5MNWZny6MxbA0OA
+         oPe6ekVWSZF8FhY1pcd7Q9kmUBnfHNdPl772Rvmn/QhYD4qom8AgDkG5qtlBg2wx9KCf
+         JWeHWlZSGtpQ2QpjfAEvfhPCxAhtSoUUURhOM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684185571; x=1686777571;
+        d=1e100.net; s=20221208; t=1684186311; x=1686778311;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iCAGJRSZlOdbZk8TJO2+IV5B/w81wFfW9jtMkWpTH+M=;
-        b=VVDL8q4GxmVEY3/XnMD7I/jSTla4ITOQdI9z0XIUayuvin64SqRVTqiYosQHky416E
-         32BGPLq2XUh/NH+0PFM9V17iJkzWrE+plUaBlqzJhFYLsr31PX/aJ32IkbveUC53GQ9B
-         WOqQRwIsKBgDUknOALnBcaaxf62N2W87vYTzHIY2c9qP8lhF/vFMkBLaVNTWJj8nS/6M
-         KR7RUDuKPvDQB+q6GgZHNaUThLJ3K+LWWwANSZgXWDd2gzaVBABmIF3YD/EGd8XOcAU7
-         KD/ty1OL0pj9hM4rLtMW3YEYfM2jKtpDnGgYzd0KgTRl+4UByye271z7JYcFbiuFS/lq
-         9AAw==
-X-Gm-Message-State: AC+VfDw+g8m0SW6sRYRFVvWrtqlpf8NoPsVqHxtbSrPKqYEUKMbeColn
-        GQVu3ETeGkI8JpmOLNR8ET1j5RD2BiDE89cDc/yuiw==
-X-Google-Smtp-Source: ACHHUZ4NVNi7naSU30mEHscyRmFftvi4fhFnmiYSDcSrg9y4ApnJuNxOMdtq7yH9l565H4qJkeCcSkHBc3YRcSzTMNU=
-X-Received: by 2002:a17:907:9485:b0:96a:b12d:2fdf with SMTP id
- dm5-20020a170907948500b0096ab12d2fdfmr10487913ejc.12.1684185571480; Mon, 15
- May 2023 14:19:31 -0700 (PDT)
+        bh=0+97QIKHZALmFiK8g1VXhuSr7RLu+60+zvsYBuHgbGg=;
+        b=IDIeWZnPJMYee0iYf1gJ4YQtBNAZVrWqDBFJzl73fm6vmtPo1sXTYm65yUleZhrhTH
+         CfV1glf1mpjuTi618VyLk4QHT3HEfPy07my6rpr6ugwsGFMahsHsLjYOZNEuwWPhSE5o
+         Xfr9DEdvt/abxUfXZM0pQ82ynjVxqHCRP7+2NPv65HY9uasnxZAUfDL2GYjDbfPJkhJr
+         DeaiJwRI/xcAYYiEHuVw2ZhofWSEdJwesPYNhsGXvilrWRVLQus1RrtrJXB7T8X4tYIX
+         d8uraeV/8ad18iEQGYUCVGA+WWXV4J//r7Bo7nyKdeI3B55Ux3n7UgTuasWz5ZPfC5Oo
+         82bw==
+X-Gm-Message-State: AC+VfDz1UMbPoECZkt3IE2ZIZtsIroxhcOhXhHcdtE+LkrkpptSVGCcM
+        XTg5diZkBWgj8HFrsjWGSiWFEwM7lbz7vXrC64etJDO8mNkJu3s/utU=
+X-Google-Smtp-Source: ACHHUZ7Hc5oE5ND/9/QiL+Zn8CNn3DUPNRrptIElw6wI0GM9IDTcdOqoMTas5ig/h8ZcZwS+0kIdU23YGzZrwmE+F1M=
+X-Received: by 2002:a17:907:728e:b0:96a:e7cc:b8b1 with SMTP id
+ dt14-20020a170907728e00b0096ae7ccb8b1mr8614530ejc.56.1684186311425; Mon, 15
+ May 2023 14:31:51 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230420004850.297045-1-sarthakkukreti@chromium.org>
- <20230506062909.74601-1-sarthakkukreti@chromium.org> <20230506062909.74601-5-sarthakkukreti@chromium.org>
- <ZF54OH8hZTTko4c3@redhat.com>
-In-Reply-To: <ZF54OH8hZTTko4c3@redhat.com>
+ <20230506062909.74601-1-sarthakkukreti@chromium.org> <20230506062909.74601-6-sarthakkukreti@chromium.org>
+ <ZGIoKi7d5bKcMWw4@bfoster>
+In-Reply-To: <ZGIoKi7d5bKcMWw4@bfoster>
 From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
-Date:   Mon, 15 May 2023 14:19:20 -0700
-Message-ID: <CAG9=OMMj+xNNNFR6JJbsbzjb=9oVScg+BYdAq68hBRzw3q81ZA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] dm-thin: Add REQ_OP_PROVISION support
-To:     Mike Snitzer <snitzer@kernel.org>
+Date:   Mon, 15 May 2023 14:31:40 -0700
+Message-ID: <CAG9=OMMPphcFMeyge_5pa=-j=fNtDBQTK2bQaDwFWhTs3_pJjw@mail.gmail.com>
+Subject: Re: [PATCH v6 5/5] loop: Add support for provision requests
+To:     Brian Foster <bfoster@redhat.com>
 Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        "Theodore Ts'o" <tytso@mit.edu>,
         "Michael S. Tsirkin" <mst@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
         Jason Wang <jasowang@redhat.com>,
-        Bart Van Assche <bvanassche@google.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
         Stefan Hajnoczi <stefanha@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -79,83 +79,138 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 12, 2023 at 10:32=E2=80=AFAM Mike Snitzer <snitzer@kernel.org> =
-wrote:
+On Mon, May 15, 2023 at 5:37=E2=80=AFAM Brian Foster <bfoster@redhat.com> w=
+rote:
 >
-> On Sat, May 06 2023 at  2:29P -0400,
-> Sarthak Kukreti <sarthakkukreti@chromium.org> wrote:
->
-> > dm-thinpool uses the provision request to provision
-> > blocks for a dm-thin device. dm-thinpool currently does not
-> > pass through REQ_OP_PROVISION to underlying devices.
-> >
-> > For shared blocks, provision requests will break sharing and copy the
-> > contents of the entire block. Additionally, if 'skip_block_zeroing'
-> > is not set, dm-thin will opt to zero out the entire range as a part
-> > of provisioning.
+> On Fri, May 05, 2023 at 11:29:09PM -0700, Sarthak Kukreti wrote:
+> > Add support for provision requests to loopback devices.
+> > Loop devices will configure provision support based on
+> > whether the underlying block device/file can support
+> > the provision request and upon receiving a provision bio,
+> > will map it to the backing device/storage. For loop devices
+> > over files, a REQ_OP_PROVISION request will translate to
+> > an fallocate mode 0 call on the backing file.
 > >
 > > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
 > > ---
-> >  drivers/md/dm-thin.c | 70 +++++++++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 66 insertions(+), 4 deletions(-)
+> >  drivers/block/loop.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 42 insertions(+)
 > >
-> > diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-> > index 2b13c949bd72..3f94f53ac956 100644
-> > --- a/drivers/md/dm-thin.c
-> > +++ b/drivers/md/dm-thin.c
-> ...
-> > @@ -4114,6 +4171,8 @@ static void pool_io_hints(struct dm_target *ti, s=
-truct queue_limits *limits)
-> >        * The pool uses the same discard limits as the underlying data
-> >        * device.  DM core has already set this up.
-> >        */
+> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > index bc31bb7072a2..13c4b4f8b9c1 100644
+> > --- a/drivers/block/loop.c
+> > +++ b/drivers/block/loop.c
+> > @@ -327,6 +327,24 @@ static int lo_fallocate(struct loop_device *lo, st=
+ruct request *rq, loff_t pos,
+> >       return ret;
+> >  }
+> >
+> > +static int lo_req_provision(struct loop_device *lo, struct request *rq=
+, loff_t pos)
+> > +{
+> > +     struct file *file =3D lo->lo_backing_file;
+> > +     struct request_queue *q =3D lo->lo_queue;
+> > +     int ret;
 > > +
-> > +     limits->max_provision_sectors =3D pool->sectors_per_block;
+> > +     if (!q->limits.max_provision_sectors) {
+> > +             ret =3D -EOPNOTSUPP;
+> > +             goto out;
+> > +     }
+> > +
+> > +     ret =3D file->f_op->fallocate(file, 0, pos, blk_rq_bytes(rq));
+> > +     if (unlikely(ret && ret !=3D -EINVAL && ret !=3D -EOPNOTSUPP))
+> > +             ret =3D -EIO;
+> > + out:
+> > +     return ret;
+> > +}
+> > +
+> >  static int lo_req_flush(struct loop_device *lo, struct request *rq)
+> >  {
+> >       int ret =3D vfs_fsync(lo->lo_backing_file, 0);
+> > @@ -488,6 +506,8 @@ static int do_req_filebacked(struct loop_device *lo=
+, struct request *rq)
+> >                               FALLOC_FL_PUNCH_HOLE);
+> >       case REQ_OP_DISCARD:
+> >               return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
+> > +     case REQ_OP_PROVISION:
+> > +             return lo_req_provision(lo, rq, pos);
 >
-> Just noticed that setting limits->max_provision_sectors needs to move
-> above pool_io_hints code that sets up discards -- otherwise the early
-> return from if (!pt->adjusted_pf.discard_enabled) will cause setting
-> max_provision_sectors to be skipped.
+> Hi Sarthak,
 >
-> Here is a roll up of the fixes that need to be folded into this patch:
+> The only thing that stands out to me is the separate lo_req_provision()
+> helper here. It seems it might be a little cleaner to extend and reuse
+> lo_req_fallocate()..? But that's not something I feel strongly about, so
+> this all looks pretty good to me either way, FWIW.
 >
-Ah right, thanks for pointing that out! I'll fold this into v7.
+Fair point, I think that should shorten the patch (and for
+correctness, we'd want to add FALLOC_FL_KEEP_SIZE for REQ_OP_PROVISION
+too). I'll fix this up in v7.
 
 Best
 Sarthak
 
-> diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-> index 3f94f53ac956..90c8e36cb327 100644
-> --- a/drivers/md/dm-thin.c
-> +++ b/drivers/md/dm-thin.c
-> @@ -4151,6 +4151,8 @@ static void pool_io_hints(struct dm_target *ti, str=
-uct queue_limits *limits)
->                 blk_limits_io_opt(limits, pool->sectors_per_block << SECT=
-OR_SHIFT);
->         }
+> Brian
 >
-> +       limits->max_provision_sectors =3D pool->sectors_per_block;
-> +
->         /*
->          * pt->adjusted_pf is a staging area for the actual features to u=
-se.
->          * They get transferred to the live pool in bind_control_target()
-> @@ -4171,8 +4173,6 @@ static void pool_io_hints(struct dm_target *ti, str=
-uct queue_limits *limits)
->          * The pool uses the same discard limits as the underlying data
->          * device.  DM core has already set this up.
->          */
-> -
-> -       limits->max_provision_sectors =3D pool->sectors_per_block;
->  }
->
->  static struct target_type pool_target =3D {
-> @@ -4349,6 +4349,7 @@ static int thin_ctr(struct dm_target *ti, unsigned =
-int argc, char **argv)
->
->         ti->num_provision_bios =3D 1;
->         ti->provision_supported =3D true;
-> +       ti->max_provision_granularity =3D true;
->
->         mutex_unlock(&dm_thin_pool_table.mutex);
+> >       case REQ_OP_WRITE:
+> >               if (cmd->use_aio)
+> >                       return lo_rw_aio(lo, cmd, pos, ITER_SOURCE);
+> > @@ -754,6 +774,25 @@ static void loop_sysfs_exit(struct loop_device *lo=
+)
+> >                                  &loop_attribute_group);
+> >  }
+> >
+> > +static void loop_config_provision(struct loop_device *lo)
+> > +{
+> > +     struct file *file =3D lo->lo_backing_file;
+> > +     struct inode *inode =3D file->f_mapping->host;
+> > +
+> > +     /*
+> > +      * If the backing device is a block device, mirror its provisioni=
+ng
+> > +      * capability.
+> > +      */
+> > +     if (S_ISBLK(inode->i_mode)) {
+> > +             blk_queue_max_provision_sectors(lo->lo_queue,
+> > +                     bdev_max_provision_sectors(I_BDEV(inode)));
+> > +     } else if (file->f_op->fallocate) {
+> > +             blk_queue_max_provision_sectors(lo->lo_queue, UINT_MAX >>=
+ 9);
+> > +     } else {
+> > +             blk_queue_max_provision_sectors(lo->lo_queue, 0);
+> > +     }
+> > +}
+> > +
+> >  static void loop_config_discard(struct loop_device *lo)
+> >  {
+> >       struct file *file =3D lo->lo_backing_file;
+> > @@ -1092,6 +1131,7 @@ static int loop_configure(struct loop_device *lo,=
+ fmode_t mode,
+> >       blk_queue_io_min(lo->lo_queue, bsize);
+> >
+> >       loop_config_discard(lo);
+> > +     loop_config_provision(lo);
+> >       loop_update_rotational(lo);
+> >       loop_update_dio(lo);
+> >       loop_sysfs_init(lo);
+> > @@ -1304,6 +1344,7 @@ loop_set_status(struct loop_device *lo, const str=
+uct loop_info64 *info)
+> >       }
+> >
+> >       loop_config_discard(lo);
+> > +     loop_config_provision(lo);
+> >
+> >       /* update dio if lo_offset or transfer is changed */
+> >       __loop_update_dio(lo, lo->use_dio);
+> > @@ -1830,6 +1871,7 @@ static blk_status_t loop_queue_rq(struct blk_mq_h=
+w_ctx *hctx,
+> >       case REQ_OP_FLUSH:
+> >       case REQ_OP_DISCARD:
+> >       case REQ_OP_WRITE_ZEROES:
+> > +     case REQ_OP_PROVISION:
+> >               cmd->use_aio =3D false;
+> >               break;
+> >       default:
+> > --
+> > 2.40.1.521.gf1e218fcd8-goog
+> >
 >
