@@ -2,82 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CDC0702615
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 09:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D74A870262E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 09:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234018AbjEOHaB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 03:30:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47714 "EHLO
+        id S231948AbjEOHiB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 03:38:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230074AbjEOHaA (ORCPT
+        with ESMTP id S234967AbjEOHh5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 03:30:00 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60779D9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 00:29:57 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-50b9ef67f35so21929706a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 00:29:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1684135796; x=1686727796;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xB/H7Jo2uEMNG/RV83jejDcjqMFS0mnYDpQFTZKPFzw=;
-        b=Cj4BOE2twEMed27WIrgQyfZdTny1qLi30IXKTx1U/6zbHirj67Xnf+tEvLb9wRQ9aG
-         BGy1kvcTkM/1fQ0WIAg/BGSLwZEIz/4mRhBsGfwXHnLnkhTJazmYEzC1NHuzj8M4WQkE
-         PmeIE82Vpm3iTLPFK5R456zDBXDgmE+MigJa4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684135796; x=1686727796;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xB/H7Jo2uEMNG/RV83jejDcjqMFS0mnYDpQFTZKPFzw=;
-        b=aec1348fPfbk9wZYeOM13ZAIm/TRhtxrbL8NMvA+jjeZb0PxqzY8EdIC4QoNWlY+/u
-         72eyZwacmobYeVW2mATq0CK747XQP7hBDoxoteu4NdCSw8tWYrX2dGcY40v5CSk3qdVw
-         vy3A2GM1R9+AQqNw/eGAgj4wx1Y3SkSdHxtDdr6F8w7clL8plqshrnMq629CIpmKge23
-         GqvsXVem08K4s4meGj5Wx3fMCmC0R+vhyJkHarUpph4ZhmCthBNCYddkAU7RI0jOEd6q
-         5N4gZMP0vh94up0thKUXGDh5X13Kew0vl12b5v0/e7fQKQX+4nh4p88X8Whe7jz3c7zF
-         UM/w==
-X-Gm-Message-State: AC+VfDz5gQqw3HCWau2dCI5YiA+X56F8Bzb/jkZ1hrrxdFDveoQy0Sju
-        SgHfXds42nqzJ+M8dcvS8nAHvs+wGo9yKEyUuxCk5Q==
-X-Google-Smtp-Source: ACHHUZ5GqVh6BSqiM04nh0j407yAmJjjJSnHNlfwcMiXTmthP8URs+b6hfFPXsEGkjRuwK2kpbRvOfgsqqnCqvqfQPU=
-X-Received: by 2002:a17:906:58c9:b0:94f:6218:191d with SMTP id
- e9-20020a17090658c900b0094f6218191dmr32784034ejs.32.1684135795846; Mon, 15
- May 2023 00:29:55 -0700 (PDT)
+        Mon, 15 May 2023 03:37:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C5D1A5;
+        Mon, 15 May 2023 00:37:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C9D3E611C5;
+        Mon, 15 May 2023 07:37:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7763BC433EF;
+        Mon, 15 May 2023 07:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684136275;
+        bh=WjuJTRI0yDa5tJ0OvZ+Ic4uBPIR1vsm5WT5pCGM3Bwc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GS0ZdfqvzuRLDVaYXKytaGyFmq34hv6ZO0MVLxZrswStvtnsAunJEKkgfFMcta4SI
+         3rF1QMYsowzoTmpOJ1LBaLCyZLOLBQSC+jMIM8j0L3hus86l74auc93hhYDXub4PxQ
+         xHCqlHPfnDV4xIR4sej7gwR1fiUNGFrTomT7OiB/ddsNjsC69uKPfTcst48PhgMPaS
+         kqwuq50Zp5Sbzd8unmTD7xW0lT1Y4dGYbHxUBdMD6Awp5QAIW6PfISUrzrk9ymjdHd
+         /5IvxIy+EctF4Wan9h3PoKDk76cnUkw5UpkHRvj+eeD/pt0lOuyUS2NVUjvnea5zcu
+         LpAjDE7PreRzA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Min-Hua Chen <minhuadotchen@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: use correct __poll_t type
+Date:   Mon, 15 May 2023 09:37:40 +0200
+Message-Id: <20230515-mengenlehre-reinreden-a4ca60c63d75@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230511164628.336586-1-minhuadotchen@gmail.com>
+References: <20230511164628.336586-1-minhuadotchen@gmail.com>
 MIME-Version: 1.0
-References: <20210125153057.3623715-1-balsini@android.com> <20210125153057.3623715-4-balsini@android.com>
- <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
- <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
- <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
- <YD0evc676pdANlHQ@google.com> <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
- <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
- <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
- <CAJfpegvbMKadnsBZmEvZpCxeWaMEGDRiDBqEZqaBSXcWyPZnpA@mail.gmail.com>
- <CAOQ4uxgXhVOpF8NgAcJCeW67QMKBOytzMXwy-GjdmS=DGGZ0hA@mail.gmail.com> <CAOQ4uxg2k3DsTdiMKNm4ESZinjS513Pj2EeKGW4jQR_o5Mp3-Q@mail.gmail.com>
-In-Reply-To: <CAOQ4uxg2k3DsTdiMKNm4ESZinjS513Pj2EeKGW4jQR_o5Mp3-Q@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 15 May 2023 09:29:44 +0200
-Message-ID: <CAJfpegv1ByQg750uHTGOTZ7CJ4OrYp6i4MKXU13mwZPUEk+pnA@mail.gmail.com>
-Subject: Re: [PATCH RESEND V12 3/8] fuse: Definitions and ioctl for passthrough
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alessio Balsini <balsini@android.com>,
-        Peng Tao <bergwolf@gmail.com>,
-        Akilesh Kailash <akailash@google.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>, wuyan <wu-yan@tcl.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=769; i=brauner@kernel.org; h=from:subject:message-id; bh=WjuJTRI0yDa5tJ0OvZ+Ic4uBPIR1vsm5WT5pCGM3Bwc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQkPtR9nn03eNHaRY+evZou4rwo91vaKZXVy9rWRwg858t+ E8PH3VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRyCZGhvXhDhwrfp+3FtVda+TvfX /6duGF6awxiQ8lsrcqr1jsuoKR4aW12bK++DVHatts2WqnpM3Mi6iNea9ffnJFp6hq2cfnzAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -86,37 +58,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 12 May 2023 at 21:37, Amir Goldstein <amir73il@gmail.com> wrote:
+On Fri, 12 May 2023 00:46:25 +0800, Min-Hua Chen wrote:
+> Fix the following sparse warnings by using __poll_t instead
+> of unsigned type.
+> 
+> fs/eventpoll.c:541:9: sparse: warning: restricted __poll_t degrades to integer
+> fs/eventfd.c:67:17: sparse: warning: restricted __poll_t degrades to integer
+> 
+> 
+> [...]
 
-> I was waiting for LSFMM to see if and how FUSE-BPF intends to
-> address the highest value use case of read/write passthrough.
->
-> From what I've seen, you are still taking a very broad approach of
-> all-or-nothing which still has a lot of core design issues to address,
-> while these old patches already address the most important use case
-> of read/write passthrough of fd without any of the core issues
-> (credentials, hidden fds).
->
-> As far as I can tell, this old implementation is mostly independent of your
-> lookup based approach - they share the low level read/write passthrough
-> functions but not much more than that, so merging them should not be
-> a blocker to your efforts in the longer run.
-> Please correct me if I am wrong.
->
-> As things stand, I intend to re-post these old patches with mandatory
-> FOPEN_PASSTHROUGH_AUTOCLOSE to eliminate the open
-> questions about managing mappings.
->
-> Miklos, please stop me if I missed something and if you do not
-> think that these two approaches are independent.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Do you mean that the BPF patches should use their own passthrough mechanism?
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-I think it would be better if we could agree on a common interface for
-passthough (or per Paul's suggestion: backing) mechanism.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-Let's see this patchset and then we can discuss how this could be
-usable for the BPF case as well.
-
-Thanks,
-Miklos
+[1/1] fs: use correct __poll_t type
+      https://git.kernel.org/vfs/vfs/c/1454df87a544
