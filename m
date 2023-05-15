@@ -2,89 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 26A9A703A92
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 19:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 500F9703B06
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 19:59:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244952AbjEORwk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 13:52:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51490 "EHLO
+        id S244799AbjEOR6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 13:58:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244847AbjEORwV (ORCPT
+        with ESMTP id S244931AbjEOR6a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 13:52:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869D11642C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 10:49:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684172965;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iK/+txc5klXi+z7XErjcTrOlSl0WWJNlg61QJBSSw2w=;
-        b=EK9WbJZwF4qhdJWoOuouiORRV/syILIL2MKXW6HRFphPE+uojcR1qVs7GQL0UuQ4xM3zxr
-        fW2l3NsQOCB+X1/JQhKvoPLlgXBwRZg063dBW1mVoK5Q2BEkN5zZUKvd15bgHz35SFITke
-        SygWq6ZPizlE38FMRzQX2PcF9I8UDfk=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-563-M2Rxp9pSNSKqaz3e9PaXFQ-1; Mon, 15 May 2023 13:49:23 -0400
-X-MC-Unique: M2Rxp9pSNSKqaz3e9PaXFQ-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-61a6bb9f808so66817046d6.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 10:49:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684172963; x=1686764963;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iK/+txc5klXi+z7XErjcTrOlSl0WWJNlg61QJBSSw2w=;
-        b=SpqUMUG/Yup5MHD/RT0WjYEBOfeFzeVtGaeO5pItYRDiqJKWzxG9mpE77f5TJDjc6g
-         sWRlYWpsEgdBtf6IopHJkmzPjX7ggewgFKY8fJqRM3YlTylnU0B4sz1KwzG7I4nq9zbW
-         NyS7cYSDihZG4hF5Bjn9dNXv9i3HOlTs7fM5skgsi/yyZK5dlwxhCVm1h7+/aVku1Vl4
-         0/tIsG1i+rYS5tOTTolcYOomGYZwGag/TgaBUbQtTEodIae1GMvqI7+yUiSM/bV3bRa8
-         5E8fO4LOKS6D7PI91DLO7wn+7WjbW1nMzAZrR2EHg9abwFJbXvub25ohuzCV1GBxci3S
-         hf9w==
-X-Gm-Message-State: AC+VfDz5v61U1RPOGgR91idHnJCivs5OQA3zLfjT1iG/XHMgzITxkzaH
-        4XjV52y5ogWvp0DVB86OJeWY2J/qTUWUY9blP0rNT3e60TQATPJRgmHNBZoQA1ufM2rL7NDcuw0
-        VKLvAUJpFSnlKRR3a07IKlzOg8PUHaCNQJg==
-X-Received: by 2002:a05:6214:29ca:b0:623:64cd:941d with SMTP id gh10-20020a05621429ca00b0062364cd941dmr6146384qvb.2.1684172963118;
-        Mon, 15 May 2023 10:49:23 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6t/j9z84nPYJuJ91AB8G0tMbZ0MjPIfB+8QSEt4cwP0Kmhw7bw2URLfhsaTjzMhsAAOmjsxg==
-X-Received: by 2002:a05:6214:29ca:b0:623:64cd:941d with SMTP id gh10-20020a05621429ca00b0062364cd941dmr6146357qvb.2.1684172962837;
-        Mon, 15 May 2023 10:49:22 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id b7-20020a0ccd07000000b006211b7c1035sm3612061qvm.144.2023.05.15.10.49.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 10:49:22 -0700 (PDT)
-Message-ID: <d4e26d9e4d9113f8da20425f5bf7ad91c786f381.camel@redhat.com>
-Subject: Re: [PATCH] fix NFSv4 acl detection on F39
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        "eggert@cs.ucla.edu" <eggert@cs.ucla.edu>,
-        "bruno@clisp.org" <bruno@clisp.org>,
-        "ondrej.valousek.xm@renesas.com" <ondrej.valousek.xm@renesas.com>,
-        "brauner@kernel.org" <brauner@kernel.org>
-Cc:     "bug-gnulib@gnu.org" <bug-gnulib@gnu.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Date:   Mon, 15 May 2023 13:49:21 -0400
-In-Reply-To: <f967cbcc1620d1a5e68d7f005571dc569c8b5bb4.camel@hammerspace.com>
-References: <20230501194321.57983-1-ondrej.valousek.xm@renesas.com>
-         <c955ee20-371c-5dde-fcb5-26d573f69cd9@cs.ucla.edu>
-         <TYXPR01MB1854B3C3B8215DD0FA7B83CCD96D9@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-         <17355394.lhrHg4fidi@nimes>
-         <32edbaf1-d3b1-6057-aefc-d83df3266c20@cs.ucla.edu>
-         <4f1519d8-bda1-1b15-4a78-a8072ba1551a@cs.ucla.edu>
-         <TYXPR01MB18547A591663A4934B5D4D82D9789@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-         <fb005d7e29f1167b83acf7b10800ff3124ee2a50.camel@redhat.com>
-         <f967cbcc1620d1a5e68d7f005571dc569c8b5bb4.camel@hammerspace.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        Mon, 15 May 2023 13:58:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49C2215EC6;
+        Mon, 15 May 2023 10:55:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BE94062FD3;
+        Mon, 15 May 2023 17:55:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B9D1C4339B;
+        Mon, 15 May 2023 17:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684173309;
+        bh=SYlCjJPnIAZdtaEsyaIOZnccee9nZDPfMhujZGhqFjs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qGcKw72kuHN2ccXAOuanzXd76CVT0crojUORzv13lleH5LEok6pSrx+8DsTRsvDY3
+         W3rMAW/t+vzogqhgWDEfnvwQvrIBX4TbK9VaLzJHUF3Zpfqktm6mtYhYknkR7xKvd/
+         1RZ+UbWdFDUsd8gmFLIOSkkEVbmRlA/1nZWDhnIiCElJQNO5Cubn74MA9t3bQkFPEF
+         iNLuEvA0F/ZL7De7DRIRgf9tkZxQ5yF54rxQb3TzEFH3fCUaUg1+PRnPeVtA8FQmgL
+         zqiM1Eg2avKeoOs48YC7QAlpEORSrBXK6RFqP2pK2UciN8lscVkjHXT8r99VKtrf4F
+         1kuy+U8svNK6g==
+Date:   Mon, 15 May 2023 19:55:04 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Vladimir Sementsov-Ogievskiy <vsementsov@yandex-team.ru>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ptikhomirov@virtuozzo.com, Andrey Ryabinin <arbn@yandex-team.com>,
+        Linus Torvalds <torvalds@linuxfoundation.org>
+Subject: Re: [PATCH] fs/coredump: open coredump file in O_WRONLY instead of
+ O_RDWR
+Message-ID: <20230515-bekochen-ertrinken-ce677c8d9e6e@brauner>
+References: <20230420120409.602576-1-vsementsov@yandex-team.ru>
+ <14af0872-a7c2-0aab-b21d-189af055f528@yandex-team.ru>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <14af0872-a7c2-0aab-b21d-189af055f528@yandex-team.ru>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -92,96 +58,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-05-15 at 17:28 +0000, Trond Myklebust wrote:
-> On Mon, 2023-05-15 at 13:11 -0400, Jeff Layton wrote:
-> > On Mon, 2023-05-15 at 11:50 +0000, Ondrej Valousek wrote:
-> > > Hi Paul,
-> > >=20
-> > > Ok first of all, thanks for taking initiative on this, I am unable
-> > > to proceed on this on my own at the moment.
-> > > I see few problems with this:
-> > >=20
-> > > 1. The calculation of the 'listbufsize' is incorrect in your patch.
-> > > It will _not_work as you expected and won't limit the number of
-> > > syscalls (which is why we came up with this patch, right?). Check
-> > > with my original proposal, we really need to check for
-> > > 'system.nfs4' xattr name presence here
-> > > 2. It mistakenly detects an ACL presence on files which do not have
-> > > any ACL on NFSv4 filesystem. Digging further it seems that kernel
-> > > in F39 behaves differently to the previous kernels:
-> > >=20
-> > > F38:=20
-> > > # getfattr -m . /path_to_nfs4_file
-> > > # file: path_to_nfs4_file
-> > > system.nfs4_acl=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <---- only
-> > > single xattr detected
-> > >=20
-> > > F39:
-> > > # getfattr -m . /path_to_nfs4_file
-> > > # file: path_to_nfs4_file
-> > > system.nfs4_acl
-> > > system.posix_acl_default
-> > > /* SOMETIMES even shows this */
-> > > system.posix_acl_default
-> >=20
-> > (cc'ing Christian and relevant kernel lists)
-> >=20
-> > I assume the F39 kernel is v6.4-rc based? If so, then I think that's
-> > a
-> > regression. NFSv4 client inodes should _not_ report a POSIX ACL
-> > attribute since the protocol doesn't support them.
-> >=20
-> > In fact, I think the rationale in the kernel commit below is wrong.
-> > NFSv4 has a listxattr operation, but doesn't support POSIX ACLs.
-> >=20
-> > Christian, do we need to revert this?
-> >=20
-> > commit e499214ce3ef50c50522719e753a1ffc928c2ec1
-> > Author: Christian Brauner <brauner@kernel.org>
-> > Date:=A0=A0 Wed Feb 1 14:15:01 2023 +0100
-> >=20
-> > =A0=A0=A0 acl: don't depend on IOP_XATTR
-> > =A0=A0=A0=20
-> >=20
->=20
->=20
-> No. The problem is commit f2620f166e2a ("xattr: simplify listxattr
-> helpers") which helpfully inserts posix acl handlers into
-> generic_listxattr(), and makes it impossible to call from
-> nfs4_listxattr().
->=20
+On Wed, May 10, 2023 at 06:15:41PM +0300, Vladimir Sementsov-Ogievskiy wrote:
+> Gently ping.
+> 
+> Is there any interest?
 
+The question that I would've loved to have an answer to was why was it
+made O_RDWR and not just O_WRONLY in the first place. Was there a time
+when this was meaningful? Because honestly this looks innocent and
+straightforward and then it always makes me go and think "Oh, there's
+probably a good reason and something super obvious I'm missing.".
 
-Ahh ok. Looking at that function though, it seems like it'd only report
-these for mounts that set SB_POSIXACL. Any reason that we have that
-turned on with v4 mounts?
+Funny enough, this code was originally:
 
-This patch fixes the bug for me, but I haven't done any testing with it:
+    if (open_namei("core",O_CREAT | O_WRONLY | O_TRUNC,0600,&inode,NULL)
 
----------------8<-----------------
+and then became:
 
-[RFC PATCH] nfs: don't set SB_POSIXACL on NFSv4 mounts
+    if (open_namei("core",O_CREAT | 2 | O_TRUNC,0600,&inode,NULL))
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfs/super.c | 1 -
- 1 file changed, 1 deletion(-)
+in
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 30e53e93049e..cbb8de6e25dc 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1057,7 +1057,6 @@ static void nfs_fill_super(struct super_block *sb, st=
-ruct nfs_fs_context *ctx)
- 		sb->s_export_op =3D &nfs_export_ops;
- 		break;
- 	case 4:
--		sb->s_flags |=3D SB_POSIXACL;
- 		sb->s_time_gran =3D 1;
- 		sb->s_time_min =3D S64_MIN;
- 		sb->s_time_max =3D S64_MAX;
---=20
-2.40.1
+    commit 9cb9f18b5d26 ("[PATCH] Linux-0.99.10 (June 7, 1993)")
 
+Author/applier of said patch Cced (more for the fun of referencing
+Linux-0.99.10 than anything else).
 
+So after this commit the flag combination just got copied over and over.
+First when coredump handling was moved out of fs/exec.c into the
+individual binfmt handlers and then again when it was moved back into
+fs/exec.c and then again when it was moved to fs/coredump.c.
+
+So that open-coded 2 added in commit 9cb9f18b5d26 ("[PATCH]
+Linux-0.99.10 (June 7, 1993)") survived for 23 years until it was
+replaced by Jan in 378c6520e7d2 ("fs/coredump: prevent fsuid=0 dumps
+into user-controlled directories"). 
+
+So no one could be bothered for 23 years to use O_RDWR instead of that
+lonely 2 which is kinda funny. :)
+
+In any case, I don't see anything that suggests this would cause issues.
+So I'm going to pick this up unless I'm being told I'm being obviously
+stupid and this absolutely needs to be O_RDWR...
+
+> 
+> On 20.04.23 15:04, Vladimir Sementsov-Ogievskiy wrote:
+> > This makes it possible to make stricter apparmor profile and don't
+> > allow the program to read any coredump in the system.
+> > 
+> > Signed-off-by: Vladimir Sementsov-Ogievskiy <vsementsov@yandex-team.ru>
+> > ---
+> >   fs/coredump.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/coredump.c b/fs/coredump.c
+> > index 5df1e6e1eb2b..8f263a389175 100644
+> > --- a/fs/coredump.c
+> > +++ b/fs/coredump.c
+> > @@ -646,7 +646,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+> >   	} else {
+> >   		struct mnt_idmap *idmap;
+> >   		struct inode *inode;
+> > -		int open_flags = O_CREAT | O_RDWR | O_NOFOLLOW |
+> > +		int open_flags = O_CREAT | O_WRONLY | O_NOFOLLOW |
+> >   				 O_LARGEFILE | O_EXCL;
+> >   		if (cprm.limit < binfmt->min_coredump)
+> 
+> -- 
+> Best regards,
+> Vladimir
+> 
