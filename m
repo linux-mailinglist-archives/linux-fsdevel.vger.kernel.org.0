@@ -2,65 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD991702B87
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 13:32:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 784DB702BF8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 13:56:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241290AbjEOLcA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 07:32:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39604 "EHLO
+        id S241499AbjEOL4M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 07:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241241AbjEOLb7 (ORCPT
+        with ESMTP id S241197AbjEOLza (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 07:31:59 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0518138;
-        Mon, 15 May 2023 04:31:55 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-965f7bdab6bso2222322866b.3;
-        Mon, 15 May 2023 04:31:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684150314; x=1686742314;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vvfV0sEFtRCF/8ZbA1b9yt0/e64L7RJ3L0AI8zLMm9I=;
-        b=kPjpVmksuf9oAOejRIjWtY9929N374P+GeBpuGDe9iZWM2wPxC/p7NH6UEF5CISwH4
-         jbUJRuyomH2kG/yCIN+G9SheAr2hkP2YMdk0OxcEvVYwkJGttFgvtC7xpQGR6CB3GgKo
-         mBkuqwLXnswyAkUiZe3Pb6f9p2sS9PuFyWzDFq68Xo6/Ss+7ngAKnr/qYPzt18rawGCm
-         GHur/KAmxb8a/zFus0h5gVJmVgcTT5V16E7PmlkWqFq66Qnr4jGrFF3uKVuyXZJqDOfy
-         7MZ0mjag4BxFqnNTV1u51azqbFpO3Pe7MRPdRD7Vr+VDJWy2LDZGy7rNOKFtseSEylK2
-         da1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684150314; x=1686742314;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vvfV0sEFtRCF/8ZbA1b9yt0/e64L7RJ3L0AI8zLMm9I=;
-        b=TIsyANi821eRhJysbtGmFa5LO20worihSRmxLwqJsfOgranq/DqoJ8ilW3dLatb2Bh
-         kfltPVnTkuRO78Pp4QPO0ZesXSklwuqD9PR39y/1QmonKWF6sdqgjbzPiTOQFBNKutvu
-         by1q1lMGy2lHFiEVXRAMuMUgV7U94DmVPtUD/UL5zMtLRRqZEz0tXAlRuOEk0TNusG6m
-         DvJTpT7corv/O/ypOJ32quYpYdATXIfvaedW07mTPiFVQFZnnsOy8pY3FEXW/7TT3wpN
-         QPoJ9Gz02c+HIfIj0N9UU++he/Q0LUszMy7fcLTWhzJxMcPy1+zwNBWOKEycErI4JM66
-         7S7A==
-X-Gm-Message-State: AC+VfDzmu4oZc84054NXLvQlvime83wQuRQNrxZH0uSs16q34ov5SB3R
-        dBFnJUOhbJWX2osj5IJLla8=
-X-Google-Smtp-Source: ACHHUZ4cvEaBYT8S0j4/i8jS1x5f8hGr+r0ucmaZDxWPOpxxOrBcBp7R6Ds7K5N4DMVSU/SZjBBVtQ==
-X-Received: by 2002:a17:906:58c5:b0:966:58ad:d934 with SMTP id e5-20020a17090658c500b0096658add934mr26454295ejs.0.1684150313896;
-        Mon, 15 May 2023 04:31:53 -0700 (PDT)
-Received: from localhost ([31.94.21.70])
-        by smtp.gmail.com with ESMTPSA id hz20-20020a1709072cf400b0094f4d2d81d9sm9303913ejc.94.2023.05.15.04.31.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 04:31:53 -0700 (PDT)
-Date:   Mon, 15 May 2023 12:31:51 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     Christoph Hellwig <hch@infradead.org>
+        Mon, 15 May 2023 07:55:30 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C2F130D5;
+        Mon, 15 May 2023 04:49:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=1ZrFV+Wc8/ZJUp/FX577rHKoHb
+        pguabdBOPfN9icKLDwx8+lfxd4KDXZXBt65mjoFYofoKg9TRudHshWljB9gYETArKptQo+oFRmJA1
+        eo+2zBbp2gLaQcK/ZxTmXWX97XuuhWXTpwW/8B/J5idTE6bKUfrokWnlmPydpnBH4EOjx3U9VQodk
+        naXhjhdEubAh9RyJuU3+ESV+S8FH7s0ArSTHvUwa8nMEiMKJBSae2NCDhoQv3+VGQt1/Xqw4leXUd
+        4n5VoEHIgXVD6eCHDBgn3WYe118PghBRjPE8s+mIhsg8a84B4PUzFWDZj49OKSahwEUNl8P/qrzX/
+        5Bg9taNg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pyWi1-00224V-0U;
+        Mon, 15 May 2023 11:49:45 +0000
+Date:   Mon, 15 May 2023 04:49:45 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
         Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -70,70 +61,36 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Namhyung Kim <namhyung@kernel.org>,
         Ian Rogers <irogers@google.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
- mappings by default
-Message-ID: <59c47ed5-a565-4220-823c-a278130092d5@lucifer.local>
-References: <cover.1683235180.git.lstoakes@gmail.com>
- <0eb31f6f-a122-4a5b-a959-03ed4dee1f3c@lucifer.local>
- <ZGG/xkIUYK2QMPSv@infradead.org>
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v5 3/6] mm/gup: remove vmas parameter from
+ get_user_pages_remote()
+Message-ID: <ZGIcWaZBUXiTh1G9@infradead.org>
+References: <cover.1684097001.git.lstoakes@gmail.com>
+ <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZGG/xkIUYK2QMPSv@infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 14, 2023 at 10:14:46PM -0700, Christoph Hellwig wrote:
-> On Sun, May 14, 2023 at 08:20:04PM +0100, Lorenzo Stoakes wrote:
-> > As discussed at LSF/MM, on the flight over I wrote a little repro [0] which
-> > reliably triggers the ext4 warning by recreating the scenario described
-> > above, using a small userland program and kernel module.
-> >
-> > This code is not perfect (plane code :) but does seem to do the job
-> > adequately, also obviously this should only be run in a VM environment
-> > where data loss is acceptable (in my case a small qemu instance).
->
-> It would be really awesome if you could wire it up with and submit it
-> to xfstests.
+Looks good:
 
-Sure am happy to take a look at that! Also happy if David finds it useful in any
-way for this unit tests.
-
-The kernel module interface is a bit sketchy (it takes a user address which it
-blindly pins for you) so it's not something that should be run in any unsafe
-environment but as long as we are ok with that :)
+Reviewed-by: Christoph Hellwig <hch@lst.de>
