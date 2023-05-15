@@ -2,167 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 667B47036DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 19:14:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84B1770382D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 19:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243816AbjEOROf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 13:14:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54546 "EHLO
+        id S244299AbjEOR2u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 13:28:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243775AbjEOROU (ORCPT
+        with ESMTP id S244084AbjEOR1l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 13:14:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D09DDAD20
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 10:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684170691;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=B0VQV6r8AYh45PqzQsI13Ira1377ExJZY+6kun+twe0=;
-        b=JkxmJVpN8n+6eh/UVuIf89FGxmL8WyXylsASa0SnyVdslzTKDZS3q+vIa32bj4Wy2xTcYn
-        I6VnJJWr/J6/UFgWNhSiV4tmK82K9FPyzo4fkrf/iI4t0cVwHG37fNW2YrKxXIXBW4Gs56
-        l7lllWWZqt5LXBScls3K+geFf8vCens=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-53-KQbYEC7MOdq1kQjNJemo2Q-1; Mon, 15 May 2023 13:11:29 -0400
-X-MC-Unique: KQbYEC7MOdq1kQjNJemo2Q-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-61e209243f7so65548766d6.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 10:11:29 -0700 (PDT)
+        Mon, 15 May 2023 13:27:41 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD9B1154E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 10:26:27 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-b99ef860a40so23844698276.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 10:26:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1684171584; x=1686763584;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=y97BQ7sR2LBYQN45EWEO4FJ6RSEUfFrbQxSXtC1eEEg=;
+        b=lnrHEXI214x0JOHTaG19NvuKmqNZq8vfQFKdpU6IFL5CrGuJIGS18GJfVi7BwsHwLu
+         z/19S9vAZW30pNF09qix5IlZ31ZEXIfoGPrblHX6Enf6KFUoXTTZnWap+ULYaVY8vhtU
+         OkCdhS24qIkQeup6yuRZj7uh7CWNtThe5UGcraCNGfBBC5Hww348MxDxRagpAxcDVTgA
+         AZ7h+zuAXJzQAH2BNFM6Zv0fa/yUNkqKLh+ZXEOhgjyLaqTiXJhjvNH8l0R1RPrqwNd7
+         0RKoPgChapU4TerGr+ESr+HQzkCOntbXEi2Aj+4c6i7PG4f7i/oYDqbdgA2BE8qDfgLN
+         /7wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684170689; x=1686762689;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=1e100.net; s=20221208; t=1684171584; x=1686763584;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=B0VQV6r8AYh45PqzQsI13Ira1377ExJZY+6kun+twe0=;
-        b=c5ipc7PyWdU8WiDYbCeegtjdGKh6VsL6KfgNNSY7t6Pp/dV2eLOgIbAcfEzdJPUNsb
-         bmpDYYE+3sa125+KayBlJBaTy3PxHLULnxx0F+/hT8uQSGO9B6+f/XR2rWDl+y8/joE9
-         1aqCMhCbiQpC9S04Dmtj6/OYhHN1R10/5+RTRL02ef6x98lz80a2Er2lcj1OpPXZ8qiU
-         KRerm5D5gyEBWiYe5tuXniiGcSgkUkIaID7rOL5W8ap20aB3z6C+pBJBo7LwwdhkdaV5
-         nBBlCr6/G3MMcd3nfp7PTf3YT8GfWJNYTrg8+vfg3niKwGmAJOOfufhuPG0dddsfpU8k
-         1+xw==
-X-Gm-Message-State: AC+VfDz9FOQl3m3C2lfHDxGyI08n48c+PDHzm7Hb51J6aicOP3z1q+us
-        2OYZElDVCGwwePcAVGq1znHCkH83heLgIUEgaTipjo4sJjswLjMRHNNPf1O4CreO2v9nIQ+QpkI
-        Y4B0rvVBXsATVDmPd48RELxJOBuZViw8k2Q==
-X-Received: by 2002:ad4:5be1:0:b0:623:44bf:c41f with SMTP id k1-20020ad45be1000000b0062344bfc41fmr13483333qvc.17.1684170688729;
-        Mon, 15 May 2023 10:11:28 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4zrtsD09R7XFx/jpOy5e7xJUOfRnJ+UlDpdJUF6fpginznv6eVOpZ0LpRmkUGSJGRUVwZ3+g==
-X-Received: by 2002:ad4:5be1:0:b0:623:44bf:c41f with SMTP id k1-20020ad45be1000000b0062344bfc41fmr13483290qvc.17.1684170688434;
-        Mon, 15 May 2023 10:11:28 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id a3-20020a05620a102300b00759240a4771sm53672qkk.130.2023.05.15.10.11.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 10:11:27 -0700 (PDT)
-Message-ID: <fb005d7e29f1167b83acf7b10800ff3124ee2a50.camel@redhat.com>
-Subject: Re: [PATCH] fix NFSv4 acl detection on F39
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Ondrej Valousek <ondrej.valousek.xm@renesas.com>,
-        Paul Eggert <eggert@cs.ucla.edu>,
-        Bruno Haible <bruno@clisp.org>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     "bug-gnulib@gnu.org" <bug-gnulib@gnu.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>
-Date:   Mon, 15 May 2023 13:11:26 -0400
-In-Reply-To: <TYXPR01MB18547A591663A4934B5D4D82D9789@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-References: <20230501194321.57983-1-ondrej.valousek.xm@renesas.com>
-         <c955ee20-371c-5dde-fcb5-26d573f69cd9@cs.ucla.edu>
-         <TYXPR01MB1854B3C3B8215DD0FA7B83CCD96D9@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-         <17355394.lhrHg4fidi@nimes>
-         <32edbaf1-d3b1-6057-aefc-d83df3266c20@cs.ucla.edu>
-         <4f1519d8-bda1-1b15-4a78-a8072ba1551a@cs.ucla.edu>
-         <TYXPR01MB18547A591663A4934B5D4D82D9789@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
-MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        bh=y97BQ7sR2LBYQN45EWEO4FJ6RSEUfFrbQxSXtC1eEEg=;
+        b=mGpABQPrBunCmyG/irT5WcFW3/0hmqLualWOAQeGkw+qdgU85SGJD9LitAef4WikE5
+         3JVSfJlot2X0bJEon0e3+edoFLDbV0bSehJBVYN/dJyMaLT0SzhONYabMHMAyg3IdO/g
+         Yu3Zwe/41R8KQofIAlniIjTemoTmNPqIKrPbJ6qrjXkEBpzc8RHneTf5EqB8wBiEJ23Q
+         PNyslYIkHmaPcDlv0nt6p0pgJWeP2gZ3jEgigurG3YYTCLQHsA6vPzd8oY7RGzwQu6BO
+         tErMuCuQYoPZpWBQosg7ckNI6nPkgBhWXPD+ZYtfkCT6ATaIDeEK/aygFN31BAdisdH3
+         1lDw==
+X-Gm-Message-State: AC+VfDybJQXHgt1GSmTpaxXuzfFrUEXteliT4zq5Efq941tKgdXWODo1
+        XutCzDtM6CG7TdZVNVS6UPu7YUKbicdR
+X-Google-Smtp-Source: ACHHUZ5TeR03DncbFn2MDJZP9KzUWVPcJVpfEqM7CUznGNTSHd5/NHOxIZ8GKK9NiQzFZ/fPDVHY/iZDWiai
+X-Received: from yuanchu.bej.corp.google.com ([2401:fa00:44:10:166c:6ee8:fb91:4744])
+ (user=yuanchu job=sendgmr) by 2002:a5b:750:0:b0:ba7:75a8:e37d with SMTP id
+ s16-20020a5b0750000000b00ba775a8e37dmr3199880ybq.4.1684171584365; Mon, 15 May
+ 2023 10:26:24 -0700 (PDT)
+Date:   Tue, 16 May 2023 01:26:08 +0800
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.40.1.606.ga4b1b128d6-goog
+Message-ID: <20230515172608.3558391-1-yuanchu@google.com>
+Subject: [PATCH] mm: pagemap: restrict pagewalk to the requested range
+From:   Yuanchu Xie <yuanchu@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+        Yang Shi <shy828301@gmail.com>,
+        "Zach O'Keefe" <zokeefe@google.com>, Peter Xu <peterx@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Yuanchu Xie <yuanchu@google.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-05-15 at 11:50 +0000, Ondrej Valousek wrote:
-> Hi Paul,
->=20
-> Ok first of all, thanks for taking initiative on this, I am unable to pro=
-ceed on this on my own at the moment.
-> I see few problems with this:
->=20
-> 1. The calculation of the 'listbufsize' is incorrect in your patch. It wi=
-ll _not_work as you expected and won't limit the number of syscalls (which =
-is why we came up with this patch, right?). Check with my original proposal=
-, we really need to check for 'system.nfs4' xattr name presence here
-> 2. It mistakenly detects an ACL presence on files which do not have any A=
-CL on NFSv4 filesystem. Digging further it seems that kernel in F39 behaves=
- differently to the previous kernels:
->=20
-> F38:=20
-> # getfattr -m . /path_to_nfs4_file
-> # file: path_to_nfs4_file
-> system.nfs4_acl                                    <---- only single xatt=
-r detected
->
-> F39:
-> # getfattr -m . /path_to_nfs4_file
-> # file: path_to_nfs4_file
-> system.nfs4_acl
-> system.posix_acl_default
-> /* SOMETIMES even shows this */
-> system.posix_acl_default
+The pagewalk in pagemap_read reads one PTE past the end of the requested
+range, and stops when the buffer runs out of space. While it produces
+the right result, the extra read is unnecessary and less performant.
 
-(cc'ing Christian and relevant kernel lists)
+I timed the following command before and after this patch:
+	dd count=100000 if=/proc/self/pagemap of=/dev/null
+The results are consistently within 0.001s across 5 runs.
 
-I assume the F39 kernel is v6.4-rc based? If so, then I think that's a
-regression. NFSv4 client inodes should _not_ report a POSIX ACL
-attribute since the protocol doesn't support them.
+Before:
+100000+0 records in
+100000+0 records out
+51200000 bytes (51 MB) copied, 0.0763159 s, 671 MB/s
 
-In fact, I think the rationale in the kernel commit below is wrong.
-NFSv4 has a listxattr operation, but doesn't support POSIX ACLs.
+real    0m0.078s
+user    0m0.012s
+sys     0m0.065s
 
-Christian, do we need to revert this?
+After:
+100000+0 records in
+100000+0 records out
+51200000 bytes (51 MB) copied, 0.0487928 s, 1.0 GB/s
 
-commit e499214ce3ef50c50522719e753a1ffc928c2ec1
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Wed Feb 1 14:15:01 2023 +0100
+real    0m0.050s
+user    0m0.011s
+sys     0m0.039s
 
-    acl: don't depend on IOP_XATTR
-   =20
-    All codepaths that don't want to implement POSIX ACLs should simply not
-    implement the associated inode operations instead of relying on
-    IOP_XATTR. That's the case for all filesystems today.
-   =20
-    For vfs_listxattr() all filesystems that explicitly turn of xattrs for =
-a
-    given inode all set inode->i_op to a dedicated set of inode operations
-    that doesn't implement ->listxattr().  We can remove the dependency of
-    vfs_listxattr() on IOP_XATTR.
-   =20
-    Removing this dependency will allow us to decouple POSIX ACLs from
-    IOP_XATTR and they can still be listed even if no other xattr handlers
-    are implemented. Otherwise we would have to implement elaborate schemes
-    to raise IOP_XATTR even if sb->s_xattr is set to NULL.
-   =20
-    Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Signed-off-by: Yuanchu Xie <yuanchu@google.com>
+---
+ fs/proc/task_mmu.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-
->=20
-> Now I faintly recall there was an activity in to move POSIX acls calculat=
-ion from userspace to kernel (now Jeff in CC will hopefully clarify this)
->=20
-
-The POSIX<->NFSv4 ACL translation has always been in the kernel server.
-It has to be, as the primary purpose is to translate v4 ACLs from the
-clients to and from the POSIX ACLs that the exported Linux filesystems
-support.
-
---=20
-Jeff Layton <jlayton@redhat.com>
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 420510f6a545..6259dd432eeb 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1689,23 +1689,23 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
+ 	/* watch out for wraparound */
+ 	start_vaddr = end_vaddr;
+ 	if (svpfn <= (ULONG_MAX >> PAGE_SHIFT)) {
++		unsigned long end;
++
+ 		ret = mmap_read_lock_killable(mm);
+ 		if (ret)
+ 			goto out_free;
+ 		start_vaddr = untagged_addr_remote(mm, svpfn << PAGE_SHIFT);
+ 		mmap_read_unlock(mm);
++
++		end = start_vaddr + ((count / PM_ENTRY_BYTES) << PAGE_SHIFT);
++		if (end >= start_vaddr && end < mm->task_size)
++			end_vaddr = end;
+ 	}
+ 
+ 	/* Ensure the address is inside the task */
+ 	if (start_vaddr > mm->task_size)
+ 		start_vaddr = end_vaddr;
+ 
+-	/*
+-	 * The odds are that this will stop walking way
+-	 * before end_vaddr, because the length of the
+-	 * user buffer is tracked in "pm", and the walk
+-	 * will stop when we hit the end of the buffer.
+-	 */
+ 	ret = 0;
+ 	while (count && (start_vaddr < end_vaddr)) {
+ 		int len;
+-- 
+2.40.1.606.ga4b1b128d6-goog
 
