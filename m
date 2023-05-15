@@ -2,152 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85EA870231F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 07:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16404702331
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 07:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230153AbjEOFCz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 01:02:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42614 "EHLO
+        id S233016AbjEOFPB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 01:15:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjEOFCx (ORCPT
+        with ESMTP id S229635AbjEOFO5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 01:02:53 -0400
-Received: from out-4.mta0.migadu.com (out-4.mta0.migadu.com [91.218.175.4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C04133
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 May 2023 22:02:51 -0700 (PDT)
-Date:   Mon, 15 May 2023 01:02:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1684126969;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=q2mGEUvyHwZiGTrF0TDmaBKI7TfcH+VD1Blkzm5ytFk=;
-        b=QJAzPvdoQUkeyTUk6S2C+QWy4jL4zcmYveWG3SSgImiqUUCC42tKyxxcO2zjN7BKZll567
-        0ccXmBJd5mbCp9XkvCh9Jw/aMSC5/HQXIWaA8wvZfGp6/o4zsDQVFiMoWCF2m/8nSah/lp
-        /VcUxVy7M0z3GWs4tmlJsv/ywE8JtAA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     Lorenzo Stoakes <lstoakes@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mon, 15 May 2023 01:14:57 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB4E26A0;
+        Sun, 14 May 2023 22:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=8z08rPxfDAASG/XLpN5ZedEBdMlrltNVn22wzFhYK0Q=; b=DBnEYHtgDBNHel35RYI8L6MwdG
+        CXYRTUv6uFJgJPOmp1dC7GyFiOrl7T9RDvVL7ssNxrdDZuv06gFGlXD+4TjMNfRR7jllqpFx9ZcPk
+        iWuFmrLuY2w0rXmJFGf+CKrzyNnAMNTmQanAWet7sGxkMm+e3hC8lRgBB4abCj9hzdDZsso1mP7Ys
+        1fE1HfzlN2Ljyek0uKbAifZ8L0D7nMMqZgNZ0SmvgO7W5OCE/51X3pVXURq5GVUg8GQEZUuig+8l9
+        /3642c8ZGs8O/jvN0ziHyaxigZGRxPz79VfXkgFV1iczxRORzO1oIQIFuyI2QWGR6oHzFpR50n61u
+        IH83ZVLw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pyQXm-000vaf-1t;
+        Mon, 15 May 2023 05:14:46 +0000
+Date:   Sun, 14 May 2023 22:14:46 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
-Message-ID: <ZGG89NGRKdWJo8gn@moria.home.lan>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-8-kent.overstreet@linux.dev>
- <ZFqxEWqD19eHe353@infradead.org>
- <ZFq3SdSBJ_LWsOgd@murray>
- <8f76b8c2-f59d-43fc-9613-bb094e53fb16@lucifer.local>
- <ce5125be-464e-44ad-8d9e-7c818f794db1@csgroup.eu>
- <ZGFyHY6pH9CU4fzf@moria.home.lan>
- <6f049870-1684-1875-3cdc-73e1323ffdb0@csgroup.eu>
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
+ mappings by default
+Message-ID: <ZGG/xkIUYK2QMPSv@infradead.org>
+References: <cover.1683235180.git.lstoakes@gmail.com>
+ <0eb31f6f-a122-4a5b-a959-03ed4dee1f3c@lucifer.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6f049870-1684-1875-3cdc-73e1323ffdb0@csgroup.eu>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <0eb31f6f-a122-4a5b-a959-03ed4dee1f3c@lucifer.local>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 15, 2023 at 04:45:42AM +0000, Christophe Leroy wrote:
+On Sun, May 14, 2023 at 08:20:04PM +0100, Lorenzo Stoakes wrote:
+> As discussed at LSF/MM, on the flight over I wrote a little repro [0] which
+> reliably triggers the ext4 warning by recreating the scenario described
+> above, using a small userland program and kernel module.
 > 
-> 
-> Le 15/05/2023 à 01:43, Kent Overstreet a écrit :
-> > On Sun, May 14, 2023 at 06:39:00PM +0000, Christophe Leroy wrote:
-> >> I addition to that, I still don't understand why you bring back
-> >> vmalloc_exec() instead of using module_alloc().
-> >>
-> >> As reminded in a previous response, some architectures like powerpc/32s
-> >> cannot allocate exec memory in vmalloc space. On powerpc this is because
-> >> exec protection is performed on 256Mbytes segments and vmalloc space is
-> >> flagged non-exec. Some other architectures have a constraint on distance
-> >> between kernel core text and other text.
-> >>
-> >> Today you have for instance kprobes in the kernel that need dynamic exec
-> >> memory. It uses module_alloc() to get it. On some architectures you also
-> >> have ftrace that gets some exec memory with module_alloc().
-> >>
-> >> So, I still don't understand why you cannot use module_alloc() and need
-> >> vmalloc_exec() instead.
-> > 
-> > Because I didn't know about it :)
-> > 
-> > Looks like that is indeed the appropriate interface (if a bit poorly
-> > named), I'll switch to using that, thanks.
-> > 
-> > It'll still need to be exported, but it looks like the W|X attribute
-> > discussion is not really germane here since it's what other in kernel
-> > users are using, and there's nothing particularly special about how
-> > bcachefs is using it compared to them.
-> 
-> The W|X subject is applicable.
-> 
-> If you look into powerpc's module_alloc(), you'll see that when 
-> CONFIG_STRICT_MODULE_RWX is selected, module_alloc() allocate 
-> PAGE_KERNEL memory. It is then up to the consumer to change it to RO-X.
-> 
-> See for instance in arch/powerpc/kernel/kprobes.c:
-> 
-> void *alloc_insn_page(void)
-> {
-> 	void *page;
-> 
-> 	page = module_alloc(PAGE_SIZE);
-> 	if (!page)
-> 		return NULL;
-> 
-> 	if (strict_module_rwx_enabled())
-> 		set_memory_rox((unsigned long)page, 1);
-> 
-> 	return page;
-> }
+> This code is not perfect (plane code :) but does seem to do the job
+> adequately, also obviously this should only be run in a VM environment
+> where data loss is acceptable (in my case a small qemu instance).
 
-Yeah.
-
-I'm looking at the bpf code now.
-
-<RANT MODE, YOU ARE WARNED>
-
-Can I just say, for the record - god damn this situation is starting to
-piss me off? This really nicely encapsulates everything I hate about
-kernel development processes and culture and the fscking messes that get
-foisted upon people as a result.
-
-All I'm trying to do is write a fucking filesystem here people, I've got
-enough on my plate. Dealing with the fallout of a kernel interface going
-away without a proper replacement was NOT WHAT I FUCKING HAD IN MIND?
-
-5% performance regression without this. That's just not acceptable, I
-can't produce a filesystem that people will in the end want to use by
-leaving performance on the table, it's death of a thousand cuts if I
-take that attitude. Every 1% needs to be accounted for, a 5% performance
-regression is flat out not going to happen.
-
-And the real icing on this motherfucking turd sandwich of a cake, is
-that I'm not the first person to have to solve this particular technical
-problem.
-
-BPF has the code I need.
-
-But, in true kernel fashion, did they recognize that this was a
-subproblem they could write as a library, both making their code more
-modular and easier to understand, as well as, oh I don't know, not
-leaving a giant steaming turd for the next person to come along?
-
-Nope.
-
-I'd be embarassed if I was responsible for this.
+It would be really awesome if you could wire it up with and submit it
+to xfstests.
