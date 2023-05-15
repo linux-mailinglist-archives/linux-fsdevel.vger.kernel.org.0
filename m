@@ -2,356 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3D2E702C10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 13:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAD79702C64
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 14:12:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241627AbjEOL4s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 07:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51272 "EHLO
+        id S241376AbjEOMM4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 08:12:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241567AbjEOL4K (ORCPT
+        with ESMTP id S230342AbjEOMMz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 07:56:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C91CE3AA0;
-        Mon, 15 May 2023 04:51:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 42E7F62250;
-        Mon, 15 May 2023 11:51:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5A5C433D2;
-        Mon, 15 May 2023 11:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684151503;
-        bh=3KSleyL7XQUaTkYDk+zv0P1xYUZAQVLII4WzE3eWxZ4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RKYvE+7ZbkB8x/YZzza6ok3IrA2k0ZWdqASIvRBYevL6vkOtNLLOJoTvZX/naiDXo
-         Ghn0v76ehzPxIEFZd1JaXblVsUgee8xJTGPSlrx0+AYt7LQv92mvz/670qxEoZ52n1
-         NRUXU0amptFQ7ptS/PaGGMsy1cg9a0EZpf5ebGiaH03s3ujx3u7SpBD4oU+RunbiJ6
-         rxDAlZVqvU30xSPYwjDVbh6TIxkjnIZBcZIYzYVv1mM/nOci6GIfotJzGMsy00AR+l
-         Sc8/YGqPizJ18RN+KOiz1csXqIzvz/haGdse7PGI5/06+C3ECWa5G7ImeubD+TIj2f
-         ngi5LeCItgleA==
-Message-ID: <0dcd16bae001b3cbc51337e360341f9efb35470e.camel@kernel.org>
-Subject: Re: [PATCH v2 4/4] NFSD: handle GETATTR conflict with write
- delegation
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dai Ngo <dai.ngo@oracle.com>, chuck.lever@oracle.com
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Mon, 15 May 2023 07:51:41 -0400
-In-Reply-To: <1684110038-11266-5-git-send-email-dai.ngo@oracle.com>
-References: <1684110038-11266-1-git-send-email-dai.ngo@oracle.com>
-         <1684110038-11266-5-git-send-email-dai.ngo@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        Mon, 15 May 2023 08:12:55 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2046.outbound.protection.outlook.com [40.107.92.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A107D1AB;
+        Mon, 15 May 2023 05:12:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dZbzkACfo0vrr08uwcPAqfESg8dm8tUXn9bd091xAYZ8hMykx3Q9Yxr2J7MOg4QcGIvWKvGhzzWr/23nP83M0iKq/GYKMxP3ZnAd2BO3yk2wLI5sa9/nOh6dCYiUkkzWYWmVfyeo6onIVTA0KRTFAhd/vGGEUPfTheqqQ91N7avxw9hJdnXOk9n01d+e3D4Po4tzKZ+ZROLXEfb3RnXRTYDwcFRuCs3OawDI8cL215yyKZLOn1vgZzAr5iDQikAxKOgwFaCi/69wSdUmzeXrAadMcJPilTjuqo36vjlta2aS61JOrBsZ2cnWVU7/CpcIRtyBtDEc+Lx1DZ0NxJXX6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vo2okyu9q4O73CTCXQvO2hUuvIL9+MVHCkrrCKsE8as=;
+ b=C7WEr6hBBfoJRfJkl/zV8y27JXx+CpRaq5csiCtifgrb5IHxy0z6544f08OFc61vTVehtzzqLCc2D0YDqReNokxEq+ZMyHeUDci+J7icwg58mMeOmV5eTexHygpEcGcJaWc9JaoyQ8uIF0hJV6wGMHqSXiCBALaSSQ73NdHPl77A0nSCDq1iZf6o2Caabhe9swArFgBaaDJoKlVljCYXWuVS3yE3dmn1bXqKNiHl0Taf6kbF9QcetrBaHDun71Cq6s1UiQ4HLdPjADQtNDMKUwaBH6MMHQPVGFZ5J4afyyFVPIXGDeI2ipEHT4cDj7SSGyC3fmv5jPI+/k2tQK8BeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vo2okyu9q4O73CTCXQvO2hUuvIL9+MVHCkrrCKsE8as=;
+ b=sludTHXMA373Qn9ggvQsmqJFZB1roS03FR2loxOUAbrcy3lm60ODvyNd2TI/Z9zre4o9nUZIO5jcooarRjZvTxGKitSX1K5eN6OhEztM34W9zAPDeGTCrvUBBDhKiwZpEBrLpeomekqVUWbfNvDIVk6kXOBvcUREri7uW0zRTNN75InKTpiPkG4u04JyhrbUCuF2LLmeUs4OeFruyzt9fLIMGhs07Yy8CnTpsP1u0jvgGthlJV3oaV6pmc+ePq3bPntlyyBpyHaWNuU6SYV3mHBxjy/cz6OcRrN9oW5br9CzhvAcYtY6uC3wUsordoyssd+zzI2QR3Dxt08UaMrhTw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by BY5PR12MB4321.namprd12.prod.outlook.com (2603:10b6:a03:204::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.30; Mon, 15 May
+ 2023 12:12:50 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::f7a7:a561:87e9:5fab%6]) with mapi id 15.20.6387.030; Mon, 15 May 2023
+ 12:12:50 +0000
+Date:   Mon, 15 May 2023 09:12:49 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     "Kirill A . Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christian Benvenuti <benve@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bjorn Topel <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Mika Penttila <mpenttil@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
+ mappings by default
+Message-ID: <ZGIhwZl2FbLodLrc@nvidia.com>
+References: <cover.1683235180.git.lstoakes@gmail.com>
+ <20230515110315.uqifqgqkzcrrrubv@box.shutemov.name>
+ <7f6dbe36-88f2-468e-83c1-c97e666d8317@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f6dbe36-88f2-468e-83c1-c97e666d8317@lucifer.local>
+X-ClientProxiedBy: BL1PR13CA0134.namprd13.prod.outlook.com
+ (2603:10b6:208:2bb::19) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|BY5PR12MB4321:EE_
+X-MS-Office365-Filtering-Correlation-Id: e517f40b-794c-47a4-952e-08db553db3b3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: N/zsEx0MTKHwLUimmYqcbdIfjLizCySoq9C6JCls6zs4LJiqfKG/rA25LDS1Fc8CiqtrCPaq14ntbssBBhPFY93Ui0TwIlq7gWOJY52P3cMfK9+rnlcElAFNkI2JN8lKopgW2fkKb4v3NgaZ3DtPKX2y1+1AzksITHLNqF/NWSqlX1TZ47nKnWM9K5bnkLmJKTGaw0izF5Vi5a0tt+CmBOD9ZZpLnLgAKhS+4SXBSOO8RJ78gMGbnyz1Ye/pgVmu2pRcIrMGSiFVLEepQSWgCj56YpJKg/0PY6R2nsxVL21gnACOYV+AQbkMJfcFygfgGohz2DL3mY67gxuBBZ8LnsfekTMq0FNnRAvOPCtelmrmsC716UrOUUWU55MiTNpbUCWR4Pv2h4L5MaTb3a2hSa9E3UwkKYaNgCY2KBgTDjw9Rvj9SSrNzgGMf3syIN/0tsGm17zxSupG5NWm4fqAH5yLqeGK3ZgAwA7Z7CdMkezZkbfpCWTjp+6TJTa3NC4Q1dWzuVY33ahWRhsuqbMW5U0EJ6R09T6YdoOa142oEzK4GPElzbkHj2lPbhllTvfo
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(39860400002)(366004)(396003)(136003)(451199021)(83380400001)(4326008)(41300700001)(6916009)(316002)(36756003)(2906002)(38100700002)(26005)(6506007)(6512007)(6486002)(478600001)(66946007)(66476007)(66556008)(2616005)(86362001)(5660300002)(8936002)(8676002)(54906003)(7366002)(7406005)(7416002)(186003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?G+qL5vFMYT6D+nnSgzfuolJgmHEgH4dPR3MTkIhI0WJ3eg35wslLv8EcGLb0?=
+ =?us-ascii?Q?XPMpDTl5n+gVUkSBlCATUXkeEkD2tulwBCzDgo/c9CbIq9c/GuEnx7IB4Jgy?=
+ =?us-ascii?Q?6yCBn3kJ/QuTVHb/+v23Ikknuh2l+Tjyj2T5HwufyqWM9R9VrgyeSOU9ncne?=
+ =?us-ascii?Q?W53kCiR1qM+6BI7ehhrly4/cHMzfiasKYkkb1SJrOxNdNpAkuzSS/j/aa8VX?=
+ =?us-ascii?Q?qsnZ3ZEktt6StW1OnQVKxB2U0MO0u/x7LoqQ0Q+0+ztFjHIMqqp/2kQqk078?=
+ =?us-ascii?Q?4c5t7Xs8O1jcckkUhxt7fDrD4QHbXzz8k+HCnwnCe8LmObVDQAGrxJgShfQx?=
+ =?us-ascii?Q?rhcQxMgObqXWgdt70OWPfj6MfpJUcqNYHR/FctMkNaIiPQ+0iVRsFMLBS3JZ?=
+ =?us-ascii?Q?kGKQMAORHxn2i7qkk07xzDGmyhPKfaDGQAAfBbQSUV47IWBS3xbY6Jq0LsMb?=
+ =?us-ascii?Q?wKAIKW7KBF8+n0qy+pXsGzl6Q6CrDmbzUS6ujjazVLnnp+puzGqCNvJKi5rW?=
+ =?us-ascii?Q?6vij8M6UnhFHgtnIdwTysz+TsrQ8i4Ab9jsbbn1NSBSxR8uO3YWwENeYmZ+3?=
+ =?us-ascii?Q?Sj2AheSUFe1hxa6L8uKBluXxwDDFs+CyywNnqwh/wqmgaTdf1DMtO3BBSe32?=
+ =?us-ascii?Q?PP/uR2EbfMNIUSre12EwGxlBhYO6zdXIew5kRBKNZBH+hroIIrP93opOLQxs?=
+ =?us-ascii?Q?Q6c2cT6mh+W0W+Nad6geqFCejguKSAwh17upFnh7KZj3+J3bHSvihjx6c2jh?=
+ =?us-ascii?Q?Iu6VaCPqRGUsQzPII1QEuTNBF79CqgyAdhOGiYP6PZpGWoWYPBHwEufU9gsP?=
+ =?us-ascii?Q?c9jSoFiIT85yWl4dHFzwBTDiVQn+YFsXHubFn5aLiUsHq6Tzh+0S/awPF+2E?=
+ =?us-ascii?Q?sZv9nGYdPhx68TvqjSlBo3T0ayGbeLVO7IcY8/T6ACoFlvHFp3XzTgwRMTEO?=
+ =?us-ascii?Q?36oCA/Ur9l8Mvc52suSFnspxgjtC/wdRwkaqyQYSiJjiQV0pfOAK6A2wRfHP?=
+ =?us-ascii?Q?QWu16Ck3nylaL7g/A9tmXyu49JLuiw0nRfzlSVbeM0r/FcfG4/HDvXepeCs4?=
+ =?us-ascii?Q?EuQ6xFH+hdrReNqigeBnZJTOvDNs/DEqkCIYnfWDanuae3G787aFrkTTcato?=
+ =?us-ascii?Q?jATfBK96zi52PnqHPUT0GVuB1l9y7X5fjH4VoSHljLCe0GO4dxKRtyM/sctv?=
+ =?us-ascii?Q?2Sim4aV4DwoX+hMoQroedjQtzpvAoYyPuYwBimAFo8YGgoxq1Bfor2qpYeGm?=
+ =?us-ascii?Q?k2L3SrkulKiFqSRPuUeqfbc3YELxnKRCcc29Mo6ilocjjEsiAZX0F9rCqGkZ?=
+ =?us-ascii?Q?bKJaY33kmJQCcQ5zsY8bQAgbfGBF61NlDpaGUjQhV53tYJpN0axpZhlDnkTK?=
+ =?us-ascii?Q?hLfJgkPqzyzZ2kh5bMRpRHv1lJM88A8CrVjld9HYuq/xCZ//OcWQeAnGiNdL?=
+ =?us-ascii?Q?g9AqsFxbEkFIoECXTR3j8GsWlWbT4V6EsS1B5nj3uqJvdvzHi09DV4PTbfIU?=
+ =?us-ascii?Q?fdwpnItvvGh+ETUOJk9ljuhbyxc4ELMLBBnqvZVStZ0iEpTDmZ1WeiJe6Vz2?=
+ =?us-ascii?Q?HkXq9o4Id3e9FyX79yFP2boAC4P5tgeLP9a4BWz8?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e517f40b-794c-47a4-952e-08db553db3b3
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2023 12:12:50.0813
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8quOnnNBOxdw4tqchzoE4R9DYph0firWZ099EtdbNRWYDxYS5r2wSK5qv1YCcYK0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4321
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2023-05-14 at 17:20 -0700, Dai Ngo wrote:
-> If the GETATTR request on a file that has write delegation in effect
-> and the request attributes include the change info and size attribute
-> then the request is handled as below:
->=20
-> Server sends CB_GETATTR to client to get the latest change info and file
-> size. If these values are the same as the server's cached values then
-> the GETATTR proceeds as normal.
->=20
-> If either the change info or file size is different from the server's
-> cached values, or the file was already marked as modified, then:
->=20
->    . update time_modify and time_metadata into file's metadata
->      with current time
->=20
->    . encode GETATTR as normal except the file size is encoded with
->      the value returned from CB_GETATTR
->=20
->    . mark the file as modified
->=20
-> If the CB_GETATTR fails for any reasons, the delegation is recalled
-> and NFS4ERR_DELAY is returned for the GETATTR.
->=20
-> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
-> ---
->  fs/nfsd/nfs4state.c | 58 ++++++++++++++++++++++++++++++++++++
->  fs/nfsd/nfs4xdr.c   | 84 +++++++++++++++++++++++++++++++++++++++++++++++=
-+++++-
->  fs/nfsd/state.h     |  7 +++++
->  3 files changed, 148 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index 09a9e16407f9..fb305b28a090 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -127,6 +127,7 @@ static void free_session(struct nfsd4_session *);
-> =20
->  static const struct nfsd4_callback_ops nfsd4_cb_recall_ops;
->  static const struct nfsd4_callback_ops nfsd4_cb_notify_lock_ops;
-> +static const struct nfsd4_callback_ops nfsd4_cb_getattr_ops;
-> =20
->  static struct workqueue_struct *laundry_wq;
-> =20
-> @@ -1175,6 +1176,10 @@ alloc_init_deleg(struct nfs4_client *clp, struct n=
-fs4_file *fp,
->  	dp->dl_recalled =3D false;
->  	nfsd4_init_cb(&dp->dl_recall, dp->dl_stid.sc_client,
->  		      &nfsd4_cb_recall_ops, NFSPROC4_CLNT_CB_RECALL);
-> +	nfsd4_init_cb(&dp->dl_cb_fattr.ncf_getattr, dp->dl_stid.sc_client,
-> +			&nfsd4_cb_getattr_ops, NFSPROC4_CLNT_CB_GETATTR);
-> +	dp->dl_cb_fattr.ncf_file_modified =3D false;
-> +	dp->dl_cb_fattr.ncf_cb_bmap[0] =3D FATTR4_WORD0_CHANGE | FATTR4_WORD0_S=
-IZE;
->  	get_nfs4_file(fp);
->  	dp->dl_stid.sc_file =3D fp;
->  	return dp;
-> @@ -2882,11 +2887,49 @@ nfsd4_cb_recall_any_release(struct nfsd4_callback=
- *cb)
->  	spin_unlock(&nn->client_lock);
->  }
-> =20
-> +static int
-> +nfsd4_cb_getattr_done(struct nfsd4_callback *cb, struct rpc_task *task)
-> +{
-> +	struct nfs4_cb_fattr *ncf =3D
-> +		container_of(cb, struct nfs4_cb_fattr, ncf_getattr);
-> +
-> +	ncf->ncf_cb_status =3D task->tk_status;
-> +	switch (task->tk_status) {
-> +	case -NFS4ERR_DELAY:
-> +		rpc_delay(task, 2 * HZ);
-> +		return 0;
-> +	default:
-> +		return 1;
-> +	}
-> +}
-> +
-> +static void
-> +nfsd4_cb_getattr_release(struct nfsd4_callback *cb)
-> +{
-> +	struct nfs4_cb_fattr *ncf =3D
-> +		container_of(cb, struct nfs4_cb_fattr, ncf_getattr);
-> +
-> +	clear_bit(CB_GETATTR_BUSY, &ncf->ncf_cb_flags);
-> +	wake_up_bit(&ncf->ncf_cb_flags, CB_GETATTR_BUSY);
-> +}
-> +
->  static const struct nfsd4_callback_ops nfsd4_cb_recall_any_ops =3D {
->  	.done		=3D nfsd4_cb_recall_any_done,
->  	.release	=3D nfsd4_cb_recall_any_release,
->  };
-> =20
-> +static const struct nfsd4_callback_ops nfsd4_cb_getattr_ops =3D {
-> +	.done		=3D nfsd4_cb_getattr_done,
-> +	.release	=3D nfsd4_cb_getattr_release,
-> +};
-> +
-> +void nfs4_cb_getattr(struct nfs4_cb_fattr *ncf)
-> +{
-> +	if (test_and_set_bit(CB_GETATTR_BUSY, &ncf->ncf_cb_flags))
-> +		return;
-> +	nfsd4_run_cb(&ncf->ncf_getattr);
-> +}
-> +
->  static struct nfs4_client *create_client(struct xdr_netobj name,
->  		struct svc_rqst *rqstp, nfs4_verifier *verf)
->  {
-> @@ -5591,6 +5634,8 @@ nfs4_open_delegation(struct nfsd4_open *open, struc=
-t nfs4_ol_stateid *stp,
->  	int cb_up;
->  	int status =3D 0;
->  	u32 wdeleg =3D false;
-> +	struct kstat stat;
-> +	struct path path;
-> =20
->  	cb_up =3D nfsd4_cb_channel_good(oo->oo_owner.so_client);
->  	open->op_recall =3D 0;
-> @@ -5626,6 +5671,19 @@ nfs4_open_delegation(struct nfsd4_open *open, stru=
-ct nfs4_ol_stateid *stp,
->  	wdeleg =3D open->op_share_access & NFS4_SHARE_ACCESS_WRITE;
->  	open->op_delegate_type =3D wdeleg ?
->  			NFS4_OPEN_DELEGATE_WRITE : NFS4_OPEN_DELEGATE_READ;
-> +	if (wdeleg) {
-> +		path.mnt =3D currentfh->fh_export->ex_path.mnt;
-> +		path.dentry =3D currentfh->fh_dentry;
-> +		if (vfs_getattr(&path, &stat, STATX_BASIC_STATS,
+On Mon, May 15, 2023 at 12:16:21PM +0100, Lorenzo Stoakes wrote:
+> > One thing that came to mind is KVM with "qemu -object memory-backend-file,share=on..."
+> > It is mostly used for pmem emulation.
+> >
+> > Do we have plan B?
+> 
+> Yes, we can make it opt-in or opt-out via a FOLL_FLAG. This would be easy
+> to implement in the event of any issues arising.
 
-I think you want (STATX_SIZE|STATX_CTIME|STATX_CHANGE_COOKIE) here
-instead of BASIC_STATS. You might not get the change cookie otherwise,
-even when it's supported.
+I'm becoming less keen on the idea of a per-subsystem opt out. I think
+we should make a kernel wide opt out. I like the idea of using lower
+lockdown levels. Lots of things become unavaiable in the uAPI when the
+lockdown level increases already.
 
-> +						AT_STATX_SYNC_AS_STAT)) {
-> +			nfs4_put_stid(&dp->dl_stid);
-> +			destroy_delegation(dp);
-> +			goto out_no_deleg;
-> +		}
-> +		dp->dl_cb_fattr.ncf_cur_fsize =3D stat.size;
-> +		dp->dl_cb_fattr.ncf_initial_cinfo =3D nfsd4_change_attribute(&stat,
-> +							d_inode(currentfh->fh_dentry));
-> +	}
->  	nfs4_put_stid(&dp->dl_stid);
->  	return;
->  out_no_deleg:
-> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> index 76db2fe29624..5d7e11db8ccf 100644
-> --- a/fs/nfsd/nfs4xdr.c
-> +++ b/fs/nfsd/nfs4xdr.c
-> @@ -2920,6 +2920,77 @@ nfsd4_encode_bitmap(struct xdr_stream *xdr, u32 bm=
-val0, u32 bmval1, u32 bmval2)
->  	return nfserr_resource;
->  }
-> =20
-> +static struct file_lock *
-> +nfs4_wrdeleg_filelock(struct svc_rqst *rqstp, struct inode *inode)
-> +{
-> +	struct file_lock_context *ctx;
-> +	struct file_lock *fl;
-> +
-> +	ctx =3D locks_inode_context(inode);
-> +	if (!ctx)
-> +		return NULL;
-> +	spin_lock(&ctx->flc_lock);
-> +	list_for_each_entry(fl, &ctx->flc_lease, fl_list) {
-> +		if (fl->fl_type =3D=3D F_WRLCK) {
-> +			spin_unlock(&ctx->flc_lock);
-> +			return fl;
-> +		}
-> +	}
+> Jason will have some thoughts on this I'm sure. I guess the key question
+> here is - is it actually feasible for this to work at all? Once we
+> establish that, the rest are details :)
 
-When there is a write lease, then there cannot be any read leases, so
-you don't need to walk the entire list here. Just check the first
-element and see whether it's a write lease.
+Surely it is, but like Ted said, the FS folks are not interested and
+they are at least half the solution..
 
-> +	spin_unlock(&ctx->flc_lock);
-> +	return NULL;
-> +}
-> +
-> +static __be32
-> +nfs4_handle_wrdeleg_conflict(struct svc_rqst *rqstp, struct inode *inode=
-,
-> +			bool *modified, u64 *size)
-> +{
-> +	__be32 status;
-> +	struct file_lock *fl;
-> +	struct nfs4_delegation *dp;
-> +	struct nfs4_cb_fattr *ncf;
-> +	struct iattr attrs;
-> +
-> +	*modified =3D false;
-> +	fl =3D nfs4_wrdeleg_filelock(rqstp, inode);
-> +	if (!fl)
-> +		return 0;
-> +	dp =3D fl->fl_owner;
-> +	ncf =3D &dp->dl_cb_fattr;
-> +	if (dp->dl_recall.cb_clp =3D=3D *(rqstp->rq_lease_breaker))
-> +		return 0;
-> +
-> +	refcount_inc(&dp->dl_stid.sc_count);
-> +	nfs4_cb_getattr(&dp->dl_cb_fattr);
-> +	wait_on_bit(&ncf->ncf_cb_flags, CB_GETATTR_BUSY, TASK_INTERRUPTIBLE);
-> +	if (ncf->ncf_cb_status) {
-> +		status =3D nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
-> +		nfs4_put_stid(&dp->dl_stid);
-> +		return status;
-> +	}
-> +	ncf->ncf_cur_fsize =3D ncf->ncf_cb_fsize;
-> +	if (!ncf->ncf_file_modified &&
-> +			(ncf->ncf_initial_cinfo !=3D ncf->ncf_cb_change ||
-> +			ncf->ncf_cur_fsize !=3D ncf->ncf_cb_fsize)) {
-> +		ncf->ncf_file_modified =3D true;
-> +	}
-> +
-> +	if (ncf->ncf_file_modified) {
-> +		/*
-> +		 * The server would not update the file's metadata
-> +		 * with the client's modified size.
-> +		 * nfsd4 change attribute is constructed from ctime.
-> +		 */
-> +		attrs.ia_mtime =3D attrs.ia_ctime =3D current_time(inode);
-> +		attrs.ia_valid =3D ATTR_MTIME | ATTR_CTIME;
-> +		setattr_copy(&nop_mnt_idmap, inode, &attrs);
-> +		mark_inode_dirty(inode);
-> +		*size =3D ncf->ncf_cur_fsize;
-> +		*modified =3D true;
-> +	}
-> +	nfs4_put_stid(&dp->dl_stid);
-> +	return 0;
-> +}
-> +
->  /*
->   * Note: @fhp can be NULL; in this case, we might have to compose the fi=
-lehandle
->   * ourselves.
-> @@ -2957,6 +3028,8 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct s=
-vc_fh *fhp,
->  		.dentry	=3D dentry,
->  	};
->  	struct nfsd_net *nn =3D net_generic(SVC_NET(rqstp), nfsd_net_id);
-> +	bool file_modified;
-> +	u64 size =3D 0;
-> =20
->  	BUG_ON(bmval1 & NFSD_WRITEONLY_ATTRS_WORD1);
->  	BUG_ON(!nfsd_attrs_supported(minorversion, bmval));
-> @@ -2966,6 +3039,12 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct =
-svc_fh *fhp,
->  		if (status)
->  			goto out;
->  	}
-> +	if (bmval0 & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
-> +		status =3D nfs4_handle_wrdeleg_conflict(rqstp, d_inode(dentry),
-> +						&file_modified, &size);
-> +		if (status)
-> +			goto out;
-> +	}
-> =20
->  	err =3D vfs_getattr(&path, &stat,
->  			  STATX_BASIC_STATS | STATX_BTIME | STATX_CHANGE_COOKIE,
-> @@ -3089,7 +3168,10 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct =
-svc_fh *fhp,
->  		p =3D xdr_reserve_space(xdr, 8);
->  		if (!p)
->  			goto out_resource;
-> -		p =3D xdr_encode_hyper(p, stat.size);
-> +		if (file_modified)
-> +			p =3D xdr_encode_hyper(p, size);
-> +		else
-> +			p =3D xdr_encode_hyper(p, stat.size);
->  	}
->  	if (bmval0 & FATTR4_WORD0_LINK_SUPPORT) {
->  		p =3D xdr_reserve_space(xdr, 4);
-> diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-> index 9fb69ed8ae80..b20b65fe89b4 100644
-> --- a/fs/nfsd/state.h
-> +++ b/fs/nfsd/state.h
-> @@ -121,6 +121,10 @@ struct nfs4_cb_fattr {
->  	struct nfsd4_callback ncf_getattr;
->  	u32 ncf_cb_status;
->  	u32 ncf_cb_bmap[1];
-> +	unsigned long ncf_cb_flags;
-> +	bool ncf_file_modified;
-> +	u64 ncf_initial_cinfo;
-> +	u64 ncf_cur_fsize;
-> =20
->  	/* from CB_GETATTR reply */
->  	u64 ncf_cb_change;
-> @@ -744,6 +748,9 @@ extern void nfsd4_client_record_remove(struct nfs4_cl=
-ient *clp);
->  extern int nfsd4_client_record_check(struct nfs4_client *clp);
->  extern void nfsd4_record_grace_done(struct nfsd_net *nn);
-> =20
-> +/* CB_GETTTAR */
-> +extern void nfs4_cb_getattr(struct nfs4_cb_fattr *ncf);
-> +
->  static inline bool try_to_expire_client(struct nfs4_client *clp)
->  {
->  	cmpxchg(&clp->cl_state, NFSD4_COURTESY, NFSD4_EXPIRABLE);
+The FS also has to actively not write out the page while it cannot be
+write protected unless it copies the data to a stable page. The block
+stack needs the source data to be stable to do checksum/parity/etc
+stuff. It is a complicated subject.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Jason 
