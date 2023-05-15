@@ -2,108 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A66A770273A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 10:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81BA87027A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 10:55:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229820AbjEOIcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 04:32:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49560 "EHLO
+        id S234446AbjEOIzC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 04:55:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238321AbjEOIb1 (ORCPT
+        with ESMTP id S237856AbjEOIyp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 04:31:27 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A94FF1701;
-        Mon, 15 May 2023 01:31:26 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-53063897412so5114399a12.0;
-        Mon, 15 May 2023 01:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684139486; x=1686731486;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4VK51eI/t5c+51kYm+a78Tlw9GVzo2BN1qlFXbL5gxM=;
-        b=dgHWCWXr/45mZVHx37pUXQ5ax3pSD27O0hK2QZ8u39ByY789Uu4NssssUd3z7ZkcpW
-         2DgH38l/buoAWtH+zleNzK0iFwr7mJ501xhMwJofR4wF8kuukvdd1BAV1PYvUuNGghlB
-         +nqbd09i3wigZOmXWDk4g549jn+ordOKe2z1+c8EExES4hhZfAxeCR4dN9wHKLQ2tmGM
-         yoMMxeSPelwbPLMq6272ah2LagnkXZj+qhHGjmwyhTeLvuBIdtalX3Nh6tqLZNcfrtu+
-         wWfSfJ8p3DbBvU+hiobmLkDtvf/p8ZdHGlzp9lcQs12dMXsPdfgbVKZ5ROS7OGBQ4IiS
-         rGng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684139486; x=1686731486;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4VK51eI/t5c+51kYm+a78Tlw9GVzo2BN1qlFXbL5gxM=;
-        b=ITKGL0VQtfkhjssOXdKkC+6+BiKVvAbW5orTc6o9P4HkfYA7csVOuERnuhg8IZXDtP
-         SxGF9ahgAXa4kPu4rFqM8eIBBvkX5YUrUt3CrMTMOU/SHYfyvygELkcd9ffDv7y5q2w7
-         GMWXporDGO67Fj547UaA/b5OBOMNb9+7sLP/ju2rCAVbZjeTGMVCxB1O7AJSUChu0r+6
-         L6w+nrB+nlN192JTKNNscbllrCg6ayJe9DNxojoVfVvyDbH0y3PH1MrlbnK1lWhm3188
-         all2USfuHH91+uckSfK0v/p8tL1hBqMAffGz9e2FHRx3b2VIZE0MjvoPB5iEsQ2MYyTy
-         u3vA==
-X-Gm-Message-State: AC+VfDziwR7IEw1Fk/tcDsI+WvPfPebqcymUg0OlNZdZrZ5xwvcDcUZH
-        hjGCo7zO5LY+6vLxxX6HP8U=
-X-Google-Smtp-Source: ACHHUZ4r1zJo/M7Od73wSoUy4/JqVLUQxUGSohUkpS2AlgCsT9+nw31zZK4hcG6ZOq+vibt5IBA1rw==
-X-Received: by 2002:a05:6a20:a129:b0:101:38f0:1a90 with SMTP id q41-20020a056a20a12900b0010138f01a90mr25981877pzk.1.1684139485970;
-        Mon, 15 May 2023 01:31:25 -0700 (PDT)
-Received: from rh-tp ([129.41.58.18])
-        by smtp.gmail.com with ESMTPSA id h11-20020aa786cb000000b00646ec752fedsm10995364pfo.199.2023.05.15.01.31.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 01:31:25 -0700 (PDT)
-Date:   Mon, 15 May 2023 14:01:08 +0530
-Message-Id: <87v8guhu7n.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Pankaj Raghav <p.raghav@samsung.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>,
-        Aravinda Herle <araherle@in.ibm.com>, mcgrof@kernel.org
-Subject: Re: [RFCv5 5/5] iomap: Add per-block dirty state tracking to improve performance
-In-Reply-To: <20230515081613.rlnehghsypix5ddm@localhost>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 15 May 2023 04:54:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93EEB199
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 01:54:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F559611C5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 08:54:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E653C433EF;
+        Mon, 15 May 2023 08:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684140883;
+        bh=v+5nF/1DkkDDoVN+U8TQob4EWCEaBwMC/iQv9hCC1oQ=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=Njm8OfWBVpLM34hIqp0kC7RyVTINrPlKdsqrER5MufEN5+SHsNqF/YYkgt1P58KVM
+         2vKz/0hoKW/Kiiy55KGox8gOKTmx3d62dJpGES4tfueAzOI8GW2p7EyZwSOuzTirE9
+         gxJyu4uQ0F3ZDyuNcZaZwIy/fwub/5q0PdMG/tGOo11mv48E2HycANyrcML/IBrOp5
+         QOUsG7LNep7mcGwGb6c9nF3WSMDbueW3uOmgW86itKzoKyX+hz7xQCqArwTDONAaB9
+         skQ8dt85AgpLGE+BqLNVWhvGdEOWXY/HiMfTcnzjevQZEHBNSt7zaIU/aUwIPPmUTo
+         WGgnjncS7IjnQ==
+Date:   Mon, 15 May 2023 10:54:39 +0200
+From:   Carlos Maiolino <cem@kernel.org>
+To:     hughd@google.com, jack@suse.cz, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org
+Subject: Re: [PATCH V4 0/6] shmem: Add user and group quota support for tmpfs
+Message-ID: <20230515085439.5s5n4xxljgl6e5jl@andromeda>
+References: <p9LagXdw-LiFcxInjRmJLqLkzLqVNNSLD3tgGy8JvvgCPGI7k-7Aaxu5gpTG0Kyy3tXWAbNZT8ZUzAH1eFW4qw==@protonmail.internalid>
+ <20230426102008.2930932-1-cem@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230426102008.2930932-1-cem@kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pankaj Raghav <p.raghav@samsung.com> writes:
+On Wed, Apr 26, 2023 at 12:20:02PM +0200, cem@kernel.org wrote:
+> From: Carlos Maiolino <cem@kernel.org>
+> 
+> Hello folks.
+> 
+> This is the final version of the quota support from tmpfs, with all the issues
+> addressed, and now including RwB tags on all patches, and should be ready for
+> merge. Details are within each patch, and the original cover-letter below.
+> 
 
->> @@ -1666,7 +1766,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->>  		struct writeback_control *wbc, struct inode *inode,
->>  		struct folio *folio, u64 end_pos)
->>  {
->> -	struct iomap_page *iop = iop_alloc(inode, folio, 0);
->> +	struct iomap_page *iop = iop_alloc(inode, folio, 0, true);
->>  	struct iomap_ioend *ioend, *next;
->>  	unsigned len = i_blocksize(inode);
->>  	unsigned nblocks = i_blocks_per_folio(inode, folio);
->> @@ -1682,7 +1782,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->>  	 * invalid, grab a new one.
->>  	 */
->>  	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
->> -		if (iop && !iop_test_block_uptodate(folio, i))
->> +		if (iop && !iop_test_block_dirty(folio, i))
->
-> Shouldn't this be if(iop && iop_test_block_dirty(folio, i))?
->
-> Before we were skipping if the blocks were not uptodate but now we are
-> skipping if the blocks are not dirty (which means they are uptodate)?
->
-> I am new to iomap but let me know if I am missing something here.
->
+Ping? Can somebody manage to pickup these patches?
 
-We set the per-block dirty status in ->write_begin. The check above happens in the
-writeback path when we are about to write the dirty data to the disk.
-What the check is doing is that, it checks if the block state is not dirty
-then skip it which means the block was not written to in the ->write_begin().
-Also the block with dirty status always means that the block is uptodate
-anyways.
+Thanks!
 
-Hope it helps!
+> Hi folks. this work has been done originally by Lukas, but he left the company,
+> so I'm taking over his work from where he left it of. This series is virtually
+> done, and he had updated it with comments from the last version, but, I'm
+> initially posting it as a RFC because it's been a while since he posted the
+> last version.
+> Most of what I did here was rebase his last work on top of current Linus's tree.
+> 
+> Honza, there is one patch from you in this series, which I believe you had it
+> suggested to Lukas on a previous version.
+> 
+> The original cover-letter follows...
+> 
+> people have been asking for quota support in tmpfs many times in the past
+> mostly to avoid one malicious user, or misbehaving user/program to consume
+> all of the system memory. This has been partially solved with the size
+> mount option, but some problems still prevail.
+> 
+> One of the problems is the fact that /dev/shm is still generally unprotected
+> with this and another is administration overhead of managing multiple tmpfs
+> mounts and lack of more fine grained control.
+> 
+> Quota support can solve all these problems in a somewhat standard way
+> people are already familiar with from regular file systems. It can give us
+> more fine grained control over how much memory user/groups can consume.
+> Additionally it can also control number of inodes and with special quota
+> mount options introduced with a second patch we can set global limits
+> allowing us to replace the size mount option with quota entirely.
+> 
+> Currently the standard userspace quota tools (quota, xfs_quota) are only
+> using quotactl ioctl which is expecting a block device. I patched quota [1]
+> and xfs_quota [2] to use quotactl_fd in case we want to run the tools on
+> mount point directory to work nicely with tmpfs.
+> 
+> The implementation was tested on patched version of xfstests [3].
+> 
+> [1] https://github.com/lczerner/quota/tree/quotactl_fd_support
+> [2] https://github.com/lczerner/xfsprogs/tree/quotactl_fd_support
+> [3] https://github.com/lczerner/xfstests/tree/tmpfs_quota_support
+> 
+> 
+> Jan Kara (1):
+>   quota: Check presence of quota operation structures instead of
+>     ->quota_read and ->quota_write callbacks
+> 
+> Lukas Czerner (5):
+>   shmem: make shmem_inode_acct_block() return error
+>   shmem: make shmem_get_inode() return ERR_PTR instead of NULL
+>   shmem: prepare shmem quota infrastructure
+>   shmem: quota support
+>   Add default quota limit mount options
+> 
+>  Documentation/filesystems/tmpfs.rst |  31 ++
+>  fs/Kconfig                          |  12 +
+>  fs/quota/dquot.c                    |   2 +-
+>  include/linux/shmem_fs.h            |  28 ++
+>  include/uapi/linux/quota.h          |   1 +
+>  mm/Makefile                         |   2 +-
+>  mm/shmem.c                          | 465 +++++++++++++++++++++-------
+>  mm/shmem_quota.c                    | 350 +++++++++++++++++++++
+>  8 files changed, 783 insertions(+), 108 deletions(-)
+>  create mode 100644 mm/shmem_quota.c
+> 
+> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> --
+> 2.30.2
+> 
 
--ritesh
+-- 
+Carlos Maiolino
