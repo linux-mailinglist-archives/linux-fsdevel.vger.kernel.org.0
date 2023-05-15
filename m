@@ -2,60 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4631770370B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 19:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 667B47036DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 19:14:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243925AbjEORQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 13:16:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55890 "EHLO
+        id S243816AbjEOROf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 13:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243764AbjEORP4 (ORCPT
+        with ESMTP id S243775AbjEOROU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 13:15:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED203100F3;
-        Mon, 15 May 2023 10:14:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 59B6F62BBB;
-        Mon, 15 May 2023 17:14:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 179D0C433EF;
-        Mon, 15 May 2023 17:14:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1684170883;
-        bh=4jSls9SEgL+5agkw266mNjGCuZcNspC+bOyWIa1yb6I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jRYAjJ608jjjiUSdRUie7QQOp8sksSyc0lYCe+rMnhsYqNmfqaPJaGwYKFqEaNJwD
-         Jix+TYhDkHwYlLIEBLWepcRRm2q4KLrkXmoOUlbz5/mSeQlv11/SJIfV95hHYubpxN
-         TYN3I+WedvJaQTxke0ZPSFnlCr60Ti+e6XNpZehg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev,
-        syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.2 031/242] rxrpc: Fix potential data race in rxrpc_wait_to_be_connected()
-Date:   Mon, 15 May 2023 18:25:57 +0200
-Message-Id: <20230515161722.857279092@linuxfoundation.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230515161721.802179972@linuxfoundation.org>
-References: <20230515161721.802179972@linuxfoundation.org>
-User-Agent: quilt/0.67
+        Mon, 15 May 2023 13:14:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D09DDAD20
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 10:11:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684170691;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=B0VQV6r8AYh45PqzQsI13Ira1377ExJZY+6kun+twe0=;
+        b=JkxmJVpN8n+6eh/UVuIf89FGxmL8WyXylsASa0SnyVdslzTKDZS3q+vIa32bj4Wy2xTcYn
+        I6VnJJWr/J6/UFgWNhSiV4tmK82K9FPyzo4fkrf/iI4t0cVwHG37fNW2YrKxXIXBW4Gs56
+        l7lllWWZqt5LXBScls3K+geFf8vCens=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-53-KQbYEC7MOdq1kQjNJemo2Q-1; Mon, 15 May 2023 13:11:29 -0400
+X-MC-Unique: KQbYEC7MOdq1kQjNJemo2Q-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-61e209243f7so65548766d6.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 10:11:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684170689; x=1686762689;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B0VQV6r8AYh45PqzQsI13Ira1377ExJZY+6kun+twe0=;
+        b=c5ipc7PyWdU8WiDYbCeegtjdGKh6VsL6KfgNNSY7t6Pp/dV2eLOgIbAcfEzdJPUNsb
+         bmpDYYE+3sa125+KayBlJBaTy3PxHLULnxx0F+/hT8uQSGO9B6+f/XR2rWDl+y8/joE9
+         1aqCMhCbiQpC9S04Dmtj6/OYhHN1R10/5+RTRL02ef6x98lz80a2Er2lcj1OpPXZ8qiU
+         KRerm5D5gyEBWiYe5tuXniiGcSgkUkIaID7rOL5W8ap20aB3z6C+pBJBo7LwwdhkdaV5
+         nBBlCr6/G3MMcd3nfp7PTf3YT8GfWJNYTrg8+vfg3niKwGmAJOOfufhuPG0dddsfpU8k
+         1+xw==
+X-Gm-Message-State: AC+VfDz9FOQl3m3C2lfHDxGyI08n48c+PDHzm7Hb51J6aicOP3z1q+us
+        2OYZElDVCGwwePcAVGq1znHCkH83heLgIUEgaTipjo4sJjswLjMRHNNPf1O4CreO2v9nIQ+QpkI
+        Y4B0rvVBXsATVDmPd48RELxJOBuZViw8k2Q==
+X-Received: by 2002:ad4:5be1:0:b0:623:44bf:c41f with SMTP id k1-20020ad45be1000000b0062344bfc41fmr13483333qvc.17.1684170688729;
+        Mon, 15 May 2023 10:11:28 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4zrtsD09R7XFx/jpOy5e7xJUOfRnJ+UlDpdJUF6fpginznv6eVOpZ0LpRmkUGSJGRUVwZ3+g==
+X-Received: by 2002:ad4:5be1:0:b0:623:44bf:c41f with SMTP id k1-20020ad45be1000000b0062344bfc41fmr13483290qvc.17.1684170688434;
+        Mon, 15 May 2023 10:11:28 -0700 (PDT)
+Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id a3-20020a05620a102300b00759240a4771sm53672qkk.130.2023.05.15.10.11.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 May 2023 10:11:27 -0700 (PDT)
+Message-ID: <fb005d7e29f1167b83acf7b10800ff3124ee2a50.camel@redhat.com>
+Subject: Re: [PATCH] fix NFSv4 acl detection on F39
+From:   Jeff Layton <jlayton@redhat.com>
+To:     Ondrej Valousek <ondrej.valousek.xm@renesas.com>,
+        Paul Eggert <eggert@cs.ucla.edu>,
+        Bruno Haible <bruno@clisp.org>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     "bug-gnulib@gnu.org" <bug-gnulib@gnu.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>
+Date:   Mon, 15 May 2023 13:11:26 -0400
+In-Reply-To: <TYXPR01MB18547A591663A4934B5D4D82D9789@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+References: <20230501194321.57983-1-ondrej.valousek.xm@renesas.com>
+         <c955ee20-371c-5dde-fcb5-26d573f69cd9@cs.ucla.edu>
+         <TYXPR01MB1854B3C3B8215DD0FA7B83CCD96D9@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+         <17355394.lhrHg4fidi@nimes>
+         <32edbaf1-d3b1-6057-aefc-d83df3266c20@cs.ucla.edu>
+         <4f1519d8-bda1-1b15-4a78-a8072ba1551a@cs.ucla.edu>
+         <TYXPR01MB18547A591663A4934B5D4D82D9789@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,116 +89,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+On Mon, 2023-05-15 at 11:50 +0000, Ondrej Valousek wrote:
+> Hi Paul,
+>=20
+> Ok first of all, thanks for taking initiative on this, I am unable to pro=
+ceed on this on my own at the moment.
+> I see few problems with this:
+>=20
+> 1. The calculation of the 'listbufsize' is incorrect in your patch. It wi=
+ll _not_work as you expected and won't limit the number of syscalls (which =
+is why we came up with this patch, right?). Check with my original proposal=
+, we really need to check for 'system.nfs4' xattr name presence here
+> 2. It mistakenly detects an ACL presence on files which do not have any A=
+CL on NFSv4 filesystem. Digging further it seems that kernel in F39 behaves=
+ differently to the previous kernels:
+>=20
+> F38:=20
+> # getfattr -m . /path_to_nfs4_file
+> # file: path_to_nfs4_file
+> system.nfs4_acl                                    <---- only single xatt=
+r detected
+>
+> F39:
+> # getfattr -m . /path_to_nfs4_file
+> # file: path_to_nfs4_file
+> system.nfs4_acl
+> system.posix_acl_default
+> /* SOMETIMES even shows this */
+> system.posix_acl_default
 
-[ Upstream commit 2b5fdc0f5caa505afe34d608e2eefadadf2ee67a ]
+(cc'ing Christian and relevant kernel lists)
 
-Inside the loop in rxrpc_wait_to_be_connected() it checks call->error to
-see if it should exit the loop without first checking the call state.  This
-is probably safe as if call->error is set, the call is dead anyway, but we
-should probably wait for the call state to have been set to completion
-first, lest it cause surprise on the way out.
+I assume the F39 kernel is v6.4-rc based? If so, then I think that's a
+regression. NFSv4 client inodes should _not_ report a POSIX ACL
+attribute since the protocol doesn't support them.
 
-Fix this by only accessing call->error if the call is complete.  We don't
-actually need to access the error inside the loop as we'll do that after.
+In fact, I think the rationale in the kernel commit below is wrong.
+NFSv4 has a listxattr operation, but doesn't support POSIX ACLs.
 
-This caused the following report:
+Christian, do we need to revert this?
 
-    BUG: KCSAN: data-race in rxrpc_send_data / rxrpc_set_call_completion
+commit e499214ce3ef50c50522719e753a1ffc928c2ec1
+Author: Christian Brauner <brauner@kernel.org>
+Date:   Wed Feb 1 14:15:01 2023 +0100
 
-    write to 0xffff888159cf3c50 of 4 bytes by task 25673 on cpu 1:
-     rxrpc_set_call_completion+0x71/0x1c0 net/rxrpc/call_state.c:22
-     rxrpc_send_data_packet+0xba9/0x1650 net/rxrpc/output.c:479
-     rxrpc_transmit_one+0x1e/0x130 net/rxrpc/output.c:714
-     rxrpc_decant_prepared_tx net/rxrpc/call_event.c:326 [inline]
-     rxrpc_transmit_some_data+0x496/0x600 net/rxrpc/call_event.c:350
-     rxrpc_input_call_event+0x564/0x1220 net/rxrpc/call_event.c:464
-     rxrpc_io_thread+0x307/0x1d80 net/rxrpc/io_thread.c:461
-     kthread+0x1ac/0x1e0 kernel/kthread.c:376
-     ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
-
-    read to 0xffff888159cf3c50 of 4 bytes by task 25672 on cpu 0:
-     rxrpc_send_data+0x29e/0x1950 net/rxrpc/sendmsg.c:296
-     rxrpc_do_sendmsg+0xb7a/0xc20 net/rxrpc/sendmsg.c:726
-     rxrpc_sendmsg+0x413/0x520 net/rxrpc/af_rxrpc.c:565
-     sock_sendmsg_nosec net/socket.c:724 [inline]
-     sock_sendmsg net/socket.c:747 [inline]
-     ____sys_sendmsg+0x375/0x4c0 net/socket.c:2501
-     ___sys_sendmsg net/socket.c:2555 [inline]
-     __sys_sendmmsg+0x263/0x500 net/socket.c:2641
-     __do_sys_sendmmsg net/socket.c:2670 [inline]
-     __se_sys_sendmmsg net/socket.c:2667 [inline]
-     __x64_sys_sendmmsg+0x57/0x60 net/socket.c:2667
-     do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-     do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
-     entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-    value changed: 0x00000000 -> 0xffffffea
-
-Fixes: 9d35d880e0e4 ("rxrpc: Move client call connection to the I/O thread")
-Reported-by: syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/r/000000000000e7c6d205fa10a3cd@google.com/
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Dmitry Vyukov <dvyukov@google.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-fsdevel@vger.kernel.org
-cc: netdev@vger.kernel.org
-Link: https://lore.kernel.org/r/508133.1682427395@warthog.procyon.org.uk
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/rxrpc/sendmsg.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
-index da49fcf1c4567..6caa47d352ed6 100644
---- a/net/rxrpc/sendmsg.c
-+++ b/net/rxrpc/sendmsg.c
-@@ -50,15 +50,11 @@ static int rxrpc_wait_to_be_connected(struct rxrpc_call *call, long *timeo)
- 	_enter("%d", call->debug_id);
- 
- 	if (rxrpc_call_state(call) != RXRPC_CALL_CLIENT_AWAIT_CONN)
--		return call->error;
-+		goto no_wait;
- 
- 	add_wait_queue_exclusive(&call->waitq, &myself);
- 
- 	for (;;) {
--		ret = call->error;
--		if (ret < 0)
--			break;
--
- 		switch (call->interruptibility) {
- 		case RXRPC_INTERRUPTIBLE:
- 		case RXRPC_PREINTERRUPTIBLE:
-@@ -69,10 +65,9 @@ static int rxrpc_wait_to_be_connected(struct rxrpc_call *call, long *timeo)
- 			set_current_state(TASK_UNINTERRUPTIBLE);
- 			break;
- 		}
--		if (rxrpc_call_state(call) != RXRPC_CALL_CLIENT_AWAIT_CONN) {
--			ret = call->error;
-+
-+		if (rxrpc_call_state(call) != RXRPC_CALL_CLIENT_AWAIT_CONN)
- 			break;
--		}
- 		if ((call->interruptibility == RXRPC_INTERRUPTIBLE ||
- 		     call->interruptibility == RXRPC_PREINTERRUPTIBLE) &&
- 		    signal_pending(current)) {
-@@ -85,6 +80,7 @@ static int rxrpc_wait_to_be_connected(struct rxrpc_call *call, long *timeo)
- 	remove_wait_queue(&call->waitq, &myself);
- 	__set_current_state(TASK_RUNNING);
- 
-+no_wait:
- 	if (ret == 0 && rxrpc_call_is_complete(call))
- 		ret = call->error;
- 
--- 
-2.39.2
+    acl: don't depend on IOP_XATTR
+   =20
+    All codepaths that don't want to implement POSIX ACLs should simply not
+    implement the associated inode operations instead of relying on
+    IOP_XATTR. That's the case for all filesystems today.
+   =20
+    For vfs_listxattr() all filesystems that explicitly turn of xattrs for =
+a
+    given inode all set inode->i_op to a dedicated set of inode operations
+    that doesn't implement ->listxattr().  We can remove the dependency of
+    vfs_listxattr() on IOP_XATTR.
+   =20
+    Removing this dependency will allow us to decouple POSIX ACLs from
+    IOP_XATTR and they can still be listed even if no other xattr handlers
+    are implemented. Otherwise we would have to implement elaborate schemes
+    to raise IOP_XATTR even if sb->s_xattr is set to NULL.
+   =20
+    Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
 
+>=20
+> Now I faintly recall there was an activity in to move POSIX acls calculat=
+ion from userspace to kernel (now Jeff in CC will hopefully clarify this)
+>=20
+
+The POSIX<->NFSv4 ACL translation has always been in the kernel server.
+It has to be, as the primary purpose is to translate v4 ACLs from the
+clients to and from the POSIX ACLs that the exported Linux filesystems
+support.
+
+--=20
+Jeff Layton <jlayton@redhat.com>
 
