@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0E97028D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 11:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B28A87028D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 11:36:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240473AbjEOJg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 05:36:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39906 "EHLO
+        id S240120AbjEOJgm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 05:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239037AbjEOJfg (ORCPT
+        with ESMTP id S239938AbjEOJfj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 05:35:36 -0400
+        Mon, 15 May 2023 05:35:39 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECADE10DD
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 02:34:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 006A010D9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 02:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684143287;
+        s=mimecast20190719; t=1684143290;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5dEuCyEYbAeTLbptDWG+lpG3TePaGyDY6iKA6gIr8Gk=;
-        b=gqV2PDOdSOtvhYwZyarkp9am8JU9GeNJMEcOlijk/7lq1oLv4KBqTjL8RmMHNL56hLbehO
-        rJD+gz9VnGietzea0BN0UYvCrBmx7zzbILA5G1Whshr0EugBkfDtN/UBUK+x6DXGBm1p4Q
-        dIg6OI2HFeZu/eOsaoxiw4pmP71REfs=
+        bh=arPLIYOMzcdUPWLjuF22tHo0vP4jVzFFThikgCzP+CE=;
+        b=NXZlNEcMRBUhRzkXXXbAk6WOOwUdUaMLiWl+LhLWJ3atlDPK3t2kdCMT6HywjSBAgh4kOJ
+        eY5dqjdd0mTnK2fWmZ0+MtYfHT1SY2kiAWZ2qkku72LQK74uttqSe+ZKZR6FlqkoAJAp60
+        PjWCCYkCJsRJyyk7GS3pns1VdCZPpJQ=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-196-7yv7CbjeNdu0aC-6W8LDyw-1; Mon, 15 May 2023 05:34:43 -0400
-X-MC-Unique: 7yv7CbjeNdu0aC-6W8LDyw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+ us-mta-66-s4PfbxzJO6eXzsD79oKorw-1; Mon, 15 May 2023 05:34:47 -0400
+X-MC-Unique: s4PfbxzJO6eXzsD79oKorw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7E350870820;
-        Mon, 15 May 2023 09:34:42 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 23A9387082F;
+        Mon, 15 May 2023 09:34:46 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AED6840C6EC4;
-        Mon, 15 May 2023 09:34:39 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 40B9963F5F;
+        Mon, 15 May 2023 09:34:43 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     David Howells <dhowells@redhat.com>,
@@ -56,14 +56,14 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH net-next v7 12/16] ip6, udp6: Support MSG_SPLICE_PAGES
-Date:   Mon, 15 May 2023 10:33:41 +0100
-Message-Id: <20230515093345.396978-13-dhowells@redhat.com>
+Subject: [PATCH net-next v7 13/16] udp: Convert udp_sendpage() to use MSG_SPLICE_PAGES
+Date:   Mon, 15 May 2023 10:33:42 +0100
+Message-Id: <20230515093345.396978-14-dhowells@redhat.com>
 In-Reply-To: <20230515093345.396978-1-dhowells@redhat.com>
 References: <20230515093345.396978-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -74,8 +74,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make IP6/UDP6 sendmsg() support MSG_SPLICE_PAGES.  This causes pages to be
-spliced from the source iterator if possible, copying the data if not.
+Convert udp_sendpage() to use sendmsg() with MSG_SPLICE_PAGES rather than
+directly splicing in the pages itself.
 
 This allows ->sendpage() to be replaced by something that can handle
 multiple multipage folios in a single transaction.
@@ -94,44 +94,75 @@ cc: netdev@vger.kernel.org
 
 Notes:
     ver #6)
-     - Use common helper.
+     - udp_sendpage() shouldn't lock the socket around udp_sendpage().
+     - udp_sendpage() should only set MSG_MORE if MSG_SENDPAGE_NOTLAST is set.
 
- net/ipv6/ip6_output.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ net/ipv4/udp.c | 51 ++++++--------------------------------------------
+ 1 file changed, 6 insertions(+), 45 deletions(-)
 
-diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-index 9554cf46ed88..c722cb881b2d 100644
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1589,6 +1589,14 @@ static int __ip6_append_data(struct sock *sk,
- 				skb_zcopy_set(skb, uarg, &extra_uref);
- 			}
- 		}
-+	} else if ((flags & MSG_SPLICE_PAGES) && length) {
-+		if (inet_sk(sk)->hdrincl)
-+			return -EPERM;
-+		if (rt->dst.dev->features & NETIF_F_SG)
-+			/* We need an empty buffer to attach stuff to */
-+			paged = true;
-+		else
-+			flags &= ~MSG_SPLICE_PAGES;
- 	}
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index aa32afd871ee..2879dc6d66ea 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -1332,54 +1332,15 @@ EXPORT_SYMBOL(udp_sendmsg);
+ int udp_sendpage(struct sock *sk, struct page *page, int offset,
+ 		 size_t size, int flags)
+ {
+-	struct inet_sock *inet = inet_sk(sk);
+-	struct udp_sock *up = udp_sk(sk);
+-	int ret;
++	struct bio_vec bvec;
++	struct msghdr msg = { .msg_flags = flags | MSG_SPLICE_PAGES };
  
- 	/*
-@@ -1778,6 +1786,15 @@ static int __ip6_append_data(struct sock *sk,
- 				err = -EFAULT;
- 				goto error;
- 			}
-+		} else if (flags & MSG_SPLICE_PAGES) {
-+			struct msghdr *msg = from;
-+
-+			err = skb_splice_from_iter(skb, &msg->msg_iter, copy,
-+						   sk->sk_allocation);
-+			if (err < 0)
-+				goto error;
-+			copy = err;
-+			wmem_alloc_delta += copy;
- 		} else if (!zc) {
- 			int i = skb_shinfo(skb)->nr_frags;
+ 	if (flags & MSG_SENDPAGE_NOTLAST)
+-		flags |= MSG_MORE;
+-
+-	if (!up->pending) {
+-		struct msghdr msg = {	.msg_flags = flags|MSG_MORE };
+-
+-		/* Call udp_sendmsg to specify destination address which
+-		 * sendpage interface can't pass.
+-		 * This will succeed only when the socket is connected.
+-		 */
+-		ret = udp_sendmsg(sk, &msg, 0);
+-		if (ret < 0)
+-			return ret;
+-	}
+-
+-	lock_sock(sk);
++		msg.msg_flags |= MSG_MORE;
  
+-	if (unlikely(!up->pending)) {
+-		release_sock(sk);
+-
+-		net_dbg_ratelimited("cork failed\n");
+-		return -EINVAL;
+-	}
+-
+-	ret = ip_append_page(sk, &inet->cork.fl.u.ip4,
+-			     page, offset, size, flags);
+-	if (ret == -EOPNOTSUPP) {
+-		release_sock(sk);
+-		return sock_no_sendpage(sk->sk_socket, page, offset,
+-					size, flags);
+-	}
+-	if (ret < 0) {
+-		udp_flush_pending_frames(sk);
+-		goto out;
+-	}
+-
+-	up->len += size;
+-	if (!(READ_ONCE(up->corkflag) || (flags&MSG_MORE)))
+-		ret = udp_push_pending_frames(sk);
+-	if (!ret)
+-		ret = size;
+-out:
+-	release_sock(sk);
+-	return ret;
++	bvec_set_page(&bvec, page, size, offset);
++	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
++	return udp_sendmsg(sk, &msg, size);
+ }
+ 
+ #define UDP_SKB_IS_STATELESS 0x80000000
 
