@@ -2,207 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04BAD703F68
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 23:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E07B703F81
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 May 2023 23:19:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244771AbjEOVLm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 May 2023 17:11:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44646 "EHLO
+        id S244744AbjEOVTg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 May 2023 17:19:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242603AbjEOVLk (ORCPT
+        with ESMTP id S236744AbjEOVTe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 May 2023 17:11:40 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EE56129
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 14:11:39 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id ECF3432007BE;
-        Mon, 15 May 2023 17:11:34 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 15 May 2023 17:11:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:content-transfer-encoding:content-type:content-type:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1684185094; x=1684271494; bh=tTM6Ma7Tqg5ENG0TOTiHn6TgbPp6GpSZcIf
-        D9qgO+wM=; b=3OZDYuqgSjl9rpNQLnVhYG0Zr1FbKFgzjtx3U9spfg7c3jvsmur
-        j9FPVo0Q+F45CdW/YcgDct0oIQqNmN7t1CjLfTnfIa72Zm+CVKhNwi9s+ZZFim7H
-        K2riRpS74OlQVtwNCa1qMiNSEYUw0E1a867+tPXCiFAlkdPM85Ophyzkkdd+7aTX
-        +WUJdpfTs8J6jswoXSfYRk3RKwuxogknyWxFCX6SZNjmMwlTG96gXjsUtS5TBgk9
-        uq25cwujA990CLxclgosnRFexhxzutCLXm0KeftA2iVZgUyp9GlBH57gyID0QbQ9
-        31c/LL4z5rd1mMHrddFGvR3M9+/wFQJFZfQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1684185094; x=
-        1684271494; bh=tTM6Ma7Tqg5ENG0TOTiHn6TgbPp6GpSZcIfD9qgO+wM=; b=N
-        jfXVf6PvhznUhXSSB+QXRz27lBIYhgSqM/X5FNPrAHpb5B/gNgM30qn4DUzDy6s7
-        o9CdxcnYYk60vXhMoTj5MsY43HtxF91UxRsFaUQ1HXqR3cr0i4mB0VIiRrfTIa8n
-        UCYaI1AyejR4csqywzBKJhUbhpWp1ukruZGVeZqTmnG0hz4ZJVqAkWIA9yHlAYPN
-        k50p6Zrg9wJ9kCr/pBBrtQ3+4tYJtpIQHmJh5kxXI6ywxRus20XjsPsmxP/wXWBy
-        F4PXDwm5Ob3YaeDHIDE7s5mDac26lQ2edvSXS+zxtIM1zkPokj8iJrmPfU+ki4Wv
-        6YgbjfI4TH19siwbDe+YA==
-X-ME-Sender: <xms:BqBiZOSaSiynNGGGnZM2IrFsJ9wJMJQQ8RyjLut-n6WTyeupZFK4Sg>
-    <xme:BqBiZDznEq3GzTn615nC56mupTf-shyOr-K4in8iCEwi7nxFxRuRLg6gUkWaEEuMg
-    l_WaxshYacCD0A->
-X-ME-Received: <xmr:BqBiZL20fNfleS5UjCt7Sq4N-g4QrvkNgipUfwOBMBSLhTcihA5nqwIqcOa-akIvWtDtHrjqkZrhiLUeDRjZmGrkh-_TtCDVMNBMTE3QOg2gfOcR2ZQs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeehjedgudeitdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfhfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnheptdduueeuveegkeefheeiueekvdduleeiveet
-    veeutdeufffhueetieevvdfhuddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:BqBiZKAumpN62Xm8-Q9xDT3O91HJduwkuN6RGTODTK0dRc7ynHj5Tw>
-    <xmx:BqBiZHheTVYnDktZTqc_h5iv0yLeKmErCjFlrTpwqolBEpq7TRiTVw>
-    <xmx:BqBiZGqlV-klnTMieGM5h7QQeKMGBHtcz-dsw-YIgqKKH3rtCuouFQ>
-    <xmx:BqBiZHxblG_C4GfheyhXkZaRFcr_qNtdJNKXUhcvpGBa_fFdf_EkWg>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 May 2023 17:11:32 -0400 (EDT)
-Message-ID: <93b77b5d-a1bc-7bb9-ffea-3876068bd369@fastmail.fm>
-Date:   Mon, 15 May 2023 23:11:30 +0200
+        Mon, 15 May 2023 17:19:34 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03728D2D5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 14:19:33 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-50bdd7b229cso24003903a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 May 2023 14:19:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1684185571; x=1686777571;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iCAGJRSZlOdbZk8TJO2+IV5B/w81wFfW9jtMkWpTH+M=;
+        b=Fvz8x0dNvAfi6vn1MsWVsrIVhI0JC8Py8rU64fVV7c1WYzdrPJSFY/nJ5/ha/SBSdW
+         O9Qrv+J04LkWY26V+6ISj9fbwtnonPqRY48vi74RSHlcYaXNOdDEzZhPQlpxhzKkIUJ0
+         9wiJslfn6dHpTu8YNli6Te99vlovWTdFmnEfc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684185571; x=1686777571;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iCAGJRSZlOdbZk8TJO2+IV5B/w81wFfW9jtMkWpTH+M=;
+        b=VVDL8q4GxmVEY3/XnMD7I/jSTla4ITOQdI9z0XIUayuvin64SqRVTqiYosQHky416E
+         32BGPLq2XUh/NH+0PFM9V17iJkzWrE+plUaBlqzJhFYLsr31PX/aJ32IkbveUC53GQ9B
+         WOqQRwIsKBgDUknOALnBcaaxf62N2W87vYTzHIY2c9qP8lhF/vFMkBLaVNTWJj8nS/6M
+         KR7RUDuKPvDQB+q6GgZHNaUThLJ3K+LWWwANSZgXWDd2gzaVBABmIF3YD/EGd8XOcAU7
+         KD/ty1OL0pj9hM4rLtMW3YEYfM2jKtpDnGgYzd0KgTRl+4UByye271z7JYcFbiuFS/lq
+         9AAw==
+X-Gm-Message-State: AC+VfDw+g8m0SW6sRYRFVvWrtqlpf8NoPsVqHxtbSrPKqYEUKMbeColn
+        GQVu3ETeGkI8JpmOLNR8ET1j5RD2BiDE89cDc/yuiw==
+X-Google-Smtp-Source: ACHHUZ4NVNi7naSU30mEHscyRmFftvi4fhFnmiYSDcSrg9y4ApnJuNxOMdtq7yH9l565H4qJkeCcSkHBc3YRcSzTMNU=
+X-Received: by 2002:a17:907:9485:b0:96a:b12d:2fdf with SMTP id
+ dm5-20020a170907948500b0096ab12d2fdfmr10487913ejc.12.1684185571480; Mon, 15
+ May 2023 14:19:31 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [fuse-devel] [PATCH RESEND V12 3/8] fuse: Definitions and ioctl
- for passthrough
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jann Horn <jannh@google.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>,
-        kernel-team <kernel-team@android.com>,
-        Peng Tao <bergwolf@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        David Anderson <dvander@google.com>, wuyan <wu-yan@tcl.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Akilesh Kailash <akailash@google.com>,
-        Martijn Coenen <maco@android.com>
-References: <20210125153057.3623715-1-balsini@android.com>
- <20210125153057.3623715-4-balsini@android.com>
- <CAJfpegs4=NYn9k4F4HvZK3mqLehhxCFKgVxctNGf1f2ed0gfqg@mail.gmail.com>
- <CA+a=Yy5=4SJJoDLOPCYDh-Egk8gTv0JgCU-w-AT+Hxhua3_B2w@mail.gmail.com>
- <CAJfpegtmXegm0FFxs-rs6UhJq4raktiyuzO483wRatj5HKZvYA@mail.gmail.com>
- <YD0evc676pdANlHQ@google.com>
- <CAOQ4uxjCT+gJVeMsnjyFZ9n6Z0+jZ6V4s_AtyPmHvBd52+zF7Q@mail.gmail.com>
- <CAJfpegsKJ38rmZT=VrOYPOZt4pRdQGjCFtM-TV+TRtcKS5WSDQ@mail.gmail.com>
- <CAOQ4uxg-r3Fy-pmFrA0L2iUbUVcPz6YZMGrAH2LO315aE-6DzA@mail.gmail.com>
- <CAJfpegvbMKadnsBZmEvZpCxeWaMEGDRiDBqEZqaBSXcWyPZnpA@mail.gmail.com>
- <CAOQ4uxgXhVOpF8NgAcJCeW67QMKBOytzMXwy-GjdmS=DGGZ0hA@mail.gmail.com>
- <CAOQ4uxg2k3DsTdiMKNm4ESZinjS513Pj2EeKGW4jQR_o5Mp3-Q@mail.gmail.com>
- <CAJfpegv1ByQg750uHTGOTZ7CJ4OrYp6i4MKXU13mwZPUEk+pnA@mail.gmail.com>
- <CAOQ4uxjrhf8D081Z8aG71=Kjjub28MwR3xsaAHD4cK48-FzjNA@mail.gmail.com>
- <87353xjqoj.fsf@vostro.rath.org>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <87353xjqoj.fsf@vostro.rath.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20230420004850.297045-1-sarthakkukreti@chromium.org>
+ <20230506062909.74601-1-sarthakkukreti@chromium.org> <20230506062909.74601-5-sarthakkukreti@chromium.org>
+ <ZF54OH8hZTTko4c3@redhat.com>
+In-Reply-To: <ZF54OH8hZTTko4c3@redhat.com>
+From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
+Date:   Mon, 15 May 2023 14:19:20 -0700
+Message-ID: <CAG9=OMMj+xNNNFR6JJbsbzjb=9oVScg+BYdAq68hBRzw3q81ZA@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] dm-thin: Add REQ_OP_PROVISION support
+To:     Mike Snitzer <snitzer@kernel.org>
+Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Jason Wang <jasowang@redhat.com>,
+        Bart Van Assche <bvanassche@google.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, May 12, 2023 at 10:32=E2=80=AFAM Mike Snitzer <snitzer@kernel.org> =
+wrote:
+>
+> On Sat, May 06 2023 at  2:29P -0400,
+> Sarthak Kukreti <sarthakkukreti@chromium.org> wrote:
+>
+> > dm-thinpool uses the provision request to provision
+> > blocks for a dm-thin device. dm-thinpool currently does not
+> > pass through REQ_OP_PROVISION to underlying devices.
+> >
+> > For shared blocks, provision requests will break sharing and copy the
+> > contents of the entire block. Additionally, if 'skip_block_zeroing'
+> > is not set, dm-thin will opt to zero out the entire range as a part
+> > of provisioning.
+> >
+> > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
+> > ---
+> >  drivers/md/dm-thin.c | 70 +++++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 66 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+> > index 2b13c949bd72..3f94f53ac956 100644
+> > --- a/drivers/md/dm-thin.c
+> > +++ b/drivers/md/dm-thin.c
+> ...
+> > @@ -4114,6 +4171,8 @@ static void pool_io_hints(struct dm_target *ti, s=
+truct queue_limits *limits)
+> >        * The pool uses the same discard limits as the underlying data
+> >        * device.  DM core has already set this up.
+> >        */
+> > +
+> > +     limits->max_provision_sectors =3D pool->sectors_per_block;
+>
+> Just noticed that setting limits->max_provision_sectors needs to move
+> above pool_io_hints code that sets up discards -- otherwise the early
+> return from if (!pt->adjusted_pf.discard_enabled) will cause setting
+> max_provision_sectors to be skipped.
+>
+> Here is a roll up of the fixes that need to be folded into this patch:
+>
+Ah right, thanks for pointing that out! I'll fold this into v7.
 
+Best
+Sarthak
 
-On 5/15/23 22:16, Nikolaus Rath wrote:
-> On May 15 2023, Amir Goldstein <amir73il@gmail.com> wrote:
->> On Mon, May 15, 2023 at 10:29 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->>> On Fri, 12 May 2023 at 21:37, Amir Goldstein <amir73il@gmail.com> wrote:
->>>
->>>> I was waiting for LSFMM to see if and how FUSE-BPF intends to
->>>> address the highest value use case of read/write passthrough.
->>>>
->>>>  From what I've seen, you are still taking a very broad approach of
->>>> all-or-nothing which still has a lot of core design issues to address,
->>>> while these old patches already address the most important use case
->>>> of read/write passthrough of fd without any of the core issues
->>>> (credentials, hidden fds).
->>>>
->>>> As far as I can tell, this old implementation is mostly independent of your
->>>> lookup based approach - they share the low level read/write passthrough
->>>> functions but not much more than that, so merging them should not be
->>>> a blocker to your efforts in the longer run.
->>>> Please correct me if I am wrong.
->>>>
->>>> As things stand, I intend to re-post these old patches with mandatory
->>>> FOPEN_PASSTHROUGH_AUTOCLOSE to eliminate the open
->>>> questions about managing mappings.
->>>>
->>>> Miklos, please stop me if I missed something and if you do not
->>>> think that these two approaches are independent.
->>>
->>> Do you mean that the BPF patches should use their own passthrough mechanism?
->>>
->>> I think it would be better if we could agree on a common interface for
->>> passthough (or per Paul's suggestion: backing) mechanism.
->>
->> Well, not exactly different.
->> With BFP patches, if you have a backing inode that was established during
->> LOOKUP with rules to do passthrough for open(), you'd get a backing file and
->> that backing file would be used to passthrough read/write.
->>
->> FOPEN_PASSTHROUGH is another way to configure passthrough read/write
->> to a backing file that is controlled by the server per open fd instead of by BFP
->> for every open of the backing inode.
->>
->> Obviously, both methods would use the same backing_file field and
->> same read/write passthrough methods regardless of how the backing file
->> was setup.
->>
->> Obviously, the BFP patches will not use the same ioctl to setup passthrough
->> (and/or BPF program) to a backing inode, but I don't think that matters much.
->> When we settle on ioctls for setting up backing inodes, we can also add new
->> ioctls for setting up backing file with optional BPF program.
-> 
->> I don't see any reason to make the first ioctl more complicated than this:
->>
->> struct fuse_passthrough_out {
->>          uint32_t        fd;
->>          /* For future implementation */
->>          uint32_t        len;
->>          void            *vec;
->> };
->>
->> One advantage with starting with FOPEN_PASSTHROUGH, besides
->> dealing with the highest priority performance issue, is how it deals with
->> resource limits on open files.
-> 
-> One thing that struck me when we discussed FUSE-BPF at LSF was that from
-> a userspace point of view, FUSE-BPF presents an almost completely
-> different API than traditional FUSE (at least in its current form).
-> 
-> As long as there is no support for falling back to standard FUSE
-> callbacks, using FUSE-BPF means that most of the existing API no longer
-> works, and instead there is a large new API surface that doesn't work in
-> standard FUSE (the pre-filter and post-filter callbacks for each
-> operation).
-> 
-> I think this means that FUSE-BPF file systems won't work with FUSE, and
-> FUSE filesystems won't work with FUSE-BPF.
-
-Is that so? I think found some incompatibilities in the patches (need to 
-double check), but doesn't it just do normal fuse operations and then 
-replies with an ioctl to do passthrough? BPF is used for additional 
-filtering, that would have to be done otherwise in userspace.
-
-Really difficult in the current patch set and data structures is to see 
-what is actually BPF and what is passthrough.
-
-
-Thanks,
-Bernd
+> diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+> index 3f94f53ac956..90c8e36cb327 100644
+> --- a/drivers/md/dm-thin.c
+> +++ b/drivers/md/dm-thin.c
+> @@ -4151,6 +4151,8 @@ static void pool_io_hints(struct dm_target *ti, str=
+uct queue_limits *limits)
+>                 blk_limits_io_opt(limits, pool->sectors_per_block << SECT=
+OR_SHIFT);
+>         }
+>
+> +       limits->max_provision_sectors =3D pool->sectors_per_block;
+> +
+>         /*
+>          * pt->adjusted_pf is a staging area for the actual features to u=
+se.
+>          * They get transferred to the live pool in bind_control_target()
+> @@ -4171,8 +4173,6 @@ static void pool_io_hints(struct dm_target *ti, str=
+uct queue_limits *limits)
+>          * The pool uses the same discard limits as the underlying data
+>          * device.  DM core has already set this up.
+>          */
+> -
+> -       limits->max_provision_sectors =3D pool->sectors_per_block;
+>  }
+>
+>  static struct target_type pool_target =3D {
+> @@ -4349,6 +4349,7 @@ static int thin_ctr(struct dm_target *ti, unsigned =
+int argc, char **argv)
+>
+>         ti->num_provision_bios =3D 1;
+>         ti->provision_supported =3D true;
+> +       ti->max_provision_granularity =3D true;
+>
+>         mutex_unlock(&dm_thin_pool_table.mutex);
+>
