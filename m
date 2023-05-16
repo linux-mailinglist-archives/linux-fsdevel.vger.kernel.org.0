@@ -2,175 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCB80705A5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 00:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69587705A69
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 00:09:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230373AbjEPWCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 18:02:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44036 "EHLO
+        id S230187AbjEPWJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 18:09:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjEPWCW (ORCPT
+        with ESMTP id S229501AbjEPWJj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 18:02:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A0CB4;
-        Tue, 16 May 2023 15:02:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B587363CF5;
-        Tue, 16 May 2023 22:02:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C90F7C433EF;
-        Tue, 16 May 2023 22:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1684274540;
-        bh=Xn5gFOegvDQoAs6fV+QPMtWJd/9gIN1gu+8PHj8jATQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=I8HmcSl3RSMNgObVi4nyzA8Dn0pIVn3Hyd4M9+6+jiCnOIEHPDAD1katsykkWAiMa
-         gn5fQMZJ0CFmK2NC9H7JKcNfD2tVhwbbUSeGJQe61+ttSYu+uB1762WRf9rvoaH/7u
-         R2FZf07p1aiooDIDhn5t28F6IgINIJ5khA8X4Fo4=
-Date:   Tue, 16 May 2023 15:02:18 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v5 3/6] mm/gup: remove vmas parameter from
- get_user_pages_remote()
-Message-Id: <20230516150218.477c5e9d0a2d9ef8b057069c@linux-foundation.org>
-In-Reply-To: <20230516094919.GA411@mutt>
-References: <cover.1684097001.git.lstoakes@gmail.com>
-        <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
-        <20230516094919.GA411@mutt>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 16 May 2023 18:09:39 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B85426A3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 15:09:38 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1ae4c5e1388so2000105ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 15:09:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1684274978; x=1686866978;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lsjtlt+tmKh7JPFwk0D4DTI1gHb3Nr3Nm7erGiy/3VY=;
+        b=QQkN9qlvw5XUU3Z7lXPY6TfcJa12k3O8pI3vuQ1PvDMMq6EYgY2q5pUWvoSLIsDrKS
+         2VqMSwhwRmr7XITa7vVNbt0EiIbWwcvCYMFkCeAoEM0GhiAEeRvgk85wzsaXwDx3NFfl
+         2sWAIm2MTz9nhbcADs/qhichpxH4Sto4dQeW5KKCmwzZK/943wYWCwJwGuMfzQrcnkh7
+         L3D7vKzmHTNPnWc3lAUs2aPb1m5GOvj8K/5airLBacSItHqmPTzzHc/Ogwl9m1usP/Da
+         0drZxVnMZ6n/Q8jqVeSocXqXO3ogc/PpZElfBgQ+63BcJXxqrIRhzoKrN/Q685uovSUP
+         mrrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684274978; x=1686866978;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lsjtlt+tmKh7JPFwk0D4DTI1gHb3Nr3Nm7erGiy/3VY=;
+        b=D4hKx2OePAlrZsrRjj4FCYeBVQ22IMxEuz+xl9yseZ5J8umRYf0BZCQGl8arUBUVwV
+         5KbggnyI8xuNnRdxog55aaUyRnjq8a7CT6hLNz7cLw7ijPuM7aZ5M/u2onhRVRbCoLAL
+         D+wxJlHikMwLOyoL+etejm17Bf2XA/ML8YAOup1z0m/gO5U937hUNYyG0J9Woxxh8b48
+         NjqCJbkDngM8QH9NszoQQvoGCuhLHYevqRgZbbJapB4qnXEh2DdiWRye6bGQm7x41ZZV
+         PzFEn6kq4ENFDN16/wMHpcMguUmwcEWMpP8BIU4G63dBgGfhUovc5GCenQeMaP0prvwi
+         ezKg==
+X-Gm-Message-State: AC+VfDwW4p4sJcWB3cS3FtzUY40QoJhpZAons6TcWSXKpvM69BeefTRT
+        lwb6REYerBnYwQA9CkovJC/Cn0rSvlGdsgFAtYY=
+X-Google-Smtp-Source: ACHHUZ6QobyS1uRdWqesr4Y+L/Q3mYDZdA+v1ZMRPT7Lb9Cw8XktRdpxC4hRSazCpVDB2gV439S8Sw==
+X-Received: by 2002:a17:902:f54c:b0:19c:dbce:dce8 with SMTP id h12-20020a170902f54c00b0019cdbcedce8mr52725819plf.15.1684274978068;
+        Tue, 16 May 2023 15:09:38 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
+        by smtp.gmail.com with ESMTPSA id x3-20020a170902ec8300b001adfe981c77sm7305856plg.285.2023.05.16.15.09.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 May 2023 15:09:37 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1pz2rP-000Ja0-04;
+        Wed, 17 May 2023 08:09:35 +1000
+Date:   Wed, 17 May 2023 08:09:35 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: DIO hangs in 6.4.0-rc2
+Message-ID: <ZGP/H1UQgMYemYP1@dread.disaster.area>
+References: <ZGN20Hp1ho/u4uPY@casper.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZGN20Hp1ho/u4uPY@casper.infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 16 May 2023 11:49:19 +0200 Anders Roxell <anders.roxell@linaro.org> wrote:
-
-> On 2023-05-14 22:26, Lorenzo Stoakes wrote:
-> > The only instances of get_user_pages_remote() invocations which used the
-> > vmas parameter were for a single page which can instead simply look up the
-> > VMA directly. In particular:-
-> > 
-> > - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
-> >   remove it.
-> > 
-> > - __access_remote_vm() was already using vma_lookup() when the original
-> >   lookup failed so by doing the lookup directly this also de-duplicates the
-> >   code.
-> > 
-> > We are able to perform these VMA operations as we already hold the
-> > mmap_lock in order to be able to call get_user_pages_remote().
-> > 
-> > As part of this work we add get_user_page_vma_remote() which abstracts the
-> > VMA lookup, error handling and decrementing the page reference count should
-> > the VMA lookup fail.
-> > 
-> > This forms part of a broader set of patches intended to eliminate the vmas
-> > parameter altogether.
-> > 
-> > -		int bytes, ret, offset;
-> > +		int bytes, offset;
-> >  		void *maddr;
-> > -		struct page *page = NULL;
-> > +		struct vm_area_struct *vma;
-> > +		struct page *page = get_user_page_vma_remote(mm, addr,
-> > +							     gup_flags, &vma);
-> > +
-> > +		if (IS_ERR_OR_NULL(page)) {
-> > +			int ret = 0;
+On Tue, May 16, 2023 at 01:28:00PM +0100, Matthew Wilcox wrote:
+> Plain 6.4.0-rc2 with a relatively minor change to the futex code that
+> I cannot believe was in any way responsible for this.
 > 
-> I see the warning below when building without CONFIG_HAVE_IOREMAP_PROT set.
+> kworkers blocked all over the place.  Some on XFS_ILOCK_EXCL.  Some on
+> xfs_buf_lock.  One in xfs_btree_split() calling wait_for_completion.
 > 
-> make --silent --keep-going --jobs=32 \
-> O=/home/anders/.cache/tuxmake/builds/1244/build ARCH=arm \
-> CROSS_COMPILE=arm-linux-gnueabihf- /home/anders/src/kernel/next/mm/memory.c: In function '__access_remote_vm':
-> /home/anders/src/kernel/next/mm/memory.c:5608:29: warning: unused variable 'ret' [-Wunused-variable]
->  5608 |                         int ret = 0;
->       |                             ^~~
+> This was an overnight test run that is now dead, so I can't get any
+> more info from the locked up kernel.  I have the vmlinux if some
+> decoding of offsets is useful.
 
-Thanks, I did the obvious.
+This is likely the same AGF try-lock bug that was discovered in this
+thread:
 
-Also s/ret/res/, as `ret' is kinda reserved for "this is what this
-function will return".
+https://lore.kernel.org/linux-xfs/202305090905.aff4e0e6-oliver.sang@intel.com/
 
---- a/mm/memory.c~mm-gup-remove-vmas-parameter-from-get_user_pages_remote-fix
-+++ a/mm/memory.c
-@@ -5605,11 +5605,11 @@ int __access_remote_vm(struct mm_struct
- 							     gup_flags, &vma);
+The fact that the try-lock was ignored means that out of order AGF
+locking can be attempted, and the try-lock prevents deadlocks from
+occurring.
+
+Can you try the patch below - I was going to send it for review
+anyway this morning so it can't hurt to see if it also fixes this
+issue.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
+
+xfs: restore allocation trylock iteration
+
+From: Dave Chinner <dchinner@redhat.com>
+
+It was accidentally dropped when refactoring the allocation code,
+resulting in the AG iteration always doing blocking AG iteration.
+This results in a small performance regression for a specific fsmark
+test that runs more user data writer threads than there are AGs.
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Fixes: 2edf06a50f5b ("xfs: factor xfs_alloc_vextent_this_ag() for _iterate_ags()")
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+---
+ fs/xfs/libxfs/xfs_alloc.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+index fdfa08cbf4db..61eb65be17f3 100644
+--- a/fs/xfs/libxfs/xfs_alloc.c
++++ b/fs/xfs/libxfs/xfs_alloc.c
+@@ -3187,7 +3187,8 @@ xfs_alloc_vextent_check_args(
+  */
+ static int
+ xfs_alloc_vextent_prepare_ag(
+-	struct xfs_alloc_arg	*args)
++	struct xfs_alloc_arg	*args,
++	uint32_t		flags)
+ {
+ 	bool			need_pag = !args->pag;
+ 	int			error;
+@@ -3196,7 +3197,7 @@ xfs_alloc_vextent_prepare_ag(
+ 		args->pag = xfs_perag_get(args->mp, args->agno);
  
- 		if (IS_ERR_OR_NULL(page)) {
--			int ret = 0;
--
- #ifndef CONFIG_HAVE_IOREMAP_PROT
+ 	args->agbp = NULL;
+-	error = xfs_alloc_fix_freelist(args, 0);
++	error = xfs_alloc_fix_freelist(args, flags);
+ 	if (error) {
+ 		trace_xfs_alloc_vextent_nofix(args);
+ 		if (need_pag)
+@@ -3336,7 +3337,7 @@ xfs_alloc_vextent_this_ag(
+ 		return error;
+ 	}
+ 
+-	error = xfs_alloc_vextent_prepare_ag(args);
++	error = xfs_alloc_vextent_prepare_ag(args, 0);
+ 	if (!error && args->agbp)
+ 		error = xfs_alloc_ag_vextent_size(args);
+ 
+@@ -3380,7 +3381,7 @@ xfs_alloc_vextent_iterate_ags(
+ 	for_each_perag_wrap_range(mp, start_agno, restart_agno,
+ 			mp->m_sb.sb_agcount, agno, args->pag) {
+ 		args->agno = agno;
+-		error = xfs_alloc_vextent_prepare_ag(args);
++		error = xfs_alloc_vextent_prepare_ag(args, flags);
+ 		if (error)
  			break;
- #else
-+			int res = 0;
-+
- 			/*
- 			 * Check if this is a VM_IO | VM_PFNMAP VMA, which
- 			 * we can access using slightly different code.
-@@ -5617,11 +5617,11 @@ int __access_remote_vm(struct mm_struct
- 			if (!vma)
- 				break;
- 			if (vma->vm_ops && vma->vm_ops->access)
--				ret = vma->vm_ops->access(vma, addr, buf,
-+				res = vma->vm_ops->access(vma, addr, buf,
- 							  len, write);
--			if (ret <= 0)
-+			if (res <= 0)
- 				break;
--			bytes = ret;
-+			bytes = res;
- #endif
- 		} else {
- 			bytes = len;
-_
-
+ 		if (!args->agbp) {
+@@ -3546,7 +3547,7 @@ xfs_alloc_vextent_exact_bno(
+ 		return error;
+ 	}
+ 
+-	error = xfs_alloc_vextent_prepare_ag(args);
++	error = xfs_alloc_vextent_prepare_ag(args, 0);
+ 	if (!error && args->agbp)
+ 		error = xfs_alloc_ag_vextent_exact(args);
+ 
+@@ -3587,7 +3588,7 @@ xfs_alloc_vextent_near_bno(
+ 	if (needs_perag)
+ 		args->pag = xfs_perag_grab(mp, args->agno);
+ 
+-	error = xfs_alloc_vextent_prepare_ag(args);
++	error = xfs_alloc_vextent_prepare_ag(args, 0);
+ 	if (!error && args->agbp)
+ 		error = xfs_alloc_ag_vextent_near(args);
+ 
