@@ -2,97 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A6657048F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 11:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 073F37049AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 11:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231978AbjEPJTk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 05:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53644 "EHLO
+        id S231422AbjEPJtc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 05:49:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231975AbjEPJTd (ORCPT
+        with ESMTP id S231847AbjEPJt1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 05:19:33 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF42527D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 02:19:06 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-ba825dee5f0so558242276.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 02:19:06 -0700 (PDT)
+        Tue, 16 May 2023 05:49:27 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8679F30DA
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 02:49:24 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4f14ec8d72aso14024850e87.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 02:49:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684228735; x=1686820735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1684230563; x=1686822563;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G3PO2Pyp97ZMAD2vBcdWWuGlS8wMmQ0Anr89fdT1itg=;
-        b=SnLc7z4OusgQkdLJW2gpC1baRzLHCxxry6/C+4UjVFNnTPasnfiPkwK53P1kkgTVdD
-         jTKK8ss4OZD8XKjjQq8wY03VJ5Oe5RHDs1yvY8+EOTxoWcJSuTK7C11kpIWmw3gXQJHd
-         Lr1Q3yVH/sbUISDc/hPO6XN45n3T4qV7q9AbqbvoF3TF/CKKfgqucw7C9ikJ60JvtEYM
-         RZWq8qHyla87xTV8v+o/RkUfgaKOxVyUC2q+zgx1kDfIfEhVq+nmpO3H61poEs9vdGUc
-         mOzQj6BxLBs2pa6WpFCON0vyVIFD01vnG8CwRDr7oaC2ucRGNIWDDeoHyor0/J84BNNJ
-         GWWQ==
+        bh=ZU/9Bd1F4v4AQI4XYwGvMKtVUVhP+Ta/KlDV/Ofhgvw=;
+        b=DLO9Sp+4W+z5eLJ4OplpY56KL7dsXPxPyKzZN31e24ZgWla/8bs4IkvAtRU1sNrr4d
+         M/zIAUZjhZlW4P2rkk7T+6W0UVsyD90WG+YdGYFrH/Glii/KUDZq0IpUmntg707CdF5n
+         i37UB3Tbbcas87bL0/efYfe6w3ZnC5XyG3qMqn02SGpfBU+8hNkNlrN1nhw2lKAkzq5B
+         CRMAVzp4RUPFc/3/QZ675+4TlLXQLlc1iMNrOb5F/K4RaFPvTUMi9nJBxjhqICMZPBab
+         XEfOKIgxNn+kxSFXUOWAg+ZiVcGCmn7Ho0MHbSwpND8R8HARcto93DQrGrEkUYhsomoF
+         2BmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684228735; x=1686820735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1684230563; x=1686822563;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G3PO2Pyp97ZMAD2vBcdWWuGlS8wMmQ0Anr89fdT1itg=;
-        b=kX12DmdLrHduhMJuRW5vh+/6aq+ACxfbPY1CNJIMAJ5mgs0aLXure/4FxzyuWQhdw8
-         UKcgFLIbqY46GW6muojjY7Ng76Cmz1Ksoa2X20qnBa9yA2z9AjLtPe+GQP0PowgqybEg
-         WoykcOqhcYEYfmx5gYwE5AgxJ8L6Zd822dFadUyiVNdxAv9y789d0rx8J7RpyPLFrnnW
-         mrojJl236QpUE5ou2xp0HRFr1S7XKRul4cZZEnfYMZXja68nik5ryvY6I1BLvM/tUvwB
-         dFUV3Fm5nWz5xlMOH5WD3f3bwt4QWN+puzTpc/XZ0gAzkD80NZP1Pe2gLYq2peXOX+If
-         3ScQ==
-X-Gm-Message-State: AC+VfDxQLjNd6O9PbmW6G0leJh19ayXZo3OqX4dPUqNcrfXtbjo7hwDN
-        NhD69J8LXZgeGwlE1JtCBZwDc6G9Y9t0eCQKEkpKoQ==
-X-Google-Smtp-Source: ACHHUZ7ouX4pR8enSVuqce0U0lt0Y3WNzSweQexHvE3MJ4CinODJS3Gxe6HEZ3NipwDnbhl+pti8r/LzgvUfPj6ua34=
-X-Received: by 2002:a0d:c701:0:b0:556:d4ab:cbe with SMTP id
- j1-20020a0dc701000000b00556d4ab0cbemr34265656ywd.39.1684228735569; Tue, 16
- May 2023 02:18:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230503-virt-to-pfn-v6-4-rc1-v1-0-6c4698dcf9c8@linaro.org>
- <20230503-virt-to-pfn-v6-4-rc1-v1-2-6c4698dcf9c8@linaro.org>
- <CAMuHMdVJjjo9TMeow1-i27ybpQOu9-VZYnTkY5p8p_Cm6sW_GA@mail.gmail.com> <CAMuHMdV5Aukxx+XyC-s2=CDa2BYqvc3uRvWBhD6ri5j09tXj3A@mail.gmail.com>
-In-Reply-To: <CAMuHMdV5Aukxx+XyC-s2=CDa2BYqvc3uRvWBhD6ri5j09tXj3A@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 16 May 2023 11:18:43 +0200
-Message-ID: <CACRpkdbwd6ELhJVu--=N+Ckjp0MNyG3aWv5B+DQUoXNVFicDfw@mail.gmail.com>
-Subject: Re: [PATCH 02/12] m68k: Pass a pointer to virt_to_pfn() virt_to_page()
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Vineet Gupta <vgupta@kernel.org>,
+        bh=ZU/9Bd1F4v4AQI4XYwGvMKtVUVhP+Ta/KlDV/Ofhgvw=;
+        b=j/NTZZGmhFETroVvgCyxWT6IOHLzy8faVRi+FCr7kKUOHH9gmdUwykIYFk3+U/TLgb
+         Br8+jOt0lserQH2heDWQTEBTmHRx4vPUgIvOMT/ZO3lIrDnQWbEpU5J4aTyl2CgF5ruG
+         KVlk0OTBLv1g9L1tq1qSwi9mhhw5wMfLHjSmnAgTcM7uc/4J8Mjo8rRz+GTaSMTpuokx
+         ZHeKNadRTmsYIN/uoqLd/Dy1ICrv4ATtJSUZhet/TsJ/mVF9WAS7KJcovx6bXnWi0qsY
+         MfHU3YEL/JeGdfGmZBHz2iUCmDIITTwas1E9Sr9kuhjBRCvblfuWh0NvJMlavTK52yyM
+         6Zfg==
+X-Gm-Message-State: AC+VfDwvp0pvUUGAWoAGkBQ/SJbBQ7KeROG0YZhMSsohzODmdZUxk4L2
+        lO7riyGEszsfcWODgBnFEvAEKQ==
+X-Google-Smtp-Source: ACHHUZ4l3TyALRDEaGcVcIkdK7q9mH/ov5OVGGAezktN7u9QG834/IDjSuCD7zTf56ZU9ouww0Hd6Q==
+X-Received: by 2002:a05:6512:2181:b0:4e8:4a21:9c92 with SMTP id b1-20020a056512218100b004e84a219c92mr7419897lft.4.1684230562687;
+        Tue, 16 May 2023 02:49:22 -0700 (PDT)
+Received: from mutt (c-9b0ee555.07-21-73746f28.bbcust.telenor.se. [85.229.14.155])
+        by smtp.gmail.com with ESMTPSA id w11-20020a19c50b000000b004f251cf3d31sm2908003lfe.153.2023.05.16.02.49.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 May 2023 02:49:21 -0700 (PDT)
+Date:   Tue, 16 May 2023 11:49:19 +0200
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-snps-arc@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v5 3/6] mm/gup: remove vmas parameter from
+ get_user_pages_remote()
+Message-ID: <20230516094919.GA411@mutt>
+References: <cover.1684097001.git.lstoakes@gmail.com>
+ <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <afe323639b7bda066ee5c7a6cca906f5ad8df940.1684097002.git.lstoakes@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 12, 2023 at 12:26=E2=80=AFPM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+On 2023-05-14 22:26, Lorenzo Stoakes wrote:
+> The only instances of get_user_pages_remote() invocations which used the
+> vmas parameter were for a single page which can instead simply look up the
+> VMA directly. In particular:-
+> 
+> - __update_ref_ctr() looked up the VMA but did nothing with it so we simply
+>   remove it.
+> 
+> - __access_remote_vm() was already using vma_lookup() when the original
+>   lookup failed so by doing the lookup directly this also de-duplicates the
+>   code.
+> 
+> We are able to perform these VMA operations as we already hold the
+> mmap_lock in order to be able to call get_user_pages_remote().
+> 
+> As part of this work we add get_user_page_vma_remote() which abstracts the
+> VMA lookup, error handling and decrementing the page reference count should
+> the VMA lookup fail.
+> 
+> This forms part of a broader set of patches intended to eliminate the vmas
+> parameter altogether.
+> 
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com> (for arm64)
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Janosch Frank <frankja@linux.ibm.com> (for s390)
+> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> ---
+>  arch/arm64/kernel/mte.c   | 17 +++++++++--------
+>  arch/s390/kvm/interrupt.c |  2 +-
+>  fs/exec.c                 |  2 +-
+>  include/linux/mm.h        | 34 +++++++++++++++++++++++++++++++---
+>  kernel/events/uprobes.c   | 13 +++++--------
+>  mm/gup.c                  | 12 ++++--------
+>  mm/memory.c               | 14 +++++++-------
+>  mm/rmap.c                 |  2 +-
+>  security/tomoyo/domain.c  |  2 +-
+>  virt/kvm/async_pf.c       |  3 +--
+>  10 files changed, 61 insertions(+), 40 deletions(-)
+> 
 
-> Much simpler to drop the cast in __pte_page() instead:
->
-> @@ -91,7 +91,7 @@ static inline pte_t pte_modify(pte_t pte, pgprot_t newp=
-rot)
->  #define pmd_set(pmdp,ptep) do {} while (0)
->
->  #define __pte_page(pte) \
-> -((unsigned long) __va ((pte_val (pte) & SUN3_PAGE_PGNUM_MASK) << PAGE_SH=
-IFT))
-> +        (__va ((pte_val (pte) & SUN3_PAGE_PGNUM_MASK) << PAGE_SHIFT))
+[...]
 
-Thanks, folded this into the patch!
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 146bb94764f8..63632a5eafc1 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -5590,7 +5590,6 @@ EXPORT_SYMBOL_GPL(generic_access_phys);
+>  int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
+>  		       int len, unsigned int gup_flags)
+>  {
+> -	struct vm_area_struct *vma;
+>  	void *old_buf = buf;
+>  	int write = gup_flags & FOLL_WRITE;
+>  
+> @@ -5599,13 +5598,15 @@ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
+>  
+>  	/* ignore errors, just check how much was successfully transferred */
+>  	while (len) {
+> -		int bytes, ret, offset;
+> +		int bytes, offset;
+>  		void *maddr;
+> -		struct page *page = NULL;
+> +		struct vm_area_struct *vma;
+> +		struct page *page = get_user_page_vma_remote(mm, addr,
+> +							     gup_flags, &vma);
+> +
+> +		if (IS_ERR_OR_NULL(page)) {
+> +			int ret = 0;
 
-Yours,
-Linus Walleij
+I see the warning below when building without CONFIG_HAVE_IOREMAP_PROT set.
+
+make --silent --keep-going --jobs=32 \
+O=/home/anders/.cache/tuxmake/builds/1244/build ARCH=arm \
+CROSS_COMPILE=arm-linux-gnueabihf- /home/anders/src/kernel/next/mm/memory.c: In function '__access_remote_vm':
+/home/anders/src/kernel/next/mm/memory.c:5608:29: warning: unused variable 'ret' [-Wunused-variable]
+ 5608 |                         int ret = 0;
+      |                             ^~~
+
+
+>  
+> -		ret = get_user_pages_remote(mm, addr, 1,
+> -				gup_flags, &page, &vma, NULL);
+> -		if (ret <= 0) {
+>  #ifndef CONFIG_HAVE_IOREMAP_PROT
+>  			break;
+>  #else
+> @@ -5613,7 +5614,6 @@ int __access_remote_vm(struct mm_struct *mm, unsigned long addr, void *buf,
+>  			 * Check if this is a VM_IO | VM_PFNMAP VMA, which
+>  			 * we can access using slightly different code.
+>  			 */
+> -			vma = vma_lookup(mm, addr);
+>  			if (!vma)
+>  				break;
+>  			if (vma->vm_ops && vma->vm_ops->access)
+
+Cheers,
+Anders
