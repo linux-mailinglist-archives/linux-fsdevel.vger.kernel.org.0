@@ -2,80 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B809705A86
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 00:22:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EB22705AFF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 01:07:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229915AbjEPWWP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 18:22:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51394 "EHLO
+        id S231235AbjEPXHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 19:07:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbjEPWWP (ORCPT
+        with ESMTP id S229658AbjEPXHc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 18:22:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F1559DA;
-        Tue, 16 May 2023 15:22:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E74963F85;
-        Tue, 16 May 2023 22:22:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D852C433EF;
-        Tue, 16 May 2023 22:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1684275733;
-        bh=EIdRYcyP9S+kTImEKsoJFXEN/e3jqvOkEEH/JnuSzco=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=1oMgZuuxCVMi9e86xkru49WX/+FY8PSoo0tBvRgNNTI0VmrvS1f+nwBjGHgvSKZC1
-         zYWcqZ6d9vYb/CAT23ciFEPMu7LfYRiwfR7dfUoWKy/SJXVP40Jrr7awZ14Gw60VD1
-         u6Mg2ZpvWMIdMnGfJPVqFF13W5a/8QLsOMdjO58U=
-Date:   Tue, 16 May 2023 15:22:12 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Mike Rapoport <rppt@kernel.org>, <linux-mm@kvack.org>,
-        David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        Tue, 16 May 2023 19:07:32 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0162535B5;
+        Tue, 16 May 2023 16:07:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=x8NCOC5dNuO+EeXO7vXVX1hNNhgjTbmodd02OhrRIPE=; b=46DEdGL7nKcLjwLiOUZcBe+ekZ
+        GU31yD15KNjcweKnMTxXy//ryiuocE3/bzYP1Dzm5jCFKdjC+EvP/bqfeE4Eqzq3wP22GbdlKWMMq
+        TburDrLdmpn8jQ5C8cxssVXl9ijTbZOPZNsNvQbok3yKXkYQ/tFEoUkZaRBc+CnsTOnXW7PD8uWPf
+        0mmaJB7TYHfN2Bb8W77jBsT1sWMbIG6kN2/UV3mmWzlQ5Lxh7z8TYaYzLHREOnZ4fvp7JS+XSuWqi
+        U44uI8vPdfcIIzNOLYgssAsGwaLtO3hOg132lQr23qor+57G570UVp3Yp1E5qsf7mCIj6L+eL7pR2
+        HVo3TqDw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pz3lQ-007Oz5-2O;
+        Tue, 16 May 2023 23:07:28 +0000
+Date:   Tue, 16 May 2023 16:07:28 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Joel Granados <j.granados@samsung.com>
+Cc:     Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
         Iurii Zaikin <yzaikin@google.com>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <ying.huang@intel.com>
-Subject: Re: [PATCH v2 08/13] mm: page_alloc: split out DEBUG_PAGEALLOC
-Message-Id: <20230516152212.95f4a6ebba475cb994a4429f@linux-foundation.org>
-In-Reply-To: <20230516063821.121844-9-wangkefeng.wang@huawei.com>
-References: <20230516063821.121844-1-wangkefeng.wang@huawei.com>
-        <20230516063821.121844-9-wangkefeng.wang@huawei.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        linux-kernel@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: [PATCH v3 0/6] sysctl: Remove register_sysctl_table from parport
+Message-ID: <ZGQMsKiZUZg+5mFb@bombadil.infradead.org>
+References: <CGME20230516162915eucas1p2fdfc03a04f6fe55373e491b97660c8bc@eucas1p2.samsung.com>
+ <20230516162903.3208880-1-j.granados@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230516162903.3208880-1-j.granados@samsung.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 16 May 2023 14:38:16 +0800 Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
+On Tue, May 16, 2023 at 06:28:57PM +0200, Joel Granados wrote:
+> This is part of the general push to deprecate register_sysctl_paths and
+> register_sysctl_table. Parport driver uses the "CHILD" pointer
+> in the ctl_table structure to create its directory structure. We move to
+> the newer register_sysctl call and remove the pointer madness.
+> 
+> I have separated the parport into 5 patches to clarify the different
+> changes needed for the 3 calls to register_sysctl_paths. I can squash
+> them together if need be.
+> 
+> We no longer export the register_sysctl_table call as parport was the
+> last user from outside proc_sysctl.c. Also modified documentation slightly
+> so register_sysctl_table is no longer mentioned.
+> 
+> V2:
+> * Added a return error value when register fails
+> * Made sure to free the memory on error when calling parport_proc_register
+> * Added a bloat-o-meter output to measure bloat
+> * Replaced kmalloc with kzalloc
+> * Added comments about testing
+> * Improved readability when using snprintf
 
-> DEBUG_PAGEALLOC
->
->  mm/debug_page_alloc.c | 59 +++++++++++++++++++++++++++++++++
->  mm/page_alloc.c       | 69 ---------------------------------------
+Thanks, applied and pushed!
 
-and
-
-FAIL_PAGE_ALLOC
-
-We're irritatingly inconsistent about whether there's an underscore.
-
-akpm:/usr/src/25> grep page_alloc mm/*c|wc -l
-49
-akpm:/usr/src/25> grep pagealloc mm/*c|wc -l 
-28
-
+  Luis
