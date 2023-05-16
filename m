@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1F57057A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 21:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 667B1705809
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 21:54:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbjEPTmk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 15:42:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35666 "EHLO
+        id S229449AbjEPTyz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 15:54:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229938AbjEPTmc (ORCPT
+        with ESMTP id S229831AbjEPTyv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 15:42:32 -0400
+        Tue, 16 May 2023 15:54:51 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540BC76AF;
-        Tue, 16 May 2023 12:42:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44172C1;
+        Tue, 16 May 2023 12:54:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CDD426340C;
-        Tue, 16 May 2023 19:42:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01CDFC433D2;
-        Tue, 16 May 2023 19:42:17 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CDFA662CEE;
+        Tue, 16 May 2023 19:54:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9AD0C433EF;
+        Tue, 16 May 2023 19:54:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684266139;
-        bh=5lvCP4bPSOrgTZv7kSqqa1Lk3TnQEcnuBUwkjntOlBw=;
+        s=k20201202; t=1684266889;
+        bh=ephEl7G1z6WaYBIJFTE6QgAOh66gp022Xrli5jHzoSg=;
         h=From:To:Cc:Subject:Date:From;
-        b=sGA1G0BIX4VM0STtkY1VwQj3jrY3tVJHulInpr9gDGJUF3jOd3lNFrcIrzwM8ugtV
-         RLRTSLD+ZcLMVVbOOvjSh2l+22yPCuJtPOID4cM1qUW0n06BMh5n9BCV8HYAqiTQDW
-         wxN81EThZVxFIn9XWcHduKuVkBLdLH2mJkdJ9WjIPTcxgLhz2rEhP8Nw01l2iPsX20
-         V/qDU83w4Pbp9H+7FZPij4usjaOYHce36PuZL/5ZPOpPeT5t7idjpHkPbLE7ZcNKI8
-         G6UkDWbj5r97z28djwWHPSVAFXd+cKnmrbiSizfpZTJ/YzEGVu/1ko4r/2jn2wDfNk
-         kAkjc2JXeL9ig==
+        b=VACMJeXaOUxjDd/zTMoPAoKSVlUW5gDq0LgnxtkgFDCThDHYTgDroPc41nWujY6kE
+         LjqEA5Slpkyh3Q53xcmBsbv2aGDduxJf6KfDWi5iKCcYkauyYw0dsNv337jUWfrJsU
+         5W72LjBi/AT2+qH6FNU57cshXnigtxGyCOD4q0yPxUacqQCyDmi9Krqm1IiVyl3De5
+         YTUvQVVg9+CI07PNJrdyoiCyQV4YEwQlGxpCfnlnBFG21J3MiVzse0eNeCDshjdqkp
+         FPVrQWF+aI/ldTpp+TyrxscFPebKm8p+Iq9uYQBSIe3QrjKnZa73yET9fqO3H30o38
+         AOS1KFgp85Jrw==
 From:   Arnd Bergmann <arnd@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] radix-tree: move declarations to header
-Date:   Tue, 16 May 2023 21:41:54 +0200
-Message-Id: <20230516194212.548910-1-arnd@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] fs: d_path: include internal.h
+Date:   Tue, 16 May 2023 21:54:38 +0200
+Message-Id: <20230516195444.551461-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -55,76 +55,28 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The xarray.c file contains the only call to radix_tree_node_rcu_free(),
-and it comes with its own extern declaration for it. This means the
-function definition causes a missing-prototype warning:
+make W=1 warns about a missing prototype that is defined but
+not visible at point where simple_dname() is defined:
 
-lib/radix-tree.c:288:6: error: no previous prototype for 'radix_tree_node_rcu_free' [-Werror=missing-prototypes]
-
-Instead, move the declaration for this function to a new header that
-can be included by both, and do the same for the radix_tree_node_cachep
-variable that has the same underlying problem but does not cause
-a warning with gcc.
+fs/d_path.c:317:7: error: no previous prototype for 'simple_dname' [-Werror=missing-prototypes]
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- lib/radix-tree.c | 2 ++
- lib/radix-tree.h | 8 ++++++++
- lib/xarray.c     | 6 ++----
- 3 files changed, 12 insertions(+), 4 deletions(-)
- create mode 100644 lib/radix-tree.h
+ fs/d_path.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index 049ba132f7ef..1a31065b2036 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -27,6 +27,8 @@
- #include <linux/string.h>
- #include <linux/xarray.h>
- 
-+#include "radix-tree.h"
-+
- /*
-  * Radix tree node cache.
-  */
-diff --git a/lib/radix-tree.h b/lib/radix-tree.h
-new file mode 100644
-index 000000000000..40d5c03e2b09
---- /dev/null
-+++ b/lib/radix-tree.h
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/* radix-tree helpers that are only shared with xarray */
-+
-+struct kmem_cache;
-+struct rcu_head;
-+
-+extern struct kmem_cache *radix_tree_node_cachep;
-+extern void radix_tree_node_rcu_free(struct rcu_head *head);
-diff --git a/lib/xarray.c b/lib/xarray.c
-index ea9ce1f0b386..2071a3718f4e 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -12,6 +12,8 @@
+diff --git a/fs/d_path.c b/fs/d_path.c
+index 56a6ee4c6331..5f4da5c8d5db 100644
+--- a/fs/d_path.c
++++ b/fs/d_path.c
+@@ -7,6 +7,7 @@
  #include <linux/slab.h>
- #include <linux/xarray.h>
+ #include <linux/prefetch.h>
+ #include "mount.h"
++#include "internal.h"
  
-+#include "radix-tree.h"
-+
- /*
-  * Coding conventions in this file:
-  *
-@@ -247,10 +249,6 @@ void *xas_load(struct xa_state *xas)
- }
- EXPORT_SYMBOL_GPL(xas_load);
- 
--/* Move the radix tree node cache here */
--extern struct kmem_cache *radix_tree_node_cachep;
--extern void radix_tree_node_rcu_free(struct rcu_head *head);
--
- #define XA_RCU_FREE	((struct xarray *)1)
- 
- static void xa_node_free(struct xa_node *node)
+ struct prepend_buffer {
+ 	char *buf;
 -- 
 2.39.2
 
