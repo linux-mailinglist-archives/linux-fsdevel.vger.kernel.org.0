@@ -2,80 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 443A5705712
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 21:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5337970571C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 21:30:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbjEPT1g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 15:27:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51870 "EHLO
+        id S229812AbjEPTah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 15:30:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbjEPT1f (ORCPT
+        with ESMTP id S229497AbjEPTag (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 15:27:35 -0400
+        Tue, 16 May 2023 15:30:36 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71547B5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 12:26:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C92A36583
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 12:29:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684265204;
+        s=mimecast20190719; t=1684265387;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FbZvmBy7Xu5p36p9xf/yVfMX/2icPS0uwZwtjXy0DwM=;
-        b=g7h3DxbmsOuVY4R46Ecx82hI+s4OiOUuTcXscE1o/ms1eHpd0ILo0qcJHFdF7Dq3BozXKO
-        a5cLr7rd0pYhR27iBbwNzFQ9EU+KUSnbiPAoWY+NKqUddQv8tFxA33V/RgRFAEAmZlZU6D
-        5mYe/0WQyZZzkOYwtxNGPa/yYaqWjho=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=t9UrkqIYKxvK9jQQrJXRaqEAIFWUC38gkJPtkDfF+s0=;
+        b=a2M/0NvE3X/qJXIr3cM4tRJJFnwsy7pmiPf2is5NR9JX3GOTVo+sQM35mgZWpuRA7qsvMe
+        XCF99pVFJ97ltGBCTcszuTISkNF5x94lIlqDPpix3Q1knEWaWhEySqTkloip0BQ3t9bqa9
+        0yI1ZxgHgSM8JlhLnQyX3Q7h47opKTE=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-335-9sYjkZ_ONU-Wg_7Kz6suLw-1; Tue, 16 May 2023 15:26:42 -0400
-X-MC-Unique: 9sYjkZ_ONU-Wg_7Kz6suLw-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-61afc445dd5so85471836d6.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 12:26:42 -0700 (PDT)
+ us-mta-643-Zu3X5UNEPD-aqsNoC0mGnw-1; Tue, 16 May 2023 15:29:46 -0400
+X-MC-Unique: Zu3X5UNEPD-aqsNoC0mGnw-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-24df8644eaeso13616a91.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 12:29:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684265202; x=1686857202;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FbZvmBy7Xu5p36p9xf/yVfMX/2icPS0uwZwtjXy0DwM=;
-        b=KOaq/f0kRWH8bmOrk7Kp7+Vb+qTuRv0S5JftVON2uVDoL0GmRkZp2SeV9hvNrjbbUT
-         3KdE56hkjOmfWOOCLBxguwTXSB/7Oo1jLJHWvPRwQHAkUtYaI5VJUM8Jng82HXsdGik5
-         QL5rY2wkqi83ON78J447h7VzztNV/AbnzdI+1ErO3mdnqNm2mpIc+llYZU3W1h7bf/6V
-         ggALut0tFE1P3Do7miFhNm/J8dDNbB+YDIYkF/GUr/Ez/gD7R5WIPJPXNGOZWaOcwPkA
-         EnO6idUPFwS4WKaHbMRDYv+ouU20i3U1e2l+7Fweesm9hMgyxVXTrtxsCi1m1ct9+Zer
-         F0CA==
-X-Gm-Message-State: AC+VfDyLN8uqECb2+tTGS6V7R0uKyWrwDjsTZnXaQrqFSAvuw6JrcPwy
-        zevVf/KN/HgqiQOLEEb0PJ5IM1eV4aFwHUCGOAxyJITXyhjitrOpvawLqwMimON7JKVsq9ZrGwo
-        2qRPmtmj4LUpbhxYVF2ftLavl7lFOQUhmVQ==
-X-Received: by 2002:a05:622a:d:b0:3f5:2341:5435 with SMTP id x13-20020a05622a000d00b003f523415435mr14953122qtw.61.1684265201940;
-        Tue, 16 May 2023 12:26:41 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ50tDJ4umb6aa6I7f1zQnmpgRgHfd3Y/pzOpaSjxdRqsTMqQE+Erj0pWnSBslYYbIQMEnDlzw==
-X-Received: by 2002:a05:622a:d:b0:3f5:2341:5435 with SMTP id x13-20020a05622a000d00b003f523415435mr14953089qtw.61.1684265201583;
-        Tue, 16 May 2023 12:26:41 -0700 (PDT)
-Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
-        by smtp.gmail.com with ESMTPSA id cx12-20020a05620a51cc00b007593bf6e345sm72133qkb.113.2023.05.16.12.26.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 May 2023 12:26:40 -0700 (PDT)
-Date:   Tue, 16 May 2023 15:29:08 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Ritesh Harjani <ritesh.list@gmail.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>,
-        Aravinda Herle <araherle@in.ibm.com>
-Subject: Re: [RFCv5 5/5] iomap: Add per-block dirty state tracking to improve
- performance
-Message-ID: <ZGPZhMr0ZiPDxVkw@bfoster>
-References: <ZGJMg2G4XVeFnMcY@bfoster>
- <878rdol4as.fsf@doe.com>
+        d=1e100.net; s=20221208; t=1684265386; x=1686857386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t9UrkqIYKxvK9jQQrJXRaqEAIFWUC38gkJPtkDfF+s0=;
+        b=GPq7ojdYw+Y+z53843zSVUty02o0gaTfjb4kBnDzDgoqEued9EmRB0Rp+EFegDNiM/
+         mInwWp6FKfANKXGoJOh0zMVBXSnOqlE5BtXkj0O/5vtsd/kpRdIbhOY/Z7yjhra7Dp5d
+         1CV2eXwgtTHcAbaWf2i0p8ELv28BxkmdgkkOklfXV3BcwKTAsk7lRKvXarurP2e0QOZy
+         v0/LJnB6+fWRhVqvCVCxq3ZhjBJRQDJQXQ75pgpQBGrMXpHcMpeWMI+Sc+Pquv0u3xAU
+         8tj3zIKUTeQhvWEc7aZ/AJVEkukARY6qdJ7aa7CMOEmQmkLO8yFJkDX4nUMyWGt8znA1
+         trfA==
+X-Gm-Message-State: AC+VfDy8sK0jk0S4ysLTDjxKygJVDe1w3oX4m1DK/F8jzB7P6zM4C3lM
+        1rGtGO5+ZVCyynhQOOaDrvLmJ2IdC7esYmx7nSWrIph4KyqTF1CLRU4/2JWCYfSbqyQDB75EcIY
+        /wSPicG+BvDz+YKtDJmAUxme0p2LA/HUBov4uK6JHUw==
+X-Received: by 2002:a17:90a:8049:b0:24d:e929:56cf with SMTP id e9-20020a17090a804900b0024de92956cfmr37452329pjw.39.1684265385703;
+        Tue, 16 May 2023 12:29:45 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5gBFGff4dAZMhxmbGkiocJy63rZyONMUQ6rm3VRtZFYy02jZIS98cu+nLLPRraC5I03lzcx85+v3rvPJQsVd4=
+X-Received: by 2002:a17:90a:8049:b0:24d:e929:56cf with SMTP id
+ e9-20020a17090a804900b0024de92956cfmr37452303pjw.39.1684265385415; Tue, 16
+ May 2023 12:29:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878rdol4as.fsf@doe.com>
+References: <20230216150701.3654894-1-dhowells@redhat.com>
+In-Reply-To: <20230216150701.3654894-1-dhowells@redhat.com>
+From:   David Wysochanski <dwysocha@redhat.com>
+Date:   Tue, 16 May 2023 15:29:09 -0400
+Message-ID: <CALF+zO=w2Gyz6JtzEoFgTVjH67-_CuTaK7e+2yoHEwXZ8bPx_A@mail.gmail.com>
+Subject: Re: [Linux-cachefs] [PATCH v6 0/2] mm, netfs, fscache: Stop read
+ optimisation when folio removed from pagecache
+To:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,264 +83,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 16, 2023 at 08:19:31PM +0530, Ritesh Harjani wrote:
-> Brian Foster <bfoster@redhat.com> writes:
-> 
-> > On Mon, May 08, 2023 at 12:58:00AM +0530, Ritesh Harjani (IBM) wrote:
-> >> When filesystem blocksize is less than folio size (either with
-> >> mapping_large_folio_support() or with blocksize < pagesize) and when the
-> >> folio is uptodate in pagecache, then even a byte write can cause
-> >> an entire folio to be written to disk during writeback. This happens
-> >> because we currently don't have a mechanism to track per-block dirty
-> >> state within struct iomap_page. We currently only track uptodate state.
-> >>
-> >> This patch implements support for tracking per-block dirty state in
-> >> iomap_page->state bitmap. This should help improve the filesystem write
-> >> performance and help reduce write amplification.
-> >>
-> >> Performance testing of below fio workload reveals ~16x performance
-> >> improvement using nvme with XFS (4k blocksize) on Power (64K pagesize)
-> >> FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
-> >>
-> >> 1. <test_randwrite.fio>
-> >> [global]
-> >> 	ioengine=psync
-> >> 	rw=randwrite
-> >> 	overwrite=1
-> >> 	pre_read=1
-> >> 	direct=0
-> >> 	bs=4k
-> >> 	size=1G
-> >> 	dir=./
-> >> 	numjobs=8
-> >> 	fdatasync=1
-> >> 	runtime=60
-> >> 	iodepth=64
-> >> 	group_reporting=1
-> >>
-> >> [fio-run]
-> >>
-> >> 2. Also our internal performance team reported that this patch improves
-> >>    their database workload performance by around ~83% (with XFS on Power)
-> >>
-> >> Reported-by: Aravinda Herle <araherle@in.ibm.com>
-> >> Reported-by: Brian Foster <bfoster@redhat.com>
-> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> >> ---
-> >>  fs/gfs2/aops.c         |   2 +-
-> >>  fs/iomap/buffered-io.c | 115 ++++++++++++++++++++++++++++++++++++++---
-> >>  fs/xfs/xfs_aops.c      |   2 +-
-> >>  fs/zonefs/file.c       |   2 +-
-> >>  include/linux/iomap.h  |   1 +
-> >>  5 files changed, 112 insertions(+), 10 deletions(-)
-> >>
-> > ...
-> >> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> >> index 25f20f269214..c7f41b26280a 100644
-> >> --- a/fs/iomap/buffered-io.c
-> >> +++ b/fs/iomap/buffered-io.c
-> > ...
-> >> @@ -119,12 +169,20 @@ static struct iomap_page *iop_alloc(struct inode *inode, struct folio *folio,
-> >>  	else
-> >>  		gfp = GFP_NOFS | __GFP_NOFAIL;
-> >>
-> >> -	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(nr_blocks)),
-> >> +	/*
-> >> +	 * iop->state tracks two sets of state flags when the
-> >> +	 * filesystem block size is smaller than the folio size.
-> >> +	 * The first state tracks per-block uptodate and the
-> >> +	 * second tracks per-block dirty state.
-> >> +	 */
-> >> +	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(2 * nr_blocks)),
-> >>  		      gfp);
-> >>  	if (iop) {
-> >>  		spin_lock_init(&iop->state_lock);
-> >>  		if (folio_test_uptodate(folio))
-> >>  			iop_set_range(iop, 0, nr_blocks);
-> >> +		if (is_dirty)
-> >> +			iop_set_range(iop, nr_blocks, nr_blocks);
-> >
-> > I find the is_dirty logic here a bit confusing. AFAICT, this is
-> > primarily to handle the case where a folio is completely overwritten, so
-> > no iop is allocated at write time, and so then writeback needs to
-> > allocate the iop as fully dirty to reflect that. I.e., all iop_alloc()
-> > callers other than iomap_writepage_map() either pass the result of
-> > folio_test_dirty() or explicitly dirty the entire range of the folio
-> > anyways.  iomap_dirty_folio() essentially does the latter because it
-> > needs to dirty the entire folio regardless of whether the iop already
-> > exists or not, right?
-> 
-> Yes.
-> 
-> >
-> > If so and if I'm following all of that correctly, could this complexity
-> > be isolated to iomap_writepage_map() by simply checking for the !iop
-> > case first, then call iop_alloc() immediately followed by
-> > set_range_dirty() of the entire folio? Then presumably iop_alloc() could
-> > always just dirty based on folio state with the writeback path exception
-> > case handled explicitly. Hm?
-> >
-> 
-> Hi Brian,
-> 
-> It was discussed here [1] to pass is_dirty flag at the time of iop
-> allocation. We can do what you are essentially suggesting, but it's just
-> extra work i.e. we will again do some calculations of blocks_per_folio,
-> start, end and more importantly take and release iop->state_lock
-> spinlock. Whereas with above approach we could get away with this at the
-> time of iop allocation itself.
-> 
+On Thu, Feb 16, 2023 at 10:07=E2=80=AFAM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> Hi Willy,
+>
+> Is this okay by you?  You said you wanted to look at the remaining uses o=
+f
+> page_has_private(), of which there are then three after these patches, no=
+t
+> counting folio_has_private():
+>
+>         arch/s390/kernel/uv.c:          if (page_has_private(page))
+>         mm/khugepaged.c:                    1 + page_mapcount(page) + pag=
+e_has_private(page)) {
+>         mm/migrate_device.c:            extra +=3D 1 + page_has_private(p=
+age);
+>
+> --
+> I've split the folio_has_private()/filemap_release_folio() call pair
+> merging into its own patch, separate from the actual bugfix and pulled ou=
+t
+> the folio_needs_release() function into mm/internal.h and made
+> filemap_release_folio() use it.  I've also got rid of the bit clearances
+> from the network filesystem evict_inode functions as they doesn't seem to
+> be necessary.
+>
+> Note that the last vestiges of try_to_release_page() got swept away, so I
+> rebased and dealt with that.  One comment remained, which is removed by t=
+he
+> first patch.
+>
+> David
+>
+> Changes:
+> =3D=3D=3D=3D=3D=3D=3D=3D
+> ver #6)
+>  - Drop the third patch which removes a duplicate check in vmscan().
+>
+> ver #5)
+>  - Rebased on linus/master.  try_to_release_page() has now been entirely
+>    replaced by filemap_release_folio(), barring one comment.
+>  - Cleaned up some pairs in ext4.
+>
+> ver #4)
+>  - Split has_private/release call pairs into own patch.
+>  - Moved folio_needs_release() to mm/internal.h and removed open-coded
+>    version from filemap_release_folio().
+>  - Don't need to clear AS_RELEASE_ALWAYS in ->evict_inode().
+>  - Added experimental patch to reduce shrink_folio_list().
+>
+> ver #3)
+>  - Fixed mapping_clear_release_always() to use clear_bit() not set_bit().
+>  - Moved a '&&' to the correct line.
+>
+> ver #2)
+>  - Rewrote entirely according to Willy's suggestion[1].
+>
+> Link: https://lore.kernel.org/r/Yk9V/03wgdYi65Lb@casper.infradead.org/ [1=
+]
+> Link: https://lore.kernel.org/r/164928630577.457102.8519251179327601178.s=
+tgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/166844174069.1124521.10890506360974169994=
+.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/166869495238.3720468.4878151409085146764.=
+stgit@warthog.procyon.org.uk/ # v3
+> Link: https://lore.kernel.org/r/1459152.1669208550@warthog.procyon.org.uk=
+/ # v3 also
+> Link: https://lore.kernel.org/r/166924370539.1772793.13730698360771821317=
+.stgit@warthog.procyon.org.uk/ # v4
+> Link: https://lore.kernel.org/r/167172131368.2334525.8569808925687731937.=
+stgit@warthog.procyon.org.uk/ # v5
+> ---
+> %(shortlog)s
+> %(diffstat)s
+>
+> David Howells (2):
+>   mm: Merge folio_has_private()/filemap_release_folio() call pairs
+>   mm, netfs, fscache: Stop read optimisation when folio removed from
+>     pagecache
+>
+>  fs/9p/cache.c           |  2 ++
+>  fs/afs/internal.h       |  2 ++
+>  fs/cachefiles/namei.c   |  2 ++
+>  fs/ceph/cache.c         |  2 ++
+>  fs/cifs/fscache.c       |  2 ++
+>  fs/ext4/move_extent.c   | 12 ++++--------
+>  fs/splice.c             |  3 +--
+>  include/linux/pagemap.h | 16 ++++++++++++++++
+>  mm/filemap.c            |  2 ++
+>  mm/huge_memory.c        |  3 +--
+>  mm/internal.h           | 11 +++++++++++
+>  mm/khugepaged.c         |  3 +--
+>  mm/memory-failure.c     |  8 +++-----
+>  mm/migrate.c            |  3 +--
+>  mm/truncate.c           |  6 ++----
+>  mm/vmscan.c             |  8 ++++----
+>  16 files changed, 56 insertions(+), 29 deletions(-)
+>
+> --
+> Linux-cachefs mailing list
+> Linux-cachefs@redhat.com
+> https://listman.redhat.com/mailman/listinfo/linux-cachefs
+>
 
-Hi Ritesh,
+Willy, and David,
 
-Isn't that extra work already occurring in iomap_dirty_folio()? I was
-just thinking that maybe moving it to where it's apparently needed (i.e.
-writeback) might eliminate the need for the param.
+Can this series move forward?
+This just got mentioned again [1] after Chris tested the NFS netfs
+patches that were merged in 6.4-rc1
 
-I suppose iomap_dirty_folio() would need to call filemap_dirty_folio()
-first to make sure iop_alloc() sees the dirty state, but maybe that
-would also allow skipping the iop alloc if the folio was already dirty
-(i.e. if the folio was previously dirtied by a full buffered overwite
-for example)?
-
-I've appended a quick diff below (compile tested only) just to explain
-what I mean. When doing that it also occurred to me that if we really
-care about the separate call, we could keep the is_dirty param but do
-the __iop_alloc() wrapper thing where iop_alloc() always passes
-folio_test_dirty().
-
-BTW, I think you left off your [1] discussion reference..
-
-> Besides, isn't it easier this way? which as you also stated we will
-> dirty all the blocks based on is_dirty flag, which is folio_test_dirty()
-> except at the writeback time.
-> 
-
-My thinking was just that I kind of had to read through all of the
-iop_alloc() callsites to grok the purpose of the parameter, which made
-it seem unnecessarily confusing. But ultimately it made sense, so I
-don't insist on changing it or anything if this approach is intentional
-and/or preferred by others. That's just my .02 and I'll defer to your
-preference. :)
-
-> 
-> >>  		folio_attach_private(folio, iop);
-> >>  	}
-> >>  	return iop;
-> > ...
-> >> @@ -561,6 +621,18 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
-...
-> >
-> > WRT to the !iop case.. I _think_ this is handled correctly here because
-> > that means we'd handle the folio as completely dirty at writeback time.
-> > Is that the case? If so, it might be nice to document that assumption
-> > somewhere (here or perhaps in the writeback path).
-> >
-> 
-> !iop case is simply when we don't have a large folio and blocksize ==
->  pagesize. In that case we don't allocate any iop and simply returns
->  from iop_alloc().
-> So then we just skip the loop which is only meant when we have blocks
-> within a folio.
-> 
-
-Isn't it also the case that iop might be NULL at this point if the fs
-has sub-folio blocks, but the folio was dirtied by a full overwrite of
-the folio? Or did I misunderstand patch 4?
-
-Brian
-
---- 8< ---
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 92e1e1061225..89b3053e3f2d 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -155,7 +155,7 @@ static void iop_clear_range_dirty(struct folio *folio, size_t off, size_t len)
- }
- 
- static struct iomap_page *iop_alloc(struct inode *inode, struct folio *folio,
--				    unsigned int flags, bool is_dirty)
-+				    unsigned int flags)
- {
- 	struct iomap_page *iop = to_iomap_page(folio);
- 	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-@@ -181,7 +181,7 @@ static struct iomap_page *iop_alloc(struct inode *inode, struct folio *folio,
- 		spin_lock_init(&iop->state_lock);
- 		if (folio_test_uptodate(folio))
- 			iop_set_range(iop, 0, nr_blocks);
--		if (is_dirty)
-+		if (folio_test_dirty(folio))
- 			iop_set_range(iop, nr_blocks, nr_blocks);
- 		folio_attach_private(folio, iop);
- 	}
-@@ -326,8 +326,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
- 	if (WARN_ON_ONCE(size > iomap->length))
- 		return -EIO;
- 	if (offset > 0)
--		iop = iop_alloc(iter->inode, folio, iter->flags,
--				folio_test_dirty(folio));
-+		iop = iop_alloc(iter->inode, folio, iter->flags);
- 	else
- 		iop = to_iomap_page(folio);
- 
-@@ -365,8 +364,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 		return iomap_read_inline_data(iter, folio);
- 
- 	/* zero post-eof blocks as the page may be mapped */
--	iop = iop_alloc(iter->inode, folio, iter->flags,
--			folio_test_dirty(folio));
-+	iop = iop_alloc(iter->inode, folio, iter->flags);
- 	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
- 	if (plen == 0)
- 		goto done;
-@@ -616,13 +614,10 @@ EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
- 
- bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio)
- {
--	struct iomap_page *iop;
--	struct inode *inode = mapping->host;
--	size_t len = i_blocks_per_folio(inode, folio) << inode->i_blkbits;
--
--	iop = iop_alloc(inode, folio, 0, false);
--	iop_set_range_dirty(inode, folio, 0, len);
--	return filemap_dirty_folio(mapping, folio);
-+	bool dirtied = filemap_dirty_folio(mapping, folio);
-+	if (dirtied)
-+		iop_alloc(mapping->host, folio, 0);
-+	return dirtied;
- }
- EXPORT_SYMBOL_GPL(iomap_dirty_folio);
- 
-@@ -673,8 +668,7 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
- 	    pos + len >= folio_pos(folio) + folio_size(folio))
- 		return 0;
- 
--	iop = iop_alloc(iter->inode, folio, iter->flags,
--			folio_test_dirty(folio));
-+	iop = iop_alloc(iter->inode, folio, iter->flags);
- 
- 	if ((iter->flags & IOMAP_NOWAIT) && !iop && nr_blocks > 1)
- 		return -EAGAIN;
-@@ -1759,7 +1753,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct inode *inode,
- 		struct folio *folio, u64 end_pos)
- {
--	struct iomap_page *iop = iop_alloc(inode, folio, 0, true);
-+	struct iomap_page *iop = to_iomap_page(folio);
- 	struct iomap_ioend *ioend, *next;
- 	unsigned len = i_blocksize(inode);
- 	unsigned nblocks = i_blocks_per_folio(inode, folio);
-@@ -1767,6 +1761,11 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	int error = 0, count = 0, i;
- 	LIST_HEAD(submit_list);
- 
-+	if (!iop) {
-+		iop = iop_alloc(inode, folio, 0);
-+		iop_set_range_dirty(inode, folio, 0, folio_size(folio));
-+	}
-+
- 	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
- 
- 	/*
+[1] https://lore.kernel.org/linux-nfs/CAAmbk-f_U8CPcTQM866L572uUHdK4p5iWKnU=
+Qs4r8fkW=3D6RW9g@mail.gmail.com/
 
