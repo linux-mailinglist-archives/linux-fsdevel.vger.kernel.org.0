@@ -2,103 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74BD670570A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 21:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 087B670570F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 21:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbjEPTZa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 15:25:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50728 "EHLO
+        id S229607AbjEPT11 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 15:27:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229770AbjEPTZ3 (ORCPT
+        with ESMTP id S229572AbjEPT10 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 15:25:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6494C8A48;
-        Tue, 16 May 2023 12:25:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F188663E5B;
-        Tue, 16 May 2023 19:25:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2317C433D2;
-        Tue, 16 May 2023 19:25:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1684265127;
-        bh=S0Rq0G95CHXp1m5S50Xtw88jTsSFrtOHdzpyyFfPe0E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wz3FHy0V43KAsSPzha+tkRRwMjg88jaek5nHtnOKFD69lkdQjPK1x4dLPI8VAhx4+
-         cUjeTfmLgmawZQr1sy/f0j9C5nRE2xgaE0EKWlK9c5bYUcwIXNDs7+jH22wKB/ukWv
-         TiMRfHW63t4IQ6YksDh/bFAzrJP12OWuWyhmNNtY=
-Date:   Tue, 16 May 2023 21:25:24 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Avadhut Naik <Avadhut.Naik@amd.com>
-Cc:     rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, yazen.ghannam@amd.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1] ACPI: APEI: EINJ: Add support for vendor defined
- error types
-Message-ID: <2023051602-clear-encode-984e@gregkh>
-References: <20230516183228.3736-1-Avadhut.Naik@amd.com>
+        Tue, 16 May 2023 15:27:26 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B46F935AD;
+        Tue, 16 May 2023 12:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=6ZrPYDjwLGlRaReyRClDuqn4qyu9lZUT+0fYgFgPHu0=; b=d9EZO9asjupb3jlC/brALJtbtQ
+        0uTLJKKO/MBmoyBlZFNzPjU5vpkp7nzh0TEEqF8F96GaTWqQXGVFWeILRLRtOHx3EDHY0fz4kjZl2
+        zEyXiWoTA4L/JsClBdSg3fWJgxokSlu/olWCz90JAL+BtFW3tiB3nVC4HLP/UCmAhlgpQ+p7tOWfA
+        VOPYmYFPO7v7Ffd4UBuraYVz+UOixrLKtwq2D8LLBvZPx01ZWc4QQkDrwojm2TwfuKxWW+rJcdUPR
+        0MxfVjh2P7DlyXqomzBQ8swQAdBZBcq759vVD/RjAsvztddgSxdioiksfUnKA/8Mqvy0JnZPHOqi7
+        w60ndHdw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pz0KR-004UVv-7Y; Tue, 16 May 2023 19:27:23 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 6/5] ext4: Call fsverity_verify_folio()
+Date:   Tue, 16 May 2023 20:27:13 +0100
+Message-Id: <20230516192713.1070469-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <cover.1684122756.git.ritesh.list@gmail.com>
+References: <cover.1684122756.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230516183228.3736-1-Avadhut.Naik@amd.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 16, 2023 at 06:32:28PM +0000, Avadhut Naik wrote:
-> According to ACPI specification 6.5, section 18.6.4, Vendor-Defined Error
-> types are supported by the system apart from standard error types if bit
-> 31 is set in the output of GET_ERROR_TYPE Error Injection Action. While
-> the errors themselves and the length of their associated OEM Vendor data
-> structure might vary between vendors, the physical address of this very
-> structure can be computed through vendor_extension and length fields of
-> SET_ERROR_TYPE_WITH_ADDRESS Data Structure and Vendor Error Type Extension
-> Structure respectively (ACPI Spec 6.5, Table 18.31 and 18.32).
-> 
-> Currently, however, the einj module only computes the physical address of
-> Vendor Error Type Extension Structure. Neither does it compute the physical
-> address of OEM Vendor structure nor does it establish the memory mapping
-> required for injecting Vendor-defined errors. Consequently, userspace
-> tools have to establish the very mapping through /dev/mem, nopat kernel
-> parameter and system calls like mmap/munmap initially before injecting
-> Vendor-defined errors.
-> 
-> Circumvent the issue by computing the physical address of OEM Vendor data
-> structure and establishing the required mapping with the structure. Create
-> a new file "oem_error", if the system supports Vendor-defined errors, to
-> export this mapping, through debugfs_create_blob API. Userspace tools can
-> then populate their respective OEM Vendor structure instances and just
-> write to the file as part of injecting Vendor-defined Errors.
-> 
-> Additionally, since the debugfs files created through debugfs_create_blob
-> API are read-only, introduce a write callback to enable userspace tools to
-> write OEM Vendor structures into the oem_error file.
+Now that fsverity supports working on entire folios, call
+fsverity_verify_folio() instead of fsverity_verify_page()
 
-When you say "additionally", that's usually a huge hint that you need to
-split this up into multiple patches.
+Reported-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/ext4/readpage.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please do so here.
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index 6f46823fba61..3e7d160f543f 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -334,7 +334,7 @@ int ext4_mpage_readpages(struct inode *inode,
+ 					  folio_size(folio));
+ 			if (first_hole == 0) {
+ 				if (ext4_need_verity(inode, folio->index) &&
+-				    !fsverity_verify_page(&folio->page))
++				    !fsverity_verify_folio(folio))
+ 					goto set_error_page;
+ 				folio_mark_uptodate(folio);
+ 				folio_unlock(folio);
+-- 
+2.39.2
 
-Also note that debugfs is almost never a valid api for anything you care
-about for having a running system, as it is locked down for root access
-only and some distros refuse to enable it at all due to its security
-leakage.  So be careful about creating an api here that you might need
-to use on a normal running system.
-
-
-> 
-> Note: Some checkpatch warnings are ignored to maintain coding style.
-
-That's not good, please follow the right style for new code.
-
-thanks,
-
-greg k-h
