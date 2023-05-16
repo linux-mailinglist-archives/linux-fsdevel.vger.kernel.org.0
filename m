@@ -2,140 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C51C7046C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 09:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E5BB70474B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 10:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231136AbjEPHpP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 03:45:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43828 "EHLO
+        id S231494AbjEPIFS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 04:05:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230117AbjEPHpO (ORCPT
+        with ESMTP id S230136AbjEPIFR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 03:45:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4946A1FC9;
-        Tue, 16 May 2023 00:45:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DAAF560AFF;
-        Tue, 16 May 2023 07:45:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E556C433D2;
-        Tue, 16 May 2023 07:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684223112;
-        bh=7BlG4EAaAQ/2PfJOByK6/yL6MquEqFQSgp+HP1sIrO0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rIvMj1JmRgzYN1y+iVKqKvOkJp/1DmVR5JlVAwph4mcKzBnAFR1M+UEX/2O3Y+dYv
-         DMj5yrVMHmmg2CPbXLrmFwOXJHHx2cL0finNLS6cke3kiK2QtuKhUD8pMyrYYIJaXH
-         nmcAcHCoPmUrEyHKoc3eY30kwGjwvdx111WWwQl56Eup8W48WkJACGL6YCET7SooA4
-         iJCWfehbNamCnfrj19DFONCzV5WGoEg0eEIMKBIFXvVwhCnxy2HIanrNdWsPq9f/hH
-         PzUfoASABgYdCIyv32R57oCFO7DoPQbxl67VxGeeguaFbQUXT04PrAJybbPO2nzJPv
-         UhUDEraTb2alQ==
-Date:   Tue, 16 May 2023 10:45:05 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Yuanchu Xie <yuanchu@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yang Shi <shy828301@gmail.com>,
-        Zach O'Keefe <zokeefe@google.com>,
-        Peter Xu <peterx@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mm: pagemap: restrict pagewalk to the requested range
-Message-ID: <ZGM0gegQkvrQtq49@kernel.org>
-References: <20230515172608.3558391-1-yuanchu@google.com>
+        Tue, 16 May 2023 04:05:17 -0400
+Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 391C844B0;
+        Tue, 16 May 2023 01:05:14 -0700 (PDT)
+Received: from mail-nwsmtp-smtp-corp-main-11.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-11.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:2c24:0:640:73f8:0])
+        by forwardcorp1b.mail.yandex.net (Yandex) with ESMTP id 2A0B360AC5;
+        Tue, 16 May 2023 11:05:12 +0300 (MSK)
+Received: from [IPV6:2a02:6b8:8f:4:7a31:c1ff:fef2:bf07] (unknown [2a02:6b8:8f:4:7a31:c1ff:fef2:bf07])
+        by mail-nwsmtp-smtp-corp-main-11.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id A5WFgX1OmGk0-7LFYAc0J;
+        Tue, 16 May 2023 11:05:11 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1684224311; bh=F5bRoS4xpTyVs5DFCkErH3y1wwSu6rDSU3Adh9JEHxc=;
+        h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+        b=aWj+cMyK7wLaA426sbgLxmJI/jn353ehUh0W4FX9Qt5m3TfTpQAarrBB3ryPNv0qX
+         xjFvuwwj5GHQF2ERpKOU8lfeIiSyMIJVG8+C8CXYxng6XyjTtQsAApcicaGG3f0t/W
+         SJlqOaXQwOF8rzWBTP+JXWoMGxbQvkNW+wHgOJqc=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-11.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+Message-ID: <fa295ea1-d7ee-3f85-98be-f6a547fa13ce@yandex-team.ru>
+Date:   Tue, 16 May 2023 11:05:10 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230515172608.3558391-1-yuanchu@google.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] fs/coredump: open coredump file in O_WRONLY instead of
+ O_RDWR
+To:     Linus Torvalds <torvalds@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ptikhomirov@virtuozzo.com, Andrey Ryabinin <arbn@yandex-team.com>
+References: <20230420120409.602576-1-vsementsov@yandex-team.ru>
+ <14af0872-a7c2-0aab-b21d-189af055f528@yandex-team.ru>
+ <20230515-bekochen-ertrinken-ce677c8d9e6e@brauner>
+ <CAHk-=wiRmfEmUWTcVPexUk50Ejgy4NCBE6HP84eckraMRrL6gQ@mail.gmail.com>
+ <CAHk-=wjex4GE-HXFNPzi+xE+w2hkZTQrACgAaScNdf-8hnMHKA@mail.gmail.com>
+Content-Language: en-US
+From:   Vladimir Sementsov-Ogievskiy <vsementsov@yandex-team.ru>
+In-Reply-To: <CAHk-=wjex4GE-HXFNPzi+xE+w2hkZTQrACgAaScNdf-8hnMHKA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 16, 2023 at 01:26:08AM +0800, Yuanchu Xie wrote:
-> The pagewalk in pagemap_read reads one PTE past the end of the requested
-> range, and stops when the buffer runs out of space. While it produces
-> the right result, the extra read is unnecessary and less performant.
+On 15.05.23 22:13, Linus Torvalds wrote:
+> On Mon, May 15, 2023 at 11:50 AM Linus Torvalds
+> <torvalds@linuxfoundation.org> wrote:
+>>
+>> It's strange, because the "O_WRONLY" -> "2" change that changes to a
+>> magic raw number is right next to changing "(unsigned short) 0x10" to
+>> "KERNEL_DS", so we're getting *rid* of a magic raw number there.
 > 
-> I timed the following command before and after this patch:
-> 	dd count=100000 if=/proc/self/pagemap of=/dev/null
-> The results are consistently within 0.001s across 5 runs.
+> Oh, no, never mind. I see what is going on.
 > 
-> Before:
-> 100000+0 records in
-> 100000+0 records out
-> 51200000 bytes (51 MB) copied, 0.0763159 s, 671 MB/s
+> Back then, "open_namei()" didn't actually take O_RDWR style flags AT ALL.
 > 
-> real    0m0.078s
-> user    0m0.012s
-> sys     0m0.065s
+> The O_RDONLY flags are broken, because you cannot say "open with no
+> permissions", which we used internally. You have
 > 
-> After:
-> 100000+0 records in
-> 100000+0 records out
-> 51200000 bytes (51 MB) copied, 0.0487928 s, 1.0 GB/s
+>   0 - read-only
+>   1 - write-only
+>   2 - read-write
 > 
-> real    0m0.050s
-> user    0m0.011s
-> sys     0m0.039s
+> but the internal code actually wants to match that up with the
+> read-write permission bits (FMODE_READ etc).
 > 
-> Signed-off-by: Yuanchu Xie <yuanchu@google.com>
+> And then we've long had a special value for "open for special
+> accesses" (format etc), which (naturally) was 3.
+> 
+> So then the open code would do
+> 
+>          f->f_flags = flag = flags;
+>          f->f_mode = (flag+1) & O_ACCMODE;
+>          if (f->f_mode)
+>                  flag++;
+> 
+> which means that "f_mode" now becomes that FMODE_READ | FMODE_WRITE
+> mask, and "flag" ends up being a translation from that O_RDWR space
+> (0/1/2/3) into the FMODE_READ/WRITE space (1/2/3/3, where "special"
+> required read-write permissions, and 0 was only used for symlinks).
+> 
+> We still have that, although the code looks different.
+> 
+> So back then, "open_namei()" took that FMODE_READ/WRITE flag as an
+> argument, and the  "O_WRONLY" -> "2" change is actually a bugfix and
+> makes sense. The O_WRONLY thing was wrong, because it was 1, which
+> actuall ymeant FMODE_READ.
+> 
+> And back then, we didn't *have* FMODE_READ and FMODE_WRITE.
+> 
+> So just writing it as "2" made sense, even if it was horrible. We
+> added FMODE_WRITE later, but never fixed up those core file writers.
+> 
+> So that 0.99pl10 commit from 1993 is actually correct, and the bug
+> happened *later*.
+> 
+> I think the real bug may have been in 2.2.4pre4 (February 16, 1999),
+> when this happened:
+> 
+> -       dentry = open_namei(corefile,O_CREAT | 2 | O_TRUNC | O_NOFOLLOW, 0600);
+> ...
+> +       file = filp_open(corefile,O_CREAT | 2 | O_TRUNC | O_NOFOLLOW, 0600);
+> 
+> without realizing that the "2" in open_namei() should have become a
+> O_WRONLY for filp_open().
+> 
+> So I think this explains it all.
+> 
+> Very understandable mistake after all.
+> 
+>                      Linus
 
-Acked-by: Mike Rapoport (IBM) <rppt@kernel.org>
-
-> ---
->  fs/proc/task_mmu.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 420510f6a545..6259dd432eeb 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1689,23 +1689,23 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
->  	/* watch out for wraparound */
->  	start_vaddr = end_vaddr;
->  	if (svpfn <= (ULONG_MAX >> PAGE_SHIFT)) {
-> +		unsigned long end;
-> +
->  		ret = mmap_read_lock_killable(mm);
->  		if (ret)
->  			goto out_free;
->  		start_vaddr = untagged_addr_remote(mm, svpfn << PAGE_SHIFT);
->  		mmap_read_unlock(mm);
-> +
-> +		end = start_vaddr + ((count / PM_ENTRY_BYTES) << PAGE_SHIFT);
-> +		if (end >= start_vaddr && end < mm->task_size)
-> +			end_vaddr = end;
->  	}
->  
->  	/* Ensure the address is inside the task */
->  	if (start_vaddr > mm->task_size)
->  		start_vaddr = end_vaddr;
->  
-> -	/*
-> -	 * The odds are that this will stop walking way
-> -	 * before end_vaddr, because the length of the
-> -	 * user buffer is tracked in "pm", and the walk
-> -	 * will stop when we hit the end of the buffer.
-> -	 */
->  	ret = 0;
->  	while (count && (start_vaddr < end_vaddr)) {
->  		int len;
-> -- 
-> 2.40.1.606.ga4b1b128d6-goog
-> 
-> 
+Wow that's became a detective story, great thanks! [took note to check history myself next time]
 
 -- 
-Sincerely yours,
-Mike.
+Best regards,
+Vladimir
+
