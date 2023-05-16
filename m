@@ -2,86 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 511D2705962
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 23:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9CCD705965
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 23:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbjEPVUo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 17:20:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
+        id S229921AbjEPVWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 17:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230416AbjEPVUm (ORCPT
+        with ESMTP id S229701AbjEPVWe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 17:20:42 -0400
-Received: from out-27.mta0.migadu.com (out-27.mta0.migadu.com [91.218.175.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A025FD6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 14:20:40 -0700 (PDT)
-Date:   Tue, 16 May 2023 17:20:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1684272038;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dbkTng8H6hiTn8uKTCVsk8fFMRZsv0G437tHoNcRdyw=;
-        b=SibD303eoaJKDw/Qhvvh03L8pvarBF0nYUklNoNZHgjjEpZ53aMlv5snN9FpqFXPEHQbx0
-        LHXWrEV8byrPRslwxSNZj55hzeuxAFGK+ubsNu2p2v/2BFgQ2akuSeiuhIiYnhMwXR9Doi
-        pF/mjBYG4GZWtq5+dZGjxFVscbKXIck=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tue, 16 May 2023 17:22:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABBBB4698;
+        Tue, 16 May 2023 14:22:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 413E563F81;
+        Tue, 16 May 2023 21:22:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B36C433D2;
+        Tue, 16 May 2023 21:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684272152;
+        bh=nsnbvkz4IM+E5OVmBDfoHg+keBdzLU5YbNR/tm3g7OQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=fVXrZ6Pzte2LrlJ35tCPQClTqIj2qf1mGNleN9w2S76B5CithTjwvsjQgYvlTF5je
+         AiyEBY0upq/Q8eORu/CeBQrCi5idgJBi48Me2IbxPluKiFvX15DmKWPnqcGphPYSdu
+         DcMw3GaQWvUECk4kqHO2/fbHcmpCPASdoW8XiwC/0MfN2kkgudrEiI/6maefS6v2AV
+         4mXN8GmNAx4swLN88pXHh/AJAC3b5Px2SfjgwGmpAMmlqD2YDiROuI/v+Ez+zC2f/3
+         QHPSIDMlAVNYUmu9YZhmuICTnMKjVbUPC7l4l8f+/GXMIy4hIZ3E/B4061NSJQGAWF
+         sM9XX/aqz5Lfw==
+Message-ID: <cc4317d9cb8f10aa0b3750bdb6db8b4e77ff26f8.camel@kernel.org>
+Subject: Re: A pass-through support for NFSv4 style ACL
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Ondrej Valousek <ondrej.valousek.xm@renesas.com>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     "trondmy@hammerspace.com" <trondmy@hammerspace.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
-Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
-Message-ID: <ZGPzocRpSlg+4vgN@moria.home.lan>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-8-kent.overstreet@linux.dev>
- <3508afc0-6f03-a971-e716-999a7373951f@wdc.com>
- <202305111525.67001E5C4@keescook>
- <ZF6Ibvi8U9B+mV1d@moria.home.lan>
- <202305161401.F1E3ACFAC@keescook>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 16 May 2023 17:22:30 -0400
+In-Reply-To: <TYXPR01MB18549D3A5B0BE777D7F6B284D9799@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+References: <20230516124655.82283-1-jlayton@kernel.org>
+         <20230516-notorisch-geblickt-6b591fbd77c1@brauner>
+         <TYXPR01MB18549D3A5B0BE777D7F6B284D9799@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202305161401.F1E3ACFAC@keescook>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 16, 2023 at 02:02:11PM -0700, Kees Cook wrote:
-> For something that small, why not use the text_poke API?
+On Tue, 2023-05-16 at 20:50 +0000, Ondrej Valousek wrote:
+>=20
+> Hi Christian,
+>=20
+> Would it be possible to patch kernel the way it accepts native (i.e no
+> conversion to Posix ACL) NFSv4 style ACLs for filesystems that can
+> support them?
+> I.E. OpenZFS, NTFS, could be also interesting for Microsofts WSL2=A0 or
+> Samba right?
+>=20
+> I mean, I am not trying to push richacl again knowing they have been
+> rejected, but just NFS4 style Acls as they are so similar to Windows
+> ACLs.
+>=20
 
-This looks like it's meant for patching existing kernel text, which
-isn't what I want - I'm generating new functions on the fly, one per
-btree node.
+Erm, except you kind of are if you want to do this. I don't see how this
+idea works unless you resurrect RichACLs or something like them.
 
-I'm working up a new allocator - a (very simple) slab allocator where
-you pass a buffer, and it gives you a copy of that buffer mapped
-executable, but not writeable.
+> The idea here would be that we could
+> - mount NTFS/ZFS filesystem and inspect ACLs using existing tools
+> (nfs4_getacl)
+> - share with NFSv4 in a pass through mode
+> - in Windows WSL2 we could inspect local filesystem ACLs using the
+> same tools
+>=20
+> Does it make any sense or it would require lot of changes to VFS
+> subsystem or its a nonsense altogether?
+>=20
 
-It looks like we'll be able to convert bpf, kprobes, and ftrace
-trampolines to it; it'll consolidate a fair amount of code (particularly
-in bpf), and they won't have to burn a full page per allocation anymore.
+Eventually you have to actually enforce the ACL. Do NTFS/ZFS already
+have code to do this? If not then someone would need to write it.
 
-bpf has a neat trick where it maps the same page in two different
-locations, one is the executable location and the other is the writeable
-location - I'm stealing that.
-
-external api will be:
-
-void *jit_alloc(void *buf, size_t len, gfp_t gfp);
-void jit_free(void *buf);
-void jit_update(void *buf, void *new_code, size_t len); /* update an existing allocation */
+Also windows and nfs acls do have some differences, so you'll need a
+translation layer too.
+--=20
+Jeff Layton <jlayton@kernel.org>
