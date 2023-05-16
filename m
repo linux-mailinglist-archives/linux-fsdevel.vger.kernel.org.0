@@ -2,91 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57C29704DA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 14:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC89B704DC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 14:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232712AbjEPMVT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 08:21:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41344 "EHLO
+        id S233092AbjEPM2N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 08:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231549AbjEPMVS (ORCPT
+        with ESMTP id S232625AbjEPM2M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 08:21:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A48C94698
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 05:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684239636;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=E0FZtsxQz3Rjm7C2/u5FO2j69Qx91RmAS6xW6uxmtbs=;
-        b=aLIIJUax4tVmCJObE2hs7vpWNq6FtPauhn2XTVx3ITImEctPRhCKkGUi05tOIbqpY2N/Q1
-        Oi0bPJqubTmNaC6eXU2Vg9cWzdtiI+0VqwotIp65pWCmzfk6V/tpVjtt/kJ7CJ/BgjfqNU
-        m3jS03mNj2XFGQxU3+A6G7ZGK7pfx1Q=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-61-SoIIL50RPpaSFgsLisuG4Q-1; Tue, 16 May 2023 08:20:35 -0400
-X-MC-Unique: SoIIL50RPpaSFgsLisuG4Q-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-61b62c71a61so187653926d6.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 05:20:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684239635; x=1686831635;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E0FZtsxQz3Rjm7C2/u5FO2j69Qx91RmAS6xW6uxmtbs=;
-        b=UFiKxI6MxFRYiZGAWjpDEKsoYcYbwLzY0EmXtVmP6LUuBpw4RZTC9lg5kEUieNmvFB
-         qU8Mo02iC2a4j31JCwosAG6EYwiIP3KOzqX2TVzcUD9Fj0G/LvKFU6ZiKm1pe06KUIpK
-         /0/5BFb8X2A6xi4T016cibdIP8JMaTQYWg7T0TsiWZCqYulvfybW7WjgmPiJXFL/EZCD
-         Pf3h87hX13EJBT/ELbpwWIFQr+uvN181HiLu3j9Ed61MfO5bGjR30JI0GI6aEZwx3gb6
-         TlhXKVdpHYda9FxddvrKJYdDQbQXgjAzvGrCdq/B+ijrJrIXmDDDILYDTSRsUNqH9QNs
-         XTZg==
-X-Gm-Message-State: AC+VfDyfKuCPdjgEnNI7XeUzIRheMlpS9D0TTr+WKhR/Od6u+1fGSSvf
-        3Eue67YSfrGxYSf+yN08IrQUti+J5j3qHJaaSD5/wiPb6qOcK75L5G9124LwY51uH9T/AY7lBJ1
-        wEFanemk8ZvRS8T9WKuwI4dY2Ag==
-X-Received: by 2002:ad4:5cce:0:b0:61b:7383:798d with SMTP id iu14-20020ad45cce000000b0061b7383798dmr63602838qvb.40.1684239635146;
-        Tue, 16 May 2023 05:20:35 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5ItUHbySneQ59sTCRzmPR4UnU0PyajUWJ+MBcZ/7Bg8t+g7UugkdXD+80X50kOnePk3/gsyw==
-X-Received: by 2002:ad4:5cce:0:b0:61b:7383:798d with SMTP id iu14-20020ad45cce000000b0061b7383798dmr63602787qvb.40.1684239634701;
-        Tue, 16 May 2023 05:20:34 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id h10-20020a0cf20a000000b0061b5c45f970sm5594360qvk.74.2023.05.16.05.20.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 May 2023 05:20:34 -0700 (PDT)
-Message-ID: <b4f836aa654acef4825dc8e502afe415a6956ffb.camel@redhat.com>
-Subject: Re: [PATCH] fix NFSv4 acl detection on F39
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "eggert@cs.ucla.edu" <eggert@cs.ucla.edu>,
-        "bruno@clisp.org" <bruno@clisp.org>,
-        "ondrej.valousek.xm@renesas.com" <ondrej.valousek.xm@renesas.com>,
-        "bug-gnulib@gnu.org" <bug-gnulib@gnu.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Date:   Tue, 16 May 2023 08:20:33 -0400
-In-Reply-To: <20230516-distanz-abkommen-95e565ba928b@brauner>
-References: <20230501194321.57983-1-ondrej.valousek.xm@renesas.com>
-         <c955ee20-371c-5dde-fcb5-26d573f69cd9@cs.ucla.edu>
-         <TYXPR01MB1854B3C3B8215DD0FA7B83CCD96D9@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-         <17355394.lhrHg4fidi@nimes>
-         <32edbaf1-d3b1-6057-aefc-d83df3266c20@cs.ucla.edu>
-         <4f1519d8-bda1-1b15-4a78-a8072ba1551a@cs.ucla.edu>
-         <TYXPR01MB18547A591663A4934B5D4D82D9789@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-         <fb005d7e29f1167b83acf7b10800ff3124ee2a50.camel@redhat.com>
-         <f967cbcc1620d1a5e68d7f005571dc569c8b5bb4.camel@hammerspace.com>
-         <d4e26d9e4d9113f8da20425f5bf7ad91c786f381.camel@redhat.com>
-         <20230516-distanz-abkommen-95e565ba928b@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        Tue, 16 May 2023 08:28:12 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 942825BA8;
+        Tue, 16 May 2023 05:28:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=M4Bft0UlsE+EtGzPxKSspoLbFFPDJ23l5PsHz/IN7e8=; b=nzuWRMSq84D3tBJiUSL8ouZdwR
+        Qwur2frEYfoSj8ub2VQaLZSw5/XDVJ9MMouvdKNguA/UqyTFAgJJsSJoMPrwdu4UqltJC0Q6mTmTc
+        4lyhzXGT31Tz8cWQkMaKAVzVBTndfKiBstBeawTTH5tQaV9vK7pXv4IYQR2c360gFHyXsfb2ZEaba
+        DgyR0t90IaGkrK84rZDXb+JvGIRZc0EP5d6cygz38yz1FHboHO9D+Ma0d+Kb9PLXbT2YBC601M5Er
+        Fu41U0k2PX/kfZdeOBJpUM03TmOB5ZvjB2GuFDgGFD5lKs5JwF+BLOrGwNGOeulWPwCcnjOxlr2ix
+        a+yrjIsQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pytma-004E1l-VG; Tue, 16 May 2023 12:28:01 +0000
+Date:   Tue, 16 May 2023 13:28:00 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: DIO hangs in 6.4.0-rc2
+Message-ID: <ZGN20Hp1ho/u4uPY@casper.infradead.org>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -94,93 +46,471 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-05-16 at 11:17 +0200, Christian Brauner wrote:
-> On Mon, May 15, 2023 at 01:49:21PM -0400, Jeff Layton wrote:
-> > On Mon, 2023-05-15 at 17:28 +0000, Trond Myklebust wrote:
-> > > On Mon, 2023-05-15 at 13:11 -0400, Jeff Layton wrote:
-> > > > On Mon, 2023-05-15 at 11:50 +0000, Ondrej Valousek wrote:
-> > > > > Hi Paul,
-> > > > >=20
-> > > > > Ok first of all, thanks for taking initiative on this, I am unabl=
-e
-> > > > > to proceed on this on my own at the moment.
-> > > > > I see few problems with this:
-> > > > >=20
-> > > > > 1. The calculation of the 'listbufsize' is incorrect in your patc=
-h.
-> > > > > It will _not_work as you expected and won't limit the number of
-> > > > > syscalls (which is why we came up with this patch, right?). Check
-> > > > > with my original proposal, we really need to check for
-> > > > > 'system.nfs4' xattr name presence here
-> > > > > 2. It mistakenly detects an ACL presence on files which do not ha=
-ve
-> > > > > any ACL on NFSv4 filesystem. Digging further it seems that kernel
-> > > > > in F39 behaves differently to the previous kernels:
-> > > > >=20
-> > > > > F38:=20
-> > > > > # getfattr -m . /path_to_nfs4_file
-> > > > > # file: path_to_nfs4_file
-> > > > > system.nfs4_acl=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <---- only
-> > > > > single xattr detected
-> > > > >=20
-> > > > > F39:
-> > > > > # getfattr -m . /path_to_nfs4_file
-> > > > > # file: path_to_nfs4_file
-> > > > > system.nfs4_acl
-> > > > > system.posix_acl_default
-> > > > > /* SOMETIMES even shows this */
-> > > > > system.posix_acl_default
-> > > >=20
-> > > > (cc'ing Christian and relevant kernel lists)
-> > > >=20
-> > > > I assume the F39 kernel is v6.4-rc based? If so, then I think that'=
-s
-> > > > a
-> > > > regression. NFSv4 client inodes should _not_ report a POSIX ACL
-> > > > attribute since the protocol doesn't support them.
-> > > >=20
-> > > > In fact, I think the rationale in the kernel commit below is wrong.
-> > > > NFSv4 has a listxattr operation, but doesn't support POSIX ACLs.
-> > > >=20
-> > > > Christian, do we need to revert this?
-> > > >=20
-> > > > commit e499214ce3ef50c50522719e753a1ffc928c2ec1
-> > > > Author: Christian Brauner <brauner@kernel.org>
-> > > > Date:=A0=A0 Wed Feb 1 14:15:01 2023 +0100
-> > > >=20
-> > > > =A0=A0=A0 acl: don't depend on IOP_XATTR
-> > > > =A0=A0=A0=20
-> > > >=20
-> > >=20
-> > >=20
-> > > No. The problem is commit f2620f166e2a ("xattr: simplify listxattr
-> > > helpers") which helpfully inserts posix acl handlers into
-> > > generic_listxattr(), and makes it impossible to call from
-> > > nfs4_listxattr().
-> > >=20
-> >=20
-> >=20
-> > Ahh ok. Looking at that function though, it seems like it'd only report
-> > these for mounts that set SB_POSIXACL. Any reason that we have that
-> > turned on with v4 mounts?
->=20
-> You seem to just be calling generic_listxattr() in fs/nfs/nfs4proc.c and
-> not using it as an inode operation.
->=20
+Plain 6.4.0-rc2 with a relatively minor change to the futex code that
+I cannot believe was in any way responsible for this.
 
-Correct, but even if we were, this would be doing the wrong thing. As
-Trond pointed out, f2620f166e2a changed the behavior of
-generic_listxattr to make it include the POSIX ACL entries.
+kworkers blocked all over the place.  Some on XFS_ILOCK_EXCL.  Some on
+xfs_buf_lock.  One in xfs_btree_split() calling wait_for_completion.
 
-> So imho just add a tiny helper into
-> fs/xattr.c that takes a boolean argument and skips over POSIX ACLs that
-> you can call in nfs4. That should be enough, no?
->=20
+This was an overnight test run that is now dead, so I can't get any
+more info from the locked up kernel.  I have the vmlinux if some
+decoding of offsets is useful.
 
-The only other user of generic_listxattr is HFS, and I don't think it
-supports POSIX ACLs either. I think we should probably just remove the
-call to posix_acl_listxattr from generic_listxattr.
---=20
-Jeff Layton <jlayton@redhat.com>
+03112 generic/299       run fstests generic/299 at 2023-05-15 21:57:47
+03112 XFS (sdb): Mounting V5 Filesystem f0c30f98-050d-46ac-a75c-da4c48421e16
+03112 XFS (sdb): Ending clean mount
+03113 XFS (sdc): Mounting V5 Filesystem 0aa26d2f-31a3-47f9-b264-1654bf262ef4
+03113 XFS (sdc): Ending clean mount
+03253 kworker/dying (1180190) used greatest stack depth: 10648 bytes left
+03384 INFO: task kworker/0:55:1617125 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:kworker/0:55    state:D stack:12936 pid:1617125 ppid:2      flags:0x00004000
+03384 Workqueue: dio/sdc iomap_dio_complete_work
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  schedule+0x5d/0xd0
+03384  schedule_preempt_disabled+0x13/0x20
+03384  rwsem_down_write_slowpath+0x26d/0x5e0
+03384  down_write+0x5a/0x70
+03384  xfs_ilock+0x71/0x100
+03384  xfs_trans_alloc_inode+0x70/0x130
+03384  xfs_iomap_write_unwritten+0x118/0x2c0
+03384  xfs_dio_write_end_io+0x1d3/0x1f0
+03384  iomap_dio_complete+0x43/0x1c0
+03384  ? aio_fsync_work+0x90/0x90
+03384  iomap_dio_complete_work+0x17/0x30
+03384  process_one_work+0x1a9/0x3a0
+03384  worker_thread+0x4e/0x3a0
+03384  ? process_one_work+0x3a0/0x3a0
+03384  kthread+0xf9/0x130
+03384  ? kthread_complete_and_exit+0x20/0x20
+03384  ret_from_fork+0x1f/0x30
+03384  </TASK>
+03384 INFO: task kworker/0:68:1617702 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:kworker/0:68    state:D stack:12536 pid:1617702 ppid:2      flags:0x00004000
+03384 Workqueue: dio/sdc iomap_dio_complete_work
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  schedule+0x5d/0xd0
+03384  schedule_preempt_disabled+0x13/0x20
+03384  rwsem_down_write_slowpath+0x26d/0x5e0
+03384  down_write+0x5a/0x70
+03384  xfs_ilock+0x71/0x100
+03384  xfs_trans_alloc_inode+0x70/0x130
+03384  xfs_iomap_write_unwritten+0x118/0x2c0
+03384  ? iocb_put.part.0+0x1f8/0x270
+03384  xfs_dio_write_end_io+0x1d3/0x1f0
+03384  ? iocb_put.part.0+0x1f8/0x270
+03384  iomap_dio_complete+0x43/0x1c0
+03384  ? aio_fsync_work+0x90/0x90
+03384  iomap_dio_complete_work+0x17/0x30
+03384  process_one_work+0x1a9/0x3a0
+03384  worker_thread+0x4e/0x3a0
+03384  ? process_one_work+0x3a0/0x3a0
+03384  kthread+0xf9/0x130
+03384  ? kthread_complete_and_exit+0x20/0x20
+03384  ret_from_fork+0x1f/0x30
+03384  </TASK>
+03384 INFO: task kworker/0:126:1621285 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:kworker/0:126   state:D stack:12584 pid:1621285 ppid:2      flags:0x00004000
+03384 Workqueue: dio/sdc iomap_dio_complete_work
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  schedule+0x5d/0xd0
+03384  schedule_preempt_disabled+0x13/0x20
+03384  rwsem_down_write_slowpath+0x26d/0x5e0
+03384  down_write+0x5a/0x70
+03384  xfs_ilock+0x71/0x100
+03384  xfs_trans_alloc_inode+0x70/0x130
+03384  xfs_iomap_write_unwritten+0x118/0x2c0
+03384  ? update_load_avg+0x61/0x300
+03384  ? update_load_avg+0x61/0x300
+03384  xfs_dio_write_end_io+0x1d3/0x1f0
+03384  iomap_dio_complete+0x43/0x1c0
+03384  ? aio_fsync_work+0x90/0x90
+03384  iomap_dio_complete_work+0x17/0x30
+03384  process_one_work+0x1a9/0x3a0
+03384  worker_thread+0x4e/0x3a0
+03384  ? process_one_work+0x3a0/0x3a0
+03384  kthread+0xf9/0x130
+03384  ? kthread_complete_and_exit+0x20/0x20
+03384  ret_from_fork+0x1f/0x30
+03384  </TASK>
+03384 INFO: task kworker/0:129:1621288 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:kworker/0:129   state:D stack:12536 pid:1621288 ppid:2      flags:0x00004000
+03384 Workqueue: dio/sdc iomap_dio_complete_work
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  schedule+0x5d/0xd0
+03384  schedule_timeout+0x11d/0x130
+03384  ? ___slab_alloc+0x4f2/0x990
+03384  ? preempt_count_add+0x6f/0xb0
+03384  __down_common+0xe6/0x1d0
+03384  __down+0x18/0x20
+03384  down+0x43/0x60
+03384  xfs_buf_lock+0x2b/0xe0
+03384  xfs_buf_find_lock+0x2d/0xf0
+03384  xfs_buf_get_map+0x170/0x9f0
+03384  xfs_buf_read_map+0x36/0x290
+03384  xfs_trans_read_buf_map+0xea/0x2a0
+03384  ? xfs_read_agf+0x78/0x100
+03384  xfs_read_agf+0x78/0x100
+03384  xfs_alloc_read_agf+0x41/0x1d0
+03384  xfs_alloc_fix_freelist+0x446/0x590
+03384  ? xfs_buf_rele+0x10e/0x460
+03384  ? up+0x2d/0x60
+03384  ? xfs_buf_item_release+0x6a/0xc0
+03384  ? preempt_count_add+0x45/0xb0
+03384  ? up_read+0x36/0x70
+03384  ? xlog_cil_commit+0x8d0/0xc00
+03384  xfs_free_extent_fix_freelist+0x55/0x70
+03384  xfs_rmap_finish_one+0x63/0x290
+03384  ? xfs_defer_restore_resources+0x34/0xa0
+03384  ? kmem_cache_alloc+0xdd/0x200
+03384  xfs_rmap_update_finish_item+0x1f/0x60
+03384  xfs_defer_finish_noroll+0x171/0x690
+03384  __xfs_trans_commit+0x2bf/0x3d0
+03384  xfs_trans_commit+0xb/0x10
+03384  xfs_iomap_write_unwritten+0xbe/0x2c0
+03384  xfs_dio_write_end_io+0x1d3/0x1f0
+03384  iomap_dio_complete+0x43/0x1c0
+03384  ? aio_fsync_work+0x90/0x90
+03384  iomap_dio_complete_work+0x17/0x30
+03384  process_one_work+0x1a9/0x3a0
+03384  worker_thread+0x4e/0x3a0
+03384  ? process_one_work+0x3a0/0x3a0
+03384  kthread+0xf9/0x130
+03384  ? kthread_complete_and_exit+0x20/0x20
+03384  ret_from_fork+0x1f/0x30
+03384  </TASK>
+03384 INFO: task kworker/u2:8:1670277 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:kworker/u2:8    state:D stack:10648 pid:1670277 ppid:2      flags:0x00004000
+03384 Workqueue: writeback wb_workfn (flush-8:32)
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  schedule+0x5d/0xd0
+03384  schedule_timeout+0x11d/0x130
+03384  ? _raw_spin_lock_irqsave+0x18/0x40
+03384  ? _raw_spin_unlock_irqrestore+0x1a/0x30
+03384  __down_common+0xe6/0x1d0
+03384  ? xfs_buf_lock+0x2b/0xe0
+03384  ? xfs_buf_get_map+0x1d0/0x9f0
+03384  __down+0x18/0x20
+03384  down+0x43/0x60
+03384  xfs_buf_lock+0x2b/0xe0
+03384  xfs_buf_find_lock+0x2d/0xf0
+03384  xfs_buf_get_map+0x170/0x9f0
+03384  xfs_buf_read_map+0x36/0x290
+03384  ? resched_curr+0x21/0x110
+03384  xfs_trans_read_buf_map+0xea/0x2a0
+03384  ? xfs_read_agf+0x78/0x100
+03384  xfs_read_agf+0x78/0x100
+03384  xfs_alloc_read_agf+0x41/0x1d0
+03384  xfs_alloc_fix_freelist+0x446/0x590
+03384  ? xfs_buf_rele+0x10e/0x460
+03384  ? xfs_buf_item_release+0x6a/0xc0
+03384  ? preempt_count_add+0x45/0xb0
+03384  ? up_read+0x36/0x70
+03384  ? xlog_cil_commit+0x8d0/0xc00
+03384  xfs_free_extent_fix_freelist+0x55/0x70
+03384  xfs_rmap_finish_one+0x63/0x290
+03384  ? kmem_cache_alloc+0xdd/0x200
+03384  xfs_rmap_update_finish_item+0x1f/0x60
+03384  xfs_defer_finish_noroll+0x171/0x690
+03384  __xfs_trans_commit+0x2bf/0x3d0
+03384  xfs_trans_commit+0xb/0x10
+03384  xfs_bmapi_convert_delalloc+0x373/0x4b0
+03384  xfs_map_blocks+0x1b8/0x3e0
+03384  iomap_do_writepage+0x23e/0x820
+03384  ? __this_cpu_preempt_check+0x13/0x20
+03384  ? percpu_counter_add_batch+0x2a/0xa0
+03384  write_cache_pages+0x16a/0x3e0
+03384  ? iomap_page_mkwrite+0x2d0/0x2d0
+03384  iomap_writepages+0x1b/0x40
+03384  xfs_vm_writepages+0x6f/0xa0
+03384  do_writepages+0xa9/0x150
+03384  ? __schedule+0x27c/0x740
+03384  __writeback_single_inode+0x3f/0x350
+03384  writeback_sb_inodes+0x1b3/0x460
+03384  __writeback_inodes_wb+0x4f/0xe0
+03384  wb_writeback+0x1d4/0x2b0
+03384  wb_workfn+0x2a8/0x440
+03384  ? _raw_spin_unlock+0x11/0x30
+03384  ? finish_task_switch.isra.0+0x89/0x250
+03384  ? __switch_to+0x12a/0x480
+03384  process_one_work+0x1a9/0x3a0
+03384  worker_thread+0x4e/0x3a0
+03384  ? process_one_work+0x3a0/0x3a0
+03384  kthread+0xf9/0x130
+03384  ? kthread_complete_and_exit+0x20/0x20
+03384  ret_from_fork+0x1f/0x30
+03384  </TASK>
+03384 INFO: task fio:1714564 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:fio             state:D stack:11032 pid:1714564 ppid:1714547 flags:0x00000002
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  schedule+0x5d/0xd0
+03384  schedule_timeout+0x11d/0x130
+03384  ? wake_up_process+0x10/0x20
+03384  ? insert_work+0xa9/0xd0
+03384  ? preempt_count_add+0x6f/0xb0
+03384  wait_for_completion+0x74/0x140
+03384  xfs_btree_split+0xa9/0xc0
+03384  ? xfs_btree_split+0xc0/0xc0
+03384  xfs_btree_make_block_unfull+0x11f/0x150
+03384  xfs_btree_insrec+0x4ab/0x590
+03384  xfs_btree_insert+0x8a/0x1c0
+03384  xfs_bmap_add_extent_hole_real+0x1a4/0x9b0
+03384  ? xfs_bmap_add_extent_hole_real+0x1a4/0x9b0
+03384  ? xfs_bmbt_init_cursor+0x5d/0x190
+03384  xfs_bmapi_allocate+0x26b/0x2f0
+03384  xfs_bmapi_write+0x3f9/0x4f0
+03384  xfs_iomap_write_direct+0x133/0x1e0
+03384  xfs_direct_write_iomap_begin+0x3a0/0x5d0
+03384  ? __kmem_cache_alloc_node+0x3b/0x190
+03384  iomap_iter+0x132/0x2f0
+03384  __iomap_dio_rw+0x1e5/0x8c0
+03384  iomap_dio_rw+0xc/0x30
+03384  xfs_file_dio_write_aligned+0x84/0x130
+03384  xfs_file_write_iter+0xcb/0x110
+03384  aio_write+0xf7/0x200
+03384  ? update_load_avg+0x61/0x300
+03384  io_submit_one+0x460/0x6c0
+03384  ? io_submit_one+0x460/0x6c0
+03384  ? __this_cpu_preempt_check+0x13/0x20
+03384  ? xfd_validate_state+0x1e/0x80
+03384  __x64_sys_io_submit+0x6b/0x130
+03384  ? exit_to_user_mode_prepare+0xe9/0x100
+03384  ? irqentry_exit_to_user_mode+0x9/0x20
+03384  do_syscall_64+0x34/0x80
+03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+03384 RIP: 0033:0x7f4d776cb5a9
+03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+03384 RDX: 000055c01bef4980 RSI: 0000000000000001 RDI: 00007f4d6d11c000
+03384 RBP: 00007f4d6d11c000 R08: 0000000000000000 R09: 00000000000001e0
+03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+03384 R13: 0000000000000000 R14: 000055c01bef4980 R15: 00007f4d62d57018
+03384  </TASK>
+03384 INFO: task fio:1714565 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:fio             state:D stack:11400 pid:1714565 ppid:1714547 flags:0x00000002
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  schedule+0x5d/0xd0
+03384  schedule_timeout+0x11d/0x130
+03384  ? preempt_count_add+0x6f/0xb0
+03384  ? preempt_count_add+0x6f/0xb0
+03384  ? _raw_spin_lock_irqsave+0x18/0x40
+03384  __down_common+0xe6/0x1d0
+03384  ? __down_common+0x140/0x1d0
+03384  __down+0x18/0x20
+03384  down+0x43/0x60
+03384  xfs_buf_lock+0x2b/0xe0
+03384  xfs_buf_find_lock+0x2d/0xf0
+03384  xfs_buf_get_map+0x170/0x9f0
+03384  xfs_buf_read_map+0x36/0x290
+03384  ? preempt_count_add+0x6f/0xb0
+03384  xfs_trans_read_buf_map+0xea/0x2a0
+03384  ? xfs_read_agf+0x78/0x100
+03384  xfs_read_agf+0x78/0x100
+03384  xfs_alloc_read_agf+0x41/0x1d0
+03384  xfs_alloc_fix_freelist+0x446/0x590
+03384  ? xfs_trans_log_buf+0x29/0x80
+03384  ? xfs_btree_insrec+0x339/0x590
+03384  xfs_alloc_vextent_prepare_ag+0x2b/0x120
+03384  xfs_alloc_vextent_iterate_ags+0x56/0x1f0
+03384  xfs_alloc_vextent_start_ag+0x94/0x190
+03384  xfs_bmap_btalloc+0x522/0x760
+03384  xfs_bmapi_allocate+0xe2/0x2f0
+03384  xfs_bmapi_write+0x3f9/0x4f0
+03384  xfs_iomap_write_direct+0x133/0x1e0
+03384  xfs_direct_write_iomap_begin+0x3a0/0x5d0
+03384  ? __kmem_cache_alloc_node+0x3b/0x190
+03384  iomap_iter+0x132/0x2f0
+03384  __iomap_dio_rw+0x1e5/0x8c0
+03384  iomap_dio_rw+0xc/0x30
+03384  xfs_file_dio_write_aligned+0x84/0x130
+03384  xfs_file_write_iter+0xcb/0x110
+03384  aio_write+0xf7/0x200
+03384  ? preempt_count_add+0x45/0xb0
+03384  ? aio_read_events_ring+0x1f6/0x230
+03384  io_submit_one+0x460/0x6c0
+03384  ? io_submit_one+0x460/0x6c0
+03384  ? _raw_spin_unlock+0x11/0x30
+03384  __x64_sys_io_submit+0x6b/0x130
+03384  ? fpregs_assert_state_consistent+0x21/0x50
+03384  ? exit_to_user_mode_prepare+0x2b/0x100
+03384  do_syscall_64+0x34/0x80
+03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+03384 RIP: 0033:0x7f4d776cb5a9
+03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+03384 RDX: 000055c01bef4a20 RSI: 0000000000000001 RDI: 00007f4d6d11b000
+03384 RBP: 00007f4d6d11b000 R08: 0000000000000000 R09: 0000000000000280
+03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+03384 R13: 0000000000000000 R14: 000055c01bef4a20 R15: 00007f4d62d85e50
+03384  </TASK>
+03384 INFO: task fio:1714566 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:fio             state:D stack:11032 pid:1714566 ppid:1714547 flags:0x00000002
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  schedule+0x5d/0xd0
+03384  schedule_preempt_disabled+0x13/0x20
+03384  rwsem_down_read_slowpath+0x264/0x4b0
+03384  down_read+0x46/0xb0
+03384  xfs_ilock+0x83/0x100
+03384  xfs_file_dio_write_aligned+0x9c/0x130
+03384  xfs_file_write_iter+0xcb/0x110
+03384  aio_write+0xf7/0x200
+03384  ? preempt_count_add+0x45/0xb0
+03384  ? aio_read_events_ring+0x1f6/0x230
+03384  io_submit_one+0x460/0x6c0
+03384  ? io_submit_one+0x460/0x6c0
+03384  ? _raw_spin_unlock+0x11/0x30
+03384  __x64_sys_io_submit+0x6b/0x130
+03384  ? fpregs_assert_state_consistent+0x21/0x50
+03384  ? exit_to_user_mode_prepare+0x2b/0x100
+03384  do_syscall_64+0x34/0x80
+03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+03384 RIP: 0033:0x7f4d776cb5a9
+03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+03384 RDX: 000055c01bef4a80 RSI: 0000000000000001 RDI: 00007f4d6d11a000
+03384 RBP: 00007f4d6d11a000 R08: 0000000000000000 R09: 00000000000002e0
+03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+03384 R13: 0000000000000000 R14: 000055c01bef4a80 R15: 00007f4d62db4c88
+03384  </TASK>
+03384 INFO: task fio:1714567 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:fio             state:D stack:11400 pid:1714567 ppid:1714547 flags:0x00000002
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  schedule+0x5d/0xd0
+03384  schedule_preempt_disabled+0x13/0x20
+03384  rwsem_down_write_slowpath+0x26d/0x5e0
+03384  down_write+0x5a/0x70
+03384  xfs_ilock+0x71/0x100
+03384  xfs_vn_update_time+0x8f/0x190
+03384  file_modified_flags+0x9c/0xd0
+03384  kiocb_modified+0xf/0x20
+03384  xfs_file_write_checks+0x1d4/0x270
+03384  xfs_file_dio_write_aligned+0x52/0x130
+03384  xfs_file_write_iter+0xcb/0x110
+03384  aio_write+0xf7/0x200
+03384  ? update_load_avg+0x61/0x300
+03384  io_submit_one+0x460/0x6c0
+03384  ? io_submit_one+0x460/0x6c0
+03384  ? __schedule+0x27c/0x740
+03384  ? __rseq_handle_notify_resume+0x358/0x4a0
+03384  __x64_sys_io_submit+0x6b/0x130
+03384  ? exit_to_user_mode_prepare+0xe9/0x100
+03384  ? irqentry_exit_to_user_mode+0x9/0x20
+03384  do_syscall_64+0x34/0x80
+03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+03384 RIP: 0033:0x7f4d776cb5a9
+03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+03384 RDX: 000055c01bef4980 RSI: 0000000000000001 RDI: 00007f4d6d119000
+03384 RBP: 00007f4d6d119000 R08: 0000000000000000 R09: 00000000000001e0
+03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+03384 R13: 0000000000000000 R14: 000055c01bef4980 R15: 00007f4d62de3ac0
+03384  </TASK>
+03384 INFO: task fio:1714568 blocked for more than 120 seconds.
+03384       Not tainted 6.4.0-rc2-dirty #347
+03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+03384 task:fio             state:D stack:11400 pid:1714568 ppid:1714547 flags:0x00004002
+03384 Call Trace:
+03384  <TASK>
+03384  __schedule+0x274/0x740
+03384  ? __switch_to+0x12a/0x480
+03384  schedule+0x5d/0xd0
+03384  schedule_timeout+0x11d/0x130
+03384  ? schedule+0x67/0xd0
+03384  __down_common+0xe6/0x1d0
+03384  __down+0x18/0x20
+03384  down+0x43/0x60
+03384  xfs_buf_lock+0x2b/0xe0
+03384  xfs_buf_find_lock+0x2d/0xf0
+03384  xfs_buf_get_map+0x170/0x9f0
+03384  ? update_load_avg+0x61/0x300
+03384  xfs_buf_read_map+0x36/0x290
+03384  ? enqueue_task_fair+0x233/0x4e0
+03384  xfs_trans_read_buf_map+0xea/0x2a0
+03384  ? xfs_read_agf+0x78/0x100
+03384  xfs_read_agf+0x78/0x100
+03384  xfs_alloc_read_agf+0x41/0x1d0
+03384  xfs_alloc_fix_freelist+0x446/0x590
+03384  ? xfs_buf_rele+0x6d/0x460
+03384  ? up+0x2d/0x60
+03384  ? xfs_buf_item_release+0x6a/0xc0
+03384  ? preempt_count_add+0x45/0xb0
+03384  ? up_read+0x36/0x70
+03384  ? xlog_cil_commit+0x8d0/0xc00
+03384  xfs_free_extent_fix_freelist+0x55/0x70
+03384  xfs_rmap_finish_one+0x63/0x290
+03384  ? xfs_defer_restore_resources+0x34/0xa0
+03384  ? kmem_cache_alloc+0xdd/0x200
+03384  xfs_rmap_update_finish_item+0x1f/0x60
+03384  xfs_defer_finish_noroll+0x171/0x690
+03384  __xfs_trans_commit+0x2bf/0x3d0
+03384  xfs_trans_commit+0xb/0x10
+03384  xfs_iomap_write_direct+0x142/0x1e0
+03384  xfs_direct_write_iomap_begin+0x3a0/0x5d0
+03384  ? xfs_read_iomap_begin+0x151/0x260
+03384  ? iov_iter_zero+0x64/0x4c0
+03384  ? __kmem_cache_alloc_node+0x3b/0x190
+03384  iomap_iter+0x132/0x2f0
+03384  __iomap_dio_rw+0x1e5/0x8c0
+03384  iomap_dio_rw+0xc/0x30
+03384  xfs_file_dio_write_aligned+0x84/0x130
+03384  ? xfs_file_dio_read+0xcf/0x100
+03384  xfs_file_write_iter+0xcb/0x110
+03384  aio_write+0xf7/0x200
+03384  ? check_preempt_curr+0x52/0x60
+03384  ? try_to_wake_up+0x87/0x4c0
+03384  ? preempt_count_add+0x45/0xb0
+03384  ? aio_read_events_ring+0x1f6/0x230
+03384  io_submit_one+0x460/0x6c0
+03384  ? io_submit_one+0x460/0x6c0
+03384  ? _raw_spin_unlock+0x11/0x30
+03384  __x64_sys_io_submit+0x6b/0x130
+03384  ? fpregs_assert_state_consistent+0x21/0x50
+03384  ? exit_to_user_mode_prepare+0x2b/0x100
+03384  do_syscall_64+0x34/0x80
+03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+03384 RIP: 0033:0x7f4d776cb5a9
+03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+03384 RDX: 000055c01bef48a0 RSI: 0000000000000001 RDI: 00007f4d6d118000
+03384 RBP: 00007f4d6d118000 R08: 0000000000000000 R09: 0000000000000100
+03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+03384 R13: 0000000000000000 R14: 000055c01bef48a0 R15: 00007f4d62e128f8
+03384  </TASK>
+03384 Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
+
 
