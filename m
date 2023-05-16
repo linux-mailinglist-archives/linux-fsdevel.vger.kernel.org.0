@@ -2,45 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 667B1705809
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 21:54:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8401A705812
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 21:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229449AbjEPTyz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 15:54:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48378 "EHLO
+        id S229977AbjEPT4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 15:56:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229831AbjEPTyv (ORCPT
+        with ESMTP id S229923AbjEPT4h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 15:54:51 -0400
+        Tue, 16 May 2023 15:56:37 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44172C1;
-        Tue, 16 May 2023 12:54:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA8B7ABE;
+        Tue, 16 May 2023 12:56:35 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CDFA662CEE;
-        Tue, 16 May 2023 19:54:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9AD0C433EF;
-        Tue, 16 May 2023 19:54:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 334E4633A0;
+        Tue, 16 May 2023 19:56:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 283ACC4339B;
+        Tue, 16 May 2023 19:56:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684266889;
-        bh=ephEl7G1z6WaYBIJFTE6QgAOh66gp022Xrli5jHzoSg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VACMJeXaOUxjDd/zTMoPAoKSVlUW5gDq0LgnxtkgFDCThDHYTgDroPc41nWujY6kE
-         LjqEA5Slpkyh3Q53xcmBsbv2aGDduxJf6KfDWi5iKCcYkauyYw0dsNv337jUWfrJsU
-         5W72LjBi/AT2+qH6FNU57cshXnigtxGyCOD4q0yPxUacqQCyDmi9Krqm1IiVyl3De5
-         YTUvQVVg9+CI07PNJrdyoiCyQV4YEwQlGxpCfnlnBFG21J3MiVzse0eNeCDshjdqkp
-         FPVrQWF+aI/ldTpp+TyrxscFPebKm8p+Iq9uYQBSIe3QrjKnZa73yET9fqO3H30o38
-         AOS1KFgp85Jrw==
+        s=k20201202; t=1684266994;
+        bh=ZU2Zyf0H03rXKE9YvXFofcikO93Ns0RFs8ZYRp3OsaA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=tf3mGJYbfXDUuKzpYVC5dBWll5p0S5N9WMNdtJ2iqua20Z0hH2+at4Hys1CA5/sxb
+         7P4NZQIaQd3ePO75ufKBX/LinFDNMXdX8hgScHPgH6wtoglVscXDYpsLMUs2cO882L
+         AK7P/lDH6t2IwAltA04Ffi/oUidP9yht9vqPFrwZ4/dSSqsrov48xn++4QuyMBWnHw
+         jHVCAyLwdl0nFMEn5hWEMzeh4huCRcYId+bahUgj2UidiWqva7Db8/9DA3LxdjPpre
+         2GsLHhTSqOIrwMQB21Ym2n8cFLla0kRyfAWrC2kJmTZGAZlsqFg+pRq8aAcmcfXXSf
+         u/d0gVkvAGV4Q==
 From:   Arnd Bergmann <arnd@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+To:     viro@zeniv.linux.org.uk, brauner@kernel.org,
+        David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] fs: d_path: include internal.h
-Date:   Tue, 16 May 2023 21:54:38 +0200
-Message-Id: <20230516195444.551461-1-arnd@kernel.org>
+Subject: [PATCH 2/2] fs: pipe: reveal missing function protoypes
+Date:   Tue, 16 May 2023 21:56:12 +0200
+Message-Id: <20230516195629.551602-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230516195444.551461-1-arnd@kernel.org>
+References: <20230516195444.551461-1-arnd@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -55,28 +57,47 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-make W=1 warns about a missing prototype that is defined but
-not visible at point where simple_dname() is defined:
+A couple of functions from fs/pipe.c are used both internally
+and for the watch queue code, but the declaration is only
+visible when the latter is enabled:
 
-fs/d_path.c:317:7: error: no previous prototype for 'simple_dname' [-Werror=missing-prototypes]
+fs/pipe.c:1254:5: error: no previous prototype for 'pipe_resize_ring'
+fs/pipe.c:758:15: error: no previous prototype for 'account_pipe_buffers'
+fs/pipe.c:764:6: error: no previous prototype for 'too_many_pipe_buffers_soft'
+fs/pipe.c:771:6: error: no previous prototype for 'too_many_pipe_buffers_hard'
+fs/pipe.c:777:6: error: no previous prototype for 'pipe_is_unprivileged_user'
 
+Make the visible unconditionally to avoid these warnings.
+
+Fixes: c73be61cede5 ("pipe: Add general notification queue support")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/d_path.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/pipe_fs_i.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/fs/d_path.c b/fs/d_path.c
-index 56a6ee4c6331..5f4da5c8d5db 100644
---- a/fs/d_path.c
-+++ b/fs/d_path.c
-@@ -7,6 +7,7 @@
- #include <linux/slab.h>
- #include <linux/prefetch.h>
- #include "mount.h"
-+#include "internal.h"
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index d2c3f16cf6b1..02e0086b10f6 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -261,18 +261,14 @@ void generic_pipe_buf_release(struct pipe_inode_info *, struct pipe_buffer *);
  
- struct prepend_buffer {
- 	char *buf;
+ extern const struct pipe_buf_operations nosteal_pipe_buf_ops;
+ 
+-#ifdef CONFIG_WATCH_QUEUE
+ unsigned long account_pipe_buffers(struct user_struct *user,
+ 				   unsigned long old, unsigned long new);
+ bool too_many_pipe_buffers_soft(unsigned long user_bufs);
+ bool too_many_pipe_buffers_hard(unsigned long user_bufs);
+ bool pipe_is_unprivileged_user(void);
+-#endif
+ 
+ /* for F_SETPIPE_SZ and F_GETPIPE_SZ */
+-#ifdef CONFIG_WATCH_QUEUE
+ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots);
+-#endif
+ long pipe_fcntl(struct file *, unsigned int, unsigned long arg);
+ struct pipe_inode_info *get_pipe_info(struct file *file, bool for_splice);
+ 
 -- 
 2.39.2
 
