@@ -2,80 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EB22705AFF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 01:07:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16649705B14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 01:15:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231235AbjEPXHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 19:07:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47654 "EHLO
+        id S229803AbjEPXPm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 19:15:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbjEPXHc (ORCPT
+        with ESMTP id S229493AbjEPXPl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 19:07:32 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0162535B5;
-        Tue, 16 May 2023 16:07:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=x8NCOC5dNuO+EeXO7vXVX1hNNhgjTbmodd02OhrRIPE=; b=46DEdGL7nKcLjwLiOUZcBe+ekZ
-        GU31yD15KNjcweKnMTxXy//ryiuocE3/bzYP1Dzm5jCFKdjC+EvP/bqfeE4Eqzq3wP22GbdlKWMMq
-        TburDrLdmpn8jQ5C8cxssVXl9ijTbZOPZNsNvQbok3yKXkYQ/tFEoUkZaRBc+CnsTOnXW7PD8uWPf
-        0mmaJB7TYHfN2Bb8W77jBsT1sWMbIG6kN2/UV3mmWzlQ5Lxh7z8TYaYzLHREOnZ4fvp7JS+XSuWqi
-        U44uI8vPdfcIIzNOLYgssAsGwaLtO3hOg132lQr23qor+57G570UVp3Yp1E5qsf7mCIj6L+eL7pR2
-        HVo3TqDw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pz3lQ-007Oz5-2O;
-        Tue, 16 May 2023 23:07:28 +0000
-Date:   Tue, 16 May 2023 16:07:28 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH v3 0/6] sysctl: Remove register_sysctl_table from parport
-Message-ID: <ZGQMsKiZUZg+5mFb@bombadil.infradead.org>
-References: <CGME20230516162915eucas1p2fdfc03a04f6fe55373e491b97660c8bc@eucas1p2.samsung.com>
- <20230516162903.3208880-1-j.granados@samsung.com>
+        Tue, 16 May 2023 19:15:41 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FC0F4EF9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 16:15:39 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-64ab2a37812so9104178b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 16:15:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1684278939; x=1686870939;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ComBD5cVSZXxb8CF1oU6ofe5UBMPl0+rt3cWiD9Tacg=;
+        b=nQDi6NYrzWKrK0bA4GjAg3dfl3oHSpMlCxu4FLE1nnFNWHCjuRLMFhBS9Nqwu8kjjn
+         1Cl5BHAOoCd5zi7pqEenAcLKhi8pm72XFABs6sCcMumuOF52ZsWEZ8gjFp/qcKgkHe/t
+         OuWN2+FkrNqC1e+TUc0aTRu4ojycowYVSnRuMA0XNS3ZbgOnKaE2SjNZJx3J/D/8NBgU
+         arE7TsWhDx5uCTWpuNMzDwYmSGQXfjQ/5y2YrYDo9TzLOk5QoIjGoezXygUQiRKNlinI
+         sRBGrWIzZmfKupV+Ufgs9EskGsOUt5Ti6pfL3Jl4Wsc3n8rUbs9HvypBXUOFyzfux9Li
+         ooDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684278939; x=1686870939;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ComBD5cVSZXxb8CF1oU6ofe5UBMPl0+rt3cWiD9Tacg=;
+        b=IrAkcyCAltEI73L9NdjYDYws0aKwfy2X3Dip1ZaMsu3meHdK++18Rw58BFZstjoGjw
+         v6/Rz3yR9wBByxndX/HmJiCLkAsVDe27zTYls9lJprHbwxPKbQAyOBHLcPXJp0NkCG0I
+         WxEvx0UvOMwDE6P13mF8+ouo7Ui0/PGAOPFZVg0a0r/3gHoKEuT4kmULLHPut7AodKLP
+         F8dqZT2tF7C3m8cJ4qectaJuMtIQvRh4uVu+wx2U7VcTyFRGqkvO6Rxob4soY4JBGvX7
+         F003hiJnQJozAypE67KUvD1EuPGce5u8ChZsqsP/oXlip2umliPh+6VlXun+5yGpqalN
+         jGUw==
+X-Gm-Message-State: AC+VfDzWAk6KyteW37K6D8cvNF+FBD8ckHYfu/8CKf+iYCfoqQL4Fos6
+        kLC2loGeswpQqC+FqKjquvT+qycvA9EDJGq4abI=
+X-Google-Smtp-Source: ACHHUZ4gosaB6ODsKvk2XDn1AJsJpl9jEWJVUpQm58NAxF/3RNS7MtlM6w4/fMxX3zUVwJKoPCNW6A==
+X-Received: by 2002:a05:6a00:238c:b0:64b:e8:24ff with SMTP id f12-20020a056a00238c00b0064b00e824ffmr367750pfc.17.1684278939473;
+        Tue, 16 May 2023 16:15:39 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
+        by smtp.gmail.com with ESMTPSA id g26-20020aa7819a000000b0063799398eaesm13840532pfi.51.2023.05.16.16.15.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 May 2023 16:15:38 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1pz3tG-000KiC-28;
+        Wed, 17 May 2023 09:15:34 +1000
+Date:   Wed, 17 May 2023 09:15:34 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 22/32] vfs: inode cache conversion to hash-bl
+Message-ID: <ZGQOlrcvLplTfZmf@dread.disaster.area>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-23-kent.overstreet@linux.dev>
+ <20230510044557.GF2651828@dread.disaster.area>
+ <20230516-brand-hocken-a7b5b07e406c@brauner>
+ <ZGOsgI7a68mWYVQH@moria.home.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230516162903.3208880-1-j.granados@samsung.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZGOsgI7a68mWYVQH@moria.home.lan>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 16, 2023 at 06:28:57PM +0200, Joel Granados wrote:
-> This is part of the general push to deprecate register_sysctl_paths and
-> register_sysctl_table. Parport driver uses the "CHILD" pointer
-> in the ctl_table structure to create its directory structure. We move to
-> the newer register_sysctl call and remove the pointer madness.
+On Tue, May 16, 2023 at 12:17:04PM -0400, Kent Overstreet wrote:
+> On Tue, May 16, 2023 at 05:45:19PM +0200, Christian Brauner wrote:
+> > On Wed, May 10, 2023 at 02:45:57PM +1000, Dave Chinner wrote:
+> > There's a bit of a backlog before I get around to looking at this but
+> > it'd be great if we'd have a few reviewers for this change.
 > 
-> I have separated the parport into 5 patches to clarify the different
-> changes needed for the 3 calls to register_sysctl_paths. I can squash
-> them together if need be.
+> It is well tested - it's been in the bcachefs tree for ages with zero
+> issues. I'm pulling it out of the bcachefs-prerequisites series though
+> since Dave's still got it in his tree, he's got a newer version with
+> better commit messages.
 > 
-> We no longer export the register_sysctl_table call as parport was the
-> last user from outside proc_sysctl.c. Also modified documentation slightly
-> so register_sysctl_table is no longer mentioned.
-> 
-> V2:
-> * Added a return error value when register fails
-> * Made sure to free the memory on error when calling parport_proc_register
-> * Added a bloat-o-meter output to measure bloat
-> * Replaced kmalloc with kzalloc
-> * Added comments about testing
-> * Improved readability when using snprintf
+> It's a significant performance boost on metadata heavy workloads for any
+> non-XFS filesystem, we should definitely get it in.
 
-Thanks, applied and pushed!
+I've got an up to date vfs-scale tree here (6.4-rc1) but I have not
+been able to test it effectively right now because my local
+performance test server is broken. I'll do what I can on the old
+small machine that I have to validate it when I get time, but that
+might be a few weeks away....
 
-  Luis
+git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs.git vfs-scale
+
+As it is, the inode hash-bl changes have zero impact on XFS because
+it has it's own highly scalable lockless, sharded inode cache. So
+unless I'm explicitly testing ext4 or btrfs scalability (rare) it's
+not getting a lot of scalability exercise. It is being used by the
+root filesytsems on all those test VMs, but that's about it...
+
+That said, my vfs-scale tree also has Waiman Long's old dlist code
+(per cpu linked list) which converts the sb inode list and removes
+the global lock there. This does make a huge impact for XFS - the
+current code limits inode cache cycling to about 600,000 inodes/sec
+on >=16p machines. With dlists, however:
+
+| 5.17.0 on a XFS filesystem with 50 million inodes in it on a 32p
+| machine with a 1.6MIOPS/6.5GB/s block device.
+| 
+| Fully concurrent full filesystem bulkstat:
+| 
+| 		wall time	sys time	IOPS	BW	rate
+| unpatched:	1m56.035s	56m12.234s	 8k     200MB/s	0.4M/s
+| patched:	0m15.710s	 3m45.164s	70k	1.9GB/s 3.4M/s
+| 
+| Unpatched flat kernel profile:
+| 
+|   81.97%  [kernel]  [k] __pv_queued_spin_lock_slowpath
+|    1.84%  [kernel]  [k] do_raw_spin_lock
+|    1.33%  [kernel]  [k] __raw_callee_save___pv_queued_spin_unlock
+|    0.50%  [kernel]  [k] memset_erms
+|    0.42%  [kernel]  [k] do_raw_spin_unlock
+|    0.42%  [kernel]  [k] xfs_perag_get
+|    0.40%  [kernel]  [k] xfs_buf_find
+|    0.39%  [kernel]  [k] __raw_spin_lock_init
+| 
+| Patched flat kernel profile:
+| 
+|   10.90%  [kernel]  [k] do_raw_spin_lock
+|    7.21%  [kernel]  [k] __raw_callee_save___pv_queued_spin_unlock
+|    3.16%  [kernel]  [k] xfs_buf_find
+|    3.06%  [kernel]  [k] rcu_segcblist_enqueue
+|    2.73%  [kernel]  [k] memset_erms
+|    2.31%  [kernel]  [k] __pv_queued_spin_lock_slowpath
+|    2.15%  [kernel]  [k] __raw_spin_lock_init
+|    2.15%  [kernel]  [k] do_raw_spin_unlock
+|    2.12%  [kernel]  [k] xfs_perag_get
+|    1.93%  [kernel]  [k] xfs_btree_lookup
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
