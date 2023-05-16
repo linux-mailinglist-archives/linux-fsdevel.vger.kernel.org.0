@@ -2,50 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFFD2704E01
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 14:47:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8C9A704FB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 15:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233227AbjEPMrC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 08:47:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57688 "EHLO
+        id S233558AbjEPNqV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 09:46:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233126AbjEPMrB (ORCPT
+        with ESMTP id S232459AbjEPNqU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 08:47:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF6FBA;
-        Tue, 16 May 2023 05:46:58 -0700 (PDT)
+        Tue, 16 May 2023 09:46:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E905264;
+        Tue, 16 May 2023 06:46:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 18F0C63631;
-        Tue, 16 May 2023 12:46:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFEDEC433EF;
-        Tue, 16 May 2023 12:46:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2DA5D62BD9;
+        Tue, 16 May 2023 13:46:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71294C433EF;
+        Tue, 16 May 2023 13:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684241217;
-        bh=7tar1xhhDTSs/JYBfwXYakQ+Ax7bdebO3jwrH6Q86kU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ATK+FmjXrL9rZieU1j+umoCAKGK7jxm4u3zP96tWdasjKZJM9JzbSPlge+Zeunrcz
-         ecHh+lE0gASxbUEThWfddrKj5Mz5tzveDSfQwTWnJNjqU/8+X4U7llBKckx9fxfBHl
-         Jk6i8ZPj6Q2DKL1qcLbwaXl7KBatKbjLm8QITR+sYl3xFzx6R2KHLkD3go/9v/tZSn
-         1jqjvuJxlSTwg99EYBmNnZHiWJVeMyMu2lm/5Qb6vBDQs2O0sDnW0ZBm9A8r5Dcnaj
-         oBZERYIbc0FcBkURip8R6MavTKvlfCoOFnFJWpz8tYRx/2+i7iFKO5+YeNymr6f/uK
-         H6OJDQdhRQ4BQ==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     trondmy@hammerspace.com, eggert@cs.ucla.edu, bruno@clisp.org,
-        Ondrej Valousek <ondrej.valousek.xm@renesas.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: don't call posix_acl_listxattr in generic_listxattr
-Date:   Tue, 16 May 2023 08:46:54 -0400
-Message-Id: <20230516124655.82283-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.40.1
+        s=k20201202; t=1684244778;
+        bh=t8z30oiY0fzwDSpixG5W4QvXXHcgLw6aXaPTs2SDSO4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JUSiP5keC4I3Ju86omAo/EXLS7AHJ+mushRkuf7Pfb/v7T7oetwjovicMKQYd/kUL
+         VvyDwmCEMB37xp2tzUUyvAYKb62xeNfHB9dYi9seowqX2ohJi8nNOaPcYelFwgGepS
+         0ptAk6hWdxSLJILny6OMp3myP9MTt9wiDa4qD5roIt1L/55xb7CbusQJGOHJ0PBvVU
+         PzFvpJ04d+/Vx5wCsde/OJpRRMdSMYyuoOgUgun+1ptsMbW/OmjxVBw5e+Akq6AIR4
+         GC0C3sElr43/PIbDgXXYB0SXIXiK4SIiejncYjFvXT8k5KtWHJnFn53AWTU+pOF2/O
+         ESjTuj4W7hljw==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Vladimir Sementsov-Ogievskiy <vsementsov@yandex-team.ru>,
+        Linus Torvalds <torvalds@linuxfoundation.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ptikhomirov@virtuozzo.com, Andrey Ryabinin <arbn@yandex-team.com>
+Subject: Re: [PATCH] fs/coredump: open coredump file in O_WRONLY instead of O_RDWR
+Date:   Tue, 16 May 2023 15:46:11 +0200
+Message-Id: <20230516-melancholisch-traten-3336ff6e9d30@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To:  <CAHk-=wjex4GE-HXFNPzi+xE+w2hkZTQrACgAaScNdf-8hnMHKA@mail.gmail.com>
+References:  <CAHk-=wjex4GE-HXFNPzi+xE+w2hkZTQrACgAaScNdf-8hnMHKA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=685; i=brauner@kernel.org; h=from:subject:message-id; bh=t8z30oiY0fzwDSpixG5W4QvXXHcgLw6aXaPTs2SDSO4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQkd0p78d6N8/W801v/YqFMZkZb5hOFH/HvqrnUjNualJns Mrw6SlkYxLgYZMUUWRzaTcLllvNUbDbK1ICZw8oEMoSBi1MAJqJ1jJGhudjlMe/TJ1W9ry5WGvEGKM 4WWSgcuvy3r3eEXfDMS7uZGBlW7lvZcYbBMvHQ+3svVoq2fF+za6XxhDNvHqy2DdU+nqjNBAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -54,52 +60,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit f2620f166e2a caused the kernel to start emitting POSIX ACL xattrs
-for NFSv4 inodes, which it doesn't support. The only other user of
-generic_listxattr is HFS (classic) and it doesn't support POSIX ACLs
-either.
+On Thu, 20 Apr 2023 15:04:09 +0300, Vladimir Sementsov-Ogievskiy wrote:
+> This makes it possible to make stricter apparmor profile and don't
+> allow the program to read any coredump in the system.
+> 
+> 
 
-Fixes: f2620f166e2a xattr: simplify listxattr helpers
-Reported-by: Ondrej Valousek <ondrej.valousek.xm@renesas.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/xattr.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index fcf67d80d7f9..e7bbb7f57557 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -985,9 +985,16 @@ int xattr_list_one(char **buffer, ssize_t *remaining_size, const char *name)
- 	return 0;
- }
- 
--/*
-+/**
-+ * generic_listxattr - run through a dentry's xattr list() operations
-+ * @dentry: dentry to list the xattrs
-+ * @buffer: result buffer
-+ * @buffer_size: size of @buffer
-+ *
-  * Combine the results of the list() operation from every xattr_handler in the
-- * list.
-+ * xattr_handler stack.
-+ *
-+ * Note that this will not include the entries for POSIX ACLs.
-  */
- ssize_t
- generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
-@@ -996,10 +1003,6 @@ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
- 	ssize_t remaining_size = buffer_size;
- 	int err = 0;
- 
--	err = posix_acl_listxattr(d_inode(dentry), &buffer, &remaining_size);
--	if (err)
--		return err;
--
- 	for_each_xattr_handler(handlers, handler) {
- 		if (!handler->name || (handler->list && !handler->list(dentry)))
- 			continue;
--- 
-2.40.1
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs/coredump: open coredump file in O_WRONLY instead of O_RDWR
+      https://git.kernel.org/vfs/vfs/c/f84566e710af
