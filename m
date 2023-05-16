@@ -2,96 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9CCD705965
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 23:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82EB170597F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 23:32:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbjEPVWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 17:22:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45196 "EHLO
+        id S230454AbjEPVcm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 17:32:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229701AbjEPVWe (ORCPT
+        with ESMTP id S229572AbjEPVcl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 17:22:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABBBB4698;
-        Tue, 16 May 2023 14:22:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 413E563F81;
-        Tue, 16 May 2023 21:22:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B36C433D2;
-        Tue, 16 May 2023 21:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684272152;
-        bh=nsnbvkz4IM+E5OVmBDfoHg+keBdzLU5YbNR/tm3g7OQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=fVXrZ6Pzte2LrlJ35tCPQClTqIj2qf1mGNleN9w2S76B5CithTjwvsjQgYvlTF5je
-         AiyEBY0upq/Q8eORu/CeBQrCi5idgJBi48Me2IbxPluKiFvX15DmKWPnqcGphPYSdu
-         DcMw3GaQWvUECk4kqHO2/fbHcmpCPASdoW8XiwC/0MfN2kkgudrEiI/6maefS6v2AV
-         4mXN8GmNAx4swLN88pXHh/AJAC3b5Px2SfjgwGmpAMmlqD2YDiROuI/v+Ez+zC2f/3
-         QHPSIDMlAVNYUmu9YZhmuICTnMKjVbUPC7l4l8f+/GXMIy4hIZ3E/B4061NSJQGAWF
-         sM9XX/aqz5Lfw==
-Message-ID: <cc4317d9cb8f10aa0b3750bdb6db8b4e77ff26f8.camel@kernel.org>
-Subject: Re: A pass-through support for NFSv4 style ACL
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ondrej Valousek <ondrej.valousek.xm@renesas.com>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     "trondmy@hammerspace.com" <trondmy@hammerspace.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Tue, 16 May 2023 17:22:30 -0400
-In-Reply-To: <TYXPR01MB18549D3A5B0BE777D7F6B284D9799@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-References: <20230516124655.82283-1-jlayton@kernel.org>
-         <20230516-notorisch-geblickt-6b591fbd77c1@brauner>
-         <TYXPR01MB18549D3A5B0BE777D7F6B284D9799@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        Tue, 16 May 2023 17:32:41 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 896F86EA2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 14:32:40 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-643bb9cdd6eso12433684b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 14:32:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1684272760; x=1686864760;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bxYdFfNWgH8T3xza0b6h2vTAfCsIMX0iES+NjWywOvA=;
+        b=bXzoKWHeThT08/25gYmYH/PwvxAModM/x18sF48hSGj6VfYx3AqwxvU/wbGQ5mK0I8
+         8+IV3gwBatiY+/CsiJpzllvn6cxt3Da73Qsi7ikeS1pvjLSFJnKtNdk9H5CtJjTRxk/W
+         NlheeFiA1lboSiLgxb1bD8vHNpJviFWLuyTFA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684272760; x=1686864760;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bxYdFfNWgH8T3xza0b6h2vTAfCsIMX0iES+NjWywOvA=;
+        b=Q6pyFRK7uylE0vSFl4snG3vNkO+yzyhDuqG7PuCMjSqoQqoHFgf1lXwYsmtrHPUMfI
+         4U6wO919C/Gpwf8L5zT3QFbkmlK2WT8+6s3hYAsHMVpZLOGOvu+lBYCmkUK88j/k22im
+         SdDDiS7BVM4FaNXliJlrzNFV5teEpn1IAjJq4hrO8h4pevWW2VQfeehbORUX9MTvvw47
+         z8ar5tOUXRr9IdhY0qtnasujAeMZLXtz8te4Z0Hp54ro2xIfVheCzCo3HPhFobRdLyc0
+         Feunqe+C53xXJoJ018gCG1b5OLhj5Hjueu8GxgyYjwYh3LYAMD6dw/BhbWd3JE/h66nI
+         iHsA==
+X-Gm-Message-State: AC+VfDyLiU8u/Pfwrb8l9CYVyTfE5h0tltDkPb9bWXWOkfqupixAHtDr
+        BSP1m3ErJk+juLapmzeZvgHasw==
+X-Google-Smtp-Source: ACHHUZ4VD+Jiit5nBg+95/NhuhCFqpi2Y3R98cX5qgMR2DjWCcb42bHIdO2wn+EhSDv5VMuUlg+loQ==
+X-Received: by 2002:a05:6a00:1311:b0:63a:fae3:9890 with SMTP id j17-20020a056a00131100b0063afae39890mr49796503pfu.24.1684272760089;
+        Tue, 16 May 2023 14:32:40 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id k14-20020a65464e000000b00530914c3bc1sm8277026pgr.21.2023.05.16.14.32.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 May 2023 14:32:39 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
+        Al Viro <viro@zeniv.linux.org.uk>, bhe@redhat.com,
+        maskray@google.com, ebiederm@xmission.com, brauner@kernel.org,
+        vgoyal@redhat.com, dyoung@redhat.com
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] coredump, vmcore: Set p_align to 4 for PT_NOTE
+Date:   Tue, 16 May 2023 14:32:34 -0700
+Message-Id: <168427275061.1358677.10611822490555556072.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230512022528.3430327-1-maskray@google.com>
+References: <20230512022528.3430327-1-maskray@google.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-05-16 at 20:50 +0000, Ondrej Valousek wrote:
->=20
-> Hi Christian,
->=20
-> Would it be possible to patch kernel the way it accepts native (i.e no
-> conversion to Posix ACL) NFSv4 style ACLs for filesystems that can
-> support them?
-> I.E. OpenZFS, NTFS, could be also interesting for Microsofts WSL2=A0 or
-> Samba right?
->=20
-> I mean, I am not trying to push richacl again knowing they have been
-> rejected, but just NFS4 style Acls as they are so similar to Windows
-> ACLs.
->=20
+On Fri, 12 May 2023 02:25:28 +0000, Fangrui Song wrote:
+> Tools like readelf/llvm-readelf use p_align to parse a PT_NOTE program
+> header as an array of 4-byte entries or 8-byte entries. Currently, there
+> are workarounds[1] in place for Linux to treat p_align==0 as 4. However,
+> it would be more appropriate to set the correct alignment so that tools
+> do not have to rely on guesswork. FreeBSD coredumps set p_align to 4 as
+> well.
+> 
+> [...]
 
-Erm, except you kind of are if you want to do this. I don't see how this
-idea works unless you resurrect RichACLs or something like them.
+Applied to for-next/execve, thanks!
 
-> The idea here would be that we could
-> - mount NTFS/ZFS filesystem and inspect ACLs using existing tools
-> (nfs4_getacl)
-> - share with NFSv4 in a pass through mode
-> - in Windows WSL2 we could inspect local filesystem ACLs using the
-> same tools
->=20
-> Does it make any sense or it would require lot of changes to VFS
-> subsystem or its a nonsense altogether?
->=20
+[1/1] coredump, vmcore: Set p_align to 4 for PT_NOTE
+      https://git.kernel.org/kees/c/60592fb6b67c
 
-Eventually you have to actually enforce the ACL. Do NTFS/ZFS already
-have code to do this? If not then someone would need to write it.
+-- 
+Kees Cook
 
-Also windows and nfs acls do have some differences, so you'll need a
-translation layer too.
---=20
-Jeff Layton <jlayton@kernel.org>
