@@ -2,53 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 05B5370453A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 08:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C51C7046C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 09:45:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230160AbjEPGWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 02:22:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39396 "EHLO
+        id S231136AbjEPHpP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 03:45:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230158AbjEPGV4 (ORCPT
+        with ESMTP id S230117AbjEPHpO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 02:21:56 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD05468F;
-        Mon, 15 May 2023 23:21:40 -0700 (PDT)
-Received: from dggpemm500001.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4QL5cb0cKzzqSMx;
-        Tue, 16 May 2023 14:17:19 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Tue, 16 May 2023 14:21:37 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>, <linux-mm@kvack.org>
-CC:     David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <ying.huang@intel.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH v2 13/13] mm: page_alloc: move is_check_pages_enabled() into page_alloc.c
-Date:   Tue, 16 May 2023 14:38:21 +0800
-Message-ID: <20230516063821.121844-14-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20230516063821.121844-1-wangkefeng.wang@huawei.com>
-References: <20230516063821.121844-1-wangkefeng.wang@huawei.com>
+        Tue, 16 May 2023 03:45:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4946A1FC9;
+        Tue, 16 May 2023 00:45:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DAAF560AFF;
+        Tue, 16 May 2023 07:45:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E556C433D2;
+        Tue, 16 May 2023 07:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684223112;
+        bh=7BlG4EAaAQ/2PfJOByK6/yL6MquEqFQSgp+HP1sIrO0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rIvMj1JmRgzYN1y+iVKqKvOkJp/1DmVR5JlVAwph4mcKzBnAFR1M+UEX/2O3Y+dYv
+         DMj5yrVMHmmg2CPbXLrmFwOXJHHx2cL0finNLS6cke3kiK2QtuKhUD8pMyrYYIJaXH
+         nmcAcHCoPmUrEyHKoc3eY30kwGjwvdx111WWwQl56Eup8W48WkJACGL6YCET7SooA4
+         iJCWfehbNamCnfrj19DFONCzV5WGoEg0eEIMKBIFXvVwhCnxy2HIanrNdWsPq9f/hH
+         PzUfoASABgYdCIyv32R57oCFO7DoPQbxl67VxGeeguaFbQUXT04PrAJybbPO2nzJPv
+         UhUDEraTb2alQ==
+Date:   Tue, 16 May 2023 10:45:05 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Yuanchu Xie <yuanchu@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Zach O'Keefe <zokeefe@google.com>,
+        Peter Xu <peterx@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] mm: pagemap: restrict pagewalk to the requested range
+Message-ID: <ZGM0gegQkvrQtq49@kernel.org>
+References: <20230515172608.3558391-1-yuanchu@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230515172608.3558391-1-yuanchu@google.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -57,56 +62,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The is_check_pages_enabled() only used in page_alloc.c, move it into
-page_alloc.c, also use it in free_tail_page_prepare().
+On Tue, May 16, 2023 at 01:26:08AM +0800, Yuanchu Xie wrote:
+> The pagewalk in pagemap_read reads one PTE past the end of the requested
+> range, and stops when the buffer runs out of space. While it produces
+> the right result, the extra read is unnecessary and less performant.
+> 
+> I timed the following command before and after this patch:
+> 	dd count=100000 if=/proc/self/pagemap of=/dev/null
+> The results are consistently within 0.001s across 5 runs.
+> 
+> Before:
+> 100000+0 records in
+> 100000+0 records out
+> 51200000 bytes (51 MB) copied, 0.0763159 s, 671 MB/s
+> 
+> real    0m0.078s
+> user    0m0.012s
+> sys     0m0.065s
+> 
+> After:
+> 100000+0 records in
+> 100000+0 records out
+> 51200000 bytes (51 MB) copied, 0.0487928 s, 1.0 GB/s
+> 
+> real    0m0.050s
+> user    0m0.011s
+> sys     0m0.039s
+> 
+> Signed-off-by: Yuanchu Xie <yuanchu@google.com>
 
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- mm/internal.h   | 5 -----
- mm/page_alloc.c | 7 ++++++-
- 2 files changed, 6 insertions(+), 6 deletions(-)
+Acked-by: Mike Rapoport (IBM) <rppt@kernel.org>
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 5fdf930a87b5..bb6542279599 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -208,11 +208,6 @@ extern char * const zone_names[MAX_NR_ZONES];
- /* perform sanity checks on struct pages being allocated or freed */
- DECLARE_STATIC_KEY_MAYBE(CONFIG_DEBUG_VM, check_pages_enabled);
- 
--static inline bool is_check_pages_enabled(void)
--{
--	return static_branch_unlikely(&check_pages_enabled);
--}
--
- extern int min_free_kbytes;
- 
- void setup_per_zone_wmarks(void);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 5e8680669388..1023f41de2fb 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -983,6 +983,11 @@ static inline bool free_page_is_bad(struct page *page)
- 	return true;
- }
- 
-+static inline bool is_check_pages_enabled(void)
-+{
-+	return static_branch_unlikely(&check_pages_enabled);
-+}
-+
- static int free_tail_page_prepare(struct page *head_page, struct page *page)
- {
- 	struct folio *folio = (struct folio *)head_page;
-@@ -994,7 +999,7 @@ static int free_tail_page_prepare(struct page *head_page, struct page *page)
- 	 */
- 	BUILD_BUG_ON((unsigned long)LIST_POISON1 & 1);
- 
--	if (!static_branch_unlikely(&check_pages_enabled)) {
-+	if (!is_check_pages_enabled()) {
- 		ret = 0;
- 		goto out;
- 	}
+> ---
+>  fs/proc/task_mmu.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 420510f6a545..6259dd432eeb 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1689,23 +1689,23 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
+>  	/* watch out for wraparound */
+>  	start_vaddr = end_vaddr;
+>  	if (svpfn <= (ULONG_MAX >> PAGE_SHIFT)) {
+> +		unsigned long end;
+> +
+>  		ret = mmap_read_lock_killable(mm);
+>  		if (ret)
+>  			goto out_free;
+>  		start_vaddr = untagged_addr_remote(mm, svpfn << PAGE_SHIFT);
+>  		mmap_read_unlock(mm);
+> +
+> +		end = start_vaddr + ((count / PM_ENTRY_BYTES) << PAGE_SHIFT);
+> +		if (end >= start_vaddr && end < mm->task_size)
+> +			end_vaddr = end;
+>  	}
+>  
+>  	/* Ensure the address is inside the task */
+>  	if (start_vaddr > mm->task_size)
+>  		start_vaddr = end_vaddr;
+>  
+> -	/*
+> -	 * The odds are that this will stop walking way
+> -	 * before end_vaddr, because the length of the
+> -	 * user buffer is tracked in "pm", and the walk
+> -	 * will stop when we hit the end of the buffer.
+> -	 */
+>  	ret = 0;
+>  	while (count && (start_vaddr < end_vaddr)) {
+>  		int len;
+> -- 
+> 2.40.1.606.ga4b1b128d6-goog
+> 
+> 
+
 -- 
-2.35.3
-
+Sincerely yours,
+Mike.
