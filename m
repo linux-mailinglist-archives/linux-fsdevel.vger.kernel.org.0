@@ -2,342 +2,542 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 77AA770513B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 16:50:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 143F170514A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 May 2023 16:53:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233616AbjEPOt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 10:49:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56448 "EHLO
+        id S234045AbjEPOxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 10:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232016AbjEPOt4 (ORCPT
+        with ESMTP id S233455AbjEPOxX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 10:49:56 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A5210EC;
-        Tue, 16 May 2023 07:49:54 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-6438d95f447so9891268b3a.3;
-        Tue, 16 May 2023 07:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684248594; x=1686840594;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=erE4vGWDuB3ylDKW6w92v/eJD65npUgQp0gNAzfTF64=;
-        b=V84I1/3RSm7qsXa0SofXrqjL364i/X5xLJRxVNK3Z1IMXwzaTkfbPMbAMfPARMUtfz
-         EOQXY1kU7qhzV6GWOqQH6yJzxyY1rLqvPdvMWrmw6lA++YzeS2604DwPk2+ftu0FyF85
-         A0GWcXd/M5PjZrONiNYZefihJFy9IJv9RhPWbGrptIb9RHGvn8HfL+SW/9t0URRPJqZQ
-         yW0smJ7yxuqrMgnOtJ8xYQfa2claYCHjW7TI8TkeXXoS3dJKsLbuNWcU3IuUuvQb9jRW
-         SaLRfP+n0kCZgNfTLyxbVRFQOeBOvwIfBq9PK8I2DN/66GA/6hEkbkU69hkztH+eolES
-         rpNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684248594; x=1686840594;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=erE4vGWDuB3ylDKW6w92v/eJD65npUgQp0gNAzfTF64=;
-        b=ZURfaARwg6cnRQ7s/ErbuUXbONpSJCAz9bx/IosjeogMrJ1YuYfiQbplrxTlSHPJWR
-         AfMwNe1Mx3dCcKjdcMdwFKhAA8Wh3zaUNkVPN2uT67MHxZ7agnQ0KD3FbniWhfO0avKg
-         bVHUrFqBz21tj2BvWBemksSfz/ufqzN8NDRShX5zUwMUCMCBoXlMrDuYZCItm9adiJI8
-         qy1xFdrvW/4nzDehTmE4o6mQL1Kg8CX4f7sfGMSQsoavXUPgc8HOlc6d5VfrNHzPfdRf
-         CW0a6BSdgxShiC5UZF6BqPTbyqTN5gDjbUfFs+tin+cq37qjCpCatD/tuRp3pC3GryE1
-         ftEg==
-X-Gm-Message-State: AC+VfDzYC18cB+sDBoT4FU+be/36rird4rMqtqMrNa9jYTP0+fbvtzLj
-        CsWU4ZQAqI5aDt1ORY0muko=
-X-Google-Smtp-Source: ACHHUZ59bAfgmiHgnoWa7ircj/PaquuMrtjPikO2e7a+YhQ2VpWG9Sp2UeY9N8y4gxF+KYJnSZLLIQ==
-X-Received: by 2002:a05:6a00:2d85:b0:646:8515:c763 with SMTP id fb5-20020a056a002d8500b006468515c763mr36970548pfb.9.1684248593494;
-        Tue, 16 May 2023 07:49:53 -0700 (PDT)
-Received: from rh-tp ([49.207.220.159])
-        by smtp.gmail.com with ESMTPSA id z6-20020aa791c6000000b0063b96574b8bsm13390358pfa.220.2023.05.16.07.49.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 May 2023 07:49:52 -0700 (PDT)
-Date:   Tue, 16 May 2023 20:19:31 +0530
-Message-Id: <878rdol4as.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>,
-        Aravinda Herle <araherle@in.ibm.com>
-Subject: Re: [RFCv5 5/5] iomap: Add per-block dirty state tracking to improve performance
-In-Reply-To: <ZGJMg2G4XVeFnMcY@bfoster>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 16 May 2023 10:53:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F14D244AD;
+        Tue, 16 May 2023 07:53:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7FD2A61652;
+        Tue, 16 May 2023 14:53:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E49C433EF;
+        Tue, 16 May 2023 14:53:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684248799;
+        bh=2Ft+FAHmPxALjpeynNQt2uBiZnkvj/wfacofA23SRK8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VLvcqxFCxROjoEdxOEE4Qa6d5gz6NQMd0ST1VidNUT6SJUhggcVSXpqNMRjoZjdNk
+         NcHrHmNjEilbgeEO8rNPR/+4qjZyKyOWhBgBnpNSoXQ3uSvkNWk/5rldxV59DEGbN1
+         o6kNlkWDrxmUKsBTBTzqZBhI+vl40AvFeuKMyNFn+XkFIsXnUAI+UHPTFdsjyhUq7+
+         y2l3fajUp4hNJap+8T9EeIPlqpXLfGx+HSI65oEHy7v461ANuOlLMIwO6R75I1P6jO
+         zJhGTefxZzclRF3u1vUl8p7dIhIjvF0rt+VFnSSttx3V+efFnSTBw3rlbgaVb8m9qh
+         gOQueRPKpTeCg==
+Date:   Tue, 16 May 2023 07:53:19 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: DIO hangs in 6.4.0-rc2
+Message-ID: <20230516145319.GF858791@frogsfrogsfrogs>
+References: <ZGN20Hp1ho/u4uPY@casper.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZGN20Hp1ho/u4uPY@casper.infradead.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Brian Foster <bfoster@redhat.com> writes:
+On Tue, May 16, 2023 at 01:28:00PM +0100, Matthew Wilcox wrote:
+> Plain 6.4.0-rc2 with a relatively minor change to the futex code that
+> I cannot believe was in any way responsible for this.
+> 
+> kworkers blocked all over the place.  Some on XFS_ILOCK_EXCL.  Some on
+> xfs_buf_lock.  One in xfs_btree_split() calling wait_for_completion.
+> 
+> This was an overnight test run that is now dead, so I can't get any
+> more info from the locked up kernel.  I have the vmlinux if some
+> decoding of offsets is useful.
 
-> On Mon, May 08, 2023 at 12:58:00AM +0530, Ritesh Harjani (IBM) wrote:
->> When filesystem blocksize is less than folio size (either with
->> mapping_large_folio_support() or with blocksize < pagesize) and when the
->> folio is uptodate in pagecache, then even a byte write can cause
->> an entire folio to be written to disk during writeback. This happens
->> because we currently don't have a mechanism to track per-block dirty
->> state within struct iomap_page. We currently only track uptodate state.
->>
->> This patch implements support for tracking per-block dirty state in
->> iomap_page->state bitmap. This should help improve the filesystem write
->> performance and help reduce write amplification.
->>
->> Performance testing of below fio workload reveals ~16x performance
->> improvement using nvme with XFS (4k blocksize) on Power (64K pagesize)
->> FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
->>
->> 1. <test_randwrite.fio>
->> [global]
->> 	ioengine=psync
->> 	rw=randwrite
->> 	overwrite=1
->> 	pre_read=1
->> 	direct=0
->> 	bs=4k
->> 	size=1G
->> 	dir=./
->> 	numjobs=8
->> 	fdatasync=1
->> 	runtime=60
->> 	iodepth=64
->> 	group_reporting=1
->>
->> [fio-run]
->>
->> 2. Also our internal performance team reported that this patch improves
->>    their database workload performance by around ~83% (with XFS on Power)
->>
->> Reported-by: Aravinda Herle <araherle@in.ibm.com>
->> Reported-by: Brian Foster <bfoster@redhat.com>
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> ---
->>  fs/gfs2/aops.c         |   2 +-
->>  fs/iomap/buffered-io.c | 115 ++++++++++++++++++++++++++++++++++++++---
->>  fs/xfs/xfs_aops.c      |   2 +-
->>  fs/zonefs/file.c       |   2 +-
->>  include/linux/iomap.h  |   1 +
->>  5 files changed, 112 insertions(+), 10 deletions(-)
->>
-> ...
->> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->> index 25f20f269214..c7f41b26280a 100644
->> --- a/fs/iomap/buffered-io.c
->> +++ b/fs/iomap/buffered-io.c
-> ...
->> @@ -119,12 +169,20 @@ static struct iomap_page *iop_alloc(struct inode *inode, struct folio *folio,
->>  	else
->>  		gfp = GFP_NOFS | __GFP_NOFAIL;
->>
->> -	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(nr_blocks)),
->> +	/*
->> +	 * iop->state tracks two sets of state flags when the
->> +	 * filesystem block size is smaller than the folio size.
->> +	 * The first state tracks per-block uptodate and the
->> +	 * second tracks per-block dirty state.
->> +	 */
->> +	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(2 * nr_blocks)),
->>  		      gfp);
->>  	if (iop) {
->>  		spin_lock_init(&iop->state_lock);
->>  		if (folio_test_uptodate(folio))
->>  			iop_set_range(iop, 0, nr_blocks);
->> +		if (is_dirty)
->> +			iop_set_range(iop, nr_blocks, nr_blocks);
->
-> I find the is_dirty logic here a bit confusing. AFAICT, this is
-> primarily to handle the case where a folio is completely overwritten, so
-> no iop is allocated at write time, and so then writeback needs to
-> allocate the iop as fully dirty to reflect that. I.e., all iop_alloc()
-> callers other than iomap_writepage_map() either pass the result of
-> folio_test_dirty() or explicitly dirty the entire range of the folio
-> anyways.  iomap_dirty_folio() essentially does the latter because it
-> needs to dirty the entire folio regardless of whether the iop already
-> exists or not, right?
+It would be kinda nice to sysrq-t if that's at all possible.  I don't
+see the kworker that's handling the btree split, and I wonder what that
+thread is up to.
 
-Yes.
+A long time ago I had a hypothesis that it's actually possible to
+deadlock the filesystem if writeback completion is rolling a transaction
+chain enough times to require acquisition of more log grant space while
+holding an ILOCK if there are other threads that have taken all the log
+grant space and are now waiting on memory reclaim pushing writeback.
 
->
-> If so and if I'm following all of that correctly, could this complexity
-> be isolated to iomap_writepage_map() by simply checking for the !iop
-> case first, then call iop_alloc() immediately followed by
-> set_range_dirty() of the entire folio? Then presumably iop_alloc() could
-> always just dirty based on folio state with the writeback path exception
-> case handled explicitly. Hm?
->
+Hmmm.  I only saw the above happen once or twice, and I haven't seen it
+since we <cough> increased the default log size to 64MB.
 
-Hi Brian,
+Side question: I wonder if we could get the hangcheck timer to invoke a
+sysrq-t automatically.  That would be useful for things like OCI where
+you can't send a break over the serial console.
 
-It was discussed here [1] to pass is_dirty flag at the time of iop
-allocation. We can do what you are essentially suggesting, but it's just
-extra work i.e. we will again do some calculations of blocks_per_folio,
-start, end and more importantly take and release iop->state_lock
-spinlock. Whereas with above approach we could get away with this at the
-time of iop allocation itself.
+--D
 
-Besides, isn't it easier this way? which as you also stated we will
-dirty all the blocks based on is_dirty flag, which is folio_test_dirty()
-except at the writeback time.
-
-
->>  		folio_attach_private(folio, iop);
->>  	}
->>  	return iop;
-> ...
->> @@ -561,6 +621,18 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
->>  }
->>  EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
->>
->> +bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio)
->> +{
->> +	struct iomap_page *iop;
->> +	struct inode *inode = mapping->host;
->> +	size_t len = i_blocks_per_folio(inode, folio) << inode->i_blkbits;
->
-> folio_size()?
->
-
-sure.
-
->> +
->> +	iop = iop_alloc(inode, folio, 0, false);
->> +	iop_set_range_dirty(inode, folio, 0, len);
->> +	return filemap_dirty_folio(mapping, folio);
->> +}
->> +EXPORT_SYMBOL_GPL(iomap_dirty_folio);
->> +
->>  static void
->>  iomap_write_failed(struct inode *inode, loff_t pos, unsigned len)
->>  {
-> ...
->> @@ -978,6 +1056,28 @@ static int iomap_write_delalloc_scan(struct inode *inode,
->>  				}
->>  			}
->>
->> +			/*
->> +			 * When we have per-block dirty tracking, there can be
->> +			 * blocks within a folio which are marked uptodate
->> +			 * but not dirty. In that case it is necessary to punch
->> +			 * out such blocks to avoid leaking any delalloc blocks.
->> +			 */
->> +			iop = to_iomap_page(folio);
->> +			if (!iop)
->> +				goto skip_iop_punch;
->> +			last_byte = min_t(loff_t, end_byte - 1,
->> +				(folio_next_index(folio) << PAGE_SHIFT) - 1);
->> +			first_blk = offset_in_folio(folio, start_byte) >>
->> +						    blkbits;
->> +			last_blk = offset_in_folio(folio, last_byte) >>
->> +						   blkbits;
->> +			blks_per_folio = i_blocks_per_folio(inode, folio);
->
-> Unused?
->
-
-Yes. I will fix it in next rev somehow compilation didn't give me any warnings.
-
->> +			for (i = first_blk; i <= last_blk; i++) {
->> +				if (!iop_test_block_dirty(folio, i))
->> +					punch(inode, i << blkbits,
->> +						     1 << blkbits);
->> +			}
->> +skip_iop_punch:
->
-> Looks reasonable at first glance, though the deep indentation here kind
-> of makes my eyes cross. Could we stuff this loop into a
-> iomap_write_delalloc_scan_folio() helper or some such, and then maybe
-> update the comment at the top of the whole branch to explain both
-> punches?
-
-I felt that too. Sure will give it a try in the next spin.
-
->
-> WRT to the !iop case.. I _think_ this is handled correctly here because
-> that means we'd handle the folio as completely dirty at writeback time.
-> Is that the case? If so, it might be nice to document that assumption
-> somewhere (here or perhaps in the writeback path).
->
-
-!iop case is simply when we don't have a large folio and blocksize ==
- pagesize. In that case we don't allocate any iop and simply returns
- from iop_alloc().
-So then we just skip the loop which is only meant when we have blocks
-within a folio.
-
-
--ritesh
-
-
-> Brian
->
->>  			/*
->>  			 * Make sure the next punch start is correctly bound to
->>  			 * the end of this data range, not the end of the folio.
->> @@ -1666,7 +1766,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->>  		struct writeback_control *wbc, struct inode *inode,
->>  		struct folio *folio, u64 end_pos)
->>  {
->> -	struct iomap_page *iop = iop_alloc(inode, folio, 0);
->> +	struct iomap_page *iop = iop_alloc(inode, folio, 0, true);
->>  	struct iomap_ioend *ioend, *next;
->>  	unsigned len = i_blocksize(inode);
->>  	unsigned nblocks = i_blocks_per_folio(inode, folio);
->> @@ -1682,7 +1782,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->>  	 * invalid, grab a new one.
->>  	 */
->>  	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
->> -		if (iop && !iop_test_block_uptodate(folio, i))
->> +		if (iop && !iop_test_block_dirty(folio, i))
->>  			continue;
->>
->>  		error = wpc->ops->map_blocks(wpc, inode, pos);
->> @@ -1726,6 +1826,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->>  		}
->>  	}
->>
->> +	iop_clear_range_dirty(folio, 0, end_pos - folio_pos(folio));
->>  	folio_start_writeback(folio);
->>  	folio_unlock(folio);
->>
->> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
->> index 2ef78aa1d3f6..77c7332ae197 100644
->> --- a/fs/xfs/xfs_aops.c
->> +++ b/fs/xfs/xfs_aops.c
->> @@ -578,7 +578,7 @@ const struct address_space_operations xfs_address_space_operations = {
->>  	.read_folio		= xfs_vm_read_folio,
->>  	.readahead		= xfs_vm_readahead,
->>  	.writepages		= xfs_vm_writepages,
->> -	.dirty_folio		= filemap_dirty_folio,
->> +	.dirty_folio		= iomap_dirty_folio,
->>  	.release_folio		= iomap_release_folio,
->>  	.invalidate_folio	= iomap_invalidate_folio,
->>  	.bmap			= xfs_vm_bmap,
->> diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
->> index 132f01d3461f..e508c8e97372 100644
->> --- a/fs/zonefs/file.c
->> +++ b/fs/zonefs/file.c
->> @@ -175,7 +175,7 @@ const struct address_space_operations zonefs_file_aops = {
->>  	.read_folio		= zonefs_read_folio,
->>  	.readahead		= zonefs_readahead,
->>  	.writepages		= zonefs_writepages,
->> -	.dirty_folio		= filemap_dirty_folio,
->> +	.dirty_folio		= iomap_dirty_folio,
->>  	.release_folio		= iomap_release_folio,
->>  	.invalidate_folio	= iomap_invalidate_folio,
->>  	.migrate_folio		= filemap_migrate_folio,
->> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
->> index 0f8123504e5e..0c2bee80565c 100644
->> --- a/include/linux/iomap.h
->> +++ b/include/linux/iomap.h
->> @@ -264,6 +264,7 @@ bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
->>  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos);
->>  bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
->>  void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len);
->> +bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio);
->>  int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
->>  		const struct iomap_ops *ops);
->>  int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
->> --
->> 2.39.2
->>
+> 03112 generic/299       run fstests generic/299 at 2023-05-15 21:57:47
+> 03112 XFS (sdb): Mounting V5 Filesystem f0c30f98-050d-46ac-a75c-da4c48421e16
+> 03112 XFS (sdb): Ending clean mount
+> 03113 XFS (sdc): Mounting V5 Filesystem 0aa26d2f-31a3-47f9-b264-1654bf262ef4
+> 03113 XFS (sdc): Ending clean mount
+> 03253 kworker/dying (1180190) used greatest stack depth: 10648 bytes left
+> 03384 INFO: task kworker/0:55:1617125 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:kworker/0:55    state:D stack:12936 pid:1617125 ppid:2      flags:0x00004000
+> 03384 Workqueue: dio/sdc iomap_dio_complete_work
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_preempt_disabled+0x13/0x20
+> 03384  rwsem_down_write_slowpath+0x26d/0x5e0
+> 03384  down_write+0x5a/0x70
+> 03384  xfs_ilock+0x71/0x100
+> 03384  xfs_trans_alloc_inode+0x70/0x130
+> 03384  xfs_iomap_write_unwritten+0x118/0x2c0
+> 03384  xfs_dio_write_end_io+0x1d3/0x1f0
+> 03384  iomap_dio_complete+0x43/0x1c0
+> 03384  ? aio_fsync_work+0x90/0x90
+> 03384  iomap_dio_complete_work+0x17/0x30
+> 03384  process_one_work+0x1a9/0x3a0
+> 03384  worker_thread+0x4e/0x3a0
+> 03384  ? process_one_work+0x3a0/0x3a0
+> 03384  kthread+0xf9/0x130
+> 03384  ? kthread_complete_and_exit+0x20/0x20
+> 03384  ret_from_fork+0x1f/0x30
+> 03384  </TASK>
+> 03384 INFO: task kworker/0:68:1617702 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:kworker/0:68    state:D stack:12536 pid:1617702 ppid:2      flags:0x00004000
+> 03384 Workqueue: dio/sdc iomap_dio_complete_work
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_preempt_disabled+0x13/0x20
+> 03384  rwsem_down_write_slowpath+0x26d/0x5e0
+> 03384  down_write+0x5a/0x70
+> 03384  xfs_ilock+0x71/0x100
+> 03384  xfs_trans_alloc_inode+0x70/0x130
+> 03384  xfs_iomap_write_unwritten+0x118/0x2c0
+> 03384  ? iocb_put.part.0+0x1f8/0x270
+> 03384  xfs_dio_write_end_io+0x1d3/0x1f0
+> 03384  ? iocb_put.part.0+0x1f8/0x270
+> 03384  iomap_dio_complete+0x43/0x1c0
+> 03384  ? aio_fsync_work+0x90/0x90
+> 03384  iomap_dio_complete_work+0x17/0x30
+> 03384  process_one_work+0x1a9/0x3a0
+> 03384  worker_thread+0x4e/0x3a0
+> 03384  ? process_one_work+0x3a0/0x3a0
+> 03384  kthread+0xf9/0x130
+> 03384  ? kthread_complete_and_exit+0x20/0x20
+> 03384  ret_from_fork+0x1f/0x30
+> 03384  </TASK>
+> 03384 INFO: task kworker/0:126:1621285 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:kworker/0:126   state:D stack:12584 pid:1621285 ppid:2      flags:0x00004000
+> 03384 Workqueue: dio/sdc iomap_dio_complete_work
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_preempt_disabled+0x13/0x20
+> 03384  rwsem_down_write_slowpath+0x26d/0x5e0
+> 03384  down_write+0x5a/0x70
+> 03384  xfs_ilock+0x71/0x100
+> 03384  xfs_trans_alloc_inode+0x70/0x130
+> 03384  xfs_iomap_write_unwritten+0x118/0x2c0
+> 03384  ? update_load_avg+0x61/0x300
+> 03384  ? update_load_avg+0x61/0x300
+> 03384  xfs_dio_write_end_io+0x1d3/0x1f0
+> 03384  iomap_dio_complete+0x43/0x1c0
+> 03384  ? aio_fsync_work+0x90/0x90
+> 03384  iomap_dio_complete_work+0x17/0x30
+> 03384  process_one_work+0x1a9/0x3a0
+> 03384  worker_thread+0x4e/0x3a0
+> 03384  ? process_one_work+0x3a0/0x3a0
+> 03384  kthread+0xf9/0x130
+> 03384  ? kthread_complete_and_exit+0x20/0x20
+> 03384  ret_from_fork+0x1f/0x30
+> 03384  </TASK>
+> 03384 INFO: task kworker/0:129:1621288 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:kworker/0:129   state:D stack:12536 pid:1621288 ppid:2      flags:0x00004000
+> 03384 Workqueue: dio/sdc iomap_dio_complete_work
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_timeout+0x11d/0x130
+> 03384  ? ___slab_alloc+0x4f2/0x990
+> 03384  ? preempt_count_add+0x6f/0xb0
+> 03384  __down_common+0xe6/0x1d0
+> 03384  __down+0x18/0x20
+> 03384  down+0x43/0x60
+> 03384  xfs_buf_lock+0x2b/0xe0
+> 03384  xfs_buf_find_lock+0x2d/0xf0
+> 03384  xfs_buf_get_map+0x170/0x9f0
+> 03384  xfs_buf_read_map+0x36/0x290
+> 03384  xfs_trans_read_buf_map+0xea/0x2a0
+> 03384  ? xfs_read_agf+0x78/0x100
+> 03384  xfs_read_agf+0x78/0x100
+> 03384  xfs_alloc_read_agf+0x41/0x1d0
+> 03384  xfs_alloc_fix_freelist+0x446/0x590
+> 03384  ? xfs_buf_rele+0x10e/0x460
+> 03384  ? up+0x2d/0x60
+> 03384  ? xfs_buf_item_release+0x6a/0xc0
+> 03384  ? preempt_count_add+0x45/0xb0
+> 03384  ? up_read+0x36/0x70
+> 03384  ? xlog_cil_commit+0x8d0/0xc00
+> 03384  xfs_free_extent_fix_freelist+0x55/0x70
+> 03384  xfs_rmap_finish_one+0x63/0x290
+> 03384  ? xfs_defer_restore_resources+0x34/0xa0
+> 03384  ? kmem_cache_alloc+0xdd/0x200
+> 03384  xfs_rmap_update_finish_item+0x1f/0x60
+> 03384  xfs_defer_finish_noroll+0x171/0x690
+> 03384  __xfs_trans_commit+0x2bf/0x3d0
+> 03384  xfs_trans_commit+0xb/0x10
+> 03384  xfs_iomap_write_unwritten+0xbe/0x2c0
+> 03384  xfs_dio_write_end_io+0x1d3/0x1f0
+> 03384  iomap_dio_complete+0x43/0x1c0
+> 03384  ? aio_fsync_work+0x90/0x90
+> 03384  iomap_dio_complete_work+0x17/0x30
+> 03384  process_one_work+0x1a9/0x3a0
+> 03384  worker_thread+0x4e/0x3a0
+> 03384  ? process_one_work+0x3a0/0x3a0
+> 03384  kthread+0xf9/0x130
+> 03384  ? kthread_complete_and_exit+0x20/0x20
+> 03384  ret_from_fork+0x1f/0x30
+> 03384  </TASK>
+> 03384 INFO: task kworker/u2:8:1670277 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:kworker/u2:8    state:D stack:10648 pid:1670277 ppid:2      flags:0x00004000
+> 03384 Workqueue: writeback wb_workfn (flush-8:32)
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_timeout+0x11d/0x130
+> 03384  ? _raw_spin_lock_irqsave+0x18/0x40
+> 03384  ? _raw_spin_unlock_irqrestore+0x1a/0x30
+> 03384  __down_common+0xe6/0x1d0
+> 03384  ? xfs_buf_lock+0x2b/0xe0
+> 03384  ? xfs_buf_get_map+0x1d0/0x9f0
+> 03384  __down+0x18/0x20
+> 03384  down+0x43/0x60
+> 03384  xfs_buf_lock+0x2b/0xe0
+> 03384  xfs_buf_find_lock+0x2d/0xf0
+> 03384  xfs_buf_get_map+0x170/0x9f0
+> 03384  xfs_buf_read_map+0x36/0x290
+> 03384  ? resched_curr+0x21/0x110
+> 03384  xfs_trans_read_buf_map+0xea/0x2a0
+> 03384  ? xfs_read_agf+0x78/0x100
+> 03384  xfs_read_agf+0x78/0x100
+> 03384  xfs_alloc_read_agf+0x41/0x1d0
+> 03384  xfs_alloc_fix_freelist+0x446/0x590
+> 03384  ? xfs_buf_rele+0x10e/0x460
+> 03384  ? xfs_buf_item_release+0x6a/0xc0
+> 03384  ? preempt_count_add+0x45/0xb0
+> 03384  ? up_read+0x36/0x70
+> 03384  ? xlog_cil_commit+0x8d0/0xc00
+> 03384  xfs_free_extent_fix_freelist+0x55/0x70
+> 03384  xfs_rmap_finish_one+0x63/0x290
+> 03384  ? kmem_cache_alloc+0xdd/0x200
+> 03384  xfs_rmap_update_finish_item+0x1f/0x60
+> 03384  xfs_defer_finish_noroll+0x171/0x690
+> 03384  __xfs_trans_commit+0x2bf/0x3d0
+> 03384  xfs_trans_commit+0xb/0x10
+> 03384  xfs_bmapi_convert_delalloc+0x373/0x4b0
+> 03384  xfs_map_blocks+0x1b8/0x3e0
+> 03384  iomap_do_writepage+0x23e/0x820
+> 03384  ? __this_cpu_preempt_check+0x13/0x20
+> 03384  ? percpu_counter_add_batch+0x2a/0xa0
+> 03384  write_cache_pages+0x16a/0x3e0
+> 03384  ? iomap_page_mkwrite+0x2d0/0x2d0
+> 03384  iomap_writepages+0x1b/0x40
+> 03384  xfs_vm_writepages+0x6f/0xa0
+> 03384  do_writepages+0xa9/0x150
+> 03384  ? __schedule+0x27c/0x740
+> 03384  __writeback_single_inode+0x3f/0x350
+> 03384  writeback_sb_inodes+0x1b3/0x460
+> 03384  __writeback_inodes_wb+0x4f/0xe0
+> 03384  wb_writeback+0x1d4/0x2b0
+> 03384  wb_workfn+0x2a8/0x440
+> 03384  ? _raw_spin_unlock+0x11/0x30
+> 03384  ? finish_task_switch.isra.0+0x89/0x250
+> 03384  ? __switch_to+0x12a/0x480
+> 03384  process_one_work+0x1a9/0x3a0
+> 03384  worker_thread+0x4e/0x3a0
+> 03384  ? process_one_work+0x3a0/0x3a0
+> 03384  kthread+0xf9/0x130
+> 03384  ? kthread_complete_and_exit+0x20/0x20
+> 03384  ret_from_fork+0x1f/0x30
+> 03384  </TASK>
+> 03384 INFO: task fio:1714564 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:fio             state:D stack:11032 pid:1714564 ppid:1714547 flags:0x00000002
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_timeout+0x11d/0x130
+> 03384  ? wake_up_process+0x10/0x20
+> 03384  ? insert_work+0xa9/0xd0
+> 03384  ? preempt_count_add+0x6f/0xb0
+> 03384  wait_for_completion+0x74/0x140
+> 03384  xfs_btree_split+0xa9/0xc0
+> 03384  ? xfs_btree_split+0xc0/0xc0
+> 03384  xfs_btree_make_block_unfull+0x11f/0x150
+> 03384  xfs_btree_insrec+0x4ab/0x590
+> 03384  xfs_btree_insert+0x8a/0x1c0
+> 03384  xfs_bmap_add_extent_hole_real+0x1a4/0x9b0
+> 03384  ? xfs_bmap_add_extent_hole_real+0x1a4/0x9b0
+> 03384  ? xfs_bmbt_init_cursor+0x5d/0x190
+> 03384  xfs_bmapi_allocate+0x26b/0x2f0
+> 03384  xfs_bmapi_write+0x3f9/0x4f0
+> 03384  xfs_iomap_write_direct+0x133/0x1e0
+> 03384  xfs_direct_write_iomap_begin+0x3a0/0x5d0
+> 03384  ? __kmem_cache_alloc_node+0x3b/0x190
+> 03384  iomap_iter+0x132/0x2f0
+> 03384  __iomap_dio_rw+0x1e5/0x8c0
+> 03384  iomap_dio_rw+0xc/0x30
+> 03384  xfs_file_dio_write_aligned+0x84/0x130
+> 03384  xfs_file_write_iter+0xcb/0x110
+> 03384  aio_write+0xf7/0x200
+> 03384  ? update_load_avg+0x61/0x300
+> 03384  io_submit_one+0x460/0x6c0
+> 03384  ? io_submit_one+0x460/0x6c0
+> 03384  ? __this_cpu_preempt_check+0x13/0x20
+> 03384  ? xfd_validate_state+0x1e/0x80
+> 03384  __x64_sys_io_submit+0x6b/0x130
+> 03384  ? exit_to_user_mode_prepare+0xe9/0x100
+> 03384  ? irqentry_exit_to_user_mode+0x9/0x20
+> 03384  do_syscall_64+0x34/0x80
+> 03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 03384 RIP: 0033:0x7f4d776cb5a9
+> 03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+> 03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+> 03384 RDX: 000055c01bef4980 RSI: 0000000000000001 RDI: 00007f4d6d11c000
+> 03384 RBP: 00007f4d6d11c000 R08: 0000000000000000 R09: 00000000000001e0
+> 03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> 03384 R13: 0000000000000000 R14: 000055c01bef4980 R15: 00007f4d62d57018
+> 03384  </TASK>
+> 03384 INFO: task fio:1714565 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:fio             state:D stack:11400 pid:1714565 ppid:1714547 flags:0x00000002
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_timeout+0x11d/0x130
+> 03384  ? preempt_count_add+0x6f/0xb0
+> 03384  ? preempt_count_add+0x6f/0xb0
+> 03384  ? _raw_spin_lock_irqsave+0x18/0x40
+> 03384  __down_common+0xe6/0x1d0
+> 03384  ? __down_common+0x140/0x1d0
+> 03384  __down+0x18/0x20
+> 03384  down+0x43/0x60
+> 03384  xfs_buf_lock+0x2b/0xe0
+> 03384  xfs_buf_find_lock+0x2d/0xf0
+> 03384  xfs_buf_get_map+0x170/0x9f0
+> 03384  xfs_buf_read_map+0x36/0x290
+> 03384  ? preempt_count_add+0x6f/0xb0
+> 03384  xfs_trans_read_buf_map+0xea/0x2a0
+> 03384  ? xfs_read_agf+0x78/0x100
+> 03384  xfs_read_agf+0x78/0x100
+> 03384  xfs_alloc_read_agf+0x41/0x1d0
+> 03384  xfs_alloc_fix_freelist+0x446/0x590
+> 03384  ? xfs_trans_log_buf+0x29/0x80
+> 03384  ? xfs_btree_insrec+0x339/0x590
+> 03384  xfs_alloc_vextent_prepare_ag+0x2b/0x120
+> 03384  xfs_alloc_vextent_iterate_ags+0x56/0x1f0
+> 03384  xfs_alloc_vextent_start_ag+0x94/0x190
+> 03384  xfs_bmap_btalloc+0x522/0x760
+> 03384  xfs_bmapi_allocate+0xe2/0x2f0
+> 03384  xfs_bmapi_write+0x3f9/0x4f0
+> 03384  xfs_iomap_write_direct+0x133/0x1e0
+> 03384  xfs_direct_write_iomap_begin+0x3a0/0x5d0
+> 03384  ? __kmem_cache_alloc_node+0x3b/0x190
+> 03384  iomap_iter+0x132/0x2f0
+> 03384  __iomap_dio_rw+0x1e5/0x8c0
+> 03384  iomap_dio_rw+0xc/0x30
+> 03384  xfs_file_dio_write_aligned+0x84/0x130
+> 03384  xfs_file_write_iter+0xcb/0x110
+> 03384  aio_write+0xf7/0x200
+> 03384  ? preempt_count_add+0x45/0xb0
+> 03384  ? aio_read_events_ring+0x1f6/0x230
+> 03384  io_submit_one+0x460/0x6c0
+> 03384  ? io_submit_one+0x460/0x6c0
+> 03384  ? _raw_spin_unlock+0x11/0x30
+> 03384  __x64_sys_io_submit+0x6b/0x130
+> 03384  ? fpregs_assert_state_consistent+0x21/0x50
+> 03384  ? exit_to_user_mode_prepare+0x2b/0x100
+> 03384  do_syscall_64+0x34/0x80
+> 03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 03384 RIP: 0033:0x7f4d776cb5a9
+> 03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+> 03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+> 03384 RDX: 000055c01bef4a20 RSI: 0000000000000001 RDI: 00007f4d6d11b000
+> 03384 RBP: 00007f4d6d11b000 R08: 0000000000000000 R09: 0000000000000280
+> 03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> 03384 R13: 0000000000000000 R14: 000055c01bef4a20 R15: 00007f4d62d85e50
+> 03384  </TASK>
+> 03384 INFO: task fio:1714566 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:fio             state:D stack:11032 pid:1714566 ppid:1714547 flags:0x00000002
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_preempt_disabled+0x13/0x20
+> 03384  rwsem_down_read_slowpath+0x264/0x4b0
+> 03384  down_read+0x46/0xb0
+> 03384  xfs_ilock+0x83/0x100
+> 03384  xfs_file_dio_write_aligned+0x9c/0x130
+> 03384  xfs_file_write_iter+0xcb/0x110
+> 03384  aio_write+0xf7/0x200
+> 03384  ? preempt_count_add+0x45/0xb0
+> 03384  ? aio_read_events_ring+0x1f6/0x230
+> 03384  io_submit_one+0x460/0x6c0
+> 03384  ? io_submit_one+0x460/0x6c0
+> 03384  ? _raw_spin_unlock+0x11/0x30
+> 03384  __x64_sys_io_submit+0x6b/0x130
+> 03384  ? fpregs_assert_state_consistent+0x21/0x50
+> 03384  ? exit_to_user_mode_prepare+0x2b/0x100
+> 03384  do_syscall_64+0x34/0x80
+> 03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 03384 RIP: 0033:0x7f4d776cb5a9
+> 03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+> 03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+> 03384 RDX: 000055c01bef4a80 RSI: 0000000000000001 RDI: 00007f4d6d11a000
+> 03384 RBP: 00007f4d6d11a000 R08: 0000000000000000 R09: 00000000000002e0
+> 03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> 03384 R13: 0000000000000000 R14: 000055c01bef4a80 R15: 00007f4d62db4c88
+> 03384  </TASK>
+> 03384 INFO: task fio:1714567 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:fio             state:D stack:11400 pid:1714567 ppid:1714547 flags:0x00000002
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_preempt_disabled+0x13/0x20
+> 03384  rwsem_down_write_slowpath+0x26d/0x5e0
+> 03384  down_write+0x5a/0x70
+> 03384  xfs_ilock+0x71/0x100
+> 03384  xfs_vn_update_time+0x8f/0x190
+> 03384  file_modified_flags+0x9c/0xd0
+> 03384  kiocb_modified+0xf/0x20
+> 03384  xfs_file_write_checks+0x1d4/0x270
+> 03384  xfs_file_dio_write_aligned+0x52/0x130
+> 03384  xfs_file_write_iter+0xcb/0x110
+> 03384  aio_write+0xf7/0x200
+> 03384  ? update_load_avg+0x61/0x300
+> 03384  io_submit_one+0x460/0x6c0
+> 03384  ? io_submit_one+0x460/0x6c0
+> 03384  ? __schedule+0x27c/0x740
+> 03384  ? __rseq_handle_notify_resume+0x358/0x4a0
+> 03384  __x64_sys_io_submit+0x6b/0x130
+> 03384  ? exit_to_user_mode_prepare+0xe9/0x100
+> 03384  ? irqentry_exit_to_user_mode+0x9/0x20
+> 03384  do_syscall_64+0x34/0x80
+> 03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 03384 RIP: 0033:0x7f4d776cb5a9
+> 03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+> 03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+> 03384 RDX: 000055c01bef4980 RSI: 0000000000000001 RDI: 00007f4d6d119000
+> 03384 RBP: 00007f4d6d119000 R08: 0000000000000000 R09: 00000000000001e0
+> 03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> 03384 R13: 0000000000000000 R14: 000055c01bef4980 R15: 00007f4d62de3ac0
+> 03384  </TASK>
+> 03384 INFO: task fio:1714568 blocked for more than 120 seconds.
+> 03384       Not tainted 6.4.0-rc2-dirty #347
+> 03384 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> 03384 task:fio             state:D stack:11400 pid:1714568 ppid:1714547 flags:0x00004002
+> 03384 Call Trace:
+> 03384  <TASK>
+> 03384  __schedule+0x274/0x740
+> 03384  ? __switch_to+0x12a/0x480
+> 03384  schedule+0x5d/0xd0
+> 03384  schedule_timeout+0x11d/0x130
+> 03384  ? schedule+0x67/0xd0
+> 03384  __down_common+0xe6/0x1d0
+> 03384  __down+0x18/0x20
+> 03384  down+0x43/0x60
+> 03384  xfs_buf_lock+0x2b/0xe0
+> 03384  xfs_buf_find_lock+0x2d/0xf0
+> 03384  xfs_buf_get_map+0x170/0x9f0
+> 03384  ? update_load_avg+0x61/0x300
+> 03384  xfs_buf_read_map+0x36/0x290
+> 03384  ? enqueue_task_fair+0x233/0x4e0
+> 03384  xfs_trans_read_buf_map+0xea/0x2a0
+> 03384  ? xfs_read_agf+0x78/0x100
+> 03384  xfs_read_agf+0x78/0x100
+> 03384  xfs_alloc_read_agf+0x41/0x1d0
+> 03384  xfs_alloc_fix_freelist+0x446/0x590
+> 03384  ? xfs_buf_rele+0x6d/0x460
+> 03384  ? up+0x2d/0x60
+> 03384  ? xfs_buf_item_release+0x6a/0xc0
+> 03384  ? preempt_count_add+0x45/0xb0
+> 03384  ? up_read+0x36/0x70
+> 03384  ? xlog_cil_commit+0x8d0/0xc00
+> 03384  xfs_free_extent_fix_freelist+0x55/0x70
+> 03384  xfs_rmap_finish_one+0x63/0x290
+> 03384  ? xfs_defer_restore_resources+0x34/0xa0
+> 03384  ? kmem_cache_alloc+0xdd/0x200
+> 03384  xfs_rmap_update_finish_item+0x1f/0x60
+> 03384  xfs_defer_finish_noroll+0x171/0x690
+> 03384  __xfs_trans_commit+0x2bf/0x3d0
+> 03384  xfs_trans_commit+0xb/0x10
+> 03384  xfs_iomap_write_direct+0x142/0x1e0
+> 03384  xfs_direct_write_iomap_begin+0x3a0/0x5d0
+> 03384  ? xfs_read_iomap_begin+0x151/0x260
+> 03384  ? iov_iter_zero+0x64/0x4c0
+> 03384  ? __kmem_cache_alloc_node+0x3b/0x190
+> 03384  iomap_iter+0x132/0x2f0
+> 03384  __iomap_dio_rw+0x1e5/0x8c0
+> 03384  iomap_dio_rw+0xc/0x30
+> 03384  xfs_file_dio_write_aligned+0x84/0x130
+> 03384  ? xfs_file_dio_read+0xcf/0x100
+> 03384  xfs_file_write_iter+0xcb/0x110
+> 03384  aio_write+0xf7/0x200
+> 03384  ? check_preempt_curr+0x52/0x60
+> 03384  ? try_to_wake_up+0x87/0x4c0
+> 03384  ? preempt_count_add+0x45/0xb0
+> 03384  ? aio_read_events_ring+0x1f6/0x230
+> 03384  io_submit_one+0x460/0x6c0
+> 03384  ? io_submit_one+0x460/0x6c0
+> 03384  ? _raw_spin_unlock+0x11/0x30
+> 03384  __x64_sys_io_submit+0x6b/0x130
+> 03384  ? fpregs_assert_state_consistent+0x21/0x50
+> 03384  ? exit_to_user_mode_prepare+0x2b/0x100
+> 03384  do_syscall_64+0x34/0x80
+> 03384  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 03384 RIP: 0033:0x7f4d776cb5a9
+> 03384 RSP: 002b:00007fff729a72d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+> 03384 RAX: ffffffffffffffda RBX: 00007f4d6d141da8 RCX: 00007f4d776cb5a9
+> 03384 RDX: 000055c01bef48a0 RSI: 0000000000000001 RDI: 00007f4d6d118000
+> 03384 RBP: 00007f4d6d118000 R08: 0000000000000000 R09: 0000000000000100
+> 03384 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> 03384 R13: 0000000000000000 R14: 000055c01bef48a0 R15: 00007f4d62e128f8
+> 03384  </TASK>
+> 03384 Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
+> 
+> 
