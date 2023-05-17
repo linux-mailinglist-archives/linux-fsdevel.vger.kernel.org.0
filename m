@@ -2,358 +2,249 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6C74706E20
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 18:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19908706F0F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 19:08:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbjEQQ2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 12:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55446 "EHLO
+        id S229744AbjEQRIf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 13:08:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbjEQQ2P (ORCPT
+        with ESMTP id S229483AbjEQRId (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 12:28:15 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60D7C59FE;
-        Wed, 17 May 2023 09:28:12 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id ca18e2360f4ac-76c5558ba95so7832739f.1;
-        Wed, 17 May 2023 09:28:12 -0700 (PDT)
+        Wed, 17 May 2023 13:08:33 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B3F1FDA;
+        Wed, 17 May 2023 10:08:32 -0700 (PDT)
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34HE4CHA032044;
+        Wed, 17 May 2023 17:02:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-03-30;
+ bh=DbO+6RvnoPipjVHAznIE8SL314W7nt07DuuylCE2byU=;
+ b=uZHdLAqO71pkxECXSZ8Kln6xn5AGYs4j4WrBQrW9CdG1jgBfT2NyuoUFjx781ocp2vsY
+ +VTb78S7rqZPm2tQy6x0v9ErymIF5EmSe5pYRKs1JrCHt4ZaYZlNqQrySNM/RgbA/vsp
+ 5mbKhRWj+/gJ6bs6l24aGEpsaFmXW7Bok1F6T1tFt/Y/1GTc7wzpy9fL5Oa7koVqd7Tv
+ ofKphLq9JkgJsSmJ+t5xsCZJDkvOTlMzqyKQDP/vtQWZEzxPJ/0a7FfktOzOQoKUGYhR
+ 1chTnaI1Gy6g9FFXU3qoaNTFDRAnlAKw7TAW60cMyXhbp2bi/zf/c8ZZR+rrn8xzjmJO gw== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qj2kdpen6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 May 2023 17:02:27 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34HFQi1Q033852;
+        Wed, 17 May 2023 17:02:26 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2174.outbound.protection.outlook.com [104.47.59.174])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qj10669j3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 May 2023 17:02:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Gegngw6nDrxziioIdtDQ4OLrbdGtt1RnM5YhtOViRBVztFKzDCEvILDlhZ3qpNUg9oYnogpx3TqcyNs/WJF7FTGzlFeJEWN/diZKlJOibeAMLsorYewAwTHO7ZCgoIzqaAxb2PAMED+LqavCf9k7jElsp0J+C+yc5erpOQxq3us6cJP7xXgJ/FBCW9JiZAKVQUOQ/FtSUShq5l4s7tRBWIj+zqRAsRNhh9dvREDNafo1no2fh67DlkkHPXeqbWeXNf+UHkdxjF8KE56hjNQEiBxMWJMrHWgPGanE9/eyEg3qEx5+LxLBP3qHv9gN8Fv4diQ3npB5DgvwD1Is1kuI/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DbO+6RvnoPipjVHAznIE8SL314W7nt07DuuylCE2byU=;
+ b=AxNqZV2g4vv0C56FaR2S8dWhweQWbgm85/TsImh69k9m2zgaCV16ytdqF3UoJiF2K3YhgsBb3Q83d+N1YnAC3CubXXuvTDwS0/Z7wTpjNZat+xnVhbkjwxZolk0OrOdO5PqbEOBXQxEXFjAmDTONPSjUeQYlpHO0JIKBbQGNscD0FTq8RbGJ6KA+AkwjSLWBZieGNe5tKdtBrkgZNaVGG99IZ9UBfTdrugGESGI8EOeWh/JKngmg9AIAHy7XTemyp7rWyYIUhx/+R198Al69WoVnUlt2a2rxajSxcal8zqO411ZSjWhNNgov55mddwIHQyUmkZqFkAI8wBpryqMg1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684340891; x=1686932891;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4gMuEkKDJREyXSyoSGs4+n/k2Lf1FfNV1qz9TkWdmtI=;
-        b=IPvti5YSpDuU7HTlKSjP8UDy7vb5HUtcTBJwBZtvu27ZIobIqljpW1zmItAS5zBqmr
-         3QRic0FYh+OUwYxNsnLrNeI2ym4Vw97m6EM6LjE9sA8mQ1XMb5Rd/rAyZVZ5fFckjxwG
-         dGEEPd9rENb3g7bgN9tZql/gyWPUjy9tF9RrhxUvkg7vTpMwVztS5cAQ1+JUdHNo/BB1
-         vMe2wZPXz4zzP24oiL/Dy3NPdKe9PDGQhhVzvsp0dEVnqVMJAiSpogXfz7QJMY+6EiWZ
-         zgGBPp6qysvFVtfq5smUGidD3lAk1QgkFii72OM+eYogR+KZ45NX5VL6siEywsUm93ey
-         JtPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684340891; x=1686932891;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4gMuEkKDJREyXSyoSGs4+n/k2Lf1FfNV1qz9TkWdmtI=;
-        b=EtDu3mmAYFEIsY1jfo1jMwjOmtB8HDz6UUh+zqMCz6pX1sp6TKUAC/E56unGNOchQw
-         uWyj8wrIk3mYtRqfLqKlkqZBcJ/+Pbg6LkS6zxjroO+WPzcPmWsiFCMs9Bluu151vg1k
-         dcIUWOE5el0IQnEp/B+KZCSwPiikBr3EYq9MAUiy+5pn6tL9A6iHeB0fVgxsdTbkbNoU
-         mboXjFc8bjt20RhbhTq+6dtk0QglH2HT0CqR1iqkY41IRX2w+qCXYLvRfnNMx4vvpBcJ
-         gH8ot/xnkFNdBusuZBScQqXi5zzatd3vE5FArZRvcxcdVm9d8Sr+vKzrp99MfsINlXzA
-         +LQw==
-X-Gm-Message-State: AC+VfDyfsuZnT+k12kQTvdUiJMhGdnp8a6NHmybFPw20L1C5Wr3uVYmJ
-        Za6lr4+hQqpvB+e7SnHBr1M6FkzLnXIkDBb8dZU=
-X-Google-Smtp-Source: ACHHUZ5wnATIfPiv4SqLTpL2m40PDbCae27ywFd05aY5lvyRGr674BJIgxb1z7hOiWCM9hIWq4jTRl0eRnkK1o9qF5c=
-X-Received: by 2002:a05:6602:885:b0:76c:88fc:5ace with SMTP id
- f5-20020a056602088500b0076c88fc5acemr1590452ioz.3.1684340890850; Wed, 17 May
- 2023 09:28:10 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DbO+6RvnoPipjVHAznIE8SL314W7nt07DuuylCE2byU=;
+ b=LhcmoXC1IMBw5jKPFok6YGeyJKUuIT1l2DjP/foufdRHP8gL+NEyfjPL6kv8rzIkQRLzc71MmtRwA1exohT/FO9vQkHgkvS7x9TT3sfA0dqZ0n+4L9qpOcI1A62v0e6m2kteBQ2Y/9+ktRs89T6YrksAkVXbHA3VGkYKrBhy7XE=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by IA1PR10MB7486.namprd10.prod.outlook.com (2603:10b6:208:44e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.30; Wed, 17 May
+ 2023 17:02:22 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::8456:ba59:80ec:d804]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::8456:ba59:80ec:d804%7]) with mapi id 15.20.6411.017; Wed, 17 May 2023
+ 17:02:22 +0000
+Message-ID: <4c338833-5fb7-5031-ceac-2d735b70c212@oracle.com>
+Date:   Wed, 17 May 2023 18:02:15 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH RFC 01/16] block: Add atomic write operations to
+ request_queue limits
+To:     Mike Snitzer <snitzer@kernel.org>
+Cc:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        martin.petersen@oracle.com, djwong@kernel.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+        jejb@linux.ibm.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com,
+        Himanshu Madhani <himanshu.madhani@oracle.com>,
+        dm-devel@redhat.com
+References: <20230503183821.1473305-1-john.g.garry@oracle.com>
+ <20230503183821.1473305-2-john.g.garry@oracle.com>
+ <CAH6w=ay1NNxh=9mQv5PCcDi3OY0mgvRXO_0VrmKBLAd1dcUQqQ@mail.gmail.com>
+Content-Language: en-US
+From:   John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <CAH6w=ay1NNxh=9mQv5PCcDi3OY0mgvRXO_0VrmKBLAd1dcUQqQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM3PR07CA0140.eurprd07.prod.outlook.com
+ (2603:10a6:207:8::26) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 MIME-Version: 1.0
-References: <CAAehj2=HQDk-AMYpVR7i91hbQC4G5ULKd9iYoP05u_9tay8VMw@mail.gmail.com>
- <ZGTGiNItObrI2Z34@casper.infradead.org>
-In-Reply-To: <ZGTGiNItObrI2Z34@casper.infradead.org>
-From:   yang lan <lanyang0908@gmail.com>
-Date:   Thu, 18 May 2023 00:27:58 +0800
-Message-ID: <CAAehj2k2Sjt-kMwdJTP2uDJTtDzF_hzzHQJ=YVg3FN4bZYo2tQ@mail.gmail.com>
-Subject: Re: INFO: task hung in blkdev_open bug
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        josef@toxicpanda.com, linux-block@vger.kernel.org,
-        nbd@other.debian.org, syzkaller-bugs@googlegroups.com,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
-        haris.iqbal@ionos.com, jinpu.wang@ionos.com, brauner@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|IA1PR10MB7486:EE_
+X-MS-Office365-Filtering-Correlation-Id: e7e97a17-e201-479d-613d-08db56f87b20
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kZACmKChk/4QEhaPZLmoYIz/Fqek0kYQxwHy8l6UiwYaKAXETX1Wg1ir/yfIhxLoAxNpY3XUyk5Dn48uLZOKOgaRIHqf1ZynVgpKOcYsKsclXLLzDwhw2Y9EUhxWe+HozU1smJ+g+CUyBtq88VPXsDc8/7Ig0d7MmAI+dwlEYJn5e3d0L5UWMbpwMQdKx92PXKdUwMU/XLH4yq2cHULP+IgYd9GzcLchzQeG/N5EgeZWtuLf97ozWTtDXniykD5rR5A1jSNJWrhijhWhNUnpF6sQBQwYr9O/3o1qbg3ohK2ENy2iiZIJD+HOf7lOupk5ULW174ERnyF0L6YIl99qXZnHnKLwY4P3kgM65Cx7rNJ9mzUQKiyeZ2ZC9MguxMFDns5bsYsGqJrFM54WGozPykm8reU28u4SOe4U4XrJ4yTC5TftTGGMZUrZoTfwXmbanXnsDZTP9sEhy8iUN7pYvBSrdG5ERfT9Xe0YGoQP2WauDKChAAr1i92PVJK8rzv9Cu2e7SkdJLvObN86VtaPNZc7HtE2jIlNZcZOMCsArMbDhXvtZkGwILr4x/YMY9JWKlaB/hWUxbBUjNbJczO0Pf1YuO4NtksV2ZpY8YhCt6cZbS4eMx1l+CLISRCpAD1Bw5XmI9RxvmBHn2VpGlUwWQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(376002)(39860400002)(346002)(136003)(366004)(451199021)(31686004)(36916002)(6916009)(66556008)(66946007)(66476007)(6486002)(316002)(4326008)(36756003)(478600001)(6512007)(53546011)(6666004)(6506007)(2616005)(26005)(186003)(41300700001)(83380400001)(5660300002)(8676002)(86362001)(7416002)(2906002)(31696002)(8936002)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WWhPZ1ZTbC9QcnY2YitYYmdpMndyd1hQSTRuTStTYngvMCtQeTVVakNhT01Z?=
+ =?utf-8?B?aVpVWitobUVjUi83SWRLWkU4RmtXMTFpZWpzVmdwMGpDRVFLTVd2R3FSZTBV?=
+ =?utf-8?B?VUVJZURZOGlwUDlJZ1M3L2tONVBIbTE5c3B1bnpEa2ZLZWtlUjkyVG12RUpF?=
+ =?utf-8?B?WVluUFBWSU9DZFVoZGVGZkdBdFZ2aHpnTDlOeGhRaFc2a3RGYnc5bksyaVVy?=
+ =?utf-8?B?NDE2aC9VdTJRN0lLL2x6ejUyaXBGVDI5Tm9QZEJWNEJhZTFhTndIQmhSWEZ6?=
+ =?utf-8?B?MlN5UktrSEtMMVNtcWhkejk0WHN2NkZTSXZDOE9hRk5aN3pEVEt4dG9KSzZC?=
+ =?utf-8?B?aHU5VzB5Wi8yMTlUU2p0bGIrekVZNktaT3lxNEpmOXdsZXFRS3N6eXFEcGFV?=
+ =?utf-8?B?cHhpd0VsUDB6QlVLcm5BMFZOT0YydkwwRDVucnV2TThUTDhoWS9Dak1FQnhW?=
+ =?utf-8?B?NSs0VTI4bzRXdmF5QjM2bFFFWWZsZ0Flc0p5Z2ZRaHFKckZ4NGpxKzZodHRN?=
+ =?utf-8?B?eFI5czdFZlpHUThzaCtRWlF1dHIxV1R2RTk4aklvM3ZEL1NrNnZGS3FGOGZt?=
+ =?utf-8?B?cEVuVzI4QnNCT0JQTjBpaDJ5aFlDRjd5WjlZMndBOHpOTms4eTR1cGU0bEhX?=
+ =?utf-8?B?K0hnd3lXVzZTenlaU1kwVVhTeUNtZkU5M2cxY0tFbGhZdU9zcW1uZjdWT1RD?=
+ =?utf-8?B?SVlsWVNWOEJqaEs1THd2TnFxU0FGbzMrdEszQTFLY2p6SnYrYXNZR3VWY0ho?=
+ =?utf-8?B?R3dYekJRWHJjdURHcFRQWHUwR2g2RHczLzdyeFFrOCs0SHNNRWs5Y2FOZ2RV?=
+ =?utf-8?B?WDJNVk93VkY0Nml0THR1R3Z2T1cvc2RJR0o1S2pkQzB4TzdQQ28rVyt5a1dO?=
+ =?utf-8?B?MTA4YVVZRVdJejZtZnBtZ2VDc0dLdFBlRDk2WlpFUXEwelVVNkpnelByT2xi?=
+ =?utf-8?B?Y0pRZWhDOS95YlltSzNQdXRpcHRlSzVLU2ZPMHBnOUMvUnI4UXZpOTZPK3hz?=
+ =?utf-8?B?Qno0bEtXNUI5VmY4RE9hT21uZGhLeWRneVJIbXBSbTJKcjhQdUdJcUZ2K0pS?=
+ =?utf-8?B?Z0xBNjY2aWI5S3FiTjlYc0hTVWY0NE83OGdwMzhGM0M1Q1kvblNKOGkvcUUx?=
+ =?utf-8?B?S3VpVUZnODJnS09yMmdKR250b3JnV3VVclp1N3JUcXNnZHduSllidURKWkFR?=
+ =?utf-8?B?M1BsSEVKRy9kenFPRFFDMTlxYW1ucEhVbnpmd2UzWFpGcVZ4b1pacWxxM0cv?=
+ =?utf-8?B?SzVPRjd3UHE0OFN1UHZmMlVvN1lmcWNPd1J1V1M4R1c4SS9ybHhXZDlSRTU5?=
+ =?utf-8?B?ODRBNWlhQUx6Sy84QVlmaG54YXU3TCt4RCs1OVQwTStRZWRQdFd4eCttZXNT?=
+ =?utf-8?B?OTFIR083dVhXSzFkc1NWdlpya2pPTlE3dTVaK3d6aEp1MFFzTGc3VlhzNFJR?=
+ =?utf-8?B?U3B3RnNST0Fxa0drTEwwK2xTcDRqYVdxbVI4QmdmQnBhQWVCMWJKcEVuZ3Bi?=
+ =?utf-8?B?T0dLbGNZeUVQM3ZhYzNHY2ZFMjU2b05qWGRyVlM1TU8xT1lWbHZLcmc0VE1t?=
+ =?utf-8?B?bklRNlN4Qkttb245TldzajdsbEtRcFJpdFlkVHF4Q0dLL0h0MDB2UlVnTmtE?=
+ =?utf-8?B?d0JXMlJkTnB4R2h2TE50V1E1cmxjcE9XMXc4bUNaL3M2MGJlTTFQakFhTUZR?=
+ =?utf-8?B?MU1nQ2o4QURkbVVSZ0EzK2FOSmFzcWRKSG1kQUN3NDBWVHdrdFRMWUF1NzVq?=
+ =?utf-8?B?dWYyYlE4TC9PM0U5Z3NGV2xSNDBaUzFZYk90UG4zQllVazFRWVp2bml6dyt1?=
+ =?utf-8?B?ZDk1aGxTVlhtYlBzdDlyaFhHYlR3L2puTXBVSDVka0dZdmZSTGk3bXNveGNI?=
+ =?utf-8?B?Mm90RGM1eEMrRDRJaDk2aFFqOVlraVVMNTAzOTBPdDJnNG9LaVlGZzV6RW5z?=
+ =?utf-8?B?WHJ4MmFSVkwwSEdXTEU2ZXQ0V0JqN21FMm51SnR4RkJwOFk5bWpnNGUvdEMv?=
+ =?utf-8?B?aXJmSWlLRTF5b2pldTdGSGdJN1k2L1NOckxmYUpvOWRIcnViQWliR2Q3Y2Vm?=
+ =?utf-8?B?NVg1ZThrejRrMjk4ZVVqaHRQYzkvYWhvTG83YldhazlOdytZVVBCb3gvOEJh?=
+ =?utf-8?B?OW41VkgzamV1bng2cEVlK3lPYjlnRUlEVW9Ub0JyTVY5T041dWUyMGR4VnQx?=
+ =?utf-8?B?T2c9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?dGUwcTUyd3ZPeWFOUjYySzNJa2VzNU9VM09KdGFZVG5URFJvM3JBVjlBSVBE?=
+ =?utf-8?B?SDR5MlpZeGVYaUF6SElvUk5KZWFubU5NcXVVUmZuSG5rZlBYaWpkS3dpRFR3?=
+ =?utf-8?B?U0tyNXBWNnhkK0xxQy9XWm5PN0M4eTdsTkJMWldVNHFSY0MvU0pXRFJDMmZD?=
+ =?utf-8?B?c2xXR3lYZEpzM09td1R4eGhEejlSYk5Lb2t6bmZZSlNxb1FJWGdvTGUxbzdk?=
+ =?utf-8?B?VVBpK1YrUS9lTVJoZFhnR09US2hLeGpMQnk3Rm5uN0Zjck4zK0lJUmVGYi9k?=
+ =?utf-8?B?RnNoNzJYcE44MVdxOVQ5d25MYzM1SmtreXhGdUszMkN5S1hyOHdQSmZscUdE?=
+ =?utf-8?B?Q3dMV1BXOHJRSmVuVmMwYU9aNndhT09lVWZDY0htYlFlS3UvaE13MzNRbGR2?=
+ =?utf-8?B?dmEvSnJhREJ1bzdicDM4eFJ4RVlwMjlYOU01L2Q5ZDg2UjdzaGU5eHppREY5?=
+ =?utf-8?B?N3kvQmZ5Ky9HditEYmpQRG5sck0vYVhPZTRmRmwxcStyOW9OWGpkZGVrcURZ?=
+ =?utf-8?B?cWZjVjE1RzltMVhzOHpXRzdZeEEvL3J4dWozS2FiS2cyNHhOWklGUG5HREpV?=
+ =?utf-8?B?SlJJaGRlTmhyNFZUakoralBmZTFMOHUrTWNqMmduRlVKRVFkYWptNlBoZUp4?=
+ =?utf-8?B?Rm5NelpCdEdOc0xFZUdUamRUUHpUZUpGWXZYcDFLZTE3c3hKeFVvcXBUYnZE?=
+ =?utf-8?B?VXdkY3cwQnJySEN4ZnFMMDNYRWxlOS9xYWNlWGZRVENOU1NQNE5aWk5zS3Y1?=
+ =?utf-8?B?WVBIU3A1Z1Y5Q2Q4eFM4Nytyc2FaeVRTOHRQM1QyTmdQeHdMZTBqdkk1OE9V?=
+ =?utf-8?B?empvQTJGOCtSaE5Mb01TTzFJM1RaYXdKZmFOTFpZTWFueUlJaWVnbGxHTWw2?=
+ =?utf-8?B?M3I4OCs5dWtiK0VNaVNuSTY4YVAwcXJJcWFEL1ZBa1UxUVJSR0YyYklHalJV?=
+ =?utf-8?B?d3RpQUNLbFpBeGF0UFRFOXNwL1R3eUd2RzFZM3d1cW81WjB3TDRGMXh2bDYv?=
+ =?utf-8?B?dEZ0d3dCZk13dU5FZmh6ZEdwODRhZjVsZk5RK1lPUy9EQlM0bGxjRTNUWDhu?=
+ =?utf-8?B?bWN2Q2VjNUh0cjNyOHV2N0VWUWtKc3ZLcGpzQURqZzlQNElmQ2NGMXBkcStS?=
+ =?utf-8?B?b2ZQVCtoVE94akpKYTdNNm96WUsyZUdwTEtsMDQvRGUzdVVMdG1WR2hZSWV3?=
+ =?utf-8?B?MFVjbXI2empWV0lVcGZYcjh2UEJEck8yYWNIaTEyZjVKVWVyWXZYejJlZDUw?=
+ =?utf-8?B?ZFZBUlIwRm9PL0gydUtnZ0x1TFBGZW50NEozZ2ppMUhIcmRieUxBSi9VVk1O?=
+ =?utf-8?B?Y0lTYkk2SDIraEV4OGlZNkZPVkFFdkVwT2Z4V2x6cHdPS09Ocm1WWGc1akoz?=
+ =?utf-8?B?REczZU43dEh1cytjczRsRFh5bGxuYlFhV2NUQy9odnVGaG1heDMxd2l2N0ZE?=
+ =?utf-8?B?UTVHRFpuUE1UUjh5QzY4Um9nV0pnOFNEZGJJTjlSL1U3dG15TUtkYWtKclRs?=
+ =?utf-8?Q?elDxYfJpLNsr7uRgz4szkmiaYIU?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7e97a17-e201-479d-613d-08db56f87b20
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2023 17:02:22.3953
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SPmtLtDMZ30ri+vJzWnCdba3MQTn55QuK2rS6YX0rptQ8OvTsXdZNi6TDWY+/U6aAPqt7/+dbJ6sg9pKZRzZWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7486
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-17_02,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 spamscore=0
+ bulkscore=0 suspectscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305170139
+X-Proofpoint-GUID: yF1CEABBuUjnmwifmjd4Gpyk5cxBqfTZ
+X-Proofpoint-ORIG-GUID: yF1CEABBuUjnmwifmjd4Gpyk5cxBqfTZ
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On 09/05/2023 01:19, Mike Snitzer wrote:
+> On Wed, May 3, 2023 at 2:40 PM John Garry <john.g.garry@oracle.com> wrote:
+>>
+>> From: Himanshu Madhani <himanshu.madhani@oracle.com>
+>>
+>> Add the following limits:
+>> - atomic_write_boundary
+>> - atomic_write_max_bytes
+>> - atomic_write_unit_max
+>> - atomic_write_unit_min
+>>
+>> Signed-off-by: Himanshu Madhani <himanshu.madhani@oracle.com>
+>> Signed-off-by: John Garry <john.g.garry@oracle.com>
+>> ---
+>>   Documentation/ABI/stable/sysfs-block | 42 +++++++++++++++++++++
+>>   block/blk-settings.c                 | 56 ++++++++++++++++++++++++++++
+>>   block/blk-sysfs.c                    | 33 ++++++++++++++++
+>>   include/linux/blkdev.h               | 23 ++++++++++++
+>>   4 files changed, 154 insertions(+)
+>>
+> 
+> ...
+> 
+>> diff --git a/block/blk-settings.c b/block/blk-settings.c
+>> index 896b4654ab00..e21731715a12 100644
+>> --- a/block/blk-settings.c
+>> +++ b/block/blk-settings.c
+>> @@ -59,6 +59,9 @@ void blk_set_default_limits(struct queue_limits *lim)
+>>          lim->zoned = BLK_ZONED_NONE;
+>>          lim->zone_write_granularity = 0;
+>>          lim->dma_alignment = 511;
+>> +       lim->atomic_write_unit_min = lim->atomic_write_unit_max = 1;
+>> +       lim->atomic_write_max_bytes = 512;
+>> +       lim->atomic_write_boundary = 0;
+>>   }
+> 
+> Not seeing required changes to blk_set_stacking_limits() nor blk_stack_limits().
+> 
+> Sorry to remind you of DM and MD limits stacking requirements. ;)
+> 
 
-Thank you for your response.
+Hi Mike,
 
-> Does this reproduce on current kernels, eg 6.4-rc2?
+Sorry for the slow response.
 
-Yeah, it can be reproduced on kernel 6.4-rc2.
+The idea is that initially we would not be adding stacked device 
+support, so we can leave atomic defaults as min unit we always consider 
+atomic, i.e. logical block size/fixed 512B sector size.
 
-root@syzkaller:~# uname -a
-Linux syzkaller 6.4.0-rc2 #1 SMP PREEMPT_DYNAMIC Wed May 17 22:58:52
-CST 2023 x86_64 GNU/Linux
-root@syzkaller:~# gcc poc_blkdev.c -o poc_blkdev
-root@syzkaller:~# ./poc_blkdev
-[  128.718051][ T7121] nbd0: detected capacity change from 0 to 4
-[  158.917678][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 30 seconds
-[  188.997677][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 60 seconds
-[  219.077191][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 90 seconds
-[  249.157312][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 120 seconds
-[  279.237409][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 150 seconds
-[  309.317843][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 180 seconds
-[  339.397950][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 210 seconds
-[  369.478031][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 240 seconds
-[  399.558253][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 270 seconds
-[  429.638372][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 300 seconds
-[  459.718454][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 330 seconds
-[  489.798571][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 360 seconds
-[  519.878643][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 390 seconds
-[  549.958966][  T998] block nbd0: Possible stuck request
-ffff888016f08000: control (read@0,2048B). Runtime 420 seconds
-[  571.719145][   T30] INFO: task systemd-udevd:7123 blocked for more
-than 143 seconds.
-[  571.719652][   T30]       Not tainted 6.4.0-rc2 #1
-[  571.719900][   T30] "echo 0 >
-/proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  571.720307][   T30] task:systemd-udevd   state:D stack:26224
-pid:7123  ppid:3998   flags:0x00004004
-[  571.720756][   T30] Call Trace:
-[  571.720923][   T30]  <TASK>
-[  571.721073][   T30]  __schedule+0x9ca/0x2630
-[  571.721348][   T30]  ? firmware_map_remove+0x1e0/0x1e0
-[  571.721618][   T30]  ? find_held_lock+0x33/0x1c0
-[  571.721866][   T30]  ? lock_release+0x3b9/0x690
-[  571.722108][   T30]  ? do_read_cache_folio+0x4ff/0xb20
-[  571.722447][   T30]  ? lock_downgrade+0x6b0/0x6b0
-[  571.722785][   T30]  ? mark_held_locks+0xb0/0x110
-[  571.723044][   T30]  schedule+0xd3/0x1b0
-[  571.723264][   T30]  io_schedule+0x1b/0x70
-[  571.723489][   T30]  ? do_read_cache_folio+0x58c/0xb20
-[  571.723760][   T30]  do_read_cache_folio+0x58c/0xb20
-[  571.724036][   T30]  ? blkdev_readahead+0x20/0x20
-[  571.724319][   T30]  ? __filemap_get_folio+0x8e0/0x8e0
-[  571.724588][   T30]  ? __sanitizer_cov_trace_switch+0x53/0x90
-[  571.724885][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
-[  571.725246][   T30]  ? format_decode+0x1cf/0xb50
-[  571.725547][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
-[  571.725837][   T30]  ? fill_ptr_key+0x30/0x30
-[  571.726072][   T30]  ? default_pointer+0x4a0/0x4a0
-[  571.726335][   T30]  ? __isolate_free_page+0x220/0x220
-[  571.726608][   T30]  ? filemap_fdatawrite_wbc+0x1c0/0x1c0
-[  571.726888][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
-[  571.727172][   T30]  ? read_part_sector+0x229/0x420
-[  571.727434][   T30]  ? adfspart_check_ADFS+0x560/0x560
-[  571.727707][   T30]  read_part_sector+0xfa/0x420
-[  571.727963][   T30]  adfspart_check_POWERTEC+0x90/0x690
-[  571.728244][   T30]  ? adfspart_check_ADFS+0x560/0x560
-[  571.728520][   T30]  ? __kasan_slab_alloc+0x33/0x70
-[  571.728780][   T30]  ? adfspart_check_ICS+0x8f0/0x8f0
-[  571.729889][   T30]  ? snprintf+0xb2/0xe0
-[  571.730145][   T30]  ? vsprintf+0x30/0x30
-[  571.730374][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
-[  571.730659][   T30]  ? adfspart_check_ICS+0x8f0/0x8f0
-[  571.730928][   T30]  bdev_disk_changed+0x674/0x1260
-[  571.731189][   T30]  ? write_comp_data+0x1f/0x70
-[  571.731439][   T30]  ? iput+0xd0/0x780
-[  571.731646][   T30]  blkdev_get_whole+0x186/0x260
-[  571.731886][   T30]  blkdev_get_by_dev+0x4ce/0xae0
-[  571.732139][   T30]  blkdev_open+0x140/0x2c0
-[  571.732366][   T30]  do_dentry_open+0x6de/0x1450
-[  571.732612][   T30]  ? blkdev_close+0x80/0x80
-[  571.732848][   T30]  path_openat+0xd6d/0x26d0
-[  571.733084][   T30]  ? lock_downgrade+0x6b0/0x6b0
-[  571.733336][   T30]  ? vfs_path_lookup+0x110/0x110
-[  571.733591][   T30]  do_filp_open+0x1bb/0x290
-[  571.733824][   T30]  ? may_open_dev+0xf0/0xf0
-[  571.734061][   T30]  ? __phys_addr_symbol+0x30/0x70
-[  571.734324][   T30]  ? do_raw_spin_unlock+0x176/0x260
-[  571.734595][   T30]  do_sys_openat2+0x5fd/0x980
-[  571.734837][   T30]  ? file_open_root+0x3f0/0x3f0
-[  571.735087][   T30]  ? seccomp_notify_ioctl+0xff0/0xff0
-[  571.735368][   T30]  do_sys_open+0xce/0x140
-[  571.735596][   T30]  ? filp_open+0x80/0x80
-[  571.735820][   T30]  ? __secure_computing+0x1e3/0x340
-[  571.736090][   T30]  do_syscall_64+0x38/0x80
-[  571.736325][   T30]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-[  571.736626][   T30] RIP: 0033:0x7fb212210840
-[  571.736857][   T30] RSP: 002b:00007fffb37bbbe8 EFLAGS: 00000246
-ORIG_RAX: 0000000000000002
-[  571.737269][   T30] RAX: ffffffffffffffda RBX: 0000560e09072e10
-RCX: 00007fb212210840
-[  571.737651][   T30] RDX: 0000560e08e39fe3 RSI: 00000000000a0800
-RDI: 0000560e090813b0
-[  571.738037][   T30] RBP: 00007fffb37bbd60 R08: 0000560e08e39670
-R09: 0000000000000010
-[  571.738432][   T30] R10: 0000560e08e39d0c R11: 0000000000000246
-R12: 00007fffb37bbcb0
-[  571.739563][   T30] R13: 0000560e09087a70 R14: 0000000000000003
-R15: 000000000000000e
-[  571.739973][   T30]  </TASK>
-[  571.740133][   T30]
-[  571.740133][   T30] Showing all locks held in the system:
-[  571.740495][   T30] 1 lock held by rcu_tasks_kthre/13:
-[  571.740758][   T30]  #0: ffffffff8b6badd0
-(rcu_tasks.tasks_gp_mutex){+.+.}-{3:3}, at:
-rcu_tasks_one_gp+0x2b/0xdb0
-[  571.741301][   T30] 1 lock held by rcu_tasks_trace/14:
-[  571.741571][   T30]  #0: ffffffff8b6baad0
-(rcu_tasks_trace.tasks_gp_mutex){+.+.}-{3:3}, at:
-rcu_tasks_one_gp+0x2b/0xdb0
-[  571.742134][   T30] 1 lock held by khungtaskd/30:
-[  571.742385][   T30]  #0: ffffffff8b6bb960
-(rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x5b/0x300
-[  571.742947][   T30] 2 locks held by kworker/u8:0/50:
-[  571.743198][   T30]  #0: ffff888016e7b138
-((wq_completion)nbd0-recv){+.+.}-{0:0}, at:
-process_one_work+0x94b/0x17b0
-[  571.743809][   T30]  #1: ffff888011e4fdd0
-((work_completion)(&args->work)){+.+.}-{0:0}, at:
-process_one_work+0x984/0x17b0
-[  571.744393][   T30] 1 lock held by in:imklog/6784:
-[  571.744643][   T30]  #0: ffff88801106e368
-(&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100
-[  571.745122][   T30] 1 lock held by systemd-udevd/7123:
-[  571.745381][   T30]  #0: ffff8880431854c8
-(&disk->open_mutex){+.+.}-{3:3}, at: blkdev_get_by_dev+0x24b/0xae0
-[  571.745885][   T30]
-[  571.746008][   T30] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-[  571.746008][   T30]
-[  571.746424][   T30] NMI backtrace for cpu 1
-[  571.746642][   T30] CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.4.0-rc=
-2 #1
-[  571.746989][   T30] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.12.0-1 04/01/2014
-[  571.747440][   T30] Call Trace:
-[  571.747606][   T30]  <TASK>
-[  571.747764][   T30]  dump_stack_lvl+0x91/0xf0
-[  571.747997][   T30]  nmi_cpu_backtrace+0x21a/0x2b0
-[  571.748257][   T30]  ? lapic_can_unplug_cpu+0xa0/0xa0
-[  571.748525][   T30]  nmi_trigger_cpumask_backtrace+0x28c/0x2f0
-[  571.748830][   T30]  watchdog+0xe4b/0x10c0
-[  571.749057][   T30]  ? proc_dohung_task_timeout_secs+0x90/0x90
-[  571.749366][   T30]  kthread+0x33b/0x430
-[  571.749596][   T30]  ? kthread_complete_and_exit+0x40/0x40
-[  571.749891][   T30]  ret_from_fork+0x1f/0x30
-[  571.750126][   T30]  </TASK>
-[  571.750347][   T30] Sending NMI from CPU 1 to CPUs 0:
-[  571.750620][    C0] NMI backtrace for cpu 0
-[  571.750626][    C0] CPU: 0 PID: 3987 Comm: systemd-journal Not
-tainted 6.4.0-rc2 #1
-[  571.750637][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.12.0-1 04/01/2014
-[  571.750643][    C0] RIP: 0033:0x7fb1d8c34bd1
-[  571.750652][    C0] Code: ed 4d 89 cf 75 a3 0f 1f 00 48 85 ed 75 4b
-48 8b 54 24 28 48 8b 44 24 18 48 8b 7c 24 20 48 29 da 48 8b 70 20 48
-0f af 54 24 08 <48> 83 c4 38 5b 5d 41 5c 41 5d 41 5e 41 5f e9 ac f2 04
-00 0f 1f 40
-[  571.750662][    C0] RSP: 002b:00007ffff9686c30 EFLAGS: 00000202
-[  571.750670][    C0] RAX: 00007ffff9686e50 RBX: 0000000000000002
-RCX: 0000000000000010
-[  571.750677][    C0] RDX: 0000000000000010 RSI: 00007ffff9686d80
-RDI: 00007ffff9686f20
-[  571.750683][    C0] RBP: 0000000000000000 R08: 0000000000000010
-R09: 00007ffff9686d90
-[  571.750689][    C0] R10: 00007ffff9686fb0 R11: 00007fb1d8d6a060
-R12: 00007ffff9686f30
-[  571.750696][    C0] R13: 00007fb1d9d20ee0 R14: 00007ffff9686f30
-R15: 00007ffff9686d90
-[  571.750703][    C0] FS:  00007fb1da33d8c0 GS:  0000000000000000
-[  571.752358][   T30] Kernel panic - not syncing: hung_task: blocked tasks
-[  571.757337][   T30] CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.4.0-rc=
-2 #1
-[  571.757686][   T30] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.12.0-1 04/01/2014
-[  571.758131][   T30] Call Trace:
-[  571.758302][   T30]  <TASK>
-[  571.758462][   T30]  dump_stack_lvl+0x91/0xf0
-[  571.758714][   T30]  panic+0x62d/0x6a0
-[  571.758926][   T30]  ? panic_smp_self_stop+0x90/0x90
-[  571.759188][   T30]  ? preempt_schedule_common+0x1a/0xc0
-[  571.759486][   T30]  ? preempt_schedule_thunk+0x1a/0x20
-[  571.759785][   T30]  ? watchdog+0xc21/0x10c0
-[  571.760020][   T30]  watchdog+0xc32/0x10c0
-[  571.760240][   T30]  ? proc_dohung_task_timeout_secs+0x90/0x90
-[  571.760541][   T30]  kthread+0x33b/0x430
-[  571.760753][   T30]  ? kthread_complete_and_exit+0x40/0x40
-[  571.761052][   T30]  ret_from_fork+0x1f/0x30
-[  571.761286][   T30]  </TASK>
-[  571.761814][   T30] Kernel Offset: disabled
-[  571.762047][   T30] Rebooting in 86400 seconds..
+Thanks,
+John
 
-> You need to include poc_blkdev.c as part of your report.
-
-It's a little confusing and I'm sorry for that.
-The poc_blkdev.c is exactly the C reproducer
-(https://pastebin.com/raw/6mg7uF8W).
-
-> I suspect you've done something that is known to not work (as root,
-> so we won't necessarily care).  But I can't really say without seeing
-> what you've done.  Running syzkaller is an art, and most people aren't
-> good at it.  It takes a lot of work to submit good quality bug reports,
-> see this article:
->
-> https://blog.regehr.org/archives/2037
-
-I have read this article and thanks for your recommendations.
-I'm not familiar with this module and I haven't figured out the root
-cause of this bug yet.
-
-Regards,
-
-Yang
-
-Matthew Wilcox <willy@infradead.org> =E4=BA=8E2023=E5=B9=B45=E6=9C=8817=E6=
-=97=A5=E5=91=A8=E4=B8=89 20:20=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, May 17, 2023 at 07:12:23PM +0800, yang lan wrote:
-> > root@syzkaller:~# uname -a
-> > Linux syzkaller 5.10.179 #1 SMP PREEMPT Thu Apr 27 16:22:48 CST 2023
->
-> Does this reproduce on current kernels, eg 6.4-rc2?
->
-> > root@syzkaller:~# gcc poc_blkdev.c -o poc_blkdev
->
-> You need to include poc_blkdev.c as part of your report.
->
-> > Please let me know if I can provide any more information, and I hope I
-> > didn't mess up this bug report.
->
-> I suspect you've done something that is known to not work (as root,
-> so we won't necessarily care).  But I can't really say without seeing
-> what you've done.  Running syzkaller is an art, and most people aren't
-> good at it.  It takes a lot of work to submit good quality bug reports,
-> see this article:
->
-> https://blog.regehr.org/archives/2037
-
-Matthew Wilcox <willy@infradead.org> =E4=BA=8E2023=E5=B9=B45=E6=9C=8817=E6=
-=97=A5=E5=91=A8=E4=B8=89 20:20=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, May 17, 2023 at 07:12:23PM +0800, yang lan wrote:
-> > root@syzkaller:~# uname -a
-> > Linux syzkaller 5.10.179 #1 SMP PREEMPT Thu Apr 27 16:22:48 CST 2023
->
-> Does this reproduce on current kernels, eg 6.4-rc2?
->
-> > root@syzkaller:~# gcc poc_blkdev.c -o poc_blkdev
->
-> You need to include poc_blkdev.c as part of your report.
->
-> > Please let me know if I can provide any more information, and I hope I
-> > didn't mess up this bug report.
->
-> I suspect you've done something that is known to not work (as root,
-> so we won't necessarily care).  But I can't really say without seeing
-> what you've done.  Running syzkaller is an art, and most people aren't
-> good at it.  It takes a lot of work to submit good quality bug reports,
-> see this article:
->
-> https://blog.regehr.org/archives/2037
