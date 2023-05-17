@@ -2,99 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9CAD706178
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 09:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 841A070617F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 09:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230119AbjEQHmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 03:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39708 "EHLO
+        id S230135AbjEQHnH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 03:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbjEQHmd (ORCPT
+        with ESMTP id S230025AbjEQHnG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 03:42:33 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3478B1BF;
-        Wed, 17 May 2023 00:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HPDWw34wuVd8ioS24/GeMKLCeS2AVAgFryvQOngyNIQ=; b=MsacaJGq7G6gp1g2tKwWD9aPxj
-        lIWiYSjSeZTbTQc8SB3TDcwvIoK1SbqwWRIlPhC4YSIUXLoxKBxmBJ58tJRS9JpJmnWpamWhDDysS
-        V+k9SiF1Gr/FG74fEbS0WLGg5+wM8WHBsWbZPUbLL61ZV6/WLTgCmsVZQ0eHVUJ6f5q8AhU/DBoow
-        9bum13Vokx8ry+6dEIpVmJ8nUJYyawYXr4VnZAj+bk7J7JugOSOwIcYMLgnY3TWJ9XtR7iQY9Doiw
-        wbuan1SLeZK8/F+6tjRql9ysljB4YE9pY/nSPiZeshU2J/+GFfaBZVfQ90285TEWrjn1EYa4PYQ/M
-        3YyGF0Jg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pzBnk-008iGg-1Y;
-        Wed, 17 May 2023 07:42:24 +0000
-Date:   Wed, 17 May 2023 00:42:24 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Lorenzo Stoakes <lstoakes@gmail.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
- mappings by default
-Message-ID: <ZGSFYNAauVDsb22o@infradead.org>
-References: <cover.1683235180.git.lstoakes@gmail.com>
- <20230515110315.uqifqgqkzcrrrubv@box.shutemov.name>
- <7f6dbe36-88f2-468e-83c1-c97e666d8317@lucifer.local>
- <ZGIhwZl2FbLodLrc@nvidia.com>
- <ad0053a4-fa34-4b95-a262-d27942b168fd@lucifer.local>
- <20230517072920.bfs7gfo4whdmi6ay@quack3>
+        Wed, 17 May 2023 03:43:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5423BDA;
+        Wed, 17 May 2023 00:43:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E04A261505;
+        Wed, 17 May 2023 07:43:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7059C433EF;
+        Wed, 17 May 2023 07:43:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684309384;
+        bh=O9BH3MMwJ9QLfDiBDxx6MYQ6q0OrfOn8kxK3I1Ze9Yo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SLx3zhrnBRX6BxumCB+uz3OasNrIpbQdUVmqHECCNSMmOYtLfHVLI/2UdI8m4bXmO
+         Iy6AzzQIxzE+3p194U1XkRaTZvpVKg+zmEfpwmZQkSwWKrXu689ly7ad5ROanbBmJT
+         1LPT43AY7EcRHmZj35LxqtRBKrdO5SHnSplTwn2gzEd9SY8iIEgkn627b/nfqmz3MS
+         2gQ5joEbjYPfCXNc0j1oItjy9zHwQdceeUxO9aGXq4GoTQJWusb40Xj4xBhSpEl8vn
+         ELQ1Sm6wLqvecjdmaZXocjz1upV+qrC2V463RyiWMRV2sfvGsWiV3mLf/xp6BGrfCJ
+         eQ2C/llrMFFog==
+Date:   Wed, 17 May 2023 09:42:59 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ondrej Valousek <ondrej.valousek.xm@renesas.com>,
+        "trondmy@hammerspace.com" <trondmy@hammerspace.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: A pass-through support for NFSv4 style ACL
+Message-ID: <20230517-herstellen-zitat-21eeccd36558@brauner>
+References: <20230516124655.82283-1-jlayton@kernel.org>
+ <20230516-notorisch-geblickt-6b591fbd77c1@brauner>
+ <TYXPR01MB18549D3A5B0BE777D7F6B284D9799@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+ <cc4317d9cb8f10aa0b3750bdb6db8b4e77ff26f8.camel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230517072920.bfs7gfo4whdmi6ay@quack3>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cc4317d9cb8f10aa0b3750bdb6db8b4e77ff26f8.camel@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -102,36 +60,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 17, 2023 at 09:29:20AM +0200, Jan Kara wrote:
-> > > Surely it is, but like Ted said, the FS folks are not interested and
-> > > they are at least half the solution..
+On Tue, May 16, 2023 at 05:22:30PM -0400, Jeff Layton wrote:
+> On Tue, 2023-05-16 at 20:50 +0000, Ondrej Valousek wrote:
 > > 
-> > :'(
-> 
-> Well, I'd phrase this a bit differently - it is a difficult sell to fs
-> maintainers that they should significantly complicate writeback code / VFS
-> with bounce page handling etc. for a thing that is not much used corner
-> case. So if we can get away with forbiding long-term pins, then that's the
-> easiest solution. Dealing with short-term pins is easier as we can just
-> wait for unpinning which is implementable in a localized manner.
-
-Full agreement here.  The whole concept of supporting writeback for
-long term mappings does not make much sense.
-
-> > > The FS also has to actively not write out the page while it cannot be
-> > > write protected unless it copies the data to a stable page. The block
-> > > stack needs the source data to be stable to do checksum/parity/etc
-> > > stuff. It is a complicated subject.
+> > Hi Christian,
 > > 
-> > Yes my sense was that being able to write arbitrarily to these pages _at
-> > all_ was a big issue, not only the dirty tracking aspect.
+> > Would it be possible to patch kernel the way it accepts native (i.e no
+> > conversion to Posix ACL) NFSv4 style ACLs for filesystems that can
+> > support them?
+> > I.E. OpenZFS, NTFS, could be also interesting for Microsofts WSL2  or
+> > Samba right?
+> > 
+> > I mean, I am not trying to push richacl again knowing they have been
+> > rejected, but just NFS4 style Acls as they are so similar to Windows
+> > ACLs.
+> > 
 > 
-> Yes.
-> 
-> > I guess at some level letting filesystems have such total flexibility as to
-> > how they implement things leaves us in a difficult position.
-> 
-> I'm not sure what you mean by "total flexibility" here. In my opinion it is
-> also about how HW performs checksumming etc.
+> Erm, except you kind of are if you want to do this. I don't see how this
+> idea works unless you resurrect RichACLs or something like them.
 
-I have no idea what total flexbility is even supposed to be.
+I have no idea about the original flame war that ended RichACLs in
+additition to having no clear clue what RichACLs are supposed to
+achieve. My current knowledge extends to "Christoph didn't like them".
+
+> 
+> > The idea here would be that we could
+> > - mount NTFS/ZFS filesystem and inspect ACLs using existing tools
+> > (nfs4_getacl)
+> > - share with NFSv4 in a pass through mode
+> > - in Windows WSL2 we could inspect local filesystem ACLs using the
+> > same tools
+> > 
+> > Does it make any sense or it would require lot of changes to VFS
+> > subsystem or its a nonsense altogether?
+
+Yes, very likely.
+
+We'd either have to change the current inode operations for getting and
+setting acls to take a new struct acl that can contain either posix acls
+or rich acls or add new ones just for these new fangled ones.
+
+Choosing the first - more sensible - of these two options will mean
+updating each filesystem's acl inode operations. Might turn out to not
+be invasive code as it might boil down to struct posix_acl *acl =
+acl->posix at the beginning of each method but still.
+
+Then we'd probably also need to:
+
+* handle permission checking (see Jeff's comment below)
+* change/update the ACL caching layer
+* if the past hast taught me anything then overlayfs would probably need
+  some additional logic as well
+
+> > 
+> 
+> Eventually you have to actually enforce the ACL. Do NTFS/ZFS already
+> have code to do this? If not then someone would need to write it.
+> 
+> Also windows and nfs acls do have some differences, so you'll need a
+> translation layer too.
+
+Jeff, I know you have some knowledge in this area you probably are
+better equipped to judge the sanity and feasibility of this.
