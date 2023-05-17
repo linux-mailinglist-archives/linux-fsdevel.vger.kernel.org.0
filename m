@@ -2,72 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C60E706FEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 19:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 445BB70706B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 20:07:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229525AbjEQRuc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 13:50:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59054 "EHLO
+        id S229915AbjEQSHf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 14:07:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbjEQRub (ORCPT
+        with ESMTP id S229942AbjEQSHe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 13:50:31 -0400
-X-Greylist: delayed 165 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 17 May 2023 10:50:29 PDT
-Received: from p3plwbeout16-04.prod.phx3.secureserver.net (p3plsmtp16-04-2.prod.phx3.secureserver.net [173.201.193.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A1DCBE
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 10:50:29 -0700 (PDT)
-Received: from mailex.mailcore.me ([94.136.40.142])
-        by :WBEOUT: with ESMTP
-        id zLFWp4Nh3b397zLFXpx1yr; Wed, 17 May 2023 10:47:43 -0700
-X-CMAE-Analysis: v=2.4 cv=XfBMcK15 c=1 sm=1 tr=0 ts=6465133f
- a=s1hRAmXuQnGNrIj+3lWWVA==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=ggZhUymU-5wA:10 a=IkcTkHD0fZMA:10 a=P0xRbXHiH_UA:10 a=FXvPX3liAAAA:8
- a=IoMjfNCK1isbzoXsNuIA:9 a=QEXdDO2ut3YA:10 a=SM4aVyO6fsoA:10
- a=UxLD5KG5Eu0A:10 a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk  
-X-SID:  zLFWp4Nh3b397
-Received: from 82-69-79-175.dsl.in-addr.zen.co.uk ([82.69.79.175] helo=[192.168.178.87])
-        by smtp05.mailcore.me with esmtpa (Exim 4.94.2)
-        (envelope-from <phillip@squashfs.org.uk>)
-        id 1pzLFa-0006vm-O3; Wed, 17 May 2023 18:47:47 +0100
-Message-ID: <6c9e3b5d-093f-b7b7-2370-04d3953dc9cd@squashfs.org.uk>
-Date:   Wed, 17 May 2023 18:47:41 +0100
+        Wed, 17 May 2023 14:07:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2614094
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 11:06:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684346803;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JPAKEMmoW/hN8niZpR0qHJlcpgA9MC/akmM/6a2jgQg=;
+        b=bgu4QF6u+ivGqJZ2LRPGTE7S0z9kuqSHKvbeXeNwGoRgezfhCBj9qGoZK8BMJwT0nnj62S
+        pxQjzVnkOoZ+wsrc79Wkr1gjOZmkIHuQ5g4RW13zWm/TwbNO714WQgAqMKMrEaFodATvQQ
+        uYq5lxKxiItV8Z/QTqhAOHFPecIidLc=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-255-XiSmhdtOO_6yC4ddxRN65Q-1; Wed, 17 May 2023 14:06:41 -0400
+X-MC-Unique: XiSmhdtOO_6yC4ddxRN65Q-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-3f4d7e97a37so7215531cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 11:06:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684346801; x=1686938801;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JPAKEMmoW/hN8niZpR0qHJlcpgA9MC/akmM/6a2jgQg=;
+        b=HpCRlHQdBkZ94SWsTFUu9oqzyZJQ+mILAHU+Wrn19L22rANbwnljt5DgzFZShsARwJ
+         /DtCVdVQRGrOsNONXbjs37HVIlGhEM8dVTgmR2CXMNsY3aGoCC51P563QdnzlIDg1SZp
+         AE3H1G4P86G60i95hnz79eke6Ij5jSh4WAbrH+GuyQYVJEtGUFP+7PsoYfEJOM4NPCQO
+         o24q3FRSvLLhzcGdqLMJolSrt1emh7IVx61ngRpZn2xq0ysec9PJVdH8maCE2K6ZIUij
+         oEeZHwYBojsYj0Su4SYhOxuTnv016Kuy5IAKP28dP8sxn90w1MW9mldj4qkKmd/f4wfS
+         607A==
+X-Gm-Message-State: AC+VfDw5PBuUqBdiE9MHwarQ3/Zry85nC02gLrEhk5aixdxoYJxnlw8I
+        9G1NggLD11ErXPfkhxsk6A5qX6M5zPVrjtjvMjw/i3iSXpBYvek9Xw+UDR3LzjKd9nMuWjpePIx
+        Zdq4vSFqMRa0H0+O+tcKZ4LluGA==
+X-Received: by 2002:ac8:7f88:0:b0:3f5:1bf2:8b90 with SMTP id z8-20020ac87f88000000b003f51bf28b90mr823698qtj.13.1684346801029;
+        Wed, 17 May 2023 11:06:41 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7bKUBNvkUgo07NzXqdvUsP1kW6RU9BYMt7BII3OsWP+fRx8VumCBPBNl0Tjnzu4rkCFMPrTw==
+X-Received: by 2002:ac8:7f88:0:b0:3f5:1bf2:8b90 with SMTP id z8-20020ac87f88000000b003f51bf28b90mr823675qtj.13.1684346800793;
+        Wed, 17 May 2023 11:06:40 -0700 (PDT)
+Received: from [172.16.0.7] ([209.73.90.46])
+        by smtp.gmail.com with ESMTPSA id v11-20020ae9e30b000000b0074636e35405sm790856qkf.65.2023.05.17.11.06.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 May 2023 11:06:40 -0700 (PDT)
+Message-ID: <4b01c34d-5bdc-e72a-33f1-956864236ed4@redhat.com>
+Date:   Wed, 17 May 2023 13:06:38 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] squashfs: don't include buffer_head.h
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     akpm@linux-foundation.org, squashfs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230517071622.245151-1-hch@lst.de>
-Content-Language: en-GB
-From:   Phillip Lougher <phillip@squashfs.org.uk>
-In-Reply-To: <20230517071622.245151-1-hch@lst.de>
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 0/6] gfs2/buffer folio changes
+Content-Language: en-US
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, Hannes Reinecke <hare@suse.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+References: <20230517032442.1135379-1-willy@infradead.org>
+From:   Bob Peterson <rpeterso@redhat.com>
+In-Reply-To: <20230517032442.1135379-1-willy@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailcore-Auth: 439999529
-X-Mailcore-Domain: 1394945
-X-123-reg-Authenticated:  phillip@squashfs.org.uk  
-X-Originating-IP: 82.69.79.175
-X-CMAE-Envelope: MS4xfDQmMV5H0TZAUZ8qKdYriUUlbqZqPqTrxCvr9ALcT7ae9mYtwXcsexgTNFa1IS7Yq7rX0OzKkGTUScTV9OB35HTcZ3eZLX606lxzWY9jLGo6T5TpZfsX
- fge0FfNrZgBJq/C7kFPaAcHmlomSHg976uUZDCI2QtadD4rjNE2bzJT1tG8LDiUHBbzge0ym9lxQ/HsD+nAsWKifOPG9AFZB4NpIVl3gyfvedIacy6CKoAqw
- GxCRN6aps+p8f3VQuiL1ug==
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17/05/2023 08:16, Christoph Hellwig wrote:
-> Squashfs has stopped using buffers heads in 93e72b3c612adcaca1
-> ("squashfs: migrate from ll_rw_block usage to BIO").
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On 5/16/23 10:24 PM, Matthew Wilcox (Oracle) wrote:
+> This kind of started off as a gfs2 patch series, then became entwined
+> with buffer heads once I realised that gfs2 was the only remaining
+> caller of __block_write_full_page().  For those not in the gfs2 world,
+> the big point of this series is that block_write_full_page() should now
+> handle large folios correctly.
+> 
+> It probably makes most sense to take this through Andrew's tree, once
+> enough people have signed off on it?
+> 
+> Matthew Wilcox (Oracle) (6):
+>    gfs2: Use a folio inside gfs2_jdata_writepage()
+>    gfs2: Pass a folio to __gfs2_jdata_write_folio()
+>    gfs2: Convert gfs2_write_jdata_page() to gfs2_write_jdata_folio()
+>    buffer: Convert __block_write_full_page() to
+>      __block_write_full_folio()
+>    gfs2: Support ludicrously large folios in gfs2_trans_add_databufs()
+>    buffer: Make block_write_full_page() handle large folios correctly
+> 
+>   fs/buffer.c                 | 75 ++++++++++++++++++-------------------
+>   fs/gfs2/aops.c              | 66 ++++++++++++++++----------------
+>   fs/gfs2/aops.h              |  2 +-
+>   fs/ntfs/aops.c              |  2 +-
+>   fs/reiserfs/inode.c         |  2 +-
+>   include/linux/buffer_head.h |  2 +-
+>   6 files changed, 75 insertions(+), 74 deletions(-)
+> 
+Hi Matthew,
 
-Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
+I recently started looking into doing this, too, so this is apropos.
+I'll give it a careful review and some testing. The jdata stuff in gfs2 
+is very touchy, but this looks like a step in the right direction.
+I'll let you know how it fares.
 
+Regards,
+
+Bob Peterson
 
