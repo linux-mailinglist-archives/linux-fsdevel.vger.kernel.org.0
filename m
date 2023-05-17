@@ -2,186 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 061697060B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 09:05:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E08297060EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 09:16:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229593AbjEQHFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 03:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42736 "EHLO
+        id S229604AbjEQHQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 03:16:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjEQHFp (ORCPT
+        with ESMTP id S229885AbjEQHQb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 03:05:45 -0400
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 793B9125;
-        Wed, 17 May 2023 00:05:42 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=23;SR=0;TI=SMTPD_---0VirfQ1g_1684307134;
-Received: from 30.97.48.190(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VirfQ1g_1684307134)
-          by smtp.aliyun-inc.com;
-          Wed, 17 May 2023 15:05:37 +0800
-Message-ID: <7386e858-1026-2924-9df9-22350b1e33a7@linux.alibaba.com>
-Date:   Wed, 17 May 2023 15:05:33 +0800
+        Wed, 17 May 2023 03:16:31 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15815449A;
+        Wed, 17 May 2023 00:16:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=L9Rma4Q1qDKB9y05bibUf7H4u/Qt/w4qqQA7vkQBHhw=; b=hnjQeZYxV88CDNJnYVZxS9Ogzb
+        /rGRANh+Rb2oHRd/CSQtpL38iDlXzfV/nCAWMRf91jzgaqNKYfBbwmGUb8+QPD91hTl51Bc680hAZ
+        ytdAV872DJBp65Lq3M/dFlPE+K/X2cJGZ2Tc/+GHiXKHGKA5MN2lMgKjxglsO65x7F7f6cqFJfLfP
+        SbgMZkqKL9Dap9wFQNXwfrdi7vpeYwndyFn8MsygBg3QNH/6cw8HPEJiFslgbOBIVV0MXL8e+yEII
+        KZrHGXdkwuVc9pcQxDo0o+Ub6Sa+rw5uixfiA/ncblOwpyLFM03zj2RbQaMFKoRfhtjaNUqjsP1W4
+        LUa2qddw==;
+Received: from [2001:4bb8:188:3dd5:bc0:409a:ad8d:a02b] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pzBOa-008dWg-33;
+        Wed, 17 May 2023 07:16:25 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     phillip@squashfs.org.uk
+Cc:     akpm@linux-foundation.org, squashfs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] squashfs: don't include buffer_head.h
+Date:   Wed, 17 May 2023 09:16:22 +0200
+Message-Id: <20230517071622.245151-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: [RFC PATCH bpf-next v3 00/37] FUSE BPF: A Stacked Filesystem
- Extension for FUSE
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Daniel Rosenberg <drosen@google.com>,
-        Miklos Szeredi <miklos@szeredi.hu>, bpf@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joanne Koong <joannelkoong@gmail.com>,
-        Mykola Lysenko <mykolal@fb.com>, kernel-team@android.com
-References: <20230418014037.2412394-1-drosen@google.com>
- <CAJfpegtuNgbZfLiKnpzdEP0sNtCt=83NjGtBnmtvMaon2avv2w@mail.gmail.com>
- <CA+PiJmTMs2u=J6ANYqHdGww5SoE_focZGjMRZk5WgoH8fVuCsA@mail.gmail.com>
- <93e0e991-147f-0021-d635-95e615057273@linux.alibaba.com>
- <CAOQ4uxjCebxGxkguAh9s4_Vg7QHM=oBoV0LUPZpb+0pcm3z1bw@mail.gmail.com>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAOQ4uxjCebxGxkguAh9s4_Vg7QHM=oBoV0LUPZpb+0pcm3z1bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-12.6 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Amir,
+Squashfs has stopped using buffers heads in 93e72b3c612adcaca1
+("squashfs: migrate from ll_rw_block usage to BIO").
 
-On 2023/5/17 23:51, Amir Goldstein wrote:
-> On Wed, May 17, 2023 at 5:50 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>
->>
->>
->> On 2023/5/2 17:07, Daniel Rosenberg wrote:
->>> On Mon, Apr 24, 2023 at 8:32 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->>>>
->>>>
->>>> The security model needs to be thought about and documented.  Think
->>>> about this: the fuse server now delegates operations it would itself
->>>> perform to the passthrough code in fuse.  The permissions that would
->>>> have been checked in the context of the fuse server are now checked in
->>>> the context of the task performing the operation.  The server may be
->>>> able to bypass seccomp restrictions.  Files that are open on the
->>>> backing filesystem are now hidden (e.g. lsof won't find these), which
->>>> allows the server to obfuscate accesses to backing files.  Etc.
->>>>
->>>> These are not particularly worrying if the server is privileged, but
->>>> fuse comes with the history of supporting unprivileged servers, so we
->>>> should look at supporting passthrough with unprivileged servers as
->>>> well.
->>>>
->>>
->>> This is on my todo list. My current plan is to grab the creds that the
->>> daemon uses to respond to FUSE_INIT. That should keep behavior fairly
->>> similar. I'm not sure if there are cases where the fuse server is
->>> operating under multiple contexts.
->>> I don't currently have a plan for exposing open files via lsof. Every
->>> such file should relate to one that will show up though. I haven't dug
->>> into how that's set up, but I'm open to suggestions.
->>>
->>>> My other generic comment is that you should add justification for
->>>> doing this in the first place.  I guess it's mainly performance.  So
->>>> how performance can be won in real life cases?   It would also be good
->>>> to measure the contribution of individual ops to that win.   Is there
->>>> another reason for this besides performance?
->>>>
->>>> Thanks,
->>>> Miklos
->>>
->>> Our main concern with it is performance. We have some preliminary
->>> numbers looking at the pure passthrough case. We've been testing using
->>> a ramdrive on a somewhat slow machine, as that should highlight
->>> differences more. We ran fio for sequential reads, and random
->>> read/write. For sequential reads, we were seeing libfuse's
->>> passthrough_hp take about a 50% hit, with fuse-bpf not being
->>> detectably slower. For random read/write, we were seeing a roughly 90%
->>> drop in performance from passthrough_hp, while fuse-bpf has about a 7%
->>> drop in read and write speed. When we use a bpf that traces every
->>> opcode, that performance hit increases to a roughly 1% drop in
->>> sequential read performance, and a 20% drop in both read and write
->>> performance for random read/write. We plan to make more complex bpf
->>> examples, with fuse daemon equivalents to compare against.
->>>
->>> We have not looked closely at the impact of individual opcodes yet.
->>>
->>> There's also a potential ease of use for fuse-bpf. If you're
->>> implementing a fuse daemon that is largely mirroring a backing
->>> filesystem, you only need to write code for the differences in
->>> behavior. For instance, say you want to remove image metadata like
->>> location. You could give bpf information on what range of data is
->>> metadata, and zero out that section without having to handle any other
->>> operations.
->>
->> A bit out of topic (although I'm not quite look into FUSE BPF internals)
->> After roughly listening to this topic in FS track last week, I'm not
->> quite sure (at least in the long term) if it might be better if
->> ebpf-related filter/redirect stuffs could be landed in vfs or in a
->> somewhat stackable fs so that we could redirect/filter any sub-fstree
->> in principle?    It's just an open question and I have no real tendency
->> of this but do we really need a BPF-filter functionality for each
->> individual fs?
-> 
-> I think that is a valid question, but the answer is that even if it makes sense,
-> doing something like this in vfs would be a much bigger project with larger
-> consequences on performance and security and whatnot, so even if
-> (and a very big if) this ever happens, using FUSE-BPF as a playground for
-> this sort of stuff would be a good idea.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/squashfs/block.c                     | 1 -
+ fs/squashfs/decompressor.c              | 1 -
+ fs/squashfs/decompressor_multi_percpu.c | 1 -
+ 3 files changed, 3 deletions(-)
 
-My current observation is that the total Fuse-BPF LoC is already beyond the
-whole FUSE itself.  In addition, it almost hooks all fs operations which
-impacts something to me.
+diff --git a/fs/squashfs/block.c b/fs/squashfs/block.c
+index bed3bb8b27fa3d..cb4e48baa4ba5b 100644
+--- a/fs/squashfs/block.c
++++ b/fs/squashfs/block.c
+@@ -18,7 +18,6 @@
+ #include <linux/vfs.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
+-#include <linux/buffer_head.h>
+ #include <linux/bio.h>
+ 
+ #include "squashfs_fs.h"
+diff --git a/fs/squashfs/decompressor.c b/fs/squashfs/decompressor.c
+index 8893cb9b419833..a676084be27e43 100644
+--- a/fs/squashfs/decompressor.c
++++ b/fs/squashfs/decompressor.c
+@@ -11,7 +11,6 @@
+ #include <linux/types.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
+-#include <linux/buffer_head.h>
+ 
+ #include "squashfs_fs.h"
+ #include "squashfs_fs_sb.h"
+diff --git a/fs/squashfs/decompressor_multi_percpu.c b/fs/squashfs/decompressor_multi_percpu.c
+index 1dfadf76ed9ae8..8a218e7c2390f2 100644
+--- a/fs/squashfs/decompressor_multi_percpu.c
++++ b/fs/squashfs/decompressor_multi_percpu.c
+@@ -7,7 +7,6 @@
+ #include <linux/types.h>
+ #include <linux/slab.h>
+ #include <linux/percpu.h>
+-#include <linux/buffer_head.h>
+ #include <linux/local_lock.h>
+ 
+ #include "squashfs_fs.h"
+-- 
+2.39.2
 
-> 
-> This reminds me of union mounts - it made sense to have union mount
-> functionality in vfs, but after a long winding road, a stacked fs (overlayfs)
-> turned out to be a much more practical solution.
-
-Yeah, I agree.  So it was just a pure hint on my side.
-
-> 
->>
->> It sounds much like
->> https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/about-file-system-filter-drivers
->>
-> 
-> Nice reference.
-> I must admit that I found it hard to understand what Windows filter drivers
-> can do compared to FUSE-BPF design.
-> It'd be nice to get some comparison from what is planned for FUSE-BPF.
-
-At least some investigation/analysis first might be better in the long
-term development.
-
-> 
-> Interesting to note that there is a "legacy" Windows filter driver API,
-> so Windows didn't get everything right for the first API - that is especially
-> interesting to look at as repeating other people's mistakes would be a shame.
-
-I'm not familiar with that details as well, yet I saw that they have a
-filesystem filter subsystem, so I mentioned it here.
-
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> Amir.
