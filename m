@@ -2,59 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 49010705D74
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 04:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 282AF705DE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 05:20:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231857AbjEQCu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 22:50:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35302 "EHLO
+        id S231901AbjEQDUu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 23:20:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231472AbjEQCu5 (ORCPT
+        with ESMTP id S230403AbjEQDUt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 22:50:57 -0400
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3492F103;
-        Tue, 16 May 2023 19:50:55 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=23;SR=0;TI=SMTPD_---0ViqnrSZ_1684291846;
-Received: from 30.97.48.190(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0ViqnrSZ_1684291846)
-          by smtp.aliyun-inc.com;
-          Wed, 17 May 2023 10:50:50 +0800
-Message-ID: <93e0e991-147f-0021-d635-95e615057273@linux.alibaba.com>
-Date:   Wed, 17 May 2023 10:50:45 +0800
+        Tue, 16 May 2023 23:20:49 -0400
+Received: from mx5.didiglobal.com (mx5.didiglobal.com [111.202.70.122])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 052181BC3;
+        Tue, 16 May 2023 20:20:45 -0700 (PDT)
+Received: from mail.didiglobal.com (unknown [10.79.71.35])
+        by mx5.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id C0D75B0035073;
+        Wed, 17 May 2023 11:20:42 +0800 (CST)
+Received: from localhost.localdomain (10.79.71.101) by
+ ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Wed, 17 May 2023 11:20:42 +0800
+X-MD-Sfrom: chengkaitao@didiglobal.com
+X-MD-SrcIP: 10.79.71.35
+From:   chengkaitao <chengkaitao@didiglobal.com>
+To:     <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+        <corbet@lwn.net>, <mhocko@kernel.org>, <roman.gushchin@linux.dev>,
+        <shakeelb@google.com>, <akpm@linux-foundation.org>,
+        <brauner@kernel.org>, <muchun.song@linux.dev>
+CC:     <viro@zeniv.linux.org.uk>, <zhengqi.arch@bytedance.com>,
+        <ebiederm@xmission.com>, <Liam.Howlett@Oracle.com>,
+        <chengzhihao1@huawei.com>, <pilgrimtao@gmail.com>,
+        <haolee.swjtu@gmail.com>, <yuzhao@google.com>,
+        <willy@infradead.org>, <vasily.averin@linux.dev>, <vbabka@suse.cz>,
+        <surenb@google.com>, <sfr@canb.auug.org.au>, <mcgrof@kernel.org>,
+        <sujiaxun@uniontech.com>, <feng.tang@intel.com>,
+        <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, chengkaitao <chengkaitao@didiglobal.com>
+Subject: [PATCH v4 0/2] memcontrol: support cgroup level OOM protection
+Date:   Wed, 17 May 2023 11:20:30 +0800
+Message-ID: <20230517032032.76334-1-chengkaitao@didiglobal.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.10.0
-Subject: Re: [RFC PATCH bpf-next v3 00/37] FUSE BPF: A Stacked Filesystem
- Extension for FUSE
-To:     Daniel Rosenberg <drosen@google.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joanne Koong <joannelkoong@gmail.com>,
-        Mykola Lysenko <mykolal@fb.com>, kernel-team@android.com
-References: <20230418014037.2412394-1-drosen@google.com>
- <CAJfpegtuNgbZfLiKnpzdEP0sNtCt=83NjGtBnmtvMaon2avv2w@mail.gmail.com>
- <CA+PiJmTMs2u=J6ANYqHdGww5SoE_focZGjMRZk5WgoH8fVuCsA@mail.gmail.com>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CA+PiJmTMs2u=J6ANYqHdGww5SoE_focZGjMRZk5WgoH8fVuCsA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-12.6 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.79.71.101]
+X-ClientProxiedBy: ZJY02-PUBMBX-01.didichuxing.com (10.79.65.31) To
+ ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,82 +58,112 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Establish a new OOM score algorithm, supports the cgroup level OOM
+protection mechanism. When an global/memcg oom event occurs, we treat
+all processes in the cgroup as a whole, and OOM killers need to select
+the process to kill based on the protection quota of the cgroup.
 
+Here is a more detailed comparison and introduction of the old 
+oom_score_adj mechanism and the new oom_protect mechanism,
 
-On 2023/5/2 17:07, Daniel Rosenberg wrote:
-> On Mon, Apr 24, 2023 at 8:32 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->>
->>
->> The security model needs to be thought about and documented.  Think
->> about this: the fuse server now delegates operations it would itself
->> perform to the passthrough code in fuse.  The permissions that would
->> have been checked in the context of the fuse server are now checked in
->> the context of the task performing the operation.  The server may be
->> able to bypass seccomp restrictions.  Files that are open on the
->> backing filesystem are now hidden (e.g. lsof won't find these), which
->> allows the server to obfuscate accesses to backing files.  Etc.
->>
->> These are not particularly worrying if the server is privileged, but
->> fuse comes with the history of supporting unprivileged servers, so we
->> should look at supporting passthrough with unprivileged servers as
->> well.
->>
-> 
-> This is on my todo list. My current plan is to grab the creds that the
-> daemon uses to respond to FUSE_INIT. That should keep behavior fairly
-> similar. I'm not sure if there are cases where the fuse server is
-> operating under multiple contexts.
-> I don't currently have a plan for exposing open files via lsof. Every
-> such file should relate to one that will show up though. I haven't dug
-> into how that's set up, but I'm open to suggestions.
-> 
->> My other generic comment is that you should add justification for
->> doing this in the first place.  I guess it's mainly performance.  So
->> how performance can be won in real life cases?   It would also be good
->> to measure the contribution of individual ops to that win.   Is there
->> another reason for this besides performance?
->>
->> Thanks,
->> Miklos
-> 
-> Our main concern with it is performance. We have some preliminary
-> numbers looking at the pure passthrough case. We've been testing using
-> a ramdrive on a somewhat slow machine, as that should highlight
-> differences more. We ran fio for sequential reads, and random
-> read/write. For sequential reads, we were seeing libfuse's
-> passthrough_hp take about a 50% hit, with fuse-bpf not being
-> detectably slower. For random read/write, we were seeing a roughly 90%
-> drop in performance from passthrough_hp, while fuse-bpf has about a 7%
-> drop in read and write speed. When we use a bpf that traces every
-> opcode, that performance hit increases to a roughly 1% drop in
-> sequential read performance, and a 20% drop in both read and write
-> performance for random read/write. We plan to make more complex bpf
-> examples, with fuse daemon equivalents to compare against.
-> 
-> We have not looked closely at the impact of individual opcodes yet.
-> 
-> There's also a potential ease of use for fuse-bpf. If you're
-> implementing a fuse daemon that is largely mirroring a backing
-> filesystem, you only need to write code for the differences in
-> behavior. For instance, say you want to remove image metadata like
-> location. You could give bpf information on what range of data is
-> metadata, and zero out that section without having to handle any other
-> operations.
+1. The regulating granularity of oom_protect is smaller than that of
+   oom_score_adj. On a 512G physical machine, the minimum granularity
+   adjusted by oom_score_adj is 512M, and the minimum granularity
+   adjusted by oom_protect is one page (4K)
+2. It may be simple to create a lightweight parent process and uniformly
+   set the oom_score_adj of some important processes, but it is not a
+   simple matter to make multi-level settings for tens of thousands of
+   processes on the physical machine through the lightweight parent
+   processes. We may need a huge table to record the value of oom_score_adj
+   maintained by all lightweight parent processes, and the user process
+   limited by the parent process has no ability to change its own
+   oom_score_adj, because it does not know the details of the huge
+   table. on the other hand, we have to set the common parent process'
+   oom_score_adj, before it forks all children processes. We must strictly
+   follow this setting sequence, and once oom_score_adj is set, it cannot
+   be changed. To sum up, it is very difficult to apply oom_score_adj in
+   other situations. The new patch adopts the cgroup mechanism. It does not
+   need any parent process to manage oom_score_adj. the settings between
+   each memcg are independent of each other, making it easier to plan the
+   OOM order of all processes. Due to the unique nature of memory
+   resources, current Service cloud vendors are not oversold in memory
+   planning. I would like to use the new patch to try to achieve the
+   possibility of oversold memory resources.
+3. I conducted a test and deployed an excessive number of containers on
+   a physical machine, By setting the oom_score_adj value of all processes
+   in the container to a positive number through dockerinit, even processes
+   that occupy very little memory in the container are easily killed,
+   resulting in a large number of invalid kill behaviors. If dockerinit is
+   also killed unfortunately, it will trigger container self-healing, and
+   the container will rebuild, resulting in more severe memory
+   oscillations. The new patch abandons the behavior of adding an equal
+   amount of oom_score_adj to each process in the container and adopts a
+   shared oom_protect quota for all processes in the container. If a
+   process in the container is killed, the remaining other processes will
+   receive more oom_protect quota, making it more difficult for the
+   remaining processes to be killed. In my test case, the new patch reduced
+   the number of invalid kill behaviors by 70%. 
+4. oom_score_adj is a global configuration that cannot achieve a kill
+   order that only affects a certain memcg-oom-killer. However, the
+   oom_protect mechanism inherits downwards (If the oom_protect quota of
+   the parent cgroup is less than the sum of sub-cgroups oom_protect quota,
+   the oom_protect quota of each sub-cgroup will be proportionally reduced.
+   If the oom_protect quota of the parent cgroup is greater than the sum of
+   sub-cgroups oom_protect quota, the oom_protect quota of each sub-cgroup
+   will be proportionally increased). The purpose of doing so is that users
+   can set oom_protect quota according to their own needs, and the system
+   management process can set appropriate oom_protect quota on the parent
+   memcg as the final cover. If the oom_protect of the parent cgroup is 0,
+   the kill order of memcg-oom or global-ooms will not be affected by user
+   specific settings.
+5. Per-process accounting does not count shared memory, similar to
+   active page cache, which also increases the probability of OOM-kill.
+   However, the memcg accounting may be more reasonable, as its memory
+   statistics are more comprehensive. In the new patch, all the shared
+   memory will also consume the oom_protect quota of the memcg, and the
+   process's oom_protect quota of the memcg will decrease, the probability
+   of they being killed will increase.
+6. In the final discussion of patch v2, we discussed that although the
+   adjustment range of oom_score_adj is [-1000,1000], but essentially it
+   only allows two usecases(OOM_SCORE_ADJ_MIN, OOM_SCORE_ADJ_MAX) reliably.
+   Everything in between is clumsy at best. In order to solve this problem
+   in the new patch, I introduced a new indicator oom_kill_inherit, which
+   counts the number of times the local and child cgroups have been
+   selected by the OOM killer of the ancestor cgroup. oom_kill_inherit
+   maintains a negative correlation with memory.oom.protect, so we have a
+   ruler to measure the optimal value of memory.oom.protect. By observing
+   the proportion of oom_kill_inherit in the parent cgroup, I can
+   effectively adjust the value of oom_protect to achieve the best.
 
-A bit out of topic (although I'm not quite look into FUSE BPF internals)
-After roughly listening to this topic in FS track last week, I'm not
-quite sure (at least in the long term) if it might be better if
-ebpf-related filter/redirect stuffs could be landed in vfs or in a
-somewhat stackable fs so that we could redirect/filter any sub-fstree
-in principle?    It's just an open question and I have no real tendency
-of this but do we really need a BPF-filter functionality for each
-individual fs?
+Changelog:
+v4:
+  * Fix warning: overflow in expression. (patch 1)
+  * Supplementary commit information. (patch 0)
+v3:
+  * Add "auto" option for memory.oom.protect. (patch 1)
+  * Fix division errors. (patch 1)
+  * Add observation indicator oom_kill_inherit. (patch 2)
+  https://lore.kernel.org/linux-mm/20230506114948.6862-1-chengkaitao@didiglobal.com/
+v2:
+  * Modify the formula of the process request memcg protection quota.
+  https://lore.kernel.org/linux-mm/20221208034644.3077-1-chengkaitao@didiglobal.com/
+v1:
+  https://lore.kernel.org/linux-mm/20221130070158.44221-1-chengkaitao@didiglobal.com/
 
-It sounds much like
-https://learn.microsoft.com/en-us/windows-hardware/drivers/ifs/about-file-system-filter-drivers
+chengkaitao (2):
+  mm: memcontrol: protect the memory in cgroup from being oom killed
+  memcg: add oom_kill_inherit event indicator
 
-Thanks,
-Gao Xiang
+ Documentation/admin-guide/cgroup-v2.rst |  29 ++++-
+ fs/proc/base.c                          |  17 ++-
+ include/linux/memcontrol.h              |  46 +++++++-
+ include/linux/oom.h                     |   3 +-
+ include/linux/page_counter.h            |   6 +
+ mm/memcontrol.c                         | 199 ++++++++++++++++++++++++++++++++
+ mm/oom_kill.c                           |  25 ++--
+ mm/page_counter.c                       |  30 +++++
+ 8 files changed, 334 insertions(+), 21 deletions(-)
 
-> 
->   -Daniel
+-- 
+2.14.1
+
