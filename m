@@ -2,137 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A04AE706A98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 16:10:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F06E2706AE7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 16:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231542AbjEQOKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 10:10:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35518 "EHLO
+        id S230415AbjEQOSY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 10:18:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231231AbjEQOKn (ORCPT
+        with ESMTP id S230454AbjEQOSV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 10:10:43 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE7023C1E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 07:10:41 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230517141038euoutp020776ea25328bfb8266485026753195fe~f85xqGqX92848528485euoutp02U
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 14:10:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230517141038euoutp020776ea25328bfb8266485026753195fe~f85xqGqX92848528485euoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1684332638;
-        bh=fSUGBWEOANyW/Vd4t6CfRE1QGm0GQPrvGJcdROwIVqg=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=fNl0h3C1hZ+nGrZl++y+bBgSekUmpp8SlIIEz7mPD1N7aIeE02zgwzfTx9X9Q81O+
-         vl7vewHSPvMR+/BYxbI7yXnc+Ez9u1xMJt57drq0b+G9ACNaFixXMOqDEHvOB6skEG
-         mQd9KtCdGhTAtWLXbcE9bBzUIsQNCU14kVssptcE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230517141038eucas1p293f58fc03a209708ab90c7e52d79adf6~f85xkSAPZ0791107911eucas1p2F;
-        Wed, 17 May 2023 14:10:38 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 64.DB.42423.E50E4646; Wed, 17
-        May 2023 15:10:38 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230517141038eucas1p2571e1922590aa30a21d7c0fcdcfb1cf7~f85xV1Ahx3104331043eucas1p2_;
-        Wed, 17 May 2023 14:10:38 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230517141038eusmtrp1879024d97bf8613375dac8878e8a591c~f85xVRMyV3195231952eusmtrp1B;
-        Wed, 17 May 2023 14:10:38 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-03-6464e05ea066
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0B.5B.14344.E50E4646; Wed, 17
-        May 2023 15:10:38 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230517141038eusmtip24dcef5a47f82a0857bf3c83af65df262~f85xESINC2284722847eusmtip2j;
-        Wed, 17 May 2023 14:10:38 +0000 (GMT)
-Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Wed, 17 May 2023 15:10:37 +0100
-Date:   Wed, 17 May 2023 16:10:36 +0200
-From:   Pankaj Raghav <p.raghav@samsung.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     <phillip@squashfs.org.uk>, <akpm@linux-foundation.org>,
-        <squashfs-devel@lists.sourceforge.net>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <p.raghav@samsung.com>
-Subject: Re: [PATCH] squashfs: don't include buffer_head.h
-Message-ID: <20230517141036.iwipagublvjca2sc@localhost>
+        Wed, 17 May 2023 10:18:21 -0400
+Received: from out-35.mta0.migadu.com (out-35.mta0.migadu.com [IPv6:2001:41d0:1004:224b::23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B34D459D4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 07:18:18 -0700 (PDT)
+Date:   Wed, 17 May 2023 10:18:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1684333096;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yJ5xyIjdnqOODdgYyT/tGprQTvXceNzR+PcU18XJA2Y=;
+        b=DRkNRqw2cpxP72oh9ESo41gFutZSDl+YmWd79P8rLziplWE9cmhMThXeM5UNfH3kBgthIO
+        a2S1CSe8ZEfb6r9FtPGIm+83nqHbWlyB9vWkyhrNJhAK04eoQo+AdJg4SsVr1UUtpeiZoX
+        R3WCAJelUZMAB+z0U6eH56SZab8kKuQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+        song@kernel.org
+Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
+Message-ID: <ZGTiI49s8+YjBxVX@moria.home.lan>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-8-kent.overstreet@linux.dev>
+ <3508afc0-6f03-a971-e716-999a7373951f@wdc.com>
+ <202305111525.67001E5C4@keescook>
+ <ZF6Ibvi8U9B+mV1d@moria.home.lan>
+ <202305161401.F1E3ACFAC@keescook>
+ <ZGPzocRpSlg+4vgN@moria.home.lan>
+ <ZGP54T0d89TMySsf@casper.infradead.org>
+ <ZGRmC2Qhe6oAHPIm@moria.home.lan>
+ <ZGTe6zFYL25fNwcw@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20230517071622.245151-1-hch@lst.de>
-X-Originating-IP: [106.110.32.140]
-X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsWy7djP87pxD1JSDBrvqFrMWb+GzWLl6qNM
-        Fnv2nmSxuLxrDpvF0Z7NbBZXd9U7sHmcmPGbxWP3gs9MHrtvNrB5TPn6nNnj8ya5ANYoLpuU
-        1JzMstQifbsErowTT8oLfrBUNO7qY2lgXMvSxcjJISFgIjHlw0L2LkYuDiGBFYwSs26eZoRw
-        vjBKnNv2mwnC+cwosf72fSaYlpnTb0AlljNKbLuwkgWu6u6Za8wQzhZGiSWfe5lBWlgEVCXu
-        PfkOtIWDg01AS6Kxkx0kLCKgJPH01VmwfcwC+xkl/pz/zwZSIyxgJXGwlw2khlfAXGL76nXM
-        ELagxMmZT8AO5xQwlPj56SEzxEVKEg2bz0A9VCuxt/kA2EMSAnc4JH7MvMQIkXCROPZ8ExuE
-        LSzx6vgWdghbRuL05B6o5mqJpzd+M0M0tzBK9O9cD3aQhIC1RN+ZHJAaZoFMiW/v37FC1DtK
-        tF7ZxwhRwidx460gRAmfxKRt05khwrwSHW1CENVqEqvvvWGBCMtInPvEN4FRaRaSx2YhmQ9h
-        60gs2P2JbRZQB7OAtMTyfxwQpqbE+l36CxhZVzGKp5YW56anFhvmpZbrFSfmFpfmpesl5+du
-        YgSmotP/jn/awTj31Ue9Q4xMHIyHGCU4mJVEeAP7klOEeFMSK6tSi/Lji0pzUosPMUpzsCiJ
-        82rbnkwWEkhPLEnNTk0tSC2CyTJxcEo1MOUELO44vzx489+tF40FHIoCdoudYXRLEFm97l9C
-        U5fY21cCzTXcrT7ViQcymVq3cp7ViyyefkTS4/P8P5XPxLevdd3q8vrPmuygGS+7PO4+naph
-        GaE4S2+9zXz+TbOEjv7IV71/a2uMB9dtDw2PZ1WuXkH+ORI19uq93zyU+9x220Tcvd5zastr
-        lUUf1//vLj/svTlq7Z4bz4XDVeebfvaJy124JzzJ7le9w95/inwP0pkl01YYTHgkvsXU4aCV
-        6+ude2dXvWR8elXP/PXE7O/Nz7fOWy63wkzlxvJLV6K39AtEuEuVPHU/6Ta59kToyl/3qg/W
-        iDrN5drJtZvrwerUXQc234lQn6RiqBR7JlyJpTgj0VCLuag4EQCv7oAatAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsVy+t/xe7pxD1JSDCZ+4LeYs34Nm8XK1UeZ
-        LPbsPclicXnXHDaLoz2b2Syu7qp3YPM4MeM3i8fuBZ+ZPHbfbGDzmPL1ObPH501yAaxRejZF
-        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlf5n9gLdjK
-        VLHxyXLWBsZmpi5GTg4JAROJmdNvANlcHEICSxklel9PYYZIyEhs/HKVFcIWlvhzrYsNxBYS
-        +MgosehXPETDFkaJzu9/wCaxCKhK3Hvynb2LkYODTUBLorGTHSQsIqAk8fTVWUaQemaB/YwS
-        f87/ZwOpERawkjjYCzaTV8BcYvvqdcwQ8w0klvZPYoeIC0qcnPmEBcRmFtCRWLD7E1grs4C0
-        xPJ/HCBhTgFDiZ+fHkKdrCTRsPkMC4RdK9H56jTbBEbhWUgmzUIyaRbCpAWMzKsYRVJLi3PT
-        c4uN9IoTc4tL89L1kvNzNzECY2zbsZ9bdjCufPVR7xAjEwfjIUYJDmYlEd7AvuQUId6UxMqq
-        1KL8+KLSnNTiQ4ymwICYyCwlmpwPjPK8knhDMwNTQxMzSwNTSzNjJXFez4KORCGB9MSS1OzU
-        1ILUIpg+Jg5OqQYmF5tySxYDvrdHzp3o/JPCu6e96fbxxaHhc2q2GNXbsvxZ/9JPe75KQfE6
-        B3P+PeLJcVs//M9SYj7Cxt79lt3vl/yUoAY/ZzlD4Tkyc7IP5i6Va/lksU6UUWSC7+01H99V
-        cl2Zvmzm49gtQVfO9aoZ9q6aURkveGnD9DyRL72O2XNmhHr8WKqy/qv96qTq/Qbr1qa88Sla
-        5aNz0GTTphuFqm579s1yi+4O5/B86VYb1GZ1ZLaH16r+M2nfPxRvFHPPiX/Vdmp5n/eBJKn+
-        l2ZlF79IuB/Mnx1wtoS1TC0yVu6PXVFqmRjzQdWJnw+0F8hGyFx9wdiaue5SiZSp8D9OJ8Y6
-        /1fJfX8Opi87H6zEUpyRaKjFXFScCACVjb6DOgMAAA==
-X-CMS-MailID: 20230517141038eucas1p2571e1922590aa30a21d7c0fcdcfb1cf7
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----nt9vO67.b8K_looarrbd7-OVwn-OXfZhK5OxcWyp3fprDND4=_1c023e_"
-X-RootMTR: 20230517141038eucas1p2571e1922590aa30a21d7c0fcdcfb1cf7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230517141038eucas1p2571e1922590aa30a21d7c0fcdcfb1cf7
-References: <20230517071622.245151-1-hch@lst.de>
-        <CGME20230517141038eucas1p2571e1922590aa30a21d7c0fcdcfb1cf7@eucas1p2.samsung.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZGTe6zFYL25fNwcw@kernel.org>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------nt9vO67.b8K_looarrbd7-OVwn-OXfZhK5OxcWyp3fprDND4=_1c023e_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-
-On Wed, May 17, 2023 at 09:16:22AM +0200, Christoph Hellwig wrote:
-> Squashfs has stopped using buffers heads in 93e72b3c612adcaca1
-> ("squashfs: migrate from ll_rw_block usage to BIO").
+On Wed, May 17, 2023 at 05:04:27PM +0300, Mike Rapoport wrote:
+> On Wed, May 17, 2023 at 01:28:43AM -0400, Kent Overstreet wrote:
+> > On Tue, May 16, 2023 at 10:47:13PM +0100, Matthew Wilcox wrote:
+> > > On Tue, May 16, 2023 at 05:20:33PM -0400, Kent Overstreet wrote:
+> > > > On Tue, May 16, 2023 at 02:02:11PM -0700, Kees Cook wrote:
+> > > > > For something that small, why not use the text_poke API?
+> > > > 
+> > > > This looks like it's meant for patching existing kernel text, which
+> > > > isn't what I want - I'm generating new functions on the fly, one per
+> > > > btree node.
+> > > > 
+> > > > I'm working up a new allocator - a (very simple) slab allocator where
+> > > > you pass a buffer, and it gives you a copy of that buffer mapped
+> > > > executable, but not writeable.
+> > > > 
+> > > > It looks like we'll be able to convert bpf, kprobes, and ftrace
+> > > > trampolines to it; it'll consolidate a fair amount of code (particularly
+> > > > in bpf), and they won't have to burn a full page per allocation anymore.
+> > > > 
+> > > > bpf has a neat trick where it maps the same page in two different
+> > > > locations, one is the executable location and the other is the writeable
+> > > > location - I'm stealing that.
+> > > 
+> > > How does that avoid the problem of being able to construct an arbitrary
+> > > gadget that somebody else will then execute?  IOW, what bpf has done
+> > > seems like it's working around & undoing the security improvements.
+> > > 
+> > > I suppose it's an improvement that only the executable address is
+> > > passed back to the caller, and not the writable address.
+> > 
+> > Ok, here's what I came up with. Have not tested all corner cases, still
+> > need to write docs - but I think this gives us a nicer interface than
+> > what bpf/kprobes/etc. have been doing, and it does the sub-page sized
+> > allocations I need.
+> > 
+> > With an additional tweak to module_alloc() (not done in this patch yet)
+> > we avoid ever mapping in pages both writeable and executable:
+> > 
+> > -->--
+> > 
+> > From 6eeb6b8ef4271ea1a8d9cac7fbaeeb7704951976 Mon Sep 17 00:00:00 2001
+> > From: Kent Overstreet <kent.overstreet@linux.dev>
+> > Date: Wed, 17 May 2023 01:22:06 -0400
+> > Subject: [PATCH] mm: jit/text allocator
+> > 
+> > This provides a new, very simple slab allocator for jit/text, i.e. bpf,
+> > ftrace trampolines, or bcachefs unpack functions.
+> > 
+> > With this API we can avoid ever mapping pages both writeable and
+> > executable (not implemented in this patch: need to tweak
+> > module_alloc()), and it also supports sub-page sized allocations.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> This looks like yet another workaround for that module_alloc() was not
+> designed to handle permission changes. Rather than create more and more
+> wrappers for module_alloc() we need to have core API for code allocation,
+> apparently on top of vmalloc, and then use that API for modules, bpf,
+> tracing and whatnot.
+> 
+> There was quite lengthy discussion about how to handle code allocations
+> here:
+> 
+> https://lore.kernel.org/linux-mm/20221107223921.3451913-1-song@kernel.org/
 
-Looks good,
-Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
+Thanks for the link!
 
-------nt9vO67.b8K_looarrbd7-OVwn-OXfZhK5OxcWyp3fprDND4=_1c023e_
-Content-Type: text/plain; charset="utf-8"
+Added Song to the CC.
 
+Song, I'm looking at your code now - switching to hugepages is great,
+but I wonder if we might be able to combine our two approaches - with
+the slab allocator I did, do we have to bother with VMAs at all? And
+then it gets us sub-page sized allocations.
 
-------nt9vO67.b8K_looarrbd7-OVwn-OXfZhK5OxcWyp3fprDND4=_1c023e_--
+> and Song is already working on improvements for module_alloc(), e.g. see
+> commit ac3b43283923 ("module: replace module_layout with module_memory")
+> 
+> Another thing, the code below will not even compile on !x86.
+
+Due to text_poke(), which I see is abstracted better in that patchset.
+
+I'm very curious why text_poke() does tlb flushing at all; it seems like
+flush_icache_range() is actually what's needed?
+
+text_poke() also only touching up to two pages, without that being
+documented, is also a footgun...
+
+And I'm really curious why text_poke() is needed at all. Seems like we
+could just use kmap_local() to create a temporary writeable mapping,
+except in my testing that got me a RO mapping. Odd.
