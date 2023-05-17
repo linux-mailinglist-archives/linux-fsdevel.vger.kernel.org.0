@@ -2,222 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78C9C706F1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 19:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B54C706F8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 19:35:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229735AbjEQRNp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 13:13:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56510 "EHLO
+        id S229877AbjEQRfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 13:35:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjEQRNo (ORCPT
+        with ESMTP id S229591AbjEQRfn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 13:13:44 -0400
-Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD683C30;
-        Wed, 17 May 2023 10:13:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1684343620; i=@fujitsu.com;
-        bh=a+C4Lijc0DDX2QslyttoIa32t1xmY+p+E/ypLSLFsew=;
-        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-         In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        b=efNFUU4wejhU40SDNCvs8h77b0phW72mg/TmKepDUZExicQsnitkwFBGd8Rmg6Axf
-         c5nWUG257zQJkYffE9MxtoXeo/64Mvf6+SxPgrDfpurFT9e21UK552GX9a8YqVXzui
-         XNwNfvvQSOktIHrPG/AqyBe4o1h28xcoJaJjNSJtYz2RAtL0/EICwmGmZ6ETJqT7rR
-         FaDePHTduuh3SvyqZrLYI8hH1UDdjvE9xQQuQ2rlCp93PMHCkFjX7UqGjBM/HFtaoG
-         e6Wz1uCNaFGxrgh+2pZ4qGnqakHvBs5S1h0KXS/VEO9m7VoTEkFu91htQzee+gBzOQ
-         00MU3oUb4ipvA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRWlGSWpSXmKPExsViZ8ORqOvMnZp
-  i8Oi5usW2dbvZLS4/4bN4vnwxo8WevSdZLHb92cFucWPCU0YHNo9NqzrZPN7vu8rmsX7LVRaP
-  z5vkAliiWDPzkvIrElgzPq5tZCxYplhxaOkJ1gbG51JdjFwcQgJbGCXOf+9kgXBWMEkcPvcGy
-  tnKKLH12G22LkZODl4BO4mT59aA2SwCqhKHJr9hhIgLSpyc+YQFxBYVSJGYsXExM4gtLBApMe
-  94F5gtIhAg0bBiHyvIUGaBNkaJqwd/Q23YySjxYdZbJpAqNgEdiQsL/rKC2JwCZhJLb+4A28Y
-  sYCGx+M1BdghbXqJ562ywqRICChI3Jq1igbCrJC6+n8kGYatJXD23iXkCo9AsJAfOQjJqFpJR
-  CxiZVzGaFqcWlaUW6ZroJRVlpmeU5CZm5uglVukm6qWW6panFpfoGukllhfrpRYX6xVX5ibnp
-  OjlpZZsYgRGT0qxUscOxus7/+odYpTkYFIS5a3ZmJIixJeUn1KZkVicEV9UmpNafIhRhoNDSY
-  J3EntqipBgUWp6akVaZg4wkmHSEhw8SiK87GxAad7igsTc4sx0iNQpRl2Ojy+nHmQWYsnLz0u
-  VEufdwwVUJABSlFGaBzcCllQuMcpKCfMyMjAwCPEUpBblZpagyr9iFOdgVBLmfcIJNIUnM68E
-  btMroCOYgI4o3ZgMckRJIkJKqoFpgZDpiZ++PFtYXdh/hMX0XjIP1ta6F+e1PNyqXfXym8U6M
-  5Yc3B3VXfXU4rvX3KQXES6qMWHqjz6/5fzPtdLohYjpo1ncXj+2TAg66v7vRJ8Se5Zua8DTa2
-  tM1wr8fMyn271u1fa9TzR4tS/ODeAxCraNT2a9YXqrVtZS8iVrknyypQFHqNH9B1mbkjOZnaQ
-  mGD085OEgYaI66+OUBxfvLbxVfEVd6csb3xPaT5/WdE/+8KjrgbB474P9uVztlbHvmr6ZKd08
-  kSMqu/nfsnDWiFkzvkW/UvhayzXlyvIf03h4kwJjnijFnX8lmRyQc7+w839AQfALzX0Caksbl
-  XWdTpn7zdhw84hYA1djbKESS3FGoqEWc1FxIgCb4fJSpQMAAA==
-X-Env-Sender: ruansy.fnst@fujitsu.com
-X-Msg-Ref: server-18.tower-548.messagelabs.com!1684343619!26996!1
-X-Originating-IP: [62.60.8.97]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.105.3; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 4559 invoked from network); 17 May 2023 17:13:39 -0000
-Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
-  by server-18.tower-548.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 17 May 2023 17:13:39 -0000
-Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 546A9100191;
-        Wed, 17 May 2023 18:13:39 +0100 (BST)
-Received: from R01UKEXCASM223.r01.fujitsu.local (R01UKEXCASM223 [10.182.185.121])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 473C3100043;
-        Wed, 17 May 2023 18:13:39 +0100 (BST)
-Received: from [10.167.201.2] (10.167.201.2) by
- R01UKEXCASM223.r01.fujitsu.local (10.182.185.121) with Microsoft SMTP Server
- (TLS) id 15.0.1497.42; Wed, 17 May 2023 18:13:35 +0100
-Message-ID: <0456fe2d-889d-b2e2-57c0-2dfb1f626339@fujitsu.com>
-Date:   Thu, 18 May 2023 01:13:26 +0800
+        Wed, 17 May 2023 13:35:43 -0400
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76DB130C2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 10:35:40 -0700 (PDT)
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3383a678225so10260765ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 10:35:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684344939; x=1686936939;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aGQwNnU6wbVIzp4iz14/V7eAlLSmWR46eSYidn8u46M=;
+        b=Q7qEN087h3MRTBd1Zw4sq/gtKxQ8TGr+LKtUwn4LMNZ8+jI/tBdTqYoiw7zUlMENkV
+         YTaNyQZP7y8YI5mYdL7emRMRWYZSnxejMKlARVsB1LfwTktHXKJKkbPt6JwIF054M63p
+         fy/pNshMZex786TPMnScKgb2EOMLvBtwK2YQD1lezH3JiG1HtjFk5A6pfQ5cCfsc5l2H
+         sUyalwMKxehVVMEzSvyj+F1W918YdxVraO+A1ErLE4ZjIVVQYn+fjEH3bjOT80SucWEa
+         sQ9zwNSpauDqCbLO3brA8N4NLHePQA6fB1f6n+RtqvYkrQ6ySKazMOaKJWPhNwxCWipK
+         GdMQ==
+X-Gm-Message-State: AC+VfDw+1D3vSAqkJZTEwpkWy7JAT6oG2E9IEOpiFnjhm3a+2N6bF6kf
+        Ywt12toPc9ALOF7CYd+eyeF56crIOw7iFr4XegkQxe8qTTwU
+X-Google-Smtp-Source: ACHHUZ58ceKj+7ueId84yjPKsorg5yhzD02C/g+j09rM3UikJgHxnAJ+xNcfdIlsYtvlxz5rguc9H+GNuyPSaAVcRqmIEybzk9Pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 1/4] vfs: allow filesystem freeze callers to denote who
- froze the fs
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-References: <168308293319.734377.10454919162350827812.stgit@frogsfrogsfrogs>
- <168308293892.734377.10931394426623343285.stgit@frogsfrogsfrogs>
- <ZFc1wVFeHsi7rK01@bombadil.infradead.org>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <ZFc1wVFeHsi7rK01@bombadil.infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.201.2]
-X-ClientProxiedBy: G08CNEXHBPEKD10.g08.fujitsu.local (10.167.33.114) To
- R01UKEXCASM223.r01.fujitsu.local (10.182.185.121)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:d950:0:b0:331:8e32:a36b with SMTP id
+ l16-20020a92d950000000b003318e32a36bmr1763043ilq.4.1684344939754; Wed, 17 May
+ 2023 10:35:39 -0700 (PDT)
+Date:   Wed, 17 May 2023 10:35:39 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d03b0805fbe71d55@google.com>
+Subject: [syzbot] [erofs?] general protection fault in erofs_bread (2)
+From:   syzbot <syzbot+bbb353775d51424087f2@syzkaller.appspotmail.com>
+To:     chao@kernel.org, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        xiang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    f1fcbaa18b28 Linux 6.4-rc2
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=114aa029280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6beb6ffe4f59ef2a
+dashboard link: https://syzkaller.appspot.com/bug?extid=bbb353775d51424087f2
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13dd834e280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167ef106280000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4adf207e9d5e/disk-f1fcbaa1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9e7cce92f611/vmlinux-f1fcbaa1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/cfd911b80f89/bzImage-f1fcbaa1.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/a2583fbaaf14/mount_2.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bbb353775d51424087f2@syzkaller.appspotmail.com
+
+erofs: (device loop0): EXPERIMENTAL global deduplication feature in use. Use at your own risk!
+general protection fault, probably for non-canonical address 0xdffffc0000000019: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x00000000000000c8-0x00000000000000cf]
+CPU: 0 PID: 4995 Comm: syz-executor235 Not tainted 6.4.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/28/2023
+RIP: 0010:erofs_bread+0x56/0x6d0 fs/erofs/data.c:38
+Code: 48 c1 ea 03 80 3c 02 00 0f 85 15 06 00 00 48 b8 00 00 00 00 00 fc ff df 4c 8b 23 49 8d bc 24 ca 00 00 00 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48 89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 82 05 00 00
+RSP: 0018:ffffc900034b7980 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffffc900034b7af8 RCX: 0000000000000000
+RDX: 0000000000000019 RSI: ffffffff83c1ea5f RDI: 00000000000000ca
+RBP: 0000000000000000 R08: 0000000000000001 R09: 000000000000003f
+R10: 000000000000000c R11: ffffffff81d50f12 R12: 0000000000000000
+R13: 0000000000000001 R14: ffff888019bd4000 R15: ffff888019bd4000
+FS:  0000555555bf6300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc664ae0ca0 CR3: 0000000020cc6000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ erofs_read_metadata+0xbb/0x490 fs/erofs/super.c:137
+ erofs_xattr_prefixes_init+0x3b1/0x590 fs/erofs/xattr.c:684
+ erofs_fc_fill_super+0x1734/0x2a80 fs/erofs/super.c:825
+ get_tree_bdev+0x44a/0x770 fs/super.c:1303
+ vfs_get_tree+0x8d/0x350 fs/super.c:1510
+ do_new_mount fs/namespace.c:3039 [inline]
+ path_mount+0x134b/0x1e40 fs/namespace.c:3369
+ do_mount fs/namespace.c:3382 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount fs/namespace.c:3568 [inline]
+ __x64_sys_mount+0x283/0x300 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fc664b09e5a
+Code: 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd1310be98 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007fc664b09e5a
+RDX: 0000000020000180 RSI: 0000000020000140 RDI: 00007ffd1310bea0
+RBP: 00007ffd1310bea0 R08: 00007ffd1310bee0 R09: 00000000000001d4
+R10: 0000000001000801 R11: 0000000000000286 R12: 0000000000000005
+R13: 0000555555bf62c0 R14: 00007ffd1310bee0 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:erofs_bread+0x56/0x6d0 fs/erofs/data.c:38
+Code: 48 c1 ea 03 80 3c 02 00 0f 85 15 06 00 00 48 b8 00 00 00 00 00 fc ff df 4c 8b 23 49 8d bc 24 ca 00 00 00 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48 89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 82 05 00 00
+RSP: 0018:ffffc900034b7980 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffffc900034b7af8 RCX: 0000000000000000
+RDX: 0000000000000019 RSI: ffffffff83c1ea5f RDI: 00000000000000ca
+RBP: 0000000000000000 R08: 0000000000000001 R09: 000000000000003f
+R10: 000000000000000c R11: ffffffff81d50f12 R12: 0000000000000000
+R13: 0000000000000001 R14: ffff888019bd4000 R15: ffff888019bd4000
+FS:  0000555555bf6300(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb0e8fdab10 CR3: 0000000020cc6000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	48 c1 ea 03          	shr    $0x3,%rdx
+   4:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+   8:	0f 85 15 06 00 00    	jne    0x623
+   e:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  15:	fc ff df
+  18:	4c 8b 23             	mov    (%rbx),%r12
+  1b:	49 8d bc 24 ca 00 00 	lea    0xca(%r12),%rdi
+  22:	00
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	0f b6 04 02          	movzbl (%rdx,%rax,1),%eax <-- trapping instruction
+  2e:	48 89 fa             	mov    %rdi,%rdx
+  31:	83 e2 07             	and    $0x7,%edx
+  34:	38 d0                	cmp    %dl,%al
+  36:	7f 08                	jg     0x40
+  38:	84 c0                	test   %al,%al
+  3a:	0f 85 82 05 00 00    	jne    0x5c2
 
 
-在 2023/5/7 13:23, Luis Chamberlain 写道:
-> On Tue, May 02, 2023 at 08:02:18PM -0700, Darrick J. Wong wrote:
->> diff --git a/fs/super.c b/fs/super.c
->> index 04bc62ab7dfe..01891f9e6d5e 100644
->> --- a/fs/super.c
->> +++ b/fs/super.c
->> @@ -1736,18 +1747,33 @@ int freeze_super(struct super_block *sb)
->>   	up_write(&sb->s_umount);
->>   	return 0;
->>   }
->> +
->> +/*
->> + * freeze_super - lock the filesystem and force it into a consistent state
->> + * @sb: the super to lock
->> + *
->> + * Syncs the super to make sure the filesystem is consistent and calls the fs's
->> + * freeze_fs.  Subsequent calls to this without first thawing the fs will return
->> + * -EBUSY.  See the comment for __freeze_super for more information.
->> + */
->> +int freeze_super(struct super_block *sb)
->> +{
->> +	return __freeze_super(sb, USERSPACE_FREEZE_COOKIE);
->> +}
->>   EXPORT_SYMBOL(freeze_super);
->>   
->> -static int thaw_super_locked(struct super_block *sb)
->> +static int thaw_super_locked(struct super_block *sb, unsigned long cookie)
->>   {
->>   	int error;
->>   
->> -	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE) {
->> +	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE ||
->> +	    sb->s_writers.freeze_cookie != cookie) {
->>   		up_write(&sb->s_umount);
->>   		return -EINVAL;
-> 
-> We get the same by just having drivers use freeze_super(sb, true) in the
-> patches I have, ie, we treat it a user-initiated.
-> 
-> On freeze() we have:
-> 
-> int freeze_super(struct super_block *sb, bool usercall)
-> {
-> 	int ret;
-> 	
-> 	if(!usercall && sb_is_frozen(sb))
-> 		return 0;
-> 
-> 	if (!sb_is_unfrozen(sb))
-> 	return -EBUSY;
-> 	...
-> }
-> 
-> On thaw we end up with:
-> 
-> int thaw_super(struct super_block *sb, bool usercall)
-> {
-> 	int error;
-> 
-> 	if (!usercall) {
-> 		/*
-> 		 * If userspace initiated the freeze don't let the kernel
-> 		 *  thaw it on return from a kernel initiated freeze.
-> 		 */
-> 		 if (sb_is_unfrozen(sb) || sb_is_frozen_by_user(sb))
-> 		 	return 0;
-> 	}
-> 
-> 	if (!sb_is_frozen(sb))
-> 		return -EINVAL;
-> 	...
-> }
-> 
-> As I had it, I had made the drivers and the bdev freeze use the usercall as
-> true and so there is no change.
-> 
-> In case there is a filesystem already frozen then which was initiated by
-> the filesystem, for whatever reason, the filesystem the kernel auto-freeze
-> will chug on happy with the system freeze, it bails out withour error
-> and moves on to the next filesystem to freeze.
-> 
-> Upon thaw, the kernel auto-thaw will detect that the filesystem was
-> frozen by user on sb_is_frozen_by_user() and so will just bail and not
-> thaw it.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Hi, Luis
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Thanks for the great idea.  I also need this upgraded API for a unbind 
-mechanism on pmem device, which is finally called in 
-xfs_notify_failure.c where we want to freeze the fs to prevent any other 
-new file mappings from being created.  In my case, I think we should 
-think it as a kernel-initiated freeze, and hope it won't be thaw by 
-others, especially userspace-initiated thaw.
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-In my understanding of your implementation, if there is a 
-userspace-initiated thaw, with @usercall is set true, thaw_super(sb, 
-true) will ignore any others' freeze and thaw the fs anyway.  But, 
-except in my case, I think the order of userspace-initiated freeze/thaw 
-may be messed up due to bugs in the user app, then the kernel-initiated 
-freeze state could be accidentally broken...  In my opinion, the kernel 
-code is more reliable.  Therefore, kernel-initiated freeze should be 
-exclusive at least.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
---
-Thanks,
-Ruan.
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
-> 
-> If the mechanism you want to introduce is to allow a filesystem to even
-> prevent kernel auto-freeze with -EBUSY it begs the question if that
-> shouldn't also prevent suspend. Because it would anyway as you have it
-> right now with your patch but it would return -EINVAL. I also ask because of
-> the possible issues with the filesystem not going to suspend but the backing
-> or other possible related devices going to suspend.
-> 
-> Since I think the goal is to prevent the kernel auto-freeze due to
-> online fsck to complete, then I think you *do* want to prevent full
-> system suspend from moving forward. In that case, why not just have
-> the filesystem check for that and return -EBUSY on its respective
-> filesystem sb->s_op->freeze_fs(sb) callback?
-> 
->    Luis
+If you want to undo deduplication, reply with:
+#syz undup
