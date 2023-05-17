@@ -2,50 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A292705E06
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 05:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D828705E2E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 05:38:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232076AbjEQDZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 May 2023 23:25:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
+        id S232483AbjEQDiG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 May 2023 23:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232307AbjEQDY7 (ORCPT
+        with ESMTP id S231646AbjEQDiE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 May 2023 23:24:59 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C3E3213D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 May 2023 20:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=AbeZXSrkUqRDuI65kyPYYuObwRGdx2E78FHWlBXfCH4=; b=mBHptnEcNvYNLwI9ydb/p10XxW
-        XDkShpCJ8Gfe687sKd96Yl9ITHLTEuaNrk023aV5jza3fVqEpreonjmt2fMGurIin4aMsjB68Q8Zy
-        LNzQGq89NRTFWZBy3SUsqap0nzBjAY6JF1ikEh6w37SUwLC6G3T4aqgoQ+IIV9CLofqj4akXmznVM
-        b+hI+YaM1fj9il2UXpc9M4W7C5d0na31DZLEU1r5OyUX3ozFSSzzhfIszAvMV5CfLHKgG1j3XgrhH
-        w84bYQXUFUdAqnW3XBr0DUBHP1kwg5+gzjby85OOLdOKMDg5SfjZKccWcFDAmhr8mFyWeu7+6UhQ8
-        BQ63G4Ig==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pz7mO-004lNE-3m; Wed, 17 May 2023 03:24:44 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        cluster-devel@redhat.com, Hannes Reinecke <hare@suse.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 6/6] buffer: Make block_write_full_page() handle large folios correctly
-Date:   Wed, 17 May 2023 04:24:42 +0100
-Message-Id: <20230517032442.1135379-7-willy@infradead.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230517032442.1135379-1-willy@infradead.org>
-References: <20230517032442.1135379-1-willy@infradead.org>
+        Tue, 16 May 2023 23:38:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E0E40E4;
+        Tue, 16 May 2023 20:38:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CAF6364155;
+        Wed, 17 May 2023 03:38:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 26D7AC4339E;
+        Wed, 17 May 2023 03:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684294682;
+        bh=m52AwY8jkOJZBA18hcFlrV08AkqFHGhpvAceGFKRUa8=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=uUxUMpZU1izkwKReHCQeOCvSUV87028CpR6qFoGkd5w6DeYMDd8hZUxU0PYw4ujce
+         8VXrvtL9NIXm15qahHmShhhMdqldmqITbPQeD4npE3Zo6OYO7i/UMyAJmWOmlMOOVQ
+         ybidG2prTxL17aFy09snRwt8/mI3T4NAwRvf8Ml8gceee/awLrIa1Yfr0/mMCmSkJa
+         QIW2WAbS2ZRfOLH2KwRm1jVI/MLYxg19YK2bv8JAuBuK2NcrKX2GZ5Bz/WeTo13X9Y
+         79na5Z2L9mNMD0Aa3RAfhkPjsmzKGntR3JzryEzd1rDoYuS+PgSS9jZ8ZT/Rsoiwtt
+         y6y4Ywk9A169w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0909AC73FE2;
+        Wed, 17 May 2023 03:38:02 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Subject: Re: [PATCH 6.3 022/246] rxrpc: Fix potential data race in
+ rxrpc_wait_to_be_connected()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <168429468203.3680.17732082530948499467.git-patchwork-notify@kernel.org>
+Date:   Wed, 17 May 2023 03:38:02 +0000
+References: <20230515161723.275161336@linuxfoundation.org>
+In-Reply-To: <20230515161723.275161336@linuxfoundation.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     stable@vger.kernel.org, patches@lists.linux.dev,
+        syzbot+ebc945fdb4acd72cba78@syzkaller.appspotmail.com,
+        dhowells@redhat.com, marc.dionne@auristor.com, dvyukov@google.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        sashal@kernel.org
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,63 +63,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Keep the interface as struct page, but work entirely on the folio
-internally.  Removes several PAGE_SIZE assumptions and removes
-some references to page->index and page->mapping.
+Hello:
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/buffer.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+This series was applied to bpf/bpf-next.git (master)
+by Arnaldo Carvalho de Melo <acme@redhat.com>:
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 4d518df50fab..d8c2c000676b 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2678,33 +2678,31 @@ int block_write_full_page(struct page *page, get_block_t *get_block,
- 			struct writeback_control *wbc)
- {
- 	struct folio *folio = page_folio(page);
--	struct inode * const inode = page->mapping->host;
-+	struct inode * const inode = folio->mapping->host;
- 	loff_t i_size = i_size_read(inode);
--	const pgoff_t end_index = i_size >> PAGE_SHIFT;
--	unsigned offset;
- 
--	/* Is the page fully inside i_size? */
--	if (page->index < end_index)
-+	/* Is the folio fully inside i_size? */
-+	if (folio_pos(folio) + folio_size(folio) <= i_size)
- 		return __block_write_full_folio(inode, folio, get_block, wbc,
- 					       end_buffer_async_write);
- 
--	/* Is the page fully outside i_size? (truncate in progress) */
--	offset = i_size & (PAGE_SIZE-1);
--	if (page->index >= end_index+1 || !offset) {
-+	/* Is the folio fully outside i_size? (truncate in progress) */
-+	if (folio_pos(folio) > i_size) {
- 		folio_unlock(folio);
- 		return 0; /* don't care */
- 	}
- 
- 	/*
--	 * The page straddles i_size.  It must be zeroed out on each and every
-+	 * The folio straddles i_size.  It must be zeroed out on each and every
- 	 * writepage invocation because it may be mmapped.  "A file is mapped
- 	 * in multiples of the page size.  For a file that is not a multiple of
--	 * the  page size, the remaining memory is zeroed when mapped, and
-+	 * the page size, the remaining memory is zeroed when mapped, and
- 	 * writes to that region are not written out to the file."
- 	 */
--	zero_user_segment(page, offset, PAGE_SIZE);
-+	folio_zero_segment(folio, offset_in_folio(folio, i_size),
-+			folio_size(folio));
- 	return __block_write_full_folio(inode, folio, get_block, wbc,
--							end_buffer_async_write);
-+			end_buffer_async_write);
- }
- EXPORT_SYMBOL(block_write_full_page);
- 
+On Mon, 15 May 2023 18:23:54 +0200 you wrote:
+> From: David Howells <dhowells@redhat.com>
+> 
+> [ Upstream commit 2b5fdc0f5caa505afe34d608e2eefadadf2ee67a ]
+> 
+> Inside the loop in rxrpc_wait_to_be_connected() it checks call->error to
+> see if it should exit the loop without first checking the call state.  This
+> is probably safe as if call->error is set, the call is dead anyway, but we
+> should probably wait for the call state to have been set to completion
+> first, lest it cause surprise on the way out.
+> 
+> [...]
+
+Here is the summary with links:
+  - [6.3,022/246] rxrpc: Fix potential data race in rxrpc_wait_to_be_connected()
+    (no matching commit)
+  - [6.3,051/246] rxrpc: Fix hard call timeout units
+    (no matching commit)
+  - [6.3,052/246] rxrpc: Make it so that a waiting process can be aborted
+    (no matching commit)
+  - [6.3,053/246] rxrpc: Fix timeout of a call that hasnt yet been granted a channel
+    (no matching commit)
+  - [6.3,100/246] perf lock contention: Fix compiler builtin detection
+    https://git.kernel.org/bpf/bpf-next/c/17535a33a9c1
+
+You are awesome, thank you!
 -- 
-2.39.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
