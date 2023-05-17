@@ -2,163 +2,378 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FAD9706A6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 16:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7D6A706A7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 16:04:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231381AbjEQOBY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 10:01:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57932 "EHLO
+        id S231231AbjEQOEj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 10:04:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231175AbjEQOBJ (ORCPT
+        with ESMTP id S229654AbjEQOEh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 10:01:09 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2082.outbound.protection.outlook.com [40.107.212.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB975FEB;
-        Wed, 17 May 2023 07:01:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Jk45MmP4D2BU61Wh0OSF3fWaodm8ntUO8rAa3w2a/UE6TdolrDoh6F8L9VVMIxQbG3/GTViPzN8r4dmD1OTXloB0q77A+F1b7/l92c+wmcqb5xgglfUid+xEmkrTyguCjbEShMzRiKVL3lkcEg5K+VLAiDOiy55Y2cyOQvI/Eb4IAMZODysWYz1uAk0muDnrpFQUGkF5cvvxI9Tlr5Rlwpl7wQFzou267YD6DEAO6wLFCtVx2xvNALzN+HbcsOvhjgl847u6/whewgP3BhLrgZsBf63F1vYA7Bfhb009LcrWkpNCWaQNO5r6buxko7Z5XQXEwUdveVr9Sl9c8bz6dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B0R5HnpCLdsb/78pwozWuz39kXCHHNrRHJlfIFqRfzA=;
- b=CY5ghDH0PO99jjKhAEoqyxLE0k/sn/lPW8r4vobfBYZWoa9Ayh/ROXSBu2oYTVDq83emeg63C53eL/y6nC15DAJS6QxJJvBJu1/3WkkiBj4hODepnVqn+rURP27MGDsiflVnmDcJ73JrqLZpd5IIzo10lXlWhPRaBM0dZh6OBMD/Ji3uvnBJVIgLo/rkZxQGQsAy9eIDinyx9Bus1p9pkEX+Jbnx5Vr1+O776WeU7aBThhKFdypv4y06IZxadGqlMXLNojscm0xFzfmU/qbLzSb41oU+STqSwg3oiy499/40k7TuEx3anNVptkmaOt6S6+trUEj/G1rDXcBYPhV/FA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
- dkim=pass header.d=talpey.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=talpey.com;
-Received: from SN6PR01MB4445.prod.exchangelabs.com (2603:10b6:805:e2::33) by
- BN7PR01MB3794.prod.exchangelabs.com (2603:10b6:406:81::25) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6387.33; Wed, 17 May 2023 14:01:07 +0000
-Received: from SN6PR01MB4445.prod.exchangelabs.com
- ([fe80::ef26:464c:ccdf:ee6b]) by SN6PR01MB4445.prod.exchangelabs.com
- ([fe80::ef26:464c:ccdf:ee6b%6]) with mapi id 15.20.6387.029; Wed, 17 May 2023
- 14:01:07 +0000
-Message-ID: <bd2abfae-b8d8-2416-57aa-49da7a9915dd@talpey.com>
-Date:   Wed, 17 May 2023 10:01:04 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 06/12] cifs: Pass a pointer to virt_to_page() in cifsglob
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Greg Ungerer <gerg@linux-m68k.org>
-Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-snps-arc@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
-References: <20230503-virt-to-pfn-v6-4-rc1-v1-0-6c4698dcf9c8@linaro.org>
- <20230503-virt-to-pfn-v6-4-rc1-v1-6-6c4698dcf9c8@linaro.org>
-From:   Tom Talpey <tom@talpey.com>
-In-Reply-To: <20230503-virt-to-pfn-v6-4-rc1-v1-6-6c4698dcf9c8@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1P223CA0006.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:208:2c4::11) To SN6PR01MB4445.prod.exchangelabs.com
- (2603:10b6:805:e2::33)
+        Wed, 17 May 2023 10:04:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30B7D1BF5;
+        Wed, 17 May 2023 07:04:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A9CC86377C;
+        Wed, 17 May 2023 14:04:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75AAC433D2;
+        Wed, 17 May 2023 14:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684332275;
+        bh=NZnDYJtiCeENbcF7LOJTWubrTiazOVbwrHQWcqyHtg8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WA2H4SC9ezMAQVyw4AE1XGBbdmygIDUhMfolEcwW0mnysWd3h2F1xi9FfyJHKVoZT
+         OvBjTO4YZvQW7AmYEdvRITeT563w+gEWSUIjBBBLMzej7TUXTNGSRIa+RCAOKBEm7O
+         4Q70GhGTDJH5gZFBziN9sj+/jwP5WuO35M5Gh7P46IorbJSequ0QQflM06+R2me6Gg
+         1yxfKvyM7p9rUu7DHuC94RvOcmxxlEiMDou8G6a7tdfDooQL76cDAGUyXtZvZcz4bR
+         lzO1QDAS8ZpHGsDDjI9hzmckIpKuTl5NVg3rJKbe3hnnn+DafbOxhkhd349+MWAJdM
+         DbEoFiNQN6J0g==
+Date:   Wed, 17 May 2023 17:04:27 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
+Message-ID: <ZGTe6zFYL25fNwcw@kernel.org>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-8-kent.overstreet@linux.dev>
+ <3508afc0-6f03-a971-e716-999a7373951f@wdc.com>
+ <202305111525.67001E5C4@keescook>
+ <ZF6Ibvi8U9B+mV1d@moria.home.lan>
+ <202305161401.F1E3ACFAC@keescook>
+ <ZGPzocRpSlg+4vgN@moria.home.lan>
+ <ZGP54T0d89TMySsf@casper.infradead.org>
+ <ZGRmC2Qhe6oAHPIm@moria.home.lan>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR01MB4445:EE_|BN7PR01MB3794:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1966ef6f-3422-49e4-2146-08db56df2926
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: LKhPNI3e+QpI7sZ0ui7e0hMC4cdKEcitEqtSzBW9RqDCcyahm6JFnXRvY7faBDQ5Ms5y0SNPmkXdMC75fQNayXHtTqE/5+sFL9Sy+yjmanXDTOFROujqPvDLu+QdTfixaO/UBgLK7ysBhnt2yJJ3QG7ob24upXbi0uCqbQMIx+TPg0hC/OyDG1sTQy9dMQyHt5D+9ItNCpANhCEgjCJl8ZOIS/2aOG6n/14VQZm6608rQCpPZI8ddkzO83Xsn38LEyS+vLF3K73OwJJzQelFKDqwDz+wm8zAhq75FMiHm2Bx+muLlGGcGY/4dTfL5HHLM8vqzAI1YT2eq+fhkUTtxiJEJ0ujyKfgAtKzzu7qLcyzhP152EUcVy/18bn83Uh+VkMz0ZrCPVFFM3EEEBZhK0VqLJI/iH0FbaIZKDtFLUETHyO5Us4hLhRApnoqMJDt6JBd9g8uxrxvUBcB7w3wcU5vd30F5Y3F8jgQYocK8vysa5YklZmlezpHqx2cr51mvXHbE4qK6yBeENbNQJjFuQ26XhYTMb+p055UB558vYDHtcjzTtW0MoHc2JRHyxUNZQHUoSCAt2G5LvANVDG9aHhJMTzUzjvBtkt9esRKShOO2RpUx+xz1GxVFQrN9EDjyjWIrs8RXtPpNaMbZ1CMdA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR01MB4445.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230028)(346002)(376002)(396003)(136003)(366004)(39830400003)(451199021)(5660300002)(8676002)(8936002)(7416002)(2616005)(186003)(6506007)(83380400001)(6512007)(53546011)(26005)(38100700002)(38350700002)(52116002)(478600001)(31696002)(6666004)(110136005)(316002)(6486002)(66476007)(66556008)(41300700001)(66946007)(86362001)(36756003)(4326008)(2906002)(4744005)(31686004)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V1dtbE5IM1BxdFFMaDFLWmc3YXQ4b0tzUzhUU0N5S2dwdmRCN2lWR216R1hW?=
- =?utf-8?B?TU44WUlvVWVtYVFCWk5XUHdyVHZ4RFJ6ZTRtMloxbmQwREEwcE13UzRGb2NT?=
- =?utf-8?B?QmNzUkpxaWVxSWMxUDFMaVozZXUxQ0gzUUV3UFpXK0FJZkluU0lrRTZmQ0E2?=
- =?utf-8?B?eHpEM1h6bWhDVjA4dE5QTWViOGtFL0NsNktDQUZGTmo4R1RtU3VmUVBwYWdS?=
- =?utf-8?B?RmJBT2dwMHhIbmRiNE5pUnNNSy9JNGNxY1dsT096TlVrbytnclhjSGZGdFlH?=
- =?utf-8?B?MUYybFN6K3dmUXYvUUdmOTdVY2wzSm44RlNXQlVORTliUGpRaEVOdTQ2dzZJ?=
- =?utf-8?B?UkZIOGZkb01hYUoxdXBlclZFWDBwNHE2ckRObmdMTDkxYTF3dDdEU3d4OXBO?=
- =?utf-8?B?djJQMmh1emI3RGM2ZFZMbGJVT2tPNFpHdHVJLzhWai9mYUovek1KcHAwQ3Nt?=
- =?utf-8?B?aUtpaGx2K3NnWnQ5c2ZCelVYS3haK2pWNmpKNmI4cmg1QmhvN1J3NjFXV1F2?=
- =?utf-8?B?ZEw5YTRldWVhNktNRGZsd0FCd3ZzK3pVc0hiaElOUlpWdkd0cWp5b2VGNzlY?=
- =?utf-8?B?VTlFMzRwM0dYSEhVbWxuMTIza3Z6T2ZUZU5pZkFKSlBSdkc0TFkyVXNnMVNB?=
- =?utf-8?B?RDl6MFFuK2FDdm12SzBPT1BXaE9Xd2RFdlFUdUwvb2JGbzdPblg0QU5hSERh?=
- =?utf-8?B?blh6WDJyS0RsV1Q3enNtWVczMTVNZWtXdFZnRWMrbjRlTnA4Q2hFMnB0UGln?=
- =?utf-8?B?WnA3cUtWSkoxSURiSmJaZnJKait5bno5MWZpb1ptaDJibkt3YkZoSnlOR2x4?=
- =?utf-8?B?ekNMUEk4akdWMTh4U081ZDhkK1JtMi96VG1UaW96UUh6ZytTSGI5NXpCLy8v?=
- =?utf-8?B?RnZIZGFONU5FVk9oZ0pWYUxtczJjcmszSm5CejQwMGl1RkxZWEpFWGFvUnRs?=
- =?utf-8?B?dGdvdThEVm5qNUMxZGg1ZkJaNENTdlVQYWtVN2FKSVB6WHFHMmRkbFExVUFL?=
- =?utf-8?B?VGVMVzNPSDBhNEdlOVo3NTBiOTF1RFpUSUtESC9FbjllMkpkTkQ2TkMrSmw4?=
- =?utf-8?B?bC9Ud3VvSmdmUTQzemE5L3VFbkNRekg1dm1SSDRjU1ZaOUFNNGlqYWJOR3Rm?=
- =?utf-8?B?UFFiRHluQjZkL29mMmYyY3ZlSXFyTi9oam4zclRQbDEyTHpSRHlPSjhCaFkv?=
- =?utf-8?B?SXR1OFFPT2VTWjZxTFpyY1hmUlBYam9DQnNNbnRFNlRnd1FJY05tSnNxeTVo?=
- =?utf-8?B?N0c0OXVnd3RWV1paUXAwRXRDbW0zSS9nS1g2UEQ1MEFqRzZpMmE2VEZpT3ph?=
- =?utf-8?B?TFIrcHZmM0JjaW8wOTdhMFByclpxTnd5Z1FKbGZyV29tSkNKcHM4QUZKVWFK?=
- =?utf-8?B?c0RycE5renpicDFsSC9VQnhFVHBQVEJ6YXBKT3hMb3BUVGMzak9NZ2lNS1Jt?=
- =?utf-8?B?ZFphc0Y4SFFqNEpDU2tTK2VFaklLZDFuRzV0YzIzZ0tFSXR1RGpQeDZjT2wy?=
- =?utf-8?B?Z2EvcWFmemZXUDZDNjFMTnB3VkVtc2dTMll1WWQrOXNJK3hJS01NaTZEcTUx?=
- =?utf-8?B?RVgxVmNsMk5Yb2RuVzlsZW50ckN5eEhBUUlMT0w2Y1Y4Rm44QkQrQnZoSnV1?=
- =?utf-8?B?RDh2c0NET3dMUi93WVI2bWFpamNlbC9LUy9DSUVteVJEUVkvb0QzbENYSTNa?=
- =?utf-8?B?a3hFWjFIVEp4Q3VTUEVUM0Y3WWE0U1V0ZzJQaEs1TGlRelp1enY5a3ZNRC9B?=
- =?utf-8?B?NXVIYzUrRTgyNTRwdDhNSmdZVnFwU1FRMVJmd0ZGR2hGdU1wUEpHdXEzSjAr?=
- =?utf-8?B?dzRaYStpNXJ6YWJEZVExY2FvdENUcXArQTdiMHJBREFDNHNYSTRneW00cG9L?=
- =?utf-8?B?S0lvcGpicTlpZ2NaaUh0SUc1ZFhrWUFtWGxHald1U09menRPL3luVC9uRytR?=
- =?utf-8?B?blFVRlZjN0pJRXRlcWxVVTV2T0l0WG0wc05USUNoMmhORmZaKzVxMUNEZkNv?=
- =?utf-8?B?V3V0b1BSMVdOMnphUnFPMWl1cVFpYkoyYWNQREhDL1lLcVU5cmVVTlV6SVYw?=
- =?utf-8?B?MHdtQTZ5ekFOc1JKbzhuNG1ETFVSYThBeGdvbWdJMTRidUYwTnlZbys5YTRQ?=
- =?utf-8?Q?27qoJ/xFefoZTgyFxSv3pKhis?=
-X-OriginatorOrg: talpey.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1966ef6f-3422-49e4-2146-08db56df2926
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR01MB4445.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2023 14:01:07.2578
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DstVk89vSlDEmosLCcRivC/WkwdUgfAvpfm3CORTspDeG0t8KZC7NKjQUXLLFY2H
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR01MB3794
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZGRmC2Qhe6oAHPIm@moria.home.lan>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/11/2023 7:59 AM, Linus Walleij wrote:
-> Like the other calls in this function virt_to_page() expects
-> a pointer, not an integer.
+On Wed, May 17, 2023 at 01:28:43AM -0400, Kent Overstreet wrote:
+> On Tue, May 16, 2023 at 10:47:13PM +0100, Matthew Wilcox wrote:
+> > On Tue, May 16, 2023 at 05:20:33PM -0400, Kent Overstreet wrote:
+> > > On Tue, May 16, 2023 at 02:02:11PM -0700, Kees Cook wrote:
+> > > > For something that small, why not use the text_poke API?
+> > > 
+> > > This looks like it's meant for patching existing kernel text, which
+> > > isn't what I want - I'm generating new functions on the fly, one per
+> > > btree node.
+> > > 
+> > > I'm working up a new allocator - a (very simple) slab allocator where
+> > > you pass a buffer, and it gives you a copy of that buffer mapped
+> > > executable, but not writeable.
+> > > 
+> > > It looks like we'll be able to convert bpf, kprobes, and ftrace
+> > > trampolines to it; it'll consolidate a fair amount of code (particularly
+> > > in bpf), and they won't have to burn a full page per allocation anymore.
+> > > 
+> > > bpf has a neat trick where it maps the same page in two different
+> > > locations, one is the executable location and the other is the writeable
+> > > location - I'm stealing that.
+> > 
+> > How does that avoid the problem of being able to construct an arbitrary
+> > gadget that somebody else will then execute?  IOW, what bpf has done
+> > seems like it's working around & undoing the security improvements.
+> > 
+> > I suppose it's an improvement that only the executable address is
+> > passed back to the caller, and not the writable address.
 > 
-> However since many architectures implement virt_to_pfn() as
-> a macro, this function becomes polymorphic and accepts both a
-> (unsigned long) and a (void *).
+> Ok, here's what I came up with. Have not tested all corner cases, still
+> need to write docs - but I think this gives us a nicer interface than
+> what bpf/kprobes/etc. have been doing, and it does the sub-page sized
+> allocations I need.
 > 
-> Fix this up with an explicit cast.
+> With an additional tweak to module_alloc() (not done in this patch yet)
+> we avoid ever mapping in pages both writeable and executable:
 > 
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> -->--
+> 
+> From 6eeb6b8ef4271ea1a8d9cac7fbaeeb7704951976 Mon Sep 17 00:00:00 2001
+> From: Kent Overstreet <kent.overstreet@linux.dev>
+> Date: Wed, 17 May 2023 01:22:06 -0400
+> Subject: [PATCH] mm: jit/text allocator
+> 
+> This provides a new, very simple slab allocator for jit/text, i.e. bpf,
+> ftrace trampolines, or bcachefs unpack functions.
+> 
+> With this API we can avoid ever mapping pages both writeable and
+> executable (not implemented in this patch: need to tweak
+> module_alloc()), and it also supports sub-page sized allocations.
 
+This looks like yet another workaround for that module_alloc() was not
+designed to handle permission changes. Rather than create more and more
+wrappers for module_alloc() we need to have core API for code allocation,
+apparently on top of vmalloc, and then use that API for modules, bpf,
+tracing and whatnot.
 
-For fs/cifs:
+There was quite lengthy discussion about how to handle code allocations
+here:
 
-Acked-by: Tom Talpey <tom@talpey.com>
+https://lore.kernel.org/linux-mm/20221107223921.3451913-1-song@kernel.org/
+ 
+and Song is already working on improvements for module_alloc(), e.g. see
+commit ac3b43283923 ("module: replace module_layout with module_memory")
 
-> ---
->   fs/cifs/cifsglob.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+Another thing, the code below will not even compile on !x86.
+
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 > 
-> diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
-> index 414685c5d530..3d29a4bbbc40 100644
-> --- a/fs/cifs/cifsglob.h
-> +++ b/fs/cifs/cifsglob.h
-> @@ -2218,7 +2218,7 @@ static inline void cifs_sg_set_buf(struct sg_table *sgtable,
->   		} while (buflen);
->   	} else {
->   		sg_set_page(&sgtable->sgl[sgtable->nents++],
-> -			    virt_to_page(addr), buflen, off);
-> +			    virt_to_page((void *)addr), buflen, off);
->   	}
->   }
->   
+> diff --git a/include/linux/jitalloc.h b/include/linux/jitalloc.h
+> new file mode 100644
+> index 0000000000..f1549d60e8
+> --- /dev/null
+> +++ b/include/linux/jitalloc.h
+> @@ -0,0 +1,9 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _LINUX_JITALLOC_H
+> +#define _LINUX_JITALLOC_H
+> +
+> +void jit_update(void *buf, void *new_buf, size_t len);
+> +void jit_free(void *buf);
+> +void *jit_alloc(void *buf, size_t len);
+> +
+> +#endif /* _LINUX_JITALLOC_H */
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 4751031f3f..ff26a4f0c9 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1202,6 +1202,9 @@ config LRU_GEN_STATS
+>  	  This option has a per-memcg and per-node memory overhead.
+>  # }
+>  
+> +config JITALLOC
+> +	bool
+> +
+>  source "mm/damon/Kconfig"
+>  
+>  endmenu
+> diff --git a/mm/Makefile b/mm/Makefile
+> index c03e1e5859..25e82db9e8 100644
+> --- a/mm/Makefile
+> +++ b/mm/Makefile
+> @@ -138,3 +138,4 @@ obj-$(CONFIG_IO_MAPPING) += io-mapping.o
+>  obj-$(CONFIG_HAVE_BOOTMEM_INFO_NODE) += bootmem_info.o
+>  obj-$(CONFIG_GENERIC_IOREMAP) += ioremap.o
+>  obj-$(CONFIG_SHRINKER_DEBUG) += shrinker_debug.o
+> +obj-$(CONFIG_JITALLOC) += jitalloc.o
+> diff --git a/mm/jitalloc.c b/mm/jitalloc.c
+> new file mode 100644
+> index 0000000000..7c4d621802
+> --- /dev/null
+> +++ b/mm/jitalloc.c
+> @@ -0,0 +1,187 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/gfp.h>
+> +#include <linux/highmem.h>
+> +#include <linux/jitalloc.h>
+> +#include <linux/mm.h>
+> +#include <linux/moduleloader.h>
+> +#include <linux/mutex.h>
+> +#include <linux/set_memory.h>
+> +#include <linux/vmalloc.h>
+> +
+> +#include <asm/text-patching.h>
+> +
+> +static DEFINE_MUTEX(jit_alloc_lock);
+> +
+> +struct jit_cache {
+> +	unsigned		obj_size_bits;
+> +	unsigned		objs_per_slab;
+> +	struct list_head	partial;
+> +};
+> +
+> +#define JITALLOC_MIN_SIZE	16
+> +#define NR_JIT_CACHES		ilog2(PAGE_SIZE / JITALLOC_MIN_SIZE)
+> +
+> +static struct jit_cache jit_caches[NR_JIT_CACHES];
+> +
+> +struct jit_slab {
+> +	unsigned long		__page_flags;
+> +
+> +	struct jit_cache	*cache;
+> +	void			*executably_mapped;;
+> +	unsigned long		*objs_allocated; /* bitmap of free objects */
+> +	struct list_head	list;
+> +};
+> +
+> +#define folio_jit_slab(folio)		(_Generic((folio),			\
+> +	const struct folio *:		(const struct jit_slab *)(folio),	\
+> +	struct folio *:			(struct jit_slab *)(folio)))
+> +
+> +#define jit_slab_folio(s)		(_Generic((s),				\
+> +	const struct jit_slab *:	(const struct folio *)s,		\
+> +	struct jit_slab *:		(struct folio *)s))
+> +
+> +static struct jit_slab *jit_slab_alloc(struct jit_cache *cache)
+> +{
+> +	void *executably_mapped = module_alloc(PAGE_SIZE);
+> +	struct page *page;
+> +	struct folio *folio;
+> +	struct jit_slab *slab;
+> +	unsigned long *objs_allocated;
+> +
+> +	if (!executably_mapped)
+> +		return NULL;
+> +
+> +	objs_allocated = kcalloc(BITS_TO_LONGS(cache->objs_per_slab), sizeof(unsigned long), GFP_KERNEL);
+> +	if (!objs_allocated ) {
+> +		vfree(executably_mapped);
+> +		return NULL;
+> +	}
+> +
+> +	set_vm_flush_reset_perms(executably_mapped);
+> +	set_memory_rox((unsigned long) executably_mapped, 1);
+> +
+> +	page = vmalloc_to_page(executably_mapped);
+> +	folio = page_folio(page);
+> +
+> +	__folio_set_slab(folio);
+> +	slab			= folio_jit_slab(folio);
+> +	slab->cache		= cache;
+> +	slab->executably_mapped	= executably_mapped;
+> +	slab->objs_allocated = objs_allocated;
+> +	INIT_LIST_HEAD(&slab->list);
+> +
+> +	return slab;
+> +}
+> +
+> +static void *jit_cache_alloc(void *buf, size_t len, struct jit_cache *cache)
+> +{
+> +	struct jit_slab *s =
+> +		list_first_entry_or_null(&cache->partial, struct jit_slab, list) ?:
+> +		jit_slab_alloc(cache);
+> +	unsigned obj_idx, nr_allocated;
+> +
+> +	if (!s)
+> +		return NULL;
+> +
+> +	obj_idx = find_first_zero_bit(s->objs_allocated, cache->objs_per_slab);
+> +
+> +	BUG_ON(obj_idx >= cache->objs_per_slab);
+> +	__set_bit(obj_idx, s->objs_allocated);
+> +
+> +	nr_allocated = bitmap_weight(s->objs_allocated, s->cache->objs_per_slab);
+> +
+> +	if (nr_allocated == s->cache->objs_per_slab) {
+> +		list_del_init(&s->list);
+> +	} else if (nr_allocated == 1) {
+> +		list_del(&s->list);
+> +		list_add(&s->list, &s->cache->partial);
+> +	}
+> +
+> +	return s->executably_mapped + (obj_idx << cache->obj_size_bits);
+> +}
+> +
+> +void jit_update(void *buf, void *new_buf, size_t len)
+> +{
+> +	text_poke_copy(buf, new_buf, len);
+> +}
+> +EXPORT_SYMBOL_GPL(jit_update);
+> +
+> +void jit_free(void *buf)
+> +{
+> +	struct page *page;
+> +	struct folio *folio;
+> +	struct jit_slab *s;
+> +	unsigned obj_idx, nr_allocated;
+> +	size_t offset;
+> +
+> +	if (!buf)
+> +		return;
+> +
+> +	page	= vmalloc_to_page(buf);
+> +	folio	= page_folio(page);
+> +	offset	= offset_in_folio(folio, buf);
+> +
+> +	if (!folio_test_slab(folio)) {
+> +		vfree(buf);
+> +		return;
+> +	}
+> +
+> +	s = folio_jit_slab(folio);
+> +
+> +	mutex_lock(&jit_alloc_lock);
+> +	obj_idx = offset >> s->cache->obj_size_bits;
+> +
+> +	__clear_bit(obj_idx, s->objs_allocated);
+> +
+> +	nr_allocated = bitmap_weight(s->objs_allocated, s->cache->objs_per_slab);
+> +
+> +	if (nr_allocated == 0) {
+> +		list_del(&s->list);
+> +		kfree(s->objs_allocated);
+> +		folio_put(folio);
+> +	} else if (nr_allocated + 1 == s->cache->objs_per_slab) {
+> +		list_del(&s->list);
+> +		list_add(&s->list, &s->cache->partial);
+> +	}
+> +
+> +	mutex_unlock(&jit_alloc_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(jit_free);
+> +
+> +void *jit_alloc(void *buf, size_t len)
+> +{
+> +	unsigned jit_cache_idx = ilog2(roundup_pow_of_two(len) / 16);
+> +	void *p;
+> +
+> +	if (jit_cache_idx < NR_JIT_CACHES) {
+> +		mutex_lock(&jit_alloc_lock);
+> +		p = jit_cache_alloc(buf, len, &jit_caches[jit_cache_idx]);
+> +		mutex_unlock(&jit_alloc_lock);
+> +	} else {
+> +		p = module_alloc(len);
+> +		if (p) {
+> +			set_vm_flush_reset_perms(p);
+> +			set_memory_rox((unsigned long) p, DIV_ROUND_UP(len, PAGE_SIZE));
+> +		}
+> +	}
+> +
+> +	if (p && buf)
+> +		jit_update(p, buf, len);
+> +
+> +	return p;
+> +}
+> +EXPORT_SYMBOL_GPL(jit_alloc);
+> +
+> +static int __init jit_alloc_init(void)
+> +{
+> +	for (unsigned i = 0; i < ARRAY_SIZE(jit_caches); i++) {
+> +		jit_caches[i].obj_size_bits	= ilog2(JITALLOC_MIN_SIZE) + i;
+> +		jit_caches[i].objs_per_slab	= PAGE_SIZE >> jit_caches[i].obj_size_bits;
+> +
+> +		INIT_LIST_HEAD(&jit_caches[i].partial);
+> +	}
+> +
+> +	return 0;
+> +}
+> +core_initcall(jit_alloc_init);
 > 
+
+-- 
+Sincerely yours,
+Mike.
