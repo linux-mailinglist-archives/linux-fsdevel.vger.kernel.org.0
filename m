@@ -2,95 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F333706185
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 09:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 286C970618D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 09:45:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230164AbjEQHno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 03:43:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40824 "EHLO
+        id S230156AbjEQHpW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 03:45:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbjEQHnl (ORCPT
+        with ESMTP id S230154AbjEQHpS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 03:43:41 -0400
+        Wed, 17 May 2023 03:45:18 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44AF8DA;
-        Wed, 17 May 2023 00:43:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC12118;
+        Wed, 17 May 2023 00:45:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=epIz9WNLfn/uDEbQVAxaXtzYiN9TCXftS0bKHjTl38Y=; b=tldy3unv0O0ScM26uWYfvGYwqV
-        RIUAc42Wa5JqJlmli6hN7aarUI2WLa8u8hlYjNKRB9TsgpEWZlEJCuIEdQvhVYt3TNdVyyJVlbDB3
-        McAms7oQTK8UeRCDjBuP4nYMDWDVtNsavChSiigR7jrv2lUpxm7fs3B5Lqi4SjWgiOHdpyXB/o3+3
-        z4mOJSgbkesaYtKiPshob4b3L49efh/RSG90s556lsuexl7EQv2MB9M9fSUPoaDBESoJ61XAsivf6
-        Vl+rGJ/8ui1Rix5kgi60q3e9OFbxnYhc7eh7WfFfgtOiNvtETDLHKi9n6MN9b3LYRm9xWn47Y5JFU
-        OhncL+Qg==;
+        bh=vium4kzZwZijke38DwhAMJr0846uD/O6movHx6mFnao=; b=pcNydiRAb2YicDVJWxYVscV2Vy
+        12fpDoJ6FLMerw70YFritnAS3eCgLQ9zUTqx4VGqvAZhT4Do6xJSyRwcHqe4kDZM+ACpb1OxAgj5z
+        BmTGnmBJBsoT79w5cHfSiAqWnAjuv/9HCrBFGT31kKL6AN+6JKaOP7F2yebsnwtlIgTyeOk2J0ZUX
+        cXp1mOS29tvJRO/HH9xDaVP8M4PEHGS6scRDMofMTL9bEn+EvhDswi/o5eUR2ALg6GekkABkPGzFR
+        9i7+Pmh+J7YRtBFWc6CNlqlDXQetHvoGevvuHEWo/Evb6PJ315FtBNXkJkFwebEPyQ/ORgnI/3Oqw
+        fd+c34aA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pzBos-008iVo-1m;
-        Wed, 17 May 2023 07:43:34 +0000
-Date:   Wed, 17 May 2023 00:43:34 -0700
+        id 1pzBqT-008iol-2G;
+        Wed, 17 May 2023 07:45:13 +0000
+Date:   Wed, 17 May 2023 00:45:13 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@nvidia.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bjorn Topel <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Mika Penttila <mpenttil@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Peter Xu <peterx@redhat.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH v9 0/3] mm/gup: disallow GUP writing to file-backed
- mappings by default
-Message-ID: <ZGSFptUyOko+184t@infradead.org>
-References: <cover.1683235180.git.lstoakes@gmail.com>
- <20230515110315.uqifqgqkzcrrrubv@box.shutemov.name>
- <7f6dbe36-88f2-468e-83c1-c97e666d8317@lucifer.local>
- <ZGIhwZl2FbLodLrc@nvidia.com>
- <ad0053a4-fa34-4b95-a262-d27942b168fd@lucifer.local>
- <20230517072920.bfs7gfo4whdmi6ay@quack3>
- <d17c0fce-679b-4f5d-9a7c-6ff7e28ad4b2@lucifer.local>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ondrej Valousek <ondrej.valousek.xm@renesas.com>,
+        "trondmy@hammerspace.com" <trondmy@hammerspace.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: A pass-through support for NFSv4 style ACL
+Message-ID: <ZGSGCTWOWkwIbvQE@infradead.org>
+References: <20230516124655.82283-1-jlayton@kernel.org>
+ <20230516-notorisch-geblickt-6b591fbd77c1@brauner>
+ <TYXPR01MB18549D3A5B0BE777D7F6B284D9799@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+ <cc4317d9cb8f10aa0b3750bdb6db8b4e77ff26f8.camel@kernel.org>
+ <20230517-herstellen-zitat-21eeccd36558@brauner>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d17c0fce-679b-4f5d-9a7c-6ff7e28ad4b2@lucifer.local>
+In-Reply-To: <20230517-herstellen-zitat-21eeccd36558@brauner>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -102,14 +58,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 17, 2023 at 08:40:26AM +0100, Lorenzo Stoakes wrote:
-> > I'm not sure what you mean by "total flexibility" here. In my opinion it is
-> > also about how HW performs checksumming etc.
-> 
-> I mean to say *_ops allow a lot of flexibility in how things are
-> handled. Certainly checksumming is a great example but in theory an
-> arbitrary filesystem could be doing, well, anything and always assuming
-> that only userland mappings should be modifying the underlying data.
+On Wed, May 17, 2023 at 09:42:59AM +0200, Christian Brauner wrote:
+> I have no idea about the original flame war that ended RichACLs in
+> additition to having no clear clue what RichACLs are supposed to
+> achieve. My current knowledge extends to "Christoph didn't like them".
 
-File systems need a wait to track when a page is dirtied so that it can
-be written back.  Not much to do with flexbility.
+Christoph certainly doesn't like Rich ACLs, as do many other people.
+
+But the deal block was that the patchset:
+
+ - totally duplicated the VFS level ACL handling instead of having
+   a common object for Posix and the new ACLs
+ - did add even more mess to the already horrible xattr interface
+   instead of adding syscalls.
