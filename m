@@ -2,153 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DF7B7064D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 12:02:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A495D706596
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 May 2023 12:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbjEQKCD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 06:02:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36730 "EHLO
+        id S230039AbjEQKvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 06:51:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229836AbjEQKBy (ORCPT
+        with ESMTP id S229681AbjEQKvE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 06:01:54 -0400
-Received: from mx5.didiglobal.com (mx5.didiglobal.com [111.202.70.122])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id B57BE30C8;
-        Wed, 17 May 2023 03:01:51 -0700 (PDT)
-Received: from mail.didiglobal.com (unknown [10.79.65.18])
-        by mx5.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id 36B38B025264C;
-        Wed, 17 May 2023 18:01:49 +0800 (CST)
-Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
- ZJY02-ACTMBX-06.didichuxing.com (10.79.65.18) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Wed, 17 May 2023 18:01:48 +0800
-Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::7d7d:d727:7a02:e909])
- by ZJY03-ACTMBX-05.didichuxing.com ([fe80::7d7d:d727:7a02:e909%7]) with mapi
- id 15.01.2507.021; Wed, 17 May 2023 18:01:48 +0800
-X-MD-Sfrom: chengkaitao@didiglobal.com
-X-MD-SrcIP: 10.79.65.18
-From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
-        <chengkaitao@didiglobal.com>
-To:     Yosry Ahmed <yosryahmed@google.com>
-CC:     "tj@kernel.org" <tj@kernel.org>,
-        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
-        "shakeelb@google.com" <shakeelb@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "muchun.song@linux.dev" <muchun.song@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-        "pilgrimtao@gmail.com" <pilgrimtao@gmail.com>,
-        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
-        "yuzhao@google.com" <yuzhao@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "surenb@google.com" <surenb@google.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH v4 0/2] memcontrol: support cgroup level OOM protection
-Thread-Topic: [PATCH v4 0/2] memcontrol: support cgroup level OOM protection
-Thread-Index: AQHZiG6QYuA8nkfOmkSWHm0JCEvXOa9dgyoAgACXf4D//3xFAIAApWQA
-Date:   Wed, 17 May 2023 10:01:48 +0000
-Message-ID: <6AB7FF12-F855-4D5B-9F75-9F7D64823144@didiglobal.com>
-In-Reply-To: <CAJD7tkbHKQBoz7kn6ZjMTMoxLKYs7x9w4uRGWLvuyOogmBkZ_g@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.79.71.101]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <370AA8CD74597143B46B0A36D41DF0C7@didichuxing.com>
-Content-Transfer-Encoding: base64
+        Wed, 17 May 2023 06:51:04 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 379301FE5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 03:51:03 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-ba82059eec9so818224276.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 03:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1684320662; x=1686912662;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Gw/nFgM66W0F1hY4dIi8SPI28fmRbulPvC24clCLJA=;
+        b=pJzVo6K67r/UjoBgbbGrnyKigA7vtgWFvU0DJ8IkMVQoZNXk0Lp+VJDL1iIYpd81Fc
+         OKtvFy7VHXpoI9aCRITXtzueOFOyU8q2O8+ArD/oa6dhUfMPTKVhaH1hnN51fY7COCb9
+         f3cthPAJeMzsrWZqamoYpdzz0SHmWO8mtr6x++Df3bGqczuaadpmB+WGDaKY7dRngvYG
+         aaFupDNxm+++nsfhpyMl5cIvL87fZoQUqHGeVYkoyg9bGoLX5iXIFl6PWpcewvXp92Ki
+         ZxHqIKBDhWkoRUiJpS9uAL7gzaJFsWzySZi3LS0iOPMIAhP7cjZwEW7KRrbJsgeq+IGC
+         H++A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684320662; x=1686912662;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Gw/nFgM66W0F1hY4dIi8SPI28fmRbulPvC24clCLJA=;
+        b=H5b+Cq4/P0vuINoR1Ci9SazXcul8I8oArlet71C38z5qsFDL1hRINENlpQfuQ0btUw
+         rU9wcZz1f/ZRuZll3ltEwjh9JnZnKs+EowtZ9trK8KchqpzzpTGqRt0ROFV8rBVztLo8
+         OJxuslZNczjwx1PouI93APzAp4rlBM2Dy8xR7DLcFwIbQgH3NOibaM//uTuNQ+P5xrND
+         /7Dvlsj6VsLzjwleMqDPEwbtWHwckSsJQFjKZuXkO5v8IO9leut7uZq664UlSNxdrH2v
+         yqJds141I4l3QZIc6xdJhBYBxPgzlTOgu1H9ceFuLR1iHmXW5NWQo1ml6nyaxHZyi2sW
+         2vxg==
+X-Gm-Message-State: AC+VfDxTGtEONJTzqWZNbsvP9XAJqwk6wKWEozdms3g/S10OhBLNqmbj
+        k82HOAtIQhcsrBdCYDrSm4ZzbA==
+X-Google-Smtp-Source: ACHHUZ7RC+7ZD3UcS0XihTT69tZ7H6BUD9A9plffuHCSn5RjytFWbP+Ilr0C4BpxW7Qc/TJ90Woxow==
+X-Received: by 2002:a25:6801:0:b0:b9e:453e:d0c4 with SMTP id d1-20020a256801000000b00b9e453ed0c4mr35279378ybc.28.1684320662248;
+        Wed, 17 May 2023 03:51:02 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 67-20020a250f46000000b00b9d8612a8bbsm478874ybp.16.2023.05.17.03.51.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 May 2023 03:51:01 -0700 (PDT)
+Date:   Wed, 17 May 2023 03:50:47 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.attlocal.net
+To:     Carlos Maiolino <cem@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>, hughd@google.com,
+        jack@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        djwong@kernel.org
+Subject: Re: [PATCH V4 0/6] shmem: Add user and group quota support for
+ tmpfs
+In-Reply-To: <20230515085439.5s5n4xxljgl6e5jl@andromeda>
+Message-ID: <f0c4b9c1-e131-fa4c-e07-7466a2e2f98@google.com>
+References: <p9LagXdw-LiFcxInjRmJLqLkzLqVNNSLD3tgGy8JvvgCPGI7k-7Aaxu5gpTG0Kyy3tXWAbNZT8ZUzAH1eFW4qw==@protonmail.internalid> <20230426102008.2930932-1-cem@kernel.org> <20230515085439.5s5n4xxljgl6e5jl@andromeda>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-QXQgMjAyMy0wNS0xNyAxNjowOTo1MCwgIllvc3J5IEFobWVkIiA8eW9zcnlhaG1lZEBnb29nbGUu
-Y29tPiB3cm90ZToNCj5PbiBXZWQsIE1heSAxNywgMjAyMyBhdCAxOjAx4oCvQU0g56iL5Z6y5rab
-IENoZW5na2FpdGFvIENoZW5nDQo+PGNoZW5na2FpdGFvQGRpZGlnbG9iYWwuY29tPiB3cm90ZToN
-Cj4+DQo+PiBBdCAyMDIzLTA1LTE3IDE0OjU5OjA2LCAiWW9zcnkgQWhtZWQiIDx5b3NyeWFobWVk
-QGdvb2dsZS5jb20+IHdyb3RlOg0KPj4gPitEYXZpZCBSaWVudGplcw0KPj4gPg0KPj4gPk9uIFR1
-ZSwgTWF5IDE2LCAyMDIzIGF0IDg6MjDigK9QTSBjaGVuZ2thaXRhbyA8Y2hlbmdrYWl0YW9AZGlk
-aWdsb2JhbC5jb20+IHdyb3RlOg0KPj4gPj4NCj4+ID4+IEVzdGFibGlzaCBhIG5ldyBPT00gc2Nv
-cmUgYWxnb3JpdGhtLCBzdXBwb3J0cyB0aGUgY2dyb3VwIGxldmVsIE9PTQ0KPj4gPj4gcHJvdGVj
-dGlvbiBtZWNoYW5pc20uIFdoZW4gYW4gZ2xvYmFsL21lbWNnIG9vbSBldmVudCBvY2N1cnMsIHdl
-IHRyZWF0DQo+PiA+PiBhbGwgcHJvY2Vzc2VzIGluIHRoZSBjZ3JvdXAgYXMgYSB3aG9sZSwgYW5k
-IE9PTSBraWxsZXJzIG5lZWQgdG8gc2VsZWN0DQo+PiA+PiB0aGUgcHJvY2VzcyB0byBraWxsIGJh
-c2VkIG9uIHRoZSBwcm90ZWN0aW9uIHF1b3RhIG9mIHRoZSBjZ3JvdXAuDQo+PiA+Pg0KPj4gPg0K
-Pj4gPlBlcmhhcHMgdGhpcyBpcyBvbmx5IHNsaWdodGx5IHJlbGV2YW50LCBidXQgYXQgR29vZ2xl
-IHdlIGRvIGhhdmUgYQ0KPj4gPmRpZmZlcmVudCBwZXItbWVtY2cgYXBwcm9hY2ggdG8gcHJvdGVj
-dCBmcm9tIE9PTSBraWxscywgb3IgbW9yZQ0KPj4gPnNwZWNpZmljYWxseSB0ZWxsIHRoZSBrZXJu
-ZWwgaG93IHdlIHdvdWxkIGxpa2UgdGhlIE9PTSBraWxsZXIgdG8NCj4+ID5iZWhhdmUuDQo+PiA+
-DQo+PiA+V2UgZGVmaW5lIGFuIGludGVyZmFjZSBjYWxsZWQgbWVtb3J5Lm9vbV9zY29yZV9iYWRu
-ZXNzLCBhbmQgd2UgYWxzbw0KPj4gPmFsbG93IGl0IHRvIGJlIHNwZWNpZmllZCBwZXItcHJvY2Vz
-cyB0aHJvdWdoIGEgcHJvY2ZzIGludGVyZmFjZSwNCj4+ID5zaW1pbGFyIHRvIG9vbV9zY29yZV9h
-ZGouDQo+PiA+DQo+PiA+VGhlc2Ugc2NvcmVzIGVzc2VudGlhbGx5IHRlbGwgdGhlIE9PTSBraWxs
-ZXIgdGhlIG9yZGVyIGluIHdoaWNoIHdlDQo+PiA+cHJlZmVyIG1lbWNncyB0byBiZSBPT00nZCwg
-YW5kIHRoZSBvcmRlciBpbiB3aGljaCB3ZSB3YW50IHByb2Nlc3NlcyBpbg0KPj4gPnRoZSBtZW1j
-ZyB0byBiZSBPT00nZC4gQnkgZGVmYXVsdCwgYWxsIHByb2Nlc3NlcyBhbmQgbWVtY2dzIHN0YXJ0
-IHdpdGgNCj4+ID50aGUgc2FtZSBzY29yZS4gVGllcyBhcmUgYnJva2VuIGJhc2VkIG9uIHRoZSBy
-c3Mgb2YgdGhlIHByb2Nlc3Mgb3IgdGhlDQo+PiA+dXNhZ2Ugb2YgdGhlIG1lbWNnIChwcmVmZXIg
-dG8ga2lsbCB0aGUgcHJvY2Vzcy9tZW1jZyB0aGF0IHdpbGwgZnJlZQ0KPj4gPm1vcmUgbWVtb3J5
-KSAtLSBzaW1pbGFyIHRvIHRoZSBjdXJyZW50IE9PTSBraWxsZXIuDQo+Pg0KPj4gVGhhbmsgeW91
-IGZvciBwcm92aWRpbmcgYSBuZXcgYXBwbGljYXRpb24gc2NlbmFyaW8uIFlvdSBoYXZlIGRlc2Ny
-aWJlZCBhDQo+PiBuZXcgcGVyLW1lbWNnIGFwcHJvYWNoLCBidXQgYSBzaW1wbGUgaW50cm9kdWN0
-aW9uIGNhbm5vdCBleHBsYWluIHRoZQ0KPj4gZGV0YWlscyBvZiB5b3VyIGFwcHJvYWNoIGNsZWFy
-bHkuIElmIHlvdSBjb3VsZCBjb21wYXJlIGFuZCBhbmFseXplIG15DQo+PiBwYXRjaGVzIGZvciBw
-b3NzaWJsZSBkZWZlY3RzLCBvciBpZiB5b3VyIG5ldyBhcHByb2FjaCBoYXMgYWR2YW50YWdlcw0K
-Pj4gdGhhdCBteSBwYXRjaGVzIGRvIG5vdCBoYXZlLCBJIHdvdWxkIGdyZWF0bHkgYXBwcmVjaWF0
-ZSBpdC4NCj4NCj5Tb3JyeSBpZiBJIHdhcyBub3QgY2xlYXIsIEkgYW0gbm90IGltcGx5aW5nIGlu
-IGFueSB3YXkgdGhhdCB0aGUNCj5hcHByb2FjaCBJIGFtIGRlc2NyaWJpbmcgaXMgYmV0dGVyIHRo
-YW4geW91ciBwYXRjaGVzLiBJIGFtIGd1aWx0eSBvZg0KPm5vdCBjb25kdWN0aW5nIHRoZSBwcm9w
-ZXIgYW5hbHlzaXMgeW91IGFyZSByZXF1ZXN0aW5nLg0KDQpUaGVyZSBpcyBubyBwZXJmZWN0IGFw
-cHJvYWNoIGluIHRoZSB3b3JsZCwgYW5kIEkgYWxzbyBzZWVrIHlvdXIgYWR2aWNlIHdpdGgNCmEg
-bGVhcm5pbmcgYXR0aXR1ZGUuIFlvdSBkb24ndCBuZWVkIHRvIHNheSBzb3JyeSwgSSBzaG91bGQg
-c2F5IHRoYW5rIHlvdS4NCg0KPkkganVzdCBzYXcgdGhlIHRocmVhZCBhbmQgdGhvdWdodCBpdCBt
-aWdodCBiZSBpbnRlcmVzdGluZyB0byB5b3Ugb3INCj5vdGhlcnMgdG8ga25vdyB0aGUgYXBwcm9h
-Y2ggdGhhdCB3ZSBoYXZlIGJlZW4gdXNpbmcgZm9yIHllYXJzIGluIG91cg0KPnByb2R1Y3Rpb24u
-IEkgZ3Vlc3MgdGhlIHRhcmdldCBpcyB0aGUgc2FtZSwgYmUgYWJsZSB0byB0ZWxsIHRoZSBPT00N
-Cj5raWxsZXIgd2hpY2ggbWVtY2dzL3Byb2Nlc3NlcyBhcmUgbW9yZSBpbXBvcnRhbnQgdG8gcHJv
-dGVjdC4gVGhlDQo+ZnVuZGFtZW50YWwgZGlmZmVyZW5jZSBpcyB0aGF0IGluc3RlYWQgb2YgdHVu
-aW5nIHRoaXMgYmFzZWQgb24gdGhlDQo+bWVtb3J5IHVzYWdlIG9mIHRoZSBtZW1jZyAoeW91ciBh
-cHByb2FjaCksIHdlIGVzc2VudGlhbGx5IGdpdmUgdGhlIE9PTQ0KPmtpbGxlciB0aGUgb3JkZXJp
-bmcgaW4gd2hpY2ggd2Ugd2FudCBtZW1jZ3MvcHJvY2Vzc2VzIHRvIGJlIE9PTQ0KPmtpbGxlZC4g
-VGhpcyBtYXBzIHRvIGpvYnMgcHJpb3JpdGllcyBlc3NlbnRpYWxseS4NCg0KS2lsbGluZyBwcm9j
-ZXNzZXMgaW4gb3JkZXIgb2YgbWVtb3J5IHVzYWdlIGNhbm5vdCBlZmZlY3RpdmVseSBwcm90ZWN0
-DQppbXBvcnRhbnQgcHJvY2Vzc2VzLiBLaWxsaW5nIHByb2Nlc3NlcyBpbiBhIHVzZXItZGVmaW5l
-ZCBwcmlvcml0eSBvcmRlcg0Kd2lsbCByZXN1bHQgaW4gYSBsYXJnZSBudW1iZXIgb2YgT09NIGV2
-ZW50cyBhbmQgc3RpbGwgbm90IGJlaW5nIGFibGUgdG8NCnJlbGVhc2UgZW5vdWdoIG1lbW9yeS4g
-SSBoYXZlIGJlZW4gc2VhcmNoaW5nIGZvciBhIGJhbGFuY2UgYmV0d2Vlbg0KdGhlIHR3byBtZXRo
-b2RzLCBzbyB0aGF0IHRoZWlyIHNob3J0Y29taW5ncyBhcmUgbm90IHRvbyBvYnZpb3VzLg0KVGhl
-IGJpZ2dlc3QgYWR2YW50YWdlIG9mIG1lbWNnIGlzIGl0cyB0cmVlIHRvcG9sb2d5LCBhbmQgSSBh
-bHNvIGhvcGUNCnRvIG1ha2UgZ29vZCB1c2Ugb2YgaXQuDQoNCj5JZiB0aGlzIGFwcHJvYWNoIHdv
-cmtzIGZvciB5b3UgKG9yIGFueSBvdGhlciBhdWRpZW5jZSksIHRoYXQncyBncmVhdCwNCj5JIGNh
-biBzaGFyZSBtb3JlIGRldGFpbHMgYW5kIHBlcmhhcHMgd2UgY2FuIHJlYWNoIHNvbWV0aGluZyB0
-aGF0IHdlDQo+Y2FuIGJvdGggdXNlIDopDQoNCklmIHlvdSBoYXZlIGEgZ29vZCBpZGVhLCBwbGVh
-c2Ugc2hhcmUgbW9yZSBkZXRhaWxzIG9yIHNob3cgc29tZSBjb2RlLg0KSSB3b3VsZCBncmVhdGx5
-IGFwcHJlY2lhdGUgaXQNCg0KPj4NCj4+ID5UaGlzIGhhcyBiZWVuIGJyb3VnaHQgdXAgYmVmb3Jl
-IGluIG90aGVyIGRpc2N1c3Npb25zIHdpdGhvdXQgbXVjaA0KPj4gPmludGVyZXN0IFsxXSwgYnV0
-IGp1c3QgdGhvdWdodCBpdCBtYXkgYmUgcmVsZXZhbnQgaGVyZS4NCj4+ID4NCj4+ID5bMV1odHRw
-czovL2xvcmUua2VybmVsLm9yZy9sa21sL0NBSFM4aXpOM2VqMW1xVXBuTlE4Yy0xQng1RWVPN3E1
-Tk9raDBxcllfNFBMcWM4cmtIQUBtYWlsLmdtYWlsLmNvbS8jdA0KDQotLQ0KVGhhbmtzIGZvciB5
-b3VyIGNvbW1lbnQhDQpjaGVuZ2thaXRhbw0KDQo=
+Hi Carlos,
+
+On Mon, 15 May 2023, Carlos Maiolino wrote:
+> On Wed, Apr 26, 2023 at 12:20:02PM +0200, cem@kernel.org wrote:
+> > From: Carlos Maiolino <cem@kernel.org>
+> > 
+> > Hello folks.
+> > 
+> > This is the final version of the quota support from tmpfs, with all the issues
+> > addressed, and now including RwB tags on all patches, and should be ready for
+> > merge. Details are within each patch, and the original cover-letter below.
+> > 
+> 
+> Ping? Can somebody manage to pickup these patches?
+
+Sorry, but it won't be me picking them up.  Let's Cc Andrew Morton,
+through whose mm tree mm/shmem.c patches usually go.  fs-wide updates
+often go through the fs tree, but this is not really in that category:
+it's a specific addition of a feature new to tmpfs; plus I see that
+Andrew did have plenty of quota involvement back in the day.  And let's
+Cc Christian Brauner, who was raising namespace questions in November.
+
+tmpfs quotas: not a feature that I was ever hoping for, though I might
+have joked about it twenty years ago.  Already we had the nr_blocks=
+or size= restriction; and the vm_enough_memory strict-non-overcommit
+restriction; and later the memcg charging restriction.  Nowadays,
+with namespaces (and tmpfs FS_USERNS_MOUNT), I'd have imagined that
+the natural way to proceed would be to mount a size-limited tmpfs
+into the namespace of the user to be limited - but I'm no system
+designer, and likely just boasting my ignorance of namespaces again.
+
+It does look as if Lukas and you have done a good job here:
+it's a much lighter "invasion" than I was expecting (and the
+de-indentation changes looked reasonable to me too, though I didn't
+check through them).  I was puzzled where the i_blocks accounting
+had vanished, but found it eventually in the dquot stubs.
+
+So, I don't have an actual objection, and it counts for a lot that
+you have Jan Kara on board; but this is not work that I shall be able
+to support myself (I'll rarely even turn the CONFIG on).  If Andrew
+thinks it should go in, then you will be needed to maintain it.
+
+IIRC there's an outstanding issue, that namespaces are not properly
+supported here.  Given Christian's work on idmapping, that will be
+unfortunate; but if it's just that you were waiting for the base
+series to go in, before correcting the namespace situation, that's
+understandable and should not delay further - but I hope that you
+know what more is needed, and that it won't add much more code.
+
+Hugh
+
+> 
+> Thanks!
+> 
+> > Hi folks. this work has been done originally by Lukas, but he left the company,
+> > so I'm taking over his work from where he left it of. This series is virtually
+> > done, and he had updated it with comments from the last version, but, I'm
+> > initially posting it as a RFC because it's been a while since he posted the
+> > last version.
+> > Most of what I did here was rebase his last work on top of current Linus's tree.
+> > 
+> > Honza, there is one patch from you in this series, which I believe you had it
+> > suggested to Lukas on a previous version.
+> > 
+> > The original cover-letter follows...
+> > 
+> > people have been asking for quota support in tmpfs many times in the past
+> > mostly to avoid one malicious user, or misbehaving user/program to consume
+> > all of the system memory. This has been partially solved with the size
+> > mount option, but some problems still prevail.
+> > 
+> > One of the problems is the fact that /dev/shm is still generally unprotected
+> > with this and another is administration overhead of managing multiple tmpfs
+> > mounts and lack of more fine grained control.
+> > 
+> > Quota support can solve all these problems in a somewhat standard way
+> > people are already familiar with from regular file systems. It can give us
+> > more fine grained control over how much memory user/groups can consume.
+> > Additionally it can also control number of inodes and with special quota
+> > mount options introduced with a second patch we can set global limits
+> > allowing us to replace the size mount option with quota entirely.
+> > 
+> > Currently the standard userspace quota tools (quota, xfs_quota) are only
+> > using quotactl ioctl which is expecting a block device. I patched quota [1]
+> > and xfs_quota [2] to use quotactl_fd in case we want to run the tools on
+> > mount point directory to work nicely with tmpfs.
+> > 
+> > The implementation was tested on patched version of xfstests [3].
+> > 
+> > [1] https://github.com/lczerner/quota/tree/quotactl_fd_support
+> > [2] https://github.com/lczerner/xfsprogs/tree/quotactl_fd_support
+> > [3] https://github.com/lczerner/xfstests/tree/tmpfs_quota_support
+> > 
+> > 
+> > Jan Kara (1):
+> >   quota: Check presence of quota operation structures instead of
+> >     ->quota_read and ->quota_write callbacks
+> > 
+> > Lukas Czerner (5):
+> >   shmem: make shmem_inode_acct_block() return error
+> >   shmem: make shmem_get_inode() return ERR_PTR instead of NULL
+> >   shmem: prepare shmem quota infrastructure
+> >   shmem: quota support
+> >   Add default quota limit mount options
+> > 
+> >  Documentation/filesystems/tmpfs.rst |  31 ++
+> >  fs/Kconfig                          |  12 +
+> >  fs/quota/dquot.c                    |   2 +-
+> >  include/linux/shmem_fs.h            |  28 ++
+> >  include/uapi/linux/quota.h          |   1 +
+> >  mm/Makefile                         |   2 +-
+> >  mm/shmem.c                          | 465 +++++++++++++++++++++-------
+> >  mm/shmem_quota.c                    | 350 +++++++++++++++++++++
+> >  8 files changed, 783 insertions(+), 108 deletions(-)
+> >  create mode 100644 mm/shmem_quota.c
+> > 
+> > Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> > --
+> > 2.30.2
+> > 
+> 
+> -- 
+> Carlos Maiolino
