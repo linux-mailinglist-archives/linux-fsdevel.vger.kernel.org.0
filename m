@@ -2,54 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 927537076B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 02:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D757076E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 02:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229566AbjERAGc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 May 2023 20:06:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39350 "EHLO
+        id S229695AbjERAVX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 May 2023 20:21:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbjERAGa (ORCPT
+        with ESMTP id S229453AbjERAVV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 May 2023 20:06:30 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82EFDE2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 17:06:26 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-76c550fbae9so92249739f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 17:06:26 -0700 (PDT)
+        Wed, 17 May 2023 20:21:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDC093C01
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 17:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684369235;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ctm+oHZ88OJx9RdDqhhRf0OhM0Skp+u6Ga9xqH4ST4w=;
+        b=G5EM1hydzjK4aiv0Zjxb/QHhDhKGZSVtSVvezitqviHaQiwDftfqXE/JnQtYlsTMCRiRHX
+        VytIXszDTyDe3erUhOtNdTmldgx1go0fe922bXwj6QWLZQakxoRLeJ65TLlFYgBNrcF308
+        HkVtDNnMDeK3nSeqj0i9xYRN7e0e2BM=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-501-YmhSZtHRPte3vcdTOQnQqg-1; Wed, 17 May 2023 20:20:34 -0400
+X-MC-Unique: YmhSZtHRPte3vcdTOQnQqg-1
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-3f38280ec63so2543741cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 May 2023 17:20:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684368385; x=1686960385;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JoMoqXQ0K9ottZ20H37Za5eMXtoOXhgZyhPciqIVH40=;
-        b=aoGZVg3wQZOcS6wW/geye5vt2HgI2g6VNhmKhhbuF84i+auS5G3PYntXH4Sz1VD5nS
-         +vCIB+19HbWkSpzzcymhTEEgVxxT51rc7hek/lHvhSkvfKcRodSl0aE8f0XK2T96TVGc
-         ohLcaii3qX7LNVheF7U/nQ58AgVOImWbU5Kn1JQM4akhurz9qkji2/lVbswZkdAAXqoY
-         rHJ4hByM9e0rXnm+F5zP8NNyAt30KDrX+CzF/vdS6Mb69egqXNg3JcoVv8Bhep7udBLJ
-         mHzQQGr4u2rSeNmoqKAyxJ3fsFclrEVnjneMKCwGFe3vI1WzxsbWTVhSbiRZjreTACNv
-         k7KA==
-X-Gm-Message-State: AC+VfDwcV8IkUiGU7L4dJRsJUzOFXBm/lRLCr3bsNu8XwpM6hjPw6c3L
-        WP3DWsW/wSX7E1uaAVM42ZeF6H18yiGvzUITEhocBoLkBfqt
-X-Google-Smtp-Source: ACHHUZ6DNGJMApeEtlCbWYZKgYUwbD77h7Sl32mT1FuFXMAbv1g8H2Rp/h6l/JOhvlYQ3m90Yo89xTWn99FpYmbgBWBt1f8GKVyH
-MIME-Version: 1.0
-X-Received: by 2002:a5e:db04:0:b0:76f:d7c2:aa54 with SMTP id
- q4-20020a5edb04000000b0076fd7c2aa54mr3866659iop.1.1684368385810; Wed, 17 May
- 2023 17:06:25 -0700 (PDT)
-Date:   Wed, 17 May 2023 17:06:25 -0700
-In-Reply-To: <000000000000d03b0805fbe71d55@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004ea77505fbec93b6@google.com>
-Subject: Re: [syzbot] [erofs?] general protection fault in erofs_bread (2)
-From:   syzbot <syzbot+bbb353775d51424087f2@syzkaller.appspotmail.com>
-To:     chao@kernel.org, hsiangkao@linux.alibaba.com, huyue2@coolpad.com,
-        jefflexu@linux.alibaba.com, linux-erofs@lists.ozlabs.org,
+        d=1e100.net; s=20221208; t=1684369234; x=1686961234;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ctm+oHZ88OJx9RdDqhhRf0OhM0Skp+u6Ga9xqH4ST4w=;
+        b=kTLm/88AV+q3HrFwunX6gVql62wOb6icslNcMEJsDnjN8gC2AUJUKRhJsKFneEhQWF
+         nlWIaWJChC7wlR1zPhiutpFdgkay6jvjrXGPoRSs4AFIxyJiRU7hSZffxap7NCS6XwCB
+         wESxShadMyByZV5OcIB1DTT74Xv7fNr+RhLZ7ir2DXMLhzGCjhfGT9jY12SMSOCeGQfh
+         bZbaSVqiCbhGq9KaA6hwuUSiMXSGfp8KNd0k2fmWDdVUU0zBr1UsNxfAMLHGnTKMYwEX
+         jA5DdnZCUYJ0M+VBpAWbax0GNAupgtsYGmceTUhMAyEOjY4+B0dx9Ev1CYXm4wf1aNOM
+         ckNw==
+X-Gm-Message-State: AC+VfDx4X/3ivc6TftjKAIAnXwYx0y2fY1hDq0OB5ttEMcpYoWKcfnqy
+        0iGudQLr65IWwZOMFl0c1LUIIbCLm7ehf/VhNH+CDJ7efdmwMzAbEPvJrMNso6nFSHPzea2UHmT
+        eCCMJx658ZXw80seL6H3FL6EmGg==
+X-Received: by 2002:ac8:5707:0:b0:3e3:1d31:e37 with SMTP id 7-20020ac85707000000b003e31d310e37mr8013653qtw.1.1684369233894;
+        Wed, 17 May 2023 17:20:33 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5uCwwNk/Gtb9I7N6Wt9AMm8Uc3BeJUVAUIZEhidZKrahY1/OGxGLT0sKfPQ9PRHymHcL6anw==
+X-Received: by 2002:ac8:5707:0:b0:3e3:1d31:e37 with SMTP id 7-20020ac85707000000b003e31d310e37mr8013634qtw.1.1684369233657;
+        Wed, 17 May 2023 17:20:33 -0700 (PDT)
+Received: from x1n (bras-base-aurron9127w-grc-62-70-24-86-62.dsl.bell.ca. [70.24.86.62])
+        by smtp.gmail.com with ESMTPSA id c8-20020ac853c8000000b003e69c51cf53sm65569qtq.72.2023.05.17.17.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 May 2023 17:20:32 -0700 (PDT)
+Date:   Wed, 17 May 2023 20:20:31 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Axel Rasmussen <axelrasmussen@google.com>
+Cc:     James Houghton <jthoughton@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Hongchen Zhang <zhanghongchen@loongson.cn>,
+        Huang Ying <ying.huang@intel.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Nadav Amit <namit@vmware.com>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Shuah Khan <shuah@kernel.org>,
+        ZhangPeng <zhangpeng362@huawei.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, xiang@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Anish Moorthy <amoorthy@google.com>,
+        Jiaqi Yan <jiaqiyan@google.com>
+Subject: Re: [PATCH 1/3] mm: userfaultfd: add new UFFDIO_SIGBUS ioctl
+Message-ID: <ZGVvTxIH3JK9KJq/@x1n>
+References: <20230511182426.1898675-1-axelrasmussen@google.com>
+ <CADrL8HXFiTL-RDnETS2BUg_qH8CvcCMZiX-kutsrS1-8Uy25=w@mail.gmail.com>
+ <ZGVRUeCWr8209m8d@x1n>
+ <ZGVTMnVKNcQDM0x4@x1n>
+ <CAJHvVcgXynHcuoS6eCfOAB2SgzqYy_zMGrRMR2kFuxOtSdUwvQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJHvVcgXynHcuoS6eCfOAB2SgzqYy_zMGrRMR2kFuxOtSdUwvQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,25 +97,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+Hi, Axel,
 
-commit 6a318ccd7e083729cbcdbd174d7070f6b7d24130
-Author: Jingbo Xu <jefflexu@linux.alibaba.com>
-Date:   Fri Apr 7 22:28:08 2023 +0000
+On Wed, May 17, 2023 at 03:28:36PM -0700, Axel Rasmussen wrote:
+> I do plan a v2, if for no other reason than to update the
+> documentation. Happy to add a cover letter with it as well.
+> 
+> +Jiaqi back to CC, this is one piece of a larger memory poisoning /
+> recovery design Jiaqi is working on, so he may have some ideas why
+> MADV_HWPOISON or MADV_PGER will or won't work.
+> 
+> One idea is, at least for our use case, we have to have the range be
+> userfaultfd registered, because we need to intercept the first access
+> and check at that point whether or not it should be poisoned. But, I
+> think in principle a scheme like this could work:
+> 
+> 1. Intercept first access with UFFD
+> 2. Issue MADV_HWPOISON or MADV_PGERR or etc to put a pte denoting the
+> poisoned page in place
+> 3. UFFDIO_WAKE to have the faulting thread retry, see the new entry, and SIGBUS
+> 
+> It's arguably slightly weird, since normally UFFD events are resolved
+> with UFFDIO_* operations, but I don't see why it *couldn't* work.
+> 
+> Then again I am not super familiar with MADV_HWPOISON, I will have to
+> do a bit of reading to understand if its semantics are the same
+> (future accesses to this address get SIGBUS).
 
-    erofs: enable long extended attribute name prefixes
+Yes, it'll be great if this can be checked up before sending v2.  What you
+said match exactly what I was in mind. I hope it will already work, or we
+can always discuss what is missing.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=159afed9280000
-start commit:   f1fcbaa18b28 Linux 6.4-rc2
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=179afed9280000
-console output: https://syzkaller.appspot.com/x/log.txt?x=139afed9280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6beb6ffe4f59ef2a
-dashboard link: https://syzkaller.appspot.com/bug?extid=bbb353775d51424087f2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13dd834e280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167ef106280000
+-- 
+Peter Xu
 
-Reported-by: syzbot+bbb353775d51424087f2@syzkaller.appspotmail.com
-Fixes: 6a318ccd7e08 ("erofs: enable long extended attribute name prefixes")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
