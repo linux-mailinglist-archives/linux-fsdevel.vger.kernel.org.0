@@ -2,195 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D913708ACF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 23:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B44C4708AD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 23:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbjERVzH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 17:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57504 "EHLO
+        id S230056AbjERV4X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 17:56:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjERVzF (ORCPT
+        with ESMTP id S229737AbjERV4X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 17:55:05 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 417A610C8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 14:55:03 -0700 (PDT)
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34IFq9fK001985
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 14:55:03 -0700
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3qncww6jvy-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 14:55:02 -0700
-Received: from twshared52565.14.frc2.facebook.com (2620:10d:c0a8:1c::11) by
- mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Thu, 18 May 2023 14:55:00 -0700
-Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 005DE30EEE4D6; Thu, 18 May 2023 14:54:51 -0700 (PDT)
-From:   Andrii Nakryiko <andrii@kernel.org>
-To:     <bpf@vger.kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <martin.lau@kernel.org>
-CC:     <cyphar@cyphar.com>, <brauner@kernel.org>,
-        <lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v2 bpf-next 3/3] selftests/bpf: add path_fd-based BPF_OBJ_PIN and BPF_OBJ_GET tests
-Date:   Thu, 18 May 2023 14:54:44 -0700
-Message-ID: <20230518215444.1418789-4-andrii@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230518215444.1418789-1-andrii@kernel.org>
-References: <20230518215444.1418789-1-andrii@kernel.org>
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: PCIWVyXDPOrZw_4UHEOqY3WAHoEG4Y_B
-X-Proofpoint-GUID: PCIWVyXDPOrZw_4UHEOqY3WAHoEG4Y_B
-Content-Transfer-Encoding: 8BIT
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 18 May 2023 17:56:23 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 812A118F;
+        Thu, 18 May 2023 14:56:21 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-965ddb2093bso411927966b.2;
+        Thu, 18 May 2023 14:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684446980; x=1687038980;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q4PaaD3J5ioNYOH+7Gy4E8NmlgV45J9uQ6WnKhEJswY=;
+        b=DHNeSY73iRZYV3gWrBRkAwkUJufIG0PI+Mf5njLXH4HV9bFoBhVgZTeJus/oLbeZw4
+         I3+F2iZWVKEpaQ7rvePtGtDx1UVNEBRFc3GppIo5mAD79Sv4biOyETHj/eL1JXyI1uPn
+         mkfW4doy0BT5ILOb7wUPqAhPpKfpdsGbHj0Hk6RURT4UklpUcwyVKyop6tlgf9mSDkSm
+         Pk8Fwze0jf94HZI/ma5MQsOdEAl5TqnOTVQJTIakQ30+5PmZ8ogGKIKufNkGyyCFe5mE
+         GXiQyLW5VFUTvXyz5d8FdtteodiwxYzQROjFSGPDreGmYr0R8FKCwBXD4sSvzRh/aehB
+         8D/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684446980; x=1687038980;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q4PaaD3J5ioNYOH+7Gy4E8NmlgV45J9uQ6WnKhEJswY=;
+        b=AzvBNWojF7mTnPIexylNofTu8FQxhdyQo5ylgkyELtg3GhGUYfmKUkkn1PsZKrRm7Y
+         y3lO8xDwuwsr7lLqUV0I224JzVbbn1MiX5idvrNRLjtfYShoXG7xQt5l7fMK4rhCeIja
+         gcCW4gbqdwkoEa5ovtTal8uMi5iEfInRdTfHkyc0oQwOMe5fP8h+le0AmmP6TLroIODf
+         bFkn6AAMt1+kwqJ9BG36716BFE0QxnT305eiXLptGPLRlJE+fR7DGgGDrM4Rit3B7jfa
+         PjlJNY58MWkl0IQ7p/28LRdPFc/Vb4MF1DC6PefLSBOUeaSVnl4xGQbaI4DndA0lbYGE
+         9usw==
+X-Gm-Message-State: AC+VfDwS/sQZiYNRJ0uR5prR1c0riCik7cGpA3LaXbvWUGsZlI+/yCGn
+        Vvej6DFEIwYr1g8BhP2JIlzarHX1irs6Mflgtj4=
+X-Google-Smtp-Source: ACHHUZ6d0qDNnRMtPOKLiUg0AfEnZzBmy0sP8Nxs9L7cWt+RvH8bjauxbJxKjsGf9BaAp8yitQ2SfAktFiTj2HdowUU=
+X-Received: by 2002:a17:906:6a10:b0:96f:504b:4672 with SMTP id
+ qw16-20020a1709066a1000b0096f504b4672mr585480ejc.13.1684446979672; Thu, 18
+ May 2023 14:56:19 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-18_15,2023-05-17_02,2023-02-09_01
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230516001348.286414-1-andrii@kernel.org> <20230516001348.286414-2-andrii@kernel.org>
+ <20230516-briefe-blutzellen-0432957bdd15@brauner> <CAEf4BzafCCeRm9M8pPzpwexadKy5OAEmrYcnVpKmqNJ2tnSVuw@mail.gmail.com>
+ <20230517-allabendlich-umgekehrt-8cc81f8313ac@brauner>
+In-Reply-To: <20230517-allabendlich-umgekehrt-8cc81f8313ac@brauner>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 18 May 2023 14:56:07 -0700
+Message-ID: <CAEf4BzYW2_P8FQEkOZ6-O1OBuLFXtDoE=x-g_TieUC54wbgGXg@mail.gmail.com>
+Subject: Re: fd == 0 means AT_FDCWD BPF_OBJ_GET commands
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, martin.lau@kernel.org,
+        cyphar@cyphar.com, lennart@poettering.net,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a selftest demonstrating using detach-mounted BPF FS using new mount
-APIs, and pinning and getting BPF map using such mount. This
-demonstrates how something like container manager could setup BPF FS,
-pin and adjust all the necessary objects in it, all before exposing BPF
-FS to a particular mount namespace.
+On Wed, May 17, 2023 at 2:11=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Tue, May 16, 2023 at 11:02:42AM -0700, Andrii Nakryiko wrote:
+> > On Tue, May 16, 2023 at 2:07=E2=80=AFAM Christian Brauner <brauner@kern=
+el.org> wrote:
+> > >
+> > > On Mon, May 15, 2023 at 05:13:46PM -0700, Andrii Nakryiko wrote:
+> > > > Current UAPI of BPF_OBJ_PIN and BPF_OBJ_GET commands of bpf() sysca=
+ll
+> > > > forces users to specify pinning location as a string-based absolute=
+ or
+> > > > relative (to current working directory) path. This has various
+> > > > implications related to security (e.g., symlink-based attacks), for=
+ces
+> > > > BPF FS to be exposed in the file system, which can cause races with
+> > > > other applications.
+> > > >
+> > > > One of the feedbacks we got from folks working with containers heav=
+ily
+> > > > was that inability to use purely FD-based location specification wa=
+s an
+> > > > unfortunate limitation and hindrance for BPF_OBJ_PIN and BPF_OBJ_GE=
+T
+> > > > commands. This patch closes this oversight, adding path_fd field to
+> > >
+> > > Cool!
+> > >
+> > > > BPF_OBJ_PIN and BPF_OBJ_GET UAPI, following conventions established=
+ by
+> > > > *at() syscalls for dirfd + pathname combinations.
+> > > >
+> > > > This now allows interesting possibilities like working with detache=
+d BPF
+> > > > FS mount (e.g., to perform multiple pinnings without running a risk=
+ of
+> > > > someone interfering with them), and generally making pinning/gettin=
+g
+> > > > more secure and not prone to any races and/or security attacks.
+> > > >
+> > > > This is demonstrated by a selftest added in subsequent patch that t=
+akes
+> > > > advantage of new mount APIs (fsopen, fsconfig, fsmount) to demonstr=
+ate
+> > > > creating detached BPF FS mount, pinning, and then getting BPF map o=
+ut of
+> > > > it, all while never exposing this private instance of BPF FS to out=
+side
+> > > > worlds.
+> > > >
+> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > ---
+> > > >  include/linux/bpf.h            |  4 ++--
+> > > >  include/uapi/linux/bpf.h       |  5 +++++
+> > > >  kernel/bpf/inode.c             | 16 ++++++++--------
+> > > >  kernel/bpf/syscall.c           |  8 +++++---
+> > > >  tools/include/uapi/linux/bpf.h |  5 +++++
+> > > >  5 files changed, 25 insertions(+), 13 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> > > > index 36e4b2d8cca2..f58895830ada 100644
+> > > > --- a/include/linux/bpf.h
+> > > > +++ b/include/linux/bpf.h
+> > > > @@ -2077,8 +2077,8 @@ struct file *bpf_link_new_file(struct bpf_lin=
+k *link, int *reserved_fd);
+> > > >  struct bpf_link *bpf_link_get_from_fd(u32 ufd);
+> > > >  struct bpf_link *bpf_link_get_curr_or_next(u32 *id);
+> > > >
+> > > > -int bpf_obj_pin_user(u32 ufd, const char __user *pathname);
+> > > > -int bpf_obj_get_user(const char __user *pathname, int flags);
+> > > > +int bpf_obj_pin_user(u32 ufd, int path_fd, const char __user *path=
+name);
+> > > > +int bpf_obj_get_user(int path_fd, const char __user *pathname, int=
+ flags);
+> > > >
+> > > >  #define BPF_ITER_FUNC_PREFIX "bpf_iter_"
+> > > >  #define DEFINE_BPF_ITER_FUNC(target, args...)                     =
+   \
+> > > > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > > > index 1bb11a6ee667..db2870a52ce0 100644
+> > > > --- a/include/uapi/linux/bpf.h
+> > > > +++ b/include/uapi/linux/bpf.h
+> > > > @@ -1420,6 +1420,11 @@ union bpf_attr {
+> > > >               __aligned_u64   pathname;
+> > > >               __u32           bpf_fd;
+> > > >               __u32           file_flags;
+> > > > +             /* same as dirfd in openat() syscall; see openat(2)
+> > > > +              * manpage for details of dirfd/path_fd and pathname =
+semantics;
+> > > > +              * zero path_fd implies AT_FDCWD behavior
+> > > > +              */
+> > > > +             __u32           path_fd;
+> > > >       };
+> > >
+> > > So 0 is a valid file descriptor and can trivially be created and made=
+ to
+> > > refer to any file. Is this a conscious decision to have a zero value
+> > > imply AT_FDCWD and have you done this somewhere else in bpf already?
+> > > Because that's contrary to how any file descriptor based apis work.
+> > >
+> > > How this is usually solved for extensible structs is to have a flag
+> > > field that raises a flag to indicate that the fd fiel is set and thus=
+ 0
+> > > can be used as a valid value.
+> > >
+> > > The way you're doing it right now is very counterintuitive to userspa=
+ce
+> > > and pretty much guaranteed to cause subtle bugs.
+> >
+> > Yes, it's a very bpf()-specific convention we've settled on a while
+> > ago. It allows a cleaner and simpler backwards compatibility story
+> > without having to introduce new flags every single time. Most of BPF
+> > UAPI by now dictates that (otherwise valid) FD 0 can't be used to pass
+> > it to bpf() syscall. Most of the time users will be blissfully unaware
+> > because libbpf and other BPF libraries are checking for fd =3D=3D 0 and
+> > dup()'ing them to avoid ever returning FD 0 to the user.
+> >
+> > tl;dr, a conscious decision consistent with the rest of BPF UAPI. It
+> > is a bpf() peculiarity, yes.
+>
+> Adding fsdevel so we're aware of this quirk.
+>
+> So I'm not sure whether this was ever discussed on fsdevel when you took
+> the decision to treat fd 0 as AT_FDCWD or in general treat fd 0 as an
+> invalid value.
+>
+> If it was discussed then great but if not then I would like to make it
+> very clear that if in the future you decide to introduce custom
+> semantics for vfs provided infrastructure - especially when exposed to
+> userspace - that you please Cc us.
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- .../bpf/prog_tests/bpf_obj_pinning.c          | 112 ++++++++++++++++++
- 1 file changed, 112 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c
+Yep, I'll remember to cc linux-fsdevel@vger.kernel.org for future
+patches touching on vfs-related concepts, no problem. I wasn't trying
+to sneak it in or anything, it just never occurred to me, sorry about
+that.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c b/tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c
-new file mode 100644
-index 000000000000..a5f6063198aa
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c
-@@ -0,0 +1,112 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
-+
-+#include <test_progs.h>
-+#include <bpf/btf.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <linux/unistd.h>
-+#include <linux/mount.h>
-+#include <sys/syscall.h>
-+
-+static inline int sys_fsopen(const char *fsname, unsigned flags)
-+{
-+	return syscall(__NR_fsopen, fsname, flags);
-+}
-+
-+static inline int sys_fsconfig(int fs_fd, unsigned cmd, const char *key, const void *val, int aux)
-+{
-+	return syscall(__NR_fsconfig, fs_fd, cmd, key, val, aux);
-+}
-+
-+static inline int sys_fsmount(int fs_fd, unsigned flags, unsigned ms_flags)
-+{
-+	return syscall(__NR_fsmount, fs_fd, flags, ms_flags);
-+}
-+
-+static inline int sys_move_mount(int from_dfd, const char *from_path,
-+			         int to_dfd, const char *to_path,
-+			         unsigned int ms_flags)
-+{
-+	return syscall(__NR_move_mount, from_dfd, from_path, to_dfd, to_path, ms_flags);
-+}
-+
-+void test_bpf_obj_pinning(void)
-+{
-+	LIBBPF_OPTS(bpf_obj_pin_opts, pin_opts);
-+	LIBBPF_OPTS(bpf_obj_get_opts, get_opts);
-+	int fs_fd = -1, mnt_fd = -1;
-+	int map_fd = -1, map_fd2 = -1;
-+	int zero = 0, src_value, dst_value, err;
-+	const char *map_name = "fsmount_map";
-+
-+	/* A bunch of below UAPI calls are constructed based on reading:
-+	 * https://brauner.io/2023/02/28/mounting-into-mount-namespaces.html
-+	 */
-+
-+	/* create VFS context */
-+	fs_fd = sys_fsopen("bpf", 0);
-+	if (!ASSERT_GE(fs_fd, 0, "fs_fd"))
-+		goto cleanup;
-+
-+	/* instantiate FS object */
-+	err = sys_fsconfig(fs_fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-+	if (!ASSERT_OK(err, "fs_create"))
-+		goto cleanup;
-+
-+	/* create O_PATH fd for detached mount */
-+	mnt_fd = sys_fsmount(fs_fd, 0, 0);
-+	if (!ASSERT_GE(mnt_fd, 0, "mnt_fd"))
-+		goto cleanup;
-+
-+	/* If we wanted to expose detached mount in the file system, we'd do
-+	 * something like below. But the whole point is that we actually don't
-+	 * even have to expose BPF FS in the file system to be able to work
-+	 * (pin/get objects) with it.
-+	 *
-+	 * err = sys_move_mount(mnt_fd, "", -EBADF, mnt_path, MOVE_MOUNT_F_EMPTY_PATH);
-+	 * if (!ASSERT_OK(err, "move_mount"))
-+	 *	goto cleanup;
-+	 */
-+
-+	/* create BPF map to pin */
-+	map_fd = bpf_map_create(BPF_MAP_TYPE_ARRAY, map_name, 4, 4, 1, NULL);
-+	if (!ASSERT_GE(map_fd, 0, "map_fd"))
-+		goto cleanup;
-+
-+	/* pin BPF map into detached BPF FS through mnt_fd */
-+	pin_opts.file_flags = BPF_F_PATH_FD;
-+	pin_opts.path_fd = mnt_fd;
-+	err = bpf_obj_pin_opts(map_fd, map_name, &pin_opts);
-+	if (!ASSERT_OK(err, "map_pin"))
-+		goto cleanup;
-+
-+	/* get BPF map from detached BPF FS through mnt_fd */
-+	get_opts.file_flags = BPF_F_PATH_FD;
-+	get_opts.path_fd = mnt_fd;
-+	map_fd2 = bpf_obj_get_opts(map_name, &get_opts);
-+	if (!ASSERT_GE(map_fd2, 0, "map_get"))
-+		goto cleanup;
-+
-+	/* update map through one FD */
-+	src_value = 0xcafebeef;
-+	err = bpf_map_update_elem(map_fd, &zero, &src_value, 0);
-+	ASSERT_OK(err, "map_update");
-+
-+	/* check values written/read through different FDs do match */
-+	dst_value = 0;
-+	err = bpf_map_lookup_elem(map_fd2, &zero, &dst_value);
-+	ASSERT_OK(err, "map_lookup");
-+	ASSERT_EQ(dst_value, src_value, "map_value_eq1");
-+	ASSERT_EQ(dst_value, 0xcafebeef, "map_value_eq2");
-+
-+cleanup:
-+	if (map_fd >= 0)
-+		ASSERT_OK(close(map_fd), "close_map_fd");
-+	if (map_fd2 >= 0)
-+		ASSERT_OK(close(map_fd2), "close_map_fd2");
-+	if (fs_fd >= 0)
-+		ASSERT_OK(close(fs_fd), "close_fs_fd");
-+	if (mnt_fd >= 0)
-+		ASSERT_OK(close(mnt_fd), "close_mnt_fd");
-+}
--- 
-2.34.1
+>
+> You often make it very clear on the list that you don't like it when
+> anything that touches bpf code doesn't end up getting sent to the bpf
+> mailing list. It is exactly the same for us.
 
+That's a fair request, ack.
+
+>
+> This is not a rant I'm really just trying to make sure that we agree on
+> common ground when it comes to touching each others code or semantic
+> assumptions.
+>
+> I personally find this extremely weird to treat fd 0 as anything other
+> than a random fd number as it goes against any userspace assumptions and
+> drastically deviates from basically every file descriptor interface we
+> have. I mean, you're not just saying fd 0 is invalid you're even saying
+> it means AT_FDCWD.
+
+Agreed, I can see how this could have undesirable (not just
+surprising) implications if, say, open(O_PATH) returned fd=3D0. I just
+sent a v2 with a new flag that needs to be specified to be able to use
+path FD (and falling back to backwards-compatible AT_FDCWD behavior
+otherwise).
+
+>
+> For every other interface, including those that pass fds in structs
+> whose extensibility is premised on unknown fields being set to zero,
+> have ways to make fd 0 work just fine. You could've done that to without
+> inventing custom fd semantics.
