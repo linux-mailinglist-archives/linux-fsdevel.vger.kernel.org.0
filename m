@@ -2,50 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67FBD708336
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 15:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71DF970834A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 15:56:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230422AbjERNwC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 09:52:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37662 "EHLO
+        id S231279AbjERN4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 09:56:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230330AbjERNwB (ORCPT
+        with ESMTP id S230339AbjERN4K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 09:52:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BF93E5C;
-        Thu, 18 May 2023 06:52:00 -0700 (PDT)
+        Thu, 18 May 2023 09:56:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4428710D5;
+        Thu, 18 May 2023 06:56:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 190186190C;
-        Thu, 18 May 2023 13:52:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C05C433EF;
-        Thu, 18 May 2023 13:51:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CC7F96410A;
+        Thu, 18 May 2023 13:56:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FEB3C4339B;
+        Thu, 18 May 2023 13:56:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684417919;
-        bh=xQeJyfMoA+rHFk5UUJlu9K+CLca1PudNfwxXKrEhcks=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=dA7Gouj5BCEb5KxpMS+0pyhsrIVYUB7Ozf2Jl6GohY7SwAJWCwYvyTZsLkeZlCr3Y
-         q/lVY/XkqEbdk/Y6hF+et9+X8si6gd3Ik283i2R4tlLJWWUm1OZ8/UVS7dVDspOmBZ
-         ed+tdo3BAI/5MarQNkU7jCpFd3/3Cep7DbUoIImbSA4udQIjZZLTC/btCuYktNFZ9W
-         NVb7z8rk7quTGvCzXnKQe9zjTk2L54ufH/i190sbbHaJ2lRV+sCjKa2LXymT5q7YmJ
-         2rip+q/2eGq+Rpf/stWl1yC7SQ36WozBOwXbtkQTVZBBL0fr977Q9LDsQzRBIAwOuu
-         nef/9lQwFezjg==
-Message-ID: <d09ff65f6a937ddfaa5ecdc3a97c621df9809292.camel@kernel.org>
-Subject: Re: [PATCH v3 0/2] NFSD: add support for NFSv4 write delegation
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dai Ngo <dai.ngo@oracle.com>, chuck.lever@oracle.com
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Thu, 18 May 2023 09:51:57 -0400
-In-Reply-To: <1684366690-28029-1-git-send-email-dai.ngo@oracle.com>
-References: <1684366690-28029-1-git-send-email-dai.ngo@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        s=k20201202; t=1684418168;
+        bh=hHyuhDMjdrGvdqZgER2nh0JzKbT7a7ZLHIcfi0F4Ds0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dsloX7t6KQCKsExTq09JdNRt4DRwUADPhd104IQM8lXR3JQCYdP+zIytegAbnCRMT
+         jgvy89L2iCP+Sslpz4GaGLrPfHo7HlXtl1+3FKK7BaTZ8kXOdFhq0EDMHMjFonm3Z3
+         eNXnJPLDpwTWqQveTTDpXLwU7tdC2ZCgQp6ngSBLzbq8XlCNlJdfesp80aNWQk/HUD
+         YVh910VanHRvrXq3u0T+th3WafPEUwjt38uVLv6nU2gv6+gWNOm1ZYMsf2AZG0gllr
+         oDn0CKndio/khJxd/pxBEVOD1/JvMWgDsL2+MdpjurYaLbM1gwW40SQvYhlSMf6/Ra
+         SUQuGhpwlMqkA==
+Date:   Thu, 18 May 2023 15:56:03 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 5/9] block: introduce holder ops
+Message-ID: <20230518-erdkruste-unteilbar-cb91c62511c9@brauner>
+References: <20230516-kommode-weizen-4c410968c1f6@brauner>
+ <20230517073031.GF27026@lst.de>
+ <20230517-einreden-dermatologisch-9c6a3327a689@brauner>
+ <20230517080613.GA31383@lst.de>
+ <20230517-erhoffen-degradieren-d0aa039f0e1d@brauner>
+ <20230517120259.GA16915@lst.de>
+ <20230517-holzfiguren-anbot-490e5a7f74fe@brauner>
+ <20230517142609.GA28898@lst.de>
+ <20230518-teekanne-knifflig-a4ea8c3c885a@brauner>
+ <20230518131216.GA32076@lst.de>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230518131216.GA32076@lst.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -54,59 +64,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-05-17 at 16:38 -0700, Dai Ngo wrote:
-> NFSD: add support for NFSv4 write delegation
->=20
-> The NFSv4 server currently supports read delegation using VFS lease
-> which is implemented using file_lock.=20
->=20
-> This patch series add write delegation support for NFSv4 server by:
->=20
->     . remove the check for F_WRLCK in generic_add_lease to allow
->       file_lock to be used for write delegation. =20
->=20
->     . grant write delegation for OPEN with NFS4_SHARE_ACCESS_WRITE
->       if there is no conflict with other OPENs.
->=20
-> Write delegation conflict with another OPEN, REMOVE, RENAME and SETATTR
-> are handled the same as read delegation using notify_change, try_break_de=
-leg.
->=20
-> Changes since v1:
->=20
-> [PATCH 3/4] NFSD: add supports for CB_GETATTR callback
-> - remove WARN_ON_ONCE from encode_bitmap4
-> - replace decode_bitmap4 with xdr_stream_decode_uint32_array
-> - replace xdr_inline_decode and xdr_decode_hyper in decode_cb_getattr
->    with xdr_stream_decode_u64. Also remove the un-needed likely().
-> - modify signature of encode_cb_getattr4args to take pointer to
->    nfs4_cb_fattr
-> - replace decode_attr_length with xdr_stream_decode_u32
-> - rename decode_cb_getattr to decode_cb_fattr4
-> - fold the initialization of cb_cinfo and cb_fsize into decode_cb_fattr4
-> - rename ncf_cb_cinfo to ncf_cb_change to avoid confusion of cindo usage
->   in fs/nfsd/nfs4xdr.c
-> - correct NFS4_dec_cb_getattr_sz and update size description
->=20
-> [PATCH 4/4] NFSD: handle GETATTR conflict with write delegation
-> - change nfs4_handle_wrdeleg_conflict returns __be32 to fix test robot
-> - change ncf_cb_cinfo to ncf_cb_change to avoid confusion of cindo usage
->   in fs/nfsd/nfs4xdr.c
->=20
-> Changes since v2:
->=20
-> [PATCH 2/4] NFSD: enable support for write delegation
-> - rename 'deleg' to 'dl_type' in nfs4_set_delegation
-> - remove 'wdeleg' in nfs4_open_delegation
->=20
-> - drop [PATCH 3/4] NFSD: add supports for CB_GETATTR callback
->   and [PATCH 4/4] NFSD: handle GETATTR conflict with write delegation
->   for futher clarification of the benefits of using CB_GETATTR
->   for handling GETATTR from the 2nd client
->=20
+On Thu, May 18, 2023 at 03:12:16PM +0200, Christoph Hellwig wrote:
+> On Thu, May 18, 2023 at 10:13:04AM +0200, Christian Brauner wrote:
+> > Fwiw, I didn't mean to have a special device handler for an O_PATH fd.
+> > I really just tried to figure out whether it would make sense to have an
+> > fd-based block device lookup function because right now we only have
+> > blkdev_get_by_path() and we'd be passing blkdev fds through the mount
+> > api. But I understand now how I'd likely do it. So now just finding time
+> > to actually implement it.
+> 
+> What's wrong with blkdev_get_by_dev(file_inode(file)->i_rdev) after
+> the sanity checks from lookup_bdev (S_ISBLK and may_open_dev)?
 
-Pretty straightforward. Not as useful (IMO) without CB_GETATTR, since
-even a stray 'ls -l' in the parent directory will cause the delegation
-to be recalled, but it's a reasonable first step.
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Yeah, that's what I realized could work fine. I just need to check all
+fses how they currently do this and how to do this cleanly.
