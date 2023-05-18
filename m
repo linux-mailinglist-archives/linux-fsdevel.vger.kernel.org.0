@@ -2,329 +2,318 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C3E5708AA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 23:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03173708AB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 23:46:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbjERVjK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 17:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52214 "EHLO
+        id S229849AbjERVqw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 17:46:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjERVjI (ORCPT
+        with ESMTP id S229456AbjERVqv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 17:39:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F33C9F9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 14:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684445899;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fF16NozMTAGkjTJVbzcLd4pKW6g0WKeMa5ciTZoyR8I=;
-        b=C0wIZKNA0vCUPWGgZiw/ElXmIvQ/wABRkpP/nyfxLb4hcKCCPLr5/fNOk73RYrFiPvIu8q
-        m6HpkMn8qhY0AfPW/stufna+Bjf8deBNSOai6foXEjsQI7GKQqA2/0ndNpGXQqANeMuqI1
-        7Cf+BpAgqVNekmQqEFLCFtL3tzv/aB8=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-y-9kuQbsOKCuXvHM9zbL-Q-1; Thu, 18 May 2023 17:38:18 -0400
-X-MC-Unique: y-9kuQbsOKCuXvHM9zbL-Q-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-3f398a25be2so2398101cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 14:38:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684445898; x=1687037898;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fF16NozMTAGkjTJVbzcLd4pKW6g0WKeMa5ciTZoyR8I=;
-        b=Y0+p1VO3SUhfIr2djxHjQN1njptgI/3QzkcOsj/GP1pnX0IbgvirMwaKRDAqHBAmhS
-         8Z4o1kKmNgztWk/XtbTbJ/UCslU/qIRr/TscYr1aV3H1TXl679kroZPzc+KNdQnWc4Z3
-         yBf3P5LN8iBjQWLQksJ1iU2E3oC9w0Jpa+Hn7PIgP6E0Vmo6ytnjL2kSKgIarsyS0Be3
-         wu4RE0SrY0iDTIqqNDQoiOPoMQ3b+tVti0DMb/IFI2VgzXaF5FNva+7bpzoqN2KDDODO
-         8cv/Cg1JhuyN/8H0OzuUVyUZx+kSSPescfMSHjnReoRWdgCZ0s4b2L9dChJgTN6mDx7x
-         z9bw==
-X-Gm-Message-State: AC+VfDy7hCX9YQb43LXhdPK7sIjF3jY0Jcc0FwsvegsVqTaPiSHvYQko
-        xY/jX9c2myU6vp34NmSM0u3OD+TwWCaeTKfv5RrYGJZotOKdsiemsnGknWbUoBysY8GSANW6xGG
-        88IA5PPRWJlRgaqZv0yDKb8rgSA==
-X-Received: by 2002:a05:622a:1801:b0:3ef:4614:d0e9 with SMTP id t1-20020a05622a180100b003ef4614d0e9mr33313qtc.5.1684445897739;
-        Thu, 18 May 2023 14:38:17 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4F7YYadNy4hNwuBEtJHsszBONmAwTnm70nfw8WkvP5XXBIxqCTLfGirE7l4DCLZRdFzwOonA==
-X-Received: by 2002:a05:622a:1801:b0:3ef:4614:d0e9 with SMTP id t1-20020a05622a180100b003ef4614d0e9mr33285qtc.5.1684445897332;
-        Thu, 18 May 2023 14:38:17 -0700 (PDT)
-Received: from x1n (bras-base-aurron9127w-grc-62-70-24-86-62.dsl.bell.ca. [70.24.86.62])
-        by smtp.gmail.com with ESMTPSA id x5-20020ae9e905000000b0075931950b5esm670407qkf.74.2023.05.18.14.38.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 May 2023 14:38:16 -0700 (PDT)
-Date:   Thu, 18 May 2023 17:38:14 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Jiaqi Yan <jiaqiyan@google.com>,
-        James Houghton <jthoughton@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Huang Ying <ying.huang@intel.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Shuah Khan <shuah@kernel.org>,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Anish Moorthy <amoorthy@google.com>
-Subject: Re: [PATCH 1/3] mm: userfaultfd: add new UFFDIO_SIGBUS ioctl
-Message-ID: <ZGaaxjS4jWUio+f6@x1n>
-References: <20230511182426.1898675-1-axelrasmussen@google.com>
- <CADrL8HXFiTL-RDnETS2BUg_qH8CvcCMZiX-kutsrS1-8Uy25=w@mail.gmail.com>
- <ZGVRUeCWr8209m8d@x1n>
- <ZGVTMnVKNcQDM0x4@x1n>
- <CAJHvVcgXynHcuoS6eCfOAB2SgzqYy_zMGrRMR2kFuxOtSdUwvQ@mail.gmail.com>
- <CACw3F52MNOVv6KA5n7wRYDT2ujwYkco=aYngbo-zGA3zW1yq+w@mail.gmail.com>
- <ZGZMtK6PzoTuLZ1b@x1n>
- <CAJHvVcgcYPu-G3RDVrkrM_J48NUiUY0SH0G1sd+=X9BDgnQEuQ@mail.gmail.com>
+        Thu, 18 May 2023 17:46:51 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BCE318D;
+        Thu, 18 May 2023 14:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gvVJOUsKiElhq9zQolbxtMbqOslGBiidrjppFq3b82c=; b=ooaIifHq1X8ltC8yeE5e7hpFS0
+        TYcgcCEQYyxDhqN9jCBigeMFFi0Haea2VrD7f01eifBd1Ln9UnOTlcTF+RqH2XnNpujJ+kT/bx+gD
+        KfuqxWCvpt57UgstyHlIXFkot71auiYmltqaiizTHED0VJUb7I88Z90yEHjosV6ia++wPgEp4yTWz
+        DwIhxzUqOUpcJy9admNuh92YkUPaU87zgesWN5yS6jTTS/UpPRIcr3Q70I+9uZDVJlsgtM8gHlndq
+        vQcBYZraDAN2+ORmajInpRKUzfFEFx9BbahUOwiMkHpfan/MDifyiwD3Xjw4ENMhxvHupuUtHELrn
+        bDWvBIUg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pzlSN-0065yW-9D; Thu, 18 May 2023 21:46:43 +0000
+Date:   Thu, 18 May 2023 22:46:43 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Wang Yugui <wangyugui@e16-tech.com>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: Creating large folios in iomap buffered write path
+Message-ID: <ZGacw+1cu49qnttj@casper.infradead.org>
+References: <20230510165055.01D5.409509F4@e16-tech.com>
+ <20230511013410.GY3223426@dread.disaster.area>
+ <20230517210740.6464.409509F4@e16-tech.com>
+ <ZGZwNqYhttjREl0V@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJHvVcgcYPu-G3RDVrkrM_J48NUiUY0SH0G1sd+=X9BDgnQEuQ@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZGZwNqYhttjREl0V@casper.infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 18, 2023 at 01:38:09PM -0700, Axel Rasmussen wrote:
-> On Thu, May 18, 2023 at 9:05 AM Peter Xu <peterx@redhat.com> wrote:
-> >
-> > On Wed, May 17, 2023 at 05:43:53PM -0700, Jiaqi Yan wrote:
-> > > On Wed, May 17, 2023 at 3:29 PM Axel Rasmussen <axelrasmussen@google.com> wrote:
-> > > >
-> > > > On Wed, May 17, 2023 at 3:20 PM Peter Xu <peterx@redhat.com> wrote:
-> > > > >
-> > > > > On Wed, May 17, 2023 at 06:12:33PM -0400, Peter Xu wrote:
-> > > > > > On Thu, May 11, 2023 at 03:00:09PM -0700, James Houghton wrote:
-> > > > > > > On Thu, May 11, 2023 at 11:24 AM Axel Rasmussen
-> > > > > > > <axelrasmussen@google.com> wrote:
-> > > > > > > >
-> > > > > > > > So the basic way to use this new feature is:
-> > > > > > > >
-> > > > > > > > - On the new host, the guest's memory is registered with userfaultfd, in
-> > > > > > > >   either MISSING or MINOR mode (doesn't really matter for this purpose).
-> > > > > > > > - On any first access, we get a userfaultfd event. At this point we can
-> > > > > > > >   communicate with the old host to find out if the page was poisoned.
-> > > > > > > > - If so, we can respond with a UFFDIO_SIGBUS - this places a swap marker
-> > > > > > > >   so any future accesses will SIGBUS. Because the pte is now "present",
-> > > > > > > >   future accesses won't generate more userfaultfd events, they'll just
-> > > > > > > >   SIGBUS directly.
-> > > > > > >
-> > > > > > > I want to clarify the SIGBUS mechanism here when KVM is involved,
-> > > > > > > keeping in mind that we need to be able to inject an MCE into the
-> > > > > > > guest for this to be useful.
-> > > > > > >
-> > > > > > > 1. vCPU gets an EPT violation --> KVM attempts GUP.
-> > > > > > > 2. GUP finds a PTE_MARKER_UFFD_SIGBUS and returns VM_FAULT_SIGBUS.
-> > > > > > > 3. KVM finds that GUP failed and returns -EFAULT.
-> > > > > > >
-> > > > > > > This is different than if GUP found poison, in which case KVM will
-> > > > > > > actually queue up a SIGBUS *containing the address of the fault*, and
-> > > > > > > userspace can use it to inject an appropriate MCE into the guest. With
-> > > > > > > UFFDIO_SIGBUS, we are missing the address!
-> > > > > > >
-> > > > > > > I see three options:
-> > > > > > > 1. Make KVM_RUN queue up a signal for any VM_FAULT_SIGBUS. I think
-> > > > > > > this is pointless.
-> > > > > > > 2. Don't have UFFDIO_SIGBUS install a PTE entry, but instead have a
-> > > > > > > UFFDIO_WAKE_MODE_SIGBUS, where upon waking, we return VM_FAULT_SIGBUS
-> > > > > > > instead of VM_FAULT_RETRY. We will keep getting userfaults on repeated
-> > > > > > > accesses, just like how we get repeated signals for real poison.
-> > > > > > > 3. Use this in conjunction with the additional KVM EFAULT info that
-> > > > > > > Anish proposed (the first part of [1]).
-> > > > > > >
-> > > > > > > I think option 3 is fine. :)
-> > > > > >
-> > > > > > Or... option 4) just to use either MADV_HWPOISON or hwpoison-inject? :)
-> > > > >
-> > > > > I just remember Axel mentioned this in the commit message, and just in case
-> > > > > this is why option 4) was ruled out:
-> > > > >
-> > > > >         They expect that once poisoned, pages can never become
-> > > > >         "un-poisoned". So, when we live migrate the VM, we need to preserve
-> > > > >         the poisoned status of these pages.
-> > > > >
-> > > > > Just to supplement on this point: we do have unpoison (echoing to
-> > > > > "debug/hwpoison/hwpoison_unpoison"), or am I wrong?
-> > >
-> > > If I read unpoison_memory() correctly, once there is a real hardware
-> > > memory corruption (hw_memory_failure will be set), unpoison will stop
-> > > working and return EOPNOTSUPP.
-> > >
-> > > I know some cloud providers evacuating VMs once a single memory error
-> > > happens, so not supporting unpoison is probably not a big deal for
-> > > them. BUT others do keep VM running until more errors show up later,
-> > > which could be long after the 1st error.
-> >
-> > We're talking about postcopy migrating a VM has poisoned page on src,
-> > rather than on dst host, am I right?  IOW, the dest hwpoison should be
-> > fake.
-> >
-> > If so, then I would assume that's the case where all the pages on the dest
-> > host is still all good (so hw_memory_failure not yet set, or I doubt the
-> > judgement of being a migration target after all)?
-> >
-> > The other thing is even if dest host has hw poisoned page, I'm not sure
-> > whether hw_memory_failure is the only way to solve this.
-> >
-> > I saw that this is something got worked on before from Zhenwei, David used
-> > to have some reasoning on why it was suggested like using a global knob:
-> >
-> > https://lore.kernel.org/all/d7927214-e433-c26d-7a9c-a291ced81887@redhat.com/
-> >
-> > Two major issues here afaics:
-> >
-> >   - Zhenwei's approach only considered x86 hwpoison - it relies on kpte
-> >     having !present in entries but that's x86 specific rather than generic
-> >     to memory_failure.c.
-> >
-> >   - It is _assumed_ that hwpoison injection is for debugging only.
-> >
-> > I'm not sure whether you can fix 1) by some other ways, e.g., what if the
-> > host just remember all the hardware poisoned pfns (or remember
-> > soft-poisoned ones, but then here we need to be careful on removing them
-> > from the list when it's hwpoisoned for real)?  It sounds like there's
-> > opportunity on providing a generic solution rather than relying on
-> > !pte_present().
-> >
-> > For 2) IMHO that's not a big issue, you can declare it'll be used in !debug
-> > but production systems so as to boost the feature importance with a real
-> > use case.
-> >
-> > So far I'd say it'll be great to leverage what it's already there in linux
-> > and make it as generic as possible. The only issue is probably
-> > CAP_ADMIN... not sure whether we can have some way to provide !ADMIN
-> > somehow, or you can simply work around this issue.
+On Thu, May 18, 2023 at 07:36:38PM +0100, Matthew Wilcox wrote:
+> Not so much a "folio problem" as "an enhancement nobody got around to doing
+> yet".  Here's a first attempt.  It's still churning through an xfstests
+> run for me.  I have seen this warning trigger:
 > 
-> As you mention below I think the key distinction is the scope - I
-> think MADV_HWPOISON affects the whole system, including other
-> processes.
+>                 WARN_ON_ONCE(!folio_test_uptodate(folio) &&
+>                              folio_test_dirty(folio));
 > 
-> For our purposes, we really just want to "poison" this particular
-> virtual address (the HVA, from the VM's perspective), not even other
-> mappings of the same shared memory. I think that behavior is different
-> from MADV_HWPOISON, at least.
-> 
-> >
-> > >
-> > > > >
-> > > > > >
-> > > > > > Besides what James mentioned on "missing addr", I didn't quickly see what's
-> > > > > > the major difference comparing to the old hwpoison injection methods even
-> > > > > > without the addr requirement. If we want the addr for MCE then it's more of
-> > > > > > a question to ask.
-> > > > > >
-> > > > > > I also didn't quickly see why for whatever new way to inject a pte error we
-> > > > > > need to have it registered with uffd.  Could it be something like
-> > > > > > MADV_PGERR (even if MADV_HWPOISON won't suffice) so you can inject even
-> > > > > > without an userfault context (but still usable when uffd registered)?
-> > > > > >
-> > > > > > And it'll be alawys nice to have a cover letter too (if there'll be a new
-> > > > > > version) explaining the bits.
-> > > >
-> > > > I do plan a v2, if for no other reason than to update the
-> > > > documentation. Happy to add a cover letter with it as well.
-> > > >
-> > > > +Jiaqi back to CC, this is one piece of a larger memory poisoning /
-> > > > recovery design Jiaqi is working on, so he may have some ideas why
-> > > > MADV_HWPOISON or MADV_PGER will or won't work.
-> > >
-> > > Per https://man7.org/linux/man-pages/man2/madvise.2.html,
-> > > MADV_HWPOISON "is available only for privileged (CAP_SYS_ADMIN)
-> > > processes." So for a non-root VMM, MADV_HWPOISON is out of option.
-> >
-> > It makes sense to me especially when the page can be shared with other
-> > tasks.
-> >
-> > >
-> > > Another issue with MADV_HWPOISON is, it requires to first successfully
-> > > get_user_pages_fast(). I don't think it will work if memory is not
-> > > mapped yet.
-> >
-> > Fair point, so probably current MADV_HWPOISON got ruled out.
-> > hwpoison-inject seems fine where only the PFN is needed rather than the
-> > pte. But same issue on CAP_ADMIN indeed.
-> >
-> > >
-> > > With the UFFDIO_SIGBUS feature introduced in this patchset, it may
-> > > even be possible to free the emulated-hwpoison page back to the kernel
-> > > so we don't lose a 4K page.
-> > >
-> > > I didn't find any ref/doc for MADV_PGERR. Is it something you suggest
-> > > to build, Peter?
-> >
-> > That's something I made up just to show my question on why such an
-> > interface (even if wanted) needs to be bound to userfaultfd, e.g. a
-> > madvise() seems working if someone sololy want to install a poisoned pte.
-> 
-> I look at it a bit differently...
-> 
-> Even existing UFFDIO_* operations could technically be separated from
-> userfaultfd. You could imagine a MADV_MAP_PAGE instead of
-> UFFDIO_CONTINUE. UFFDIO_COPY is a bit trickier since it takes an
-> argument, but it could be done with process_madvise(). (Granted, I'm
-> not sure this would be useful... But this is equally true for
-> UFFDIO_SIGBUS; it seems non-live-migration use cases could use
-> MADV_HWPOISON, and for live migration use cases we will be using
-> UFFD.)
-> 
-> We've sort of setup a convention with userfaultfd where at a high
-> level users are supposed to:
-> 
-> 1. Receive events from the uffd
-> 2. Resolve those events with UFFDIO_* ioctls
-> 3. Wake up with UFFDIO_WAKE to retry the fault that generated the
-> original event (can be combined with step 2 of course)
-> 
-> So for me, even if MADV_PGERR or similar existed, I would be tempted
-> to add a UFFDIO_SIGBUS as well, even if it just calls the same
-> underlying function to do the same thing, if only for consistency
-> (with the idea "UFFD events are resolved by UFFD ioctls") from the
-> user's perspective.
+> in iomap_invalidate_folio() as it's now possible to create a folio
+> for write that is larger than the write, and therefore we won't
+> mark it uptodate.  Maybe we should create slightly smaller folios.
 
-I don't worry too much on "consistency", but I'm trying to understand
-whether it's more beneficial to combine it with uffd or being generic.
+Here's one that does.  A couple of other small problems also fixed.
 
-One thing I was thinking is if I have a library that manages some memory
-for the user, the library can use such madvise()/... to poison specific
-small pages (without registering uffd with sigbus mode, also no lose on
-page faults of other normal pages) so when illegal access it can trap it
-for current mm rather than silently happen (e.g. use after free).  Unpoison
-is also easy there, we can simply DONTNEED it.
 
-One defect of such general solution for your case is we need one more
-UFFDIO_WAKE, but since we're talking about real poisoned pages on src, so I
-guess it's not a concern (unlike most of the rest ioctls).
-
-I've no strong opinion if you still want to do that with an userfault
-ioctl.  After all, I can't provide a solid example but just some rough
-ideas.  But I hope I explained why I think it's still different from other
-ioctls (e.g., an "atomic update a page" operation doesn't sound reasonable
-at all as generic operation for any !uffd context, so that definitely
-suites more as an uffd specific ioctl).
-
-If with uffd, perhaps avoid calling it sigbus? As we have FEATURE_SIGBUS
-and I'm afraid it'll cause confusion.  UFFDIO_HWPOISON may sound more
-suitable?
-
-Thanks,
-
--- 
-Peter Xu
-
+diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+index c739b258a2d9..3702e5e47b0f 100644
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -971,7 +971,7 @@ gfs2_iomap_get_folio(struct iomap_iter *iter, loff_t pos, unsigned len)
+ 	if (status)
+ 		return ERR_PTR(status);
+ 
+-	folio = iomap_get_folio(iter, pos);
++	folio = iomap_get_folio(iter, pos, len);
+ 	if (IS_ERR(folio))
+ 		gfs2_trans_end(sdp);
+ 	return folio;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 063133ec77f4..32ddddf9f35c 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -461,19 +461,25 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
+  * iomap_get_folio - get a folio reference for writing
+  * @iter: iteration structure
+  * @pos: start offset of write
++ * @len: length of write
+  *
+  * Returns a locked reference to the folio at @pos, or an error pointer if the
+  * folio could not be obtained.
+  */
+-struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos)
++struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
+ {
+ 	unsigned fgp = FGP_WRITEBEGIN | FGP_NOFS;
++	struct folio *folio;
+ 
+ 	if (iter->flags & IOMAP_NOWAIT)
+ 		fgp |= FGP_NOWAIT;
++	fgp |= fgp_order(len);
+ 
+-	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
++	folio = __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
+ 			fgp, mapping_gfp_mask(iter->inode->i_mapping));
++	if (!IS_ERR(folio) && folio_test_large(folio))
++		printk("index:%lu len:%zu order:%u\n", (unsigned long)(pos / PAGE_SIZE), len, folio_order(folio));
++	return folio;
+ }
+ EXPORT_SYMBOL_GPL(iomap_get_folio);
+ 
+@@ -510,8 +516,8 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
+ 		iomap_page_release(folio);
+ 	} else if (folio_test_large(folio)) {
+ 		/* Must release the iop so the page can be split */
+-		WARN_ON_ONCE(!folio_test_uptodate(folio) &&
+-			     folio_test_dirty(folio));
++		VM_WARN_ON_ONCE_FOLIO(!folio_test_uptodate(folio) &&
++				folio_test_dirty(folio), folio);
+ 		iomap_page_release(folio);
+ 	}
+ }
+@@ -603,7 +609,7 @@ static struct folio *__iomap_get_folio(struct iomap_iter *iter, loff_t pos,
+ 	if (folio_ops && folio_ops->get_folio)
+ 		return folio_ops->get_folio(iter, pos, len);
+ 	else
+-		return iomap_get_folio(iter, pos);
++		return iomap_get_folio(iter, pos, len);
+ }
+ 
+ static void __iomap_put_folio(struct iomap_iter *iter, loff_t pos, size_t ret,
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index e2b836c2e119..80facb9c9e5b 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -261,7 +261,7 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
+ void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+ bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
+-struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos);
++struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len);
+ bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
+ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len);
+ int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index a56308a9d1a4..f4d05beb64eb 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -466,6 +466,19 @@ static inline void *detach_page_private(struct page *page)
+ 	return folio_detach_private(page_folio(page));
+ }
+ 
++/*
++ * There are some parts of the kernel which assume that PMD entries
++ * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
++ * limit the maximum allocation order to PMD size.  I'm not aware of any
++ * assumptions about maximum order if THP are disabled, but 8 seems like
++ * a good order (that's 1MB if you're using 4kB pages)
++ */
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
++#else
++#define MAX_PAGECACHE_ORDER	8
++#endif
++
+ #ifdef CONFIG_NUMA
+ struct folio *filemap_alloc_folio(gfp_t gfp, unsigned int order);
+ #else
+@@ -505,14 +518,24 @@ pgoff_t page_cache_prev_miss(struct address_space *mapping,
+ #define FGP_NOWAIT		0x00000020
+ #define FGP_FOR_MMAP		0x00000040
+ #define FGP_STABLE		0x00000080
++#define FGP_ORDER(fgp)		((fgp) >> 26)	/* top 6 bits */
+ 
+ #define FGP_WRITEBEGIN		(FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE)
+ 
++static inline unsigned fgp_order(size_t size)
++{
++	unsigned int shift = ilog2(size);
++
++	if (shift <= PAGE_SHIFT)
++		return 0;
++	return (shift - PAGE_SHIFT) << 26;
++}
++
+ void *filemap_get_entry(struct address_space *mapping, pgoff_t index);
+ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+-		int fgp_flags, gfp_t gfp);
++		unsigned fgp_flags, gfp_t gfp);
+ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
+-		int fgp_flags, gfp_t gfp);
++		unsigned fgp_flags, gfp_t gfp);
+ 
+ /**
+  * filemap_get_folio - Find and get a folio.
+@@ -586,7 +609,7 @@ static inline struct page *find_get_page(struct address_space *mapping,
+ }
+ 
+ static inline struct page *find_get_page_flags(struct address_space *mapping,
+-					pgoff_t offset, int fgp_flags)
++					pgoff_t offset, unsigned fgp_flags)
+ {
+ 	return pagecache_get_page(mapping, offset, fgp_flags, 0);
+ }
+diff --git a/mm/filemap.c b/mm/filemap.c
+index b4c9bd368b7e..7abbb072d4d9 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1910,7 +1910,7 @@ void *filemap_get_entry(struct address_space *mapping, pgoff_t index)
+  * Return: The found folio or an ERR_PTR() otherwise.
+  */
+ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+-		int fgp_flags, gfp_t gfp)
++		unsigned fgp_flags, gfp_t gfp)
+ {
+ 	struct folio *folio;
+ 
+@@ -1952,7 +1952,9 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+ 		folio_wait_stable(folio);
+ no_page:
+ 	if (!folio && (fgp_flags & FGP_CREAT)) {
++		unsigned order = FGP_ORDER(fgp_flags);
+ 		int err;
++
+ 		if ((fgp_flags & FGP_WRITE) && mapping_can_writeback(mapping))
+ 			gfp |= __GFP_WRITE;
+ 		if (fgp_flags & FGP_NOFS)
+@@ -1961,26 +1963,38 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+ 			gfp &= ~GFP_KERNEL;
+ 			gfp |= GFP_NOWAIT | __GFP_NOWARN;
+ 		}
+-
+-		folio = filemap_alloc_folio(gfp, 0);
+-		if (!folio)
+-			return ERR_PTR(-ENOMEM);
+-
+ 		if (WARN_ON_ONCE(!(fgp_flags & (FGP_LOCK | FGP_FOR_MMAP))))
+ 			fgp_flags |= FGP_LOCK;
+ 
+-		/* Init accessed so avoid atomic mark_page_accessed later */
+-		if (fgp_flags & FGP_ACCESSED)
+-			__folio_set_referenced(folio);
++		if (order > MAX_PAGECACHE_ORDER)
++			order = MAX_PAGECACHE_ORDER;
++		/* If we're not aligned, allocate a smaller folio */
++		if (index & ((1UL << order) - 1))
++			order = __ffs(index);
+ 
+-		err = filemap_add_folio(mapping, folio, index, gfp);
+-		if (unlikely(err)) {
++		do {
++			err = -ENOMEM;
++			if (order == 1)
++				order = 0;
++			folio = filemap_alloc_folio(gfp, order);
++			if (!folio)
++				continue;
++
++			/* Init accessed so avoid atomic mark_page_accessed later */
++			if (fgp_flags & FGP_ACCESSED)
++				__folio_set_referenced(folio);
++
++			err = filemap_add_folio(mapping, folio, index, gfp);
++			if (!err)
++				break;
+ 			folio_put(folio);
+ 			folio = NULL;
+-			if (err == -EEXIST)
+-				goto repeat;
+-		}
++		} while (order-- > 0);
+ 
++		if (err == -EEXIST)
++			goto repeat;
++		if (err)
++			return ERR_PTR(err);
+ 		/*
+ 		 * filemap_add_folio locks the page, and for mmap
+ 		 * we expect an unlocked page.
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index c6f056c20503..c96e88d9a262 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -92,7 +92,7 @@ EXPORT_SYMBOL(add_to_page_cache_lru);
+ 
+ noinline
+ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
+-		int fgp_flags, gfp_t gfp)
++		unsigned fgp_flags, gfp_t gfp)
+ {
+ 	struct folio *folio;
+ 
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 47afbca1d122..59a071badb90 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -462,19 +462,6 @@ static int try_context_readahead(struct address_space *mapping,
+ 	return 1;
+ }
+ 
+-/*
+- * There are some parts of the kernel which assume that PMD entries
+- * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
+- * limit the maximum allocation order to PMD size.  I'm not aware of any
+- * assumptions about maximum order if THP are disabled, but 8 seems like
+- * a good order (that's 1MB if you're using 4kB pages)
+- */
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
+-#else
+-#define MAX_PAGECACHE_ORDER	8
+-#endif
+-
+ static inline int ra_alloc_folio(struct readahead_control *ractl, pgoff_t index,
+ 		pgoff_t mark, unsigned int order, gfp_t gfp)
+ {
