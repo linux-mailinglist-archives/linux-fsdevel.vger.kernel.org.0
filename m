@@ -2,71 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03328707FA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 13:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 875E4708018
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 13:47:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231550AbjERLiE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 07:38:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60652 "EHLO
+        id S231148AbjERLrt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 07:47:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231409AbjERLhE (ORCPT
+        with ESMTP id S230020AbjERLrs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 07:37:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810561FD2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 04:36:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684409771;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wF+2b4fBEfy00AN3VDBr6eYpnbX7vBgnsz0rKmJdTGo=;
-        b=JY6FjSn0d6rVjGwAcrpIw+NlwuU7Qc5P9YnhjfStO7EZ7cUWz1XCoS2MbvDMBXZ/vlWXRY
-        1vqecpUoL4KTsycholyN7/AzXbz0wv08Ik45o/vxYfMXN8n6GYZ93dTy4XGaV4FkwpEz2a
-        iU0WgFzeE/cuVRGtpjdgT1y+sj9i7Tg=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-321-vqjt2jLQMMKuS89fOjFPaQ-1; Thu, 18 May 2023 07:36:09 -0400
-X-MC-Unique: vqjt2jLQMMKuS89fOjFPaQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 18 May 2023 07:47:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD5ABD;
+        Thu, 18 May 2023 04:47:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F189729DD98B;
-        Thu, 18 May 2023 11:36:07 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 371ACC15BA0;
-        Thu, 18 May 2023 11:36:05 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F05764EC3;
+        Thu, 18 May 2023 11:47:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F0B5C433D2;
+        Thu, 18 May 2023 11:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684410466;
+        bh=UoOYGsMGyMMEKJ1qkzNYsll/wCyWl/nZo9olULeimuI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MgJKr48az7m1maC+5bU+MGI4uP+7mBT3hWl30A7YcL+cgivlPF30VKLMqw7WSucXZ
+         Ox9YMRyo7ZdDxP0wMLf5ic9Dzysu1/jc1NSpvMypEt5ctlHRJv0rQo7srSyKqF/gS7
+         SaGZkN5cJEev21H/T+NTGT9p7pZ3pT6aU3i8xlVw862fXe0G3SWCffI7T1I0/FddIn
+         sdlL3ODMdHT5CY29cN6680mfspWWgnBAbIX/einbTQ6ldWOceymtiXAab0t9lVjCZM
+         kJE4+R+7Xsu78Bg3MzPZG9hXx5zqPodwwI7h4m2fWSA4FBWsMxwj3GMWc45mudUi/c
+         F1gHaCzCQQNrg==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: [PATCH net-next v8 16/16] unix: Convert udp_sendpage() to use MSG_SPLICE_PAGES
-Date:   Thu, 18 May 2023 12:34:53 +0100
-Message-Id: <20230518113453.1350757-17-dhowells@redhat.com>
-In-Reply-To: <20230518113453.1350757-1-dhowells@redhat.com>
-References: <20230518113453.1350757-1-dhowells@redhat.com>
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Chuck Lever <chuck.lever@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Neil Brown <neilb@suse.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Theodore T'so <tytso@mit.edu>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Tom Talpey <tom@talpey.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org
+Subject: [PATCH v4 0/9] fs: implement multigrain timestamps
+Date:   Thu, 18 May 2023 07:47:33 -0400
+Message-Id: <20230518114742.128950-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,177 +72,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert unix_stream_sendpage() to use sendmsg() with MSG_SPLICE_PAGES
-rather than directly splicing in the pages itself.
+v4:
+- add request_mask argument to generic_fillattr
+- Drop current_ctime helper and just code functionality into current_time
+- rework i_ctime accessor functions
 
-This allows ->sendpage() to be replaced by something that can handle
-multiple multipage folios in a single transaction.
+A few weeks ago, during one of the discussions around i_version, Dave
+Chinner wrote this:
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: netdev@vger.kernel.org
----
- net/unix/af_unix.c | 134 +++------------------------------------------
- 1 file changed, 7 insertions(+), 127 deletions(-)
+"You've missed the part where I suggested lifting the "nfsd sampled
+i_version" state into an inode state flag rather than hiding it in
+the i_version field. At that point, we could optimise away the
+secondary ctime updates just like you are proposing we do with the
+i_version updates.  Further, we could also use that state it to
+decide whether we need to use high resolution timestamps when
+recording ctime updates - if the nfsd has not sampled the
+ctime/i_version, we don't need high res timestamps to be recorded
+for ctime...."
 
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 976bc1c5e11b..115436ce1f8a 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -1839,24 +1839,6 @@ static void maybe_add_creds(struct sk_buff *skb, const struct socket *sock,
- 	}
- }
- 
--static int maybe_init_creds(struct scm_cookie *scm,
--			    struct socket *socket,
--			    const struct sock *other)
--{
--	int err;
--	struct msghdr msg = { .msg_controllen = 0 };
--
--	err = scm_send(socket, &msg, scm, false);
--	if (err)
--		return err;
--
--	if (unix_passcred_enabled(socket, other)) {
--		scm->pid = get_pid(task_tgid(current));
--		current_uid_gid(&scm->creds.uid, &scm->creds.gid);
--	}
--	return err;
--}
--
- static bool unix_skb_scm_eq(struct sk_buff *skb,
- 			    struct scm_cookie *scm)
- {
-@@ -2292,117 +2274,15 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
- static ssize_t unix_stream_sendpage(struct socket *socket, struct page *page,
- 				    int offset, size_t size, int flags)
- {
--	int err;
--	bool send_sigpipe = false;
--	bool init_scm = true;
--	struct scm_cookie scm;
--	struct sock *other, *sk = socket->sk;
--	struct sk_buff *skb, *newskb = NULL, *tail = NULL;
--
--	if (flags & MSG_OOB)
--		return -EOPNOTSUPP;
-+	struct bio_vec bvec;
-+	struct msghdr msg = { .msg_flags = flags | MSG_SPLICE_PAGES };
- 
--	other = unix_peer(sk);
--	if (!other || sk->sk_state != TCP_ESTABLISHED)
--		return -ENOTCONN;
--
--	if (false) {
--alloc_skb:
--		unix_state_unlock(other);
--		mutex_unlock(&unix_sk(other)->iolock);
--		newskb = sock_alloc_send_pskb(sk, 0, 0, flags & MSG_DONTWAIT,
--					      &err, 0);
--		if (!newskb)
--			goto err;
--	}
--
--	/* we must acquire iolock as we modify already present
--	 * skbs in the sk_receive_queue and mess with skb->len
--	 */
--	err = mutex_lock_interruptible(&unix_sk(other)->iolock);
--	if (err) {
--		err = flags & MSG_DONTWAIT ? -EAGAIN : -ERESTARTSYS;
--		goto err;
--	}
--
--	if (sk->sk_shutdown & SEND_SHUTDOWN) {
--		err = -EPIPE;
--		send_sigpipe = true;
--		goto err_unlock;
--	}
--
--	unix_state_lock(other);
-+	if (flags & MSG_SENDPAGE_NOTLAST)
-+		msg.msg_flags |= MSG_MORE;
- 
--	if (sock_flag(other, SOCK_DEAD) ||
--	    other->sk_shutdown & RCV_SHUTDOWN) {
--		err = -EPIPE;
--		send_sigpipe = true;
--		goto err_state_unlock;
--	}
--
--	if (init_scm) {
--		err = maybe_init_creds(&scm, socket, other);
--		if (err)
--			goto err_state_unlock;
--		init_scm = false;
--	}
--
--	skb = skb_peek_tail(&other->sk_receive_queue);
--	if (tail && tail == skb) {
--		skb = newskb;
--	} else if (!skb || !unix_skb_scm_eq(skb, &scm)) {
--		if (newskb) {
--			skb = newskb;
--		} else {
--			tail = skb;
--			goto alloc_skb;
--		}
--	} else if (newskb) {
--		/* this is fast path, we don't necessarily need to
--		 * call to kfree_skb even though with newskb == NULL
--		 * this - does no harm
--		 */
--		consume_skb(newskb);
--		newskb = NULL;
--	}
--
--	if (skb_append_pagefrags(skb, page, offset, size, MAX_SKB_FRAGS)) {
--		tail = skb;
--		goto alloc_skb;
--	}
--
--	skb->len += size;
--	skb->data_len += size;
--	skb->truesize += size;
--	refcount_add(size, &sk->sk_wmem_alloc);
--
--	if (newskb) {
--		err = unix_scm_to_skb(&scm, skb, false);
--		if (err)
--			goto err_state_unlock;
--		spin_lock(&other->sk_receive_queue.lock);
--		__skb_queue_tail(&other->sk_receive_queue, newskb);
--		spin_unlock(&other->sk_receive_queue.lock);
--	}
--
--	unix_state_unlock(other);
--	mutex_unlock(&unix_sk(other)->iolock);
--
--	other->sk_data_ready(other);
--	scm_destroy(&scm);
--	return size;
--
--err_state_unlock:
--	unix_state_unlock(other);
--err_unlock:
--	mutex_unlock(&unix_sk(other)->iolock);
--err:
--	kfree_skb(newskb);
--	if (send_sigpipe && !(flags & MSG_NOSIGNAL))
--		send_sig(SIGPIPE, current, 0);
--	if (!init_scm)
--		scm_destroy(&scm);
--	return err;
-+	bvec_set_page(&bvec, page, size, offset);
-+	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-+	return unix_stream_sendmsg(socket, &msg, size);
- }
- 
- static int unix_seqpacket_sendmsg(struct socket *sock, struct msghdr *msg,
+While I don't think we can practically optimize away ctime updates
+like we do with i_version, I do like the idea of using this scheme to
+indicate when we need to use a high-res timestamp.
+
+The basic idea here is to use an unused bit in the timespec64.tv_nsec
+field to act as a flag to indicate that the value was queried since
+the last time we updated it. If that flag is set when we go to update
+the timestamp, we'll clear it and grab a fine-grained ktime value for
+the update.
+
+The first couple of patches add the necessary infrastructure, and the
+last several patches update various filesystems to use it. For now, I'm
+focusing on widely-used, exportable filesystems, but this scheme is
+probably suitable for most filesystems in the kernel.
+
+Note that this does cause at least one test failure with LTP's statx06
+test. I have submitted a patch to fix the issue (by changing how it
+fetches the "after" timestamp in that test).
+
+Jeff Layton (9):
+  fs: pass the request_mask to generic_fillattr
+  fs: add infrastructure for multigrain inode i_m/ctime
+  overlayfs: allow it to handle multigrain timestamps
+  nfsd: ensure we use ctime_peek to grab the inode->i_ctime
+  ksmbd: use ctime_peek to grab the ctime out of the inode
+  tmpfs: add support for multigrain timestamps
+  xfs: switch to multigrain timestamps
+  ext4: convert to multigrain timestamps
+  btrfs: convert to multigrain timestamps
+
+ fs/9p/vfs_inode.c             |  4 +--
+ fs/9p/vfs_inode_dotl.c        |  4 +--
+ fs/afs/inode.c                |  2 +-
+ fs/btrfs/delayed-inode.c      |  2 +-
+ fs/btrfs/inode.c              |  4 +--
+ fs/btrfs/super.c              |  5 +--
+ fs/btrfs/tree-log.c           |  2 +-
+ fs/ceph/inode.c               |  2 +-
+ fs/cifs/inode.c               |  2 +-
+ fs/coda/inode.c               |  3 +-
+ fs/ecryptfs/inode.c           |  5 +--
+ fs/erofs/inode.c              |  2 +-
+ fs/exfat/file.c               |  2 +-
+ fs/ext2/inode.c               |  2 +-
+ fs/ext4/inode.c               | 19 ++++++++--
+ fs/ext4/super.c               |  2 +-
+ fs/f2fs/file.c                |  2 +-
+ fs/fat/file.c                 |  2 +-
+ fs/fuse/dir.c                 |  2 +-
+ fs/gfs2/inode.c               |  2 +-
+ fs/hfsplus/inode.c            |  2 +-
+ fs/inode.c                    | 48 +++++++++++++++++++++----
+ fs/kernfs/inode.c             |  2 +-
+ fs/ksmbd/smb2pdu.c            | 28 +++++++--------
+ fs/ksmbd/vfs.c                |  3 +-
+ fs/libfs.c                    |  4 +--
+ fs/minix/inode.c              |  2 +-
+ fs/nfs/inode.c                |  2 +-
+ fs/nfs/namespace.c            |  3 +-
+ fs/nfsd/nfsfh.c               | 11 ++++--
+ fs/ntfs3/file.c               |  2 +-
+ fs/ocfs2/file.c               |  2 +-
+ fs/orangefs/inode.c           |  2 +-
+ fs/overlayfs/file.c           |  7 ++--
+ fs/overlayfs/util.c           |  2 +-
+ fs/proc/base.c                |  4 +--
+ fs/proc/fd.c                  |  2 +-
+ fs/proc/generic.c             |  2 +-
+ fs/proc/proc_net.c            |  2 +-
+ fs/proc/proc_sysctl.c         |  2 +-
+ fs/proc/root.c                |  3 +-
+ fs/stat.c                     | 59 ++++++++++++++++++++++++------
+ fs/sysv/itree.c               |  3 +-
+ fs/ubifs/dir.c                |  2 +-
+ fs/udf/symlink.c              |  2 +-
+ fs/vboxsf/utils.c             |  2 +-
+ fs/xfs/libxfs/xfs_inode_buf.c |  2 +-
+ fs/xfs/xfs_inode_item.c       |  2 +-
+ fs/xfs/xfs_iops.c             |  4 +--
+ fs/xfs/xfs_super.c            |  2 +-
+ include/linux/fs.h            | 68 +++++++++++++++++++++++++++++++++--
+ mm/shmem.c                    |  4 +--
+ 52 files changed, 260 insertions(+), 95 deletions(-)
+
+-- 
+2.40.1
 
