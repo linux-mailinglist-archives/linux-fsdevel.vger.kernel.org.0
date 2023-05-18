@@ -2,60 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 71DF970834A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 15:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69B3570836A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 16:01:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231279AbjERN4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 09:56:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38764 "EHLO
+        id S231504AbjEROBM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 10:01:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230339AbjERN4K (ORCPT
+        with ESMTP id S230211AbjEROBL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 09:56:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4428710D5;
-        Thu, 18 May 2023 06:56:09 -0700 (PDT)
+        Thu, 18 May 2023 10:01:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E1ED10E5;
+        Thu, 18 May 2023 07:01:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CC7F96410A;
-        Thu, 18 May 2023 13:56:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FEB3C4339B;
-        Thu, 18 May 2023 13:56:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0988561561;
+        Thu, 18 May 2023 14:01:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22874C433D2;
+        Thu, 18 May 2023 14:01:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684418168;
-        bh=hHyuhDMjdrGvdqZgER2nh0JzKbT7a7ZLHIcfi0F4Ds0=;
+        s=k20201202; t=1684418462;
+        bh=4Im3v0IgUYIeUV6N/ZeLmE9WDFNsWEqr0RUZml2Q5/Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dsloX7t6KQCKsExTq09JdNRt4DRwUADPhd104IQM8lXR3JQCYdP+zIytegAbnCRMT
-         jgvy89L2iCP+Sslpz4GaGLrPfHo7HlXtl1+3FKK7BaTZ8kXOdFhq0EDMHMjFonm3Z3
-         eNXnJPLDpwTWqQveTTDpXLwU7tdC2ZCgQp6ngSBLzbq8XlCNlJdfesp80aNWQk/HUD
-         YVh910VanHRvrXq3u0T+th3WafPEUwjt38uVLv6nU2gv6+gWNOm1ZYMsf2AZG0gllr
-         oDn0CKndio/khJxd/pxBEVOD1/JvMWgDsL2+MdpjurYaLbM1gwW40SQvYhlSMf6/Ra
-         SUQuGhpwlMqkA==
-Date:   Thu, 18 May 2023 15:56:03 +0200
+        b=t+wm02X+LoomXyftqhOFhQZD69cBSUgk/6Ligw+Qe7ZvOOhrUO4Ea5O85zvIydwDZ
+         aX4rEjeel0BD52p3R6HRuq6tcPW14tEVhoWlBeqOHPLaIlWnJrpQdXmAl9DBuHYS4D
+         /2QmC7dLUldYb2D1DqBJycfPLgP9OvnBMLpFQtPfZjbZN6uixEATGZN03ky6DQjyNT
+         w+oIOTy+K7XiJyjABLToRlAqoVdE0r0mcIVTZEassNa210h3Nc2rMlFQMRSKM8JjJm
+         m7tvk7Kf91/9+Qvm7Yxs71SN7WAYnQ0JUyxeZTzargOpYG3k0lye9F6ZdpiDbJ57KN
+         zZkrN2epRjd5w==
+Date:   Thu, 18 May 2023 16:00:57 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 5/9] block: introduce holder ops
-Message-ID: <20230518-erdkruste-unteilbar-cb91c62511c9@brauner>
-References: <20230516-kommode-weizen-4c410968c1f6@brauner>
- <20230517073031.GF27026@lst.de>
- <20230517-einreden-dermatologisch-9c6a3327a689@brauner>
- <20230517080613.GA31383@lst.de>
- <20230517-erhoffen-degradieren-d0aa039f0e1d@brauner>
- <20230517120259.GA16915@lst.de>
- <20230517-holzfiguren-anbot-490e5a7f74fe@brauner>
- <20230517142609.GA28898@lst.de>
- <20230518-teekanne-knifflig-a4ea8c3c885a@brauner>
- <20230518131216.GA32076@lst.de>
+To:     Karel Zak <kzak@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: Re: [ANNOUNCE] util-linux v2.39
+Message-ID: <20230518-gejagt-vervollkommnen-01451a4325b9@brauner>
+References: <20230517112242.3rubpxvxhzsc4kt2@ws.net.home>
+ <20230517-mahnmal-setzen-37937c35cf78@brauner>
+ <20230518102316.f6s6v6xxnicx646r@ws.net.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230518131216.GA32076@lst.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <20230518102316.f6s6v6xxnicx646r@ws.net.home>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -64,17 +56,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 18, 2023 at 03:12:16PM +0200, Christoph Hellwig wrote:
-> On Thu, May 18, 2023 at 10:13:04AM +0200, Christian Brauner wrote:
-> > Fwiw, I didn't mean to have a special device handler for an O_PATH fd.
-> > I really just tried to figure out whether it would make sense to have an
-> > fd-based block device lookup function because right now we only have
-> > blkdev_get_by_path() and we'd be passing blkdev fds through the mount
-> > api. But I understand now how I'd likely do it. So now just finding time
-> > to actually implement it.
+On Thu, May 18, 2023 at 12:23:16PM +0200, Karel Zak wrote:
+> On Wed, May 17, 2023 at 03:48:54PM +0200, Christian Brauner wrote:
+> > This is a very exciting release! There's good reason for us to be happy
+> > imho. This is the first release of util-linux with comprehensive support
+> > for the new mount api which is very exciting.
 > 
-> What's wrong with blkdev_get_by_dev(file_inode(file)->i_rdev) after
-> the sanity checks from lookup_bdev (S_ISBLK and may_open_dev)?
+> We will see how many things in libmount and kernel are not ready ;-)
 
-Yeah, that's what I realized could work fine. I just need to check all
-fses how they currently do this and how to do this cleanly.
+Yeah, I think we will indeed...
+So, I think we need to port overlayfs to the new mount api because of
+https://github.com/util-linux/util-linux/issues/1992#issuecomment-1486475153
+
+> 
+> > A part of that is of course the support for idmapped mounts and the
+> > ability to recursively change mount properties, i.e., idempotently
+> > change the mount properties of a whole mount tree.
+> > 
+> > It's also great to see support for disk sequence numbers via the
+> > BLKGETDISKSEQ ioctl and the port to util-linux to rely on
+> 
+> BLKGETDISKSEQ is supported in the blockdev command only.
+> 
+> Lennart has also idea to support it in libmount to verify devices
+> before the filesystem is attached to VFS. 
+> 
+> https://github.com/util-linux/util-linux/issues/1786
+> 
+> That's something we can work on in the next release.
+
+Yeah, I remember discussing that. Though that doesn't eliminate all
+races as we discussed on the thread and I plan to implement what I said in
+https://github.com/util-linux/util-linux/issues/1786#issuecomment-1410515391
+rather soon and talked about at LSFMM last week.
+
+> 
+> > statx(AT_STATX_DONT_SYNC|AT_NO_AUTOMOUNT) to avoid tripping over
+> > automounts or hung network filesystems as we just recently discussed
+> > this!
+> > 
+> > Thanks for working on this and hopefully we can add the missing pieces
+> > of the new mount api in the coming months!
+> 
+> I would like to make the v2.40 development cycle shorter. The v2.39
+> cycle was excessively long and large.
+
+Yeah, but that was kinda expected given the switch to the new mount api.
+I mean, after I did the initial support to get idmapped mounts working
+in there you still had to port all the rest of libmount...
