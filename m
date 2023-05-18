@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A093707F9D
+	by mail.lfdr.de (Postfix) with ESMTP id CE324707F9E
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 13:37:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbjERLhd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 07:37:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60364 "EHLO
+        id S231510AbjERLhe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 07:37:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231441AbjERLgt (ORCPT
+        with ESMTP id S231443AbjERLgx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 07:36:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E501BE9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 04:36:03 -0700 (PDT)
+        Thu, 18 May 2023 07:36:53 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3560C10C6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 04:36:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684409763;
+        s=mimecast20190719; t=1684409765;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=arPLIYOMzcdUPWLjuF22tHo0vP4jVzFFThikgCzP+CE=;
-        b=B4YPxMh3mFJwxulLSu8BE1aodJ0RrmckH7IQp04hkT2gstvrC87RKrFOHcI/LUQN6KPTWt
-        y2IhjRWZGzAyndnCarDvqNycedPnq/jFbw1ZPccYBN7lgGxnof1JgqlbvBln4cYD4g4bMq
-        corbumGWQASnNUrW5Lz3wyZJV5xu1TI=
+        bh=vVs0CsGrBKFATDm79TCVboT9gSnZlC7XDeXTGZfAJzM=;
+        b=IMrHobwuwL0OdVOO8/wULcxQnoc3GDU6fTkdLJ0WR4D/jJ3cYeuaoNhr63cA5EMrX8fOqp
+        QKeLfzYAP5qn0CoR9iP0sej4kzZOutzIKw2ZOqQHBfgvww65YmnKvVwIaB7Ezai5VS8TbF
+        7+ih65QqcJEkA5weUc0mJHoNsZ7Ie0A=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-253-zr9gaF3vOCeYO5wuwbnLTQ-1; Thu, 18 May 2023 07:35:58 -0400
-X-MC-Unique: zr9gaF3vOCeYO5wuwbnLTQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+ us-mta-266-miPRkfAKPhyxWJ8vCer5_A-1; Thu, 18 May 2023 07:36:01 -0400
+X-MC-Unique: miPRkfAKPhyxWJ8vCer5_A-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 19F6086C60D;
-        Thu, 18 May 2023 11:35:57 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C56AD10146F8;
+        Thu, 18 May 2023 11:36:00 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6844440C206F;
-        Thu, 18 May 2023 11:35:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A1FB2166B31;
+        Thu, 18 May 2023 11:35:58 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     David Howells <dhowells@redhat.com>,
@@ -56,29 +56,26 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH net-next v8 13/16] udp: Convert udp_sendpage() to use MSG_SPLICE_PAGES
-Date:   Thu, 18 May 2023 12:34:50 +0100
-Message-Id: <20230518113453.1350757-14-dhowells@redhat.com>
+Subject: [PATCH net-next v8 14/16] ip: Remove ip_append_page()
+Date:   Thu, 18 May 2023 12:34:51 +0100
+Message-Id: <20230518113453.1350757-15-dhowells@redhat.com>
 In-Reply-To: <20230518113453.1350757-1-dhowells@redhat.com>
 References: <20230518113453.1350757-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert udp_sendpage() to use sendmsg() with MSG_SPLICE_PAGES rather than
-directly splicing in the pages itself.
-
-This allows ->sendpage() to be replaced by something that can handle
-multiple multipage folios in a single transaction.
+ip_append_page() is no longer used with the removal of udp_sendpage(), so
+remove it.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
@@ -93,76 +90,197 @@ cc: netdev@vger.kernel.org
 ---
 
 Notes:
-    ver #6)
-     - udp_sendpage() shouldn't lock the socket around udp_sendpage().
-     - udp_sendpage() should only set MSG_MORE if MSG_SENDPAGE_NOTLAST is set.
+    ver #7)
+     - Remove now-unused csum_page().
 
- net/ipv4/udp.c | 51 ++++++--------------------------------------------
- 1 file changed, 6 insertions(+), 45 deletions(-)
+ include/net/ip.h     |   2 -
+ net/ipv4/ip_output.c | 148 ++-----------------------------------------
+ 2 files changed, 4 insertions(+), 146 deletions(-)
 
-diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index aa32afd871ee..2879dc6d66ea 100644
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -1332,54 +1332,15 @@ EXPORT_SYMBOL(udp_sendmsg);
- int udp_sendpage(struct sock *sk, struct page *page, int offset,
- 		 size_t size, int flags)
- {
--	struct inet_sock *inet = inet_sk(sk);
--	struct udp_sock *up = udp_sk(sk);
--	int ret;
-+	struct bio_vec bvec;
-+	struct msghdr msg = { .msg_flags = flags | MSG_SPLICE_PAGES };
+diff --git a/include/net/ip.h b/include/net/ip.h
+index c3fffaa92d6e..7627a4df893b 100644
+--- a/include/net/ip.h
++++ b/include/net/ip.h
+@@ -220,8 +220,6 @@ int ip_append_data(struct sock *sk, struct flowi4 *fl4,
+ 		   unsigned int flags);
+ int ip_generic_getfrag(void *from, char *to, int offset, int len, int odd,
+ 		       struct sk_buff *skb);
+-ssize_t ip_append_page(struct sock *sk, struct flowi4 *fl4, struct page *page,
+-		       int offset, size_t size, int flags);
+ struct sk_buff *__ip_make_skb(struct sock *sk, struct flowi4 *fl4,
+ 			      struct sk_buff_head *queue,
+ 			      struct inet_cork *cork);
+diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
+index c7db973b5d29..553c740a6bfb 100644
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -946,17 +946,6 @@ ip_generic_getfrag(void *from, char *to, int offset, int len, int odd, struct sk
+ }
+ EXPORT_SYMBOL(ip_generic_getfrag);
  
- 	if (flags & MSG_SENDPAGE_NOTLAST)
--		flags |= MSG_MORE;
+-static inline __wsum
+-csum_page(struct page *page, int offset, int copy)
+-{
+-	char *kaddr;
+-	__wsum csum;
+-	kaddr = kmap(page);
+-	csum = csum_partial(kaddr + offset, copy, 0);
+-	kunmap(page);
+-	return csum;
+-}
 -
--	if (!up->pending) {
--		struct msghdr msg = {	.msg_flags = flags|MSG_MORE };
--
--		/* Call udp_sendmsg to specify destination address which
--		 * sendpage interface can't pass.
--		 * This will succeed only when the socket is connected.
--		 */
--		ret = udp_sendmsg(sk, &msg, 0);
--		if (ret < 0)
--			return ret;
--	}
--
--	lock_sock(sk);
-+		msg.msg_flags |= MSG_MORE;
- 
--	if (unlikely(!up->pending)) {
--		release_sock(sk);
--
--		net_dbg_ratelimited("cork failed\n");
--		return -EINVAL;
--	}
--
--	ret = ip_append_page(sk, &inet->cork.fl.u.ip4,
--			     page, offset, size, flags);
--	if (ret == -EOPNOTSUPP) {
--		release_sock(sk);
--		return sock_no_sendpage(sk->sk_socket, page, offset,
--					size, flags);
--	}
--	if (ret < 0) {
--		udp_flush_pending_frames(sk);
--		goto out;
--	}
--
--	up->len += size;
--	if (!(READ_ONCE(up->corkflag) || (flags&MSG_MORE)))
--		ret = udp_push_pending_frames(sk);
--	if (!ret)
--		ret = size;
--out:
--	release_sock(sk);
--	return ret;
-+	bvec_set_page(&bvec, page, size, offset);
-+	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-+	return udp_sendmsg(sk, &msg, size);
+ static int __ip_append_data(struct sock *sk,
+ 			    struct flowi4 *fl4,
+ 			    struct sk_buff_head *queue,
+@@ -1327,10 +1316,10 @@ static int ip_setup_cork(struct sock *sk, struct inet_cork *cork,
  }
  
- #define UDP_SKB_IS_STATELESS 0x80000000
+ /*
+- *	ip_append_data() and ip_append_page() can make one large IP datagram
+- *	from many pieces of data. Each pieces will be holded on the socket
+- *	until ip_push_pending_frames() is called. Each piece can be a page
+- *	or non-page data.
++ *	ip_append_data() can make one large IP datagram from many pieces of
++ *	data.  Each piece will be held on the socket until
++ *	ip_push_pending_frames() is called. Each piece can be a page or
++ *	non-page data.
+  *
+  *	Not only UDP, other transport protocols - e.g. raw sockets - can use
+  *	this interface potentially.
+@@ -1363,135 +1352,6 @@ int ip_append_data(struct sock *sk, struct flowi4 *fl4,
+ 				from, length, transhdrlen, flags);
+ }
+ 
+-ssize_t	ip_append_page(struct sock *sk, struct flowi4 *fl4, struct page *page,
+-		       int offset, size_t size, int flags)
+-{
+-	struct inet_sock *inet = inet_sk(sk);
+-	struct sk_buff *skb;
+-	struct rtable *rt;
+-	struct ip_options *opt = NULL;
+-	struct inet_cork *cork;
+-	int hh_len;
+-	int mtu;
+-	int len;
+-	int err;
+-	unsigned int maxfraglen, fragheaderlen, fraggap, maxnonfragsize;
+-
+-	if (inet->hdrincl)
+-		return -EPERM;
+-
+-	if (flags&MSG_PROBE)
+-		return 0;
+-
+-	if (skb_queue_empty(&sk->sk_write_queue))
+-		return -EINVAL;
+-
+-	cork = &inet->cork.base;
+-	rt = (struct rtable *)cork->dst;
+-	if (cork->flags & IPCORK_OPT)
+-		opt = cork->opt;
+-
+-	if (!(rt->dst.dev->features & NETIF_F_SG))
+-		return -EOPNOTSUPP;
+-
+-	hh_len = LL_RESERVED_SPACE(rt->dst.dev);
+-	mtu = cork->gso_size ? IP_MAX_MTU : cork->fragsize;
+-
+-	fragheaderlen = sizeof(struct iphdr) + (opt ? opt->optlen : 0);
+-	maxfraglen = ((mtu - fragheaderlen) & ~7) + fragheaderlen;
+-	maxnonfragsize = ip_sk_ignore_df(sk) ? 0xFFFF : mtu;
+-
+-	if (cork->length + size > maxnonfragsize - fragheaderlen) {
+-		ip_local_error(sk, EMSGSIZE, fl4->daddr, inet->inet_dport,
+-			       mtu - (opt ? opt->optlen : 0));
+-		return -EMSGSIZE;
+-	}
+-
+-	skb = skb_peek_tail(&sk->sk_write_queue);
+-	if (!skb)
+-		return -EINVAL;
+-
+-	cork->length += size;
+-
+-	while (size > 0) {
+-		/* Check if the remaining data fits into current packet. */
+-		len = mtu - skb->len;
+-		if (len < size)
+-			len = maxfraglen - skb->len;
+-
+-		if (len <= 0) {
+-			struct sk_buff *skb_prev;
+-			int alloclen;
+-
+-			skb_prev = skb;
+-			fraggap = skb_prev->len - maxfraglen;
+-
+-			alloclen = fragheaderlen + hh_len + fraggap + 15;
+-			skb = sock_wmalloc(sk, alloclen, 1, sk->sk_allocation);
+-			if (unlikely(!skb)) {
+-				err = -ENOBUFS;
+-				goto error;
+-			}
+-
+-			/*
+-			 *	Fill in the control structures
+-			 */
+-			skb->ip_summed = CHECKSUM_NONE;
+-			skb->csum = 0;
+-			skb_reserve(skb, hh_len);
+-
+-			/*
+-			 *	Find where to start putting bytes.
+-			 */
+-			skb_put(skb, fragheaderlen + fraggap);
+-			skb_reset_network_header(skb);
+-			skb->transport_header = (skb->network_header +
+-						 fragheaderlen);
+-			if (fraggap) {
+-				skb->csum = skb_copy_and_csum_bits(skb_prev,
+-								   maxfraglen,
+-						    skb_transport_header(skb),
+-								   fraggap);
+-				skb_prev->csum = csum_sub(skb_prev->csum,
+-							  skb->csum);
+-				pskb_trim_unique(skb_prev, maxfraglen);
+-			}
+-
+-			/*
+-			 * Put the packet on the pending queue.
+-			 */
+-			__skb_queue_tail(&sk->sk_write_queue, skb);
+-			continue;
+-		}
+-
+-		if (len > size)
+-			len = size;
+-
+-		if (skb_append_pagefrags(skb, page, offset, len,
+-					 MAX_SKB_FRAGS)) {
+-			err = -EMSGSIZE;
+-			goto error;
+-		}
+-
+-		if (skb->ip_summed == CHECKSUM_NONE) {
+-			__wsum csum;
+-			csum = csum_page(page, offset, len);
+-			skb->csum = csum_block_add(skb->csum, csum, skb->len);
+-		}
+-
+-		skb_len_add(skb, len);
+-		refcount_add(len, &sk->sk_wmem_alloc);
+-		offset += len;
+-		size -= len;
+-	}
+-	return 0;
+-
+-error:
+-	cork->length -= size;
+-	IP_INC_STATS(sock_net(sk), IPSTATS_MIB_OUTDISCARDS);
+-	return err;
+-}
+-
+ static void ip_cork_release(struct inet_cork *cork)
+ {
+ 	cork->flags &= ~IPCORK_OPT;
 
