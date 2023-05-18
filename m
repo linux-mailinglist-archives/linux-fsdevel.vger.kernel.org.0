@@ -2,179 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B511708C14
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 01:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F2D8708C49
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 01:31:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229819AbjERXJH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 19:09:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60802 "EHLO
+        id S229969AbjERXbx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 19:31:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjERXJG (ORCPT
+        with ESMTP id S229513AbjERXbw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 19:09:06 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40BE218D;
-        Thu, 18 May 2023 16:09:04 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id AA2BC6E3;
-        Thu, 18 May 2023 23:09:03 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AA2BC6E3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1684451343; bh=1M5d91X9MObXWb0pgAgYuQeNohJxmU2Ps8GnVyUg/3w=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=jepeY1C96EP+fR9RyG121qTdDSV3QXN1Z5+jxxnfiNNGC7DCKW5gw7xDz4PnbrzMI
-         ww2ex1Yym24pC7VvTol2CGQ092poGEmeRSgxIUy4n+dJ4tC/B5FC4l9xMsyFa7PEu6
-         M7ab1tT7uvDSQOQiEjBavSbzeQVDUA5zmPCzSdgvNcVEd84dEsgiGEEukl8H2y1xM5
-         y9RDqDAjiJdBcKjMZEYllzN5Pq3bIdR6s7KQhrv3K30nhvKppaEKaW3P9Owls4aOR9
-         yABduy2xRUq2Nd4S0vVNc9Hx5RsYpuZVTQ9cjTSLpW9UdxtOYiw1K1h2HyFRgEzN3a
-         KrSDco9sso3zg==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Luis Chamberlain <mcgrof@kernel.org>, jake@lwn.net,
-        hch@infradead.org, djwong@kernel.org, dchinner@redhat.com
-Cc:     ritesh.list@gmail.com, rgoldwyn@suse.com, jack@suse.cz,
-        linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com,
-        mcgrof@kernel.org
-Subject: Re: [PATCH v2] Documentation: add initial iomap kdoc
-In-Reply-To: <20230518150105.3160445-1-mcgrof@kernel.org>
-References: <20230518150105.3160445-1-mcgrof@kernel.org>
-Date:   Thu, 18 May 2023 17:09:02 -0600
-Message-ID: <87zg61p78x.fsf@meer.lwn.net>
+        Thu, 18 May 2023 19:31:52 -0400
+Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18493C1;
+        Thu, 18 May 2023 16:31:51 -0700 (PDT)
+Received: by mail-oo1-xc2c.google.com with SMTP id 006d021491bc7-554f951e658so339823eaf.0;
+        Thu, 18 May 2023 16:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684452710; x=1687044710;
+        h=content-transfer-encoding:in-reply-to:cc:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eYgDPuLZiKeSPvGEjWOY9Kw5MPWojzL4LRufpH719TQ=;
+        b=IQO2fjLRAy+iPaC34snXbtkrfVQnWY04g6bmUzfpFaMHFgtdgckYGNwyiqkjLHVqei
+         d+M56JxXARfISb84dEqsW7HAX/frhxY0d1E67eqDyxKX8JiALNSH5luxfPnybUN5im28
+         Wg9P/TEDQwUub1oVvSVPIgrqbQhTFuGzPCJnCI+6OsZJ5eVdCr8yn67totj8xxtXlTvF
+         Tb1nsj8dEGgho0yp45uSoSifG97voZSAoJkchZpnclk4zlP1Trdxall1WhaGbkjYF3d6
+         4ISA2TjNgvswptaNVztlE5nb0Skan9827uqHshyLtZJPSeTlQIN3YXWnnCfep9wLzSfg
+         a7gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684452710; x=1687044710;
+        h=content-transfer-encoding:in-reply-to:cc:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eYgDPuLZiKeSPvGEjWOY9Kw5MPWojzL4LRufpH719TQ=;
+        b=Z2leHZzuoqF2CV6HgQGavQPte2U5iU/SZPTKDgeuVK8AaR/J/lt6zUQyTtwQJ1Lwse
+         mL1A4QkzTuo/OKViRCCWQjpqbug3MRu2mHpOzwt1B9/3nUbp4fur+nyKRDEKIhH5Hw/C
+         2EDMTmOmDd1FKoBxTwqdadLYuaHXjW6ktbyghH6FPq2EXIEBl6VNjo3bWPWtvx1luHGM
+         pd9t3PVwXg7Q9kDWrFIqe8WFjlH+NxNpARj6xOpMOjaAx0AHPD1AAGykdD/Yq4a4xgUz
+         ipkwdTHacWKBrc64bI9I/kpf1FBy5vn58EfW5vADY/Blk2zBsXoIXpV02o6gcJe1FT9k
+         2r/Q==
+X-Gm-Message-State: AC+VfDzAefDBd5kA0zUzlbMVSeoTRfguQWineT1B+d6TT1MHUezRnLu8
+        r7uTQ4zyJMPLs8Nrp3pd+dL2QR+On0k=
+X-Google-Smtp-Source: ACHHUZ5FZaUANm5x68UabkwtO8tsnGuh3O1Ul5AELkv5gASaJYrr9FXsm6HWXp9lUXSQnEEq68QxvA==
+X-Received: by 2002:a4a:764a:0:b0:54c:b507:2616 with SMTP id w10-20020a4a764a000000b0054cb5072616mr18716ooe.3.1684452710343;
+        Thu, 18 May 2023 16:31:50 -0700 (PDT)
+Received: from [192.168.0.92] (cpe-70-94-157-206.satx.res.rr.com. [70.94.157.206])
+        by smtp.gmail.com with ESMTPSA id n14-20020a4abd0e000000b0052a32a952e9sm917047oop.48.2023.05.18.16.31.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 May 2023 16:31:49 -0700 (PDT)
+Message-ID: <652d32c5-4b33-ce3a-3de7-9ebc064bbdcb@gmail.com>
+Date:   Thu, 18 May 2023 18:31:47 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [ANNOUNCE] util-linux v2.39
+Content-Language: en-US
+To:     Karel Zak <kzak@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, util-linux@vger.kernel.org
+References: <20230517112242.3rubpxvxhzsc4kt2@ws.net.home>
+From:   Bruce Dubbs <bruce.dubbs@gmail.com>
+Cc:     "Douglas R. Reno" <renodr2002@gmail.com>
+In-Reply-To: <20230517112242.3rubpxvxhzsc4kt2@ws.net.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Luis Chamberlain <mcgrof@kernel.org> writes:
+On 5/17/23 06:22, Karel Zak wrote:
+> 
+> The util-linux release v2.39 is available at
+>                                    
+>    http://www.kernel.org/pub/linux/utils/util-linux/v2.39
+>                                    
+> Feedback and bug reports, as always, are welcomed.
 
-> To help with iomap adoption / porting I set out the goal to try to
-> help improve the iomap documentation and get general guidance for
-> filesystem conversions over from buffer-head in time for this year's
-> LSFMM. The end results thanks to the review of Darrick, Christoph and
-> others is on the kernelnewbies wiki [0].
->
-> This brings this forward a relevant subset of that documentation to
-> the kernel in kdoc format and also kdoc'ifies the existing documentation
-> on iomap.h.
+Karel,  I have installed util-linux v2.39 in LFS and have run into a problem with one 
+test, test_mkfds.  Actually the test passes, but does not clean up after itself. 
+What is left over is:
 
-OK, I've had a read through it.  Thanks again for doing it, we
-definitely need this.  There are typos and such that Randy has already
-pointed out, so I won't bother with those.  My main comment is mainly a
-high level one, along with a handful of nits.
+tester   32245     1  0 15:43 ?        00:00:00 /sources/util-linux-2.39/test_mkfds 
+-q udp 3 4 server-port=34567 client-port=23456 server-do-bind=1 client-do-bind=1 
+client-do-connect=1
+tester   32247     1  0 15:43 ?        00:00:00 /sources/util-linux-2.39/test_mkfds 
+-q udp6 3 4 lite=1 server-port=34567 client-port=23456 server-do-bind=1 
+client-do-bind=1 client-do-connect=1
 
-My high-level question is: who is the audience for this document?  I'm
-guessing it's filesystem developers?  Whoever it is, the document could
-benefit from an introductory section, aimed at that audience, saying how
-to get *started* with iomap.  What include files do I need?  How do I
-provide a set of iomap callbacks and make them visible to the VFS?
-Without that sort of stuff, it makes for a rough jumping-in experience.
+It's possible it may be due to something we are doing inside our chroot environment, 
+but we've not had this type of problem with earlier versions of util-linux.
 
-The nits:
+In all I do have:
 
-> diff --git a/Documentation/filesystems/iomap.rst b/Documentation/filesystems/iomap.rst
-> new file mode 100644
-> index 000000000000..be487030fcff
-> --- /dev/null
-> +++ b/Documentation/filesystems/iomap.rst
-> @@ -0,0 +1,253 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. _iomap:
+   All 261 tests PASSED
 
-I don't think you use this label anywhere, so it doesn't need to be here.
+but the left over processes interfere later when we try to remove the non-root user, 
+tester, that runs the tests.  I can work around the problem by disabling test_mkfds, 
+but thought you would like to know.
 
-> +..
-> +        Mapping of heading styles within this document:
-> +        Heading 1 uses "====" above and below
-> +        Heading 2 uses "===="
-> +        Heading 3 uses "----"
-> +        Heading 4 uses "````"
-> +        Heading 5 uses "^^^^"
-> +        Heading 6 uses "~~~~"
-> +        Heading 7 uses "...."
-
-We have a set of conventions for section headings, nicely documented in
-Documentation/doc-guide/sphinx.rst.  This hierarchy doesn't quite match
-it, but you don't get far enough into it to hit the differences.  I'd
-just take this out.
-
-> +
-> +        Sections are manually numbered because apparently that's what everyone
-> +        does in the kernel.
-
-The sections are *not* manually numbered, which I think is entirely
-fine.  But that makes this comment a bit weird.
-
-> +.. contents:: Table of Contents
-> +   :local:
-> +
-> +=====
-> +iomap
-> +=====
-> +
-> +.. kernel-doc:: include/linux/iomap.h
-> +
-> +A modern block abstraction
-> +==========================
-> +
-> +**iomap** allows filesystems to query storage media for data using *byte
-> +ranges*. Since block mapping are provided for a *byte ranges* for cache data in
-> +memory, in the page cache, naturally this implies operations on block ranges
-> +will also deal with *multipage* operations in the page cache. **Folios** are
-> +used to help provide *multipage* operations in memory for the *byte ranges*
-> +being worked on.
-
-This text (and the document as a whole) is a bit heavy on the markup.
-I'd consider taking some of it out to improve the plain-text readability.
-
-[...]
-
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index e2b836c2e119..ee4b026995ac 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -10,6 +10,30 @@
->  #include <linux/mm_types.h>
->  #include <linux/blkdev.h>
->  
-> +/**
-> + * DOC: Introduction
-> + *
-> + * iomap allows filesystems to sequentially iterate over byte addressable block
-> + * ranges on an inode and apply operations to it.
-> + *
-> + * iomap grew out of the need to provide a modern block mapping abstraction for
-> + * filesystems with the different IO access methods they support and assisting
-> + * the VFS with manipulating files into the page cache. iomap helpers are
-> + * provided for each of these mechanisms. However, block mapping is just one of
-> + * the features of iomap, given iomap supports DAX IO for filesystems and also
-> + * supports such the ``lseek``/``llseek`` ``SEEK_DATA``/``SEEK_HOLE``
-> + * interfaces.
-> + *
-> + * Block mapping provides a mapping between data cached in memory and the
-> + * location on persistent storage where that data lives. `LWN has an great
-> + * review of the old buffer-heads block-mapping and why they are inefficient
-> + * <https://lwn.net/Articles/930173/>`, since the inception of Linux.  Since
-> + * **buffer-heads** work on a 512-byte block based paradigm, it creates an
-> + * overhead for modern storage media which no longer necessarily works only on
-> + * 512-blocks. iomap is flexible providing block ranges in *bytes*. iomap, with
-> + * the support of folios, provides a modern replacement for **buffer-heads**.
-
-As much as I love to see LWN references embedded in as many kernel files
-as possible, I'm honestly not sure that the iomap documentation needs to
-talk about buffer heads at all - except maybe for help in replacing
-them.  In particular, I don't think that the documentation needs to
-justify iomap's existence; we can look at the commit logs if we need to
-remind ourselves of that.
-
-Thanks,
-
-jon
+   -- Bruce
