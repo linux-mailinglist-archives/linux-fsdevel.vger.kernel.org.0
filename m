@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C4A23708231
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 15:09:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B0A070822E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 15:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231334AbjERNJu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 09:09:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
+        id S231354AbjERNJq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 09:09:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231348AbjERNJS (ORCPT
+        with ESMTP id S231341AbjERNJP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 09:09:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96701173C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 06:08:15 -0700 (PDT)
+        Thu, 18 May 2023 09:09:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27D64EA
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 06:08:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684415294;
+        s=mimecast20190719; t=1684415300;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Di14zlocOEDECmKOzgXOEyS4sjRLATonTy1WJdIXAUU=;
-        b=WzuiFJA03REbpsIjyjAz4NCS291xFUU/UirQSsz+mN8UjrnLZDpZ4ra0frwU2JTGx3cG6H
-        X+1/+nUx8fs9jxgfc4Rp75FnQLstELND+XyfMQCwGS+ayxnYdaZlVNYgXd73wohMbGZOzZ
-        Lg4eSqdD6/WBIC1YLcRqTVR22tmSQHA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=5dEuCyEYbAeTLbptDWG+lpG3TePaGyDY6iKA6gIr8Gk=;
+        b=Kd9tGQS4owLrYW1POlpENMawofaEWAOyC+lHvze0UGOcM+9ZA0Pg60Eq5FAGsyUrOHcjq5
+        mQ3wtNQLFl65JHSJkLWJwGWq/WFwLVyeilvxk6LsYmbpGX3QtBO2x6EOQ093/xCOcv974h
+        qOqhSaOYu8vahrKDkS/NHvap/tYszFo=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-255-IupZrLRDOgiU6UQOydG1Gw-1; Thu, 18 May 2023 09:08:12 -0400
-X-MC-Unique: IupZrLRDOgiU6UQOydG1Gw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+ us-mta-638-lV58l2MBPkWSA52mh6FUSg-1; Thu, 18 May 2023 09:08:16 -0400
+X-MC-Unique: lV58l2MBPkWSA52mh6FUSg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2621484AF2F;
-        Thu, 18 May 2023 13:08:11 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F4D128237C8;
+        Thu, 18 May 2023 13:08:15 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0967F40C2063;
-        Thu, 18 May 2023 13:08:07 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 397681121318;
+        Thu, 18 May 2023 13:08:12 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     David Howells <dhowells@redhat.com>,
@@ -56,26 +56,26 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH net-next v9 11/16] ip, udp: Support MSG_SPLICE_PAGES
-Date:   Thu, 18 May 2023 14:07:08 +0100
-Message-Id: <20230518130713.1515729-12-dhowells@redhat.com>
+Subject: [PATCH net-next v9 12/16] ip6, udp6: Support MSG_SPLICE_PAGES
+Date:   Thu, 18 May 2023 14:07:09 +0100
+Message-Id: <20230518130713.1515729-13-dhowells@redhat.com>
 In-Reply-To: <20230518130713.1515729-1-dhowells@redhat.com>
 References: <20230518130713.1515729-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make IP/UDP sendmsg() support MSG_SPLICE_PAGES.  This causes pages to be
-spliced from the source iterator.
+Make IP6/UDP6 sendmsg() support MSG_SPLICE_PAGES.  This causes pages to be
+spliced from the source iterator if possible, copying the data if not.
 
 This allows ->sendpage() to be replaced by something that can handle
 multiple multipage folios in a single transaction.
@@ -96,19 +96,19 @@ Notes:
     ver #6)
      - Use common helper.
 
- net/ipv4/ip_output.c | 17 +++++++++++++++++
+ net/ipv6/ip6_output.c | 17 +++++++++++++++++
  1 file changed, 17 insertions(+)
 
-diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
-index 52fc840898d8..c7db973b5d29 100644
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -1048,6 +1048,14 @@ static int __ip_append_data(struct sock *sk,
+diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+index 9554cf46ed88..c722cb881b2d 100644
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -1589,6 +1589,14 @@ static int __ip6_append_data(struct sock *sk,
  				skb_zcopy_set(skb, uarg, &extra_uref);
  			}
  		}
 +	} else if ((flags & MSG_SPLICE_PAGES) && length) {
-+		if (inet->hdrincl)
++		if (inet_sk(sk)->hdrincl)
 +			return -EPERM;
 +		if (rt->dst.dev->features & NETIF_F_SG)
 +			/* We need an empty buffer to attach stuff to */
@@ -117,8 +117,8 @@ index 52fc840898d8..c7db973b5d29 100644
 +			flags &= ~MSG_SPLICE_PAGES;
  	}
  
- 	cork->length += length;
-@@ -1207,6 +1215,15 @@ static int __ip_append_data(struct sock *sk,
+ 	/*
+@@ -1778,6 +1786,15 @@ static int __ip6_append_data(struct sock *sk,
  				err = -EFAULT;
  				goto error;
  			}
