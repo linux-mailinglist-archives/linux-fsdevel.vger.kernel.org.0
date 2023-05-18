@@ -2,185 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74123708BB7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 00:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B511708C14
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 01:09:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231240AbjERWea (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 18:34:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46944 "EHLO
+        id S229819AbjERXJH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 19:09:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231157AbjERWeH (ORCPT
+        with ESMTP id S229522AbjERXJG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 18:34:07 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB5B010CF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 15:33:59 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1ae408f4d1aso20867215ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 15:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1684449239; x=1687041239;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D1nBFbl2kNhqRXHkgIUn6lQxv3BWL5XvL+95Aso43MI=;
-        b=JnT3Nm6byGtDawfZcACo1v8lokc0XTySqmTYShweWMVp8qL45gp07eq/6jgdwoVlR0
-         nZXUqAFvVJd7nS83y/ZXaFd7TsKRuQjPPI8JmvPWUHujsZkS7P4hHgSkTkmF2pkjGl9K
-         DSB916FWMBFpvSJ5MLATv/gve4uyaJyVrwk+M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684449239; x=1687041239;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D1nBFbl2kNhqRXHkgIUn6lQxv3BWL5XvL+95Aso43MI=;
-        b=VeRD3fL7YstadbvWnvvLFRpHmGS7K0cyWsB1DHv23cqYWhbGo+tsGdn6enYjmiIZwO
-         w60lEpHyjYOZ3n8hZxJOeVXZJHJb59uXGCbKfWHDsngk5kgJv2wFKNJflkNu5Ro8iFZp
-         WXOgnMwFnDoL4EKkIbihxwDv02oVxiGQqpElKoGIw6eFVhb8VMPnvpCrBq88pyCx9MtE
-         nqcMtDc4xU0rkrJIomaStCmJJur7afVduEPNm1ksi5jX5kinAkVNw6sLyyRc5MKouH+M
-         BZGVQQraFFdDBdi7iadrSfFnUgjWogByL08gpZCzb4ef+wIZCuquSM2UHW8MBUs1f91e
-         jWfQ==
-X-Gm-Message-State: AC+VfDyKMRpq8A/g3SAMsXXzt2XNa3v5pfyTNjRf41LffGiCkdtTKtde
-        uFtRL1ufHwWsIF7Db871d0Dpvg==
-X-Google-Smtp-Source: ACHHUZ7zJhYjfPa+ZbTaOHzNa4SnFtqdlL9pTqh+Bv9ufbfnFBxQYSdHmDSrGjM9o2XMte6XYk8eIA==
-X-Received: by 2002:a17:903:2689:b0:1ac:8837:df8 with SMTP id jf9-20020a170903268900b001ac88370df8mr699263plb.6.1684449239382;
-        Thu, 18 May 2023 15:33:59 -0700 (PDT)
-Received: from sarthakkukreti-glaptop.corp.google.com ([100.107.238.113])
-        by smtp.gmail.com with ESMTPSA id q4-20020a170902b10400b001aafb802efbsm1996502plr.12.2023.05.18.15.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 May 2023 15:33:59 -0700 (PDT)
-From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
-To:     dm-devel@redhat.com, linux-block@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Bart Van Assche <bvanassche@google.com>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: [PATCH v7 5/5] loop: Add support for provision requests
-Date:   Thu, 18 May 2023 15:33:26 -0700
-Message-ID: <20230518223326.18744-6-sarthakkukreti@chromium.org>
-X-Mailer: git-send-email 2.40.1.698.g37aff9b760-goog
-In-Reply-To: <20230518223326.18744-1-sarthakkukreti@chromium.org>
-References: <20230518223326.18744-1-sarthakkukreti@chromium.org>
+        Thu, 18 May 2023 19:09:06 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40BE218D;
+        Thu, 18 May 2023 16:09:04 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id AA2BC6E3;
+        Thu, 18 May 2023 23:09:03 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AA2BC6E3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1684451343; bh=1M5d91X9MObXWb0pgAgYuQeNohJxmU2Ps8GnVyUg/3w=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=jepeY1C96EP+fR9RyG121qTdDSV3QXN1Z5+jxxnfiNNGC7DCKW5gw7xDz4PnbrzMI
+         ww2ex1Yym24pC7VvTol2CGQ092poGEmeRSgxIUy4n+dJ4tC/B5FC4l9xMsyFa7PEu6
+         M7ab1tT7uvDSQOQiEjBavSbzeQVDUA5zmPCzSdgvNcVEd84dEsgiGEEukl8H2y1xM5
+         y9RDqDAjiJdBcKjMZEYllzN5Pq3bIdR6s7KQhrv3K30nhvKppaEKaW3P9Owls4aOR9
+         yABduy2xRUq2Nd4S0vVNc9Hx5RsYpuZVTQ9cjTSLpW9UdxtOYiw1K1h2HyFRgEzN3a
+         KrSDco9sso3zg==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Luis Chamberlain <mcgrof@kernel.org>, jake@lwn.net,
+        hch@infradead.org, djwong@kernel.org, dchinner@redhat.com
+Cc:     ritesh.list@gmail.com, rgoldwyn@suse.com, jack@suse.cz,
+        linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com,
+        mcgrof@kernel.org
+Subject: Re: [PATCH v2] Documentation: add initial iomap kdoc
+In-Reply-To: <20230518150105.3160445-1-mcgrof@kernel.org>
+References: <20230518150105.3160445-1-mcgrof@kernel.org>
+Date:   Thu, 18 May 2023 17:09:02 -0600
+Message-ID: <87zg61p78x.fsf@meer.lwn.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add support for provision requests to loopback devices.
-Loop devices will configure provision support based on
-whether the underlying block device/file can support
-the provision request and upon receiving a provision bio,
-will map it to the backing device/storage. For loop devices
-over files, a REQ_OP_PROVISION request will translate to
-an fallocate mode 0 call on the backing file.
+Luis Chamberlain <mcgrof@kernel.org> writes:
 
-Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
----
- drivers/block/loop.c | 34 +++++++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
+> To help with iomap adoption / porting I set out the goal to try to
+> help improve the iomap documentation and get general guidance for
+> filesystem conversions over from buffer-head in time for this year's
+> LSFMM. The end results thanks to the review of Darrick, Christoph and
+> others is on the kernelnewbies wiki [0].
+>
+> This brings this forward a relevant subset of that documentation to
+> the kernel in kdoc format and also kdoc'ifies the existing documentation
+> on iomap.h.
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index bc31bb7072a2..7fe1a6629754 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -311,16 +311,20 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
- {
- 	/*
- 	 * We use fallocate to manipulate the space mappings used by the image
--	 * a.k.a. discard/zerorange.
-+	 * a.k.a. discard/provision/zerorange.
- 	 */
- 	struct file *file = lo->lo_backing_file;
- 	int ret;
- 
--	mode |= FALLOC_FL_KEEP_SIZE;
-+	if (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE) &&
-+	    !bdev_max_discard_sectors(lo->lo_device))
-+		return -EOPNOTSUPP;
- 
--	if (!bdev_max_discard_sectors(lo->lo_device))
-+	if (mode == 0 && !bdev_max_provision_sectors(lo->lo_device))
- 		return -EOPNOTSUPP;
- 
-+	mode |= FALLOC_FL_KEEP_SIZE;
-+
- 	ret = file->f_op->fallocate(file, mode, pos, blk_rq_bytes(rq));
- 	if (unlikely(ret && ret != -EINVAL && ret != -EOPNOTSUPP))
- 		return -EIO;
-@@ -488,6 +492,8 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- 				FALLOC_FL_PUNCH_HOLE);
- 	case REQ_OP_DISCARD:
- 		return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
-+	case REQ_OP_PROVISION:
-+		return lo_fallocate(lo, rq, pos, 0);
- 	case REQ_OP_WRITE:
- 		if (cmd->use_aio)
- 			return lo_rw_aio(lo, cmd, pos, ITER_SOURCE);
-@@ -754,6 +760,25 @@ static void loop_sysfs_exit(struct loop_device *lo)
- 				   &loop_attribute_group);
- }
- 
-+static void loop_config_provision(struct loop_device *lo)
-+{
-+	struct file *file = lo->lo_backing_file;
-+	struct inode *inode = file->f_mapping->host;
-+
-+	/*
-+	 * If the backing device is a block device, mirror its provisioning
-+	 * capability.
-+	 */
-+	if (S_ISBLK(inode->i_mode)) {
-+		blk_queue_max_provision_sectors(lo->lo_queue,
-+			bdev_max_provision_sectors(I_BDEV(inode)));
-+	} else if (file->f_op->fallocate) {
-+		blk_queue_max_provision_sectors(lo->lo_queue, UINT_MAX >> 9);
-+	} else {
-+		blk_queue_max_provision_sectors(lo->lo_queue, 0);
-+	}
-+}
-+
- static void loop_config_discard(struct loop_device *lo)
- {
- 	struct file *file = lo->lo_backing_file;
-@@ -1092,6 +1117,7 @@ static int loop_configure(struct loop_device *lo, fmode_t mode,
- 	blk_queue_io_min(lo->lo_queue, bsize);
- 
- 	loop_config_discard(lo);
-+	loop_config_provision(lo);
- 	loop_update_rotational(lo);
- 	loop_update_dio(lo);
- 	loop_sysfs_init(lo);
-@@ -1304,6 +1330,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
- 	}
- 
- 	loop_config_discard(lo);
-+	loop_config_provision(lo);
- 
- 	/* update dio if lo_offset or transfer is changed */
- 	__loop_update_dio(lo, lo->use_dio);
-@@ -1830,6 +1857,7 @@ static blk_status_t loop_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	case REQ_OP_FLUSH:
- 	case REQ_OP_DISCARD:
- 	case REQ_OP_WRITE_ZEROES:
-+	case REQ_OP_PROVISION:
- 		cmd->use_aio = false;
- 		break;
- 	default:
--- 
-2.40.1.698.g37aff9b760-goog
+OK, I've had a read through it.  Thanks again for doing it, we
+definitely need this.  There are typos and such that Randy has already
+pointed out, so I won't bother with those.  My main comment is mainly a
+high level one, along with a handful of nits.
 
+My high-level question is: who is the audience for this document?  I'm
+guessing it's filesystem developers?  Whoever it is, the document could
+benefit from an introductory section, aimed at that audience, saying how
+to get *started* with iomap.  What include files do I need?  How do I
+provide a set of iomap callbacks and make them visible to the VFS?
+Without that sort of stuff, it makes for a rough jumping-in experience.
+
+The nits:
+
+> diff --git a/Documentation/filesystems/iomap.rst b/Documentation/filesystems/iomap.rst
+> new file mode 100644
+> index 000000000000..be487030fcff
+> --- /dev/null
+> +++ b/Documentation/filesystems/iomap.rst
+> @@ -0,0 +1,253 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +.. _iomap:
+
+I don't think you use this label anywhere, so it doesn't need to be here.
+
+> +..
+> +        Mapping of heading styles within this document:
+> +        Heading 1 uses "====" above and below
+> +        Heading 2 uses "===="
+> +        Heading 3 uses "----"
+> +        Heading 4 uses "````"
+> +        Heading 5 uses "^^^^"
+> +        Heading 6 uses "~~~~"
+> +        Heading 7 uses "...."
+
+We have a set of conventions for section headings, nicely documented in
+Documentation/doc-guide/sphinx.rst.  This hierarchy doesn't quite match
+it, but you don't get far enough into it to hit the differences.  I'd
+just take this out.
+
+> +
+> +        Sections are manually numbered because apparently that's what everyone
+> +        does in the kernel.
+
+The sections are *not* manually numbered, which I think is entirely
+fine.  But that makes this comment a bit weird.
+
+> +.. contents:: Table of Contents
+> +   :local:
+> +
+> +=====
+> +iomap
+> +=====
+> +
+> +.. kernel-doc:: include/linux/iomap.h
+> +
+> +A modern block abstraction
+> +==========================
+> +
+> +**iomap** allows filesystems to query storage media for data using *byte
+> +ranges*. Since block mapping are provided for a *byte ranges* for cache data in
+> +memory, in the page cache, naturally this implies operations on block ranges
+> +will also deal with *multipage* operations in the page cache. **Folios** are
+> +used to help provide *multipage* operations in memory for the *byte ranges*
+> +being worked on.
+
+This text (and the document as a whole) is a bit heavy on the markup.
+I'd consider taking some of it out to improve the plain-text readability.
+
+[...]
+
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index e2b836c2e119..ee4b026995ac 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -10,6 +10,30 @@
+>  #include <linux/mm_types.h>
+>  #include <linux/blkdev.h>
+>  
+> +/**
+> + * DOC: Introduction
+> + *
+> + * iomap allows filesystems to sequentially iterate over byte addressable block
+> + * ranges on an inode and apply operations to it.
+> + *
+> + * iomap grew out of the need to provide a modern block mapping abstraction for
+> + * filesystems with the different IO access methods they support and assisting
+> + * the VFS with manipulating files into the page cache. iomap helpers are
+> + * provided for each of these mechanisms. However, block mapping is just one of
+> + * the features of iomap, given iomap supports DAX IO for filesystems and also
+> + * supports such the ``lseek``/``llseek`` ``SEEK_DATA``/``SEEK_HOLE``
+> + * interfaces.
+> + *
+> + * Block mapping provides a mapping between data cached in memory and the
+> + * location on persistent storage where that data lives. `LWN has an great
+> + * review of the old buffer-heads block-mapping and why they are inefficient
+> + * <https://lwn.net/Articles/930173/>`, since the inception of Linux.  Since
+> + * **buffer-heads** work on a 512-byte block based paradigm, it creates an
+> + * overhead for modern storage media which no longer necessarily works only on
+> + * 512-blocks. iomap is flexible providing block ranges in *bytes*. iomap, with
+> + * the support of folios, provides a modern replacement for **buffer-heads**.
+
+As much as I love to see LWN references embedded in as many kernel files
+as possible, I'm honestly not sure that the iomap documentation needs to
+talk about buffer heads at all - except maybe for help in replacing
+them.  In particular, I don't think that the documentation needs to
+justify iomap's existence; we can look at the commit logs if we need to
+remind ourselves of that.
+
+Thanks,
+
+jon
