@@ -2,189 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B4EF7081BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 14:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FE36708210
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 May 2023 15:08:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230374AbjERMt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 08:49:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37752 "EHLO
+        id S230153AbjERNIH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 09:08:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230378AbjERMtw (ORCPT
+        with ESMTP id S229985AbjERNIG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 08:49:52 -0400
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE1101B5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 05:49:50 -0700 (PDT)
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-76c63aadc10so113710839f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 05:49:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684414190; x=1687006190;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EL47r0F0+OEq9WYeDd2ivQLtcg9WFKpt2Zp7P+I2EZ4=;
-        b=lrZ6JBubIAyxebHXaRZ3cdyVaFiNTIahaszsns2EFu0c7fkCEOMRBINI78wz+Xj2wy
-         icIVTKox81c/wnLOxg8ElGp+PPeGDKrUs8a83t8+UdYO7YI6JhlJN6kOEtDmCpFqQtx7
-         efGd970xYgTGXEVGOJWfRqOnXh+A2Apmbhff9ZutCWPrA0eTiN13k2a6StlaE+kxSj7t
-         pkcTHCieX8gsVExdzq7IyAI67lPH9v+ObnoXHGTxrMwo9bIJ3mp8xK5pDy3Joj7YFi4A
-         mpxuoC5CzEWKLyXlxDSqOkw+qsrzbPdP74UJ5iAqhB1DRWVHfNz39tZXa2SMkmyh5MV4
-         Hibw==
-X-Gm-Message-State: AC+VfDx/ZFcB4BLeqklviIajeH4tEtdAnftWh00JED2ebWO9X4XsitaJ
-        1fmVgoIGuOd/KKP8E6a9tws1d6Q5VUGUg9iHTXIaCy2CBxkIJRluGw==
-X-Google-Smtp-Source: ACHHUZ6J949dumGBQtf6sjzvRdLuwX2MafPZRdnKIyLJZILQUKuz/Rif+CJnNEEAhvTf0CTJDNffRlU/vtUZI3vYAQmFSrwlXDx7
+        Thu, 18 May 2023 09:08:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6749BDF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 06:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684415243;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=gmChLLTaBmtSZq1ShF8K7UAV7zLX+N6Ybamf0Zveefo=;
+        b=RArmhJuWBMv4FqtJTtXLlm9oLow3CYTpxLXx9n9G1fgKU1Nch/uqzCbcjW8K7m6NMTYynV
+        P/PrQc3LAKCEWWoy3mth6fLrS4SqUP6yISyMe2gqQV+IKHQi9N66ofp+ukZJSFAme7n+z8
+        TtERuRkSSu5coxWyqXZ72Yag9UFkM3A=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-247-4Z1hckUWN-OevcDAT1Ge4w-1; Thu, 18 May 2023 09:07:20 -0400
+X-MC-Unique: 4Z1hckUWN-OevcDAT1Ge4w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4DA2E85C069;
+        Thu, 18 May 2023 13:07:19 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2398D40C2063;
+        Thu, 18 May 2023 13:07:16 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH net-next v9 00/16] splice, net: Replace sendpage with sendmsg(MSG_SPLICE_PAGES), part 1
+Date:   Thu, 18 May 2023 14:06:57 +0100
+Message-Id: <20230518130713.1515729-1-dhowells@redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b284:0:b0:76f:e71e:5f9d with SMTP id
- b126-20020a6bb284000000b0076fe71e5f9dmr3511726iof.1.1684414190127; Thu, 18
- May 2023 05:49:50 -0700 (PDT)
-Date:   Thu, 18 May 2023 05:49:50 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075136e05fbf73d67@google.com>
-Subject: [syzbot] [hfs?] KASAN: slab-use-after-free Read in hfsplus_read_wrapper
-From:   syzbot <syzbot+4b52080e97cde107939d@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Here's the first tranche of patches towards providing a MSG_SPLICE_PAGES
+internal sendmsg flag that is intended to replace the ->sendpage() op with
+calls to sendmsg().  MSG_SPLICE_PAGES is a hint that tells the protocol
+that it should splice the pages supplied if it can and copy them if not.
 
-syzbot found the following issue on:
+This will allow splice to pass multiple pages in a single call and allow
+certain parts of higher protocols (e.g. sunrpc, iwarp) to pass an entire
+message in one go rather than having to send them piecemeal.  This should
+also make it easier to handle the splicing of multipage folios.
 
-HEAD commit:    e922ba281a8d Add linux-next specific files for 20230512
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=15aef2ea280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=17a4c2d44484b62f
-dashboard link: https://syzkaller.appspot.com/bug?extid=4b52080e97cde107939d
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10190f7a280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11e7c33a280000
+A helper, skb_splice_from_iter() is provided to do the work of splicing or
+copying data from an iterator.  If a page is determined to be unspliceable
+(such as being in the slab), then the helper will give an error.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2026345928c3/disk-e922ba28.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4fd686a0e4f4/vmlinux-e922ba28.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cd44b724fbdf/bzImage-e922ba28.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/ee7fe34360d1/mount_0.gz
+Note that this facility is not made available to userspace and does not
+provide any sort of callback.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4b52080e97cde107939d@syzkaller.appspotmail.com
+This set consists of the following parts:
 
-==================================================================
-BUG: KASAN: slab-use-after-free in hfsplus_read_wrapper+0xf62/0x1020 fs/hfsplus/wrapper.c:225
-Read of size 2 at addr ffff88801566f800 by task syz-executor154/5030
+ (1) Define the MSG_SPLICE_PAGES flag and prevent sys_sendmsg() from being
+     able to set it.
 
-CPU: 0 PID: 5030 Comm: syz-executor154 Not tainted 6.4.0-rc1-next-20230512-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/28/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
- print_address_description.constprop.0+0x2c/0x3c0 mm/kasan/report.c:351
- print_report mm/kasan/report.c:462 [inline]
- kasan_report+0x11c/0x130 mm/kasan/report.c:572
- hfsplus_read_wrapper+0xf62/0x1020 fs/hfsplus/wrapper.c:225
- hfsplus_fill_super+0x312/0x1c40 fs/hfsplus/super.c:413
- mount_bdev+0x357/0x420 fs/super.c:1380
- legacy_get_tree+0x109/0x220 fs/fs_context.c:610
- vfs_get_tree+0x8d/0x350 fs/super.c:1510
- do_new_mount fs/namespace.c:3039 [inline]
- path_mount+0x134b/0x1e40 fs/namespace.c:3369
- do_mount fs/namespace.c:3382 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __x64_sys_mount+0x283/0x300 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f816d82df0a
-Code: 48 c7 c2 c0 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 a8 00 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd9592d6f8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f816d82df0a
-RDX: 0000000020000500 RSI: 0000000020000080 RDI: 00007ffd9592d710
-RBP: 00007ffd9592d710 R08: 00007ffd9592d750 R09: 0000000000000614
-R10: 0000000000000000 R11: 0000000000000286 R12: 0000000000000004
-R13: 0000555556eac2c0 R14: 0000000000000000 R15: 00007ffd9592d750
- </TASK>
+ (2) Add an extra argument to skb_append_pagefrags() so that something
+     other than MAX_SKB_FRAGS can be used (sysctl_max_skb_frags for
+     example).
 
-The buggy address belongs to the object at ffff88801566f800
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 0 bytes inside of
- freed 512-byte region [ffff88801566f800, ffff88801566fa00)
+ (3) Add the skb_splice_from_iter() helper to handle splicing pages into
+     skbuffs for MSG_SPLICE_PAGES that can be shared by TCP, IP/UDP and
+     AF_UNIX.
 
-The buggy address belongs to the physical page:
-page:ffffea0000559b00 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1566c
-head:ffffea0000559b00 order:2 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 00fff00000010200 ffff888012441c80 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0x52000(__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 0, tgid 0 (swapper/0), ts 1778430890, free_ts 0
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x2db/0x350 mm/page_alloc.c:1731
- prep_new_page mm/page_alloc.c:1738 [inline]
- get_page_from_freelist+0xf7c/0x2aa0 mm/page_alloc.c:3502
- __alloc_pages+0x1cb/0x4a0 mm/page_alloc.c:4768
- alloc_page_interleave+0x1e/0x200 mm/mempolicy.c:2112
- alloc_pages+0x233/0x270 mm/mempolicy.c:2274
- alloc_slab_page mm/slub.c:1851 [inline]
- allocate_slab+0x28e/0x380 mm/slub.c:1998
- new_slab mm/slub.c:2051 [inline]
- ___slab_alloc+0xa91/0x1400 mm/slub.c:3192
- __slab_alloc.constprop.0+0x56/0xa0 mm/slub.c:3291
- __slab_alloc_node mm/slub.c:3344 [inline]
- slab_alloc_node mm/slub.c:3441 [inline]
- __kmem_cache_alloc_node+0x136/0x320 mm/slub.c:3490
- kmalloc_trace+0x26/0xe0 mm/slab_common.c:1057
- kmalloc include/linux/slab.h:559 [inline]
- kzalloc include/linux/slab.h:680 [inline]
- devcgroup_css_alloc+0x41/0x120 security/device_cgroup.c:226
- cgroup_init_subsys+0x1bd/0x900 kernel/cgroup/cgroup.c:5988
- cgroup_init+0xb83/0x1090 kernel/cgroup/cgroup.c:6107
- start_kernel+0x398/0x490 init/main.c:1077
- x86_64_start_reservations+0x18/0x30 arch/x86/kernel/head64.c:556
- x86_64_start_kernel+0xb3/0xc0 arch/x86/kernel/head64.c:537
-page_owner free stack trace missing
+ (4) Implement MSG_SPLICE_PAGES support in TCP.
 
-Memory state around the buggy address:
- ffff88801566f700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88801566f780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88801566f800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff88801566f880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88801566f900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+ (5) Make do_tcp_sendpages() just wrap sendmsg() and then fold it in to its
+     various callers.
 
+ (6) Implement MSG_SPLICE_PAGES support in IP and make udp_sendpage() just
+     a wrapper around sendmsg().
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ (7) Implement MSG_SPLICE_PAGES support in IP6/UDP6.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ (8) Implement MSG_SPLICE_PAGES support in AF_UNIX.
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ (9) Make AF_UNIX copy unspliceable pages.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+I've pushed the patches here also:
 
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=sendpage-1
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+The follow-on patches are on branch iov-sendpage on the same tree.
 
-If you want to undo deduplication, reply with:
-#syz undup
+David
+
+Changes
+=======
+ver #9)
+ - Fix a merge conflict with commit eea96a3e2c909.
+
+ver #8)
+ - Order local variables in reverse xmas tree order.
+ - Remove duplicate coalescence check.
+ - Warn if sendpage_ok() fails.
+
+ver #7)
+ - Rebase after merge window.
+ - In ____sys_sendmsg(), clear internal flags before setting msg_flags.
+ - Clear internal flags in uring io_send{,_zc}().
+ - Export skb_splice_from_iter().
+ - Missed changing a "zc = 1" in tcp_sendmsg_locked().
+ - Remove now-unused csum_page() from UDP.
+ - Add a patch to make AF_UNIX sendpage() just a wrapper around sendmsg().
+ - Return an error if !sendpage_ok() rather than copying for now.
+ - Drop the page frag allocator patches for the moment.
+
+ver #6)
+ - Removed a couple of leftover page pointer declarations.
+ - In TCP, set zc to 0/MSG_ZEROCOPY/MSG_SPLICE_PAGES rather than 0/1/2.
+ - Add a max-frags argument to skb_append_pagefrags().
+ - Extract the AF_UNIX helper out into a common helper and use it for
+   IP/UDP and TCP too.
+ - udp_sendpage() shouldn't lock the socket around udp_sendmsg().
+ - udp_sendpage() should only set MSG_MORE if MSG_SENDPAGE_NOTLAST is set.
+ - In siw, don't clear MSG_SPLICE_PAGES on the last page.
+
+ver #5)
+ - Dropped the samples patch as it causes lots of failures in the patchwork
+   32-bit builds due to apparent libc userspace header issues.
+ - Made the pagefrag alloc patches alter the Google gve driver too.
+ - Rearranged the patches to put the support in IP before altering UDP.
+
+ver #4)
+ - Added some sample socket-I/O programs into samples/net/.
+ - Fix a missing page-get in AF_KCM.
+ - Init the sgtable and mark the end in AF_ALG when calling
+   netfs_extract_iter_to_sg().
+ - Add a destructor func for page frag caches prior to generalising it and
+   making it per-cpu.
+
+ver #3)
+ - Dropped the iterator-of-iterators patch.
+ - Only expunge MSG_SPLICE_PAGES in sys_send[m]msg, not sys_recv[m]msg.
+ - Split MSG_SPLICE_PAGES code in __ip_append_data() out into helper
+   functions.
+ - Implement MSG_SPLICE_PAGES support in __ip6_append_data() using the
+   above helper functions.
+ - Rename 'xlength' to 'initial_length'.
+ - Minimise the changes to sunrpc for the moment.
+ - Don't give -EOPNOTSUPP if NETIF_F_SG not available, just copy instead.
+ - Implemented MSG_SPLICE_PAGES support in the TLS, Chelsio-TLS and AF_KCM
+   code.
+
+ver #2)
+ - Overhauled the page_frag_alloc() allocator: large folios and per-cpu.
+   - Got rid of my own zerocopy allocator.
+ - Use iov_iter_extract_pages() rather poking in iter->bvec.
+ - Made page splicing fall back to page copying on a page-by-page basis.
+ - Made splice_to_socket() pass 16 pipe buffers at a time.
+ - Made AF_ALG/hash use finup/digest where possible in sendmsg.
+ - Added an iterator-of-iterators, ITER_ITERLIST.
+ - Made sunrpc use the iterator-of-iterators.
+ - Converted more drivers.
+
+Link: https://lore.kernel.org/r/20230316152618.711970-1-dhowells@redhat.com/ # v1
+Link: https://lore.kernel.org/r/20230329141354.516864-1-dhowells@redhat.com/ # v2
+Link: https://lore.kernel.org/r/20230331160914.1608208-1-dhowells@redhat.com/ # v3
+Link: https://lore.kernel.org/r/20230405165339.3468808-1-dhowells@redhat.com/ # v4
+Link: https://lore.kernel.org/r/20230406094245.3633290-1-dhowells@redhat.com/ # v5
+Link: https://lore.kernel.org/r/20230411160902.4134381-1-dhowells@redhat.com/ # v6
+Link: https://lore.kernel.org/r/20230515093345.396978-1-dhowells@redhat.com/ # v7
+Link: https://lore.kernel.org/r/20230518113453.1350757-1-dhowells@redhat.com/ # v8
+
+David Howells (16):
+  net: Declare MSG_SPLICE_PAGES internal sendmsg() flag
+  net: Pass max frags into skb_append_pagefrags()
+  net: Add a function to splice pages into an skbuff for
+    MSG_SPLICE_PAGES
+  tcp: Support MSG_SPLICE_PAGES
+  tcp: Convert do_tcp_sendpages() to use MSG_SPLICE_PAGES
+  tcp_bpf: Inline do_tcp_sendpages as it's now a wrapper around
+    tcp_sendmsg
+  espintcp: Inline do_tcp_sendpages()
+  tls: Inline do_tcp_sendpages()
+  siw: Inline do_tcp_sendpages()
+  tcp: Fold do_tcp_sendpages() into tcp_sendpage_locked()
+  ip, udp: Support MSG_SPLICE_PAGES
+  ip6, udp6: Support MSG_SPLICE_PAGES
+  udp: Convert udp_sendpage() to use MSG_SPLICE_PAGES
+  ip: Remove ip_append_page()
+  af_unix: Support MSG_SPLICE_PAGES
+  unix: Convert udp_sendpage() to use MSG_SPLICE_PAGES
+
+ drivers/infiniband/sw/siw/siw_qp_tx.c |  17 +-
+ include/linux/skbuff.h                |   5 +-
+ include/linux/socket.h                |   3 +
+ include/net/ip.h                      |   2 -
+ include/net/tcp.h                     |   2 -
+ include/net/tls.h                     |   2 +-
+ io_uring/net.c                        |   2 +
+ net/core/skbuff.c                     |  92 ++++++++++-
+ net/ipv4/ip_output.c                  | 164 +++-----------------
+ net/ipv4/tcp.c                        | 214 ++++++--------------------
+ net/ipv4/tcp_bpf.c                    |  20 ++-
+ net/ipv4/udp.c                        |  51 +-----
+ net/ipv6/ip6_output.c                 |  17 ++
+ net/socket.c                          |   2 +
+ net/tls/tls_main.c                    |  24 +--
+ net/unix/af_unix.c                    | 183 +++++-----------------
+ net/xfrm/espintcp.c                   |  10 +-
+ 17 files changed, 278 insertions(+), 532 deletions(-)
+
