@@ -2,95 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B8ED709DF8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 19:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFED9709E3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 19:33:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229680AbjESR1B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 13:27:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36840 "EHLO
+        id S232036AbjESRdm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 13:33:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbjESR1A (ORCPT
+        with ESMTP id S232064AbjESRdh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 13:27:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D82103;
-        Fri, 19 May 2023 10:26:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F324B616F7;
-        Fri, 19 May 2023 17:26:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D48C2C433D2;
-        Fri, 19 May 2023 17:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684517218;
-        bh=3drYpyYKUnH1cb6kQ/uVQsoKFoAeU6vU9OI6/6PAfZk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=n9S35mWf0Pm1llwyRM/w2pbmtXfNp34VbrsNfXPxN520wya1N0C9fZhbaDkGXp6t1
-         ++4elSII5PbPazoPs1V13ArsNYNWNCG9iBVCR8Jg+0ORpWnLuUWnIvNyTthkwCh/Wp
-         mMkIJ/RKwTOi9mGU1PpxaVARUlGIQaKWBPHYsWJq7aOFuZoXPs/Xsal++FoCctM77B
-         T3WzBD4cszc8qG0Mpj1oUa2IW7kT7dBh48dusd/dRyZLrXwhjMXA990AA7/jN7Qacf
-         vg6p0Bhiq9oBCEdH0NSkyjZxonQ6UpawB1FL3Dh9IyGluDL25TXzfnenQB65Xtwag7
-         1bCFyT4ZTuATQ==
-Message-ID: <9672a3006f0f8424c09e0f00dcb8ecaa1c42abb6.camel@kernel.org>
-Subject: Re: [PATCH] cachefiles: Allow the cache to be non-root
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-Cc:     linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 19 May 2023 13:26:56 -0400
-In-Reply-To: <1853230.1684516880@warthog.procyon.org.uk>
-References: <1853230.1684516880@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        Fri, 19 May 2023 13:33:37 -0400
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80559E5F;
+        Fri, 19 May 2023 10:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1684517595; x=1716053595;
+  h=mime-version:content-transfer-encoding:date:cc:subject:
+   from:to:message-id:references:in-reply-to;
+  bh=CDpNYbYopL6l908P9YpiX0NY2dAoYXZOF2ciVkFIcHY=;
+  b=skRf3WeULY4iY1sDYu2VGD1JjQuOJI+lZ3usiYVoTiAomNsY4J7dCzSm
+   ApbeGhH5wra4vi57ni6BlTH+FZFLQ+yseA+SAKp6C2tTYEXB4DfnAaq/p
+   VLxqE4KTdmOshG3yBBgfr8K0oiex71Q0efNs2Gn/+pDNIgFAEqlgswxcj
+   E=;
+X-IronPort-AV: E=Sophos;i="6.00,177,1681171200"; 
+   d="scan'208";a="4343439"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO email-inbound-relay-pdx-2c-m6i4x-f7c754c9.us-west-2.amazon.com) ([10.25.36.214])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2023 17:32:31 +0000
+Received: from EX19D004EUC001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
+        by email-inbound-relay-pdx-2c-m6i4x-f7c754c9.us-west-2.amazon.com (Postfix) with ESMTPS id 9037C40D80;
+        Fri, 19 May 2023 17:32:28 +0000 (UTC)
+Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
+ (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.26; Fri, 19 May
+ 2023 17:32:14 +0000
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date:   Fri, 19 May 2023 17:32:10 +0000
+CC:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        "Joerg Roedel" <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Mike Rapoport" <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        <luto@kernel.org>, <jun.nakajima@intel.com>,
+        <dave.hansen@intel.com>, <ak@linux.intel.com>, <david@redhat.com>,
+        <aarcange@redhat.com>, <ddutile@redhat.com>, <dhildenb@redhat.com>,
+        Quentin Perret <qperret@google.com>, <tabba@google.com>,
+        Michael Roth <michael.roth@amd.com>, <mhocko@suse.com>,
+        <wei.w.wang@intel.com>, <anelkz@amazon.de>
+Subject: Re: [PATCH v10 2/9] KVM: Introduce per-page memory attributes
+From:   Nicolas Saenz Julienne <nsaenz@amazon.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <qemu-devel@nongnu.org>, <graf@amazon.com>, <seanjc@google.com>
+Message-ID: <CSQFE7I30W27.2TPDIHOTZNRIZ@dev-dsk-nsaenz-1b-189b39ae.eu-west-1.amazon.com>
+X-Mailer: aerc 0.15.2-21-g30c1a30168df-dirty
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-3-chao.p.peng@linux.intel.com>
+In-Reply-To: <20221202061347.1070246-3-chao.p.peng@linux.intel.com>
+X-Originating-IP: [10.13.235.138]
+X-ClientProxiedBy: EX19D037UWB001.ant.amazon.com (10.13.138.123) To
+ EX19D004EUC001.ant.amazon.com (10.252.51.190)
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        SPF_HELO_NONE,T_SCC_BODY_TEXT_LINE,T_SPF_PERMERROR,URIBL_BLOCKED
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2023-05-19 at 18:21 +0100, David Howells wrote:
->    =20
-> Set mode 0600 on files in the cache so that cachefilesd can run as an
-> unprivileged user rather than leaving the files all with 0.  Directories
-> are already set to 0700.
->=20
-> Userspace then needs to set the uid and gid before issuing the "bind"
-> command and the cache must've been chown'd to those IDs.
->=20
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: David Howells <dhowells@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cachefs@redhat.com
-> cc: linux-erofs@lists.ozlabs.org
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/cachefiles/namei.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index 82219a8f6084..66482c193e86 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -451,7 +451,8 @@ struct file *cachefiles_create_tmpfile(struct cachefi=
-les_object *object)
-> =20
->  	ret =3D cachefiles_inject_write_error();
->  	if (ret =3D=3D 0) {
-> -		file =3D vfs_tmpfile_open(&nop_mnt_idmap, &parentpath, S_IFREG,
-> +		file =3D vfs_tmpfile_open(&nop_mnt_idmap, &parentpath,
-> +					S_IFREG | 0600,
->  					O_RDWR | O_LARGEFILE | O_DIRECT,
->  					cache->cache_cred);
->  		ret =3D PTR_ERR_OR_ZERO(file);
->=20
+Hi,
 
-Seems safe enough, and if it helps allow this to run unprivileged then:
+On Fri Dec 2, 2022 at 6:13 AM UTC, Chao Peng wrote:
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+[...]
+
+> +4.138 KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES
+> +-----------------------------------------
+> +
+> +:Capability: KVM_CAP_MEMORY_ATTRIBUTES
+> +:Architectures: x86
+> +:Type: vm ioctl
+> +:Parameters: u64 memory attributes bitmask(out)
+> +:Returns: 0 on success, <0 on error
+> +
+> +Returns supported memory attributes bitmask. Supported memory attributes=
+ will
+> +have the corresponding bits set in u64 memory attributes bitmask.
+> +
+> +The following memory attributes are defined::
+> +
+> +  #define KVM_MEMORY_ATTRIBUTE_READ              (1ULL << 0)
+> +  #define KVM_MEMORY_ATTRIBUTE_WRITE             (1ULL << 1)
+> +  #define KVM_MEMORY_ATTRIBUTE_EXECUTE           (1ULL << 2)
+> +  #define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
+> +
+> +4.139 KVM_SET_MEMORY_ATTRIBUTES
+> +-----------------------------------------
+> +
+> +:Capability: KVM_CAP_MEMORY_ATTRIBUTES
+> +:Architectures: x86
+> +:Type: vm ioctl
+> +:Parameters: struct kvm_memory_attributes(in/out)
+> +:Returns: 0 on success, <0 on error
+> +
+> +Sets memory attributes for pages in a guest memory range. Parameters are
+> +specified via the following structure::
+> +
+> +  struct kvm_memory_attributes {
+> +	__u64 address;
+> +	__u64 size;
+> +	__u64 attributes;
+> +	__u64 flags;
+> +  };
+> +
+> +The user sets the per-page memory attributes to a guest memory range ind=
+icated
+> +by address/size, and in return KVM adjusts address and size to reflect t=
+he
+> +actual pages of the memory range have been successfully set to the attri=
+butes.
+> +If the call returns 0, "address" is updated to the last successful addre=
+ss + 1
+> +and "size" is updated to the remaining address size that has not been se=
+t
+> +successfully. The user should check the return value as well as the size=
+ to
+> +decide if the operation succeeded for the whole range or not. The user m=
+ay want
+> +to retry the operation with the returned address/size if the previous ra=
+nge was
+> +partially successful.
+> +
+> +Both address and size should be page aligned and the supported attribute=
+s can be
+> +retrieved with KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES.
+> +
+> +The "flags" field may be used for future extensions and should be set to=
+ 0s.
+
+We have been looking into adding support for the Hyper-V VSM extensions
+which Windows uses to implement Credential Guard. This interface seems
+like a good fit for one of its underlying features. I just wanted to
+share a bit about it, and see if we can expand it to fit this use-case.
+Note that this was already briefly discussed between Sean and Alex some
+time ago[1].
+
+VSM introduces isolated guest execution contexts called Virtual Trust
+Levels (VTL) [2]. Each VTL has its own memory access protections,
+virtual processors states, interrupt controllers and overlay pages. VTLs
+are hierarchical and might enforce memory protections on less privileged
+VTLs. Memory protections are enforced on a per-GPA granularity.
+
+The list of possible protections is:
+- No access -- This needs a new memory attribute, I think.
+- Read-only, no execute
+- Read-only, execute
+- Read/write, no execute
+- Read/write, execute
+
+We implemented this in the past by using a separate address space per
+VTL and updating memory regions on protection changes. But having to
+update the memory slot layout for every permission change scales poorly,
+especially as we have to perform 100.000s of these operations at boot
+(see [1] for a little more context).
+
+I believe the biggest barrier for us to use memory attributes is not
+having the ability to target specific address spaces, or to the very
+least having some mechanism to maintain multiple independent layers of
+attributes.
+
+Also sorry for not posting our VSM patches. They are not ready for
+upstream review yet, but we're working on it.
+
+Nicolas
+
+[1] https://patchwork.kernel.org/comment/25054908/
+[2] See Chapter 15 of Microsoft's 'Hypervisor Top Level Functional Specific=
+ation':
+    https://raw.githubusercontent.com/MicrosoftDocs/Virtualization-Document=
+ation/main/tlfs/Hypervisor%20Top%20Level%20Functional%20Specification%20v6.=
+0b.pdf
