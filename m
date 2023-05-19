@@ -2,470 +2,404 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 469D270904C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 09:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 065AA709085
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 09:42:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbjESHVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 03:21:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54796 "EHLO
+        id S230274AbjESHl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 03:41:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbjESHVw (ORCPT
+        with ESMTP id S230250AbjESHl5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 03:21:52 -0400
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5564B109;
-        Fri, 19 May 2023 00:21:49 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.153])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4QMyvX56vTz4f3k6d;
-        Fri, 19 May 2023 15:21:44 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-        by APP4 (Coremail) with SMTP id gCh0CgAHvbCFI2dkxDIFJw--.21906S3;
-        Fri, 19 May 2023 15:21:43 +0800 (CST)
-Subject: Re: INFO: task hung in blkdev_open bug
-To:     yang lan <lanyang0908@gmail.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, josef@toxicpanda.com,
-        linux-block@vger.kernel.org, nbd@other.debian.org,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org,
-        axboe@kernel.dk, haris.iqbal@ionos.com, jinpu.wang@ionos.com,
-        brauner@kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <CAAehj2=HQDk-AMYpVR7i91hbQC4G5ULKd9iYoP05u_9tay8VMw@mail.gmail.com>
- <ZGTGiNItObrI2Z34@casper.infradead.org>
- <CAAehj2k2Sjt-kMwdJTP2uDJTtDzF_hzzHQJ=YVg3FN4bZYo2tQ@mail.gmail.com>
- <c3391bd5-9e4a-226c-9f21-4474a0929cd4@huaweicloud.com>
- <CAAehj2my7rWCNRBNg=8WoADNQFDo7rDcVUhaJutoX73HU55HZw@mail.gmail.com>
-From:   Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <031340ee-7c64-42ef-9459-604f0543708a@huaweicloud.com>
-Date:   Fri, 19 May 2023 15:21:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 19 May 2023 03:41:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB14186
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 00:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684482070;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=0KfcB1OydV4rwmbYT4w5olAopDG1nKc4VGqZ0OSjoS0=;
+        b=DR6gwuxfEuMLZ1tRjVSESS7gqWyk0nRtzV5n6e2qacNwChhrMQQyB1opttye5ox+edTqEJ
+        jFzHJaIaCgYX1ImuIBVZvK+keEMLJm6H4H0fUCKOmx0i3Pig1scLyugApkyGFeUWP3/rDM
+        ozylpiCS+9jSW07RAdneukjRO5ROoZA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-556-dD1o4JJQP7qz_5TIdUc_iw-1; Fri, 19 May 2023 03:41:04 -0400
+X-MC-Unique: dD1o4JJQP7qz_5TIdUc_iw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 262C429AB3F0;
+        Fri, 19 May 2023 07:41:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A08342166B25;
+        Fri, 19 May 2023 07:41:00 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v20 00/32] splice, block: Use page pinning and kill ITER_PIPE
+Date:   Fri, 19 May 2023 08:40:15 +0100
+Message-Id: <20230519074047.1739879-1-dhowells@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAehj2my7rWCNRBNg=8WoADNQFDo7rDcVUhaJutoX73HU55HZw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: gCh0CgAHvbCFI2dkxDIFJw--.21906S3
-X-Coremail-Antispam: 1UD129KBjvAXoWfGry8GF4DGr4kuF4UtF1DJrb_yoW8AFyDXo
-        WrJ3yfu3y8G34UG3Z7Ga1Yqwn7Jw1vyF1xZFyIkry7A3W2g3y5t3WDWr48XrW5JryUWF13
-        AryYqa10k3srX3s7n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-        AaLaJ3UjIYCTnIWjp_UUUYy7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
-        j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
-        x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
-        Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-        xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-        6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-        0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-        n2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-        0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-        zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-        4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j
-        6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-        BIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
-        MAY_BE_FORGED,NICE_REPLY_A,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hi Jens, Al, Christoph,
 
-在 2023/05/19 15:12, yang lan 写道:
-> Hi,
-> 
-> ./rqos/wbt/wb_background:4
-> ./rqos/wbt/wb_normal:8
-> ./rqos/wbt/unknown_cnt:0
-> ./rqos/wbt/min_lat_nsec:2000000
-> ./rqos/wbt/inflight:0: inflight 0
-> ./rqos/wbt/inflight:1: inflight 0
-> ./rqos/wbt/inflight:2: inflight 0
-> ./rqos/wbt/id:0
-> ./rqos/wbt/enabled:1
-> ./rqos/wbt/curr_win_nsec:0
-> ./hctx0/type:default
-> ./hctx0/dispatch_busy:0
-> ./hctx0/active:0
-> ./hctx0/run:1
-> ./hctx0/sched_tags_bitmap:00000000: 0100 0000 0000 0000 0000 0000 0000 0000
-> ./hctx0/sched_tags_bitmap:00000010: 0000 0000 0000 0000 0000 0000 0000 0000
-> ./hctx0/sched_tags:nr_tags=256
-> ./hctx0/sched_tags:nr_reserved_tags=0
-> ./hctx0/sched_tags:active_queues=0
-> ./hctx0/sched_tags:bitmap_tags:
-> ./hctx0/sched_tags:depth=256
-> ./hctx0/sched_tags:busy=1
-> ./hctx0/sched_tags:cleared=0
-> ./hctx0/sched_tags:bits_per_word=64
-> ./hctx0/sched_tags:map_nr=4
-> ./hctx0/sched_tags:alloc_hint={245, 45}
-> ./hctx0/sched_tags:wake_batch=8
-> ./hctx0/sched_tags:wake_index=0
-> ./hctx0/sched_tags:ws_active=0
-> ./hctx0/sched_tags:ws={
-> ./hctx0/sched_tags:     {.wait=inactive},
-> ./hctx0/sched_tags:     {.wait=inactive},
-> ./hctx0/sched_tags:     {.wait=inactive},
-> ./hctx0/sched_tags:     {.wait=inactive},
-> ./hctx0/sched_tags:     {.wait=inactive},
-> ./hctx0/sched_tags:     {.wait=inactive},
-> ./hctx0/sched_tags:     {.wait=inactive},
-> ./hctx0/sched_tags:     {.wait=inactive},
-> ./hctx0/sched_tags:}
-> ./hctx0/sched_tags:round_robin=0
-> ./hctx0/sched_tags:min_shallow_depth=192
-> ./hctx0/tags_bitmap:00000000: 0000 0000 0100 0000 0000 0000 0000 0000
-> ./hctx0/tags:nr_tags=128
-> ./hctx0/tags:nr_reserved_tags=0
-> ./hctx0/tags:active_queues=0
-> ./hctx0/tags:bitmap_tags:
-> ./hctx0/tags:depth=128
-> ./hctx0/tags:busy=1
+The first half of this patchset kills off ITER_PIPE to avoid a race between
+truncate, iov_iter_revert() on the pipe and an as-yet incomplete DMA to a
+bio with unpinned/unref'ed pages from an O_DIRECT splice read.  This causes
+memory corruption[2].  Instead, we use filemap_splice_read(), which invokes
+the buffered file reading code and splices from the pagecache into the
+pipe; direct_splice_read(), which bulk-allocates a buffer, reads into it
+and then pushes the filled pages into the pipe; or handle it in
+filesystem-specific code.
 
-tags:busy and sched_tags:busy shows that one io is inflight.
+ (1) Simplify the calculations for the number of pages to be reclaimed in
+     direct_splice_read().
 
-> ./hctx0/tags:cleared=0
-> ./hctx0/tags:bits_per_word=32
-> ./hctx0/tags:map_nr=4
-> ./hctx0/tags:alloc_hint={123, 51}
-> ./hctx0/tags:wake_batch=8
-> ./hctx0/tags:wake_index=0
-> ./hctx0/tags:ws_active=0
-> ./hctx0/tags:ws={
-> ./hctx0/tags:   {.wait=inactive},
-> ./hctx0/tags:   {.wait=inactive},
-> ./hctx0/tags:   {.wait=inactive},
-> ./hctx0/tags:   {.wait=inactive},
-> ./hctx0/tags:   {.wait=inactive},
-> ./hctx0/tags:   {.wait=inactive},
-> ./hctx0/tags:   {.wait=inactive},
-> ./hctx0/tags:   {.wait=inactive},
-> ./hctx0/tags:}
-> ./hctx0/tags:round_robin=0
-> ./hctx0/tags:min_shallow_depth=4294967295
-> ./hctx0/ctx_map:00000000: 00
-> ./hctx0/busy:ffff888016860000 {.op=READ, .cmd_flags=,
-> .rq_flags=STARTED|ELVPRIV|IO_STAT|STATS|ELV, .state=in_flight,
-> .tag=32, .internal_tag=0}
+ (2) Turn do_splice_to() into a helper so that it can be used by overlayfs
+     and coda to perform the checks on the lower fs.
 
-About "busy" means this io is issued to driver and yet not finished. So
-next step is to dig out where is the io in the driver and why it's not
-done.
+ (3) Provide shmem with its own splice_read to handle non-existent pages
+     in the pagecache.  We don't want a ->read_folio() as we don't want to
+     populate holes, but filemap_get_pages() requires it.
 
-Thanks,
-Kuai
-> ./hctx0/flags:alloc_policy=FIFO SHOULD_MERGE|BLOCKING
-> ./sched/queued:0 1 0
-> ./sched/owned_by_driver:0 1 0
-> ./sched/async_depth:192
-> ./sched/starved:0
-> ./sched/batching:1
-> ./state:SAME_COMP|NONROT|IO_STAT|INIT_DONE|STATS|REGISTERED|NOWAIT|30
-> ./pm_only:0
-> 
-> So how can we know where the io is?
-> 
-> Regards,
-> 
-> Yang
-> 
-> Yu Kuai <yukuai1@huaweicloud.com> 于2023年5月18日周四 11:30写道：
->>
->> Hi,
->>
->> 在 2023/05/18 0:27, yang lan 写道:
->>> Hi,
->>>
->>> Thank you for your response.
->>>
->>>> Does this reproduce on current kernels, eg 6.4-rc2?
->>>
->>> Yeah, it can be reproduced on kernel 6.4-rc2.
->>>
->>
->> Below log shows that io hang, can you collect following debugfs so
->> that we can know where is the io now.
->>
->> cd /sys/kernel/debug/block/[test_device] && find . -type f -exec grep
->> -aH . {} \;
->>
->> Thanks,
->> Kuai
->>> root@syzkaller:~# uname -a
->>> Linux syzkaller 6.4.0-rc2 #1 SMP PREEMPT_DYNAMIC Wed May 17 22:58:52
->>> CST 2023 x86_64 GNU/Linux
->>> root@syzkaller:~# gcc poc_blkdev.c -o poc_blkdev
->>> root@syzkaller:~# ./poc_blkdev
->>> [  128.718051][ T7121] nbd0: detected capacity change from 0 to 4
->>> [  158.917678][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 30 seconds
->>> [  188.997677][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 60 seconds
->>> [  219.077191][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 90 seconds
->>> [  249.157312][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 120 seconds
->>> [  279.237409][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 150 seconds
->>> [  309.317843][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 180 seconds
->>> [  339.397950][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 210 seconds
->>> [  369.478031][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 240 seconds
->>> [  399.558253][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 270 seconds
->>> [  429.638372][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 300 seconds
->>> [  459.718454][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 330 seconds
->>> [  489.798571][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 360 seconds
->>> [  519.878643][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 390 seconds
->>> [  549.958966][  T998] block nbd0: Possible stuck request
->>> ffff888016f08000: control (read@0,2048B). Runtime 420 seconds
->>> [  571.719145][   T30] INFO: task systemd-udevd:7123 blocked for more
->>> than 143 seconds.
->>> [  571.719652][   T30]       Not tainted 6.4.0-rc2 #1
->>> [  571.719900][   T30] "echo 0 >
->>> /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>> [  571.720307][   T30] task:systemd-udevd   state:D stack:26224
->>> pid:7123  ppid:3998   flags:0x00004004
->>> [  571.720756][   T30] Call Trace:
->>> [  571.720923][   T30]  <TASK>
->>> [  571.721073][   T30]  __schedule+0x9ca/0x2630
->>> [  571.721348][   T30]  ? firmware_map_remove+0x1e0/0x1e0
->>> [  571.721618][   T30]  ? find_held_lock+0x33/0x1c0
->>> [  571.721866][   T30]  ? lock_release+0x3b9/0x690
->>> [  571.722108][   T30]  ? do_read_cache_folio+0x4ff/0xb20
->>> [  571.722447][   T30]  ? lock_downgrade+0x6b0/0x6b0
->>> [  571.722785][   T30]  ? mark_held_locks+0xb0/0x110
->>> [  571.723044][   T30]  schedule+0xd3/0x1b0
->>> [  571.723264][   T30]  io_schedule+0x1b/0x70
->>> [  571.723489][   T30]  ? do_read_cache_folio+0x58c/0xb20
->>> [  571.723760][   T30]  do_read_cache_folio+0x58c/0xb20
->>> [  571.724036][   T30]  ? blkdev_readahead+0x20/0x20
->>> [  571.724319][   T30]  ? __filemap_get_folio+0x8e0/0x8e0
->>> [  571.724588][   T30]  ? __sanitizer_cov_trace_switch+0x53/0x90
->>> [  571.724885][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
->>> [  571.725246][   T30]  ? format_decode+0x1cf/0xb50
->>> [  571.725547][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
->>> [  571.725837][   T30]  ? fill_ptr_key+0x30/0x30
->>> [  571.726072][   T30]  ? default_pointer+0x4a0/0x4a0
->>> [  571.726335][   T30]  ? __isolate_free_page+0x220/0x220
->>> [  571.726608][   T30]  ? filemap_fdatawrite_wbc+0x1c0/0x1c0
->>> [  571.726888][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
->>> [  571.727172][   T30]  ? read_part_sector+0x229/0x420
->>> [  571.727434][   T30]  ? adfspart_check_ADFS+0x560/0x560
->>> [  571.727707][   T30]  read_part_sector+0xfa/0x420
->>> [  571.727963][   T30]  adfspart_check_POWERTEC+0x90/0x690
->>> [  571.728244][   T30]  ? adfspart_check_ADFS+0x560/0x560
->>> [  571.728520][   T30]  ? __kasan_slab_alloc+0x33/0x70
->>> [  571.728780][   T30]  ? adfspart_check_ICS+0x8f0/0x8f0
->>> [  571.729889][   T30]  ? snprintf+0xb2/0xe0
->>> [  571.730145][   T30]  ? vsprintf+0x30/0x30
->>> [  571.730374][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
->>> [  571.730659][   T30]  ? adfspart_check_ICS+0x8f0/0x8f0
->>> [  571.730928][   T30]  bdev_disk_changed+0x674/0x1260
->>> [  571.731189][   T30]  ? write_comp_data+0x1f/0x70
->>> [  571.731439][   T30]  ? iput+0xd0/0x780
->>> [  571.731646][   T30]  blkdev_get_whole+0x186/0x260
->>> [  571.731886][   T30]  blkdev_get_by_dev+0x4ce/0xae0
->>> [  571.732139][   T30]  blkdev_open+0x140/0x2c0
->>> [  571.732366][   T30]  do_dentry_open+0x6de/0x1450
->>> [  571.732612][   T30]  ? blkdev_close+0x80/0x80
->>> [  571.732848][   T30]  path_openat+0xd6d/0x26d0
->>> [  571.733084][   T30]  ? lock_downgrade+0x6b0/0x6b0
->>> [  571.733336][   T30]  ? vfs_path_lookup+0x110/0x110
->>> [  571.733591][   T30]  do_filp_open+0x1bb/0x290
->>> [  571.733824][   T30]  ? may_open_dev+0xf0/0xf0
->>> [  571.734061][   T30]  ? __phys_addr_symbol+0x30/0x70
->>> [  571.734324][   T30]  ? do_raw_spin_unlock+0x176/0x260
->>> [  571.734595][   T30]  do_sys_openat2+0x5fd/0x980
->>> [  571.734837][   T30]  ? file_open_root+0x3f0/0x3f0
->>> [  571.735087][   T30]  ? seccomp_notify_ioctl+0xff0/0xff0
->>> [  571.735368][   T30]  do_sys_open+0xce/0x140
->>> [  571.735596][   T30]  ? filp_open+0x80/0x80
->>> [  571.735820][   T30]  ? __secure_computing+0x1e3/0x340
->>> [  571.736090][   T30]  do_syscall_64+0x38/0x80
->>> [  571.736325][   T30]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
->>> [  571.736626][   T30] RIP: 0033:0x7fb212210840
->>> [  571.736857][   T30] RSP: 002b:00007fffb37bbbe8 EFLAGS: 00000246
->>> ORIG_RAX: 0000000000000002
->>> [  571.737269][   T30] RAX: ffffffffffffffda RBX: 0000560e09072e10
->>> RCX: 00007fb212210840
->>> [  571.737651][   T30] RDX: 0000560e08e39fe3 RSI: 00000000000a0800
->>> RDI: 0000560e090813b0
->>> [  571.738037][   T30] RBP: 00007fffb37bbd60 R08: 0000560e08e39670
->>> R09: 0000000000000010
->>> [  571.738432][   T30] R10: 0000560e08e39d0c R11: 0000000000000246
->>> R12: 00007fffb37bbcb0
->>> [  571.739563][   T30] R13: 0000560e09087a70 R14: 0000000000000003
->>> R15: 000000000000000e
->>> [  571.739973][   T30]  </TASK>
->>> [  571.740133][   T30]
->>> [  571.740133][   T30] Showing all locks held in the system:
->>> [  571.740495][   T30] 1 lock held by rcu_tasks_kthre/13:
->>> [  571.740758][   T30]  #0: ffffffff8b6badd0
->>> (rcu_tasks.tasks_gp_mutex){+.+.}-{3:3}, at:
->>> rcu_tasks_one_gp+0x2b/0xdb0
->>> [  571.741301][   T30] 1 lock held by rcu_tasks_trace/14:
->>> [  571.741571][   T30]  #0: ffffffff8b6baad0
->>> (rcu_tasks_trace.tasks_gp_mutex){+.+.}-{3:3}, at:
->>> rcu_tasks_one_gp+0x2b/0xdb0
->>> [  571.742134][   T30] 1 lock held by khungtaskd/30:
->>> [  571.742385][   T30]  #0: ffffffff8b6bb960
->>> (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x5b/0x300
->>> [  571.742947][   T30] 2 locks held by kworker/u8:0/50:
->>> [  571.743198][   T30]  #0: ffff888016e7b138
->>> ((wq_completion)nbd0-recv){+.+.}-{0:0}, at:
->>> process_one_work+0x94b/0x17b0
->>> [  571.743809][   T30]  #1: ffff888011e4fdd0
->>> ((work_completion)(&args->work)){+.+.}-{0:0}, at:
->>> process_one_work+0x984/0x17b0
->>> [  571.744393][   T30] 1 lock held by in:imklog/6784:
->>> [  571.744643][   T30]  #0: ffff88801106e368
->>> (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100
->>> [  571.745122][   T30] 1 lock held by systemd-udevd/7123:
->>> [  571.745381][   T30]  #0: ffff8880431854c8
->>> (&disk->open_mutex){+.+.}-{3:3}, at: blkdev_get_by_dev+0x24b/0xae0
->>> [  571.745885][   T30]
->>> [  571.746008][   T30] =============================================
->>> [  571.746008][   T30]
->>> [  571.746424][   T30] NMI backtrace for cpu 1
->>> [  571.746642][   T30] CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.4.0-rc2 #1
->>> [  571.746989][   T30] Hardware name: QEMU Standard PC (i440FX + PIIX,
->>> 1996), BIOS 1.12.0-1 04/01/2014
->>> [  571.747440][   T30] Call Trace:
->>> [  571.747606][   T30]  <TASK>
->>> [  571.747764][   T30]  dump_stack_lvl+0x91/0xf0
->>> [  571.747997][   T30]  nmi_cpu_backtrace+0x21a/0x2b0
->>> [  571.748257][   T30]  ? lapic_can_unplug_cpu+0xa0/0xa0
->>> [  571.748525][   T30]  nmi_trigger_cpumask_backtrace+0x28c/0x2f0
->>> [  571.748830][   T30]  watchdog+0xe4b/0x10c0
->>> [  571.749057][   T30]  ? proc_dohung_task_timeout_secs+0x90/0x90
->>> [  571.749366][   T30]  kthread+0x33b/0x430
->>> [  571.749596][   T30]  ? kthread_complete_and_exit+0x40/0x40
->>> [  571.749891][   T30]  ret_from_fork+0x1f/0x30
->>> [  571.750126][   T30]  </TASK>
->>> [  571.750347][   T30] Sending NMI from CPU 1 to CPUs 0:
->>> [  571.750620][    C0] NMI backtrace for cpu 0
->>> [  571.750626][    C0] CPU: 0 PID: 3987 Comm: systemd-journal Not
->>> tainted 6.4.0-rc2 #1
->>> [  571.750637][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX,
->>> 1996), BIOS 1.12.0-1 04/01/2014
->>> [  571.750643][    C0] RIP: 0033:0x7fb1d8c34bd1
->>> [  571.750652][    C0] Code: ed 4d 89 cf 75 a3 0f 1f 00 48 85 ed 75 4b
->>> 48 8b 54 24 28 48 8b 44 24 18 48 8b 7c 24 20 48 29 da 48 8b 70 20 48
->>> 0f af 54 24 08 <48> 83 c4 38 5b 5d 41 5c 41 5d 41 5e 41 5f e9 ac f2 04
->>> 00 0f 1f 40
->>> [  571.750662][    C0] RSP: 002b:00007ffff9686c30 EFLAGS: 00000202
->>> [  571.750670][    C0] RAX: 00007ffff9686e50 RBX: 0000000000000002
->>> RCX: 0000000000000010
->>> [  571.750677][    C0] RDX: 0000000000000010 RSI: 00007ffff9686d80
->>> RDI: 00007ffff9686f20
->>> [  571.750683][    C0] RBP: 0000000000000000 R08: 0000000000000010
->>> R09: 00007ffff9686d90
->>> [  571.750689][    C0] R10: 00007ffff9686fb0 R11: 00007fb1d8d6a060
->>> R12: 00007ffff9686f30
->>> [  571.750696][    C0] R13: 00007fb1d9d20ee0 R14: 00007ffff9686f30
->>> R15: 00007ffff9686d90
->>> [  571.750703][    C0] FS:  00007fb1da33d8c0 GS:  0000000000000000
->>> [  571.752358][   T30] Kernel panic - not syncing: hung_task: blocked tasks
->>> [  571.757337][   T30] CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.4.0-rc2 #1
->>> [  571.757686][   T30] Hardware name: QEMU Standard PC (i440FX + PIIX,
->>> 1996), BIOS 1.12.0-1 04/01/2014
->>> [  571.758131][   T30] Call Trace:
->>> [  571.758302][   T30]  <TASK>
->>> [  571.758462][   T30]  dump_stack_lvl+0x91/0xf0
->>> [  571.758714][   T30]  panic+0x62d/0x6a0
->>> [  571.758926][   T30]  ? panic_smp_self_stop+0x90/0x90
->>> [  571.759188][   T30]  ? preempt_schedule_common+0x1a/0xc0
->>> [  571.759486][   T30]  ? preempt_schedule_thunk+0x1a/0x20
->>> [  571.759785][   T30]  ? watchdog+0xc21/0x10c0
->>> [  571.760020][   T30]  watchdog+0xc32/0x10c0
->>> [  571.760240][   T30]  ? proc_dohung_task_timeout_secs+0x90/0x90
->>> [  571.760541][   T30]  kthread+0x33b/0x430
->>> [  571.760753][   T30]  ? kthread_complete_and_exit+0x40/0x40
->>> [  571.761052][   T30]  ret_from_fork+0x1f/0x30
->>> [  571.761286][   T30]  </TASK>
->>> [  571.761814][   T30] Kernel Offset: disabled
->>> [  571.762047][   T30] Rebooting in 86400 seconds..
->>>
->>>> You need to include poc_blkdev.c as part of your report.
->>>
->>> It's a little confusing and I'm sorry for that.
->>> The poc_blkdev.c is exactly the C reproducer
->>> (https://pastebin.com/raw/6mg7uF8W).
->>>
->>>> I suspect you've done something that is known to not work (as root,
->>>> so we won't necessarily care).  But I can't really say without seeing
->>>> what you've done.  Running syzkaller is an art, and most people aren't
->>>> good at it.  It takes a lot of work to submit good quality bug reports,
->>>> see this article:
->>>>
->>>> https://blog.regehr.org/archives/2037
->>>
->>> I have read this article and thanks for your recommendations.
->>> I'm not familiar with this module and I haven't figured out the root
->>> cause of this bug yet.
->>>
->>> Regards,
->>>
->>> Yang
->>>
->>> Matthew Wilcox <willy@infradead.org> 于2023年5月17日周三 20:20写道：
->>>>
->>>> On Wed, May 17, 2023 at 07:12:23PM +0800, yang lan wrote:
->>>>> root@syzkaller:~# uname -a
->>>>> Linux syzkaller 5.10.179 #1 SMP PREEMPT Thu Apr 27 16:22:48 CST 2023
->>>>
->>>> Does this reproduce on current kernels, eg 6.4-rc2?
->>>>
->>>>> root@syzkaller:~# gcc poc_blkdev.c -o poc_blkdev
->>>>
->>>> You need to include poc_blkdev.c as part of your report.
->>>>
->>>>> Please let me know if I can provide any more information, and I hope I
->>>>> didn't mess up this bug report.
->>>>
->>>> I suspect you've done something that is known to not work (as root,
->>>> so we won't necessarily care).  But I can't really say without seeing
->>>> what you've done.  Running syzkaller is an art, and most people aren't
->>>> good at it.  It takes a lot of work to submit good quality bug reports,
->>>> see this article:
->>>>
->>>> https://blog.regehr.org/archives/2037
->>>
->>> Matthew Wilcox <willy@infradead.org> 于2023年5月17日周三 20:20写道：
->>>>
->>>> On Wed, May 17, 2023 at 07:12:23PM +0800, yang lan wrote:
->>>>> root@syzkaller:~# uname -a
->>>>> Linux syzkaller 5.10.179 #1 SMP PREEMPT Thu Apr 27 16:22:48 CST 2023
->>>>
->>>> Does this reproduce on current kernels, eg 6.4-rc2?
->>>>
->>>>> root@syzkaller:~# gcc poc_blkdev.c -o poc_blkdev
->>>>
->>>> You need to include poc_blkdev.c as part of your report.
->>>>
->>>>> Please let me know if I can provide any more information, and I hope I
->>>>> didn't mess up this bug report.
->>>>
->>>> I suspect you've done something that is known to not work (as root,
->>>> so we won't necessarily care).  But I can't really say without seeing
->>>> what you've done.  Running syzkaller is an art, and most people aren't
->>>> good at it.  It takes a lot of work to submit good quality bug reports,
->>>> see this article:
->>>>
->>>> https://blog.regehr.org/archives/2037
->>> .
->>>
->>
-> .
-> 
+ (4) Provide overlayfs with its own splice_read to call down to a lower
+     layer as overlayfs doesn't provide ->read_folio().
+
+ (5) Provide coda with its own splice_read to call down to a lower layer as
+     coda doesn't provide ->read_folio().
+
+ (6) Direct ->splice_read to direct_splice_read() in tty, procfs, kernfs
+     and random files as they just copy to the output buffer and don't
+     splice pages.
+
+ (7) Provide stubs for afs, ceph, ecryptfs, ext4, f2fs, nfs, ntfs3, ocfs2,
+     orangefs, xfs and zonefs to do locking and/or revalidation.
+
+ (8) Change generic_file_splice_read() to just switch between
+     filemap_splice_read() and direct_splice_read() rather than using
+     ITER_PIPE.
+
+ (9) Make cifs use generic_file_splice_read().
+
+(10) Remove ITER_PIPE and its paraphernalia as generic_file_splice_read()
+     was the only user.
+
+The second half of the patchset rolls page-pinning out to the bio struct
+and the block layer, using iov_iter_extract_pages() to get pages and noting
+with BIO_PAGE_PINNED if the data pages attached to a bio are pinned.  If
+the data pages come from a non-user-backed iterator, then the pages are
+left unpinned and unref'd, relying on whoever set up the I/O to do the
+retaining
+
+(10) Don't hold a ref on ZERO_PAGE in iomap_dio_zero().
+
+(11) Fix bio_flagged() so that it doesn't prevent a gcc optimisation.
+
+(12) Make the bio struct carry a pair of flags to indicate the cleanup
+     mode.  BIO_NO_PAGE_REF is replaced with BIO_PAGE_REFFED (indicating
+     FOLL_GET was used) and BIO_PAGE_PINNED (indicating FOLL_PIN was used)
+     is added.
+
+     BIO_PAGE_REFFED will go away, but at the moment fs/direct-io.c sets it
+     and this series does not fully address that file.
+
+(13) Add a function, bio_release_page(), to release a page appropriately to
+     the cleanup mode indicated by the BIO_PAGE_* flags.
+
+(14) Make bio_iov_iter_get_pages() use iov_iter_extract_pages() to retain
+     the pages appropriately and clean them up later.
+
+(15) Make bio_map_user_iov() also use iov_iter_extract_pages().
+
+I've pushed the patches here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-extract
+
+David
+
+Changes:
+========
+ver #20)
+ - Make direct_splice_read() limit the read to eof for regular files and
+   blockdevs.
+ - Check against s_maxbytes on the backing store, not a devnode inode.
+ - Provide stubs for afs, ceph, ecryptfs, ext4, f2fs, nfs, ntfs3, ocfs2,
+   orangefs, xfs and zonefs.
+ - Always use direct_splice_read() for 9p, trace and sockets.
+
+ver #19)
+ - Remove a missed get_page() on the zeropage in shmem_splice_read().
+
+ver #18)
+ - Split out the cifs bits from the patch the switches
+   generic_file_splice_read() over to using the non-ITER_PIPE splicing.
+ - Don't get/put refs on the zeropage in shmem_splice_read().
+
+ver #17)
+ - Rename do_splice_to() to vfs_splice_read() and export it so that it can
+   be a helper and make overlayfs and coda use it, allowing duplicate
+   checks to be removed.
+
+ver #16)
+ - The filemap_get_pages() changes are now upstream.
+ - filemap_splice_read() and direct_splice_read() are now upstream.
+ - iov_iter_extract_pages() is now upstream.
+
+ver #15)
+ - Fixed up some errors in overlayfs_splice_read().
+
+ver #14)
+ - Some changes to generic_file_buffered_splice_read():
+   - Rename to filemap_splice_read() and move to mm/filemap.c.
+   - Create a helper, pipe_head_buf().
+   - Use init_sync_kiocb().
+ - Some changes to generic_file_direct_splice_read():
+   - Use alloc_pages_bulk_array() rather than alloc_pages_bulk_list().
+   - Use release_pages() instead of __free_page() in a loop.
+   - Rename to direct_splice_read().
+ - Rearrange the patches to implement filemap_splice_read() and
+   direct_splice_read() separately to changing generic_file_splice_read().
+ - Don't call generic_file_splice_read() when there isn't a ->read_folio().
+ - Insert patches to fix read_folio-less cases:
+   - Make tty, procfs, kernfs and (u)random use direct_splice_read().
+   - Make overlayfs and coda call down to a lower layer.
+   - Give shmem its own splice-read that doesn't insert missing pages.
+ - Fixed a min() with mixed type args on some arches.
+
+ver #13)
+ - Only use allocation in advance and ITER_BVEC for DIO read-splice.
+ - Make buffered read-splice get pages directly from the pagecache.
+ - Alter filemap_get_pages() & co. so that it doesn't need an iterator.
+
+ver #12)
+ - Added the missing __bitwise on the iov_iter_extraction_t typedef.
+ - Rebased on -rc7.
+ - Don't specify FOLL_PIN to pin_user_pages_fast().
+ - Inserted patch at front to fix race between DIO read and truncation that
+   caused memory corruption when iov_iter_revert() got called on an
+   ITER_PIPE iterator[2].
+ - Inserted a patch after that to remove the now-unused ITER_PIPE and its
+   helper functions.
+ - Removed the ITER_PIPE bits from iov_iter_extract_pages().
+
+ver #11)
+ - Fix iov_iter_extract_kvec_pages() to include the offset into the page in
+   the returned starting offset.
+ - Use __bitwise for the extraction flags
+
+ver #10)
+ - Fix use of i->kvec in iov_iter_extract_bvec_pages() to be i->bvec.
+ - Drop bio_set_cleanup_mode(), open coding it instead.
+
+ver #9)
+ - It's now not permitted to use FOLL_PIN outside of mm/, so:
+ - Change iov_iter_extract_mode() into iov_iter_extract_will_pin() and
+   return true/false instead of FOLL_PIN/0.
+ - Drop of folio_put_unpin() and page_put_unpin() and instead call
+   unpin_user_page() (and put_page()) directly as necessary.
+ - Make __bio_release_pages() call bio_release_page() instead of
+   unpin_user_page() as there's no BIO_* -> FOLL_* translation to do.
+ - Drop the FOLL_* renumbering patch.
+ - Change extract_flags to extraction_flags.
+
+ver #8)
+ - Import Christoph Hellwig's changes.
+   - Split the conversion-to-extraction patch.
+   - Drop the extract_flags arg from iov_iter_extract_mode().
+   - Don't default bios to BIO_PAGE_REFFED, but set explicitly.
+ - Switch FOLL_PIN and FOLL_GET when renumbering so PIN is at bit 0.
+ - Switch BIO_PAGE_PINNED and BIO_PAGE_REFFED so PINNED is at bit 0.
+ - We should always be using FOLL_PIN (not FOLL_GET) for DIO, so adjust the
+   patches for that.
+
+ver #7)
+ - For now, drop the parts to pass the I/O direction to iov_iter_*pages*()
+   as it turned out to be a lot more complicated, with places not setting
+   IOCB_WRITE when they should, for example.
+ - Drop all the patches that changed things other then the block layer's
+   bio handling.  The netfslib and cifs changes can go into a separate
+   patchset.
+ - Add support for extracting pages from KVEC-type iterators.
+ - When extracting from BVEC/KVEC, skip over empty vecs at the front.
+
+ver #6)
+ - Fix write() syscall and co. not setting IOCB_WRITE.
+ - Added iocb_is_read() and iocb_is_write() to check IOCB_WRITE.
+ - Use op_is_write() in bio_copy_user_iov().
+ - Drop the iterator direction checks from smbd_recv().
+ - Define FOLL_SOURCE_BUF and FOLL_DEST_BUF and pass them in as part of
+   gup_flags to iov_iter_get/extract_pages*().
+ - Replace iov_iter_get_pages*2() with iov_iter_get_pages*() and remove.
+ - Add back the function to indicate the cleanup mode.
+ - Drop the cleanup_mode return arg to iov_iter_extract_pages().
+ - Provide a helper to clean up a page.
+ - Renumbered FOLL_GET and FOLL_PIN and made BIO_PAGE_REFFED/PINNED have
+   the same numerical values, enforced with an assertion.
+ - Converted AF_ALG, SCSI vhost, generic DIO, FUSE, splice to pipe, 9P and
+   NFS.
+ - Added in the patches to make CIFS do top-to-bottom iterators and use
+   various of the added extraction functions.
+ - Added a pair of work-in-progess patches to make sk_buff fragments store
+   FOLL_GET and FOLL_PIN.
+
+ver #5)
+ - Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED and split into own patch.
+ - Transcribe FOLL_GET/PIN into BIO_PAGE_REFFED/PINNED flags.
+ - Add patch to allow bio_flagged() to be combined by gcc.
+
+ver #4)
+ - Drop the patch to move the FOLL_* flags to linux/mm_types.h as they're
+   no longer referenced by linux/uio.h.
+ - Add ITER_SOURCE/DEST cleanup patches.
+ - Make iov_iter/netfslib iter extraction patches use ITER_SOURCE/DEST.
+ - Allow additional gup_flags to be passed into iov_iter_extract_pages().
+ - Add struct bio patch.
+
+ver #3)
+ - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
+   to get/pin_user_pages_fast()[1].
+
+ver #2)
+ - Rolled the extraction cleanup mode query function into the extraction
+   function, returning the indication through the argument list.
+ - Fixed patch 4 (extract to scatterlist) to actually use the new
+   extraction API.
+
+Link: https://lore.kernel.org/r/Y3zFzdWnWlEJ8X8/@infradead.org/ [1]
+Link: https://lore.kernel.org/r/000000000000b0b3c005f3a09383@google.com/ [2]
+Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166722777223.2555743.162508599131141451.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166732024173.3186319.18204305072070871546.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166920902005.1461876.2786264600108839814.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/166997419665.9475.15014699817597102032.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk/ # v4
+Link: https://lore.kernel.org/r/167344725490.2425628.13771289553670112965.stgit@warthog.procyon.org.uk/ # v5
+Link: https://lore.kernel.org/r/167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk/ # v6
+Link: https://lore.kernel.org/r/20230120175556.3556978-1-dhowells@redhat.com/ # v7
+Link: https://lore.kernel.org/r/20230123173007.325544-1-dhowells@redhat.com/ # v8
+Link: https://lore.kernel.org/r/20230124170108.1070389-1-dhowells@redhat.com/ # v9
+Link: https://lore.kernel.org/r/20230125210657.2335748-1-dhowells@redhat.com/ # v10
+Link: https://lore.kernel.org/r/20230126141626.2809643-1-dhowells@redhat.com/ # v11
+Link: https://lore.kernel.org/r/20230207171305.3716974-1-dhowells@redhat.com/ # v12
+Link: https://lore.kernel.org/r/20230209102954.528942-1-dhowells@redhat.com/ # v13
+Link: https://lore.kernel.org/r/20230214171330.2722188-1-dhowells@redhat.com/ # v14
+Link: https://lore.kernel.org/r/20230308143754.1976726-1-dhowells@redhat.com/ # v16
+Link: https://lore.kernel.org/r/20230308165251.2078898-1-dhowells@redhat.com/ # v17
+Link: https://lore.kernel.org/r/20230314220757.3827941-1-dhowells@redhat.com/ # v18
+Link: https://lore.kernel.org/r/20230315163549.295454-1-dhowells@redhat.com/ # v19
+
+Additional patches that got folded in:
+
+Link: https://lore.kernel.org/r/20230213134619.2198965-1-dhowells@redhat.com/ # v1
+Link: https://lore.kernel.org/r/20230213153301.2338806-1-dhowells@redhat.com/ # v2
+Link: https://lore.kernel.org/r/20230214083710.2547248-1-dhowells@redhat.com/ # v3
+
+Christoph Hellwig (1):
+  block: Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED with inverted
+    logic
+
+David Howells (31):
+  splice: Fix filemap of a blockdev
+  splice: Clean up direct_splice_read() a bit
+  splice: Make direct_read_splice() limit to eof where appropriate
+  splice: Make do_splice_to() generic and export it
+  splice: Make splice from a DAX file use direct_splice_read()
+  shmem: Implement splice-read
+  overlayfs: Implement splice-read
+  coda: Implement splice-read
+  tty, proc, kernfs, random: Use direct_splice_read()
+  net: Make sock_splice_read() use direct_splice_read() by default
+  9p:  Add splice_read stub
+  afs: Provide a splice-read stub
+  ceph: Provide a splice-read stub
+  ecryptfs: Provide a splice-read stub
+  ext4: Provide a splice-read stub
+  f2fs: Provide a splice-read stub
+  nfs: Provide a splice-read stub
+  ntfs3: Provide a splice-read stub
+  ocfs2: Provide a splice-read stub
+  orangefs: Provide a splice-read stub
+  xfs: Provide a splice-read stub
+  zonefs: Provide a splice-read stub
+  splice: Convert trace/seq to use direct_splice_read()
+  splice: Do splice read from a file without using ITER_PIPE
+  cifs: Use generic_file_splice_read()
+  iov_iter: Kill ITER_PIPE
+  iomap: Don't get an reference on ZERO_PAGE for direct I/O block
+    zeroing
+  block: Fix bio_flagged() so that gcc can better optimise it
+  block: Add BIO_PAGE_PINNED and associated infrastructure
+  block: Convert bio_iov_iter_get_pages to use iov_iter_extract_pages
+  block: convert bio_map_user_iov to use iov_iter_extract_pages
+
+ block/bio.c               |  29 +--
+ block/blk-map.c           |  22 +-
+ block/blk.h               |  12 ++
+ drivers/char/random.c     |   4 +-
+ drivers/tty/tty_io.c      |   4 +-
+ fs/9p/vfs_file.c          |  26 ++-
+ fs/afs/file.c             |  20 +-
+ fs/ceph/file.c            |  66 +++++-
+ fs/cifs/cifsfs.c          |   8 +-
+ fs/cifs/cifsfs.h          |   3 -
+ fs/cifs/file.c            |  16 --
+ fs/coda/file.c            |  29 ++-
+ fs/direct-io.c            |   2 +
+ fs/ecryptfs/file.c        |  27 ++-
+ fs/ext4/file.c            |  13 +-
+ fs/f2fs/file.c            |  68 +++++-
+ fs/iomap/direct-io.c      |   1 -
+ fs/kernfs/file.c          |   2 +-
+ fs/nfs/file.c             |  26 ++-
+ fs/nfs/internal.h         |   2 +
+ fs/nfs/nfs4file.c         |   2 +-
+ fs/ntfs3/file.c           |  36 +++-
+ fs/ocfs2/file.c           |  42 +++-
+ fs/ocfs2/ocfs2_trace.h    |   3 +
+ fs/orangefs/file.c        |  25 ++-
+ fs/overlayfs/file.c       |  23 +-
+ fs/proc/inode.c           |   4 +-
+ fs/proc/proc_sysctl.c     |   2 +-
+ fs/proc_namespace.c       |   6 +-
+ fs/splice.c               |  93 ++++----
+ fs/xfs/xfs_file.c         |  33 ++-
+ fs/xfs/xfs_trace.h        |   2 +-
+ fs/zonefs/file.c          |  43 +++-
+ include/linux/bio.h       |   5 +-
+ include/linux/blk_types.h |   3 +-
+ include/linux/splice.h    |   3 +
+ include/linux/uio.h       |  14 --
+ kernel/trace/trace.c      |   2 +-
+ lib/iov_iter.c            | 431 +-------------------------------------
+ mm/filemap.c              |   7 +-
+ mm/shmem.c                | 134 +++++++++++-
+ net/socket.c              |   2 +-
+ 42 files changed, 717 insertions(+), 578 deletions(-)
 
