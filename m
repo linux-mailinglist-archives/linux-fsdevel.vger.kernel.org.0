@@ -2,309 +2,472 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 211D9708F84
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 07:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D8870902E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 09:12:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229493AbjESFkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 01:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35138 "EHLO
+        id S229985AbjESHM5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 03:12:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbjESFkA (ORCPT
+        with ESMTP id S229436AbjESHMz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 01:40:00 -0400
-Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3685F10CE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 22:39:58 -0700 (PDT)
-Received: by mail-vk1-xa35.google.com with SMTP id 71dfb90a1353d-456fc2e1ccdso301121e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 22:39:58 -0700 (PDT)
+        Fri, 19 May 2023 03:12:55 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86EC10CE;
+        Fri, 19 May 2023 00:12:53 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-76c5404464fso245044139f.3;
+        Fri, 19 May 2023 00:12:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684474797; x=1687066797;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3B42Gi1lK0VMt7Rg2etX15frwNW0h2cgi6yUrv4a9E4=;
-        b=Ed3AudVTxqSKGtFbYSskCYpOnfo6Fd5kH7U4QBfFHB+9e2zMk1GgLqZQtXdJmVEx0m
-         /S39GtfNMeCWZOjnkOqwoWvhDpne2bfbV5jnqd6mDs3JZ8hvDjF1R2QXBt/iASL22fZS
-         QxyuNiSaB4cgY5fEMM1F07PE7VFPbd1oK5jMaxnZXO/8BY469t0u/KwpNQ3d9JjxK7/1
-         OVp1PX4Ds1i0cL8H2z9OwuLp3CIQniMLG0dQDT32VglzXdqQJ+yivM9Kr1q4mN/2U6TV
-         ZXAQzuViy/6XiE/KBz371SrbtyOj2UpoZ3OfW0fY+eNUIBFRxYE/+she14Y4//dmyQ2k
-         2X/g==
+        d=gmail.com; s=20221208; t=1684480373; x=1687072373;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9m1S1oMA95zkVGYUcMHqoCf/wXnc2adk02Ct/klTPL4=;
+        b=i665eORFw6FJL8cwKocTSKBipjF1NnsKo5l6W2vKIsU+/ZmFdcngk/oWzQBZ6L6NH3
+         UQKGK983+b/sQ0EAmO3Abl4cRhcn7TJPF3WqX8q80vP8wQqT+pPYnGuKxOvXr4iAGKvq
+         C6opHkcxU16PmGWV5gVTbH+YmEifwT0G+5TmkrrKlNvWWi7+z8FICEw4SZynGptGnB20
+         eTa9LjIeajTA/HVRmF8DnVqIRtzJwpkDgpYXgnrh6pKr9+MXWvMBCXEfImx+s4oWR6s+
+         WouLyGN2quIXp+Im0/vh0m3DmwwPWmJH4E6GnL9JnoGiBkC5vIllbf6TCDw/R7eddV+v
+         lITQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684474797; x=1687066797;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3B42Gi1lK0VMt7Rg2etX15frwNW0h2cgi6yUrv4a9E4=;
-        b=FFI8CGgIDE1uNfhi+hSD6daAwGUeUFAqZ7GYFkd1R+fE1fwImwHZB4Qbq6/m6e5k+P
-         MPBCgxsmMtPYWfsnm7KNTH/Pi5TjoZtXiSymiylIL40+++xWdiR9K1hpfVKgJ+lWD7uo
-         r9GoFGy/+Xro4/u5sT2SdUifyHm0yRiz6wOydV3fXll7g7kbXk2ZeUDO9PcsZFa1Seid
-         WM+OT+l2426TAHQkuZP7u0aKu4JVulDI20EwgM/TG4cTS2WKw5Oo6NRaQzLAhadufCJC
-         srkKy5L/CsOD3929iplUkCLSSM6gSn1zIPxHtZjkelbyPZGmr3MX7Yvyyaia4G7jgcDi
-         fFYw==
-X-Gm-Message-State: AC+VfDwYlWqe4gYWL/TvvR7vq6CEPLThXU2dLFp8kvRrwum32A4M9SMJ
-        W/DrB8ZHzVpuZJnFvxr7lbP+KtqGxP1MI+daami/QQ==
-X-Google-Smtp-Source: ACHHUZ7xoIQRozNOou/K/L/ALEGzUZLUJumHHMd6mtrugzfaLJ3R/Wj848SKoSHi7xhRgqS6nI75aoWNt5UAqLtEcrI=
-X-Received: by 2002:a67:e955:0:b0:437:dc08:1a84 with SMTP id
- p21-20020a67e955000000b00437dc081a84mr267633vso.3.1684474797080; Thu, 18 May
- 2023 22:39:57 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684480373; x=1687072373;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9m1S1oMA95zkVGYUcMHqoCf/wXnc2adk02Ct/klTPL4=;
+        b=STq5X/rrVD7SodalpoKol6tf2xDon40Jy7B/DtDOxLCAahdILc0roVTTyOsjyU5f6u
+         ljZ0zyQYnIOXgpI6wGHO0lIEsOanzUV/IrmMr9m7Qb+Zzy/xRvUEXUYnvjJpRtm01DBR
+         btMQZOsWx8cpjA6DQ9IxcIaz4+n27cTcslkT1jNJc+DA+qsaUx4gZHbN0zCGGc6qCgyj
+         zV1ovKv34GMZuI1ZTBlrA6a6eiNxcW6iZMo1O2TdmNnxHWEDCHu+jIjQmmq8yVLLZA/f
+         hSGwbJu/Dub5gSPCUwvwQ7SZ3QFO4S5xcM7DsXFCvWvfjW73KGzs5RyHtrHiURo66ZOT
+         5weA==
+X-Gm-Message-State: AC+VfDwrQ8uzAVOqgXXFnpBVMT01OgIbIDbT172vSV8e1pJbjHJDK0N7
+        71R4RoB+iQmHI10GAlZOuTF8E/j5YTcA8W7lk6M=
+X-Google-Smtp-Source: ACHHUZ6IpSxW6pHgJVoa3C8OjVxff9Q2miJR8wL80lVJTBhCrFAk1Keb06CaM57/3cLL8ICd5aigmPnBsBHxjIgxXt4=
+X-Received: by 2002:a92:d849:0:b0:32f:80a1:2e44 with SMTP id
+ h9-20020a92d849000000b0032f80a12e44mr632978ilq.9.1684480372939; Fri, 19 May
+ 2023 00:12:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <CA+G9fYszs5wPp+TWJeVZsdRjnBTXTa8i3YY3qV9SHbB1+R2+4Q@mail.gmail.com>
- <20680bb5-71c0-4945-a058-05f43bbd03f4@kili.mountain>
-In-Reply-To: <20680bb5-71c0-4945-a058-05f43bbd03f4@kili.mountain>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 19 May 2023 11:09:45 +0530
-Message-ID: <CA+G9fYvY8HZ=F0hQueeX2x2RvP-fJgrDF_7y-Q_yhpVE_8Y9Xg@mail.gmail.com>
-Subject: Re: next: qemu-arm64: kernel BUG at fs/inode.c:1763!
-To:     Chuck Lever <chuck.lever@oracle.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        lkft-triage@lists.linaro.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>, frederic@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Jakub Kacinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Netdev <netdev@vger.kernel.org>
+References: <CAAehj2=HQDk-AMYpVR7i91hbQC4G5ULKd9iYoP05u_9tay8VMw@mail.gmail.com>
+ <ZGTGiNItObrI2Z34@casper.infradead.org> <CAAehj2k2Sjt-kMwdJTP2uDJTtDzF_hzzHQJ=YVg3FN4bZYo2tQ@mail.gmail.com>
+ <c3391bd5-9e4a-226c-9f21-4474a0929cd4@huaweicloud.com>
+In-Reply-To: <c3391bd5-9e4a-226c-9f21-4474a0929cd4@huaweicloud.com>
+From:   yang lan <lanyang0908@gmail.com>
+Date:   Fri, 19 May 2023 15:12:39 +0800
+Message-ID: <CAAehj2my7rWCNRBNg=8WoADNQFDo7rDcVUhaJutoX73HU55HZw@mail.gmail.com>
+Subject: Re: INFO: task hung in blkdev_open bug
+To:     Yu Kuai <yukuai1@huaweicloud.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, josef@toxicpanda.com,
+        linux-block@vger.kernel.org, nbd@other.debian.org,
+        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk, haris.iqbal@ionos.com, jinpu.wang@ionos.com,
+        brauner@kernel.org, "yukuai (C)" <yukuai3@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 17 May 2023 at 20:38, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+Hi,
+
+./rqos/wbt/wb_background:4
+./rqos/wbt/wb_normal:8
+./rqos/wbt/unknown_cnt:0
+./rqos/wbt/min_lat_nsec:2000000
+./rqos/wbt/inflight:0: inflight 0
+./rqos/wbt/inflight:1: inflight 0
+./rqos/wbt/inflight:2: inflight 0
+./rqos/wbt/id:0
+./rqos/wbt/enabled:1
+./rqos/wbt/curr_win_nsec:0
+./hctx0/type:default
+./hctx0/dispatch_busy:0
+./hctx0/active:0
+./hctx0/run:1
+./hctx0/sched_tags_bitmap:00000000: 0100 0000 0000 0000 0000 0000 0000 0000
+./hctx0/sched_tags_bitmap:00000010: 0000 0000 0000 0000 0000 0000 0000 0000
+./hctx0/sched_tags:nr_tags=3D256
+./hctx0/sched_tags:nr_reserved_tags=3D0
+./hctx0/sched_tags:active_queues=3D0
+./hctx0/sched_tags:bitmap_tags:
+./hctx0/sched_tags:depth=3D256
+./hctx0/sched_tags:busy=3D1
+./hctx0/sched_tags:cleared=3D0
+./hctx0/sched_tags:bits_per_word=3D64
+./hctx0/sched_tags:map_nr=3D4
+./hctx0/sched_tags:alloc_hint=3D{245, 45}
+./hctx0/sched_tags:wake_batch=3D8
+./hctx0/sched_tags:wake_index=3D0
+./hctx0/sched_tags:ws_active=3D0
+./hctx0/sched_tags:ws=3D{
+./hctx0/sched_tags:     {.wait=3Dinactive},
+./hctx0/sched_tags:     {.wait=3Dinactive},
+./hctx0/sched_tags:     {.wait=3Dinactive},
+./hctx0/sched_tags:     {.wait=3Dinactive},
+./hctx0/sched_tags:     {.wait=3Dinactive},
+./hctx0/sched_tags:     {.wait=3Dinactive},
+./hctx0/sched_tags:     {.wait=3Dinactive},
+./hctx0/sched_tags:     {.wait=3Dinactive},
+./hctx0/sched_tags:}
+./hctx0/sched_tags:round_robin=3D0
+./hctx0/sched_tags:min_shallow_depth=3D192
+./hctx0/tags_bitmap:00000000: 0000 0000 0100 0000 0000 0000 0000 0000
+./hctx0/tags:nr_tags=3D128
+./hctx0/tags:nr_reserved_tags=3D0
+./hctx0/tags:active_queues=3D0
+./hctx0/tags:bitmap_tags:
+./hctx0/tags:depth=3D128
+./hctx0/tags:busy=3D1
+./hctx0/tags:cleared=3D0
+./hctx0/tags:bits_per_word=3D32
+./hctx0/tags:map_nr=3D4
+./hctx0/tags:alloc_hint=3D{123, 51}
+./hctx0/tags:wake_batch=3D8
+./hctx0/tags:wake_index=3D0
+./hctx0/tags:ws_active=3D0
+./hctx0/tags:ws=3D{
+./hctx0/tags:   {.wait=3Dinactive},
+./hctx0/tags:   {.wait=3Dinactive},
+./hctx0/tags:   {.wait=3Dinactive},
+./hctx0/tags:   {.wait=3Dinactive},
+./hctx0/tags:   {.wait=3Dinactive},
+./hctx0/tags:   {.wait=3Dinactive},
+./hctx0/tags:   {.wait=3Dinactive},
+./hctx0/tags:   {.wait=3Dinactive},
+./hctx0/tags:}
+./hctx0/tags:round_robin=3D0
+./hctx0/tags:min_shallow_depth=3D4294967295
+./hctx0/ctx_map:00000000: 00
+./hctx0/busy:ffff888016860000 {.op=3DREAD, .cmd_flags=3D,
+.rq_flags=3DSTARTED|ELVPRIV|IO_STAT|STATS|ELV, .state=3Din_flight,
+.tag=3D32, .internal_tag=3D0}
+./hctx0/flags:alloc_policy=3DFIFO SHOULD_MERGE|BLOCKING
+./sched/queued:0 1 0
+./sched/owned_by_driver:0 1 0
+./sched/async_depth:192
+./sched/starved:0
+./sched/batching:1
+./state:SAME_COMP|NONROT|IO_STAT|INIT_DONE|STATS|REGISTERED|NOWAIT|30
+./pm_only:0
+
+So how can we know where the io is?
+
+Regards,
+
+Yang
+
+Yu Kuai <yukuai1@huaweicloud.com> =E4=BA=8E2023=E5=B9=B45=E6=9C=8818=E6=97=
+=A5=E5=91=A8=E5=9B=9B 11:30=E5=86=99=E9=81=93=EF=BC=9A
 >
-> The fs/inode.c:1763 bug is more stuff from net/handshake testing, so
-> lets add Chuck to the CC list.
-
-Anders bisected this problem and found the first bad commit,
-
----
-commit f921bd41001ccff2249f5f443f2917f7ef937daf
-Author: Chuck Lever <chuck.lever@oracle.com>
-Date:   Thu May 11 11:49:17 2023 -0400
-
-    net/handshake: Unpin sock->file if a handshake is cancelled
-
-    If user space never calls DONE, sock->file's reference count remains
-    elevated. Enable sock->file to be freed eventually in this case.
-
-    Reported-by: Jakub Kacinski <kuba@kernel.org>
-    Fixes: 3b3009ea8abb ("net/handshake: Create a NETLINK service for
-handling handshake requests")
-    Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
- net/handshake/handshake.h | 1 +
- net/handshake/request.c   | 4 ++++
- 2 files changed, 5 insertions(+)
-
-
-
+> Hi,
 >
-> regards,
-> dan carpenter
+> =E5=9C=A8 2023/05/18 0:27, yang lan =E5=86=99=E9=81=93:
+> > Hi,
+> >
+> > Thank you for your response.
+> >
+> >> Does this reproduce on current kernels, eg 6.4-rc2?
+> >
+> > Yeah, it can be reproduced on kernel 6.4-rc2.
+> >
 >
-> On Wed, May 17, 2023 at 06:39:57PM +0530, Naresh Kamboju wrote:
-> > Following kernel crash noticed while booting qemu-arm64 kunit builds on
-> > Linux next version 6.4.0-rc2-next-20230517.
+> Below log shows that io hang, can you collect following debugfs so
+> that we can know where is the io now.
+>
+> cd /sys/kernel/debug/block/[test_device] && find . -type f -exec grep
+> -aH . {} \;
+>
+> Thanks,
+> Kuai
+> > root@syzkaller:~# uname -a
+> > Linux syzkaller 6.4.0-rc2 #1 SMP PREEMPT_DYNAMIC Wed May 17 22:58:52
+> > CST 2023 x86_64 GNU/Linux
+> > root@syzkaller:~# gcc poc_blkdev.c -o poc_blkdev
+> > root@syzkaller:~# ./poc_blkdev
+> > [  128.718051][ T7121] nbd0: detected capacity change from 0 to 4
+> > [  158.917678][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 30 seconds
+> > [  188.997677][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 60 seconds
+> > [  219.077191][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 90 seconds
+> > [  249.157312][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 120 seconds
+> > [  279.237409][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 150 seconds
+> > [  309.317843][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 180 seconds
+> > [  339.397950][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 210 seconds
+> > [  369.478031][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 240 seconds
+> > [  399.558253][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 270 seconds
+> > [  429.638372][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 300 seconds
+> > [  459.718454][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 330 seconds
+> > [  489.798571][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 360 seconds
+> > [  519.878643][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 390 seconds
+> > [  549.958966][  T998] block nbd0: Possible stuck request
+> > ffff888016f08000: control (read@0,2048B). Runtime 420 seconds
+> > [  571.719145][   T30] INFO: task systemd-udevd:7123 blocked for more
+> > than 143 seconds.
+> > [  571.719652][   T30]       Not tainted 6.4.0-rc2 #1
+> > [  571.719900][   T30] "echo 0 >
+> > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > [  571.720307][   T30] task:systemd-udevd   state:D stack:26224
+> > pid:7123  ppid:3998   flags:0x00004004
+> > [  571.720756][   T30] Call Trace:
+> > [  571.720923][   T30]  <TASK>
+> > [  571.721073][   T30]  __schedule+0x9ca/0x2630
+> > [  571.721348][   T30]  ? firmware_map_remove+0x1e0/0x1e0
+> > [  571.721618][   T30]  ? find_held_lock+0x33/0x1c0
+> > [  571.721866][   T30]  ? lock_release+0x3b9/0x690
+> > [  571.722108][   T30]  ? do_read_cache_folio+0x4ff/0xb20
+> > [  571.722447][   T30]  ? lock_downgrade+0x6b0/0x6b0
+> > [  571.722785][   T30]  ? mark_held_locks+0xb0/0x110
+> > [  571.723044][   T30]  schedule+0xd3/0x1b0
+> > [  571.723264][   T30]  io_schedule+0x1b/0x70
+> > [  571.723489][   T30]  ? do_read_cache_folio+0x58c/0xb20
+> > [  571.723760][   T30]  do_read_cache_folio+0x58c/0xb20
+> > [  571.724036][   T30]  ? blkdev_readahead+0x20/0x20
+> > [  571.724319][   T30]  ? __filemap_get_folio+0x8e0/0x8e0
+> > [  571.724588][   T30]  ? __sanitizer_cov_trace_switch+0x53/0x90
+> > [  571.724885][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
+> > [  571.725246][   T30]  ? format_decode+0x1cf/0xb50
+> > [  571.725547][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
+> > [  571.725837][   T30]  ? fill_ptr_key+0x30/0x30
+> > [  571.726072][   T30]  ? default_pointer+0x4a0/0x4a0
+> > [  571.726335][   T30]  ? __isolate_free_page+0x220/0x220
+> > [  571.726608][   T30]  ? filemap_fdatawrite_wbc+0x1c0/0x1c0
+> > [  571.726888][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
+> > [  571.727172][   T30]  ? read_part_sector+0x229/0x420
+> > [  571.727434][   T30]  ? adfspart_check_ADFS+0x560/0x560
+> > [  571.727707][   T30]  read_part_sector+0xfa/0x420
+> > [  571.727963][   T30]  adfspart_check_POWERTEC+0x90/0x690
+> > [  571.728244][   T30]  ? adfspart_check_ADFS+0x560/0x560
+> > [  571.728520][   T30]  ? __kasan_slab_alloc+0x33/0x70
+> > [  571.728780][   T30]  ? adfspart_check_ICS+0x8f0/0x8f0
+> > [  571.729889][   T30]  ? snprintf+0xb2/0xe0
+> > [  571.730145][   T30]  ? vsprintf+0x30/0x30
+> > [  571.730374][   T30]  ? __sanitizer_cov_trace_pc+0x1e/0x50
+> > [  571.730659][   T30]  ? adfspart_check_ICS+0x8f0/0x8f0
+> > [  571.730928][   T30]  bdev_disk_changed+0x674/0x1260
+> > [  571.731189][   T30]  ? write_comp_data+0x1f/0x70
+> > [  571.731439][   T30]  ? iput+0xd0/0x780
+> > [  571.731646][   T30]  blkdev_get_whole+0x186/0x260
+> > [  571.731886][   T30]  blkdev_get_by_dev+0x4ce/0xae0
+> > [  571.732139][   T30]  blkdev_open+0x140/0x2c0
+> > [  571.732366][   T30]  do_dentry_open+0x6de/0x1450
+> > [  571.732612][   T30]  ? blkdev_close+0x80/0x80
+> > [  571.732848][   T30]  path_openat+0xd6d/0x26d0
+> > [  571.733084][   T30]  ? lock_downgrade+0x6b0/0x6b0
+> > [  571.733336][   T30]  ? vfs_path_lookup+0x110/0x110
+> > [  571.733591][   T30]  do_filp_open+0x1bb/0x290
+> > [  571.733824][   T30]  ? may_open_dev+0xf0/0xf0
+> > [  571.734061][   T30]  ? __phys_addr_symbol+0x30/0x70
+> > [  571.734324][   T30]  ? do_raw_spin_unlock+0x176/0x260
+> > [  571.734595][   T30]  do_sys_openat2+0x5fd/0x980
+> > [  571.734837][   T30]  ? file_open_root+0x3f0/0x3f0
+> > [  571.735087][   T30]  ? seccomp_notify_ioctl+0xff0/0xff0
+> > [  571.735368][   T30]  do_sys_open+0xce/0x140
+> > [  571.735596][   T30]  ? filp_open+0x80/0x80
+> > [  571.735820][   T30]  ? __secure_computing+0x1e3/0x340
+> > [  571.736090][   T30]  do_syscall_64+0x38/0x80
+> > [  571.736325][   T30]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> > [  571.736626][   T30] RIP: 0033:0x7fb212210840
+> > [  571.736857][   T30] RSP: 002b:00007fffb37bbbe8 EFLAGS: 00000246
+> > ORIG_RAX: 0000000000000002
+> > [  571.737269][   T30] RAX: ffffffffffffffda RBX: 0000560e09072e10
+> > RCX: 00007fb212210840
+> > [  571.737651][   T30] RDX: 0000560e08e39fe3 RSI: 00000000000a0800
+> > RDI: 0000560e090813b0
+> > [  571.738037][   T30] RBP: 00007fffb37bbd60 R08: 0000560e08e39670
+> > R09: 0000000000000010
+> > [  571.738432][   T30] R10: 0000560e08e39d0c R11: 0000000000000246
+> > R12: 00007fffb37bbcb0
+> > [  571.739563][   T30] R13: 0000560e09087a70 R14: 0000000000000003
+> > R15: 000000000000000e
+> > [  571.739973][   T30]  </TASK>
+> > [  571.740133][   T30]
+> > [  571.740133][   T30] Showing all locks held in the system:
+> > [  571.740495][   T30] 1 lock held by rcu_tasks_kthre/13:
+> > [  571.740758][   T30]  #0: ffffffff8b6badd0
+> > (rcu_tasks.tasks_gp_mutex){+.+.}-{3:3}, at:
+> > rcu_tasks_one_gp+0x2b/0xdb0
+> > [  571.741301][   T30] 1 lock held by rcu_tasks_trace/14:
+> > [  571.741571][   T30]  #0: ffffffff8b6baad0
+> > (rcu_tasks_trace.tasks_gp_mutex){+.+.}-{3:3}, at:
+> > rcu_tasks_one_gp+0x2b/0xdb0
+> > [  571.742134][   T30] 1 lock held by khungtaskd/30:
+> > [  571.742385][   T30]  #0: ffffffff8b6bb960
+> > (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x5b/0x300
+> > [  571.742947][   T30] 2 locks held by kworker/u8:0/50:
+> > [  571.743198][   T30]  #0: ffff888016e7b138
+> > ((wq_completion)nbd0-recv){+.+.}-{0:0}, at:
+> > process_one_work+0x94b/0x17b0
+> > [  571.743809][   T30]  #1: ffff888011e4fdd0
+> > ((work_completion)(&args->work)){+.+.}-{0:0}, at:
+> > process_one_work+0x984/0x17b0
+> > [  571.744393][   T30] 1 lock held by in:imklog/6784:
+> > [  571.744643][   T30]  #0: ffff88801106e368
+> > (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100
+> > [  571.745122][   T30] 1 lock held by systemd-udevd/7123:
+> > [  571.745381][   T30]  #0: ffff8880431854c8
+> > (&disk->open_mutex){+.+.}-{3:3}, at: blkdev_get_by_dev+0x24b/0xae0
+> > [  571.745885][   T30]
+> > [  571.746008][   T30] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> > [  571.746008][   T30]
+> > [  571.746424][   T30] NMI backtrace for cpu 1
+> > [  571.746642][   T30] CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.4.=
+0-rc2 #1
+> > [  571.746989][   T30] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> > 1996), BIOS 1.12.0-1 04/01/2014
+> > [  571.747440][   T30] Call Trace:
+> > [  571.747606][   T30]  <TASK>
+> > [  571.747764][   T30]  dump_stack_lvl+0x91/0xf0
+> > [  571.747997][   T30]  nmi_cpu_backtrace+0x21a/0x2b0
+> > [  571.748257][   T30]  ? lapic_can_unplug_cpu+0xa0/0xa0
+> > [  571.748525][   T30]  nmi_trigger_cpumask_backtrace+0x28c/0x2f0
+> > [  571.748830][   T30]  watchdog+0xe4b/0x10c0
+> > [  571.749057][   T30]  ? proc_dohung_task_timeout_secs+0x90/0x90
+> > [  571.749366][   T30]  kthread+0x33b/0x430
+> > [  571.749596][   T30]  ? kthread_complete_and_exit+0x40/0x40
+> > [  571.749891][   T30]  ret_from_fork+0x1f/0x30
+> > [  571.750126][   T30]  </TASK>
+> > [  571.750347][   T30] Sending NMI from CPU 1 to CPUs 0:
+> > [  571.750620][    C0] NMI backtrace for cpu 0
+> > [  571.750626][    C0] CPU: 0 PID: 3987 Comm: systemd-journal Not
+> > tainted 6.4.0-rc2 #1
+> > [  571.750637][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> > 1996), BIOS 1.12.0-1 04/01/2014
+> > [  571.750643][    C0] RIP: 0033:0x7fb1d8c34bd1
+> > [  571.750652][    C0] Code: ed 4d 89 cf 75 a3 0f 1f 00 48 85 ed 75 4b
+> > 48 8b 54 24 28 48 8b 44 24 18 48 8b 7c 24 20 48 29 da 48 8b 70 20 48
+> > 0f af 54 24 08 <48> 83 c4 38 5b 5d 41 5c 41 5d 41 5e 41 5f e9 ac f2 04
+> > 00 0f 1f 40
+> > [  571.750662][    C0] RSP: 002b:00007ffff9686c30 EFLAGS: 00000202
+> > [  571.750670][    C0] RAX: 00007ffff9686e50 RBX: 0000000000000002
+> > RCX: 0000000000000010
+> > [  571.750677][    C0] RDX: 0000000000000010 RSI: 00007ffff9686d80
+> > RDI: 00007ffff9686f20
+> > [  571.750683][    C0] RBP: 0000000000000000 R08: 0000000000000010
+> > R09: 00007ffff9686d90
+> > [  571.750689][    C0] R10: 00007ffff9686fb0 R11: 00007fb1d8d6a060
+> > R12: 00007ffff9686f30
+> > [  571.750696][    C0] R13: 00007fb1d9d20ee0 R14: 00007ffff9686f30
+> > R15: 00007ffff9686d90
+> > [  571.750703][    C0] FS:  00007fb1da33d8c0 GS:  0000000000000000
+> > [  571.752358][   T30] Kernel panic - not syncing: hung_task: blocked t=
+asks
+> > [  571.757337][   T30] CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.4.=
+0-rc2 #1
+> > [  571.757686][   T30] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> > 1996), BIOS 1.12.0-1 04/01/2014
+> > [  571.758131][   T30] Call Trace:
+> > [  571.758302][   T30]  <TASK>
+> > [  571.758462][   T30]  dump_stack_lvl+0x91/0xf0
+> > [  571.758714][   T30]  panic+0x62d/0x6a0
+> > [  571.758926][   T30]  ? panic_smp_self_stop+0x90/0x90
+> > [  571.759188][   T30]  ? preempt_schedule_common+0x1a/0xc0
+> > [  571.759486][   T30]  ? preempt_schedule_thunk+0x1a/0x20
+> > [  571.759785][   T30]  ? watchdog+0xc21/0x10c0
+> > [  571.760020][   T30]  watchdog+0xc32/0x10c0
+> > [  571.760240][   T30]  ? proc_dohung_task_timeout_secs+0x90/0x90
+> > [  571.760541][   T30]  kthread+0x33b/0x430
+> > [  571.760753][   T30]  ? kthread_complete_and_exit+0x40/0x40
+> > [  571.761052][   T30]  ret_from_fork+0x1f/0x30
+> > [  571.761286][   T30]  </TASK>
+> > [  571.761814][   T30] Kernel Offset: disabled
+> > [  571.762047][   T30] Rebooting in 86400 seconds..
 > >
-> > WARNING: CPU: 1 PID: 1436 at mm/page_alloc.c:4781 __alloc_pages
-> > kernel BUG at fs/inode.c:1763!
-> > WARNING: CPU: 0 PID: 0 at kernel/context_tracking.c:128
-> > ct_kernel_exit.constprop.0+0xe0/0xe8
+> >> You need to include poc_blkdev.c as part of your report.
 > >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > It's a little confusing and I'm sorry for that.
+> > The poc_blkdev.c is exactly the C reproducer
+> > (https://pastebin.com/raw/6mg7uF8W).
 > >
-> > Detailed Crash log:
-> > =========
-> > <4>[  800.148388] ------------[ cut here ]------------
-> > <4>[  800.150072] WARNING: CPU: 1 PID: 1436 at mm/page_alloc.c:4781
-> > __alloc_pages+0x998/0x13e8
-> > <4>[  800.151978] Modules linked in:
-> > <4>[  800.153337] CPU: 1 PID: 1436 Comm: kunit_try_catch Tainted: G
-> > B            N 6.4.0-rc2-next-20230517 #1
-> > <4>[  800.154662] Hardware name: linux,dummy-virt (DT)
-> > <4>[  800.155921] pstate: 22400005 (nzCv daif +PAN -UAO +TCO -DIT
-> > -SSBS BTYPE=--)
-> > <4>[  800.157079] pc : __alloc_pages+0x998/0x13e8
-> > <4>[  800.158148] lr : __kmalloc_large_node+0xc0/0x1b8
-> > <4>[  800.159238] sp : ffff80000b5e7aa0
-> > <4>[  800.160154] x29: ffff80000b5e7aa0 x28: 0000000000000000 x27:
-> > 0000000000000000
-> > <4>[  800.161762] x26: ffff0000c4509f00 x25: ffff800008087a98 x24:
-> > ffffd0168ffa8460
-> > <4>[  800.163283] x23: 1ffff000016bcf74 x22: 0000000000040dc0 x21:
-> > 0000000000000000
-> > <4>[  800.164813] x20: 0000000000000015 x19: 0000000000000000 x18:
-> > 000000000000000b
-> > <4>[  800.166307] x17: 00000000bd2c963e x16: 00000000a2b18575 x15:
-> > 0000000033b8949b
-> > <4>[  800.167831] x14: 000000006d0ad0a4 x13: 00000000e32f85f5 x12:
-> > ffff7000016bcfa1
-> > <4>[  800.169363] x11: 1ffff000016bcfa0 x10: ffff7000016bcfa0 x9 :
-> > 000000000000f204
-> > <4>[  800.170928] x8 : 00000000f2000000 x7 : 00000000f2f2f2f2 x6 :
-> > 00000000f3f3f3f3
-> > <4>[  800.172467] x5 : 0000000000040dc0 x4 : ffff0000c614e900 x3 :
-> > 0000000000000000
-> > <4>[  800.173976] x2 : 0000000000000000 x1 : 0000000000000001 x0 :
-> > ffffd01696633000
-> > <4>[  800.175603] Call trace:
-> > <4>[  800.176314]  __alloc_pages+0x998/0x13e8
-> > <4>[  800.177355]  __kmalloc_large_node+0xc0/0x1b8
-> > <4>[  800.178401]  __kmalloc+0x158/0x1c0
-> > <4>[  800.179350]  handshake_req_alloc+0x70/0xb8
-> > <4>[  800.180510]  handshake_req_alloc_case+0xa4/0x188
-> > <4>[  800.181598]  kunit_try_run_case+0x88/0x120
-> > <4>[  800.182614]  kunit_generic_run_threadfn_adapter+0x38/0x60
-> > <4>[  800.183809]  kthread+0x194/0x1b0
-> > <4>[  800.184813]  ret_from_fork+0x10/0x20
-> > <4>[  800.185873] ---[ end trace 0000000000000000 ]---
-> > <6>[  800.202972]         ok 6 handshake_req_alloc excessive privsize
-> > <6>[  800.217425]         ok 7 handshake_req_alloc all good
-> > <6>[  800.219182]     # req_alloc API fuzzing: pass:7 fail:0 skip:0 total:7
-> > <6>[  800.222082]     ok 1 req_alloc API fuzzing
-> > <6>[  800.243148]     ok 2 req_submit NULL req arg
-> > <6>[  800.260195]     ok 3 req_submit NULL sock arg
-> > <6>[  800.274397]     ok 4 req_submit NULL sock->file
-> > <6>[  800.294631]     ok 5 req_lookup works
-> > <6>[  800.310289]     ok 6 req_submit max pending
-> > <6>[  800.326669]     ok 7 req_submit multiple
-> > <6>[  800.342645]     ok 8 req_cancel before accept
-> > <4>[  800.359161] ------------[ cut here ]------------
-> > <2>[  800.360659] kernel BUG at fs/inode.c:1763!
-> > <0>[  800.362464] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-> > <4>[  800.364079] Modules linked in:
-> > <4>[  800.364978] CPU: 0 PID: 9 Comm: kworker/0:1 Tainted: G    B   W
-> >       N 6.4.0-rc2-next-20230517 #1
-> > <4>[  800.366607] Hardware name: linux,dummy-virt (DT)
-> > <4>[  800.368282] Workqueue: events delayed_fput
-> > <4>[  800.369511] pstate: 62400005 (nZCv daif +PAN -UAO +TCO -DIT
-> > -SSBS BTYPE=--)
-> > <4>[  800.370861] pc : iput+0x2c4/0x328
-> > <4>[  800.371839] lr : iput+0x3c/0x328
-> > <4>[  800.372882] sp : ffff800008107b50
-> > <6>[  800.375744]     ok 9 req_cancel after accept
-> > <4>[  800.376704] x29: ffff800008107b50 x28: ffffd016924f7400 x27:
-> > ffff0000c08d4da0
-> > <4>[  800.379288] x26: ffff0000c042f918 x25: ffff0000cc273918 x24:
-> > ffff0000cc273900
-> > <4>[  800.381160] x23: 0000000000000000 x22: ffff0000c042f9b8 x21:
-> > ffffd016924f7b40
-> > <4>[  800.383408] x20: ffff0000c042f880 x19: ffff0000c042f880 x18:
-> > 000000000000000b
-> > <4>[  800.385535] x17: ffffd0168fb6f094 x16: ffffd0168fb6ee10 x15:
-> > ffffd0168fb6ebd4
-> > <4>[  800.387985] x14: ffffd0168f7d5de8 x13: ffffd0168f617f98 x12:
-> > ffff700001020f53
-> > <4>[  800.389672] x11: 1ffff00001020f52 x10: ffff700001020f52 x9 :
-> > ffffd0168fb67384
-> > <4>[  800.392442] x8 : ffff800008107a98 x7 : 0000000000000000 x6 :
-> > 0000000000000008
-> > <4>[  800.395053] x5 : ffff800008107a58 x4 : 0000000000000001 x3 :
-> > dfff800000000000
-> > <4>[  800.397652] x2 : 0000000000000007 x1 : ffff0000c042f918 x0 :
-> > 0000000000000060
-> > <4>[  800.400110] Call trace:
-> > <4>[  800.401352]  iput+0x2c4/0x328
-> > <4>[  800.402741]  dentry_unlink_inode+0x12c/0x240
-> > <4>[  800.404519]  __dentry_kill+0x16c/0x2b0
-> > <4>[  800.406047]  dput+0x24c/0x438
-> > <4>[  800.407331]  __fput+0x140/0x3b0
-> > <4>[  800.409152]  delayed_fput+0x64/0x80
-> > <4>[  800.410708]  process_one_work+0x3cc/0x7d0
-> > <4>[  800.413032]  worker_thread+0xa4/0x6a0
-> > <4>[  800.415041]  kthread+0x194/0x1b0
-> > <6>[  800.416283]     ok 10 req_cancel after done
-> > <4>[  800.416205]  ret_from_fork+0x10/0x20
-> > <0>[  800.419090] Code: 17ffffc4 97fffb54 17ffffd4 d65f03c0 (d4210000)
-> > <4>[  800.421577] ---[ end trace 0000000000000000 ]---
-> > <6>[  800.424335] note: kworker/0:1[9] exited with irqs disabled
-> > <6>[  800.428252] note: kworker/0:1[9] exited with preempt_count 1
-> > <4>[  800.435635] ------------[ cut here ]------------
-> > <4>[  800.436529] WARNING: CPU: 0 PID: 0 at
-> > kernel/context_tracking.c:128 ct_kernel_exit.constprop.0+0xe0/0xe8
-> > <4>[  800.439070] Modules linked in:
-> > <4>[  800.440326] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G    B D W
-> >     N 6.4.0-rc2-next-20230517 #1
-> > <4>[  800.442196] Hardware name: linux,dummy-virt (DT)
-> > <4>[  800.443408] pstate: 224003c5 (nzCv DAIF +PAN -UAO +TCO -DIT
-> > -SSBS BTYPE=--)
-> > <4>[  800.445031] pc : ct_kernel_exit.constprop.0+0xe0/0xe8
-> > <4>[  800.446629] lr : ct_kernel_exit.constprop.0+0x20/0xe8
-> > <4>[  800.448263] sp : ffffd01694ed7cd0
-> > <4>[  800.449375] x29: ffffd01694ed7cd0 x28: 00000000437e90ac x27:
-> > 0000000000000000
-> > <4>[  800.451354] x26: ffffd01694ef1e40 x25: 0000000000000000 x24:
-> > 0000000000000000
-> > <4>[  800.453397] x23: ffffd01694ee2ba0 x22: 1ffffa02d29dafb4 x21:
-> > 0000000000000000
-> > <4>[  800.455573] x20: ffffd01692f29c20 x19: ffff0000da667c20 x18:
-> > 000000000000000b
-> > <4>[  800.457649] x17: 000000000055a8d0 x16: 000000006cbc159c x15:
-> > ffffd0168fb6865c
-> > <4>[  800.459662] x14: ffffd0168fb680ec x13: ffffd0168fb3b03c x12:
-> > ffff7a02d29daf81
-> > <4>[  800.461787] x11: 1ffffa02d29daf80 x10: ffff7a02d29daf80 x9 :
-> > dfff800000000000
-> > <4>[  800.463827] x8 : ffffd01694ed7c08 x7 : 0000000000000000 x6 :
-> > 0000000000000008
-> > <4>[  800.465864] x5 : ffffd01694ed7bc8 x4 : 0000000000000001 x3 :
-> > dfff800000000000
-> > <4>[  800.467860] x2 : 4000000000000002 x1 : 4000000000000000 x0 :
-> > ffff2fea4773e000
-> > <4>[  800.469981] Call trace:
-> > <4>[  800.470946]  ct_kernel_exit.constprop.0+0xe0/0xe8
-> > <4>[  800.472535]  ct_idle_enter+0x10/0x20
-> > <4>[  800.473923]  default_idle_call+0x58/0x90
-> > <4>[  800.475213]  do_idle+0x304/0x388
-> > <4>[  800.476492]  cpu_startup_entry+0x2c/0x40
-> > <4>[  800.477885]  rest_init+0x120/0x128
-> > <4>[  800.478830]  arch_call_rest_init+0x1c/0x28
-> > <4>[  800.479961]  start_kernel+0x2f8/0x3c0
-> > <4>[  800.482015]  __primary_switched+0xc0/0xd0
-> > <4>[  800.483086] ---[ end trace 0000000000000000 ]---
-> > <6>[  800.487780]     ok 11 req_destroy works
-> > <6>[  800.488283] # Handshake API tests: pass:11 fail:0 skip:0 total:11
-> > <6>[  800.491161] # Totals: pass:17 fail:0 skip:0 total:17
-> > <6>[  800.495059] ok 75 Handshake API tests
-> > <6>[  800.514129] uart-pl011 9000000.pl011: no DMA platform data
+> >> I suspect you've done something that is known to not work (as root,
+> >> so we won't necessarily care).  But I can't really say without seeing
+> >> what you've done.  Running syzkaller is an art, and most people aren't
+> >> good at it.  It takes a lot of work to submit good quality bug reports=
+,
+> >> see this article:
+> >>
+> >> https://blog.regehr.org/archives/2037
 > >
-> > links,
-> >  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20230517/testrun/17029810/suite/boot/test/gcc-12-lkftconfig-kunit/log
-> >  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20230517/testrun/17029810/suite/boot/test/gcc-12-lkftconfig-kunit/history/
-> >  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20230517/testrun/17029810/suite/boot/tests/
+> > I have read this article and thanks for your recommendations.
+> > I'm not familiar with this module and I haven't figured out the root
+> > cause of this bug yet.
 > >
-> > Steps to reproduce:
-> > =================
-> > # To install tuxrun on your system globally:
-> > # sudo pip3 install -U tuxrun==0.42.0
-> > #
-> > # See https://tuxrun.org/ for complete documentation.
+> > Regards,
 > >
-> > tuxrun   \
-> >  --runtime podman   \
-> >  --device qemu-arm64   \
-> >  --kernel https://storage.tuxsuite.com/public/linaro/lkft/builds/2PtylM1zfMZo4vZUtwFtBJhJRvx/Image.gz
-> >   \
-> >  --modules https://storage.tuxsuite.com/public/linaro/lkft/builds/2PtylM1zfMZo4vZUtwFtBJhJRvx/modules.tar.xz
-> >   \
-> >  --rootfs https://storage.tuxsuite.com/public/linaro/lkft/oebuilds/2PeQhlPkvTmtoQVO1F0CQ7lAsm5/images/juno/lkft-tux-image-juno-20230511150149.rootfs.ext4.gz
-> >   \
-> >  --parameters SKIPFILE=skipfile-lkft.yaml   \
-> >  --image docker.io/lavasoftware/lava-dispatcher:2023.01.0020.gc1598238f   \
-> >  --tests kunit   \
-> >  --timeouts boot=30
+> > Yang
 > >
-> > --
-> > Linaro LKFT
-> > https://lkft.linaro.org
-
-- Naresh
+> > Matthew Wilcox <willy@infradead.org> =E4=BA=8E2023=E5=B9=B45=E6=9C=8817=
+=E6=97=A5=E5=91=A8=E4=B8=89 20:20=E5=86=99=E9=81=93=EF=BC=9A
+> >>
+> >> On Wed, May 17, 2023 at 07:12:23PM +0800, yang lan wrote:
+> >>> root@syzkaller:~# uname -a
+> >>> Linux syzkaller 5.10.179 #1 SMP PREEMPT Thu Apr 27 16:22:48 CST 2023
+> >>
+> >> Does this reproduce on current kernels, eg 6.4-rc2?
+> >>
+> >>> root@syzkaller:~# gcc poc_blkdev.c -o poc_blkdev
+> >>
+> >> You need to include poc_blkdev.c as part of your report.
+> >>
+> >>> Please let me know if I can provide any more information, and I hope =
+I
+> >>> didn't mess up this bug report.
+> >>
+> >> I suspect you've done something that is known to not work (as root,
+> >> so we won't necessarily care).  But I can't really say without seeing
+> >> what you've done.  Running syzkaller is an art, and most people aren't
+> >> good at it.  It takes a lot of work to submit good quality bug reports=
+,
+> >> see this article:
+> >>
+> >> https://blog.regehr.org/archives/2037
+> >
+> > Matthew Wilcox <willy@infradead.org> =E4=BA=8E2023=E5=B9=B45=E6=9C=8817=
+=E6=97=A5=E5=91=A8=E4=B8=89 20:20=E5=86=99=E9=81=93=EF=BC=9A
+> >>
+> >> On Wed, May 17, 2023 at 07:12:23PM +0800, yang lan wrote:
+> >>> root@syzkaller:~# uname -a
+> >>> Linux syzkaller 5.10.179 #1 SMP PREEMPT Thu Apr 27 16:22:48 CST 2023
+> >>
+> >> Does this reproduce on current kernels, eg 6.4-rc2?
+> >>
+> >>> root@syzkaller:~# gcc poc_blkdev.c -o poc_blkdev
+> >>
+> >> You need to include poc_blkdev.c as part of your report.
+> >>
+> >>> Please let me know if I can provide any more information, and I hope =
+I
+> >>> didn't mess up this bug report.
+> >>
+> >> I suspect you've done something that is known to not work (as root,
+> >> so we won't necessarily care).  But I can't really say without seeing
+> >> what you've done.  Running syzkaller is an art, and most people aren't
+> >> good at it.  It takes a lot of work to submit good quality bug reports=
+,
+> >> see this article:
+> >>
+> >> https://blog.regehr.org/archives/2037
+> > .
+> >
+>
