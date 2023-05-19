@@ -2,180 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A8BC709F07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 20:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BBE970A006
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 21:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229826AbjESSXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 14:23:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34438 "EHLO
+        id S231149AbjESTm4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 15:42:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjESSX2 (ORCPT
+        with ESMTP id S229788AbjESTmz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 14:23:28 -0400
-Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E81FB139
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 11:23:24 -0700 (PDT)
-Received: by mail-pf1-x449.google.com with SMTP id d2e1a72fcca58-64d1c53cad8so2538424b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 11:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1684520604; x=1687112604;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DLB02Z/Vwsol/Ye6PM6jgDdfosuGHdGXe49pn4jVFGs=;
-        b=ITz9fDEYRz6uJ1+nRWO7vsSi14em+HdSJidcWgxJ4Wt6DeOJu7xDarNLoGHPPmOBJm
-         513df8JS3NzUdZBK5GSwxSAE1obesd28XWXoOz2iBbvdy2ADgD8Q7q4etCMKIPinEZf9
-         82KenOrwjvv/KK8vs+qKxwowe4qePsP8+TuW1ty9rOYtzfzi/ynfD476K7Sa4jcxQ34p
-         HkwfUr8RcwOMfxti367AckaqXDd3aDIN65dnmKhBIIZmfTcWPib/CZQFAhBLIgn2eTM2
-         VcgA71nqkKuEZwM79FEKmyy8iW+KFC3fLH2DABkTHNX+7IlmO+RnTTQJhuLLoZh1rgpR
-         H95A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684520604; x=1687112604;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DLB02Z/Vwsol/Ye6PM6jgDdfosuGHdGXe49pn4jVFGs=;
-        b=aJJW8SjidoiJMDgEnC2axnT3Kb6eys8VscYaMxzdkNz9a/jKJ/kqfs2ff5MbeEpGfj
-         8eyz5d1k6W33MeQIZMrWhyl51DQhbUdUPfSh7ZS/U5osI+ap7o3l+lxwJyZ4TFbi2/DU
-         TtANGw7w7UOHbodSKmI1vNL829XucU6mNdGICVP2IQS2Tsthf/re7kJrbdQxd/wCUeI4
-         0FHlQ0NdrkCpTlHR6KDxr7qY2vJ/i3NEoQ5xB+TmfLfQuPfB9Hxq3WThcmA/og2Lm+cX
-         yOcZTqYq0quqqQJUDvhI2IMorVjC6erPJDoxiYJa7j8uaFBx+MLieV+6TVLJdHMu1HWB
-         2clA==
-X-Gm-Message-State: AC+VfDyg59ll3eP7WMR2jVxvJWj6TIfyjvXVeAM6JBM2SWvtw3MJfbZH
-        eXG/4t3BAjtiigIqGwsczccf13AiZeI=
-X-Google-Smtp-Source: ACHHUZ419BZyva9XfjdHZezzlVRJTJng9P1rwHIVB2iZ3Kvn5yX6WZYPLwlGGRjyBM2xKvPRPQpWmzT2ch0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:aa7:88c4:0:b0:643:4595:64c7 with SMTP id
- k4-20020aa788c4000000b00643459564c7mr1352262pff.4.1684520604384; Fri, 19 May
- 2023 11:23:24 -0700 (PDT)
-Date:   Fri, 19 May 2023 11:23:23 -0700
-In-Reply-To: <CSQFE7I30W27.2TPDIHOTZNRIZ@dev-dsk-nsaenz-1b-189b39ae.eu-west-1.amazon.com>
+        Fri, 19 May 2023 15:42:55 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F40EC186;
+        Fri, 19 May 2023 12:42:53 -0700 (PDT)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34JJb0aX023123;
+        Fri, 19 May 2023 19:42:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=XsOHwqSus0ATATt2cux6Mgrp0/sHwsa6ufvz+q0MK8g=;
+ b=c9ELQp+Re9BiKXDXTxlE0rFLbKbhdTmPV7aKJsnIAVCyEYJ5wdS1pyzDF/1q127Se3eJ
+ acLqWr8DruMmg7pbMDK9/9HWMxGmr753ygh0j6NIopweYQ80CKmihTT18tTdjH2GxLDC
+ d0LT7c4Gys94/z7+Q7le/6wwf5Jv/opLotpAnOMtY/BfuXBJcPgChzk1nEWpudQyOVwC
+ iFPgh+IXGMuqNkfEs+hLIRGprjbrc1idmvR+Wy7J9mY6hb9oUw/r/syVUka5IQtRyE+K
+ kUoaXa204wkk+VKa6RnXHnic/5Hp0x++2ctSqUJD6ptgJZTNGT3QX3OXV+5DGuR51U54 FA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qpem8198y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 19:42:43 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34JJb6ED023940;
+        Fri, 19 May 2023 19:42:42 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qpem8198h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 19:42:42 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34JJBZ5F005254;
+        Fri, 19 May 2023 19:42:41 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([9.208.129.117])
+        by ppma02wdc.us.ibm.com (PPS) with ESMTPS id 3qj266rjv1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 19:42:41 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34JJgeAi57082344
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 May 2023 19:42:40 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E25495805E;
+        Fri, 19 May 2023 19:42:39 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 247025805A;
+        Fri, 19 May 2023 19:42:39 +0000 (GMT)
+Received: from wecm-9-67-22-188.wecm.ibm.com (unknown [9.67.22.188])
+        by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 19 May 2023 19:42:39 +0000 (GMT)
+Message-ID: <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM
+ after writes
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     Stefan Berger <stefanb@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Ignaz Forster <iforster@suse.de>, Petr Vorel <pvorel@suse.cz>
+Date:   Fri, 19 May 2023 15:42:38 -0400
+In-Reply-To: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
 Mime-Version: 1.0
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-3-chao.p.peng@linux.intel.com> <CSQFE7I30W27.2TPDIHOTZNRIZ@dev-dsk-nsaenz-1b-189b39ae.eu-west-1.amazon.com>
-Message-ID: <ZGe+m+uFzpiW7wlr@google.com>
-Subject: Re: [PATCH v10 2/9] KVM: Introduce per-page memory attributes
-From:   Sean Christopherson <seanjc@google.com>
-To:     Nicolas Saenz Julienne <nsaenz@amazon.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, graf@amazon.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com, anelkz@amazon.de
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,
-        USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: zr_Pq2V2khX2xqvpCsnZD1Mjxeh_EExZ
+X-Proofpoint-ORIG-GUID: ks43xaZjg_1cB0zk9Sgi9XaOBDVpYPRs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-19_14,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 mlxlogscore=999 clxscore=1011
+ phishscore=0 malwarescore=0 adultscore=0 impostorscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305190168
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 19, 2023, Nicolas Saenz Julienne wrote:
-> Hi,
+On Fri, 2023-04-07 at 10:31 +0200, Christian Brauner wrote:
+> So, I think we want both; we want the ovl_copyattr() and the
+> vfs_getattr_nosec() change:
 > 
-> On Fri Dec 2, 2022 at 6:13 AM UTC, Chao Peng wrote:
+> (1) overlayfs should copy up the inode version in ovl_copyattr(). That
+>     is in line what we do with all other inode attributes. IOW, the
+>     overlayfs inode's i_version counter should aim to mirror the
+>     relevant layer's i_version counter. I wouldn't know why that
+>     shouldn't be the case. Asking the other way around there doesn't
+>     seem to be any use for overlayfs inodes to have an i_version that
+>     isn't just mirroring the relevant layer's i_version.
+> (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
+>     Currently, ima assumes that it will get the correct i_version from
+>     an inode but that just doesn't hold for stacking filesystem.
 > 
-> [...]
-> > +The user sets the per-page memory attributes to a guest memory range indicated
-> > +by address/size, and in return KVM adjusts address and size to reflect the
-> > +actual pages of the memory range have been successfully set to the attributes.
-> > +If the call returns 0, "address" is updated to the last successful address + 1
-> > +and "size" is updated to the remaining address size that has not been set
-> > +successfully. The user should check the return value as well as the size to
-> > +decide if the operation succeeded for the whole range or not. The user may want
-> > +to retry the operation with the returned address/size if the previous range was
-> > +partially successful.
-> > +
-> > +Both address and size should be page aligned and the supported attributes can be
-> > +retrieved with KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES.
-> > +
-> > +The "flags" field may be used for future extensions and should be set to 0s.
-> 
-> We have been looking into adding support for the Hyper-V VSM extensions
-> which Windows uses to implement Credential Guard. This interface seems
-> like a good fit for one of its underlying features. I just wanted to
-> share a bit about it, and see if we can expand it to fit this use-case.
-> Note that this was already briefly discussed between Sean and Alex some
-> time ago[1].
-> 
-> VSM introduces isolated guest execution contexts called Virtual Trust
-> Levels (VTL) [2]. Each VTL has its own memory access protections,
-> virtual processors states, interrupt controllers and overlay pages. VTLs
-> are hierarchical and might enforce memory protections on less privileged
-> VTLs. Memory protections are enforced on a per-GPA granularity.
-> 
-> The list of possible protections is:
-> - No access -- This needs a new memory attribute, I think.
+> While (1) would likely just fix the immediate bug (2) is correct and
+> _robust_. If we change how attributes are handled vfs_*() helpers will
+> get updated and ima with it. Poking at raw inodes without using
+> appropriate helpers is much more likely to get ima into trouble.
 
-No, if KVM provides three bits for READ, WRITE, and EXECUTE, then userspace can
-get all the possible combinations.  E.g. this is RWX=000b
+In addition to properly setting the i_version for IMA, EVM has a
+similar issue with i_generation and s_uuid. Adding them to
+ovl_copyattr() seems to resolve it.   Does that make sense?
 
-> - Read-only, no execute
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 923d66d131c1..cd0aeb828868 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -1118,5 +1118,8 @@ void ovl_copyattr(struct inode *inode)
+ 	inode->i_atime = realinode->i_atime;
+ 	inode->i_mtime = realinode->i_mtime;
+ 	inode->i_ctime = realinode->i_ctime;
++	inode->i_generation = realinode->i_generation;
++	if (inode->i_sb)
++		uuid_copy(&inode->i_sb->s_uuid, &realinode->i_sb-
+>s_uuid);
+ 	i_size_write(inode, i_size_read(realinode));
+ }
+-- 
+thanks,
 
-RWX=100b (using my completely arbitrary ordering of RWX bits :-) )
+Mimib
 
-> - Read-only, execute
-
-RWX=101b
-
-> - Read/write, no execute
-
-RWX=110b
-
-> - Read/write, execute
-
-RWX=111b
-
-> We implemented this in the past by using a separate address space per
-> VTL and updating memory regions on protection changes. But having to
-> update the memory slot layout for every permission change scales poorly,
-> especially as we have to perform 100.000s of these operations at boot
-> (see [1] for a little more context).
-> 
-> I believe the biggest barrier for us to use memory attributes is not
-> having the ability to target specific address spaces, or to the very
-> least having some mechanism to maintain multiple independent layers of
-> attributes.
-
-Can you elaborate on "specific address spaces"?  In KVM, that usually means SMM,
-but the VTL comment above makes me think you're talking about something entirely
-different.  E.g. can you provide a brief summary of the requirements/expectations?
-
-> Also sorry for not posting our VSM patches. They are not ready for
-> upstream review yet, but we're working on it.
-> 
-> Nicolas
-> 
-> [1] https://patchwork.kernel.org/comment/25054908/
-> [2] See Chapter 15 of Microsoft's 'Hypervisor Top Level Functional Specification':
->     https://raw.githubusercontent.com/MicrosoftDocs/Virtualization-Documentation/main/tlfs/Hypervisor%20Top%20Level%20Functional%20Specification%20v6.0b.pdf
