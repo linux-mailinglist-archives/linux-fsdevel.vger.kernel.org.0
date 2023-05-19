@@ -2,176 +2,334 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AB1370A039
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 21:58:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7BB970A04A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 22:09:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229862AbjEST60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 15:58:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45830 "EHLO
+        id S229678AbjESUJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 16:09:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229812AbjEST6Y (ORCPT
+        with ESMTP id S229501AbjESUJj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 15:58:24 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67EC410DC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 12:57:48 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-54c2999fdc7so70247247b3.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 12:57:48 -0700 (PDT)
+        Fri, 19 May 2023 16:09:39 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C869DFE;
+        Fri, 19 May 2023 13:09:37 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1ae7dd22ea1so318145ad.1;
+        Fri, 19 May 2023 13:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1684526250; x=1687118250;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pKqky4qtLhLMqwc+jYDJn6p8bYat7L/lp+nKxMPkRyY=;
-        b=Y4/nCNzrFtAXrTxhpgxnIohVGQ15GL4scvI0E/2mwJYj0GQbPVuXot7Jeu/0WvRvj2
-         9Uxos5w5dD8ChOUGochlppnIBC5WV72wtD3Z57q1qVzEB6BAU0zrp0Rj839OpxiYl1kv
-         G7aILpvUERbXB4ndb2rR/5sC8oXuhx9NqV1vUAEDqYGF4xFHckOEfCC8e/Xg4DdMuR9l
-         zQm9PUkP+OBFNpwTjL8yMr9HKgLvxTY4wkwyU4C1eKD22zw0o+8bYInRVaF8kFuyTWom
-         12s22nrLwFtLZKHZJekTC38ZFlIu/iG4U6Mf6VoeQ952/z/sfp8161qhLkUY71jT5lqI
-         iHcQ==
+        d=gmail.com; s=20221208; t=1684526977; x=1687118977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LwOKloDvg1ZNDK0LMlCuSHhq2VpDE8rvC2g5Zyq0mFU=;
+        b=IDMI0MkQWwmRtH+x509w+/BPnxWTe3AE3KbZB+OI3Eg0WWfrTTYkhzPtTw0HF0VvYJ
+         gekS5GIjDEfyhTAnOmZLVvjE5quxBlqIbqqUtlmVIX6DWpRT3btGAnw4GddVCw/99IP8
+         h63e1D0c7B3qrMpuI4S1oE8Z2eq6EbIrCsFMeHODzn8F2+GqHC4bwXPehQKQYDLIUEwJ
+         6cIWG/YdOjD0u8QDcP0L4tJU3gdzop/ZQzh6fg6zA0NvVipHANn07Uxqom5MC9OeH/FH
+         SluzyMCVd3e8NJ1OqsrRKmt/op4enl/BnXu6L4VkI1o0i1tLuvUyOAfIv64TdBFw8FzB
+         5Ajw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684526250; x=1687118250;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pKqky4qtLhLMqwc+jYDJn6p8bYat7L/lp+nKxMPkRyY=;
-        b=ahYZSr+QmoVlaFsteqEmohOq4wDi/ivaOTWItjYyMqFeGv/+UwVOoOoFE6VLQld5Pl
-         2XwQ3cKmUCl+6j80USkYIMWtXGRWWXMkAHsPEboN1rgHdroNOJVxGkx4CW3PQj17yaRO
-         cG+/O7IEEQwlPqH0NJKTWfs/S20z1liHl16ps2DbRLQb8XRaLiG9K+cVcECaA9JSgqjM
-         KJmR7twGX1B5oU2DyiWvcpeomjlYfZVduWonf+c2fXbM8FXra9dzOSHeWZlGKJ319IaL
-         P8M10HNuwiIaCZ8l6xfOttMus/5tk3TouDz1pgul5wQFNVURH9FlP3AIhyA6lS47X1BX
-         rduw==
-X-Gm-Message-State: AC+VfDxfV9KWvIRAbSwv8jkRI5QM3I8l9FHHs1aFhQWSsKDFoO8LXRuO
-        v/84jszoyFrWfJUhCr1BhHVhVE3NMQ4=
-X-Google-Smtp-Source: ACHHUZ6FEiPmU5v43LWifQRBpo81052L49sw5QgxYInZToAzWsR8mGtYDH7+PppQKkPgp34+c6aLJuvLWhk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:9f0a:0:b0:561:949f:227 with SMTP id
- s10-20020a819f0a000000b00561949f0227mr1854093ywn.1.1684526250423; Fri, 19 May
- 2023 12:57:30 -0700 (PDT)
-Date:   Fri, 19 May 2023 12:57:28 -0700
-In-Reply-To: <CSQI5IB968XC.GO0OPMYT1C8N@dev-dsk-nsaenz-1b-189b39ae.eu-west-1.amazon.com>
-Mime-Version: 1.0
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-3-chao.p.peng@linux.intel.com> <CSQFE7I30W27.2TPDIHOTZNRIZ@dev-dsk-nsaenz-1b-189b39ae.eu-west-1.amazon.com>
- <ZGe+m+uFzpiW7wlr@google.com> <CSQI5IB968XC.GO0OPMYT1C8N@dev-dsk-nsaenz-1b-189b39ae.eu-west-1.amazon.com>
-Message-ID: <ZGfUqBLaO+cI9ypv@google.com>
-Subject: Re: [PATCH v10 2/9] KVM: Introduce per-page memory attributes
-From:   Sean Christopherson <seanjc@google.com>
-To:     Nicolas Saenz Julienne <nsaenz@amazon.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, graf@amazon.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com, anelkz@amazon.de
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        d=1e100.net; s=20221208; t=1684526977; x=1687118977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LwOKloDvg1ZNDK0LMlCuSHhq2VpDE8rvC2g5Zyq0mFU=;
+        b=h0+BMzeZTf7yaPqyv7wQPmfV3EFY4eyFd+fr+/tm5/3Rtw45QDM/WHnmK1qQnIhxh1
+         GJSxnBg57w0zeF1cwPvZBhWLYHi97uxMg3J5uZMJdh7YtJl5LsusfVqVoAWgt87cIuFi
+         9D9l1jNwX3BoAx/9ZGOyWUu3iBEfikMbWr67BcZ59w3k3hwhThmMsmRV6SxfFQDT1bnt
+         yEyn4VUF/nNb4JhJUWhN6abJrY1UPieWXdKYzXXYOOqChtIa30ll5Ap0rV6h4NGq+ZjP
+         RHKkQLqcJkkrc3F84DQMK38sAHY7RUBXYh9G9pLHDx5C3OEpkGFuuYWWk+foDH5Z1oa6
+         jOqw==
+X-Gm-Message-State: AC+VfDwJpIkqMdKzwJRQ6RzKi96N/ydi39zOzzagH6Fej2l2w4OB+O7A
+        GKbSxGKfSR3tSIqmTjNVcZM=
+X-Google-Smtp-Source: ACHHUZ7i2KZvjhivH8RjcXk11sX3CRJecRzRPWEjQs2sKE/OSBKvSX643EBdIgg4MQtih8JG3bYQdg==
+X-Received: by 2002:a17:902:ec8a:b0:1a9:6467:aa8d with SMTP id x10-20020a170902ec8a00b001a96467aa8dmr4014866plg.1.1684526977070;
+        Fri, 19 May 2023 13:09:37 -0700 (PDT)
+Received: from ip-172-31-38-16.us-west-2.compute.internal (ec2-52-37-71-140.us-west-2.compute.amazonaws.com. [52.37.71.140])
+        by smtp.gmail.com with ESMTPSA id p17-20020a170902ead100b001ac8cd5ecd6sm40769pld.65.2023.05.19.13.09.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 May 2023 13:09:36 -0700 (PDT)
+Date:   Fri, 19 May 2023 20:09:35 +0000
+From:   Alok Tiagi <aloktiagi@gmail.com>
+To:     viro@zeniv.linux.org.uk, willy@infradead.org, brauner@kernel.org,
+        David.Laight@aculab.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     keescook@chromium.org, hch@infradead.org, tycho@tycho.pizza,
+        aloktiagi@gmail.com
+Subject: Re: [RFC v5 2/2] seccomp: replace existing file in the epoll
+ interface by a new file injected by the syscall supervisor.
+Message-ID: <ZGfXf8c3MwUe/qCe@ip-172-31-38-16.us-west-2.compute.internal>
+References: <20230429054955.1957024-1-aloktiagi@gmail.com>
+ <20230429054955.1957024-2-aloktiagi@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230429054955.1957024-2-aloktiagi@gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 19, 2023, Nicolas Saenz Julienne wrote:
-> Hi Sean,
+On Sat, Apr 29, 2023 at 05:49:55AM +0000, aloktiagi wrote:
+> Introduce a mechanism to replace a file linked in the epoll interface by a new
+> file injected by the syscall supervisor by using the epoll provided
+> eventpoll_replace_file() api.
 > 
-> On Fri May 19, 2023 at 6:23 PM UTC, Sean Christopherson wrote:
-> > On Fri, May 19, 2023, Nicolas Saenz Julienne wrote:
-> > > Hi,
-> > >
-> > > On Fri Dec 2, 2022 at 6:13 AM UTC, Chao Peng wrote:
-> > >
-> > > [...]
-> > > > +The user sets the per-page memory attributes to a guest memory range indicated
-> > > > +by address/size, and in return KVM adjusts address and size to reflect the
-> > > > +actual pages of the memory range have been successfully set to the attributes.
-> > > > +If the call returns 0, "address" is updated to the last successful address + 1
-> > > > +and "size" is updated to the remaining address size that has not been set
-> > > > +successfully. The user should check the return value as well as the size to
-> > > > +decide if the operation succeeded for the whole range or not. The user may want
-> > > > +to retry the operation with the returned address/size if the previous range was
-> > > > +partially successful.
-> > > > +
-> > > > +Both address and size should be page aligned and the supported attributes can be
-> > > > +retrieved with KVM_GET_SUPPORTED_MEMORY_ATTRIBUTES.
-> > > > +
-> > > > +The "flags" field may be used for future extensions and should be set to 0s.
-> > >
-> > > We have been looking into adding support for the Hyper-V VSM extensions
-> > > which Windows uses to implement Credential Guard. This interface seems
-> > > like a good fit for one of its underlying features. I just wanted to
-> > > share a bit about it, and see if we can expand it to fit this use-case.
-> > > Note that this was already briefly discussed between Sean and Alex some
-> > > time ago[1].
-> > >
-> > > VSM introduces isolated guest execution contexts called Virtual Trust
-> > > Levels (VTL) [2]. Each VTL has its own memory access protections,
-> > > virtual processors states, interrupt controllers and overlay pages. VTLs
-> > > are hierarchical and might enforce memory protections on less privileged
-> > > VTLs. Memory protections are enforced on a per-GPA granularity.
-> > >
-> > > The list of possible protections is:
-> > > - No access -- This needs a new memory attribute, I think.
-> >
-> > No, if KVM provides three bits for READ, WRITE, and EXECUTE, then userspace can
-> > get all the possible combinations.  E.g. this is RWX=000b
+> Also introduce a new addfd flag SECCOMP_ADDFD_FLAG_REPLACE_REF to allow the supervisor
+> to indicate that it is interested in getting the original file replaced by the
+> new injected file.
 > 
-> That's not what the current implementation does, when attributes is
-> equal 0 it clears the entries from the xarray:
+> We have a use case where multiple IPv6 only network namespaces can use a single
+> IPv4 network namespace for IPv4 only egress connectivity by switching their
+> sockets from IPv6 to IPv4 network namespace. This allows for migration of
+> systems to IPv6 only while keeping their connectivity to IPv4 only destinations
+> intact.
 > 
-> static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
-> 					   struct kvm_memory_attributes *attrs)
-> {
+> Today, we achieve this by setting up seccomp filter to intercept network system
+> calls like connect() from a container in a syscall supervisor which runs in an
+> IPv4 only network namespace. The syscall supervisor creates a new IPv4 connection
+> and injects the new file descriptor through SECCOMP_NOTIFY_IOCTL_ADDFD replacing
+> the original file descriptor from the connect() call. This does not work for
+> cases where the original file descriptor is handed off to a system like epoll
+> before the connect() call. After a new file descriptor is injected the original
+> file descriptor being referenced by the epoll fd is not longer valid leading to
+> failures. As a workaround the syscall supervisor when intercepting connect()
+> loops through all open socket file descriptors to check if they are referencing
+> the socket attempting the connect() and replace the reference with the to be
+> injected file descriptor. This workaround is cumbersome and makes the solution
+> prone to similar yet to be discovered issues.
 > 
->     entry = attrs->attributes ? xa_mk_value(attrs->attributes) : NULL;
-> [...]
->     for (i = start; i < end; i++)
->     	if (xa_err(xa_store(&kvm->mem_attr_array, i, entry,
->     			    GFP_KERNEL_ACCOUNT)))
->         		break;
-> }
+> The above change will enable us remove the workaround in the syscall supervisor
+> and let the kernel handle the replacement correctly.
 > 
-> >From Documentation/core-api/xarray.rst:
+> Signed-off-by: aloktiagi <aloktiagi@gmail.com>
+> ---
+>  include/uapi/linux/seccomp.h                  |   1 +
+>  kernel/seccomp.c                              |  35 +++++-
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 102 ++++++++++++++++++
+>  3 files changed, 136 insertions(+), 2 deletions(-)
 > 
-> "There is no difference between an entry that has never
-> been stored to, one that has been erased and one that has most recently
-> had ``NULL`` stored to it."
+> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+> index 0fdc6ef02b94..0a74dc5d967f 100644
+> --- a/include/uapi/linux/seccomp.h
+> +++ b/include/uapi/linux/seccomp.h
+> @@ -118,6 +118,7 @@ struct seccomp_notif_resp {
+>  /* valid flags for seccomp_notif_addfd */
+>  #define SECCOMP_ADDFD_FLAG_SETFD	(1UL << 0) /* Specify remote fd */
+>  #define SECCOMP_ADDFD_FLAG_SEND		(1UL << 1) /* Addfd and return it, atomically */
+> +#define SECCOMP_ADDFD_FLAG_REPLACE_REF	(1UL << 2) /* Update replace references */
+>  
+>  /**
+>   * struct seccomp_notif_addfd
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index cebf26445f9e..5b1b265b30d9 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/audit.h>
+>  #include <linux/compat.h>
+>  #include <linux/coredump.h>
+> +#include <linux/eventpoll.h>
+>  #include <linux/kmemleak.h>
+>  #include <linux/nospec.h>
+>  #include <linux/prctl.h>
+> @@ -1056,6 +1057,7 @@ static u64 seccomp_next_notify_id(struct seccomp_filter *filter)
+>  static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_knotif *n)
+>  {
+>  	int fd;
+> +	struct file *old_file = NULL;
+>  
+>  	/*
+>  	 * Remove the notification, and reset the list pointers, indicating
+> @@ -1064,8 +1066,30 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
+>  	list_del_init(&addfd->list);
+>  	if (!addfd->setfd)
+>  		fd = receive_fd(addfd->file, addfd->flags);
+> -	else
+> +	else {
+> +		int ret = 0;
+> +		if (addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_REPLACE_REF) {
+> +			old_file = fget(addfd->fd);
+> +			if (!old_file) {
+> +				fd = -EBADF;
+> +				goto error;
+> +			}
+> +			ret = eventpoll_replace_file(old_file, addfd->file, addfd->fd);
+> +			if (ret < 0) {
+> +				fd = ret;
+> +				goto error;
+> +			}
+> +		}
+>  		fd = receive_fd_replace(addfd->fd, addfd->file, addfd->flags);
+> +		/* In case of error restore all references */
+> +		if (fd < 0 && addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_REPLACE_REF) {
+> +			ret = eventpoll_replace_file(addfd->file, old_file, addfd->fd);
+> +			if (ret < 0) {
+> +				fd = ret;
+> +			}
+> +		}
+> +	}
+> +error:
+>  	addfd->ret = fd;
+>  
+>  	if (addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_SEND) {
+> @@ -1080,6 +1104,9 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
+>  		}
+>  	}
+>  
+> +	if (old_file)
+> +		fput(old_file);
+> +
+>  	/*
+>  	 * Mark the notification as completed. From this point, addfd mem
+>  	 * might be invalidated and we can't safely read it anymore.
+> @@ -1613,12 +1640,16 @@ static long seccomp_notify_addfd(struct seccomp_filter *filter,
+>  	if (addfd.newfd_flags & ~O_CLOEXEC)
+>  		return -EINVAL;
+>  
+> -	if (addfd.flags & ~(SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_SEND))
+> +	if (addfd.flags & ~(SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_SEND |
+> +			    SECCOMP_ADDFD_FLAG_REPLACE_REF))
+>  		return -EINVAL;
+>  
+>  	if (addfd.newfd && !(addfd.flags & SECCOMP_ADDFD_FLAG_SETFD))
+>  		return -EINVAL;
+>  
+> +	if (!addfd.newfd && (addfd.flags & SECCOMP_ADDFD_FLAG_REPLACE_REF))
+> +		return -EINVAL;
+> +
+>  	kaddfd.file = fget(addfd.srcfd);
+>  	if (!kaddfd.file)
+>  		return -EBADF;
+> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> index 61386e499b77..3ece9407c6a9 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> @@ -47,6 +47,7 @@
+>  #include <linux/kcmp.h>
+>  #include <sys/resource.h>
+>  #include <sys/capability.h>
+> +#include <sys/epoll.h>
+>  
+>  #include <unistd.h>
+>  #include <sys/syscall.h>
+> @@ -4179,6 +4180,107 @@ TEST(user_notification_addfd)
+>  	close(memfd);
+>  }
+>  
+> +TEST(user_notification_addfd_with_epoll_replace)
+> +{
+> +	char c;
+> +	pid_t pid;
+> +	long ret;
+> +	int optval;
+> +	socklen_t optlen = sizeof(optval);
+> +	int status, listener, fd;
+> +	int efd, sfd[4];
+> +	struct epoll_event e;
+> +	struct seccomp_notif_addfd addfd = {};
+> +	struct seccomp_notif req = {};
+> +	struct seccomp_notif_resp resp = {};
+> +
+> +	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+> +	ASSERT_EQ(0, ret) {
+> +		TH_LOG("Kernel does not support PR_SET_NO_NEW_PRIVS!");
+> +	}
+> +
+> +	listener = user_notif_syscall(__NR_getsockopt,
+> +				      SECCOMP_FILTER_FLAG_NEW_LISTENER);
+> +
+> +	/* Create two socket pairs sfd[0] <-> sfd[1] and sfd[2] <-> sfd[3] */
+> +	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[2]), 0);
+> +
+> +	pid = fork();
+> +	ASSERT_GE(pid, 0);
+> +
+> +	if (pid == 0) {
+> +		if (socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[0]) != 0)
+> +			exit(1);
+> +
+> +		efd = epoll_create(1);
+> +		if (efd == -1)
+> +			exit(1);
+> +
+> +		e.events = EPOLLIN;
+> +		if (epoll_ctl(efd, EPOLL_CTL_ADD, sfd[0], &e) != 0)
+> +			exit(1);
+> +
+> +		/*
+> +		 * fd will be added here to replace an existing one linked
+> +		 * in the epoll interface.
+> +		 */
+> +		if (getsockopt(sfd[0], SOL_SOCKET, SO_DOMAIN, &optval,
+> +		       &optlen) != USER_NOTIF_MAGIC)
+> +			exit(1);
+> +
+> +		/*
+> +		 * Write data to the sfd[3] connected to sfd[2], but due to
+> +		 * the swap, we should see data on sfd[0]
+> +		 */
+> +		if (write(sfd[3], "w", 1) != 1)
+> +			exit(1);
+> +
+> +		if (epoll_wait(efd, &e, 1, 0) != 1)
+> +			exit(1);
+> +
+> +		if (read(sfd[0], &c, 1) != 1)
+> +			exit(1);
+> +
+> +		if ('w' != c)
+> +			exit(1);
+> +
+> +		if (epoll_ctl(efd, EPOLL_CTL_DEL, sfd[0], &e) != 0)
+> +			exit(1);
+> +
+> +		close(efd);
+> +		close(sfd[0]);
+> +		close(sfd[1]);
+> +		close(sfd[2]);
+> +		close(sfd[3]);
+> +		exit(0);
+> +	}
+> +
+> +	ASSERT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, &req), 0);
+> +
+> +	addfd.srcfd = sfd[2];
+> +	addfd.newfd = req.data.args[0];
+> +	addfd.id = req.id;
+> +	addfd.flags = SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_REPLACE_REF;
+> +	addfd.newfd_flags = O_CLOEXEC;
+> +
+> +	/*
+> +	 * Verfiy we can install and replace a file that is linked in the
+> +	 * epoll interface. Replace the socket sfd[0] with sfd[2]
+> +	 */
+> +	fd = ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd);
+> +	EXPECT_EQ(fd, req.data.args[0]);
+> +
+> +	resp.id = req.id;
+> +	resp.error = 0;
+> +	resp.val = USER_NOTIF_MAGIC;
+> +	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_SEND, &resp), 0);
+> +
+> +	/* Wait for child to finish. */
+> +	EXPECT_EQ(waitpid(pid, &status, 0), pid);
+> +	EXPECT_EQ(true, WIFEXITED(status));
+> +	EXPECT_EQ(0, WEXITSTATUS(status));
+> +}
+> +
+>  TEST(user_notification_addfd_rlimit)
+>  {
+>  	pid_t pid;
+> -- 
+> 2.34.1
 > 
-> The way I understood the series, there needs to be a differentiation
-> between no attributes (regular page fault) and no-access.
 
-Ah, I see what you're saying.  There are multiple ways to solve things without a
-"no access" flag while still maintaining an empty xarray for the default case.
-E.g. invert the flags to be DENY flags[*], have an internal-only "entry valid" flag,
-etc.
+thoughts on this?
 
-[*] I vaguely recall suggesting a "deny" approach somewhere, but I may just be
-    making things up to make it look like I thought deeply about this ;-)
+- Alok 
