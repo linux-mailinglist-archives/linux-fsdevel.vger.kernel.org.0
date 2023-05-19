@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5121F709086
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 09:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD66709090
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 09:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbjESHmC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 03:42:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58922 "EHLO
+        id S230516AbjESHmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 03:42:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229987AbjESHl7 (ORCPT
+        with ESMTP id S230387AbjESHmM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 03:41:59 -0400
+        Fri, 19 May 2023 03:42:12 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 106641A5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 00:41:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D82A10F3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 00:41:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684482076;
+        s=mimecast20190719; t=1684482081;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=BN8k90GM05xGcXUwqmiE5oyub34c+VlFBbq2fGi5jWo=;
-        b=G/rJtfNSCV1B6dVkOwpsO6MfDP5UY9mBOjPECFxfekqlW6p5rdJxUJIQs+Jtt3yqKbvDfz
-        XG3kU/tKMchLaSxqXwRojT8evHmhotI7Yjc+WRksZ5EBFgMqZAEzNC1Svc+lx6UcKZUKhp
-        3Ilw00rtTOEN52PNRcv1meaCVYK1+Zk=
+        bh=sXlwBEApq0PjRnmqqIdGIYb9yjH9GX5fVKdD8XUANt8=;
+        b=D1FExhMVD+Rv7j1guKI4G2RIyie9b5ZuDqUkg8muKxqrnorzACqpj50phjFsvZ4vcvMZar
+        2ePpLz+zKay7pEvts0iRj2KrXG9iRdYXhwrBAWI8ltYYkCos9urZPk8YUVUEt2UcieuEUL
+        i/DU5ttHuNToYK5AC6S4X9A1+jfk2WA=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-541-i2ERw50uOo69R7scCkPSwg-1; Fri, 19 May 2023 03:41:08 -0400
-X-MC-Unique: i2ERw50uOo69R7scCkPSwg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+ us-mta-1-IyiQq-xAM9m13EaOaEApEQ-1; Fri, 19 May 2023 03:41:10 -0400
+X-MC-Unique: IyiQq-xAM9m13EaOaEApEQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DCDB029AB3E6;
-        Fri, 19 May 2023 07:41:06 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E69E5380450F;
+        Fri, 19 May 2023 07:41:09 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B6BAC1121314;
-        Fri, 19 May 2023 07:41:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B1B6F2166B25;
+        Fri, 19 May 2023 07:41:07 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -52,17 +52,16 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Steve French <stfrench@microsoft.com>,
         Christoph Hellwig <hch@lst.de>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v20 01/32] splice: Fix filemap of a blockdev
-Date:   Fri, 19 May 2023 08:40:16 +0100
-Message-Id: <20230519074047.1739879-2-dhowells@redhat.com>
+Subject: [PATCH v20 02/32] splice: Clean up direct_splice_read() a bit
+Date:   Fri, 19 May 2023 08:40:17 +0100
+Message-Id: <20230519074047.1739879-3-dhowells@redhat.com>
 In-Reply-To: <20230519074047.1739879-1-dhowells@redhat.com>
 References: <20230519074047.1739879-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
@@ -73,16 +72,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix filemap_splice_read() to use file->f_mapping->host, not file->f_inode,
-as the source of the file size because in the case of a block device,
-file->f_inode points to the block-special file (which is typically 0
-length) and not the backing store.
+Do a couple of cleanups to direct_splice_read():
 
-Fixes: 07073eb01c5f ("splice: Add a func to do a splice from a buffered file without ITER_PIPE")
+ (1) Cast to struct page **, not void *.
+
+ (2) Simplify the calculation of the number of pages to keep/reclaim in
+     direct_splice_read().
+
+Suggested-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <stfrench@microsoft.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 cc: Jens Axboe <axboe@kernel.dk>
-cc: Christoph Hellwig <hch@lst.de>
 cc: Al Viro <viro@zeniv.linux.org.uk>
 cc: David Hildenbrand <david@redhat.com>
 cc: John Hubbard <jhubbard@nvidia.com>
@@ -90,29 +90,61 @@ cc: linux-mm@kvack.org
 cc: linux-block@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 ---
- mm/filemap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/splice.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index b4c9bd368b7e..a2006936a6ae 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2900,7 +2900,7 @@ ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
- 	do {
- 		cond_resched();
+diff --git a/fs/splice.c b/fs/splice.c
+index 3e06611d19ae..4db3eee49423 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -312,7 +312,7 @@ ssize_t direct_splice_read(struct file *in, loff_t *ppos,
+ 	struct kiocb kiocb;
+ 	struct page **pages;
+ 	ssize_t ret;
+-	size_t used, npages, chunk, remain, reclaim;
++	size_t used, npages, chunk, remain, keep = 0;
+ 	int i;
  
--		if (*ppos >= i_size_read(file_inode(in)))
-+		if (*ppos >= i_size_read(in->f_mapping->host))
- 			break;
+ 	/* Work out how much data we can actually add into the pipe */
+@@ -326,7 +326,7 @@ ssize_t direct_splice_read(struct file *in, loff_t *ppos,
+ 	if (!bv)
+ 		return -ENOMEM;
  
- 		iocb.ki_pos = *ppos;
-@@ -2916,7 +2916,7 @@ ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
- 		 * part of the page is not copied back to userspace (unless
- 		 * another truncate extends the file - this is desired though).
- 		 */
--		isize = i_size_read(file_inode(in));
-+		isize = i_size_read(in->f_mapping->host);
- 		if (unlikely(*ppos >= isize))
- 			break;
- 		end_offset = min_t(loff_t, isize, *ppos + len);
+-	pages = (void *)(bv + npages);
++	pages = (struct page **)(bv + npages);
+ 	npages = alloc_pages_bulk_array(GFP_USER, npages, pages);
+ 	if (!npages) {
+ 		kfree(bv);
+@@ -349,11 +349,8 @@ ssize_t direct_splice_read(struct file *in, loff_t *ppos,
+ 	kiocb.ki_pos = *ppos;
+ 	ret = call_read_iter(in, &kiocb, &to);
+ 
+-	reclaim = npages * PAGE_SIZE;
+-	remain = 0;
+ 	if (ret > 0) {
+-		reclaim -= ret;
+-		remain = ret;
++		keep = DIV_ROUND_UP(ret, PAGE_SIZE);
+ 		*ppos = kiocb.ki_pos;
+ 		file_accessed(in);
+ 	} else if (ret < 0) {
+@@ -366,14 +363,12 @@ ssize_t direct_splice_read(struct file *in, loff_t *ppos,
+ 	}
+ 
+ 	/* Free any pages that didn't get touched at all. */
+-	reclaim /= PAGE_SIZE;
+-	if (reclaim) {
+-		npages -= reclaim;
+-		release_pages(pages + npages, reclaim);
+-	}
++	if (keep < npages)
++		release_pages(pages + keep, npages - keep);
+ 
+ 	/* Push the remaining pages into the pipe. */
+-	for (i = 0; i < npages; i++) {
++	remain = ret;
++	for (i = 0; i < keep; i++) {
+ 		struct pipe_buffer *buf = pipe_head_buf(pipe);
+ 
+ 		chunk = min_t(size_t, remain, PAGE_SIZE);
 
