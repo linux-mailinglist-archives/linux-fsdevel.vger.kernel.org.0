@@ -2,166 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B09B270974A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 14:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A79D709766
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 14:41:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbjESMhn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 08:37:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53492 "EHLO
+        id S229942AbjESMli (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 08:41:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjESMhm (ORCPT
+        with ESMTP id S229675AbjESMlh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 08:37:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B14F4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 05:37:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Fri, 19 May 2023 08:41:37 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2973A1A8;
+        Fri, 19 May 2023 05:41:14 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DAE7D65734
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 12:37:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A689C433D2;
-        Fri, 19 May 2023 12:37:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684499860;
-        bh=R4EVhjhpgezvGhcJ1rV29LbGDOpa0u2W5P9ZfvrYWlA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R8xBBpYyQRaIs0yTaNAnSLlS2fixkSTPPROhZIgMGu+sIJGJ5evQ48Os4Bdev/9dM
-         Uk9UU30352149DwKwJ03G6i/TaBI/ocOr3PJ4UmdW2RjA+8gFm/sBbwxI/2aWPBSwy
-         p88pcpuqzNuJJvN1W7FvANVOrYnrwXloFuocTIaHNjtTG24zWcgWV+ZMbR3Nq/TPDO
-         pBKqIfQ2H5Fsx8ubVHvKOc85j4d7sakKAxRv6Ce2C058LmANm/1NdNwZCA7NEWYPJ0
-         mXLz+Ts/QuoUdGZdet1gzb+SuyPynmyD2xqE1deZqAihEWNlbEKGrbksmcYYUoH5AY
-         JEBPucONB0KLQ==
-Date:   Fri, 19 May 2023 14:37:35 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Andrii Nakryiko <andrii@kernel.org>
-Cc:     bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        martin.lau@kernel.org, cyphar@cyphar.com, lennart@poettering.net,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 bpf-next 1/3] bpf: support O_PATH FDs in BPF_OBJ_PIN
- and BPF_OBJ_GET commands
-Message-ID: <20230519-ratschlag-gockel-c27d5fdfb72d@brauner>
-References: <20230518215444.1418789-1-andrii@kernel.org>
- <20230518215444.1418789-2-andrii@kernel.org>
- <20230519-eiswasser-leibarzt-ed7e52934486@brauner>
+        by ms.lwn.net (Postfix) with ESMTPSA id DA9A57C0;
+        Fri, 19 May 2023 12:41:06 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net DA9A57C0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1684500067; bh=Mn4aex3r3tcIexmUxRNT5U8Atc2UG4Nc4lQH6evssMM=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=gZf7ANIZaa/7Q1rgunvrPwGwZDiRrPQJh/r7c+04LjcKROD6SaQA32cv+SfHF31sn
+         1Wzq7+aPFp6z0FAhq083CUKfk3SfcVpzAE5TdWCGjz2GDzWdPU8ZAS474OAB7Kh8Sj
+         EhjRG1hILuCbGyNju46jjgjQf4amw6zocsFbL3f83Nb+NE+UpF1KvjhErswaiNfpNi
+         VGFQmHb4BUF4c9e6k6+nEab9l6PFf3YZIaSVEHVS6vdszIN+c9Od3Ff+kvqlllo3qe
+         vPdiMiNROHj/JEUpNHZJ7og7Ayy6wtlJfa8/uYMWA6ASUwxz2btxw4d0G4wH25bzVl
+         sDSS6ZHkOa7ZA==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Dave Chinner <david@fromorbit.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Cc:     jake@lwn.net, hch@infradead.org, djwong@kernel.org,
+        dchinner@redhat.com, ritesh.list@gmail.com, rgoldwyn@suse.com,
+        jack@suse.cz, linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com
+Subject: Re: [PATCH v2] Documentation: add initial iomap kdoc
+In-Reply-To: <ZGbVaewzcCysclPt@dread.disaster.area>
+References: <20230518150105.3160445-1-mcgrof@kernel.org>
+ <ZGbVaewzcCysclPt@dread.disaster.area>
+Date:   Fri, 19 May 2023 06:41:06 -0600
+Message-ID: <87r0rcpk7x.fsf@meer.lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230519-eiswasser-leibarzt-ed7e52934486@brauner>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 19, 2023 at 11:49:50AM +0200, Christian Brauner wrote:
-> On Thu, May 18, 2023 at 02:54:42PM -0700, Andrii Nakryiko wrote:
-> > Current UAPI of BPF_OBJ_PIN and BPF_OBJ_GET commands of bpf() syscall
-> > forces users to specify pinning location as a string-based absolute or
-> > relative (to current working directory) path. This has various
-> > implications related to security (e.g., symlink-based attacks), forces
-> > BPF FS to be exposed in the file system, which can cause races with
-> > other applications.
-> > 
-> > One of the feedbacks we got from folks working with containers heavily
-> > was that inability to use purely FD-based location specification was an
-> > unfortunate limitation and hindrance for BPF_OBJ_PIN and BPF_OBJ_GET
-> > commands. This patch closes this oversight, adding path_fd field to
-> > BPF_OBJ_PIN and BPF_OBJ_GET UAPI, following conventions established by
-> > *at() syscalls for dirfd + pathname combinations.
-> > 
-> > This now allows interesting possibilities like working with detached BPF
-> > FS mount (e.g., to perform multiple pinnings without running a risk of
-> > someone interfering with them), and generally making pinning/getting
-> > more secure and not prone to any races and/or security attacks.
-> > 
-> > This is demonstrated by a selftest added in subsequent patch that takes
-> > advantage of new mount APIs (fsopen, fsconfig, fsmount) to demonstrate
-> > creating detached BPF FS mount, pinning, and then getting BPF map out of
-> > it, all while never exposing this private instance of BPF FS to outside
-> > worlds.
-> > 
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  include/linux/bpf.h            |  4 ++--
-> >  include/uapi/linux/bpf.h       | 10 ++++++++++
-> >  kernel/bpf/inode.c             | 16 ++++++++--------
-> >  kernel/bpf/syscall.c           | 25 ++++++++++++++++++++-----
-> >  tools/include/uapi/linux/bpf.h | 10 ++++++++++
-> >  5 files changed, 50 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> > index 36e4b2d8cca2..f58895830ada 100644
-> > --- a/include/linux/bpf.h
-> > +++ b/include/linux/bpf.h
-> > @@ -2077,8 +2077,8 @@ struct file *bpf_link_new_file(struct bpf_link *link, int *reserved_fd);
-> >  struct bpf_link *bpf_link_get_from_fd(u32 ufd);
-> >  struct bpf_link *bpf_link_get_curr_or_next(u32 *id);
-> >  
-> > -int bpf_obj_pin_user(u32 ufd, const char __user *pathname);
-> > -int bpf_obj_get_user(const char __user *pathname, int flags);
-> > +int bpf_obj_pin_user(u32 ufd, int path_fd, const char __user *pathname);
-> > +int bpf_obj_get_user(int path_fd, const char __user *pathname, int flags);
-> >  
-> >  #define BPF_ITER_FUNC_PREFIX "bpf_iter_"
-> >  #define DEFINE_BPF_ITER_FUNC(target, args...)			\
-> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> > index 1bb11a6ee667..3731284671e4 100644
-> > --- a/include/uapi/linux/bpf.h
-> > +++ b/include/uapi/linux/bpf.h
-> > @@ -1272,6 +1272,9 @@ enum {
-> >  
-> >  /* Create a map that will be registered/unregesitered by the backed bpf_link */
-> >  	BPF_F_LINK		= (1U << 13),
-> > +
-> > +/* Get path from provided FD in BPF_OBJ_PIN/BPF_OBJ_GET commands */
-> > +	BPF_F_PATH_FD		= (1U << 14),
-> >  };
-> >  
-> >  /* Flags for BPF_PROG_QUERY. */
-> > @@ -1420,6 +1423,13 @@ union bpf_attr {
-> >  		__aligned_u64	pathname;
-> >  		__u32		bpf_fd;
-> >  		__u32		file_flags;
-> > +		/* Same as dirfd in openat() syscall; see openat(2)
-> > +		 * manpage for details of path FD and pathname semantics;
-> > +		 * path_fd should accompanied by BPF_F_PATH_FD flag set in
-> > +		 * file_flags field, otherwise it should be set to zero;
-> > +		 * if BPF_F_PATH_FD flag is not set, AT_FDCWD is assumed.
-> > +		 */
-> > +		__u32		path_fd;
-> >  	};
-> 
-> Thanks for changing that.
-> 
-> This is still odd though because you prevent users from specifying
-> AT_FDCWD explicitly. They should be allowed to do that plus file
-> descriptors are signed integers so please s/__u32/__s32/. AT_FDCWD
-> should be passable anywhere where we have at* semantics. Plus, if in the
-> vfs we ever add
-> #define AT_ROOT -200
-> or something you can't use without coming up with your own custom flags.
-> If you just follow what everyone else does and use __s32 then you're
-> good.
-> 
-> File descriptors really need to be signed. There's no way around that.
-> See io_uring as a good example
-> 
-> io_uring_sqe {
->           __u8    opcode;         /* type of operation for this sqe */
->           __u8    flags;          /* IOSQE_ flags */
->           __u16   ioprio;         /* ioprio for the request */
->           __s32   fd;             /* file descriptor to do IO on */
-> }
-> 
-> where the __s32 fd is used in all fd based requests including
-> io_openat*() (See io_uring/openclose.c) which are effectively the
-> semantics you want to emulate here.
+Dave Chinner <david@fromorbit.com> writes:
 
-I should clarify that this is mainly for apis that return fds or that
-provide at* semantics. We certainly do use unsigned in cases where the
-system call operates directly on an fd without any lookup semantics.
+One little point among all the more substantial stuff:
+
+>> -/*
+>> - * Types of block ranges for iomap mappings:
+>> +/**
+>> + * DOC: iomap block ranges types
+>
+> I seriously dislike this "DOC:" keyword appearing everywhere.
+> We've already got a "this is a comment for documentation" annotation
+> in the "/**" comment prefix, having to add "DOC:" is entirely
+> redudant and unnecessary noise.
+
+DOC: actually isn't redundant, it causes the kernel-doc directive to
+pull that text into the rendered documentation.
+
+This document shows both the advantages and disadvantages of that
+mechanism, IMO.  It allows the documentation to be kept with the code,
+where optimistic people think it is more likely to be updated.  But it
+also scatters the material to the detriment of readers of the plain-text
+documentation.  The rendered version of iomap.rst is rather more
+complete and comprehensible than the RST file itself.
+
+Thanks,
+
+jon
