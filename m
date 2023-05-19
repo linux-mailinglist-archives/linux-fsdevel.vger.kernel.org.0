@@ -2,85 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E205F709A23
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 16:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C31B6709ABF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 16:58:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232159AbjESOmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 10:42:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58874 "EHLO
+        id S232196AbjESO6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 10:58:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232149AbjESOmW (ORCPT
+        with ESMTP id S232197AbjESO6o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 10:42:22 -0400
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68881E1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 07:41:34 -0700 (PDT)
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-75791a035b8so173490585a.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 07:41:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684507293; x=1687099293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        Fri, 19 May 2023 10:58:44 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C90F1A6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 07:58:42 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-562108900acso21281457b3.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 07:58:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1684508322; x=1687100322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ruzCCcFqzef6NacZHTXOwoNZcEE4fN80jkfDGRuHqfY=;
-        b=dCO/hpAQMl7uBSXyxTjjeVrthq2XQrzb9HWh0eevI750ThBoeX9iwtXsHy7BLT3/zo
-         L6n9lVjt7xn4JqFCC3g8C3gQ5Cv/Haf0zBgYKT55Bbt22kk9p98xT2XbyKSDZJetoOBv
-         Dlq6Kzu/JTs5ebN3f2QMAnLBoB2I7G7SbqBwlp/PfzcT+Ffhn71ynxnJww3KXMfI8rMG
-         MkJgeYaHlH4XnXaCO9KNmCwk+7fawL+0xSgRTKiDm80pRkUqB4vel2iS5bmmhbsFN2wZ
-         qGEbkTBshyxVCY9m51WmdO8INR4atAwCt3IecvyEz1PFCZ3Qm+UUHfzl4NblBV/2vEjw
-         VUXw==
-X-Gm-Message-State: AC+VfDze6M4kOshBBwCt25LyMyW98pW5REkROZ1E21l+KxUeLWi1ol6q
-        mvu7WbtDIHZYNA84mU7fsyaA
-X-Google-Smtp-Source: ACHHUZ7qTfS72Mnvokou1gCiu8aMJLDGwXNKH9h+hze9P3ooxLjSWNKQoFEuFuJJeWOz7sBi4VE6LQ==
-X-Received: by 2002:ad4:5d4e:0:b0:5ef:1e0a:1b07 with SMTP id jk14-20020ad45d4e000000b005ef1e0a1b07mr5299722qvb.40.1684507293525;
-        Fri, 19 May 2023 07:41:33 -0700 (PDT)
-Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
-        by smtp.gmail.com with ESMTPSA id qd17-20020ad44811000000b005ddd27e2c0asm1358298qvb.36.2023.05.19.07.41.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 May 2023 07:41:33 -0700 (PDT)
-Date:   Fri, 19 May 2023 10:41:31 -0400
-From:   Mike Snitzer <snitzer@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Sarthak Kukreti <sarthakkukreti@chromium.org>, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Bart Van Assche <bvanassche@google.com>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [PATCH v7 0/5] Introduce provisioning primitives
-Message-ID: <ZGeKm+jcBxzkMXQs@redhat.com>
-References: <20230518223326.18744-1-sarthakkukreti@chromium.org>
- <ZGb2Xi6O3i2pLam8@infradead.org>
+        bh=AajyqWszb0uY6qD9cS3VXYrfDU988bXtZCs1rPMruhw=;
+        b=CVjYLnK8pZSm+0s+2JgmOpL6fd7Fh3xe0DrvRV47kW58O8GUdqascT+ihAWb+4/PB5
+         57l1fSbdpzDrjebhCKxmt8dH+h8nzNnzfGUC6O47kcvj+/tq7D0PSJjuIJJayEMDuPTp
+         RZmYcbvGlGStIcUkuVCBO7399/guNv++G9I5Asoz5DROlHagoZjpYdqO7T9i1NOAzJ1w
+         Du4lToaIIcFchOrn0Nn//43a6dCasI0vQfLXRVHExkpStSbCh+g9ayLmw5x0ghVHqblw
+         Dsm6QLKodk9RMwxd+A5A9Ln0JG71pTOJEq/9kFiLF97zE4pLcdM5N8FRzbB5GfM0mP18
+         P5iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684508322; x=1687100322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AajyqWszb0uY6qD9cS3VXYrfDU988bXtZCs1rPMruhw=;
+        b=DeVh1Yiq0UejzohodzOOV4YqRs1IB1jjG9wf21QsygF82Ydz5GA7XSO4wBwAoNCK2v
+         EnkvY6YyxEUpbBrrhsrcCa+5dURC1htzD0hp/3zjZamExKUS/4zyN9TOXDfPcDxlXqRk
+         eLU0NxgDfAVndp79/vFFQm4nWuGTNvwFTJsAc84SM3SHRfIhIe1wRRC3iSKPAZSxULqb
+         0mVsV3CG5kuWsphv6zEglzJjAwisY+iQI5wUMPHgE2IAVWW0qHf8QZpeobIRDRXfmpf5
+         xqInPD0NOXZ78+pIqNGG/OdNbR0SV+gG5myVIMWTV6qecXq6s2KhqpwGjuVcupq18SyP
+         9bCg==
+X-Gm-Message-State: AC+VfDzosmlVp6bpBnzP1g3FyafKLHTk+HkCBXXUCiF/yNF3c3BkK5JV
+        5vMp+CQ8TlmYso6xnUOG+WWn2wcaY9Of5bvxfUAI
+X-Google-Smtp-Source: ACHHUZ4wVQ8Htbed+cTytEWUQf0lb6NRULZiiMX8VBBzsWBICc5rj9+tiqRxdZAlDEbFGOiNVwJSMMDulwZ/apnybkg=
+X-Received: by 2002:a81:4e92:0:b0:561:d6dd:bc84 with SMTP id
+ c140-20020a814e92000000b00561d6ddbc84mr2216527ywb.48.1684508321812; Fri, 19
+ May 2023 07:58:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZGb2Xi6O3i2pLam8@infradead.org>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+ <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
+ <cbffa3dee65ecc0884dd16eb3af95c09a28f4297.camel@linux.ibm.com>
+ <CAHC9VhSeBn-4UN48NcQWhJqLvQuydt4OvdyUsk9AXcviJ9Cqyw@mail.gmail.com> <49a31515666cb0ecf78909f09d40d29eb5528e0f.camel@linux.ibm.com>
+In-Reply-To: <49a31515666cb0ecf78909f09d40d29eb5528e0f.camel@linux.ibm.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 19 May 2023 10:58:30 -0400
+Message-ID: <CAHC9VhS7uMMgvwRRDzpZPUQDAeibdkLi0OCdp=j_Q-EcMHm0cw@mail.gmail.com>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after writes
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.ibm.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 19 2023 at 12:09P -0400,
-Christoph Hellwig <hch@infradead.org> wrote:
+On Thu, May 18, 2023 at 4:56=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Thu, 2023-05-18 at 16:46 -0400, Paul Moore wrote:
+> > On Fri, Apr 21, 2023 at 10:44=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.co=
+m> wrote:
+> > > On Fri, 2023-04-07 at 09:29 -0400, Jeff Layton wrote:
 
-> FYI, I really don't think this primitive is a good idea.  In the
-> concept of non-overwritable storage (NAND, SMR drives) the entire
-> concept of a one-shoot 'provisioning' that will guarantee later writes
-> are always possible is simply bogus.
+...
 
-Valid point for sure, such storage shouldn't advertise support (and
-will return -EOPNOTSUPP).
+> > I'm going through my review queue to make sure I haven't missed
+> > anything and this thread popped up ... Stefan, Mimi, did you get a fix
+> > into an upstream tree somewhere?  If not, is it because you are
+> > waiting on a review/merge from me into the LSM tree?
+>
+> Sorry for the delay.  Between vacation and LSS, I just started testing
+> Jeff Layton's patch.
 
-But the primitive still has utility for other classes of storage.
+No worries, I'm a bit behind too, I just wanted to make sure I wasn't
+blocking this thread :)
+
+--=20
+paul-moore.com
