@@ -2,78 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4CBB70A2B1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 00:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4E1170A2CB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 00:28:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231671AbjESWKM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 18:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44962 "EHLO
+        id S231330AbjESW2l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 18:28:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjESWKK (ORCPT
+        with ESMTP id S229595AbjESW2k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 18:10:10 -0400
-Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3C6189;
-        Fri, 19 May 2023 15:10:09 -0700 (PDT)
-Received: by mail-vk1-xa2b.google.com with SMTP id 71dfb90a1353d-4572a528cefso316845e0c.0;
-        Fri, 19 May 2023 15:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684534209; x=1687126209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gyfmWjt1VTCSjEVbZNcL2tFnvyTBlxMVg1mjX07QoOk=;
-        b=HuqVrHcIazlUiRSIb8fAEfdnHq/RzLyc/Altx4qWmXass7Tml/ynZuTYQt00iiZUhM
-         BRGbiXN4KogjSr01b1jWtSks2+m/EJRNsWdhy3SP/PNG8D03BzTBIg/8A7AZ5mzf8MD+
-         U5XuFtLvT8iuEexfhBYsri6fcGAulgnpVNMHUYoVfhBJkZxK9PdNwEVuHlLuvnBGs6OT
-         hpz4njpSffhfS+tEBpCx+poGKyuG6uk+yyLvuZWYFa2jLCFSnTTbHymrUEIleI/lXNYp
-         sqXslBL3PcxCesRRNsIsrdvsqd4VIVgJTneJNGHAjfimt3WT1kQhcnEiudtfwbrLAO4J
-         dBAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684534209; x=1687126209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gyfmWjt1VTCSjEVbZNcL2tFnvyTBlxMVg1mjX07QoOk=;
-        b=dTyaspIhvwp1fGGBGkzx93kaEaJ11UQocLKpF5G7KM7wWJ90s8WcSAO5A0a+/Aq96t
-         KgXAa5jwHeI2Gjg2qmjomV5WZZkK2LQsL+9sb9mjn07E5qa3YzSh98Uk+AkVJY77hWvX
-         51uj2PPyVlw3AcccrhirGbGjQCcPIbfZ2hdPYXoeN79JwEot5h+iT0w1ug+j7oyLFlnb
-         91EmfsbXfQkEJMXRCPx/890H0dRtojbuSHq0SW1hz35hAocYFRgjTOJqT3w2TkWQ4n0/
-         hCbjlDaqwosJbqnmMqU68TYhMvjWnijFQaI8ipST4lJMaS95nbGO+4NUvdgw8uMsBH1u
-         Xt4w==
-X-Gm-Message-State: AC+VfDwQsafApZds5Pm9bum/7jDQZhwwhYVzEGkMXy0mAWmYe8R4PHaa
-        ZSvHUD/9aDRX19v4m8ykJfNiSUsD5R/lotccczk=
-X-Google-Smtp-Source: ACHHUZ6udFa8fDirOYyi4r78zSwj7dD2Pe6HxOKp+hdVt7UaRlTAzbr80JAQ7Aig0vByD6RfXheFKqIBKauvLEZux/k=
-X-Received: by 2002:a05:6102:cd:b0:42c:543a:ab2a with SMTP id
- u13-20020a05610200cd00b0042c543aab2amr272687vsp.35.1684534208774; Fri, 19 May
- 2023 15:10:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230518130713.1515729-1-dhowells@redhat.com> <20230518130713.1515729-17-dhowells@redhat.com>
-In-Reply-To: <20230518130713.1515729-17-dhowells@redhat.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Fri, 19 May 2023 18:09:31 -0400
-Message-ID: <CAF=yD-J8KGX5gjGBK6OO2SuoVa8s07Cm-oKxwmvBmRXY7XscBQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 16/16] unix: Convert udp_sendpage() to use MSG_SPLICE_PAGES
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        Fri, 19 May 2023 18:28:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 622B51A8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 15:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684535276;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=N8SCLY3o4J6b9Y2pJlg3hyrvURsXqrxf9JlUVv4zhn4=;
+        b=Zt17/oDUwxQIaMgJRDfpoTbQqJry8YkbMQf/gD3ZsLdEF9FqapRKlHYrcERwmQDD6I5tyM
+        FJbWdliFo3GFOWG5cfX+hTuJ2TXC/9cJrDqxs3zadiaFP5Xc2gP1dEe2M8BN6K8MgDUzOk
+        EUDh2uthQTtZl/aaERPVky5km/SyeNk=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-626-CHpRL3_TMzyLAsNxrRHseg-1; Fri, 19 May 2023 18:27:54 -0400
+X-MC-Unique: CHpRL3_TMzyLAsNxrRHseg-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 124DF2A59551;
+        Fri, 19 May 2023 22:27:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7BB5492B0A;
+        Fri, 19 May 2023 22:27:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <ZGc3vUU/bUpt+3Tm@infradead.org>
+References: <ZGc3vUU/bUpt+3Tm@infradead.org> <ZGcusJQfz68H1s7S@infradead.org> <20230519074047.1739879-1-dhowells@redhat.com> <20230519074047.1739879-4-dhowells@redhat.com> <1742093.1684485814@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
         Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Kuniyuki Iwashima <kuniyu@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v20 03/32] splice: Make direct_read_splice() limit to eof where appropriate
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2154517.1684535271.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Date:   Fri, 19 May 2023 23:27:51 +0100
+Message-ID: <2154518.1684535271@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,25 +77,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 18, 2023 at 9:08=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Convert unix_stream_sendpage() to use sendmsg() with MSG_SPLICE_PAGES
-> rather than directly splicing in the pages itself.
->
-> This allows ->sendpage() to be replaced by something that can handle
-> multiple multipage folios in a single transaction.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: "David S. Miller" <davem@davemloft.net>
-> cc: Eric Dumazet <edumazet@google.com>
-> cc: Jakub Kicinski <kuba@kernel.org>
-> cc: Paolo Abeni <pabeni@redhat.com>
-> cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: netdev@vger.kernel.org
+Okay.  Let's go with that.  So I have to put the handling in vfs_splice_re=
+ad():
 
-tiny nit: subject s/udp_sendpage/unix_stream_sendpage/
+	long vfs_splice_read(struct file *in, loff_t *ppos,
+			     struct pipe_inode_info *pipe, size_t len,
+			     unsigned int flags)
+	{
+	...
+		if (unlikely(!in->f_op->splice_read))
+			return warn_unsupported(in, "read");
+		/*
+		 * O_DIRECT and DAX don't deal with the pagecache, so we
+		 * allocate a buffer, copy into it and splice that into the pipe.
+		 */
+		if ((in->f_flags & O_DIRECT) || IS_DAX(in->f_mapping->host))
+			return copy_splice_read(in, ppos, pipe, len, flags);
+		return in->f_op->splice_read(in, ppos, pipe, len, flags);
+	}
 
-no other comments on this patch series from me
+which leaves very little in generic_file_splice_read:
+
+	ssize_t generic_file_splice_read(struct file *in, loff_t *ppos,
+					 struct pipe_inode_info *pipe, size_t len,
+					 unsigned int flags)
+	{
+		if (unlikely(*ppos >=3D in->f_mapping->host->i_sb->s_maxbytes))
+			return 0;
+		if (unlikely(!len))
+			return 0;
+		return filemap_splice_read(in, ppos, pipe, len, flags);
+	}
+
+so I wonder if the tests in generic_file_splice_read() can be folded into
+vfs_splice_read(), pointers to generic_file_splice_read() be replaced with
+pointers to filemap_splice_read() and generic_file_splice_read() just be
+removed.
+
+I suspect we can't quite do this because of the *ppos check - but I wonder=
+ if
+that's actually necessary since filemap_splice_read() checks against
+i_size... or if the check can be moved there if we definitely want to do i=
+t.
+
+Certainly, the zero-length check can be done in vfs_splice_read().
+
+David
+
