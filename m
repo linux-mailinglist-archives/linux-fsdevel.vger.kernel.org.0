@@ -2,147 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F8670A2F9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 00:56:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6FA370A328
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 01:07:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbjESW4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 18:56:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59112 "EHLO
+        id S231612AbjESXHy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 19:07:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbjESW4i (ORCPT
+        with ESMTP id S229597AbjESXHx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 18:56:38 -0400
-Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 127CDD2;
-        Fri, 19 May 2023 15:56:37 -0700 (PDT)
-Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-199bcf78252so2872896fac.3;
-        Fri, 19 May 2023 15:56:37 -0700 (PDT)
+        Fri, 19 May 2023 19:07:53 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B56191B3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 16:07:50 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-64d2467d640so2572833b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 16:07:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684536996; x=1687128996;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=01F6L2T4pjLkKQmZA6gKcdxUdxVxb3DuCpizwvjV8kc=;
-        b=g12E5fXHBR2Yx6PnNk36Eurn+OLKY5+4IwwTP1Ue0WJrFUGyoIk2HUDLN+B9jDGze8
-         DQk1A1KlWvm6BtMtGOPPxqXBH5RPLjciuHZOFL8C+W2feRLuoFCtrX1YxHtLf4DP198b
-         g3TlUdopP28iOgpxvkwdsrs2srGxshVb4vmF0ZHi7FHKYN65LcpjTHmOzJuNKKY28sDI
-         OnSlnrFxtOKEyFlkNFjR51he8O3PH/mIXZMLoScGyVc5eTPE+y42XxMM9Qmjt37JsBhs
-         2TiMYkgRd27DAMrWUiXudpFuSBiF4V6/hetF2y2HKdmkP+VEv1LbwxJtSocogiEFAGx/
-         rw1w==
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1684537670; x=1687129670;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vej0HUXiqshmcvqs7VBZTGkCXU+JddJuVreKpbmYuhw=;
+        b=M7M+fUzZKYFhCed62ckEM75i49Kzi0Sy+mNCDiHsZpcNM/HQImrznTrkS4Wi9NL1Qt
+         OpBue7B/lTyS4Ky8m0UYNNuyU32olEvqU9kMDgIsurTQS74yymOzmc8h+RSkAmjSqxOP
+         woaJGiEwnE03YgfMS1q3jv3TV55P4eda89l5rEF9YibVhRMXrAoasmZaFgYrpCbUd+oE
+         XkNqBx9FFYqUpTZUSUyJJeWE0IiZORfli0QtnpbJ5rpT7PGgf7LZiQ+NCEMRM7WFfN1T
+         vkwBHodfbKEBqQNapAiloS/SU1gESn6ZDbM8KRw093WyP1wcSNUWGyK7A0I+ybuXSTVQ
+         2JuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684536996; x=1687128996;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=01F6L2T4pjLkKQmZA6gKcdxUdxVxb3DuCpizwvjV8kc=;
-        b=X+wfmgHQ+mn5XSqDKtI7Y/GKtRNEEvoXv6zxCOgJEJxRj4gTJYuECPZ6O5fVUKLmG6
-         VIx5OSDasEb3APdnoHjn5OhW+o5NBvNhlZK2sSMSPlhTqb60Enmm4ndeSuqGfCXHrXlG
-         rQv+PnE/LbUv+QdJ/bHgBFj43pNZd1cjWeuidm5CN3+FQJU5tRAhMnMeSNb+exbI7Cth
-         PBhpTNKJop//zQga0oCfpNSF5iXZhKYDcHm3DTM2RfftUOaqa9iFaVdt7C8lynP2gqZC
-         fj5U1treGnCmTdQ49H7TamRoERqdMT4am0kse+2NI9ZulTyDQRFREuGscHnR4Ii07oTJ
-         qZfw==
-X-Gm-Message-State: AC+VfDyrAi5K+dO3Bx9QEN/hhrPrFKkpN8SE9aUX4EGzcAC5VzYx8jPK
-        mmhyfNV6XBSlvKUNa1Psw14=
-X-Google-Smtp-Source: ACHHUZ430RfMVA9lT0Ci0zMkelFDaQe3W/2SZ/z8+uKvIrDt/nPEcQn6paR3oUnFpG7TuZ2oNRkZ6g==
-X-Received: by 2002:a05:6870:a344:b0:184:4117:4bc6 with SMTP id y4-20020a056870a34400b0018441174bc6mr1794676oak.30.1684536996253;
-        Fri, 19 May 2023 15:56:36 -0700 (PDT)
-Received: from [192.168.0.92] (cpe-70-94-157-206.satx.res.rr.com. [70.94.157.206])
-        by smtp.gmail.com with ESMTPSA id v19-20020a4a9753000000b00541854d066bsm203611ooi.10.2023.05.19.15.56.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 May 2023 15:56:35 -0700 (PDT)
-Message-ID: <2fc8421e-634a-aa7d-b023-c8d5e5fa1741@gmail.com>
-Date:   Fri, 19 May 2023 17:56:34 -0500
+        d=1e100.net; s=20221208; t=1684537670; x=1687129670;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vej0HUXiqshmcvqs7VBZTGkCXU+JddJuVreKpbmYuhw=;
+        b=JLCIkrxOgcmYbdJB+q2GJCmQWFW18gtc+aryuB14mRGuTne/mA40reVjIhEnKrT44T
+         vVAE4sCxSkJJ+dXfB4L5BmLVe7rZrD/pw7I2R/ad+5Gx0yPBsV4yw3dxeiHisi2o8BGO
+         J9ZA1advV58D5o999FsM9c4RygH+j64xCHUafgUSZRsESTzstKqHrUK2V5oGTbzkvqDS
+         MjtSB+45pDas6++ZFfp5ag1cUrCnZG18O8vNs+HPtTzTpfTgDBf0h97DFdSzSCG4kPJg
+         lD8SKUm67PtEZuMBoSvCRIWSaD0bY/GiHMB1IpPHHR9XXS4Dmm/qi5q/ery9ROpAmMeI
+         SeZw==
+X-Gm-Message-State: AC+VfDxPtKjLagU8sq2zfhq6IAgeal7As+GMYkRR+h1mPWsTByNnqVAE
+        /65TvCWhtva6MjiRKdZa0q+rhQ==
+X-Google-Smtp-Source: ACHHUZ44Ml1ojpiPU8i/+mCvFac8UKDWss2kgW+R+G0QKFHgCdmutJq5p5DRKhkFYnyqqBTN1Dtx1w==
+X-Received: by 2002:a05:6a00:1896:b0:63b:854c:e0f6 with SMTP id x22-20020a056a00189600b0063b854ce0f6mr5344668pfh.21.1684537670148;
+        Fri, 19 May 2023 16:07:50 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
+        by smtp.gmail.com with ESMTPSA id i6-20020aa78d86000000b006414289ab69sm204704pfr.52.2023.05.19.16.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 May 2023 16:07:49 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q09CM-001WVR-2G;
+        Sat, 20 May 2023 09:07:46 +1000
+Date:   Sat, 20 May 2023 09:07:46 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Mike Snitzer <snitzer@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Sarthak Kukreti <sarthakkukreti@chromium.org>,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH v7 0/5] Introduce provisioning primitives
+Message-ID: <ZGgBQhsbU9b0RiT1@dread.disaster.area>
+References: <20230518223326.18744-1-sarthakkukreti@chromium.org>
+ <ZGb2Xi6O3i2pLam8@infradead.org>
+ <ZGeKm+jcBxzkMXQs@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [ANNOUNCE] util-linux v2.39
-Content-Language: en-US
-To:     Masatake YAMATO <yamato@redhat.com>
-Cc:     kzak@redhat.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, util-linux@vger.kernel.org,
-        renodr2002@gmail.com
-References: <20230517112242.3rubpxvxhzsc4kt2@ws.net.home>
- <652d32c5-4b33-ce3a-3de7-9ebc064bbdcb@gmail.com>
- <20230520.074311.642413213582621319.yamato@redhat.com>
-From:   Bruce Dubbs <bruce.dubbs@gmail.com>
-In-Reply-To: <20230520.074311.642413213582621319.yamato@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZGeKm+jcBxzkMXQs@redhat.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/19/23 17:43, Masatake YAMATO wrote:
-> Bruce,
+On Fri, May 19, 2023 at 10:41:31AM -0400, Mike Snitzer wrote:
+> On Fri, May 19 2023 at 12:09P -0400,
+> Christoph Hellwig <hch@infradead.org> wrote:
 > 
->> On 5/17/23 06:22, Karel Zak wrote:
->>> The util-linux release v2.39 is available at
->>>                                        http://www.kernel.org/pub/linux/utils/util-linux/v2.39
->>>                                     Feedback and bug reports, as always, are welcomed.
->>
->> Karel, I have installed util-linux v2.39 in LFS and have run into a
->> problem with one test, test_mkfds.  Actually the test passes, but does
->> not clean up after itself. What is left over is:
->>
->> tester 32245 1 0 15:43 ?  00:00:00 /sources/util-linux-2.39/test_mkfds
->> -q udp 3 4 server-port=34567 client-port=23456 server-do-bind=1
->> client-do-bind=1 client-do-connect=1
->> tester 32247 1 0 15:43 ?  00:00:00 /sources/util-linux-2.39/test_mkfds
->> -q udp6 3 4 lite=1 server-port=34567 client-port=23456
->> server-do-bind=1 client-do-bind=1 client-do-connect=1
->>
->> It's possible it may be due to something we are doing inside our
->> chroot environment, but we've not had this type of problem with
->> earlier versions of util-linux.
->>
->> In all I do have:
->>
->>    All 261 tests PASSED
->>
->> but the left over processes interfere later when we try to remove the
->> non-root user, tester, that runs the tests.  I can work around the
->> problem by disabling test_mkfds, but thought you would like to know.
+> > FYI, I really don't think this primitive is a good idea.  In the
+> > concept of non-overwritable storage (NAND, SMR drives) the entire
+> > concept of a one-shoot 'provisioning' that will guarantee later writes
+> > are always possible is simply bogus.
 > 
-> Thank you for reporting.
-> Reproduced on my PC. I found two processes were not killed properly.
+> Valid point for sure, such storage shouldn't advertise support (and
+> will return -EOPNOTSUPP).
 > 
-> Could you try the following change?
-> 
-> diff --git a/tests/ts/lsfd/option-inet b/tests/ts/lsfd/option-inet
-> index 21e66f700..70cc3798d 100755
-> --- a/tests/ts/lsfd/option-inet
-> +++ b/tests/ts/lsfd/option-inet
-> @@ -84,14 +84,10 @@ ts_cd "$TS_OUTDIR"
->                     -o ASSOC,TYPE,NAME \
->                     -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3) or (PID == $PID4)"
->   
-> -    kill -CONT "${PID0}"
-> -    wait "${PID0}"
-> -
-> -    kill -CONT "${PID1}"
-> -    wait "${PID1}"
-> -
-> -    kill -CONT "${PID2}"
-> -    wait "${PID2}"
-> +    for pid in "${PID0}" "${PID1}" "${PID2}" "${PID3}" "${PID4}"; do
-> +       kill -CONT "${pid}"
-> +       wait "${pid}"
-> +    done
->   } > "$TS_OUTPUT" 2>&1
->   
->   ts_finalize
+> But the primitive still has utility for other classes of storage.
 
-I will do that, but will not be able to get to it until late tomorrow, but will 
-report back asap.
+Yet the thing people are wanting to us filesystem developers to use
+this with is thinly provisioned storage that has snapshot
+capability. That, by definition, is non-overwritable storage. These
+are the use cases people are asking filesystes to gracefully handle
+and report errors when the sparse backing store runs out of space.
 
-Thanks for looking at this.
+e.g. journal writes after a snapshot is taken on a busy filesystem
+are always an overwrite and this requires more space in the storage
+device for the write to succeed. ENOSPC from the backing device for
+journal IO is a -fatal error-. Hence if REQ_PROVISION doesn't
+guarantee space for overwrites after snapshots, then it's not
+actually useful for solving the real world use cases we actually
+need device-level provisioning to solve.
 
-   -- Bruce
+It is not viable for filesystems to have to reprovision space for
+in-place metadata overwrites after every snapshot - the filesystem
+may not even know a snapshot has been taken! And it's not feasible
+for filesystems to provision on demand before they modify metadata
+because we don't know what metadata is going to need to be modified
+before we start modifying metadata in transactions. If we get ENOSPC
+from provisioning in the middle of a dirty transcation, it's all
+over just the same as if we get ENOSPC during metadata writeback...
 
+Hence what filesystems actually need is device provisioned space to
+be -always over-writable- without ENOSPC occurring.  Ideally, if we
+provision a range of the block device, the block device *must*
+guarantee all future writes to that LBA range succeeds. That
+guarantee needs to stand until we discard or unmap the LBA range,
+and for however many writes we do to that LBA range.
 
+e.g. If the device takes a snapshot, it needs to reprovision the
+potential COW ranges that overlap with the provisioned LBA range at
+snapshot time. e.g. by re-reserving the space from the backing pool
+for the provisioned space so if a COW occurs there is space
+guaranteed for it to succeed.  If there isn't space in the backing
+pool for the reprovisioning, then whatever operation that triggers
+the COW behaviour should fail with ENOSPC before doing anything
+else....
+
+Software devices like dm-thin/snapshot should really only need to
+keep a persistent map of the provisioned space and refresh space
+reservations for used space within that map whenever something that
+triggers COW behaviour occurs. i.e. a snapshot needs to reset the
+provisioned ranges back to "all ranges are freshly provisioned"
+before the snapshot is started. If that space is not available in
+the backing pool, then the snapshot attempt gets ENOSPC....
+
+That means filesystems only need to provision space for journals and
+fixed metadata at mkfs time, and they only need issue a
+REQ_PROVISION bio when they first allocate over-write in place
+metadata. We already have online discard and/or fstrim for releasing
+provisioned space via discards.
+
+This will require some mods to filesystems like ext4 and XFS to
+issue REQ_PROVISION and fail gracefully during metadata allocation.
+However, doing so means that we can actually harden filesystems
+against sparse block device ENOSPC errors by ensuring they will
+never occur in critical filesystem structures....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
