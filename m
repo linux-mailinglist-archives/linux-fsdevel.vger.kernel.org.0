@@ -2,109 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 76618709AFC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 17:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E1BF709B0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 17:17:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232273AbjESPOD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 11:14:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47488 "EHLO
+        id S232294AbjESPRb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 11:17:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232231AbjESPOC (ORCPT
+        with ESMTP id S229532AbjESPRa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 11:14:02 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD58198;
-        Fri, 19 May 2023 08:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=1opaetK90ziQPrltM/q7s99LS+5Ffz+3TEwjrEuHrv4=; b=q442WZBtQBcOW7sBrNoWDtaPsc
-        NHZWvxl5JBj/nYxbbB5KkKy/mxxDzNWFPcemw/hWQn5t78rr0GaE+Lu/9EZaWnLYngq3LOvKoCGwu
-        Rsuu1xpUADM5kH0dC/r3joANDzDtnPjHt4RWga/vgnXFEbJ5UeMWQkJC0addAPUGEog9i/vDLWsxJ
-        3NOL5jZfsiDDGtqMu1bizMp9LRnvmhhZA9vGb2zo0CRL6MkZkLZ7wWFWuIZrp71D+zviky5bsJQL8
-        f55Qy+XSsUGRTuDfBOKHbG3iwNOhf9N9I9lMJjG2QS51+qYMleuyEIz6y4CL102xxlRvySSXk1Khi
-        M8f/yFYg==;
-Received: from [2601:1c2:980:9ec0::2764]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q01nj-00GZpF-2b;
-        Fri, 19 May 2023 15:13:51 +0000
-Message-ID: <731a3061-973c-a4ad-2fe5-7981c6c1279b@infradead.org>
-Date:   Fri, 19 May 2023 08:13:50 -0700
+        Fri, 19 May 2023 11:17:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D000CF;
+        Fri, 19 May 2023 08:17:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDD9C61D3F;
+        Fri, 19 May 2023 15:17:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 510EBC433D2;
+        Fri, 19 May 2023 15:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684509448;
+        bh=47KTQ+HxzwYC6TsbUYOQ6aOmK4jjWb0xI6ebbOh8XlY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eBoUzUHnDSgsYrzw4so+d/v46+i/P/j4IUxwDsjTYBdtazJ9gFSlAlsy35dOA5dAB
+         98fZ0hSNCK8E3Ff/VyQXKQQ3x9hFwiD2w4hM2rYENyWeXPhVkugepOyzLnDFBB8/4H
+         51nzDK1yxzVdxXU3YJHR5VQXEaPxtVRp5EvpcQmfKDCue9AB+ShL0CvP1iDdSpglh6
+         MWmF7J8rXBCAZpQQkpn7BgBq+HJMv7Fp//dscLwf5L6VeL4ftPDmRESHT3py5aPQBA
+         83lsfrl7iLOXfgQUZ201RO+WG5WlYpLgr3CrPJjOST6Yxp0lgO7nkcDAd11UtSuqfi
+         qklM9iSrUgaOQ==
+Date:   Fri, 19 May 2023 08:17:27 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Sarthak Kukreti <sarthakkukreti@chromium.org>
+Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v7 1/5] block: Don't invalidate pagecache for invalid
+ falloc modes
+Message-ID: <20230519151727.GD11642@frogsfrogsfrogs>
+References: <20230518223326.18744-1-sarthakkukreti@chromium.org>
+ <20230518223326.18744-2-sarthakkukreti@chromium.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH] Documentation: add initial iomap kdoc
-Content-Language: en-US
-To:     Bagas Sanjaya <bagasdotme@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>, corbet@lwn.net,
-        jake@lwn.net, hch@infradead.org, djwong@kernel.org,
-        dchinner@redhat.com
-Cc:     ritesh.list@gmail.com, rgoldwyn@suse.com, jack@suse.cz,
-        linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com
-References: <20230518144037.3149361-1-mcgrof@kernel.org>
- <ZGdBO6bmbj3sLlzp@debian.me>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <ZGdBO6bmbj3sLlzp@debian.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230518223326.18744-2-sarthakkukreti@chromium.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 5/19/23 02:28, Bagas Sanjaya wrote:
->> +/**
->> + * DOC:  Flags reported by the file system from iomap_begin
->>   *
->> - * IOMAP_F_NEW indicates that the blocks have been newly allocated and need
->> - * zeroing for areas that no data is copied to.
->> + * * IOMAP_F_NEW: indicates that the blocks have been newly allocated and need
->> + *	zeroing for areas that no data is copied to.
->>   *
->> - * IOMAP_F_DIRTY indicates the inode has uncommitted metadata needed to access
->> - * written data and requires fdatasync to commit them to persistent storage.
->> - * This needs to take into account metadata changes that *may* be made at IO
->> - * completion, such as file size updates from direct IO.
->> + * * IOMAP_F_DIRTY: indicates the inode has uncommitted metadata needed to access
->> + *	written data and requires fdatasync to commit them to persistent storage.
->> + *	This needs to take into account metadata changes that *may* be made at IO
->> + *	completion, such as file size updates from direct IO.
->>   *
->> - * IOMAP_F_SHARED indicates that the blocks are shared, and will need to be
->> - * unshared as part a write.
->> + * * IOMAP_F_SHARED: indicates that the blocks are shared, and will need to be
->> + *	unshared as part a write.
->>   *
->> - * IOMAP_F_MERGED indicates that the iomap contains the merge of multiple block
->> - * mappings.
->> + * * IOMAP_F_MERGED: indicates that the iomap contains the merge of multiple block
->> + *	mappings.
->>   *
->> - * IOMAP_F_BUFFER_HEAD indicates that the file system requires the use of
->> - * buffer heads for this mapping.
->> + * * IOMAP_F_BUFFER_HEAD: indicates that the file system requires the use of
->> + *	buffer heads for this mapping.
->>   *
->> - * IOMAP_F_XATTR indicates that the iomap is for an extended attribute extent
->> - * rather than a file data extent.
->> + * * IOMAP_F_XATTR: indicates that the iomap is for an extended attribute extent
->> + *	rather than a file data extent.
->>   */
-> Why don't use kernel-doc comments to describe flags?
+On Thu, May 18, 2023 at 03:33:22PM -0700, Sarthak Kukreti wrote:
+> Only call truncate_bdev_range() if the fallocate mode is
+> supported. This fixes a bug where data in the pagecache
+> could be invalidated if the fallocate() was called on the
+> block device with an invalid mode.
 > 
+> Fixes: 25f4c41415e5 ("block: implement (some of) fallocate for block devices")
+> Cc: stable@vger.kernel.org
+> Reported-by: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
 
-Because kernel-doc handles functions, structs, unions, and enums.
-Not defines.
+Thanks for fixing this,
 
--- 
-~Randy
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> ---
+>  block/fops.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/block/fops.c b/block/fops.c
+> index d2e6be4e3d1c..4c70fdc546e7 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -648,24 +648,35 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+>  
+>  	filemap_invalidate_lock(inode->i_mapping);
+>  
+> -	/* Invalidate the page cache, including dirty pages. */
+> -	error = truncate_bdev_range(bdev, file->f_mode, start, end);
+> -	if (error)
+> -		goto fail;
+> -
+> +	/*
+> +	 * Invalidate the page cache, including dirty pages, for valid
+> +	 * de-allocate mode calls to fallocate().
+> +	 */
+>  	switch (mode) {
+>  	case FALLOC_FL_ZERO_RANGE:
+>  	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
+> +		error = truncate_bdev_range(bdev, file->f_mode, start, end);
+> +		if (error)
+> +			goto fail;
+> +
+>  		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
+>  					     len >> SECTOR_SHIFT, GFP_KERNEL,
+>  					     BLKDEV_ZERO_NOUNMAP);
+>  		break;
+>  	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE:
+> +		error = truncate_bdev_range(bdev, file->f_mode, start, end);
+> +		if (error)
+> +			goto fail;
+> +
+>  		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
+>  					     len >> SECTOR_SHIFT, GFP_KERNEL,
+>  					     BLKDEV_ZERO_NOFALLBACK);
+>  		break;
+>  	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE | FALLOC_FL_NO_HIDE_STALE:
+> +		error = truncate_bdev_range(bdev, file->f_mode, start, end);
+> +		if (error)
+> +			goto fail;
+> +
+>  		error = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
+>  					     len >> SECTOR_SHIFT, GFP_KERNEL);
+>  		break;
+> -- 
+> 2.40.1.698.g37aff9b760-goog
+> 
