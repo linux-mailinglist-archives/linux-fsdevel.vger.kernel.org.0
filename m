@@ -2,111 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E90EA70957C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 12:57:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA50F70963B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 13:18:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230477AbjESK5D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 06:57:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40606 "EHLO
+        id S232006AbjESLSP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 07:18:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbjESK5C (ORCPT
+        with ESMTP id S231764AbjESLSG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 06:57:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FA5C113;
-        Fri, 19 May 2023 03:57:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 10C4465679;
-        Fri, 19 May 2023 10:57:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8F8AC433D2;
-        Fri, 19 May 2023 10:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684493820;
-        bh=Ny8DZAy5gKR3s60MDtiOGy1mFcI6FdFw0aMN+pXWUOg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MAdZDpKPl0mTxDUvAb4tg3zBCnn+EcVd1JzAARb/qLdKqXRiYiVd7ZGphiEBGzWKu
-         0ga90+cCzAsqpY7s6I+BtX3Ri8deJ/2dtkrxN9cNbnsA1uLd/kZZYESX9L2KGO9YqO
-         HeOLzeKrwK3xNMkl0DeMF8x7Z6wvtsdpV+GxOv+suHCYV7fWdgchnbfjf2AV39UHO6
-         oHaDDup4rCm6e4/OAOjbCY/PKGD3c+weVXnN8TSE7h5AApC2K7NrwCUbwi7apF0qs9
-         UvFcAxNxUUKUHy0mLlH+kI39is6G66mfHngg+eYPuCBCBMyGZNZp+770WtEW3cNuCL
-         pFWO02tA3/CaA==
-Date:   Fri, 19 May 2023 12:56:55 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ondrej Valousek <ondrej.valousek.xm@renesas.com>,
-        "trondmy@hammerspace.com" <trondmy@hammerspace.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: A pass-through support for NFSv4 style ACL
-Message-ID: <20230519-allzu-aufmerksam-c3098b5ecf0d@brauner>
-References: <20230516124655.82283-1-jlayton@kernel.org>
- <20230516-notorisch-geblickt-6b591fbd77c1@brauner>
- <TYXPR01MB18549D3A5B0BE777D7F6B284D9799@TYXPR01MB1854.jpnprd01.prod.outlook.com>
- <cc4317d9cb8f10aa0b3750bdb6db8b4e77ff26f8.camel@kernel.org>
- <20230517-herstellen-zitat-21eeccd36558@brauner>
- <20230517123914.GA4578@mit.edu>
+        Fri, 19 May 2023 07:18:06 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E1751735
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 04:18:04 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f42c865535so31194775e9.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 04:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684495083; x=1687087083;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YmxaI1amCfTksu6ynk2557PwK0HJxrBQmYIx/Pz5hBs=;
+        b=dp+mR0vkFQD+NRcVbVyj7ZlxJiY8tXKz6Dxjt02kU/9woIUxxNMg5SvP4xJ9eDYE2l
+         hEJnfKK8BrITZUJm9ghCyPg0Je/wA7ZgsYMJwVI4lH3jXGvqlwkDJtDwfhLanlOsT7wH
+         hQNPeCWF3wvvAZcvRLj33th7gYZ9PBshaM63xjIgYDJS4JRwCX0aFRvKXP3BWylWimpe
+         32aKHm6KkPEtxXep1GltN/NdkgyiCPA4l7PN1GNXnXbpDZBBR5hr4EY5Y5zYuEDAHe2L
+         02Hos4KJ6tjKqeoN5tOyzagtXmnXAX0KjFhaRoSVPjIKvYuO1hoBO+IbePE5pb7+tpSc
+         zBGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684495083; x=1687087083;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YmxaI1amCfTksu6ynk2557PwK0HJxrBQmYIx/Pz5hBs=;
+        b=OhG2/MIznIhKBVA1ZXd5MZ3i6Ykv7YMjPUVaVQ86+bdOhYkXzcSO5hUtpT2zTE0Zsi
+         /RXqg3Hv55XcEzPYARJADzDOQqtgDz7MR7/Ok4XiZmQnUvoqFLt40JqkF7UqP3dlUXFb
+         ZSq7SuSzafOkyrKI9VWNojG5ulYkgGl9xSNS5WW1FgSCq+uegCLumyEwEB2357yq5XJR
+         qhWNU015BjeYbRt1wcusNML8pbfNvXRLjoyrr0f9w0wxXdnN8LzJArP0QyhqknthpP2l
+         ouUkWErZADQG3glYI3i75DKsBV+lCyitxkAIUhi0WJ5HUW5ELyycxATMEijvkx6FkIcm
+         elzw==
+X-Gm-Message-State: AC+VfDwivv3fS+r2o6CeiACi2yxVJKuu0ZBaE7D71c8H08egebRp8RJG
+        lIax3r4wMJbR9ce55iUClnwyYyWJxJZamxEoI6BZDjEWBeuAMQ==
+X-Google-Smtp-Source: ACHHUZ4GcdKjctEWmkMJD/Q5ZDCusH7zrjV+w4c4EgP8GDbM+BMa7NNuPpP4cOMUW2oAUk/kOHHzW6hqw5zKR98kQX0=
+X-Received: by 2002:a17:907:1b12:b0:8b8:c06e:52d8 with SMTP id
+ mp18-20020a1709071b1200b008b8c06e52d8mr1298232ejc.36.1684495062361; Fri, 19
+ May 2023 04:17:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230517123914.GA4578@mit.edu>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a17:907:7dab:b0:94f:7d03:8e8b with HTTP; Fri, 19 May 2023
+ 04:17:41 -0700 (PDT)
+Reply-To: ninacoulibaly03@myself.com
+From:   nina coulibaly <ninacoulibaly199@gmail.com>
+Date:   Fri, 19 May 2023 04:17:41 -0700
+Message-ID: <CAM7Z2JAd00KW6b=O8M27vwRnsJ1w3AmDO5tP+gSmzkaHvk6=CA@mail.gmail.com>
+Subject: from nina coulibaly
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=4.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 17, 2023 at 08:39:14AM -0400, Theodore Ts'o wrote:
-> On Wed, May 17, 2023 at 09:42:59AM +0200, Christian Brauner wrote:
-> > 
-> > I have no idea about the original flame war that ended RichACLs in
-> > additition to having no clear clue what RichACLs are supposed to
-> > achieve. My current knowledge extends to "Christoph didn't like them".
-> 
-> As to what RichACL's are supposed to achieve....
+Dear,
 
-Interesting, thanks for all the details!
+Please grant me permission to share a very crucial discussion with
+you. I am looking forward to hearing from you at your earliest
+convenience.
 
-> 
-> Windows/NFSv4 -style ACL's are very different from POSIX semantics, in
-> a gazillion ways.  For example, if you set a top-level acl, it will
-> automatically affect all of the ACL's in the subhierarcy.  This is
-> trivially easy in Windows given that apparently ACL's are evaluated by
-> path every time you try to operate on a file (or at least, that's how
-> it works effectively; having not taken a look at Windows source code,
-> I can't vouch for how it is actually implemented.)  This is, of
-> course, a performance disaster and doesn't work all that well for
-> Linux where we can do things like like fchdir() and use O_PATH file
-> descriptors and *at() system calls.  Moreover, Windows doesn't have
-> things like the mode parameter to open(2) and mkdir(2) system calls.
-> 
-> As a result, RichACL's are quite a bit more complicated than Posix
-> ACL's or the Windows-style ACL's from which they were derived because
-> they have to compromise between the Windows authorization model and
-> the Posix/Linux authorization model while being expressive enough
-> to mostly emulate Windows-style ACL's.  For example, instead of
-> implementing Windows-style "automatic inheritance", setrichacl(1) will
-> do the moral equivalent of chmod -R, and then add a lot of hair in the
-> form of "file_inherit, dir_inherit, no_propagate, and inherit_only"
-> flags to each ACL entry, which are all there to try to mostly (but not
-> completely) handle make Windows-style and Linux/POSIX acl's work
-> within the same file system.  There's a lot more detail of the hair
-> documented here[1].
-> 
-> [1] https://www.systutorials.com/docs/linux/man/7-richacl/
-> 
-> I'll note most of this complexity is only necessary if you want to
-> have local file access to the file system work with similar semantics
-> as what would get exported via NFSv4.  If you didn't, you could just
-> store the Windows-style ACL in an xattr and just let it be set via the
-> remote file system, and return it when the remote file system queries
-> it.  The problem comes when you want to have "RichACLs" actually
-> influence the local Linux permissions check.
-
-Yeah, I'm already scared enough.
+Mrs. Nina Coulibal
