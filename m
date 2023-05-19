@@ -2,247 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 721747091C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 10:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6EF7091CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 10:41:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230363AbjESIj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 04:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32798 "EHLO
+        id S230320AbjESIlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 04:41:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230246AbjESIjV (ORCPT
+        with ESMTP id S229533AbjESIlU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 04:39:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DCABE56
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 01:38:35 -0700 (PDT)
+        Fri, 19 May 2023 04:41:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9804C2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 01:40:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684485514;
+        s=mimecast20190719; t=1684485639;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=tX9NkuaMfOfCKs1FCdEqGfDAsl8Ds/2jqifxpDMQKog=;
-        b=D561lFdafay1NhkBb2dY5VSEopkbivV0wVlMjM2FUN4R9i+vG/RKCdF8PIDm4N5dXwrXUM
-        P3MtwE0klO9m6NKPCyPgWWZVqXZX8QU1OaEDXc+29BFc3tnzBZl2U8aahZCoPSHc3z+hdG
-        VSYTgO8h66KyfxhQdysTG8+By1y5z7s=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=egBPRHVpdHSfd20nm0e9mbT5sU7zP2+9zHGLlUwPTiM=;
+        b=Y77Oh3f7BbqcfJAya9qhO8BC23iyJEZx3HziCeSQzEQQ599j2qfpmgfm7k+H1sGowKMamg
+        RhjRf+yEOfGQLldxYGJqMxWAiDakcFBZkknCfFWlqTqdSidTIxHuS6So5ljtjYRQTJp4rL
+        005bhweGkCVLmz1VxYS0ZpsndKRkmpc=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-424-a8kzH9LzMwq0QrRWhwC_kg-1; Fri, 19 May 2023 04:38:33 -0400
-X-MC-Unique: a8kzH9LzMwq0QrRWhwC_kg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3f4f2f5098bso17272885e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 01:38:32 -0700 (PDT)
+ us-mta-615-LvBB2JrBN3WYP0Wbv-kZgA-1; Fri, 19 May 2023 04:40:37 -0400
+X-MC-Unique: LvBB2JrBN3WYP0Wbv-kZgA-1
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-64d24df4852so907728b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 01:40:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684485512; x=1687077512;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :content-language:references:cc:to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tX9NkuaMfOfCKs1FCdEqGfDAsl8Ds/2jqifxpDMQKog=;
-        b=HubYApm4BBfdN4v55jwqYdU63PjUTiPOTS4SSh0m2gEKh2CctIL7MiXOVQD0bPLdQc
-         z90EU1pGY4RBqJkF/Mm8W23QHAm0VRfS/ZNiDkr8wYAthVh8h7hEIA1exClNnjg0piLP
-         OipKLt6HElB63YQLrIoPVi6l5fIRrDk4biKj19M7AUapSQBPa6lwLTA0HuB+kb1pTitI
-         nT2liD3qRHE9vyyv47A5zjmzJuc6SbxxZPysoyh4a6PJuxmPgqrGSWBRPsGamOQSGmPn
-         8VBT938LBd1qqTVriBi5oc72dKQPMuWofKGQht3igEdhQphicVrhdf4GbkcMbA/jqTpv
-         WHWg==
-X-Gm-Message-State: AC+VfDz3Q393AL5UJTtH7UxWtRWEetu0BNtjLGWl3K0/Bi4rH+1kofKf
-        MTzEKbwJ7XS6tDB8+bTINQ/zU7Abm7vxgUq8ya4gZG7lPORzGks8CJFH7xP1DgvGfJeqAEmsB65
-        rlv5MJ5a5T7V/gPg6V0UF8vEtew==
-X-Received: by 2002:a7b:c39a:0:b0:3f4:2198:dc2b with SMTP id s26-20020a7bc39a000000b003f42198dc2bmr693578wmj.37.1684485511863;
-        Fri, 19 May 2023 01:38:31 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ7LtglJFB9R2JhDU+tff4uPwmts/Q/Nk8YQIEhGQ9liamKeS2OKMjiL1/ZjRuXRD48OUaDpuA==
-X-Received: by 2002:a7b:c39a:0:b0:3f4:2198:dc2b with SMTP id s26-20020a7bc39a000000b003f42198dc2bmr693547wmj.37.1684485511344;
-        Fri, 19 May 2023 01:38:31 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c722:9d00:7421:54d8:9227:a3e8? (p200300cbc7229d00742154d89227a3e8.dip0.t-ipconnect.de. [2003:cb:c722:9d00:7421:54d8:9227:a3e8])
-        by smtp.gmail.com with ESMTPSA id q28-20020a056000137c00b003093a412310sm4570816wrz.92.2023.05.19.01.38.29
+        d=1e100.net; s=20221208; t=1684485636; x=1687077636;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=egBPRHVpdHSfd20nm0e9mbT5sU7zP2+9zHGLlUwPTiM=;
+        b=jeZo2nAb+eQoH6Z4+ndfhGEB2kSkMGmYUwHJpCIWBmbxlvOrvByG1hQDZACwhiUmFp
+         Yn10xxgprdXOj+Ecv4fum4af8iMPkc4AHayt1EpGkwhql75mSrQuyHfjOSFenFCCcyqt
+         kA3TgjH+LV1iRoQ0ScEh/TpWSCO/l5b+bg7XlYgSqRsjPkAAWrH7unID1ylovDX5gLFQ
+         vUGKQZ4CWqRGrMkK3Tqvv39yFG6jC5D9PGw1Xfg7+yusjKnIv+KzUuIXBHvibTT2YWli
+         zX+NmxZb7gWyAfwmWNUsqLAO6Mf1NkCp/MJb/twpUKH1omxMB2XzzfkuK7eoG7JTmQQq
+         rLmw==
+X-Gm-Message-State: AC+VfDy8LCeK0SQmrwjyDeuSckwLoqDuqbeBUnqugVoXbD0Ckt4iFI4m
+        cXB9aZLvWmbspO//36DVWg+lfdMuj5lf/eiUCHCoQXLtpjQsgn30CWFiNuPmh6HHj9OmiqbU8Fz
+        4UwhkO/Pd9f1sW99tUUULmYNHCA==
+X-Received: by 2002:a05:6a20:12ce:b0:103:4188:5dc6 with SMTP id v14-20020a056a2012ce00b0010341885dc6mr1404871pzg.61.1684485636697;
+        Fri, 19 May 2023 01:40:36 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5qifzK49CJEVh43BJzHJgxewYSM92TBkBZCMgJvFD6rw1sXkY73qala5W0RRLrYfUw1jrMRQ==
+X-Received: by 2002:a05:6a20:12ce:b0:103:4188:5dc6 with SMTP id v14-20020a056a2012ce00b0010341885dc6mr1404860pzg.61.1684485636344;
+        Fri, 19 May 2023 01:40:36 -0700 (PDT)
+Received: from [10.72.12.98] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id c24-20020aa78e18000000b00622e01989cbsm2609668pfr.176.2023.05.19.01.40.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 May 2023 01:38:30 -0700 (PDT)
-Message-ID: <32fdc2c8-b86b-92f3-1d5e-64db6be29126@redhat.com>
-Date:   Fri, 19 May 2023 10:38:29 +0200
+        Fri, 19 May 2023 01:40:36 -0700 (PDT)
+Message-ID: <c1fd63b9-42ea-fa83-ecb1-9af715e37ffa@redhat.com>
+Date:   Fri, 19 May 2023 16:40:26 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-To:     Axel Rasmussen <axelrasmussen@google.com>,
-        Peter Xu <peterx@redhat.com>
-Cc:     Jiaqi Yan <jiaqiyan@google.com>,
-        James Houghton <jthoughton@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
+Subject: Re: [PATCH v20 13/32] ceph: Provide a splice-read stub
+To:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
         Christian Brauner <brauner@kernel.org>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Huang Ying <ying.huang@intel.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Shuah Khan <shuah@kernel.org>,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Anish Moorthy <amoorthy@google.com>
-References: <20230511182426.1898675-1-axelrasmussen@google.com>
- <CADrL8HXFiTL-RDnETS2BUg_qH8CvcCMZiX-kutsrS1-8Uy25=w@mail.gmail.com>
- <ZGVRUeCWr8209m8d@x1n> <ZGVTMnVKNcQDM0x4@x1n>
- <CAJHvVcgXynHcuoS6eCfOAB2SgzqYy_zMGrRMR2kFuxOtSdUwvQ@mail.gmail.com>
- <CACw3F52MNOVv6KA5n7wRYDT2ujwYkco=aYngbo-zGA3zW1yq+w@mail.gmail.com>
- <ZGZMtK6PzoTuLZ1b@x1n>
- <CAJHvVcgcYPu-G3RDVrkrM_J48NUiUY0SH0G1sd+=X9BDgnQEuQ@mail.gmail.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+References: <20230519074047.1739879-1-dhowells@redhat.com>
+ <20230519074047.1739879-14-dhowells@redhat.com>
 Content-Language: en-US
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH 1/3] mm: userfaultfd: add new UFFDIO_SIGBUS ioctl
-In-Reply-To: <CAJHvVcgcYPu-G3RDVrkrM_J48NUiUY0SH0G1sd+=X9BDgnQEuQ@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20230519074047.1739879-14-dhowells@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18.05.23 22:38, Axel Rasmussen wrote:
-> On Thu, May 18, 2023 at 9:05 AM Peter Xu <peterx@redhat.com> wrote:
->>
->> On Wed, May 17, 2023 at 05:43:53PM -0700, Jiaqi Yan wrote:
->>> On Wed, May 17, 2023 at 3:29 PM Axel Rasmussen <axelrasmussen@google.com> wrote:
->>>>
->>>> On Wed, May 17, 2023 at 3:20 PM Peter Xu <peterx@redhat.com> wrote:
->>>>>
->>>>> On Wed, May 17, 2023 at 06:12:33PM -0400, Peter Xu wrote:
->>>>>> On Thu, May 11, 2023 at 03:00:09PM -0700, James Houghton wrote:
->>>>>>> On Thu, May 11, 2023 at 11:24 AM Axel Rasmussen
->>>>>>> <axelrasmussen@google.com> wrote:
->>>>>>>>
->>>>>>>> So the basic way to use this new feature is:
->>>>>>>>
->>>>>>>> - On the new host, the guest's memory is registered with userfaultfd, in
->>>>>>>>    either MISSING or MINOR mode (doesn't really matter for this purpose).
->>>>>>>> - On any first access, we get a userfaultfd event. At this point we can
->>>>>>>>    communicate with the old host to find out if the page was poisoned.
->>>>>>>> - If so, we can respond with a UFFDIO_SIGBUS - this places a swap marker
->>>>>>>>    so any future accesses will SIGBUS. Because the pte is now "present",
->>>>>>>>    future accesses won't generate more userfaultfd events, they'll just
->>>>>>>>    SIGBUS directly.
->>>>>>>
->>>>>>> I want to clarify the SIGBUS mechanism here when KVM is involved,
->>>>>>> keeping in mind that we need to be able to inject an MCE into the
->>>>>>> guest for this to be useful.
->>>>>>>
->>>>>>> 1. vCPU gets an EPT violation --> KVM attempts GUP.
->>>>>>> 2. GUP finds a PTE_MARKER_UFFD_SIGBUS and returns VM_FAULT_SIGBUS.
->>>>>>> 3. KVM finds that GUP failed and returns -EFAULT.
->>>>>>>
->>>>>>> This is different than if GUP found poison, in which case KVM will
->>>>>>> actually queue up a SIGBUS *containing the address of the fault*, and
->>>>>>> userspace can use it to inject an appropriate MCE into the guest. With
->>>>>>> UFFDIO_SIGBUS, we are missing the address!
->>>>>>>
->>>>>>> I see three options:
->>>>>>> 1. Make KVM_RUN queue up a signal for any VM_FAULT_SIGBUS. I think
->>>>>>> this is pointless.
->>>>>>> 2. Don't have UFFDIO_SIGBUS install a PTE entry, but instead have a
->>>>>>> UFFDIO_WAKE_MODE_SIGBUS, where upon waking, we return VM_FAULT_SIGBUS
->>>>>>> instead of VM_FAULT_RETRY. We will keep getting userfaults on repeated
->>>>>>> accesses, just like how we get repeated signals for real poison.
->>>>>>> 3. Use this in conjunction with the additional KVM EFAULT info that
->>>>>>> Anish proposed (the first part of [1]).
->>>>>>>
->>>>>>> I think option 3 is fine. :)
->>>>>>
->>>>>> Or... option 4) just to use either MADV_HWPOISON or hwpoison-inject? :)
->>>>>
->>>>> I just remember Axel mentioned this in the commit message, and just in case
->>>>> this is why option 4) was ruled out:
->>>>>
->>>>>          They expect that once poisoned, pages can never become
->>>>>          "un-poisoned". So, when we live migrate the VM, we need to preserve
->>>>>          the poisoned status of these pages.
->>>>>
->>>>> Just to supplement on this point: we do have unpoison (echoing to
->>>>> "debug/hwpoison/hwpoison_unpoison"), or am I wrong?
->>>
->>> If I read unpoison_memory() correctly, once there is a real hardware
->>> memory corruption (hw_memory_failure will be set), unpoison will stop
->>> working and return EOPNOTSUPP.
->>>
->>> I know some cloud providers evacuating VMs once a single memory error
->>> happens, so not supporting unpoison is probably not a big deal for
->>> them. BUT others do keep VM running until more errors show up later,
->>> which could be long after the 1st error.
->>
->> We're talking about postcopy migrating a VM has poisoned page on src,
->> rather than on dst host, am I right?  IOW, the dest hwpoison should be
->> fake.
->>
->> If so, then I would assume that's the case where all the pages on the dest
->> host is still all good (so hw_memory_failure not yet set, or I doubt the
->> judgement of being a migration target after all)?
->>
->> The other thing is even if dest host has hw poisoned page, I'm not sure
->> whether hw_memory_failure is the only way to solve this.
->>
->> I saw that this is something got worked on before from Zhenwei, David used
->> to have some reasoning on why it was suggested like using a global knob:
->>
->> https://lore.kernel.org/all/d7927214-e433-c26d-7a9c-a291ced81887@redhat.com/
->>
->> Two major issues here afaics:
->>
->>    - Zhenwei's approach only considered x86 hwpoison - it relies on kpte
->>      having !present in entries but that's x86 specific rather than generic
->>      to memory_failure.c.
->>
->>    - It is _assumed_ that hwpoison injection is for debugging only.
->>
->> I'm not sure whether you can fix 1) by some other ways, e.g., what if the
->> host just remember all the hardware poisoned pfns (or remember
->> soft-poisoned ones, but then here we need to be careful on removing them
->> from the list when it's hwpoisoned for real)?  It sounds like there's
->> opportunity on providing a generic solution rather than relying on
->> !pte_present().
->>
->> For 2) IMHO that's not a big issue, you can declare it'll be used in !debug
->> but production systems so as to boost the feature importance with a real
->> use case.
->>
->> So far I'd say it'll be great to leverage what it's already there in linux
->> and make it as generic as possible. The only issue is probably
->> CAP_ADMIN... not sure whether we can have some way to provide !ADMIN
->> somehow, or you can simply work around this issue.
-> 
-> As you mention below I think the key distinction is the scope - I
-> think MADV_HWPOISON affects the whole system, including other
-> processes.
-> 
-> For our purposes, we really just want to "poison" this particular
-> virtual address (the HVA, from the VM's perspective), not even other
-> mappings of the same shared memory. I think that behavior is different
-> from MADV_HWPOISON, at least.
 
-MADV_HWPOISON really is the wrong interface to use. See "man madvise".
+On 5/19/23 15:40, David Howells wrote:
+> Provide a splice_read stub for Ceph.  This does the inode shutdown check
+> before proceeding and jumps to direct_splice_read() if O_DIRECT is set, the
+> file has inline data or is a synchronous file.
+>
+> We try and get FILE_RD and either FILE_CACHE and/or FILE_LAZYIO caps and
+> hold them across filemap_splice_read().  If we fail to get FILE_CACHE or
+> FILE_LAZYIO capabilities, we use direct_splice_read() instead.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Christoph Hellwig <hch@lst.de>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Xiubo Li <xiubli@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: ceph-devel@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-block@vger.kernel.org
+> cc: linux-mm@kvack.org
+> ---
+>   fs/ceph/file.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 65 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index f4d8bf7dec88..382dd5901748 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1745,6 +1745,70 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   	return ret;
+>   }
+>   
+> +/*
+> + * Wrap filemap_splice_read with checks for cap bits on the inode.
+> + * Atomically grab references, so that those bits are not released
+> + * back to the MDS mid-read.
+> + */
+> +static ssize_t ceph_splice_read(struct file *in, loff_t *ppos,
+> +				struct pipe_inode_info *pipe,
+> +				size_t len, unsigned int flags)
+> +{
+> +	struct ceph_file_info *fi = in->private_data;
+> +	struct inode *inode = file_inode(in);
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+> +	ssize_t ret;
+> +	int want = 0, got = 0;
+> +	CEPH_DEFINE_RW_CONTEXT(rw_ctx, 0);
+> +
+> +	dout("splice_read %p %llx.%llx %llu~%zu trying to get caps on %p\n",
+> +	     inode, ceph_vinop(inode), *ppos, len, inode);
+> +
+> +	if (ceph_inode_is_shutdown(inode))
+> +		return -ESTALE;
+> +
+> +	if ((in->f_flags & O_DIRECT) ||
+> +	    ceph_has_inline_data(ci) ||
+> +	    (fi->flags & CEPH_F_SYNC))
+> +		return direct_splice_read(in, ppos, pipe, len, flags);
+> +
+> +	ceph_start_io_read(inode);
+> +
+> +	want = CEPH_CAP_FILE_CACHE;
+> +	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+> +		want |= CEPH_CAP_FILE_LAZYIO;
+> +
+> +	ret = ceph_get_caps(in, CEPH_CAP_FILE_RD, want, -1, &got);
+> +	if (ret < 0) {
+> +		ceph_end_io_read(inode);
+> +		return ret;
+> +	}
+> +
+> +	if ((got & (CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO)) == 0) {
+> +		dout("splice_read/sync %p %llx.%llx %llu~%zu got cap refs on %s\n",
+> +		     inode, ceph_vinop(inode), *ppos, len,
+> +		     ceph_cap_string(got));
+> +
+> +		ceph_end_io_read(inode);
+> +		return direct_splice_read(in, ppos, pipe, len, flags);
 
-We don't want to allow arbitrary users to hwpoison+offline absolutely 
-healthy physical memory, which is what MADV_HWPOISON is all about.
+Shouldn't we release cap ref before returning here ?
 
-As you say, we want to turn an unpopulated (!present) virtual address to 
-mimic like we had a MCE on a page that would have been previously mapped 
-here: install a hwpoison marker without actually poisoning any present 
-page. In fact, we'd even want to fail if there *is* something mapped.
+Thanks
 
-Sure, one could teach MADV_HWPOISON to allow unprivileged users to do 
-that for !present PTE entries, and fail for unprivileged users if there 
-is a present PTE entry. I'm not sure if that's the cleanest approach, 
-though, and a new MADV as suggested in this thread would eventually be 
-cleaner.
+- Xiubo
 
--- 
-Thanks,
 
-David / dhildenb
+> +	}
+> +
+> +	dout("splice_read %p %llx.%llx %llu~%zu got cap refs on %s\n",
+> +	     inode, ceph_vinop(inode), *ppos, len, ceph_cap_string(got));
+> +
+> +	rw_ctx.caps = got;
+> +	ceph_add_rw_context(fi, &rw_ctx);
+> +	ret = filemap_splice_read(in, ppos, pipe, len, flags);
+> +	ceph_del_rw_context(fi, &rw_ctx);
+> +
+> +	dout("splice_read %p %llx.%llx dropping cap refs on %s = %zd\n",
+> +	     inode, ceph_vinop(inode), ceph_cap_string(got), ret);
+> +	ceph_put_cap_refs(ci, got);
+> +
+> +	ceph_end_io_read(inode);
+> +	return ret;
+> +}
+> +
+>   /*
+>    * Take cap references to avoid releasing caps to MDS mid-write.
+>    *
+> @@ -2593,7 +2657,7 @@ const struct file_operations ceph_file_fops = {
+>   	.lock = ceph_lock,
+>   	.setlease = simple_nosetlease,
+>   	.flock = ceph_flock,
+> -	.splice_read = generic_file_splice_read,
+> +	.splice_read = ceph_splice_read,
+>   	.splice_write = iter_file_splice_write,
+>   	.unlocked_ioctl = ceph_ioctl,
+>   	.compat_ioctl = compat_ptr_ioctl,
+>
 
