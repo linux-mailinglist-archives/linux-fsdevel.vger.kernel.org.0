@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F3707097D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 14:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA097097D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 14:58:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231938AbjESM6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 08:58:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37540 "EHLO
+        id S231860AbjESM6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 08:58:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231866AbjESM6P (ORCPT
+        with ESMTP id S231901AbjESM6b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 08:58:15 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE66F1A8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 05:57:29 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f427118644so31291755e9.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 05:57:29 -0700 (PDT)
+        Fri, 19 May 2023 08:58:31 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DE54F7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 05:57:32 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3063891d61aso3089407f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 05:57:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684501045; x=1687093045;
+        d=gmail.com; s=20221208; t=1684501047; x=1687093047;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+u9VxBMZPGYf+c2R53dKXDbbBJGM0bbTYdDzTM1sa4M=;
-        b=FtrjhRn6MiN7yDeFBxXPCNK+k8KYUktRCZeRs/qI27KI97XnVdTKPXECO2Un1wrzVW
-         WfeSBYThL0nHBT/1oehJaeOUDe6H/fFgpRMPLKoVyh6W5X31kyAfmxGP/YBq0hjUdBHe
-         dt/pyMEXze880IZt7ocWi3RqH0OrZ77mFpkMQl/kfuk7i8bAw9KaKtjc1kLGF/e3pijb
-         wEvuNn2vKx03THmFWHqCs5gGgsvJ35+4/IS/7GcYOJmwW2pFVe5as1QoTd2CWcdtizNn
-         hmDZ8QualPfvH+KkgycpuwZ6dSrMDtuYESdmdpPT2Mkinn+eV7w67dj1HsB508kR6872
-         VFig==
+        bh=0NtouwrutgEwNDuf2MOZ2GRPT1+Ogpzjs3DqxXesgZU=;
+        b=aJKBiaGwTLXEItqnnu2syNMyD2AxGVDrwajgvvz7lyqvE4veb8wLjW3OawbmGPMQPI
+         cWDoBzKBSPwHvaN/m0kUZhVEdRZYCLff+0PHV4jARq/Y0+oYRiPsspplqc9Yj/ikTNrt
+         eAhVdPhG31L8Ix3yA/mjTyIZCWZnHQgwZxOrNUGfgSh2x2NpayBW3KgcdKgGbc7oHZ7Z
+         x0iFnR1n+ewTqEl1rV7FPQwa0w+pBiXrysqF+ITJfkax+NvTFqIjISlVNWGAlsxgMRxk
+         bu2eAcmbljuoQfr5jqSM2Wpr5TIts1uzVeYp2eD9Z6wlvxtK7WYpcIRBN16+6WUE8h9P
+         +wlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684501045; x=1687093045;
+        d=1e100.net; s=20221208; t=1684501047; x=1687093047;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+u9VxBMZPGYf+c2R53dKXDbbBJGM0bbTYdDzTM1sa4M=;
-        b=X6TETjoyNqVLe7IRQY12WFujFBvTd0vVmArXnO5jsHDawXsI7l3Hoeo3UFm9a/e/0Q
-         4Y+ImAFwEnSglbf4qnGBR2pB92AkxAl3mY2J9w4EOufkx6vAFYFm+x3dZ/d+kT+ajtVU
-         sMhk+8Z73YPwTuX6PzAO2r2mHcASGhC04qHvD0wMJVjPh1ZAJFdvuuwtS6F4ZZS3SAYs
-         0iUENQMjdGJIhebKcT49pAmvj3k8m2rkK5YitDNJjcW5D4kP+3PKZj8OPN136urlFrmT
-         W4QkdeL8BM160BCgn+HUyklM+4iDpjjIUXGXFzZFvZoLu6I8K3qGpo5q/dWTbs4AtvY+
-         uWWg==
-X-Gm-Message-State: AC+VfDynPVFkrquTJgtq0/hZ3U/K3OKxO4ZEyU3JCQ7UaQ9m73a8lGTT
-        qVlNkvarD8Fv1b/qxd3yODY=
-X-Google-Smtp-Source: ACHHUZ5MMKPQv5/tH/tKyuJDrJqL4kNUKEjKiE+N2t9rYHgsCqPaBt2Mqp8R4+BU9TCtIumZ5ARW+Q==
-X-Received: by 2002:a7b:cd01:0:b0:3f1:72ec:4009 with SMTP id f1-20020a7bcd01000000b003f172ec4009mr1228039wmj.9.1684501045117;
-        Fri, 19 May 2023 05:57:25 -0700 (PDT)
+        bh=0NtouwrutgEwNDuf2MOZ2GRPT1+Ogpzjs3DqxXesgZU=;
+        b=PNq5EVoViz0yJf/sakF2kgI9W0vZ5SrxYe1jXp1P6ZNJgsYEkD6jx26absWwt5p/me
+         2VwGcQ3jGLDJs6JAuCnzZJhYVgKeOMlRz8lClMz5XVB3rXd98OXyPqDTEDFo7iMoV9LV
+         h4K29d995KGfoTTdDgPGY+Ar0qAc1TBwTNNomiJUBDY4ujkGLXcpf74qgyPR/3+YDswz
+         vj5jN071ocJPIcNnppoC8F6KkM90h89s/MpQ3zTBm5obAZBVcgbPCdKPlroMCMjOv9Hr
+         vmJUxTPMTFQ3Cjiggs1keb8em3rU1PErunBy0EeYUMZClkOGqNW4PuRJoicozyZ5Jdyz
+         /pAg==
+X-Gm-Message-State: AC+VfDycR9KPEKMZMcA5IjM3R+jo21+yXxYgk2aSFC+p8cDDgdQOSwYG
+        xR7JT/EQphatj5hLMHSW2Nk=
+X-Google-Smtp-Source: ACHHUZ66aynbt1uDkwlc6cjqEcUoiSOjjKdDcYYvgwxVTlONRhnbumBlCPmyjPbVDA/VGrqlbPS2GA==
+X-Received: by 2002:adf:e945:0:b0:309:3a83:cf43 with SMTP id m5-20020adfe945000000b003093a83cf43mr1551415wrn.27.1684501046569;
+        Fri, 19 May 2023 05:57:26 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id v23-20020a5d5917000000b0030630120e56sm5250937wrd.57.2023.05.19.05.57.24
+        by smtp.gmail.com with ESMTPSA id v23-20020a5d5917000000b0030630120e56sm5250937wrd.57.2023.05.19.05.57.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 May 2023 05:57:24 -0700 (PDT)
+        Fri, 19 May 2023 05:57:26 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Daniel Rosenberg <drosen@google.com>,
         Paul Lawrence <paullawrence@google.com>,
         Alessio Balsini <balsini@android.com>,
         fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v13 09/10] fuse: invalidate atime after passthrough read/mmap
-Date:   Fri, 19 May 2023 15:57:04 +0300
-Message-Id: <20230519125705.598234-10-amir73il@gmail.com>
+Subject: [PATCH v13 10/10] fuse: setup a passthrough fd without a permanent backing id
+Date:   Fri, 19 May 2023 15:57:05 +0300
+Message-Id: <20230519125705.598234-11-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230519125705.598234-1-amir73il@gmail.com>
 References: <20230519125705.598234-1-amir73il@gmail.com>
@@ -74,99 +74,227 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Similar to invalidate atime in fuse_readpages_end().
+WIP
 
-To minimize requests to server, invalidate atime only if the backing
-inode atime has changed during the operation.
+Add an ioctl to associate a FUSE server open fd with a request.
+A later response to this request get use the FOPEN_PASSTHROUGH flag
+to request passthrough to the associated backing file.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/fuse/passthrough.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
 
-diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-index 8352d6b91e0e..2b745b6b2364 100644
---- a/fs/fuse/passthrough.c
-+++ b/fs/fuse/passthrough.c
-@@ -12,6 +12,7 @@
- struct fuse_aio_req {
- 	struct kiocb iocb;
- 	struct kiocb *iocb_fuse;
-+	struct timespec64 pre_atime;
- };
+Miklos,
+
+After implementing refcounted backing files, I started to think how
+to limit the server from mapping too many files.
+
+I wanted to limit the backing files mappings to the number of open fuse
+files to simplify backing files accounting (i.e. open files are
+effectively accounted to clients).
+
+It occured to me that creatig a 1-to-1 mapping between fuse files and
+backing file ids is quite futile if there is no need to manage 1-to-many
+backing file mappings.
+
+If only 1-to-1 mapping is desired, the proposed ioctl associates a
+backing file with a pending request.  The backing file will be kept
+open for as long the request lives, or until its refcount is handed
+over to the client, which can then use it to setup passthough to the
+backing file without the intermediate idr array.
+
+I have not implemented the full hand over yet, because I wanted to
+hear your feedback first.
+
+Thanks,
+Amir.
+
+
+ fs/fuse/dev.c             | 45 ++++++++++++++++++++++++++++++++++++++-
+ fs/fuse/fuse_i.h          | 16 +++++++++-----
+ fs/fuse/passthrough.c     | 12 ++++++++++-
+ include/uapi/linux/fuse.h |  8 +++++++
+ 4 files changed, 74 insertions(+), 7 deletions(-)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index cb00234e7843..01fb9c5411d2 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -61,6 +61,8 @@ static struct fuse_req *fuse_request_alloc(struct fuse_mount *fm, gfp_t flags)
  
- static void fuse_file_start_write(struct file *fuse_file,
-@@ -40,6 +41,21 @@ static void fuse_file_end_write(struct file *fuse_file,
- 	clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
+ static void fuse_request_free(struct fuse_req *req)
+ {
++	if (test_bit(FR_PASSTHROUGH, &req->flags))
++		fuse_passthrough_put(req->fpt);
+ 	kmem_cache_free(fuse_req_cachep, req);
  }
  
-+static void fuse_file_start_read(struct file *backing_file,
-+				 struct timespec64 *pre_atime)
+@@ -2251,6 +2253,43 @@ static int fuse_device_clone(struct fuse_conn *fc, struct file *new)
+ 	return 0;
+ }
+ 
++// Associate an passthrough fd to a fuse request
++static int fuse_handle_ioc_passthrough_setup(struct fuse_dev *fud,
++				struct fuse_passthrough_setup_in __user *arg)
 +{
-+	*pre_atime = file_inode(backing_file)->i_atime;
++	struct fuse_pqueue *fpq = &fud->pq;
++	struct fuse_req *req;
++	struct fuse_passthrough_setup_in fpts;
++	struct fuse_passthrough *fpt;
++	int err;
++
++	if (copy_from_user(&fpts, arg, sizeof(fpts)))
++		return -EFAULT;
++
++	if (fpts.padding)
++		return -EINVAL;
++
++	err = fuse_passthrough_open(fud->fc, fpts.fd, &fpt);
++	if (err)
++		return err;
++
++	spin_lock(&fpq->lock);
++	req = NULL;
++	if (fpq->connected)
++		req = request_find(fpq, fpts.unique);
++	if (req) {
++		__set_bit(FR_PASSTHROUGH, &req->flags);
++		req->fpt = fpt;
++	}
++	spin_unlock(&fpq->lock);
++	if (!req) {
++		fuse_passthrough_put(fpt);
++		return -ENOENT;
++	}
++
++	return 0;
 +}
 +
-+static void fuse_file_end_read(struct file *fuse_file,
-+			       struct file *backing_file,
-+			       struct timespec64 *pre_atime)
-+{
-+	/* Mimic atime update policy of passthrough inode, not the value */
-+	if (!timespec64_equal(&file_inode(backing_file)->i_atime, pre_atime))
-+		fuse_invalidate_atime(file_inode(fuse_file));
-+}
-+
- static void fuse_aio_cleanup_handler(struct fuse_aio_req *aio_req, long res)
+ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+ 			   unsigned long arg)
  {
- 	struct kiocb *iocb = &aio_req->iocb;
-@@ -50,6 +66,8 @@ static void fuse_aio_cleanup_handler(struct fuse_aio_req *aio_req, long res)
- 	if (iocb->ki_flags & IOCB_WRITE) {
- 		__sb_writers_acquired(file_inode(filp)->i_sb, SB_FREEZE_WRITE);
- 		fuse_file_end_write(fuse_filp, filp, iocb->ki_pos, res);
-+	} else {
-+		fuse_file_end_read(fuse_filp, filp, &aio_req->pre_atime);
- 	}
+@@ -2291,7 +2330,7 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+ 		if (!f.file)
+ 			return -EINVAL;
  
- 	iocb_fuse->ki_pos = iocb->ki_pos;
-@@ -81,9 +99,13 @@ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
+-		res = fuse_passthrough_open(fud->fc, fd);
++		res = fuse_passthrough_open(fud->fc, fd, NULL);
+ 		fdput(f);
+ 		break;
+ 	case FUSE_DEV_IOC_PASSTHROUGH_CLOSE:
+@@ -2300,6 +2339,10 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
  
- 	old_cred = override_creds(ff->passthrough->cred);
- 	if (is_sync_kiocb(iocb_fuse)) {
-+		struct timespec64 pre_atime;
+ 		res = fuse_passthrough_close(fud->fc, id);
+ 		break;
++	case FUSE_DEV_IOC_PASSTHROUGH_SETUP:
++		res = fuse_handle_ioc_passthrough_setup(fud,
++			   (struct fuse_passthrough_setup_in __user *)arg);
++		break;
+ 	default:
+ 		res = -ENOTTY;
+ 		break;
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 238a43349298..085d7607ba6e 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -332,6 +332,7 @@ struct fuse_io_priv {
+  * FR_FINISHED:		request is finished
+  * FR_PRIVATE:		request is on private list
+  * FR_ASYNC:		request is asynchronous
++ * FR_PASSTHROUGH:	request is associated with passthrough file
+  */
+ enum fuse_req_flag {
+ 	FR_ISREPLY,
+@@ -346,6 +347,7 @@ enum fuse_req_flag {
+ 	FR_FINISHED,
+ 	FR_PRIVATE,
+ 	FR_ASYNC,
++	FR_PASSTHROUGH,
+ };
+ 
+ /**
+@@ -385,10 +387,13 @@ struct fuse_req {
+ 	/** Used to wake up the task waiting for completion of request*/
+ 	wait_queue_head_t waitq;
+ 
+-#if IS_ENABLED(CONFIG_VIRTIO_FS)
+-	/** virtio-fs's physically contiguous buffer for in and out args */
+-	void *argbuf;
+-#endif
++	union {
++		/** virtio-fs's physically contiguous buffer for in/out args */
++		void *argbuf;
 +
- 		rwf = iocb_to_rw_flags(iocb_fuse->ki_flags, FUSE_IOCB_MASK);
-+		fuse_file_start_read(passthrough_filp, &pre_atime);
- 		ret = vfs_iter_read(passthrough_filp, iter, &iocb_fuse->ki_pos,
- 				    rwf);
-+		fuse_file_end_read(fuse_filp, passthrough_filp, &pre_atime);
- 	} else {
- 		struct fuse_aio_req *aio_req;
++		/** passthrough file associated with request */
++		struct fuse_passthrough *fpt;
++	};
  
-@@ -94,6 +116,7 @@ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
- 		}
+ 	/** fuse_mount this request belongs to */
+ 	struct fuse_mount *fm;
+@@ -1347,7 +1352,8 @@ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
+ 		       unsigned int open_flags, fl_owner_t id, bool isdir);
  
- 		aio_req->iocb_fuse = iocb_fuse;
-+		fuse_file_start_read(passthrough_filp, &aio_req->pre_atime);
- 		kiocb_clone(&aio_req->iocb, iocb_fuse, passthrough_filp);
- 		aio_req->iocb.ki_complete = fuse_aio_rw_complete;
- 		ret = call_read_iter(passthrough_filp, &aio_req->iocb, iter);
-@@ -166,6 +189,7 @@ ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma)
- 	const struct cred *old_cred;
- 	struct fuse_file *ff = file->private_data;
- 	struct file *passthrough_filp = ff->passthrough->filp;
-+	struct timespec64 pre_atime;
+ /* passthrough.c */
+-int fuse_passthrough_open(struct fuse_conn *fc, int backing_fd);
++int fuse_passthrough_open(struct fuse_conn *fc, int backing_fd,
++			  struct fuse_passthrough **pfpt);
+ int fuse_passthrough_close(struct fuse_conn *fc, int passthrough_fh);
+ int fuse_passthrough_setup(struct fuse_conn *fc, struct fuse_file *ff,
+ 			   struct fuse_open_out *openarg);
+diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+index 2b745b6b2364..85a1d72b1666 100644
+--- a/fs/fuse/passthrough.c
++++ b/fs/fuse/passthrough.c
+@@ -216,8 +216,12 @@ ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma)
+ /*
+  * Returns passthrough_fh id that can be passed with FOPEN_PASSTHROUGH
+  * open response and needs to be released with fuse_passthrough_close().
++ *
++ * When @pfpt is non-NULL, an anonynous passthrough handle is returned
++ * via *pfpt on success and the return value is 0.
+  */
+-int fuse_passthrough_open(struct fuse_conn *fc, int backing_fd)
++int fuse_passthrough_open(struct fuse_conn *fc, int backing_fd,
++			  struct fuse_passthrough **pfpt)
+ {
+ 	struct file *passthrough_filp;
+ 	struct inode *passthrough_inode;
+@@ -252,6 +256,12 @@ int fuse_passthrough_open(struct fuse_conn *fc, int backing_fd)
+ 	passthrough->cred = prepare_creds();
+ 	refcount_set(&passthrough->count, 1);
  
- 	if (!passthrough_filp->f_op->mmap)
- 		return -ENODEV;
-@@ -176,7 +200,9 @@ ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma)
- 	vma->vm_file = get_file(passthrough_filp);
++	if (pfpt) {
++		/* Return an anonynous passthrough handle */
++		*pfpt = passthrough;
++		return 0;
++	}
++
+ 	idr_preload(GFP_KERNEL);
+ 	spin_lock(&fc->lock);
+ 	res = idr_alloc_cyclic(&fc->passthrough_files_map, passthrough, 1, 0,
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 3da1f59007cf..028a65fe3fa2 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -993,11 +993,19 @@ struct fuse_notify_retrieve_in {
+ 	uint64_t	dummy4;
+ };
  
- 	old_cred = override_creds(ff->passthrough->cred);
-+	fuse_file_start_read(passthrough_filp, &pre_atime);
- 	ret = call_mmap(vma->vm_file, vma);
-+	fuse_file_end_read(file, passthrough_filp, &pre_atime);
- 	revert_creds(old_cred);
++struct fuse_passthrough_setup_in {
++	uint64_t	unique;
++	uint32_t        fd;
++	uint32_t        padding;
++};
++
+ /* Device ioctls: */
+ #define FUSE_DEV_IOC_MAGIC		229
+ #define FUSE_DEV_IOC_CLONE		_IOR(FUSE_DEV_IOC_MAGIC, 0, uint32_t)
+ #define FUSE_DEV_IOC_PASSTHROUGH_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, uint32_t)
+ #define FUSE_DEV_IOC_PASSTHROUGH_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
++#define FUSE_DEV_IOC_PASSTHROUGH_SETUP	_IOW(FUSE_DEV_IOC_MAGIC, 3, \
++					     struct fuse_passthrough_setup_in)
  
- 	if (ret)
+ struct fuse_lseek_in {
+ 	uint64_t	fh;
 -- 
 2.34.1
 
