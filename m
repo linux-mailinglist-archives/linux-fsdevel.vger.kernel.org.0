@@ -2,58 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F34E7096FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 14:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B09B270974A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 14:37:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230468AbjESMCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 08:02:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44744 "EHLO
+        id S229942AbjESMhn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 08:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbjESMCb (ORCPT
+        with ESMTP id S229456AbjESMhm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 08:02:31 -0400
+        Fri, 19 May 2023 08:37:42 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFF6C18F;
-        Fri, 19 May 2023 05:02:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B14F4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 05:37:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 852B565714;
-        Fri, 19 May 2023 12:02:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 441D7C433EF;
-        Fri, 19 May 2023 12:02:26 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DAE7D65734
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 12:37:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A689C433D2;
+        Fri, 19 May 2023 12:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684497748;
-        bh=aUS8W90dTjFtHRr5ELiJEI3YIx95XhkEyqi9qJUIPf0=;
+        s=k20201202; t=1684499860;
+        bh=R4EVhjhpgezvGhcJ1rV29LbGDOpa0u2W5P9ZfvrYWlA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nsLYf9h3VKVvflYL7lhrEMVuy931qaFIru5NBh429e/ULynt2sWUkpSwykjNaN0zD
-         BJPSmzqsYRs6eLCb35SSGOHx1gVzVkPdmvtaIqlB/S/0LLAo/6eAYIMMKfljMlGUHr
-         dOBZ3ahBiDeL0P8YYnrY2K8gpGAGl/so9UZsbHzbywsaLwSboq4mMEFwAQzVxizGsn
-         6dgDKIEnNpRaw5951EzV/3U9N3MetZdwCPNUhUGuDiZ8bZDVIVFbwxwzRP2SGDrO+g
-         q6mkYPqYYUIBctcbwcMIHDJJUHs2oGy78pT8AuUx8MjZYBABAIv92mDOHHh2wJb8sw
-         IsQE4FbELGTEw==
-Date:   Fri, 19 May 2023 14:02:23 +0200
+        b=R8xBBpYyQRaIs0yTaNAnSLlS2fixkSTPPROhZIgMGu+sIJGJ5evQ48Os4Bdev/9dM
+         Uk9UU30352149DwKwJ03G6i/TaBI/ocOr3PJ4UmdW2RjA+8gFm/sBbwxI/2aWPBSwy
+         p88pcpuqzNuJJvN1W7FvANVOrYnrwXloFuocTIaHNjtTG24zWcgWV+ZMbR3Nq/TPDO
+         pBKqIfQ2H5Fsx8ubVHvKOc85j4d7sakKAxRv6Ce2C058LmANm/1NdNwZCA7NEWYPJ0
+         mXLz+Ts/QuoUdGZdet1gzb+SuyPynmyD2xqE1deZqAihEWNlbEKGrbksmcYYUoH5AY
+         JEBPucONB0KLQ==
+Date:   Fri, 19 May 2023 14:37:35 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Ondrej Valousek <ondrej.valousek.xm@renesas.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
-        "trondmy@hammerspace.com" <trondmy@hammerspace.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: A pass-through support for NFSv4 style ACL
-Message-ID: <20230519-verfrachten-gurte-a648ebd0a2fa@brauner>
-References: <20230516124655.82283-1-jlayton@kernel.org>
- <20230516-notorisch-geblickt-6b591fbd77c1@brauner>
- <TYXPR01MB18549D3A5B0BE777D7F6B284D9799@TYXPR01MB1854.jpnprd01.prod.outlook.com>
- <cc4317d9cb8f10aa0b3750bdb6db8b4e77ff26f8.camel@kernel.org>
- <20230517-herstellen-zitat-21eeccd36558@brauner>
- <20230517123914.GA4578@mit.edu>
- <20230519-allzu-aufmerksam-c3098b5ecf0d@brauner>
- <TYXPR01MB185439828CC7CEC40425065BD97C9@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+To:     Andrii Nakryiko <andrii@kernel.org>
+Cc:     bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        martin.lau@kernel.org, cyphar@cyphar.com, lennart@poettering.net,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 bpf-next 1/3] bpf: support O_PATH FDs in BPF_OBJ_PIN
+ and BPF_OBJ_GET commands
+Message-ID: <20230519-ratschlag-gockel-c27d5fdfb72d@brauner>
+References: <20230518215444.1418789-1-andrii@kernel.org>
+ <20230518215444.1418789-2-andrii@kernel.org>
+ <20230519-eiswasser-leibarzt-ed7e52934486@brauner>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <TYXPR01MB185439828CC7CEC40425065BD97C9@TYXPR01MB1854.jpnprd01.prod.outlook.com>
+In-Reply-To: <20230519-eiswasser-leibarzt-ed7e52934486@brauner>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -64,32 +58,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 19, 2023 at 11:38:30AM +0000, Ondrej Valousek wrote:
+On Fri, May 19, 2023 at 11:49:50AM +0200, Christian Brauner wrote:
+> On Thu, May 18, 2023 at 02:54:42PM -0700, Andrii Nakryiko wrote:
+> > Current UAPI of BPF_OBJ_PIN and BPF_OBJ_GET commands of bpf() syscall
+> > forces users to specify pinning location as a string-based absolute or
+> > relative (to current working directory) path. This has various
+> > implications related to security (e.g., symlink-based attacks), forces
+> > BPF FS to be exposed in the file system, which can cause races with
+> > other applications.
 > > 
-> > I'll note most of this complexity is only necessary if you want to 
-> > have local file access to the file system work with similar semantics 
-> > as what would get exported via NFSv4.  If you didn't, you could just 
-> > store the Windows-style ACL in an xattr and just let it be set via the 
-> > remote file system, and return it when the remote file system queries 
-> > it.  The problem comes when you want to have "RichACLs" actually 
-> > influence the local Linux permissions check.
+> > One of the feedbacks we got from folks working with containers heavily
+> > was that inability to use purely FD-based location specification was an
+> > unfortunate limitation and hindrance for BPF_OBJ_PIN and BPF_OBJ_GET
+> > commands. This patch closes this oversight, adding path_fd field to
+> > BPF_OBJ_PIN and BPF_OBJ_GET UAPI, following conventions established by
+> > *at() syscalls for dirfd + pathname combinations.
+> > 
+> > This now allows interesting possibilities like working with detached BPF
+> > FS mount (e.g., to perform multiple pinnings without running a risk of
+> > someone interfering with them), and generally making pinning/getting
+> > more secure and not prone to any races and/or security attacks.
+> > 
+> > This is demonstrated by a selftest added in subsequent patch that takes
+> > advantage of new mount APIs (fsopen, fsconfig, fsmount) to demonstrate
+> > creating detached BPF FS mount, pinning, and then getting BPF map out of
+> > it, all while never exposing this private instance of BPF FS to outside
+> > worlds.
+> > 
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  include/linux/bpf.h            |  4 ++--
+> >  include/uapi/linux/bpf.h       | 10 ++++++++++
+> >  kernel/bpf/inode.c             | 16 ++++++++--------
+> >  kernel/bpf/syscall.c           | 25 ++++++++++++++++++++-----
+> >  tools/include/uapi/linux/bpf.h | 10 ++++++++++
+> >  5 files changed, 50 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> > index 36e4b2d8cca2..f58895830ada 100644
+> > --- a/include/linux/bpf.h
+> > +++ b/include/linux/bpf.h
+> > @@ -2077,8 +2077,8 @@ struct file *bpf_link_new_file(struct bpf_link *link, int *reserved_fd);
+> >  struct bpf_link *bpf_link_get_from_fd(u32 ufd);
+> >  struct bpf_link *bpf_link_get_curr_or_next(u32 *id);
+> >  
+> > -int bpf_obj_pin_user(u32 ufd, const char __user *pathname);
+> > -int bpf_obj_get_user(const char __user *pathname, int flags);
+> > +int bpf_obj_pin_user(u32 ufd, int path_fd, const char __user *pathname);
+> > +int bpf_obj_get_user(int path_fd, const char __user *pathname, int flags);
+> >  
+> >  #define BPF_ITER_FUNC_PREFIX "bpf_iter_"
+> >  #define DEFINE_BPF_ITER_FUNC(target, args...)			\
+> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > index 1bb11a6ee667..3731284671e4 100644
+> > --- a/include/uapi/linux/bpf.h
+> > +++ b/include/uapi/linux/bpf.h
+> > @@ -1272,6 +1272,9 @@ enum {
+> >  
+> >  /* Create a map that will be registered/unregesitered by the backed bpf_link */
+> >  	BPF_F_LINK		= (1U << 13),
+> > +
+> > +/* Get path from provided FD in BPF_OBJ_PIN/BPF_OBJ_GET commands */
+> > +	BPF_F_PATH_FD		= (1U << 14),
+> >  };
+> >  
+> >  /* Flags for BPF_PROG_QUERY. */
+> > @@ -1420,6 +1423,13 @@ union bpf_attr {
+> >  		__aligned_u64	pathname;
+> >  		__u32		bpf_fd;
+> >  		__u32		file_flags;
+> > +		/* Same as dirfd in openat() syscall; see openat(2)
+> > +		 * manpage for details of path FD and pathname semantics;
+> > +		 * path_fd should accompanied by BPF_F_PATH_FD flag set in
+> > +		 * file_flags field, otherwise it should be set to zero;
+> > +		 * if BPF_F_PATH_FD flag is not set, AT_FDCWD is assumed.
+> > +		 */
+> > +		__u32		path_fd;
+> >  	};
 > 
-> > Yeah, I'm already scared enough.
+> Thanks for changing that.
 > 
-> Well I do not think it's that difficult. As I said, just take a look how OmniOS does things, very nice - you can set up a VM with it in just a half an hour and you get a system with ZFS and native NFSv4 working.
-> True it's not Richacl, but just NFSv4 style acl - even better.
+> This is still odd though because you prevent users from specifying
+> AT_FDCWD explicitly. They should be allowed to do that plus file
+> descriptors are signed integers so please s/__u32/__s32/. AT_FDCWD
+> should be passable anywhere where we have at* semantics. Plus, if in the
+> vfs we ever add
+> #define AT_ROOT -200
+> or something you can't use without coming up with your own custom flags.
+> If you just follow what everyone else does and use __s32 then you're
+> good.
 > 
-> As for the implementation, lot of code could be presumably taken from Samba which is already doing Windows style-ACL to NFSv4 translation.
+> File descriptors really need to be signed. There's no way around that.
+> See io_uring as a good example
 > 
-> To me interesting bit was that the original path from Andreas was not accepted largely because it would add another piece of mess to the already messy code in the kernel, I did not know that.
-> I hoped that  now that Christian cleaned the code recently, it would perhaps allow us to reconsider things, but maybe I am too naive here 😊
+> io_uring_sqe {
+>           __u8    opcode;         /* type of operation for this sqe */
+>           __u8    flags;          /* IOSQE_ flags */
+>           __u16   ioprio;         /* ioprio for the request */
+>           __s32   fd;             /* file descriptor to do IO on */
+> }
+> 
+> where the __s32 fd is used in all fd based requests including
+> io_openat*() (See io_uring/openclose.c) which are effectively the
+> semantics you want to emulate here.
 
-Noo one is going to stop you from writing the code and posting it on the
-list. But I think none of us here will be very eager to implement it. If
-it can be done cleanly without performance regressions or unwiedly
-complications in the generic lookup and permission checking code and
-both posix acls and these nfs4 style acls can be abstracted away nicely
-in a single file, and have well-defined semantics and there's a clear
-use-case that isn't just someone's hobby project then it might be
-considered. But it might also mean you've spent significant effort just
-to hear a no in the end.
+I should clarify that this is mainly for apis that return fds or that
+provide at* semantics. We certainly do use unsigned in cases where the
+system call operates directly on an fd without any lookup semantics.
