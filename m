@@ -2,189 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30355708CDF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 02:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1509D708CE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 02:27:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230434AbjESA1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 May 2023 20:27:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33700 "EHLO
+        id S230527AbjESA1v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 May 2023 20:27:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbjESA1I (ORCPT
+        with ESMTP id S230482AbjESA1u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 May 2023 20:27:08 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED475199D;
-        Thu, 18 May 2023 17:26:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ay4W8bozgbMDHggFbHb1tEFZ6uEkx4PpIr80gFSYx6c=; b=kNw0UCSRwPiIvPybr3/z9ZRngc
-        /kaGi5Sf4+JVDVWKzNRglnirLN+Rj1zUZ0qxOqKuiyCU+MyNDwZ9suBLPpO90d0COwAf8rvNWNPBk
-        3AMOcJvKBp3RPkfe0DngjxekZzLP+CSQyZKV19DlcZFpwADjAbnGBpkULnmlBetbCgJeA1pAGUBNU
-        2EZ68P8a6sPiO18L201fXNp3K+u0pdPVJmNABt75fAcnAra3y9f/kXIeP71BbQRDH7f6p4eyx8fqU
-        LEuwpB2GiVIYDQhrImSkUTFpoH4J5FDKcqjUR2nwN2vstjfwqTX+sAmd0w7myzt7srqRiz6d857uZ
-        2tlX4ROA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pznx4-00EZ12-2B;
-        Fri, 19 May 2023 00:26:34 +0000
-Date:   Thu, 18 May 2023 17:26:34 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Joel Granados <j.granados@samsung.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, Iurii Zaikin <yzaikin@google.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 0/2] sysctl: Remove register_sysctl_table from sources
-Message-ID: <ZGbCOjS1n6zV9ZGV@bombadil.infradead.org>
-References: <CGME20230518160715eucas1p174602d770f0d46e0294b7dba8d6d36dc@eucas1p1.samsung.com>
- <20230518160705.3888592-1-j.granados@samsung.com>
- <ZGaOtM0TqmwOkdd6@bombadil.infradead.org>
+        Thu, 18 May 2023 20:27:50 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B56B510DD
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 17:27:34 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-76c6469c2b5so213416039f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 May 2023 17:27:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684456054; x=1687048054;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wS4yRst5lIZOEFwOGopGmG/PFz9tJWrMaN/Ir/080P8=;
+        b=ZQ9Z7yE6vZpuCD8NGfgGwrXKMvNaKO4Xjy17k1TZBe5/EIIeorJI0XJ5ZVUnApmzUa
+         Eb/azoIBjW37hbapv7Uqlfy/dP/SBUM8HlA6HbPsbq+yhjStN+pbG+UR6h1UbOQF3B6E
+         wGRCwR3zkpKb3tESAqbQf/JjWOrfuiOwJ26/PSAMcmD9dUCxuF8AyF+oo/Q/ZUOl7nD0
+         e44WZGNtSgQXUQopfs8KLi6ONOWb0LtmvvPjzTE1C4MnhP9Ah+VCb+W9gQUMPNen6qIo
+         1tsr/0oxAt6Zb9SWzN7Wa709oHliOC3cDVyEMAAO3qQR6JQ2Ggd4euQKIG2kAfyUNLOM
+         2apw==
+X-Gm-Message-State: AC+VfDyFIkeBMnLX566rJ3mGe/2PaNhtiNpK3lcFRktSkcRki0omV+nK
+        qy4Wn+GsiV17zX1dRW4ZO/PnJGoosoH/dN8D54nakMLhnXQV
+X-Google-Smtp-Source: ACHHUZ4uvwIW/3D56BvXGaHQPr33ch9NlqQpk3LuznfAGWdZ3iL/anO0zW2bQ/xBVbTceVtGs4NO9Yf0CRaEkLPozBhj17OS6ICr
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZGaOtM0TqmwOkdd6@bombadil.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a5e:9409:0:b0:761:22af:1e36 with SMTP id
+ q9-20020a5e9409000000b0076122af1e36mr64161ioj.1.1684456054078; Thu, 18 May
+ 2023 17:27:34 -0700 (PDT)
+Date:   Thu, 18 May 2023 17:27:34 -0700
+In-Reply-To: <000000000000dd4a6405f5336cbc@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000be442905fc00fc78@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: stack-out-of-bounds Write in ktime_get_coarse_real_ts64
+From:   syzbot <syzbot+91eeffac5287c260f2d0@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com, ivan.orlov0322@gmail.com,
+        jstultz@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
+        sboyd@kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 18, 2023 at 01:46:44PM -0700, Luis Chamberlain wrote:
-> On Thu, May 18, 2023 at 06:07:03PM +0200, Joel Granados wrote:
-> > This is part of the general push to deprecate register_sysctl_paths and
-> > register_sysctl_table. This patchset completely removes register_sysctl_table
-> > and replaces it with register_sysctl effectively transitioning 5 base paths
-> > ("kernel", "vm", "fs", "dev" and "debug") to the new call. Besides removing the
-> > actuall function, I also removed it from the checks done in check-sysctl-docs.
-> > 
-> > Testing for this change was done in the same way as with previous sysctl
-> > replacement patches: I made sure that the result of `find /proc/sys/ | sha1sum`
-> > was the same before and after the patchset.
-> > 
-> > Have pushed this through 0-day. Waiting on results..
-> > 
-> > Feedback greatly appreciated.
-> 
-> Thanks so much! I merged this to sysctl-testing as build tests are ongoing. But
-> I incorporated these minor changes to your first patch as register_sysctl_init()
-> is more obvious about when we cannot care about the return value.
-> 
-> If the build tests come through I'll push to sysctl-next.
-> 
+syzbot suspects this issue was fixed by commit:
 
-I also had to apply this (yay more nuking):
+commit 267a36ba30a7425ad59d20e7e7e33bbdcc9cfb0a
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Mon Jan 16 08:52:10 2023 +0000
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 7bc7d3c3a215..8873812d22f3 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -1466,19 +1466,6 @@ void __init __register_sysctl_init(const char *path, struct ctl_table *table,
- 	kmemleak_not_leak(hdr);
- }
- 
--static char *append_path(const char *path, char *pos, const char *name)
--{
--	int namelen;
--	namelen = strlen(name);
--	if (((pos - path) + namelen + 2) >= PATH_MAX)
--		return NULL;
--	memcpy(pos, name, namelen);
--	pos[namelen] = '/';
--	pos[namelen + 1] = '\0';
--	pos += namelen + 1;
--	return pos;
--}
--
- static int count_subheaders(struct ctl_table *table)
- {
- 	int has_files = 0;
-@@ -1498,82 +1485,6 @@ static int count_subheaders(struct ctl_table *table)
- 	return nr_subheaders + has_files;
- }
- 
--static int register_leaf_sysctl_tables(const char *path, char *pos,
--	struct ctl_table_header ***subheader, struct ctl_table_set *set,
--	struct ctl_table *table)
--{
--	struct ctl_table *ctl_table_arg = NULL;
--	struct ctl_table *entry, *files;
--	int nr_files = 0;
--	int nr_dirs = 0;
--	int err = -ENOMEM;
--
--	list_for_each_table_entry(entry, table) {
--		if (entry->child)
--			nr_dirs++;
--		else
--			nr_files++;
--	}
--
--	files = table;
--	/* If there are mixed files and directories we need a new table */
--	if (nr_dirs && nr_files) {
--		struct ctl_table *new;
--		files = kcalloc(nr_files + 1, sizeof(struct ctl_table),
--				GFP_KERNEL);
--		if (!files)
--			goto out;
--
--		ctl_table_arg = files;
--		new = files;
--
--		list_for_each_table_entry(entry, table) {
--			if (entry->child)
--				continue;
--			*new = *entry;
--			new++;
--		}
--	}
--
--	/* Register everything except a directory full of subdirectories */
--	if (nr_files || !nr_dirs) {
--		struct ctl_table_header *header;
--		header = __register_sysctl_table(set, path, files);
--		if (!header) {
--			kfree(ctl_table_arg);
--			goto out;
--		}
--
--		/* Remember if we need to free the file table */
--		header->ctl_table_arg = ctl_table_arg;
--		**subheader = header;
--		(*subheader)++;
--	}
--
--	/* Recurse into the subdirectories. */
--	list_for_each_table_entry(entry, table) {
--		char *child_pos;
--
--		if (!entry->child)
--			continue;
--
--		err = -ENAMETOOLONG;
--		child_pos = append_path(path, pos, entry->procname);
--		if (!child_pos)
--			goto out;
--
--		err = register_leaf_sysctl_tables(path, child_pos, subheader,
--						  set, entry->child);
--		pos[0] = '\0';
--		if (err)
--			goto out;
--	}
--	err = 0;
--out:
--	/* On failure our caller will unregister all registered subheaders */
--	return err;
--}
--
- static void put_links(struct ctl_table_header *header)
- {
- 	struct ctl_table_set *root_set = &sysctl_table_root.default_set;
+    fs/ntfs3: Remove noacsrules
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13793a5a280000
+start commit:   3ac88fa4605e Merge tag 'net-6.2-final' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7bfeb3e8d4df76ca
+dashboard link: https://syzkaller.appspot.com/bug?extid=91eeffac5287c260f2d0
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a7a4ab480000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151aeaf0c80000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs/ntfs3: Remove noacsrules
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
