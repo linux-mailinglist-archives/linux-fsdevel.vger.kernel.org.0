@@ -2,76 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6DA2709533
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 12:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 162BB709569
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 12:52:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231739AbjESKjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 06:39:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58588 "EHLO
+        id S231686AbjESKwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 06:52:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231602AbjESKjR (ORCPT
+        with ESMTP id S230304AbjESKwN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 06:39:17 -0400
+        Fri, 19 May 2023 06:52:13 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BDF419BA;
-        Fri, 19 May 2023 03:38:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B497A192
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 03:52:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2312D65665;
-        Fri, 19 May 2023 10:37:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 355FBC433EF;
-        Fri, 19 May 2023 10:36:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4A37A65673
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 10:52:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 655FAC433D2;
+        Fri, 19 May 2023 10:52:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684492625;
-        bh=wml5FX+iifwiN9GWfcWZwLOn5yYaW+2EgAm1pGQ4wag=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LesqHPpJFvmUzFRNKNrXorR1EYqX2OH4PzpfMnfkwpXBNMAdG0ZQ2/EhXWk4IygXG
-         2SChx7zSoJ0YLPAx8NLZvJ6SOzp1REqqg2W4zVp5wbwe7o+dIDPVWUoxCl/qyUoiC6
-         Hc8K5v1h61MJ/2+pFTwgJ2RbfpliI2uZCFdccGPMr9bJ2ILACO3fq5ktbLX9Ih9mt7
-         borB3WCTF8vBovAIwJK2NJXzqkEsDom9vEZ+pqPWJpam+HPFNvtn25M8aQT5NRfCtp
-         AGEEcDIESrx+0PUP4SCR9bC6eWarMtHEgUXfuLLSvsE0ZBK7mZlQH/I+SzX7bqFsFt
-         94cgCHIsObdWA==
-Date:   Fri, 19 May 2023 12:36:51 +0200
+        s=k20201202; t=1684493531;
+        bh=/v84OOWogMzxwAPPo1Lb1tB1SIYHcs9Fx1rZ53zIfrw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qps9qe+0NQBOWm9wwg29ehs0SOd0mpSTTSdd4Z79mPzF0tReOw/KmDod822XsfWOR
+         41LwOvDfyLtkSmtY22sczae6Wc3TZaPxcg5sbBacN/DQBD8R40kcvL2VolvhQBEwOu
+         S8NuKGGRuN9OE4TLdctswnMLSW7OYqEPb5eH3xPqthjeTSf1ffcXkS4FzgrNQSu1iB
+         geR1+VBKC8891hdBHPERSaDAXQs0kPUYd9wx6uW7w1BX6HPmNstDTBgR4fyFaiOerW
+         WAs7zZJU0CW7i9QeF6R2QgzydGLtKFlOdH/MlEZ1kqYzB12R7r/V9xGNxDncZaLWbA
+         skz6r/fesFbuw==
 From:   Christian Brauner <brauner@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Chuck Lever III <chuck.lever@oracle.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Neil Brown <neilb@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Theodore T'so <tytso@mit.edu>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Tom Talpey <tom@talpey.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-XFS <linux-xfs@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>
-Subject: Re: [PATCH v4 4/9] nfsd: ensure we use ctime_peek to grab the
- inode->i_ctime
-Message-ID: <20230519-zierde-legieren-e769c19a29cb@brauner>
-References: <20230518114742.128950-1-jlayton@kernel.org>
- <20230518114742.128950-5-jlayton@kernel.org>
- <2B6A4DDD-0356-4765-9CED-B22A29767254@oracle.com>
- <b046f7e3c86d1c9dd45e932d3f25785fce921f4a.camel@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] fs: allow to mount beneath top mount
+Date:   Fri, 19 May 2023 12:52:00 +0200
+Message-Id: <20230519-aromen-zeugnis-5554bbb56ec1@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230202-fs-move-mount-replace-v4-0-98f3d80d7eaa@kernel.org>
+References: <20230202-fs-move-mount-replace-v4-0-98f3d80d7eaa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b046f7e3c86d1c9dd45e932d3f25785fce921f4a.camel@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1588; i=brauner@kernel.org; h=from:subject:message-id; bh=/v84OOWogMzxwAPPo1Lb1tB1SIYHcs9Fx1rZ53zIfrw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSkh5xZI28VvN+tNT892iCx8O/x/e92bRTXbKz1fGyi9aVG ZvuGjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIl8eMDIsCxu6qXtez4tOXXwVvDPTa f0jjz6Kpl/SWL/X84XdYtS7S4zMtxt7Ko0nyT7ZuvailkTTbcKrjgRs63O4/yZGQ9UDWZtesYCAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -82,51 +58,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 18, 2023 at 11:31:45AM -0400, Jeff Layton wrote:
-> On Thu, 2023-05-18 at 13:43 +0000, Chuck Lever III wrote:
-> > 
-> > > On May 18, 2023, at 7:47 AM, Jeff Layton <jlayton@kernel.org> wrote:
-> > > 
-> > > If getattr fails, then nfsd can end up scraping the time values directly
-> > > out of the inode for pre and post-op attrs. This may or may not be the
-> > > right thing to do, but for now make it at least use ctime_peek in this
-> > > situation to ensure that the QUERIED flag is masked.
-> > 
-> > That code comes from:
-> > 
-> > commit 39ca1bf624b6b82cc895b0217889eaaf572a7913
-> > Author:     Amir Goldstein <amir73il@gmail.com>
-> > AuthorDate: Wed Jan 3 17:14:35 2018 +0200
-> > Commit:     J. Bruce Fields <bfields@redhat.com>
-> > CommitDate: Thu Feb 8 13:40:17 2018 -0500
-> > 
-> >     nfsd: store stat times in fill_pre_wcc() instead of inode times
-> > 
-> >     The time values in stat and inode may differ for overlayfs and stat time
-> >     values are the correct ones to use. This is also consistent with the fact
-> >     that fill_post_wcc() also stores stat time values.
-> > 
-> >     This means introducing a stat call that could fail, where previously we
-> >     were just copying values out of the inode.  To be conservative about
-> >     changing behavior, we fall back to copying values out of the inode in
-> >     the error case.  It might be better just to clear fh_pre_saved (though
-> >     note the BUG_ON in set_change_info).
-> > 
-> >     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >     Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-> > 
-> > I was thinking it might have been added to handle odd corner
-> > cases around re-exporting NFS mounts, but that does not seem
-> > to be the case.
-> > 
-> > The fh_getattr() can fail for legitimate reasons -- like the
-> > file is in the middle of being deleted or renamed over -- I
-> > would think. This code should really deal with that by not
-> > adding pre-op attrs, since they are optional.
-> > 
+On Wed, 03 May 2023 13:18:38 +0200, Christian Brauner wrote:
+> Changes in v4:
+> * Refuse MOVE_MOUNT_BENEATH in more cases.
+> * Fix documentation of __lookup_mnt().
+> * The sample program to test all of this got reworked:
+>   https://github.com/brauner/move-mount-beneath
 > 
-> That sounds fine to me. I'll plan to drop this patch from the series and
-> I'll send a separate patch to just remove those branches altogether
-> (which should DTRT).
+> Various distributions are adding or are in the process of adding support
+> for system extensions and in the future configuration extensions through
+> various tools. A more detailed explanation on system and configuration
+> extensions can be found on the manpage which is listed below at [1].
+> 
+> [...]
 
-I'll wait with reviewing this until you send the next version then.
+I'd like to see v4 get some -next exposure since this has been sitting
+on the list for a while.
+
+Applied to the v6.5/vfs.mount branch of the vfs/vfs.git tree.
+Patches in the v6.5/vfs.mount branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: v6.5/vfs.mount
+
+[1/4] fs: add path_mounted()
+      https://git.kernel.org/vfs/vfs/c/78aa08a8cab6
+[2/4] fs: properly document __lookup_mnt()
+      https://git.kernel.org/vfs/vfs/c/104026c2e49f
+[3/4] fs: use a for loop when locking a mount
+      https://git.kernel.org/vfs/vfs/c/64f44b27ae91
+[4/4] fs: allow to mount beneath top mount
+      https://git.kernel.org/vfs/vfs/c/6ac392815628
