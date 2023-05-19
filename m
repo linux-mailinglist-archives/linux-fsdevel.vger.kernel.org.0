@@ -2,141 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 212AC709C45
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 18:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B852709C6D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 May 2023 18:30:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230045AbjESQVT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 12:21:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49228 "EHLO
+        id S229938AbjESQaU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 12:30:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbjESQVS (ORCPT
+        with ESMTP id S230111AbjESQaT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 12:21:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53104F4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 09:20:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684513229;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PhXJXT80hjlIVA8C9efdiNr9myekTSBO7D5CbfC3JCw=;
-        b=IVXVk9u2A1sivGIu24gmKXniGfrefnhsKok5PlbFuo7BBSg3pMDuWR9f2e2Hyg6YdlO1ce
-        jypmB/ct2SROQJNuidIh1eHbnZMT9XoS9RmTPUJjDPHXADqsW906jzsGV0JkIQ19hAnu2V
-        LzvCjgGDk31Gu75AQOUs/3QpB33h1hk=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-57-bg1qj79nN8mgsz7xRfgBwA-1; Fri, 19 May 2023 12:20:28 -0400
-X-MC-Unique: bg1qj79nN8mgsz7xRfgBwA-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7592c8fe630so8703385a.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 09:20:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684513228; x=1687105228;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        Fri, 19 May 2023 12:30:19 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2005C1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 09:30:17 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2ac836f4447so38494901fa.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 09:30:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1684513816; x=1687105816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PhXJXT80hjlIVA8C9efdiNr9myekTSBO7D5CbfC3JCw=;
-        b=NLMJgwvYLRUi7rLgNNA5fLFOpc6C1xHEE5RtU1woPSNfI5fGOCHOFa9INzto+wfbUQ
-         SUlVPvhPYy7m6yUZmu2upiSg0TytfWPtcM/YqJ/Z8bxOp3gH9rX9+QiZOdN48g6Pl0eI
-         hA91t/p8MkViyp9UerxCJvreGLVjV4E4LwMfdf0g+Y9wHVc/DIGrEOmA/jIuIBVLzDCa
-         h/OuSF25Jm2gBYaBWQrJzPxRKoVQ76t62gLUX/ukXRxLDoSVFBcspQSGHbIB+uyQRrWo
-         D4LyUBNUaFECne0zX7rha0dIxQ97AB9f3dS0+E5t1jlCbvG0cbRXPVKeDsoteif8PBw7
-         vR2A==
-X-Gm-Message-State: AC+VfDy6erb2nBATdh9Xe/8CjIg8cuQBXpQF7T/LGURpjY0k5GWMpBMf
-        G6LxJyRAjxCRdj6wlvcsXno4jvGOPm/2nQ4MVylofWt7yYAM3uKkNpv7qbNS4TWh3X7rSk0r/K5
-        YcO5bawrvN4BAc6ZwuLrA1CUmxw==
-X-Received: by 2002:a05:6214:4009:b0:5ed:c96e:ca4a with SMTP id kd9-20020a056214400900b005edc96eca4amr5184439qvb.1.1684513227849;
-        Fri, 19 May 2023 09:20:27 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6xd9iw24FUHoBv1Mr8oLJTlU6xLu6EjLFcB6cD+Gjyro3xcus5t+14yDAKr2/F83GAqVZi9A==
-X-Received: by 2002:a05:6214:4009:b0:5ed:c96e:ca4a with SMTP id kd9-20020a056214400900b005edc96eca4amr5184405qvb.1.1684513227530;
-        Fri, 19 May 2023 09:20:27 -0700 (PDT)
-Received: from x1n (bras-base-aurron9127w-grc-62-70-24-86-62.dsl.bell.ca. [70.24.86.62])
-        by smtp.gmail.com with ESMTPSA id z24-20020a05620a101800b00751517fd46esm1211930qkj.26.2023.05.19.09.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 May 2023 09:20:26 -0700 (PDT)
-Date:   Fri, 19 May 2023 12:20:25 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Jiaqi Yan <jiaqiyan@google.com>
-Cc:     Axel Rasmussen <axelrasmussen@google.com>,
-        David Hildenbrand <david@redhat.com>,
-        James Houghton <jthoughton@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Huang Ying <ying.huang@intel.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Shuah Khan <shuah@kernel.org>,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Anish Moorthy <amoorthy@google.com>
-Subject: Re: [PATCH 1/3] mm: userfaultfd: add new UFFDIO_SIGBUS ioctl
-Message-ID: <ZGehyTCtAtTneiE8@x1n>
-References: <20230511182426.1898675-1-axelrasmussen@google.com>
- <CADrL8HXFiTL-RDnETS2BUg_qH8CvcCMZiX-kutsrS1-8Uy25=w@mail.gmail.com>
- <ZGVRUeCWr8209m8d@x1n>
- <ZGVTMnVKNcQDM0x4@x1n>
- <CAJHvVcgXynHcuoS6eCfOAB2SgzqYy_zMGrRMR2kFuxOtSdUwvQ@mail.gmail.com>
- <CACw3F52MNOVv6KA5n7wRYDT2ujwYkco=aYngbo-zGA3zW1yq+w@mail.gmail.com>
- <ZGZMtK6PzoTuLZ1b@x1n>
- <CAJHvVcgcYPu-G3RDVrkrM_J48NUiUY0SH0G1sd+=X9BDgnQEuQ@mail.gmail.com>
- <32fdc2c8-b86b-92f3-1d5e-64db6be29126@redhat.com>
- <CACw3F50qvf13-fUx4XrL1jkhbo2mQ5sPV=E_i7_Gt2NaWXJfnQ@mail.gmail.com>
+        bh=kK1ZTkygyrBiweN68dKEUcpOojpjbump5mMSvci/Nuk=;
+        b=Sjhvkk2GxQhG4iAmAY5uw9IcngF2TuKIYUlQVWQDgnn8viw8Vus3J2UYKi2pRt9EnZ
+         GhCdb7Jq/wi9B5BwBvPyi3KlB4RUQJiLnpSeBir9WyUpCj2gCAKYiibZNOEivOKI3lYw
+         tPEJ7cbGmkqhCC/TBZIKntAr1zVz3XZ89U/mU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684513816; x=1687105816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kK1ZTkygyrBiweN68dKEUcpOojpjbump5mMSvci/Nuk=;
+        b=I1ZSKbKj64XriFdKj76Zrq2UcvBWUA/h7UM98I3AxzTZuXdUw+nYo6QHvfho9sDVfO
+         ZaOmC0NkjGCKf+Vv9a74UhMGPLranfiT6HooYHYXe9ffsw9KZu15Jupg9kNnznN6XGGf
+         DzoGPeKbsu1m3Xh5flme0iEkHeNs4MEirhVtR0qgTNKq9uM5t8KH/BoQ0zd4SzSPqqXl
+         FbtpD6qjbC0Sd3IfcmPFe5lMVoetdZxGX5T7mjH9lTnXpZC3zVXaYuaiYVNjHKKr/uX9
+         TL5baDIOVmuAuYmZ7bW88GuTLWDXF8pV6zkPEmmgwHSPAFTLT7Tn+0WHsm5zHmrvktov
+         sKyQ==
+X-Gm-Message-State: AC+VfDyI8FCz0rDK1fgqbPjwX695Qt1eetLQM3tphS8wvhYpHcduEmeA
+        pIqJSSLPuLzNHbUEtvJXgdtZ6IBuY1RAbzI6dgiikFNf
+X-Google-Smtp-Source: ACHHUZ5UmiZSe0UzO4+VMsiNOehU7SVjmtFoa1mO6mzeTpV8oz4GFGZh3qJB1KfseUdFCfYbI6h6Lw==
+X-Received: by 2002:a2e:b165:0:b0:2ad:7943:4c15 with SMTP id a5-20020a2eb165000000b002ad79434c15mr1062147ljm.14.1684513816042;
+        Fri, 19 May 2023 09:30:16 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id o13-20020ac2494d000000b004efe9fc130esm638818lfi.251.2023.05.19.09.30.15
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 May 2023 09:30:15 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2af177f12d1so24727771fa.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 09:30:15 -0700 (PDT)
+X-Received: by 2002:a05:6402:2d5:b0:510:f6e0:7d9f with SMTP id
+ b21-20020a05640202d500b00510f6e07d9fmr2254674edx.13.1684513359285; Fri, 19
+ May 2023 09:22:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACw3F50qvf13-fUx4XrL1jkhbo2mQ5sPV=E_i7_Gt2NaWXJfnQ@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <20230519074047.1739879-1-dhowells@redhat.com> <20230519074047.1739879-10-dhowells@redhat.com>
+ <ZGcvfLWAqmOLrnLj@infradead.org>
+In-Reply-To: <ZGcvfLWAqmOLrnLj@infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 19 May 2023 09:22:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgzSLXt38J_B2=QWCDi7A1c5B0_cJ3XYRj9rYn+YXbjQA@mail.gmail.com>
+Message-ID: <CAHk-=wgzSLXt38J_B2=QWCDi7A1c5B0_cJ3XYRj9rYn+YXbjQA@mail.gmail.com>
+Subject: Re: [PATCH v20 09/32] tty, proc, kernfs, random: Use direct_splice_read()
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Jiaqi,
+On Fri, May 19, 2023 at 1:12=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> Pinging Al (and maybe Linus): is there any good reason to not simply
+> default to direct_splice_read if ->read_iter is implemented and
+> ->splice_read is not once you remove ITER_PIPE?
 
-On Fri, May 19, 2023 at 08:04:09AM -0700, Jiaqi Yan wrote:
-> I don't think CAP_ADMIN is something we can work around: a VMM must be
-> a good citizen to avoid introducing any vulnerability to the host or
-> guest.
-> 
-> On the other hand, "Userfaults allow the implementation of on-demand
-> paging from userland and more generally they allow userland to take
-> control of various memory page faults, something otherwise only the
-> kernel code could do." [3]. I am not familiar with the UFFD internals,
-> but our use case seems to match what UFFD wants to provide: without
-> affecting the whole world, give a specific userspace (without
-> CAP_ADMIN) the ability to handle page faults (indirectly emulate a
-> HWPOISON page (in my mind I treat it as SetHWPOISON(page) +
-> TestHWPOISON(page) operation in kernel's PF code)). So is it fair to
-> say what Axel provided here is "provide !ADMIN somehow"?
-> 
-> [3]https://docs.kernel.org/admin-guide/mm/userfaultfd.html
+For me, the reason isn't so much technical as "historical pain".
 
-Userfault keywords on "user", IMHO.  We don't strictly need userfault to
-resolve anything regarding CAP_ADMIN problems.  MADV_DONTNEED also dosn't
-need CAP_ADMIN, same to any new madvise() if we want to make it useful for
-injecting poisoned ptes with !ADMIN and limit it within current->mm.
+We've had *so* many problems with splice on random file descriptors
+that I at some point decided "no splice by default".
 
-But I think you're right that userfaultfd always tried to avoid having
-ADMIN and keep everything within its own scope of permissions.
+Now, admittedly most of the problems were due to the whole set_fs()
+ambiguity, which you fixed and no longer exists. So maybe we could go
+back to "implement splice by default".
 
-So again, totally no objection on make it uffd specific for now if you guys
-are all happy with it, but just to be clear that it's (to me) mostly for
-avoiding another WAKE, and afaics that's not really for solving the ADMIN
-issue here.
+I agree that as long as the default implementation is obviously safe,
+it should be ok, and maybe direct_splice_read is that obvious..
 
-Thanks,
-
--- 
-Peter Xu
-
+           Linus
