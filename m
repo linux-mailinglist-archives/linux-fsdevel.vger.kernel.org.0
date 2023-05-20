@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 10E7A70A3C3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 02:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 883C770A3CC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 02:04:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231626AbjETADn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 20:03:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52302 "EHLO
+        id S231747AbjETAEe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 20:04:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230510AbjETADd (ORCPT
+        with ESMTP id S231735AbjETADv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 20:03:33 -0400
+        Fri, 19 May 2023 20:03:51 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BF4D1713
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 17:01:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4169173D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 17:01:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684540911;
+        s=mimecast20190719; t=1684540915;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zZb+7DwI4egZIrF5pxcV1ZQbliPAo6greLJudpvGjhA=;
-        b=hqZ8/zFWUuZlxZRMLFVe1W/DDXBoLSAtvS1R6Ao1dWFt0hpObVLSAH2O0XWeaq49HaruNV
-        +GPN8KjMBFmZNXjT5RYIbqXPsqAE9O+lRheQUwHc+FNS7XQcxhqLzSSiGz1t9k9xFxN1NQ
-        ZUAglNQEDypmuF5sA0Vn2C/blX2Ck+E=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=qie1g7ABANTtTR0bfsI5jgl8Vmls/curDgoBmVrj5jE=;
+        b=CNOKGd0dDecnBbED7khHnEv90I5tkzfy32Vt0t+r6Mf2mRdugr/B9l0u7Vq649LlYSqQYe
+        XwF39btpBYDzRigGQ3DUeSRyBzHRH/1MyZAn6qooqmiJHFCKO/e1n5HNML8YIib9RiiRAC
+        F682Jh6+hW/GtjM8W77l5XiUu+GBB5o=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-513-G93-k9ToPbKP465srY7iiw-1; Fri, 19 May 2023 20:01:48 -0400
-X-MC-Unique: G93-k9ToPbKP465srY7iiw-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+ us-mta-561-EBYUT5fsO6CFgP7kQK6tFw-1; Fri, 19 May 2023 20:01:51 -0400
+X-MC-Unique: EBYUT5fsO6CFgP7kQK6tFw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F2AC85A5A8;
-        Sat, 20 May 2023 00:01:47 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 84FD7296A609;
+        Sat, 20 May 2023 00:01:50 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 00F7E4F2DE0;
-        Sat, 20 May 2023 00:01:44 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D757CC154D1;
+        Sat, 20 May 2023 00:01:47 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -52,16 +52,18 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>, Tyler Hicks <code@tyhicks.com>,
-        ecryptfs@vger.kernel.org
-Subject: [PATCH v21 17/30] ecryptfs: Provide a splice-read stub
-Date:   Sat, 20 May 2023 01:00:36 +0100
-Message-Id: <20230520000049.2226926-18-dhowells@redhat.com>
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org
+Subject: [PATCH v21 18/30] ext4: Provide a splice-read stub
+Date:   Sat, 20 May 2023 01:00:37 +0100
+Message-Id: <20230520000049.2226926-19-dhowells@redhat.com>
 In-Reply-To: <20230520000049.2226926-1-dhowells@redhat.com>
 References: <20230520000049.2226926-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
@@ -72,64 +74,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a splice_read stub for ecryptfs to update the access time on the
-lower file after the operation.  Splicing from a direct I/O fd will update
-the access time when ->read_iter() is called.
+Provide a splice_read stub for Ext4.  This does the inode shutdown check
+before proceeding.  Splicing from DAX files and O_DIRECT fds is handled by
+the caller.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Christoph Hellwig <hch@lst.de>
 cc: Al Viro <viro@zeniv.linux.org.uk>
 cc: Jens Axboe <axboe@kernel.dk>
-cc: Tyler Hicks <code@tyhicks.com>
-cc: ecryptfs@vger.kernel.org
+cc: "Theodore Ts'o" <tytso@mit.edu>
+cc: Andreas Dilger <adilger.kernel@dilger.ca>
+cc: linux-ext4@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 cc: linux-block@vger.kernel.org
 cc: linux-mm@kvack.org
 ---
- fs/ecryptfs/file.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ fs/ext4/file.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ecryptfs/file.c b/fs/ecryptfs/file.c
-index 268b74499c28..284395587be0 100644
---- a/fs/ecryptfs/file.c
-+++ b/fs/ecryptfs/file.c
-@@ -44,6 +44,31 @@ static ssize_t ecryptfs_read_update_atime(struct kiocb *iocb,
- 	return rc;
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index d101b3b0c7da..9f8bbd9d131c 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -147,6 +147,17 @@ static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return generic_file_read_iter(iocb, to);
  }
  
-+/*
-+ * ecryptfs_splice_read_update_atime
-+ *
-+ * generic_file_splice_read updates the atime of upper layer inode.  But, it
-+ * doesn't give us a chance to update the atime of the lower layer inode.  This
-+ * function is a wrapper to generic_file_read.  It updates the atime of the
-+ * lower level inode if generic_file_read returns without any errors. This is
-+ * to be used only for file reads.  The function to be used for directory reads
-+ * is ecryptfs_read.
-+ */
-+static ssize_t ecryptfs_splice_read_update_atime(struct file *in, loff_t *ppos,
-+						 struct pipe_inode_info *pipe,
-+						 size_t len, unsigned int flags)
++static ssize_t ext4_file_splice_read(struct file *in, loff_t *ppos,
++				     struct pipe_inode_info *pipe,
++				     size_t len, unsigned int flags)
 +{
-+	ssize_t rc;
-+	const struct path *path;
++	struct inode *inode = file_inode(in);
 +
-+	rc = generic_file_splice_read(in, ppos, pipe, len, flags);
-+	if (rc >= 0) {
-+		path = ecryptfs_dentry_to_lower_path(in->f_path.dentry);
-+		touch_atime(path);
-+	}
-+	return rc;
++	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
++		return -EIO;
++	return generic_file_splice_read(in, ppos, pipe, len, flags);
 +}
 +
- struct ecryptfs_getdents_callback {
- 	struct dir_context ctx;
- 	struct dir_context *caller;
-@@ -414,5 +439,5 @@ const struct file_operations ecryptfs_main_fops = {
- 	.release = ecryptfs_release,
- 	.fsync = ecryptfs_fsync,
- 	.fasync = ecryptfs_fasync,
--	.splice_read = generic_file_splice_read,
-+	.splice_read = ecryptfs_splice_read_update_atime,
+ /*
+  * Called when an inode is released. Note that this is different
+  * from ext4_file_open: open gets called at every open, but release
+@@ -957,7 +968,7 @@ const struct file_operations ext4_file_operations = {
+ 	.release	= ext4_release_file,
+ 	.fsync		= ext4_sync_file,
+ 	.get_unmapped_area = thp_get_unmapped_area,
+-	.splice_read	= generic_file_splice_read,
++	.splice_read	= ext4_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ 	.fallocate	= ext4_fallocate,
  };
 
