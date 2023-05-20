@@ -2,242 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D97B70A85C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 15:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 650B070A85D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 15:39:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229852AbjETNfi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 May 2023 09:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42408 "EHLO
+        id S229852AbjETNji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 May 2023 09:39:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbjETNfh (ORCPT
+        with ESMTP id S229464AbjETNjh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 May 2023 09:35:37 -0400
-Received: from out28-45.mail.aliyun.com (out28-45.mail.aliyun.com [115.124.28.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F2AF7;
-        Sat, 20 May 2023 06:35:34 -0700 (PDT)
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.04436263|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.133124-1.38585e-05-0.866862;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047207;MF=wangyugui@e16-tech.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.T7WgR4O_1684589730;
-Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.T7WgR4O_1684589730)
-          by smtp.aliyun-inc.com;
-          Sat, 20 May 2023 21:35:31 +0800
-Date:   Sat, 20 May 2023 21:35:32 +0800
-From:   Wang Yugui <wangyugui@e16-tech.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Subject: Re: Creating large folios in iomap buffered write path
-Cc:     Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        Sat, 20 May 2023 09:39:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E611DC7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 May 2023 06:39:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B1E160ADB
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 May 2023 13:39:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E732C433EF;
+        Sat, 20 May 2023 13:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684589974;
+        bh=glzFq73gXQMBmUnvxbN6Wy1bn8Z4/NqLPw/GH8Fo26E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ENOSH9qXsw1lt31foxErJCzJQwGgKIUgHVxJkRnepJLl5NiuhUmo79IfwhorTJzjB
+         hkTWB4eVl++eqXSGFItUhOdnFJkhkXRW6qrFTe/iytZfkuxyJit808xvC0alZ8tUoQ
+         DmSGvoCsMHS57Y3a94wh2lIblqVRCENQ/OnaHuYH5wigdCL96RumkFt0QrexPXBpJE
+         4kws2kspcEGfbZdidoJGc/yyQmnBBFewSpe8za3SRjFMBwyPffCn1KpQAs4JFjaQ0F
+         tHaEgN+ZDNth1KkYWag1x2InODCWHtFJ8dNnRzq9InckaDOqvQYcFBD1cY9lDly5zE
+         iW8CEEXc79QBA==
+Date:   Sat, 20 May 2023 15:39:28 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, martin.lau@kernel.org,
+        cyphar@cyphar.com, lennart@poettering.net,
         linux-fsdevel@vger.kernel.org
-In-Reply-To: <ZGeX9Oc5vTkrceLZ@casper.infradead.org>
-References: <20230519105528.1321.409509F4@e16-tech.com> <ZGeX9Oc5vTkrceLZ@casper.infradead.org>
-Message-Id: <20230520213531.38CB.409509F4@e16-tech.com>
+Subject: Re: [PATCH v2 bpf-next 1/3] bpf: support O_PATH FDs in BPF_OBJ_PIN
+ and BPF_OBJ_GET commands
+Message-ID: <20230520-ozonkonzentration-gebacken-8aa9230bad17@brauner>
+References: <20230518215444.1418789-1-andrii@kernel.org>
+ <20230518215444.1418789-2-andrii@kernel.org>
+ <20230519-eiswasser-leibarzt-ed7e52934486@brauner>
+ <CAEf4BzY_kJZiWe804-DOzfNJNKVSQCct8_gNta7jFyruFDw6zA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.81.04 [en]
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzY_kJZiWe804-DOzfNJNKVSQCct8_gNta7jFyruFDw6zA@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-> On Fri, May 19, 2023 at 10:55:29AM +0800, Wang Yugui wrote:
-> > Hi,
-> > 
-> > > On Thu, May 18, 2023 at 10:46:43PM +0100, Matthew Wilcox wrote:
-> > > > -struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos)
-> > > > +struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
-> > > >  {
-> > > >  	unsigned fgp = FGP_WRITEBEGIN | FGP_NOFS;
-> > > > +	struct folio *folio;
-> > > >  
-> > > >  	if (iter->flags & IOMAP_NOWAIT)
-> > > >  		fgp |= FGP_NOWAIT;
-> > > > +	fgp |= fgp_order(len);
-> > > >  
-> > > > -	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
-> > > > +	folio = __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
-> > > >  			fgp, mapping_gfp_mask(iter->inode->i_mapping));
-> > > > +	if (!IS_ERR(folio) && folio_test_large(folio))
-> > > > +		printk("index:%lu len:%zu order:%u\n", (unsigned long)(pos / PAGE_SIZE), len, folio_order(folio));
-> > > > +	return folio;
-> > > >  }
-> > > 
-> > > Forgot to take the debugging out.  This should read:
-> > > 
-> > > -struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos)
-> > > +struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
-> > >  {
-> > >  	unsigned fgp = FGP_WRITEBEGIN | FGP_NOFS;
-> > >  	if (iter->flags & IOMAP_NOWAIT)
-> > >  		fgp |= FGP_NOWAIT;
-> > > +	fgp |= fgp_order(len);
-> > >  
-> > >  	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
-> > >  			fgp, mapping_gfp_mask(iter->inode->i_mapping));
-> > >  }
-> > 
-> > I test it (attachment file) on 6.4.0-rc2.
-> > fio -name write-bandwidth -rw=write -bs=1024Ki -size=32Gi -runtime=30 -iodepth 1 -ioengine sync -zero_buffers=1 -direct=0 -end_fsync=1 -numjobs=4 -directory=/mnt/test
-> > 
-> > fio  WRITE: bw=2430MiB/s.
-> > expected value: > 6000MiB/s
-> > so yet no fio write bandwidth improvement.
+On Fri, May 19, 2023 at 09:01:53AM -0700, Andrii Nakryiko wrote:
+> On Fri, May 19, 2023 at 2:49 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Thu, May 18, 2023 at 02:54:42PM -0700, Andrii Nakryiko wrote:
+> > > Current UAPI of BPF_OBJ_PIN and BPF_OBJ_GET commands of bpf() syscall
+> > > forces users to specify pinning location as a string-based absolute or
+> > > relative (to current working directory) path. This has various
+> > > implications related to security (e.g., symlink-based attacks), forces
+> > > BPF FS to be exposed in the file system, which can cause races with
+> > > other applications.
+> > >
+> > > One of the feedbacks we got from folks working with containers heavily
+> > > was that inability to use purely FD-based location specification was an
+> > > unfortunate limitation and hindrance for BPF_OBJ_PIN and BPF_OBJ_GET
+> > > commands. This patch closes this oversight, adding path_fd field to
+> > > BPF_OBJ_PIN and BPF_OBJ_GET UAPI, following conventions established by
+> > > *at() syscalls for dirfd + pathname combinations.
+> > >
+> > > This now allows interesting possibilities like working with detached BPF
+> > > FS mount (e.g., to perform multiple pinnings without running a risk of
+> > > someone interfering with them), and generally making pinning/getting
+> > > more secure and not prone to any races and/or security attacks.
+> > >
+> > > This is demonstrated by a selftest added in subsequent patch that takes
+> > > advantage of new mount APIs (fsopen, fsconfig, fsmount) to demonstrate
+> > > creating detached BPF FS mount, pinning, and then getting BPF map out of
+> > > it, all while never exposing this private instance of BPF FS to outside
+> > > worlds.
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> > >  include/linux/bpf.h            |  4 ++--
+> > >  include/uapi/linux/bpf.h       | 10 ++++++++++
+> > >  kernel/bpf/inode.c             | 16 ++++++++--------
+> > >  kernel/bpf/syscall.c           | 25 ++++++++++++++++++++-----
+> > >  tools/include/uapi/linux/bpf.h | 10 ++++++++++
+> > >  5 files changed, 50 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> > > index 36e4b2d8cca2..f58895830ada 100644
+> > > --- a/include/linux/bpf.h
+> > > +++ b/include/linux/bpf.h
+> > > @@ -2077,8 +2077,8 @@ struct file *bpf_link_new_file(struct bpf_link *link, int *reserved_fd);
+> > >  struct bpf_link *bpf_link_get_from_fd(u32 ufd);
+> > >  struct bpf_link *bpf_link_get_curr_or_next(u32 *id);
+> > >
+> > > -int bpf_obj_pin_user(u32 ufd, const char __user *pathname);
+> > > -int bpf_obj_get_user(const char __user *pathname, int flags);
+> > > +int bpf_obj_pin_user(u32 ufd, int path_fd, const char __user *pathname);
+> > > +int bpf_obj_get_user(int path_fd, const char __user *pathname, int flags);
+> > >
+> > >  #define BPF_ITER_FUNC_PREFIX "bpf_iter_"
+> > >  #define DEFINE_BPF_ITER_FUNC(target, args...)                        \
+> > > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > > index 1bb11a6ee667..3731284671e4 100644
+> > > --- a/include/uapi/linux/bpf.h
+> > > +++ b/include/uapi/linux/bpf.h
+> > > @@ -1272,6 +1272,9 @@ enum {
+> > >
+> > >  /* Create a map that will be registered/unregesitered by the backed bpf_link */
+> > >       BPF_F_LINK              = (1U << 13),
+> > > +
+> > > +/* Get path from provided FD in BPF_OBJ_PIN/BPF_OBJ_GET commands */
+> > > +     BPF_F_PATH_FD           = (1U << 14),
+> > >  };
+> > >
+> > >  /* Flags for BPF_PROG_QUERY. */
+> > > @@ -1420,6 +1423,13 @@ union bpf_attr {
+> > >               __aligned_u64   pathname;
+> > >               __u32           bpf_fd;
+> > >               __u32           file_flags;
+> > > +             /* Same as dirfd in openat() syscall; see openat(2)
+> > > +              * manpage for details of path FD and pathname semantics;
+> > > +              * path_fd should accompanied by BPF_F_PATH_FD flag set in
+> > > +              * file_flags field, otherwise it should be set to zero;
+> > > +              * if BPF_F_PATH_FD flag is not set, AT_FDCWD is assumed.
+> > > +              */
+> > > +             __u32           path_fd;
+> > >       };
+> >
+> > Thanks for changing that.
+> >
+> > This is still odd though because you prevent users from specifying
+> > AT_FDCWD explicitly. They should be allowed to do that plus file
+> > descriptors are signed integers so please s/__u32/__s32/. AT_FDCWD
+> > should be passable anywhere where we have at* semantics. Plus, if in the
+> > vfs we ever add
+> > #define AT_ROOT -200
+> > or something you can't use without coming up with your own custom flags.
+> > If you just follow what everyone else does and use __s32 then you're
+> > good.
 > 
-> That's basically unchanged.  There's no per-page or per-block work being
-> done in start/end writeback, so if Dave's investigation is applicable
-> to your situation, I'd expect to see an improvement.
+> It's just an oversight, I'll change to __s32, good point. I intended
+> AT_FDCWD to be passable explicitly and it will work because we just
+> interpret that path_fd as int internally, but you are of course right
+> that API should make it clear that this is signed value.
 > 
-> Maybe try the second version of the patch I sent with the debug in,
-> to confirm you really are seeing large folios being created (you might
-> want to use printk_ratelimit() instead of printk to ensure it doesn't
-> overwhelm your system)?  That fio command you were using ought to create
-> them, but there's always a chance it doesn't.
+> >
+> > File descriptors really need to be signed. There's no way around that.
+> > See io_uring as a good example
+> >
+> > io_uring_sqe {
+> >           __u8    opcode;         /* type of operation for this sqe */
+> >           __u8    flags;          /* IOSQE_ flags */
+> >           __u16   ioprio;         /* ioprio for the request */
+> >           __s32   fd;             /* file descriptor to do IO on */
+> > }
+> >
+> > where the __s32 fd is used in all fd based requests including
+> > io_openat*() (See io_uring/openclose.c) which are effectively the
+> > semantics you want to emulate here.
 > 
-> Perhaps you could use perf (the command Dave used) to see where the time
-> is being spent.
+> Agreed. Please bear in mind that it's the first time we are dealing
+> with these path FDs in bpf() subsystem, so all these silly mistakes
+> are just coming from being exposed into unfamiliar "territory". Will
+> fix in v3, along with adding explicit tests for AT_FWCWD.
 
-test result of the second version of the patch.
+I really don't expect this to be perfect right off the bat and it's
+perfectly understandable to not get all the details right if you haven't
+been exposed to the customs of a specific subsystems. So no worries
+there and I'm well aware of that. I probably couldn't tell head from toe
+in some parts of bpf.
 
-# dmesg |grep 'index\|suppressed'
-[   89.376149] index:0 len:292 order:2
-[   97.862938] index:0 len:4096 order:2
-[   98.340665] index:0 len:4096 order:2
-[   98.346633] index:0 len:4096 order:2
-[   98.352323] index:0 len:4096 order:2
-[   98.359952] index:0 len:4096 order:2
-[   98.364015] index:3 len:4096 order:2
-[   98.368943] index:0 len:4096 order:2
-[   98.374285] index:0 len:4096 order:2
-[   98.379163] index:3 len:4096 order:2
-[   98.384760] index:0 len:4096 order:2
-[  181.103751] iomap_get_folio: 342 callbacks suppressed
-[  181.103761] index:0 len:292 order:2
+For bpf pinning things are a little simpler because it really is just an
+exclusive file create/file mknodat with preset mode so you don't really
+have to worry about general lookup like e.g., io_uring does. So we
+should've reached peak complexity for you in supporting basic *at()
+functionality.
 
+Btw, looking at bpf_obj_do_pin() you call security_path_mknod() before
+you verify that you're dealing with a bpf file. Might be simpler to
+check that this is a bpf file first and don't trigger an LSM check on
+something that you don't own:
 
-'perf report -g' result:
-Samples: 344K of event 'cycles', Event count (approx.): 103747884662
-  Children      Self  Command          Shared Object            Symbol
-+   58.73%     0.01%  fio              [kernel.kallsyms]        [k] entry_SYSCALL_64_after_hwframe
-+   58.72%     0.01%  fio              [kernel.kallsyms]        [k] do_syscall_64
-+   58.53%     0.00%  fio              libpthread-2.17.so       [.] 0x00007f83e400e6fd
-+   58.47%     0.01%  fio              [kernel.kallsyms]        [k] ksys_write
-+   58.45%     0.02%  fio              [kernel.kallsyms]        [k] vfs_write
-+   58.41%     0.03%  fio              [kernel.kallsyms]        [k] xfs_file_buffered_write
-+   57.96%     0.57%  fio              [kernel.kallsyms]        [k] iomap_file_buffered_write
-+   27.57%     1.29%  fio              [kernel.kallsyms]        [k] iomap_write_begin
-+   25.32%     0.43%  fio              [kernel.kallsyms]        [k] iomap_get_folio
-+   24.84%     0.70%  fio              [kernel.kallsyms]        [k] __filemap_get_folio.part.69
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] ret_from_fork
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] kthread
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] worker_thread
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] process_one_work
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] wb_workfn
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] wb_writeback
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] __writeback_inodes_wb
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] writeback_sb_inodes
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] __writeback_single_inode
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] do_writepages
-+   20.11%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] xfs_vm_writepages
-+   20.10%     0.00%  kworker/u98:15-  [kernel.kallsyms]        [k] iomap_writepages
-+   20.10%     0.69%  kworker/u98:15-  [kernel.kallsyms]        [k] write_cache_pages
-+   16.95%     0.39%  fio              [kernel.kallsyms]        [k] copy_page_from_iter_atomic
-+   16.53%     0.10%  fio              [kernel.kallsyms]        [k] copyin
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index 9948b542a470..329f27d5cacf 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -448,18 +448,17 @@ static int bpf_obj_do_pin(const char __user *pathname, void *raw,
+        if (IS_ERR(dentry))
+                return PTR_ERR(dentry);
 
+-       mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
+-
+-       ret = security_path_mknod(&path, dentry, mode, 0);
+-       if (ret)
+-               goto out;
+-
+        dir = d_inode(path.dentry);
+        if (dir->i_op != &bpf_dir_iops) {
+                ret = -EPERM;
+                goto out;
+        }
 
-'perf report ' result:
-
-Samples: 335K of event 'cycles', Event count (approx.): 108508755052
-Overhead  Command          Shared Object        Symbol
-  17.70%  fio              [kernel.kallsyms]    [k] rep_movs_alternative
-   2.89%  kworker/u98:2-e  [kernel.kallsyms]    [k] native_queued_spin_lock_slowpath
-   2.88%  fio              [kernel.kallsyms]    [k] get_page_from_freelist
-   2.67%  fio              [kernel.kallsyms]    [k] native_queued_spin_lock_slowpath
-   2.59%  fio              [kernel.kallsyms]    [k] asm_exc_nmi
-   2.25%  swapper          [kernel.kallsyms]    [k] intel_idle
-   1.59%  kworker/u98:2-e  [kernel.kallsyms]    [k] __folio_start_writeback
-   1.52%  fio              [kernel.kallsyms]    [k] xas_load
-   1.45%  fio              [kernel.kallsyms]    [k] lru_add_fn
-   1.44%  fio              [kernel.kallsyms]    [k] xas_descend
-   1.32%  fio              [kernel.kallsyms]    [k] iomap_write_begin
-   1.29%  fio              [kernel.kallsyms]    [k] __filemap_add_folio
-   1.08%  kworker/u98:2-e  [kernel.kallsyms]    [k] folio_clear_dirty_for_io
-   1.07%  fio              [kernel.kallsyms]    [k] __folio_mark_dirty
-   0.94%  fio              [kernel.kallsyms]    [k] iomap_set_range_uptodate.part.24
-   0.93%  fio              [kernel.kallsyms]    [k] node_dirty_ok
-   0.92%  kworker/u98:2-e  [kernel.kallsyms]    [k] _raw_spin_lock_irqsave
-   0.83%  fio              [kernel.kallsyms]    [k] xas_start
-   0.83%  fio              [kernel.kallsyms]    [k] __alloc_pages
-   0.83%  fio              [kernel.kallsyms]    [k] _raw_spin_lock_irqsave
-   0.81%  kworker/u98:2-e  [kernel.kallsyms]    [k] asm_exc_nmi
-   0.79%  fio              [kernel.kallsyms]    [k] percpu_counter_add_batch
-   0.75%  kworker/u98:2-e  [kernel.kallsyms]    [k] iomap_writepage_map
-   0.74%  kworker/u98:2-e  [kernel.kallsyms]    [k] __mod_lruvec_page_state
-   0.70%  fio              fio                  [.] 0x000000000001b1ac
-   0.70%  fio              [kernel.kallsyms]    [k] filemap_dirty_folio
-   0.69%  kworker/u98:2-e  [kernel.kallsyms]    [k] write_cache_pages
-   0.69%  fio              [kernel.kallsyms]    [k] __filemap_get_folio.part.69
-   0.67%  kworker/1:0-eve  [kernel.kallsyms]    [k] native_queued_spin_lock_slowpath
-   0.66%  fio              [kernel.kallsyms]    [k] __mod_lruvec_page_state
-   0.64%  fio              [kernel.kallsyms]    [k] __mod_node_page_state
-   0.64%  fio              [kernel.kallsyms]    [k] folio_add_lru
-   0.64%  fio              [kernel.kallsyms]    [k] balance_dirty_pages_ratelimited_flags
-   0.62%  fio              [kernel.kallsyms]    [k] __mod_memcg_lruvec_state
-   0.61%  fio              [kernel.kallsyms]    [k] iomap_write_end
-   0.60%  fio              [kernel.kallsyms]    [k] xas_find_conflict
-   0.59%  fio              [kernel.kallsyms]    [k] bad_range
-   0.58%  kworker/u98:2-e  [kernel.kallsyms]    [k] xas_load
-   0.57%  fio              [kernel.kallsyms]    [k] iomap_file_buffered_write
-   0.56%  kworker/u98:2-e  [kernel.kallsyms]    [k] percpu_counter_add_batch
-   0.49%  fio              [kernel.kallsyms]    [k] __might_resched
-
-
-'perf top -g -U' result:
-Samples: 78K of event 'cycles', 4000 Hz, Event count (approx.): 29400815085 lost: 0/0 drop: 0/0
-  Children      Self  Shared Object       Symbol
-+   62.59%     0.03%  [kernel]            [k] entry_SYSCALL_64_after_hwframe
-+   60.15%     0.02%  [kernel]            [k] do_syscall_64
-+   59.45%     0.02%  [kernel]            [k] vfs_write
-+   59.09%     0.54%  [kernel]            [k] iomap_file_buffered_write
-+   57.41%     0.00%  [kernel]            [k] ksys_write
-+   57.36%     0.01%  [kernel]            [k] xfs_file_buffered_write
-+   37.82%     0.00%  libpthread-2.17.so  [.] 0x00007fce6f20e6fd
-+   26.83%     1.20%  [kernel]            [k] iomap_write_begin
-+   24.65%     0.45%  [kernel]            [k] iomap_get_folio
-+   24.15%     0.74%  [kernel]            [k] __filemap_get_folio.part.69
-+   20.17%     0.00%  [kernel]            [k] __writeback_single_inode
-+   20.17%     0.65%  [kernel]            [k] write_cache_pages
-+   17.66%     0.43%  [kernel]            [k] copy_page_from_iter_atomic
-+   17.18%     0.12%  [kernel]            [k] copyin
-+   17.08%    16.71%  [kernel]            [k] rep_movs_alternative
-+   16.97%     0.00%  [kernel]            [k] ret_from_fork
-+   16.97%     0.00%  [kernel]            [k] kthread
-+   16.87%     0.00%  [kernel]            [k] worker_thread
-+   16.84%     0.00%  [kernel]            [k] process_one_work
-+   14.86%     0.17%  [kernel]            [k] filemap_add_folio
-+   13.83%     0.77%  [kernel]            [k] iomap_writepage_map
-+   11.90%     0.33%  [kernel]            [k] iomap_finish_ioend
-+   11.57%     0.23%  [kernel]            [k] folio_end_writeback
-+   11.51%     0.73%  [kernel]            [k] iomap_write_end
-+   11.30%     2.14%  [kernel]            [k] __folio_end_writeback
-+   10.70%     0.00%  [kernel]            [k] wb_workfn
-+   10.70%     0.00%  [kernel]            [k] wb_writeback
-+   10.70%     0.00%  [kernel]            [k] __writeback_inodes_wb
-+   10.70%     0.00%  [kernel]            [k] writeback_sb_inodes
-+   10.70%     0.00%  [kernel]            [k] do_writepages
-+   10.70%     0.00%  [kernel]            [k] xfs_vm_writepages
-+   10.70%     0.00%  [kernel]            [k] iomap_writepages
-+   10.19%     2.68%  [kernel]            [k] _raw_spin_lock_irqsave
-+   10.17%     1.35%  [kernel]            [k] __filemap_add_folio
-+    9.94%     0.00%  [unknown]           [k] 0x0000000001942a70
-+    9.94%     0.00%  [unknown]           [k] 0x0000000001942ac0
-+    9.94%     0.00%  [unknown]           [k] 0x0000000001942b30
-
-Best Regards
-Wang Yugui (wangyugui@e16-tech.com)
-2023/05/20
-
-
++       mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
++       ret = security_path_mknod(&path, dentry, mode, 0);
++       if (ret)
++               goto out;
++
+        switch (type) {
+        case BPF_TYPE_PROG:
+                ret = vfs_mkobj(dentry, mode, bpf_mkprog, raw);
 
