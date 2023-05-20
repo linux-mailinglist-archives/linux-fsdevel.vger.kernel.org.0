@@ -2,150 +2,422 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 276B670A34C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 01:25:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2055D70A38D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 02:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229933AbjESXZk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 May 2023 19:25:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
+        id S229615AbjETABu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 May 2023 20:01:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229731AbjESXZj (ORCPT
+        with ESMTP id S229449AbjETABt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 May 2023 19:25:39 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FAC8E45
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 16:25:38 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-5343c3daff0so2628058a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 16:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1684538737; x=1687130737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bKr1UB/0XkRzk2PihpADAJXUksvmnyVm9O5+fMmopFI=;
-        b=vA8gjoc7KyrjW0i8bNRpNsG/byB9+2+EFP/q1UJwgQL6b9LmP3ic8xqFrMS68ZfB2a
-         WehbkU1mXIYkJH+yPHJRYgtBv9Lr/z88H9y/wgBwJM4zrS8/hmtYoy1o33ROdc+2XBDG
-         AGRBMGEHmOUYcxXjxYlLXmQ9Tq7m5BCITL4hAih1KWV4m4ijl4MKqR5T+OpVptWNax5K
-         7uuHvNo+6iE2rzhe1RNZI/ZUPDov3wKU5K3B0nYy44b41aa8Y+13A4u0uWysUXq393aP
-         tAONcDyw+WlJJWwnI1TumxivcIhCDJg+cR5Jhnt+PALu++aDnHXaXIEwIP80dx1smXis
-         nhZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684538737; x=1687130737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bKr1UB/0XkRzk2PihpADAJXUksvmnyVm9O5+fMmopFI=;
-        b=hvKYYd45mX2bfO09niOJWJdfbZBAaaDPUNWS4e63RiiBVgV0iffmhXQbpaIvBx5m7D
-         +SzPgr6+gZGlo0X1a6Ovkbhs6svjU1DEoHFjX99HjkJNQbeRkwf1dDB8949vTfEbPBW7
-         zXV08hdlTTVyvZDat2jgf26vSTYOev0y1XxEgR7HLXdNPur9uqfB8x96gJmWpGhWM35U
-         IgJNugPkMVUEaeAsmq0+tkIH6uO6vrRrbsAjVrBXhpdR23p3zxtPB2pVJ4TwxdF58QVf
-         6x0nag6fiCgR1satmk3gA4W3qD6RK44wmkfzHwhNnYQ7PmWwy2wM2Z1tJ3hCq/CfkXW2
-         LLpw==
-X-Gm-Message-State: AC+VfDwA6JYEuXXF8EPm06cbZ9QpEx0LoAHzrDe0AwR4eF55GKk6MFPs
-        OJp10Y/9CRzBJm5xdNkteGXzww==
-X-Google-Smtp-Source: ACHHUZ5A2G4STQpUdYeDUuTa75DYc03lsT9xU4W88afMcTm7115Rh7EEYQvinFgfBaG7xvb8ys1tRw==
-X-Received: by 2002:a17:902:9686:b0:1a6:a6e7:8846 with SMTP id n6-20020a170902968600b001a6a6e78846mr3673960plp.40.1684538737548;
-        Fri, 19 May 2023 16:25:37 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
-        by smtp.gmail.com with ESMTPSA id ja7-20020a170902efc700b001ae4edacce5sm171280plb.94.2023.05.19.16.25.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 May 2023 16:25:37 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1q09Ta-001WpT-0w;
-        Sat, 20 May 2023 09:25:34 +1000
-Date:   Sat, 20 May 2023 09:25:34 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>, corbet@lwn.net,
-        jake@lwn.net, hch@infradead.org, djwong@kernel.org,
-        dchinner@redhat.com, ritesh.list@gmail.com, rgoldwyn@suse.com,
-        jack@suse.cz, linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Fri, 19 May 2023 20:01:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 373AAE46
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 May 2023 17:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684540860;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Sm+NBbBXelBx1Ymw9CqKVg+PjwVKyuJIja8eN79QcjE=;
+        b=YWAMtnLCIe1ZmChTIJ+VWXzHwQdQrW8l3tPuTgR9N0YQPqOQPi7Z7yltxbJWcWQXUiRNCh
+        Q/9M7pSbWhlFmDrEH61H9p/gR3nCq7YSwPEM7RJ9NTsH0ERcwx5bb/CCkpMd9gshmj3K6H
+        K14x93YCuurD0xZv8U1pjQCQlC46lkQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-656-JcwAyAR9N_W-JZu8-haK8w-1; Fri, 19 May 2023 20:00:55 -0400
+X-MC-Unique: JcwAyAR9N_W-JZu8-haK8w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F316101A531;
+        Sat, 20 May 2023 00:00:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E0E9640CFD45;
+        Sat, 20 May 2023 00:00:51 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com
-Subject: Re: [PATCH] Documentation: add initial iomap kdoc
-Message-ID: <ZGgFbmdCrlXtNFYS@dread.disaster.area>
-References: <20230518144037.3149361-1-mcgrof@kernel.org>
- <ZGdBO6bmbj3sLlzp@debian.me>
- <731a3061-973c-a4ad-2fe5-7981c6c1279b@infradead.org>
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v21 00/30] splice: Kill ITER_PIPE
+Date:   Sat, 20 May 2023 01:00:19 +0100
+Message-Id: <20230520000049.2226926-1-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <731a3061-973c-a4ad-2fe5-7981c6c1279b@infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 19, 2023 at 08:13:50AM -0700, Randy Dunlap wrote:
-> 
-> 
-> On 5/19/23 02:28, Bagas Sanjaya wrote:
-> >> +/**
-> >> + * DOC:  Flags reported by the file system from iomap_begin
-> >>   *
-> >> - * IOMAP_F_NEW indicates that the blocks have been newly allocated and need
-> >> - * zeroing for areas that no data is copied to.
-> >> + * * IOMAP_F_NEW: indicates that the blocks have been newly allocated and need
-> >> + *	zeroing for areas that no data is copied to.
-> >>   *
-> >> - * IOMAP_F_DIRTY indicates the inode has uncommitted metadata needed to access
-> >> - * written data and requires fdatasync to commit them to persistent storage.
-> >> - * This needs to take into account metadata changes that *may* be made at IO
-> >> - * completion, such as file size updates from direct IO.
-> >> + * * IOMAP_F_DIRTY: indicates the inode has uncommitted metadata needed to access
-> >> + *	written data and requires fdatasync to commit them to persistent storage.
-> >> + *	This needs to take into account metadata changes that *may* be made at IO
-> >> + *	completion, such as file size updates from direct IO.
-> >>   *
-> >> - * IOMAP_F_SHARED indicates that the blocks are shared, and will need to be
-> >> - * unshared as part a write.
-> >> + * * IOMAP_F_SHARED: indicates that the blocks are shared, and will need to be
-> >> + *	unshared as part a write.
-> >>   *
-> >> - * IOMAP_F_MERGED indicates that the iomap contains the merge of multiple block
-> >> - * mappings.
-> >> + * * IOMAP_F_MERGED: indicates that the iomap contains the merge of multiple block
-> >> + *	mappings.
-> >>   *
-> >> - * IOMAP_F_BUFFER_HEAD indicates that the file system requires the use of
-> >> - * buffer heads for this mapping.
-> >> + * * IOMAP_F_BUFFER_HEAD: indicates that the file system requires the use of
-> >> + *	buffer heads for this mapping.
-> >>   *
-> >> - * IOMAP_F_XATTR indicates that the iomap is for an extended attribute extent
-> >> - * rather than a file data extent.
-> >> + * * IOMAP_F_XATTR: indicates that the iomap is for an extended attribute extent
-> >> + *	rather than a file data extent.
-> >>   */
-> > Why don't use kernel-doc comments to describe flags?
-> > 
-> 
-> Because kernel-doc handles functions, structs, unions, and enums.
-> Not defines.
+Hi Jens, Al, Christoph,
 
-So perhaps that should be fixed first?
+I've split off splice patchset and moved the block patches to a separate
+branch (though they are dependent on this one).
 
-I seriously dislike the implication here that we should accept
-poorly/inconsistently written comments and code just to work around
-deficiencies in documentation tooling.
+This patchset kills off ITER_PIPE to avoid a race between truncate,
+iov_iter_revert() on the pipe and an as-yet incomplete DMA to a bio with
+unpinned/unref'ed pages from an O_DIRECT splice read.  This causes memory
+corruption[2].  Instead, we use filemap_splice_read(), which invokes the
+buffered file reading code and splices from the pagecache into the pipe;
+copy_splice_read(), which bulk-allocates a buffer, reads into it and then
+pushes the filled pages into the pipe; or handle it in filesystem-specific
+code.
 
-Either modify the code to work cleanly and consistently with the
-tooling (e.g. change the code to use enums rather than #defines), or
-fix the tools that don't work with macro definitions in a way that
-matches the existing code documentation standards.
+ (1) Rename direct_splice_read() to copy_splice_read().
 
-Forcing developers, reviewers and maintainers to understand, accept
-and then maintain inconsistent crap in the code just because some
-tool they never use is deficient is pretty much my definition of an
-unacceptible engineering process.
+ (2) Simplify the calculations for the number of pages to be reclaimed in
+     copy_splice_read().
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+ (3) Turn do_splice_to() into a helper, vfs_splice_read(), so that it can
+     be used by overlayfs and coda to perform the checks on the lower fs.
+
+ (4) Make vfs_splice_read() jump to copy_splice_read() to handle direct-I/O
+     and DAX.
+
+ (5) Provide shmem with its own splice_read to handle non-existent pages
+     in the pagecache.  We don't want a ->read_folio() as we don't want to
+     populate holes, but filemap_get_pages() requires it.
+
+ (6) Provide overlayfs with its own splice_read to call down to a lower
+     layer as overlayfs doesn't provide ->read_folio().
+
+ (7) Provide coda with its own splice_read to call down to a lower layer as
+     coda doesn't provide ->read_folio().
+
+ (8) Direct ->splice_read to copy_splice_read() in tty, procfs, kernfs
+     and random files as they just copy to the output buffer and don't
+     splice pages.
+
+ (9) Provide stubs for afs, ceph, ecryptfs, ext4, f2fs, nfs, ntfs3, ocfs2,
+     orangefs, xfs and zonefs to do locking and/or revalidation.
+
+(10) Make cifs use filemap_splice_read().
+
+(11) Replace pointers to generic_file_splice_read() with pointers to
+     filemap_splice_read() as DIO and DAX are handled in the caller;
+     filesystems can still provide their own alternate ->splice_read() op.
+
+(12) Remove generic_file_splice_read().
+
+(13) Remove ITER_PIPE and its paraphernalia as generic_file_splice_read()
+     was the only user.
+
+I've pushed the patches here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=kill-iter-pipe
+
+David
+
+Changes:
+========
+ver #21)
+ - Split off the block-layer changes into a separate branch.
+ - Check for zero len in vfs_splice_read().
+ - Check s_maxbytes in filemap_splice_read().
+ - Rename direct_splice_read() to copy_splice_read().
+ - The direct I/O and DAX handling needs to be in vfs_splice_read(), not
+   generic_file_splice_read(), before ->splice_read() is called.
+ - Don't need #ifdef CONFIG_FS_DAX as IS_DAX() is false if !CONFIG_FS_DAX.
+ - Replace pointers to generic_file_splice_read() to filemap_splice_read().
+ - Remove generic_file_splice_read().
+ - In ceph, drop the caps ref.
+ - In NFS, Fix pos -> ppos in dprintk().
+
+ver #20)
+ - Make direct_splice_read() limit the read to eof for regular files and
+   blockdevs.
+ - Check against s_maxbytes on the backing store, not a devnode inode.
+ - Provide stubs for afs, ceph, ecryptfs, ext4, f2fs, nfs, ntfs3, ocfs2,
+   orangefs, xfs and zonefs.
+ - Always use direct_splice_read() for 9p, trace and sockets.
+
+ver #19)
+ - Remove a missed get_page() on the zeropage in shmem_splice_read().
+
+ver #18)
+ - Split out the cifs bits from the patch the switches
+   generic_file_splice_read() over to using the non-ITER_PIPE splicing.
+ - Don't get/put refs on the zeropage in shmem_splice_read().
+
+ver #17)
+ - Rename do_splice_to() to vfs_splice_read() and export it so that it can
+   be a helper and make overlayfs and coda use it, allowing duplicate
+   checks to be removed.
+
+ver #16)
+ - The filemap_get_pages() changes are now upstream.
+ - filemap_splice_read() and direct_splice_read() are now upstream.
+ - iov_iter_extract_pages() is now upstream.
+
+ver #15)
+ - Fixed up some errors in overlayfs_splice_read().
+
+ver #14)
+ - Some changes to generic_file_buffered_splice_read():
+   - Rename to filemap_splice_read() and move to mm/filemap.c.
+   - Create a helper, pipe_head_buf().
+   - Use init_sync_kiocb().
+ - Some changes to generic_file_direct_splice_read():
+   - Use alloc_pages_bulk_array() rather than alloc_pages_bulk_list().
+   - Use release_pages() instead of __free_page() in a loop.
+   - Rename to direct_splice_read().
+ - Rearrange the patches to implement filemap_splice_read() and
+   direct_splice_read() separately to changing generic_file_splice_read().
+ - Don't call generic_file_splice_read() when there isn't a ->read_folio().
+ - Insert patches to fix read_folio-less cases:
+   - Make tty, procfs, kernfs and (u)random use direct_splice_read().
+   - Make overlayfs and coda call down to a lower layer.
+   - Give shmem its own splice-read that doesn't insert missing pages.
+ - Fixed a min() with mixed type args on some arches.
+
+ver #13)
+ - Only use allocation in advance and ITER_BVEC for DIO read-splice.
+ - Make buffered read-splice get pages directly from the pagecache.
+ - Alter filemap_get_pages() & co. so that it doesn't need an iterator.
+
+ver #12)
+ - Added the missing __bitwise on the iov_iter_extraction_t typedef.
+ - Rebased on -rc7.
+ - Don't specify FOLL_PIN to pin_user_pages_fast().
+ - Inserted patch at front to fix race between DIO read and truncation that
+   caused memory corruption when iov_iter_revert() got called on an
+   ITER_PIPE iterator[2].
+ - Inserted a patch after that to remove the now-unused ITER_PIPE and its
+   helper functions.
+ - Removed the ITER_PIPE bits from iov_iter_extract_pages().
+
+ver #11)
+ - Fix iov_iter_extract_kvec_pages() to include the offset into the page in
+   the returned starting offset.
+ - Use __bitwise for the extraction flags
+
+ver #10)
+ - Fix use of i->kvec in iov_iter_extract_bvec_pages() to be i->bvec.
+ - Drop bio_set_cleanup_mode(), open coding it instead.
+
+ver #9)
+ - It's now not permitted to use FOLL_PIN outside of mm/, so:
+ - Change iov_iter_extract_mode() into iov_iter_extract_will_pin() and
+   return true/false instead of FOLL_PIN/0.
+ - Drop of folio_put_unpin() and page_put_unpin() and instead call
+   unpin_user_page() (and put_page()) directly as necessary.
+ - Make __bio_release_pages() call bio_release_page() instead of
+   unpin_user_page() as there's no BIO_* -> FOLL_* translation to do.
+ - Drop the FOLL_* renumbering patch.
+ - Change extract_flags to extraction_flags.
+
+ver #8)
+ - Import Christoph Hellwig's changes.
+   - Split the conversion-to-extraction patch.
+   - Drop the extract_flags arg from iov_iter_extract_mode().
+   - Don't default bios to BIO_PAGE_REFFED, but set explicitly.
+ - Switch FOLL_PIN and FOLL_GET when renumbering so PIN is at bit 0.
+ - Switch BIO_PAGE_PINNED and BIO_PAGE_REFFED so PINNED is at bit 0.
+ - We should always be using FOLL_PIN (not FOLL_GET) for DIO, so adjust the
+   patches for that.
+
+ver #7)
+ - For now, drop the parts to pass the I/O direction to iov_iter_*pages*()
+   as it turned out to be a lot more complicated, with places not setting
+   IOCB_WRITE when they should, for example.
+ - Drop all the patches that changed things other then the block layer's
+   bio handling.  The netfslib and cifs changes can go into a separate
+   patchset.
+ - Add support for extracting pages from KVEC-type iterators.
+ - When extracting from BVEC/KVEC, skip over empty vecs at the front.
+
+ver #6)
+ - Fix write() syscall and co. not setting IOCB_WRITE.
+ - Added iocb_is_read() and iocb_is_write() to check IOCB_WRITE.
+ - Use op_is_write() in bio_copy_user_iov().
+ - Drop the iterator direction checks from smbd_recv().
+ - Define FOLL_SOURCE_BUF and FOLL_DEST_BUF and pass them in as part of
+   gup_flags to iov_iter_get/extract_pages*().
+ - Replace iov_iter_get_pages*2() with iov_iter_get_pages*() and remove.
+ - Add back the function to indicate the cleanup mode.
+ - Drop the cleanup_mode return arg to iov_iter_extract_pages().
+ - Provide a helper to clean up a page.
+ - Renumbered FOLL_GET and FOLL_PIN and made BIO_PAGE_REFFED/PINNED have
+   the same numerical values, enforced with an assertion.
+ - Converted AF_ALG, SCSI vhost, generic DIO, FUSE, splice to pipe, 9P and
+   NFS.
+ - Added in the patches to make CIFS do top-to-bottom iterators and use
+   various of the added extraction functions.
+ - Added a pair of work-in-progess patches to make sk_buff fragments store
+   FOLL_GET and FOLL_PIN.
+
+ver #5)
+ - Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED and split into own patch.
+ - Transcribe FOLL_GET/PIN into BIO_PAGE_REFFED/PINNED flags.
+ - Add patch to allow bio_flagged() to be combined by gcc.
+
+ver #4)
+ - Drop the patch to move the FOLL_* flags to linux/mm_types.h as they're
+   no longer referenced by linux/uio.h.
+ - Add ITER_SOURCE/DEST cleanup patches.
+ - Make iov_iter/netfslib iter extraction patches use ITER_SOURCE/DEST.
+ - Allow additional gup_flags to be passed into iov_iter_extract_pages().
+ - Add struct bio patch.
+
+ver #3)
+ - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
+   to get/pin_user_pages_fast()[1].
+
+ver #2)
+ - Rolled the extraction cleanup mode query function into the extraction
+   function, returning the indication through the argument list.
+ - Fixed patch 4 (extract to scatterlist) to actually use the new
+   extraction API.
+
+Link: https://lore.kernel.org/r/Y3zFzdWnWlEJ8X8/@infradead.org/ [1]
+Link: https://lore.kernel.org/r/000000000000b0b3c005f3a09383@google.com/ [2]
+Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166722777223.2555743.162508599131141451.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166732024173.3186319.18204305072070871546.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166920902005.1461876.2786264600108839814.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/166997419665.9475.15014699817597102032.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk/ # v4
+Link: https://lore.kernel.org/r/167344725490.2425628.13771289553670112965.stgit@warthog.procyon.org.uk/ # v5
+Link: https://lore.kernel.org/r/167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk/ # v6
+Link: https://lore.kernel.org/r/20230120175556.3556978-1-dhowells@redhat.com/ # v7
+Link: https://lore.kernel.org/r/20230123173007.325544-1-dhowells@redhat.com/ # v8
+Link: https://lore.kernel.org/r/20230124170108.1070389-1-dhowells@redhat.com/ # v9
+Link: https://lore.kernel.org/r/20230125210657.2335748-1-dhowells@redhat.com/ # v10
+Link: https://lore.kernel.org/r/20230126141626.2809643-1-dhowells@redhat.com/ # v11
+Link: https://lore.kernel.org/r/20230207171305.3716974-1-dhowells@redhat.com/ # v12
+Link: https://lore.kernel.org/r/20230209102954.528942-1-dhowells@redhat.com/ # v13
+Link: https://lore.kernel.org/r/20230214171330.2722188-1-dhowells@redhat.com/ # v14
+Link: https://lore.kernel.org/r/20230308143754.1976726-1-dhowells@redhat.com/ # v16
+Link: https://lore.kernel.org/r/20230308165251.2078898-1-dhowells@redhat.com/ # v17
+Link: https://lore.kernel.org/r/20230314220757.3827941-1-dhowells@redhat.com/ # v18
+Link: https://lore.kernel.org/r/20230315163549.295454-1-dhowells@redhat.com/ # v19
+Link: https://lore.kernel.org/r/20230519074047.1739879-1-dhowells@redhat.com/ #v20
+
+Additional patches that got folded in:
+
+Link: https://lore.kernel.org/r/20230213134619.2198965-1-dhowells@redhat.com/ # v1
+Link: https://lore.kernel.org/r/20230213153301.2338806-1-dhowells@redhat.com/ # v2
+Link: https://lore.kernel.org/r/20230214083710.2547248-1-dhowells@redhat.com/ # v3
+
+David Howells (30):
+  splice: Fix filemap of a blockdev
+  splice: Make filemap_splice_read() check s_maxbytes
+  splice: Rename direct_splice_read() to copy_splice_read()
+  splice: Clean up copy_splice_read() a bit
+  splice: Make do_splice_to() generic and export it
+  splice: Check for zero count in vfs_splice_read()
+  splice: Make splice from an O_DIRECT fd use copy_splice_read()
+  splice: Make splice from a DAX file use copy_splice_read()
+  shmem: Implement splice-read
+  overlayfs: Implement splice-read
+  coda: Implement splice-read
+  tty, proc, kernfs, random: Use copy_splice_read()
+  net: Make sock_splice_read() use copy_splice_read() by default
+  9p:  Add splice_read stub
+  afs: Provide a splice-read stub
+  ceph: Provide a splice-read stub
+  ecryptfs: Provide a splice-read stub
+  ext4: Provide a splice-read stub
+  f2fs: Provide a splice-read stub
+  nfs: Provide a splice-read stub
+  ntfs3: Provide a splice-read stub
+  ocfs2: Provide a splice-read stub
+  orangefs: Provide a splice-read stub
+  xfs: Provide a splice-read stub
+  zonefs: Provide a splice-read stub
+  splice: Convert trace/seq to use copy_splice_read()
+  cifs: Use filemap_splice_read()
+  splice: Use filemap_splice_read() instead of
+    generic_file_splice_read()
+  splice: Remove generic_file_splice_read()
+  iov_iter: Kill ITER_PIPE
+
+ block/fops.c            |   2 +-
+ drivers/char/random.c   |   4 +-
+ drivers/tty/tty_io.c    |   4 +-
+ fs/9p/vfs_file.c        |  26 ++-
+ fs/adfs/file.c          |   2 +-
+ fs/affs/file.c          |   2 +-
+ fs/afs/file.c           |  20 +-
+ fs/bfs/file.c           |   2 +-
+ fs/btrfs/file.c         |   2 +-
+ fs/ceph/file.c          |  65 +++++-
+ fs/cifs/cifsfs.c        |  12 +-
+ fs/cifs/cifsfs.h        |   3 -
+ fs/cifs/file.c          |  16 --
+ fs/coda/file.c          |  29 ++-
+ fs/cramfs/inode.c       |   2 +-
+ fs/ecryptfs/file.c      |  27 ++-
+ fs/erofs/data.c         |   2 +-
+ fs/exfat/file.c         |   2 +-
+ fs/ext2/file.c          |   2 +-
+ fs/ext4/file.c          |  13 +-
+ fs/f2fs/file.c          |  43 +++-
+ fs/fat/file.c           |   2 +-
+ fs/fuse/file.c          |   2 +-
+ fs/gfs2/file.c          |   4 +-
+ fs/hfs/inode.c          |   2 +-
+ fs/hfsplus/inode.c      |   2 +-
+ fs/hostfs/hostfs_kern.c |   2 +-
+ fs/hpfs/file.c          |   2 +-
+ fs/jffs2/file.c         |   2 +-
+ fs/jfs/file.c           |   2 +-
+ fs/kernfs/file.c        |   2 +-
+ fs/minix/file.c         |   2 +-
+ fs/nfs/file.c           |  23 ++-
+ fs/nfs/internal.h       |   2 +
+ fs/nfs/nfs4file.c       |   2 +-
+ fs/nilfs2/file.c        |   2 +-
+ fs/ntfs/file.c          |   2 +-
+ fs/ntfs3/file.c         |  31 ++-
+ fs/ocfs2/file.c         |  41 +++-
+ fs/ocfs2/ocfs2_trace.h  |   3 +
+ fs/omfs/file.c          |   2 +-
+ fs/orangefs/file.c      |  22 +-
+ fs/overlayfs/file.c     |  23 ++-
+ fs/proc/inode.c         |   4 +-
+ fs/proc/proc_sysctl.c   |   2 +-
+ fs/proc_namespace.c     |   6 +-
+ fs/ramfs/file-mmu.c     |   2 +-
+ fs/ramfs/file-nommu.c   |   2 +-
+ fs/read_write.c         |   2 +-
+ fs/reiserfs/file.c      |   2 +-
+ fs/romfs/mmap-nommu.c   |   2 +-
+ fs/splice.c             | 108 ++++------
+ fs/sysv/file.c          |   2 +-
+ fs/ubifs/file.c         |   2 +-
+ fs/udf/file.c           |   2 +-
+ fs/ufs/file.c           |   2 +-
+ fs/vboxsf/file.c        |   2 +-
+ fs/xfs/xfs_file.c       |  30 ++-
+ fs/xfs/xfs_trace.h      |   2 +-
+ fs/zonefs/file.c        |  40 +++-
+ include/linux/fs.h      |   8 +-
+ include/linux/splice.h  |   3 +
+ include/linux/uio.h     |  14 --
+ kernel/trace/trace.c    |   2 +-
+ lib/iov_iter.c          | 431 +---------------------------------------
+ mm/filemap.c            |  10 +-
+ mm/shmem.c              | 134 ++++++++++++-
+ net/socket.c            |   2 +-
+ 68 files changed, 657 insertions(+), 616 deletions(-)
+
