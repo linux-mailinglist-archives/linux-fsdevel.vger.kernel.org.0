@@ -2,225 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 650B070A85D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 15:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 577B470A896
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 May 2023 16:55:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229852AbjETNji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 20 May 2023 09:39:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42882 "EHLO
+        id S231536AbjETOzv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 20 May 2023 10:55:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbjETNjh (ORCPT
+        with ESMTP id S231240AbjETOzu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 20 May 2023 09:39:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E611DC7
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 May 2023 06:39:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B1E160ADB
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 May 2023 13:39:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E732C433EF;
-        Sat, 20 May 2023 13:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684589974;
-        bh=glzFq73gXQMBmUnvxbN6Wy1bn8Z4/NqLPw/GH8Fo26E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ENOSH9qXsw1lt31foxErJCzJQwGgKIUgHVxJkRnepJLl5NiuhUmo79IfwhorTJzjB
-         hkTWB4eVl++eqXSGFItUhOdnFJkhkXRW6qrFTe/iytZfkuxyJit808xvC0alZ8tUoQ
-         DmSGvoCsMHS57Y3a94wh2lIblqVRCENQ/OnaHuYH5wigdCL96RumkFt0QrexPXBpJE
-         4kws2kspcEGfbZdidoJGc/yyQmnBBFewSpe8za3SRjFMBwyPffCn1KpQAs4JFjaQ0F
-         tHaEgN+ZDNth1KkYWag1x2InODCWHtFJ8dNnRzq9InckaDOqvQYcFBD1cY9lDly5zE
-         iW8CEEXc79QBA==
-Date:   Sat, 20 May 2023 15:39:28 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, martin.lau@kernel.org,
-        cyphar@cyphar.com, lennart@poettering.net,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 bpf-next 1/3] bpf: support O_PATH FDs in BPF_OBJ_PIN
- and BPF_OBJ_GET commands
-Message-ID: <20230520-ozonkonzentration-gebacken-8aa9230bad17@brauner>
-References: <20230518215444.1418789-1-andrii@kernel.org>
- <20230518215444.1418789-2-andrii@kernel.org>
- <20230519-eiswasser-leibarzt-ed7e52934486@brauner>
- <CAEf4BzY_kJZiWe804-DOzfNJNKVSQCct8_gNta7jFyruFDw6zA@mail.gmail.com>
+        Sat, 20 May 2023 10:55:50 -0400
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14306115
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 May 2023 07:55:49 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-770222340cfso132364139f.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 20 May 2023 07:55:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684594548; x=1687186548;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B4iLgFiE+ByV2f7sOeewOAOG3keoQv49WDwj0mKMtes=;
+        b=Zpi/yfeh8rrYRh8/X3OsVZEhm1PLwsEfTh9mS+oq3kxvop8m1Ht5h5+ICZJm5QYDpE
+         ArTngUyBb/Pdpoor8qIaUGVuUVSPmKSBUTlMkkg2prD7gblC4t3gwuvd3coOVM6ucp6D
+         bXQLw0nr2rrnmcuwD4fRNlL9lw5vw7+mAnrJaxUidqFqz9il/I202gMiuORkyQ9Du52M
+         vrvYVaiSMWfrmhbieyTzZPmeC1bD98cfz6MkrvQgYre9iIc69Z5oGnBl1KByxoUxmUZO
+         991Ullodjxuk/6TIBuR998iRfTZH4YSYU4Ch1LIRz0zXb/GgjTsIdFTRp7znuLREg68K
+         i21w==
+X-Gm-Message-State: AC+VfDziOLw2viD5GUNsNnrBuC4ENEDYO2AcAWQObdSk/A1HZFBAFNh4
+        A49xMNuyiqjrN+zIOAuIyJZAONrm+S9qHnkLt1uSwjqkHwRD
+X-Google-Smtp-Source: ACHHUZ6MYZctwrpUn7LsNALT5EV4xokpPFAsyuy/vH46TlPrn4OrYyY4Gq1POVSTz8mwljInYanMn5hvwwna+CKT8YQp7kTYkl3F
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzY_kJZiWe804-DOzfNJNKVSQCct8_gNta7jFyruFDw6zA@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:b1d8:0:b0:41a:c5e3:6bf4 with SMTP id
+ u24-20020a02b1d8000000b0041ac5e36bf4mr1714679jah.6.1684594548414; Sat, 20 May
+ 2023 07:55:48 -0700 (PDT)
+Date:   Sat, 20 May 2023 07:55:48 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a6229505fc213b06@google.com>
+Subject: [syzbot] [btrfs?] WARNING in btrfs_relocate_block_group
+From:   syzbot <syzbot+07a7e6273e07bda9ef8b@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 19, 2023 at 09:01:53AM -0700, Andrii Nakryiko wrote:
-> On Fri, May 19, 2023 at 2:49 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Thu, May 18, 2023 at 02:54:42PM -0700, Andrii Nakryiko wrote:
-> > > Current UAPI of BPF_OBJ_PIN and BPF_OBJ_GET commands of bpf() syscall
-> > > forces users to specify pinning location as a string-based absolute or
-> > > relative (to current working directory) path. This has various
-> > > implications related to security (e.g., symlink-based attacks), forces
-> > > BPF FS to be exposed in the file system, which can cause races with
-> > > other applications.
-> > >
-> > > One of the feedbacks we got from folks working with containers heavily
-> > > was that inability to use purely FD-based location specification was an
-> > > unfortunate limitation and hindrance for BPF_OBJ_PIN and BPF_OBJ_GET
-> > > commands. This patch closes this oversight, adding path_fd field to
-> > > BPF_OBJ_PIN and BPF_OBJ_GET UAPI, following conventions established by
-> > > *at() syscalls for dirfd + pathname combinations.
-> > >
-> > > This now allows interesting possibilities like working with detached BPF
-> > > FS mount (e.g., to perform multiple pinnings without running a risk of
-> > > someone interfering with them), and generally making pinning/getting
-> > > more secure and not prone to any races and/or security attacks.
-> > >
-> > > This is demonstrated by a selftest added in subsequent patch that takes
-> > > advantage of new mount APIs (fsopen, fsconfig, fsmount) to demonstrate
-> > > creating detached BPF FS mount, pinning, and then getting BPF map out of
-> > > it, all while never exposing this private instance of BPF FS to outside
-> > > worlds.
-> > >
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > ---
-> > >  include/linux/bpf.h            |  4 ++--
-> > >  include/uapi/linux/bpf.h       | 10 ++++++++++
-> > >  kernel/bpf/inode.c             | 16 ++++++++--------
-> > >  kernel/bpf/syscall.c           | 25 ++++++++++++++++++++-----
-> > >  tools/include/uapi/linux/bpf.h | 10 ++++++++++
-> > >  5 files changed, 50 insertions(+), 15 deletions(-)
-> > >
-> > > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> > > index 36e4b2d8cca2..f58895830ada 100644
-> > > --- a/include/linux/bpf.h
-> > > +++ b/include/linux/bpf.h
-> > > @@ -2077,8 +2077,8 @@ struct file *bpf_link_new_file(struct bpf_link *link, int *reserved_fd);
-> > >  struct bpf_link *bpf_link_get_from_fd(u32 ufd);
-> > >  struct bpf_link *bpf_link_get_curr_or_next(u32 *id);
-> > >
-> > > -int bpf_obj_pin_user(u32 ufd, const char __user *pathname);
-> > > -int bpf_obj_get_user(const char __user *pathname, int flags);
-> > > +int bpf_obj_pin_user(u32 ufd, int path_fd, const char __user *pathname);
-> > > +int bpf_obj_get_user(int path_fd, const char __user *pathname, int flags);
-> > >
-> > >  #define BPF_ITER_FUNC_PREFIX "bpf_iter_"
-> > >  #define DEFINE_BPF_ITER_FUNC(target, args...)                        \
-> > > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> > > index 1bb11a6ee667..3731284671e4 100644
-> > > --- a/include/uapi/linux/bpf.h
-> > > +++ b/include/uapi/linux/bpf.h
-> > > @@ -1272,6 +1272,9 @@ enum {
-> > >
-> > >  /* Create a map that will be registered/unregesitered by the backed bpf_link */
-> > >       BPF_F_LINK              = (1U << 13),
-> > > +
-> > > +/* Get path from provided FD in BPF_OBJ_PIN/BPF_OBJ_GET commands */
-> > > +     BPF_F_PATH_FD           = (1U << 14),
-> > >  };
-> > >
-> > >  /* Flags for BPF_PROG_QUERY. */
-> > > @@ -1420,6 +1423,13 @@ union bpf_attr {
-> > >               __aligned_u64   pathname;
-> > >               __u32           bpf_fd;
-> > >               __u32           file_flags;
-> > > +             /* Same as dirfd in openat() syscall; see openat(2)
-> > > +              * manpage for details of path FD and pathname semantics;
-> > > +              * path_fd should accompanied by BPF_F_PATH_FD flag set in
-> > > +              * file_flags field, otherwise it should be set to zero;
-> > > +              * if BPF_F_PATH_FD flag is not set, AT_FDCWD is assumed.
-> > > +              */
-> > > +             __u32           path_fd;
-> > >       };
-> >
-> > Thanks for changing that.
-> >
-> > This is still odd though because you prevent users from specifying
-> > AT_FDCWD explicitly. They should be allowed to do that plus file
-> > descriptors are signed integers so please s/__u32/__s32/. AT_FDCWD
-> > should be passable anywhere where we have at* semantics. Plus, if in the
-> > vfs we ever add
-> > #define AT_ROOT -200
-> > or something you can't use without coming up with your own custom flags.
-> > If you just follow what everyone else does and use __s32 then you're
-> > good.
-> 
-> It's just an oversight, I'll change to __s32, good point. I intended
-> AT_FDCWD to be passable explicitly and it will work because we just
-> interpret that path_fd as int internally, but you are of course right
-> that API should make it clear that this is signed value.
-> 
-> >
-> > File descriptors really need to be signed. There's no way around that.
-> > See io_uring as a good example
-> >
-> > io_uring_sqe {
-> >           __u8    opcode;         /* type of operation for this sqe */
-> >           __u8    flags;          /* IOSQE_ flags */
-> >           __u16   ioprio;         /* ioprio for the request */
-> >           __s32   fd;             /* file descriptor to do IO on */
-> > }
-> >
-> > where the __s32 fd is used in all fd based requests including
-> > io_openat*() (See io_uring/openclose.c) which are effectively the
-> > semantics you want to emulate here.
-> 
-> Agreed. Please bear in mind that it's the first time we are dealing
-> with these path FDs in bpf() subsystem, so all these silly mistakes
-> are just coming from being exposed into unfamiliar "territory". Will
-> fix in v3, along with adding explicit tests for AT_FWCWD.
+Hello,
 
-I really don't expect this to be perfect right off the bat and it's
-perfectly understandable to not get all the details right if you haven't
-been exposed to the customs of a specific subsystems. So no worries
-there and I'm well aware of that. I probably couldn't tell head from toe
-in some parts of bpf.
+syzbot found the following issue on:
 
-For bpf pinning things are a little simpler because it really is just an
-exclusive file create/file mknodat with preset mode so you don't really
-have to worry about general lookup like e.g., io_uring does. So we
-should've reached peak complexity for you in supporting basic *at()
-functionality.
+HEAD commit:    1b66c114d161 Merge tag 'nfsd-6.4-1' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=160f9dd9280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94af80bb8ddd23c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=07a7e6273e07bda9ef8b
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122229f9280000
 
-Btw, looking at bpf_obj_do_pin() you call security_path_mknod() before
-you verify that you're dealing with a bpf file. Might be simpler to
-check that this is a bpf file first and don't trigger an LSM check on
-something that you don't own:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2e240bb8f051/disk-1b66c114.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f68505e2033a/vmlinux-1b66c114.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b5b233cfac6d/bzImage-1b66c114.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/92afd11e51ee/mount_0.gz
 
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index 9948b542a470..329f27d5cacf 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -448,18 +448,17 @@ static int bpf_obj_do_pin(const char __user *pathname, void *raw,
-        if (IS_ERR(dentry))
-                return PTR_ERR(dentry);
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+07a7e6273e07bda9ef8b@syzkaller.appspotmail.com
 
--       mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
--
--       ret = security_path_mknod(&path, dentry, mode, 0);
--       if (ret)
--               goto out;
--
-        dir = d_inode(path.dentry);
-        if (dir->i_op != &bpf_dir_iops) {
-                ret = -EPERM;
-                goto out;
-        }
+BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5901 at fs/btrfs/relocation.c:4123 btrfs_relocate_block_group+0xcda/0xd70
+Modules linked in:
+CPU: 1 PID: 5901 Comm: syz-executor.0 Not tainted 6.4.0-rc2-syzkaller-00015-g1b66c114d161 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/28/2023
+RIP: 0010:btrfs_relocate_block_group+0xcda/0xd70 fs/btrfs/relocation.c:4123
+Code: fe 48 c7 c7 80 2e 2b 8b 48 c7 c6 20 2e 2b 8b ba b1 0f 00 00 e8 b7 c4 10 07 e8 e2 e2 ee fd 0f 0b e9 62 fd ff ff e8 d6 e2 ee fd <0f> 0b e9 b5 fd ff ff e8 ca e2 ee fd 0f 0b e9 08 fe ff ff 44 89 e1
+RSP: 0018:ffffc9000ae1fa28 EFLAGS: 00010293
+RAX: ffffffff839c99ca RBX: 0000000000190000 RCX: ffff88806f4d0000
+RDX: 0000000000000000 RSI: 0000000000190000 RDI: 0000000000000000
+RBP: ffff88806d673068 R08: ffffffff839c9778 R09: fffff520015c3f35
+R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88806e4e2000
+R13: 0000000000000000 R14: ffff88806e750000 R15: ffff88806e750010
+FS:  00007fdf35b02700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe4fb4e6000 CR3: 000000002079a000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3276
+ __btrfs_balance+0x1b06/0x2690 fs/btrfs/volumes.c:4011
+ btrfs_balance+0xbdb/0x1120 fs/btrfs/volumes.c:4395
+ btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3599
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fdf34e8c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fdf35b02168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fdf34fac050 RCX: 00007fdf34e8c169
+RDX: 00000000200003c0 RSI: 00000000c4009420 RDI: 0000000000000005
+RBP: 00007fdf34ee7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fff060f715f R14: 00007fdf35b02300 R15: 0000000000022000
+ </TASK>
 
-+       mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
-+       ret = security_path_mknod(&path, dentry, mode, 0);
-+       if (ret)
-+               goto out;
-+
-        switch (type) {
-        case BPF_TYPE_PROG:
-                ret = vfs_mkobj(dentry, mode, bpf_mkprog, raw);
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
