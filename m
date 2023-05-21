@@ -2,68 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E84BC70ADBA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 May 2023 13:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D62370ADB5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 May 2023 13:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231171AbjEULrL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 May 2023 07:47:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36930 "EHLO
+        id S230037AbjEULrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 May 2023 07:47:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231650AbjEUKkV (ORCPT
+        with ESMTP id S231899AbjEULqF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 May 2023 06:40:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A85F219B;
-        Sun, 21 May 2023 03:31:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 384E7616F5;
-        Sun, 21 May 2023 10:28:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 243EBC433EF;
-        Sun, 21 May 2023 10:28:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684664913;
-        bh=fuwAavm/XaNEAXoWfH+8YMFck1QbFLwrPXjkugnEjGc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZklILM9/gXHkmMK8esniIM/BsLqN2K4sb1ZQSwMJLVSn4FIJLDuSf6SqgodPF887D
-         52utCGg8uIy3Mp8jHuXlxJwsrRcc/O+t8xls6IAPFPQgH05ORKDyi0aOJ1gtr7x++x
-         W0ebfTTsJ7Yp//nU0gL0Qr+7jKFJ7vLuHvpol1/rEdpqamal1a7Wf5e5dPbIy8QLsD
-         TzuNvtoDSvI15/io6hy7ldIoZcnXa/xOn6R2rc8sKxhS1XJvmaG0/2O6jTgizm27bg
-         +sk1gfglqE5tcQsoP45sgfn2m0fyM6242S6JCtRsBYs4mjav+vqqm6wamTHlNtZQkS
-         g/nJd4Gt4kRZA==
-Date:   Sun, 21 May 2023 19:28:26 +0900
-From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Sun, 21 May 2023 07:46:05 -0400
+Received: from out28-62.mail.aliyun.com (out28-62.mail.aliyun.com [115.124.28.62])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A47E58;
+        Sun, 21 May 2023 04:40:56 -0700 (PDT)
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1352782|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0462248-0.00033699-0.953438;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047204;MF=wangyugui@e16-tech.com;NM=1;PH=DS;RN=6;RT=6;SR=0;TI=SMTPD_---.T87AWYB_1684669252;
+Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.T87AWYB_1684669252)
+          by smtp.aliyun-inc.com;
+          Sun, 21 May 2023 19:40:53 +0800
+Date:   Sun, 21 May 2023 19:40:54 +0800
+From:   Wang Yugui <wangyugui@e16-tech.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: Re: [PATCH 0/3] Create large folios in iomap buffered write path
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v21 26/30] splice: Convert trace/seq to use
- copy_splice_read()
-Message-Id: <20230521192826.825bfafa17645aacba9b1076@kernel.org>
-In-Reply-To: <20230520000049.2226926-27-dhowells@redhat.com>
-References: <20230520000049.2226926-1-dhowells@redhat.com>
-        <20230520000049.2226926-27-dhowells@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        "Darrick J . Wong" <djwong@kernel.org>
+In-Reply-To: <20230520163603.1794256-1-willy@infradead.org>
+References: <20230520163603.1794256-1-willy@infradead.org>
+Message-Id: <20230521194053.8CD1.409509F4@e16-tech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+X-Mailer: Becky! ver. 2.81.04 [en]
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,59 +43,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
+Hi,
 
-On Sat, 20 May 2023 01:00:45 +0100
-David Howells <dhowells@redhat.com> wrote:
-
-> For the splice from the trace seq buffer, just use copy_splice_read().
-
-So this is because you will remove generic_file_splice_read() (since
-it's buggy), right?
-
+> Wang Yugui has a workload which would be improved by using large folios.
+> Until now, we've only created large folios in the readahead path,
+> but this workload writes without reading.  The decision of what size
+> folio to create is based purely on the size of the write() call (unlike
+> readahead where we keep history and can choose to create larger folios
+> based on that history even if individual reads are small).
 > 
-> In the future, something better can probably be done by gifting pages from
-> seq->buf into the pipe, but that would require changing seq->buf into a
-> vmap over an array of pages.
-
-So what we need is to introduce a vmap? We introduced splice support for
-avoiding copy ringbuffer pages, but this drops it. Thus this will drop
-performance of splice on ring buffer (trace file). If it is correct,
-can you also add a note about that?
-
-Thank you,
-
+> The third patch looks like it's an optional extra but is actually needed
+> for the first two patches to work in the write path, otherwise it limits
+> the length that iomap_get_folio() sees to PAGE_SIZE.
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Christoph Hellwig <hch@lst.de>
-> cc: Al Viro <viro@zeniv.linux.org.uk>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Steven Rostedt <rostedt@goodmis.org>
-> cc: Masami Hiramatsu <mhiramat@kernel.org>
-> cc: linux-kernel@vger.kernel.org
-> cc: linux-trace-kernel@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-block@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
->  kernel/trace/trace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index ebc59781456a..c210d02fac97 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -5171,7 +5171,7 @@ static const struct file_operations tracing_fops = {
->  	.open		= tracing_open,
->  	.read		= seq_read,
->  	.read_iter	= seq_read_iter,
-> -	.splice_read	= generic_file_splice_read,
-> +	.splice_read	= copy_splice_read,
->  	.write		= tracing_write_stub,
->  	.llseek		= tracing_lseek,
->  	.release	= tracing_release,
-> 
+> Matthew Wilcox (Oracle) (3):
+>   filemap: Allow __filemap_get_folio to allocate large folios
+>   iomap: Create large folios in the buffered write path
+>   iomap: Copy larger chunks from userspace
+
+The [PATCH 2/3] is a little difficult to backport to 6.1.y(LTS),
+it need some patches as depency.
+
+so please provide those patches based on 6.1.y(LTS)  and depency list?
+then we can do more test on 6.1.y(LTS) too.
+
+Best Regards
+Wang Yugui (wangyugui@e16-tech.com)
+2023/05/21
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+>  fs/gfs2/bmap.c          |  2 +-
+>  fs/iomap/buffered-io.c  | 32 ++++++++++++++++++------------
+>  include/linux/iomap.h   |  2 +-
+>  include/linux/pagemap.h | 29 ++++++++++++++++++++++++---
+>  mm/filemap.c            | 44 ++++++++++++++++++++++++++++-------------
+>  mm/folio-compat.c       |  2 +-
+>  mm/readahead.c          | 13 ------------
+>  7 files changed, 78 insertions(+), 46 deletions(-)
+> 
+> -- 
+> 2.39.2
+
+
