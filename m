@@ -2,106 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA0B670B156
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 00:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51BDA70B1D4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 00:50:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230472AbjEUWEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 May 2023 18:04:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36532 "EHLO
+        id S231446AbjEUWt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 May 2023 18:49:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230470AbjEUWEt (ORCPT
+        with ESMTP id S231358AbjEUWt4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 May 2023 18:04:49 -0400
-Received: from out-19.mta1.migadu.com (out-19.mta1.migadu.com [IPv6:2001:41d0:203:375::13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90CF7DD
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 May 2023 15:04:48 -0700 (PDT)
-Date:   Sun, 21 May 2023 18:04:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1684706684;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=M7SZ4icPM/G1fu0ULdKEsJem1DjVdc2mchXSlwG+/Tc=;
-        b=pNlBxYp89TaGuI/Pja+cAFNusJ6CcLCYMLeXkpWHfk8wp2qS4mvN3aemgC6BSn2VE2PhUE
-        4c7qqnVrgpCoGa7/WcHruX+2OboTSsJTjjG+89QTN7Pdm4pbm7qZXRNQvDq/XquaOAJOms
-        epiuAFYuYMDP+Y5scpiuH3SIv0k3qhk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Lorenzo Stoakes <lstoakes@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org
-Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
-Message-ID: <ZGqVd9Vx5vjqlEh0@moria.home.lan>
-References: <ZF6HHRDeUWLNtuL7@moria.home.lan>
- <20230513015752.GC3033@quark.localdomain>
- <ZGB1eevk/u2ssIBT@moria.home.lan>
- <20230514184325.GB9528@sol.localdomain>
- <ZGHFa4AprPSsEpeq@moria.home.lan>
- <20230515061346.GB15871@sol.localdomain>
- <ZGHOppBFcKEJkzCe@moria.home.lan>
- <20230515071343.GD15871@sol.localdomain>
- <ZGHesxEMsCfOewhy@moria.home.lan>
- <20230521213334.GA32557@sol.localdomain>
+        Sun, 21 May 2023 18:49:56 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0ECCC6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 May 2023 15:49:54 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-64d2e8a842cso2141879b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 May 2023 15:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1684709394; x=1687301394;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YfaiIW3biZ2nDYazMreEHIKSLRhntSglWJTWt2nlD0A=;
+        b=IP5yZ0MMUZe32WseJQj3R2egNthpjmyvm+ciAk24LX8IEV7id8mpJCFeDWFj0Omm2f
+         GfW41TZ5PxSnakzCNRnqNV5+26u2zf1il0w5TpmJjsm5guGJqcVuzI450S8ezK7xGm53
+         aJ+fCiUOOMUejIoPQNcQOFm0coGehr46kezzbLLHU6Q6EjhrP/LicNOwUetRXPpSn6i5
+         RPkrxmRKW1B0Yhp7ttk/tDuPOX7wOFhQJaeQTyXvqn9eQXqAZzuXWhDS+uGXNL3iUomt
+         VQ6hKc0ZeYG9IesB6W0x2zNu/R+dTIeyCjtaPv6dKj8VfMkra6Sdh0kFoP2Mws2cdHgr
+         mUCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684709394; x=1687301394;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YfaiIW3biZ2nDYazMreEHIKSLRhntSglWJTWt2nlD0A=;
+        b=I4VqjbT9fykgioXirk6AZGxyPzn3J/aQi+H6iaHBpvTogixYuialEYGxsjILReopu3
+         cMWxu+wZHFw2cQ1fOnikqI27fOUiKTNG4AVeYrg+BLZhn8r6l3W0J5r6ycYmBRhmbjoj
+         L2LEcnzkmfL1y/Bf2DgolgwD7pT872/OuaQEc+swBwKVvs8FxM/JjYm0p8+BKzwsBlTS
+         0RBJTx/IbSbFAx95qpMND5OX22n212UtvEpM9P9PKnP1l5Ca46cnDK4HDrhuFQ+DUE78
+         0taeCzG2XIniaaPT86XeZr82HM9ku5k1qvJSUDHkyhSdOMy9hgA4buNNLn2ieZ1i2cAb
+         gLVA==
+X-Gm-Message-State: AC+VfDw6KVomT0Jxa1qXUSbIPABloNWPJ1owPV8YhafKLez53RX/93Rl
+        aSkiEg0F9PiQGxY4yc+TdwIAbA==
+X-Google-Smtp-Source: ACHHUZ72WQJhhCaeNMhFrQWZeqaQ3D4XEC9Issa3Qxfnr9+ou9y0ZTpJBeGEsgMJX5F+VThTgg1fcw==
+X-Received: by 2002:a17:902:c1c4:b0:1af:b681:5313 with SMTP id c4-20020a170902c1c400b001afb6815313mr820157plc.33.1684709394215;
+        Sun, 21 May 2023 15:49:54 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
+        by smtp.gmail.com with ESMTPSA id ja15-20020a170902efcf00b001ac55a5e5eesm3425837plb.121.2023.05.21.15.49.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 May 2023 15:49:53 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q0rs6-002J36-1t;
+        Mon, 22 May 2023 08:49:50 +1000
+Date:   Mon, 22 May 2023 08:49:50 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Ignaz Forster <iforster@suse.de>, Petr Vorel <pvorel@suse.cz>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after
+ writes
+Message-ID: <ZGqgDjJqFSlpIkz/@dread.disaster.area>
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+ <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
+ <20230520-angenehm-orangen-80fdce6f9012@brauner>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230521213334.GA32557@sol.localdomain>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20230520-angenehm-orangen-80fdce6f9012@brauner>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 21, 2023 at 02:33:34PM -0700, Eric Biggers wrote:
-> FYI, I had a go with your test framework today, but I ran into too many problems
-> to really bother with it.  In case you want to improve it, these are the
-> problems I ran into (so far).  The command I was trying to run, after having run
-> './root_image create' as root as the README says to do, was
-> 'build-test-kernel run -I ~/src/ktest/tests/bcachefs/perf.ktest':
+On Sat, May 20, 2023 at 11:17:35AM +0200, Christian Brauner wrote:
+> On Fri, May 19, 2023 at 03:42:38PM -0400, Mimi Zohar wrote:
+> > On Fri, 2023-04-07 at 10:31 +0200, Christian Brauner wrote:
+> > > So, I think we want both; we want the ovl_copyattr() and the
+> > > vfs_getattr_nosec() change:
+> > > 
+> > > (1) overlayfs should copy up the inode version in ovl_copyattr(). That
+> > >     is in line what we do with all other inode attributes. IOW, the
+> > >     overlayfs inode's i_version counter should aim to mirror the
+> > >     relevant layer's i_version counter. I wouldn't know why that
+> > >     shouldn't be the case. Asking the other way around there doesn't
+> > >     seem to be any use for overlayfs inodes to have an i_version that
+> > >     isn't just mirroring the relevant layer's i_version.
+> > > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
+> > >     Currently, ima assumes that it will get the correct i_version from
+> > >     an inode but that just doesn't hold for stacking filesystem.
+> > > 
+> > > While (1) would likely just fix the immediate bug (2) is correct and
+> > > _robust_. If we change how attributes are handled vfs_*() helpers will
+> > > get updated and ima with it. Poking at raw inodes without using
+> > > appropriate helpers is much more likely to get ima into trouble.
+> > 
+> > In addition to properly setting the i_version for IMA, EVM has a
+> > similar issue with i_generation and s_uuid. Adding them to
+> > ovl_copyattr() seems to resolve it.   Does that make sense?
+> > 
+> > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> > index 923d66d131c1..cd0aeb828868 100644
+> > --- a/fs/overlayfs/util.c
+> > +++ b/fs/overlayfs/util.c
+> > @@ -1118,5 +1118,8 @@ void ovl_copyattr(struct inode *inode)
+> >  	inode->i_atime = realinode->i_atime;
+> >  	inode->i_mtime = realinode->i_mtime;
+> >  	inode->i_ctime = realinode->i_ctime;
+> > +	inode->i_generation = realinode->i_generation;
+> > +	if (inode->i_sb)
+> > +		uuid_copy(&inode->i_sb->s_uuid, &realinode->i_sb-
+> 
+> Overlayfs can consist of multiple lower layers and each of those lower
+> layers may have a different uuid. So everytime you trigger a
+> ovl_copyattr() on a different layer this patch would alter the uuid of
+> the overlayfs superblock.
+> 
+> In addition the uuid should be set when the filesystem is mounted.
+> Unless the filesystem implements a dedicated ioctl() - like ext4 - to
+> change the uuid.
 
-Thanks for giving it a shot...
+IMO, that ext4 functionality is a landmine waiting to be stepped on.
 
-> - Error due to ~/src/ktest/tests/bcachefs/bcachefs-tools not existing.  Worked
->   around by cloning the bcachefs-tools repo to this location.  (Note, it's not a
->   git submodule, so updating the git submodules didn't help.)
+We should not be changing the sb->s_uuid of filesysetms dynamically.
+The VFS does not guarantee in any way that it is safe to change the
+sb->s_uuid (i.e. no locking, no change notifications, no udev
+events, etc). Various subsystems - both in the kernel and in
+userspace - use the sb->s_uuid as a canonical and/or persistent
+filesystem/device identifier and are unprepared to have it change
+while the filesystem is mounted and active.
 
-a require-git line was missing, fixed that...
+I commented on this from an XFS perspective here when it was
+proposed to copy this ext4 mis-feature in XFS:
 
-> - Error due to "Root image not found".  Worked around by recursively chown'ing
->   /var/lib/ktest from root to my user.  (Note, the README says to run
->   'root_image create' as root, which results in root ownership.)
+https://lore.kernel.org/linux-xfs/20230314062847.GQ360264@dread.disaster.area/
 
-Not sure about this one - root ownership is supposed to be fine because
-qemu opens the root image read only, we use qemu's block device
-in-memory snapshot mode. Was it just not readable by your user?
+Further to this, I also suspect that changing uuids online will
+cause issues with userspace caching of fs uuids (e.g. libblkid and
+anything that uses it) and information that uses uuids to identify
+the filesystem that are set up at mount time (/dev/disk/by-uuid/
+links, etc) by kernel events sent to userspace helpers...
 
-> - Error due to "cannot set up guest memory 'pc.ram': Cannot allocate memory".
->   Worked around by editing tests/bcachefs/perf.ktest to change config-mem from
->   32G to 16G.  (I have 32G memory total on this computer.)
- 
-I think 32G is excessive for the tests that actually need to be in this
-file, dropping that back to 16G.
+IMO, we shouldn't even be considering dynamic sb->s_uuid changes
+without first working through the full system impacts of having
+persistent userspace-visible filesystem identifiers change
+dynamically...
 
-> - Error due to "failed to open /dev/vfio/10: No such file or directory".
->   Enabling CONFIG_VFIO and CONFIG_VFIO_PCI in my host kernel didn't help.  It
->   seems the test is hardcoded to expect PCI passthrough to be set up with a
->   specific device.  I'd have expected it to just set up a standard virtual disk.
-
-Some of the tests in that file do need a fast device, but the tests
-we're interested in do not - I'll split that up.
-
-I just pushed fixes for everything except the root_image issue if you
-want to give it another go.
-
-Cheers,
-Kent
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
