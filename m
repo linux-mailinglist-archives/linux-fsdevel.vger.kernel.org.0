@@ -2,121 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9519D70B0A1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 May 2023 23:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0EB570B0E0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 May 2023 23:33:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbjEUVOJ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 May 2023 17:14:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56004 "EHLO
+        id S230271AbjEUVdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 May 2023 17:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbjEUVOD (ORCPT
+        with ESMTP id S229571AbjEUVdh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 May 2023 17:14:03 -0400
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 368E6B4;
-        Sun, 21 May 2023 14:14:00 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 224F8616B2D5;
-        Sun, 21 May 2023 23:13:58 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id rrieuuPGfCQW; Sun, 21 May 2023 23:13:57 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 5F4AA616B2E1;
-        Sun, 21 May 2023 23:13:57 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id o4O3u6pDXA4P; Sun, 21 May 2023 23:13:57 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 34319616B2D5;
-        Sun, 21 May 2023 23:13:57 +0200 (CEST)
-Date:   Sun, 21 May 2023 23:13:56 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>,
-        kuba <kuba@kernel.org>, James Morris <jmorris@namei.org>,
-        Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Ritesh Raj Sarraf <ritesh@collabora.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sjoerd Simons <sjoerd@collabora.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Message-ID: <133970354.9328381.1684703636966.JavaMail.zimbra@nod.at>
-In-Reply-To: <20230309165455.175131-2-mic@digikod.net>
-References: <20230309165455.175131-1-mic@digikod.net> <20230309165455.175131-2-mic@digikod.net>
-Subject: Re: [PATCH v1 1/5] hostfs: Fix ephemeral inodes
+        Sun, 21 May 2023 17:33:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13B9ACA;
+        Sun, 21 May 2023 14:33:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A5A1A6133B;
+        Sun, 21 May 2023 21:33:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC70C433D2;
+        Sun, 21 May 2023 21:33:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684704816;
+        bh=ImWTr7+FEz7G2UQwBZSuCeiA4GdQb8LvzHpdtatDkNE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KO5gheQtibjJybbzamwH89UnyFKfq7zeKADXvoSFgiCqxbSPU6/lkOYsX+fiKkeTi
+         LgQfBghYJA+ploSYPsr6NOcf0MR+cw1jXNJZsr3nNRwX3c7yieSMjWAAMjTWpKFsCL
+         cye65LB4fT0Hb2hF917VKqPVQKeNc70onO3Grmqrr34lYdMNZEQyCrOonOutj2/Udz
+         c2twa3EUXfs2ciG+vcf4YLg+2vVVCtTE1ECWCwAd3RUmmI6d1zk3PGeGsWwcCMnYy3
+         /aufTNKVNvXXa9OnRvLUrcPbkeHudYZ3pU0aK6Cd7sGro/2Kv1MEk/BHm9VUfz4FJB
+         fx8o2Zgd3TmAw==
+Date:   Sun, 21 May 2023 14:33:34 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Lorenzo Stoakes <lstoakes@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org
+Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
+Message-ID: <20230521213334.GA32557@sol.localdomain>
+References: <20230510064849.GC1851@quark.localdomain>
+ <ZF6HHRDeUWLNtuL7@moria.home.lan>
+ <20230513015752.GC3033@quark.localdomain>
+ <ZGB1eevk/u2ssIBT@moria.home.lan>
+ <20230514184325.GB9528@sol.localdomain>
+ <ZGHFa4AprPSsEpeq@moria.home.lan>
+ <20230515061346.GB15871@sol.localdomain>
+ <ZGHOppBFcKEJkzCe@moria.home.lan>
+ <20230515071343.GD15871@sol.localdomain>
+ <ZGHesxEMsCfOewhy@moria.home.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: hostfs: Fix ephemeral inodes
-Thread-Index: tKJAlvYqiwgTPVoEW6hlXkXRgBTN3A==
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        T_SCC_BODY_TEXT_LINE,T_SPF_PERMERROR autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZGHesxEMsCfOewhy@moria.home.lan>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> Von: "Mickaël Salaün" <mic@digikod.net>
-> hostfs creates a new inode for each opened or created file, which created
-> useless inode allocations and forbade identifying a host file with a kernel
-> inode.
+On Mon, May 15, 2023 at 03:26:43AM -0400, Kent Overstreet wrote:
+> On Mon, May 15, 2023 at 12:13:43AM -0700, Eric Biggers wrote:
+> > Sure, given that this is an optimization problem with a very small scope
+> > (decoding 6 fields from a bitstream), I was hoping for something easier and
+> > faster to iterate on than setting up a full kernel + bcachefs test environment
+> > and reverse engineering 500 lines of shell script.  But sure, I can look into
+> > that when I have a chance.
 > 
-> Fix this uncommon filesystem behavior by tying kernel inodes to host
-> file's inode and device IDs.  Even if the host filesystem inodes may be
-> recycled, this cannot happen while a file referencing it is open, which
-> is the case with hostfs.  It should be noted that hostfs inode IDs may
-> not be unique for the same hostfs superblock because multiple host's
-> (backed) superblocks may be used.
+> If you were actually wanting to help, that repository is the tool I use
+> for kernel development and testing - it's got documentation.
 > 
-> Delete inodes when dropping them to force backed host's file descriptors
-> closing.
+> It builds a kernel, boots a VM and runs a test in about 15 seconds, no
+> need for lifting that code out to userspace.
 > 
-> This enables to entirely remove ARCH_EPHEMERAL_INODES, and then makes
-> Landlock fully supported by UML.  This is very useful for testing
-> (ongoing and backported) changes.
 
-Removing ARCH_EPHEMERAL_INODES should be a patch on its own, IMHO.
+FYI, I had a go with your test framework today, but I ran into too many problems
+to really bother with it.  In case you want to improve it, these are the
+problems I ran into (so far).  The command I was trying to run, after having run
+'./root_image create' as root as the README says to do, was
+'build-test-kernel run -I ~/src/ktest/tests/bcachefs/perf.ktest':
 
-> These changes also factor out and simplify some helpers thanks to the
-> new hostfs_inode_update() and the hostfs_iget() revamp: read_name(),
-> hostfs_create(), hostfs_lookup(), hostfs_mknod(), and
-> hostfs_fill_sb_common().
-> 
-> A following commit with new Landlock tests check this new hostfs inode
-> consistency.
-> 
-> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-> Cc: Johannes Berg <johannes@sipsolutions.net>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: <stable@vger.kernel.org> # 5.15.x: ce72750f04d6: hostfs: Fix writeback of
-> dirty pages
-> Cc: <stable@vger.kernel.org> # 5.15+
+- Error due to ~/src/ktest/tests/bcachefs/bcachefs-tools not existing.  Worked
+  around by cloning the bcachefs-tools repo to this location.  (Note, it's not a
+  git submodule, so updating the git submodules didn't help.)
 
-I'm not sure whether this patch qualifies as stable material.
-While I fully agree that the current behavoir is odd, nothing user visible
-is really broken so far.
+- Error due to "Root image not found".  Worked around by recursively chown'ing
+  /var/lib/ktest from root to my user.  (Note, the README says to run
+  'root_image create' as root, which results in root ownership.)
 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20230309165455.175131-2-mic@digikod.net
+- Error due to "cannot set up guest memory 'pc.ram': Cannot allocate memory".
+  Worked around by editing tests/bcachefs/perf.ktest to change config-mem from
+  32G to 16G.  (I have 32G memory total on this computer.)
 
-Other than that, patch looks good to me.
-
-Thanks,
-//richard
+- Error due to "failed to open /dev/vfio/10: No such file or directory".
+  Enabling CONFIG_VFIO and CONFIG_VFIO_PCI in my host kernel didn't help.  It
+  seems the test is hardcoded to expect PCI passthrough to be set up with a
+  specific device.  I'd have expected it to just set up a standard virtual disk.
