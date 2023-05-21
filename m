@@ -2,143 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A65C770B1FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 01:08:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFB2570B214
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 01:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbjEUXIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 May 2023 19:08:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52094 "EHLO
+        id S229715AbjEUXlH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 May 2023 19:41:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjEUXIr (ORCPT
+        with ESMTP id S229481AbjEUXlG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 May 2023 19:08:47 -0400
+        Sun, 21 May 2023 19:41:06 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194E3C6;
-        Sun, 21 May 2023 16:08:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0E4CB4;
+        Sun, 21 May 2023 16:41:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A2F2060F18;
-        Sun, 21 May 2023 23:08:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E45BC433EF;
-        Sun, 21 May 2023 23:08:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4DEBE60FAC;
+        Sun, 21 May 2023 23:41:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF259C433EF;
+        Sun, 21 May 2023 23:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684710525;
-        bh=rAjX+Pw8DlL/f2viStzysdGu9FJ4PJFDA1kvOmFjdss=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ai5jXapn4Kii1DO8mRO9kG8ij10vD/qLFjh+k5sf3jwszBrhEh3jmsx7uANKp39Vy
-         VtPsG4Fm8CbdrjozYo3lZG7210R3wP4I3sPs8CWoCH9Or4ekK7OMaIkfxYkE6Y7VW5
-         ArHwR6bScxT8YemetRBJsSHSQDCDkw806+JHnZpWipjTiTbjcxceyElfgnSU6Zur5N
-         +vPJYlqc1yuO9LO71ir7kke42GeZbZmdhVzX6NeXn29dgRbeAO32/t001C1h4t5eQd
-         433OZ1CzYAu9/I57Rj+P6Ej8TPQiFA0bWYFGyaZwmjO7Y8s1wN3lkScVwuhQkKRNcX
-         YQMYw8TeWqFZw==
-Message-ID: <d3ae1575dcdc44d1822a5b6a4ffd09b12c600374.camel@kernel.org>
-Subject: Re: [PATCH v4 3/4] NFSD: handle GETATTR conflict with write
- delegation
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dai Ngo <dai.ngo@oracle.com>, chuck.lever@oracle.com
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Sun, 21 May 2023 19:08:43 -0400
-In-Reply-To: <1684618595-4178-4-git-send-email-dai.ngo@oracle.com>
-References: <1684618595-4178-1-git-send-email-dai.ngo@oracle.com>
-         <1684618595-4178-4-git-send-email-dai.ngo@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        s=k20201202; t=1684712463;
+        bh=tA12yQU00KKUJDHmMiS/p1BMYZTe42VhuQxJI9hnBGs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=bbR+hubYRLAGzg/uGQW+S+uObtEMdvAC9Prq09XRey518FIX9V+FA9yn08nrOyJNo
+         phX9SlbCCQp1tqYPJmwQQ7TYpLWkj6b+H3zMuc1Z7VQuG4Eo9Q/x02u3s+NMYDXZK7
+         y6g4/CCC39Anez1oZFdvYg1ooCDtAlwpyilfm6Q6NNXW5yqA5BSTe0P3z5r+pwBHUD
+         0on5F0vG1ouPX4IHgXYeHIp4iq7izeicWegN4YNYFIeZ8chatU4lAHZIfFgH6cpWn+
+         WUW1P4+xbujvaU0L10MBQr77eKeg564VpiezTN64057zhcRO/0ww07EJx3udJ/fiyx
+         NLclOBUpvfnRw==
+Message-ID: <3efbf8c7-b3ad-fbca-f37e-a7b2fd78320d@kernel.org>
+Date:   Mon, 22 May 2023 08:40:59 +0900
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 01/13] iomap: update ki_pos a little later in
+ iomap_dio_complete
+To:     Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+        cluster-devel@redhat.com, linux-xfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+References: <20230519093521.133226-1-hch@lst.de>
+ <20230519093521.133226-2-hch@lst.de>
+Content-Language: en-US
+From:   Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20230519093521.133226-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 2023-05-20 at 14:36 -0700, Dai Ngo wrote:
-> If the GETATTR request on a file that has write delegation in effect
-> and the request attributes include the change info and size attribute
-> then the write delegation is recalled and NFS4ERR_DELAY is returned
-> for the GETATTR.
->=20
-> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
-> ---
->  fs/nfsd/nfs4xdr.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
->=20
-> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> index 76db2fe29624..e069b970f136 100644
-> --- a/fs/nfsd/nfs4xdr.c
-> +++ b/fs/nfsd/nfs4xdr.c
-> @@ -2920,6 +2920,46 @@ nfsd4_encode_bitmap(struct xdr_stream *xdr, u32 bm=
-val0, u32 bmval1, u32 bmval2)
->  	return nfserr_resource;
+On 5/19/23 18:35, Christoph Hellwig wrote:
+> Move the ki_pos update down a bit to prepare for a better common
+> helper that invalidates pages based of an iocb.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Looks OK to me.
+
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+
+> +		if (dio->flags & IOMAP_DIO_NEED_SYNC)
+> +			ret = generic_write_sync(iocb, ret);
+> +		if (ret > 0)
+> +			ret += dio->done_before;
+> +	}
+>  	trace_iomap_dio_complete(iocb, dio->error, ret);
+>  	kfree(dio);
+> -
+
+white line change. Personally, I like a blank line before returns to make them
+stand out :)
+
+>  	return ret;
 >  }
-> =20
-> +static struct file_lock *
-> +nfs4_wrdeleg_filelock(struct svc_rqst *rqstp, struct inode *inode)
-> +{
-> +	struct file_lock_context *ctx;
-> +	struct file_lock *fl;
-> +
-> +	ctx =3D locks_inode_context(inode);
-> +	if (!ctx)
-> +		return NULL;
-> +	spin_lock(&ctx->flc_lock);
-> +	if (!list_empty(&ctx->flc_lease)) {
-> +		fl =3D list_first_entry(&ctx->flc_lease,
-> +					struct file_lock, fl_list);
-> +		if (fl->fl_type =3D=3D F_WRLCK) {
-> +			spin_unlock(&ctx->flc_lock);
-> +			return fl;
-> +		}
-> +	}
-> +	spin_unlock(&ctx->flc_lock);
-> +	return NULL;
-> +}
-> +
-> +static __be32
-> +nfs4_handle_wrdeleg_conflict(struct svc_rqst *rqstp, struct inode *inode=
-)
-> +{
-> +	__be32 status;
-> +	struct file_lock *fl;
-> +	struct nfs4_delegation *dp;
-> +
-> +	fl =3D nfs4_wrdeleg_filelock(rqstp, inode);
-> +	if (!fl)
-> +		return 0;
-> +	dp =3D fl->fl_owner;
-> +	if (dp->dl_recall.cb_clp =3D=3D *(rqstp->rq_lease_breaker))
-> +		return 0;
-> +	refcount_inc(&dp->dl_stid.sc_count);
+>  EXPORT_SYMBOL_GPL(iomap_dio_complete);
 
-Another question: Why are you taking a reference here at all? AFAICT,
-you don't even look at the delegation again after that point, so it's
-not clear to me who's responsible for putting that reference.
+-- 
+Damien Le Moal
+Western Digital Research
 
-> +	status =3D nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
-> +	return status;
-> +}
-> +
->  /*
->   * Note: @fhp can be NULL; in this case, we might have to compose the fi=
-lehandle
->   * ourselves.
-> @@ -2966,6 +3006,11 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct =
-svc_fh *fhp,
->  		if (status)
->  			goto out;
->  	}
-> +	if (bmval0 & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
-> +		status =3D nfs4_handle_wrdeleg_conflict(rqstp, d_inode(dentry));
-> +		if (status)
-> +			goto out;
-> +	}
-> =20
->  	err =3D vfs_getattr(&path, &stat,
->  			  STATX_BASIC_STATS | STATX_BTIME | STATX_CHANGE_COOKIE,
-
---=20
-Jeff Layton <jlayton@kernel.org>
