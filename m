@@ -2,108 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EAD9C70AD67
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 May 2023 12:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E84BC70ADBA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 May 2023 13:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbjEUKIf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 May 2023 06:08:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34028 "EHLO
+        id S231171AbjEULrL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 May 2023 07:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230455AbjEUKHG (ORCPT
+        with ESMTP id S231650AbjEUKkV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 May 2023 06:07:06 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F13DDE66
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 May 2023 02:55:41 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-25374c9be49so2629136a91.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 May 2023 02:55:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1684662941; x=1687254941;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J2wvUeHhuusQaep940v40WYCSBa0GTC/pU4VHFBZK60=;
-        b=XnIQqtxdxPmD/KnZq8uj/btOSp0PPr8cQxoppCk6LlcV9cq2J7lenURpztkriMgNAh
-         sK3FUJUMe/6fFhvg1YPxrBjRCff0j4Vm+3jxxp6lsGM3tZOXYW4RNrDvKAWQmB65hwZ5
-         SLGfeEZarhej8B+HRf8MQPQDEIkQLh//EquRSaY0Q87miZs8ojMxNZ3gn/oH0QiO+IIx
-         Hd3MshNLmegApz9HX6IksnLt7K7INyLwibs0UIGS81aWqIrSedRMK2TpXarOumqSMP/2
-         jy1hRpLb53TGSsHE3T6ICh6n/sZ8SnWdDjit0y/DrNnPj8DMpwaUUkEcm9lt39OyByPk
-         HqZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684662941; x=1687254941;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J2wvUeHhuusQaep940v40WYCSBa0GTC/pU4VHFBZK60=;
-        b=MzEKnU0vuvpXXI89dQrZcnNNOnNGJnEvaUusp8btalddq0hxUDo+WAaiQdPDhuO+YN
-         J2OrdmBVvh6U5JjDkUhhWyEnq3yiIXcPKJZxmtE92CEp8SsAH6WHlXI4zn7cotq6N/ca
-         LILxRsAXm6LiGmfOGNx3kF7JSXeLvjUwoN4sol9yv25BcyQocyaJvD7OS48f5HsX4z3E
-         ZMd6omji2uf/pyeZBkQdKf5XIbLre9RDQLjhr6bpAUja25AONbFSmTkbLOJ4HmhhURdK
-         1JHvbMh3uB45sIPkNi6x3m13kv8T6yc+FfmOGgdfiPmFhF36+tWtLhw8LsaljkUTZrJX
-         EHfw==
-X-Gm-Message-State: AC+VfDxZ7ZsvZ2OQ1uF9cw6TZ9cv16BXGbi13+gqtX1TlOqxK913UwYK
-        Z+0CiB8LpTi02WYf+GLGPA7ZhA==
-X-Google-Smtp-Source: ACHHUZ4pNkFMSNTwnq79r37gYRmD1cb5gl4v11Ef3rVSHBUEsV1w9A31bRWAJMxfSePavMnzWl8xYg==
-X-Received: by 2002:a17:90b:4f4e:b0:250:4f32:54b2 with SMTP id pj14-20020a17090b4f4e00b002504f3254b2mr7164761pjb.19.1684662941280;
-        Sun, 21 May 2023 02:55:41 -0700 (PDT)
-Received: from localhost.localdomain ([139.177.225.249])
-        by smtp.gmail.com with ESMTPSA id b15-20020a631b4f000000b00534684201b0sm2530629pgm.27.2023.05.21.02.55.38
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 21 May 2023 02:55:40 -0700 (PDT)
-From:   Peng Zhang <zhangpeng.00@bytedance.com>
-To:     arnd@kernel.org, willy@infradead.org
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Liam.Howlett@oracle.com,
-        Peng Zhang <zhangpeng.00@bytedance.com>
-Subject: [PATCH] radix tree test suite: Fix building radix tree test suite.
-Date:   Sun, 21 May 2023 17:54:50 +0800
-Message-Id: <20230521095450.21332-1-zhangpeng.00@bytedance.com>
-X-Mailer: git-send-email 2.37.0 (Apple Git-136)
-In-Reply-To: <20230516194212.548910-1-arnd@kernel.org>
-References: <20230516194212.548910-1-arnd@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Sun, 21 May 2023 06:40:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A85F219B;
+        Sun, 21 May 2023 03:31:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 384E7616F5;
+        Sun, 21 May 2023 10:28:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 243EBC433EF;
+        Sun, 21 May 2023 10:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684664913;
+        bh=fuwAavm/XaNEAXoWfH+8YMFck1QbFLwrPXjkugnEjGc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZklILM9/gXHkmMK8esniIM/BsLqN2K4sb1ZQSwMJLVSn4FIJLDuSf6SqgodPF887D
+         52utCGg8uIy3Mp8jHuXlxJwsrRcc/O+t8xls6IAPFPQgH05ORKDyi0aOJ1gtr7x++x
+         W0ebfTTsJ7Yp//nU0gL0Qr+7jKFJ7vLuHvpol1/rEdpqamal1a7Wf5e5dPbIy8QLsD
+         TzuNvtoDSvI15/io6hy7ldIoZcnXa/xOn6R2rc8sKxhS1XJvmaG0/2O6jTgizm27bg
+         +sk1gfglqE5tcQsoP45sgfn2m0fyM6242S6JCtRsBYs4mjav+vqqm6wamTHlNtZQkS
+         g/nJd4Gt4kRZA==
+Date:   Sun, 21 May 2023 19:28:26 +0900
+From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v21 26/30] splice: Convert trace/seq to use
+ copy_splice_read()
+Message-Id: <20230521192826.825bfafa17645aacba9b1076@kernel.org>
+In-Reply-To: <20230520000049.2226926-27-dhowells@redhat.com>
+References: <20230520000049.2226926-1-dhowells@redhat.com>
+        <20230520000049.2226926-27-dhowells@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The build of radix tree test suite failed due to a new internal header
-file added to radix-tree.c. Adding the header directory in the Makefile
-fixes it.
+Hi David,
 
-Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
----
- tools/testing/radix-tree/Makefile | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Sat, 20 May 2023 01:00:45 +0100
+David Howells <dhowells@redhat.com> wrote:
 
-diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
-index caf32a9b9608..7527f738b4a1 100644
---- a/tools/testing/radix-tree/Makefile
-+++ b/tools/testing/radix-tree/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--CFLAGS += -I. -I../../include -g -Og -Wall -D_LGPL_SOURCE -fsanitize=address \
--	  -fsanitize=undefined
-+CFLAGS += -I. -I../../include -I../../../lib -g -Og -Wall \
-+	  -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined
- LDFLAGS += -fsanitize=address -fsanitize=undefined
- LDLIBS+= -lpthread -lurcu
- TARGETS = main idr-test multiorder xarray maple
-@@ -49,6 +49,7 @@ $(OFILES): Makefile *.h */*.h generated/map-shift.h generated/bit-length.h \
- 	../../../include/linux/xarray.h \
- 	../../../include/linux/maple_tree.h \
- 	../../../include/linux/radix-tree.h \
-+	../../../lib/radix-tree.h \
- 	../../../include/linux/idr.h
- 
- radix-tree.c: ../../../lib/radix-tree.c
+> For the splice from the trace seq buffer, just use copy_splice_read().
+
+So this is because you will remove generic_file_splice_read() (since
+it's buggy), right?
+
+> 
+> In the future, something better can probably be done by gifting pages from
+> seq->buf into the pipe, but that would require changing seq->buf into a
+> vmap over an array of pages.
+
+So what we need is to introduce a vmap? We introduced splice support for
+avoiding copy ringbuffer pages, but this drops it. Thus this will drop
+performance of splice on ring buffer (trace file). If it is correct,
+can you also add a note about that?
+
+Thank you,
+
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Christoph Hellwig <hch@lst.de>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Steven Rostedt <rostedt@goodmis.org>
+> cc: Masami Hiramatsu <mhiramat@kernel.org>
+> cc: linux-kernel@vger.kernel.org
+> cc: linux-trace-kernel@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-block@vger.kernel.org
+> cc: linux-mm@kvack.org
+> ---
+>  kernel/trace/trace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index ebc59781456a..c210d02fac97 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -5171,7 +5171,7 @@ static const struct file_operations tracing_fops = {
+>  	.open		= tracing_open,
+>  	.read		= seq_read,
+>  	.read_iter	= seq_read_iter,
+> -	.splice_read	= generic_file_splice_read,
+> +	.splice_read	= copy_splice_read,
+>  	.write		= tracing_write_stub,
+>  	.llseek		= tracing_lseek,
+>  	.release	= tracing_release,
+> 
+
+
 -- 
-2.20.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
