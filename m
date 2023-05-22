@@ -2,71 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87CFA70C451
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 19:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 378C370C481
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 19:42:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232946AbjEVRdx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 13:33:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42786 "EHLO
+        id S229960AbjEVRmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 13:42:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231448AbjEVRdw (ORCPT
+        with ESMTP id S229835AbjEVRme (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 13:33:52 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA50DFF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 10:33:50 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-510e682795fso9109523a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 10:33:50 -0700 (PDT)
+        Mon, 22 May 2023 13:42:34 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AC55FA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 10:42:33 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-96fab30d1e1so462385666b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 10:42:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1684776829; x=1687368829;
+        d=linux-foundation.org; s=google; t=1684777351; x=1687369351;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Slu3gux4GuUHwh68X0h4hh6LgeEzWMQzZomXLQPnCh0=;
-        b=Ljg4LOy0fHrVHwQrC6CFPRl2RBlB71H4nfxmtrAN37UAHfFvzivakgEuSCbqDA1N+4
-         i9+SneFGnaWeVgwnYb9dbnOzwq8hgg370KB87G8X/9Pg+cm8yutJsa3CPJ4QGUp1mYpD
-         A3AKz+Vz4rkoke6nYDDwagdl3BNnF6xBH56y4=
+        bh=v0vGfy2nsZav2HY5i+tp/Nl3rfKXvicFLnxzClJPsL0=;
+        b=TXiT4G41d+/QacX49+njbr4cngiQQjIe0I3U0q+googMR1+xhIyTmHA95E77iZJ8w8
+         rfiAnF/wDTn8b1pFdobvBOIDmt8Dt39vxkrgawgKQ7IiL7ON4cw3gDofK+aS5XMbKZuD
+         ar7Px3z7dtoYcC3dG/8itMjQ8eRLrv6Cb07Oo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684776829; x=1687368829;
+        d=1e100.net; s=20221208; t=1684777351; x=1687369351;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Slu3gux4GuUHwh68X0h4hh6LgeEzWMQzZomXLQPnCh0=;
-        b=TC+HFUIsNSXDbVHGweuvy1444lm3FP6Ulr3T6Wg7XSKvj1LJHT8StOgoOLwwBL/OZE
-         CzKDpr9jJLyXu5I3Bol9+81fg4QTXxnP0ryWS6GzdJIL5RnQgdjfTRpmhHeMoZ7DuRxQ
-         4ZWWsjYjK7gwhN8DbY1OILjhVDNmuCGvb6gnaxy0V3V93AXK96FrNt8+srDsg4MVJf9V
-         B9sLVg8Cc6tF6Gof4WbYeEcbt1CLwl6l1Wd5JH+Xblgf55z1jLXFRt14r7uqmHAptm5d
-         wTvoNpOqWebTmosBwIhPu02r3xcIwxcH467stsKWSr79I4T9JLrT3RVn2JWTV91PFmdE
-         VaaQ==
-X-Gm-Message-State: AC+VfDxsiCayu0wnMKg67HqJbaMJ4azCgX9pMdIsTZSueJZJ9Nhjd4yb
-        mqLlCxdokVQnUbhbjihh19S59Z+NZDvTrEUvpxyWiw==
-X-Google-Smtp-Source: ACHHUZ7K6LCbuTKFb/M3lcXkFyzScJeyNRF66il+9nGFXdiJBelS2OvJZDFtaBBo28ny9gAF0eyG5g==
-X-Received: by 2002:a50:fc17:0:b0:504:9393:18b1 with SMTP id i23-20020a50fc17000000b00504939318b1mr9994561edr.9.1684776829132;
-        Mon, 22 May 2023 10:33:49 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id n2-20020a50c202000000b005067d6b06efsm3310998edf.17.2023.05.22.10.33.48
+        bh=v0vGfy2nsZav2HY5i+tp/Nl3rfKXvicFLnxzClJPsL0=;
+        b=VGvHETOrcdoEpcVFjoLC17o/8xh69VlpwLr0p4I3/aWiF3+Nlfk785vjz94j5a9pi3
+         7Kwa6YhTz43Xzk4xGsBJiRX9LYOa4MzXkaxgJQukBAoz0Ny9kcOwEOtIOLNpHRhQoh8O
+         3Qtm78AE0CSwGrUyXKRmpz6j5K6+XA7ztVzJiWVTx0cqky9sn0iLCoB09Fx426ntAeVU
+         oPS8Bvws7nSSIPiaWTORzP8TTzxvoRHVJWVF9Rye0atLFFdogSRUk9BaYwUf9OzHc4ET
+         l0P7j7FRC4y+xUsCOlLxo3PcqjMIN4VQ50bh44e1MKOL9ijBMFByrCAHT/X/NeF2shFP
+         ptfg==
+X-Gm-Message-State: AC+VfDzeXt2ZFHteAZqDmxSsfYHwM1LbOk2wjIdRtc8hPilVgu6+ATe5
+        KnYfcuh/P9wvof+U/aeo0ql5xfH50CA5ubs4/CCUww==
+X-Google-Smtp-Source: ACHHUZ518DkAfnZteFy+hCwwKmIgA8cboayD03sOigR8ugYma15HcA4PXhboF9ltso+Tf0fwhKUlDw==
+X-Received: by 2002:a17:907:6287:b0:966:a691:55f9 with SMTP id nd7-20020a170907628700b00966a69155f9mr8980470ejc.30.1684777351498;
+        Mon, 22 May 2023 10:42:31 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id e9-20020a170906844900b009661484e84esm3382611ejy.191.2023.05.22.10.42.29
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 May 2023 10:33:48 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-97000a039b2so184348666b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 10:33:48 -0700 (PDT)
-X-Received: by 2002:a17:907:2d23:b0:96a:928c:d382 with SMTP id
- gs35-20020a1709072d2300b0096a928cd382mr11676946ejc.48.1684776828268; Mon, 22
- May 2023 10:33:48 -0700 (PDT)
+        Mon, 22 May 2023 10:42:30 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-95fde138693so791997266b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 10:42:29 -0700 (PDT)
+X-Received: by 2002:a17:907:1688:b0:965:d7c7:24db with SMTP id
+ hc8-20020a170907168800b00965d7c724dbmr9757222ejc.32.1684777349281; Mon, 22
+ May 2023 10:42:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAH2r5msVBGuRbv2tEuZWLR6_pSNNaoeihx=CjvgZ7NxwCNqZvA@mail.gmail.com>
-In-Reply-To: <CAH2r5msVBGuRbv2tEuZWLR6_pSNNaoeihx=CjvgZ7NxwCNqZvA@mail.gmail.com>
+References: <20230519074047.1739879-1-dhowells@redhat.com> <20230519074047.1739879-24-dhowells@redhat.com>
+ <20230522102920.0528d821@rorschach.local.home> <2812412.1684767005@warthog.procyon.org.uk>
+In-Reply-To: <2812412.1684767005@warthog.procyon.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 22 May 2023 10:33:30 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjuNDG-nu6eAv1vwPuZp=6FtRpK_izmH7aBkc4Cic-uGQ@mail.gmail.com>
-Message-ID: <CAHk-=wjuNDG-nu6eAv1vwPuZp=6FtRpK_izmH7aBkc4Cic-uGQ@mail.gmail.com>
-Subject: Re: patches to move ksmbd and cifs under new subdirectory
-To:     Steve French <smfrench@gmail.com>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Mon, 22 May 2023 10:42:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgg4iDEuSN4K6S6ohAm4zd_V5h4tXGn6-2-cfOuJPFDZQ@mail.gmail.com>
+Message-ID: <CAHk-=wgg4iDEuSN4K6S6ohAm4zd_V5h4tXGn6-2-cfOuJPFDZQ@mail.gmail.com>
+Subject: Re: [PATCH v20 23/32] splice: Convert trace/seq to use direct_splice_read()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -79,30 +90,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 22, 2023 at 9:33=E2=80=AFAM Steve French <smfrench@gmail.com> w=
-rote:
+On Mon, May 22, 2023 at 7:50=E2=80=AFAM David Howells <dhowells@redhat.com>=
+ wrote:
 >
-> Following up on the email thread suggestion to move fs/ksmbd and
-> fs/cifs and fs/smbfs_common all under a common directory fs/smb, here
-> is an updated patchset for that (added one small patch).
+> We could implement seq_splice_read().  What we would need to do is to cha=
+nge
+> how the seq buffer is allocated: bulk allocate a bunch of arbitrary pages
+> which we then vmap().  When we need to splice, we read into the buffer, d=
+o a
+> vunmap() and then splice the pages holding the data we used into the pipe=
+.
 
-Looks fine to me.
+Please don't use vmap as a way to do zero-copy.
 
-I wouldn't have noticed the typo that Tom Talpey mentioned (misspelled
-"common" in the commit message of the first patch), and that
-SMB_CLIENT config variable is odd.
+The virtual mapping games are more expensive than a small copy from
+some random seq file.
 
-I'm actually surprised that Kconfig didn't complain about the
+Yes, yes, seq_file currently uses "kvmalloc()", which does fall back
+to vmalloc too. But the keyword there is "falls back". Most of the
+time it's just a regular boring kmalloc, and most of the time a
+seq-file is tiny.
 
-        select SMB_CLIENT
-
-when there is no actual declaration of that Kconfig variable, just a random=
- use.
-
-That thing seems confusing and confused, and isn't related to the
-renaming, so please drop the new random SMB_CLIENT config variable. If
-you want to introduce a new Kconfig variable later for some reason,
-that's fine, but please don't mix those kinds of changes up with pure
-renames..
-
-                Linus
+                      Linus
