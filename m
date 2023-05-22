@@ -2,75 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D7C70B72B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 09:57:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1675170B744
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 10:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229903AbjEVH5S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 03:57:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42542 "EHLO
+        id S231588AbjEVIEd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 04:04:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230166AbjEVH4q (ORCPT
+        with ESMTP id S230363AbjEVIEb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 03:56:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DE1B6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 00:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684742121;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=i+Y/VY/1bCM7OTbyEqv3AVM1otfl3olIIYs7Uq2R/A4=;
-        b=Flp0/U8ydaXqe6G3E9h3Emts9sIwoUaBYu2c/NVX/Laj+zzQ9tqoFBdcnxuVUUlZ7MNypn
-        zGX6skNrYXIFkR0XZR7ZyhBlhK+lyf6Mf17aq2njDPCt5UZ/pG8YCPlBt+lc/Yu35uDyz2
-        +V0O5vdvn1cwm1iQrRMRHfPxlunDTM0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-638-Fp-BK7lKNVK23BF0WPdKPQ-1; Mon, 22 May 2023 03:55:19 -0400
-X-MC-Unique: Fp-BK7lKNVK23BF0WPdKPQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 129AC1C02D2D;
-        Mon, 22 May 2023 07:55:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 18E20C54184;
-        Mon, 22 May 2023 07:55:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230520-sekunde-vorteil-f2d588e40b68@brauner>
-References: <20230520-sekunde-vorteil-f2d588e40b68@brauner> <20230520000049.2226926-1-dhowells@redhat.com> <20230520000049.2226926-4-dhowells@redhat.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>,
-        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org
-Subject: Re: [PATCH v21 03/30] splice: Rename direct_splice_read() to copy_splice_read()
+        Mon, 22 May 2023 04:04:31 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E85AF9B;
+        Mon, 22 May 2023 01:04:29 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5112cae8d82so4771765a12.2;
+        Mon, 22 May 2023 01:04:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684742668; x=1687334668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FVoPGktCVxZ7I7pWV/dKHM8hG/ValAUm7IgNP+5cCl4=;
+        b=Ayj/fJoXlly24dKezTqDQda1QVp3kPflNFTRBGCApXT/NioCd/3louFRldPosbteKZ
+         5CZ+p0DnY3Mpn90GYb24yx8uN8WjrU8DgMNS2d8nXY/T4XBYfayfc0l5SEjXi/YAAbET
+         TUBgwJNGIR1ZWeA4DUSYdEZwAk/etx7S3EwPZoPiMBBkkz7XC6UCcZy/pfbQbWyKzQDs
+         Z2zSPI9vZmIPJX1/AzwoWZFXXTNxv7PupxQQvB2CmTU5QZGwM3Hnk8xwkLUldgNGjnfY
+         F8oduJM0iKugUviWrcCVjQG4benTUgpgvVGdONha3oCAbuEsxRakCCBm8njghgliOQr2
+         7u9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684742668; x=1687334668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FVoPGktCVxZ7I7pWV/dKHM8hG/ValAUm7IgNP+5cCl4=;
+        b=UOU9c1GHFGhJZ0IyfKj0zEKxzo9rMTTFy1qXfhJsLWnPNIcQGUHgjT7srerAqPwMdu
+         AEj+qEB8SEDGm2Vh8U80k9cubmKLgEwp4LiYpJnDqUorBAA8oziBBBmX0eG1KYERmQsH
+         YtP2umjutuHNp0PkmMj11GZYLI69wqxseDaAh67FwkB4lZnxmSPSuXQieTW36z4l2KAB
+         mdrY3rmfemyHkMCN2luYEzeDlZgL06TDbLoPncDVYKctxEmX+wce1PwIVIqUkFxMfDzu
+         ynMn07MY5dC2DjLts39sB/DQOXQX/OMTgkPI9+9ypc8eutosPl2yfr9Z58kCoqqYLzB2
+         N2cw==
+X-Gm-Message-State: AC+VfDwk+NpoObSLVs1lys8pHSjTTnMz0hI9dwIC51D9MQ/dzniJstIZ
+        q0RpHwV0gY/KKkGbY0ljge3Qms5/6bStd6wsV6M=
+X-Google-Smtp-Source: ACHHUZ6P4eYcbViBSBokKd/QDJANfsxUT4RcwcSupXg4VvwJqh0qFjOIrWXJdZ2TuBOkguzAdcs0BF+1TDVQ1+50S2k=
+X-Received: by 2002:a05:6402:12cd:b0:510:ed22:db43 with SMTP id
+ k13-20020a05640212cd00b00510ed22db43mr8357858edx.24.1684742668169; Mon, 22
+ May 2023 01:04:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2468126.1684742114.1@warthog.procyon.org.uk>
+References: <CAH2r5msxkE5cPJ-nQCAibJ+x+hO7uSLpasGm81i6DknQ8M5zWg@mail.gmail.com>
+ <CAHk-=wiStOAKntvgzZ79aA=Xc0Zz7byoBxBW_As5cmn5cgkuoQ@mail.gmail.com>
+ <CAH2r5muxwEMA9JpE6ijSbZEByxRmtNSiwcXMbOz+Ojo8_APJUQ@mail.gmail.com>
+ <CAHk-=wjeuUNo6o6k4y3nQD2mmT5T04ack7i_UOAetmga-4_SbQ@mail.gmail.com> <CAH2r5muRG45L3bNsNV1LJ_komzbp-js11sn+EfQ6Ys6b=X683Q@mail.gmail.com>
+In-Reply-To: <CAH2r5muRG45L3bNsNV1LJ_komzbp-js11sn+EfQ6Ys6b=X683Q@mail.gmail.com>
+From:   ronnie sahlberg <ronniesahlberg@gmail.com>
+Date:   Mon, 22 May 2023 18:04:15 +1000
+Message-ID: <CAN05THRhO_SUs46=x5p6FZFNUAr-fsOWpzb9pM25eC9YcmXsAA@mail.gmail.com>
+Subject: Re: [GIT PULL] ksmbd server fixes
+To:     Steve French <smfrench@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 22 May 2023 08:55:14 +0100
-Message-ID: <2468127.1684742114@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,118 +76,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> For the future it'd be nice if exported functions would always get
-> proper kernel doc,
+Sounds like a good plan.
 
-Something like the attached?
-
-David
----
-commit 0362042ba0751fc5457b0548fb9006f9d7dfbeca
-Author: David Howells <dhowells@redhat.com>
-Date:   Mon May 22 08:34:24 2023 +0100
-
-    splice: kdoc for filemap_splice_read() and copy_splice_read()
-    =
-
-    Provide kerneldoc comments for filemap_splice_read() and
-    copy_splice_read().
-    =
-
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: Christian Brauner <brauner@kernel.org>
-    cc: Christoph Hellwig <hch@lst.de>
-    cc: Jens Axboe <axboe@kernel.dk>
-    cc: Steve French <smfrench@gmail.com>
-    cc: Al Viro <viro@zeniv.linux.org.uk>
-    cc: linux-mm@kvack.org
-    cc: linux-block@vger.kernel.org
-    cc: linux-cifs@vger.kernel.org
-    cc: linux-fsdevel@vger.kernel.org
-
-diff --git a/fs/splice.c b/fs/splice.c
-index 9be4cb3b9879..5292a8fa929d 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -299,8 +299,25 @@ void splice_shrink_spd(struct splice_pipe_desc *spd)
- 	kfree(spd->partial);
- }
- =
-
--/*
-- * Copy data from a file into pages and then splice those into the output=
- pipe.
-+/**
-+ * copy_splice_read -  Copy data from a file and splice the copy into a p=
-ipe
-+ * @in: The file to read from
-+ * @ppos: Pointer to the file position to read from
-+ * @pipe: The pipe to splice into
-+ * @len: The amount to splice
-+ * @flags: The SPLICE_F_* flags
-+ *
-+ * This function allocates a bunch of pages sufficient to hold the reques=
-ted
-+ * amount of data (but limited by the remaining pipe capacity), passes it=
- to
-+ * the file's ->read_iter() to read into and then splices the used pages =
-into
-+ * the pipe.
-+ *
-+ * On success, the number of bytes read will be returned and *@ppos will =
-be
-+ * updated if appropriate; 0 will be returned if there is no more data to=
- be
-+ * read; -EAGAIN will be returned if the pipe had no space, and some othe=
-r
-+ * negative error code will be returned on error.  A short read may occur=
- if
-+ * the pipe has insufficient space, we reach the end of the data or we hi=
-t a
-+ * hole.
-  */
- ssize_t copy_splice_read(struct file *in, loff_t *ppos,
- 			 struct pipe_inode_info *pipe,
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 603b562d69b1..1f235a6430fd 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2871,9 +2871,24 @@ size_t splice_folio_into_pipe(struct pipe_inode_inf=
-o *pipe,
- 	return spliced;
- }
- =
-
--/*
-- * Splice folios from the pagecache of a buffered (ie. non-O_DIRECT) file=
- into
-- * a pipe.
-+/**
-+ * filemap_splice_read -  Splice data from a file's pagecache into a pipe
-+ * @in: The file to read from
-+ * @ppos: Pointer to the file position to read from
-+ * @pipe: The pipe to splice into
-+ * @len: The amount to splice
-+ * @flags: The SPLICE_F_* flags
-+ *
-+ * This function gets folios from a file's pagecache and splices them int=
-o the
-+ * pipe.  Readahead will be called as necessary to fill more folios.  Thi=
-s may
-+ * be used for blockdevs also.
-+ *
-+ * On success, the number of bytes read will be returned and *@ppos will =
-be
-+ * updated if appropriate; 0 will be returned if there is no more data to=
- be
-+ * read; -EAGAIN will be returned if the pipe had no space, and some othe=
-r
-+ * negative error code will be returned on error.  A short read may occur=
- if
-+ * the pipe has insufficient space, we reach the end of the data or we hi=
-t a
-+ * hole.
-  */
- ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
- 			    struct pipe_inode_info *pipe,
-
+On Mon, 22 May 2023 at 14:39, Steve French via samba-technical
+<samba-technical@lists.samba.org> wrote:
+>
+> On Sun, May 21, 2023 at 2:21=E2=80=AFPM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Sun, May 21, 2023 at 12:03=E2=80=AFPM Steve French <smfrench@gmail.c=
+om> wrote:
+> > >
+> > > I would be happy to do the move (to fs/smb) of the directories and
+> > > update the config soon (seems reasonably low risk) - let me know if y=
+ou
+> > > want me to send it this week or wait till 6.5-rc
+> >
+> > So I think the "do it now or wait until the 6.5 merge window" is
+> > entirely up to you.
+> >
+> > We've often intentionally done big renames during the "quiet time"
+> > after the merge window is oven, just because doing them during the
+> > merge window can be somewhat painful with unnecessary conflicts.
+> >
+> > I would *not* want to do it during the last week of the release, just
+> > in case there are small details that need to be fixed up, but doing it
+> > now during the rc3/rc4 kind of timeframe is not only fairly quiet, but
+> > also gives us time to find any surprises.
+> >
+> > So in that sense, doing it now is likely one of the better times, and
+> > a pure rename should not be risky from a code standpoint.
+> >
+> > At the same time, doing it during the merge window isn't *wrong*
+> > either.  Despite the somewhat painful merge with folio changes, I
+> > don't think fs/cifs/ or fs/ksmbd/ normally have a lot of conflicts,
+> > and git does handle rename conflicts fairly well unless there's just
+> > lots of complexity.
+> >
+> > So it's really fine either way. The normal kind of "big changes"
+> > should obviously always be merge window things, but pure renames
+> > really are different and are often done outside of the merge window
+> > (the same way I intentionally did the MAINTAINERS re-ordering just
+> > *after* the merge window)
+> >
+> > But we don't do renames often enough to have any kind of strict rules
+> > about things like this.
+> >
+> > So I think "whenever is most convenient for you" is the thing to aim
+> > for here. This is *not* a "only during merge window" kind of thing.
+> >
+> >                  Linus
+>
+> Here are two patches:
+> 1)  Move CIFS/SMB3 related client and server files (cifs.ko and ksmbd.ko
+> and helper modules) to new fs/smb subdirectory (fs/smbfs was not used
+> to avoid confusion with the directory of the same name removed in 2.6.27
+> release and we also avoid using CONFIG_SMB_FS for the same reason)
+>
+>    fs/cifs --> fs/smb/client
+>    fs/ksmbd --> fs/smb/server
+>    fs/smbfs_common --> fs/smb/common
+>
+> 2) With the fs/cifs directory moved to fs/smb/client, correct mentions
+> of this in Documentation and comments.
+>
+> Follow on patch can change Documentation/filesystems/cifs -->
+> Documentation/filesystems/smb (since it contains both server
+> and client documentation)
+>
+>
+> --
+> Thanks,
+>
+> Steve
