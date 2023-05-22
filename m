@@ -2,53 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1C370BA56
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 12:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB45470BB31
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 13:09:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232688AbjEVKub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 06:50:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40512 "EHLO
+        id S233212AbjEVLJj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 07:09:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbjEVKu2 (ORCPT
+        with ESMTP id S231138AbjEVLJS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 06:50:28 -0400
+        Mon, 22 May 2023 07:09:18 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE845E0;
-        Mon, 22 May 2023 03:50:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12FE62119;
+        Mon, 22 May 2023 04:04:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7BA2E61311;
-        Mon, 22 May 2023 10:50:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 354FAC433A0;
-        Mon, 22 May 2023 10:50:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9CC766187D;
+        Mon, 22 May 2023 10:53:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40EACC43442;
+        Mon, 22 May 2023 10:53:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684752624;
-        bh=/Dsws80UZCyCNkx5kpZBoZZOFnVURNXMcH0eB0d7XsE=;
+        s=k20201202; t=1684752801;
+        bh=lxoFdlwyXreWklHMGhjnnVDqvf5QqMirVF69DEG4jMg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WRuof6P0jAKUcQThpVKCNGXUemVNP0AEKsD965OQqDRJulCvuhvN9GtSGHhVRUNKZ
-         CZQP6w7xJGg3mijEvkbZYZ2vFCBCEtz5Sc7lJUy39eJ6LVj/qHrhjCMaYJ7aNl0rq0
-         T/1fgeA8GjtKiYyBEYJQPi1ndJxFyQ6aiG/x6NxfI9zzwl/YGv+LVlqFmP7uEjaiu+
-         mrcSOFzWQ4fGDkS2rkTEQAJX3XV8YyoLw2/2AFE5ejchwXHFP7hpX0FcpW005vvDgz
-         EOMiWCspgyTUIlkr575urpZ2TkfrPdBfX+r2YbNv/ya3nYbyH6ArqyT+zdb+3fHKE7
-         4N1BERax3vQDQ==
-Date:   Mon, 22 May 2023 12:50:19 +0200
+        b=Ct274itzCgUdbCBjIi3u/ZuZmET312SHUcSUBK2Lkv3upiqkMWaP9Qq0zgj+4HbPE
+         fvQijfSZwweDPv0LNSALl1fiE6LtH9LiviXLFaVxf77cyoWoeww2S21gQEAXUCj1pZ
+         VtyTeHrbIDNp69dBMo1dR+0Ni43MBESSIkh/MqIyj1hmT6MGiQOS0nwtQs58ujg/5A
+         s0i1BLJvJx9Epkd0Bi76KBwOmg+bJ19wLhSSeInBoVPgAHkrzWsB7AW5OfWhKeciyi
+         I4UKgE8UBOtfjfmH6OCgbl9+JCvxaCZi+6x6BRI8QYqHd30puM0p91YwBa55dH0yHg
+         S8ZcqLivMgRwA==
+Date:   Mon, 22 May 2023 12:53:05 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: uuid ioctl - was: Re: [PATCH] overlayfs: Trigger file re-evaluation
- by IMA / EVM after writes
-Message-ID: <20230522-unsensibel-backblech-7be4e920ba87@brauner>
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
- <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
- <20230520-angenehm-orangen-80fdce6f9012@brauner>
- <ZGqgDjJqFSlpIkz/@dread.disaster.area>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dsterba@suse.cz, Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Neil Brown <neilb@suse.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Theodore T'so <tytso@mit.edu>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Tom Talpey <tom@talpey.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org
+Subject: Re: [PATCH v4 9/9] btrfs: convert to multigrain timestamps
+Message-ID: <20230522-bannen-urkunden-9759d84aece5@brauner>
+References: <20230518114742.128950-1-jlayton@kernel.org>
+ <20230518114742.128950-10-jlayton@kernel.org>
+ <20230522095601.GH32559@twin.jikos.cz>
+ <cde7bc1874e2d69860ecdb87d4e21c762f355aea.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZGqgDjJqFSlpIkz/@dread.disaster.area>
+In-Reply-To: <cde7bc1874e2d69860ecdb87d4e21c762f355aea.camel@kernel.org>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -59,182 +77,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 22, 2023 at 08:49:50AM +1000, Dave Chinner wrote:
-> On Sat, May 20, 2023 at 11:17:35AM +0200, Christian Brauner wrote:
-> > On Fri, May 19, 2023 at 03:42:38PM -0400, Mimi Zohar wrote:
-> > > On Fri, 2023-04-07 at 10:31 +0200, Christian Brauner wrote:
-> > > > So, I think we want both; we want the ovl_copyattr() and the
-> > > > vfs_getattr_nosec() change:
-> > > > 
-> > > > (1) overlayfs should copy up the inode version in ovl_copyattr(). That
-> > > >     is in line what we do with all other inode attributes. IOW, the
-> > > >     overlayfs inode's i_version counter should aim to mirror the
-> > > >     relevant layer's i_version counter. I wouldn't know why that
-> > > >     shouldn't be the case. Asking the other way around there doesn't
-> > > >     seem to be any use for overlayfs inodes to have an i_version that
-> > > >     isn't just mirroring the relevant layer's i_version.
-> > > > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
-> > > >     Currently, ima assumes that it will get the correct i_version from
-> > > >     an inode but that just doesn't hold for stacking filesystem.
-> > > > 
-> > > > While (1) would likely just fix the immediate bug (2) is correct and
-> > > > _robust_. If we change how attributes are handled vfs_*() helpers will
-> > > > get updated and ima with it. Poking at raw inodes without using
-> > > > appropriate helpers is much more likely to get ima into trouble.
-> > > 
-> > > In addition to properly setting the i_version for IMA, EVM has a
-> > > similar issue with i_generation and s_uuid. Adding them to
-> > > ovl_copyattr() seems to resolve it.   Does that make sense?
-> > > 
-> > > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> > > index 923d66d131c1..cd0aeb828868 100644
-> > > --- a/fs/overlayfs/util.c
-> > > +++ b/fs/overlayfs/util.c
-> > > @@ -1118,5 +1118,8 @@ void ovl_copyattr(struct inode *inode)
-> > >  	inode->i_atime = realinode->i_atime;
-> > >  	inode->i_mtime = realinode->i_mtime;
-> > >  	inode->i_ctime = realinode->i_ctime;
-> > > +	inode->i_generation = realinode->i_generation;
-> > > +	if (inode->i_sb)
-> > > +		uuid_copy(&inode->i_sb->s_uuid, &realinode->i_sb-
+On Mon, May 22, 2023 at 06:08:56AM -0400, Jeff Layton wrote:
+> On Mon, 2023-05-22 at 11:56 +0200, David Sterba wrote:
+> > On Thu, May 18, 2023 at 07:47:42AM -0400, Jeff Layton wrote:
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > > 
-> > Overlayfs can consist of multiple lower layers and each of those lower
-> > layers may have a different uuid. So everytime you trigger a
-> > ovl_copyattr() on a different layer this patch would alter the uuid of
-> > the overlayfs superblock.
+> > Acked-by: David Sterba <dsterba@suse.com>
 > > 
-> > In addition the uuid should be set when the filesystem is mounted.
-> > Unless the filesystem implements a dedicated ioctl() - like ext4 - to
-> > change the uuid.
+> > Please add a brief description to the changelog too, there's a similar
+> > text in the patches adding the infrastructure. Something like "Allow to
+> > optimize lot of metadata updates by encoding the status in the cmtime.
+> > The fine grained time is needed for NFS."
 > 
-> IMO, that ext4 functionality is a landmine waiting to be stepped on.
+> Sure thing.
 > 
-> We should not be changing the sb->s_uuid of filesysetms dynamically.
+> Christian, do you want to just alter the changelog with David's
+> suggestion, or would you rather I resend the series?
 
-Yeah, I kinda agree. If it works for ext4 and it's an ext4 specific
-ioctl then this is fine though.
-
-Thanks for bringing this up. I had some thoughts on this (mostly at the
-end of this mail) but haven't had the time to express them.
-
-> The VFS does not guarantee in any way that it is safe to change the
-> sb->s_uuid (i.e. no locking, no change notifications, no udev
-> events, etc). Various subsystems - both in the kernel and in
-> userspace - use the sb->s_uuid as a canonical and/or persistent
-> filesystem/device identifier and are unprepared to have it change
-> while the filesystem is mounted and active.
-
-Yes, it is not a VFS concept for sure.
-
-> 
-> I commented on this from an XFS perspective here when it was
-> proposed to copy this ext4 mis-feature in XFS:
-> 
-> https://lore.kernel.org/linux-xfs/20230314062847.GQ360264@dread.disaster.area/
-
-So I read the thread back then and I agree with you specifically about:
-
-* changing uuid dynamically isn't a well-defined concept
-* hoisting the ext4 specific ioctl that allows changing the uuid
-  dynamically into a generic vfs ioctl is premature and gives the
-  impression that this is a well-defined concept when it isn't.
-* the chosen data structure with a flexible array member would probably
-  work but is suboptimal
-
-> 
-> Further to this, I also suspect that changing uuids online will
-> cause issues with userspace caching of fs uuids (e.g. libblkid and
-> anything that uses it) and information that uses uuids to identify
-> the filesystem that are set up at mount time (/dev/disk/by-uuid/
-> links, etc) by kernel events sent to userspace helpers...
-
-Yeah, that's a valid concern as it's common practice to put uuids into
-/etc/fstab so if they were allowed to change while the filesystem is
-mounted/superblock is active the minimum thing needed is for userspace
-get a uevent so the /dev/disk/by-uuid/$uuid symlink can be updated by
-udev. But I digress.
-
-> 
-> IMO, we shouldn't even be considering dynamic sb->s_uuid changes
-> without first working through the full system impacts of having
-> persistent userspace-visible filesystem identifiers change
-> dynamically...
-
-Yes.
-
----
-
-The thing that I think we could do is have all filesystems that can
-reasonably support it set a uuid. We currently don't do that. If we
-would start doing that then all filesystems that currently don't
-implement a separate f_fsid based on e.g., the disk's device number can
-just generate the f_fsid based on the uuid. This will make all these
-filesystems available to be used with fanotify - which requires f_fsid
-to be set for its most useful features.
-
-This is often the most useful for filesystems such as tmpfs which gained
-support for uuids quite recently. For such pseudo filesystems the
-lifetime of the uuid would be the lifetime of the superblock in contrast
-to filesystems like xfs that persist the uuid to disk. IOW, if you
-mount -t tmpfs tmpfs /mnt; umount /mnt; mount -t tmpfs tmpfs /mnt then
-you get a new uuid but the uuid stays fixed for the lifetime of the
-superblock and can't be changed.
-
-So the patchset that you objected had one part that made sense to me
-which was to hoist the ioctl that _gets_ the uuid from a filesystems
-into a generic ioctl. But I agree that the structure wasn't chosen
-nicely. I would prefer if this was a fixed size but extensible structure
-which is a concept we've had for a long time. So say we were to chose
-the following structure layout for the generic ioctl:
-
-struct fsuuid {
-        __u32       fsu_len;
-        __u32       fsu_flags;
-        __u8        fsu_uuid[16]; // 8 * 16 = 128 = 64 * 2
-};
-
-then this would be compatible with ext4. It would also be extensible if
-we wanted to add additional fields in the future or switch to a new uuid
-format or whatever.
-
-A while back we did work for extensible struct in system calls but these
-extensible structs also work with ioctls.
-
-For example, see what we did for kernel/seccomp.c:
-
-        /* Extensible Argument ioctls */
-        #define EA_IOCTL(cmd)   ((cmd) & ~(IOC_INOUT | IOCSIZE_MASK))
-
-        switch (EA_IOCTL(cmd)) {
-        case EA_IOCTL(SECCOMP_IOCTL_NOTIF_ADDFD):
-                return seccomp_notify_addfd(filter, buf, _IOC_SIZE(cmd));
-        default:
-                return -EINVAL;
-        }
-
-and then
-
-        static long seccomp_notify_addfd(struct seccomp_filter *filter,
-                                         struct seccomp_notif_addfd __user *uaddfd,
-                                         unsigned int size)
-        {
-                [...]
-        
-                BUILD_BUG_ON(sizeof(addfd) < SECCOMP_NOTIFY_ADDFD_SIZE_VER0);
-                BUILD_BUG_ON(sizeof(addfd) != SECCOMP_NOTIFY_ADDFD_SIZE_LATEST);
-        
-                if (size < SECCOMP_NOTIFY_ADDFD_SIZE_VER0 || size >= PAGE_SIZE)
-                        return -EINVAL;
-        
-                ret = copy_struct_from_user(&addfd, sizeof(addfd), uaddfd, size);
-                if (ret)
-                        return ret;
-        
-                [...]
-        }
-
-So the struct is versioned by size the same as for system calls. The
-difference for the ioctl is that the size is already encoded in the
-ioctl when it is defined. So even with a fixed size struct it is
-trivially possible to extend the struct later as long as the extension
-is 64bit aligned.
+Nah, don't bother resending I'll just add it to the fs specific patches.
+I'll end up updating the patch trailers anyway when individual
+maintainers add new Acks.
