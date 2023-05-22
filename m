@@ -2,80 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 083B270CD86
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 00:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6667970CDF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 00:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230101AbjEVWKI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 18:10:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60224 "EHLO
+        id S234090AbjEVWaf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 18:30:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232143AbjEVWKG (ORCPT
+        with ESMTP id S229477AbjEVWae (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 18:10:06 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88D72AF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 15:10:04 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1ae3fe67980so63580405ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 15:10:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1684793404; x=1687385404;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zhk/FFw49fszGKvEVhYvbvMP+dTpGvDn5zl+3/9L1Dc=;
-        b=fblWw9UzbFxiy0IdFHcyiEwVDIdKvIAKrQRPskBGENxPURLIOwwaK7n1zvySgU7WzL
-         VU8Vfr1s05BDJeWnx6GvlwtigLtu+eqhdhxMauzwVoEmiW/RcmEFcKMqrypOtXnRwUeV
-         Vx8ZBImfDyJb1VIqxhV1vDoDsK4UvJ1KJ+MUQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684793404; x=1687385404;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zhk/FFw49fszGKvEVhYvbvMP+dTpGvDn5zl+3/9L1Dc=;
-        b=F6gqDxJHm6JmXG8ud2jeJ23gmq+w/+qZTo+KaXKTgt8DKCV8SkNg/muuBjNigE3RhP
-         elmtIypmG0JBq9A4ovDuy1Jtx7IUdqEGdNlONpeCJXGLFXymn2Do2omimSVzv65wkoLd
-         3qY5LZKVRBY0qtqYJjR+qSNPQz6oJkmFbZRFrmBu0KZ4+q4AsJvukGgOIVYGfCHg/hCL
-         C21lchb6z6Of/2UwQZMj8ec2nZP4Tc7xAo8C3VaIQ5q+UGtiqhbfiHe/sK3iIWCKlEL2
-         hDd9Oh/CBI62FgKp7k7LuagTv3Y6g6WDpSTqP/PTu8wYgxE8co70eE+DroQaon4sDtju
-         MsJg==
-X-Gm-Message-State: AC+VfDw3WXFMfyOfgxgB3lfaWeYLdqgeC9ufh9T7rQS2u4hJ9Gf0wdcJ
-        13kK4L7VqR2Zp6xhIow95FSPbQ==
-X-Google-Smtp-Source: ACHHUZ5WRtvEBtYahpKG6aPeTI5eHL+V7B6L6O9jAUq/08MWwaaWRvizWzszQGPZBbFKrv/0tLK8Kg==
-X-Received: by 2002:a17:902:ea0f:b0:1ad:c736:2090 with SMTP id s15-20020a170902ea0f00b001adc7362090mr14394226plg.3.1684793403998;
-        Mon, 22 May 2023 15:10:03 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:7ecd:bb34:d662:f45a])
-        by smtp.gmail.com with UTF8SMTPSA id v4-20020a170902b7c400b001ab2b4105ddsm5308998plz.60.2023.05.22.15.10.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 May 2023 15:10:03 -0700 (PDT)
-From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
-To:     dm-devel@redhat.com, linux-block@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Bart Van Assche <bvanassche@google.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Sarthak Kukreti <sarthakkukreti@chromium.org>
-Subject: [PATCH v7 5/5] loop: Add support for provision requests
-Date:   Mon, 22 May 2023 15:09:55 -0700
-Message-ID: <20230522221000.603769-1-sarthakkukreti@chromium.org>
-X-Mailer: git-send-email 2.40.1.698.g37aff9b760-goog
-In-Reply-To: <20230522163710.GA11607@frogsfrogsfrogs>
-References: <20230522163710.GA11607@frogsfrogsfrogs>
+        Mon, 22 May 2023 18:30:34 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DD7109;
+        Mon, 22 May 2023 15:30:30 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 3F1A91FEE9;
+        Mon, 22 May 2023 22:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1684794629;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IeRR5m7pzmYl0Ar1i40Qz7t46CN66yxFsAZx3v44EHU=;
+        b=Jap4uBpt/3Lv0r4uwtIXQs5YMDLXLHNqVr8awKTjJfu7Jm4SXSbejyUPeoGE0HErl7gTTB
+        8zouQEyamI58E3NEpwP50QCFUAucK3g67chaMgaSAgIgE/hSnW1sO5T8u0GFEgBjOWM1WU
+        GR3/fYV3CM5uiFvauunL7Xboso65hcQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1684794629;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IeRR5m7pzmYl0Ar1i40Qz7t46CN66yxFsAZx3v44EHU=;
+        b=U7jiNNzH8JgsrPETLfiG5MvKnieVlLXd8gjx4wwkJBaEMXzTT35rdx7/8duEbUmElG6hTl
+        VkiJBrxnQml0aDDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F2BB713776;
+        Mon, 22 May 2023 22:30:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id M6coOgTta2RQfQAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Mon, 22 May 2023 22:30:28 +0000
+Date:   Tue, 23 May 2023 00:24:22 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     syzbot <syzbot+5e466383663438b99b44@syzkaller.appspotmail.com>
+Cc:     chris@chrisdown.name, clm@fb.com, dsterba@suse.com,
+        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, xiaoshoukui@gmail.com
+Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_exclop_balance (2)
+Message-ID: <20230522222422.GV32559@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <000000000000725cab05f55f1bb0@google.com>
+ <000000000000e7582c05fafc8901@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000e7582c05fafc8901@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,183 +75,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 22, 2023 at 9:37 AM Darrick J. Wong <djwong@kernel.org> wrote:
->
-> If someone calls fallocate(UNSHARE_RANGE) on a loop bdev, shouldn't
-> there be a way to pass that through to the fallocate call to the backing
-> file?
->
-> --D
->
+On Fri, May 05, 2023 at 06:43:55PM -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    7163a2111f6c Merge tag 'acpi-6.4-rc1-3' of git://git.kerne..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=175bb84c280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=73a06f6ef2d5b492
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5e466383663438b99b44
+> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12048338280000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ff7314280000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/01051811f2fe/disk-7163a211.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a26c68e4c8a6/vmlinux-7163a211.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/17380fb8dad4/bzImage-7163a211.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/b30a249e8609/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5e466383663438b99b44@syzkaller.appspotmail.com
+> 
+> assertion failed: fs_info->exclusive_operation == BTRFS_EXCLOP_BALANCE_PAUSED, in fs/btrfs/ioctl.c:463
 
-Yeah, I think we could add a REQ_UNSHARE bit (similar to REQ_NOUNMAP) to pass down the intent to the backing file (and possibly beyond...).
+Looks like syzbot was able to hit another problem, the above assertion
+is from a recent fix ac868bc9d136 ("btrfs: fix assertion of exclop
+condition when starting balance").
 
-I took a stab at implementing it as a follow up patch so that there's less review churn on the current series. If it looks good, I can add it to the end of the series (or incorporate this into the existing block and loop patches):
+> ------------[ cut here ]------------
+> kernel BUG at fs/btrfs/messages.c:259!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 8630 Comm: syz-executor102 Not tainted 6.3.0-syzkaller-13225-g7163a2111f6c #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
+> RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
+> Code: df e8 2c 05 36 f7 e9 50 fb ff ff e8 b2 90 01 00 66 90 66 0f 1f 00 89 d1 48 89 f2 48 89 fe 48 c7 c7 80 32 2c 8b e8 c8 60 ff ff <0f> 0b 66 0f 1f 44 00 00 66 0f 1f 00 53 48 89 fb e8 73 31 de f6 48
+> RSP: 0018:ffffc9000ae27e48 EFLAGS: 00010246
+> RAX: 0000000000000066 RBX: 1ffff1100fa13c18 RCX: e812ce05a9b3c300
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+> RBP: 0000000000000002 R08: ffffffff816f0fec R09: fffff520015c4f7d
+> R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88807d09e0c0
+> R13: ffff88807d09c000 R14: ffff88807d09c678 R15: dffffc0000000000
+> FS:  00007f2bb10a8700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f2bb0c90000 CR3: 0000000028447000 CR4: 00000000003506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  btrfs_exclop_balance+0x153/0x1f0 fs/btrfs/ioctl.c:463
+>  btrfs_ioctl_balance+0x482/0x7c0 fs/btrfs/ioctl.c:3562
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:870 [inline]
+>  __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:856
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> RIP: 0033:0x7f2bb853ec69
+> RSP: 002b:00007f2bb10a82f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f2bb85c87c0 RCX: 00007f2bb853ec69
 
-From: Sarthak Kukreti <sarthakkukreti@chromium.org>
-Date: Mon, 22 May 2023 14:18:15 -0700
-Subject: [PATCH] block: Pass unshare intent via REQ_OP_PROVISION
+If this could be relevant as some error code, RAX 0xda is -38 which is
+ENOSYS, so there might be some combination of balance parameters that is
+unexpected.
 
-Allow REQ_OP_PROVISION to pass in an extra REQ_UNSHARE bit to
-annotate unshare requests to underlying layers. Layers that support
-FALLOC_FL_UNSHARE will be able to use this as an indicator of which
-fallocate() mode to use.
-
-Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
----
- block/blk-lib.c           |  6 +++++-
- block/fops.c              |  6 +++++-
- drivers/block/loop.c      | 35 +++++++++++++++++++++++++++++------
- include/linux/blk_types.h |  3 +++
- include/linux/blkdev.h    |  3 ++-
- 5 files changed, 44 insertions(+), 9 deletions(-)
-
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index 3cff5fb654f5..bea6f5a700b3 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -350,6 +350,7 @@ EXPORT_SYMBOL(blkdev_issue_secure_erase);
-  * @sector:	start sector
-  * @nr_sects:	number of sectors to provision
-  * @gfp_mask:	memory allocation flags (for bio_alloc)
-+ * @flags:	controls detailed behavior
-  *
-  * Description:
-  *  Issues a provision request to the block device for the range of sectors.
-@@ -357,7 +358,7 @@ EXPORT_SYMBOL(blkdev_issue_secure_erase);
-  *  underlying storage pool to allocate space for this block range.
-  */
- int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
--		sector_t nr_sects, gfp_t gfp)
-+		sector_t nr_sects, gfp_t gfp, unsigned flags)
- {
- 	sector_t bs_mask = (bdev_logical_block_size(bdev) >> 9) - 1;
- 	unsigned int max_sectors = bdev_max_provision_sectors(bdev);
-@@ -380,6 +381,9 @@ int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
- 		bio->bi_iter.bi_sector = sector;
- 		bio->bi_iter.bi_size = req_sects << SECTOR_SHIFT;
- 
-+		if (flags & BLKDEV_UNSHARE_RANGE)
-+			bio->bi_opf |= REQ_UNSHARE;
-+
- 		sector += req_sects;
- 		nr_sects -= req_sects;
- 		if (!nr_sects) {
-diff --git a/block/fops.c b/block/fops.c
-index be2e41f160bf..6848756f0557 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -659,7 +659,11 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 	case FALLOC_FL_KEEP_SIZE:
- 	case FALLOC_FL_UNSHARE_RANGE | FALLOC_FL_KEEP_SIZE:
- 		error = blkdev_issue_provision(bdev, start >> SECTOR_SHIFT,
--					       len >> SECTOR_SHIFT, GFP_KERNEL);
-+					       len >> SECTOR_SHIFT, GFP_KERNEL,
-+					       (mode &
-+						FALLOC_FL_UNSHARE_RANGE) ?
-+						       BLKDEV_UNSHARE_RANGE :
-+						       0);
- 		break;
- 	case FALLOC_FL_ZERO_RANGE:
- 	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 7fe1a6629754..c844b145d666 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -306,6 +306,30 @@ static int lo_read_simple(struct loop_device *lo, struct request *rq,
- 	return 0;
- }
- 
-+static bool validate_fallocate_mode(struct loop_device *lo, int mode)
-+{
-+	bool ret = true;
-+
-+	switch (mode) {
-+	case FALLOC_FL_PUNCH_HOLE:
-+	case FALLOC_FL_ZERO_RANGE:
-+		if (!bdev_max_discard_sectors(lo->lo_device))
-+			ret = false;
-+		break;
-+	case 0:
-+	case FALLOC_FL_UNSHARE_RANGE:
-+		if (!bdev_max_provision_sectors(lo->lo_device))
-+			ret = false;
-+		break;
-+
-+	default:
-+		ret = false;
-+	}
-+
-+	return ret;
-+}
-+
-+
- static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
- 			int mode)
- {
-@@ -316,11 +340,7 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
- 	struct file *file = lo->lo_backing_file;
- 	int ret;
- 
--	if (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE) &&
--	    !bdev_max_discard_sectors(lo->lo_device))
--		return -EOPNOTSUPP;
--
--	if (mode == 0 && !bdev_max_provision_sectors(lo->lo_device))
-+	if (!validate_fallocate_mode(lo, mode))
- 		return -EOPNOTSUPP;
- 
- 	mode |= FALLOC_FL_KEEP_SIZE;
-@@ -493,7 +513,10 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- 	case REQ_OP_DISCARD:
- 		return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
- 	case REQ_OP_PROVISION:
--		return lo_fallocate(lo, rq, pos, 0);
-+		return lo_fallocate(lo, rq, pos,
-+				    (rq->cmd_flags & REQ_UNSHARE) ?
-+					    FALLOC_FL_UNSHARE_RANGE :
-+					    0);
- 	case REQ_OP_WRITE:
- 		if (cmd->use_aio)
- 			return lo_rw_aio(lo, cmd, pos, ITER_SOURCE);
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index b7bb0226fdee..1a536fd897cb 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -423,6 +423,8 @@ enum req_flag_bits {
- 	 */
- 	/* for REQ_OP_WRITE_ZEROES: */
- 	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
-+	/* for REQ_OP_PROVISION: */
-+	__REQ_UNSHARE,		/* unshare blocks */
- 
- 	__REQ_NR_BITS,		/* stops here */
- };
-@@ -451,6 +453,7 @@ enum req_flag_bits {
- #define REQ_FS_PRIVATE	(__force blk_opf_t)(1ULL << __REQ_FS_PRIVATE)
- 
- #define REQ_NOUNMAP	(__force blk_opf_t)(1ULL << __REQ_NOUNMAP)
-+#define REQ_UNSHARE	(__force blk_opf_t)(1ULL << __REQ_UNSHARE)
- 
- #define REQ_FAILFAST_MASK \
- 	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 462ce586d46f..60c09b0d3fc9 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1049,10 +1049,11 @@ int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
- 		sector_t nr_sects, gfp_t gfp);
- 
- extern int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
--		sector_t nr_sects, gfp_t gfp_mask);
-+		sector_t nr_sects, gfp_t gfp_mask, unsigned int flags);
- 
- #define BLKDEV_ZERO_NOUNMAP	(1 << 0)  /* do not free blocks */
- #define BLKDEV_ZERO_NOFALLBACK	(1 << 1)  /* don't write explicit zeroes */
-+#define BLKDEV_UNSHARE_RANGE	(1 << 2)  /* unshare range on provision */
- 
- extern int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
- 		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop,
--- 
-2.39.2
-
+> RDX: 0000000020000540 RSI: 00000000c4009420 RDI: 0000000000000004
+> RBP: 00007f2bb85951d0 R08: 00007f2bb10a8700 R09: 0000000000000000
+> R10: 00007f2bb10a8700 R11: 0000000000000246 R12: 7fffffffffffffff
+> R13: 0000000100000001 R14: 8000000000000001 R15: 00007f2bb85c87c8
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
+> RSP: 0018:ffffc9000ae27e48 EFLAGS: 00010246
+> RAX: 0000000000000066 RBX: 1ffff1100fa13c18 RCX: e812ce05a9b3c300
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+> RBP: 0000000000000002 R08: ffffffff816f0fec R09: fffff520015c4f7d
+> R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88807d09e0c0
+> R13: ffff88807d09c000 R14: ffff88807d09c678 R15: dffffc0000000000
+> FS:  00007f2bb10a8700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f2bb0c90000 CR3: 0000000028447000 CR4: 00000000003506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
