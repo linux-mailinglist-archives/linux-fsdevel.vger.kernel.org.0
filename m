@@ -2,205 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C323A70C0A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 16:02:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0494D70C0DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 16:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234473AbjEVOCs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 10:02:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40654 "EHLO
+        id S233655AbjEVOT4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 10:19:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234287AbjEVOCc (ORCPT
+        with ESMTP id S233689AbjEVOTz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 10:02:32 -0400
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90CC3E53;
-        Mon, 22 May 2023 07:00:21 -0700 (PDT)
-Received: by mail-vs1-xe35.google.com with SMTP id ada2fe7eead31-43931d2b92eso942572137.2;
-        Mon, 22 May 2023 07:00:21 -0700 (PDT)
+        Mon, 22 May 2023 10:19:55 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A9DF1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 07:19:51 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-96fe2a1db26so224468766b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 07:19:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684764020; x=1687356020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PEIsFZ8irdYi/r84zw/P7G0vXgtk/uWzE9ABb35GWWY=;
-        b=pqM2tRNgow4mYTRczgh4sEK3eiXY0fD5ph8vUaSqn4GN4KZfaeurTtpkSIyubVxH1I
-         YVL7LATdQBxUD9AfoUv0YaSQ1cWNNTWV6+ybH4yK3z7IzJDV5GpucCqsuCI5muRJyev6
-         fsnf+WvCZctHlVJ4QRJOrUq4Dng7j+GqtlpVgxDCnL4yJ309QPdGk2n959jNhkCeNn+Q
-         eMeKhSaxAFBFlCEeroPFzQ+46I5YIIBOtAlU7KjuccMcQ65HAfd2J1+0nBtD+HHUR5T4
-         GVBsgHDapxb1Jt7w2PsMVrhkRbKR/OmkyjjyoiASOgdAyXVhc76NY6P9Mqhi7b/e6RBb
-         C0Fg==
+        d=szeredi.hu; s=google; t=1684765190; x=1687357190;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VSL7mwwp7mP3i/A2Ha5ZWYNP2l8nV9xWCZ9dDdVJyrE=;
+        b=bW3JxzSWL903VRTFCHvbgK/kSmmhNGzjPmv2oTgKuUeY/4UGuj+rpVpSRqU0fLX71Z
+         9x0WYxajpqEHWpasb3FMt2QPMwFvEXG1qzy09fFvoatRiySxfHmtlreAhXwdf72AH0EA
+         uaD7yDQ7ocfBWwGajHKOT7vpFDgho5apenxJE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684764020; x=1687356020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PEIsFZ8irdYi/r84zw/P7G0vXgtk/uWzE9ABb35GWWY=;
-        b=BLWk/01NKQ6698tXrjHU7bB0CNnWJBXum4uli74XepYuFsK/m97cec3LaykkthJv71
-         NR3wKfho90jKssfydEqB2JwUhoBLRbk74hEXUtjEyN5nQ3+nQ7yu8iad/YBwdxhO4o4g
-         O/dIbXZwAFmvlEw8et0hzxV2TbsBZ84qytkLQUmudA1ZImFk54DjhYULmWaxwK3mj/Uj
-         8CG58//t9rh9/J1dE+J1unddSdnv7s+/wvr3RX1J9d6LR2Ypu9vHb+Wv/k5lwKddYP8M
-         cGUqd1QzRqrs9hfCLx9T9FxtqELfz4jXw/hqE4KCxuM5bug1FOD3Jyb53QHTHWj36tYV
-         Hy7A==
-X-Gm-Message-State: AC+VfDxPKoihGqjY/gDJhPN8OqC7i12URnnQBywZIhBSiPK46nfVvs0Z
-        rIeUI8+KBqJAOILXnefLKgCPMQzUfXoi1FPvlpM=
-X-Google-Smtp-Source: ACHHUZ7B4hMBeYBsVxL5wraCCIO1z1bJH8HaKsoApI4gs/rTg6c29bjtZp2N+rvlwHwjVxa8kjKbNrG9QV/AgCw/yEg=
-X-Received: by 2002:a67:ff86:0:b0:434:6d1b:8b15 with SMTP id
- v6-20020a67ff86000000b004346d1b8b15mr2608457vsq.25.1684764020472; Mon, 22 May
- 2023 07:00:20 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684765190; x=1687357190;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VSL7mwwp7mP3i/A2Ha5ZWYNP2l8nV9xWCZ9dDdVJyrE=;
+        b=E8JnkGmRTgoA81xU/5kE+WU2XBZh7oSMs7tbs107BOFnHF3PenpKSuaOXsF4aU4UI5
+         rg3ECxCZKdfBeihYaPBrhCRSw+S9WH9kHOeiOlTdeQCmzlAWNzSXzl56/IciFBFRHOrY
+         tkSBOt8Mk+zEUaL6gjkr3x847ypfYtdGvoJ+SYVkjFlDyQmjuggAw2xZ1/fLPyIqDVML
+         B1tr2VgGGgL6xRLXG//ui6AODfhZ4Ce44AwQFcbmtLexalmqJf5zhxgQPZzEwa2q9Gng
+         SPLOWnzhSb/DhzwOPNFd46eUIog6/D9uxRFwyUHxPKwyqo92Ic3VqI/YKAmRzl+fArsL
+         gw/Q==
+X-Gm-Message-State: AC+VfDxJYiyEVMPsDwaGhrHjvB16GxmFdiEnj4V8T38L2ZYxFd9KjwMt
+        E5Q1Y0nC23pU+xKT/vJJaCR1GeDna4kbX5u1Ldla/w==
+X-Google-Smtp-Source: ACHHUZ5pTZpoagrq7BPdRNACytZjcbnwwAzdd4/4F4mMBgFIR5olByJvr8DzGqhjgDPmmSOeMIBmAwCLlQut/WuHsuo=
+X-Received: by 2002:a17:907:25c2:b0:969:edf8:f73b with SMTP id
+ ae2-20020a17090725c200b00969edf8f73bmr9314077ejc.60.1684765189889; Mon, 22
+ May 2023 07:19:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
- <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
- <CAOQ4uxi7PFPPUuW9CZAZB9tvU2GWVpmpdBt=EUYyw60K=WX-Yg@mail.gmail.com> <9aced306f134628221c55530643535b89874ccc0.camel@linux.ibm.com>
-In-Reply-To: <9aced306f134628221c55530643535b89874ccc0.camel@linux.ibm.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 22 May 2023 17:00:09 +0300
-Message-ID: <CAOQ4uxjjLLGQM5BUgDrFdghYsFgShNA6tDpvC8vNg_jOh9WGAQ@mail.gmail.com>
-Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after writes
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        Ignaz Forster <iforster@suse.de>, Petr Vorel <pvorel@suse.cz>
+References: <20230519093521.133226-1-hch@lst.de> <20230519093521.133226-11-hch@lst.de>
+In-Reply-To: <20230519093521.133226-11-hch@lst.de>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 22 May 2023 16:19:38 +0200
+Message-ID: <CAJfpegtHb4pA=1NBRzQJSub7B0HZqnvqsMNQmYYM-8L7PTQfvw@mail.gmail.com>
+Subject: Re: [PATCH 10/13] fs: factor out a direct_write_fallback helper
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <chao@kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+        cluster-devel@redhat.com, linux-xfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 22, 2023 at 3:18=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
+On Fri, 19 May 2023 at 11:36, Christoph Hellwig <hch@lst.de> wrote:
 >
-> On Sat, 2023-05-20 at 12:15 +0300, Amir Goldstein wrote:
-> > On Fri, May 19, 2023 at 10:42=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.co=
-m> wrote:
-> > >
-> > > On Fri, 2023-04-07 at 10:31 +0200, Christian Brauner wrote:
-> > > > So, I think we want both; we want the ovl_copyattr() and the
-> > > > vfs_getattr_nosec() change:
-> > > >
-> > > > (1) overlayfs should copy up the inode version in ovl_copyattr(). T=
-hat
-> > > >     is in line what we do with all other inode attributes. IOW, the
-> > > >     overlayfs inode's i_version counter should aim to mirror the
-> > > >     relevant layer's i_version counter. I wouldn't know why that
-> > > >     shouldn't be the case. Asking the other way around there doesn'=
-t
-> > > >     seem to be any use for overlayfs inodes to have an i_version th=
-at
-> > > >     isn't just mirroring the relevant layer's i_version.
-> > > > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
-> > > >     Currently, ima assumes that it will get the correct i_version f=
-rom
-> > > >     an inode but that just doesn't hold for stacking filesystem.
-> > > >
-> > > > While (1) would likely just fix the immediate bug (2) is correct an=
-d
-> > > > _robust_. If we change how attributes are handled vfs_*() helpers w=
-ill
-> > > > get updated and ima with it. Poking at raw inodes without using
-> > > > appropriate helpers is much more likely to get ima into trouble.
-> > >
-> > > In addition to properly setting the i_version for IMA, EVM has a
-> > > similar issue with i_generation and s_uuid. Adding them to
-> > > ovl_copyattr() seems to resolve it.   Does that make sense?
-> > >
-> > > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> > > index 923d66d131c1..cd0aeb828868 100644
-> > > --- a/fs/overlayfs/util.c
-> > > +++ b/fs/overlayfs/util.c
-> > > @@ -1118,5 +1118,8 @@ void ovl_copyattr(struct inode *inode)
-> > >         inode->i_atime =3D realinode->i_atime;
-> > >         inode->i_mtime =3D realinode->i_mtime;
-> > >         inode->i_ctime =3D realinode->i_ctime;
-> > > +       inode->i_generation =3D realinode->i_generation;
-> > > +       if (inode->i_sb)
-> > > +               uuid_copy(&inode->i_sb->s_uuid, &realinode->i_sb-
-> > > >s_uuid);
-> >
-> > That is not a possible solution Mimi.
-> >
-> > The i_gneration copy *may* be acceptable in "all layers on same fs"
-> > setup, but changing overlayfs s_uuid over and over is a non-starter.
-> >
-> > If you explain the problem, I may be able to help you find a better sol=
-ution.
+> Add a helper dealing with handling the syncing of a buffered write fallback
+> for direct I/O.
 >
-> EVM calculates an HMAC of the file metadata (security xattrs, i_ino,
-> i_generation, i_uid, i_gid, i_mode, s_uuid)  and stores it as
-> security.evm.  Notrmally this would be used for mutable files, which
-> cannot be signed.  The i_generation and s_uuid on the lower layer and
-> the overlay are not the same, causing the EVM HMAC verification to
-> fail.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/libfs.c         | 36 ++++++++++++++++++++++++++++
+>  include/linux/fs.h |  2 ++
+>  mm/filemap.c       | 59 ++++++++++------------------------------------
+>  3 files changed, 50 insertions(+), 47 deletions(-)
 >
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 89cf614a327158..9f3791fc6e0715 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1613,3 +1613,39 @@ u64 inode_query_iversion(struct inode *inode)
+>         return cur >> I_VERSION_QUERIED_SHIFT;
+>  }
+>  EXPORT_SYMBOL(inode_query_iversion);
+> +
+> +ssize_t direct_write_fallback(struct kiocb *iocb, struct iov_iter *iter,
+> +               ssize_t direct_written, ssize_t buffered_written)
+> +{
+> +       struct address_space *mapping = iocb->ki_filp->f_mapping;
+> +       loff_t pos = iocb->ki_pos, end;
 
-OK, so EVM expects i_ino, i_generation, i_uid, i_gid, i_mode, s_uuid
-and security xattr to remain stable and persistent (survive umount/mount).
-Correct?
+At this point pos will point after the end of the buffered write (as
+per earlier patches), yes?
 
-You cannot expect that the same EVM xattr will correctly describe both
-the overlayfs inode and the underlying real fs inode, because they may
-vary in some of the metadata, so need to decide if you only want to attest
-overlayfs inodes, real underlying inodes or both.
-If both, then the same EVM xattr cannot be used, but as it is, overlayfs
-inode has no "private" xattr version, it stores its xattr on the underlying
-real inode.
+> +       int err;
+> +
+> +       /*
+> +        * If the buffered write fallback returned an error, we want to return
+> +        * the number of bytes which were written by direct I/O, or the error
+> +        * code if that was zero.
+> +        *
+> +        * Note that this differs from normal direct-io semantics, which will
+> +        * return -EFOO even if some bytes were written.
+> +        */
+> +       if (unlikely(buffered_written < 0))
+> +               return buffered_written;
+> +
+> +       /*
+> +        * We need to ensure that the page cache pages are written to disk and
+> +        * invalidated to preserve the expected O_DIRECT semantics.
+> +        */
+> +       end = pos + buffered_written - 1;
 
-i_uid, i_gid, i_mode:
-Should be stable and persistent for overlayfs inode and survive copy up.
-Should be identical to the underlying inode.
+So this calculation is wrong.
 
-security xattr:
-Overlayfs tries to copy up all security.* xattr and also calls the LSM
-hook security_inode_copy_up_xattr() to approve each copied xattr.
-Should be identical to the underlying inode.
-
-s_uuid:
-So far, overlayfs sb has a null uuid.
-With this patch, overlayfs will gain a persistent s_uuid, just like any
-other disk fs with the opt-in feature index=3Don:
-https://lore.kernel.org/linux-unionfs/20230425132223.2608226-4-amir73il@gma=
-il.com/
-Should be different from the underlying fs uuid when there is more
-than one underlying fs.
-We can consider inheriting s_uuid from underlying fs when all layers
-are on the same fs.
-
-i_ino:
-As documented in:
-https://github.com/torvalds/linux/blob/master/Documentation/filesystems/ove=
-rlayfs.rst#inode-properties
-It should be persistent and survive copy up with the
-xino=3Dauto feature (module param or mount option) or
-CONFIG_OVERLAY_FS_XINO_AUTO=3Dy
-which is not the kernel default, but already set by some distros.
-Will be identical to the underlying inode only in some special cases
-such as pure upper (not copied up) inodes.
-Will be different from the underlying lower file inode many in other cases.
-
-i_generation:
-For xino=3Dauto, we could follow the same rules as i_ino and get similar
-qualities -
-i_generation will become persistent and survive copy up, but it will not be
-identical to the real underlying inode i_generation in many cases.
-
-Bottom line:
-If you only want to attest overlayfs inodes - shouldn't be too hard
-If you want to attest both overlayfs inodes AND their backing "real" inodes=
- -
-much more challenging.
-
-Hope that this writeup helps more than it confuses.
+AFAICS this affects later patches as well.
 
 Thanks,
-Amir.
+Miklos
