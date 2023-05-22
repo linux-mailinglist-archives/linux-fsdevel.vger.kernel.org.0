@@ -2,193 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39CFB70C22D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 17:19:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7560470C234
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 17:20:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231934AbjEVPTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 11:19:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55198 "EHLO
+        id S233893AbjEVPUg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 11:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231348AbjEVPTb (ORCPT
+        with ESMTP id S229937AbjEVPUe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 11:19:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED0AF9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 08:18:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684768725;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QtwpGxtG++IildS19TxDJ64n89sIOkk1Zx05HB1YFBA=;
-        b=bQ/ziOA/gz1Yb3/irp1ZpeTLwvBHPYWprU5Czlo+KQxxgf7Uk4pnJtJu9UAf+BGz0/t/KK
-        a6r9DgBXQ6J8ZTRpxl8HirgRXUF9y3yYSzxjp5Dp6pKAveYmFETrw82UpfiyPfPqpecac4
-        VcFO1VlrXNrTRg/11AfF+n8NPgQJ9h0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-517-jTsudKaSMQKPukvSiDKyfw-1; Mon, 22 May 2023 11:18:42 -0400
-X-MC-Unique: jTsudKaSMQKPukvSiDKyfw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-3f4f2f5098bso35363115e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 08:18:41 -0700 (PDT)
+        Mon, 22 May 2023 11:20:34 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BDDDE0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 08:20:33 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-96f6e83e12fso527877166b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 08:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1684768832; x=1687360832;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sXylGKi1rWwW1V2NNE6iruQyUfcknd1oVKM5gNk8Svw=;
+        b=LLdfXJZ0eSPwsPR9PduLg6V8he1mxPGhVtQJr/6BhTR6NXjk6R3OY4ws153KJh6001
+         zIZn1v9A1/E9rDZdAMGP7gX56Xoxqv3nZhu/AV6joee7JN/X0zcEIfZnJ4K2niTu1FXY
+         t0YI+UeJVzKOU0Jz1W4BDx5oAv/EuDtl2tgOk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684768721; x=1687360721;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QtwpGxtG++IildS19TxDJ64n89sIOkk1Zx05HB1YFBA=;
-        b=HHnWXRmkdSErszyz7RtrEaUD24085dNBFCkAmWoYKa0JheacV+psGZasfdL/+/1IXt
-         zuhtEhyC2NMelrl+cg4OA0Bs+0z6Pg8yvW8ZCSApd/7lzmvhF/uVr4/BIE1xa/sw35wi
-         EruvkbrFrGTEPQ95u8v11o9f3KsYMojV3zasb3bGtCcO2sCwx0yOE+GyahF0lx6YqZh5
-         nnsMexIWwl3oCdEMDnswv2+cFDrto0AnfRkD5/5/dvmExn5pv6dN3LAkYqlkBk44/Ejx
-         n8D2YwYjSUhxIE0lDJxTsEHY8B3dc0LuXpTBPPdaXIa4XAj2S27IQ5vWwY9CEDJ2ML68
-         52lw==
-X-Gm-Message-State: AC+VfDzBR7P2EXvYjyT46zicOr6hAtNjeUDfchVgb8xpLnKK9c5TgzuZ
-        8ew9yYL9l/XjAdx/jL+1e5ajKBq2o2z8yisNEPgboAeVuxhviAqzDvE3osU6ruKaYypsL9vyvmh
-        I4+5L6Cw2gNVukeWxKB3CTPAvMw==
-X-Received: by 2002:adf:f3cd:0:b0:307:a4ee:4a25 with SMTP id g13-20020adff3cd000000b00307a4ee4a25mr7567584wrp.28.1684768720936;
-        Mon, 22 May 2023 08:18:40 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5c5Jh29rHJWdlcSftb4ivtZudFaESkFZGZH5aeQjTlOaWyT+K5kG/FE0wh/FICWlng66JoQQ==
-X-Received: by 2002:adf:f3cd:0:b0:307:a4ee:4a25 with SMTP id g13-20020adff3cd000000b00307a4ee4a25mr7567565wrp.28.1684768720646;
-        Mon, 22 May 2023 08:18:40 -0700 (PDT)
-Received: from vschneid.remote.csb ([208.178.8.98])
-        by smtp.gmail.com with ESMTPSA id l9-20020a05600012c900b003078354f774sm7963718wrx.36.2023.05.22.08.18.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 May 2023 08:18:40 -0700 (PDT)
-From:   Valentin Schneider <vschneid@redhat.com>
-To:     Marcelo Tosatti <mtosatti@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Leonardo Bras <leobras@redhat.com>,
-        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
-Subject: Re: [PATCH v4] fs/buffer.c: update per-CPU bh_lru cache via RCU
-In-Reply-To: <ZCXipBvmhAC1+eRi@tpad>
-References: <ZCXipBvmhAC1+eRi@tpad>
-Date:   Mon, 22 May 2023 16:18:39 +0100
-Message-ID: <xhsmha5xwqtrk.mognet@vschneid.remote.csb>
+        d=1e100.net; s=20221208; t=1684768832; x=1687360832;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sXylGKi1rWwW1V2NNE6iruQyUfcknd1oVKM5gNk8Svw=;
+        b=LCwM8iffFV5eZpNI9e8e3N0s+CN0arRAo+//Ffd0EyUBcoOsUJfzytSv3WeiII0l0z
+         ZdkkLUEAdK3JjDtTZezlAeMlmk/tIK/pR9sAjPwdGMwLu9nrYkJ09vibXfrLEa/gnRRf
+         KYD2opYCdDDlsrBry4KGaHuLhMtRqRhmsMkmiJ1yHmXGd1xIN+K5B3G+RRi8JQKjbDON
+         LsJRSMAj8xmtH+OyHLkf8ZzGpJX55g6UYKdv9ULXaw6wZcSm0hBft91muWgBO6+OZMIX
+         q1UQGVz8R1EiC+58qF/MTNmWgU0mkq0PXRxyFGNQFV9+tAdaH29sdf0PDebPuK6ZhXXT
+         NBPg==
+X-Gm-Message-State: AC+VfDz+97LFFYLHm1of1gnZ9uja7+fBnWhtL9hRfTOLKSEZOKI0860i
+        dIKBwlwVBStFa22WczoalJf3aGcmAALGeHtHx8y/Lg==
+X-Google-Smtp-Source: ACHHUZ4HaqImK9dYbBOqieW1s8qE8xvW1sBDPdxKWVrv7i4hYsrWzEOG0VeDTlcJSiWAWDd82pMSgzwxRVoCSox8tHY=
+X-Received: by 2002:a17:907:98d:b0:96f:a86f:9d16 with SMTP id
+ bf13-20020a170907098d00b0096fa86f9d16mr5100918ejc.23.1684768831852; Mon, 22
+ May 2023 08:20:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230519125705.598234-1-amir73il@gmail.com> <20230519125705.598234-6-amir73il@gmail.com>
+In-Reply-To: <20230519125705.598234-6-amir73il@gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 22 May 2023 17:20:20 +0200
+Message-ID: <CAJfpeguhmZbjP3JLqtUy0AdWaHOkAPWeP827BBWwRFEAUgnUcQ@mail.gmail.com>
+Subject: Re: [PATCH v13 05/10] fuse: Handle asynchronous read and write in passthrough
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Alessio Balsini <balsini@android.com>,
+        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 30/03/23 16:27, Marcelo Tosatti wrote:
-> +/*
-> + * invalidate_bh_lrus() is called rarely - but not only at unmount.
-> + */
->  void invalidate_bh_lrus(void)
->  {
-> -	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
-> +	int cpu, oidx;
-> +
-> +	mutex_lock(&bh_lru_invalidate_mutex);
-> +	cpus_read_lock();
-> +	oidx = bh_lru_idx;
-
-> +	bh_lru_idx++;
-> +	if (bh_lru_idx >= 2)
-> +		bh_lru_idx = 0;
-> +
-
-You could make this a bool and flip it:
-  bh_lru_idx = !bh_lru_idx
-
-> +	/* Assign the per-CPU bh_lru pointer */
-> +	for_each_online_cpu(cpu)
-> +		rcu_assign_pointer(per_cpu(bh_lrup, cpu),
-> +				   per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
-> +	synchronize_rcu_expedited();
-> +
-> +	for_each_online_cpu(cpu) {
-> +		struct bh_lru *b = per_cpu_ptr(&bh_lrus[oidx], cpu);
-> +
-> +		bh_lru_lock();
-> +		__invalidate_bh_lrus(b);
-> +		bh_lru_unlock();
-
-Given the bh_lrup has been updated and we're past the synchronize_rcu(),
-what is bh_lru_lock() used for here?
-
-> +	}
-> +	cpus_read_unlock();
-> +	mutex_unlock(&bh_lru_invalidate_mutex);
-
-Re scalability, this is shifting a set of per-CPU-IPI callbacks to a single
-CPU, which isn't great. Can we consider doing something like [1], i.e. in
-the general case send an IPI to:
-
-  rcu_assign_pointer() + call_rcu(/* invalidation callback */)
-
-and in the case we're NOHZ_FULL and the target CPU is not executing in the
-kernel, we do that remotely to reduce interference. We might want to batch
-the synchronize_rcu() for the remote invalidates, maybe some abuse of the
-API like so?
-
-  bool do_local_invalidate(int cpu, struct cpumask *mask)
-  {
-          if (cpu_in_kernel(cpu)) {
-              __cpumask_clear_cpu(cpu, mask);
-              return true;
-          }
-
-          return false;
-  }
-
-  void invalidate_bh_lrus(void)
-  {
-          cpumask_var_t cpumask;
-
-          cpus_read_lock();
-          cpumask_copy(&cpumask, cpu_online_mask);
-          on_each_cpu_cond(do_local_invalidate, invalidate_bh_lru, &cpumask, 1);
-
-          for_each_cpu(cpu, &cpumask)
-                  rcu_assign_pointer(per_cpu(bh_lrup, cpu),
-                                             per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
-
-          synchronize_rcu_expedited();
-
-          for_each_cpu(cpu, &cpumask) {
-                  // Do remote invalidate here
-          }
-  }
-
-[1]: https://lore.kernel.org/lkml/20230404134224.137038-4-ypodemsk@redhat.com/
-
->  }
->  EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
+On Fri, 19 May 2023 at 14:57, Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> @@ -1465,8 +1505,10 @@ void invalidate_bh_lrus_cpu(void)
->       struct bh_lru *b;
+> Extend the passthrough feature by handling asynchronous IO both for read
+> and write operations.
 >
->       bh_lru_lock();
-> -	b = this_cpu_ptr(&bh_lrus);
-> +	rcu_read_lock();
-> +	b = rcu_dereference(per_cpu(bh_lrup, smp_processor_id()));
->       __invalidate_bh_lrus(b);
-> +	rcu_read_unlock();
->       bh_lru_unlock();
->  }
+> When an AIO request is received, if the request targets a FUSE file with
+> the passthrough functionality enabled, a new identical AIO request is
+> created.  The new request targets the backing file and gets assigned
+> a special FUSE passthrough AIO completion callback.
 >
-> @@ -2968,15 +3010,25 @@ void free_buffer_head(struct buffer_head *bh)
->  }
->  EXPORT_SYMBOL(free_buffer_head);
->
-> +static int buffer_cpu_online(unsigned int cpu)
-> +{
-> +	rcu_assign_pointer(per_cpu(bh_lrup, cpu),
-> +			   per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
-> +	return 0;
-> +}
+> When the backing file AIO request is completed, the FUSE
+> passthrough AIO completion callback is executed and propagates the
+> completion signal to the FUSE AIO request by triggering its completion
+> callback as well.
 
-What serializes this against invalidate_bh_lrus()? Are you relying on this
-running under cpus_write_lock()?
+Overlayfs added refcounting to the async req (commit 9a2544037600
+("ovl: fix use after free in struct ovl_aio_req")).  Is that not
+needed for fuse as well?
 
+Would it make sense to try and merge the two implementations?
+
+Thanks,
+Miklos
