@@ -2,49 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03EA970CF19
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 02:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 702F270CF0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 02:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232726AbjEWAYv convert rfc822-to-8bit (ORCPT
+        id S229702AbjEWAYp convert rfc822-to-8bit (ORCPT
         <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 20:24:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33914 "EHLO
+        Mon, 22 May 2023 20:24:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235178AbjEVXaH (ORCPT
+        with ESMTP id S235181AbjEVXaH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 22 May 2023 19:30:07 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2011DE50
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 16:29:34 -0700 (PDT)
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MMkja6007826
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 16:29:34 -0700
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3qrb9d348s-6
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E49BE52
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 16:29:31 -0700 (PDT)
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MMkxIj019125
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 16:29:30 -0700
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3qpur5ydyj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 16:29:33 -0700
-Received: from twshared58712.02.prn6.facebook.com (2620:10d:c0a8:1c::1b) by
- mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 16:29:30 -0700
+Received: from twshared1631.42.prn1.facebook.com (2620:10d:c085:208::11) by
+ mail.thefacebook.com (2620:10d:c085:21d::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Mon, 22 May 2023 16:29:32 -0700
+ 15.1.2507.23; Mon, 22 May 2023 16:29:29 -0700
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 1919D312BC064; Mon, 22 May 2023 16:29:19 -0700 (PDT)
+        id 1E396312BC06F; Mon, 22 May 2023 16:29:21 -0700 (PDT)
 From:   Andrii Nakryiko <andrii@kernel.org>
 To:     <bpf@vger.kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
         <martin.lau@kernel.org>
 CC:     <cyphar@cyphar.com>, <brauner@kernel.org>,
         <lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
         Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v3 bpf-next 0/4] Add O_PATH-based BPF_OBJ_PIN and BPF_OBJ_GET support
-Date:   Mon, 22 May 2023 16:29:13 -0700
-Message-ID: <20230522232917.2454595-1-andrii@kernel.org>
+Subject: [PATCH v3 bpf-next 1/4] bpf: validate BPF object in BPF_OBJ_PIN before calling LSM
+Date:   Mon, 22 May 2023 16:29:14 -0700
+Message-ID: <20230522232917.2454595-2-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230522232917.2454595-1-andrii@kernel.org>
+References: <20230522232917.2454595-1-andrii@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: zP1on8Uq2gdPEtOA52Hwk6UJ7vFsnxPL
-X-Proofpoint-GUID: zP1on8Uq2gdPEtOA52Hwk6UJ7vFsnxPL
+X-Proofpoint-GUID: 9jQV-LL24upW9x6iZv5lbMLTWhKCulzy
+X-Proofpoint-ORIG-GUID: 9jQV-LL24upW9x6iZv5lbMLTWhKCulzy
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
  definitions=2023-05-22_17,2023-05-22_03,2023-05-22_02
@@ -58,43 +60,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add ability to specify pinning location within BPF FS using O_PATH-based FDs,
-similar to openat() family of APIs. Patch #2 adds necessary kernel-side
-changes. Patch #3 exposes this through libbpf APIs. Patch #4 uses new mount
-APIs (fsopen, fsconfig, fsmount) to demonstrated how now it's possible to work
-with detach-mounted BPF FS using new BPF_OBJ_PIN and BPF_OBJ_GET
-functionality. We also add few more tests using various combinations of
-path_fd and pathname to validate proper argument propagation in kernel code.
+Do a sanity check whether provided file-to-be-pinned is actually a BPF
+object (prog, map, btf) before calling security_path_mknod LSM hook. If
+it's not, LSM hook doesn't have to be triggered, as the operation has no
+chance of succeeding anyways.
 
-This feature is inspired as a result of recent conversations during
-LSF/MM/BPF 2023 conference about shortcomings of being able to perform BPF
-objects pinning only using lookup-based paths.
+Suggested-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ kernel/bpf/inode.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-v2->v3:
-  - __s32 for path_fd in union bpf_attr (Christian);
-  - added subtest for absolute/relative paths during pinning/getting;
-  - added pre-patch moving LSM hook (security_path_mknod) around (Christian);
-v1->v2:
-  - add BPF_F_PATH_FD flag that should go along with path FD (Christian).
-
-Andrii Nakryiko (4):
-  bpf: validate BPF object in BPF_OBJ_PIN before calling LSM
-  bpf: support O_PATH FDs in BPF_OBJ_PIN and BPF_OBJ_GET commands
-  libbpf: add opts-based bpf_obj_pin() API and add support for path_fd
-  selftests/bpf: add path_fd-based BPF_OBJ_PIN and BPF_OBJ_GET tests
-
- include/linux/bpf.h                           |   4 +-
- include/uapi/linux/bpf.h                      |  10 +
- kernel/bpf/inode.c                            |  27 +-
- kernel/bpf/syscall.c                          |  25 +-
- tools/include/uapi/linux/bpf.h                |  10 +
- tools/lib/bpf/bpf.c                           |  17 +-
- tools/lib/bpf/bpf.h                           |  18 +-
- tools/lib/bpf/libbpf.map                      |   1 +
- .../bpf/prog_tests/bpf_obj_pinning.c          | 268 ++++++++++++++++++
- 9 files changed, 354 insertions(+), 26 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c
-
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index 9948b542a470..329f27d5cacf 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -448,18 +448,17 @@ static int bpf_obj_do_pin(const char __user *pathname, void *raw,
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
+-	mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
+-
+-	ret = security_path_mknod(&path, dentry, mode, 0);
+-	if (ret)
+-		goto out;
+-
+ 	dir = d_inode(path.dentry);
+ 	if (dir->i_op != &bpf_dir_iops) {
+ 		ret = -EPERM;
+ 		goto out;
+ 	}
+ 
++	mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
++	ret = security_path_mknod(&path, dentry, mode, 0);
++	if (ret)
++		goto out;
++
+ 	switch (type) {
+ 	case BPF_TYPE_PROG:
+ 		ret = vfs_mkobj(dentry, mode, bpf_mkprog, raw);
 -- 
 2.34.1
 
