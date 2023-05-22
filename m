@@ -2,254 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A2D70BD2F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 14:14:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE6B70BDAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 14:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233820AbjEVMOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 08:14:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47204 "EHLO
+        id S234016AbjEVMW2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 08:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232946AbjEVMNe (ORCPT
+        with ESMTP id S234012AbjEVMVy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 08:13:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E63B198
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 05:12:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684757552;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4nmIdUwXs8xUZa8LHr6SjLu9qXp25hoa6tjiHzVF7uA=;
-        b=gt+0l9oCWAqhaSeCnG7Glc1Bxws4NXg0UQ65u/6ZEvBpQaOC5+cPjq4R2PECxuoohQXMh+
-        sEJN5qjSOud0DIl3F6W8j6qPwMXPuxK6ECy1Svb3mePfhOSPzLpDvu7KGJwwt03y2xs9la
-        UEKn4/cYHvuTQc/wm+uBERPq1iq+e1Y=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-576-SCXcFoZWMeW_c6Kl9rP7Pg-1; Mon, 22 May 2023 08:12:28 -0400
-X-MC-Unique: SCXcFoZWMeW_c6Kl9rP7Pg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4357E185A792;
-        Mon, 22 May 2023 12:12:27 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A11807B7C;
-        Mon, 22 May 2023 12:12:24 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: [PATCH net-next v10 16/16] unix: Convert unix_stream_sendpage() to use MSG_SPLICE_PAGES
-Date:   Mon, 22 May 2023 13:11:25 +0100
-Message-Id: <20230522121125.2595254-17-dhowells@redhat.com>
-In-Reply-To: <20230522121125.2595254-1-dhowells@redhat.com>
-References: <20230522121125.2595254-1-dhowells@redhat.com>
-MIME-Version: 1.0
+        Mon, 22 May 2023 08:21:54 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A292D5A;
+        Mon, 22 May 2023 05:19:22 -0700 (PDT)
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MAHKSw014026;
+        Mon, 22 May 2023 12:18:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=EM4f/HnWMsQA9XlCO7vQgbwM3VoRhIqdzHyjShVOjq0=;
+ b=JiIKplnPhYcywJVRwRORFA+9ApBQTtaNyy6k7HfHZk/vf7MlEUd8LOsawF+J5nBOcabq
+ 1vT2qaW/JkFLzYTvKKKjsOVMgggSQeVlFVbiRnpiVeXSZ7QhN6bN4z4VOcVEy2W+0hXH
+ Fw2ocd9QwP8c3T8arIOmsVvomi46+al1Qo1xBzW5hAuJG+2DgOq07D5C9yprKuOa0+yl
+ Z4fBD3jA863/Dx1k9I2olggJQJ1fZT6rVI5E7qreCEWDwfyEIH1qtEX0KR1TD1F9HfPM
+ t/sBT8XGDeW8YXuOdDyil7uLe91omgwUiq84H/eFbFilIIxf2vpPMHU5cdZ9ol5Qc0wf 7Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qqfak4xq3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 May 2023 12:18:15 +0000
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34MBpOmB010492;
+        Mon, 22 May 2023 12:18:14 GMT
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qqfak4xpf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 May 2023 12:18:14 +0000
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34M9CMA5018866;
+        Mon, 22 May 2023 12:18:12 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([9.208.129.118])
+        by ppma05wdc.us.ibm.com (PPS) with ESMTPS id 3qppdb284e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 May 2023 12:18:12 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+        by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34MCIBJ864487908
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 May 2023 12:18:11 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C976858050;
+        Mon, 22 May 2023 12:18:11 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 856D258045;
+        Mon, 22 May 2023 12:18:10 +0000 (GMT)
+Received: from wecm-9-67-38-173.wecm.ibm.com (unknown [9.67.38.173])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 22 May 2023 12:18:10 +0000 (GMT)
+Message-ID: <9aced306f134628221c55530643535b89874ccc0.camel@linux.ibm.com>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM
+ after writes
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Ignaz Forster <iforster@suse.de>, Petr Vorel <pvorel@suse.cz>
+Date:   Mon, 22 May 2023 08:18:10 -0400
+In-Reply-To: <CAOQ4uxi7PFPPUuW9CZAZB9tvU2GWVpmpdBt=EUYyw60K=WX-Yg@mail.gmail.com>
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+         <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
+         <CAOQ4uxi7PFPPUuW9CZAZB9tvU2GWVpmpdBt=EUYyw60K=WX-Yg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: opgvgwF5P4zhuFJfXOQ6CRad1NlY8c2l
+X-Proofpoint-GUID: 3d-XEyOzlFh7k_HYEoehOs7bmpk7h9i5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-22_08,2023-05-22_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 mlxlogscore=999 spamscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 clxscore=1015 bulkscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305220101
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert unix_stream_sendpage() to use sendmsg() with MSG_SPLICE_PAGES
-rather than directly splicing in the pages itself.
+On Sat, 2023-05-20 at 12:15 +0300, Amir Goldstein wrote:
+> On Fri, May 19, 2023 at 10:42 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >
+> > On Fri, 2023-04-07 at 10:31 +0200, Christian Brauner wrote:
+> > > So, I think we want both; we want the ovl_copyattr() and the
+> > > vfs_getattr_nosec() change:
+> > >
+> > > (1) overlayfs should copy up the inode version in ovl_copyattr(). That
+> > >     is in line what we do with all other inode attributes. IOW, the
+> > >     overlayfs inode's i_version counter should aim to mirror the
+> > >     relevant layer's i_version counter. I wouldn't know why that
+> > >     shouldn't be the case. Asking the other way around there doesn't
+> > >     seem to be any use for overlayfs inodes to have an i_version that
+> > >     isn't just mirroring the relevant layer's i_version.
+> > > (2) Jeff's changes for ima to make it rely on vfs_getattr_nosec().
+> > >     Currently, ima assumes that it will get the correct i_version from
+> > >     an inode but that just doesn't hold for stacking filesystem.
+> > >
+> > > While (1) would likely just fix the immediate bug (2) is correct and
+> > > _robust_. If we change how attributes are handled vfs_*() helpers will
+> > > get updated and ima with it. Poking at raw inodes without using
+> > > appropriate helpers is much more likely to get ima into trouble.
+> >
+> > In addition to properly setting the i_version for IMA, EVM has a
+> > similar issue with i_generation and s_uuid. Adding them to
+> > ovl_copyattr() seems to resolve it.   Does that make sense?
+> >
+> > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> > index 923d66d131c1..cd0aeb828868 100644
+> > --- a/fs/overlayfs/util.c
+> > +++ b/fs/overlayfs/util.c
+> > @@ -1118,5 +1118,8 @@ void ovl_copyattr(struct inode *inode)
+> >         inode->i_atime = realinode->i_atime;
+> >         inode->i_mtime = realinode->i_mtime;
+> >         inode->i_ctime = realinode->i_ctime;
+> > +       inode->i_generation = realinode->i_generation;
+> > +       if (inode->i_sb)
+> > +               uuid_copy(&inode->i_sb->s_uuid, &realinode->i_sb-
+> > >s_uuid);
+> 
+> That is not a possible solution Mimi.
+> 
+> The i_gneration copy *may* be acceptable in "all layers on same fs"
+> setup, but changing overlayfs s_uuid over and over is a non-starter.
+> 
+> If you explain the problem, I may be able to help you find a better solution.
 
-This allows ->sendpage() to be replaced by something that can handle
-multiple multipage folios in a single transaction.
+EVM calculates an HMAC of the file metadata (security xattrs, i_ino,
+i_generation, i_uid, i_gid, i_mode, s_uuid)  and stores it as
+security.evm.  Notrmally this would be used for mutable files, which
+cannot be signed.  The i_generation and s_uuid on the lower layer and
+the overlay are not the same, causing the EVM HMAC verification to
+fail.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: netdev@vger.kernel.org
----
+-- 
+thanks,
 
-Notes:
-    ver #10)
-     - Fix subject to refer to unix_stream_sendpage() not udp_sendpage().
-
- net/unix/af_unix.c | 134 +++------------------------------------------
- 1 file changed, 7 insertions(+), 127 deletions(-)
-
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 976bc1c5e11b..115436ce1f8a 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -1839,24 +1839,6 @@ static void maybe_add_creds(struct sk_buff *skb, const struct socket *sock,
- 	}
- }
- 
--static int maybe_init_creds(struct scm_cookie *scm,
--			    struct socket *socket,
--			    const struct sock *other)
--{
--	int err;
--	struct msghdr msg = { .msg_controllen = 0 };
--
--	err = scm_send(socket, &msg, scm, false);
--	if (err)
--		return err;
--
--	if (unix_passcred_enabled(socket, other)) {
--		scm->pid = get_pid(task_tgid(current));
--		current_uid_gid(&scm->creds.uid, &scm->creds.gid);
--	}
--	return err;
--}
--
- static bool unix_skb_scm_eq(struct sk_buff *skb,
- 			    struct scm_cookie *scm)
- {
-@@ -2292,117 +2274,15 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
- static ssize_t unix_stream_sendpage(struct socket *socket, struct page *page,
- 				    int offset, size_t size, int flags)
- {
--	int err;
--	bool send_sigpipe = false;
--	bool init_scm = true;
--	struct scm_cookie scm;
--	struct sock *other, *sk = socket->sk;
--	struct sk_buff *skb, *newskb = NULL, *tail = NULL;
--
--	if (flags & MSG_OOB)
--		return -EOPNOTSUPP;
-+	struct bio_vec bvec;
-+	struct msghdr msg = { .msg_flags = flags | MSG_SPLICE_PAGES };
- 
--	other = unix_peer(sk);
--	if (!other || sk->sk_state != TCP_ESTABLISHED)
--		return -ENOTCONN;
--
--	if (false) {
--alloc_skb:
--		unix_state_unlock(other);
--		mutex_unlock(&unix_sk(other)->iolock);
--		newskb = sock_alloc_send_pskb(sk, 0, 0, flags & MSG_DONTWAIT,
--					      &err, 0);
--		if (!newskb)
--			goto err;
--	}
--
--	/* we must acquire iolock as we modify already present
--	 * skbs in the sk_receive_queue and mess with skb->len
--	 */
--	err = mutex_lock_interruptible(&unix_sk(other)->iolock);
--	if (err) {
--		err = flags & MSG_DONTWAIT ? -EAGAIN : -ERESTARTSYS;
--		goto err;
--	}
--
--	if (sk->sk_shutdown & SEND_SHUTDOWN) {
--		err = -EPIPE;
--		send_sigpipe = true;
--		goto err_unlock;
--	}
--
--	unix_state_lock(other);
-+	if (flags & MSG_SENDPAGE_NOTLAST)
-+		msg.msg_flags |= MSG_MORE;
- 
--	if (sock_flag(other, SOCK_DEAD) ||
--	    other->sk_shutdown & RCV_SHUTDOWN) {
--		err = -EPIPE;
--		send_sigpipe = true;
--		goto err_state_unlock;
--	}
--
--	if (init_scm) {
--		err = maybe_init_creds(&scm, socket, other);
--		if (err)
--			goto err_state_unlock;
--		init_scm = false;
--	}
--
--	skb = skb_peek_tail(&other->sk_receive_queue);
--	if (tail && tail == skb) {
--		skb = newskb;
--	} else if (!skb || !unix_skb_scm_eq(skb, &scm)) {
--		if (newskb) {
--			skb = newskb;
--		} else {
--			tail = skb;
--			goto alloc_skb;
--		}
--	} else if (newskb) {
--		/* this is fast path, we don't necessarily need to
--		 * call to kfree_skb even though with newskb == NULL
--		 * this - does no harm
--		 */
--		consume_skb(newskb);
--		newskb = NULL;
--	}
--
--	if (skb_append_pagefrags(skb, page, offset, size, MAX_SKB_FRAGS)) {
--		tail = skb;
--		goto alloc_skb;
--	}
--
--	skb->len += size;
--	skb->data_len += size;
--	skb->truesize += size;
--	refcount_add(size, &sk->sk_wmem_alloc);
--
--	if (newskb) {
--		err = unix_scm_to_skb(&scm, skb, false);
--		if (err)
--			goto err_state_unlock;
--		spin_lock(&other->sk_receive_queue.lock);
--		__skb_queue_tail(&other->sk_receive_queue, newskb);
--		spin_unlock(&other->sk_receive_queue.lock);
--	}
--
--	unix_state_unlock(other);
--	mutex_unlock(&unix_sk(other)->iolock);
--
--	other->sk_data_ready(other);
--	scm_destroy(&scm);
--	return size;
--
--err_state_unlock:
--	unix_state_unlock(other);
--err_unlock:
--	mutex_unlock(&unix_sk(other)->iolock);
--err:
--	kfree_skb(newskb);
--	if (send_sigpipe && !(flags & MSG_NOSIGNAL))
--		send_sig(SIGPIPE, current, 0);
--	if (!init_scm)
--		scm_destroy(&scm);
--	return err;
-+	bvec_set_page(&bvec, page, size, offset);
-+	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-+	return unix_stream_sendmsg(socket, &msg, size);
- }
- 
- static int unix_seqpacket_sendmsg(struct socket *sock, struct msghdr *msg,
+Mimi
 
