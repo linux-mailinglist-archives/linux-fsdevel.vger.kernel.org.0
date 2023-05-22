@@ -2,397 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE24170CF9B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 02:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D8BC70CF11
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 02:24:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234870AbjEWAkw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 20:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37818 "EHLO
+        id S235408AbjEWAYi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 20:24:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234890AbjEWAGa (ORCPT
+        with ESMTP id S234451AbjEVX4t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 20:06:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DE3995;
-        Mon, 22 May 2023 16:42:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C4E0E6202F;
-        Mon, 22 May 2023 23:42:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13475C433D2;
-        Mon, 22 May 2023 23:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684798921;
-        bh=N6kv/5McifazKgNnuizUSRLrcRrnxq8b8JoyRkwM7+Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NLt9j7F6mtU+hZMWozRng8oVG7209X8FV0lKdaQUualgujQ7N6jM29zeBP0OwG1VS
-         YUDrFejCYUSawGylnutJCY9DYPbUF68Kwq4nQ1x162kGNr1EgctxYtS1WjHKVS6Vq1
-         W9EqPn8NH3Y/Rs3hvsTOb+Onpd/KF0fE1nEi7CtsYMIchNUsDMUl7w8vv3i/+Sz0ar
-         hSq+PrPlOxX7Uqe8YBkEdZuHNRIeMtw7qaaYMuQ7QX9y/SR5gBzynUS1jQ0NEI38L9
-         u6xdGFBVa0g4X40sHGOIzA/LnZWlRmSKXopplc2VO1hG7bon1e1YEgOFqIoJYZJ3ao
-         quLHANLeX7nkw==
-Date:   Mon, 22 May 2023 16:42:00 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     hch@infradead.org, sandeen@sandeen.net, song@kernel.org,
-        rafael@kernel.org, gregkh@linuxfoundation.org,
-        viro@zeniv.linux.org.uk, jack@suse.cz, jikos@kernel.org,
-        bvanassche@acm.org, ebiederm@xmission.com, mchehab@kernel.org,
-        keescook@chromium.org, p.raghav@samsung.com, da.gomez@samsung.com,
-        linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] fs: distinguish between user initiated freeze and
- kernel initiated freeze
-Message-ID: <20230522234200.GC11598@frogsfrogsfrogs>
-References: <20230508011717.4034511-1-mcgrof@kernel.org>
- <20230508011717.4034511-4-mcgrof@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230508011717.4034511-4-mcgrof@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Mon, 22 May 2023 19:56:49 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C650E2125;
+        Mon, 22 May 2023 16:52:56 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MKNsVe001958;
+        Mon, 22 May 2023 23:52:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2023-03-30;
+ bh=IKJkCOccVzLu6kohxV9I79caIQhey6LTKOR4b88i/IU=;
+ b=3UJqX2XZ6j0UBhzLIZNQ9lmrVhrAYUAVXnHMxqkynXI9OasWnBEcNIjIC2/LbJXJqrt/
+ FIR6hZIOA6KKiJQpdjI3LrSgoepG+7/eZ0L+iWy68LiP2J9J6h/4roh0c3KnZfJvi/T+
+ H/v1dIluN2YehVetJU54XDaczryUpq8wNkWTgJkkUEn3uCgDlZyF38YvdOtfj0tFrz5i
+ sfCykymZr0m98jM9b1u6u9wRG0ETKPaTPpCEqVC7sxvE2kqoEws4cHEEoAuYCOkpW7+e
+ 9hsYfh/z8rtRiw2LoDLmWWxOi3MbXHavtpKQbq2zDeqbYOY0+KTjYKf2dmcKEtJP8B/Z LQ== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qpp44kumq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 May 2023 23:52:53 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34MLouQa013218;
+        Mon, 22 May 2023 23:52:52 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3qqk7e43vn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 May 2023 23:52:52 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34MNqqgv018982;
+        Mon, 22 May 2023 23:52:52 GMT
+Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3qqk7e43vc-1;
+        Mon, 22 May 2023 23:52:52 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     chuck.lever@oracle.com, jlayton@kernel.org
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v5 0/3] NFSD: add support for NFSv4 write delegation
+Date:   Mon, 22 May 2023 16:52:37 -0700
+Message-Id: <1684799560-31663-1-git-send-email-dai.ngo@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-22_17,2023-05-22_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ mlxscore=0 spamscore=0 mlxlogscore=800 adultscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305220201
+X-Proofpoint-GUID: mG3qQPbzzKhwgvq5ftf9mpVDGfzqfCEM
+X-Proofpoint-ORIG-GUID: mG3qQPbzzKhwgvq5ftf9mpVDGfzqfCEM
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-How about this as an alternative patch?  Kernel and userspace freeze
-state are stored in s_writers; each type cannot block the other (though
-you still can't have nested kernel or userspace freezes); and the freeze
-is maintained until /both/ freeze types are dropped.
+NFSD: add support for NFSv4 write delegation
 
-AFAICT this should work for the two other usecases (quiescing pagefaults
-for fsdax pmem pre-removal; and freezing fses during suspend) besides
-online fsck for xfs.
+The NFSv4 server currently supports read delegation using VFS lease
+which is implemented using file_lock. 
 
---D
+This patch series add write delegation support for NFSv4 server by:
 
-From: Darrick J. Wong <djwong@kernel.org>
-Subject: fs: distinguish between user initiated freeze and kernel initiated freeze
+    . remove the check for F_WRLCK in generic_add_lease to allow
+      file_lock to be used for write delegation.  
 
-Userspace can freeze a filesystem using the FIFREEZE ioctl or by
-suspending the block device; this state persists until userspace thaws
-the filesystem with the FITHAW ioctl or resuming the block device.
-Since commit 18e9e5104fcd ("Introduce freeze_super and thaw_super for
-the fsfreeze ioctl") we only allow the first freeze command to succeed.
+    . grant write delegation for OPEN with NFS4_SHARE_ACCESS_WRITE
+      if there is no conflict with other OPENs.
 
-The kernel may decide that it is necessary to freeze a filesystem for
-its own internal purposes, such as suspends in progress, filesystem fsck
-activities, or quiescing a device prior to removal.  Userspace thaw
-commands must never break a kernel freeze, and kernel thaw commands
-shouldn't undo userspace's freeze command.
+Write delegation conflict with another OPEN, REMOVE, RENAME and SETATTR
+are handled the same as read delegation using notify_change, try_break_deleg.
 
-Introduce a couple of freeze holder flags and wire it into the
-sb_writers state.  One kernel and one userspace freeze are allowed to
-coexist at the same time; the filesystem will not thaw until both are
-lifted.
+Changes since v1:
 
-Inspired-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/super.c         |  172 +++++++++++++++++++++++++++++++++++++++++++++++++---
- include/linux/fs.h |    8 ++
- 2 files changed, 170 insertions(+), 10 deletions(-)
+[PATCH 3/4] NFSD: add supports for CB_GETATTR callback
+- remove WARN_ON_ONCE from encode_bitmap4
+- replace decode_bitmap4 with xdr_stream_decode_uint32_array
+- replace xdr_inline_decode and xdr_decode_hyper in decode_cb_getattr
+   with xdr_stream_decode_u64. Also remove the un-needed likely().
+- modify signature of encode_cb_getattr4args to take pointer to
+   nfs4_cb_fattr
+- replace decode_attr_length with xdr_stream_decode_u32
+- rename decode_cb_getattr to decode_cb_fattr4
+- fold the initialization of cb_cinfo and cb_fsize into decode_cb_fattr4
+- rename ncf_cb_cinfo to ncf_cb_change to avoid confusion of cindo usage
+  in fs/nfsd/nfs4xdr.c
+- correct NFS4_dec_cb_getattr_sz and update size description
 
-diff --git a/fs/super.c b/fs/super.c
-index 34afe411cf2b..7496d51affb9 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -39,7 +39,7 @@
- #include <uapi/linux/mount.h>
- #include "internal.h"
- 
--static int thaw_super_locked(struct super_block *sb);
-+static int thaw_super_locked(struct super_block *sb, unsigned short who);
- 
- static LIST_HEAD(super_blocks);
- static DEFINE_SPINLOCK(sb_lock);
-@@ -1027,7 +1027,7 @@ static void do_thaw_all_callback(struct super_block *sb)
- 	down_write(&sb->s_umount);
- 	if (sb->s_root && sb->s_flags & SB_BORN) {
- 		emergency_thaw_bdev(sb);
--		thaw_super_locked(sb);
-+		thaw_super_locked(sb, FREEZE_HOLDER_USERSPACE);
- 	} else {
- 		up_write(&sb->s_umount);
- 	}
-@@ -1636,13 +1636,21 @@ static void sb_freeze_unlock(struct super_block *sb, int level)
- }
- 
- /**
-- * freeze_super - lock the filesystem and force it into a consistent state
-+ * __freeze_super - lock the filesystem and force it into a consistent state
-  * @sb: the super to lock
-+ * @who: FREEZE_HOLDER_USERSPACE if userspace wants to freeze the fs;
-+ * FREEZE_HOLDER_KERNEL if the kernel wants to freeze it
-  *
-  * Syncs the super to make sure the filesystem is consistent and calls the fs's
-- * freeze_fs.  Subsequent calls to this without first thawing the fs will return
-+ * freeze_fs.  Subsequent calls to this without first thawing the fs may return
-  * -EBUSY.
-  *
-+ * The @who argument distinguishes between the kernel and userspace trying to
-+ * freeze the filesystem.  Although there cannot be multiple kernel freezes or
-+ * multiple userspace freezes in effect at any given time, the kernel and
-+ * userspace can both hold a filesystem frozen.  The filesystem remains frozen
-+ * until there are no kernel or userspace freezes in effect.
-+ *
-  * During this function, sb->s_writers.frozen goes through these values:
-  *
-  * SB_UNFROZEN: File system is normal, all writes progress as usual.
-@@ -1668,12 +1676,61 @@ static void sb_freeze_unlock(struct super_block *sb, int level)
-  *
-  * sb->s_writers.frozen is protected by sb->s_umount.
-  */
--int freeze_super(struct super_block *sb)
-+static int __freeze_super(struct super_block *sb, unsigned short who)
- {
-+	struct sb_writers *sbw = &sb->s_writers;
- 	int ret;
- 
- 	atomic_inc(&sb->s_active);
- 	down_write(&sb->s_umount);
-+
-+	if (sbw->frozen == SB_FREEZE_COMPLETE) {
-+		switch (who) {
-+		case FREEZE_HOLDER_KERNEL:
-+			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
-+				/*
-+				 * Kernel freeze already in effect; caller can
-+				 * try again.
-+				 */
-+				deactivate_locked_super(sb);
-+				return -EBUSY;
-+			}
-+			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
-+				/*
-+				 * Share the freeze state with the userspace
-+				 * freeze already in effect.
-+				 */
-+				sbw->freeze_holders |= who;
-+				deactivate_locked_super(sb);
-+				return 0;
-+			}
-+			break;
-+		case FREEZE_HOLDER_USERSPACE:
-+			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
-+				/*
-+				 * Userspace freeze already in effect; tell
-+				 * the caller we're busy.
-+				 */
-+				deactivate_locked_super(sb);
-+				return -EBUSY;
-+			}
-+			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
-+				/*
-+				 * Share the freeze state with the kernel
-+				 * freeze already in effect.
-+				 */
-+				sbw->freeze_holders |= who;
-+				deactivate_locked_super(sb);
-+				return 0;
-+			}
-+			break;
-+		default:
-+			BUG();
-+			deactivate_locked_super(sb);
-+			return -EINVAL;
-+		}
-+	}
-+
- 	if (sb->s_writers.frozen != SB_UNFROZEN) {
- 		deactivate_locked_super(sb);
- 		return -EBUSY;
-@@ -1686,6 +1743,7 @@ int freeze_super(struct super_block *sb)
- 
- 	if (sb_rdonly(sb)) {
- 		/* Nothing to do really... */
-+		sb->s_writers.freeze_holders |= who;
- 		sb->s_writers.frozen = SB_FREEZE_COMPLETE;
- 		up_write(&sb->s_umount);
- 		return 0;
-@@ -1731,23 +1789,103 @@ int freeze_super(struct super_block *sb)
- 	 * For debugging purposes so that fs can warn if it sees write activity
- 	 * when frozen is set to SB_FREEZE_COMPLETE, and for thaw_super().
- 	 */
-+	sb->s_writers.freeze_holders |= who;
- 	sb->s_writers.frozen = SB_FREEZE_COMPLETE;
- 	lockdep_sb_freeze_release(sb);
- 	up_write(&sb->s_umount);
- 	return 0;
- }
-+
-+/*
-+ * freeze_super - lock the filesystem and force it into a consistent state
-+ * @sb: the super to lock
-+ *
-+ * Syncs the super to make sure the filesystem is consistent and calls the fs's
-+ * freeze_fs.  Subsequent calls to this without first calling thaw_super will
-+ * return -EBUSY.  See the comment for __freeze_super for more information.
-+ */
-+int freeze_super(struct super_block *sb)
-+{
-+	return __freeze_super(sb, FREEZE_HOLDER_USERSPACE);
-+}
- EXPORT_SYMBOL(freeze_super);
- 
--static int thaw_super_locked(struct super_block *sb)
-+/**
-+ * freeze_super_kernel - lock the filesystem for an internal kernel operation
-+ * and force it into a consistent state.
-+ * @sb: the super to lock
-+ *
-+ * Syncs the super to make sure the filesystem is consistent and calls the fs's
-+ * freeze_fs.  Subsequent calls to this without first calling thaw_super_excl
-+ * will return -EBUSY.
-+ */
-+int freeze_super_kernel(struct super_block *sb)
- {
-+	return __freeze_super(sb, FREEZE_HOLDER_KERNEL);
-+}
-+EXPORT_SYMBOL_GPL(freeze_super_kernel);
-+
-+/*
-+ * Undoes the effect of a freeze_super_locked call.  If the filesystem is
-+ * frozen both by userspace and the kernel, a thaw call from either source
-+ * removes that state without releasing the other state or unlocking the
-+ * filesystem.
-+ */
-+static int thaw_super_locked(struct super_block *sb, unsigned short who)
-+{
-+	struct sb_writers *sbw = &sb->s_writers;
- 	int error;
- 
-+	if (sbw->frozen == SB_FREEZE_COMPLETE) {
-+		switch (who) {
-+		case FREEZE_HOLDER_KERNEL:
-+			if (!(sbw->freeze_holders & FREEZE_HOLDER_KERNEL)) {
-+				/* Caller doesn't hold a kernel freeze. */
-+				up_write(&sb->s_umount);
-+				return -EINVAL;
-+			}
-+			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
-+				/*
-+				 * We were sharing the freeze with userspace,
-+				 * so drop the userspace freeze but exit
-+				 * without unfreezing.
-+				 */
-+				sbw->freeze_holders &= ~who;
-+				up_write(&sb->s_umount);
-+				return 0;
-+			}
-+			break;
-+		case FREEZE_HOLDER_USERSPACE:
-+			if (!(sbw->freeze_holders & FREEZE_HOLDER_USERSPACE)) {
-+				/* Caller doesn't hold a userspace freeze. */
-+				up_write(&sb->s_umount);
-+				return -EINVAL;
-+			}
-+			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
-+				/*
-+				 * We were sharing the freeze with the kernel,
-+				 * so drop the kernel freeze but exit without
-+				 * unfreezing.
-+				 */
-+				sbw->freeze_holders &= ~who;
-+				up_write(&sb->s_umount);
-+				return 0;
-+			}
-+			break;
-+		default:
-+			BUG();
-+			up_write(&sb->s_umount);
-+			return -EINVAL;
-+		}
-+	}
-+
- 	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE) {
- 		up_write(&sb->s_umount);
- 		return -EINVAL;
- 	}
- 
- 	if (sb_rdonly(sb)) {
-+		sb->s_writers.freeze_holders &= ~who;
- 		sb->s_writers.frozen = SB_UNFROZEN;
- 		goto out;
- 	}
-@@ -1765,6 +1903,7 @@ static int thaw_super_locked(struct super_block *sb)
- 		}
- 	}
- 
-+	sb->s_writers.freeze_holders &= ~who;
- 	sb->s_writers.frozen = SB_UNFROZEN;
- 	sb_freeze_unlock(sb, SB_FREEZE_FS);
- out:
-@@ -1774,18 +1913,33 @@ static int thaw_super_locked(struct super_block *sb)
- }
- 
- /**
-- * thaw_super -- unlock filesystem
-+ * thaw_super -- unlock filesystem frozen with freeze_super
-  * @sb: the super to thaw
-  *
-- * Unlocks the filesystem and marks it writeable again after freeze_super().
-+ * Unlocks the filesystem after freeze_super, and make it writeable again if
-+ * there is not a freeze_super_kernel still in effect.
-  */
- int thaw_super(struct super_block *sb)
- {
- 	down_write(&sb->s_umount);
--	return thaw_super_locked(sb);
-+	return thaw_super_locked(sb, FREEZE_HOLDER_USERSPACE);
- }
- EXPORT_SYMBOL(thaw_super);
- 
-+/**
-+ * thaw_super_kernel -- unlock filesystem frozen with freeze_super_kernel
-+ * @sb: the super to thaw
-+ *
-+ * Unlocks the filesystem after freeze_super_kernel, and make it writeable
-+ * again if there is not a freeze_super still in effect.
-+ */
-+int thaw_super_kernel(struct super_block *sb)
-+{
-+	down_write(&sb->s_umount);
-+	return thaw_super_locked(sb, FREEZE_HOLDER_KERNEL);
-+}
-+EXPORT_SYMBOL_GPL(thaw_super_kernel);
-+
- /*
-  * Create workqueue for deferred direct IO completions. We allocate the
-  * workqueue when it's first needed. This avoids creating workqueue for
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 21a981680856..147644b5d648 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1145,11 +1145,15 @@ enum {
- #define SB_FREEZE_LEVELS (SB_FREEZE_COMPLETE - 1)
- 
- struct sb_writers {
--	int				frozen;		/* Is sb frozen? */
-+	unsigned short			frozen;		/* Is sb frozen? */
-+	unsigned short			freeze_holders;	/* Who froze fs? */
- 	wait_queue_head_t		wait_unfrozen;	/* wait for thaw */
- 	struct percpu_rw_semaphore	rw_sem[SB_FREEZE_LEVELS];
- };
- 
-+#define FREEZE_HOLDER_USERSPACE	(1U << 1)	/* userspace froze fs */
-+#define FREEZE_HOLDER_KERNEL	(1U << 2)	/* kernel froze fs */
-+
- struct super_block {
- 	struct list_head	s_list;		/* Keep this first */
- 	dev_t			s_dev;		/* search index; _not_ kdev_t */
-@@ -2288,6 +2292,8 @@ extern int user_statfs(const char __user *, struct kstatfs *);
- extern int fd_statfs(int, struct kstatfs *);
- extern int freeze_super(struct super_block *super);
- extern int thaw_super(struct super_block *super);
-+extern int freeze_super_kernel(struct super_block *super);
-+extern int thaw_super_kernel(struct super_block *super);
- extern __printf(2, 3)
- int super_setup_bdi_name(struct super_block *sb, char *fmt, ...);
- extern int super_setup_bdi(struct super_block *sb);
+[PATCH 4/4] NFSD: handle GETATTR conflict with write delegation
+- change nfs4_handle_wrdeleg_conflict returns __be32 to fix test robot
+- change ncf_cb_cinfo to ncf_cb_change to avoid confusion of cindo usage
+  in fs/nfsd/nfs4xdr.c
+
+Changes since v2:
+
+[PATCH 2/4] NFSD: enable support for write delegation
+- rename 'deleg' to 'dl_type' in nfs4_set_delegation
+- remove 'wdeleg' in nfs4_open_delegation
+
+- drop [PATCH 3/4] NFSD: add supports for CB_GETATTR callback
+  and [PATCH 4/4] NFSD: handle GETATTR conflict with write delegation
+  for futher clarification of the benefits of these patches
+
+Changes since v3:
+
+- recall write delegation when there is GETATTR from 2nd client
+- add trace point to track when write delegation is granted 
+
+Changes since v4:
+- squash 4/4 into 2/4
+- apply 1/4 last instead of first
+- combine nfs4_wrdeleg_filelock and nfs4_handle_wrdeleg_conflict to
+  nfsd4_deleg_getattr_conflict and move it to fs/nfsd/nfs4state.c
+- check for lock belongs to delegation before proceed and do it
+  under the fl_lock
+- check and skip FL_LAYOUT file_locks
