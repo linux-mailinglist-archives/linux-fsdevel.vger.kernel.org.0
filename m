@@ -2,354 +2,397 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CF47470CF95
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 02:41:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE24170CF9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 02:41:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232043AbjEWAlJ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 20:41:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34968 "EHLO
+        id S234870AbjEWAkw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 20:40:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232488AbjEVXe2 (ORCPT
+        with ESMTP id S234890AbjEWAGa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 19:34:28 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CC5F118
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 16:32:16 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MMkIjL015313
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 16:32:15 -0700
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3qpuy0qjg2-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 16:32:15 -0700
-Received: from twshared58712.02.prn6.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Mon, 22 May 2023 16:32:13 -0700
-Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-        id 55A77312BC0C1; Mon, 22 May 2023 16:29:27 -0700 (PDT)
-From:   Andrii Nakryiko <andrii@kernel.org>
-To:     <bpf@vger.kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <martin.lau@kernel.org>
-CC:     <cyphar@cyphar.com>, <brauner@kernel.org>,
-        <lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v3 bpf-next 4/4] selftests/bpf: add path_fd-based BPF_OBJ_PIN and BPF_OBJ_GET tests
-Date:   Mon, 22 May 2023 16:29:17 -0700
-Message-ID: <20230522232917.2454595-5-andrii@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230522232917.2454595-1-andrii@kernel.org>
-References: <20230522232917.2454595-1-andrii@kernel.org>
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: D_dyvWX-0fB4mJnmMzg3r5iQTkCdqmPK
-X-Proofpoint-GUID: D_dyvWX-0fB4mJnmMzg3r5iQTkCdqmPK
-Content-Transfer-Encoding: 8BIT
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 22 May 2023 20:06:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DE3995;
+        Mon, 22 May 2023 16:42:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C4E0E6202F;
+        Mon, 22 May 2023 23:42:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13475C433D2;
+        Mon, 22 May 2023 23:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684798921;
+        bh=N6kv/5McifazKgNnuizUSRLrcRrnxq8b8JoyRkwM7+Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NLt9j7F6mtU+hZMWozRng8oVG7209X8FV0lKdaQUualgujQ7N6jM29zeBP0OwG1VS
+         YUDrFejCYUSawGylnutJCY9DYPbUF68Kwq4nQ1x162kGNr1EgctxYtS1WjHKVS6Vq1
+         W9EqPn8NH3Y/Rs3hvsTOb+Onpd/KF0fE1nEi7CtsYMIchNUsDMUl7w8vv3i/+Sz0ar
+         hSq+PrPlOxX7Uqe8YBkEdZuHNRIeMtw7qaaYMuQ7QX9y/SR5gBzynUS1jQ0NEI38L9
+         u6xdGFBVa0g4X40sHGOIzA/LnZWlRmSKXopplc2VO1hG7bon1e1YEgOFqIoJYZJ3ao
+         quLHANLeX7nkw==
+Date:   Mon, 22 May 2023 16:42:00 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     hch@infradead.org, sandeen@sandeen.net, song@kernel.org,
+        rafael@kernel.org, gregkh@linuxfoundation.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, jikos@kernel.org,
+        bvanassche@acm.org, ebiederm@xmission.com, mchehab@kernel.org,
+        keescook@chromium.org, p.raghav@samsung.com, da.gomez@samsung.com,
+        linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] fs: distinguish between user initiated freeze and
+ kernel initiated freeze
+Message-ID: <20230522234200.GC11598@frogsfrogsfrogs>
+References: <20230508011717.4034511-1-mcgrof@kernel.org>
+ <20230508011717.4034511-4-mcgrof@kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-22_17,2023-05-22_03,2023-05-22_02
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230508011717.4034511-4-mcgrof@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a selftest demonstrating using detach-mounted BPF FS using new mount
-APIs, and pinning and getting BPF map using such mount. This
-demonstrates how something like container manager could setup BPF FS,
-pin and adjust all the necessary objects in it, all before exposing BPF
-FS to a particular mount namespace.
+How about this as an alternative patch?  Kernel and userspace freeze
+state are stored in s_writers; each type cannot block the other (though
+you still can't have nested kernel or userspace freezes); and the freeze
+is maintained until /both/ freeze types are dropped.
 
-Also add a few subtests validating all meaningful combinations of
-path_fd and pathname. We use mounted /sys/fs/bpf location for these.
+AFAICT this should work for the two other usecases (quiescing pagefaults
+for fsdax pmem pre-removal; and freezing fses during suspend) besides
+online fsck for xfs.
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+--D
+
+From: Darrick J. Wong <djwong@kernel.org>
+Subject: fs: distinguish between user initiated freeze and kernel initiated freeze
+
+Userspace can freeze a filesystem using the FIFREEZE ioctl or by
+suspending the block device; this state persists until userspace thaws
+the filesystem with the FITHAW ioctl or resuming the block device.
+Since commit 18e9e5104fcd ("Introduce freeze_super and thaw_super for
+the fsfreeze ioctl") we only allow the first freeze command to succeed.
+
+The kernel may decide that it is necessary to freeze a filesystem for
+its own internal purposes, such as suspends in progress, filesystem fsck
+activities, or quiescing a device prior to removal.  Userspace thaw
+commands must never break a kernel freeze, and kernel thaw commands
+shouldn't undo userspace's freeze command.
+
+Introduce a couple of freeze holder flags and wire it into the
+sb_writers state.  One kernel and one userspace freeze are allowed to
+coexist at the same time; the filesystem will not thaw until both are
+lifted.
+
+Inspired-by: Luis Chamberlain <mcgrof@kernel.org>
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- .../bpf/prog_tests/bpf_obj_pinning.c          | 268 ++++++++++++++++++
- 1 file changed, 268 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c
+ fs/super.c         |  172 +++++++++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/fs.h |    8 ++
+ 2 files changed, 170 insertions(+), 10 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c b/tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c
-new file mode 100644
-index 000000000000..31f1e815f671
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c
-@@ -0,0 +1,268 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
-+#define _GNU_SOURCE
-+#include <test_progs.h>
-+#include <bpf/btf.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <linux/unistd.h>
-+#include <linux/mount.h>
-+#include <sys/syscall.h>
+diff --git a/fs/super.c b/fs/super.c
+index 34afe411cf2b..7496d51affb9 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -39,7 +39,7 @@
+ #include <uapi/linux/mount.h>
+ #include "internal.h"
+ 
+-static int thaw_super_locked(struct super_block *sb);
++static int thaw_super_locked(struct super_block *sb, unsigned short who);
+ 
+ static LIST_HEAD(super_blocks);
+ static DEFINE_SPINLOCK(sb_lock);
+@@ -1027,7 +1027,7 @@ static void do_thaw_all_callback(struct super_block *sb)
+ 	down_write(&sb->s_umount);
+ 	if (sb->s_root && sb->s_flags & SB_BORN) {
+ 		emergency_thaw_bdev(sb);
+-		thaw_super_locked(sb);
++		thaw_super_locked(sb, FREEZE_HOLDER_USERSPACE);
+ 	} else {
+ 		up_write(&sb->s_umount);
+ 	}
+@@ -1636,13 +1636,21 @@ static void sb_freeze_unlock(struct super_block *sb, int level)
+ }
+ 
+ /**
+- * freeze_super - lock the filesystem and force it into a consistent state
++ * __freeze_super - lock the filesystem and force it into a consistent state
+  * @sb: the super to lock
++ * @who: FREEZE_HOLDER_USERSPACE if userspace wants to freeze the fs;
++ * FREEZE_HOLDER_KERNEL if the kernel wants to freeze it
+  *
+  * Syncs the super to make sure the filesystem is consistent and calls the fs's
+- * freeze_fs.  Subsequent calls to this without first thawing the fs will return
++ * freeze_fs.  Subsequent calls to this without first thawing the fs may return
+  * -EBUSY.
+  *
++ * The @who argument distinguishes between the kernel and userspace trying to
++ * freeze the filesystem.  Although there cannot be multiple kernel freezes or
++ * multiple userspace freezes in effect at any given time, the kernel and
++ * userspace can both hold a filesystem frozen.  The filesystem remains frozen
++ * until there are no kernel or userspace freezes in effect.
++ *
+  * During this function, sb->s_writers.frozen goes through these values:
+  *
+  * SB_UNFROZEN: File system is normal, all writes progress as usual.
+@@ -1668,12 +1676,61 @@ static void sb_freeze_unlock(struct super_block *sb, int level)
+  *
+  * sb->s_writers.frozen is protected by sb->s_umount.
+  */
+-int freeze_super(struct super_block *sb)
++static int __freeze_super(struct super_block *sb, unsigned short who)
+ {
++	struct sb_writers *sbw = &sb->s_writers;
+ 	int ret;
+ 
+ 	atomic_inc(&sb->s_active);
+ 	down_write(&sb->s_umount);
 +
-+static inline int sys_fsopen(const char *fsname, unsigned flags)
-+{
-+	return syscall(__NR_fsopen, fsname, flags);
-+}
-+
-+static inline int sys_fsconfig(int fs_fd, unsigned cmd, const char *key, const void *val, int aux)
-+{
-+	return syscall(__NR_fsconfig, fs_fd, cmd, key, val, aux);
-+}
-+
-+static inline int sys_fsmount(int fs_fd, unsigned flags, unsigned ms_flags)
-+{
-+	return syscall(__NR_fsmount, fs_fd, flags, ms_flags);
-+}
-+
-+__attribute__((unused))
-+static inline int sys_move_mount(int from_dfd, const char *from_path,
-+			         int to_dfd, const char *to_path,
-+			         unsigned int ms_flags)
-+{
-+	return syscall(__NR_move_mount, from_dfd, from_path, to_dfd, to_path, ms_flags);
-+}
-+
-+static void bpf_obj_pinning_detached(void)
-+{
-+	LIBBPF_OPTS(bpf_obj_pin_opts, pin_opts);
-+	LIBBPF_OPTS(bpf_obj_get_opts, get_opts);
-+	int fs_fd = -1, mnt_fd = -1;
-+	int map_fd = -1, map_fd2 = -1;
-+	int zero = 0, src_value, dst_value, err;
-+	const char *map_name = "fsmount_map";
-+
-+	/* A bunch of below UAPI calls are constructed based on reading:
-+	 * https://brauner.io/2023/02/28/mounting-into-mount-namespaces.html
-+	 */
-+
-+	/* create VFS context */
-+	fs_fd = sys_fsopen("bpf", 0);
-+	if (!ASSERT_GE(fs_fd, 0, "fs_fd"))
-+		goto cleanup;
-+
-+	/* instantiate FS object */
-+	err = sys_fsconfig(fs_fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-+	if (!ASSERT_OK(err, "fs_create"))
-+		goto cleanup;
-+
-+	/* create O_PATH fd for detached mount */
-+	mnt_fd = sys_fsmount(fs_fd, 0, 0);
-+	if (!ASSERT_GE(mnt_fd, 0, "mnt_fd"))
-+		goto cleanup;
-+
-+	/* If we wanted to expose detached mount in the file system, we'd do
-+	 * something like below. But the whole point is that we actually don't
-+	 * even have to expose BPF FS in the file system to be able to work
-+	 * (pin/get objects) with it.
-+	 *
-+	 * err = sys_move_mount(mnt_fd, "", -EBADF, mnt_path, MOVE_MOUNT_F_EMPTY_PATH);
-+	 * if (!ASSERT_OK(err, "move_mount"))
-+	 *	goto cleanup;
-+	 */
-+
-+	/* create BPF map to pin */
-+	map_fd = bpf_map_create(BPF_MAP_TYPE_ARRAY, map_name, 4, 4, 1, NULL);
-+	if (!ASSERT_GE(map_fd, 0, "map_fd"))
-+		goto cleanup;
-+
-+	/* pin BPF map into detached BPF FS through mnt_fd */
-+	pin_opts.file_flags = BPF_F_PATH_FD;
-+	pin_opts.path_fd = mnt_fd;
-+	err = bpf_obj_pin_opts(map_fd, map_name, &pin_opts);
-+	if (!ASSERT_OK(err, "map_pin"))
-+		goto cleanup;
-+
-+	/* get BPF map from detached BPF FS through mnt_fd */
-+	get_opts.file_flags = BPF_F_PATH_FD;
-+	get_opts.path_fd = mnt_fd;
-+	map_fd2 = bpf_obj_get_opts(map_name, &get_opts);
-+	if (!ASSERT_GE(map_fd2, 0, "map_get"))
-+		goto cleanup;
-+
-+	/* update map through one FD */
-+	src_value = 0xcafebeef;
-+	err = bpf_map_update_elem(map_fd, &zero, &src_value, 0);
-+	ASSERT_OK(err, "map_update");
-+
-+	/* check values written/read through different FDs do match */
-+	dst_value = 0;
-+	err = bpf_map_lookup_elem(map_fd2, &zero, &dst_value);
-+	ASSERT_OK(err, "map_lookup");
-+	ASSERT_EQ(dst_value, src_value, "map_value_eq1");
-+	ASSERT_EQ(dst_value, 0xcafebeef, "map_value_eq2");
-+
-+cleanup:
-+	if (map_fd >= 0)
-+		ASSERT_OK(close(map_fd), "close_map_fd");
-+	if (map_fd2 >= 0)
-+		ASSERT_OK(close(map_fd2), "close_map_fd2");
-+	if (fs_fd >= 0)
-+		ASSERT_OK(close(fs_fd), "close_fs_fd");
-+	if (mnt_fd >= 0)
-+		ASSERT_OK(close(mnt_fd), "close_mnt_fd");
-+}
-+
-+enum path_kind
-+{
-+	PATH_STR_ABS,
-+	PATH_STR_REL,
-+	PATH_FD_REL,
-+};
-+
-+static void validate_pin(int map_fd, const char *map_name, int src_value,
-+			 enum path_kind path_kind)
-+{
-+	LIBBPF_OPTS(bpf_obj_pin_opts, pin_opts);
-+	char abs_path[PATH_MAX], old_cwd[PATH_MAX];
-+	const char *pin_path = NULL;
-+	int zero = 0, dst_value, map_fd2, err;
-+
-+	snprintf(abs_path, sizeof(abs_path), "/sys/fs/bpf/%s", map_name);
-+	old_cwd[0] = '\0';
-+
-+	switch (path_kind) {
-+	case PATH_STR_ABS:
-+		/* absolute path */
-+		pin_path = abs_path;
-+		break;
-+	case PATH_STR_REL:
-+		/* cwd + relative path */
-+		ASSERT_OK_PTR(getcwd(old_cwd, sizeof(old_cwd)), "getcwd");
-+		ASSERT_OK(chdir("/sys/fs/bpf"), "chdir");
-+		pin_path = map_name;
-+		break;
-+	case PATH_FD_REL:
-+		/* dir fd + relative path */
-+		pin_opts.file_flags = BPF_F_PATH_FD;
-+		pin_opts.path_fd = open("/sys/fs/bpf", O_PATH);
-+		ASSERT_GE(pin_opts.path_fd, 0, "path_fd");
-+		pin_path = map_name;
-+		break;
++	if (sbw->frozen == SB_FREEZE_COMPLETE) {
++		switch (who) {
++		case FREEZE_HOLDER_KERNEL:
++			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
++				/*
++				 * Kernel freeze already in effect; caller can
++				 * try again.
++				 */
++				deactivate_locked_super(sb);
++				return -EBUSY;
++			}
++			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
++				/*
++				 * Share the freeze state with the userspace
++				 * freeze already in effect.
++				 */
++				sbw->freeze_holders |= who;
++				deactivate_locked_super(sb);
++				return 0;
++			}
++			break;
++		case FREEZE_HOLDER_USERSPACE:
++			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
++				/*
++				 * Userspace freeze already in effect; tell
++				 * the caller we're busy.
++				 */
++				deactivate_locked_super(sb);
++				return -EBUSY;
++			}
++			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
++				/*
++				 * Share the freeze state with the kernel
++				 * freeze already in effect.
++				 */
++				sbw->freeze_holders |= who;
++				deactivate_locked_super(sb);
++				return 0;
++			}
++			break;
++		default:
++			BUG();
++			deactivate_locked_super(sb);
++			return -EINVAL;
++		}
 +	}
 +
-+	/* pin BPF map using specified path definition */
-+	err = bpf_obj_pin_opts(map_fd, pin_path, &pin_opts);
-+	ASSERT_OK(err, "obj_pin");
+ 	if (sb->s_writers.frozen != SB_UNFROZEN) {
+ 		deactivate_locked_super(sb);
+ 		return -EBUSY;
+@@ -1686,6 +1743,7 @@ int freeze_super(struct super_block *sb)
+ 
+ 	if (sb_rdonly(sb)) {
+ 		/* Nothing to do really... */
++		sb->s_writers.freeze_holders |= who;
+ 		sb->s_writers.frozen = SB_FREEZE_COMPLETE;
+ 		up_write(&sb->s_umount);
+ 		return 0;
+@@ -1731,23 +1789,103 @@ int freeze_super(struct super_block *sb)
+ 	 * For debugging purposes so that fs can warn if it sees write activity
+ 	 * when frozen is set to SB_FREEZE_COMPLETE, and for thaw_super().
+ 	 */
++	sb->s_writers.freeze_holders |= who;
+ 	sb->s_writers.frozen = SB_FREEZE_COMPLETE;
+ 	lockdep_sb_freeze_release(sb);
+ 	up_write(&sb->s_umount);
+ 	return 0;
+ }
 +
-+	/* cleanup */
-+	if (pin_opts.path_fd >= 0)
-+		close(pin_opts.path_fd);
-+	if (old_cwd[0])
-+		ASSERT_OK(chdir(old_cwd), "restore_cwd");
-+
-+	map_fd2 = bpf_obj_get(abs_path);
-+	if (!ASSERT_GE(map_fd2, 0, "map_get"))
-+		goto cleanup;
-+
-+	/* update map through one FD */
-+	err = bpf_map_update_elem(map_fd, &zero, &src_value, 0);
-+	ASSERT_OK(err, "map_update");
-+
-+	/* check values written/read through different FDs do match */
-+	dst_value = 0;
-+	err = bpf_map_lookup_elem(map_fd2, &zero, &dst_value);
-+	ASSERT_OK(err, "map_lookup");
-+	ASSERT_EQ(dst_value, src_value, "map_value_eq");
-+cleanup:
-+	if (map_fd2 >= 0)
-+		ASSERT_OK(close(map_fd2), "close_map_fd2");
-+	unlink(abs_path);
-+}
-+
-+static void validate_get(int map_fd, const char *map_name, int src_value,
-+			 enum path_kind path_kind)
++/*
++ * freeze_super - lock the filesystem and force it into a consistent state
++ * @sb: the super to lock
++ *
++ * Syncs the super to make sure the filesystem is consistent and calls the fs's
++ * freeze_fs.  Subsequent calls to this without first calling thaw_super will
++ * return -EBUSY.  See the comment for __freeze_super for more information.
++ */
++int freeze_super(struct super_block *sb)
 +{
-+	LIBBPF_OPTS(bpf_obj_get_opts, get_opts);
-+	char abs_path[PATH_MAX], old_cwd[PATH_MAX];
-+	const char *pin_path = NULL;
-+	int zero = 0, dst_value, map_fd2, err;
++	return __freeze_super(sb, FREEZE_HOLDER_USERSPACE);
++}
+ EXPORT_SYMBOL(freeze_super);
+ 
+-static int thaw_super_locked(struct super_block *sb)
++/**
++ * freeze_super_kernel - lock the filesystem for an internal kernel operation
++ * and force it into a consistent state.
++ * @sb: the super to lock
++ *
++ * Syncs the super to make sure the filesystem is consistent and calls the fs's
++ * freeze_fs.  Subsequent calls to this without first calling thaw_super_excl
++ * will return -EBUSY.
++ */
++int freeze_super_kernel(struct super_block *sb)
+ {
++	return __freeze_super(sb, FREEZE_HOLDER_KERNEL);
++}
++EXPORT_SYMBOL_GPL(freeze_super_kernel);
 +
-+	snprintf(abs_path, sizeof(abs_path), "/sys/fs/bpf/%s", map_name);
-+	/* pin BPF map using specified path definition */
-+	err = bpf_obj_pin(map_fd, abs_path);
-+	if (!ASSERT_OK(err, "pin_map"))
-+		return;
-+
-+	old_cwd[0] = '\0';
-+
-+	switch (path_kind) {
-+	case PATH_STR_ABS:
-+		/* absolute path */
-+		pin_path = abs_path;
-+		break;
-+	case PATH_STR_REL:
-+		/* cwd + relative path */
-+		ASSERT_OK_PTR(getcwd(old_cwd, sizeof(old_cwd)), "getcwd");
-+		ASSERT_OK(chdir("/sys/fs/bpf"), "chdir");
-+		pin_path = map_name;
-+		break;
-+	case PATH_FD_REL:
-+		/* dir fd + relative path */
-+		get_opts.file_flags = BPF_F_PATH_FD;
-+		get_opts.path_fd = open("/sys/fs/bpf", O_PATH);
-+		ASSERT_GE(get_opts.path_fd, 0, "path_fd");
-+		pin_path = map_name;
-+		break;
++/*
++ * Undoes the effect of a freeze_super_locked call.  If the filesystem is
++ * frozen both by userspace and the kernel, a thaw call from either source
++ * removes that state without releasing the other state or unlocking the
++ * filesystem.
++ */
++static int thaw_super_locked(struct super_block *sb, unsigned short who)
++{
++	struct sb_writers *sbw = &sb->s_writers;
+ 	int error;
+ 
++	if (sbw->frozen == SB_FREEZE_COMPLETE) {
++		switch (who) {
++		case FREEZE_HOLDER_KERNEL:
++			if (!(sbw->freeze_holders & FREEZE_HOLDER_KERNEL)) {
++				/* Caller doesn't hold a kernel freeze. */
++				up_write(&sb->s_umount);
++				return -EINVAL;
++			}
++			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
++				/*
++				 * We were sharing the freeze with userspace,
++				 * so drop the userspace freeze but exit
++				 * without unfreezing.
++				 */
++				sbw->freeze_holders &= ~who;
++				up_write(&sb->s_umount);
++				return 0;
++			}
++			break;
++		case FREEZE_HOLDER_USERSPACE:
++			if (!(sbw->freeze_holders & FREEZE_HOLDER_USERSPACE)) {
++				/* Caller doesn't hold a userspace freeze. */
++				up_write(&sb->s_umount);
++				return -EINVAL;
++			}
++			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
++				/*
++				 * We were sharing the freeze with the kernel,
++				 * so drop the kernel freeze but exit without
++				 * unfreezing.
++				 */
++				sbw->freeze_holders &= ~who;
++				up_write(&sb->s_umount);
++				return 0;
++			}
++			break;
++		default:
++			BUG();
++			up_write(&sb->s_umount);
++			return -EINVAL;
++		}
 +	}
 +
-+	map_fd2 = bpf_obj_get_opts(pin_path, &get_opts);
-+	if (!ASSERT_GE(map_fd2, 0, "map_get"))
-+		goto cleanup;
-+
-+	/* cleanup */
-+	if (get_opts.path_fd >= 0)
-+		close(get_opts.path_fd);
-+	if (old_cwd[0])
-+		ASSERT_OK(chdir(old_cwd), "restore_cwd");
-+
-+	/* update map through one FD */
-+	err = bpf_map_update_elem(map_fd, &zero, &src_value, 0);
-+	ASSERT_OK(err, "map_update");
-+
-+	/* check values written/read through different FDs do match */
-+	dst_value = 0;
-+	err = bpf_map_lookup_elem(map_fd2, &zero, &dst_value);
-+	ASSERT_OK(err, "map_lookup");
-+	ASSERT_EQ(dst_value, src_value, "map_value_eq");
-+cleanup:
-+	if (map_fd2 >= 0)
-+		ASSERT_OK(close(map_fd2), "close_map_fd2");
-+	unlink(abs_path);
-+}
-+
-+static void bpf_obj_pinning_mounted(enum path_kind path_kind)
+ 	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE) {
+ 		up_write(&sb->s_umount);
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (sb_rdonly(sb)) {
++		sb->s_writers.freeze_holders &= ~who;
+ 		sb->s_writers.frozen = SB_UNFROZEN;
+ 		goto out;
+ 	}
+@@ -1765,6 +1903,7 @@ static int thaw_super_locked(struct super_block *sb)
+ 		}
+ 	}
+ 
++	sb->s_writers.freeze_holders &= ~who;
+ 	sb->s_writers.frozen = SB_UNFROZEN;
+ 	sb_freeze_unlock(sb, SB_FREEZE_FS);
+ out:
+@@ -1774,18 +1913,33 @@ static int thaw_super_locked(struct super_block *sb)
+ }
+ 
+ /**
+- * thaw_super -- unlock filesystem
++ * thaw_super -- unlock filesystem frozen with freeze_super
+  * @sb: the super to thaw
+  *
+- * Unlocks the filesystem and marks it writeable again after freeze_super().
++ * Unlocks the filesystem after freeze_super, and make it writeable again if
++ * there is not a freeze_super_kernel still in effect.
+  */
+ int thaw_super(struct super_block *sb)
+ {
+ 	down_write(&sb->s_umount);
+-	return thaw_super_locked(sb);
++	return thaw_super_locked(sb, FREEZE_HOLDER_USERSPACE);
+ }
+ EXPORT_SYMBOL(thaw_super);
+ 
++/**
++ * thaw_super_kernel -- unlock filesystem frozen with freeze_super_kernel
++ * @sb: the super to thaw
++ *
++ * Unlocks the filesystem after freeze_super_kernel, and make it writeable
++ * again if there is not a freeze_super still in effect.
++ */
++int thaw_super_kernel(struct super_block *sb)
 +{
-+	const char *map_name = "mounted_map";
-+	int map_fd;
-+
-+	/* create BPF map to pin */
-+	map_fd = bpf_map_create(BPF_MAP_TYPE_ARRAY, map_name, 4, 4, 1, NULL);
-+	if (!ASSERT_GE(map_fd, 0, "map_fd"))
-+		return;
-+
-+	validate_pin(map_fd, map_name, 100 + (int)path_kind, path_kind);
-+	validate_get(map_fd, map_name, 200 + (int)path_kind, path_kind);
-+	ASSERT_OK(close(map_fd), "close_map_fd");
++	down_write(&sb->s_umount);
++	return thaw_super_locked(sb, FREEZE_HOLDER_KERNEL);
 +}
++EXPORT_SYMBOL_GPL(thaw_super_kernel);
 +
-+void test_bpf_obj_pinning()
-+{
-+	if (test__start_subtest("detached"))
-+		bpf_obj_pinning_detached();
-+	if (test__start_subtest("mounted-str-abs"))
-+		bpf_obj_pinning_mounted(PATH_STR_ABS);
-+	if (test__start_subtest("mounted-str-rel"))
-+		bpf_obj_pinning_mounted(PATH_STR_REL);
-+	if (test__start_subtest("mounted-fd-rel"))
-+		bpf_obj_pinning_mounted(PATH_FD_REL);
-+}
--- 
-2.34.1
-
+ /*
+  * Create workqueue for deferred direct IO completions. We allocate the
+  * workqueue when it's first needed. This avoids creating workqueue for
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 21a981680856..147644b5d648 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1145,11 +1145,15 @@ enum {
+ #define SB_FREEZE_LEVELS (SB_FREEZE_COMPLETE - 1)
+ 
+ struct sb_writers {
+-	int				frozen;		/* Is sb frozen? */
++	unsigned short			frozen;		/* Is sb frozen? */
++	unsigned short			freeze_holders;	/* Who froze fs? */
+ 	wait_queue_head_t		wait_unfrozen;	/* wait for thaw */
+ 	struct percpu_rw_semaphore	rw_sem[SB_FREEZE_LEVELS];
+ };
+ 
++#define FREEZE_HOLDER_USERSPACE	(1U << 1)	/* userspace froze fs */
++#define FREEZE_HOLDER_KERNEL	(1U << 2)	/* kernel froze fs */
++
+ struct super_block {
+ 	struct list_head	s_list;		/* Keep this first */
+ 	dev_t			s_dev;		/* search index; _not_ kdev_t */
+@@ -2288,6 +2292,8 @@ extern int user_statfs(const char __user *, struct kstatfs *);
+ extern int fd_statfs(int, struct kstatfs *);
+ extern int freeze_super(struct super_block *super);
+ extern int thaw_super(struct super_block *super);
++extern int freeze_super_kernel(struct super_block *super);
++extern int thaw_super_kernel(struct super_block *super);
+ extern __printf(2, 3)
+ int super_setup_bdi_name(struct super_block *sb, char *fmt, ...);
+ extern int super_setup_bdi(struct super_block *sb);
