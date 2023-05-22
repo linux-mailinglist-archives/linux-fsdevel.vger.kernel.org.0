@@ -2,72 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6667970CDF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 00:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC0DF70CE0E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 00:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234090AbjEVWaf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 18:30:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42088 "EHLO
+        id S234814AbjEVWgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 18:36:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjEVWae (ORCPT
+        with ESMTP id S234805AbjEVWgP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 18:30:34 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DD7109;
-        Mon, 22 May 2023 15:30:30 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 3F1A91FEE9;
-        Mon, 22 May 2023 22:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1684794629;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IeRR5m7pzmYl0Ar1i40Qz7t46CN66yxFsAZx3v44EHU=;
-        b=Jap4uBpt/3Lv0r4uwtIXQs5YMDLXLHNqVr8awKTjJfu7Jm4SXSbejyUPeoGE0HErl7gTTB
-        8zouQEyamI58E3NEpwP50QCFUAucK3g67chaMgaSAgIgE/hSnW1sO5T8u0GFEgBjOWM1WU
-        GR3/fYV3CM5uiFvauunL7Xboso65hcQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1684794629;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IeRR5m7pzmYl0Ar1i40Qz7t46CN66yxFsAZx3v44EHU=;
-        b=U7jiNNzH8JgsrPETLfiG5MvKnieVlLXd8gjx4wwkJBaEMXzTT35rdx7/8duEbUmElG6hTl
-        VkiJBrxnQml0aDDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F2BB713776;
-        Mon, 22 May 2023 22:30:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id M6coOgTta2RQfQAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Mon, 22 May 2023 22:30:28 +0000
-Date:   Tue, 23 May 2023 00:24:22 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     syzbot <syzbot+5e466383663438b99b44@syzkaller.appspotmail.com>
-Cc:     chris@chrisdown.name, clm@fb.com, dsterba@suse.com,
-        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, xiaoshoukui@gmail.com
-Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_exclop_balance (2)
-Message-ID: <20230522222422.GV32559@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <000000000000725cab05f55f1bb0@google.com>
- <000000000000e7582c05fafc8901@google.com>
+        Mon, 22 May 2023 18:36:15 -0400
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486B4FE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 15:36:12 -0700 (PDT)
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7636c775952so274982739f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 15:36:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684794971; x=1687386971;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GkcPTyai8fLKGWDOfLOHN9Xafg7Hw5fvduTOLXDbabE=;
+        b=DOTVK88XgY5k/s2xKqW8Gox3NZre9DV65WvL+QiJsSPgOCG+JyVAkoTZQwfC0jGLyf
+         f3i1s7IqII69qGZG48vD1pstZeWtZbMoH6xrL5h7PQMp3erD7P69KPU1jqzTMyshCyN0
+         nQo+MsF0L34LQFMz6ybjZiYFDlez1SeTu4EL/7CoZaBFV0OZERHDkTiAHccjm2U8Mb8n
+         EkBEvANwwUHS2Tg16oS1Nu0DkDUQCO+dklg6NV6sEfKy5z2sI7orb6PIMJM8EM9rTfoO
+         BUpbRGqV6VmULapCQwWu8LNpAdgsbcNnfKoOiFev6UW7WOOa4+SdAOWdhHGsf886NGD+
+         aO+A==
+X-Gm-Message-State: AC+VfDwV1/rZsjDWiGORYdObKKMNkmVXk09adOFZF1jrKCnL0EQQuAe0
+        FkzFpKroLHwSuFXJF6/GCH5pa3QU8LYSPvpYNBjRtlPVE/qM7NTT0g==
+X-Google-Smtp-Source: ACHHUZ6A7OW3+C4d3KxiyFg7rBK4mtT8QvqxZA9bBUi0NV6FCyTyzJvgEQiyXEGl5G5PFH3O4Ho5BA0NfU7OshvByZVzvrTAGb6y
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000e7582c05fafc8901@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SORTED_RECIPS,
-        SPF_HELO_NONE,SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=no
+X-Received: by 2002:a05:6638:10c5:b0:416:7e77:bb5f with SMTP id
+ q5-20020a05663810c500b004167e77bb5fmr6129956jad.0.1684794971452; Mon, 22 May
+ 2023 15:36:11 -0700 (PDT)
+Date:   Mon, 22 May 2023 15:36:11 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cafb9305fc4fe588@google.com>
+Subject: [syzbot] [fs?] KASAN: null-ptr-deref Write in get_block (2)
+From:   syzbot <syzbot+aad58150cbc64ba41bdc@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,85 +54,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 05, 2023 at 06:43:55PM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    7163a2111f6c Merge tag 'acpi-6.4-rc1-3' of git://git.kerne..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=175bb84c280000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=73a06f6ef2d5b492
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5e466383663438b99b44
-> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12048338280000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ff7314280000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/01051811f2fe/disk-7163a211.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/a26c68e4c8a6/vmlinux-7163a211.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/17380fb8dad4/bzImage-7163a211.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/b30a249e8609/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5e466383663438b99b44@syzkaller.appspotmail.com
-> 
-> assertion failed: fs_info->exclusive_operation == BTRFS_EXCLOP_BALANCE_PAUSED, in fs/btrfs/ioctl.c:463
+Hello,
 
-Looks like syzbot was able to hit another problem, the above assertion
-is from a recent fix ac868bc9d136 ("btrfs: fix assertion of exclop
-condition when starting balance").
+syzbot found the following issue on:
 
-> ------------[ cut here ]------------
-> kernel BUG at fs/btrfs/messages.c:259!
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 8630 Comm: syz-executor102 Not tainted 6.3.0-syzkaller-13225-g7163a2111f6c #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/14/2023
-> RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
-> Code: df e8 2c 05 36 f7 e9 50 fb ff ff e8 b2 90 01 00 66 90 66 0f 1f 00 89 d1 48 89 f2 48 89 fe 48 c7 c7 80 32 2c 8b e8 c8 60 ff ff <0f> 0b 66 0f 1f 44 00 00 66 0f 1f 00 53 48 89 fb e8 73 31 de f6 48
-> RSP: 0018:ffffc9000ae27e48 EFLAGS: 00010246
-> RAX: 0000000000000066 RBX: 1ffff1100fa13c18 RCX: e812ce05a9b3c300
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: 0000000000000002 R08: ffffffff816f0fec R09: fffff520015c4f7d
-> R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88807d09e0c0
-> R13: ffff88807d09c000 R14: ffff88807d09c678 R15: dffffc0000000000
-> FS:  00007f2bb10a8700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f2bb0c90000 CR3: 0000000028447000 CR4: 00000000003506e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  btrfs_exclop_balance+0x153/0x1f0 fs/btrfs/ioctl.c:463
->  btrfs_ioctl_balance+0x482/0x7c0 fs/btrfs/ioctl.c:3562
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:870 [inline]
->  __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:856
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> RIP: 0033:0x7f2bb853ec69
-> RSP: 002b:00007f2bb10a82f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f2bb85c87c0 RCX: 00007f2bb853ec69
+HEAD commit:    4d6d4c7f541d Merge tag 'linux-kselftest-fixes-6.4-rc3' of ..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17b34a5a280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94af80bb8ddd23c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=aad58150cbc64ba41bdc
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1615fbe9280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1282842e280000
 
-If this could be relevant as some error code, RAX 0xda is -38 which is
-ENOSYS, so there might be some combination of balance parameters that is
-unexpected.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/dcd8898335fc/disk-4d6d4c7f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6a1f7abe57aa/vmlinux-4d6d4c7f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b485f41c18e6/bzImage-4d6d4c7f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/19be7546cd7d/mount_1.gz
 
-> RDX: 0000000020000540 RSI: 00000000c4009420 RDI: 0000000000000004
-> RBP: 00007f2bb85951d0 R08: 00007f2bb10a8700 R09: 0000000000000000
-> R10: 00007f2bb10a8700 R11: 0000000000000246 R12: 7fffffffffffffff
-> R13: 0000000100000001 R14: 8000000000000001 R15: 00007f2bb85c87c8
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:btrfs_assertfail+0x18/0x20 fs/btrfs/messages.c:259
-> RSP: 0018:ffffc9000ae27e48 EFLAGS: 00010246
-> RAX: 0000000000000066 RBX: 1ffff1100fa13c18 RCX: e812ce05a9b3c300
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: 0000000000000002 R08: ffffffff816f0fec R09: fffff520015c4f7d
-> R10: 0000000000000000 R11: dffffc0000000001 R12: ffff88807d09e0c0
-> R13: ffff88807d09c000 R14: ffff88807d09c678 R15: dffffc0000000000
-> FS:  00007f2bb10a8700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f2bb0c90000 CR3: 0000000028447000 CR4: 00000000003506e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+aad58150cbc64ba41bdc@syzkaller.appspotmail.com
+
+memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL, pid=4996 'syz-executor412'
+loop0: detected capacity change from 0 to 128
+VFS: Found a Xenix FS (block size = 512) on device loop0
+sysv_free_block: trying to free block not in datazone
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: null-ptr-deref in test_and_set_bit_lock include/asm-generic/bitops/instrumented-lock.h:57 [inline]
+BUG: KASAN: null-ptr-deref in trylock_buffer include/linux/buffer_head.h:399 [inline]
+BUG: KASAN: null-ptr-deref in lock_buffer include/linux/buffer_head.h:405 [inline]
+BUG: KASAN: null-ptr-deref in alloc_branch fs/sysv/itree.c:148 [inline]
+BUG: KASAN: null-ptr-deref in get_block+0x567/0x16a0 fs/sysv/itree.c:251
+Write of size 8 at addr 0000000000000000 by task syz-executor412/4996
+
+CPU: 1 PID: 4996 Comm: syz-executor412 Not tainted 6.4.0-rc2-syzkaller-00018-g4d6d4c7f541d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/28/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_report+0xe6/0x540 mm/kasan/report.c:465
+ kasan_report+0x176/0x1b0 mm/kasan/report.c:572
+ kasan_check_range+0x283/0x290 mm/kasan/generic.c:187
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ test_and_set_bit_lock include/asm-generic/bitops/instrumented-lock.h:57 [inline]
+ trylock_buffer include/linux/buffer_head.h:399 [inline]
+ lock_buffer include/linux/buffer_head.h:405 [inline]
+ alloc_branch fs/sysv/itree.c:148 [inline]
+ get_block+0x567/0x16a0 fs/sysv/itree.c:251
+ __block_write_begin_int+0x548/0x1a50 fs/buffer.c:2064
+ __block_write_begin fs/buffer.c:2114 [inline]
+ block_write_begin+0x9c/0x1f0 fs/buffer.c:2175
+ sysv_write_begin+0x31/0x70 fs/sysv/itree.c:485
+ generic_perform_write+0x300/0x5e0 mm/filemap.c:3923
+ __generic_file_write_iter+0x17a/0x400 mm/filemap.c:4051
+ generic_file_write_iter+0xaf/0x310 mm/filemap.c:4083
+ do_iter_write+0x7b1/0xcb0 fs/read_write.c:860
+ vfs_writev fs/read_write.c:933 [inline]
+ do_pwritev+0x21a/0x360 fs/read_write.c:1030
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f3233222b19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffecf15f268 EFLAGS: 00000246 ORIG_RAX: 0000000000000128
+RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007f3233222b19
+RDX: 0000000000000005 RSI: 0000000020000480 RDI: 0000000000000004
+RBP: 00007f32331e2150 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000007fff R11: 0000000000000246 R12: 00007f32331e21e0
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
