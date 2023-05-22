@@ -2,232 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 084C170C170
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 16:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39CFB70C22D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 17:19:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229960AbjEVOuU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 10:50:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35686 "EHLO
+        id S231934AbjEVPTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 11:19:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbjEVOuU (ORCPT
+        with ESMTP id S231348AbjEVPTb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 10:50:20 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC28CF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 07:50:18 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-510b4e488e4so11238374a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 07:50:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1684767017; x=1687359017;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+ON1XtIn8i5t/ok1PZB/tCkyoT+Ms37Fnnm8zl6UYm8=;
-        b=gOfrA1nkFC4EosA0DoIjpYPbjKBgOW9GJQCAFlmnuJZaGJ/KGGOcC4OlPLYuCUAYnz
-         5q6KTu2hpPYV4tIYDgnQPtpojZW2Vr4s1COZM741vB5cmNuWxIx7ccfKve61j3fLpdhZ
-         8sgYsJl39A19yOm2+SmJTHUIhXWVNa65ylADE=
+        Mon, 22 May 2023 11:19:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED0AF9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 08:18:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684768725;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QtwpGxtG++IildS19TxDJ64n89sIOkk1Zx05HB1YFBA=;
+        b=bQ/ziOA/gz1Yb3/irp1ZpeTLwvBHPYWprU5Czlo+KQxxgf7Uk4pnJtJu9UAf+BGz0/t/KK
+        a6r9DgBXQ6J8ZTRpxl8HirgRXUF9y3yYSzxjp5Dp6pKAveYmFETrw82UpfiyPfPqpecac4
+        VcFO1VlrXNrTRg/11AfF+n8NPgQJ9h0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-jTsudKaSMQKPukvSiDKyfw-1; Mon, 22 May 2023 11:18:42 -0400
+X-MC-Unique: jTsudKaSMQKPukvSiDKyfw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-3f4f2f5098bso35363115e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 08:18:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684767017; x=1687359017;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+ON1XtIn8i5t/ok1PZB/tCkyoT+Ms37Fnnm8zl6UYm8=;
-        b=R95mPtHBxKQFc+eC2r/N0xXMruhBSmPS7DLXiilca2t1NCRdrAYax4655mUDA4ZCEP
-         Cgflde6R0qio/bDPqqSa2Jzqfq6g0tU+ZDxFJTrUonph9Awi8eYLSmHHrVox7qEYiplQ
-         Pnhwm1LSGu4QKtHWI9r6xeeff+FsVLtnFa9nh7TKlRK1kbw/TxE2tTxGYUDxVLfCCCpa
-         1ti36OsAY49Z4RB9b3Kn07QXpaIp4x1I4+/nM++ha40H8NzWQQ9wEpk7VVa+QrCIWQYr
-         G1eZvQUI8ONE5kaom/CO7AigDqaWujpn3wFkjtOEsgohZ2HoNEqGfXYvucfmpriagCGg
-         OkOw==
-X-Gm-Message-State: AC+VfDw6n4JsdlNenCTY+Ob6LDxqQDSqFYZLz+AjfK1jc3L9cZ0Bkd+n
-        8JEwoDvAgW2ysBUE5udo1Y3QttfmrWWySfAbYoc5Gw==
-X-Google-Smtp-Source: ACHHUZ5hRjtpjMRp7EHe7euPLb7teaCVuN8oSj+MtgtgxPQdX+TMV4M4eAXkP3qsgHWy76S4QGGCbE1S3H4f5Ef5VzE=
-X-Received: by 2002:a17:907:da5:b0:970:925:6563 with SMTP id
- go37-20020a1709070da500b0097009256563mr2127237ejc.8.1684767017115; Mon, 22
- May 2023 07:50:17 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684768721; x=1687360721;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QtwpGxtG++IildS19TxDJ64n89sIOkk1Zx05HB1YFBA=;
+        b=HHnWXRmkdSErszyz7RtrEaUD24085dNBFCkAmWoYKa0JheacV+psGZasfdL/+/1IXt
+         zuhtEhyC2NMelrl+cg4OA0Bs+0z6Pg8yvW8ZCSApd/7lzmvhF/uVr4/BIE1xa/sw35wi
+         EruvkbrFrGTEPQ95u8v11o9f3KsYMojV3zasb3bGtCcO2sCwx0yOE+GyahF0lx6YqZh5
+         nnsMexIWwl3oCdEMDnswv2+cFDrto0AnfRkD5/5/dvmExn5pv6dN3LAkYqlkBk44/Ejx
+         n8D2YwYjSUhxIE0lDJxTsEHY8B3dc0LuXpTBPPdaXIa4XAj2S27IQ5vWwY9CEDJ2ML68
+         52lw==
+X-Gm-Message-State: AC+VfDzBR7P2EXvYjyT46zicOr6hAtNjeUDfchVgb8xpLnKK9c5TgzuZ
+        8ew9yYL9l/XjAdx/jL+1e5ajKBq2o2z8yisNEPgboAeVuxhviAqzDvE3osU6ruKaYypsL9vyvmh
+        I4+5L6Cw2gNVukeWxKB3CTPAvMw==
+X-Received: by 2002:adf:f3cd:0:b0:307:a4ee:4a25 with SMTP id g13-20020adff3cd000000b00307a4ee4a25mr7567584wrp.28.1684768720936;
+        Mon, 22 May 2023 08:18:40 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5c5Jh29rHJWdlcSftb4ivtZudFaESkFZGZH5aeQjTlOaWyT+K5kG/FE0wh/FICWlng66JoQQ==
+X-Received: by 2002:adf:f3cd:0:b0:307:a4ee:4a25 with SMTP id g13-20020adff3cd000000b00307a4ee4a25mr7567565wrp.28.1684768720646;
+        Mon, 22 May 2023 08:18:40 -0700 (PDT)
+Received: from vschneid.remote.csb ([208.178.8.98])
+        by smtp.gmail.com with ESMTPSA id l9-20020a05600012c900b003078354f774sm7963718wrx.36.2023.05.22.08.18.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 May 2023 08:18:40 -0700 (PDT)
+From:   Valentin Schneider <vschneid@redhat.com>
+To:     Marcelo Tosatti <mtosatti@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Leonardo Bras <leobras@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
+Subject: Re: [PATCH v4] fs/buffer.c: update per-CPU bh_lru cache via RCU
+In-Reply-To: <ZCXipBvmhAC1+eRi@tpad>
+References: <ZCXipBvmhAC1+eRi@tpad>
+Date:   Mon, 22 May 2023 16:18:39 +0100
+Message-ID: <xhsmha5xwqtrk.mognet@vschneid.remote.csb>
 MIME-Version: 1.0
-References: <20230519125705.598234-1-amir73il@gmail.com> <20230519125705.598234-3-amir73il@gmail.com>
- <CAJfpegtK7dJ1wa5NdruK1rPmJ9JgXujjyxFCGFBXnu=6u_KzLQ@mail.gmail.com> <CAOQ4uxi=wWWeDb5BLQiOmMG02R-LRugy1TXCM7YU77K-7Ost0A@mail.gmail.com>
-In-Reply-To: <CAOQ4uxi=wWWeDb5BLQiOmMG02R-LRugy1TXCM7YU77K-7Ost0A@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 22 May 2023 16:50:05 +0200
-Message-ID: <CAJfpegsty3wfV=2g_M7pfdrHxDDjecOAnkidcp87pe5o+dBt_A@mail.gmail.com>
-Subject: Re: [PATCH v13 02/10] fuse: Definitions and ioctl for passthrough
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Daniel Rosenberg <drosen@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Alessio Balsini <balsini@android.com>,
-        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 20 May 2023 at 12:20, Amir Goldstein <amir73il@gmail.com> wrote:
+On 30/03/23 16:27, Marcelo Tosatti wrote:
+> +/*
+> + * invalidate_bh_lrus() is called rarely - but not only at unmount.
+> + */
+>  void invalidate_bh_lrus(void)
+>  {
+> -	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
+> +	int cpu, oidx;
+> +
+> +	mutex_lock(&bh_lru_invalidate_mutex);
+> +	cpus_read_lock();
+> +	oidx = bh_lru_idx;
+
+> +	bh_lru_idx++;
+> +	if (bh_lru_idx >= 2)
+> +		bh_lru_idx = 0;
+> +
+
+You could make this a bool and flip it:
+  bh_lru_idx = !bh_lru_idx
+
+> +	/* Assign the per-CPU bh_lru pointer */
+> +	for_each_online_cpu(cpu)
+> +		rcu_assign_pointer(per_cpu(bh_lrup, cpu),
+> +				   per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
+> +	synchronize_rcu_expedited();
+> +
+> +	for_each_online_cpu(cpu) {
+> +		struct bh_lru *b = per_cpu_ptr(&bh_lrus[oidx], cpu);
+> +
+> +		bh_lru_lock();
+> +		__invalidate_bh_lrus(b);
+> +		bh_lru_unlock();
+
+Given the bh_lrup has been updated and we're past the synchronize_rcu(),
+what is bh_lru_lock() used for here?
+
+> +	}
+> +	cpus_read_unlock();
+> +	mutex_unlock(&bh_lru_invalidate_mutex);
+
+Re scalability, this is shifting a set of per-CPU-IPI callbacks to a single
+CPU, which isn't great. Can we consider doing something like [1], i.e. in
+the general case send an IPI to:
+
+  rcu_assign_pointer() + call_rcu(/* invalidation callback */)
+
+and in the case we're NOHZ_FULL and the target CPU is not executing in the
+kernel, we do that remotely to reduce interference. We might want to batch
+the synchronize_rcu() for the remote invalidates, maybe some abuse of the
+API like so?
+
+  bool do_local_invalidate(int cpu, struct cpumask *mask)
+  {
+          if (cpu_in_kernel(cpu)) {
+              __cpumask_clear_cpu(cpu, mask);
+              return true;
+          }
+
+          return false;
+  }
+
+  void invalidate_bh_lrus(void)
+  {
+          cpumask_var_t cpumask;
+
+          cpus_read_lock();
+          cpumask_copy(&cpumask, cpu_online_mask);
+          on_each_cpu_cond(do_local_invalidate, invalidate_bh_lru, &cpumask, 1);
+
+          for_each_cpu(cpu, &cpumask)
+                  rcu_assign_pointer(per_cpu(bh_lrup, cpu),
+                                             per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
+
+          synchronize_rcu_expedited();
+
+          for_each_cpu(cpu, &cpumask) {
+                  // Do remote invalidate here
+          }
+  }
+
+[1]: https://lore.kernel.org/lkml/20230404134224.137038-4-ypodemsk@redhat.com/
+
+>  }
+>  EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
 >
-> On Fri, May 19, 2023 at 6:13=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu=
-> wrote:
-> >
-> > On Fri, 19 May 2023 at 14:57, Amir Goldstein <amir73il@gmail.com> wrote=
-:
-> > >
-> > > From: Alessio Balsini <balsini@android.com>
-> > >
-> > > Expose the FUSE_PASSTHROUGH capability to user space and declare all =
-the
-> > > basic data structures and functions as the skeleton on top of which t=
-he
-> > > FUSE passthrough functionality will be built.
-> > >
-> > > As part of this, introduce the new FUSE passthrough ioctl, which allo=
-ws
-> > > the FUSE daemon to specify a direct connection between a FUSE file an=
-d a
-> > > backing file.  The ioctl requires user space to pass the file descrip=
-tor
-> > > of one of its opened files to the FUSE driver and get an id in return=
-.
-> > > This id may be passed in a reply to OPEN with flag FOPEN_PASSTHROUGH
-> > > to setup passthrough of read/write operations on the open file.
-> > >
-> > > Also, add the passthrough functions for the set-up and tear-down of t=
-he
-> > > data structures and locks that will be used both when fuse_conns and
-> > > fuse_files are created/deleted.
-> > >
-> > > Signed-off-by: Alessio Balsini <balsini@android.com>
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > ---
-> > >  fs/fuse/Makefile          |  1 +
-> > >  fs/fuse/dev.c             | 33 ++++++++++++++++++++++++--------
-> > >  fs/fuse/dir.c             |  7 ++++++-
-> > >  fs/fuse/file.c            | 17 +++++++++++++----
-> > >  fs/fuse/fuse_i.h          | 27 ++++++++++++++++++++++++++
-> > >  fs/fuse/inode.c           | 21 +++++++++++++++++++-
-> > >  fs/fuse/passthrough.c     | 40 +++++++++++++++++++++++++++++++++++++=
-++
-> > >  include/uapi/linux/fuse.h | 13 +++++++++++--
-> > >  8 files changed, 143 insertions(+), 16 deletions(-)
-> > >  create mode 100644 fs/fuse/passthrough.c
-> > >
-> > > diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
-> > > index 0c48b35c058d..d9e1b47382f3 100644
-> > > --- a/fs/fuse/Makefile
-> > > +++ b/fs/fuse/Makefile
-> > > @@ -8,6 +8,7 @@ obj-$(CONFIG_CUSE) +=3D cuse.o
-> > >  obj-$(CONFIG_VIRTIO_FS) +=3D virtiofs.o
-> > >
-> > >  fuse-y :=3D dev.o dir.o file.o inode.o control.o xattr.o acl.o readd=
-ir.o ioctl.o
-> > > +fuse-y +=3D passthrough.o
-> > >  fuse-$(CONFIG_FUSE_DAX) +=3D dax.o
-> > >
-> > >  virtiofs-y :=3D virtio_fs.o
-> > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > > index 1a8f82f478cb..cb00234e7843 100644
-> > > --- a/fs/fuse/dev.c
-> > > +++ b/fs/fuse/dev.c
-> > > @@ -2255,16 +2255,19 @@ static long fuse_dev_ioctl(struct file *file,=
- unsigned int cmd,
-> > >                            unsigned long arg)
-> > >  {
-> > >         int res;
-> > > -       int oldfd;
-> > > -       struct fuse_dev *fud =3D NULL;
-> > > +       int fd, id;
-> > > +       struct fuse_dev *fud =3D fuse_get_dev(file);
-> >
-> > This is broken, see below.
+> @@ -1465,8 +1505,10 @@ void invalidate_bh_lrus_cpu(void)
+>       struct bh_lru *b;
 >
-> IIUC, *this* is not broken for the new ioctls...
+>       bh_lru_lock();
+> -	b = this_cpu_ptr(&bh_lrus);
+> +	rcu_read_lock();
+> +	b = rcu_dereference(per_cpu(bh_lrup, smp_processor_id()));
+>       __invalidate_bh_lrus(b);
+> +	rcu_read_unlock();
+>       bh_lru_unlock();
+>  }
 >
-> >
-> > >         struct fd f;
-> > >
-> > > +       if (!fud)
-> > > +               return -EINVAL;
-> > > +
-
-This is also broken for the old ioctl.
-
-> > >         switch (cmd) {
-> > >         case FUSE_DEV_IOC_CLONE:
-> > > -               if (get_user(oldfd, (__u32 __user *)arg))
-> > > +               if (get_user(fd, (__u32 __user *)arg))
-> > >                         return -EFAULT;
-> > >
-> > > -               f =3D fdget(oldfd);
-> > > +               f =3D fdget(fd);
-> > >                 if (!f.file)
-> > >                         return -EINVAL;
-> > >
-> > > @@ -2272,17 +2275,31 @@ static long fuse_dev_ioctl(struct file *file,=
- unsigned int cmd,
-> > >                  * Check against file->f_op because CUSE
-> > >                  * uses the same ioctl handler.
-> > >                  */
-> > > -               if (f.file->f_op =3D=3D file->f_op)
-> > > -                       fud =3D fuse_get_dev(f.file);
-> > > -
-> > >                 res =3D -EINVAL;
-> > > -               if (fud) {
-> > > +               if (f.file->f_op =3D=3D file->f_op) {
+> @@ -2968,15 +3010,25 @@ void free_buffer_head(struct buffer_head *bh)
+>  }
+>  EXPORT_SYMBOL(free_buffer_head);
 >
-> and this can be fixed by adding:
->  +                           fud =3D fuse_get_dev(f.file);
+> +static int buffer_cpu_online(unsigned int cpu)
+> +{
+> +	rcu_assign_pointer(per_cpu(bh_lrup, cpu),
+> +			   per_cpu_ptr(&bh_lrus[bh_lru_idx], cpu));
+> +	return 0;
+> +}
 
-Yes, but it's still messy.
+What serializes this against invalidate_bh_lrus()? Are you relying on this
+running under cpus_write_lock()?
 
-I suggest separating out unrelated ioctl commands into different
-functions.  Not sure if it's worth doing the open/close in a common
-function, I'll leave that to you.
-
-[snip]
-
-> > Seems too restrictive.  We could specify the max stacking depth in the
-> > protocol and verify that when registering the passthrough file.
-> >
-> > I.e. fuse_sb->s_stack_depth of
-> >
-> > 0 -> passthrough disabled
-> > 1 -> backing_sb->s_stack_depth =3D=3D 0
-> > 2 -> backing_sb->stack_depth <=3D 1
-> > ...
-> >
->
-> Ok. Let's see.
-> What do we stand to gain from the ability to setup nax stacking depth?
->
-> We could use it to setup an overlayfs with lower FUSE that allows passthr=
-ough
-> fds to a non-stacked backing fs and we could use it to setup FUSE that al=
-lows
-> passthrough fds to overlayfs.
->
-> I pity the FUSE userspace developers that will need to understand this
-> setup parameter...
-
-I guess libfuse could parse it with other common options.  It's
-something that needs to be tuned on a per-case basis, not something
-the filesystem designer can predict.
-
-Would be better if we could have a per-inode stack depth and then this
-wouldn't have to be tuned.  Is that feasible?
-
-> So ignoring the possibility of  FILESYSTEM_MAX_STACK_DEPTH changing in
-> the future, maybe better describe this with two capability flags
-> instead of an int?
-
-The max depth could be changed, this value was just chosen because we
-didn't have a use case for a larger fs stack, I guess.  Some analysis
-about the kernel stack usage would be required before doing so (btw.
-such analysis was never done, so it would be useful regardless).
-
-Thanks,
-Miklos
