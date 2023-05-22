@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74BF670BD33
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 14:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66A2D70BD2F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 14:14:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233786AbjEVMOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 08:14:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46914 "EHLO
+        id S233820AbjEVMOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 08:14:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233567AbjEVMNg (ORCPT
+        with ESMTP id S232946AbjEVMNe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 08:13:36 -0400
+        Mon, 22 May 2023 08:13:34 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2823E6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 05:12:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E63B198
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 05:12:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684757548;
+        s=mimecast20190719; t=1684757552;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4sbDm+4sgaynAjmiQFVbDl+OyfXvG2vWGJtRH+IAST4=;
-        b=aDfOV330zAq7NXnI3V0uqKZw+PakXs3V5iELOcGwX4no+kj0BENmv9uMLPPvtZ3Hxtw0U0
-        RVReGG6Xg6YP3kO0bCgepcxOM60Y3eQbmRWB+eXtHB1upZfj9N6f5RJT2UDjmCKg13PUxE
-        7n9hicpglwRkA0qD24jUEAUwI8xnWQM=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=4nmIdUwXs8xUZa8LHr6SjLu9qXp25hoa6tjiHzVF7uA=;
+        b=gt+0l9oCWAqhaSeCnG7Glc1Bxws4NXg0UQ65u/6ZEvBpQaOC5+cPjq4R2PECxuoohQXMh+
+        sEJN5qjSOud0DIl3F6W8j6qPwMXPuxK6ECy1Svb3mePfhOSPzLpDvu7KGJwwt03y2xs9la
+        UEKn4/cYHvuTQc/wm+uBERPq1iq+e1Y=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-160-SjSudd0MOWalkYvBaLq9kg-1; Mon, 22 May 2023 08:12:24 -0400
-X-MC-Unique: SjSudd0MOWalkYvBaLq9kg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+ us-mta-576-SCXcFoZWMeW_c6Kl9rP7Pg-1; Mon, 22 May 2023 08:12:28 -0400
+X-MC-Unique: SCXcFoZWMeW_c6Kl9rP7Pg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B4B991C04602;
-        Mon, 22 May 2023 12:12:23 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4357E185A792;
+        Mon, 22 May 2023 12:12:27 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 112762166B26;
-        Mon, 22 May 2023 12:12:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A11807B7C;
+        Mon, 22 May 2023 12:12:24 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     David Howells <dhowells@redhat.com>,
@@ -56,14 +56,14 @@ Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: [PATCH net-next v10 15/16] af_unix: Support MSG_SPLICE_PAGES
-Date:   Mon, 22 May 2023 13:11:24 +0100
-Message-Id: <20230522121125.2595254-16-dhowells@redhat.com>
+Subject: [PATCH net-next v10 16/16] unix: Convert unix_stream_sendpage() to use MSG_SPLICE_PAGES
+Date:   Mon, 22 May 2023 13:11:25 +0100
+Message-Id: <20230522121125.2595254-17-dhowells@redhat.com>
 In-Reply-To: <20230522121125.2595254-1-dhowells@redhat.com>
 References: <20230522121125.2595254-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -74,8 +74,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make AF_UNIX sendmsg() support MSG_SPLICE_PAGES, splicing in pages from the
-source iterator if possible and copying the data in otherwise.
+Convert unix_stream_sendpage() to use sendmsg() with MSG_SPLICE_PAGES
+rather than directly splicing in the pages itself.
 
 This allows ->sendpage() to be replaced by something that can handle
 multiple multipage folios in a single transaction.
@@ -92,81 +92,164 @@ cc: netdev@vger.kernel.org
 ---
 
 Notes:
-    ver #6)
-     - Use common helper.
+    ver #10)
+     - Fix subject to refer to unix_stream_sendpage() not udp_sendpage().
 
- net/unix/af_unix.c | 49 +++++++++++++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 16 deletions(-)
+ net/unix/af_unix.c | 134 +++------------------------------------------
+ 1 file changed, 7 insertions(+), 127 deletions(-)
 
 diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index dd55506b4632..976bc1c5e11b 100644
+index 976bc1c5e11b..115436ce1f8a 100644
 --- a/net/unix/af_unix.c
 +++ b/net/unix/af_unix.c
-@@ -2200,19 +2200,25 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
- 	while (sent < len) {
- 		size = len - sent;
+@@ -1839,24 +1839,6 @@ static void maybe_add_creds(struct sk_buff *skb, const struct socket *sock,
+ 	}
+ }
  
--		/* Keep two messages in the pipe so it schedules better */
--		size = min_t(int, size, (sk->sk_sndbuf >> 1) - 64);
-+		if (unlikely(msg->msg_flags & MSG_SPLICE_PAGES)) {
-+			skb = sock_alloc_send_pskb(sk, 0, 0,
-+						   msg->msg_flags & MSG_DONTWAIT,
-+						   &err, 0);
-+		} else {
-+			/* Keep two messages in the pipe so it schedules better */
-+			size = min_t(int, size, (sk->sk_sndbuf >> 1) - 64);
+-static int maybe_init_creds(struct scm_cookie *scm,
+-			    struct socket *socket,
+-			    const struct sock *other)
+-{
+-	int err;
+-	struct msghdr msg = { .msg_controllen = 0 };
+-
+-	err = scm_send(socket, &msg, scm, false);
+-	if (err)
+-		return err;
+-
+-	if (unix_passcred_enabled(socket, other)) {
+-		scm->pid = get_pid(task_tgid(current));
+-		current_uid_gid(&scm->creds.uid, &scm->creds.gid);
+-	}
+-	return err;
+-}
+-
+ static bool unix_skb_scm_eq(struct sk_buff *skb,
+ 			    struct scm_cookie *scm)
+ {
+@@ -2292,117 +2274,15 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
+ static ssize_t unix_stream_sendpage(struct socket *socket, struct page *page,
+ 				    int offset, size_t size, int flags)
+ {
+-	int err;
+-	bool send_sigpipe = false;
+-	bool init_scm = true;
+-	struct scm_cookie scm;
+-	struct sock *other, *sk = socket->sk;
+-	struct sk_buff *skb, *newskb = NULL, *tail = NULL;
+-
+-	if (flags & MSG_OOB)
+-		return -EOPNOTSUPP;
++	struct bio_vec bvec;
++	struct msghdr msg = { .msg_flags = flags | MSG_SPLICE_PAGES };
  
--		/* allow fallback to order-0 allocations */
--		size = min_t(int, size, SKB_MAX_HEAD(0) + UNIX_SKB_FRAGS_SZ);
-+			/* allow fallback to order-0 allocations */
-+			size = min_t(int, size, SKB_MAX_HEAD(0) + UNIX_SKB_FRAGS_SZ);
+-	other = unix_peer(sk);
+-	if (!other || sk->sk_state != TCP_ESTABLISHED)
+-		return -ENOTCONN;
+-
+-	if (false) {
+-alloc_skb:
+-		unix_state_unlock(other);
+-		mutex_unlock(&unix_sk(other)->iolock);
+-		newskb = sock_alloc_send_pskb(sk, 0, 0, flags & MSG_DONTWAIT,
+-					      &err, 0);
+-		if (!newskb)
+-			goto err;
+-	}
+-
+-	/* we must acquire iolock as we modify already present
+-	 * skbs in the sk_receive_queue and mess with skb->len
+-	 */
+-	err = mutex_lock_interruptible(&unix_sk(other)->iolock);
+-	if (err) {
+-		err = flags & MSG_DONTWAIT ? -EAGAIN : -ERESTARTSYS;
+-		goto err;
+-	}
+-
+-	if (sk->sk_shutdown & SEND_SHUTDOWN) {
+-		err = -EPIPE;
+-		send_sigpipe = true;
+-		goto err_unlock;
+-	}
+-
+-	unix_state_lock(other);
++	if (flags & MSG_SENDPAGE_NOTLAST)
++		msg.msg_flags |= MSG_MORE;
  
--		data_len = max_t(int, 0, size - SKB_MAX_HEAD(0));
-+			data_len = max_t(int, 0, size - SKB_MAX_HEAD(0));
+-	if (sock_flag(other, SOCK_DEAD) ||
+-	    other->sk_shutdown & RCV_SHUTDOWN) {
+-		err = -EPIPE;
+-		send_sigpipe = true;
+-		goto err_state_unlock;
+-	}
+-
+-	if (init_scm) {
+-		err = maybe_init_creds(&scm, socket, other);
+-		if (err)
+-			goto err_state_unlock;
+-		init_scm = false;
+-	}
+-
+-	skb = skb_peek_tail(&other->sk_receive_queue);
+-	if (tail && tail == skb) {
+-		skb = newskb;
+-	} else if (!skb || !unix_skb_scm_eq(skb, &scm)) {
+-		if (newskb) {
+-			skb = newskb;
+-		} else {
+-			tail = skb;
+-			goto alloc_skb;
+-		}
+-	} else if (newskb) {
+-		/* this is fast path, we don't necessarily need to
+-		 * call to kfree_skb even though with newskb == NULL
+-		 * this - does no harm
+-		 */
+-		consume_skb(newskb);
+-		newskb = NULL;
+-	}
+-
+-	if (skb_append_pagefrags(skb, page, offset, size, MAX_SKB_FRAGS)) {
+-		tail = skb;
+-		goto alloc_skb;
+-	}
+-
+-	skb->len += size;
+-	skb->data_len += size;
+-	skb->truesize += size;
+-	refcount_add(size, &sk->sk_wmem_alloc);
+-
+-	if (newskb) {
+-		err = unix_scm_to_skb(&scm, skb, false);
+-		if (err)
+-			goto err_state_unlock;
+-		spin_lock(&other->sk_receive_queue.lock);
+-		__skb_queue_tail(&other->sk_receive_queue, newskb);
+-		spin_unlock(&other->sk_receive_queue.lock);
+-	}
+-
+-	unix_state_unlock(other);
+-	mutex_unlock(&unix_sk(other)->iolock);
+-
+-	other->sk_data_ready(other);
+-	scm_destroy(&scm);
+-	return size;
+-
+-err_state_unlock:
+-	unix_state_unlock(other);
+-err_unlock:
+-	mutex_unlock(&unix_sk(other)->iolock);
+-err:
+-	kfree_skb(newskb);
+-	if (send_sigpipe && !(flags & MSG_NOSIGNAL))
+-		send_sig(SIGPIPE, current, 0);
+-	if (!init_scm)
+-		scm_destroy(&scm);
+-	return err;
++	bvec_set_page(&bvec, page, size, offset);
++	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
++	return unix_stream_sendmsg(socket, &msg, size);
+ }
  
--		data_len = min_t(size_t, size, PAGE_ALIGN(data_len));
-+			data_len = min_t(size_t, size, PAGE_ALIGN(data_len));
- 
--		skb = sock_alloc_send_pskb(sk, size - data_len, data_len,
--					   msg->msg_flags & MSG_DONTWAIT, &err,
--					   get_order(UNIX_SKB_FRAGS_SZ));
-+			skb = sock_alloc_send_pskb(sk, size - data_len, data_len,
-+						   msg->msg_flags & MSG_DONTWAIT, &err,
-+						   get_order(UNIX_SKB_FRAGS_SZ));
-+		}
- 		if (!skb)
- 			goto out_err;
- 
-@@ -2224,13 +2230,24 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
- 		}
- 		fds_sent = true;
- 
--		skb_put(skb, size - data_len);
--		skb->data_len = data_len;
--		skb->len = size;
--		err = skb_copy_datagram_from_iter(skb, 0, &msg->msg_iter, size);
--		if (err) {
--			kfree_skb(skb);
--			goto out_err;
-+		if (unlikely(msg->msg_flags & MSG_SPLICE_PAGES)) {
-+			err = skb_splice_from_iter(skb, &msg->msg_iter, size,
-+						   sk->sk_allocation);
-+			if (err < 0) {
-+				kfree_skb(skb);
-+				goto out_err;
-+			}
-+			size = err;
-+			refcount_add(size, &sk->sk_wmem_alloc);
-+		} else {
-+			skb_put(skb, size - data_len);
-+			skb->data_len = data_len;
-+			skb->len = size;
-+			err = skb_copy_datagram_from_iter(skb, 0, &msg->msg_iter, size);
-+			if (err) {
-+				kfree_skb(skb);
-+				goto out_err;
-+			}
- 		}
- 
- 		unix_state_lock(other);
+ static int unix_seqpacket_sendmsg(struct socket *sock, struct msghdr *msg,
 
