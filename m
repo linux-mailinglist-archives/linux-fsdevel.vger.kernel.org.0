@@ -2,224 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AF6270CBFF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 May 2023 23:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 083B270CD86
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 00:10:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235543AbjEVVJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 17:09:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35484 "EHLO
+        id S230101AbjEVWKI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 18:10:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235405AbjEVVI6 (ORCPT
+        with ESMTP id S232143AbjEVWKG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 17:08:58 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CAFEB7;
-        Mon, 22 May 2023 14:08:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=+3mMvkCk/meKXuQTldWwg9QWOYtx2piimZEsgamr2Wk=; b=IAHN7BifPzCm/GqDN1Ugq2ibAI
-        SoJ8vkphb95h4PVRmGqogZQNTL9nmLLbwsl+n2rf2eAucZrOvyxz/+qLKg+lt5B3v9oPtq/5ufIL6
-        Y/EW7pj8R9B1YjRdAkc7YdEhHVtCR8lRLq+zD4ldMhvn5/GeJQs6WGRR8dwRT4HUTERbyWHsFJ9qq
-        2LoeEa7O/r5/EluSSntHrds01xea37sGDTQR1QwwiXRZMCI3zJ/Wp5yYhuzxPWZPTvlqG+/JtxhBM
-        B2YyCUEurw8CS0rtIOhhORdBPbAMorgfOik3aD4lbnblXr2R+GxR0FpV8SduW5i8E9rhwP/iup4rp
-        34hT42qg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q1ClL-0083Je-24;
-        Mon, 22 May 2023 21:08:15 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     keescook@chromium.org, yzaikin@google.com, ebiederm@xmission.com,
-        arnd@arndb.de, bp@alien8.de, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        luto@kernel.org, peterz@infradead.org, brgerst@gmail.com,
-        christophe.jaillet@wanadoo.fr, kirill.shutemov@linux.intel.com,
-        jroedel@suse.de
-Cc:     j.granados@samsung.com, akpm@linux-foundation.org,
-        willy@infradead.org, linux-parisc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 2/2] signal: move show_unhandled_signals sysctl to its own file
-Date:   Mon, 22 May 2023 14:08:14 -0700
-Message-Id: <20230522210814.1919325-3-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230522210814.1919325-1-mcgrof@kernel.org>
-References: <20230522210814.1919325-1-mcgrof@kernel.org>
+        Mon, 22 May 2023 18:10:06 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88D72AF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 15:10:04 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1ae3fe67980so63580405ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 May 2023 15:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1684793404; x=1687385404;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zhk/FFw49fszGKvEVhYvbvMP+dTpGvDn5zl+3/9L1Dc=;
+        b=fblWw9UzbFxiy0IdFHcyiEwVDIdKvIAKrQRPskBGENxPURLIOwwaK7n1zvySgU7WzL
+         VU8Vfr1s05BDJeWnx6GvlwtigLtu+eqhdhxMauzwVoEmiW/RcmEFcKMqrypOtXnRwUeV
+         Vx8ZBImfDyJb1VIqxhV1vDoDsK4UvJ1KJ+MUQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684793404; x=1687385404;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zhk/FFw49fszGKvEVhYvbvMP+dTpGvDn5zl+3/9L1Dc=;
+        b=F6gqDxJHm6JmXG8ud2jeJ23gmq+w/+qZTo+KaXKTgt8DKCV8SkNg/muuBjNigE3RhP
+         elmtIypmG0JBq9A4ovDuy1Jtx7IUdqEGdNlONpeCJXGLFXymn2Do2omimSVzv65wkoLd
+         3qY5LZKVRBY0qtqYJjR+qSNPQz6oJkmFbZRFrmBu0KZ4+q4AsJvukGgOIVYGfCHg/hCL
+         C21lchb6z6Of/2UwQZMj8ec2nZP4Tc7xAo8C3VaIQ5q+UGtiqhbfiHe/sK3iIWCKlEL2
+         hDd9Oh/CBI62FgKp7k7LuagTv3Y6g6WDpSTqP/PTu8wYgxE8co70eE+DroQaon4sDtju
+         MsJg==
+X-Gm-Message-State: AC+VfDw3WXFMfyOfgxgB3lfaWeYLdqgeC9ufh9T7rQS2u4hJ9Gf0wdcJ
+        13kK4L7VqR2Zp6xhIow95FSPbQ==
+X-Google-Smtp-Source: ACHHUZ5WRtvEBtYahpKG6aPeTI5eHL+V7B6L6O9jAUq/08MWwaaWRvizWzszQGPZBbFKrv/0tLK8Kg==
+X-Received: by 2002:a17:902:ea0f:b0:1ad:c736:2090 with SMTP id s15-20020a170902ea0f00b001adc7362090mr14394226plg.3.1684793403998;
+        Mon, 22 May 2023 15:10:03 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:7ecd:bb34:d662:f45a])
+        by smtp.gmail.com with UTF8SMTPSA id v4-20020a170902b7c400b001ab2b4105ddsm5308998plz.60.2023.05.22.15.10.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 May 2023 15:10:03 -0700 (PDT)
+From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
+To:     dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Sarthak Kukreti <sarthakkukreti@chromium.org>
+Subject: [PATCH v7 5/5] loop: Add support for provision requests
+Date:   Mon, 22 May 2023 15:09:55 -0700
+Message-ID: <20230522221000.603769-1-sarthakkukreti@chromium.org>
+X-Mailer: git-send-email 2.40.1.698.g37aff9b760-goog
+In-Reply-To: <20230522163710.GA11607@frogsfrogsfrogs>
+References: <20230522163710.GA11607@frogsfrogsfrogs>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The show_unhandled_signals sysctl is the only sysctl for debug
-left on kernel/sysctl.c. We've been moving the syctls out from
-kernel/sysctl.c so to help avoid merge conflicts as the shared
-array gets out of hand.
+On Mon, May 22, 2023 at 9:37 AM Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> If someone calls fallocate(UNSHARE_RANGE) on a loop bdev, shouldn't
+> there be a way to pass that through to the fallocate call to the backing
+> file?
+>
+> --D
+>
 
-This change incurs simplifies sysctl registration by localizing
-it where it should go for a penalty in size of increasing the
-kernel by 23 bytes, we accept this given recent cleanups have
-actually already saved us 1465 bytes in the prior commits.
+Yeah, I think we could add a REQ_UNSHARE bit (similar to REQ_NOUNMAP) to pass down the intent to the backing file (and possibly beyond...).
 
-./scripts/bloat-o-meter vmlinux.3-remove-dev-table vmlinux.4-remove-debug-table
-add/remove: 3/1 grow/shrink: 0/1 up/down: 177/-154 (23)
-Function                                     old     new   delta
-signal_debug_table                             -     128    +128
-init_signal_sysctls                            -      33     +33
-__pfx_init_signal_sysctls                      -      16     +16
-sysctl_init_bases                             85      59     -26
-debug_table                                  128       -    -128
-Total: Before=21256967, After=21256990, chg +0.00%
+I took a stab at implementing it as a follow up patch so that there's less review churn on the current series. If it looks good, I can add it to the end of the series (or incorporate this into the existing block and loop patches):
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+From: Sarthak Kukreti <sarthakkukreti@chromium.org>
+Date: Mon, 22 May 2023 14:18:15 -0700
+Subject: [PATCH] block: Pass unshare intent via REQ_OP_PROVISION
+
+Allow REQ_OP_PROVISION to pass in an extra REQ_UNSHARE bit to
+annotate unshare requests to underlying layers. Layers that support
+FALLOC_FL_UNSHARE will be able to use this as an indicator of which
+fallocate() mode to use.
+
+Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
 ---
- arch/parisc/kernel/traps.c |  1 +
- arch/x86/kernel/signal.c   |  1 +
- arch/x86/kernel/traps.c    |  1 +
- arch/x86/kernel/umip.c     |  1 +
- arch/x86/mm/fault.c        |  1 +
- kernel/signal.c            | 23 +++++++++++++++++++++++
- kernel/sysctl.c            | 14 --------------
- 7 files changed, 28 insertions(+), 14 deletions(-)
+ block/blk-lib.c           |  6 +++++-
+ block/fops.c              |  6 +++++-
+ drivers/block/loop.c      | 35 +++++++++++++++++++++++++++++------
+ include/linux/blk_types.h |  3 +++
+ include/linux/blkdev.h    |  3 ++-
+ 5 files changed, 44 insertions(+), 9 deletions(-)
 
-diff --git a/arch/parisc/kernel/traps.c b/arch/parisc/kernel/traps.c
-index f9696fbf646c..e15f7e201962 100644
---- a/arch/parisc/kernel/traps.c
-+++ b/arch/parisc/kernel/traps.c
-@@ -23,6 +23,7 @@
- #include <linux/module.h>
- #include <linux/smp.h>
- #include <linux/spinlock.h>
-+#include <linux/signal.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/console.h>
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 004cb30b7419..91905377d708 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
-+#include <linux/signal.h>
- #include <linux/mm.h>
- #include <linux/smp.h>
- #include <linux/kernel.h>
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 58b1f208eff5..180d770f8817 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -31,6 +31,7 @@
- #include <linux/kexec.h>
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
-+#include <linux/signal.h>
- #include <linux/timer.h>
- #include <linux/init.h>
- #include <linux/bug.h>
-diff --git a/arch/x86/kernel/umip.c b/arch/x86/kernel/umip.c
-index 5a4b21389b1d..cef5240dcd92 100644
---- a/arch/x86/kernel/umip.c
-+++ b/arch/x86/kernel/umip.c
-@@ -12,6 +12,7 @@
- #include <asm/insn.h>
- #include <asm/insn-eval.h>
- #include <linux/ratelimit.h>
-+#include <linux/signal.h>
- 
- #undef pr_fmt
- #define pr_fmt(fmt) "umip: " fmt
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index e4399983c50c..e5f13250e68c 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -6,6 +6,7 @@
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 3cff5fb654f5..bea6f5a700b3 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -350,6 +350,7 @@ EXPORT_SYMBOL(blkdev_issue_secure_erase);
+  * @sector:	start sector
+  * @nr_sects:	number of sectors to provision
+  * @gfp_mask:	memory allocation flags (for bio_alloc)
++ * @flags:	controls detailed behavior
+  *
+  * Description:
+  *  Issues a provision request to the block device for the range of sectors.
+@@ -357,7 +358,7 @@ EXPORT_SYMBOL(blkdev_issue_secure_erase);
+  *  underlying storage pool to allocate space for this block range.
   */
- #include <linux/sched.h>		/* test_thread_flag(), ...	*/
- #include <linux/sched/task_stack.h>	/* task_stack_*(), ...		*/
-+#include <linux/sched/signal.h>		/* show_unhandled_signals */
- #include <linux/kdebug.h>		/* oops_begin/end, ...		*/
- #include <linux/extable.h>		/* search_exception_tables	*/
- #include <linux/memblock.h>		/* max_low_pfn			*/
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 8f6330f0e9ca..5ba4150c01a7 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -45,6 +45,7 @@
- #include <linux/posix-timers.h>
- #include <linux/cgroup.h>
- #include <linux/audit.h>
-+#include <linux/sysctl.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/signal.h>
-@@ -4771,6 +4772,28 @@ static inline void siginfo_buildtime_checks(void)
- #endif
- }
- 
-+#if defined(CONFIG_SYSCTL)
-+static struct ctl_table signal_debug_table[] = {
-+#ifdef CONFIG_SYSCTL_EXCEPTION_TRACE
-+	{
-+		.procname	= "exception-trace",
-+		.data		= &show_unhandled_signals,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec
-+	},
-+#endif
-+	{ }
-+};
-+
-+static int __init init_signal_sysctls(void)
-+{
-+	register_sysctl_init("debug", signal_debug_table);
-+	return 0;
-+}
-+early_initcall(init_signal_sysctls);
-+#endif /* CONFIG_SYSCTL */
-+
- void __init signals_init(void)
+ int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
+-		sector_t nr_sects, gfp_t gfp)
++		sector_t nr_sects, gfp_t gfp, unsigned flags)
  {
- 	siginfo_buildtime_checks();
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index a7fdb828afb6..43240955dcad 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2331,24 +2331,10 @@ static struct ctl_table vm_table[] = {
- 	{ }
- };
+ 	sector_t bs_mask = (bdev_logical_block_size(bdev) >> 9) - 1;
+ 	unsigned int max_sectors = bdev_max_provision_sectors(bdev);
+@@ -380,6 +381,9 @@ int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
+ 		bio->bi_iter.bi_sector = sector;
+ 		bio->bi_iter.bi_size = req_sects << SECTOR_SHIFT;
  
--static struct ctl_table debug_table[] = {
--#ifdef CONFIG_SYSCTL_EXCEPTION_TRACE
--	{
--		.procname	= "exception-trace",
--		.data		= &show_unhandled_signals,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec
--	},
--#endif
--	{ }
--};
--
- int __init sysctl_init_bases(void)
- {
- 	register_sysctl_init("kernel", kern_table);
- 	register_sysctl_init("vm", vm_table);
--	register_sysctl_init("debug", debug_table);
- 
++		if (flags & BLKDEV_UNSHARE_RANGE)
++			bio->bi_opf |= REQ_UNSHARE;
++
+ 		sector += req_sects;
+ 		nr_sects -= req_sects;
+ 		if (!nr_sects) {
+diff --git a/block/fops.c b/block/fops.c
+index be2e41f160bf..6848756f0557 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -659,7 +659,11 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+ 	case FALLOC_FL_KEEP_SIZE:
+ 	case FALLOC_FL_UNSHARE_RANGE | FALLOC_FL_KEEP_SIZE:
+ 		error = blkdev_issue_provision(bdev, start >> SECTOR_SHIFT,
+-					       len >> SECTOR_SHIFT, GFP_KERNEL);
++					       len >> SECTOR_SHIFT, GFP_KERNEL,
++					       (mode &
++						FALLOC_FL_UNSHARE_RANGE) ?
++						       BLKDEV_UNSHARE_RANGE :
++						       0);
+ 		break;
+ 	case FALLOC_FL_ZERO_RANGE:
+ 	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 7fe1a6629754..c844b145d666 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -306,6 +306,30 @@ static int lo_read_simple(struct loop_device *lo, struct request *rq,
  	return 0;
  }
+ 
++static bool validate_fallocate_mode(struct loop_device *lo, int mode)
++{
++	bool ret = true;
++
++	switch (mode) {
++	case FALLOC_FL_PUNCH_HOLE:
++	case FALLOC_FL_ZERO_RANGE:
++		if (!bdev_max_discard_sectors(lo->lo_device))
++			ret = false;
++		break;
++	case 0:
++	case FALLOC_FL_UNSHARE_RANGE:
++		if (!bdev_max_provision_sectors(lo->lo_device))
++			ret = false;
++		break;
++
++	default:
++		ret = false;
++	}
++
++	return ret;
++}
++
++
+ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
+ 			int mode)
+ {
+@@ -316,11 +340,7 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
+ 	struct file *file = lo->lo_backing_file;
+ 	int ret;
+ 
+-	if (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE) &&
+-	    !bdev_max_discard_sectors(lo->lo_device))
+-		return -EOPNOTSUPP;
+-
+-	if (mode == 0 && !bdev_max_provision_sectors(lo->lo_device))
++	if (!validate_fallocate_mode(lo, mode))
+ 		return -EOPNOTSUPP;
+ 
+ 	mode |= FALLOC_FL_KEEP_SIZE;
+@@ -493,7 +513,10 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
+ 	case REQ_OP_DISCARD:
+ 		return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
+ 	case REQ_OP_PROVISION:
+-		return lo_fallocate(lo, rq, pos, 0);
++		return lo_fallocate(lo, rq, pos,
++				    (rq->cmd_flags & REQ_UNSHARE) ?
++					    FALLOC_FL_UNSHARE_RANGE :
++					    0);
+ 	case REQ_OP_WRITE:
+ 		if (cmd->use_aio)
+ 			return lo_rw_aio(lo, cmd, pos, ITER_SOURCE);
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index b7bb0226fdee..1a536fd897cb 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -423,6 +423,8 @@ enum req_flag_bits {
+ 	 */
+ 	/* for REQ_OP_WRITE_ZEROES: */
+ 	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
++	/* for REQ_OP_PROVISION: */
++	__REQ_UNSHARE,		/* unshare blocks */
+ 
+ 	__REQ_NR_BITS,		/* stops here */
+ };
+@@ -451,6 +453,7 @@ enum req_flag_bits {
+ #define REQ_FS_PRIVATE	(__force blk_opf_t)(1ULL << __REQ_FS_PRIVATE)
+ 
+ #define REQ_NOUNMAP	(__force blk_opf_t)(1ULL << __REQ_NOUNMAP)
++#define REQ_UNSHARE	(__force blk_opf_t)(1ULL << __REQ_UNSHARE)
+ 
+ #define REQ_FAILFAST_MASK \
+ 	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 462ce586d46f..60c09b0d3fc9 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1049,10 +1049,11 @@ int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp);
+ 
+ extern int blkdev_issue_provision(struct block_device *bdev, sector_t sector,
+-		sector_t nr_sects, gfp_t gfp_mask);
++		sector_t nr_sects, gfp_t gfp_mask, unsigned int flags);
+ 
+ #define BLKDEV_ZERO_NOUNMAP	(1 << 0)  /* do not free blocks */
+ #define BLKDEV_ZERO_NOFALLBACK	(1 << 1)  /* don't write explicit zeroes */
++#define BLKDEV_UNSHARE_RANGE	(1 << 2)  /* unshare range on provision */
+ 
+ extern int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop,
 -- 
 2.39.2
 
