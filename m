@@ -2,113 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66D9B70E941
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 00:50:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CAC170E949
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 00:53:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjEWWuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 18:50:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
+        id S238596AbjEWWxb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 18:53:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230081AbjEWWuu (ORCPT
+        with ESMTP id S231534AbjEWWx3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 18:50:50 -0400
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB8C6C2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 15:50:48 -0700 (PDT)
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3382ff898c3so2191435ab.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 15:50:48 -0700 (PDT)
+        Tue, 23 May 2023 18:53:29 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E9FE5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 15:53:27 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1ae4baa77b2so1742715ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 15:53:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1684882407; x=1687474407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D4PhmKVouafwl2lkI37bc+Y4HJ74bZ8XIgMqc4mDI8U=;
+        b=ydqarSiJJg8/qlfiybY04O3RO4ik8W1MGJy8LAFW2WWKhnJjVg/kliO9Csr6ezjTxQ
+         CCr+qRpaopVTGsAn0f3l5dbMCo+p2W+aPNeaBhEtfP5bJ9Mjgnc5fTAqVn4RIB2q1YN9
+         T4tabZcuFaOoU/7IsAEwcXQPtLoiHvECcuXyTIfNzB2W2sq5mFSLbAYLnz/KQMv1ljoG
+         wZuSL7Bbl0DjHi49APaxTV/JWMjZM3CCRFDqQhqEu4zJlEZBtHCtHARwqCzUqKDFWYgN
+         xW1Z5cvUGTnV+ZYWY/MRBI4erUVV8hNCo5i56rdI6V8+qX0d2IZFSvvBWq9u+nWEMdhO
+         Wyig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684882248; x=1687474248;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CdB683sgWwh+OYHpDOYM2ACu6pGxWfF2nR7ZnTieMw0=;
-        b=h887vVvDmc/M1B8F1or/zNM69tgIidaIwlnFETGwTs7uqXzvXWf+j8Wkmvd8UUXI8M
-         tkweozf8EwxeLNXhum/d7hlquSqRRia6wI9OkIp/bqFisufQON6aQJmmkRtaaRWSVIqs
-         w2JzbhTDKYEM+bEY8aBzMOliyfjoeyr9mdvcNTKgRtWi3dOMOWmg9bMZ6FDF6Al4ZDLX
-         jt98++wC6sA6jLu5xt7dpScqI8mkE/v3gCeYIyjpulP31nLTQT99wgB1ib0ilG11f42r
-         7268HvgECH27xvkkvBDIuEXbN4Sk5Mmku9ZwxpoO56VzB81nFV5Wk6bA/ram12o9NExn
-         Pp0A==
-X-Gm-Message-State: AC+VfDyOCHWJv1dHB0EcN3ayOgo4k+kgT+bXmvfKXbD26VFpnRDBcZJo
-        AU/UkR0O43Eyg13Srv8SfX3goLYmMJfxFroxn+UgDHbqXN5L
-X-Google-Smtp-Source: ACHHUZ6P1bc/CABl11eEtK49q0VaWEeHBQcwhV0y4KgKtuiyZrILQ9lPfSOceFAnsuz7GPDc90Rychfg9XZSReefQPm3OY+2iFU8
+        d=1e100.net; s=20221208; t=1684882407; x=1687474407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D4PhmKVouafwl2lkI37bc+Y4HJ74bZ8XIgMqc4mDI8U=;
+        b=N2SaSmjlnzh5n04EOd533scbBRRoV8jwqc4mWAKSAOkQLZIs1+k3zWHZ5FXkOSWLVo
+         olG3GY5jcGZyF+ezcccf64I0J/CKkANQZ8pIHOcwowG0+ZbDP4Ex/Zl5k2XFbYSKVKU+
+         PCBJGO2DwF5NwdFnLKHQyqgYMknejtUnsy378rIURQ3lDQ1w8mOUepyZsEKDm8i7eAi1
+         R9b4AP94gOuvAGJxgaE/O5rc1YwZzWL24etNM3+2cFhjXM5Mf04YdsyppvGKQ5poGM7X
+         S8VZWwQckP0WfcXUYXf54cmVOMNrxpiYI8d/c7ApfdZ/YKOFaUQwZJCVbVFIxklPXcdP
+         cBSQ==
+X-Gm-Message-State: AC+VfDwNA/xLqIYqpFLXxQNw70nCcuTm9hpSw/b+MqDJVWbRMcJCyTxW
+        RUaCS+KNmqqUuklk8u8T5oTtnA==
+X-Google-Smtp-Source: ACHHUZ4rf3ZnipqrpeU5LtwMsMVWiU9amtx3ykAwdeSvQFidX6a1jAjFyPwJGzq92rRNbryEDFU+Kg==
+X-Received: by 2002:a17:902:d50e:b0:1ae:6720:8e01 with SMTP id b14-20020a170902d50e00b001ae67208e01mr17699251plg.20.1684882407345;
+        Tue, 23 May 2023 15:53:27 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
+        by smtp.gmail.com with ESMTPSA id u3-20020a170902e80300b001a682a195basm7284710plg.28.2023.05.23.15.53.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 May 2023 15:53:26 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q1asc-0036XB-37;
+        Wed, 24 May 2023 08:53:22 +1000
+Date:   Wed, 24 May 2023 08:53:22 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Dave Chinner <dchinner@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: (subset) [PATCH 20/32] vfs: factor out inode hash head
+ calculation
+Message-ID: <ZG1D4gvpkFjZVMcL@dread.disaster.area>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-21-kent.overstreet@linux.dev>
+ <20230523-plakat-kleeblatt-007077ebabb6@brauner>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d287:0:b0:335:908b:8ee with SMTP id
- p7-20020a92d287000000b00335908b08eemr7899169ilp.2.1684882248078; Tue, 23 May
- 2023 15:50:48 -0700 (PDT)
-Date:   Tue, 23 May 2023 15:50:48 -0700
-In-Reply-To: <000000000000172fc905f8a19ab5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e29eee05fc64378e@google.com>
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_commit_transaction (2)
-From:   syzbot <syzbot+dafbca0e20fbc5946925@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230523-plakat-kleeblatt-007077ebabb6@brauner>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Tue, May 23, 2023 at 11:27:06AM +0200, Christian Brauner wrote:
+> On Tue, 09 May 2023 12:56:45 -0400, Kent Overstreet wrote:
+> > In preparation for changing the inode hash table implementation.
+> >
+> >
+> 
+> This is interesting completely independent of bcachefs so we should give
+> it some testing.
+> 
+> ---
+> 
+> Applied to the vfs.unstable.inode-hash branch of the vfs/vfs.git tree.
+> Patches in the vfs.unstable.inode-hash branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.unstable.inode-hash
+> 
+> [20/32] vfs: factor out inode hash head calculation
+>         https://git.kernel.org/vfs/vfs/c/b54a4516146d
 
-HEAD commit:    ae8373a5add4 Merge tag 'x86_urgent_for_6.4-rc4' of git://g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17b3b489280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f389ffdf4e9ba3f0
-dashboard link: https://syzkaller.appspot.com/bug?extid=dafbca0e20fbc5946925
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14243ef9280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c06772280000
+Hi Christian - I suspect you should pull the latest version of these
+patches from:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2c5ee189dd12/disk-ae8373a5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/63acf75623d7/vmlinux-ae8373a5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/29de65c99e9d/bzImage-ae8373a5.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2eac0114b435/mount_0.gz
+git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs.git vfs-scale
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dafbca0e20fbc5946925@syzkaller.appspotmail.com
+The commit messages are more recent and complete, and I've been
+testing the branch in all my test kernels since 6.4-rc1 without
+issues.
 
-BTRFS warning (device loop0): Skipping commit of aborted transaction.
-------------[ cut here ]------------
-BTRFS: Transaction aborted (error -28)
-WARNING: CPU: 0 PID: 41 at fs/btrfs/transaction.c:1978 cleanup_transaction fs/btrfs/transaction.c:1978 [inline]
-WARNING: CPU: 0 PID: 41 at fs/btrfs/transaction.c:1978 btrfs_commit_transaction+0x3223/0x3fa0 fs/btrfs/transaction.c:2565
-Modules linked in:
-CPU: 0 PID: 41 Comm: kworker/u4:2 Not tainted 6.4.0-rc3-syzkaller-00008-gae8373a5add4 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/28/2023
-Workqueue: events_unbound btrfs_async_reclaim_metadata_space
-RIP: 0010:cleanup_transaction fs/btrfs/transaction.c:1978 [inline]
-RIP: 0010:btrfs_commit_transaction+0x3223/0x3fa0 fs/btrfs/transaction.c:2565
-Code: c8 fe ff ff be 02 00 00 00 e8 f9 41 aa 00 e9 21 d3 ff ff e8 af 68 1b fe 8b b5 20 ff ff ff 48 c7 c7 c0 25 95 8a e8 2d 28 e3 fd <0f> 0b c7 85 00 ff ff ff 01 00 00 00 e9 97 df ff ff e8 87 68 1b fe
-RSP: 0018:ffffc90000b27990 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 000000001f0d8001 RCX: 0000000000000000
-RDX: ffff888014aa0000 RSI: ffffffff814c03e7 RDI: 0000000000000001
-RBP: ffffc90000b27b00 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: ffff88801f0d8000
-R13: ffff888074df3e98 R14: ffff888074df4000 R15: ffff88801f0d8000
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055bc77452c28 CR3: 0000000072dfb000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- flush_space+0x1e0/0xde0 fs/btrfs/space-info.c:808
- btrfs_async_reclaim_metadata_space+0x39e/0xa90 fs/btrfs/space-info.c:1078
- process_one_work+0x99a/0x15e0 kernel/workqueue.c:2405
- worker_thread+0x67d/0x10c0 kernel/workqueue.c:2552
- kthread+0x344/0x440 kernel/kthread.c:379
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
- </TASK>
+There's also the dlist-lock stuff for avoiding s_inode_list_lock
+contention in that branch. Once the global hash lock is removed,
+the s_inode_list_lock is the only global lock in the inode
+instantiation and reclaim paths. It nests inside the hash locks, so
+all the contention is currently taken on the hash locks - remove the
+global hash locks and we just contend on the next global cache
+line and the workload doesn't go any faster.
 
+i.e. to see the full benefit of the inode hash lock contention
+reduction, we also need the sb->s_inode_list_lock contention to be
+fixed....
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
