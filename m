@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6751D70E14B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 18:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DAC470E152
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 18:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237678AbjEWQB6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 12:01:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57706 "EHLO
+        id S237686AbjEWQCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 12:02:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237673AbjEWQBz (ORCPT
+        with ESMTP id S233200AbjEWQCV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 12:01:55 -0400
+        Tue, 23 May 2023 12:02:21 -0400
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8727B132;
-        Tue, 23 May 2023 09:01:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B12928E;
+        Tue, 23 May 2023 09:02:20 -0700 (PDT)
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 32BF46732D; Tue, 23 May 2023 18:01:47 +0200 (CEST)
-Date:   Tue, 23 May 2023 18:01:46 +0200
+        id 8A4516732D; Tue, 23 May 2023 18:02:17 +0200 (CEST)
+Date:   Tue, 23 May 2023 18:02:17 +0200
 From:   Christoph Hellwig <hch@lst.de>
 To:     Damien Le Moal <dlemoal@kernel.org>
 Cc:     Christoph Hellwig <hch@lst.de>,
@@ -39,13 +39,13 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
         cluster-devel@redhat.com, linux-xfs@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 06/13] filemap: add a kiocb_invalidate_post_write helper
-Message-ID: <20230523160146.GA15391@lst.de>
-References: <20230519093521.133226-1-hch@lst.de> <20230519093521.133226-7-hch@lst.de> <5703f49d-177a-a810-6f1c-b32aa1abcde7@kernel.org>
+Subject: Re: [PATCH 07/13] iomap: update ki_pos in iomap_file_buffered_write
+Message-ID: <20230523160217.GB15391@lst.de>
+References: <20230519093521.133226-1-hch@lst.de> <20230519093521.133226-8-hch@lst.de> <5c66fe46-13eb-d9d2-e107-cc48eb50688f@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5703f49d-177a-a810-6f1c-b32aa1abcde7@kernel.org>
+In-Reply-To: <5c66fe46-13eb-d9d2-e107-cc48eb50688f@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -56,13 +56,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 22, 2023 at 08:56:34AM +0900, Damien Le Moal wrote:
-> On 5/19/23 18:35, Christoph Hellwig wrote:
-> > Add a helper to invalidate page cache after a dio write.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Mon, May 22, 2023 at 09:01:05AM +0900, Damien Le Moal wrote:
+> > -	int ret;
+> > +	ssize_t ret;
+> >  
+> >  	if (iocb->ki_flags & IOCB_NOWAIT)
+> >  		iter.flags |= IOMAP_NOWAIT;
+> >  
+> >  	while ((ret = iomap_iter(&iter, ops)) > 0)
+> >  		iter.processed = iomap_write_iter(&iter, i);
+> > -	if (iter.pos == iocb->ki_pos)
+> > +
+> > +	if (unlikely(ret < 0))
 > 
-> Nit: kiocb_invalidate_post_dio_write() may be a better name to be explicit about
-> the fact that this is for DIOs only ?
+> Nit: This could be if (unlikely(ret <= 0)), no ?
 
-I've renamed it to kiocb_invalidate_post_direct_write, thanks.
+No.  iomap_iter does not return te amount of bytes written.
