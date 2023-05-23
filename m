@@ -2,120 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D553170E267
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 18:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 973B970E213
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 18:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237524AbjEWQcl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 12:32:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
+        id S236827AbjEWQbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 12:31:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231770AbjEWQck (ORCPT
+        with ESMTP id S231152AbjEWQbL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 12:32:40 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43C1DD;
-        Tue, 23 May 2023 09:32:38 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 893EA22925;
-        Tue, 23 May 2023 16:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1684859557; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=Jgln17Itx5qPVoKJlWMfz4FJb2LjDNqFHYWInznf3aw=;
-        b=QxkQFOSxtNEoEdH1bnrO66HEJd2Zwin6JvwUuTU958yG6YUL/HVKt6sZtMzjDsMZkim/dK
-        YxsYK8Cc6Xh/N+RfWa8wkbvwHEgw7p6sLLYPQdv5sCRY6PX8pGWaTcGTf6SKaezCcWLP+b
-        bBctfzPkyZVIDTqf32NnLE+p5XNIV00=
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id 65ADE2C141;
-        Tue, 23 May 2023 16:32:37 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id DECACDA7D7; Tue, 23 May 2023 18:26:30 +0200 (CEST)
-From:   David Sterba <dsterba@suse.com>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH] fs: use UB-safe check for signed addition overflow in remap_verify_area
-Date:   Tue, 23 May 2023 18:26:28 +0200
-Message-Id: <20230523162628.17071-1-dsterba@suse.com>
-X-Mailer: git-send-email 2.40.0
+        Tue, 23 May 2023 12:31:11 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B1AAE0;
+        Tue, 23 May 2023 09:31:09 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4f3b9e54338so105520e87.0;
+        Tue, 23 May 2023 09:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684859467; x=1687451467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rGIwkL0PP8YODaMN3n8QoDck+WHcXF208Kv/zXnG360=;
+        b=JkG507OsWCRuHvJbGgL3PIM7CSsl4ixF0HV9tX0MjNaGMutXtl59HlMQaTi9L7TVQ0
+         0uW5whc6Uncb8VJ+UytyUZbpe/ZrZ3n4yHGip0vcVYlfn5mkQM+H82cO3oE+WS1fuH2J
+         oaq2OGqrAie+QFQjcmc9z4OWzi14fnSehly/q2rQNbdPfj8nayCLWNSjfLxxdoV35R+L
+         BnvJsWmdrtHggw6phVHjTp2Oo0uHezCb4JHR6tVPP1140j+7jh6s7uBxhkSEmk8LAM2V
+         5PBvZJ6VcUJCqWo5DVJikkLqEBWPrZv4no9B+IMbTKoYW8CpWHMUMy35U/2VqdDvbeBi
+         DH0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684859467; x=1687451467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rGIwkL0PP8YODaMN3n8QoDck+WHcXF208Kv/zXnG360=;
+        b=WrbwhKyOMhVAnhzvAGaIIiBBf4QpiW+u1uaT0L1uh+EKiUknptVK1hzJ0iOhv06DDf
+         d7BkCECsp2pR9VrCRCN7uAW+E6zeFoPXRIZOB+CO7leT2bYCgS1pHo+zFoxMXzHjCuj3
+         nJABLOjXKYx8UXrSk1EbzCno5a6DpWwqdTPG11B5wO89XuHXPPNkgGgBrO2j2RIbfS7n
+         Dt8w/9QE6dxzDInVHE+VovmUYb6g1x6gSzOxW9Cr7+JNtcasEoGK2sX2A3bgWaHdm6pe
+         mZoqoFlc+zVKJ/Tq5YCo0/dH9tNhsIfoVseW/2sFVMjBBWJT6ltZXPIzDdD8M6hLA5l0
+         80eg==
+X-Gm-Message-State: AC+VfDx1roCHeLrLKknDbZHDC06mn0JgmFuGAH/s8QNj3L4Ev3OeQFdE
+        kA4Sz5+5bZSnGsHShMD07Ur4YIQ+eSZZsBxlq/w=
+X-Google-Smtp-Source: ACHHUZ6XxYMjRPfT3xIGKngiLHoL5Ye98dFpjpDe+w98eFwhLgs2qTWaYrwILtPbNJvWKXFze81PctmbI6VCnaDdZOU=
+X-Received: by 2002:a05:6512:15e:b0:4f0:e2:c709 with SMTP id
+ m30-20020a056512015e00b004f000e2c709mr4868396lfo.17.1684859467103; Tue, 23
+ May 2023 09:31:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+References: <2989165.1684846121@warthog.procyon.org.uk>
+In-Reply-To: <2989165.1684846121@warthog.procyon.org.uk>
+From:   Shyam Prasad N <nspmangalore@gmail.com>
+Date:   Tue, 23 May 2023 22:00:55 +0530
+Message-ID: <CANT5p=r7usL_YOBxRoiVCrZpZr2+-FLjs1Jg_T6R5==HJQ0epg@mail.gmail.com>
+Subject: Re: [PATCH v2] cifs: Fix cifs_limit_bvec_subset() to correctly check
+ the maxmimum size
+To:     David Howells <dhowells@redhat.com>
+Cc:     Shyam Prasad N <sprasad@microsoft.com>,
+        Steve French <smfrench@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Tom Talpey <tom@talpey.com>, Jeff Layton <jlayton@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following warning pops up with enabled UBSAN in tests fstests/generic/303:
+On Tue, May 23, 2023 at 6:24=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
+>
+> Fix cifs_limit_bvec_subset() so that it limits the span to the maximum
+> specified and won't return with a size greater than max_size.
+>
+> Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rathe=
+r than a page list")
+> Reported-by: Shyam Prasad N <sprasad@microsoft.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <smfrench@gmail.com>
+> cc: Rohith Surabattula <rohiths.msft@gmail.com>
+> cc: Paulo Alcantara <pc@manguebit.com>
+> cc: Tom Talpey <tom@talpey.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/cifs/file.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index ba7f2e09d6c8..df88b8c04d03 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -3353,9 +3353,10 @@ static size_t cifs_limit_bvec_subset(const struct =
+iov_iter *iter, size_t max_siz
+>         while (n && ix < nbv) {
+>                 len =3D min3(n, bvecs[ix].bv_len - skip, max_size);
+>                 span +=3D len;
+> +               max_size -=3D len;
+>                 nsegs++;
+>                 ix++;
+> -               if (span >=3D max_size || nsegs >=3D max_segs)
+> +               if (max_size =3D=3D 0 || nsegs >=3D max_segs)
+>                         break;
+>                 skip =3D 0;
+>                 n -=3D len;
+>
 
-  [23127.529395] UBSAN: Undefined behaviour in fs/read_write.c:1725:7
-  [23127.529400] signed integer overflow:
-  [23127.529403] 4611686018427322368 + 9223372036854775807 cannot be represented in type 'long long int'
-  [23127.529412] CPU: 4 PID: 26180 Comm: xfs_io Not tainted 5.2.0-rc2-1.ge195904-vanilla+ #450
-  [23127.556999] Hardware name: empty empty/S3993, BIOS PAQEX0-3 02/24/2008
-  [23127.557001] Call Trace:
-  [23127.557060]  dump_stack+0x67/0x9b
-  [23127.557070]  ubsan_epilogue+0x9/0x40
-  [23127.573496]  handle_overflow+0xb3/0xc0
-  [23127.573514]  do_clone_file_range+0x28f/0x2a0
-  [23127.573547]  vfs_clone_file_range+0x35/0xb0
-  [23127.573564]  ioctl_file_clone+0x8d/0xc0
-  [23127.590144]  do_vfs_ioctl+0x300/0x700
-  [23127.590160]  ksys_ioctl+0x70/0x80
-  [23127.590203]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-  [23127.590210]  __x64_sys_ioctl+0x16/0x20
-  [23127.590215]  do_syscall_64+0x5c/0x1d0
-  [23127.590224]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  [23127.590231] RIP: 0033:0x7ff6d7250327
-  [23127.590241] RSP: 002b:00007ffe3a38f1d8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
-  [23127.590246] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007ff6d7250327
-  [23127.590249] RDX: 00007ffe3a38f220 RSI: 000000004020940d RDI: 0000000000000003
-  [23127.590252] RBP: 0000000000000000 R08: 00007ffe3a3c80a0 R09: 00007ffe3a3c8080
-  [23127.590255] R10: 000000000fa99fa0 R11: 0000000000000206 R12: 0000000000000000
-  [23127.590260] R13: 0000000000000000 R14: 3fffffffffff0000 R15: 00007ff6d750a20c
+Looks good to me.
 
-As loff_t is a signed type, we should use the safe overflow checks
-instead of relying on compiler implementation.
-
-The bogus values are intentional and the test is supposed to verify the
-boundary conditions.
-
-Signed-off-by: David Sterba <dsterba@suse.com>
----
-
- fs/remap_range.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index 1331a890f2f2..87ae4f0dc3aa 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -15,6 +15,7 @@
- #include <linux/mount.h>
- #include <linux/fs.h>
- #include <linux/dax.h>
-+#include <linux/overflow.h>
- #include "internal.h"
- 
- #include <linux/uaccess.h>
-@@ -101,10 +102,12 @@ static int generic_remap_checks(struct file *file_in, loff_t pos_in,
- static int remap_verify_area(struct file *file, loff_t pos, loff_t len,
- 			     bool write)
- {
-+	loff_t tmp;
-+
- 	if (unlikely(pos < 0 || len < 0))
- 		return -EINVAL;
- 
--	if (unlikely((loff_t) (pos + len) < 0))
-+	if (unlikely(check_add_overflow(pos, len, &tmp)))
- 		return -EINVAL;
- 
- 	return security_file_permission(file, write ? MAY_WRITE : MAY_READ);
--- 
-2.40.0
-
+--=20
+Regards,
+Shyam
