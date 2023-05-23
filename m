@@ -2,134 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CAC170E949
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 00:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 371B870E9B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 01:46:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238596AbjEWWxb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 18:53:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37542 "EHLO
+        id S234513AbjEWXqQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 19:46:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231534AbjEWWx3 (ORCPT
+        with ESMTP id S229539AbjEWXqP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 18:53:29 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E9FE5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 15:53:27 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1ae4baa77b2so1742715ad.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 15:53:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1684882407; x=1687474407;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D4PhmKVouafwl2lkI37bc+Y4HJ74bZ8XIgMqc4mDI8U=;
-        b=ydqarSiJJg8/qlfiybY04O3RO4ik8W1MGJy8LAFW2WWKhnJjVg/kliO9Csr6ezjTxQ
-         CCr+qRpaopVTGsAn0f3l5dbMCo+p2W+aPNeaBhEtfP5bJ9Mjgnc5fTAqVn4RIB2q1YN9
-         T4tabZcuFaOoU/7IsAEwcXQPtLoiHvECcuXyTIfNzB2W2sq5mFSLbAYLnz/KQMv1ljoG
-         wZuSL7Bbl0DjHi49APaxTV/JWMjZM3CCRFDqQhqEu4zJlEZBtHCtHARwqCzUqKDFWYgN
-         xW1Z5cvUGTnV+ZYWY/MRBI4erUVV8hNCo5i56rdI6V8+qX0d2IZFSvvBWq9u+nWEMdhO
-         Wyig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684882407; x=1687474407;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D4PhmKVouafwl2lkI37bc+Y4HJ74bZ8XIgMqc4mDI8U=;
-        b=N2SaSmjlnzh5n04EOd533scbBRRoV8jwqc4mWAKSAOkQLZIs1+k3zWHZ5FXkOSWLVo
-         olG3GY5jcGZyF+ezcccf64I0J/CKkANQZ8pIHOcwowG0+ZbDP4Ex/Zl5k2XFbYSKVKU+
-         PCBJGO2DwF5NwdFnLKHQyqgYMknejtUnsy378rIURQ3lDQ1w8mOUepyZsEKDm8i7eAi1
-         R9b4AP94gOuvAGJxgaE/O5rc1YwZzWL24etNM3+2cFhjXM5Mf04YdsyppvGKQ5poGM7X
-         S8VZWwQckP0WfcXUYXf54cmVOMNrxpiYI8d/c7ApfdZ/YKOFaUQwZJCVbVFIxklPXcdP
-         cBSQ==
-X-Gm-Message-State: AC+VfDwNA/xLqIYqpFLXxQNw70nCcuTm9hpSw/b+MqDJVWbRMcJCyTxW
-        RUaCS+KNmqqUuklk8u8T5oTtnA==
-X-Google-Smtp-Source: ACHHUZ4rf3ZnipqrpeU5LtwMsMVWiU9amtx3ykAwdeSvQFidX6a1jAjFyPwJGzq92rRNbryEDFU+Kg==
-X-Received: by 2002:a17:902:d50e:b0:1ae:6720:8e01 with SMTP id b14-20020a170902d50e00b001ae67208e01mr17699251plg.20.1684882407345;
-        Tue, 23 May 2023 15:53:27 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
-        by smtp.gmail.com with ESMTPSA id u3-20020a170902e80300b001a682a195basm7284710plg.28.2023.05.23.15.53.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 May 2023 15:53:26 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1q1asc-0036XB-37;
-        Wed, 24 May 2023 08:53:22 +1000
-Date:   Wed, 24 May 2023 08:53:22 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Dave Chinner <dchinner@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: (subset) [PATCH 20/32] vfs: factor out inode hash head
- calculation
-Message-ID: <ZG1D4gvpkFjZVMcL@dread.disaster.area>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-21-kent.overstreet@linux.dev>
- <20230523-plakat-kleeblatt-007077ebabb6@brauner>
+        Tue, 23 May 2023 19:46:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B40F190;
+        Tue, 23 May 2023 16:46:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4623C63581;
+        Tue, 23 May 2023 23:46:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65EE2C433EF;
+        Tue, 23 May 2023 23:46:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684885573;
+        bh=hy6VE9loTK6zmHLdZEYYJlKXBdhGlHAMSBuVMqSkYR8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eUzzM5yl0hW5QdsTB+hdJwUiYiWlArc/Z7PL4V8BGkzM+OW28urXzmJ3/BZZ2m2qb
+         2QTaWtjlh+Jnvy43jTuAqN93tR3z7cQcN9/VPc2w4rGJUIkdARMhDa93/rBdOLcvTJ
+         2Cqq5IIcYfzsDZ2FGqzQ8/rR8ZEWVNS2GXqpbtfSDHDKYcZvtzXov6BIdv40zZB27n
+         qILKIetEW4Fb2D4pd5ZENfN2yhPLSJpDlboP8G/m4cZG9vj+o71nPgIQl59S+/xpJL
+         iRpO9tdfB+Brib5lxkD4qkG0m6aHf6gjPysmJoyVYTfuEWKIWLDvGOymuNwW+mE9+c
+         MCYuJY9eCaZBQ==
+Date:   Tue, 23 May 2023 23:46:12 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Pengfei Xu <pengfei.xu@intel.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, heng.su@intel.com,
+        dchinner@redhat.com, lkp@intel.com,
+        Linux Regressions <regressions@lists.linux.dev>
+Subject: Re: [Syzkaller & bisect] There is BUG: unable to handle kernel NULL
+ pointer dereference in xfs_extent_free_diff_items in v6.4-rc3
+Message-ID: <20230523234612.GG888341@google.com>
+References: <ZGrOYDZf+k0i4jyM@xpf.sh.intel.com>
+ <ZGsOH5D5vLTLWzoB@debian.me>
+ <20230522160525.GB11620@frogsfrogsfrogs>
+ <20230523000029.GB3187780@google.com>
+ <ZGxry4yMn+DKCWcJ@dread.disaster.area>
+ <20230523165044.GA862686@google.com>
+ <ZG07WoKnBzaN4T1L@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230523-plakat-kleeblatt-007077ebabb6@brauner>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <ZG07WoKnBzaN4T1L@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 23, 2023 at 11:27:06AM +0200, Christian Brauner wrote:
-> On Tue, 09 May 2023 12:56:45 -0400, Kent Overstreet wrote:
-> > In preparation for changing the inode hash table implementation.
-> >
-> >
+On Wed, May 24, 2023 at 08:16:58AM +1000, Dave Chinner wrote:
+> config XFS_SUPPORT_V4
+>         bool "Support deprecated V4 (crc=0) format"
+>         depends on XFS_FS
+>         default y
+>         help
+>           The V4 filesystem format lacks certain features that are supported
+>           by the V5 format, such as metadata checksumming, strengthened
+>           metadata verification, and the ability to store timestamps past the
+>           year 2038.  Because of this, the V4 format is deprecated.  All users
+>           should upgrade by backing up their files, reformatting, and restoring
+>           from the backup.
 > 
-> This is interesting completely independent of bcachefs so we should give
-> it some testing.
+>           Administrators and users can detect a V4 filesystem by running
+>           xfs_info against a filesystem mountpoint and checking for a string
+>           beginning with "crc=".  If the string "crc=0" is found, the
+>           filesystem is a V4 filesystem.  If no such string is found, please
+>           upgrade xfsprogs to the latest version and try again.
 > 
-> ---
+>           This option will become default N in September 2025.  Support for the
+>           V4 format will be removed entirely in September 2030.  Distributors
+>           can say N here to withdraw support earlier.
 > 
-> Applied to the vfs.unstable.inode-hash branch of the vfs/vfs.git tree.
-> Patches in the vfs.unstable.inode-hash branch should appear in linux-next soon.
+>           To continue supporting the old V4 format (crc=0), say Y.
+>           To close off an attack surface, say N.
 > 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
+> This was added almost 3 years ago in mid-2020. We're more than half
+> way through the deprecation period and then we're going to turn off
+> v4 support by default. At this point, nobody should be using v4
+> filesystems in new production systems, and those that are should be
+> preparing for upstream and distro support to be withdraw in the next
+> couple of years...
+
+Great to see that this exists now and there is a specific deprecation plan!
+
+> > Then you could just tell the people fuzzing XFS filesystem images
+> > that they need to use that option.  That would save everyone a lot of time.
+> > (To be clear, I'm not arguing for the XFS policy on v4 filesystems being right
+> > or wrong; that's really not something I'd like to get into again...  I'm just
+> > saying that if that's indeed your policy, this is what you should do.)
 > 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.unstable.inode-hash
-> 
-> [20/32] vfs: factor out inode hash head calculation
->         https://git.kernel.org/vfs/vfs/c/b54a4516146d
+> It should be obvious by now that we've already done this. 3 years
+> ago, in fact. And yet we are still having the same problems. Maybe
+> this helps you understand the level of frustration we have with all
+> the people running fuzzing bots out there....
 
-Hi Christian - I suspect you should pull the latest version of these
-patches from:
+I don't see evidence that this actually happened, though perhaps we are not
+looking in the same places.  https://lore.kernel.org/all/?q=XFS_SUPPORT_V4
+brings up little except the original patch thread, nor did
+https://github.com/search?q=XFS_SUPPORT_V4&type=issues find anything.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs.git vfs-scale
+Anyway, I took 3 minutes to file an issue in the syzkaller repo
+(https://github.com/google/syzkaller/issues/3918), so at least this should get
+resolved for syzbot soon.
 
-The commit messages are more recent and complete, and I've been
-testing the branch in all my test kernels since 6.4-rc1 without
-issues.
-
-There's also the dlist-lock stuff for avoiding s_inode_list_lock
-contention in that branch. Once the global hash lock is removed,
-the s_inode_list_lock is the only global lock in the inode
-instantiation and reclaim paths. It nests inside the hash locks, so
-all the contention is currently taken on the hash locks - remove the
-global hash locks and we just contend on the next global cache
-line and the workload doesn't go any faster.
-
-i.e. to see the full benefit of the inode hash lock contention
-reduction, we also need the sb->s_inode_list_lock contention to be
-fixed....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+- Eric
