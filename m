@@ -2,524 +2,763 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4906270D4ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 09:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E397F70D4D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 09:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235175AbjEWH2G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 03:28:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60954 "EHLO
+        id S232374AbjEWHVv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 03:21:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235427AbjEWH1g (ORCPT
+        with ESMTP id S230522AbjEWHVu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 03:27:36 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179FB18B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 00:27:16 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230523072712epoutp020f5c713cf4a4b0995ec9ba4db52c2411~htRPO1mEz0235102351epoutp02V
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:27:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230523072712epoutp020f5c713cf4a4b0995ec9ba4db52c2411~htRPO1mEz0235102351epoutp02V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1684826832;
-        bh=rQUWV+UuU8XdtuuAO2kK75l817gnXAls71mYpkwqbKc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=rd0kdCSmYZr67SPWymQnp/lXDpuZmcSnHRG3LO9f9TA+fUUgdjeFrsHuoe5mc9Yy1
-         GdRy6XVjLol3o3VRy/fkc3I+J0iqG5HWswsyMPuYrgWeO7Eu8iSMnOg3OwVBA7IBIC
-         mM/fSzsYPLootr29I9OAAjqfpAhtIrEJF15T3j2w=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20230523072711epcas5p3e6c66813d663ca942b50297a815c37c9~htROn8T0c2669626696epcas5p34;
-        Tue, 23 May 2023 07:27:11 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4QQQqx6tSCz4x9QF; Tue, 23 May
-        2023 07:27:09 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        56.2A.16380.DCA6C646; Tue, 23 May 2023 16:27:09 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20230523071830epcas5p4b6a07de13274dacda50248545c6fcc22~htJo0_Ch21309913099epcas5p4K;
-        Tue, 23 May 2023 07:18:30 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230523071829epsmtrp2966efaa9ec6287e6d593034a25c605ad~htJozkfAa1509815098epsmtrp2V;
-        Tue, 23 May 2023 07:18:29 +0000 (GMT)
-X-AuditID: b6c32a4b-56fff70000013ffc-8a-646c6acdc44b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A0.16.28392.5C86C646; Tue, 23 May 2023 16:18:29 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230523071826epsmtip18aa6407b5ba7be72746b14764a90e1d9~htJlK9C6B1635116351epsmtip1I;
-        Tue, 23 May 2023 07:18:25 +0000 (GMT)
-Date:   Tue, 23 May 2023 12:45:28 +0530
-From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Damien Le Moal <dlemoal@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Tue, 23 May 2023 03:21:50 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C6E120;
+        Tue, 23 May 2023 00:21:20 -0700 (PDT)
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34N6rGSF026726;
+        Tue, 23 May 2023 07:19:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=aOFKrxD/8Ws8yLWC8SjjnwbXx06prSo2yjIJvkzzvk0=;
+ b=M5ZAlAq4eFQ2gk9smVqosLDW3krPRgn8PJbVaauNvenj9HaiA2FNdNhkr6nt9K5Um4ek
+ D4PidRgQp0WyPgz1mAnqRFiDRCcELzI4lLfRenvvPyDbKLK5T0JXvhjF/PGa6fJbuSOw
+ bYHY7DFFVj/E+/VfB5zWm8jSx9MKHxXwUBAcsdGSR6eEPXT7n2cL8XQo4tquhJVQMFpk
+ 9bEHfRcLM8Dcq2RyrKrwGzv8MQykTNmuODviC9QIDlWrcXQGrkQpsyF40RUdZae4ASmQ
+ N3ts3dlkzvVgyofRkBWKHh9bj1OB6BrxQuVuzmxjW5p8+GNJBHbkX1SQByz1GWZOoIAc og== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qrrkygtf7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 May 2023 07:19:38 +0000
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34N6vx99008008;
+        Tue, 23 May 2023 07:19:37 GMT
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qrrkygtdt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 May 2023 07:19:37 +0000
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34N4snZn030176;
+        Tue, 23 May 2023 07:19:34 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+        by ppma03fra.de.ibm.com (PPS) with ESMTPS id 3qppe09361-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 May 2023 07:19:34 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34N7JVKH21693066
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 May 2023 07:19:31 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9847B2004E;
+        Tue, 23 May 2023 07:19:31 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 600C920040;
+        Tue, 23 May 2023 07:19:22 +0000 (GMT)
+Received: from li-a450e7cc-27df-11b2-a85c-b5a9ac31e8ef.ibm.com (unknown [9.109.216.99])
+        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Tue, 23 May 2023 07:19:22 +0000 (GMT)
+Date:   Tue, 23 May 2023 12:49:19 +0530
+From:   Kautuk Consul <kconsul@linux.vnet.ibm.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        James.Bottomley@HansenPartnership.com, bvanassche@acm.org,
-        hare@suse.de, ming.lei@redhat.com, anuj20.g@samsung.com,
-        joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v11 1/9] block: Introduce queue limits for copy-offload
- support
-Message-ID: <20230523071528.GA15436@green245>
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v7 08/14] KVM: Rename mmu_notifier_*
+Message-ID: <ZGxo9ylqYI8JXjGn@li-a450e7cc-27df-11b2-a85c-b5a9ac31e8ef.ibm.com>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-9-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <dba0bdea-4f64-8b3c-d366-1046860ccf07@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTH87u3vRSysstr+wFpxBKGgEArhf0wgI8p3qwmY26EzcxAhRsK
-        lLbrQ3RsgmMuk8XhQBhWnk5BHpMBikgBoc6VR7FCBwgOdAbYIpOnDDYmDGhZ/O9zvud38v2d
-        c3JYuL3WyoWVIFXRCqlIwiVsGA13vDx9exIlcbzLv+5ANV0/46igpppAn597gaOqkSwCTd6Z
-        Ayhv5m8cPb69C7VMXWSiobZbGGq+lI2hiqq7GKrNYiFt6SyG7q4+I1C2bgCg8X4NhlqGfVBz
-        SycDmZoKCDRavcpExWXjVujrwUYCletXMKTLycBQ49gpgK5NTjNQx7ArMr7QM9HyUgGxm0OZ
-        fhFSmkc9BHVLM2JFGUdrGVRedhdB1V/1pkw9aqqu8gxB1c1lW1Ed+csMqv5yGqUdSieosxlT
-        BDU7Psygplv7Ceqb65UgwuFwUoiYFsXRCjdaGiuLS5DGh3KF70W/FR0YxOP78oPRm1w3qSiZ
-        DuXuOxjhG54gWRsS1+2YSKJekyJESiXXPyxEIVOraDexTKkK5dLyOIlcIPdTipKVamm8n5RW
-        7eTzeDsC1x7GJIknFjOY8lbJ8e72JyAdnInKBNYsSArgxI8VIBPYsOxJLYBLk3OWYA7AQpMe
-        NwfzAA6slIHNksLff2OaE00AVuUYMXMwAWCusZjIBCwWg/SAvYad60iQPrB7lbVe60h6wtyc
-        5g0HnJwi4Pf9V4j1hAMZCTVtBmyd2aQvvL3y0MJ2sPPCGGOdrckweGOmD19nJ9IdtjXoN3wh
-        +dQappearMy/2wevDJgIMzvAp/rrFt0Fzk+1WPQUWHH+KmEu/gJAzaDG0toueLora8MBJ8VQ
-        k1uFmXUOzO26hpl1W3h2ecyis2Fj0Sa7w+qaEouBMxxYPGVhCvZfGCXME5oF8NFNPXYObNG8
-        1J3mJT8zb4cl2jlCszY9nHSF5SssM3rBmib/EsCsBM60XJkcTysD5QFSOuX/lcfKkuvAxhV5
-        CxvBk8czfjqAsYAOQBbOdWR3pCTF2bPjRCc+oRWyaIVaQit1IHBtWd/iLk6xsrUzlKqi+YJg
-        niAoKEgQHBDE577O9gztjLUn40UqOomm5bRisw5jWbukY4xtn5bM2954RewU+cdCM9qbF7V1
-        f/q92bL55z/tTVqoN3CWoxl6r5s+573z3zniF5NWyQ7Z7XfA8NpJWa9dPhA26YR7uk1HygOe
-        GYrv3/vsB0+ZuwJzTdOEFzk6Hmoo/8iDbn918XTSUc7BodbvOA7SE/9GHOhXThjdktl/epV9
-        EHHsgSGs+I1e18hL4X22+XzfkaAQzqHCk0UZX1ZIjcKM92PiP05NtU7cZrAXJtB5an1B5tvq
-        xgXy4dJ0n6GNZ7q4vd3jH1Xp2PGZr3CMI9gTkTD3vNMu+K/W1EFFSC3ZZS1SPMhu3Hr0fjkY
-        ydt3WN/yoWjL/ijVrL/WS2LzrjORKOYylGIR3xtXKEX/AexofTHOBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0wTVwDH997dvR5sNWeB8YCMuBLiUicKor4xV1SIu6nROdElW6I2cAKT
-        ImmLIksYzGXGEhQhY/YEUSMqqGWFjeEAIe2Q0pUpAzYpgqIFNp0I/QMRRru0zTL/+yTfX/98
-        WUo2T4ezmdk6QZOtypKjQLrJIo9c3pmRlbbSY1hN6m23KFJZfw2RL0sXKHJ1+CQiTywuQCqm
-        XlDkQXsiaZs8w5DBjhuQtF4og6T2aickppMsaTk/DUmn5ykiZebfARkbECFpcywjrW3dNOn7
-        qRKRkWsehlRfGpOQ4j+aEbnc5YbEXH4UkmZnESDGJ89oYnVEkNsLXQyZn61E69/g+/q38OL9
-        HsTfEIcl/O0RE81XlNkQ33hFwff15PINdccR3+Aqk/DW0/M033jxC75lsBDxJUcnET895qD5
-        ZzcHEH/i+zrwYdAngevShKzMQ4JmhXJfYEa1aw7muDPz+otnmULwMEUPAljMxeOqiVFGDwJZ
-        GdcM8J0ZPeMXwvClhZ8pPwfhWveExG9yAuwq+hvqAcvSXDTutSd4EXHL8C8e1msP5pbib8pb
-        gddOcTMIG2/afT1B3C4sdtihl6XcctzuHoL+zmmAe0uGGL+wGHcbnLSXKU6B77r/8m1RXAS+
-        7PYNBHBK/MPUb77OEC4KdzR1wVKwWHwpLb6UFv9PnwNUHQgTcrTqdLU2NicuWzgco1WptbnZ
-        6TGpB9UNwPcPhaIZtNZNxZgBZIEZYJaSB0uthw+kyaRpqiP5gubgXk1ulqA1gwiWlodK7+i7
-        98q4dJVOOCAIOYLmPxWyAeGF8H23+LXt0VtrU7bWJIbIihNqPqj9R7beeg/UDEWqe7vJ4xCL
-        Cf0Zi+QfKaO+Ld5x4R210v6Kpf3dW8y56LwwneQ5Dja2XP/RcpeOfwQHLs7cjxtcNQrnCpKH
-        rRW2gH7dWpU2CZ89fkXNrqM+m3Lnrxlf5HgvWVkSmX/6BZ0R9Ti3YK70TPkxp6Jovyup5/pr
-        G8FI6IqV+54ORVS8WrB9/PVPU7eFF9XrwjdULdlpNHg+7sxLnsDyNbsS1fFwU+MpAzO7MSH6
-        +ao9W1MXxZl2f9U0/+tuO3O2x7jjyJuV48HyJPHtnekPnFXH9hTQm4NMNkP15OfS0VDHQzxe
-        +t2h/SkzclqboYpVUBqt6l89Uxt8jgMAAA==
-X-CMS-MailID: 20230523071830epcas5p4b6a07de13274dacda50248545c6fcc22
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----kPHV7voJGfjLavpOfz2TLZSfqzzSedGz1kraSQUx2cheHG0X=_139f8_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230522104526epcas5p30d6cb07abadb068a95ab1f90dea42d4e
-References: <20230522104146.2856-1-nj.shetty@samsung.com>
-        <CGME20230522104526epcas5p30d6cb07abadb068a95ab1f90dea42d4e@epcas5p3.samsung.com>
-        <20230522104146.2856-2-nj.shetty@samsung.com>
-        <dba0bdea-4f64-8b3c-d366-1046860ccf07@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220706082016.2603916-9-chao.p.peng@linux.intel.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: rIX2sU3fQE3c3XkBrS10nGHJfLdh5OEX
+X-Proofpoint-ORIG-GUID: bxYNWGfbJVvyRRyVmwpJr9egMnmcVBgY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-23_04,2023-05-22_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 impostorscore=0 clxscore=1011 mlxlogscore=940
+ priorityscore=1501 mlxscore=0 adultscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305230058
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------kPHV7voJGfjLavpOfz2TLZSfqzzSedGz1kraSQUx2cheHG0X=_139f8_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-
-On Mon, May 22, 2023 at 08:45:44PM +0900, Damien Le Moal wrote:
-> On 5/22/23 19:41, Nitesh Shetty wrote:
-> > Add device limits as sysfs entries,
-> >         - copy_offload (RW)
-> >         - copy_max_bytes (RW)
-> >         - copy_max_bytes_hw (RO)
-> > 
-> > Above limits help to split the copy payload in block layer.
-> > copy_offload: used for setting copy offload(1) or emulation(0).
-> > copy_max_bytes: maximum total length of copy in single payload.
-> > copy_max_bytes_hw: Reflects the device supported maximum limit.
-> > 
-> > Reviewed-by: Hannes Reinecke <hare@suse.de>
-> > Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> > Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> > Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> > ---
-> >  Documentation/ABI/stable/sysfs-block | 33 ++++++++++++++
-> >  block/blk-settings.c                 | 24 +++++++++++
-> >  block/blk-sysfs.c                    | 64 ++++++++++++++++++++++++++++
-> >  include/linux/blkdev.h               | 12 ++++++
-> >  include/uapi/linux/fs.h              |  3 ++
-> >  5 files changed, 136 insertions(+)
-> > 
-> > diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
-> > index c57e5b7cb532..e4d31132f77c 100644
-> > --- a/Documentation/ABI/stable/sysfs-block
-> > +++ b/Documentation/ABI/stable/sysfs-block
-> > @@ -155,6 +155,39 @@ Description:
-> >  		last zone of the device which may be smaller.
-> >  
-> >  
-> > +What:		/sys/block/<disk>/queue/copy_offload
-> > +Date:		April 2023
-> > +Contact:	linux-block@vger.kernel.org
-> > +Description:
-> > +		[RW] When read, this file shows whether offloading copy to a
-> > +		device is enabled (1) or disabled (0). Writing '0' to this
-> > +		file will disable offloading copies for this device.
-> > +		Writing any '1' value will enable this feature. If the device
-> > +		does not support offloading, then writing 1, will result in
-> > +		error.
+On 2022-07-06 16:20:10, Chao Peng wrote:
+> The sync mechanism between mmu_notifier and page fault handler employs
+> fields mmu_notifier_seq/count and mmu_notifier_range_start/end. For the
+> to be added private memory, there is the same mechanism needed but not
+> rely on mmu_notifier (It uses new introduced memfile_notifier). This
+> patch renames the existing fields and related helper functions to a
+> neutral name mmu_updating_* so private memory can reuse.
 > 
-> will result is an error.
+> No functional change intended.
 > 
-
-acked
-
-> > +
-> > +
-> > +What:		/sys/block/<disk>/queue/copy_max_bytes
-> > +Date:		April 2023
-> > +Contact:	linux-block@vger.kernel.org
-> > +Description:
-> > +		[RW] This is the maximum number of bytes, that the block layer
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> ---
+>  arch/arm64/kvm/mmu.c                     |  8 ++---
+>  arch/mips/kvm/mmu.c                      | 10 +++---
+>  arch/powerpc/include/asm/kvm_book3s_64.h |  2 +-
+>  arch/powerpc/kvm/book3s_64_mmu_host.c    |  4 +--
+>  arch/powerpc/kvm/book3s_64_mmu_hv.c      |  4 +--
+>  arch/powerpc/kvm/book3s_64_mmu_radix.c   |  6 ++--
+>  arch/powerpc/kvm/book3s_hv_nested.c      |  2 +-
+>  arch/powerpc/kvm/book3s_hv_rm_mmu.c      |  8 ++---
+>  arch/powerpc/kvm/e500_mmu_host.c         |  4 +--
+>  arch/riscv/kvm/mmu.c                     |  4 +--
+>  arch/x86/kvm/mmu/mmu.c                   | 14 ++++----
+>  arch/x86/kvm/mmu/paging_tmpl.h           |  4 +--
+>  include/linux/kvm_host.h                 | 38 ++++++++++-----------
+>  virt/kvm/kvm_main.c                      | 42 +++++++++++-------------
+>  virt/kvm/pfncache.c                      | 14 ++++----
+>  15 files changed, 81 insertions(+), 83 deletions(-)
 > 
-> Please drop the comma after block.
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index 87f1cd0df36e..7ee6fafc24ee 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -993,7 +993,7 @@ transparent_hugepage_adjust(struct kvm *kvm, struct kvm_memory_slot *memslot,
+>  		 * THP doesn't start to split while we are adjusting the
+>  		 * refcounts.
+>  		 *
+> -		 * We are sure this doesn't happen, because mmu_notifier_retry
+> +		 * We are sure this doesn't happen, because mmu_updating_retry
+>  		 * was successful and we are holding the mmu_lock, so if this
+>  		 * THP is trying to split, it will be blocked in the mmu
+>  		 * notifier before touching any of the pages, specifically
+> @@ -1188,9 +1188,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  			return ret;
+>  	}
+>  
+> -	mmu_seq = vcpu->kvm->mmu_notifier_seq;
+> +	mmu_seq = vcpu->kvm->mmu_updating_seq;
+>  	/*
+> -	 * Ensure the read of mmu_notifier_seq happens before we call
+> +	 * Ensure the read of mmu_updating_seq happens before we call
+>  	 * gfn_to_pfn_prot (which calls get_user_pages), so that we don't risk
+>  	 * the page we just got a reference to gets unmapped before we have a
+>  	 * chance to grab the mmu_lock, which ensure that if the page gets
+> @@ -1246,7 +1246,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	else
+>  		write_lock(&kvm->mmu_lock);
+>  	pgt = vcpu->arch.hw_mmu->pgt;
+> -	if (mmu_notifier_retry(kvm, mmu_seq))
+> +	if (mmu_updating_retry(kvm, mmu_seq))
+>  		goto out_unlock;
+>  
+>  	/*
+> diff --git a/arch/mips/kvm/mmu.c b/arch/mips/kvm/mmu.c
+> index 1bfd1b501d82..abd468c6a749 100644
+> --- a/arch/mips/kvm/mmu.c
+> +++ b/arch/mips/kvm/mmu.c
+> @@ -615,17 +615,17 @@ static int kvm_mips_map_page(struct kvm_vcpu *vcpu, unsigned long gpa,
+>  	 * Used to check for invalidations in progress, of the pfn that is
+>  	 * returned by pfn_to_pfn_prot below.
+>  	 */
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  	/*
+> -	 * Ensure the read of mmu_notifier_seq isn't reordered with PTE reads in
+> +	 * Ensure the read of mmu_updating_seq isn't reordered with PTE reads in
+>  	 * gfn_to_pfn_prot() (which calls get_user_pages()), so that we don't
+>  	 * risk the page we get a reference to getting unmapped before we have a
+> -	 * chance to grab the mmu_lock without mmu_notifier_retry() noticing.
+> +	 * chance to grab the mmu_lock without mmu_updating_retry () noticing.
+>  	 *
+>  	 * This smp_rmb() pairs with the effective smp_wmb() of the combination
+>  	 * of the pte_unmap_unlock() after the PTE is zapped, and the
+>  	 * spin_lock() in kvm_mmu_notifier_invalidate_<page|range_end>() before
+> -	 * mmu_notifier_seq is incremented.
+> +	 * mmu_updating_seq is incremented.
+>  	 */
+>  	smp_rmb();
+>  
+> @@ -638,7 +638,7 @@ static int kvm_mips_map_page(struct kvm_vcpu *vcpu, unsigned long gpa,
+>  
+>  	spin_lock(&kvm->mmu_lock);
+>  	/* Check if an invalidation has taken place since we got pfn */
+> -	if (mmu_notifier_retry(kvm, mmu_seq)) {
+> +	if (mmu_updating_retry(kvm, mmu_seq)) {
+>  		/*
+>  		 * This can happen when mappings are changed asynchronously, but
+>  		 * also synchronously if a COW is triggered by
+> diff --git a/arch/powerpc/include/asm/kvm_book3s_64.h b/arch/powerpc/include/asm/kvm_book3s_64.h
+> index 4def2bd17b9b..4d35fb913de5 100644
+> --- a/arch/powerpc/include/asm/kvm_book3s_64.h
+> +++ b/arch/powerpc/include/asm/kvm_book3s_64.h
+> @@ -666,7 +666,7 @@ static inline pte_t *find_kvm_host_pte(struct kvm *kvm, unsigned long mmu_seq,
+>  	VM_WARN(!spin_is_locked(&kvm->mmu_lock),
+>  		"%s called with kvm mmu_lock not held \n", __func__);
+>  
+> -	if (mmu_notifier_retry(kvm, mmu_seq))
+> +	if (mmu_updating_retry(kvm, mmu_seq))
+>  		return NULL;
+>  
+>  	pte = __find_linux_pte(kvm->mm->pgd, ea, NULL, hshift);
+> diff --git a/arch/powerpc/kvm/book3s_64_mmu_host.c b/arch/powerpc/kvm/book3s_64_mmu_host.c
+> index 1ae09992c9ea..78f1aae8cb60 100644
+> --- a/arch/powerpc/kvm/book3s_64_mmu_host.c
+> +++ b/arch/powerpc/kvm/book3s_64_mmu_host.c
+> @@ -90,7 +90,7 @@ int kvmppc_mmu_map_page(struct kvm_vcpu *vcpu, struct kvmppc_pte *orig_pte,
+>  	unsigned long pfn;
+>  
+>  	/* used to check for invalidations in progress */
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	/* Get host physical address for gpa */
+> @@ -151,7 +151,7 @@ int kvmppc_mmu_map_page(struct kvm_vcpu *vcpu, struct kvmppc_pte *orig_pte,
+>  	cpte = kvmppc_mmu_hpte_cache_next(vcpu);
+>  
+>  	spin_lock(&kvm->mmu_lock);
+> -	if (!cpte || mmu_notifier_retry(kvm, mmu_seq)) {
+> +	if (!cpte || mmu_updating_retry(kvm, mmu_seq)) {
+>  		r = -EAGAIN;
+>  		goto out_unlock;
+>  	}
+> diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+> index 514fd45c1994..bcdec6a6f2a7 100644
+> --- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
+> +++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+> @@ -578,7 +578,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_vcpu *vcpu,
+>  		return -EFAULT;
+>  
+>  	/* used to check for invalidations in progress */
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	ret = -EFAULT;
+> @@ -693,7 +693,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_vcpu *vcpu,
+>  
+>  	/* Check if we might have been invalidated; let the guest retry if so */
+>  	ret = RESUME_GUEST;
+> -	if (mmu_notifier_retry(vcpu->kvm, mmu_seq)) {
+> +	if (mmu_updating_retry(vcpu->kvm, mmu_seq)) {
+>  		unlock_rmap(rmap);
+>  		goto out_unlock;
+>  	}
+> diff --git a/arch/powerpc/kvm/book3s_64_mmu_radix.c b/arch/powerpc/kvm/book3s_64_mmu_radix.c
+> index 42851c32ff3b..c8890ccc3f40 100644
+> --- a/arch/powerpc/kvm/book3s_64_mmu_radix.c
+> +++ b/arch/powerpc/kvm/book3s_64_mmu_radix.c
+> @@ -639,7 +639,7 @@ int kvmppc_create_pte(struct kvm *kvm, pgd_t *pgtable, pte_t pte,
+>  	/* Check if we might have been invalidated; let the guest retry if so */
+>  	spin_lock(&kvm->mmu_lock);
+>  	ret = -EAGAIN;
+> -	if (mmu_notifier_retry(kvm, mmu_seq))
+> +	if (mmu_updating_retry(kvm, mmu_seq))
+>  		goto out_unlock;
+>  
+>  	/* Now traverse again under the lock and change the tree */
+> @@ -829,7 +829,7 @@ int kvmppc_book3s_instantiate_page(struct kvm_vcpu *vcpu,
+>  	bool large_enable;
+>  
+>  	/* used to check for invalidations in progress */
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	/*
+> @@ -1190,7 +1190,7 @@ void kvmppc_radix_flush_memslot(struct kvm *kvm,
+>  	 * Increase the mmu notifier sequence number to prevent any page
+>  	 * fault that read the memslot earlier from writing a PTE.
+>  	 */
+> -	kvm->mmu_notifier_seq++;
+> +	kvm->mmu_updating_seq++;
+>  	spin_unlock(&kvm->mmu_lock);
+>  }
+>  
+> diff --git a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3s_hv_nested.c
+> index 0644732d1a25..09f841f730da 100644
+> --- a/arch/powerpc/kvm/book3s_hv_nested.c
+> +++ b/arch/powerpc/kvm/book3s_hv_nested.c
+> @@ -1579,7 +1579,7 @@ static long int __kvmhv_nested_page_fault(struct kvm_vcpu *vcpu,
+>  	/* 2. Find the host pte for this L1 guest real address */
+>  
+>  	/* Used to check for invalidations in progress */
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	/* See if can find translation in our partition scoped tables for L1 */
+> diff --git a/arch/powerpc/kvm/book3s_hv_rm_mmu.c b/arch/powerpc/kvm/book3s_hv_rm_mmu.c
+> index 2257fb18cb72..952b504dc98a 100644
+> --- a/arch/powerpc/kvm/book3s_hv_rm_mmu.c
+> +++ b/arch/powerpc/kvm/book3s_hv_rm_mmu.c
+> @@ -219,7 +219,7 @@ long kvmppc_do_h_enter(struct kvm *kvm, unsigned long flags,
+>  	g_ptel = ptel;
+>  
+>  	/* used later to detect if we might have been invalidated */
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	/* Find the memslot (if any) for this address */
+> @@ -366,7 +366,7 @@ long kvmppc_do_h_enter(struct kvm *kvm, unsigned long flags,
+>  			rmap = real_vmalloc_addr(rmap);
+>  		lock_rmap(rmap);
+>  		/* Check for pending invalidations under the rmap chain lock */
+> -		if (mmu_notifier_retry(kvm, mmu_seq)) {
+> +		if (mmu_updating_retry(kvm, mmu_seq)) {
+>  			/* inval in progress, write a non-present HPTE */
+>  			pteh |= HPTE_V_ABSENT;
+>  			pteh &= ~HPTE_V_VALID;
+> @@ -932,7 +932,7 @@ static long kvmppc_do_h_page_init_zero(struct kvm_vcpu *vcpu,
+>  	int i;
+>  
+>  	/* Used later to detect if we might have been invalidated */
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	arch_spin_lock(&kvm->mmu_lock.rlock.raw_lock);
+> @@ -960,7 +960,7 @@ static long kvmppc_do_h_page_init_copy(struct kvm_vcpu *vcpu,
+>  	long ret = H_SUCCESS;
+>  
+>  	/* Used later to detect if we might have been invalidated */
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	arch_spin_lock(&kvm->mmu_lock.rlock.raw_lock);
+> diff --git a/arch/powerpc/kvm/e500_mmu_host.c b/arch/powerpc/kvm/e500_mmu_host.c
+> index 7f16afc331ef..d7636b926f25 100644
+> --- a/arch/powerpc/kvm/e500_mmu_host.c
+> +++ b/arch/powerpc/kvm/e500_mmu_host.c
+> @@ -339,7 +339,7 @@ static inline int kvmppc_e500_shadow_map(struct kvmppc_vcpu_e500 *vcpu_e500,
+>  	unsigned long flags;
+>  
+>  	/* used to check for invalidations in progress */
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	/*
+> @@ -460,7 +460,7 @@ static inline int kvmppc_e500_shadow_map(struct kvmppc_vcpu_e500 *vcpu_e500,
+>  	}
+>  
+>  	spin_lock(&kvm->mmu_lock);
+> -	if (mmu_notifier_retry(kvm, mmu_seq)) {
+> +	if (mmu_updating_retry(kvm, mmu_seq)) {
+>  		ret = -EAGAIN;
+>  		goto out;
+>  	}
+> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+> index 081f8d2b9cf3..a7db374d3861 100644
+> --- a/arch/riscv/kvm/mmu.c
+> +++ b/arch/riscv/kvm/mmu.c
+> @@ -654,7 +654,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>  		return ret;
+>  	}
+>  
+> -	mmu_seq = kvm->mmu_notifier_seq;
+> +	mmu_seq = kvm->mmu_updating_seq;
+>  
+>  	hfn = gfn_to_pfn_prot(kvm, gfn, is_write, &writeable);
+>  	if (hfn == KVM_PFN_ERR_HWPOISON) {
+> @@ -674,7 +674,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>  
+>  	spin_lock(&kvm->mmu_lock);
+>  
+> -	if (mmu_notifier_retry(kvm, mmu_seq))
+> +	if (mmu_updating_retry(kvm, mmu_seq))
+>  		goto out_unlock;
+>  
+>  	if (writeable) {
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 0d882fad4bc1..545eb74305fe 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -2908,7 +2908,7 @@ static void direct_pte_prefetch(struct kvm_vcpu *vcpu, u64 *sptep)
+>  	 * If addresses are being invalidated, skip prefetching to avoid
+>  	 * accidentally prefetching those addresses.
+>  	 */
+> -	if (unlikely(vcpu->kvm->mmu_notifier_count))
+> +	if (unlikely(vcpu->kvm->mmu_updating_count))
+>  		return;
+>  
+>  	__direct_pte_prefetch(vcpu, sp, sptep);
+> @@ -2950,7 +2950,7 @@ static int host_pfn_mapping_level(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
+>  	/*
+>  	 * Lookup the mapping level in the current mm.  The information
+>  	 * may become stale soon, but it is safe to use as long as
+> -	 * 1) mmu_notifier_retry was checked after taking mmu_lock, and
+> +	 * 1) mmu_updating_retry was checked after taking mmu_lock, and
+>  	 * 2) mmu_lock is taken now.
+>  	 *
+>  	 * We still need to disable IRQs to prevent concurrent tear down
+> @@ -3035,7 +3035,7 @@ void kvm_mmu_hugepage_adjust(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+>  		return;
+>  
+>  	/*
+> -	 * mmu_notifier_retry() was successful and mmu_lock is held, so
+> +	 * mmu_updating_retry was successful and mmu_lock is held, so
+>  	 * the pmd can't be split from under us.
+>  	 */
+>  	fault->goal_level = fault->req_level;
+> @@ -4182,7 +4182,7 @@ static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
+>  		return true;
+>  
+>  	return fault->slot &&
+> -	       mmu_notifier_retry_gfn(vcpu->kvm, mmu_seq, fault->gfn);
+> +	       mmu_updating_retry_gfn(vcpu->kvm, mmu_seq, fault->gfn);
+>  }
+>  
+>  static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> @@ -4206,7 +4206,7 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+>  	if (r)
+>  		return r;
+>  
+> -	mmu_seq = vcpu->kvm->mmu_notifier_seq;
+> +	mmu_seq = vcpu->kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	r = kvm_faultin_pfn(vcpu, fault);
+> @@ -6023,7 +6023,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+>  
+>  	write_lock(&kvm->mmu_lock);
+>  
+> -	kvm_inc_notifier_count(kvm, gfn_start, gfn_end);
+> +	kvm_mmu_updating_begin(kvm, gfn_start, gfn_end);
+>  
+>  	flush = __kvm_zap_rmaps(kvm, gfn_start, gfn_end);
+>  
+> @@ -6037,7 +6037,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+>  		kvm_flush_remote_tlbs_with_address(kvm, gfn_start,
+>  						   gfn_end - gfn_start);
+>  
+> -	kvm_dec_notifier_count(kvm, gfn_start, gfn_end);
+> +	kvm_mmu_updating_end(kvm, gfn_start, gfn_end);
+>  
+>  	write_unlock(&kvm->mmu_lock);
+>  }
+> diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
+> index 2448fa8d8438..acf7e41aa02b 100644
+> --- a/arch/x86/kvm/mmu/paging_tmpl.h
+> +++ b/arch/x86/kvm/mmu/paging_tmpl.h
+> @@ -589,7 +589,7 @@ static void FNAME(pte_prefetch)(struct kvm_vcpu *vcpu, struct guest_walker *gw,
+>  	 * If addresses are being invalidated, skip prefetching to avoid
+>  	 * accidentally prefetching those addresses.
+>  	 */
+> -	if (unlikely(vcpu->kvm->mmu_notifier_count))
+> +	if (unlikely(vcpu->kvm->mmu_updating_count))
+>  		return;
+>  
+>  	if (sp->role.direct)
+> @@ -838,7 +838,7 @@ static int FNAME(page_fault)(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+>  	else
+>  		fault->max_level = walker.level;
+>  
+> -	mmu_seq = vcpu->kvm->mmu_notifier_seq;
+> +	mmu_seq = vcpu->kvm->mmu_updating_seq;
+>  	smp_rmb();
+>  
+>  	r = kvm_faultin_pfn(vcpu, fault);
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index e9153b54e2a4..c262ebb168a7 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -765,10 +765,10 @@ struct kvm {
+>  
+>  #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+>  	struct mmu_notifier mmu_notifier;
+> -	unsigned long mmu_notifier_seq;
+> -	long mmu_notifier_count;
+> -	gfn_t mmu_notifier_range_start;
+> -	gfn_t mmu_notifier_range_end;
+> +	unsigned long mmu_updating_seq;
+> +	long mmu_updating_count;
 
-you mean after bytes ?, acked.
+Can we convert mmu_updating_seq and mmu_updating_count to atomic_t ?
+I see that not all accesses to these are under the kvm->mmu_lock
+spinlock. This will also remove the need for putting separate smp_wmb() and
+smp_rmb() memory barriers while accessing these structure members.
 
+> +	gfn_t mmu_updating_range_start;
+> +	gfn_t mmu_updating_range_end;
+>  #endif
+>  	struct list_head devices;
+>  	u64 manual_dirty_log_protect;
+> @@ -1362,8 +1362,8 @@ void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc);
+>  void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
+>  #endif
+>  
+> -void kvm_inc_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end);
+> -void kvm_dec_notifier_count(struct kvm *kvm, gfn_t start, gfn_t end);
+> +void kvm_mmu_updating_begin(struct kvm *kvm, gfn_t start, gfn_t end);
+> +void kvm_mmu_updating_end(struct kvm *kvm, gfn_t start, gfn_t end);
+>  
+>  long kvm_arch_dev_ioctl(struct file *filp,
+>  			unsigned int ioctl, unsigned long arg);
+> @@ -1901,42 +1901,42 @@ extern const struct kvm_stats_header kvm_vcpu_stats_header;
+>  extern const struct _kvm_stats_desc kvm_vcpu_stats_desc[];
+>  
+>  #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+> -static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
+> +static inline int mmu_updating_retry(struct kvm *kvm, unsigned long mmu_seq)
+>  {
+> -	if (unlikely(kvm->mmu_notifier_count))
+> +	if (unlikely(kvm->mmu_updating_count))
+>  		return 1;
+>  	/*
+> -	 * Ensure the read of mmu_notifier_count happens before the read
+> -	 * of mmu_notifier_seq.  This interacts with the smp_wmb() in
+> +	 * Ensure the read of mmu_updating_count happens before the read
+> +	 * of mmu_updating_seq.  This interacts with the smp_wmb() in
+>  	 * mmu_notifier_invalidate_range_end to make sure that the caller
+> -	 * either sees the old (non-zero) value of mmu_notifier_count or
+> -	 * the new (incremented) value of mmu_notifier_seq.
+> +	 * either sees the old (non-zero) value of mmu_updating_count or
+> +	 * the new (incremented) value of mmu_updating_seq.
+>  	 * PowerPC Book3s HV KVM calls this under a per-page lock
+>  	 * rather than under kvm->mmu_lock, for scalability, so
+>  	 * can't rely on kvm->mmu_lock to keep things ordered.
+>  	 */
+>  	smp_rmb();
+> -	if (kvm->mmu_notifier_seq != mmu_seq)
+> +	if (kvm->mmu_updating_seq != mmu_seq)
+>  		return 1;
+>  	return 0;
+>  }
+>  
+> -static inline int mmu_notifier_retry_gfn(struct kvm *kvm,
+> +static inline int mmu_updating_retry_gfn(struct kvm *kvm,
+>  					 unsigned long mmu_seq,
+>  					 gfn_t gfn)
+>  {
+>  	lockdep_assert_held(&kvm->mmu_lock);
+>  	/*
+> -	 * If mmu_notifier_count is non-zero, then the range maintained by
+> +	 * If mmu_updating_count is non-zero, then the range maintained by
+>  	 * kvm_mmu_notifier_invalidate_range_start contains all addresses that
+>  	 * might be being invalidated. Note that it may include some false
+>  	 * positives, due to shortcuts when handing concurrent invalidations.
+>  	 */
+> -	if (unlikely(kvm->mmu_notifier_count) &&
+> -	    gfn >= kvm->mmu_notifier_range_start &&
+> -	    gfn < kvm->mmu_notifier_range_end)
+> +	if (unlikely(kvm->mmu_updating_count) &&
+> +	    gfn >= kvm->mmu_updating_range_start &&
+> +	    gfn < kvm->mmu_updating_range_end)
+>  		return 1;
+> -	if (kvm->mmu_notifier_seq != mmu_seq)
+> +	if (kvm->mmu_updating_seq != mmu_seq)
+>  		return 1;
+>  	return 0;
+>  }
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 4d7f0e72366f..3ae4944b9f15 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -698,30 +698,29 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
+>  
+>  	/*
+>  	 * .change_pte() must be surrounded by .invalidate_range_{start,end}().
+> -	 * If mmu_notifier_count is zero, then no in-progress invalidations,
+> +	 * If mmu_updating_count is zero, then no in-progress invalidations,
+>  	 * including this one, found a relevant memslot at start(); rechecking
+>  	 * memslots here is unnecessary.  Note, a false positive (count elevated
+>  	 * by a different invalidation) is sub-optimal but functionally ok.
+>  	 */
+>  	WARN_ON_ONCE(!READ_ONCE(kvm->mn_active_invalidate_count));
+> -	if (!READ_ONCE(kvm->mmu_notifier_count))
+> +	if (!READ_ONCE(kvm->mmu_updating_count))
+>  		return;
+>  
+>  	kvm_handle_hva_range(mn, address, address + 1, pte, kvm_set_spte_gfn);
+>  }
+>  
+> -void kvm_inc_notifier_count(struct kvm *kvm, unsigned long start,
+> -				   unsigned long end)
+> +void kvm_mmu_updating_begin(struct kvm *kvm, gfn_t start, gfn_t end)
+>  {
+>  	/*
+>  	 * The count increase must become visible at unlock time as no
+>  	 * spte can be established without taking the mmu_lock and
+>  	 * count is also read inside the mmu_lock critical section.
+>  	 */
+> -	kvm->mmu_notifier_count++;
+> -	if (likely(kvm->mmu_notifier_count == 1)) {
+> -		kvm->mmu_notifier_range_start = start;
+> -		kvm->mmu_notifier_range_end = end;
+> +	kvm->mmu_updating_count++;
+> +	if (likely(kvm->mmu_updating_count == 1)) {
+> +		kvm->mmu_updating_range_start = start;
+> +		kvm->mmu_updating_range_end = end;
+>  	} else {
+>  		/*
+>  		 * Fully tracking multiple concurrent ranges has diminishing
+> @@ -732,10 +731,10 @@ void kvm_inc_notifier_count(struct kvm *kvm, unsigned long start,
+>  		 * accumulate and persist until all outstanding invalidates
+>  		 * complete.
+>  		 */
+> -		kvm->mmu_notifier_range_start =
+> -			min(kvm->mmu_notifier_range_start, start);
+> -		kvm->mmu_notifier_range_end =
+> -			max(kvm->mmu_notifier_range_end, end);
+> +		kvm->mmu_updating_range_start =
+> +			min(kvm->mmu_updating_range_start, start);
+> +		kvm->mmu_updating_range_end =
+> +			max(kvm->mmu_updating_range_end, end);
+>  	}
+>  }
+>  
+> @@ -748,7 +747,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+>  		.end		= range->end,
+>  		.pte		= __pte(0),
+>  		.handler	= kvm_unmap_gfn_range,
+> -		.on_lock	= kvm_inc_notifier_count,
+> +		.on_lock	= kvm_mmu_updating_begin,
+>  		.on_unlock	= kvm_arch_guest_memory_reclaimed,
+>  		.flush_on_ret	= true,
+>  		.may_block	= mmu_notifier_range_blockable(range),
+> @@ -759,7 +758,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+>  	/*
+>  	 * Prevent memslot modification between range_start() and range_end()
+>  	 * so that conditionally locking provides the same result in both
+> -	 * functions.  Without that guarantee, the mmu_notifier_count
+> +	 * functions.  Without that guarantee, the mmu_updating_count
+>  	 * adjustments will be imbalanced.
+>  	 *
+>  	 * Pairs with the decrement in range_end().
+> @@ -775,7 +774,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+>  	 * any given time, and the caches themselves can check for hva overlap,
+>  	 * i.e. don't need to rely on memslot overlap checks for performance.
+>  	 * Because this runs without holding mmu_lock, the pfn caches must use
+> -	 * mn_active_invalidate_count (see above) instead of mmu_notifier_count.
+> +	 * mn_active_invalidate_count (see above) instead of mmu_updating_count.
+>  	 */
+>  	gfn_to_pfn_cache_invalidate_start(kvm, range->start, range->end,
+>  					  hva_range.may_block);
+> @@ -785,22 +784,21 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+>  	return 0;
+>  }
+>  
+> -void kvm_dec_notifier_count(struct kvm *kvm, unsigned long start,
+> -				   unsigned long end)
+> +void kvm_mmu_updating_end(struct kvm *kvm, gfn_t start, gfn_t end)
+>  {
+>  	/*
+>  	 * This sequence increase will notify the kvm page fault that
+>  	 * the page that is going to be mapped in the spte could have
+>  	 * been freed.
+>  	 */
+> -	kvm->mmu_notifier_seq++;
+> +	kvm->mmu_updating_seq++;
+>  	smp_wmb();
+>  	/*
+>  	 * The above sequence increase must be visible before the
+>  	 * below count decrease, which is ensured by the smp_wmb above
+> -	 * in conjunction with the smp_rmb in mmu_notifier_retry().
+> +	 * in conjunction with the smp_rmb in mmu_updating_retry().
+>  	 */
+> -	kvm->mmu_notifier_count--;
+> +	kvm->mmu_updating_count--;
+>  }
+>  
+>  static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+> @@ -812,7 +810,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+>  		.end		= range->end,
+>  		.pte		= __pte(0),
+>  		.handler	= (void *)kvm_null_fn,
+> -		.on_lock	= kvm_dec_notifier_count,
+> +		.on_lock	= kvm_mmu_updating_end,
+>  		.on_unlock	= (void *)kvm_null_fn,
+>  		.flush_on_ret	= false,
+>  		.may_block	= mmu_notifier_range_blockable(range),
+> @@ -833,7 +831,7 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+>  	if (wake)
+>  		rcuwait_wake_up(&kvm->mn_memslots_update_rcuwait);
+>  
+> -	BUG_ON(kvm->mmu_notifier_count < 0);
+> +	BUG_ON(kvm->mmu_updating_count < 0);
+>  }
+>  
+>  static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
+> diff --git a/virt/kvm/pfncache.c b/virt/kvm/pfncache.c
+> index ab519f72f2cd..aa6d24966a76 100644
+> --- a/virt/kvm/pfncache.c
+> +++ b/virt/kvm/pfncache.c
+> @@ -112,27 +112,27 @@ static inline bool mmu_notifier_retry_cache(struct kvm *kvm, unsigned long mmu_s
+>  {
+>  	/*
+>  	 * mn_active_invalidate_count acts for all intents and purposes
+> -	 * like mmu_notifier_count here; but the latter cannot be used
+> +	 * like mmu_updating_count here; but the latter cannot be used
+>  	 * here because the invalidation of caches in the mmu_notifier
+> -	 * event occurs _before_ mmu_notifier_count is elevated.
+> +	 * event occurs _before_ mmu_updating_count is elevated.
+>  	 *
+>  	 * Note, it does not matter that mn_active_invalidate_count
+>  	 * is not protected by gpc->lock.  It is guaranteed to
+>  	 * be elevated before the mmu_notifier acquires gpc->lock, and
+> -	 * isn't dropped until after mmu_notifier_seq is updated.
+> +	 * isn't dropped until after mmu_updating_seq is updated.
+>  	 */
+>  	if (kvm->mn_active_invalidate_count)
+>  		return true;
+>  
+>  	/*
+>  	 * Ensure mn_active_invalidate_count is read before
+> -	 * mmu_notifier_seq.  This pairs with the smp_wmb() in
+> +	 * mmu_updating_seq.  This pairs with the smp_wmb() in
+>  	 * mmu_notifier_invalidate_range_end() to guarantee either the
+>  	 * old (non-zero) value of mn_active_invalidate_count or the
+> -	 * new (incremented) value of mmu_notifier_seq is observed.
+> +	 * new (incremented) value of mmu_updating_seq is observed.
+>  	 */
+>  	smp_rmb();
+> -	return kvm->mmu_notifier_seq != mmu_seq;
+> +	return kvm->mmu_updating_seq != mmu_seq;
+>  }
+>  
+>  static kvm_pfn_t hva_to_pfn_retry(struct kvm *kvm, struct gfn_to_pfn_cache *gpc)
+> @@ -155,7 +155,7 @@ static kvm_pfn_t hva_to_pfn_retry(struct kvm *kvm, struct gfn_to_pfn_cache *gpc)
+>  	gpc->valid = false;
+>  
+>  	do {
+> -		mmu_seq = kvm->mmu_notifier_seq;
+> +		mmu_seq = kvm->mmu_updating_seq;
+>  		smp_rmb();
+>  
+>  		write_unlock_irq(&gpc->lock);
+> -- 
+> 2.25.1
 > 
-> > +		will allow for copy request. This will be smaller or equal to
-> 
-> will allow for a copy request. This value is always smaller...
-> 
-
-acked
-
-> > +		the maximum size allowed by the hardware, indicated by
-> > +		'copy_max_bytes_hw'. Attempt to set value higher than
-> 
-> An attempt to set a value higher than...
-> 
-
-acked
-
-> > +		'copy_max_bytes_hw' will truncate this to 'copy_max_bytes_hw'.
-> > +
-> > +
-> > +What:		/sys/block/<disk>/queue/copy_max_bytes_hw
-> > +Date:		April 2023
-> > +Contact:	linux-block@vger.kernel.org
-> > +Description:
-> > +		[RO] This is the maximum number of bytes, that the hardware
-> 
-> drop the comma after bytes
-> 
-
-acked
-
-> > +		will allow in a single data copy request.
-> 
-> will allow for
-> 
-
-acked
-
-> > +		A value of 0 means that the device does not support
-> > +		copy offload.
-> 
-> Given that you do have copy emulation for devices that do not support hw
-> offload, how is the user supposed to know the maximum size of a copy request
-> when it is emulated ? This is not obvious from looking at these parameters.
-> 
-
-This was little tricky for us as well.
-There are multiple limits (such as max_hw_sectors, max_segments,
-buffer allocation size), which decide what emulated copy size is.
-Moreover this limit was supposed to reflect device copy offload
-size/capability.
-Let me know if you something in mind, which can make this look better.
-
-> > +
-> > +
-> >  What:		/sys/block/<disk>/queue/crypto/
-> >  Date:		February 2022
-> >  Contact:	linux-block@vger.kernel.org
-> > diff --git a/block/blk-settings.c b/block/blk-settings.c
-> > index 896b4654ab00..23aff2d4dcba 100644
-> > --- a/block/blk-settings.c
-> > +++ b/block/blk-settings.c
-> > @@ -59,6 +59,8 @@ void blk_set_default_limits(struct queue_limits *lim)
-> >  	lim->zoned = BLK_ZONED_NONE;
-> >  	lim->zone_write_granularity = 0;
-> >  	lim->dma_alignment = 511;
-> > +	lim->max_copy_sectors_hw = 0;
-> > +	lim->max_copy_sectors = 0;
-> >  }
-> >  
-> >  /**
-> > @@ -82,6 +84,8 @@ void blk_set_stacking_limits(struct queue_limits *lim)
-> >  	lim->max_dev_sectors = UINT_MAX;
-> >  	lim->max_write_zeroes_sectors = UINT_MAX;
-> >  	lim->max_zone_append_sectors = UINT_MAX;
-> > +	lim->max_copy_sectors_hw = ULONG_MAX;
-> > +	lim->max_copy_sectors = ULONG_MAX;
-> 
-> UINT_MAX is not enough ?
-
-acked
-
->
-> >  }
-> >  EXPORT_SYMBOL(blk_set_stacking_limits);
-> >  
-> > @@ -183,6 +187,22 @@ void blk_queue_max_discard_sectors(struct request_queue *q,
-> >  }
-> >  EXPORT_SYMBOL(blk_queue_max_discard_sectors);
-> >  
-> > +/**
-> > + * blk_queue_max_copy_sectors_hw - set max sectors for a single copy payload
-> > + * @q:  the request queue for the device
-> > + * @max_copy_sectors: maximum number of sectors to copy
-> > + **/
-> > +void blk_queue_max_copy_sectors_hw(struct request_queue *q,
-> > +		unsigned int max_copy_sectors)
-> > +{
-> > +	if (max_copy_sectors > (COPY_MAX_BYTES >> SECTOR_SHIFT))
-> > +		max_copy_sectors = COPY_MAX_BYTES >> SECTOR_SHIFT;
-> > +
-> > +	q->limits.max_copy_sectors_hw = max_copy_sectors;
-> > +	q->limits.max_copy_sectors = max_copy_sectors;
-> > +}
-> > +EXPORT_SYMBOL_GPL(blk_queue_max_copy_sectors_hw);
-> > +
-> >  /**
-> >   * blk_queue_max_secure_erase_sectors - set max sectors for a secure erase
-> >   * @q:  the request queue for the device
-> > @@ -578,6 +598,10 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
-> >  	t->max_segment_size = min_not_zero(t->max_segment_size,
-> >  					   b->max_segment_size);
-> >  
-> > +	t->max_copy_sectors = min(t->max_copy_sectors, b->max_copy_sectors);
-> > +	t->max_copy_sectors_hw = min(t->max_copy_sectors_hw,
-> > +						b->max_copy_sectors_hw);
-> > +
-> >  	t->misaligned |= b->misaligned;
-> >  
-> >  	alignment = queue_limit_alignment_offset(b, start);
-> > diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-> > index a64208583853..826ab29beba3 100644
-> > --- a/block/blk-sysfs.c
-> > +++ b/block/blk-sysfs.c
-> > @@ -212,6 +212,63 @@ static ssize_t queue_discard_zeroes_data_show(struct request_queue *q, char *pag
-> >  	return queue_var_show(0, page);
-> >  }
-> >  
-> > +static ssize_t queue_copy_offload_show(struct request_queue *q, char *page)
-> > +{
-> > +	return queue_var_show(blk_queue_copy(q), page);
-> > +}
-> > +
-> > +static ssize_t queue_copy_offload_store(struct request_queue *q,
-> > +				       const char *page, size_t count)
-> > +{
-> > +	s64 copy_offload;
-> > +	ssize_t ret = queue_var_store64(&copy_offload, page);
-> > +
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	if (copy_offload && !q->limits.max_copy_sectors_hw)
-> > +		return -EINVAL;
-> > +
-> > +	if (copy_offload)
-> > +		blk_queue_flag_set(QUEUE_FLAG_COPY, q);
-> > +	else
-> > +		blk_queue_flag_clear(QUEUE_FLAG_COPY, q);
-> > +
-> > +	return count;
-> > +}
-> > +
-> > +static ssize_t queue_copy_max_hw_show(struct request_queue *q, char *page)
-> > +{
-> > +	return sprintf(page, "%llu\n", (unsigned long long)
-> > +			q->limits.max_copy_sectors_hw << SECTOR_SHIFT);
-> > +}
-> > +
-> > +static ssize_t queue_copy_max_show(struct request_queue *q, char *page)
-> > +{
-> > +	return sprintf(page, "%llu\n", (unsigned long long)
-> > +			q->limits.max_copy_sectors << SECTOR_SHIFT);
-> > +}
-> > +
-> > +static ssize_t queue_copy_max_store(struct request_queue *q,
-> > +				       const char *page, size_t count)
-> > +{
-> > +	s64 max_copy;
-> > +	ssize_t ret = queue_var_store64(&max_copy, page);
-> > +
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	if (max_copy & (queue_logical_block_size(q) - 1))
-> > +		return -EINVAL;
-> > +
-> > +	max_copy >>= SECTOR_SHIFT;
-> > +	if (max_copy > q->limits.max_copy_sectors_hw)
-> > +		max_copy = q->limits.max_copy_sectors_hw;
-> > +
-> > +	q->limits.max_copy_sectors = max_copy;
-> 
-> 	q->limits.max_copy_sectors =
-> 		min(max_copy, q->limits.max_copy_sectors_hw);
-> 
-> To remove the if above.
-
-acked
-
-> 
-> > +	return count;
-> > +}
-> > +
-> >  static ssize_t queue_write_same_max_show(struct request_queue *q, char *page)
-> >  {
-> >  	return queue_var_show(0, page);
-> > @@ -590,6 +647,10 @@ QUEUE_RO_ENTRY(queue_nr_zones, "nr_zones");
-> >  QUEUE_RO_ENTRY(queue_max_open_zones, "max_open_zones");
-> >  QUEUE_RO_ENTRY(queue_max_active_zones, "max_active_zones");
-> >  
-> > +QUEUE_RW_ENTRY(queue_copy_offload, "copy_offload");
-> > +QUEUE_RO_ENTRY(queue_copy_max_hw, "copy_max_bytes_hw");
-> > +QUEUE_RW_ENTRY(queue_copy_max, "copy_max_bytes");
-> > +
-> >  QUEUE_RW_ENTRY(queue_nomerges, "nomerges");
-> >  QUEUE_RW_ENTRY(queue_rq_affinity, "rq_affinity");
-> >  QUEUE_RW_ENTRY(queue_poll, "io_poll");
-> > @@ -637,6 +698,9 @@ static struct attribute *queue_attrs[] = {
-> >  	&queue_discard_max_entry.attr,
-> >  	&queue_discard_max_hw_entry.attr,
-> >  	&queue_discard_zeroes_data_entry.attr,
-> > +	&queue_copy_offload_entry.attr,
-> > +	&queue_copy_max_hw_entry.attr,
-> > +	&queue_copy_max_entry.attr,
-> >  	&queue_write_same_max_entry.attr,
-> >  	&queue_write_zeroes_max_entry.attr,
-> >  	&queue_zone_append_max_entry.attr,
-> > diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> > index b441e633f4dd..c9bf11adccb3 100644
-> > --- a/include/linux/blkdev.h
-> > +++ b/include/linux/blkdev.h
-> > @@ -295,6 +295,9 @@ struct queue_limits {
-> >  	unsigned int		discard_alignment;
-> >  	unsigned int		zone_write_granularity;
-> >  
-> > +	unsigned long		max_copy_sectors_hw;
-> > +	unsigned long		max_copy_sectors;
-> 
-> Why unsigned long ? unsigned int gives you 4G * 512 = 2TB max copy. Isn't that a
-> large enough max limit ?
-
-Should be enough. Will update this.
-
-> 
-> > +
-> >  	unsigned short		max_segments;
-> >  	unsigned short		max_integrity_segments;
-> >  	unsigned short		max_discard_segments;
-> > @@ -561,6 +564,7 @@ struct request_queue {
-> >  #define QUEUE_FLAG_NOWAIT       29	/* device supports NOWAIT */
-> >  #define QUEUE_FLAG_SQ_SCHED     30	/* single queue style io dispatch */
-> >  #define QUEUE_FLAG_SKIP_TAGSET_QUIESCE	31 /* quiesce_tagset skip the queue*/
-> > +#define QUEUE_FLAG_COPY		32	/* supports copy offload */
-> 
-> Nope. That is misleading. This flag is cleared in queue_copy_offload_store() if
-> the user writes 0. So this flag indicates that copy offload is enabled or
-> disabled, not that the device supports it. For the device support, one has to
-> look at max copy sectors hw being != 0.
->
-Agree. Will changing it to "flag to enable/disable copy offload",
-will it be better?
-
-> >  
-> >  #define QUEUE_FLAG_MQ_DEFAULT	((1UL << QUEUE_FLAG_IO_STAT) |		\
-> >  				 (1UL << QUEUE_FLAG_SAME_COMP) |	\
-> > @@ -581,6 +585,7 @@ bool blk_queue_flag_test_and_set(unsigned int flag, struct request_queue *q);
-> >  	test_bit(QUEUE_FLAG_STABLE_WRITES, &(q)->queue_flags)
-> >  #define blk_queue_io_stat(q)	test_bit(QUEUE_FLAG_IO_STAT, &(q)->queue_flags)
-> >  #define blk_queue_add_random(q)	test_bit(QUEUE_FLAG_ADD_RANDOM, &(q)->queue_flags)
-> > +#define blk_queue_copy(q)	test_bit(QUEUE_FLAG_COPY, &(q)->queue_flags)
-> >  #define blk_queue_zone_resetall(q)	\
-> >  	test_bit(QUEUE_FLAG_ZONE_RESETALL, &(q)->queue_flags)
-> >  #define blk_queue_dax(q)	test_bit(QUEUE_FLAG_DAX, &(q)->queue_flags)
-> > @@ -899,6 +904,8 @@ extern void blk_queue_chunk_sectors(struct request_queue *, unsigned int);
-> >  extern void blk_queue_max_segments(struct request_queue *, unsigned short);
-> >  extern void blk_queue_max_discard_segments(struct request_queue *,
-> >  		unsigned short);
-> > +extern void blk_queue_max_copy_sectors_hw(struct request_queue *q,
-> > +		unsigned int max_copy_sectors);
-> >  void blk_queue_max_secure_erase_sectors(struct request_queue *q,
-> >  		unsigned int max_sectors);
-> >  extern void blk_queue_max_segment_size(struct request_queue *, unsigned int);
-> > @@ -1218,6 +1225,11 @@ static inline unsigned int bdev_discard_granularity(struct block_device *bdev)
-> >  	return bdev_get_queue(bdev)->limits.discard_granularity;
-> >  }
-> >  
-> > +static inline unsigned int bdev_max_copy_sectors(struct block_device *bdev)
-> > +{
-> > +	return bdev_get_queue(bdev)->limits.max_copy_sectors;
-> > +}
-> > +
-> >  static inline unsigned int
-> >  bdev_max_secure_erase_sectors(struct block_device *bdev)
-> >  {
-> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > index b7b56871029c..8879567791fa 100644
-> > --- a/include/uapi/linux/fs.h
-> > +++ b/include/uapi/linux/fs.h
-> > @@ -64,6 +64,9 @@ struct fstrim_range {
-> >  	__u64 minlen;
-> >  };
-> >  
-> > +/* maximum total copy length */
-> > +#define COPY_MAX_BYTES	(1 << 27)
-> 
-> My brain bit shifter is not as good as a CPU one :) So it would be nice to
-> mention what value that is in MB and also explain where this magic value comes from.
-> 
-
-Agree. Even I had similar experience :). Will update the comments to
-reflect in MB.
-
-About the limit, we faced a dilemma,
-1. not set limit: Allow copy which is huge(ssize_t) and which starts
-consuming/hogging system resources
-2. set limit: what the limit should be
-
-We went with 2, and limit is based on our internel testing,
-mainly desktop systems had memory limitation for emulation scenario.
-Feel free to suggest, if you have some other thoughts.
-
-Thanks, 
-Nitesh Shetty
-
-------kPHV7voJGfjLavpOfz2TLZSfqzzSedGz1kraSQUx2cheHG0X=_139f8_
-Content-Type: text/plain; charset="utf-8"
-
-
-------kPHV7voJGfjLavpOfz2TLZSfqzzSedGz1kraSQUx2cheHG0X=_139f8_--
