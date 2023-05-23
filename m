@@ -2,328 +2,524 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72BE270D46A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 08:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4906270D4ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 09:28:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235282AbjEWG6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 02:58:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48380 "EHLO
+        id S235175AbjEWH2G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 03:28:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235243AbjEWG6N (ORCPT
+        with ESMTP id S235427AbjEWH1g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 02:58:13 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11A31133;
-        Mon, 22 May 2023 23:58:08 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1ae4048627aso5172315ad.0;
-        Mon, 22 May 2023 23:58:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684825088; x=1687417088;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y+WIcvhrqlufXYpxmz6nVoWyH/V6Y60Y7UdO4BRoheE=;
-        b=np11PijIe6/1E8zaM9kkKFmFOLP7KoM0lYhATsntntEfQW9L+ryPJYnOACZ8ZWGvZ8
-         FeWsXPDeMg+hJJvNgUP4A0jpo0DGGLvooS392XURs0IuEJoBlsjVZSeVBacPG2Rwe4LR
-         6mmqdO0spNx2hjHBpLw2ku56C0c47EITn4oM65qgMWEmmAhzVJUo65s7a3boHxxrdDfM
-         N8X5ND4IK/cYDmlpUHqCqr2fvSo4bdXYnGPWpqUmXdht0EiNgq21Yo8nV7QCtqrP7h0L
-         EWvVa6d8kR3wI+PTVlRoIBffFNqjgtz15wtzcLiDTefsm8kcdE2HSEDzYjmRjGXzPLj5
-         575Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684825088; x=1687417088;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y+WIcvhrqlufXYpxmz6nVoWyH/V6Y60Y7UdO4BRoheE=;
-        b=Z3ah0PWXlIJhDrDel+uQSHefQ1cqREJL8Yqxe7O7IKJUSdj4IMBxu6fdZmKsXh+WB/
-         9sIrZr9NN7K5S+1Unt0itrmVK+HcEgy5BvyGfkv2a7pdJVdCG7s0lYD3abVamU2AFn/D
-         hjQAMhQ/ETNhPh/tDnqkCbDRrDzxP24Svj1F2jboZmfHqMYOeixv5JtGw7hdXMKC7Bej
-         th1UaC7HPwK9mc1d/WGjZKsQYzVKuAKlVonR7OKeAKt7tlgXtu9FV8xM7fpL3Ws02iXV
-         uBFodrNSOaR/S+SYHsPgMkYGKuRtULZxxBRyQjAXoafgDyeFqm2uDgVpaqiKWrPAoAQG
-         6ObA==
-X-Gm-Message-State: AC+VfDwaeu+3h74grvVrGajDn7znJZjHpnJomtHuLN+bXVdx+tSdG52h
-        T4E3aflTddkIw2qczJk3mlc=
-X-Google-Smtp-Source: ACHHUZ7n++tA5X7dagtyHFAUPD+y8RFyeIAHij14p1CeLKqfexcz0k9zszB0b4qjrG9BNe3mWKXewQ==
-X-Received: by 2002:a17:902:daca:b0:1ad:eada:598b with SMTP id q10-20020a170902daca00b001adeada598bmr14938583plx.3.1684825088318;
-        Mon, 22 May 2023 23:58:08 -0700 (PDT)
-Received: from ip-172-31-38-16.us-west-2.compute.internal (ec2-52-37-71-140.us-west-2.compute.amazonaws.com. [52.37.71.140])
-        by smtp.gmail.com with ESMTPSA id u6-20020a17090282c600b001ac912cac1asm5945593plz.175.2023.05.22.23.58.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 May 2023 23:58:08 -0700 (PDT)
-From:   aloktiagi <aloktiagi@gmail.com>
-To:     viro@zeniv.linux.org.uk, willy@infradead.org, brauner@kernel.org,
-        David.Laight@ACULAB.COM, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     keescook@chromium.org, hch@infradead.org, tycho@tycho.pizza,
-        aloktiagi@gmail.com
-Subject: [RFC v6 2/2] seccomp: replace existing file in the epoll interface by a new file injected by the syscall supervisor.
-Date:   Tue, 23 May 2023 06:58:02 +0000
-Message-Id: <20230523065802.2253926-2-aloktiagi@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230523065802.2253926-1-aloktiagi@gmail.com>
-References: <20230523065802.2253926-1-aloktiagi@gmail.com>
+        Tue, 23 May 2023 03:27:36 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179FB18B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 00:27:16 -0700 (PDT)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230523072712epoutp020f5c713cf4a4b0995ec9ba4db52c2411~htRPO1mEz0235102351epoutp02V
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:27:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230523072712epoutp020f5c713cf4a4b0995ec9ba4db52c2411~htRPO1mEz0235102351epoutp02V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1684826832;
+        bh=rQUWV+UuU8XdtuuAO2kK75l817gnXAls71mYpkwqbKc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rd0kdCSmYZr67SPWymQnp/lXDpuZmcSnHRG3LO9f9TA+fUUgdjeFrsHuoe5mc9Yy1
+         GdRy6XVjLol3o3VRy/fkc3I+J0iqG5HWswsyMPuYrgWeO7Eu8iSMnOg3OwVBA7IBIC
+         mM/fSzsYPLootr29I9OAAjqfpAhtIrEJF15T3j2w=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20230523072711epcas5p3e6c66813d663ca942b50297a815c37c9~htROn8T0c2669626696epcas5p34;
+        Tue, 23 May 2023 07:27:11 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4QQQqx6tSCz4x9QF; Tue, 23 May
+        2023 07:27:09 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        56.2A.16380.DCA6C646; Tue, 23 May 2023 16:27:09 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20230523071830epcas5p4b6a07de13274dacda50248545c6fcc22~htJo0_Ch21309913099epcas5p4K;
+        Tue, 23 May 2023 07:18:30 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230523071829epsmtrp2966efaa9ec6287e6d593034a25c605ad~htJozkfAa1509815098epsmtrp2V;
+        Tue, 23 May 2023 07:18:29 +0000 (GMT)
+X-AuditID: b6c32a4b-56fff70000013ffc-8a-646c6acdc44b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A0.16.28392.5C86C646; Tue, 23 May 2023 16:18:29 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230523071826epsmtip18aa6407b5ba7be72746b14764a90e1d9~htJlK9C6B1635116351epsmtip1I;
+        Tue, 23 May 2023 07:18:25 +0000 (GMT)
+Date:   Tue, 23 May 2023 12:45:28 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Damien Le Moal <dlemoal@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, bvanassche@acm.org,
+        hare@suse.de, ming.lei@redhat.com, anuj20.g@samsung.com,
+        joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v11 1/9] block: Introduce queue limits for copy-offload
+ support
+Message-ID: <20230523071528.GA15436@green245>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <dba0bdea-4f64-8b3c-d366-1046860ccf07@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTH87u3vRSysstr+wFpxBKGgEArhf0wgI8p3qwmY26EzcxAhRsK
+        lLbrQ3RsgmMuk8XhQBhWnk5BHpMBikgBoc6VR7FCBwgOdAbYIpOnDDYmDGhZ/O9zvud38v2d
+        c3JYuL3WyoWVIFXRCqlIwiVsGA13vDx9exIlcbzLv+5ANV0/46igpppAn597gaOqkSwCTd6Z
+        Ayhv5m8cPb69C7VMXWSiobZbGGq+lI2hiqq7GKrNYiFt6SyG7q4+I1C2bgCg8X4NhlqGfVBz
+        SycDmZoKCDRavcpExWXjVujrwUYCletXMKTLycBQ49gpgK5NTjNQx7ArMr7QM9HyUgGxm0OZ
+        fhFSmkc9BHVLM2JFGUdrGVRedhdB1V/1pkw9aqqu8gxB1c1lW1Ed+csMqv5yGqUdSieosxlT
+        BDU7Psygplv7Ceqb65UgwuFwUoiYFsXRCjdaGiuLS5DGh3KF70W/FR0YxOP78oPRm1w3qSiZ
+        DuXuOxjhG54gWRsS1+2YSKJekyJESiXXPyxEIVOraDexTKkK5dLyOIlcIPdTipKVamm8n5RW
+        7eTzeDsC1x7GJIknFjOY8lbJ8e72JyAdnInKBNYsSArgxI8VIBPYsOxJLYBLk3OWYA7AQpMe
+        NwfzAA6slIHNksLff2OaE00AVuUYMXMwAWCusZjIBCwWg/SAvYad60iQPrB7lbVe60h6wtyc
+        5g0HnJwi4Pf9V4j1hAMZCTVtBmyd2aQvvL3y0MJ2sPPCGGOdrckweGOmD19nJ9IdtjXoN3wh
+        +dQappearMy/2wevDJgIMzvAp/rrFt0Fzk+1WPQUWHH+KmEu/gJAzaDG0toueLora8MBJ8VQ
+        k1uFmXUOzO26hpl1W3h2ecyis2Fj0Sa7w+qaEouBMxxYPGVhCvZfGCXME5oF8NFNPXYObNG8
+        1J3mJT8zb4cl2jlCszY9nHSF5SssM3rBmib/EsCsBM60XJkcTysD5QFSOuX/lcfKkuvAxhV5
+        CxvBk8czfjqAsYAOQBbOdWR3pCTF2bPjRCc+oRWyaIVaQit1IHBtWd/iLk6xsrUzlKqi+YJg
+        niAoKEgQHBDE577O9gztjLUn40UqOomm5bRisw5jWbukY4xtn5bM2954RewU+cdCM9qbF7V1
+        f/q92bL55z/tTVqoN3CWoxl6r5s+573z3zniF5NWyQ7Z7XfA8NpJWa9dPhA26YR7uk1HygOe
+        GYrv3/vsB0+ZuwJzTdOEFzk6Hmoo/8iDbn918XTSUc7BodbvOA7SE/9GHOhXThjdktl/epV9
+        EHHsgSGs+I1e18hL4X22+XzfkaAQzqHCk0UZX1ZIjcKM92PiP05NtU7cZrAXJtB5an1B5tvq
+        xgXy4dJ0n6GNZ7q4vd3jH1Xp2PGZr3CMI9gTkTD3vNMu+K/W1EFFSC3ZZS1SPMhu3Hr0fjkY
+        ydt3WN/yoWjL/ijVrL/WS2LzrjORKOYylGIR3xtXKEX/AexofTHOBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0wTVwDH997dvR5sNWeB8YCMuBLiUicKor4xV1SIu6nROdElW6I2cAKT
+        ImmLIksYzGXGEhQhY/YEUSMqqGWFjeEAIe2Q0pUpAzYpgqIFNp0I/QMRRru0zTL/+yTfX/98
+        WUo2T4ezmdk6QZOtypKjQLrJIo9c3pmRlbbSY1hN6m23KFJZfw2RL0sXKHJ1+CQiTywuQCqm
+        XlDkQXsiaZs8w5DBjhuQtF4og6T2aickppMsaTk/DUmn5ykiZebfARkbECFpcywjrW3dNOn7
+        qRKRkWsehlRfGpOQ4j+aEbnc5YbEXH4UkmZnESDGJ89oYnVEkNsLXQyZn61E69/g+/q38OL9
+        HsTfEIcl/O0RE81XlNkQ33hFwff15PINdccR3+Aqk/DW0/M033jxC75lsBDxJUcnET895qD5
+        ZzcHEH/i+zrwYdAngevShKzMQ4JmhXJfYEa1aw7muDPz+otnmULwMEUPAljMxeOqiVFGDwJZ
+        GdcM8J0ZPeMXwvClhZ8pPwfhWveExG9yAuwq+hvqAcvSXDTutSd4EXHL8C8e1msP5pbib8pb
+        gddOcTMIG2/afT1B3C4sdtihl6XcctzuHoL+zmmAe0uGGL+wGHcbnLSXKU6B77r/8m1RXAS+
+        7PYNBHBK/MPUb77OEC4KdzR1wVKwWHwpLb6UFv9PnwNUHQgTcrTqdLU2NicuWzgco1WptbnZ
+        6TGpB9UNwPcPhaIZtNZNxZgBZIEZYJaSB0uthw+kyaRpqiP5gubgXk1ulqA1gwiWlodK7+i7
+        98q4dJVOOCAIOYLmPxWyAeGF8H23+LXt0VtrU7bWJIbIihNqPqj9R7beeg/UDEWqe7vJ4xCL
+        Cf0Zi+QfKaO+Ld5x4R210v6Kpf3dW8y56LwwneQ5Dja2XP/RcpeOfwQHLs7cjxtcNQrnCpKH
+        rRW2gH7dWpU2CZ89fkXNrqM+m3Lnrxlf5HgvWVkSmX/6BZ0R9Ti3YK70TPkxp6Jovyup5/pr
+        G8FI6IqV+54ORVS8WrB9/PVPU7eFF9XrwjdULdlpNHg+7sxLnsDyNbsS1fFwU+MpAzO7MSH6
+        +ao9W1MXxZl2f9U0/+tuO3O2x7jjyJuV48HyJPHtnekPnFXH9hTQm4NMNkP15OfS0VDHQzxe
+        +t2h/SkzclqboYpVUBqt6l89Uxt8jgMAAA==
+X-CMS-MailID: 20230523071830epcas5p4b6a07de13274dacda50248545c6fcc22
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----kPHV7voJGfjLavpOfz2TLZSfqzzSedGz1kraSQUx2cheHG0X=_139f8_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230522104526epcas5p30d6cb07abadb068a95ab1f90dea42d4e
+References: <20230522104146.2856-1-nj.shetty@samsung.com>
+        <CGME20230522104526epcas5p30d6cb07abadb068a95ab1f90dea42d4e@epcas5p3.samsung.com>
+        <20230522104146.2856-2-nj.shetty@samsung.com>
+        <dba0bdea-4f64-8b3c-d366-1046860ccf07@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce a mechanism to replace a file linked in the epoll interface by a new
-file injected by the syscall supervisor by using the epoll provided
-eventpoll_replace_file() api.
+------kPHV7voJGfjLavpOfz2TLZSfqzzSedGz1kraSQUx2cheHG0X=_139f8_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-Also introduce a new addfd flag SECCOMP_ADDFD_FLAG_REPLACE_REF to allow the supervisor
-to indicate that it is interested in getting the original file replaced by the
-new injected file.
+On Mon, May 22, 2023 at 08:45:44PM +0900, Damien Le Moal wrote:
+> On 5/22/23 19:41, Nitesh Shetty wrote:
+> > Add device limits as sysfs entries,
+> >         - copy_offload (RW)
+> >         - copy_max_bytes (RW)
+> >         - copy_max_bytes_hw (RO)
+> > 
+> > Above limits help to split the copy payload in block layer.
+> > copy_offload: used for setting copy offload(1) or emulation(0).
+> > copy_max_bytes: maximum total length of copy in single payload.
+> > copy_max_bytes_hw: Reflects the device supported maximum limit.
+> > 
+> > Reviewed-by: Hannes Reinecke <hare@suse.de>
+> > Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> > Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> > Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+> > ---
+> >  Documentation/ABI/stable/sysfs-block | 33 ++++++++++++++
+> >  block/blk-settings.c                 | 24 +++++++++++
+> >  block/blk-sysfs.c                    | 64 ++++++++++++++++++++++++++++
+> >  include/linux/blkdev.h               | 12 ++++++
+> >  include/uapi/linux/fs.h              |  3 ++
+> >  5 files changed, 136 insertions(+)
+> > 
+> > diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
+> > index c57e5b7cb532..e4d31132f77c 100644
+> > --- a/Documentation/ABI/stable/sysfs-block
+> > +++ b/Documentation/ABI/stable/sysfs-block
+> > @@ -155,6 +155,39 @@ Description:
+> >  		last zone of the device which may be smaller.
+> >  
+> >  
+> > +What:		/sys/block/<disk>/queue/copy_offload
+> > +Date:		April 2023
+> > +Contact:	linux-block@vger.kernel.org
+> > +Description:
+> > +		[RW] When read, this file shows whether offloading copy to a
+> > +		device is enabled (1) or disabled (0). Writing '0' to this
+> > +		file will disable offloading copies for this device.
+> > +		Writing any '1' value will enable this feature. If the device
+> > +		does not support offloading, then writing 1, will result in
+> > +		error.
+> 
+> will result is an error.
+> 
 
-We have a use case where multiple IPv6 only network namespaces can use a single
-IPv4 network namespace for IPv4 only egress connectivity by switching their
-sockets from IPv6 to IPv4 network namespace. This allows for migration of
-systems to IPv6 only while keeping their connectivity to IPv4 only destinations
-intact.
+acked
 
-Today, we achieve this by setting up seccomp filter to intercept network system
-calls like connect() from a container in a syscall supervisor which runs in an
-IPv4 only network namespace. The syscall supervisor creates a new IPv4 connection
-and injects the new file descriptor through SECCOMP_NOTIFY_IOCTL_ADDFD replacing
-the original file descriptor from the connect() call. This does not work for
-cases where the original file descriptor is handed off to a system like epoll
-before the connect() call. After a new file descriptor is injected the original
-file descriptor being referenced by the epoll fd is not longer valid leading to
-failures. As a workaround the syscall supervisor when intercepting connect()
-loops through all open socket file descriptors to check if they are referencing
-the socket attempting the connect() and replace the reference with the to be
-injected file descriptor. This workaround is cumbersome and makes the solution
-prone to similar yet to be discovered issues.
+> > +
+> > +
+> > +What:		/sys/block/<disk>/queue/copy_max_bytes
+> > +Date:		April 2023
+> > +Contact:	linux-block@vger.kernel.org
+> > +Description:
+> > +		[RW] This is the maximum number of bytes, that the block layer
+> 
+> Please drop the comma after block.
 
-The above change will enable us remove the workaround in the syscall supervisor
-and let the kernel handle the replacement correctly.
+you mean after bytes ?, acked.
 
-Signed-off-by: aloktiagi <aloktiagi@gmail.com>
----
- include/uapi/linux/seccomp.h                  |   1 +
- kernel/seccomp.c                              |  35 +++++-
- tools/testing/selftests/seccomp/seccomp_bpf.c | 102 ++++++++++++++++++
- 3 files changed, 136 insertions(+), 2 deletions(-)
+> 
+> > +		will allow for copy request. This will be smaller or equal to
+> 
+> will allow for a copy request. This value is always smaller...
+> 
 
-diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-index 0fdc6ef02b94..0a74dc5d967f 100644
---- a/include/uapi/linux/seccomp.h
-+++ b/include/uapi/linux/seccomp.h
-@@ -118,6 +118,7 @@ struct seccomp_notif_resp {
- /* valid flags for seccomp_notif_addfd */
- #define SECCOMP_ADDFD_FLAG_SETFD	(1UL << 0) /* Specify remote fd */
- #define SECCOMP_ADDFD_FLAG_SEND		(1UL << 1) /* Addfd and return it, atomically */
-+#define SECCOMP_ADDFD_FLAG_REPLACE_REF	(1UL << 2) /* Update replace references */
- 
- /**
-  * struct seccomp_notif_addfd
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index d3e584065c7f..e4784b70b9e5 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -19,6 +19,7 @@
- #include <linux/audit.h>
- #include <linux/compat.h>
- #include <linux/coredump.h>
-+#include <linux/eventpoll.h>
- #include <linux/kmemleak.h>
- #include <linux/nospec.h>
- #include <linux/prctl.h>
-@@ -1056,6 +1057,7 @@ static u64 seccomp_next_notify_id(struct seccomp_filter *filter)
- static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_knotif *n)
- {
- 	int fd;
-+	struct file *old_file = NULL;
- 
- 	/*
- 	 * Remove the notification, and reset the list pointers, indicating
-@@ -1064,8 +1066,30 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
- 	list_del_init(&addfd->list);
- 	if (!addfd->setfd)
- 		fd = receive_fd(addfd->file, addfd->flags);
--	else
-+	else {
-+		int ret = 0;
-+		if (addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_REPLACE_REF) {
-+			old_file = fget(addfd->fd);
-+			if (!old_file) {
-+				fd = -EBADF;
-+				goto error;
-+			}
-+			ret = eventpoll_replace_file(old_file, addfd->file, addfd->fd);
-+			if (ret < 0) {
-+				fd = ret;
-+				goto error;
-+			}
-+		}
- 		fd = receive_fd_replace(addfd->fd, addfd->file, addfd->flags);
-+		/* In case of error restore all references */
-+		if (fd < 0 && addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_REPLACE_REF) {
-+			ret = eventpoll_replace_file(addfd->file, old_file, addfd->fd);
-+			if (ret < 0) {
-+				fd = ret;
-+			}
-+		}
-+	}
-+error:
- 	addfd->ret = fd;
- 
- 	if (addfd->ioctl_flags & SECCOMP_ADDFD_FLAG_SEND) {
-@@ -1080,6 +1104,9 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
- 		}
- 	}
- 
-+	if (old_file)
-+		fput(old_file);
-+
- 	/*
- 	 * Mark the notification as completed. From this point, addfd mem
- 	 * might be invalidated and we can't safely read it anymore.
-@@ -1613,12 +1640,16 @@ static long seccomp_notify_addfd(struct seccomp_filter *filter,
- 	if (addfd.newfd_flags & ~O_CLOEXEC)
- 		return -EINVAL;
- 
--	if (addfd.flags & ~(SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_SEND))
-+	if (addfd.flags & ~(SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_SEND |
-+			    SECCOMP_ADDFD_FLAG_REPLACE_REF))
- 		return -EINVAL;
- 
- 	if (addfd.newfd && !(addfd.flags & SECCOMP_ADDFD_FLAG_SETFD))
- 		return -EINVAL;
- 
-+	if (!addfd.newfd && (addfd.flags & SECCOMP_ADDFD_FLAG_REPLACE_REF))
-+		return -EINVAL;
-+
- 	kaddfd.file = fget(addfd.srcfd);
- 	if (!kaddfd.file)
- 		return -EBADF;
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 43ec36b179dc..0ec8e4f9dff6 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -47,6 +47,7 @@
- #include <linux/kcmp.h>
- #include <sys/resource.h>
- #include <sys/capability.h>
-+#include <sys/epoll.h>
- 
- #include <unistd.h>
- #include <sys/syscall.h>
-@@ -4185,6 +4186,107 @@ TEST(user_notification_addfd)
- 	close(memfd);
- }
- 
-+TEST(user_notification_addfd_with_epoll_replace)
-+{
-+	char c;
-+	pid_t pid;
-+	long ret;
-+	int optval;
-+	socklen_t optlen = sizeof(optval);
-+	int status, listener, fd;
-+	int efd, sfd[4];
-+	struct epoll_event e;
-+	struct seccomp_notif_addfd addfd = {};
-+	struct seccomp_notif req = {};
-+	struct seccomp_notif_resp resp = {};
-+
-+	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+	ASSERT_EQ(0, ret) {
-+		TH_LOG("Kernel does not support PR_SET_NO_NEW_PRIVS!");
-+	}
-+
-+	listener = user_notif_syscall(__NR_getsockopt,
-+				      SECCOMP_FILTER_FLAG_NEW_LISTENER);
-+
-+	/* Create two socket pairs sfd[0] <-> sfd[1] and sfd[2] <-> sfd[3] */
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[2]), 0);
-+
-+	pid = fork();
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		if (socketpair(AF_UNIX, SOCK_STREAM, 0, &sfd[0]) != 0)
-+			exit(1);
-+
-+		efd = epoll_create(1);
-+		if (efd == -1)
-+			exit(1);
-+
-+		e.events = EPOLLIN;
-+		if (epoll_ctl(efd, EPOLL_CTL_ADD, sfd[0], &e) != 0)
-+			exit(1);
-+
-+		/*
-+		 * fd will be added here to replace an existing one linked
-+		 * in the epoll interface.
-+		 */
-+		if (getsockopt(sfd[0], SOL_SOCKET, SO_DOMAIN, &optval,
-+		       &optlen) != USER_NOTIF_MAGIC)
-+			exit(1);
-+
-+		/*
-+		 * Write data to the sfd[3] connected to sfd[2], but due to
-+		 * the swap, we should see data on sfd[0]
-+		 */
-+		if (write(sfd[3], "w", 1) != 1)
-+			exit(1);
-+
-+		if (epoll_wait(efd, &e, 1, 0) != 1)
-+			exit(1);
-+
-+		if (read(sfd[0], &c, 1) != 1)
-+			exit(1);
-+
-+		if ('w' != c)
-+			exit(1);
-+
-+		if (epoll_ctl(efd, EPOLL_CTL_DEL, sfd[0], &e) != 0)
-+			exit(1);
-+
-+		close(efd);
-+		close(sfd[0]);
-+		close(sfd[1]);
-+		close(sfd[2]);
-+		close(sfd[3]);
-+		exit(0);
-+	}
-+
-+	ASSERT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, &req), 0);
-+
-+	addfd.srcfd = sfd[2];
-+	addfd.newfd = req.data.args[0];
-+	addfd.id = req.id;
-+	addfd.flags = SECCOMP_ADDFD_FLAG_SETFD | SECCOMP_ADDFD_FLAG_REPLACE_REF;
-+	addfd.newfd_flags = O_CLOEXEC;
-+
-+	/*
-+	 * Verfiy we can install and replace a file that is linked in the
-+	 * epoll interface. Replace the socket sfd[0] with sfd[2]
-+	 */
-+	fd = ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd);
-+	EXPECT_EQ(fd, req.data.args[0]);
-+
-+	resp.id = req.id;
-+	resp.error = 0;
-+	resp.val = USER_NOTIF_MAGIC;
-+	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_SEND, &resp), 0);
-+
-+	/* Wait for child to finish. */
-+	EXPECT_EQ(waitpid(pid, &status, 0), pid);
-+	EXPECT_EQ(true, WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+}
-+
- TEST(user_notification_addfd_rlimit)
- {
- 	pid_t pid;
--- 
-2.34.1
+acked
 
+> > +		the maximum size allowed by the hardware, indicated by
+> > +		'copy_max_bytes_hw'. Attempt to set value higher than
+> 
+> An attempt to set a value higher than...
+> 
+
+acked
+
+> > +		'copy_max_bytes_hw' will truncate this to 'copy_max_bytes_hw'.
+> > +
+> > +
+> > +What:		/sys/block/<disk>/queue/copy_max_bytes_hw
+> > +Date:		April 2023
+> > +Contact:	linux-block@vger.kernel.org
+> > +Description:
+> > +		[RO] This is the maximum number of bytes, that the hardware
+> 
+> drop the comma after bytes
+> 
+
+acked
+
+> > +		will allow in a single data copy request.
+> 
+> will allow for
+> 
+
+acked
+
+> > +		A value of 0 means that the device does not support
+> > +		copy offload.
+> 
+> Given that you do have copy emulation for devices that do not support hw
+> offload, how is the user supposed to know the maximum size of a copy request
+> when it is emulated ? This is not obvious from looking at these parameters.
+> 
+
+This was little tricky for us as well.
+There are multiple limits (such as max_hw_sectors, max_segments,
+buffer allocation size), which decide what emulated copy size is.
+Moreover this limit was supposed to reflect device copy offload
+size/capability.
+Let me know if you something in mind, which can make this look better.
+
+> > +
+> > +
+> >  What:		/sys/block/<disk>/queue/crypto/
+> >  Date:		February 2022
+> >  Contact:	linux-block@vger.kernel.org
+> > diff --git a/block/blk-settings.c b/block/blk-settings.c
+> > index 896b4654ab00..23aff2d4dcba 100644
+> > --- a/block/blk-settings.c
+> > +++ b/block/blk-settings.c
+> > @@ -59,6 +59,8 @@ void blk_set_default_limits(struct queue_limits *lim)
+> >  	lim->zoned = BLK_ZONED_NONE;
+> >  	lim->zone_write_granularity = 0;
+> >  	lim->dma_alignment = 511;
+> > +	lim->max_copy_sectors_hw = 0;
+> > +	lim->max_copy_sectors = 0;
+> >  }
+> >  
+> >  /**
+> > @@ -82,6 +84,8 @@ void blk_set_stacking_limits(struct queue_limits *lim)
+> >  	lim->max_dev_sectors = UINT_MAX;
+> >  	lim->max_write_zeroes_sectors = UINT_MAX;
+> >  	lim->max_zone_append_sectors = UINT_MAX;
+> > +	lim->max_copy_sectors_hw = ULONG_MAX;
+> > +	lim->max_copy_sectors = ULONG_MAX;
+> 
+> UINT_MAX is not enough ?
+
+acked
+
+>
+> >  }
+> >  EXPORT_SYMBOL(blk_set_stacking_limits);
+> >  
+> > @@ -183,6 +187,22 @@ void blk_queue_max_discard_sectors(struct request_queue *q,
+> >  }
+> >  EXPORT_SYMBOL(blk_queue_max_discard_sectors);
+> >  
+> > +/**
+> > + * blk_queue_max_copy_sectors_hw - set max sectors for a single copy payload
+> > + * @q:  the request queue for the device
+> > + * @max_copy_sectors: maximum number of sectors to copy
+> > + **/
+> > +void blk_queue_max_copy_sectors_hw(struct request_queue *q,
+> > +		unsigned int max_copy_sectors)
+> > +{
+> > +	if (max_copy_sectors > (COPY_MAX_BYTES >> SECTOR_SHIFT))
+> > +		max_copy_sectors = COPY_MAX_BYTES >> SECTOR_SHIFT;
+> > +
+> > +	q->limits.max_copy_sectors_hw = max_copy_sectors;
+> > +	q->limits.max_copy_sectors = max_copy_sectors;
+> > +}
+> > +EXPORT_SYMBOL_GPL(blk_queue_max_copy_sectors_hw);
+> > +
+> >  /**
+> >   * blk_queue_max_secure_erase_sectors - set max sectors for a secure erase
+> >   * @q:  the request queue for the device
+> > @@ -578,6 +598,10 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+> >  	t->max_segment_size = min_not_zero(t->max_segment_size,
+> >  					   b->max_segment_size);
+> >  
+> > +	t->max_copy_sectors = min(t->max_copy_sectors, b->max_copy_sectors);
+> > +	t->max_copy_sectors_hw = min(t->max_copy_sectors_hw,
+> > +						b->max_copy_sectors_hw);
+> > +
+> >  	t->misaligned |= b->misaligned;
+> >  
+> >  	alignment = queue_limit_alignment_offset(b, start);
+> > diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> > index a64208583853..826ab29beba3 100644
+> > --- a/block/blk-sysfs.c
+> > +++ b/block/blk-sysfs.c
+> > @@ -212,6 +212,63 @@ static ssize_t queue_discard_zeroes_data_show(struct request_queue *q, char *pag
+> >  	return queue_var_show(0, page);
+> >  }
+> >  
+> > +static ssize_t queue_copy_offload_show(struct request_queue *q, char *page)
+> > +{
+> > +	return queue_var_show(blk_queue_copy(q), page);
+> > +}
+> > +
+> > +static ssize_t queue_copy_offload_store(struct request_queue *q,
+> > +				       const char *page, size_t count)
+> > +{
+> > +	s64 copy_offload;
+> > +	ssize_t ret = queue_var_store64(&copy_offload, page);
+> > +
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	if (copy_offload && !q->limits.max_copy_sectors_hw)
+> > +		return -EINVAL;
+> > +
+> > +	if (copy_offload)
+> > +		blk_queue_flag_set(QUEUE_FLAG_COPY, q);
+> > +	else
+> > +		blk_queue_flag_clear(QUEUE_FLAG_COPY, q);
+> > +
+> > +	return count;
+> > +}
+> > +
+> > +static ssize_t queue_copy_max_hw_show(struct request_queue *q, char *page)
+> > +{
+> > +	return sprintf(page, "%llu\n", (unsigned long long)
+> > +			q->limits.max_copy_sectors_hw << SECTOR_SHIFT);
+> > +}
+> > +
+> > +static ssize_t queue_copy_max_show(struct request_queue *q, char *page)
+> > +{
+> > +	return sprintf(page, "%llu\n", (unsigned long long)
+> > +			q->limits.max_copy_sectors << SECTOR_SHIFT);
+> > +}
+> > +
+> > +static ssize_t queue_copy_max_store(struct request_queue *q,
+> > +				       const char *page, size_t count)
+> > +{
+> > +	s64 max_copy;
+> > +	ssize_t ret = queue_var_store64(&max_copy, page);
+> > +
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	if (max_copy & (queue_logical_block_size(q) - 1))
+> > +		return -EINVAL;
+> > +
+> > +	max_copy >>= SECTOR_SHIFT;
+> > +	if (max_copy > q->limits.max_copy_sectors_hw)
+> > +		max_copy = q->limits.max_copy_sectors_hw;
+> > +
+> > +	q->limits.max_copy_sectors = max_copy;
+> 
+> 	q->limits.max_copy_sectors =
+> 		min(max_copy, q->limits.max_copy_sectors_hw);
+> 
+> To remove the if above.
+
+acked
+
+> 
+> > +	return count;
+> > +}
+> > +
+> >  static ssize_t queue_write_same_max_show(struct request_queue *q, char *page)
+> >  {
+> >  	return queue_var_show(0, page);
+> > @@ -590,6 +647,10 @@ QUEUE_RO_ENTRY(queue_nr_zones, "nr_zones");
+> >  QUEUE_RO_ENTRY(queue_max_open_zones, "max_open_zones");
+> >  QUEUE_RO_ENTRY(queue_max_active_zones, "max_active_zones");
+> >  
+> > +QUEUE_RW_ENTRY(queue_copy_offload, "copy_offload");
+> > +QUEUE_RO_ENTRY(queue_copy_max_hw, "copy_max_bytes_hw");
+> > +QUEUE_RW_ENTRY(queue_copy_max, "copy_max_bytes");
+> > +
+> >  QUEUE_RW_ENTRY(queue_nomerges, "nomerges");
+> >  QUEUE_RW_ENTRY(queue_rq_affinity, "rq_affinity");
+> >  QUEUE_RW_ENTRY(queue_poll, "io_poll");
+> > @@ -637,6 +698,9 @@ static struct attribute *queue_attrs[] = {
+> >  	&queue_discard_max_entry.attr,
+> >  	&queue_discard_max_hw_entry.attr,
+> >  	&queue_discard_zeroes_data_entry.attr,
+> > +	&queue_copy_offload_entry.attr,
+> > +	&queue_copy_max_hw_entry.attr,
+> > +	&queue_copy_max_entry.attr,
+> >  	&queue_write_same_max_entry.attr,
+> >  	&queue_write_zeroes_max_entry.attr,
+> >  	&queue_zone_append_max_entry.attr,
+> > diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> > index b441e633f4dd..c9bf11adccb3 100644
+> > --- a/include/linux/blkdev.h
+> > +++ b/include/linux/blkdev.h
+> > @@ -295,6 +295,9 @@ struct queue_limits {
+> >  	unsigned int		discard_alignment;
+> >  	unsigned int		zone_write_granularity;
+> >  
+> > +	unsigned long		max_copy_sectors_hw;
+> > +	unsigned long		max_copy_sectors;
+> 
+> Why unsigned long ? unsigned int gives you 4G * 512 = 2TB max copy. Isn't that a
+> large enough max limit ?
+
+Should be enough. Will update this.
+
+> 
+> > +
+> >  	unsigned short		max_segments;
+> >  	unsigned short		max_integrity_segments;
+> >  	unsigned short		max_discard_segments;
+> > @@ -561,6 +564,7 @@ struct request_queue {
+> >  #define QUEUE_FLAG_NOWAIT       29	/* device supports NOWAIT */
+> >  #define QUEUE_FLAG_SQ_SCHED     30	/* single queue style io dispatch */
+> >  #define QUEUE_FLAG_SKIP_TAGSET_QUIESCE	31 /* quiesce_tagset skip the queue*/
+> > +#define QUEUE_FLAG_COPY		32	/* supports copy offload */
+> 
+> Nope. That is misleading. This flag is cleared in queue_copy_offload_store() if
+> the user writes 0. So this flag indicates that copy offload is enabled or
+> disabled, not that the device supports it. For the device support, one has to
+> look at max copy sectors hw being != 0.
+>
+Agree. Will changing it to "flag to enable/disable copy offload",
+will it be better?
+
+> >  
+> >  #define QUEUE_FLAG_MQ_DEFAULT	((1UL << QUEUE_FLAG_IO_STAT) |		\
+> >  				 (1UL << QUEUE_FLAG_SAME_COMP) |	\
+> > @@ -581,6 +585,7 @@ bool blk_queue_flag_test_and_set(unsigned int flag, struct request_queue *q);
+> >  	test_bit(QUEUE_FLAG_STABLE_WRITES, &(q)->queue_flags)
+> >  #define blk_queue_io_stat(q)	test_bit(QUEUE_FLAG_IO_STAT, &(q)->queue_flags)
+> >  #define blk_queue_add_random(q)	test_bit(QUEUE_FLAG_ADD_RANDOM, &(q)->queue_flags)
+> > +#define blk_queue_copy(q)	test_bit(QUEUE_FLAG_COPY, &(q)->queue_flags)
+> >  #define blk_queue_zone_resetall(q)	\
+> >  	test_bit(QUEUE_FLAG_ZONE_RESETALL, &(q)->queue_flags)
+> >  #define blk_queue_dax(q)	test_bit(QUEUE_FLAG_DAX, &(q)->queue_flags)
+> > @@ -899,6 +904,8 @@ extern void blk_queue_chunk_sectors(struct request_queue *, unsigned int);
+> >  extern void blk_queue_max_segments(struct request_queue *, unsigned short);
+> >  extern void blk_queue_max_discard_segments(struct request_queue *,
+> >  		unsigned short);
+> > +extern void blk_queue_max_copy_sectors_hw(struct request_queue *q,
+> > +		unsigned int max_copy_sectors);
+> >  void blk_queue_max_secure_erase_sectors(struct request_queue *q,
+> >  		unsigned int max_sectors);
+> >  extern void blk_queue_max_segment_size(struct request_queue *, unsigned int);
+> > @@ -1218,6 +1225,11 @@ static inline unsigned int bdev_discard_granularity(struct block_device *bdev)
+> >  	return bdev_get_queue(bdev)->limits.discard_granularity;
+> >  }
+> >  
+> > +static inline unsigned int bdev_max_copy_sectors(struct block_device *bdev)
+> > +{
+> > +	return bdev_get_queue(bdev)->limits.max_copy_sectors;
+> > +}
+> > +
+> >  static inline unsigned int
+> >  bdev_max_secure_erase_sectors(struct block_device *bdev)
+> >  {
+> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> > index b7b56871029c..8879567791fa 100644
+> > --- a/include/uapi/linux/fs.h
+> > +++ b/include/uapi/linux/fs.h
+> > @@ -64,6 +64,9 @@ struct fstrim_range {
+> >  	__u64 minlen;
+> >  };
+> >  
+> > +/* maximum total copy length */
+> > +#define COPY_MAX_BYTES	(1 << 27)
+> 
+> My brain bit shifter is not as good as a CPU one :) So it would be nice to
+> mention what value that is in MB and also explain where this magic value comes from.
+> 
+
+Agree. Even I had similar experience :). Will update the comments to
+reflect in MB.
+
+About the limit, we faced a dilemma,
+1. not set limit: Allow copy which is huge(ssize_t) and which starts
+consuming/hogging system resources
+2. set limit: what the limit should be
+
+We went with 2, and limit is based on our internel testing,
+mainly desktop systems had memory limitation for emulation scenario.
+Feel free to suggest, if you have some other thoughts.
+
+Thanks, 
+Nitesh Shetty
+
+------kPHV7voJGfjLavpOfz2TLZSfqzzSedGz1kraSQUx2cheHG0X=_139f8_
+Content-Type: text/plain; charset="utf-8"
+
+
+------kPHV7voJGfjLavpOfz2TLZSfqzzSedGz1kraSQUx2cheHG0X=_139f8_--
