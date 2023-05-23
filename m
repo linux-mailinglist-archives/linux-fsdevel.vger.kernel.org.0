@@ -2,61 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2565C70DE9C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 16:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25C8B70DEA3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 16:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237221AbjEWOIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 10:08:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46886 "EHLO
+        id S237258AbjEWOIO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 10:08:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237100AbjEWOHN (ORCPT
+        with ESMTP id S237170AbjEWOHP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 10:07:13 -0400
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBA491B1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:06:54 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-4f37b860173so8188991e87.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:06:54 -0700 (PDT)
+        Tue, 23 May 2023 10:07:15 -0400
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFC2FE42
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:06:55 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-4f3edc05aa5so3196231e87.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:06:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684850753; x=1687442753;
+        d=linaro.org; s=google; t=1684850754; x=1687442754;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=H1mJE8PBb75X4TbUyJXZ6L55Fw+NsuGtTu+nI/l3Cvc=;
-        b=sZzbi9Or1ecOkZRiN09Yj29Ot8B7LAVjqlaksWa5mtFSaJfhhAjYBQqCbgu39f00zk
-         VK7TpV3BWK7N5disTxsUT+9gEJBxOb/ehtepI30IxdIgZOD7ILx03dfX1U9LUlrqnIxN
-         o/DfgylSvuaURfgnFTqAlkk4/e/2QTF/i6nSUNEA8A45JrglmfBlJskn+PBcNSxo8Nax
-         UjDkj9kSQQAr49/ra9mfVBiByY1gHuy6vLurVvXWcr3GtGvlt7ps8J70oCU3gREuO2Ow
-         Oymkav54lF/OR103ZsyoD4QG8gT0MmmztfsSMu7sHfsLZwHZYwfd4ojLRHaLUm/2afXV
-         RLGg==
+        bh=UDtU5Jqmt1rhTrWGvrFpFNAhujSWuurCg4wxa03/anU=;
+        b=HpmD5IFXXBYh79hB/QdHKbKxuFRZSDMi4b5OZGTylI/XbzqUU0nz4W2BvN6yvKss7I
+         K1cwCwlsNLZKWtwDIbEgnBIwLeSRk9MusgogzqpLIGkeV6I3IpHf5ZImCV1dO7TmBmQd
+         Jxo5lBjORGSyxFQpYfuSMr3vb6XHB27JbLUYvAKRm5hN6Vx2cqGdrc5nBtxembJzIGb+
+         XkA5TOH4FTAGjGGX8LhKx2vDYw5pSIfYWUjWXmA8zVjBOfrxf/vDnuKaKLU2/n/3jNel
+         W+4yMbxUSUGgrAJBjS8Un11ko0kSEr5ibGVEHRlBzUWYgh4gIdzzchv9ZLkOCYx4CEzT
+         1cyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684850753; x=1687442753;
+        d=1e100.net; s=20221208; t=1684850754; x=1687442754;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H1mJE8PBb75X4TbUyJXZ6L55Fw+NsuGtTu+nI/l3Cvc=;
-        b=bkSDWxgNZ0w5kn4e+HxIFQPp5hdJFIyhcsyX1s5xNvWHSeuSrSQ22G8hB2JR7FtM+q
-         aM2kcAcdDhwAzMIDa15hBRHcUPwxXvr//FfB6/80K0Zr4WMPInvnHTVZDgSkntHP9dDG
-         SiGcx8YC1Ge2DAtXCGg1xE61Wps/JdLNQgmcczQh4uapv3fxTJk+KGZJVnZXSzajKh7A
-         76UkFNGFXsb17jUMLk8pLxJ0Z3Yykt82e3NbvGgqYhRbu7AfNbTPr6Rk0vFJI6jFVy+b
-         +qR+Xokd1lF0a+3M7rWZ43Hh5vTPPpEUzjX8oausUI/QxXlHuHKGi0LmovJ9xWYmg+2l
-         Wk6g==
-X-Gm-Message-State: AC+VfDwNPhG4pD+7mj1qd+Ncehc7JTZzkaxDyOLx64fx+u/JHHvX7KiJ
-        3knHkRB3Pc8uzm7wtPJxFtURKQ==
-X-Google-Smtp-Source: ACHHUZ7YlzepS19qIlofP4XlSVUTHmMLxnEQ9ww0qjdX5Jh1QQqAhfZ8W2WtZdVOQzfdgWC9DXghfQ==
-X-Received: by 2002:ac2:52ad:0:b0:4f3:8263:cfdb with SMTP id r13-20020ac252ad000000b004f38263cfdbmr3539737lfm.50.1684850753268;
-        Tue, 23 May 2023 07:05:53 -0700 (PDT)
+        bh=UDtU5Jqmt1rhTrWGvrFpFNAhujSWuurCg4wxa03/anU=;
+        b=kDpb1umlUa91nGSJJhMJvt5DrxLY7Wnvx4/XNTayC1HFe/fP/FyKP5q0RwjfKTBAHi
+         Xa0Oq9B0L/BTrtAUuc9CQ7/g+DGMcp7vgtSvtsjaWA0VfKUARVLCmNZFSvD8IALx6eRh
+         1FfLJesIcOpZx8mM4ye5SJVgjrhU1t+0ysvCjnShNirhb/rWJRRlYsm6Anvzbkigp50v
+         2OkwsQDw2MbHoVpkY/zGVRlB7X5oAo5n5tFUszvH387jcHH2ZNBqh4PI3NBy/Qw4zxtr
+         Tbaek3cY7LvA/EX2MmpPjik7hdTjabF2sfWbhPvFX1xYKPWJNFmEGkRkYVj0JJv5GpCS
+         pflQ==
+X-Gm-Message-State: AC+VfDxbQQOWKqTFXoAFkUU8QlapQpGBKq4DFD7jFRJhAhiW2bgz4aoE
+        Xvtedr4kJoncIya1czyEISrY4Q==
+X-Google-Smtp-Source: ACHHUZ7lHZmUmrpa6AszHCZQHgR8jjoC1zWdiC0X3jOoWePtInb6ZlpLCgb3B/kHs0cj9MvDG7f8Ew==
+X-Received: by 2002:ac2:51a9:0:b0:4f3:b9bc:9d68 with SMTP id f9-20020ac251a9000000b004f3b9bc9d68mr2955818lfk.18.1684850754250;
+        Tue, 23 May 2023 07:05:54 -0700 (PDT)
 Received: from [127.0.1.1] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id h28-20020ac2597c000000b004e9bf853c27sm1346562lfp.70.2023.05.23.07.05.52
+        by smtp.gmail.com with ESMTPSA id h28-20020ac2597c000000b004e9bf853c27sm1346562lfp.70.2023.05.23.07.05.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 May 2023 07:05:52 -0700 (PDT)
+        Tue, 23 May 2023 07:05:53 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 23 May 2023 16:05:32 +0200
-Subject: [PATCH v3 08/12] arm64: vdso: Pass (void *) to virt_to_page()
+Date:   Tue, 23 May 2023 16:05:33 +0200
+Subject: [PATCH v3 09/12] asm-generic/page.h: Make pfn accessors static
+ inlines
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230503-virt-to-pfn-v6-4-rc1-v3-8-a16c19c03583@linaro.org>
+Message-Id: <20230503-virt-to-pfn-v6-4-rc1-v3-9-a16c19c03583@linaro.org>
 References: <20230503-virt-to-pfn-v6-4-rc1-v3-0-a16c19c03583@linaro.org>
 In-Reply-To: <20230503-virt-to-pfn-v6-4-rc1-v3-0-a16c19c03583@linaro.org>
 To:     Andrew Morton <akpm@linux-foundation.org>,
@@ -83,34 +84,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Like the other calls in this function virt_to_page() expects
-a pointer, not an integer.
+Making virt_to_pfn() a static inline taking a strongly typed
+(const void *) makes the contract of a passing a pointer of that
+type to the function explicit and exposes any misuse of the
+macro virt_to_pfn() acting polymorphic and accepting many types
+such as (void *), (unitptr_t) or (unsigned long) as arguments
+without warnings.
 
-However since many architectures implement virt_to_pfn() as
-a macro, this function becomes polymorphic and accepts both a
-(unsigned long) and a (void *).
+For symmetry we do the same change for pfn_to_virt.
 
-Fix this up with an explicit cast.
+Immediately define virt_to_pfn and pfn_to_virt to the static
+inline after the static inline since this style of defining
+functions is used for the generic helpers.
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm64/kernel/vdso.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/asm-generic/page.h | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 0119dc91abb5..d9e1355730ef 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -288,7 +288,7 @@ static int aarch32_alloc_kuser_vdso_page(void)
+diff --git a/include/asm-generic/page.h b/include/asm-generic/page.h
+index c0be2edeb484..9773582fd96e 100644
+--- a/include/asm-generic/page.h
++++ b/include/asm-generic/page.h
+@@ -74,8 +74,16 @@ extern unsigned long memory_end;
+ #define __va(x) ((void *)((unsigned long) (x)))
+ #define __pa(x) ((unsigned long) (x))
  
- 	memcpy((void *)(vdso_page + 0x1000 - kuser_sz), __kuser_helper_start,
- 	       kuser_sz);
--	aarch32_vectors_page = virt_to_page(vdso_page);
-+	aarch32_vectors_page = virt_to_page((void *)vdso_page);
- 	return 0;
- }
+-#define virt_to_pfn(kaddr)	(__pa(kaddr) >> PAGE_SHIFT)
+-#define pfn_to_virt(pfn)	__va((pfn) << PAGE_SHIFT)
++static inline unsigned long virt_to_pfn(const void *kaddr)
++{
++	return __pa(kaddr) >> PAGE_SHIFT;
++}
++#define virt_to_pfn virt_to_pfn
++static inline void *pfn_to_virt(unsigned long pfn)
++{
++	return __va(pfn) << PAGE_SHIFT;
++}
++#define pfn_to_virt pfn_to_virt
  
+ #define virt_to_page(addr)	pfn_to_page(virt_to_pfn(addr))
+ #define page_to_virt(page)	pfn_to_virt(page_to_pfn(page))
 
 -- 
 2.34.1
