@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68AC870DCB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 14:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC70770DCB8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 14:37:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236938AbjEWMfr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 08:35:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59122 "EHLO
+        id S236873AbjEWMhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 08:37:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236932AbjEWMfq (ORCPT
+        with ESMTP id S230230AbjEWMho (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 08:35:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1443C118;
-        Tue, 23 May 2023 05:35:40 -0700 (PDT)
+        Tue, 23 May 2023 08:37:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC48DD;
+        Tue, 23 May 2023 05:37:43 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9621B62877;
-        Tue, 23 May 2023 12:35:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B897CC433D2;
-        Tue, 23 May 2023 12:35:34 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6FBF2631E6;
+        Tue, 23 May 2023 12:37:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AFFC433D2;
+        Tue, 23 May 2023 12:37:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684845339;
-        bh=u5mv3oHXC56HjI2PT+W2P28h07N+KAV9oli2njljAUQ=;
+        s=k20201202; t=1684845462;
+        bh=IrFR6hSXFwTPIqL0va6YERj1ltruCOkzI1N56fCgPFM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tsJt2ZMGlEFFghj3Uk2r2mtJQ27DlaXhKf/RUJonBOkx0K8nP6Wrpcy+FtTmqI0RS
-         lI87w/XrmQ1hEaK4B3nsUQqXfPz7E+ZDsUM9TtjEW0RGIU2kjLanDYtAxFH+G5x5MZ
-         Rs8fB4bfJSadDYzTM/IkeJ16LcXs2C3SveGeLllZ4E3hDk1Hm+AfwTObpj8VtWNRO+
-         PeLKCq6+8WSeuHz7XoTvdCsx4FEsvdJHokEVnS3x/K1h1TDcmuVijh2s1a8LJlCowo
-         8qvUhGAyJ/k6spJX3i+sNA+dlkPSFVPpwb0RFIqIElPXdaHL9+1vQK/xZ8spbDPv/S
-         hj99yo81V7Dvw==
-Date:   Tue, 23 May 2023 14:35:26 +0200
+        b=BbcPp5Wk39tfRgN0F4hqRWr2z1n0SIKLjtFrqEbV6rdwWzWWBf41JaluXdPwngS7n
+         YkP2M+MNrre1IqYdowqD2gvwspBlw+78DyFX72q66G+F/EgL87TSfBL03dsoLrD1qM
+         au4VSvKklwQat8ncTYQIWu6YEu3YE2e8269d+DGcLRwFi/TP2lU7v9EbyBbjcrqMjT
+         TfL44g4byc+ONKKhrrNPF7Del3TtLGY10AAIErkDGWFzW9t8m2z9qEjENI9kADmq1S
+         RJahiUXw1uO7b7wkD3a2j0nrda5NEi0cA233jlDNrLclS7KunYJMBDqfAzEFmnY2a2
+         OI0JXdTdk+PsQ==
+Date:   Tue, 23 May 2023 14:37:35 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     David Howells <dhowells@redhat.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
@@ -46,38 +46,71 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v21 1/6] iomap: Don't get an reference on ZERO_PAGE for
- direct I/O block zeroing
-Message-ID: <20230523-taschen-erfinden-3bd7c39beeda@brauner>
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v21 2/6] block: Fix bio_flagged() so that gcc can better
+ optimise it
+Message-ID: <20230523-kommst-gewechselt-e7b94e891a12@brauner>
 References: <20230522205744.2825689-1-dhowells@redhat.com>
- <20230522205744.2825689-2-dhowells@redhat.com>
+ <20230522205744.2825689-3-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230522205744.2825689-2-dhowells@redhat.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230522205744.2825689-3-dhowells@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 22, 2023 at 09:57:39PM +0100, David Howells wrote:
-> ZERO_PAGE can't go away, no need to hold an extra reference.
+On Mon, May 22, 2023 at 09:57:40PM +0100, David Howells wrote:
+> Fix bio_flagged() so that multiple instances of it, such as:
+> 
+> 	if (bio_flagged(bio, BIO_PAGE_REFFED) ||
+> 	    bio_flagged(bio, BIO_PAGE_PINNED))
+> 
+> can be combined by the gcc optimiser into a single test in assembly
+> (arguably, this is a compiler optimisation issue[1]).
+> 
+> The missed optimisation stems from bio_flagged() comparing the result of
+> the bitwise-AND to zero.  This results in an out-of-line bio_release_page()
+> being compiled to something like:
+> 
+>    <+0>:     mov    0x14(%rdi),%eax
+>    <+3>:     test   $0x1,%al
+>    <+5>:     jne    0xffffffff816dac53 <bio_release_pages+11>
+>    <+7>:     test   $0x2,%al
+>    <+9>:     je     0xffffffff816dac5c <bio_release_pages+20>
+>    <+11>:    movzbl %sil,%esi
+>    <+15>:    jmp    0xffffffff816daba1 <__bio_release_pages>
+>    <+20>:    jmp    0xffffffff81d0b800 <__x86_return_thunk>
+> 
+> However, the test is superfluous as the return type is bool.  Removing it
+> results in:
+> 
+>    <+0>:     testb  $0x3,0x14(%rdi)
+>    <+4>:     je     0xffffffff816e4af4 <bio_release_pages+15>
+>    <+6>:     movzbl %sil,%esi
+>    <+10>:    jmp    0xffffffff816dab7c <__bio_release_pages>
+>    <+15>:    jmp    0xffffffff81d0b7c0 <__x86_return_thunk>
+> 
+> instead.
+> 
+> Also, the MOVZBL instruction looks unnecessary[2] - I think it's just
+> 're-booling' the mark_dirty parameter.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> Reviewed-by: Dave Chinner <dchinner@redhat.com>
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> cc: Al Viro <viro@zeniv.linux.org.uk>
-> cc: linux-fsdevel@vger.kernel.org
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: linux-block@vger.kernel.org
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108370 [1]
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108371 [2]
+> Link: https://lore.kernel.org/r/167391056756.2311931.356007731815807265.stgit@warthog.procyon.org.uk/ # v6
 > ---
 
 Reviewed-by: Christian Brauner <brauner@kernel.org>
