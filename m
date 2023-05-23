@@ -2,88 +2,286 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4854070DF74
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 16:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2616070DF8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 16:43:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237238AbjEWOiF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 10:38:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36748 "EHLO
+        id S236358AbjEWOnI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 10:43:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbjEWOiE (ORCPT
+        with ESMTP id S234269AbjEWOnH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 10:38:04 -0400
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063B7E0;
-        Tue, 23 May 2023 07:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-        bh=lVxc8nMPNGIm5J+njIEIPXXeD353Vh5ymn5V4/A0dvg=; b=mzQt2SkOgl1mdg+WuY9fkhOPAh
-        mIWKLljybsKGp2mvuu/30+CBsasAfF9CXUnTTqc//ujHs2ytgT/oipLbS834fclgBUA5UIqLd9FRu
-        GrKfkM6y9ooDGoZWMs/hupyL3NL2EfbEBtCMXHWTxM9hpFTX3m48zTWydMtOMxsiR9WjgY12lPqaa
-        rXYIjhKq+zriDr2lNGMaSakwWuYOuiR/RbqyRTtsOI8ftthlAAkJt6hmFq3BgY+h5LGMiPUb9TFsl
-        oi9TpHBDrrDw110TF/lOeRJYoxLSgMiYpdP3rGlwgv07fxxxHrp+3bIjBc9FP8ln56CPvyW0zyubi
-        ff7FC8tA==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-        by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1q1T9F-000Iy2-BU; Tue, 23 May 2023 16:38:01 +0200
-Received: from [85.1.206.226] (helo=linux.home)
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1q1T9E-000C87-Qg; Tue, 23 May 2023 16:38:00 +0200
-Subject: Re: [PATCH v3 bpf-next 3/4] libbpf: add opts-based bpf_obj_pin() API
- and add support for path_fd
-To:     Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        ast@kernel.org, martin.lau@kernel.org
-Cc:     cyphar@cyphar.com, brauner@kernel.org, lennart@poettering.net,
-        linux-fsdevel@vger.kernel.org
-References: <20230522232917.2454595-1-andrii@kernel.org>
- <20230522232917.2454595-4-andrii@kernel.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <383289fa-1036-b569-1ebf-5da8ba41c58d@iogearbox.net>
-Date:   Tue, 23 May 2023 16:38:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 23 May 2023 10:43:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF731C6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684852938;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LCKdglUCANFdGhErMzORCCoCaHXmNlH1rNWS89psq4Y=;
+        b=cax2LlF+AbF6ghN+avZT4vlEkOfTykwpHd+hl1evqjrN9pYIWa8aPKTqHG4KFP5dfkkKng
+        kq2ngZkXo+FRGPGARF5jNtEQcilM20jkSox7O2A7FySFxjTj3z2Kq4E46Tn47iRJjLovBP
+        2YwyR+4KkdgY/0mp69QR/LJd6LfeSPs=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-QSgunTtcPYeow1AuMFofbw-1; Tue, 23 May 2023 10:42:17 -0400
+X-MC-Unique: QSgunTtcPYeow1AuMFofbw-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-3f39e818cb5so50869311cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:42:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684852937; x=1687444937;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LCKdglUCANFdGhErMzORCCoCaHXmNlH1rNWS89psq4Y=;
+        b=W4IaCAG8M76XxJNsPKA06Xa+P3JrPVRbo9LglUmAOFUWdl0gxdYn57F5lGUCDDRK8P
+         Op2P5i2i/ezs1xqGeUPI5FjxVQxNtGCuHX3HKjd6lFTxLT1FR+5Ji+Vzm8i2664DG6MP
+         i9wITUHKdoLPUabSJQunQy/HzFPdQkEVoVum09ZDyWup6JmDE+TEh/vwmMt8HGcb12aQ
+         cq8FndYs6HIXDmNHrdUkn5YifduSJnRcr1OKS5Rw+DACdcaegFv69UHf7AkmrteExCp0
+         E8t+Cpe2FBQkmKvMbq7/Mqb8wUmBguoBIDlpC4QOr6KCzK7CuqrKVnzLI8CRnCko8NpC
+         WLTA==
+X-Gm-Message-State: AC+VfDyvFLzTeIzLKsJH2aCR9IhWnXykx7tH7qw5DjFz5Oc0pkh5Xweh
+        mrZKF8BHZbYKTj8ZZpeYj5IhmJ2WUIw12IJNUOvH+7KtSSGcxk2wNdOakP7ioha2yA9KZgW4WI8
+        H+dM91zMCAcHpbwORB02iL9P8oA==
+X-Received: by 2002:a05:622a:60c:b0:3f5:2840:cce with SMTP id z12-20020a05622a060c00b003f528400ccemr22749715qta.39.1684852937059;
+        Tue, 23 May 2023 07:42:17 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4NriSSarNwFrAP/zBWH6Tdop0wKIL/+PTl8BbSTnJ0k2xny6jvvgd71AFlKJxxSrEYbYfalw==
+X-Received: by 2002:a05:622a:60c:b0:3f5:2840:cce with SMTP id z12-20020a05622a060c00b003f528400ccemr22749680qta.39.1684852936625;
+        Tue, 23 May 2023 07:42:16 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id w13-20020ac87e8d000000b003e4dab0776esm1299153qtj.40.2023.05.23.07.42.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 May 2023 07:42:16 -0700 (PDT)
+Date:   Tue, 23 May 2023 10:44:47 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Ritesh Harjani <ritesh.list@gmail.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [RFCv5 5/5] iomap: Add per-block dirty state tracking to improve
+ performance
+Message-ID: <ZGzRX9YVkAYJGLqV@bfoster>
+References: <ZGyuXgGzuFWmHnsd@bfoster>
+ <87pm6rupsn.fsf@doe.com>
 MIME-Version: 1.0
-In-Reply-To: <20230522232917.2454595-4-andrii@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.8/26916/Tue May 23 09:22:39 2023)
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pm6rupsn.fsf@doe.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/23/23 1:29 AM, Andrii Nakryiko wrote:
-[...]
-> diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
-> index a5aa3a383d69..7a4fe80da360 100644
-> --- a/tools/lib/bpf/libbpf.map
-> +++ b/tools/lib/bpf/libbpf.map
-> @@ -389,5 +389,6 @@ LIBBPF_1.2.0 {
->   		bpf_link__update_map;
->   		bpf_link_get_info_by_fd;
->   		bpf_map_get_info_by_fd;
-> +		bpf_obj_pin_opts;
+On Tue, May 23, 2023 at 07:13:04PM +0530, Ritesh Harjani wrote:
+> Brian Foster <bfoster@redhat.com> writes:
+> 
+> > On Mon, May 22, 2023 at 05:56:25PM -0700, Darrick J. Wong wrote:
+> >> On Mon, May 22, 2023 at 07:18:07AM -0400, Brian Foster wrote:
+> >> > On Mon, May 22, 2023 at 10:03:05AM +0530, Ritesh Harjani wrote:
+> >> > > Matthew Wilcox <willy@infradead.org> writes:
+> >> > >
+> >> > > > On Thu, May 18, 2023 at 06:23:44AM -0700, Christoph Hellwig wrote:
+> >> > > >> On Wed, May 17, 2023 at 02:48:12PM -0400, Brian Foster wrote:
+> >> > > >> > But I also wonder.. if we can skip the iop alloc on full folio buffered
+> >> > > >> > overwrites, isn't that also true of mapped writes to folios that don't
+> >> > > >> > already have an iop?
+> >> > > >>
+> >> > > >> Yes.
+> >> > > >
+> >> > > > Hm, well, maybe?  If somebody stores to a page, we obviously set the
+> >> > > > dirty flag on the folio, but depending on the architecture, we may
+> >> > > > or may not have independent dirty bits on the PTEs (eg if it's a PMD,
+> >> > > > we have one dirty bit for the entire folio; similarly if ARM uses the
+> >> > > > contiguous PTE bit).  If we do have independent dirty bits, we could
+> >> > > > dirty only the blocks corresponding to a single page at a time.
+> >> > > >
+> >> > > > This has potential for causing some nasty bugs, so I'm inclined to
+> >> > > > rule that if a folio is mmaped, then it's all dirty from any writable
+> >> > > > page fault.  The fact is that applications generally do not perform
+> >> > > > writes through mmap because the error handling story is so poor.
+> >> > > >
+> >> > > > There may be a different answer for anonymous memory, but that doesn't
+> >> > > > feel like my problem and shouldn't feel like any FS developer's problem.
+> >> > >
+> >> > > Although I am skeptical too to do the changes which Brian is suggesting
+> >> > > here. i.e. not making all the blocks of the folio dirty when we are
+> >> > > going to call ->dirty_folio -> filemap_dirty_folio() (mmaped writes).
+> >> > >
+> >> > > However, I am sorry but I coudn't completely follow your reasoning
+> >> > > above. I think what Brian is suggesting here is that
+> >> > > filemap_dirty_folio() should be similar to complete buffered overwrite
+> >> > > case where we do not allocate the iop at the ->write_begin() time.
+> >> > > Then at the writeback time we allocate an iop and mark all blocks dirty.
+> >> > >
+> >> >
+> >> > Yeah... I think what Willy is saying (i.e. to not track sub-page dirty
+> >> > granularity of intra-folio faults) makes sense, but I'm also not sure
+> >> > what it has to do with the idea of being consistent with how full folio
+> >> > overwrites are implemented (between buffered or mapped writes). We're
+> >> > not changing historical dirtying granularity either way. I think this is
+> >> > just a bigger picture thought for future consideration as opposed to
+> >> > direct feedback on this patch..
+> >>
+> >> <nod>
+> >>
+> >> > > In a way it is also the similar case as for mmapped writes too but my
+> >> > > only worry is the way mmaped writes work and it makes more
+> >> > > sense to keep the dirty state of folio and per-block within iop in sync.
+> >> > > For that matter, we can even just make sure we always allocate an iop in
+> >> > > the complete overwrites case as well. I didn't change that code because
+> >> > > it was kept that way for uptodate state as well and based on one of your
+> >> > > inputs for complete overwrite case.
+> >> > >
+> >> >
+> >> > Can you elaborate on your concerns, out of curiosity?
+> >> >
+> >> > Either way, IMO it also seems reasonable to drop this behavior for the
+> >> > basic implementation of dirty tracking (so always allocate the iop for
+> >> > sub-folio tracking as you suggest above) and then potentially restore it
+> >> > as a separate optimization patch at the end of the series.
+> >>
+> >> Agree.
+> >>
+> >> > That said, I'm not totally clear why it exists in the first place, so
+> >> > that might warrant some investigation. Is it primarily to defer
+> >> > allocations out of task write/fault contexts?
+> >>
+> >> (Assuming by 'it' you mean the behavior where we don't unconditionally
+> >> allocate iops for blocksize < foliosize...)
+> >>
+> >> IIRC the reason is to reduce memory usage by eliding iop allocations
+> >> unless it's absolutely necessary for correctness was /my/ understanding
+> >> of why we don't always allocate the iop...
+> >>
+> >> > To optimize the case where pagecache is dirtied but truncated or
+> >> > something and thus never written back?
+> >>
+> >> ...because this might very well happen.  Write a temporary .o file to
+> >> the filesystem, then delete the whole thing before writeback ever gets
+> >> its hands on the file.
+> >>
+> >
+> > I don't think a simple temp write will trigger this scenario currently
+> > because the folios would have to be uptodate at the time of the write to
+> > bypass the iop alloc. I guess you'd have to read folios (even if backed
+> > by holes) first to start seeing the !iop case at writeback time (for bs
+> > != ps).
+> >
+> > That could change with these patches, but I was trying to reason about
+> > the intent of the existing code and whether there was some known reason
+> > to continue to try and defer the iop allocation as the need/complexity
+> > for deferring it grows with the addition of more (i.e. dirty) tracking.
+> >
+> 
+> Here is the 1st discussion/reasoning where the deferred iop allocation
+> in the readpage path got discussed [1].
+> And here is the discussion when I first pointed out the deferred
+> allocation in writepage path. IMO, it got slipped in with the
+> discussions maybe only on mailing list but nothing in the commit
+> messages or comments.[2]
+> 
+> [1]: https://lore.kernel.org/linux-xfs/20210628172727.1894503-1-agruenba@redhat.com/
+> [2]: https://lore.kernel.org/linux-xfs/20230130202150.pfohy5yg6dtu64ce@rh-tp/
+> 
+> >> > Is there any room for further improvement where the alloc could be
+> >> > avoided completely for folio overwrites instead of just deferred?
+> >>
+> >> Once writeback starts, though, we need the iop so that we can know when
+> >> all the writeback for that folio is actually complete, no matter how
+> >> many IOs might be in flight for that folio.  I don't know how you'd get
+> >> around this problem.
+> >>
+> >
+> > Ok. I noticed some kind of counter or something being updated last time
+> > I looked through that code, so it sounds like that's the reason the iop
+> > eventually needs to exist. Thanks.
+> >
+> >> > Was that actually the case at some point and then something later
+> >> > decided the iop was needed at writeback time, leading to current
+> >> > behavior?
+> >>
+> >> It's been in iomap since the beginning when we lifted it from xfs.
+> >>
+> >
+> > Not sure exactly what you're referring to here. iomap_writepage_map()
+> > would warn on the (bs != ps && !iop) case up until commit 8e1bcef8e18d
+> > ("iomap: Permit pages without an iop to enter writeback"), so I don't
+> > see how iop allocs were deferred (other than when bs == ps, obviously)
+> > prior to that.
+> >
+> > Heh, but I'm starting to get my wires crossed just trying to piece
+> > things together here. Ritesh, ISTM the (writeback && !iop && bs != ps)
+> > case is primarily a subtle side effect of the current writeback behavior
+> > being driven by uptodate status. I think it's probably wise to drop it
+> > at least initially, always alloc and dirty the appropriate iop ranges
+> > for sub-folio blocks, and then if you or others think there is value in
+> > the overwrite optimization to defer iop allocs, tack that on as a
+> > separate patch and try to be consistent between buffered and mapped
+> > writes.
+> 
+> Based on the discussion so far, I would like to think of this as follow:
+> We already have some sort of lazy iop allocation in the buffered I/O
+> path (discussed above). This patch series does not changes that
+> behavior. For now I would like to keep the page mkwrite page as is
+> without any lazy iop allocation optimization.
+> I am ok to pick this optimization work as a seperate series
+> because, IIUC, Christoph has some ideas on deferring iop allocations
+> even further [2] (from link shared above).
+> 
+> Does that sound good?
+> 
 
-Given 1.2.0 went out [0], shouldn't this go into a new LIBBPF_1.3.0 section?
+Could you do that in two steps where the buffered I/O path variant is
+replaced by explicit dirty tracking in the initial patch, and then is
+restored by a subsequent patch in the same series? That would allow
+keeping it around and documenting it explicitly in the commit log for
+the separate patch, but IMO makes this a bit easier to review (and
+potentially debug/bisect if needed down the road).
 
->   		bpf_prog_get_info_by_fd;
->   } LIBBPF_1.1.0;
+But I don't insist if that's too troublesome for some reason...
 
-Thanks,
-Daniel
+Brian
 
-   [0] https://lore.kernel.org/bpf/CAEf4BzYJhzEDHarRGvidhPd-DRtu4VXxnQ=HhOG-LZjkbK-MwQ@mail.gmail.com/
+> >
+> > Darrick noted above that he also agrees with that separate patch
+> > approach. For me, I think it would also be useful to show that there is
+> > some measurable performance benefit on at least one reasonable workload
+> > to help justify it.
+> 
+> Agree that when we work on such optimizations as a seperate series, it
+> will be worth measuring the performance benefits of that.
+> 
+> 
+> -ritesh
+> 
+> >
+> > Brian
+> >
+> >> --D (who is now weeks behind on reviewing things and stressed out)
+> >>
+> >> > Brian
+> >> >
+> >> > > Though I agree that we should ideally be allocatting & marking all
+> >> > > blocks in iop as dirty in the call to ->dirty_folio(), I just wanted to
+> >> > > understand your reasoning better.
+> >> > >
+> >> > > Thanks!
+> >> > > -ritesh
+> >> > >
+> >> >
+> >>
+> 
+
