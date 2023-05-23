@@ -2,103 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3EF970CF09
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 02:24:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1165670CF22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 02:25:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234713AbjEWAYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 20:24:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37322 "EHLO
+        id S234291AbjEWAY7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 20:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234472AbjEVX4t (ORCPT
+        with ESMTP id S235142AbjEWAM4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 19:56:49 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 761692128;
-        Mon, 22 May 2023 16:52:59 -0700 (PDT)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MKNuIB019632;
-        Mon, 22 May 2023 23:52:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2023-03-30;
- bh=/N2LpwZMHf8t9rQO6kZ7l4/DJAl3DnwMVCbSh1H47sk=;
- b=1IEseT7IyF+uW70NfXFKjWbwz6zKuWfL4Iuc4iCrhD3thRwlP7CeN9PJChjcTwbMJ4xO
- x6HOgWtGymG7IHxwPprc3FBhzhyI3R14BFblqiBsV0co4pc0H4UHnjToA6vbb9MHV+Wt
- dJieTk81ELtH2JXypoq4irLKI58jMFhhNQp7t9HpRxo0W5D9UvagpjuklwLglDwQuekP
- sOIJIbv1LW4oEbwWn9CyBz7Q3iZ+g/RSHiIOHF4FZ14c/A4FjzEI7pzOH3Qb2QytG09g
- tpPJfkLfoJ3NShIDZkUENuiNcLTRoitq2jmxvmPj2iz/RLXU+TGMYcpzBi7STK2M0s/i hw== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qpp8cbxqa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 May 2023 23:52:55 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34MLagYP013996;
-        Mon, 22 May 2023 23:52:55 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3qqk7e43wb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 May 2023 23:52:55 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34MNqqh3018982;
-        Mon, 22 May 2023 23:52:54 GMT
-Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3qqk7e43vc-4;
-        Mon, 22 May 2023 23:52:54 +0000
-From:   Dai Ngo <dai.ngo@oracle.com>
-To:     chuck.lever@oracle.com, jlayton@kernel.org
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v5 3/3] locks: allow support for write delegation
-Date:   Mon, 22 May 2023 16:52:40 -0700
-Message-Id: <1684799560-31663-4-git-send-email-dai.ngo@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1684799560-31663-1-git-send-email-dai.ngo@oracle.com>
-References: <1684799560-31663-1-git-send-email-dai.ngo@oracle.com>
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-22_17,2023-05-22_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- mlxscore=0 spamscore=0 mlxlogscore=999 adultscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305220201
-X-Proofpoint-ORIG-GUID: bZUU06QhhgBAJ5HlQcp5qEoPkWi9On9u
-X-Proofpoint-GUID: bZUU06QhhgBAJ5HlQcp5qEoPkWi9On9u
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 22 May 2023 20:12:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D52E1FF6;
+        Mon, 22 May 2023 17:00:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BEB7A62C96;
+        Tue, 23 May 2023 00:00:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14837C4339B;
+        Tue, 23 May 2023 00:00:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684800031;
+        bh=lyfJmGLkgdjgHeJSrLwwF6HfUqdYiWsGQeIjY/eZY1I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ScFA+6V/haACDctyNZcJLiBoeSdsbN1/9GRgY0vOch4RpWSQFKgM1bgtrdD06dQUc
+         Bzdm6yUWJmf69K0Vd10lOudLMjqO4bfURM5zGjvi+zsuunoLarb4r0I2sBZI8ZqFgb
+         tgxusQdeSMYpv+Naki3HAekF/GQPmeFIkKgItnPLHJfUG+zc5LINDg83GLwxGlLm7z
+         CXAQd4XKKJXb640o3oRKTwqmtbufleHG3gBbkcbSbxjTd692KuVk/UVhSs/rKdOI2E
+         WuOULd1zxmWLGr5xoIVY1i3s7el31WsSpWZ+K/EFXUWoCyhq6EqbloBhps/JZTlvGk
+         qVSLYgtLjKNlg==
+Date:   Tue, 23 May 2023 00:00:29 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
+        Pengfei Xu <pengfei.xu@intel.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, heng.su@intel.com,
+        dchinner@redhat.com, lkp@intel.com,
+        Linux Regressions <regressions@lists.linux.dev>
+Subject: Re: [Syzkaller & bisect] There is BUG: unable to handle kernel NULL
+ pointer dereference in xfs_extent_free_diff_items in v6.4-rc3
+Message-ID: <20230523000029.GB3187780@google.com>
+References: <ZGrOYDZf+k0i4jyM@xpf.sh.intel.com>
+ <ZGsOH5D5vLTLWzoB@debian.me>
+ <20230522160525.GB11620@frogsfrogsfrogs>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230522160525.GB11620@frogsfrogsfrogs>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove the check for F_WRLCK in generic_add_lease to allow file_lock
-to be used for write delegation.
+On Mon, May 22, 2023 at 09:05:25AM -0700, Darrick J. Wong wrote:
+> On Mon, May 22, 2023 at 01:39:27PM +0700, Bagas Sanjaya wrote:
+> > On Mon, May 22, 2023 at 10:07:28AM +0800, Pengfei Xu wrote:
+> > > Hi Darrick,
+> > > 
+> > > Greeting!
+> > > There is BUG: unable to handle kernel NULL pointer dereference in
+> > > xfs_extent_free_diff_items in v6.4-rc3:
+> > > 
+> > > Above issue could be reproduced in v6.4-rc3 and v6.4-rc2 kernel in guest.
+> > > 
+> > > Bisected this issue between v6.4-rc2 and v5.11, found the problem commit is:
+> > > "
+> > > f6b384631e1e xfs: give xfs_extfree_intent its own perag reference
+> > > "
+> > > 
+> > > report0, repro.stat and so on detailed info is link: https://github.com/xupengfe/syzkaller_logs/tree/main/230521_043336_xfs_extent_free_diff_items
+> > > Syzkaller reproduced code: https://github.com/xupengfe/syzkaller_logs/blob/main/230521_043336_xfs_extent_free_diff_items/repro.c
+> > > Syzkaller reproduced prog: https://github.com/xupengfe/syzkaller_logs/blob/main/230521_043336_xfs_extent_free_diff_items/repro.prog
+> > > Kconfig: https://github.com/xupengfe/syzkaller_logs/blob/main/230521_043336_xfs_extent_free_diff_items/kconfig_origin
+> > > Bisect info: https://github.com/xupengfe/syzkaller_logs/blob/main/230521_043336_xfs_extent_free_diff_items/bisect_info.log
+> > > Issue dmesg: https://github.com/xupengfe/syzkaller_logs/blob/main/230521_043336_xfs_extent_free_diff_items/v6.4-rc3_reproduce_dmesg.log
+> > > 
+> > > v6.4-rc3 reproduced info:
+> 
+> Diagnosis and patches welcomed.
+> 
+> Or are we doing the usual syzbot bullshit where you all assume that I'm
+> going to do all the fucking work for you?
+> 
 
-First consumer is NFSD.
+It looks like Pengfei already took the time to manually bisect this issue to a
+very recent commit authored by you.  Is that not helpful?
 
-Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
----
- fs/locks.c | 7 -------
- 1 file changed, 7 deletions(-)
+(Apologies if I didn't include enough profanities for this email to be suitable
+for linux-xfs@.)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index df8b26a42524..08fb0b4fd4f8 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1729,13 +1729,6 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
- 	if (is_deleg && !inode_trylock(inode))
- 		return -EAGAIN;
- 
--	if (is_deleg && arg == F_WRLCK) {
--		/* Write delegations are not currently supported: */
--		inode_unlock(inode);
--		WARN_ON_ONCE(1);
--		return -EINVAL;
--	}
--
- 	percpu_down_read(&file_rwsem);
- 	spin_lock(&ctx->flc_lock);
- 	time_out_leases(inode, &dispose);
--- 
-2.9.5
-
+- Eric
