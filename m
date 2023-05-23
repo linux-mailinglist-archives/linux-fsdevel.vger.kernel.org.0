@@ -2,61 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E66070DE94
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 16:07:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D89170DE8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 16:07:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237204AbjEWOHZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 10:07:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46890 "EHLO
+        id S237213AbjEWOH2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 10:07:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237096AbjEWOHM (ORCPT
+        with ESMTP id S237144AbjEWOHN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 10:07:12 -0400
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A541C132
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:06:51 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-4f3b9c88af8so3675811e87.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:06:51 -0700 (PDT)
+        Tue, 23 May 2023 10:07:13 -0400
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751D61A1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:06:53 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-4f3b9755961so3499024e87.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 07:06:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684850750; x=1687442750;
+        d=linaro.org; s=google; t=1684850751; x=1687442751;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=b/3885L94lN4KFkmIG4KL0Z1VLtyVywWWWjhcZ8AdCI=;
-        b=qhdr9VIeHm3TCAUgvcaHfodtBDTuWxK2iXj6V/SQ66zUErdAk9+DCvdLTF4aCd1ETu
-         C+ZAXFKiOs20Y/LEEtHSq1dPudVvh6HRokN0i21bR1zIMcVKbUmCrYz24kNjxTLPVXAa
-         cFSvLYM8x6ZBwAnEtC4zHJP9yI7e0Y76rr1w29rfD59OhfMtbLcaAZOSrbcUgEQ+zCmx
-         caIJ/LOff8nHxBYzP4GFpPBpy1b42pU47PMbeKWiMmKuOjXR5pkLmpUVwA4W9JWmR+b4
-         CDnpYKOJa/b0/Br6Vk3EN6ig9EeMV6vmOvhLsCfhbrFKneL3zoOIRn+iLLV6tfwCA1tP
-         yGJg==
+        bh=AahUWbcM1gd1dIKV3ajpbH14PSzhJ7702+mo4mqS4bw=;
+        b=suXLt6rUWNL44vDNr6SS/EymOZ59hQEEGR2ZTXjDAx/AQp8nmKRLdaV2gUtIwvhf1t
+         K/tAq8Z9ZeMTJQOstwd3dQeZhusrHSkrzN26dMfjKZk7yFZpGGO12BPMNBl2tvDMBfau
+         g1zZ2x6JYoE8G1O6v87j/M1aKi8OQ0BwKQlzHWXj2LMSLUmsooYNVOxWag2uMhjdMbMO
+         cWdFAnbyaQzYQHH2jmdzSe8LmY7bWDBbmxV219wusGP7c6T2/7oOh6ZhoSHiNVm9tLUm
+         nypNbf4j0yWVIS8C0Jk1OKF5sOw3pb2FjFioOqx47SpRH6sLccmqgHJKbm5qp2ED/llI
+         S7Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684850750; x=1687442750;
+        d=1e100.net; s=20221208; t=1684850751; x=1687442751;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b/3885L94lN4KFkmIG4KL0Z1VLtyVywWWWjhcZ8AdCI=;
-        b=fu/cUOQ7JO+IznOYdzk353t7FsDdpXKiSLBjzEPAee6Nul4ReH71PBP2k61H1STkEB
-         uJipxe089ULBgELz5s3mU7Pz6HOTng5pbnPkbzUxRoPkxkc9+YmfJNsqt0q4M2RMA1jt
-         3Q54UKRgVmf3NQiWKbv81Q2Pc3jlWH+yD5z24aSOEUszZoBSvZwRxepbAn2qV4gWIOYz
-         BJIBCX4UP8zjguUpJ4ciqpK4N9FfiOv5EXl0sdCRySRpaNHh2aTFF/nTwRm5mZAazMbh
-         fHW5htfyBiJPVi267vGnBzWakrtQZTO59alceI8V/sSalcsOTYDlE6Ot3qipqU+R7MRp
-         sPfA==
-X-Gm-Message-State: AC+VfDxUAF+MfgvA75Vy0Xsa4QWyUMwG3HQtHnZUzd5jSDLDxO8V4s9B
-        wTUKIiUTTcRoiCwH5zcTe//sJg==
-X-Google-Smtp-Source: ACHHUZ7+n7MNuNF1TIH+E5EiaRwyqYEQK1Dut57yCG9qKprwmGVeigy/nhu/aE9P+Jn/qDJ6+UR8bQ==
-X-Received: by 2002:ac2:52aa:0:b0:4ef:d6e2:6530 with SMTP id r10-20020ac252aa000000b004efd6e26530mr4123672lfm.37.1684850750175;
-        Tue, 23 May 2023 07:05:50 -0700 (PDT)
+        bh=AahUWbcM1gd1dIKV3ajpbH14PSzhJ7702+mo4mqS4bw=;
+        b=gYgnwaN2GG4QRYBOCVH6k3tDdWJZIw8WjIiyQp8OJBjXznB5cswB9VisHVIiRv/P1/
+         n0d0zdF+j8nK14bPni/cQmLZur9bof2uNwgbjkcyIgflGYGuZqFhrTPPey4yqTQU1X86
+         AV7OthYwxFlj1Zze9AnJSova+qSLPomNakrjwjHjY/IaSk/EJbv+O9gFmehbR5Zo5Fzz
+         07dO1pE8DTHZMUjgHl0wskQW0VBYQm6mmoY8JtUGvsaaTf8ZPzU+GtF3mw3pXSv+nJ4M
+         kbH1UTPHUSf9DWVqmeA3STIlOxKeTSV/5Be5LlxN9lZtAr5w3zlVYnisGY4d/waa/W8s
+         7Odw==
+X-Gm-Message-State: AC+VfDxYygKDfrjiRFHcuX04UG+2fpnOCS/SGJ8JYLTosECczAwyGrew
+        /4rW7L4BNsTTPsNc7TESv/4FiQ==
+X-Google-Smtp-Source: ACHHUZ4Heo+Mm/MZodpjJ/spmtQbla212mLAYM+FLuHrRCfUH/Fsho3ChrpMik0Ns6Cxqj0IZ64E6g==
+X-Received: by 2002:a05:6512:908:b0:4ef:f11c:f5b0 with SMTP id e8-20020a056512090800b004eff11cf5b0mr4377803lft.54.1684850751226;
+        Tue, 23 May 2023 07:05:51 -0700 (PDT)
 Received: from [127.0.1.1] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id h28-20020ac2597c000000b004e9bf853c27sm1346562lfp.70.2023.05.23.07.05.49
+        by smtp.gmail.com with ESMTPSA id h28-20020ac2597c000000b004e9bf853c27sm1346562lfp.70.2023.05.23.07.05.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 May 2023 07:05:49 -0700 (PDT)
+        Tue, 23 May 2023 07:05:50 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 23 May 2023 16:05:29 +0200
-Subject: [PATCH v3 05/12] cifs: Pass a pointer to virt_to_page()
+Date:   Tue, 23 May 2023 16:05:30 +0200
+Subject: [PATCH v3 06/12] cifs: Pass a pointer to virt_to_page() in
+ cifsglob
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230503-virt-to-pfn-v6-4-rc1-v3-5-a16c19c03583@linaro.org>
+Message-Id: <20230503-virt-to-pfn-v6-4-rc1-v3-6-a16c19c03583@linaro.org>
 References: <20230503-virt-to-pfn-v6-4-rc1-v3-0-a16c19c03583@linaro.org>
 In-Reply-To: <20230503-virt-to-pfn-v6-4-rc1-v3-0-a16c19c03583@linaro.org>
 To:     Andrew Morton <akpm@linux-foundation.org>,
@@ -96,22 +97,22 @@ Fix this up with an explicit cast.
 Acked-by: Tom Talpey <tom@talpey.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- fs/cifs/smbdirect.c | 2 +-
+ fs/cifs/cifsglob.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-index 0362ebd4fa0f..964f07375a8d 100644
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -2500,7 +2500,7 @@ static ssize_t smb_extract_kvec_to_rdma(struct iov_iter *iter,
- 			if (is_vmalloc_or_module_addr((void *)kaddr))
- 				page = vmalloc_to_page((void *)kaddr);
- 			else
--				page = virt_to_page(kaddr);
-+				page = virt_to_page((void *)kaddr);
+diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
+index 414685c5d530..3d29a4bbbc40 100644
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -2218,7 +2218,7 @@ static inline void cifs_sg_set_buf(struct sg_table *sgtable,
+ 		} while (buflen);
+ 	} else {
+ 		sg_set_page(&sgtable->sgl[sgtable->nents++],
+-			    virt_to_page(addr), buflen, off);
++			    virt_to_page((void *)addr), buflen, off);
+ 	}
+ }
  
- 			if (!smb_set_sge(rdma, page, off, seg))
- 				return -EIO;
 
 -- 
 2.34.1
