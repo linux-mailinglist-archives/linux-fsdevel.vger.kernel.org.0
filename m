@@ -2,87 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D41A770E1C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 18:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D553170E267
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 18:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237527AbjEWQWG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 12:22:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39900 "EHLO
+        id S237524AbjEWQcl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 12:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjEWQWF (ORCPT
+        with ESMTP id S231770AbjEWQck (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 12:22:05 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49F4112B;
-        Tue, 23 May 2023 09:22:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=d661uJD3QZyNSbDvh1yODoH87KCKXO6AdQINLMKGe10=; b=PJwJqOx+NIMo9E4oIdJHNzHO4x
-        /I3Fbeijrw9ytebTXP/VjCInxuGEyLhyF7xK8tuhjlfrJL+4miepn6rGuZNMr5lVWDLMP5nLFDN5U
-        VmyWpb0tB51Wm0DRUm1Lw8tWZB8qqHaYAUGYCtJnq2/TMNBM6iuUiGBwsjrKPSeuh/a2hcal0qJXW
-        DnEIJi9jkoA0SIeByrBKFfHDsAiHJqK+NGjeIWf0DXni53eZdO6V8ifabwFhdnzm9a/6VWSPaoo3V
-        QLtDo5B4zTthXQWU4qSrbH9mzvYLHucS9j+5ROtP1vDIK6MooC5a/p+4oDUqZF3eqJi6wnkrKyMeo
-        JASpUFUA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q1Ulo-00Amb7-2r;
-        Tue, 23 May 2023 16:21:56 +0000
-Date:   Tue, 23 May 2023 09:21:56 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        cluster-devel@redhat.com, "Darrick J . Wong" <djwong@kernel.org>,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: Re: [Cluster-devel] [PATCH 06/32] sched: Add
- task_struct->faults_disabled_mapping
-Message-ID: <ZGzoJLCRLk+pCKAk@infradead.org>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-7-kent.overstreet@linux.dev>
- <20230510010737.heniyuxazlprrbd6@quack3>
- <ZFs3RYgdCeKjxYCw@moria.home.lan>
- <20230523133431.wwrkjtptu6vqqh5e@quack3>
+        Tue, 23 May 2023 12:32:40 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43C1DD;
+        Tue, 23 May 2023 09:32:38 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 893EA22925;
+        Tue, 23 May 2023 16:32:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1684859557; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Jgln17Itx5qPVoKJlWMfz4FJb2LjDNqFHYWInznf3aw=;
+        b=QxkQFOSxtNEoEdH1bnrO66HEJd2Zwin6JvwUuTU958yG6YUL/HVKt6sZtMzjDsMZkim/dK
+        YxsYK8Cc6Xh/N+RfWa8wkbvwHEgw7p6sLLYPQdv5sCRY6PX8pGWaTcGTf6SKaezCcWLP+b
+        bBctfzPkyZVIDTqf32NnLE+p5XNIV00=
+Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
+        by relay2.suse.de (Postfix) with ESMTP id 65ADE2C141;
+        Tue, 23 May 2023 16:32:37 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id DECACDA7D7; Tue, 23 May 2023 18:26:30 +0200 (CEST)
+From:   David Sterba <dsterba@suse.com>
+To:     viro@zeniv.linux.org.uk, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH] fs: use UB-safe check for signed addition overflow in remap_verify_area
+Date:   Tue, 23 May 2023 18:26:28 +0200
+Message-Id: <20230523162628.17071-1-dsterba@suse.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230523133431.wwrkjtptu6vqqh5e@quack3>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 23, 2023 at 03:34:31PM +0200, Jan Kara wrote:
-> I've checked the code and AFAICT it is all indeed handled. BTW, I've now
-> remembered that GFS2 has dealt with the same deadlocks - b01b2d72da25
-> ("gfs2: Fix mmap + page fault deadlocks for direct I/O") - in a different
-> way (by prefaulting pages from the iter before grabbing the problematic
-> lock and then disabling page faults for the iomap_dio_rw() call). I guess
-> we should somehow unify these schemes so that we don't have two mechanisms
-> for avoiding exactly the same deadlock. Adding GFS2 guys to CC.
-> 
-> Also good that you've written a fstest for this, that is definitely a useful
-> addition, although I suspect GFS2 guys added a test for this not so long
-> ago when testing their stuff. Maybe they have a pointer handy?
+The following warning pops up with enabled UBSAN in tests fstests/generic/303:
 
-generic/708 is the btrfs version of this.
+  [23127.529395] UBSAN: Undefined behaviour in fs/read_write.c:1725:7
+  [23127.529400] signed integer overflow:
+  [23127.529403] 4611686018427322368 + 9223372036854775807 cannot be represented in type 'long long int'
+  [23127.529412] CPU: 4 PID: 26180 Comm: xfs_io Not tainted 5.2.0-rc2-1.ge195904-vanilla+ #450
+  [23127.556999] Hardware name: empty empty/S3993, BIOS PAQEX0-3 02/24/2008
+  [23127.557001] Call Trace:
+  [23127.557060]  dump_stack+0x67/0x9b
+  [23127.557070]  ubsan_epilogue+0x9/0x40
+  [23127.573496]  handle_overflow+0xb3/0xc0
+  [23127.573514]  do_clone_file_range+0x28f/0x2a0
+  [23127.573547]  vfs_clone_file_range+0x35/0xb0
+  [23127.573564]  ioctl_file_clone+0x8d/0xc0
+  [23127.590144]  do_vfs_ioctl+0x300/0x700
+  [23127.590160]  ksys_ioctl+0x70/0x80
+  [23127.590203]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+  [23127.590210]  __x64_sys_ioctl+0x16/0x20
+  [23127.590215]  do_syscall_64+0x5c/0x1d0
+  [23127.590224]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  [23127.590231] RIP: 0033:0x7ff6d7250327
+  [23127.590241] RSP: 002b:00007ffe3a38f1d8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
+  [23127.590246] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007ff6d7250327
+  [23127.590249] RDX: 00007ffe3a38f220 RSI: 000000004020940d RDI: 0000000000000003
+  [23127.590252] RBP: 0000000000000000 R08: 00007ffe3a3c80a0 R09: 00007ffe3a3c8080
+  [23127.590255] R10: 000000000fa99fa0 R11: 0000000000000206 R12: 0000000000000000
+  [23127.590260] R13: 0000000000000000 R14: 3fffffffffff0000 R15: 00007ff6d750a20c
 
-But I think all of the file systems that have this deadlock are actually
-fundamentally broken because they have a mess up locking hierarchy
-where page faults take the same lock that is held over the the direct I/
-operation.  And the right thing is to fix this.  I have work in progress
-for btrfs, and something similar should apply to gfs2, with the added
-complication that it probably means a revision to their network
-protocol.
+As loff_t is a signed type, we should use the safe overflow checks
+instead of relying on compiler implementation.
 
-I'm absolutely not in favour to add workarounds for thes kind of locking
-problems to the core kernel.  I already feel bad for allowing the
-small workaround in iomap for btrfs, as just fixing the locking back
-then would have avoid massive ratholing.
+The bogus values are intentional and the test is supposed to verify the
+boundary conditions.
+
+Signed-off-by: David Sterba <dsterba@suse.com>
+---
+
+ fs/remap_range.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index 1331a890f2f2..87ae4f0dc3aa 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -15,6 +15,7 @@
+ #include <linux/mount.h>
+ #include <linux/fs.h>
+ #include <linux/dax.h>
++#include <linux/overflow.h>
+ #include "internal.h"
+ 
+ #include <linux/uaccess.h>
+@@ -101,10 +102,12 @@ static int generic_remap_checks(struct file *file_in, loff_t pos_in,
+ static int remap_verify_area(struct file *file, loff_t pos, loff_t len,
+ 			     bool write)
+ {
++	loff_t tmp;
++
+ 	if (unlikely(pos < 0 || len < 0))
+ 		return -EINVAL;
+ 
+-	if (unlikely((loff_t) (pos + len) < 0))
++	if (unlikely(check_add_overflow(pos, len, &tmp)))
+ 		return -EINVAL;
+ 
+ 	return security_file_permission(file, write ? MAY_WRITE : MAY_READ);
+-- 
+2.40.0
+
