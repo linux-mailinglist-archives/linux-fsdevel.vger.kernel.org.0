@@ -2,99 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F7D470D900
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 11:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6AF970D92E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 11:35:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235259AbjEWJ2r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 05:28:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51468 "EHLO
+        id S236259AbjEWJe7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 05:34:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230082AbjEWJ2q (ORCPT
+        with ESMTP id S236386AbjEWJep (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 05:28:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D864E6;
-        Tue, 23 May 2023 02:28:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A195614B2;
-        Tue, 23 May 2023 09:28:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABA2EC433D2;
-        Tue, 23 May 2023 09:28:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684834124;
-        bh=l6zlO3zrfqNyX7yFpEx6BRzK5yGcYjeoYtH9xlr+994=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HM298nrMQgJkZY147EZroy4PK7mr5PO1OKvTSfI9+RY+oAzcPrhBfxJGv+QtFPmed
-         48Lr8wvAVWllrJRyoY2o/ZZfRNzZma++cSt5/0sb+JoPMoODU5cXuAgxqcA9+xzQPM
-         6BndpH3IdRP5EWrIVVQr7fNn5YalW3kbs5xeLYY0C6BmP2AvrUPSZlrablsQPSfaUj
-         7bwdhbsDaSYMtzxjpOAeNbvemmcDYY/IG4MAG8eBMAb25UBVHzPQsStvWPxUj1cHYJ
-         AdLNaaj9d3KFvldgtPGwAL3TJH3hTm9ocKGCxBLySPlWIifNbTU3OvSXjoV9P92dPb
-         rfzr060cwMPoQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Dave Chinner <dchinner@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: (subset) [PATCH 22/32] vfs: inode cache conversion to hash-bl
-Date:   Tue, 23 May 2023 11:28:38 +0200
-Message-Id: <20230523-zujubeln-heizsysteme-f756eefe663e@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230509165657.1735798-23-kent.overstreet@linux.dev>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev> <20230509165657.1735798-23-kent.overstreet@linux.dev>
+        Tue, 23 May 2023 05:34:45 -0400
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22941B0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 02:34:31 -0700 (PDT)
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-76c71fc7be6so285514939f.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 May 2023 02:34:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684834471; x=1687426471;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6XhonWAPAu8OTH4owMzaT0fJr80igSY+VEVOwOtFTeA=;
+        b=ROemzMzbxLRXsdiOdg/BBykG/9U05oPJcUfU/SiaeyPaXloRBEiPtDR2Rcfn+AgoMD
+         HZXkNWmp1LN8VyaFD+vSoPRzYPo8la3Ocr1ufZEOTKxYCYfYAiU+gvnI/cWydpB1wR/Q
+         1Lv8dbjwi6X3qQpT1ILiE94caHSl2c7lkFJuoYte24SujLujxnVPrkyL5GkXbqNsL1Bv
+         fLcDkhtfzVgQzCoEt9JOx7TFxR4cVBbSO7ONlrNBxbpU3BsdLdHnsedgjZdaQkw1YBF7
+         NCEeeptR79Wcq/rATJlwXLHGnpxUHXD/TRzHBkzgtig2ZPb1Xi9kV7VCAtA/BRHIeGfM
+         nBzw==
+X-Gm-Message-State: AC+VfDzwoJbYRAkbLs107OLw0ZvzrYX1wu0+geo8qGcy4huQlMhOxEA0
+        GPif5NeRdmTDKKgYJVof63yt95zdi2+Vxk6xM7PejpdYim3a
+X-Google-Smtp-Source: ACHHUZ5YZD8fx0KgCTuHpDJe0wpCyOKPizAlCEPgXSRJ4L1EvfuXNi5P5YSJh8gMioCuqsedxNrAggthsCP4xsGho4gpnN+tE5a8
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1340; i=brauner@kernel.org; h=from:subject:message-id; bh=l6zlO3zrfqNyX7yFpEx6BRzK5yGcYjeoYtH9xlr+994=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTktNsoO3+5lbI+eNuhP803wtzbZnrxf9y8/bFq4ZNA78kT IqbadpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE+CDDf79WZo+Q06qzlzYUXg+KPp VnzWx90LlJXYfJSXuprtKhhQz/M6ILLaZlzozr23v4144mneiNcbWfluy+Eui1+bddz4R2NgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a5d:9285:0:b0:763:5a5a:90e7 with SMTP id
+ s5-20020a5d9285000000b007635a5a90e7mr6621320iom.3.1684834471032; Tue, 23 May
+ 2023 02:34:31 -0700 (PDT)
+Date:   Tue, 23 May 2023 02:34:31 -0700
+In-Reply-To: <00000000000066a94205fc488445@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000026bdd305fc5918a5@google.com>
+Subject: Re: [syzbot] [block?] [reiserfs?] KASAN: user-memory-access Write in zram_slot_lock
+From:   syzbot <syzbot+b8d61a58b7c7ebd2c8e0@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, axboe@kernel.dk, hch@lst.de,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, minchan@kernel.org,
+        reiserfs-devel@vger.kernel.org, senozhatsky@chromium.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 09 May 2023 12:56:47 -0400, Kent Overstreet wrote:
-> Because scalability of the global inode_hash_lock really, really
-> sucks.
-> 
-> 32-way concurrent create on a couple of different filesystems
-> before:
-> 
-> -   52.13%     0.04%  [kernel]            [k] ext4_create
->    - 52.09% ext4_create
->       - 41.03% __ext4_new_inode
->          - 29.92% insert_inode_locked
->             - 25.35% _raw_spin_lock
->                - do_raw_spin_lock
->                   - 24.97% __pv_queued_spin_lock_slowpath
-> 
-> [...]
+syzbot has bisected this issue to:
 
-This is interesting completely independent of bcachefs so we should give
-it some testing.
+commit 9fe95babc7420722d39a1ded379027a1e1825d3a
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Tue Apr 11 17:14:44 2023 +0000
 
-I updated a few places that had outdated comments.
+    zram: remove valid_io_request
 
----
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=132fa586280000
+start commit:   44c026a73be8 Linux 6.4-rc3
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10afa586280000
+console output: https://syzkaller.appspot.com/x/log.txt?x=172fa586280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8067683055e3f5
+dashboard link: https://syzkaller.appspot.com/bug?extid=b8d61a58b7c7ebd2c8e0
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1223f7d9280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1245326a280000
 
-Applied to the vfs.unstable.inode-hash branch of the vfs/vfs.git tree.
-Patches in the vfs.unstable.inode-hash branch should appear in linux-next soon.
+Reported-by: syzbot+b8d61a58b7c7ebd2c8e0@syzkaller.appspotmail.com
+Fixes: 9fe95babc742 ("zram: remove valid_io_request")
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.unstable.inode-hash
-
-[22/32] vfs: inode cache conversion to hash-bl
-        https://git.kernel.org/vfs/vfs/c/e3e92d47e6b1
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
