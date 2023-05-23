@@ -2,56 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0650370CFF4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 03:01:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE75B70CFFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 03:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234354AbjEWBBY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 May 2023 21:01:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60484 "EHLO
+        id S235266AbjEWBCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 May 2023 21:02:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234114AbjEWBBB (ORCPT
+        with ESMTP id S233828AbjEWBBg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 May 2023 21:01:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21AE8E50;
-        Mon, 22 May 2023 17:59:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95B0E62D48;
-        Tue, 23 May 2023 00:58:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF473C433EF;
-        Tue, 23 May 2023 00:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684803502;
-        bh=Whm3F+BaEDtTHWv5CVbTMbR2wtAjinD7dfq3GQH8gJM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lwQB9AzQgK/gdEKKM3BjL9vPedjDik6d1UA3j5F/gUVmcA8wN4pK0FxwD8hrZBFpD
-         SKekKphgQHbZGR3BXCFtG+nRijmHWxf2ekR3a9OJBY1VFh2txnNztS6MMS6f49Wuvo
-         CxQzevNKCsppfZ1c80xdW0RYFoaB2y5SHyNoFlClxJ4Eeuyrz+7mHV/qqxFjkM0RGb
-         ivnpo6nJiWqvPGzFIVuc+ikjfgKVukjZUyE4prnm+QsEXzv2fPyX4yNxVd7KxYeLfu
-         yUyCJMYsmZOqzgauqffAjwSCZjl4Y/AgGzCG9UmYagDoPkwVW1t0uNbsZv3TXk4HIx
-         yw8TaJ+3FOq6g==
-Date:   Mon, 22 May 2023 17:58:21 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Jan Kara <jack@suse.cz>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: introduce bdev holder ops and a file system shutdown method v2
-Message-ID: <20230523005821.GF11620@frogsfrogsfrogs>
-References: <20230518042323.663189-1-hch@lst.de>
- <ZGbYLK0lOqYqPf9O@mit.edu>
- <20230519041136.GA10931@lst.de>
+        Mon, 22 May 2023 21:01:36 -0400
+Received: from out28-38.mail.aliyun.com (out28-38.mail.aliyun.com [115.124.28.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFAABE78;
+        Mon, 22 May 2023 17:59:37 -0700 (PDT)
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1252176|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_enroll_verification|0.0240655-4.02396e-05-0.975894;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047187;MF=wangyugui@e16-tech.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.T9RQ-uT_1684803569;
+Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.T9RQ-uT_1684803569)
+          by smtp.aliyun-inc.com;
+          Tue, 23 May 2023 08:59:30 +0800
+Date:   Tue, 23 May 2023 08:59:30 +0800
+From:   Wang Yugui <wangyugui@e16-tech.com>
+To:     cluster-devel@redhat.com
+Subject: gfs2 write bandwidth regression on 6.4-rc3 compareto 5.15.y
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Message-Id: <20230523085929.614A.409509F4@e16-tech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230519041136.GA10931@lst.de>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.81.04 [en]
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,34 +42,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 19, 2023 at 06:11:36AM +0200, Christoph Hellwig wrote:
-> On Thu, May 18, 2023 at 10:00:12PM -0400, Theodore Ts'o wrote:
-> > On Thu, May 18, 2023 at 06:23:09AM +0200, Christoph Hellwig wrote:
-> > > Hi all,
-> > > 
-> > > this series fixes the long standing problem that we never had a good way
-> > > to communicate block device events to the user of the block device.
-> > > 
-> > > It fixes this by introducing a new set of holder ops registered at
-> > > blkdev_get_by_* time for the exclusive holder, and then wire that up
-> > > to a shutdown super operation to report the block device remove to the
-> > > file systems.
-> > 
-> > Thanks for working on this!  Is there going to be an fstest which
-> > simulates a device removal while we're running fsstress or some such,
-> > so we can exercise full device removal path?
-> 
-> 
-> So the problem with xfstests is that there isn't really any generic
-> way to remove a block device, and even less so to put it back.
-> 
-> xfstests has some scsi_debug based tests, maybe I can cook something up
-> for that.  My testing has been with nvme, so another option would be
-> to add nvme-loop support to xfstests and use that.  I'll see what I can
-> do.
+Hi,
 
-Could you make dm-error accept a 'message' telling it to invoke all
-these bdev removal actions?  There's already a bunch of helpers in
-fstests to make that less awful for test authors.
+gfs2 write bandwidth regression on 6.4-rc3 compare to 5.15.y.
 
---D
+we added  linux-xfs@ and linux-fsdevel@ because some related problem[1]
+and related patches[2].
+
+we compared 6.4-rc3(rather than 6.1.y) to 5.15.y becasue some related patches[2]
+work only for 6.4 now.
+
+[1] https://lore.kernel.org/linux-xfs/20230508172406.1CF3.409509F4@e16-tech.com/
+[2] https://lore.kernel.org/linux-xfs/20230520163603.1794256-1-willy@infradead.org/
+
+
+test case:
+1) PCIe3 SSD *4 with LVM
+2) gfs2 lock_nolock
+    gfs2 attr(T) GFS2_AF_ORLOV
+   # chattr +T /mnt/test
+3) fio
+fio --name=global --rw=write -bs=1024Ki -size=32Gi -runtime=30 -iodepth 1
+-ioengine sync -zero_buffers=1 -direct=0 -end_fsync=1 -numjobs=1 \
+	-name write-bandwidth-1 -filename=/mnt/test/sub1/1.txt \
+	-name write-bandwidth-2 -filename=/mnt/test/sub2/1.txt \
+	-name write-bandwidth-3 -filename=/mnt/test/sub3/1.txt \
+	-name write-bandwidth-4 -filename=/mnt/test/sub4/1.txt
+4) patches[2] are applied to 6.4-rc3.
+
+
+5.15.y result
+	fio WRITE: bw=5139MiB/s (5389MB/s),
+6.4-rc3 result
+	fio  WRITE: bw=2599MiB/s (2725MB/s)
+
+Best Regards
+Wang Yugui (wangyugui@e16-tech.com)
+2023/05/23
+
+
