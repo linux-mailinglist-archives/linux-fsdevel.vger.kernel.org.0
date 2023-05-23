@@ -2,125 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2F2770D74E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 10:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2115370D6B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 May 2023 10:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235683AbjEWIZT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 May 2023 04:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42076 "EHLO
+        id S235991AbjEWIIb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 May 2023 04:08:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236212AbjEWIYu (ORCPT
+        with ESMTP id S235998AbjEWIID (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 May 2023 04:24:50 -0400
-X-Greylist: delayed 1134 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 May 2023 01:22:10 PDT
-Received: from gardel.0pointer.net (gardel.0pointer.net [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21662108;
-        Tue, 23 May 2023 01:22:10 -0700 (PDT)
-Received: from gardel-login.0pointer.net (gardel-mail [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-        by gardel.0pointer.net (Postfix) with ESMTP id B4A95E8022C;
-        Tue, 23 May 2023 09:49:49 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-        id F147716006B; Tue, 23 May 2023 09:49:48 +0200 (CEST)
-Date:   Tue, 23 May 2023 09:49:48 +0200
-From:   Lennart Poettering <lennart@poettering.net>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 23 May 2023 04:08:03 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE79610DD;
+        Tue, 23 May 2023 01:07:37 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B6C852041A;
+        Tue, 23 May 2023 08:07:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1684829222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sO7kzFwmptuNxnDGut8ORslGVd/fsxgDQH0NmJ023YI=;
+        b=r1KUvnNOrg4jCn2j2nvm3IGqQZdkSp91G7kLEGLkmgGJxcV8LFfdWxsw3jH1pqVU0QACXc
+        sg/cbM6M6BTU0IyAfyUvgrVCJvEYSkQ9JsPC5/+DWNStD9q/zy8r5eIfeQCFYeGmvV+g2F
+        uYa+9vaGVp8XTheLDDOw7szQBHtG8yk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1684829222;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sO7kzFwmptuNxnDGut8ORslGVd/fsxgDQH0NmJ023YI=;
+        b=Aev85FbgF9zoffR/wHco7E5dzx62A6HSGGXEjWrm9VODge+o7OMOQ5BCtrVNDzXW1XNCcY
+        OdpS27+W46HrysDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9ADE113A10;
+        Tue, 23 May 2023 08:07:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id pZfHJSZ0bGQgMQAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 23 May 2023 08:07:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 16D74A075D; Tue, 23 May 2023 10:07:02 +0200 (CEST)
+Date:   Tue, 23 May 2023 10:07:02 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
         Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <martin.lau@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: fd == 0 means AT_FDCWD BPF_OBJ_GET commands
-Message-ID: <ZGxwHO2MRNK9gYxB@gardel-login>
-References: <CAEf4BzafCCeRm9M8pPzpwexadKy5OAEmrYcnVpKmqNJ2tnSVuw@mail.gmail.com>
- <20230517-allabendlich-umgekehrt-8cc81f8313ac@brauner>
- <20230517120528.GA17087@lst.de>
- <CAADnVQLitLUc1SozzKjBgq6HGTchE1cO+e4j8eDgtE0zFn5VEw@mail.gmail.com>
- <20230518-erdkugel-komprimieren-16548ca2a39c@brauner>
- <20230518162508.odupqkndqmpdfqnr@MacBook-Pro-8.local>
- <20230518-tierzucht-modewelt-eb6aaf60037e@brauner>
- <20230518182635.na7vgyysd7fk7eu4@MacBook-Pro-8.local>
- <CAHk-=whg-ygwrxm3GZ_aNXO=srH9sZ3NmFqu0KkyWw+wgEsi6g@mail.gmail.com>
- <20230519044433.2chdcze3qg2eho77@MacBook-Pro-8.local>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v21 1/6] iomap: Don't get an reference on ZERO_PAGE for
+ direct I/O block zeroing
+Message-ID: <20230523080702.vo5n3vanhc5kxcen@quack3>
+References: <20230522205744.2825689-1-dhowells@redhat.com>
+ <20230522205744.2825689-2-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230519044433.2chdcze3qg2eho77@MacBook-Pro-8.local>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20230522205744.2825689-2-dhowells@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Do, 18.05.23 21:44, Alexei Starovoitov (alexei.starovoitov@gmail.com) wrote:
+On Mon 22-05-23 21:57:39, David Howells wrote:
+> ZERO_PAGE can't go away, no need to hold an extra reference.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: linux-fsdevel@vger.kernel.org
 
-> > The 0/1/2 file descriptors are not at all special. They are a shell
-> > pipeline default, nothing more. They are not the argument your think they
-> > are, and you should stop trying to make them an argument.
->
-> I'm well aware that any file type is allowed to be in FDs 0,1,2 and
-> some user space is using it that way, like old inetd:
-> https://github.com/guillemj/inetutils/blob/master/src/inetd.c#L428
-> That puts the same socket into 0,1,2 before exec-ing new process.
->
-> My point that the kernel has to assist user space instead of
-> stubbornly sticking to POSIX and saying all FDs are equal.
->
-> Most user space developers know that care should be taken with FDs 0,1,2,
-> but it's still easy to make a mistake.
+Looks good to me. Feel free to add:
 
-If I look at libbpf, which supposedly gets the fd handling right I
-can't find any hint it actually moves the fds it gets from open() to
-an fd > 2, though?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-i.e. the code that invokes open() calls in the libbpf codebase happily
-just accepts an fd < 2, including fd == 0, and this is then later
-passed back into the kernel in various bpf() syscall invocations,
-which should refuse it, no? So what's going on there?
+								Honza
 
-I did find this though:
-
-<snip>
-	new_fd = open("/", O_RDONLY | O_CLOEXEC);
-	if (new_fd < 0) {
-		err = -errno;
-		goto err_free_new_name;
-	}
-
-	new_fd = dup3(fd, new_fd, O_CLOEXEC);
-	if (new_fd < 0) {
-		err = -errno;
-		goto err_close_new_fd;
-	}
-</snip>
-
-(This is from libbpf.c, bpf_map__reuse_fd(), i.e. https://github.com/libbpf/libbpf/blob/master/src/libbpf.c)
-
-Not sure what's going on here, what is this about? you allocate an fd
-you then immediately replace? Is this done to move the fd away from
-fd=0?  but that doesn't work that way, in case fd 0 is closed when
-entering this function.
-
-Or is this about dup'ping with O_CLOEXEC?
-
-Please be aware that F_DUPFD_CLOEXEC exists, which allows you to
-easily move some fd above some treshold, *and* set O_CLOEXEC at the
-same time. In the systemd codebase we call this frequently for code
-that ends up being loaded in arbitrary processes (glibc NSS modules,
-PAM modules), in order to ensure we get out of the fd < 3 territory
-quickly.
-
-(btw, if you do care about O_CLOEXEC – which is great – then you also
-want to replace a bunch of fopen(…, "r") with fopen(…, "re") in your
-codebase)
-
-Lennart
+> ---
+>  fs/iomap/direct-io.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 019cc87d0fb3..66a9f10e3207 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -203,7 +203,7 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>  	bio->bi_private = dio;
+>  	bio->bi_end_io = iomap_dio_bio_end_io;
+>  
+> -	get_page(page);
+> +	bio_set_flag(bio, BIO_NO_PAGE_REF);
+>  	__bio_add_page(bio, page, len, 0);
+>  	iomap_dio_submit_bio(iter, dio, bio, pos);
+>  }
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
