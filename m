@@ -2,84 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5457B70F870
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 16:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C6B70F86D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 16:16:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235778AbjEXOQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 10:16:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52182 "EHLO
+        id S235485AbjEXOQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 10:16:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235635AbjEXOQa (ORCPT
+        with ESMTP id S229919AbjEXOQ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 10:16:30 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F45212F;
-        Wed, 24 May 2023 07:16:28 -0700 (PDT)
-Received: from [192.168.10.48] (unknown [119.155.11.156])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Wed, 24 May 2023 10:16:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BA6E11D;
+        Wed, 24 May 2023 07:16:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id AFC8E6605943;
-        Wed, 24 May 2023 15:16:08 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1684937786;
-        bh=AuJTdSQvXF6YuhHcmscNAwhCf5setc7Hta7xDcqui0k=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=fIm4enJ3OeMwYz3UmiX6os2xp2qfzmCLKiUjTfJ4WEheyVlpslMtqmurhm5tWkKaE
-         B5c862c9aeNgkl2gI4F0CHbOHo9bCwe0x1uvKAZ/Ysnlpi3cIWXeQ2Bz3HiLhkEeRM
-         9a8r0sAzu0TsuTVvBmJ4/eabCHK0KDuQFc/s+dr0jaSKCc0cjrKYJEahnBrOKm4PRi
-         QLsTEsZBuLUD9wscuazomaYC3KRhTITFTzEJJ+rp00hx1mdxxV5Ijtx4xWfAaB52sm
-         xDB1AKaJuABxKR46EqktjF1zovF2M9Zmgm1WFZ4OkXRpgzwW3Q6Qb/m0OIcDkaoDUD
-         ByXuRdFihANXg==
-Message-ID: <8947d94d-8229-f8ee-e981-9b73462ecb94@collabora.com>
-Date:   Wed, 24 May 2023 19:16:02 +0500
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 095326336E;
+        Wed, 24 May 2023 14:16:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D9EC433D2;
+        Wed, 24 May 2023 14:16:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684937784;
+        bh=3QN+9t6JJtH6fE/ajF8xfSfq7v/w6qAiLq/kcVdecT0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=erNS1OCdqIspA56gFKpdaFf+A6sG5B5UE/U/ri7nVQuB5Decx1IO/Hign2SWpeeM9
+         MWFTEQsEN+XzO54OT3wxhkIAUL/9dfOEzN5ftsbD62aNcEqKuyNXeCdh2qwLP4JHDG
+         07NKWkA0gNEqdrVxZ7HUtSFvNdFmHjHBUUqBzG/Kxw1Okr09FZl5YvMBtSo7JApUri
+         eltVWoul+Yx0ssnaCnX4w1r2hVbS5j3AGOU3M6OeGeeDdZ7zY69ep6SIwqQ6HCzbAH
+         osmXkqmLjIHdQ+H6UE6/RKBWri3pgItDuTGtZDFbTIpJWmNajNoC/5a2BZ1j/fxHcu
+         upPrMuPa7YEog==
+From:   Christian Brauner <brauner@kernel.org>
+To:     David Sterba <dsterba@suse.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs: use UB-safe check for signed addition overflow in remap_verify_area
+Date:   Wed, 24 May 2023 16:16:17 +0200
+Message-Id: <20230524-umfahren-stift-d1c34fd1d0fa@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230523162628.17071-1-dsterba@suse.com>
+References: <20230523162628.17071-1-dsterba@suse.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        linux-mm@kvack.org, Paul Gofman <pgofman@codeweavers.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH RESEND v15 2/5] fs/proc/task_mmu: Implement IOCTL to get
- and optionally clear info about PTEs
-Content-Language: en-US
-To:     Peter Xu <peterx@redhat.com>
-References: <20230420060156.895881-1-usama.anjum@collabora.com>
- <20230420060156.895881-3-usama.anjum@collabora.com>
- <fd9ddd43-6737-88bd-4054-3d5b94534271@collabora.com> <ZEkxh6dbnAOuYuJj@x1n>
- <ff17a13f-ccc2-fc39-7731-6d794c7dd980@collabora.com>
- <0edfaf12-66f2-86d3-df1c-f5dff10fb743@collabora.com> <ZG0XUZSBI2I3/3bY@x1n>
- <a2615158-a0a6-9c2f-b04a-964dfa932aec@collabora.com> <ZG4Xb3rYK0p8BoB9@x1n>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <ZG4Xb3rYK0p8BoB9@x1n>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2584; i=brauner@kernel.org; h=from:subject:message-id; bh=3QN+9t6JJtH6fE/ajF8xfSfq7v/w6qAiLq/kcVdecT0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTkyeh6HmmsOqjfeqDPkDOlbscftU5vdi1PscrfCR8yjKsX y/7vKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmEjSJ0aGE2v01T8dfdwj6nyBXWW2+9 dna5SlDzHd43EVs6i8nWj2nOF/uG+q8gKNr+cE+KR/2y1ePuVvSFxsxKa8+4t1m29JyKcwAQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_SORBS_WEB,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -87,68 +58,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/24/23 6:55 PM, Peter Xu wrote:
-...
->>> What is the steps of the test?  Is it as simple as "writeprotect",
->>> "unprotect", then write all pages in a single thread?
->>>
->>> Is UFFDIO_WRITEPROTECT sent in one range covering all pages?
->>>
->>> Maybe you can attach the test program here too.
->>
->> I'd not attached the test earlier as I thought that you wouldn't be
->> interested in running the test. I've attached it now. The test has multiple
+On Tue, 23 May 2023 18:26:28 +0200, David Sterba wrote:
+> The following warning pops up with enabled UBSAN in tests fstests/generic/303:
 > 
-> Thanks.  No plan to run it, just to make sure I understand why such a
-> difference.
+>   [23127.529395] UBSAN: Undefined behaviour in fs/read_write.c:1725:7
+>   [23127.529400] signed integer overflow:
+>   [23127.529403] 4611686018427322368 + 9223372036854775807 cannot be represented in type 'long long int'
+>   [23127.529412] CPU: 4 PID: 26180 Comm: xfs_io Not tainted 5.2.0-rc2-1.ge195904-vanilla+ #450
+>   [23127.556999] Hardware name: empty empty/S3993, BIOS PAQEX0-3 02/24/2008
+>   [23127.557001] Call Trace:
+>   [23127.557060]  dump_stack+0x67/0x9b
+>   [23127.557070]  ubsan_epilogue+0x9/0x40
+>   [23127.573496]  handle_overflow+0xb3/0xc0
+>   [23127.573514]  do_clone_file_range+0x28f/0x2a0
+>   [23127.573547]  vfs_clone_file_range+0x35/0xb0
+>   [23127.573564]  ioctl_file_clone+0x8d/0xc0
+>   [23127.590144]  do_vfs_ioctl+0x300/0x700
+>   [23127.590160]  ksys_ioctl+0x70/0x80
+>   [23127.590203]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+>   [23127.590210]  __x64_sys_ioctl+0x16/0x20
+>   [23127.590215]  do_syscall_64+0x5c/0x1d0
+>   [23127.590224]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>   [23127.590231] RIP: 0033:0x7ff6d7250327
+>   [23127.590241] RSP: 002b:00007ffe3a38f1d8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
+>   [23127.590246] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007ff6d7250327
+>   [23127.590249] RDX: 00007ffe3a38f220 RSI: 000000004020940d RDI: 0000000000000003
+>   [23127.590252] RBP: 0000000000000000 R08: 00007ffe3a3c80a0 R09: 00007ffe3a3c8080
+>   [23127.590255] R10: 000000000fa99fa0 R11: 0000000000000206 R12: 0000000000000000
+>   [23127.590260] R13: 0000000000000000 R14: 3fffffffffff0000 R15: 00007ff6d750a20c
 > 
->> threads where one thread tries to get status of flags and reset them, while
->> other threads write to that memory. In main(), we call the pagemap_scan
->> ioctl to get status of flags and reset the memory area as well. While in N
->> threads, the memory is written.
->>
->> I usually run the test by following where memory area is of 100000 * pages:
->> ./win2_linux 8 100000 1 1 0
->>
->> I'm running tests on real hardware. The results are pretty consistent. I'm
->> also testing only on x86_64. PM_SCAN_OP_WP wins every time as compared to
->> UFFDIO_WRITEPROTECT.
-> 
-> If it's multi-threaded test especially when the ioctl runs together with
-> the writers, then I'd assume it's caused by writers frequently need to
-> flush tlb (when writes during UFFDIO_WRITEPROTECT), the flush target could
-> potentially also include the core running the main thread who is also
-> trying to reprotect because they run on the same mm.
-> 
-> This makes me think that your current test case probably is the worst case
-> of Nadav's patch 6ce64428d6 because (1) the UFFDIO_WRITEPROTECT covers a
-> super large range, and (2) there're a _lot_ of concurrent writers during
-> the ioctl, so all of them will need to trigger a tlb flush, and that tlb
-> flush will further slow down the ioctl sender.
-> 
-> While I think that's the optimal case sometimes, of having minimum tlb
-> flush on the ioctl(UFFDIO_WRITEPROTECT), so maybe it makes sense somewhere
-> else where concurrent writers are not that much. I'll need to rethink a bit
-> on all these to find out whether we can have a good way for both..
-> 
-> For now, if your workload is mostly exactly like your test case, maybe you
-> can have your pagemap version of WP-only op there, making sure tlb flush is
-> within the pgtable lock critical section (so you should be safe even
-> without Nadav's patch).  If so, I'd appreciate you can add some comment
-> somewhere about such difference of using pagemap WP-only and
-> ioctl(UFFDIO_WRITEPROTECT), though.  In short, functional-wise they should
-> be the same, but trivial detail difference on performance as TBD (maybe one
-> day we can have a good approach for all and make them aligned again, but
-> maybe that also doesn't need to block your work).
-Thank you for understanding what I've been trying to convey. We are going
-to translate Windows syscall to this new ioctl. So it is very difficult to
-find out the exact use cases as application must be using this syscall in
-several different ways. There is one thing for sure is that we want to get
-best performance possible which we are getting by adding WP-only. I'll add
-it and send v16. I think that we are almost there.
+> [...]
 
-> 
+Independent of this fix it is a bit strange that we have this
+discrepancy between struct file_clone_range using u64s and the internal
+apis using loff_t. It's not a big deal but it's a bit ugly.
 
--- 
-BR,
-Muhammad Usama Anjum
+---
+
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs: use UB-safe check for signed addition overflow in remap_verify_area
+      https://git.kernel.org/vfs/vfs/c/70a4d38461f8
