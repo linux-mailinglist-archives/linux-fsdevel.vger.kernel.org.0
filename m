@@ -2,202 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D4D970F80E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 15:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CFCC70F81C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 15:56:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235511AbjEXNwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 09:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41860 "EHLO
+        id S235600AbjEXN4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 09:56:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232786AbjEXNwx (ORCPT
+        with ESMTP id S235594AbjEXN4u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 09:52:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26E2DA7;
-        Wed, 24 May 2023 06:52:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B0DC663385;
-        Wed, 24 May 2023 13:52:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7AF8C433EF;
-        Wed, 24 May 2023 13:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684936371;
-        bh=Q6Piz/VYzHrVX6KEUi2cQWK5oS2GYT39oeGN9zrZYuM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=BS93/9GdjzUFLYqJKTBKB4Q60Y2QqSwxN1LkQ1zb6RmTO5OxcdpEI1jB3ameL1bg4
-         pxHKM+BXeo3i0vmD0gDS2DvsE9khq063ATGHxT5Z3AwpF34cgJHDKRMehLr0eyrFX0
-         6tbvjr04UIQOLrz6aqihuaaE/d3xjX8CN3Uisq9PZBc1Q5aXeBmvHvN5XgQKSGcYYL
-         l2AUoiPuroDgKx3+fjbWWvBxIn/baYdmg3dP71TqHuKnLHO6qi2SgCBW8NQuB3hi/e
-         HB6tgNlH+wZbF5XGf9Z8c0OAmmrjXs9n03sOlPuslapaTN/2q62Ox1vPCsnpZWMjeZ
-         C9TygU/Psx9EQ==
-Date:   Wed, 24 May 2023 15:52:45 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] fs: split off vfs_getdents function of getdents64
- syscall
-Message-ID: <20230524-monolog-punkband-4ed95d8ea852@brauner>
+        Wed, 24 May 2023 09:56:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94CE59E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 06:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684936564;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zqvJBcdP4jWNQEKJ2URv+kldtu3J4d9i0mGEu6ibPxU=;
+        b=JMbT6qonp/G+zvFzenSapH5UyWMPOPSSebXTSleDyWEuBAZzAb+bkOzMhmWZ/WRhczr5xg
+        Pp9nVj4/8C96NNG2brEvO+dBH1HO00rbMYfsghfZLT4KaTUwYpL3wpZsiCNkzO1kSqXymI
+        jjnf8/EZb41YOME4/d/ES2G6iZobF2o=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-fJh_siYaNSqbrlqSq6H0KQ-1; Wed, 24 May 2023 09:56:03 -0400
+X-MC-Unique: fJh_siYaNSqbrlqSq6H0KQ-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-624a29df9feso1909426d6.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 06:56:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684936563; x=1687528563;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zqvJBcdP4jWNQEKJ2URv+kldtu3J4d9i0mGEu6ibPxU=;
+        b=kGQVRvkntowsxMpQ3rvI7uG5SWPH4iR/ZwOdwpFEXFAMeXnxzNdSVU60rwKF9iBFsB
+         UDcx3D/7ZR7vRGwpK4/crdu6tro9Esa0U9GO1owQxq0RPmQDkYMPdfbIwh4NYEyyaIzr
+         R0pEieRTayGRYYjhH84y70F/OAD2rpLGQXXYPz0oImH2PMfUZu8jN+TWzIWzp0xGRK3y
+         1TemwrU5pjWvg5qQp7sA+qsk7qzBK/9jiyX5oPioiiJ/HHnXKlr4zX+ZF2DPrNKGnwxB
+         dshk5I3BC0JhR2w1hXH7j1snCf1kxnBvtcxRXgUzGZE3JGAa02rdJ5jtnf00ni5OQyLo
+         vqqw==
+X-Gm-Message-State: AC+VfDwqJ79OBA4BKqCsMjLXkrFyFrYblyuuCOJf02En78hDfhC8lt9O
+        UDOXjVExqyLaRrxWRsiUue0iLDTh3CyORsUePy6HrZlcxJbmf6jYhs5W7Y0cAlq1Vi9FUxZ/O79
+        ixsT2ZDtDmDVEq0fXBNJ2Nl8i4w==
+X-Received: by 2002:a05:6214:3016:b0:624:dcc5:819f with SMTP id ke22-20020a056214301600b00624dcc5819fmr18149956qvb.1.1684936563052;
+        Wed, 24 May 2023 06:56:03 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4pBPX7+qaDYGxlQoeY6OyplIaXhpMsb5ATbOBD7baiqgZdqLz61HHPSv2R+xgeCMZ81/JTEw==
+X-Received: by 2002:a05:6214:3016:b0:624:dcc5:819f with SMTP id ke22-20020a056214301600b00624dcc5819fmr18149935qvb.1.1684936562709;
+        Wed, 24 May 2023 06:56:02 -0700 (PDT)
+Received: from x1n (bras-base-aurron9127w-grc-62-70-24-86-62.dsl.bell.ca. [70.24.86.62])
+        by smtp.gmail.com with ESMTPSA id v16-20020a0ccd90000000b00604ee171d99sm3516206qvm.106.2023.05.24.06.56.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 May 2023 06:56:01 -0700 (PDT)
+Date:   Wed, 24 May 2023 09:55:59 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     linux-mm@kvack.org, Paul Gofman <pgofman@codeweavers.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        Nadav Amit <namit@vmware.com>
+Subject: Re: [PATCH RESEND v15 2/5] fs/proc/task_mmu: Implement IOCTL to get
+ and optionally clear info about PTEs
+Message-ID: <ZG4Xb3rYK0p8BoB9@x1n>
+References: <20230420060156.895881-1-usama.anjum@collabora.com>
+ <20230420060156.895881-3-usama.anjum@collabora.com>
+ <fd9ddd43-6737-88bd-4054-3d5b94534271@collabora.com>
+ <ZEkxh6dbnAOuYuJj@x1n>
+ <ff17a13f-ccc2-fc39-7731-6d794c7dd980@collabora.com>
+ <0edfaf12-66f2-86d3-df1c-f5dff10fb743@collabora.com>
+ <ZG0XUZSBI2I3/3bY@x1n>
+ <a2615158-a0a6-9c2f-b04a-964dfa932aec@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZG0slV2BhSZkRL_y@codewreck.org>
- <ZG0qgniV1DzIbbzi@codewreck.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a2615158-a0a6-9c2f-b04a-964dfa932aec@collabora.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 24, 2023 at 06:13:57AM +0900, Dominique Martinet wrote:
-> Christian Brauner wrote on Tue, May 23, 2023 at 05:39:08PM +0200:
-> > > @@ -362,11 +369,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
-> > >  	};
-> > >  	int error;
-> > >  
-> > > -	f = fdget_pos(fd);
-> > > -	if (!f.file)
-> > > -		return -EBADF;
-> > > -
-> > > -	error = iterate_dir(f.file, &buf.ctx);
-> > > +	error = iterate_dir(file, &buf.ctx);
+On Wed, May 24, 2023 at 04:26:33PM +0500, Muhammad Usama Anjum wrote:
+> On 5/24/23 12:43 AM, Peter Xu wrote:
+> > Hi, Muhammad,
 > > 
-> > So afaict this isn't enough.
-> > If you look into iterate_shared() you should see that it uses and
-> > updates f_pos. But that can't work for io_uring and also isn't how
-> > io_uring handles read and write. You probably need to use a local pos
-> > similar to what io_uring does in rw.c for rw->kiocb.ki_pos. But in
-> > contrast simply disallow any offsets for getdents completely. Thus not
-> > relying on f_pos anywhere at all.
-> 
-> Using a private offset from the sqe was the previous implementation
-> discussed around here[1], and Al Viro pointed out that the iterate
-> filesystem implementations don't validate the offset makes sense as it's
-> either costly or for some filesystems downright impossible, so I went
-> into a don't let users modify it approach.
-> 
-> [1] https://lore.kernel.org/all/20211221164004.119663-1-shr@fb.com/T/#m517583f23502f32b040c819d930359313b3db00c
-> 
-> 
-> I agree it's not how io_uring usually works -- it dislikes global
-> states -- but it works perfectly well as long as you don't have multiple
-> users on the same file, which the application can take care of.
-> 
-> Not having any offsets would work for small directories but make reading
-> large directories impossible so some sort of continuation is required,
-> which means we need to keep the offset around; I also suggested keeping
-> the offset in argument as the previous version but only allowing the
-> last known offset (... so ultimately still updating f_pos anyway as we
-> don't have anywhere else to store it) or 0, but if we're going to do
-> that it looks much simpler to me to expose the same API as getdents.
-> 
-> -- 
-> Dominique Martinet | Asmadeus
-
-On Wed, May 24, 2023 at 06:05:06AM +0900, Dominique Martinet wrote:
-> Christian Brauner wrote on Tue, May 23, 2023 at 04:30:14PM +0200:
-> > > index b15ec81c1ed2..f6222b0148ef 100644
-> > > --- a/io_uring/fs.c
-> > > +++ b/io_uring/fs.c
-> > > @@ -322,6 +322,7 @@ int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-> > >  {
-> > >  	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
-> > >  	unsigned long getdents_flags = 0;
-> > > +	u32 cqe_flags = 0;
-> > >  	int ret;
-> > >  
-> > >  	if (issue_flags & IO_URING_F_NONBLOCK) {
-> > > @@ -338,13 +339,16 @@ int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-> > >  			goto out;
-> > >  	}
-> > >  
-> > > -	ret = vfs_getdents(req->file, gd->dirent, gd->count, getdents_flags);
-> > > +	ret = vfs_getdents(req->file, gd->dirent, gd->count, &getdents_flags);
+> > On Mon, May 22, 2023 at 04:26:07PM +0500, Muhammad Usama Anjum wrote:
+> >> On 5/22/23 3:24 PM, Muhammad Usama Anjum wrote:
+> >>> On 4/26/23 7:13 PM, Peter Xu wrote:
+> >>>> Hi, Muhammad,
+> >>>>
+> >>>> On Wed, Apr 26, 2023 at 12:06:23PM +0500, Muhammad Usama Anjum wrote:
+> >>>>> On 4/20/23 11:01 AM, Muhammad Usama Anjum wrote:
+> >>>>>> +/* Supported flags */
+> >>>>>> +#define PM_SCAN_OP_GET	(1 << 0)
+> >>>>>> +#define PM_SCAN_OP_WP	(1 << 1)
+> >>>>> We have only these flag options available in PAGEMAP_SCAN IOCTL.
+> >>>>> PM_SCAN_OP_GET must always be specified for this IOCTL. PM_SCAN_OP_WP can
+> >>>>> be specified as need. But PM_SCAN_OP_WP cannot be specified without
+> >>>>> PM_SCAN_OP_GET. (This was removed after you had asked me to not duplicate
+> >>>>> functionality which can be achieved by UFFDIO_WRITEPROTECT.)
+> >>>>>
+> >>>>> 1) PM_SCAN_OP_GET | PM_SCAN_OP_WP
+> >>>>> vs
+> >>>>> 2) UFFDIO_WRITEPROTECT
+> >>>>>
+> >>>>> After removing the usage of uffd_wp_range() from PAGEMAP_SCAN IOCTL, we are
+> >>>>> getting really good performance which is comparable just like we are
+> >>>>> depending on SOFT_DIRTY flags in the PTE. But when we want to perform wp,
+> >>>>> PM_SCAN_OP_GET | PM_SCAN_OP_WP is more desirable than UFFDIO_WRITEPROTECT
+> >>>>> performance and behavior wise.
+> >>>>>
+> >>>>> I've got the results from someone else that UFFDIO_WRITEPROTECT block
+> >>>>> pagefaults somehow which PAGEMAP_IOCTL doesn't. I still need to verify this
+> >>>>> as I don't have tests comparing them one-to-one.
+> >>>>>
+> >>>>> What are your thoughts about it? Have you thought about making
+> >>>>> UFFDIO_WRITEPROTECT perform better?
+> >>>>>
+> >>>>> I'm sorry to mention the word "performance" here. Actually we want better
+> >>>>> performance to emulate Windows syscall. That is why we are adding this
+> >>>>> functionality. So either we need to see what can be improved in
+> >>>>> UFFDIO_WRITEPROTECT or can I please add only PM_SCAN_OP_WP back in
+> >>>>> pagemap_ioctl?
+> >>>>
+> >>>> I'm fine if you want to add it back if it works for you.  Though before
+> >>>> that, could you remind me why there can be a difference on performance?
+> >>> I've looked at the code again and I think I've found something. Lets look
+> >>> at exact performance numbers:
+> >>>
+> >>> I've run 2 different tests. In first test UFFDIO_WRITEPROTECT is being used
+> >>> for engaging WP. In second test PM_SCAN_OP_WP is being used. I've measured
+> >>> the average write time to the same memory which is being WP-ed and total
+> >>> time of execution of these APIs:
 > > 
-> > I don't understand how synchronization and updating of f_pos works here.
-> > For example, what happens if a concurrent seek happens on the fd while
-> > io_uring is using vfs_getdents which calls into iterate_dir() and
-> > updates f_pos?
+> > What is the steps of the test?  Is it as simple as "writeprotect",
+> > "unprotect", then write all pages in a single thread?
+> > 
+> > Is UFFDIO_WRITEPROTECT sent in one range covering all pages?
+> > 
+> > Maybe you can attach the test program here too.
 > 
-> I don't see how different that is from a user spawning two threads and
-> calling getdents64 + lseek or two getdents64 in parallel?
-> (or any two other users of iterate_dir)
+> I'd not attached the test earlier as I thought that you wouldn't be
+> interested in running the test. I've attached it now. The test has multiple
+
+Thanks.  No plan to run it, just to make sure I understand why such a
+difference.
+
+> threads where one thread tries to get status of flags and reset them, while
+> other threads write to that memory. In main(), we call the pagemap_scan
+> ioctl to get status of flags and reset the memory area as well. While in N
+> threads, the memory is written.
 > 
-> As far as I understand you'll either get the old or new pos as
-> obtained/updated by iterate_dir()?
+> I usually run the test by following where memory area is of 100000 * pages:
+> ./win2_linux 8 100000 1 1 0
 > 
-> That iterate_dir probably ought to be using READ_ONCE/WRITE_ONCE or some
-> atomic read/update wrappers as the shared case only has a read lock
-> around these, but that's not a new problem; and for all I care
-> about I'm happy to let users shoot themselves in the foot.
-> (although I guess that with filesystems not validating the offset as
-> was pointed out in a previous version comment having non-atomic update
-> might be a security issue at some point on architectures that don't
-> guarantee atomic 64bit updates, but if someone manages to abuse it
-> it's already possible to abuse it with the good old syscalls, so I'd
-> rather leave that up to someone who understand how atomicity in the
-> kernel works better than me...)
+> I'm running tests on real hardware. The results are pretty consistent. I'm
+> also testing only on x86_64. PM_SCAN_OP_WP wins every time as compared to
+> UFFDIO_WRITEPROTECT.
 
-There's multiple issues here.
+If it's multi-threaded test especially when the ioctl runs together with
+the writers, then I'd assume it's caused by writers frequently need to
+flush tlb (when writes during UFFDIO_WRITEPROTECT), the flush target could
+potentially also include the core running the main thread who is also
+trying to reprotect because they run on the same mm.
 
-The main objection in [1] was to allow specifying an arbitrary offset
-from userspace. What [3] did was to implement a pread() variant for
-directories, i.e., pgetdents(). That can't work in principle/is
-prohibitively complex. Which is what your series avoids by not allowing
-any offsets to be specified.
+This makes me think that your current test case probably is the worst case
+of Nadav's patch 6ce64428d6 because (1) the UFFDIO_WRITEPROTECT covers a
+super large range, and (2) there're a _lot_ of concurrent writers during
+the ioctl, so all of them will need to trigger a tlb flush, and that tlb
+flush will further slow down the ioctl sender.
 
-However, there's still a problem here. Updates to f_pos happen under an
-approriate lock to guarantee consistency of the position between calls
-that move the cursor position. In the normal read-write path io_uring
-doesn't concern itself with f_pos as it keeps local state in
-kiocb->ki_pos.
+While I think that's the optimal case sometimes, of having minimum tlb
+flush on the ioctl(UFFDIO_WRITEPROTECT), so maybe it makes sense somewhere
+else where concurrent writers are not that much. I'll need to rethink a bit
+on all these to find out whether we can have a good way for both..
 
-But then it still does end up running into f_pos consistency problems
-for read-write because it does allow operating on the current f_pos if
-the offset if struct io_rw is set to -1.
+For now, if your workload is mostly exactly like your test case, maybe you
+can have your pagemap version of WP-only op there, making sure tlb flush is
+within the pgtable lock critical section (so you should be safe even
+without Nadav's patch).  If so, I'd appreciate you can add some comment
+somewhere about such difference of using pagemap WP-only and
+ioctl(UFFDIO_WRITEPROTECT), though.  In short, functional-wise they should
+be the same, but trivial detail difference on performance as TBD (maybe one
+day we can have a good approach for all and make them aligned again, but
+maybe that also doesn't need to block your work).
 
-In that case it does retrieve and update f_pos which should take
-f_pos_lock and a patchset for this was posted but it didn't go anywhere.
-It should probably hold that lock. See Jann's comments in the other
-thread how that currently can lead to issues.
+-- 
+Peter Xu
 
-For getdents() not protecting f_pos is equally bad or worse. The patch
-doesn't hold f_pos_lock and just updates f_pos prior _and_ post
-iterate_dir() arguing that this race is fine. But again, f_version and
-f_pos are consistent after each system call invocation.
-
-But without that you can have a concurrent seek running and can end up
-with an inconsistent f_pos position within the same system call. IOW,
-you're breaking f_pos being in a well-known state. And you're not doing
-that just for io_uring you're doing it for the regular system call
-interface as well as both can be used on the same fd simultaneously.
-So that's a no go imho.
-
-> I don't see how different that is from a user spawning two threads and
-> calling getdents64 + lseek or two getdents64 in parallel?
-> (or any two other users of iterate_dir)
-
-The difference is that in both cases f_pos_lock for both getdents and
-lseek is held. So f_pos is in a good known state. You're not taking any
-locks so now we're risking inconsistency within the same system call if
-getdents and lseek run concurrently. Jens also mentioned that you could
-even have this problem from within io_uring itself.
-
-So tl;dr, there's no good reason to declare this an acceptable race
-afaict. So either this is fixed properly or we're not doing it as far as
-I'm concerned.
-
-[1] https://lore.kernel.org/all/20211221164004.119663-1-shr@fb.com/T/#m517583f23502f32b040c819d930359313b3db00c
-[2] https://lore.kernel.org/io-uring/20211221164004.119663-4-shr@fb.com
-[3] https://lore.kernel.org/io-uring/20211221164004.119663-1-shr@fb.com
