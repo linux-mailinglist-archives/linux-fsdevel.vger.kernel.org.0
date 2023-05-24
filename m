@@ -2,219 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CFCC70F81C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 15:56:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25D6B70F83D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 16:06:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235600AbjEXN4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 09:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43734 "EHLO
+        id S235753AbjEXOGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 10:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235594AbjEXN4u (ORCPT
+        with ESMTP id S232969AbjEXOGv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 09:56:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94CE59E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 06:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684936564;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Wed, 24 May 2023 10:06:51 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2201A12E;
+        Wed, 24 May 2023 07:06:50 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C8C8A21F4E;
+        Wed, 24 May 2023 14:06:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1684937208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zqvJBcdP4jWNQEKJ2URv+kldtu3J4d9i0mGEu6ibPxU=;
-        b=JMbT6qonp/G+zvFzenSapH5UyWMPOPSSebXTSleDyWEuBAZzAb+bkOzMhmWZ/WRhczr5xg
-        Pp9nVj4/8C96NNG2brEvO+dBH1HO00rbMYfsghfZLT4KaTUwYpL3wpZsiCNkzO1kSqXymI
-        jjnf8/EZb41YOME4/d/ES2G6iZobF2o=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-fJh_siYaNSqbrlqSq6H0KQ-1; Wed, 24 May 2023 09:56:03 -0400
-X-MC-Unique: fJh_siYaNSqbrlqSq6H0KQ-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-624a29df9feso1909426d6.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 06:56:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684936563; x=1687528563;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqvJBcdP4jWNQEKJ2URv+kldtu3J4d9i0mGEu6ibPxU=;
-        b=kGQVRvkntowsxMpQ3rvI7uG5SWPH4iR/ZwOdwpFEXFAMeXnxzNdSVU60rwKF9iBFsB
-         UDcx3D/7ZR7vRGwpK4/crdu6tro9Esa0U9GO1owQxq0RPmQDkYMPdfbIwh4NYEyyaIzr
-         R0pEieRTayGRYYjhH84y70F/OAD2rpLGQXXYPz0oImH2PMfUZu8jN+TWzIWzp0xGRK3y
-         1TemwrU5pjWvg5qQp7sA+qsk7qzBK/9jiyX5oPioiiJ/HHnXKlr4zX+ZF2DPrNKGnwxB
-         dshk5I3BC0JhR2w1hXH7j1snCf1kxnBvtcxRXgUzGZE3JGAa02rdJ5jtnf00ni5OQyLo
-         vqqw==
-X-Gm-Message-State: AC+VfDwqJ79OBA4BKqCsMjLXkrFyFrYblyuuCOJf02En78hDfhC8lt9O
-        UDOXjVExqyLaRrxWRsiUue0iLDTh3CyORsUePy6HrZlcxJbmf6jYhs5W7Y0cAlq1Vi9FUxZ/O79
-        ixsT2ZDtDmDVEq0fXBNJ2Nl8i4w==
-X-Received: by 2002:a05:6214:3016:b0:624:dcc5:819f with SMTP id ke22-20020a056214301600b00624dcc5819fmr18149956qvb.1.1684936563052;
-        Wed, 24 May 2023 06:56:03 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4pBPX7+qaDYGxlQoeY6OyplIaXhpMsb5ATbOBD7baiqgZdqLz61HHPSv2R+xgeCMZ81/JTEw==
-X-Received: by 2002:a05:6214:3016:b0:624:dcc5:819f with SMTP id ke22-20020a056214301600b00624dcc5819fmr18149935qvb.1.1684936562709;
-        Wed, 24 May 2023 06:56:02 -0700 (PDT)
-Received: from x1n (bras-base-aurron9127w-grc-62-70-24-86-62.dsl.bell.ca. [70.24.86.62])
-        by smtp.gmail.com with ESMTPSA id v16-20020a0ccd90000000b00604ee171d99sm3516206qvm.106.2023.05.24.06.56.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 May 2023 06:56:01 -0700 (PDT)
-Date:   Wed, 24 May 2023 09:55:59 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     linux-mm@kvack.org, Paul Gofman <pgofman@codeweavers.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH RESEND v15 2/5] fs/proc/task_mmu: Implement IOCTL to get
- and optionally clear info about PTEs
-Message-ID: <ZG4Xb3rYK0p8BoB9@x1n>
-References: <20230420060156.895881-1-usama.anjum@collabora.com>
- <20230420060156.895881-3-usama.anjum@collabora.com>
- <fd9ddd43-6737-88bd-4054-3d5b94534271@collabora.com>
- <ZEkxh6dbnAOuYuJj@x1n>
- <ff17a13f-ccc2-fc39-7731-6d794c7dd980@collabora.com>
- <0edfaf12-66f2-86d3-df1c-f5dff10fb743@collabora.com>
- <ZG0XUZSBI2I3/3bY@x1n>
- <a2615158-a0a6-9c2f-b04a-964dfa932aec@collabora.com>
+        bh=azT27sC/5HTwO4nU9zsSaao85zwwW02tSeq2dW23Krg=;
+        b=136QS7Xfzz9r+qA9sTqqoNuM+ieaF3gAsVs/IDBTYV85Ew3uOaZORt3nCSiy2XHisRlLOs
+        +f4vSs9WxdHk2VAvvxfKkJyLGdY1KNRZNeMPaT9FUvF6w5G5dnyoc0uUpzm2mKStQU0K0J
+        r13YosXfojPGfiReeQmGV7blcm1n5yA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1684937208;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=azT27sC/5HTwO4nU9zsSaao85zwwW02tSeq2dW23Krg=;
+        b=xsuPNPHOf7SJ+YkB9ofJh6U4v4iBITW4Kf4YujiVY9tReOJkmpM8RtYbgJ+ZJ+0Ny/Otau
+        c8LFKH0wTFyBKIBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BA0AA13425;
+        Wed, 24 May 2023 14:06:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id i6RiLfgZbmQPHQAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 24 May 2023 14:06:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 50CBFA075C; Wed, 24 May 2023 16:06:48 +0200 (CEST)
+Date:   Wed, 24 May 2023 16:06:48 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Chuck Lever <cel@kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Subject: Re: [bug report] fanotify: support reporting non-decodeable file
+ handles
+Message-ID: <20230524140648.u6pexxspze7pz63z@quack3>
+References: <ca02955f-1877-4fde-b453-3c1d22794740@kili.mountain>
+ <CAOQ4uxi6ST19WGkZiM=ewoK_9o-7DHvZcAc3v2c5GrqSFf0WDQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a2615158-a0a6-9c2f-b04a-964dfa932aec@collabora.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAOQ4uxi6ST19WGkZiM=ewoK_9o-7DHvZcAc3v2c5GrqSFf0WDQ@mail.gmail.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 24, 2023 at 04:26:33PM +0500, Muhammad Usama Anjum wrote:
-> On 5/24/23 12:43 AM, Peter Xu wrote:
-> > Hi, Muhammad,
-> > 
-> > On Mon, May 22, 2023 at 04:26:07PM +0500, Muhammad Usama Anjum wrote:
-> >> On 5/22/23 3:24 PM, Muhammad Usama Anjum wrote:
-> >>> On 4/26/23 7:13 PM, Peter Xu wrote:
-> >>>> Hi, Muhammad,
-> >>>>
-> >>>> On Wed, Apr 26, 2023 at 12:06:23PM +0500, Muhammad Usama Anjum wrote:
-> >>>>> On 4/20/23 11:01 AM, Muhammad Usama Anjum wrote:
-> >>>>>> +/* Supported flags */
-> >>>>>> +#define PM_SCAN_OP_GET	(1 << 0)
-> >>>>>> +#define PM_SCAN_OP_WP	(1 << 1)
-> >>>>> We have only these flag options available in PAGEMAP_SCAN IOCTL.
-> >>>>> PM_SCAN_OP_GET must always be specified for this IOCTL. PM_SCAN_OP_WP can
-> >>>>> be specified as need. But PM_SCAN_OP_WP cannot be specified without
-> >>>>> PM_SCAN_OP_GET. (This was removed after you had asked me to not duplicate
-> >>>>> functionality which can be achieved by UFFDIO_WRITEPROTECT.)
-> >>>>>
-> >>>>> 1) PM_SCAN_OP_GET | PM_SCAN_OP_WP
-> >>>>> vs
-> >>>>> 2) UFFDIO_WRITEPROTECT
-> >>>>>
-> >>>>> After removing the usage of uffd_wp_range() from PAGEMAP_SCAN IOCTL, we are
-> >>>>> getting really good performance which is comparable just like we are
-> >>>>> depending on SOFT_DIRTY flags in the PTE. But when we want to perform wp,
-> >>>>> PM_SCAN_OP_GET | PM_SCAN_OP_WP is more desirable than UFFDIO_WRITEPROTECT
-> >>>>> performance and behavior wise.
-> >>>>>
-> >>>>> I've got the results from someone else that UFFDIO_WRITEPROTECT block
-> >>>>> pagefaults somehow which PAGEMAP_IOCTL doesn't. I still need to verify this
-> >>>>> as I don't have tests comparing them one-to-one.
-> >>>>>
-> >>>>> What are your thoughts about it? Have you thought about making
-> >>>>> UFFDIO_WRITEPROTECT perform better?
-> >>>>>
-> >>>>> I'm sorry to mention the word "performance" here. Actually we want better
-> >>>>> performance to emulate Windows syscall. That is why we are adding this
-> >>>>> functionality. So either we need to see what can be improved in
-> >>>>> UFFDIO_WRITEPROTECT or can I please add only PM_SCAN_OP_WP back in
-> >>>>> pagemap_ioctl?
-> >>>>
-> >>>> I'm fine if you want to add it back if it works for you.  Though before
-> >>>> that, could you remind me why there can be a difference on performance?
-> >>> I've looked at the code again and I think I've found something. Lets look
-> >>> at exact performance numbers:
-> >>>
-> >>> I've run 2 different tests. In first test UFFDIO_WRITEPROTECT is being used
-> >>> for engaging WP. In second test PM_SCAN_OP_WP is being used. I've measured
-> >>> the average write time to the same memory which is being WP-ed and total
-> >>> time of execution of these APIs:
-> > 
-> > What is the steps of the test?  Is it as simple as "writeprotect",
-> > "unprotect", then write all pages in a single thread?
-> > 
-> > Is UFFDIO_WRITEPROTECT sent in one range covering all pages?
-> > 
-> > Maybe you can attach the test program here too.
+On Wed 24-05-23 11:38:17, Amir Goldstein wrote:
+> On Wed, May 24, 2023 at 9:34 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > Hello Amir Goldstein,
+> >
+> > The patch 7ba39960c7f3: "fanotify: support reporting non-decodeable
+> > file handles" from May 2, 2023, leads to the following Smatch static
+> > checker warning:
+> >
+> >         fs/notify/fanotify/fanotify.c:451 fanotify_encode_fh()
+> >         warn: assigning signed to unsigned: 'fh->type = type' 's32min-(-1),1-254,256-s32max'
+> >
+> > (unpublished garbage Smatch check).
+> >
+> > fs/notify/fanotify/fanotify.c
+> >     403 static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
+> >     404                               unsigned int fh_len, unsigned int *hash,
+> >     405                               gfp_t gfp)
+> >     406 {
+> >     407         int dwords, type = 0;
+> >     408         char *ext_buf = NULL;
+> >     409         void *buf = fh->buf;
+> >     410         int err;
+> >     411
+> >     412         fh->type = FILEID_ROOT;
+> >     413         fh->len = 0;
+> >     414         fh->flags = 0;
+> >     415
+> >     416         /*
+> >     417          * Invalid FHs are used by FAN_FS_ERROR for errors not
+> >     418          * linked to any inode. The f_handle won't be reported
+> >     419          * back to userspace.
+> >     420          */
+> >     421         if (!inode)
+> >     422                 goto out;
+> >     423
+> >     424         /*
+> >     425          * !gpf means preallocated variable size fh, but fh_len could
+> >     426          * be zero in that case if encoding fh len failed.
+> >     427          */
+> >     428         err = -ENOENT;
+> >     429         if (fh_len < 4 || WARN_ON_ONCE(fh_len % 4) || fh_len > MAX_HANDLE_SZ)
+> >     430                 goto out_err;
+> >     431
+> >     432         /* No external buffer in a variable size allocated fh */
+> >     433         if (gfp && fh_len > FANOTIFY_INLINE_FH_LEN) {
+> >     434                 /* Treat failure to allocate fh as failure to encode fh */
+> >     435                 err = -ENOMEM;
+> >     436                 ext_buf = kmalloc(fh_len, gfp);
+> >     437                 if (!ext_buf)
+> >     438                         goto out_err;
+> >     439
+> >     440                 *fanotify_fh_ext_buf_ptr(fh) = ext_buf;
+> >     441                 buf = ext_buf;
+> >     442                 fh->flags |= FANOTIFY_FH_FLAG_EXT_BUF;
+> >     443         }
+> >     444
+> >     445         dwords = fh_len >> 2;
+> >     446         type = exportfs_encode_fid(inode, buf, &dwords);
+> >     447         err = -EINVAL;
+> >     448         if (!type || type == FILEID_INVALID || fh_len != dwords << 2)
+> >
+> > exportfs_encode_fid() can return negative errors.  Do we need to check
+> > if (!type etc?
 > 
-> I'd not attached the test earlier as I thought that you wouldn't be
-> interested in running the test. I've attached it now. The test has multiple
+> Well, it is true that exportfs_encode_fid() can return a negative value
+> in principle, as did exportfs_encode_fh() before it, if there was a
+> filesystem implementation of ->encode_fh() that returned a negative
+> value.  AFAIK, there currently is no such implementation in-tree,
+> otherwise current upstream code would have been buggy.
 
-Thanks.  No plan to run it, just to make sure I understand why such a
-difference.
+Yes, I've checked and all ->encode_fh() implementations return
+FILEID_INVALID in case of problems (which are basically always only
+problems with not enough space in the handle buffer).
 
-> threads where one thread tries to get status of flags and reset them, while
-> other threads write to that memory. In main(), we call the pagemap_scan
-> ioctl to get status of flags and reset the memory area as well. While in N
-> threads, the memory is written.
+> Patch 2/4 adds a new possible -EOPNOTSUPP return value from
+> exportfs_encode_inode_fh() and even goes further to add a kerndoc:
+>  * Returns an enum fid_type or a negative errno.
+> But this new return value is not possible from exportfs_encode_fid()
+> that is used here and in {fa,i}notify_fdinfo().
 > 
-> I usually run the test by following where memory area is of 100000 * pages:
-> ./win2_linux 8 100000 1 1 0
+> All the rest of the callers (nfsd, overlayfs, name_to_hanle_at) already
+> check this same EOPNOTSUPP condition before calling, but there is
+> no guarantee that this will not change in the future.
 > 
-> I'm running tests on real hardware. The results are pretty consistent. I'm
-> also testing only on x86_64. PM_SCAN_OP_WP wins every time as compared to
-> UFFDIO_WRITEPROTECT.
+> All the callers mentioned above check the unexpected return value differently:
+> nfsd: only type == FILEID_INVALID
+> fdinfo: type < 0 || type == FILEID_INVALID
+> fanotify: !type || type == FILEID_INVALID
+> overlayfs: type < 0 || type == FILEID_INVALID
+> name_to_hanle_at: (retval == FILEID_INVALID) || (retval == -ENOSPC))
+>                 /* As per old exportfs_encode_fh documentation
+>                  * we could return ENOSPC to indicate overflow
+>                  * But file system returned 255 always. So handle
+>                  * both the values
+>                  */
+> 
+> So he have a bit of a mess.
 
-If it's multi-threaded test especially when the ioctl runs together with
-the writers, then I'd assume it's caused by writers frequently need to
-flush tlb (when writes during UFFDIO_WRITEPROTECT), the flush target could
-potentially also include the core running the main thread who is also
-trying to reprotect because they run on the same mm.
+Yeah, it's a bit messy. When checking ->encode_fh() implementations I've
+also noticed quite some callers use explicit numbers and not FILEID_*
+enums. This is not directly related to the problem at hand but I'm voicing
+it in case someone looks for an easy cleanup project :)
 
-This makes me think that your current test case probably is the worst case
-of Nadav's patch 6ce64428d6 because (1) the UFFDIO_WRITEPROTECT covers a
-super large range, and (2) there're a _lot_ of concurrent writers during
-the ioctl, so all of them will need to trigger a tlb flush, and that tlb
-flush will further slow down the ioctl sender.
+> How should we clean it up?
+> 
+> Option #1: Change encode_fh to return unsigned and replace that new
+>                   EOPNOTSUPP with FILEID_INVALID
+> Option #2: change all callers to check negative return value
+> 
+> I am in favor of option #2.
+> Shall I send a patch?
 
-While I think that's the optimal case sometimes, of having minimum tlb
-flush on the ioctl(UFFDIO_WRITEPROTECT), so maybe it makes sense somewhere
-else where concurrent writers are not that much. I'll need to rethink a bit
-on all these to find out whether we can have a good way for both..
+When we have two different error conditions (out of buffer space, encoding
+handles unsupported), I agree it makes sense to be able to differentiate
+them in exportfs_encode_fh() return value. However then it would make sense
+to properly return -ENOSPC instead of FILEID_INVALID (as it is strange to
+have two different ways of indicating error) which means touching like 16
+different .encode_fh implementations. Not too bad but a bit tedious...
 
-For now, if your workload is mostly exactly like your test case, maybe you
-can have your pagemap version of WP-only op there, making sure tlb flush is
-within the pgtable lock critical section (so you should be safe even
-without Nadav's patch).  If so, I'd appreciate you can add some comment
-somewhere about such difference of using pagemap WP-only and
-ioctl(UFFDIO_WRITEPROTECT), though.  In short, functional-wise they should
-be the same, but trivial detail difference on performance as TBD (maybe one
-day we can have a good approach for all and make them aligned again, but
-maybe that also doesn't need to block your work).
-
+								Honza
 -- 
-Peter Xu
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
