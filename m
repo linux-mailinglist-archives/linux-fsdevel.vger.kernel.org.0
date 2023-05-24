@@ -2,110 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C6B70F86D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 16:16:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7274970F8EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 16:43:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235485AbjEXOQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 10:16:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52146 "EHLO
+        id S235644AbjEXOne (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 10:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbjEXOQ0 (ORCPT
+        with ESMTP id S233605AbjEXOnb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 10:16:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BA6E11D;
-        Wed, 24 May 2023 07:16:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 095326336E;
-        Wed, 24 May 2023 14:16:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D9EC433D2;
-        Wed, 24 May 2023 14:16:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684937784;
-        bh=3QN+9t6JJtH6fE/ajF8xfSfq7v/w6qAiLq/kcVdecT0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=erNS1OCdqIspA56gFKpdaFf+A6sG5B5UE/U/ri7nVQuB5Decx1IO/Hign2SWpeeM9
-         MWFTEQsEN+XzO54OT3wxhkIAUL/9dfOEzN5ftsbD62aNcEqKuyNXeCdh2qwLP4JHDG
-         07NKWkA0gNEqdrVxZ7HUtSFvNdFmHjHBUUqBzG/Kxw1Okr09FZl5YvMBtSo7JApUri
-         eltVWoul+Yx0ssnaCnX4w1r2hVbS5j3AGOU3M6OeGeeDdZ7zY69ep6SIwqQ6HCzbAH
-         osmXkqmLjIHdQ+H6UE6/RKBWri3pgItDuTGtZDFbTIpJWmNajNoC/5a2BZ1j/fxHcu
-         upPrMuPa7YEog==
-From:   Christian Brauner <brauner@kernel.org>
-To:     David Sterba <dsterba@suse.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs: use UB-safe check for signed addition overflow in remap_verify_area
-Date:   Wed, 24 May 2023 16:16:17 +0200
-Message-Id: <20230524-umfahren-stift-d1c34fd1d0fa@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230523162628.17071-1-dsterba@suse.com>
-References: <20230523162628.17071-1-dsterba@suse.com>
+        Wed, 24 May 2023 10:43:31 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B1A5119
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 07:43:30 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id ca18e2360f4ac-760dff4b701so7943239f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 07:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1684939409; x=1687531409;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IPXLDCSKwXBraRh8qU8X4kYe3FTw3OcmD0b0rwLV1YI=;
+        b=m48EBfWC4KuAg/PFZ/0kUI+QHNwJaQfIB+xzHweX9tEcZiaLYmKkAFrvooTQeD72mR
+         5nuIqn52bQsXOH+sDbEf2iilTBjDmzf5Vaug6zt+7NwPNUHqnF2YhFjnhAbi5jkuUDzR
+         7m+SmGTwfmjIdUhZdJqzT/9rqQlD2XBG3iLW1ma53pIxqASTEaEmzR8GeDn3e+oY0/Tb
+         EQY4e3uJbmu7K6DpzOYT+dvlXrh2ciUolwngPkZGHTcBmPtucatUj0435Ih4Cd11IoqE
+         AvcBuVbI3PnrGjxUZeHGtGMnQeL6zlgUeSkdNoMPcGy8RAUjK35BSKtBzNQwVhfkUwn5
+         Pydg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684939409; x=1687531409;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IPXLDCSKwXBraRh8qU8X4kYe3FTw3OcmD0b0rwLV1YI=;
+        b=XfwtJ5AMOSjsUZSsFMxcujqaCpW0q3hs1120czO81pw/bhTpuXnpsccIC0AGXDPCNr
+         n19F7MJ+mApHIdNYIz9TMVQFIHkfCLuo+DkCT4Ekg45loKtinRMu1zXWGqVLsBW+iZcc
+         rTRDvS1bm/xYlFlvuuEvu6qPX7Mz7yHNBNrz4pc9PeDZt0Fzlv/XsBFlgVY3t8vUwYs0
+         w/8D3/55KWp+n849lz16eIWncDLM6LesMfzKqA/ToCQ8Es6BWIlrTUeCEX+yl/ySvGwV
+         cnpNDptWeki5RnIP3uoQ5dIHFHX5xz3OxT6tmnXcQ2UJKYaGePOmzufCcj+5Y5Bh59v6
+         ZpaQ==
+X-Gm-Message-State: AC+VfDwLzbMAMvbVAlI0ZTycjsXeQN+U3lI93XODKwnKY29C5iRjoXio
+        KzpYDmvNVDK/x/0d2wXyUdC0ShtHSIfqziEwir8=
+X-Google-Smtp-Source: ACHHUZ4ttTueGCVRrRMUAUl7Mb54HKL0lLyB7DUkcn/PC4TPkkAQ6M3t/qFZ/WO5l9qruO96ONfCvg==
+X-Received: by 2002:a05:6e02:1608:b0:338:1467:208f with SMTP id t8-20020a056e02160800b003381467208fmr9620690ilu.2.1684939409547;
+        Wed, 24 May 2023 07:43:29 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id w34-20020a05663837a200b004168295d33esm3311241jal.47.2023.05.24.07.43.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 May 2023 07:43:28 -0700 (PDT)
+Message-ID: <90c73358-7c16-8918-50b3-b1e9101f7b21@kernel.dk>
+Date:   Wed, 24 May 2023 08:43:27 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2584; i=brauner@kernel.org; h=from:subject:message-id; bh=3QN+9t6JJtH6fE/ajF8xfSfq7v/w6qAiLq/kcVdecT0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTkyeh6HmmsOqjfeqDPkDOlbscftU5vdi1PscrfCR8yjKsX y/7vKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmEjSJ0aGE2v01T8dfdwj6nyBXWW2+9 dna5SlDzHd43EVs6i8nWj2nOF/uG+q8gKNr+cE+KR/2y1ePuVvSFxsxKa8+4t1m29JyKcwAQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v21 0/6] block: Use page pinning
+Content-Language: en-US
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Jason Gunthorpe <jgg@ziepe.ca>
+References: <20230522205744.2825689-1-dhowells@redhat.com>
+ <168487791137.449781.3170440352656135902.b4-ty@kernel.dk>
+ <ZG2mKMus29qquHia@infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZG2mKMus29qquHia@infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 23 May 2023 18:26:28 +0200, David Sterba wrote:
-> The following warning pops up with enabled UBSAN in tests fstests/generic/303:
+On 5/23/23 11:52 PM, Christoph Hellwig wrote:
+> On Tue, May 23, 2023 at 03:38:31PM -0600, Jens Axboe wrote:
+>> Applied, thanks!
 > 
->   [23127.529395] UBSAN: Undefined behaviour in fs/read_write.c:1725:7
->   [23127.529400] signed integer overflow:
->   [23127.529403] 4611686018427322368 + 9223372036854775807 cannot be represented in type 'long long int'
->   [23127.529412] CPU: 4 PID: 26180 Comm: xfs_io Not tainted 5.2.0-rc2-1.ge195904-vanilla+ #450
->   [23127.556999] Hardware name: empty empty/S3993, BIOS PAQEX0-3 02/24/2008
->   [23127.557001] Call Trace:
->   [23127.557060]  dump_stack+0x67/0x9b
->   [23127.557070]  ubsan_epilogue+0x9/0x40
->   [23127.573496]  handle_overflow+0xb3/0xc0
->   [23127.573514]  do_clone_file_range+0x28f/0x2a0
->   [23127.573547]  vfs_clone_file_range+0x35/0xb0
->   [23127.573564]  ioctl_file_clone+0x8d/0xc0
->   [23127.590144]  do_vfs_ioctl+0x300/0x700
->   [23127.590160]  ksys_ioctl+0x70/0x80
->   [23127.590203]  ? trace_hardirqs_off_thunk+0x1a/0x1c
->   [23127.590210]  __x64_sys_ioctl+0x16/0x20
->   [23127.590215]  do_syscall_64+0x5c/0x1d0
->   [23127.590224]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->   [23127.590231] RIP: 0033:0x7ff6d7250327
->   [23127.590241] RSP: 002b:00007ffe3a38f1d8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
->   [23127.590246] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007ff6d7250327
->   [23127.590249] RDX: 00007ffe3a38f220 RSI: 000000004020940d RDI: 0000000000000003
->   [23127.590252] RBP: 0000000000000000 R08: 00007ffe3a3c80a0 R09: 00007ffe3a3c8080
->   [23127.590255] R10: 000000000fa99fa0 R11: 0000000000000206 R12: 0000000000000000
->   [23127.590260] R13: 0000000000000000 R14: 3fffffffffff0000 R15: 00007ff6d750a20c
-> 
-> [...]
+> This ended up on the for-6.5/block branch, but I think it needs to be
+> on the splice one, as that is pre-requisite unless I'm missing
+> something.
 
-Independent of this fix it is a bit strange that we have this
-discrepancy between struct file_clone_range using u64s and the internal
-apis using loff_t. It's not a big deal but it's a bit ugly.
+Oops yes, that's my bad. I've reshuffled things now so that they should
+make more sense.
 
----
+-- 
+Jens Axboe
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs: use UB-safe check for signed addition overflow in remap_verify_area
-      https://git.kernel.org/vfs/vfs/c/70a4d38461f8
