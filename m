@@ -2,123 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 853E270EC78
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 06:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDCF870EC89
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 06:27:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234532AbjEXEUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 00:20:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37884 "EHLO
+        id S235623AbjEXE10 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 00:27:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231534AbjEXEU2 (ORCPT
+        with ESMTP id S231534AbjEXE1Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 00:20:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24768FC;
-        Tue, 23 May 2023 21:20:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A6273638A9;
-        Wed, 24 May 2023 04:20:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0F6A1C433EF;
-        Wed, 24 May 2023 04:20:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684902026;
-        bh=GNZhXKomMT54g+LtxRjYbIBwQk2dt/X5HlQu3jjOZZI=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=gM2mno2MgOChhOSkSovPlMxLYxjoipeN7KkmD4t7OmgDq07CzCzYvbwfVkq0CF1XE
-         OKoJULyvIioS1mde9iSOK4qXTB3XWrM7F61AzejUoiX7rsdjKSawUWd4Iy42ZqiIU4
-         8C5+2JbcvgTBU9PjkRKn/aJF9wdUcTevPuepr4o+6K7wbxgmaAj0H4PrUcoe7ECbey
-         RrijNJVfKTqMHUjjzD69kYlZ341wTdtNpGq0+2k0Inj4kPIETtAUp+Q2eeFWdsuesZ
-         s/NsNJ8n26DjwStiP9UxaNIAiQaTZTH3+CLcN6BksluYexGIwQueLU9ZVzSNMIJXrH
-         QnCQr9zSFE4hA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EF55CC395F8;
-        Wed, 24 May 2023 04:20:25 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 24 May 2023 00:27:25 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F73DE6;
+        Tue, 23 May 2023 21:27:23 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4effb818c37so333792e87.3;
+        Tue, 23 May 2023 21:27:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684902442; x=1687494442;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=m7Lg8DDm/ij6uVAAnSJrfz7gWG7Octz6xQjt6V3Uyyo=;
+        b=FC9jPngS2I4ZuBz3yXaWmAaDbiTwoGylw/lIWmLh8lFe2LP5W5Y29ueBAXLF05cQyg
+         3JQg9qXLbAG8k51OLXvx4buQM3kUkoeUJt6Nl5pam0sZH/22OrdQrCszcipBd7JgvQVM
+         HHJsNmQ16IH+G4AE6jUKwrNE0Tcf3NUZKvy23petgWPOwtk1xyloqXgnRcoOtXZDVFiL
+         9WyxNw3RlNZW2O2X6/YHCEycpzA6pBdpwUY1TzSwRzUQfYZH9rCsi6XOeraMra/ePGLX
+         HFmWZXtr5BtQjeSIcFgmlVjaHPwPIuB6+Yf1qjRPWM3F/CYI9MjvTTWt6i50Ns4u2N7q
+         MhyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684902442; x=1687494442;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m7Lg8DDm/ij6uVAAnSJrfz7gWG7Octz6xQjt6V3Uyyo=;
+        b=KRlpG578e3KPlImw9bnUF2rpMOgqzT4l68TpbxhvBNOoe25qSX4ywoDqD9w9vL5f/c
+         LvWo84efIZEzv8b5wns/kb7RznhJRtmkoshcl/bsP682vuqbm+V4jWTiZz0aL/Z0emfg
+         eCtSOgl/3bRKWjYXv2wySmRkFW8zBoBxvj13NneIYk9gWKr0KgItF2Re9dkh/WYB9Ao6
+         8ltzxjsYiphjprcg4He9Z2aI8RIfy+tOvJ1xB3+FB/hRdIPT8wf17D8o/8ubn65uhltO
+         TJWh9yn6wX+H8vBrT0cOZ025bYnjzZsZ/8H0w2lm2pxe5pFDzc+Dms5xNoJpQTZhJRjI
+         bNGA==
+X-Gm-Message-State: AC+VfDwmPjTvqhF16pFgRYZj9Tam5taDnO8yrmsm+W7bhp1mJuIFWq0U
+        nW9nJeLf4p/oeACtksLReGIYYB0vb21BmHmohUFNinCGE4Y6pQ==
+X-Google-Smtp-Source: ACHHUZ6w3alXwd2NcYMYKlrzcGuK/36n7eZz2lAz1OSxnXDUW6hJh+PySMGGi1b2HG06gWgpZb5PtjjFNb4ELqBSsLY=
+X-Received: by 2002:a05:6512:219:b0:4f3:b32d:f744 with SMTP id
+ a25-20020a056512021900b004f3b32df744mr4465194lfo.11.1684902441576; Tue, 23
+ May 2023 21:27:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v10 00/16] splice,
- net: Replace sendpage with sendmsg(MSG_SPLICE_PAGES), part 1
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168490202597.21222.4656712429626955049.git-patchwork-notify@kernel.org>
-Date:   Wed, 24 May 2023 04:20:25 +0000
-References: <20230522121125.2595254-1-dhowells@redhat.com>
-In-Reply-To: <20230522121125.2595254-1-dhowells@redhat.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com,
-        willemdebruijn.kernel@gmail.com, dsahern@kernel.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, hch@infradead.org,
-        axboe@kernel.dk, jlayton@kernel.org, brauner@kernel.org,
-        chuck.lever@oracle.com, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <CAH2r5msVBGuRbv2tEuZWLR6_pSNNaoeihx=CjvgZ7NxwCNqZvA@mail.gmail.com>
+ <CAHk-=wjuNDG-nu6eAv1vwPuZp=6FtRpK_izmH7aBkc4Cic-uGQ@mail.gmail.com>
+ <CAH2r5msZ_8q1b4FHKGZVm_gbiMWuYyaF=_Mz1-gsfJPS0ryRsg@mail.gmail.com>
+ <CAHk-=wjYTAK4PSK23bDm_urZ49Q=5m=ScYcmK27ZJNKSBPdbgA@mail.gmail.com> <CAH2r5mssPFZO3XZvws+=C+Gywjs_79bpC0nByeWP5F2T7DWHvw@mail.gmail.com>
+In-Reply-To: <CAH2r5mssPFZO3XZvws+=C+Gywjs_79bpC0nByeWP5F2T7DWHvw@mail.gmail.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 23 May 2023 23:27:10 -0500
+Message-ID: <CAH2r5muhWo9mV44n8AUQgKX+gpBZ=7sWpn7ns7+EODXDXzofLQ@mail.gmail.com>
+Subject: Re: patches to move ksmbd and cifs under new subdirectory
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="0000000000008306ee05fc68eb2e"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello:
+--0000000000008306ee05fc68eb2e
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+One more minor change (fs/smb/common/Makefile was missing a two line change=
+).
+Running automated tests now.
 
-On Mon, 22 May 2023 13:11:09 +0100 you wrote:
-> Here's the first tranche of patches towards providing a MSG_SPLICE_PAGES
-> internal sendmsg flag that is intended to replace the ->sendpage() op with
-> calls to sendmsg().  MSG_SPLICE_PAGES is a hint that tells the protocol
-> that it should splice the pages supplied if it can and copy them if not.
-> 
-> This will allow splice to pass multiple pages in a single call and allow
-> certain parts of higher protocols (e.g. sunrpc, iwarp) to pass an entire
-> message in one go rather than having to send them piecemeal.  This should
-> also make it easier to handle the splicing of multipage folios.
-> 
-> [...]
+Attached updated patch
 
-Here is the summary with links:
-  - [net-next,v10,01/16] net: Declare MSG_SPLICE_PAGES internal sendmsg() flag
-    https://git.kernel.org/netdev/net-next/c/b841b901c452
-  - [net-next,v10,02/16] net: Pass max frags into skb_append_pagefrags()
-    https://git.kernel.org/netdev/net-next/c/96449f902407
-  - [net-next,v10,03/16] net: Add a function to splice pages into an skbuff for MSG_SPLICE_PAGES
-    https://git.kernel.org/netdev/net-next/c/2e910b95329c
-  - [net-next,v10,04/16] tcp: Support MSG_SPLICE_PAGES
-    https://git.kernel.org/netdev/net-next/c/270a1c3de47e
-  - [net-next,v10,05/16] tcp: Convert do_tcp_sendpages() to use MSG_SPLICE_PAGES
-    https://git.kernel.org/netdev/net-next/c/c5c37af6ecad
-  - [net-next,v10,06/16] tcp_bpf: Inline do_tcp_sendpages as it's now a wrapper around tcp_sendmsg
-    https://git.kernel.org/netdev/net-next/c/ebf2e8860eea
-  - [net-next,v10,07/16] espintcp: Inline do_tcp_sendpages()
-    https://git.kernel.org/netdev/net-next/c/7f8816ab4bae
-  - [net-next,v10,08/16] tls: Inline do_tcp_sendpages()
-    https://git.kernel.org/netdev/net-next/c/e117dcfd646e
-  - [net-next,v10,09/16] siw: Inline do_tcp_sendpages()
-    https://git.kernel.org/netdev/net-next/c/c2ff29e99a76
-  - [net-next,v10,10/16] tcp: Fold do_tcp_sendpages() into tcp_sendpage_locked()
-    https://git.kernel.org/netdev/net-next/c/5367f9bbb86a
-  - [net-next,v10,11/16] ip, udp: Support MSG_SPLICE_PAGES
-    https://git.kernel.org/netdev/net-next/c/7da0dde68486
-  - [net-next,v10,12/16] ip6, udp6: Support MSG_SPLICE_PAGES
-    https://git.kernel.org/netdev/net-next/c/6d8192bd69bb
-  - [net-next,v10,13/16] udp: Convert udp_sendpage() to use MSG_SPLICE_PAGES
-    https://git.kernel.org/netdev/net-next/c/7ac7c987850c
-  - [net-next,v10,14/16] ip: Remove ip_append_page()
-    https://git.kernel.org/netdev/net-next/c/c49cf2663291
-  - [net-next,v10,15/16] af_unix: Support MSG_SPLICE_PAGES
-    https://git.kernel.org/netdev/net-next/c/a0dbf5f818f9
-  - [net-next,v10,16/16] unix: Convert unix_stream_sendpage() to use MSG_SPLICE_PAGES
-    https://git.kernel.org/netdev/net-next/c/57d44a354a43
+On Tue, May 23, 2023 at 9:41=E2=80=AFPM Steve French <smfrench@gmail.com> w=
+rote:
+>
+> Lightly updated (e.g. to include a missing trivial change needed to
+> Documentation/filesystems/index.rst that Namjae noticed).  See
+> attached.
+>
+> Presumably can defer the additional cleanup/prettying (ie those beyond
+> those required for the directory rename) with distinct patches later.
+>
+> On Tue, May 23, 2023 at 12:35=E2=80=AFPM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Mon, May 22, 2023 at 11:39=E2=80=AFPM Steve French <smfrench@gmail.c=
+om> wrote:
+> > >
+> > > My reason for adding CONFIG_SMB_CLIENT, enabling CONFIG_SMB_CLIENT
+> > > when CONFIG_CIFS was enabled, I was trying to make the Makefile more =
+clear
+> > > (without changing any behavior):
+> >
+> > That sounds ok, but I think it should be done separately from the
+> > move. Keep the move as a pure move/rename, not "new things".
+> >
+> > Also, when you actually do this cleanup, I think you really should just=
+ do
+> >
+> >   config SMB
+> >         tristate
+> >
+> >   config SMB_CLIENT
+> >         tristate
+> >
+> > to declare them, but *not* have that
+> >
+> >         default y if CIFS=3Dy || SMB_SERVER=3Dy
+> >         default m if CIFS=3Dm || SMB_SERVER=3Dm
+> >
+> > kind of noise anywhere. Not for SMBFS, not for SMB_CLIENT.
+> >
+> > Just do
+> >
+> >         select SMBFS
+> >         select SMB_CLIENT
+> >
+> > in the current CIFS Kconfig entry. And then SMB_SERVER can likewise do
+> >
+> >         select SMBFS
+> >
+> > and I think it will all automatically do what those much more complex
+> > "default" expressions currently do.
+> >
+> > But again - I think this kind of "clean things up" should be entirely
+> > separate from the pure code movement. Don't do new functionality when
+> > moving things, just do the minimal required infrastructure changes to
+> > make things work with the movement.
+> >
+> >               Linus
+>
+>
+>
+> --
+> Thanks,
+>
+> Steve
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
+--=20
+Thanks,
+
+Steve
+
+--0000000000008306ee05fc68eb2e
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-smb3-move-Documentation-filesystems-cifs-to-Document.patch"
+Content-Disposition: attachment; 
+	filename="0001-smb3-move-Documentation-filesystems-cifs-to-Document.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_li17ecct0>
+X-Attachment-Id: f_li17ecct0
+
+RnJvbSA0ZjBkMDAzMWNiOTcyMDFmZGFmNGNjYzM2MTkzMTBlMjAwZmFlN2FjIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTdGV2ZSBGcmVuY2ggPHN0ZnJlbmNoQG1pY3Jvc29mdC5jb20+
+CkRhdGU6IE1vbiwgMjIgTWF5IDIwMjMgMDk6NTA6MzMgLTA1MDAKU3ViamVjdDogW1BBVENIXSBz
+bWIzOiBtb3ZlIERvY3VtZW50YXRpb24vZmlsZXN5c3RlbXMvY2lmcyB0bwogRG9jdW1lbnRhdGlv
+bi9maWxlc3lzdGVtcy9zbWIKCkRvY3VtZW50YXRpb24vZmlsZXN5c3RlbXMvY2lmcyBjb250YWlu
+cyBib3RoIHNlcnZlciBhbmQgY2xpZW50IGluZm9ybWF0aW9uCnNvIGl0cyBwYXRobmFtZSBpcyBt
+aXNsZWFkaW5nLiAgSW4gYWRkaXRpb24sIHRoZSBkaXJlY3RvcnkgZnMvc21iCm5vdyBjb250YWlu
+cyBib3RoIHNlcnZlciBhbmQgY2xpZW50LCBzbyBtb3ZlIERvY3VtZW50YXRpb24vZmlsZXN5c3Rl
+bXMvY2lmcwp0byBEb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL3NtYgoKU3VnZ2VzdGVkLWJ5OiBO
+YW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPgpBY2tlZC1ieTogTmFtamFlIEplb24g
+PGxpbmtpbmplb25Aa2VybmVsLm9yZz4KU2lnbmVkLW9mZi1ieTogU3RldmUgRnJlbmNoIDxzdGZy
+ZW5jaEBtaWNyb3NvZnQuY29tPgotLS0KIERvY3VtZW50YXRpb24vZmlsZXN5c3RlbXMvaW5kZXgu
+cnN0ICAgICAgICAgICAgICAgICAgfCAyICstCiBEb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL3tj
+aWZzID0+IHNtYn0vY2lmc3Jvb3QucnN0IHwgMAogRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy97
+Y2lmcyA9PiBzbWJ9L2luZGV4LnJzdCAgICB8IDAKIERvY3VtZW50YXRpb24vZmlsZXN5c3RlbXMv
+e2NpZnMgPT4gc21ifS9rc21iZC5yc3QgICAgfCAwCiBNQUlOVEFJTkVSUyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMiArLQogNSBmaWxlcyBjaGFuZ2VkLCAyIGlu
+c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCiByZW5hbWUgRG9jdW1lbnRhdGlvbi9maWxlc3lz
+dGVtcy97Y2lmcyA9PiBzbWJ9L2NpZnNyb290LnJzdCAoMTAwJSkKIHJlbmFtZSBEb2N1bWVudGF0
+aW9uL2ZpbGVzeXN0ZW1zL3tjaWZzID0+IHNtYn0vaW5kZXgucnN0ICgxMDAlKQogcmVuYW1lIERv
+Y3VtZW50YXRpb24vZmlsZXN5c3RlbXMve2NpZnMgPT4gc21ifS9rc21iZC5yc3QgKDEwMCUpCgpk
+aWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9pbmRleC5yc3QgYi9Eb2N1bWVu
+dGF0aW9uL2ZpbGVzeXN0ZW1zL2luZGV4LnJzdAppbmRleCBmYmIyYjVhZGE5NWIuLmViMjUyZmM5
+NzJhYSAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9pbmRleC5yc3QKKysr
+IGIvRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9pbmRleC5yc3QKQEAgLTcyLDcgKzcyLDYgQEAg
+RG9jdW1lbnRhdGlvbiBmb3IgZmlsZXN5c3RlbSBpbXBsZW1lbnRhdGlvbnMuCiAgICBiZWZzCiAg
+ICBiZnMKICAgIGJ0cmZzCi0gICBjaWZzL2luZGV4CiAgICBjZXBoCiAgICBjb2RhCiAgICBjb25m
+aWdmcwpAQCAtMTExLDYgKzExMCw3IEBAIERvY3VtZW50YXRpb24gZm9yIGZpbGVzeXN0ZW0gaW1w
+bGVtZW50YXRpb25zLgogICAgcmFtZnMtcm9vdGZzLWluaXRyYW1mcwogICAgcmVsYXkKICAgIHJv
+bWZzCisgICBzbWIvaW5kZXgKICAgIHNwdWZzL2luZGV4CiAgICBzcXVhc2hmcwogICAgc3lzZnMK
+ZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZmlsZXN5c3RlbXMvY2lmcy9jaWZzcm9vdC5yc3Qg
+Yi9Eb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL3NtYi9jaWZzcm9vdC5yc3QKc2ltaWxhcml0eSBp
+bmRleCAxMDAlCnJlbmFtZSBmcm9tIERvY3VtZW50YXRpb24vZmlsZXN5c3RlbXMvY2lmcy9jaWZz
+cm9vdC5yc3QKcmVuYW1lIHRvIERvY3VtZW50YXRpb24vZmlsZXN5c3RlbXMvc21iL2NpZnNyb290
+LnJzdApkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9jaWZzL2luZGV4LnJz
+dCBiL0RvY3VtZW50YXRpb24vZmlsZXN5c3RlbXMvc21iL2luZGV4LnJzdApzaW1pbGFyaXR5IGlu
+ZGV4IDEwMCUKcmVuYW1lIGZyb20gRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9jaWZzL2luZGV4
+LnJzdApyZW5hbWUgdG8gRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9zbWIvaW5kZXgucnN0CmRp
+ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL2NpZnMva3NtYmQucnN0IGIvRG9j
+dW1lbnRhdGlvbi9maWxlc3lzdGVtcy9zbWIva3NtYmQucnN0CnNpbWlsYXJpdHkgaW5kZXggMTAw
+JQpyZW5hbWUgZnJvbSBEb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL2NpZnMva3NtYmQucnN0CnJl
+bmFtZSB0byBEb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL3NtYi9rc21iZC5yc3QKZGlmZiAtLWdp
+dCBhL01BSU5UQUlORVJTIGIvTUFJTlRBSU5FUlMKaW5kZXggOTAyZjc2M2U4NDVkLi42MTUyYTQy
+NTFjZTcgMTAwNjQ0Ci0tLSBhL01BSU5UQUlORVJTCisrKyBiL01BSU5UQUlORVJTCkBAIC0xMTMw
+MCw3ICsxMTMwMCw3IEBAIFI6CVRvbSBUYWxwZXkgPHRvbUB0YWxwZXkuY29tPgogTDoJbGludXgt
+Y2lmc0B2Z2VyLmtlcm5lbC5vcmcKIFM6CU1haW50YWluZWQKIFQ6CWdpdCBnaXQ6Ly9naXQuc2Ft
+YmEub3JnL2tzbWJkLmdpdAotRjoJRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9jaWZzL2tzbWJk
+LnJzdAorRjoJRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9zbWIva3NtYmQucnN0CiBGOglmcy9z
+bWIvY29tbW9uLwogRjoJZnMvc21iL3NlcnZlci8KIAotLSAKMi4zNC4xCgo=
+--0000000000008306ee05fc68eb2e--
