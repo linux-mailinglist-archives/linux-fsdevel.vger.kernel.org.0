@@ -2,78 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 84BD270F03C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 10:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB0FF70F0C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 10:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239831AbjEXIJY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 04:09:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58990 "EHLO
+        id S240157AbjEXIbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 04:31:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239735AbjEXIJX (ORCPT
+        with ESMTP id S239935AbjEXIbn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 04:09:23 -0400
-Received: from out-7.mta1.migadu.com (out-7.mta1.migadu.com [IPv6:2001:41d0:203:375::7])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F1D419D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 01:09:09 -0700 (PDT)
-Date:   Wed, 24 May 2023 04:09:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1684915747;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PkhXh/TNyeXnNZOI/g5bdL7/bZLBDieBo7l7auFehJY=;
-        b=OXVDS+r2p27nxKKqRkqENlViSIEfqtZGoYc3kUZAvrLrMCsgBoAWydyq7TCQCOP9ytJb4X
-        X21tXArPk8LIe/Q4J2B9PVtUETWXb4sqWXRQ4bSH/XBnuRWF2Venmm+l0ZxUIhayGx1DEF
-        Ej6hv4vtmZ0eemIzKCYqV1JLFVorz/I=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, cluster-devel@redhat.com,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: Re: [Cluster-devel] [PATCH 06/32] sched: Add
- task_struct->faults_disabled_mapping
-Message-ID: <ZG3GHoNnJJW4xX2H@moria.home.lan>
+        Wed, 24 May 2023 04:31:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B139184;
+        Wed, 24 May 2023 01:31:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EC4DB63A92;
+        Wed, 24 May 2023 08:31:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC7CC433D2;
+        Wed, 24 May 2023 08:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684917079;
+        bh=ZlVoxwIsaYAgxSC4RI1ZotSzStbW0T0NJv0jKHHFdw4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eDiadXvYffS1uYZMc9oGkxjm7GOukTwe6358e0XUGe9Eu4euNu/2NH57X5Wg+ss06
+         pK565keJNG0Kyp19fEuAG9gx/kftjWcID4u2eawJRyPxFvx2Bx8LxDIMLh+J4mxFKy
+         zYLPJQTyGe0CKwc2kydC8gUDk7Tr4lf58P+onM0/KRVXNcxIaTCE6F+7OE+VD4Jwb0
+         0KlBOoo0LnVT5gIQRk/upbeRKYK5niRa2XXSdcwBr/1jR0HdGPGoJFRe2PeuwHbf5I
+         hrzyGzrSHFcFohE4YvjTL6GaRpYwM2rNnwi04+dmxE3qbMo4ooYfalv2AziSNdXimM
+         Bp3P8yDudj9rw==
+Date:   Wed, 24 May 2023 10:31:14 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: (subset) [PATCH 20/32] vfs: factor out inode hash head
+ calculation
+Message-ID: <20230524-zumeist-fotomodell-8b772735323d@brauner>
 References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-7-kent.overstreet@linux.dev>
- <20230510010737.heniyuxazlprrbd6@quack3>
- <ZFs3RYgdCeKjxYCw@moria.home.lan>
- <20230523133431.wwrkjtptu6vqqh5e@quack3>
- <ZGzoJLCRLk+pCKAk@infradead.org>
- <ZGzrV5j7OUU6rYij@moria.home.lan>
- <ZG2yFFcpE7w/Glge@infradead.org>
+ <20230509165657.1735798-21-kent.overstreet@linux.dev>
+ <20230523-plakat-kleeblatt-007077ebabb6@brauner>
+ <ZG1D4gvpkFjZVMcL@dread.disaster.area>
+ <ZG2yM1vzHZkW0yIA@infradead.org>
+ <ZG2+Jl8X1i5zGdMK@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZG2yFFcpE7w/Glge@infradead.org>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZG2+Jl8X1i5zGdMK@dread.disaster.area>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 23, 2023 at 11:43:32PM -0700, Christoph Hellwig wrote:
-> On Tue, May 23, 2023 at 12:35:35PM -0400, Kent Overstreet wrote:
-> > No, this is fundamentally because userspace controls the ordering of
-> > locking because the buffer passed to dio can point into any address
-> > space. You can't solve this by changing the locking heirarchy.
+On Wed, May 24, 2023 at 05:35:02PM +1000, Dave Chinner wrote:
+> On Tue, May 23, 2023 at 11:44:03PM -0700, Christoph Hellwig wrote:
+> > On Wed, May 24, 2023 at 08:53:22AM +1000, Dave Chinner wrote:
+> > > Hi Christian - I suspect you should pull the latest version of these
+> > > patches from:
+> > > 
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs.git vfs-scale
+> > > 
+> > > The commit messages are more recent and complete, and I've been
+> > > testing the branch in all my test kernels since 6.4-rc1 without
+> > > issues.
 > > 
-> > If you want to be able to have locking around adding things to the
-> > pagecache so that things that bypass the pagecache can prevent
-> > inconsistencies (and we do, the big one is fcollapse), and if you want
-> > dio to be able to use that same locking (because otherwise dio will also
-> > cause page cache inconsistency), this is the way to do it.
+> > Can you please send the series to linux-fsdevel for review?
 > 
-> Well, it seems like you are talking about something else than the
-> existing cases in gfs2 and btrfs, that is you want full consistency
-> between direct I/O and buffered I/O.  That's something nothing in the
-> kernel has ever provided, so I'd be curious why you think you need it
-> and want different semantics from everyone else?
+> When it gets back to the top of my priority pile. Last time I sent
+> it there was zero interest in reviewing it from fs/vfs developers
+> but it attracted lots of obnoxious shouting from some RTPREEMPT
+> people about using bit locks. If there's interest in getting it
 
-Because I like code that is correct.
+I think there is given that it seems to have nice perf gains.
+
+> merged, then I can add it to my backlog of stuff to do...
+> 
+> As it is, I'm buried layers deep right now, so I really have no
+> bandwidth to deal with this in the foreseeable future. The code is
+> there, it works just fine, if you want to push it through the
+> process of getting it merged, you're more than welcome to do so.
+
+I'm here to help get more review done and pick stuff up. I won't be able
+to do it without additional reviewers such as Christoph helping of
+course as this isn't a one-man show.
+
+Let's see if we can get this reviewed. If you have the bandwith to send
+it to fsdevel that'd be great. If it takes you a while to get back to it
+then that's fine too.
