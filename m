@@ -2,109 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8195C70F54C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 13:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 237B870F646
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 14:24:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbjEXLbl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 07:31:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52110 "EHLO
+        id S231755AbjEXMYX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 08:24:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjEXLbk (ORCPT
+        with ESMTP id S229509AbjEXMYW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 07:31:40 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18CF1135;
-        Wed, 24 May 2023 04:31:38 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A06FA222BF;
-        Wed, 24 May 2023 11:31:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1684927897; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WhtheA/Gzw9ZBNNVZW5R7hvu64pufOsIiq+9Wxeew6w=;
-        b=yaEmWV91uf9kFNZVSdwCR4ztkwEzW569EA78TK2s1YpmSCk2G/OcFo4QTL+cl4r99DaM9D
-        GUUAJMXFpG52ncpystMX4EUZixq4KVqQcHdQ9tH9PUPiiJtoSV5nQL9hHWhyZgBVeOXnVF
-        3C8piEzc8ZspkJSibAR5EWqKQmzCmhw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1684927897;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WhtheA/Gzw9ZBNNVZW5R7hvu64pufOsIiq+9Wxeew6w=;
-        b=IWt0IOG3fSUbfiZwva2e35cH8bCx65a6TP4dEfu5vqXHyWpU94jKn5TXlqBtiPMBWZ6Wqo
-        bHlt31ywkP0EXEBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 818D7133E6;
-        Wed, 24 May 2023 11:31:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id nmgMHpn1bWQDRwAAMHmgww
-        (envelope-from <chrubis@suse.cz>); Wed, 24 May 2023 11:31:37 +0000
-Date:   Wed, 24 May 2023 13:32:47 +0200
-From:   Cyril Hrubis <chrubis@suse.cz>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        LTP List <ltp@lists.linux.it>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org,
-        Jeff Layton <jlayton@kernel.org>, Petr Vorel <pvorel@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Wed, 24 May 2023 08:24:22 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17F3A99;
+        Wed, 24 May 2023 05:24:20 -0700 (PDT)
+Received: from dggpemm500005.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4QR9Jx5wfyzLpvk;
+        Wed, 24 May 2023 20:21:21 +0800 (CST)
+Received: from [10.69.30.204] (10.69.30.204) by dggpemm500005.china.huawei.com
+ (7.185.36.74) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Wed, 24 May
+ 2023 20:24:17 +0800
+Subject: Re: [PATCH net-next v10 03/16] net: Add a function to splice pages
+ into an skbuff for MSG_SPLICE_PAGES
+To:     David Howells <dhowells@redhat.com>, <netdev@vger.kernel.org>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: LTP: syscalls: statx06.c:138: TFAIL: Modified time > after_time
-Message-ID: <ZG3130X0GO9eNJfc@yuki>
-References: <CA+G9fYvGM6a3wct+_o0z-B=k1ZBg1FuBBpfLH71ULihnTo5RrQ@mail.gmail.com>
- <dca09245-5b59-438b-b7d6-c65db7a84a85@app.fastmail.com>
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>
+References: <20230522121125.2595254-1-dhowells@redhat.com>
+ <20230522121125.2595254-4-dhowells@redhat.com>
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <82041a42-e7b0-bde3-0f70-8ad180565794@huawei.com>
+Date:   Wed, 24 May 2023 20:24:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dca09245-5b59-438b-b7d6-c65db7a84a85@app.fastmail.com>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20230522121125.2595254-4-dhowells@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.69.30.204]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500005.china.huawei.com (7.185.36.74)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
-> > [ 1192.088987] loop0: detected capacity change from 0 to 614400
-> > tst_device.c:93: TINFO: Found free device 0 '/dev/loop0'
-> > tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts='-I 256'
-> > extra opts=''
-> > mke2fs 1.46.5 (30-Dec-2021)
-> > [ 1192.337350] EXT4-fs (loop0): mounted filesystem
-> > dfe9283c-5d2f-43f8-840e-a2bbbff5b202 r/w with ordered data mode. Quota
-> > mode: none.
-> > tst_test.c:1558: TINFO: Timeout per run is 0h 05m 00s
-> >
-> > statx06.c:140: TPASS: Birth time Passed
-> > statx06.c:138: TFAIL: Modified time > after_time
-> > statx06.c:140: TPASS: Access time Passed
-> > statx06.c:140: TPASS: Change time Passed
-> 
-> I found a description in
-> 
-> https://lwn.net/ml/linux-kernel/20230503142037.153531-1-jlayton@kernel.org/
-> 
-> which indicates that this is expected. Added Jeff to Cc in case
-> I'm misreading his explanation.
+On 2023/5/22 20:11, David Howells wrote:
 
-We even have in-flight patch from Jeff to fix the test with fine-grained
-timestamps in LTP:
+Hi, David
 
-http://patchwork.ozlabs.org/project/ltp/patch/20230518113216.126233-1-jlayton@kernel.org/
+I am not very familiar with the 'struct iov_iter' yet, just two
+questions below.
 
--- 
-Cyril Hrubis
-chrubis@suse.cz
+> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> index 7f53dcb26ad3..f4a5b51aed22 100644
+> --- a/net/core/skbuff.c
+> +++ b/net/core/skbuff.c
+> @@ -6892,3 +6892,91 @@ nodefer:	__kfree_skb(skb);
+>  	if (unlikely(kick) && !cmpxchg(&sd->defer_ipi_scheduled, 0, 1))
+>  		smp_call_function_single_async(cpu, &sd->defer_csd);
+>  }
+> +
+> +static void skb_splice_csum_page(struct sk_buff *skb, struct page *page,
+> +				 size_t offset, size_t len)
+> +{
+> +	const char *kaddr;
+> +	__wsum csum;
+> +
+> +	kaddr = kmap_local_page(page);
+> +	csum = csum_partial(kaddr + offset, len, 0);
+> +	kunmap_local(kaddr);
+> +	skb->csum = csum_block_add(skb->csum, csum, skb->len);
+> +}
+> +
+> +/**
+> + * skb_splice_from_iter - Splice (or copy) pages to skbuff
+> + * @skb: The buffer to add pages to
+> + * @iter: Iterator representing the pages to be added
+> + * @maxsize: Maximum amount of pages to be added
+> + * @gfp: Allocation flags
+> + *
+> + * This is a common helper function for supporting MSG_SPLICE_PAGES.  It
+> + * extracts pages from an iterator and adds them to the socket buffer if
+> + * possible, copying them to fragments if not possible (such as if they're slab
+> + * pages).
+> + *
+> + * Returns the amount of data spliced/copied or -EMSGSIZE if there's
+
+I am not seeing any copying done directly in the skb_splice_from_iter(),
+maybe iov_iter_extract_pages() has done copying for it?
+
+> + * insufficient space in the buffer to transfer anything.
+> + */
+> +ssize_t skb_splice_from_iter(struct sk_buff *skb, struct iov_iter *iter,
+> +			     ssize_t maxsize, gfp_t gfp)
+> +{
+> +	size_t frag_limit = READ_ONCE(sysctl_max_skb_frags);
+> +	struct page *pages[8], **ppages = pages;
+> +	ssize_t spliced = 0, ret = 0;
+> +	unsigned int i;
+> +
+> +	while (iter->count > 0) {
+> +		ssize_t space, nr;
+> +		size_t off, len;
+> +
+> +		ret = -EMSGSIZE;
+> +		space = frag_limit - skb_shinfo(skb)->nr_frags;
+> +		if (space < 0)
+> +			break;
+> +
+> +		/* We might be able to coalesce without increasing nr_frags */
+> +		nr = clamp_t(size_t, space, 1, ARRAY_SIZE(pages));
+> +
+> +		len = iov_iter_extract_pages(iter, &ppages, maxsize, nr, 0, &off);
+> +		if (len <= 0) {
+> +			ret = len ?: -EIO;
+> +			break;
+> +		}
+> +
+> +		i = 0;
+> +		do {
+> +			struct page *page = pages[i++];
+> +			size_t part = min_t(size_t, PAGE_SIZE - off, len);
+> +
+> +			ret = -EIO;
+> +			if (WARN_ON_ONCE(!sendpage_ok(page)))
+> +				goto out;
+> +
+> +			ret = skb_append_pagefrags(skb, page, off, part,
+> +						   frag_limit);
+> +			if (ret < 0) {
+> +				iov_iter_revert(iter, len);
+
+I am not sure I understand the error handling here, doesn't 'len'
+indicate the remaining size of the data to be appended to skb, maybe
+we should revert the size of data that is already appended to skb here?
+Does 'spliced' need to be adjusted accordingly?
+
+> +				goto out;
+> +			}
+> +
+> +			if (skb->ip_summed == CHECKSUM_NONE)
+> +				skb_splice_csum_page(skb, page, off, part);
+> +
+> +			off = 0;
+> +			spliced += part;
+> +			maxsize -= part;
+> +			len -= part;
+> +		} while (len > 0);
+> +
+> +		if (maxsize <= 0)
+> +			break;
+> +	}
+> +
+> +out:
+> +	skb_len_add(skb, spliced);
+> +	return spliced ?: ret;
+> +}
+> +EXPORT_SYMBOL(skb_splice_from_iter);
+> 
+> 
+> .
+> 
