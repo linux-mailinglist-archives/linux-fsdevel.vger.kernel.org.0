@@ -2,91 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB60470EF8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 09:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84BD270F03C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 10:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239963AbjEXHgz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 03:36:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38116 "EHLO
+        id S239831AbjEXIJY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 04:09:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239952AbjEXHgx (ORCPT
+        with ESMTP id S239735AbjEXIJX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 03:36:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC619E41
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 00:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684913746;
+        Wed, 24 May 2023 04:09:23 -0400
+Received: from out-7.mta1.migadu.com (out-7.mta1.migadu.com [IPv6:2001:41d0:203:375::7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F1D419D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 01:09:09 -0700 (PDT)
+Date:   Wed, 24 May 2023 04:09:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1684915747;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=vvK6Z2AVFSI9O3ecKj+peO5KkO7IQHk2/yqFJ3/8oK8=;
-        b=JKA4l12t1VVVcbzOXNXspMc6BkHYVfeMSNpFFxSaQnAKu++e3M0VipFeVWmuBELL3T/MbO
-        Ff3whrPEZHakxV/nltH2rF9Uz+ghaFNsNxQspYv466CTBr7smtoEnfPoSTEYBYLadIqXel
-        c1WqMq2xk24rqzkWNkueJXgrzWOgbPU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-388-49PEef-7NZij7YL6FX6QFA-1; Wed, 24 May 2023 03:35:43 -0400
-X-MC-Unique: 49PEef-7NZij7YL6FX6QFA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 38BCF80027F;
-        Wed, 24 May 2023 07:35:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BCF04492B0A;
-        Wed, 24 May 2023 07:35:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <ZG2mKMus29qquHia@infradead.org>
-References: <ZG2mKMus29qquHia@infradead.org> <20230522205744.2825689-1-dhowells@redhat.com> <168487791137.449781.3170440352656135902.b4-ty@kernel.dk>
+        bh=PkhXh/TNyeXnNZOI/g5bdL7/bZLBDieBo7l7auFehJY=;
+        b=OXVDS+r2p27nxKKqRkqENlViSIEfqtZGoYc3kUZAvrLrMCsgBoAWydyq7TCQCOP9ytJb4X
+        X21tXArPk8LIe/Q4J2B9PVtUETWXb4sqWXRQ4bSH/XBnuRWF2Venmm+l0ZxUIhayGx1DEF
+        Ej6hv4vtmZ0eemIzKCYqV1JLFVorz/I=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
 To:     Christoph Hellwig <hch@infradead.org>
-Cc:     dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH v21 0/6] block: Use page pinning
+Cc:     Jan Kara <jack@suse.cz>, cluster-devel@redhat.com,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Subject: Re: [Cluster-devel] [PATCH 06/32] sched: Add
+ task_struct->faults_disabled_mapping
+Message-ID: <ZG3GHoNnJJW4xX2H@moria.home.lan>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-7-kent.overstreet@linux.dev>
+ <20230510010737.heniyuxazlprrbd6@quack3>
+ <ZFs3RYgdCeKjxYCw@moria.home.lan>
+ <20230523133431.wwrkjtptu6vqqh5e@quack3>
+ <ZGzoJLCRLk+pCKAk@infradead.org>
+ <ZGzrV5j7OUU6rYij@moria.home.lan>
+ <ZG2yFFcpE7w/Glge@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3206938.1684913738.1@warthog.procyon.org.uk>
-Date:   Wed, 24 May 2023 08:35:39 +0100
-Message-ID: <3206939.1684913739@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZG2yFFcpE7w/Glge@infradead.org>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> wrote:
-
-> > Applied, thanks!
+On Tue, May 23, 2023 at 11:43:32PM -0700, Christoph Hellwig wrote:
+> On Tue, May 23, 2023 at 12:35:35PM -0400, Kent Overstreet wrote:
+> > No, this is fundamentally because userspace controls the ordering of
+> > locking because the buffer passed to dio can point into any address
+> > space. You can't solve this by changing the locking heirarchy.
+> > 
+> > If you want to be able to have locking around adding things to the
+> > pagecache so that things that bypass the pagecache can prevent
+> > inconsistencies (and we do, the big one is fcollapse), and if you want
+> > dio to be able to use that same locking (because otherwise dio will also
+> > cause page cache inconsistency), this is the way to do it.
 > 
-> This ended up on the for-6.5/block branch, but I think it needs to be
-> on the splice one, as that is pre-requisite unless I'm missing
-> something.
+> Well, it seems like you are talking about something else than the
+> existing cases in gfs2 and btrfs, that is you want full consistency
+> between direct I/O and buffered I/O.  That's something nothing in the
+> kernel has ever provided, so I'd be curious why you think you need it
+> and want different semantics from everyone else?
 
-Indeed.  As I noted in the cover note:
-
-    This requires the splice-read patchset to have been applied first,
-    otherwise reversion of the ITER_PAGE iterator can race with truncate and
-    return pages to the allocator whilst they're still undergoing DMA[2].
-
-David
-
+Because I like code that is correct.
