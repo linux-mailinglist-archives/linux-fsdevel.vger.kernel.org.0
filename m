@@ -2,222 +2,341 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF68670F913
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 16:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAEBA70F92B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 16:51:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232726AbjEXOtT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 10:49:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38822 "EHLO
+        id S236225AbjEXOu4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 10:50:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230478AbjEXOtS (ORCPT
+        with ESMTP id S235840AbjEXOug (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 10:49:18 -0400
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F49B12F;
-        Wed, 24 May 2023 07:49:17 -0700 (PDT)
-Received: by mail-vs1-xe2c.google.com with SMTP id ada2fe7eead31-439719278f9so48030137.2;
-        Wed, 24 May 2023 07:49:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684939756; x=1687531756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8N5qlYmiAXWULktRKXG/UhCtGDwPSyTxe/ySUVnkDwY=;
-        b=dBC6KAHXClWFNV9kX0MloX3nIqucuJo05hM/8GvICpqF28QpnnqJOmaAQlwqMX/O9j
-         2GOukayqhspD5qhn6UZzsJygD0RLGBIwhbCeknmRRvLt3bkKNCR/Ez6X+ClBnDFspeuC
-         jAFtkYzQK+ed/CTpxtNQguk6tIcx9LMhCh8BksapC51YC2sKCsifbKwb6GKnUZj8xJ3Z
-         k1o+bEairdfEH/W8P/mCkddEm3bjyoxc3nopSiqBCjrED9zrOEP5xXGJ6H9XxtgayTLV
-         VEDFMrrpgBBLHZ/MfwkONNlkS6HEGW//MkoFhAb3lA/b0tYYLXz87kA5xFCOHrKJdZhX
-         hNTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684939756; x=1687531756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8N5qlYmiAXWULktRKXG/UhCtGDwPSyTxe/ySUVnkDwY=;
-        b=N+n3jSv1yemIqNAN/ErSWFlaR8YJH2L+rtXCI/GVBbAzGox/LQpLPvf0wtbihCPhYU
-         uZ9ntPthPkDM62bGk0K+5XPTXF1xoYM3JyVVbUPE6INzhiN1BkEAuS+66eYRskTziHQ2
-         l0WnqS6RG80ShTAaDiHLG6HlVN64eKx6VVa8I5EtrY5Cp7Jm6Wg3oiSRpJpzqe6iNTzc
-         nU0hY+iYZshjq1hjfu/PXXFPuQN/6Nx5G9O05JRfcoay1BdU+0Ume2FFmrCr0KwSpDnT
-         CZqQ+vHTAk48yua76f4DHTXtobLk7k46U77so11XQ39CFzqMhfHFfeWhFHV14x0EzKg6
-         Y+Nw==
-X-Gm-Message-State: AC+VfDzHy/ymhMLsqMDqjeTEdR6jVwgfoGslHpKOTG+kkUaBja7BJkbZ
-        q1gfTm4BUPJBlx4rkS0ilNFUDXhR0iSYJS3yvi2tx07K
-X-Google-Smtp-Source: ACHHUZ5Na276cn6Z2FClsw695iYfEQWJzknvW+PQdi10nmwcQGnL6GhG54r2n63B2Jhww5r8YgNJF2I8O8W3J2twdN0=
-X-Received: by 2002:a67:f101:0:b0:439:30df:6bb1 with SMTP id
- n1-20020a67f101000000b0043930df6bb1mr5753497vsk.1.1684939756394; Wed, 24 May
- 2023 07:49:16 -0700 (PDT)
+        Wed, 24 May 2023 10:50:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A6781BC;
+        Wed, 24 May 2023 07:50:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDF3D63E12;
+        Wed, 24 May 2023 14:50:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F49C433D2;
+        Wed, 24 May 2023 14:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684939829;
+        bh=tO2IMEGijtd57Gf9dwTbwdnlrcrYP93IAJz+fPhyfYg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Knvw+aNnLCkCrn91eEu9btjgwuW9tUet6Mr/qVPia+A/hRem1D5rmDrUnfgfneoWX
+         9OvAAnltzB0vKktDVYgUrSn0y0m6O2qzq3wNznJQEz9v2FJe2TDlPhgvQy9rjgt5Xr
+         xGY/Cwiwk+Lq8lwkotO3qFaRbfZ3MtPWGor1A4nMUjEa6zkr5cNC4H8xvOAjA08mLK
+         ddj6+YB7K+B/3YgntOYamQZrMJ/Gr8yJtruyyXGWQmdOa7MThCT0RHGZ1sA5s4sQ7I
+         R8ZdIH3OXjFCsifx9UShNhQ4siE2ISFsl1RfsQTR1onDe6iO73voe6d46Zsjsbtl/8
+         q08CdMKBPGpPw==
+Date:   Wed, 24 May 2023 07:50:28 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 01/11] backing_dev: remove current->backing_dev_info
+Message-ID: <20230524145028.GH11620@frogsfrogsfrogs>
+References: <20230524063810.1595778-1-hch@lst.de>
+ <20230524063810.1595778-2-hch@lst.de>
 MIME-Version: 1.0
-References: <ca02955f-1877-4fde-b453-3c1d22794740@kili.mountain>
- <CAOQ4uxi6ST19WGkZiM=ewoK_9o-7DHvZcAc3v2c5GrqSFf0WDQ@mail.gmail.com> <20230524140648.u6pexxspze7pz63z@quack3>
-In-Reply-To: <20230524140648.u6pexxspze7pz63z@quack3>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 24 May 2023 17:49:05 +0300
-Message-ID: <CAOQ4uxjhYajALo2fGzmcF6F84o_jvKnDcadUvfc+R=RrT-i8YA@mail.gmail.com>
-Subject: Re: [bug report] fanotify: support reporting non-decodeable file handles
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Chuck Lever <cel@kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230524063810.1595778-2-hch@lst.de>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 24, 2023 at 5:06=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 24-05-23 11:38:17, Amir Goldstein wrote:
-> > On Wed, May 24, 2023 at 9:34=E2=80=AFAM Dan Carpenter <dan.carpenter@li=
-naro.org> wrote:
-> > >
-> > > Hello Amir Goldstein,
-> > >
-> > > The patch 7ba39960c7f3: "fanotify: support reporting non-decodeable
-> > > file handles" from May 2, 2023, leads to the following Smatch static
-> > > checker warning:
-> > >
-> > >         fs/notify/fanotify/fanotify.c:451 fanotify_encode_fh()
-> > >         warn: assigning signed to unsigned: 'fh->type =3D type' 's32m=
-in-(-1),1-254,256-s32max'
-> > >
-> > > (unpublished garbage Smatch check).
-> > >
-> > > fs/notify/fanotify/fanotify.c
-> > >     403 static int fanotify_encode_fh(struct fanotify_fh *fh, struct =
-inode *inode,
-> > >     404                               unsigned int fh_len, unsigned i=
-nt *hash,
-> > >     405                               gfp_t gfp)
-> > >     406 {
-> > >     407         int dwords, type =3D 0;
-> > >     408         char *ext_buf =3D NULL;
-> > >     409         void *buf =3D fh->buf;
-> > >     410         int err;
-> > >     411
-> > >     412         fh->type =3D FILEID_ROOT;
-> > >     413         fh->len =3D 0;
-> > >     414         fh->flags =3D 0;
-> > >     415
-> > >     416         /*
-> > >     417          * Invalid FHs are used by FAN_FS_ERROR for errors no=
-t
-> > >     418          * linked to any inode. The f_handle won't be reporte=
-d
-> > >     419          * back to userspace.
-> > >     420          */
-> > >     421         if (!inode)
-> > >     422                 goto out;
-> > >     423
-> > >     424         /*
-> > >     425          * !gpf means preallocated variable size fh, but fh_l=
-en could
-> > >     426          * be zero in that case if encoding fh len failed.
-> > >     427          */
-> > >     428         err =3D -ENOENT;
-> > >     429         if (fh_len < 4 || WARN_ON_ONCE(fh_len % 4) || fh_len =
-> MAX_HANDLE_SZ)
-> > >     430                 goto out_err;
-> > >     431
-> > >     432         /* No external buffer in a variable size allocated fh=
- */
-> > >     433         if (gfp && fh_len > FANOTIFY_INLINE_FH_LEN) {
-> > >     434                 /* Treat failure to allocate fh as failure to=
- encode fh */
-> > >     435                 err =3D -ENOMEM;
-> > >     436                 ext_buf =3D kmalloc(fh_len, gfp);
-> > >     437                 if (!ext_buf)
-> > >     438                         goto out_err;
-> > >     439
-> > >     440                 *fanotify_fh_ext_buf_ptr(fh) =3D ext_buf;
-> > >     441                 buf =3D ext_buf;
-> > >     442                 fh->flags |=3D FANOTIFY_FH_FLAG_EXT_BUF;
-> > >     443         }
-> > >     444
-> > >     445         dwords =3D fh_len >> 2;
-> > >     446         type =3D exportfs_encode_fid(inode, buf, &dwords);
-> > >     447         err =3D -EINVAL;
-> > >     448         if (!type || type =3D=3D FILEID_INVALID || fh_len !=
-=3D dwords << 2)
-> > >
-> > > exportfs_encode_fid() can return negative errors.  Do we need to chec=
-k
-> > > if (!type etc?
-> >
-> > Well, it is true that exportfs_encode_fid() can return a negative value
-> > in principle, as did exportfs_encode_fh() before it, if there was a
-> > filesystem implementation of ->encode_fh() that returned a negative
-> > value.  AFAIK, there currently is no such implementation in-tree,
-> > otherwise current upstream code would have been buggy.
->
-> Yes, I've checked and all ->encode_fh() implementations return
-> FILEID_INVALID in case of problems (which are basically always only
-> problems with not enough space in the handle buffer).
->
-> > Patch 2/4 adds a new possible -EOPNOTSUPP return value from
-> > exportfs_encode_inode_fh() and even goes further to add a kerndoc:
-> >  * Returns an enum fid_type or a negative errno.
-> > But this new return value is not possible from exportfs_encode_fid()
-> > that is used here and in {fa,i}notify_fdinfo().
-> >
-> > All the rest of the callers (nfsd, overlayfs, name_to_hanle_at) already
-> > check this same EOPNOTSUPP condition before calling, but there is
-> > no guarantee that this will not change in the future.
-> >
-> > All the callers mentioned above check the unexpected return value diffe=
-rently:
-> > nfsd: only type =3D=3D FILEID_INVALID
-> > fdinfo: type < 0 || type =3D=3D FILEID_INVALID
-> > fanotify: !type || type =3D=3D FILEID_INVALID
-> > overlayfs: type < 0 || type =3D=3D FILEID_INVALID
-> > name_to_hanle_at: (retval =3D=3D FILEID_INVALID) || (retval =3D=3D -ENO=
-SPC))
-> >                 /* As per old exportfs_encode_fh documentation
-> >                  * we could return ENOSPC to indicate overflow
-> >                  * But file system returned 255 always. So handle
-> >                  * both the values
-> >                  */
-> >
-> > So he have a bit of a mess.
->
-> Yeah, it's a bit messy. When checking ->encode_fh() implementations I've
-> also noticed quite some callers use explicit numbers and not FILEID_*
-> enums. This is not directly related to the problem at hand but I'm voicin=
-g
-> it in case someone looks for an easy cleanup project :)
->
-> > How should we clean it up?
-> >
-> > Option #1: Change encode_fh to return unsigned and replace that new
-> >                   EOPNOTSUPP with FILEID_INVALID
-> > Option #2: change all callers to check negative return value
-> >
-> > I am in favor of option #2.
-> > Shall I send a patch?
->
-> When we have two different error conditions (out of buffer space, encodin=
-g
-> handles unsupported), I agree it makes sense to be able to differentiate
-> them in exportfs_encode_fh() return value. However then it would make sen=
-se
-> to properly return -ENOSPC instead of FILEID_INVALID (as it is strange to
-> have two different ways of indicating error) which means touching like 16
-> different .encode_fh implementations. Not too bad but a bit tedious...
+On Wed, May 24, 2023 at 08:38:00AM +0200, Christoph Hellwig wrote:
+> The last user of current->backing_dev_info disappeared in commit
+> b9b1335e6403 ("remove bdi_congested() and wb_congested() and related
+> functions").  Remove the field and all assignments to it.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-I would prefer leaving that to that "cleanup project" (maybe I will take
-it on one day), but even if we leave the fs implementations as is (not
-returning negative values) I think we should at least fortify the callers t=
-hat
-assume no negative return values.
+Yay code removal!!!! :)
 
-I will send a patch and we will see the reaction.
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Thanks,
-Amir.
+--D
+
+> ---
+>  fs/btrfs/file.c       | 6 +-----
+>  fs/ceph/file.c        | 4 ----
+>  fs/ext4/file.c        | 2 --
+>  fs/f2fs/file.c        | 2 --
+>  fs/fuse/file.c        | 4 ----
+>  fs/gfs2/file.c        | 2 --
+>  fs/nfs/file.c         | 5 +----
+>  fs/ntfs/file.c        | 2 --
+>  fs/ntfs3/file.c       | 3 ---
+>  fs/xfs/xfs_file.c     | 4 ----
+>  include/linux/sched.h | 3 ---
+>  mm/filemap.c          | 3 ---
+>  12 files changed, 2 insertions(+), 38 deletions(-)
+> 
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index f649647392e0e4..ecd43ab66fa6c7 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -1145,7 +1145,6 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
+>  	    !(BTRFS_I(inode)->flags & (BTRFS_INODE_NODATACOW | BTRFS_INODE_PREALLOC)))
+>  		return -EAGAIN;
+>  
+> -	current->backing_dev_info = inode_to_bdi(inode);
+>  	ret = file_remove_privs(file);
+>  	if (ret)
+>  		return ret;
+> @@ -1165,10 +1164,8 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
+>  		loff_t end_pos = round_up(pos + count, fs_info->sectorsize);
+>  
+>  		ret = btrfs_cont_expand(BTRFS_I(inode), oldsize, end_pos);
+> -		if (ret) {
+> -			current->backing_dev_info = NULL;
+> +		if (ret)
+>  			return ret;
+> -		}
+>  	}
+>  
+>  	return 0;
+> @@ -1689,7 +1686,6 @@ ssize_t btrfs_do_write_iter(struct kiocb *iocb, struct iov_iter *from,
+>  	if (sync)
+>  		atomic_dec(&inode->sync_writers);
+>  
+> -	current->backing_dev_info = NULL;
+>  	return num_written;
+>  }
+>  
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index f4d8bf7dec88a8..c8ef72f723badd 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1791,9 +1791,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	else
+>  		ceph_start_io_write(inode);
+>  
+> -	/* We can write back this queue in page reclaim */
+> -	current->backing_dev_info = inode_to_bdi(inode);
+> -
+>  	if (iocb->ki_flags & IOCB_APPEND) {
+>  		err = ceph_do_getattr(inode, CEPH_STAT_CAP_SIZE, false);
+>  		if (err < 0)
+> @@ -1940,7 +1937,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		ceph_end_io_write(inode);
+>  out_unlocked:
+>  	ceph_free_cap_flush(prealloc_cf);
+> -	current->backing_dev_info = NULL;
+>  	return written ? written : err;
+>  }
+>  
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index d101b3b0c7dad8..bc430270c23c19 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -285,9 +285,7 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
+>  	if (ret <= 0)
+>  		goto out;
+>  
+> -	current->backing_dev_info = inode_to_bdi(inode);
+>  	ret = generic_perform_write(iocb, from);
+> -	current->backing_dev_info = NULL;
+>  
+>  out:
+>  	inode_unlock(inode);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 5ac53d2627d20d..4f423d367a44b9 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -4517,9 +4517,7 @@ static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		return -EOPNOTSUPP;
+>  
+> -	current->backing_dev_info = inode_to_bdi(inode);
+>  	ret = generic_perform_write(iocb, from);
+> -	current->backing_dev_info = NULL;
+>  
+>  	if (ret > 0) {
+>  		iocb->ki_pos += ret;
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 89d97f6188e05e..97d435874b14aa 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1362,9 +1362,6 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  writethrough:
+>  	inode_lock(inode);
+>  
+> -	/* We can write back this queue in page reclaim */
+> -	current->backing_dev_info = inode_to_bdi(inode);
+> -
+>  	err = generic_write_checks(iocb, from);
+>  	if (err <= 0)
+>  		goto out;
+> @@ -1409,7 +1406,6 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  			iocb->ki_pos += written;
+>  	}
+>  out:
+> -	current->backing_dev_info = NULL;
+>  	inode_unlock(inode);
+>  	if (written > 0)
+>  		written = generic_write_sync(iocb, written);
+> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+> index 300844f50dcd28..904a0d6ac1a1a9 100644
+> --- a/fs/gfs2/file.c
+> +++ b/fs/gfs2/file.c
+> @@ -1041,11 +1041,9 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
+>  			goto out_unlock;
+>  	}
+>  
+> -	current->backing_dev_info = inode_to_bdi(inode);
+>  	pagefault_disable();
+>  	ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
+>  	pagefault_enable();
+> -	current->backing_dev_info = NULL;
+>  	if (ret > 0) {
+>  		iocb->ki_pos += ret;
+>  		written += ret;
+> diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+> index f0edf5a36237d1..665ce3fc62eaf4 100644
+> --- a/fs/nfs/file.c
+> +++ b/fs/nfs/file.c
+> @@ -648,11 +648,8 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
+>  	since = filemap_sample_wb_err(file->f_mapping);
+>  	nfs_start_io_write(inode);
+>  	result = generic_write_checks(iocb, from);
+> -	if (result > 0) {
+> -		current->backing_dev_info = inode_to_bdi(inode);
+> +	if (result > 0)
+>  		result = generic_perform_write(iocb, from);
+> -		current->backing_dev_info = NULL;
+> -	}
+>  	nfs_end_io_write(inode);
+>  	if (result <= 0)
+>  		goto out;
+> diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
+> index c481b14e4fd989..e296f804a9c442 100644
+> --- a/fs/ntfs/file.c
+> +++ b/fs/ntfs/file.c
+> @@ -1911,11 +1911,9 @@ static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  
+>  	inode_lock(vi);
+>  	/* We can write back this queue in page reclaim. */
+> -	current->backing_dev_info = inode_to_bdi(vi);
+>  	err = ntfs_prepare_file_for_write(iocb, from);
+>  	if (iov_iter_count(from) && !err)
+>  		written = ntfs_perform_write(file, from, iocb->ki_pos);
+> -	current->backing_dev_info = NULL;
+>  	inode_unlock(vi);
+>  	iocb->ki_pos += written;
+>  	if (likely(written > 0))
+> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+> index 9a3d55c367d920..86d16a2c8339ca 100644
+> --- a/fs/ntfs3/file.c
+> +++ b/fs/ntfs3/file.c
+> @@ -820,7 +820,6 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+>  	if (!pages)
+>  		return -ENOMEM;
+>  
+> -	current->backing_dev_info = inode_to_bdi(inode);
+>  	err = file_remove_privs(file);
+>  	if (err)
+>  		goto out;
+> @@ -993,8 +992,6 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+>  out:
+>  	kfree(pages);
+>  
+> -	current->backing_dev_info = NULL;
+> -
+>  	if (err < 0)
+>  		return err;
+>  
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index aede746541f8ae..431c3fd0e2b598 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -717,9 +717,6 @@ xfs_file_buffered_write(
+>  	if (ret)
+>  		goto out;
+>  
+> -	/* We can write back this queue in page reclaim */
+> -	current->backing_dev_info = inode_to_bdi(inode);
+> -
+>  	trace_xfs_file_buffered_write(iocb, from);
+>  	ret = iomap_file_buffered_write(iocb, from,
+>  			&xfs_buffered_write_iomap_ops);
+> @@ -753,7 +750,6 @@ xfs_file_buffered_write(
+>  		goto write_retry;
+>  	}
+>  
+> -	current->backing_dev_info = NULL;
+>  out:
+>  	if (iolock)
+>  		xfs_iunlock(ip, iolock);
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index eed5d65b8d1f4d..54780571fe9a07 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -41,7 +41,6 @@
+>  
+>  /* task_struct member predeclarations (sorted alphabetically): */
+>  struct audit_context;
+> -struct backing_dev_info;
+>  struct bio_list;
+>  struct blk_plug;
+>  struct bpf_local_storage;
+> @@ -1186,8 +1185,6 @@ struct task_struct {
+>  	/* VM state: */
+>  	struct reclaim_state		*reclaim_state;
+>  
+> -	struct backing_dev_info		*backing_dev_info;
+> -
+>  	struct io_context		*io_context;
+>  
+>  #ifdef CONFIG_COMPACTION
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index b4c9bd368b7e58..33b54660ad2b39 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3991,8 +3991,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	ssize_t		err;
+>  	ssize_t		status;
+>  
+> -	/* We can write back this queue in page reclaim */
+> -	current->backing_dev_info = inode_to_bdi(inode);
+>  	err = file_remove_privs(file);
+>  	if (err)
+>  		goto out;
+> @@ -4053,7 +4051,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  			iocb->ki_pos += written;
+>  	}
+>  out:
+> -	current->backing_dev_info = NULL;
+>  	return written ? written : err;
+>  }
+>  EXPORT_SYMBOL(__generic_file_write_iter);
+> -- 
+> 2.39.2
+> 
