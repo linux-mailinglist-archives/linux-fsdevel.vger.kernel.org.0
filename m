@@ -2,120 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 842F770FF51
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 22:35:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB88F71001A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 23:36:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235933AbjEXUfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 16:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41478 "EHLO
+        id S236113AbjEXVgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 17:36:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236149AbjEXUev (ORCPT
+        with ESMTP id S235702AbjEXVgo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 16:34:51 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9628E1AC;
-        Wed, 24 May 2023 13:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xfybRCqfmly451via0zB+H/Q+AApSu2iaDmN5fGZ/x4=; b=IgXiGZt/AjIkZyk47M6JmzSETo
-        5JvYqmTY0S/6CNcf6rOgIUGkx8fCELILrDrVXemYkb5BPYKAn0HI2Y6XB5K+3xzooX2AKsZSw2rzz
-        mh9MKJ/BLQiIqzzeKOeINobvgbeJqtrrw702L1m+480O4PgbeQxZTVHsPTxFOgTQXwjhkEFw9ES3j
-        jYrlmoMd2O6KMc0tFDq7r+mdPcC6sbWD0mdmLQKvSrN/CRbmjwjlImLpNC1DyVuMY2O6L3UPugOJF
-        IUkQyLOL6dwpJlAiac2Dvj+LDhnldubALNgI54EHmr7EPEHVm08LfHTcHZ65apsu3c2zLqTuflfCR
-        76pcnqHw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q1vAx-00BWOr-Uz; Wed, 24 May 2023 20:33:40 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AD8D830013F;
-        Wed, 24 May 2023 22:33:36 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D6F5F20A78733; Wed, 24 May 2023 22:33:36 +0200 (CEST)
-Date:   Wed, 24 May 2023 22:33:36 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Kautuk Consul <kconsul@linux.vnet.ibm.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH v7 08/14] KVM: Rename mmu_notifier_*
-Message-ID: <20230524203336.GC3447678@hirez.programming.kicks-ass.net>
-References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
- <20220706082016.2603916-9-chao.p.peng@linux.intel.com>
- <ZGxo9ylqYI8JXjGn@li-a450e7cc-27df-11b2-a85c-b5a9ac31e8ef.ibm.com>
- <ZGzLf4zgxpBjghaF@google.com>
- <ZG2qv9sWl2RUnGqd@li-a450e7cc-27df-11b2-a85c-b5a9ac31e8ef.ibm.com>
- <ZG5wg3VbG4rCYrfk@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZG5wg3VbG4rCYrfk@google.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Wed, 24 May 2023 17:36:44 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24302FC;
+        Wed, 24 May 2023 14:36:42 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 82F68C021; Wed, 24 May 2023 23:36:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1684964200; bh=yrpXMUqAGp5oyUvzDl3QkfpAYUk5X23ovRaf0BC/DY0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q8c8AFZuTz+kvioFyFxziJpfPFV1ZxhngrealEWWTvTmybbhje/mnZqid6WR4dgms
+         qA8dNB8MszRwHTMnqfEZC2vYEJCUlc8iw1hOaltviXNAjzK5SnC+XbCP3FJGs83STA
+         f8Eu65q21KnrRVRa1NB0xoHTCswWy4gX59+7RZB2OY55lTXBtNNlI544SHqQpzaLI5
+         ACdc5fMzzEI4eRWGAaLjcg+kqia2ArDk8HduFYi3MY9yN6bSUIK8o4kwF4Di5oqn8U
+         3J56rwNT/zfVJwZrly7KkRwd4OpKNbsFmU3usnBTwp/eqYmhxWAUoiD1+VKa3mANV0
+         EolySEU28Tb4w==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 76195C009;
+        Wed, 24 May 2023 23:36:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1684964198; bh=yrpXMUqAGp5oyUvzDl3QkfpAYUk5X23ovRaf0BC/DY0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zhZEAhayVDmsW4Tz0Sh9flNnfBzGkRuV4XRVAiMhfrC7O3ljD1T9WGGwhZ/P8G8JS
+         2K3pWt6Q/5Ar9ESDxVzq9wNyYXHopA7WIau76JTHDspNoW9RePb7tBya6AlKD1kHq8
+         e75Jc58nRsNTQBpVk5X2NMvDa/wjQCnt+47qOm3zNDVbMX52UNfcv4J2HOfxD2Yk9H
+         Qqb3r5QXAKF9eQlUjfNfL6qdlE4OW3295JntKQRuUdpOHLmVYWxJetPzUlVqZGNAYT
+         tcibgTyEXrmw+4/eQtEYEcHsE5q5Yu6DKA6c0ODguzlz1aRqFm5I6iNFR2djGoDFSA
+         1Ziwk97KZMEKg==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id ec1cb997;
+        Wed, 24 May 2023 21:36:32 +0000 (UTC)
+Date:   Thu, 25 May 2023 06:36:17 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] fs: split off vfs_getdents function of getdents64
+ syscall
+Message-ID: <ZG6DUfdbTHS-e5P7@codewreck.org>
+References: <ZG0slV2BhSZkRL_y@codewreck.org>
+ <ZG0qgniV1DzIbbzi@codewreck.org>
+ <20230524-monolog-punkband-4ed95d8ea852@brauner>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230524-monolog-punkband-4ed95d8ea852@brauner>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 24, 2023 at 01:16:03PM -0700, Sean Christopherson wrote:
+Christian Brauner wrote on Wed, May 24, 2023 at 03:52:45PM +0200:
+> The main objection in [1] was to allow specifying an arbitrary offset
+> from userspace. What [3] did was to implement a pread() variant for
+> directories, i.e., pgetdents(). That can't work in principle/is
+> prohibitively complex. Which is what your series avoids by not allowing
+> any offsets to be specified.
 
-> Atomics aren't memory barriers on all architectures, e.g. see the various
-> definitions of smp_mb__after_atomic().
+Yes.
+
+> However, there's still a problem here. Updates to f_pos happen under an
+> approriate lock to guarantee consistency of the position between calls
+> that move the cursor position. In the normal read-write path io_uring
+> doesn't concern itself with f_pos as it keeps local state in
+> kiocb->ki_pos.
 > 
-> Even if atomic operations did provide barriers, using an atomic would be overkill
-> and a net negative.  On strongly ordered architectures like x86, memory barriers are
-> just compiler barriers, whereas atomics may be more expensive. 
+> But then it still does end up running into f_pos consistency problems
+> for read-write because it does allow operating on the current f_pos if
+> the offset if struct io_rw is set to -1.
+> 
+> In that case it does retrieve and update f_pos which should take
+> f_pos_lock and a patchset for this was posted but it didn't go anywhere.
+> It should probably hold that lock. See Jann's comments in the other
+> thread how that currently can lead to issues.
 
-Not quite, smp_{r,w}mb() and smp_mb__{before,after}_atomic() are
-compiler barriers on the TSO archs, but smp_mb() very much isn't. TSO
-still allows stores to be delayed vs later loads (iow it doesn't pretend
-to hide the store buffer).
+Assuming that is this mail:
+https://lore.kernel.org/io-uring/CAG48ez1O9VxSuWuLXBjke23YxUA8EhMP+6RCHo5PNQBf3B0pDQ@mail.gmail.com/
 
-> Of course, the only
-> accesses outside of mmu_lock are reads, so on x86 that "atomic" access is just a
-> READ_ONCE() load, but that's not the case for all architectures.
+So, ok, I didn't realize fdget_pos() actually acted as a lock on the
+file's f_pos_lock (apparently only if FMODE_ATMOIC_POS is set? but it
+looks set on most if not all directories through finish_open(), that
+looks called consistently enough)
 
-This is true on *all* archs. atomic_set() and atomic_read() are no more
-and no less than WRITE_ONCE() / READ_ONCE().
+What was confusing is that default_llseek updates f_pos under the
+inode_lock (write), and getdents also takes that lock (for read only in
+shared implem), so I assumed getdents also was just protected by this
+read lock, but I guess that was a bad assumption (as I kept pointing
+out, a shared read lock isn't good enough, we definitely agree there)
 
-> Anyways, the point is that atomics and memory barriers are different things that
-> serve different purposes.
 
-This is true; esp. on the weakly ordered architectures where atomics do
-not naturally imply any ordering.
+In practice, in the non-registered file case io_uring is also calling
+fdget, so the lock is held exactly the same as the syscall and I wasn't
+so far off -- but we need to figure something for the registered file
+case.
+openat variants don't allow working with the registered variant at all
+on the parent fd, so as far as I'm concerned I'd be happy setting the
+same limitation for getdents: just say it acts on fd and not files, and
+call it a day...
+It'd also be possible to check if REQ_F_FIXED_FILE flag was set and
+manually take the lock somehow but we don't have any primitive that
+takes f_pos_lock from a file (the only place that takes it is fdget
+which requires a fd), so I'd rather not add such a new exception.
+I assume the other patch you mentioned about adding that lock was this
+one:
+https://lore.kernel.org/all/20220222105504.3331010-1-dylany@fb.com/T/#m3609dc8057d0bc8e41ceab643e4d630f7b91bde6
+and it just atkes the lock, but __fdget_pos also checks for
+FMODE_ATOMIC_OPS and file_count and I'm not sure I understand how it
+sets (f.flags & FDPUT_POS_UNLOCK) (for fdput_pos) so I'd rather not add
+such a code path at this point..
+
+
+So, ok, what do you think about just forbidding registered files?
+I can't see where that wouldn't suffice but I might be missing something
+else.
+
+> For getdents() not protecting f_pos is equally bad or worse. The patch
+> doesn't hold f_pos_lock and just updates f_pos prior _and_ post
+> iterate_dir() arguing that this race is fine. But again, f_version and
+> f_pos are consistent after each system call invocation.
+> 
+> But without that you can have a concurrent seek running and can end up
+> with an inconsistent f_pos position within the same system call. IOW,
+> you're breaking f_pos being in a well-known state. And you're not doing
+> that just for io_uring you're doing it for the regular system call
+> interface as well as both can be used on the same fd simultaneously.
+> So that's a no go imho.
+
+(so seek is fine, but I agree two concurrent getdents on registered
+files won't have the required lock)
+
+-- 
+Dominique Martinet | Asmadeus
