@@ -2,49 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD47870FC06
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 18:56:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2947970FC2D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 19:05:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230218AbjEXQzz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 12:55:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57614 "EHLO
+        id S235095AbjEXRFi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 13:05:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235457AbjEXQzp (ORCPT
+        with ESMTP id S234737AbjEXRFh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 12:55:45 -0400
+        Wed, 24 May 2023 13:05:37 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDDF7123;
-        Wed, 24 May 2023 09:55:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02B0E12B;
+        Wed, 24 May 2023 10:05:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5AD3963F57;
-        Wed, 24 May 2023 16:55:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5178FC433EF;
-        Wed, 24 May 2023 16:55:43 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 93B4263738;
+        Wed, 24 May 2023 17:05:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6825EC433EF;
+        Wed, 24 May 2023 17:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684947343;
-        bh=sGxhTK9X0YjqTCyycyn24FalMzlbamwdb0oSsXWIbqA=;
+        s=k20201202; t=1684947933;
+        bh=5msYT2xJYYGairPBr0tzDWJW/tq/WFkKdahahH8wkJo=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=NA8pjEs+Q/z/3/JXcw+JZ2UuvO54Ux+k4fI8a8Sfh3dGZmgAAP4xFNsVjL9F01Lu0
-         plgazzcantSpxOvUZTODWad5/L530OIPbDrB+vlk71GjNQ5Hv1pA8mI2k1FiP2WA/d
-         yKeZAhBW+AMR1qommnNTfQNoHrDSeDOMmKE/zHu6zhAidWLplOSFsX9gTIeQzzOKMm
-         fnm7jynnYoxcvyeIx/rVrs28+txYho1gdvkmSIJJxNR+WuHL0l2OTwThmzQOLwu+Bi
-         htF2iYZVYJ155oXgr1AwwashhfRQw46mjhQW98mbzKo72FRD19nLTNWl5dh86dyElN
-         5LHNxh5KgZG8w==
-Message-ID: <bc960c7251781f912d2d0d4271702d15f19fb34a.camel@kernel.org>
-Subject: Re: [PATCH v5 3/3] locks: allow support for write delegation
+        b=Su2dnSmZ8IYxiDYWOrBtGR/JlQYs9KWjy6g4IHj09onLZDL6xJwMD2eie6P3KzjSY
+         bGqHbqHIpKAwjFK2uEGtq60Us8APmdeXtTpjlfx8AynXFdZtv7itaZK0VogopGTuvV
+         x3p7pP5RGCCS6hgaaPqsU243Y32uDlfkcxxH/lj0gwUKKE6qzX5zNzrXwfgW4MIxF5
+         MMrnWv+y+zj++PVQiKqJ1Ydd475LYJliCz7DhyQwpkhEeKn50PO0qUOQvZxKzuDfo9
+         VNLgQdF5Qq6ug5Wao4vQAGSSPSX+6PRw4VRCZnL+QAFhj5W85+36fBEMFmPbfqQHAP
+         3gDATHFDPN8Mw==
+Message-ID: <61146b7311e44d89034bd09dee901254a4a6a60b.camel@kernel.org>
+Subject: Re: [PATCH] exportfs: check for error return value from
+ exportfs_encode_*()
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Chuck Lever III <chuck.lever@oracle.com>
-Cc:     Dai Ngo <dai.ngo@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Date:   Wed, 24 May 2023 12:55:41 -0400
-In-Reply-To: <D8739068-BCAD-4E47-A2E2-1467F9DC32ED@oracle.com>
-References: <1684799560-31663-1-git-send-email-dai.ngo@oracle.com>
-         <1684799560-31663-4-git-send-email-dai.ngo@oracle.com>
-         <32e880c5f66ce8a6f343c01416fcc8b791cc1302.camel@kernel.org>
-         <D8739068-BCAD-4E47-A2E2-1467F9DC32ED@oracle.com>
+To:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Date:   Wed, 24 May 2023 13:05:31 -0400
+In-Reply-To: <20230524154825.881414-1-amir73il@gmail.com>
+References: <20230524154825.881414-1-amir73il@gmail.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
@@ -59,51 +57,120 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-05-24 at 15:09 +0000, Chuck Lever III wrote:
+On Wed, 2023-05-24 at 18:48 +0300, Amir Goldstein wrote:
+> The exportfs_encode_*() helpers call the filesystem ->encode_fh()
+> method which returns a signed int.
 >=20
-> > On May 24, 2023, at 11:08 AM, Jeff Layton <jlayton@kernel.org> wrote:
-> >=20
-> > On Mon, 2023-05-22 at 16:52 -0700, Dai Ngo wrote:
-> > > Remove the check for F_WRLCK in generic_add_lease to allow file_lock
-> > > to be used for write delegation.
-> > >=20
-> > > First consumer is NFSD.
-> > >=20
-> > > Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
-> > > ---
-> > > fs/locks.c | 7 -------
-> > > 1 file changed, 7 deletions(-)
-> > >=20
-> > > diff --git a/fs/locks.c b/fs/locks.c
-> > > index df8b26a42524..08fb0b4fd4f8 100644
-> > > --- a/fs/locks.c
-> > > +++ b/fs/locks.c
-> > > @@ -1729,13 +1729,6 @@ generic_add_lease(struct file *filp, long arg,=
- struct file_lock **flp, void **pr
-> > > if (is_deleg && !inode_trylock(inode))
-> > > return -EAGAIN;
-> > >=20
-> > > - if (is_deleg && arg =3D=3D F_WRLCK) {
-> > > - /* Write delegations are not currently supported: */
-> > > - inode_unlock(inode);
-> > > - WARN_ON_ONCE(1);
-> > > - return -EINVAL;
-> > > - }
-> > > -
-> > > percpu_down_read(&file_rwsem);
-> > > spin_lock(&ctx->flc_lock);
-> > > time_out_leases(inode, &dispose);
-> >=20
-> > I'd probably move this back to the first patch in the series.
-> >=20
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> All the in-tree implementations of ->encode_fh() return a positive
+> integer and FILEID_INVALID (255) for error.
 >=20
-> I asked him to move it to the end. Is it safe to take out this
-> check before write delegation is actually implemented?
+> Fortify the callers for possible future ->encode_fh() implementation
+> that will return a negative error value.
 >=20
+> name_to_handle_at() would propagate the returned error to the users
+> if filesystem ->encode_fh() method returns an error.
+>=20
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Link: https://lore.kernel.org/linux-fsdevel/ca02955f-1877-4fde-b453-3c1d2=
+2794740@kili.mountain/
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>=20
+> Jan,
+>=20
+> This patch is on top of the patches you have queued on fsnotify branch.
+>=20
+> I am not sure about the handling of negative value in nfsfh.c.
+>=20
+> Jeff/Chuck,
+>=20
+> Could you please take a look.
+>=20
+> I've test this patch with fanotify LTP tests, xfstest -g exportfs tests
+> and some sanity xfstest nfs tests, but I did not try to inject errors
+> in encode_fh().
+>=20
+> Please let me know what you think.
+>=20
+> Thanks,
+> Amir.
+>=20
+>=20
+>=20
+>  fs/fhandle.c                  | 5 +++--
+>  fs/nfsd/nfsfh.c               | 4 +++-
+>  fs/notify/fanotify/fanotify.c | 2 +-
+>  3 files changed, 7 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 4a635cf787fc..fd0d6a3b3699 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -57,18 +57,19 @@ static long do_sys_name_to_handle(const struct path *=
+path,
+>  	handle_bytes =3D handle_dwords * sizeof(u32);
+>  	handle->handle_bytes =3D handle_bytes;
+>  	if ((handle->handle_bytes > f_handle.handle_bytes) ||
+> -	    (retval =3D=3D FILEID_INVALID) || (retval =3D=3D -ENOSPC)) {
+> +	    (retval =3D=3D FILEID_INVALID) || (retval < 0)) {
+>  		/* As per old exportfs_encode_fh documentation
+>  		 * we could return ENOSPC to indicate overflow
+>  		 * But file system returned 255 always. So handle
+>  		 * both the values
+>  		 */
+> +		if (retval =3D=3D FILEID_INVALID || retval =3D=3D -ENOSPC)
+> +			retval =3D -EOVERFLOW;
+>  		/*
+>  		 * set the handle size to zero so we copy only
+>  		 * non variable part of the file_handle
+>  		 */
+>  		handle_bytes =3D 0;
+> -		retval =3D -EOVERFLOW;
+>  	} else
+>  		retval =3D 0;
+>  	/* copy the mount id */
+> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> index 31e4505c0df3..0f5eacae5f43 100644
+> --- a/fs/nfsd/nfsfh.c
+> +++ b/fs/nfsd/nfsfh.c
+> @@ -416,9 +416,11 @@ static void _fh_update(struct svc_fh *fhp, struct sv=
+c_export *exp,
+>  		int maxsize =3D (fhp->fh_maxsize - fhp->fh_handle.fh_size)/4;
+>  		int fh_flags =3D (exp->ex_flags & NFSEXP_NOSUBTREECHECK) ? 0 :
+>  				EXPORT_FH_CONNECTABLE;
+> +		int fileid_type =3D
+> +			exportfs_encode_fh(dentry, fid, &maxsize, fh_flags);
+> =20
+>  		fhp->fh_handle.fh_fileid_type =3D
+> -			exportfs_encode_fh(dentry, fid, &maxsize, fh_flags);
+> +			fileid_type > 0 ? fileid_type : FILEID_INVALID;
+>  		fhp->fh_handle.fh_size +=3D maxsize * 4;
+>  	} else {
+>  		fhp->fh_handle.fh_fileid_type =3D FILEID_ROOT;
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.=
+c
+> index d2bbf1445a9e..9dac7f6e72d2 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -445,7 +445,7 @@ static int fanotify_encode_fh(struct fanotify_fh *fh,=
+ struct inode *inode,
+>  	dwords =3D fh_len >> 2;
+>  	type =3D exportfs_encode_fid(inode, buf, &dwords);
 
-I think so, but it don't think it doesn't make much difference either
-way. The only real downside of putting it at the end is that you might
-have to contend with a WARN_ON_ONCE if you're bisecting.
+Are you sure this patch is against the HEAD? My tree has this call as
+exportfs_encode_inode_fh.
+
+>  	err =3D -EINVAL;
+> -	if (!type || type =3D=3D FILEID_INVALID || fh_len !=3D dwords << 2)
+> +	if (type <=3D 0 || type =3D=3D FILEID_INVALID || fh_len !=3D dwords << =
+2)
+
+>  		goto out_err;
+> =20
+>  	fh->type =3D type;
+
+I'm generally in favor of better guardrails for these sorts of
+operations, so ACK on the general idea around the patch.
+
 --=20
 Jeff Layton <jlayton@kernel.org>
