@@ -2,67 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 701B670F9DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 17:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BCA70FA40
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 17:35:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235966AbjEXPLj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 11:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
+        id S236143AbjEXPej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 11:34:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235865AbjEXPLi (ORCPT
+        with ESMTP id S235404AbjEXPeh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 11:11:38 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F77818E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 08:11:35 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-bab8f66d3a2so1561746276.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 08:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1684941094; x=1687533094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HqqN7STJH2LoGCrwrill0kIUbhodoox7qSOdJoH92o8=;
-        b=EFehSwqT4xP3Dsgl9bmiZS3CIEPYx7oE8YP/dagGWOYw22jxpzPgKbLa+z/ZmWlOwX
-         sbDUYJK1SF3CUXwmwlypvEibDRI9nS0D2DX+1qVKP8T5GElGdyojL5b5LWCxsc3eJabx
-         TAQKujaM7/wvTwHsVvSiJVHxSnfB7NkBNEEEy0m67Z1moTU+gNl374iCNxVEG4RM6sZW
-         9VpQVnKwVC9ltwPttucugKAFTxlXCjokxJbv+TppvKl4cWmkpEiNAzPg+S0RLyaHL2T5
-         8746YxI3TCs5u9PRcnTlk2UxGUeRQTfCZaRTwVv3wIyHrEIF5SBSX4BfjZzx6oLbdaGJ
-         X1Tg==
+        Wed, 24 May 2023 11:34:37 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1228E18E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 08:34:13 -0700 (PDT)
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 362D241AB0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 15:33:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1684942430;
+        bh=EWhp3bFE5YGNYZTeqnLuyw/BwJKRfP8fBMMP2Kg8LVA=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=CAjO2sTzn/pC/n8wkfnTaCEnfgEqjyibCGDy8xPg64gA1a48Ar3UwrbpzaqrdzFy1
+         oUyIYE47N7LMp1IpsEUqrnceNWU7Fz5wQPmQcinMCrdt6ZyKvTXk/ItF/64F6cp4ug
+         VpS9yn7cLq7kEAv1VLDF/r48tJFfjLJ3CUF/uwDwHklZzeAQNVfNb+z/fR69lvdz2E
+         1FsXzylHHU5bq8eyxLbeNqewRVSZRVaH4NB73J+sM9NiNIq+39+/luLbOknMeYwjYj
+         RdYb8DOLge6fsQuUB/beDPeqhDNKm+zfFR5/JzYf1pcngtFPtdhhOVzsZB1lknw8mX
+         znkN3rM2ZN+vw==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-96f83b44939so108106366b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 08:33:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684941094; x=1687533094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HqqN7STJH2LoGCrwrill0kIUbhodoox7qSOdJoH92o8=;
-        b=KnAL/sdyizs6fGJbsAgonkwPkmX4dlGUx56ZeeWRICwCPdVsw6TW1kPBWMosTwuQvi
-         UZCSWLnV9ggDIbbvS9avsuaeEU0Plou5sb1DIrJw0OkH8z1jlwkdPTEBEcDBakh/wala
-         3asILk2e/kA+5UAdxgwGKqFH5yIimwnF8uffV9FdfClB+WzDPedk5DG158fL6P2FCpxt
-         rVBwqmRdffLg4HPsqGTjoNNUCcGaMRvE0MzB/wWQ2x9J4Gx3I9pd1hhyDb0n2VB6d5vn
-         scX+a4ITjfCIUYwIlekis+7mbO+Z0UOx+k3ZYSF6hjEDdKDsr+BgkkBScBxQf2Ts+OUN
-         8NPg==
-X-Gm-Message-State: AC+VfDyDQ26wSrU4mxk7mmCdj1bVWbLc4vciBrWqiX+hoFdrltm4mGeT
-        brB9azpvdb0rLF2CIMxba53Je5pSm3G5sR4rnRxs
-X-Google-Smtp-Source: ACHHUZ7h5ztNlZIBSemxHTQoG+pdx9LkR0k/enQ4NmhLwlTYFQsLUTSuCVlVruca0i0KPIlmFIwlSwu/781g1QjhNk8=
-X-Received: by 2002:a0d:cc95:0:b0:561:7ec:cf90 with SMTP id
- o143-20020a0dcc95000000b0056107eccf90mr18983019ywd.42.1684941094273; Wed, 24
- May 2023 08:11:34 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684942429; x=1687534429;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EWhp3bFE5YGNYZTeqnLuyw/BwJKRfP8fBMMP2Kg8LVA=;
+        b=N2n8rzs6XGrEx5+qEtw0+AiQSUsV0syFdMAzII6RJKGp7QojVxWkttCNJCKP+JhTYI
+         9numxIyvZOnd2ME/yKD1lDL5e81qWCEp3zPrEnt9MNqq9spHZFOeUmAls9CyLFhKFnmQ
+         RXEb449tZXWWYbqV4PaiMA2TSfMk3JiXteqDDXqlqsOrJSDeNUPpm49ZgiQj2/kjDGsq
+         4OIkxsfnfk1UihY22ZlCXllhE27/68hycwfothBvhnUv/QI/WjRw6IBV1Z7BtYvIpRx5
+         wJ6fe4eU6AVPMBVJy++Oq7zO2PGE0oH7ExUwHiiu02jQj/xtS70tM6AG37zDtKk4S/eB
+         sSpw==
+X-Gm-Message-State: AC+VfDyeTrnbXrHleR6flfW1RkOD14sFGqbRcSKZSki0cJ1W9v+cZLRz
+        mx8stMVIksNgHOFeRE0SnNbyWPpAQQ5boofwS48jgkcL6vA6wrAFOEekp/elf5TQvGOYvhrwwZ4
+        iFRQhQczU4aZBbgjVzI9ku+IOOU+Ktc4hACk6knIYUYc=
+X-Received: by 2002:a17:906:ee81:b0:96f:1629:3e9a with SMTP id wt1-20020a170906ee8100b0096f16293e9amr7864683ejb.34.1684942428989;
+        Wed, 24 May 2023 08:33:48 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6FfHlSp740KFdG3fkWYcfhprliWqIMlIui+VfDoltbt8piUfLCsAuDVK0xOfy9qveDfEPafg==
+X-Received: by 2002:a17:906:ee81:b0:96f:1629:3e9a with SMTP id wt1-20020a170906ee8100b0096f16293e9amr7864653ejb.34.1684942428590;
+        Wed, 24 May 2023 08:33:48 -0700 (PDT)
+Received: from amikhalitsyn.local (dslb-088-074-206-207.088.074.pools.vodafone-ip.de. [88.74.206.207])
+        by smtp.gmail.com with ESMTPSA id p26-20020a17090664da00b0096f7105b3a6sm5986979ejn.189.2023.05.24.08.33.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 May 2023 08:33:48 -0700 (PDT)
+From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To:     xiubli@redhat.com
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/13] ceph: support idmapped mounts
+Date:   Wed, 24 May 2023 17:33:02 +0200
+Message-Id: <20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <000000000000be039005fc540ed7@google.com> <00000000000018faf905fc6d9056@google.com>
-In-Reply-To: <00000000000018faf905fc6d9056@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 24 May 2023 11:11:23 -0400
-Message-ID: <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com>
-Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
-To:     linux-security-module@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -71,58 +81,87 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 24, 2023 at 5:59=E2=80=AFAM syzbot
-<syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com> wrote:
->
-> syzbot has bisected this issue to:
->
-> commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
-> Author: Roberto Sassu <roberto.sassu@huawei.com>
-> Date:   Fri Mar 31 12:32:18 2023 +0000
->
->     reiserfs: Add security prefix to xattr name in reiserfs_security_writ=
-e()
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D11c3963928=
-0000
-> start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.linux=
--..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D13c3963928=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D15c3963928000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D7d8067683055e=
-3f5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D0a684c061589dcc=
-30e51
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14312791280=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12da860528000=
-0
->
-> Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
-> Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reis=
-erfs_security_write()")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
+Dear friends,
 
-Roberto, I think we need to resolve this somehow.  As I mentioned
-earlier, I don't believe this to be a fault in your patch, rather that
-patch simply triggered a situation that had not been present before,
-likely because the reiserfs code always failed when writing LSM
-xattrs.  Regardless, we still need to fix the deadlocks that sysbot
-has been reporting.
+This patchset was originally developed by Christian Brauner but I'll continue
+to push it forward. Christian allowed me to do that :)
 
-Has anyone dug into the reiserfs code to try and resolve the deadlock?
- Considering the state of reiserfs, I'm guessing no one has, and I
-can't blame them; I personally would have a hard time justifying
-significant time spent on reiserfs at this point.  Unless someone has
-any better ideas, I'm wondering if we shouldn't just admit defeat with
-reiserfs and LSM xattrs and disable/remove the reiserfs LSM xattr
-support?  Given the bug that Roberto was fixing with the patch in
-question, it's unlikely this was working anyway.
+This feature is already actively used/tested with LXD/LXC project.
 
---
-paul-moore.com
+v2 is just a rebased version of the original series with some small field naming change.
+
+Git tree (based on https://github.com/ceph/ceph-client.git master):
+https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph.v2
+
+Original description from Christian:
+========================================================================
+This patch series enables cephfs to support idmapped mounts, i.e. the
+ability to alter ownership information on a per-mount basis.
+
+Container managers such as LXD support sharaing data via cephfs between
+the host and unprivileged containers and between unprivileged containers.
+They may all use different idmappings. Idmapped mounts can be used to
+create mounts with the idmapping used for the container (or a different
+one specific to the use-case).
+
+There are in fact more use-cases such as remapping ownership for
+mountpoints on the host itself to grant or restrict access to different
+users or to make it possible to enforce that programs running as root
+will write with a non-zero {g,u}id to disk.
+
+The patch series is simple overall and few changes are needed to cephfs.
+There is one cephfs specific issue that I would like to discuss and
+solve which I explain in detail in:
+
+[PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
+
+It has to do with how to handle mds serves which have id-based access
+restrictions configured. I would ask you to please take a look at the
+explanation in the aforementioned patch.
+
+The patch series passes the vfs and idmapped mount testsuite as part of
+xfstests. To run it you will need a config like:
+
+[ceph]
+export FSTYP=ceph
+export TEST_DIR=/mnt/test
+export TEST_DEV=10.103.182.10:6789:/
+export TEST_FS_MOUNT_OPTS="-o name=admin,secret=$password
+
+and then simply call
+
+sudo ./check -g idmapped
+
+========================================================================
+
+Alexander Mikhalitsyn (1):
+  fs: export mnt_idmap_get/mnt_idmap_put
+
+Christian Brauner (12):
+  ceph: stash idmapping in mdsc request
+  ceph: handle idmapped mounts in create_request_message()
+  ceph: allow idmapped mknod inode op
+  ceph: allow idmapped symlink inode op
+  ceph: allow idmapped mkdir inode op
+  ceph: allow idmapped rename inode op
+  ceph: allow idmapped getattr inode op
+  ceph: allow idmapped permission inode op
+  ceph: allow idmapped setattr inode op
+  ceph/acl: allow idmapped set_acl inode op
+  ceph/file: allow idmapped atomic_open inode op
+  ceph: allow idmapped mounts
+
+ fs/ceph/acl.c                 |  2 +-
+ fs/ceph/dir.c                 |  4 ++++
+ fs/ceph/file.c                | 10 ++++++++--
+ fs/ceph/inode.c               | 15 +++++++++++----
+ fs/ceph/mds_client.c          | 29 +++++++++++++++++++++++++----
+ fs/ceph/mds_client.h          |  1 +
+ fs/ceph/super.c               |  2 +-
+ fs/mnt_idmapping.c            |  2 ++
+ include/linux/mnt_idmapping.h |  3 +++
+ 9 files changed, 56 insertions(+), 12 deletions(-)
+
+-- 
+2.34.1
+
