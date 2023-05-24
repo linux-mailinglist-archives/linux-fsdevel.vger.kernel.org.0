@@ -2,139 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07867710044
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 23:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 365DD7100E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 00:25:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236268AbjEXV52 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 17:57:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40250 "EHLO
+        id S237805AbjEXWZh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 18:25:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236221AbjEXV50 (ORCPT
+        with ESMTP id S237549AbjEXWZe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 17:57:26 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05E5F183
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 14:57:25 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id 3f1490d57ef6-ba81031424dso2186900276.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 14:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1684965444; x=1687557444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HnrQePs+guIncAtpR4LpewLTG9uJD1WVMzDg7x5+JnQ=;
-        b=MOJGgNeeZ2NTaZLOw5dLeQKOsSMdZuOUDLi4BpOvTiIWRhxlewpCkLWFm90AvCFDM0
-         dBbOiUgnwSF3tx2OCsfzW5pehrThLZTOsfw+byMilrUxH/Cj5v2axZNDxs+vrOsJ2N4v
-         IxXP53ZTgLR3muduWGVYPh1B5tWmAMwq4uWqW4WLkhKPpMI27Eee0C+v/cW+dzVTGCUZ
-         4A+99EiMuntUsoYNf+LzQB7aUOpYtEqfYo2C/g9I4lkOyTxkb7Zoy5dm+ieqK7BfUV0z
-         H7dMG4Is8HvC4rO8ie0Gg/xc9BXLT61Su2UirLdP/AoEm8mYapaDU29mprZAm7Yp+MSi
-         ymhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684965444; x=1687557444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HnrQePs+guIncAtpR4LpewLTG9uJD1WVMzDg7x5+JnQ=;
-        b=DEJH0h81a6s+iv5qCUi7r4D6IlGyFcIwa7MzZKI4DOqDlGjLy+yxWbKYb+lakobwjj
-         1TqDukp12WtsO9rfxVfT4p+EPLGBW+Ld1JOoCrdPmfewI65ExBdT6DCYeTnp8O2QCoJc
-         9YVeefRC4Lx3Yt5O49dh8EMfimEbqB+TB/oQ5tagblVITz/LMzFSFKhymrQwAaO3m6iH
-         noavkEg6Dapzl1GPNzdy00FnsWEDrgmJp+VH6oY45p6rB4B+S6e5gT8EphDUkqut9bF/
-         DbF2E7T6ADFJdwj4y6Okwn8lEg5xXtulv/Yq7cfErtHDGyeVzPLGBavl2UTP6wAitzH0
-         eOjw==
-X-Gm-Message-State: AC+VfDyAMF2pWv0OWG7+b7LC1co0XSrUXWw1O7NgoqPlllMXALmsAVLZ
-        5MpUzn4edA/IPwX+scn7gu0Hx0LZwlcD47jKWDdb
-X-Google-Smtp-Source: ACHHUZ6wwnRp26WVRb5bMlIwp5UO3NdT+DkO9QgYycHZoQNR88qp6I/wrFTyf14xwXWr/rrvRF6bugZWse9TXC6cuUE=
-X-Received: by 2002:a0d:e807:0:b0:55a:4ff4:f97d with SMTP id
- r7-20020a0de807000000b0055a4ff4f97dmr19964058ywe.48.1684965444190; Wed, 24
- May 2023 14:57:24 -0700 (PDT)
+        Wed, 24 May 2023 18:25:34 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCFBB99;
+        Wed, 24 May 2023 15:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6a4TWuzTGi7+tMMLrCXx2xS2HLm+fpIBXBWX9SQFhJc=; b=Olg5NsAiR4MXUKxEfN0JWQ26G+
+        48QUUb0p3dP2AO5RET1yB+OlmxpPgfW/OAuL8L3TmcLxGehBJ8zrOmr2kBjQvXnIDe74EGIXQUw5V
+        jrolzbG8yKU05ZkW5mpKw/LmaGIzjIW2osv7EnQcuMT1PVUpROY1wInr2AXsx/P1CtXqq68pLnhwc
+        o//oJNGyzcS02XIm8oZ0EkYqFxmeJvu+ZYfriDV2Rx6DKfxLwq6Z2WZASZL/SOiLmZyzD7t1ZY8rR
+        AcKIKrMHyGez7UPTrzHiDlh7DZpdMV2McGOt3pus8tAT+JlDrTHSf6mbJJPR2Ulm/XYS7au9Vkv2O
+        3mANUUxw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q1wsv-00EnXL-1n;
+        Wed, 24 May 2023 22:23:09 +0000
+Date:   Wed, 24 May 2023 15:23:09 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>,
+        Daniel Gomez <da.gomez@samsung.com>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/17] block: open code __generic_file_write_iter for
+ blkdev writes
+Message-ID: <ZG6OTWckNlz+P+mo@bombadil.infradead.org>
+References: <20230424054926.26927-1-hch@lst.de>
+ <20230424054926.26927-15-hch@lst.de>
 MIME-Version: 1.0
-References: <000000000000be039005fc540ed7@google.com> <00000000000018faf905fc6d9056@google.com>
- <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com> <813148798c14a49cbdf0f500fbbbab154929e6ed.camel@huaweicloud.com>
-In-Reply-To: <813148798c14a49cbdf0f500fbbbab154929e6ed.camel@huaweicloud.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 24 May 2023 17:57:13 -0400
-Message-ID: <CAHC9VhRoj3muyD0+pTwpJvCdmzz25C8k8eufWcjc8ZE4e2AOew@mail.gmail.com>
-Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230424054926.26927-15-hch@lst.de>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 24, 2023 at 11:50=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Wed, 2023-05-24 at 11:11 -0400, Paul Moore wrote:
-> > On Wed, May 24, 2023 at 5:59=E2=80=AFAM syzbot
-> > <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com> wrote:
-> > > syzbot has bisected this issue to:
-> > >
-> > > commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
-> > > Author: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Date:   Fri Mar 31 12:32:18 2023 +0000
-> > >
-> > >     reiserfs: Add security prefix to xattr name in reiserfs_security_=
-write()
-> > >
-> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D11c396=
-39280000
-> > > start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.l=
-inux-..
-> > > git tree:       upstream
-> > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D13c396=
-39280000
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D15c396392=
-80000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D7d8067683=
-055e3f5
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D0a684c06158=
-9dcc30e51
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1431279=
-1280000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12da86052=
-80000
-> > >
-> > > Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
-> > > Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in =
-reiserfs_security_write()")
-> > >
-> > > For information about bisection process see: https://goo.gl/tpsmEJ#bi=
-section
-> >
-> > Roberto, I think we need to resolve this somehow.  As I mentioned
-> > earlier, I don't believe this to be a fault in your patch, rather that
-> > patch simply triggered a situation that had not been present before,
-> > likely because the reiserfs code always failed when writing LSM
-> > xattrs.  Regardless, we still need to fix the deadlocks that sysbot
-> > has been reporting.
->
-> Hi Paul
->
-> ok, I will try.
+On Mon, Apr 24, 2023 at 07:49:23AM +0200, Christoph Hellwig wrote:
+> Open code __generic_file_write_iter to remove the indirect call into
+> ->direct_IO and to prepare using the iomap based write code.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  block/fops.c | 46 ++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 44 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/fops.c b/block/fops.c
+> index b670aa7c5bb745..fd510b6142bd57 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -508,6 +508,29 @@ static int blkdev_close(struct inode *inode, struct file *filp)
+>  	return 0;
+>  }
+>  
+> +static ssize_t
+> +blkdev_direct_write(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +	size_t count = iov_iter_count(from);
+> +	ssize_t written;
+> +
+> +	written = kiocb_invalidate_pages(iocb, count);
+> +	if (written) {
+> +		if (written == -EBUSY)
+> +			return 0;
+> +		return written;
+> +	}
+> +
+> +	written = blkdev_direct_IO(iocb, from);
+> +	if (written > 0) {
+> +		kiocb_invalidate_post_write(iocb, count);
+> +		iocb->ki_pos += written;
+> +	}
 
-Thanks Roberto.  If it gets to be too challenging, let us know and we
-can look into safely disabling the LSM xattrs for reiserfs, I'll be
-shocked if anyone is successfully using LSM xattrs on reiserfs.
+Written can be negative here after blkdev_direct_IO()
 
-> > Has anyone dug into the reiserfs code to try and resolve the deadlock?
-> >  Considering the state of reiserfs, I'm guessing no one has, and I
-> > can't blame them; I personally would have a hard time justifying
-> > significant time spent on reiserfs at this point.  Unless someone has
-> > any better ideas, I'm wondering if we shouldn't just admit defeat with
-> > reiserfs and LSM xattrs and disable/remove the reiserfs LSM xattr
-> > support?  Given the bug that Roberto was fixing with the patch in
-> > question, it's unlikely this was working anyway.
+> +	if (written != -EIOCBQUEUED)
+> +		iov_iter_revert(from, count - written - iov_iter_count(from));
 
---=20
-paul-moore.com
+And we'll then use it here on iov_iter_revert() and this can crash on
+with some values. For example this can crash on a 4k write attempt
+on a 32k drive when experimenting wit large block sizes.
+
+kernel BUG at lib/iov_iter.c:999!
+invalid opcode: 0000 [#1] PREEMPT SMP PTI
+CPU: 4 PID: 949 Comm: fio Not tainted 6.3.0-large-block-20230426-dirty#28
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
+1.16.0-debian-1.16.0-5        04/01/2014
++RIP: 0010:iov_iter_revert.part.0+0x16e/0x170
+Code: f9 40 a2 63 af 74 07 03 56 08 89 d8 29 d0 89 45 08 44 89 6d 20
+<etc>
+RSP: 0018:ffffaa52006cfc60 EFLAGS: 00010246
+RAX: 0000000000000016 RBX: 0000000000000016 RCX: 0000000000000000
+RDX: 0000000000000004 RSI: 0000000000000006 RDI: ffffaa52006cfd08
+RBP: ffffaa52006cfd08 R08: 0000000000000000 R09: ffffaa52006cfb40
+R10: 0000000000000003 R11: ffffffffafcc21e8 R12: 0000000000004000
+R13: 0000000000003fea R14: ffff9de3d7565e00 R15: ffff9de3c1f68600
+FS:  00007f8bfe726c40(0000) GS:ffff9de43bd00000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8bf5eadd68 CR3: 0000000102c76001 CR4: 0000000000770ee0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+PKRU: 55555554
+Call Trace:
+ <TASK>
+blkdev_direct_write+0xf0/0x160
+blkdev_write_iter+0x11b/0x230
+io_write+0x10c/0x420
+? kmem_cache_alloc_bulk+0x2a1/0x410
+? fget+0x79/0xb0
+io_issue_sqe+0x60/0x3b0
+? io_prep_rw+0x5a/0x190
+io_submit_sqes+0x1e6/0x640
+__do_sys_io_uring_enter+0x54c/0xb90
+? handle_mm_fault+0x9a/0x340
+? preempt_count_add+0x47/0xa0
+? up_read+0x37/0x70
+? do_user_addr_fault+0x27c/0x780
+do_syscall_64+0x37/0x90
+entry_SYSCALL_64_after_hw
+
+Although I fixed it with an early check on this routine
+with:
+
+if (count < bdev_logical_block_size(bdev))
+	return -EINVAL; 
+
+I think this can just be fixed by also using the alignment
+check earier here:
+
+if (blkdev_dio_unaligned(bdev, pos, iter))                               
+	return -EINVAL;  
+
+  Luis
