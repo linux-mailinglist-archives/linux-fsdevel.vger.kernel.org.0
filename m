@@ -2,79 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B1C47100FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 00:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D86AE710192
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 01:13:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236425AbjEXWb6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 18:31:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56522 "EHLO
+        id S236779AbjEXXNd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 19:13:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230495AbjEXWb4 (ORCPT
+        with ESMTP id S229459AbjEXXNc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 18:31:56 -0400
-Received: from mail-io1-xd47.google.com (mail-io1-xd47.google.com [IPv6:2607:f8b0:4864:20::d47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4DAC1A7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 15:31:17 -0700 (PDT)
-Received: by mail-io1-xd47.google.com with SMTP id ca18e2360f4ac-76998d984b0so260664739f.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 May 2023 15:31:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684967361; x=1687559361;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EEv2m2tkW3LxgGFisYpUk4xaYXyQdf15D8timEsBePw=;
-        b=jj2jXH9D09H9CAJwWi/ABQYqeiSfvkqYFjjtM2ql2HCzG9ib/ThZ5/aHazFxyjySIA
-         Qiv7/0cmIuKYSbq3T870A14SteMUhoLFyr+ni8QNnz3w8dHxsx9ZjzaW5L1vAwh/YrKx
-         n/LLuuHIgqlncKlbpz54F8TvyI154bjFcmrL6Dgwf6zP0HuOkzeLmIrnOOLs7JxR0ed1
-         S+rsUrSSztb1PuW32V9PbbNBxTrj0zQRyZx5/GGOT3RP8cpeVKaSxqPR8vIJp4SyIshb
-         BxwoMTY2krbqWaFozprvtmsyMPo37UQDr3Ki4xOnMNG8FxWIAR4sqaEXO1HI7KEEb+fI
-         jigw==
-X-Gm-Message-State: AC+VfDwDbHvt2e438WbyTZHCLxRqfpL2sXYj2zFAJBpAfL4X0GQXRjYt
-        csPYIsWunRJg7cey1lXiV5qOxlmVbqSXdrvRc3GJXVJ/YOte
-X-Google-Smtp-Source: ACHHUZ72qrCpncxwPE6/T5eypdjBRfnsPFGFFDWfjAutJOp5v9DIOoQX8UKqk1yaqn3vJLjS3kFKoFiv8AWb/wsRgVElDA5SO5rs
+        Wed, 24 May 2023 19:13:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA6BA9;
+        Wed, 24 May 2023 16:13:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BE0AE6172F;
+        Wed, 24 May 2023 23:13:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09EEDC433EF;
+        Wed, 24 May 2023 23:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684970011;
+        bh=TZkIpxpAgQpdYh2IdY1lcMnQau3zcUBWqWIr6I9VfCM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Txari5z6ZBrn3Eda4nkNy/2JwwlJLQjqX66l5Nj1swylueJgBUynUXM7+f+DTR2Yw
+         HR9sMj4wecpB7wFrt/r3pOAjt92yyEhK5FE5UOB21N1jOZ8Gd9j4ahu36iaAGHwMDx
+         r4vnQ4XUkQ04DwFI+3583OuKYAvZKda+Bp7JLd1gjhnAJyrFUiMo+ISPRz2OYdo2Hx
+         CiDgSF5RxrSfGS52Sia19Q8VE4zWeibHvMQ8xB5t8JLo9xodX3XtHFESosM9lf789N
+         LKIxqhtUcl6HOeXm4r31wWKBtsUbsNoaheWsT8dsnpwrNzF+ifumhMhgTCx0R/OYI+
+         P06GpR7c9n3RA==
+Message-ID: <5d327bed-b532-ad3b-a211-52ad0a3e276a@kernel.org>
+Date:   Thu, 25 May 2023 08:13:28 +0900
 MIME-Version: 1.0
-X-Received: by 2002:a02:8521:0:b0:41a:c808:b49f with SMTP id
- g30-20020a028521000000b0041ac808b49fmr8538740jai.3.1684967361648; Wed, 24 May
- 2023 15:29:21 -0700 (PDT)
-Date:   Wed, 24 May 2023 15:29:21 -0700
-In-Reply-To: <000000000000eb49a905f061ada5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000ca36b05fc780953@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in do_symlinkat
-From:   syzbot <syzbot+e78eab0c1cf4649256ed@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v22 25/31] zonefs: Provide a splice-read wrapper
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org
+References: <12153db1-20af-040b-ded0-31286b5bafca@kernel.org>
+ <20230522135018.2742245-1-dhowells@redhat.com>
+ <20230522135018.2742245-26-dhowells@redhat.com>
+ <3071148.1684874594@warthog.procyon.org.uk>
+From:   Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <3071148.1684874594@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On 5/24/23 05:43, David Howells wrote:
+> Damien Le Moal <dlemoal@kernel.org> wrote:
+> 
+>>> +	if (len > 0) {
+>>> +		ret = filemap_splice_read(in, ppos, pipe, len, flags);
+>>> +		if (ret == -EIO)
+>>
+>> Is -EIO the only error that filemap_splice_read() may return ? There are other
+>> IO error codes that we could get from the block layer, e.g. -ETIMEDOUT etc. So
+>> "if (ret < 0)" may be better here ?
+> 
+> It can return -ENOMEM, -EINTR and -EAGAIN at least, none of which really count
+> as I/O errors.  I based the splice function on what zonefs_file_read_iter()
+> does:
+> 
+> 	} else {
+> 		ret = generic_file_read_iter(iocb, to);
+> 		if (ret == -EIO)
+> 			zonefs_io_error(inode, false);
+> 	}
 
-commit 267a36ba30a7425ad59d20e7e7e33bbdcc9cfb0a
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Mon Jan 16 08:52:10 2023 +0000
+Fair point. But checking again zonefs_io_error(), it will do nothing is nothing
+bad is detected for the zone that was used for the failed IO. So calling
+zonefs_io_error() for all error codes is actually fine, and likely much safer. I
+will change that in zonefs_file_read_iter(). Please use "if (ret < 0)" in your
+patch.
 
-    fs/ntfs3: Remove noacsrules
+-- 
+Damien Le Moal
+Western Digital Research
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15fdf761280000
-start commit:   ec35307e18ba Merge tag 'drm-fixes-2023-02-17' of git://ano..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0b8e3df6f76ec
-dashboard link: https://syzkaller.appspot.com/bug?extid=e78eab0c1cf4649256ed
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12570890c80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14523acf480000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/ntfs3: Remove noacsrules
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
