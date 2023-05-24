@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D753670F9CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 17:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DBB070F9CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 17:08:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231573AbjEXPI2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 11:08:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52078 "EHLO
+        id S235073AbjEXPIz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 11:08:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbjEXPI1 (ORCPT
+        with ESMTP id S230316AbjEXPIz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 11:08:27 -0400
+        Wed, 24 May 2023 11:08:55 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65315E9;
-        Wed, 24 May 2023 08:08:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E78579C;
+        Wed, 24 May 2023 08:08:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 02168617BC;
-        Wed, 24 May 2023 15:08:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E26C4339B;
-        Wed, 24 May 2023 15:08:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8491161559;
+        Wed, 24 May 2023 15:08:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B516C433D2;
+        Wed, 24 May 2023 15:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684940905;
-        bh=GdLsUpZLBsirJz5igIaN9pF2KdmoAUOlg0CNCDZnHJg=;
+        s=k20201202; t=1684940932;
+        bh=CGAtmXlNfDfrMpchgS8nLVatIa5I1GnFafW2EgwQg+w=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=bx/B4HQwk71OSt26yCE1us7+xXVm5qEDVjMsElT1waCCyVqJwmHmTFMXGkBbJo4Yh
-         gyrhHoxJVvdxQv2GbjKsUkRIPmrgSxiInD6cU7BQeBQBaEETcZVhfTlx+jln36fCNB
-         qAxKzDN7WP0OlhVa3jt/5ocFdpn6S4cJ2L/maDpn0bVCq7l04xmYthSmygKjVBXv0O
-         in2NOfGb/X7/C4ZVnuxt08a8uNMq1ar3zVZNHw11DMCBk91PbtUqMtkpeMXMJH007j
-         gKwp3Oic2dxAckS/4cYKzd76xv1iMjRUvQQD56LJngAbXdL/D9JIkC5rAQ93XwTJ+w
-         7/vrQJBLJ9Ykg==
-Message-ID: <32e880c5f66ce8a6f343c01416fcc8b791cc1302.camel@kernel.org>
-Subject: Re: [PATCH v5 3/3] locks: allow support for write delegation
+        b=qp8knbrD93yG3yJMuerzBDbQD8dojOoLXfR6fbNH4DGGC8KoiJse/LOM9IGTfzPym
+         HgrPgDDS+mwa5z2vLAgC3HzEJgqflYSvimyy+XaY4qDHe0T9yT3CUXyvboiuZKuiAT
+         2ioGlC9vQ43Jfexqc6/WaHLLjrN/PRiD4Ut7mArX3gV9f+k1Q4y4MsWw6kDKZaiFUN
+         w+WXULaVM/Q5OtzjxSL5lxPjZfAPhJ1BxYnUXN5q6cIlO8PTczGRhLdKpKYU4jRx9a
+         muUa2W+k9EUx4cF4IC2C8TPfx2TUuU+rxJXzXgdfyjYRtHSfAwLD4fseUFrvi/Cthn
+         KAGWUYRJJ+Ggw==
+Message-ID: <b95df7c30b6c919532bda3b382c6837bce6e492f.camel@kernel.org>
+Subject: Re: [PATCH v5 1/3] NFSD: enable support for write delegation
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Dai Ngo <dai.ngo@oracle.com>, chuck.lever@oracle.com
 Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Wed, 24 May 2023 11:08:23 -0400
-In-Reply-To: <1684799560-31663-4-git-send-email-dai.ngo@oracle.com>
+Date:   Wed, 24 May 2023 11:08:51 -0400
+In-Reply-To: <1684799560-31663-2-git-send-email-dai.ngo@oracle.com>
 References: <1684799560-31663-1-git-send-email-dai.ngo@oracle.com>
-         <1684799560-31663-4-git-send-email-dai.ngo@oracle.com>
+         <1684799560-31663-2-git-send-email-dai.ngo@oracle.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
@@ -56,36 +56,125 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, 2023-05-22 at 16:52 -0700, Dai Ngo wrote:
-> Remove the check for F_WRLCK in generic_add_lease to allow file_lock
-> to be used for write delegation.
+> This patch grants write delegation for OPEN with NFS4_SHARE_ACCESS_WRITE
+> if there is no conflict with other OPENs.
 >=20
-> First consumer is NFSD.
+> Write delegation conflict with another OPEN, REMOVE, RENAME and SETATTR
+> are handled the same as read delegation using notify_change,
+> try_break_deleg.
+>=20
+> Add trace point to track whether read or write delegation is granted.
 >=20
 > Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
 > ---
->  fs/locks.c | 7 -------
->  1 file changed, 7 deletions(-)
+>  fs/nfsd/nfs4state.c | 28 +++++++++++++++++++---------
+>  fs/nfsd/trace.h     |  1 +
+>  2 files changed, 20 insertions(+), 9 deletions(-)
 >=20
-> diff --git a/fs/locks.c b/fs/locks.c
-> index df8b26a42524..08fb0b4fd4f8 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1729,13 +1729,6 @@ generic_add_lease(struct file *filp, long arg, str=
-uct file_lock **flp, void **pr
->  	if (is_deleg && !inode_trylock(inode))
->  		return -EAGAIN;
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 6e61fa3acaf1..b90b74a5e66e 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -1144,7 +1144,7 @@ static void block_delegations(struct knfsd_fh *fh)
 > =20
-> -	if (is_deleg && arg =3D=3D F_WRLCK) {
-> -		/* Write delegations are not currently supported: */
-> -		inode_unlock(inode);
-> -		WARN_ON_ONCE(1);
-> -		return -EINVAL;
-> -	}
-> -
->  	percpu_down_read(&file_rwsem);
->  	spin_lock(&ctx->flc_lock);
->  	time_out_leases(inode, &dispose);
+>  static struct nfs4_delegation *
+>  alloc_init_deleg(struct nfs4_client *clp, struct nfs4_file *fp,
+> -		 struct nfs4_clnt_odstate *odstate)
+> +		struct nfs4_clnt_odstate *odstate, u32 dl_type)
+>  {
+>  	struct nfs4_delegation *dp;
+>  	long n;
+> @@ -1170,7 +1170,7 @@ alloc_init_deleg(struct nfs4_client *clp, struct nf=
+s4_file *fp,
+>  	INIT_LIST_HEAD(&dp->dl_recall_lru);
+>  	dp->dl_clnt_odstate =3D odstate;
+>  	get_clnt_odstate(odstate);
+> -	dp->dl_type =3D NFS4_OPEN_DELEGATE_READ;
+> +	dp->dl_type =3D dl_type;
+>  	dp->dl_retries =3D 1;
+>  	dp->dl_recalled =3D false;
+>  	nfsd4_init_cb(&dp->dl_recall, dp->dl_stid.sc_client,
+> @@ -5451,6 +5451,7 @@ nfs4_set_delegation(struct nfsd4_open *open, struct=
+ nfs4_ol_stateid *stp,
+>  	struct nfs4_delegation *dp;
+>  	struct nfsd_file *nf;
+>  	struct file_lock *fl;
+> +	u32 dl_type;
+> =20
+>  	/*
+>  	 * The fi_had_conflict and nfs_get_existing_delegation checks
+> @@ -5460,7 +5461,13 @@ nfs4_set_delegation(struct nfsd4_open *open, struc=
+t nfs4_ol_stateid *stp,
+>  	if (fp->fi_had_conflict)
+>  		return ERR_PTR(-EAGAIN);
+> =20
+> -	nf =3D find_readable_file(fp);
+> +	if (open->op_share_access & NFS4_SHARE_ACCESS_WRITE) {
+> +		nf =3D find_writeable_file(fp);
+> +		dl_type =3D NFS4_OPEN_DELEGATE_WRITE;
+> +	} else {
+> +		nf =3D find_readable_file(fp);
+> +		dl_type =3D NFS4_OPEN_DELEGATE_READ;
+> +	}
+>  	if (!nf) {
+>  		/*
+>  		 * We probably could attempt another open and get a read
+> @@ -5491,11 +5498,11 @@ nfs4_set_delegation(struct nfsd4_open *open, stru=
+ct nfs4_ol_stateid *stp,
+>  		return ERR_PTR(status);
+> =20
+>  	status =3D -ENOMEM;
+> -	dp =3D alloc_init_deleg(clp, fp, odstate);
+> +	dp =3D alloc_init_deleg(clp, fp, odstate, dl_type);
+>  	if (!dp)
+>  		goto out_delegees;
+> =20
+> -	fl =3D nfs4_alloc_init_lease(dp, NFS4_OPEN_DELEGATE_READ);
+> +	fl =3D nfs4_alloc_init_lease(dp, dl_type);
+>  	if (!fl)
+>  		goto out_clnt_odstate;
+> =20
+> @@ -5590,8 +5597,6 @@ nfs4_open_delegation(struct nfsd4_open *open, struc=
+t nfs4_ol_stateid *stp,
+>  		case NFS4_OPEN_CLAIM_PREVIOUS:
+>  			if (!cb_up)
+>  				open->op_recall =3D 1;
+> -			if (open->op_delegate_type !=3D NFS4_OPEN_DELEGATE_READ)
+> -				goto out_no_deleg;
+>  			break;
+>  		case NFS4_OPEN_CLAIM_NULL:
+>  			parent =3D currentfh;
+> @@ -5616,8 +5621,13 @@ nfs4_open_delegation(struct nfsd4_open *open, stru=
+ct nfs4_ol_stateid *stp,
+> =20
+>  	memcpy(&open->op_delegate_stateid, &dp->dl_stid.sc_stateid, sizeof(dp->=
+dl_stid.sc_stateid));
+> =20
+> -	trace_nfsd_deleg_read(&dp->dl_stid.sc_stateid);
+> -	open->op_delegate_type =3D NFS4_OPEN_DELEGATE_READ;
+> +	if (open->op_share_access & NFS4_SHARE_ACCESS_WRITE) {
+> +		open->op_delegate_type =3D NFS4_OPEN_DELEGATE_WRITE;
+> +		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
+> +	} else {
+> +		open->op_delegate_type =3D NFS4_OPEN_DELEGATE_READ;
+> +		trace_nfsd_deleg_read(&dp->dl_stid.sc_stateid);
+> +	}
+>  	nfs4_put_stid(&dp->dl_stid);
+>  	return;
+>  out_no_deleg:
+> diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
+> index 4183819ea082..a14cf8684255 100644
+> --- a/fs/nfsd/trace.h
+> +++ b/fs/nfsd/trace.h
+> @@ -607,6 +607,7 @@ DEFINE_STATEID_EVENT(layout_recall_release);
+> =20
+>  DEFINE_STATEID_EVENT(open);
+>  DEFINE_STATEID_EVENT(deleg_read);
+> +DEFINE_STATEID_EVENT(deleg_write);
+>  DEFINE_STATEID_EVENT(deleg_return);
+>  DEFINE_STATEID_EVENT(deleg_recall);
+> =20
 
-I'd probably move this back to the first patch in the series.
+This one looks fine and is fairly straightforward.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
