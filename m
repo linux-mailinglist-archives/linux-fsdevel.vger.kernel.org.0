@@ -2,100 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB0FF70F0C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 10:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC1D70F134
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 10:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240157AbjEXIbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 04:31:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43186 "EHLO
+        id S239952AbjEXIkj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 04:40:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239935AbjEXIbn (ORCPT
+        with ESMTP id S240622AbjEXIkF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 04:31:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B139184;
-        Wed, 24 May 2023 01:31:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EC4DB63A92;
-        Wed, 24 May 2023 08:31:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC7CC433D2;
-        Wed, 24 May 2023 08:31:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684917079;
-        bh=ZlVoxwIsaYAgxSC4RI1ZotSzStbW0T0NJv0jKHHFdw4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eDiadXvYffS1uYZMc9oGkxjm7GOukTwe6358e0XUGe9Eu4euNu/2NH57X5Wg+ss06
-         pK565keJNG0Kyp19fEuAG9gx/kftjWcID4u2eawJRyPxFvx2Bx8LxDIMLh+J4mxFKy
-         zYLPJQTyGe0CKwc2kydC8gUDk7Tr4lf58P+onM0/KRVXNcxIaTCE6F+7OE+VD4Jwb0
-         0KlBOoo0LnVT5gIQRk/upbeRKYK5niRa2XXSdcwBr/1jR0HdGPGoJFRe2PeuwHbf5I
-         hrzyGzrSHFcFohE4YvjTL6GaRpYwM2rNnwi04+dmxE3qbMo4ooYfalv2AziSNdXimM
-         Bp3P8yDudj9rw==
-Date:   Wed, 24 May 2023 10:31:14 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: (subset) [PATCH 20/32] vfs: factor out inode hash head
- calculation
-Message-ID: <20230524-zumeist-fotomodell-8b772735323d@brauner>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-21-kent.overstreet@linux.dev>
- <20230523-plakat-kleeblatt-007077ebabb6@brauner>
- <ZG1D4gvpkFjZVMcL@dread.disaster.area>
- <ZG2yM1vzHZkW0yIA@infradead.org>
- <ZG2+Jl8X1i5zGdMK@dread.disaster.area>
+        Wed, 24 May 2023 04:40:05 -0400
+Received: from mail-vk1-xa36.google.com (mail-vk1-xa36.google.com [IPv6:2607:f8b0:4864:20::a36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641791BD5;
+        Wed, 24 May 2023 01:38:57 -0700 (PDT)
+Received: by mail-vk1-xa36.google.com with SMTP id 71dfb90a1353d-4572fc80fe2so507097e0c.1;
+        Wed, 24 May 2023 01:38:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684917508; x=1687509508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NfarnodxQu2uVifQlwyFWQBlKRRu34cl2qnKn/jHsVk=;
+        b=DqQa3/3cv/yETeS+tnJXyueNRkd6494IjWgKyztrzD2dU3E9eeaebzKLmvSG4wdzpy
+         QYGiITCSFHc7jLBkhP/AdlT9H5ZOSpDq33HfmvXaq8Us2mBX9w9CWMJ5gt8PhebWq9vn
+         8ZHHNYGHmd7O1DxZ+EREkLoRZjeSmR+q2vJTlG6sLPnfUNm2rQpaAt1gUgcQdyADOoIE
+         fq4QjJ60Ms85nLvLeNeFiWFsHdWt9F7GmLzjkgkxuNY8loiif0XPL4QWUkgCLiGlrzyH
+         YWKEo+LmuiVR7yajpa9M3AQmU2yBm+VV4M1kiyqpeFNc18N5iyHIVgb9p+ZaOJs5Xpsa
+         BoRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684917508; x=1687509508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NfarnodxQu2uVifQlwyFWQBlKRRu34cl2qnKn/jHsVk=;
+        b=YWrGMSbFO4u7B2N4tm0L2Y7qPhqcIwFg70Zg6oYXfB16FcE3oZWhQTNN0pkIsyyloi
+         iUYTi3qK2DP9Ozi/p344CS5P5eg9eGKIOPIa2KhGUQk4VXHtUgVU5NGKTP5sJykfkQrc
+         aziJ2aKihDvHHjZAU22ATTY5tEozZGcIkW81Wjk8yGEjhemfN2PSRqJXZAwZ5Ji+EpVD
+         401hcdEZtAeyhzY0FLPKFZd3dEJl+DymOux0t47keyo5+gspUWxjC8uG8uPeH81lE8or
+         16+Cj9qpRJ2RXctOFRUp5o/jrxY77+7lYyO92GBPBxanC6TcdhotDfvCO9dIOVIqSySz
+         Lz4w==
+X-Gm-Message-State: AC+VfDyP4Q68AkoFLyXtPbcyuOLuuXSr1YxIBuJ7DGAdH+TKqeY/gi8Q
+        WDaKxJomNkEmmhwTIgURiuXUkzzncn7/aE2XEwhxaFkWq7w=
+X-Google-Smtp-Source: ACHHUZ5xQRUy4pMOWZxpLLW/9i1uu+tK709ow3UcPYu8kFXzlb77oIdNVsh6fQO2qPmE9ogKKz+uaTpE5r+5AY8wz4M=
+X-Received: by 2002:a67:eb48:0:b0:439:4c9c:1f00 with SMTP id
+ x8-20020a67eb48000000b004394c9c1f00mr2878336vso.30.1684917508396; Wed, 24 May
+ 2023 01:38:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZG2+Jl8X1i5zGdMK@dread.disaster.area>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <ca02955f-1877-4fde-b453-3c1d22794740@kili.mountain>
+In-Reply-To: <ca02955f-1877-4fde-b453-3c1d22794740@kili.mountain>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 24 May 2023 11:38:17 +0300
+Message-ID: <CAOQ4uxi6ST19WGkZiM=ewoK_9o-7DHvZcAc3v2c5GrqSFf0WDQ@mail.gmail.com>
+Subject: Re: [bug report] fanotify: support reporting non-decodeable file handles
+To:     Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Chuck Lever <cel@kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 24, 2023 at 05:35:02PM +1000, Dave Chinner wrote:
-> On Tue, May 23, 2023 at 11:44:03PM -0700, Christoph Hellwig wrote:
-> > On Wed, May 24, 2023 at 08:53:22AM +1000, Dave Chinner wrote:
-> > > Hi Christian - I suspect you should pull the latest version of these
-> > > patches from:
-> > > 
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs.git vfs-scale
-> > > 
-> > > The commit messages are more recent and complete, and I've been
-> > > testing the branch in all my test kernels since 6.4-rc1 without
-> > > issues.
-> > 
-> > Can you please send the series to linux-fsdevel for review?
-> 
-> When it gets back to the top of my priority pile. Last time I sent
-> it there was zero interest in reviewing it from fs/vfs developers
-> but it attracted lots of obnoxious shouting from some RTPREEMPT
-> people about using bit locks. If there's interest in getting it
+On Wed, May 24, 2023 at 9:34=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Hello Amir Goldstein,
+>
+> The patch 7ba39960c7f3: "fanotify: support reporting non-decodeable
+> file handles" from May 2, 2023, leads to the following Smatch static
+> checker warning:
+>
+>         fs/notify/fanotify/fanotify.c:451 fanotify_encode_fh()
+>         warn: assigning signed to unsigned: 'fh->type =3D type' 's32min-(=
+-1),1-254,256-s32max'
+>
+> (unpublished garbage Smatch check).
+>
+> fs/notify/fanotify/fanotify.c
+>     403 static int fanotify_encode_fh(struct fanotify_fh *fh, struct inod=
+e *inode,
+>     404                               unsigned int fh_len, unsigned int *=
+hash,
+>     405                               gfp_t gfp)
+>     406 {
+>     407         int dwords, type =3D 0;
+>     408         char *ext_buf =3D NULL;
+>     409         void *buf =3D fh->buf;
+>     410         int err;
+>     411
+>     412         fh->type =3D FILEID_ROOT;
+>     413         fh->len =3D 0;
+>     414         fh->flags =3D 0;
+>     415
+>     416         /*
+>     417          * Invalid FHs are used by FAN_FS_ERROR for errors not
+>     418          * linked to any inode. The f_handle won't be reported
+>     419          * back to userspace.
+>     420          */
+>     421         if (!inode)
+>     422                 goto out;
+>     423
+>     424         /*
+>     425          * !gpf means preallocated variable size fh, but fh_len c=
+ould
+>     426          * be zero in that case if encoding fh len failed.
+>     427          */
+>     428         err =3D -ENOENT;
+>     429         if (fh_len < 4 || WARN_ON_ONCE(fh_len % 4) || fh_len > MA=
+X_HANDLE_SZ)
+>     430                 goto out_err;
+>     431
+>     432         /* No external buffer in a variable size allocated fh */
+>     433         if (gfp && fh_len > FANOTIFY_INLINE_FH_LEN) {
+>     434                 /* Treat failure to allocate fh as failure to enc=
+ode fh */
+>     435                 err =3D -ENOMEM;
+>     436                 ext_buf =3D kmalloc(fh_len, gfp);
+>     437                 if (!ext_buf)
+>     438                         goto out_err;
+>     439
+>     440                 *fanotify_fh_ext_buf_ptr(fh) =3D ext_buf;
+>     441                 buf =3D ext_buf;
+>     442                 fh->flags |=3D FANOTIFY_FH_FLAG_EXT_BUF;
+>     443         }
+>     444
+>     445         dwords =3D fh_len >> 2;
+>     446         type =3D exportfs_encode_fid(inode, buf, &dwords);
+>     447         err =3D -EINVAL;
+>     448         if (!type || type =3D=3D FILEID_INVALID || fh_len !=3D dw=
+ords << 2)
+>
+> exportfs_encode_fid() can return negative errors.  Do we need to check
+> if (!type etc?
 
-I think there is given that it seems to have nice perf gains.
+Well, it is true that exportfs_encode_fid() can return a negative value
+in principle, as did exportfs_encode_fh() before it, if there was a filesys=
+tem
+implementation of ->encode_fh() that returned a negative value.
+AFAIK, there currently is no such implementation in-tree, otherwise current
+upstream code would have been buggy.
 
-> merged, then I can add it to my backlog of stuff to do...
-> 
-> As it is, I'm buried layers deep right now, so I really have no
-> bandwidth to deal with this in the foreseeable future. The code is
-> there, it works just fine, if you want to push it through the
-> process of getting it merged, you're more than welcome to do so.
+Patch 2/4 adds a new possible -EOPNOTSUPP return value from
+exportfs_encode_inode_fh() and even goes further to add a kerndoc:
+ * Returns an enum fid_type or a negative errno.
+But this new return value is not possible from exportfs_encode_fid()
+that is used here and in {fa,i}notify_fdinfo().
 
-I'm here to help get more review done and pick stuff up. I won't be able
-to do it without additional reviewers such as Christoph helping of
-course as this isn't a one-man show.
+All the rest of the callers (nfsd, overlayfs, name_to_hanle_at) already
+check this same EOPNOTSUPP condition before calling, but there is
+no guarantee that this will not change in the future.
 
-Let's see if we can get this reviewed. If you have the bandwith to send
-it to fsdevel that'd be great. If it takes you a while to get back to it
-then that's fine too.
+All the callers mentioned above check the unexpected return value different=
+ly:
+nfsd: only type =3D=3D FILEID_INVALID
+fdinfo: type < 0 || type =3D=3D FILEID_INVALID
+fanotify: !type || type =3D=3D FILEID_INVALID
+overlayfs: type < 0 || type =3D=3D FILEID_INVALID
+name_to_hanle_at: (retval =3D=3D FILEID_INVALID) || (retval =3D=3D -ENOSPC)=
+)
+                /* As per old exportfs_encode_fh documentation
+                 * we could return ENOSPC to indicate overflow
+                 * But file system returned 255 always. So handle
+                 * both the values
+                 */
+
+So he have a bit of a mess.
+How should we clean it up?
+
+Option #1: Change encode_fh to return unsigned and replace that new
+                  EOPNOTSUPP with FILEID_INVALID
+Option #2: change all callers to check negative return value
+
+I am in favor of option #2.
+Shall I send a patch?
+
+Thanks,
+Amir.
