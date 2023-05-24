@@ -2,45 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB44170FF3A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 22:30:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 842F770FF51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 22:35:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233629AbjEXUas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 16:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39564 "EHLO
+        id S235933AbjEXUfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 16:35:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjEXUaq (ORCPT
+        with ESMTP id S236149AbjEXUev (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 16:30:46 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EF4B10B;
-        Wed, 24 May 2023 13:30:45 -0700 (PDT)
+        Wed, 24 May 2023 16:34:51 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9628E1AC;
+        Wed, 24 May 2023 13:34:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=h+t0pLHTzUYTGgD0HYtHAFUPzSwmA3nxfBA9XXlt8cA=; b=TzCo3G5krtm9tGsXiiydWWi/eN
-        2Ja6ji6ltXVTrpI214coF3MM1ptZDXWUJSJE41JNnYHtVJ9ieUlLtI5FAlR65z+v7rtG+nnL7sVID
-        OgsTRQPWy5nbErcp48ZK3QDlsIXTKzvK4D/c+sgQMs1/DtnE+OtYs7ZJ2hnik2V3qQ9sldWrGnZNc
-        kNw/8zRzuc33EgYPNjd4vUjA3vFIjoPVaq2qd1lutuvIqDY/uj4kLjQi5y0AeH18EeN3nOSvz9vrN
-        bmtCvnmTI1BtCWgd2aoRQsim/rWZw4bKtcWV2HlgZrg30dettFpYIdg0ft8A5dPU7BF8PbeRzvZ48
-        3t6cjDNw==;
+        bh=xfybRCqfmly451via0zB+H/Q+AApSu2iaDmN5fGZ/x4=; b=IgXiGZt/AjIkZyk47M6JmzSETo
+        5JvYqmTY0S/6CNcf6rOgIUGkx8fCELILrDrVXemYkb5BPYKAn0HI2Y6XB5K+3xzooX2AKsZSw2rzz
+        mh9MKJ/BLQiIqzzeKOeINobvgbeJqtrrw702L1m+480O4PgbeQxZTVHsPTxFOgTQXwjhkEFw9ES3j
+        jYrlmoMd2O6KMc0tFDq7r+mdPcC6sbWD0mdmLQKvSrN/CRbmjwjlImLpNC1DyVuMY2O6L3UPugOJF
+        IUkQyLOL6dwpJlAiac2Dvj+LDhnldubALNgI54EHmr7EPEHVm08LfHTcHZ65apsu3c2zLqTuflfCR
+        76pcnqHw==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q1v6B-0054jl-18;
-        Wed, 24 May 2023 20:28:45 +0000
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q1vAx-00BWOr-Uz; Wed, 24 May 2023 20:33:40 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0CFBB30013F;
-        Wed, 24 May 2023 22:28:35 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AD8D830013F;
+        Wed, 24 May 2023 22:33:36 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BD56A20A78733; Wed, 24 May 2023 22:28:35 +0200 (CEST)
-Date:   Wed, 24 May 2023 22:28:35 +0200
+        id D6F5F20A78733; Wed, 24 May 2023 22:33:36 +0200 (CEST)
+Date:   Wed, 24 May 2023 22:33:36 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Kautuk Consul <kconsul@linux.vnet.ibm.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Kautuk Consul <kconsul@linux.vnet.ibm.com>,
         Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
@@ -73,16 +72,17 @@ Cc:     Sean Christopherson <seanjc@google.com>,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         Muchun Song <songmuchun@bytedance.com>
 Subject: Re: [PATCH v7 08/14] KVM: Rename mmu_notifier_*
-Message-ID: <20230524202835.GB3447678@hirez.programming.kicks-ass.net>
+Message-ID: <20230524203336.GC3447678@hirez.programming.kicks-ass.net>
 References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
  <20220706082016.2603916-9-chao.p.peng@linux.intel.com>
  <ZGxo9ylqYI8JXjGn@li-a450e7cc-27df-11b2-a85c-b5a9ac31e8ef.ibm.com>
  <ZGzLf4zgxpBjghaF@google.com>
  <ZG2qv9sWl2RUnGqd@li-a450e7cc-27df-11b2-a85c-b5a9ac31e8ef.ibm.com>
+ <ZG5wg3VbG4rCYrfk@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZG2qv9sWl2RUnGqd@li-a450e7cc-27df-11b2-a85c-b5a9ac31e8ef.ibm.com>
+In-Reply-To: <ZG5wg3VbG4rCYrfk@google.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -93,12 +93,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 24, 2023 at 11:42:15AM +0530, Kautuk Consul wrote:
+On Wed, May 24, 2023 at 01:16:03PM -0700, Sean Christopherson wrote:
 
-> My comment was based on the assumption that "all atomic operations are
-> implicit memory barriers". If that assumption is true then we won't need
+> Atomics aren't memory barriers on all architectures, e.g. see the various
+> definitions of smp_mb__after_atomic().
+> 
+> Even if atomic operations did provide barriers, using an atomic would be overkill
+> and a net negative.  On strongly ordered architectures like x86, memory barriers are
+> just compiler barriers, whereas atomics may be more expensive. 
 
-It is not -- also see Documentation/atomic_t.txt.
+Not quite, smp_{r,w}mb() and smp_mb__{before,after}_atomic() are
+compiler barriers on the TSO archs, but smp_mb() very much isn't. TSO
+still allows stores to be delayed vs later loads (iow it doesn't pretend
+to hide the store buffer).
 
-Specifically atomic_read() doesn't imply any ordering on any
-architecture including the strongly ordered TSO-archs (like x86).
+> Of course, the only
+> accesses outside of mmu_lock are reads, so on x86 that "atomic" access is just a
+> READ_ONCE() load, but that's not the case for all architectures.
+
+This is true on *all* archs. atomic_set() and atomic_read() are no more
+and no less than WRITE_ONCE() / READ_ONCE().
+
+> Anyways, the point is that atomics and memory barriers are different things that
+> serve different purposes.
+
+This is true; esp. on the weakly ordered architectures where atomics do
+not naturally imply any ordering.
