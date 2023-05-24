@@ -2,52 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DCCA70F9C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 17:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D753670F9CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 17:08:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233637AbjEXPHp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 11:07:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51854 "EHLO
+        id S231573AbjEXPI2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 11:08:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230330AbjEXPHn (ORCPT
+        with ESMTP id S230316AbjEXPI1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 11:07:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C161B9C;
-        Wed, 24 May 2023 08:07:42 -0700 (PDT)
+        Wed, 24 May 2023 11:08:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65315E9;
+        Wed, 24 May 2023 08:08:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4D8F461722;
-        Wed, 24 May 2023 15:07:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D14C433EF;
-        Wed, 24 May 2023 15:07:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 02168617BC;
+        Wed, 24 May 2023 15:08:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E26C4339B;
+        Wed, 24 May 2023 15:08:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684940861;
-        bh=NovvNzKCgnpyOA16gqnch6BIfKxYmjyswdBaDeKJjoQ=;
+        s=k20201202; t=1684940905;
+        bh=GdLsUpZLBsirJz5igIaN9pF2KdmoAUOlg0CNCDZnHJg=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=U8WEHk+WB/Z3dB/xLnclFMCsoe6j0cV2idj47GRRuHcNSexuCLrtMzkm4F1UU44Sd
-         n83BoSkWo6pK+ovQdRNA2Du8MtHKnW/M6Mxw+w01uZUywJfi3POdxFyf+q1GWP8q0B
-         ErPydTe5QABgniyJV7x/hmspoEhRFNC5FhWV+F7WQ+7H0rGAiP63/ATpxtschAj7/6
-         TMUcQFEDyyH56nN0HRO8jFFQ6T4Dqkr+N7F0HtEw03HmJ+pU4lpwUDGMzspjIpPv5O
-         yLeCQeciPh6bobuuij7i6taTKSSw/hluWpG1wLpaGlJWip6G37la0ymPz/+weK3dlf
-         j6iB7PPmn0rwA==
-Message-ID: <33ffcd5fd5d794fb642bbabf93f34a61d2f0d4e9.camel@kernel.org>
-Subject: Re: [PATCH v5 2/3] NFSD: handle GETATTR conflict with write
- delegation
+        b=bx/B4HQwk71OSt26yCE1us7+xXVm5qEDVjMsElT1waCCyVqJwmHmTFMXGkBbJo4Yh
+         gyrhHoxJVvdxQv2GbjKsUkRIPmrgSxiInD6cU7BQeBQBaEETcZVhfTlx+jln36fCNB
+         qAxKzDN7WP0OlhVa3jt/5ocFdpn6S4cJ2L/maDpn0bVCq7l04xmYthSmygKjVBXv0O
+         in2NOfGb/X7/C4ZVnuxt08a8uNMq1ar3zVZNHw11DMCBk91PbtUqMtkpeMXMJH007j
+         gKwp3Oic2dxAckS/4cYKzd76xv1iMjRUvQQD56LJngAbXdL/D9JIkC5rAQ93XwTJ+w
+         7/vrQJBLJ9Ykg==
+Message-ID: <32e880c5f66ce8a6f343c01416fcc8b791cc1302.camel@kernel.org>
+Subject: Re: [PATCH v5 3/3] locks: allow support for write delegation
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Dai Ngo <dai.ngo@oracle.com>, chuck.lever@oracle.com
 Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Wed, 24 May 2023 11:07:39 -0400
-In-Reply-To: <1684799560-31663-3-git-send-email-dai.ngo@oracle.com>
+Date:   Wed, 24 May 2023 11:08:23 -0400
+In-Reply-To: <1684799560-31663-4-git-send-email-dai.ngo@oracle.com>
 References: <1684799560-31663-1-git-send-email-dai.ngo@oracle.com>
-         <1684799560-31663-3-git-send-email-dai.ngo@oracle.com>
+         <1684799560-31663-4-git-send-email-dai.ngo@oracle.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -57,103 +56,36 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, 2023-05-22 at 16:52 -0700, Dai Ngo wrote:
-> If the GETATTR request on a file that has write delegation in effect
-> and the request attributes include the change info and size attribute
-> then the write delegation is recalled and NFS4ERR_DELAY is returned
-> for the GETATTR.
+> Remove the check for F_WRLCK in generic_add_lease to allow file_lock
+> to be used for write delegation.
+>=20
+> First consumer is NFSD.
 >=20
 > Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
 > ---
->  fs/nfsd/nfs4state.c | 37 +++++++++++++++++++++++++++++++++++++
->  fs/nfsd/nfs4xdr.c   |  5 +++++
->  fs/nfsd/state.h     |  3 +++
->  3 files changed, 45 insertions(+)
+>  fs/locks.c | 7 -------
+>  1 file changed, 7 deletions(-)
 >=20
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index b90b74a5e66e..ea9cd781db5f 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -8353,3 +8353,40 @@ nfsd4_get_writestateid(struct nfsd4_compound_state=
- *cstate,
->  {
->  	get_stateid(cstate, &u->write.wr_stateid);
->  }
-> +
-> +__be32
-> +nfs4_handle_wrdeleg_conflict(struct svc_rqst *rqstp, struct inode *inode=
-)
-> +{
-> +	struct file_lock_context *ctx;
-> +	struct file_lock *fl;
-> +	struct nfs4_delegation *dp;
-> +
-> +	ctx =3D locks_inode_context(inode);
-> +	if (!ctx)
-> +		return 0;
-> +	spin_lock(&ctx->flc_lock);
-> +	list_for_each_entry(fl, &ctx->flc_lease, fl_list) {
-> +		if (fl->fl_flags =3D=3D FL_LAYOUT ||
-> +				fl->fl_lmops !=3D &nfsd_lease_mng_ops)
-> +			continue;
-> +		if (fl->fl_type =3D=3D F_WRLCK) {
-> +			dp =3D fl->fl_owner;
-> +			/*
-> +			 * increment the sc_count to prevent the delegation to
-> +			 * be freed while sending the CB_RECALL. The refcount is
-> +			 * decremented by nfs4_put_stid in nfsd4_cb_recall_release
-> +			 * after the request was sent.
-> +			 */
-> +			if (dp->dl_recall.cb_clp =3D=3D *(rqstp->rq_lease_breaker) ||
-> +					!refcount_inc_not_zero(&dp->dl_stid.sc_count)) {
-
-I still don't get why you're incrementing the refcount of this stateid.
-At this point, you know that this stateid is owned by a different client
-altogether,  and breaking its lease doesn't require a reference to the
-stateid.
-
-I think this will cause a refcount leak.
-
-> +				spin_unlock(&ctx->flc_lock);
-> +				return 0;
-> +			}
-> +			spin_unlock(&ctx->flc_lock);
-> +			return nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
-> +		}
-> +		break;
-> +	}
-> +	spin_unlock(&ctx->flc_lock);
-> +	return 0;
-> +}
-> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> index 76db2fe29624..ed09b575afac 100644
-> --- a/fs/nfsd/nfs4xdr.c
-> +++ b/fs/nfsd/nfs4xdr.c
-> @@ -2966,6 +2966,11 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct =
-svc_fh *fhp,
->  		if (status)
->  			goto out;
->  	}
-> +	if (bmval0 & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
-> +		status =3D nfs4_handle_wrdeleg_conflict(rqstp, d_inode(dentry));
-> +		if (status)
-> +			goto out;
-> +	}
+> diff --git a/fs/locks.c b/fs/locks.c
+> index df8b26a42524..08fb0b4fd4f8 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -1729,13 +1729,6 @@ generic_add_lease(struct file *filp, long arg, str=
+uct file_lock **flp, void **pr
+>  	if (is_deleg && !inode_trylock(inode))
+>  		return -EAGAIN;
 > =20
->  	err =3D vfs_getattr(&path, &stat,
->  			  STATX_BASIC_STATS | STATX_BTIME | STATX_CHANGE_COOKIE,
-> diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-> index d49d3060ed4f..64727a39f0db 100644
-> --- a/fs/nfsd/state.h
-> +++ b/fs/nfsd/state.h
-> @@ -732,4 +732,7 @@ static inline bool try_to_expire_client(struct nfs4_c=
-lient *clp)
->  	cmpxchg(&clp->cl_state, NFSD4_COURTESY, NFSD4_EXPIRABLE);
->  	return clp->cl_state =3D=3D NFSD4_EXPIRABLE;
->  }
-> +
-> +extern __be32 nfs4_handle_wrdeleg_conflict(struct svc_rqst *rqstp,
-> +				struct inode *inode);
->  #endif   /* NFSD4_STATE_H */
+> -	if (is_deleg && arg =3D=3D F_WRLCK) {
+> -		/* Write delegations are not currently supported: */
+> -		inode_unlock(inode);
+> -		WARN_ON_ONCE(1);
+> -		return -EINVAL;
+> -	}
+> -
+>  	percpu_down_read(&file_rwsem);
+>  	spin_lock(&ctx->flc_lock);
+>  	time_out_leases(inode, &dispose);
 
---=20
-Jeff Layton <jlayton@kernel.org>
+I'd probably move this back to the first patch in the series.
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
