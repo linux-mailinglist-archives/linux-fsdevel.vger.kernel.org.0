@@ -2,174 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 211F370FABF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 17:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9D4270FAC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 May 2023 17:50:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234897AbjEXPtG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 May 2023 11:49:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46904 "EHLO
+        id S236224AbjEXPui (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 May 2023 11:50:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235867AbjEXPtE (ORCPT
+        with ESMTP id S229919AbjEXPuh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 May 2023 11:49:04 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD24119;
-        Wed, 24 May 2023 08:48:33 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-30789a4c537so748349f8f.0;
-        Wed, 24 May 2023 08:48:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684943312; x=1687535312;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aImk2uu1cCysgQ8U53t2GJVGevPaRL+0/lCsb4kPA7A=;
-        b=ea+MZZMqRmQfIWlvg9nR3KldDPydXVHLvjiEp5qgPd0drWpv+v8XqRQznGtk0puZwz
-         aFjFyy0Se3r+Ag5/H4X4c9DoRgb+N/2DhoflP13Y4uz2IET7laYGgIaHmcFHuoPbnR+6
-         pGCth22T4qrvQFelXGg1UjWMVgCTwpCjzwxIRwjVVdG47d93Huylo/rlMWp+OVdC3H12
-         sHrEJ3bfFkgTbpCYDhqK9Sd3+/2SU9+NzD08Zg2QwK4hCRgO+o2Pz/8FAVdMcZGaq7ut
-         exI+oQkaZcfXztZ+gTFMp7ZAKCWkfXjNhsVvc3nIavTu4h0va2fx7wqAzbCu0uC5AKzA
-         84Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684943312; x=1687535312;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aImk2uu1cCysgQ8U53t2GJVGevPaRL+0/lCsb4kPA7A=;
-        b=eWFs+gIjNKN9pFsRViwkPw05v0cwKWbzsAKRAb0FCyvjp3GI/xVO+nf/4739HQjfCM
-         q/2vS8zJFO7eUjwc+evEvR7spFMrrA1U2HT6ffpkPI45kmiisEUKNGv0SuY1ZEjdRtNY
-         anes+oNWgATMv7iuUOh0apAyCn4/6R+6vsoKvvf8BOzZ84/FpyspBcbJ16C9i5F8bXLJ
-         fLimXzYlTqRfgsz8gj6WpZa9n1CdoSbQtrvtBsyz3fK/n9Zo4sddVcZGov5g8LYRhKqh
-         3OFFM5Q6a2kw9m5j9tjDrnSD0QpB6QzH+xHnI8RTA7LVCV2JSXe3W/95cxQodykNZwM6
-         yNAA==
-X-Gm-Message-State: AC+VfDyJXJL+DkRthYDXKVkPTfVaazC9QDgDkHvS+FLf7nAFH+L0VHYT
-        eoZt5d/znQ7KsHBnUAW2GIJ2R0ruMiU=
-X-Google-Smtp-Source: ACHHUZ6OIp9n0axGNymT78Gev/UL9Ol3dUkAptq2tNVHDclMDfDXc+lmWy+y68j+pyBBmPZAR/2yAQ==
-X-Received: by 2002:a5d:4b88:0:b0:309:2b6:5c83 with SMTP id b8-20020a5d4b88000000b0030902b65c83mr219110wrt.1.1684943311859;
-        Wed, 24 May 2023 08:48:31 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id 16-20020a05600c025000b003f605814850sm2718687wmj.37.2023.05.24.08.48.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 May 2023 08:48:31 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] exportfs: check for error return value from exportfs_encode_*()
-Date:   Wed, 24 May 2023 18:48:25 +0300
-Message-Id: <20230524154825.881414-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 24 May 2023 11:50:37 -0400
+Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B58D93;
+        Wed, 24 May 2023 08:50:36 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4QRFj419Ltz9xFZy;
+        Wed, 24 May 2023 23:39:04 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwDXVQEvMm5kDA3ZAg--.2184S2;
+        Wed, 24 May 2023 16:50:18 +0100 (CET)
+Message-ID: <813148798c14a49cbdf0f500fbbbab154929e6ed.camel@huaweicloud.com>
+Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
+        syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>
+Date:   Wed, 24 May 2023 17:50:03 +0200
+In-Reply-To: <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com>
+References: <000000000000be039005fc540ed7@google.com>
+         <00000000000018faf905fc6d9056@google.com>
+         <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-CM-TRANSID: LxC2BwDXVQEvMm5kDA3ZAg--.2184S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFW7ZFW8GryfJryxArW3GFg_yoW8Kw18pr
+        WrGFnIkrsYvr1jyFn2vF1DWw1I9rZ5CrW7J3yDtryj9anaqrnrtrs29F4fW3yDCr4DCF90
+        v3W3uwn5Xwn5u37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUgmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+        AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
+        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
+        KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj42dyAADso
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-0.5 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
+        MAY_BE_FORGED,RDNS_DYNAMIC,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The exportfs_encode_*() helpers call the filesystem ->encode_fh()
-method which returns a signed int.
+On Wed, 2023-05-24 at 11:11 -0400, Paul Moore wrote:
+> On Wed, May 24, 2023 at 5:59 AM syzbot
+> <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com> wrote:
+> > syzbot has bisected this issue to:
+> > 
+> > commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+> > Author: Roberto Sassu <roberto.sassu@huawei.com>
+> > Date:   Fri Mar 31 12:32:18 2023 +0000
+> > 
+> >     reiserfs: Add security prefix to xattr name in reiserfs_security_write()
+> > 
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11c39639280000
+> > start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.linux-..
+> > git tree:       upstream
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=13c39639280000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=15c39639280000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8067683055e3f5
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=0a684c061589dcc30e51
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14312791280000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12da8605280000
+> > 
+> > Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
+> > Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
+> > 
+> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> Roberto, I think we need to resolve this somehow.  As I mentioned
+> earlier, I don't believe this to be a fault in your patch, rather that
+> patch simply triggered a situation that had not been present before,
+> likely because the reiserfs code always failed when writing LSM
+> xattrs.  Regardless, we still need to fix the deadlocks that sysbot
+> has been reporting.
 
-All the in-tree implementations of ->encode_fh() return a positive
-integer and FILEID_INVALID (255) for error.
+Hi Paul
 
-Fortify the callers for possible future ->encode_fh() implementation
-that will return a negative error value.
+ok, I will try.
 
-name_to_handle_at() would propagate the returned error to the users
-if filesystem ->encode_fh() method returns an error.
+Roberto
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Link: https://lore.kernel.org/linux-fsdevel/ca02955f-1877-4fde-b453-3c1d22794740@kili.mountain/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
-
-Jan,
-
-This patch is on top of the patches you have queued on fsnotify branch.
-
-I am not sure about the handling of negative value in nfsfh.c.
-
-Jeff/Chuck,
-
-Could you please take a look.
-
-I've test this patch with fanotify LTP tests, xfstest -g exportfs tests
-and some sanity xfstest nfs tests, but I did not try to inject errors
-in encode_fh().
-
-Please let me know what you think.
-
-Thanks,
-Amir.
-
-
-
- fs/fhandle.c                  | 5 +++--
- fs/nfsd/nfsfh.c               | 4 +++-
- fs/notify/fanotify/fanotify.c | 2 +-
- 3 files changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 4a635cf787fc..fd0d6a3b3699 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -57,18 +57,19 @@ static long do_sys_name_to_handle(const struct path *path,
- 	handle_bytes = handle_dwords * sizeof(u32);
- 	handle->handle_bytes = handle_bytes;
- 	if ((handle->handle_bytes > f_handle.handle_bytes) ||
--	    (retval == FILEID_INVALID) || (retval == -ENOSPC)) {
-+	    (retval == FILEID_INVALID) || (retval < 0)) {
- 		/* As per old exportfs_encode_fh documentation
- 		 * we could return ENOSPC to indicate overflow
- 		 * But file system returned 255 always. So handle
- 		 * both the values
- 		 */
-+		if (retval == FILEID_INVALID || retval == -ENOSPC)
-+			retval = -EOVERFLOW;
- 		/*
- 		 * set the handle size to zero so we copy only
- 		 * non variable part of the file_handle
- 		 */
- 		handle_bytes = 0;
--		retval = -EOVERFLOW;
- 	} else
- 		retval = 0;
- 	/* copy the mount id */
-diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-index 31e4505c0df3..0f5eacae5f43 100644
---- a/fs/nfsd/nfsfh.c
-+++ b/fs/nfsd/nfsfh.c
-@@ -416,9 +416,11 @@ static void _fh_update(struct svc_fh *fhp, struct svc_export *exp,
- 		int maxsize = (fhp->fh_maxsize - fhp->fh_handle.fh_size)/4;
- 		int fh_flags = (exp->ex_flags & NFSEXP_NOSUBTREECHECK) ? 0 :
- 				EXPORT_FH_CONNECTABLE;
-+		int fileid_type =
-+			exportfs_encode_fh(dentry, fid, &maxsize, fh_flags);
- 
- 		fhp->fh_handle.fh_fileid_type =
--			exportfs_encode_fh(dentry, fid, &maxsize, fh_flags);
-+			fileid_type > 0 ? fileid_type : FILEID_INVALID;
- 		fhp->fh_handle.fh_size += maxsize * 4;
- 	} else {
- 		fhp->fh_handle.fh_fileid_type = FILEID_ROOT;
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index d2bbf1445a9e..9dac7f6e72d2 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -445,7 +445,7 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
- 	dwords = fh_len >> 2;
- 	type = exportfs_encode_fid(inode, buf, &dwords);
- 	err = -EINVAL;
--	if (!type || type == FILEID_INVALID || fh_len != dwords << 2)
-+	if (type <= 0 || type == FILEID_INVALID || fh_len != dwords << 2)
- 		goto out_err;
- 
- 	fh->type = type;
--- 
-2.34.1
+> Has anyone dug into the reiserfs code to try and resolve the deadlock?
+>  Considering the state of reiserfs, I'm guessing no one has, and I
+> can't blame them; I personally would have a hard time justifying
+> significant time spent on reiserfs at this point.  Unless someone has
+> any better ideas, I'm wondering if we shouldn't just admit defeat with
+> reiserfs and LSM xattrs and disable/remove the reiserfs LSM xattr
+> support?  Given the bug that Roberto was fixing with the patch in
+> question, it's unlikely this was working anyway.
+> 
+> --
+> paul-moore.com
 
