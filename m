@@ -2,68 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C914711004
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 17:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C884711040
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 18:01:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241590AbjEYPwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 11:52:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41480 "EHLO
+        id S241897AbjEYQBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 12:01:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241572AbjEYPwE (ORCPT
+        with ESMTP id S241815AbjEYQBb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 11:52:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27881B3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 08:51:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685029881;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pxFfFsuy6kbRVs0LWrBWAlBLaVA5rUY1NByIba8Y/08=;
-        b=BmwOZIt0PCrasKhbNhzIly83AXQZVXJHL/39hQya4nEZvC3rTEcNnHTB05psbWgaiUOf2/
-        xpeW3GSVUDyT05lG6kZgECwezH2nfR3vtZC92XP2EYcdmRb6pE1ShdA7VjH/OGfoWObnvz
-        HDZfiJdCreqUt7OwP/0wWykU2bJbUgg=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-601-yKzjrWDzM6Su1Tb4mISqqA-1; Thu, 25 May 2023 11:51:18 -0400
-X-MC-Unique: yKzjrWDzM6Su1Tb4mISqqA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DB73F3C17C65;
-        Thu, 25 May 2023 15:51:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BE4C492B0A;
-        Thu, 25 May 2023 15:51:14 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        David Hildenbrand <david@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [RFC PATCH 3/3] block: Use iov_iter_extract_pages() and page pinning in direct-io.c
-Date:   Thu, 25 May 2023 16:51:02 +0100
-Message-Id: <20230525155102.87353-4-dhowells@redhat.com>
-In-Reply-To: <20230525155102.87353-1-dhowells@redhat.com>
-References: <20230525155102.87353-1-dhowells@redhat.com>
+        Thu, 25 May 2023 12:01:31 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE511A4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 09:00:45 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-75b17298108so63817385a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 09:00:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685030445; x=1687622445;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XHGm6h9ltzIrb4jNjdDlUA0RTr0K5h3DXD0V46u1KXM=;
+        b=KmtEdsuCZaAUrLYZR12Oc+05D8TnVG/pQ60ld70vAXeUw1v+aUE1dkZgwJosoMFz0N
+         LEdYC5y2dXRq1R6u2QVu2B3lU1wcbxERyUtbkM6tgez81z4ry4jk2H6g30VkMMCTS/bs
+         HgJaEzLn7HsfYpS2gR+ZwHNkuXmKCin/ha7upfqHu+1ry5E80b4Lpm64ON1gF7X+/p1L
+         cznq9qCQ6aI31X1txwgeLMwBZ72cwwfm4mUEe1PojpY8emQMD44rDaJxVcUwAjUM8aFQ
+         KVKbzkJYreehWdpmaTTDtYLgDIuaAskmtw7OUfrLWAcKofJm3sR8PzHDB9+Taj79j8AT
+         zvuQ==
+X-Gm-Message-State: AC+VfDxer+0K3YV2D2u+9z3SZ/1zpoTn15pIEWsXG8xqZ6HvshQZAloo
+        k1mB9B+nFncgfp0u71J1ES+d
+X-Google-Smtp-Source: ACHHUZ4Z77PxkwjQ7WFe2GRTFdAB5YMbwS9Fi8O2f9aEzq40ZuS6SSvTA3pLXmIPe4Uvb22Hlm64XQ==
+X-Received: by 2002:a37:68d0:0:b0:75b:23a1:421 with SMTP id d199-20020a3768d0000000b0075b23a10421mr11005599qkc.55.1685030444711;
+        Thu, 25 May 2023 09:00:44 -0700 (PDT)
+Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
+        by smtp.gmail.com with ESMTPSA id f10-20020a05620a15aa00b007339c5114a9sm474202qkk.103.2023.05.25.09.00.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 May 2023 09:00:44 -0700 (PDT)
+Date:   Thu, 25 May 2023 12:00:43 -0400
+From:   Mike Snitzer <snitzer@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>, Joe Thornber <ejt@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Bart Van Assche <bvanassche@google.com>,
+        linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>, dm-devel@redhat.com,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Sarthak Kukreti <sarthakkukreti@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>
+Subject: Re: [PATCH v7 0/5] Introduce provisioning primitives
+Message-ID: <ZG+GKwFC7M3FfAO5@redhat.com>
+References: <20230518223326.18744-1-sarthakkukreti@chromium.org>
+ <ZGb2Xi6O3i2pLam8@infradead.org>
+ <ZGeKm+jcBxzkMXQs@redhat.com>
+ <ZGgBQhsbU9b0RiT1@dread.disaster.area>
+ <ZGu0LaQfREvOQO4h@redhat.com>
+ <ZGzIJlCE2pcqQRFJ@bfoster>
+ <ZGzbGg35SqMrWfpr@redhat.com>
+ <ZG1dAtHmbQ53aOhA@dread.disaster.area>
+ <ZG5taYoXDRymo/e9@redhat.com>
+ <ZG9JD+4Zu36lnm4F@dread.disaster.area>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZG9JD+4Zu36lnm4F@dread.disaster.area>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,258 +81,224 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Change the old block-based direct-I/O code to use iov_iter_extract_pages()
-to pin user pages or leave kernel pages unpinned rather than taking refs
-when submitting bios.
+On Thu, May 25 2023 at  7:39P -0400,
+Dave Chinner <david@fromorbit.com> wrote:
 
-This makes use of the preceding patches to not take pins on the zero page
-(thereby allowing insertion of zero pages in with pinned pages) and to get
-additional pins on pages, allowing an extracted page to be used in multiple
-bios without having to re-extract it.
+> On Wed, May 24, 2023 at 04:02:49PM -0400, Mike Snitzer wrote:
+> > On Tue, May 23 2023 at  8:40P -0400,
+> > Dave Chinner <david@fromorbit.com> wrote:
+> > 
+> > > On Tue, May 23, 2023 at 11:26:18AM -0400, Mike Snitzer wrote:
+> > > > On Tue, May 23 2023 at 10:05P -0400, Brian Foster <bfoster@redhat.com> wrote:
+> > > > > On Mon, May 22, 2023 at 02:27:57PM -0400, Mike Snitzer wrote:
+> > > > > ... since I also happen to think there is a potentially interesting
+> > > > > development path to make this sort of reserve pool configurable in terms
+> > > > > of size and active/inactive state, which would allow the fs to use an
+> > > > > emergency pool scheme for managing metadata provisioning and not have to
+> > > > > track and provision individual metadata buffers at all (dealing with
+> > > > > user data is much easier to provision explicitly). So the space
+> > > > > inefficiency thing is potentially just a tradeoff for simplicity, and
+> > > > > filesystems that want more granularity for better behavior could achieve
+> > > > > that with more work. Filesystems that don't would be free to rely on the
+> > > > > simple/basic mechanism provided by dm-thin and still have basic -ENOSPC
+> > > > > protection with very minimal changes.
+> > > > > 
+> > > > > That's getting too far into the weeds on the future bits, though. This
+> > > > > is essentially 99% a dm-thin approach, so I'm mainly curious if there's
+> > > > > sufficient interest in this sort of "reserve mode" approach to try and
+> > > > > clean it up further and have dm guys look at it, or if you guys see any
+> > > > > obvious issues in what it does that makes it potentially problematic, or
+> > > > > if you would just prefer to go down the path described above...
+> > > > 
+> > > > The model that Dave detailed, which builds on REQ_PROVISION and is
+> > > > sticky (by provisioning same blocks for snapshot) seems more useful to
+> > > > me because it is quite precise.  That said, it doesn't account for
+> > > > hard requirements that _all_ blocks will always succeed.
+> > > 
+> > > Hmmm. Maybe I'm misunderstanding the "reserve pool" context here,
+> > > but I don't think we'd ever need a hard guarantee from the block
+> > > device that every write bio issued from the filesystem will succeed
+> > > without ENOSPC.
+> > > 
+> > > If the block device can provide a guarantee that a provisioned LBA
+> > > range is always writable, then everything else is a filesystem level
+> > > optimisation problem and we don't have to involve the block device
+> > > in any way. All we need is a flag we can ready out of the bdev at
+> > > mount time to determine if the filesystem should be operating with
+> > > LBA provisioning enabled...
+> > > 
+> > > e.g. If we need to "pre-provision" a chunk of the LBA space for
+> > > filesystem metadata, we can do that ahead of time and track the
+> > > pre-provisioned range(s) in the filesystem itself.
+> > > 
+> > > In XFS, That could be as simple as having small chunks of each AG
+> > > reserved to metadata (e.g. start with the first 100MB) and limiting
+> > > all metadata allocation free space searches to that specific block
+> > > range. When we run low on that space, we pre-provision another 100MB
+> > > chunk and then allocate all metadata out of that new range. If we
+> > > start getting ENOSPC to pre-provisioning, then we reduce the size of
+> > > the regions and log low space warnings to userspace. If we can't
+> > > pre-provision any space at all and we've completely run out, we
+> > > simply declare ENOSPC for all incoming operations that require
+> > > metadata allocation until pre-provisioning succeeds again.
+> > 
+> > This is basically saying the same thing but:
+> > 
+> > It could be that the LBA space is fragmented and so falling back to
+> > the smallest region size (that matches the thinp block size) would be
+> > the last resort?  Then if/when thinp cannot even service allocating a
+> > new free thin block, dm-thinp will transition to out-of-data-space
+> > mode.
+> 
+> Yes, something of that sort, though we'd probably give up if we
+> can't get at least megabyte scale reservations - a single
+> modification in XFS can modify many structures and require
+> allocation of a lot of new metadata, so the fileystem cut-off would
+> for metadata provisioning failure would be much larger than the
+> dm-thinp region size....
+> 
+> > > This is built entirely on the premise that once proactive backing
+> > > device provisioning fails, the backing device is at ENOSPC and we
+> > > have to wait for that situation to go away before allowing new data
+> > > to be ingested. Hence the block device really doesn't need to know
+> > > anything about what the filesystem is doing and vice versa - The
+> > > block dev just says "yes" or "no" and the filesystem handles
+> > > everything else.
+> > 
+> > Yes.
+> > 
+> > > It's worth noting that XFS already has a coarse-grained
+> > > implementation of preferred regions for metadata storage. It will
+> > > currently not use those metadata-preferred regions for user data
+> > > unless all the remaining user data space is full.  Hence I'm pretty
+> > > sure that a pre-provisioning enhancment like this can be done
+> > > entirely in-memory without requiring any new on-disk state to be
+> > > added.
+> > > 
+> > > Sure, if we crash and remount, then we might chose a different LBA
+> > > region for pre-provisioning. But that's not really a huge deal as we
+> > > could also run an internal background post-mount fstrim operation to
+> > > remove any unused pre-provisioning that was left over from when the
+> > > system went down.
+> > 
+> > This would be the FITRIM with extension you mention below? Which is a
+> > filesystem interface detail?
+> 
+> No. We might reuse some of the internal infrastructure we use to
+> implement FITRIM, but that's about it. It's just something kinda
+> like FITRIM but with different constraints determined by the
+> filesystem rather than the user...
+> 
+> As it is, I'm not sure we'd even need it - a preiodic userspace
+> FITRIM would acheive the same result, so leaked provisioned spaces
+> would get cleaned up eventually without the filesystem having to do
+> anything specific...
+> 
+> > So dm-thinp would _not_ need to have new
+> > state that tracks "provisioned but unused" block?
+> 
+> No idea - that's your domain. :)
+> 
+> dm-snapshot, for certain, will need to track provisioned regions
+> because it has to guarantee that overwrites to provisioned space in
+> the origin device will always succeed. Hence it needs to know how
+> much space breaking sharing in provisioned regions after a snapshot
+> has been taken with be required...
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Christoph Hellwig <hch@infradead.org>
-cc: David Hildenbrand <david@redhat.com>
-cc: Andrew Morton <akpm@linux-foundation.org>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Jan Kara <jack@suse.cz>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Jason Gunthorpe <jgg@nvidia.com>
-cc: Logan Gunthorpe <logang@deltatee.com>
-cc: Hillf Danton <hdanton@sina.com>
-cc: Christian Brauner <brauner@kernel.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-block@vger.kernel.org
-cc: linux-kernel@vger.kernel.org
-cc: linux-mm@kvack.org
----
- fs/direct-io.c | 68 ++++++++++++++++++++++++++++++--------------------
- 1 file changed, 41 insertions(+), 27 deletions(-)
+dm-thinp offers its own much more scalable snapshot support (doesn't
+use old dm-snapshot N-way copyout target).
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index ad20f3428bab..14049204cac8 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -42,8 +42,8 @@
- #include "internal.h"
- 
- /*
-- * How many user pages to map in one call to get_user_pages().  This determines
-- * the size of a structure in the slab cache
-+ * How many user pages to map in one call to iov_iter_extract_pages().  This
-+ * determines the size of a structure in the slab cache
-  */
- #define DIO_PAGES	64
- 
-@@ -121,12 +121,13 @@ struct dio {
- 	struct inode *inode;
- 	loff_t i_size;			/* i_size when submitted */
- 	dio_iodone_t *end_io;		/* IO completion function */
-+	bool need_unpin;		/* T if we need to unpin the pages */
- 
- 	void *private;			/* copy from map_bh.b_private */
- 
- 	/* BIO completion state */
- 	spinlock_t bio_lock;		/* protects BIO fields below */
--	int page_errors;		/* errno from get_user_pages() */
-+	int page_errors;		/* err from iov_iter_extract_pages() */
- 	int is_async;			/* is IO async ? */
- 	bool defer_completion;		/* defer AIO completion to workqueue? */
- 	bool should_dirty;		/* if pages should be dirtied */
-@@ -165,14 +166,14 @@ static inline unsigned dio_pages_present(struct dio_submit *sdio)
-  */
- static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
- {
-+	struct page **pages = dio->pages;
- 	const enum req_op dio_op = dio->opf & REQ_OP_MASK;
- 	ssize_t ret;
- 
--	ret = iov_iter_get_pages2(sdio->iter, dio->pages, LONG_MAX, DIO_PAGES,
--				&sdio->from);
-+	ret = iov_iter_extract_pages(sdio->iter, &pages, LONG_MAX,
-+				     DIO_PAGES, 0, &sdio->from);
- 
- 	if (ret < 0 && sdio->blocks_available && dio_op == REQ_OP_WRITE) {
--		struct page *page = ZERO_PAGE(0);
- 		/*
- 		 * A memory fault, but the filesystem has some outstanding
- 		 * mapped blocks.  We need to use those blocks up to avoid
-@@ -180,8 +181,7 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
- 		 */
- 		if (dio->page_errors == 0)
- 			dio->page_errors = ret;
--		get_page(page);
--		dio->pages[0] = page;
-+		dio->pages[0] = ZERO_PAGE(0);
- 		sdio->head = 0;
- 		sdio->tail = 1;
- 		sdio->from = 0;
-@@ -201,9 +201,9 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
- 
- /*
-  * Get another userspace page.  Returns an ERR_PTR on error.  Pages are
-- * buffered inside the dio so that we can call get_user_pages() against a
-- * decent number of pages, less frequently.  To provide nicer use of the
-- * L1 cache.
-+ * buffered inside the dio so that we can call iov_iter_extract_pages()
-+ * against a decent number of pages, less frequently.  To provide nicer use of
-+ * the L1 cache.
-  */
- static inline struct page *dio_get_page(struct dio *dio,
- 					struct dio_submit *sdio)
-@@ -219,6 +219,18 @@ static inline struct page *dio_get_page(struct dio *dio,
- 	return dio->pages[sdio->head];
- }
- 
-+static void dio_pin_page(struct dio *dio, struct page *page)
-+{
-+	if (dio->need_unpin)
-+		page_get_additional_pin(page);
-+}
-+
-+static void dio_unpin_page(struct dio *dio, struct page *page)
-+{
-+	if (dio->need_unpin)
-+		unpin_user_page(page);
-+}
-+
- /*
-  * dio_complete() - called when all DIO BIO I/O has been completed
-  *
-@@ -444,8 +456,9 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
-  */
- static inline void dio_cleanup(struct dio *dio, struct dio_submit *sdio)
- {
--	while (sdio->head < sdio->tail)
--		put_page(dio->pages[sdio->head++]);
-+	if (dio->need_unpin)
-+		unpin_user_pages(dio->pages + sdio->head,
-+				 sdio->tail - sdio->head);
- }
- 
- /*
-@@ -676,7 +689,7 @@ static inline int dio_new_bio(struct dio *dio, struct dio_submit *sdio,
-  *
-  * Return zero on success.  Non-zero means the caller needs to start a new BIO.
-  */
--static inline int dio_bio_add_page(struct dio_submit *sdio)
-+static inline int dio_bio_add_page(struct dio *dio, struct dio_submit *sdio)
- {
- 	int ret;
- 
-@@ -688,7 +701,7 @@ static inline int dio_bio_add_page(struct dio_submit *sdio)
- 		 */
- 		if ((sdio->cur_page_len + sdio->cur_page_offset) == PAGE_SIZE)
- 			sdio->pages_in_io--;
--		get_page(sdio->cur_page);
-+		dio_pin_page(dio, sdio->cur_page);
- 		sdio->final_block_in_bio = sdio->cur_page_block +
- 			(sdio->cur_page_len >> sdio->blkbits);
- 		ret = 0;
-@@ -743,11 +756,11 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
- 			goto out;
- 	}
- 
--	if (dio_bio_add_page(sdio) != 0) {
-+	if (dio_bio_add_page(dio, sdio) != 0) {
- 		dio_bio_submit(dio, sdio);
- 		ret = dio_new_bio(dio, sdio, sdio->cur_page_block, map_bh);
- 		if (ret == 0) {
--			ret = dio_bio_add_page(sdio);
-+			ret = dio_bio_add_page(dio, sdio);
- 			BUG_ON(ret != 0);
- 		}
- 	}
-@@ -804,13 +817,13 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
- 	 */
- 	if (sdio->cur_page) {
- 		ret = dio_send_cur_page(dio, sdio, map_bh);
--		put_page(sdio->cur_page);
-+		dio_unpin_page(dio, sdio->cur_page);
- 		sdio->cur_page = NULL;
- 		if (ret)
- 			return ret;
- 	}
- 
--	get_page(page);		/* It is in dio */
-+	dio_pin_page(dio, page);		/* It is in dio */
- 	sdio->cur_page = page;
- 	sdio->cur_page_offset = offset;
- 	sdio->cur_page_len = len;
-@@ -825,7 +838,7 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
- 		ret = dio_send_cur_page(dio, sdio, map_bh);
- 		if (sdio->bio)
- 			dio_bio_submit(dio, sdio);
--		put_page(sdio->cur_page);
-+		dio_unpin_page(dio, sdio->cur_page);
- 		sdio->cur_page = NULL;
- 	}
- 	return ret;
-@@ -926,7 +939,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
- 
- 				ret = get_more_blocks(dio, sdio, map_bh);
- 				if (ret) {
--					put_page(page);
-+					dio_unpin_page(dio, page);
- 					goto out;
- 				}
- 				if (!buffer_mapped(map_bh))
-@@ -971,7 +984,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
- 
- 				/* AKPM: eargh, -ENOTBLK is a hack */
- 				if (dio_op == REQ_OP_WRITE) {
--					put_page(page);
-+					dio_unpin_page(dio, page);
- 					return -ENOTBLK;
- 				}
- 
-@@ -984,7 +997,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
- 				if (sdio->block_in_file >=
- 						i_size_aligned >> blkbits) {
- 					/* We hit eof */
--					put_page(page);
-+					dio_unpin_page(dio, page);
- 					goto out;
- 				}
- 				zero_user(page, from, 1 << blkbits);
-@@ -1024,7 +1037,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
- 						  sdio->next_block_for_io,
- 						  map_bh);
- 			if (ret) {
--				put_page(page);
-+				dio_unpin_page(dio, page);
- 				goto out;
- 			}
- 			sdio->next_block_for_io += this_chunk_blocks;
-@@ -1039,8 +1052,8 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
- 				break;
- 		}
- 
--		/* Drop the ref which was taken in get_user_pages() */
--		put_page(page);
-+		/* Drop the pin which was taken in get_user_pages() */
-+		dio_unpin_page(dio, page);
- 	}
- out:
- 	return ret;
-@@ -1135,6 +1148,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 		/* will be released by direct_io_worker */
- 		inode_lock(inode);
- 	}
-+	dio->need_unpin = iov_iter_extract_will_pin(iter);
- 
- 	/* Once we sampled i_size check for reads beyond EOF */
- 	dio->i_size = i_size_read(inode);
-@@ -1259,7 +1273,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 		ret2 = dio_send_cur_page(dio, &sdio, &map_bh);
- 		if (retval == 0)
- 			retval = ret2;
--		put_page(sdio.cur_page);
-+		dio_unpin_page(dio, sdio.cur_page);
- 		sdio.cur_page = NULL;
- 	}
- 	if (sdio.bio)
+dm-snapshot isn't going to be modified to support this level of
+hardening (dm-snapshot is basically in "maintenance only" now).
 
+But I understand your meaning: what you said is 100% applicable to
+dm-thinp's snapshot implementation and needs to be accounted for in
+thinp's metadata (inherent 'provisioned' flag).
+
+> > Nor would the block
+> > layer need an extra discard flag for a new class of "provisioned"
+> > blocks.
+> 
+> Right, I don't see that the discard operations need to care whether
+> the underlying storage is provisioned. dm-thinp and dm-snapshot can
+> treat REQ_OP_DISCARD as "this range is not longer in use" and do
+> whatever they want with them. 
+> 
+> > If XFS tracked this "provisioned but unused" state, dm-thinp could
+> > just discard the block like its told.  Would be nice to avoid dm-thinp
+> > needing to track "provisioned but unused".
+> >
+> > That said, dm-thinp does still need to know if a block was provisioned
+> > (given our previous designed discussion, to allow proper guarantees
+> > from this interface at snapshot time) so that XFS and other
+> > filesystems don't need to re-provision areas they already
+> > pre-provisioned.
+> 
+> Right.
+> 
+> I've simply assumed that dm-thinp would need to track entire
+> provisioned regions - used or unused - so it knows which writes to
+> empty or shared regions have a reservation to allow allocation to
+> succeed when the backing pool is otherwise empty.....
+> 
+> > However, it may be that if thinp did track "provisioned but unused"
+> > it'd be useful to allow snapshots to share provisioned blocks that
+> > were never used.  Meaning, we could then avoid "breaking sharing" at
+> > snapshot-time for "provisioned but unused" blocks.  But allowing this
+> > "optimization" undercuts the gaurantee that XFS needs for thinp
+> > storage that allows snapshots... SO, I think I answered my own
+> > question: thinp doesnt need to track "provisioned but unused" blocks
+> > but we must always ensure snapshots inherit provisoned blocks ;)
+> 
+> Sounds like a potential optimisation, but I haven't thought through
+> a potential snapshot device implementation that far to comment
+> sanely. I stopped once I got to the point where accounting tricks
+> count be used to guarantee space is available for breaking sharing
+> of used provisioned space after a snapshot was taken....
+> 
+> > > Further, managing shared pool exhaustion doesn't require a
+> > > reservation pool in the backing device and for the filesystems to
+> > > request space from it. Filesystems already have their own reserve
+> > > pools via pre-provisioning. If we want the filesystems to be able to
+> > > release that space back to the shared pool (e.g. because the shared
+> > > backing pool is critically short on space) then all we need is an
+> > > extension to FITRIM to tell the filesystem to also release internal
+> > > pre-provisioned reserves.
+> > 
+> > So by default FITRIM will _not_ discard provisioned blocks.  Only if
+> > a flag is used will it result in discarding provisioned blocks.
+> 
+> No. FITRIM results in discard of any unused free space in the
+> filesystem that matches the criteria set by the user. We don't care
+> if free space was once provisioned used space - we'll issue a
+> discard for the range regardless. The "special" FITRIM extension I
+> mentioned is to get filesystem metadata provisioning released;
+> that's completely separate to user data provisioning through
+> fallocate() which FITRIM will always discard if it has been freed...
+> 
+> IOWs, normal behaviour will be that a FITRIM ends up discarding a
+> mix of unprovisioned and provisioned space. Nobody will be able to
+> predict what mix the device is going to get at any point in time.
+> Also, if we turn on online discard, the block device is going to get
+> a constant stream of discard operations that will also be a mix of
+> provisioned and unprovisioned space that is not longer in use by the
+> filesystem. 
+> 
+> I suspect that you need to stop trying to double guess what
+> operations the filesystem will use provisioning for, what it will
+> send discards for and when it will send discards for them.. Just
+> assume the device will receive a constant stream of both
+> REQ_PROVISION and REQ_OP_DISCARD (for both provisioned and
+> unprovisioned regions) operations whenver the filesystem is active
+> on a thinp device.....
+
+Yeah, I was getting tripped up in the weeds a bit.  It's pretty
+straight-forward (and like I said at the start of our subthread here:
+this follow-on work, to inherit provisioned flag, can build on this
+REQ_PROVISION patchset).
+
+All said, I've now gotten this sub-thread on Joe Thornber's radar and
+we've started discussing. We'll be discussing with more focus
+tomorrow.
+
+Mike
