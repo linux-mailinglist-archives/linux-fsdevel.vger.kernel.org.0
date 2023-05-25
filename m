@@ -2,163 +2,318 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5C1711148
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 18:48:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D032B711151
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 18:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239784AbjEYQsu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 12:48:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49332 "EHLO
+        id S231990AbjEYQt6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 12:49:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231905AbjEYQsk (ORCPT
+        with ESMTP id S240605AbjEYQtx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 12:48:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8FD195
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 09:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685033277;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dkhHTV4yWf72EQW+jJcHV7CXxI+jmEVf1Ed42wfSOPk=;
-        b=WaF8xPR1lvpTp2woEH13cl6poE2DWKBxMZF263M3bBj3RhjEQTAyBiQ69U+M2wecyaf9It
-        x4MeaXSd7ID8A/OBqptVXepCQ6TI2RPlcvlxljbpxfesNZQ9f7MzK39XD6+JNSOlcGAKOc
-        1OGojcsaqGKxWq39kdCVrV2jDUzYkpE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-157-IgZzrMhCOGuDPosT7GPZHg-1; Thu, 25 May 2023 12:47:56 -0400
-X-MC-Unique: IgZzrMhCOGuDPosT7GPZHg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3f6038dc351so3429885e9.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 09:47:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685033275; x=1687625275;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dkhHTV4yWf72EQW+jJcHV7CXxI+jmEVf1Ed42wfSOPk=;
-        b=XOzHW+zYLU6P+3Lmjoxulyne6L2FeBbwHncMcfPcbxtHjHppNyeOPYI2skYSUS4bQy
-         u6T+Z2Zu4TaM/6n4WUfsERL7Cym2e06SyIhEobZ+sDkaHAx9F3TEdwUznOyHdptzltV0
-         Krt8WtI0CPy0dVtEYuzSxtTS/2v1x4BqZ5bQRJi4M9Cu/EYS31uKmonMttHoe6lvBpLs
-         Guq+OMMTi4HSDqK/+vLFCekw1XZhC9fjf3bxNRCaLV/ZWNMmuXvtvjUIB+RDv8gm4JrZ
-         pOVdDSYbMXQIWxjUN4bXyZLZRBErp6k2tyL769lim7/NfuRjnpLwGymj5xk1WDqDNE1I
-         84AQ==
-X-Gm-Message-State: AC+VfDyrurfuhNiRQ1KTP+oj8Wi5TwhOHyHQbC0EpT4Z2HbiWkILXoUL
-        cgAm1uVCZ9050AYx2vU+YOLHEckyvqAaajG9jB7v0gcbRsfZtXEcOjM6EyOTlIRj4ifEQLAEVuf
-        GH1leOYom3jZaQYCLJKlFruH+Xw==
-X-Received: by 2002:a1c:4c0e:0:b0:3f6:d2f:27f7 with SMTP id z14-20020a1c4c0e000000b003f60d2f27f7mr2643833wmf.17.1685033275005;
-        Thu, 25 May 2023 09:47:55 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5x7Zn1U8eTzuREMoFUdD9y0e8K096Z9etxMSRY6PlxSUFaWdbdc1yyGZ28KrofBVrR4sLjBw==
-X-Received: by 2002:a1c:4c0e:0:b0:3f6:d2f:27f7 with SMTP id z14-20020a1c4c0e000000b003f60d2f27f7mr2643817wmf.17.1685033274602;
-        Thu, 25 May 2023 09:47:54 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c709:600:4306:6a2b:57d5:2da1? (p200300cbc709060043066a2b57d52da1.dip0.t-ipconnect.de. [2003:cb:c709:600:4306:6a2b:57d5:2da1])
-        by smtp.gmail.com with ESMTPSA id b5-20020a5d45c5000000b002fda1b12a0bsm2397513wrs.2.2023.05.25.09.47.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 May 2023 09:47:53 -0700 (PDT)
-Message-ID: <97970ae6-e912-912a-1755-8d7bbb1131d0@redhat.com>
-Date:   Thu, 25 May 2023 18:47:52 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC PATCH 1/3] mm: Don't pin ZERO_PAGE in pin_user_pages()
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20230525155102.87353-1-dhowells@redhat.com>
- <20230525155102.87353-2-dhowells@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230525155102.87353-2-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Thu, 25 May 2023 12:49:53 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02CED189;
+        Thu, 25 May 2023 09:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685033392; x=1716569392;
+  h=date:from:to:cc:subject:message-id;
+  bh=yAaFl8xaWXtUTN2/2tBMaSZCgNk9fLjATl65FL+t4Vs=;
+  b=jByYn2Sf+DovNIpmPjXi0fd5pGHl7SDIohwyQNU6rquiC93fjJzbQe5t
+   ijyJWXzJ7X5tzmnrXFnOx4SwwpNlQhJv6Nna6kPGq9uFMCFkUCO8YZ78k
+   7MwdIhscaXCCQyRbRpc/SUNaR1x7549sNANex1DA8/wY9Cvx1tbZxH0zw
+   jlzpWSA+s80VgQLf/tGEnUf/PgQTdRceVNHcgJ2DyGSwcZkfRfvoPd47Q
+   jZ9tKLWwp40pmbXDUvyNY/NJ/G0CwU022dyN5EcSb1C8zqWPimUHpR0pT
+   KwhgAM41EvMFEnjU65qvDTtHPrbEHuJMWGTgO9bdct1XCmghK31NulI/6
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10721"; a="352794729"
+X-IronPort-AV: E=Sophos;i="6.00,191,1681196400"; 
+   d="scan'208";a="352794729"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2023 09:49:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10721"; a="737848703"
+X-IronPort-AV: E=Sophos;i="6.00,191,1681196400"; 
+   d="scan'208";a="737848703"
+Received: from lkp-server01.sh.intel.com (HELO dea6d5a4f140) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 25 May 2023 09:49:49 -0700
+Received: from kbuild by dea6d5a4f140 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1q2E9s-000Fr3-2A;
+        Thu, 25 May 2023 16:49:48 +0000
+Date:   Fri, 26 May 2023 00:49:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: [linux-next:master] BUILD REGRESSION
+ 6a3d37b4d885129561e1cef361216f00472f7d2e
+Message-ID: <20230525164911.Tn0rP%lkp@intel.com>
+User-Agent: s-nail v14.9.24
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 25.05.23 17:51, David Howells wrote:
-> Make pin_user_pages*() leave the ZERO_PAGE unpinned if it extracts a
-> pointer to it from the page tables and make unpin_user_page*()
-> correspondingly ignore the ZERO_PAGE when unpinning.  We don't want to risk
-> overrunning the zero page's refcount as we're only allowed ~2 million pins
-> on it - something that userspace can conceivably trigger.
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 6a3d37b4d885129561e1cef361216f00472f7d2e  Add linux-next specific files for 20230525
 
-As Linus raised, the ZERO_PAGE(0) checks should probably be 
-is_zero_pfn(page_to_pfn(page)).
+Error/Warning reports:
 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Christoph Hellwig <hch@infradead.org>
-> cc: David Hildenbrand <david@redhat.com>
-> cc: Andrew Morton <akpm@linux-foundation.org>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Al Viro <viro@zeniv.linux.org.uk>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: Jan Kara <jack@suse.cz>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Jason Gunthorpe <jgg@nvidia.com>
-> cc: Logan Gunthorpe <logang@deltatee.com>
-> cc: Hillf Danton <hdanton@sina.com>
-> cc: Christian Brauner <brauner@kernel.org>
-> cc: Linus Torvalds <torvalds@linux-foundation.org>
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-block@vger.kernel.org
-> cc: linux-kernel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
->   mm/gup.c | 25 ++++++++++++++++++++++++-
->   1 file changed, 24 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index bbe416236593..d2662aa8cf01 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -51,7 +51,8 @@ static inline void sanity_check_pinned_pages(struct page **pages,
->   		struct page *page = *pages;
->   		struct folio *folio = page_folio(page);
->   
-> -		if (!folio_test_anon(folio))
-> +		if (page == ZERO_PAGE(0) ||
-> +		    !folio_test_anon(folio))
->   			continue;
->   		if (!folio_test_large(folio) || folio_test_hugetlb(folio))
->   			VM_BUG_ON_PAGE(!PageAnonExclusive(&folio->page), page);
-> @@ -131,6 +132,13 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
->   	else if (flags & FOLL_PIN) {
->   		struct folio *folio;
->   
-> +		/*
-> +		 * Don't take a pin on the zero page - it's not going anywhere
-> +		 * and it is used in a *lot* of places.
-> +		 */
-> +		if (page == ZERO_PAGE(0))
-> +			return page_folio(ZERO_PAGE(0));
+https://lore.kernel.org/oe-kbuild-all/202305241902.UvHtMoxa-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202305251508.qSwAS1hL-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202305251510.U0R2as7k-lkp@intel.com
 
-With the fixed check, this should be
-	return page_folio(page);
+Error/Warning: (recently discovered and may have been fixed)
 
-I guess.
+ERROR: modpost: "amdgpu_show_fdinfo" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+drivers/gpu/drm/i915/display/intel_display.c:6012:3: error: unannotated fall-through between switch labels [-Werror,-Wimplicit-fallthrough]
+drivers/gpu/drm/i915/display/intel_display.c:6012:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+hppa-linux-ld: drivers/gpu/drm/amd/amdgpu/amdgpu_drv.o:(.rodata+0x2a8): undefined reference to `amdgpu_show_fdinfo'
+
+Unverified Error/Warning (likely false positive, please contact us if interested):
+
+fs/smb/client/cifsfs.c:982 cifs_smb3_do_mount() warn: possible memory leak of 'cifs_sb'
+fs/smb/client/cifssmb.c:4089 CIFSFindFirst() warn: missing error code? 'rc'
+fs/smb/client/cifssmb.c:4216 CIFSFindNext() warn: missing error code? 'rc'
+fs/smb/client/connect.c:2725 cifs_match_super() error: 'tlink' dereferencing possible ERR_PTR()
+fs/smb/client/connect.c:2924 generic_ip_connect() error: we previously assumed 'socket' could be null (see line 2912)
+fs/smb/client/smb2pdu.c:3729 SMB2_change_notify() error: we previously assumed 'plen' could be null (see line 3688)
+fs/xfs/scrub/fscounters.c:459 xchk_fscounters() warn: ignoring unreachable code.
+kernel/watchdog.c:40:19: sparse: sparse: symbol 'watchdog_hardlockup_user_enabled' was not declared. Should it be static?
+kernel/watchdog.c:41:19: sparse: sparse: symbol 'watchdog_softlockup_user_enabled' was not declared. Should it be static?
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- arm-randconfig-r025-20230524
+|   `-- ERROR:amdgpu_show_fdinfo-drivers-gpu-drm-amd-amdgpu-amdgpu.ko-undefined
+|-- i386-randconfig-m021-20230524
+|   `-- fs-xfs-scrub-fscounters.c-xchk_fscounters()-warn:ignoring-unreachable-code.
+|-- i386-randconfig-s032-20230524
+|   |-- kernel-watchdog.c:sparse:sparse:symbol-watchdog_hardlockup_user_enabled-was-not-declared.-Should-it-be-static
+|   `-- kernel-watchdog.c:sparse:sparse:symbol-watchdog_softlockup_user_enabled-was-not-declared.-Should-it-be-static
+|-- ia64-buildonly-randconfig-r005-20230524
+|   `-- ERROR:amdgpu_show_fdinfo-drivers-gpu-drm-amd-amdgpu-amdgpu.ko-undefined
+|-- ia64-randconfig-s031-20230524
+|   |-- kernel-watchdog.c:sparse:sparse:symbol-watchdog_hardlockup_user_enabled-was-not-declared.-Should-it-be-static
+|   `-- kernel-watchdog.c:sparse:sparse:symbol-watchdog_softlockup_user_enabled-was-not-declared.-Should-it-be-static
+|-- parisc-randconfig-r031-20230524
+|   `-- hppa-linux-ld:drivers-gpu-drm-amd-amdgpu-amdgpu_drv.o:(.rodata):undefined-reference-to-amdgpu_show_fdinfo
+`-- x86_64-randconfig-m001-20230524
+    |-- fs-smb-client-cifsfs.c-cifs_smb3_do_mount()-warn:possible-memory-leak-of-cifs_sb
+    |-- fs-smb-client-cifssmb.c-CIFSFindFirst()-warn:missing-error-code-rc
+    |-- fs-smb-client-cifssmb.c-CIFSFindNext()-warn:missing-error-code-rc
+    |-- fs-smb-client-connect.c-cifs_match_super()-error:tlink-dereferencing-possible-ERR_PTR()
+    |-- fs-smb-client-connect.c-generic_ip_connect()-error:we-previously-assumed-socket-could-be-null-(see-line-)
+    `-- fs-smb-client-smb2pdu.c-SMB2_change_notify()-error:we-previously-assumed-plen-could-be-null-(see-line-)
+clang_recent_errors
+|-- i386-randconfig-i011-20230524
+|   `-- drivers-gpu-drm-i915-display-intel_display.c:warning:unannotated-fall-through-between-switch-labels
+|-- i386-randconfig-i014-20230524
+|   `-- drivers-gpu-drm-i915-display-intel_display.c:warning:unannotated-fall-through-between-switch-labels
+|-- i386-randconfig-i015-20230524
+|   `-- drivers-gpu-drm-i915-display-intel_display.c:error:unannotated-fall-through-between-switch-labels-Werror-Wimplicit-fallthrough
+|-- i386-randconfig-i075-20230524
+|   `-- drivers-gpu-drm-i915-display-intel_display.c:warning:unannotated-fall-through-between-switch-labels
+|-- i386-randconfig-i085-20230524
+|   `-- drivers-gpu-drm-i915-display-intel_display.c:warning:unannotated-fall-through-between-switch-labels
+|-- x86_64-randconfig-x066-20230524
+|   `-- drivers-gpu-drm-i915-display-intel_display.c:error:unannotated-fall-through-between-switch-labels-Werror-Wimplicit-fallthrough
+`-- x86_64-randconfig-x072-20230525
+    `-- drivers-gpu-drm-i915-display-intel_display.c:warning:unannotated-fall-through-between-switch-labels
+
+elapsed time: 725m
+
+configs tested: 176
+configs skipped: 10
+
+tested configs:
+alpha                            alldefconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r026-20230524   gcc  
+arc                              allyesconfig   gcc  
+arc          buildonly-randconfig-r004-20230524   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r032-20230524   gcc  
+arc                  randconfig-r043-20230524   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                     am200epdkit_defconfig   clang
+arm                       aspeed_g4_defconfig   clang
+arm                       aspeed_g5_defconfig   gcc  
+arm                                 defconfig   gcc  
+arm                          exynos_defconfig   gcc  
+arm                          gemini_defconfig   gcc  
+arm                  randconfig-r003-20230524   clang
+arm                  randconfig-r015-20230524   gcc  
+arm                  randconfig-r046-20230524   gcc  
+arm                           stm32_defconfig   gcc  
+arm                           sunxi_defconfig   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+csky         buildonly-randconfig-r005-20230524   gcc  
+csky                                defconfig   gcc  
+hexagon      buildonly-randconfig-r002-20230524   clang
+hexagon              randconfig-r041-20230524   clang
+hexagon              randconfig-r045-20230524   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-i001-20230524   gcc  
+i386                 randconfig-i002-20230524   gcc  
+i386                 randconfig-i003-20230524   gcc  
+i386                 randconfig-i004-20230524   gcc  
+i386                 randconfig-i005-20230524   gcc  
+i386                 randconfig-i006-20230524   gcc  
+i386                 randconfig-i011-20230524   clang
+i386                 randconfig-i012-20230524   clang
+i386                 randconfig-i013-20230524   clang
+i386                 randconfig-i014-20230524   clang
+i386                 randconfig-i015-20230524   clang
+i386                 randconfig-i016-20230524   clang
+i386                 randconfig-i051-20230524   gcc  
+i386                 randconfig-i052-20230524   gcc  
+i386                 randconfig-i053-20230524   gcc  
+i386                 randconfig-i054-20230524   gcc  
+i386                 randconfig-i055-20230524   gcc  
+i386                 randconfig-i056-20230524   gcc  
+i386                 randconfig-i061-20230524   gcc  
+i386                 randconfig-i062-20230524   gcc  
+i386                 randconfig-i063-20230524   gcc  
+i386                 randconfig-i064-20230524   gcc  
+i386                 randconfig-i065-20230524   gcc  
+i386                 randconfig-i066-20230524   gcc  
+i386                 randconfig-i071-20230524   clang
+i386                 randconfig-i072-20230524   clang
+i386                 randconfig-i073-20230524   clang
+i386                 randconfig-i074-20230524   clang
+i386                 randconfig-i075-20230524   clang
+i386                 randconfig-i076-20230524   clang
+i386                 randconfig-i081-20230524   clang
+i386                 randconfig-i082-20230524   clang
+i386                 randconfig-i083-20230524   clang
+i386                 randconfig-i084-20230524   clang
+i386                 randconfig-i085-20230524   clang
+i386                 randconfig-i086-20230524   clang
+i386                 randconfig-i091-20230524   gcc  
+i386                 randconfig-i092-20230524   gcc  
+i386                 randconfig-i093-20230524   gcc  
+i386                 randconfig-i094-20230524   gcc  
+i386                 randconfig-i095-20230524   gcc  
+i386                 randconfig-i096-20230524   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r024-20230524   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+m68k                             allmodconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                        mvme147_defconfig   gcc  
+m68k                 randconfig-r014-20230524   gcc  
+m68k                           sun3_defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                       bmips_be_defconfig   gcc  
+mips         buildonly-randconfig-r003-20230524   clang
+mips                           ip28_defconfig   clang
+mips                      pic32mzda_defconfig   clang
+mips                 randconfig-r016-20230524   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r022-20230524   gcc  
+openrisc             randconfig-r036-20230524   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r002-20230524   gcc  
+parisc               randconfig-r031-20230524   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                     kmeter1_defconfig   clang
+powerpc                      makalu_defconfig   gcc  
+powerpc                      pcm030_defconfig   gcc  
+powerpc              randconfig-r023-20230524   clang
+powerpc              randconfig-r033-20230524   gcc  
+powerpc                    socrates_defconfig   clang
+powerpc                 xes_mpc85xx_defconfig   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv        buildonly-randconfig-r001-20230524   clang
+riscv                               defconfig   gcc  
+riscv                randconfig-r042-20230524   clang
+riscv                          rv32_defconfig   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r021-20230524   clang
+s390                 randconfig-r044-20230524   clang
+sh                               allmodconfig   gcc  
+sh                             espt_defconfig   gcc  
+sh                   randconfig-r004-20230524   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r001-20230524   gcc  
+sparc                randconfig-r012-20230524   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230524   gcc  
+x86_64               randconfig-a002-20230524   gcc  
+x86_64               randconfig-a003-20230524   gcc  
+x86_64               randconfig-a004-20230524   gcc  
+x86_64               randconfig-a005-20230524   gcc  
+x86_64               randconfig-a006-20230524   gcc  
+x86_64               randconfig-a011-20230524   clang
+x86_64               randconfig-a012-20230524   clang
+x86_64               randconfig-a013-20230524   clang
+x86_64               randconfig-a014-20230524   clang
+x86_64               randconfig-a015-20230524   clang
+x86_64               randconfig-a016-20230524   clang
+x86_64               randconfig-r013-20230524   clang
+x86_64               randconfig-r035-20230524   gcc  
+x86_64               randconfig-x051-20230525   gcc  
+x86_64               randconfig-x052-20230525   gcc  
+x86_64               randconfig-x053-20230525   gcc  
+x86_64               randconfig-x054-20230525   gcc  
+x86_64               randconfig-x055-20230525   gcc  
+x86_64               randconfig-x056-20230525   gcc  
+x86_64               randconfig-x061-20230524   clang
+x86_64               randconfig-x062-20230524   clang
+x86_64               randconfig-x063-20230524   clang
+x86_64               randconfig-x064-20230524   clang
+x86_64               randconfig-x065-20230524   clang
+x86_64               randconfig-x066-20230524   clang
+x86_64               randconfig-x071-20230525   clang
+x86_64               randconfig-x072-20230525   clang
+x86_64               randconfig-x073-20230525   clang
+x86_64               randconfig-x074-20230525   clang
+x86_64               randconfig-x075-20230525   clang
+x86_64               randconfig-x076-20230525   clang
+x86_64               randconfig-x081-20230524   gcc  
+x86_64               randconfig-x082-20230524   gcc  
+x86_64               randconfig-x083-20230524   gcc  
+x86_64               randconfig-x084-20230524   gcc  
+x86_64               randconfig-x085-20230524   gcc  
+x86_64               randconfig-x086-20230524   gcc  
+x86_64               randconfig-x091-20230525   gcc  
+x86_64               randconfig-x092-20230525   gcc  
+x86_64               randconfig-x093-20230525   gcc  
+x86_64               randconfig-x094-20230525   gcc  
+x86_64               randconfig-x095-20230525   gcc  
+x86_64               randconfig-x096-20230525   gcc  
+x86_64                               rhel-8.3   gcc  
 
 -- 
-Thanks,
-
-David / dhildenb
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
