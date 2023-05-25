@@ -2,112 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C86127116FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 21:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F909711777
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 21:35:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242413AbjEYTG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 15:06:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54458 "EHLO
+        id S241481AbjEYTfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 15:35:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244035AbjEYTFp (ORCPT
+        with ESMTP id S240824AbjEYTe7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 15:05:45 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA1386BB;
-        Thu, 25 May 2023 11:54:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685040849; x=1716576849;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=I9uqk67X9bs3sYyrSKFArEnF17vc0xskgqqQ5rfNWro=;
-  b=InJhDBtxi2J6JTpkhmNMySs/N0m5KSd8O9SBEwqH1nMQGcvOKeS9mGMM
-   Le5eDrDrwk9rBArR+HSpM0eh0wTxSyv3CbXzsAYYIZGiEiMWI3jWd7a3d
-   J+YyaqmcbXWO0Drgh61oNyuFzm1FnTlIWgM4VsGgoiY0CTPJhuxX5PcNK
-   DhbWmHQ2o8I9cvAuqo5SV0CUV+uNuI/5tyyqatKZtfD5Q7pYt6eneLM8F
-   mCmb5E6Uql5kySb3GAAxomb9vG3+rRVOpF7oBMp7rfcVTM+JFMPLw6cMh
-   0zFWnIYCzW80aWy6QrQWjv82GYuG2XWUU3Ay/9GRZCYYDw7oGZjIJ6qlK
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10721"; a="351499792"
-X-IronPort-AV: E=Sophos;i="6.00,191,1681196400"; 
-   d="scan'208";a="351499792"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2023 11:53:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10721"; a="794765493"
-X-IronPort-AV: E=Sophos;i="6.00,191,1681196400"; 
-   d="scan'208";a="794765493"
-Received: from shuklaas-mobl1.amr.corp.intel.com (HELO [10.212.186.148]) ([10.212.186.148])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2023 11:52:59 -0700
-Message-ID: <603f5357-3018-6c1b-2dc8-ec96aee9552c@intel.com>
-Date:   Thu, 25 May 2023 11:52:58 -0700
+        Thu, 25 May 2023 15:34:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C41DED8;
+        Thu, 25 May 2023 12:34:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5BFA16492C;
+        Thu, 25 May 2023 19:33:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C33F6C433D2;
+        Thu, 25 May 2023 19:32:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685043179;
+        bh=6UobrKBXIGhe2eUQTgBJPED9+bJgDbD/miYgiY64fQI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PcQK9c9EREG4YKZhM4pdUTAf6OggbyNsdHXCf/2K1OpwOUwcqpW4ZVTBOLYcHbTQF
+         NX6SWvPe5znnFXJBbQAQ811rD8ETp8tL8p3UPTQXp2hxmwTpMqYOLY+clwKia6xleX
+         VFQsrL5Dvb7eAh9GUNw649P/3o/rI+p4wNPR0PnxXai3GSiwtVEarne4mXgNBdFEYl
+         TfJSClRSYf1VeXjdHiB5chZvYyCh2wjqRHRcSGJIM+SWjTgsAMgiepbc0VtWkbT1mv
+         DKxdeTKbzaIl5lpU+fSC7qeRVHwLAbdKMQhXH/YLXO/qVYnv9PJoAgVK9BEPkDOLZ0
+         4lJKDAJjaiXHg==
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-3f623adec61so43355e9.0;
+        Thu, 25 May 2023 12:32:59 -0700 (PDT)
+X-Gm-Message-State: AC+VfDyc6SJaJakUHRg7Gc0IuNj3G6RVfBVjkLPNcqmYyKajL/ttV0yV
+        dd1+SIgoTCZzIEC55Ta5X464CPO2/SRgVsTTBfI=
+X-Google-Smtp-Source: ACHHUZ4aeMTw09mMjfqXPUFnCiuZAbomSUSRRfwvCVtW6z9ZsKNKLNK2xI+Aluo+xANppdWVouLl7+1DSFFxC7prqxM=
+X-Received: by 2002:a05:600c:21cf:b0:3f6:3bd:77dc with SMTP id
+ x15-20020a05600c21cf00b003f603bd77dcmr3032498wmj.23.1685043178000; Thu, 25
+ May 2023 12:32:58 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/2] signal: move show_unhandled_signals sysctl to its own
- file
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     keescook@chromium.org, yzaikin@google.com, ebiederm@xmission.com,
-        arnd@arndb.de, bp@alien8.de, James.Bottomley@hansenpartnership.com,
-        deller@gmx.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        luto@kernel.org, peterz@infradead.org, brgerst@gmail.com,
-        christophe.jaillet@wanadoo.fr, kirill.shutemov@linux.intel.com,
-        jroedel@suse.de, j.granados@samsung.com, akpm@linux-foundation.org,
-        willy@infradead.org, linux-parisc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230522210814.1919325-1-mcgrof@kernel.org>
- <20230522210814.1919325-3-mcgrof@kernel.org>
- <d0fe7a6f-8cd9-0b81-758a-f3b444e74bab@intel.com>
- <ZG29HWE9NWn56hTg@bombadil.infradead.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <ZG29HWE9NWn56hTg@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230524213620.3509138-1-mcgrof@kernel.org> <20230524213620.3509138-2-mcgrof@kernel.org>
+ <CAHk-=wjahcAqLYm0ijcAVcPcQAz-UUuJ3Ubx4GzP_SJAupf=qQ@mail.gmail.com>
+ <CAHk-=wgKu=tJf1bm_dtme4Hde4zTB=_7EdgR8avsDRK4_jD+uA@mail.gmail.com>
+ <ZG+kDevFH6uE1I/j@bombadil.infradead.org> <CAHk-=wgWCDw58fZDLGYVqVC2ee-Zec25unewdHFp8syCZFumvg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgWCDw58fZDLGYVqVC2ee-Zec25unewdHFp8syCZFumvg@mail.gmail.com>
+From:   Luis Chamberlain <mcgrof@kernel.org>
+Date:   Thu, 25 May 2023 12:32:45 -0700
+X-Gmail-Original-Message-ID: <CAB=NE6XjXtGmXH-wt_38rKpPPxNoBDOgdNVTsrkD7cOecNG4dg@mail.gmail.com>
+Message-ID: <CAB=NE6XjXtGmXH-wt_38rKpPPxNoBDOgdNVTsrkD7cOecNG4dg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/kernel_read_file: add support for duplicate detection
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>, hch@lst.de,
+        brauner@kernel.org, david@redhat.com, tglx@linutronix.de,
+        patches@lists.linux.dev, linux-modules@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org, pmladek@suse.com,
+        petr.pavlu@suse.com, prarit@redhat.com, lennart@poettering.net,
+        gregkh@linuxfoundation.org, rafael@kernel.org, song@kernel.org,
+        lucas.de.marchi@gmail.com, lucas.demarchi@intel.com,
+        christophe.leroy@csgroup.eu, peterz@infradead.org, rppt@kernel.org,
+        dave@stgolabs.net, willy@infradead.org, vbabka@suse.cz,
+        mhocko@suse.com, dave.hansen@linux.intel.com,
+        colin.i.king@gmail.com, jim.cromie@gmail.com,
+        catalin.marinas@arm.com, jbaron@akamai.com,
+        rick.p.edgecombe@intel.com, yujie.liu@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/24/23 00:30, Luis Chamberlain wrote:
->> It doesn't actually have anything to do with moving the
->> show_unhandled_signals sysctl, right?
-> Well in my case it is making sure the sysctl variable used is declared
-> as well.
+On Thu, May 25, 2023 at 11:50=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> So it would probably improve on those numbers a bit more, but you'd
+> still have the fundamental race where *serial* duplicates end up
+> always wasting CPU effort and temporary vmalloc space.
 
-But what does this have to do with _this_ patch?  This:
+The known failed boots are with KASAN with a large number of CPUs, so
+the value in
+the mitigation would be to help those boot until userspace fixes it
+and we have enough
+time for propagation. But since it is not a full proof solution, it
+may seem like an odd thing
+to have in place later and this being lost as odd tribal knowledge.
+I'd be in favor of only
+applying the mitigation if we really are chasing userspace to fix
+this, and we'd be OK
+in later removing it after userspace gets this fixed / propagated.
 
-> --- a/arch/x86/kernel/umip.c
-> +++ b/arch/x86/kernel/umip.c
-> @@ -12,6 +12,7 @@
->  #include <asm/insn.h>
->  #include <asm/insn-eval.h>
->  #include <linux/ratelimit.h>
-> +#include <linux/signal.h>
+If we're going to have userspace fix this, who is volunteering?
 
-For instance.  You don't move things to another header or make *ANY*
-change to the compilation of umip.c.  So why patch it?
-
-It looks to me like a _fundamentally_ superfluous change.  That hunk
-literally *can't* be related to the rest of the patch.
-
->> If that's the case, it would be nice to have this in its own patch.
-> If its not really fixing any build bugs or functional bugs I don't see
-> the need. But if you really want it, I can do it.
-> 
-> Let me know!
-
-Yes, I really want it.
-
-Please remove all the x86 bits from _this_ patch.  If x86 has a
-separate, preexisting problem, please send that patch separately with a
-separate changelog and justification.
-
-We'll take a look.
+  Luis
