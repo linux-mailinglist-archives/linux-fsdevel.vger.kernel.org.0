@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12F83711861
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 22:45:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CF0E711864
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 22:45:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241827AbjEYUpR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 16:45:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47412 "EHLO
+        id S241790AbjEYUpi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 16:45:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241695AbjEYUpJ (ORCPT
+        with ESMTP id S241876AbjEYUpa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 16:45:09 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2077.outbound.protection.outlook.com [40.107.92.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 020EA1B6;
-        Thu, 25 May 2023 13:45:06 -0700 (PDT)
+        Thu, 25 May 2023 16:45:30 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2084.outbound.protection.outlook.com [40.107.244.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30AC2194;
+        Thu, 25 May 2023 13:45:18 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fM3QreBtGFmllBSWnCPIM9uemfOxW766Hf8FfPKiEJAwo9cdpZ50GIizKXG6RsFYs5qm6DNTzxJOqc96GNC1gIS/DHMrjU8+aBT0HpQ+evuWc9AUQamutv7I0RTXoOxmGb8BbAo6KU7+94cCGs/qftw7qGDUWdCuI1Hho/mZymknEYijDq0Z8B1jqqpxqRuv9d2bN86ikQprVQrfIXqL8+zGAhNSZjpbFzh1zMCymi+STTvgj9klJ/p99/tdDppmR6TqYT8p6WDkKs6/XECAiKN6RKSR2ANKV6pb8hHPiCmRqitShh1UfOyFKQD1R1sLBSyx5BZvC3XlrMZFT0+p1g==
+ b=obAQL5hQdy+gRy5xuXayX9/itowch6FQnBbbyBwj1B+WLGvsIFvUAQrLkfGaPqu847qqNLbH1YECYK38HfLytXOmGyylxu/982W/KNs5gEGB1Wf5KJjoyPPuThW+xaqu+EB8vFW6ILUjtCtXwgJb7y9MJpoXS8un2JBZtYu+zU+0pN7fuenuprs3yOKITyOxgkh87eIGgf8qU3T9nsxprXGygAbKu/jl9iifaMCtTULBAyDXyIluRST/I+0BgRoPQQEXTRvA6sLfdKVAnzndNNtnsQlFmHb4BkDAjMm8kAJfkjI25G9HApehktOVF619d6SFW7JXXuStv5ABRg1Rxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zXYVMUyjlaVoz/P8NyTIr4/LQVpSnCp8FmaNUFZ1Imo=;
- b=VQQGr/GN0wPmq+VaHHIFA1xL3y6uEWFqpeDalN8WjHl8UbRfXUNsqe23A4TIlPyvjglkxymCVWu9M3dh+zpO/6EROlS3tAoj5iZX2VxSqHoUjO81AWnqnEqn4aQVQhhekXRBvQAo+XsCj+QPA286w2aQKeabJzIeSGOQYV6KzxXzzDWdY0nhw2Fl3rh180lP0ZhzupwUUYVQMzH/bOVaUQsVSZr2qVtG67e80rPu1m8+wWp5zjHkoKvZWukhuxl3/tdJqGwX0a/sDPi3ihw/aXP5szLeMUib+2sK5zezYZvHSK9qNGKXSmyjxjVmRwQ786rAt5ggPaYQNpk98AYF/Q==
+ bh=W32bL/ksI1szNMOCYcQEZO0otnTfwPc32Ft5tbZTKJU=;
+ b=K8+5XCh1sz96XM7k1uobGoHHOIxaX4csftPnSUK6ZZ8CuRWDO0sqz2njN+gXaLkN4n5+5AURMXBik0wBbHzfeWbNbA8WQNGUVG/erE1pz4z6MrcjLDt6ePW+Ii/3Xp8U4xBgAZOr/FI2e6SPJppJqmVUkBhSkvM0L2n1NwnYFxvqcebCPjwQcJMeklkCEhGxnQEOg3NY7GRWmupBtadkLp2EGB+8C8XSe91eWq9vfZV4/q1nSDq0+/LtPAQOd2fB8UMUAak57lcWlSPLZHEyfQ3wFG8/ReHawIIN6NOeczCE0VNUzLIqxpJJUgmxBNcCyqbVaL57fgr9ixZamYma7Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zXYVMUyjlaVoz/P8NyTIr4/LQVpSnCp8FmaNUFZ1Imo=;
- b=r9/ndGKlXCQrCjdexFuaBcUH2kWy9z5TsUit8LAYOuzVeR9dS4rsYtkBygSQwMyY5+zrw1OqIOpit58f/9afUfTkNbB01zAScYeDqEXaY6/RhtPQPkO5Ug5SjcueHUpT7ESn1rzB6kVN1rjYPXFLDmFWvWQOzjzKorkw2rtZJIw=
-Received: from CY5PR15CA0080.namprd15.prod.outlook.com (2603:10b6:930:18::32)
- by SJ0PR12MB7067.namprd12.prod.outlook.com (2603:10b6:a03:4ae::9) with
+ bh=W32bL/ksI1szNMOCYcQEZO0otnTfwPc32Ft5tbZTKJU=;
+ b=EkrHST3D3JTBxS47puKfYE/b3Q8lRr+YNbUtpu7KbPAt9j39mL/8plDdRG5JIipZJPWBfD6F+Xmj2bYKFD8OXaUPZL94vjYkZyp57iMqYoWMemimVbjJ15Qtfnuh842cptdylwpscd4G/lcvCaT2zskTfRcEHTigywQUkL87AXc=
+Received: from CY5PR15CA0082.namprd15.prod.outlook.com (2603:10b6:930:18::11)
+ by CH0PR12MB5043.namprd12.prod.outlook.com (2603:10b6:610:e2::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.17; Thu, 25 May
- 2023 20:45:02 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.28; Thu, 25 May
+ 2023 20:45:15 +0000
 Received: from CY4PEPF0000C978.namprd02.prod.outlook.com
- (2603:10b6:930:18:cafe::dd) by CY5PR15CA0080.outlook.office365.com
- (2603:10b6:930:18::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.17 via Frontend
- Transport; Thu, 25 May 2023 20:45:01 +0000
+ (2603:10b6:930:18:cafe::b3) by CY5PR15CA0082.outlook.office365.com
+ (2603:10b6:930:18::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.16 via Frontend
+ Transport; Thu, 25 May 2023 20:45:14 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -49,20 +49,20 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
  CY4PEPF0000C978.mail.protection.outlook.com (10.167.241.139) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6433.7 via Frontend Transport; Thu, 25 May 2023 20:45:01 +0000
+ 15.20.6433.7 via Frontend Transport; Thu, 25 May 2023 20:45:14 +0000
 Received: from onyx-7400host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 25 May
- 2023 15:45:00 -0500
+ 2023 15:45:13 -0500
 From:   Avadhut Naik <Avadhut.Naik@amd.com>
 To:     <rafael@kernel.org>, <gregkh@linuxfoundation.org>,
         <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <avadnaik@amd.com>, <yazen.ghannam@amd.com>,
         <alexey.kardashevskiy@amd.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v2 2/3] fs: debugfs: Add write functionality to debugfs blobs
-Date:   Thu, 25 May 2023 20:44:21 +0000
-Message-ID: <20230525204422.4754-3-Avadhut.Naik@amd.com>
+Subject: [RFC PATCH v2 3/3] ACPI: APEI: EINJ: Add support for vendor defined error types
+Date:   Thu, 25 May 2023 20:44:22 +0000
+Message-ID: <20230525204422.4754-4-Avadhut.Naik@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230525204422.4754-1-Avadhut.Naik@amd.com>
 References: <20230525204422.4754-1-Avadhut.Naik@amd.com>
@@ -74,23 +74,23 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000C978:EE_|SJ0PR12MB7067:EE_
-X-MS-Office365-Filtering-Correlation-Id: 438affbb-6c99-4259-a4af-08db5d60e970
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000C978:EE_|CH0PR12MB5043:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30fb1f42-3917-42bd-3e51-08db5d60f13c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: EwydB9HTH0YNNjtHk0fsWkwv0Lza9FcmMUmbjDx5ehgmUvcbwNeasSQ0PEt3Rv+tsk9K8e1R5sSGelYttCNQIiyR6gxB6rrK0xKSM+QcaWIcSW8qS+qRaCPNURh2xVdj+90AhpvGNYZWb/+xyVNqH1IRfBh+y8A1cUtFKC3y5CEPBPZDtCYzL4ulAiEhXdoDj/QmhyHm+bEWYzwB3PcT5aCg6a7dpAGCQB5i1KNfIIu8+e3FXF+r32bInCaxwSjhh9JhbEid5s5hKOB8rKXfyEd/zCcvZZoyVGnibhybf/YXCdv633Maa0jkkVsA2BXQSih5S2r+bMDSFHTJOH0SoIrAqcBzPRpxawZq2aL6jQs/spW/emx3iPcA1MIPc8AIYwXYa+kEjY8xszJVHNXsZngyrmPik8V4qclPD4xZbFxaA3OoNYBnhpEQKdbkkc2isgFnDzfd25v6Mk5D8Sb4wHhp+rMdsdptLQ8tTR0V7kT0jkHVnVNGk9Mcfy+Ov7mMOCN4VskWGLLcwYfX7u/WEoDvKfwdDrMaIpVq0i0ogyXNcDlId0HM0hvzWNBsTJKatpk92XSJDVpZSCfbD1C8OK+c4sRBhBEIjvjxt6HzAHZRFCeYS7Z5W1UBBlCo6qdTy+Tpn1FC5lgZVpCoD+95Fu/K5Z3smuGXBiFFAricZ78ljSWgnTkdudBccLXHshoZNdJcdtXCkfWkFq0U4+BZF23ATpoNjHXBvl3sqpMUGtaI3Qy7sW6e53suT/oWBxjfiSgTxsbFfeK4fE4k19qvznChPb+kQNZEfO2mhyVHbhc=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(136003)(346002)(39860400002)(451199021)(36840700001)(46966006)(40470700004)(40460700003)(82310400005)(40480700001)(41300700001)(8936002)(186003)(8676002)(426003)(2616005)(1076003)(26005)(336012)(86362001)(4326008)(36756003)(47076005)(36860700001)(2906002)(6666004)(70206006)(5660300002)(16526019)(110136005)(54906003)(70586007)(316002)(83380400001)(7696005)(82740400003)(478600001)(356005)(81166007)(36900700001)(2101003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: +nK6L3u5ZlNB4G3Om+zw9qqGHufTCXVDtbYx3LR8C8rRF3nPmguvFJCVBwiJg4meLphqSM6kDCKlEmKRp/4D+LeK4zOTu0DwYaasL7Ky/z/jLakhWvZ+1JxzgOophIAvH2wQMDHjBNlLi2v6fvo0GF/7yMMndyfiaTB0tagXWwbvL4CV4YBk8d9t3CcvoAnpSQA8evTOr60UJdorWoCiW1jmBBZklBReB80F62g8Gcx6FzbwiSDb9oZSwrh65wpWAHWSW5lvhi3unSDiMnlQWXbT2pdcO4eL6CReI9fe9PKKZxibdOXgShc0myXjLBuKvbiBSyd1mocdnqAnQnkqHUfFDSjhVhUuJ+KIObcbf/P34pkxl/PxdZwnt9NsW1lxHpo+Yj1rcGPgh07z1MnyWk5YezP3W1e2jNhssh/YBXHILYvWFP5Qq9hGPDvPUo8//WjzZXe/Y56+NwbT3+KnkVe0n2/aqf6aECCtZodLF/hB1pfA7sNsKW6RBZB0ks1V4TKuKnHbJvJVjpnDl78F6sYH+Gzgo4JUzHYjc1UXvGpE/Vzm/s8I73fI08wKDGtMwE88SIcKByE1eNHdXHHF1BN4xg1FSIG2XWwUgGeaDOjVpPN0RW3qORFhNqn0Zq5AtvXqDnHmyuAZk0OzrLFuldTgBBEB3WSwheMnEsJvpT/6FkKDoRu1KtBWl9ugIROS962jSYsXZMPghFHib8u+E7g9A8OquuxKwcRdSpYtG+c3iTER/xgeFB5KJbW0DxfOao0jxVGSpEd3gVhwD2Nt5pnMqMMGG8HG1enf8Rd6j9s=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(136003)(396003)(376002)(451199021)(46966006)(40470700004)(36840700001)(16526019)(356005)(26005)(82740400003)(40460700003)(81166007)(1076003)(186003)(36860700001)(2616005)(47076005)(36756003)(336012)(426003)(2906002)(40480700001)(6666004)(316002)(70206006)(70586007)(4326008)(7696005)(41300700001)(86362001)(54906003)(110136005)(478600001)(82310400005)(8936002)(8676002)(5660300002)(2101003)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2023 20:45:01.6681
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2023 20:45:14.7463
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 438affbb-6c99-4259-a4af-08db5d60e970
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30fb1f42-3917-42bd-3e51-08db5d60f13c
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000C978.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7067
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5043
 X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
@@ -102,85 +102,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently, debugfs_create_blob() creates read-only debugfs binary blob
-files.
+Vendor-Defined Error types are supported by the platform apart from
+standard error types if bit 31 is set in the output of GET_ERROR_TYPE
+Error Injection Action.[1] While the errors themselves and the length
+of their associated "OEM Defined data structure" might vary between
+vendors, the physical address of this structure can be computed through
+vendor_extension and length fields of "SET_ERROR_TYPE_WITH_ADDRESS" and
+"Vendor Error Type Extension" Structures respectively.[2][3]
 
-In some cases, however, userspace tools need to write variable length
-data structures into predetermined memory addresses. An example is when
-injecting Vendor-defined error types through the einj module. In such
-cases, the functionality to write to these blob files in debugfs would
-be desired since the mapping aspect can be handled within the modules
-with userspace tools only needing to write into the blob files.
+Currently, however, the einj module only computes the physical address of
+Vendor Error Type Extension Structure. Neither does it compute the physical
+address of OEM Defined structure nor does it establish the memory mapping
+required for injecting Vendor-defined errors. Consequently, userspace
+tools have to establish the very mapping through /dev/mem, nopat kernel
+parameter and system calls like mmap/munmap initially before injecting
+Vendor-defined errors.
 
-Implement a write callback to enable writing to these blob files in
-debugfs.
+Circumvent the issue by computing the physical address of OEM Defined data
+structure and establishing the required mapping with the structure. Create
+a new file "oem_error", if the system supports Vendor-defined errors, to
+export this mapping, through debugfs_create_blob(). Userspace tools can
+then populate their respective OEM Defined structure instances and just
+write to the file as part of injecting Vendor-defined Errors.
 
+[1] ACPI specification 6.5, section 18.6.4
+[2] ACPI specification 6.5, Table 18.31
+[3] ACPI specification 6.5, Table 18.32
+
+Suggested-by: Yazen Ghannam <yazen.ghannam@amd.com>
 Signed-off-by: Avadhut Naik <Avadhut.Naik@amd.com>
 ---
- fs/debugfs/file.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+ drivers/acpi/apei/einj.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 1f971c880dde..fab5a562b57c 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -973,17 +973,35 @@ static ssize_t read_file_blob(struct file *file, char __user *user_buf,
- 	return r;
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index d5f8dc4df7a5..9f23b6955cf0 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -73,6 +73,7 @@ static u32 notrigger;
+ 
+ static u32 vendor_flags;
+ static struct debugfs_blob_wrapper vendor_blob;
++static struct debugfs_blob_wrapper vendor_errors;
+ static char vendor_dev[64];
+ 
+ /*
+@@ -182,6 +183,16 @@ static int einj_timedout(u64 *t)
+ 	return 0;
  }
  
-+static ssize_t write_file_blob(struct file *file, const char __user *user_buf,
-+			       size_t count, loff_t *ppos)
++static void get_oem_vendor_struct(u64 paddr, int offset,
++				  struct vendor_error_type_extension *v)
 +{
-+	struct debugfs_blob_wrapper *blob = file->private_data;
-+	struct dentry *dentry = F_DENTRY(file);
-+	ssize_t r;
++	u64 target_pa = paddr + offset + sizeof(struct vendor_error_type_extension);
 +
-+	r = debugfs_file_get(dentry);
-+	if (unlikely(r))
-+		return r;
-+	r = simple_write_to_buffer(blob->data, blob->size, ppos, user_buf,
-+				   count);
-+
-+	debugfs_file_put(dentry);
-+	return r;
++	vendor_errors.size = v->length - sizeof(struct vendor_error_type_extension);
++	if (vendor_errors.size)
++		vendor_errors.data = acpi_os_map_iomem(target_pa, vendor_errors.size);
 +}
 +
- static const struct file_operations fops_blob = {
- 	.read =		read_file_blob,
-+	.write =	write_file_blob,
- 	.open =		simple_open,
- 	.llseek =	default_llseek,
+ static void check_vendor_extension(u64 paddr,
+ 				   struct set_error_type_with_address *v5param)
+ {
+@@ -194,6 +205,7 @@ static void check_vendor_extension(u64 paddr,
+ 	v = acpi_os_map_iomem(paddr + offset, sizeof(*v));
+ 	if (!v)
+ 		return;
++	get_oem_vendor_struct(paddr, offset, v);
+ 	sbdf = v->pcie_sbdf;
+ 	sprintf(vendor_dev, "%x:%x:%x.%x vendor_id=%x device_id=%x rev_id=%x\n",
+ 		sbdf >> 24, (sbdf >> 16) & 0xff,
+@@ -596,6 +608,7 @@ static struct { u32 mask; const char *str; } const einj_error_type_string[] = {
+ 	{0x00008000, "CXL.mem Protocol Correctable"},
+ 	{0x00010000, "CXL.mem Protocol Uncorrectable non-fatal"},
+ 	{0x00020000, "CXL.mem Protocol Uncorrectable fatal"},
++	{0x80000000, "Vendor Defined Error Types"},
  };
  
- /**
-- * debugfs_create_blob - create a debugfs file that is used to read a binary blob
-+ * debugfs_create_blob - create a debugfs file that is used to read and write
-+ * a binary blob
-  * @name: a pointer to a string containing the name of the file to create.
-- * @mode: the read permission that the file should have (other permissions are
-- *	  masked out)
-+ * @mode: the permission that the file should have
-  * @parent: a pointer to the parent dentry for this file.  This should be a
-  *          directory dentry if set.  If this parameter is %NULL, then the
-  *          file will be created in the root of the debugfs filesystem.
-@@ -992,7 +1010,7 @@ static const struct file_operations fops_blob = {
-  *
-  * This function creates a file in debugfs with the given name that exports
-  * @blob->data as a binary blob. If the @mode variable is so set it can be
-- * read from. Writing is not supported.
-+ * read from and written to.
-  *
-  * This function will return a pointer to a dentry if it succeeds.  This
-  * pointer must be passed to the debugfs_remove() function when the file is
-@@ -1007,7 +1025,7 @@ struct dentry *debugfs_create_blob(const char *name, umode_t mode,
- 				   struct dentry *parent,
- 				   struct debugfs_blob_wrapper *blob)
- {
--	return debugfs_create_file_unsafe(name, mode & 0444, parent, blob, &fops_blob);
-+	return debugfs_create_file_unsafe(name, mode, parent, blob, &fops_blob);
- }
- EXPORT_SYMBOL_GPL(debugfs_create_blob);
+ static int available_error_type_show(struct seq_file *m, void *v)
+@@ -768,6 +781,10 @@ static int __init einj_init(void)
+ 				   einj_debug_dir, &vendor_flags);
+ 	}
  
++	if (vendor_errors.size)
++		debugfs_create_blob("oem_error", 0200, einj_debug_dir,
++				    &vendor_errors);
++
+ 	pr_info("Error INJection is initialized.\n");
+ 
+ 	return 0;
+@@ -793,6 +810,8 @@ static void __exit einj_exit(void)
+ 			sizeof(struct einj_parameter);
+ 
+ 		acpi_os_unmap_iomem(einj_param, size);
++		if (vendor_errors.size)
++			acpi_os_unmap_iomem(vendor_errors.data, vendor_errors.size);
+ 	}
+ 	einj_exec_ctx_init(&ctx);
+ 	apei_exec_post_unmap_gars(&ctx);
 -- 
 2.34.1
 
