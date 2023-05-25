@@ -2,230 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8DA6710E0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 16:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C27710E17
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 16:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241578AbjEYOOf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 10:14:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50708 "EHLO
+        id S241346AbjEYORT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 10:17:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234918AbjEYOOe (ORCPT
+        with ESMTP id S232848AbjEYORS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 10:14:34 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85929183;
-        Thu, 25 May 2023 07:14:32 -0700 (PDT)
+        Thu, 25 May 2023 10:17:18 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E4A8189
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 07:17:17 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 1C06521CBC;
-        Thu, 25 May 2023 14:14:31 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id E13E71FE66;
+        Thu, 25 May 2023 14:17:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1685024071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=u7RZVOpUgKAIKKStr6mg8ItmOigKUlpi4ivof3Issio=;
-        b=TTqW+UC0GIpI7UOwRaBG29HSTo3TfDzWh+Q4gQht0/v4jLFfFjJww8xnmDgqGaGTrF86Rg
-        ojwRa/AgsxcMV8ZShfSCjAZzed4lPNwe0mw+z7pVKue3lnHpZDCFBSRodwoZcBDU5zb4NX
-        jK5EhS2CW6cc1fwU+GODk695Ytv5iVU=
+        t=1685024235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=X6Dj5SbnioRpzQa86EakUDpSW1KTxgyl2UXowSV3mqg=;
+        b=TebKdMP2Ib/nJXWTE6JHs5tIGWhS3YhKdJQQaJpybfjieICjdwdiPRGqiW2xf0dOf/9eFH
+        2t3HTkgBoxHMQkjNPYz2JgvfaQ3ikrouPPvXooNn9ruaq/4zJzMhYYDmDNaTpvzqWGfjfb
+        krWHc/ZozIcRwiBE+inX3IFsS8LCp/U=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1685024071;
+        s=susede2_ed25519; t=1685024235;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=u7RZVOpUgKAIKKStr6mg8ItmOigKUlpi4ivof3Issio=;
-        b=aZ8WnxzKcjA2gdMAZYdYL0wMophIY0sBTBWymF80w/z8EAEjfOgUJTDHKTQVPzDWv4Kwhv
-        Uc3l0FhszMYBGbBw==
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=X6Dj5SbnioRpzQa86EakUDpSW1KTxgyl2UXowSV3mqg=;
+        b=QH3a2RjOVLsxyoN3Y1Q60EsRJc6vvuCFIXuPhzTbyD4QjS3aD7/rehbsqpiOTVYRFjVvch
+        HExRuF0gslOFFkAQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 043A5134B2;
-        Thu, 25 May 2023 14:14:31 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CF7AA134B2;
+        Thu, 25 May 2023 14:17:15 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id QzL1AEdtb2SbZgAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 25 May 2023 14:14:31 +0000
+        id 7wqZMuttb2QTaAAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 25 May 2023 14:17:15 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 86387A075C; Thu, 25 May 2023 16:14:30 +0200 (CEST)
-Date:   Thu, 25 May 2023 16:14:30 +0200
+        id 2B02DA075C; Thu, 25 May 2023 16:17:15 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>, hch@infradead.org,
-        sandeen@sandeen.net, song@kernel.org, rafael@kernel.org,
-        gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-        jikos@kernel.org, bvanassche@acm.org, ebiederm@xmission.com,
-        mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
-        da.gomez@samsung.com, linux-fsdevel@vger.kernel.org,
-        kernel@tuxforce.de, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] fs: distinguish between user initiated freeze and
- kernel initiated freeze
-Message-ID: <20230525141430.slms7f2xkmesezy5@quack3>
-References: <20230508011717.4034511-1-mcgrof@kernel.org>
- <20230508011717.4034511-4-mcgrof@kernel.org>
- <20230522234200.GC11598@frogsfrogsfrogs>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: [PATCH] fs: Drop wait_unfrozen wait queue
+Date:   Thu, 25 May 2023 16:17:10 +0200
+Message-Id: <20230525141710.7595-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="wr2u3ku724mk4x5d"
-Content-Disposition: inline
-In-Reply-To: <20230522234200.GC11598@frogsfrogsfrogs>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2662; i=jack@suse.cz; h=from:subject; bh=/AQOGNkCHvftqXw/Vfi9QbKMJfxbiMS1L+K6x7okguU=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkb23geVozHyQR0Sc2HNg94/LEyCK8HaYtyQo7g5B2 /AABGSOJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZG9t4AAKCRCcnaoHP2RA2dsJB/ 9/hpYM2pcYuAvK5dlWXtS2/nyviPfFbsMMDlBbe4WmjSqJk8ZUzztdf68wbQCQvWfWwg1J0HT1F+2w ckbkpm/508OdB9OOs5J2vxaWQoB4LOLO9oFcnqDHE2d+giUAE7V/k6juOCr3HDitnvRPkpkwgQtsiJ 4HUrQbTdIhUbCeJnH5wNJKSdhe8O0+v7SsyLI2B5WuojKaHjpo49ft3jIvHBo283DhWrA3jdZ+QbZD Wm+cbLQISwt1r7f74QlFxAfmqxgBT4ldqh7soM8iMAmWINR6kbWY6NIjUv65lXFvxZbaV/qm8uujY8 et387+riiDGQx+BtE+9NPG2E3xfKYf
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
-
-
---wr2u3ku724mk4x5d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon 22-05-23 16:42:00, Darrick J. Wong wrote:
-> How about this as an alternative patch?  Kernel and userspace freeze
-> state are stored in s_writers; each type cannot block the other (though
-> you still can't have nested kernel or userspace freezes); and the freeze
-> is maintained until /both/ freeze types are dropped.
-> 
-> AFAICT this should work for the two other usecases (quiescing pagefaults
-> for fsdax pmem pre-removal; and freezing fses during suspend) besides
-> online fsck for xfs.
-> 
-> --D
-> 
-> From: Darrick J. Wong <djwong@kernel.org>
-> Subject: fs: distinguish between user initiated freeze and kernel initiated freeze
-> 
-> Userspace can freeze a filesystem using the FIFREEZE ioctl or by
-> suspending the block device; this state persists until userspace thaws
-> the filesystem with the FITHAW ioctl or resuming the block device.
-> Since commit 18e9e5104fcd ("Introduce freeze_super and thaw_super for
-> the fsfreeze ioctl") we only allow the first freeze command to succeed.
-> 
-> The kernel may decide that it is necessary to freeze a filesystem for
-> its own internal purposes, such as suspends in progress, filesystem fsck
-> activities, or quiescing a device prior to removal.  Userspace thaw
-> commands must never break a kernel freeze, and kernel thaw commands
-> shouldn't undo userspace's freeze command.
-> 
-> Introduce a couple of freeze holder flags and wire it into the
-> sb_writers state.  One kernel and one userspace freeze are allowed to
-> coexist at the same time; the filesystem will not thaw until both are
-> lifted.
-> 
-> Inspired-by: Luis Chamberlain <mcgrof@kernel.org>
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-
-Yes, this is exactly how I'd imagine it. Thanks for writing the patch!
-
-I'd just note that this would need rebasing on top of Luis' patches 1 and
-2. Also:
-
-> +	if (sbw->frozen == SB_FREEZE_COMPLETE) {
-> +		switch (who) {
-> +		case FREEZE_HOLDER_KERNEL:
-> +			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
-> +				/*
-> +				 * Kernel freeze already in effect; caller can
-> +				 * try again.
-> +				 */
-> +				deactivate_locked_super(sb);
-> +				return -EBUSY;
-> +			}
-> +			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
-> +				/*
-> +				 * Share the freeze state with the userspace
-> +				 * freeze already in effect.
-> +				 */
-> +				sbw->freeze_holders |= who;
-> +				deactivate_locked_super(sb);
-> +				return 0;
-> +			}
-> +			break;
-> +		case FREEZE_HOLDER_USERSPACE:
-> +			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
-> +				/*
-> +				 * Userspace freeze already in effect; tell
-> +				 * the caller we're busy.
-> +				 */
-> +				deactivate_locked_super(sb);
-> +				return -EBUSY;
-> +			}
-> +			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
-> +				/*
-> +				 * Share the freeze state with the kernel
-> +				 * freeze already in effect.
-> +				 */
-> +				sbw->freeze_holders |= who;
-> +				deactivate_locked_super(sb);
-> +				return 0;
-> +			}
-> +			break;
-> +		default:
-> +			BUG();
-> +			deactivate_locked_super(sb);
-> +			return -EINVAL;
-> +		}
-> +	}
-
-Can't this be simplified to:
-
-	BUG_ON(who & ~(FREEZE_HOLDER_USERSPACE | FREEZE_HOLDER_KERNEL));
-	BUG_ON(!(!(who & FREEZE_HOLDER_USERSPACE) ^
-	       !(who & FREEZE_HOLDER_KERNEL)));
-retry:
-	if (sb->s_writers.freeze_holders & who)
-		return -EBUSY;
-	/* Already frozen by someone else? */
-	if (sb->s_writers.freeze_holders & ~who) {
-		sb->s_writers.freeze_holders |= who;
-		return 0;
-	}
-
-Now the only remaining issue with the code is that the two different
-holders can be attempting to freeze the filesystem at once and in that case
-one of them has to wait for the other one instead of returning -EBUSY as
-would happen currently. This can happen because we temporarily drop
-s_umount in freeze_super() due to lock ordering issues. I think we could
-do something like:
-
-	if (!sb_unfrozen(sb)) {
-		up_write(&sb->s_umount);
-		wait_var_event(&sb->s_writers.frozen,
-			       sb_unfrozen(sb) || sb_frozen(sb));
-		down_write(&sb->s_umount);
-		goto retry;
-	}
-
-and then sprinkle wake_up_var(&sb->s_writers.frozen) at appropriate places
-in freeze_super().
-
-BTW, when reading this code, I've spotted attached cleanup opportunity but
-I'll queue that separately so that is JFYI.
-
-> +#define FREEZE_HOLDER_USERSPACE	(1U << 1)	/* userspace froze fs */
-> +#define FREEZE_HOLDER_KERNEL	(1U << 2)	/* kernel froze fs */
-
-Why not start from 1U << 0? And bonus points for using BIT() macro :).
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
---wr2u3ku724mk4x5d
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-fs-Drop-wait_unfrozen-wait-queue.patch"
-
-From 9fce35f21f9a62470e764463c84373fb013108fd Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Thu, 25 May 2023 15:56:19 +0200
-Subject: [PATCH] fs: Drop wait_unfrozen wait queue
 
 wait_unfrozen waitqueue is used only in quota code to wait for
 filesystem to become unfrozen. In that place we can just use
@@ -238,6 +80,9 @@ Signed-off-by: Jan Kara <jack@suse.cz>
  fs/super.c         | 4 ----
  include/linux/fs.h | 1 -
  3 files changed, 3 insertions(+), 7 deletions(-)
+
+Guys, I can merge this cleanup through my tree since I don't expect any
+conflicts and the generic part is pure removal of unused code.
 
 diff --git a/fs/quota/quota.c b/fs/quota/quota.c
 index 052f143e2e0e..0e41fb84060f 100644
@@ -306,5 +151,3 @@ index 21a981680856..3b65a6194485 100644
 -- 
 2.35.3
 
-
---wr2u3ku724mk4x5d--
