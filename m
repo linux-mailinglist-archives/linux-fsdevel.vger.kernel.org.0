@@ -2,77 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5FB77107DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 10:47:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5215B7107F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 10:55:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240379AbjEYIrg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 04:47:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39148 "EHLO
+        id S240101AbjEYIzO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 04:55:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232749AbjEYIre (ORCPT
+        with ESMTP id S230389AbjEYIzM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 04:47:34 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD789E;
-        Thu, 25 May 2023 01:47:33 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Thu, 25 May 2023 04:55:12 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0505798;
+        Thu, 25 May 2023 01:55:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=4b2eicAEuLtRWdZtNZ5cHEIkzBFWO5fbGUCIkmElStA=; b=awjODk2fwPYTgmCI5gJmw6l9OT
+        webj8qbFiwu2EL0MRewtFXEC24of9u7MvAW5satunvNuK0PfsEXnHCvwZdPeVlmrsw6YlUMgskELw
+        WNFvHhYGq2vX1/nA3+RnT7Ewviy63PEB/VQJlSpqkZNlmRE6hBD+qKC25FfdB8cV/yZPZ6qBNLpBo
+        en8dqOWQjXH3kLxP48mjho4LySuKy+LkE7/OcY26lmBWJY9wsywIRwmVJ4noS0NZY3hsyN8wzzxgY
+        eo9zRmZLXoe6kD+DKJ5sOgSpyhphRKbS6OSMZfY7OxgblBnBnlx+363WZE2cNfcb8tk/Pqg7uMSA3
+        iH5ae6cg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q26jT-00C1Be-HE; Thu, 25 May 2023 08:54:03 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id C360B21CA3;
-        Thu, 25 May 2023 08:47:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1685004451; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KuhUxhJ4qXqlC8S61jGgkZ/rePw29whTgtvzHY6sSiI=;
-        b=ZrusZYsCefuMnAVLQhgd8aBN2vNvwAyrM1z1cZn9oRunL0M8JfFy92IqTRXhxJg9dyQ+3V
-        Q8yHLX3wYbtbH0HYQWtQlKL9UMpQKxyFX1cHfV97/XUUa9mdp5HlUf7zSKu6aMJI3TC4fN
-        /g6oWielTzMSNQo/9YenUVIHEIU6Zp0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1685004451;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KuhUxhJ4qXqlC8S61jGgkZ/rePw29whTgtvzHY6sSiI=;
-        b=XdzjVSs3+TjUoFyH5X//zoHI1wt48WjIl65701RGoFiCfws+iTsL1D3tjnaB6pIYnjG35e
-        Nerxvu9ESp34vGDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B1FAA13356;
-        Thu, 25 May 2023 08:47:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id mxRrK6Mgb2TyRAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 25 May 2023 08:47:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 36009A075C; Thu, 25 May 2023 10:47:31 +0200 (CEST)
-Date:   Thu, 25 May 2023 10:47:31 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        "Darrick J . Wong" <djwong@kernel.org>, dhowells@redhat.com,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        cluster-devel@redhat.com, Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [PATCH 06/32] sched: Add task_struct->faults_disabled_mapping
-Message-ID: <20230525084731.losrlnarpbqtqzil@quack3>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-7-kent.overstreet@linux.dev>
- <20230510010737.heniyuxazlprrbd6@quack3>
- <ZFs3RYgdCeKjxYCw@moria.home.lan>
- <20230523133431.wwrkjtptu6vqqh5e@quack3>
- <ZGzugpw7vgCFxOYL@moria.home.lan>
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AA4AA3002F0;
+        Thu, 25 May 2023 10:54:00 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3566720A78733; Thu, 25 May 2023 10:54:00 +0200 (CEST)
+Date:   Thu, 25 May 2023 10:54:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Kautuk Consul <kconsul@linux.vnet.ibm.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v7 08/14] KVM: Rename mmu_notifier_*
+Message-ID: <20230525085400.GP4253@hirez.programming.kicks-ass.net>
+References: <20220706082016.2603916-1-chao.p.peng@linux.intel.com>
+ <20220706082016.2603916-9-chao.p.peng@linux.intel.com>
+ <ZGxo9ylqYI8JXjGn@li-a450e7cc-27df-11b2-a85c-b5a9ac31e8ef.ibm.com>
+ <ZGzLf4zgxpBjghaF@google.com>
+ <ZG2qv9sWl2RUnGqd@li-a450e7cc-27df-11b2-a85c-b5a9ac31e8ef.ibm.com>
+ <ZG5wg3VbG4rCYrfk@google.com>
+ <20230524203336.GC3447678@hirez.programming.kicks-ass.net>
+ <ZG6EJoXbduApRsgV@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZGzugpw7vgCFxOYL@moria.home.lan>
+In-Reply-To: <ZG6EJoXbduApRsgV@google.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,57 +95,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 23-05-23 12:49:06, Kent Overstreet wrote:
-> > > No, that's definitely handled (and you can see it in the code I linked),
-> > > and I wrote a torture test for fstests as well.
+On Wed, May 24, 2023 at 02:39:50PM -0700, Sean Christopherson wrote:
+> On Wed, May 24, 2023, Peter Zijlstra wrote:
+> > On Wed, May 24, 2023 at 01:16:03PM -0700, Sean Christopherson wrote:
+> > > Of course, the only accesses outside of mmu_lock are reads, so on x86 that
+> > > "atomic" access is just a READ_ONCE() load, but that's not the case for all
+> > > architectures.
 > > 
-> > I've checked the code and AFAICT it is all indeed handled. BTW, I've now
-> > remembered that GFS2 has dealt with the same deadlocks - b01b2d72da25
-> > ("gfs2: Fix mmap + page fault deadlocks for direct I/O") - in a different
-> > way (by prefaulting pages from the iter before grabbing the problematic
-> > lock and then disabling page faults for the iomap_dio_rw() call). I guess
-> > we should somehow unify these schemes so that we don't have two mechanisms
-> > for avoiding exactly the same deadlock. Adding GFS2 guys to CC.
+> > This is true on *all* archs. atomic_set() and atomic_read() are no more
+> > and no less than WRITE_ONCE() / READ_ONCE().
 > 
-> Oof, that sounds a bit sketchy. What happens if the dio call passes in
-> an address from the same address space?
+> Ah, I take it s390's handcoded assembly routines are just a paranoid equivalents
+> and not truly special?  "l" and "st" do sound quite generic...
 
-If we submit direct IO that uses mapped file F at offset O as a buffer for
-direct IO from file F, offset O, it will currently livelock in an
-indefinite retry loop. It should rather return error or fall back to
-buffered IO. But that should be fixable. Andreas?
-
-But if the buffer and direct IO range does not overlap, it will just
-happily work - iomap_dio_rw() invalidates only the range direct IO is done
-to.
-
-> What happens if we race with the pages we faulted in being evicted?
-
-We fault them in again and retry.
-
-> > Also good that you've written a fstest for this, that is definitely a useful
-> > addition, although I suspect GFS2 guys added a test for this not so long
-> > ago when testing their stuff. Maybe they have a pointer handy?
-> 
-> More tests more good.
-> 
-> So if we want to lift this scheme to the VFS layer, we'd start by
-> replacing the lock you added (grepping for it, the name escapes me) with
-> a different type of lock - two_state_shared_lock in my code, it's like a
-> rw lock except writers don't exclude other writers. That way the DIO
-> path can use it without singlethreading writes to a single file.
-
-Yes, I've noticed that you are introducing in bcachefs a lock with very
-similar semantics to mapping->invalidate_lock, just with this special lock
-type. What I'm kind of worried about with two_state_shared_lock as
-implemented in bcachefs is the fairness. AFAICS so far if someone is e.g.
-heavily faulting pages on a file, direct IO to that file can be starved
-indefinitely. That is IMHO not a good thing and I would not like to use
-this type of lock in VFS until this problem is resolved. But it should be
-fixable e.g. by introducing some kind of deadline for a waiter after which
-it will block acquisitions of the other lock state.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yep, compiler *should* generate the same with READ_ONCE/WRITE_ONCE.
