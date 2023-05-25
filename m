@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27930711A3A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 00:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BDBB711A45
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 00:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233928AbjEYWky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 18:40:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40322 "EHLO
+        id S241902AbjEYWlq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 18:41:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229944AbjEYWkw (ORCPT
+        with ESMTP id S242048AbjEYWlk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 18:40:52 -0400
+        Thu, 25 May 2023 18:41:40 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0849219D
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 15:40:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24AD41B0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 15:40:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685054407;
+        s=mimecast20190719; t=1685054412;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4LadGJQg30+UITevY/GGSgUqQRDMNZJwaw2G4qvwi6M=;
-        b=FU37hNueS7v3qTU23bsMTXPf0OTMa77uxFadXAOWY3ATS238Hg3V3xuw0dWvrV0fGGeuiW
-        hQ4Ou5U1KLGv03UNM0nRA+KgunjOjIZxWI/42Rs0moXZuxOsUvwwq/92H+ENkE5Wx8HgqR
-        ups3teF8V3QrtiZzaKHf62fZ9OscQlU=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=PCC0sosk0Q9OchSk1Wd/PogJY3iRiwmEwElEkGvXYZE=;
+        b=MDbCHnw5LrpRZAgYBMuKfJr+pKqkMYbfgTPPmlTAuUJ4GH2hsW44TP2L//t1SEGWEUXKG6
+        P9cy0WAi69TTvi8k9zmxPNa5epUrjxNMNadYe/1U2m+2RISIMdbbDpC53mki/oHquhfoD3
+        esJP+B0Vq85b5nFl1AC+vcvTJ/+RwSs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-164-lyrjH9PRONCGKTu4lTu3Vg-1; Thu, 25 May 2023 18:40:05 -0400
-X-MC-Unique: lyrjH9PRONCGKTu4lTu3Vg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+ us-mta-344-_OlhGPMwOpeIMBefHaCpnA-1; Thu, 25 May 2023 18:40:08 -0400
+X-MC-Unique: _OlhGPMwOpeIMBefHaCpnA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DC30B1C05EA3;
-        Thu, 25 May 2023 22:40:04 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E96918007D9;
+        Thu, 25 May 2023 22:40:07 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C98540CFD45;
-        Thu, 25 May 2023 22:40:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9049E7AF5;
+        Thu, 25 May 2023 22:40:05 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Christoph Hellwig <hch@infradead.org>,
         David Hildenbrand <david@redhat.com>
@@ -53,14 +53,14 @@ Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [RFC PATCH v2 2/3] mm: Provide a function to get an additional pin on a page
-Date:   Thu, 25 May 2023 23:39:52 +0100
-Message-Id: <20230525223953.225496-3-dhowells@redhat.com>
+Subject: [RFC PATCH v2 3/3] block: Use iov_iter_extract_pages() and page pinning in direct-io.c
+Date:   Thu, 25 May 2023 23:39:53 +0100
+Message-Id: <20230525223953.225496-4-dhowells@redhat.com>
 In-Reply-To: <20230525223953.225496-1-dhowells@redhat.com>
 References: <20230525223953.225496-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -71,10 +71,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a function to get an additional pin on a page that we already have
-a pin on.  This will be used in fs/direct-io.c when dispatching multiple
-bios to a page we've extracted from a user-backed iter rather than redoing
-the extraction.
+Change the old block-based direct-I/O code to use iov_iter_extract_pages()
+to pin user pages or leave kernel pages unpinned rather than taking refs
+when submitting bios.
+
+This makes use of the preceding patches to not take pins on the zero page
+(thereby allowing insertion of zero pages in with pinned pages) and to get
+additional pins on pages, allowing an extracted page to be used in multiple
+bios without having to re-extract it.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Christoph Hellwig <hch@infradead.org>
@@ -95,60 +99,246 @@ cc: linux-block@vger.kernel.org
 cc: linux-kernel@vger.kernel.org
 cc: linux-mm@kvack.org
 ---
- include/linux/mm.h |  1 +
- mm/gup.c           | 29 +++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 27ce77080c79..931b75dae7ff 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2383,6 +2383,7 @@ int get_user_pages_fast(unsigned long start, int nr_pages,
- 			unsigned int gup_flags, struct page **pages);
- int pin_user_pages_fast(unsigned long start, int nr_pages,
- 			unsigned int gup_flags, struct page **pages);
-+void page_get_additional_pin(struct page *page);
+Notes:
+    ver #2)
+     - Need to set BIO_PAGE_PINNED conditionally, not BIO_PAGE_REFFED.
+
+ fs/direct-io.c | 72 ++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 43 insertions(+), 29 deletions(-)
+
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index ad20f3428bab..5d4c5be0fb41 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -42,8 +42,8 @@
+ #include "internal.h"
  
- int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc);
- int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
-diff --git a/mm/gup.c b/mm/gup.c
-index 69b002628f5d..4b4353a184ed 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -275,6 +275,35 @@ void unpin_user_page(struct page *page)
+ /*
+- * How many user pages to map in one call to get_user_pages().  This determines
+- * the size of a structure in the slab cache
++ * How many user pages to map in one call to iov_iter_extract_pages().  This
++ * determines the size of a structure in the slab cache
+  */
+ #define DIO_PAGES	64
+ 
+@@ -121,12 +121,13 @@ struct dio {
+ 	struct inode *inode;
+ 	loff_t i_size;			/* i_size when submitted */
+ 	dio_iodone_t *end_io;		/* IO completion function */
++	bool need_unpin;		/* T if we need to unpin the pages */
+ 
+ 	void *private;			/* copy from map_bh.b_private */
+ 
+ 	/* BIO completion state */
+ 	spinlock_t bio_lock;		/* protects BIO fields below */
+-	int page_errors;		/* errno from get_user_pages() */
++	int page_errors;		/* err from iov_iter_extract_pages() */
+ 	int is_async;			/* is IO async ? */
+ 	bool defer_completion;		/* defer AIO completion to workqueue? */
+ 	bool should_dirty;		/* if pages should be dirtied */
+@@ -165,14 +166,14 @@ static inline unsigned dio_pages_present(struct dio_submit *sdio)
+  */
+ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ {
++	struct page **pages = dio->pages;
+ 	const enum req_op dio_op = dio->opf & REQ_OP_MASK;
+ 	ssize_t ret;
+ 
+-	ret = iov_iter_get_pages2(sdio->iter, dio->pages, LONG_MAX, DIO_PAGES,
+-				&sdio->from);
++	ret = iov_iter_extract_pages(sdio->iter, &pages, LONG_MAX,
++				     DIO_PAGES, 0, &sdio->from);
+ 
+ 	if (ret < 0 && sdio->blocks_available && dio_op == REQ_OP_WRITE) {
+-		struct page *page = ZERO_PAGE(0);
+ 		/*
+ 		 * A memory fault, but the filesystem has some outstanding
+ 		 * mapped blocks.  We need to use those blocks up to avoid
+@@ -180,8 +181,7 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ 		 */
+ 		if (dio->page_errors == 0)
+ 			dio->page_errors = ret;
+-		get_page(page);
+-		dio->pages[0] = page;
++		dio->pages[0] = ZERO_PAGE(0);
+ 		sdio->head = 0;
+ 		sdio->tail = 1;
+ 		sdio->from = 0;
+@@ -201,9 +201,9 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ 
+ /*
+  * Get another userspace page.  Returns an ERR_PTR on error.  Pages are
+- * buffered inside the dio so that we can call get_user_pages() against a
+- * decent number of pages, less frequently.  To provide nicer use of the
+- * L1 cache.
++ * buffered inside the dio so that we can call iov_iter_extract_pages()
++ * against a decent number of pages, less frequently.  To provide nicer use of
++ * the L1 cache.
+  */
+ static inline struct page *dio_get_page(struct dio *dio,
+ 					struct dio_submit *sdio)
+@@ -219,6 +219,18 @@ static inline struct page *dio_get_page(struct dio *dio,
+ 	return dio->pages[sdio->head];
  }
- EXPORT_SYMBOL(unpin_user_page);
  
-+/**
-+ * page_get_additional_pin - Try to get an additional pin on a pinned page
-+ * @page: The page to be pinned
-+ *
-+ * Get an additional pin on a page we already have a pin on.  Makes no change
-+ * if the page is the zero_page.
-+ */
-+void page_get_additional_pin(struct page *page)
++static void dio_pin_page(struct dio *dio, struct page *page)
 +{
-+	struct folio *folio = page_folio(page);
-+
-+	if (page == ZERO_PAGE(0))
-+		return;
-+
-+	/*
-+	 * Similar to try_grab_folio(): be sure to *also* increment the normal
-+	 * page refcount field at least once, so that the page really is
-+	 * pinned.
-+	 */
-+	if (folio_test_large(folio)) {
-+		WARN_ON_ONCE(atomic_read(&folio->_pincount) < 1);
-+		folio_ref_add(folio, 1);
-+		atomic_add(1, &folio->_pincount);
-+	} else {
-+		WARN_ON_ONCE(folio_ref_count(folio) < GUP_PIN_COUNTING_BIAS);
-+		folio_ref_add(folio, GUP_PIN_COUNTING_BIAS);
-+	}
++	if (dio->need_unpin)
++		page_get_additional_pin(page);
 +}
 +
- static inline struct folio *gup_folio_range_next(struct page *start,
- 		unsigned long npages, unsigned long i, unsigned int *ntails)
++static void dio_unpin_page(struct dio *dio, struct page *page)
++{
++	if (dio->need_unpin)
++		unpin_user_page(page);
++}
++
+ /*
+  * dio_complete() - called when all DIO BIO I/O has been completed
+  *
+@@ -402,8 +414,8 @@ dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
+ 		bio->bi_end_io = dio_bio_end_aio;
+ 	else
+ 		bio->bi_end_io = dio_bio_end_io;
+-	/* for now require references for all pages */
+-	bio_set_flag(bio, BIO_PAGE_REFFED);
++	if (dio->need_unpin)
++		bio_set_flag(bio, BIO_PAGE_PINNED);
+ 	sdio->bio = bio;
+ 	sdio->logical_offset_in_bio = sdio->cur_page_fs_offset;
+ }
+@@ -444,8 +456,9 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
+  */
+ static inline void dio_cleanup(struct dio *dio, struct dio_submit *sdio)
  {
+-	while (sdio->head < sdio->tail)
+-		put_page(dio->pages[sdio->head++]);
++	if (dio->need_unpin)
++		unpin_user_pages(dio->pages + sdio->head,
++				 sdio->tail - sdio->head);
+ }
+ 
+ /*
+@@ -676,7 +689,7 @@ static inline int dio_new_bio(struct dio *dio, struct dio_submit *sdio,
+  *
+  * Return zero on success.  Non-zero means the caller needs to start a new BIO.
+  */
+-static inline int dio_bio_add_page(struct dio_submit *sdio)
++static inline int dio_bio_add_page(struct dio *dio, struct dio_submit *sdio)
+ {
+ 	int ret;
+ 
+@@ -688,7 +701,7 @@ static inline int dio_bio_add_page(struct dio_submit *sdio)
+ 		 */
+ 		if ((sdio->cur_page_len + sdio->cur_page_offset) == PAGE_SIZE)
+ 			sdio->pages_in_io--;
+-		get_page(sdio->cur_page);
++		dio_pin_page(dio, sdio->cur_page);
+ 		sdio->final_block_in_bio = sdio->cur_page_block +
+ 			(sdio->cur_page_len >> sdio->blkbits);
+ 		ret = 0;
+@@ -743,11 +756,11 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
+ 			goto out;
+ 	}
+ 
+-	if (dio_bio_add_page(sdio) != 0) {
++	if (dio_bio_add_page(dio, sdio) != 0) {
+ 		dio_bio_submit(dio, sdio);
+ 		ret = dio_new_bio(dio, sdio, sdio->cur_page_block, map_bh);
+ 		if (ret == 0) {
+-			ret = dio_bio_add_page(sdio);
++			ret = dio_bio_add_page(dio, sdio);
+ 			BUG_ON(ret != 0);
+ 		}
+ 	}
+@@ -804,13 +817,13 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+ 	 */
+ 	if (sdio->cur_page) {
+ 		ret = dio_send_cur_page(dio, sdio, map_bh);
+-		put_page(sdio->cur_page);
++		dio_unpin_page(dio, sdio->cur_page);
+ 		sdio->cur_page = NULL;
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
+-	get_page(page);		/* It is in dio */
++	dio_pin_page(dio, page);		/* It is in dio */
+ 	sdio->cur_page = page;
+ 	sdio->cur_page_offset = offset;
+ 	sdio->cur_page_len = len;
+@@ -825,7 +838,7 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+ 		ret = dio_send_cur_page(dio, sdio, map_bh);
+ 		if (sdio->bio)
+ 			dio_bio_submit(dio, sdio);
+-		put_page(sdio->cur_page);
++		dio_unpin_page(dio, sdio->cur_page);
+ 		sdio->cur_page = NULL;
+ 	}
+ 	return ret;
+@@ -926,7 +939,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 
+ 				ret = get_more_blocks(dio, sdio, map_bh);
+ 				if (ret) {
+-					put_page(page);
++					dio_unpin_page(dio, page);
+ 					goto out;
+ 				}
+ 				if (!buffer_mapped(map_bh))
+@@ -971,7 +984,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 
+ 				/* AKPM: eargh, -ENOTBLK is a hack */
+ 				if (dio_op == REQ_OP_WRITE) {
+-					put_page(page);
++					dio_unpin_page(dio, page);
+ 					return -ENOTBLK;
+ 				}
+ 
+@@ -984,7 +997,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 				if (sdio->block_in_file >=
+ 						i_size_aligned >> blkbits) {
+ 					/* We hit eof */
+-					put_page(page);
++					dio_unpin_page(dio, page);
+ 					goto out;
+ 				}
+ 				zero_user(page, from, 1 << blkbits);
+@@ -1024,7 +1037,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 						  sdio->next_block_for_io,
+ 						  map_bh);
+ 			if (ret) {
+-				put_page(page);
++				dio_unpin_page(dio, page);
+ 				goto out;
+ 			}
+ 			sdio->next_block_for_io += this_chunk_blocks;
+@@ -1039,8 +1052,8 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 				break;
+ 		}
+ 
+-		/* Drop the ref which was taken in get_user_pages() */
+-		put_page(page);
++		/* Drop the pin which was taken in get_user_pages() */
++		dio_unpin_page(dio, page);
+ 	}
+ out:
+ 	return ret;
+@@ -1135,6 +1148,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+ 		/* will be released by direct_io_worker */
+ 		inode_lock(inode);
+ 	}
++	dio->need_unpin = iov_iter_extract_will_pin(iter);
+ 
+ 	/* Once we sampled i_size check for reads beyond EOF */
+ 	dio->i_size = i_size_read(inode);
+@@ -1259,7 +1273,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+ 		ret2 = dio_send_cur_page(dio, &sdio, &map_bh);
+ 		if (retval == 0)
+ 			retval = ret2;
+-		put_page(sdio.cur_page);
++		dio_unpin_page(dio, sdio.cur_page);
+ 		sdio.cur_page = NULL;
+ 	}
+ 	if (sdio.bio)
 
