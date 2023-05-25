@@ -2,165 +2,291 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D78710924
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 11:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD9B171092B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 11:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240400AbjEYJo5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 05:44:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37100 "EHLO
+        id S240581AbjEYJss (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 05:48:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233558AbjEYJoq (ORCPT
+        with ESMTP id S234903AbjEYJsq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 05:44:46 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07145A9;
-        Thu, 25 May 2023 02:44:43 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 718451FDC2;
-        Thu, 25 May 2023 09:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1685007882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=p5KDT5n7B93Vi9xs1xIjnqiETEkQKRSr647A/1d/+S4=;
-        b=qiJeZaxCmaCdG74Skn1lpuA6uFRaLGsNJHxg0eldi3Y2EpQNfYmllo9h9HCULHAETWghYX
-        357bUematuJ7lIKzFL/69ANbP87eT3gX9rxFOtQZQhWJJYAv0cZjPVNX1ntpD8yX3OGeY+
-        jXKtvH5nCV4ZxyTwyjlGtkQk8mUFAbw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1685007882;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=p5KDT5n7B93Vi9xs1xIjnqiETEkQKRSr647A/1d/+S4=;
-        b=zNCa3NEXa5yV+ot1qtkCNy+wRqMbXs+HPIuoqh3YrRzBfoVpGcdCVwdB5n7tnulR+XxqLa
-        eztLvHoz8/AuJNCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6013C134B2;
-        Thu, 25 May 2023 09:44:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id KrBtFwoub2QYZAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 25 May 2023 09:44:42 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id EEDE2A075C; Thu, 25 May 2023 11:44:41 +0200 (CEST)
-Date:   Thu, 25 May 2023 11:44:41 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        "Darrick J. Wong" <djwong@kernel.org>, Ted Tso <tytso@mit.edu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        'David Laight <David.Laight@aculab.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: Locking for RENAME_EXCHANGE
-Message-ID: <20230525094441.wozlaigewzqemdm2@quack3>
-References: <20230524163504.lugqgz2ibe5vdom2@quack3>
- <CAJfpegu8W9R9G8n+4n3U5Ba_bKpM1o_5_2dfTOoeGDAOFcyF1g@mail.gmail.com>
+        Thu, 25 May 2023 05:48:46 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4555F191;
+        Thu, 25 May 2023 02:48:45 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-439494cbfedso227423137.3;
+        Thu, 25 May 2023 02:48:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685008124; x=1687600124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qQh+45Nz0JdYt5YoKDhD/qR63ItYpY/eVsSLPvtod8Q=;
+        b=eG1wbx4VBsjKLyjuDWKYKV/VkWjuc9Sv369WKPBhJGQ8wTWZViCohT5Hb9OPlFT8BV
+         Sf00wKGtMMeDg5a5AhoRWLy/ForyOEMS2mwQTcYN2KHk2y8cJNqn786GA6YktTBI21Vm
+         777Bpn37vsOc3ImxWTkIF6UA/DyyxLogn0f1tgvb8DVW/Xp1+wXnF335hs/Myvkr07SW
+         2SOVWZQa4hG5H9duINgs0cFpnLKBSlfvmXbqjKk1UXFEsbBk/AI5U7qCEXQxlv8HEqzr
+         bwTWVWsFNHwZKPL/cr0lVIr6+NkOXtR7r2d/yH4xxL6SOD6FrMwH8TDFwM2X5pf3heYa
+         HOCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685008124; x=1687600124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qQh+45Nz0JdYt5YoKDhD/qR63ItYpY/eVsSLPvtod8Q=;
+        b=iN6tOhEDYAZwJQVU2+Ihs0o9+EygWTNTUN/dM8OFOBFGfye0/GasWdpNvoCtSW71BX
+         KbUFl7qRVwurkQCJYqbTiZwNX5VHy+P0LxvAtfw6Y7u7bKV7bX0KH8IRTJsnLgSmyJsj
+         NWsz+qY3pVDgAC45ajDJk+M+uHXIP4a+MrMp8fTSiN++jG2m5yxw+CI7/amedipU+4E3
+         lAU7NCE3oeA6zxw95oKWk1vbXUOPe2bTCipNENG58u2p7sLUQL6PjxmurRJn4h5T6c3V
+         4Dpq8Wh+SS4y1v7f8CYqYqaDZwaTT/7KUAB3SVfMO2w6FUDp3KjOEHw0DJDRf7LigKIR
+         hT2g==
+X-Gm-Message-State: AC+VfDzPyHQuxEqMtHSAEXooCRnj2JoDhMpnGvrshrow9X40W0POgBlz
+        iXyH7BxTFFRMC3cvnlrtSlIrq0Da1DMs4M3GFS4=
+X-Google-Smtp-Source: ACHHUZ5pPduQ3JgOvASZqNytGhNjS1z0Sqe5F2B3v1y2iUv9Fp5ZPRNcu1YM8+0HWrmopbt8vDQPq7tyL4SyFrsQ1X8=
+X-Received: by 2002:a05:6102:d5:b0:437:e49d:634a with SMTP id
+ u21-20020a05610200d500b00437e49d634amr5259020vsp.35.1685008124269; Thu, 25
+ May 2023 02:48:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegu8W9R9G8n+4n3U5Ba_bKpM1o_5_2dfTOoeGDAOFcyF1g@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <ca02955f-1877-4fde-b453-3c1d22794740@kili.mountain>
+ <CAOQ4uxi6ST19WGkZiM=ewoK_9o-7DHvZcAc3v2c5GrqSFf0WDQ@mail.gmail.com>
+ <20230524140648.u6pexxspze7pz63z@quack3> <080107ac-873c-41dc-b7c7-208970181c40@kili.mountain>
+In-Reply-To: <080107ac-873c-41dc-b7c7-208970181c40@kili.mountain>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 25 May 2023 12:48:33 +0300
+Message-ID: <CAOQ4uxgA-kQOOp69pyKhQpMZZuyWZ0t6ir+nqL4yL9wX5CBNgQ@mail.gmail.com>
+Subject: Re: [bug report] fanotify: support reporting non-decodeable file handles
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Chuck Lever <cel@kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 24-05-23 21:33:07, Miklos Szeredi wrote:
-> On Wed, 24 May 2023 at 18:35, Jan Kara <jack@suse.cz> wrote:
-> >
-> > Hello!
-> >
-> > This is again about the problem with directory renames I've already
-> > reported in [1]. To quickly sum it up some filesystems (so far we know at
-> > least about xfs, ext4, udf, reiserfs) need to lock the directory when it is
-> > being renamed into another directory. This is because we need to update the
-> > parent pointer in the directory in that case and if that races with other
-> > operation on the directory, bad things can happen.
-> >
-> > So far we've done the locking in the filesystem code but recently Darrick
-> > pointed out [2] that we've missed the RENAME_EXCHANGE case in our ext4 fix.
-> > That one is particularly nasty because RENAME_EXCHANGE can arbitrarily mix
-> > regular files and directories. Couple nasty arising cases:
-> >
-> > 1) We need to additionally lock two exchanged directories. Suppose a
-> > situation like:
-> >
-> > mkdir P; mkdir P/A; mkdir P/B; touch P/B/F
-> >
-> > CPU1                                            CPU2
-> > renameat2("P/A", "P/B", RENAME_EXCHANGE);       renameat2("P/B/F", "P/A", 0);
-> 
-> Not sure I get it.
-> 
-> CPU1 locks P then A then B
-> CPU2 locks P then B then A
-> 
-> Both start with P and after that ordering between A and B doesn't
-> matter as long as the topology stays the same, which is guaranteed.
-> 
-> Or did you mean renameat2("P/B/F", "P/A/F", 0);?
-> 
-> This indeed looks deadlocky.
+On Thu, May 25, 2023 at 12:26=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> On Wed, May 24, 2023 at 04:06:48PM +0200, Jan Kara wrote:
+> > Yes, I've checked and all ->encode_fh() implementations return
+> > FILEID_INVALID in case of problems (which are basically always only
+> > problems with not enough space in the handle buffer).
+>
+> ceph_encode_fh() can return -EINVAL
 
-Right, that is what I meant. Sorry for confusion.
+Ouch! thanks for pointing this out
 
-> > Both operations need to lock A and B directories which are unrelated in the
-> > tree. This means we must establish stable lock ordering on directory locks
-> > even for the case when they are not in ancestor relationship.
-> >
-> > 2) We may need to lock a directory and a non-directory and they can be in
-> > parent-child relationship when hardlinks are involved:
-> >
-> > mkdir A; mkdir B; touch A/F; ln A/F B/F
-> > renameat2("A/F", "B");
-> >
-> > And this is really nasty because we don't have a way to find out whether
-> > "A/F" and "B" are in any relationship - in particular whether B happens to
-> > be another parent of A/F or not.
-> >
-> > What I've decided to do is to make sure we always lock directory first in
-> > this mixed case and that *should* avoid all the deadlocks but I'm spelling
-> > this out here just in case people can think of some even more wicked case
-> > before I'll send patches.
-> 
-> Locking directories first has always been the case, described in
-> detail in Documentation/filesystems/directory-locking.rst
-> 
-> > Also I wanted to ask (Miklos in particular as RENAME_EXCHANGE author): Why
-> > do we lock non-directories in RENAME_EXCHANGE case? If we didn't have to do
-> > that things would be somewhat simpler...
-> 
-> I can't say I remember anything, but digging into
-> lock_two_nondirectories() this comes up quickly:
-> 
->   6cedba8962f4 ("vfs: take i_mutex on renamed file")
-> 
-> So apparently NFS is relying on i_mutex to prevent delegations from
-> being broken without its knowledge.  Might be that is't NFS only, and
-> then the RENAME_EXCHANGE case doesn't need it (NFS doesn't support
-> RENAME_EXCHANGE), but I can't say for sure.
-> 
-> Also Al seems to have had some thoughts on this in d42b386834ee
-> ("update D/f/directory-locking")
+Jeff,
 
-Thanks for the references. I've now updated the document
-Documentation/filesystems/directory-locking.rst and I'm now more convinced
-the scheme is correct. It is also kind of neat there are less special cases
-:).
+In your own backyard ;-)
+Do you think this new information calls for rebasing my fix on top of maste=
+r
+and marking it for stable? or is this still low risk in your opinion?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Amir.
+
+
+>
+> $ smdb.py functions encode_fh > where
+> $ for i in $(cut -d '|' -f 3 where | sort -u) ; do smdb.py return_states =
+$i ; done | grep INTER | tee out
+>
+> regards,
+> dan carpenter
+>
+> fs/btrfs/export.c | btrfs_encode_fh | 36 |           255|        INTERNAL=
+ | -1 |                      | int(*)(struct inode*, uint*, int*, struct in=
+ode*) |
+> fs/btrfs/export.c | btrfs_encode_fh | 37 |           255|        INTERNAL=
+ | -1 |                      | int(*)(struct inode*, uint*, int*, struct in=
+ode*) |
+> fs/btrfs/export.c | btrfs_encode_fh | 43 |            77|        INTERNAL=
+ | -1 |                      | int(*)(struct inode*, uint*, int*, struct in=
+ode*) |
+> fs/btrfs/export.c | btrfs_encode_fh | 44 |            79|        INTERNAL=
+ | -1 |                      | int(*)(struct inode*, uint*, int*, struct in=
+ode*) |
+> fs/btrfs/export.c | btrfs_encode_fh | 45 |            78|        INTERNAL=
+ | -1 |                      | int(*)(struct inode*, uint*, int*, struct in=
+ode*) |
+> fs/ceph/export.c | ceph_encode_fh | 69 |           255|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/ceph/export.c | ceph_encode_fh | 70 |         (-22)|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/ceph/export.c | ceph_encode_fh | 71 |            78|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/ceph/export.c | ceph_encode_fh | 72 |           255|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/ceph/export.c | ceph_encode_fh | 73 |           255|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/ceph/export.c | ceph_encode_fh | 88 |             2|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/ceph/export.c | ceph_encode_fh | 89 |             1|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/fat/nfs.c | fat_encode_fh_nostale | 84 |           255|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/fat/nfs.c | fat_encode_fh_nostale | 85 |           255|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/fat/nfs.c | fat_encode_fh_nostale | 88 |           114|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/fat/nfs.c | fat_encode_fh_nostale | 89 |           113|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/fuse/inode.c | fuse_encode_fh | 475 |           255|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/fuse/inode.c | fuse_encode_fh | 478 |           130|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/fuse/inode.c | fuse_encode_fh | 479 |           129|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/gfs2/export.c | gfs2_encode_fh | 37 |           255|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/gfs2/export.c | gfs2_encode_fh | 38 |           255|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/gfs2/export.c | gfs2_encode_fh | 40 |             4|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/gfs2/export.c | gfs2_encode_fh | 42 |             8|        INTERNAL |=
+ -1 |                      | int(*)(struct inode*, uint*, int*, struct inod=
+e*) |
+> fs/isofs/export.c | isofs_export_encode_fh | 93 |           255|        I=
+NTERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, st=
+ruct inode*) |
+> fs/isofs/export.c | isofs_export_encode_fh | 94 |           255|        I=
+NTERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, st=
+ruct inode*) |
+> fs/isofs/export.c | isofs_export_encode_fh | 96 |             2|        I=
+NTERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, st=
+ruct inode*) |
+> fs/isofs/export.c | isofs_export_encode_fh | 97 |             1|        I=
+NTERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, st=
+ruct inode*) |
+> fs/kernfs/mount.c | kernfs_encode_fh | 59 |           255|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/kernfs/mount.c | kernfs_encode_fh | 60 |           254|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/nfs/export.c | nfs_encode_fh | 39 |           255|        INTERNAL | -=
+1 |                      | int(*)(struct inode*, uint*, int*, struct inode*=
+) |
+> fs/nfs/export.c | nfs_encode_fh | 45 | s32min-s32max|        INTERNAL | -=
+1 |                      | int(*)(struct inode*, uint*, int*, struct inode*=
+) |
+> fs/nilfs2/namei.c | nilfs_encode_fh | 289 |           255|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/nilfs2/namei.c | nilfs_encode_fh | 290 |           255|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/nilfs2/namei.c | nilfs_encode_fh | 291 |            98|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/nilfs2/namei.c | nilfs_encode_fh | 292 |            97|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/ocfs2/export.c | ocfs2_encode_fh | 213 |           255|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/ocfs2/export.c | ocfs2_encode_fh | 214 |             2|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/ocfs2/export.c | ocfs2_encode_fh | 215 |             1|        INTERNA=
+L | -1 |                      | int(*)(struct inode*, uint*, int*, struct i=
+node*) |
+> fs/orangefs/super.c | orangefs_encode_fh | 100 |           255|        IN=
+TERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, str=
+uct inode*) |
+> fs/orangefs/super.c | orangefs_encode_fh | 101 |             2|        IN=
+TERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, str=
+uct inode*) |
+> fs/orangefs/super.c | orangefs_encode_fh | 102 |             1|        IN=
+TERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, str=
+uct inode*) |
+> fs/overlayfs/export.c | ovl_encode_fh | 111 |           255|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
+> fs/overlayfs/export.c | ovl_encode_fh | 112 |           255|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
+> fs/overlayfs/export.c | ovl_encode_fh | 113 |           255|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
+> fs/overlayfs/export.c | ovl_encode_fh | 114 |           255|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
+> fs/overlayfs/export.c | ovl_encode_fh | 115 |           248|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
+> fs/reiserfs/inode.c | reiserfs_encode_fh | 740 |           255|        IN=
+TERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, str=
+uct inode*) |
+> fs/reiserfs/inode.c | reiserfs_encode_fh | 741 |           255|        IN=
+TERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, str=
+uct inode*) |
+> fs/reiserfs/inode.c | reiserfs_encode_fh | 744 |             3|        IN=
+TERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, str=
+uct inode*) |
+> fs/reiserfs/inode.c | reiserfs_encode_fh | 745 |             6|        IN=
+TERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, str=
+uct inode*) |
+> fs/reiserfs/inode.c | reiserfs_encode_fh | 746 |             5|        IN=
+TERNAL | -1 |                      | int(*)(struct inode*, uint*, int*, str=
+uct inode*) |
+> mm/shmem.c | shmem_encode_fh | 2144 |           255|        INTERNAL | -1=
+ |                      | int(*)(struct inode*, uint*, int*, struct inode*)=
+ |
+> mm/shmem.c | shmem_encode_fh | 2149 |             1|        INTERNAL | -1=
+ |                      | int(*)(struct inode*, uint*, int*, struct inode*)=
+ |
+> fs/udf/namei.c | udf_encode_fh | 447 |           255|        INTERNAL | -=
+1 |                      | int(*)(struct inode*, uint*, int*, struct inode*=
+) |
+> fs/udf/namei.c | udf_encode_fh | 448 |           255|        INTERNAL | -=
+1 |                      | int(*)(struct inode*, uint*, int*, struct inode*=
+) |
+> fs/udf/namei.c | udf_encode_fh | 450 |            82|        INTERNAL | -=
+1 |                      | int(*)(struct inode*, uint*, int*, struct inode*=
+) |
+> fs/udf/namei.c | udf_encode_fh | 451 |            81|        INTERNAL | -=
+1 |                      | int(*)(struct inode*, uint*, int*, struct inode*=
+) |
+> fs/xfs/xfs_export.c | xfs_fs_encode_fh | 48 |           255|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
+> fs/xfs/xfs_export.c | xfs_fs_encode_fh | 53 |           130|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
+> fs/xfs/xfs_export.c | xfs_fs_encode_fh | 54 |           129|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
+> fs/xfs/xfs_export.c | xfs_fs_encode_fh | 55 |             1|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
+> fs/xfs/xfs_export.c | xfs_fs_encode_fh | 56 |             2|        INTER=
+NAL | -1 |                      | int(*)(struct inode*, uint*, int*, struct=
+ inode*) |
