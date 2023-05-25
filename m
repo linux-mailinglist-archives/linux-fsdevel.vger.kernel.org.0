@@ -2,51 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 128C2710BFA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 14:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54055710C2D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 14:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232045AbjEYMY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 08:24:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54822 "EHLO
+        id S240262AbjEYMdz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 08:33:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231599AbjEYMYz (ORCPT
+        with ESMTP id S234820AbjEYMdy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 08:24:55 -0400
+        Thu, 25 May 2023 08:33:54 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85AA0189;
-        Thu, 25 May 2023 05:24:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06C6C12F;
+        Thu, 25 May 2023 05:33:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0D8B464513;
-        Thu, 25 May 2023 12:24:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B24EAC433D2;
-        Thu, 25 May 2023 12:24:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4281760B70;
+        Thu, 25 May 2023 12:33:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F38C433EF;
+        Thu, 25 May 2023 12:33:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685017493;
-        bh=6ByQ9jPlC0Z75D3momx9qOf9bXDHoK8a5ZO34jIyhdE=;
+        s=k20201202; t=1685018030;
+        bh=WwuJIMk0ASgoxwnOktjJhHCWL86S4p4sEIeupWlyQeM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A50oeQE+ZDEOQtWA7fRPVjjH3HWhpGb6eq76F6qEMBB/sv448Rl8+Omj3Z6UjVF95
-         kVeGvt1uTFklhrDRqwya95JFNvNwv9Dir8RxIE1RwUTCK+gkII36xwwLSO64IFmeIJ
-         BJnMdpLq1baho77fNdby4YjtH/cqEpmrPrfYhHIp0S/fLdqbAbld7aK0vZYNdAihIr
-         HXPSbjzUSlOqswBFgCFyElqyNcmKnWC6GBpXdWDDnsGmEedEgSUWPNQKHR314R42QK
-         JiGC8EEUTY6Kfvmz8Jf7fKyXOHro1jBojt5YZb1tk+fzajZvjA4cpz6oVDmmyMgaBo
-         Fa6DAvLRTj7WQ==
-Date:   Thu, 25 May 2023 14:24:48 +0200
+        b=SDBX1zmYPcqsRMMCAemYBOSVgszCtQonTA8o1DAdib8QXlakORJDRYus5rZ/EwuKr
+         ijRsGYc5cteo7Tj0F7NrSUDpEa7n1Sw4Hc3whujqhje7DkYPRtcY9j3VWqNJnLj3Bf
+         AlVy16XSemuyg3rRTEdCIJnyf2hlABBiMW746UIGGO44p6dItFydqjr7eElN04lAgY
+         q8u3rWzIE9k1GyODSdf5Daf4IdjpcrvXjmoHvCGkUBBKoXCaQpj2nsQEgIszQ0n2mi
+         jVrJAVWdyx5zIkKMadEPWy6Q/XteRfGZUMk8rOBUqQ6JUm73YCbhK4wCe1vWrwxTn3
+         Ob4HwfF6npgPQ==
+Date:   Thu, 25 May 2023 14:33:44 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     David Sterba <dsterba@suse.cz>
-Cc:     David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs: use UB-safe check for signed addition overflow in
- remap_verify_area
-Message-ID: <20230525-normung-essverhalten-5e8579dc8e15@brauner>
-References: <20230523162628.17071-1-dsterba@suse.com>
- <20230524-umfahren-stift-d1c34fd1d0fa@brauner>
- <20230525120935.GI30909@suse.cz>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] fs: split off vfs_getdents function of getdents64
+ syscall
+Message-ID: <20230525-ziellinie-dachten-3eaa30a89e6f@brauner>
+References: <ZG0slV2BhSZkRL_y@codewreck.org>
+ <ZG0qgniV1DzIbbzi@codewreck.org>
+ <20230524-monolog-punkband-4ed95d8ea852@brauner>
+ <ZG6DUfdbTHS-e5P7@codewreck.org>
+ <20230525-funkanstalt-ertasten-a43443d045c8@brauner>
+ <ZG8_su9Pq1oI-t5s@codewreck.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230525120935.GI30909@suse.cz>
+In-Reply-To: <ZG8_su9Pq1oI-t5s@codewreck.org>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -57,47 +65,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 25, 2023 at 02:09:35PM +0200, David Sterba wrote:
-> On Wed, May 24, 2023 at 04:16:17PM +0200, Christian Brauner wrote:
-> > On Tue, 23 May 2023 18:26:28 +0200, David Sterba wrote:
-> > > The following warning pops up with enabled UBSAN in tests fstests/generic/303:
+On Thu, May 25, 2023 at 08:00:02PM +0900, Dominique Martinet wrote:
+> Christian Brauner wrote on Thu, May 25, 2023 at 11:22:08AM +0200:
+> > > What was confusing is that default_llseek updates f_pos under the
+> > > inode_lock (write), and getdents also takes that lock (for read only in
+> > > shared implem), so I assumed getdents also was just protected by this
+> > > read lock, but I guess that was a bad assumption (as I kept pointing
+> > > out, a shared read lock isn't good enough, we definitely agree there)
 > > > 
-> > >   [23127.529395] UBSAN: Undefined behaviour in fs/read_write.c:1725:7
-> > >   [23127.529400] signed integer overflow:
-> > >   [23127.529403] 4611686018427322368 + 9223372036854775807 cannot be represented in type 'long long int'
-> > >   [23127.529412] CPU: 4 PID: 26180 Comm: xfs_io Not tainted 5.2.0-rc2-1.ge195904-vanilla+ #450
-> > >   [23127.556999] Hardware name: empty empty/S3993, BIOS PAQEX0-3 02/24/2008
-> > >   [23127.557001] Call Trace:
-> > >   [23127.557060]  dump_stack+0x67/0x9b
-> > >   [23127.557070]  ubsan_epilogue+0x9/0x40
-> > >   [23127.573496]  handle_overflow+0xb3/0xc0
-> > >   [23127.573514]  do_clone_file_range+0x28f/0x2a0
-> > >   [23127.573547]  vfs_clone_file_range+0x35/0xb0
-> > >   [23127.573564]  ioctl_file_clone+0x8d/0xc0
-> > >   [23127.590144]  do_vfs_ioctl+0x300/0x700
-> > >   [23127.590160]  ksys_ioctl+0x70/0x80
-> > >   [23127.590203]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-> > >   [23127.590210]  __x64_sys_ioctl+0x16/0x20
-> > >   [23127.590215]  do_syscall_64+0x5c/0x1d0
-> > >   [23127.590224]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > >   [23127.590231] RIP: 0033:0x7ff6d7250327
-> > >   [23127.590241] RSP: 002b:00007ffe3a38f1d8 EFLAGS: 00000206 ORIG_RAX: 0000000000000010
-> > >   [23127.590246] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007ff6d7250327
-> > >   [23127.590249] RDX: 00007ffe3a38f220 RSI: 000000004020940d RDI: 0000000000000003
-> > >   [23127.590252] RBP: 0000000000000000 R08: 00007ffe3a3c80a0 R09: 00007ffe3a3c8080
-> > >   [23127.590255] R10: 000000000fa99fa0 R11: 0000000000000206 R12: 0000000000000000
-> > >   [23127.590260] R13: 0000000000000000 R14: 3fffffffffff0000 R15: 00007ff6d750a20c
 > > > 
-> > > [...]
+> > > In practice, in the non-registered file case io_uring is also calling
+> > > fdget, so the lock is held exactly the same as the syscall and I wasn't
 > > 
-> > Independent of this fix it is a bit strange that we have this
-> > discrepancy between struct file_clone_range using u64s and the internal
-> > apis using loff_t. It's not a big deal but it's a bit ugly.
+> > No, it really isn't. fdget() doesn't take f_pos_lock at all:
+> > 
+> > fdget()
+> > -> __fdget()
+> >    -> __fget_light()
+> >       -> __fget()
+> >          -> __fget_files()
+> >             -> __fget_files_rcu()
 > 
-> The file_clone_range used to be a private btrfs ioctl with u64 types
-> that got lifted to VFS, inheriting the types.
+> Ugh, I managed to not notice that I was looking at fdget_pos and that
+> it's not the same as fdget by the time I wrote two paragraphs... These
+> functions all have too many wrappers and too similar names for a quick
+> look before work.
 > 
-> 04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
+> > If that were true then any system call that passes an fd and uses
+> > fdget() would try to acquire a mutex on f_pos_lock. We'd be serializing
+> > every *at based system call on f_pos_lock whenever we have multiple fds
+> > referring to the same file trying to operate on it concurrently.
+> > 
+> > We do have fdget_pos() and fdput_pos() as a special purpose fdget() for
+> > a select group of system calls that require this synchronization.
+> 
+> Right, that makes sense, and invalidates everything I said after that
+> anyway but it's not like looking stupid ever killed anyone.
 
-Yeah, I saw that when I looked up the history. I understand why it
-happened it's just a bit unforunate. Thanks!
+I strongly disagree with the looking stupid part. These callchains are
+quite unwieldy and it's easy to get confused. Usually if you receive a
+long mail about the semantics involved - as in the earlier thread - it
+means there's landmines all over.
+
+> 
+> Ok so it would require adding a new wrapper from struct file to struct
+> fd that'd eventually take the lock and set FDPUT_POS_UNLOCK for... not
+> fdput_pos but another function for that stopping short of fdput...
+> Then just call that around both vfs_llseek and vfs_getdents calls; which
+> is the easy part.
+> 
+> (Or possibly call mutex_lock directly like Dylan did in [1]...)
+> [1] https://lore.kernel.org/all/20220222105504.3331010-1-dylany@fb.com/T/#m3609dc8057d0bc8e41ceab643e4d630f7b91bde6
+
+We'd need a consistent story whatever it ends up being.
+
+> I'll be honest though I'm thankful for your explanations but I think
+> I'll just do like Stefan and stop trying for now: the only reason I've
+> started this was because I wanted to play with io_uring for a new toy
+> project and it felt awkward without a getdents for crawling a tree; and
+> I'm long past the point where I should have thrown the towel and just
+> make that a sequential walk.
+> There's too many "conditional patches" (NOWAIT, end of dir indicator)
+> that I don't care about and require additional work to rebase
+> continuously so I'll just leave it up to someone else who does care.
+> 
+> So to that someone: feel free to continue from these branches (I've
+> included the fix for kernfs_fop_readdir that Dan Carpenter reported):
+> https://github.com/martinetd/linux/commits/io_uring_getdents
+> https://github.com/martinetd/liburing/commits/getdents
+> 
+> Or just start over, there's not that much code now hopefully the
+> baseline requirements have gotten a little bit clearer.
+> 
+> 
+> Sorry for stirring the mess and leaving halfway, if nobody does continue
+> I might send a v3 when I have more time/energy in a few months, but it
+> won't be quick.
+
+It's fine.
