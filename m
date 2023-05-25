@@ -2,175 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BF2B711998
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 23:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE607119F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 00:05:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241996AbjEYVzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 17:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54902 "EHLO
+        id S241947AbjEYWEf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 18:04:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241923AbjEYVzJ (ORCPT
+        with ESMTP id S242090AbjEYWEc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 17:55:09 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFA7312C;
-        Thu, 25 May 2023 14:55:07 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-64d3bc0dce9so55285b3a.0;
-        Thu, 25 May 2023 14:55:07 -0700 (PDT)
+        Thu, 25 May 2023 18:04:32 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78CFBCC;
+        Thu, 25 May 2023 15:04:31 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2af290cf9b7so518001fa.3;
+        Thu, 25 May 2023 15:04:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685051707; x=1687643707;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LbQCRta1Y9jbQW7prv57mERnTrGdSIJmBXQojqB73vg=;
-        b=pbWH4QGdh0eZ5BhoWFAbimtwVSr5dFKasEjOv9jjhNBdAU6EGes6ukcV9zKfQWTXuL
-         q4qvWBY5WF9mX7kYrOFW9n2dgKTCShheYn1vLGSQoXBBeLbTQBTiaBVAMC+puZJFgq/h
-         CUq1r2Loqb0u716ScZuQM7w/kJ4hur5T7D+jirn1+eaIGIrYe9W3uqKJr141gcmpQbbV
-         gXwKgNgwxHyCNwR604AEM+q/W2nIdZKdd09vlO7ZSX65O13xOSfyMQJYmzpF71BddTwQ
-         EA1Mg1qKGJefuGGP9lsHRr7/Uemx6PmrpGSM0YVjG+kJJumFQniY8NUWYYQ1J1+tG2jL
-         hP5g==
+        d=gmail.com; s=20221208; t=1685052270; x=1687644270;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BsY/WgiwAnYCALQVm6Bp47qhqPyD/a7vg0rsgz10LlE=;
+        b=TUo2WvnfP9OGI1VxpWw2n8J8rt9QR+/8yVLJTqcGcnMZdpcc9kBW0J7Mtb/3X4/jr0
+         7ar5NHR0CD6CBCWzyR+DQFLXlGfqwndERiv1vZXjEu4e4eiGkqvBRDI9pSkZuhmYlzjE
+         nuF/jwfkacKlSSspRImeupNYWJ/p0Y5U6DLX6oauxGRFLkVhsbpdQHj961elAUzWnvQN
+         SeDh3NrzNsl99rlHKcJa6ZWNGeLt4vSyBZycxW+fNpGXuIFWlX8eo7O3Gy99Lvp+ikfI
+         g8JA8Tdj4/sU2Z4RWsADxYZEEMfGlO/jP9JPBw3dQclGKNdWlxeu08IehtQRB1gSqdOH
+         5YvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685051707; x=1687643707;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LbQCRta1Y9jbQW7prv57mERnTrGdSIJmBXQojqB73vg=;
-        b=W4o80LiiB5rSiid+1sZ6bVYtvu1swQk7PpyJn0L/NUASxvcclugAzJveGRr3XV9BJo
-         yV8UqqANH+zKCPCuxo1FlhEKkRbHSh5ODtN239v8dD+irywoXeK765Bkx51u83OyD0cN
-         oTBY3zUMBRXiyaZ3u3MXFtzH8E+ZEAaPRHoUjXowo7R2S+Q/KLse3gn8peAb6GBW0epV
-         xicT0MQ99iC5r4kOLnZHfSp4P4k8XQ5M6TV9N6/Rk3kKC0SkePq+rKqzAt80SAO6EGJv
-         cvYsUh6LtLKugXVpM5Q45fDo+a1QsOu73ozof36tcx2s6+rcHq0xWMrTzV0kv9ytbmG3
-         5gfw==
-X-Gm-Message-State: AC+VfDxOOyfdekSu40lIIDddBtFNgO0b2sDosp1J7cuhd7ebyX2LwwWs
-        KbTXhITuzKaqa2kzpCSH7kM=
-X-Google-Smtp-Source: ACHHUZ5URYK9lc36UtJVOivvqnqiAeYzt89uGFIDG12Ovoo/KrGPXZ/a5fF54ob6IoRVoFI/xvSRQA==
-X-Received: by 2002:a17:902:ce86:b0:1af:adc2:ab5b with SMTP id f6-20020a170902ce8600b001afadc2ab5bmr262553plg.0.1685051707020;
-        Thu, 25 May 2023 14:55:07 -0700 (PDT)
-Received: from ip-172-31-38-16.us-west-2.compute.internal (ec2-52-37-71-140.us-west-2.compute.amazonaws.com. [52.37.71.140])
-        by smtp.gmail.com with ESMTPSA id i12-20020a1709026acc00b001afd275e186sm1829141plt.286.2023.05.25.14.55.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 May 2023 14:55:06 -0700 (PDT)
-Date:   Thu, 25 May 2023 21:55:04 +0000
-From:   Alok Tiagi <aloktiagi@gmail.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, willy@infradead.org,
-        David.Laight@aculab.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        hch@infradead.org, tycho@tycho.pizza
-Subject: Re: [RFC v7 1/2] epoll: Implement eventpoll_replace_file()
-Message-ID: <ZG/ZOP0qtG4lVrNY@ip-172-31-38-16.us-west-2.compute.internal>
-References: <20230524063933.2339105-1-aloktiagi@gmail.com>
- <20230524-quirlig-leckt-5e89366ede47@brauner>
+        d=1e100.net; s=20221208; t=1685052270; x=1687644270;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BsY/WgiwAnYCALQVm6Bp47qhqPyD/a7vg0rsgz10LlE=;
+        b=j0kD13X0eFvOAs4tth3I8TAMLYf/rVJY9JC24bvWd0swqjUJlX3LL8N/fA9ZGmk1cv
+         oICgdAQfpKR6LJ+njLfv9/YEScbo270XuCfrsoC+9Gz0F9CvGNoEtor9YyAKq2VqVtbX
+         ymCQdpAZbak6ieGeQMVXN6QkjSrdJcSLmUqFoRCNB+L/FsJ8P90VpqPSUG5PaQSuuRWQ
+         RNTPuh/S+CLtgu6AsJGRnskohhpdCXu9TlkK0ThODGnaqnzLrQr959h6GiHltwdelxpr
+         xrsH5RncisDyiHRWbUDy6jsCcK+X6qOceRYHMTlXlFw2MyRo6exFr9fkKWTInZtsQYxs
+         an2A==
+X-Gm-Message-State: AC+VfDz+cvAeKZGoNatGYq3rqsPwXpUy3letMuOMvmYtPWUPTafSbCbw
+        G1Mi6IP+wyLKc4sutxiJHRD8ADwADZCtlBhI7Bg=
+X-Google-Smtp-Source: ACHHUZ6atKuSW0mxmBEyZwRwKLDLYOhQEiYiF6zIejDH2dcPtMDsGBAsJ15ONxXwAJhKNJsWeD9VDTirPe6qiM6rveg=
+X-Received: by 2002:a2e:3005:0:b0:2ac:6038:ece5 with SMTP id
+ w5-20020a2e3005000000b002ac6038ece5mr1292743ljw.49.1685052269350; Thu, 25 May
+ 2023 15:04:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230524-quirlig-leckt-5e89366ede47@brauner>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-7-kent.overstreet@linux.dev> <20230510010737.heniyuxazlprrbd6@quack3>
+ <ZFs3RYgdCeKjxYCw@moria.home.lan> <20230523133431.wwrkjtptu6vqqh5e@quack3>
+In-Reply-To: <20230523133431.wwrkjtptu6vqqh5e@quack3>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Fri, 26 May 2023 00:04:18 +0200
+Message-ID: <CAHpGcMLdPAcFJnMii0eq=hyK2UX1L9E19wRKKp7LMr971nnL7w@mail.gmail.com>
+Subject: Re: [PATCH 06/32] sched: Add task_struct->faults_disabled_mapping
+To:     Jan Kara <jack@suse.cz>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        "Darrick J . Wong" <djwong@kernel.org>, dhowells@redhat.com,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, Bob Peterson <rpeterso@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 24, 2023 at 07:26:24PM +0200, Christian Brauner wrote:
-> On Wed, May 24, 2023 at 06:39:32AM +0000, aloktiagi wrote:
-> > Introduce a mechanism to replace a file linked in the epoll interface with a new
-> > file.
-> > 
-> > eventpoll_replace() finds all instances of the file to be replaced and replaces
-> > them with the new file and the interested events.h
-> 
-> I've spent a bit more time on this and I have a few more
-> questions/thoughts.
-> 
-> * What if the seccomp notifier replaces a pollable file with a
->   non-pollable file? Right now you check that the file is pollable and
->   if it isn't you're not updating the file references in the epoll
->   instance for the file descriptor you updated. Why these semantics and
->   not e.g., removing all instances of that file referring to the updated
->   fd?
+Am Di., 23. Mai 2023 um 15:37 Uhr schrieb Jan Kara <jack@suse.cz>:
+> On Wed 10-05-23 02:18:45, Kent Overstreet wrote:
+> > On Wed, May 10, 2023 at 03:07:37AM +0200, Jan Kara wrote:
+> > > On Tue 09-05-23 12:56:31, Kent Overstreet wrote:
+> > > > From: Kent Overstreet <kent.overstreet@gmail.com>
+> > > >
+> > > > This is used by bcachefs to fix a page cache coherency issue with
+> > > > O_DIRECT writes.
+> > > >
+> > > > Also relevant: mapping->invalidate_lock, see below.
+> > > >
+> > > > O_DIRECT writes (and other filesystem operations that modify file data
+> > > > while bypassing the page cache) need to shoot down ranges of the page
+> > > > cache - and additionally, need locking to prevent those pages from
+> > > > pulled back in.
+> > > >
+> > > > But O_DIRECT writes invoke the page fault handler (via get_user_pages),
+> > > > and the page fault handler will need to take that same lock - this is a
+> > > > classic recursive deadlock if userspace has mmaped the file they're DIO
+> > > > writing to and uses those pages for the buffer to write from, and it's a
+> > > > lock ordering deadlock in general.
+> > > >
+> > > > Thus we need a way to signal from the dio code to the page fault handler
+> > > > when we already are holding the pagecache add lock on an address space -
+> > > > this patch just adds a member to task_struct for this purpose. For now
+> > > > only bcachefs is implementing this locking, though it may be moved out
+> > > > of bcachefs and made available to other filesystems in the future.
+> > >
+> > > It would be nice to have at least a link to the code that's actually using
+> > > the field you are adding.
+> >
+> > Bit of a trick to link to a _later_ patch in the series from a commit
+> > message, but...
+> >
+> > https://evilpiepirate.org/git/bcachefs.git/tree/fs/bcachefs/fs-io.c#n975
+> > https://evilpiepirate.org/git/bcachefs.git/tree/fs/bcachefs/fs-io.c#n2454
 >
-
-good question. the current implementation relies on __fput() calling
-eventpoll_release() to ultimately release the file. eventpoll_replace_file()
-only removes the file if it can successfully install the new file in epoll.
- 
-> * What if the seccomp notifier replaces the file of a file descriptor
->   with an epoll file descriptor? If the fd and original file are present
->   in an epoll instance does that mean you add the epoll file into all
->   epoll instances? That also means you create nested epoll instances
->   which are supported but are subject to various limitations. What's the
->   plan?
+> Thanks and I'm sorry for the delay.
 >
-
-My plan was to allow these cases since there is support for nested epoll
-instances. But thinking more on this, since seccomp subsystem is the only
-caller of eventpoll_replace_file(), I am not sure whether there is a valid
-use case where seccomp is used to intercept a system call that uses an
-epoll fd as a parameter. Maybe its ok to not do the replacement for such
-cases. Thoughts?
- 
-> * What if you have two threads in the same threadgroup that each have a
->   seccomp listener profile attached to them. Both have the same fd open.
-> 
->   Now both replace the same fd concurrently. Both threads concurrently
->   update references in the epoll instances now since the spinlock and
->   mutex are acquired and reacquired again. Afaict, you can end up with
->   some instances of the fd temporarily generating events for file1 and
->   other instances generating events for file2 while the replace is in
->   progress. Thus generating spurious events and userspace might be
->   acting on a file descriptor that doesn't yet refer to the new file?
->   That's possibly dangerous.
-> 
->   Maybe I'm mistaken but if so I'd like to hear the details why that
->   can't happen.
+> > > Also I think we were already through this discussion [1] and we ended up
+> > > agreeing that your scheme actually solves only the AA deadlock but a
+> > > malicious userspace can easily create AB BA deadlock by running direct IO
+> > > to file A using mapped file B as a buffer *and* direct IO to file B using
+> > > mapped file A as a buffer.
+> >
+> > No, that's definitely handled (and you can see it in the code I linked),
+> > and I wrote a torture test for fstests as well.
 >
-
-Considering file1 is the original file and file2 is the new file. First
-the eventpoll_replace_file() is called before receive_fd_replace(), so
-the file1 is still active and file2 would not receive any events. Within
-receive_fd_replace() the install phase first installs file2 alongside file1
-without removing file1. So during this phase the userspace can continue to
-receive events on file1. In the remove phase within eventpoll_replace_file()
-the epi for file1 is set to dying and replaced with file2. At this point the
-fd should see no new events, since receive_fd_replace() is yet to be called.
- 
->   Thinking about it what if the same file is registered via multiple fds
->   at the same time? Can't you end up in a scenario where you have the
->   same fd referring to different files in one or multiple epoll
->   instance?
-> 
->   I mean, you can get into that situation via dup2() where you change
->   the file descriptor to refer to a different file but the fd might
->   still be registered in the epoll instance referring to the old file
->   provided there's another fd open holding the old file alive.
-> 
-
-The current implementation scopes the replacement to the fd being replaced
-in the call to receive_fd_replace() since thats what the userspace intends
-to do. In case there are multiple fds pointing to the same file, and 
-receive_fd_replace() replaces only one of them, we would end up updating
-the file for only one of the fds. The other fd will see the same result as
-seen today without this patch, where the replaced file doesn't exist in 
-epoll since it got cleared due to __fput().
-
->   The difference though is that userspace must've been dumb enough to
->   actually do that whereas now this can just happen behind their back
->   misleading them.
+> I've checked the code and AFAICT it is all indeed handled. BTW, I've now
+> remembered that GFS2 has dealt with the same deadlocks - b01b2d72da25
+> ("gfs2: Fix mmap + page fault deadlocks for direct I/O") - in a different
+> way (by prefaulting pages from the iter before grabbing the problematic
+> lock and then disabling page faults for the iomap_dio_rw() call). I guess
+> we should somehow unify these schemes so that we don't have two mechanisms
+> for avoiding exactly the same deadlock. Adding GFS2 guys to CC.
 >
+> Also good that you've written a fstest for this, that is definitely a useful
+> addition, although I suspect GFS2 guys added a test for this not so long
+> ago when testing their stuff. Maybe they have a pointer handy?
 
-Since this is mainly serving the seccomp add fd usecase today, do you think
-its something that can be documented as a limitation? I am not aware of the
-interesting ways users are using seccomp add fd to think of all the possible
-scenarios, so I am open to suggestions.
+Ah yes, that's xfstests commit d3cbdabf ("generic: Test page faults
+during read and write").
 
->   Honestly, the kernel can't give you any atomicity in replacing these
->   references and if so it would require new possibly invasive locking
->   that would very likely not be acceptable upstream just for the sake of
->   this feature. I still have a very hard time seeing any of this
->   happening.
-> 
-> * I haven't looked at the codepath that tries to restore the old file on
->   failure. That might introduce even more weirdness.
+Thanks,
+Andreas
+
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
