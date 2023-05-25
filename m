@@ -2,99 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 98080711A70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 01:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADCCE711A73
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 01:05:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232645AbjEYXEg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 19:04:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48836 "EHLO
+        id S233538AbjEYXFb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 19:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229944AbjEYXEf (ORCPT
+        with ESMTP id S229944AbjEYXFa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 19:04:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D834AE2;
-        Thu, 25 May 2023 16:04:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6446764BC3;
-        Thu, 25 May 2023 23:04:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E110C433EF;
-        Thu, 25 May 2023 23:04:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685055872;
-        bh=XdOmX0J4cMjw/F8WqcmMWlj3q2i0+z3j4UltRDsxXas=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=jPAS+ejc27tlKAjqH0sSeK26lSC+pzZBMxMiVfvfOGF3r7Xaj2BNyzz1O9GohGZiQ
-         gH7vJKASVwfO4wv4I6YddGKdksSLzjyfaY08n8v5lJC3UbQe16EkR1GJUjo1m+SNCP
-         TkU50vJ9HnhrSL1H0TnqmdjwU/066gcw2iPvp7BH1eLhfKZd5u+kPftBCn81ahKWcJ
-         PTeXWWf8bK2A07eIxJBXJOagUJ3tNg406KzzcOUPqhG6yworxHonCLGzqrIkPONcLo
-         AGUL+jSnREV1cguhgYPm7Txv8qLIvG39Bk1708mGINY6gd+DdRYSx6szcAt4YGZmcf
-         JiMHWtr+il98A==
-Message-ID: <9d1a3d1a-b726-5144-4911-de6b77d9bf02@kernel.org>
-Date:   Fri, 26 May 2023 08:04:30 +0900
+        Thu, 25 May 2023 19:05:30 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53223E2;
+        Thu, 25 May 2023 16:05:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=1wIWSmx8tL1zwRosKN785Bsjw/NXry+bXUPs1s1BkGA=; b=nYujE/Ekj6U8L08bVcRYWqNpVi
+        gjNO473kYesKbi1pg4x7EzWo9m2GVJnkq0OKJBo8LAe6OvS5M2BgJEZRZu8Xl3HzPcwKet+nEgyoS
+        rxXJxPJVrgjuoXta18NBLgspC+r1WrkTjeqpeqkh9nz5ws02AhB5trWOTKBqHJKyDuo3UzcuCob3h
+        DHUVEwmrG7yeX7J00INUlganD9IUMQgcblHaTzkX9+1Tip1NCfXR9ZkxO5CMNtSbn9wY3gh7UyAk/
+        /3D0s6NQU32BfbUKM0qkGhhD17VwGf0OJruB6cRTmWPTIhWPoEcpRVMUeps4bWMJVOK8S+GlWb9E1
+        c5KM9IbQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q2K0m-000Mm9-0S;
+        Thu, 25 May 2023 23:04:48 +0000
+Date:   Thu, 25 May 2023 16:04:48 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     keescook@chromium.org, yzaikin@google.com, ebiederm@xmission.com,
+        arnd@arndb.de, bp@alien8.de, James.Bottomley@hansenpartnership.com,
+        deller@gmx.de, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        luto@kernel.org, peterz@infradead.org, brgerst@gmail.com,
+        christophe.jaillet@wanadoo.fr, kirill.shutemov@linux.intel.com,
+        jroedel@suse.de, j.granados@samsung.com, akpm@linux-foundation.org,
+        willy@infradead.org, linux-parisc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] signal: move show_unhandled_signals sysctl to its
+ own file
+Message-ID: <ZG/pkEdt9ArO4NGg@bombadil.infradead.org>
+References: <20230522210814.1919325-1-mcgrof@kernel.org>
+ <20230522210814.1919325-3-mcgrof@kernel.org>
+ <d0fe7a6f-8cd9-0b81-758a-f3b444e74bab@intel.com>
+ <ZG29HWE9NWn56hTg@bombadil.infradead.org>
+ <603f5357-3018-6c1b-2dc8-ec96aee9552c@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] zonefs: Call zonefs_io_error() on any error from
- filemap_splice_read()
-To:     Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@kvack.org
-References: <3788353.1685003937@warthog.procyon.org.uk>
- <ZG99DRyH461VAoUX@casper.infradead.org>
-Content-Language: en-US
-From:   Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <ZG99DRyH461VAoUX@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <603f5357-3018-6c1b-2dc8-ec96aee9552c@intel.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/26/23 00:21, Matthew Wilcox wrote:
-> On Thu, May 25, 2023 at 09:38:57AM +0100, David Howells wrote:
->>     
->> Call zonefs_io_error() after getting any error from filemap_splice_read()
->> in zonefs_file_splice_read(), including non-fatal errors such as ENOMEM,
->> EINTR and EAGAIN.
->>
->> Suggested-by: Damien Le Moal <dlemoal@kernel.org>
->> Link: https://lore.kernel.org/r/5d327bed-b532-ad3b-a211-52ad0a3e276a@kernel.org/
+On Thu, May 25, 2023 at 11:52:58AM -0700, Dave Hansen wrote:
+> On 5/24/23 00:30, Luis Chamberlain wrote:
+> >> It doesn't actually have anything to do with moving the
+> >> show_unhandled_signals sysctl, right?
+> > Well in my case it is making sure the sysctl variable used is declared
+> > as well.
 > 
-> This seems like a bizarre thing to do.  Let's suppose you got an
-> -ENOMEM.  blkdev_report_zones() is also likely to report -ENOMEM in
-> that case, which will cause a zonefs_err() to be called.  Surely
-> that can't be the desired outcome from getting -ENOMEM!
+> But what does this have to do with _this_ patch?  This:
 
-Right... What I want to make sure here is that the error we get is not the
-result of a failed IO. Beside EIO, are there any other cases ?
-I can think of at least:
-1) -ETIMEDOUT -> the drive is not responding. In this case, calling
-zonefs_io_error() may not be useful either.
-2) -ETIME: The IO was done with a duration limit (e.g. active time limit) and
-was aborted by the drive because it took too long. Calling zonefs_io_error() for
-this case is also not useful.
+Because to create consistency for the users.
 
-But I am thinking block layer (blk_status_t to errno conversion) here. Does the
-folio code *always* return EIO if it could not get a page/folio, regardless of
-the actual bio status ?
+> > --- a/arch/x86/kernel/umip.c
+> > +++ b/arch/x86/kernel/umip.c
+> > @@ -12,6 +12,7 @@
+> >  #include <asm/insn.h>
+> >  #include <asm/insn-eval.h>
+> >  #include <linux/ratelimit.h>
+> > +#include <linux/signal.h>
+> 
+> For instance.  You don't move things to another header or make *ANY*
+> change to the compilation of umip.c.  So why patch it?
+> 
+> It looks to me like a _fundamentally_ superfluous change.  That hunk
+> literally *can't* be related to the rest of the patch.
 
--- 
-Damien Le Moal
-Western Digital Research
+I suspect it is not needed as otherwise compilation would have failed.
+So I'll just drop it.
 
+> >> If that's the case, it would be nice to have this in its own patch.
+> > If its not really fixing any build bugs or functional bugs I don't see
+> > the need. But if you really want it, I can do it.
+> > 
+> > Let me know!
+> 
+> Yes, I really want it.
+> 
+> Please remove all the x86 bits from _this_ patch.  If x86 has a
+> separate, preexisting problem, please send that patch separately with a
+> separate changelog and justification.
+> 
+> We'll take a look.
+
+Sounds good.
+
+  Luis
