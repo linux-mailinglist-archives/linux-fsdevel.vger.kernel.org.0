@@ -2,53 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E46D710F61
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 17:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA9A711000
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 17:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241735AbjEYPWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 11:22:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56970 "EHLO
+        id S241383AbjEYPwN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 11:52:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241309AbjEYPWG (ORCPT
+        with ESMTP id S241495AbjEYPv5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 11:22:06 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5566A98;
-        Thu, 25 May 2023 08:22:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3ssmfPPhjZLZynXP//sBx5vsYc+zLAKwJikGSWYPm+0=; b=nt4MAsSsht78IxSABs4xkmDWo0
-        EKxsw0prVbpYYsQAXeH4XMJ0x63qyDHrACDKjGmUWwQwFw95baWxLTbqrhZPi7KXXAH+6wP6XucMa
-        nq+KefxK7MOXhK99ds49yXhZdWH2wJ6xjoin5d3g2rn7NWMViLGMYfJXwn46iT9GO4a5VRFSPaiNd
-        KBPdPhrlWLULcchf2eZnhyQeC64cbQPOMFlWuwmQ9ClzicvdnSxdeMy+1Z0hxiR4JMndbMt6aRWcb
-        H1/+oA57h6cZFx5kqK8oO3X3OGH4xwwUWHs8ru/wF7t/gy1/UGVmRjdzZzSg9i1OIOAzquLQnycIX
-        zffd+X0g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q2Cmj-00CI4P-3g; Thu, 25 May 2023 15:21:49 +0000
-Date:   Thu, 25 May 2023 16:21:49 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Damien Le Moal <dlemoal@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
+        Thu, 25 May 2023 11:51:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A662018D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 08:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685029871;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Dnh9Ymd0aXLnszSbYXuRCQIZeE9p62JOLrx7AW+9I7M=;
+        b=ehftH4zHYp4i803rNveNXev4o0LZC77COF1qxPShhcvrGQdCfb+oz36iu1CvhNUKoPxFfv
+        5Mh+u2V5bxPZtQvbPSYDFEM4JksLPnPzjWtMuYJ4Amfv/MeCZz1VLJrcfMQ0pr6fR3OPnz
+        9lQmHa8TJy78d/qdIjK0w8SQDl+IqO8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-138-tBX-uUEGPaSF-e1H0150-Q-1; Thu, 25 May 2023 11:51:08 -0400
+X-MC-Unique: tBX-uUEGPaSF-e1H0150-Q-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7E1DD8030D2;
+        Thu, 25 May 2023 15:51:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7180D200BA65;
+        Thu, 25 May 2023 15:51:04 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        David Hildenbrand <david@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@kvack.org
-Subject: Re: [PATCH] zonefs: Call zonefs_io_error() on any error from
- filemap_splice_read()
-Message-ID: <ZG99DRyH461VAoUX@casper.infradead.org>
-References: <3788353.1685003937@warthog.procyon.org.uk>
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [RFC PATCH 0/3] block: Make old dio use iov_iter_extract_pages() and page pinning
+Date:   Thu, 25 May 2023 16:50:59 +0100
+Message-Id: <20230525155102.87353-1-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3788353.1685003937@warthog.procyon.org.uk>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,16 +67,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 25, 2023 at 09:38:57AM +0100, David Howells wrote:
->     
-> Call zonefs_io_error() after getting any error from filemap_splice_read()
-> in zonefs_file_splice_read(), including non-fatal errors such as ENOMEM,
-> EINTR and EAGAIN.
-> 
-> Suggested-by: Damien Le Moal <dlemoal@kernel.org>
-> Link: https://lore.kernel.org/r/5d327bed-b532-ad3b-a211-52ad0a3e276a@kernel.org/
+Hi Christoph, David,
 
-This seems like a bizarre thing to do.  Let's suppose you got an
--ENOMEM.  blkdev_report_zones() is also likely to report -ENOMEM in
-that case, which will cause a zonefs_err() to be called.  Surely
-that can't be the desired outcome from getting -ENOMEM!
+Since Christoph asked nicely[1] ;-), here are three patches that go on top
+of the similar patches for bio structs now in the block tree that make the
+old block direct-IO code use iov_iter_extract_pages() and page pinning.
+
+There are three patches:
+
+ (1) Make page pinning not add or remove a pin to/from the ZERO_PAGE,
+     thereby allowing the dio code to insert zero pages in the middle of
+     dealing with pinned pages.
+
+ (2) Provide a function to allow an additional pin to be taken on a page we
+     already have pinned (and do nothing for the zero page).
+
+ (3) Switch direct-io.c over to using page pinning and to use
+     iov_iter_extract_pages() so that pages from non-user-backed iterators
+     aren't pinned.
+
+Note that I haven't managed to test this yet as SELinux is refusing to let
+me mount things like ext2 filesystems on account of it not having xattrs:-/
+
+I've pushed the patches here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-old-dio
+
+David
+
+Link: https://lore.kernel.org/r/ZGxfrOLZ4aN9/MvE@infradead.org/ [1]
+
+David Howells (3):
+  mm: Don't pin ZERO_PAGE in pin_user_pages()
+  mm: Provide a function to get an additional pin on a page
+  block: Use iov_iter_extract_pages() and page pinning in direct-io.c
+
+ fs/direct-io.c     | 68 ++++++++++++++++++++++++++++------------------
+ include/linux/mm.h |  1 +
+ mm/gup.c           | 54 +++++++++++++++++++++++++++++++++++-
+ 3 files changed, 95 insertions(+), 28 deletions(-)
+
