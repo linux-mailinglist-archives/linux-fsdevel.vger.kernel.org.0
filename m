@@ -2,107 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3AB47107BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 10:40:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5FB77107DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 10:47:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238018AbjEYIkX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 04:40:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34050 "EHLO
+        id S240379AbjEYIrg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 04:47:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbjEYIkV (ORCPT
+        with ESMTP id S232749AbjEYIre (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 04:40:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3362186
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 01:39:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685003949;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Hkz4KYmd+qyivCKCvtUuaLboauM+EJmqeUCBu8NMbLs=;
-        b=Z115Yt2TQ/yrNI3AUAFgJ4hCFr3xc3QU3+hyDvai5OjpHFEXsoZYSiPlnX5KmCBAbkpx7X
-        ICxpcNSir1kduc74LItCzKWTNf4NI2u3RqkhgBdpKdQNj3W8xsGRT73QiqFjFuAktKPQ9F
-        sKBDk5nRDZSuNfLu90/rhJvyjmVVwF0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-297-0cOG5D8xOvCHAP0HOjqVgw-1; Thu, 25 May 2023 04:39:01 -0400
-X-MC-Unique: 0cOG5D8xOvCHAP0HOjqVgw-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 25 May 2023 04:47:34 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD789E;
+        Thu, 25 May 2023 01:47:33 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0B6F885A5BD;
-        Thu, 25 May 2023 08:39:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 06397492B00;
-        Thu, 25 May 2023 08:38:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     Damien Le Moal <dlemoal@kernel.org>
-cc:     dhowells@redhat.com, Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@kvack.org
-Subject: [PATCH] zonefs: Call zonefs_io_error() on any error from filemap_splice_read()
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C360B21CA3;
+        Thu, 25 May 2023 08:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1685004451; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KuhUxhJ4qXqlC8S61jGgkZ/rePw29whTgtvzHY6sSiI=;
+        b=ZrusZYsCefuMnAVLQhgd8aBN2vNvwAyrM1z1cZn9oRunL0M8JfFy92IqTRXhxJg9dyQ+3V
+        Q8yHLX3wYbtbH0HYQWtQlKL9UMpQKxyFX1cHfV97/XUUa9mdp5HlUf7zSKu6aMJI3TC4fN
+        /g6oWielTzMSNQo/9YenUVIHEIU6Zp0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1685004451;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KuhUxhJ4qXqlC8S61jGgkZ/rePw29whTgtvzHY6sSiI=;
+        b=XdzjVSs3+TjUoFyH5X//zoHI1wt48WjIl65701RGoFiCfws+iTsL1D3tjnaB6pIYnjG35e
+        Nerxvu9ESp34vGDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B1FAA13356;
+        Thu, 25 May 2023 08:47:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id mxRrK6Mgb2TyRAAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 25 May 2023 08:47:31 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 36009A075C; Thu, 25 May 2023 10:47:31 +0200 (CEST)
+Date:   Thu, 25 May 2023 10:47:31 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        "Darrick J . Wong" <djwong@kernel.org>, dhowells@redhat.com,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, Bob Peterson <rpeterso@redhat.com>
+Subject: Re: [PATCH 06/32] sched: Add task_struct->faults_disabled_mapping
+Message-ID: <20230525084731.losrlnarpbqtqzil@quack3>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-7-kent.overstreet@linux.dev>
+ <20230510010737.heniyuxazlprrbd6@quack3>
+ <ZFs3RYgdCeKjxYCw@moria.home.lan>
+ <20230523133431.wwrkjtptu6vqqh5e@quack3>
+ <ZGzugpw7vgCFxOYL@moria.home.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3788352.1685003937.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 25 May 2023 09:38:57 +0100
-Message-ID: <3788353.1685003937@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZGzugpw7vgCFxOYL@moria.home.lan>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-    =
+On Tue 23-05-23 12:49:06, Kent Overstreet wrote:
+> > > No, that's definitely handled (and you can see it in the code I linked),
+> > > and I wrote a torture test for fstests as well.
+> > 
+> > I've checked the code and AFAICT it is all indeed handled. BTW, I've now
+> > remembered that GFS2 has dealt with the same deadlocks - b01b2d72da25
+> > ("gfs2: Fix mmap + page fault deadlocks for direct I/O") - in a different
+> > way (by prefaulting pages from the iter before grabbing the problematic
+> > lock and then disabling page faults for the iomap_dio_rw() call). I guess
+> > we should somehow unify these schemes so that we don't have two mechanisms
+> > for avoiding exactly the same deadlock. Adding GFS2 guys to CC.
+> 
+> Oof, that sounds a bit sketchy. What happens if the dio call passes in
+> an address from the same address space?
 
-Call zonefs_io_error() after getting any error from filemap_splice_read()
-in zonefs_file_splice_read(), including non-fatal errors such as ENOMEM,
-EINTR and EAGAIN.
+If we submit direct IO that uses mapped file F at offset O as a buffer for
+direct IO from file F, offset O, it will currently livelock in an
+indefinite retry loop. It should rather return error or fall back to
+buffered IO. But that should be fixable. Andreas?
 
-Suggested-by: Damien Le Moal <dlemoal@kernel.org>
-Link: https://lore.kernel.org/r/5d327bed-b532-ad3b-a211-52ad0a3e276a@kerne=
-l.org/
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Naohiro Aota <naohiro.aota@wdc.com>
-cc: Johannes Thumshirn <jth@kernel.org>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-block@vger.kernel.org
-cc: linux-mm@kvack.org
----
- fs/zonefs/file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But if the buffer and direct IO range does not overlap, it will just
+happily work - iomap_dio_rw() invalidates only the range direct IO is done
+to.
 
-diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
-index 65d4c4fe6364..0660cffc5ed8 100644
---- a/fs/zonefs/file.c
-+++ b/fs/zonefs/file.c
-@@ -782,7 +782,7 @@ static ssize_t zonefs_file_splice_read(struct file *in=
-, loff_t *ppos,
- =
+> What happens if we race with the pages we faulted in being evicted?
 
- 	if (len > 0) {
- 		ret =3D filemap_splice_read(in, ppos, pipe, len, flags);
--		if (ret =3D=3D -EIO)
-+		if (ret < 0)
- 			zonefs_io_error(inode, false);
- 	}
- =
+We fault them in again and retry.
 
+> > Also good that you've written a fstest for this, that is definitely a useful
+> > addition, although I suspect GFS2 guys added a test for this not so long
+> > ago when testing their stuff. Maybe they have a pointer handy?
+> 
+> More tests more good.
+> 
+> So if we want to lift this scheme to the VFS layer, we'd start by
+> replacing the lock you added (grepping for it, the name escapes me) with
+> a different type of lock - two_state_shared_lock in my code, it's like a
+> rw lock except writers don't exclude other writers. That way the DIO
+> path can use it without singlethreading writes to a single file.
+
+Yes, I've noticed that you are introducing in bcachefs a lock with very
+similar semantics to mapping->invalidate_lock, just with this special lock
+type. What I'm kind of worried about with two_state_shared_lock as
+implemented in bcachefs is the fairness. AFAICS so far if someone is e.g.
+heavily faulting pages on a file, direct IO to that file can be starved
+indefinitely. That is IMHO not a good thing and I would not like to use
+this type of lock in VFS until this problem is resolved. But it should be
+fixable e.g. by introducing some kind of deadline for a waiter after which
+it will block acquisitions of the other lock state.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
