@@ -2,50 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A657111CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 19:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51CBA711215
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 19:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240804AbjEYRQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 13:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32988 "EHLO
+        id S233904AbjEYRZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 13:25:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240792AbjEYRQG (ORCPT
+        with ESMTP id S231745AbjEYRZG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 13:16:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE25E18D
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 10:15:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685034924;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=L96rFIYpIHHwiFX7796wWwBgjlxyxPuCZajU63kNJnw=;
-        b=IpodDNp3b2lMoKrJuU/Fp3npfKbpW17fjZCrfIUGUPAP2PWynhT7EABnzrJdt18hep32u5
-        FxEJlZsEHWY2W2WZg4mNvexV5aKAH7Yn1jkHd7mxqeiHgJDVSx5WiuVy4oZUfRiY5hGQ6R
-        efrON3Cg9OLyHQbIovDl04eU/99a06s=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-119-ucjSGAbKP2aGgyvrpvU2oQ-1; Thu, 25 May 2023 13:15:19 -0400
-X-MC-Unique: ucjSGAbKP2aGgyvrpvU2oQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 16E508030D8;
-        Thu, 25 May 2023 17:15:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B0A8D492B0A;
-        Thu, 25 May 2023 17:15:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wgPWUCyhiM+=S3nmh4JK8qtBQteYvtiXpoYpDjfKHnEhQ@mail.gmail.com>
-References: <CAHk-=wgPWUCyhiM+=S3nmh4JK8qtBQteYvtiXpoYpDjfKHnEhQ@mail.gmail.com> <ZGxfrOLZ4aN9/MvE@infradead.org> <20230522205744.2825689-1-dhowells@redhat.com> <3068545.1684872971@warthog.procyon.org.uk> <ZG2m0PGztI2BZEn9@infradead.org> <3215177.1684918030@warthog.procyon.org.uk> <CAHk-=wjaqHgd4u63XdZoTPs1YCJnDZ7-GQHKKdFrT32y2-__tw@mail.gmail.com> <e00ee9f5-0f02-6463-bc84-b94c17f488bc@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, David Hildenbrand <david@redhat.com>,
+        Thu, 25 May 2023 13:25:06 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BD10E63
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 10:24:48 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-510d6e1f1b2so4639269a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 10:24:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1685035487; x=1687627487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3TG2KiabOTIRDETeuidPveq5vd/DC84WzmbIAz8Xbn0=;
+        b=g/c3t+Jte85Hauun7NR2559wp9vRtlwRU1Ir9tnqHBR+XkmM/1G6dp1+QIxHdLgmXq
+         28vM+W/gx3SIJDmWcdsX6p5+IoNP7VHmHQ376lp+7Qjo6QoTOmHqFd+Zj0m6V4rbhHvZ
+         Q7GotxjIyWBLkDgHBUBxG1XTAnwI7PQa3ApdA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685035487; x=1687627487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3TG2KiabOTIRDETeuidPveq5vd/DC84WzmbIAz8Xbn0=;
+        b=K4nCOxDyRf0KaE7NTBCbVBTtKwJ6Fc9WVOrTiLBIToevS7T3XaaHVEVRHvLSMB3eyf
+         hISRUZXQJ8IiCvDLZcq8Oubg0o+k+t5d2DHyJ/XBL00uglWYEvucdAMpCz7LVcE77ABx
+         7TXArwaRzHGxxU1F8sY6FcRknumz/OPO6WSjs3GQOC7FHgwqmhCGoRN7BTtmVnDIi9A8
+         ivelXdeS5Cr0UcTv/G/EAum0l/mPm2W2JVX+fESEuhwAk6AW62RyEZrP9M75UIh0CsxZ
+         Ver1z1lT2+H+hm95CL0i2KIlrK15cqw3hfiEO2Q2rUTbs3EY6bwtJJ2L/9GLxakbPSy4
+         WY2w==
+X-Gm-Message-State: AC+VfDy2T13LztMikoqzY52AyzEbH8A4F/bJ/D8mG0upltgNpTEgV5BA
+        fSj1Vcdie1calBXKY7nS/npdIZnkrblr3pUfLlpQIodX
+X-Google-Smtp-Source: ACHHUZ4a/uVuSrKFtyi7vumxFbMRSpIOUFF2kz684eWL+1d8r/C0W9M9AkJdRzoS9cr5qmLeTirjxA==
+X-Received: by 2002:a17:906:ef07:b0:96f:74d0:ad0e with SMTP id f7-20020a170906ef0700b0096f74d0ad0emr2078117ejs.58.1685035486760;
+        Thu, 25 May 2023 10:24:46 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id gg26-20020a170906e29a00b00973a9d66f56sm1060144ejb.206.2023.05.25.10.24.46
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 May 2023 10:24:46 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-50bcb229adaso4633127a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 10:24:46 -0700 (PDT)
+X-Received: by 2002:a17:907:9289:b0:96a:6723:da48 with SMTP id
+ bw9-20020a170907928900b0096a6723da48mr1860929ejc.75.1685035054236; Thu, 25
+ May 2023 10:17:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <ZGxfrOLZ4aN9/MvE@infradead.org> <20230522205744.2825689-1-dhowells@redhat.com>
+ <3068545.1684872971@warthog.procyon.org.uk> <ZG2m0PGztI2BZEn9@infradead.org>
+ <3215177.1684918030@warthog.procyon.org.uk> <CAHk-=wjaqHgd4u63XdZoTPs1YCJnDZ7-GQHKKdFrT32y2-__tw@mail.gmail.com>
+ <e00ee9f5-0f02-6463-bc84-b94c17f488bc@redhat.com> <98511.1685034443@warthog.procyon.org.uk>
+In-Reply-To: <98511.1685034443@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 25 May 2023 10:17:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wht8Z=Vm-WkvZ2fMcBkF+CZSwm0nMpbtFoKc5_o+0oEbQ@mail.gmail.com>
+Message-ID: <CAHk-=wht8Z=Vm-WkvZ2fMcBkF+CZSwm0nMpbtFoKc5_o+0oEbQ@mail.gmail.com>
+Subject: Re: Extending page pinning into fs/direct-io.c
+To:     David Howells <dhowells@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
         Jens Axboe <axboe@kernel.dk>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -57,51 +77,36 @@ Cc:     dhowells@redhat.com, David Hildenbrand <david@redhat.com>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: Extending page pinning into fs/direct-io.c
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <144596.1685034915.1@warthog.procyon.org.uk>
-Date:   Thu, 25 May 2023 18:15:15 +0100
-Message-ID: <144598.1685034915@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, May 25, 2023 at 10:07=E2=80=AFAM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> Should everywhere that is using ZERO_PAGE(0) actually be using my_zero_pf=
+n()?
 
-> So I suspect we should add that
-> 
->     is_zero_pfn(page_to_pfn(page))
-> 
-> as a helper inline function rather than write it out even more times
-> (that "is this 'struct page' a zero page" pattern already exists in
-> /proc and a few other places.
-> 
-> is_longterm_pinnable_page() already has it, so adding it as a helper
-> there in <linux/mm.h> is probably a good idea.
+No, that would just make code uglier for no reason, because then you
+have to turn that pfn into a virtual address.
 
-I just added:
+So if what you *want* is a pfn to begin with, then use, use my_zero_pfn().
 
+But if what you want is just the virtual address, use ZERO_PAGE().
 
-static inline bool IS_ZERO_PAGE(const struct page *page)
-{
-	return is_zero_pfn(page_to_pfn(page));
-}
+And if you are going to map it at some address, give it the address
+you're going to use, otherwise just do zero for "whatever".
 
-static inline bool IS_ZERO_FOLIO(const struct folio *folio)
-{
-	return is_zero_pfn(page_to_pfn((const struct page *)folio));
-}
+The only thing you can't use ZERO_PAGE(0) for is literally that "is
+this a zero page" address comparison, because ZERO_PAGE(0) is just
+_one_ address.
 
-to include/linux/pgtable.h.  It doesn't seem I can add it to mm.h as an inline
-function.
-
-David
-
+                   Linus
