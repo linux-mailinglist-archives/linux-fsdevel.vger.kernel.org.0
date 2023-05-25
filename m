@@ -2,152 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C27710E17
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 16:17:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10CDA710E1E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 16:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241346AbjEYORT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 10:17:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52034 "EHLO
+        id S241596AbjEYOSD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 10:18:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232848AbjEYORS (ORCPT
+        with ESMTP id S232848AbjEYOSD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 10:17:18 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E4A8189
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 07:17:17 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 25 May 2023 10:18:03 -0400
+Received: from sandeen.net (sandeen.net [63.231.237.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0D334189;
+        Thu, 25 May 2023 07:17:59 -0700 (PDT)
+Received: from [10.0.0.71] (liberator.sandeen.net [10.0.0.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E13E71FE66;
-        Thu, 25 May 2023 14:17:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1685024235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=X6Dj5SbnioRpzQa86EakUDpSW1KTxgyl2UXowSV3mqg=;
-        b=TebKdMP2Ib/nJXWTE6JHs5tIGWhS3YhKdJQQaJpybfjieICjdwdiPRGqiW2xf0dOf/9eFH
-        2t3HTkgBoxHMQkjNPYz2JgvfaQ3ikrouPPvXooNn9ruaq/4zJzMhYYDmDNaTpvzqWGfjfb
-        krWHc/ZozIcRwiBE+inX3IFsS8LCp/U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1685024235;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=X6Dj5SbnioRpzQa86EakUDpSW1KTxgyl2UXowSV3mqg=;
-        b=QH3a2RjOVLsxyoN3Y1Q60EsRJc6vvuCFIXuPhzTbyD4QjS3aD7/rehbsqpiOTVYRFjVvch
-        HExRuF0gslOFFkAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CF7AA134B2;
-        Thu, 25 May 2023 14:17:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 7wqZMuttb2QTaAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 25 May 2023 14:17:15 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 2B02DA075C; Thu, 25 May 2023 16:17:15 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: [PATCH] fs: Drop wait_unfrozen wait queue
-Date:   Thu, 25 May 2023 16:17:10 +0200
-Message-Id: <20230525141710.7595-1-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
+        by sandeen.net (Postfix) with ESMTPS id 0F5225CC312;
+        Thu, 25 May 2023 09:17:58 -0500 (CDT)
+Message-ID: <2099f62e-460b-cc49-d0d0-a288d33619f0@sandeen.net>
+Date:   Thu, 25 May 2023 09:17:57 -0500
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2662; i=jack@suse.cz; h=from:subject; bh=/AQOGNkCHvftqXw/Vfi9QbKMJfxbiMS1L+K6x7okguU=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkb23geVozHyQR0Sc2HNg94/LEyCK8HaYtyQo7g5B2 /AABGSOJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZG9t4AAKCRCcnaoHP2RA2dsJB/ 9/hpYM2pcYuAvK5dlWXtS2/nyviPfFbsMMDlBbe4WmjSqJk8ZUzztdf68wbQCQvWfWwg1J0HT1F+2w ckbkpm/508OdB9OOs5J2vxaWQoB4LOLO9oFcnqDHE2d+giUAE7V/k6juOCr3HDitnvRPkpkwgQtsiJ 4HUrQbTdIhUbCeJnH5wNJKSdhe8O0+v7SsyLI2B5WuojKaHjpo49ft3jIvHBo283DhWrA3jdZ+QbZD Wm+cbLQISwt1r7f74QlFxAfmqxgBT4ldqh7soM8iMAmWINR6kbWY6NIjUv65lXFvxZbaV/qm8uujY8 et387+riiDGQx+BtE+9NPG2E3xfKYf
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.11.0
+Subject: Re: [Syzkaller & bisect] There is "soft lockup in __cleanup_mnt" in
+ v6.4-rc3 kernel
+Content-Language: en-US
+To:     Pengfei Xu <pengfei.xu@intel.com>
+Cc:     dchinner@redhat.com, djwong@kernel.org, heng.su@intel.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        lkp@intel.com
+References: <ZG7PGdRED5A68Jyh@xpf.sh.intel.com>
+ <f723cb17-ca68-4db9-c296-cf33b16c529c@sandeen.net>
+ <ZG71v9dlDm0h4idA@xpf.sh.intel.com>
+From:   Eric Sandeen <sandeen@sandeen.net>
+In-Reply-To: <ZG71v9dlDm0h4idA@xpf.sh.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-wait_unfrozen waitqueue is used only in quota code to wait for
-filesystem to become unfrozen. In that place we can just use
-sb_start_write() - sb_end_write() pair to achieve the same. So just
-remove the waitqueue.
+On 5/25/23 12:44 AM, Pengfei Xu wrote:
+> On 2023-05-24 at 22:51:27 -0500, Eric Sandeen wrote:
+>> On 5/24/23 9:59 PM, Pengfei Xu wrote:
+>>> Hi Dave,
+>>>
+>>> Greeting!
+>>>
+>>> Platform: Alder lake
+>>> There is "soft lockup in __cleanup_mnt" in v6.4-rc3 kernel.
+>>>
+>>> Syzkaller analysis repro.report and bisect detailed info: https://github.com/xupengfe/syzkaller_logs/tree/main/230524_140757___cleanup_mnt
+>>> Guest machine info: https://github.com/xupengfe/syzkaller_logs/blob/main/230524_140757___cleanup_mnt/machineInfo0
+>>> Reproduced code: https://github.com/xupengfe/syzkaller_logs/blob/main/230524_140757___cleanup_mnt/repro.c
+>>> Reproduced syscall: https://github.com/xupengfe/syzkaller_logs/blob/main/230524_140757___cleanup_mnt/repro.prog
+>>> Bisect info: https://github.com/xupengfe/syzkaller_logs/blob/main/230524_140757___cleanup_mnt/bisect_info.log
+>>> Kconfig origin: https://github.com/xupengfe/syzkaller_logs/blob/main/230524_140757___cleanup_mnt/kconfig_origin
+>>
+>> There was a lot of discussion yesterday about how turning the crank on
+>> syzkaller and throwing un-triaged bug reports over the wall at stressed-out
+>> xfs developers isn't particularly helpful.
+>>
+>> There was also a very specific concern raised in that discussion:
+>>
+>>> IOWs, the bug report is deficient and not complete, and so I'm
+>>> forced to spend unnecessary time trying to work out how to extract
+>>> the filesystem image from a weird syzkaller report that is basically
+>>> just a bunch of undocumented blobs in a github tree.
+>>
+>> but here we are again, with another undocumented blob in a github tree, and
+>> no meaningful attempt at triage.
+>>
+>> Syzbot at least is now providing filesystem images[1], which relieves some
+>> of the burden on the filesystem developers you're expecting to fix these
+>> bugs.
+>>
+>> Perhaps before you send the /next/ filesystem-related syzkaller report, you
+>> can at least work out how to provide a standard filesystem image as part of
+>> the reproducer, one that can be examined with normal filesystem development
+>> and debugging tools?
+>>
+>    There is a standard filesystem image after
+> 
+> git clone https://gitlab.com/xupengfe/repro_vm_env.git
+> cd repro_vm_env
+> tar -xvf repro_vm_env.tar.gz
+> image is named as centos8_3.img, and will boot by start3.sh.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/quota/quota.c   | 5 +++--
- fs/super.c         | 4 ----
- include/linux/fs.h | 1 -
- 3 files changed, 3 insertions(+), 7 deletions(-)
+Honestly, this suggests to me that you don't really have much 
+understanding at all about the bugs you're reporting.
 
-Guys, I can merge this cleanup through my tree since I don't expect any
-conflicts and the generic part is pure removal of unused code.
+> There is bzImage v6.4-rc3 in link: https://github.com/xupengfe/syzkaller_logs/blob/main/230524_140757___cleanup_mnt/bzImage_v64rc3
+> You could use it to boot v6.4-rc3 kernel.
+> 
+> ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
+>    // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
+>    // You could change the bzImage_xxx as you want
+> You could use below command to log in, there is no password for root.
+> ssh -p 10023 root@localhost
+> 
+> After login vm(virtual machine) successfully, you could transfer reproduced
+> binary to the vm by below way, and reproduce the problem in vm:
+> gcc -pthread -o repro repro.c
+> scp -P 10023 repro root@localhost:/root/
+> 
+> Then you could reproduce this issue easily in above environment.
 
-diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-index 052f143e2e0e..0e41fb84060f 100644
---- a/fs/quota/quota.c
-+++ b/fs/quota/quota.c
-@@ -895,8 +895,9 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
- 			up_write(&sb->s_umount);
- 		else
- 			up_read(&sb->s_umount);
--		wait_event(sb->s_writers.wait_unfrozen,
--			   sb->s_writers.frozen == SB_UNFROZEN);
-+		/* Wait for sb to unfreeze */
-+		sb_start_write(sb);
-+		sb_end_write(sb);
- 		put_super(sb);
- 		goto retry;
- 	}
-diff --git a/fs/super.c b/fs/super.c
-index 34afe411cf2b..6283cea67280 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -236,7 +236,6 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
- 					&type->s_writers_key[i]))
- 			goto fail;
- 	}
--	init_waitqueue_head(&s->s_writers.wait_unfrozen);
- 	s->s_bdi = &noop_backing_dev_info;
- 	s->s_flags = flags;
- 	if (s->s_user_ns != &init_user_ns)
-@@ -1706,7 +1705,6 @@ int freeze_super(struct super_block *sb)
- 	if (ret) {
- 		sb->s_writers.frozen = SB_UNFROZEN;
- 		sb_freeze_unlock(sb, SB_FREEZE_PAGEFAULT);
--		wake_up(&sb->s_writers.wait_unfrozen);
- 		deactivate_locked_super(sb);
- 		return ret;
- 	}
-@@ -1722,7 +1720,6 @@ int freeze_super(struct super_block *sb)
- 				"VFS:Filesystem freeze failed\n");
- 			sb->s_writers.frozen = SB_UNFROZEN;
- 			sb_freeze_unlock(sb, SB_FREEZE_FS);
--			wake_up(&sb->s_writers.wait_unfrozen);
- 			deactivate_locked_super(sb);
- 			return ret;
- 		}
-@@ -1768,7 +1765,6 @@ static int thaw_super_locked(struct super_block *sb)
- 	sb->s_writers.frozen = SB_UNFROZEN;
- 	sb_freeze_unlock(sb, SB_FREEZE_FS);
- out:
--	wake_up(&sb->s_writers.wait_unfrozen);
- 	deactivate_locked_super(sb);
- 	return 0;
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 21a981680856..3b65a6194485 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1146,7 +1146,6 @@ enum {
- 
- struct sb_writers {
- 	int				frozen;		/* Is sb frozen? */
--	wait_queue_head_t		wait_unfrozen;	/* wait for thaw */
- 	struct percpu_rw_semaphore	rw_sem[SB_FREEZE_LEVELS];
- };
- 
--- 
-2.35.3
+You seem to be suggesting that the xfs developers should go do /more 
+work/ to get to the bare minimum of a decent fuzzed filesystem bug 
+report, instead of you doing a little bit of prep work yourself by 
+providing the fuzzed filesystem image itself?
+
+Your github account says you are "looking to collaborate on Linux kernel 
+learning" - tossing auto-generated and difficult-to-triage bug reports 
+at other developers is not collaboration. Wouldn't it be more 
+interesting to take the time to understand the reports you're 
+generating, find ways to make them more accessible/debuggable, and/or 
+take some time to look into the problems yourself, in order to learn 
+about the code you're turning the crank on?
+
+> Thanks!
+> BR.
+> 
+>> [1]
+>> https://lore.kernel.org/lkml/0000000000001f239205fb969174@google.com/T/
+>>
+>>
+> 
 
