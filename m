@@ -2,74 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F909711777
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 21:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 017AB7117CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 May 2023 22:04:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241481AbjEYTfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 15:35:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51030 "EHLO
+        id S232547AbjEYUD6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 16:03:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240824AbjEYTe7 (ORCPT
+        with ESMTP id S233522AbjEYUD5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 15:34:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C41DED8;
-        Thu, 25 May 2023 12:34:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5BFA16492C;
-        Thu, 25 May 2023 19:33:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C33F6C433D2;
-        Thu, 25 May 2023 19:32:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685043179;
-        bh=6UobrKBXIGhe2eUQTgBJPED9+bJgDbD/miYgiY64fQI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=PcQK9c9EREG4YKZhM4pdUTAf6OggbyNsdHXCf/2K1OpwOUwcqpW4ZVTBOLYcHbTQF
-         NX6SWvPe5znnFXJBbQAQ811rD8ETp8tL8p3UPTQXp2hxmwTpMqYOLY+clwKia6xleX
-         VFQsrL5Dvb7eAh9GUNw649P/3o/rI+p4wNPR0PnxXai3GSiwtVEarne4mXgNBdFEYl
-         TfJSClRSYf1VeXjdHiB5chZvYyCh2wjqRHRcSGJIM+SWjTgsAMgiepbc0VtWkbT1mv
-         DKxdeTKbzaIl5lpU+fSC7qeRVHwLAbdKMQhXH/YLXO/qVYnv9PJoAgVK9BEPkDOLZ0
-         4lJKDAJjaiXHg==
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-3f623adec61so43355e9.0;
-        Thu, 25 May 2023 12:32:59 -0700 (PDT)
-X-Gm-Message-State: AC+VfDyc6SJaJakUHRg7Gc0IuNj3G6RVfBVjkLPNcqmYyKajL/ttV0yV
-        dd1+SIgoTCZzIEC55Ta5X464CPO2/SRgVsTTBfI=
-X-Google-Smtp-Source: ACHHUZ4aeMTw09mMjfqXPUFnCiuZAbomSUSRRfwvCVtW6z9ZsKNKLNK2xI+Aluo+xANppdWVouLl7+1DSFFxC7prqxM=
-X-Received: by 2002:a05:600c:21cf:b0:3f6:3bd:77dc with SMTP id
- x15-20020a05600c21cf00b003f603bd77dcmr3032498wmj.23.1685043178000; Thu, 25
- May 2023 12:32:58 -0700 (PDT)
+        Thu, 25 May 2023 16:03:57 -0400
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73878B2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 13:03:55 -0700 (PDT)
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3318938ea0bso1216905ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 13:03:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685045034; x=1687637034;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rOyGkFoZn20LeX23mewfkZotpLoPgdrgq2gxJUVaJOY=;
+        b=AyfnTrWMaB1NsGEcmFe9fXB2GCKX621WF7fnU7OR2kxIxvZRD1id4NtNv5fMaQdEmc
+         xI9SGdCV9o8YiDtDUbt8Z+VFDAmFnaDMlHJGJp0kTOqseoRz+7Nx1Fx0rKoD0YKL56zf
+         rdRvWLCC4l+doRosZ3Yvc0HfL6YFEDw8aBCWVw6IFB+URWcVRQopQolYp9VPm2rrnWPW
+         3GCQySxH8xILxSFx/hslkoqDcZYA1KOCZH0gUghkrxMC1sAYbDCx2vHXMQlwGZ52E9J/
+         1fPjdr/aVqOZ6Fbhkpip/kyn2Jb4Q3BpuLzT7V+8ZTU5ey4on1eCfa/UzwUK9tsStZw0
+         /7LQ==
+X-Gm-Message-State: AC+VfDzddzTdE0SM1USeMy9SdvKT9svQ3yY85S+JMcMiYNDosrVsxN6x
+        EkotOffPf4Cf9NzcJLEfzv4Aq5QdUF4ZXCYcurNTDK4bFD5pQigpPA==
+X-Google-Smtp-Source: ACHHUZ6bwwg8XrzxjTSNmRHCXa4VcYcD2IJ9cqOt3fnT0Ni8umAcO3F7rGvp0rNy82hjWA7mm1FUHbzmvrI3Otgpvn69c87jJ0e9
 MIME-Version: 1.0
-References: <20230524213620.3509138-1-mcgrof@kernel.org> <20230524213620.3509138-2-mcgrof@kernel.org>
- <CAHk-=wjahcAqLYm0ijcAVcPcQAz-UUuJ3Ubx4GzP_SJAupf=qQ@mail.gmail.com>
- <CAHk-=wgKu=tJf1bm_dtme4Hde4zTB=_7EdgR8avsDRK4_jD+uA@mail.gmail.com>
- <ZG+kDevFH6uE1I/j@bombadil.infradead.org> <CAHk-=wgWCDw58fZDLGYVqVC2ee-Zec25unewdHFp8syCZFumvg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgWCDw58fZDLGYVqVC2ee-Zec25unewdHFp8syCZFumvg@mail.gmail.com>
-From:   Luis Chamberlain <mcgrof@kernel.org>
-Date:   Thu, 25 May 2023 12:32:45 -0700
-X-Gmail-Original-Message-ID: <CAB=NE6XjXtGmXH-wt_38rKpPPxNoBDOgdNVTsrkD7cOecNG4dg@mail.gmail.com>
-Message-ID: <CAB=NE6XjXtGmXH-wt_38rKpPPxNoBDOgdNVTsrkD7cOecNG4dg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs/kernel_read_file: add support for duplicate detection
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>, hch@lst.de,
-        brauner@kernel.org, david@redhat.com, tglx@linutronix.de,
-        patches@lists.linux.dev, linux-modules@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org, pmladek@suse.com,
-        petr.pavlu@suse.com, prarit@redhat.com, lennart@poettering.net,
-        gregkh@linuxfoundation.org, rafael@kernel.org, song@kernel.org,
-        lucas.de.marchi@gmail.com, lucas.demarchi@intel.com,
-        christophe.leroy@csgroup.eu, peterz@infradead.org, rppt@kernel.org,
-        dave@stgolabs.net, willy@infradead.org, vbabka@suse.cz,
-        mhocko@suse.com, dave.hansen@linux.intel.com,
-        colin.i.king@gmail.com, jim.cromie@gmail.com,
-        catalin.marinas@arm.com, jbaron@akamai.com,
-        rick.p.edgecombe@intel.com, yujie.liu@intel.com
+X-Received: by 2002:a05:6e02:b2f:b0:32b:fc:52b1 with SMTP id
+ e15-20020a056e020b2f00b0032b00fc52b1mr3353775ilu.0.1685045034755; Thu, 25 May
+ 2023 13:03:54 -0700 (PDT)
+Date:   Thu, 25 May 2023 13:03:54 -0700
+In-Reply-To: <0000000000005cf71b05f9818cc2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ba2ea605fc8a1e3e@google.com>
+Subject: Re: [syzbot] [hfs?] KASAN: wild-memory-access Read in hfsplus_bnode_dump
+From:   syzbot <syzbot+f687659f3c2acfa34201@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,24 +55,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 25, 2023 at 11:50=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> So it would probably improve on those numbers a bit more, but you'd
-> still have the fundamental race where *serial* duplicates end up
-> always wasting CPU effort and temporary vmalloc space.
+syzbot has found a reproducer for the following issue on:
 
-The known failed boots are with KASAN with a large number of CPUs, so
-the value in
-the mitigation would be to help those boot until userspace fixes it
-and we have enough
-time for propagation. But since it is not a full proof solution, it
-may seem like an odd thing
-to have in place later and this being lost as odd tribal knowledge.
-I'd be in favor of only
-applying the mitigation if we really are chasing userspace to fix
-this, and we'd be OK
-in later removing it after userspace gets this fixed / propagated.
+HEAD commit:    933174ae28ba Merge tag 'spi-fix-v6.4-rc3' of git://git.ker..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1716f189280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8067683055e3f5
+dashboard link: https://syzkaller.appspot.com/bug?extid=f687659f3c2acfa34201
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13582a4d280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10e6d339280000
 
-If we're going to have userspace fix this, who is volunteering?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/189d556c105e/disk-933174ae.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/498458304963/vmlinux-933174ae.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/68bcd9d7c04c/bzImage-933174ae.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/a584867d6b9f/mount_0.gz
 
-  Luis
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f687659f3c2acfa34201@syzkaller.appspotmail.com
+
+memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL, pid=4993 'syz-executor106'
+loop0: detected capacity change from 0 to 1024
+hfsplus: request for non-existent node 32768 in B*Tree
+hfsplus: request for non-existent node 32768 in B*Tree
+==================================================================
+BUG: KASAN: wild-memory-access in memcpy_from_page include/linux/highmem.h:417 [inline]
+BUG: KASAN: wild-memory-access in hfsplus_bnode_read fs/hfsplus/bnode.c:32 [inline]
+BUG: KASAN: wild-memory-access in hfsplus_bnode_read_u16 fs/hfsplus/bnode.c:45 [inline]
+BUG: KASAN: wild-memory-access in hfsplus_bnode_dump+0x403/0xba0 fs/hfsplus/bnode.c:305
+Read of size 2 at addr 000508800000103e by task syz-executor106/4993
+
+CPU: 0 PID: 4993 Comm: syz-executor106 Not tainted 6.4.0-rc3-syzkaller-00032-g933174ae28ba #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/16/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_report+0xe6/0x540 mm/kasan/report.c:465
+ kasan_report+0x176/0x1b0 mm/kasan/report.c:572
+ kasan_check_range+0x283/0x290 mm/kasan/generic.c:187
+ __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+ memcpy_from_page include/linux/highmem.h:417 [inline]
+ hfsplus_bnode_read fs/hfsplus/bnode.c:32 [inline]
+ hfsplus_bnode_read_u16 fs/hfsplus/bnode.c:45 [inline]
+ hfsplus_bnode_dump+0x403/0xba0 fs/hfsplus/bnode.c:305
+ hfsplus_brec_remove+0x42c/0x4f0 fs/hfsplus/brec.c:229
+ __hfsplus_delete_attr+0x275/0x450 fs/hfsplus/attributes.c:299
+ hfsplus_delete_all_attrs+0x26b/0x3c0 fs/hfsplus/attributes.c:378
+ hfsplus_delete_cat+0xb87/0xfc0 fs/hfsplus/catalog.c:425
+ hfsplus_unlink+0x363/0x7f0 fs/hfsplus/dir.c:385
+ vfs_unlink+0x35d/0x5f0 fs/namei.c:4327
+ do_unlinkat+0x4a7/0x950 fs/namei.c:4393
+ __do_sys_unlink fs/namei.c:4441 [inline]
+ __se_sys_unlink fs/namei.c:4439 [inline]
+ __x64_sys_unlink+0x49/0x50 fs/namei.c:4439
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f5196975789
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc9b401ce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5196975789
+RDX: 00007f5196933e03 RSI: 0000000000000000 RDI: 0000000020000140
+RBP: 00007f5196935020 R08: 0000000000000640 R09: 0000000000000000
+R10: 00007ffc9b401bb0 R11: 0000000000000246 R12: 00007f51969350b0
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+==================================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
