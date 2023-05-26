@@ -2,159 +2,205 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67258712FF1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 00:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B53171305D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 01:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243314AbjEZWWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 18:22:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40812 "EHLO
+        id S230466AbjEZX1T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 19:27:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237800AbjEZWWq (ORCPT
+        with ESMTP id S229966AbjEZX1S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 18:22:46 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE3D5BB;
-        Fri, 26 May 2023 15:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=7I+m1g7na/yjhxthJGIYbRam59qypHh9f0/DcF7s0Gw=; b=dTUKjzHilPPj4bODYepSmnAgwc
-        w+I1BnJkTV6SLiZU1ESKgv3XJ/LpPQLmmg2i0wDMbTMVXOwuR3r6JPDkCIaaNtYDLfPRhYzZs/nvS
-        UQIVNecH2dRYmp28N3EtL/kAILDyt78RGKD+sSMi+aljzmL1YF4zBY6kyBh13xgIQmNYrU8r70EXi
-        uyJ/ku2pbhwvF5XZKjt8dSDHlAvO7F1TqOHEKw4uXgf2fesaLtoCtPHf2rF76DECaW2AW8tQmYNlQ
-        JMzsAQpbwWkUmiFxDcwqFH9mR4ukBp6tla30VYj1dFy2mTiWi5w65dnfLYYw9AQTb46ZL4ik1mikq
-        v2//tw0Q==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q2fp1-0047Un-2S;
-        Fri, 26 May 2023 22:22:07 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     keescook@chromium.org, yzaikin@google.com, ebiederm@xmission.com,
-        dave.hansen@intel.com, arnd@arndb.de, bp@alien8.de,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
-        hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
-        brgerst@gmail.com, christophe.jaillet@wanadoo.fr,
-        kirill.shutemov@linux.intel.com, jroedel@suse.de
-Cc:     j.granados@samsung.com, akpm@linux-foundation.org,
-        willy@infradead.org, linux-parisc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v2 2/2] signal: move show_unhandled_signals sysctl to its own file
-Date:   Fri, 26 May 2023 15:22:06 -0700
-Message-Id: <20230526222207.982107-3-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230526222207.982107-1-mcgrof@kernel.org>
-References: <20230526222207.982107-1-mcgrof@kernel.org>
+        Fri, 26 May 2023 19:27:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED7E3B6;
+        Fri, 26 May 2023 16:27:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7742A653FD;
+        Fri, 26 May 2023 23:27:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B160C433EF;
+        Fri, 26 May 2023 23:27:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685143635;
+        bh=EYT3bd4GCNQY8FsiREuXfss/gcs1qIQQqlzl7HskQ+k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AhUt+PrgBkiKxDS9BWGY/zyVxmAb1igAaFslkWcSB3wv3oYswXGjWsVmNsjHYJn9A
+         RsVt0udwy9jVWLMhwAt5Az28o09KZLreErTyaey6TOz01o6JyE7azbRwi7tK2dvaaT
+         la90m5Dxuptxty1RJeFIeGCogjgz2agBV/VofbN5JsbrMTcBGmiCNVI2ntFyrKfKZI
+         mQ4UNODGWCeHm3tgH6pEMluapbKhHcsyzBPkHeiMB+1zUPNpDRb3PA4nNGm9BTgUpl
+         4duS4i9ZDyfq3AKPOi2z6nLJJHemg+Y6bGRX5BE1doah8vEynsNgu+UfIGXlUXe28p
+         ujNvm6+fHFusg==
+Date:   Fri, 26 May 2023 19:27:12 -0400
+From:   Chuck Lever <cel@kernel.org>
+To:     dai.ngo@oracle.com
+Cc:     chuck.lever@oracle.com, jlayton@kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] NFSD: handle GETATTR conflict with write delegation
+Message-ID: <ZHFAUA+PXrZs/BIU@manet.1015granger.net>
+References: <1685122722-18287-1-git-send-email-dai.ngo@oracle.com>
+ <1685122722-18287-2-git-send-email-dai.ngo@oracle.com>
+ <ZHD8lDQADV6wUO4V@manet.1015granger.net>
+ <85bc3a7b-7db0-1d83-44d9-c4d4c9640a37@oracle.com>
+ <ZHELONbYnZe0wOzh@manet.1015granger.net>
+ <3719ffe2-c232-6779-9379-8cdbf94c0ef8@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3719ffe2-c232-6779-9379-8cdbf94c0ef8@oracle.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The show_unhandled_signals sysctl is the only sysctl for debug
-left on kernel/sysctl.c. We've been moving the syctls out from
-kernel/sysctl.c so to help avoid merge conflicts as the shared
-array gets out of hand.
+On Fri, May 26, 2023 at 01:54:12PM -0700, dai.ngo@oracle.com wrote:
+> 
+> On 5/26/23 12:40 PM, Chuck Lever wrote:
+> > On Fri, May 26, 2023 at 12:34:16PM -0700, dai.ngo@oracle.com wrote:
+> > > On 5/26/23 11:38 AM, Chuck Lever wrote:
+> > > > On Fri, May 26, 2023 at 10:38:41AM -0700, Dai Ngo wrote:
+> > > > > If the GETATTR request on a file that has write delegation in effect
+> > > > > and the request attributes include the change info and size attribute
+> > > > > then the write delegation is recalled. The server waits a maximum of
+> > > > > 90ms for the delegation to be returned before replying NFS4ERR_DELAY
+> > > > > for the GETATTR.
+> > > > > 
+> > > > > Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
+> > > > > ---
+> > > > >    fs/nfsd/nfs4state.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+> > > > >    fs/nfsd/nfs4xdr.c   |  5 +++++
+> > > > >    fs/nfsd/state.h     |  3 +++
+> > > > >    3 files changed, 56 insertions(+)
+> > > > > 
+> > > > > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> > > > > index b90b74a5e66e..9f551dbf50d6 100644
+> > > > > --- a/fs/nfsd/nfs4state.c
+> > > > > +++ b/fs/nfsd/nfs4state.c
+> > > > > @@ -8353,3 +8353,51 @@ nfsd4_get_writestateid(struct nfsd4_compound_state *cstate,
+> > > > >    {
+> > > > >    	get_stateid(cstate, &u->write.wr_stateid);
+> > > > >    }
+> > > > > +
+> > > > > +/**
+> > > > > + * nfsd4_deleg_getattr_conflict - Trigger recall if GETATTR causes conflict
+> > > > > + * @rqstp: RPC transaction context
+> > > > > + * @inode: file to be checked for a conflict
+> > > > > + *
+> > > > Let's have this comment explain why this is necessary. At the least,
+> > > > it needs to cite RFC 8881 Section 18.7.4, which REQUIREs a conflicting
+> > > > write delegation to be gone before the server can respond to a
+> > > > change/size GETATTR request.
+> > > ok, will add the comment.
+> > > 
+> > > > 
+> > > > > + * Returns 0 if there is no conflict; otherwise an nfs_stat
+> > > > > + * code is returned.
+> > > > > + */
+> > > > > +__be32
+> > > > > +nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct inode *inode)
+> > > > > +{
+> > > > > +	__be32 status;
+> > > > > +	int cnt;
+> > > > > +	struct file_lock_context *ctx;
+> > > > > +	struct file_lock *fl;
+> > > > > +	struct nfs4_delegation *dp;
+> > > > > +
+> > > > > +	ctx = locks_inode_context(inode);
+> > > > > +	if (!ctx)
+> > > > > +		return 0;
+> > > > > +	spin_lock(&ctx->flc_lock);
+> > > > > +	list_for_each_entry(fl, &ctx->flc_lease, fl_list) {
+> > > > > +		if (fl->fl_flags == FL_LAYOUT ||
+> > > > > +				fl->fl_lmops != &nfsd_lease_mng_ops)
+> > > > > +			continue;
+> > > > > +		if (fl->fl_type == F_WRLCK) {
+> > > > > +			dp = fl->fl_owner;
+> > > > > +			if (dp->dl_recall.cb_clp == *(rqstp->rq_lease_breaker)) {
+> > > > > +				spin_unlock(&ctx->flc_lock);
+> > > > > +				return 0;
+> > > > > +			}
+> > > > > +			spin_unlock(&ctx->flc_lock);
+> > > > > +			status = nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
+> > > > > +			if (status != nfserr_jukebox)
+> > > > > +				return status;
+> > > > > +			for (cnt = 3; cnt > 0; --cnt) {
+> > > > > +				if (!nfsd_wait_for_delegreturn(rqstp, inode))
+> > > > > +					continue;
+> > > > > +				return 0;
+> > > > > +			}
+> > > > I'd rather not retry here. Can you can say why a 30ms wait is not
+> > > > sufficient for this case?
+> > > on my VMs, it takes about 80ms for the the delegation return to complete.
+> > I'd rather not tune for tiny VM guests. How long does it take for a
+> > native client to handle CB_RECALL and return the delegation? It
+> > shouldn't take longer to do so than it would for the other cases the
+> > server already handles in under 30ms.
+> > 
+> > Even 30ms is a long time to hold up an nfsd thread, IMO.
+> 
+> If the client takes less than 30ms to return the delegation then the
+> server will reply to the GETATTR right away, it does not wait for the
+> whole 90ms.
+> 
+> The 90ms is for the worst case scenario where the client/network is slow
+> or under load. Even if the server waits for the whole 90ms it's still
+> faster to reply to the GETATTR than sending CB_RECALL and wait for
+> DELEGRETURN before the server can reply to the GETATTR.
 
-This change incurs simplifies sysctl registration by localizing
-it where it should go for a penalty in size of increasing the
-kernel by 23 bytes, we accept this given recent cleanups have
-actually already saved us 1465 bytes in the prior commits.
+The reason for the short timeout is we can't tie up nfsd threads for
+a long time; that can amount to denial of service. I'm not concerned
+about a single slow client, but enough clients that don't respond
+quickly to CB_RECALL can prevent the server from making forward
+progress, even for a short period, and that will be noticeable.
 
-./scripts/bloat-o-meter vmlinux.3-remove-dev-table vmlinux.4-remove-debug-table
-add/remove: 3/1 grow/shrink: 0/1 up/down: 177/-154 (23)
-Function                                     old     new   delta
-signal_debug_table                             -     128    +128
-init_signal_sysctls                            -      33     +33
-__pfx_init_signal_sysctls                      -      16     +16
-sysctl_init_bases                             85      59     -26
-debug_table                                  128       -    -128
-Total: Before=21256967, After=21256990, chg +0.00%
+In Linux, generally we optimize for the fastest case, not the slow
+cases like this one. Make the fast clients as fast as possible; do
+not penalize everyone for the slow cases.
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- kernel/signal.c | 23 +++++++++++++++++++++++
- kernel/sysctl.c | 14 --------------
- 2 files changed, 23 insertions(+), 14 deletions(-)
+So, please make this function call nfsd_wait_for_delegreturn() only
+once, and leave NFSD_DELEGRETURN_TIMEOUT at 30ms.
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 8f6330f0e9ca..5ba4150c01a7 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -45,6 +45,7 @@
- #include <linux/posix-timers.h>
- #include <linux/cgroup.h>
- #include <linux/audit.h>
-+#include <linux/sysctl.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/signal.h>
-@@ -4771,6 +4772,28 @@ static inline void siginfo_buildtime_checks(void)
- #endif
- }
- 
-+#if defined(CONFIG_SYSCTL)
-+static struct ctl_table signal_debug_table[] = {
-+#ifdef CONFIG_SYSCTL_EXCEPTION_TRACE
-+	{
-+		.procname	= "exception-trace",
-+		.data		= &show_unhandled_signals,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec
-+	},
-+#endif
-+	{ }
-+};
-+
-+static int __init init_signal_sysctls(void)
-+{
-+	register_sysctl_init("debug", signal_debug_table);
-+	return 0;
-+}
-+early_initcall(init_signal_sysctls);
-+#endif /* CONFIG_SYSCTL */
-+
- void __init signals_init(void)
- {
- 	siginfo_buildtime_checks();
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index a7fdb828afb6..43240955dcad 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2331,24 +2331,10 @@ static struct ctl_table vm_table[] = {
- 	{ }
- };
- 
--static struct ctl_table debug_table[] = {
--#ifdef CONFIG_SYSCTL_EXCEPTION_TRACE
--	{
--		.procname	= "exception-trace",
--		.data		= &show_unhandled_signals,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec
--	},
--#endif
--	{ }
--};
--
- int __init sysctl_init_bases(void)
- {
- 	register_sysctl_init("kernel", kern_table);
- 	register_sysctl_init("vm", vm_table);
--	register_sysctl_init("debug", debug_table);
- 
- 	return 0;
- }
--- 
-2.39.2
 
+> > > > > +			return status;
+> > > > > +		}
+> > > > > +		break;
+> > > > > +	}
+> > > > > +	spin_unlock(&ctx->flc_lock);
+> > > > > +	return 0;
+> > > > > +}
+> > > > > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> > > > > index b83954fc57e3..4590b893dbc8 100644
+> > > > > --- a/fs/nfsd/nfs4xdr.c
+> > > > > +++ b/fs/nfsd/nfs4xdr.c
+> > > > > @@ -2970,6 +2970,11 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_fh *fhp,
+> > > > >    		if (status)
+> > > > >    			goto out;
+> > > > >    	}
+> > > > > +	if (bmval0 & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
+> > > > > +		status = nfsd4_deleg_getattr_conflict(rqstp, d_inode(dentry));
+> > > > > +		if (status)
+> > > > > +			goto out;
+> > > > > +	}
+> > > > >    	err = vfs_getattr(&path, &stat,
+> > > > >    			  STATX_BASIC_STATS | STATX_BTIME | STATX_CHANGE_COOKIE,
+> > > > > diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+> > > > > index d49d3060ed4f..cbddcf484dba 100644
+> > > > > --- a/fs/nfsd/state.h
+> > > > > +++ b/fs/nfsd/state.h
+> > > > > @@ -732,4 +732,7 @@ static inline bool try_to_expire_client(struct nfs4_client *clp)
+> > > > >    	cmpxchg(&clp->cl_state, NFSD4_COURTESY, NFSD4_EXPIRABLE);
+> > > > >    	return clp->cl_state == NFSD4_EXPIRABLE;
+> > > > >    }
+> > > > > +
+> > > > > +extern __be32 nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp,
+> > > > > +				struct inode *inode);
+> > > > >    #endif   /* NFSD4_STATE_H */
+> > > > > -- 
+> > > > > 2.9.5
+> > > > > 
