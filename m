@@ -2,74 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92B36712EDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 23:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DC59712F07
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 23:42:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237088AbjEZVUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 17:20:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
+        id S231204AbjEZVma (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 17:42:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbjEZVUY (ORCPT
+        with ESMTP id S230172AbjEZVm3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 17:20:24 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5475B99;
-        Fri, 26 May 2023 14:20:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685136023; x=1716672023;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xLztI1z/bt8u7ZWjF6Lk6lSk8LyetuzzR2QE/9h7Ys8=;
-  b=NLLsHNBS+iOT/Szy/NWdPUQWAMc4gPMA1Lby2CvfqquLrh1WMNHaT8bZ
-   pgZynHA6CE+qE82Qa3qDXfioGlyLskaaj0VQy3sjMzXjTsEF+E3CSAJeo
-   EkLfmaM7OMVRWKGvvlOLdRm31fpi4yetXM8Q+JASAm9mKbZW9311jGXUM
-   fFm06nQluw4/GKH2MWTO3wh3nzwld7A8DizIzpMK0/eCsKd7lc42RMFFD
-   UnrtPveMDxCOJK37gQrp3UeT1HJGft/o6b9O2unD8h7nFZMAYu+86tMhN
-   0LfCauEqRxARC3eWde35MVKs1N8FAAd+Qd+cXslZUf4i8O8oZfx1koAvm
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10722"; a="343804416"
-X-IronPort-AV: E=Sophos;i="6.00,195,1681196400"; 
-   d="scan'208";a="343804416"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2023 14:20:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10722"; a="655769998"
-X-IronPort-AV: E=Sophos;i="6.00,195,1681196400"; 
-   d="scan'208";a="655769998"
-Received: from ggreenle-mobl1.amr.corp.intel.com (HELO [10.212.214.91]) ([10.212.214.91])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2023 14:20:22 -0700
-Message-ID: <3ac927ab-35ae-4b6b-4308-fab5bf072e9c@intel.com>
-Date:   Fri, 26 May 2023 14:20:22 -0700
+        Fri, 26 May 2023 17:42:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BA01DF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 14:41:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685137310;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=I2DiPgqm3c5QPJhRJAJCbIB9OqdP8JSz4YiRYoqTjK8=;
+        b=DIFN6vJPQdkrZ/aN2VvvUWJRN560iH5bsGmpBKOOkcC9bRtu17eZI80NVWJcUfm+k9BikT
+        1BqV+pOxOWufFDTs90uMCxUZfSz0XcThAG2H3MoUuapX2mbzjQ4QD4Yc2iDIhxgj9xXOks
+        DaVqGmlq6IRmbIprJORJd9cQ5jViKO4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-630-GRqTbWv-PT2iy4i50bmzWQ-1; Fri, 26 May 2023 17:41:47 -0400
+X-MC-Unique: GRqTbWv-PT2iy4i50bmzWQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A45FB811E7C;
+        Fri, 26 May 2023 21:41:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F0C92140E961;
+        Fri, 26 May 2023 21:41:43 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v4 0/3] block: Make old dio use iov_iter_extract_pages() and page pinning
+Date:   Fri, 26 May 2023 22:41:39 +0100
+Message-Id: <20230526214142.958751-1-dhowells@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [Syzkaller & bisect] There is "soft lockup in __cleanup_mnt" in
- v6.4-rc3 kernel
-Content-Language: en-US
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Pengfei Xu <pengfei.xu@intel.com>,
-        Eric Sandeen <sandeen@sandeen.net>, dchinner@redhat.com,
-        djwong@kernel.org, heng.su@intel.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, lkp@intel.com,
-        Aleksandr Nogikh <nogikh@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Li, Philip" <philip.li@intel.com>
-References: <ZG7PGdRED5A68Jyh@xpf.sh.intel.com>
- <f723cb17-ca68-4db9-c296-cf33b16c529c@sandeen.net>
- <ZG71v9dlDm0h4idA@xpf.sh.intel.com> <ZG785SwJtvR4pO/6@dread.disaster.area>
- <20230525175542.GB821358@mit.edu>
- <ddaf2e42-ea1e-2359-4859-310a126bd0c1@intel.com>
- <20230526205434.GA973485@mit.edu>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <20230526205434.GA973485@mit.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,80 +68,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/26/23 13:54, Theodore Ts'o wrote:
-> On Fri, May 26, 2023 at 10:42:55AM -0700, Dave Hansen wrote:
->>
->>> If Intel feels that it's useful to run their own instance, maybe
->>> there's some way you can work with Google syzkaller team so you don't
->>> have to do that?
->>
->> I actually don't know why or when Intel started doing this.  0day in
->> general runs on a pretty diverse set of systems and I suspect this was
->> an attempt to leverage that.  Philip, do you know the history here?
-> 
-> Yeah, I think that's at least part of the issue.  Looking at some of
-> the reports that, the reported architecture was Tiger Lake and Adler
-> Lake.  According to Pengfei, part of this was to test features that
-> require newer cpu features, such as CET / Shadow Stack.  Now, I could
-> be wrong, because Intel's CPU naming scheme is too complex for my tiny
-> brain and makes my head spin.  It's really hard to map the names used
-> for mobile processors to those used by Xeon server class platforms,
-> but I *think*, if Intel's Product Managers haven't confused me
-> hopelessly, Google Cloud's C3 VM's, which use Sapphire Rapids, should
-> have those hardware features which are in Tiger Lake and Adler Lake,
-> while the Google Cloud's N2 VM's, which use Ice Lake processors, are
-> too old.  Can someone confirm if I got that right?
+Hi Christoph, David, Lorenzo,
 
-That's roughly right.  *But*, there are things that got removed from
-Tiger->Alder Lake like AVX-512 and things that the Xeons have that the
-client CPUs don't, like SGX.
+Here are three patches that go on top of the similar patches for bio
+structs now in the block tree that make the old block direct-IO code use
+iov_iter_extract_pages() and page pinning.
 
-Shadow stacks are definitely one of the things that got added from Ice
-Lake => Sapphire Rapids.
+There are three patches:
 
-But like you mentioned below, I don't see any actual evidence that
-"newer" hardware is implicated here at all.
+ (1) Make page pinning neither add nor remove a pin to/from a ZERO_PAGE,
+     thereby allowing the dio code to insert zero pages in the middle of
+     dealing with pinned pages.  This also mitigates a potential problem
+     whereby userspace could force the overrun the pin counter of a zero
+     page.
 
-> So this might be an issue of Intel submitting the relevant syzkaller
-> commits that add support for testing Shadow Stack, CET, IOMMUFD, etc.,
-> where needed to the upstream syzkaller git repo --- and then
-> convincing the Google Syzkaller team to turn up run some of test VM's
-> on the much more expensive (per CPU/hour) C3 VM's.  The former is
-> probably something that is just a matter of standard open source
-> upstreaming.  The latter might be more complicated, and might require
-> some private negotiations between companies to address the cost
-> differential and availability of C3 VM's.
+     A pair of functions are provided to wrap the testing of a page or
+     folio to see if it is a zero page.
 
-Yeah, absolutely.
+ (2) Provide a function to allow an additional pin to be taken on a page we
+     already have pinned (and do nothing for a zero page).
 
-If Intel keeps up with its own instance of syzkaller, Intel should
-constantly be asking itself why the Google instance isn't hitting the
-same bugs and how we can close the gap if there is one.
+ (3) Switch direct-io.c over to using page pinning and to use
+     iov_iter_extract_pages() so that pages from non-user-backed iterators
+     aren't pinned.
 
-> The other thing that's probably worth considering here is that
-> hopefully many of these reports are one that aren't *actually*
-> architecture dependent, but for some reason, are just results that one
-> syzkaller's instance has found, but another syzkaller instance has not
-> yet found.  So perhaps there can be some kind of syzkaller state
-> export/import scheme so that a report that be transferred from one
-> syzkaller instance to another.  That way, upstream developers would
-> have a single syzkaller dashboard to pay attention to, get regular
-> information about how often a particular report is getting triggered,
-> and if the information behind the report can get fed into receiving
-> syzkaller's instance's fuzzing seed library, it might improve the test
-> coverage for other kernels that Intel doesn't have the business case
-> to test (e.g., Android kernels, kernels compiled for arm64 and RISC-V,
-> etc.)
+I've pushed the patches here also:
 
-Absolutely, a unified view of all of the instances would be really nice.
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-old-dio
 
-> After all, looking at the report which kicked off this thread ("soft
-> lockup in __cleanup_mnt"), I don't think this is something that should
-> be hardware specific; and yet, this report appears not to exist in
-> Google's syzkaller instance.  If we could import the fuzzing seed for
-> this and similar reports into Google's syzkaller instance, it seems to
-> me that this would be a Good Thing.
+David
 
-Very true.  I don't see anything obviously Intel-specific here.  One of
-the first questions we should be asking ourselves is why _we_ hit this
-and Google didn't.
+Changes
+=======
+ver #4)
+ - Use _inc rather than _add ops when we're just adding 1.
+
+ver #3)
+ - Move is_zero_page() and is_zero_folio() to mm.h for dependency reasons.
+ - Add more comments and adjust the docs about pinning zero pages.
+ - Rename page_get_additional_pin() to folio_add_pin().
+ - Use is_zero_folio() in folio_add_pin().
+ - Rename need_unpin to is_pinned in struct dio.
+
+ver #2)
+ - Fix use of ZERO_PAGE().
+ - Add wrappers for testing if a page is a zero page.
+ - Return the zero page obtained, not ZERO_PAGE(0) unconditionally.
+ - Need to set BIO_PAGE_PINNED conditionally, and not BIO_PAGE_REFFED.
+
+Link: https://lore.kernel.org/r/ZGxfrOLZ4aN9/MvE@infradead.org/ [1]
+Link: https://lore.kernel.org/r/20230525155102.87353-1-dhowells@redhat.com/ # v1
+Link: https://lore.kernel.org/r/20230525223953.225496-1-dhowells@redhat.com/ # v2
+Link: https://lore.kernel.org/r/20230526112859.654506-1-dhowells@redhat.com/ # v3
+
+David Howells (3):
+  mm: Don't pin ZERO_PAGE in pin_user_pages()
+  mm: Provide a function to get an additional pin on a page
+  block: Use iov_iter_extract_pages() and page pinning in direct-io.c
+
+ Documentation/core-api/pin_user_pages.rst |  6 ++
+ fs/direct-io.c                            | 72 ++++++++++++++---------
+ include/linux/mm.h                        | 27 ++++++++-
+ mm/gup.c                                  | 58 +++++++++++++++++-
+ 4 files changed, 131 insertions(+), 32 deletions(-)
+
