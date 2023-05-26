@@ -2,57 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD7671222D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 10:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8160F712237
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 10:30:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242521AbjEZI2S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 04:28:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34132 "EHLO
+        id S242706AbjEZIaQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 04:30:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbjEZI2Q (ORCPT
+        with ESMTP id S242693AbjEZIaL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 04:28:16 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D9C9D9;
-        Fri, 26 May 2023 01:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LPzCO3xWGBowU0ajceftsmznXkRp49QJy/R8CAeiRrA=; b=KAYxWBGAXtX8I8UbNVp2o6Apkb
-        5LAlO3sf49+TG2wkCiVj5kvZS/Jo6XJSWrWQWq2U6gvd4vCiFERk6fznQF57bxEU4dh7ovUdTgaIn
-        D1srjQKEhBQBhr4aaWwlO4S89I8dSC/bXwwOOzo6RVAy6kQ6MaXRBF+0p2q0JIdjf+dCkFsKWtzq+
-        2jA258+4q9weUDmSKZOD69ywTogpa8dI5bKu90L7i3xE/tsn9nrZchmSMA/ua4a7YAwd6KfLnd/nA
-        6vKzRBeKwBw76LtypA6Z/IJS4XGErN3BiUlLB5ibLI9YMSSOSUvdjAu1n1XrWol66ulCihd6slXnL
-        q3Ym63jw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q2Snr-001bdJ-1t;
-        Fri, 26 May 2023 08:28:03 +0000
-Date:   Fri, 26 May 2023 01:28:03 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, hughd@google.com,
-        akpm@linux-foundation.org, willy@infradead.org, brauner@kernel.org,
-        djwong@kernel.org, p.raghav@samsung.com, da.gomez@samsung.com,
-        rohan.puri@samsung.com, rpuri.linux@gmail.com,
-        a.manzanares@samsung.com, dave@stgolabs.net, yosryahmed@google.com,
-        keescook@chromium.org, hare@suse.de, kbusch@kernel.org,
-        patches@lists.linux.dev, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 0/8] add support for blocksize > PAGE_SIZE
-Message-ID: <ZHBtk3mmupubbWyc@infradead.org>
-References: <20230526075552.363524-1-mcgrof@kernel.org>
- <ZHBqfyPUR4B2GNsF@infradead.org>
- <ZHBrS4hTZZn3w4tF@bombadil.infradead.org>
+        Fri, 26 May 2023 04:30:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A478194
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 01:29:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685089769;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=c892gmHnFnyJknfSVBWfjI1O+CRXJGRWy+yybVQO/8A=;
+        b=cFhpiHDKvo2x30cHJRaNGprlQFTAO3McevsP04WM2OfEZqoTAc0i9aD3LH08lgvX+O2vDB
+        0oygoi+qFsh4WfDggal4J31geI6S76sVDWNqYBLo/CUzhGCNxJzv1sSjEUD6dx4qho6Vir
+        DdeQMiZ/GxHHva9iqa6Y/50qcKnfOh4=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-436-bQLEo4I9MN6xV7hqaz2Y0Q-1; Fri, 26 May 2023 04:29:24 -0400
+X-MC-Unique: bQLEo4I9MN6xV7hqaz2Y0Q-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0A07538035A6;
+        Fri, 26 May 2023 08:29:24 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C9D19D7A;
+        Fri, 26 May 2023 08:29:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <ZHBsXnJcW3L9SXF4@infradead.org>
+References: <ZHBsXnJcW3L9SXF4@infradead.org> <20230525223953.225496-1-dhowells@redhat.com> <20230525223953.225496-2-dhowells@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH v2 1/3] mm: Don't pin ZERO_PAGE in pin_user_pages()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZHBrS4hTZZn3w4tF@bombadil.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <520321.1685089759.1@warthog.procyon.org.uk>
+Date:   Fri, 26 May 2023 09:29:19 +0100
+Message-ID: <520322.1685089759@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,15 +75,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 01:18:19AM -0700, Luis Chamberlain wrote:
-> On Fri, May 26, 2023 at 01:14:55AM -0700, Christoph Hellwig wrote:
-> > On Fri, May 26, 2023 at 12:55:44AM -0700, Luis Chamberlain wrote:
-> > > This is an initial attempt to add support for block size > PAGE_SIZE for tmpfs.
-> > 
-> > The concept of a block size doesn't make any sense for tmpfs.   What
-> > are you actually trying to do here?
-> 
-> More of helping to test high order folios for tmpfs. Swap for instance
-> would be one thing we could use to test.
+Christoph Hellwig <hch@infradead.org> wrote:
 
-I'm still not sure where the concept of a block size would come in here.
+> Shouldn't unpin_user_pages
+
+It calls gup_put_folio() which is where the skip is.
+
+> and bio_release_page also be updated to skip a zero page here?
+
+Porbably best to leave it to unpin_user_page() there.  I've tried to hide the
+behaviour entirely within gup.c.
+
+David
+
