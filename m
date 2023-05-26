@@ -2,50 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E66A71211F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 09:35:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5730B71219F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 09:56:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242427AbjEZHd5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 03:33:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60516 "EHLO
+        id S242622AbjEZH4O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 03:56:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242431AbjEZHdp (ORCPT
+        with ESMTP id S242574AbjEZH4J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 03:33:45 -0400
+        Fri, 26 May 2023 03:56:09 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F065412A;
-        Fri, 26 May 2023 00:33:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BE5134;
+        Fri, 26 May 2023 00:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=l8SXSO/lmiFeJihMCTRRFm0o8Ak15fMAUhw4BXdB6WA=; b=A0xPKQUoDsDrFgURMQlgZXIoK4
-        lF0smhhvDr9DIwh3hI5+Foy4jSB44qqYKTW9k2PV/7PuWcBUSeOo6jWJLU2DNhMOCi1CTP1Vr1qXN
-        cB1zrc2ldkTJb0i1ydOhaeGCJSHRsdi8p9dUGm95225TqZGlE84F6Y3mfrRFtVU8AAk/LeILUvTzj
-        DCxobQiHgxGi8mvk1uiSyIKFvEMqMniMXjlXlxhbRRhvWQ3LnJ21MPhaTWeTq5Fi6r/fGfhBlXjzW
-        o+5/0Ft/FRALeNM171FNjOPX7gizDDJyiLwYYmSgprAWBoMr6t5XCcMourkOlUq8zpJCEwA9TAgAY
-        J55czzyw==;
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=5sDzoLLiNk6KHdYH8uCoV/dBsj9Jyf+/G1i59BLdhsE=; b=aNld4o2VvRGiQ7vUI5arJSgX/L
+        6HnGHoys0fJ0NyQtFF23FYlkQQzjBbOG2VhMIvldNEf22GLVMNLTPM709hyKOlQD0gLZxwuctNBgy
+        5xB+UXzv2lZoitwyBzx9gtzjlhfkbRrUBPE63O6bJwBIPoLlAiT5sqXh83wJrFBVWWsyd0+6vzmLw
+        Zg+CCpzYhsYjajho25CSz1p1EJHOT1tTxSqrc5eVEUGlE72Ih/0P9mhN8JBy4HyPPn6fJ2fJsrvnB
+        8F5DFRPYRHJ48DzQkK2rZN5deuJkdDWpeanaIbyclKM98/ZFBFaHcLpjk6EO/3caforvAU1V5EiBJ
+        7SdjKf2Q==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q2RxB-001Rda-0i;
-        Fri, 26 May 2023 07:33:37 +0000
+        id 1q2SIj-001WZa-2E;
+        Fri, 26 May 2023 07:55:53 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
-        christoph.boehmwalder@linbit.com, hch@infradead.org,
-        djwong@kernel.org, minchan@kernel.org, senozhatsky@chromium.org
-Cc:     patches@lists.linux.dev, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, hare@suse.de, p.raghav@samsung.com,
-        da.gomez@samsung.com, rohan.puri@samsung.com,
-        rpuri.linux@gmail.com, kbusch@kernel.org, mcgrof@kernel.org
-Subject: [PATCH v2 5/5] zram: use generic PAGE_SECTORS and PAGE_SECTORS_SHIFT
-Date:   Fri, 26 May 2023 00:33:36 -0700
-Message-Id: <20230526073336.344543-6-mcgrof@kernel.org>
+To:     hughd@google.com, akpm@linux-foundation.org, willy@infradead.org,
+        brauner@kernel.org, djwong@kernel.org
+Cc:     p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com,
+        rpuri.linux@gmail.com, a.manzanares@samsung.com, dave@stgolabs.net,
+        yosryahmed@google.com, keescook@chromium.org, hare@suse.de,
+        kbusch@kernel.org, mcgrof@kernel.org, patches@lists.linux.dev,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [RFC v2 0/8] add support for blocksize > PAGE_SIZE
+Date:   Fri, 26 May 2023 00:55:44 -0700
+Message-Id: <20230526075552.363524-1-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230526073336.344543-1-mcgrof@kernel.org>
-References: <20230526073336.344543-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
@@ -59,72 +54,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Instead of re-defining the already existing constants use the provided ones:
+This is an initial attempt to add support for block size > PAGE_SIZE for tmpfs.
+Why would you want this? It helps us experiment with higher order folio uses
+with fs APIS and helps us test out corner cases which would likely need
+to be accounted for sooner or later if and when filesystems enable support
+for this. Better review early and burn early than continue on in the wrong
+direction so looking for early feedback.
 
-So replace:
+I have other patches to convert shmem_file_read_iter() to folios too but that
+is not yet working. In the swap world the next thing to look at would be to
+convert swap_cluster_readahead() to folios.
 
- o SECTORS_PER_PAGE_SHIFT with PAGE_SECTORS_SHIFT
- o SECTORS_PER_PAGE       with PAGE_SECTORS
+As mentioned at LSFMM, if folks want to experiment with anything related to
+Large Block Sizes (LBS) I've been trying to stash related patches in
+a tree which tries to carry as many nuggets we have and can collect into
+a dedicated lage-block tree. Many of this is obviously work in progress
+so don't try it unless you want to your systems to blow up. But in case you
+do, you can use my large-block-20230525 branch [0]. Similarly you can also
+use kdevops with CONFIG_QEMU_ENABLE_EXTRA_DRIVE_LARGEIO support to get
+everything with just as that branch is used for that:
+                                                                                                                                                                                              
+  make
+  make bringup
+  make linux
 
-This produces no functional changes.
+Changes on this v2:
 
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- drivers/block/zram/zram_drv.c | 12 ++++++------
- drivers/block/zram/zram_drv.h |  2 --
- 2 files changed, 6 insertions(+), 8 deletions(-)
+  o the block size has been modified to block order after Matthew Wilcox's
+    suggestion. This truly makes a huge difference in making this code
+    much more easier to read and maintain.
+  o At Pankaj Raghav's suggestion I've put together a helper for
+    poison flags and so this now introduces that as is_folio_hwpoison().
+  o cleaned up the nits / debug code as pointed out by Matthew Wilcox
+  o clarified the max block size we support is computed by the MAX_ORDER,
+    and for x86_64 this is 8 MiB.
+  o Tested up to 4 MiB block size with a basic test nothing blew up
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index f6d90f1ba5cf..5fdeb78ace9a 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1834,8 +1834,8 @@ static ssize_t recompress_store(struct device *dev,
- static void zram_bio_discard(struct zram *zram, struct bio *bio)
- {
- 	size_t n = bio->bi_iter.bi_size;
--	u32 index = bio->bi_iter.bi_sector >> SECTORS_PER_PAGE_SHIFT;
--	u32 offset = (bio->bi_iter.bi_sector & (SECTORS_PER_PAGE - 1)) <<
-+	u32 index = bio->bi_iter.bi_sector >> PAGE_SECTORS_SHIFT;
-+	u32 offset = (bio->bi_iter.bi_sector & (PAGE_SECTORS - 1)) <<
- 			SECTOR_SHIFT;
- 
- 	/*
-@@ -1876,8 +1876,8 @@ static void zram_bio_read(struct zram *zram, struct bio *bio)
- 
- 	start_time = bio_start_io_acct(bio);
- 	bio_for_each_segment(bv, bio, iter) {
--		u32 index = iter.bi_sector >> SECTORS_PER_PAGE_SHIFT;
--		u32 offset = (iter.bi_sector & (SECTORS_PER_PAGE - 1)) <<
-+		u32 index = iter.bi_sector >> PAGE_SECTORS_SHIFT;
-+		u32 offset = (iter.bi_sector & (PAGE_SECTORS - 1)) <<
- 				SECTOR_SHIFT;
- 
- 		if (zram_bvec_read(zram, &bv, index, offset, bio) < 0) {
-@@ -1903,8 +1903,8 @@ static void zram_bio_write(struct zram *zram, struct bio *bio)
- 
- 	start_time = bio_start_io_acct(bio);
- 	bio_for_each_segment(bv, bio, iter) {
--		u32 index = iter.bi_sector >> SECTORS_PER_PAGE_SHIFT;
--		u32 offset = (iter.bi_sector & (SECTORS_PER_PAGE - 1)) <<
-+		u32 index = iter.bi_sector >> PAGE_SECTORS_SHIFT;
-+		u32 offset = (iter.bi_sector & (PAGE_SECTORS - 1)) <<
- 				SECTOR_SHIFT;
- 
- 		if (zram_bvec_write(zram, &bv, index, offset, bio) < 0) {
-diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-index ca7a15bd4845..9f2543af5c76 100644
---- a/drivers/block/zram/zram_drv.h
-+++ b/drivers/block/zram/zram_drv.h
-@@ -21,8 +21,6 @@
- 
- #include "zcomp.h"
- 
--#define SECTORS_PER_PAGE_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
--#define SECTORS_PER_PAGE	(1 << SECTORS_PER_PAGE_SHIFT)
- #define ZRAM_LOGICAL_BLOCK_SHIFT 12
- #define ZRAM_LOGICAL_BLOCK_SIZE	(1 << ZRAM_LOGICAL_BLOCK_SHIFT)
- #define ZRAM_SECTOR_PER_LOGICAL_BLOCK	\
+Future work:
+
+  o shmem_file_read_iter()
+  o extend struct address_space with order and use that instead
+    of our own block order. We may still need to have our own block order,
+    we'll need to see.
+  o swap_cluster_readahead() and friends coverted over to folios
+  o test this well
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=large-block-20230525
+[1] https://github.com/linux-kdevops/kdevops
+
+Luis Chamberlain (8):
+  page_flags: add is_folio_hwpoison()
+  shmem: convert to use is_folio_hwpoison()
+  shmem: account for high order folios
+  shmem: add helpers to get block size
+  shmem: account for larger blocks sizes for shmem_default_max_blocks()
+  shmem: consider block size in shmem_default_max_inodes()
+  shmem: add high order page support
+  shmem: add support to customize block size order
+
+ include/linux/page-flags.h |   7 ++
+ include/linux/shmem_fs.h   |   3 +
+ mm/shmem.c                 | 139 +++++++++++++++++++++++++++++--------
+ 3 files changed, 119 insertions(+), 30 deletions(-)
+
 -- 
 2.39.2
-
