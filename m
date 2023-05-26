@@ -2,209 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D289D711E04
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 04:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F73711E5F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 05:19:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233507AbjEZCfg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 22:35:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56914 "EHLO
+        id S229827AbjEZDTW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 23:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233300AbjEZCfe (ORCPT
+        with ESMTP id S229727AbjEZDTU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 22:35:34 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC0BE1B1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 19:35:27 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-96f6e83e12fso29642866b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 19:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1685068526; x=1687660526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+W8m3Ca/C7ABr7TnX4n7WXczAjnHTy6VxW28/pga+l4=;
-        b=Wavv/Ov2JSnmm+7j2BYBnmhKRyztSttW1+mnqq7+2MZ9K1A7mAmZr4EJLFq5EASJ6x
-         t2/A3ejCByvnHo+RksigZM4+BFRkPM7YDCuoT3AfyWAv8H7eZA9+C6oL5/qxyUSzxjfC
-         JCU/e5goHDnpHb9hX4afGFLT/JVQv7M4AnxEU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685068526; x=1687660526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+W8m3Ca/C7ABr7TnX4n7WXczAjnHTy6VxW28/pga+l4=;
-        b=Qstk2qBZ1N6AYimVFKcA3tdKfs/nbd2C7SJN5/PMVdx2PndtakIPpXZ60/Dp81+Sjx
-         jyym2wuLNq71KJXtW5Vk9cHX4KSEjrN+cSB/UnFimHkRv3Woka1CCF7Fbmsztp4UjxFO
-         cofzM/q8klgNNCwkCU+5Iz4ncV1cfiGC2w79jEIPnpaQKngnyM53KbcSyTALXDA1OaLI
-         ng2IlqtPW1EH1jAzt0gxmKdUcElfhga/q8yvhuvw/x44PWEbX+7dHVu0sL41yb3D8qv/
-         nu3eKhHRW07kMsodXXIwSCFouz8yKOr9bXuKRnqIcx9G2/JMZ7mKGcGJNdl9ACfJzNx/
-         PJ4w==
-X-Gm-Message-State: AC+VfDy7Wi1JKw5JQO457fsKb5gwYmbbacfHuX2OoGXV4m9Akm8u047h
-        vwRXsx3fWo3fEGkBVZgHuggySmAFSLUByFz/X3SukA==
-X-Google-Smtp-Source: ACHHUZ4+v93lsnr3vDJxsBIB4NIbwy545X9nEEDCwOA1BxMR0ul1C//JHHo5qpf1DdQM1Wstuba6WbgbYuA6QotLgOc=
-X-Received: by 2002:a17:906:dacb:b0:96b:e92:4feb with SMTP id
- xi11-20020a170906dacb00b0096b0e924febmr572925ejb.60.1685068526183; Thu, 25
- May 2023 19:35:26 -0700 (PDT)
+        Thu, 25 May 2023 23:19:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD9395;
+        Thu, 25 May 2023 20:19:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E0BC63965;
+        Fri, 26 May 2023 03:19:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9BAFC433D2;
+        Fri, 26 May 2023 03:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685071157;
+        bh=f7TU70oLDRh9Pi3ZECFSXWkEbijJuOfz/D2cQ8KEKxo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sBecEvukJmVVN9DM23tbfMRqylLjPIaEO5q8KrAZzqlEov/qsyvspo6ocDiSUzdny
+         AC7j65xv31PN5PRU6XSaeUrrWg/zcjeCLiNjaTIKlakxhbHu+blRYltEhvJC00QqVv
+         aKb/sXfBS+OJ35KpRdop6L07wBSndDAz3aJuAthK+iELJ4D2IKeUwrVo2YpaGZEN3R
+         BBPg+kizjmhJVqcwPq/f6qZ7M77UEv/A9SPCUM2AvfgRlvXZUZBwRpWNlpUimqRXWX
+         kO5WcB62IoGyuQlLEkHVRsNijufLoV+G/2VZ1pmg/bA4WUtDtKjkCr1ZTWjDQQTe1C
+         AVLvOluTjOUUQ==
+Date:   Thu, 25 May 2023 20:19:17 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/7] xfs: create a big array data structure
+Message-ID: <20230526031917.GK11620@frogsfrogsfrogs>
+References: <168506056447.3729324.13624212283929857624.stgit@frogsfrogsfrogs>
+ <168506056469.3729324.10116553858401440150.stgit@frogsfrogsfrogs>
+ <ZHAMpeyu/KmXtRw8@moria.home.lan>
 MIME-Version: 1.0
-References: <ZGeKm+jcBxzkMXQs@redhat.com> <ZGgBQhsbU9b0RiT1@dread.disaster.area>
- <ZGu0LaQfREvOQO4h@redhat.com> <ZGzIJlCE2pcqQRFJ@bfoster> <ZGzbGg35SqMrWfpr@redhat.com>
- <ZG1dAtHmbQ53aOhA@dread.disaster.area> <ZG5taYoXDRymo/e9@redhat.com>
- <ZG9JD+4Zu36lnm4F@dread.disaster.area> <ZG+GKwFC7M3FfAO5@redhat.com>
- <CAG9=OMNhCNFhTcktxSMYbc5WXkSZ-vVVPtb4ak6B3Z2-kEVX0Q@mail.gmail.com> <ZHANCbnHuhnwCrGz@dread.disaster.area>
-In-Reply-To: <ZHANCbnHuhnwCrGz@dread.disaster.area>
-From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
-Date:   Thu, 25 May 2023 19:35:14 -0700
-Message-ID: <CAG9=OMPxHOzYcy8TQRnvNfNvPvvU=A1pceyL72JfyQwJSKNjQQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] Introduce provisioning primitives
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Mike Snitzer <snitzer@kernel.org>, Joe Thornber <ejt@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Bart Van Assche <bvanassche@google.com>,
-        linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, dm-devel@redhat.com,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Jason Wang <jasowang@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZHAMpeyu/KmXtRw8@moria.home.lan>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 25, 2023 at 6:36=E2=80=AFPM Dave Chinner <david@fromorbit.com> =
-wrote:
->
-> On Thu, May 25, 2023 at 03:47:21PM -0700, Sarthak Kukreti wrote:
-> > On Thu, May 25, 2023 at 9:00=E2=80=AFAM Mike Snitzer <snitzer@kernel.or=
-g> wrote:
-> > > On Thu, May 25 2023 at  7:39P -0400,
-> > > Dave Chinner <david@fromorbit.com> wrote:
-> > > > On Wed, May 24, 2023 at 04:02:49PM -0400, Mike Snitzer wrote:
-> > > > > On Tue, May 23 2023 at  8:40P -0400,
-> > > > > Dave Chinner <david@fromorbit.com> wrote:
-> > > > > > It's worth noting that XFS already has a coarse-grained
-> > > > > > implementation of preferred regions for metadata storage. It wi=
-ll
-> > > > > > currently not use those metadata-preferred regions for user dat=
-a
-> > > > > > unless all the remaining user data space is full.  Hence I'm pr=
-etty
-> > > > > > sure that a pre-provisioning enhancment like this can be done
-> > > > > > entirely in-memory without requiring any new on-disk state to b=
-e
-> > > > > > added.
-> > > > > >
-> > > > > > Sure, if we crash and remount, then we might chose a different =
-LBA
-> > > > > > region for pre-provisioning. But that's not really a huge deal =
-as we
-> > > > > > could also run an internal background post-mount fstrim operati=
-on to
-> > > > > > remove any unused pre-provisioning that was left over from when=
- the
-> > > > > > system went down.
-> > > > >
-> > > > > This would be the FITRIM with extension you mention below? Which =
-is a
-> > > > > filesystem interface detail?
-> > > >
-> > > > No. We might reuse some of the internal infrastructure we use to
-> > > > implement FITRIM, but that's about it. It's just something kinda
-> > > > like FITRIM but with different constraints determined by the
-> > > > filesystem rather than the user...
-> > > >
-> > > > As it is, I'm not sure we'd even need it - a preiodic userspace
-> > > > FITRIM would acheive the same result, so leaked provisioned spaces
-> > > > would get cleaned up eventually without the filesystem having to do
-> > > > anything specific...
-> > > >
-> > > > > So dm-thinp would _not_ need to have new
-> > > > > state that tracks "provisioned but unused" block?
-> > > >
-> > > > No idea - that's your domain. :)
-> > > >
-> > > > dm-snapshot, for certain, will need to track provisioned regions
-> > > > because it has to guarantee that overwrites to provisioned space in
-> > > > the origin device will always succeed. Hence it needs to know how
-> > > > much space breaking sharing in provisioned regions after a snapshot
-> > > > has been taken with be required...
-> > >
-> > > dm-thinp offers its own much more scalable snapshot support (doesn't
-> > > use old dm-snapshot N-way copyout target).
-> > >
-> > > dm-snapshot isn't going to be modified to support this level of
-> > > hardening (dm-snapshot is basically in "maintenance only" now).
->
-> Ah, of course. Sorry for the confusion, I was kinda using
-> dm-snapshot as shorthand for "dm-thinp + snapshots".
->
-> > > But I understand your meaning: what you said is 100% applicable to
-> > > dm-thinp's snapshot implementation and needs to be accounted for in
-> > > thinp's metadata (inherent 'provisioned' flag).
->
-> *nod*
->
-> > A bit orthogonal: would dm-thinp need to differentiate between
-> > user-triggered provision requests (eg. from fallocate()) vs
-> > fs-triggered requests?
->
-> Why?  How is the guarantee the block device has to provide to
-> provisioned areas different for user vs filesystem internal
-> provisioned space?
->
-After thinking this through, I stand corrected. I was primarily
-concerned with how this would balloon thin snapshot sizes if users
-potentially provision a large chunk of the filesystem but that's
-putting the cart way before the horse.
+On Thu, May 25, 2023 at 09:34:29PM -0400, Kent Overstreet wrote:
+> On Thu, May 25, 2023 at 05:47:08PM -0700, Darrick J. Wong wrote:
+> > +struct xfarray {
+> > +	/* Underlying file that backs the array. */
+> > +	struct xfile	*xfile;
+> > +
+> > +	/* Number of array elements. */
+> > +	xfarray_idx_t	nr;
+> > +
+> > +	/* Maximum possible array size. */
+> > +	xfarray_idx_t	max_nr;
+> > +
+> > +	/* Number of unset slots in the array below @nr. */
+> > +	uint64_t	unset_slots;
+> > +
+> > +	/* Size of an array element. */
+> > +	size_t		obj_size;
+> > +
+> > +	/* log2 of array element size, if possible. */
+> > +	int		obj_size_log;
+> > +};
+> > +
+> > +int xfarray_create(struct xfs_mount *mp, const char *descr,
+> > +		unsigned long long required_capacity, size_t obj_size,
+> > +		struct xfarray **arrayp);
+> > +void xfarray_destroy(struct xfarray *array);
+> > +int xfarray_load(struct xfarray *array, xfarray_idx_t idx, void *ptr);
+> > +int xfarray_unset(struct xfarray *array, xfarray_idx_t idx);
+> > +int xfarray_store(struct xfarray *array, xfarray_idx_t idx, const void *ptr);
+> > +int xfarray_store_anywhere(struct xfarray *array, const void *ptr);
+> > +bool xfarray_element_is_null(struct xfarray *array, const void *ptr);
+> 
+> Nice simple external interface... +1
+> 
+> Since you're storing fixed size elements, if you wanted to make it
+> slicker you could steal the generic-radix tree approach of using a
+> wrapper type to make the object size known at compile time, which lets
+> you constant propagate through the index -> offset calculations.
+> 
+> But not worth it from a performance POV with the current implementation,
+> because...
+> 
+> > +/*
+> > + * Read a memory object directly from the xfile's page cache.  Unlike regular
+> > + * pread, we return -E2BIG and -EFBIG for reads that are too large or at too
+> > + * high an offset, instead of truncating the read.  Otherwise, we return
+> > + * bytes read or an error code, like regular pread.
+> > + */
+> > +ssize_t
+> > +xfile_pread(
+> > +	struct xfile		*xf,
+> > +	void			*buf,
+> > +	size_t			count,
+> > +	loff_t			pos)
+> > +{
+> > +	struct inode		*inode = file_inode(xf->file);
+> > +	struct address_space	*mapping = inode->i_mapping;
+> > +	struct page		*page = NULL;
+> > +	ssize_t			read = 0;
+> > +	unsigned int		pflags;
+> > +	int			error = 0;
+> > +
+> > +	if (count > MAX_RW_COUNT)
+> > +		return -E2BIG;
+> > +	if (inode->i_sb->s_maxbytes - pos < count)
+> > +		return -EFBIG;
+> > +
+> > +	trace_xfile_pread(xf, pos, count);
+> > +
+> > +	pflags = memalloc_nofs_save();
+> > +	while (count > 0) {
+> > +		void		*p, *kaddr;
+> > +		unsigned int	len;
+> > +
+> > +		len = min_t(ssize_t, count, PAGE_SIZE - offset_in_page(pos));
+> > +
+> > +		/*
+> > +		 * In-kernel reads of a shmem file cause it to allocate a page
+> > +		 * if the mapping shows a hole.  Therefore, if we hit ENOMEM
+> > +		 * we can continue by zeroing the caller's buffer.
+> > +		 */
+> > +		page = shmem_read_mapping_page_gfp(mapping, pos >> PAGE_SHIFT,
+> > +				__GFP_NOWARN);
+> > +		if (IS_ERR(page)) {
+> > +			error = PTR_ERR(page);
+> > +			if (error != -ENOMEM)
+> > +				break;
+> > +
+> > +			memset(buf, 0, len);
+> > +			goto advance;
+> > +		}
+> > +
+> > +		if (PageUptodate(page)) {
+> > +			/*
+> > +			 * xfile pages must never be mapped into userspace, so
+> > +			 * we skip the dcache flush.
+> > +			 */
+> > +			kaddr = kmap_local_page(page);
+> > +			p = kaddr + offset_in_page(pos);
+> > +			memcpy(buf, p, len);
+> > +			kunmap_local(kaddr);
+> > +		} else {
+> > +			memset(buf, 0, len);
+> > +		}
+> > +		put_page(page);
+> > +
+> > +advance:
+> > +		count -= len;
+> > +		pos += len;
+> > +		buf += len;
+> > +		read += len;
+> > +	}
+> > +	memalloc_nofs_restore(pflags);
+> > +
+> > +	if (read > 0)
+> > +		return read;
+> > +	return error;
+> > +}
+> 
+> this all, and the write path, looks a bit heavy - you're calling through
+> shmem_read_mapping_page_gfp() on every lookup. Does it matter?
 
-Best
-Sarthak
+Longer term I'd like to work with willy on an in-kernel mmap and/or
+using large folios with the tmpfs file, but for now I only care that it
+works correctly and gets merged. :)
 
-> > I would lean towards user provisioned areas not
-> > getting dedup'd on snapshot creation,
->
-> <twitch>
->
-> Snapshotting is a clone operation, not a dedupe operation.
->
-> Yes, the end result of both is that you have a block shared between
-> multiple indexes that needs COW on the next overwrite, but the two
-> operations that get to that point are very different...
->
-> </pedantic mode disegaged>
->
-> > but that would entail tracking
-> > the state of the original request and possibly a provision request
-> > flag (REQ_PROVISION_DEDUP_ON_SNAPSHOT) or an inverse flag
-> > (REQ_PROVISION_NODEDUP). Possibly too convoluted...
->
-> Let's not try to add everyone's favourite pony to this interface
-> before we've even got it off the ground.
->
-> It's the simple precision of the API, the lack of cross-layer
-> communication requirements and the ability to implement and optimise
-> the independent layers independently that makes this a very
-> appealing solution.
->
-> We need to start with getting the simple stuff working and prove the
-> concept. Then once we can observe the behaviour of a working system
-> we can start working on optimising individual layers for efficiency
-> and performance....
->
-> Cheers,
->
-> Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+> If we care about performance, we want to get it as much as possible down
+> to just the page cache radix tree lookup - and possibly cache the last
+> page returned if we care about sequential performance.
+
+(That comes later in this megapatchset.)
+
+> OTOH, maybe shmem_get_folio_gfp() and __filemap_get_folio() could
+> benefit from some early returns -
+> 	if (likely(got_the_thing_we_want)) return folio;
+> 
+> Another thought... if obj_size <= PAGE_SIZE, maybe you could do what
+> genradix does and not have objects span pages? That would let you get
+> rid of the loop in read/write - but then you'd want to be doing an
+> interface that works in terms of pages/folios, which wouldn't be as
+> clean as what you've got.
+
+Yeah... the xfs dquot files store 136-byte dquot records which don't
+cross fsblock boundaries.  There's a lot of math involved there, which
+at least there's an incore dquot object so we're mostly not pounding on
+the dquot file itself.
+
+--D
+
+> Just spitballing random ideas, looks good :)
