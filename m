@@ -2,48 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0347711BAA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 02:50:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 241C4711BFC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 03:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235394AbjEZAul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 20:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48568 "EHLO
+        id S229878AbjEZBEy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 21:04:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbjEZAuk (ORCPT
+        with ESMTP id S229567AbjEZBEx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 20:50:40 -0400
-Received: from out-9.mta1.migadu.com (out-9.mta1.migadu.com [IPv6:2001:41d0:203:375::9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C02F194
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 May 2023 17:50:39 -0700 (PDT)
-Date:   Thu, 25 May 2023 20:50:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1685062237;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XccFcqhRV9oVZ2BhjoWlowoz0O43NBdleRYrqpo+tGk=;
-        b=te1MA/PDmp4dIRH1TY49m1pWccvyo+kxGKHIAX3+k8t98qQbEiPCWJYi4Gkczlt1aIn7En
-        cHq/akYRgnPKxFNi2vHECVpzXGpjZ3XraNt/Yalda8BuacVJcdSo4hYF5j3kzlTDgdIB0w
-        GQUPt6jslW3+faac2EkPdAimK2RxUyY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-kernel@vger.kernel.org, axboe@kernel.dk,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 5/7] block: Rework bio_for_each_folio_all()
-Message-ID: <ZHACWWNIUR6Ohh/8@moria.home.lan>
-References: <20230525214822.2725616-1-kent.overstreet@linux.dev>
- <20230525214822.2725616-6-kent.overstreet@linux.dev>
- <ZG/+88/G+hX5DyCX@dread.disaster.area>
+        Thu, 25 May 2023 21:04:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C1D4195;
+        Thu, 25 May 2023 18:04:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CFC2260C3F;
+        Fri, 26 May 2023 01:04:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D621C433EF;
+        Fri, 26 May 2023 01:04:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685063091;
+        bh=HfCTt6ykRXErlMmoLlfsIDXmzBepQMiTuZZMR7GtI+o=;
+        h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+        b=lToyAzi1DWlfdcSSIjkyXzBs6MJEfhWw9bC8psNTmmcS2/DNqh/ypDI609k+76v/0
+         1rDGfXTWJq8N/T86jJLaq+Alg9eT0aGD7lWyHLrxZ4NHOycqMP6ZypOFMQ0BXlAgfw
+         kMexIMeMqx39PVgx3CMNNvNWSudbwv9FLh1pbq3rgyqdGcAL9vjAFyB3LoWLccXEdS
+         NptbIv2zHqIrLYl+pUyjojY3usRWQS2JU1wegWPhcfx+Qfiei+Mo5xotw1YynxHEdo
+         ++2wgChYjp6ZLtS5tXKMG3U6YOVRsfqW0zSMGAHlm4bTt5urRNzleqCX1iHNOVc87s
+         KiLqoO0Jo1oLw==
+Date:   Thu, 25 May 2023 18:04:50 -0700
+Subject: [PATCH 1/9] xfs: dump xfiles for debugging purposes
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     djwong@kernel.org
+Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org
+Message-ID: <168506061865.3733082.14220362905242831184.stgit@frogsfrogsfrogs>
+In-Reply-To: <168506061839.3733082.9818919714772025609.stgit@frogsfrogsfrogs>
+References: <168506061839.3733082.9818919714772025609.stgit@frogsfrogsfrogs>
+User-Agent: StGit/0.19
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZG/+88/G+hX5DyCX@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -51,65 +55,132 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 10:36:03AM +1000, Dave Chinner wrote:
-> On Thu, May 25, 2023 at 05:48:20PM -0400, Kent Overstreet wrote:
-> > This reimplements bio_for_each_folio_all() on top of the newly-reworked
-> > bvec_iter_all, and since it's now trivial we also provide
-> > bio_for_each_folio.
-> > 
-> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: linux-block@vger.kernel.org
-> > ---
-> >  fs/crypto/bio.c        |  9 +++--
-> >  fs/iomap/buffered-io.c | 14 ++++---
-> >  fs/verity/verify.c     |  9 +++--
-> >  include/linux/bio.h    | 91 +++++++++++++++++++++---------------------
-> >  include/linux/bvec.h   | 15 +++++--
-> >  5 files changed, 75 insertions(+), 63 deletions(-)
-> ....
-> > diff --git a/include/linux/bio.h b/include/linux/bio.h
-> > index f86c7190c3..7ced281734 100644
-> > --- a/include/linux/bio.h
-> > +++ b/include/linux/bio.h
-> > @@ -169,6 +169,42 @@ static inline void bio_advance(struct bio *bio, unsigned int nbytes)
-> >  #define bio_for_each_segment(bvl, bio, iter)				\
-> >  	__bio_for_each_segment(bvl, bio, iter, (bio)->bi_iter)
-> >  
-> > +struct folio_vec {
-> > +	struct folio	*fv_folio;
-> > +	size_t		fv_offset;
-> > +	size_t		fv_len;
-> > +};
-> 
-> Can we drop the "fv_" variable prefix here? It's just unnecessary
-> verbosity when we know we have a folio_vec structure. i.e fv->folio
-> is easier to read and type than fv->fv_folio...
+From: Darrick J. Wong <djwong@kernel.org>
 
-That's actually one of the things I like about bio/biovec, it's been
-handy in the past for grepping and block layer refactorings...
+Add a debug function to dump an xfile's contents for debug purposes.
 
-(I would _kill_ for a tool that let me do that kind of type-aware grep.
-ctags can in theory produce that kind of an index but I never figured
-out how to get vim to use it properly. I believe the lsp-server stuff
-that uses the compiler as a backend can do it; I've started using that
-stuff for Rust coding and it works amazingly, don't think I've tried it
-for struct members - I wonder if that stuff works at all on a codebase
-the size of the kernel or just dies...)
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+---
+ fs/xfs/scrub/xfile.c |   98 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/xfs/scrub/xfile.h |    2 +
+ 2 files changed, 100 insertions(+)
 
-> Hmmm, this is probably not a good name considering "struct pagevec" is
-> something completely different - the equivalent is "struct
-> folio_batch" but I can see this being confusing for people who
-> largely expect some symmetry between page<->folio naming
-> conventions...
 
-Yeah, good point. folio_seg, perhaps?
+diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
+index d3e678cd4a2f..851aeb244660 100644
+--- a/fs/xfs/scrub/xfile.c
++++ b/fs/xfs/scrub/xfile.c
+@@ -431,3 +431,101 @@ xfile_put_page(
+ 		return -EIO;
+ 	return 0;
+ }
++
++/* Dump an xfile to dmesg. */
++int
++xfile_dump(
++	struct xfile		*xf)
++{
++	struct xfile_stat	sb;
++	struct inode		*inode = file_inode(xf->file);
++	struct address_space	*mapping = inode->i_mapping;
++	loff_t			holepos = 0;
++	loff_t			datapos;
++	loff_t			ret;
++	unsigned int		pflags;
++	bool			all_zeroes = true;
++	int			error = 0;
++
++	error = xfile_stat(xf, &sb);
++	if (error)
++		return error;
++
++	printk(KERN_ALERT "xfile ino 0x%lx isize 0x%llx dump:", inode->i_ino,
++			sb.size);
++	pflags = memalloc_nofs_save();
++
++	while ((ret = vfs_llseek(xf->file, holepos, SEEK_DATA)) >= 0) {
++		datapos = rounddown_64(ret, PAGE_SIZE);
++		ret = vfs_llseek(xf->file, datapos, SEEK_HOLE);
++		if (ret < 0)
++			break;
++		holepos = min_t(loff_t, sb.size, roundup_64(ret, PAGE_SIZE));
++
++		while (datapos < holepos) {
++			struct page	*page = NULL;
++			void		*p, *kaddr;
++			u64		datalen = holepos - datapos;
++			unsigned int	pagepos;
++			unsigned int	pagelen;
++
++			cond_resched();
++
++			if (fatal_signal_pending(current)) {
++				error = -EINTR;
++				goto out_pflags;
++			}
++
++			pagelen = min_t(u64, datalen, PAGE_SIZE);
++
++			page = shmem_read_mapping_page_gfp(mapping,
++					datapos >> PAGE_SHIFT, __GFP_NOWARN);
++			if (IS_ERR(page)) {
++				error = PTR_ERR(page);
++				if (error == -EIO)
++					printk(KERN_ALERT "%.8llx: poisoned",
++							datapos);
++				else if (error != -ENOMEM)
++					goto out_pflags;
++
++				goto next_pgoff;
++			}
++
++			if (!PageUptodate(page))
++				goto next_page;
++
++			kaddr = kmap_local_page(page);
++			p = kaddr;
++
++			for (pagepos = 0; pagepos < pagelen; pagepos += 16) {
++				char prefix[16];
++				unsigned int linelen;
++
++				linelen = min_t(unsigned int, pagelen, 16);
++
++				if (!memchr_inv(p + pagepos, 0, linelen))
++					continue;
++
++				snprintf(prefix, 16, "%.8llx: ",
++						datapos + pagepos);
++
++				all_zeroes = false;
++				print_hex_dump(KERN_ALERT, prefix,
++						DUMP_PREFIX_NONE, 16, 1,
++						p + pagepos, linelen, true);
++			}
++			kunmap_local(kaddr);
++next_page:
++			put_page(page);
++next_pgoff:
++			datapos += PAGE_SIZE;
++		}
++	}
++	if (all_zeroes)
++		printk(KERN_ALERT "<all zeroes>");
++	if (ret != -ENXIO)
++		error = ret;
++out_pflags:
++	memalloc_nofs_restore(pflags);
++	return error;
++}
+diff --git a/fs/xfs/scrub/xfile.h b/fs/xfs/scrub/xfile.h
+index 1aae2cd91720..adf5dbdc4c21 100644
+--- a/fs/xfs/scrub/xfile.h
++++ b/fs/xfs/scrub/xfile.h
+@@ -75,4 +75,6 @@ int xfile_get_page(struct xfile *xf, loff_t offset, unsigned int len,
+ 		struct xfile_page *xbuf);
+ int xfile_put_page(struct xfile *xf, struct xfile_page *xbuf);
+ 
++int xfile_dump(struct xfile *xf);
++
+ #endif /* __XFS_SCRUB_XFILE_H__ */
 
-(I think Matthew may have already made that suggestion...)
-
-> Also, why is this in bio.h and not in a mm/folio related header
-> file?
-
-Is it worth moving it there considering it's only used in bio.h/bvec.h?
-Perhaps we could keep it where it's used for now and move it if it gains
-more users?
