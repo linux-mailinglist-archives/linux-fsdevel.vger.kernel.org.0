@@ -2,108 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F6C711AD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 01:46:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAAE6711AEC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 02:00:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241819AbjEYXqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 19:46:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60564 "EHLO
+        id S235701AbjEZAA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 20:00:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241710AbjEYXqs (ORCPT
+        with ESMTP id S234918AbjEZAAX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 19:46:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2374135;
-        Thu, 25 May 2023 16:46:47 -0700 (PDT)
+        Thu, 25 May 2023 20:00:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22E969C;
+        Thu, 25 May 2023 17:00:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 442376453E;
-        Thu, 25 May 2023 23:46:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54892C433D2;
-        Thu, 25 May 2023 23:46:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ACCA564B53;
+        Fri, 26 May 2023 00:00:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1857EC433EF;
+        Fri, 26 May 2023 00:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685058406;
-        bh=rjbndO/LAuL+bviGPDqErD8/rV2wobnhP+qhDHN9E4Q=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=lmUBO/G8cDI/xJ0BHixdkUE4jvqYFoP8+qUtkYNCqKbMFgAjdB7r4y/y9JO15Q3n7
-         H34uqGeMvqEChTuUqYQaR9Mf5FUFO5Y65W4Ayy84AutEeNfaPufa6tYhre4LxwSJ+Y
-         g9NAtEiUQu1YP0LQwo1OVt9pp8QPXGxoqjp9BQw4GsdeAJrxbX5N/l6BJBiV2binEa
-         2CDIoi+WlxnqUTqvvnDZ1zjWq7YhwD6ccz71I3vuZ1VnFEVDHPSRhEmdq5vifp0s5S
-         wAaNTvVdxPzncebRJBciwvgJO7voJ7aFxqrwuoq1gP4nBV8nSlUN1xp0eunLBMg/44
-         kw8Dr5VkXKtqg==
-Message-ID: <8b803ab8-f8ee-259f-8d30-1d14d34dc1e4@kernel.org>
-Date:   Fri, 26 May 2023 08:46:44 +0900
+        s=k20201202; t=1685059221;
+        bh=Rv/9AaaPRgSQNsKPeSqBSjfB5dbXn+qZlod3vzY8KXk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=bV1/JRerXd8uZxRqC+jRCHQ5NGH+jb0rTykBKEgKtXkYiMaprwXA/9qq1EZzD16oJ
+         I6OX67bgc3xZ99R8Mf8RBhpIpOrwoT8YuD9v1kQhdY9f1HPPg73dMrefcejMYTDuDZ
+         rVKQp8U6SGjBfpUUsVRRE+RB7mEiLzLPIDOWm8qrVy+rgKiPErVzof9A9+Z1TytLB2
+         OEKXAZyjZUis8OR12VFbUjYjI1teUaLmeM+HPfFeI8znFxpB7wD9+toCR6qbCfR7mh
+         09cirkh1BNzKNw5EYdlAYsHVg5uff9x67TmuDRaV6wPG8WWHhf/o+9VztIAAQlCgXo
+         XwC5npTMHhL1g==
+Date:   Thu, 25 May 2023 17:00:20 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        Chandan Babu R <chandanrlinux@gmail.com>,
+        Catherine Hoang <catherine.hoang@oracle.com>
+Subject: [MEGAPATCHSET v25 1/2] xfs: online repair, part 1
+Message-ID: <20230526000020.GJ11620@frogsfrogsfrogs>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] zonefs: Call zonefs_io_error() on any error from
- filemap_splice_read()
-Content-Language: en-US
-From:   Damien Le Moal <dlemoal@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@kvack.org
-References: <3788353.1685003937@warthog.procyon.org.uk>
- <ZG99DRyH461VAoUX@casper.infradead.org>
- <9d1a3d1a-b726-5144-4911-de6b77d9bf02@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <9d1a3d1a-b726-5144-4911-de6b77d9bf02@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/26/23 08:04, Damien Le Moal wrote:
-> On 5/26/23 00:21, Matthew Wilcox wrote:
->> On Thu, May 25, 2023 at 09:38:57AM +0100, David Howells wrote:
->>>     
->>> Call zonefs_io_error() after getting any error from filemap_splice_read()
->>> in zonefs_file_splice_read(), including non-fatal errors such as ENOMEM,
->>> EINTR and EAGAIN.
->>>
->>> Suggested-by: Damien Le Moal <dlemoal@kernel.org>
->>> Link: https://lore.kernel.org/r/5d327bed-b532-ad3b-a211-52ad0a3e276a@kernel.org/
->>
->> This seems like a bizarre thing to do.  Let's suppose you got an
->> -ENOMEM.  blkdev_report_zones() is also likely to report -ENOMEM in
->> that case, which will cause a zonefs_err() to be called.  Surely
->> that can't be the desired outcome from getting -ENOMEM!
-> 
-> Right... What I want to make sure here is that the error we get is not the
-> result of a failed IO. Beside EIO, are there any other cases ?
-> I can think of at least:
-> 1) -ETIMEDOUT -> the drive is not responding. In this case, calling
-> zonefs_io_error() may not be useful either.
-> 2) -ETIME: The IO was done with a duration limit (e.g. active time limit) and
-> was aborted by the drive because it took too long. Calling zonefs_io_error() for
-> this case is also not useful.
-> 
-> But I am thinking block layer (blk_status_t to errno conversion) here. Does the
-> folio code *always* return EIO if it could not get a page/folio, regardless of
-> the actual bio status ?
+Hi everyone,
 
-Replying to myself :)
+I've finished merging parent pointers into what is now part 2 of online
+repair.  Part 1 hasn't changed much since the last posting at the end of
+2022, aside from various reorganizations of the directory repair, dotdot
+repair, and the tempfile/orphanage infrastructure to support the bits
+that part 2 will want.  Zorro merged all the pending fstests changes to
+support and test everything in part 1, so that part is done.
 
-iomap_read_folio() or iomap_finish_folio_read() -> folio_set_error(), which sets
-PG_error. Then filemap_read_folio() will see !folio_test_uptodate(folio) and end
-up returning -EIO. So if there was an IO and it failed, we always get EIO,
-regardless of the actual reason for the IO failure. Right ?
+In other words, I'm formally submitting part 1 for inclusion in 6.5.
 
--- 
-Damien Le Moal
-Western Digital Research
+For this review, I would like people to focus the following:
 
+- Are the major subsystems sufficiently documented that you could figure
+  out what the code does?
+
+- Do you see any problems that are severe enough to cause long term
+  support hassles? (e.g. bad API design, writing weird metadata to disk)
+
+- Can you spot mis-interactions between the subsystems?
+
+- What were my blind spots in devising this feature?
+
+- Are there missing pieces that you'd like to help build?
+
+- Can I just merge all of this?
+
+The one thing that is /not/ in scope for this review are requests for
+more refactoring of existing subsystems.
+
+I've been running daily online **repairs** of every computer I own for
+the last 14 months.  So far, no damage has resulted from these
+operations.
+
+Fuzz and stress testing of online repairs have been running well for a
+year now.  As of this writing, online repair can fix slightly more
+things than offline repair, and the fsstress+repair long soak test has
+passed 200 million repairs with zero problems observed.  All issues
+observed in that time have been corrected in this submission.
+
+(For comparison, the long soak fsx test recently passed 99 billion file
+operations, so online fsck has a ways to go...)
+
+This is actually an excerpt of the xfsprogs patches -- I'm only mailing
+the changes to xfs_scrub; there are substantially more bug fixes and
+improvements to xfs_{db,repair,spaceman} that I've made along the way.
+
+--D
