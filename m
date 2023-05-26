@@ -2,84 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBBE5712BD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 19:34:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E013712BE0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 19:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbjEZReH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 13:34:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46678 "EHLO
+        id S237533AbjEZRjF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 13:39:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbjEZReF (ORCPT
+        with ESMTP id S229847AbjEZRjD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 13:34:05 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E18099;
-        Fri, 26 May 2023 10:34:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=V7pSq7PJnnV+17c0PLHAsV81o6PiUmwa5c8k+OK0j2c=; b=HKC5GqVxZdX8wRhS+hcBeYXxlV
-        UI5ei/MYN07YXASmtoH6v/hoXh1Z8WEJPAFULInxGzMig6H2DvnQbp8R6exL/GuEEF9na0UaYo3mF
-        feu8hcR1fY/coNq+BfeGDyrVIxdo+3Zr2xL1BkgKf4SGlbCiKxNzebiwgVD0ZIhF5OLWP6VVp1dTg
-        i6lT2nciuafF13kv1/76VfXv8qQK1HKnByvMoN0YpS67HFjhUyV2wx1t8SLakmsRFiyTVOFo80sqU
-        +6/TDGsJ463twtBFUdkp/BgnQrLfbuKgPP9CDetYozGKolTok9W2usghuCeSXCuz7iF5CZgfsLndp
-        A8DElMFw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q2bK5-003Jgz-38;
-        Fri, 26 May 2023 17:33:53 +0000
-Date:   Fri, 26 May 2023 10:33:53 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     hughd@google.com, akpm@linux-foundation.org, brauner@kernel.org,
-        djwong@kernel.org, p.raghav@samsung.com, da.gomez@samsung.com,
-        rohan.puri@samsung.com, rpuri.linux@gmail.com,
-        a.manzanares@samsung.com, dave@stgolabs.net, yosryahmed@google.com,
-        keescook@chromium.org, hare@suse.de, kbusch@kernel.org,
-        patches@lists.linux.dev, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 0/8] add support for blocksize > PAGE_SIZE
-Message-ID: <ZHDtgdhauy0RZPeU@bombadil.infradead.org>
-References: <20230526075552.363524-1-mcgrof@kernel.org>
- <ZHC6BM+ehSC5Atv8@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZHC6BM+ehSC5Atv8@casper.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 26 May 2023 13:39:03 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24D8A4;
+        Fri, 26 May 2023 10:39:02 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34QHU9aA007730;
+        Fri, 26 May 2023 17:38:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2023-03-30;
+ bh=7GHixNjxW+UZDhXAwIA35lM4fZnSsriYlu6yHD9y7tI=;
+ b=TZEEm/1UAuO7eSs3k0rd7LxD42gOSuGN/YlnfsNr55DpQZ38eEBlgvnqUUuiTS0jVF/B
+ d4EOi4x596eehzyNuCAT8rPowNVRM53fdAhtq4O0ASjVt8DDG5htZOe3qBjhE8Q48HzQ
+ aIL6edw7Ka4pexY8v+BSTDj+p6mb/AdzeIgjdvCU8qcH/vaV1jAaOXrIF1lQFD6hFL71
+ YAOOXQkxPkaJONAwBpP2PmG+8C2YbtO0OwSmUsMAbUbzdvy9npvaRlI9ii5r7yRMOKJc
+ biRJXIhyl62YCFjckJlY2lrdK2OxeXiQzBIDXYbD84zq8r+B9GmNVYDjmgB4cqwuFNq9 rA== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qu17g80nr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 26 May 2023 17:38:55 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34QGOGKn028598;
+        Fri, 26 May 2023 17:38:54 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qqk2vfpmf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 26 May 2023 17:38:54 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34QHcsE3029060;
+        Fri, 26 May 2023 17:38:54 GMT
+Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3qqk2vfpm6-1;
+        Fri, 26 May 2023 17:38:54 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     chuck.lever@oracle.com, jlayton@kernel.org
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/2] NFSD: recall write delegation on GETATTR conflict
+Date:   Fri, 26 May 2023 10:38:40 -0700
+Message-Id: <1685122722-18287-1-git-send-email-dai.ngo@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-26_07,2023-05-25_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 adultscore=0
+ mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=818 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305260150
+X-Proofpoint-ORIG-GUID: I4db7zWHn7LiWDWqFdrimfw7QbAgkxDb
+X-Proofpoint-GUID: I4db7zWHn7LiWDWqFdrimfw7QbAgkxDb
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 02:54:12PM +0100, Matthew Wilcox wrote:
-> On Fri, May 26, 2023 at 12:55:44AM -0700, Luis Chamberlain wrote:
-> > This is an initial attempt to add support for block size > PAGE_SIZE for tmpfs.
-> > Why would you want this? It helps us experiment with higher order folio uses
-> > with fs APIS and helps us test out corner cases which would likely need
-> > to be accounted for sooner or later if and when filesystems enable support
-> > for this. Better review early and burn early than continue on in the wrong
-> > direction so looking for early feedback.
-> 
-> I think this is entirely the wrong direction to go in.
+This patch series adds the recall of write delegation when there is
+conflict with a GETATTR and a counter in /proc/net/rpc/nfsd to keep
+count of this recall.
 
-Any recommendations for alternative directions?
 
-> You're coming at this from a block layer perspective, and we have two
-> ways of doing large block devices -- qemu nvme and brd.  tmpfs should
-> be like other filesystems and opportunistically use folios of whatever
-> size makes sense.
-
-I figured the backing block size would be a good reason to use high
-order folios for filesystems, and this mimicks that through the super
-block block size. Although usage of the block size would be moved to
-the block device and tmpfs use an page order, what other alternatives
-were you thinking?
-
-  Luis
