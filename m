@@ -2,84 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 83FF1712246
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 10:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01378712250
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 10:35:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242722AbjEZIeV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 04:34:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37524 "EHLO
+        id S242590AbjEZIft (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 04:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241481AbjEZIeU (ORCPT
+        with ESMTP id S242600AbjEZIfs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 04:34:20 -0400
-Received: from out-33.mta0.migadu.com (out-33.mta0.migadu.com [91.218.175.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 593D612C
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 01:34:18 -0700 (PDT)
-Date:   Fri, 26 May 2023 04:34:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1685090056;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a1+k8geEgB3EI42+JJ+lx1nGKMJgJ9cIZX0cMtf11v8=;
-        b=YmHfcSlC6Hj1py8HMz8oTzzq+ZfEqeBn9Pz/Ed/IQtvrF6RfexPzvh/A/8AYkicbAz78LB
-        o9z8e2ts1pjbylZmZNsPRSHfTV8H+Il0z8tQSYR9//uxbgsPVnS9Fvo4aqt9a7iMtin30f
-        oNKadLj96+v5lfZsEVRpmAnphhg6I7Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
+        Fri, 26 May 2023 04:35:48 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58276199;
+        Fri, 26 May 2023 01:35:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=cU4HbZ0Ihk69KMRkjUWIN8WBPWiQau/75Wx/UKV6Xy8=; b=NbqKOjNGXmKVkdSnQezuWV1eT5
+        shzgQn36kaoEabnbYb/Jyz3Rdfyo4i9Gt9NcFEgBW4SxCR9JG+o+jSKnUKh34k8rrj8nhlDQulx6y
+        6VreloRZ4j6ECTgnH6aVsJIOwYtIqjD5EVkDYaakhcl9aFDyVUPVL/7qPbXwjDPiuKZjBAJ0h2p/c
+        AeN+fmkiyu4Cusz7HUAP0Hz6pvjMNSt5HsMgL8MBhbG43QEg+Ri3e8GndeuvIjNy1idYUYW6cxIiL
+        jsCIs6TkJFVD5KST6G7qRiRVkM5o6ra1UpwTs2oEuwtb9GLGqQOM7RcaspSqneNmqabaORhr7WwZy
+        Stg1KBDw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q2Sv2-001cm2-0Z;
+        Fri, 26 May 2023 08:35:28 +0000
+Date:   Fri, 26 May 2023 01:35:28 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, cluster-devel@redhat.com,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: Re: [Cluster-devel] [PATCH 06/32] sched: Add
- task_struct->faults_disabled_mapping
-Message-ID: <ZHBvA9uy8A0YdK1p@moria.home.lan>
-References: <20230510010737.heniyuxazlprrbd6@quack3>
- <ZFs3RYgdCeKjxYCw@moria.home.lan>
- <20230523133431.wwrkjtptu6vqqh5e@quack3>
- <ZGzoJLCRLk+pCKAk@infradead.org>
- <ZGzrV5j7OUU6rYij@moria.home.lan>
- <ZG2yFFcpE7w/Glge@infradead.org>
- <ZG3GHoNnJJW4xX2H@moria.home.lan>
- <ZG8jJRcwtx3JQf6Q@infradead.org>
- <ZG/KH9cQluA5e30N@moria.home.lan>
- <ZHBolpHP5JAmt65V@infradead.org>
+Cc:     hughd@google.com, akpm@linux-foundation.org, willy@infradead.org,
+        brauner@kernel.org, djwong@kernel.org, p.raghav@samsung.com,
+        da.gomez@samsung.com, rohan.puri@samsung.com,
+        rpuri.linux@gmail.com, a.manzanares@samsung.com, dave@stgolabs.net,
+        yosryahmed@google.com, keescook@chromium.org, hare@suse.de,
+        kbusch@kernel.org, patches@lists.linux.dev,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2 0/8] add support for blocksize > PAGE_SIZE
+Message-ID: <ZHBvUNqKEyszpJKT@bombadil.infradead.org>
+References: <20230526075552.363524-1-mcgrof@kernel.org>
+ <ZHBqfyPUR4B2GNsF@infradead.org>
+ <ZHBrS4hTZZn3w4tF@bombadil.infradead.org>
+ <ZHBtk3mmupubbWyc@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZHBolpHP5JAmt65V@infradead.org>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <ZHBtk3mmupubbWyc@infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 01:06:46AM -0700, Christoph Hellwig wrote:
-> On Thu, May 25, 2023 at 04:50:39PM -0400, Kent Overstreet wrote:
-> > A cache that isn't actually consistent is a _bug_. You're being
-> > Obsequious. And any time this has come up in previous discussions
-> > (including at LSF), that was never up for debate, the only question has
-> > been whether it was even possible to practically fix it.
+On Fri, May 26, 2023 at 01:28:03AM -0700, Christoph Hellwig wrote:
+> On Fri, May 26, 2023 at 01:18:19AM -0700, Luis Chamberlain wrote:
+> > On Fri, May 26, 2023 at 01:14:55AM -0700, Christoph Hellwig wrote:
+> > > On Fri, May 26, 2023 at 12:55:44AM -0700, Luis Chamberlain wrote:
+> > > > This is an initial attempt to add support for block size > PAGE_SIZE for tmpfs.
+> > > 
+> > > The concept of a block size doesn't make any sense for tmpfs.   What
+> > > are you actually trying to do here?
+> > 
+> > More of helping to test high order folios for tmpfs. Swap for instance
+> > would be one thing we could use to test.
 > 
-> That is not my impression.  But again, if you think it is useful,
-> go ahead and seel people on the idea.  But please prepare a series
-> that includes the rationale, performance tradeoffs and real live
-> implications for it.  And do it on the existing code that people use
-> and not just your shiny new thing.
+> I'm still not sure where the concept of a block size would come in here.
 
-When I'm ready to lift this to the VFS level I will; it should simplify
-locking overall and it'll be one less thing for people to worry about.
+From a filesystem perspective that's what we call it as well today, and
+tmpfs implements a simple one, just that indeed this just a high order
+folio support. The languge for blocksize was used before my patches for the
+sb->s_blocksize and sb->s_blocksize_bits. Even for shmem_statfs()
+buf->f_bsize.
 
-(i.e. the fact that even _readahead_ can pull in pages a dio is
-invalidating is a really nice footgun if not worked around).
+I understand we should move the sb->s_blocksize to the block_device
+and use the page order for address_space, but we can't negate the
+existing stuff there immediately.
 
-Right now though I've got more than enough on my plate just trying to
-finally get bcachefs merged, I'm happy to explain what this is for but
-I'm not ready for additional headaches or projects yet.
+  Luis
