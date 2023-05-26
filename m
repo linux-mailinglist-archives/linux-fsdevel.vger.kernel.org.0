@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07B1E71219B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 09:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 319F77121A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 09:56:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242597AbjEZH4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 03:56:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47300 "EHLO
+        id S242397AbjEZH4R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 03:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242138AbjEZH4H (ORCPT
+        with ESMTP id S242602AbjEZH4K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 03:56:07 -0400
+        Fri, 26 May 2023 03:56:10 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C0A3125;
-        Fri, 26 May 2023 00:56:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063D51A7;
+        Fri, 26 May 2023 00:56:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=NWUBmxTvJYmgTPK2izgiLtu8bfX6PD49E6ZFMW3sIA8=; b=WnxjNjU6yVkEoG/2yJlDTptWs+
-        IG4CY/nxbwF8l4vRcxt8rVMn+9Dke0fLaHt3F5PKjYHOCuggCCfmh6i38zB5Gx5JOJLWasGkYjxH0
-        QrvgHFxs3p0IHA4D2naeXZvojSzJjquvJ8IOoTDRqg0KY+GyKnG89UoXRje+tPiuSXfkrionjwvMZ
-        WwhJR2wNNcLjSsxhHhxiIqnT8Nk9scxo6r5Gv7Jlz/qvE29q34PedlMGogFKJpYEFffHm4TubN+Al
-        +neu4w739RAZ/MuaXB06KM7rPauhpBwSTQwxfDsOHTDhLQFP7KD43o6lXsgWZlGEsM6hpYLW48oqt
-        TUayW7nw==;
+        bh=1AhvaQEykxRfZlsh2c4Dug9Lp7odXzIMf8TvoDKNOGw=; b=E15C01rvh8qJUhFpengqZNed+/
+        epNw4ByYQ60Hpq6UA2LISl8vHwk8zLvgERrEfiFp3oNWfTARAPEe7kg6OrC9oLUNypcBwftohyOnf
+        +kL6CMebLub5C8stfDZczdk0CnTJ2fgF/4xjbR58muAKAcLkhsx0UFbRGlIlzEGokmwyiQyPBh2wB
+        bKTkZouYgrnXR+ek49+JL+J0BZFyfmAg080+gR8oRXI7sFUtk8hhGst/KBWs76xcaNZWzGmiur9Ci
+        XJdyxvsilz8bhnSS0ZbAagO3yezv4DQzoPICC07AQImRF3Kid2X8VB9bGdRAtSfY4kFBchyEre3KY
+        lgFf96ig==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q2SIj-001WZw-39;
-        Fri, 26 May 2023 07:55:53 +0000
+        id 1q2SIk-001WZy-03;
+        Fri, 26 May 2023 07:55:54 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hughd@google.com, akpm@linux-foundation.org, willy@infradead.org,
         brauner@kernel.org, djwong@kernel.org
@@ -37,9 +37,9 @@ Cc:     p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com,
         kbusch@kernel.org, mcgrof@kernel.org, patches@lists.linux.dev,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [RFC v2 6/8] shmem: consider block size in shmem_default_max_inodes()
-Date:   Fri, 26 May 2023 00:55:50 -0700
-Message-Id: <20230526075552.363524-7-mcgrof@kernel.org>
+Subject: [RFC v2 7/8] shmem: add high order page support
+Date:   Fri, 26 May 2023 00:55:51 -0700
+Message-Id: <20230526075552.363524-8-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230526075552.363524-1-mcgrof@kernel.org>
 References: <20230526075552.363524-1-mcgrof@kernel.org>
@@ -56,65 +56,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Today we allow for a max number of inodes in consideration for
-the smallest possible inodes with just one block of size PAGE_SIZE.
-The max number of inodes depend on the size of the block size then,
-and if we want to support higher block sizes we end up with less
-number of inodes.
+To support high order block sizes we want to support a high order
+folios so to treat the larger block atomically. Add support for this
+for tmpfs mounts.
 
-Account for this in the computation for the max number of inodes.
-
-If the blocksize is greater than the PAGE_SIZE, we simply divide the
-number of pages usable, multiply by the page size and divide by the
-blocksize.
-
-This produces no functional changes right now as we don't support
-larger block sizes yet.
+Right now this produces no functional changes since we only allow one
+single block size, matching the PAGE_SIZE and so the order is always 0.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- mm/shmem.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ mm/shmem.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 179fde04f57f..d347a5ba49f1 100644
+index d347a5ba49f1..080864949fe5 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -145,11 +145,14 @@ static unsigned long shmem_default_max_blocks(unsigned char block_order)
- 	return totalram_pages() >> (block_order - PAGE_SHIFT + 1);
- }
- 
--static unsigned long shmem_default_max_inodes(void)
-+static unsigned long shmem_default_max_inodes(unsigned char block_order)
+@@ -1623,9 +1623,15 @@ static struct folio *shmem_alloc_folio(gfp_t gfp,
  {
- 	unsigned long nr_pages = totalram_pages();
-+	unsigned long pages_for_inodes = min(nr_pages - totalhigh_pages(), nr_pages / 2);
+ 	struct vm_area_struct pvma;
+ 	struct folio *folio;
++	struct inode *inode = &info->vfs_inode;
++	struct super_block *i_sb = inode->i_sb;
++	int order = 0;
++
++	if (!(i_sb->s_flags & SB_KERNMOUNT))
++		order = i_sb->s_blocksize_bits - PAGE_SHIFT;
  
--	return min(nr_pages - totalhigh_pages(), nr_pages / 2);
-+	if (block_order == shmem_default_block_order())
-+		return pages_for_inodes;
-+	return pages_for_inodes >> (block_order - PAGE_SHIFT);
- }
- #else
- static u64 shmem_block_order(struct shmem_sb_info *sbinfo)
-@@ -3910,7 +3913,7 @@ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
- 	if (sbinfo->max_blocks != shmem_default_max_blocks(shmem_default_block_order()))
- 		seq_printf(seq, ",size=%luk",
- 			sbinfo->max_blocks << (PAGE_SHIFT - 10));
--	if (sbinfo->max_inodes != shmem_default_max_inodes())
-+	if (sbinfo->max_inodes != shmem_default_max_inodes(shmem_default_block_order()))
- 		seq_printf(seq, ",nr_inodes=%lu", sbinfo->max_inodes);
- 	if (sbinfo->mode != (0777 | S_ISVTX))
- 		seq_printf(seq, ",mode=%03ho", sbinfo->mode);
-@@ -3991,7 +3994,7 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 		if (!(ctx->seen & SHMEM_SEEN_BLOCKS))
- 			ctx->blocks = shmem_default_max_blocks(shmem_default_block_order());
- 		if (!(ctx->seen & SHMEM_SEEN_INODES))
--			ctx->inodes = shmem_default_max_inodes();
-+			ctx->inodes = shmem_default_max_inodes(shmem_default_block_order());
- 		if (!(ctx->seen & SHMEM_SEEN_INUMS))
- 			ctx->full_inums = IS_ENABLED(CONFIG_TMPFS_INODE64);
- 		sbinfo->noswap = ctx->noswap;
+ 	shmem_pseudo_vma_init(&pvma, info, index);
+-	folio = vma_alloc_folio(gfp, 0, &pvma, 0, false);
++	folio = vma_alloc_folio(gfp, order, &pvma, 0, false);
+ 	shmem_pseudo_vma_destroy(&pvma);
+ 
+ 	return folio;
 -- 
 2.39.2
 
