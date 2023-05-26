@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5730B71219F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 09:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 101F7712195
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 09:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242622AbjEZH4O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 03:56:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47334 "EHLO
+        id S242594AbjEZH4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 03:56:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242574AbjEZH4J (ORCPT
+        with ESMTP id S242581AbjEZH4I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 03:56:09 -0400
+        Fri, 26 May 2023 03:56:08 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BE5134;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A06819D;
         Fri, 26 May 2023 00:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=5sDzoLLiNk6KHdYH8uCoV/dBsj9Jyf+/G1i59BLdhsE=; b=aNld4o2VvRGiQ7vUI5arJSgX/L
-        6HnGHoys0fJ0NyQtFF23FYlkQQzjBbOG2VhMIvldNEf22GLVMNLTPM709hyKOlQD0gLZxwuctNBgy
-        5xB+UXzv2lZoitwyBzx9gtzjlhfkbRrUBPE63O6bJwBIPoLlAiT5sqXh83wJrFBVWWsyd0+6vzmLw
-        Zg+CCpzYhsYjajho25CSz1p1EJHOT1tTxSqrc5eVEUGlE72Ih/0P9mhN8JBy4HyPPn6fJ2fJsrvnB
-        8F5DFRPYRHJ48DzQkK2rZN5deuJkdDWpeanaIbyclKM98/ZFBFaHcLpjk6EO/3caforvAU1V5EiBJ
-        7SdjKf2Q==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=5oQ2gGbUsqL42uQDz21dyQWBbUA0px4CnOLURAD/lus=; b=LdiDWYPfbsR2VwE3muTukBHf1n
+        2WKuZw7xVn16RN6k6Wo9ylU0o5DsPwzzrnruYbzYdoYyEpJt744EXDXhFgaq3aPLQM0XtiDj2f8FP
+        2plHBSw0sndtNX7DTHqerD4102mCieETYl1G0dRVa+cHO3vzNpp7xWDo8hVulJyMeNAOkZv4L98nW
+        6TmrmiHMZRz3tMGsyF1olHjbXr53o35bSOXIQ23JnCL7T/TEVq47iBber3uY3gk1HYKtkAuea4Vam
+        CYKjwRSPO0HEhImDxfLN6W/tI67qgSTWbDSI9uMVp9MT7NiJOiaImnK7AjLb+fCQHpyGYE6dCefwT
+        r8p56qVA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q2SIj-001WZa-2E;
+        id 1q2SIj-001WZg-2T;
         Fri, 26 May 2023 07:55:53 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hughd@google.com, akpm@linux-foundation.org, willy@infradead.org,
@@ -37,10 +37,12 @@ Cc:     p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com,
         kbusch@kernel.org, mcgrof@kernel.org, patches@lists.linux.dev,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [RFC v2 0/8] add support for blocksize > PAGE_SIZE
-Date:   Fri, 26 May 2023 00:55:44 -0700
-Message-Id: <20230526075552.363524-1-mcgrof@kernel.org>
+Subject: [RFC v2 1/8] page_flags: add is_folio_hwpoison()
+Date:   Fri, 26 May 2023 00:55:45 -0700
+Message-Id: <20230526075552.363524-2-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230526075552.363524-1-mcgrof@kernel.org>
+References: <20230526075552.363524-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
@@ -54,68 +56,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an initial attempt to add support for block size > PAGE_SIZE for tmpfs.
-Why would you want this? It helps us experiment with higher order folio uses
-with fs APIS and helps us test out corner cases which would likely need
-to be accounted for sooner or later if and when filesystems enable support
-for this. Better review early and burn early than continue on in the wrong
-direction so looking for early feedback.
+Provide a helper similar to is_page_hwpoison() for folios
+which tests the first head and if the folio is large any page in
+the folio is tested for the poison flag.
 
-I have other patches to convert shmem_file_read_iter() to folios too but that
-is not yet working. In the swap world the next thing to look at would be to
-convert swap_cluster_readahead() to folios.
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ include/linux/page-flags.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-As mentioned at LSFMM, if folks want to experiment with anything related to
-Large Block Sizes (LBS) I've been trying to stash related patches in
-a tree which tries to carry as many nuggets we have and can collect into
-a dedicated lage-block tree. Many of this is obviously work in progress
-so don't try it unless you want to your systems to blow up. But in case you
-do, you can use my large-block-20230525 branch [0]. Similarly you can also
-use kdevops with CONFIG_QEMU_ENABLE_EXTRA_DRIVE_LARGEIO support to get
-everything with just as that branch is used for that:
-                                                                                                                                                                                              
-  make
-  make bringup
-  make linux
-
-Changes on this v2:
-
-  o the block size has been modified to block order after Matthew Wilcox's
-    suggestion. This truly makes a huge difference in making this code
-    much more easier to read and maintain.
-  o At Pankaj Raghav's suggestion I've put together a helper for
-    poison flags and so this now introduces that as is_folio_hwpoison().
-  o cleaned up the nits / debug code as pointed out by Matthew Wilcox
-  o clarified the max block size we support is computed by the MAX_ORDER,
-    and for x86_64 this is 8 MiB.
-  o Tested up to 4 MiB block size with a basic test nothing blew up
-
-Future work:
-
-  o shmem_file_read_iter()
-  o extend struct address_space with order and use that instead
-    of our own block order. We may still need to have our own block order,
-    we'll need to see.
-  o swap_cluster_readahead() and friends coverted over to folios
-  o test this well
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=large-block-20230525
-[1] https://github.com/linux-kdevops/kdevops
-
-Luis Chamberlain (8):
-  page_flags: add is_folio_hwpoison()
-  shmem: convert to use is_folio_hwpoison()
-  shmem: account for high order folios
-  shmem: add helpers to get block size
-  shmem: account for larger blocks sizes for shmem_default_max_blocks()
-  shmem: consider block size in shmem_default_max_inodes()
-  shmem: add high order page support
-  shmem: add support to customize block size order
-
- include/linux/page-flags.h |   7 ++
- include/linux/shmem_fs.h   |   3 +
- mm/shmem.c                 | 139 +++++++++++++++++++++++++++++--------
- 3 files changed, 119 insertions(+), 30 deletions(-)
-
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 1c68d67b832f..4d5f395edf03 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -883,6 +883,13 @@ static inline bool is_page_hwpoison(struct page *page)
+ 	return PageHuge(page) && PageHWPoison(compound_head(page));
+ }
+ 
++static inline bool is_folio_hwpoison(struct folio *folio)
++{
++       if (folio_test_hwpoison(folio))
++               return true;
++       return folio_test_large(folio) && folio_test_has_hwpoisoned(folio);
++}
++
+ /*
+  * For pages that are never mapped to userspace (and aren't PageSlab),
+  * page_type may be used.  Because it is initialised to -1, we invert the
 -- 
 2.39.2
+
