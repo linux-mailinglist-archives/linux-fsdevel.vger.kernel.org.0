@@ -2,159 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A0C6712731
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 15:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F98712774
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 15:25:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243540AbjEZNHg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 09:07:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49726 "EHLO
+        id S229882AbjEZNZ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 09:25:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243315AbjEZNHf (ORCPT
+        with ESMTP id S243518AbjEZNZY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 09:07:35 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D76101B1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 06:07:29 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f6cbf02747so5230505e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 06:07:29 -0700 (PDT)
+        Fri, 26 May 2023 09:25:24 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F7F912F;
+        Fri, 26 May 2023 06:25:22 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f606a80d34so5685965e9.0;
+        Fri, 26 May 2023 06:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685106448; x=1687698448;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3OYN7dZABhmYimN+TZxc/LvZq8eCNJGJVqa65c9esQQ=;
-        b=hVt1U943xtcdOo2EhnLU8fSa9SaQAhhJAK9fHvIygC7JJ8lzJKKxP4k7u5OHw8Cp4/
-         GsuhTsj7XzA72Zxe9iq2RfLMhyqlEB0pzSIDDgSSYWZsnp/ykcjQeDwPRVz7kDJvnGPl
-         KgZToumD2FoaSZR9jpQgonIffD2DIgJPuF4qX7LxLYn3tz66EN6ljaxsV+OcT9Ih0IGM
-         LzrS01FjPnYyjJyAtBTRPL8ZsTEM4QgBcxkM4ldHr/JZvlU2r/KZxoQquvr8tjs/l+mW
-         BJ0oV+JvPFQW+SJPIkGkl+u9pJ9qj152wZMxlg/TDIGZq+oeD3SUbA0kwEs4sgbvGxpB
-         je3g==
+        d=gmail.com; s=20221208; t=1685107521; x=1687699521;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HShHppzRiA2afD7idA0kDlCaSnR/8d/LIwnMexDz04E=;
+        b=R2isuQULlkXH0YYBi5gD32Fkr3TG8yDVfJ1SZVV7em4NfGBjX4bVPG+FKg55+DboUy
+         xNw1y4PLZ0pqrv9V9WHS0FvRqBiarXByunSM8MzLauQE/bKpywSlCjLB9FSL4V0IukLp
+         UQABcDgtNu9b1uRocJofhh/dRXZ+9UBOOLmZSySCchW2lCveBWzVvdxkYOkj/6bA2OEo
+         Yy1ak5MiXh3QWYBLjiukrpaN0L0BzetweArXCOoOg47X1Eja1Jsrt2XjjW5c+lv+wNCU
+         b4TLGokRtye3X/Fz1mKsDRFAKggAbXFrCDBYnrqtTOWOg3PZ/5DFdvpNsTt5XHOTSeVe
+         qHjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685106448; x=1687698448;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3OYN7dZABhmYimN+TZxc/LvZq8eCNJGJVqa65c9esQQ=;
-        b=Dp1+zdWxsVUwaPVNRYDSUgCJnUF2zBk4d3RLn+FUxAXBJTAWNVbH2aMrtOTe4JKKwj
-         tP+cn+tbD25c6T//fk7jtJhCKF3JyIjHqinzCKu1jzvx7cehXsNXcaUwkP55rv9AFo4g
-         wWzlZcTCofL1fVuuAtVaoNxbyr7VuXeixlT3jVU5bfCt5ldvuGMbsYJqfsLbwRmwwrE+
-         Aiw8x0bVEIQlb3kGQ5pv5YBlVjgIoecv+3DrzDixyLxvDDL7XhiQZP3Yog5B8EuhxOhr
-         dIJaniITq5XAUXJTJitSztmrliuwXHCnzMSgEbLs8qiDmBPsqDhvWi2kTf8wWslqHyh5
-         bdwQ==
-X-Gm-Message-State: AC+VfDxJ7HdKALDGb54y8M5a0Fkcv7IpYaJXAixLQJiEimyMKYU/ZpUk
-        HaT1TbjPYcXOTY/SNiOCzJYhSw==
-X-Google-Smtp-Source: ACHHUZ7YKORMpC4RuNFuNl96MUWxk3+APLsN1PXwJ89q18j6GEnvJOhIRtKVBHTuz15K85dTVUYMJQ==
-X-Received: by 2002:a05:600c:3658:b0:3f5:fb83:62b0 with SMTP id y24-20020a05600c365800b003f5fb8362b0mr1473701wmq.36.1685106448115;
-        Fri, 26 May 2023 06:07:28 -0700 (PDT)
-Received: from loic-ThinkPad-T470p.. ([2a01:e0a:82c:5f0:73c8:c098:1848:c7ac])
-        by smtp.gmail.com with ESMTPSA id i2-20020a05600c290200b003eddc6aa5fasm8731390wmd.39.2023.05.26.06.07.27
+        d=1e100.net; s=20221208; t=1685107521; x=1687699521;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HShHppzRiA2afD7idA0kDlCaSnR/8d/LIwnMexDz04E=;
+        b=iIkR2QOxwFGBRXuVogB+APaIddbitey9W41ygGVR/JfDS5pytJvf7yWm9KZRWA+Sue
+         rcLLoxY5Gjt4WuXj5xq4Kt9Kypr8/vP4+U0VVUaBeY6KL2f4WTyByYSG3gMoERvrgt+k
+         8MyblJkriUtqzOsw9Nuv20UhWbUuSRaT1Oe1UcNBSY5KFj4TX+uGUskTNV+JYAPtK+hy
+         p5JGqPmnck/KVm+bhT+azc8oXkVIMdbsctfcXyfQDd/SgU51zgjhKZS8XaQ1nCFXBzd/
+         tvvrEoKXPhkhdV+J4N2vCs1MQ2hN4F2FSy5V8xveZhUF0txMLIfwztxAK4L3Lv00yE/j
+         cdCg==
+X-Gm-Message-State: AC+VfDyA17dHfEZXr7tORlGAytkYkRkVVrc1R9efQ7KYLYViCF9QK07u
+        v/FoLMpCkgxuXI1m8G/S29hraqZXCD0=
+X-Google-Smtp-Source: ACHHUZ5cUYpuKwSC5GNuQI4L1b0LxRQJaktaM3pMyNQhA9flteuuGt++y+NANX2R5ob81DqhZYQgAQ==
+X-Received: by 2002:a5d:420c:0:b0:306:36ef:2e3b with SMTP id n12-20020a5d420c000000b0030636ef2e3bmr1329543wrq.70.1685107520644;
+        Fri, 26 May 2023 06:25:20 -0700 (PDT)
+Received: from suse.localnet (host-95-248-204-235.retail.telecomitalia.it. [95.248.204.235])
+        by smtp.gmail.com with ESMTPSA id i13-20020a5d522d000000b00307c8d6b4a0sm5128776wra.26.2023.05.26.06.25.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 May 2023 06:07:27 -0700 (PDT)
-From:   Loic Poulain <loic.poulain@linaro.org>
-To:     corbet@lwn.net, viro@zeniv.linux.org.uk, brauner@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Loic Poulain <loic.poulain@linaro.org>
-Subject: [PATCH] init: Add support for rootwait timeout parameter
-Date:   Fri, 26 May 2023 15:07:16 +0200
-Message-Id: <20230526130716.2932507-1-loic.poulain@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Fri, 26 May 2023 06:25:19 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [git pull] vfs.git sysv pile
+Date:   Fri, 26 May 2023 15:25:18 +0200
+Message-ID: <2886258.e9J7NaK4W3@suse>
+In-Reply-To: <5939173.lOV4Wx5bFT@suse>
+References: <Y/gugbqq858QXJBY@ZenIV> <20230525201046.cth6qizdh7lwobxj@quack3>
+ <5939173.lOV4Wx5bFT@suse>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add an optional timeout arg to 'rootwait' as the maximum time in
-seconds to wait for the root device to show up before attempting
-forced mount of the root filesystem.
+On venerd=EC 26 maggio 2023 12:32:59 CEST Fabio M. De Francesco wrote:
+> On gioved=EC 25 maggio 2023 22:10:46 CEST Jan Kara wrote:
+> > On Mon 27-03-23 12:29:56, Fabio M. De Francesco wrote:
+> > > On luned=EC 20 marzo 2023 13:47:25 CEST Jan Kara wrote:
+> > > > On Mon 20-03-23 12:18:38, Fabio M. De Francesco wrote:
+> > > > > On gioved=EC 16 marzo 2023 11:30:21 CET Fabio M. De Francesco wro=
+te:
+> > > > > > On gioved=EC 16 marzo 2023 10:00:35 CET Jan Kara wrote:
+> > > > > > > On Wed 15-03-23 19:08:57, Fabio M. De Francesco wrote:
+> > > > > > > > On mercoled=EC 1 marzo 2023 15:14:16 CET Al Viro wrote:
+> > > [snip]
+> > >=20
+> > > > > > > > > I think I've pushed a demo patchset to vfs.git at some po=
+int
+> > > > > > > > > back
+> > >=20
+> > > in
+> > >=20
+> > > > > > > > > January... Yep - see #work.ext2 in there; completely=20
+untested,
+> > > > > > > > > though.
+> > >=20
+> > > Al,
+> > >=20
+> > > I reviewed and tested your patchset (please see below).
+> > >=20
+> > > I think that you probably also missed Jan's last message about how you
+> > > prefer
+> > > they to be treated.
+> > >=20
+> > > Jan asked you whether you will submit these patches or he should just=
+=20
+pull
+> > > your branch into his tree.
+> > >=20
+> > > Please look below for my tags and Jan's question.
+> >=20
+> > Ok, Al didn't reply
+>=20
+> I noticed it...
+>=20
+> > so I've just pulled the patches from Al's tree,
+>=20
+> Thank you very much for doing this :-)
+>=20
+> > added
+> > your Tested-by tag
+>=20
+> Did you also notice the Reviewed-by tags?
+>=20
 
-This can be helpful to force boot failure and restart in case the
-root device does not show up in time, allowing the bootloader to
-take any appropriate measures (e.g. recovery, A/B switch, retry...).
+Well, it looks like you missed my Reviewed-by tags at https://lore.kernel.o=
+rg/
+lkml/3019063.4lk9UinFSI@suse/
 
-In success case, mounting happens as soon as the root device is ready,
-contrary to the existing 'rootdelay' parameter (unconditional delay).
+=46WIW, I'd just like to say that I did the review of Al's patchset because=
+ I=20
+know the code that is modeled after a similar series to fs/sysv, which in t=
+urn=20
+I made following Al's suggestions.
 
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
----
- .../admin-guide/kernel-parameters.txt         |  4 ++++
- init/do_mounts.c                              | 19 +++++++++++++++++--
- 2 files changed, 21 insertions(+), 2 deletions(-)
+However, I suppose it's up to you to decide whether or not is worth mention=
+ing=20
+my reviews :-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9e5bab29685f..6e351d4c84a5 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5465,6 +5465,10 @@
- 			Useful for devices that are detected asynchronously
- 			(e.g. USB and MMC devices).
- 
-+	rootwait=	[KNL] Maximum time (in seconds) to wait for root device
-+			to show up before attempting to mount the root
-+			filesystem.
-+
- 	rproc_mem=nn[KMG][@address]
- 			[KNL,ARM,CMA] Remoteproc physical memory block.
- 			Memory area to be used by remote processor image,
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 811e94daf0a8..942458e7d1c0 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/ramfs.h>
- #include <linux/shmem_fs.h>
-+#include <linux/ktime.h>
- 
- #include <linux/nfs_fs.h>
- #include <linux/nfs_fs_sb.h>
-@@ -306,12 +307,20 @@ static int __init rootwait_setup(char *str)
- {
- 	if (*str)
- 		return 0;
--	root_wait = 1;
-+	root_wait = -1;
- 	return 1;
- }
- 
- __setup("rootwait", rootwait_setup);
- 
-+static int __init rootwait_timeout_setup(char *str)
-+{
-+	root_wait = simple_strtoul(str, NULL, 0);
-+	return 1;
-+}
-+
-+__setup("rootwait=", rootwait_timeout_setup);
-+
- static char * __initdata root_mount_data;
- static int __init root_data_setup(char *str)
- {
-@@ -633,11 +642,17 @@ void __init prepare_namespace(void)
- 
- 	/* wait for any asynchronous scanning to complete */
- 	if ((ROOT_DEV == 0) && root_wait) {
-+		const ktime_t end = ktime_add_ms(ktime_get_raw(), root_wait * MSEC_PER_SEC);
-+
- 		printk(KERN_INFO "Waiting for root device %s...\n",
- 			saved_root_name);
- 		while (driver_probe_done() != 0 ||
--			(ROOT_DEV = name_to_dev_t(saved_root_name)) == 0)
-+			(ROOT_DEV = name_to_dev_t(saved_root_name)) == 0) {
- 			msleep(5);
-+
-+			if (root_wait > 0 && ktime_after(ktime_get_raw(), end))
-+				break;
-+		}
- 		async_synchronize_full();
- 	}
- 
--- 
-2.34.1
+Thanks,
+
+=46abio
+
+> > and push out the result into linux-next.
+>=20
+> Great!
+> Again thanks,
+>=20
+> Fabio
+>=20
+>=20
+> Honza
+>=20
+> > --
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
+
+
+
 
