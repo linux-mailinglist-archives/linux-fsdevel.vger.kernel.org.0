@@ -2,283 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E9D7121D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 10:07:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAAD67121E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 10:12:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242441AbjEZIHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 04:07:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53070 "EHLO
+        id S242465AbjEZIMt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 04:12:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229911AbjEZIHm (ORCPT
+        with ESMTP id S236852AbjEZIMs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 04:07:42 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8339BA3;
-        Fri, 26 May 2023 01:07:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=DAqGFJ28glJE4ZP3/Vn+DHN/P/C6GAqumynKOxNDeSk=; b=a6cT2qqWdXXLmvoaraOfyw/kp/
-        wO2Ux6i3iGYwDAhCjfC5XV0OxJAeH0lzK0O9Dp6jSObJykoaF4Ofc0jhNY+sQLdSQo10Vj02L+khf
-        3oeWWL1OE/AG5Kuo7BiqKdJBxfMbaiPKstv2hFXJFGAfjs/gt4Yf46acq7Kb6IgCMt2xg915Nygvs
-        10EXC35fWpRdmAq26Sz8ohRDv3NJxy+JnOjBtSb4X0zy223fcyPi/IKLhiW7G6ySTsPnyYxBJxN9o
-        MozjKOb8s2OmwRSYFch+gJE3Er8ZHmKRQR+kr90JcV8rxHLzissr/WdkXQLJ4BTUbYJ9S68GrsEiV
-        LGWU13+w==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q2STw-001YTx-2K;
-        Fri, 26 May 2023 08:07:28 +0000
-Date:   Fri, 26 May 2023 01:07:28 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     hughd@google.com, akpm@linux-foundation.org, willy@infradead.org,
-        brauner@kernel.org, djwong@kernel.org
-Cc:     p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com,
-        rpuri.linux@gmail.com, a.manzanares@samsung.com, dave@stgolabs.net,
-        yosryahmed@google.com, keescook@chromium.org, hare@suse.de,
-        kbusch@kernel.org, patches@lists.linux.dev,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 0/8] add support for blocksize > PAGE_SIZE
-Message-ID: <ZHBowMEDfyrAAOWH@bombadil.infradead.org>
-References: <20230526075552.363524-1-mcgrof@kernel.org>
+        Fri, 26 May 2023 04:12:48 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07AC9D9;
+        Fri, 26 May 2023 01:12:47 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f6042d605dso3046385e9.2;
+        Fri, 26 May 2023 01:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685088765; x=1687680765;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IQNRjhK3jlaLYFDGbUON4IVN8F+sSVQXRFYbktw9Bqw=;
+        b=rRXX6w93fiNwxOUzxA3p521bhc6sXRRDR6a9hSjs8VyyKTyaLYWiqCG/ij2C9D+V7r
+         5uxqrHE+lzRyXHPmzknbRPeb8PFPhwUtn7ifW6sePg5jM0wvfu0tM3toGeAmRTwQA3WA
+         qM+YLiaKz97SliWHC6SUNW5GmZ625q+8y6e5CPvhOuDIvcV9xhNz0rsqWhNUbz+aTE50
+         PNGE3IyLV7nwcpf10cg78FJ26zlBBiZAKOCa3NC1/gll4+XAXo17XdnibkMuYI9zvg1q
+         3Le4b+D2Zr4gIUSZPG4f/YUPfPu/B1Lw54nMHhZbRMP+H0QlPnPkgaBpH8Tssvbv/93+
+         q7SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685088765; x=1687680765;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IQNRjhK3jlaLYFDGbUON4IVN8F+sSVQXRFYbktw9Bqw=;
+        b=WYDEd7S1J2nl0upRkMp9OlCZMyP7gPJIL2QGpuWqbNQlW77QNLbRzCIFSA3WV4Lm1B
+         TEUr1yGQ6gDdrP6e6Vm10A4YrfwhjvPKCzefrUD8HqBglgeYF5aP08G0LVaPVwaDM/Rg
+         9g3vDxtiwFsNP/6eTkE5GJyh/pJyyWdEcXOm9rDKnoPHUsqYpOC/gv5/fFctOkBpr/nZ
+         aZOc+jRZkJeD45uVHj7TknY4/a4wL6j51NHz2At4Tgi+35m1pJCx7sc7K6lqnxN/FK+5
+         dOYJAI6dpf/+UHndnnrPP0kcBO4whRJvPPG4rDPbGzpkjg4+rHev9SCHzUuKhQ9mDUPv
+         hvHg==
+X-Gm-Message-State: AC+VfDwO9T4IrCQhQEXAAyae4n+Gn7IYGqZQE5JFnfdo3Pd9+yk5FuBK
+        g55QXXxLYJe7LbV5SqGC394=
+X-Google-Smtp-Source: ACHHUZ5+6bk9eUeMhvmG1njF28MYQkY/8d5vrsHCWk2yqoDh7SowQtY1F0FNyPmvYHsGjgcAqlnMbw==
+X-Received: by 2002:a7b:cbc8:0:b0:3f6:464:4b32 with SMTP id n8-20020a7bcbc8000000b003f604644b32mr677742wmi.13.1685088765148;
+        Fri, 26 May 2023 01:12:45 -0700 (PDT)
+Received: from localhost (host81-154-179-160.range81-154.btcentralplus.com. [81.154.179.160])
+        by smtp.gmail.com with ESMTPSA id c22-20020a7bc016000000b003f4285629casm4325988wmb.42.2023.05.26.01.12.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 May 2023 01:12:44 -0700 (PDT)
+Date:   Fri, 26 May 2023 09:10:33 +0100
+From:   Lorenzo Stoakes <lstoakes@gmail.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH v2 1/3] mm: Don't pin ZERO_PAGE in pin_user_pages()
+Message-ID: <89c7f535-8fc5-4480-845f-de94f335d332@lucifer.local>
+References: <20230525223953.225496-1-dhowells@redhat.com>
+ <20230525223953.225496-2-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230526075552.363524-1-mcgrof@kernel.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230525223953.225496-2-dhowells@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 12:55:44AM -0700, Luis Chamberlain wrote:
-> Future work:
-> 
->   o shmem_file_read_iter()
+On Thu, May 25, 2023 at 11:39:51PM +0100, David Howells wrote:
+> Make pin_user_pages*() leave a ZERO_PAGE unpinned if it extracts a pointer
+> to it from the page tables and make unpin_user_page*() correspondingly
+> ignore a ZERO_PAGE when unpinning.  We don't want to risk overrunning a
+> zero page's refcount as we're only allowed ~2 million pins on it -
+> something that userspace can conceivably trigger.
 
-And as for this, this is what I'm up to, but for the life of me I can't
-figure out why I end up with an empty new line at the end of my test
-with this, the same simple test as described in the patch "shmem: add
-support to customize block size order".
+I guess we're not quite as concerned about FOLL_GET because FOLL_GET should
+be ephemeral and FOLL_PIN (horrifically) adds GUP_PIN_COUNTING_BIAS each
+time?
 
-I end up with:
+>
+> Add a pair of functions to test whether a page or a folio is a ZERO_PAGE.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Christoph Hellwig <hch@infradead.org>
+> cc: David Hildenbrand <david@redhat.com>
+> cc: Andrew Morton <akpm@linux-foundation.org>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: Jan Kara <jack@suse.cz>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Jason Gunthorpe <jgg@nvidia.com>
+> cc: Logan Gunthorpe <logang@deltatee.com>
+> cc: Hillf Danton <hdanton@sina.com>
+> cc: Christian Brauner <brauner@kernel.org>
+> cc: Linus Torvalds <torvalds@linux-foundation.org>
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-block@vger.kernel.org
+> cc: linux-kernel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> ---
+>
+> Notes:
+>     ver #2)
+>      - Fix use of ZERO_PAGE().
+>      - Add is_zero_page() and is_zero_folio() wrappers.
+>      - Return the zero page obtained, not ZERO_PAGE(0) unconditionally.
+>
+>  include/linux/pgtable.h | 10 ++++++++++
+>  mm/gup.c                | 25 ++++++++++++++++++++++++-
+>  2 files changed, 34 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index c5a51481bbb9..2b0431a11de2 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -1245,6 +1245,16 @@ static inline unsigned long my_zero_pfn(unsigned long addr)
+>  }
+>  #endif /* CONFIG_MMU */
+>
+> +static inline bool is_zero_page(const struct page *page)
+> +{
+> +	return is_zero_pfn(page_to_pfn(page));
+> +}
+> +
+> +static inline bool is_zero_folio(const struct folio *folio)
+> +{
+> +	return is_zero_page(&folio->page);
+> +}
+> +
+>  #ifdef CONFIG_MMU
+>
+>  #ifndef CONFIG_TRANSPARENT_HUGEPAGE
+> diff --git a/mm/gup.c b/mm/gup.c
+> index bbe416236593..69b002628f5d 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -51,7 +51,8 @@ static inline void sanity_check_pinned_pages(struct page **pages,
+>  		struct page *page = *pages;
+>  		struct folio *folio = page_folio(page);
+>
+> -		if (!folio_test_anon(folio))
+> +		if (is_zero_page(page) ||
+> +		    !folio_test_anon(folio))
+>  			continue;
+>  		if (!folio_test_large(folio) || folio_test_hugetlb(folio))
+>  			VM_BUG_ON_PAGE(!PageAnonExclusive(&folio->page), page);
+> @@ -131,6 +132,13 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+>  	else if (flags & FOLL_PIN) {
+>  		struct folio *folio;
+>
+> +		/*
+> +		 * Don't take a pin on the zero page - it's not going anywhere
+> +		 * and it is used in a *lot* of places.
+> +		 */
+> +		if (is_zero_page(page))
+> +			return page_folio(page);
+> +
 
-root@iomap ~ # ./run.sh 
-2dcc06b7ca3b7dd8b5626af83c1be3cb08ddc76c  /root/ordered.txt
-a0466a798f2d967c143f0f716c344660dc360f78  /data-tmpfs/ordered.txt
-  File: /data-tmpfs/ordered.txt
-    Size: 6888896         Blocks: 16384      IO Block: 4194304 regular
-    file
-    Device: 0,44    Inode: 2           Links: 1
-    Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/
-    root)
-    Access: 2023-05-26 01:06:15.566330524 -0700
-    Modify: 2023-05-26 01:06:15.554330477 -0700
-    Change: 2023-05-26 01:06:15.554330477 -0700
-     Birth: 2023-05-26 01:06:15.534330399 -0700
+This will capture huge page cases too which have folio->_pincount and thus
+don't suffer the GUP_PIN_COUNTING_BIAS issue, however it is equally logical
+to simply skip these when pinning.
 
-root@iomap ~ # diff -u /root/ordered.txt /data-tmpfs/ordered.txt 
---- /root/ordered.txt   2023-05-25 16:50:53.755019418 -0700
-+++ /data-tmpfs/ordered.txt     2023-05-26 01:06:15.554330477 -0700
-@@ -999998,3 +999998,4 @@
- 999998
- 999999
- 1000000
-+
-\ No newline at end of file
+This does make me think that we should just skip pinning for FOLL_GET cases
+too - there's literally no sane reason we should be pinning zero pages in
+any case (unless I'm missing something!)
 
-root@iomap ~ # cat run.sh 
-#!/bin/bash
+>  		/*
+>  		 * Can't do FOLL_LONGTERM + FOLL_PIN gup fast path if not in a
+>  		 * right zone, so fail and let the caller fall back to the slow
+> @@ -180,6 +188,8 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+>  static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
+>  {
+>  	if (flags & FOLL_PIN) {
+> +		if (is_zero_folio(folio))
+> +			return;
+>  		node_stat_mod_folio(folio, NR_FOLL_PIN_RELEASED, refs);
+>  		if (folio_test_large(folio))
+>  			atomic_sub(refs, &folio->_pincount);
+> @@ -224,6 +234,13 @@ int __must_check try_grab_page(struct page *page, unsigned int flags)
+>  	if (flags & FOLL_GET)
+>  		folio_ref_inc(folio);
+>  	else if (flags & FOLL_PIN) {
+> +		/*
+> +		 * Don't take a pin on the zero page - it's not going anywhere
+> +		 * and it is used in a *lot* of places.
+> +		 */
+> +		if (is_zero_page(page))
+> +			return 0;
+> +
+>  		/*
+>  		 * Similar to try_grab_folio(): be sure to *also*
+>  		 * increment the normal page refcount field at least once,
+> @@ -3079,6 +3096,9 @@ EXPORT_SYMBOL_GPL(get_user_pages_fast);
+>   *
+>   * FOLL_PIN means that the pages must be released via unpin_user_page(). Please
+>   * see Documentation/core-api/pin_user_pages.rst for further details.
+> + *
+> + * Note that if the zero_page is amongst the returned pages, it will not have
+> + * pins in it and unpin_user_page() will not remove pins from it.
+>   */
+>  int pin_user_pages_fast(unsigned long start, int nr_pages,
+>  			unsigned int gup_flags, struct page **pages)
+> @@ -3161,6 +3181,9 @@ EXPORT_SYMBOL(pin_user_pages);
+>   * pin_user_pages_unlocked() is the FOLL_PIN variant of
+>   * get_user_pages_unlocked(). Behavior is the same, except that this one sets
+>   * FOLL_PIN and rejects FOLL_GET.
+> + *
+> + * Note that if the zero_page is amongst the returned pages, it will not have
+> + * pins in it and unpin_user_page() will not remove pins from it.
+>   */
+>  long pin_user_pages_unlocked(unsigned long start, unsigned long nr_pages,
+>  			     struct page **pages, unsigned int gup_flags)
+>
 
-# time for i in $(seq 1 1000000); do echo $i >>
-# /root/ordered.txt; done
+Shouldn't this comment be added to pup() and pup_remote() also? Also I
+think it's well worth updating Documentation/core-api/pin_user_pages.rst to
+reflect this as that is explclitly referenced by a few comments and it's a
+worthwhile corner case to cover.
 
-sha1sum /root/ordered.txt
-mount -t tmpfs            -o size=8M,border=22 -o noswap tmpfs
-/data-tmpfs/
-cp /root/ordered.txt /data-tmpfs/
-sha1sum /data-tmpfs/ordered.txt
-stat /data-tmpfs/ordered.txt
+Another nitty thing that I noticed is, in is_longterm_pinnable_page():-
 
-From 61008f03217b1524da317928885ef68a67abc773 Mon Sep 17 00:00:00 2001
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Wed, 19 Apr 2023 20:42:54 -0700
-Subject: [PATCH] shmem: convert shmem_file_read_iter() to folios
+	/* The zero page may always be pinned */
+	if (is_zero_pfn(page_to_pfn(page)))
+		return true;
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- mm/shmem.c | 74 +++++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 56 insertions(+), 18 deletions(-)
+Which, strictly speaking I suppose we are 'pinning' it or rather allowing
+the pin to succeed without actually pinning, but to be super pedantic
+perhaps it's worth updating this comment too.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 777e953df62e..2d3512f6dd30 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2431,6 +2431,10 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
- 		inode->i_ino = ino;
- 		inode_init_owner(idmap, inode, dir, mode);
- 		inode->i_blocks = 0;
-+		if (sb->s_flags & SB_KERNMOUNT)
-+			inode->i_blkbits = PAGE_SHIFT;
-+		else
-+			inode->i_blkbits = sb->s_blocksize_bits;
- 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
- 		inode->i_generation = get_random_u32();
- 		info = SHMEM_I(inode);
-@@ -2676,19 +2680,42 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file_inode(file);
- 	struct address_space *mapping = inode->i_mapping;
-+	struct super_block *sb = inode->i_sb;
-+	u64 bsize = i_blocksize(inode);
- 	pgoff_t index;
- 	unsigned long offset;
- 	int error = 0;
- 	ssize_t retval = 0;
- 	loff_t *ppos = &iocb->ki_pos;
- 
-+	/*
-+	 * Although our index is page specific, we can read a blocksize at a
-+	 * time as we use a folio per block.
-+	 */
- 	index = *ppos >> PAGE_SHIFT;
--	offset = *ppos & ~PAGE_MASK;
-+
-+	/*
-+	 * We're going to read a folio at a time of size blocksize.
-+	 *
-+	 * The offset represents the position in the folio where we are
-+	 * currently doing reads on. It starts off by the offset position in the
-+	 * first folio where we were asked to start our read. It later gets
-+	 * incremented by the number of bytes we read per folio.  After the
-+	 * first folio is read offset would be 0 as we are starting to read the
-+	 * next folio at offset 0. We'd then read a full blocksize at a time
-+	 * until we're done.
-+	 */
-+	offset = *ppos & (bsize - 1);
- 
- 	for (;;) {
- 		struct folio *folio = NULL;
--		struct page *page = NULL;
- 		pgoff_t end_index;
-+		/*
-+		 * nr represents the number of bytes we can read per folio,
-+		 * and this will depend on the blocksize set. On the last
-+		 * folio nr represents how much data on the last folio is
-+		 * valid to be read on the inode.
-+		 */
- 		unsigned long nr, ret;
- 		loff_t i_size = i_size_read(inode);
- 
-@@ -2696,7 +2723,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		if (index > end_index)
- 			break;
- 		if (index == end_index) {
--			nr = i_size & ~PAGE_MASK;
-+			nr = i_size & (bsize - 1);
- 			if (nr <= offset)
- 				break;
- 		}
-@@ -2709,9 +2736,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		}
- 		if (folio) {
- 			folio_unlock(folio);
--
--			page = folio_file_page(folio, index);
--			if (PageHWPoison(page)) {
-+			if (is_folio_hwpoison(folio)) {
- 				folio_put(folio);
- 				error = -EIO;
- 				break;
-@@ -2722,49 +2747,56 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		 * We must evaluate after, since reads (unlike writes)
- 		 * are called without i_rwsem protection against truncate
- 		 */
--		nr = PAGE_SIZE;
-+		nr = bsize;
-+		WARN_ON(!(sb->s_flags & SB_KERNMOUNT) && folio && bsize != folio_size(folio));
- 		i_size = i_size_read(inode);
- 		end_index = i_size >> PAGE_SHIFT;
- 		if (index == end_index) {
--			nr = i_size & ~PAGE_MASK;
-+			nr = i_size & (bsize - 1);
- 			if (nr <= offset) {
- 				if (folio)
- 					folio_put(folio);
- 				break;
- 			}
- 		}
-+
-+		/*
-+		 * On the first folio read the number of bytes we can read
-+		 * will be blocksize - offset. On subsequent reads we can read
-+		 * blocksize at time until iov_iter_count(to) == 0.
-+		 */
- 		nr -= offset;
- 
- 		if (folio) {
- 			/*
--			 * If users can be writing to this page using arbitrary
-+			 * If users can be writing to this folio using arbitrary
- 			 * virtual addresses, take care about potential aliasing
--			 * before reading the page on the kernel side.
-+			 * before reading the folio on the kernel side.
- 			 */
- 			if (mapping_writably_mapped(mapping))
--				flush_dcache_page(page);
-+				flush_dcache_folio(folio);
- 			/*
--			 * Mark the page accessed if we read the beginning.
-+			 * Mark the folio accessed if we read the beginning.
- 			 */
- 			if (!offset)
- 				folio_mark_accessed(folio);
- 			/*
--			 * Ok, we have the page, and it's up-to-date, so
-+			 * Ok, we have the folio, and it's up-to-date, so
- 			 * now we can copy it to user space...
- 			 */
--			ret = copy_page_to_iter(page, offset, nr, to);
-+			ret = copy_folio_to_iter(folio, offset, nr, to);
- 			folio_put(folio);
- 
- 		} else if (user_backed_iter(to)) {
- 			/*
- 			 * Copy to user tends to be so well optimized, but
- 			 * clear_user() not so much, that it is noticeably
--			 * faster to copy the zero page instead of clearing.
-+			 * faster to copy the zero folio instead of clearing.
- 			 */
--			ret = copy_page_to_iter(ZERO_PAGE(0), offset, nr, to);
-+			ret = copy_folio_to_iter(page_folio(ZERO_PAGE(0)), offset, nr, to);
- 		} else {
- 			/*
--			 * But submitting the same page twice in a row to
-+			 * But submitting the same folio twice in a row to
- 			 * splice() - or others? - can result in confusion:
- 			 * so don't attempt that optimization on pipes etc.
- 			 */
-@@ -2773,8 +2805,14 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 
- 		retval += ret;
- 		offset += ret;
-+
-+		/*
-+		 * Due to usage of folios per blocksize we know this will
-+		 * actually read blocksize at a time after the first block read
-+		 * at offset.
-+		 */
- 		index += offset >> PAGE_SHIFT;
--		offset &= ~PAGE_MASK;
-+		offset &= (bsize - 1);
- 
- 		if (!iov_iter_count(to))
- 			break;
--- 
-2.39.2
+Other than the pedantic nits, this patch looks good and makes a lot of
+sense so:-
 
+Reviewed-by: Lorenzo Stoakes <lstoakes@gmail.com>
