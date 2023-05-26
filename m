@@ -2,131 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 221F2712BE1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 19:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D0EA712BF5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 19:41:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236964AbjEZRjK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 13:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48534 "EHLO
+        id S242714AbjEZRlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 13:41:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237566AbjEZRjF (ORCPT
+        with ESMTP id S242689AbjEZRl2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 13:39:05 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 884989C;
-        Fri, 26 May 2023 10:39:03 -0700 (PDT)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34QHUhtb027460;
-        Fri, 26 May 2023 17:38:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2023-03-30;
- bh=IfSW/UDWwBRWG8SDIQHpCEwrphBWk4YngDf3Lp64uek=;
- b=2Fz69+XpLWolstaZXxwprwNIRs56rITnMnBxDReWzz3fUpjbmmgyqZTr8RzvC+hlhGJS
- IJjLads0cKhcYTMq5bR7NoEZYWh40Hf34IjVZUezaUM35HJ+a7Q6qFVvjWYUUXmpC31h
- 2FbTmgSz1L4Rwk4Y50dnNrKTUv3A3JZN+cLYnRlLRqwJVD2GFhhusGtSQCpvBPURnrvP
- dI9aW8y6D68ArcdAnWSp9yVCX/JvRAEbMLV+rFykk/xhIdhfkXQRCoglf1gtXXMwN2cE
- N0rifZml/aZr+TkRIy87uVZUhcJ5QsU1VhwUD/p6qTds/1KDYk3CyfqdrQI/exvEHisF 4g== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qu17j00kv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 May 2023 17:38:56 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34QHQUAX029298;
-        Fri, 26 May 2023 17:38:55 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qqk2vfpn3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 May 2023 17:38:55 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34QHcsE7029060;
-        Fri, 26 May 2023 17:38:55 GMT
-Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3qqk2vfpm6-3;
-        Fri, 26 May 2023 17:38:55 +0000
-From:   Dai Ngo <dai.ngo@oracle.com>
-To:     chuck.lever@oracle.com, jlayton@kernel.org
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] NFSD: add counter for write delegation recall due to conflict with GETATTR
-Date:   Fri, 26 May 2023 10:38:42 -0700
-Message-Id: <1685122722-18287-3-git-send-email-dai.ngo@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1685122722-18287-1-git-send-email-dai.ngo@oracle.com>
-References: <1685122722-18287-1-git-send-email-dai.ngo@oracle.com>
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-26_07,2023-05-25_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 adultscore=0
- mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305260150
-X-Proofpoint-GUID: 6APJP43Ccmy90bxE_7GHzHZ_oyYQLWmN
-X-Proofpoint-ORIG-GUID: 6APJP43Ccmy90bxE_7GHzHZ_oyYQLWmN
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 26 May 2023 13:41:28 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F0CAE5C;
+        Fri, 26 May 2023 10:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=IlhXisbqRI4JCa1p0EpJL3g9WoXpQt0xT0Nj4ndM20E=; b=mnWv9xxpTNuhG9+/dZEP0422ih
+        ZPvYZFFcScZsfnA2f4wknjp8Fp0JtupSp2LqseWHGM7ee9+lvA+QH1ioyjPQBJPaRm09DAuRuIwZv
+        eMymAmHrmXat4ByJhquy0fed6ttcWGo5OSwCD4DS0hOTJZVIw3e/jKAfZPk/Dyoj6Bc7pa3JwUyTm
+        U4mdVm/BmYresJJJ/2b5LrnxT1pJH71T53E4VxJMDnaNm+3584FVJJ9t93+Mkg4BRTKHwwm3KUvzM
+        CVPnRwfPFh9kSVefDR9cPVvUJy8aevpvmdUAx0lYoGi0npASsDLKiy7j4Zyju9aD90/HrStecaqc4
+        MyH9ayMg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q2bQy-003KpZ-2Y;
+        Fri, 26 May 2023 17:41:00 +0000
+Date:   Fri, 26 May 2023 10:41:00 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     hughd@google.com, akpm@linux-foundation.org, brauner@kernel.org,
+        djwong@kernel.org, p.raghav@samsung.com, da.gomez@samsung.com,
+        rohan.puri@samsung.com, rpuri.linux@gmail.com,
+        a.manzanares@samsung.com, dave@stgolabs.net, yosryahmed@google.com,
+        keescook@chromium.org, hare@suse.de, kbusch@kernel.org,
+        patches@lists.linux.dev, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2 2/8] shmem: convert to use is_folio_hwpoison()
+Message-ID: <ZHDvLD3vwt11EYFg@bombadil.infradead.org>
+References: <20230526075552.363524-1-mcgrof@kernel.org>
+ <20230526075552.363524-3-mcgrof@kernel.org>
+ <ZHDDFoXs51Be8FcZ@casper.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZHDDFoXs51Be8FcZ@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add counter to keep track of how many times write delegations are
-recalled due to conflict with GETATTR.
+On Fri, May 26, 2023 at 03:32:54PM +0100, Matthew Wilcox wrote:
+> On Fri, May 26, 2023 at 12:55:46AM -0700, Luis Chamberlain wrote:
+> > The PageHWPoison() call can be converted over to the respective folio
+> > call is_folio_hwpoison(). This introduces no functional changes.
+> 
+> Yes, it very much does!
+> 
+> > @@ -4548,7 +4548,7 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+> >  		return &folio->page;
+> >  
+> >  	page = folio_file_page(folio, index);
+> > -	if (PageHWPoison(page)) {
+> > +	if (is_folio_hwpoison(folio)) {
+> >  		folio_put(folio);
+> 
+> Imagine you have an order-9 folio and one of the pages in it gets
+> HWPoison.  Before, you can read the other 511 pages in the folio.
 
-Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
----
- fs/nfsd/nfs4state.c | 1 +
- fs/nfsd/stats.c     | 2 ++
- fs/nfsd/stats.h     | 5 +++++
- 3 files changed, 8 insertions(+)
+But before we didn't use high order folios for reads on tmpfs?
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 9f551dbf50d6..89ec251f7e83 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -8386,6 +8386,7 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct inode *inode)
- 				return 0;
- 			}
- 			spin_unlock(&ctx->flc_lock);
-+			nfsd_stats_wdeleg_getattr_inc();
- 			status = nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
- 			if (status != nfserr_jukebox)
- 				return status;
-diff --git a/fs/nfsd/stats.c b/fs/nfsd/stats.c
-index 777e24e5da33..63797635e1c3 100644
---- a/fs/nfsd/stats.c
-+++ b/fs/nfsd/stats.c
-@@ -65,6 +65,8 @@ static int nfsd_show(struct seq_file *seq, void *v)
- 		seq_printf(seq, " %lld",
- 			   percpu_counter_sum_positive(&nfsdstats.counter[NFSD_STATS_NFS4_OP(i)]));
- 	}
-+	seq_printf(seq, "\nwdeleg_getattr %lld",
-+		percpu_counter_sum_positive(&nfsdstats.counter[NFSD_STATS_WDELEG_GETATTR]));
- 
- 	seq_putc(seq, '\n');
- #endif
-diff --git a/fs/nfsd/stats.h b/fs/nfsd/stats.h
-index 9b43dc3d9991..e31bd3abdf07 100644
---- a/fs/nfsd/stats.h
-+++ b/fs/nfsd/stats.h
-@@ -22,6 +22,7 @@ enum {
- 	NFSD_STATS_FIRST_NFS4_OP,	/* count of individual nfsv4 operations */
- 	NFSD_STATS_LAST_NFS4_OP = NFSD_STATS_FIRST_NFS4_OP + LAST_NFS4_OP,
- #define NFSD_STATS_NFS4_OP(op)	(NFSD_STATS_FIRST_NFS4_OP + (op))
-+	NFSD_STATS_WDELEG_GETATTR,	/* count of getattr conflict with wdeleg */
- #endif
- 	NFSD_STATS_COUNTERS_NUM
- };
-@@ -93,4 +94,8 @@ static inline void nfsd_stats_drc_mem_usage_sub(struct nfsd_net *nn, s64 amount)
- 	percpu_counter_sub(&nn->counter[NFSD_NET_DRC_MEM_USAGE], amount);
- }
- 
-+static inline void nfsd_stats_wdeleg_getattr_inc(void)
-+{
-+	percpu_counter_inc(&nfsdstats.counter[NFSD_STATS_WDELEG_GETATTR]);
-+}
- #endif /* _NFSD_STATS_H */
--- 
-2.9.5
+But I get the idea.
 
+> After your patch, you can't read any of them.  You've effectively
+> increased the blast radius of any hwerror, and I don't think that's an
+> acceptable change.
+
+I see, thanks! Will fix if we move forward with this.
+
+  Luis
