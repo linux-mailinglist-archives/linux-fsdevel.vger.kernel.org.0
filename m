@@ -2,66 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0D7D712AB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 18:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 361FF712AD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 18:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231201AbjEZQdW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 12:33:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39322 "EHLO
+        id S236681AbjEZQkh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 12:40:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231124AbjEZQdU (ORCPT
+        with ESMTP id S231185AbjEZQkg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 12:33:20 -0400
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D9B198
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 09:33:17 -0700 (PDT)
+        Fri, 26 May 2023 12:40:36 -0400
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [IPv6:2001:1600:3:17::42ad])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA9FD9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 09:40:31 -0700 (PDT)
 Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QSVpc2hLFzMq9gR;
-        Fri, 26 May 2023 18:33:12 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QSVpV20JTzMskdH;
-        Fri, 26 May 2023 18:33:06 +0200 (CEST)
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QSVz13cjDzMqfBn;
+        Fri, 26 May 2023 18:40:29 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QSVyz2XFlzMppDv;
+        Fri, 26 May 2023 18:40:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685118792;
-        bh=HJQhmbmtbBhKQKuJigfXUA3I5dGt5vNd+kwPhAR19ZE=;
+        s=20191114; t=1685119229;
+        bh=qgneZctsmZu9NYVEqwCZ63IYebRwqPZkfQJshIM+ino=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=QqUfw9dzLlsE/jUv5i4Jbgo6yOquEH/LNulEp4j1bWACweWhxdKLOxVud95fbWB4E
-         npEnxoPtqyuJGwkskhuE2oFCSu10WcSFOgyuW8dZTYuf1lnresczWPQXS0hze8B1ou
-         boYfLZK8RC3g7VGc+V2WpOIG30d240jDxiyeRn5Q=
-Message-ID: <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net>
-Date:   Fri, 26 May 2023 18:33:05 +0200
+        b=g8vn7bbw22o6LUCPBxp8u7iUChoXbXrE80j7X4tDjpPDGZ0CJMqSE7T8+XlA+teCx
+         ImuLqBbgQ0molZYHgkbRsstgprjuS6zYERZMvEKj3KrStLFOhClSCU2A/jKXfrDii2
+         i+FZof4I6D1lcDjYLsiTvh8LNbXn8dOv0y65+dPw=
+Message-ID: <8249dd59-ce08-2253-1697-301ad082d905@digikod.net>
+Date:   Fri, 26 May 2023 18:40:26 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
+Subject: Re: [PATCH v1 1/5] hostfs: Fix ephemeral inodes
 Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, code@tyhicks.com,
-        hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
-        sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
-        chuck.lever@oracle.com, jlayton@kernel.org, miklos@szeredi.hu,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, dchinner@redhat.com,
-        john.johansen@canonical.com, mcgrof@kernel.org,
-        mortonm@chromium.org, fred@cloudflare.com, mpe@ellerman.id.au,
-        nathanl@linux.ibm.com, gnoack3000@gmail.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        wangweiyang2@huawei.com
-References: <20230505081200.254449-1-xiujianfeng@huawei.com>
- <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Christopher Obbard <chris.obbard@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        kuba <kuba@kernel.org>, James Morris <jmorris@namei.org>,
+        Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Ritesh Raj Sarraf <ritesh@collabora.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sjoerd Simons <sjoerd@collabora.com>,
+        Willem de Bruijn <willemb@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+References: <20230309165455.175131-1-mic@digikod.net>
+ <20230309165455.175131-2-mic@digikod.net>
+ <133970354.9328381.1684703636966.JavaMail.zimbra@nod.at>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
+In-Reply-To: <133970354.9328381.1684703636966.JavaMail.zimbra@nod.at>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,51 +71,66 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 15/05/2023 17:12, Christian Brauner wrote:
-> On Fri, May 05, 2023 at 04:11:58PM +0800, Xiu Jianfeng wrote:
->> Hi,
+On 21/05/2023 23:13, Richard Weinberger wrote:
+> ----- Ursprüngliche Mail -----
+>> Von: "Mickaël Salaün" <mic@digikod.net>
+>> hostfs creates a new inode for each opened or created file, which created
+>> useless inode allocations and forbade identifying a host file with a kernel
+>> inode.
 >>
->> I am working on adding xattr/attr support for landlock [1], so we can
->> control fs accesses such as chmod, chown, uptimes, setxattr, etc.. inside
->> landlock sandbox. the LSM hooks as following are invoved:
->> 1.inode_setattr
->> 2.inode_setxattr
->> 3.inode_removexattr
->> 4.inode_set_acl
->> 5.inode_remove_acl
->> which are controlled by LANDLOCK_ACCESS_FS_WRITE_METADATA.
+>> Fix this uncommon filesystem behavior by tying kernel inodes to host
+>> file's inode and device IDs.  Even if the host filesystem inodes may be
+>> recycled, this cannot happen while a file referencing it is open, which
+>> is the case with hostfs.  It should be noted that hostfs inode IDs may
+>> not be unique for the same hostfs superblock because multiple host's
+>> (backed) superblocks may be used.
 >>
->> and
->> 1.inode_getattr
->> 2.inode_get_acl
->> 3.inode_getxattr
->> 4.inode_listxattr
->> which are controlled by LANDLOCK_ACCESS_FS_READ_METADATA
+>> Delete inodes when dropping them to force backed host's file descriptors
+>> closing.
+>>
+>> This enables to entirely remove ARCH_EPHEMERAL_INODES, and then makes
+>> Landlock fully supported by UML.  This is very useful for testing
+>> (ongoing and backported) changes.
 > 
-> It would be helpful to get the complete, full picture.
-> 
-> Piecemeal extending vfs helpers with struct path arguments is costly,
-> will cause a lot of churn and will require a lot of review time from us.
-> 
-> Please give us the list of all security hooks to which you want to pass
-> a struct path (if there are more to come apart from the ones listed
-> here). Then please follow all callchains and identify the vfs helpers
-> that would need to be updated. Then please figure out where those
-> vfs helpers are called from and follow all callchains finding all
-> inode_operations that would have to be updated and passed a struct path
-> argument. So ultimately we'll end up with a list of vfs helpers and
-> inode_operations that would have to be changed.
-> 
-> I'm very reluctant to see anything merged without knowing _exactly_ what
-> you're getting us into.
+> Removing ARCH_EPHEMERAL_INODES should be a patch on its own, IMHO.
 
-Ultimately we'd like the path-based LSMs to reach parity with the 
-inode-based LSMs. This proposal's goal is to provide users the ability 
-to control (in a complete and easy way) file metadata access. For these 
-we need to extend the inode_*attr hooks and inode_*acl hooks to handle 
-paths. The chown/chmod hooks are already good.
+OK, I'll do that in the next series.
 
-In the future, I'd also like to be able to control directory traversals 
-(e.g. chdir), which currently only calls inode_permission().
+> 
+>> These changes also factor out and simplify some helpers thanks to the
+>> new hostfs_inode_update() and the hostfs_iget() revamp: read_name(),
+>> hostfs_create(), hostfs_lookup(), hostfs_mknod(), and
+>> hostfs_fill_sb_common().
+>>
+>> A following commit with new Landlock tests check this new hostfs inode
+>> consistency.
+>>
+>> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+>> Cc: Johannes Berg <johannes@sipsolutions.net>
+>> Cc: Richard Weinberger <richard@nod.at>
+>> Cc: <stable@vger.kernel.org> # 5.15.x: ce72750f04d6: hostfs: Fix writeback of
+>> dirty pages
+>> Cc: <stable@vger.kernel.org> # 5.15+
+> 
+> I'm not sure whether this patch qualifies as stable material.
+> While I fully agree that the current behavoir is odd, nothing user visible
+> is really broken so far.
+I added the ARCH_EPHEMERAL_INODES knob to avoid unexpected behavior. 
+Thanks to that there is no regression for Landlock, but it's unfortunate 
+that we could not use UML to test old kernel versions. According to this 
+odd behavior, I guess some user space may not work with hostfs because 
+of this issue, hence this Cc. I can remove it if you think it is not the 
+case.
 
-What would be the best way to reach this goal?
+
+> 
+>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>> Link: https://lore.kernel.org/r/20230309165455.175131-2-mic@digikod.net
+> 
+> Other than that, patch looks good to me.
+
+Good, I'll send a new series with your suggestions.
+
+> 
+> Thanks,
+> //richard
