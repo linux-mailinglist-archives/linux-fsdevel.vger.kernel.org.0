@@ -2,205 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B53171305D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 01:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB3F0713095
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 01:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230466AbjEZX1T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 19:27:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55046 "EHLO
+        id S242720AbjEZXqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 19:46:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229966AbjEZX1S (ORCPT
+        with ESMTP id S242143AbjEZXqI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 19:27:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED7E3B6;
-        Fri, 26 May 2023 16:27:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7742A653FD;
-        Fri, 26 May 2023 23:27:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B160C433EF;
-        Fri, 26 May 2023 23:27:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685143635;
-        bh=EYT3bd4GCNQY8FsiREuXfss/gcs1qIQQqlzl7HskQ+k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AhUt+PrgBkiKxDS9BWGY/zyVxmAb1igAaFslkWcSB3wv3oYswXGjWsVmNsjHYJn9A
-         RsVt0udwy9jVWLMhwAt5Az28o09KZLreErTyaey6TOz01o6JyE7azbRwi7tK2dvaaT
-         la90m5Dxuptxty1RJeFIeGCogjgz2agBV/VofbN5JsbrMTcBGmiCNVI2ntFyrKfKZI
-         mQ4UNODGWCeHm3tgH6pEMluapbKhHcsyzBPkHeiMB+1zUPNpDRb3PA4nNGm9BTgUpl
-         4duS4i9ZDyfq3AKPOi2z6nLJJHemg+Y6bGRX5BE1doah8vEynsNgu+UfIGXlUXe28p
-         ujNvm6+fHFusg==
-Date:   Fri, 26 May 2023 19:27:12 -0400
-From:   Chuck Lever <cel@kernel.org>
-To:     dai.ngo@oracle.com
-Cc:     chuck.lever@oracle.com, jlayton@kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] NFSD: handle GETATTR conflict with write delegation
-Message-ID: <ZHFAUA+PXrZs/BIU@manet.1015granger.net>
-References: <1685122722-18287-1-git-send-email-dai.ngo@oracle.com>
- <1685122722-18287-2-git-send-email-dai.ngo@oracle.com>
- <ZHD8lDQADV6wUO4V@manet.1015granger.net>
- <85bc3a7b-7db0-1d83-44d9-c4d4c9640a37@oracle.com>
- <ZHELONbYnZe0wOzh@manet.1015granger.net>
- <3719ffe2-c232-6779-9379-8cdbf94c0ef8@oracle.com>
+        Fri, 26 May 2023 19:46:08 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 306FB189
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 16:45:37 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-64d2ca9ef0cso1092760b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 16:45:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1685144706; x=1687736706;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CWzxmQ8QxCg8O8dff9yLq2U6+xkvzRDR890XcXfK3mg=;
+        b=qNuMbPXmTsHLzrS9s68EhswAAzoxtilaQGWKnCRgcVZwgN8OI10caCromsS5yYFv2R
+         H+874/2Gj6go+XQifmTf5kewkn7i7zvKifQzI3km3f265IqOyDa5gd9FHfoFuAjSyJKf
+         yp3Cu3MsWTcnXTi9viqZ4k5krjQN5vXKA82k2fOXEqn8d2vffoDkxV23GTnBw+SHldDg
+         BKOE/PD8nm9+R387W92lR63+tYy0KUg7uB0gL32cR+2Vdg9xe1KAHkV5Hxgrp36Ol5Dq
+         mPB6awaqPs/XRgHujtk3dzFuZEXXJDEl3MYeGn/kMUMu3PuoffhICO1ogYG8CxUAsQyb
+         9Idg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685144706; x=1687736706;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CWzxmQ8QxCg8O8dff9yLq2U6+xkvzRDR890XcXfK3mg=;
+        b=FNXbjWN1lZFQI9d9Ly/FJ57yLqy423rwlohbAVzV/7d8fbH8vz5n85llFI2VJlpP1W
+         dox67HyUP8Jlfhj3Hy3j6VwsAYLnu0MUKD0W1Jnp5aXDoEV7FS9lto4HHlA+CgtKWmw5
+         3ivy0L4K6/bl0JoHp7xi4k+pO3GlKXUy4RhL/KXyBzPf9GcH7NYsGod31SQpc4qlRLKI
+         V+14PSJJkmS4FYTxwBPDr+IsQHUcct8mrot5XBfL2fmKpeTzS7QVZcbIL4LTHXO0N2Ak
+         1xsBrpnq3PV274asXDC0SxTruOt+8h+BgI8N7P4OLDeBtCBuAflHzOQUld4GRP17Cdp1
+         AUVw==
+X-Gm-Message-State: AC+VfDwlMu4FOk/+N1nt7rpWLm1IJNfxdo6KHBxzZz/CXA7qfBsgwWB2
+        QTNXcTlfa9KXzVK43OnnGpWr1Q==
+X-Google-Smtp-Source: ACHHUZ4K3iebgteK6vCXrRpRxz8VUX6r/9jfq7BcWqxhVfO6CgyxLnisMFr2+io1W37C8mIwj9ZXTw==
+X-Received: by 2002:a05:6a00:2d88:b0:64c:ecf7:f49a with SMTP id fb8-20020a056a002d8800b0064cecf7f49amr5438139pfb.21.1685144706285;
+        Fri, 26 May 2023 16:45:06 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
+        by smtp.gmail.com with ESMTPSA id l11-20020a62be0b000000b0064f46570bb7sm3100448pff.167.2023.05.26.16.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 May 2023 16:45:05 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q2h7G-004Jsa-2r;
+        Sat, 27 May 2023 09:45:02 +1000
+Date:   Sat, 27 May 2023 09:45:02 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Joe Thornber <thornber@redhat.com>
+Cc:     Brian Foster <bfoster@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Sarthak Kukreti <sarthakkukreti@chromium.org>,
+        dm-devel@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Jason Wang <jasowang@redhat.com>,
+        Bart Van Assche <bvanassche@google.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Joe Thornber <ejt@redhat.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Alasdair Kergon <agk@redhat.com>
+Subject: Re: [PATCH v7 0/5] Introduce provisioning primitives
+Message-ID: <ZHFEfngPyUOqlthr@dread.disaster.area>
+References: <ZGb2Xi6O3i2pLam8@infradead.org>
+ <ZGeKm+jcBxzkMXQs@redhat.com>
+ <ZGgBQhsbU9b0RiT1@dread.disaster.area>
+ <ZGu0LaQfREvOQO4h@redhat.com>
+ <ZGzIJlCE2pcqQRFJ@bfoster>
+ <ZGzbGg35SqMrWfpr@redhat.com>
+ <ZG1dAtHmbQ53aOhA@dread.disaster.area>
+ <ZG+KoxDMeyogq4J0@bfoster>
+ <ZHB954zGG1ag0E/t@dread.disaster.area>
+ <CAJ0trDbspRaDKzTzTjFdPHdB9n0Q9unfu1cEk8giTWoNu3jP8g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3719ffe2-c232-6779-9379-8cdbf94c0ef8@oracle.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <CAJ0trDbspRaDKzTzTjFdPHdB9n0Q9unfu1cEk8giTWoNu3jP8g@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 01:54:12PM -0700, dai.ngo@oracle.com wrote:
+On Fri, May 26, 2023 at 12:04:02PM +0100, Joe Thornber wrote:
+> Here's my take:
 > 
-> On 5/26/23 12:40 PM, Chuck Lever wrote:
-> > On Fri, May 26, 2023 at 12:34:16PM -0700, dai.ngo@oracle.com wrote:
-> > > On 5/26/23 11:38 AM, Chuck Lever wrote:
-> > > > On Fri, May 26, 2023 at 10:38:41AM -0700, Dai Ngo wrote:
-> > > > > If the GETATTR request on a file that has write delegation in effect
-> > > > > and the request attributes include the change info and size attribute
-> > > > > then the write delegation is recalled. The server waits a maximum of
-> > > > > 90ms for the delegation to be returned before replying NFS4ERR_DELAY
-> > > > > for the GETATTR.
-> > > > > 
-> > > > > Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
-> > > > > ---
-> > > > >    fs/nfsd/nfs4state.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
-> > > > >    fs/nfsd/nfs4xdr.c   |  5 +++++
-> > > > >    fs/nfsd/state.h     |  3 +++
-> > > > >    3 files changed, 56 insertions(+)
-> > > > > 
-> > > > > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> > > > > index b90b74a5e66e..9f551dbf50d6 100644
-> > > > > --- a/fs/nfsd/nfs4state.c
-> > > > > +++ b/fs/nfsd/nfs4state.c
-> > > > > @@ -8353,3 +8353,51 @@ nfsd4_get_writestateid(struct nfsd4_compound_state *cstate,
-> > > > >    {
-> > > > >    	get_stateid(cstate, &u->write.wr_stateid);
-> > > > >    }
-> > > > > +
-> > > > > +/**
-> > > > > + * nfsd4_deleg_getattr_conflict - Trigger recall if GETATTR causes conflict
-> > > > > + * @rqstp: RPC transaction context
-> > > > > + * @inode: file to be checked for a conflict
-> > > > > + *
-> > > > Let's have this comment explain why this is necessary. At the least,
-> > > > it needs to cite RFC 8881 Section 18.7.4, which REQUIREs a conflicting
-> > > > write delegation to be gone before the server can respond to a
-> > > > change/size GETATTR request.
-> > > ok, will add the comment.
-> > > 
-> > > > 
-> > > > > + * Returns 0 if there is no conflict; otherwise an nfs_stat
-> > > > > + * code is returned.
-> > > > > + */
-> > > > > +__be32
-> > > > > +nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct inode *inode)
-> > > > > +{
-> > > > > +	__be32 status;
-> > > > > +	int cnt;
-> > > > > +	struct file_lock_context *ctx;
-> > > > > +	struct file_lock *fl;
-> > > > > +	struct nfs4_delegation *dp;
-> > > > > +
-> > > > > +	ctx = locks_inode_context(inode);
-> > > > > +	if (!ctx)
-> > > > > +		return 0;
-> > > > > +	spin_lock(&ctx->flc_lock);
-> > > > > +	list_for_each_entry(fl, &ctx->flc_lease, fl_list) {
-> > > > > +		if (fl->fl_flags == FL_LAYOUT ||
-> > > > > +				fl->fl_lmops != &nfsd_lease_mng_ops)
-> > > > > +			continue;
-> > > > > +		if (fl->fl_type == F_WRLCK) {
-> > > > > +			dp = fl->fl_owner;
-> > > > > +			if (dp->dl_recall.cb_clp == *(rqstp->rq_lease_breaker)) {
-> > > > > +				spin_unlock(&ctx->flc_lock);
-> > > > > +				return 0;
-> > > > > +			}
-> > > > > +			spin_unlock(&ctx->flc_lock);
-> > > > > +			status = nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
-> > > > > +			if (status != nfserr_jukebox)
-> > > > > +				return status;
-> > > > > +			for (cnt = 3; cnt > 0; --cnt) {
-> > > > > +				if (!nfsd_wait_for_delegreturn(rqstp, inode))
-> > > > > +					continue;
-> > > > > +				return 0;
-> > > > > +			}
-> > > > I'd rather not retry here. Can you can say why a 30ms wait is not
-> > > > sufficient for this case?
-> > > on my VMs, it takes about 80ms for the the delegation return to complete.
-> > I'd rather not tune for tiny VM guests. How long does it take for a
-> > native client to handle CB_RECALL and return the delegation? It
-> > shouldn't take longer to do so than it would for the other cases the
-> > server already handles in under 30ms.
-> > 
-> > Even 30ms is a long time to hold up an nfsd thread, IMO.
+> I don't see why the filesystem cares if thinp is doing a reservation or
+> provisioning under the hood.  All that matters is that a future write
+> to that region will be honoured (barring device failure etc.).
 > 
-> If the client takes less than 30ms to return the delegation then the
-> server will reply to the GETATTR right away, it does not wait for the
-> whole 90ms.
+> I agree that the reservation/force mapped status needs to be inherited
+> by snapshots.
 > 
-> The 90ms is for the worst case scenario where the client/network is slow
-> or under load. Even if the server waits for the whole 90ms it's still
-> faster to reply to the GETATTR than sending CB_RECALL and wait for
-> DELEGRETURN before the server can reply to the GETATTR.
+> 
+> One of the few strengths of thinp is the performance of taking a snapshot.
+> Most snapshots created are never activated.  Many other snapshots are
+> only alive for a brief period, and used read-only.  eg, blk-archive
+> (https://github.com/jthornber/blk-archive) uses snapshots to do very
+> fast incremental backups.  As such I'm strongly against any scheme that
+> requires provisioning as part of the snapshot operation.
+> 
+> Hank and I are in the middle of the range tree work which requires a
+> metadata
+> change.  So now is a convenient time to piggyback other metadata changes to
+> support reservations.
+> 
+> 
+> Given the above this is what I suggest:
+> 
+> 1) We have an api (ioctl, bio flag, whatever) that lets you
+> reserve/guarantee a region:
+> 
+>   int reserve_region(dev, sector_t begin, sector_t end);
 
-The reason for the short timeout is we can't tie up nfsd threads for
-a long time; that can amount to denial of service. I'm not concerned
-about a single slow client, but enough clients that don't respond
-quickly to CB_RECALL can prevent the server from making forward
-progress, even for a short period, and that will be noticeable.
+A C-based interface is not sufficient because the layer that must do
+provsioning is not guaranteed to be directly under the filesystem.
+We must be able to propagate the request down to the layers that
+need to provision storage, and that includes hardware devices.
 
-In Linux, generally we optimize for the fastest case, not the slow
-cases like this one. Make the fast clients as fast as possible; do
-not penalize everyone for the slow cases.
+e.g. dm-thin would have to issue REQ_PROVISION on the LBA ranges it
+allocates in it's backing device to guarantee that the provisioned
+LBA range it allocates is also fully provisioned by the storage
+below it....
 
-So, please make this function call nfsd_wait_for_delegreturn() only
-once, and leave NFSD_DELEGRETURN_TIMEOUT at 30ms.
+>   This api should be used minimally, eg, critical FS metadata only.
 
+Keep in mind that "critical FS metadata" in this context is any
+metadata which could cause the filesystem to hang or enter a global
+error state if an unexpected ENOSPC error occurs during a metadata
+write IO.
 
-> > > > > +			return status;
-> > > > > +		}
-> > > > > +		break;
-> > > > > +	}
-> > > > > +	spin_unlock(&ctx->flc_lock);
-> > > > > +	return 0;
-> > > > > +}
-> > > > > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> > > > > index b83954fc57e3..4590b893dbc8 100644
-> > > > > --- a/fs/nfsd/nfs4xdr.c
-> > > > > +++ b/fs/nfsd/nfs4xdr.c
-> > > > > @@ -2970,6 +2970,11 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_fh *fhp,
-> > > > >    		if (status)
-> > > > >    			goto out;
-> > > > >    	}
-> > > > > +	if (bmval0 & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
-> > > > > +		status = nfsd4_deleg_getattr_conflict(rqstp, d_inode(dentry));
-> > > > > +		if (status)
-> > > > > +			goto out;
-> > > > > +	}
-> > > > >    	err = vfs_getattr(&path, &stat,
-> > > > >    			  STATX_BASIC_STATS | STATX_BTIME | STATX_CHANGE_COOKIE,
-> > > > > diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-> > > > > index d49d3060ed4f..cbddcf484dba 100644
-> > > > > --- a/fs/nfsd/state.h
-> > > > > +++ b/fs/nfsd/state.h
-> > > > > @@ -732,4 +732,7 @@ static inline bool try_to_expire_client(struct nfs4_client *clp)
-> > > > >    	cmpxchg(&clp->cl_state, NFSD4_COURTESY, NFSD4_EXPIRABLE);
-> > > > >    	return clp->cl_state == NFSD4_EXPIRABLE;
-> > > > >    }
-> > > > > +
-> > > > > +extern __be32 nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp,
-> > > > > +				struct inode *inode);
-> > > > >    #endif   /* NFSD4_STATE_H */
-> > > > > -- 
-> > > > > 2.9.5
-> > > > > 
+Which, in pretty much every journalling filesystem, equates to all
+metadata in the filesystem. For a typical root filesystem, that
+might be a in the range of a 1-200MB (depending on journal size).
+For larger filesytems with lots of files in them, it will be in the
+range of GBs of space.
+
+Plan for having to support tens of GBs of provisioned space in
+filesystems, not tens of MBs....
+
+[snip]
+
+> Now this is a lot of work.  As well as the kernel changes we'll need to
+> update the userland tools: thin_check, thin_ls, thin_metadata_unpack,
+> thin_rmap, thin_delta, thin_metadata_pack, thin_repair, thin_trim,
+> thin_dump, thin_metadata_size, thin_restore.  Are we confident that we
+> have buy in from the FS teams that this will be widely adopted?  Are users
+> asking for this?  I really don't want to do 6 months of work for nothing.
+
+I think there's a 2-3 solid days of coding to fully implement
+REQ_PROVISION support in XFS, including userspace tool support.
+Maybe a couple of weeks more to flush the bugs out before it's
+largely ready to go.
+
+So if there's buy in from the block layer and DM people for
+REQ_PROVISION as described, then I'll definitely have XFS support
+ready for you to test whenever dm-thinp is ready to go.
+
+I can't speak for other filesystems, I suspect the only one we care
+about is ext4.  btrfs and f2fs don't need dm-thinp and there aren't
+any other filesystems that are used in production on top of
+dm-thinp, so I think only XFS and ext4 matter at this point in time.
+
+I suspect that ext4 would be fairly easy to add support for as well.
+ext4 has a lot more fixed-place metadata than XFS has so much more
+of it's metadata is covered by mkfs-time provisioning. Limiting
+dynamic metadata to specific fully provisioned block groups and
+provisioning new block groups for metadata when they are near full
+would be equivalent to how I plan to provision metadata space in
+XFS. Hence the implementation for ext4 looks to be broadly similar
+in scope and complexity as XFS....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
