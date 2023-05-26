@@ -2,45 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4B1711B9E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 02:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4668711BA0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 02:48:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234574AbjEZAsQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 20:48:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48120 "EHLO
+        id S229711AbjEZAsb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 20:48:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234550AbjEZAsO (ORCPT
+        with ESMTP id S231344AbjEZAs3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 20:48:14 -0400
+        Thu, 25 May 2023 20:48:29 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A82712E;
-        Thu, 25 May 2023 17:48:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A824912E;
+        Thu, 25 May 2023 17:48:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8DA8763A6B;
-        Fri, 26 May 2023 00:48:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC6EC433D2;
-        Fri, 26 May 2023 00:48:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3815261A5C;
+        Fri, 26 May 2023 00:48:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE31C433EF;
+        Fri, 26 May 2023 00:48:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685062092;
-        bh=ieil9oDICYP49sNwYl1fbl8wErWSNYbCITxFoEMO48Y=;
+        s=k20201202; t=1685062107;
+        bh=gDJChdO4lLzlfsvfXR/2OoKnv0TQP2W9CdJC+cvGd10=;
         h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-        b=ruYupq20AMbwABwcuKM8Td0QkYwAYuZZiV9riMx8Yo2BbTcz2qj2DZQo54bX1I92q
-         aB9kO2fHbx51wizYvCI7iLj9FQRx//sDY1Gm++sb4F32/S1vfPYhPysJvj3dd0rmWs
-         jOhhP7zrNVZc8bwJcKddhIemw0nTr+fgnfnn8TrXgx5Xt07PtnQnZjyLIVZhW/a2O0
-         TyrztGxcKv0piyL3jddv+4xtT1eQ/rAbGC7BQvQnB4naKq+VN+Ns0xujiW4gn9BIQy
-         wN32cp+i81KNYXwd1PH5D07ncbHIo27RNqADhvpwrcOu9gpm6dccUBvRON6ByZ4L9c
-         MuORIwK4QtQRA==
-Date:   Thu, 25 May 2023 17:48:11 -0700
-Subject: [PATCH 5/7] xfs: speed up xfarray sort by sorting xfile page contents
- directly
+        b=tEH1jV7SKV8wA4Uf9QgWnIxVmLSh17LiwvLr/rkoaTJKSTJ1wea8ZB/PSS3/N5fqS
+         jJLR4fgxYEF1TZY4GJ0RoO8ZAHmFFS5CBu3pVwOaNLlWx9fCGutrDgrJQ0AftxG0bu
+         2VDvTNEOKbZOc5EtkPeuFqMrtRj0PRnWF1xfksfHL+nyXX72MXrfbm4/LnhYUCMOrd
+         N2wtNp4M0qvwdbNPdk4h7NbSH1LZTrXDScxcDzwPuLgjzRZZQerI5LtfoWXAHqD+L5
+         ns9F2POMi6YWfv008nqU5GiBNhyaOSIr3nHgbJKUsEMgijL4tx6PFhOVefYxmCUPSu
+         2PuFX+EK9csrA==
+Date:   Thu, 25 May 2023 17:48:27 -0700
+Subject: [PATCH 6/7] xfs: cache pages used for xfarray quicksort convergence
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
         linux-xfs@vger.kernel.org, willy@infradead.org,
         linux-fsdevel@vger.kernel.org
-Message-ID: <168506056526.3729324.16909610222042340263.stgit@frogsfrogsfrogs>
+Message-ID: <168506056541.3729324.17926871235505185426.stgit@frogsfrogsfrogs>
 In-Reply-To: <168506056447.3729324.13624212283929857624.stgit@frogsfrogsfrogs>
 References: <168506056447.3729324.13624212283929857624.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -59,187 +58,175 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-If all the records in an xfarray subset live within the same memory
-page, we can short-circuit even more quicksort recursion by mapping that
-page into the local CPU and using the kernel's heapsort function to sort
-the subset.  On the author's computer, this reduces the runtime by
-another 15% on a 500,000 element array.
+After quicksort picks a pivot item for a particular subsort, it walks
+the records in that subset from the outside in, rearranging them so that
+every record less than the pivot comes before it, and every record
+greater than the pivot comes after it.  This scan has a lot of locality,
+so we can speed it up quite a bit by grabbing the xfile backing page and
+holding onto it as long as we possibly can.  Doing so reduces the
+runtime by another 5% on the author's computer.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- fs/xfs/scrub/trace.h   |   20 ++++++++++
- fs/xfs/scrub/xfarray.c |   97 ++++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/scrub/xfarray.h |    4 ++
- 3 files changed, 121 insertions(+)
+ fs/xfs/scrub/xfarray.c |   86 ++++++++++++++++++++++++++++++++++++++++++------
+ fs/xfs/scrub/xfile.h   |   10 ++++++
+ 2 files changed, 86 insertions(+), 10 deletions(-)
 
 
-diff --git a/fs/xfs/scrub/trace.h b/fs/xfs/scrub/trace.h
-index cf210681d028..faefcc37fff4 100644
---- a/fs/xfs/scrub/trace.h
-+++ b/fs/xfs/scrub/trace.h
-@@ -871,6 +871,26 @@ TRACE_EVENT(xfarray_isort,
- 		  __entry->hi - __entry->lo)
- );
- 
-+TRACE_EVENT(xfarray_pagesort,
-+	TP_PROTO(struct xfarray_sortinfo *si, uint64_t lo, uint64_t hi),
-+	TP_ARGS(si, lo, hi),
-+	TP_STRUCT__entry(
-+		__field(unsigned long, ino)
-+		__field(unsigned long long, lo)
-+		__field(unsigned long long, hi)
-+	),
-+	TP_fast_assign(
-+		__entry->ino = file_inode(si->array->xfile->file)->i_ino;
-+		__entry->lo = lo;
-+		__entry->hi = hi;
-+	),
-+	TP_printk("xfino 0x%lx lo %llu hi %llu elts %llu",
-+		  __entry->ino,
-+		  __entry->lo,
-+		  __entry->hi,
-+		  __entry->hi - __entry->lo)
-+);
-+
- TRACE_EVENT(xfarray_qsort,
- 	TP_PROTO(struct xfarray_sortinfo *si, uint64_t lo, uint64_t hi),
- 	TP_ARGS(si, lo, hi),
 diff --git a/fs/xfs/scrub/xfarray.c b/fs/xfs/scrub/xfarray.c
-index ea995054412c..df042fa016e8 100644
+index df042fa016e8..443ef9be151b 100644
 --- a/fs/xfs/scrub/xfarray.c
 +++ b/fs/xfs/scrub/xfarray.c
-@@ -546,6 +546,87 @@ xfarray_isort(
- 	return xfile_obj_store(si->array->xfile, scratch, len, lo_pos);
+@@ -760,6 +760,66 @@ xfarray_qsort_push(
+ 	return 0;
  }
  
-+/* Grab a page for sorting records. */
++/*
++ * Load an element from the array into the first scratchpad and cache the page,
++ * if possible.
++ */
 +static inline int
-+xfarray_sort_get_page(
++xfarray_sort_load_cached(
 +	struct xfarray_sortinfo	*si,
-+	loff_t			pos,
-+	uint64_t		len)
++	xfarray_idx_t		idx,
++	void			*ptr)
 +{
-+	int			error;
-+
-+	error = xfile_get_page(si->array->xfile, pos, len, &si->xfpage);
-+	if (error)
-+		return error;
++	loff_t			idx_pos = xfarray_pos(si->array, idx);
++	pgoff_t			startpage;
++	pgoff_t			endpage;
++	int			error = 0;
 +
 +	/*
-+	 * xfile pages must never be mapped into userspace, so we skip the
-+	 * dcache flush when mapping the page.
++	 * If this load would split a page, release the cached page, if any,
++	 * and perform a traditional read.
 +	 */
-+	si->page_kaddr = kmap_local_page(si->xfpage.page);
++	startpage = idx_pos >> PAGE_SHIFT;
++	endpage = (idx_pos + si->array->obj_size - 1) >> PAGE_SHIFT;
++	if (startpage != endpage) {
++		error = xfarray_sort_put_page(si);
++		if (error)
++			return error;
++
++		if (xfarray_sort_terminated(si, &error))
++			return error;
++
++		return xfile_obj_load(si->array->xfile, ptr,
++				si->array->obj_size, idx_pos);
++	}
++
++	/* If the cached page is not the one we want, release it. */
++	if (xfile_page_cached(&si->xfpage) &&
++	    xfile_page_index(&si->xfpage) != startpage) {
++		error = xfarray_sort_put_page(si);
++		if (error)
++			return error;
++	}
++
++	/*
++	 * If we don't have a cached page (and we know the load is contained
++	 * in a single page) then grab it.
++	 */
++	if (!xfile_page_cached(&si->xfpage)) {
++		if (xfarray_sort_terminated(si, &error))
++			return error;
++
++		error = xfarray_sort_get_page(si, startpage << PAGE_SHIFT,
++				PAGE_SIZE);
++		if (error)
++			return error;
++	}
++
++	memcpy(ptr, si->page_kaddr + offset_in_page(idx_pos),
++			si->array->obj_size);
 +	return 0;
 +}
 +
-+/* Release a page we grabbed for sorting records. */
-+static inline int
-+xfarray_sort_put_page(
-+	struct xfarray_sortinfo	*si)
-+{
-+	if (!si->page_kaddr)
-+		return 0;
-+
-+	kunmap_local(si->page_kaddr);
-+	si->page_kaddr = NULL;
-+
-+	return xfile_put_page(si->array->xfile, &si->xfpage);
-+}
-+
-+/* Decide if these records are eligible for in-page sorting. */
-+static inline bool
-+xfarray_want_pagesort(
-+	struct xfarray_sortinfo	*si,
-+	xfarray_idx_t		lo,
-+	xfarray_idx_t		hi)
-+{
-+	pgoff_t			lo_page;
-+	pgoff_t			hi_page;
-+	loff_t			end_pos;
-+
-+	/* We can only map one page at a time. */
-+	lo_page = xfarray_pos(si->array, lo) >> PAGE_SHIFT;
-+	end_pos = xfarray_pos(si->array, hi) + si->array->obj_size - 1;
-+	hi_page = end_pos >> PAGE_SHIFT;
-+
-+	return lo_page == hi_page;
-+}
-+
-+/* Sort a bunch of records that all live in the same memory page. */
-+STATIC int
-+xfarray_pagesort(
-+	struct xfarray_sortinfo	*si,
-+	xfarray_idx_t		lo,
-+	xfarray_idx_t		hi)
-+{
-+	void			*startp;
-+	loff_t			lo_pos = xfarray_pos(si->array, lo);
-+	uint64_t		len = xfarray_pos(si->array, hi - lo);
-+	int			error = 0;
-+
-+	trace_xfarray_pagesort(si, lo, hi);
-+
-+	xfarray_sort_bump_loads(si);
-+	error = xfarray_sort_get_page(si, lo_pos, len);
-+	if (error)
-+		return error;
-+
-+	xfarray_sort_bump_heapsorts(si);
-+	startp = si->page_kaddr + offset_in_page(lo_pos);
-+	sort(startp, hi - lo + 1, si->array->obj_size, si->cmp_fn, NULL);
-+
-+	xfarray_sort_bump_stores(si);
-+	return xfarray_sort_put_page(si);
-+}
-+
- /* Return a pointer to the xfarray pivot record within the sortinfo struct. */
- static inline void *xfarray_sortinfo_pivot(struct xfarray_sortinfo *si)
- {
-@@ -700,6 +781,10 @@ xfarray_qsort_push(
-  * 4. For small sets, load the records into the scratchpad and run heapsort on
-  *    them because that is very fast.  In the author's experience, this yields
-  *    a ~10% reduction in runtime.
+ /*
+  * Sort the array elements via quicksort.  This implementation incorporates
+  * four optimizations discussed in Sedgewick:
+@@ -785,6 +845,10 @@ xfarray_qsort_push(
+  *    If a small set is contained entirely within a single xfile memory page,
+  *    map the page directly and run heap sort directly on the xfile page
+  *    instead of using the load/store interface.  This halves the runtime.
 + *
-+ *    If a small set is contained entirely within a single xfile memory page,
-+ *    map the page directly and run heap sort directly on the xfile page
-+ *    instead of using the load/store interface.  This halves the runtime.
++ * 5. This optimization is specific to the implementation.  When converging lo
++ *    and hi after selecting a pivot, we will try to retain the xfile memory
++ *    page between load calls, which reduces run time by 50%.
   */
  
  /*
-@@ -745,6 +830,18 @@ xfarray_sort(
- 			continue;
- 		}
- 
-+		/*
-+		 * If directly mapping the page and sorting can solve our
-+		 * problems, we're done.
-+		 */
-+		if (xfarray_want_pagesort(si, lo, hi)) {
-+			error = xfarray_pagesort(si, lo, hi);
+@@ -866,19 +930,20 @@ xfarray_sort(
+ 			 * Decrement hi until it finds an a[hi] less than the
+ 			 * pivot value.
+ 			 */
+-			error = xfarray_sort_load(si, hi, scratch);
++			error = xfarray_sort_load_cached(si, hi, scratch);
+ 			if (error)
+ 				goto out_free;
+ 			while (xfarray_sort_cmp(si, scratch, pivot) >= 0 &&
+ 								lo < hi) {
+-				if (xfarray_sort_terminated(si, &error))
+-					goto out_free;
+-
+ 				hi--;
+-				error = xfarray_sort_load(si, hi, scratch);
++				error = xfarray_sort_load_cached(si, hi,
++						scratch);
+ 				if (error)
+ 					goto out_free;
+ 			}
++			error = xfarray_sort_put_page(si);
 +			if (error)
 +				goto out_free;
-+			si->stack_depth--;
-+			continue;
-+		}
-+
- 		/* If insertion sort can solve our problems, we're done. */
- 		if (xfarray_want_isort(si, lo, hi)) {
- 			error = xfarray_isort(si, lo, hi);
-diff --git a/fs/xfs/scrub/xfarray.h b/fs/xfs/scrub/xfarray.h
-index a58ce3294ded..e7e88350a80e 100644
---- a/fs/xfs/scrub/xfarray.h
-+++ b/fs/xfs/scrub/xfarray.h
-@@ -81,6 +81,10 @@ struct xfarray_sortinfo {
- 	/* XFARRAY_SORT_* flags; see below. */
- 	unsigned int		flags;
  
-+	/* Cache a page here for faster access. */
-+	struct xfile_page	xfpage;
-+	void			*page_kaddr;
+ 			if (xfarray_sort_terminated(si, &error))
+ 				goto out_free;
+@@ -894,19 +959,20 @@ xfarray_sort(
+ 			 * Increment lo until it finds an a[lo] greater than
+ 			 * the pivot value.
+ 			 */
+-			error = xfarray_sort_load(si, lo, scratch);
++			error = xfarray_sort_load_cached(si, lo, scratch);
+ 			if (error)
+ 				goto out_free;
+ 			while (xfarray_sort_cmp(si, scratch, pivot) <= 0 &&
+ 								lo < hi) {
+-				if (xfarray_sort_terminated(si, &error))
+-					goto out_free;
+-
+ 				lo++;
+-				error = xfarray_sort_load(si, lo, scratch);
++				error = xfarray_sort_load_cached(si, lo,
++						scratch);
+ 				if (error)
+ 					goto out_free;
+ 			}
++			error = xfarray_sort_put_page(si);
++			if (error)
++				goto out_free;
+ 
+ 			if (xfarray_sort_terminated(si, &error))
+ 				goto out_free;
+diff --git a/fs/xfs/scrub/xfile.h b/fs/xfs/scrub/xfile.h
+index d08a202f3882..1aae2cd91720 100644
+--- a/fs/xfs/scrub/xfile.h
++++ b/fs/xfs/scrub/xfile.h
+@@ -12,6 +12,16 @@ struct xfile_page {
+ 	loff_t			pos;
+ };
+ 
++static inline bool xfile_page_cached(const struct xfile_page *xfpage)
++{
++	return xfpage->page != NULL;
++}
 +
- #ifdef DEBUG
- 	/* Performance statistics. */
- 	uint64_t		loads;
++static inline pgoff_t xfile_page_index(const struct xfile_page *xfpage)
++{
++	return xfpage->page->index;
++}
++
+ struct xfile {
+ 	struct file		*file;
+ };
 
