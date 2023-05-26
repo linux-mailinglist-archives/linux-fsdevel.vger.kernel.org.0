@@ -2,205 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C1BC712483
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 12:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E7457124BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 12:33:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242800AbjEZKWn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 06:22:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33326 "EHLO
+        id S242521AbjEZKdJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 06:33:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242765AbjEZKWl (ORCPT
+        with ESMTP id S230035AbjEZKdF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 06:22:41 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 783C8FB;
-        Fri, 26 May 2023 03:22:37 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230526102225euoutp02f3ee4392ab1b2d57683ecb95db40883c~iqmFZZxFr0213402134euoutp02K;
-        Fri, 26 May 2023 10:22:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230526102225euoutp02f3ee4392ab1b2d57683ecb95db40883c~iqmFZZxFr0213402134euoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1685096545;
-        bh=E5j3mNncGUKQnVTagpyIHdEzaEGKl4d4KchUoa6tm8s=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=ieli2mS0rP58yAIJ+EDq/aGVemzZNhHrOwujB/tO/Jy96TEvoTca7XhdbkUCdhaSw
-         wxb+tH1Nd+3xVMwn0q4BUmnmUXqXAy4ozGV+b8UXNcrfVXswEPq1QGLabfQGmDJbik
-         jJsPv7/AVOsdKOtMg0HE0iw5XFETEbii88s3pEdc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230526102225eucas1p2dd4eb7d91c12b5f7be915c7768048675~iqmFQvdZY1456714567eucas1p2m;
-        Fri, 26 May 2023 10:22:25 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 71.52.42423.16880746; Fri, 26
-        May 2023 11:22:25 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230526102224eucas1p140af5598f8323865da3bb5e39fdb5192~iqmEqgkW60550205502eucas1p1F;
-        Fri, 26 May 2023 10:22:24 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230526102224eusmtrp149fb1eb2c5a49727eabc3dadd11f28b2~iqmEp6aUF2919029190eusmtrp1x;
-        Fri, 26 May 2023 10:22:24 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-8d-647088616b8e
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id C9.7F.10549.06880746; Fri, 26
-        May 2023 11:22:24 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230526102224eusmtip18210e41d32b9a2e482bd9185d96079fd~iqmEbuqRA0765907659eusmtip1B;
-        Fri, 26 May 2023 10:22:24 +0000 (GMT)
-Received: from localhost (106.210.248.78) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 26 May 2023 11:22:23 +0100
-Date:   Fri, 26 May 2023 12:22:22 +0200
-From:   Joel Granados <j.granados@samsung.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-CC:     <mcgrof@kernel.org>, Christian Brauner <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH v4 7/8] sysctl: Refactor base paths registrations
-Message-ID: <20230526102222.c5anxpcfia5djnxe@localhost>
+        Fri, 26 May 2023 06:33:05 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0653812A;
+        Fri, 26 May 2023 03:33:04 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-30a8c4afa46so503374f8f.1;
+        Fri, 26 May 2023 03:33:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685097182; x=1687689182;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7GMIbxSmACC58JY0s4Fx99cZ5L7LdXOL1wbSAxCBBMs=;
+        b=KnX4LPdzrVoYh1g88IfS6jHE1lmyQMFjkZHZDfkHT55O6QJ8dLc6GulwVzLk6FrZcL
+         BvdKsl+h/EX0Tz4kqo9AU5grM7X9SkoMazJ3QOB3cYYAskQrQIDZkVD6qPRBg7chxwfK
+         omg/2SkIDM5bpS0LIiEqW1uSvw0rXYC5/qwl3S7Yc4nGZ6VlpcuHxCr8GWkiNp7EFo+f
+         pWfvBGhVt+eCHt7N5/dgbgNVF+FBP2HdcgMHJ+fpJOifYsIMZ8O2QuiDdcckAy3MrdO5
+         KLbc9VgwRaGpr7T3aZ42GLGA5GevBLdZy/jLnfXBHFzrZrv/ngbca2LF0G4ZCExz+jwy
+         TYaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685097182; x=1687689182;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7GMIbxSmACC58JY0s4Fx99cZ5L7LdXOL1wbSAxCBBMs=;
+        b=V2EydWafPuamF1ggEaN3pjUGtSsnrafOAdIvkFlOnP5AHiGBvzp4WDL55mLG8cOmrJ
+         /pDn8Hka/Up87o8n5EURvvg7mhhYVUoin9Zlt8K0DeD0qfdZmBmC1u7UlNkGIDRfoUKb
+         oYoJv59CBDM9sMOauCRYzsaHqCzAX3Wg5gcMZ/Nf4onrC+lIfH2hleps37nhzCdkZwLY
+         3HjWjNiES4icX8am4SD1vVmzZOSG2uY7pbTGqvU+6ClGKtZWes6XftvTlS3tBmbGwGN7
+         BZGAnzLNVhHW4hXZu8RFP0iOfYe0b9oss99rGUqVVvBqHJCPzbKe+Fjgu4J6qQHhPWrN
+         ZGeQ==
+X-Gm-Message-State: AC+VfDy7gbxL8E7TJCUncnH803oL9b4tuFUEthKq2WUiylp1jUBIHnl3
+        Z4yCj/f2XDLR3dI+s0UP4rBc77uymfQ=
+X-Google-Smtp-Source: ACHHUZ62mVkAf+27IkrhdN6EwXoYAVcQ3q16snWYpA3QdQwxIFSSH4LCdtadf7UGwbc/g3pYsQKWjA==
+X-Received: by 2002:a5d:6ac4:0:b0:30a:8e6a:3d77 with SMTP id u4-20020a5d6ac4000000b0030a8e6a3d77mr1197818wrw.1.1685097182117;
+        Fri, 26 May 2023 03:33:02 -0700 (PDT)
+Received: from suse.localnet (host-95-248-204-235.retail.telecomitalia.it. [95.248.204.235])
+        by smtp.gmail.com with ESMTPSA id j10-20020a5d618a000000b0030631a599a0sm4647915wru.24.2023.05.26.03.33.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 May 2023 03:33:01 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [git pull] vfs.git sysv pile
+Date:   Fri, 26 May 2023 12:32:59 +0200
+Message-ID: <5939173.lOV4Wx5bFT@suse>
+In-Reply-To: <20230525201046.cth6qizdh7lwobxj@quack3>
+References: <Y/gugbqq858QXJBY@ZenIV> <3307436.0oRPG1VZx4@suse>
+ <20230525201046.cth6qizdh7lwobxj@quack3>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="s4khld4elb45pjku"
-Content-Disposition: inline
-In-Reply-To: <c97bfda5-cecf-4521-880b-02c6da987120@kili.mountain>
-X-Originating-IP: [106.210.248.78]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHKsWRmVeSWpSXmKPExsWy7djPc7qJHQUpBqsOS1u8PvyJ0eLDvFZ2
-        izPduRZ79p5ksbi8aw6bxY0JTxktDpyewmxx/u9xVotlO/0cOD1mN1xk8dg56y67x4JNpR6b
-        VnWyedy5tofN4/MmOY9NT94yBbBHcdmkpOZklqUW6dslcGXc/zqRtaBZsmLKzL3MDYwThbsY
-        OTkkBEwk7n1ZwdbFyMUhJLCCUeLmzQtMIAkhgS+MErNb1CASnxklZp1azwbTcfJuNztEYjmj
-        xLv3B5nhqpae/c0E4WxhlDjb+IYdpIVFQFWi81kXWDubgI7E+Td3mEFsESD739/JLCA2s8AS
-        Jolry2RBbGEBV4nL68+CxXkFzCWuXrzECGELSpyc+QSqvkJi7vIPQHEOIFtaYvk/DpAwp4Cj
-        xKnbx1khLlWS2Nr1jgnCrpU4teUW2G0SAus5JQ6tfcIOkXCR+POmmRHCFpZ4dXwLVFxG4vTk
-        HhaIhsmMEvv/fWCHcFYzSixr/Ao11lqi5QrIJA4g21Fi5gx9CJNP4sZbQYg7+SQmbZvODBHm
-        lehoE4JoVJNYfe8NywRG5VlIPpuF5LNZCJ9BhHUkFuz+xIYhrC2xbOFrZgjbVmLduvcsCxjZ
-        VzGKp5YW56anFhvmpZbrFSfmFpfmpesl5+duYgQmu9P/jn/awTj31Ue9Q4xMHIyHGFWAmh9t
-        WH2BUYolLz8vVUmEd0NOfooQb0piZVVqUX58UWlOavEhRmkOFiVxXm3bk8lCAumJJanZqakF
-        qUUwWSYOTqkGprr68Enr/DND5l/6lxz66f6qWJ9aPW3nsPurQ49b3ZA8JNXbe//jOq/+Jha+
-        bUryx1z/5f//7zfZcpu0WEfSWnfr3xyfC3unuSV237VymvTKYPfhhS9vWBfcc7xWxsu7b225
-        yunTaeapk2LthLXXzv20Z+G1/55HF7Pcr2n9ta1qRfnd6VdqZXJEm0wvS36czXtWk3FO5Ftm
-        j6rqs0frAt/3XNg231Ti7vqoNyfkNq6deuzsTSGHFd5RelO8TTmyWk9vir7evbVBfmO+2PRv
-        u+crd8WZnPkXp7KhJSBl+fbzyf4P7GZWmZ2fXSfZ6Fu5UEj+g2dYxza7d308jqusepj+TF2Z
-        lx7Lei3w3wz+xUosxRmJhlrMRcWJALdsrrbxAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDIsWRmVeSWpSXmKPExsVy+t/xu7oJHQUpButn6lm8PvyJ0eLDvFZ2
-        izPduRZ79p5ksbi8aw6bxY0JTxktDpyewmxx/u9xVotlO/0cOD1mN1xk8dg56y67x4JNpR6b
-        VnWyedy5tofN4/MmOY9NT94yBbBH6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZ
-        mSrp29mkpOZklqUW6dsl6GUs6//PUtAoWXGyQ7WBsV+4i5GTQ0LAROLk3W72LkYuDiGBpYwS
-        k48eZIFIyEhs/HKVFcIWlvhzrYsNougjo8SaD5NZIJwtjBLvPpxjBKliEVCV6HwGUsXJwSag
-        I3H+zR1mEFsEyP73F6KBWWAJk8TCtmVgK4QFXCUurz8LZvMKmEtcvXiJEWLqH0aJKTOusUEk
-        BCVOznwCVsQsUCYxc00jUJwDyJaWWP6PAyTMKeAocer2cahTlSS2dr1jgrBrJT7/fcY4gVF4
-        FpJJs5BMmoUwCSKsJXHj30smDGFtiWULXzND2LYS69a9Z1nAyL6KUSS1tDg3PbfYUK84Mbe4
-        NC9dLzk/dxMjMOq3Hfu5eQfjvFcf9Q4xMnEwHmJUAep8tGH1BUYplrz8vFQlEd4NOfkpQrwp
-        iZVVqUX58UWlOanFhxhNgcE4kVlKNDkfmI7ySuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNL
-        UrNTUwtSi2D6mDg4pRqYtsyaPzsia9Wsh1t8/zrM3SAV3/STSUE6u+lI3ZyT1fvOR/Zrn5Pe
-        MPE3g3uzcGfsOrG+a88PX/oerfg4pfvv5Wu/GHwbVCozVDMu3jxp2Cd9ZuU5qZlm6dU3H/m1
-        XFYI4+icOfuk59x+fat94Zvtvt0Q14vaNWV65JSbyQLft3uKzt1yR3Ke2pYMNnZe/SmT39w6
-        e+KbTVaXZW3uF8a7NSe4zT6xHmsJ2v3/KsOthT823b+xN8l+9rL/dzLNI2fatV6r+Wn34a5A
-        c3XtXIZ38xwrDCzKH/1Q+L01/8supx3Kvz+ZTXvCe6Li1ImgeJ/HHxbzx08oEV0VvahTQrRf
-        WHJXqtBy3fjrWf4XdytPP6fEUpyRaKjFXFScCAApwMtUjwMAAA==
-X-CMS-MailID: 20230526102224eucas1p140af5598f8323865da3bb5e39fdb5192
-X-Msg-Generator: CA
-X-RootMTR: 20230523122236eucas1p17639bfdbfb30c9d751e0a8fc85fe2fd3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230523122236eucas1p17639bfdbfb30c9d751e0a8fc85fe2fd3
-References: <20230523122220.1610825-1-j.granados@samsung.com>
-        <CGME20230523122236eucas1p17639bfdbfb30c9d751e0a8fc85fe2fd3@eucas1p1.samsung.com>
-        <20230523122220.1610825-8-j.granados@samsung.com>
-        <c97bfda5-cecf-4521-880b-02c6da987120@kili.mountain>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---s4khld4elb45pjku
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, May 25, 2023 at 11:37:47AM +0300, Dan Carpenter wrote:
-> On Tue, May 23, 2023 at 02:22:19PM +0200, Joel Granados wrote:
-> > This is part of the general push to deprecate register_sysctl_paths and
-> > register_sysctl_table. The old way of doing this through
-> > register_sysctl_base and DECLARE_SYSCTL_BASE macro is replaced with a
-> > call to register_sysctl_init. The 5 base paths affected are: "kernel",
-> > "vm", "debug", "dev" and "fs".
+On gioved=EC 25 maggio 2023 22:10:46 CEST Jan Kara wrote:
+> On Mon 27-03-23 12:29:56, Fabio M. De Francesco wrote:
+> > On luned=EC 20 marzo 2023 13:47:25 CEST Jan Kara wrote:
+> > > On Mon 20-03-23 12:18:38, Fabio M. De Francesco wrote:
+> > > > On gioved=EC 16 marzo 2023 11:30:21 CET Fabio M. De Francesco wrote:
+> > > > > On gioved=EC 16 marzo 2023 10:00:35 CET Jan Kara wrote:
+> > > > > > On Wed 15-03-23 19:08:57, Fabio M. De Francesco wrote:
+> > > > > > > On mercoled=EC 1 marzo 2023 15:14:16 CET Al Viro wrote:
+> > [snip]
 > >=20
-> > We remove the register_sysctl_base function and the DECLARE_SYSCTL_BASE
-> > macro since they are no longer needed.
+> > > > > > > > I think I've pushed a demo patchset to vfs.git at some point
+> > > > > > > > back
 > >=20
-> > In order to quickly acertain that the paths did not actually change I
-> > executed `find /proc/sys/ | sha1sum` and made sure that the sha was the
-> > same before and after the commit.
+> > in
 > >=20
-> > We end up saving 563 bytes with this change:
+> > > > > > > > January... Yep - see #work.ext2 in there; completely untest=
+ed,
+> > > > > > > > though.
 > >=20
-> > ./scripts/bloat-o-meter vmlinux.0.base vmlinux.1.refactor-base-paths
-> > add/remove: 0/5 grow/shrink: 2/0 up/down: 77/-640 (-563)
-> > Function                                     old     new   delta
-> > sysctl_init_bases                             55     111     +56
-> > init_fs_sysctls                               12      33     +21
-> > vm_base_table                                128       -    -128
-> > kernel_base_table                            128       -    -128
-> > fs_base_table                                128       -    -128
-> > dev_base_table                               128       -    -128
-> > debug_base_table                             128       -    -128
-> > Total: Before=3D21258215, After=3D21257652, chg -0.00%
+> > Al,
 > >=20
-> > Signed-off-by: Joel Granados <j.granados@samsung.com>
-> > [mcgrof: modified to use register_sysctl_init() over register_sysctl()
-> >  and add bloat-o-meter stats]
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > I reviewed and tested your patchset (please see below).
+> >=20
+> > I think that you probably also missed Jan's last message about how you
+> > prefer
+> > they to be treated.
+> >=20
+> > Jan asked you whether you will submit these patches or he should just p=
+ull
+> > your branch into his tree.
+> >=20
+> > Please look below for my tags and Jan's question.
 >=20
-> This needs a Fixes tag so it doesn't get backported by some weird fluke.
-> Or you could just fold it in with the original patch which introduced
-I folded it into the original patch
+> Ok, Al didn't reply
 
-thx
+I noticed it...=20
 
-Best
-> the bug.
->=20
-> Probably add a copy of the output from dmesg?  Maybe add some
-> Reported-by tags?
->=20
-> regards,
-> dan carpenter
-> >=20
+> so I've just pulled the patches from Al's tree,
 
---=20
+Thank you very much for doing this :-)
 
-Joel Granados
+> added
+> your Tested-by tag
 
---s4khld4elb45pjku
-Content-Type: application/pgp-signature; name="signature.asc"
+Did you also notice the Reviewed-by tags?
 
------BEGIN PGP SIGNATURE-----
+> and push out the result into linux-next.
 
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmRwiF4ACgkQupfNUreW
-QU/Phgv/dM4OeXZoGMXjp7WJRASyGlFsDMvhxkoTWqze/5olOWjFw31231QWfvkr
-VWqUxm5CPzLt7/x0UNg/jiT5NrF72kVJssTuYUNPW/01J7NYhNSoEX0gGB2d7LOU
-DrHC+0LGLGYbvKIOg58xvQul3DPMk3sofThlyajSQVfH5zqJEZB7Pt9f8rrYAXZF
-wJrs+5lTtQ0uJjfA1NGYfom5tDJH9c0ekVR8SjfpflswiHSf1ZXarN+x6qy0LBv4
-wk6IDhCh4pZRrUSd3z6InRApXGnyFJpY4JrLVb7h9Beibs8QIBWBTQs1xIblAOKR
-wZzGfMZrps4RJumsIxxU6tP+yb5NjKIhx8z7MZ761uLW5j8agKzGLT4fSprQ7/H3
-WI29BR58yVyO0a5Kig3rmpqvR88KVCHy+1TEgJzMfL9wbEdxwX08iyRxNX/NhVs9
-e4dVJSBXnZoUuc2iVOV7j77d3fTQ5S0MwRuYmss/WNV2s2q4fW7kkAo6b3tsvM98
-LhlD2/fi
-=uLjI
------END PGP SIGNATURE-----
+Great!
+Again thanks,
 
---s4khld4elb45pjku--
+=46abio
+
+> 							=09
+Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
+
+
