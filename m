@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A40711C44
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 03:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81816711C47
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 03:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239099AbjEZBPT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 May 2023 21:15:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56976 "EHLO
+        id S229885AbjEZBPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 May 2023 21:15:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235295AbjEZBPS (ORCPT
+        with ESMTP id S229865AbjEZBPd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 May 2023 21:15:18 -0400
+        Thu, 25 May 2023 21:15:33 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93963198;
-        Thu, 25 May 2023 18:15:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F38C194;
+        Thu, 25 May 2023 18:15:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1EC0A64C28;
-        Fri, 26 May 2023 01:15:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D91C433D2;
-        Fri, 26 May 2023 01:15:15 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B383E64AFA;
+        Fri, 26 May 2023 01:15:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A046C433EF;
+        Fri, 26 May 2023 01:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685063715;
-        bh=1MTTC0Q8gPwH/yfHT1/eDbn5c4QwXN7byAdtKsepBQE=;
+        s=k20201202; t=1685063731;
+        bh=Q7XpztbDZTCPqwcV5ZMUllJPcLOTiZDONz8F6l4AzDs=;
         h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-        b=A8zDaC4De3Z4PBtUQv7Z7LWgEG6b8HIzRzjQuJaslHN9a2+QHU5pAhluvmTbXjUxI
-         R8fTUPMGHD2vkzqXxIF3iUKrlXYSuONMx8iLA+RTuTbPexroc3la3T6lRQsNcYLQZX
-         BUgAsISF98CcKG7D3auwGWI/5VQ/cD7lkX/blyve8zSKXkNqY53KhFx0d5pNwxh8uK
-         ub5uDzLSqeyiQtBWIV2mICQdT/0uX9fIn3yy980O4mzotWbwM57SAGsZSCeCNY+5kZ
-         FO3iaRGWdc/T+GEGHLTySaejGBvht67Rx8Nejwbw9HJ9bzpJWoOz7JjaJjMIrXuhJR
-         ocX4gWwB7k/tg==
-Date:   Thu, 25 May 2023 18:15:15 -0700
-Subject: [PATCH 03/25] xfs: move inode lease breaking functions to xfs_inode.c
+        b=Ahj9gqkpRzF3T80ROvECarxAP0+R7u52r4y21P5+qDqJ4Yfc+yc64nnGCNk3wR2Pt
+         fC9HYBHc5lcTsE7IdOly8PVqYnRdoZLuMvPk9mvkE7bzBD+S+C4zApcgtOvOco4H0l
+         WZxMmseV5ajqzMMeFTK3aM+MgO3B5hbCYMw03ttGouvpEc0zeLK1PKpyDCRhW8Ov7o
+         Sxl3eq+UTM2u4B5K1M57twzkk82NpTwG24n5jX8H6Ta3k8WtTN4BEjHxNqS2gSMj+D
+         qcCNH4pj1Vh+XHKcPHrVqslQ5p7NMXUA5P7wvBg0jAJOSV7shstL/tLRYS2VKIDdL8
+         bjO3PV+6Dx2oA==
+Date:   Thu, 25 May 2023 18:15:30 -0700
+Subject: [PATCH 04/25] xfs: move xfs_iops.c declarations out of xfs_inode.h
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
-Message-ID: <168506065022.3734442.7019671792166233875.stgit@frogsfrogsfrogs>
+Message-ID: <168506065036.3734442.11286868946019821694.stgit@frogsfrogsfrogs>
 In-Reply-To: <168506064947.3734442.7654653738998941813.stgit@frogsfrogsfrogs>
 References: <168506064947.3734442.7654653738998941813.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
@@ -57,178 +57,43 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-The lease breaking functions operate at the scope of the entire VFS
-inode, not subranges of a file.  Move them to xfs_inode.c since they're
-already declared in xfs_inode.h.  This cleanup moves us closer to
-having xfs_FOO.h declare only the symbols in xfs_FOO.c.
+Similarly, move declarations of public symbols of xfs_iops.c from
+xfs_inode.h to xfs_iops.h.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/xfs_file.c  |   61 ---------------------------------------------------
- fs/xfs/xfs_inode.c |   62 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_inode.h |    1 -
- 3 files changed, 62 insertions(+), 62 deletions(-)
+ fs/xfs/xfs_inode.h |    5 -----
+ fs/xfs/xfs_iops.h  |    4 ++++
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 2380067aa154..5ecbac510056 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -802,67 +802,6 @@ xfs_file_write_iter(
- 	return xfs_file_buffered_write(iocb, from);
- }
- 
--static void
--xfs_wait_dax_page(
--	struct inode		*inode)
--{
--	struct xfs_inode        *ip = XFS_I(inode);
--
--	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
--	schedule();
--	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
--}
--
--int
--xfs_break_dax_layouts(
--	struct inode		*inode,
--	bool			*retry)
--{
--	struct page		*page;
--
--	ASSERT(xfs_isilocked(XFS_I(inode), XFS_MMAPLOCK_EXCL));
--
--	page = dax_layout_busy_page(inode->i_mapping);
--	if (!page)
--		return 0;
--
--	*retry = true;
--	return ___wait_var_event(&page->_refcount,
--			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
--			0, 0, xfs_wait_dax_page(inode));
--}
--
--int
--xfs_break_layouts(
--	struct inode		*inode,
--	uint			*iolock,
--	enum layout_break_reason reason)
--{
--	bool			retry;
--	int			error;
--
--	ASSERT(xfs_isilocked(XFS_I(inode), XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL));
--
--	do {
--		retry = false;
--		switch (reason) {
--		case BREAK_UNMAP:
--			error = xfs_break_dax_layouts(inode, &retry);
--			if (error || retry)
--				break;
--			fallthrough;
--		case BREAK_WRITE:
--			error = xfs_break_leased_layouts(inode, iolock, &retry);
--			break;
--		default:
--			WARN_ON_ONCE(1);
--			error = -EINVAL;
--		}
--	} while (error == 0 && retry);
--
--	return error;
--}
--
- /* Does this file, inode, or mount want synchronous writes? */
- static inline bool xfs_file_sync_writes(struct file *filp)
- {
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 167d10c614ec..f63d0d20098c 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -38,6 +38,7 @@
- #include "xfs_ag.h"
- #include "xfs_log_priv.h"
- #include "xfs_health.h"
-+#include "xfs_pnfs.h"
- 
- struct kmem_cache *xfs_inode_cache;
- 
-@@ -3699,3 +3700,64 @@ xfs_inode_count_blocks(
- 	xfs_bmap_count_leaves(ifp, rblocks);
- 	*dblocks = ip->i_nblocks - *rblocks;
- }
-+
-+static void
-+xfs_wait_dax_page(
-+	struct inode		*inode)
-+{
-+	struct xfs_inode        *ip = XFS_I(inode);
-+
-+	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
-+	schedule();
-+	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-+}
-+
-+int
-+xfs_break_dax_layouts(
-+	struct inode		*inode,
-+	bool			*retry)
-+{
-+	struct page		*page;
-+
-+	ASSERT(xfs_isilocked(XFS_I(inode), XFS_MMAPLOCK_EXCL));
-+
-+	page = dax_layout_busy_page(inode->i_mapping);
-+	if (!page)
-+		return 0;
-+
-+	*retry = true;
-+	return ___wait_var_event(&page->_refcount,
-+			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
-+			0, 0, xfs_wait_dax_page(inode));
-+}
-+
-+int
-+xfs_break_layouts(
-+	struct inode		*inode,
-+	uint			*iolock,
-+	enum layout_break_reason reason)
-+{
-+	bool			retry;
-+	int			error;
-+
-+	ASSERT(xfs_isilocked(XFS_I(inode), XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL));
-+
-+	do {
-+		retry = false;
-+		switch (reason) {
-+		case BREAK_UNMAP:
-+			error = xfs_break_dax_layouts(inode, &retry);
-+			if (error || retry)
-+				break;
-+			fallthrough;
-+		case BREAK_WRITE:
-+			error = xfs_break_leased_layouts(inode, iolock, &retry);
-+			break;
-+		default:
-+			WARN_ON_ONCE(1);
-+			error = -EINVAL;
-+		}
-+	} while (error == 0 && retry);
-+
-+	return error;
-+}
 diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index f80f4761892a..de77bc053681 100644
+index de77bc053681..fd12509560e4 100644
 --- a/fs/xfs/xfs_inode.h
 +++ b/fs/xfs/xfs_inode.h
-@@ -536,7 +536,6 @@ xfs_itruncate_extents(
- 	return xfs_itruncate_extents_flags(tpp, ip, whichfork, new_size, 0);
- }
- 
--/* from xfs_file.c */
- int	xfs_break_dax_layouts(struct inode *inode, bool *retry);
+@@ -540,11 +540,6 @@ int	xfs_break_dax_layouts(struct inode *inode, bool *retry);
  int	xfs_break_layouts(struct inode *inode, uint *iolock,
  		enum layout_break_reason reason);
+ 
+-/* from xfs_iops.c */
+-extern void xfs_setup_inode(struct xfs_inode *ip);
+-extern void xfs_setup_iops(struct xfs_inode *ip);
+-extern void xfs_diflags_to_iflags(struct xfs_inode *ip, bool init);
+-
+ /*
+  * When setting up a newly allocated inode, we need to call
+  * xfs_finish_inode_setup() once the inode is fully instantiated at
+diff --git a/fs/xfs/xfs_iops.h b/fs/xfs/xfs_iops.h
+index 7f84a0843b24..8a38c3e2ed0e 100644
+--- a/fs/xfs/xfs_iops.h
++++ b/fs/xfs/xfs_iops.h
+@@ -19,4 +19,8 @@ int xfs_vn_setattr_size(struct mnt_idmap *idmap,
+ int xfs_inode_init_security(struct inode *inode, struct inode *dir,
+ 		const struct qstr *qstr);
+ 
++extern void xfs_setup_inode(struct xfs_inode *ip);
++extern void xfs_setup_iops(struct xfs_inode *ip);
++extern void xfs_diflags_to_iflags(struct xfs_inode *ip, bool init);
++
+ #endif /* __XFS_IOPS_H__ */
 
