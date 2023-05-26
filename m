@@ -2,54 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A12A0712A14
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 17:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0D7D712AB1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 18:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244177AbjEZP6X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 11:58:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53114 "EHLO
+        id S231201AbjEZQdW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 12:33:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244268AbjEZP6Q (ORCPT
+        with ESMTP id S231124AbjEZQdU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 11:58:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B08D13D;
-        Fri, 26 May 2023 08:58:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ED4F36511C;
-        Fri, 26 May 2023 15:58:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD836C433EF;
-        Fri, 26 May 2023 15:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685116694;
-        bh=gvQZFNx4XS2KmvTv6kEkw3b4TW68Vp+DGN0cJs/f/d8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZpiPTT6Uyl0UVGrEUkODKtD5emNa+RiT889sfyclqfClYRPune8owX39t7hr3NpaE
-         kJZmfjMmntqPmr4K9SjBOBd+ISOzqbxZrrU7Mbv7g6sObkv5tHecx+IWkjqedSJ+PK
-         RYQJddgIw9UFpjyS64nY7D05HRNUnBVVp/oWmWTQQbSm76bSNCDbbvDdadff0+mjhz
-         10ZxD7u/xVbrGeP9ZxAlxTiGrj84qTqtCGzxh9n75kOQkr5H69s5PKNk2mq1uew7DQ
-         ff6NeUgcpd9HEwEq+zG0blr+9kgQAKqTynM4RfSeixhg1O+u0juyH0g+d9DjQWGzXs
-         Zno018bMTs6+w==
-Date:   Fri, 26 May 2023 17:58:08 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J. Wong" <djwong@kernel.org>, Ted Tso <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 0/6] fs: Fix directory corruption when moving directories
-Message-ID: <20230526-schrebergarten-vortag-9cd89694517e@brauner>
-References: <20230525100654.15069-1-jack@suse.cz>
+        Fri, 26 May 2023 12:33:20 -0400
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D9B198
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 May 2023 09:33:17 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QSVpc2hLFzMq9gR;
+        Fri, 26 May 2023 18:33:12 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QSVpV20JTzMskdH;
+        Fri, 26 May 2023 18:33:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1685118792;
+        bh=HJQhmbmtbBhKQKuJigfXUA3I5dGt5vNd+kwPhAR19ZE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=QqUfw9dzLlsE/jUv5i4Jbgo6yOquEH/LNulEp4j1bWACweWhxdKLOxVud95fbWB4E
+         npEnxoPtqyuJGwkskhuE2oFCSu10WcSFOgyuW8dZTYuf1lnresczWPQXS0hze8B1ou
+         boYfLZK8RC3g7VGc+V2WpOIG30d240jDxiyeRn5Q=
+Message-ID: <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net>
+Date:   Fri, 26 May 2023 18:33:05 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230525100654.15069-1-jack@suse.cz>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+User-Agent: 
+Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        viro@zeniv.linux.org.uk, dhowells@redhat.com, code@tyhicks.com,
+        hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
+        sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
+        chuck.lever@oracle.com, jlayton@kernel.org, miklos@szeredi.hu,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, dchinner@redhat.com,
+        john.johansen@canonical.com, mcgrof@kernel.org,
+        mortonm@chromium.org, fred@cloudflare.com, mpe@ellerman.id.au,
+        nathanl@linux.ibm.com, gnoack3000@gmail.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        wangweiyang2@huawei.com
+References: <20230505081200.254449-1-xiujianfeng@huawei.com>
+ <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Infomaniak-Routing: alpha
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,80 +69,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 25, 2023 at 12:16:06PM +0200, Jan Kara wrote:
-> Hello,
+
+On 15/05/2023 17:12, Christian Brauner wrote:
+> On Fri, May 05, 2023 at 04:11:58PM +0800, Xiu Jianfeng wrote:
+>> Hi,
+>>
+>> I am working on adding xattr/attr support for landlock [1], so we can
+>> control fs accesses such as chmod, chown, uptimes, setxattr, etc.. inside
+>> landlock sandbox. the LSM hooks as following are invoved:
+>> 1.inode_setattr
+>> 2.inode_setxattr
+>> 3.inode_removexattr
+>> 4.inode_set_acl
+>> 5.inode_remove_acl
+>> which are controlled by LANDLOCK_ACCESS_FS_WRITE_METADATA.
+>>
+>> and
+>> 1.inode_getattr
+>> 2.inode_get_acl
+>> 3.inode_getxattr
+>> 4.inode_listxattr
+>> which are controlled by LANDLOCK_ACCESS_FS_READ_METADATA
 > 
-> this patch set fixes a problem with cross directory renames originally reported
-> in [1]. To quickly sum it up some filesystems (so far we know at least about
-> ext4, udf, f2fs, ocfs2, likely also reiserfs, gfs2 and others) need to lock the
-> directory when it is being renamed into another directory. This is because we
-> need to update the parent pointer in the directory in that case and if that
-> races with other operation on the directory (in particular a conversion from
-> one directory format into another), bad things can happen.
+> It would be helpful to get the complete, full picture.
 > 
-> So far we've done the locking in the filesystem code but recently Darrick
-> pointed out [2] that we've missed the RENAME_EXCHANGE case in our ext4 fix.
-> That one is particularly nasty because RENAME_EXCHANGE can arbitrarily mix
-> regular files and directories and proper lock ordering is not achievable in the
-> filesystems alone.
+> Piecemeal extending vfs helpers with struct path arguments is costly,
+> will cause a lot of churn and will require a lot of review time from us.
 > 
-> This patch set adds locking into vfs_rename() so that not only parent
-> directories but also moved inodes (regardless whether they are directories or
-> not) are locked when calling into the filesystem.
+> Please give us the list of all security hooks to which you want to pass
+> a struct path (if there are more to come apart from the ones listed
+> here). Then please follow all callchains and identify the vfs helpers
+> that would need to be updated. Then please figure out where those
+> vfs helpers are called from and follow all callchains finding all
+> inode_operations that would have to be updated and passed a struct path
+> argument. So ultimately we'll end up with a list of vfs helpers and
+> inode_operations that would have to be changed.
+> 
+> I'm very reluctant to see anything merged without knowing _exactly_ what
+> you're getting us into.
 
-This locking is trauma inducing.
+Ultimately we'd like the path-based LSMs to reach parity with the 
+inode-based LSMs. This proposal's goal is to provide users the ability 
+to control (in a complete and easy way) file metadata access. For these 
+we need to extend the inode_*attr hooks and inode_*acl hooks to handle 
+paths. The chown/chmod hooks are already good.
 
-So I was staring at this for a long time and the thing that bothered me
-big time was that I couldn't easily figure out how we ended up with the
-locking scheme that we have. So I went digging. Corrections and
-additions very welcome...
+In the future, I'd also like to be able to control directory traversals 
+(e.g. chdir), which currently only calls inode_permission().
 
-Before 914a6e0ea12 ("Import 2.3.51pre1") locking for rename was based on
-s_vfs_rename_sem and i_sem. For both within- and across-directory
-renames s_vfs_rename_sem was acquired and the i_sem on the parent
-directories was acquired but the target wasn't locked.
-
-Then 914a6e0ea12 ("Import 2.3.51pre1") introduced an additional i_zombie
-semaphore to protect against create, link, mknod, mkdir, unlink, and
-rmdir on the target. So i_zombie had to be acquired during
-vfs_rename_dir() on both parent and the victim but only if the source
-was a directory. Back then RENAME_EXCHANGE didn't exist so if source was
-a directory then target if it existed must've been a directory as well.
-
-The original reasoning behind only locking the target if the source was
-a directory was based on some filesystems not being able to deal with
-opened but unlinked directories.
-
-The i_zombie finally died in 1b3d7c93c6d ("[PATCH] (2.5.4) death of
-->i_zombie") and a new locking scheme was introduced. The
-s_vfs_rename_sem was now only used for across-directory renames. Instead
-of having i_zombie and i_sem only i_sem was left. Now, both
-vfs_rename_dir(/* if renaming directory */) and vfs_rename_other()
-grabbed i_sem on both parents and on the target. So now the target was
-always explicitly protected against a concurrent unlink or rmdir
-as that would be done as part of the rename operation and that race
-would just been awkward to allow afaict. Probably always was.
-
-The locking of source however is a different story. This was introduced
-in 6cedba8962f4 ("vfs: take i_mutex on renamed file") to prevent new
-delegations from being acquired during rename, link, or unlink. So now
-both source and target were locked. The target seemingly because it
-would be unlinked in the filesystem's rename method and the source to
-prevent new delegations from being acquired. So, since leases can only
-be taken on regular files vfs_setlease()/generic_setlease() directories
-were never considered for locking. So the lock never had to be acquired
-for source directories.
-
-So in any case, under the assumption that the broad strokes are correct
-there seems to be no inherent reason why locking source and target if
-they're directories couldn't be done if the ordering is well-defined.
-Which is what originally made me hesitate. IOW, given my current
-knowledge this seems ok.
-
-Frankly, if we end up unconditionally locking source and target we're in
-a better place from a pure maintainability perspective as far as I'm
-concerned. Even if we end up taking the lock pointlessly for e.g., NFS
-with RENAME_EXCHANGE. The last thing we need is more conditions on when
-things are locked and why.
-
-/me goes off into the weekend
+What would be the best way to reach this goal?
