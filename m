@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 543647121E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 10:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AAD97121EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 May 2023 10:14:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242529AbjEZIN3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 May 2023 04:13:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54968 "EHLO
+        id S242547AbjEZIOF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 May 2023 04:14:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236852AbjEZINZ (ORCPT
+        with ESMTP id S236852AbjEZIOD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 May 2023 04:13:25 -0400
+        Fri, 26 May 2023 04:14:03 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F90C125;
-        Fri, 26 May 2023 01:13:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8422128;
+        Fri, 26 May 2023 01:13:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=DgTgBMZWINXOuoCZBI2L8FK+k2n3IGa7ukNMwg/DhYc=; b=L1M/wOjEJS+hbGb0Ek6blzw3yA
-        nabgFkkkKy+DTSss8/1GulWyfdXqHHVYNAzFWT5mbVwZAjUGHZXHuEQfl0e+6/OtF12MpNy4YLP80
-        VEIFzvlb4aVe0P7pRCuYc3yIdqxzO6y1Zsavs8rcRkdM9/4mz4siRmfuqn+sIDoKXdA46+bkVCwm5
-        aiixFMuyKgI/5ocaWt6B9ZqX+HUkoXOZlXs8Z6gefmi2wlMxbafMZW818soeWjD1oBROq9uXous9u
-        y1HEaBkTCpK3nsAM9uz9T5N1fw3+CMx5JirbVy1uboijoXvhGmyTqNkB3f7GvUjESGORDZCBAgPdX
-        NkZvUbmg==;
+        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=LD/oWd/+mUj05u7ro37NQInoFL
+        QzOw/tkYA8cVHDX+8VYtqDDKsM8OF05TnEUZx6NkzwaoN6OKUQAZJV8bkH41SMqO8dkQiogL53on9
+        oGdLGmmKwtwfXwxOgpUBRjTOSi7VN2TtkHQI5QOFNgLJsKY70Td+PpxZPdYun+JdJPmInaFuVTou+
+        cxx2GDaEkVUCw6GgAS+3fCiOb4NrG7orVCeA4t1x7IE24+c2eoYcddQeqDJmjo0iQjOcgFWaQCbqq
+        6qSd+rSBRbQ8QJPvXdLtfoQC1oVaNYbInTaTaPEVhKwja5Gzbn10nhYW9T1C1gWHoZn5YHKTC+iiv
+        bWNDgIlg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q2SZW-001Z7f-3C;
-        Fri, 26 May 2023 08:13:14 +0000
-Date:   Fri, 26 May 2023 01:13:14 -0700
+        id 1q2Sa5-001ZC5-2F;
+        Fri, 26 May 2023 08:13:49 +0000
+Date:   Fri, 26 May 2023 01:13:49 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Luis Chamberlain <mcgrof@kernel.org>
 Cc:     axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
@@ -42,15 +42,14 @@ Cc:     axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
         willy@infradead.org, hare@suse.de, p.raghav@samsung.com,
         da.gomez@samsung.com, rohan.puri@samsung.com,
         rpuri.linux@gmail.com, kbusch@kernel.org
-Subject: Re: [PATCH v2 1/5] block: annotate bdev_disk_changed() deprecation
- with a symbol namespace
-Message-ID: <ZHBqGosY0tWkNdIR@infradead.org>
+Subject: Re: [PATCH v2 3/5] iomap: simplify iomap_init() with PAGE_SECTORS
+Message-ID: <ZHBqPbMCsNHVRvkt@infradead.org>
 References: <20230526073336.344543-1-mcgrof@kernel.org>
- <20230526073336.344543-2-mcgrof@kernel.org>
+ <20230526073336.344543-4-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230526073336.344543-2-mcgrof@kernel.org>
+In-Reply-To: <20230526073336.344543-4-mcgrof@kernel.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -62,18 +61,6 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 12:33:32AM -0700, Luis Chamberlain wrote:
-> This ensures no other users pop up by mistake easily and provides
-> us a with an easy vehicle to do the same with other routines should
-> we need it later.
+Looks good:
 
-I don't see how this is related to the rest of the seris.  I also don't
-think it's a good idea.  The APIs isn't deprecated per se.  It just
-should not be called by drivers.  The right thing would be an interface
-like
-
-EXPORT_SYMBOL_GPL_FOR(bdev_disk_changed, loop.ko, CONFIG_BLK_DEV_LOOP);
-EXPORT_SYMBOL_GPL_FOR(bdev_disk_changed, dasd_mod.ko, CONFIG_DASD);
-
-with the modulo code enforcing that no one but the module this is
-explicitly exorted for can use the symbol.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
