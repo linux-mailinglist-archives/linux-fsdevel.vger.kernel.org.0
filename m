@@ -2,151 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2C8C7134AC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 14:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04B057134CD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 14:38:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232358AbjE0MZU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 May 2023 08:25:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40828 "EHLO
+        id S232548AbjE0MiP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 May 2023 08:38:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231883AbjE0MZO (ORCPT
+        with ESMTP id S232086AbjE0MiL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 May 2023 08:25:14 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2111.outbound.protection.outlook.com [40.107.244.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88FBEF3;
-        Sat, 27 May 2023 05:25:12 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R6UwMUBSa/SDh664K8NvK9q8T5ZKP4AFyabSrhMueBeEm6t9zN0J3ZLlzyjiIS2dFQP3HDm3MRlXNLYND23qve5M5F5qI1w9HghRg42NX6AYxZIp/CD8xmMu6W0Sw/LKg8biiox+ycegJc6bhK2rqTkkpDRGBvURCAYPg1wAQppfvK2IYWcMkU2n9c8ruZj2pUwj9w7zgzrSGzQxpNLchj+kiYeG5QKkH2Is5vg8YehEUuAU2gik63wvPq/7ui6wjzLSvxaaZlRmkLJ63ES3aaZIhao8n/zF3xRKmZCIzm5L0z59q6WdW1klf1nzjO4CA9sHC8pS1jDY01x95KpocQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fizieVRhPX3hj13JBmTQ5Gv/nPYafPqwV7hC0mC6chI=;
- b=RgW2wbAOAQxxrMToxRrRVBYuDSp90hiBjWIATd/3lTuBxmgRfrbeu22/FM8tBZbVG3JqOwHjO1ZxrXYkSGuRHY6Ce+ANSjRfaz3+dGTZEdINAFVM+jNAaBVVwcGKXzh8L1sX0pV3tpccSuMjXUtAsoEyTaG1yIRsPPqyHmcEjILJX4N8cX/UGGYYK91rmr8vabLEEHVxqlvWBb/gMobtrGMyC58XysxIKRMPZt6gLrcws1J7mUdlgTBJOk1vuq1BFAOQ7BxrFI9VFU97KdEm7IdftPeWy/7apUQqPOFKDEjnF5SKfUjntSAzx89Ayc4BhkhH+1sj0MrMUmOaw3HUGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
- dkim=pass header.d=corigine.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fizieVRhPX3hj13JBmTQ5Gv/nPYafPqwV7hC0mC6chI=;
- b=v31KmmquKvSIju5QOQAymwxYKwOPAnU/Ogp0tkzf2kSp/hO7QC0RevYeTVBSq7uhQx58pOSNHwTM5kz+r5AFoGv2KLKLCn2GtyScoi+M081RqqtyffAs/BnW5aJSgItMtVXL3kQ4Y6JN/uCrpFce9hrZozSN79tFMofmy2NevBU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=corigine.com;
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by PH0PR13MB5471.namprd13.prod.outlook.com (2603:10b6:510:12a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.18; Sat, 27 May
- 2023 12:25:08 +0000
-Received: from PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::5e55:9a39:751f:55f6]) by PH0PR13MB4842.namprd13.prod.outlook.com
- ([fe80::5e55:9a39:751f:55f6%3]) with mapi id 15.20.6433.018; Sat, 27 May 2023
- 12:25:08 +0000
-Date:   Sat, 27 May 2023 14:24:57 +0200
-From:   Simon Horman <simon.horman@corigine.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-crypto@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/8] Drop the netfs_ prefix from
- netfs_extract_iter_to_sg()
-Message-ID: <ZHH2mSRqeL4Gs1ft@corigine.com>
-References: <20230526143104.882842-1-dhowells@redhat.com>
- <20230526143104.882842-3-dhowells@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230526143104.882842-3-dhowells@redhat.com>
-X-ClientProxiedBy: AM0PR10CA0123.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:e6::40) To PH0PR13MB4842.namprd13.prod.outlook.com
- (2603:10b6:510:78::6)
+        Sat, 27 May 2023 08:38:11 -0400
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3784B10A
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 May 2023 05:37:40 -0700 (PDT)
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7749b49ce95so116630739f.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 May 2023 05:37:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685191007; x=1687783007;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TXLeImvadCCjJrIitdWXQ/Qq5+spMjoR50QGkRnRX5k=;
+        b=Gc6LlKjXN+Rxb+Iz23JVjVZpSbyMGOr1RmsqktOHj2/833OSoWubHlP+bkyhBmWt0L
+         RtbTRdmCl8z1U7z4pbVsN0DeY0mPtu86Jdwkkud6NHybrBQoGEFbvyh1vaFnQyNyk9fW
+         r8T/FaONIi+ANOifM0fFtCk6FHX5Ifb66NOihk794Ot7RDQwzdptk5ePCmANehNVHLTm
+         4YwXHcNuQELAdkBBGj7CHJFMF+PbDy5YBWs5UiOC2mYnVSpU1dsi0NrRtwJCt+UxpaSc
+         7y/i067BfClvOw/7Qp5USHBOzZu5jpVDvBVbJd8hSmxd28S7nfqfruyyp+iFqfuBrqat
+         g6oA==
+X-Gm-Message-State: AC+VfDx61SpeoVUxolygziuJfOSe0IeOoeb9IeDfAk32CCa94SVmf/NM
+        la+SrqRYHFu1uEmN5rpBv8YwdlLVrmm3CJw10bhhgUhkKktp
+X-Google-Smtp-Source: ACHHUZ4nLH293RmzQ05tAr9ipA7lfymnIlgUBq00ASiGMf/mxdaZfHrnZXY61Lfx305YikEpGGPDxX50IBh5by0nTbAS6Diys1Sf
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|PH0PR13MB5471:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55200223-d275-414b-eb58-08db5ead68e6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: y3+MoLq/14Ctzcat+G/USt33jdvYtkVasElOTf42r13hXoerUfrJHCRrvcWiaVAFmI3emFb69Rs1Abhoc+EzGgg2nD1h8u92t0McuCCh8cnFY0JPio77bP/P14mKHy79u/ONF4IIpqgeJR/OMCMRvOkeoMELLk1gpvO2UYYgFNmXWKId6dqLVSTUPmWfWKdA0Rlx9SF+qq7VKAKnuirvgc8o2kNA6BGWMzdZ4FFWsWyuuIkODaYkIVx05ZUWFHX979FURBrKT00HZVE7mOfNd3NkBndxcitnaBGL4uVh44GxwfwGpbwTSwUqvp2upjPt4uGmligskk41dJAnEivSjp9UWVfmVepkiUZBQGfx+DeViIAmJ4WHrxU3Y9Hfj76W3ia53VhQXWHNbcK2et7C55zklTdnHrIyqPANL+ObIqkctLT7VDG5qdTHqtV9JLFCJ8pnhjkcxmPgJPUIW8sgLq78Nr8s5x3vrDnCpQ0dAftQQmIdLbPQMIgAiGVjSIzBpK1QYsjIvecpvFpTajfRp6XEJhK7xgdS4ScICytc8MH6m5v90BcaEENaOPqSq7w7
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(39830400003)(376002)(396003)(346002)(366004)(451199021)(86362001)(2616005)(2906002)(4744005)(186003)(4326008)(66946007)(41300700001)(66476007)(66556008)(36756003)(6916009)(6512007)(6506007)(44832011)(7416002)(8936002)(5660300002)(8676002)(38100700002)(6486002)(316002)(6666004)(478600001)(54906003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZzarhNN+vecew2zpFG7ovDCdHs/ZI+5MT3rGhzw2HSUymuonsU6I61SJzcFw?=
- =?us-ascii?Q?L08Dxf8MLcO0AcanKzn+TAia37eSgW8UKkjBe3K9wr0kOtVJKJVLCriR1vmf?=
- =?us-ascii?Q?OYi5Eq27K+j1qhURDnAZfk/th52gF2arvRSp4PoiinSqXLr9zQoz3iv1a/um?=
- =?us-ascii?Q?bXhBfXPHJ0cleT4vNfVWo3Nf9IGWB4UalV/5tebIUxPmY4SFM3FmQrTyy/lm?=
- =?us-ascii?Q?TzoO4kAeGetjqzU3a/gSYIr+b2iPbsNdEbrnDdLiTlKPfwWPdRf0JwUfPw6Y?=
- =?us-ascii?Q?3/CU7wvJKAwMeUA1KGfPqYfDfUX66C+TKfmc5qoPhMJjH7f3tjvEYINWcdxm?=
- =?us-ascii?Q?JCQt+libUg5KoXRLG5td4MO3THl5KQei2PbKCNpdCphTjkPZdnXTiLvkYuGN?=
- =?us-ascii?Q?jy4Jt4UXEJcXBlyp+8Ft32saZgeuv+A8McKoeKQBuFDzNRypIfJwPqHQQDw+?=
- =?us-ascii?Q?r6KpC51ASqAC22htGb1YbLoKSt/3FdlJIw22mHnAvoTfa1IIwVEYmRa91ym0?=
- =?us-ascii?Q?wmbGYNCipmvgmghxgS7HofKo7lV14GJyoQlrawenWBak1HrhoomCYMaa3SCN?=
- =?us-ascii?Q?UL4KeHLxq6D0Xglv39JBWt1xjkPjCNTya7nT2NBTeByFGWg8zqSWv6Yc88qn?=
- =?us-ascii?Q?vpaxKeXzihc4oIW4mA+NE4Htye3+IiTFm6MlAM7SKuvQI+VicJuGWvNe2goD?=
- =?us-ascii?Q?bEoYX/u41+wS3D0dJ5cDvzk4PUXcPmqrjIzYKRY9tvcXOrEMu7GX5RRb8sF7?=
- =?us-ascii?Q?aK5HkOqvph2kVGFFYU9SpVkRryguZZ2lqklf6N6kEes+pcD92aamQPcRCV7s?=
- =?us-ascii?Q?a+vsgwy3OCkoLWCB0dkWdIFnIXJxg64BbGmqQ1+Hj89tKXQBzcZdcAKgzGxj?=
- =?us-ascii?Q?YQ4SBpSMJvKUxy1d8Jez6Kh8gWEwSQHBri3eWpwoUyLaFm75JB08I4tOBUUC?=
- =?us-ascii?Q?IfWfPhMsTK8Wakwgg2+Vzwgj0ekPCRYUnvSEUcWJQSN4Uv5AEIEJdIKs5jIh?=
- =?us-ascii?Q?TQewNV6Ks+bCiVWQkRR7xYwLf00PlYzWLGIfDrgWJMu2MhUkpxqpQAWoio/R?=
- =?us-ascii?Q?0Y8idv6jjdzoMOItS6Kl7WDzG6f1A7znR3TIouoSaDGa9swn2Mli5tI9mmvZ?=
- =?us-ascii?Q?iRkjaktQ089AX6lgg5fBiR8Bq5T+bJo+rMlfF8F80+tlgpufWfYbarro7bm5?=
- =?us-ascii?Q?kZWuUjn8tS7cHMBGyPTrhL/juJLhniIkid6ukh7r//1c4lNU1+Rj6mRdQdbG?=
- =?us-ascii?Q?Jt+IuTmQHrfpTr3KPpBLEzDEu/S15Z4ajDEWfa3VEXnZFLvpEDx1zfSsr3hx?=
- =?us-ascii?Q?GS5PiD9OMi0DxmI4UhhfUI1oREAe5V4rORiaBFcCMaSCBka/q66Tudp2sOZu?=
- =?us-ascii?Q?JnMEsxoaZ/RWWXNByXUwnP90esiE7RRNPYt/g37ya6ffzEvpMOqXCcdsiO7U?=
- =?us-ascii?Q?NqwH6qRHozT3BuLN0kTuxQH7WgL/U7TLHOJtCVShNpPCk162hQF9EBS0KgLc?=
- =?us-ascii?Q?6lC1vPuMa/Ms61TmPf/9Xub3HVSSQ7U0J2P9Ha8r1UL12ZXeiplzVH25d2A0?=
- =?us-ascii?Q?sfK5mN5ynrmuGyRAd8svZyNGG7RPqDzK0yr8VZzHHHZ5ldtAvVvdYBS16sGX?=
- =?us-ascii?Q?14S+WkibBairQ6bknYOy++o8NUFZ8kPJq6Z2Kz8NVd/oJgmrwq+OP5FHxSh5?=
- =?us-ascii?Q?KZBVbg=3D=3D?=
-X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55200223-d275-414b-eb58-08db5ead68e6
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2023 12:25:08.6580
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pLIHxkO10a28tXCgyB5GWmYYchoFQ/f0CGtqxDM6NuUPVvMgj+p1oMJK4nASZwfONJLfBut+UmIte3lrRUOS8E9A3RcrleaFgaF0F1LGwaA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB5471
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:dc4f:0:b0:331:1846:6064 with SMTP id
+ x15-20020a92dc4f000000b0033118466064mr910654ilq.5.1685191007474; Sat, 27 May
+ 2023 05:36:47 -0700 (PDT)
+Date:   Sat, 27 May 2023 05:36:47 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000611acc05fcac1bf5@google.com>
+Subject: [syzbot] [squashfs?] [fuse?] INFO: task hung in truncate_inode_pages_range
+ (6)
+From:   syzbot <syzbot+dd00076bcf1ab8165aea@syzkaller.appspotmail.com>
+To:     brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, miklos@szeredi.hu,
+        phillip@squashfs.org.uk, squashfs-devel@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 03:30:58PM +0100, David Howells wrote:
+Hello,
 
-...
+syzbot found the following issue on:
 
-> @@ -1307,7 +1307,7 @@ static ssize_t netfs_extract_xarray_to_sg(struct iov_iter *iter,
->  }
->  
->  /**
-> - * netfs_extract_iter_to_sg - Extract pages from an iterator and add ot an sglist
-> + * extract_iter_to_sg - Extract pages from an iterator and add ot an sglist
+HEAD commit:    f1fcbaa18b28 Linux 6.4-rc2
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1505bb65280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3dc1cdd68141cdc3
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd00076bcf1ab8165aea
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110c71d9280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1222c039280000
 
-nit: While we are here, perhaps
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f9e1748cceea/disk-f1fcbaa1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6dea99343621/vmlinux-f1fcbaa1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f5a93f86012d/Image-f1fcbaa1.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ebeba8fb1375/mount_0.gz
 
-     s/and add ot an/and add to an/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dd00076bcf1ab8165aea@syzkaller.appspotmail.com
 
->   * @iter: The iterator to extract from
->   * @maxsize: The amount of iterator to copy
->   * @sgtable: The scatterlist table to fill in
+INFO: task syz-executor176:6013 blocked for more than 143 seconds.
+      Not tainted 6.4.0-rc2-syzkaller-gf1fcbaa18b28 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor176 state:D stack:0     pid:6013  ppid:6011   flags:0x00000000
+Call trace:
+ __switch_to+0x320/0x754 arch/arm64/kernel/process.c:556
+ context_switch kernel/sched/core.c:5343 [inline]
+ __schedule+0x1368/0x23b8 kernel/sched/core.c:6669
+ schedule+0xc4/0x170 kernel/sched/core.c:6745
+ io_schedule+0x8c/0x12c kernel/sched/core.c:8979
+ folio_wait_bit_common+0x65c/0xb90 mm/filemap.c:1301
+ __folio_lock+0x2c/0x3c mm/filemap.c:1664
+ folio_lock include/linux/pagemap.h:955 [inline]
+ truncate_inode_pages_range+0x930/0xf74 mm/truncate.c:422
+ truncate_inode_pages mm/truncate.c:449 [inline]
+ truncate_inode_pages_final+0x90/0xc0 mm/truncate.c:484
+ evict+0x26c/0x68c fs/inode.c:667
+ dispose_list fs/inode.c:698 [inline]
+ evict_inodes+0x6b4/0x74c fs/inode.c:748
+ generic_shutdown_super+0x9c/0x328 fs/super.c:479
+ kill_block_super+0x70/0xdc fs/super.c:1407
+ deactivate_locked_super+0xac/0x124 fs/super.c:331
+ deactivate_super+0xe0/0x100 fs/super.c:362
+ cleanup_mnt+0x34c/0x3dc fs/namespace.c:1177
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1184
+ task_work_run+0x230/0x2e0 kernel/task_work.c:179
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ do_notify_resume+0x2180/0x3c90 arch/arm64/kernel/signal.c:1304
+ prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
+ el0_svc+0x90/0x15c arch/arm64/kernel/entry-common.c:638
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
 
-..
+Showing all locks held in the system:
+1 lock held by rcu_tasks_kthre/13:
+ #0: ffff8000160810d0 (rcu_tasks.tasks_gp_mutex){+.+.}-{3:3}, at: rcu_tasks_one_gp+0x44/0xcf4 kernel/rcu/tasks.h:518
+1 lock held by rcu_tasks_trace/14:
+ #0: ffff800016081490 (rcu_tasks_trace.tasks_gp_mutex){+.+.}-{3:3}, at: rcu_tasks_one_gp+0x44/0xcf4 kernel/rcu/tasks.h:518
+1 lock held by khungtaskd/28:
+ #0: ffff800016080f00 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0xc/0x44 include/linux/rcupdate.h:326
+2 locks held by getty/5728:
+ #0: ffff0000dab28098 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
+ #1: ffff80001ae462f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x414/0x1210 drivers/tty/n_tty.c:2176
+1 lock held by syz-executor176/6013:
+ #0: ffff0000c99160e0 (&type->s_umount_key#41){+.+.}-{3:3}, at: deactivate_super+0xd8/0x100 fs/super.c:361
+
+=============================================
+
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
