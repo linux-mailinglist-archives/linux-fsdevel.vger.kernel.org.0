@@ -2,54 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04B057134CD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 14:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F29EF7135DB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 19:16:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232548AbjE0MiP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 May 2023 08:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47298 "EHLO
+        id S230137AbjE0RQP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 May 2023 13:16:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232086AbjE0MiL (ORCPT
+        with ESMTP id S229796AbjE0RQO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 May 2023 08:38:11 -0400
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3784B10A
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 May 2023 05:37:40 -0700 (PDT)
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7749b49ce95so116630739f.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 May 2023 05:37:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685191007; x=1687783007;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TXLeImvadCCjJrIitdWXQ/Qq5+spMjoR50QGkRnRX5k=;
-        b=Gc6LlKjXN+Rxb+Iz23JVjVZpSbyMGOr1RmsqktOHj2/833OSoWubHlP+bkyhBmWt0L
-         RtbTRdmCl8z1U7z4pbVsN0DeY0mPtu86Jdwkkud6NHybrBQoGEFbvyh1vaFnQyNyk9fW
-         r8T/FaONIi+ANOifM0fFtCk6FHX5Ifb66NOihk794Ot7RDQwzdptk5ePCmANehNVHLTm
-         4YwXHcNuQELAdkBBGj7CHJFMF+PbDy5YBWs5UiOC2mYnVSpU1dsi0NrRtwJCt+UxpaSc
-         7y/i067BfClvOw/7Qp5USHBOzZu5jpVDvBVbJd8hSmxd28S7nfqfruyyp+iFqfuBrqat
-         g6oA==
-X-Gm-Message-State: AC+VfDx61SpeoVUxolygziuJfOSe0IeOoeb9IeDfAk32CCa94SVmf/NM
-        la+SrqRYHFu1uEmN5rpBv8YwdlLVrmm3CJw10bhhgUhkKktp
-X-Google-Smtp-Source: ACHHUZ4nLH293RmzQ05tAr9ipA7lfymnIlgUBq00ASiGMf/mxdaZfHrnZXY61Lfx305YikEpGGPDxX50IBh5by0nTbAS6Diys1Sf
+        Sat, 27 May 2023 13:16:14 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50BEBB;
+        Sat, 27 May 2023 10:16:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685207773; x=1716743773;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eI4v3Kbvvfcjabeh6H6ktAqjlUA5edg4THJ0FK8h8A8=;
+  b=e5AHF406cXxJ/QgVpJedtDqEJD61J7z96j6Ak7rGmbLf+0ni7eAX9uWj
+   7s9gdLaXeg9Trq6ZnMJ5vS6WOgnh1USGEF+ibhoBln9M0Wj0NTZOSg4EX
+   nsllYVkjgJauRfvyaVeQc2F59lA0uw1cd4OAj65e/TwmHt96O7a79zPgl
+   n7249uBboHqhPiOQFYuBcBuRylyROv+mHOocIaU2rq/EA7pvlkYtoXIFJ
+   Ka+RVQ4pY+g25+wTieHNGnZBKCd7F9/fYIHiJLp5mzo+stTnQUJ5wyxAg
+   3jxz69lYnc194VSXi9QfSDwlkUfjLT63O0YbzjFgBMs+Uu+gTPlBmar6x
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10723"; a="334046264"
+X-IronPort-AV: E=Sophos;i="6.00,197,1681196400"; 
+   d="scan'208";a="334046264"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2023 10:16:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10723"; a="879868893"
+X-IronPort-AV: E=Sophos;i="6.00,197,1681196400"; 
+   d="scan'208";a="879868893"
+Received: from lkp-server01.sh.intel.com (HELO dea6d5a4f140) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 27 May 2023 10:16:11 -0700
+Received: from kbuild by dea6d5a4f140 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1q2xWU-000K5w-04;
+        Sat, 27 May 2023 17:16:10 +0000
+Date:   Sun, 28 May 2023 01:15:15 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Dai Ngo <dai.ngo@oracle.com>, chuck.lever@oracle.com,
+        jlayton@kernel.org
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] NFSD: add counter for write delegation recall due to
+ conflict with GETATTR
+Message-ID: <202305280121.3RAeAt4l-lkp@intel.com>
+References: <1685122722-18287-3-git-send-email-dai.ngo@oracle.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:dc4f:0:b0:331:1846:6064 with SMTP id
- x15-20020a92dc4f000000b0033118466064mr910654ilq.5.1685191007474; Sat, 27 May
- 2023 05:36:47 -0700 (PDT)
-Date:   Sat, 27 May 2023 05:36:47 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000611acc05fcac1bf5@google.com>
-Subject: [syzbot] [squashfs?] [fuse?] INFO: task hung in truncate_inode_pages_range
- (6)
-From:   syzbot <syzbot+dd00076bcf1ab8165aea@syzkaller.appspotmail.com>
-To:     brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, miklos@szeredi.hu,
-        phillip@squashfs.org.uk, squashfs-devel@lists.sourceforge.net,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1685122722-18287-3-git-send-email-dai.ngo@oracle.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,101 +67,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi Dai,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build errors:
 
-HEAD commit:    f1fcbaa18b28 Linux 6.4-rc2
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1505bb65280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3dc1cdd68141cdc3
-dashboard link: https://syzkaller.appspot.com/bug?extid=dd00076bcf1ab8165aea
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110c71d9280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1222c039280000
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.4-rc3 next-20230525]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f9e1748cceea/disk-f1fcbaa1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6dea99343621/vmlinux-f1fcbaa1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f5a93f86012d/Image-f1fcbaa1.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/ebeba8fb1375/mount_0.gz
+url:    https://github.com/intel-lab-lkp/linux/commits/Dai-Ngo/NFSD-handle-GETATTR-conflict-with-write-delegation/20230527-013936
+base:   linus/master
+patch link:    https://lore.kernel.org/r/1685122722-18287-3-git-send-email-dai.ngo%40oracle.com
+patch subject: [PATCH 2/2] NFSD: add counter for write delegation recall due to conflict with GETATTR
+config: i386-randconfig-i074-20230526 (https://download.01.org/0day-ci/archive/20230528/202305280121.3RAeAt4l-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build):
+        mkdir -p ~/bin
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/a90d0ca71c9459b76f9faa8c704c029ac8066d00
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Dai-Ngo/NFSD-handle-GETATTR-conflict-with-write-delegation/20230527-013936
+        git checkout a90d0ca71c9459b76f9faa8c704c029ac8066d00
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang ~/bin/make.cross W=1 O=build_dir ARCH=i386 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang ~/bin/make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dd00076bcf1ab8165aea@syzkaller.appspotmail.com
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202305280121.3RAeAt4l-lkp@intel.com/
 
-INFO: task syz-executor176:6013 blocked for more than 143 seconds.
-      Not tainted 6.4.0-rc2-syzkaller-gf1fcbaa18b28 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor176 state:D stack:0     pid:6013  ppid:6011   flags:0x00000000
-Call trace:
- __switch_to+0x320/0x754 arch/arm64/kernel/process.c:556
- context_switch kernel/sched/core.c:5343 [inline]
- __schedule+0x1368/0x23b8 kernel/sched/core.c:6669
- schedule+0xc4/0x170 kernel/sched/core.c:6745
- io_schedule+0x8c/0x12c kernel/sched/core.c:8979
- folio_wait_bit_common+0x65c/0xb90 mm/filemap.c:1301
- __folio_lock+0x2c/0x3c mm/filemap.c:1664
- folio_lock include/linux/pagemap.h:955 [inline]
- truncate_inode_pages_range+0x930/0xf74 mm/truncate.c:422
- truncate_inode_pages mm/truncate.c:449 [inline]
- truncate_inode_pages_final+0x90/0xc0 mm/truncate.c:484
- evict+0x26c/0x68c fs/inode.c:667
- dispose_list fs/inode.c:698 [inline]
- evict_inodes+0x6b4/0x74c fs/inode.c:748
- generic_shutdown_super+0x9c/0x328 fs/super.c:479
- kill_block_super+0x70/0xdc fs/super.c:1407
- deactivate_locked_super+0xac/0x124 fs/super.c:331
- deactivate_super+0xe0/0x100 fs/super.c:362
- cleanup_mnt+0x34c/0x3dc fs/namespace.c:1177
- __cleanup_mnt+0x20/0x30 fs/namespace.c:1184
- task_work_run+0x230/0x2e0 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- do_notify_resume+0x2180/0x3c90 arch/arm64/kernel/signal.c:1304
- prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
- el0_svc+0x90/0x15c arch/arm64/kernel/entry-common.c:638
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+All errors (new ones prefixed by >>):
 
-Showing all locks held in the system:
-1 lock held by rcu_tasks_kthre/13:
- #0: ffff8000160810d0 (rcu_tasks.tasks_gp_mutex){+.+.}-{3:3}, at: rcu_tasks_one_gp+0x44/0xcf4 kernel/rcu/tasks.h:518
-1 lock held by rcu_tasks_trace/14:
- #0: ffff800016081490 (rcu_tasks_trace.tasks_gp_mutex){+.+.}-{3:3}, at: rcu_tasks_one_gp+0x44/0xcf4 kernel/rcu/tasks.h:518
-1 lock held by khungtaskd/28:
- #0: ffff800016080f00 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0xc/0x44 include/linux/rcupdate.h:326
-2 locks held by getty/5728:
- #0: ffff0000dab28098 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
- #1: ffff80001ae462f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x414/0x1210 drivers/tty/n_tty.c:2176
-1 lock held by syz-executor176/6013:
- #0: ffff0000c99160e0 (&type->s_umount_key#41){+.+.}-{3:3}, at: deactivate_super+0xd8/0x100 fs/super.c:361
-
-=============================================
+   In file included from fs/nfsd/trace.c:4:
+   In file included from fs/nfsd/trace.h:17:
+   In file included from fs/nfsd/xdr4.h:40:
+   In file included from fs/nfsd/state.h:42:
+   In file included from fs/nfsd/nfsd.h:28:
+>> fs/nfsd/stats.h:99:40: error: use of undeclared identifier 'NFSD_STATS_WDELEG_GETATTR'
+           percpu_counter_inc(&nfsdstats.counter[NFSD_STATS_WDELEG_GETATTR]);
+                                                 ^
+   1 error generated.
+--
+   In file included from fs/nfsd/export.c:21:
+   In file included from fs/nfsd/nfsd.h:28:
+>> fs/nfsd/stats.h:99:40: error: use of undeclared identifier 'NFSD_STATS_WDELEG_GETATTR'
+           percpu_counter_inc(&nfsdstats.counter[NFSD_STATS_WDELEG_GETATTR]);
+                                                 ^
+   fs/nfsd/export.c:1005:17: warning: variable 'inode' set but not used [-Wunused-but-set-variable]
+           struct inode            *inode;
+                                    ^
+   1 warning and 1 error generated.
 
 
+vim +/NFSD_STATS_WDELEG_GETATTR +99 fs/nfsd/stats.h
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+    96	
+    97	static inline void nfsd_stats_wdeleg_getattr_inc(void)
+    98	{
+  > 99		percpu_counter_inc(&nfsdstats.counter[NFSD_STATS_WDELEG_GETATTR]);
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
