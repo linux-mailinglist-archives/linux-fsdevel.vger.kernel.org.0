@@ -2,290 +2,337 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CF31713646
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 21:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6421D71367C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 May 2023 23:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231208AbjE0TqM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 May 2023 15:46:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48446 "EHLO
+        id S229788AbjE0VBt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 May 2023 17:01:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjE0TqK (ORCPT
+        with ESMTP id S229472AbjE0VBp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 May 2023 15:46:10 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2354BE;
-        Sat, 27 May 2023 12:46:04 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3093d10442aso1117690f8f.1;
-        Sat, 27 May 2023 12:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685216763; x=1687808763;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yScXvAOo/xUmomxE33DkwJiq9zbdLwNtpoWsDl3jelk=;
-        b=gcr+i/Oe2B/fp27UmbsngDZwfGTLNeLqWKY5Gxg7SD/h4R7bkbR9gSYMnb3GG+4/GA
-         xg5Th5Kjpje2q0zbpBKEblCxios13UBcRT6/lYgYw221LcSV5g2Z7kWwiL8+cuF8KT/I
-         Q4PUbQYuI8LTmRMNTj8eRBkNXVNRBVFaZtLWAztiv4G/1mIvO6nBjLa/6O0OC3jeZ6mp
-         PM87Vo+eBj2sr1lJzHeGnOHb5HV5umbeOMhXcVDrd2M6GPjkHcawsRu79fyYkZIeNhH2
-         tq7RRqppBi7g+cs3jNZEWXIfbWpp5nYwo+YybNFvNEr/CsDOXEYu5ofn82CZM5WjUj3Z
-         orTA==
+        Sat, 27 May 2023 17:01:45 -0400
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1B5BB
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 May 2023 14:01:43 -0700 (PDT)
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-766655c2cc7so134200139f.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 May 2023 14:01:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685216763; x=1687808763;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yScXvAOo/xUmomxE33DkwJiq9zbdLwNtpoWsDl3jelk=;
-        b=KBTLD8A5+YCGvm3cw9xShENiQTy+cneLrYZ2MpQNJ+AaE1sOlMeg9LLbUbp5sUn2Dr
-         cL+pVOi8gUbgjZLppnOZARfysLl2BB8EqLQNF9255QdwylooRfMBeldOSJJIsoaoXKeA
-         NwQFFoTuYIzSeOaY8Eqjt5y7bA5tjDMlp7/PKDvIQxMWSI6V6QAKoLSoB8NF1ao2y8xU
-         NtL1KDwUym5Evr3pCmdtxicFCcS8GsRgEVfENeVCKhlyGdGvBFLqmj9Ien4YnUeVDBkR
-         fKHe+FzeJDgPDGapEplXkkMotXq/t0gMxqtV/yGGXM295oXN4neoTiPh3zNZeCjZwW1a
-         Gskw==
-X-Gm-Message-State: AC+VfDyfme51eW0qagrIjFwv9l6981PLETeu1C7K5TdPWsDy02IfoRLQ
-        PT3eMaY06Ry4wCAk840LGcs=
-X-Google-Smtp-Source: ACHHUZ6HI+9ndP9jA2w0d+e7jXcwjj7zyjBoMOcS+oeZ1wbojrMqinOs2X09wzBcOzCtDZ9DZNBguw==
-X-Received: by 2002:a05:6000:11c4:b0:306:2fab:1f81 with SMTP id i4-20020a05600011c400b003062fab1f81mr4453730wrx.21.1685216763120;
-        Sat, 27 May 2023 12:46:03 -0700 (PDT)
-Received: from localhost (host81-154-179-160.range81-154.btcentralplus.com. [81.154.179.160])
-        by smtp.gmail.com with ESMTPSA id u18-20020adfed52000000b003079986fd71sm8897412wro.88.2023.05.27.12.46.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 May 2023 12:46:02 -0700 (PDT)
-Date:   Sat, 27 May 2023 20:46:01 +0100
-From:   Lorenzo Stoakes <lstoakes@gmail.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v4 1/3] mm: Don't pin ZERO_PAGE in pin_user_pages()
-Message-ID: <c6bfafa5-a4ba-477b-99a2-dd14a25fc634@lucifer.local>
-References: <20230526214142.958751-1-dhowells@redhat.com>
- <20230526214142.958751-2-dhowells@redhat.com>
+        d=1e100.net; s=20221208; t=1685221303; x=1687813303;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AM1jbn0su24YV15CboMIyOZg7PxhpNpo2v60gsISwLw=;
+        b=EMuXWJBwUY4ILyCJi0F9b+exOEv40fu77ChhZOzpMXoAz7jjUH73yoQi0/2HnZaajx
+         pkRXBySUwlcTI1g934Y5Q6M5cH8Wa7uucUDBQx/o75LfVjcjBTAUJyuu3rIYCJTVbGF5
+         9eTb+5A0bXjMQ+3QeM9oaY/vD315VZXugrJJkTNAObr2C908PmmbBF0rKPGCCoWNeS8k
+         NflnslS2ZRGYoUqbNeLd24G9+lh9EAM5xXZ0ppyqgkuvTY50FiKq0Ue3rQIi9J4USUUw
+         q3KxGwGpsc1SkjLyL0mkh7wztduWHgKyKJgmQOPcZ/zY+1tiTdr3X3aXdloIM3SFsMse
+         XmGA==
+X-Gm-Message-State: AC+VfDxlEqEG+ANziEgYYVbbHXBvv+dIOMzT3+agUBv+xoLNlIRX9t6D
+        itBdyUyEihaIG3w0kH5aNQqn8SHTfcfevBN4CSXtbwzuiYLx
+X-Google-Smtp-Source: ACHHUZ5mHoErI2NB1cEfebAyBDxRnRLcz1mhTojSY2U2Hj9NOz/SjzkXjzx39QAUiiglKr4ReM+nyUD02U9ggJdTUJs/ZMXt7gq+
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230526214142.958751-2-dhowells@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:9585:0:b0:41a:d24b:c9c6 with SMTP id
+ b5-20020a029585000000b0041ad24bc9c6mr1165343jai.3.1685221302930; Sat, 27 May
+ 2023 14:01:42 -0700 (PDT)
+Date:   Sat, 27 May 2023 14:01:42 -0700
+In-Reply-To: <000000000000cef3a005fc1bcc80@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000021168405fcb329a7@google.com>
+Subject: Re: [syzbot] [ntfs3?] possible deadlock in scheduler_tick (2)
+From:   syzbot <syzbot+ece2915262061d6e0ac1@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org,
+        almaz.alexandrovich@paragon-software.com, andreyknvl@gmail.com,
+        dvyukov@google.com, elver@google.com, frederic@kernel.org,
+        glider@google.com, hannes@cmpxchg.org, kasan-dev@googlegroups.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mgorman@techsingularity.net, mhocko@kernel.org,
+        mhocko@suse.com, mingo@kernel.org, ntfs3@lists.linux.dev,
+        penguin-kernel@i-love.sakura.ne.jp, ryabinin.a.a@gmail.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        vbabka@suse.cz, vincenzo.frascino@arm.com, ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 10:41:40PM +0100, David Howells wrote:
-> Make pin_user_pages*() leave a ZERO_PAGE unpinned if it extracts a pointer
-> to it from the page tables and make unpin_user_page*() correspondingly
-> ignore a ZERO_PAGE when unpinning.  We don't want to risk overrunning a
-> zero page's refcount as we're only allowed ~2 million pins on it -
-> something that userspace can conceivably trigger.
->
-> Add a pair of functions to test whether a page or a folio is a ZERO_PAGE.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Christoph Hellwig <hch@infradead.org>
-> cc: David Hildenbrand <david@redhat.com>
-> cc: Lorenzo Stoakes <lstoakes@gmail.com>
-> cc: Andrew Morton <akpm@linux-foundation.org>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Al Viro <viro@zeniv.linux.org.uk>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: Jan Kara <jack@suse.cz>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Jason Gunthorpe <jgg@nvidia.com>
-> cc: Logan Gunthorpe <logang@deltatee.com>
-> cc: Hillf Danton <hdanton@sina.com>
-> cc: Christian Brauner <brauner@kernel.org>
-> cc: Linus Torvalds <torvalds@linux-foundation.org>
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-block@vger.kernel.org
-> cc: linux-kernel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
->
-> Notes:
->     ver #3)
->      - Move is_zero_page() and is_zero_folio() to mm.h for dependency reasons.
->      - Add more comments and adjust the docs.
->
->     ver #2)
->      - Fix use of ZERO_PAGE().
->      - Add is_zero_page() and is_zero_folio() wrappers.
->      - Return the zero page obtained, not ZERO_PAGE(0) unconditionally.
->
->  Documentation/core-api/pin_user_pages.rst |  6 +++++
->  include/linux/mm.h                        | 26 +++++++++++++++++--
->  mm/gup.c                                  | 31 ++++++++++++++++++++++-
->  3 files changed, 60 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/core-api/pin_user_pages.rst b/Documentation/core-api/pin_user_pages.rst
-> index 9fb0b1080d3b..d3c1f6d8c0e0 100644
-> --- a/Documentation/core-api/pin_user_pages.rst
-> +++ b/Documentation/core-api/pin_user_pages.rst
-> @@ -112,6 +112,12 @@ pages:
->  This also leads to limitations: there are only 31-10==21 bits available for a
->  counter that increments 10 bits at a time.
->
-> +* Because of that limitation, special handling is applied to the zero pages
-> +  when using FOLL_PIN.  We only pretend to pin a zero page - we don't alter its
-> +  refcount or pincount at all (it is permanent, so there's no need).  The
-> +  unpinning functions also don't do anything to a zero page.  This is
-> +  transparent to the caller.
-> +
+syzbot has found a reproducer for the following issue on:
 
-Great! Cheers. :)
+HEAD commit:    eb0f1697d729 Merge branch 'for-next/core', remote-tracking..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=17733b4d280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8860074b9a9d6c45
+dashboard link: https://syzkaller.appspot.com/bug?extid=ece2915262061d6e0ac1
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b4e536280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10224d6d280000
 
->  * Callers must specifically request "dma-pinned tracking of pages". In other
->    words, just calling get_user_pages() will not suffice; a new set of functions,
->    pin_user_page() and related, must be used.
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 27ce77080c79..3c2f6b452586 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1910,6 +1910,28 @@ static inline bool page_needs_cow_for_dma(struct vm_area_struct *vma,
->  	return page_maybe_dma_pinned(page);
->  }
->
-> +/**
-> + * is_zero_page - Query if a page is a zero page
-> + * @page: The page to query
-> + *
-> + * This returns true if @page is one of the permanent zero pages.
-> + */
-> +static inline bool is_zero_page(const struct page *page)
-> +{
-> +	return is_zero_pfn(page_to_pfn(page));
-> +}
-> +
-> +/**
-> + * is_zero_folio - Query if a folio is a zero page
-> + * @folio: The folio to query
-> + *
-> + * This returns true if @folio is one of the permanent zero pages.
-> + */
-> +static inline bool is_zero_folio(const struct folio *folio)
-> +{
-> +	return is_zero_page(&folio->page);
-> +}
-> +
->  /* MIGRATE_CMA and ZONE_MOVABLE do not allow pin pages */
->  #ifdef CONFIG_MIGRATION
->  static inline bool is_longterm_pinnable_page(struct page *page)
-> @@ -1920,8 +1942,8 @@ static inline bool is_longterm_pinnable_page(struct page *page)
->  	if (mt == MIGRATE_CMA || mt == MIGRATE_ISOLATE)
->  		return false;
->  #endif
-> -	/* The zero page may always be pinned */
-> -	if (is_zero_pfn(page_to_pfn(page)))
-> +	/* The zero page can be "pinned" but gets special handling. */
-> +	if (is_zero_page(page))
->  		return true;
->
->  	/* Coherent device memory must always allow eviction. */
-> diff --git a/mm/gup.c b/mm/gup.c
-> index bbe416236593..ad28261dcafd 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -51,7 +51,8 @@ static inline void sanity_check_pinned_pages(struct page **pages,
->  		struct page *page = *pages;
->  		struct folio *folio = page_folio(page);
->
-> -		if (!folio_test_anon(folio))
-> +		if (is_zero_page(page) ||
-> +		    !folio_test_anon(folio))
->  			continue;
->  		if (!folio_test_large(folio) || folio_test_hugetlb(folio))
->  			VM_BUG_ON_PAGE(!PageAnonExclusive(&folio->page), page);
-> @@ -131,6 +132,13 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
->  	else if (flags & FOLL_PIN) {
->  		struct folio *folio;
->
-> +		/*
-> +		 * Don't take a pin on the zero page - it's not going anywhere
-> +		 * and it is used in a *lot* of places.
-> +		 */
-> +		if (is_zero_page(page))
-> +			return page_folio(page);
-> +
->  		/*
->  		 * Can't do FOLL_LONGTERM + FOLL_PIN gup fast path if not in a
->  		 * right zone, so fail and let the caller fall back to the slow
-> @@ -180,6 +188,8 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
->  static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
->  {
->  	if (flags & FOLL_PIN) {
-> +		if (is_zero_folio(folio))
-> +			return;
->  		node_stat_mod_folio(folio, NR_FOLL_PIN_RELEASED, refs);
->  		if (folio_test_large(folio))
->  			atomic_sub(refs, &folio->_pincount);
-> @@ -224,6 +234,13 @@ int __must_check try_grab_page(struct page *page, unsigned int flags)
->  	if (flags & FOLL_GET)
->  		folio_ref_inc(folio);
->  	else if (flags & FOLL_PIN) {
-> +		/*
-> +		 * Don't take a pin on the zero page - it's not going anywhere
-> +		 * and it is used in a *lot* of places.
-> +		 */
-> +		if (is_zero_page(page))
-> +			return 0;
-> +
->  		/*
->  		 * Similar to try_grab_folio(): be sure to *also*
->  		 * increment the normal page refcount field at least once,
-> @@ -3079,6 +3096,9 @@ EXPORT_SYMBOL_GPL(get_user_pages_fast);
->   *
->   * FOLL_PIN means that the pages must be released via unpin_user_page(). Please
->   * see Documentation/core-api/pin_user_pages.rst for further details.
-> + *
-> + * Note that if a zero_page is amongst the returned pages, it will not have
-> + * pins in it and unpin_user_page() will not remove pins from it.
->   */
->  int pin_user_pages_fast(unsigned long start, int nr_pages,
->  			unsigned int gup_flags, struct page **pages)
-> @@ -3110,6 +3130,9 @@ EXPORT_SYMBOL_GPL(pin_user_pages_fast);
->   *
->   * FOLL_PIN means that the pages must be released via unpin_user_page(). Please
->   * see Documentation/core-api/pin_user_pages.rst for details.
-> + *
-> + * Note that if a zero_page is amongst the returned pages, it will not have
-> + * pins in it and unpin_user_page*() will not remove pins from it.
->   */
->  long pin_user_pages_remote(struct mm_struct *mm,
->  			   unsigned long start, unsigned long nr_pages,
-> @@ -3143,6 +3166,9 @@ EXPORT_SYMBOL(pin_user_pages_remote);
->   *
->   * FOLL_PIN means that the pages must be released via unpin_user_page(). Please
->   * see Documentation/core-api/pin_user_pages.rst for details.
-> + *
-> + * Note that if a zero_page is amongst the returned pages, it will not have
-> + * pins in it and unpin_user_page*() will not remove pins from it.
->   */
->  long pin_user_pages(unsigned long start, unsigned long nr_pages,
->  		    unsigned int gup_flags, struct page **pages,
-> @@ -3161,6 +3187,9 @@ EXPORT_SYMBOL(pin_user_pages);
->   * pin_user_pages_unlocked() is the FOLL_PIN variant of
->   * get_user_pages_unlocked(). Behavior is the same, except that this one sets
->   * FOLL_PIN and rejects FOLL_GET.
-> + *
-> + * Note that if a zero_page is amongst the returned pages, it will not have
-> + * pins in it and unpin_user_page*() will not remove pins from it.
->   */
->  long pin_user_pages_unlocked(unsigned long start, unsigned long nr_pages,
->  			     struct page **pages, unsigned int gup_flags)
->
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/034232da7cff/disk-eb0f1697.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b11411bec33e/vmlinux-eb0f1697.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a53c52e170dd/Image-eb0f1697.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2ce9b06770e0/mount_0.gz
 
-All looks good, thanks for adding comments/updating doc!
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ece2915262061d6e0ac1@syzkaller.appspotmail.com
 
-Reviewed-by: Lorenzo Stoakes <lstoakes@gmail.com>
+======================================================
+WARNING: possible circular locking dependency detected
+6.4.0-rc3-syzkaller-geb0f1697d729 #0 Not tainted
+------------------------------------------------------
+klogd/5578 is trying to acquire lock:
+ffff0001fea76c40 (&pgdat->kcompactd_wait){-...}-{2:2}, at: __wake_up_common_lock kernel/sched/wait.c:137 [inline]
+ffff0001fea76c40 (&pgdat->kcompactd_wait){-...}-{2:2}, at: __wake_up+0xec/0x1a8 kernel/sched/wait.c:160
+
+but task is already holding lock:
+ffff0001b4259b18 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:558 [inline]
+ffff0001b4259b18 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1366 [inline]
+ffff0001b4259b18 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1653 [inline]
+ffff0001b4259b18 (&rq->__lock){-.-.}-{2:2}, at: scheduler_tick+0xa4/0x52c kernel/sched/core.c:5616
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&rq->__lock){-.-.}-{2:2}:
+       _raw_spin_lock_nested+0x50/0x6c kernel/locking/spinlock.c:378
+       raw_spin_rq_lock_nested+0x2c/0x44 kernel/sched/core.c:558
+       raw_spin_rq_lock kernel/sched/sched.h:1366 [inline]
+       rq_lock kernel/sched/sched.h:1653 [inline]
+       task_fork_fair+0x7c/0x23c kernel/sched/fair.c:12095
+       sched_cgroup_fork+0x38c/0x464 kernel/sched/core.c:4777
+       copy_process+0x24fc/0x3514 kernel/fork.c:2618
+       kernel_clone+0x1d8/0x8ac kernel/fork.c:2918
+       user_mode_thread+0x110/0x178 kernel/fork.c:2996
+       rest_init+0x2c/0x2f4 init/main.c:700
+       start_kernel+0x0/0x55c init/main.c:834
+       start_kernel+0x3f0/0x55c init/main.c:1088
+       __primary_switched+0xb8/0xc0 arch/arm64/kernel/head.S:523
+
+-> #1 (&p->pi_lock){-.-.}-{2:2}:
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0x5c/0x7c kernel/locking/spinlock.c:162
+       try_to_wake_up+0xb0/0xd9c kernel/sched/core.c:4191
+       default_wake_function+0x4c/0x60 kernel/sched/core.c:6993
+       autoremove_wake_function+0x24/0xf8 kernel/sched/wait.c:419
+       __wake_up_common+0x23c/0x3bc kernel/sched/wait.c:107
+       __wake_up_common_lock kernel/sched/wait.c:138 [inline]
+       __wake_up+0x10c/0x1a8 kernel/sched/wait.c:160
+       wakeup_kcompactd+0x254/0x310 mm/compaction.c:2942
+       balance_pgdat+0x1880/0x1c34 mm/vmscan.c:7541
+       kswapd+0x7d0/0x10fc mm/vmscan.c:7738
+       kthread+0x288/0x310 kernel/kthread.c:379
+       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:853
+
+-> #0 (&pgdat->kcompactd_wait){-...}-{2:2}:
+       check_prev_add kernel/locking/lockdep.c:3108 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3227 [inline]
+       validate_chain kernel/locking/lockdep.c:3842 [inline]
+       __lock_acquire+0x3310/0x75f0 kernel/locking/lockdep.c:5074
+       lock_acquire+0x23c/0x71c kernel/locking/lockdep.c:5691
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0x5c/0x7c kernel/locking/spinlock.c:162
+       __wake_up_common_lock kernel/sched/wait.c:137 [inline]
+       __wake_up+0xec/0x1a8 kernel/sched/wait.c:160
+       wakeup_kcompactd+0x254/0x310 mm/compaction.c:2942
+       wakeup_kswapd+0x350/0x8c8 mm/vmscan.c:7792
+       wake_all_kswapds+0x13c/0x23c mm/page_alloc.c:4028
+       __alloc_pages_slowpath+0x378/0x1edc mm/page_alloc.c:4296
+       __alloc_pages+0x3bc/0x698 mm/page_alloc.c:4781
+       alloc_pages+0x4bc/0x7c0
+       __stack_depot_save+0x4ac/0x678 lib/stackdepot.c:410
+       kasan_save_stack+0x54/0x6c mm/kasan/common.c:46
+       __kasan_record_aux_stack+0xcc/0xe8 mm/kasan/generic.c:491
+       kasan_record_aux_stack+0x14/0x20 mm/kasan/generic.c:496
+       task_work_add+0x94/0x3c0 kernel/task_work.c:48
+       task_tick_mm_cid kernel/sched/core.c:11940 [inline]
+       scheduler_tick+0x2d0/0x52c kernel/sched/core.c:5626
+       update_process_times+0x198/0x1f4 kernel/time/timer.c:2076
+       tick_sched_handle kernel/time/tick-sched.c:243 [inline]
+       tick_sched_timer+0x330/0x4e8 kernel/time/tick-sched.c:1481
+       __run_hrtimer kernel/time/hrtimer.c:1685 [inline]
+       __hrtimer_run_queues+0x458/0xca0 kernel/time/hrtimer.c:1749
+       hrtimer_interrupt+0x2c0/0xb64 kernel/time/hrtimer.c:1811
+       timer_handler drivers/clocksource/arm_arch_timer.c:656 [inline]
+       arch_timer_handler_virt+0x74/0x88 drivers/clocksource/arm_arch_timer.c:667
+       handle_percpu_devid_irq+0x2a4/0x804 kernel/irq/chip.c:930
+       generic_handle_irq_desc include/linux/irqdesc.h:158 [inline]
+       handle_irq_desc kernel/irq/irqdesc.c:651 [inline]
+       generic_handle_domain_irq+0x7c/0xc4 kernel/irq/irqdesc.c:707
+       __gic_handle_irq drivers/irqchip/irq-gic-v3.c:728 [inline]
+       __gic_handle_irq_from_irqson drivers/irqchip/irq-gic-v3.c:779 [inline]
+       gic_handle_irq+0x70/0x1e4 drivers/irqchip/irq-gic-v3.c:823
+       call_on_irq_stack+0x24/0x4c arch/arm64/kernel/entry.S:882
+       do_interrupt_handler+0xd4/0x138 arch/arm64/kernel/entry-common.c:274
+       __el1_irq arch/arm64/kernel/entry-common.c:471 [inline]
+       el1_interrupt+0x34/0x68 arch/arm64/kernel/entry-common.c:486
+       el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:491
+       el1h_64_irq+0x64/0x68 arch/arm64/kernel/entry.S:587
+       __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:182 [inline]
+       arch_local_irq_restore arch/arm64/include/asm/irqflags.h:202 [inline]
+       dump_stack_lvl+0x104/0x124 lib/dump_stack.c:107
+       dump_stack+0x1c/0x28 lib/dump_stack.c:113
+       dump_header+0xb4/0x954 mm/oom_kill.c:460
+       oom_kill_process+0x10c/0x6ec mm/oom_kill.c:1036
+       out_of_memory+0xe24/0x103c mm/oom_kill.c:1156
+       __alloc_pages_may_oom mm/page_alloc.c:3669 [inline]
+       __alloc_pages_slowpath+0x1714/0x1edc mm/page_alloc.c:4444
+       __alloc_pages+0x3bc/0x698 mm/page_alloc.c:4781
+       alloc_pages+0x4bc/0x7c0
+       alloc_slab_page+0xa0/0x164 mm/slub.c:1851
+       allocate_slab mm/slub.c:2006 [inline]
+       new_slab+0x210/0x2f4 mm/slub.c:2051
+       ___slab_alloc+0x80c/0xdf4 mm/slub.c:3192
+       __slab_alloc mm/slub.c:3291 [inline]
+       __slab_alloc_node mm/slub.c:3344 [inline]
+       slab_alloc_node mm/slub.c:3441 [inline]
+       kmem_cache_alloc_node+0x318/0x46c mm/slub.c:3496
+       __alloc_skb+0x19c/0x3d8 net/core/skbuff.c:644
+       alloc_skb include/linux/skbuff.h:1288 [inline]
+       alloc_skb_with_frags+0xb4/0x590 net/core/skbuff.c:6378
+       sock_alloc_send_pskb+0x76c/0x884 net/core/sock.c:2729
+       unix_dgram_sendmsg+0x480/0x16c0 net/unix/af_unix.c:1944
+       sock_sendmsg_nosec net/socket.c:724 [inline]
+       sock_sendmsg net/socket.c:747 [inline]
+       __sys_sendto+0x3b4/0x538 net/socket.c:2144
+       __do_sys_sendto net/socket.c:2156 [inline]
+       __se_sys_sendto net/socket.c:2152 [inline]
+       __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2152
+       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+       invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
+       el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
+       do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
+       el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
+       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+
+other info that might help us debug this:
+
+Chain exists of:
+  &pgdat->kcompactd_wait --> &p->pi_lock --> &rq->__lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&rq->__lock);
+                               lock(&p->pi_lock);
+                               lock(&rq->__lock);
+  lock(&pgdat->kcompactd_wait);
+
+ *** DEADLOCK ***
+
+2 locks held by klogd/5578:
+ #0: ffff8000161245e8 (oom_lock){+.+.}-{3:3}, at: __alloc_pages_may_oom mm/page_alloc.c:3618 [inline]
+ #0: ffff8000161245e8 (oom_lock){+.+.}-{3:3}, at: __alloc_pages_slowpath+0x1694/0x1edc mm/page_alloc.c:4444
+ #1: ffff0001b4259b18 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:558 [inline]
+ #1: ffff0001b4259b18 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1366 [inline]
+ #1: ffff0001b4259b18 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1653 [inline]
+ #1: ffff0001b4259b18 (&rq->__lock){-.-.}-{2:2}, at: scheduler_tick+0xa4/0x52c kernel/sched/core.c:5616
+
+stack backtrace:
+CPU: 1 PID: 5578 Comm: klogd Not tainted 6.4.0-rc3-syzkaller-geb0f1697d729 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/28/2023
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:233
+ show_stack+0x2c/0x44 arch/arm64/kernel/stacktrace.c:240
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
+ dump_stack+0x1c/0x28 lib/dump_stack.c:113
+ print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2066
+ check_noncircular+0x2cc/0x378 kernel/locking/lockdep.c:2188
+ check_prev_add kernel/locking/lockdep.c:3108 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3227 [inline]
+ validate_chain kernel/locking/lockdep.c:3842 [inline]
+ __lock_acquire+0x3310/0x75f0 kernel/locking/lockdep.c:5074
+ lock_acquire+0x23c/0x71c kernel/locking/lockdep.c:5691
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x5c/0x7c kernel/locking/spinlock.c:162
+ __wake_up_common_lock kernel/sched/wait.c:137 [inline]
+ __wake_up+0xec/0x1a8 kernel/sched/wait.c:160
+ wakeup_kcompactd+0x254/0x310 mm/compaction.c:2942
+ wakeup_kswapd+0x350/0x8c8 mm/vmscan.c:7792
+ wake_all_kswapds+0x13c/0x23c mm/page_alloc.c:4028
+ __alloc_pages_slowpath+0x378/0x1edc mm/page_alloc.c:4296
+ __alloc_pages+0x3bc/0x698 mm/page_alloc.c:4781
+ alloc_pages+0x4bc/0x7c0
+ __stack_depot_save+0x4ac/0x678 lib/stackdepot.c:410
+ kasan_save_stack+0x54/0x6c mm/kasan/common.c:46
+ __kasan_record_aux_stack+0xcc/0xe8 mm/kasan/generic.c:491
+ kasan_record_aux_stack+0x14/0x20 mm/kasan/generic.c:496
+ task_work_add+0x94/0x3c0 kernel/task_work.c:48
+ task_tick_mm_cid kernel/sched/core.c:11940 [inline]
+ scheduler_tick+0x2d0/0x52c kernel/sched/core.c:5626
+ update_process_times+0x198/0x1f4 kernel/time/timer.c:2076
+ tick_sched_handle kernel/time/tick-sched.c:243 [inline]
+ tick_sched_timer+0x330/0x4e8 kernel/time/tick-sched.c:1481
+ __run_hrtimer kernel/time/hrtimer.c:1685 [inline]
+ __hrtimer_run_queues+0x458/0xca0 kernel/time/hrtimer.c:1749
+ hrtimer_interrupt+0x2c0/0xb64 kernel/time/hrtimer.c:1811
+ timer_handler drivers/clocksource/arm_arch_timer.c:656 [inline]
+ arch_timer_handler_virt+0x74/0x88 drivers/clocksource/arm_arch_timer.c:667
+ handle_percpu_devid_irq+0x2a4/0x804 kernel/irq/chip.c:930
+ generic_handle_irq_desc include/linux/irqdesc.h:158 [inline]
+ handle_irq_desc kernel/irq/irqdesc.c:651 [inline]
+ generic_handle_domain_irq+0x7c/0xc4 kernel/irq/irqdesc.c:707
+ __gic_handle_irq drivers/irqchip/irq-gic-v3.c:728 [inline]
+ __gic_handle_irq_from_irqson drivers/irqchip/irq-gic-v3.c:779 [inline]
+ gic_handle_irq+0x70/0x1e4 drivers/irqchip/irq-gic-v3.c:823
+ call_on_irq_stack+0x24/0x4c arch/arm64/kernel/entry.S:882
+ do_interrupt_handler+0xd4/0x138 arch/arm64/kernel/entry-common.c:274
+ __el1_irq arch/arm64/kernel/entry-common.c:471 [inline]
+ el1_interrupt+0x34/0x68 arch/arm64/kernel/entry-common.c:486
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:491
+ el1h_64_irq+0x64/0x68 arch/arm64/kernel/entry.S:587
+ __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:182 [inline]
+ arch_local_irq_restore arch/arm64/include/asm/irqflags.h:202 [inline]
+ dump_stack_lvl+0x104/0x124 lib/dump_stack.c:107
+ dump_stack+0x1c/0x28 lib/dump_stack.c:113
+ dump_header+0xb4/0x954 mm/oom_kill.c:460
+ oom_kill_process+0x10c/0x6ec mm/oom_kill.c:1036
+ out_of_memory+0xe24/0x103c mm/oom_kill.c:1156
+ __alloc_pages_may_oom mm/page_alloc.c:3669 [inline]
+ __alloc_pages_slowpath+0x1714/0x1edc mm/page_alloc.c:4444
+ __alloc_pages+0x3bc/0x698 mm/page_alloc.c:4781
+ alloc_pages+0x4bc/0x7c0
+ alloc_slab_page+0xa0/0x164 mm/slub.c:1851
+ allocate_slab mm/slub.c:2006 [inline]
+ new_slab+0x210/0x2f4 mm/slub.c:2051
+ ___slab_alloc+0x80c/0xdf4 mm/slub.c:3192
+ __slab_alloc mm/slub.c:3291 [inline]
+ __slab_alloc_node mm/slub.c:3344 [inline]
+ slab_alloc_node mm/slub.c:3441 [inline]
+ kmem_cache_alloc_node+0x318/0x46c mm/slub.c:3496
+ __alloc_skb+0x19c/0x3d8 net/core/skbuff.c:644
+ alloc_skb include/linux/skbuff.h:1288 [inline]
+ alloc_skb_with_frags+0xb4/0x590 net/core/skbuff.c:6378
+ sock_alloc_send_pskb+0x76c/0x884 net/core/sock.c:2729
+ unix_dgram_sendmsg+0x480/0x16c0 net/unix/af_unix.c:1944
+ sock_sendmsg_nosec net/socket.c:724 [inline]
+ sock_sendmsg net/socket.c:747 [inline]
+ __sys_sendto+0x3b4/0x538 net/socket.c:2144
+ __do_sys_sendto net/socket.c:2156 [inline]
+ __se_sys_sendto net/socket.c:2152 [inline]
+ __arm64_sys_sendto+0xd8/0xf8 net/socket.c:2152
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
+ el0_svc_common+0x138/0x258 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:193
+ el0_svc+0x4c/0x15c arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
