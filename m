@@ -2,95 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D11713A6D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 May 2023 17:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40F75713A7C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 May 2023 18:20:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229606AbjE1PxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 May 2023 11:53:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
+        id S229625AbjE1QUd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 May 2023 12:20:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjE1PxV (ORCPT
+        with ESMTP id S229461AbjE1QUc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 May 2023 11:53:21 -0400
-Received: from out28-84.mail.aliyun.com (out28-84.mail.aliyun.com [115.124.28.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26575B2;
-        Sun, 28 May 2023 08:53:17 -0700 (PDT)
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1322099|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0385983-0.000103678-0.961298;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047213;MF=wangyugui@e16-tech.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.TEnfwM8_1685289193;
-Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.TEnfwM8_1685289193)
-          by smtp.aliyun-inc.com;
-          Sun, 28 May 2023 23:53:14 +0800
-Date:   Sun, 28 May 2023 23:53:15 +0800
-From:   Wang Yugui <wangyugui@e16-tech.com>
-To:     cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: Re: gfs2 write bandwidth regression on 6.4-rc3 compareto 5.15.y
-In-Reply-To: <20230523085929.614A.409509F4@e16-tech.com>
-References: <20230523085929.614A.409509F4@e16-tech.com>
-Message-Id: <20230528235314.7852.409509F4@e16-tech.com>
+        Sun, 28 May 2023 12:20:32 -0400
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 778C6BB
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 May 2023 09:20:31 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 3J87qJcsWrDwx3J87qjZRk; Sun, 28 May 2023 18:20:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1685290829;
+        bh=a2vlfOS/zd156pwgWbEvLCkl+o6nZ4EPHRWlCYI1/Dc=;
+        h=From:To:Cc:Subject:Date;
+        b=KVeczUZ2SyAWnA9n3+aJnOifGCiTgEBfhm1Wso9EJlktFte7I/K8YRWaX0PD1LAA+
+         TyZ45qzvlxznn3FHzzU/LgAHEWWLn5J1J/FW9lQFLfhvBA0W+f/l2ZD5tz2osdtA0x
+         Rnzuzet0WwEtNtln/r545IpoMMkikmB/3McAaG56VrZucC2AFhJN8xHSvcCce5aDU0
+         kdMGUJzsigwyY+rtfN2seE6H1bMQFwOB248InKFtDuqb5TAvEqi/l4PGejxwsz8Hwl
+         CHwz7QDQcX+mOs3cme9JFRxThY7U6uqMBO1tMEipxYN4CAgH/WOy+9Tcc2IRhAjSne
+         iXOfKYaNp6gfw==
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 28 May 2023 18:20:29 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH 1/2] binfmt: Use struct_size()
+Date:   Sun, 28 May 2023 18:20:24 +0200
+Message-Id: <53150beae5dc04dac513dba391a2e4ae8696a7f3.1685290790.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.81.04 [en]
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Use struct_size() instead of hand-writing it. It is less verbose, more
+robust and more informative.
 
-> Hi,
-> 
-> gfs2 write bandwidth regression on 6.4-rc3 compare to 5.15.y.
-> 
-> we added  linux-xfs@ and linux-fsdevel@ because some related problem[1]
-> and related patches[2].
-> 
-> we compared 6.4-rc3(rather than 6.1.y) to 5.15.y becasue some related patches[2]
-> work only for 6.4 now.
-> 
-> [1] https://lore.kernel.org/linux-xfs/20230508172406.1CF3.409509F4@e16-tech.com/
-> [2] https://lore.kernel.org/linux-xfs/20230520163603.1794256-1-willy@infradead.org/
-> 
-> 
-> test case:
-> 1) PCIe3 SSD *4 with LVM
-> 2) gfs2 lock_nolock
->     gfs2 attr(T) GFS2_AF_ORLOV
->    # chattr +T /mnt/test
-> 3) fio
-> fio --name=global --rw=write -bs=1024Ki -size=32Gi -runtime=30 -iodepth 1
-> -ioengine sync -zero_buffers=1 -direct=0 -end_fsync=1 -numjobs=1 \
-> 	-name write-bandwidth-1 -filename=/mnt/test/sub1/1.txt \
-> 	-name write-bandwidth-2 -filename=/mnt/test/sub2/1.txt \
-> 	-name write-bandwidth-3 -filename=/mnt/test/sub3/1.txt \
-> 	-name write-bandwidth-4 -filename=/mnt/test/sub4/1.txt
-> 4) patches[2] are applied to 6.4-rc3.
-> 
-> 
-> 5.15.y result
-> 	fio WRITE: bw=5139MiB/s (5389MB/s),
-> 6.4-rc3 result
-> 	fio  WRITE: bw=2599MiB/s (2725MB/s)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested on arm
+---
+ fs/binfmt_elf_fdpic.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-more test result:
-
-5.17.0	WRITE: bw=4988MiB/s (5231MB/s)
-5.18.0	WRITE: bw=5165MiB/s (5416MB/s)
-5.19.0	WRITE: bw=5511MiB/s (5779MB/s)
-6.0.5	WRITE: bw=3055MiB/s (3203MB/s),	WRITE: bw=3225MiB/s (3382MB/s)
-6.1.30	WRITE: bw=2579MiB/s (2705MB/s)
-
-so this regression  happen in some code introduced in 6.0,
-and maybe some minor regression in 6.1 too?
-
-Best Regards
-Wang Yugui (wangyugui@e16-tech.com)
-2023/05/28
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index d76ad3d4f676..237ce388d06d 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -748,7 +748,6 @@ static int elf_fdpic_map_file(struct elf_fdpic_params *params,
+ 	struct elf32_phdr *phdr;
+ 	unsigned long load_addr, stop;
+ 	unsigned nloads, tmp;
+-	size_t size;
+ 	int loop, ret;
+ 
+ 	/* allocate a load map table */
+@@ -760,8 +759,7 @@ static int elf_fdpic_map_file(struct elf_fdpic_params *params,
+ 	if (nloads == 0)
+ 		return -ELIBBAD;
+ 
+-	size = sizeof(*loadmap) + nloads * sizeof(*seg);
+-	loadmap = kzalloc(size, GFP_KERNEL);
++	loadmap = kzalloc(struct_size(loadmap, segs, nloads), GFP_KERNEL);
+ 	if (!loadmap)
+ 		return -ENOMEM;
+ 
+-- 
+2.34.1
 
