@@ -2,105 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA2AA713BCC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 May 2023 20:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C7F713DCE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 May 2023 21:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbjE1Soz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 May 2023 14:44:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55474 "EHLO
+        id S230168AbjE1T3J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 May 2023 15:29:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjE1Sov (ORCPT
+        with ESMTP id S230185AbjE1T3E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 May 2023 14:44:51 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5979AB1;
-        Sun, 28 May 2023 11:44:47 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-64d1e96c082so1923580b3a.1;
-        Sun, 28 May 2023 11:44:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685299487; x=1687891487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zyjlDSIQffiBz94m+7qOi6jUFMwLIf/LyrTK9DsOjUA=;
-        b=Un9DHhM8TW3EHQq43OAA0Ogd3lKDCjk40R7E2SKFoH0vJxv9UdeDIFWBxL66SkMdaU
-         X3z9UxahVzY8yK3w1sPAcHVzArfQy6EvitNCRL5PeRn24pF2LcOSnS/pZ6t0R2+ycor8
-         rvGEDN6tJtAC7si/wvow8iNmQXDYhWNr+VoYUDOP4QDosm6niKgufq4eBdmx9SDrmRae
-         GdW0O86XeoIERzdhrPzQFLzFaLpxY54wZiPTDsGOpE3rR3Rafki6LmC5NO++/4wXEfJI
-         8+HOCRTQVqqn5BtL8bUyD0n0fWEfY2q663fXaPQOOy1JfowlDKnKWI6W/BamTyk2lmYR
-         rLlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685299487; x=1687891487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zyjlDSIQffiBz94m+7qOi6jUFMwLIf/LyrTK9DsOjUA=;
-        b=gWki0U6z7xx/5Znf+IEnCCXzD/0qTKeZ9o+p+UNNHuZNmozxlZa+hGfAJOc4sJOwFk
-         1uqZLiRueTYVJMP5Zv/PhisSGNoBBnxO1Yu6xnS8Xndxgl52UXvz/EFrKcMMX0OyDGWi
-         culzwrU9kx7pJvWZ+z/OU8m8mYCqKf/V8ANR+REYItmAaEg+CGi50TM4z/pPBcFwNBje
-         ngiqAnkEXUuL37nbYT0bx54suUDy60cvcL93k2rVJgu1Zz2/VOQhCPjuneBWd7qSJ0sf
-         31hx9YZfIXa/7tTWSKZ4ym6G+v2S3Ad2K8Ak/2Ftx8kkHoD6FnSjyfOElof1VkDTuVmR
-         ntJw==
-X-Gm-Message-State: AC+VfDyU74pKcNWsZGqyFe+7ET/mpcmPARwgXGgy3p5er45pHb0B5ksW
-        DNiDebJ+qh7JnV0J+EqfWWQ=
-X-Google-Smtp-Source: ACHHUZ5zW/1h08AQmHowCqrrh1SxgfsI0UBae44jNzqPq2Ab3Ujo7WM8MI5PGX9oSiEstous+gZbGA==
-X-Received: by 2002:a05:6a00:170b:b0:64c:c5f9:1533 with SMTP id h11-20020a056a00170b00b0064cc5f91533mr12576431pfc.33.1685299486709;
-        Sun, 28 May 2023 11:44:46 -0700 (PDT)
-Received: from fedora.hsd1.wa.comcast.net ([2601:602:9300:2710::f1c9])
-        by smtp.gmail.com with ESMTPSA id i18-20020aa78b52000000b0064d4d306af9sm4155893pfd.79.2023.05.28.11.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 May 2023 11:44:46 -0700 (PDT)
-From:   Prince Kumar Maurya <princekumarmaurya06@gmail.com>
-To:     skhan@linuxfoundation.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chenzhongjin@huawei.com
-Cc:     Prince Kumar Maurya <princekumarmaurya06@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org,
-        syzbot+aad58150cbc64ba41bdc@syzkaller.appspotmail.com
-Subject: [PATCH v3] fs/sysv: Null check to prevent null-ptr-deref bug
-Date:   Sun, 28 May 2023 11:44:22 -0700
-Message-Id: <20230528184422.596947-1-princekumarmaurya06@gmail.com>
+        Sun, 28 May 2023 15:29:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F691A3;
+        Sun, 28 May 2023 12:29:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C1BF161D08;
+        Sun, 28 May 2023 19:28:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDF7C433EF;
+        Sun, 28 May 2023 19:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1685302139;
+        bh=XMCKPmmB6wR8ZK8G4zPaMYL3vfjAWABXK/vt+P7ewBc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2OnuL5HwUpTdulaenZxVghXNIZ2/GLNRrTMpQSOr6oOqaRakdDSYMO5rGFV11983P
+         eMePQgUcPNOQUuGycAb655/a4t6Qqw2giFY1jgLi4BALnq6F0I/ML1J0cPoXLtPzqF
+         i0fFuqvOlx4w4n6NhCSopWg4P5U/Ymr6h7heVC3U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        patches@lists.linux.dev, Shyam Prasad N <sprasad@microsoft.com>,
+        David Howells <dhowells@redhat.com>,
+        Steve French <smfrench@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Tom Talpey <tom@talpey.com>, Jeff Layton <jlayton@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 6.3 015/127] cifs: Fix cifs_limit_bvec_subset() to correctly check the maxmimum size
+Date:   Sun, 28 May 2023 20:09:51 +0100
+Message-Id: <20230528190836.719803586@linuxfoundation.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <000000000000cafb9305fc4fe588@google.com>
-References: <000000000000cafb9305fc4fe588@google.com>
+In-Reply-To: <20230528190836.161231414@linuxfoundation.org>
+References: <20230528190836.161231414@linuxfoundation.org>
+User-Agent: quilt/0.67
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-sb_getblk(inode->i_sb, parent) return a null ptr and taking lock on
-that leads to the null-ptr-deref bug.
+From: David Howells <dhowells@redhat.com>
 
-Reported-by: syzbot+aad58150cbc64ba41bdc@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=aad58150cbc64ba41bdc 
-Signed-off-by: Prince Kumar Maurya <princekumarmaurya06@gmail.com>
+commit 4ef4aee67eed640064fff95a693c0184cedb7bec upstream.
+
+Fix cifs_limit_bvec_subset() so that it limits the span to the maximum
+specified and won't return with a size greater than max_size.
+
+Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rather than a page list")
+Cc: stable@vger.kernel.org # 6.3
+Reported-by: Shyam Prasad N <sprasad@microsoft.com>
+Reviewed-by: Shyam Prasad N <sprasad@microsoft.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <smfrench@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Tom Talpey <tom@talpey.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-Change since v2: Updated subject and added Reported-by and closes tags.
+ fs/cifs/file.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- fs/sysv/itree.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/sysv/itree.c b/fs/sysv/itree.c
-index b22764fe669c..3a6b66e719fd 100644
---- a/fs/sysv/itree.c
-+++ b/fs/sysv/itree.c
-@@ -145,6 +145,8 @@ static int alloc_branch(struct inode *inode,
- 		 */
- 		parent = block_to_cpu(SYSV_SB(inode->i_sb), branch[n-1].key);
- 		bh = sb_getblk(inode->i_sb, parent);
-+		if (!bh)
-+			break;
- 		lock_buffer(bh);
- 		memset(bh->b_data, 0, blocksize);
- 		branch[n].bh = bh;
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index ba7f2e09d6c8..df88b8c04d03 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -3353,9 +3353,10 @@ static size_t cifs_limit_bvec_subset(const struct iov_iter *iter, size_t max_siz
+ 	while (n && ix < nbv) {
+ 		len = min3(n, bvecs[ix].bv_len - skip, max_size);
+ 		span += len;
++		max_size -= len;
+ 		nsegs++;
+ 		ix++;
+-		if (span >= max_size || nsegs >= max_segs)
++		if (max_size == 0 || nsegs >= max_segs)
+ 			break;
+ 		skip = 0;
+ 		n -= len;
 -- 
 2.40.1
+
+
 
