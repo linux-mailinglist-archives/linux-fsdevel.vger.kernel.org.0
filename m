@@ -2,57 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7C7F713DCE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 May 2023 21:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C2EC7141C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 03:57:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230168AbjE1T3J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 May 2023 15:29:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45660 "EHLO
+        id S229660AbjE2B5Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 May 2023 21:57:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230185AbjE1T3E (ORCPT
+        with ESMTP id S229453AbjE2B5P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 May 2023 15:29:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F691A3;
-        Sun, 28 May 2023 12:29:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C1BF161D08;
-        Sun, 28 May 2023 19:28:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDF7C433EF;
-        Sun, 28 May 2023 19:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1685302139;
-        bh=XMCKPmmB6wR8ZK8G4zPaMYL3vfjAWABXK/vt+P7ewBc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2OnuL5HwUpTdulaenZxVghXNIZ2/GLNRrTMpQSOr6oOqaRakdDSYMO5rGFV11983P
-         eMePQgUcPNOQUuGycAb655/a4t6Qqw2giFY1jgLi4BALnq6F0I/ML1J0cPoXLtPzqF
-         i0fFuqvOlx4w4n6NhCSopWg4P5U/Ymr6h7heVC3U=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, Shyam Prasad N <sprasad@microsoft.com>,
-        David Howells <dhowells@redhat.com>,
-        Steve French <smfrench@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Tom Talpey <tom@talpey.com>, Jeff Layton <jlayton@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 6.3 015/127] cifs: Fix cifs_limit_bvec_subset() to correctly check the maxmimum size
-Date:   Sun, 28 May 2023 20:09:51 +0100
-Message-Id: <20230528190836.719803586@linuxfoundation.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230528190836.161231414@linuxfoundation.org>
-References: <20230528190836.161231414@linuxfoundation.org>
-User-Agent: quilt/0.67
+        Sun, 28 May 2023 21:57:15 -0400
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 411EDB8;
+        Sun, 28 May 2023 18:57:12 -0700 (PDT)
+X-UUID: daab79a208784ff98e108a5844808a4b-20230529
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.22,REQID:567b328f-12ca-4442-b2a8-d379ba623739,IP:15,
+        URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
+        ION:release,TS:-5
+X-CID-INFO: VERSION:1.1.22,REQID:567b328f-12ca-4442-b2a8-d379ba623739,IP:15,UR
+        L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+        N:release,TS:-5
+X-CID-META: VersionHash:120426c,CLOUDID:525c446d-2f20-4998-991c-3b78627e4938,B
+        ulkID:230529093928BK5NKPIW,BulkQuantity:1,Recheck:0,SF:24|17|19|44|102,TC:
+        nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,Bulk:40,QS:nil,BEC:nil,COL:0,OSI
+        :0,OSA:0,AV:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-UUID: daab79a208784ff98e108a5844808a4b-20230529
+X-User: lijun01@kylinos.cn
+Received: from localhost.localdomain [(39.156.73.12)] by mailgw
+        (envelope-from <lijun01@kylinos.cn>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 404288243; Mon, 29 May 2023 09:56:57 +0800
+From:   lijun <lijun01@kylinos.cn>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lijun01@kylinos.cn
+Subject: [PATCH] FUSE: dev: Change the posiion of spin_lock
+Date:   Mon, 29 May 2023 09:56:56 +0800
+Message-Id: <20230529015656.3099390-1-lijun01@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,49 +55,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+just list_del need spin_lock ，so the spin_lock should be close to
+"list_del(&req->list)", this may add a little benefit.
 
-commit 4ef4aee67eed640064fff95a693c0184cedb7bec upstream.
-
-Fix cifs_limit_bvec_subset() so that it limits the span to the maximum
-specified and won't return with a size greater than max_size.
-
-Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rather than a page list")
-Cc: stable@vger.kernel.org # 6.3
-Reported-by: Shyam Prasad N <sprasad@microsoft.com>
-Reviewed-by: Shyam Prasad N <sprasad@microsoft.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <smfrench@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Tom Talpey <tom@talpey.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: lijun <lijun01@kylinos.cn>
 ---
- fs/cifs/file.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/fuse/dev.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index ba7f2e09d6c8..df88b8c04d03 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -3353,9 +3353,10 @@ static size_t cifs_limit_bvec_subset(const struct iov_iter *iter, size_t max_siz
- 	while (n && ix < nbv) {
- 		len = min3(n, bvecs[ix].bv_len - skip, max_size);
- 		span += len;
-+		max_size -= len;
- 		nsegs++;
- 		ix++;
--		if (span >= max_size || nsegs >= max_segs)
-+		if (max_size == 0 || nsegs >= max_segs)
- 			break;
- 		skip = 0;
- 		n -= len;
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 1a8f82f478cb..c3a0a04ea9b4 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -388,16 +388,15 @@ static void request_wait_answer(struct fuse_req *req)
+ 		if (!err)
+ 			return;
+ 
+-		spin_lock(&fiq->lock);
+ 		/* Request is not yet in userspace, bail out */
+ 		if (test_bit(FR_PENDING, &req->flags)) {
++			spin_lock(&fiq->lock);
+ 			list_del(&req->list);
+ 			spin_unlock(&fiq->lock);
+ 			__fuse_put_request(req);
+ 			req->out.h.error = -EINTR;
+ 			return;
+ 		}
+-		spin_unlock(&fiq->lock);
+ 	}
+ 
+ 	/*
 -- 
-2.40.1
-
-
+2.34.1
 
