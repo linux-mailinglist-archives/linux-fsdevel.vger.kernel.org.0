@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB34A71468F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 10:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3E8B71469A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 10:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231703AbjE2IsQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 May 2023 04:48:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50030 "EHLO
+        id S231584AbjE2Iu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 May 2023 04:50:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231640AbjE2IsM (ORCPT
+        with ESMTP id S231690AbjE2Iuw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 May 2023 04:48:12 -0400
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F44EC4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 May 2023 01:47:56 -0700 (PDT)
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-33b27ff696eso9061835ab.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 May 2023 01:47:56 -0700 (PDT)
+        Mon, 29 May 2023 04:50:52 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19949B8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 May 2023 01:50:47 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-76fe42b7f7dso493497639f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 May 2023 01:50:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685350075; x=1687942075;
+        d=1e100.net; s=20221208; t=1685350246; x=1687942246;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bnTVL9U7w3OOuFsS48xppNwD0ZB4eLygMiJgfpYLfH8=;
-        b=e6ZwLXGdyJE6e3VWPSZrRHhltC9aWL+GXIZPKCuBjfnMDb0Rn2dkaj6VSs6CBRJb22
-         l62hS/nGz6dZoHjFuT0JoWmB6ZwJ0QZ0CTnwMU4ekdmDVfpKJ0dPKxVgvoV77aF0Za55
-         81gLMTurAx3MYCBOH1Pvg62mPoN2m4hLZV7/V2/BAhy2Xu264969u1btFz8HTXe07vdx
-         rJ1jdp3VF4uVtjyE1+/nEMfPk7/T7sEqm9+/1k7oztDlGtH2TZk9MhwkeH7aRiSS/odV
-         2suVUn1k2MTBspMn7SDsqRaN/ZDwjt494WavJFnzoIqmYgueY1y6zRhjuOZaa5fnlU2/
-         6L1Q==
-X-Gm-Message-State: AC+VfDyr9g5eaJEfxeMMo5IQEKLaHCibiIJ8IweLnxJ1F+waPUghxaW8
-        w/KozV9LrsloZpKWBiFfPe8v7NJ5FLgCcG7Q7egzObgQhlmh
-X-Google-Smtp-Source: ACHHUZ7IxAvaObznXnMrgZgtX15bUMBgnYnKGIvF77bGXOOdrjy4l9yVtOZYDPGh02iwjg/Ik5XX8aC9HbWnhziALyXToOLHE5VH
+        bh=+Pzz//WLGisQRMA9EGKGwqNxwnucK0kg6ldl5wEv+QQ=;
+        b=RJ/7P0w/Zp6Kbdb/xSPEAP9Fuhk5ucCK6XWcx3HHwejiVUixXiIBwwLRi1LnZh4wRI
+         wIQhJfiRZdEtkz/l5C4ix8tZmn5ADP0eqlkceW7P54pjkxPmPswOJhboE92mV56QQiBk
+         iu+8o+6Oo47q1SQypLelAwU/2VkglTWwAAOyE+nUD8uWm7oTaptss0HCJCJAFYSuRlfr
+         w71OC9XieQ53r84F3V9iaKGRvb4YgvlUvLiNJpyBy2TwuVxDSmIIIVobI4qOyMJSkyue
+         j9q393iEkj2qyM36nXTTHo5ekfo5HhGeEdGMe64oZB9pD0D7dYS8CmjT8d0uVJUMH983
+         4LSg==
+X-Gm-Message-State: AC+VfDyU9vYb7zAFxSp8Vs1tGWA/ZE8dir8xebaYRgb2QPdXNzpskI9a
+        zhvkZ6tA5uuudOnX+eaUsPDVD3rlBRb8BhA5adlOCJa3MQbl
+X-Google-Smtp-Source: ACHHUZ7R5D27DvtOZs60rj3g1XmpdKg+EQ2CMLp/eBrrsJw7DjzN7Fl57zdlWtSWfEmPXaHomr6+OpG9TeWidPoXMdrpuQsEnZ7f
 MIME-Version: 1.0
-X-Received: by 2002:a92:c708:0:b0:33a:54b1:5506 with SMTP id
- a8-20020a92c708000000b0033a54b15506mr2685176ilp.2.1685350075610; Mon, 29 May
- 2023 01:47:55 -0700 (PDT)
-Date:   Mon, 29 May 2023 01:47:55 -0700
+X-Received: by 2002:a6b:f20d:0:b0:759:25eb:210d with SMTP id
+ q13-20020a6bf20d000000b0075925eb210dmr3456023ioh.0.1685350246468; Mon, 29 May
+ 2023 01:50:46 -0700 (PDT)
+Date:   Mon, 29 May 2023 01:50:46 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000943c3c05fcd1243f@google.com>
-Subject: [syzbot] Monthly ntfs3 report (May 2023)
-From:   syzbot <syzbot+list2081dffd0319a3bb8057@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000c358c205fcd12e02@google.com>
+Subject: [syzbot] Monthly nilfs report (May 2023)
+From:   syzbot <syzbot+list49de8182d696bb4d450d@syzkaller.appspotmail.com>
+To:     konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
@@ -55,38 +55,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ntfs3 maintainers/developers,
+Hello nilfs maintainers/developers,
 
-This is a 31-day syzbot report for the ntfs3 subsystem.
+This is a 31-day syzbot report for the nilfs subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs3
+https://syzkaller.appspot.com/upstream/s/nilfs
 
-During the period, 4 new issues were detected and 0 were fixed.
-In total, 57 issues are still open and 23 have been fixed so far.
+During the period, 1 new issues were detected and 3 were fixed.
+In total, 14 issues are still open and 29 have been fixed so far.
 
 Some of the still happening issues:
 
-Ref  Crashes Repro Title
-<1>  3558    Yes   KASAN: slab-out-of-bounds Read in ntfs_iget5
-                   https://syzkaller.appspot.com/bug?extid=b4084c18420f9fad0b4f
-<2>  2648    Yes   UBSAN: shift-out-of-bounds in ntfs_fill_super (2)
-                   https://syzkaller.appspot.com/bug?extid=478c1bf0e6bf4a8f3a04
-<3>  1371    Yes   possible deadlock in ni_fiemap
-                   https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
-<4>  1104    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
-                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
-<5>  942     Yes   possible deadlock in attr_data_get_block
-                   https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
-<6>  656     Yes   possible deadlock in ntfs_set_state
-                   https://syzkaller.appspot.com/bug?extid=f91c29a5d5a01ada051a
-<7>  425     Yes   possible deadlock in mi_read
-                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
-<8>  334     Yes   possible deadlock in ntfs_fiemap
-                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
-<9>  310     No    possible deadlock in ntfs_mark_rec_free
-                   https://syzkaller.appspot.com/bug?extid=f83f0dbef763c426e3cf
-<10> 58      Yes   KASAN: vmalloc-out-of-bounds Write in find_lock_entries
-                   https://syzkaller.appspot.com/bug?extid=e498ebacfd2fd78cf7b2
+Ref Crashes Repro Title
+<1> 718     Yes   WARNING in nilfs_btree_assign
+                  https://syzkaller.appspot.com/bug?extid=31837fe952932efc8fb9
+<2> 324     Yes   WARNING in nilfs_sufile_set_segment_usage
+                  https://syzkaller.appspot.com/bug?extid=14e9f834f6ddecece094
+<3> 203     No    INFO: task hung in path_openat (7)
+                  https://syzkaller.appspot.com/bug?extid=950a0cdaa2fdd14f5bdc
+<4> 60      Yes   INFO: task hung in nilfs_detach_log_writer
+                  https://syzkaller.appspot.com/bug?extid=e3973c409251e136fdd0
+<5> 31      Yes   kernel BUG in folio_end_writeback
+                  https://syzkaller.appspot.com/bug?extid=7e5cf1d80677ec185e63
+<6> 3       Yes   general protection fault in folio_create_empty_buffers
+                  https://syzkaller.appspot.com/bug?extid=0ad741797f4565e7e2d2
 
 ---
 This report is generated by a bot. It may contain errors.
