@@ -2,75 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F27327146CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 11:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72EB9714D33
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 17:38:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231545AbjE2JCJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 May 2023 05:02:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57256 "EHLO
+        id S229982AbjE2PiC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 May 2023 11:38:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbjE2JCI (ORCPT
+        with ESMTP id S229691AbjE2PiB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 May 2023 05:02:08 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7DD79C;
-        Mon, 29 May 2023 02:02:05 -0700 (PDT)
+        Mon, 29 May 2023 11:38:01 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F59DF3;
+        Mon, 29 May 2023 08:37:56 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7AD3921A1E;
-        Mon, 29 May 2023 09:02:04 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id A8E621F8B5;
+        Mon, 29 May 2023 15:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1685350924; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1685374674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kFWz25ijAwtezsEsJfvwhWUN0ek5GmhRBcW2BirG67s=;
-        b=ZN9ZFQLchBtUfvhRF6uJVCSPdqOdDMnq6D0bYEMlB3KVOifIJMpTqeRit28RmFuB1JOdNS
-        a6OdjvKL/hU4tFlRyU+Plm1sA9CqI/54DiEz8Du0s3J4zlHeN8c1XLLbVjSwKRUlaZ2Lu1
-        fzl6goxkg0Pa0yOH5RPLeFVJ+KRCsSQ=
+        bh=VfC2IdpO+7uEiBHhtf+jBby1eH6FWQ5ChsH/O7pLur0=;
+        b=gSf0t+vZ0B4myh9SviD61zCj1EH1uc1YlVGhNUgb/MCZXxzHgA8J3XifwVyza2KRq20hWr
+        pZGc6AXCETQnP8jb+U91N20w7vIA7f5VobiHfL+/HbuvYR4sGOy/Qvb7o1ZnPBWqac7LBg
+        kZfgvCRZqV9R20JgWvdDd1kIZir+lK0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1685350924;
+        s=susede2_ed25519; t=1685374674;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kFWz25ijAwtezsEsJfvwhWUN0ek5GmhRBcW2BirG67s=;
-        b=HyCV5MkHcUPb0kFy0qNvwwus+4zH6Zgf5PAAuzQgvjAgqY1O+g2X1gcOkar74GwIfcUizj
-        asUFBf3enD5OkHAQ==
+        bh=VfC2IdpO+7uEiBHhtf+jBby1eH6FWQ5ChsH/O7pLur0=;
+        b=2+2tMQkyipmhcoqtqPAlHCSakWLZKRrkGMRW/G1J4HZuo+ZsFqLS2sYv/igpPh23T0GX71
+        4QMmBZeR6OW2F3DA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6D02C13466;
-        Mon, 29 May 2023 09:02:04 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 87AAC13A36;
+        Mon, 29 May 2023 15:37:54 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4EuTGgxqdGRmYwAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 29 May 2023 09:02:04 +0000
+        id BKs+INLGdGQrSAAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 29 May 2023 15:37:54 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 05276A0719; Mon, 29 May 2023 11:02:04 +0200 (CEST)
-Date:   Mon, 29 May 2023 11:02:03 +0200
+        id 0BA32A06F2; Mon, 29 May 2023 14:41:31 +0200 (CEST)
+Date:   Mon, 29 May 2023 14:41:31 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [git pull] vfs.git sysv pile
-Message-ID: <20230529090203.cbqst3rlkv2ejtnd@quack3.mediaserver.passengera.com>
-References: <Y/gugbqq858QXJBY@ZenIV>
- <20230525201046.cth6qizdh7lwobxj@quack3>
- <5939173.lOV4Wx5bFT@suse>
- <2886258.e9J7NaK4W3@suse>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J. Wong" <djwong@kernel.org>, Ted Tso <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4/6] fs: Establish locking order for unrelated directories
+Message-ID: <20230529124131.gbb3fmhrspl332i6@quack3>
+References: <20230525100654.15069-1-jack@suse.cz>
+ <20230525101624.15814-4-jack@suse.cz>
+ <20230526-polarstern-herrichten-32fc46c63bfc@brauner>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2886258.e9J7NaK4W3@suse>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <20230526-polarstern-herrichten-32fc46c63bfc@brauner>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,69 +77,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 26-05-23 15:25:18, Fabio M. De Francesco wrote:
-> On venerdì 26 maggio 2023 12:32:59 CEST Fabio M. De Francesco wrote:
-> > On giovedì 25 maggio 2023 22:10:46 CEST Jan Kara wrote:
-> > > On Mon 27-03-23 12:29:56, Fabio M. De Francesco wrote:
-> > > > On lunedì 20 marzo 2023 13:47:25 CEST Jan Kara wrote:
-> > > > > On Mon 20-03-23 12:18:38, Fabio M. De Francesco wrote:
-> > > > > > On giovedì 16 marzo 2023 11:30:21 CET Fabio M. De Francesco wrote:
-> > > > > > > On giovedì 16 marzo 2023 10:00:35 CET Jan Kara wrote:
-> > > > > > > > On Wed 15-03-23 19:08:57, Fabio M. De Francesco wrote:
-> > > > > > > > > On mercoledì 1 marzo 2023 15:14:16 CET Al Viro wrote:
-> > > > [snip]
-> > > > 
-> > > > > > > > > > I think I've pushed a demo patchset to vfs.git at some point
-> > > > > > > > > > back
-> > > > 
-> > > > in
-> > > > 
-> > > > > > > > > > January... Yep - see #work.ext2 in there; completely 
-> untested,
-> > > > > > > > > > though.
-> > > > 
-> > > > Al,
-> > > > 
-> > > > I reviewed and tested your patchset (please see below).
-> > > > 
-> > > > I think that you probably also missed Jan's last message about how you
-> > > > prefer
-> > > > they to be treated.
-> > > > 
-> > > > Jan asked you whether you will submit these patches or he should just 
-> pull
-> > > > your branch into his tree.
-> > > > 
-> > > > Please look below for my tags and Jan's question.
-> > > 
-> > > Ok, Al didn't reply
+On Fri 26-05-23 11:45:15, Christian Brauner wrote:
+> On Thu, May 25, 2023 at 12:16:10PM +0200, Jan Kara wrote:
+> > Currently the locking order of inode locks for directories that are not
+> > in ancestor relationship is not defined because all operations that
+> > needed to lock two directories like this were serialized by
+> > sb->s_vfs_rename_mutex. However some filesystems need to lock two
+> > subdirectories for RENAME_EXCHANGE operations and for this we need the
+> > locking order established even for two tree-unrelated directories.
+> > Provide a helper function lock_two_inodes() that establishes lock
+> > ordering for any two inodes and use it in lock_two_directories().
 > > 
-> > I noticed it...
+> > CC: stable@vger.kernel.org
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  fs/inode.c    | 34 ++++++++++++++++++++++++++++++++++
+> >  fs/internal.h |  2 ++
+> >  fs/namei.c    |  4 ++--
+> >  3 files changed, 38 insertions(+), 2 deletions(-)
 > > 
-> > > so I've just pulled the patches from Al's tree,
-> > 
-> > Thank you very much for doing this :-)
-> > 
-> > > added
-> > > your Tested-by tag
-> > 
-> > Did you also notice the Reviewed-by tags?
-> > 
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 577799b7855f..2015fa50d34a 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -1103,6 +1103,40 @@ void discard_new_inode(struct inode *inode)
+> >  }
+> >  EXPORT_SYMBOL(discard_new_inode);
+> >  
+> > +/**
+> > + * lock_two_inodes - lock two inodes (may be regular files but also dirs)
+> > + *
+> > + * Lock any non-NULL argument. The caller must make sure that if he is passing
+> > + * in two directories, one is not ancestor of the other.  Zero, one or two
+> > + * objects may be locked by this function.
+> > + *
+> > + * @inode1: first inode to lock
+> > + * @inode2: second inode to lock
+> > + * @subclass1: inode lock subclass for the first lock obtained
+> > + * @subclass2: inode lock subclass for the second lock obtained
+> > + */
+> > +void lock_two_inodes(struct inode *inode1, struct inode *inode2,
+> > +		     unsigned subclass1, unsigned subclass2)
+> > +{
+> > +	if (!inode1 || !inode2)
+> > +		goto lock;
 > 
-> Well, it looks like you missed my Reviewed-by tags at https://lore.kernel.org/
-> lkml/3019063.4lk9UinFSI@suse/
+> Before this change in
 > 
-> FWIW, I'd just like to say that I did the review of Al's patchset because I 
-> know the code that is modeled after a similar series to fs/sysv, which in turn 
-> I made following Al's suggestions.
+> lock_two_nondirectories(struct inode *inode1, struct inode *inode2)
 > 
-> However, I suppose it's up to you to decide whether or not is worth
-> mentioning my reviews :-)
+> the swap() would cause the non-NULL inode to always be locked with
+> I_MUTEX_NONDIR2. Now it can be either I_MUTEX_NORMAL or I_MUTEX_NONDIR2.
+> Is that change intentional?
 
-Yes, I've missed that you also gave your Reviewed-by tags. I will add
-these. Thanks for the reminder :).
+Kind of. I don't think we really care so I didn't bother to complicate the
+code for this. If you think keeping the lockdep class consistent is worth
+it, I can modify the patch...
 
 								Honza
+
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
