@@ -2,189 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 971EB7150FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 23:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15B437151F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 00:39:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbjE2VoC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 May 2023 17:44:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34382 "EHLO
+        id S229830AbjE2Wjp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 May 2023 18:39:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjE2VoB (ORCPT
+        with ESMTP id S229997AbjE2Wjo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 May 2023 17:44:01 -0400
-Received: from out-14.mta0.migadu.com (out-14.mta0.migadu.com [IPv6:2001:41d0:1004:224b::e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F0DFCF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 May 2023 14:43:59 -0700 (PDT)
-Date:   Mon, 29 May 2023 17:43:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1685396637;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=g9LV2x82sc6A+Ucb7bsrgYQlKFVDBatiYh9r3a/voOU=;
-        b=icbVg3aiJm3WrNrdXGgum3GzwV53yb1ocwOV8Y6vBmnjiy9FibXB9foRC6mHPgNv9jrgES
-        Nwn5No/pNNOaNDhpEABuXs22j2L+NVU/Av5S0XKgeIqIUun0qEEsu4iClZ+W7QNKxK0Nzq
-        AdWAOEkLGFCue6lfLzu2ecN8evc7IIY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     linux-bcachefs@vger.kernel.org, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: fuzzing bcachefs with dm-flakey
-Message-ID: <ZHUcmeYrUmtytdDU@moria.home.lan>
-References: <alpine.LRH.2.21.2305260915400.12513@file01.intranet.prod.int.rdu2.redhat.com>
+        Mon, 29 May 2023 18:39:44 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 481EED2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 May 2023 15:39:37 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-64d577071a6so4423907b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 May 2023 15:39:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1685399977; x=1687991977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wx7H79kjT6gmQYpSqCpEUZ9C7FgqkhS0HzDi2l0vcVg=;
+        b=Ha0SOdPQTwrcubn4x3Dlo6qyJ1FJqfxqxiG//TSDuEy81m7MOuSLkf9aKBle6u/6k7
+         qNCkslgWkbSl/mOavuL27vq2J0/BUEUXfRiT6HVGV/HJm7+B7c0AycgV0REuhSOEaUBL
+         bY9tVrU3Irp+H7GUBOV7PXmfIyoYB3u5cl/yXLWG1CwJkJNagfiL9fwp8ZATL8wVc+UV
+         dZGlHatOACtmkISIddPQ+rQWoe4tmVvyyIEDMlXSmxqZhNTinYMrkKhMOjz7WEjLTDF7
+         YUrowfNT71l8OeMb2o0EVkhed3GXT5s/zSLzBKBeQvqtifa8rCr9hYjI6HKId1cjvvqd
+         R3yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685399977; x=1687991977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wx7H79kjT6gmQYpSqCpEUZ9C7FgqkhS0HzDi2l0vcVg=;
+        b=i/J3o5l5W9ZOeBwi//WncPQDmJ3HmAu3yXhoNVa7hV5ln6s5owFmHMoCh4PmigFKFx
+         Pfk0R1hQRv8wtK1j/jyB+Gar6egC6o8SjTvW1Zrorsvkhy8qwq08+DDeh7BO9F0WXfWn
+         38sxMm/1wEu/DUePbAGQ52+ds4BM1i4sk9f4LvACNLHwMrQ7Chvosa6kK7kqWRsakzhD
+         GEyxa6xjFRnmLpBz78NY3qflVvKWSqY0vcXyxgPAwOyfNwrqNW5qAtsCGoY0shD5dnF7
+         ogHbMJscwC83FOlkajFoT9TmbZMzIDwmm615/b+6uqp5P1/Se7ywhqu/agxQkassHz2+
+         6cqA==
+X-Gm-Message-State: AC+VfDxvpJfDMAB0VYCsHSuGxCf1Nzk4QAVPylB2PG911OSpi96gZq9O
+        xEl3J9DzIHPCzrA649xHFr3w19UmyBE0IlBysyk=
+X-Google-Smtp-Source: ACHHUZ5eN4x0CrceYVmiIHZfFyM7yZnNYI0D1umb+f9fyzYPL4eeXeyev/gh9wYQ49lM0B1QXna/0Q==
+X-Received: by 2002:a05:6a00:b84:b0:64d:4a94:1a60 with SMTP id g4-20020a056a000b8400b0064d4a941a60mr113964pfj.18.1685399976657;
+        Mon, 29 May 2023 15:39:36 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
+        by smtp.gmail.com with ESMTPSA id s5-20020a62e705000000b00634a96493f7sm391665pfh.128.2023.05.29.15.39.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 May 2023 15:39:36 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q3lWW-005U2h-25;
+        Tue, 30 May 2023 08:39:32 +1000
+Date:   Tue, 30 May 2023 08:39:32 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: Splitting dirty fs folios
+Message-ID: <ZHUppPtjIjXVsacC@dread.disaster.area>
+References: <ZHUEH849ff09pVpf@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.2305260915400.12513@file01.intranet.prod.int.rdu2.redhat.com>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZHUEH849ff09pVpf@casper.infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 29, 2023 at 04:59:40PM -0400, Mikulas Patocka wrote:
-> Hi
+On Mon, May 29, 2023 at 08:59:27PM +0100, Matthew Wilcox wrote:
+> At the moment, when we truncate (also holepunch, etc) a file,
+> the VFS attempts to split any large folios which overlap the newly
+> created boundary in the file.  See mm/truncate.c for the callers of
+> ->invalidate_folio.
 > 
-> I improved the dm-flakey device mapper target, so that it can do random 
-> corruption of read and write bios - I uploaded it here: 
-> https://people.redhat.com/~mpatocka/testcases/bcachefs/dm-flakey.c
+> We need the filesystem and the MM to cooperate on splitting a folio
+> because there's FS metadata attached to folio->private.  We have per-folio
+> state (uptodate, dirty) which the filesystem keeps per-block state for
+> and uses the folio state as a summary (if every block is uptodate,
+> the folio is uptodate.  if any block is dirty, the folio is dirty).
+> If we just throw away that per-folio extra state we risk not writing
+> back blocks which are dirty, or losing buffered writes as we re-read
+> blocks which were more uptodate in memory than on disk.  There's no
+> safe state to set the folio to.
 > 
-> I set up dm-flakey, so that it corrupts 10% of read bios and 10% of write 
-> bios with this command:
-> dmsetup create flakey --table "0 `blockdev --getsize /dev/ram0` flakey /dev/ram0 0 0 1 4 random_write_corrupt 100000000 random_read_corrupt 100000000"
-
-I've got some existing ktest tests for error injection:
-https://evilpiepirate.org/git/ktest.git/tree/tests/bcachefs/single_device.ktest#n200
-https://evilpiepirate.org/git/ktest.git/tree/tests/bcachefs/replication.ktest#n491
-
-I haven't looked at dm-flakey before, I take it you're silently
-corrupting data instead of just failing the IOs like these tests do?
-
-Let's add what you're doing to ktest, and see if we can merge it with
-the existing tests.
-
-> I created a bcachefs volume on a single disk (metadata and data checksums 
-> were turned off) and mounted it on dm-flakey. I got:
+> This is fine if the entire folio is uptodate, and it generally is today
+> because large folios are only created through readahead, which will
+> bring the entire folio uptodate unless there is a read error.  But when
+> creating a large folio in the write path, we can end up with large folios
+> which are not uptodate under various circumstances.  For example, I've
+> captured one where we write to pos:0x2a0e5f len:0xf1a1.  Because this is
+> on a 1kB block size filesystem, we leave the first three blocks in the folio
+> unread, and the uptodate bits are fffffffffffffff8.  That means that
+> the folio as a whole is not uptodate.
 > 
-> crash: https://people.redhat.com/~mpatocka/testcases/bcachefs/crash1.txt
-> deadlock: https://people.redhat.com/~mpatocka/testcases/bcachefs/crash2.txt
-> infinite loop: https://people.redhat.com/~mpatocka/testcases/bcachefs/crash3.txt
+> Option 1: Read the start of the folio so we can set the whole folio
+> uptodate.  In this case, we're already submitting a read for bytes
+> 0x2a0c00-0x2a0fff (so we can overwrite the end of that block).  We could
+> expand that to read 0x2a0000-0x2a0fff instead.  This could get tricky;
+> at the moment we're guaranteed to have the iomap that covers the start
+> of the block, but we might have to do a lookup to find the iomap(s)
+> that covers the start of the folio.
 
-Fun!
+Yeah, that seems like a problem - having to go back and get a
+different iomap for read while we currently hold an iomap for write
+is a potential deadlock for some filesystems. I think at this point,
+we would be better off backing out of the write, getting a write
+mapping for the entire large folio range and running the existing
+"sub folio" zero-or-RMW code...
 
-> Here I uploaded an image that causes infnite loop when we run bcachefs 
-> fsck on it or when we attempt mount it:
-> https://people.redhat.com/~mpatocka/testcases/bcachefs/inf-loop.gz
-> 
-> 
-> I tried to run bcachefs on two block devices and fuzzing just one of them 
-> (checksums and replication were turned on - so bcachefs shold correct the 
-> corrupted data) - in this scenario, bcachefs doesn't return invalid data, 
-> but it sometimes returns errors and sometimes crashes.
-> 
-> This script will trigger an oops on unmount:
-> 	https://people.redhat.com/~mpatocka/testcases/bcachefs/crash4.txt
-> or nonsensical errors returned to userspace:
-> 	rm: cannot remove '/mnt/test/test/cmd_migrate.c': Unknown error 2206
-> or I/O errors returned to userspace:
-> 	diff: /mnt/test/test/rust-src/target/release/.fingerprint/bch_bindgen-f0bad16858ff0019/lib-bch_bindgen.json: Input/output error
-> 
-> #!/bin/sh -ex
-> umount /mnt/test || true
-> dmsetup remove_all || true
-> rmmod brd || true
-> SRC=/usr/src/git/bcachefs-tools
-> while true; do
->         modprobe brd rd_size=1048576
->         bcachefs format --replicas=2 /dev/ram0 /dev/ram1
->         dmsetup create flakey --table "0 `blockdev --getsize /dev/ram0` linear /dev/ram0 0"
->         mount -t bcachefs /dev/mapper/flakey:/dev/ram1 /mnt/test
->         dmsetup load flakey --table "0 `blockdev --getsize /dev/ram0` flakey /dev/ram0 0 0 1 4 random_write_corrupt 100000000 random_read_corrupt 100000000"
->         dmsetup suspend flakey
->         dmsetup resume flakey
->         cp -a "$SRC" /mnt/test/test
->         diff -r "$SRC" /mnt/test/test
->         echo 3 >/proc/sys/vm/drop_caches
->         diff -r "$SRC" /mnt/test/test
->         echo 3 >/proc/sys/vm/drop_caches
->         diff -r "$SRC" /mnt/test/test
->         echo 3 >/proc/sys/vm/drop_caches
->         rm -rf /mnt/test/test
->         echo 3 >/proc/sys/vm/drop_caches
->         cp -a "$SRC" /mnt/test/test
->         echo 3 >/proc/sys/vm/drop_caches
->         diff -r "$SRC" /mnt/test/test
->         umount /mnt/test
->         dmsetup remove flakey
->         rmmod brd
-> done
-> 
-> The oops happens in set_btree_iter_dontneed and it is caused by the fact 
-> that iter->path is NULL. The code in try_alloc_bucket is buggy because it 
-> sets "struct btree_iter iter = { NULL };" and then jumps to the "err" 
-> label that tries to dereference values in "iter".
+> Option 2: In the invalidate_folio implementation, writeback the folio
+> so it is no longer dirty.  I'm not sure we have all the information we
+> need to start writeback, and it'll annoy the filesystem as it has to
+> allocate space if it wasn't already allocated.
 
-Good catches on all of them. Darrick's been on me to get fuzz testing
-going, looks like it's definitely needed :)
+I don't really like this - we want to throw away dirty data in range
+being invalidated, not take a latency/performance hit to write it
+back first.
 
-However, there's two things I want in place first before I put much
-effort into fuzz testing:
+FWIW, is the folio is dirty and the filesystem doesn't have
+allocated space for it to be written back, then that is a bug that
+needs fixing. Nothing should be dirtying a folio without giving the
+filesystem the opportunity to allocate backing space for it
+first....
 
- - Code coverage analysis. ktest used to have integrated code coverage
-   analysis, where you'd tell it a subdirectory of the kernel tree
-   (doing code coverage analysis for the entire kernel is impossibly
-   slow) and it would run tests and then give you the lcov output.
+> Option 3: Figure out a more complicated dance between the FS and the MM
+> that allows the FS to attach state to the newly created folios before
+> finally freeing the original folio.
 
-   However, several years ago something about kbuild changed, and the
-   method ktest was using for passing in build flags for a specific
-   subdir on the command line stopped working. I would like to track
-   down someone who understands kbuild and get this working again.
+Complex, but seems possible. Also seems tricky with respect to
+making the entire swap appear atomic from an outside observer's
+perspective. 
 
- - Fault injection
+> Option 4: Stop splitting folios on holepunch / truncate.  Folio splits
+> can fail, so we all have to cope with folios that substantially overhang
+> a hole/data/EOF boundary.  We don't attempt to split folios on readahead
+> when we discover we're trying to read from a hole, we just zero the
+> appropriate chuks of the folio. 
 
-   Years and years ago, when I was still at Google and this was just
-   bcache, we had fault injection that worked like dynamic debug: you
-   could call dynamic_fault("type of fault") anywhere in your code,
-   and it returned a bool indicating whether that fault had been enabled
-   - and faults were controllable at runtime via debugfs, we had tests
-   that iterated over e.g. faults in the initialization path, or memory
-   allocation failures, and flipped them on one by one and ran
-   $test_workload.
+That sounds like the best idea to me - it matches what we already in
+terms of sub-page block size behaviour - zero the part of the page
+that was invalidated.
 
-   The memory allocation profiling stuff that Suren and I have been
-   working on includes code tagging, which is for (among other things) a
-   new and simplified implementation of dynamic fault injection, which
-   I'm going to push forward again once the memory allocation profiling
-   stuff gets merged.
+> We do attempt to not allocate folios
+> which extend more than one page past EOF, but that's subject to change
+> anyway.
 
-The reason I want this stuff is because fuzz testing tends to be a
-heavyweight, scattershot approach.
+Yeah, i think we'll want to change that because if extending
+sequential writes don't exactly match large folio alignment we'll
+still end up with lots of small folios around the edges of the user
+writes....
 
-I want to be able to look at the code coverage analysis first to e.g.
-work on a chunk of code at a time and make sure it's tested thoroughly,
-instead of jumping around in the code at random depending on what fuzz
-testing finds, and when we are fuzz testing I want to be able to add
-fault injection points and write unit tests so that we can have much
-more targeted, quicker to run tests going forward.
+> Option 5: If the folio is both dirty and !uptodate, just refuse to split
+> it, like if somebody else had a reference on it.  A less extreme version
+> of #4.
 
-Can I get you interested in either of those things? I'd really love to
-find someone to hand off or collaborate with on the fault injection
-stuff in particular.
+Also seems like a reasonable first step.
 
-> Bcachefs gives not much usefull error messages, like "Fatal error: Unknown 
-> error 2184" or "Error in recovery: cannot allocate memory" or "mount(2) 
-> system call failed: Unknown error 2186." or "rm: cannot remove 
-> '/mnt/test/xfstests-dev/tools/fs-walk': Unknown error 2206".
+> I may have missed some other option.  Option 5 seems like the least
+> amount of work.
 
-Those are mostly missing bch2_err_str()/bch2_err_class() calls:
- - bch2_err_str(), to print error string for our private error code
- - bch2_err_class(), to convert private error code to standard error
-   code before returning it to outside bcachefs code
+*nod*
 
-except error in recovery, cannot allocate memory - that's ancient code
-that still squashes to -ENOMEM
+Overall, I think the best way to approach it is to do the simplest,
+most obviously correct thing first. If/when we observe performance
+problems from the simple approach, then we can decide how to solve
+that via one of the more complex approaches...
+
+Cheers,
+
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
