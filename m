@@ -2,154 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1014F714CAA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 17:07:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F06714E8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 18:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229796AbjE2PHc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 May 2023 11:07:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51582 "EHLO
+        id S229554AbjE2Qh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 May 2023 12:37:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjE2PHb (ORCPT
+        with ESMTP id S229468AbjE2QhZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 May 2023 11:07:31 -0400
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fae])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B7C9CF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 May 2023 08:07:28 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QVJXW2WkFzMpyk5;
-        Mon, 29 May 2023 16:57:15 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4QVJXS2kmszMq014;
-        Mon, 29 May 2023 16:57:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685372235;
-        bh=k2yksphiVr17PfyANZFLI9Exwg8Jhb/+C2VCBIF3McU=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=vnqdvI7B2gcSPoa7xG8gAG2+wFvjlop8mh8W0i0AQQCQpGtFQWtCyZw5X1UmldqHK
-         tyXavk+wtMv7AztQ2Am3KJETPgAycVz0ahjWSwI3uyosYnEBM8/hQROg2eos2b6C+5
-         QIm1JmslgodAazXJaphzDWQX+cq57AuR2F6jmPDc=
-Message-ID: <a0c3e6d4-2827-d9b4-8f4e-aef25997fa8a@digikod.net>
-Date:   Mon, 29 May 2023 16:57:11 +0200
+        Mon, 29 May 2023 12:37:25 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACCC1BD;
+        Mon, 29 May 2023 09:36:49 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-565eb83efe4so24202567b3.0;
+        Mon, 29 May 2023 09:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685378184; x=1687970184;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGlmlfpGRhYW8HjfyI5EG9tKXwTbZGzHl2Gw/X6ax14=;
+        b=gD4kPaLLf9pJV0lpw2cIWttEo9EVBn7x8f+92LW12OXCCFANe21Fg01PjDXO0UtxY2
+         Ub5I5H1SdDWAoWmUFNeFLAYHmxDq8YTSmOaqguooZLFZobRrzvTxGbtaD72knDH23eOR
+         MY6ARUPzlKzmyW1m+BBJysdYOhoJdDqFYBuSUXe+0EMClHkTcg4RjJwjoiWhoOTKM3Dt
+         9K997gDZQsyxazGzIDcLguDZimyccw5IT7vyORCRBHtiqJDhUH/qSIl0d7GezyQg513/
+         VW7HwcNry8jcfbS5LOs9BUzeIfyV4CP5ISfkACbfC7ABZjMV3VQHFd1Zf4JXCiU+XtDx
+         EW2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685378184; x=1687970184;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XGlmlfpGRhYW8HjfyI5EG9tKXwTbZGzHl2Gw/X6ax14=;
+        b=GsNNlAKbeXflSyaAa6v79IOGVeQxbnXU1jT7PQgFL7HfCIJLIn0ORbsSofuQ+8WE4X
+         TUHtFu1vAFklN4LpJvxI2XwOF7lKxOrICDBk9tSqql2w69jZu+NN7c8X1w5f0RyvZdJd
+         pdcWa3h4ppCrAtpuEilCU1rbR665Yj3UKjvcfOZzqjuabu62r32VXzBqP5ZJbSIQbEMH
+         SFI4ZR2/NATus1f38WMMzSNzSfa31jmqF6MyxYHQN6FOXDaRX5xwQ3Xda+x/ns2ic8g+
+         lmKB2qR7LT5ZBI0rBzqOAb0ghe7n14LwyuQy4Bn/ZGQykhlAwaKRMXmXd/ypSxqkDKtI
+         hbbA==
+X-Gm-Message-State: AC+VfDxdASf+QV70XbJiWXTY1CpTM1L1BdwawKGia5e+249t5YtYodcX
+        b7D03l4EtXIVz6TuMUlQt5pPrCAMZd/eD6Bf9D8=
+X-Google-Smtp-Source: ACHHUZ7InCRLGF330bSJ+LMuRh4g/NfzTfd2m8OEywQty5+b+eU+JLZRKLHh0ktsR3qbMPwu4QSHwqAz7Ha/ifAXWSw=
+X-Received: by 2002:a0d:d88b:0:b0:565:bb04:53fa with SMTP id
+ a133-20020a0dd88b000000b00565bb0453famr11663162ywe.10.1685378184319; Mon, 29
+ May 2023 09:36:24 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v1 1/5] hostfs: Fix ephemeral inodes
-Content-Language: en-US
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        kuba <kuba@kernel.org>, James Morris <jmorris@namei.org>,
-        Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Ritesh Raj Sarraf <ritesh@collabora.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sjoerd Simons <sjoerd@collabora.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-References: <20230309165455.175131-1-mic@digikod.net>
- <20230309165455.175131-2-mic@digikod.net>
- <133970354.9328381.1684703636966.JavaMail.zimbra@nod.at>
- <8249dd59-ce08-2253-1697-301ad082d905@digikod.net>
-In-Reply-To: <8249dd59-ce08-2253-1697-301ad082d905@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20230522104146.2856-1-nj.shetty@samsung.com> <CGME20230522104536epcas5p23dd8108dd267ec588e5c36e8f9eb9fe8@epcas5p2.samsung.com>
+ <20230522104146.2856-3-nj.shetty@samsung.com> <20230524154049.GD11607@frogsfrogsfrogs>
+In-Reply-To: <20230524154049.GD11607@frogsfrogsfrogs>
+From:   Nitesh Shetty <nitheshshetty@gmail.com>
+Date:   Mon, 29 May 2023 22:06:13 +0530
+Message-ID: <CAOSviJ2-=U+Y2vFOq6=8n=uHqXgoud3=7gaH7H7sw2jiPXtNPA@mail.gmail.com>
+Subject: Re: [dm-devel] [PATCH v11 2/9] block: Add copy offload support infrastructure
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Nitesh Shetty <nj.shetty@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, linux-mm@kvack.org,
+        gost.dev@samsung.com, anuj20.g@samsung.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        ming.lei@redhat.com, James.Bottomley@hansenpartnership.com,
+        linux-fsdevel@vger.kernel.org, dlemoal@kernel.org,
+        joshi.k@samsung.com, bvanassche@acm.org
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+> > +/*
+> > + * @bdev_in: source block device
+> > + * @pos_in:  source offset
+> > + * @bdev_out:        destination block device
+> > + * @pos_out: destination offset
+> > + * @len:     length in bytes to be copied
+> > + * @endio:   endio function to be called on completion of copy operation,
+> > + *           for synchronous operation this should be NULL
+> > + * @private: endio function will be called with this private data, should be
+> > + *           NULL, if operation is synchronous in nature
+> > + * @gfp_mask:   memory allocation flags (for bio_alloc)
+> > + *
+> > + * Returns the length of bytes copied or error if encountered
+> > + *
+> > + * Description:
+> > + *   Copy source offset from source block device to destination block
+> > + *   device. Max total length of copy is limited to MAX_COPY_TOTAL_LENGTH
+> > + */
+> > +int blkdev_issue_copy(struct block_device *bdev_in, loff_t pos_in,
+>
+> I'd have thought you'd return ssize_t here.  If the two block devices
+> are loopmounted xfs files, we can certainly reflink "copy" more than 2GB
+> at a time.
+>
+> --D
+>
 
-On 26/05/2023 18:40, Mickaël Salaün wrote:
-> 
-> On 21/05/2023 23:13, Richard Weinberger wrote:
->> ----- Ursprüngliche Mail -----
->>> Von: "Mickaël Salaün" <mic@digikod.net>
->>> hostfs creates a new inode for each opened or created file, which created
->>> useless inode allocations and forbade identifying a host file with a kernel
->>> inode.
->>>
->>> Fix this uncommon filesystem behavior by tying kernel inodes to host
->>> file's inode and device IDs.  Even if the host filesystem inodes may be
->>> recycled, this cannot happen while a file referencing it is open, which
->>> is the case with hostfs.  It should be noted that hostfs inode IDs may
->>> not be unique for the same hostfs superblock because multiple host's
->>> (backed) superblocks may be used.
->>>
->>> Delete inodes when dropping them to force backed host's file descriptors
->>> closing.
->>>
->>> This enables to entirely remove ARCH_EPHEMERAL_INODES, and then makes
->>> Landlock fully supported by UML.  This is very useful for testing
->>> (ongoing and backported) changes.
->>
->> Removing ARCH_EPHEMERAL_INODES should be a patch on its own, IMHO.
-> 
-> OK, I'll do that in the next series.
+Sure we will add this to make API future proof, but at present we do have
+a limit for copy. COPY_MAX_BYTES(=128MB) at present. This limit is based
+on our internal testing, we have plans to increase/remove with this
+limit in future phases.
 
-Well, I added ARCH_EPHEMERAL_INODES for Landlock specifically because of 
-this hostfs inconsistency, and it is not used by anything else in the 
-kernel: https://git.kernel.org/torvalds/c/cb2c7d1a1776
-I then think it makes sense to remove this Kconfig option with the 
-hostfs change. Moreover, this protects against erroneously backporting 
-the ARCH_EPHEMERAL_INODES change, which would silently introduce a bug 
-for Landlock.
-
-
-> 
->>
->>> These changes also factor out and simplify some helpers thanks to the
->>> new hostfs_inode_update() and the hostfs_iget() revamp: read_name(),
->>> hostfs_create(), hostfs_lookup(), hostfs_mknod(), and
->>> hostfs_fill_sb_common().
->>>
->>> A following commit with new Landlock tests check this new hostfs inode
->>> consistency.
->>>
->>> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
->>> Cc: Johannes Berg <johannes@sipsolutions.net>
->>> Cc: Richard Weinberger <richard@nod.at>
->>> Cc: <stable@vger.kernel.org> # 5.15.x: ce72750f04d6: hostfs: Fix writeback of
->>> dirty pages
->>> Cc: <stable@vger.kernel.org> # 5.15+
->>
->> I'm not sure whether this patch qualifies as stable material.
->> While I fully agree that the current behavoir is odd, nothing user visible
->> is really broken so far.
-> I added the ARCH_EPHEMERAL_INODES knob to avoid unexpected behavior.
-> Thanks to that there is no regression for Landlock, but it's unfortunate
-> that we could not use UML to test old kernel versions. According to this
-> odd behavior, I guess some user space may not work with hostfs because
-> of this issue, hence this Cc. I can remove it if you think it is not the
-> case.
-> 
-> 
->>
->>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->>> Link: https://lore.kernel.org/r/20230309165455.175131-2-mic@digikod.net
->>
->> Other than that, patch looks good to me.
-> 
-> Good, I'll send a new series with your suggestions.
-
-Can I add your Signed-off-by to this patch (without touching 
-ARCH_EPHEMERAL_INODES changes, but removing the Cc stable)?
-
-Are you OK for me to push this patch (with the whole series) in the 
-Landlock and next tree?
-
-I'll send a new series splitting the Landlock tests to make a patch 
-dedicated to Landlock with hostfs tests (not backported), and with 
-another patch containing backportable and independent new Landlock FS tests.
+Thank you,
+Nitesh Shetty
