@@ -2,129 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29EAF715044
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 22:06:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDC971509C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 May 2023 22:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbjE2UGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 May 2023 16:06:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42044 "EHLO
+        id S229484AbjE2Uie (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 May 2023 16:38:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbjE2UGc (ORCPT
+        with ESMTP id S229453AbjE2Uic (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 May 2023 16:06:32 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A9C713D;
-        Mon, 29 May 2023 13:05:58 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230529200542euoutp021214b3bb62b79dd32d5ad368126a4268~jtfNsD1Mz1164011640euoutp02b;
-        Mon, 29 May 2023 20:05:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230529200542euoutp021214b3bb62b79dd32d5ad368126a4268~jtfNsD1Mz1164011640euoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1685390742;
-        bh=pIKJ/0pTFVod4oct0Ya5kXe8iwtRftZQzHN3BQjmhKA=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=hY2bCm/lXgY5xARnEJv9icirNk2CWpi+nhiIBDpm1CpL835Yr+OtYl0jIWRXauuOX
-         AAuVeSG17ywfgOe3kknJ2ySoO5c36TLQx33ukAZNaBYo6A6Py4PXallIo1wJD2NCd7
-         nzV+k7f/S2owc2iw42QDYZym4aX/9R5GhpRCJUNE=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230529200542eucas1p1a7eab0e6643f3c129c498d541cc84e62~jtfNhJJz30669106691eucas1p1k;
-        Mon, 29 May 2023 20:05:42 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id C2.11.37758.69505746; Mon, 29
-        May 2023 21:05:42 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230529200542eucas1p17aaabea06538cf7591abea0d37085426~jtfNGZmFJ0800408004eucas1p18;
-        Mon, 29 May 2023 20:05:42 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230529200541eusmtrp2889d1ec7946385a3bdaadecb8f538e87~jtfNEjDYS2796827968eusmtrp2c;
-        Mon, 29 May 2023 20:05:41 +0000 (GMT)
-X-AuditID: cbfec7f5-7ffff7000002937e-4d-647505969f3f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E5.E4.14344.59505746; Mon, 29
-        May 2023 21:05:41 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230529200541eusmtip2f15a406eeefc8d43e2569de5e8f7b5a5~jtfMy5-g10618906189eusmtip2R;
-        Mon, 29 May 2023 20:05:41 +0000 (GMT)
-Received: from localhost (106.210.248.78) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Mon, 29 May 2023 21:05:41 +0100
-Date:   Mon, 29 May 2023 22:05:39 +0200
-From:   Joel Granados <j.granados@samsung.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-CC:     <keescook@chromium.org>, <yzaikin@google.com>,
-        <ebiederm@xmission.com>, <dave.hansen@intel.com>, <arnd@arndb.de>,
-        <bp@alien8.de>, <James.Bottomley@HansenPartnership.com>,
-        <deller@gmx.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <x86@kernel.org>, <hpa@zytor.com>, <luto@kernel.org>,
-        <peterz@infradead.org>, <brgerst@gmail.com>,
-        <christophe.jaillet@wanadoo.fr>, <kirill.shutemov@linux.intel.com>,
-        <jroedel@suse.de>, <akpm@linux-foundation.org>,
-        <willy@infradead.org>, <linux-parisc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] signal: move show_unhandled_signals sysctl to
- its own file
-Message-ID: <20230529200539.limexmxhrpfyya7p@localhost>
+        Mon, 29 May 2023 16:38:32 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2092.outbound.protection.outlook.com [40.107.220.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45285C9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 May 2023 13:38:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y37iMyn6skenY7xbpC8cZwZs500fxMekUKGeUbx+5BgIbjCX3+hLwlc5biYw+KNJI75E3oZUaHtqJCw8G3Eq1uBQ3lBDAspTN4tFn7UHGOsJwtKFoVHZcGrDLfVaPpE9yqDk6XF0zjrxgD91LK1Rh8C2XFGHJQ9vBzVK+MK+ooLCTBD8XGNia859t/WxUZfSiUTdqOPnGu9BEBdLHER/1EDi9Qk81GoN0gx6PbcLaBWk4FTC6R8vEPkemtDBqkysbwStCLz/YQkTIy/vSFrWab8a9smAzZaYHk4DH8DkGBMLBwRA4ah8OjVj8UWq+2OCZic22n7j4yQ/fPl0yV+lGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IdoJdnLKEVMeQFIxNJ1YpC816/bgEi89w6rTc3lI1hs=;
+ b=OBY8wuCJWVSr0/RjQxrJz9IlpVPTTzHyOrZMyqjtqrVnuM5OgebLS45qaZfDqDD3obqJBdHmrzYPheqRTkGKRgGDM+DCNnIGYg8ETyb6ujcKO/GX+0+Ti21+ONf0GUcnrMUpbdnM2KtOTcfiwL/QRmPHZ5CVxEbAC8dnd8GBeMgQOEKcoo1AQRrLGvprHtZ1qJZdUxPNgYXpAJXHcaaDMmwCUNMkLG+EKHV6aW3tmv9nKpNye+52PHQlzuOwyiFQQFjKPl6QQr7bdwNItVZFQxq4M+x77hjf6cXCUkKRcQe7tWT4mCoSA5dDZNz1ddFugBJOTY97ynhTeoK8UhYTkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=purdue.edu; dmarc=pass action=none header.from=purdue.edu;
+ dkim=pass header.d=purdue.edu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=purdue0.onmicrosoft.com; s=selector2-purdue0-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IdoJdnLKEVMeQFIxNJ1YpC816/bgEi89w6rTc3lI1hs=;
+ b=ctk6A3QHkjNr9zKDd3FhE9zWyJe9bbg+zHAfUJBt3OMVun5qXIWgk5vnx68r5QoRvZ3UNVdRv+xDKjI2y7Ddy2QrlWkhsQI+wLDlw0M6HWPb26TxD0PP2Kq9nKR7/0MhxwANPKR2rsnae96jtj/VtTibIjKwX81157mH64zk8VY=
+Received: from SA1PR22MB3124.namprd22.prod.outlook.com (2603:10b6:806:23c::12)
+ by PH0PR22MB3498.namprd22.prod.outlook.com (2603:10b6:510:169::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.21; Mon, 29 May
+ 2023 20:38:29 +0000
+Received: from SA1PR22MB3124.namprd22.prod.outlook.com
+ ([fe80::647d:bdd1:e07f:42e1]) by SA1PR22MB3124.namprd22.prod.outlook.com
+ ([fe80::647d:bdd1:e07f:42e1%4]) with mapi id 15.20.6455.020; Mon, 29 May 2023
+ 20:38:28 +0000
+From:   "Gong, Sishuai" <sishuai@purdue.edu>
+To:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: A data race on mnt->mnt.mnt_flags
+Thread-Topic: A data race on mnt->mnt.mnt_flags
+Thread-Index: AQHZkm2GlZRqkKm/bUu1fNeL67eZrg==
+Date:   Mon, 29 May 2023 20:38:28 +0000
+Message-ID: <BE49328F-DC47-4509-AC7E-6DD6FEC2FF83@purdue.edu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=purdue.edu;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR22MB3124:EE_|PH0PR22MB3498:EE_
+x-ms-office365-filtering-correlation-id: 128277cd-664f-4b24-630f-08db6084a8e0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 494bOblciIfzOnAhI/S+bT/MoX2UJdXzehvu6JJTQnlHjek9AxpZec2rzjg9PjLbFVZg+Ve5ft0tB/XZZnGZRyJM4DtXuUU58iTWFLqiQ/hvtkO7Gw2e5d3wTR62Q0tocwF9GeAvh5f5Txw+sx1+kz8Dq65Jlfp6k2/WrIeHW/KFdl9YrgeVTLdDOeRv1QeH2/++vFC9J+Z/actJmQEP+yv/NlXuYiERmgnViKuvN+qWIgiOdxXYi/JONFWMV17ykiKBfGIToEtn6+POtcKHcyZ7oh7mb2961UnEbORbdNbKUC7VWdF1LiOYy1yrK20SGZRG1IPVWMMPCe9Ah1BeVwNZWegsnH6goNUNfh+6B3Q9vuYg0UxTmVQbRrGCsNb6zbKWWvdoV5C3XBfrqBx2/RyAYxz0+H2R6y1SvWqKAYXf8L6Jbqg7GBsXtuy0ls1tR7hFNg2CAk+HNnYS/Gbe7TQSBTFvMXdfSXAsXlprAj9Z7YgOSu7WuOpvlvZhcPSXeUIqD87uqclfersgKcPQwZ9IvgOfc6Wyu2TURWZJYTJQ+BzsKB59m5R1C3eKGItpPpVDxUBWeusleD6VPxh05yFn1Qs+eIRFx/XF51sZ6Ib+mNPSLSFF7kSlfudph4IZAVI/fLRyXsrBkiNEdBM0qQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR22MB3124.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(366004)(136003)(39860400002)(376002)(346002)(451199021)(122000001)(478600001)(38100700002)(76116006)(2616005)(83380400001)(66446008)(66556008)(66476007)(64756008)(38070700005)(91956017)(66946007)(86362001)(4326008)(6916009)(4744005)(71200400001)(2906002)(6512007)(6486002)(186003)(26005)(33656002)(316002)(786003)(41320700001)(6506007)(41300700001)(36756003)(5660300002)(75432002)(8936002)(8676002)(45980500001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Orz4DOnCbXU1vH6woFeRopthOlqP1bEE1aoP3NVGG5u5XCS7PIxbtqswwf8K?=
+ =?us-ascii?Q?YMmNGT0oaQ2dx7gOWNC5OwaGOs/VRNBulnTw8t+/AxYgCJ0OuH/v8WoO/y5x?=
+ =?us-ascii?Q?/jSrUHI9E8iXxtc/vrxTbtKEe/OBQYX9bcwsBxlowKb3yvuG/i77kLyV9rIR?=
+ =?us-ascii?Q?VV6ISLKPb5j5tS5j31IbOmpEjoj1iqSEqVdnwqu6BjDFbudefFLmlVDVQBXK?=
+ =?us-ascii?Q?/2VwciJVNazvByZTW7MD8DgePxwVIRf2JHn54cv3b4LnbkWZkDO1Chgip150?=
+ =?us-ascii?Q?ysysY17XCjh54UzFRyIKzMxLkTQmA0vJLtqVG7J39g9gPY1pUDfYiPM7YRnF?=
+ =?us-ascii?Q?uYeyUCbF+UVjEIE5DJyiwpFCjkzP2N4/v/zPLlnNQRFAR/2ohTWqvcRw7kef?=
+ =?us-ascii?Q?YqoQLEJNVDoInWbu+R0vMMyHn7qYBBCC/ONcWpWmpT5ryW3g/1dEuuJu1D5L?=
+ =?us-ascii?Q?lhDZTKEhvYXS64LcVl6IpvpuZHSyEVzAj5hshYkT3708P7R0r06OliKfn44B?=
+ =?us-ascii?Q?Sbl/TI/9xnGlFG9dRdRuaFxxHc8xcbY2J2ZE8DZ8HID7o7zJaY0LW+6S2H5O?=
+ =?us-ascii?Q?JJBRymUsW2cNyg/JsPxv7z1IOpDmpEA2m+pm2oeSCSJ2DE412VINtH367F4m?=
+ =?us-ascii?Q?kJcw50+wk21ktUQtqMFHHVrhhBEoQJL6+S6sBwoKfnYdGmqNVgbaFu3dC6fm?=
+ =?us-ascii?Q?0WLbl5kUK2uYoEJqizv52Jv5+oiIy1NvTzUBlPNmKrXtVwGK+nCExYu0C/3F?=
+ =?us-ascii?Q?GYRe/8WjKG5eWTbF1J23q0kZA5r/0I8vjlT8pezrE4k1yQgWvfoReYrf0h9L?=
+ =?us-ascii?Q?oaCkGFeqAptkysiVt9UNJjT1YtagDGpR+mQWU9h9aoQIvAVlGMzZqV8vRiaQ?=
+ =?us-ascii?Q?Ch2iEm8XpmitM/ZVCIn94uLiHjtLMScbgMhmFoI/jF+f37iW4O7nem2lKXXn?=
+ =?us-ascii?Q?hbOlLi+MsmJqof6cTVOf1755JMBhvU3hKUOTbIDEvrZA4Pm0YG7UYD5fTKh2?=
+ =?us-ascii?Q?bSmHLFauh+xMBJytNIJmGSVHuzhh2CbIYdP4ELELikr0bksGFSENiAywWcIN?=
+ =?us-ascii?Q?v67WbHsD4fOA/3jYDdxkV7cOkoymanb/R4X1ih3CNUNHB08aHU/BTZ+nAC7D?=
+ =?us-ascii?Q?8YeZfu2isVlhDfn5upkuC8S80O01AXmQ2+50fDUXBAfHd5jCZuWBxtahFSu3?=
+ =?us-ascii?Q?FUd9g/5UqQSzRR22sSvp2gzXbqvqbtm5gIJm/jVxfJwiM0OmVubscAUbRGNf?=
+ =?us-ascii?Q?V5bHnI3q99JhzzvAHNAZZrfrg2z9D2YLpLlEiXV/+xBRsa+p5FeWNET1953W?=
+ =?us-ascii?Q?//E/rqDzs0Kk9ND/yFIbj1qQGk6sQmkKQ0iKSqAbZtGluG1Tydt6ZBpSyPHw?=
+ =?us-ascii?Q?im6rF174gk2rf+YBVTilK9lBmC8Eu8sYtKQCnDgy3xiiqMaFkJz1SQ5LdCo+?=
+ =?us-ascii?Q?L/vtA6qpi+eJ8oQpvcvIxy/jUPOk0zKB6CQiUemQABY89Jvs++6QEAhmoxuK?=
+ =?us-ascii?Q?y84QNY10cI87BWYlfkH3pUDcg4W55RjRPsADNBx7bZw6tXRZeo/B6+3w8/2E?=
+ =?us-ascii?Q?GYYK/Hw/ddcMdFLp+nycR+fTu0WIM0p5PmXgviWq?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <67192B0E98E7004C9042A25ECEDAA685@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="xtz7dcv4hf5tve4g"
-Content-Disposition: inline
-In-Reply-To: <20230526222207.982107-3-mcgrof@kernel.org>
-X-Originating-IP: [106.210.248.78]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA2WSfUxTZxTGeW9vey81ZdfWhDeVuYzNRYEBk2W+YcO5xGUXt4m47CPq0CI3
-        4ISL64c4FwIKWOxEsArOClqB0EpZKcjHysAxdEALA3GAlE+HX5MhCh0qI+Aot5tL9t/vPc9z
-        Ts5z8pI8cbtASu5mlYyclcX7CoR4TfNM56t5fFVM8OVuCcovLxOgOW0zgZyWeQH6pQmi6p8K
-        +Gjq3g2ARqYGAHpak06gvApvVJFNohP2Agy1f5OAHHfzcVTfYMPRr3X5AjRqv4qhzrrv+Kgv
-        5zZA1xr1GGrJasTQxcpcHpp9smB5YrnJRyXWTesh/TjjGE7P/qUF9JnULpy26oYI+uFkFK2v
-        VNF5WruAvmj0o4vq72F0ZekRAT3R0UHQrd/O4vRZWyT94FLPgqHta9pZuWKzZKvwrRgmfvc+
-        Rh60bqcwrjr3Otib/uL+OntKKiiWaoAnCanX4anjp3gaICTFlBHAOYOF7xLE1J8ATles5gQn
-        gH2DcwsCudjxSIdxdQOAaoeN+Nc0oO52K1UAtg07CNconFoJbQUO4GIBFQA7xwd5Ll5GrYKX
-        crIwF/OoFhzezWZcLKE+g3WG7kWPiFoLS7vGCI6XQtvpW7hrCx61Hx5Vh3C4HBrmSZfDk0LQ
-        2dsLuGS+sFozgXGcDO1V/YurQapHCIvUToITNkDH7/VulsCxlio3+8Cn1nPuhhMA/jj/kOAe
-        JgBLDk67x74J07tvuTvegRM3rYA7kRfsu7+Uy+UFtTWu+7rKIph5WMy5X4Gm4XE8B7yk+08y
-        3bNkumfJdItzAqD+hynB/8r+sOT8HzyOw6DZ/ADXA6IUeDMqRUIsowhhmaRAhSxBoWJjA3cl
-        JlSChU/eNt8y/T0wjk0GNgGMBE3g5YXmUYvpKpDibCLL+C4ThckUMWJRjOyrA4w8cYdcFc8o
-        msByEvf1FvmH2XaJqViZktnDMHsZ+T8qRnpKU7HPtw0qrYVdPrOF4z3VF8i1SZ2hYxH2++n9
-        1p2iw8PhxvyZ8PVx7AvH3343w8zGvf+JpLA8osNjuxcr6Nyj9K8dvVP70cDHG6mJLRbNc637
-        TEm3i835RV98aj4yKU070KD4cFp7XbsxKDaFF860p52MKktZ1TrgkbzVVFZ9p6orq1Z29IMr
-        oTWPD814ZCb3V12RNJ7UZB0zpl3ISs80b3hjzaMlKwt6tgT8rC4bGDzXsn2kg8Cl0REN20ZO
-        s+PeUZEV1+I39eT61Kx7Pjm61/+3NaGKYOPBgiWxN3acCaot8gtZbfDkH3KyXwaffc8glCcZ
-        i1uzh5TR+vJmRxIK98m4HDm0whdXxMle8+PJFbK/AZ32uhlfBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsVy+t/xe7pTWUtTDG5/MLSYs34Nm8XfScfY
-        LT5v+MdmcfaQhMXWg3NZLT69fMBocf/TbUaL/9ta2C2mbRS32NjPYTH51FwmizPduRY3n89h
-        sdiz9ySLxeVdc9gsHp26wGRxftdaVosbE54yWlw6sIDJ4njvASaLzZumMlv8/gFU8mPDY1aL
-        ZTv9HCQ8vrf2sXj8/jWJ0WN2w0UWj52z7rJ7fPgY57FgU6nHtEmn2Dw2r9DyWLznJZPHplWd
-        bB7vzp1j9zgx4zeLx7yTgR7v910FKjhd7fF5k1yAcJSeTVF+aUmqQkZ+cYmtUrShhZGeoaWF
-        npGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJeRtvDL6wFTYoVf07dYGlgXCTVxcjBISFgIvFt
-        FlMXIxeHkMBSRolZU/6ydzFyAsVlJDZ+ucoKYQtL/LnWxQZR9JFR4vL7K+wQzhZGiYlz1oJV
-        sQioSpyce5MRxGYT0JE4/+YOM4gtIqAhsW9CLxOIzSxwnEXieX8qiC0sECHRvfof2DZeAXOJ
-        VRdfQQ3dyShxZeY5JoiEoMTJmU9YIJrLJN4v+s8IcjazgLTE8n8cIGFOAQuJz9euMUJcqiSx
-        tesdE4RdK/H57zPGCYzCs5BMmoVk0iyESRBhLYkb/14yYQhrSyxb+JoZwraVWLfuPcsCRvZV
-        jCKppcW56bnFRnrFibnFpXnpesn5uZsYgUlt27GfW3Ywrnz1Ue8QIxMH4yFGFaDORxtWX2CU
-        YsnLz0tVEuG1TSxOEeJNSaysSi3Kjy8qzUktPsRoCgzFicxSosn5wHSbVxJvaGZgamhiZmlg
-        amlmrCTO61nQkSgkkJ5YkpqdmlqQWgTTx8TBKdXA1KEQK7LbdYumOM8qp3WVro27Nt/ZOsdI
-        qXiNQcG7S7neu3L9PcK7cjm5Da4xXZm2vkXeX+zJhWMmdWtUZuQpJYj8lK8LTpFesVueNdx6
-        yrP4xUctjPntfhfckDMNuKA/e0byiTI/meTLGpxT0ndoXwn/3MlyNCg14ZPwnaqKo/YXXzKV
-        Pa7KnvUu86tdpaCx1ZJrunmOh9gLGiUlDjYdZGp2sN9UuUhFa+LalEM6Pa+X5X2O9M8ymrsw
-        aoXAdcOJZx8Ks32ufMey/ctzCb0EvzmvI1Qu3DC/vI7tSta8+CZ9PfVle6R+PEv1FfrA9fWi
-        8atw8dc7Nsy/bX/G9/HqPzN38t4x/iom+t7b/8NUJZbijERDLeai4kQAUP1uy/8DAAA=
-X-CMS-MailID: 20230529200542eucas1p17aaabea06538cf7591abea0d37085426
-X-Msg-Generator: CA
-X-RootMTR: 20230526222248eucas1p2c21183361439f3a9e36c84545265395e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230526222248eucas1p2c21183361439f3a9e36c84545265395e
-References: <20230526222207.982107-1-mcgrof@kernel.org>
-        <CGME20230526222248eucas1p2c21183361439f3a9e36c84545265395e@eucas1p2.samsung.com>
-        <20230526222207.982107-3-mcgrof@kernel.org>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+X-OriginatorOrg: purdue.edu
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR22MB3124.namprd22.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 128277cd-664f-4b24-630f-08db6084a8e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2023 20:38:28.8235
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4130bd39-7c53-419c-b1e5-8758d6d63f21
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XJ/97Vb+sgD2Sl6X1TdZLYE2gODaUavZljRsmJv2fwkRbt03hiMJqX5gSU5hFsaEy0/2yyKkmXDEo+DISB6nNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR22MB3498
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -132,134 +113,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---xtz7dcv4hf5tve4g
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-On Fri, May 26, 2023 at 03:22:06PM -0700, Luis Chamberlain wrote:
-> The show_unhandled_signals sysctl is the only sysctl for debug
-> left on kernel/sysctl.c. We've been moving the syctls out from
-> kernel/sysctl.c so to help avoid merge conflicts as the shared
-> array gets out of hand.
->=20
-> This change incurs simplifies sysctl registration by localizing
-> it where it should go for a penalty in size of increasing the
-> kernel by 23 bytes, we accept this given recent cleanups have
-> actually already saved us 1465 bytes in the prior commits.
->=20
-> ./scripts/bloat-o-meter vmlinux.3-remove-dev-table vmlinux.4-remove-debug=
--table
-> add/remove: 3/1 grow/shrink: 0/1 up/down: 177/-154 (23)
-> Function                                     old     new   delta
-> signal_debug_table                             -     128    +128
-> init_signal_sysctls                            -      33     +33
-> __pfx_init_signal_sysctls                      -      16     +16
-> sysctl_init_bases                             85      59     -26
-> debug_table                                  128       -    -128
-> Total: Before=3D21256967, After=3D21256990, chg +0.00%
->=20
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  kernel/signal.c | 23 +++++++++++++++++++++++
->  kernel/sysctl.c | 14 --------------
->  2 files changed, 23 insertions(+), 14 deletions(-)
->=20
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 8f6330f0e9ca..5ba4150c01a7 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -45,6 +45,7 @@
->  #include <linux/posix-timers.h>
->  #include <linux/cgroup.h>
->  #include <linux/audit.h>
-> +#include <linux/sysctl.h>
-> =20
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/signal.h>
-> @@ -4771,6 +4772,28 @@ static inline void siginfo_buildtime_checks(void)
->  #endif
->  }
-> =20
-> +#if defined(CONFIG_SYSCTL)
-> +static struct ctl_table signal_debug_table[] =3D {
-> +#ifdef CONFIG_SYSCTL_EXCEPTION_TRACE
-> +	{
-> +		.procname	=3D "exception-trace",
-> +		.data		=3D &show_unhandled_signals,
-> +		.maxlen		=3D sizeof(int),
-> +		.mode		=3D 0644,
-> +		.proc_handler	=3D proc_dointvec
-> +	},
-> +#endif
-> +	{ }
-> +};
-> +
-> +static int __init init_signal_sysctls(void)
-> +{
-> +	register_sysctl_init("debug", signal_debug_table);
-> +	return 0;
-> +}
-> +early_initcall(init_signal_sysctls);
-> +#endif /* CONFIG_SYSCTL */
-> +
->  void __init signals_init(void)
->  {
->  	siginfo_buildtime_checks();
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index a7fdb828afb6..43240955dcad 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -2331,24 +2331,10 @@ static struct ctl_table vm_table[] =3D {
->  	{ }
->  };
-> =20
-> -static struct ctl_table debug_table[] =3D {
-> -#ifdef CONFIG_SYSCTL_EXCEPTION_TRACE
-> -	{
-> -		.procname	=3D "exception-trace",
-> -		.data		=3D &show_unhandled_signals,
-> -		.maxlen		=3D sizeof(int),
-> -		.mode		=3D 0644,
-> -		.proc_handler	=3D proc_dointvec
-> -	},
-> -#endif
-> -	{ }
-> -};
-> -
->  int __init sysctl_init_bases(void)
->  {
->  	register_sysctl_init("kernel", kern_table);
->  	register_sysctl_init("vm", vm_table);
-> -	register_sysctl_init("debug", debug_table);
-> =20
->  	return 0;
->  }
-> --=20
-> 2.39.2
->=20
+We found a data race that could happen between clone_mnt() and
+mnt_hold_writers() over mnt->mnt.mnt_flags.
 
-LGTM
---=20
+The two functions can write to mnt->mnt.mnt_flags concurrently.
+Although mnt_hold_writers() holds the lock_mount_hash(), clone_mnt() does n=
+ot
+respect this lock at this moment (it will apply for this lock later).
 
-Joel Granados
+Thread-1					Thread-2
+// clone_mnt()				// mnt_hold_writers() holding lock_mount_hash()
+mnt->mnt.mnt_flags &=3D ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
+						mnt->mnt.mnt_flags |=3D MNT_WRITE_HOLD;
 
---xtz7dcv4hf5tve4g
-Content-Type: application/pgp-signature; name="signature.asc"
+It is not clear whether this is a serious problem but we would like to repo=
+rt it
+just in case.
 
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmR1BZMACgkQupfNUreW
-QU+RNgwAk/Z2mYaycPxMeef8lQvY2yVWUf5q2MCjPy06wUObCXySaXq7LCvkxJPF
-7JUVXIQ81yZNNNdQ8dWnP0M1gF7Gy1/FuVZwE4FagWhT9nelpF3kmBll4JfkbnG0
-1fJVvS4HDK3RB1h7MwIyy1loRFrZvOC7oPf25qwK7PHfjrbAfZvHIda88CH8uQoY
-Ro2letTYBeYIcSp/YXSd7QjvnlWMWZbJuLHodgm1GK5MmZFARCxCKydYczFta8kC
-/hT/VaYTnxs1uG8eI55Bb69LJF9kZNKsZYwzNus9wJxKWJgkhkpgJvJyFoJP2pXf
-2Wdrufh/b73bRTGolMe4zZmqtMeFLctMSXSMglftViTkJzQSRKi+goiwnH//dt3+
-JpvVex4Z1k9hz6MBRpCPys3kSmXjOW5EwI1hTNtH9Hp3xeotJEN6n3ncwHpOuL2E
-D5i7AXkoFQa4D731FlAsfCxxuelF98CHS3CNaqDK9cRqOa9Gzco1TafXtc9DD8T3
-RWpFL98a
-=5oKi
------END PGP SIGNATURE-----
-
---xtz7dcv4hf5tve4g--
+Thanks,
+Sishuai=
