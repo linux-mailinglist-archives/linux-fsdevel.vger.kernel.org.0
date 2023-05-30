@@ -2,278 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6483571706A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 00:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ABF171708B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 00:15:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233634AbjE3WEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 18:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
+        id S233674AbjE3WPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 18:15:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233633AbjE3WEl (ORCPT
+        with ESMTP id S233668AbjE3WPI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 18:04:41 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 350BDF7;
-        Tue, 30 May 2023 15:04:38 -0700 (PDT)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34UKO6T2029837;
-        Tue, 30 May 2023 22:04:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-03-30;
- bh=Bmy2pydRqwqZcFRWbiMatHarHwvAMdzHjl/PmxHna+Q=;
- b=ELCsa9cW70ndQyJF+ztcRCWymHTXaH+pp2d2Rvj45FaD8vkor7n/XVIIA+2KEjf9pSCr
- lBoi8WukuqOoFB1o1hPb1+rOA4lWJjhv0No+LEZkA4C4H27eu4ZFltX03VuoHo99p76D
- VxiUhi4D/Awgox1yt6Xq1VUVt/Bu7D0EXd67baazFdZdDUn5O6CwRyrDX+rBMcMZged+
- lDtFMugDP5oHZq6Tctomwonu/UNqDKY+PreyjISQUKvaaejo+RQv91n5BN0V3Z4lAKx3
- UyjD+g4t5HYiskgeZ1UI2nWh3qlYOcEVm4jOMOt94iiWzjQPf2HL6MYuzbnqMTdqrP/U ZQ== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qvhd9v5b5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 May 2023 22:04:33 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34ULo5IF030024;
-        Tue, 30 May 2023 22:04:32 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2177.outbound.protection.outlook.com [104.47.55.177])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3qu8a59ff8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 May 2023 22:04:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ujw7A3k8W77fvuculSSMtfX/CJ+jkA4yEdNn/oaYSmDt2uoNEa6N/3AiWyntmSuU6SKUBlG45h83vep6gPrhYnhemdS15fxECXFDdEX2lbm6MFmF78+gaM2W/WsAX8AXqpn4TCemVLnPc77i2SdBoq6Dh02liPicXPaRH6+YEpP8qdnXe0RHIyWsyodIxdE3fvfqklTWrfFG1x0BFwS/7UUbKU4ftLDVz//xHS9zU/OVmkhQJ45RmQh0YM4HFo7DXhCfaHWjuSk42cTZZNX3eq5cTJ9NQ4/d7rEEr9kJYeqPeGsflwZiLpOCaYUtQK7WF2myhP9GQnmIxETqGbCQJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bmy2pydRqwqZcFRWbiMatHarHwvAMdzHjl/PmxHna+Q=;
- b=BfGS9X9hLdmJZ4dF5hyvBY61Iiagwc/ufmc0xm1LYEeyrhDVH8nALGdpyN6xO60XcjLK2NHdDLeOsU6MVjRsgFt+AwloTHvj8jfsPOtnAqqCQH413ikdzWp2WOZeMjRI5qRUzAlqCHqs3UXcKKKNlyLL4kC3QnOJ11WEY4LddB7rjuhtT+SDVsY0Pcjc9DLlNzV7I77iuh4NWwtxF3D3+rsBcKJamxlHSc03IbG23CmYwHNDy72fQKY1q2b06+Hdx/fooBvqjWAPqZiGeW7205OdGTjBa5Xjxi6M//94iXnsakyYeJc5jfuqgDRt/11iffZYkSEwRstNi50KmbO6lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bmy2pydRqwqZcFRWbiMatHarHwvAMdzHjl/PmxHna+Q=;
- b=aIxBG2X5o4l7q9M7G9urRG21yPJMvaSWnmcqH6MpsK6UuqBP03vKNWseecrRLg8cw9Q2wSKHmfIFA4EDK538FS3wkwTT16imMdOHtv1Ctbap9tDkNI4/XwZ/1x9OAkbnGIBH61LJnm9VsyvVu4sFT++wovjcP/nbJ4L1aHP7kaM=
-Received: from MN2PR10MB4270.namprd10.prod.outlook.com (2603:10b6:208:1d6::21)
- by SN7PR10MB6382.namprd10.prod.outlook.com (2603:10b6:806:26e::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.24; Tue, 30 May
- 2023 22:04:30 +0000
-Received: from MN2PR10MB4270.namprd10.prod.outlook.com
- ([fe80::8116:747a:ad20:6e8f]) by MN2PR10MB4270.namprd10.prod.outlook.com
- ([fe80::8116:747a:ad20:6e8f%4]) with mapi id 15.20.6433.022; Tue, 30 May 2023
- 22:04:30 +0000
-Message-ID: <a566e41a-8f38-83dd-d477-cd7409a256e4@oracle.com>
-Date:   Tue, 30 May 2023 15:04:26 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.11.2
-Subject: Re: [PATCH v2 1/2] NFSD: handle GETATTR conflict with write
- delegation
-To:     Jeff Layton <jlayton@kernel.org>, chuck.lever@oracle.com
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <1685429537-11855-1-git-send-email-dai.ngo@oracle.com>
- <1685429537-11855-2-git-send-email-dai.ngo@oracle.com>
- <283915f369b99b88b2a335034a11cddf7b93fcff.camel@kernel.org>
-Content-Language: en-US
-From:   dai.ngo@oracle.com
-In-Reply-To: <283915f369b99b88b2a335034a11cddf7b93fcff.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DS7PR06CA0035.namprd06.prod.outlook.com (2603:10b6:8:54::9)
- To MN2PR10MB4270.namprd10.prod.outlook.com (2603:10b6:208:1d6::21)
+        Tue, 30 May 2023 18:15:08 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7265F7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 15:15:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685484904; bh=M3FptpK0dre4Vl5h5roYbX7FnwrYeKGSVF1j9bZEXKE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ayJ8tdiLorsKAOLSzLsXrstWXo+2R4034OpCcCngbkKbsXE56jkkJmg17oIQxZU1Sg9uYroxTh94qIBfWfzdWsVsEJXDfRDDz52t/nnCj9ANmEDkOsijDjLF8DqH96nkhUOMc+cp1H5M8OjhUPXW/nt3Xnops//lsxFAiwYogoyBsCU1GGqa11mGoKjkZqrbhAZoDmmHCvH6EXpN2ZHn4qcaGwWG94uQadS79GxEvkqIdpSJkm2KBB+aV+z+4LuQ50Fr7jn3oIrDSOIlPVeD7ik8lCSMCqtQHt9h7OY0wSpwNqAXj1HEsD7Q3rxyXeCXzqIQFUv6sSxYX3skXgmZ9Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685484904; bh=m0jBu7FnGohxkywaH5HxFqRVtflv1AvAFXS5FKj94tB=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=YW1yw87eMdxYt7xVagzMMwO9Ck61Bvf+ZwSjwkNbYTPksq1GqeF+Ik00V5QnkruTX4ohC/s/mL0Y6hukSQz5C1xJv/NZADv1xFGkGYyGGog8PKsmvPqy67PsnAV5JS8ec9GSykj8upsoz8ZWHSBLbts2sPtiMVns+PxhGZdoGhLq96mDa6/Y2hnjh6UfWV8UlbuY6TaXVZCVz3Wcl9BWtrydoy1EEQ0jSQcY6zOL//+HfzTtTe2raX0l7dZGEZoQZztTXoRWCFkYVIaWrf5AUNFAkW3pXAcKznbsBD8Cqtal4bZv8MxR5Y6IDK83/a13aSq9u0JLhOGJP06zHXiPCw==
+X-YMail-OSG: mTax22kVM1l16k5yT7pC2O1bT4Z6PuhpbmB8RLu9eYr1eAx5w4CepGMevYtViQg
+ 1NVrcKYjD40By2_iwk4qEL0I44cFzcDiJ1IdRjx2wULGtafs9IbAqA1LVWB9CiR5_FwQhOJcGz.w
+ s66WMN16KIqI_cfbUU_gykZKC0zOtIYT1FezQX2z4iCe3tKgeUHb8qfcTjIW7IvH9JMmysXNf..P
+ lu9UxvTrE22QQsA43FBPa1tNqgmuyvVsHQtZ9GJhTonPQ6qm90x46IwzY6o5rjqaM1feiEw0wu8y
+ 1MNdmHquMfaMXDjOw_D3NL2dJbLg_YoCufADzIJ4qowXXuA9EMYnX9L31_z.iU15DdYKSAuR8cso
+ pizv22WfWNLXPxNWo1mfa2cWAUyrUsH9euDP_81zt2g2c6DEqJoukHC9XUREIRLxWbXEmDYR0RAB
+ EBC3IurpARJyfv9eCUNyW_RULkz_4wgarruvxtrARZu7gyKsKKeS3nBnP183_RCdlZPVqNXefpxd
+ l7S8NO2Rehw491cSJfPC9t70HFgp3dIcurlISD_nwE657CVCFT_AxuxWiN2ozhE8sfsQrnpEQ7Jo
+ 1sAzSGaATyvOqS0bxgP29o.GOWfmRVTemzwIBsuEOFUFhulIzMLD6Qcg70spbfzazUebeLbnWoXW
+ 7o3chrir6Ah_1JQFKaUm5LwmdqHbNyYR_NPXJ9WdVsuPZyHmZLi9X1FjyykP_K3Y7M4mupwMZjPy
+ 5ZlPY66kv566GPsRzRiSV5d8YT3GxXLxbRyLNRCQZrG89Ish8F.FONRHg6xNZc_vwhaNV1GmWZGj
+ XMisrbrfjrf7iA1MoYd0QnxFuOomtvoouLblsCFa1eAtdaOxeYlPG0Lc54MhRSwNeQXd2zMzk3RX
+ kB1FBasA4TTEn8Yvsf5Rhl9EU08DeUzj4lRBZbwbMgwWXeaZAgTcqBXIy8W4.6D.NjtWnzluGRVX
+ KO35LgREbTandq4Zdk2VjOQNs25sgULtmLyG.B2xN8tsKcs58H9eWVOIozD7uali9PBvH2MGDGjC
+ rYFz7NP.Ha.VRpyVI8XAt8umovdFzgXaHkJI7LWKkxRiHU44Zce6btrJyVeqApGapTbOEsZJoe47
+ C7vNvI4Pf9ZCjfNB9xR7HkbG86HLMnpPRTestKxTTk3iZBUVOKPDWFmXQ7LjTtFeNNJq3Kw1kLpv
+ sX3iI7g.aw_7BYTPmQFI63giMlfSOy0widgBEdyEVVGkjWaUE2HB7DNg6ku0J6dVn_hAJ.U4kRIj
+ L4og1Ov1dUlGLsdHlxRSlSe_LmBCfVRHoSXqDSyQ.6joQMx5FB1J3NB3TSrCn_VKhm_ORp1AcUqu
+ laUywqvqKtet_nw1WV4jBen_j4pH_K80.FfNob25EsY6I9VtMe7i_XM41v76oWFe1nGgVgYjdZsj
+ veNYcMMZziPZxqk3slODtHqbg056hlXo57rmSb_NxrYa6LX73JKjRHbtIcyaz12PY05UxdIkX601
+ bCZ9BrYmOyyMkhVONyXH0Sn2sQeis5PV1IZxRWTp2ssHvpXlz4eT3Vv4Fpb8nTsM_XkRnkDTc430
+ cmVr9wYJcJbldHEHar9fx0ROYctdKu6m9_2QCxNUUH1qgLNe2RKrbAOz_XywcCih4Fx99jcUy8KO
+ xgqlZT3tZmRzhD1BrF5wANG3Cgls3JZn1ezGBmB3XC_nlUW9KR5i72ffd3MR6BUmmgCXVLJ0PFyz
+ paRXtpb0CG8.8jwcZRD366A5J9PKWL19vfMbFD8ITM6u_96sPARzk3qBKqjYN_CXrnM9Xlxo4M77
+ zIuj4SOPF2MR4KVpJ6qEAyZuuHyFAOm0fHh_vyHa7qd.kGUVSEHwPTIoJzuT6Mcq3f6hKfJy0fSD
+ IoQHvl7zOQDDhyh.Kd4VRA0XX11POQB6K4M0bwxI6.aphWpPRX.PXCQYC4cK8.8ZWWZ3nIosmRyB
+ KY3346NGo3Po5yqHuX4iKPsx0AFCpk_b41TAY8c86sqGEKCh23ltzNTKPLFE.bQIzvbJTcxxTJ0c
+ qyCxym_AovTWVj6GHVlEo.R6bNOfiBPqfdYwodK5ftHnCS7RGiYnrxy8LspLwawfHz1931HTY949
+ V48FA66D_KV0CVbupsPmtD43672ZXelDWFBeEYsysy.gOrzSsTKGeu0aE4ZCVO_s2axLLut5iWrP
+ .xcuxKstHOQ_KiM.qsUDaTsg6y89q1j1q_FhCjgzWxvWIYM.UwUWsS9oNmznBzAq5bX2NatBn.nt
+ joOWZcwUu8y2Of57kAhk_rbTIU9Xo_QFX
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: ec3c0326-5610-4751-b411-bab55e7c81bd
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 30 May 2023 22:15:04 +0000
+Received: by hermes--production-gq1-6db989bfb-4sk72 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3afa87517718980d01f16661ce4f0e8a;
+          Tue, 30 May 2023 22:15:03 +0000 (UTC)
+Message-ID: <28f3ca55-29ea-4582-655d-2769881127ad@schaufler-ca.com>
+Date:   Tue, 30 May 2023 15:15:01 -0700
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4270:EE_|SN7PR10MB6382:EE_
-X-MS-Office365-Filtering-Correlation-Id: 680f5b3c-4ea5-4ae7-226a-08db6159d78f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Vq+dqRnOQLvlmsNXTwRtwG58FKqv6qVaoRog3Kus+Itf+s4lS+jqNq/8NiPSO0vs4sruEhf+pJU77xe3HGoG4t9AOT1xQhkxlbQcOPJW8hBM8XNvOT9jvt7Fxj4t9qPyi9GiXs5qazKkHrI8COacLIN1uwPUd5ksVYyUmtLL6thQW5zqKnTJjhQWWai74M3dNobrs5N2uicUJW5qK6ptjAbFQGGtRQUitmmpB35RKcoWbyu3yAMzIfmE9agjJgJTov8gx0yNXpn7LqtOXEP27sD+SDncQKtZQp0G8Xlo/uFQm1HEDOFxVowo+tYqPEKRyMLwtA7gOfVDFlIclmfvoqh/r397db2pP4QvQ/r7E4wFcDigLxrA+ihnTyFxGAcD/BlTAHZ5VnexIBpMgigHESbScGUt8GRBG/JShaFsveyXzR5V/FvC0Elv5/UDGaj1TVaKnQod1KfsGRFDiRq8z4zKbruE6frnlKPgphErcwKXaVsRQE9frD/ukibUC6ivx4lHwqLP01JRgl4NWwFFPruibaxE/mTe14/FeE4Ng+ut9uxqfgl85nA2Oyp1nRwp2LicOIazf08dsYnYp6PdXODbDeZ1xf7cpmIH7lTNqhU4muX4jl22p0GZps/Mzc4T
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4270.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(376002)(346002)(366004)(136003)(39860400002)(396003)(451199021)(31686004)(2616005)(83380400001)(86362001)(66946007)(66556008)(66476007)(41300700001)(186003)(4326008)(36756003)(2906002)(31696002)(53546011)(6506007)(6512007)(26005)(9686003)(8676002)(8936002)(5660300002)(6486002)(478600001)(316002)(6666004)(38100700002)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Zm5TUDZYcHgrQ1k3ektNeE5sNThoM05tbW9qQ2dYSEx2TWRhdGtYMGFDVmR6?=
- =?utf-8?B?L0xUamNMQThRaHp4TUEybFdwZ01xL0dPQzVBZjBqQ3pZc2RucHlXUUNrc3Mv?=
- =?utf-8?B?VzNhQkg3enlMRzhGcDJmeUluU1dUQ0RxZ0VHaUlqdTZYOTkwSnJsczh5cW1q?=
- =?utf-8?B?aWZlOEY0UzM3bVpoUkVWeHQydGZiZTVmWXYwQnE5TzlzNldjR1laT1UvWG9P?=
- =?utf-8?B?UGFwSm9CaEcvamtzZTFYUWFUOHpFdzdkaEVIMG11L2tVR1RZMzNOb0N0MGlv?=
- =?utf-8?B?NmNMd3lSUlY0bks0YXA2MytuQlNMTHdCZUcxOXNDNFdsa0V6ZU05dXoxOHo3?=
- =?utf-8?B?dmY2VnZBd2xnY2RacWJjZzdFNlM0bG5nNFU2ellIdDRnWnFNdUJ1QXpaNGV0?=
- =?utf-8?B?czZsZ2VMRkNCa1BscFRiRDkzQnhyd0ZIOUpmOEZNYVNIMzBVOCtQUnZwbHF6?=
- =?utf-8?B?bzU0bWp4cXhpaGdvZzRsanhxeThucnRuREpsOFZDdUlkNXN2OEZhTmgvMGcz?=
- =?utf-8?B?azhwLzlqSGxYbHJUd2Q1bS9jWGxKQmxmWEJXUTVoOG42OFFnVTg5YUFIWFVj?=
- =?utf-8?B?ZERrOWhDUldDVVhyUXFYNHAzSHJvcWdtV2puclc2bkljb3lSNEZHeVF1ZWt6?=
- =?utf-8?B?aXc3Yy8rRVJrczUrWXlmdHB3REQ0V2s3Z3ZDM1Y0bXptQzB3YWRFaFVHeGJS?=
- =?utf-8?B?QzI3M1hSK3VHRTk4YlVoK3dxQTFLQXVublhCQ2pKZE9va1dGTHBhRlg5c3h4?=
- =?utf-8?B?akFmZ3ZUejZNdWhCR1J2aStQWG93OC9HdGpyYmdCOUx4YzFSeVUvYUxJTVkw?=
- =?utf-8?B?b3FaTnBzZ29aQWNCaC9LYTN6SWQraVVIUHEwbXRLNlZCQ3I3dnB0UHJnUkQ5?=
- =?utf-8?B?Mkc2ZWNsVVpBSEZQT01HTXVncURzTzJKd3BJODdoaEdvbTI4QUZybzRCSTVU?=
- =?utf-8?B?NzlSVUxERldZQTNGdjVFdGtySGd3ZGlySGZCZXo3bHlhb1ZMa1cwcWZvOVhh?=
- =?utf-8?B?WEQrcDNwVlozNHlVK0ZqYTlsdEMrbC9pZGxWTVZ0VzNiSlUyMTJwUi9YUFVo?=
- =?utf-8?B?cVI4cHZBR25oRmJTclFxaTVNVW9zeGk0d2NhNFVidWRxK0U0eE9uTnhkaHdG?=
- =?utf-8?B?N3RrMm1HdFFEcllHWlJPK2hZL1lVaW8yUTY0bDQvL0NCMHpHZDhIcHZESkpZ?=
- =?utf-8?B?OEp0Sm5yUDYwY0VTOENEV010N1UyNlMzNjdpRzB5RzhUOWw4cWY4dVpLYzRF?=
- =?utf-8?B?NXhGa3JoL1RKSENYeUlFeUswL3Rxak14b0hGVXlBd2VkZjRUZ3EybUs4VWpP?=
- =?utf-8?B?TnJqcDQrWm1ES2xYdFBkdytKaHJSMmdTaG1palpuZTZnN0dxSm54R2VvZ3pp?=
- =?utf-8?B?SWkxc3JxTGJnVUl1UiszdFh1QmlXNTJxd0lYUCtDaEdtcFVQaEROVmRvZWNV?=
- =?utf-8?B?bTdhbUZMQWZ0eFNLaFcwTEkrdXpscFhWdjk3M0Y4ZmNZcDFFaENRQnVrUlI3?=
- =?utf-8?B?dDFRSUVHZlZ0ZUNBRzEwSmdMZUhUUGE1SG1vdkN5YnZ1MzhNUXhVQmc2T1gr?=
- =?utf-8?B?RDNmYTlrWCtPT0c1NmRSayt3dWxDVUZxTTZOUTdNZlRQcnpNRHgzOGNIbWZI?=
- =?utf-8?B?c2FmOTBza2p3QmlzQURDZ0pmaHFHR2hRV0thSmx1enpVOXlubjFwdWlKS2pX?=
- =?utf-8?B?Z1Awb0tMQmprSWIzV1JSRnQ4UVh6dFpKYTZXK0V6OVJubVJ0MXo4S0I2bFJw?=
- =?utf-8?B?VDYrLy85MjduK3lOSnRTMzV5eEtyMkJaTVc0UmpTT3hsUVJ0QmhuZ3NLT2lJ?=
- =?utf-8?B?R3ZxTzhnVkRKZ3BIZjhPYThWK2xaNlU1RmJvU0FQRkF6YkJDNkw4eXJId0RJ?=
- =?utf-8?B?Y1B2WWJCRWs2RW8vSVlvcnhrQ3BObDBRb2dEdDM5NnBiYlRGZzErV0R3S0VU?=
- =?utf-8?B?OEJFTzhhRTN1WFhOcWY3cnZaSFE3TUczT242dFZkTDRZZ05JdzdPUzhZK0N1?=
- =?utf-8?B?NEQ0WktaUEgwTmdlY2J2M29DekIxVVJpMStCU1hmR1RjdVFVb3djQTNCWGEx?=
- =?utf-8?B?SWlSbmpsOTlCVTJQYnFFUlc4MXcxc1pQS3BZVHQ1eVF6TGQ5OXZUcGMwY1U2?=
- =?utf-8?Q?LqnrgepSk8TumMggXIbT8w4oC?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 7pN2X/qmob04Fy8LoP9NfGb7iG+tdLXQcecvXBlHT4UQ139NRApFyImxesCkCPum9ba8suAtPhiFO4RNfDCkR8li5IjmAcmWV2wuOkJdm4D2rLz++Gcam0UYP5yU6GVTygZeqs2zFeRetL+FjaRAetLX20m89fCnZuCJyaITFdsKgcyn/J0FQuNmJvgSE/QtqHIkYhQH7U4OVHhsL+5IlARGHGXSDPXFJCcbGjpITWfUjXoVRQvG6j5MVsDc2DA7Xdk+C/+EzxLO/VRk3t6YxhaSiL3n6GIWfXoz6UlCrPmm0LRrDzfaYf/6Z8DvH1PDKZWLUtVI4Xqcb5HH1qCUEhsco5VIILES/NoD5zKWa6OmA3im83te6MuFnJ0EHL7sl0vsfItBhgTMt0/ZQzvMIhojQSWq9jiOXW9GMzObg+YE91pB5CM1lXoOeW5ska3IVmqVAMwFE0rF8t+4ELAioJ8sVxM/L0gmsyIIbr6J0e3ekWqsllf5B5GQUepD6SSzI5cgC11oiTXNwado/CDW+06+SOuWd0FHhUhrGHlaWCQjI/pcuy3oSsPHC14+69l2x1zLjdEBLQNJPqAi31Gj4g0vySa/EL+XqhnM0YXZF2pBE95QT4TGJC5w4L6hJv4lYp0sKloA4DKWZzxLgWIEjZmKswsi5WSwTuCo3oWL2SvvxAOm0I6TyLALp9YHPlZr3J56CMeSqZyo/Ba13aSlIHuC2sYfl8skzhiLI66uMxzG0J9QZTJTaBKrbE8/59cd5xpl/1qkJ9gtpZ4N7CQfSddXV4dv2QcNQp8lJ61zbcs=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 680f5b3c-4ea5-4ae7-226a-08db6159d78f
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4270.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2023 22:04:30.0997
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zG6RYOCUJqYRe5fCUyPPBA/l7fE0y8TgonXQaNrJm/LQ70qSIxbCHEhpgOyNcnNucAZDqOAOJzMP+5W13CKmkQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6382
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-30_16,2023-05-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305300179
-X-Proofpoint-GUID: LMB5OotkQQiqOOXDjWO8mREvJMpZyYgm
-X-Proofpoint-ORIG-GUID: LMB5OotkQQiqOOXDjWO8mREvJMpZyYgm
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        viro@zeniv.linux.org.uk, dhowells@redhat.com, code@tyhicks.com,
+        hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
+        sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
+        chuck.lever@oracle.com, jlayton@kernel.org, miklos@szeredi.hu,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        dchinner@redhat.com, john.johansen@canonical.com,
+        mcgrof@kernel.org, mortonm@chromium.org, fred@cloudflare.com,
+        mpe@ellerman.id.au, nathanl@linux.ibm.com, gnoack3000@gmail.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        wangweiyang2@huawei.com, Casey Schaufler <casey@schaufler-ca.com>
+References: <20230505081200.254449-1-xiujianfeng@huawei.com>
+ <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
+ <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net>
+ <20230530-mietfrei-zynisch-8b63a8566f66@brauner>
+ <20230530142826.GA9376@lst.de>
+ <301a58de-e03f-02fd-57c5-1267876eb2df@schaufler-ca.com>
+ <20230530-tumult-adrenalin-8d48cb35d506@brauner>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20230530-tumult-adrenalin-8d48cb35d506@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21495 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 5/30/2023 9:01 AM, Christian Brauner wrote:
+> On Tue, May 30, 2023 at 07:55:17AM -0700, Casey Schaufler wrote:
+>> On 5/30/2023 7:28 AM, Christoph Hellwig wrote:
+>>> On Tue, May 30, 2023 at 03:58:35PM +0200, Christian Brauner wrote:
+>>>> The main concern which was expressed on other patchsets before is that
+>>>> modifying inode operations to take struct path is not the way to go.
+>>>> Passing struct path into individual filesystems is a clear layering
+>>>> violation for most inode operations, sometimes downright not feasible,
+>>>> and in general exposing struct vfsmount to filesystems is a hard no. At
+>>>> least as far as I'm concerned.
+>>> Agreed.  Passing struct path into random places is not how the VFS works.
+>>>
+>>>> So the best way to achieve the landlock goal might be to add new hooks
+>>> What is "the landlock goal", and why does it matter?
+>>>
+>>>> or not. And we keep adding new LSMs without deprecating older ones (A
+>>>> problem we also face in the fs layer.) and then they sit around but
+>>>> still need to be taken into account when doing changes.
+>>> Yes, I'm really worried about th amount of LSMs we have, and the weird
+>>> things they do.
+>> Which LSM(s) do you think ought to be deprecated? I only see one that I
+> I don't have a good insight into what LSMs are actively used or are
+> effectively unused but I would be curious to hear what LSMs are
+> considered actively used/maintained from the LSM maintainer's
+> perspective.
 
-On 5/30/23 3:29 AM, Jeff Layton wrote:
-> On Mon, 2023-05-29 at 23:52 -0700, Dai Ngo wrote:
->> If the GETATTR request on a file that has write delegation in effect
->> and the request attributes include the change info and size attribute
->> then the write delegation is recalled. If the delegation is returned
->> within 30ms then the GETATTR is serviced as normal otherwise the
->> NFS4ERR_DELAY error is returned for the GETATTR.
->>
->> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
->> ---
->>   fs/nfsd/nfs4state.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++++++
->>   fs/nfsd/nfs4xdr.c   |  5 +++++
->>   fs/nfsd/state.h     |  3 +++
->>   3 files changed, 58 insertions(+)
->>
->> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
->> index b90b74a5e66e..7826483e8421 100644
->> --- a/fs/nfsd/nfs4state.c
->> +++ b/fs/nfsd/nfs4state.c
->> @@ -8353,3 +8353,53 @@ nfsd4_get_writestateid(struct nfsd4_compound_state *cstate,
->>   {
->>   	get_stateid(cstate, &u->write.wr_stateid);
->>   }
->> +
->> +/**
->> + * nfsd4_deleg_getattr_conflict - Trigger recall if GETATTR causes conflict
->> + * @rqstp: RPC transaction context
->> + * @inode: file to be checked for a conflict
->> + *
->> + * This function is called when there is a conflict between a write
->> + * delegation and a change/size GETATR from another client. The server
->> + * must either use the CB_GETATTR to get the current values of the
->> + * attributes from the client that hold the delegation or recall the
->> + * delegation before replying to the GETATTR. See RFC 8881 section
->> + * 18.7.4.
->> + *
->> + * Returns 0 if there is no conflict; otherwise an nfs_stat
->> + * code is returned.
->> + */
->> +__be32
->> +nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct inode *inode)
->> +{
->> +	__be32 status;
->> +	struct file_lock_context *ctx;
->> +	struct file_lock *fl;
->> +	struct nfs4_delegation *dp;
->> +
->> +	ctx = locks_inode_context(inode);
->> +	if (!ctx)
->> +		return 0;
->> +	spin_lock(&ctx->flc_lock);
->> +	list_for_each_entry(fl, &ctx->flc_lease, fl_list) {
->> +		if (fl->fl_flags == FL_LAYOUT ||
->> +				fl->fl_lmops != &nfsd_lease_mng_ops)
->> +			continue;
->> +		if (fl->fl_type == F_WRLCK) {
->> +			dp = fl->fl_owner;
->> +			if (dp->dl_recall.cb_clp == *(rqstp->rq_lease_breaker)) {
->> +				spin_unlock(&ctx->flc_lock);
->> +				return 0;
->> +			}
->> +			spin_unlock(&ctx->flc_lock);
->> +			status = nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
->> +			if (status != nfserr_jukebox ||
->> +					!nfsd_wait_for_delegreturn(rqstp, inode))
->> +				return status;
->> +			return 0;
->> +		}
->> +		break;
->> +	}
->> +	spin_unlock(&ctx->flc_lock);
->> +	return 0;
->> +}
->
-> If there is a lease held by a userland program (e.g. Samba), why don't
-> you want to break it here? Shouldn't it also be broken in this case?
+I'm not the LSM maintainer, but I've been working on the infrastructure
+for quite some time. All the existing LSMs save one can readily be associated
+with active systems, and the one that isn't is actively maintained. We have
+not gotten into the habit of accepting LSMs upstream that don't have a real
+world use.
 
-okay, I will make the change to also break non-nfs lease with F_WRLCK.
+>> might consider a candidate. As for weird behavior, that's what LSMs are
+>> for, and the really weird ones proposed (e.g. pathname character set limitations)
+> If this is effectively saying that LSMs are licensed to step outside the
+> rules of the subsystem they're a guest in then it seems unlikely
+> subsystems will be very excited to let new LSM changes go in important
+> codepaths going forward. In fact this seems like a good argument against
+> it.
 
->
-> I think this logic may be wrong. ISTM that you want to basically always
-> call nfsd_open_break_lease, unless it's a delegation held by the same
-> client.
+This is an artifact of Linus' decision that security models should be
+supported as add-on modules. On the one hand, all that a subsystem maintainer
+needs to know about a security feature is what it needs in the way of hooks.
+On the other hand, the subsystem maintainer loses control over what kinds of
+things the security feature does with the available information. It's a
+tension that we've had to deal with since the Orange Book days of the late
+1980's. The deal has always been:
 
-I don't think we need to break any lease with F_RDLCK.
+	You can have your security feature if:
+	1. If I turn it off it has no performance impact
+	2. I don't have to do anything to maintain it
+	3. It doesn't interfere with any other system behavior
+	4. You'll leave me alone
 
--Dai
+As a security developer from way back I would be delighted if maintainers of
+other subsystems took an active interest in some of what we've been trying
+to accomplish in the security space. If the VFS maintainers would like to
+see the LSM interfaces for file systems changed I, for one, would like very
+much to hear about what they'd prefer. 
 
->
->
->> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
->> index b83954fc57e3..4590b893dbc8 100644
->> --- a/fs/nfsd/nfs4xdr.c
->> +++ b/fs/nfsd/nfs4xdr.c
->> @@ -2970,6 +2970,11 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_fh *fhp,
->>   		if (status)
->>   			goto out;
->>   	}
->> +	if (bmval0 & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
->> +		status = nfsd4_deleg_getattr_conflict(rqstp, d_inode(dentry));
->> +		if (status)
->> +			goto out;
->> +	}
->>   
->>   	err = vfs_getattr(&path, &stat,
->>   			  STATX_BASIC_STATS | STATX_BTIME | STATX_CHANGE_COOKIE,
->> diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
->> index d49d3060ed4f..cbddcf484dba 100644
->> --- a/fs/nfsd/state.h
->> +++ b/fs/nfsd/state.h
->> @@ -732,4 +732,7 @@ static inline bool try_to_expire_client(struct nfs4_client *clp)
->>   	cmpxchg(&clp->cl_state, NFSD4_COURTESY, NFSD4_EXPIRABLE);
->>   	return clp->cl_state == NFSD4_EXPIRABLE;
->>   }
->> +
->> +extern __be32 nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp,
->> +				struct inode *inode);
->>   #endif   /* NFSD4_STATE_H */
+We do a lot of crazy things to avoid interfering with the subsystems we
+interact with. A closer developer relationship would be most welcome, so
+long as it helps us achieve or goals. We get a lot of complaints about how
+LSM feature perform, but no one wants to hear that a good deal of that comes
+about because of what has to be done in support of 1, 2 and 3 above. Sometimes
+we do stoopid things, but usually it's to avoid changes "outside our swim lane".
+
