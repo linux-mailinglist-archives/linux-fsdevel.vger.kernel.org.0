@@ -2,101 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8B971584C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 10:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3BEC71586A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 10:26:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230328AbjE3IWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 04:22:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
+        id S230012AbjE3I0K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 04:26:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230283AbjE3IWB (ORCPT
+        with ESMTP id S229504AbjE3I0J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 04:22:01 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58CEAF0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 01:21:56 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7749ceb342fso605957039f.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 01:21:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685434915; x=1688026915;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H0PjtfHgEkkTfBjwGwBOt6JzxiRldvCH/yMO3ajZeos=;
-        b=iZMYg5D2+wFhCqHC3LYrwb4H18fqISYoXtRGH1cidliE0xr4wVk46wYXHTAuEtgGl2
-         AouldA9I0vu7ikvF+TPfMoOcmFDrGA3RQj21sVCnSUMY3kDOCUAQBZaA2N0zSXTKfz2S
-         otWfRTZbfYdVjsVVlYwtCWmrRDYjpTnayqN10IbIbBaErhX8ekLEf4yfFenM7aBtOEo1
-         9X8S+hjnEwJ1ReFHJLGLfOQ1ZDC0tV4HXgBnSIo97o9d1Js8T+KPIHz719VE23MGCemK
-         rkICuDsOGC4UTkvNbGR3N1FPCZkqXgDfkau7OdlZQDILjCPgCdskBYblUdlXglIVsd4J
-         1A0A==
-X-Gm-Message-State: AC+VfDyNXi+NoTneW6VaZYW9ZgzTjUj8qXW1HIudV8a0k/o2z0dF7sOa
-        7nwOUs7VMB1bfeJnnkHvAX0vw/80MXIzC1hw9TneGOR50FWU
-X-Google-Smtp-Source: ACHHUZ523Nj7XJucoxcSG183lHb6UxLEmuDyK5jix5/bojPX6Kye3v5XAcW4PsK+YYQHIn3cwDhIjvbzc+E9MMj6421BV1wT0zGX
+        Tue, 30 May 2023 04:26:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D06F9D;
+        Tue, 30 May 2023 01:26:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 11CC662BC9;
+        Tue, 30 May 2023 08:26:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE1EC433D2;
+        Tue, 30 May 2023 08:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685435166;
+        bh=gV7/E8xwGz8n4hz/QHyBLw7IDb3oqSnvYUBNMP6S4TQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=intwRy1xi/TyOKKIj28kVl1c3fBzPeTdM0ZH8LE3yH0DfOpESSMEA7TYMo1w/LINp
+         3b9wJDjZIFy3D1oe4i4kedf7MYnHRavsHvF03cNPU27JE0z7XE05+dTtNkovfHco2c
+         Ye0eHI8Sf76Dh6lu8JdK+4iQRxCEqdKyvjtD2uCJ52Bgt+64Y4VvLqaScTt6Sjkdsh
+         Ajdt1mOHkzXScmyr4ZdJRDsP9IB/tSRl+IXpRzBpFH/gOHK2BM4X/UN/aUeQfHhwQx
+         Up+RmjKnOpuPoGuib93EtTEOm34U1mkoK3ggUyJgey8BJXYU8t5o3GAaK4nHmgSjkY
+         tbkC09OLGNvEw==
+Date:   Tue, 30 May 2023 10:26:01 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Prince Kumar Maurya <princekumarmaurya06@gmail.com>
+Cc:     skhan@linuxfoundation.org, viro@zeniv.linux.org.uk,
+        chenzhongjin@huawei.com, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org,
+        syzbot+aad58150cbc64ba41bdc@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3] fs/sysv: Null check to prevent null-ptr-deref bug
+Message-ID: <20230530-zenit-radeln-06417ce5fe85@brauner>
+References: <000000000000cafb9305fc4fe588@google.com>
+ <20230528184422.596947-1-princekumarmaurya06@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:298b:0:b0:40b:d54d:e5bf with SMTP id
- p133-20020a02298b000000b0040bd54de5bfmr778529jap.1.1685434915708; Tue, 30 May
- 2023 01:21:55 -0700 (PDT)
-Date:   Tue, 30 May 2023 01:21:55 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000716a8005fce4e592@google.com>
-Subject: [syzbot] Monthly btrfs report (May 2023)
-From:   syzbot <syzbot+list3e0431ddab075345f512@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230528184422.596947-1-princekumarmaurya06@gmail.com>
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello btrfs maintainers/developers,
+On Sun, May 28, 2023 at 11:44:22AM -0700, Prince Kumar Maurya wrote:
+> sb_getblk(inode->i_sb, parent) return a null ptr and taking lock on
+> that leads to the null-ptr-deref bug.
+> 
+> Reported-by: syzbot+aad58150cbc64ba41bdc@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=aad58150cbc64ba41bdc 
+> Signed-off-by: Prince Kumar Maurya <princekumarmaurya06@gmail.com>
+> ---
+> Change since v2: Updated subject and added Reported-by and closes tags.
+> 
+>  fs/sysv/itree.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/sysv/itree.c b/fs/sysv/itree.c
+> index b22764fe669c..3a6b66e719fd 100644
+> --- a/fs/sysv/itree.c
+> +++ b/fs/sysv/itree.c
+> @@ -145,6 +145,8 @@ static int alloc_branch(struct inode *inode,
+>  		 */
+>  		parent = block_to_cpu(SYSV_SB(inode->i_sb), branch[n-1].key);
+>  		bh = sb_getblk(inode->i_sb, parent);
+> +		if (!bh)
+> +			break;
 
-This is a 31-day syzbot report for the btrfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/btrfs
+When you break here you'll hit:
 
-During the period, 5 new issues were detected and 1 were fixed.
-In total, 52 issues are still open and 26 have been fixed so far.
+/* Allocation failed, free what we already allocated */
+for (i = 1; i < n; i++)
+        bforget(branch[i].bh);
+for (i = 0; i < n; i++)
+        sysv_free_block(inode->i_sb, branch[i].key);
 
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  2986    Yes   kernel BUG in close_ctree
-                   https://syzkaller.appspot.com/bug?extid=2665d678fffcc4608e18
-<2>  677     Yes   VFS: Busy inodes after unmount (use-after-free)
-                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
-<3>  424     Yes   WARNING in __kernel_write_iter
-                   https://syzkaller.appspot.com/bug?extid=12e098239d20385264d3
-<4>  381     Yes   WARNING in btrfs_space_info_update_bytes_may_use
-                   https://syzkaller.appspot.com/bug?extid=8edfa01e46fd9fe3fbfb
-<5>  370     Yes   WARNING in btrfs_block_rsv_release
-                   https://syzkaller.appspot.com/bug?extid=dde7e853812ed57835ea
-<6>  193     Yes   WARNING in btrfs_remove_chunk
-                   https://syzkaller.appspot.com/bug?extid=e8582cc16881ec70a430
-<7>  191     Yes   WARNING in lookup_inline_extent_backref
-                   https://syzkaller.appspot.com/bug?extid=d6f9ff86c1d804ba2bc6
-<8>  189     Yes   WARNING in btrfs_chunk_alloc
-                   https://syzkaller.appspot.com/bug?extid=e8e56d5d31d38b5b47e7
-<9>  184     Yes   possible deadlock in btrfs_search_slot
-                   https://syzkaller.appspot.com/bug?extid=c06034aecf9f5eab1ac1
-<10> 151     Yes   kernel BUG in assertfail (2)
-                   https://syzkaller.appspot.com/bug?extid=c4614eae20a166c25bf0
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+below. The cleanup paths were coded in the assumption that sb_getblk()
+can't fail. So bforget() can assume that branch[i].bh has been allocated
+and set up. So that bforget(branch[i].bh) is your next pending NULL
+deref afaict.
