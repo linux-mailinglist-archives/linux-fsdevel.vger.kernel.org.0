@@ -2,51 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7836A716015
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 14:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C89C716031
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 14:42:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231787AbjE3Ml3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 08:41:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39246 "EHLO
+        id S231373AbjE3Mmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 08:42:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231443AbjE3Ml0 (ORCPT
+        with ESMTP id S229821AbjE3Mmu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 08:41:26 -0400
+        Tue, 30 May 2023 08:42:50 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C70133;
-        Tue, 30 May 2023 05:41:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 645E8A1;
+        Tue, 30 May 2023 05:42:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C8B662F86;
-        Tue, 30 May 2023 12:39:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A4A6C433EF;
-        Tue, 30 May 2023 12:39:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BB3FC62F82;
+        Tue, 30 May 2023 12:42:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78B3CC433D2;
+        Tue, 30 May 2023 12:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685450359;
-        bh=TS1jJ1+J3AnhYCDxSoKKegrqTQJekZ2DPhjOmpAwbX4=;
+        s=k20201202; t=1685450538;
+        bh=AjbhKWnLkbzSGImSCtxRr31JpRn/bFy4QpGd/SOJtsQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NdkOXaeEgM+F3FBJgO2jS8dcT+yhIeR2jhBp4b+Mt6/CCiXJwhyOF9mFJJKclN+Ed
-         TyeH7phT7HQvqz7Iwap+9YtGlv+9O1vssyfXtX92KZCssxuUSWY2wk9h5TEREfQd8u
-         EQkJl4Z+2dcOrleyJ0PE3EzRjwAF+V8IVZKJqdmHFi8mUQWZkQ4QdFzNW6vIdt8nkQ
-         Nz12PgnDL1VDHZZHxljteMZjyj8OXtrGj/AHZZdY6fu309DkkeYcAQeAN+AqL4zx8+
-         3RsaIU9DhepU64I1ugFOxCfYysEFlCxxwbckxW7W99ooZ6IYg8BHmFd7TGM+3RILEX
-         KxlHEX8QcnSug==
-Date:   Tue, 30 May 2023 14:39:15 +0200
+        b=U+6p+TL98fxRHUAbLkCHzfVMO5xsp5WqmINUupyMMLssUcIgc7Kmxv+V5Kds/fS0N
+         yzdgl57dIZFTnAnMYhyai0TY9oiFNDAeL90OBvAgWMy8D7OVhPQfEttMLr8iPJCiJa
+         PdOkheBNknMRnIRgb67UOyGSZX4jrtc6jAD6hFbXNk9vZfqEQi6Jkd/SIVZf0VVWcY
+         TDax/ezF+3aGAVkJzc+V/S2laopkDQr19jiOqZOAfD6tWfhr9herMBemtwqsN43Oyk
+         fqM1pNJGwLAhDlCQ0WyBCzAlWxBBawRN6NTDWgG2e5AfzdYsZQ/b1Bkm6gyqiAMOp9
+         Gg6KXHzh3jOkQ==
+Date:   Tue, 30 May 2023 14:42:07 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Loic Poulain <loic.poulain@linaro.org>
-Cc:     corbet@lwn.net, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] init: Add support for rootwait timeout parameter
-Message-ID: <20230530-anziehen-brokkoli-4c1365e888ea@brauner>
-References: <20230526130716.2932507-1-loic.poulain@linaro.org>
- <20230530-polytechnisch-besten-258f74577eff@brauner>
- <CAMZdPi_WE7eegcn3V+7tUsJL2GoGottz2fGY14tkmqG9Tgdbhg@mail.gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J. Wong" <djwong@kernel.org>, Ted Tso <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4/6] fs: Establish locking order for unrelated directories
+Message-ID: <20230530-darauf-nordost-4e631cd8f1d0@brauner>
+References: <20230525100654.15069-1-jack@suse.cz>
+ <20230525101624.15814-4-jack@suse.cz>
+ <20230526-polarstern-herrichten-32fc46c63bfc@brauner>
+ <20230529124131.gbb3fmhrspl332i6@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMZdPi_WE7eegcn3V+7tUsJL2GoGottz2fGY14tkmqG9Tgdbhg@mail.gmail.com>
+In-Reply-To: <20230529124131.gbb3fmhrspl332i6@quack3>
 X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -57,36 +61,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 30, 2023 at 01:23:50PM +0200, Loic Poulain wrote:
-> Hi Christian,
-> 
-> On Tue, 30 May 2023 at 11:45, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Fri, May 26, 2023 at 03:07:16PM +0200, Loic Poulain wrote:
-> > > Add an optional timeout arg to 'rootwait' as the maximum time in
-> > > seconds to wait for the root device to show up before attempting
-> > > forced mount of the root filesystem.
-> > >
-> > > This can be helpful to force boot failure and restart in case the
-> > > root device does not show up in time, allowing the bootloader to
-> > > take any appropriate measures (e.g. recovery, A/B switch, retry...).
-> > >
-> > > In success case, mounting happens as soon as the root device is ready,
-> > > contrary to the existing 'rootdelay' parameter (unconditional delay).
-> > >
-> > > Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+On Mon, May 29, 2023 at 02:41:31PM +0200, Jan Kara wrote:
+> On Fri 26-05-23 11:45:15, Christian Brauner wrote:
+> > On Thu, May 25, 2023 at 12:16:10PM +0200, Jan Kara wrote:
+> > > Currently the locking order of inode locks for directories that are not
+> > > in ancestor relationship is not defined because all operations that
+> > > needed to lock two directories like this were serialized by
+> > > sb->s_vfs_rename_mutex. However some filesystems need to lock two
+> > > subdirectories for RENAME_EXCHANGE operations and for this we need the
+> > > locking order established even for two tree-unrelated directories.
+> > > Provide a helper function lock_two_inodes() that establishes lock
+> > > ordering for any two inodes and use it in lock_two_directories().
+> > > 
+> > > CC: stable@vger.kernel.org
+> > > Signed-off-by: Jan Kara <jack@suse.cz>
 > > > ---
-> >
-> > Not terribly opposed and not terribly convinced yet.
-> > So, we have rootdelay= with a timeout parameter that allows to specify a
-> > delay before attempting to mount the root device. And we have rootwait
-> > currently as an indefinite wait. Adding a timeout for rootwait doesn't
-> > seem crazy and is backwards compatible. But there's no mention of any
-> > concrete users or use-case for this which is usually preferable. If this
-> > is just "could be useful for someone eventually" it's way less desirable
-> > to merge this than when it's "here's a/multiple user/users"... So I
-> > would love to see a use-case described here.
+> > >  fs/inode.c    | 34 ++++++++++++++++++++++++++++++++++
+> > >  fs/internal.h |  2 ++
+> > >  fs/namei.c    |  4 ++--
+> > >  3 files changed, 38 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/inode.c b/fs/inode.c
+> > > index 577799b7855f..2015fa50d34a 100644
+> > > --- a/fs/inode.c
+> > > +++ b/fs/inode.c
+> > > @@ -1103,6 +1103,40 @@ void discard_new_inode(struct inode *inode)
+> > >  }
+> > >  EXPORT_SYMBOL(discard_new_inode);
+> > >  
+> > > +/**
+> > > + * lock_two_inodes - lock two inodes (may be regular files but also dirs)
+> > > + *
+> > > + * Lock any non-NULL argument. The caller must make sure that if he is passing
+> > > + * in two directories, one is not ancestor of the other.  Zero, one or two
+> > > + * objects may be locked by this function.
+> > > + *
+> > > + * @inode1: first inode to lock
+> > > + * @inode2: second inode to lock
+> > > + * @subclass1: inode lock subclass for the first lock obtained
+> > > + * @subclass2: inode lock subclass for the second lock obtained
+> > > + */
+> > > +void lock_two_inodes(struct inode *inode1, struct inode *inode2,
+> > > +		     unsigned subclass1, unsigned subclass2)
+> > > +{
+> > > +	if (!inode1 || !inode2)
+> > > +		goto lock;
+> > 
+> > Before this change in
+> > 
+> > lock_two_nondirectories(struct inode *inode1, struct inode *inode2)
+> > 
+> > the swap() would cause the non-NULL inode to always be locked with
+> > I_MUTEX_NONDIR2. Now it can be either I_MUTEX_NORMAL or I_MUTEX_NONDIR2.
+> > Is that change intentional?
 > 
-> I can integrate the following use case into a v2 if you think it makes sense:
+> Kind of. I don't think we really care so I didn't bother to complicate the
+> code for this. If you think keeping the lockdep class consistent is worth
+> it, I can modify the patch...
 
-Yes, please.
+Either a short comment or consistent lockdep class would be nice. I know
+it probably doesn't matter much but otherwise someone may end up
+wondering whether that's ok or not.
