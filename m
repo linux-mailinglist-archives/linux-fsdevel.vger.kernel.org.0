@@ -2,79 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C8D1715430
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 05:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA38715438
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 05:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229494AbjE3DdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 May 2023 23:33:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47986 "EHLO
+        id S229597AbjE3Dj4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 May 2023 23:39:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjE3DdW (ORCPT
+        with ESMTP id S229621AbjE3Djy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 May 2023 23:33:22 -0400
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF93C9;
-        Mon, 29 May 2023 20:33:12 -0700 (PDT)
-X-QQ-mid: bizesmtp84t1685417562t8wq2x3p
-Received: from localhost.localdomain ( [113.200.76.118])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Tue, 30 May 2023 11:32:41 +0800 (CST)
-X-QQ-SSF: 01400000000000C0G000000A0001000
-X-QQ-FEAT: uGhnJwy6xZIa4gIS+jDjc06YMsYLdchXgk3LHYba6K8g4kaZI58NW9IZ70lCx
-        5cr5DUrlSQBm9FHK8DnL0Rq6y/n89ytPLY9sK45p60ngxh7kJB52jYPlxRVeQZ1m2vB+A7h
-        OKyPJBubLG8o9n44Us/9Hb59W1ezLWkzCwgkWTY7ljCo0DvXh9PG6Uewiqo9ajlvlvgVKQ9
-        /dmdj3tPvLOpepy1AEeadSptbdrRzP8N4s+n+6dR9EG6b4mbhKtfpU94sjMILIIkexiPYZ3
-        ueDO4nkAJz5MPRVIfd7m5Uw+Xx9sxkoz/MvkgJBwIuDMJ0iwAHDBAwkprYz8nItvn7MjCqK
-        ebBWuCUlertEnRVyc+rWw6yGg0me0P7N7L01pUXyMtojmuuz6pXCVGIDEf4hhtNaHDvlUnx
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 171752197749127171
-From:   gouhao@uniontech.com
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org, axboe@kernel.dk
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Mon, 29 May 2023 23:39:54 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563C4B7;
+        Mon, 29 May 2023 20:39:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2D/dQDDcxVNNdhfU159MLR/FS+XWwtto6W8hG7rRSiY=; b=UFz1I7BrDrz/KrjWMd1GpiN8CY
+        izU4R/occ2YkdHaiSMFt3hzhzlpvrZVQ4RYKxk7+4zQH+/xX6cSNuj1op/XqUGo3GPp1nZ46SiFmC
+        lcO09fgDSbEtrQGiG0wwv52dX7kD7n/uvFW97/OSzAsBPbSjAMPgxWo1I/tFfcZrBSygoVbu/ZNZc
+        bhjO3w3LIBc7h96viLyck3A7QdN/XEDNFVxbI1C+apn1ifn6p/RxuYSafRPigvjwzwwL/n0dyl0+S
+        0uAU+JQU39lmzQAcfNeWoBvbn0s/O/btYNuM0S1GyXaA3xbpj6dkLBkMGPB9U9w+h3Cma91hWJmZ8
+        O2mM5mNQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q3qCw-005vQx-6s; Tue, 30 May 2023 03:39:38 +0000
+Date:   Tue, 30 May 2023 04:39:38 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     gouhao@uniontech.com
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/buffer: using __bio_add_page in submit_bh_wbc()
-Date:   Tue, 30 May 2023 11:32:39 +0800
-Message-Id: <20230530033239.17534-1-gouhao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+Subject: Re: [PATCH] fs/buffer: using __bio_add_page in submit_bh_wbc()
+Message-ID: <ZHVv+rPl7iL3dMqi@casper.infradead.org>
+References: <20230530033239.17534-1-gouhao@uniontech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,T_SCC_BODY_TEXT_LINE,
-        T_SPF_TEMPERROR autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230530033239.17534-1-gouhao@uniontech.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Gou Hao <gouhao@uniontech.com>
+On Tue, May 30, 2023 at 11:32:39AM +0800, gouhao@uniontech.com wrote:
+> From: Gou Hao <gouhao@uniontech.com>
+> 
+> In submit_bh_wbc(), bio is newly allocated, so it
+> does not need any merging logic.
+> 
+> And using bio_add_page here will execute 'bio_flagged(
+> bio, BIO_CLONED)' and 'bio_full' twice, which is unnecessary.
 
-In submit_bh_wbc(), bio is newly allocated, so it
-does not need any merging logic.
+https://lore.kernel.org/linux-fsdevel/20230502101934.24901-5-johannes.thumshirn@wdc.com/
 
-And using bio_add_page here will execute 'bio_flagged(
-bio, BIO_CLONED)' and 'bio_full' twice, which is unnecessary.
-
-Signed-off-by: Gou Hao <gouhao@uniontech.com>
----
- fs/buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index a7fc561758b1..5abc26d8399d 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2760,7 +2760,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
- 
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 
--	bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
-+	__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
- 	BUG_ON(bio->bi_iter.bi_size != bh->b_size);
- 
- 	bio->bi_end_io = end_bio_bh_io_sync;
--- 
-2.20.1
-
+You could send some Reviewed-by: tags to that patch series.
