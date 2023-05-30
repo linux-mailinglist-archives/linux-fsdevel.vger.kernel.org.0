@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E76716277
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 15:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00BE8715FE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 14:36:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbjE3NqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 09:46:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36000 "EHLO
+        id S231756AbjE3MgF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 08:36:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231320AbjE3NqV (ORCPT
+        with ESMTP id S231543AbjE3MgD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 09:46:21 -0400
+        Tue, 30 May 2023 08:36:03 -0400
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1354E52;
-        Tue, 30 May 2023 06:45:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65A3DE4C;
+        Tue, 30 May 2023 05:35:31 -0700 (PDT)
 Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34UBkADs020995;
-        Tue, 30 May 2023 12:34:13 GMT
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34UBrV6o013352;
+        Tue, 30 May 2023 12:34:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=vKqk5VAlWO7T7apoxgtfCz1rQzInq/ixcvszJqIQEaI=;
- b=pxn88Zqh83rsEZNa/XC4dsTq2rxNi4kutSspmJOGFJltL26ZrCXleFcjBTGSkHt4RY6R
- lzfUnhqHzY0T8ltiQJNkzPX0M4eOKqNyumYyDuc6UZ96Ef7/pvl5LhxRas+FP1hIm6mp
- 6pfnMElFFhZa8Qzt2MOSt10dv9IVh9iamw/MzonyOvCg7G0EaGa4r3IfJ5uMsVqAkK2v
- +rE+/Zm437KwpyJEd8kvuKrLCuz0WEidh/4GadCtsl/bMZCztijQMn5cTUhv30S+ZHzQ
- ekWZq5w7NY+a9/xDBOtRr0geNCm1yE2bFgBihpTsx+bawmRPOChMGa1EOjT2LK1QuYJV lQ== 
+ bh=l31TWPx7iQqEtqCIwTjdkarFhVmshfo03Z6bbRpQAto=;
+ b=LqL8ekO01xkqai7C/h746+s6yMwbCZCfRbgTWMJpAH0Z6FA8mz8UsBQjsP6+EbXAuLDa
+ t6HxPna/JKH94cEMa3JUukqejrRe3dREAYYITCuW+1i+aysRN0E2666gVhBJ9A89gRZF
+ CCPpOCmmKYwVvPnavq+NG1WnJ7gDw7ob0O44ps5lKH85jb5BF/rUpKLM1v+78pAF87LK
+ Zyihd8exjvA6sxGk3tf4EX/f9NYeXT8dKR02Ju+MIj7TNKr/kLD62EoY7bZ4gENtcEYw
+ MZOJc0+YshMwZlkuicBPbSDC2FbjuiSETKVTDY+aycAUUex4Zhd5qHz4MofbDl+AJFR7 AQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qwbst1e1d-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qwbst1e3t-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 May 2023 12:34:12 +0000
+        Tue, 30 May 2023 12:34:15 +0000
 Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34UCGPwO030742;
-        Tue, 30 May 2023 12:34:12 GMT
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34UCGA1C030172;
+        Tue, 30 May 2023 12:34:14 GMT
 Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qwbst1dyg-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qwbst1e1h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 May 2023 12:34:14 +0000
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34U5k672032052;
+        Tue, 30 May 2023 12:34:12 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+        by ppma04fra.de.ibm.com (PPS) with ESMTPS id 3qu9g5183y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Tue, 30 May 2023 12:34:12 +0000
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34U30Gkv021816;
-        Tue, 30 May 2023 12:34:09 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-        by ppma04fra.de.ibm.com (PPS) with ESMTPS id 3qu9g5183x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 May 2023 12:34:09 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-        by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34UCY76136111094
+        by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34UCY9Cm43123344
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 May 2023 12:34:07 GMT
+        Tue, 30 May 2023 12:34:09 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4700420043;
+        by IMSVA (Postfix) with ESMTP id B65E320043;
+        Tue, 30 May 2023 12:34:09 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9D52720040;
         Tue, 30 May 2023 12:34:07 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4438920040;
-        Tue, 30 May 2023 12:34:05 +0000 (GMT)
 Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.in.ibm.com (unknown [9.109.253.169])
         by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 30 May 2023 12:34:05 +0000 (GMT)
+        Tue, 30 May 2023 12:34:07 +0000 (GMT)
 From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
 To:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
 Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
@@ -65,24 +65,24 @@ Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
         Jan Kara <jack@suse.cz>,
         Kemeng Shi <shikemeng@huaweicloud.com>,
         Ritesh Harjani <ritesh.list@gmail.com>
-Subject: [PATCH v2 06/12] ext4: Add counter to track successful allocation of goal length
-Date:   Tue, 30 May 2023 18:03:44 +0530
-Message-Id: <343620e2be8a237239ea2613a7a866ee8607e973.1685449706.git.ojaswin@linux.ibm.com>
+Subject: [PATCH v2 07/12] ext4: Avoid scanning smaller extents in BG during CR1
+Date:   Tue, 30 May 2023 18:03:45 +0530
+Message-Id: <a5473df4517c53ec940bc9b603ef83a547032a32.1685449706.git.ojaswin@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1685449706.git.ojaswin@linux.ibm.com>
 References: <cover.1685449706.git.ojaswin@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: QNhsF3hkGIQzvuc7Ao8pzSztLvLlzWxR
-X-Proofpoint-GUID: SmM8nCuuuJbtAKCmR1X7DXcHA2AdVcrD
+X-Proofpoint-ORIG-GUID: Vi_Y8PMUwyEL3MLzPKwnEdq4EdBl5_D7
+X-Proofpoint-GUID: TQTdXStfxejj1jI504QkJrQjoEY-EJV9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
  definitions=2023-05-30_08,2023-05-30_01,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
  bulkscore=0 lowpriorityscore=0 mlxscore=0 clxscore=1015 impostorscore=0
  priorityscore=1501 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ mlxlogscore=800 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2304280000 definitions=main-2305300103
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
@@ -94,56 +94,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Track number of allocations where the length of blocks allocated is equal to the
-length of goal blocks (post normalization). This metric could be useful if
-making changes to the allocator logic in the future as it could give us
-visibility into how often do we trim our requests.
+When we are inside ext4_mb_complex_scan_group() in CR1, we can be sure
+that this group has atleast 1 big enough continuous free extent to satisfy
+our request because (free / fragments) > goal length.
 
-PS: ac_b_ex.fe_len might get modified due to preallocation efforts and
-hence we use ac_f_ex.fe_len instead since we want to compare how much the
-allocator was able to actually find.
+Hence, instead of wasting time looping over smaller free extents, only
+try to consider the free extent if we are sure that it has enough
+continuous free space to satisfy goal length. This is particularly
+useful when scanning highly fragmented BGs in CR1 as, without this
+patch, the allocator might stop scanning early before reaching the big
+enough free extent (due to ac_found > mb_max_to_scan) which causes us to
+uncessarily trim the request.
 
 Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/ext4/ext4.h    | 1 +
- fs/ext4/mballoc.c | 3 +++
- 2 files changed, 4 insertions(+)
+ fs/ext4/mballoc.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 2df4189ef778..eae981ab2539 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1556,6 +1556,7 @@ struct ext4_sb_info {
- 	atomic_t s_bal_cX_ex_scanned[EXT4_MB_NUM_CRS];	/* total extents scanned */
- 	atomic_t s_bal_groups_scanned;	/* number of groups scanned */
- 	atomic_t s_bal_goals;	/* goal hits */
-+	atomic_t s_bal_len_goals;	/* len goal hits */
- 	atomic_t s_bal_breaks;	/* too long searches */
- 	atomic_t s_bal_2orders;	/* 2^order hits */
- 	atomic_t s_bal_cr0_bad_suggestions;
 diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index a3106607486f..73e98a4d01f5 100644
+index 73e98a4d01f5..c86565606359 100644
 --- a/fs/ext4/mballoc.c
 +++ b/fs/ext4/mballoc.c
-@@ -2966,6 +2966,7 @@ int ext4_seq_mb_stats_show(struct seq_file *seq, void *offset)
- 		   atomic64_read(&sbi->s_bal_cX_failed[CR3]));
- 	seq_printf(seq, "\textents_scanned: %u\n", atomic_read(&sbi->s_bal_ex_scanned));
- 	seq_printf(seq, "\t\tgoal_hits: %u\n", atomic_read(&sbi->s_bal_goals));
-+	seq_printf(seq, "\t\tlen_goal_hits: %u\n", atomic_read(&sbi->s_bal_len_goals));
- 	seq_printf(seq, "\t\t2^n_hits: %u\n", atomic_read(&sbi->s_bal_2orders));
- 	seq_printf(seq, "\t\tbreaks: %u\n", atomic_read(&sbi->s_bal_breaks));
- 	seq_printf(seq, "\t\tlost: %u\n", atomic_read(&sbi->s_mb_lost_chunks));
-@@ -4420,6 +4421,8 @@ static void ext4_mb_collect_stats(struct ext4_allocation_context *ac)
- 		if (ac->ac_g_ex.fe_start == ac->ac_b_ex.fe_start &&
- 				ac->ac_g_ex.fe_group == ac->ac_b_ex.fe_group)
- 			atomic_inc(&sbi->s_bal_goals);
-+		if (ac->ac_f_ex.fe_len == ac->ac_g_ex.fe_len)
-+			atomic_inc(&sbi->s_bal_len_goals);
- 		if (ac->ac_found > sbi->s_mb_max_to_scan)
- 			atomic_inc(&sbi->s_bal_breaks);
- 	}
+@@ -2308,7 +2308,7 @@ void ext4_mb_complex_scan_group(struct ext4_allocation_context *ac,
+ 	struct super_block *sb = ac->ac_sb;
+ 	void *bitmap = e4b->bd_bitmap;
+ 	struct ext4_free_extent ex;
+-	int i;
++	int i, j, freelen;
+ 	int free;
+ 
+ 	free = e4b->bd_info->bb_free;
+@@ -2335,6 +2335,23 @@ void ext4_mb_complex_scan_group(struct ext4_allocation_context *ac,
+ 			break;
+ 		}
+ 
++		if (ac->ac_criteria < CR2) {
++			/*
++			 * In CR1, we are sure that this group will
++			 * have a large enough continuous free extent, so skip
++			 * over the smaller free extents
++			 */
++			j = mb_find_next_bit(bitmap,
++						EXT4_CLUSTERS_PER_GROUP(sb), i);
++			freelen = j - i;
++
++			if (freelen < ac->ac_g_ex.fe_len) {
++				i = j;
++				free -= freelen;
++				continue;
++			}
++		}
++
+ 		mb_find_extent(e4b, i, ac->ac_g_ex.fe_len, &ex);
+ 		if (WARN_ON(ex.fe_len <= 0))
+ 			break;
 -- 
 2.31.1
 
