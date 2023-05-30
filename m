@@ -2,54 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 132FE715566
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 08:14:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 373157155B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 08:52:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229843AbjE3GOE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 02:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54208 "EHLO
+        id S230169AbjE3Gwm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 02:52:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjE3GOD (ORCPT
+        with ESMTP id S230113AbjE3Gwi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 02:14:03 -0400
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA330CD;
-        Mon, 29 May 2023 23:14:00 -0700 (PDT)
-X-QQ-mid: bizesmtp65t1685426547tmy4xja6
-Received: from localhost.localdomain ( [113.200.76.118])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Tue, 30 May 2023 14:02:24 +0800 (CST)
-X-QQ-SSF: 01400000000000C0G000000A0000000
-X-QQ-FEAT: znfcQSa1hKaNoAA+Wu37XwpK1cksC/6aTghWFSS0JvJasQfz+eIO2zJLQRT6i
-        rEM1DjNn+cMKUMmMkYKxNVhiJ/YaqYwyOdwJn8trVVHL4FwWqRIC1gXasm0tl2QcgbOhP2j
-        LvZhKTr8+O0f7WbJ7aEKXPBecA76aTyilAsJsTVqnedMXbBhFAnGHPVXjv6vLMsjW6YvPyi
-        i1gtBueSiPnfPmNzUzOGPtA6xO9BEI1yiGrXZ0be9XSQujkY1RIoTVJFJr5g/q5q1gPvFUS
-        ZEKOIIEP+REIXrHWhBXhZbB8seLB4k9ZUsPfQMlMU4/yyaVrRkuBNBwcOqvR1A5Vgs91htm
-        UZo1RdQcwSh9F4y0PRV2IDwcHtWLTFF1d191XBv6COHtM1tov3TE4c2SwkUPUQ1WWsDxlmz
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6104239791662094715
-From:   gouhao@uniontech.com
-To:     johannes.thumshirn@wdc.com
-Cc:     agruenba@redhat.com, axboe@kernel.dk, cluster-devel@redhat.com,
-        damien.lemoal@opensource.wdc.com, damien.lemoal@wdc.com,
-        dm-devel@redhat.com, hare@suse.de, hch@lst.de,
-        jfs-discussion@lists.sourceforge.net, kch@nvidia.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-raid@vger.kernel.org,
-        ming.lei@redhat.com, rpeterso@redhat.com, shaggy@kernel.org,
-        snitzer@kernel.org, song@kernel.org, willy@infradead.org
-Subject: Re:[PATCH v5 04/20] fs: buffer: use __bio_add_page to add single page to bio
-Date:   Tue, 30 May 2023 14:02:22 +0800
-Message-Id: <20230530060222.14892-1-gouhao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230502101934.24901-5-johannes.thumshirn@wdc.com>
-References: <20230502101934.24901-5-johannes.thumshirn@wdc.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        Tue, 30 May 2023 02:52:38 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E38B811A;
+        Mon, 29 May 2023 23:52:36 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34U5ktdM006024;
+        Tue, 30 May 2023 06:52:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2023-03-30;
+ bh=Ajkk8xr2EJ8K2eqtoXhnilmuNMzEVwrcYKYboWoAZRY=;
+ b=sul1MzqEa/tGD+JzNWH2zIi8iaXsH0fIjV+7MEAWL3bp8Mon8i3nmJOFierVA8hq3Zee
+ rS7G346ItXTlANHsVx8rxoxuvj4OUdaUYtMP6f+SSX3/7rpA4YOVo+n/yliOamWkq9bQ
+ F49OcUtf0qSocShyy+/QirCFs9a04Mk+lCg58+6Ppvp7ACa1nLKcEHjpPI2nGAVVMApm
+ +Egk+GbVh9pCgkwAHwwPOupCD4jpePcanBWluNQoro7mC/npk6YdIvTpeqdDLv5rn1HP
+ vp2n6bTwtXyXXmRPLJ/K1e2kN+bAKuXeKCmjn9r4aaVl2tmuFvbBZhkKcwFYVhjtdZRi 7A== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3qvhww9xau-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 May 2023 06:52:33 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 34U6l51N000304;
+        Tue, 30 May 2023 06:52:32 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3qu8q7ue9s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 May 2023 06:52:32 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34U6qWoo004059;
+        Tue, 30 May 2023 06:52:32 GMT
+Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3qu8q7ue9a-1;
+        Tue, 30 May 2023 06:52:32 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     chuck.lever@oracle.com, jlayton@kernel.org
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/2] NFSD: recall write delegation on GETATTR conflict
+Date:   Mon, 29 May 2023 23:52:15 -0700
+Message-Id: <1685429537-11855-1-git-send-email-dai.ngo@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-30_04,2023-05-29_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 mlxlogscore=795
+ suspectscore=0 malwarescore=0 adultscore=0 phishscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305300056
+X-Proofpoint-ORIG-GUID: wibIN83zmrMLOzPe5tUw-rD_oDawlBg3
+X-Proofpoint-GUID: wibIN83zmrMLOzPe5tUw-rD_oDawlBg3
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,38 +69,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> 
-> The buffer_head submission code uses bio_add_page() to add a page to a
-> newly created bio. bio_add_page() can fail, but the return value is never
-> checked.
-> 
-> Use __bio_add_page() as adding a single page to a newly created bio is
-> guaranteed to succeed.
-> 
-> This brings us a step closer to marking bio_add_page() as __must_check.
-> 
-> Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  fs/buffer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index a7fc561758b1..5abc26d8399d 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -2760,7 +2760,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
->  
->  	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
->  
-> -	bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
-> +	__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
->  	BUG_ON(bio->bi_iter.bi_size != bh->b_size);
-Can `BUG_ON` be deleted now ?
->  
->  	bio->bi_end_io = end_bio_bh_io_sync;
-> -- 
-> 2.40.0
---
-thanks,
-Gou Hao
+NFSD: recall write delegation on GETATTR conflict
+
+This patch series adds the recall of write delegation when there is
+conflict with a GETATTR and a counter in /proc/net/rpc/nfsd to keep
+count of this recall.
+
+Changes from v1:
+
+- add comment for nfsd4_deleg_getattr_conflict
+- only wait 30ms for delegation to be returned before returing
+  NFS4ERR_DELAY
+- fix test robot undeclared NFSD_STATS_WDELEG_GETATTR error
+
