@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 79FAF7160FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 15:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F3A71610B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 15:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232540AbjE3NDg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 09:03:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33658 "EHLO
+        id S232524AbjE3NFc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 09:05:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232521AbjE3NDa (ORCPT
+        with ESMTP id S232487AbjE3NFa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 09:03:30 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83AA2FF;
-        Tue, 30 May 2023 06:03:21 -0700 (PDT)
+        Tue, 30 May 2023 09:05:30 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C786C7;
+        Tue, 30 May 2023 06:05:25 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1C9BC1F889;
-        Tue, 30 May 2023 13:03:20 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id EFF0121AC5;
+        Tue, 30 May 2023 13:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1685451800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1685451923; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=A6Eyot2e7GfHNTZ6RpMOtpNM8Rq1H8Ilv0VpKII0caM=;
-        b=f0VUnVHA44WV3WV/0mFa9rmeX7bPOj7TVDl011p1u1ZedqK3xAwouFg3No4VvU2hEuog+0
-        X4Q2J05X81VoP8cgkhHwmJsTiG+toRf49WWEDu4D6g2uKIFWtGKRBGN+1I/yBkE8VVhqKq
-        Y1F/H9K1Fm0OCkSGrSw08n4RD5ZtvoA=
+        bh=DcEAgA2JZ0KR1tmWedLbxw3Dp0QbOIFwZ3jOl5YXKUo=;
+        b=NfNSBWZQOY4KtoSbpIVpCTMZU42CC4m/TZgNyIl6kFfWgBI3y7wMOevplKAirJVgoXQ8di
+        h0LBKiTAr8syzdP/65WlTipk4gntlVUoRP6rkwnc6c/dr57yZ1XanODjyZ5jToGqxM3Qjz
+        rD1oP2H+wxqZMCTHkFzph02hOYW94sA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1685451800;
+        s=susede2_ed25519; t=1685451923;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=A6Eyot2e7GfHNTZ6RpMOtpNM8Rq1H8Ilv0VpKII0caM=;
-        b=TH7gkTYdjm5PbhIaaWJ3OTESv15T3ILo2Uq8szcZsoa0P5sga+5qwCEfn1g4nLvhUQ/P02
-        lm1OcIRZmYpJ5oBA==
+        bh=DcEAgA2JZ0KR1tmWedLbxw3Dp0QbOIFwZ3jOl5YXKUo=;
+        b=G6xoq38JZvxOJjrWTzcfa8QvJB5oF1lQJ7A3mgc2YAkQZoG1IsgQUG9e+Qbhp8CsfFtHTe
+        uet/JQcl/ANu2ECQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0792313478;
-        Tue, 30 May 2023 13:03:20 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DC7FA13478;
+        Tue, 30 May 2023 13:05:23 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id ZaDWARj0dWR5MgAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 30 May 2023 13:03:20 +0000
+        id AJfQNZP0dWSgMwAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 30 May 2023 13:05:23 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 91BA9A0754; Tue, 30 May 2023 15:03:19 +0200 (CEST)
-Date:   Tue, 30 May 2023 15:03:19 +0200
+        id 52E41A0754; Tue, 30 May 2023 15:05:23 +0200 (CEST)
+Date:   Tue, 30 May 2023 15:05:23 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
@@ -57,17 +57,17 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 09/13] block: introduce holder ops
-Message-ID: <20230530130319.tagybuem4725xm72@quack3>
+Subject: Re: [PATCH 10/13] block: add a mark_dead holder operation
+Message-ID: <20230530130523.5bl3cg3rfzia4vqm@quack3>
 References: <20230518042323.663189-1-hch@lst.de>
- <20230518042323.663189-10-hch@lst.de>
+ <20230518042323.663189-11-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230518042323.663189-10-hch@lst.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <20230518042323.663189-11-hch@lst.de>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,13 +75,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 18-05-23 06:23:18, Christoph Hellwig wrote:
-> Add a new blk_holder_ops structure, which is passed to blkdev_get_by_* and
-> installed in the block_device for exclusive claims.  It will be used to
-> allow the block layer to call back into the user of the block device for
-> thing like notification of a removed device or a device resize.
+On Thu 18-05-23 06:23:19, Christoph Hellwig wrote:
+> Add a mark_dead method to blk_holder_ops that is called from blk_mark_disk_dead
+> to notify the holder that the block device it is using has been marked dead.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Christian Brauner <brauner@kernel.org>
 
 Looks good. Feel free to add:
 
@@ -89,750 +88,66 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
+
 > ---
->  block/bdev.c                        | 41 ++++++++++++++++++++---------
->  block/fops.c                        |  2 +-
->  block/genhd.c                       |  6 +++--
->  block/ioctl.c                       |  3 ++-
->  drivers/block/drbd/drbd_nl.c        |  3 ++-
->  drivers/block/loop.c                |  2 +-
->  drivers/block/pktcdvd.c             |  5 ++--
->  drivers/block/rnbd/rnbd-srv.c       |  2 +-
->  drivers/block/xen-blkback/xenbus.c  |  2 +-
->  drivers/block/zram/zram_drv.c       |  2 +-
->  drivers/md/bcache/super.c           |  2 +-
->  drivers/md/dm.c                     |  2 +-
->  drivers/md/md.c                     |  2 +-
->  drivers/mtd/devices/block2mtd.c     |  4 +--
->  drivers/nvme/target/io-cmd-bdev.c   |  2 +-
->  drivers/s390/block/dasd_genhd.c     |  2 +-
->  drivers/target/target_core_iblock.c |  2 +-
->  drivers/target/target_core_pscsi.c  |  3 ++-
->  fs/btrfs/dev-replace.c              |  2 +-
->  fs/btrfs/volumes.c                  |  6 ++---
->  fs/erofs/super.c                    |  2 +-
->  fs/ext4/super.c                     |  3 ++-
->  fs/f2fs/super.c                     |  4 +--
->  fs/jfs/jfs_logmgr.c                 |  2 +-
->  fs/nfs/blocklayout/dev.c            |  5 ++--
->  fs/nilfs2/super.c                   |  2 +-
->  fs/ocfs2/cluster/heartbeat.c        |  2 +-
->  fs/reiserfs/journal.c               |  5 ++--
->  fs/super.c                          |  4 +--
->  fs/xfs/xfs_super.c                  |  2 +-
->  include/linux/blk_types.h           |  2 ++
->  include/linux/blkdev.h              | 11 +++++---
->  kernel/power/swap.c                 |  4 +--
->  mm/swapfile.c                       |  3 ++-
->  34 files changed, 90 insertions(+), 56 deletions(-)
+>  block/genhd.c          | 24 ++++++++++++++++++++++++
+>  include/linux/blkdev.h |  1 +
+>  2 files changed, 25 insertions(+)
 > 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index f5ffcac762e0cd..5c46ff10770638 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -102,7 +102,7 @@ int truncate_bdev_range(struct block_device *bdev, fmode_t mode,
->  	 * under live filesystem.
->  	 */
->  	if (!(mode & FMODE_EXCL)) {
-> -		int err = bd_prepare_to_claim(bdev, truncate_bdev_range);
-> +		int err = bd_prepare_to_claim(bdev, truncate_bdev_range, NULL);
->  		if (err)
->  			goto invalidate;
->  	}
-> @@ -415,6 +415,7 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
->  	bdev = I_BDEV(inode);
->  	mutex_init(&bdev->bd_fsfreeze_mutex);
->  	spin_lock_init(&bdev->bd_size_lock);
-> +	mutex_init(&bdev->bd_holder_lock);
->  	bdev->bd_partno = partno;
->  	bdev->bd_inode = inode;
->  	bdev->bd_queue = disk->queue;
-> @@ -464,13 +465,15 @@ long nr_blockdev_pages(void)
->   * bd_may_claim - test whether a block device can be claimed
->   * @bdev: block device of interest
->   * @holder: holder trying to claim @bdev
-> + * @hops: holder ops
->   *
->   * Test whether @bdev can be claimed by @holder.
->   *
->   * RETURNS:
->   * %true if @bdev can be claimed, %false otherwise.
->   */
-> -static bool bd_may_claim(struct block_device *bdev, void *holder)
-> +static bool bd_may_claim(struct block_device *bdev, void *holder,
-> +		const struct blk_holder_ops *hops)
->  {
->  	struct block_device *whole = bdev_whole(bdev);
->  
-> @@ -480,8 +483,11 @@ static bool bd_may_claim(struct block_device *bdev, void *holder)
->  		/*
->  		 * The same holder can always re-claim.
->  		 */
-> -		if (bdev->bd_holder == holder)
-> +		if (bdev->bd_holder == holder) {
-> +			if (WARN_ON_ONCE(bdev->bd_holder_ops != hops))
-> +				return false;
->  			return true;
-> +		}
->  		return false;
->  	}
->  
-> @@ -499,6 +505,7 @@ static bool bd_may_claim(struct block_device *bdev, void *holder)
->   * bd_prepare_to_claim - claim a block device
->   * @bdev: block device of interest
->   * @holder: holder trying to claim @bdev
-> + * @hops: holder ops.
->   *
->   * Claim @bdev.  This function fails if @bdev is already claimed by another
->   * holder and waits if another claiming is in progress. return, the caller
-> @@ -507,7 +514,8 @@ static bool bd_may_claim(struct block_device *bdev, void *holder)
->   * RETURNS:
->   * 0 if @bdev can be claimed, -EBUSY otherwise.
->   */
-> -int bd_prepare_to_claim(struct block_device *bdev, void *holder)
-> +int bd_prepare_to_claim(struct block_device *bdev, void *holder,
-> +		const struct blk_holder_ops *hops)
->  {
->  	struct block_device *whole = bdev_whole(bdev);
->  
-> @@ -516,7 +524,7 @@ int bd_prepare_to_claim(struct block_device *bdev, void *holder)
->  retry:
->  	mutex_lock(&bdev_lock);
->  	/* if someone else claimed, fail */
-> -	if (!bd_may_claim(bdev, holder)) {
-> +	if (!bd_may_claim(bdev, holder, hops)) {
->  		mutex_unlock(&bdev_lock);
->  		return -EBUSY;
->  	}
-> @@ -557,12 +565,13 @@ static void bd_clear_claiming(struct block_device *whole, void *holder)
->   * Finish exclusive open of a block device. Mark the device as exlusively
->   * open by the holder and wake up all waiters for exclusive open to finish.
->   */
-> -static void bd_finish_claiming(struct block_device *bdev, void *holder)
-> +static void bd_finish_claiming(struct block_device *bdev, void *holder,
-> +		const struct blk_holder_ops *hops)
->  {
->  	struct block_device *whole = bdev_whole(bdev);
->  
->  	mutex_lock(&bdev_lock);
-> -	BUG_ON(!bd_may_claim(bdev, holder));
-> +	BUG_ON(!bd_may_claim(bdev, holder, hops));
->  	/*
->  	 * Note that for a whole device bd_holders will be incremented twice,
->  	 * and bd_holder will be set to bd_may_claim before being set to holder
-> @@ -570,7 +579,10 @@ static void bd_finish_claiming(struct block_device *bdev, void *holder)
->  	whole->bd_holders++;
->  	whole->bd_holder = bd_may_claim;
->  	bdev->bd_holders++;
-> +	mutex_lock(&bdev->bd_holder_lock);
->  	bdev->bd_holder = holder;
-> +	bdev->bd_holder_ops = hops;
-> +	mutex_unlock(&bdev->bd_holder_lock);
->  	bd_clear_claiming(whole, holder);
->  	mutex_unlock(&bdev_lock);
->  }
-> @@ -605,7 +617,10 @@ static void bd_end_claim(struct block_device *bdev)
->  	WARN_ON_ONCE(--bdev->bd_holders < 0);
->  	WARN_ON_ONCE(--whole->bd_holders < 0);
->  	if (!bdev->bd_holders) {
-> +		mutex_lock(&bdev->bd_holder_lock);
->  		bdev->bd_holder = NULL;
-> +		bdev->bd_holder_ops = NULL;
-> +		mutex_unlock(&bdev->bd_holder_lock);
->  		if (bdev->bd_write_holder)
->  			unblock = true;
->  	}
-> @@ -735,6 +750,7 @@ void blkdev_put_no_open(struct block_device *bdev)
->   * @dev: device number of block device to open
->   * @mode: FMODE_* mask
->   * @holder: exclusive holder identifier
-> + * @hops: holder operations
->   *
->   * Open the block device described by device number @dev. If @mode includes
->   * %FMODE_EXCL, the block device is opened with exclusive access.  Specifying
-> @@ -751,7 +767,8 @@ void blkdev_put_no_open(struct block_device *bdev)
->   * RETURNS:
->   * Reference to the block_device on success, ERR_PTR(-errno) on failure.
->   */
-> -struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder)
-> +struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder,
-> +		const struct blk_holder_ops *hops)
->  {
->  	bool unblock_events = true;
->  	struct block_device *bdev;
-> @@ -771,7 +788,7 @@ struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder)
->  	disk = bdev->bd_disk;
->  
->  	if (mode & FMODE_EXCL) {
-> -		ret = bd_prepare_to_claim(bdev, holder);
-> +		ret = bd_prepare_to_claim(bdev, holder, hops);
->  		if (ret)
->  			goto put_blkdev;
->  	}
-> @@ -791,7 +808,7 @@ struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder)
->  	if (ret)
->  		goto put_module;
->  	if (mode & FMODE_EXCL) {
-> -		bd_finish_claiming(bdev, holder);
-> +		bd_finish_claiming(bdev, holder, hops);
->  
->  		/*
->  		 * Block event polling for write claims if requested.  Any write
-> @@ -842,7 +859,7 @@ EXPORT_SYMBOL(blkdev_get_by_dev);
->   * Reference to the block_device on success, ERR_PTR(-errno) on failure.
->   */
->  struct block_device *blkdev_get_by_path(const char *path, fmode_t mode,
-> -					void *holder)
-> +		void *holder, const struct blk_holder_ops *hops)
->  {
->  	struct block_device *bdev;
->  	dev_t dev;
-> @@ -852,7 +869,7 @@ struct block_device *blkdev_get_by_path(const char *path, fmode_t mode,
->  	if (error)
->  		return ERR_PTR(error);
->  
-> -	bdev = blkdev_get_by_dev(dev, mode, holder);
-> +	bdev = blkdev_get_by_dev(dev, mode, holder, hops);
->  	if (!IS_ERR(bdev) && (mode & FMODE_WRITE) && bdev_read_only(bdev)) {
->  		blkdev_put(bdev, mode);
->  		return ERR_PTR(-EACCES);
-> diff --git a/block/fops.c b/block/fops.c
-> index d2e6be4e3d1c7d..2ac5ea878fa4cc 100644
-> --- a/block/fops.c
-> +++ b/block/fops.c
-> @@ -490,7 +490,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
->  	if ((filp->f_flags & O_ACCMODE) == 3)
->  		filp->f_mode |= FMODE_WRITE_IOCTL;
->  
-> -	bdev = blkdev_get_by_dev(inode->i_rdev, filp->f_mode, filp);
-> +	bdev = blkdev_get_by_dev(inode->i_rdev, filp->f_mode, filp, NULL);
->  	if (IS_ERR(bdev))
->  		return PTR_ERR(bdev);
->  
 > diff --git a/block/genhd.c b/block/genhd.c
-> index bd4c4eca31363e..226ddb8329f751 100644
+> index 226ddb8329f751..42aebf0e1e2628 100644
 > --- a/block/genhd.c
 > +++ b/block/genhd.c
-> @@ -370,13 +370,15 @@ int disk_scan_partitions(struct gendisk *disk, fmode_t mode)
->  	 * scanners.
+> @@ -565,6 +565,28 @@ int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
+>  }
+>  EXPORT_SYMBOL(device_add_disk);
+>  
+> +static void blk_report_disk_dead(struct gendisk *disk)
+> +{
+> +	struct block_device *bdev;
+> +	unsigned long idx;
+> +
+> +	rcu_read_lock();
+> +	xa_for_each(&disk->part_tbl, idx, bdev) {
+> +		if (!kobject_get_unless_zero(&bdev->bd_device.kobj))
+> +			continue;
+> +		rcu_read_unlock();
+> +
+> +		mutex_lock(&bdev->bd_holder_lock);
+> +		if (bdev->bd_holder_ops && bdev->bd_holder_ops->mark_dead)
+> +			bdev->bd_holder_ops->mark_dead(bdev);
+> +		mutex_unlock(&bdev->bd_holder_lock);
+> +
+> +		put_device(&bdev->bd_device);
+> +		rcu_read_lock();
+> +	}
+> +	rcu_read_unlock();
+> +}
+> +
+>  /**
+>   * blk_mark_disk_dead - mark a disk as dead
+>   * @disk: disk to mark as dead
+> @@ -592,6 +614,8 @@ void blk_mark_disk_dead(struct gendisk *disk)
+>  	 * Prevent new I/O from crossing bio_queue_enter().
 >  	 */
->  	if (!(mode & FMODE_EXCL)) {
-> -		ret = bd_prepare_to_claim(disk->part0, disk_scan_partitions);
-> +		ret = bd_prepare_to_claim(disk->part0, disk_scan_partitions,
-> +					  NULL);
->  		if (ret)
->  			return ret;
->  	}
+>  	blk_queue_start_drain(disk->queue);
+> +
+> +	blk_report_disk_dead(disk);
+>  }
+>  EXPORT_SYMBOL_GPL(blk_mark_disk_dead);
 >  
->  	set_bit(GD_NEED_PART_SCAN, &disk->state);
-> -	bdev = blkdev_get_by_dev(disk_devt(disk), mode & ~FMODE_EXCL, NULL);
-> +	bdev = blkdev_get_by_dev(disk_devt(disk), mode & ~FMODE_EXCL, NULL,
-> +				 NULL);
->  	if (IS_ERR(bdev))
->  		ret =  PTR_ERR(bdev);
->  	else
-> diff --git a/block/ioctl.c b/block/ioctl.c
-> index 9c5f637ff153f8..c7d7d4345edb4f 100644
-> --- a/block/ioctl.c
-> +++ b/block/ioctl.c
-> @@ -454,7 +454,8 @@ static int blkdev_bszset(struct block_device *bdev, fmode_t mode,
->  	if (mode & FMODE_EXCL)
->  		return set_blocksize(bdev, n);
->  
-> -	if (IS_ERR(blkdev_get_by_dev(bdev->bd_dev, mode | FMODE_EXCL, &bdev)))
-> +	if (IS_ERR(blkdev_get_by_dev(bdev->bd_dev, mode | FMODE_EXCL, &bdev,
-> +			NULL)))
->  		return -EBUSY;
->  	ret = set_blocksize(bdev, n);
->  	blkdev_put(bdev, mode | FMODE_EXCL);
-> diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-> index 1a5d3d72d91d27..cab59dab3410aa 100644
-> --- a/drivers/block/drbd/drbd_nl.c
-> +++ b/drivers/block/drbd/drbd_nl.c
-> @@ -1641,7 +1641,8 @@ static struct block_device *open_backing_dev(struct drbd_device *device,
->  	int err = 0;
->  
->  	bdev = blkdev_get_by_path(bdev_path,
-> -				  FMODE_READ | FMODE_WRITE | FMODE_EXCL, claim_ptr);
-> +				  FMODE_READ | FMODE_WRITE | FMODE_EXCL,
-> +				  claim_ptr, NULL);
->  	if (IS_ERR(bdev)) {
->  		drbd_err(device, "open(\"%s\") failed with %ld\n",
->  				bdev_path, PTR_ERR(bdev));
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index bc31bb7072a2cb..a73c857f5bfed0 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -1015,7 +1015,7 @@ static int loop_configure(struct loop_device *lo, fmode_t mode,
->  	 * here to avoid changing device under exclusive owner.
->  	 */
->  	if (!(mode & FMODE_EXCL)) {
-> -		error = bd_prepare_to_claim(bdev, loop_configure);
-> +		error = bd_prepare_to_claim(bdev, loop_configure, NULL);
->  		if (error)
->  			goto out_putf;
->  	}
-> diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-> index d5d7884cedd477..377f8b34535294 100644
-> --- a/drivers/block/pktcdvd.c
-> +++ b/drivers/block/pktcdvd.c
-> @@ -2125,7 +2125,8 @@ static int pkt_open_dev(struct pktcdvd_device *pd, fmode_t write)
->  	 * to read/write from/to it. It is already opened in O_NONBLOCK mode
->  	 * so open should not fail.
->  	 */
-> -	bdev = blkdev_get_by_dev(pd->bdev->bd_dev, FMODE_READ | FMODE_EXCL, pd);
-> +	bdev = blkdev_get_by_dev(pd->bdev->bd_dev, FMODE_READ | FMODE_EXCL, pd,
-> +				 NULL);
->  	if (IS_ERR(bdev)) {
->  		ret = PTR_ERR(bdev);
->  		goto out;
-> @@ -2530,7 +2531,7 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
->  		}
->  	}
->  
-> -	bdev = blkdev_get_by_dev(dev, FMODE_READ | FMODE_NDELAY, NULL);
-> +	bdev = blkdev_get_by_dev(dev, FMODE_READ | FMODE_NDELAY, NULL, NULL);
->  	if (IS_ERR(bdev))
->  		return PTR_ERR(bdev);
->  	sdev = scsi_device_from_queue(bdev->bd_disk->queue);
-> diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
-> index 2cfed2e58d646f..cec22bbae2f9a5 100644
-> --- a/drivers/block/rnbd/rnbd-srv.c
-> +++ b/drivers/block/rnbd/rnbd-srv.c
-> @@ -719,7 +719,7 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
->  		goto reject;
->  	}
->  
-> -	bdev = blkdev_get_by_path(full_path, open_flags, THIS_MODULE);
-> +	bdev = blkdev_get_by_path(full_path, open_flags, THIS_MODULE, NULL);
->  	if (IS_ERR(bdev)) {
->  		ret = PTR_ERR(bdev);
->  		pr_err("Opening device '%s' on session %s failed, failed to open the block device, err: %d\n",
-> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-> index 4807af1d580593..43b36da9b3544d 100644
-> --- a/drivers/block/xen-blkback/xenbus.c
-> +++ b/drivers/block/xen-blkback/xenbus.c
-> @@ -492,7 +492,7 @@ static int xen_vbd_create(struct xen_blkif *blkif, blkif_vdev_t handle,
->  	vbd->pdevice  = MKDEV(major, minor);
->  
->  	bdev = blkdev_get_by_dev(vbd->pdevice, vbd->readonly ?
-> -				 FMODE_READ : FMODE_WRITE, NULL);
-> +				 FMODE_READ : FMODE_WRITE, NULL, NULL);
->  
->  	if (IS_ERR(bdev)) {
->  		pr_warn("xen_vbd_create: device %08x could not be opened\n",
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index f6d90f1ba5cf7b..ef9dc4ef6796da 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -508,7 +508,7 @@ static ssize_t backing_dev_store(struct device *dev,
->  	}
->  
->  	bdev = blkdev_get_by_dev(inode->i_rdev,
-> -			FMODE_READ | FMODE_WRITE | FMODE_EXCL, zram);
-> +			FMODE_READ | FMODE_WRITE | FMODE_EXCL, zram, NULL);
->  	if (IS_ERR(bdev)) {
->  		err = PTR_ERR(bdev);
->  		bdev = NULL;
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 7e9d19fd21ddd5..d84c09a73af803 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -2560,7 +2560,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  	err = "failed to open device";
->  	bdev = blkdev_get_by_path(strim(path),
->  				  FMODE_READ|FMODE_WRITE|FMODE_EXCL,
-> -				  sb);
-> +				  sb, NULL);
->  	if (IS_ERR(bdev)) {
->  		if (bdev == ERR_PTR(-EBUSY)) {
->  			dev_t dev;
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 3b694ba3a106e6..d759f8bdb3df2f 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -746,7 +746,7 @@ static struct table_device *open_table_device(struct mapped_device *md,
->  		return ERR_PTR(-ENOMEM);
->  	refcount_set(&td->count, 1);
->  
-> -	bdev = blkdev_get_by_dev(dev, mode | FMODE_EXCL, _dm_claim_ptr);
-> +	bdev = blkdev_get_by_dev(dev, mode | FMODE_EXCL, _dm_claim_ptr, NULL);
->  	if (IS_ERR(bdev)) {
->  		r = PTR_ERR(bdev);
->  		goto out_free_td;
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 8e344b4b34446f..60ab5c4bee77c5 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -3642,7 +3642,7 @@ static struct md_rdev *md_import_device(dev_t newdev, int super_format, int supe
->  
->  	rdev->bdev = blkdev_get_by_dev(newdev,
->  			FMODE_READ | FMODE_WRITE | FMODE_EXCL,
-> -			super_format == -2 ? &claim_rdev : rdev);
-> +			super_format == -2 ? &claim_rdev : rdev, NULL);
->  	if (IS_ERR(rdev->bdev)) {
->  		pr_warn("md: could not open device unknown-block(%u,%u).\n",
->  			MAJOR(newdev), MINOR(newdev));
-> diff --git a/drivers/mtd/devices/block2mtd.c b/drivers/mtd/devices/block2mtd.c
-> index 4cd37ec45762b6..7ac82c6fe35024 100644
-> --- a/drivers/mtd/devices/block2mtd.c
-> +++ b/drivers/mtd/devices/block2mtd.c
-> @@ -235,7 +235,7 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
->  		return NULL;
->  
->  	/* Get a handle on the device */
-> -	bdev = blkdev_get_by_path(devname, mode, dev);
-> +	bdev = blkdev_get_by_path(devname, mode, dev, NULL);
->  
->  #ifndef MODULE
->  	/*
-> @@ -257,7 +257,7 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
->  		devt = name_to_dev_t(devname);
->  		if (!devt)
->  			continue;
-> -		bdev = blkdev_get_by_dev(devt, mode, dev);
-> +		bdev = blkdev_get_by_dev(devt, mode, dev, NULL);
->  	}
->  #endif
->  
-> diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
-> index c2d6cea0236b0a..9b6d6d85c72544 100644
-> --- a/drivers/nvme/target/io-cmd-bdev.c
-> +++ b/drivers/nvme/target/io-cmd-bdev.c
-> @@ -85,7 +85,7 @@ int nvmet_bdev_ns_enable(struct nvmet_ns *ns)
->  		return -ENOTBLK;
->  
->  	ns->bdev = blkdev_get_by_path(ns->device_path,
-> -			FMODE_READ | FMODE_WRITE, NULL);
-> +			FMODE_READ | FMODE_WRITE, NULL, NULL);
->  	if (IS_ERR(ns->bdev)) {
->  		ret = PTR_ERR(ns->bdev);
->  		if (ret != -ENOTBLK) {
-> diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
-> index 998a961e170417..f21198bc483e1a 100644
-> --- a/drivers/s390/block/dasd_genhd.c
-> +++ b/drivers/s390/block/dasd_genhd.c
-> @@ -130,7 +130,7 @@ int dasd_scan_partitions(struct dasd_block *block)
->  	struct block_device *bdev;
->  	int rc;
->  
-> -	bdev = blkdev_get_by_dev(disk_devt(block->gdp), FMODE_READ, NULL);
-> +	bdev = blkdev_get_by_dev(disk_devt(block->gdp), FMODE_READ, NULL, NULL);
->  	if (IS_ERR(bdev)) {
->  		DBF_DEV_EVENT(DBF_ERR, block->base,
->  			      "scan partitions error, blkdev_get returned %ld",
-> diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-> index cc838ffd129472..a5cbbefa78ee4e 100644
-> --- a/drivers/target/target_core_iblock.c
-> +++ b/drivers/target/target_core_iblock.c
-> @@ -114,7 +114,7 @@ static int iblock_configure_device(struct se_device *dev)
->  	else
->  		dev->dev_flags |= DF_READ_ONLY;
->  
-> -	bd = blkdev_get_by_path(ib_dev->ibd_udev_path, mode, ib_dev);
-> +	bd = blkdev_get_by_path(ib_dev->ibd_udev_path, mode, ib_dev, NULL);
->  	if (IS_ERR(bd)) {
->  		ret = PTR_ERR(bd);
->  		goto out_free_bioset;
-> diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
-> index e7425549e39c73..e3494e036c6c85 100644
-> --- a/drivers/target/target_core_pscsi.c
-> +++ b/drivers/target/target_core_pscsi.c
-> @@ -367,7 +367,8 @@ static int pscsi_create_type_disk(struct se_device *dev, struct scsi_device *sd)
->  	 * for TYPE_DISK and TYPE_ZBC using supplied udev_path
->  	 */
->  	bd = blkdev_get_by_path(dev->udev_path,
-> -				FMODE_WRITE|FMODE_READ|FMODE_EXCL, pdv);
-> +				FMODE_WRITE|FMODE_READ|FMODE_EXCL, pdv,
-> +				NULL);
->  	if (IS_ERR(bd)) {
->  		pr_err("pSCSI: blkdev_get_by_path() failed\n");
->  		scsi_device_put(sd);
-> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-> index 78696d331639bd..4de4984fa99ba3 100644
-> --- a/fs/btrfs/dev-replace.c
-> +++ b/fs/btrfs/dev-replace.c
-> @@ -258,7 +258,7 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
->  	}
->  
->  	bdev = blkdev_get_by_path(device_path, FMODE_WRITE | FMODE_EXCL,
-> -				  fs_info->bdev_holder);
-> +				  fs_info->bdev_holder, NULL);
->  	if (IS_ERR(bdev)) {
->  		btrfs_err(fs_info, "target device %s is invalid!", device_path);
->  		return PTR_ERR(bdev);
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index 841e799dece51b..784ccc8f6c69c1 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -496,7 +496,7 @@ btrfs_get_bdev_and_sb(const char *device_path, fmode_t flags, void *holder,
->  {
->  	int ret;
->  
-> -	*bdev = blkdev_get_by_path(device_path, flags, holder);
-> +	*bdev = blkdev_get_by_path(device_path, flags, holder, NULL);
->  
->  	if (IS_ERR(*bdev)) {
->  		ret = PTR_ERR(*bdev);
-> @@ -1377,7 +1377,7 @@ struct btrfs_device *btrfs_scan_one_device(const char *path, fmode_t flags,
->  	 * values temporarily, as the device paths of the fsid are the only
->  	 * required information for assembling the volume.
->  	 */
-> -	bdev = blkdev_get_by_path(path, flags, holder);
-> +	bdev = blkdev_get_by_path(path, flags, holder, NULL);
->  	if (IS_ERR(bdev))
->  		return ERR_CAST(bdev);
->  
-> @@ -2629,7 +2629,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
->  		return -EROFS;
->  
->  	bdev = blkdev_get_by_path(device_path, FMODE_WRITE | FMODE_EXCL,
-> -				  fs_info->bdev_holder);
-> +				  fs_info->bdev_holder, NULL);
->  	if (IS_ERR(bdev))
->  		return PTR_ERR(bdev);
->  
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 811ab66d805ede..6c263e9cd38b2a 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -254,7 +254,7 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
->  		dif->fscache = fscache;
->  	} else if (!sbi->devs->flatdev) {
->  		bdev = blkdev_get_by_path(dif->path, FMODE_READ | FMODE_EXCL,
-> -					  sb->s_type);
-> +					  sb->s_type, NULL);
->  		if (IS_ERR(bdev))
->  			return PTR_ERR(bdev);
->  		dif->bdev = bdev;
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 9680fe753e599a..865625089ecca3 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1103,7 +1103,8 @@ static struct block_device *ext4_blkdev_get(dev_t dev, struct super_block *sb)
->  {
->  	struct block_device *bdev;
->  
-> -	bdev = blkdev_get_by_dev(dev, FMODE_READ|FMODE_WRITE|FMODE_EXCL, sb);
-> +	bdev = blkdev_get_by_dev(dev, FMODE_READ|FMODE_WRITE|FMODE_EXCL, sb,
-> +				 NULL);
->  	if (IS_ERR(bdev))
->  		goto fail;
->  	return bdev;
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 9f15b03037dba9..7c34ab082f1382 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -4025,7 +4025,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
->  			/* Single zoned block device mount */
->  			FDEV(0).bdev =
->  				blkdev_get_by_dev(sbi->sb->s_bdev->bd_dev,
-> -					sbi->sb->s_mode, sbi->sb->s_type);
-> +					sbi->sb->s_mode, sbi->sb->s_type, NULL);
->  		} else {
->  			/* Multi-device mount */
->  			memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
-> @@ -4044,7 +4044,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
->  					sbi->log_blocks_per_seg) - 1;
->  			}
->  			FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path,
-> -					sbi->sb->s_mode, sbi->sb->s_type);
-> +					sbi->sb->s_mode, sbi->sb->s_type, NULL);
->  		}
->  		if (IS_ERR(FDEV(i).bdev))
->  			return PTR_ERR(FDEV(i).bdev);
-> diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-> index 695415cbfe985b..8c55030c57ed52 100644
-> --- a/fs/jfs/jfs_logmgr.c
-> +++ b/fs/jfs/jfs_logmgr.c
-> @@ -1101,7 +1101,7 @@ int lmLogOpen(struct super_block *sb)
->  	 */
->  
->  	bdev = blkdev_get_by_dev(sbi->logdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL,
-> -				 log);
-> +				 log, NULL);
->  	if (IS_ERR(bdev)) {
->  		rc = PTR_ERR(bdev);
->  		goto free;
-> diff --git a/fs/nfs/blocklayout/dev.c b/fs/nfs/blocklayout/dev.c
-> index fea5f8821da5ef..38b066ca699ed7 100644
-> --- a/fs/nfs/blocklayout/dev.c
-> +++ b/fs/nfs/blocklayout/dev.c
-> @@ -243,7 +243,7 @@ bl_parse_simple(struct nfs_server *server, struct pnfs_block_dev *d,
->  	if (!dev)
->  		return -EIO;
->  
-> -	bdev = blkdev_get_by_dev(dev, FMODE_READ | FMODE_WRITE, NULL);
-> +	bdev = blkdev_get_by_dev(dev, FMODE_READ | FMODE_WRITE, NULL, NULL);
->  	if (IS_ERR(bdev)) {
->  		printk(KERN_WARNING "pNFS: failed to open device %d:%d (%ld)\n",
->  			MAJOR(dev), MINOR(dev), PTR_ERR(bdev));
-> @@ -312,7 +312,8 @@ bl_open_path(struct pnfs_block_volume *v, const char *prefix)
->  	if (!devname)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	bdev = blkdev_get_by_path(devname, FMODE_READ | FMODE_WRITE, NULL);
-> +	bdev = blkdev_get_by_path(devname, FMODE_READ | FMODE_WRITE, NULL,
-> +				  NULL);
->  	if (IS_ERR(bdev)) {
->  		pr_warn("pNFS: failed to open device %s (%ld)\n",
->  			devname, PTR_ERR(bdev));
-> diff --git a/fs/nilfs2/super.c b/fs/nilfs2/super.c
-> index 77f1e5778d1c84..91bfbd973d1d53 100644
-> --- a/fs/nilfs2/super.c
-> +++ b/fs/nilfs2/super.c
-> @@ -1285,7 +1285,7 @@ nilfs_mount(struct file_system_type *fs_type, int flags,
->  	if (!(flags & SB_RDONLY))
->  		mode |= FMODE_WRITE;
->  
-> -	sd.bdev = blkdev_get_by_path(dev_name, mode, fs_type);
-> +	sd.bdev = blkdev_get_by_path(dev_name, mode, fs_type, NULL);
->  	if (IS_ERR(sd.bdev))
->  		return ERR_CAST(sd.bdev);
->  
-> diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-> index 60b97c92e2b25e..6b13b8c3f2b8af 100644
-> --- a/fs/ocfs2/cluster/heartbeat.c
-> +++ b/fs/ocfs2/cluster/heartbeat.c
-> @@ -1786,7 +1786,7 @@ static ssize_t o2hb_region_dev_store(struct config_item *item,
->  		goto out2;
->  
->  	reg->hr_bdev = blkdev_get_by_dev(f.file->f_mapping->host->i_rdev,
-> -					 FMODE_WRITE | FMODE_READ, NULL);
-> +					 FMODE_WRITE | FMODE_READ, NULL, NULL);
->  	if (IS_ERR(reg->hr_bdev)) {
->  		ret = PTR_ERR(reg->hr_bdev);
->  		reg->hr_bdev = NULL;
-> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> index 4d11d60f493c14..5e4db9a0c8e5a3 100644
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -2616,7 +2616,7 @@ static int journal_init_dev(struct super_block *super,
->  		if (jdev == super->s_dev)
->  			blkdev_mode &= ~FMODE_EXCL;
->  		journal->j_dev_bd = blkdev_get_by_dev(jdev, blkdev_mode,
-> -						      journal);
-> +						      journal, NULL);
->  		journal->j_dev_mode = blkdev_mode;
->  		if (IS_ERR(journal->j_dev_bd)) {
->  			result = PTR_ERR(journal->j_dev_bd);
-> @@ -2632,7 +2632,8 @@ static int journal_init_dev(struct super_block *super,
->  	}
->  
->  	journal->j_dev_mode = blkdev_mode;
-> -	journal->j_dev_bd = blkdev_get_by_path(jdev_name, blkdev_mode, journal);
-> +	journal->j_dev_bd = blkdev_get_by_path(jdev_name, blkdev_mode, journal,
-> +					       NULL);
->  	if (IS_ERR(journal->j_dev_bd)) {
->  		result = PTR_ERR(journal->j_dev_bd);
->  		journal->j_dev_bd = NULL;
-> diff --git a/fs/super.c b/fs/super.c
-> index 34afe411cf2bc3..012ce140080375 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1248,7 +1248,7 @@ int get_tree_bdev(struct fs_context *fc,
->  	if (!fc->source)
->  		return invalf(fc, "No source specified");
->  
-> -	bdev = blkdev_get_by_path(fc->source, mode, fc->fs_type);
-> +	bdev = blkdev_get_by_path(fc->source, mode, fc->fs_type, NULL);
->  	if (IS_ERR(bdev)) {
->  		errorf(fc, "%s: Can't open blockdev", fc->source);
->  		return PTR_ERR(bdev);
-> @@ -1333,7 +1333,7 @@ struct dentry *mount_bdev(struct file_system_type *fs_type,
->  	if (!(flags & SB_RDONLY))
->  		mode |= FMODE_WRITE;
->  
-> -	bdev = blkdev_get_by_path(dev_name, mode, fs_type);
-> +	bdev = blkdev_get_by_path(dev_name, mode, fs_type, NULL);
->  	if (IS_ERR(bdev))
->  		return ERR_CAST(bdev);
->  
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 7e706255f16502..5684c538eb76dc 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -386,7 +386,7 @@ xfs_blkdev_get(
->  	int			error = 0;
->  
->  	*bdevp = blkdev_get_by_path(name, FMODE_READ|FMODE_WRITE|FMODE_EXCL,
-> -				    mp);
-> +				    mp, NULL);
->  	if (IS_ERR(*bdevp)) {
->  		error = PTR_ERR(*bdevp);
->  		xfs_warn(mp, "Invalid device [%s], error=%d", name, error);
-> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> index 740afe80f29786..84a931caef514e 100644
-> --- a/include/linux/blk_types.h
-> +++ b/include/linux/blk_types.h
-> @@ -55,6 +55,8 @@ struct block_device {
->  	struct super_block *	bd_super;
->  	void *			bd_claiming;
->  	void *			bd_holder;
-> +	const struct blk_holder_ops *bd_holder_ops;
-> +	struct mutex		bd_holder_lock;
->  	/* The counter of freeze processes */
->  	int			bd_fsfreeze_count;
->  	int			bd_holders;
 > diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index b441e633f4dd49..c94f3b63c86422 100644
+> index c94f3b63c86422..41f894f6355f96 100644
 > --- a/include/linux/blkdev.h
 > +++ b/include/linux/blkdev.h
-> @@ -1465,10 +1465,15 @@ void blkdev_show(struct seq_file *seqf, off_t offset);
->  #define BLKDEV_MAJOR_MAX	0
+> @@ -1466,6 +1466,7 @@ void blkdev_show(struct seq_file *seqf, off_t offset);
 >  #endif
 >  
-> +struct blk_holder_ops {
-> +};
-> +
-> +struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder,
-> +		const struct blk_holder_ops *hops);
->  struct block_device *blkdev_get_by_path(const char *path, fmode_t mode,
-> -		void *holder);
-> -struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder);
-> -int bd_prepare_to_claim(struct block_device *bdev, void *holder);
-> +		void *holder, const struct blk_holder_ops *hops);
-> +int bd_prepare_to_claim(struct block_device *bdev, void *holder,
-> +		const struct blk_holder_ops *hops);
->  void bd_abort_claiming(struct block_device *bdev, void *holder);
->  void blkdev_put(struct block_device *bdev, fmode_t mode);
+>  struct blk_holder_ops {
+> +	void (*mark_dead)(struct block_device *bdev);
+>  };
 >  
-> diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-> index 92e41ed292ada8..801c411530d11c 100644
-> --- a/kernel/power/swap.c
-> +++ b/kernel/power/swap.c
-> @@ -357,7 +357,7 @@ static int swsusp_swap_check(void)
->  	root_swap = res;
->  
->  	hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device, FMODE_WRITE,
-> -			NULL);
-> +			NULL, NULL);
->  	if (IS_ERR(hib_resume_bdev))
->  		return PTR_ERR(hib_resume_bdev);
->  
-> @@ -1524,7 +1524,7 @@ int swsusp_check(void)
->  		mode |= FMODE_EXCL;
->  
->  	hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device,
-> -					    mode, &holder);
-> +					    mode, &holder, NULL);
->  	if (!IS_ERR(hib_resume_bdev)) {
->  		set_blocksize(hib_resume_bdev, PAGE_SIZE);
->  		clear_page(swsusp_header);
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 274bbf79748006..cfbcf7d5705f5f 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -2770,7 +2770,8 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
->  
->  	if (S_ISBLK(inode->i_mode)) {
->  		p->bdev = blkdev_get_by_dev(inode->i_rdev,
-> -				   FMODE_READ | FMODE_WRITE | FMODE_EXCL, p);
-> +				   FMODE_READ | FMODE_WRITE | FMODE_EXCL, p,
-> +				   NULL);
->  		if (IS_ERR(p->bdev)) {
->  			error = PTR_ERR(p->bdev);
->  			p->bdev = NULL;
+>  struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder,
 > -- 
 > 2.39.2
 > 
