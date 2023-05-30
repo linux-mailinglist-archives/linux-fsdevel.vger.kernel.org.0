@@ -2,52 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C4FA716010
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 14:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7836A716015
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 14:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230006AbjE3Mkn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 08:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38540 "EHLO
+        id S231787AbjE3Ml3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 08:41:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231222AbjE3Mkl (ORCPT
+        with ESMTP id S231443AbjE3Ml0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 08:40:41 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAEE0193
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 05:40:18 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-33b508a368fso15134655ab.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 05:40:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685450335; x=1688042335;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lOqU2cFlwwhO3g/33K82Gr+pKM9WLFrsk1Apd8RAs/s=;
-        b=CBYYvuscPDEzFT81NEsmVIKaSDSLyEEAKFIPT9pOvg64mZpo0B81YhTMtrgYZd4cF6
-         ZmKFx9GTE4DOXc1kFS82F7xmhbXa1PZoslHL/GU2gklFrMsF9bnZU/PVX7c1oSAmqaKt
-         uChR3nAZekMVw8lKeDbQp08pMUTPIWEx8VJoB+t45TNEqTjftWt9vklYc5hNmKafnI7x
-         bdbLz0WrPYPA5CcfsGMxbFWlXEttNdY/BaefW9fu3Bjpq/8uKWtCsimHkjyX4cidlWoL
-         ecVlFg+yV42iIZ0mRyEOygX9cWK8mDcFYwNRWtNEYmuXUxZV7tSoCTF5a2ikzdrM4MmL
-         obUQ==
-X-Gm-Message-State: AC+VfDwAORKDCPtiH9Zoy6CSNsqiP5U3cD6hRwCh3vOJeyiwUXVx+T87
-        1mn5DlchifH23QE1uIfBwCNmZY3TE85Qnya7fTAKz8zg6/EI
-X-Google-Smtp-Source: ACHHUZ6YKfKSHb8uLvCulgIoUQCdKLbbZRinmxHVJTu/EwBlr/AyIY9Xi0rLfRbfSg+vRhxlgoDFUVmA9Dz6Wjt2HMaSD7wRwj1A
+        Tue, 30 May 2023 08:41:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C70133;
+        Tue, 30 May 2023 05:41:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C8B662F86;
+        Tue, 30 May 2023 12:39:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A4A6C433EF;
+        Tue, 30 May 2023 12:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685450359;
+        bh=TS1jJ1+J3AnhYCDxSoKKegrqTQJekZ2DPhjOmpAwbX4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NdkOXaeEgM+F3FBJgO2jS8dcT+yhIeR2jhBp4b+Mt6/CCiXJwhyOF9mFJJKclN+Ed
+         TyeH7phT7HQvqz7Iwap+9YtGlv+9O1vssyfXtX92KZCssxuUSWY2wk9h5TEREfQd8u
+         EQkJl4Z+2dcOrleyJ0PE3EzRjwAF+V8IVZKJqdmHFi8mUQWZkQ4QdFzNW6vIdt8nkQ
+         Nz12PgnDL1VDHZZHxljteMZjyj8OXtrGj/AHZZdY6fu309DkkeYcAQeAN+AqL4zx8+
+         3RsaIU9DhepU64I1ugFOxCfYysEFlCxxwbckxW7W99ooZ6IYg8BHmFd7TGM+3RILEX
+         KxlHEX8QcnSug==
+Date:   Tue, 30 May 2023 14:39:15 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Loic Poulain <loic.poulain@linaro.org>
+Cc:     corbet@lwn.net, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] init: Add support for rootwait timeout parameter
+Message-ID: <20230530-anziehen-brokkoli-4c1365e888ea@brauner>
+References: <20230526130716.2932507-1-loic.poulain@linaro.org>
+ <20230530-polytechnisch-besten-258f74577eff@brauner>
+ <CAMZdPi_WE7eegcn3V+7tUsJL2GoGottz2fGY14tkmqG9Tgdbhg@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b41:b0:331:31d7:9816 with SMTP id
- f1-20020a056e020b4100b0033131d79816mr5136261ilu.1.1685450335142; Tue, 30 May
- 2023 05:38:55 -0700 (PDT)
-Date:   Tue, 30 May 2023 05:38:55 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000834af205fce87c00@google.com>
-Subject: [syzbot] Monthly ext4 report (May 2023)
-From:   syzbot <syzbot+list5ea887c46d22b2acf805@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMZdPi_WE7eegcn3V+7tUsJL2GoGottz2fGY14tkmqG9Tgdbhg@mail.gmail.com>
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,38 +57,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ext4 maintainers/developers,
+On Tue, May 30, 2023 at 01:23:50PM +0200, Loic Poulain wrote:
+> Hi Christian,
+> 
+> On Tue, 30 May 2023 at 11:45, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, May 26, 2023 at 03:07:16PM +0200, Loic Poulain wrote:
+> > > Add an optional timeout arg to 'rootwait' as the maximum time in
+> > > seconds to wait for the root device to show up before attempting
+> > > forced mount of the root filesystem.
+> > >
+> > > This can be helpful to force boot failure and restart in case the
+> > > root device does not show up in time, allowing the bootloader to
+> > > take any appropriate measures (e.g. recovery, A/B switch, retry...).
+> > >
+> > > In success case, mounting happens as soon as the root device is ready,
+> > > contrary to the existing 'rootdelay' parameter (unconditional delay).
+> > >
+> > > Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+> > > ---
+> >
+> > Not terribly opposed and not terribly convinced yet.
+> > So, we have rootdelay= with a timeout parameter that allows to specify a
+> > delay before attempting to mount the root device. And we have rootwait
+> > currently as an indefinite wait. Adding a timeout for rootwait doesn't
+> > seem crazy and is backwards compatible. But there's no mention of any
+> > concrete users or use-case for this which is usually preferable. If this
+> > is just "could be useful for someone eventually" it's way less desirable
+> > to merge this than when it's "here's a/multiple user/users"... So I
+> > would love to see a use-case described here.
+> 
+> I can integrate the following use case into a v2 if you think it makes sense:
 
-This is a 31-day syzbot report for the ext4 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ext4
-
-During the period, 3 new issues were detected and 10 were fixed.
-In total, 46 issues are still open and 106 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 124     Yes   kernel BUG in ext4_do_writepages
-                  https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
-<2> 48      No    WARNING in ext4_write_inode (2)
-                  https://syzkaller.appspot.com/bug?extid=748cc361874fca7d33cc
-<3> 8       Yes   WARNING in ext4_da_update_reserve_space (2)
-                  https://syzkaller.appspot.com/bug?extid=a1232eabd7a3d43d4fb5
-<4> 8       Yes   kernel BUG in __ext4_journal_stop
-                  https://syzkaller.appspot.com/bug?extid=bdab24d5bf96d57c50b0
-<5> 7       Yes   kernel BUG in ext4_write_inline_data
-                  https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Yes, please.
