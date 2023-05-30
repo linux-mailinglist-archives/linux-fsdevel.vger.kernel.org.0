@@ -2,121 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B844071536F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 04:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C8D1715430
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 05:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbjE3CIT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 May 2023 22:08:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48612 "EHLO
+        id S229494AbjE3DdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 May 2023 23:33:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230122AbjE3CIQ (ORCPT
+        with ESMTP id S229455AbjE3DdW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 May 2023 22:08:16 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0574E5;
-        Mon, 29 May 2023 19:08:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685412486; x=1716948486;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=reNeQez1F7r8ZGoYnYWNc9HF8+Nb54iuzqiK4gjVInk=;
-  b=RvI0vc8nvPDXh9OLIdtAIF7/GgaoafLv076/HcdN4WE/vzhr6dz1oA3m
-   PhDlBq35suDKVciCo75k6z7s+c/+UaKtluCJIEORY1e96+tkWN9AW5e4A
-   C2VD8SwJ3Zn+pmM/gWBMhvYfVS0BE29hO4WwgIia5chBqRlENtWeVUj+E
-   fg1bocAL2cVIDs/GTin1saCL9sPw3E+rb6ycPBSZM01sAmH9IKViLE+at
-   FmhJqxKHTFfR+JuWFwgNhRUkjhC6a5kG5A0zasbHRMm5ELMHaiwAcvJ96
-   IDIzNF1PzytQvEd86UrQ+yCZXhr3Aa/qxr7haxWXFVUWIxSVb32ePMhnM
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10725"; a="354812291"
-X-IronPort-AV: E=Sophos;i="6.00,201,1681196400"; 
-   d="scan'208";a="354812291"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2023 19:06:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10725"; a="952923391"
-X-IronPort-AV: E=Sophos;i="6.00,201,1681196400"; 
-   d="scan'208";a="952923391"
-Received: from crt-e302.sh.intel.com (HELO localhost.localdomain) ([10.239.45.181])
-  by fmsmga006.fm.intel.com with ESMTP; 29 May 2023 19:06:53 -0700
-From:   chenzhiyin <zhiyin.chen@intel.com>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nanhai.zou@intel.com, zhiyin.chen@intel.com
-Subject: [PATCH] fs.h: Optimize file struct to prevent false sharing
-Date:   Mon, 29 May 2023 22:06:26 -0400
-Message-Id: <20230530020626.186192-1-zhiyin.chen@intel.com>
-X-Mailer: git-send-email 2.39.1
+        Mon, 29 May 2023 23:33:22 -0400
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF93C9;
+        Mon, 29 May 2023 20:33:12 -0700 (PDT)
+X-QQ-mid: bizesmtp84t1685417562t8wq2x3p
+Received: from localhost.localdomain ( [113.200.76.118])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Tue, 30 May 2023 11:32:41 +0800 (CST)
+X-QQ-SSF: 01400000000000C0G000000A0001000
+X-QQ-FEAT: uGhnJwy6xZIa4gIS+jDjc06YMsYLdchXgk3LHYba6K8g4kaZI58NW9IZ70lCx
+        5cr5DUrlSQBm9FHK8DnL0Rq6y/n89ytPLY9sK45p60ngxh7kJB52jYPlxRVeQZ1m2vB+A7h
+        OKyPJBubLG8o9n44Us/9Hb59W1ezLWkzCwgkWTY7ljCo0DvXh9PG6Uewiqo9ajlvlvgVKQ9
+        /dmdj3tPvLOpepy1AEeadSptbdrRzP8N4s+n+6dR9EG6b4mbhKtfpU94sjMILIIkexiPYZ3
+        ueDO4nkAJz5MPRVIfd7m5Uw+Xx9sxkoz/MvkgJBwIuDMJ0iwAHDBAwkprYz8nItvn7MjCqK
+        ebBWuCUlertEnRVyc+rWw6yGg0me0P7N7L01pUXyMtojmuuz6pXCVGIDEf4hhtNaHDvlUnx
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 171752197749127171
+From:   gouhao@uniontech.com
+To:     viro@zeniv.linux.org.uk, brauner@kernel.org, axboe@kernel.dk
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/buffer: using __bio_add_page in submit_bh_wbc()
+Date:   Tue, 30 May 2023 11:32:39 +0800
+Message-Id: <20230530033239.17534-1-gouhao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,T_SCC_BODY_TEXT_LINE,
+        T_SPF_TEMPERROR autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In the syscall test of UnixBench, performance regression occurred
-due to false sharing.
+From: Gou Hao <gouhao@uniontech.com>
 
-The lock and atomic members, including file::f_lock, file::f_count
-and file::f_pos_lock are highly contended and frequently updated
-in the high-concurrency test scenarios. perf c2c indentified one
-affected read access, file::f_op.
-To prevent false sharing, the layout of file struct is changed as
-following
-(A) f_lock, f_count and f_pos_lock are put together to share the
-same cache line.
-(B) The read mostly members, including f_path, f_inode, f_op are
-put into a separate cache line.
-(C) f_mode is put together with f_count, since they are used
-frequently at the same time.
+In submit_bh_wbc(), bio is newly allocated, so it
+does not need any merging logic.
 
-The optimization has been validated in the syscall test of
-UnixBench. performance gain is 30~50%, when the number of parallel
-jobs is 16.
+And using bio_add_page here will execute 'bio_flagged(
+bio, BIO_CLONED)' and 'bio_full' twice, which is unnecessary.
 
-Signed-off-by: chenzhiyin <zhiyin.chen@intel.com>
+Signed-off-by: Gou Hao <gouhao@uniontech.com>
 ---
- include/linux/fs.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 21a981680856..01c55e3a1b96 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -962,23 +962,23 @@ struct file {
- 		struct rcu_head 	f_rcuhead;
- 		unsigned int 		f_iocb_flags;
- 	};
--	struct path		f_path;
--	struct inode		*f_inode;	/* cached value */
--	const struct file_operations	*f_op;
+diff --git a/fs/buffer.c b/fs/buffer.c
+index a7fc561758b1..5abc26d8399d 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2760,7 +2760,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
  
- 	/*
- 	 * Protects f_ep, f_flags.
- 	 * Must not be taken from IRQ context.
- 	 */
- 	spinlock_t		f_lock;
--	atomic_long_t		f_count;
--	unsigned int 		f_flags;
- 	fmode_t			f_mode;
-+	atomic_long_t		f_count;
- 	struct mutex		f_pos_lock;
-+	unsigned int		f_flags;
- 	loff_t			f_pos;
- 	struct fown_struct	f_owner;
- 	const struct cred	*f_cred;
- 	struct file_ra_state	f_ra;
-+	struct path		f_path;
-+	struct inode		*f_inode;	/* cached value */
-+	const struct file_operations	*f_op;
+ 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
  
- 	u64			f_version;
- #ifdef CONFIG_SECURITY
+-	bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
++	__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
+ 	BUG_ON(bio->bi_iter.bi_size != bh->b_size);
+ 
+ 	bio->bi_end_io = end_bio_bh_io_sync;
 -- 
-2.39.1
+2.20.1
 
