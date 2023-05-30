@@ -2,112 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2B8371688D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 18:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C506A7168BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 18:07:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233254AbjE3QC1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 12:02:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49402 "EHLO
+        id S233315AbjE3QHZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 12:07:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233258AbjE3QCV (ORCPT
+        with ESMTP id S233210AbjE3QHK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 12:02:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 830B5188;
-        Tue, 30 May 2023 09:02:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EE42E61E32;
-        Tue, 30 May 2023 16:01:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81848C433D2;
-        Tue, 30 May 2023 16:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685462519;
-        bh=+bjafflQkeGR0pj0+9Bhf6+uOuRDMWm4LCaEU7oL4w0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KLaTmgKr9+qOi4tzVuxg+TXb+MUGtQm7dHTrbVzElWgKQyLB4yL5GjduODeFwRiOu
-         Z/KbTROKs6gwvjktFWLm+DRnfyvGl9LTyL1jLsCJuUcwkddIxWa28IRFVdUB4mzHIc
-         ZIcKKI8sh6HsrQRBikCHvASIM1PBETBZ7XBXwUkiDGchVhpuNNcCgqYfC08Sw14KZN
-         J3FBIe+2O0JrexwQZbteEyl5Y1EvTCK0ovYPa5m9Wq+LR+BL0VbYMte2EVnFOh7pjt
-         vMCw9rDFL12RPrANGQ46P+uvqgCVwG7jGeAYU8SwL5GbXZS8i15QKkNMxcFQvwzrXA
-         B9MAgoVoJO94w==
-Date:   Tue, 30 May 2023 18:01:47 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, code@tyhicks.com,
-        hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
-        sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
-        chuck.lever@oracle.com, jlayton@kernel.org, miklos@szeredi.hu,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        dchinner@redhat.com, john.johansen@canonical.com,
-        mcgrof@kernel.org, mortonm@chromium.org, fred@cloudflare.com,
-        mpe@ellerman.id.au, nathanl@linux.ibm.com, gnoack3000@gmail.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        wangweiyang2@huawei.com
-Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
-Message-ID: <20230530-tumult-adrenalin-8d48cb35d506@brauner>
-References: <20230505081200.254449-1-xiujianfeng@huawei.com>
- <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
- <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net>
- <20230530-mietfrei-zynisch-8b63a8566f66@brauner>
- <20230530142826.GA9376@lst.de>
- <301a58de-e03f-02fd-57c5-1267876eb2df@schaufler-ca.com>
+        Tue, 30 May 2023 12:07:10 -0400
+Received: from out-8.mta1.migadu.com (out-8.mta1.migadu.com [95.215.58.8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94705C9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 09:07:00 -0700 (PDT)
+Date:   Tue, 30 May 2023 12:06:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1685462818;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GvzDBLaFoADOumJHcj6o4wathgB48XH/zOUCBfWh1rI=;
+        b=sy7Fwk/kgvokmeLr0X9kOdkzIshmz3RIjnrrzA/Q5pwbmqQc5EKb47hfIQJddkEkTXT/qF
+        N5qMsH6OoZcTKHOXD4mh38mYq+Qkw0vb6xhb2K2mzIN38Sl8V2TiggGBWUVtydQngHKQTi
+        ML9bOGFfq2i0evMAHiRrTLfgOfmzqoM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/7] block layer patches for bcachefs
+Message-ID: <ZHYfGvPJFONm58dA@moria.home.lan>
+References: <20230525214822.2725616-1-kent.overstreet@linux.dev>
+ <ee03b7ce-8257-17f9-f83e-bea2c64aff16@kernel.dk>
+ <ZHEaKQH22Uxk9jPK@moria.home.lan>
+ <8e874109-db4a-82e3-4020-0596eeabbadf@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <301a58de-e03f-02fd-57c5-1267876eb2df@schaufler-ca.com>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <8e874109-db4a-82e3-4020-0596eeabbadf@kernel.dk>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 30, 2023 at 07:55:17AM -0700, Casey Schaufler wrote:
-> On 5/30/2023 7:28 AM, Christoph Hellwig wrote:
-> > On Tue, May 30, 2023 at 03:58:35PM +0200, Christian Brauner wrote:
-> >> The main concern which was expressed on other patchsets before is that
-> >> modifying inode operations to take struct path is not the way to go.
-> >> Passing struct path into individual filesystems is a clear layering
-> >> violation for most inode operations, sometimes downright not feasible,
-> >> and in general exposing struct vfsmount to filesystems is a hard no. At
-> >> least as far as I'm concerned.
-> > Agreed.  Passing struct path into random places is not how the VFS works.
-> >
-> >> So the best way to achieve the landlock goal might be to add new hooks
-> > What is "the landlock goal", and why does it matter?
-> >
-> >> or not. And we keep adding new LSMs without deprecating older ones (A
-> >> problem we also face in the fs layer.) and then they sit around but
-> >> still need to be taken into account when doing changes.
-> > Yes, I'm really worried about th amount of LSMs we have, and the weird
-> > things they do.
+On Tue, May 30, 2023 at 08:22:50AM -0600, Jens Axboe wrote:
+> On 5/26/23 2:44?PM, Kent Overstreet wrote:
+> > On Fri, May 26, 2023 at 08:35:23AM -0600, Jens Axboe wrote:
+> >> On 5/25/23 3:48?PM, Kent Overstreet wrote:
+> >>> Jens, here's the full series of block layer patches needed for bcachefs:
+> >>>
+> >>> Some of these (added exports, zero_fill_bio_iter?) can probably go with
+> >>> the bcachefs pull and I'm just including here for completeness. The main
+> >>> ones are the bio_iter patches, and the __invalidate_super() patch.
+> >>>
+> >>> The bio_iter series has a new documentation patch.
+> >>>
+> >>> I would still like the __invalidate_super() patch to get some review
+> >>> (from VFS people? unclear who owns this).
+> >>
+> >> I wanted to check the code generation for patches 4 and 5, but the
+> >> series doesn't seem to apply to current -git nor my for-6.5/block.
+> >> There's no base commit in this cover letter either, so what is this
+> >> against?
+> >>
+> >> Please send one that applies to for-6.5/block so it's a bit easier
+> >> to take a closer look at this.
+> > 
+> > Here you go:
+> > git pull https://evilpiepirate.org/git/bcachefs.git block-for-bcachefs
 > 
-> Which LSM(s) do you think ought to be deprecated? I only see one that I
+> Thanks
+> 
+> The re-exporting of helpers is somewhat odd - why is bcachefs special
+> here and needs these, while others do not?
 
-I don't have a good insight into what LSMs are actively used or are
-effectively unused but I would be curious to hear what LSMs are
-considered actively used/maintained from the LSM maintainer's
-perspective.
+It's not iomap based.
 
-> might consider a candidate. As for weird behavior, that's what LSMs are
-> for, and the really weird ones proposed (e.g. pathname character set limitations)
+> But the main issue for me are the iterator changes, which mostly just
+> seems like unnecessary churn. What's the justification for these? The
+> commit messages don;t really have any. Doesn't seem like much of a
+> simplification, and in fact it's more code than before and obviously
+> more stack usage as well.
 
-If this is effectively saying that LSMs are licensed to step outside the
-rules of the subsystem they're a guest in then it seems unlikely
-subsystems will be very excited to let new LSM changes go in important
-codepaths going forward. In fact this seems like a good argument against
-it.
+I need bio_for_each_folio().
+
+The approach taken by the bcachefs IO paths is to first build up bios,
+then walk the extents btree to determine where to send them, splitting
+as needed.
+
+For reading into the page cache we additionally need to initialize our
+private state based on what we're reading from that says what's on disk
+(unallocated, reservation, or normal allocation) and how many replicas.
+This is used for both i_blocks accounting and for deciding when we need
+to get a disk reservation. Since we're doing this post split, it needs
+bio_for_each_folio, not the _all variant.
+
+Yes, the iterator changes are a bit more code - but it's split up into
+better helpers now, the pointer arithmetic before was a bit dense; I
+found the result to be more readable. I'm surprised at more stack usage;
+I would have expected _less_ for bio_for_each_page_all() since it gets
+rid of a pointer into the bvec_iter_all. How did you measure that?
