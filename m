@@ -2,58 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C89C716031
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 14:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82D347160BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 14:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231373AbjE3Mmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 08:42:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40844 "EHLO
+        id S232479AbjE3M5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 08:57:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbjE3Mmu (ORCPT
+        with ESMTP id S232435AbjE3M4q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 08:42:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 645E8A1;
-        Tue, 30 May 2023 05:42:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 30 May 2023 08:56:46 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23EDE74;
+        Tue, 30 May 2023 05:56:02 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BB3FC62F82;
-        Tue, 30 May 2023 12:42:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78B3CC433D2;
-        Tue, 30 May 2023 12:42:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685450538;
-        bh=AjbhKWnLkbzSGImSCtxRr31JpRn/bFy4QpGd/SOJtsQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U+6p+TL98fxRHUAbLkCHzfVMO5xsp5WqmINUupyMMLssUcIgc7Kmxv+V5Kds/fS0N
-         yzdgl57dIZFTnAnMYhyai0TY9oiFNDAeL90OBvAgWMy8D7OVhPQfEttMLr8iPJCiJa
-         PdOkheBNknMRnIRgb67UOyGSZX4jrtc6jAD6hFbXNk9vZfqEQi6Jkd/SIVZf0VVWcY
-         TDax/ezF+3aGAVkJzc+V/S2laopkDQr19jiOqZOAfD6tWfhr9herMBemtwqsN43Oyk
-         fqM1pNJGwLAhDlCQ0WyBCzAlWxBBawRN6NTDWgG2e5AfzdYsZQ/b1Bkm6gyqiAMOp9
-         Gg6KXHzh3jOkQ==
-Date:   Tue, 30 May 2023 14:42:07 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J. Wong" <djwong@kernel.org>, Ted Tso <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4/6] fs: Establish locking order for unrelated directories
-Message-ID: <20230530-darauf-nordost-4e631cd8f1d0@brauner>
-References: <20230525100654.15069-1-jack@suse.cz>
- <20230525101624.15814-4-jack@suse.cz>
- <20230526-polarstern-herrichten-32fc46c63bfc@brauner>
- <20230529124131.gbb3fmhrspl332i6@quack3>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4F3E321AA0;
+        Tue, 30 May 2023 12:55:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1685451340; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Qz6VxSG6Me8cMILTxPNvLBOuIKtS1BXIYbnFAOzFU88=;
+        b=RNM/5v9I0cJcxe2sgHVWKvoJ27BJ/3BbwFUlVHziTd7W/RqzpgPEKRvFcNBwwBMvYv+gDS
+        lqz36elGppGr6JcTnA6KRI7+KEvgmr46pD8DmL2tigbtQ8YArVKOKHdZzD1cxJONnJlzPH
+        yOx+bng3UCPGQr7a2XRluMW9OmAUfX4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1685451340;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Qz6VxSG6Me8cMILTxPNvLBOuIKtS1BXIYbnFAOzFU88=;
+        b=E0j6eqL4WpPaYkWdFKYUucEWYhdWrYqciFAO8En1dOpC19SmzyWLmu2enr5ip67P2d1fWA
+        SN0mmS3X+MiEm1Bg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 405A713478;
+        Tue, 30 May 2023 12:55:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id I5esD0zydWTlLQAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 30 May 2023 12:55:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id CAEB4A0754; Tue, 30 May 2023 14:55:39 +0200 (CEST)
+Date:   Tue, 30 May 2023 14:55:39 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 07/13] block: delete partitions later in del_gendisk
+Message-ID: <20230530125539.fmby32cz3grnueu6@quack3>
+References: <20230518042323.663189-1-hch@lst.de>
+ <20230518042323.663189-8-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230529124131.gbb3fmhrspl332i6@quack3>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20230518042323.663189-8-hch@lst.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,64 +75,141 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 29, 2023 at 02:41:31PM +0200, Jan Kara wrote:
-> On Fri 26-05-23 11:45:15, Christian Brauner wrote:
-> > On Thu, May 25, 2023 at 12:16:10PM +0200, Jan Kara wrote:
-> > > Currently the locking order of inode locks for directories that are not
-> > > in ancestor relationship is not defined because all operations that
-> > > needed to lock two directories like this were serialized by
-> > > sb->s_vfs_rename_mutex. However some filesystems need to lock two
-> > > subdirectories for RENAME_EXCHANGE operations and for this we need the
-> > > locking order established even for two tree-unrelated directories.
-> > > Provide a helper function lock_two_inodes() that establishes lock
-> > > ordering for any two inodes and use it in lock_two_directories().
-> > > 
-> > > CC: stable@vger.kernel.org
-> > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > ---
-> > >  fs/inode.c    | 34 ++++++++++++++++++++++++++++++++++
-> > >  fs/internal.h |  2 ++
-> > >  fs/namei.c    |  4 ++--
-> > >  3 files changed, 38 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/inode.c b/fs/inode.c
-> > > index 577799b7855f..2015fa50d34a 100644
-> > > --- a/fs/inode.c
-> > > +++ b/fs/inode.c
-> > > @@ -1103,6 +1103,40 @@ void discard_new_inode(struct inode *inode)
-> > >  }
-> > >  EXPORT_SYMBOL(discard_new_inode);
-> > >  
-> > > +/**
-> > > + * lock_two_inodes - lock two inodes (may be regular files but also dirs)
-> > > + *
-> > > + * Lock any non-NULL argument. The caller must make sure that if he is passing
-> > > + * in two directories, one is not ancestor of the other.  Zero, one or two
-> > > + * objects may be locked by this function.
-> > > + *
-> > > + * @inode1: first inode to lock
-> > > + * @inode2: second inode to lock
-> > > + * @subclass1: inode lock subclass for the first lock obtained
-> > > + * @subclass2: inode lock subclass for the second lock obtained
-> > > + */
-> > > +void lock_two_inodes(struct inode *inode1, struct inode *inode2,
-> > > +		     unsigned subclass1, unsigned subclass2)
-> > > +{
-> > > +	if (!inode1 || !inode2)
-> > > +		goto lock;
-> > 
-> > Before this change in
-> > 
-> > lock_two_nondirectories(struct inode *inode1, struct inode *inode2)
-> > 
-> > the swap() would cause the non-NULL inode to always be locked with
-> > I_MUTEX_NONDIR2. Now it can be either I_MUTEX_NORMAL or I_MUTEX_NONDIR2.
-> > Is that change intentional?
+On Thu 18-05-23 06:23:16, Christoph Hellwig wrote:
+> Delay dropping the block_devices for partitions in del_gendisk until
+> after the call to blk_mark_disk_dead, so that we can implementat
+> notification of removed devices in blk_mark_disk_dead.
 > 
-> Kind of. I don't think we really care so I didn't bother to complicate the
-> code for this. If you think keeping the lockdep class consistent is worth
-> it, I can modify the patch...
+> This requires splitting a lower-level drop_partition helper out of
+> delete_partition and using that from del_gendisk, while having a
+> common loop for the whole device and partitions that calls
+> remove_inode_hash, fsync_bdev and __invalidate_device before the
+> call to blk_mark_disk_dead.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Either a short comment or consistent lockdep class would be nice. I know
-it probably doesn't matter much but otherwise someone may end up
-wondering whether that's ok or not.
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  block/blk.h             |  2 +-
+>  block/genhd.c           | 24 +++++++++++++++++++-----
+>  block/partitions/core.c | 19 ++++++++++++-------
+>  3 files changed, 32 insertions(+), 13 deletions(-)
+> 
+> diff --git a/block/blk.h b/block/blk.h
+> index 45547bcf111938..4363052f90416a 100644
+> --- a/block/blk.h
+> +++ b/block/blk.h
+> @@ -409,7 +409,7 @@ int bdev_add_partition(struct gendisk *disk, int partno, sector_t start,
+>  int bdev_del_partition(struct gendisk *disk, int partno);
+>  int bdev_resize_partition(struct gendisk *disk, int partno, sector_t start,
+>  		sector_t length);
+> -void blk_drop_partitions(struct gendisk *disk);
+> +void drop_partition(struct block_device *part);
+>  
+>  void bdev_set_nr_sectors(struct block_device *bdev, sector_t sectors);
+>  
+> diff --git a/block/genhd.c b/block/genhd.c
+> index a744daeed55318..bd4c4eca31363e 100644
+> --- a/block/genhd.c
+> +++ b/block/genhd.c
+> @@ -615,6 +615,8 @@ EXPORT_SYMBOL_GPL(blk_mark_disk_dead);
+>  void del_gendisk(struct gendisk *disk)
+>  {
+>  	struct request_queue *q = disk->queue;
+> +	struct block_device *part;
+> +	unsigned long idx;
+>  
+>  	might_sleep();
+>  
+> @@ -623,16 +625,28 @@ void del_gendisk(struct gendisk *disk)
+>  
+>  	disk_del_events(disk);
+>  
+> +	/*
+> +	 * Prevent new openers by unlinked the bdev inode, and write out
+> +	 * dirty data before marking the disk dead and stopping all I/O.
+> +	 */
+>  	mutex_lock(&disk->open_mutex);
+> -	remove_inode_hash(disk->part0->bd_inode);
+> -	blk_drop_partitions(disk);
+> +	xa_for_each(&disk->part_tbl, idx, part) {
+> +		remove_inode_hash(part->bd_inode);
+> +		fsync_bdev(part);
+> +		__invalidate_device(part, true);
+> +	}
+>  	mutex_unlock(&disk->open_mutex);
+>  
+> -	fsync_bdev(disk->part0);
+> -	__invalidate_device(disk->part0, true);
+> -
+>  	blk_mark_disk_dead(disk);
+>  
+> +	/*
+> +	 * Drop all partitions now that the disk is marked dead.
+> +	 */
+> +	mutex_lock(&disk->open_mutex);
+> +	xa_for_each_start(&disk->part_tbl, idx, part, 1)
+> +		drop_partition(part);
+> +	mutex_unlock(&disk->open_mutex);
+> +
+>  	if (!(disk->flags & GENHD_FL_HIDDEN)) {
+>  		sysfs_remove_link(&disk_to_dev(disk)->kobj, "bdi");
+>  
+> diff --git a/block/partitions/core.c b/block/partitions/core.c
+> index fa5c707fe0ad2f..31ac815d77a83c 100644
+> --- a/block/partitions/core.c
+> +++ b/block/partitions/core.c
+> @@ -263,10 +263,19 @@ struct device_type part_type = {
+>  	.uevent		= part_uevent,
+>  };
+>  
+> -static void delete_partition(struct block_device *part)
+> +void drop_partition(struct block_device *part)
+>  {
+>  	lockdep_assert_held(&part->bd_disk->open_mutex);
+>  
+> +	xa_erase(&part->bd_disk->part_tbl, part->bd_partno);
+> +	kobject_put(part->bd_holder_dir);
+> +
+> +	device_del(&part->bd_device);
+> +	put_device(&part->bd_device);
+> +}
+> +
+> +static void delete_partition(struct block_device *part)
+> +{
+>  	/*
+>  	 * Remove the block device from the inode hash, so that it cannot be
+>  	 * looked up any more even when openers still hold references.
+> @@ -276,11 +285,7 @@ static void delete_partition(struct block_device *part)
+>  	fsync_bdev(part);
+>  	__invalidate_device(part, true);
+>  
+> -	xa_erase(&part->bd_disk->part_tbl, part->bd_partno);
+> -	kobject_put(part->bd_holder_dir);
+> -	device_del(&part->bd_device);
+> -
+> -	put_device(&part->bd_device);
+> +	drop_partition(part);
+>  }
+>  
+>  static ssize_t whole_disk_show(struct device *dev,
+> @@ -519,7 +524,7 @@ static bool disk_unlock_native_capacity(struct gendisk *disk)
+>  	return true;
+>  }
+>  
+> -void blk_drop_partitions(struct gendisk *disk)
+> +static void blk_drop_partitions(struct gendisk *disk)
+>  {
+>  	struct block_device *part;
+>  	unsigned long idx;
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
