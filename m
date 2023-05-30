@@ -2,78 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65D477167F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 17:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 225727167E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 17:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230374AbjE3Pv5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 11:51:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40154 "EHLO
+        id S230375AbjE3Pvl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 11:51:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232840AbjE3PvH (ORCPT
+        with ESMTP id S232733AbjE3Pup (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 11:51:07 -0400
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 977AF123;
-        Tue, 30 May 2023 08:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1685461830; x=1716997830;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eyPQiHOzD3W2DQRKwVAI2Cbe6Umke2Yu0VLdprV7VgA=;
-  b=B+xdn/zItxk6VZTLGReToDp/fwoeh2V4UxHrimaBzcC/IwHaX+uncGkH
-   Gyh2pCWLdjUK4DPLr2YKTtgzJqpwkAKSVTuWT9qFRUbVVcjiRkbEsP6OP
-   y5kgiTgD/GmysLEvqfTwEdD9RD6arQySKj3tQkL+dR0GRWQHcyaj+IGHm
-   xmcEQw/pUmaoo8gGNMF1OstRCoFdu6HnLPLUKuPXJkDudS8zTGy6+6/Da
-   +DMc2RM+5Nx26hMuMVCI7VcrLdfQhbXhkUy0RnbX13LzxlvtguWS62qp5
-   Tt7Jy0LwSJmNO5mI1G8Sm3b1AOsXwtlWDec+CZMdMvA+2RkpRsV+dVUcY
-   w==;
-X-IronPort-AV: E=Sophos;i="6.00,204,1681142400"; 
-   d="scan'208";a="230129909"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 30 May 2023 23:50:29 +0800
-IronPort-SDR: F9jKRLUXq/OoUCrD7C/Q4DPRQnFptPSsFWYc16lgtCpx4zpY5E8ftX4BqeYV+wL28YlKFh/M95
- JfPtuiASJ404lullBRYc9lZh9lNAilMwChHXfLIdYb/cw7XfWv4XWUZ1k8dLnZ8IPfxlTyT5fQ
- vGFEi8RDNGh721cRImVAxdE7XXQa4mggAHxJZnDf+UXJAZ/xsFOG2mxVcrDaNyFnFjo/QuSd4j
- QcgTTSMukdJwDzI4pHxYp7DzAtoUDaQeKaQAKGWdTVn2AuOQ4NjtrDS3uDCqmAjpUjQO9QUIMe
- IRk=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 May 2023 08:05:23 -0700
-IronPort-SDR: bSqBFzv7rrWvPvkE4gwhOHj9e0jpcVXnuD/Kq3xELlTSi+Nq3cUl8HGoaL0rUxB1OR25AAJdei
- TIPhTBMTndkhO2YNy8PxBhVVLv4Kla8ZXnfIi5I7M3fxa3gTd8oOlhRXj2aVcnNgmc/rxQ3lh0
- pt68H/iNv5aYOaAvAaRNX6IexlshH2MNcr7cPmRVBzj+I1Z64b2NARfsMPI8qXzvdg6WEXxV+l
- Bxa2dMoJnICTi4jECIHCBYec6Uvp0PaRuTsjD5YAUZHSr6x9Mm/SzMBT9zXRe7WaHmXxtQTl7o
- Jr8=
-WDCIronportException: Internal
-Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.6])
-  by uls-op-cesaip02.wdc.com with ESMTP; 30 May 2023 08:50:27 -0700
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dm-devel@redhat.com, Song Liu <song@kernel.org>,
-        linux-raid@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>, gouhao@uniontech.com,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v6 20/20] block: mark bio_add_folio as __must_check
-Date:   Tue, 30 May 2023 08:49:23 -0700
-Message-Id: <3d45098a7640897cbace54713efe10d88b74c160.1685461490.git.johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <cover.1685461490.git.johannes.thumshirn@wdc.com>
-References: <cover.1685461490.git.johannes.thumshirn@wdc.com>
+        Tue, 30 May 2023 11:50:45 -0400
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22F3FEC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 08:49:56 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-75b1975ea18so262107485a.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 08:49:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685461795; x=1688053795;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ef9UXKlo6HOEzGKOWoRQOx3X1Mv/S3dqqbfR/aqcj1E=;
+        b=EMOA1rDYz+ZmDBe7askj85gnLKl1WSy1PmjV5GAzGZCATo5dvYS7iGKE5tKP4JqYAu
+         wQD/mSR8byk30+Gnb57oXDgfd9yafYdpm68fCLRA2jBPlj4bgz9jevueP/ybAntM/NXa
+         VaqczDvCZ8GLABGkMVT50NEw9zbQxVW72vYcGmxDv4IlvAWuZMV5c1W9pUj1TN2fbnPH
+         NKJy1B1MKe2aDcN/PlmajRn36Yje1dXzXodikDg3MFwDc6ElKConpdRw/I0+z477irjr
+         FMzc8pphXl+CVWVLnaYH40hBn8uRzJBkCPYRr53FjWVMt+0+WOFpK2uscmo+ow4ZFY/z
+         6TLw==
+X-Gm-Message-State: AC+VfDyiVqJ2cEwfTasfIpTegN9doBMRGP1tnrbyASNcNmj4NbFr+RWk
+        1bUp7LPpSAGpEhETTraoeB4X
+X-Google-Smtp-Source: ACHHUZ7pliMoFycu95ZOXiwcTabY+u351+caH9+LwJwAEUbICb4vYuE61O+IVefjdSw8mai/KPkDog==
+X-Received: by 2002:a05:620a:8084:b0:75c:c99d:e416 with SMTP id ef4-20020a05620a808400b0075cc99de416mr2289656qkb.49.1685461794842;
+        Tue, 30 May 2023 08:49:54 -0700 (PDT)
+Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
+        by smtp.gmail.com with ESMTPSA id a23-20020a05620a16d700b0075b053ab66bsm4135656qkn.50.2023.05.30.08.49.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 May 2023 08:49:54 -0700 (PDT)
+Date:   Tue, 30 May 2023 11:49:53 -0400
+From:   Mike Snitzer <snitzer@kernel.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        "axboe @ kernel . dk" <axboe@kernel.dk>, shaggy@kernel.org,
+        damien.lemoal@wdc.com, cluster-devel@redhat.com, kch@nvidia.com,
+        agruenba@redhat.com, linux-mm@kvack.org,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        jfs-discussion@lists.sourceforge.net, willy@infradead.org,
+        ming.lei@redhat.com, linux-block@vger.kernel.org, song@kernel.org,
+        dm-devel@redhat.com, rpeterso@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        hch@lst.de
+Subject: Re: [PATCH v5 16/20] dm-crypt: check if adding pages to clone bio
+ fails
+Message-ID: <ZHYbIYxGbcXbpvIK@redhat.com>
+References: <20230502101934.24901-1-johannes.thumshirn@wdc.com>
+ <20230502101934.24901-17-johannes.thumshirn@wdc.com>
+ <alpine.LRH.2.21.2305301045220.3943@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.2305301045220.3943@file01.intranet.prod.int.rdu2.redhat.com>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,27 +71,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that all callers of bio_add_folio() check the return value, mark it as
-__must_check.
+On Tue, May 30 2023 at 11:13P -0400,
+Mikulas Patocka <mpatocka@redhat.com> wrote:
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- include/linux/bio.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> 
+> On Tue, 2 May 2023, Johannes Thumshirn wrote:
+> 
+> > Check if adding pages to clone bio fails and if it does retry with
+> > reclaim. This mirrors the behaviour of page allocation in
+> > crypt_alloc_buffer().
+> > 
+> > This way we can mark bio_add_pages as __must_check.
+> > 
+> > Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+> > Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> > ---
+> >  drivers/md/dm-crypt.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+> > index 8b47b913ee83..b234dc089cee 100644
+> > --- a/drivers/md/dm-crypt.c
+> > +++ b/drivers/md/dm-crypt.c
+> > @@ -1693,7 +1693,14 @@ static struct bio *crypt_alloc_buffer(struct dm_crypt_io *io, unsigned int size)
+> >  
+> >  		len = (remaining_size > PAGE_SIZE) ? PAGE_SIZE : remaining_size;
+> >  
+> > -		bio_add_page(clone, page, len, 0);
+> > +		if (!bio_add_page(clone, page, len, 0)) {
+> > +			mempool_free(page, &cc->page_pool);
+> > +			crypt_free_buffer_pages(cc, clone);
+> > +			bio_put(clone);
+> > +			gfp_mask |= __GFP_DIRECT_RECLAIM;
+> > +			goto retry;
+> > +
+> > +		}
+> >  
+> >  		remaining_size -= len;
+> >  	}
+> 
+> Hi
+> 
+> I nack this. This just adds code that can't ever be executed.
+> 
+> dm-crypt already allocates enough entries in the vector (see "unsigned int 
+> nr_iovecs = (size + PAGE_SIZE - 1) >> PAGE_SHIFT;"), so bio_add_page can't 
+> fail.
+> 
+> If you want to add __must_check to bio_add_page, you should change the 
+> dm-crypt code to:
+> if (!bio_add_page(clone, page, len, 0)) {
+> 	WARN(1, "this can't happen");
+> 	return NULL;
+> }
+> and not write recovery code for a can't-happen case.
 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 4232a17e6b10..fef9f3085a02 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -466,7 +466,7 @@ void bio_reset(struct bio *bio, struct block_device *bdev, blk_opf_t opf);
- void bio_chain(struct bio *, struct bio *);
- 
- int __must_check bio_add_page(struct bio *, struct page *, unsigned len, unsigned off);
--bool bio_add_folio(struct bio *, struct folio *, size_t len, size_t off);
-+bool __must_check bio_add_folio(struct bio *, struct folio *, size_t len, size_t off);
- extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
- 			   unsigned int, unsigned int);
- int bio_add_zone_append_page(struct bio *bio, struct page *page,
--- 
-2.40.1
+Thanks for the review Mikulas. But the proper way forward, in the
+context of this patchset, is to simply change bio_add_page() to
+__bio_add_page()
 
+Subject becomes: "dm crypt: use __bio_add_page to add single page to clone bio"
+
+And header can explain that "crypt_alloc_buffer() already allocates
+enough entries in the clone bio's vector, so bio_add_page can't fail".
+
+Mike
