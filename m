@@ -2,109 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C506A7168BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 18:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06CB57168E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 18:11:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233315AbjE3QHZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 12:07:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53702 "EHLO
+        id S233387AbjE3QLf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 12:11:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233210AbjE3QHK (ORCPT
+        with ESMTP id S231256AbjE3QLd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 12:07:10 -0400
-Received: from out-8.mta1.migadu.com (out-8.mta1.migadu.com [95.215.58.8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94705C9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 09:07:00 -0700 (PDT)
-Date:   Tue, 30 May 2023 12:06:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1685462818;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GvzDBLaFoADOumJHcj6o4wathgB48XH/zOUCBfWh1rI=;
-        b=sy7Fwk/kgvokmeLr0X9kOdkzIshmz3RIjnrrzA/Q5pwbmqQc5EKb47hfIQJddkEkTXT/qF
-        N5qMsH6OoZcTKHOXD4mh38mYq+Qkw0vb6xhb2K2mzIN38Sl8V2TiggGBWUVtydQngHKQTi
-        ML9bOGFfq2i0evMAHiRrTLfgOfmzqoM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/7] block layer patches for bcachefs
-Message-ID: <ZHYfGvPJFONm58dA@moria.home.lan>
-References: <20230525214822.2725616-1-kent.overstreet@linux.dev>
- <ee03b7ce-8257-17f9-f83e-bea2c64aff16@kernel.dk>
- <ZHEaKQH22Uxk9jPK@moria.home.lan>
- <8e874109-db4a-82e3-4020-0596eeabbadf@kernel.dk>
+        Tue, 30 May 2023 12:11:33 -0400
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A0C13D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 09:10:17 -0700 (PDT)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-626117a8610so15885286d6.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 09:10:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685463017; x=1688055017;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Irk/8GUWmwLYWfm2Lio5fOal+y0GOgImfVphQa7iGfs=;
+        b=bN9dGcZ1hdC6k34rh5scm2sIehbYfy2UpFHrLcy9BSFdZIanrCm4ij8HefvoLZjCK2
+         y74M76O/XBZ9KdYUA9dHmyO+cuqlCsPHCA6lXWs36JIG5JtueaMyjTQDNp/MRprzDb3L
+         KrBB6NVThOg3NSeERkVzBWZaem/gd05Xdi65EARLC2dDWfkskqyY82B7lU4cTl5iUgre
+         NsfqcEH+hbgl9vJOQyWyEhXC8LRAA5KwwX4AVMLhloVB7KMGVbrqVHjrP3dty5djqSZf
+         PZCV9w3nLF2ppxaai72aQsp712k8W36hgu5ls+l9sz+z4lk/ukGfHy7czpzQNzIB/3+1
+         V+zA==
+X-Gm-Message-State: AC+VfDzGfAHKZCJ+JkTINd+PhcYTKWeH5LjZuypT8bSC8Cik7FAwGkhl
+        P1+QO9XgNhemOM6njdOtZn7j
+X-Google-Smtp-Source: ACHHUZ56MECtsjcewLbFVxD7Rkez1npKixqOW82Zsid/kEpDsAmjiM2JZkfOYT0pMaVRxjwqyQggQQ==
+X-Received: by 2002:ad4:5b8d:0:b0:625:af4b:4162 with SMTP id 13-20020ad45b8d000000b00625af4b4162mr2721624qvp.14.1685463016980;
+        Tue, 30 May 2023 09:10:16 -0700 (PDT)
+Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
+        by smtp.gmail.com with ESMTPSA id w20-20020a0562140b3400b0062381fa97c5sm898935qvj.92.2023.05.30.09.10.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 May 2023 09:10:16 -0700 (PDT)
+Date:   Tue, 30 May 2023 12:10:15 -0400
+From:   Mike Snitzer <snitzer@kernel.org>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net, Song Liu <song@kernel.org>,
+        dm-devel@redhat.com, Christoph Hellwig <hch@lst.de>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-raid@vger.kernel.org,
+        Bob Peterson <rpeterso@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        linux-block@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>, gouhao@uniontech.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 16/20] dm-crypt: check if adding pages to clone bio
+ fails
+Message-ID: <ZHYf5+ocDL0hsud6@redhat.com>
+References: <cover.1685461490.git.johannes.thumshirn@wdc.com>
+ <e1c7ed59e2d2b69567ef2d9925fa997ecb7b4822.1685461490.git.johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8e874109-db4a-82e3-4020-0596eeabbadf@kernel.dk>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <e1c7ed59e2d2b69567ef2d9925fa997ecb7b4822.1685461490.git.johannes.thumshirn@wdc.com>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 30, 2023 at 08:22:50AM -0600, Jens Axboe wrote:
-> On 5/26/23 2:44?PM, Kent Overstreet wrote:
-> > On Fri, May 26, 2023 at 08:35:23AM -0600, Jens Axboe wrote:
-> >> On 5/25/23 3:48?PM, Kent Overstreet wrote:
-> >>> Jens, here's the full series of block layer patches needed for bcachefs:
-> >>>
-> >>> Some of these (added exports, zero_fill_bio_iter?) can probably go with
-> >>> the bcachefs pull and I'm just including here for completeness. The main
-> >>> ones are the bio_iter patches, and the __invalidate_super() patch.
-> >>>
-> >>> The bio_iter series has a new documentation patch.
-> >>>
-> >>> I would still like the __invalidate_super() patch to get some review
-> >>> (from VFS people? unclear who owns this).
-> >>
-> >> I wanted to check the code generation for patches 4 and 5, but the
-> >> series doesn't seem to apply to current -git nor my for-6.5/block.
-> >> There's no base commit in this cover letter either, so what is this
-> >> against?
-> >>
-> >> Please send one that applies to for-6.5/block so it's a bit easier
-> >> to take a closer look at this.
-> > 
-> > Here you go:
-> > git pull https://evilpiepirate.org/git/bcachefs.git block-for-bcachefs
+On Tue, May 30 2023 at 11:49P -0400,
+Johannes Thumshirn <johannes.thumshirn@wdc.com> wrote:
+
+> Check if adding pages to clone bio fails and if it does retry with
+> reclaim. This mirrors the behaviour of page allocation in
+> crypt_alloc_buffer().
+
+Nope.
+
+> This way we can mark bio_add_pages as __must_check.
 > 
-> Thanks
+> Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+
+The above patch header doesn't reflect the code.
+
+I also think __bio_add_page should be used, like my racey reply to
+Mikulas vs your v6 patchbomb said, please see:
+https://listman.redhat.com/archives/dm-devel/2023-May/054388.html
+
+Thanks,
+Mike
+
+> ---
+>  drivers/md/dm-crypt.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> The re-exporting of helpers is somewhat odd - why is bcachefs special
-> here and needs these, while others do not?
-
-It's not iomap based.
-
-> But the main issue for me are the iterator changes, which mostly just
-> seems like unnecessary churn. What's the justification for these? The
-> commit messages don;t really have any. Doesn't seem like much of a
-> simplification, and in fact it's more code than before and obviously
-> more stack usage as well.
-
-I need bio_for_each_folio().
-
-The approach taken by the bcachefs IO paths is to first build up bios,
-then walk the extents btree to determine where to send them, splitting
-as needed.
-
-For reading into the page cache we additionally need to initialize our
-private state based on what we're reading from that says what's on disk
-(unallocated, reservation, or normal allocation) and how many replicas.
-This is used for both i_blocks accounting and for deciding when we need
-to get a disk reservation. Since we're doing this post split, it needs
-bio_for_each_folio, not the _all variant.
-
-Yes, the iterator changes are a bit more code - but it's split up into
-better helpers now, the pointer arithmetic before was a bit dense; I
-found the result to be more readable. I'm surprised at more stack usage;
-I would have expected _less_ for bio_for_each_page_all() since it gets
-rid of a pointer into the bvec_iter_all. How did you measure that?
+> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+> index 8b47b913ee83..0dd231e61757 100644
+> --- a/drivers/md/dm-crypt.c
+> +++ b/drivers/md/dm-crypt.c
+> @@ -1693,7 +1693,10 @@ static struct bio *crypt_alloc_buffer(struct dm_crypt_io *io, unsigned int size)
+>  
+>  		len = (remaining_size > PAGE_SIZE) ? PAGE_SIZE : remaining_size;
+>  
+> -		bio_add_page(clone, page, len, 0);
+> +		if (!bio_add_page(clone, page, len, 0)) {
+> +			WARN_ONCE(1, "Adding page to bio failed\n");
+> +			return NULL;
+> +		}
+>  
+>  		remaining_size -= len;
+>  	}
+> -- 
+> 2.40.1
+> 
+> --
+> dm-devel mailing list
+> dm-devel@redhat.com
+> https://listman.redhat.com/mailman/listinfo/dm-devel
+> 
