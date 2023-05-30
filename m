@@ -2,69 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DB1B7162CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 15:58:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86CD27162F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 16:03:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232559AbjE3N6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 09:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44954 "EHLO
+        id S232828AbjE3OD1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 10:03:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232519AbjE3N6v (ORCPT
+        with ESMTP id S232827AbjE3OD0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 09:58:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF4F7103;
-        Tue, 30 May 2023 06:58:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 64582622B2;
-        Tue, 30 May 2023 13:58:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8179C433EF;
-        Tue, 30 May 2023 13:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685455127;
-        bh=hcaXRRGzPBhBBLpEW0isVOB3DKBAASE/ESHMgHvcgQE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WiHDyUv0qet+LrK4Zo5p1pc0ctSRdXlGbGZ8tl02Vx1vVgIRAhB0H5UMaqqDHCAjZ
-         XQjzg7jCBTWXmvjejDMJipaWrKARky609Yw4j6YSdroUBzfV6QT0wSj8m6CaH3tf0a
-         g4ThSKzN/ETU2CeP8TDgy1vX+fJrEgQ9qrU3Cu+nWH+h4goHpMT99clf4C9yvIzoAB
-         u6Ie6MA2SMi94iAxjNCCjqDTP+kXpP/GK97lw9niukWZB/T5wC/9lm8/PN4UXluqrd
-         /1sYc6xTyVRqd7BZWVLzTIgi3XyklcdR9AufeJU8WFw8ZcapWsg4DCuEgpAdU784dC
-         miq8usuqEjdFQ==
-Date:   Tue, 30 May 2023 15:58:35 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     Xiu Jianfeng <xiujianfeng@huawei.com>, gregkh@linuxfoundation.org,
-        rafael@kernel.org, viro@zeniv.linux.org.uk, dhowells@redhat.com,
-        code@tyhicks.com, hirofumi@mail.parknet.co.jp,
-        linkinjeon@kernel.org, sfrench@samba.org, senozhatsky@chromium.org,
-        tom@talpey.com, chuck.lever@oracle.com, jlayton@kernel.org,
-        miklos@szeredi.hu, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com, dchinner@redhat.com,
-        john.johansen@canonical.com, mcgrof@kernel.org,
-        mortonm@chromium.org, fred@cloudflare.com, mpe@ellerman.id.au,
-        nathanl@linux.ibm.com, gnoack3000@gmail.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        wangweiyang2@huawei.com, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
-Message-ID: <20230530-mietfrei-zynisch-8b63a8566f66@brauner>
-References: <20230505081200.254449-1-xiujianfeng@huawei.com>
- <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
- <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net>
+        Tue, 30 May 2023 10:03:26 -0400
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87553D9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 07:02:42 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-625a9e2bf6bso22675686d6.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 07:02:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685455361; x=1688047361;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SLXZZ4okt0cYFY/QNAJJGFsPl/H71jdcBcEpr3wA2kw=;
+        b=EK2kkN0ejNxTuHlMbgEjO2Z1u460d8DnyX+fjkCQyd5CdiM5XijjWNBsLMaAvDlA7G
+         dv+kNquwoBB8WltlsB8SlyUFinvB1kBbp/BEvXyiHJbvDaPavwePy/RNVgQ/2SLsY5gA
+         MpC4Ud2AUXGUPZctuizuT0eDBI9HuVYI7BsxUhaQA495gcReQHjfGczjz71OlMdsGogy
+         Und9T8m1NeUmYiZFubjV6PK3Fewv7X8s8H00chFmq3R7c9qAyTzCvgB2YdjxfkBl5srC
+         vaXSXYxHPzL3n0hQBxSpHnkSoQKJotO/n6UsjoTjDRYT3a1LuAM+zdjayeeXYtsMmduS
+         KZkg==
+X-Gm-Message-State: AC+VfDx2KXrH/tSRHF7eb1ThCGL7Q+ONPF3xhjE3OICV2gABt/RxJgCl
+        MnoFhDuvRhiQS7AHQSLsd4fF
+X-Google-Smtp-Source: ACHHUZ7c+L67lbfSXpLgK/LYE2fkMm11TxLSTkagmUtFWm5173a2X+RzwOCM3DIH+r9HCG6yNT7q6w==
+X-Received: by 2002:a05:6214:40a:b0:626:299b:68ee with SMTP id z10-20020a056214040a00b00626299b68eemr2306743qvx.55.1685455361523;
+        Tue, 30 May 2023 07:02:41 -0700 (PDT)
+Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
+        by smtp.gmail.com with ESMTPSA id jh18-20020a0562141fd200b0062382e1e228sm4619878qvb.49.2023.05.30.07.02.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 May 2023 07:02:40 -0700 (PDT)
+Date:   Tue, 30 May 2023 10:02:39 -0400
+From:   Mike Snitzer <snitzer@kernel.org>
+To:     Joe Thornber <thornber@redhat.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Bart Van Assche <bvanassche@google.com>,
+        linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>, dm-devel@redhat.com,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Sarthak Kukreti <sarthakkukreti@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>
+Subject: Re: [PATCH v7 0/5] Introduce provisioning primitives
+Message-ID: <ZHYB/6l5Wi+xwkbQ@redhat.com>
+References: <ZGgBQhsbU9b0RiT1@dread.disaster.area>
+ <ZGu0LaQfREvOQO4h@redhat.com>
+ <ZGzIJlCE2pcqQRFJ@bfoster>
+ <ZGzbGg35SqMrWfpr@redhat.com>
+ <ZG1dAtHmbQ53aOhA@dread.disaster.area>
+ <ZG+KoxDMeyogq4J0@bfoster>
+ <ZHB954zGG1ag0E/t@dread.disaster.area>
+ <CAJ0trDbspRaDKzTzTjFdPHdB9n0Q9unfu1cEk8giTWoNu3jP8g@mail.gmail.com>
+ <ZHFEfngPyUOqlthr@dread.disaster.area>
+ <CAJ0trDZJQwvAzngZLBJ1hB0XkQ1HRHQOdNQNTw9nK-U5i-0bLA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <CAJ0trDZJQwvAzngZLBJ1hB0XkQ1HRHQOdNQNTw9nK-U5i-0bLA@mail.gmail.com>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,103 +82,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 26, 2023 at 06:33:05PM +0200, Mickaël Salaün wrote:
+On Tue, May 30 2023 at  3:27P -0400,
+Joe Thornber <thornber@redhat.com> wrote:
+
+> On Sat, May 27, 2023 at 12:45 AM Dave Chinner <david@fromorbit.com> wrote:
 > 
-> On 15/05/2023 17:12, Christian Brauner wrote:
-> > On Fri, May 05, 2023 at 04:11:58PM +0800, Xiu Jianfeng wrote:
-> > > Hi,
-> > > 
-> > > I am working on adding xattr/attr support for landlock [1], so we can
-> > > control fs accesses such as chmod, chown, uptimes, setxattr, etc.. inside
-> > > landlock sandbox. the LSM hooks as following are invoved:
-> > > 1.inode_setattr
-> > > 2.inode_setxattr
-> > > 3.inode_removexattr
-> > > 4.inode_set_acl
-> > > 5.inode_remove_acl
-> > > which are controlled by LANDLOCK_ACCESS_FS_WRITE_METADATA.
-> > > 
-> > > and
-> > > 1.inode_getattr
-> > > 2.inode_get_acl
-> > > 3.inode_getxattr
-> > > 4.inode_listxattr
-> > > which are controlled by LANDLOCK_ACCESS_FS_READ_METADATA
-> > 
-> > It would be helpful to get the complete, full picture.
-> > 
-> > Piecemeal extending vfs helpers with struct path arguments is costly,
-> > will cause a lot of churn and will require a lot of review time from us.
-> > 
-> > Please give us the list of all security hooks to which you want to pass
-> > a struct path (if there are more to come apart from the ones listed
-> > here). Then please follow all callchains and identify the vfs helpers
-> > that would need to be updated. Then please figure out where those
-> > vfs helpers are called from and follow all callchains finding all
-> > inode_operations that would have to be updated and passed a struct path
-> > argument. So ultimately we'll end up with a list of vfs helpers and
-> > inode_operations that would have to be changed.
-> > 
-> > I'm very reluctant to see anything merged without knowing _exactly_ what
-> > you're getting us into.
+> > On Fri, May 26, 2023 at 12:04:02PM +0100, Joe Thornber wrote:
+> >
+> > > 1) We have an api (ioctl, bio flag, whatever) that lets you
+> > > reserve/guarantee a region:
+> > >
+> > >   int reserve_region(dev, sector_t begin, sector_t end);
+> >
+> > A C-based interface is not sufficient because the layer that must do
+> > provsioning is not guaranteed to be directly under the filesystem.
+> > We must be able to propagate the request down to the layers that
+> > need to provision storage, and that includes hardware devices.
+> >
+> > e.g. dm-thin would have to issue REQ_PROVISION on the LBA ranges it
+> > allocates in it's backing device to guarantee that the provisioned
+> > LBA range it allocates is also fully provisioned by the storage
+> > below it....
+> >
 > 
-> Ultimately we'd like the path-based LSMs to reach parity with the
-> inode-based LSMs. This proposal's goal is to provide users the ability to
-> control (in a complete and easy way) file metadata access. For these we need
-> to extend the inode_*attr hooks and inode_*acl hooks to handle paths. The
-> chown/chmod hooks are already good.
+> Fine, bio flag it is.
 > 
-> In the future, I'd also like to be able to control directory traversals
-> (e.g. chdir), which currently only calls inode_permission().
 > 
-> What would be the best way to reach this goal?
+> >
+> > >   This api should be used minimally, eg, critical FS metadata only.
+> >
+> >
+> >
+> > Plan for having to support tens of GBs of provisioned space in
+> > filesystems, not tens of MBs....
+> >
+> 
+> Also fine.
+> 
+> 
+> I think there's a 2-3 solid days of coding to fully implement
+> > REQ_PROVISION support in XFS, including userspace tool support.
+> > Maybe a couple of weeks more to flush the bugs out before it's
+> > largely ready to go.
+> >
+> > So if there's buy in from the block layer and DM people for
+> > REQ_PROVISION as described, then I'll definitely have XFS support
+> > ready for you to test whenever dm-thinp is ready to go.
+> >
+> 
+> Great, this is what I wanted to hear.  I guess we need an ack from the
+> block guys and then I'll get started.
 
-The main concern which was expressed on other patchsets before is that
-modifying inode operations to take struct path is not the way to go.
-Passing struct path into individual filesystems is a clear layering
-violation for most inode operations, sometimes downright not feasible,
-and in general exposing struct vfsmount to filesystems is a hard no. At
-least as far as I'm concerned.
+The block portion is where this discussion started (in the context of
+this thread's patchset, now at v7).
 
-So the best way to achieve the landlock goal might be to add new hooks
-in cases where you would be required to modify inode operations
-otherwise. Taking the chdir() case as an example. That calls
-path_permission(). Since inode_permission() and generic_permission() are
-called in a lot of places where not even a dentry might be readily
-available we will not extend them to take a struct path argument. This
-would also involve extending the inode ->permission() method which is a
-no go. That's neither feasible and would involve modifying a good chunk
-of code for the sole purpose of an LSM.
+During our discussion I think there were 2 gaps identified with this
+patchset:
 
-So in path_permission() you might have the potential to add an LSM hook.
-Or if you need to know what syscall this was called for you might have
-to add a hook into chdir() itself. That is still unpleasant but since
-the alternative to adding new LSM hooks might be endless layering
-violations that's a compromise that at least I can live with. Ultimately
-you have to convince more people.
+1) provisioning should be opt-in, and we need a clear flag that upper
+   layers look for to know if REQ_PROVISION available
+   - we do get this with the max_provision_sectors = 0 default, is
+     checking queue_limits (via queue_max_provision_sectors)
+     sufficient for upper layers like xfs?
 
-Some concerns around passing struct path to LSM hooks in general that I
-would like to just point out and ask you to keep in mind: As soon as
-there's an LSM hook that takes a path argument it means all LSMs have
-access to a struct path. At that point visibility into what's been done
-to that struct path is lost for the fs layer.
+2) DM thinp needs REQ_PROVISION passdown support
+   - also dm_table_supports_provision() needs to be stricter by
+     requiring _all_ underlying devices support provisioning?
 
-One the one hand that's fine on the other hand sooner or later some LSM
-will try to get creative and do things like starting to infer
-relationships between mounts without understanding mount property and
-mount handling enough, or start trying to infer the parent of a path and
-perform permission checks on it in ways that aren't sane. And that sucks
-because this only becomes obvious when fs wide changes are done that
-affect LSM hooks as well.
+Bonus dm-thinp work: add ranged REQ_PROVISION support to reduce number
+of calls (and bios) block core needs to pass to dm thinp.
 
-And that's the other thing. The more objects the LSM layer gets access
-to the greater the cost to do fs wide changes because the fs layer is
-now even closer entangled with the LSM layer. For example, even simple
-things like removing IOP_XATTR - even just for POSIX ACLs - suddenly
-become complicated not because of the fs layer but because of how the
-LSM layer makes use of it. It might start relying on internal flags that
-would be revoked later and so on. That also goes for struct vfsmount. So
-it means going through every LSM trying to figure out if a change is ok
-or not. And we keep adding new LSMs without deprecating older ones (A
-problem we also face in the fs layer.) and then they sit around but
-still need to be taken into account when doing changes.
+Also Joe, for you proposed dm-thinp design where you distinquish
+between "provision" and "reserve": Would it make sense for REQ_META
+(e.g. all XFS metadata) with REQ_PROVISION to be treated as an
+LBA-specific hard request?  Whereas REQ_PROVISION on its own provides
+more freedom to just reserve the length of blocks? (e.g. for XFS
+delalloc where LBA range is unknown, but dm-thinp can be asked to
+reserve space to accomodate it).
+
+Mike
