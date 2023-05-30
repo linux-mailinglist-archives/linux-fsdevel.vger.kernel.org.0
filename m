@@ -2,181 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C1A716981
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 18:31:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10FEA7169EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 18:42:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233196AbjE3QbA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 12:31:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45354 "EHLO
+        id S230148AbjE3Qmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 12:42:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233564AbjE3Qag (ORCPT
+        with ESMTP id S230096AbjE3Qmf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 12:30:36 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AD5196;
-        Tue, 30 May 2023 09:30:14 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-565c9109167so30948787b3.2;
-        Tue, 30 May 2023 09:30:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685464141; x=1688056141;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RaH6YlQLj82X1bK0066HcpgE2an8J/ytXi93zQbg3cQ=;
-        b=NiGox1WIIjth2AXTGOrzWLBf8ocEgyj8zWCgZoMezoWh8FD6QM/0tPrXmn7BSHEMyV
-         Ghm66GNFV6l4CebnGoiMKEapSzx+VaH1b1A2mUJFdz+2xaOtAl1yB5Icir/ErZt0wGE6
-         JyIAjLMoPWWC1k2Syer1b/bsqCeXF0silPz2ctpTMt7r/Pe2/FPQqlFLc/FIsalEMmU0
-         0w7JItwNex+0rTcHsMg5mpbjpH4F87ZpEr8WqrSaTOrABPnnwpPxhhgSlDHzM8bBeAwN
-         Ly8AT2ssLYkRFmnOP4FAjUZVKbnfYBM/gqE1la3gTV/SVnnUQpN83OuEYSN/T8L9ktYv
-         mZPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685464141; x=1688056141;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RaH6YlQLj82X1bK0066HcpgE2an8J/ytXi93zQbg3cQ=;
-        b=eA1jXlrzwY0gZQcaT+hA5UQIOpmZyYpfenqvyO9OXUzVn9aZjRJbZ2dPdmDv2ePWIa
-         eToZ+LDmLzf1VV4Z62XBU6ZGAT+sZtFuqOAijPKxgrhaj/XpMwVvVkiV58o4chHkSr2G
-         ctHzt6HOs6n0GevIbczPEAyZgLt6Cez30mKqMc63U8WrzSuoyWjYLc62oMKYBE9c6SGd
-         Ii8H4UH8Nc5YPogy2tM5GTy3qV4ZqrJQuAydasiAyz0R/4uRV94sQ5kme+oKZi6pBaN/
-         NHmkhNY1zdHhViXE3sm/XnE9qzK+BcYUUaxi9FeeTsAjgABIIrm6ZcMWIvvTG6P1qRnJ
-         qJfg==
-X-Gm-Message-State: AC+VfDxgR9GxfVpCGS6OvZrH/KoQIqPbSsCONFhhAikyv1Rjd4pvzmW3
-        NNLjfljH4aNbzUvngfKq406ZbdWOb220MS3dK6A=
-X-Google-Smtp-Source: ACHHUZ7pu7vphBMBZ8mAXs/tfRsKu1hhZ0D0tIefznTvYwXkKqBLlWSLtS0FFFsJK9fj4GTt5i9js4ELTS/MwImZplc=
-X-Received: by 2002:a81:778b:0:b0:55d:cf78:ed20 with SMTP id
- s133-20020a81778b000000b0055dcf78ed20mr2741306ywc.42.1685464141132; Tue, 30
- May 2023 09:29:01 -0700 (PDT)
+        Tue, 30 May 2023 12:42:35 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8E3798;
+        Tue, 30 May 2023 09:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=HkEq4u4fLQqPB9+Uc8LE0j+FzQ0s2Sx6MblZeP2TWf0=; b=KngQ/44PUjpXp8Yv1nIcHLhU0D
+        Prf0gH/CTO3tTP8+TyWljcFhPbZeWdpdBjc0uMjQYwEjuPZnPMvK2op/qN7E/EuV9Nn7zVxXWLw7D
+        yFuxjNtVjuQqKwchHCl3r6jewZYdpSpeXfoaFkVBH+dBM8Wau3tRgDdupj1ldSrNBqLsz0pGK+oel
+        DVgPLH8iV1lvaAyWGP6j8pvunRui6JQW/FWxp6vw2vaTMrER6MP21EhQ15HDSyLTyzmL2skbsCZBy
+        5mtGdfpAhjatcbQqmw/Am5vJrdIIRJy2z7cVvdFIo68HTivNGmtH+jybTmu2A5KbIBq48c4ltN55I
+        +2pgfO6w==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q42Q8-00EbtC-1O;
+        Tue, 30 May 2023 16:42:04 +0000
+Date:   Tue, 30 May 2023 09:42:04 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Joel Granados <j.granados@samsung.com>
+Cc:     keescook@chromium.org, yzaikin@google.com, ebiederm@xmission.com,
+        dave.hansen@intel.com, arnd@arndb.de, bp@alien8.de,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+        hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
+        brgerst@gmail.com, christophe.jaillet@wanadoo.fr,
+        kirill.shutemov@linux.intel.com, jroedel@suse.de,
+        akpm@linux-foundation.org, willy@infradead.org,
+        linux-parisc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] sysctl: remove empty dev table
+Message-ID: <ZHYnXKb8g0zSJe7+@bombadil.infradead.org>
+References: <20230526222207.982107-1-mcgrof@kernel.org>
+ <CGME20230526222249eucas1p1d38aca6c5a5163bd6c48b3a56e2618b4@eucas1p1.samsung.com>
+ <20230526222207.982107-2-mcgrof@kernel.org>
+ <20230529200457.a42hwn7cq6np5ur4@localhost>
 MIME-Version: 1.0
-References: <cover.1685449706.git.ojaswin@linux.ibm.com> <ddcae9658e46880dfec2fb0aa61d01fb3353d202.1685449706.git.ojaswin@linux.ibm.com>
-In-Reply-To: <ddcae9658e46880dfec2fb0aa61d01fb3353d202.1685449706.git.ojaswin@linux.ibm.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Tue, 30 May 2023 18:28:22 +0200
-Message-ID: <CA+icZUXDFbxRvx8-pvEwsZAu+-28bX4VDTj6ZTPtvn4gWqGnCg@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] Revert "ext4: remove ac->ac_found >
- sbi->s_mb_min_to_scan dead check in ext4_mb_check_limits"
-To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230529200457.a42hwn7cq6np5ur4@localhost>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 30, 2023 at 3:25=E2=80=AFPM Ojaswin Mujoo <ojaswin@linux.ibm.co=
-m> wrote:
->
-> This reverts commit 32c0869370194ae5ac9f9f501953ef693040f6a1.
->
-> The reverted commit was intended to remove a dead check however it was ob=
-served
-> that this check was actually being used to exit early instead of looping
-> sbi->s_mb_max_to_scan times when we are able to find a free extent bigger=
- than
-> the goal extent. Due to this, a my performance tests (fsmark, parallel fi=
-le
-> writes in a highly fragmented FS) were seeing a 2x-3x regression.
->
-> Example, the default value of the following variables is:
->
-> sbi->s_mb_max_to_scan =3D 200
-> sbi->s_mb_min_to_scan =3D 10
->
-> In ext4_mb_check_limits() if we find an extent smaller than goal, then we=
- return
-> early and try again. This loop will go on until we have processed
-> sbi->s_mb_max_to_scan(=3D200) number of free extents at which point we ex=
-it and
-> just use whatever we have even if it is smaller than goal extent.
->
-> Now, the regression comes when we find an extent bigger than goal. Earlie=
-r, in
-> this case we would loop only sbi->s_mb_min_to_scan(=3D10) times and then =
-just use
-> the bigger extent. However with commit 32c08693 that check was removed an=
-d hence
-> we would loop sbi->s_mb_max_to_scan(=3D200) times even though we have a b=
-ig enough
-> free extent to satisfy the request. The only time we would exit early wou=
-ld be
-> when the free extent is *exactly* the size of our goal, which is pretty u=
-ncommon
-> occurrence and so we would almost always end up looping 200 times.
->
-> Hence, revert the commit by adding the check back to fix the regression. =
-Also
-> add a comment to outline this policy.
->
+On Mon, May 29, 2023 at 10:04:57PM +0200, Joel Granados wrote:
+> On Fri, May 26, 2023 at 03:22:05PM -0700, Luis Chamberlain wrote:
+> > Now that all the dev sysctls have been moved out we can remove the
+> > dev sysctl base directory. We don't need to create base directories,
+> > they are created for you as if using 'mkdir -p' with register_syctl()
+> > and register_sysctl_init(). For details refer to sysctl_mkdir_p()
+> > usage.
+> >=20
+> > We save 90 bytes with this changes:
+> >=20
+> > ./scripts/bloat-o-meter vmlinux.2.remove-sysctl-table vmlinux.3-remove-=
+dev-table
+> > add/remove: 0/1 grow/shrink: 0/1 up/down: 0/-90 (-90)
+> > Function                                     old     new   delta
+> > sysctl_init_bases                            111      85     -26
+> > dev_table                                     64       -     -64
+> > Total: Before=3D21257057, After=3D21256967, chg -0.00%
+> >=20
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > ---
+> >  kernel/sysctl.c | 5 -----
+> >  1 file changed, 5 deletions(-)
+> >=20
+> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> > index fa2aa8bd32b6..a7fdb828afb6 100644
+> > --- a/kernel/sysctl.c
+> > +++ b/kernel/sysctl.c
+> > @@ -2344,16 +2344,11 @@ static struct ctl_table debug_table[] =3D {
+> >  	{ }
+> >  };
+> > =20
+> > -static struct ctl_table dev_table[] =3D {
+> > -	{ }
+> > -};
+> > -
+> >  int __init sysctl_init_bases(void)
+> >  {
+> >  	register_sysctl_init("kernel", kern_table);
+> >  	register_sysctl_init("vm", vm_table);
+> >  	register_sysctl_init("debug", debug_table);
+> > -	register_sysctl_init("dev", dev_table);
+> > =20
+> >  	return 0;
+> >  }
+> > --=20
+> > 2.39.2
+> >=20
+> LGTM.
 
-Hi,
+BTW, please use proper tags like Reviewed-by, and so on even if you use
+LGTM so that then if anyone uses things like b4 it can pick the tags for
+you.
 
-I applied this single patch of your series v2 on top of Linux v6.4-rc4.
+> But why was dev there to begin with?
 
-So, if this is a regression I ask myself if this is material for Linux 6.4?
+I will enhance the commit log to mention that, it was there because
+old APIs didn't create the directory for you, and now it is clear it
+is not needed. I checked ant he dev table was there since the beginning
+of sysctl.c on v2.5.0.
 
-Can you comment on this, please?
-
-Thanks.
-
-Regards,
--Sedat-
-
-
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  fs/ext4/mballoc.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index d4b6a2c1881d..7ac6d3524f29 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -2063,7 +2063,7 @@ static void ext4_mb_check_limits(struct ext4_alloca=
-tion_context *ac,
->         if (bex->fe_len < gex->fe_len)
->                 return;
->
-> -       if (finish_group)
-> +       if (finish_group || ac->ac_found > sbi->s_mb_min_to_scan)
->                 ext4_mb_use_best_found(ac, e4b);
->  }
->
-> @@ -2075,6 +2075,20 @@ static void ext4_mb_check_limits(struct ext4_alloc=
-ation_context *ac,
->   * in the context. Later, the best found extent will be used, if
->   * mballoc can't find good enough extent.
->   *
-> + * The algorithm used is roughly as follows:
-> + *
-> + * * If free extent found is exactly as big as goal, then
-> + *   stop the scan and use it immediately
-> + *
-> + * * If free extent found is smaller than goal, then keep retrying
-> + *   upto a max of sbi->s_mb_max_to_scan times (default 200). After
-> + *   that stop scanning and use whatever we have.
-> + *
-> + * * If free extent found is bigger than goal, then keep retrying
-> + *   upto a max of sbi->s_mb_min_to_scan times (default 10) before
-> + *   stopping the scan and using the extent.
-> + *
-> + *
->   * FIXME: real allocation policy is to be designed yet!
->   */
->  static void ext4_mb_measure_extent(struct ext4_allocation_context *ac,
-> --
-> 2.31.1
->
+  Luis
