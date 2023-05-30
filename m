@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6195B716F73
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 23:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A38A716F7B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 May 2023 23:14:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233215AbjE3VN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 17:13:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42436 "EHLO
+        id S233365AbjE3VOe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 May 2023 17:14:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231139AbjE3VN5 (ORCPT
+        with ESMTP id S233318AbjE3VOc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 17:13:57 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15ADAC0;
-        Tue, 30 May 2023 14:13:55 -0700 (PDT)
+        Tue, 30 May 2023 17:14:32 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F67D137;
+        Tue, 30 May 2023 14:14:19 -0700 (PDT)
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230530211353euoutp010fd9569312c89b106ed45638ac13be2b~kCEBYk8WF0406404064euoutp01j;
-        Tue, 30 May 2023 21:13:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230530211353euoutp010fd9569312c89b106ed45638ac13be2b~kCEBYk8WF0406404064euoutp01j
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230530211417euoutp0233e89d76ad6863aec1972599ba3ce296~kCEYkK5mB2686326863euoutp02E;
+        Tue, 30 May 2023 21:14:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230530211417euoutp0233e89d76ad6863aec1972599ba3ce296~kCEYkK5mB2686326863euoutp02E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1685481233;
-        bh=jEm05W5GcBUVigMjgbQvsUeHSUTN7UnO2SvK7Ym///E=;
+        s=mail20170921; t=1685481257;
+        bh=vQxYYjm3Sd4+hDeSDCuukUJhNIR9N74c+Yzqyu6R+98=;
         h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=hBiUFn/d3T0EysP6R752xwXC7ChFEeTXlexPr+blBXDrBfd2UZhKrv4tXSvILpMLh
-         wllO+GaRI22eHtOqo2T9qcpNPbpCktvAeRigVVHUyts9Ms1N645rmJbV5/lzpugxQy
-         /7BKcw2zRBBdWpaYKlHpFFkNu9x5gR5Vwer9+TU8=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230530211352eucas1p28fb5efcb81cb5b98f66c0ace8a0ad637~kCEA-epMI0777607776eucas1p2i;
-        Tue, 30 May 2023 21:13:52 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id F2.A2.42423.01766746; Tue, 30
-        May 2023 22:13:52 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230530211351eucas1p19a40e60cdf057ee20e779d6698daaba5~kCEALBveq0430304303eucas1p12;
-        Tue, 30 May 2023 21:13:51 +0000 (GMT)
+        b=W7UkrxH6NUbOKpg+vyPksOS5nfFeTso67L9BM8wcjmGcARqqE8rYo9mIpVo2UDW0H
+         7j7DjU+qgUcpsxcx7W6L04Rb73f9LP6UwiK5d4kmyxuYLLzQr53oyICIjnJB9YZkWW
+         bcsn1rly9G2yMlihY2Hj+d9ZB2Iqum++Ug6H4lYk=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230530211417eucas1p1006f751f06e812c67a01da995401edaf~kCEX6anh80430704307eucas1p1y;
+        Tue, 30 May 2023 21:14:17 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 40.27.37758.92766746; Tue, 30
+        May 2023 22:14:17 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230530211416eucas1p213625172ef8413b964090813f63efce0~kCEXYzpMR1435314353eucas1p2X;
+        Tue, 30 May 2023 21:14:16 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230530211351eusmtrp225751b624bef9b6a39560704e59549ae~kCEAKQavJ1557415574eusmtrp2U;
-        Tue, 30 May 2023 21:13:51 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-27-6476671085c0
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id B5.A7.14344.F0766746; Tue, 30
-        May 2023 22:13:51 +0100 (BST)
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230530211416eusmtrp134f748a4397465bd3724a63ada471c04~kCEXYEg3d2198221982eusmtrp1C;
+        Tue, 30 May 2023 21:14:16 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-67-647667295ce4
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E7.A7.14344.82766746; Tue, 30
+        May 2023 22:14:16 +0100 (BST)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230530211351eusmtip217553679e9642cfdceef9eb4cc7eb123~kCD-6_7SA1177611776eusmtip2i;
-        Tue, 30 May 2023 21:13:51 +0000 (GMT)
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230530211416eusmtip19656a7d03b6b12a54d7599725eb367e3~kCEXH5W1p2600426004eusmtip1e;
+        Tue, 30 May 2023 21:14:16 +0000 (GMT)
 Received: from localhost (106.210.248.78) by CAMSVWEXC02.scsc.local
         (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Tue, 30 May 2023 22:13:50 +0100
-Date:   Tue, 30 May 2023 23:13:49 +0200
+        Tue, 30 May 2023 22:14:15 +0100
+Date:   Tue, 30 May 2023 23:14:14 +0200
 From:   Joel Granados <j.granados@samsung.com>
 To:     Luis Chamberlain <mcgrof@kernel.org>
 CC:     <keescook@chromium.org>, <yzaikin@google.com>,
@@ -65,62 +65,63 @@ CC:     <keescook@chromium.org>, <yzaikin@google.com>,
         <jroedel@suse.de>, <akpm@linux-foundation.org>,
         <willy@infradead.org>, <linux-parisc@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] sysctl: remove empty dev table
-Message-ID: <20230530211349.olrowajsp3idiurd@localhost>
+Subject: Re: [PATCH v2 2/2] signal: move show_unhandled_signals sysctl to
+ its own file
+Message-ID: <20230530211414.gorx4m5cs6jliset@localhost>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="ocfcrlwnlg7a4bub"
+        protocol="application/pgp-signature"; boundary="etcb4mwp7uwhqc3g"
 Content-Disposition: inline
-In-Reply-To: <20230526222207.982107-2-mcgrof@kernel.org>
+In-Reply-To: <20230526222207.982107-3-mcgrof@kernel.org>
 X-Originating-IP: [106.210.248.78]
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
         CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA2WSe0xTZxjG952enpaGkkNr5LOaZisbQ25e2OWbGzCdW874w2CMcdkWXScn
-        BVcKtqLM3TBDEBBpiuBaCivZUoio0FrAQnVaI6XouAyUgiLCcIhDhBbklsFaDttM9t/veb7n
-        ffM+ycdlCW4RIm6y4hCtVEjlEoKH1zfPtUeSssOJG40n1yB9zTkC/aVp5iBP7SKBfrVDVHet
-        jI3cow8AGnDfBWipPouDSkxByFTIRUWtZRi6lZ+Cekf0OLJdduKoq1FPoKHWDgy1N55nI5f6
-        IUC/XTVgyFFwFUMXzcUstDDrjczW/s5GRuuOdyE1c/wUTi3MawBVmtmJU1ZdP4eamNxLGczp
-        VImmlaAuVoVRP9lGMcp8NpegxtvaOFTLDws4Ve7cST29ctsbuPkV5TGLE4Qf895JpOXJh2nl
-        htjPeEkW9e60Z8IMrWGWnQmMZB7w40LyNdiwNALyAI8rIKsALJy/jjNiCsDBe0srwgNgQ2O/
-        N8ZdHpnRJfqmBWQlgJeccf9mSie+xxhhAVDTXYf5Ujj5CnzkLsF9TJARsH3sHsvHq8hQeEVd
-        sJxhkQ4cjhTSPhaSW6BrfI7wMZ98E7pOVnEYDoRO7TDO5DNgj2EG8x3EItfCykWuz/YjEbzT
-        ex5nqklgXd44xvA3sNXSt8K9PFg0ncJ02Q6PD4QythA+dlg4DK+DS9Yfl6tAsgjAXxYnOIyo
-        BtB4bHpl0dswq3t4ZWIrrDLmYMzSAOh6EsicGQA19WdYjM2HJ7IFTDoEVt8fw9UgWPdcMd1z
-        xXT/FWPsCGhochP/s8OhseJPFsMx8MKFp7gBcM6CIDpdlSKjVZsU9JEolTRFla6QRe1PTTED
-        7ye/uehwXwJljyej7ADjAjt42Ts8VFvdAUS4IlVBS1bxY6SqRAE/UfrlUVqZuk+ZLqdVdrCW
-        i0uC+OExzv0CUiY9RH9B02m08p9XjOsnysSSsqVF92tCxMKxkdzmT2oIkFkb/aoqwDh1IGP3
-        JOu9b/0/WDN6Q9tyt3/r5hdjP1oXGXHH37SRHKpP6DKL8xvWJw/aLQ8HNVN9B+aDm053FPcY
-        HLJOTzEWWm6yvXC7VPShYhe7vyI780g8tWencEN4yLY32GM55dH8Z92Cg68XCI5Ni6oiLae2
-        PzlY36IFqz+lNYHit+Q74vpu/GzNEvV8PqyIdlTrS3tWy/9ICJ6Jh0H+xlJPRu2j3rA5sevE
-        REMTKY1rQ5XkS9prlVlnNHuSdPHvx1437DM96CRt+EBahf67c7t0rgD/ozmaLvVe2zbrZtjS
-        /nXu5JaG/Hks//J6Ca5Kkm4KYylV0r8BLP5k7V8EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA2WSe0xTZxjG852eXmDpdtYy+VIWs3VbYth2oAj4FcVpFuNZgkzWuRgNukLP
-        CtoL6wUm6MIWSLYqtyKgpUVgg6GCtIAVkBlswqVFoZbIcOqcIFM6Uwa4KHaWtWuWmey/3/vk
-        eZ68efNyGDwvU8DJVelojUqqELIi8bHAyC/vviTPl8W7m19H5s52FnpmHGajZWuAha46IDp/
-        2cJES/O/AnRn6SZAq/YSNqq1RSNbBQdVuywYunJUiW7cN+No4Ecnjib7zSw043JjaKK/g4mm
-        K+cA8gw2YmikbBBD3V01DOR/ErQ8sc4yUWtf+hZIPS4txyn/UyOg6ouv4VSf6Tab+mNxH9XY
-        padqjS4W1d0WS303MI9RXWe+ZVG+8XE2NXrCj1MNzgxq4dL1oGGsiFruWruTv4fcpFHrdfRr
-        OWqtLlW4V4QSSJEYkQmJYlK0fkNmSkKSMG7zJhmtyM2nNXGbPyVzShZKGHmP+F80l2cVg+8J
-        A+BwIJEIH5tkBhDJ4REtAJ7qsQADiAjqr0Lbo+vMMPPhX1MGVti0CGB/nRsLDz0Adte0s0Iu
-        nHgLPliqxUPMIt6BEw9vMUIcRayDlyrLsBAziBEc3q+gQ8wnUuC0b+WfLJfYAKePtbFDzCP6
-        ALxTnx3WX4bOk/fwcDYfetsvskNbM4gY+EOAE5IjCASnbnTg4UWF8LzBh4X5CFx+9huoBHzT
-        c02m55pM/zWF5Vg4HZjH/ie/DVubfmeEORWeO7eANwL2GRBF67VKuVKbQGqlSq1eJSez1cou
-        EHw0+/BKTy847V0kHQDjAAd4M5icsZ51AwGuUqtoYRQ3VaqV8bgy6aFCWqPer9EraK0DJAWP
-        WMUQvJKtDn6tSrdflByfJEpMFscniZPXC6O5H+R9I+URcqmOPkjTebTm3xzGiRAUYzHHC1Kd
-        X7kO7/bOCWeqX9hR8FmVQGGt2zomGfZGmccnStd8ndk8X7jVGT3DPXvyz9xI6dKoJHDLKBCW
-        vjcrcbxf8GFVdNYnd2vX8releV5MafCd2vXg+M8bC5YlHyUxy+XefZWDQz9hqCFbeHd7eubK
-        zNHmMbfNY+qIWfrSNdvN0Vp2XdxtLSr1njgYL7lApniy8ibr2uxTTZ3bWzMqevZk2XslN7cd
-        K752u0VstF+erHbGfdzpeyNj0FZmmywqUw2JCulDOCpMg965er956IJl9ECg7vRVH899OK1J
-        Mep0Gv1XqHvUxs9hUU1v+uqWgQOruZ4ja3rIp3l7SebDFiGuzZGKYhkarfRvUWjTHv0DAAA=
-X-CMS-MailID: 20230530211351eucas1p19a40e60cdf057ee20e779d6698daaba5
+X-Brightmail-Tracker: H4sIAAAAAAAAA2WSfUxTVxjGd24v7aWx7NIyOWlli1U3EEEXXXaisLhJzI0uxiVuYZB9NHAD
+        blBIS4XJMMXBPuoQUgQFwTFlbSOVj7Z0AzrELrEWpC0KXf3ekIXBCkJrB0jsRr3dZrL/fu/z
+        Pk/yPieHYPGH2ULioLSIlkkleWI2FzdfXnIkJeQcyt6iDOCoqUPPRo/VlznI3xlko2ErRN2X
+        miOQb+oXgO75bgH0l7mCg+q7YlFXNYFqB5sxdPVYProx2YQjy492HF3vbWKj8UEXhpy9FyKQ
+        p+Y3gK4NtGDIVjWAIaOhjoWWF1csi533I5CmZ99OSC1UHsep5UdqQJ1WjuBUT+MdDjU3/z7V
+        YlBQ9epBNmXUbaTOWaYwynD+KzY163BwqCunlnHqjP0t6kH/2IphqJTyG57fL8jgpmTTeQcP
+        0bLNr33IzR2ZJgqNa0v6gzO4EriEKhBJQHIb/KJLz1IBLsEndQCec3bizPAQQFO7GjCDH8Ab
+        J5oiVIB4EhmZ3x5K80ktgD3NxL+eBkeAwyxMAB69AkOMkxvgw8qrIMRschN0em+zQhxDxsP+
+        miosxCzShsPJajrEAjId9mpHn3h45Kvwe7MzzNHQ3jCBM/4SOOU8yQ7dwyJFUBskQnIkiaDf
+        7QZMMzHsVs1iDJfBQdNNLHQnJMe40HHtDodZpEH32bmwSQCnbaawvgYO1X6NM4FaAC8G5zjM
+        0AagpjwQTuyAFaMT4cTrcPZ+D2BeKAp6ZqKZQ6Og2nySxcg8+OXnfMb9Imy768VrwLrGp6o1
+        PlWt8b9qjLwJtvT5/i8nQs23f7AYToXt7Q/wFsA5D2JphTw/h5ZvldLFyXJJvlwhzUnOKsg3
+        gJVfPhS0BX4Auun5ZCvACGAF61fC451tLiDEpQVSWhzDS5XIs/m8bMknh2lZwQcyRR4ttwIR
+        gYtjeYmp9iw+mSMpoj+m6UJa9s8WIyKFSmz36ecs6sqEvuhMKbx4yZSyrTu4Nm1ps97tyHK1
+        /jQ61/cu3j05FbtflqrJsH86qhikbAPP+Dq8pUUJ6k59iirurn9e681853pasfB3S/qYsTTZ
+        SHVUDZkn3FGtglOf1dU+eqkiyrqqYyEzEDd9vIiM2enp6y9x6LZbMu/97E0+4I0oFVQ3rp5R
+        xJkK0x+XO8S/DmfWvFK55YW9nDdvJvpEnt2L6zLc9YcT5sr26RXaXeUNhQuLUnrNlE6/sLqd
+        bm3b8YZIdDvVkFu8vu6Mq8vjVO3aKo8f2PORxmg5ogSrBEefPXYhJue91m/+XFLTR27Fjycl
+        lS2dPbGX1/Od6G2fGJfnSl7eyJLJJX8D1Kwxa2AEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsVy+t/xu7oa6WUpBlu3yFjMWb+GzeLvpGPs
+        Fp83/GOzOHtIwmLrwbmsFp9ePmC0uP/pNqPF/20t7BbTNopbbOznsJh8ai6TxZnuXIubz+ew
+        WOzZe5LF4vKuOWwWj05dYLI4v2stq8WNCU8ZLS4dWMBkcbz3AJPF5k1TmS1+/wAq+bHhMavF
+        sp1+DhIe31v7WDx+/5rE6DG74SKLx85Zd9k9PnyM81iwqdRj2qRTbB6bV2h5LN7zkslj06pO
+        No93586xe5yY8ZvFY97JQI/3+64CFZyu9vi8SS5AOErPpii/tCRVISO/uMRWKdrQwkjP0NJC
+        z8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvo//XbbaCjYoVp7q+sTcwnpPqYuTgkBAwkbj4
+        0aqLkYtDSGApo8T0X99Zuxg5geIyEhu/XIWyhSX+XOtigyj6yChxdO5WFghnC6PEthv3GEGq
+        WARUJb60ngGz2QR0JM6/ucMMYosIaEjsm9DLBGIzCxxnkXjenwpiCwtESHSv/scOYvMKmEts
+        33aeGWLoTkaJKzPPMUEkBCVOznzCAtFcJrF/5hF2kLOZBaQllv/jAAlzClhIfL52jRHiUiWJ
+        rV3vmCDsWonPf58xTmAUnoVk0iwkk2YhTIIIa0nc+PeSCUNYW2LZwtfMELatxLp171kWMLKv
+        YhRJLS3OTc8tNtIrTswtLs1L10vOz93ECExq24793LKDceWrj3qHGJk4GA8xqgB1Ptqw+gKj
+        FEtefl6qkgivbWJxihBvSmJlVWpRfnxRaU5q8SFGU2AoTmSWEk3OB6bbvJJ4QzMDU0MTM0sD
+        U0szYyVxXs+CjkQhgfTEktTs1NSC1CKYPiYOTqkGJm5hm2uh1+cUL+f6vZsrdwG7w3qDvpWF
+        GZv07719OW3m8odbXab8ODwxv+rTVY4o/fNrn5nm31/EeoCtyj7Hdt5c6SccIs8OpUxlnRK9
+        JC7NRJe7aqHds4gzZw8kT6x+vc2dcaOeL//tGF723NaXCd59ETfdNRSu3GWaOfVkP990zpQz
+        Kqf3Gc16IzaDI7k+X8KKU1SARURFvLfJ8jbjzCT3q4+dd8zQtd/07dCKn0c0+W/6Ov8Rf6R7
+        juXbP77UxSU8rnJ5OraT/7cdVMs0XhO+jNX+JDdb9uqZN+o09pUe9/A8K/xfgPVokN6/a24h
+        H2ME9Y7t2+Tzmvv/8dsSMcW7dLLl5ixrZLyx+dZDJSWW4oxEQy3mouJEAKd2BZz/AwAA
+X-CMS-MailID: 20230530211416eucas1p213625172ef8413b964090813f63efce0
 X-Msg-Generator: CA
-X-RootMTR: 20230526222249eucas1p1d38aca6c5a5163bd6c48b3a56e2618b4
+X-RootMTR: 20230526222248eucas1p2c21183361439f3a9e36c84545265395e
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230526222249eucas1p1d38aca6c5a5163bd6c48b3a56e2618b4
+X-CMS-RootMailID: 20230526222248eucas1p2c21183361439f3a9e36c84545265395e
 References: <20230526222207.982107-1-mcgrof@kernel.org>
-        <CGME20230526222249eucas1p1d38aca6c5a5163bd6c48b3a56e2618b4@eucas1p1.samsung.com>
-        <20230526222207.982107-2-mcgrof@kernel.org>
+        <CGME20230526222248eucas1p2c21183361439f3a9e36c84545265395e@eucas1p2.samsung.com>
+        <20230526222207.982107-3-mcgrof@kernel.org>
 X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
@@ -132,42 +133,98 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---ocfcrlwnlg7a4bub
+--etcb4mwp7uwhqc3g
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 26, 2023 at 03:22:05PM -0700, Luis Chamberlain wrote:
-> Now that all the dev sysctls have been moved out we can remove the
-> dev sysctl base directory. We don't need to create base directories,
-> they are created for you as if using 'mkdir -p' with register_syctl()
-> and register_sysctl_init(). For details refer to sysctl_mkdir_p()
-> usage.
+On Fri, May 26, 2023 at 03:22:06PM -0700, Luis Chamberlain wrote:
+> The show_unhandled_signals sysctl is the only sysctl for debug
+> left on kernel/sysctl.c. We've been moving the syctls out from
+> kernel/sysctl.c so to help avoid merge conflicts as the shared
+> array gets out of hand.
 >=20
-> We save 90 bytes with this changes:
+> This change incurs simplifies sysctl registration by localizing
+> it where it should go for a penalty in size of increasing the
+> kernel by 23 bytes, we accept this given recent cleanups have
+> actually already saved us 1465 bytes in the prior commits.
 >=20
-> ./scripts/bloat-o-meter vmlinux.2.remove-sysctl-table vmlinux.3-remove-de=
-v-table
-> add/remove: 0/1 grow/shrink: 0/1 up/down: 0/-90 (-90)
+> ./scripts/bloat-o-meter vmlinux.3-remove-dev-table vmlinux.4-remove-debug=
+-table
+> add/remove: 3/1 grow/shrink: 0/1 up/down: 177/-154 (23)
 > Function                                     old     new   delta
-> sysctl_init_bases                            111      85     -26
-> dev_table                                     64       -     -64
-> Total: Before=3D21257057, After=3D21256967, chg -0.00%
+> signal_debug_table                             -     128    +128
+> init_signal_sysctls                            -      33     +33
+> __pfx_init_signal_sysctls                      -      16     +16
+> sysctl_init_bases                             85      59     -26
+> debug_table                                  128       -    -128
+> Total: Before=3D21256967, After=3D21256990, chg +0.00%
 >=20
 > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 > ---
->  kernel/sysctl.c | 5 -----
->  1 file changed, 5 deletions(-)
+>  kernel/signal.c | 23 +++++++++++++++++++++++
+>  kernel/sysctl.c | 14 --------------
+>  2 files changed, 23 insertions(+), 14 deletions(-)
 >=20
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 8f6330f0e9ca..5ba4150c01a7 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -45,6 +45,7 @@
+>  #include <linux/posix-timers.h>
+>  #include <linux/cgroup.h>
+>  #include <linux/audit.h>
+> +#include <linux/sysctl.h>
+> =20
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/signal.h>
+> @@ -4771,6 +4772,28 @@ static inline void siginfo_buildtime_checks(void)
+>  #endif
+>  }
+> =20
+> +#if defined(CONFIG_SYSCTL)
+> +static struct ctl_table signal_debug_table[] =3D {
+> +#ifdef CONFIG_SYSCTL_EXCEPTION_TRACE
+> +	{
+> +		.procname	=3D "exception-trace",
+> +		.data		=3D &show_unhandled_signals,
+> +		.maxlen		=3D sizeof(int),
+> +		.mode		=3D 0644,
+> +		.proc_handler	=3D proc_dointvec
+> +	},
+> +#endif
+> +	{ }
+> +};
+> +
+> +static int __init init_signal_sysctls(void)
+> +{
+> +	register_sysctl_init("debug", signal_debug_table);
+> +	return 0;
+> +}
+> +early_initcall(init_signal_sysctls);
+> +#endif /* CONFIG_SYSCTL */
+> +
+>  void __init signals_init(void)
+>  {
+>  	siginfo_buildtime_checks();
 > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index fa2aa8bd32b6..a7fdb828afb6 100644
+> index a7fdb828afb6..43240955dcad 100644
 > --- a/kernel/sysctl.c
 > +++ b/kernel/sysctl.c
-> @@ -2344,16 +2344,11 @@ static struct ctl_table debug_table[] =3D {
+> @@ -2331,24 +2331,10 @@ static struct ctl_table vm_table[] =3D {
 >  	{ }
 >  };
 > =20
-> -static struct ctl_table dev_table[] =3D {
+> -static struct ctl_table debug_table[] =3D {
+> -#ifdef CONFIG_SYSCTL_EXCEPTION_TRACE
+> -	{
+> -		.procname	=3D "exception-trace",
+> -		.data		=3D &show_unhandled_signals,
+> -		.maxlen		=3D sizeof(int),
+> -		.mode		=3D 0644,
+> -		.proc_handler	=3D proc_dointvec
+> -	},
+> -#endif
 > -	{ }
 > -};
 > -
@@ -175,36 +232,35 @@ v-table
 >  {
 >  	register_sysctl_init("kernel", kern_table);
 >  	register_sysctl_init("vm", vm_table);
->  	register_sysctl_init("debug", debug_table);
-> -	register_sysctl_init("dev", dev_table);
+> -	register_sysctl_init("debug", debug_table);
 > =20
 >  	return 0;
 >  }
 > --=20
 > 2.39.2
 >=20
-Reviewed-by: Joel Granados <j.granados@samsung.com>
 
+Reviewed-by: Joel Granados <j.granados@samsung.com>
 --=20
 
 Joel Granados
 
---ocfcrlwnlg7a4bub
+--etcb4mwp7uwhqc3g
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmR2Zw0ACgkQupfNUreW
-QU/sFwv/Szlm33QSWmZp4jNZj0nRdiSW/Bhzrw0gvEHK8N2xTpMMLoWL4ZyVOOq1
-/UXJQszbKqDSHCuGcvx8PeLsJc+YD47MTS41BzsU3T+EYFaxQbMgzWGmOi+ysl3g
-XWmlmvNz+B6Jn2i/dyqccml9IsaXKGkMT0ujvSDD9J90fB6LhS+cXGpTFmTJPRm5
-fphQxo8+5DMNn8fV21pIYwKhLTGzE9i3VXbtJgUa8cjv+OeUIELsRSI3YizjNx/t
-baJZch/yR5a7CJYyVk9Vu4Hl7LN6tG7kqu333a9D71G8vkeS9myqPnwJDwoHE0GL
-jSZLy13uIlLXpQz5QLHX/4vI29T2jwfVTJ08t+ufA7CwRrKU0Vmn78pj3qSGzRO3
-l0Y758g/AxA75+cWoE2cQUBkb5TnVLzzgBjLzehn8TzXLWtN3hJDCpsWYJSRa8q6
-fXnmEt1+fh5ikvKO54H0vm9HVRC+DYDCaZhDzbsZoECI55ziH529IcQfTUZ9+QTe
-hz5X//5S
-=i/vQ
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmR2ZyYACgkQupfNUreW
+QU9QSAv/YxvYBKHMzu6qIJDRm2z06uQf8MbkJI5LkiPkxOLNZSy67pCuvRhEFB4I
+Qi2PO1Q9VUecUaOtC4EKD/hD71xYyacRMEc8nvjqWpcOi7ap+wdn7RjscLXkpkgZ
+oMAqYKlKzkInKIxmg087VKMPRCw5sCixJrUJicBoK/43T/LSp5OlUwk21QcJJ3Hn
+GjOz/2KluhP4WnoTGVDGc8BtIuuZhNX2DVa2/jOJng6GLIND2bK2T5tBxKm2xC88
+9esgRntrj6QKqGFyxno7A5rK8UAzN9zGZgdSgGYoSVMypdGiAl+Y5hdNyTRCEvvy
+9VbZenQXwRJfiooiC0rBjEYsl3J1d3uo27nfhmCoUunsbddwVsZp5iDQ7Fm+URYP
+eTzeZ+9C0dCCGGcsKnPamVEZiv3N9qxEx+tOMbvf9tvpJNAJmqBEHjkhml8b1nha
+YQdexvk/hwasmW/UcogYDftOAzqUxuwabylAz6jUKR20W/mqHfcjrII0BLMVbPXA
+2PNRu95E
+=dTvY
 -----END PGP SIGNATURE-----
 
---ocfcrlwnlg7a4bub--
+--etcb4mwp7uwhqc3g--
