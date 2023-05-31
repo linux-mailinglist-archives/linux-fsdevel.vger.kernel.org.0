@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F308271750A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 06:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0735571750E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 06:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234065AbjEaEU3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 00:20:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60642 "EHLO
+        id S234142AbjEaEU5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 00:20:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231224AbjEaEU2 (ORCPT
+        with ESMTP id S230452AbjEaEU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 00:20:28 -0400
+        Wed, 31 May 2023 00:20:56 -0400
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF4DBE;
-        Tue, 30 May 2023 21:20:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 758EEBE;
+        Tue, 30 May 2023 21:20:55 -0700 (PDT)
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 2D08668B05; Wed, 31 May 2023 06:20:23 +0200 (CEST)
-Date:   Wed, 31 May 2023 06:20:22 +0200
+        id 9244068B05; Wed, 31 May 2023 06:20:52 +0200 (CEST)
+Date:   Wed, 31 May 2023 06:20:52 +0200
 From:   Christoph Hellwig <hch@lst.de>
 To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
@@ -35,13 +35,14 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         Mikulas Patocka <mpatocka@redhat.com>, gouhao@uniontech.com,
         Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Subject: Re: [PATCH v6 01/20] swap: use __bio_add_page to add page to bio
-Message-ID: <20230531042022.GA32705@lst.de>
-References: <cover.1685461490.git.johannes.thumshirn@wdc.com> <64f8ac179cc54aa316c75aaadd71e107ba12917d.1685461490.git.johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v6 04/20] fs: buffer: use __bio_add_page to add single
+ page to bio
+Message-ID: <20230531042052.GB32705@lst.de>
+References: <cover.1685461490.git.johannes.thumshirn@wdc.com> <f67cc9c310bed1e3c3302ea1c206da7d5ebc14cb.1685461490.git.johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <64f8ac179cc54aa316c75aaadd71e107ba12917d.1685461490.git.johannes.thumshirn@wdc.com>
+In-Reply-To: <f67cc9c310bed1e3c3302ea1c206da7d5ebc14cb.1685461490.git.johannes.thumshirn@wdc.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
