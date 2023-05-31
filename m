@@ -2,322 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 978A371876C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 18:33:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 079607187B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 18:45:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjEaQdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 12:33:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56634 "EHLO
+        id S229880AbjEaQpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 12:45:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229727AbjEaQdT (ORCPT
+        with ESMTP id S229520AbjEaQpJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 12:33:19 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 175DE186
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 09:33:16 -0700 (PDT)
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com [209.85.219.199])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 486364135A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 16:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1685550793;
-        bh=m/PJ/CXwEb65uT4DFpZ+uGiDR+RX6ZXvA6Ht4wNjPd0=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=PWIU5LNoMljBBuo6ttpqxwa3dQ3Bt+oqtdC7OCKP27vx0gxixGHatbGBedOfAWyPI
-         55RTtK4OZgh/2Q65hmZRP3jl6S+z6dW4qYoNKbWpHcQDgtd2R8HYwxtS44D2AlJv7U
-         1HocoyvF3dV1HfNYzLebCShjRrJi5WjwSl0lKlBkmEp0uNg0MLTF3wrtyAma+yRVGt
-         h/lhuHlLLeDcXksaG1/qzLhg89Be98DVerqWqlwlpxxIqaSYvsnHw1Blt8natJxm/5
-         xFIDwlq89tli+slDan0YJmzfbP/s9txSJKudSW+jZYQBt2hxEo+L0QbT0Uy/FUP8fn
-         Tlh4uNX28mo7g==
-Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-ba81b24b878so13282969276.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 09:33:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685550789; x=1688142789;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m/PJ/CXwEb65uT4DFpZ+uGiDR+RX6ZXvA6Ht4wNjPd0=;
-        b=Xl0jkmIFMZpIiNfpFAkBxySA+Pk/DoPRCYgyASxokip2DuagfWYVr7FfbmgqVam6hL
-         /ORD4vGpksYNblTiDL0XQ94NLnvpXVvIefwsh+9mLgG1TMF+3NYzHZIKstu70hy70CDD
-         6YWkoI1DSlYWxSvMQRRs7BpBugdv16t9VxtgCb8imv+Jp87Riwccc//l/cozmVaRWPBq
-         rQsCpFE9hVfQ2tyWW0zFdptiDS8wqNI+nNIH6LXMC0hTEBjT3x18YCE+trGPZT2ypAxj
-         3T5toemmanUyQRplT9u1fAicatz5jlCIPTBLoSRd1RxEqOMMkV5e801ZoeO1Qy+3PaQN
-         jb1g==
-X-Gm-Message-State: AC+VfDzDVPDPbrobNO3vAXFtD0b53kFgzv14lGfhQ+qelmAYbMBAD5c4
-        V1d6eT1TBtKViwkA5Seje95zy2sAKqhSDc7DBA0XQ8/chBbeCk2nddwUpxop8fdZVBgsVpeQbK6
-        WS58MYhH5l52jjHv0ZcvIcXq22EDppoeb2x+0iLhng5v+gr3qx8BZTv1ZqSo=
-X-Received: by 2002:a05:6902:1505:b0:bac:faf2:328f with SMTP id q5-20020a056902150500b00bacfaf2328fmr8340535ybu.6.1685550789232;
-        Wed, 31 May 2023 09:33:09 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ7VwMFjJ6I1kI/q4G8IJki1b4aua7xnWZtK4tAMTC+l7jBaace5D4HMOcq85LgFDI94JK4vh0rlthgII7pxaMA=
-X-Received: by 2002:a05:6902:1505:b0:bac:faf2:328f with SMTP id
- q5-20020a056902150500b00bacfaf2328fmr8340518ybu.6.1685550788957; Wed, 31 May
- 2023 09:33:08 -0700 (PDT)
+        Wed, 31 May 2023 12:45:09 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F4B12F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 09:45:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685551506; bh=SJR338Vf7dbzf8RVV8TS187vO7lAXnTfCx/UpAwzXyM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=h6ENdfUL8Awu+gBFaLkD+hzgCZvGXf1Wm9Ulgr74RtQHU/WA3+PS1hKxHX6CFWZmnkt2oFguW9ZroWgOrCy3nC36M0iBrePmm8lFk5FOPAp9G4mFyt8wBDVXHqaonjg/7QZhG+ErZlZxmj6fl90Z9DUrbdt2GFDzyQmYHGnVH3rEnOkTqdlPyuPmAVyfgrFt/V1pTU+0YG8mCFsTUP3iFQP+7jJUZLzkcpYCFMKQAAXLCQVcDS2AQd6scMPQyiMphL51R6IUKgNEhEvjivG8dJMIzxPUm+FKkNbTd9hqsnIhwIx8r+fmIsfE4pON8OtI7FVQqIye7wUhrqx5NQ8z9w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1685551506; bh=IK4gslOeWW2xAgwNjF79sSMMDJ4aQyoyJI3YquDYDcv=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jAWtEHJmvhubeBSmTqB0ckEPwUfFwywMKrCd0VAkbvfBOp93YxujbLeAq7uvJKzveVsUhcVLdoia1nkMTeFpwSXnKDVWGivZdQVzISUug+BmNDRPUf+pIOu4rcEvE2bc3IWJjDXrtGS/pu5BMyFaPlFbfHVq0iv6PYk2s9hIcpJE68x471JZk5aYw6l0wy0VfUqBXw/yoFTlxJA8u9WUgDAUhPGJu67B16gR8Ym35UbijnOSlYOlp0mnWyMC0SgSm0K/eHKWx+1wCNTy4lD0vw+nPAXLYoimbaUiQltt8nTub7zPY5Y1czAwbgVEyH9mJZ6HTY0j7Be3XTL6wP++Ww==
+X-YMail-OSG: rgeBCO8VM1ljf.g_Q8Uu4HS_ZUmEYXBNHKGjxGFeFP1zXRQjSTRHN8nmK_t3Ghh
+ KfhjA97dsyErTNGzb2iQztk4XpI4plX8XNrAM9thC2YfJ83o1aid48x._U7bunTfYF22kKAfC86W
+ pihY_Kd_AyLJwDspxCPJU7x2yz6Ww9ihlzM29qBJ63SjoKTZMoHzAaplbCbm4ix2mQfQfzR4M920
+ TyWSRXJMdI5n5hDGC4WPm46QEY0zMWUOgVAkv1yVHS9kr0jBsxYjfwqs1FqQJU0mSwU3r3m_S3ye
+ W9b75yqfA_mLknagjX_06Tjd._CoGdRyAiHjWrEcw4OqtQrMgNoKzGoYSi9PA6P2T0juIEMrrEek
+ POEaXorQr8gJx5A7beMneXZ1ih.9jrhQ9PvHAxIWqW9eWz.M_6J3ZYmXZATZ7ksh5vwsNazoWeqE
+ yY.Ty3WvL5Zf2MlQznIP2TSj2MfQA2BmTcfk5TTE2avbQC_0.W_nU0QVd_5StTGkTPCEDw7CWpaa
+ Rd6L1tEpfx0o4FbxX9KlTTpIE_WRy9SemfMaJ39rNImgHlaVkIgeRdtmaAYWHmps6ADiPPeRb1sj
+ 773B2oOSCpZLFC_3K7AbV9bVUTzw7RDe55huDpWRgH0VfNRsfy9VVaCXZzO5oq_oMBEJEMef.Pjd
+ 2.GBTxonfgA3Y.np5AlLKRhTwT27x4fzruG786POBZ6QKVABH_v3Br9DhyyNh1D_yjZ_r0WM4QJR
+ _RDW2jmTf0HObbjk7TPtwNrqqssro74U5dMV5nzd2Cbbvp3iEAtoEVPJK1I.nuxOfclzgXyxyj_c
+ Xtv5qfFFuoTxa0jltG0_UaJFQ0D8_LKbxouwaVfh.ctIpdnG3Z_DKw2OpOth2mbx6VD0UNjlj0cI
+ EazCeFbKRuguPX7eriAEpskoijKQXxGUu0qDK_DNL78Y8bD2f8HHcQWv5j8w.WPWqiaeEyi_GxTm
+ YV8iJNWiTmGZ_SVMoXv15wdu6hjFd5f1WHQm_YUCI1nFDFR_QxKQQuw5IjoahYzR3ceSoTJu1Iwv
+ iAhpfvvK54RBlpWXMvIuJNATzocWolr9t_pGkYiUrLWuncaFTLyXoQ.Aue0Fin.vzak8DtIXEdCt
+ _i5XWmii9RUS3jL_GP_BqVTMCs.Y_mXJ_8tja3pkJ_ZJmt_X2RhXvk.ESwiPwf_2mqh2WxAkBaF_
+ KJ6JaIiZlZaqquJmnm3PPGo6WPHsAf.N_Rh_pqRfDJQJ77vFo4Ex9oHwUMSbN95_6zVRyhRiflOu
+ RwXoe2AERVLwDLMO6tcpetSOd_IgxIWK2UsdacwFRAIAiHeeU884r5xawKwFWr9fMrNJ3fCPQpz4
+ fycG7D2KCWT5OXkwcxCGCkuGpHLD5utT2PG03u9LlbghhwPp1IG5O6xCr3ZPgPyghmcffILr4IOY
+ hhIkMqt9j6rfJo7n3rOTDtLGELjc2raiHXgWXIg8zrxD8HevT9I5asSxx.IjMSOmvAkO4gjfpkU0
+ TEPNxxrg1Xuv_U3FzWXOEF3k89BlycgJxoIiesbWBqkV17mQ0o0yRprUkRalcJZPCY5IAE5tLuAH
+ GDhm43aOVKDYCxheBAEvfhshOXFrGcm6zt7qT29jU_eIXQ9GQfb7xNagUvXF9Ip8Ci8TkypgtuZc
+ C14rmtStFLdivkFGpfdqhJwkjw87fWA2oFdX4Obb7o5X0vBhQCRtpk..B5W.EIAhz4pCCQz.9EEc
+ MqoMz09zaHaNEWt7lbgP1m5mW410HjMjZEVGenH0YAnqPwiK0gOKCdkooEo5CfhEXGCpoMxlfRSI
+ Os90fZagiOU0drdy2ZNP.8xS7dmfucAua7BvBJ6UvuHppG0H_SYZ3VkZQJdb4HNNTAdY8PvbTK12
+ rlicdSMQv7H9v1Z9fi3JS0A0qBn_tqeZwl1IE.kw2f0Z2S3EJjmpyTyBcaQw0XPQKcjN4nweAC7v
+ MQrm6d3HfBoSSSlE_YPAjIlzmm4JqdSLxe8f8MCaB_Ku8c05QeX9c9FXOWbZZ.u5XmMakVwxASAS
+ TQuIyQX2VYVmmTW65cIeY8vvon2waKKff61vGcEN3ugb_MOBh9bw3sJlYZBHS3GvYUSWzsknh9zG
+ _3s0JVQ3HUG6iiUR2D4DPoDQCcQlti8UC2HfaOHbV_CPj4FU4NKySEsHMVNqNeT1OFgx7mp_LZLe
+ gvtN5Hu5J_pGoqSx8rRAe5w4bdwf1j1hcey_2V2q_NJn3XgBFnd0IyHOlRwI1CcnZ37gJk6Yp8bq
+ v8mlCiX1pVMEqWDZ6GdyHTPfotsvu2g1HCLei.KGpQQbiVMWnf5h0lI9u2Miuty4g
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 3dc95e55-b757-4320-819b-cea79f802ef0
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Wed, 31 May 2023 16:45:06 +0000
+Received: by hermes--production-ne1-574d4b7954-xz2cn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 803444bd8cafbcfff4fb75f278168acc;
+          Wed, 31 May 2023 16:45:02 +0000 (UTC)
+Message-ID: <498f8719-219d-b4cf-8231-54d7fb6a58dd@schaufler-ca.com>
+Date:   Wed, 31 May 2023 09:44:58 -0700
 MIME-Version: 1.0
-References: <20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com>
- <20230524153316.476973-4-aleksandr.mikhalitsyn@canonical.com> <ec6d6cf4-a1f9-ac45-d23d-b69805d81c02@redhat.com>
-In-Reply-To: <ec6d6cf4-a1f9-ac45-d23d-b69805d81c02@redhat.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Wed, 31 May 2023 18:32:57 +0200
-Message-ID: <CAEivzxe6t08UDv6ksKfqS6BP1HaunMxr2LTGZULX5_uQ5gaT=w@mail.gmail.com>
-Subject: Re: [PATCH v2 03/13] ceph: handle idmapped mounts in create_request_message()
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     brauner@kernel.org, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        viro@zeniv.linux.org.uk, dhowells@redhat.com, code@tyhicks.com,
+        hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
+        sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com,
+        chuck.lever@oracle.com, jlayton@kernel.org, miklos@szeredi.hu,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        dchinner@redhat.com, john.johansen@canonical.com,
+        mcgrof@kernel.org, mortonm@chromium.org, fred@cloudflare.com,
+        mpe@ellerman.id.au, nathanl@linux.ibm.com, gnoack3000@gmail.com,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        wangweiyang2@huawei.com, Casey Schaufler <casey@schaufler-ca.com>
+References: <20230505081200.254449-1-xiujianfeng@huawei.com>
+ <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
+ <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net>
+ <20230530-mietfrei-zynisch-8b63a8566f66@brauner>
+ <20230530142826.GA9376@lst.de>
+ <301a58de-e03f-02fd-57c5-1267876eb2df@schaufler-ca.com>
+ <20230530-tumult-adrenalin-8d48cb35d506@brauner>
+ <28f3ca55-29ea-4582-655d-2769881127ad@schaufler-ca.com>
+ <20230531-endpreis-gepflanzt-80a5a4a9c8d6@brauner>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20230531-endpreis-gepflanzt-80a5a4a9c8d6@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21495 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 29, 2023 at 5:52=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
->
->
-> On 5/24/23 23:33, Alexander Mikhalitsyn wrote:
-> > From: Christian Brauner <christian.brauner@ubuntu.com>
-> >
-> > Inode operations that create a new filesystem object such as ->mknod,
-> > ->create, ->mkdir() and others don't take a {g,u}id argument explicitly=
-.
-> > Instead the caller's fs{g,u}id is used for the {g,u}id of the new
-> > filesystem object.
-> >
-> > Cephfs mds creation request argument structures mirror this filesystem
-> > behavior. They don't encode a {g,u}id explicitly. Instead the caller's
-> > fs{g,u}id that is always sent as part of any mds request is used by the
-> > servers to set the {g,u}id of the new filesystem object.
-> >
-> > In order to ensure that the correct {g,u}id is used map the caller's
-> > fs{g,u}id for creation requests. This doesn't require complex changes.
-> > It suffices to pass in the relevant idmapping recorded in the request
-> > message. If this request message was triggered from an inode operation
-> > that creates filesystem objects it will have passed down the relevant
-> > idmaping. If this is a request message that was triggered from an inode
-> > operation that doens't need to take idmappings into account the initial
-> > idmapping is passed down which is an identity mapping and thus is
-> > guaranteed to leave the caller's fs{g,u}id unchanged.,u}id is sent.
-> >
-> > The last few weeks before Christmas 2021 I have spent time not just
-> > reading and poking the cephfs kernel code but also took a look at the
-> > ceph mds server userspace to ensure I didn't miss some subtlety.
-> >
-> > This made me aware of one complication to solve. All requests send the
-> > caller's fs{g,u}id over the wire. The caller's fs{g,u}id matters for th=
-e
-> > server in exactly two cases:
-> >
-> > 1. to set the ownership for creation requests
-> > 2. to determine whether this client is allowed access on this server
-> >
-> > Case 1. we already covered and explained. Case 2. is only relevant for
-> > servers where an explicit uid access restriction has been set. That is
-> > to say the mds server restricts access to requests coming from a
-> > specific uid. Servers without uid restrictions will grant access to
-> > requests from any uid by setting MDS_AUTH_UID_ANY.
-> >
-> > Case 2. introduces the complication because the caller's fs{g,u}id is
-> > not just used to record ownership but also serves as the {g,u}id used
-> > when checking access to the server.
-> >
-> > Consider a user mounting a cephfs client and creating an idmapped mount
-> > from it that maps files owned by uid 1000 to be owned uid 0:
-> >
-> > mount -t cephfs -o [...] /unmapped
-> > mount-idmapped --map-mount 1000:0:1 /idmapped
-> >
-> > That is to say if the mounted cephfs filesystem contains a file "file1"
-> > which is owned by uid 1000:
-> >
-> > - looking at it via /unmapped/file1 will report it as owned by uid 1000
-> >    (One can think of this as the on-disk value.)
-> > - looking at it via /idmapped/file1 will report it as owned by uid 0
-> >
-> > Now, consider creating new files via the idmapped mount at /idmapped.
-> > When a caller with fs{g,u}id 1000 creates a file "file2" by going
-> > through the idmapped mount mounted at /idmapped it will create a file
-> > that is owned by uid 1000 on-disk, i.e.:
-> >
-> > - looking at it via /unmapped/file2 will report it as owned by uid 1000
-> > - looking at it via /idmapped/file2 will report it as owned by uid 0
-> >
-> > Now consider an mds server that has a uid access restriction set and
-> > only grants access to requests from uid 0.
-> >
-> > If the client sends a creation request for a file e.g. /idmapped/file2
-> > it will send the caller's fs{g,u}id idmapped according to the idmapped
-> > mount. So if the caller has fs{g,u}id 1000 it will be mapped to {g,u}id
-> > 0 in the idmapped mount and will be sent over the wire allowing the
-> > caller access to the mds server.
-> >
-> > However, if the caller is not issuing a creation request the caller's
-> > fs{g,u}id will be send without the mount's idmapping applied. So if the
-> > caller that just successfully created a new file on the restricted mds
-> > server sends a request as fs{g,u}id 1000 access will be refused. This
-> > however is inconsistent.
-> >
-> >  From my perspective the root of the problem lies in the fact that
-> > creation requests implicitly infer the ownership from the {g,u}id that
-> > gets sent along with every mds request.
-> >
-> > I have thought of multiple ways of addressing this problem but the one =
-I
-> > prefer is to give all mds requests that create a filesystem object a
-> > proper, separate {g,u}id field entry in the argument struct. This is,
-> > for example how ->setattr mds requests work.
-> >
-> > This way the caller's fs{g,u}id can be used consistenly for server
-> > access checks and is separated from the ownership for new filesystem
-> > objects.
-> >
-> > Servers could then be updated to refuse creation requests whenever the
-> > {g,u}id used for access checking doesn't match the {g,u}id used for
-> > creating the filesystem object just as is done for setattr requests on =
-a
-> > uid restricted server. But I am, of course, open to other suggestions.
-> >
-> > Cc: Jeff Layton <jlayton@kernel.org>
-> > Cc: Ilya Dryomov <idryomov@gmail.com>
-> > Cc: ceph-devel@vger.kernel.org
-> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
-om>
-> > ---
-> >   fs/ceph/mds_client.c | 22 ++++++++++++++++++----
-> >   1 file changed, 18 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index 810c3db2e369..e4265843b838 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -2583,6 +2583,8 @@ static struct ceph_msg *create_request_message(st=
-ruct ceph_mds_session *session,
-> >       void *p, *end;
-> >       int ret;
-> >       bool legacy =3D !(session->s_con.peer_features & CEPH_FEATURE_FS_=
-BTIME);
-> > +     kuid_t caller_fsuid;
-> > +     kgid_t caller_fsgid;
-> >
-> >       ret =3D set_request_path_attr(req->r_inode, req->r_dentry,
-> >                             req->r_parent, req->r_path1, req->r_ino1.in=
-o,
-> > @@ -2651,10 +2653,22 @@ static struct ceph_msg *create_request_message(=
-struct ceph_mds_session *session,
-> >
-> >       head->mdsmap_epoch =3D cpu_to_le32(mdsc->mdsmap->m_epoch);
-> >       head->op =3D cpu_to_le32(req->r_op);
-> > -     head->caller_uid =3D cpu_to_le32(from_kuid(&init_user_ns,
-> > -                                              req->r_cred->fsuid));
-> > -     head->caller_gid =3D cpu_to_le32(from_kgid(&init_user_ns,
-> > -                                              req->r_cred->fsgid));
-> > +     /*
-> > +      * Inode operations that create filesystem objects based on the
-> > +      * caller's fs{g,u}id like ->mknod(), ->create(), ->mkdir() etc. =
-don't
-> > +      * have separate {g,u}id fields in their respective structs in th=
-e
-> > +      * ceph_mds_request_args union. Instead the caller_{g,u}id field =
-is
-> > +      * used to set ownership of the newly created inode by the mds se=
-rver.
-> > +      * For these inode operations we need to send the mapped fs{g,u}i=
-d over
-> > +      * the wire. For other cases we simple set req->r_mnt_idmap to th=
-e
-> > +      * initial idmapping meaning the unmapped fs{g,u}id is sent.
-> > +      */
-> > +     caller_fsuid =3D from_vfsuid(req->r_mnt_idmap, &init_user_ns,
-> > +                                     VFSUIDT_INIT(req->r_cred->fsuid))=
-;
-> > +     caller_fsgid =3D from_vfsgid(req->r_mnt_idmap, &init_user_ns,
-> > +                                     VFSGIDT_INIT(req->r_cred->fsgid))=
-;
-> > +     head->caller_uid =3D cpu_to_le32(from_kuid(&init_user_ns, caller_=
-fsuid));
-> > +     head->caller_gid =3D cpu_to_le32(from_kgid(&init_user_ns, caller_=
-fsgid));
->
-> Hi Alexander,
+On 5/31/2023 1:36 AM, Christian Brauner wrote:
+> On Tue, May 30, 2023 at 03:15:01PM -0700, Casey Schaufler wrote:
+>> On 5/30/2023 9:01 AM, Christian Brauner wrote:
+>>> On Tue, May 30, 2023 at 07:55:17AM -0700, Casey Schaufler wrote:
+>>>> On 5/30/2023 7:28 AM, Christoph Hellwig wrote:
+>>>>> On Tue, May 30, 2023 at 03:58:35PM +0200, Christian Brauner wrote:
+>>>>>> The main concern which was expressed on other patchsets before is that
+>>>>>> modifying inode operations to take struct path is not the way to go.
+>>>>>> Passing struct path into individual filesystems is a clear layering
+>>>>>> violation for most inode operations, sometimes downright not feasible,
+>>>>>> and in general exposing struct vfsmount to filesystems is a hard no. At
+>>>>>> least as far as I'm concerned.
+>>>>> Agreed.  Passing struct path into random places is not how the VFS works.
+>>>>>
+>>>>>> So the best way to achieve the landlock goal might be to add new hooks
+>>>>> What is "the landlock goal", and why does it matter?
+>>>>>
+>>>>>> or not. And we keep adding new LSMs without deprecating older ones (A
+>>>>>> problem we also face in the fs layer.) and then they sit around but
+>>>>>> still need to be taken into account when doing changes.
+>>>>> Yes, I'm really worried about th amount of LSMs we have, and the weird
+>>>>> things they do.
+>>>> Which LSM(s) do you think ought to be deprecated? I only see one that I
+>>> I don't have a good insight into what LSMs are actively used or are
+>>> effectively unused but I would be curious to hear what LSMs are
+>>> considered actively used/maintained from the LSM maintainer's
+>>> perspective.
+>> I'm not the LSM maintainer, but I've been working on the infrastructure
+>> for quite some time. All the existing LSMs save one can readily be associated
+>> with active systems, and the one that isn't is actively maintained. We have
+>> not gotten into the habit of accepting LSMs upstream that don't have a real
+>> world use.
+>>
+>>>> might consider a candidate. As for weird behavior, that's what LSMs are
+>>>> for, and the really weird ones proposed (e.g. pathname character set limitations)
+>>> If this is effectively saying that LSMs are licensed to step outside the
+>>> rules of the subsystem they're a guest in then it seems unlikely
+>>> subsystems will be very excited to let new LSM changes go in important
+>>> codepaths going forward. In fact this seems like a good argument against
+>>> it.
+>> This is an artifact of Linus' decision that security models should be
+>> supported as add-on modules. On the one hand, all that a subsystem maintainer
+>> needs to know about a security feature is what it needs in the way of hooks.
+>> On the other hand, the subsystem maintainer loses control over what kinds of
+>> things the security feature does with the available information. It's a
+>> tension that we've had to deal with since the Orange Book days of the late
+>> 1980's. The deal has always been:
+>>
+>> 	You can have your security feature if:
+>> 	1. If I turn it off it has no performance impact
+>> 	2. I don't have to do anything to maintain it
+>> 	3. It doesn't interfere with any other system behavior
+>> 	4. You'll leave me alone
+>>
+>> As a security developer from way back I would be delighted if maintainers of
+>> other subsystems took an active interest in some of what we've been trying
+>> to accomplish in the security space. If the VFS maintainers would like to
+>> see the LSM interfaces for file systems changed I, for one, would like very
+>> much to hear about what they'd prefer. 
+> What is important for us is that the security layer must understand and
+> accept that some things cannot be done the way it envisions them to be
+> done because it would involve design compromises in the fs layer that
+> the fs maintainers are unwilling to make. The idea to pass struct path
+> to almost every security hook is a good example.
 
-Dear Xiubo,
+Yes, and that's completely acceptable. What would be really great is some
+guidance about what to do instead. Fishing for NAKs isn't fun for anybody.
 
-Thanks for paying attention to this series!
+> If the project is feature parity between inode and path based LSMs then
+> it must be clear from the start that this won't be achieved at the cost
+> of mixing up the layer where only dentries and inodes are relevant and
+> the layer where struct paths are most relevant.
+
+Which is a fair point, and helps those of us who don't work in the VFS
+layer daily understand the rationale.
 
 >
-> You didn't answer Jeff and Greg's concerns in the first version
-> https://www.spinics.net/lists/ceph-devel/msg53356.html.
+>> We do a lot of crazy things to avoid interfering with the subsystems we
+>> interact with. A closer developer relationship would be most welcome, so
+>> long as it helps us achieve or goals. We get a lot of complaints about how
+>> LSM feature perform, but no one wants to hear that a good deal of that comes
+>> about because of what has to be done in support of 1, 2 and 3 above. Sometimes
+>> we do stoopid things, but usually it's to avoid changes "outside our swim lane".
+> I personally am not opposed to comment on patches but they will
+> naturally have lower priority than other things.
 
-I've tried to respin discussion in the -v1 thread:
-https://lore.kernel.org/all/20230519134420.2d04e5f70aad15679ab566fc@canonic=
-al.com/
+I can't say that I see how security features "naturally have lower priority",
+but everyone has to balance things.
 
-No one replied, so I decided to send rebased and slightly changed -v2,
-where I've fixed this:
-https://lore.kernel.org/all/041afbfd171915d62ab9a93c7a35d9c9d5c5bf7b.camel@=
-kernel.org/
-
->
-> I am also confused as Greg mentioned. If we just map the ids as 1000:0
-> and created a file and then map the ids 1000:10, then the file couldn't
-> be accessible, right ? Is this normal and as expected ?
-
-This can be a problem only if filtering based on the UID is turned on
-on the server side (which is a relatively rare case).
-
-idmapped mounts are not about mapping a caller UID/GID, idmapped
-mounts are about mapping inode owner's UID/GID.
-So, for example if you have UID 1000 (on disk) and have an idmapping
-1000:0 then it will be shown as owned by 0.
-If you create a file from a user with UID 0 then you will get UID 1000
-on disk. To achieve that, we map a current user fs{g,u}id
-when sending a creation request according to the idmapping mount to
-make things consistent. But when a user opens a file,
-we are sending UID/GID as they are without applying an idmapping. Of
-course, generic_permission() kernel helper is aware of
-mount idmapping and before open request will go to the server we will
-check that current user is allowed to open this file (and during
-this check UID/GID of a current user and UID/GID of the file owner
-will be properly compared). I.e. this issue is only relevant for the
-case
-when we have additional permission checks on the network file system
-server side.
-
->
-> IMO the idmapping should be client-side feature and we should make it
-> consistent by using the unmapped fs{g,u}id always here.
-
-To make the current user fs{g,u}id always idmapped we need to make
-really big changes in the VFS layer. And it's not obvious
-that it justifies the cost. Because this particular feature with
-Cephfs idmapped mounts is already used/tested with LXD/LXC workloads
-and it works perfectly well. And as far as I know, LXD/LXC were the
-first idmapped mount adopters. IMHO, it's better to
-start from this approach and if someone will want to extend this
-functionality for network filesystems and want to map fs{g,u}id which
-are sent over the
-wire we will take a look at that. Because anyway, integration with
-Cephfs is important for the LXD project and we are looking closely at
-this.
-
-Kind regards,
-Alex
-
->
-> Thanks
->
-> - Xiubo
->
-> >       head->ino =3D cpu_to_le64(req->r_deleg_ino);
-> >       head->args =3D req->r_args;
-> >
->
