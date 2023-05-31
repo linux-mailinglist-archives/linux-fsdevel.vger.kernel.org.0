@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35B2C717E94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 13:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48DDD717E7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 13:40:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235744AbjEaLjl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 07:39:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44990 "EHLO
+        id S235489AbjEaLjw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 07:39:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235575AbjEaLjQ (ORCPT
+        with ESMTP id S235589AbjEaLjT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 07:39:16 -0400
+        Wed, 31 May 2023 07:39:19 -0400
 Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6FC41A1;
-        Wed, 31 May 2023 04:39:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F3F91B1;
+        Wed, 31 May 2023 04:39:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1685533145; x=1717069145;
+  t=1685533148; x=1717069148;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Mcd/H07yjDNLd/X+ei4F/kInbJgAqWy0dojDfw1QWYw=;
-  b=CiMMXX2NKlw0EjscvWxhy9ES+3b6W5ONEZx4ZIVK0KEZ+W6pTyl6vOeD
-   goHLcUORVi77CHSFmlQZjfywUDpvnGIdAnyxG9S18a3FhFfOLtXhUXASr
-   +/xZq2+tOejUTbu69peLdDJYinO0NqS6bEiLVueBaq1HTidJO3JFgn1sd
-   r8laS+Q6zu030u+PMvNFvdYVyPNeQ9iHXuyb04yMGUSfnGFX0E1G9pLve
-   Cshh0nGpEJv9uCYamg11lVuZlu5OxK5F9ND9cbujZuqQOcKb+RO8VuvD4
-   p8XvQP8E9HpLk+cyK7ulrW7suh64Inaumuu1oWAbwc80fX6X0Ky2PFXuw
+  bh=eyPQiHOzD3W2DQRKwVAI2Cbe6Umke2Yu0VLdprV7VgA=;
+  b=mxQ1utU17q33UNcqPrZEC6tZG0ReaTsN/oWJGsWVyAtyLFogdv2uUoee
+   gUB4/oh5u7xwIoePmyav0ZHXI4zMjlnI0Qk2Blq/LmiN+fK+ZYoSVkyv8
+   l2otdF8zEEFzjSB2oW6eYcn9SImm0SL6oAgm+H7MA4Wjm5YEjcTx5p1Jn
+   uq3TxVrpV/SBra+W24YpYuQVY3XPICn8O+kxyOYpVik1R1GNPQkbrywti
+   w129VWiHaEAvCsOsTUNYP4ziyETDkWJtghGof8T6d3nxedGuPV8/o5G1w
+   YegsmbLXiT5a1LkNLIpSODhyUMRGu+9mHhzlbAaY0SfSuyxJ78B3JQSLo
    w==;
 X-IronPort-AV: E=Sophos;i="6.00,207,1681142400"; 
-   d="scan'208";a="232064336"
+   d="scan'208";a="232064340"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 31 May 2023 19:39:05 +0800
-IronPort-SDR: to0HFdKBg+IjClABLpvTPIT1phHfuXDyOhvGvvE5YW+eCEPC6q67jqbl5yg1Q1LvS0Rrv8zFJX
- g3zyiRNaRPvhqFhvKGVqm+i/kXIKh33aLNTHs7XAwG16gJxucCC+SS68kW7hkr9sVmSGHYCpwU
- sVQRTbF1Mc7CL4arwpxE+Z3HJ0w8ZpVBhajmz2fDG5USa6OWeRmLm5Ml3CSKfsjnorP9M5CeN9
- lTt3GCLhfbO+w+j2y9v/ghAMk+KyTuHdJlqekHKOuMX4rc+JBBB8tS5aYoN9+or45nPU6PVM7g
- BA0=
+  by ob1.hgst.iphmx.com with ESMTP; 31 May 2023 19:39:07 +0800
+IronPort-SDR: a44gF74rY84tLsSNpP4G1OQxIesBpYA1tjTX/aV09UnNrMSc9qdsC/FMu3ane7jBllA2zR0YM2
+ VqhufapvfVQfJqTWlTs/j4dh6bgESXndQlwI4rrMq63tmnHI6+D53BuEAPzvy0GQEHaAykuFUm
+ 2N2Tw6hNPncvsrhk/oJctB7AXfchrkBfuPnzQbZ7bSXkO1Bxl1J/eqw5ukEdmtcAERE2GFAVN9
+ c9MdfyTMW9dQccOykaMYLvqehRe8SHQkDqKdgvq40AZXgpqmgt6uOA4FMZQQfqJ3ssR9y/0Nla
+ wBU=
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 May 2023 03:48:17 -0700
-IronPort-SDR: dJb/CRSP3Swr2x2jiC+paW0dnGjzm6Bz1GAlGKlca4A7q/x/ky8HuVCu7AA6VYX5uJ0Ewh5t3x
- q+iWl5HlhzQMV3D+zIls3XMo7zp44uRPShf3qZmHTVjlHtCyJhoy3EfEEf+h9hvbiHfRi/SZaM
- d9U7RaXciqVsSQr8sZoG/qgLo3wszKIv+4kHv8jpR5BKyb+/H8r/7FEY1iK6JWuO591/DsqLKl
- X5ltcT6eaJJce6CRG0s8vZd0Q95JNHPvX3nOAbDWSbgMiVFC4dhkCvQP9zoXpp+VrisQgvbaoC
- Beg=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 May 2023 03:48:20 -0700
+IronPort-SDR: 8+Hdbq9JLo3j5INsLQlm6RtixEL95tqPyWSgg+3x81yQ5YpWjxlpDvvFf8C2gDpDL46OYeHMF7
+ m502e3zSOaUbGvCXIe7yKR9yL0BHb3HBowtYM+/iT7iBMmtUUi7PSQ4hTrJAnGBjLnu1CVA5te
+ bypZvx72taZMiH6TrSz8fb5NFkjFwSjOlPGNDGHmkMdbexVoR2mJv4XBGnJ7ALe50hf08OiFnB
+ 2J/tij7jzk4b7zRp70+No61r07ArBbAE7p376Qn5n8sBRZOrXcPJAPnX0eqzkQx6QywpRwQ1xb
+ Wag=
 WDCIronportException: Internal
 Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.6])
-  by uls-op-cesaip02.wdc.com with ESMTP; 31 May 2023 04:39:02 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 31 May 2023 04:39:05 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
@@ -63,9 +63,9 @@ Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         Mikulas Patocka <mpatocka@redhat.com>, gouha7@uniontech.com,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v6 19/20] fs: iomap: use __bio_add_folio where possible
-Date:   Wed, 31 May 2023 04:38:01 -0700
-Message-Id: <e809b83d60d9fb0f65a8116b3e50f1432f594725.1685461490.git.johannes.thumshirn@wdc.com>
+Subject: [PATCH v6 20/20] block: mark bio_add_folio as __must_check
+Date:   Wed, 31 May 2023 04:38:02 -0700
+Message-Id: <3d45098a7640897cbace54713efe10d88b74c160.1685461490.git.johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <cover.1685461490.git.johannes.thumshirn@wdc.com>
 References: <cover.1685461490.git.johannes.thumshirn@wdc.com>
@@ -81,49 +81,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When the iomap buffered-io code can't add a folio to a bio, it allocates a
-new bio and adds the folio to that one. This is done using bio_add_folio(),
-but doesn't check for errors.
-
-As adding a folio to a newly created bio can't fail, use the newly
-introduced __bio_add_folio() function.
+Now that all callers of bio_add_folio() check the return value, mark it as
+__must_check.
 
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/iomap/buffered-io.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/bio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 063133ec77f4..42c5fc0ad329 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -312,7 +312,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 			ctx->bio->bi_opf |= REQ_RAHEAD;
- 		ctx->bio->bi_iter.bi_sector = sector;
- 		ctx->bio->bi_end_io = iomap_read_end_io;
--		bio_add_folio(ctx->bio, folio, plen, poff);
-+		__bio_add_folio(ctx->bio, folio, plen, poff);
- 	}
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 4232a17e6b10..fef9f3085a02 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -466,7 +466,7 @@ void bio_reset(struct bio *bio, struct block_device *bdev, blk_opf_t opf);
+ void bio_chain(struct bio *, struct bio *);
  
- done:
-@@ -539,7 +539,7 @@ static int iomap_read_folio_sync(loff_t block_start, struct folio *folio,
- 
- 	bio_init(&bio, iomap->bdev, &bvec, 1, REQ_OP_READ);
- 	bio.bi_iter.bi_sector = iomap_sector(iomap, block_start);
--	bio_add_folio(&bio, folio, plen, poff);
-+	__bio_add_folio(&bio, folio, plen, poff);
- 	return submit_bio_wait(&bio);
- }
- 
-@@ -1582,7 +1582,7 @@ iomap_add_to_ioend(struct inode *inode, loff_t pos, struct folio *folio,
- 
- 	if (!bio_add_folio(wpc->ioend->io_bio, folio, len, poff)) {
- 		wpc->ioend->io_bio = iomap_chain_bio(wpc->ioend->io_bio);
--		bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
-+		__bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
- 	}
- 
- 	if (iop)
+ int __must_check bio_add_page(struct bio *, struct page *, unsigned len, unsigned off);
+-bool bio_add_folio(struct bio *, struct folio *, size_t len, size_t off);
++bool __must_check bio_add_folio(struct bio *, struct folio *, size_t len, size_t off);
+ extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
+ 			   unsigned int, unsigned int);
+ int bio_add_zone_append_page(struct bio *bio, struct page *page,
 -- 
 2.40.1
 
