@@ -2,94 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BACC2718B5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 22:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A2B9718BB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 23:21:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229651AbjEaUlj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 16:41:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55696 "EHLO
+        id S230208AbjEaVVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 17:21:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbjEaUlg (ORCPT
+        with ESMTP id S230165AbjEaVU7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 16:41:36 -0400
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC1412F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 13:40:46 -0700 (PDT)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6261a8bbe5fso1793286d6.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 13:40:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685565646; x=1688157646;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        Wed, 31 May 2023 17:20:59 -0400
+Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60246129
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 14:20:58 -0700 (PDT)
+Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-56896c77434so937427b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 14:20:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1685568057; x=1688160057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H2MHMFRCtTpRq4HekvDMncZqof6fHitP/tkQ4Bwp4iw=;
-        b=KuZJi8odf0/PJ1byBpNVC5U5gvd400wQ6GvlVbX65B9C9IMM5mqYSxGFnqb7jPNbto
-         Bbb79Wy/2wWgpQViDNKeDtJmUYxEaXzT4LDmXFj4UJ9ubYIiDeCWmWmuTnpD4xS0OKMm
-         AIWLO83TT3C6TwdBH/dYcdOAVa1xMQU9DDMG7hwYpuxOF4KhhoAnogyJ/GfwfYO2YoGb
-         Cy8ejlU7OQ7RaPNrdMv48ADd3kfQgmcvNbsG5QXXrgwR68EC8mATDn9biD4ppBRSPqz1
-         YuyujW8MX6IGWPJCYCMntyVeoYD5gjvlihPB+2ZUV0HL3fSfUGfijHBhqxXozEVDTLwq
-         lUfQ==
-X-Gm-Message-State: AC+VfDx8sas1CCccbdZBiDMfFxgO3qyl62pV0lRZTFRWeSrwr2ozuNvM
-        NSJLP0yVBJ7FNL9SdPLOGrGIJe9nxeGIJB2IeA==
-X-Google-Smtp-Source: ACHHUZ5kdx7S499hJRV8/H2S3RWG6Tr6vcGeL7BQ9XuPUWxOMtGzpZSxerK1wVcQWCuUeme2JGtCZA==
-X-Received: by 2002:a05:6214:d85:b0:616:5f27:b96a with SMTP id e5-20020a0562140d8500b006165f27b96amr7207768qve.27.1685565645712;
-        Wed, 31 May 2023 13:40:45 -0700 (PDT)
-Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
-        by smtp.gmail.com with ESMTPSA id s12-20020a05621412cc00b005fe4a301350sm6354991qvv.48.2023.05.31.13.40.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 May 2023 13:40:45 -0700 (PDT)
-Date:   Wed, 31 May 2023 16:40:44 -0400
-From:   Mike Snitzer <snitzer@kernel.org>
-To:     Sarthak Kukreti <sarthakkukreti@chromium.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Bart Van Assche <bvanassche@google.com>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
-Subject: Re: [PATCH v7 1/5] block: Don't invalidate pagecache for invalid
- falloc modes
-Message-ID: <ZHewzOfOdXu+kN75@redhat.com>
-References: <20230518223326.18744-1-sarthakkukreti@chromium.org>
- <20230518223326.18744-2-sarthakkukreti@chromium.org>
+        bh=LoZ0QonL7GpvkzVGqoB0gV8pXc0xldAiiia3lsdp4Jw=;
+        b=bV4CEIauWya7OBEvEJZ8O8BySgJRaCgtsOwV6TTfZUxO5baLK/jxr8/dThczBffNj1
+         g1gilTPiZQifPjEoO+IN/kk9i9ttCodVZ8VAZQtdacEO/I73YOsQw1P3KDX0Q7NmzVl5
+         fWejNhHweIU62YqvrPCRW4133WGgKrli3JmhqeqvcL8piPMRhv5kXzRVBqPq9qLq/qnk
+         DYPmRx+V/9Ra/NmqVGiyPe/eqdSrEtP3EsfkjQln612yGRhW29oLVVtt+CMN+/kCRLon
+         kft2gp88qfJMj0vw5N1jDI9nRjKoMbdmze8lCQUhFECmOfrFLAjt2nlsqiJvMXmcx5wf
+         sMDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685568057; x=1688160057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LoZ0QonL7GpvkzVGqoB0gV8pXc0xldAiiia3lsdp4Jw=;
+        b=OW0ES5AF0O0bQUdmXGSsWkiMe0ytpsRCfAVuNBnoXlohne37/SmDn3SQdXuq7jr85R
+         r3KABgE1RDaFK8BnyEByp6ajpQDBIMsYmu6hKkGBMnFHX5cmo3b9ViQYjBHRTWMGghKj
+         HB1bo62OhXG4ZRj9DlrYCpQGG40P6NWwA+Q8NG6L/sfpY5sBUdj9OLoLo0IRYRqHADKj
+         xn52/I+Ma0ejOChwjjD/D7WLGjE1vZCczIHOg1+/Ac90isHkPePqAFl9xljlyj/Ecinm
+         6mgRTpBbfIKZ0M4loCBp6RBHGsU1rVP576pKBdYSyJ5m7LYoxgDtoHDKj5DsCNKkKpFc
+         lAzQ==
+X-Gm-Message-State: AC+VfDz+p6U4e2tC6YT9lFYMhrXxi+t6M+LN6OZ7X7T/bWdrN+j0A71C
+        WxIKrD2ZeuO5obVIrVeJKuyvnwNWI4xRlPTy6tCO
+X-Google-Smtp-Source: ACHHUZ7xDxpY+qZ+kHStKpfyGCUmSZFIrAOaNegLCNmyLU6OfWoFLFoTJ5KIVySJiQxq5mqHTIQOq8i1T+EuU78aXoc=
+X-Received: by 2002:a81:d246:0:b0:561:9051:d2d3 with SMTP id
+ m6-20020a81d246000000b005619051d2d3mr6586195ywl.11.1685568057462; Wed, 31 May
+ 2023 14:20:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230518223326.18744-2-sarthakkukreti@chromium.org>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+References: <20230530232914.3689712-1-mcgrof@kernel.org> <20230530232914.3689712-3-mcgrof@kernel.org>
+In-Reply-To: <20230530232914.3689712-3-mcgrof@kernel.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 31 May 2023 17:20:46 -0400
+Message-ID: <CAHC9VhRA_XkkiZpg=d1RiME+VUYe7bsuV6pOpsseDRWfwV+q9A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] sysctl: move security keys sysctl registration to its
+ own file
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     keescook@chromium.org, yzaikin@google.com, dhowells@redhat.com,
+        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com,
+        j.granados@samsung.com, brauner@kernel.org, ebiederm@xmission.com,
+        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 18 2023 at  6:33P -0400,
-Sarthak Kukreti <sarthakkukreti@chromium.org> wrote:
+On Tue, May 30, 2023 at 7:29=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
+> wrote:
+>
+> The security keys sysctls are already declared on its own file,
+> just move the sysctl registration to its own file to help avoid
+> merge conflicts on sysctls.c, and help with clearing up sysctl.c
+> further.
+>
+> This creates a small penalty of 23 bytes:
+>
+> ./scripts/bloat-o-meter vmlinux.1 vmlinux.2
+> add/remove: 2/0 grow/shrink: 0/1 up/down: 49/-26 (23)
+> Function                                     old     new   delta
+> init_security_keys_sysctls                     -      33     +33
+> __pfx_init_security_keys_sysctls               -      16     +16
+> sysctl_init_bases                             85      59     -26
+> Total: Before=3D21256937, After=3D21256960, chg +0.00%
+>
+> But soon we'll be saving tons of bytes anyway, as we modify the
+> sysctl registrations to use ARRAY_SIZE and so we get rid of all the
+> empty array elements so let's just clean this up now.
+>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>  include/linux/key.h    | 3 ---
+>  kernel/sysctl.c        | 4 ----
+>  security/keys/sysctl.c | 7 +++++++
+>  3 files changed, 7 insertions(+), 7 deletions(-)
 
-> Only call truncate_bdev_range() if the fallocate mode is
-> supported. This fixes a bug where data in the pagecache
-> could be invalidated if the fallocate() was called on the
-> block device with an invalid mode.
-> 
-> Fixes: 25f4c41415e5 ("block: implement (some of) fallocate for block devices")
-> Cc: stable@vger.kernel.org
-> Reported-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
+Ultimately I'll leave the ACK to David or Jarkko, but this looks
+reasonable to me.
 
-Reviewed-by: Mike Snitzer <snitzer@kernel.org>
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-Jens, this one is independent of the rest of the patchset and should
-be ready to go upstream whenever you are able.
-
-Thanks,
-Mike
+--=20
+paul-moore.com
