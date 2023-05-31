@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EC3F717E2C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 13:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42B14717E33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 13:38:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235102AbjEaLiK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 07:38:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44326 "EHLO
+        id S235212AbjEaLiR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 07:38:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbjEaLiJ (ORCPT
+        with ESMTP id S230341AbjEaLiL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 07:38:09 -0400
+        Wed, 31 May 2023 07:38:11 -0400
 Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32920E5;
-        Wed, 31 May 2023 04:38:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE28AE5;
+        Wed, 31 May 2023 04:38:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1685533087; x=1717069087;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LvvitQpZZtAL6oj1gqbFnc01A5MrDrOWTWrqLbLHBtg=;
-  b=TGA+vbVwlyf//CJ/tO4s1XYxMKDn7ZrdNuzSPxJDc7pea8D7KwBjsqHq
-   TZTmMN9zeRvleeRHLErXC1DZ23bQ0j2SwkCvF1qiwzfAWNgJGaA9ePXiL
-   bO6R425etcQC1NHfZCAwz+8CPtIatkbSgHJ2Ex5cIxeP+ZBFRaqe0vWI6
-   yY5ur2foPLDvvdznL0jvRgtpqupjfRqAl96NmSqFkfyv/dVmNGl0Ssxvf
-   Xoeqtm8ANactFsuRToXg5jNhCrzgMMExn6qGq7oUv0hmiJ7MSmRwmDlcv
-   tMn+xVNb6tGMjcg3BNdjEpPnEhrOr+yjE+EAepg2o7SHq9fqX9FSYNSbX
-   g==;
+  t=1685533090; x=1717069090;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=QmZzem9nS4IdX+YpMPH6/hkU8Q8851NfFydLySYg+TQ=;
+  b=Dwnd4VtUwVUZav/qxWUjJ9r9L6Ox3Y+sBql4otguj1UMhkYbucTSmVc2
+   GpoJPxLsr6Jk5rqcnqoLBgF6VaOPVfpfQvf+yE26JameoXZBnWQqCHkW/
+   2a+cMpmGLooNDAktPdo64oFp8v8x5srbkKrvcKP90giDuwAPCp2xz5SXU
+   a/SPGpD3z4T+NedYIksIsFaQTKApHXSD6hJYlICw/G5t71R678qy3VVF6
+   VhkSoCFij0HxCSCnVXyVwc0AyPDu3jRH1fP2yG0NVaLM7mPoY5syMKU2c
+   hDaGtEj7tn4uKoq4h9rmaRMqXRPLZiHFM6cJaF/lB9JSY14oGr6ptT5kw
+   Q==;
 X-IronPort-AV: E=Sophos;i="6.00,207,1681142400"; 
-   d="scan'208";a="344179010"
+   d="scan'208";a="344179021"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 31 May 2023 19:38:07 +0800
-IronPort-SDR: nePLnNaQJRq8r29PfsVroxAIStw5c92OssI0j8HEQTXQZkF7JzKP9bJ4++cuDPSs8oNUSNmaDE
- 9pJ7dv/otZth4jQZndpodaMTsMFi95nLSdouV9G5QCSM/jzXtJjHBMMHillHOZ4hUlVaH68Dm8
- 1dH5DIeGiqwMpTzIRstCAsAP2RVeS2l+5DWSWxoO3hG0kFiLtUeMunzI7H0sxuBuWOYhSY2x4Z
- UkDPEqhN9MSLlRg2gkl+Rh7joFEy+PKgibG3ZyLx9VjjLTF227SUlpK6MakxAxdrlAY9kdMMk3
- Abw=
+  by ob1.hgst.iphmx.com with ESMTP; 31 May 2023 19:38:10 +0800
+IronPort-SDR: z4fczhao457ypFuS2F8lpUO70DcrrE4RtiCUOwaJDlXLpAIO4rMqygu/lzMb/2rk0qY9pmo3sp
+ GWRS0eXLihr6Q+R0S+yUKJ7KxlBTlFsTIhWAjmF6EOhtvoxfiUtJGURGa9MdV4EDUJlkdjDhqk
+ WaLhDl2goIQ+7+uuMEGp7YC8TY8dZ2Qg+m2JmISLCUlFgXK+LSVMysCuYKFnJ3q/nns5BW/nN+
+ XPyqTp7qJqbLa6G5imTg46Sl5PkBrbBqkFqWOl9QOG9FeyZ/8BZM7bse0n16t6UnMWTH/w0e3F
+ Xs0=
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 May 2023 03:47:19 -0700
-IronPort-SDR: MvRk2MpNk3e8gqt7qwqmL3jPRXa6b09ylTyL/ys7eOTZgvQgIabksCsBGQRYSIPZ3fvJoKYihN
- Pf+m2tntLEopBBTPDXShIwemVZlqUpoiexRwQOM9vXrxGeZtfqIjzfL7BMbwSy+e2/4hGk0mff
- 0TQnjGk9GH6WtgFUosfjjuzMtQzDD0dAG/x6MmRyT6fauYzygDv0ft2B72XwweukdX03DxZBnz
- bDWJTrR4E+YBqjH9qg+kXG8rJIPgi2AXjM0c/MXwL4OF8owppSIwbZsIwVwUThpUzxV7rdhssW
- keY=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 May 2023 03:47:22 -0700
+IronPort-SDR: elnARq94Fzfs9J/SRdQfPNSX2Mj47szsB+03GiXquQ2ST3HVuP3adJmqVxYOTx4q+O3Ar0gSDG
+ obKu1tjEmPaDp0Baw6hhej1TiKvLCydrnnSOivc5pAoD/cOgpqCNYnEP6/Mqd74RpC+Wx0vSBH
+ GI3+WyE4fAK6iQr0axj5aoe3KHl8hMhJY0SalgRpsyxXvDMZmnHERLU4aQaTJg2RMSrIbWgvpC
+ 3iHVAQtCOiND+WXOqNqjAwGt4qQsXSe/P0EYzlIb2M+HDt/lrHj4VzKNRsn7VyLQUoD32UrxG5
+ 92Y=
 WDCIronportException: Internal
 Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.6])
-  by uls-op-cesaip02.wdc.com with ESMTP; 31 May 2023 04:38:04 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 31 May 2023 04:38:07 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
@@ -62,11 +62,14 @@ Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
         Bob Peterson <rpeterso@redhat.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         Mikulas Patocka <mpatocka@redhat.com>, gouha7@uniontech.com,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v6 00/20] bio: check return values of bio_add_page
-Date:   Wed, 31 May 2023 04:37:42 -0700
-Message-Id: <cover.1685461490.git.johannes.thumshirn@wdc.com>
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Subject: [PATCH v6 01/20] swap: use __bio_add_page to add page to bio
+Date:   Wed, 31 May 2023 04:37:43 -0700
+Message-Id: <64f8ac179cc54aa316c75aaadd71e107ba12917d.1685461490.git.johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <cover.1685461490.git.johannes.thumshirn@wdc.com>
+References: <cover.1685461490.git.johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -79,87 +82,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We have two functions for adding a page to a bio, __bio_add_page() which is
-used to add a single page to a freshly created bio and bio_add_page() which is
-used to add a page to an existing bio.
+The swap code only adds a single page to a newly created bio. So use
+__bio_add_page() to add the page which is guaranteed to succeed in this
+case.
 
-While __bio_add_page() is expected to succeed, bio_add_page() can fail.
+This brings us closer to marking bio_add_page() as __must_check.
 
-This series converts the callers of bio_add_page() which can easily use
-__bio_add_page() to using it and checks the return of bio_add_page() for
-callers that don't work on a freshly created bio.
+Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ mm/page_io.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Lastly it marks bio_add_page() as __must_check so we don't have to go again
-and audit all callers.
-
-Changes to v5:
-- Rebased onto latest Linus' master
-- Removed now superfluous BUG_ON() in fs/buffer.c (Gou)
-- Removed dead cleanup code in dm-crypt.c (Mikulas)
-
-Changes to v4:
-- Rebased onto latest Linus' master
-- Dropped already merged patches
-- Added Sergey's Reviewed-by
-
-Changes to v3:
-- Added __bio_add_folio and use it in iomap (Willy)
-- Mark bio_add_folio must check (Willy)
-- s/GFS/GFS2/ (Andreas)
-
-Changes to v2:
-- Removed 'wont fail' comments pointed out by Song
-
-Changes to v1:
-- Removed pointless comment pointed out by Willy
-- Changed commit messages pointed out by Damien
-- Colledted Damien's Reviews and Acks
-
-
-
-Johannes Thumshirn (20):
-  swap: use __bio_add_page to add page to bio
-  drbd: use __bio_add_page to add page to bio
-  dm: dm-zoned: use __bio_add_page for adding single metadata page
-  fs: buffer: use __bio_add_page to add single page to bio
-  md: use __bio_add_page to add single page
-  md: raid5-log: use __bio_add_page to add single page
-  md: raid5: use __bio_add_page to add single page to new bio
-  jfs: logmgr: use __bio_add_page to add single page to bio
-  gfs2: use __bio_add_page for adding single page to bio
-  zonefs: use __bio_add_page for adding single page to bio
-  zram: use __bio_add_page for adding single page to bio
-  floppy: use __bio_add_page for adding single page to bio
-  md: check for failure when adding pages in alloc_behind_master_bio
-  md: raid1: use __bio_add_page for adding single page to bio
-  md: raid1: check if adding pages to resync bio fails
-  dm-crypt: check if adding pages to clone bio fails
-  block: mark bio_add_page as __must_check
-  block: add __bio_add_folio
-  fs: iomap: use __bio_add_folio where possible
-  block: mark bio_add_folio as __must_check
-
- block/bio.c                      |  8 ++++++++
- drivers/block/drbd/drbd_bitmap.c |  4 +---
- drivers/block/floppy.c           |  2 +-
- drivers/block/zram/zram_drv.c    |  2 +-
- drivers/md/dm-crypt.c            |  5 ++++-
- drivers/md/dm-zoned-metadata.c   |  6 +++---
- drivers/md/md.c                  |  4 ++--
- drivers/md/raid1-10.c            | 11 ++++++-----
- drivers/md/raid1.c               |  7 +++++--
- drivers/md/raid10.c              | 20 ++++++++++----------
- drivers/md/raid5-cache.c         |  2 +-
- drivers/md/raid5-ppl.c           |  4 ++--
- fs/buffer.c                      |  3 +--
- fs/gfs2/ops_fstype.c             |  2 +-
- fs/iomap/buffered-io.c           |  6 +++---
- fs/jfs/jfs_logmgr.c              |  4 ++--
- fs/zonefs/super.c                |  2 +-
- include/linux/bio.h              |  5 +++--
- mm/page_io.c                     |  8 ++++----
- 19 files changed, 59 insertions(+), 46 deletions(-)
-
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 87b682d18850..684cd3c7b59b 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -338,7 +338,7 @@ static void swap_writepage_bdev_sync(struct page *page,
+ 	bio_init(&bio, sis->bdev, &bv, 1,
+ 		 REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc));
+ 	bio.bi_iter.bi_sector = swap_page_sector(page);
+-	bio_add_page(&bio, page, thp_size(page), 0);
++	__bio_add_page(&bio, page, thp_size(page), 0);
+ 
+ 	bio_associate_blkg_from_page(&bio, page);
+ 	count_swpout_vm_event(page);
+@@ -360,7 +360,7 @@ static void swap_writepage_bdev_async(struct page *page,
+ 			GFP_NOIO);
+ 	bio->bi_iter.bi_sector = swap_page_sector(page);
+ 	bio->bi_end_io = end_swap_bio_write;
+-	bio_add_page(bio, page, thp_size(page), 0);
++	__bio_add_page(bio, page, thp_size(page), 0);
+ 
+ 	bio_associate_blkg_from_page(bio, page);
+ 	count_swpout_vm_event(page);
+@@ -468,7 +468,7 @@ static void swap_readpage_bdev_sync(struct page *page,
+ 
+ 	bio_init(&bio, sis->bdev, &bv, 1, REQ_OP_READ);
+ 	bio.bi_iter.bi_sector = swap_page_sector(page);
+-	bio_add_page(&bio, page, thp_size(page), 0);
++	__bio_add_page(&bio, page, thp_size(page), 0);
+ 	/*
+ 	 * Keep this task valid during swap readpage because the oom killer may
+ 	 * attempt to access it in the page fault retry time check.
+@@ -488,7 +488,7 @@ static void swap_readpage_bdev_async(struct page *page,
+ 	bio = bio_alloc(sis->bdev, 1, REQ_OP_READ, GFP_KERNEL);
+ 	bio->bi_iter.bi_sector = swap_page_sector(page);
+ 	bio->bi_end_io = end_swap_bio_read;
+-	bio_add_page(bio, page, thp_size(page), 0);
++	__bio_add_page(bio, page, thp_size(page), 0);
+ 	count_vm_event(PSWPIN);
+ 	submit_bio(bio);
+ }
 -- 
 2.40.1
 
