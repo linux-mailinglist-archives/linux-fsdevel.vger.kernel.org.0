@@ -2,92 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1329F717947
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 09:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5656471793C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 09:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234962AbjEaH7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 03:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59438 "EHLO
+        id S234968AbjEaH5c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 03:57:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234932AbjEaH6e (ORCPT
+        with ESMTP id S234983AbjEaH5S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 03:58:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11949E6A;
-        Wed, 31 May 2023 00:58:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 31 May 2023 03:57:18 -0400
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09070198E;
+        Wed, 31 May 2023 00:56:06 -0700 (PDT)
+Received: from [192.168.0.2] (ip5f5ae86a.dynamic.kabel-deutschland.de [95.90.232.106])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 709A8636A0;
-        Wed, 31 May 2023 07:53:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0046AC4339E;
-        Wed, 31 May 2023 07:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685519586;
-        bh=S0GisPmsqjyz7HCMTOJiz8ZWWhleMBu7VOEDA1PRQAQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HNGpOMbqUyPbLn9cRXfHlKeQs9E2d3KUWh3P7F+bE3jatKI89Ph1ubaXGVb1Npi3g
-         1j/q4Rk6j2pLRdZ2gtoGMyaSD72BnTuQ35sm4PEfw1QNhdgjENObxBQC8ABwYokQ1p
-         0LTZiUGeuhzIKEgYG3+kV2kfaM/xyfy3tSf5lkiZfltOaLZ0Yf1a9SlZI+pasM9oTw
-         O8+vqBAL9M3AwuT2PLokyn5H/6l5dNYBgalhf97LukxvciFG5dBeGG+uTuFGmZZzQJ
-         zlfXOjRsSXRKunDt46Q7hF3dTt5RlWVThiAhMTnCeyapq2RYrwN/i2IScdxrBbTISQ
-         IRRre9952mazA==
-Date:   Wed, 31 May 2023 09:53:01 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Benjamin Segall <bsegall@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH RESEND] epoll: ep_autoremove_wake_function should use
- list_del_init_careful
-Message-ID: <20230531-zupacken-laute-22564cd952f7@brauner>
-References: <xm26pm6hvfer.fsf@google.com>
- <20230531015748.GB1648@quark.localdomain>
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id B64BB61E4052B;
+        Wed, 31 May 2023 09:54:23 +0200 (CEST)
+Message-ID: <e510055e-da93-e9c1-d60b-f6b357d6611b@molgen.mpg.de>
+Date:   Wed, 31 May 2023 09:54:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230531015748.GB1648@quark.localdomain>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v6 15/20] md: raid1: check if adding pages to resync bio
+ fails
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Song Liu <song@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        Mike Snitzer <snitzer@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>, gouhao@uniontech.com,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>
+References: <cover.1685461490.git.johannes.thumshirn@wdc.com>
+ <c60c6f46b70c96b528b6c4746918ea87c2a01473.1685461490.git.johannes.thumshirn@wdc.com>
+ <20230531042502.GM32705@lst.de>
+ <CAPhsuW62vBccjUkCUmYr+OZSLgGozFzX4YyzP8OV+dvsLujCGg@mail.gmail.com>
+Content-Language: en-US
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <CAPhsuW62vBccjUkCUmYr+OZSLgGozFzX4YyzP8OV+dvsLujCGg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 30, 2023 at 06:57:48PM -0700, Eric Biggers wrote:
-> On Tue, May 30, 2023 at 11:32:28AM -0700, Benjamin Segall wrote:
-> > autoremove_wake_function uses list_del_init_careful, so should epoll's
-> > more aggressive variant. It only doesn't because it was copied from an
-> > older wait.c rather than the most recent.
-> > 
-> > Fixes: a16ceb139610 ("epoll: autoremove wakers even more aggressively")
-> > Signed-off-by: Ben Segall <bsegall@google.com>
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  fs/eventpoll.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > index 52954d4637b5..081df056398a 100644
-> > --- a/fs/eventpoll.c
-> > +++ b/fs/eventpoll.c
-> > @@ -1756,11 +1756,11 @@ static struct timespec64 *ep_timeout_to_timespec(struct timespec64 *to, long ms)
-> >  static int ep_autoremove_wake_function(struct wait_queue_entry *wq_entry,
-> >  				       unsigned int mode, int sync, void *key)
-> >  {
-> >  	int ret = default_wake_function(wq_entry, mode, sync, key);
-> >  
-> > -	list_del_init(&wq_entry->entry);
-> > +	list_del_init_careful(&wq_entry->entry);
-> >  	return ret;
-> >  }
-> 
-> Can you please provide a more detailed explanation about why
-> list_del_init_careful() is needed here?
+Dear Johannes,
 
-Yeah, this needs more explanation... Next time someone looks at this
-code and there's a *_careful() added they'll want to know why.
+
+Thank you for your patches.
+
+Am 31.05.23 um 06:58 schrieb Song Liu:
+> On Tue, May 30, 2023 at 9:25 PM Christoph Hellwig <hch@lst.de> wrote:
+>>
+>> To me these look like __bio_add_page candidates, but I guess Song
+>> preferred it this way?  It'll add a bit pointless boilerplate code,
+>> but I'm ok with that.
+> 
+> We had some discussion on this in v2, and decided to keep these
+> assert-like WARN_ON().
+
+it’d be great if you added a summary/note of the discussion to the 
+commit message.
+
+
+Kind regards,
+
+Paul
