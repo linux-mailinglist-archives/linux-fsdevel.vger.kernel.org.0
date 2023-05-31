@@ -2,129 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 109BF717BD7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 11:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4AA8717C6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 11:50:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234789AbjEaJ0x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 05:26:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35440 "EHLO
+        id S235343AbjEaJuK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 05:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231397AbjEaJ0w (ORCPT
+        with ESMTP id S235678AbjEaJuI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 05:26:52 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E49D97;
-        Wed, 31 May 2023 02:26:51 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34V94Yqt017855;
-        Wed, 31 May 2023 09:26:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id; s=qcppdkim1;
- bh=BXj7Kiy3r/4ROGAvCQJiJz+56vxscyzDPBqDmm7TooE=;
- b=X1ehLk9Tvs/YkD/fJiNaSG71g4bl9Nfj7EVMasphcUwD/9IKj/UciBabDhOJZt5QH3PI
- UBlqjYbFcjzjCEVFmixMQ40K2JcTIV/KdtjFp6CWVhnvvyy5mhWPksCB+On2u0puzkwj
- MrM7bld3kAMqCO+aYD3JvHOZdLWBAV76NWvSInukfdotFOdZyv7RgoYNJmKaMPyNj0ww
- MTw1Qm2SaLjvYmHXiVX3xjHzyftvHxOKJWONysiKUEjfVZ0vXieUDccDzOeLnGChHqOO
- amE4zun1w/a/jzsquBo5sZVizumOdpq9kCn6Z1m/zLqY0sD6E0TE2Guqd7c2KKmFG470 7A== 
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qx39d01hp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 31 May 2023 09:26:49 +0000
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 34V9Qjx5030339;
-        Wed, 31 May 2023 09:26:45 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 3quaxkdeh9-1;
-        Wed, 31 May 2023 09:26:45 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34V9QjOw030334;
-        Wed, 31 May 2023 09:26:45 GMT
-Received: from hyd-e160-a01-1-05.qualcomm.com (hyd-e160-a01-1-05.qualcomm.com [10.147.154.233])
-        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 34V9Qj3x030333;
-        Wed, 31 May 2023 09:26:45 +0000
-Received: by hyd-e160-a01-1-05.qualcomm.com (Postfix, from userid 2304101)
-        id 781858CE2; Wed, 31 May 2023 14:56:44 +0530 (IST)
-From:   Pradeep P V K <quic_pragalla@quicinc.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pradeep P V K <quic_pragalla@quicinc.com>
-Subject: [PATCH V1] fuse: Abort the requests under processing queue with a spin_lock
-Date:   Wed, 31 May 2023 14:56:43 +0530
-Message-Id: <20230531092643.45607-1-quic_pragalla@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3yDbiAOHTv5FO89O1iB6xkSAKTPvg33D
-X-Proofpoint-ORIG-GUID: 3yDbiAOHTv5FO89O1iB6xkSAKTPvg33D
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-31_05,2023-05-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- spamscore=0 priorityscore=1501 mlxlogscore=534 adultscore=0 mlxscore=0
- impostorscore=0 phishscore=0 lowpriorityscore=0 clxscore=1011
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305310081
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 31 May 2023 05:50:08 -0400
+Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34F07E2;
+        Wed, 31 May 2023 02:50:06 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4QWPPD3w8fz9xqd6;
+        Wed, 31 May 2023 17:39:44 +0800 (CST)
+Received: from [10.206.134.65] (unknown [10.206.134.65])
+        by APP1 (Coremail) with SMTP id LxC2BwCHA_8tGHdkKS_5Ag--.3134S2;
+        Wed, 31 May 2023 10:49:44 +0100 (CET)
+Message-ID: <1020d006-c698-aacc-bcc3-92e5b237ef91@huaweicloud.com>
+Date:   Wed, 31 May 2023 11:49:30 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in open_xa_dir
+To:     Paul Moore <paul@paul-moore.com>,
+        syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>
+Cc:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org,
+        roberto.sassu@huawei.com, syzkaller-bugs@googlegroups.com,
+        peterz@infradead.org, mingo@redhat.com, will@kernel.org
+References: <0000000000007bedb605f119ed9f@google.com>
+ <00000000000000964605faf87416@google.com>
+ <CAHC9VhTZ=Esk+JxgAjch2J44WuLixe-SZMXW2iGHpLdrdMKQ=g@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAHC9VhTZ=Esk+JxgAjch2J44WuLixe-SZMXW2iGHpLdrdMKQ=g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: LxC2BwCHA_8tGHdkKS_5Ag--.3134S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCFyftry8Kw17XryDGry3urg_yoWrAr4UpF
+        W8K3ZxKrnYyr1kKF4Iq3W5Ww10grZ3Cry7JryDKryq9anrZrnxtF4Iy34fCr4FkrZ7AFZx
+        Jw1jy3yrAwnYqwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+        07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+        CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
+        14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+        9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj43p9gABsp
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        PDS_RDNS_DYNAMIC_FP,RCVD_IN_MSPIKE_BL,RCVD_IN_MSPIKE_L3,RDNS_DYNAMIC,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is a potential race/timing issue while aborting the
-requests on processing list between fuse_dev_release() and
-fuse_abort_conn(). This is resulting into below warnings
-and can even result into UAF issues.
+On 5/5/2023 11:36 PM, Paul Moore wrote:
+> On Fri, May 5, 2023 at 4:51 PM syzbot
+> <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com> wrote:
+>>
+>> syzbot has bisected this issue to:
+>>
+>> commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+>> Author: Roberto Sassu <roberto.sassu@huawei.com>
+>> Date:   Fri Mar 31 12:32:18 2023 +0000
+>>
+>>      reiserfs: Add security prefix to xattr name in reiserfs_security_write()
+>>
+>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14403182280000
+>> start commit:   3c4aa4434377 Merge tag 'ceph-for-6.4-rc1' of https://githu..
+>> git tree:       upstream
+>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16403182280000
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=12403182280000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=73a06f6ef2d5b492
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12442414280000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176a7318280000
+>>
+>> Reported-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
+>> Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
+>>
+>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> I don't think Roberto's patch identified above is the actual root
+> cause of this problem as reiserfs_xattr_set_handle() is called in
+> reiserfs_security_write() both before and after the patch.  However,
+> due to some bad logic in reiserfs_security_write() which Roberto
+> corrected, I'm thinking that it is possible this code is being
+> exercised for the first time and syzbot is starting to trigger a
+> locking issue in the reiserfs code ... ?
 
-[22809.190255][T31644] refcount_t: underflow; use-after-free.
-[22809.190266][T31644] WARNING: CPU: 2 PID: 31644 at lib/refcount.c:28
-refcount_warn_saturate+0x110/0x158
-...
-[22809.190567][T31644] Call trace:
-[22809.190567][T31644]  refcount_warn_saturate+0x110/0x158
-[22809.190569][T31644]  fuse_file_put+0xfc/0x104
-[22809.190575][T31644]  fuse_readpages_end+0x210/0x29c
-[22809.190579][T31644]  fuse_request_end+0x17c/0x200
-[22809.190580][T31644]  fuse_dev_release+0xe0/0x1e4
-[22809.190582][T31644]  __fput+0xfc/0x294
-[22809.190588][T31644]  ____fput+0x18/0x2c
-[22809.190590][T31644]  task_work_run+0xd8/0x104
-[22809.190599][T31644]  do_exit+0x2a8/0xa5c
-[22809.190605][T31644]  do_group_exit+0x78/0xa4
-[22809.190608][T31644]  get_signal+0x778/0x8a8
-[22809.190614][T31644]  do_notify_resume+0x134/0x340
-[22809.190617][T31644]  el0_svc+0x68/0xc4
-[22809.190623][T31644]  el0t_64_sync_handler+0x8c/0xfc
-[22809.190626][T31644]  el0t_64_sync+0x1a0/0x1a4
++ Jan, Jeff (which basically restructured the lock)
 
-Fix this by aborting the requests in fuse_dev_release()
-under fpq spin lock.
++ Petr, Ingo, Will
 
-Signed-off-by: Pradeep P V K <quic_pragalla@quicinc.com>
----
- fs/fuse/dev.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I involve the lockdep experts, to get a bit of help on this.
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 1a8f82f478cb..bbc33a97ab7c 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2208,9 +2208,8 @@ int fuse_dev_release(struct inode *inode, struct file *file)
- 		WARN_ON(!list_empty(&fpq->io));
- 		for (i = 0; i < FUSE_PQ_HASH_SIZE; i++)
- 			list_splice_init(&fpq->processing[i], &to_end);
--		spin_unlock(&fpq->lock);
--
- 		end_requests(&to_end);
-+		spin_unlock(&fpq->lock);
- 
- 		/* Are we the last open device? */
- 		if (atomic_dec_and_test(&fc->dev_count)) {
--- 
-2.17.1
+First of all, the lockdep warning is trivial to reproduce:
+
+# dd if=/dev/zero of=reiserfs.img bs=1M count=100
+# losetup -f --show reiserfs.img
+/dev/loop0
+# mkfs.reiserfs /dev/loop0
+# mount /dev/loop0 /mnt/
+# touch file0
+
+In the testing system, Smack is the major LSM.
+
+Ok, so the warning here is clear:
+
+https://syzkaller.appspot.com/x/log.txt?x=12403182280000
+
+However, I was looking if that can really happen. From this:
+
+[   77.746561][ T5418] -> #1 (&sbi->lock){+.+.}-{3:3}:
+[   77.753772][ T5418]        lock_acquire+0x23e/0x630
+[   77.758792][ T5418]        __mutex_lock_common+0x1d8/0x2530
+[   77.764504][ T5418]        mutex_lock_nested+0x1b/0x20
+[   77.769868][ T5418]        reiserfs_write_lock+0x70/0xc0
+[   77.775321][ T5418]        reiserfs_mkdir+0x321/0x870
+
+I see that the lock is taken in reiserfs_write_lock(), while lockdep says:
+
+[   77.710227][ T5418] but task is already holding lock:
+[   77.717587][ T5418] ffff88807568d090 (&sbi->lock){+.+.}-{3:3}, at: 
+reiserfs_write_lock_nested+0x4a/0xb0
+
+which is in a different place, I believe here:
+
+int reiserfs_paste_into_item(struct reiserfs_transaction_handle *th,
+                              /* Path to the pasted item. */
+[...]
+
+         depth = reiserfs_write_unlock_nested(sb);
+         dquot_free_space_nodirty(inode, pasted_size);
+         reiserfs_write_lock_nested(sb, depth);
+         return retval;
+}
+
+This is called by reiserfs_add_entry(), which is called by 
+reiserfs_create() (it is in the lockdep trace). After returning to 
+reiserfs_create(), d_instantiate_new() is called.
+
+I don't know exactly, I take the part that the lock is held. But if it 
+is held, how d_instantiate_new() can be executed in another task?
+
+static int reiserfs_create(struct mnt_idmap *idmap, struct inode *dir,
+                         struct dentry *dentry, umode_t mode, bool excl)
+{
+
+[...]
+
+         reiserfs_write_lock(dir->i_sb);
+
+         retval = journal_begin(&th, dir->i_sb, jbegin_count);
+
+[...]
+
+         d_instantiate_new(dentry, inode);
+         retval = journal_end(&th);
+
+out_failed:
+         reiserfs_write_unlock(dir->i_sb);
+
+If the lock is held, the scenario lockdep describes cannot happen. Any 
+thoughts?
+
+Thanks
+
+Roberto
 
