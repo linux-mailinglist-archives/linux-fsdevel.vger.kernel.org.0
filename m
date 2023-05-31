@@ -2,159 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF856717A94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 10:48:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45103717AD7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 10:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231501AbjEaIr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 04:47:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33380 "EHLO
+        id S235159AbjEaI6I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 04:58:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235002AbjEaIr0 (ORCPT
+        with ESMTP id S231397AbjEaI6G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 04:47:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E912A135
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 01:46:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685522796;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Nx2y8OB2aLxSFND9I+Qn5cRQvjq0n5CCY38YbkEtKAw=;
-        b=ixlNjoWAXFVeavpP36sE8jWEe0LZaRUPwXtlCoVthyzyPrGmmavX3Qcr0qeVH56Tsl72As
-        CCZyMZxNTl6Fd6eymywCzn0UT3B/JKEBc/rOv9ndLYBAEL7KP4iVK4D0I+br/c7ajeoUv+
-        finzqsz4rq9DoyitoRwW5J3QjKAMAss=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-PMPD_C9YObWZoNsYAfB_Vw-1; Wed, 31 May 2023 04:46:33 -0400
-X-MC-Unique: PMPD_C9YObWZoNsYAfB_Vw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-3f6069f764bso91315425e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 01:46:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685522792; x=1688114792;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nx2y8OB2aLxSFND9I+Qn5cRQvjq0n5CCY38YbkEtKAw=;
-        b=edRkrDIChyUzUrz3UwIQJnc8TSYDV7MaYXcmztqALxstX5Pxk2cZJ9qJsrLAun5Y4q
-         K3g0xGmvFgPntTJ4gLbJo15vrZUOH4LdkeOyfyjXCVXftrUV7zQd8Ve2J8hSfQPgZ6x/
-         i4sKxHOdV93lOgYUD3pNb3NP5wDh8aP2P73OqD0QYHmJ/2NA8WarJ8uR4mbCibOFZ1S7
-         C3DZW8jadbvNzUBAo83YPXXPAesuNWWgnjE7Ra+d2bxngm9ryAgD/GO4yoYFJUaKQVvD
-         crpyhdHGdCJIlK36Xc80WLfDV94i/35qZekBk0oZk8bhshtzRgyaxD7gk0ODpNQnNgIr
-         94dw==
-X-Gm-Message-State: AC+VfDx6yI9+HOdNc7Tn41UwsGxvI5ka5oVfqERw3dbXnoMOgPE6Uw/A
-        q3ejXafiuOG5OyKtPgrQR7O4vDnwaocEStblqTIbkA+ZcCxNYaK8rcJ9J5xAb8ZSVgE5JtEqECZ
-        +Oj7+vO/n9pcidSzFjhTS8moqRA==
-X-Received: by 2002:a1c:ed14:0:b0:3f5:ffe2:91c0 with SMTP id l20-20020a1ced14000000b003f5ffe291c0mr3840036wmh.0.1685522792111;
-        Wed, 31 May 2023 01:46:32 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ40ukZYaC9+p2ae+0GrHp4hYdn2NPfwIUaiQLhpoTRtuUrMnrS/tcvC//4ponMDsKOMIldq3Q==
-X-Received: by 2002:a1c:ed14:0:b0:3f5:ffe2:91c0 with SMTP id l20-20020a1ced14000000b003f5ffe291c0mr3840011wmh.0.1685522791768;
-        Wed, 31 May 2023 01:46:31 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c749:cb00:fc9f:d303:d4cc:9f26? (p200300cbc749cb00fc9fd303d4cc9f26.dip0.t-ipconnect.de. [2003:cb:c749:cb00:fc9f:d303:d4cc:9f26])
-        by smtp.gmail.com with ESMTPSA id 17-20020a05600c231100b003f31d44f0cbsm23714702wmo.29.2023.05.31.01.46.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 May 2023 01:46:31 -0700 (PDT)
-Message-ID: <492558dc-1377-fc4b-126f-c358bb000ff7@redhat.com>
-Date:   Wed, 31 May 2023 10:46:30 +0200
+        Wed, 31 May 2023 04:58:06 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7257C0;
+        Wed, 31 May 2023 01:58:03 -0700 (PDT)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34V8a5W4018378;
+        Wed, 31 May 2023 08:57:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=pp1;
+ bh=DCijIo14IUSsxzXzY9h3WyI/6hJYnKjXFiCCeIxmllw=;
+ b=VFZFGvSDUmzEdeJ7iPQn0JiNqtlQDiseu52b/KMO0Jj0m5NgOvh7nbYEflxGVXj0We28
+ zvCFhGlnlTZ4wI0XfOuuAuTMB0jO3uvU3OFVmFBjqLgFBkSpgDXMHAHuL3tHMG9OXkyf
+ ZypQu3rSLM9PXyD1y3dxxM3NLVDVE0xUMvftHgszXRFIxFbsgXReBDwlWHpXgft/pTg/
+ aMKhn19i4G2lvzjELYxDI7rKvIZkOOBl2gENwAh30d9GfiXySG1y3nDl3h24bQLyvpBo
+ Ur7IoSNYFOeTsLYkIXy+eJqqoS61/voyP+H62NY+ldwHZH4A8AvmUuxYxqyVF2vce23T 0Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qwygvdamc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 31 May 2023 08:57:54 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34V8tnb2025274;
+        Wed, 31 May 2023 08:57:54 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3qwygvdakn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 31 May 2023 08:57:53 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 34V4XbYc003811;
+        Wed, 31 May 2023 08:57:51 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3qu9g51w2x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 31 May 2023 08:57:51 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 34V8vmZl16646764
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 May 2023 08:57:49 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E03BD2004B;
+        Wed, 31 May 2023 08:57:48 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BFD0620040;
+        Wed, 31 May 2023 08:57:46 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.79.149])
+        by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Wed, 31 May 2023 08:57:46 +0000 (GMT)
+Date:   Wed, 31 May 2023 14:27:44 +0530
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     Sedat Dilek <sedat.dilek@gmail.com>
+Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>,
+        Kemeng Shi <shikemeng@huaweicloud.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>
+Subject: Re: [PATCH v2 01/12] Revert "ext4: remove ac->ac_found >
+ sbi->s_mb_min_to_scan dead check in ext4_mb_check_limits"
+Message-ID: <ZHcMCGO5zW/P8LHh@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1685449706.git.ojaswin@linux.ibm.com>
+ <ddcae9658e46880dfec2fb0aa61d01fb3353d202.1685449706.git.ojaswin@linux.ibm.com>
+ <CA+icZUXDFbxRvx8-pvEwsZAu+-28bX4VDTj6ZTPtvn4gWqGnCg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Lorenzo Stoakes <lstoakes@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <cbd39f94-407a-03b6-9c43-8144d0efc8bb@redhat.com>
- <20230526214142.958751-1-dhowells@redhat.com>
- <20230526214142.958751-2-dhowells@redhat.com>
- <510965.1685522152@warthog.procyon.org.uk>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v4 1/3] mm: Don't pin ZERO_PAGE in pin_user_pages()
-In-Reply-To: <510965.1685522152@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+icZUXDFbxRvx8-pvEwsZAu+-28bX4VDTj6ZTPtvn4gWqGnCg@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: tq1pskt3MKwfPjNSmqkQTGhC4glPTm7c
+X-Proofpoint-GUID: e0FgBzwwsD7oRx9WBcyChwPsMs0b4CVF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-31_04,2023-05-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 mlxlogscore=979 adultscore=0 bulkscore=0 mlxscore=0
+ clxscore=1015 priorityscore=1501 suspectscore=0 impostorscore=0
+ spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305310074
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 31.05.23 10:35, David Howells wrote:
-> David Hildenbrand <david@redhat.com> wrote:
+On Tue, May 30, 2023 at 06:28:22PM +0200, Sedat Dilek wrote:
+> On Tue, May 30, 2023 at 3:25 PM Ojaswin Mujoo <ojaswin@linux.ibm.com> wrote:
+> >
+> > This reverts commit 32c0869370194ae5ac9f9f501953ef693040f6a1.
+> >
+> > The reverted commit was intended to remove a dead check however it was observed
+> > that this check was actually being used to exit early instead of looping
+> > sbi->s_mb_max_to_scan times when we are able to find a free extent bigger than
+> > the goal extent. Due to this, a my performance tests (fsmark, parallel file
+> > writes in a highly fragmented FS) were seeing a 2x-3x regression.
+> >
+> > Example, the default value of the following variables is:
+> >
+> > sbi->s_mb_max_to_scan = 200
+> > sbi->s_mb_min_to_scan = 10
+> >
+> > In ext4_mb_check_limits() if we find an extent smaller than goal, then we return
+> > early and try again. This loop will go on until we have processed
+> > sbi->s_mb_max_to_scan(=200) number of free extents at which point we exit and
+> > just use whatever we have even if it is smaller than goal extent.
+> >
+> > Now, the regression comes when we find an extent bigger than goal. Earlier, in
+> > this case we would loop only sbi->s_mb_min_to_scan(=10) times and then just use
+> > the bigger extent. However with commit 32c08693 that check was removed and hence
+> > we would loop sbi->s_mb_max_to_scan(=200) times even though we have a big enough
+> > free extent to satisfy the request. The only time we would exit early would be
+> > when the free extent is *exactly* the size of our goal, which is pretty uncommon
+> > occurrence and so we would almost always end up looping 200 times.
+> >
+> > Hence, revert the commit by adding the check back to fix the regression. Also
+> > add a comment to outline this policy.
+> >
 > 
->>> Make pin_user_pages*() leave a ZERO_PAGE unpinned if it extracts a pointer
->>> to it from the page tables and make unpin_user_page*() correspondingly
->>> ignore a ZERO_PAGE when unpinning.  We don't want to risk overrunning a
->>> zero page's refcount as we're only allowed ~2 million pins on it -
->>> something that userspace can conceivably trigger.
->>
->> 2 millions pins (FOLL_PIN, which increments the refcount by 1024) or 2 million
->> references ?
+> Hi,
 > 
-> Definitely pins.  It's tricky because we've been using "pinned" to mean held
-> by a refcount or held by a flag too.
+> I applied this single patch of your series v2 on top of Linux v6.4-rc4.
 > 
-
-Yes, it would be clearer if we would be using "pinned" now only for 
-FOLL_PIN and everything else is simply "taking a temporary reference on 
-the page".
-
-> 2 million pins on the zero page is in the realms of possibility.  It only
-> takes 32768 64-page DIO writes.
+> So, if this is a regression I ask myself if this is material for Linux 6.4?
 > 
->>> @@ -3079,6 +3096,9 @@ EXPORT_SYMBOL_GPL(get_user_pages_fast);
->>>     *
->>>     * FOLL_PIN means that the pages must be released via unpin_user_page(). Please
->>>     * see Documentation/core-api/pin_user_pages.rst for further details.
->>> + *
->>> + * Note that if a zero_page is amongst the returned pages, it will not have
->>> + * pins in it and unpin_user_page() will not remove pins from it.
->>>     */
->>
->> "it will not have pins in it" sounds fairly weird to a non-native speaker.
+> Can you comment on this, please?
 > 
-> Oh, I know.  The problem is that "pin" is now really ambiguous.  Can we change
-> "FOLL_PIN" to "FOLL_NAIL"?  Or maybe "FOLL_SCREW" - your pages are screwed if
-> you use DIO and fork at the same time.
+> Thanks.
 > 
+> Regards,
+> -Sedat-
 
-I'm hoping that "pinning" will be "FOLL_PIN" (intention to access page 
-content) and everything else is simply "taking a temporary page reference".
+Hi Sedat,
 
->> "Note that the refcount of any zero_pages returned among the pinned pages will
->> not be incremented, and unpin_user_page() will similarly not decrement it."
+Since this patch fixes a regression I think it should ideally go in
+Linux 6.4
+
+Regards,
+ojaswin
 > 
-> That's not really right (although it happens to be true), because we're
-> talking primarily about the pin counter, not the refcount - and they may be
-> separate.
-
-In any case (FOLL_PIN/FOLL_GET) you increment/decrement the refcount. If 
-we have a separate pincount, we increment/decrement the refcount by 1 
-when (un)pinning.
-
-Sure, if we'd have a separate pincount we'd also not be modifying it.
-
--- 
-Thanks,
-
-David / dhildenb
-
+> 
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> > ---
+> >  fs/ext4/mballoc.c | 16 +++++++++++++++-
+> >  1 file changed, 15 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> > index d4b6a2c1881d..7ac6d3524f29 100644
+> > --- a/fs/ext4/mballoc.c
+> > +++ b/fs/ext4/mballoc.c
+> > @@ -2063,7 +2063,7 @@ static void ext4_mb_check_limits(struct ext4_allocation_context *ac,
+> >         if (bex->fe_len < gex->fe_len)
+> >                 return;
+> >
+> > -       if (finish_group)
+> > +       if (finish_group || ac->ac_found > sbi->s_mb_min_to_scan)
+> >                 ext4_mb_use_best_found(ac, e4b);
+> >  }
+> >
+> > @@ -2075,6 +2075,20 @@ static void ext4_mb_check_limits(struct ext4_allocation_context *ac,
+> >   * in the context. Later, the best found extent will be used, if
+> >   * mballoc can't find good enough extent.
+> >   *
+> > + * The algorithm used is roughly as follows:
+> > + *
+> > + * * If free extent found is exactly as big as goal, then
+> > + *   stop the scan and use it immediately
+> > + *
+> > + * * If free extent found is smaller than goal, then keep retrying
+> > + *   upto a max of sbi->s_mb_max_to_scan times (default 200). After
+> > + *   that stop scanning and use whatever we have.
+> > + *
+> > + * * If free extent found is bigger than goal, then keep retrying
+> > + *   upto a max of sbi->s_mb_min_to_scan times (default 10) before
+> > + *   stopping the scan and using the extent.
+> > + *
+> > + *
+> >   * FIXME: real allocation policy is to be designed yet!
+> >   */
+> >  static void ext4_mb_measure_extent(struct ext4_allocation_context *ac,
+> > --
+> > 2.31.1
+> >
