@@ -2,70 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC95971861B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 17:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46C617186AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 17:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234606AbjEaPWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 11:22:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47518 "EHLO
+        id S232770AbjEaPsv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 11:48:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234654AbjEaPW2 (ORCPT
+        with ESMTP id S232308AbjEaPsj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 11:22:28 -0400
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7C71A2;
-        Wed, 31 May 2023 08:22:16 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QWY0Q2wK1zMqBkH;
-        Wed, 31 May 2023 17:22:14 +0200 (CEST)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QWY0G4Z6QzMqFfF;
-        Wed, 31 May 2023 17:22:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1685546534;
-        bh=8echtExvY903wL+VZOZ6yhBJAcvuAYpaWxyyr0rVy8w=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=UCoFqVu9Y/RRO0Tl+8GYdhg+QL2jsnrLmJVc95PGsjviUz1MFlPNr9Ls9etbgky2f
-         +NJTVdzCzpayOxC7AXXulIEL5iaLoblXaS+YwfxQZuO5HILy95zRI7Soj1IzfZ1+CL
-         pp3TTVVWN5YMTh+pZ03O1kvnD/qtJwnRtDiHcV8s=
-Message-ID: <4b3fff12-f696-3d02-5873-645fef2117e1@digikod.net>
-Date:   Wed, 31 May 2023 17:22:05 +0200
+        Wed, 31 May 2023 11:48:39 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6158E93
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 08:48:35 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id e9e14a558f8ab-339fca7da2aso2001665ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 08:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1685548115; x=1688140115;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xh+NM7DUxAEzTOJt7Ae/1UKGsTT1CaBWPKgHIK+Ua4s=;
+        b=TeV2nuosxCCQSaB5ZclhgFC3ci1TbhrLaLO7YeIa++CfuP3tLyp3XgFpxvgwElWYJB
+         tHOvz9UOWflYz0udLqW8SlXtramYgCn2tvTozp6JaEpMJEnUOIOc9htdjbFb9wvYSRcL
+         Q9sgHw0VEfQJl89cB8p6S3BmlVvQ51rl2tUtJAP0ZFYUgvBVXjltJCIrCS2NNtp+8Dxx
+         Ctg+EYHhUNQDa0WFaYpG+Dq1/lO8dS++A7XL0PkNnCt87heuEDDhP4nKE2bgY3mhTx8o
+         ejL2+csFEJTi2h+Flhy8H6ZBi8Zxqv3ks3EYKU54mH0IQkZju6Ym/N47UBAkeuuRGS/b
+         MQQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685548115; x=1688140115;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xh+NM7DUxAEzTOJt7Ae/1UKGsTT1CaBWPKgHIK+Ua4s=;
+        b=f7V0BQZWsM77LFpF665r5BMQB4lN9QGvkfRD96Nf9wjeiVgrZyK6jJ++hwjV5NM6EL
+         wbF4LPGJKzEtfnAYFHHFaRDxVzgc2z7CVu6rbwlk07TvNrCaNkmSlLT3Yn2zOu6ebNVl
+         TM7YihnZnzjrm2+p4/w61TgNwCP8budR+Gp5NF4CMmaTcRF+D9OiBhb/wDlEZaK3016D
+         E0l633nKS91Mu3rgCUNqGK1Ov9eteicQc8PXWrDxabuE5tsKqLJVcWUIVrdz85RZfstK
+         2c9jaNDxxR3BrN7Bzk+lewBETqhrSwWdzqcsp47wnD3vTTXWfnJKyXFTkOoYcTWsWzrm
+         PAzg==
+X-Gm-Message-State: AC+VfDyXl18mRTmErbJdckzWw8yCW6mXW+PHOa9lzDok2g2OjWs6R/Vh
+        fd5jAimigDlRPhuCoxAeeDrREg==
+X-Google-Smtp-Source: ACHHUZ7olLMdzgJo49hRI+Brw+8ZbYH7IxOyZnrYIxdhWvtRY4fllkEJYDoAKqWowWyMCg9AG6Kdvg==
+X-Received: by 2002:a6b:8d53:0:b0:774:80fc:11a9 with SMTP id p80-20020a6b8d53000000b0077480fc11a9mr1999696iod.1.1685548114657;
+        Wed, 31 May 2023 08:48:34 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id f16-20020a02a110000000b004091d72f62dsm1552201jag.85.2023.05.31.08.48.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 May 2023 08:48:33 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Christoph Hellwig <hch@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Jason Gunthorpe <jgg@ziepe.ca>
+In-Reply-To: <20230526214142.958751-1-dhowells@redhat.com>
+References: <20230526214142.958751-1-dhowells@redhat.com>
+Subject: Re: [PATCH v4 0/3] block: Make old dio use
+ iov_iter_extract_pages() and page pinning
+Message-Id: <168554811322.183150.13490236053670818511.b4-ty@kernel.dk>
+Date:   Wed, 31 May 2023 09:48:33 -0600
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH -next 0/2] lsm: Change inode_setattr() to take struct
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Xiu Jianfeng <xiujianfeng@huawei.com>, gregkh@linuxfoundation.org,
-        rafael@kernel.org, viro@zeniv.linux.org.uk, dhowells@redhat.com,
-        code@tyhicks.com, hirofumi@mail.parknet.co.jp,
-        linkinjeon@kernel.org, sfrench@samba.org, senozhatsky@chromium.org,
-        tom@talpey.com, chuck.lever@oracle.com, jlayton@kernel.org,
-        miklos@szeredi.hu, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com, dchinner@redhat.com,
-        john.johansen@canonical.com, mcgrof@kernel.org,
-        mortonm@chromium.org, fred@cloudflare.com, mpe@ellerman.id.au,
-        nathanl@linux.ibm.com, gnoack3000@gmail.com,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        wangweiyang2@huawei.com
-References: <20230505081200.254449-1-xiujianfeng@huawei.com>
- <20230515-nutzen-umgekehrt-eee629a0101e@brauner>
- <75b4746d-d41e-7c9f-4bb0-42a46bda7f17@digikod.net>
- <20230530-mietfrei-zynisch-8b63a8566f66@brauner>
- <20230530142826.GA9376@lst.de>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20230530142826.GA9376@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Infomaniak-Routing: alpha
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Mailer: b4 0.13-dev-00303
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -73,43 +86,33 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 30/05/2023 16:28, Christoph Hellwig wrote:
-> On Tue, May 30, 2023 at 03:58:35PM +0200, Christian Brauner wrote:
->> The main concern which was expressed on other patchsets before is that
->> modifying inode operations to take struct path is not the way to go.
->> Passing struct path into individual filesystems is a clear layering
->> violation for most inode operations, sometimes downright not feasible,
->> and in general exposing struct vfsmount to filesystems is a hard no. At
->> least as far as I'm concerned.
+On Fri, 26 May 2023 22:41:39 +0100, David Howells wrote:
+> Here are three patches that go on top of the similar patches for bio
+> structs now in the block tree that make the old block direct-IO code use
+> iov_iter_extract_pages() and page pinning.
 > 
-> Agreed.  Passing struct path into random places is not how the VFS works.
-
-I understand, it makes sense for the FS layer to not get access to 
-things not required. IIUC, the main issue is the layering, with LSM 
-calls being sometime at the last layer.
-
-
+> There are three patches:
 > 
->> So the best way to achieve the landlock goal might be to add new hooks
+>  (1) Make page pinning neither add nor remove a pin to/from a ZERO_PAGE,
+>      thereby allowing the dio code to insert zero pages in the middle of
+>      dealing with pinned pages.  This also mitigates a potential problem
+>      whereby userspace could force the overrun the pin counter of a zero
+>      page.
 > 
-> What is "the landlock goal", and why does it matter?
+> [...]
 
-Landlock's goal is to enable (unprivileged) users to set their own 
-access rights for their (ephemeral) processes (on top of the existing 
-access-controls of course) i.e., to sandbox applications. Landlock rules 
-are defined by users, and then according to the FS topology they see. 
-This means that Landlock relies on inodes and mount points to define and 
-enforce a policy.
+Applied, thanks!
+
+[1/3] mm: Don't pin ZERO_PAGE in pin_user_pages()
+      commit: c8070b78751955e59b42457b974bea4a4fe00187
+[2/3] mm: Provide a function to get an additional pin on a page
+      commit: 1101fb8f89e5fc548c4d0ad66750e98980291815
+[3/3] block: Use iov_iter_extract_pages() and page pinning in direct-io.c
+      commit: 1ccf164ec866cb8575ab9b2e219fca875089c60e
+
+Best regards,
+-- 
+Jens Axboe
 
 
-> 
->> or not. And we keep adding new LSMs without deprecating older ones (A
->> problem we also face in the fs layer.) and then they sit around but
->> still need to be taken into account when doing changes.
-> 
-> Yes, I'm really worried about th amount of LSMs we have, and the weird
-> things they do.
 
-About Landlock, it's a new LSM that fit an actual need. I'd be glad to 
-hear about not recommended things and how to improve the situation. I 
-don't know all the history between VFS and LSM.
