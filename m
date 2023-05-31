@@ -2,108 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4005D717F3E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 13:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFCDA717F32
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 13:53:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235709AbjEaLy2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 07:54:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50288 "EHLO
+        id S235920AbjEaLxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 07:53:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235944AbjEaLyF (ORCPT
+        with ESMTP id S235914AbjEaLxO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 07:54:05 -0400
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA347E76;
-        Wed, 31 May 2023 04:53:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1685533995; x=1717069995;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TXHm8cKgeXSbycf6VjVIJnX8HwRGv+9KYRMuHSdcMO8=;
-  b=nT0CA6J1UqyIjwWMTnzUefEdhdMEXMco76Ck7s8BK7I+HFBi06ZFuEch
-   MFdNG2InnUklUiT+d2Dbc1jYFzCU9wDALXbZVQ9Vqo8hHIfrszt9l07qp
-   Nm9VRcpyxKtNuIr8gymVEtxMEh4xKot46fpbMTSV3fjsSX4+CR1TmJaTq
-   tPVhHJRRohbXWPxajTstrPzrGAB7SmtHxa38MnXeHk2rKa7gVLoX4IaJF
-   e4b69Y8Iym4E6fR0sTuRUrwtVeaLTCQbSNPGsDB2G24odZgL1S4UCoGRM
-   q8flxopjCgDbRIBIoyd1DTfIn+kPthP7LackcavtWjRwI93ox00RdVrin
-   A==;
-X-IronPort-AV: E=Sophos;i="6.00,207,1681142400"; 
-   d="scan'208";a="230207512"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 31 May 2023 19:51:54 +0800
-IronPort-SDR: jc+kQ+XcNju4LEwUhRPWqQnTwUgf6S/OvWhIGpVh9h+HyH3Yy7L3QwjqTQ86UM5TXt2tbDjxw7
- rQw/Ro3rrKH7UjIOigy7yIhYbnTR3idIt6TjvekM24hpM5YBVylOmYi4vpSG3/RnThA99MJO68
- TWN/JcDmF4T1gzRZU6Txo1eabChqgEOviCKU2EiGI7HQNVFLib61x5SPmaKNnqGyQqyFFHULkw
- e+C+NmQ7YXXgfGxhyq5WBl0aYjoCLCkX2nFzYKYmhmwDuAwSIBDXe6/ApgWS0NK45kM2hql1ss
- bZA=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 May 2023 04:06:46 -0700
-IronPort-SDR: K8DGvXh3flLPynticzqNOEK+cYmmrpCanEBz66JFrWIngUtekJYSQhCrCrQqqhG+xCFaPCQa2f
- kPJSf1LI5UoWCk4clEw/qwVZ0W4JIS0jS8S+dvN+TLf0ZfYCIO+3Xte4UP0xRPIscBgFVDQ2Kd
- i0oECfF+1dh8ufMGv5dV011PahNQRw/rJMUEPkg/QmDHoXKUFcS063SfGvdOMAWACqKfwoUrw7
- ZHc2iWsZBS8kDjkwhUtPmAIWhJo/MvPANH9LDUtKSOoqChVFdvi5WpUhFTDcEYLLYC3pqPKsMY
- Ipk=
-WDCIronportException: Internal
-Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.6])
-  by uls-op-cesaip02.wdc.com with ESMTP; 31 May 2023 04:51:50 -0700
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dm-devel@redhat.com, Song Liu <song@kernel.org>,
-        linux-raid@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>, gouha7@uniontech.com,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v7 20/20] block: mark bio_add_folio as __must_check
-Date:   Wed, 31 May 2023 04:50:43 -0700
-Message-Id: <381360a45ac3684120cfbe1e07685e9c36256e47.1685532726.git.johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <cover.1685532726.git.johannes.thumshirn@wdc.com>
-References: <cover.1685532726.git.johannes.thumshirn@wdc.com>
+        Wed, 31 May 2023 07:53:14 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB40172C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 04:52:30 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-96fa4a6a79bso821565166b.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 04:52:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1685533941; x=1688125941;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q8yUW6f7zPTfffxLigiRctP+nblSLEZeoMC2WhJm6RA=;
+        b=De5afgVQ5HipTyqOVU4mV4u3MwUdsinjVRVvW/7yW2GC6ZphKCcsy3CLQvXNENV4PT
+         mG5AJjoIKQNuXK2oiX7ejwA8MvGaSSPHGCnxvr0ubVYKWorbk4yyXnC4PlAYFZ5TTZmE
+         7TaWGKDBPRugNvPxN1yvLrPufaPNP3rJEJkq4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685533941; x=1688125941;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q8yUW6f7zPTfffxLigiRctP+nblSLEZeoMC2WhJm6RA=;
+        b=BHQgG/VosKFxddjNb1hvjR1nd8DchKkCF2fR7yo93ebsTolzl7tv/pWkIzcwsRoCwZ
+         goTDfvqb1zEMFbEeKhrEf0MUirI8goEMUrGIkr/qj5Yeq+D0LdF5fA0zfbj5tkE9ra6A
+         bw1u+cFewyah+WmNSVU6B4OsYGPg1E4DzNhG1Po2n9bRnn3RSrPB/zbH5P05jySXW7QP
+         sCywVCo4QOgGT5ScZOcAOp2J0ngU8N7fHp2xe1f3goh16II+QnGV23WnYHd/3S4Mnt4z
+         leLSyWxUhPAIN8vkukeTTak64UMHhZS8oOxY24r61iIQUEYPUyhjehVwg/XJPXxs789l
+         zWCg==
+X-Gm-Message-State: AC+VfDypod7jdW69N3jFgjtG6dcpxCFxDFRHwOlNI5kKZR7MAemzeyQ+
+        YVrzp8LBxjFfO9Y3PAuqKds+FZvb+CGx3ss7ILvkqA==
+X-Google-Smtp-Source: ACHHUZ5gTL+lpHrHWNYIzxWIkb53eDD2bdkr9oH7ynn0ct3h/bgrpPVOBDRWdOPwlUlBo+fjFB6+xQbcYVQsHWFc/2w=
+X-Received: by 2002:a17:907:6e15:b0:974:1f6f:111e with SMTP id
+ sd21-20020a1709076e1500b009741f6f111emr5374730ejc.23.1685533940926; Wed, 31
+ May 2023 04:52:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230531092643.45607-1-quic_pragalla@quicinc.com>
+In-Reply-To: <20230531092643.45607-1-quic_pragalla@quicinc.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 31 May 2023 13:52:09 +0200
+Message-ID: <CAJfpegtr4dZkLzWD_ezAbFgTnbYaGDRq4TR1DUzz4AfFLSLJEA@mail.gmail.com>
+Subject: Re: [PATCH V1] fuse: Abort the requests under processing queue with a spin_lock
+To:     Pradeep P V K <quic_pragalla@quicinc.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that all callers of bio_add_folio() check the return value, mark it as
-__must_check.
+On Wed, 31 May 2023 at 11:26, Pradeep P V K <quic_pragalla@quicinc.com> wrote:
+>
+> There is a potential race/timing issue while aborting the
+> requests on processing list between fuse_dev_release() and
+> fuse_abort_conn(). This is resulting into below warnings
+> and can even result into UAF issues.
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- include/linux/bio.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Okay, but...
 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index f907d75af205..c7a9425d19ee 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -467,7 +467,8 @@ void bio_chain(struct bio *, struct bio *);
- 
- int __must_check bio_add_page(struct bio *bio, struct page *page, unsigned len,
- 			      unsigned off);
--bool bio_add_folio(struct bio *, struct folio *, size_t len, size_t off);
-+bool __must_check bio_add_folio(struct bio *bio, struct folio *folio,
-+				size_t len, size_t off);
- extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
- 			   unsigned int, unsigned int);
- int bio_add_zone_append_page(struct bio *bio, struct page *page,
--- 
-2.40.1
+>
+> [22809.190255][T31644] refcount_t: underflow; use-after-free.
+> [22809.190266][T31644] WARNING: CPU: 2 PID: 31644 at lib/refcount.c:28
+> refcount_warn_saturate+0x110/0x158
+> ...
+> [22809.190567][T31644] Call trace:
+> [22809.190567][T31644]  refcount_warn_saturate+0x110/0x158
+> [22809.190569][T31644]  fuse_file_put+0xfc/0x104
 
+...how can this cause the file refcount to underflow?  That would
+imply that fuse_request_end() will be called for the same request
+twice.  I can't see how that can happen with or without the locking
+change.
+
+Do you have a reproducer?
+
+Thanks,
+Miklos
