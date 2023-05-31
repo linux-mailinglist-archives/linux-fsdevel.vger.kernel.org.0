@@ -2,123 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 240FE718ECD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 00:51:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C4E1718EDC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 00:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229935AbjEaWvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 18:51:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57308 "EHLO
+        id S230202AbjEaW5m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 18:57:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjEaWvE (ORCPT
+        with ESMTP id S230152AbjEaW5k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 18:51:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A1D124
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 15:50:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685573417;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=zpHJAAZtdS1eGDoBPdNCfJy7V4CHGDGY+NY0zDJG5HY=;
-        b=K+rimdo8uWAlhWrvxbBsjEDBWEdHywAhlpoNQrVJadUCtumTG7DENQNlDvzwDSF1cmNvQh
-        gFLlLHdtCG6OhQ8xioxRMAYkdrVlRxDm2Cld+VBAQjAOOJZBNC0Zdk+o3d/4PlikZHiK5E
-        7LXCUeJFb468zCi6GMTesrXwQP2SlbU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-584-7f37sz9DMzaFOEFZovZXsQ-1; Wed, 31 May 2023 18:50:14 -0400
-X-MC-Unique: 7f37sz9DMzaFOEFZovZXsQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 948E6800159;
-        Wed, 31 May 2023 22:50:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EE2932166B25;
-        Wed, 31 May 2023 22:50:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     Marc Dionne <marc.dionne@auristor.com>
-cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Fix setting of mtime when creating a file/dir/symlink
+        Wed, 31 May 2023 18:57:40 -0400
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E82F6107
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 15:57:38 -0700 (PDT)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-19f31d6b661so364471fac.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 15:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1685573858; x=1688165858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hu0DKnynpdBIeYnyWz2HVJfbhb3koTdW7dRzhdCwkpE=;
+        b=C+vo8MF6j6b26zd/kzN7FloSBAwgpYOfsZzLbtMx0PS/lge+w0N9lHeWtQY7X36TYm
+         cF1mChKOnlQYeDMXZhoZVhC9hMmlz8Q26FJzvKc0cxBqc8YIVIziVwzJTHdEJoIKO7rm
+         1MIELHU0YEvn0Dz26LPsqCWVIBn9kif+HqJ8iEzx9/Xg0kNl3HBBoheSivZ5R0+rIoq4
+         TYsoDTwG3PsPYiwkS3pDVby4KnLVifMBamUTJQkOjcVerkyaElp8UdqIvs0M9b3mdtYH
+         h7BIkdD70b8bmxMd+aqnnDTW4VG9sj4r6ckkbI5SWgZBdY0rKk4aumSdAahQfoVXqntH
+         pG8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685573858; x=1688165858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hu0DKnynpdBIeYnyWz2HVJfbhb3koTdW7dRzhdCwkpE=;
+        b=WIoCGSfkh8XduMWjuFVltcpGwSZQFbG6hIMhcfGQ3VabPWWuNTjVJ/r8DWTR+rFomi
+         DGr9mjNxFA9iwKsuOPiNIG5tF/OL24EcrCVOvpZZqSJ8C4cz6C0DRY6Uk3KWNKBwzzHZ
+         KjwcGtFvmZMGczovxIylgTMWYRPTa1xjhIh0QxmjBoOu+OZbL3AGpF3jxqJOhXaRglTk
+         u7NKNAjP2zgW3c7u1w5FWn/elUeM5Aj/aKSKlxswtyNhsgZDojhqhTZI9HSZCbvJ/Iw2
+         fEBQ9A4nE7iikkAWfSwVSj4jg0ljQX9XJf9DyHlRunO141cbZLl9HWWyYxMoL0EimjNe
+         qcDQ==
+X-Gm-Message-State: AC+VfDwpgkDfLp9yYnDwbyXM9OX4Np2aCnQDHdwoTLO/2lowxaFUYg4p
+        m8jDxFX3pBpmWgvDFcChoNhC8A==
+X-Google-Smtp-Source: ACHHUZ7+S8SpNNc9Gy8ZY/8ExdkaNqqUpWjOsfKLh/C3mvnAwfubkjJMA4xthDeXFgyOoB8qNU5WXA==
+X-Received: by 2002:a05:6870:3747:b0:19f:16fc:3c51 with SMTP id a7-20020a056870374700b0019f16fc3c51mr4522675oak.9.1685573858247;
+        Wed, 31 May 2023 15:57:38 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
+        by smtp.gmail.com with ESMTPSA id x38-20020a634866000000b0053fc6df5895sm1812332pgk.39.2023.05.31.15.57.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 May 2023 15:57:37 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q4Ul4-006Hcf-0h;
+        Thu, 01 Jun 2023 08:57:34 +1000
+Date:   Thu, 1 Jun 2023 08:57:34 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Qi Zheng <qi.zheng@linux.dev>
+Cc:     akpm@linux-foundation.org, tkhai@ya.ru, roman.gushchin@linux.dev,
+        vbabka@suse.cz, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        djwong@kernel.org, hughd@google.com, paulmck@kernel.org,
+        muchun.song@linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: Re: [PATCH 2/8] mm: vmscan: split unregister_shrinker()
+Message-ID: <ZHfQ3gzFToAfee/d@dread.disaster.area>
+References: <20230531095742.2480623-1-qi.zheng@linux.dev>
+ <20230531095742.2480623-3-qi.zheng@linux.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <808139.1685573412.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 31 May 2023 23:50:12 +0100
-Message-ID: <808140.1685573412@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230531095742.2480623-3-qi.zheng@linux.dev>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-    =
+On Wed, May 31, 2023 at 09:57:36AM +0000, Qi Zheng wrote:
+> From: Kirill Tkhai <tkhai@ya.ru>
+> 
+> This and the next patches in this series aim to make
+> time effect of synchronize_srcu() invisible for user.
+> The patch splits unregister_shrinker() in two functions:
+> 
+> 	unregister_shrinker_delayed_initiate()
+> 	unregister_shrinker_delayed_finalize()
+> 
+> and shrinker users may make the second of them to be called
+> asynchronous (e.g., from workqueue). Next patches make
+> superblock shrinker to follow this way, so user-visible
+> umount() time won't contain delays from synchronize_srcu().
+> 
+> Signed-off-by: Kirill Tkhai <tkhai@ya.ru>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> ---
+>  include/linux/shrinker.h |  2 ++
+>  mm/vmscan.c              | 22 ++++++++++++++++++----
+>  2 files changed, 20 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> index 224293b2dd06..e9d5a19d83fe 100644
+> --- a/include/linux/shrinker.h
+> +++ b/include/linux/shrinker.h
+> @@ -102,6 +102,8 @@ extern void register_shrinker_prepared(struct shrinker *shrinker);
+>  extern int __printf(2, 3) register_shrinker(struct shrinker *shrinker,
+>  					    const char *fmt, ...);
+>  extern void unregister_shrinker(struct shrinker *shrinker);
+> +extern void unregister_shrinker_delayed_initiate(struct shrinker *shrinker);
+> +extern void unregister_shrinker_delayed_finalize(struct shrinker *shrinker);
+>  extern void free_prealloced_shrinker(struct shrinker *shrinker);
+>  extern void synchronize_shrinkers(void);
+>  
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index a773e97e152e..baf8d2327d70 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -799,10 +799,7 @@ int register_shrinker(struct shrinker *shrinker, const char *fmt, ...)
+>  #endif
+>  EXPORT_SYMBOL(register_shrinker);
+>  
+> -/*
+> - * Remove one
+> - */
+> -void unregister_shrinker(struct shrinker *shrinker)
+> +void unregister_shrinker_delayed_initiate(struct shrinker *shrinker)
+>  {
+>  	struct dentry *debugfs_entry;
+>  	int debugfs_id;
+> @@ -819,6 +816,13 @@ void unregister_shrinker(struct shrinker *shrinker)
+>  	mutex_unlock(&shrinker_mutex);
+>  
+>  	shrinker_debugfs_remove(debugfs_entry, debugfs_id);
+> +}
+> +EXPORT_SYMBOL(unregister_shrinker_delayed_initiate);
+> +
+> +void unregister_shrinker_delayed_finalize(struct shrinker *shrinker)
+> +{
+> +	if (!shrinker->nr_deferred)
+> +		return;
 
-kafs incorrectly passes a zero mtime (ie. 1st Jan 1970) to the server when
-creating a file, dir or symlink because commit 52af7105eceb caused the
-mtime recorded in the afs_operation struct to be passed to the server, but
-didn't modify the afs_mkdir(), afs_create() and afs_symlink() functions to
-set it first.
+This is new logic and isn't explained anywhere: why do we want to
+avoid RCU cleanup if (shrinker->nr_deferred == 0)? Regardless,
+whatever this is avoiding, it needs a comment to explain it.
 
-Those functions were written with the assumption that the mtime would be
-obtained from the server - but that fell foul of malsynchronised clocks, s=
-o
-it was decided that the mtime should be set from the client instead.
-
-Fix this by filling in op->mtime before calling the create op.
-
-Fixes: 52af7105eceb ("afs: Set mtime from the client for yfs create operat=
-ions")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/afs/dir.c |    3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 4dd97afa536c..5219182e52e1 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -1358,6 +1358,7 @@ static int afs_mkdir(struct mnt_idmap *idmap, struct=
- inode *dir,
- 	op->dentry	=3D dentry;
- 	op->create.mode	=3D S_IFDIR | mode;
- 	op->create.reason =3D afs_edit_dir_for_mkdir;
-+	op->mtime	=3D current_time(dir);
- 	op->ops		=3D &afs_mkdir_operation;
- 	return afs_do_sync_operation(op);
- }
-@@ -1661,6 +1662,7 @@ static int afs_create(struct mnt_idmap *idmap, struc=
-t inode *dir,
- 	op->dentry	=3D dentry;
- 	op->create.mode	=3D S_IFREG | mode;
- 	op->create.reason =3D afs_edit_dir_for_create;
-+	op->mtime	=3D current_time(dir);
- 	op->ops		=3D &afs_create_operation;
- 	return afs_do_sync_operation(op);
- =
-
-@@ -1796,6 +1798,7 @@ static int afs_symlink(struct mnt_idmap *idmap, stru=
-ct inode *dir,
- 	op->ops			=3D &afs_symlink_operation;
- 	op->create.reason	=3D afs_edit_dir_for_symlink;
- 	op->create.symlink	=3D content;
-+	op->mtime		=3D current_time(dir);
- 	return afs_do_sync_operation(op);
- =
-
- error:
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
