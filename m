@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F15B5717591
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 06:28:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D3517175A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 06:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234460AbjEaE2E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 00:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35354 "EHLO
+        id S234127AbjEaEad (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 00:30:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234378AbjEaE1h (ORCPT
+        with ESMTP id S234549AbjEaEaJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 00:27:37 -0400
+        Wed, 31 May 2023 00:30:09 -0400
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B24A1BD;
-        Tue, 30 May 2023 21:26:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F780185;
+        Tue, 30 May 2023 21:29:26 -0700 (PDT)
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 89F1768B05; Wed, 31 May 2023 06:26:51 +0200 (CEST)
-Date:   Wed, 31 May 2023 06:26:51 +0200
+        id E36EB68B05; Wed, 31 May 2023 06:29:21 +0200 (CEST)
+Date:   Wed, 31 May 2023 06:29:21 +0200
 From:   Christoph Hellwig <hch@lst.de>
 To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
@@ -34,13 +34,13 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Bob Peterson <rpeterso@redhat.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         Mikulas Patocka <mpatocka@redhat.com>, gouhao@uniontech.com
-Subject: Re: [PATCH v6 18/20] block: add __bio_add_folio
-Message-ID: <20230531042651.GO32705@lst.de>
-References: <cover.1685461490.git.johannes.thumshirn@wdc.com> <5a142a7663a4beb2966d82f25708a9f22316117c.1685461490.git.johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v6 19/20] fs: iomap: use __bio_add_folio where possible
+Message-ID: <20230531042921.GA507@lst.de>
+References: <cover.1685461490.git.johannes.thumshirn@wdc.com> <e809b83d60d9fb0f65a8116b3e50f1432f594725.1685461490.git.johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5a142a7663a4beb2966d82f25708a9f22316117c.1685461490.git.johannes.thumshirn@wdc.com>
+In-Reply-To: <e809b83d60d9fb0f65a8116b3e50f1432f594725.1685461490.git.johannes.thumshirn@wdc.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -51,13 +51,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 30, 2023 at 08:49:21AM -0700, Johannes Thumshirn wrote:
-> Just like for bio_add_pages() add a no-fail variant for bio_add_folio().
+On Tue, May 30, 2023 at 08:49:22AM -0700, Johannes Thumshirn wrote:
+> When the iomap buffered-io code can't add a folio to a bio, it allocates a
+> new bio and adds the folio to that one. This is done using bio_add_folio(),
+> but doesn't check for errors.
+> 
+> As adding a folio to a newly created bio can't fail, use the newly
+> introduced __bio_add_folio() function.
 
-Can we call this bio_add_folio_nofail?  I really regret the __ prefix for
-bio_add_page these days - it wasn't really intended to be used as widely
-originally..
+Looks good:
 
-> +void __bio_add_folio(struct bio *, struct folio *, size_t len, size_t off);
-
-.. and please spell out the parameters.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
