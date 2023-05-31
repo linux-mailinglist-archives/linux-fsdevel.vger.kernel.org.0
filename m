@@ -2,77 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB58E718E8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 00:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32218718E9C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 00:37:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbjEaWay (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 18:30:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47654 "EHLO
+        id S230272AbjEaWhH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 18:37:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbjEaWax (ORCPT
+        with ESMTP id S230267AbjEaWhF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 18:30:53 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 596209D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 15:30:52 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id 5614622812f47-397f13944f2so52393b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 15:30:52 -0700 (PDT)
+        Wed, 31 May 2023 18:37:05 -0400
+Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B398F193
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 15:37:02 -0700 (PDT)
+Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-19f8af9aa34so300200fac.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 15:37:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1685572251; x=1688164251;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1685572622; x=1688164622;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/fxfV5VcNo1HuNl1BAlDq7x3auo0HGUulH0i8hWzvcQ=;
-        b=aZHYvexed48WM5IBidrzNTTUHgyWvwj9jzFpiCEH/huHzSVxtvHsAWNH8JIHLFj67n
-         4G0IYsOzn+FciEUpUgWQoR1hQKb2q1dm7vWFlTY+EyzkYvPTuy8mNZ+f11iJsy8+yZJn
-         EKyubvVaua/MsplXg1t04POt9rYmzvWnkNjuYZoeY9f6+1X9FPfewNrOX6YFLeip1dAs
-         LdObE2wvIsCWYpbdflvb21BNLg/QneriumlKUBicYw22PNqInLjM4SVdeUMh128KMLjU
-         poox4XkN5tobPAgLGJ9uN7SOXZn1VMv4XLq8GYmNr++ilqWGT8xIEuRed4oXZFiPSg6z
-         9ybw==
+        bh=n3rg9Z09BIl1aIQXz+8gKGwERErjA3Juhruo9wqB2U8=;
+        b=wiX6dI4YQSE++dSI7EaUMDXFauekYMtpXk1nx5uvMyo25lrfQV5e1AHiqUl7vtZsLM
+         IMsq1Z5rdgpxryXDQhmnhU6BFy28pl/Iq9YtSyYwXYAcruYkWNkt+idLzDGSUr3FKl5P
+         71TZQmlrc+8IX5Yr3GC2L31c13tTWeaseGd8GHnF4nTP4gHfGL9GdiqTtVrRnTBPX75w
+         rNqYxEQM0IHHwuhf+2DOFuAeL1Rj0RWSYjbBRij29aY9ImveoAP+ZDW+DAQgL+Nrskc1
+         zy8HdL5xcRs5rA3RogSXnzYu4aaVp7d7YXAaBJhIgs7D1bBPAkB/rkpyaOArHbaD1136
+         cQVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685572251; x=1688164251;
+        d=1e100.net; s=20221208; t=1685572622; x=1688164622;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/fxfV5VcNo1HuNl1BAlDq7x3auo0HGUulH0i8hWzvcQ=;
-        b=MtsdVfhzSVOMjGHp+VBTNj+wz6zxPH6DAj2qDit2iafkjFQnKnrIWs0zDJLKIDP8nk
-         pcdWrC17084H73n80c2prIFctcngLh/CQtRHF1wJN9bcbaGpzdqU+XzHc9Rg9A2budPK
-         qyF9iDLwajWsy5mxp/Q0P75OOWtueZoJkHBLj9sqIte4k/DLWH6kagKCncsJkhjhqpCb
-         8n84r8NiPM/Nao28Y9J9jHchtlivSdNa0i6hkUeT51qrGW+sYFSpTAwgcHuAmgUa205g
-         piA+p85r4Ft9ffuI1xeD7us3n6uMjgP/CMxp5ePSFSEv+Oc0OflwYp7KMy1CK00IzOY5
-         7THg==
-X-Gm-Message-State: AC+VfDzKcBh5TzmX80hPlMwE1QLR9CePWIdWCC5WmxCWZfJuW2WhcM05
-        IJUaGk8lPuGvXgo2gfULSL3Kxw==
-X-Google-Smtp-Source: ACHHUZ5eCf2tJFtsvUL8ppbW7rTCZstcQT9dxFkvwabquAdExDT8tCX3d8b1NHSMngPsfAhFMsLxwQ==
-X-Received: by 2002:a05:6808:3090:b0:395:f4fd:9fe9 with SMTP id bl16-20020a056808309000b00395f4fd9fe9mr6871739oib.50.1685572251471;
-        Wed, 31 May 2023 15:30:51 -0700 (PDT)
+        bh=n3rg9Z09BIl1aIQXz+8gKGwERErjA3Juhruo9wqB2U8=;
+        b=AnGWXMXFQfeyijqIZRaZlX/orhMs/rJ8mliaev+J4e0Dmm8ppB0IxnzitrUDM2wdKd
+         VADuK8sNRb5yL58Pl+Xjv2Xy+XwjeuTo1zEaw/orOUOx+7/7rrDcOjzu8drucoe1Z7UT
+         0rESiV5kOtfdaUCOanHTpYvnO3R04gUyWZLGFcY9ih5xilTNzPeK/BzUXwvPWNGb9lUx
+         rvEHfOXXh1Ml1i+oNYG50m8dbGGwsF+wmp8SuZ+8gHDRv2VkcG9IvAaDB7iaNU5zjLpM
+         MwX85/QFt6UROizb/TJzvLVgu51aYBXX8le/OhmN/EYnPxKO7fX0Y0GVJ8hm0R9Q+hlE
+         en3A==
+X-Gm-Message-State: AC+VfDypPMZyeQjv9/FRieRdU0ged+KUQzGm5TuS0qxQ/uSlZ/swETVR
+        hICGyyMi4QTJ2DVZahYL68U8mA==
+X-Google-Smtp-Source: ACHHUZ7R3wjvNkmWSbL60I9ylavOeUTJY88g1+p1PDiLJE+SHWNaI13IUYsVS+xjUDM8kOkAj2iUNQ==
+X-Received: by 2002:a05:6808:1496:b0:398:2f85:ff7f with SMTP id e22-20020a056808149600b003982f85ff7fmr6512900oiw.50.1685572621938;
+        Wed, 31 May 2023 15:37:01 -0700 (PDT)
 Received: from dread.disaster.area (pa49-179-0-188.pa.nsw.optusnet.com.au. [49.179.0.188])
-        by smtp.gmail.com with ESMTPSA id jd5-20020a170903260500b001a245b49731sm1908603plb.128.2023.05.31.15.30.50
+        by smtp.gmail.com with ESMTPSA id e12-20020a170902784c00b001b034fafaefsm1948337pln.38.2023.05.31.15.37.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 May 2023 15:30:50 -0700 (PDT)
+        Wed, 31 May 2023 15:37:01 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
         (envelope-from <david@fromorbit.com>)
-        id 1q4ULA-006HBu-12;
-        Thu, 01 Jun 2023 08:30:48 +1000
-Date:   Thu, 1 Jun 2023 08:30:48 +1000
+        id 1q4UR9-006HGI-0M;
+        Thu, 01 Jun 2023 08:36:59 +1000
+Date:   Thu, 1 Jun 2023 08:36:59 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     "Chen, Zhiyin" <zhiyin.chen@intel.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Zou, Nanhai" <nanhai.zou@intel.com>,
-        "Feng, Xiaotian" <xiaotian.feng@intel.com>
-Subject: Re: [PATCH] fs.h: Optimize file struct to prevent false sharing
-Message-ID: <ZHfKmG5RtgrMb6OT@dread.disaster.area>
-References: <20230530020626.186192-1-zhiyin.chen@intel.com>
- <20230530-wortbruch-extra-88399a74392e@brauner>
- <20230531015549.GA1648@quark.localdomain>
- <CO1PR11MB4931D767C5277A37F24C824DE4489@CO1PR11MB4931.namprd11.prod.outlook.com>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.de>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        dm-devel@redhat.com, Song Liu <song@kernel.org>,
+        linux-raid@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>, gouha7@uniontech.com
+Subject: Re: [PATCH v7 19/20] fs: iomap: use bio_add_folio_nofail where
+ possible
+Message-ID: <ZHfMC86ktyLtIxNb@dread.disaster.area>
+References: <cover.1685532726.git.johannes.thumshirn@wdc.com>
+ <58fa893c24c67340a63323f09a179fefdca07f2a.1685532726.git.johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CO1PR11MB4931D767C5277A37F24C824DE4489@CO1PR11MB4931.namprd11.prod.outlook.com>
+In-Reply-To: <58fa893c24c67340a63323f09a179fefdca07f2a.1685532726.git.johannes.thumshirn@wdc.com>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -82,64 +88,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 31, 2023 at 10:31:09AM +0000, Chen, Zhiyin wrote:
-> As Eric said, CONFIG_RANDSTRUCT_NONE is set in the default config 
-> and some production environments, including Ali Cloud. Therefore, it 
-> is worthful to optimize the file struct layout.
+On Wed, May 31, 2023 at 04:50:42AM -0700, Johannes Thumshirn wrote:
+> When the iomap buffered-io code can't add a folio to a bio, it allocates a
+> new bio and adds the folio to that one. This is done using bio_add_folio(),
+> but doesn't check for errors.
 > 
-> Here are the syscall test results of unixbench.
-
-Results look good, but the devil is in the detail....
-
-> Command: numactl -C 3-18 ./Run -c 16 syscall
-
-So the test is restricted to a set of adjacent cores within a single
-CPU socket, so all the cachelines are typically being shared within
-a single socket's CPU caches. IOWs, the fact there are 224 CPUs in
-the machine is largely irrelevant for this microbenchmark.
-
-i.e. is this a microbenchmark that is going faster simply because
-the working set for the specific benchmark now fits in L2 or L3
-cache when it didn't before?
-
-Does this same result occur for different CPUs types, cache sizes
-and architectures? What about when the cores used by the benchmark
-are spread across mulitple sockets so the cost of remote cacheline
-access is taken into account? If this is actually a real benefit,
-then we should see similar or even larger gains between CPU cores
-that are further apart because the cost of false cacheline sharing
-are higher in those systems....
-
-> Without patch
-> ------------------------
-> 224 CPUs in system; running 16 parallel copies of tests
-> System Call Overhead                        5611223.7 lps   (10.0 s, 7 samples)
-> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
-> System Call Overhead                          15000.0    5611223.7   3740.8
->                                                                    ========
-> System Benchmarks Index Score (Partial Only)                         3740.8
+> As adding a folio to a newly created bio can't fail, use the newly
+> introduced bio_add_folio_nofail() function.
 > 
-> With patch
-> ------------------------------------------------------------------------
-> 224 CPUs in system; running 16 parallel copies of tests
-> System Call Overhead                        7567076.6 lps   (10.0 s, 7 samples)
-> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
-> System Call Overhead                          15000.0    7567076.6   5044.7
->                                                                    ========
-> System Benchmarks Index Score (Partial Only)                         5044.7
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>  fs/iomap/buffered-io.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 063133ec77f4..0edab9deae2a 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -312,7 +312,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+>  			ctx->bio->bi_opf |= REQ_RAHEAD;
+>  		ctx->bio->bi_iter.bi_sector = sector;
+>  		ctx->bio->bi_end_io = iomap_read_end_io;
+> -		bio_add_folio(ctx->bio, folio, plen, poff);
+> +		bio_add_folio_nofail(ctx->bio, folio, plen, poff);
+>  	}
+>  
+>  done:
+> @@ -539,7 +539,7 @@ static int iomap_read_folio_sync(loff_t block_start, struct folio *folio,
+>  
+>  	bio_init(&bio, iomap->bdev, &bvec, 1, REQ_OP_READ);
+>  	bio.bi_iter.bi_sector = iomap_sector(iomap, block_start);
+> -	bio_add_folio(&bio, folio, plen, poff);
+> +	bio_add_folio_nofail(&bio, folio, plen, poff);
+>  	return submit_bio_wait(&bio);
+>  }
+>  
+> @@ -1582,7 +1582,7 @@ iomap_add_to_ioend(struct inode *inode, loff_t pos, struct folio *folio,
+>  
+>  	if (!bio_add_folio(wpc->ioend->io_bio, folio, len, poff)) {
+>  		wpc->ioend->io_bio = iomap_chain_bio(wpc->ioend->io_bio);
+> -		bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
+> +		bio_add_folio_nofail(wpc->ioend->io_bio, folio, len, poff);
+>  	}
 
-Where is all this CPU time being saved? Do you have a profile
-showing what functions in the kernel are running far more
-efficiently now?
+We lose adjacent page merging with this change.
 
-Yes, the results look good, but if all this change is doing is
-micro-optimising a single code path, it's much less impressive and
-far more likley that it has no impact on real-world performance...
+We've had performance regressions in the past that have been
+attributed to either the page allocator not handing out sequential
+adjacent pages for sequential writes and/or bios not merging
+adjacent pages. Some hardware is much more performant when it only
+has to do a single large DMA instead of (potentially) hundreds of
+single page DMAs for the same amount of data...
 
-More information, please!
+What performance regression testing has been done on this change?
 
 -Dave.
-
 -- 
 Dave Chinner
 david@fromorbit.com
