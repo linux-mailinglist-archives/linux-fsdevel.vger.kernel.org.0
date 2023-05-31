@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D69E5717CB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 12:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C88C717CC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 12:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235807AbjEaKE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 06:04:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58900 "EHLO
+        id S235822AbjEaKEc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 06:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235769AbjEaKEV (ORCPT
+        with ESMTP id S235785AbjEaKEX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 06:04:21 -0400
-Received: from out-7.mta0.migadu.com (out-7.mta0.migadu.com [IPv6:2001:41d0:1004:224b::7])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0386E5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 03:04:18 -0700 (PDT)
+        Wed, 31 May 2023 06:04:23 -0400
+Received: from out-32.mta0.migadu.com (out-32.mta0.migadu.com [91.218.175.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41FAA124
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 03:04:19 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1685527112;
+        t=1685527116;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+ES1OZTmJM6HPZiOufnJqkIPYyFHG+uxk+XMAxdW/H0=;
-        b=pME7V5sghWDhiBYKlYhlIGGcd+I8ZIhtp+E9A11aBMxPx6kduDLdGh2+5uOlz/UhrC8USH
-        AInETjEYhvnYApFG/QCWzh1ONDgIapx8Zsu0DP7P6tbY+y9jVOZnflKJtLkCkwkXmah55p
-        +X/uwLrssbh7WgAqh01669o0MFk+pHM=
+        bh=TtT/YiPGcEdmTG9OAN3DQ5AumhKObXT9/Vj+qIl0WEg=;
+        b=PlSv9IPmuSHjdrKvEPl7w4TEiIOKkc/t+uD+8kCUMyQjVkWRlPkNzabQJ7hHCOKGaBYK7W
+        bUUNx1CrZkZITlDuz0x6psukNLY7bBJ0k/0MQR2aKvy2s33NxB3JNm4Ms6dXTNpvioEckI
+        QgaCfDLB4ZAFsh5XY9kozVeBEH/jkVw=
 From:   Qi Zheng <qi.zheng@linux.dev>
 To:     akpm@linux-foundation.org, tkhai@ya.ru, roman.gushchin@linux.dev,
         vbabka@suse.cz, viro@zeniv.linux.org.uk, brauner@kernel.org,
@@ -34,9 +34,9 @@ To:     akpm@linux-foundation.org, tkhai@ya.ru, roman.gushchin@linux.dev,
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
         Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH 4/8] fs: shrink only (SB_ACTIVE|SB_BORN) superblocks in super_cache_scan()
-Date:   Wed, 31 May 2023 09:57:38 +0000
-Message-Id: <20230531095742.2480623-5-qi.zheng@linux.dev>
+Subject: [PATCH 5/8] fs: introduce struct super_operations::destroy_super() callback
+Date:   Wed, 31 May 2023 09:57:39 +0000
+Message-Id: <20230531095742.2480623-6-qi.zheng@linux.dev>
 In-Reply-To: <20230531095742.2480623-1-qi.zheng@linux.dev>
 References: <20230531095742.2480623-1-qi.zheng@linux.dev>
 MIME-Version: 1.0
@@ -54,62 +54,46 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Kirill Tkhai <tkhai@ya.ru>
 
-This patch prepares superblock shrinker for delayed unregistering.
-It makes super_cache_scan() avoid shrinking of not active superblocks.
-SB_ACTIVE is used as such the indicator. In case of superblock is not
-active, super_cache_scan() just exits with SHRINK_STOP as result.
+The patch introduces a new callback, which will be called
+asynchronous from delayed work.
 
-Note, that SB_ACTIVE is cleared in generic_shutdown_super() and this
-is made under the write lock of s_umount. Function super_cache_scan()
-also takes the read lock of s_umount, so it can't skip this flag cleared.
-
-SB_BORN check is added to super_cache_scan() just for uniformity
-with super_cache_count(), while super_cache_count() received SB_ACTIVE
-check just for uniformity with super_cache_scan().
-
-After this patch super_cache_scan() becomes to ignore unregistering
-superblocks, so this function is OK with splitting unregister_shrinker().
-Next patches prepare super_cache_count() to follow this way.
+This will allows to make ::nr_cached_objects() safe
+to be called on destroying superblock in next patches,
+and to split unregister_shrinker() into two primitives.
 
 Signed-off-by: Kirill Tkhai <tkhai@ya.ru>
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- fs/super.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/super.c         | 3 +++
+ include/linux/fs.h | 1 +
+ 2 files changed, 4 insertions(+)
 
 diff --git a/fs/super.c b/fs/super.c
-index 2ce4c72720f3..2ce54561e82e 100644
+index 2ce54561e82e..4e9d08224f86 100644
 --- a/fs/super.c
 +++ b/fs/super.c
-@@ -79,6 +79,11 @@ static unsigned long super_cache_scan(struct shrinker *shrink,
- 	if (!trylock_super(sb))
- 		return SHRINK_STOP;
+@@ -170,6 +170,9 @@ static void destroy_super_work(struct work_struct *work)
+ 	list_lru_destroy(&s->s_dentry_lru);
+ 	list_lru_destroy(&s->s_inode_lru);
  
-+	if ((sb->s_flags & (SB_BORN|SB_ACTIVE)) != (SB_BORN|SB_ACTIVE)) {
-+		freed = SHRINK_STOP;
-+		goto unlock;
-+	}
++	if (s->s_op->destroy_super)
++		s->s_op->destroy_super(s);
 +
- 	if (sb->s_op->nr_cached_objects)
- 		fs_objects = sb->s_op->nr_cached_objects(sb, sc);
- 
-@@ -110,6 +115,7 @@ static unsigned long super_cache_scan(struct shrinker *shrink,
- 		freed += sb->s_op->free_cached_objects(sb, sc);
- 	}
- 
-+unlock:
- 	up_read(&sb->s_umount);
- 	return freed;
- }
-@@ -136,7 +142,7 @@ static unsigned long super_cache_count(struct shrinker *shrink,
- 	 * avoid this situation, so do the same here. The memory barrier is
- 	 * matched with the one in mount_fs() as we don't hold locks here.
- 	 */
--	if (!(sb->s_flags & SB_BORN))
-+	if ((sb->s_flags & (SB_BORN|SB_ACTIVE)) != (SB_BORN|SB_ACTIVE))
- 		return 0;
- 	smp_rmb();
- 
+ 	for (i = 0; i < SB_FREEZE_LEVELS; i++)
+ 		percpu_free_rwsem(&s->s_writers.rw_sem[i]);
+ 	kfree(s);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0b54ac1d331b..30b46d0facfc 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1910,6 +1910,7 @@ struct super_operations {
+ 	int (*drop_inode) (struct inode *);
+ 	void (*evict_inode) (struct inode *);
+ 	void (*put_super) (struct super_block *);
++	void (*destroy_super) (struct super_block *);
+ 	int (*sync_fs)(struct super_block *sb, int wait);
+ 	int (*freeze_super) (struct super_block *);
+ 	int (*freeze_fs) (struct super_block *);
 -- 
 2.30.2
 
