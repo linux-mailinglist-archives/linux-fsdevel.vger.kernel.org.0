@@ -2,86 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5656471793C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 09:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFCB171792C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 09:56:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234968AbjEaH5c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 03:57:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60140 "EHLO
+        id S235038AbjEaH4f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 03:56:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234983AbjEaH5S (ORCPT
+        with ESMTP id S234817AbjEaH4T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 03:57:18 -0400
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09070198E;
-        Wed, 31 May 2023 00:56:06 -0700 (PDT)
-Received: from [192.168.0.2] (ip5f5ae86a.dynamic.kabel-deutschland.de [95.90.232.106])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Wed, 31 May 2023 03:56:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6217013E;
+        Wed, 31 May 2023 00:55:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id B64BB61E4052B;
-        Wed, 31 May 2023 09:54:23 +0200 (CEST)
-Message-ID: <e510055e-da93-e9c1-d60b-f6b357d6611b@molgen.mpg.de>
-Date:   Wed, 31 May 2023 09:54:23 +0200
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D8D976358E;
+        Wed, 31 May 2023 07:55:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD816C433D2;
+        Wed, 31 May 2023 07:55:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685519702;
+        bh=oQMKNQRLgA4ZCsezODjVAhD2XTTy3QKxeBK/2FUHClA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JMTHL3iGQTevlNsUjFG/8KGtglQhrdKh6TRlgrmvzMOHQPY9mKf0JOG/zVfvv7+9Q
+         jVbAkp4UynX6IRnhAiDmkFsb1fuQGoBlE7jJyxPfK5PBXdUCnrL3i5uQy4tQ5fKXuu
+         byQ8n/xuaf3R1YT0SdxbARajYAP0DCGDx5BvPuCB/e6ZeQuBnHVD+YChxLpDYyXB3D
+         2IMMOUSiVENkZLvH+88IqnkLH9/rneFOeIumHYMl8WQK6lGb0Ii2GF3hLmMWNhH2Da
+         fyT1iRADU425l5/Je1TouTGgF74IWW1SVYLBkxWT/yRBNjbRCyzZp/BaIUeOtCXay9
+         GqpqUHz5UVXFw==
+Date:   Wed, 31 May 2023 09:54:57 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     chenzhiyin <zhiyin.chen@intel.com>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nanhai.zou@intel.com
+Subject: Re: [PATCH] fs.h: Optimize file struct to prevent false sharing
+Message-ID: <20230531-wahlkabine-unantastbar-9f73a13262c0@brauner>
+References: <20230530020626.186192-1-zhiyin.chen@intel.com>
+ <20230530-wortbruch-extra-88399a74392e@brauner>
+ <20230531015549.GA1648@quark.localdomain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v6 15/20] md: raid1: check if adding pages to resync bio
- fails
-To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Song Liu <song@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dm-devel@redhat.com, linux-raid@vger.kernel.org,
-        Mike Snitzer <snitzer@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>, gouhao@uniontech.com,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>
-References: <cover.1685461490.git.johannes.thumshirn@wdc.com>
- <c60c6f46b70c96b528b6c4746918ea87c2a01473.1685461490.git.johannes.thumshirn@wdc.com>
- <20230531042502.GM32705@lst.de>
- <CAPhsuW62vBccjUkCUmYr+OZSLgGozFzX4YyzP8OV+dvsLujCGg@mail.gmail.com>
-Content-Language: en-US
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <CAPhsuW62vBccjUkCUmYr+OZSLgGozFzX4YyzP8OV+dvsLujCGg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230531015549.GA1648@quark.localdomain>
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Johannes,
-
-
-Thank you for your patches.
-
-Am 31.05.23 um 06:58 schrieb Song Liu:
-> On Tue, May 30, 2023 at 9:25 PM Christoph Hellwig <hch@lst.de> wrote:
->>
->> To me these look like __bio_add_page candidates, but I guess Song
->> preferred it this way?  It'll add a bit pointless boilerplate code,
->> but I'm ok with that.
+On Tue, May 30, 2023 at 06:55:49PM -0700, Eric Biggers wrote:
+> On Tue, May 30, 2023 at 10:50:42AM +0200, Christian Brauner wrote:
+> > On Mon, May 29, 2023 at 10:06:26PM -0400, chenzhiyin wrote:
+> > > In the syscall test of UnixBench, performance regression occurred
+> > > due to false sharing.
+> > > 
+> > > The lock and atomic members, including file::f_lock, file::f_count
+> > > and file::f_pos_lock are highly contended and frequently updated
+> > > in the high-concurrency test scenarios. perf c2c indentified one
+> > > affected read access, file::f_op.
+> > > To prevent false sharing, the layout of file struct is changed as
+> > > following
+> > > (A) f_lock, f_count and f_pos_lock are put together to share the
+> > > same cache line.
+> > > (B) The read mostly members, including f_path, f_inode, f_op are
+> > > put into a separate cache line.
+> > > (C) f_mode is put together with f_count, since they are used
+> > > frequently at the same time.
+> > > 
+> > > The optimization has been validated in the syscall test of
+> > > UnixBench. performance gain is 30~50%, when the number of parallel
+> > > jobs is 16.
+> > > 
+> > > Signed-off-by: chenzhiyin <zhiyin.chen@intel.com>
+> > > ---
+> > 
+> > Sounds interesting, but can we see the actual numbers, please? 
+> > So struct file is marked with __randomize_layout which seems to make
+> > this whole reordering pointless or at least only useful if the
+> > structure randomization Kconfig is turned off. Is there any precedence
+> > to optimizing structures that are marked as randomizable?
 > 
-> We had some discussion on this in v2, and decided to keep these
-> assert-like WARN_ON().
+> Most people don't use CONFIG_RANDSTRUCT.  So it's still worth optimizing struct
+> layouts for everyone else.
 
-it’d be great if you added a summary/note of the discussion to the 
-commit message.
-
-
-Kind regards,
-
-Paul
+Ok, good to know.
+We should still see actual numbers and the commit message should mention
+that this interacts with __randomize_layout and why it's still useful.
