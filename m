@@ -2,55 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DA23717FFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 14:34:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FFC9718016
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 14:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235780AbjEaMeb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 08:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38508 "EHLO
+        id S235856AbjEaMkG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 08:40:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230446AbjEaMea (ORCPT
+        with ESMTP id S235840AbjEaMkE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 08:34:30 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF6A8E;
-        Wed, 31 May 2023 05:34:29 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 1B21068B05; Wed, 31 May 2023 14:34:25 +0200 (CEST)
-Date:   Wed, 31 May 2023 14:34:24 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Hannes Reinecke <hare@suse.de>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dm-devel@redhat.com, Song Liu <song@kernel.org>,
-        linux-raid@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>, gouha7@uniontech.com
-Subject: Re: [PATCH v7 20/20] block: mark bio_add_folio as __must_check
-Message-ID: <20230531123424.GC26481@lst.de>
-References: <cover.1685532726.git.johannes.thumshirn@wdc.com> <381360a45ac3684120cfbe1e07685e9c36256e47.1685532726.git.johannes.thumshirn@wdc.com>
+        Wed, 31 May 2023 08:40:04 -0400
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5922312B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 05:40:03 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-33b59d59193so36037495ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 05:40:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685536802; x=1688128802;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O+nh8wAGvvwQBsKKm+hftixJhCePbzqLhsRE0ejzXE0=;
+        b=WYT7Wc7C9Ts8/vU1a19p8y0hA4It/ikkXmJf0N1HDdQc+KvjIrM/AFCSR4Zbn2ORwU
+         aPLkgZbnJSho6lBGS79Dnm+HV/JymgzAd8UL9YLcfT71cOWSUgpdHWSZzpQCeXwXXY41
+         JgZEyj4jVhKfbtk2YdmmwwH6HUa51A3EEBmKlULLaCqYQ2cy/Xqgm2GRTJP/6MY4Zl8b
+         JW0SoGu5vrWN9AfjNeB0Q20HwlDfzpv/EkG9mr/EqcmK70dry64HmWzbZnTfsPVf1wIs
+         dkyW6z6UAjWPlx2WsxNhlq6p8jBB0/XKBjqFL7RmpW0rvbHFpYKdu2WTH59ttMOE5PFe
+         LmJA==
+X-Gm-Message-State: AC+VfDwivn+XMNvWa7SB5fiHBCYXhHEuJwuG+osTAsyU/I1BkN36vnGw
+        43i0pd5ezEDNtt/+HkFVwoRgK6JH6LbUqeH9pSpGxahX4Anw
+X-Google-Smtp-Source: ACHHUZ7dNn26ahXuxKl07turDUmbs70Bnasi5pLlYMvVRek31d7xXR05a2EZd7/jFx0AsbL23A4fkREjDfNpmvmDnxZIEks1WoY0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <381360a45ac3684120cfbe1e07685e9c36256e47.1685532726.git.johannes.thumshirn@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a92:d405:0:b0:328:fb47:ede4 with SMTP id
+ q5-20020a92d405000000b00328fb47ede4mr1247887ilm.3.1685536802760; Wed, 31 May
+ 2023 05:40:02 -0700 (PDT)
+Date:   Wed, 31 May 2023 05:40:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000626da605fcfc9eda@google.com>
+Subject: [syzbot] Monthly fat report (May 2023)
+From:   syzbot <syzbot+list69af309433d563763abf@syzkaller.appspotmail.com>
+To:     linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good:
+Hello fat maintainers/developers,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+This is a 31-day syzbot report for the fat subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/fat
+
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 8 issues are still open and 20 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 282     Yes   possible deadlock in filemap_fault
+                  https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
+<2> 221     Yes   possible deadlock in exfat_get_block
+                  https://syzkaller.appspot.com/bug?extid=247e66a2c3ea756332c7
+<3> 220     Yes   kernel BUG at fs/buffer.c:LINE!
+                  https://syzkaller.appspot.com/bug?extid=cfed5b56649bddf80d6e
+<4> 156     Yes   possible deadlock in exfat_iterate
+                  https://syzkaller.appspot.com/bug?extid=38655f1298fefc58a904
+<5> 83      Yes   possible deadlock in exc_page_fault
+                  https://syzkaller.appspot.com/bug?extid=6d274a5dc4fa0974d4ad
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
