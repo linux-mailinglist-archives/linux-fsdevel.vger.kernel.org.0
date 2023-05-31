@@ -2,301 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03621718D73
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 23:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6394718E4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 00:16:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbjEaVrY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 17:47:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48114 "EHLO
+        id S231166AbjEaWQT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 18:16:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbjEaVrX (ORCPT
+        with ESMTP id S231185AbjEaWQI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 17:47:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B130912F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 14:46:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685569599;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=igYFvs+c9N5WeBPgjDiciSp0VkV0okfe8MCEg9xv7Mk=;
-        b=elrkLJb8Oab2ML/RV3pkqwmem5eJdT72wvlmt8aFBG/oajTcnYxD/T7tW5sv9ZyQ8akbIK
-        XgxKPZVUw+CGIpZTeFOq1z2iutJJV2vPcUY28KMnIFjdMfKVgrmKBXbZzypI2V5x1DSM6P
-        6V27wQlpSUhNmD2ZVpEJIuEFv5UyuJo=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-544-YJJ6AXvHOsylbBvMuwExgQ-1; Wed, 31 May 2023 17:46:37 -0400
-X-MC-Unique: YJJ6AXvHOsylbBvMuwExgQ-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-62829b2aa10so400246d6.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 14:46:37 -0700 (PDT)
+        Wed, 31 May 2023 18:16:08 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 973B0E46
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 15:15:45 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1a950b982d4so56235ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 May 2023 15:15:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1685571343; x=1688163343;
+        h=mime-version:user-agent:message-id:in-reply-to:date:references
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C69/HgDQcYHZzBDl4mqXS6yFcUMrvhBV+XsyYfCeFy4=;
+        b=avojlsc996gGnZc9DZwhWPrvUhBeM5Ph8gNSA8jcDuKN2emMUuWsHnU64lv54HzvW1
+         gk6Wiy/Gzo6kgMr7K5QQNsEvMkacDXf2sAq/hr/kXiDcBe5L+W24usb8vJEl3eouOszC
+         dwWJzkYg9zPXF2m/+jsTwydw/xtxLXhHqz9MAGF8SyKIJnM5LaBgqpOdsGhxqG1SGl0V
+         oU66ytUYcUTWLe2l3lfrG7+oADifxqKM2mo/sZgsogoDIgyX34io8uFbt8rOh9stuV8a
+         pupW/pRMsonx5qViaZUfcJwVB0ydPW8XE0BHrd4SS80BzTaNWrKGuPKW46p2Y8suyrNZ
+         ilMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685569597; x=1688161597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20221208; t=1685571343; x=1688163343;
+        h=mime-version:user-agent:message-id:in-reply-to:date:references
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=igYFvs+c9N5WeBPgjDiciSp0VkV0okfe8MCEg9xv7Mk=;
-        b=jwr8o/VXap5bJwLaisA7P9foiwijbJq4jHKABFV1XmY8iiYMTQsHMv4xWkMjQmKFp0
-         fvRkGJ4gtm/Anrz2Ed0VFHcEc40Y/0kxBi+RqhJ9VKpUkOA4SWfZO2AfP7zh94vyvAAc
-         mXcFZLu+kVtKVGQ3bO39dYkyQjSnO8oXnRiWc+UUn56IaZ4oa/EB2CphWXImGXigNvmw
-         PzkcMZJhCK5ksdNfOGEiYEWlr/DC1jeZY7BoaBHOJvZhDHXicWoDy/CUPikx2hTYHybW
-         APBPTbya7pyMLNX9hfd4WZvz7l6THhicfx83AyK9dJFV7LDSgdF4UnrOWTRzB1ki498v
-         TiZw==
-X-Gm-Message-State: AC+VfDxNqm7aCvi2kCsG1dVfVG29b5kcD78e5vsmvd/cBzdUxJK4WuQy
-        q+J++8SzUHW5bU1nvc9St9hwbuyWYFvrlzo3UA8XTIR8RhMg/PD0UA/EMPVZOdR2CWgLPtgy8gf
-        M9Zz+Dt9V3Jgiy2hZWFLpikwOlg==
-X-Received: by 2002:a05:6214:4013:b0:626:273e:c35c with SMTP id kd19-20020a056214401300b00626273ec35cmr7808915qvb.2.1685569596871;
-        Wed, 31 May 2023 14:46:36 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6bWGqnMQLL01DCWUi2wXYQyUExSGN2qKxzwSnBwQ/iA3qijQefM33xIvhj7QAsoSK7L4uFJQ==
-X-Received: by 2002:a05:6214:4013:b0:626:273e:c35c with SMTP id kd19-20020a056214401300b00626273ec35cmr7808878qvb.2.1685569596504;
-        Wed, 31 May 2023 14:46:36 -0700 (PDT)
-Received: from x1n (bras-base-aurron9127w-grc-62-70-24-86-62.dsl.bell.ca. [70.24.86.62])
-        by smtp.gmail.com with ESMTPSA id i27-20020a05620a151b00b0075932cd3ca0sm5728059qkk.69.2023.05.31.14.46.33
+        bh=C69/HgDQcYHZzBDl4mqXS6yFcUMrvhBV+XsyYfCeFy4=;
+        b=LYfRWTqGYB0L0hsRE1OftbJzd/3IzdhtGJ/CAAR17dLVQBx2dfhDgvv2+GeyKJRDTZ
+         z03+bptWLxypztWniptBQg/G6tCoark+UNQLr08rPXjRdX4awbo4AjevlpKQslORvcw5
+         U2voVdVvk8Kz1blLx5WPyrTseKTOdEg9Dq3nUS9BrcAghZMEAjE6sgIaQCI+jPYu6/IN
+         i5xbJy04W22EvvwYynH6RTgNWr+tGhnvoundP4Sgr/RjRQguieCBnG3qfJ1dEXOZeMqL
+         z5WYfO6JLKmlMtRW4sbB6IcunZ8TnjUYB2tMJSBtHlDY/bGm7JdbsPRR6BwKqXTD5g58
+         xEQQ==
+X-Gm-Message-State: AC+VfDw2oP1na7GijfPbRQuHTvUuQUW8aF7Ay1RfHA7WOaeTsU/0hknA
+        DISimdahOdlR+MBp/TC7pS//NQ==
+X-Google-Smtp-Source: ACHHUZ7zAWHVLeCjO/NeIx9R8Cm5pi2tcHFmuvYnV9NvWdpLer08hYIMnMnuREKWaC6bxLVBoTsmCw==
+X-Received: by 2002:a17:902:f38c:b0:1a6:6a2d:18f0 with SMTP id f12-20020a170902f38c00b001a66a2d18f0mr19120ple.9.1685571342975;
+        Wed, 31 May 2023 15:15:42 -0700 (PDT)
+Received: from bsegall-glaptop.localhost (c-73-158-249-138.hsd1.ca.comcast.net. [73.158.249.138])
+        by smtp.gmail.com with ESMTPSA id b1-20020a170902d50100b0019aaab3f9d7sm1910004plg.113.2023.05.31.15.15.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 May 2023 14:46:35 -0700 (PDT)
-Date:   Wed, 31 May 2023 17:46:32 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Wed, 31 May 2023 15:15:42 -0700 (PDT)
+From:   Benjamin Segall <bsegall@google.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v16 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Message-ID: <ZHfAOAKj1ZQJ+zSy@x1n>
-References: <20230525085517.281529-1-usama.anjum@collabora.com>
- <20230525085517.281529-3-usama.anjum@collabora.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH RESEND] epoll: ep_autoremove_wake_function should use
+ list_del_init_careful
+References: <xm26pm6hvfer.fsf@google.com>
+        <20230531015748.GB1648@quark.localdomain>
+        <20230531-zupacken-laute-22564cd952f7@brauner>
+Date:   Wed, 31 May 2023 15:15:41 -0700
+In-Reply-To: <20230531-zupacken-laute-22564cd952f7@brauner> (Christian
+        Brauner's message of "Wed, 31 May 2023 09:53:01 +0200")
+Message-ID: <xm26ilc8uoz6.fsf@google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230525085517.281529-3-usama.anjum@collabora.com>
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Muhammad,
+Christian Brauner <brauner@kernel.org> writes:
 
-Sorry, I probably can only review the non-interface part, and leave the
-interface/buffer handling, etc. review for others and real potential users
-of it..
+> On Tue, May 30, 2023 at 06:57:48PM -0700, Eric Biggers wrote:
+>> On Tue, May 30, 2023 at 11:32:28AM -0700, Benjamin Segall wrote:
+>> > autoremove_wake_function uses list_del_init_careful, so should epoll's
+>> > more aggressive variant. It only doesn't because it was copied from an
+>> > older wait.c rather than the most recent.
+>> > 
+>> > Fixes: a16ceb139610 ("epoll: autoremove wakers even more aggressively")
+>> > Signed-off-by: Ben Segall <bsegall@google.com>
+>> > Cc: stable@vger.kernel.org
+>> > ---
+>> >  fs/eventpoll.c | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> > 
+>> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+>> > index 52954d4637b5..081df056398a 100644
+>> > --- a/fs/eventpoll.c
+>> > +++ b/fs/eventpoll.c
+>> > @@ -1756,11 +1756,11 @@ static struct timespec64 *ep_timeout_to_timespec(struct timespec64 *to, long ms)
+>> >  static int ep_autoremove_wake_function(struct wait_queue_entry *wq_entry,
+>> >  				       unsigned int mode, int sync, void *key)
+>> >  {
+>> >  	int ret = default_wake_function(wq_entry, mode, sync, key);
+>> >  
+>> > -	list_del_init(&wq_entry->entry);
+>> > +	list_del_init_careful(&wq_entry->entry);
+>> >  	return ret;
+>> >  }
+>> 
+>> Can you please provide a more detailed explanation about why
+>> list_del_init_careful() is needed here?
+>
+> Yeah, this needs more explanation... Next time someone looks at this
+> code and there's a *_careful() added they'll want to know why.
 
-On Thu, May 25, 2023 at 01:55:14PM +0500, Muhammad Usama Anjum wrote:
-> +static inline void make_uffd_wp_huge_pte(struct vm_area_struct *vma,
-> +					 unsigned long addr, pte_t *ptep,
-> +					 pte_t ptent)
-> +{
-> +	pte_t old_pte;
-> +
-> +	if (!huge_pte_none(ptent)) {
-> +		old_pte = huge_ptep_modify_prot_start(vma, addr, ptep);
-> +		ptent = huge_pte_mkuffd_wp(old_pte);
-> +		ptep_modify_prot_commit(vma, addr, ptep, old_pte, ptent);
+So the general reason is the same as with autoremove_wake_function, it
+pairs with the list_entry_careful in ep_poll (which is epoll's modified
+copy of finish_wait).
 
-huge_ptep_modify_prot_start()?
-
-The other thing is what if it's a pte marker already?  What if a hugetlb
-migration entry?  Please check hugetlb_change_protection().
-
-> +	} else {
-> +		set_huge_pte_at(vma->vm_mm, addr, ptep,
-> +				make_pte_marker(PTE_MARKER_UFFD_WP));
-> +	}
-> +}
-> +#endif
-
-[...]
-
-> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
-> +				  unsigned long end, struct mm_walk *walk)
-> +{
-> +	struct pagemap_scan_private *p = walk->private;
-> +	struct vm_area_struct *vma = walk->vma;
-> +	unsigned long addr = end;
-> +	pte_t *pte, *orig_pte;
-> +	spinlock_t *ptl;
-> +	bool is_written;
-> +	int ret = 0;
-> +
-> +	arch_enter_lazy_mmu_mode();
-> +
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	ptl = pmd_trans_huge_lock(pmd, vma);
-> +	if (ptl) {
-> +		unsigned long n_pages = (end - start)/PAGE_SIZE;
-> +
-> +		if (p->max_pages && n_pages > p->max_pages - p->found_pages)
-> +			n_pages = p->max_pages - p->found_pages;
-> +
-> +		is_written = !is_pmd_uffd_wp(*pmd);
-> +
-> +		/*
-> +		 * Break huge page into small pages if the WP operation need to
-> +		 * be performed is on a portion of the huge page.
-> +		 */
-> +		if (is_written && IS_PM_SCAN_WP(p->flags) &&
-> +		    n_pages < HPAGE_SIZE/PAGE_SIZE) {
-> +			spin_unlock(ptl);
-> +
-> +			split_huge_pmd(vma, pmd, start);
-> +			goto process_smaller_pages;
-> +		}
-> +
-> +		if (IS_PM_SCAN_GET(p->flags))
-> +			ret = pagemap_scan_output(is_written, vma->vm_file,
-> +						  pmd_present(*pmd),
-> +						  is_swap_pmd(*pmd),
-> +						  p, start, n_pages);
-> +
-> +		if (ret >= 0 && is_written && IS_PM_SCAN_WP(p->flags))
-> +			make_uffd_wp_pmd(vma, addr, pmd);
-> +
-> +		if (IS_PM_SCAN_WP(p->flags))
-> +			flush_tlb_range(vma, start, end);
-> +
-> +		spin_unlock(ptl);
-> +
-> +		arch_leave_lazy_mmu_mode();
-> +		return ret;
-> +	}
-> +
-> +process_smaller_pages:
-> +	if (pmd_trans_unstable(pmd)) {
-> +		arch_leave_lazy_mmu_mode();
-> +		return 0;
-
-I'm not sure whether this is right..  Shouldn't you return with -EAGAIN and
-let the user retry?  Returning 0 means you'll move on with the next pmd
-afaict and ignoring this one.
-
-> +	}
-> +#endif
-> +
-> +	orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
-
-Just a heads-up that this may start to fail at some point if Hugh's work
-will land earlier:
-
-https://lore.kernel.org/linux-mm/68a97fbe-5c1e-7ac6-72c-7b9c6290b370@google.com/
-
-> +	for (addr = start; addr < end && !ret; pte++, addr += PAGE_SIZE) {
-> +		is_written = !is_pte_uffd_wp(*pte);
-> +
-> +		if (IS_PM_SCAN_GET(p->flags))
-> +			ret = pagemap_scan_output(is_written, vma->vm_file,
-> +						  pte_present(*pte),
-> +						  is_swap_pte(*pte),
-> +						  p, addr, 1);
-> +
-> +		if (ret >= 0 && is_written && IS_PM_SCAN_WP(p->flags))
-> +			make_uffd_wp_pte(vma, addr, pte);
-> +	}
-> +
-> +	if (IS_PM_SCAN_WP(p->flags))
-> +		flush_tlb_range(vma, start, addr);
-> +
-> +	pte_unmap_unlock(orig_pte, ptl);
-> +	arch_leave_lazy_mmu_mode();
-> +
-> +	cond_resched();
-> +	return ret;
-> +}
-> +
-> +#ifdef CONFIG_HUGETLB_PAGE
-> +static int pagemap_scan_hugetlb_entry(pte_t *ptep, unsigned long hmask,
-> +				      unsigned long start, unsigned long end,
-> +				      struct mm_walk *walk)
-> +{
-> +	unsigned long n_pages = (end - start)/PAGE_SIZE;
-> +	struct pagemap_scan_private *p = walk->private;
-> +	struct vm_area_struct *vma = walk->vma;
-> +	struct hstate *h = hstate_vma(vma);
-> +	spinlock_t *ptl;
-> +	bool is_written;
-> +	int ret = 0;
-> +	pte_t pte;
-> +
-> +	arch_enter_lazy_mmu_mode();
-
-This _seems_ to be not needed for hugetlb entries.
-
-> +
-> +	if (p->max_pages && n_pages > p->max_pages - p->found_pages)
-> +		n_pages = p->max_pages - p->found_pages;
-> +
-> +	if (IS_PM_SCAN_WP(p->flags)) {
-> +		i_mmap_lock_write(vma->vm_file->f_mapping);
-> +		ptl = huge_pte_lock(h, vma->vm_mm, ptep);
-> +	}
-> +
-> +	pte = huge_ptep_get(ptep);
-> +	is_written = !is_huge_pte_uffd_wp(pte);
-> +
-> +	/*
-> +	 * Partial hugetlb page clear isn't supported
-> +	 */
-> +	if (is_written && IS_PM_SCAN_WP(p->flags) &&
-> +	    n_pages < HPAGE_SIZE/PAGE_SIZE) {
-> +		ret = -EPERM;
-> +		goto unlock_and_return;
-> +	}
-> +
-> +	if (IS_PM_SCAN_GET(p->flags)) {
-> +		ret = pagemap_scan_output(is_written, vma->vm_file,
-> +					  pte_present(pte), is_swap_pte(pte),
-> +					  p, start, n_pages);
-> +		if (ret < 0)
-> +			goto unlock_and_return;
-> +	}
-> +
-> +	if (is_written && IS_PM_SCAN_WP(p->flags)) {
-> +		make_uffd_wp_huge_pte(vma, start, ptep, pte);
-> +		flush_hugetlb_tlb_range(vma, start, end);
-> +	}
-> +
-> +unlock_and_return:
-> +	if (IS_PM_SCAN_WP(p->flags)) {
-> +		spin_unlock(ptl);
-> +		i_mmap_unlock_write(vma->vm_file->f_mapping);
-> +	}
-> +
-> +	arch_leave_lazy_mmu_mode();
-
-Same here.
-
-> +
-> +	return ret;
-> +}
-
-[...]
-
--- 
-Peter Xu
-
+I think the original actual _problem_ was a -stable issue that was fixed
+instead by doing additional backports, so this may just avoid potential
+extra loops and avoid potential compiler shenanigans from the data race.
