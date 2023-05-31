@@ -2,63 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1294D717494
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 05:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC017174F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 May 2023 06:14:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234215AbjEaD6i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 May 2023 23:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51678 "EHLO
+        id S234183AbjEaEOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 00:14:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234071AbjEaD6Y (ORCPT
+        with ESMTP id S234078AbjEaEOa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 May 2023 23:58:24 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6B819A;
-        Tue, 30 May 2023 20:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=DZmcrb5vNIv36agVjGva8gNY+d
-        Bp2tWJDzMNDQR2uJkwhjSJ5H1K9CCsicALXEcOr0wiQhpV1PFhaKGh4K+bQfUaGdX0muTiiXSEyNS
-        bZlybfS0yefh2jakuWAUx4rEGDTCUqDWUpmc9sOTdTnVE/zPcX3eC8UUYBF30VJpL81rDjOmtl1Ly
-        S/IkRA2GEFl+28dc4HRKw4jTZABJXfWuJg+PEn8U+oyr0zXGdcNakJfQYJsd9Kz9FkgjxWqgEO8Dc
-        8vOSOngxwsLq18SN5GkU5ddVpD6cDohHnCQ2Bt6eZu0uwXio5lEZkiJ/LF9glRzW4kh88bze+VCfj
-        T20OJhqQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q4CyO-00FyLX-20;
-        Wed, 31 May 2023 03:58:08 +0000
-Date:   Tue, 30 May 2023 20:58:08 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v4 3/3] block: Use iov_iter_extract_pages() and page
- pinning in direct-io.c
-Message-ID: <ZHbF0AhT/9GRXaTk@infradead.org>
-References: <20230526214142.958751-1-dhowells@redhat.com>
- <20230526214142.958751-4-dhowells@redhat.com>
+        Wed, 31 May 2023 00:14:30 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C0C7C9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 21:14:29 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7748054f861so40787839f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 May 2023 21:14:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685506468; x=1688098468;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oQ8lccKkDI0BWu9z1HB+e7MlGRULvpuKC8oP5Znml6Y=;
+        b=NxmH0FRF88Mbg3MwBikwR1A6mbCLze2cMD8tMxJyzWQIQqdOQqN3RnTO/4Ea5QfxoI
+         4KENk4vFlPca0j5z8R/uUyeszLbFh9OvGvDKb+kwOQY/2/XI+Gj2GBs6Ixsut9XOOFPG
+         rEhq4SIcVVVvxS74ALUwvlnEdpWxN7G4GY0dxMz8A/p3cCNHqvAH5avZ/HnREDQ+MO6F
+         UjKMVsDfMc28/EBaM/i4gvKnvklLmZXZK8MukU0ZHPZ2wI4n6noaVyigTyYoBUvBPBs2
+         9tUjx8PKCLiiZdAWmaS5ji+YJYV8EuhLKREnIULAi+KHWpxb0TfrGkYEbq3qggGRDCbT
+         mmfA==
+X-Gm-Message-State: AC+VfDy8OE+6F3cDS+TpU5PODTyBkg0teIIMsjZzLJCIInCo4M5wAN1P
+        hWkfCqYSbFWu2BAn3YzrzeDmYFcFoDOUzESrs03ONbwCh/B+
+X-Google-Smtp-Source: ACHHUZ6ijLZzEZwuH0NsIQsxc2DP3wZIt7NQIH+V0p25HtMvQGsTBm7wIgmvAtUsrUwp+QLAYA9eicuP9Hvyt6mCmRqtQ6uApq/A
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230526214142.958751-4-dhowells@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+X-Received: by 2002:a02:a19d:0:b0:41a:f4a3:9884 with SMTP id
+ n29-20020a02a19d000000b0041af4a39884mr2015057jah.1.1685506467298; Tue, 30 May
+ 2023 21:14:27 -0700 (PDT)
+Date:   Tue, 30 May 2023 21:14:27 -0700
+In-Reply-To: <000000000000030b7e05f7b9ac32@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000040020d05fcf58ebf@google.com>
+Subject: Re: [syzbot] [ntfs3?] WARNING in attr_data_get_block (2)
+From:   syzbot <syzbot+a98f21ebda0a437b04d7@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
+        torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,6 +57,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good:
+syzbot suspects this issue was fixed by commit:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+commit 68674f94ffc9dddc45e7733963ecc35c5eda9efd
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat Apr 15 18:47:06 2023 +0000
+
+    x86: don't use REP_GOOD or ERMS for small memory copies
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12de3271280000
+start commit:   ffe78bbd5121 Merge tag 'xtensa-20230327' of https://github..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c35b3803e5ad668
+dashboard link: https://syzkaller.appspot.com/bug?extid=a98f21ebda0a437b04d7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=139dca3ec80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a55a35c80000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: x86: don't use REP_GOOD or ERMS for small memory copies
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
