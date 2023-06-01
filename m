@@ -2,200 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C94719866
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 12:09:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC2C71988E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 12:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233111AbjFAKI4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jun 2023 06:08:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46948 "EHLO
+        id S233345AbjFAKLe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jun 2023 06:11:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232937AbjFAKIe (ORCPT
+        with ESMTP id S232444AbjFAKKl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jun 2023 06:08:34 -0400
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DCC138;
-        Thu,  1 Jun 2023 03:06:37 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 167DF320069B;
-        Thu,  1 Jun 2023 06:06:34 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 01 Jun 2023 06:06:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1685613993; x=1685700393; bh=8ZuU8TLDMySBnmghexzuWEa4NXd1xIu7Ee2
-        fhDFog6Y=; b=B0NeQNg24xK+OoIFrVSls7ao2BGeZayfqlYJJn1anYHjnO50rkv
-        NOO6fnvCOXoPpvFB2671T6AswEIcuH/uEPX5EsT3z8YqU7xyiJ6vWtVxK5ya/1zr
-        90S7kJRE1peSTKNgVIKSDy9F23lOhokUaJz1jy7vTKbjjdMR2EyLaXaWLHu+TEXj
-        PpdF/Y8Fma0Uai7uvV0YkvkCD85Sdv5rJpm90bNw1HTVQiiCIo8MfNiy5eEwC5nI
-        3nuNPxvMUO1K3kFroe1fwcIMqxN/PgjZ76HtO0UpMFY6JIIwSC3ygLVor56gT//g
-        th8ZfLVbc03nEavoBPctF8gRTnp3f4UcIZA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1685613993; x=1685700393; bh=8ZuU8TLDMySBnmghexzuWEa4NXd1xIu7Ee2
-        fhDFog6Y=; b=aaIgCVU34yJfwMFzTrrBwqx/Qcu9VgCYnru+25FPEX07Qp0P1XT
-        1TLfjcVS/U9KVUyBXZzVTTkAfqhID3GjsQJbxfJp378jHS89KYISzaEVIodrLi9L
-        P/5mOg0VVsoVlykbF+3cEgAJewoJxGwTr3p1lkLlwLNsoymVTOh6BNaXKhdcxauf
-        XBkg/ZFUNDwPFR+OJClF3JX5M9ldUHPK9K//nwimWLd5E28ANTN08QhSjMg7HKQ4
-        E1MRpv/Coaz2BTopEp2n/1gsF059oABqWearEc9CRZaEUKCHTv3CCOKGjxVOyY/8
-        IT+4eRUgADN1fFePoxiadhs2V+0lmdb+dvw==
-X-ME-Sender: <xms:qW14ZAPQUbn6w14w9ITrWgoDhBqhOIwabnwRyGOhartZGpQHWeDGDg>
-    <xme:qW14ZG9fcg3m7HypuSQW09wrizA5xV40GmtYO12mAwvUvhddYkS_9yOeu3PpeQXn4
-    UgwDbkbSeUIvptF>
-X-ME-Received: <xmr:qW14ZHS0JK9tm-ygtF0unYYYIo4LRHHmUbl-5kIrWXN4tWPdW9sv7JRzaplfW6NN_7Gspnk-qaTFUL2nLwW93GtCUEjEVfSlWLORTXMu4pukJSPmgr7w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeluddgvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefkffggfgfuvfevfhfhjggtgfesth
-    ejredttdefjeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdr
-    shgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeekhe
-    evkeelkeekjefhheegfedtffduudejjeeiheehudeuleelgefhueekfeevudenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstg
-    hhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:qW14ZIt5lMTI4aRpvjIgsAu_miSGHKvs9dG6RPthSfSsBgP2u9yKVQ>
-    <xmx:qW14ZIdm0urElOxyJS8Y1S7Q5L6qHZtRXM0AF5dOTTB0IE6Moocfhg>
-    <xmx:qW14ZM2NDRuHY9q4WXT6oN4bvPXtI8HmPQVeSz3FSjyWqLQmIObhTw>
-    <xmx:qW14ZH45BwoF92PdEuFVlY6HnZgW7At2GkcncX-LC8jHYV4mhHnlrQ>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 1 Jun 2023 06:06:32 -0400 (EDT)
-Message-ID: <a00dc6d7-05b6-b0c2-7e89-262de91f5f18@fastmail.fm>
-Date:   Thu, 1 Jun 2023 12:06:30 +0200
+        Thu, 1 Jun 2023 06:10:41 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA75D10D2;
+        Thu,  1 Jun 2023 03:10:03 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 431761F86C;
+        Thu,  1 Jun 2023 10:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1685614202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=abruGtVP9ScBJlQSE7zQj+GmYvnPwSTU2l53mgFmTic=;
+        b=Zx42HasM4xUfIKAaR1DIxrUHCDlW++ScBSLvBmVU7mgPyM2tfeAHZ9IqjU/o7qHowTYmUT
+        j/ATwbtIxL0pvc5qcdjUBHxGh4x6QaOkAIC0I3cjFZgnBfxGX0E5YKLvzLS+o1n9I5V7cI
+        lw+0C3I0imyQfaWsT5L5ehhp0TJ87PQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1685614202;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=abruGtVP9ScBJlQSE7zQj+GmYvnPwSTU2l53mgFmTic=;
+        b=nYy+Xvq2gyytdIjl0KzaQGicobj+XiYliqCUlH53r9TtVRlhqhLacFR0384vPY6X7qIT1X
+        lfFwVbWHLXu2btDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 31762139B7;
+        Thu,  1 Jun 2023 10:10:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0csDDHpueGQcPQAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 01 Jun 2023 10:10:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id B5AB3A0754; Thu,  1 Jun 2023 12:10:01 +0200 (CEST)
+Date:   Thu, 1 Jun 2023 12:10:01 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 14/16] ext4: split ext4_shutdown
+Message-ID: <20230601101001.najppil33tuntlaw@quack3>
+References: <20230601094459.1350643-1-hch@lst.de>
+ <20230601094459.1350643-15-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH] fs.h: Optimize file struct to prevent false sharing
-To:     chenzhiyin <zhiyin.chen@intel.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nanhai.zou@intel.com
-References: <20230531-wahlkabine-unantastbar-9f73a13262c0@brauner>
- <20230601092400.27162-1-zhiyin.chen@intel.com>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <20230601092400.27162-1-zhiyin.chen@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230601094459.1350643-15-hch@lst.de>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu 01-06-23 11:44:57, Christoph Hellwig wrote:
+> Split ext4_shutdown into a low-level helper that will be reused for
+> implementing the shutdown super operation and a wrapper for the ioctl
+> handling.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
+Looks good. Feel free to add:
 
-On 6/1/23 11:24, chenzhiyin wrote:
-> In the syscall test of UnixBench, performance regression occurred due
-> to false sharing.
-> 
-> The lock and atomic members, including file::f_lock, file::f_count and
-> file::f_pos_lock are highly contended and frequently updated in the
-> high-concurrency test scenarios. perf c2c indentified one affected
-> read access, file::f_op.
-> To prevent false sharing, the layout of file struct is changed as
-> following
-> (A) f_lock, f_count and f_pos_lock are put together to share the same
-> cache line.
-> (B) The read mostly members, including f_path, f_inode, f_op are put
-> into a separate cache line.
-> (C) f_mode is put together with f_count, since they are used frequently
->   at the same time.
-> Due to '__randomize_layout' attribute of file struct, the updated layout
-> only can be effective when CONFIG_RANDSTRUCT_NONE is 'y'.
-> 
-> The optimization has been validated in the syscall test of UnixBench.
-> performance gain is 30~50%. Furthermore, to confirm the optimization
-> effectiveness on the other codes path, the results of fsdisk, fsbuffer
-> and fstime are also shown.
-> 
-> Here are the detailed test results of unixbench.
-> 
-> Command: numactl -C 3-18 ./Run -c 16 syscall fsbuffer fstime fsdisk
-> 
-> Without Patch
-> ------------------------------------------------------------------------
-> File Copy 1024 bufsize 2000 maxblocks   875052.1 KBps  (30.0 s, 2 samples)
-> File Copy 256 bufsize 500 maxblocks     235484.0 KBps  (30.0 s, 2 samples)
-> File Copy 4096 bufsize 8000 maxblocks  2815153.5 KBps  (30.0 s, 2 samples)
-> System Call Overhead                   5772268.3 lps   (10.0 s, 7 samples)
-> 
-> System Benchmarks Partial Index         BASELINE       RESULT    INDEX
-> File Copy 1024 bufsize 2000 maxblocks     3960.0     875052.1   2209.7
-> File Copy 256 bufsize 500 maxblocks       1655.0     235484.0   1422.9
-> File Copy 4096 bufsize 8000 maxblocks     5800.0    2815153.5   4853.7
-> System Call Overhead                     15000.0    5772268.3   3848.2
->                                                                ========
-> System Benchmarks Index Score (Partial Only)                    2768.3
-> 
-> With Patch
-> ------------------------------------------------------------------------
-> File Copy 1024 bufsize 2000 maxblocks  1009977.2 KBps  (30.0 s, 2 samples)
-> File Copy 256 bufsize 500 maxblocks     264765.9 KBps  (30.0 s, 2 samples)
-> File Copy 4096 bufsize 8000 maxblocks  3052236.0 KBps  (30.0 s, 2 samples)
-> System Call Overhead                   8237404.4 lps   (10.0 s, 7 samples)
-> 
-> System Benchmarks Partial Index         BASELINE       RESULT    INDEX
-> File Copy 1024 bufsize 2000 maxblocks     3960.0    1009977.2   2550.4
-> File Copy 256 bufsize 500 maxblocks       1655.0     264765.9   1599.8
-> File Copy 4096 bufsize 8000 maxblocks     5800.0    3052236.0   5262.5
-> System Call Overhead                     15000.0    8237404.4   5491.6
->                                                                ========
-> System Benchmarks Index Score (Partial Only)                    3295.3
-> 
-> Signed-off-by: chenzhiyin <zhiyin.chen@intel.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->   include/linux/fs.h | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
+>  fs/ext4/ext4.h  |  1 +
+>  fs/ext4/ioctl.c | 24 +++++++++++++++---------
+>  2 files changed, 16 insertions(+), 9 deletions(-)
 > 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 133f0640fb24..cf1388e4dad0 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -962,23 +962,23 @@ struct file {
->   		struct rcu_head 	f_rcuhead;
->   		unsigned int 		f_iocb_flags;
->   	};
-> -	struct path		f_path;
-> -	struct inode		*f_inode;	/* cached value */
-> -	const struct file_operations	*f_op;
->   
->   	/*
->   	 * Protects f_ep, f_flags.
->   	 * Must not be taken from IRQ context.
->   	 */
->   	spinlock_t		f_lock;
-> -	atomic_long_t		f_count;
-> -	unsigned int 		f_flags;
->   	fmode_t			f_mode;
-> +	atomic_long_t		f_count;
->   	struct mutex		f_pos_lock;
->   	loff_t			f_pos;
-> +	unsigned int		f_flags;
->   	struct fown_struct	f_owner;
->   	const struct cred	*f_cred;
->   	struct file_ra_state	f_ra;
-> +	struct path		f_path;
-> +	struct inode		*f_inode;	/* cached value */
-> +	const struct file_operations	*f_op;
->   
->   	u64			f_version;
->   #ifdef CONFIG_SECURITY
-
-Maybe add a comment for the struct that values are cache line optimized? 
-I.e. any change in the structure that does not check for cache lines 
-might/will invalidate your optimization - your patch adds maintenance 
-overhead, without giving a hint about that.
-
-
-Thanks,
-Bernd
-
-
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 6948d673bba2e8..2d60bbe8d171d9 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -2965,6 +2965,7 @@ int ext4_fileattr_set(struct mnt_idmap *idmap,
+>  int ext4_fileattr_get(struct dentry *dentry, struct fileattr *fa);
+>  extern void ext4_reset_inode_seed(struct inode *inode);
+>  int ext4_update_overhead(struct super_block *sb, bool force);
+> +int ext4_force_shutdown(struct super_block *sb, u32 flags);
+>  
+>  /* migrate.c */
+>  extern int ext4_ext_migrate(struct inode *);
+> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+> index f9a43015206323..961284cc9b65cc 100644
+> --- a/fs/ext4/ioctl.c
+> +++ b/fs/ext4/ioctl.c
+> @@ -793,16 +793,9 @@ static int ext4_ioctl_setproject(struct inode *inode, __u32 projid)
+>  }
+>  #endif
+>  
+> -static int ext4_shutdown(struct super_block *sb, unsigned long arg)
+> +int ext4_force_shutdown(struct super_block *sb, u32 flags)
+>  {
+>  	struct ext4_sb_info *sbi = EXT4_SB(sb);
+> -	__u32 flags;
+> -
+> -	if (!capable(CAP_SYS_ADMIN))
+> -		return -EPERM;
+> -
+> -	if (get_user(flags, (__u32 __user *)arg))
+> -		return -EFAULT;
+>  
+>  	if (flags > EXT4_GOING_FLAGS_NOLOGFLUSH)
+>  		return -EINVAL;
+> @@ -838,6 +831,19 @@ static int ext4_shutdown(struct super_block *sb, unsigned long arg)
+>  	return 0;
+>  }
+>  
+> +static int ext4_ioctl_shutdown(struct super_block *sb, unsigned long arg)
+> +{
+> +	u32 flags;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return -EPERM;
+> +
+> +	if (get_user(flags, (__u32 __user *)arg))
+> +		return -EFAULT;
+> +
+> +	return ext4_force_shutdown(sb, flags);
+> +}
+> +
+>  struct getfsmap_info {
+>  	struct super_block	*gi_sb;
+>  	struct fsmap_head __user *gi_data;
+> @@ -1566,7 +1572,7 @@ static long __ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  		return ext4_ioctl_get_es_cache(filp, arg);
+>  
+>  	case EXT4_IOC_SHUTDOWN:
+> -		return ext4_shutdown(sb, arg);
+> +		return ext4_ioctl_shutdown(sb, arg);
+>  
+>  	case FS_IOC_ENABLE_VERITY:
+>  		if (!ext4_has_feature_verity(sb))
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
