@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0548B71A162
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 17:01:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E6D71A1A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 17:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234699AbjFAPAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jun 2023 11:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41802 "EHLO
+        id S233806AbjFAPAJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jun 2023 11:00:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234777AbjFAO7u (ORCPT
+        with ESMTP id S234775AbjFAO7u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 1 Jun 2023 10:59:50 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBB0410E0;
-        Thu,  1 Jun 2023 07:59:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE3C010E5;
+        Thu,  1 Jun 2023 07:59:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=qFF6fLdGcSdKlOPYnxGb89x929heU6NqNup9f91209k=; b=wmq67X7kYyI1B5F1ECXLwrMY0T
-        7Y6PvoIwnb70q0Ip3NqZe+9BvsMOK/ZfabselOaqQF4hgbwCaALq7GWsBLMlmlw3aGlQfEhiSDGZE
-        qgCCLr/RcUkDH31Unwf4PALPHIR/628eDsUXOsJEzwWpC03Jq4mmTe4EYmYthsBJ97pKfm3AxoFS2
-        vK+qpxXWzdn0AWxaTUZ9j+AaJFhtMPX1W2V2+DH28Xro9DDo9ZVJAaJfM7i//CET9jJbCeHdJORmX
-        MyyBuMtvMazpByyotke4mF8RVMvKciUfblvRr5u7+igwHsf1p7VQJ+JtOW6PNkcsfe5y/rzoWYG4i
-        1NVtLVgQ==;
+        bh=1AhsMC0b8Le+Qj8+/F9cJR6e5GLVWYekas+17NCVqqI=; b=wiZK9iqy2Q2DgmztCycdzZFJYV
+        +f+Z1EUaPp/WxVng7hKAlTugkvoijJtdaCd0abPoIux8/9iobGyPP3C6ZdxSo+5MDjs+QVxSsZ3Yw
+        3H/pO+bF6DsK8j6VvoAk02XyxLpv8r9mchlt36SS/V9hKI45pU8u3aID3Cuyz6NRbbOYhfrEEm6b1
+        NNHoLMnhvwSNrDWABgK8ExwUWqr924HfRyejUtySvIZe/Xw5vgaGGms+mTqdLK9GBRSnpE9VluHzD
+        Eeh8qQMBY9tUVU6xoJPSMjm7g2W4rjDN+CjEc3/cLcIsyBTtm2CIz0MxYanPENl5SoUy/NTEUsg2H
+        qg0aEunA==;
 Received: from [2001:4bb8:182:6d06:eacb:c751:971:73eb] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q4jld-003w2V-0F;
-        Thu, 01 Jun 2023 14:59:09 +0000
+        id 1q4jlf-003w32-1z;
+        Thu, 01 Jun 2023 14:59:12 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
@@ -47,11 +47,10 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 01/12] backing_dev: remove current->backing_dev_info
-Date:   Thu,  1 Jun 2023 16:58:53 +0200
-Message-Id: <20230601145904.1385409-2-hch@lst.de>
+        linux-mm@kvack.org, Hannes Reinecke <hare@suse.de>
+Subject: [PATCH 02/12] iomap: update ki_pos a little later in iomap_dio_complete
+Date:   Thu,  1 Jun 2023 16:58:54 +0200
+Message-Id: <20230601145904.1385409-3-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230601145904.1385409-1-hch@lst.de>
 References: <20230601145904.1385409-1-hch@lst.de>
@@ -68,270 +67,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The last user of current->backing_dev_info disappeared in commit
-b9b1335e6403 ("remove bdi_congested() and wb_congested() and related
-functions").  Remove the field and all assignments to it.
+Move the ki_pos update down a bit to prepare for a better common
+helper that invalidates pages based of an iocb.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
 Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Acked-by: Theodore Ts'o <tytso@mit.edu>
 ---
- fs/btrfs/file.c       | 6 +-----
- fs/ceph/file.c        | 4 ----
- fs/ext4/file.c        | 2 --
- fs/f2fs/file.c        | 2 --
- fs/fuse/file.c        | 4 ----
- fs/gfs2/file.c        | 2 --
- fs/nfs/file.c         | 5 +----
- fs/ntfs/file.c        | 2 --
- fs/ntfs3/file.c       | 3 ---
- fs/xfs/xfs_file.c     | 4 ----
- include/linux/sched.h | 3 ---
- mm/filemap.c          | 3 ---
- 12 files changed, 2 insertions(+), 38 deletions(-)
+ fs/iomap/direct-io.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index f649647392e0e4..ecd43ab66fa6c7 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1145,7 +1145,6 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
- 	    !(BTRFS_I(inode)->flags & (BTRFS_INODE_NODATACOW | BTRFS_INODE_PREALLOC)))
- 		return -EAGAIN;
- 
--	current->backing_dev_info = inode_to_bdi(inode);
- 	ret = file_remove_privs(file);
- 	if (ret)
- 		return ret;
-@@ -1165,10 +1164,8 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
- 		loff_t end_pos = round_up(pos + count, fs_info->sectorsize);
- 
- 		ret = btrfs_cont_expand(BTRFS_I(inode), oldsize, end_pos);
--		if (ret) {
--			current->backing_dev_info = NULL;
-+		if (ret)
- 			return ret;
--		}
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 019cc87d0fb339..6207a59d2162e1 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -94,7 +94,6 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ 		if (offset + ret > dio->i_size &&
+ 		    !(dio->flags & IOMAP_DIO_WRITE))
+ 			ret = dio->i_size - offset;
+-		iocb->ki_pos += ret;
  	}
  
- 	return 0;
-@@ -1689,7 +1686,6 @@ ssize_t btrfs_do_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 	if (sync)
- 		atomic_dec(&inode->sync_writers);
+ 	/*
+@@ -120,19 +119,21 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ 	}
  
--	current->backing_dev_info = NULL;
- 	return num_written;
+ 	inode_dio_end(file_inode(iocb->ki_filp));
+-	/*
+-	 * If this is a DSYNC write, make sure we push it to stable storage now
+-	 * that we've written data.
+-	 */
+-	if (ret > 0 && (dio->flags & IOMAP_DIO_NEED_SYNC))
+-		ret = generic_write_sync(iocb, ret);
+ 
+-	if (ret > 0)
+-		ret += dio->done_before;
++	if (ret > 0) {
++		iocb->ki_pos += ret;
+ 
++		/*
++		 * If this is a DSYNC write, make sure we push it to stable
++		 * storage now that we've written data.
++		 */
++		if (dio->flags & IOMAP_DIO_NEED_SYNC)
++			ret = generic_write_sync(iocb, ret);
++		if (ret > 0)
++			ret += dio->done_before;
++	}
+ 	trace_iomap_dio_complete(iocb, dio->error, ret);
+ 	kfree(dio);
+-
+ 	return ret;
  }
- 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index f4d8bf7dec88a8..c8ef72f723badd 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1791,9 +1791,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	else
- 		ceph_start_io_write(inode);
- 
--	/* We can write back this queue in page reclaim */
--	current->backing_dev_info = inode_to_bdi(inode);
--
- 	if (iocb->ki_flags & IOCB_APPEND) {
- 		err = ceph_do_getattr(inode, CEPH_STAT_CAP_SIZE, false);
- 		if (err < 0)
-@@ -1940,7 +1937,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		ceph_end_io_write(inode);
- out_unlocked:
- 	ceph_free_cap_flush(prealloc_cf);
--	current->backing_dev_info = NULL;
- 	return written ? written : err;
- }
- 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index d101b3b0c7dad8..bc430270c23c19 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -285,9 +285,7 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
- 	if (ret <= 0)
- 		goto out;
- 
--	current->backing_dev_info = inode_to_bdi(inode);
- 	ret = generic_perform_write(iocb, from);
--	current->backing_dev_info = NULL;
- 
- out:
- 	inode_unlock(inode);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5ac53d2627d20d..4f423d367a44b9 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4517,9 +4517,7 @@ static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
- 	if (iocb->ki_flags & IOCB_NOWAIT)
- 		return -EOPNOTSUPP;
- 
--	current->backing_dev_info = inode_to_bdi(inode);
- 	ret = generic_perform_write(iocb, from);
--	current->backing_dev_info = NULL;
- 
- 	if (ret > 0) {
- 		iocb->ki_pos += ret;
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 89d97f6188e05e..97d435874b14aa 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1362,9 +1362,6 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- writethrough:
- 	inode_lock(inode);
- 
--	/* We can write back this queue in page reclaim */
--	current->backing_dev_info = inode_to_bdi(inode);
--
- 	err = generic_write_checks(iocb, from);
- 	if (err <= 0)
- 		goto out;
-@@ -1409,7 +1406,6 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 			iocb->ki_pos += written;
- 	}
- out:
--	current->backing_dev_info = NULL;
- 	inode_unlock(inode);
- 	if (written > 0)
- 		written = generic_write_sync(iocb, written);
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index 300844f50dcd28..904a0d6ac1a1a9 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -1041,11 +1041,9 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
- 			goto out_unlock;
- 	}
- 
--	current->backing_dev_info = inode_to_bdi(inode);
- 	pagefault_disable();
- 	ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
- 	pagefault_enable();
--	current->backing_dev_info = NULL;
- 	if (ret > 0) {
- 		iocb->ki_pos += ret;
- 		written += ret;
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index f0edf5a36237d1..665ce3fc62eaf4 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -648,11 +648,8 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
- 	since = filemap_sample_wb_err(file->f_mapping);
- 	nfs_start_io_write(inode);
- 	result = generic_write_checks(iocb, from);
--	if (result > 0) {
--		current->backing_dev_info = inode_to_bdi(inode);
-+	if (result > 0)
- 		result = generic_perform_write(iocb, from);
--		current->backing_dev_info = NULL;
--	}
- 	nfs_end_io_write(inode);
- 	if (result <= 0)
- 		goto out;
-diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
-index c481b14e4fd989..e296f804a9c442 100644
---- a/fs/ntfs/file.c
-+++ b/fs/ntfs/file.c
-@@ -1911,11 +1911,9 @@ static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 
- 	inode_lock(vi);
- 	/* We can write back this queue in page reclaim. */
--	current->backing_dev_info = inode_to_bdi(vi);
- 	err = ntfs_prepare_file_for_write(iocb, from);
- 	if (iov_iter_count(from) && !err)
- 		written = ntfs_perform_write(file, from, iocb->ki_pos);
--	current->backing_dev_info = NULL;
- 	inode_unlock(vi);
- 	iocb->ki_pos += written;
- 	if (likely(written > 0))
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 9a3d55c367d920..86d16a2c8339ca 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -820,7 +820,6 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 	if (!pages)
- 		return -ENOMEM;
- 
--	current->backing_dev_info = inode_to_bdi(inode);
- 	err = file_remove_privs(file);
- 	if (err)
- 		goto out;
-@@ -993,8 +992,6 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- out:
- 	kfree(pages);
- 
--	current->backing_dev_info = NULL;
--
- 	if (err < 0)
- 		return err;
- 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index aede746541f8ae..431c3fd0e2b598 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -717,9 +717,6 @@ xfs_file_buffered_write(
- 	if (ret)
- 		goto out;
- 
--	/* We can write back this queue in page reclaim */
--	current->backing_dev_info = inode_to_bdi(inode);
--
- 	trace_xfs_file_buffered_write(iocb, from);
- 	ret = iomap_file_buffered_write(iocb, from,
- 			&xfs_buffered_write_iomap_ops);
-@@ -753,7 +750,6 @@ xfs_file_buffered_write(
- 		goto write_retry;
- 	}
- 
--	current->backing_dev_info = NULL;
- out:
- 	if (iolock)
- 		xfs_iunlock(ip, iolock);
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index eed5d65b8d1f4d..54780571fe9a07 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -41,7 +41,6 @@
- 
- /* task_struct member predeclarations (sorted alphabetically): */
- struct audit_context;
--struct backing_dev_info;
- struct bio_list;
- struct blk_plug;
- struct bpf_local_storage;
-@@ -1186,8 +1185,6 @@ struct task_struct {
- 	/* VM state: */
- 	struct reclaim_state		*reclaim_state;
- 
--	struct backing_dev_info		*backing_dev_info;
--
- 	struct io_context		*io_context;
- 
- #ifdef CONFIG_COMPACTION
-diff --git a/mm/filemap.c b/mm/filemap.c
-index b4c9bd368b7e58..33b54660ad2b39 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3991,8 +3991,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t		err;
- 	ssize_t		status;
- 
--	/* We can write back this queue in page reclaim */
--	current->backing_dev_info = inode_to_bdi(inode);
- 	err = file_remove_privs(file);
- 	if (err)
- 		goto out;
-@@ -4053,7 +4051,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 			iocb->ki_pos += written;
- 	}
- out:
--	current->backing_dev_info = NULL;
- 	return written ? written : err;
- }
- EXPORT_SYMBOL(__generic_file_write_iter);
+ EXPORT_SYMBOL_GPL(iomap_dio_complete);
 -- 
 2.39.2
 
