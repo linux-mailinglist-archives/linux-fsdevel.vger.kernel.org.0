@@ -2,68 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B15EE719BD1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 14:18:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33F3F719CC3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 14:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232769AbjFAMSc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jun 2023 08:18:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60734 "EHLO
+        id S233369AbjFAM4o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jun 2023 08:56:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232230AbjFAMSb (ORCPT
+        with ESMTP id S233277AbjFAM4k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jun 2023 08:18:31 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF0BED7
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jun 2023 05:18:29 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-96f8d485ef3so104562266b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Jun 2023 05:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1685621908; x=1688213908;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6TjKKwQ7YZ52K1F/sXvcot46oThTtzilfqhAodws70s=;
-        b=CsDnRRS5uBym/ALZvCHGm7OVO8VYPXC64GNn1FNTOnKgg5jOg+iOXhAtG66CKfdOd+
-         UPXHtlKvdlXjgSlLL+BM5UOjTJVvXB3W3bNTbmPXlP/wSVxZXEPl4s/zZG20uM6c54SO
-         gm6uJ0Ltny7bOCl5S+z77XWhByJWJjWtyW9yg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685621908; x=1688213908;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6TjKKwQ7YZ52K1F/sXvcot46oThTtzilfqhAodws70s=;
-        b=A4fVpMfTBjf8UgEeONnJUUI9+l48ZOBzzaG04tv7a4KRY5a4DCGMuZQJ9Rs4Jd8Ntd
-         spsoHkRHAAtIBmqkSZ6C5iJ7gjRLRWWhJnXvQ8c+KPjHkBcq0dJrLhkHUgeEYanWAYq2
-         5xFzlVIhMWv6dK56UNpxdsjAyK3u7KhSY4g5mkSJsXmMIfAUX4onN+7956xYSdOSbDin
-         mgGn51cQ9Vlk6zH18XgBh8lugGbdx1cHsiu93xVirQ/1nX8/UD+YO7x4lBCg+evRiPjt
-         ONxgwn8jlQBOCjrVpPMxh3X+BDCkrJRsLqqFvdIeZvY45CCcnvg66fqFigrH3s7ICg+S
-         en5g==
-X-Gm-Message-State: AC+VfDzrf1+sZiGqtblYRKrt7V2kBlKk4UYF16GkFlua3WxVRzlcGp5G
-        ozVQw4jfDBk8CluXLwsRx89hNnaFqZGit2NfAKXxpA==
-X-Google-Smtp-Source: ACHHUZ55F5DRBseT4RmqqRQQ91PxbqrS+uhYpVfbuYrfQBpqlSD3QfHRGiR4nhu24vV3ldqVRa5Eq7dAl71hm9xTI8A=
-X-Received: by 2002:a17:907:6e09:b0:973:eac4:a24d with SMTP id
- sd9-20020a1709076e0900b00973eac4a24dmr7988792ejc.57.1685621908409; Thu, 01
- Jun 2023 05:18:28 -0700 (PDT)
+        Thu, 1 Jun 2023 08:56:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6568618B
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jun 2023 05:56:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E474660EC6
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jun 2023 12:56:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E4FC433D2;
+        Thu,  1 Jun 2023 12:56:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685624198;
+        bh=FHIgTk3M69+TGLNzqLfENMz2sXl0FwkPiMSqIA1ea4U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=C2TFQxQQrBUYYcj56+qJnk8S0m4H/sDJijdc3fR+xoFVPvmZT2NO15hwJF50GBK0n
+         1BQ4H3+QloHO6yIcRdD5C63LLES5XbWzzXYp/qlDkDaJYF8SnjMew05MK1q2DqpGvj
+         2oM7ZTkJYmz2t5mqeslX09XFLNz4XgeF1EOdz56N875UAMb7WF/uZPwPafFbIAwkBX
+         xEEDkNNFyHYbxG6o2JbLrLC94zTMpnOEn93LBGfdJMMv4Za20TxWagop9QeXymDCrL
+         sxQg/WVJCTjJcvw9cQHndvJJKzSyXAfgoPCM41NDgbLgJ+1aci9uOFfNem7j2K4AI1
+         tATbCy21r9Usw==
+From:   Damien Le Moal <dlemoal@kernel.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2] zonefs: use iomap for synchronous direct writes
+Date:   Thu,  1 Jun 2023 21:56:36 +0900
+Message-Id: <20230601125636.205191-1-dlemoal@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-References: <20220517100744.26849-1-dharamhans87@gmail.com>
- <CAJfpegsDxsMsyfP4a_5H1q91xFtwcEdu9-WBnzWKwjUSrPNdmw@mail.gmail.com>
- <ccfd2c96-35c7-8e33-9c5e-a1623d969f39@ddn.com> <CAJfpegswePPhVrDrwjZHbHb91iOkbfObnxFqzJU88U7pH86Row@mail.gmail.com>
- <805d122a-34d0-b097-c3e3-f3cc7c95aa46@ddn.com>
-In-Reply-To: <805d122a-34d0-b097-c3e3-f3cc7c95aa46@ddn.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 1 Jun 2023 14:18:17 +0200
-Message-ID: <CAJfpegs7DFvP3ZctPcgzYC+4CKg3nqag69oRxH0H339R-M+z8A@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] FUSE: Implement atomic lookup + open/create
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     Dharmendra Singh <dharamhans87@gmail.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Horst Birthelmer <horst@birthelmer.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,79 +52,337 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 1 Jun 2023 at 14:01, Bernd Schubert <bschubert@ddn.com> wrote:
->
-> On 6/1/23 13:50, Miklos Szeredi wrote:
-> > On Thu, 1 Jun 2023 at 13:17, Bernd Schubert <bschubert@ddn.com> wrote:
-> >>
-> >> Hi Miklos,
-> >>
-> >> On 5/19/22 11:39, Miklos Szeredi wrote:
-> >>> On Tue, 17 May 2022 at 12:08, Dharmendra Singh <dharamhans87@gmail.com> wrote:
-> >>>>
-> >>>> In FUSE, as of now, uncached lookups are expensive over the wire.
-> >>>> E.g additional latencies and stressing (meta data) servers from
-> >>>> thousands of clients. These lookup calls possibly can be avoided
-> >>>> in some cases. Incoming three patches address this issue.
-> >>>>
-> >>>>
-> >>>> Fist patch handles the case where we are creating a file with O_CREAT.
-> >>>> Before we go for file creation, we do a lookup on the file which is most
-> >>>> likely non-existent. After this lookup is done, we again go into libfuse
-> >>>> to create file. Such lookups where file is most likely non-existent, can
-> >>>> be avoided.
-> >>>
-> >>> I'd really like to see a bit wider picture...
-> >>>
-> >>> We have several cases, first of all let's look at plain O_CREAT
-> >>> without O_EXCL (assume that there were no changes since the last
-> >>> lookup for simplicity):
-> >>>
-> >>> [not cached, negative]
-> >>>      ->atomic_open()
-> >>>         LOOKUP
-> >>>         CREATE
-> >>>
-> >>
-> >> [...]
-> >>
-> >>> [not cached]
-> >>>      ->atomic_open()
-> >>>          OPEN_ATOMIC
-> >>
-> >> new patch version is eventually going through xfstests (and it finds
-> >> some issues), but I have a question about wording here. Why
-> >> "OPEN_ATOMIC" and not "ATOMIC_OPEN". Based on your comment  @Dharmendra
-> >> renamed all functions and this fuse op "open atomic" instead of "atomic
-> >> open" - for my non native English this sounds rather weird. At best it
-> >> should be "open atomically"?
-> >
-> > FUSE_OPEN_ATOMIC is a specialization of FUSE_OPEN.  Does that explain
-> > my thinking?
->
-> Yeah, just the vfs function is also called atomic_open. We now have
->
->
-> static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
->                  struct file *file, unsigned flags,
->                  umode_t mode)
-> {
->      struct fuse_conn *fc = get_fuse_conn(dir);
->
->      if (fc->no_open_atomic)
->          return fuse_open_nonatomic(dir, entry, file, flags, mode);
->      else
->          return fuse_open_atomic(dir, entry, file, flags, mode);
-> }
->
->
-> Personally I would use something like _fuse_atomic_open() and
-> fuse_create_open() (instead of fuse_open_nonatomic). The order of "open
-> atomic" also made it into libfuse and comments - it just sounds a bit
-> weird ;) I have to live with it, if you prefer it like this.
+Remove the function zonefs_file_dio_append() that is used to manually
+issue REQ_OP_ZONE_APPEND BIOs for processing synchronous direct writes
+and use iomap instead.
 
-I'd prefer FUSE_OPEN_ATOMIC for the API, but I don't care about
-function names, as long as the purpose is clear.
+To preserve the use of zone append operations for synchronous writes,
+different struct iomap_dio_ops are defined. For synchronous direct
+writes using zone append, zonefs_zone_append_dio_ops is introduced.
+The submit_bio operation of this structure is defined as the function
+zonefs_file_zone_append_dio_submit_io() which is used to change the BIO
+opreation for synchronous direct IO writes to REQ_OP_ZONE_APPEND.
 
-Thanks,
-Miklos
+In order to preserve the write location check on completion of zone
+append BIOs, the end_io operation is also defined using the function
+zonefs_file_zone_append_dio_bio_end_io(). This check now relies on the
+zonefs_zone_append_bio structure, allocated together with zone append
+BIOs with a dedicated BIO set. This structure include the target inode
+of a zone append BIO as well as the target append offset location for
+the zone append operation. This is used to perform a check against
+bio->bi_iter.bi_sector when the BIO completes, without needing to use
+the zone information z_wpoffset field, thus removing the need for
+taking the inode truncate mutex.
+
+Signed-off-by: Damien Le Moal <dlemoal@kernel.org>
+---
+
+Changes from v1:
+ * Renamed a few things (iomap operations, zonefs bio set, ...)
+ * Restrict the use of the bio set to zone append synchronous writes
+
+ fs/zonefs/file.c   | 206 ++++++++++++++++++++++++---------------------
+ fs/zonefs/super.c  |   9 +-
+ fs/zonefs/zonefs.h |   2 +
+ 3 files changed, 120 insertions(+), 97 deletions(-)
+
+diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
+index 132f01d3461f..c34ec5b54053 100644
+--- a/fs/zonefs/file.c
++++ b/fs/zonefs/file.c
+@@ -342,6 +342,77 @@ static loff_t zonefs_file_llseek(struct file *file, loff_t offset, int whence)
+ 	return generic_file_llseek_size(file, offset, whence, isize, isize);
+ }
+ 
++struct zonefs_zone_append_bio {
++	/* The target inode of the BIO */
++	struct inode *inode;
++
++	/* For sync writes, the target append write offset */
++	u64 append_offset;
++
++	/*
++	 * This member must come last, bio_alloc_bioset will allocate enough
++	 * bytes for entire zonefs_bio but relies on bio being last.
++	 */
++	struct bio bio;
++};
++
++static inline struct zonefs_zone_append_bio *
++zonefs_zone_append_bio(struct bio *bio)
++{
++	return container_of(bio, struct zonefs_zone_append_bio, bio);
++}
++
++static void zonefs_file_zone_append_dio_bio_end_io(struct bio *bio)
++{
++	struct zonefs_zone_append_bio *za_bio = zonefs_zone_append_bio(bio);
++	struct zonefs_zone *z = zonefs_inode_zone(za_bio->inode);
++	sector_t za_sector;
++
++	if (bio->bi_status != BLK_STS_OK)
++		goto bio_end;
++
++	/*
++	 * If the file zone was written underneath the file system, the zone
++	 * append operation can still succedd (if the zone is not full) but
++	 * the write append location will not be where we expect it to be.
++	 * Check that we wrote where we intended to, that is, at z->z_wpoffset.
++	 */
++	za_sector = z->z_sector + (za_bio->append_offset >> SECTOR_SHIFT);
++	if (bio->bi_iter.bi_sector != za_sector) {
++		zonefs_warn(za_bio->inode->i_sb,
++			    "Invalid write sector %llu for zone at %llu\n",
++			    bio->bi_iter.bi_sector, z->z_sector);
++		bio->bi_status = BLK_STS_IOERR;
++	}
++
++bio_end:
++	iomap_dio_bio_end_io(bio);
++}
++
++static void zonefs_file_zone_append_dio_submit_io(const struct iomap_iter *iter,
++						  struct bio *bio,
++						  loff_t file_offset)
++{
++	struct zonefs_zone_append_bio *za_bio = zonefs_zone_append_bio(bio);
++	struct inode *inode = iter->inode;
++	struct zonefs_zone *z = zonefs_inode_zone(inode);
++
++	/*
++	 * Issue a zone append BIO to process sync dio writes. The append
++	 * file offset is saved to check the zone append write location
++	 * on completion of the BIO.
++	 */
++	za_bio->inode = inode;
++	za_bio->append_offset = file_offset;
++
++	bio->bi_opf &= ~REQ_OP_WRITE;
++	bio->bi_opf |= REQ_OP_ZONE_APPEND;
++	bio->bi_iter.bi_sector = z->z_sector;
++	bio->bi_end_io = zonefs_file_zone_append_dio_bio_end_io;
++
++	submit_bio(bio);
++}
++
+ static int zonefs_file_write_dio_end_io(struct kiocb *iocb, ssize_t size,
+ 					int error, unsigned int flags)
+ {
+@@ -372,93 +443,17 @@ static int zonefs_file_write_dio_end_io(struct kiocb *iocb, ssize_t size,
+ 	return 0;
+ }
+ 
+-static const struct iomap_dio_ops zonefs_write_dio_ops = {
+-	.end_io			= zonefs_file_write_dio_end_io,
+-};
++static struct bio_set zonefs_zone_append_bio_set;
+ 
+-static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
+-{
+-	struct inode *inode = file_inode(iocb->ki_filp);
+-	struct zonefs_zone *z = zonefs_inode_zone(inode);
+-	struct block_device *bdev = inode->i_sb->s_bdev;
+-	unsigned int max = bdev_max_zone_append_sectors(bdev);
+-	pgoff_t start, end;
+-	struct bio *bio;
+-	ssize_t size = 0;
+-	int nr_pages;
+-	ssize_t ret;
+-
+-	max = ALIGN_DOWN(max << SECTOR_SHIFT, inode->i_sb->s_blocksize);
+-	iov_iter_truncate(from, max);
+-
+-	/*
+-	 * If the inode block size (zone write granularity) is smaller than the
+-	 * page size, we may be appending data belonging to the last page of the
+-	 * inode straddling inode->i_size, with that page already cached due to
+-	 * a buffered read or readahead. So make sure to invalidate that page.
+-	 * This will always be a no-op for the case where the block size is
+-	 * equal to the page size.
+-	 */
+-	start = iocb->ki_pos >> PAGE_SHIFT;
+-	end = (iocb->ki_pos + iov_iter_count(from) - 1) >> PAGE_SHIFT;
+-	if (invalidate_inode_pages2_range(inode->i_mapping, start, end))
+-		return -EBUSY;
+-
+-	nr_pages = iov_iter_npages(from, BIO_MAX_VECS);
+-	if (!nr_pages)
+-		return 0;
+-
+-	bio = bio_alloc(bdev, nr_pages,
+-			REQ_OP_ZONE_APPEND | REQ_SYNC | REQ_IDLE, GFP_NOFS);
+-	bio->bi_iter.bi_sector = z->z_sector;
+-	bio->bi_ioprio = iocb->ki_ioprio;
+-	if (iocb_is_dsync(iocb))
+-		bio->bi_opf |= REQ_FUA;
+-
+-	ret = bio_iov_iter_get_pages(bio, from);
+-	if (unlikely(ret))
+-		goto out_release;
+-
+-	size = bio->bi_iter.bi_size;
+-	task_io_account_write(size);
+-
+-	if (iocb->ki_flags & IOCB_HIPRI)
+-		bio_set_polled(bio, iocb);
+-
+-	ret = submit_bio_wait(bio);
+-
+-	/*
+-	 * If the file zone was written underneath the file system, the zone
+-	 * write pointer may not be where we expect it to be, but the zone
+-	 * append write can still succeed. So check manually that we wrote where
+-	 * we intended to, that is, at zi->i_wpoffset.
+-	 */
+-	if (!ret) {
+-		sector_t wpsector =
+-			z->z_sector + (z->z_wpoffset >> SECTOR_SHIFT);
+-
+-		if (bio->bi_iter.bi_sector != wpsector) {
+-			zonefs_warn(inode->i_sb,
+-				"Corrupted write pointer %llu for zone at %llu\n",
+-				bio->bi_iter.bi_sector, z->z_sector);
+-			ret = -EIO;
+-		}
+-	}
+-
+-	zonefs_file_write_dio_end_io(iocb, size, ret, 0);
+-	trace_zonefs_file_dio_append(inode, size, ret);
+-
+-out_release:
+-	bio_release_pages(bio, false);
+-	bio_put(bio);
+-
+-	if (ret >= 0) {
+-		iocb->ki_pos += size;
+-		return size;
+-	}
++static const struct iomap_dio_ops zonefs_zone_append_dio_ops = {
++	.submit_io	= zonefs_file_zone_append_dio_submit_io,
++	.end_io		= zonefs_file_write_dio_end_io,
++	.bio_set	= &zonefs_zone_append_bio_set,
++};
+ 
+-	return ret;
+-}
++static const struct iomap_dio_ops zonefs_write_dio_ops = {
++	.end_io		= zonefs_file_write_dio_end_io,
++};
+ 
+ /*
+  * Do not exceed the LFS limits nor the file zone size. If pos is under the
+@@ -539,6 +534,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+ 	struct zonefs_zone *z = zonefs_inode_zone(inode);
+ 	struct super_block *sb = inode->i_sb;
++	const struct iomap_dio_ops *dio_ops;
+ 	bool sync = is_sync_kiocb(iocb);
+ 	bool append = false;
+ 	ssize_t ret, count;
+@@ -582,20 +578,26 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 	}
+ 
+ 	if (append) {
+-		ret = zonefs_file_dio_append(iocb, from);
++		unsigned int max = bdev_max_zone_append_sectors(sb->s_bdev);
++
++		max = ALIGN_DOWN(max << SECTOR_SHIFT, sb->s_blocksize);
++		iov_iter_truncate(from, max);
++
++		dio_ops = &zonefs_zone_append_dio_ops;
+ 	} else {
+-		/*
+-		 * iomap_dio_rw() may return ENOTBLK if there was an issue with
+-		 * page invalidation. Overwrite that error code with EBUSY to
+-		 * be consistent with zonefs_file_dio_append() return value for
+-		 * similar issues.
+-		 */
+-		ret = iomap_dio_rw(iocb, from, &zonefs_write_iomap_ops,
+-				   &zonefs_write_dio_ops, 0, NULL, 0);
+-		if (ret == -ENOTBLK)
+-			ret = -EBUSY;
++		dio_ops = &zonefs_write_dio_ops;
+ 	}
+ 
++	/*
++	 * iomap_dio_rw() may return ENOTBLK if there was an issue with
++	 * page invalidation. Overwrite that error code with EBUSY so that
++	 * the user can make sense of the error.
++	 */
++	ret = iomap_dio_rw(iocb, from, &zonefs_write_iomap_ops,
++			   dio_ops, 0, NULL, 0);
++	if (ret == -ENOTBLK)
++		ret = -EBUSY;
++
+ 	if (zonefs_zone_is_seq(z) &&
+ 	    (ret > 0 || ret == -EIOCBQUEUED)) {
+ 		if (ret > 0)
+@@ -900,3 +902,15 @@ const struct file_operations zonefs_file_operations = {
+ 	.splice_write	= iter_file_splice_write,
+ 	.iopoll		= iocb_bio_iopoll,
+ };
++
++int zonefs_file_bioset_init(void)
++{
++	return bioset_init(&zonefs_zone_append_bio_set, BIO_POOL_SIZE,
++			   offsetof(struct zonefs_zone_append_bio, bio),
++			   BIOSET_NEED_BVECS);
++}
++
++void zonefs_file_bioset_exit(void)
++{
++	bioset_exit(&zonefs_zone_append_bio_set);
++}
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index 23b8b299c64e..56c00111966a 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -1412,10 +1412,14 @@ static int __init zonefs_init(void)
+ 
+ 	BUILD_BUG_ON(sizeof(struct zonefs_super) != ZONEFS_SUPER_SIZE);
+ 
+-	ret = zonefs_init_inodecache();
++	ret = zonefs_file_bioset_init();
+ 	if (ret)
+ 		return ret;
+ 
++	ret = zonefs_init_inodecache();
++	if (ret)
++		goto destroy_bioset;
++
+ 	ret = zonefs_sysfs_init();
+ 	if (ret)
+ 		goto destroy_inodecache;
+@@ -1430,6 +1434,8 @@ static int __init zonefs_init(void)
+ 	zonefs_sysfs_exit();
+ destroy_inodecache:
+ 	zonefs_destroy_inodecache();
++destroy_bioset:
++	zonefs_file_bioset_exit();
+ 
+ 	return ret;
+ }
+@@ -1439,6 +1445,7 @@ static void __exit zonefs_exit(void)
+ 	unregister_filesystem(&zonefs_type);
+ 	zonefs_sysfs_exit();
+ 	zonefs_destroy_inodecache();
++	zonefs_file_bioset_exit();
+ }
+ 
+ MODULE_AUTHOR("Damien Le Moal");
+diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
+index 8175652241b5..f663b8ebc2cb 100644
+--- a/fs/zonefs/zonefs.h
++++ b/fs/zonefs/zonefs.h
+@@ -279,6 +279,8 @@ extern const struct file_operations zonefs_dir_operations;
+ extern const struct address_space_operations zonefs_file_aops;
+ extern const struct file_operations zonefs_file_operations;
+ int zonefs_file_truncate(struct inode *inode, loff_t isize);
++int zonefs_file_bioset_init(void);
++void zonefs_file_bioset_exit(void);
+ 
+ /* In sysfs.c */
+ int zonefs_sysfs_register(struct super_block *sb);
+-- 
+2.40.1
+
