@@ -2,106 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A39F71A2B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 17:29:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A109871A2D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 17:37:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235107AbjFAP2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jun 2023 11:28:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38460 "EHLO
+        id S234932AbjFAPhm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 1 Jun 2023 11:37:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234915AbjFAP2f (ORCPT
+        with ESMTP id S233956AbjFAPhl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jun 2023 11:28:35 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17371E5C;
-        Thu,  1 Jun 2023 08:28:18 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A484321999;
-        Thu,  1 Jun 2023 15:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1685633266; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bzP3jLe8H8GOVTU+gtWIF9QQ1w/ZlpecHavzqINdb94=;
-        b=gOv8ln8aI+gXFZjWVdmCA8Wjxd4LICDM5AcA4HSkflUYb41Mcds6Sig/+gvw1r+us6LFoO
-        kVxojpvhhIe6pB3ye46OJCnKyH8RZgj7hBe/YL9nHIGq4Dz3fwiNpUvsP1RR+d1U0PwiX7
-        f67hxyD7bPdnQhqhQaCuY/jq4Qu3bLU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1685633266;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bzP3jLe8H8GOVTU+gtWIF9QQ1w/ZlpecHavzqINdb94=;
-        b=2SzoaO5XBuvNM4t9ZY5UOUFL7l/socW8dcuNJwrzQ6bLiNuaC9FS97mPz/t3+MWR1OT01Q
-        UvfkwX48LkI2rvCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9558513441;
-        Thu,  1 Jun 2023 15:27:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id qntwJPK4eGSLbAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 01 Jun 2023 15:27:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 18AC5A0754; Thu,  1 Jun 2023 17:27:46 +0200 (CEST)
-Date:   Thu, 1 Jun 2023 17:27:46 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>,
+        Thu, 1 Jun 2023 11:37:41 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A32A8FB
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jun 2023 08:37:39 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-263-AHup6Xd1OrWFzyw2F6GqSw-1; Thu, 01 Jun 2023 16:37:36 +0100
+X-MC-Unique: AHup6Xd1OrWFzyw2F6GqSw-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 1 Jun
+ 2023 16:37:32 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 1 Jun 2023 16:37:32 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Jan Kara' <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
+CC:     Al Viro <viro@ZenIV.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] ext4: Remove ext4 locking of moved directory
-Message-ID: <20230601152746.kqykcztndxvxbbf7@quack3>
+        "Darrick J. Wong" <djwong@kernel.org>, Ted Tso <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v2 4/6] fs: Establish locking order for unrelated
+ directories
+Thread-Topic: [PATCH v2 4/6] fs: Establish locking order for unrelated
+ directories
+Thread-Index: AQHZlJ1FZufsO2GDRE+EhxV9kbhF9692EqgQ
+Date:   Thu, 1 Jun 2023 15:37:32 +0000
+Message-ID: <c5f209a6263b4f039c5eafcafddf90ca@AcuMS.aculab.com>
 References: <20230601104525.27897-1-jack@suse.cz>
- <20230601105830.13168-1-jack@suse.cz>
- <20230601145222.GB1069561@mit.edu>
+ <20230601105830.13168-4-jack@suse.cz>
+ <20230601-gebracht-gesehen-c779a56b3bf3@brauner>
+ <20230601152449.h4ur5zrfqjqygujd@quack3>
+In-Reply-To: <20230601152449.h4ur5zrfqjqygujd@quack3>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230601145222.GB1069561@mit.edu>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 01-06-23 10:52:22, Theodore Ts'o wrote:
-> On Thu, Jun 01, 2023 at 12:58:21PM +0200, Jan Kara wrote:
-> > Remove locking of moved directory in ext4_rename2(). We will take care
-> > of it in VFS instead. This effectively reverts commit 0813299c586b
-> > ("ext4: Fix possible corruption when moving a directory") and followup
-> > fixes.
-> 
-> Remind me --- commit 0813299c586b is not actually causing any
-> problems; it's just not fully effective at solving the problem.  Is
-> that correct?
+...
+> > > + * Lock any non-NULL argument. The caller must make sure that if he is passing
+> > > + * in two directories, one is not ancestor of the other
 
-Yes, correct.
+Not directly relevant to this change but is the 'not an ancestor'
+check actually robust?
 
-> In other words, is there a rush in trying to get this revert to Linus
-> during this cycle as a regression fix?
-> 
-> I think the answer is no, and we can just let this full patch series
-> go in via the vfs branch during the next merge window, but I just
-> wanted to make sure.
+I found a condition in which the kernel 'pwd' code (which follows
+the inode chain) failed to stop at the base of a chroot.
 
-Exactly, that's my plan as well.
+I suspect that the ancestor check would fail the same way.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+IIRC the problematic code used unshare() to 'escape' from
+a network natespace.
+If it was inside a chroot (that wasn't on a mount point) there
+ware two copies of the 'chroot /' inode and the match failed.
+
+I might be able to find the test case.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
