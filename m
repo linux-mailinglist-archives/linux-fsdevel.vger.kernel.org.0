@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D629271A166
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 17:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CE5571A190
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 17:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233752AbjFAPAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jun 2023 11:00:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41796 "EHLO
+        id S234875AbjFAPAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jun 2023 11:00:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234806AbjFAPAT (ORCPT
+        with ESMTP id S234824AbjFAPAT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 1 Jun 2023 11:00:19 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53E7E10D8;
-        Thu,  1 Jun 2023 07:59:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F9C910C3;
+        Thu,  1 Jun 2023 07:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=ZfgUr9hrM3iUgDuWsjOEQQ3VEaL1znHWpcncQieGOc0=; b=maGAhYQNFAMFMJkP5UaB3DYSdW
-        d+R8RdMcDV03bWOTCmHYPmwJ36pmx9/A6WU7q7sP8OVK0avRy29TyqWPQcdJpHMh5RK05k4F9JR4w
-        p1QnktgZQwORlPYw29cB+YOJBoVKfE5TfUmoYlkE08N27s1Vq5l5WfLUsAB4aD2g0frLNs7+MODKj
-        nRUftDp4pR4z/rfSFBlng9SD/r7iYjhFuLk5ClV/0SxkiBglQrXMu2VowRq9idQXjJFJK9EJoAGxB
-        TNz2BE2uZA+pw096QchJIe8R0URNbB+YQ56qNHZXZhi0gnkkUpqenrRgVlIh5Krwz6yuhH8fqFjge
-        9iXhj9bQ==;
+        bh=Igh3/Q4p5iJFFlbdpwuEDO2R7sQwVarGnlYwXa7G6ao=; b=bX2jHFDKHOW4DhTCLwBCGe1mxk
+        +AiYKSPmIFT+YAYTY9l+t7ALHUSxiYYhMiFJ3fcFNMEnScgGmgdQdcc64nqMWdHzwAeK/OEVq8CQM
+        6/la1ULT2u/5N5wYcg+2XqzCr9x7VKh2kYbXOSE+U152RSNgGA2ZUKhcbKMTl31BCEnuVgVbe5uVG
+        KQtbSMq7Evw+u61WWovWbH7SgJK5m8CSsDzK4/Ri7urli6dK74r24dSyPLXTHhjnu4WWqYx4gZ4Vd
+        YBJLb+4aBmw45gsn7B8Y0St0loJ369izOY/Y1eHsyKCrf/zBDS25zyGflxhBA51boDLHRsjnEl4gn
+        i5PejoLg==;
 Received: from [2001:4bb8:182:6d06:eacb:c751:971:73eb] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q4jm2-003w9u-31;
-        Thu, 01 Jun 2023 14:59:35 +0000
+        id 1q4jm5-003wAJ-1d;
+        Thu, 01 Jun 2023 14:59:37 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
@@ -47,11 +47,10 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, Hannes Reinecke <hare@suse.de>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 11/12] fuse: drop redundant arguments to fuse_perform_write
-Date:   Thu,  1 Jun 2023 16:59:03 +0200
-Message-Id: <20230601145904.1385409-12-hch@lst.de>
+        linux-mm@kvack.org
+Subject: [PATCH 12/12] fuse: use direct_write_fallback
+Date:   Thu,  1 Jun 2023 16:59:04 +0200
+Message-Id: <20230601145904.1385409-13-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230601145904.1385409-1-hch@lst.de>
 References: <20230601145904.1385409-1-hch@lst.de>
@@ -68,57 +67,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-pos is always equal to iocb->ki_pos, and mapping is always equal to
-iocb->ki_filp->f_mapping.
+Use the generic direct_write_fallback helper instead of duplicating the
+logic.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/fuse/file.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ fs/fuse/file.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index d5902506cdcc65..b4e272a65fdd25 100644
+index b4e272a65fdd25..3a7c7d7181ccb9 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -1280,13 +1280,13 @@ static inline unsigned int fuse_wr_pages(loff_t pos, size_t len,
- 		     max_pages);
- }
- 
--static ssize_t fuse_perform_write(struct kiocb *iocb,
--				  struct address_space *mapping,
--				  struct iov_iter *ii, loff_t pos)
-+static ssize_t fuse_perform_write(struct kiocb *iocb, struct iov_iter *ii)
- {
-+	struct address_space *mapping = iocb->ki_filp->f_mapping;
+@@ -1340,7 +1340,6 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	struct file *file = iocb->ki_filp;
+ 	struct address_space *mapping = file->f_mapping;
+ 	ssize_t written = 0;
+-	ssize_t written_buffered = 0;
  	struct inode *inode = mapping->host;
+ 	ssize_t err;
  	struct fuse_conn *fc = get_fuse_conn(inode);
- 	struct fuse_inode *fi = get_fuse_inode(inode);
-+	loff_t pos = iocb->ki_pos;
- 	int err = 0;
- 	ssize_t res = 0;
+@@ -1377,30 +1376,11 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		goto out;
  
-@@ -1383,8 +1383,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+-		loff_t pos, endbyte;
+-
+ 		written = generic_file_direct_write(iocb, from);
  		if (written < 0 || !iov_iter_count(from))
  			goto out;
- 
--		written_buffered = fuse_perform_write(iocb, mapping, from,
--						      iocb->ki_pos);
-+		written_buffered = fuse_perform_write(iocb, from);
- 		if (written_buffered < 0) {
- 			err = written_buffered;
- 			goto out;
-@@ -1403,7 +1402,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 
- 		written += written_buffered;
+-
+-		written_buffered = fuse_perform_write(iocb, from);
+-		if (written_buffered < 0) {
+-			err = written_buffered;
+-			goto out;
+-		}
+-		pos = iocb->ki_pos - written_buffered;
+-		endbyte = iocb->ki_pos - 1;
+-
+-		err = filemap_write_and_wait_range(file->f_mapping, pos,
+-						   endbyte);
+-		if (err)
+-			goto out;
+-
+-		invalidate_mapping_pages(file->f_mapping,
+-					 pos >> PAGE_SHIFT,
+-					 endbyte >> PAGE_SHIFT);
+-
+-		written += written_buffered;
++		written = direct_write_fallback(iocb, from, written,
++				fuse_perform_write(iocb, from));
  	} else {
--		written = fuse_perform_write(iocb, mapping, from, iocb->ki_pos);
-+		written = fuse_perform_write(iocb, from);
+ 		written = fuse_perform_write(iocb, from);
  	}
- out:
- 	inode_unlock(inode);
 -- 
 2.39.2
 
