@@ -2,44 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A8866719025
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 03:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C982719061
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 04:09:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229618AbjFABqD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 31 May 2023 21:46:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43500 "EHLO
+        id S230409AbjFACJA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 31 May 2023 22:09:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjFABqC (ORCPT
+        with ESMTP id S229851AbjFACI5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 31 May 2023 21:46:02 -0400
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AE6BA3;
-        Wed, 31 May 2023 18:46:00 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VjzVehH_1685583955;
-Received: from 30.221.145.175(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VjzVehH_1685583955)
-          by smtp.aliyun-inc.com;
-          Thu, 01 Jun 2023 09:45:57 +0800
-Message-ID: <33fd8e03-7c99-c12d-255d-b7190612379b@linux.alibaba.com>
-Date:   Thu, 1 Jun 2023 09:45:52 +0800
+        Wed, 31 May 2023 22:08:57 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC3E0123;
+        Wed, 31 May 2023 19:08:55 -0700 (PDT)
+Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4QWqF94Sn8zqTb3;
+        Thu,  1 Jun 2023 10:04:13 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Thu, 1 Jun 2023 10:08:53 +0800
+Message-ID: <df5e7e7d-875c-8e5d-1423-82ec58299b1b@huawei.com>
+Date:   Thu, 1 Jun 2023 10:08:53 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.11.0
-Subject: Re: [PATCH] fuse: fix return value of inode_inline_reclaim_one_dmap
- in error path
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+From:   Baokun Li <libaokun1@huawei.com>
+Subject: Re: [syzbot] Monthly ext4 report (May 2023)
+To:     syzbot <syzbot+list5ea887c46d22b2acf805@syzkaller.appspotmail.com>,
+        <adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>, <tytso@mit.edu>
+CC:     Baokun Li <libaokun1@huawei.com>, yangerkun <yangerkun@huawei.com>
+References: <000000000000834af205fce87c00@google.com>
 Content-Language: en-US
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        gerry@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        German Maglione <gmaglione@redhat.com>
-References: <20230424123250.125404-1-jefflexu@linux.alibaba.com>
- <ZHeoIFrp303f0E8d@redhat.com>
-From:   Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <ZHeoIFrp303f0E8d@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+In-Reply-To: <000000000000834af205fce87c00@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.174]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -47,42 +52,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 2023/5/30 20:38, syzbot wrote:
+> Hello ext4 maintainers/developers,
+>
+> This is a 31-day syzbot report for the ext4 subsystem.
+> All related reports/information can be found at:
+> https://syzkaller.appspot.com/upstream/s/ext4
+>
+> During the period, 3 new issues were detected and 10 were fixed.
+> In total, 46 issues are still open and 106 have been fixed so far.
+>
+> Some of the still happening issues:
+>
+> Ref Crashes Repro Title
+> <1> 124     Yes   kernel BUG in ext4_do_writepages
+>                    https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
+> <2> 48      No    WARNING in ext4_write_inode (2)
+>                    https://syzkaller.appspot.com/bug?extid=748cc361874fca7d33cc
+> <3> 8       Yes   WARNING in ext4_da_update_reserve_space (2)
+>                    https://syzkaller.appspot.com/bug?extid=a1232eabd7a3d43d4fb5
+> <4> 8       Yes   kernel BUG in __ext4_journal_stop
+>                    https://syzkaller.appspot.com/bug?extid=bdab24d5bf96d57c50b0
+> <5> 7       Yes   kernel BUG in ext4_write_inline_data
+>                    https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
+>
+> ---
+>
 
+Hello, Theodore!
 
-On 6/1/23 4:03 AM, Vivek Goyal wrote:
-> On Mon, Apr 24, 2023 at 08:32:50PM +0800, Jingbo Xu wrote:
->> When range already got reclaimed by somebody else, return NULL so that
->> the caller could retry to allocate or reclaim another range, instead of
->> mistakenly returning the range already got reclaimed and reused by
->> others.
->>
->> Reported-by: Liu Jiang <gerry@linux.alibaba.com>
->> Fixes: 9a752d18c85a ("virtiofs: add logic to free up a memory range")
->> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-> 
-> Hi Jingbo,
-> 
-> This patch looks correct to me.
-> 
-> Are you able to reproduce the problem? Or you are fixing it based on
-> code inspection?
+Patch "[PATCH v2] ext4: fix race condition between buffer write and 
+page_mkwrite​"
+in maillist fixes issues <1>,<4>,<5>.
 
-It's spotted by Liu Jiang during code review.  Not tested yet.
+Patch set "[PATCH v4 00/12] ext4: fix WARNING in 
+ext4_da_update_reserve_space"
+in maillist fixes issues <3>.
 
-> 
-> How are you testing this? We don't have virtiofsd DAX implementation yet
-> in rust virtiofsd yet. 
-> 
-> I am not sure how to test this chagne now. We had out of tree patches
-> in qemu and now qemu has gotten rid of C version of virtiofsd so these
-> patches might not even work now.
+These patches have been reviewed, could you have time to merge them in?
+I would appreciate it if you could.
 
-Yeah this exception path may not be so easy to be tested as it is only
-triggered in the race condition.  I have the old branch (of qemu) with
-support for DAX, and maybe I could try to reproduce the exception path
-by configuring limited DAX window and heavy IO workload.
-
-
+Thanks!
 -- 
-Thanks,
-Jingbo
+With Best Regards,
+Baokun Li
+.
