@@ -2,57 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3790F719BB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 14:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B15EE719BD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jun 2023 14:18:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231878AbjFAMOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jun 2023 08:14:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57486 "EHLO
+        id S232769AbjFAMSc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jun 2023 08:18:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233240AbjFAMOh (ORCPT
+        with ESMTP id S232230AbjFAMSb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jun 2023 08:14:37 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FDC4E61
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jun 2023 05:14:16 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-96fa4a6a79bso99703466b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Jun 2023 05:14:16 -0700 (PDT)
+        Thu, 1 Jun 2023 08:18:31 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF0BED7
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jun 2023 05:18:29 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-96f8d485ef3so104562266b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Jun 2023 05:18:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1685621596; x=1688213596;
+        d=szeredi.hu; s=google; t=1685621908; x=1688213908;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xyPeoWutKyPiILXgLviwGF1RLzkupo3yExspEf61QSc=;
-        b=gXuksHS2G+jIJhUGBbUNjw/Kp8UgLvtwfvk2K1C4T1pZpYHIBEAQLW51xyX43VGcjk
-         GNykJTKyqGdrNQOYpogcCBk8YczFIaj96DUaruH/VajUWK9C6MiCbxctzTu/3GXcpEcs
-         72wEtWANLjdiGmP9AJbhKtikgTGG2YM35ujVQ=
+        bh=6TjKKwQ7YZ52K1F/sXvcot46oThTtzilfqhAodws70s=;
+        b=CsDnRRS5uBym/ALZvCHGm7OVO8VYPXC64GNn1FNTOnKgg5jOg+iOXhAtG66CKfdOd+
+         UPXHtlKvdlXjgSlLL+BM5UOjTJVvXB3W3bNTbmPXlP/wSVxZXEPl4s/zZG20uM6c54SO
+         gm6uJ0Ltny7bOCl5S+z77XWhByJWJjWtyW9yg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685621596; x=1688213596;
+        d=1e100.net; s=20221208; t=1685621908; x=1688213908;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xyPeoWutKyPiILXgLviwGF1RLzkupo3yExspEf61QSc=;
-        b=fZXYvwfoe21bXSiI+vd265i5B977kTECLv8HvJEIsY00HrgCsRKbmkZkI6amEVtWP4
-         fgN1NqypMH3fpIJNqwAq7J3hOOLiApuQ7yzn81DF349kZV4BBu6/SEFM7WiKPd4CvIn/
-         isIfMAKu4/5ysqI4x8oWFQcM5/7KDb+PO5mUw9OwQ+AJw0jQgvW3c0KuxLVPwSZ0YIyy
-         XmNs74WJga6cVVGR35PcSu5a3eIoRBw6ZmzgXLQLzKQyxYYfaPnAddiMOeoGp/yGXSqH
-         weABAZl/lxfEiqV/frCBKMgpCPymEUAWzOH+nvQjAkm3YCGD2J9OsRSva5N0YL9//UI7
-         U4+g==
-X-Gm-Message-State: AC+VfDz6r5AHzN5+L3e3Gd8tQ2J9VEF35vBx32VfYba9DB/WvjGQ1nfN
-        hdZQzmuXxynUNRlxJYA6bn2LLoCX+844hd5lc6hLM2ekn/Lly0l/
-X-Google-Smtp-Source: ACHHUZ4JszazVsNMBMXQ0p4wl7QThlCjhod2KN4/0fDqzedboIm9DGJkd6n8g5yFti5UauXZWQH88TQS+53u92NRWYY=
-X-Received: by 2002:a17:907:3ea0:b0:96f:9608:da7c with SMTP id
- hs32-20020a1709073ea000b0096f9608da7cmr8501573ejc.36.1685621596227; Thu, 01
- Jun 2023 05:13:16 -0700 (PDT)
+        bh=6TjKKwQ7YZ52K1F/sXvcot46oThTtzilfqhAodws70s=;
+        b=A4fVpMfTBjf8UgEeONnJUUI9+l48ZOBzzaG04tv7a4KRY5a4DCGMuZQJ9Rs4Jd8Ntd
+         spsoHkRHAAtIBmqkSZ6C5iJ7gjRLRWWhJnXvQ8c+KPjHkBcq0dJrLhkHUgeEYanWAYq2
+         5xFzlVIhMWv6dK56UNpxdsjAyK3u7KhSY4g5mkSJsXmMIfAUX4onN+7956xYSdOSbDin
+         mgGn51cQ9Vlk6zH18XgBh8lugGbdx1cHsiu93xVirQ/1nX8/UD+YO7x4lBCg+evRiPjt
+         ONxgwn8jlQBOCjrVpPMxh3X+BDCkrJRsLqqFvdIeZvY45CCcnvg66fqFigrH3s7ICg+S
+         en5g==
+X-Gm-Message-State: AC+VfDzrf1+sZiGqtblYRKrt7V2kBlKk4UYF16GkFlua3WxVRzlcGp5G
+        ozVQw4jfDBk8CluXLwsRx89hNnaFqZGit2NfAKXxpA==
+X-Google-Smtp-Source: ACHHUZ55F5DRBseT4RmqqRQQ91PxbqrS+uhYpVfbuYrfQBpqlSD3QfHRGiR4nhu24vV3ldqVRa5Eq7dAl71hm9xTI8A=
+X-Received: by 2002:a17:907:6e09:b0:973:eac4:a24d with SMTP id
+ sd9-20020a1709076e0900b00973eac4a24dmr7988792ejc.57.1685621908409; Thu, 01
+ Jun 2023 05:18:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230531092643.45607-1-quic_pragalla@quicinc.com>
- <CAJfpegtr4dZkLzWD_ezAbFgTnbYaGDRq4TR1DUzz4AfFLSLJEA@mail.gmail.com> <27f39698-8b70-52df-3371-338f2de27108@quicinc.com>
-In-Reply-To: <27f39698-8b70-52df-3371-338f2de27108@quicinc.com>
+References: <20220517100744.26849-1-dharamhans87@gmail.com>
+ <CAJfpegsDxsMsyfP4a_5H1q91xFtwcEdu9-WBnzWKwjUSrPNdmw@mail.gmail.com>
+ <ccfd2c96-35c7-8e33-9c5e-a1623d969f39@ddn.com> <CAJfpegswePPhVrDrwjZHbHb91iOkbfObnxFqzJU88U7pH86Row@mail.gmail.com>
+ <805d122a-34d0-b097-c3e3-f3cc7c95aa46@ddn.com>
+In-Reply-To: <805d122a-34d0-b097-c3e3-f3cc7c95aa46@ddn.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 1 Jun 2023 14:13:04 +0200
-Message-ID: <CAJfpegtHicLw7-KjQem60UPaUyco7h1tZ+4EmOdC-=9=C8Tg8Q@mail.gmail.com>
-Subject: Re: [PATCH V1] fuse: Abort the requests under processing queue with a spin_lock
-To:     Pradeep Pragallapati <quic_pragalla@quicinc.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 1 Jun 2023 14:18:17 +0200
+Message-ID: <CAJfpegs7DFvP3ZctPcgzYC+4CKg3nqag69oRxH0H339R-M+z8A@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] FUSE: Implement atomic lookup + open/create
+To:     Bernd Schubert <bschubert@ddn.com>
+Cc:     Dharmendra Singh <dharamhans87@gmail.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Horst Birthelmer <horst@birthelmer.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
@@ -64,39 +71,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 1 Jun 2023 at 12:02, Pradeep Pragallapati
-<quic_pragalla@quicinc.com> wrote:
+On Thu, 1 Jun 2023 at 14:01, Bernd Schubert <bschubert@ddn.com> wrote:
 >
->
-> On 5/31/2023 5:22 PM, Miklos Szeredi wrote:
-> > On Wed, 31 May 2023 at 11:26, Pradeep P V K <quic_pragalla@quicinc.com> wrote:
-> >> There is a potential race/timing issue while aborting the
-> >> requests on processing list between fuse_dev_release() and
-> >> fuse_abort_conn(). This is resulting into below warnings
-> >> and can even result into UAF issues.
-> > Okay, but...
+> On 6/1/23 13:50, Miklos Szeredi wrote:
+> > On Thu, 1 Jun 2023 at 13:17, Bernd Schubert <bschubert@ddn.com> wrote:
+> >>
+> >> Hi Miklos,
+> >>
+> >> On 5/19/22 11:39, Miklos Szeredi wrote:
+> >>> On Tue, 17 May 2022 at 12:08, Dharmendra Singh <dharamhans87@gmail.com> wrote:
+> >>>>
+> >>>> In FUSE, as of now, uncached lookups are expensive over the wire.
+> >>>> E.g additional latencies and stressing (meta data) servers from
+> >>>> thousands of clients. These lookup calls possibly can be avoided
+> >>>> in some cases. Incoming three patches address this issue.
+> >>>>
+> >>>>
+> >>>> Fist patch handles the case where we are creating a file with O_CREAT.
+> >>>> Before we go for file creation, we do a lookup on the file which is most
+> >>>> likely non-existent. After this lookup is done, we again go into libfuse
+> >>>> to create file. Such lookups where file is most likely non-existent, can
+> >>>> be avoided.
+> >>>
+> >>> I'd really like to see a bit wider picture...
+> >>>
+> >>> We have several cases, first of all let's look at plain O_CREAT
+> >>> without O_EXCL (assume that there were no changes since the last
+> >>> lookup for simplicity):
+> >>>
+> >>> [not cached, negative]
+> >>>      ->atomic_open()
+> >>>         LOOKUP
+> >>>         CREATE
+> >>>
+> >>
+> >> [...]
+> >>
+> >>> [not cached]
+> >>>      ->atomic_open()
+> >>>          OPEN_ATOMIC
+> >>
+> >> new patch version is eventually going through xfstests (and it finds
+> >> some issues), but I have a question about wording here. Why
+> >> "OPEN_ATOMIC" and not "ATOMIC_OPEN". Based on your comment  @Dharmendra
+> >> renamed all functions and this fuse op "open atomic" instead of "atomic
+> >> open" - for my non native English this sounds rather weird. At best it
+> >> should be "open atomically"?
 > >
-> >> [22809.190255][T31644] refcount_t: underflow; use-after-free.
-> >> [22809.190266][T31644] WARNING: CPU: 2 PID: 31644 at lib/refcount.c:28
-> >> refcount_warn_saturate+0x110/0x158
-> >> ...
-> >> [22809.190567][T31644] Call trace:
-> >> [22809.190567][T31644]  refcount_warn_saturate+0x110/0x158
-> >> [22809.190569][T31644]  fuse_file_put+0xfc/0x104
-> > ...how can this cause the file refcount to underflow?  That would
-> > imply that fuse_request_end() will be called for the same request
-> > twice.  I can't see how that can happen with or without the locking
-> > change.
-> Please ignore this patch. i overlooked it as list_splice in
-> fuse_dev_release() and made the change.
-> > Do you have a reproducer?
+> > FUSE_OPEN_ATOMIC is a specialization of FUSE_OPEN.  Does that explain
+> > my thinking?
 >
-> don't have exact/specific steps but i will try to recreate. This is
-> observed during stability testing (involves io, reboot, monkey, e.t.c.)
-> for 24hrs. So, far this is seen on both 5.15 and 6.1 kernels. Do you
-> have any points or speculations to share ?
+> Yeah, just the vfs function is also called atomic_open. We now have
+>
+>
+> static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+>                  struct file *file, unsigned flags,
+>                  umode_t mode)
+> {
+>      struct fuse_conn *fc = get_fuse_conn(dir);
+>
+>      if (fc->no_open_atomic)
+>          return fuse_open_nonatomic(dir, entry, file, flags, mode);
+>      else
+>          return fuse_open_atomic(dir, entry, file, flags, mode);
+> }
+>
+>
+> Personally I would use something like _fuse_atomic_open() and
+> fuse_create_open() (instead of fuse_open_nonatomic). The order of "open
+> atomic" also made it into libfuse and comments - it just sounds a bit
+> weird ;) I have to live with it, if you prefer it like this.
 
-Do you have KASAN enabled in the kernel?  That might help UAF issues easier.
+I'd prefer FUSE_OPEN_ATOMIC for the API, but I don't care about
+function names, as long as the purpose is clear.
 
 Thanks,
 Miklos
