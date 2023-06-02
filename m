@@ -2,98 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7644D71F844
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 04:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A34771F8C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 05:13:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233273AbjFBCBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jun 2023 22:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41226 "EHLO
+        id S233084AbjFBDNo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jun 2023 23:13:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233162AbjFBCBp (ORCPT
+        with ESMTP id S229454AbjFBDN3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jun 2023 22:01:45 -0400
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E2EF2;
-        Thu,  1 Jun 2023 19:01:43 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R411e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Vk7tVxr_1685671299;
-Received: from 30.221.148.89(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Vk7tVxr_1685671299)
-          by smtp.aliyun-inc.com;
-          Fri, 02 Jun 2023 10:01:40 +0800
-Message-ID: <0401ac2b-2b09-68e0-f687-152eaa12b0cc@linux.alibaba.com>
-Date:   Fri, 2 Jun 2023 10:01:39 +0800
+        Thu, 1 Jun 2023 23:13:29 -0400
+Received: from out-4.mta0.migadu.com (out-4.mta0.migadu.com [IPv6:2001:41d0:1004:224b::4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 001B0E57
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jun 2023 20:13:23 -0700 (PDT)
+Message-ID: <2f34a702-1a57-06a5-1bd9-de54a67a839e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1685675601;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YgmF6FQHZbZP4nFLcDew1nmxiHIpkYwXocM0NQqz2zY=;
+        b=f5p7vlqTupYV6QdGh8NCQgLregHHYTq55vM2cl2T/qE2nrUI3IThnpihBSZCe5p/DHt0hT
+        FHNt1oVGMEG1t/WZgYvvBgsj4vAxXDzCDqYEX+1+mlVhBNMHGWNmbhmnFwNvoZA7DWQjB4
+        gwggcsp7jVeHgpXNYpkltmq/q1rwU9Q=
+Date:   Fri, 2 Jun 2023 11:13:09 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.11.0
-Subject: Re: [PATCH] fuse: fix return value of inode_inline_reclaim_one_dmap
- in error path
+Subject: Re: [PATCH 6/8] xfs: introduce xfs_fs_destroy_super()
 Content-Language: en-US
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        gerry@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        German Maglione <gmaglione@redhat.com>
-References: <20230424123250.125404-1-jefflexu@linux.alibaba.com>
- <ZHeoIFrp303f0E8d@redhat.com>
- <33fd8e03-7c99-c12d-255d-b7190612379b@linux.alibaba.com>
- <ZHiE2zkFJKBl9GZ+@redhat.com>
-From:   Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <ZHiE2zkFJKBl9GZ+@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     akpm@linux-foundation.org, tkhai@ya.ru, roman.gushchin@linux.dev,
+        vbabka@suse.cz, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        djwong@kernel.org, hughd@google.com, paulmck@kernel.org,
+        muchun.song@linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
+References: <20230531095742.2480623-1-qi.zheng@linux.dev>
+ <20230531095742.2480623-7-qi.zheng@linux.dev>
+ <ZHfc3V4KKmW8QTR2@dread.disaster.area>
+ <b85c0d63-f6a5-73c4-e574-163b0b07d80a@linux.dev>
+ <ZHkkWjt0R1ptV7RZ@dread.disaster.area>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Qi Zheng <qi.zheng@linux.dev>
+In-Reply-To: <ZHkkWjt0R1ptV7RZ@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Dave,
 
-
-On 6/1/23 7:45 PM, Vivek Goyal wrote:
-> On Thu, Jun 01, 2023 at 09:45:52AM +0800, Jingbo Xu wrote:
->>
->>
->> On 6/1/23 4:03 AM, Vivek Goyal wrote:
->>> On Mon, Apr 24, 2023 at 08:32:50PM +0800, Jingbo Xu wrote:
->>>> When range already got reclaimed by somebody else, return NULL so that
->>>> the caller could retry to allocate or reclaim another range, instead of
->>>> mistakenly returning the range already got reclaimed and reused by
->>>> others.
->>>>
->>>> Reported-by: Liu Jiang <gerry@linux.alibaba.com>
->>>> Fixes: 9a752d18c85a ("virtiofs: add logic to free up a memory range")
->>>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+On 2023/6/2 07:06, Dave Chinner wrote:
+> On Thu, Jun 01, 2023 at 04:43:32PM +0800, Qi Zheng wrote:
+>> Hi Dave,
+>> On 2023/6/1 07:48, Dave Chinner wrote:
+>>> On Wed, May 31, 2023 at 09:57:40AM +0000, Qi Zheng wrote:
+>>>> From: Kirill Tkhai <tkhai@ya.ru>
+>>> I don't really like this ->destroy_super() callback, especially as
+>>> it's completely undocumented as to why it exists. This is purely a
+>>> work-around for handling extended filesystem superblock shrinker
+>>> functionality, yet there's nothing that tells the reader this.
 >>>
->>> Hi Jingbo,
+>>> It also seems to imply that the superblock shrinker can continue to
+>>> run after the existing unregister_shrinker() call before ->kill_sb()
+>>> is called. This violates the assumption made in filesystems that the
+>>> superblock shrinkers have been stopped and will never run again
+>>> before ->kill_sb() is called. Hence ->kill_sb() implementations
+>>> assume there is nothing else accessing filesystem owned structures
+>>> and it can tear down internal structures safely.
 >>>
->>> This patch looks correct to me.
+>>> Realistically, the days of XFS using this superblock shrinker
+>>> extension are numbered. We've got a lot of the infrastructure we
+>>> need in place to get rid of the background inode reclaim
+>>> infrastructure that requires this shrinker extension, and it's on my
+>>> list of things that need to be addressed in the near future.
 >>>
->>> Are you able to reproduce the problem? Or you are fixing it based on
->>> code inspection?
+>>> In fact, now that I look at it, I think the shmem usage of this
+>>> superblock shrinker interface is broken - it returns SHRINK_STOP to
+>>> ->free_cached_objects(), but the only valid return value is the
+>>> number of objects freed (i.e. 0 is nothing freed). These special
+>>> superblock extension interfaces do not work like a normal
+>>> shrinker....
+>>>
+>>> Hence I think the shmem usage should be replaced with an separate
+>>> internal shmem shrinker that is managed by the filesystem itself
+>>> (similar to how XFS has multiple internal shrinkers).
+>>>
+>>> At this point, then the only user of this interface is (again) XFS.
+>>> Given this, adding new VFS methods for a single filesystem
+>>> for functionality that is planned to be removed is probably not the
+>>> best approach to solving the problem.
 >>
->> It's spotted by Liu Jiang during code review.  Not tested yet.
->>
->>>
->>> How are you testing this? We don't have virtiofsd DAX implementation yet
->>> in rust virtiofsd yet. 
->>>
->>> I am not sure how to test this chagne now. We had out of tree patches
->>> in qemu and now qemu has gotten rid of C version of virtiofsd so these
->>> patches might not even work now.
->>
->> Yeah this exception path may not be so easy to be tested as it is only
->> triggered in the race condition.  I have the old branch (of qemu) with
->> support for DAX, and maybe I could try to reproduce the exception path
->> by configuring limited DAX window and heavy IO workload.
+>> Thanks for such a detailed analysis. Kirill Tkhai just proposeed a
+>> new method[1], I cc'd you on the email.
 > 
-> That would be great. Please test it with really small DAX window size.
-> Also put some pr_debug() statements to make sure you are hitting this
-> particular path during testing.
+> I;ve just read through that thread, and I've looked at the original
+> patch that caused the regression.
+> 
+> I'm a bit annoyed right now. Nobody cc'd me on the original patches
+> nor were any of the subsystems that use shrinkers were cc'd on the
+> patches that changed shrinker behaviour. I only find out about this
 
-Got it. Thanks.
+Sorry about that, my mistake. I followed the results of
+scripts/get_maintainer.pl before.
+
+> because someone tries to fix something they broke by *breaking more
+> stuff* and not even realising how broken what they are proposing is.
+
+Yes, this slows down the speed of umount. But the benefit is that
+slab shrink becomes lockless, the mount operation and slab shrink no
+longer affect each other, and the IPC no longer drops significantly,
+etc.
+
+And I used bpftrace to measure the time consumption of
+unregister_shrinker():
+
+```
+And I just tested it on a physical machine (Intel(R) Xeon(R) Platinum
+8260 CPU @ 2.40GHz) and the results are as follows:
+
+1) use synchronize_srcu():
+
+@ns[umount]:
+[8K, 16K)             83 |@@@@@@@       |
+[16K, 32K)           578 
+|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[32K, 64K)            78 |@@@@@@@       |
+[64K, 128K)            6 |       |
+[128K, 256K)           7 |       |
+[256K, 512K)          29 |@@       |
+[512K, 1M)            51 |@@@@      |
+[1M, 2M)              90 |@@@@@@@@       |
+[2M, 4M)              70 |@@@@@@      |
+[4M, 8M)               8 |      |
+
+2) use synchronize_srcu_expedited():
+
+@ns[umount]:
+[8K, 16K)             31 |@@       |
+[16K, 32K)           803 
+|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[32K, 64K)           158 |@@@@@@@@@@       |
+[64K, 128K)            4 |       |
+[128K, 256K)           2 |       |
+[256K, 512K)           2 |       |
+```
+
+With synchronize_srcu(), most of the time consumption is between 16us 
+and 32us, the worst case between 4ms and 8ms. Is this totally
+unacceptable?
+
+This performance regression report comes from a stress test. Will the
+umount action be executed so frequently under real workloads?
+
+If there are really unacceptable, after applying the newly proposed
+method, umount will be as fast as before (or even faster).
+
+Thanks,
+Qi
+
+> 
+> The previous code was not broken and it provided specific guarantees
+> to subsystems via unregister_shrinker(). From the above discussion,
+> it appears that the original authors of these changes either did not
+> know about or did not understand them, so that casts doubt in my
+> mind about the attempted solution and all the proposed fixes for it.
+> 
+> I don't have the time right now unravel this mess and fully
+> understand the original problem, changes or the band-aids that are
+> being thrown around. We are also getting quite late in the cycle to
+> be doing major surgery to critical infrastructure, especially as it
+> gives so little time to review regression test whatever new solution
+> is proposed.
+> 
+> Given this appears to be a change introduced in 6.4-rc1, I think the
+> right thing to do is to revert the change rather than make things
+> worse by trying to shove some "quick fix" into the kernel to address
+> it.
+> 
+> Andrew, could you please sort out a series to revert this shrinker
+> infrastructure change and all the dependent hacks that have been
+> added to try to fix it so far?
+> 
+> -Dave.
 
 -- 
 Thanks,
-Jingbo
+Qi
