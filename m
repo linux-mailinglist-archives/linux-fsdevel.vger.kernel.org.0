@@ -2,272 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BEC1720644
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 17:34:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FB28720745
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 18:18:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236504AbjFBPe0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Jun 2023 11:34:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47368 "EHLO
+        id S236491AbjFBQSw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jun 2023 12:18:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235809AbjFBPeZ (ORCPT
+        with ESMTP id S235810AbjFBQSu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jun 2023 11:34:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E08818D;
-        Fri,  2 Jun 2023 08:34:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CC9F46176B;
-        Fri,  2 Jun 2023 15:34:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31F94C433EF;
-        Fri,  2 Jun 2023 15:34:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685720062;
-        bh=GMAXWhUtWZYqSwvxZZhgRN+BhNtQO7FUSE/tbmymCbo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=o6geL/fTEH8z9TyfMjGmhcf0RwxRmchaTHsURljpqSObVsOkV3ShNO7YsvWsAHVZP
-         RissC8tRgym/IpG3qfBUB4AjbWmWUqYBtZvG2W45qxH+QFvKrhzNY6KCx9VzradVwW
-         LKEMV6CxiRXiQ4PrhONYygzyVoyX8vUC6Y9ekNZbyxVM8miLzzjnfvAc8OgSclwA6W
-         bplEFKFk9NHNldReJ/l004PXXDquMaDo/hSyau9YAv57Xe9hFxT0OZ72b+90SCwR3Q
-         TVKu8VH1Tn4QHYBopyimIQqtYtrKKOJYpejqSFKG+LLD2iNkjUKPuF3mqCwYUmOWx6
-         kFHtigDU3chCQ==
-Date:   Fri, 2 Jun 2023 17:34:16 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: uuid ioctl - was: Re: [PATCH] overlayfs: Trigger file
- re-evaluation by IMA / EVM after writes
-Message-ID: <20230602-freischaffend-sorgenfrei-adb9fae43a84@brauner>
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
- <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
- <20230520-angenehm-orangen-80fdce6f9012@brauner>
- <ZGqgDjJqFSlpIkz/@dread.disaster.area>
- <20230522-unsensibel-backblech-7be4e920ba87@brauner>
- <20230602012335.GB16848@frogsfrogsfrogs>
- <20230602042714.GE1128744@mit.edu>
- <ZHmNksPcA9tudSVQ@dread.disaster.area>
- <20230602-dividende-model-62b2bdc073cf@brauner>
- <20230602142329.GC16848@frogsfrogsfrogs>
+        Fri, 2 Jun 2023 12:18:50 -0400
+Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6C8FBC;
+        Fri,  2 Jun 2023 09:18:48 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4QXnv969Tpz9xFrS;
+        Sat,  3 Jun 2023 00:07:01 +0800 (CST)
+Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwAHgPtDFnpkJRAEAw--.3635S2;
+        Fri, 02 Jun 2023 17:18:22 +0100 (CET)
+Message-ID: <4aa799a0b87d4e2ecf3fa74079402074dc42b3c5.camel@huaweicloud.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in open_xa_dir
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>,
+        hdanton@sina.com, jack@suse.cz, jeffm@suse.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, paul@paul-moore.com, peterz@infradead.org,
+        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
+        syzkaller-bugs@googlegroups.com, will@kernel.org
+Date:   Fri, 02 Jun 2023 18:18:07 +0200
+In-Reply-To: <0000000000009d322605fd22054a@google.com>
+References: <0000000000009d322605fd22054a@google.com>
+Content-Type: multipart/mixed; boundary="=-HLTbvEyGK261gp7cEwEy"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230602142329.GC16848@frogsfrogsfrogs>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-CM-TRANSID: LxC2BwAHgPtDFnpkJRAEAw--.3635S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw47XF47ArWftr43Ww17Jrb_yoWDJrg_Wr
+        W8Ar97CwsrJr1Duan5Awn7twsYq3yxWF10gwn8Jr4SkwsxJF1DGa9I9F4rCrn7Jrs3ZasF
+        y3ySv3yvqr4a9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbf8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+        AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21le4C267I2x7xF54xIwI1l5I8C
+        rVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxV
+        WUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFcxC0VAYjxAxZF0Ex2Iq
+        xwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+        WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+        67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+        IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1l
+        IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UMVCEFc
+        xC0VAYjxAxZFUvcSsGvfC2KfnxnUUI43ZEXa7IU13CztUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBF1jj44KkwAAsz
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=2.0 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
+        PDS_RDNS_DYNAMIC_FP,RCVD_IN_MSPIKE_BL,RCVD_IN_MSPIKE_L3,RDNS_DYNAMIC,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 02, 2023 at 07:23:29AM -0700, Darrick J. Wong wrote:
-> On Fri, Jun 02, 2023 at 03:52:16PM +0200, Christian Brauner wrote:
-> > On Fri, Jun 02, 2023 at 04:34:58PM +1000, Dave Chinner wrote:
-> > > On Fri, Jun 02, 2023 at 12:27:14AM -0400, Theodore Ts'o wrote:
-> > > > On Thu, Jun 01, 2023 at 06:23:35PM -0700, Darrick J. Wong wrote:
-> > > > > Someone ought to cc Ted since I asked him about this topic this morning
-> > > > > and he said he hadn't noticed it going by...
-> > > > > 
-> > > > > > > > In addition the uuid should be set when the filesystem is mounted.
-> > > > > > > > Unless the filesystem implements a dedicated ioctl() - like ext4 - to
-> > > > > > > > change the uuid.
-> > > > > > > 
-> > > > > > > IMO, that ext4 functionality is a landmine waiting to be stepped on.
-> > > > > > > 
-> > > > > > > We should not be changing the sb->s_uuid of filesysetms dynamically.
-> > > > > > 
-> > > > > > Yeah, I kinda agree. If it works for ext4 and it's an ext4 specific
-> > > > > > ioctl then this is fine though.
-> > > > > 
-> > > > > Now that Dave's brought up all kinds of questions about other parts of
-> > > > > the kernel using s_uuid for things, I'm starting to think that even ext4
-> > > > > shouldn't be changing its own uuid on the fly.
-> > > > 
-> > > > So let's set some context here.  The tune2fs program in e2fsprogs has
-> > > > supported changing the UUID for a *very* long time.  Specifically,
-> > > > since September 7, 1996 (e2fsprogs version 1.05, when we first added
-> > > > the UUID field in the ext2 superblock).
-> > > 
-> > > Yup, and XFS has supported offline changing of the UUID a couple of
-> > > years before that.
-> > > 
-> > > > This feature was added from
-> > > > the very beginning since in Large Installation System Administration
-> > > > (LISA) systems, a very common thing to do is to image boot disks from
-> > > > a "golden master", and then afterwards, you want to make sure the file
-> > > > systems on each boot disk have a unique UUID; and this is done via
-> > > > "tune2fs -U random /dev/sdXX".  Since I was working at MIT Project
-> > > > Athena at the time, we regularly did this when installing Athena
-> > > > client workstations, and when I added UUID support to ext2, I made
-> > > > sure this feature was well-supported.
-> > > 
-> > > See xfs_copy(8). This was a tool originally written, IIRC, in early
-> > > 1995 for physically cloning sparse golden images in the SGI factory
-> > > production line. It was multi-threaded and could write up to 16 scsi
-> > > disks at once with a single ascending LBA order pass. The last thing
-> > > it does is change the UUID of each clone to make them unique.
-> > > 
-> > > There's nothing new here - this is all 30 years ago, and we've had
-> > > tools changing filesystems UUIDs for all this time.
-> > > 
-> > > > The tune2fs program allows the UUID to be changed via the file system
-> > > > is mounted (with some caveats), which it did by directly modifying the
-> > > > on-disk superblock.  Obviously, when it did that, it wouldn't change
-> > > > sb->s_uuid "dynamically", although the next time the file system was
-> > > > mounted, sb->s_uuid would get the new UUID.
-> > > 
-> > > Yes, which means for userspace and most of the kernel it's no
-> > > different to "unmount, change UUID, mount". It's effectively an
-> > > offline change, even if the on-disk superblock is changed while the
-> > > filesystem is mounted.
-> > > 
-> > > > If overlayfs and IMA are
-> > > > expecting that a file system's UUID would stay consant and persistent
-> > > > --- well, that's not true, and it has always been that way, since
-> > > > there are tools that make it trivially easy for a system administrator
-> > > > to adjust the UUID.
-> > > 
-> > > Yes, but that's not the point I've been making. My point is that the
-> > > *online change of sb->s_uuid* that was being proposed for the
-> > > XFS/generic variant of the ext4 online UUID change ioctl is
-> > > completely new, and that's where all the problems start....
-> > > 
-> > > > In addition to the LISA context, this feature is also commonly used in
-> > > > various cloud deployments, since when you create a new VM, it
-> > > > typically gets a new root file system, which is copied from a fixed,
-> > > > read-only image.  So on a particular hyperscale cloud system, if we
-> > > > didn't do anything special, there could be hundreds of thousands VM's
-> > > > whose root file system would all have the same UUID, which would mean
-> > > > that the UUID... isn't terribly unique.
-> > > 
-> > > Again, nothing new here - we've been using snapshots/clones/reflinks
-> > > for efficient VM storage provisioning for well over 15 years now.
-> > > 
-> > > .....
-> > > 
-> > > > This is the reason why we added the ext4 ioctl; it was intended for
-> > > > the express use of "tune2fs -U", and like tune2fs -U, it doesn't
-> > > > actually change sb->s_uuid; it only changes the on-disk superblock's
-> > > > UUID.  This was mostly because we forgot about sb->s_uuid, to be
-> > > > honest, but it means that regardless of whether "tune2fs -U" directly
-> > > > modifies the block device, or uses the ext4 ioctl, the behaviour with
-> > > > respect to sb->s_uuid is the same; it's not modified when the on-disk
-> > > > uuid is changed.
+
+--=-HLTbvEyGK261gp7cEwEy
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+On Fri, 2023-06-02 at 02:17 -0700, syzbot wrote:
+> Hello,
 > 
-> ...which means that anyone writing out non-ext4 ondisk metadata will now
-> be doing it with a stale fsuuid.  Er... that might just be an ext*
-> quirk that everyone will have to live with.
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 > 
-> > > IOWs, not only was the ext4 functionality was poorly thought out, it
-> > > was *poorly implemented*.
-> > > 
-> > > So, let's take a step back here - we've done the use case thing to
-> > > death now - and consider what is it we actually need here?
-> > > 
-> > > All we need for the hyperscale/VM provisioning use case is for the
-> > > the UUID to be changed at first boot/mount time before anything else
-> > > happens.
-> > > 
-> > > So why do we need userspace to be involved in that? Indeed,
-> > > all the problems stem from needing to have userspace change the
-> > > UUID.
-> > > 
-> > > There's an obvious solution: a newly provisioned filesystem needs to
-> > > change the uuid at first mount. The only issue is the
-> > > kernel/filesystem doesn't know when the first mount is.
-> > > 
-> > > Darrick suggested "mount -o setuuid=xxxx" on #xfs earlier, but that
-> > > requires changing userspace init stuff and, well, I hate single use
-> > > case mount options like this.
-> > > 
-> > > However, we have a golden image that every client image is cloned
-> > > from. Say we set a special feature bit in that golden image that
-> > > means "need UUID regeneration". Then on the first mount of the
-> > > cloned image after provisioning, the filesystem sees the bit and
-> > > automatically regenerates the UUID with needing any help from
-> > > userspace at all.
-> > > 
-> > > Problem solved, yes? We don't need userspace to change the uuid on
-> > > first boot of the newly provisioned VM - the filesystem just makes
-> > > it happen.
-> > 
-> > systemd-repart implements the following logic currently: If the GPT
-> > *partition* and *disk* UUIDs are 0 then it will generate new UUIDs
-> > before the first mount.
-> > 
-> > So for the *filesystem* UUID I think the golden image should either have
-> > the UUID set to zero as well or to a special UUID. Either way, it would
-> > mean the filesystem needs to generate a new UUID when it is mounted the
-> > first time.
-> > 
-> > If we do this then all filesystems that support this should use the same
-> > value to indicate "generate new UUID".
+> Reported-and-tested-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
 > 
-> Curiously, I noticed that blkid doesn't report the xfs uuid if it's all
-> zeroes:
+> Tested on:
 > 
-> # mkfs.xfs -f /dev/loop0 -m uuid=00000000-0000-0000-0000-000000000000
+> commit:         4432b507 lsm: fix a number of misspellings
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=166c541d280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=38526bf24c8d961b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=1095cd79280000
 > 
-> # blkid /dev/loop0
-> /dev/loop0: BLOCK_SIZE="512" TYPE="xfs"
+> Note: testing is done by a robot and is best-effort only.
 
-You should use blkid -p btw because without -p blkid checks a cache
-which is problematic.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git next
 
-> 
-> Nor does udev create symlinks:
-> 
-> # ls /dev/disk/by-uuid/0*
-> ls: cannot access '/dev/disk/by-uuid/0*': No such file or directory
+--=-HLTbvEyGK261gp7cEwEy
+Content-Disposition: attachment;
+	filename*0=0001-reiserfs-Disable-by-default-security-xattr-init-sinc.pat;
+	filename*1=ch
+Content-Type: text/x-patch;
+	name="0001-reiserfs-Disable-by-default-security-xattr-init-sinc.patch";
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Yeah, it can't because there's no uuid and zero is treated as "not set".
+RnJvbSA3M2JiMDJlYjdhNzUxYzQ0N2FmNDNkN2NhYzdjMTkxMzI5YjZkZDU1IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNhc3N1QGh1YXdlaS5j
+b20+CkRhdGU6IEZyaSwgMiBKdW4gMjAyMyAxMDoxMDoyOCArMDIwMApTdWJqZWN0OiBbUEFUQ0hd
+IHJlaXNlcmZzOiBEaXNhYmxlIGJ5IGRlZmF1bHQgc2VjdXJpdHkgeGF0dHIgaW5pdCBzaW5jZSBp
+dAogbmV2ZXIgd29ya2VkCgpDb21taXQgZDgyZGNkOWUyMWI3ICgicmVpc2VyZnM6IEFkZCBzZWN1
+cml0eSBwcmVmaXggdG8geGF0dHIgbmFtZSBpbgpyZWlzZXJmc19zZWN1cml0eV93cml0ZSgpIiks
+IHdoaWxlIGZpeGVkIHRoZSBzZWN1cml0eSB4YXR0ciBpbml0aWFsaXphdGlvbiwKaXQgYWxzbyBy
+ZXZlYWxlZCBhIGNpcmN1bGFyIGxvY2tpbmcgZGVwZW5kZW5jeSBiZXR3ZWVuIHRoZSByZWlzZXJm
+cyB3cml0ZQpsb2NrIGFuZCB0aGUgaW5vZGUgbG9jay4KCkFkZCB0aGUgbmV3IGNvbmZpZyBvcHRp
+b24gQ09ORklHX1JFSVNFUkZTX0ZTX1NFQ1VSSVRZX0lOSVQgdG8KZW5hYmxlL2Rpc2FibGUgdGhl
+IGZlYXR1cmUuIEFsc28sIHNpbmNlIHRoZSBidWcgaW4gc2VjdXJpdHkgeGF0dHIKaW5pdGlhbGl6
+YXRpb24gd2FzIGludHJvZHVjZWQgc2luY2UgdGhlIGJlZ2lubmluZywgZGlzYWJsZSBpdCBieSBk
+ZWZhdWx0LgoKUmVwb3J0ZWQtYW5kLXRlc3RlZC1ieTogc3l6Ym90KzhmYjY0YTYxZmRkOTZiNTBm
+M2I4QHN5emthbGxlci5hcHBzcG90bWFpbC5jb20KQ2xvc2VzOiBodHRwczovL3N5emthbGxlci5h
+cHBzcG90LmNvbS9idWc/ZXh0aWQ9OGZiNjRhNjFmZGQ5NmI1MGYzYjgKU3VnZ2VzdGVkLWJ5OiBK
+ZWZmIE1haG9uZXkgPGplZmZtQHN1c2UuY29tPgpTaWduZWQtb2ZmLWJ5OiBSb2JlcnRvIFNhc3N1
+IDxyb2JlcnRvLnNhc3N1QGh1YXdlaS5jb20+Ci0tLQogZnMvcmVpc2VyZnMvS2NvbmZpZyAgICAg
+ICAgICB8IDE1ICsrKysrKysrKysrKysrKwogZnMvcmVpc2VyZnMvc3VwZXIuYyAgICAgICAgICB8
+ICAzICsrKwogZnMvcmVpc2VyZnMveGF0dHJfc2VjdXJpdHkuYyB8ICAzICsrKwogMyBmaWxlcyBj
+aGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZnMvcmVpc2VyZnMvS2NvbmZp
+ZyBiL2ZzL3JlaXNlcmZzL0tjb25maWcKaW5kZXggNGQyMmVjZmUwZmEuLmE2MThkMGJkYTdiIDEw
+MDY0NAotLS0gYS9mcy9yZWlzZXJmcy9LY29uZmlnCisrKyBiL2ZzL3JlaXNlcmZzL0tjb25maWcK
+QEAgLTg4LDMgKzg4LDE4IEBAIGNvbmZpZyBSRUlTRVJGU19GU19TRUNVUklUWQogCiAJICBJZiB5
+b3UgYXJlIG5vdCB1c2luZyBhIHNlY3VyaXR5IG1vZHVsZSB0aGF0IHJlcXVpcmVzIHVzaW5nCiAJ
+ICBleHRlbmRlZCBhdHRyaWJ1dGVzIGZvciBmaWxlIHNlY3VyaXR5IGxhYmVscywgc2F5IE4uCisK
+K2NvbmZpZyBSRUlTRVJGU19GU19TRUNVUklUWV9JTklUCisJYm9vbCAiUmVpc2VyRlMgU2VjdXJp
+dHkgTGFiZWxzIGluaXRpYWxpemF0aW9uIgorCWRlcGVuZHMgb24gUkVJU0VSRlNfRlNfWEFUVFIK
+KwlkZWZhdWx0IGZhbHNlCisJaGVscAorCSAgSW5pdCBuZXcgaW5vZGVzIHdpdGggc2VjdXJpdHkg
+bGFiZWxzIHByb3ZpZGVkIGJ5IExTTXMuCisKKwkgIEl0IHdhcyBicm9rZW4gZnJvbSB0aGUgYmVn
+aW5uaW5nLCBzaW5jZSB0aGUgeGF0dHIgbmFtZSB3YXMKKwkgIG1pc3NpbmcgdGhlICdzZWN1cml0
+eS4nIHByZWZpeC4KKworCSAgRW5hYmxpbmcgdGhpcyBvcHRpb24gbWlnaHQgY2F1c2UgbG9ja2Rl
+cCB3YXJuaW5ncyBhbmQKKwkgIHVsdGltYXRlbHkgZGVhZGxvY2tzLgorCisJICBJZiB1bnN1cmUs
+IHNheSBOLgpkaWZmIC0tZ2l0IGEvZnMvcmVpc2VyZnMvc3VwZXIuYyBiL2ZzL3JlaXNlcmZzL3N1
+cGVyLmMKaW5kZXggOTI5YWNjZTZlNzMuLmI0MjdkMDNkMGVhIDEwMDY0NAotLS0gYS9mcy9yZWlz
+ZXJmcy9zdXBlci5jCisrKyBiL2ZzL3JlaXNlcmZzL3N1cGVyLmMKQEAgLTE2NTQsNiArMTY1NCw5
+IEBAIHN0YXRpYyBpbnQgcmVhZF9zdXBlcl9ibG9jayhzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnMsIGlu
+dCBvZmZzZXQpCiAKIAlyZWlzZXJmc193YXJuaW5nKE5VTEwsICIiLCAicmVpc2VyZnMgZmlsZXN5
+c3RlbSBpcyBkZXByZWNhdGVkIGFuZCAiCiAJCSJzY2hlZHVsZWQgdG8gYmUgcmVtb3ZlZCBmcm9t
+IHRoZSBrZXJuZWwgaW4gMjAyNSIpOworCWlmIChJU19FTkFCTEVEKENPTkZJR19SRUlTRVJGU19G
+U19TRUNVUklUWV9JTklUKSkKKwkJcmVpc2VyZnNfd2FybmluZyhOVUxMLCAiIiwgImluaXRpYWxp
+emluZyBzZWN1cml0eSB4YXR0cnMgY2FuIGNhdXNlIGRlYWRsb2NrcyIpOworCiAJU0JfQlVGRkVS
+X1dJVEhfU0IocykgPSBiaDsKIAlTQl9ESVNLX1NVUEVSX0JMT0NLKHMpID0gcnM7CiAKZGlmZiAt
+LWdpdCBhL2ZzL3JlaXNlcmZzL3hhdHRyX3NlY3VyaXR5LmMgYi9mcy9yZWlzZXJmcy94YXR0cl9z
+ZWN1cml0eS5jCmluZGV4IDA3OGRkOGNjMzEyLi5kODJjNDUwNzgwMyAxMDA2NDQKLS0tIGEvZnMv
+cmVpc2VyZnMveGF0dHJfc2VjdXJpdHkuYworKysgYi9mcy9yZWlzZXJmcy94YXR0cl9zZWN1cml0
+eS5jCkBAIC02OSw2ICs2OSw5IEBAIGludCByZWlzZXJmc19zZWN1cml0eV9pbml0KHN0cnVjdCBp
+bm9kZSAqZGlyLCBzdHJ1Y3QgaW5vZGUgKmlub2RlLAogCXNlYy0+dmFsdWUgPSBOVUxMOwogCXNl
+Yy0+bGVuZ3RoID0gMDsKIAorCWlmICghSVNfRU5BQkxFRChDT05GSUdfUkVJU0VSRlNfRlNfU0VD
+VVJJVFlfSU5JVCkpCisJCXJldHVybiAwOworCiAJLyogRG9uJ3QgYWRkIHNlbGludXggYXR0cmli
+dXRlcyBvbiB4YXR0cnMgLSB0aGV5J2xsIG5ldmVyIGdldCB1c2VkICovCiAJaWYgKElTX1BSSVZB
+VEUoZGlyKSkKIAkJcmV0dXJuIDA7Ci0tIAoyLjI1LjEKCg==
 
-> 
-> Nor does mounting by uuid work:
-> 
-> # mount UUID=00000000-0000-0000-0000-000000000000 /tmp/x
-> mount: /tmp/x: can't find UUID=00000000-0000-0000-0000-000000000000.
-> 
-> So I wonder if xfs even really needs a new superblock bit at all --
-> mounting via uuid doesn't work in the zeroed-uuid case, and the kernel
-> could indeed generate a new one at mount time before it populates
-> s_uuid, etc.  Then the initscripts can re-run blkid (or xfs_info) to
-> extract the new uuid and update config files as needed.
 
-Yeah, that's my proposal and it's closely mirrored on what we did for
-systemd-repart:
+--=-HLTbvEyGK261gp7cEwEy--
 
-6. Similarly, all existing partitions for which configuration files
-   exist and which currently have an all-zero identifying UUID will be
-   assigned a new UUID. This UUID is cryptographically hashed from a
-   common seed value together with the partition type UUID (and a
-   counter in case multiple partitions of the same type are defined),
-   see below. The same is done for all partitions that are created anew.
-   These assignments are done in memory only, too, the disk is not
-   updated yet.
-
-7. Similarly, if the disk's volume UUID is all zeroes it is also
-   initialized, also cryptographically hashed from the same common seed
-   value. This is done in memory only too.
-
-[...]
-
-9. The new partition table is finally written to disk. The kernel is
-   asked to reread the partition table.
-
-https://www.freedesktop.org/software/systemd/man/systemd-repart.service.html
-
-> 
-> Though, the first-mount uuid would still break anything recorded in the
-> non-xfs metadata by the image creating system (such as evm attributes).
-> But at least that's on the image creator people to know that.
-
-Sure, but that's a generic userspace problem for any identifier relying
-on or derived from the filesystem uuid. IOW, that's not really our
-concern imho.
