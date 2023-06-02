@@ -2,215 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6956B7205B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 17:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BEC1720644
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 17:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236568AbjFBPPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Jun 2023 11:15:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36398 "EHLO
+        id S236504AbjFBPe0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jun 2023 11:34:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236555AbjFBPPk (ORCPT
+        with ESMTP id S235809AbjFBPeZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jun 2023 11:15:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04376E44;
-        Fri,  2 Jun 2023 08:15:34 -0700 (PDT)
+        Fri, 2 Jun 2023 11:34:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E08818D;
+        Fri,  2 Jun 2023 08:34:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8088E63990;
-        Fri,  2 Jun 2023 15:15:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D95D0C433EF;
-        Fri,  2 Jun 2023 15:15:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CC9F46176B;
+        Fri,  2 Jun 2023 15:34:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31F94C433EF;
+        Fri,  2 Jun 2023 15:34:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685718932;
-        bh=Iuh/TV5V00u6R1o72iJJSNvYKl0ys0pjmnZwuwhi8nQ=;
+        s=k20201202; t=1685720062;
+        bh=GMAXWhUtWZYqSwvxZZhgRN+BhNtQO7FUSE/tbmymCbo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V+y/ZE6qoMXfrXQ/ano6QoeEmuZAVb6y7cJd2RZyBFDTNIs+eBgNKYi0HLXcuUkik
-         njWYSNM8Y9y7kkr5Nxl0b+7DFU47hszLgaiKqDgNMCBXNdRHiuSqPPwv4RuVAti96+
-         r4XzBZi1zIs6ppEs0421MMMSIexT8jhCizEt9wV5uoT6iwMch0ijknA1cU/nhhAX1b
-         prsjw+BYn1NY1gdawFGII0WHbOMLHg29OrDhCGIgNdWTIZWQpCKyD1Q0Pl9TQ/0iL9
-         72GBjxb0xn8YjEpgNw2cSzfCcDRDWcEZsbBBpL2AwH4SXvj01E0VZbQ3vW0ZcmyC94
-         F6tfX7ppxXjJw==
-Date:   Fri, 2 Jun 2023 08:15:32 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Qi Zheng <qi.zheng@linux.dev>
-Cc:     Dave Chinner <david@fromorbit.com>, akpm@linux-foundation.org,
-        tkhai@ya.ru, roman.gushchin@linux.dev, vbabka@suse.cz,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, hughd@google.com,
-        paulmck@kernel.org, muchun.song@linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: Re: [PATCH 6/8] xfs: introduce xfs_fs_destroy_super()
-Message-ID: <20230602151532.GP16865@frogsfrogsfrogs>
-References: <20230531095742.2480623-1-qi.zheng@linux.dev>
- <20230531095742.2480623-7-qi.zheng@linux.dev>
- <ZHfc3V4KKmW8QTR2@dread.disaster.area>
- <b85c0d63-f6a5-73c4-e574-163b0b07d80a@linux.dev>
- <ZHkkWjt0R1ptV7RZ@dread.disaster.area>
- <2f34a702-1a57-06a5-1bd9-de54a67a839e@linux.dev>
+        b=o6geL/fTEH8z9TyfMjGmhcf0RwxRmchaTHsURljpqSObVsOkV3ShNO7YsvWsAHVZP
+         RissC8tRgym/IpG3qfBUB4AjbWmWUqYBtZvG2W45qxH+QFvKrhzNY6KCx9VzradVwW
+         LKEMV6CxiRXiQ4PrhONYygzyVoyX8vUC6Y9ekNZbyxVM8miLzzjnfvAc8OgSclwA6W
+         bplEFKFk9NHNldReJ/l004PXXDquMaDo/hSyau9YAv57Xe9hFxT0OZ72b+90SCwR3Q
+         TVKu8VH1Tn4QHYBopyimIQqtYtrKKOJYpejqSFKG+LLD2iNkjUKPuF3mqCwYUmOWx6
+         kFHtigDU3chCQ==
+Date:   Fri, 2 Jun 2023 17:34:16 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: uuid ioctl - was: Re: [PATCH] overlayfs: Trigger file
+ re-evaluation by IMA / EVM after writes
+Message-ID: <20230602-freischaffend-sorgenfrei-adb9fae43a84@brauner>
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+ <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
+ <20230520-angenehm-orangen-80fdce6f9012@brauner>
+ <ZGqgDjJqFSlpIkz/@dread.disaster.area>
+ <20230522-unsensibel-backblech-7be4e920ba87@brauner>
+ <20230602012335.GB16848@frogsfrogsfrogs>
+ <20230602042714.GE1128744@mit.edu>
+ <ZHmNksPcA9tudSVQ@dread.disaster.area>
+ <20230602-dividende-model-62b2bdc073cf@brauner>
+ <20230602142329.GC16848@frogsfrogsfrogs>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2f34a702-1a57-06a5-1bd9-de54a67a839e@linux.dev>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230602142329.GC16848@frogsfrogsfrogs>
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 02, 2023 at 11:13:09AM +0800, Qi Zheng wrote:
-> Hi Dave,
-> 
-> On 2023/6/2 07:06, Dave Chinner wrote:
-> > On Thu, Jun 01, 2023 at 04:43:32PM +0800, Qi Zheng wrote:
-> > > Hi Dave,
-> > > On 2023/6/1 07:48, Dave Chinner wrote:
-> > > > On Wed, May 31, 2023 at 09:57:40AM +0000, Qi Zheng wrote:
-> > > > > From: Kirill Tkhai <tkhai@ya.ru>
-> > > > I don't really like this ->destroy_super() callback, especially as
-> > > > it's completely undocumented as to why it exists. This is purely a
-> > > > work-around for handling extended filesystem superblock shrinker
-> > > > functionality, yet there's nothing that tells the reader this.
+On Fri, Jun 02, 2023 at 07:23:29AM -0700, Darrick J. Wong wrote:
+> On Fri, Jun 02, 2023 at 03:52:16PM +0200, Christian Brauner wrote:
+> > On Fri, Jun 02, 2023 at 04:34:58PM +1000, Dave Chinner wrote:
+> > > On Fri, Jun 02, 2023 at 12:27:14AM -0400, Theodore Ts'o wrote:
+> > > > On Thu, Jun 01, 2023 at 06:23:35PM -0700, Darrick J. Wong wrote:
+> > > > > Someone ought to cc Ted since I asked him about this topic this morning
+> > > > > and he said he hadn't noticed it going by...
+> > > > > 
+> > > > > > > > In addition the uuid should be set when the filesystem is mounted.
+> > > > > > > > Unless the filesystem implements a dedicated ioctl() - like ext4 - to
+> > > > > > > > change the uuid.
+> > > > > > > 
+> > > > > > > IMO, that ext4 functionality is a landmine waiting to be stepped on.
+> > > > > > > 
+> > > > > > > We should not be changing the sb->s_uuid of filesysetms dynamically.
+> > > > > > 
+> > > > > > Yeah, I kinda agree. If it works for ext4 and it's an ext4 specific
+> > > > > > ioctl then this is fine though.
+> > > > > 
+> > > > > Now that Dave's brought up all kinds of questions about other parts of
+> > > > > the kernel using s_uuid for things, I'm starting to think that even ext4
+> > > > > shouldn't be changing its own uuid on the fly.
 > > > > 
-> > > > It also seems to imply that the superblock shrinker can continue to
-> > > > run after the existing unregister_shrinker() call before ->kill_sb()
-> > > > is called. This violates the assumption made in filesystems that the
-> > > > superblock shrinkers have been stopped and will never run again
-> > > > before ->kill_sb() is called. Hence ->kill_sb() implementations
-> > > > assume there is nothing else accessing filesystem owned structures
-> > > > and it can tear down internal structures safely.
-> > > > 
-> > > > Realistically, the days of XFS using this superblock shrinker
-> > > > extension are numbered. We've got a lot of the infrastructure we
-> > > > need in place to get rid of the background inode reclaim
-> > > > infrastructure that requires this shrinker extension, and it's on my
-> > > > list of things that need to be addressed in the near future.
-> > > > 
-> > > > In fact, now that I look at it, I think the shmem usage of this
-> > > > superblock shrinker interface is broken - it returns SHRINK_STOP to
-> > > > ->free_cached_objects(), but the only valid return value is the
-> > > > number of objects freed (i.e. 0 is nothing freed). These special
-> > > > superblock extension interfaces do not work like a normal
-> > > > shrinker....
-> > > > 
-> > > > Hence I think the shmem usage should be replaced with an separate
-> > > > internal shmem shrinker that is managed by the filesystem itself
-> > > > (similar to how XFS has multiple internal shrinkers).
-> > > > 
-> > > > At this point, then the only user of this interface is (again) XFS.
-> > > > Given this, adding new VFS methods for a single filesystem
-> > > > for functionality that is planned to be removed is probably not the
-> > > > best approach to solving the problem.
+> > > > So let's set some context here.  The tune2fs program in e2fsprogs has
+> > > > supported changing the UUID for a *very* long time.  Specifically,
+> > > > since September 7, 1996 (e2fsprogs version 1.05, when we first added
+> > > > the UUID field in the ext2 superblock).
 > > > 
-> > > Thanks for such a detailed analysis. Kirill Tkhai just proposeed a
-> > > new method[1], I cc'd you on the email.
-> > 
-> > I;ve just read through that thread, and I've looked at the original
-> > patch that caused the regression.
-> > 
-> > I'm a bit annoyed right now. Nobody cc'd me on the original patches
-> > nor were any of the subsystems that use shrinkers were cc'd on the
-> > patches that changed shrinker behaviour. I only find out about this
+> > > Yup, and XFS has supported offline changing of the UUID a couple of
+> > > years before that.
+> > > 
+> > > > This feature was added from
+> > > > the very beginning since in Large Installation System Administration
+> > > > (LISA) systems, a very common thing to do is to image boot disks from
+> > > > a "golden master", and then afterwards, you want to make sure the file
+> > > > systems on each boot disk have a unique UUID; and this is done via
+> > > > "tune2fs -U random /dev/sdXX".  Since I was working at MIT Project
+> > > > Athena at the time, we regularly did this when installing Athena
+> > > > client workstations, and when I added UUID support to ext2, I made
+> > > > sure this feature was well-supported.
+> > > 
+> > > See xfs_copy(8). This was a tool originally written, IIRC, in early
+> > > 1995 for physically cloning sparse golden images in the SGI factory
+> > > production line. It was multi-threaded and could write up to 16 scsi
+> > > disks at once with a single ascending LBA order pass. The last thing
+> > > it does is change the UUID of each clone to make them unique.
+> > > 
+> > > There's nothing new here - this is all 30 years ago, and we've had
+> > > tools changing filesystems UUIDs for all this time.
+> > > 
+> > > > The tune2fs program allows the UUID to be changed via the file system
+> > > > is mounted (with some caveats), which it did by directly modifying the
+> > > > on-disk superblock.  Obviously, when it did that, it wouldn't change
+> > > > sb->s_uuid "dynamically", although the next time the file system was
+> > > > mounted, sb->s_uuid would get the new UUID.
+> > > 
+> > > Yes, which means for userspace and most of the kernel it's no
+> > > different to "unmount, change UUID, mount". It's effectively an
+> > > offline change, even if the on-disk superblock is changed while the
+> > > filesystem is mounted.
+> > > 
+> > > > If overlayfs and IMA are
+> > > > expecting that a file system's UUID would stay consant and persistent
+> > > > --- well, that's not true, and it has always been that way, since
+> > > > there are tools that make it trivially easy for a system administrator
+> > > > to adjust the UUID.
+> > > 
+> > > Yes, but that's not the point I've been making. My point is that the
+> > > *online change of sb->s_uuid* that was being proposed for the
+> > > XFS/generic variant of the ext4 online UUID change ioctl is
+> > > completely new, and that's where all the problems start....
+> > > 
+> > > > In addition to the LISA context, this feature is also commonly used in
+> > > > various cloud deployments, since when you create a new VM, it
+> > > > typically gets a new root file system, which is copied from a fixed,
+> > > > read-only image.  So on a particular hyperscale cloud system, if we
+> > > > didn't do anything special, there could be hundreds of thousands VM's
+> > > > whose root file system would all have the same UUID, which would mean
+> > > > that the UUID... isn't terribly unique.
+> > > 
+> > > Again, nothing new here - we've been using snapshots/clones/reflinks
+> > > for efficient VM storage provisioning for well over 15 years now.
+> > > 
+> > > .....
+> > > 
+> > > > This is the reason why we added the ext4 ioctl; it was intended for
+> > > > the express use of "tune2fs -U", and like tune2fs -U, it doesn't
+> > > > actually change sb->s_uuid; it only changes the on-disk superblock's
+> > > > UUID.  This was mostly because we forgot about sb->s_uuid, to be
+> > > > honest, but it means that regardless of whether "tune2fs -U" directly
+> > > > modifies the block device, or uses the ext4 ioctl, the behaviour with
+> > > > respect to sb->s_uuid is the same; it's not modified when the on-disk
+> > > > uuid is changed.
 > 
-> Sorry about that, my mistake. I followed the results of
-> scripts/get_maintainer.pl before.
+> ...which means that anyone writing out non-ext4 ondisk metadata will now
+> be doing it with a stale fsuuid.  Er... that might just be an ext*
+> quirk that everyone will have to live with.
+> 
+> > > IOWs, not only was the ext4 functionality was poorly thought out, it
+> > > was *poorly implemented*.
+> > > 
+> > > So, let's take a step back here - we've done the use case thing to
+> > > death now - and consider what is it we actually need here?
+> > > 
+> > > All we need for the hyperscale/VM provisioning use case is for the
+> > > the UUID to be changed at first boot/mount time before anything else
+> > > happens.
+> > > 
+> > > So why do we need userspace to be involved in that? Indeed,
+> > > all the problems stem from needing to have userspace change the
+> > > UUID.
+> > > 
+> > > There's an obvious solution: a newly provisioned filesystem needs to
+> > > change the uuid at first mount. The only issue is the
+> > > kernel/filesystem doesn't know when the first mount is.
+> > > 
+> > > Darrick suggested "mount -o setuuid=xxxx" on #xfs earlier, but that
+> > > requires changing userspace init stuff and, well, I hate single use
+> > > case mount options like this.
+> > > 
+> > > However, we have a golden image that every client image is cloned
+> > > from. Say we set a special feature bit in that golden image that
+> > > means "need UUID regeneration". Then on the first mount of the
+> > > cloned image after provisioning, the filesystem sees the bit and
+> > > automatically regenerates the UUID with needing any help from
+> > > userspace at all.
+> > > 
+> > > Problem solved, yes? We don't need userspace to change the uuid on
+> > > first boot of the newly provisioned VM - the filesystem just makes
+> > > it happen.
+> > 
+> > systemd-repart implements the following logic currently: If the GPT
+> > *partition* and *disk* UUIDs are 0 then it will generate new UUIDs
+> > before the first mount.
+> > 
+> > So for the *filesystem* UUID I think the golden image should either have
+> > the UUID set to zero as well or to a special UUID. Either way, it would
+> > mean the filesystem needs to generate a new UUID when it is mounted the
+> > first time.
+> > 
+> > If we do this then all filesystems that support this should use the same
+> > value to indicate "generate new UUID".
+> 
+> Curiously, I noticed that blkid doesn't report the xfs uuid if it's all
+> zeroes:
+> 
+> # mkfs.xfs -f /dev/loop0 -m uuid=00000000-0000-0000-0000-000000000000
+> 
+> # blkid /dev/loop0
+> /dev/loop0: BLOCK_SIZE="512" TYPE="xfs"
 
-Sometimes I wonder if people who contribute a lot to a subsystem should
-be more aggressive about listing themselves explicitly in MAINTAINERS
-but then I look at the ~600 emails that came in while I was on vacation
-for 6 days over a long weekend and ... shut up. :P
+You should use blkid -p btw because without -p blkid checks a cache
+which is problematic.
 
-> > because someone tries to fix something they broke by *breaking more
-> > stuff* and not even realising how broken what they are proposing is.
 > 
-> Yes, this slows down the speed of umount. But the benefit is that
-> slab shrink becomes lockless, the mount operation and slab shrink no
-> longer affect each other, and the IPC no longer drops significantly,
-> etc.
+> Nor does udev create symlinks:
+> 
+> # ls /dev/disk/by-uuid/0*
+> ls: cannot access '/dev/disk/by-uuid/0*': No such file or directory
 
-The lockless shrink seems like a good thing to have, but ... is it
-really true that the superblock shrinker can still be running after
-->kill_sb?  /That/ is surprising to me.
+Yeah, it can't because there's no uuid and zero is treated as "not set".
 
---D
+> 
+> Nor does mounting by uuid work:
+> 
+> # mount UUID=00000000-0000-0000-0000-000000000000 /tmp/x
+> mount: /tmp/x: can't find UUID=00000000-0000-0000-0000-000000000000.
+> 
+> So I wonder if xfs even really needs a new superblock bit at all --
+> mounting via uuid doesn't work in the zeroed-uuid case, and the kernel
+> could indeed generate a new one at mount time before it populates
+> s_uuid, etc.  Then the initscripts can re-run blkid (or xfs_info) to
+> extract the new uuid and update config files as needed.
 
-> And I used bpftrace to measure the time consumption of
-> unregister_shrinker():
+Yeah, that's my proposal and it's closely mirrored on what we did for
+systemd-repart:
+
+6. Similarly, all existing partitions for which configuration files
+   exist and which currently have an all-zero identifying UUID will be
+   assigned a new UUID. This UUID is cryptographically hashed from a
+   common seed value together with the partition type UUID (and a
+   counter in case multiple partitions of the same type are defined),
+   see below. The same is done for all partitions that are created anew.
+   These assignments are done in memory only, too, the disk is not
+   updated yet.
+
+7. Similarly, if the disk's volume UUID is all zeroes it is also
+   initialized, also cryptographically hashed from the same common seed
+   value. This is done in memory only too.
+
+[...]
+
+9. The new partition table is finally written to disk. The kernel is
+   asked to reread the partition table.
+
+https://www.freedesktop.org/software/systemd/man/systemd-repart.service.html
+
 > 
-> ```
-> And I just tested it on a physical machine (Intel(R) Xeon(R) Platinum
-> 8260 CPU @ 2.40GHz) and the results are as follows:
-> 
-> 1) use synchronize_srcu():
-> 
-> @ns[umount]:
-> [8K, 16K)             83 |@@@@@@@       |
-> [16K, 32K)           578
-> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> [32K, 64K)            78 |@@@@@@@       |
-> [64K, 128K)            6 |       |
-> [128K, 256K)           7 |       |
-> [256K, 512K)          29 |@@       |
-> [512K, 1M)            51 |@@@@      |
-> [1M, 2M)              90 |@@@@@@@@       |
-> [2M, 4M)              70 |@@@@@@      |
-> [4M, 8M)               8 |      |
-> 
-> 2) use synchronize_srcu_expedited():
-> 
-> @ns[umount]:
-> [8K, 16K)             31 |@@       |
-> [16K, 32K)           803
-> |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> [32K, 64K)           158 |@@@@@@@@@@       |
-> [64K, 128K)            4 |       |
-> [128K, 256K)           2 |       |
-> [256K, 512K)           2 |       |
-> ```
-> 
-> With synchronize_srcu(), most of the time consumption is between 16us and
-> 32us, the worst case between 4ms and 8ms. Is this totally
-> unacceptable?
-> 
-> This performance regression report comes from a stress test. Will the
-> umount action be executed so frequently under real workloads?
-> 
-> If there are really unacceptable, after applying the newly proposed
-> method, umount will be as fast as before (or even faster).
-> 
-> Thanks,
-> Qi
-> 
-> > 
-> > The previous code was not broken and it provided specific guarantees
-> > to subsystems via unregister_shrinker(). From the above discussion,
-> > it appears that the original authors of these changes either did not
-> > know about or did not understand them, so that casts doubt in my
-> > mind about the attempted solution and all the proposed fixes for it.
-> > 
-> > I don't have the time right now unravel this mess and fully
-> > understand the original problem, changes or the band-aids that are
-> > being thrown around. We are also getting quite late in the cycle to
-> > be doing major surgery to critical infrastructure, especially as it
-> > gives so little time to review regression test whatever new solution
-> > is proposed.
-> > 
-> > Given this appears to be a change introduced in 6.4-rc1, I think the
-> > right thing to do is to revert the change rather than make things
-> > worse by trying to shove some "quick fix" into the kernel to address
-> > it.
-> > 
-> > Andrew, could you please sort out a series to revert this shrinker
-> > infrastructure change and all the dependent hacks that have been
-> > added to try to fix it so far?
-> > 
-> > -Dave.
-> 
-> -- 
-> Thanks,
-> Qi
+> Though, the first-mount uuid would still break anything recorded in the
+> non-xfs metadata by the image creating system (such as evm attributes).
+> But at least that's on the image creator people to know that.
+
+Sure, but that's a generic userspace problem for any identifier relying
+on or derived from the filesystem uuid. IOW, that's not really our
+concern imho.
