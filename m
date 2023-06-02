@@ -2,68 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6332371F819
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 03:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32FB671F81F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 03:45:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233612AbjFBBi4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Jun 2023 21:38:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33042 "EHLO
+        id S233782AbjFBBop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Jun 2023 21:44:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233727AbjFBBiz (ORCPT
+        with ESMTP id S233762AbjFBBok (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Jun 2023 21:38:55 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8AD6E6F;
-        Thu,  1 Jun 2023 18:38:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685669913; x=1717205913;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=01GCcuu0HghGwWeCZNHmm9Tq8ORhR7z4ILt07iIC0l8=;
-  b=BC/plNyzbbVKycKY7bnJX70W/j4iJ4Rnya6ncF8PBVYBV5KuWgFDfVF2
-   fZlALNJ6VVKJnUUzVy8KPY5E4z0Lfajmjm5J0BZovc25OhBk860nTpz7C
-   wnyTgIEthCQh0zxDk8GwXjMXCApxfXuaLTnf9DYaqGZM/g8RjYqz2D4jb
-   D2RFd0tBJ7WIfHHcBUx4cMKaM2OLWpMTvq2wQktBHkZSCHa0kmf76d1gL
-   uw+qcH/ejplQ06WCeXX4fu3NYxX9bj3Brz7M3xF2JXYrEonn6o/0ig6CM
-   he+P9nfi81awxLp/EEfrVuIfO3il+6mHjrGl9Ut8P02SEjnKYAd3SaGT1
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="336103236"
-X-IronPort-AV: E=Sophos;i="6.00,211,1681196400"; 
-   d="scan'208";a="336103236"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2023 18:36:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="772677288"
-X-IronPort-AV: E=Sophos;i="6.00,211,1681196400"; 
-   d="scan'208";a="772677288"
-Received: from lkp-server01.sh.intel.com (HELO fb1ced2c09fb) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 01 Jun 2023 18:36:54 -0700
-Received: from kbuild by fb1ced2c09fb with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q4tin-0002t2-1u;
-        Fri, 02 Jun 2023 01:36:53 +0000
-Date:   Fri, 2 Jun 2023 09:36:30 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J. Wong" <djwong@kernel.org>, Ted Tso <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        Jan Kara <jack@suse.cz>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] fs: Establish locking order for unrelated
- directories
-Message-ID: <202306020948.TBmCxtVw-lkp@intel.com>
-References: <20230601105830.13168-4-jack@suse.cz>
+        Thu, 1 Jun 2023 21:44:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC88DA3
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jun 2023 18:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685670231;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Qm3YBUUay/A3pBxQ63hdSOGk63jXLzGv+Yj/C0QgPBo=;
+        b=D2CPQsi6vTAhUQ3N44hhw6vxnJZsLzj+KPyoLUsqZbKSTMwPKKvpIwGKMkt7bi9wz0rfwR
+        Iyre9fhgzbq0H1G0OuYmekyFoXG7vilXSglIDdkGzDSKsB6AZcP3WqF0M79n9cVMGBppFT
+        QHLLMSL7BKxjdWow7DJCPFDNd9wfBos=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-296-8_7Dm6tFNSmxBW8KXX7SHA-1; Thu, 01 Jun 2023 21:43:50 -0400
+X-MC-Unique: 8_7Dm6tFNSmxBW8KXX7SHA-1
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-6af804baef2so1635853a34.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Jun 2023 18:43:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685670230; x=1688262230;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qm3YBUUay/A3pBxQ63hdSOGk63jXLzGv+Yj/C0QgPBo=;
+        b=QwnNtNMvMlWxOZWTD90XjXjQYaveMYs1g9+u6i12m0p7mIEaTLe/U3uDhTqgzjcsso
+         CQKid3koMfgmybc5YnflJeaU9kMrtmz/zzH84z+OlM7tKZJtFaYggYTLUFA5puufqw7+
+         qtZ2ge1fBWoM8Y2rG6584loRDo3/uYONsyrC5B4HqwKet6LV+pVJEpOrY+ppWhrBTxGA
+         L0XNqdf3WvQIbedjYjlRjq6GSLlIgDISgw94fmM/t07TGRKV4adQhqClq0SsrOgbgRO6
+         rSqyewkW9wzmATYT6Ure4BM60ek+To42iIQQbLUu1s/+jAlooijH8+4l3v5Fx8DO9efO
+         dwjQ==
+X-Gm-Message-State: AC+VfDyM54Tpb9vk7jooLsv8TgBTMYp0ngCFnTSqNTXTg5X9QmmTtB4E
+        qyA8p6g22yPdmxYLVJtquW40RUau1hMZZmx4fJShcba7l1o67wzhY6zzcGBOFiyD3UTLhrhmRQl
+        MuzPPFw7Mglst+dDivIwlUc9XFw==
+X-Received: by 2002:a05:6830:1144:b0:6ab:1b58:f408 with SMTP id x4-20020a056830114400b006ab1b58f408mr1165858otq.19.1685670229963;
+        Thu, 01 Jun 2023 18:43:49 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6dXe+qWoYjYqWymPBlKMBkzayyp1ngY7RaWquL6mNcLpLBSiviFYZu9RyuAqcMvnhIoxOw2A==
+X-Received: by 2002:a05:6830:1144:b0:6ab:1b58:f408 with SMTP id x4-20020a056830114400b006ab1b58f408mr1165844otq.19.1685670229730;
+        Thu, 01 Jun 2023 18:43:49 -0700 (PDT)
+Received: from [10.72.12.188] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id u6-20020a634706000000b0053b8a4f9465sm103388pga.45.2023.06.01.18.43.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Jun 2023 18:43:49 -0700 (PDT)
+Message-ID: <539de53d-729b-118e-1f2f-6dd2f6dccb71@redhat.com>
+Date:   Fri, 2 Jun 2023 09:43:36 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230601105830.13168-4-jack@suse.cz>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 08/13] ceph: allow idmapped getattr inode op
+Content-Language: en-US
+To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com>
+ <20230524153316.476973-9-aleksandr.mikhalitsyn@canonical.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20230524153316.476973-9-aleksandr.mikhalitsyn@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,126 +86,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
 
-kernel test robot noticed the following build errors:
+On 5/24/23 23:33, Alexander Mikhalitsyn wrote:
+> From: Christian Brauner <christian.brauner@ubuntu.com>
+>
+> Enable ceph_getattr() to handle idmapped mounts. This is just a matter
+> of passing down the mount's idmapping.
+>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Ilya Dryomov <idryomov@gmail.com>
+> Cc: ceph-devel@vger.kernel.org
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> ---
+>   fs/ceph/inode.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 8e5f41d45283..2e988612ed6c 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2465,7 +2465,7 @@ int ceph_getattr(struct mnt_idmap *idmap, const struct path *path,
+>   			return err;
+>   	}
+>   
+> -	generic_fillattr(&nop_mnt_idmap, inode, stat);
+> +	generic_fillattr(idmap, inode, stat);
+>   	stat->ino = ceph_present_inode(inode);
+>   
+>   	/*
 
-[auto build test ERROR on tytso-ext4/dev]
-[also build test ERROR on jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev linus/master v6.4-rc4 next-20230601]
-[cannot apply to vfs-idmapping/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+As mentioned in my comment in "[PATCH v2 10/13] ceph: allow idmapped 
+setattr inode op". The getattr requests may fail too in the MDS when 
+doing the client auth checking.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jan-Kara/ext4-Remove-ext4-locking-of-moved-directory/20230601-225100
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-patch link:    https://lore.kernel.org/r/20230601105830.13168-4-jack%40suse.cz
-patch subject: [PATCH v2 4/6] fs: Establish locking order for unrelated directories
-config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20230602/202306020948.TBmCxtVw-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/234d970a1de0d79e372cc04d6a8112d2aec56c44
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Jan-Kara/ext4-Remove-ext4-locking-of-moved-directory/20230601-225100
-        git checkout 234d970a1de0d79e372cc04d6a8112d2aec56c44
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=um SUBARCH=i386 olddefconfig
-        make W=1 O=build_dir ARCH=um SUBARCH=i386 SHELL=/bin/bash
+So for all the requests we should always get the correct UID/GID instead 
+of only for the creating requests, then we can make sure that the idmap 
+is only a feature in client side and then in cephfs MDS side it will 
+always get a consistent UID/GID no matter what idmappings the clients 
+are using.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306020948.TBmCxtVw-lkp@intel.com/
+Right ?
 
-All error/warnings (new ones prefixed by >>):
+Thanks
 
-   fs/inode.c: In function 'lock_two_inodes':
->> fs/inode.c:1121:9: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
-    1121 |         if (!inode1 || !inode2)
-         |         ^~
-   fs/inode.c:1129:17: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
-    1129 |                 goto lock;
-         |                 ^~~~
->> fs/inode.c:1129:17: error: label 'lock' used but not defined
-   fs/inode.c: At top level:
->> fs/inode.c:1136:9: error: expected identifier or '(' before 'if'
-    1136 |         if (S_ISDIR(inode2->i_mode) == S_ISDIR(inode1->i_mode)) {
-         |         ^~
->> fs/inode.c:1139:11: error: expected identifier or '(' before 'else'
-    1139 |         } else if (!S_ISDIR(inode1->i_mode))
-         |           ^~~~
-   In file included from include/linux/kernel.h:27,
-                    from include/linux/cpumask.h:10,
-                    from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/spinlock.h:63,
-                    from include/linux/wait.h:9,
-                    from include/linux/wait_bit.h:8,
-                    from include/linux/fs.h:6,
-                    from fs/inode.c:7:
->> include/linux/minmax.h:167:63: error: expected identifier or '(' before 'while'
-     167 |         do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
-         |                                                               ^~~~~
-   fs/inode.c:1140:17: note: in expansion of macro 'swap'
-    1140 |                 swap(inode1, inode2);
-         |                 ^~~~
->> fs/inode.c:1141:5: error: expected '=', ',', ';', 'asm' or '__attribute__' before ':' token
-    1141 | lock:
-         |     ^
-   fs/inode.c:1144:9: error: expected identifier or '(' before 'if'
-    1144 |         if (inode2 && inode2 != inode1)
-         |         ^~
->> fs/inode.c:1146:1: error: expected identifier or '(' before '}' token
-    1146 | }
-         | ^
+- Xiubo
 
-
-vim +/lock +1129 fs/inode.c
-
-  1105	
-  1106	/**
-  1107	 * lock_two_inodes - lock two inodes (may be regular files but also dirs)
-  1108	 *
-  1109	 * Lock any non-NULL argument. The caller must make sure that if he is passing
-  1110	 * in two directories, one is not ancestor of the other.  Zero, one or two
-  1111	 * objects may be locked by this function.
-  1112	 *
-  1113	 * @inode1: first inode to lock
-  1114	 * @inode2: second inode to lock
-  1115	 * @subclass1: inode lock subclass for the first lock obtained
-  1116	 * @subclass2: inode lock subclass for the second lock obtained
-  1117	 */
-  1118	void lock_two_inodes(struct inode *inode1, struct inode *inode2,
-  1119			     unsigned subclass1, unsigned subclass2)
-  1120	{
-> 1121		if (!inode1 || !inode2)
-  1122			/*
-  1123			 * Make sure @subclass1 will be used for the acquired lock.
-  1124			 * This is not strictly necessary (no current caller cares) but
-  1125			 * let's keep things consistent.
-  1126			 */
-  1127			if (!inode1)
-  1128				swap(inode1, inode2);
-> 1129			goto lock;
-  1130		}
-  1131	
-  1132		/*
-  1133		 * If one object is directory and the other is not, we must make sure
-  1134		 * to lock directory first as the other object may be its child.
-  1135		 */
-> 1136		if (S_ISDIR(inode2->i_mode) == S_ISDIR(inode1->i_mode)) {
-  1137			if (inode1 > inode2)
-  1138				swap(inode1, inode2);
-> 1139		} else if (!S_ISDIR(inode1->i_mode))
-  1140			swap(inode1, inode2);
-> 1141	lock:
-  1142		if (inode1)
-  1143			inode_lock_nested(inode1, subclass1);
-  1144		if (inode2 && inode2 != inode1)
-  1145			inode_lock_nested(inode2, subclass2);
-> 1146	}
-  1147	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
