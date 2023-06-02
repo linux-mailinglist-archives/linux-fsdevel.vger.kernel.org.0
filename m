@@ -2,89 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C36E37207B4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 18:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88BD37207C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 18:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235686AbjFBQhU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Jun 2023 12:37:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56796 "EHLO
+        id S236368AbjFBQjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jun 2023 12:39:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235308AbjFBQhS (ORCPT
+        with ESMTP id S235916AbjFBQjf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jun 2023 12:37:18 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88789197
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Jun 2023 09:37:14 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-97460240863so142469566b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Jun 2023 09:37:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1685723833; x=1688315833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vzJT3HyKG2J4xiGoewlppsTGaruPJowM8pRCfo3JmUA=;
-        b=YSWipyxtRYE4aRsDx5kpWeNsJaCCphIsrGhQvjZ+/BMhyCSkf4uEQLXkrVhWP7CDlu
-         qN17+0sbc3gtoOv5SZ2CUZ68i8hS72K0bHyO0AqBAYkzVnsWGpQbFZqdLfe0L7n1Ewf6
-         WSGhzHTQoSTj8eo9ruZ5OJukGtLsMqqkI5OJk=
+        Fri, 2 Jun 2023 12:39:35 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 398E41B7
+        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Jun 2023 09:39:33 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-772d796bbe5so114663739f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Jun 2023 09:39:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685723833; x=1688315833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vzJT3HyKG2J4xiGoewlppsTGaruPJowM8pRCfo3JmUA=;
-        b=d79FiX87Wff5D4ZJkBSANmk07V/wdQDfQbPfCTo+ud9PYfHik0s/jJF2yDNt3RICHk
-         ocRiBnEKkfP+jNqSNpTZy+t3a+i0hA3Y4D4TzT5tm1EgYBxSMc7xSsAmo55VIa6rR4i6
-         h9i71WlmI6YkiiaHoPHUCi8T3dAkFjBuzgqGm7X7xxBuQMqVqHArr538uVccOxPamI0+
-         urGGHEsGsYKdEaK57Ckwv0j7midZkvSDYnORERlaJx9Q4QsXwruF7qYlRm03IiGrXsWB
-         c7p/WorSICU36FdOEiZUnSE8XQNchVh9cdp0q6xYkRQus9v0ZUu+j1GnmwpAlBwG6bBk
-         IeeA==
-X-Gm-Message-State: AC+VfDwZqcm2TR6ePJhMn5f8YrB/UCLHJcYGOU8jOU3Er4vxkbX0GxoZ
-        Ad+1d+/IPa5ftcyRF/nj4B+hc5ATX3FbeUU9FwWwT03B
-X-Google-Smtp-Source: ACHHUZ5rd1P6c/phLmtpaybI8uqIHsVE6NMc10Pp7gJsxx5meNzxkmP51psnren/v9cxAsP54gI2+w==
-X-Received: by 2002:a17:906:9747:b0:976:6863:a737 with SMTP id o7-20020a170906974700b009766863a737mr418755ejy.50.1685723832954;
-        Fri, 02 Jun 2023 09:37:12 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id t11-20020a170906948b00b0096739e10659sm934111ejx.163.2023.06.02.09.37.12
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Jun 2023 09:37:12 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-51494659d49so3266381a12.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Jun 2023 09:37:12 -0700 (PDT)
-X-Received: by 2002:a2e:7302:0:b0:2af:1681:2993 with SMTP id
- o2-20020a2e7302000000b002af16812993mr311009ljc.49.1685723811492; Fri, 02 Jun
- 2023 09:36:51 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1685723972; x=1688315972;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jQGoC7vlZtXDhLEgYv1SxcnvHwW74JFQkSojIS2V8g0=;
+        b=jviWsLVYQexBynl9SEbxR+GUbXqWqHA4KpWNzpRaDjkg9BXSwYGsy/nkQcfA7JIdL+
+         3MRf4SQkGo6doEh+x67Y0x1vgwuMhN1G0gYWHK7zcWqoX3WVudYVOnKSNIDVIWRGHF+M
+         08seORvPAkrDECSnQldJZo8AOySoq2D0vBGznK2V5zP0G33jV+Rr31GadVi7WGuEVavX
+         OpbCFe/ANp92O2Nc4WZ5l46rVkx/bNhK71+b0uWzk8nPfS+IdInEMm7AhyZIm27/O34s
+         GsHCn/XZblWR4qFsISHWXsUQ/PewJsbgAw3gxBPBtYktX6XSeGH7W52MvSnaKyucavlv
+         7ggw==
+X-Gm-Message-State: AC+VfDwFZdb4wcK5KRn8Q4BI0OkSpiSit38GdrYu3jSG/OtHCu4oRU5r
+        t1iMyw169W33/lJRC4082N13OAirTzGvY1u/xmom5bZfeTRX
+X-Google-Smtp-Source: ACHHUZ6HfjrvFZwBLUA1rgPFDPGlIB6ktQF0HD8+Jk0f0mP7NTLlW+yzUOsQpQQ1SxCI/wQRIIkKKwq6mZsV05N5tdLLaJF2T/rJ
 MIME-Version: 1.0
-References: <20230602150752.1306532-1-dhowells@redhat.com> <20230602150752.1306532-6-dhowells@redhat.com>
-In-Reply-To: <20230602150752.1306532-6-dhowells@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 2 Jun 2023 12:36:34 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wg-9vyvbQPy_Aa=BQmkdX7b=ANinNUU+22tMELuxmH99g@mail.gmail.com>
-Message-ID: <CAHk-=wg-9vyvbQPy_Aa=BQmkdX7b=ANinNUU+22tMELuxmH99g@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 05/11] splice, net: Fix SPLICE_F_MORE
- signalling in splice_direct_to_actor()
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        Boris Pismenny <borisp@nvidia.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+X-Received: by 2002:a05:6638:10ea:b0:41d:77ab:bc2 with SMTP id
+ g10-20020a05663810ea00b0041d77ab0bc2mr924254jae.4.1685723972618; Fri, 02 Jun
+ 2023 09:39:32 -0700 (PDT)
+Date:   Fri, 02 Jun 2023 09:39:32 -0700
+In-Reply-To: <4aa799a0b87d4e2ecf3fa74079402074dc42b3c5.camel@huaweicloud.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000093d48c05fd2832a7@google.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in open_xa_dir
+From:   syzbot <syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com>
+To:     hdanton@sina.com, jack@suse.cz, jeffm@suse.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, paul@paul-moore.com, peterz@infradead.org,
+        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
+        roberto.sassu@huaweicloud.com, syzkaller-bugs@googlegroups.com,
+        will@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
         URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -92,52 +59,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 2, 2023 at 11:08=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Fix this by making splice_direct_to_actor() always signal SPLICE_F_MORE i=
-f
-> we haven't yet hit the requested operation size.
+Hello,
 
-Well, I certainly like this patch better than the previous versions,
-just because it doesn't add random fd-specific code.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-That said, I think it might be worth really documenting the behavior,
-particularly for files where the kernel *could* know "the file is at
-EOF, no more data".
+Reported-and-tested-by: syzbot+8fb64a61fdd96b50f3b8@syzkaller.appspotmail.com
 
-I hope that if user space wants to splice() a file to a socket, said
-user space would have done an 'fstat()' and actually pass in the file
-size as the length to splice(). Because if they do, I think this
-simplified patch does the right thing automatically.
+Tested on:
 
-But if user space instead passes in a "maximally big len", and just
-depends on the kernel then doing tha
+commit:         4432b507 lsm: fix a number of misspellings
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b47dd1280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=178a8c28652084e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=102f6ab6280000
 
-                ret =3D do_splice_to(in, &pos, pipe, len, flags);
-                if (unlikely(ret <=3D 0))
-                        goto out_release;
-
-to stop splicing at EOF, then the last splice_write() will have had
-SPLICE_F_MORE set, even though no more data is coming from the file,
-of course.
-
-And I think that's fine. But wasn't that effectively what the old code
-was already doing because 'read_len' was smaller than 'len'? I thought
-that was what you wanted to fix?
-
-IOW, I thought you wanted to clear SPLICE_F_MORE when we hit EOF. This
-still doesn't do that.
-
-So now I'm confused about what your "fix" is. Your patch doesn't
-actually seem to change existing behavior in splice_direct_to_actor().
-
-I was expecting you to actually pass the 'sd' down to do_splice_to()
-and then to ->splice_read(), so that the splice_read() function could
-say "I have no more", and clear it.
-
-But you didn't do that.
-
-Am I misreading something, or did I miss another patch?
-
-               Linus
+Note: testing is done by a robot and is best-effort only.
