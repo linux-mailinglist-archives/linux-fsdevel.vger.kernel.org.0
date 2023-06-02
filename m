@@ -2,218 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9E571FE97
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 12:08:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F46D71FF66
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 12:34:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234801AbjFBKI2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Jun 2023 06:08:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36488 "EHLO
+        id S235653AbjFBKeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jun 2023 06:34:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235179AbjFBKIW (ORCPT
+        with ESMTP id S235564AbjFBKeE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jun 2023 06:08:22 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D2FB1A6
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Jun 2023 03:08:18 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230602100817euoutp01c8bd376c59ec6aee312b80f28124daf9~kz6vKX7P40428904289euoutp01g
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Jun 2023 10:08:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230602100817euoutp01c8bd376c59ec6aee312b80f28124daf9~kz6vKX7P40428904289euoutp01g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1685700497;
-        bh=f1HjrLD6njVVPjduaddJfi5+Ds9joRkOIy3esLq1bnY=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=ZpZ8dW85nTYstRrklw7jGepnTiGBveS5HeGJPFdQ2cdTyjfCrydvKtCVD8AaS40hm
-         +cMvD7ssylGvBGm7rzHBkH5ANmlLZtNYJRH021nPz1PPu+LzDuAEbV5w6zTQHGGq+8
-         MzWlo+UULNbe3B+64ZUKHH5gMa3GJ+Swv1lK0Sd4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230602100817eucas1p2a857bad455aa25270c84dfb1ff6ee0a5~kz6vDIJOP1995219952eucas1p2x;
-        Fri,  2 Jun 2023 10:08:17 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id F1.30.42423.19FB9746; Fri,  2
-        Jun 2023 11:08:17 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230602100816eucas1p2c945884b8fd81603dbb39f65f1189f42~kz6uvPKLb1573615736eucas1p29;
-        Fri,  2 Jun 2023 10:08:16 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230602100816eusmtrp13ae771f8a5597a66fa213d5326d501b4~kz6usXowp1803818038eusmtrp1U;
-        Fri,  2 Jun 2023 10:08:16 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-bc-6479bf914b3b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5C.34.14344.09FB9746; Fri,  2
-        Jun 2023 11:08:16 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20230602100816eusmtip19e65f13776df3900286781284b8272be~kz6uf3oq-0246202462eusmtip1I;
-        Fri,  2 Jun 2023 10:08:16 +0000 (GMT)
-Received: from localhost (106.210.248.205) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 2 Jun 2023 11:08:15 +0100
-From:   Joel Granados <j.granados@samsung.com>
-To:     <mcgrof@kernel.org>
-CC:     <linux-kselftest@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Joel Granados <j.granados@samsung.com>
-Subject: [PATCH 4/8] test_sysctl: Add an unregister sysctl test
-Date:   Fri, 2 Jun 2023 12:08:01 +0200
-Message-ID: <20230602100805.777917-5-j.granados@samsung.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230602100805.777917-1-j.granados@samsung.com>
+        Fri, 2 Jun 2023 06:34:04 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A2202D76;
+        Fri,  2 Jun 2023 03:32:10 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1685701891;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to; bh=B7bPk3pUh4JwxyV+9d/1pqiC0xFJGdtFW+ceWYcdSZ4=;
+        b=0MrXZZY7q1FDgx0xxjf84245j6AlVlXaRHDpThHi7XbnW3x1E6EX4Gu9nVGq7G9V4KD/nk
+        eeBqEmepdfpOwimYS7N/P2rN9r7WHzLiJPMawzDIhtpqknX7/cyWsH75WPS0fgENR7zyeg
+        4Bkn0B+KDs9/sK23Uv/1RH79ljXyYTmEZPAAbX2y00lNx3F7eXRCCBLvZQdGCbWhgI1UKb
+        hSBHj+iMEwvvkBBqF+i9orKF4uvJWpB1hlp7o2LJ9bcykX1sHsAhRVqaXdfxSE7V6Nm4gw
+        vu16Ke9dM2A6msNKc4Qbsn2DwMVTG3QTTKK7CP6Ps+VcS3cCuyUM2o6RpigorQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1685701891;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to; bh=B7bPk3pUh4JwxyV+9d/1pqiC0xFJGdtFW+ceWYcdSZ4=;
+        b=4hXm0PteC8c+7Dh4r9Kak52TzCeqHsVIqz8eREdd7uJ9j2+eOsjiyvqrJJXQ5dxRHL6H42
+        GdZ9IDogdyMFlgBw==
+To:     syzbot <syzbot+5444b0cc48f4e1939d72@syzkaller.appspotmail.com>,
+        frederic@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [reiserfs?] general protection fault in
+ account_system_index_time (3)
+In-Reply-To: <00000000000073d32c05fd1d4a6b@google.com>
+Date:   Fri, 02 Jun 2023 12:31:31 +0200
+Message-ID: <87zg5i88ak.ffs@tglx>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [106.210.248.205]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsWy7djPc7oT91emGLxpYLHYs/cki8XlXXPY
-        LKbfec9mcWPCU0YHFo9NqzrZPD5vkgtgiuKySUnNySxLLdK3S+DKONSyhLHgtEjFqv67LA2M
-        bwS6GDk5JARMJE5daWTpYuTiEBJYwSgx781FZgjnC6PEiT1v2SGcz4wS/2dPZ4RpaV4zGapq
-        OaPEs8enGeGqju18D5XZwijx4eFHVpAWNgEdifNv7jCD2CIC4hInTm8GG8UsMIFRYtYhDhBb
-        WMBeYt6xa0wgNouAisSKX+/ZQGxeARuJtzf3s0Oslpdouw5xBqeArcSyGU+ZIGoEJU7OfMIC
-        MVNeonnrbGYIW0Li4IsXzBC9yhIT1v1mhbBrJU5tucUEcqiEwB4OiSW7VkMVuUjsnfUDqkhY
-        4tXxLVCLZSROT+5hgWiYzCix/98HdghnNaPEssavTBBV1hItV55AdThK/J71FuhUDiCbT+LG
-        W0GIi/gkJm2bzgwR5pXoaBOawKgyC8kPs5D8MAvJDwsYmVcxiqeWFuempxYb5qWW6xUn5haX
-        5qXrJefnbmIEJo7T/45/2sE499VHvUOMTByMhxglOJiVRHiFwspThHhTEiurUovy44tKc1KL
-        DzFKc7AoifNq255MFhJITyxJzU5NLUgtgskycXBKNTCllCYxfN0W415uU8gR++7KpbLXcVP+
-        Om2ZKCW+6Vfv/riI2+Y6Bz3Wr0yf4KB16+C+XzYf19fqPz8SISkuYDpZ5iObaYvG/gTb689F
-        Lu2VqfwX94/HqmFDh8aZqCyx9p+3jrzbu3z+7Ve/X962P/gm32rKXla1rmbbjvW/hQuMnLj3
-        xuRc1eHoC10WncPnW/5E8L32on0Nhc+KPnvOiWLvY9NzykhJWqfemvZy/ebT8qLboiSVJ216
-        9n9+lJWb8o0Dh3NSW4+ocvpvW5lpYzIv0Sh5qoNo9OLiLaG7fHtCOOLYza5MYVZ4YPbtgfi/
-        hNsr502ZN2mb9H2Fs71Hw25eVj3jbHzJU4m1++sxXSklluKMREMt5qLiRACa29ZmiwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsVy+t/xu7oT9lemGPzu1rTYs/cki8XlXXPY
-        LKbfec9mcWPCU0YHFo9NqzrZPD5vkgtgitKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0
-        No+1MjJV0rezSUnNySxLLdK3S9DLONSyhLHgtEjFqv67LA2MbwS6GDk5JARMJJrXTGbuYuTi
-        EBJYyihx8sFVNoiEjMTGL1dZIWxhiT/Xutggij4ySkzZehHK2cIo0bl1IVgVm4COxPk3d5hB
-        bBEBcYkTpzczgtjMAhMYJWYd4gCxhQXsJeYdu8YEYrMIqEis+PUebBuvgI3E25v72SG2yUu0
-        XZ8O1sspYCuxbMZTsHohoJrzjyYxQ9QLSpyc+YQFYr68RPPW2cwQtoTEwRcvmCHmKEtMWPcb
-        6oNaic9/nzFOYBSZhaR9FpL2WUjaFzAyr2IUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAiMqW3H
-        fm7Zwbjy1Ue9Q4xMHIyHGCU4mJVEeIXCylOEeFMSK6tSi/Lji0pzUosPMZoC/TmRWUo0OR8Y
-        1Xkl8YZmBqaGJmaWBqaWZsZK4ryeBR2JQgLpiSWp2ampBalFMH1MHJxSDUyl8nIHRKRnxDqs
-        nRudve7986SADffllJ6Hz9/+fTvLLMlDIRfSPBv4zppMa9m1bOmtx59WezcGJdue0WLoKZtr
-        kMq4yymKw0CM3XnvK/X5/44nFeUelrvP8FQsfj7nARefMq/1LC86wn1tFoSEGs3bclTlNm/9
-        z0LlqSwJRbu4Si76+bLo5DBXsSkslf236E+TxWrt9zv7LIJbDzql9s74ePnOovup3ftf3p83
-        v07rAZ9jhB/nDve2Uo0nu4Uzk298MX3VcOAUq8CsstCGb0biXf7hS32lnDIvWiq1HQ3RSBVZ
-        9JyZy1clvXJij/Gj0IutpbNal206Erd/C9/HDfG8vkWLmOfzXnpc4MpqpMRSnJFoqMVcVJwI
-        AKZM7RIyAwAA
-X-CMS-MailID: 20230602100816eucas1p2c945884b8fd81603dbb39f65f1189f42
-X-Msg-Generator: CA
-X-RootMTR: 20230602100816eucas1p2c945884b8fd81603dbb39f65f1189f42
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230602100816eucas1p2c945884b8fd81603dbb39f65f1189f42
-References: <20230602100805.777917-1-j.granados@samsung.com>
-        <CGME20230602100816eucas1p2c945884b8fd81603dbb39f65f1189f42@eucas1p2.samsung.com>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a test that checks that the unregistered directory is removed from
-/proc/sys/debug
+On Thu, Jun 01 2023 at 20:38, syzbot wrote:
+> general protection fault, probably for non-canonical address 0xdffffc0040000033: 0000 [#1] PREEMPT SMP KASAN
+> KASAN: probably user-memory-access in range [0x0000000200000198-0x000000020000019f]
+> CPU: 1 PID: 262216 Comm:  Not tainted 6.4.0-rc2-next-20230515-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
+> RIP: 0010:get_running_cputimer include/linux/sched/cputime.h:79 [inline]
+> RIP: 0010:account_group_system_time include/linux/sched/cputime.h:143 [inline]
+> RIP: 0010:account_system_index_time+0x86/0x2f0 kernel/sched/cputime.c:173
+> Code: 63 02 00 00 48 8b 9d f8 08 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d bb 98 01 00 00 4c 8d b3 38 01 00 00 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 08 3c 03 0f 8e e7 01 00 00 8b 83 98 01 00 00
+> RSP: 0018:ffffc900001e0da0 EFLAGS: 00010006
+> RAX: dffffc0000000000 RBX: 0000000200000001 RCX: 1ffffffff1827d41
+> RDX: 0000000040000033 RSI: 000000000097fff6 RDI: 0000000200000199
+> RBP: ffff88807638bb80 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: ffffffffffffffff R12: 000000000097fff6
+> R13: 0000000000000002 R14: 0000000200000139 R15: ffffffff817770e0
+> FS:  00005555556c1300(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ffca0efd000 CR3: 0000000019395000 CR4: 00000000003506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <IRQ>
+>  update_process_times+0x26/0x1a0 kernel/time/timer.c:2069
+>  tick_sched_handle+0x8e/0x170 kernel/time/tick-sched.c:243
+>  tick_sched_timer+0xee/0x110 kernel/time/tick-sched.c:1481
+>  __run_hrtimer kernel/time/hrtimer.c:1685 [inline]
+>  __hrtimer_run_queues+0x1c0/0xa30 kernel/time/hrtimer.c:1749
+>  hrtimer_interrupt+0x320/0x7b0 kernel/time/hrtimer.c:1811
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1095 [inline]
+>  __sysvec_apic_timer_interrupt+0x14a/0x430 arch/x86/kernel/apic/apic.c:1112
+>  sysvec_apic_timer_interrupt+0x92/0xc0 arch/x86/kernel/apic/apic.c:1106
+>  </IRQ>
 
-Signed-off-by: Joel Granados <j.granados@samsung.com>
----
- lib/test_sysctl.c                        | 30 ++++++++++++++++++++++++
- tools/testing/selftests/sysctl/sysctl.sh | 16 +++++++++++++
- 2 files changed, 46 insertions(+)
+> RSP: 0018:ffffc900001e0da0 EFLAGS: 00010006
+> RAX: dffffc0000000000 RBX: 0000000200000001 RCX: 1ffffffff1827d41
+> RDX: 0000000040000033 RSI: 000000000097fff6 RDI: 0000000200000199
+> RBP: ffff88807638bb80 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: ffffffffffffffff R12: 000000000097fff6
+> R13: 0000000000000002 R14: 0000000200000139 R15: ffffffff817770e0
+> FS:  00005555556c1300(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ffca0efd000 CR3: 0000000019395000 CR4: 00000000003506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-diff --git a/lib/test_sysctl.c b/lib/test_sysctl.c
-index 0cf7c547d61a..555244687443 100644
---- a/lib/test_sysctl.c
-+++ b/lib/test_sysctl.c
-@@ -170,12 +170,42 @@ static int test_sysctl_setup_node_tests(void)
- 	return 0;
- }
- 
-+/* Used to test that unregister actually removes the directory */
-+static struct ctl_table test_table_unregister[] = {
-+	{
-+		.procname	= "unregister_error",
-+		.data		= &test_data.int_0001,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+	},
-+	{}
-+};
-+
-+static int test_sysctl_run_unregister_nested(void)
-+{
-+	struct ctl_table_header *unregister;
-+
-+	unregister = register_sysctl("debug/test_sysctl/unregister_error",
-+				   test_table_unregister);
-+	if (!unregister)
-+		return -ENOMEM;
-+
-+	unregister_sysctl_table(unregister);
-+	return 0;
-+}
-+
- static int __init test_sysctl_init(void)
- {
- 	int err;
- 
- 	err = test_sysctl_setup_node_tests();
-+	if (err)
-+		goto out;
- 
-+	err = test_sysctl_run_unregister_nested();
-+
-+out:
- 	return err;
- }
- module_init(test_sysctl_init);
-diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-index cb8f83dfe16b..a6d79d7a36e4 100755
---- a/tools/testing/selftests/sysctl/sysctl.sh
-+++ b/tools/testing/selftests/sysctl/sysctl.sh
-@@ -31,6 +31,7 @@ ALL_TESTS="$ALL_TESTS 0005:3:1:int_0003"
- ALL_TESTS="$ALL_TESTS 0006:50:1:bitmap_0001"
- ALL_TESTS="$ALL_TESTS 0007:1:1:boot_int"
- ALL_TESTS="$ALL_TESTS 0008:1:1:match_int"
-+ALL_TESTS="$ALL_TESTS 0009:1:1:unregister_error"
- 
- function allow_user_defaults()
- {
-@@ -797,6 +798,20 @@ sysctl_test_0008()
- 	return 0
- }
- 
-+sysctl_test_0009()
-+{
-+	TARGET="${SYSCTL}/$(get_test_target 0009)"
-+	echo -n "Testing if $TARGET unregistered correctly ..."
-+	if [ -d $TARGET ]; then
-+		echo "TEST FAILED"
-+		rc=1
-+		test_rc
-+	fi
-+
-+	echo "ok"
-+	return 0
-+}
-+
- list_tests()
- {
- 	echo "Test ID list:"
-@@ -813,6 +828,7 @@ list_tests()
- 	echo "0006 x $(get_test_count 0006) - tests proc_do_large_bitmap()"
- 	echo "0007 x $(get_test_count 0007) - tests setting sysctl from kernel boot param"
- 	echo "0008 x $(get_test_count 0008) - tests sysctl macro values match"
-+	echo "0009 x $(get_test_count 0009) - tests sysct unregister"
- }
- 
- usage()
--- 
-2.30.2
+> Code disassembly (best guess):
 
+I built with that config and stared at the disassembly.
+
+RBP contains the task pointer, which looks valid RBP: ffff88807638bb80
+
+>    4:	48 8b 9d f8 08 00 00 	mov    0x8f8(%rbp),%rbx
+
+struct signal_struct *     signal;               /*  2296     8 */
+
+2296 == 0x8f8
+
+So this loads tsk->signal into RBX
+
+      RBX: 0000000200000001
+
+which is clearly not a valid signal_struct pointer...
+
+The rest is a consequence of this.
+
+>    b:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+>   12:	fc ff df
+>   15:	48 8d bb 98 01 00 00 	lea    0x198(%rbx),%rdi
+>   1c:	4c 8d b3 38 01 00 00 	lea    0x138(%rbx),%r14
+>   23:	48 89 fa             	mov    %rdi,%rdx
+>   26:	48 c1 ea 03          	shr    $0x3,%rdx
+> * 2a:	0f b6 04 02          	movzbl (%rdx,%rax,1),%eax <-- trapping instruction
+>   2e:	84 c0                	test   %al,%al
+>   30:	74 08                	je     0x3a
+>   32:	3c 03                	cmp    $0x3,%al
+>   34:	0f 8e e7 01 00 00    	jle    0x221
+>   3a:	8b 83 98 01 00 00    	mov    0x198(%rbx),%eax
+
+Looks like good old memory corruption. tsk->comm looks weird too:
+
+> CPU: 1 PID: 262216 Comm:  Not tainted 6.4.0-rc2-next-20230515-syzkaller #0
+
+tsk>comm is at offset 0x898 so close enough to the corrupted
+tsk->signal.
+
+I let the reiserfs wizards decode the root cause :)
+
+Thanks,
+
+        tglx
