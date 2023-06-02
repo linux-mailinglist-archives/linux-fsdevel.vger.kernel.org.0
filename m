@@ -2,336 +2,269 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6EA372000D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 13:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 353DA720044
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 13:19:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235859AbjFBLHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Jun 2023 07:07:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48072 "EHLO
+        id S235878AbjFBLTO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jun 2023 07:19:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235329AbjFBLH1 (ORCPT
+        with ESMTP id S235883AbjFBLTK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jun 2023 07:07:27 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21200E44
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Jun 2023 04:07:02 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230602110658euoutp02b726e5c9572055b16390d652e475b7cd~k0t_rZL8g2929029290euoutp02y
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Jun 2023 11:06:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230602110658euoutp02b726e5c9572055b16390d652e475b7cd~k0t_rZL8g2929029290euoutp02y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1685704018;
-        bh=BhjlbE3l65EDbxXPKpYH+/IItCuSaglkyGpoc2fZJys=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=X0LTpbuqcSvbiXMG8CGVd2hMCiFANmN0MeNr9nHqf5XoJm0XPowTlO9Q39fGZsCww
-         VYNpi/yndgc1369Xeb/TxQjIua+Zz5/gD72Hwb0UpzYmcH3UCVX7WF/P+iAQwScyo5
-         4hY8AAhHhkMuo17hdYwUhg74s6lqbCIm7csNdLy0=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230602110658eucas1p27ccf28cedfee77b724984314dfce3c77~k0t_jdLpI2052120521eucas1p2d;
-        Fri,  2 Jun 2023 11:06:58 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 97.77.11320.25DC9746; Fri,  2
-        Jun 2023 12:06:58 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230602110658eucas1p27d31eeac2417f9e19f8d4b6de012209b~k0t_KGxtF2052220522eucas1p2z;
-        Fri,  2 Jun 2023 11:06:58 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230602110658eusmtrp19add2e18ca5bb2a26ee0cbd401c5a237~k0t_JjZpq2194821948eusmtrp12;
-        Fri,  2 Jun 2023 11:06:58 +0000 (GMT)
-X-AuditID: cbfec7f4-97dff70000022c38-9a-6479cd527b71
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 51.B9.10549.15DC9746; Fri,  2
-        Jun 2023 12:06:57 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230602110657eusmtip2922d74715e738263fbe99c2d1cb968c1~k0t9_p76L0244502445eusmtip27;
-        Fri,  2 Jun 2023 11:06:57 +0000 (GMT)
-Received: from localhost (106.210.248.205) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 2 Jun 2023 12:06:57 +0100
-From:   Joel Granados <j.granados@samsung.com>
-To:     <mcgrof@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>,
-        Joel Granados <j.granados@samsung.com>
-Subject: [PATCH 8/8] sysctl: replace child with a flags var
-Date:   Fri, 2 Jun 2023 13:06:38 +0200
-Message-ID: <20230602110638.789426-9-j.granados@samsung.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230602110638.789426-1-j.granados@samsung.com>
+        Fri, 2 Jun 2023 07:19:10 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F28BCE53;
+        Fri,  2 Jun 2023 04:18:50 -0700 (PDT)
+Received: from [192.168.10.48] (unknown [119.152.150.198])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D34AA6605835;
+        Fri,  2 Jun 2023 12:18:42 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1685704729;
+        bh=W110dc+egvPhy7okk5EJDPoLL/gsrq4vUY4VfhaGHKs=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=jx7CVIBVrhjV5mkDEuSTZY3aWoyg0qNNIy8j0C3nRt+RuIQa6df7dHBAbYTZda4JM
+         HVtLzd6b7IQcfJ+fDfHz3db0ft+aPtL6q/j2oBmkCVRrkyr8RuaPe+055GK26uBULi
+         lVgh7nDLg9qqyYNcy1T3j5zUKKjIMaQ/xd6xV3zGiWXr1S8O5Fj5IM8P+TBq+IDHP+
+         m/VyYrvx5xThKFh7nrb1BVQYKUYKIBf7MyMjV67gx2JsjXb70FR4emk4f/PJr2tUT1
+         H04+H7LHk1RYmI09goMFibovTGJ/fehAC4rOvR2PO5moM36bQyxCzQRCCrt9i7pdbL
+         xsq8F3TGg61gQ==
+Message-ID: <3589803d-5594-71de-d078-ad4499f233b6@collabora.com>
+Date:   Fri, 2 Jun 2023 16:18:38 +0500
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
+        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v16 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Peter Xu <peterx@redhat.com>
+References: <20230525085517.281529-1-usama.anjum@collabora.com>
+ <20230525085517.281529-3-usama.anjum@collabora.com> <ZHfAOAKj1ZQJ+zSy@x1n>
+ <aeaaa33e-4d23-fd3a-1357-4751007aa3bd@collabora.com> <ZHj7jmJ5fKla1Rax@x1n>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <ZHj7jmJ5fKla1Rax@x1n>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [106.210.248.205]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsWy7djPc7pBZytTDCbdELfYs/cki8XlXXPY
-        LKbfec9mcWPCU0YHFo9NqzrZPD5vkgtgiuKySUnNySxLLdK3S+DKeP5oEnPBUrOKJzevMzcw
-        PtXpYuTkkBAwkbi2+AdzFyMXh5DACkaJ/QvWMEE4XxglDk7pZ4dwPjNKdE6ZwgzTcrxpHQtE
-        YjmjxInFG5ngqn6v64FytjBKvGrbyQLSwiagI3H+zR2wdhEBcYkTpzczghQxC0xglOhb9wus
-        SFjAWqL77xJGEJtFQEXi8rz5bCA2r4CNxI2Dx6F2y0u0XZ8OVsMpYCtx6PQZqBpBiZMzn4DN
-        YQaqad46mxnClpA4+OIFVK+yxIR1v1kh7FqJU1tuMUHYBzgktk8Ph7BdJNb92QxVIyzx6vgW
-        dghbRuL05B6wnyUEJgOD6d8HdghnNaPEssavUJOsJVquPIHqcJTo790FtJkDyOaTuPFWEOIg
-        PolJ26ZDhXklOtqEJjCqzELywiwkL8xC8sICRuZVjOKppcW56anFRnmp5XrFibnFpXnpesn5
-        uZsYgYnj9L/jX3YwLn/1Ue8QIxMH4yFGCQ5mJRFeobDyFCHelMTKqtSi/Pii0pzU4kOM0hws
-        SuK82rYnk4UE0hNLUrNTUwtSi2CyTBycUg1MOy7cush8WI87YYdC45XLBsV85Z77eOuZlCNF
-        uLJml7nqmdfr/fk8e02/e/LZVKMrV2w4NsXeFl+w3mzb+49S+zlDogUZ68rcFxyZJ5TxxCn7
-        6ow9VrLFZjK71pz7KKXbuuZ54cWPeRtOa1757bj1b5n/ltlSvvUBxl2u4e9rT0bNa05T6VvB
-        pn0xfKqPimlrQrKYebzaW7vDbSVpESelRLaJ7/Lb9J5bYIX4wn8VqT77zX+8c1JWdt4Qu6eI
-        xWXpPYNFifp7jv7/VN2fNHF+27O/zf9ndX8VNeNJ3P6n6CtDocc0lvRd4bwzlkycslssfsrs
-        lZL7QpcbG11cJzBDyZ97k6kir7jEQYfqN15KLMUZiYZazEXFiQCl5pPziwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsVy+t/xe7qBZytTDK4ftLHYs/cki8XlXXPY
-        LKbfec9mcWPCU0YHFo9NqzrZPD5vkgtgitKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0
-        No+1MjJV0rezSUnNySxLLdK3S9DLeP5oEnPBUrOKJzevMzcwPtXpYuTkkBAwkTjetI6li5GL
-        Q0hgKaNEx5EfLBAJGYmNX66yQtjCEn+udbFBFH1klLgxeSYThLOFUeLk0tXMIFVsAjoS59/c
-        AbNFBMQlTpzezAhSxCwwgVGib90vsLHCAtYS3X+XMILYLAIqEpfnzWcDsXkFbCRuHDzODLFO
-        XqLt+nSwGk4BW4lDp8+A1QgB1aw/c4Edol5Q4uTMJ2AzmYHqm7fOZoawJSQOvngBNUdZYsK6
-        31Av1Ep8/vuMcQKjyCwk7bOQtM9C0r6AkXkVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYFRt
-        O/Zz8w7Gea8+6h1iZOJgPMQowcGsJMIrFFaeIsSbklhZlVqUH19UmpNafIjRFOjPicxSosn5
-        wLjOK4k3NDMwNTQxszQwtTQzVhLn9SzoSBQSSE8sSc1OTS1ILYLpY+LglGpginw5ye355S9L
-        uGIrg1zeNGxcsvXd9HMnnssv3H/lvMb0+25NC+qWTnlm/ibnk4tR4YokyTc8HH0Z0dryZX97
-        eUxWPtWdx8T8nOOL3qevLZ+8zmdutvZf+fBszJLWn01PHkY/ePQ86quTZ9Zzbd4TZ1mlTmxb
-        IvB88ksTN+WfH9e2VDGszSjfFZ7ZwL8p6u7e7N7dM2vefrvdVm3fE/9+Web7+cddz4nFB/6x
-        n728oJ/Drzdqe98sHb5vOxLcLHmfbLr8tcaH/YzSRo+rNondu5p0ZbYLunrd57/pOq9+6qNk
-        fl2VTon8Dc84WWapB86qKZB8uNGwvFzebY7TLY/g4/MqE4qmHPup91QltD4gQomlOCPRUIu5
-        qDgRABcI0OAzAwAA
-X-CMS-MailID: 20230602110658eucas1p27d31eeac2417f9e19f8d4b6de012209b
-X-Msg-Generator: CA
-X-RootMTR: 20230602110658eucas1p27d31eeac2417f9e19f8d4b6de012209b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230602110658eucas1p27d31eeac2417f9e19f8d4b6de012209b
-References: <20230602110638.789426-1-j.granados@samsung.com>
-        <CGME20230602110658eucas1p27d31eeac2417f9e19f8d4b6de012209b@eucas1p2.samsung.com>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is part of the effort to remove the empty element at the end of
-ctl_table structs. "child" was a deprecated elem in this struct and was
-being used to differentiate between two types of ctl_tables: "normal"
-and "permanently emtpy".
+On 6/2/23 1:11 AM, Peter Xu wrote:
+> On Thu, Jun 01, 2023 at 01:16:14PM +0500, Muhammad Usama Anjum wrote:
+>> On 6/1/23 2:46 AM, Peter Xu wrote:
+>>> Muhammad,
+>>>
+>>> Sorry, I probably can only review the non-interface part, and leave the
+>>> interface/buffer handling, etc. review for others and real potential users
+>>> of it..
+>> Thank you so much for the review. I think mostly we should be okay with
+>> interface as everybody has been making suggestions over the past revisions.
+>>
+>>>
+>>> On Thu, May 25, 2023 at 01:55:14PM +0500, Muhammad Usama Anjum wrote:
+>>>> +static inline void make_uffd_wp_huge_pte(struct vm_area_struct *vma,
+>>>> +					 unsigned long addr, pte_t *ptep,
+>>>> +					 pte_t ptent)
+>>>> +{
+>>>> +	pte_t old_pte;
+>>>> +
+>>>> +	if (!huge_pte_none(ptent)) {
+>>>> +		old_pte = huge_ptep_modify_prot_start(vma, addr, ptep);
+>>>> +		ptent = huge_pte_mkuffd_wp(old_pte);
+>>>> +		ptep_modify_prot_commit(vma, addr, ptep, old_pte, ptent);
+>>>
+>>> huge_ptep_modify_prot_start()?
+>> Sorry, I didn't realized that huge_ptep_modify_prot_start() is different
+>> from its pte version.
+> 
+> Here I meant huge_ptep_modify_prot_commit()..
+I'll update.
 
-What changed?:
-* Replace "child" with a u8 "flag" variable and use it to differentiate
-  between types by refactoring the permanently empty helper functions.
-* Remove the "empty child" check from sysctl_check_table
-* Remove count_subheaders function as there is no longer a need to
-  calculate how many headers there are for every child
-* Remove the recursive call to unregister_sysctl_table as there is no
-  need to traverse down the child tree any longer
-* Add a new SYSCTL_PERM_EMPTY_DIR binary flag
-* Remove the last remanence of child from partport/procfs.c
+> 
+>>
+>>>
+>>> The other thing is what if it's a pte marker already?  What if a hugetlb
+>>> migration entry?  Please check hugetlb_change_protection().
+>> I've updated it in more better way. Please let me know what do you think
+>> about the following:
+>>
+>> static inline void make_uffd_wp_huge_pte(struct vm_area_struct *vma,
+>> 					 unsigned long addr, pte_t *ptep,
+>> 					 pte_t ptent)
+>> {
+>> 	if (is_hugetlb_entry_hwpoisoned(ptent) || is_pte_marker(ptent))
+>> 		return;
+>>
+>> 	if (is_hugetlb_entry_migration(ptent))
+>> 		set_huge_pte_at(vma->vm_mm, addr, ptep,
+>> 				pte_swp_mkuffd_wp(ptent));
+>> 	else if (!huge_pte_none(ptent))
+>> 		ptep_modify_prot_commit(vma, addr, ptep, ptent,
+>> 					huge_pte_mkuffd_wp(ptent));
+>> 	else
+>> 		set_huge_pte_at(vma->vm_mm, addr, ptep,
+>> 				make_pte_marker(PTE_MARKER_UFFD_WP));
+>> }
+> 
+> the is_pte_marker() check can be extended to double check
+> pte_marker_uffd_wp() bit, but shouldn't matter a lot since besides the
+> uffd-wp bit currently we only support swapin error which should sigbus when
+> accessed, so no point in tracking anyway.
+Yeah, we are good with what we have as even if more bits are supported in
+pte markers, this function is only reached when UNPOPULATED + ASYNC WP are
+enabled. So no other bit would be set on the marker.
 
-Signed-off-by: Joel Granados <j.granados@samsung.com>
----
- drivers/parport/procfs.c |  1 -
- fs/proc/proc_sysctl.c    | 81 +++++++++-------------------------------
- include/linux/sysctl.h   |  4 +-
- 3 files changed, 20 insertions(+), 66 deletions(-)
+> 
+>>
+>> As we always set UNPOPULATED, so markers are always set on none ptes
+>> initially. Is it possible that a none pte becomes present, then swapped and
+>> finally none again? So I'll do the following addition for make_uffd_wp_pte():
+>>
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -1800,6 +1800,9 @@ static inline void make_uffd_wp_pte(struct
+>> vm_area_struct *vma,
+>>  	} else if (is_swap_pte(ptent)) {
+>>  		ptent = pte_swp_mkuffd_wp(ptent);
+>>  		set_pte_at(vma->vm_mm, addr, pte, ptent);
+>> +	} else {
+>> +		set_pte_at(vma->vm_mm, addr, pte,
+>> +			   make_pte_marker(PTE_MARKER_UFFD_WP));
+>>  	}
+>>  }
+> 
+> Makes sense, you can leverage userfaultfd_wp_use_markers() here, and you
+> should probably keep the protocol (only set the marker when WP_UNPOPULATED
+> for anon).
+This function is only reachable when UNPOPULATED + Async WP are set. So we
+don't need to use userfaultfd_wp_use_markers().
 
-diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
-index 0f2d2e1ee28e..4e5b972c3e26 100644
---- a/drivers/parport/procfs.c
-+++ b/drivers/parport/procfs.c
-@@ -387,7 +387,6 @@ parport_device_sysctl_template = {
- 			.data		= NULL,
- 			.maxlen		= 0,
- 			.mode		= 0555,
--			.child		= NULL
- 		},
- 		{}
- 	}
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 07804097f997..a180bc952397 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -29,9 +29,8 @@ static const struct file_operations proc_sys_dir_file_operations;
- static const struct inode_operations proc_sys_dir_operations;
- 
- /* Support for permanently empty directories */
--
- struct ctl_table sysctl_mount_point[] = {
--	{ }
-+	{.flags = SYSCTL_PERM_EMPTY_DIR }
- };
- 
- /**
-@@ -48,21 +47,14 @@ struct ctl_table_header *register_sysctl_mount_point(const char *path)
- }
- EXPORT_SYMBOL(register_sysctl_mount_point);
- 
--static bool is_empty_dir(struct ctl_table_header *head)
--{
--	return head->ctl_table[0].child == sysctl_mount_point;
--}
--
--static void set_empty_dir(struct ctl_dir *dir)
--{
--	dir->header.ctl_table[0].child = sysctl_mount_point;
--}
--
--static void clear_empty_dir(struct ctl_dir *dir)
--
--{
--	dir->header.ctl_table[0].child = NULL;
--}
-+#define sysctl_is_perm_empty_ctl_table(tptr)		\
-+	(tptr[0].flags & SYSCTL_PERM_EMPTY_DIR)
-+#define sysctl_is_perm_empty_ctl_header(hptr)		\
-+	(sysctl_is_perm_empty_ctl_table(hptr->ctl_table))
-+#define sysctl_set_perm_empty_ctl_header(hptr)		\
-+	(hptr->ctl_table[0].flags |= SYSCTL_PERM_EMPTY_DIR)
-+#define sysctl_clear_perm_empty_ctl_header(hptr)	\
-+	(hptr->ctl_table[0].flags &= ~SYSCTL_PERM_EMPTY_DIR)
- 
- void proc_sys_poll_notify(struct ctl_table_poll *poll)
- {
-@@ -230,20 +222,22 @@ static void erase_header(struct ctl_table_header *head)
- static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
- {
- 	struct ctl_table *entry;
-+	struct ctl_table_header *dir_h = &dir->header;
- 	int err;
- 
-+
- 	/* Is this a permanently empty directory? */
--	if (is_empty_dir(&dir->header))
-+	if (sysctl_is_perm_empty_ctl_header(dir_h))
- 		return -EROFS;
- 
- 	/* Am I creating a permanently empty directory? */
--	if (header->ctl_table == sysctl_mount_point) {
-+	if (sysctl_is_perm_empty_ctl_table(header->ctl_table)) {
- 		if (!RB_EMPTY_ROOT(&dir->root))
- 			return -EINVAL;
--		set_empty_dir(dir);
-+		sysctl_set_perm_empty_ctl_header(dir_h);
- 	}
- 
--	dir->header.nreg++;
-+	dir_h->nreg++;
- 	header->parent = dir;
- 	err = insert_links(header);
- 	if (err)
-@@ -259,9 +253,9 @@ static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
- 	put_links(header);
- fail_links:
- 	if (header->ctl_table == sysctl_mount_point)
--		clear_empty_dir(dir);
-+		sysctl_clear_perm_empty_ctl_header(dir_h);
- 	header->parent = NULL;
--	drop_sysctl_table(&dir->header);
-+	drop_sysctl_table(dir_h);
- 	return err;
- }
- 
-@@ -479,7 +473,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
- 		inode->i_mode |= S_IFDIR;
- 		inode->i_op = &proc_sys_dir_operations;
- 		inode->i_fop = &proc_sys_dir_file_operations;
--		if (is_empty_dir(head))
-+		if (sysctl_is_perm_empty_ctl_header(head))
- 			make_empty_dir_inode(inode);
- 	}
- 
-@@ -1136,9 +1130,6 @@ static int sysctl_check_table(const char *path, struct ctl_table *table)
- 	struct ctl_table *entry;
- 	int err = 0;
- 	list_for_each_table_entry(entry, table) {
--		if (entry->child)
--			err |= sysctl_err(path, entry, "Not a file");
--
- 		if ((entry->proc_handler == proc_dostring) ||
- 		    (entry->proc_handler == proc_dobool) ||
- 		    (entry->proc_handler == proc_dointvec) ||
-@@ -1465,25 +1456,6 @@ void __init __register_sysctl_init(const char *path, struct ctl_table *table,
- 	kmemleak_not_leak(hdr);
- }
- 
--static int count_subheaders(struct ctl_table *table)
--{
--	int has_files = 0;
--	int nr_subheaders = 0;
--	struct ctl_table *entry;
--
--	/* special case: no directory and empty directory */
--	if (!table || !table->procname)
--		return 1;
--
--	list_for_each_table_entry(entry, table) {
--		if (entry->child)
--			nr_subheaders += count_subheaders(entry->child);
--		else
--			has_files = 1;
--	}
--	return nr_subheaders + has_files;
--}
--
- static void put_links(struct ctl_table_header *header)
- {
- 	struct ctl_table_set *root_set = &sysctl_table_root.default_set;
-@@ -1546,28 +1518,11 @@ static void drop_sysctl_table(struct ctl_table_header *header)
-  */
- void unregister_sysctl_table(struct ctl_table_header * header)
- {
--	int nr_subheaders;
- 	might_sleep();
- 
- 	if (header == NULL)
- 		return;
- 
--	nr_subheaders = count_subheaders(header->ctl_table_arg);
--	if (unlikely(nr_subheaders > 1)) {
--		struct ctl_table_header **subheaders;
--		int i;
--
--		subheaders = (struct ctl_table_header **)(header + 1);
--		for (i = nr_subheaders -1; i >= 0; i--) {
--			struct ctl_table_header *subh = subheaders[i];
--			struct ctl_table *table = subh->ctl_table_arg;
--			unregister_sysctl_table(subh);
--			kfree(table);
--		}
--		kfree(header);
--		return;
--	}
--
- 	spin_lock(&sysctl_lock);
- 	drop_sysctl_table(header);
- 	spin_unlock(&sysctl_lock);
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 653b66c762b1..0cd79a7f1d3e 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -137,7 +137,7 @@ struct ctl_table {
- 	void *data;
- 	int maxlen;
- 	umode_t mode;
--	struct ctl_table *child;	/* Deprecated */
-+	u8 flags;
- 	proc_handler *proc_handler;	/* Callback for text formatting */
- 	struct ctl_table_poll *poll;
- 	void *extra1;
-@@ -229,7 +229,7 @@ extern int unaligned_enabled;
- extern int unaligned_dump_stack;
- extern int no_unaligned_warning;
- 
--extern struct ctl_table sysctl_mount_point[];
-+#define SYSCTL_PERM_EMPTY_DIR	(1 << 0)
- 
- #else /* CONFIG_SYSCTL */
- 
+> 
+>>
+>>
+>>
+>>
+>>>
+>>>> +	} else {
+>>>> +		set_huge_pte_at(vma->vm_mm, addr, ptep,
+>>>> +				make_pte_marker(PTE_MARKER_UFFD_WP));
+>>>> +	}
+>>>> +}
+>>>> +#endif
+>>>
+>>> [...]
+>>>
+>>>> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
+>>>> +				  unsigned long end, struct mm_walk *walk)
+>>>> +{
+>>>> +	struct pagemap_scan_private *p = walk->private;
+>>>> +	struct vm_area_struct *vma = walk->vma;
+>>>> +	unsigned long addr = end;
+>>>> +	pte_t *pte, *orig_pte;
+>>>> +	spinlock_t *ptl;
+>>>> +	bool is_written;
+>>>> +	int ret = 0;
+>>>> +
+>>>> +	arch_enter_lazy_mmu_mode();
+>>>> +
+>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>> +	ptl = pmd_trans_huge_lock(pmd, vma);
+>>>> +	if (ptl) {
+>>>> +		unsigned long n_pages = (end - start)/PAGE_SIZE;
+>>>> +
+>>>> +		if (p->max_pages && n_pages > p->max_pages - p->found_pages)
+>>>> +			n_pages = p->max_pages - p->found_pages;
+>>>> +
+>>>> +		is_written = !is_pmd_uffd_wp(*pmd);
+>>>> +
+>>>> +		/*
+>>>> +		 * Break huge page into small pages if the WP operation need to
+>>>> +		 * be performed is on a portion of the huge page.
+>>>> +		 */
+>>>> +		if (is_written && IS_PM_SCAN_WP(p->flags) &&
+>>>> +		    n_pages < HPAGE_SIZE/PAGE_SIZE) {
+>>>> +			spin_unlock(ptl);
+>>>> +
+>>>> +			split_huge_pmd(vma, pmd, start);
+>>>> +			goto process_smaller_pages;
+>>>> +		}
+>>>> +
+>>>> +		if (IS_PM_SCAN_GET(p->flags))
+>>>> +			ret = pagemap_scan_output(is_written, vma->vm_file,
+>>>> +						  pmd_present(*pmd),
+>>>> +						  is_swap_pmd(*pmd),
+>>>> +						  p, start, n_pages);
+>>>> +
+>>>> +		if (ret >= 0 && is_written && IS_PM_SCAN_WP(p->flags))
+>>>> +			make_uffd_wp_pmd(vma, addr, pmd);
+>>>> +
+>>>> +		if (IS_PM_SCAN_WP(p->flags))
+>>>> +			flush_tlb_range(vma, start, end);
+>>>> +
+>>>> +		spin_unlock(ptl);
+>>>> +
+>>>> +		arch_leave_lazy_mmu_mode();
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +process_smaller_pages:
+>>>> +	if (pmd_trans_unstable(pmd)) {
+>>>> +		arch_leave_lazy_mmu_mode();
+>>>> +		return 0;
+>>>
+>>> I'm not sure whether this is right..  Shouldn't you return with -EAGAIN and
+>>> let the user retry?  Returning 0 means you'll move on with the next pmd
+>>> afaict and ignoring this one.
+>> This has come up before. We are just replicating pagemap_pmd_range() here
+>> as we are doing almost the same thing through IOCTL. It doesn't return any
+>> error in this case and just skips it. So we are doing the same.
+> 
+> Hmm, is it a bug for pagemap?  pagemapread.buffer should be linear to the
+> address range to be scanned to me.  If it skips some unstable pmd without
+> filling in anything it seems everything later will be shifted with
+> PMD_SIZE..  I had a feeling that it should set walk->action==ACTION_AGAIN
+> before return.
+I don't think this is a bug if this is how it was implemented in the first
+place. In this task_mmu.c file, we can find several examples of the same
+pattern that error isn't returned if pmd_trans_unstable() succeeds.
+
+> 
+
 -- 
-2.30.2
-
+BR,
+Muhammad Usama Anjum
