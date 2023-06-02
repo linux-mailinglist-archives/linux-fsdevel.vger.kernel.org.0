@@ -2,127 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02E60720503
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 16:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FB07720582
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Jun 2023 17:09:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236300AbjFBO6f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Jun 2023 10:58:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52638 "EHLO
+        id S236461AbjFBPJb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Jun 2023 11:09:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235249AbjFBO6e (ORCPT
+        with ESMTP id S236478AbjFBPJW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Jun 2023 10:58:34 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 337E4123
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Jun 2023 07:58:33 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-173-48-119-27.bstnma.fios.verizon.net [173.48.119.27])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 352EwGbf018150
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 2 Jun 2023 10:58:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1685717898; bh=dm8M0XPjrZMbj5kv6cSbTBNglQs4/hYnlvZYkoIUjfE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=MRom152hJvxtxgO34t1PpVfrQ8bgrFNaLf+9nEPtT5UX+l416vDplleCtKszLc8SW
-         qtTpkT6beYpsRV0Dxq56/J9jJcFArzbDnopIkMAL6Wk6CBtu8zDiDb8h+pdzj5jJZ9
-         EF19XNZTFb5VWIvXJ296XTTPUQEP0/VY8DZv1m6OwXUltwtlLH2y2GseoSSaKje59d
-         kpIOZFCnv6HuaMDQ4KD9Ag2fpPYwvz7DQzeKHZLUmNM9x1WXfpEXeBxCv6VyDL9de8
-         A1FJiciM7XaPlAnYgoNOceDWyq6Bl1L85HUHUfx9F9HmTKuHHrUOq1ujBXs0fizqcs
-         VlshFHizmkjug==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 7F68315C02EE; Fri,  2 Jun 2023 10:58:16 -0400 (EDT)
-Date:   Fri, 2 Jun 2023 10:58:16 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Fri, 2 Jun 2023 11:09:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D510E48
+        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Jun 2023 08:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685718509;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jyBtAHnxIDOUxFx8QcCqc48iyvS91zdxptS6bgS5LhE=;
+        b=Kwvr6nEJPCjtsqpQeS5DkJPp4skcMBfsM/eEaY66xVcEBuUvWEFlEnigdnjbEL9T9Fyd48
+        fl0Q1GLtics6RaaYtjVPFa2IN43Jh0npXlLE3kDeZUl3VNIo9KvdWrqvBVEcRKzUzqkY16
+        cztjpvx+9dgyMEGN8N0rmwlRkp3Q2n0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-652-HJKW5r7wNUG_h4BsM00Cfg-1; Fri, 02 Jun 2023 11:08:26 -0400
+X-MC-Unique: HJKW5r7wNUG_h4BsM00Cfg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 42DA4811E8F;
+        Fri,  2 Jun 2023 15:08:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 30388492B00;
+        Fri,  2 Jun 2023 15:08:22 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
         Christian Brauner <brauner@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: uuid ioctl - was: Re: [PATCH] overlayfs: Trigger file
- re-evaluation by IMA / EVM after writes
-Message-ID: <20230602145816.GA1144615@mit.edu>
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
- <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
- <20230520-angenehm-orangen-80fdce6f9012@brauner>
- <ZGqgDjJqFSlpIkz/@dread.disaster.area>
- <20230522-unsensibel-backblech-7be4e920ba87@brauner>
- <20230602012335.GB16848@frogsfrogsfrogs>
- <20230602042714.GE1128744@mit.edu>
- <ZHmNksPcA9tudSVQ@dread.disaster.area>
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCH net-next v3 05/11] splice, net: Fix SPLICE_F_MORE signalling in splice_direct_to_actor()
+Date:   Fri,  2 Jun 2023 16:07:46 +0100
+Message-ID: <20230602150752.1306532-6-dhowells@redhat.com>
+In-Reply-To: <20230602150752.1306532-1-dhowells@redhat.com>
+References: <20230602150752.1306532-1-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZHmNksPcA9tudSVQ@dread.disaster.area>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 02, 2023 at 04:34:58PM +1000, Dave Chinner wrote:
-> IOWs, not only was the ext4 functionality was poorly thought out, it
-> was *poorly implemented*.
+splice_direct_to_actor() doesn't manage SPLICE_F_MORE correctly[1] - and,
+as a result, it incorrectly signals/fails to signal MSG_MORE when splicing
+to a socket.  The problem I'm seeing happens when a short splice occurs
+because we got a short read due to hitting the EOF on a file: as the length
+read (read_len) is less than the remaining size to be spliced (len),
+SPLICE_F_MORE (and thus MSG_MORE) is set.
 
-Shrug.  It's 100% compatible with "tune2fs -U <uuid>" which existed
-prior to sb->s_uuid and /proc/XXX/mountstats, and which has allowed
-on-line, mounted changes of the UUID.  So as far as I'm concerned,
-it's "working as intended".  It fixed a real bug where racing
-resize2fs and tune2fs -U in separate systemd unit files could result
-in superblock checksum failures, and it fixed the that issue.
+The issue is that, for the moment, we have no way to know *why* the short
+read occurred and so can't make a good decision on whether we *should* keep
+MSG_MORE set.  Further, the argument can be made that it should be left to
+userspace to decide how to handle it - userspace could perform some sort of
+cancellation for example.
 
-It doesn't make any changes to how on-line "tune2fs -U <uuid>"
-functioned, because the definition of s_uuid wasn't terribly well
-defined (and "tune2fs -U" predates it in any case).  Originally s_uuid
-was just to allow /proc/XXX/mountstats expose the UUID, but at this
-point, I don't anyone has a complete understanding of other
-assumptions of how overlayfs, IMA, and other userspace utilities have
-in terms of the assumption of how file system UUID should be used and
-what it denotes.
+MSG_SENDPAGE_NOTLAST was added to work around this, but that is also set
+incorrectly under some circumstances - for example if a short read fills a
+single pipe_buffer, but the next read would return more (seqfile can do
+this).
 
-> However, we have a golden image that every client image is cloned
-> from. Say we set a special feature bit in that golden image that
-> means "need UUID regeneration". Then on the first mount of the
-> cloned image after provisioning, the filesystem sees the bit and
-> automatically regenerates the UUID with needing any help from
-> userspace at all.
+This was observed with the multi_chunk_sendfile tests in the tls kselftest
+program.  Some of those tests would hang and time out when the last chunk
+of file was less than the sendfile request size:
 
-> Problem solved, yes? We don't need userspace to change the uuid on
-> first boot of the newly provisioned VM - the filesystem just makes
-> it happen.
+	build/kselftest/net/tls -r tls.12_aes_gcm.multi_chunk_sendfile
 
-I agree that's a good design --- and ten years now, from all of the
-users using old versions of RHEL have finally migrated off to a
-version of some enterprise linux that supports this new feature, the
-cloud agents which are using "tune2fs -U <uuid>" or "xfs_admin -U
-<uuid>" can stop relying on it and switching to this new scheme.
+This has been observed before[2] and worked around in AF_TLS[3].
 
-What we could do is to make it easy to determine whether the kernel
-supports the "UUID regeneration" feature, and whether the file system
-had its UUID regnerated (because some cloud images generated using an
-older distro's installer won't request the UUID renegeration), so that
-cloud agents (which are typically installed as a daemon that starts
-out of an init.d or systemd unit file) will know whether or not they
-need to fallback to the userspace UUID regeneration.
+Fix this by making splice_direct_to_actor() always signal SPLICE_F_MORE if
+we haven't yet hit the requested operation size.  SPLICE_F_MORE remains
+signalled if the user passed it in to splice() but otherwise gets cleared
+when we've read sufficient data to fulfill the request.  The cleanup of a
+short splice to userspace is left to userspace.
 
-For cloud agents which are installed as a one-shop executable run out
-of the initramfs, we might be able to change the UUID before the root
-file system is mounted.  Of course, there are those userspace setups
-where the use of an initramfs is optional or not used at all.
+[!] Note that this changes user-visible behaviour.  It will cause the
+    multi_chunk_sendfile tests in the TLS kselftest to fail.  This failure
+    in the testsuite will be addressed in a subsequent patch by making
+    userspace do a zero-length send().
 
-So for the short-term, we're going to be stuck with userspace mediated
-UUID changes, and if there are going to be userspace or kernel
-subsystems that are going to be surprised when UUID changes out from
-under them.  So having some kind of documentation which describes how
-various subsystems are using the file system UUID, and whether they
-are getting it from sb->s_uuid, /proc/XXX/mountstats, or some other
-source, that would probably be useful.  After all, system
-administrators' access to "tune2fs -U" and "xfs_admin -U" isn't going
-away, and if we're saying "it's up to them to understand the
-implications", it's nice if we document the gotchas.   :-)
+It appears that SPLICE_F_MORE is only used by splice-to-socket.
 
-	       	    	       		    - Ted
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Jan Kara <jack@suse.cz>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: David Hildenbrand <david@redhat.com>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Chuck Lever <chuck.lever@oracle.com>
+cc: Boris Pismenny <borisp@nvidia.com>
+cc: John Fastabend <john.fastabend@gmail.com>
+cc: Eric Dumazet <edumazet@google.com>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-block@vger.kernel.org
+cc: linux-mm@kvack.org
+cc: netdev@vger.kernel.org
+
+Link: https://lore.kernel.org/r/499791.1685485603@warthog.procyon.org.uk/ [1]
+Link: https://lore.kernel.org/r/1591392508-14592-1-git-send-email-pooja.trivedi@stackpath.com/ [2]
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/?id=d452d48b9f8b1a7f8152d33ef52cfd7fe1735b0a [3]
+---
+ fs/splice.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/fs/splice.c b/fs/splice.c
+index 9b1d43c0c562..c71bd8e03469 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1052,13 +1052,17 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+ 	 */
+ 	bytes = 0;
+ 	len = sd->total_len;
++
++	/* Don't block on output, we have to drain the direct pipe. */
+ 	flags = sd->flags;
++	sd->flags &= ~SPLICE_F_NONBLOCK;
+ 
+ 	/*
+-	 * Don't block on output, we have to drain the direct pipe.
++	 * We signal MORE until we've read sufficient data to fulfill the
++	 * request and we keep signalling it if the caller set it.
+ 	 */
+-	sd->flags &= ~SPLICE_F_NONBLOCK;
+ 	more = sd->flags & SPLICE_F_MORE;
++	sd->flags |= SPLICE_F_MORE;
+ 
+ 	WARN_ON_ONCE(!pipe_empty(pipe->head, pipe->tail));
+ 
+@@ -1074,14 +1078,12 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+ 		sd->total_len = read_len;
+ 
+ 		/*
+-		 * If more data is pending, set SPLICE_F_MORE
+-		 * If this is the last data and SPLICE_F_MORE was not set
+-		 * initially, clears it.
++		 * If we now have sufficient data to fulfill the request then
++		 * we clear SPLICE_F_MORE if it was not set initially.
+ 		 */
+-		if (read_len < len)
+-			sd->flags |= SPLICE_F_MORE;
+-		else if (!more)
++		if (read_len >= len && !more)
+ 			sd->flags &= ~SPLICE_F_MORE;
++
+ 		/*
+ 		 * NOTE: nonblocking mode only applies to the input. We
+ 		 * must not do the output in nonblocking mode as then we
+
