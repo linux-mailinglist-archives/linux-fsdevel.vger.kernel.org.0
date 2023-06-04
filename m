@@ -2,51 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECF0D7218EC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jun 2023 19:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16B957218F5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jun 2023 19:58:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231723AbjFDRzv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jun 2023 13:55:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
+        id S231964AbjFDR6Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jun 2023 13:58:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjFDRzu (ORCPT
+        with ESMTP id S229886AbjFDR6O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jun 2023 13:55:50 -0400
+        Sun, 4 Jun 2023 13:58:14 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2762BC;
-        Sun,  4 Jun 2023 10:55:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806C0BD;
+        Sun,  4 Jun 2023 10:58:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 662AB60D32;
-        Sun,  4 Jun 2023 17:55:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB96AC433EF;
-        Sun,  4 Jun 2023 17:55:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1461860B2F;
+        Sun,  4 Jun 2023 17:58:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E5FC433EF;
+        Sun,  4 Jun 2023 17:58:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685901348;
-        bh=Fw7qmVrNg43DGtGBefRNuqSd6Ph80/p5EHgHUEbZI3c=;
+        s=k20201202; t=1685901492;
+        bh=dLDXF1XgacBVFEQEKeT2uVfRRN9gBZ9P2YcvSsngpE4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DfkluhMJBhmlgGvLfz4SQxAvixYdAGsjzQ7VXXeRPKgYvo4XXMdhfcZrihXHTKrY6
-         vUym/3KOWUIb5KbZMPxc/OsBIDCEx54AsbH9CrMlo9R7tKfLJOFkYOxwdYp3mjeOeT
-         VPvKICT41+0G/jA512Uy+vEUEcuJGzTaNLb81uxAdpUcEj8MzSP2kH+BxX+9d0Xb49
-         ygZxb82w2mcUw6Wct+KdM92a7MJ3skiSlQHLF+Oz2Kj+RaHBKCr3Hg78Ry+UCrquO5
-         9EqSPwMYVtDkB+XL89BjCPk+Y4IKBKjVjgjpLueg04fo7g752foS0GHiel5Z/a8hA8
-         DJcCf9GGUwULQ==
-Date:   Sun, 4 Jun 2023 10:55:48 -0700
+        b=oijjlbC6vAyW7Chvu8CilrlkOdldBm7SMPOv/dc5m4D5eyItKYY5oAxDp3DFG7Nwr
+         r0YbPRoFm8Dz6Cz/6Ia26f9qg9+PbRmIDUclmezdm6Ovzsal2NLeVm1L6JgOicPh91
+         gSCu+yXbVUbzGIB0b8xv1L4eS96H8fnkvrcQfixOHsps96JrLLMmUV+Zi0Wskvng6c
+         NHvIytztWhG2/0ofb0upBPKHZkXWRUPcWVBat6VSl6CprrdeSb7h7i69zeGXZU2/mz
+         /D9Wu2nuFx/6cegXWnfufqfemm4uvEWgSMX/DQawpagYBN6FkCuOmW8bCY3F9Hfzqg
+         WqnacgYj534zw==
+Date:   Sun, 4 Jun 2023 10:58:11 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Wang Yugui <wangyugui@e16-tech.com>,
         Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 2/7] doc: Correct the description of ->release_folio
-Message-ID: <20230604175548.GA72241@frogsfrogsfrogs>
+Subject: Re: [PATCH v2 1/7] iomap: Remove large folio handling in
+ iomap_invalidate_folio()
+Message-ID: <20230604175811.GC72241@frogsfrogsfrogs>
 References: <20230602222445.2284892-1-willy@infradead.org>
- <20230602222445.2284892-3-willy@infradead.org>
+ <20230602222445.2284892-2-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230602222445.2284892-3-willy@infradead.org>
+In-Reply-To: <20230602222445.2284892-2-willy@infradead.org>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -57,55 +58,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 02, 2023 at 11:24:39PM +0100, Matthew Wilcox (Oracle) wrote:
-> The filesystem ->release_folio method is called under more circumstances
-> now than when the documentation was written.  The second sentence
-> describing the interpretation of the return value is the wrong polarity
-> (false indicates failure, not success).  And the third sentence is also
-> wrong (the kernel calls try_to_free_buffers() instead).
+On Fri, Jun 02, 2023 at 11:24:38PM +0100, Matthew Wilcox (Oracle) wrote:
+> We do not need to release the iomap_page in iomap_invalidate_folio()
+> to allow the folio to be split.  The splitting code will call
+> ->release_folio() if there is still per-fs private data attached to
+> the folio.  At that point, we will check if the folio is still dirty
+> and decline to release the iomap_page.  It is possible to trigger the
+> warning in perfectly legitimate circumstances (eg if a disk read fails,
+> we do a partial write to the folio, then we truncate the folio), which
+> will cause those writes to be lost.
 > 
-> So replace the entire paragraph with a detailed description of what the
-> state of the folio may be, the meaning of the gfp parameter, why the
-> method is being called and what the filesystem is expected to do.
-> 
+> Fixes: 60d8231089f0 ("iomap: Support large folios in invalidatepage")
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  Documentation/filesystems/locking.rst | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-> index aa1a233b0fa8..91dc9d5bc602 100644
-> --- a/Documentation/filesystems/locking.rst
-> +++ b/Documentation/filesystems/locking.rst
-> @@ -374,10 +374,16 @@ invalidate_lock before invalidating page cache in truncate / hole punch
->  path (and thus calling into ->invalidate_folio) to block races between page
->  cache invalidation and page cache filling functions (fault, read, ...).
->  
-> -->release_folio() is called when the kernel is about to try to drop the
-> -buffers from the folio in preparation for freeing it.  It returns false to
-> -indicate that the buffers are (or may be) freeable.  If ->release_folio is
-> -NULL, the kernel assumes that the fs has no private interest in the buffers.
-> +->release_folio() is called when the MM wants to make a change to the
-> +folio that would invalidate the filesystem's private data.  For example,
-> +it may be about to be removed from the address_space or split.  The folio
-> +is locked and not under writeback.  It may be dirty.  The gfp parameter is
-> +not usually used for allocation, but rather to indicate what the filesystem
-> +may do to attempt to free the private data.  The filesystem may
-> +return false to indicate that the folio's private data cannot be freed.
-> +If it returns true, it should have already removed the private data from
-> +the folio.  If a filesystem does not provide a ->release_folio method,
-> +the kernel will call try_to_free_buffers().
 
-the MM?  Since you changed that above... :)
-
-With that nit fixed,
+Sounds reasonable to me...
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
->  
->  ->free_folio() is called when the kernel has dropped the folio
->  from the page cache.
+> ---
+>  fs/iomap/buffered-io.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 063133ec77f4..08ee293c4117 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -508,11 +508,6 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
+>  		WARN_ON_ONCE(folio_test_writeback(folio));
+>  		folio_cancel_dirty(folio);
+>  		iomap_page_release(folio);
+> -	} else if (folio_test_large(folio)) {
+> -		/* Must release the iop so the page can be split */
+> -		WARN_ON_ONCE(!folio_test_uptodate(folio) &&
+> -			     folio_test_dirty(folio));
+> -		iomap_page_release(folio);
+>  	}
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
 > -- 
 > 2.39.2
 > 
