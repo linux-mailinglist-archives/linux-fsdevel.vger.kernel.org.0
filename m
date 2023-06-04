@@ -2,53 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C5048721924
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jun 2023 20:09:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57630721927
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jun 2023 20:10:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231739AbjFDSJa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jun 2023 14:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36410 "EHLO
+        id S231754AbjFDSKM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jun 2023 14:10:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbjFDSJ2 (ORCPT
+        with ESMTP id S229886AbjFDSKL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jun 2023 14:09:28 -0400
+        Sun, 4 Jun 2023 14:10:11 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A1AFCD;
-        Sun,  4 Jun 2023 11:09:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA92B0;
+        Sun,  4 Jun 2023 11:10:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CBC6D60F19;
-        Sun,  4 Jun 2023 18:09:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A7FC433EF;
-        Sun,  4 Jun 2023 18:09:26 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CEA1460BD4;
+        Sun,  4 Jun 2023 18:10:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33464C433D2;
+        Sun,  4 Jun 2023 18:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685902166;
-        bh=snXEXkDAnrxTtoSnSl3U0rxF0IrezhNODcRFu4UYoi8=;
+        s=k20201202; t=1685902209;
+        bh=RVfmPm1NDc929R9ZBfjOMBc6v8Z+/BxE7sw65bIFSd4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AuTtYdRCJ1ZJZ8ihd4cH0u0I3rsoduvzeSQR4NxZRaaI0Qj+oVdkmacdoUqTMVJ2I
-         kzVEmwR9laVDs9IWyOF6dNx3D5IDvrlw8/mDNBf9GKYCbPtgfgbrxaKrF12wbVdAig
-         WMpyEruR7CxcfnhKHEUg+3YZwkNIQ9l9BcG5hHjx1oJoETk3WuqZPWJBrjKD9KTmbk
-         fr8YoWiOy8vGhao+Qq4dBbSUWGRkU6v5KFVDPWvnmOn3eM/hT2U6dHj/At0qtIJ2th
-         k+0m3mnYVhKYgESWq6CQIq27aGQ/1cQTtu3eyDLa3/JL2tZnxbqcLtUxd3Uw+c8ZsT
-         pFgg16/EQBJag==
-Date:   Sun, 4 Jun 2023 11:09:25 -0700
+        b=SlIVRk9+F2xkLQpF4vY6FHrME1Ldj0tYTU/Pj/H9i4pxMr5JeO3Yys6CwAeqPIbbt
+         WL/VgEw30qMlu1XL2RKrUuyHB04bFM8dSaIaQma+pbTIljIfBXlCp/YidH4eQsS6mO
+         0CQ5Rk6RAAyQSm+9Bh0gRlC2OkcucS9NqwGNF5Nzmlr03Bk7lx4XmDfgP21e81ywK2
+         pcFyUZu4vGNmhlv/VKAjerjZPkqywoEuFzXf+4nEie6FLITuCeKar0IgujWqnwMQgD
+         HiybXxABQPRfN9OKyIHCS0ukRK9xY1j5WkuQ9kFQRDlTvErMpTBZD+fZN75gkwBFbQ
+         GH/OzQfQlMk/g==
+Date:   Sun, 4 Jun 2023 11:10:08 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Wang Yugui <wangyugui@e16-tech.com>,
         Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 5/7] filemap: Allow __filemap_get_folio to allocate
- large folios
-Message-ID: <20230604180925.GF72241@frogsfrogsfrogs>
+Subject: Re: [PATCH v2 6/7] iomap: Create large folios in the buffered write
+ path
+Message-ID: <20230604181008.GG72241@frogsfrogsfrogs>
 References: <20230602222445.2284892-1-willy@infradead.org>
- <20230602222445.2284892-6-willy@infradead.org>
+ <20230602222445.2284892-7-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230602222445.2284892-6-willy@infradead.org>
+In-Reply-To: <20230602222445.2284892-7-willy@infradead.org>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -59,163 +58,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 02, 2023 at 11:24:42PM +0100, Matthew Wilcox (Oracle) wrote:
-> Allow callers of __filemap_get_folio() to specify a preferred folio
-> order in the FGP flags.  This is only honoured in the FGP_CREATE path;
-> if there is already a folio in the page cache that covers the index,
-> we will return it, no matter what its order is.  No create-around is
-> attempted; we will only create folios which start at the specified index.
-> Unmodified callers will continue to allocate order 0 folios.
+On Fri, Jun 02, 2023 at 11:24:43PM +0100, Matthew Wilcox (Oracle) wrote:
+> Use the size of the write as a hint for the size of the folio to create.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/pagemap.h | 23 ++++++++++++++++++++++
->  mm/filemap.c            | 42 ++++++++++++++++++++++++++++-------------
->  mm/readahead.c          | 13 -------------
->  3 files changed, 52 insertions(+), 26 deletions(-)
-> 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 7ab57a2bb576..667ce668f438 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -466,6 +466,19 @@ static inline void *detach_page_private(struct page *page)
->  	return folio_detach_private(page_folio(page));
->  }
->  
-> +/*
-> + * There are some parts of the kernel which assume that PMD entries
-> + * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
-> + * limit the maximum allocation order to PMD size.  I'm not aware of any
-> + * assumptions about maximum order if THP are disabled, but 8 seems like
-> + * a good order (that's 1MB if you're using 4kB pages)
-> + */
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-> +#else
-> +#define MAX_PAGECACHE_ORDER	8
-> +#endif
-> +
->  #ifdef CONFIG_NUMA
->  struct folio *filemap_alloc_folio(gfp_t gfp, unsigned int order);
->  #else
-> @@ -531,9 +544,19 @@ typedef unsigned int __bitwise fgp_t;
->  #define FGP_NOWAIT		((__force fgp_t)0x00000020)
->  #define FGP_FOR_MMAP		((__force fgp_t)0x00000040)
->  #define FGP_STABLE		((__force fgp_t)0x00000080)
-> +#define FGP_GET_ORDER(fgp)	(((__force unsigned)fgp) >> 26)	/* top 6 bits */
->  
->  #define FGP_WRITEBEGIN		(FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE)
->  
-> +static inline fgp_t fgp_set_order(size_t size)
-> +{
-> +	unsigned int shift = ilog2(size);
-> +
-> +	if (shift <= PAGE_SHIFT)
-> +		return 0;
-> +	return (__force fgp_t)((shift - PAGE_SHIFT) << 26);
-> +}
-> +
->  void *filemap_get_entry(struct address_space *mapping, pgoff_t index);
->  struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  		fgp_t fgp_flags, gfp_t gfp);
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index eb89a815f2f8..10ea9321c36e 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1937,7 +1937,9 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  		folio_wait_stable(folio);
->  no_page:
->  	if (!folio && (fgp_flags & FGP_CREAT)) {
-> +		unsigned order = FGP_GET_ORDER(fgp_flags);
->  		int err;
-> +
->  		if ((fgp_flags & FGP_WRITE) && mapping_can_writeback(mapping))
->  			gfp |= __GFP_WRITE;
->  		if (fgp_flags & FGP_NOFS)
-> @@ -1946,26 +1948,40 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  			gfp &= ~GFP_KERNEL;
->  			gfp |= GFP_NOWAIT | __GFP_NOWARN;
->  		}
-> -
-> -		folio = filemap_alloc_folio(gfp, 0);
-> -		if (!folio)
-> -			return ERR_PTR(-ENOMEM);
-> -
->  		if (WARN_ON_ONCE(!(fgp_flags & (FGP_LOCK | FGP_FOR_MMAP))))
->  			fgp_flags |= FGP_LOCK;
->  
-> -		/* Init accessed so avoid atomic mark_page_accessed later */
-> -		if (fgp_flags & FGP_ACCESSED)
-> -			__folio_set_referenced(folio);
-> +		if (!mapping_large_folio_support(mapping))
-> +			order = 0;
-> +		if (order > MAX_PAGECACHE_ORDER)
-> +			order = MAX_PAGECACHE_ORDER;
-> +		/* If we're not aligned, allocate a smaller folio */
-> +		if (index & ((1UL << order) - 1))
-> +			order = __ffs(index);
->  
-> -		err = filemap_add_folio(mapping, folio, index, gfp);
-> -		if (unlikely(err)) {
-> +		do {
-> +			err = -ENOMEM;
-> +			if (order == 1)
-> +				order = 0;
 
-Doesn't this interrupt the scale-down progression 2M -> 1M -> 512K ->
-256K -> 128K -> 64K -> 32K -> 16K -> 4k?  What if I want 8k folios?
+Looks good to me,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
-> +			folio = filemap_alloc_folio(gfp, order);
-> +			if (!folio)
-> +				continue;
-> +
-> +			/* Init accessed so avoid atomic mark_page_accessed later */
-> +			if (fgp_flags & FGP_ACCESSED)
-> +				__folio_set_referenced(folio);
-> +
-> +			err = filemap_add_folio(mapping, folio, index, gfp);
-> +			if (!err)
-> +				break;
->  			folio_put(folio);
->  			folio = NULL;
-> -			if (err == -EEXIST)
-> -				goto repeat;
-> -		}
-> +		} while (order-- > 0);
+> ---
+>  fs/gfs2/bmap.c         | 2 +-
+>  fs/iomap/buffered-io.c | 6 ++++--
+>  include/linux/iomap.h  | 2 +-
+>  3 files changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+> index c739b258a2d9..3702e5e47b0f 100644
+> --- a/fs/gfs2/bmap.c
+> +++ b/fs/gfs2/bmap.c
+> @@ -971,7 +971,7 @@ gfs2_iomap_get_folio(struct iomap_iter *iter, loff_t pos, unsigned len)
+>  	if (status)
+>  		return ERR_PTR(status);
 >  
-> +		if (err == -EEXIST)
-> +			goto repeat;
-> +		if (err)
-> +			return ERR_PTR(err);
->  		/*
->  		 * filemap_add_folio locks the page, and for mmap
->  		 * we expect an unlocked page.
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 47afbca1d122..59a071badb90 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -462,19 +462,6 @@ static int try_context_readahead(struct address_space *mapping,
->  	return 1;
+> -	folio = iomap_get_folio(iter, pos);
+> +	folio = iomap_get_folio(iter, pos, len);
+>  	if (IS_ERR(folio))
+>  		gfs2_trans_end(sdp);
+>  	return folio;
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 30d53b50ee0f..a10f9c037515 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -461,16 +461,18 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
+>   * iomap_get_folio - get a folio reference for writing
+>   * @iter: iteration structure
+>   * @pos: start offset of write
+> + * @len: length of write
+>   *
+>   * Returns a locked reference to the folio at @pos, or an error pointer if the
+>   * folio could not be obtained.
+>   */
+> -struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos)
+> +struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
+>  {
+>  	fgp_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
+>  
+>  	if (iter->flags & IOMAP_NOWAIT)
+>  		fgp |= FGP_NOWAIT;
+> +	fgp |= fgp_set_order(len);
+>  
+>  	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
+>  			fgp, mapping_gfp_mask(iter->inode->i_mapping));
+> @@ -596,7 +598,7 @@ static struct folio *__iomap_get_folio(struct iomap_iter *iter, loff_t pos,
+>  	if (folio_ops && folio_ops->get_folio)
+>  		return folio_ops->get_folio(iter, pos, len);
+>  	else
+> -		return iomap_get_folio(iter, pos);
+> +		return iomap_get_folio(iter, pos, len);
 >  }
 >  
-> -/*
-> - * There are some parts of the kernel which assume that PMD entries
-> - * are exactly HPAGE_PMD_ORDER.  Those should be fixed, but until then,
-> - * limit the maximum allocation order to PMD size.  I'm not aware of any
-> - * assumptions about maximum order if THP are disabled, but 8 seems like
-> - * a good order (that's 1MB if you're using 4kB pages)
-> - */
-> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-> -#else
-> -#define MAX_PAGECACHE_ORDER	8
-> -#endif
-> -
->  static inline int ra_alloc_folio(struct readahead_control *ractl, pgoff_t index,
->  		pgoff_t mark, unsigned int order, gfp_t gfp)
->  {
+>  static void __iomap_put_folio(struct iomap_iter *iter, loff_t pos, size_t ret,
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index e2b836c2e119..80facb9c9e5b 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -261,7 +261,7 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+>  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
+>  void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+>  bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
+> -struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos);
+> +struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len);
+>  bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
+>  void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len);
+>  int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
 > -- 
 > 2.39.2
 > 
