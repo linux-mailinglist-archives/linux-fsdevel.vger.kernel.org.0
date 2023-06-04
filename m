@@ -2,77 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14665721555
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jun 2023 09:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBFBD721578
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jun 2023 10:02:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbjFDH27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jun 2023 03:28:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48664 "EHLO
+        id S230210AbjFDICy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jun 2023 04:02:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbjFDH25 (ORCPT
+        with ESMTP id S229588AbjFDICx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jun 2023 03:28:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F181EE0
-        for <linux-fsdevel@vger.kernel.org>; Sun,  4 Jun 2023 00:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685863685;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iVM5jYUzZ2n66xWhGOhqwBQIXf/tDJSlaltfL9geA/4=;
-        b=FS094YhFP2zUpsvTHJWmLTdR1c2n5yqU9RBIAD2S52aJBRYat8JWyzwWR73lwtNlyahZGA
-        MdJUId4qoHPz1tDps1PTlHMiOYxDlZxUNw5Z8l1kPudkbjDFAa5BF4l6X0TCh3b1i0LZw5
-        UOiR8UAPGqbrOPbsXH+i5tqW+p678pk=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-346-EWsYtouZNu2rPuv3CXel7g-1; Sun, 04 Jun 2023 03:28:03 -0400
-X-MC-Unique: EWsYtouZNu2rPuv3CXel7g-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6570c5525a7so199879b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Jun 2023 00:28:03 -0700 (PDT)
+        Sun, 4 Jun 2023 04:02:53 -0400
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33D1FC1
+        for <linux-fsdevel@vger.kernel.org>; Sun,  4 Jun 2023 01:02:51 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-77567c00a37so279628039f.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Jun 2023 01:02:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685863681; x=1688455681;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iVM5jYUzZ2n66xWhGOhqwBQIXf/tDJSlaltfL9geA/4=;
-        b=jzlbvQFuKe/6iuuKtcxJ+2HNCX0B4WWclbjp5zXBgn3VQNVU0hTqWazOC2aB5ml0gP
-         sucwrOTOEX2fB/cJ2IEQAXhznqE5l9yhoO6R7Crln9EFiOxytyeINH2RkFuxFS3BGsac
-         E4WW/wxZJX2oZj76lSlBf2XSxA4Fx3QiJWCmG0VSpu/dgRW1kPmX5anwNZmJEBUMB1UT
-         lZSgnTx07V9IT0n4zI1BK927Ij8qojFZVWrig8Tx8kxF+A+wKZ8/vCS4NLhrNjtX750W
-         /vUKDQ677fTnHHNPEozyQXiV1r4bZjkcKqkaKa6gbGB2QYwnGYQ0AH0LQLCQdpG8ds+S
-         aAyQ==
-X-Gm-Message-State: AC+VfDypRaWMYE0ZMxb5GXTy2W27E+npwdDhtC9xSgX/kf8+0c8xDFOY
-        L7PfzpHFSHf13/zDWMb0TrzWzWyz7dLRkAXMaK7fbjI7EZC/saU3DDGuJOJtMknKR8KatZdvBRg
-        Okbgdee3Bz92DmU1jGGa/JLiTaJGMCr7tlfG0R5B4227elE5R6Fle
-X-Received: by 2002:a05:6a20:918b:b0:114:9bbc:c32a with SMTP id v11-20020a056a20918b00b001149bbcc32amr1748396pzd.9.1685863681615;
-        Sun, 04 Jun 2023 00:28:01 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ69zmeOtpAI+1Goa2YbFwjYqdyUHtfJLDYR4bsav+OGtu2I8GoA18rJmxHu3V64/eooDGcRkZidtiojaLhnAgc=
-X-Received: by 2002:a05:6a20:918b:b0:114:9bbc:c32a with SMTP id
- v11-20020a056a20918b00b001149bbcc32amr1748392pzd.9.1685863681303; Sun, 04 Jun
- 2023 00:28:01 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1685865770; x=1688457770;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pX3JrkxK3bl4mL5qQRzJ3YzJ93nC54ATg72Z3TueWFg=;
+        b=X7IMD8TDqhSW/nxcYrf+U5VbjDBtYDDQjrT9YAL+idF0BQZRAy/+pFdyxn0WERKo1Z
+         hxUNgcstjadE4L5yG3oZ5hYKohrIvyI8bwHxvRhdsn9+/mMpuYwFJRSp+2lIj0+mh5IQ
+         pYadL5tnxQZ3FegisMiswqMkax0LIthIYPLqOAXNXbx+SavioHYelgeGvd2BvUw06p1g
+         ZE/1tvkOYTsMHTINQFusyNwcYZgCBb6KF4C7Bw+BoDAGBvi+Y9K+e1z6E6vlQP/TEMbe
+         kjyaQiH6l9bu4Zk1juDt9UhO20W194a/aerTNojAAME/aX6xI+fzhuEKFI2IJBTXkLft
+         zVbw==
+X-Gm-Message-State: AC+VfDx+Sg88NRERdDAelZ2PkAugKH56OURm1bfVnlCJPaqRo5QyGiiN
+        l9j1i3yKmlP01ZMpsVPgvsXT/lTvnufKpNFsFE0ROFhYfMT9
+X-Google-Smtp-Source: ACHHUZ7qk0MWucJ4G9ALaHbToQi4eroKlaw30e7bZ4ghmojvQqN8CxQfvRbeszVQphZZMrO/BeyBLwC1EifGg3Yweyz2eooA6Ya1
 MIME-Version: 1.0
-References: <20230517032442.1135379-1-willy@infradead.org> <20230517032442.1135379-4-willy@infradead.org>
- <CAHc6FU4G1F1OXC233hT7_Vog9F8GNZyeLwsi+01USSXhFBNc_A@mail.gmail.com> <ZHwGhsDPYZQlYksK@casper.infradead.org>
-In-Reply-To: <ZHwGhsDPYZQlYksK@casper.infradead.org>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Sun, 4 Jun 2023 09:27:48 +0200
-Message-ID: <CAHc6FU470Aip5fTsg-8nWjK=p9ND=JCOMSTgxskQ=cwdxk7RtQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] gfs2: Convert gfs2_write_jdata_page() to gfs2_write_jdata_folio()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bob Peterson <rpeterso@redhat.com>,
-        cluster-devel <cluster-devel@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
+X-Received: by 2002:a02:29c5:0:b0:41c:feac:7a9c with SMTP id
+ p188-20020a0229c5000000b0041cfeac7a9cmr6425394jap.6.1685865770507; Sun, 04
+ Jun 2023 01:02:50 -0700 (PDT)
+Date:   Sun, 04 Jun 2023 01:02:50 -0700
+In-Reply-To: <00000000000050314505d3429981@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000063e8d005fd493617@google.com>
+Subject: Re: [syzbot] [jfs?] kernel BUG in lbmIODone
+From:   syzbot <syzbot+52ddb6c83a04ca55f975@syzkaller.appspotmail.com>
+To:     jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,62 +56,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jun 4, 2023 at 5:38=E2=80=AFAM Matthew Wilcox <willy@infradead.org>=
- wrote:
->
-> On Sat, Jun 03, 2023 at 11:34:14AM +0200, Andreas Gruenbacher wrote:
-> > >   * This is the same as calling block_write_full_page, but it also
-> > >   * writes pages outside of i_size
-> > >   */
-> > > -static int gfs2_write_jdata_page(struct page *page,
-> > > +static int gfs2_write_jdata_folio(struct folio *folio,
-> > >                                  struct writeback_control *wbc)
-> > >  {
-> > > -       struct inode * const inode =3D page->mapping->host;
-> > > +       struct inode * const inode =3D folio->mapping->host;
-> > >         loff_t i_size =3D i_size_read(inode);
-> > > -       const pgoff_t end_index =3D i_size >> PAGE_SHIFT;
-> > > -       unsigned offset;
-> > >
-> > > +       if (folio_pos(folio) >=3D i_size)
-> > > +               return 0;
-> >
-> > Function gfs2_write_jdata_page was originally introduced as
-> > gfs2_write_full_page in commit fd4c5748b8d3 ("gfs2: writeout truncated
-> > pages") to allow writing pages even when they are beyond EOF, as the
-> > function description documents.
->
-> Well, that was stupid of me.
->
-> > This hack was added because simply skipping journaled pages isn't
-> > enough on gfs2; before a journaled page can be freed, it needs to be
-> > marked as "revoked" in the journal. Journal recovery will then skip
-> > the revoked blocks, which allows them to be reused for regular,
-> > non-journaled data. We can end up here in contexts in which we cannot
-> > "revoke" pages, so instead, we write the original pages even when they
-> > are beyond EOF. This hack could be revisited, but it's pretty nasty
-> > code to pick apart.
-> >
-> > So at least the above if needs to go for now.
->
-> Understood.  So we probably don't want to waste time zeroing the folio
-> if it is entirely beyond i_size, right?  Because at the moment we'd
-> zero some essentially random part of the folio if I just take out the
-> check.  Should it look like this?
->
->         if (folio_pos(folio) < i_size &&
->             i_size < folio_pos(folio) + folio_size(folio))
->                folio_zero_segment(folio, offset_in_folio(folio, i_size),
->                                 folio_size(folio));
+syzbot has found a reproducer for the following issue on:
 
-Yes, looking good, thanks.
+HEAD commit:    715abedee4cd Add linux-next specific files for 20230515
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16769f33280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6a2745d066dda0ec
+dashboard link: https://syzkaller.appspot.com/bug?extid=52ddb6c83a04ca55f975
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1262d159280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e3b42d280000
 
-If you haven't already, could you please consider my other comment as
-well before you repost?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d4d1d06b34b8/disk-715abede.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3ef33a86fdc8/vmlinux-715abede.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e0006b413ed1/bzImage-715abede.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/e03edfdf992b/mount_0.gz
 
-https://lore.kernel.org/linux-fsdevel/CAHc6FU6GowpTfX-MgRiqqwZZJ0r-85C9exc2=
-pNkBkySCGUT0FA@mail.gmail.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+52ddb6c83a04ca55f975@syzkaller.appspotmail.com
 
-Thanks,
-Andreas
+BUG at fs/jfs/jfs_logmgr.c:2298 assert(bp->l_flag & lbmRELEASE)
+------------[ cut here ]------------
+kernel BUG at fs/jfs/jfs_logmgr.c:2298!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 15 Comm: ksoftirqd/0 Not tainted 6.4.0-rc2-next-20230515-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
+RIP: 0010:lbmIODone+0x111a/0x11d0 fs/jfs/jfs_logmgr.c:2298
+Code: fe e9 97 f3 ff ff e8 25 70 95 fe 48 c7 c1 80 ac 89 8a ba fa 08 00 00 48 c7 c6 c0 aa 89 8a 48 c7 c7 00 ab 89 8a e8 26 58 79 fe <0f> 0b e8 df 70 e8 fe e9 09 f2 ff ff e8 f5 6f 95 fe 48 c7 c1 c0 ac
+RSP: 0018:ffffc90000147c70 EFLAGS: 00010086
+RAX: 000000000000003f RBX: ffff88814aa95200 RCX: 0000000000000100
+RDX: 0000000000000000 RSI: ffffffff81689ddc RDI: 0000000000000005
+RBP: 0000000000000020 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000101 R11: 0000000000000001 R12: 0000000000000246
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5731f31000 CR3: 00000000219b5000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bio_endio+0x5af/0x6c0 block/bio.c:1608
+ req_bio_endio block/blk-mq.c:761 [inline]
+ blk_update_request+0x56a/0x14f0 block/blk-mq.c:906
+ blk_mq_end_request+0x59/0x4c0 block/blk-mq.c:1023
+ lo_complete_rq+0x1c6/0x280 drivers/block/loop.c:370
+ blk_complete_reqs+0xad/0xe0 block/blk-mq.c:1101
+ __do_softirq+0x1d4/0x905 kernel/softirq.c:553
+ run_ksoftirqd kernel/softirq.c:921 [inline]
+ run_ksoftirqd+0x31/0x60 kernel/softirq.c:913
+ smpboot_thread_fn+0x659/0x9f0 kernel/smpboot.c:164
+ kthread+0x344/0x440 kernel/kthread.c:379
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:lbmIODone+0x111a/0x11d0 fs/jfs/jfs_logmgr.c:2298
+Code: fe e9 97 f3 ff ff e8 25 70 95 fe 48 c7 c1 80 ac 89 8a ba fa 08 00 00 48 c7 c6 c0 aa 89 8a 48 c7 c7 00 ab 89 8a e8 26 58 79 fe <0f> 0b e8 df 70 e8 fe e9 09 f2 ff ff e8 f5 6f 95 fe 48 c7 c1 c0 ac
+RSP: 0018:ffffc90000147c70 EFLAGS: 00010086
+RAX: 000000000000003f RBX: ffff88814aa95200 RCX: 0000000000000100
+RDX: 0000000000000000 RSI: ffffffff81689ddc RDI: 0000000000000005
+RBP: 0000000000000020 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000101 R11: 0000000000000001 R12: 0000000000000246
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5731f31000 CR3: 00000000219b5000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
