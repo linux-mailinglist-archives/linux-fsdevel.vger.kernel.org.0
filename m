@@ -2,35 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D287721582
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jun 2023 10:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0BF9721592
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jun 2023 10:26:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230391AbjFDIGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jun 2023 04:06:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54658 "EHLO
+        id S230451AbjFDI0Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jun 2023 04:26:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjFDIGA (ORCPT
+        with ESMTP id S230433AbjFDI0Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jun 2023 04:06:00 -0400
-Received: from mx6.didiglobal.com (mx6.didiglobal.com [111.202.70.123])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 2BE43C1;
-        Sun,  4 Jun 2023 01:05:56 -0700 (PDT)
-Received: from mail.didiglobal.com (unknown [10.79.71.35])
-        by mx6.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id D65FB11001AE00;
-        Sun,  4 Jun 2023 16:05:53 +0800 (CST)
-Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
- ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Sun, 4 Jun 2023 16:05:53 +0800
-Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::7d7d:d727:7a02:e909])
- by ZJY03-ACTMBX-05.didichuxing.com ([fe80::7d7d:d727:7a02:e909%7]) with mapi
- id 15.01.2507.021; Sun, 4 Jun 2023 16:05:53 +0800
-X-MD-Sfrom: chengkaitao@didiglobal.com
-X-MD-SrcIP: 10.79.71.35
-From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
-        <chengkaitao@didiglobal.com>
+        Sun, 4 Jun 2023 04:26:24 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3510CE9
+        for <linux-fsdevel@vger.kernel.org>; Sun,  4 Jun 2023 01:26:21 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-969f90d71d4so534977366b.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Jun 2023 01:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1685867179; x=1688459179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AFfM5d2nTHRmpRlO8mIDJZgjXTrnnKiTQlq61ReJsa0=;
+        b=JmQ+twu4hyc6GP5UJQA6Eu29aA0DwIhCrRkHmDjwYwe/BSzxhojMr8b26mJnMv8/jg
+         BtIXW2q5PfM1UgknUh9nKTTPZ8XLNMBwVvrOGlXr95KLX76vfLyP1M++KLH7kIrYQ/yY
+         BOVKOwnF9SIi+7FHkP0XtD+3ZADPO3kRukwbA7EBKhI1h9xA3NasnueOukU9xlEyLM7I
+         FWugG+Ccy00cHRUGTSQCmWT49iWdS0QpCS0bf4ReiAWadq53Mici8wKzHFjfcbFLSVOa
+         w2SfgAiOpXSoxFYDV2PvgszyHJJp2+rsk6TshffX3hYXYZ7NG9ghdkDzN3FOWDJDAbwk
+         Lotw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685867179; x=1688459179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AFfM5d2nTHRmpRlO8mIDJZgjXTrnnKiTQlq61ReJsa0=;
+        b=IFGo2hcCK9May9TCpp0bvA2sblrQfAguxjxfGoVL1wRVeIsYOY5KF/GabAUWXxdo5e
+         fCOVtRDyTIh9IIbkf4AIlL532Vl1AG26+lhM8PNeuq9WW9QWIx42hnMDx9g520vWwJEe
+         43WMB7SH+gOUAcyTw8U3Qec/2D+LjY7QXguTDTqbfESGWiqolWHUcynQvxjhK8idNIsG
+         JLf6Cwf0OCMX+iQXxnfGnXqUa90Bnq2kQlcRhr6ZSHi2AwYQWXslVy8rXrwosCotz9nl
+         szViyNpA3J47g4KuWX5T5Iw2i3wjXkeDoSMvzVxCWniJC78Wn6m7XVGqlYoui+8RyhWw
+         aFEw==
+X-Gm-Message-State: AC+VfDzhr8c+mUr3iLv7mRYUnnrgMzePaNpDR54z4N/QiJgsZG+cGVw0
+        TweluhGRO65U9vw5inlj/83TSxy0bVhO+QUBUzqmyQ==
+X-Google-Smtp-Source: ACHHUZ63QyJHCE9Vzap3rzxeqGwgrwCnmQzp7XvVjXQK6XDPmgKa/rhNXBwua/DrWHYym9NtXdUrhIsVZ8egKlt0CVI=
+X-Received: by 2002:a17:907:3f27:b0:94b:d57e:9d4b with SMTP id
+ hq39-20020a1709073f2700b0094bd57e9d4bmr3443889ejc.2.1685867179447; Sun, 04
+ Jun 2023 01:26:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <ZFd5bpfYc3nPEVie@dhcp22.suse.cz> <66F9BB37-3BE1-4B0F-8DE1-97085AF4BED2@didiglobal.com>
+ <ZFkEqhAs7FELUO3a@dhcp22.suse.cz>
+In-Reply-To: <ZFkEqhAs7FELUO3a@dhcp22.suse.cz>
+From:   Yosry Ahmed <yosryahmed@google.com>
+Date:   Sun, 4 Jun 2023 01:25:42 -0700
+Message-ID: <CAJD7tkaw_7vYACsyzAtY9L0ZVC0B=XJEWgG=Ad_dOtL_pBDDvQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] memcontrol: support cgroup level OOM protection
 To:     Michal Hocko <mhocko@suse.com>
-CC:     "tj@kernel.org" <tj@kernel.org>,
+Cc:     =?UTF-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
+        <chengkaitao@didiglobal.com>, "tj@kernel.org" <tj@kernel.org>,
         "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
         "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
         "corbet@lwn.net" <corbet@lwn.net>,
@@ -53,152 +80,210 @@ CC:     "tj@kernel.org" <tj@kernel.org>,
         "surenb@google.com" <surenb@google.com>,
         "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
         "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
         "feng.tang@intel.com" <feng.tang@intel.com>,
         "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH v3 0/2] memcontrol: support cgroup level OOM protection
-Thread-Topic: [PATCH v3 0/2] memcontrol: support cgroup level OOM protection
-Thread-Index: AQHZgBDkVfbL1Z6yKEKz1c3DJxWsna9OEngAgAIGrwD//9B5AIABm3eAgBRQXwCABOFqAIAGL2CAgAmQYAA=
-Date:   Sun, 4 Jun 2023 08:05:53 +0000
-Message-ID: <C5E5137F-8754-40CC-9F0C-0EB3D8AC1EC2@didiglobal.com>
-In-Reply-To: <ZHSwhyGnPteiLKs/@dhcp22.suse.cz>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.79.65.102]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <53CFA6917DA8D6419DBF6114AC5F3BE4@didichuxing.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-QXQgMjAyMy0wNS0yOSAyMjowMjo0NywgIk1pY2hhbCBIb2NrbyIgPG1ob2Nrb0BzdXNlLmNvbT4g
-d3JvdGU6DQo+T24gVGh1IDI1LTA1LTIzIDA3OjM1OjQxLCDnqIvlnrLmtpsgQ2hlbmdrYWl0YW8g
-Q2hlbmcgd3JvdGU6DQo+PiBBdCAyMDIzLTA1LTIyIDIxOjAzOjUwLCAiTWljaGFsIEhvY2tvIiA8
-bWhvY2tvQHN1c2UuY29tPiB3cm90ZToNCj5bLi4uXQ0KPj4gPj4gSSBoYXZlIGNyZWF0ZWQgYSBu
-ZXcgaW5kaWNhdG9yIG9vbV9raWxsX2luaGVyaXQgdGhhdCBtYWludGFpbnMgYSBuZWdhdGl2ZSBj
-b3JyZWxhdGlvbiANCj4+ID4+IHdpdGggbWVtb3J5Lm9vbS5wcm90ZWN0LCBzbyB3ZSBoYXZlIGEg
-cnVsZXIgdG8gbWVhc3VyZSB0aGUgb3B0aW1hbCB2YWx1ZSBvZiANCj4+ID4+IG1lbW9yeS5vb20u
-cHJvdGVjdC4NCj4+ID4NCj4+ID5BbiBleGFtcGxlIG1pZ2h0IGhlbHAgaGVyZS4NCj4+IA0KPj4g
-SW4gbXkgdGVzdGluZyBjYXNlLCBieSBhZGp1c3RpbmcgbWVtb3J5Lm9vbS5wcm90ZWN0LCBJIHdh
-cyBhYmxlIHRvIHNpZ25pZmljYW50bHkgDQo+PiByZWR1Y2UgdGhlIG9vbV9raWxsX2luaGVyaXQg
-b2YgdGhlIGNvcnJlc3BvbmRpbmcgY2dyb3VwLiBJbiBhIHBoeXNpY2FsIG1hY2hpbmUgDQo+PiB3
-aXRoIHNldmVyZWx5IG92ZXJzb2xkIG1lbW9yeSwgSSBkaXZpZGVkIGFsbCBjZ3JvdXBzIGludG8g
-dGhyZWUgY2F0ZWdvcmllcyBhbmQgDQo+PiBjb250cm9sbGVkIHRoZWlyIHByb2JhYmlsaXR5IG9m
-IGJlaW5nIHNlbGVjdGVkIGJ5IHRoZSBvb20ta2lsbGVyIHRvIDAlLCUgMjAsIA0KPj4gYW5kIDgw
-JSwgcmVzcGVjdGl2ZWx5Lg0KPg0KPkkgbWlnaHQgYmUganVzdCBkZW5zZSBidXQgSSBhbSBsb3N0
-LiBDYW4gd2UgZm9jdXMgb24gdGhlIGJhcmVib25lDQo+c2VtYW50aWMgb2YgdGhlIGdyb3VwIG9v
-bSBzZWxlY3Rpb24gYW5kIGtpbGxpbmcgZmlyc3QuIE5vIG1hZ2ljDQo+YXV0by10dW5pbmcgYXQg
-dGhpcyBzdGFnZSBwbGVhc2UuDQo+DQo+PiA+PiA+PiBhYm91dCB0aGUgc2VtYW50aWNzIG9mIG5v
-bi1sZWFmIG1lbWNncyBwcm90ZWN0aW9uLA0KPj4gPj4gPj4gSWYgYSBub24tbGVhZiBtZW1jZydz
-IG9vbV9wcm90ZWN0IHF1b3RhIGlzIHNldCwgaXRzIGxlYWYgbWVtY2cgd2lsbCBwcm9wb3J0aW9u
-YWxseSANCj4+ID4+ID4+IGNhbGN1bGF0ZSB0aGUgbmV3IGVmZmVjdGl2ZSBvb21fcHJvdGVjdCBx
-dW90YSBiYXNlZCBvbiBub24tbGVhZiBtZW1jZydzIHF1b3RhLg0KPj4gPj4gPg0KPj4gPj4gPlNv
-IHRoZSBub24tbGVhZiBtZW1jZyBpcyBuZXZlciB1c2VkIGFzIGEgdGFyZ2V0PyBXaGF0IGlmIHRo
-ZSB3b3JrbG9hZCBpcw0KPj4gPj4gPmRpc3RyaWJ1dGVkIG92ZXIgc2V2ZXJhbCBzdWItZ3JvdXBz
-PyBPdXIgY3VycmVudCBvb20uZ3JvdXANCj4+ID4+ID5pbXBsZW1lbnRhdGlvbiB0cmF2ZXJzZXMg
-dGhlIHRyZWUgdG8gZmluZCBhIGNvbW1vbiBhbmNlc3RvciBpbiB0aGUgb29tDQo+PiA+PiA+ZG9t
-YWluIHdpdGggdGhlIG9vbS5ncm91cC4NCj4+ID4+IA0KPj4gPj4gSWYgdGhlIG9vbV9wcm90ZWN0
-IHF1b3RhIG9mIHRoZSBwYXJlbnQgbm9uLWxlYWYgbWVtY2cgaXMgbGVzcyB0aGFuIHRoZSBzdW0g
-b2YgDQo+PiA+PiBzdWItZ3JvdXBzIG9vbV9wcm90ZWN0IHF1b3RhLCB0aGUgb29tX3Byb3RlY3Qg
-cXVvdGEgb2YgZWFjaCBzdWItZ3JvdXAgd2lsbCANCj4+ID4+IGJlIHByb3BvcnRpb25hbGx5IHJl
-ZHVjZWQNCj4+ID4+IElmIHRoZSBvb21fcHJvdGVjdCBxdW90YSBvZiB0aGUgcGFyZW50IG5vbi1s
-ZWFmIG1lbWNnIGlzIGdyZWF0ZXIgdGhhbiB0aGUgc3VtIA0KPj4gPj4gb2Ygc3ViLWdyb3VwcyBv
-b21fcHJvdGVjdCBxdW90YSwgdGhlIG9vbV9wcm90ZWN0IHF1b3RhIG9mIGVhY2ggc3ViLWdyb3Vw
-IA0KPj4gPj4gd2lsbCBiZSBwcm9wb3J0aW9uYWxseSBpbmNyZWFzZWQNCj4+ID4+IFRoZSBwdXJw
-b3NlIG9mIGRvaW5nIHNvIGlzIHRoYXQgdXNlcnMgY2FuIHNldCBvb21fcHJvdGVjdCBxdW90YSBh
-Y2NvcmRpbmcgdG8gDQo+PiA+PiB0aGVpciBvd24gbmVlZHMsIGFuZCB0aGUgc3lzdGVtIG1hbmFn
-ZW1lbnQgcHJvY2VzcyBjYW4gc2V0IGFwcHJvcHJpYXRlIA0KPj4gPj4gb29tX3Byb3RlY3QgcXVv
-dGEgb24gdGhlIHBhcmVudCBub24tbGVhZiBtZW1jZyBhcyB0aGUgZmluYWwgY292ZXIsIHNvIHRo
-YXQgDQo+PiA+PiB0aGUgc3lzdGVtIG1hbmFnZW1lbnQgcHJvY2VzcyBjYW4gaW5kaXJlY3RseSBt
-YW5hZ2UgYWxsIHVzZXIgcHJvY2Vzc2VzLg0KPj4gPg0KPj4gPkkgZ3Vlc3MgdGhhdCB5b3UgYXJl
-IHRyeWluZyB0byBzYXkgdGhhdCB0aGUgb29tIHByb3RlY3Rpb24gaGFzIGENCj4+ID5zdGFuZGFy
-ZCBoaWVyYXJjaGljYWwgYmVoYXZpb3IuIEFuZCB0aGF0IGlzIGZpbmUsIHdlbGwsIGluIGZhY3Qg
-aXQgaXMNCj4+ID5tYW5kYXRvcnkgZm9yIGFueSBjb250cm9sIGtub2IgdG8gaGF2ZSBhIHNhbmUg
-aGllcmFyY2hpY2FsIHByb3BlcnRpZXMuDQo+PiA+QnV0IHRoYXQgZG9lc24ndCBhZGRyZXNzIG15
-IGFib3ZlIHF1ZXN0aW9uLiBMZXQgbWUgdHJ5IGFnYWluLiBXaGVuIGlzIGENCj4+ID5ub24tbGVh
-ZiBtZW1jZyBwb3RlbnRpYWxseSBzZWxlY3RlZCBhcyB0aGUgb29tIHZpY3RpbT8gSXQgZG9lc24n
-dCBoYXZlDQo+PiA+YW55IHRhc2tzIGRpcmVjdGx5IGJ1dCBpdCBtaWdodCBiZSBhIHN1aXRhYmxl
-IHRhcmdldCB0byBraWxsIGEgbXVsdGkNCj4+ID5tZW1jZyBiYXNlZCB3b3JrbG9hZCAoZS5nLiBh
-IGZ1bGwgY29udGFpbmVyKS4NCj4+IA0KPj4gSWYgbm9ubGVhZiBtZW1jZyBoYXZlIHRoZSBoaWdo
-ZXIgbWVtb3J5IHVzYWdlIGFuZCB0aGUgc21hbGxlciANCj4+IG1lbW9yeS5vb20ucHJvdGVjdCwg
-aXQgd2lsbCBoYXZlIHRoZSBoaWdoZXIgdGhlIHByb2JhYmlsaXR5IGJlaW5nIA0KPj4gc2VsZWN0
-ZWQgYnkgdGhlIGtpbGxlci4gSWYgdGhlIG5vbi1sZWFmIG1lbWNnIGlzIHNlbGVjdGVkIGFzIHRo
-ZSBvb20gDQo+PiB2aWN0aW0sIE9PTS1raWxsZXIgd2lsbCBjb250aW51ZSB0byBzZWxlY3QgdGhl
-IGFwcHJvcHJpYXRlIGNoaWxkIA0KPj4gbWVtY2cgZG93bndhcmRzIHVudGlsIHRoZSBsZWFmIG1l
-bWNnIGlzIHNlbGVjdGVkLg0KPg0KPlBhcmVudCBtZW1jZyBoYXMgbW9yZSBvciBlcXVhbCBtZW1v
-cnkgY2hhcmdlZCB0aGFuIGl0cyBjaGlsZChyZW4pIGJ5DQo+ZGVmaW5pdGlvbi4gTGV0IG1lIHRy
-eSB0byBhc2sgZGlmZmVyZW50bHkuIFNheSB5b3UgaGF2ZSB0aGUgZm9sbG93aW5nDQo+aGllcmFy
-Y2h5DQo+DQo+CQkgIHJvb3QNCj4JCS8gICAgIFwNCj4gICAgICAgY29udGFpbmVyX0EgICAgIGNv
-bnRhaW5lcl9CDQo+ICAgICAob29tLnByb3Q9MTAwTSkgICAob29tLnByb3Q9MjAwTSkNCj4gICAg
-ICh1c2FnZT0xMjBNKSAgICAgICh1c2FnZT0xODBNKQ0KPiAgICAgLyAgICAgfCAgICAgXA0KPiAg
-ICBBICAgICAgQiAgICAgIEMNCj4gICAgICAgICAgICAgICAgIC8gXA0KPgkJQzEgIEMyDQo+DQo+
-DQo+Y29udGFpbmVyX0IgaXMgcHJvdGVjdGVkIHNvIGl0IHNob3VsZCBiZSBleGNsdWRlZC4gQ29y
-cmVjdD8gU28gd2UgYXJlIGF0DQo+Y29udGFpbmVyX0EgdG8gY2hvc2UgZnJvbS4gVGhlcmUgYXJl
-IG11bHRpcGxlIHdheXMgdGhlIHN5c3RlbSBhbmQNCj5jb250aW5lciBhZG1pbiBtaWdodCB3YW50
-IHRvIGFjaGlldmUuDQo+MSkgc3lzdGVtIGFkbWluIG1pZ2h0IHdhbnQgdG8gc2h1dCBkb3duIHRo
-ZSB3aG9sZSBjb250YWluZXIuDQo+MikgY29udGluZXIgYWRtaW4gbWlnaHQgd2FudCB0byBzaHV0
-IHRoZSB3aG9sZSBjb250YWluZXIgZG93bg0KPjMpIGNvbnQuIGFkbWluIG1pZ2h0IHdhbnQgdG8g
-c2h1dCBkb3duIGEgd2hvbGUgc3ViIGdyb3VwIChlLmcuIEMgYXMgaXQNCj4gICBpcyBhIHNlbGYg
-Y29udGFpbmVkIHdvcmtsb2FkIGFuZCBraWxsaW5nIHBvcnRpb24gb2YgaXQgd2lsbCBwdXQgaXQg
-aW50bw0KPiAgIGluY29uc2lzdGVudCBzdGF0ZSkuDQo+NCkgY29udC4gYWRtaW4gbWlnaHQgd2Fu
-dCB0byBraWxsIHRoZSBtb3N0IGV4Y2VzcyBjZ3JvdXAgd2l0aCB0YXNrcyAoaS5lLiBhDQo+ICAg
-bGVhZiBtZW1jZykuDQo+NSkgYWRtaW4gbWlnaHQgd2FudCB0byBraWxsIGEgcHJvY2VzcyBpbiB0
-aGUgbW9zdCBleGNlc3MgbWVtY2cuDQo+DQo+Tm93IHdlIGFscmVhZHkgaGF2ZSBvb20uZ3JvdXAg
-dGhpbmd5IHRoYXQgY2FuIGRyaXZlIHRoZSBncm91cCBraWxsaW5nDQo+cG9saWN5IGJ1dCBpdCBp
-cyBub3QgcmVhbGx5IGNsZWFyIGhvdyB5b3Ugd2FudCB0byBpbmNvcnBvcmF0ZSB0aGF0IHRvDQo+
-dGhlIHByb3RlY3Rpb24uDQo+DQo+QWdhaW4sIEkgdGhpbmsgdGhhdCBhbiBvb20ucHJvdGVjdGlv
-biBtYWtlcyBzZW5zZSBidXQgdGhlIHNlbWFudGljIGhhcw0KPnRvIGJlIHZlcnkgY2FyZWZ1bGx5
-IHRob3VnaHQgdGhyb3VnaCBiZWNhdXNlIGl0IGlzIHF1aXRlIGVhc3kgdG8gY3JlYXRlDQo+Y29y
-bmVyIGNhc2VzIGFuZCB3ZWlyZCBiZWhhdmlvci4gSSBhbHNvIHRoaW5rIHRoYXQgb29tLmdyb3Vw
-IGhhcyB0byBiZQ0KPmNvbnNpc3RlbnQgd2l0aCB0aGUgcHJvdGVjdGlvbi4NCg0KVGhlIGJhcmVi
-b25lIHNlbWFudGljIG9mIHRoZSBmdW5jdGlvbiBpbXBsZW1lbnRlZCBieSBteSBwYXRjaCBhcmUg
-DQpzdW1tYXJpemVkIGFzIGZvbGxvd3M6DQpNZW1jZyBvbmx5IGFsbG93cyBwcm9jZXNzZXMgaW4g
-dGhlIG1lbWNnIHRvIGJlIHNlbGVjdGVkIGJ5IHRoZWlyIA0KYW5jZXN0b3IncyBPT00ga2lsbGVy
-IHdoZW4gdGhlIG1lbW9yeSB1c2FnZSBleGNlZWRzICJvb20ucHJvdGVjdCINCg0KSXQgc2hvdWxk
-IGJlIG5vdGVkIHRoYXQgIm9vbS5wcm90ZWN0IiBhbmQgIm9vbS5ncm91cCIgYXJlIGNvbXBsZXRl
-bHkgDQpkaWZmZXJlbnQgdGhpbmdzLCBhbmQga25lYWRpbmcgdGhlbSB0b2dldGhlciBtYXkgbWFr
-ZSB0aGUgZXhwbGFuYXRpb24gDQptb3JlIGNvbmZ1c2luZy4NCg0KPj4gPj4gPkFsbCB0aGF0IGJl
-aW5nIHNhaWQgYW5kIHdpdGggdGhlIHVzZWNhc2UgZGVzY3JpYmVkIG1vcmUgc3BlY2lmaWNhbGx5
-LiBJDQo+PiA+PiA+Y2FuIHNlZSB0aGF0IG1lbWNnIGJhc2VkIG9vbSB2aWN0aW0gc2VsZWN0aW9u
-IG1ha2VzIHNvbWUgc2Vuc2UuIFRoYXQNCj4+ID4+ID5tZW5hcyB0aGF0IGl0IGlzIGFsd2F5cyBh
-IG1lbWNnIHNlbGVjdGVkIGFuZCBhbGwgdGFza3Mgd2l0aGluZyBraWxsZWQuDQo+PiA+PiA+TWVt
-Y2cgYmFzZWQgcHJvdGVjdGlvbiBjYW4gYmUgdXNlZCB0byBldmFsdWF0ZSB3aGljaCBtZW1jZyB0
-byBjaG9vc2UgYW5kDQo+PiA+PiA+dGhlIG92ZXJhbGwgc2NoZW1lIHNob3VsZCBiZSBzdGlsbCBt
-YW5hZ2VhYmxlLiBJdCB3b3VsZCBpbmRlZWQgcmVzZW1ibGUNCj4+ID4+ID5tZW1vcnkgcHJvdGVj
-dGlvbiBmb3IgdGhlIHJlZ3VsYXIgcmVjbGFpbS4NCj4+ID4+ID4NCj4+ID4+ID5PbmUgdGhpbmcg
-dGhhdCBpcyBzdGlsbCBub3QgcmVhbGx5IGNsZWFyIHRvIG1lIGlzIHRvIGhvdyBncm91cCB2cy4N
-Cj4+ID4+ID5ub24tZ3JvdXAgb29tcyBjb3VsZCBiZSBoYW5kbGVkIGdyYWNlZnVsbHkuIFJpZ2h0
-IG5vdyB3ZSBjYW4gaGFuZGxlIHRoYXQNCj4+ID4+ID5iZWNhdXNlIHRoZSBvb20gc2VsZWN0aW9u
-IGlzIHN0aWxsIHByb2Nlc3MgYmFzZWQgYnV0IHdpdGggdGhlIHByb3RlY3Rpb24NCj4+ID4+ID50
-aGlzIHdpbGwgYmVjb21lIG1vcmUgcHJvYmxlbWF0aWMgYXMgZXhwbGFpbmVkIHByZXZpb3VzbHku
-IEVzc2VudGlhbGx5DQo+PiA+PiA+d2Ugd291bGQgbmVlZCB0byBlbmZvcmNlIHRoZSBvb20gc2Vs
-ZWN0aW9uIHRvIGJlIG1lbWNnIGJhc2VkIGZvciBhbGwNCj4+ID4+ID5tZW1jZ3MuIE1heWJlIGEg
-bW91bnQga25vYj8gV2hhdCBkbyB5b3UgdGhpbms/DQo+PiA+PiANCj4+ID4+IFRoZXJlIGlzIGEg
-ZnVuY3Rpb24gaW4gdGhlIHBhdGNoIHRvIGRldGVybWluZSB3aGV0aGVyIHRoZSBvb21fcHJvdGVj
-dCANCj4+ID4+IG1lY2hhbmlzbSBpcyBlbmFibGVkLiBBbGwgbWVtb3J5Lm9vbS5wcm90ZWN0IG5v
-ZGVzIGRlZmF1bHQgdG8gMCwgc28gdGhlIGZ1bmN0aW9uIA0KPj4gPj4gPGlzX3Jvb3Rfb29tX3By
-b3RlY3Q+IHJldHVybnMgMCBieSBkZWZhdWx0Lg0KPj4gPg0KPj4gPkhvdyBjYW4gYW4gYWRtaW4g
-ZGV0ZXJtaW5lIHdoYXQgaXMgdGhlIGN1cnJlbnQgb29tIGRldGVjdGlvbiBsb2dpYz8NCj4+IA0K
-Pj4gVGhlIG1lbW9yeS5vb20ucHJvdGVjdCBhcmUgc2V0IGJ5IHRoZSBhZG1pbmlzdHJhdG9yIHRo
-ZW1zZWx2ZXMsIGFuZCB0aGV5IA0KPj4gbXVzdCBrbm93IHdoYXQgdGhlIGN1cnJlbnQgT09NIHBv
-bGljeSBpcy4gUmVhZGluZyB0aGUgbWVtb3J5Lm9vbS5wcm90ZWN0IA0KPj4gb2YgdGhlIGZpcnN0
-IGxldmVsIGNncm91cCBkaXJlY3RvcnkgYW5kIG9ic2VydmluZyB3aGV0aGVyIGl0IGlzIDAgY2Fu
-IGFsc28gDQo+PiBkZXRlcm1pbmUgd2hldGhlciB0aGUgb29tLnByb3RlY3QgcG9saWN5IGlzIGVu
-YWJsZWQuDQo+DQo+SG93IGRvIHlvdSBhY2hpZXZlIHRoYXQgZnJvbSB3aXRoaW5nIGEgY29udGFp
-bmVyIHdoaWNoIGRvZXNuJ3QgaGF2ZSBhDQo+ZnVsbCB2aXNpYmlsaXR5IHRvIHRoZSBjZ3JvdXAg
-dHJlZT8NCg0KVGhlIGNvbnRhaW5lciBkb2VzIG5vdCBuZWVkIHRvIGhhdmUgZnVsbCB2aXNpYmls
-aXR5IHRvIHRoZSBjZ3JvdXAgdHJlZSwgZnVuY3Rpb24gDQoib29tLnByb3RlY3QiIHJlcXVpcmVz
-IGl0IHRvIG9ubHkgZm9jdXMgb24gbG9jYWwgY2dyb3VwIGFuZCBzdWJncm91cCB0cmVlcy4NCg0K
-LS0NClRoYW5rcyBmb3IgeW91ciBjb21tZW50IQ0KY2hlbmdrYWl0YW8NCg0K
+On Mon, May 8, 2023 at 7:18=E2=80=AFAM Michal Hocko <mhocko@suse.com> wrote=
+:
+>
+> On Mon 08-05-23 09:08:25, =E7=A8=8B=E5=9E=B2=E6=B6=9B Chengkaitao Cheng w=
+rote:
+> > At 2023-05-07 18:11:58, "Michal Hocko" <mhocko@suse.com> wrote:
+> > >On Sat 06-05-23 19:49:46, chengkaitao wrote:
+> > >> Establish a new OOM score algorithm, supports the cgroup level OOM
+> > >> protection mechanism. When an global/memcg oom event occurs, we trea=
+t
+> > >> all processes in the cgroup as a whole, and OOM killers need to sele=
+ct
+> > >> the process to kill based on the protection quota of the cgroup
+> > >
+> > >Although your patch 1 briefly touches on some advantages of this
+> > >interface there is a lack of actual usecase. Arguing that oom_score_ad=
+j
+> > >is hard because it needs a parent process is rather weak to be honest.
+> > >It is just trivial to create a thin wrapper, use systemd to launch
+> > >important services or simply update the value after the fact. Now
+> > >oom_score_adj has its own downsides of course (most notably a
+> > >granularity and a lack of group protection.
+> > >
+> > >That being said, make sure you describe your usecase more thoroughly.
+> > >Please also make sure you describe the intended heuristic of the knob.
+> > >It is not really clear from the description how this fits hierarchical
+> > >behavior of cgroups. I would be especially interested in the semantics
+> > >of non-leaf memcgs protection as they do not have any actual processes
+> > >to protect.
+> > >
+> > >Also there have been concerns mentioned in v2 discussion and it would =
+be
+> > >really appreciated to summarize how you have dealt with them.
+> > >
+> > >Please also note that many people are going to be slow in responding
+> > >this week because of LSFMM conference
+> > >(https://events.linuxfoundation.org/lsfmm/)
+> >
+> > Here is a more detailed comparison and introduction of the old oom_scor=
+e_adj
+> > mechanism and the new oom_protect mechanism,
+> > 1. The regulating granularity of oom_protect is smaller than that of oo=
+m_score_adj.
+> > On a 512G physical machine, the minimum granularity adjusted by oom_sco=
+re_adj
+> > is 512M, and the minimum granularity adjusted by oom_protect is one pag=
+e (4K).
+> > 2. It may be simple to create a lightweight parent process and uniforml=
+y set the
+> > oom_score_adj of some important processes, but it is not a simple matte=
+r to make
+> > multi-level settings for tens of thousands of processes on the physical=
+ machine
+> > through the lightweight parent processes. We may need a huge table to r=
+ecord the
+> > value of oom_score_adj maintained by all lightweight parent processes, =
+and the
+> > user process limited by the parent process has no ability to change its=
+ own
+> > oom_score_adj, because it does not know the details of the huge table. =
+The new
+> > patch adopts the cgroup mechanism. It does not need any parent process =
+to manage
+> > oom_score_adj. the settings between each memcg are independent of each =
+other,
+> > making it easier to plan the OOM order of all processes. Due to the uni=
+que nature
+> > of memory resources, current Service cloud vendors are not oversold in =
+memory
+> > planning. I would like to use the new patch to try to achieve the possi=
+bility of
+> > oversold memory resources.
+>
+> OK, this is more specific about the usecase. Thanks! So essentially what
+> it boils down to is that you are handling many containers (memcgs from
+> our POV) and they have different priorities. You want to overcommit the
+> memory to the extend that global ooms are not an unexpected event. Once
+> that happens the total memory consumption of a specific memcg is less
+> important than its "priority". You define that priority by the excess of
+> the memory usage above a user defined threshold. Correct?
+
+There has been a parallel discussion in the cover letter thread of v4
+[1]. To summarize, at Google, we have been using OOM scores to
+describe different job priorities in a more explicit way -- regardless
+of memory usage. It is strictly priority-based OOM killing. Ties are
+broken based on memory usage.
+
+We understand that something like memory.oom.protect has an advantage
+in the sense that you can skip killing a process if you know that it
+won't free enough memory anyway, but for an environment where multiple
+jobs of different priorities are running, we find it crucial to be
+able to define strict ordering. Some jobs are simply more important
+than others, regardless of their memory usage.
+
+It would be great if we can arrive at an interface that serves this
+use case as well.
+
+Thanks!
+
+[1]https://lore.kernel.org/linux-mm/CAJD7tkaQdSTDX0Q7zvvYrA3Y4TcvLdWKnN3yc8=
+VpfWRpUjcYBw@mail.gmail.com/
+
+>
+> Your cover letter mentions that then "all processes in the cgroup as a
+> whole". That to me reads as oom.group oom killer policy. But a brief
+> look into the patch suggests you are still looking at specific tasks and
+> this has been a concern in the previous version of the patch because
+> memcg accounting and per-process accounting are detached.
+>
+> > 3. I conducted a test and deployed an excessive number of containers on=
+ a physical
+> > machine, By setting the oom_score_adj value of all processes in the con=
+tainer to
+> > a positive number through dockerinit, even processes that occupy very l=
+ittle memory
+> > in the container are easily killed, resulting in a large number of inva=
+lid kill behaviors.
+> > If dockerinit is also killed unfortunately, it will trigger container s=
+elf-healing, and the
+> > container will rebuild, resulting in more severe memory oscillations. T=
+he new patch
+> > abandons the behavior of adding an equal amount of oom_score_adj to eac=
+h process
+> > in the container and adopts a shared oom_protect quota for all processe=
+s in the container.
+> > If a process in the container is killed, the remaining other processes =
+will receive more
+> > oom_protect quota, making it more difficult for the remaining processes=
+ to be killed.
+> > In my test case, the new patch reduced the number of invalid kill behav=
+iors by 70%.
+> > 4. oom_score_adj is a global configuration that cannot achieve a kill o=
+rder that only
+> > affects a certain memcg-oom-killer. However, the oom_protect mechanism =
+inherits
+> > downwards, and user can only change the kill order of its own memcg oom=
+, but the
+> > kill order of their parent memcg-oom-killer or global-oom-killer will n=
+ot be affected
+>
+> Yes oom_score_adj has shortcomings.
+>
+> > In the final discussion of patch v2, we discussed that although the adj=
+ustment range
+> > of oom_score_adj is [-1000,1000], but essentially it only allows two us=
+ecases
+> > (OOM_SCORE_ADJ_MIN, OOM_SCORE_ADJ_MAX) reliably. Everything in between =
+is
+> > clumsy at best. In order to solve this problem in the new patch, I intr=
+oduced a new
+> > indicator oom_kill_inherit, which counts the number of times the local =
+and child
+> > cgroups have been selected by the OOM killer of the ancestor cgroup. By=
+ observing
+> > the proportion of oom_kill_inherit in the parent cgroup, I can effectiv=
+ely adjust the
+> > value of oom_protect to achieve the best.
+>
+> What does the best mean in this context?
+>
+> > about the semantics of non-leaf memcgs protection,
+> > If a non-leaf memcg's oom_protect quota is set, its leaf memcg will pro=
+portionally
+> > calculate the new effective oom_protect quota based on non-leaf memcg's=
+ quota.
+>
+> So the non-leaf memcg is never used as a target? What if the workload is
+> distributed over several sub-groups? Our current oom.group
+> implementation traverses the tree to find a common ancestor in the oom
+> domain with the oom.group.
+>
+> All that being said and with the usecase described more specifically. I
+> can see that memcg based oom victim selection makes some sense. That
+> menas that it is always a memcg selected and all tasks withing killed.
+> Memcg based protection can be used to evaluate which memcg to choose and
+> the overall scheme should be still manageable. It would indeed resemble
+> memory protection for the regular reclaim.
+>
+> One thing that is still not really clear to me is to how group vs.
+> non-group ooms could be handled gracefully. Right now we can handle that
+> because the oom selection is still process based but with the protection
+> this will become more problematic as explained previously. Essentially
+> we would need to enforce the oom selection to be memcg based for all
+> memcgs. Maybe a mount knob? What do you think?
+> --
+> Michal Hocko
+> SUSE Labs
