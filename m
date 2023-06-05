@@ -2,145 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B121072328B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 23:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28ABA723334
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 00:32:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232864AbjFEVuy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 17:50:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53280 "EHLO
+        id S232168AbjFEWcl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 18:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjFEVux (ORCPT
+        with ESMTP id S230150AbjFEWck (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 17:50:53 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C31BDF2;
-        Mon,  5 Jun 2023 14:50:51 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b1a46ad09fso64098251fa.2;
-        Mon, 05 Jun 2023 14:50:51 -0700 (PDT)
+        Mon, 5 Jun 2023 18:32:40 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 042AEF3
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jun 2023 15:32:39 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-650c8cb68aeso3209063b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Jun 2023 15:32:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686001850; x=1688593850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NgVh6B4b5d1xPtyx1HecTGbQCfb0JPACDmuJc8CU3yk=;
-        b=Wuof9leEUkarR2buAsXGIzBHMvIBP2NXL3SOMe7sSmUo9T+/W6lcWeCKr8RmlWtpW2
-         Cos4OjtKj6qT5kSLpYloMKAgwimpDczd4kKrSNk3ggLs97m8jHUB+jZGZAOxe1wUJQPz
-         Gz8V9MReoz3B0qZviKwQ4t+nFK+7a72hXpHp03jb17WAnvvGf1fNkZnfdzKFtpBGA2Gh
-         1EkGRYuXO+v1gL1lN7DdvkMFsuI4vXdkqjBJ1xgZbSn4bG2wCxe3Hqq8z54G7czdvKCA
-         wdsjsSg0eHO8mMqfv5bJgQSoWG1M1Q7oFSoGtKKsTaUh9WITkAovqDuUrUa/6KUAEva/
-         RMww==
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686004358; x=1688596358;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q6XXKGqtv+SXyOIfPXMfeL9O+2fKpYePdxYVtpVnLRY=;
+        b=fz6LdX4ZvGqimcI7Of4JtJTRBkucihJJdFfos11nPQb2O6NaLuIL7xtTPd9cYia88g
+         UuxV0wXAMQXTo+WrDEwQm41gb2BFRGszwI9g2p2TaA5dRFMn8wGpMFcgUXxAlIOOnHcV
+         Op6qoM9r8Th8ObpVUR3xt9tX9hy9aHBZ0f1tHVUVxn+pPWaE9B0Bc6p+2E9YmIwC9dZP
+         Zv+Uo+Nqai8V2F8oa4zOKOzoj+NrvmWbo03cFg9Htu4Rw0pGHQO3N9hjRwYYfTDCRoL2
+         omvrTOH85h0mhezupcIqVwktahMHlSSgrWgxghFhVFAU3YOKBwteR4Sh91YH00tkEXok
+         CK/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686001850; x=1688593850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NgVh6B4b5d1xPtyx1HecTGbQCfb0JPACDmuJc8CU3yk=;
-        b=YuG/GvjpNx+TLh+DH7NI308cAinhBVwkgtjLh5gsFP/s5vdCSv/uR3ebjq7N/v1nr0
-         vTCYJzZdEslltb9ca2pX7xx3cwWuutlkB311vm1WiIWzOkbVbSMMsc6LhAWTrh4JynMu
-         hHeuKdfECzVfBSmhD9DmqyGDIdzlsyvDIPtLOgsIy4vDytimy0IxQQ/Jj+w4g5Xayt2E
-         2eqeGTGdAw9JrscdVC+Vwpc2/flzNIAqrd9L3gjm1CXyLsb/BwuaqFaDkISoH9jtQwXy
-         ahU8upGpLgNgv7pPweD6CiACmghx6cc6MThO9r8b6J4d/JTMIvC+ZDN5UXmce4kmDWWu
-         zNoA==
-X-Gm-Message-State: AC+VfDwu0PhXz9LjuG2VGRP9EjR6eOAzAAvTErw6+eZgTNiaWtyRR1i6
-        FTTs58Dgq/40wSyqfLVAuxVlgtjIa2zD1SFwEqg=
-X-Google-Smtp-Source: ACHHUZ7tjnGAcKbFxVovJXgOzw0tUQxxKYswQxnid+gWoGnZ+ObVi0VX+vlawUMOLPq0gbGKUZtQcincap4XuICvDi4=
-X-Received: by 2002:a2e:b16f:0:b0:2b1:d19a:f190 with SMTP id
- a15-20020a2eb16f000000b002b1d19af190mr235764ljm.49.1686001849607; Mon, 05 Jun
- 2023 14:50:49 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686004358; x=1688596358;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q6XXKGqtv+SXyOIfPXMfeL9O+2fKpYePdxYVtpVnLRY=;
+        b=CBjPBP+vl/9El9d+45p0t3vtLymFcqVjGFcw7HSnT1lmlEZ9aBt4yBZ7JFd6FHcuK8
+         GrXbJVyskdVQpf7KyAFD0h/hmLGV1TWaTklxUGfGkfWW+xPUTqy4LoX3xge3sgwNePOA
+         4v9PVW6n8geH/gjJTkeTRu8yPSy+ioqJSeeGUlsGd0KPTqV4Qh3Y/6EJC/LcB/xcc3OJ
+         2R2bB+9H+Ag09foidC4RrzmdjWgKj4saC3xY1m+Naov8pz/KzU6JudVA12Am9mtFixmB
+         X/rwqam0hUYF9kqL5QIfG82GmNqq8nFaFtS5NBesIZ38kGjDBIsIP5j6/Sze6u/kSTMF
+         9OQA==
+X-Gm-Message-State: AC+VfDzB9Ly+iTAYwU/Xi3z1lTSVh72fSwQx/1Gx2rFysJvKkNt3rUTs
+        41oNo4dv9wAMtY41WEDAgPvc4Q==
+X-Google-Smtp-Source: ACHHUZ41rdel5fOclCH4/4izzymU8dbmTPEyJUF0GLFepqnRJjlMlPqbIhWBAvN0OdUZdC7qFQI1DQ==
+X-Received: by 2002:a05:6a20:3d8e:b0:105:53:998 with SMTP id s14-20020a056a203d8e00b0010500530998mr465056pzi.12.1686004358419;
+        Mon, 05 Jun 2023 15:32:38 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-79-151.pa.nsw.optusnet.com.au. [49.179.79.151])
+        by smtp.gmail.com with ESMTPSA id bd6-20020a170902830600b001b016313b27sm7099553plb.88.2023.06.05.15.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Jun 2023 15:32:37 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q6Ikd-008G9M-0c;
+        Tue, 06 Jun 2023 08:32:35 +1000
+Date:   Tue, 6 Jun 2023 08:32:35 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Kirill Tkhai <tkhai@ya.ru>
+Cc:     akpm@linux-foundation.org, roman.gushchin@linux.dev,
+        vbabka@suse.cz, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        djwong@kernel.org, hughd@google.com, paulmck@kernel.org,
+        muchun.song@linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhengqi.arch@bytedance.com
+Subject: Re: [PATCH v2 0/3] mm: Make unregistration of super_block shrinker
+ more faster
+Message-ID: <ZH5ig590WleaH1Ed@dread.disaster.area>
+References: <168599103578.70911.9402374667983518835.stgit@pro.pro>
 MIME-Version: 1.0
-References: <CAHc6FU7xZaDAnmQ5UhO=MCnW_nGV2WNs93=PTAoVWCYuSCnrAQ@mail.gmail.com>
- <87pm69k4kf.fsf@doe.com>
-In-Reply-To: <87pm69k4kf.fsf@doe.com>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Mon, 5 Jun 2023 23:50:38 +0200
-Message-ID: <CAHpGcM+kYGwh2AQNhThQYwLRzcwL_v+iWqbD7k+vyhfGz=sjtg@mail.gmail.com>
-Subject: Re: [PATCHv7 3/6] iomap: Refactor some iop related accessor functions
-To:     Ritesh Harjani <ritesh.list@gmail.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <168599103578.70911.9402374667983518835.stgit@pro.pro>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am Mo., 5. Juni 2023 um 23:05 Uhr schrieb Ritesh Harjani
-<ritesh.list@gmail.com>:
-> Andreas Gruenbacher <agruenba@redhat.com> writes:
-> > On Mon, Jun 5, 2023 at 12:55=E2=80=AFPM Ritesh Harjani (IBM) <ritesh.li=
-st@gmail.com> wrote:
-> >> We would eventually use iomap_iop_** function naming by the rest of th=
-e
-> >> buffered-io iomap code. This patch update function arguments and namin=
-g
-> >> from iomap_set_range_uptodate() -> iomap_iop_set_range_uptodate().
-> >> iop_set_range_uptodate() then becomes an accessor function used by
-> >> iomap_iop_** functions.
-> >>
-> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> >> ---
-> >>  fs/iomap/buffered-io.c | 111 +++++++++++++++++++++++-----------------=
--
-> >>  1 file changed, 63 insertions(+), 48 deletions(-)
-> >>
-> >> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> >> index 6fffda355c45..136f57ccd0be 100644
-> >> --- a/fs/iomap/buffered-io.c
-> >> +++ b/fs/iomap/buffered-io.c
-> >> @@ -24,14 +24,14 @@
-> >>  #define IOEND_BATCH_SIZE       4096
-> >>
-> >>  /*
-> >> - * Structure allocated for each folio when block size < folio size
-> >> - * to track sub-folio uptodate status and I/O completions.
-> >> + * Structure allocated for each folio to track per-block uptodate sta=
-te
-> >> + * and I/O completions.
-> >>   */
-> >>  struct iomap_page {
-> >>         atomic_t                read_bytes_pending;
-> >>         atomic_t                write_bytes_pending;
-> >> -       spinlock_t              uptodate_lock;
-> >> -       unsigned long           uptodate[];
-> >> +       spinlock_t              state_lock;
-> >> +       unsigned long           state[];
-> >>  };
-> >>
-> >>  static inline struct iomap_page *to_iomap_page(struct folio *folio)
-> >> @@ -43,6 +43,48 @@ static inline struct iomap_page *to_iomap_page(stru=
-ct folio *folio)
-> >>
-> >>  static struct bio_set iomap_ioend_bioset;
-> >>
-> >> +static bool iop_test_full_uptodate(struct folio *folio)
-> >> +{
-> >> +       struct iomap_page *iop =3D to_iomap_page(folio);
-> >> +       struct inode *inode =3D folio->mapping->host;
-> >> +
-> >> +       return bitmap_full(iop->state, i_blocks_per_folio(inode, folio=
-));
-> >> +}
-> >
-> > Can this be called iop_test_fully_uptodate(), please?
-> >
->
-> IMHO, iop_test_full_uptodate() looks fine. It goes similar to
-> bitmap_full() function.
+On Mon, Jun 05, 2023 at 10:02:46PM +0300, Kirill Tkhai wrote:
+> This patch set introduces a new scheme of shrinker unregistration. It allows to split
+> the unregistration in two parts: fast and slow. This allows to hide slow part from
+> a user, so user-visible unregistration becomes fast.
+> 
+> This fixes the -88.8% regression of stress-ng.ramfs.ops_per_sec noticed
+> by kernel test robot:
+> 
+> https://lore.kernel.org/lkml/202305230837.db2c233f-yujie.liu@intel.com/
+> 
+> ---
+> 
+> Kirill Tkhai (2):
+>       mm: Split unregister_shrinker() in fast and slow part
+>       fs: Use delayed shrinker unregistration
 
-Nah, it really isn't fine, it's "the bitmap is full" vs. "the iop is
-fully uptodate"; you can't say "the iop is full uptodate".
+Did you test any filesystem other than ramfs?
 
-Thanks,
-Andreas
+Filesystems more complex than ramfs have internal shrinkers, and so
+they will still be running the slow synchronize_srcu() - potentially
+multiple times! - in every unmount. Both XFS and ext4 have 3
+internal shrinker instances per mount, so they will still call
+synchronize_srcu() at least 3 times per unmount after this change.
+
+What about any other subsystem that runs a shrinker - do they have
+context depedent shrinker instances that get frequently created and
+destroyed? They'll need the same treatment.
+
+Seriously, part of changing shrinker infrastructure is doing an
+audit of all the shrinker instances to determine how the change will
+impact those shrinkers, and if the same structural changes are
+needed to those implementations.
+
+I don't see any of this being done - this looks like a "slap a bandaid
+over the visible symptom" patch set without any deeper investigation
+of the scope of the issue having been gained.
+
+Along with all shrinkers now running under a SRCU critical region
+and requiring a machine wide synchronisation point for every
+unregister_shrinker() call made, the ability to repeated abort
+global shrinker passes via external SRCU expediting, and now an
+intricate locking and state dance in do_shrink_slab() vs
+unregister_shrinker, I can't say I'm particularly liking any of
+this, regardles of the benefits it supposedly provides.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
