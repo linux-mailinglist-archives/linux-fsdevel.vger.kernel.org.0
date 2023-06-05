@@ -2,71 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89A37722625
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 14:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37CD772263D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 14:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233258AbjFEMmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 08:42:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37470 "EHLO
+        id S233551AbjFEMrM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 08:47:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232908AbjFEMmv (ORCPT
+        with ESMTP id S233523AbjFEMrJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 08:42:51 -0400
-Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8422FDA;
-        Mon,  5 Jun 2023 05:42:49 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4QZY076XM8z9yhr6;
-        Mon,  5 Jun 2023 20:32:23 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwA3muUp2H1kqFsRAw--.4008S2;
-        Mon, 05 Jun 2023 13:42:27 +0100 (CET)
-Message-ID: <6a9f6314f21c5e4dd2960c12626e14c4ce8c8163.camel@huaweicloud.com>
-Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>,
-        Jeff Mahoney <jeffm@suse.com>
-Date:   Mon, 05 Jun 2023 14:42:13 +0200
-In-Reply-To: <20230605123604.7juo5siuooy2dip2@quack3>
-References: <000000000000be039005fc540ed7@google.com>
-         <00000000000018faf905fc6d9056@google.com>
-         <CAHC9VhTM0a7jnhxpCyonepcfWbnG-OJbbLpjQi68gL2GVnKSRg@mail.gmail.com>
-         <813148798c14a49cbdf0f500fbbbab154929e6ed.camel@huaweicloud.com>
-         <CAHC9VhRoj3muyD0+pTwpJvCdmzz25C8k8eufWcjc8ZE4e2AOew@mail.gmail.com>
-         <58cebdd9318bd4435df6c0cf45318abd3db0fff8.camel@huaweicloud.com>
-         <20230530112147.spvyjl7b4ss7re47@quack3>
-         <20230605123604.7juo5siuooy2dip2@quack3>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Mon, 5 Jun 2023 08:47:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A8CDA
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jun 2023 05:46:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1685969182;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nTV++T1qFJV7bEuDjQHfHExm7YDjffLohFjYna0MPZ0=;
+        b=KUD2uP/CPkw7Ol4rEB8/O4sVtGnJdQAgX9GvpoWTznXDqxBhJ1JufwgZI9al8AZNyW6G1z
+        jO2d17ZSzl/PrL/wK/Otai6U3SqRD0HRJtz0sHfdkca8z7frExO55tpIyKbXPvardO4FHS
+        k6efHOMm/SEQ+ZtALR2esg7aId2xWRA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-601-gzBNOFPnODqMmUTrqVdFFg-1; Mon, 05 Jun 2023 08:46:18 -0400
+X-MC-Unique: gzBNOFPnODqMmUTrqVdFFg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C07C3811E93;
+        Mon,  5 Jun 2023 12:46:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DBA884087C62;
+        Mon,  5 Jun 2023 12:46:14 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCH net-next v4 04/11] splice, net: Add a splice_eof op to file-ops and socket-ops
+Date:   Mon,  5 Jun 2023 13:45:53 +0100
+Message-ID: <20230605124600.1722160-5-dhowells@redhat.com>
+In-Reply-To: <20230605124600.1722160-1-dhowells@redhat.com>
+References: <20230605124600.1722160-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwA3muUp2H1kqFsRAw--.4008S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWry7AFWxuw18Zr1UCF15urg_yoW5trWrpr
-        WUGF1YkFs8tr1Utr40qF1DGwnFgrWrtrW7X3yUtr18ua1vqrnrJr4I9r47urWDGr1DCF90
-        yF15Z343Zr1ru37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrR6zUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBF1jj4o6XQAAsJ
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
-        PDS_RDNS_DYNAMIC_FP,RCVD_IN_MSPIKE_BL,RCVD_IN_MSPIKE_L3,RDNS_DYNAMIC,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,77 +77,207 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-06-05 at 14:36 +0200, Jan Kara wrote:
-> On Tue 30-05-23 13:21:47, Jan Kara wrote:
-> > On Fri 26-05-23 11:45:57, Roberto Sassu wrote:
-> > > On Wed, 2023-05-24 at 17:57 -0400, Paul Moore wrote:
-> > > > On Wed, May 24, 2023 at 11:50 AM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > On Wed, 2023-05-24 at 11:11 -0400, Paul Moore wrote:
-> > > > > > On Wed, May 24, 2023 at 5:59 AM syzbot
-> > > > > > <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com> wrote:
-> > > > > > > syzbot has bisected this issue to:
-> > > > > > > 
-> > > > > > > commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
-> > > > > > > Author: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > > Date:   Fri Mar 31 12:32:18 2023 +0000
-> > > > > > > 
-> > > > > > >     reiserfs: Add security prefix to xattr name in reiserfs_security_write()
-> > > > > > > 
-> > > > > > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11c39639280000
-> > > > > > > start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.linux-..
-> > > > > > > git tree:       upstream
-> > > > > > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=13c39639280000
-> > > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=15c39639280000
-> > > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8067683055e3f5
-> > > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=0a684c061589dcc30e51
-> > > > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14312791280000
-> > > > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12da8605280000
-> > > > > > > 
-> > > > > > > Reported-by: syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com
-> > > > > > > Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
-> > > > > > > 
-> > > > > > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> > > > > > 
-> > > > > > Roberto, I think we need to resolve this somehow.  As I mentioned
-> > > > > > earlier, I don't believe this to be a fault in your patch, rather that
-> > > > > > patch simply triggered a situation that had not been present before,
-> > > > > > likely because the reiserfs code always failed when writing LSM
-> > > > > > xattrs.  Regardless, we still need to fix the deadlocks that sysbot
-> > > > > > has been reporting.
-> > > > > 
-> > > > > Hi Paul
-> > > > > 
-> > > > > ok, I will try.
-> > > > 
-> > > > Thanks Roberto.  If it gets to be too challenging, let us know and we
-> > > > can look into safely disabling the LSM xattrs for reiserfs, I'll be
-> > > > shocked if anyone is successfully using LSM xattrs on reiserfs.
-> > > 
-> > > Ok, at least I know what happens...
-> > > 
-> > > + Jan, Jeff
-> > > 
-> > > I'm focusing on this reproducer, which works 100% of the times:
-> > > 
-> > > https://syzkaller.appspot.com/text?tag=ReproSyz&x=163079f9280000
-> > 
-> > Well, the commit d82dcd9e21b ("reiserfs: Add security prefix to xattr name
-> > in reiserfs_security_write()") looks obviously broken to me. It does:
-> > 
-> > char xattr_name[XATTR_NAME_MAX + 1] = XATTR_SECURITY_PREFIX;
-> > 
-> > Which is not how we can initialize strings in C... ;)
-> 
-> I'm growing old or what but indeed string assignment in initializers in C
-> works fine. It is only the assignment in code that would be problematic.
-> I'm sorry for the noise.
+Add an optional method, ->splice_eof(), to allow splice to indicate the
+premature termination of a splice to struct file_operations and struct
+proto_ops.
 
-Cool, thanks!
+This is called if sendfile() or splice() encounters all of the following
+conditions inside splice_direct_to_actor():
 
-It seems the difference with just doing memcpy() is that the compiler
-fully initializes the array (256 bytes), instead of copying the
-required amount.
+ (1) the user did not set SPLICE_F_MORE (splice only), and
 
-Roberto
+ (2) an EOF condition occurred (->splice_read() returned 0), and
+
+ (3) we haven't read enough to fulfill the request (ie. len > 0 still), and
+
+ (4) we have already spliced at least one byte.
+
+A further patch will modify the behaviour of SPLICE_F_MORE to always be
+passed to the actor if either the user set it or we haven't yet read
+sufficient data to fulfill the request.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/CAHk-=wh=V579PDYvkpnTobCLGczbgxpMgGmmhqiTyE34Cpi5Gg@mail.gmail.com/
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Jan Kara <jack@suse.cz>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: David Hildenbrand <david@redhat.com>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Chuck Lever <chuck.lever@oracle.com>
+cc: Boris Pismenny <borisp@nvidia.com>
+cc: John Fastabend <john.fastabend@gmail.com>
+cc: Eric Dumazet <edumazet@google.com>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-block@vger.kernel.org
+cc: linux-mm@kvack.org
+cc: netdev@vger.kernel.org
+---
+ fs/splice.c            | 31 ++++++++++++++++++++++++++++++-
+ include/linux/fs.h     |  1 +
+ include/linux/net.h    |  1 +
+ include/linux/splice.h |  1 +
+ include/net/sock.h     |  1 +
+ net/socket.c           | 10 ++++++++++
+ 6 files changed, 44 insertions(+), 1 deletion(-)
+
+diff --git a/fs/splice.c b/fs/splice.c
+index 9b1d43c0c562..3063f9a3ba62 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -969,6 +969,17 @@ static long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
+ 	return out->f_op->splice_write(pipe, out, ppos, len, flags);
+ }
+ 
++/*
++ * Indicate to the caller that there was a premature EOF when reading from the
++ * source and the caller didn't indicate they would be sending more data after
++ * this.
++ */
++static void do_splice_eof(struct splice_desc *sd)
++{
++	if (sd->splice_eof)
++		sd->splice_eof(sd);
++}
++
+ /*
+  * Attempt to initiate a splice from a file to a pipe.
+  */
+@@ -1068,7 +1079,7 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+ 
+ 		ret = do_splice_to(in, &pos, pipe, len, flags);
+ 		if (unlikely(ret <= 0))
+-			goto out_release;
++			goto read_failure;
+ 
+ 		read_len = ret;
+ 		sd->total_len = read_len;
+@@ -1108,6 +1119,15 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+ 	file_accessed(in);
+ 	return bytes;
+ 
++read_failure:
++	/*
++	 * If the user did *not* set SPLICE_F_MORE *and* we didn't hit that
++	 * "use all of len" case that cleared SPLICE_F_MORE, *and* we did a
++	 * "->splice_in()" that returned EOF (ie zero) *and* we have sent at
++	 * least 1 byte *then* we will also do the ->splice_eof() call.
++	 */
++	if (ret == 0 && !more && len > 0 && bytes)
++		do_splice_eof(sd);
+ out_release:
+ 	/*
+ 	 * If we did an incomplete transfer we must release
+@@ -1136,6 +1156,14 @@ static int direct_splice_actor(struct pipe_inode_info *pipe,
+ 			      sd->flags);
+ }
+ 
++static void direct_file_splice_eof(struct splice_desc *sd)
++{
++	struct file *file = sd->u.file;
++
++	if (file->f_op->splice_eof)
++		file->f_op->splice_eof(file);
++}
++
+ /**
+  * do_splice_direct - splices data directly between two files
+  * @in:		file to splice from
+@@ -1161,6 +1189,7 @@ long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
+ 		.flags		= flags,
+ 		.pos		= *ppos,
+ 		.u.file		= out,
++		.splice_eof	= direct_file_splice_eof,
+ 		.opos		= opos,
+ 	};
+ 	long ret;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f8254c3acf83..e393f2550300 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1796,6 +1796,7 @@ struct file_operations {
+ 	int (*flock) (struct file *, int, struct file_lock *);
+ 	ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
+ 	ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int);
++	void (*splice_eof)(struct file *file);
+ 	int (*setlease)(struct file *, long, struct file_lock **, void **);
+ 	long (*fallocate)(struct file *file, int mode, loff_t offset,
+ 			  loff_t len);
+diff --git a/include/linux/net.h b/include/linux/net.h
+index b73ad8e3c212..8defc8f1d82e 100644
+--- a/include/linux/net.h
++++ b/include/linux/net.h
+@@ -210,6 +210,7 @@ struct proto_ops {
+ 				      int offset, size_t size, int flags);
+ 	ssize_t 	(*splice_read)(struct socket *sock,  loff_t *ppos,
+ 				       struct pipe_inode_info *pipe, size_t len, unsigned int flags);
++	void		(*splice_eof)(struct socket *sock);
+ 	int		(*set_peek_off)(struct sock *sk, int val);
+ 	int		(*peek_len)(struct socket *sock);
+ 
+diff --git a/include/linux/splice.h b/include/linux/splice.h
+index 991ae318b6eb..4fab18a6e371 100644
+--- a/include/linux/splice.h
++++ b/include/linux/splice.h
+@@ -38,6 +38,7 @@ struct splice_desc {
+ 		struct file *file;	/* file to read/write */
+ 		void *data;		/* cookie */
+ 	} u;
++	void (*splice_eof)(struct splice_desc *sd); /* Unexpected EOF handler */
+ 	loff_t pos;			/* file position */
+ 	loff_t *opos;			/* sendfile: output position */
+ 	size_t num_spliced;		/* number of bytes already spliced */
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 656ea89f60ff..330b9c24ef70 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -1267,6 +1267,7 @@ struct proto {
+ 					   size_t len, int flags, int *addr_len);
+ 	int			(*sendpage)(struct sock *sk, struct page *page,
+ 					int offset, size_t size, int flags);
++	void			(*splice_eof)(struct socket *sock);
+ 	int			(*bind)(struct sock *sk,
+ 					struct sockaddr *addr, int addr_len);
+ 	int			(*bind_add)(struct sock *sk,
+diff --git a/net/socket.c b/net/socket.c
+index c4d9104418c8..b778fc03c6e0 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -130,6 +130,7 @@ static int sock_fasync(int fd, struct file *filp, int on);
+ static ssize_t sock_splice_read(struct file *file, loff_t *ppos,
+ 				struct pipe_inode_info *pipe, size_t len,
+ 				unsigned int flags);
++static void sock_splice_eof(struct file *file);
+ 
+ #ifdef CONFIG_PROC_FS
+ static void sock_show_fdinfo(struct seq_file *m, struct file *f)
+@@ -163,6 +164,7 @@ static const struct file_operations socket_file_ops = {
+ 	.fasync =	sock_fasync,
+ 	.splice_write = splice_to_socket,
+ 	.splice_read =	sock_splice_read,
++	.splice_eof =	sock_splice_eof,
+ 	.show_fdinfo =	sock_show_fdinfo,
+ };
+ 
+@@ -1076,6 +1078,14 @@ static ssize_t sock_splice_read(struct file *file, loff_t *ppos,
+ 	return sock->ops->splice_read(sock, ppos, pipe, len, flags);
+ }
+ 
++static void sock_splice_eof(struct file *file)
++{
++	struct socket *sock = file->private_data;
++
++	if (sock->ops->splice_eof)
++		sock->ops->splice_eof(sock);
++}
++
+ static ssize_t sock_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	struct file *file = iocb->ki_filp;
 
