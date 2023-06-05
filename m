@@ -2,100 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 011007228ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 16:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7586E722A41
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 17:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233616AbjFEOhD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 10:37:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57728 "EHLO
+        id S233957AbjFEPHu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 11:07:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232301AbjFEOhB (ORCPT
+        with ESMTP id S233545AbjFEPHr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 10:37:01 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7145C9C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jun 2023 07:37:00 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-173-48-119-27.bstnma.fios.verizon.net [173.48.119.27])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 355EacRo022190
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 5 Jun 2023 10:36:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1685975802; bh=Gf0lmbvGbinyQFXlk1n8DOtloRliNEg8wNbWAkf1Cn8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=SkA7AZmFJArAGOqu+xDl560hqDN5mkZhJ3f0GSbLHx7CptVTwK93YNspsCQwOUzLj
-         Dw/OOQ6ajFeXDkb7KMSRxjsxDERHNcFWyGnydL7mIPuE22BllXq4KAjqelwaC1Ka2x
-         omW8SP7nGKnt/BXgl7gRa9+aazdY13aFXB3GFq9qlei4A9cr7LhAI0xIRorBUy0AfY
-         +26JiHgOXnJGPeKRbdP7vx38pCupVzpruLwyCEkCI7W0Gn4pr8x9pKNh7rKCzn/N6g
-         Z9XrsTSlk/Twl4cCGZmdrxmCUUv196L86U7RNIlic+WVDGYBziJhuOjXOWel5CiIqr
-         zir9KteZEmWJg==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id CCD6815C02EE; Mon,  5 Jun 2023 10:36:38 -0400 (EDT)
-Date:   Mon, 5 Jun 2023 10:36:38 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: uuid ioctl - was: Re: [PATCH] overlayfs: Trigger file
- re-evaluation by IMA / EVM after writes
-Message-ID: <20230605143638.GA1151212@mit.edu>
-References: <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
- <20230520-angenehm-orangen-80fdce6f9012@brauner>
- <ZGqgDjJqFSlpIkz/@dread.disaster.area>
- <20230522-unsensibel-backblech-7be4e920ba87@brauner>
- <20230602012335.GB16848@frogsfrogsfrogs>
- <20230602042714.GE1128744@mit.edu>
- <ZHmNksPcA9tudSVQ@dread.disaster.area>
- <20230602-dividende-model-62b2bdc073cf@brauner>
- <ZH0XVWBqs9zJF69X@dread.disaster.area>
- <20230605-allgegenwart-bellt-e05884aab89a@brauner>
+        Mon, 5 Jun 2023 11:07:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC36EA;
+        Mon,  5 Jun 2023 08:07:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 584F061D0A;
+        Mon,  5 Jun 2023 15:07:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C5BC4339B;
+        Mon,  5 Jun 2023 15:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685977664;
+        bh=zmoA4oHWgg1re2UyvCi+eWlKJrDMOpb/Pib6CUUaio0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jJDbzNm7m2hUEWE9GTOJlB4OJlWzsB6kcl47F3+bvlG5GOrvzBQvv6vCjxTxUZbLP
+         +66lqihQ+VlpDKn54aczCWRS3aLtdRbV7bbud8vFxQLhqQBvIo5fRfv+0gbwhtoix5
+         WRm3eRVz3bNG71gVrQzfWkFdtCa1r7OGFX6xnM2fNyMuo985jsj/6Y8/s1Z8ZZwz1Y
+         etW5awKTvpfL1FMYvW2l5Sqgt2pkaB9yNuKnvtPc1T4LhDEDZAgTUK8zxm1WsHInHc
+         9DqceGgghM/XLWNCefu/Bqy6C35uXK53GQJhKIMnb073SOEEq+hnt5ChD7BSyQK0dA
+         XItc+siWmgxQg==
+Date:   Mon, 5 Jun 2023 08:07:44 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Wang Yugui <wangyugui@e16-tech.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 2/7] doc: Correct the description of ->release_folio
+Message-ID: <20230605150744.GJ72241@frogsfrogsfrogs>
+References: <20230602222445.2284892-1-willy@infradead.org>
+ <20230602222445.2284892-3-willy@infradead.org>
+ <20230604175548.GA72241@frogsfrogsfrogs>
+ <ZHzvzzvoQGmIaO6n@casper.infradead.org>
+ <20230604203306.GB72267@frogsfrogsfrogs>
+ <ZH3fCy+J+oLDTTkf@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230605-allgegenwart-bellt-e05884aab89a@brauner>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZH3fCy+J+oLDTTkf@casper.infradead.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 05, 2023 at 01:37:40PM +0200, Christian Brauner wrote:
-> Using a zero/special UUID would have made this usable for most
-> filesystems which allows userspace to more easily detect this. Using a
-> filesystem feature bit makes this a lot more fragmented between
-> filesystems.
+On Mon, Jun 05, 2023 at 02:11:39PM +0100, Matthew Wilcox wrote:
+> On Sun, Jun 04, 2023 at 01:33:06PM -0700, Darrick J. Wong wrote:
+> > On Sun, Jun 04, 2023 at 09:10:55PM +0100, Matthew Wilcox wrote:
+> > > On Sun, Jun 04, 2023 at 10:55:48AM -0700, Darrick J. Wong wrote:
+> > > > On Fri, Jun 02, 2023 at 11:24:39PM +0100, Matthew Wilcox (Oracle) wrote:
+> > > > > -->release_folio() is called when the kernel is about to try to drop the
+> > > > > -buffers from the folio in preparation for freeing it.  It returns false to
+> > > > > -indicate that the buffers are (or may be) freeable.  If ->release_folio is
+> > > > > -NULL, the kernel assumes that the fs has no private interest in the buffers.
+> > > > > +->release_folio() is called when the MM wants to make a change to the
+> > > > > +folio that would invalidate the filesystem's private data.  For example,
+> > > > > +it may be about to be removed from the address_space or split.  The folio
+> > > > > +is locked and not under writeback.  It may be dirty.  The gfp parameter is
+> > > > > +not usually used for allocation, but rather to indicate what the filesystem
+> > > > > +may do to attempt to free the private data.  The filesystem may
+> > > > > +return false to indicate that the folio's private data cannot be freed.
+> > > > > +If it returns true, it should have already removed the private data from
+> > > > > +the folio.  If a filesystem does not provide a ->release_folio method,
+> > > > > +the kernel will call try_to_free_buffers().
+> > > > 
+> > > > the MM?  Since you changed that above... :)
+> > > > 
+> > > > With that nit fixed,
+> > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > 
+> > > Well, is it the MM?  At this point, the decision is made by
+> > > filemap_release_folio(), which is the VFS, in my opinion ;-)
+> > 
+> > It's in mm/filemap.c, which I think makes it squarely the pagecache/mm,
+> > not the vfs.
+> 
+> Changed this to:
+> 
+> If a filesystem does not provide a ->release_folio method,
+> the pagecache will assume that private data is buffer_heads and call
+> try_to_free_buffers().
 
-Not all file systems have feature bits.  So I'd suggest that how this
-should be a file system specific implementation detail.  If with a
-newer kernel, a file systems sets the UUID to a random value if it is
-all zeros when it is mounted should be relatively simple.
+Holy schism resolved;
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-However, there are some questions this brings up.  What should the
-semantics be if a file system creates a file system-level snapshot ---
-should the UUID be refreshed?  What if it is a block-level file system
-snapshot using LVM --- should the UUID be refreshed in that case?
+--D
 
-As I've been trying to point out, exactly what the semantics of a file
-system level UUID has never been well defined, and it's not clear what
-various subsystems are trying to *do* with the UUID.  And given that
-what can happen with mount name spaces, bind mounts, etc., we should
-ask whether the assumptions they are making with respect to UUID is in
-fact something we should be encouraging.
-
-> But allowing to refuse being mounted on older kernels when the feature
-> bit is set and unknown can be quite useful. So this is also fine by me.
-
-This pretty much guarantees people won't use the feature for a while.
-People complain when a file system cann't be mounted.  Using a feature
-bit is also very likely to mean that you won't be able to run an older
-fsck on that file system --- for what users would complain would be no
-good reason.  And arguably, they would be right to complain.
-
-						- Ted
