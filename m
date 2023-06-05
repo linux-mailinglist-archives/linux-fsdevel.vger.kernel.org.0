@@ -2,53 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B45C3721B79
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 03:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 307B7721B7B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 03:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231478AbjFEBcK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Jun 2023 21:32:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42518 "EHLO
+        id S232586AbjFEBcQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Jun 2023 21:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbjFEBcJ (ORCPT
+        with ESMTP id S230193AbjFEBcN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Jun 2023 21:32:09 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEC91A1;
-        Sun,  4 Jun 2023 18:32:08 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1b026657a6fso37545555ad.0;
-        Sun, 04 Jun 2023 18:32:08 -0700 (PDT)
+        Sun, 4 Jun 2023 21:32:13 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 307E7A1;
+        Sun,  4 Jun 2023 18:32:12 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id 5614622812f47-38dec65ab50so3705173b6e.2;
+        Sun, 04 Jun 2023 18:32:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685928728; x=1688520728;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rSZA2eRliE46TAZCl7u2/d8ZP2MbH7jghdES6MZCDJk=;
-        b=owYheJdm0N0ShI3KbX42PVAZWaaG3OtOloENj3Zl+SZnkp7lKNSH5ULcy8v/erBDbP
-         x9tkvtHm7kDA4sCHCxZhvfBFqYlQvtNUOikCuIupYu3MMr2JqCaNd4eZm+9CCG2xusd+
-         LZIR+y4npWz/60l77Xw/WXqOuzcQWmw16FAAICT4o1M/K0ighwKrCRzwEF4wqmo8BaZY
-         Vf6/KVQIE2cNVhbxg8SNtz198dC8/cC2OBiml2YwGQU9AmoS/UcPhXpPrL8bn5ADKWUU
-         z1vQF7SuRbT5w0HkLTdqoVP+tzfj6LVW/ogATK3nmkF1WZehuZ6NuHxYpJGZ1LLp6In5
-         o70Q==
+        d=gmail.com; s=20221208; t=1685928731; x=1688520731;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TxrzfIp1bwlxrggScZU2c1c7t8HyvxqKo5xx2x+BHzs=;
+        b=ZhXeTtpuVcgvVDbY1dfOup6Ldk16IIubJUXqGucRD5kz4YgZ4tAqh3Faon7A0meR+u
+         wqle3fVsQfPYcjp9erTTIZg4eBEBysJK6kZ6ixGe2yhAq2aRBdRXhgd9U39uwzxR5E3x
+         0T0bcXnb/G14/ER9lH8MVvSSvIuoIJWVZz4m+gqEgKclO4WJKuWrT0JAbftrhQ5s41Sd
+         uC9My94hDSd5CAKh65bXlJWCSanDCw4cUFl3wn+oBhsvo/r1DTd/UTCQstaTrCu0nYUV
+         TC6lhOvc+DQzEck16laapZXAekCX/jVk8/T0UOd5ZxZI7ixGeFX2oYqgSNKxDC464e8N
+         vqPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685928728; x=1688520728;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rSZA2eRliE46TAZCl7u2/d8ZP2MbH7jghdES6MZCDJk=;
-        b=H5NYS+v699IBv5dqOYNKUissFKSCfOP3cVLDNodvxoqVMm3ngvEBszY/SBjXDYlpR4
-         J2IANu5/ZFOutF90GbczgSU25hbzZP5o4VIpvqrGOSkodpdHLv4bAU++10CQtmuz4aQ+
-         +2pWWl4E1HBPFScQryUTHpu7Q63uB/UfkldkwXPcInQlnNuh2ilsNzXR3rT5MaaujIyb
-         vFncltqXt8ExGYe69YBrO6wDNM0nyzkhxooNal+SkjGyPZGEwvw0eJFVBm/KEluhGkbs
-         nU07kIj2I1R6edZ1y10HauOW4X94ti+/m/HLchOt+8LBOGxF80K27s89ylwISCrsVCL6
-         hcbA==
-X-Gm-Message-State: AC+VfDyLC8k61r0ge06IOySlHuQ+ATxUg6foNf2DgEmQnN4PKl+KoLwM
-        bgBhgMAs0xsSM8xXB/V2LSD4G87EwzQ=
-X-Google-Smtp-Source: ACHHUZ7/CFsaKk0X1nejmQYx3fwRpPBxSxAJqU57MDMZXUEZVPEv/kQHsKutJWqPHntPvBuDnhE42g==
-X-Received: by 2002:a17:902:f68b:b0:1ab:7fb:aac1 with SMTP id l11-20020a170902f68b00b001ab07fbaac1mr8063463plg.24.1685928727738;
-        Sun, 04 Jun 2023 18:32:07 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1685928731; x=1688520731;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TxrzfIp1bwlxrggScZU2c1c7t8HyvxqKo5xx2x+BHzs=;
+        b=jZe6Y1kp5AvEnUa0XnjsJBZ6V2iGcwWmQSgZK5Eq5LbOQEkj/pP+wZwNgxAgrUtCZM
+         dBzRlN47iA5mNhcSjGEdrnRYzHgGgfluW8H9BFeNvlP567b/AwSk/8ga4eeINrwBmd8K
+         i/5y07qHjEtNGrZzZMfvKyIPfdBjbm5eLXYQISVn/bGW6BD/Gbc297AHvaUENuKxgifr
+         A5lvAcwnNRIh+Eyf6XLAhhQo9qYKi5L1pDzLEM/IH7rE4lW83HTMg8a4CN1rejaa7Q1Y
+         x6GQ/lrHf7oiy1fU5TAYnjbAxRaJe5ny769w/3REJBbBK7YJnMAy8oQLzZP3z9nETCu3
+         vURA==
+X-Gm-Message-State: AC+VfDymBLkpZwv/wSqwhWkgbV027ZnQyJCyiZWZoQub4OrhZY9sm/GR
+        hi4uO0QHM+PJnX4kyjMool5UZzTDADI=
+X-Google-Smtp-Source: ACHHUZ6RYWiSVkkZ4VhODX4Mhf1YOWaKUEbzP6jNZkPQI6Q5WgZjsqbNR2QuoYYGXIr9vPq9jrfS7w==
+X-Received: by 2002:a05:6808:288f:b0:39a:967e:b962 with SMTP id eu15-20020a056808288f00b0039a967eb962mr4653025oib.33.1685928730963;
+        Sun, 04 Jun 2023 18:32:10 -0700 (PDT)
 Received: from dw-tp.ihost.com ([49.207.220.159])
-        by smtp.gmail.com with ESMTPSA id 13-20020a170902c14d00b001aaec7a2a62sm5209287plj.188.2023.06.04.18.32.04
+        by smtp.gmail.com with ESMTPSA id 13-20020a170902c14d00b001aaec7a2a62sm5209287plj.188.2023.06.04.18.32.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Jun 2023 18:32:07 -0700 (PDT)
+        Sun, 04 Jun 2023 18:32:10 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org,
@@ -60,10 +61,12 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>,
         Disha Goel <disgoel@linux.ibm.com>,
         "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCHv6 0/5] iomap: Add support for per-block dirty state to improve write performance
-Date:   Mon,  5 Jun 2023 07:01:47 +0530
-Message-Id: <cover.1685900733.git.ritesh.list@gmail.com>
+Subject: [PATCHv6 1/5] iomap: Rename iomap_page_create/release() to iomap_iop_alloc/free()
+Date:   Mon,  5 Jun 2023 07:01:48 +0530
+Message-Id: <9982c97c646a4a970340b67ccfc96bdb2c981b3f.1685900733.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <cover.1685900733.git.ritesh.list@gmail.com>
+References: <cover.1685900733.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -76,87 +79,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello All,
+This patch renames the iomap_page_create/release() functions to
+iomap_iop_alloc/free() calls. Later patches adds more functions for
+handling iop structure with iomap_iop_** naming conventions.
+Hence iomap_iop_alloc/free() makes more sense to be consistent with all
+APIs.
 
-Please find PATCHv6 which adds per-block dirty tracking to iomap.
-As discussed earlier this is required to improve write performance and reduce
-write amplification for cases where either blocksize is less than pagesize (such
-as Power platform with 64k pagesize) or when we have a large folio (such as xfs
-which currently supports large folio).
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+---
+ fs/iomap/buffered-io.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-RFCv5 -> PATCHv6:
-=================
-1. Addresses review comments from Brian, Christoph and Matthew.
-   @Christoph:
-     - I have renamed the higher level functions such as iop_alloc/iop_free() to
-       iomap_iop_alloc/free() in v6.
-     - As for the low level bitmap accessor functions I couldn't find any better
-       naming then iop_test_/set/clear_**. I could have gone for
-       iomap_iop__test/set/clear/_** or iomap__iop_test/set/clear_**, but
-       I wasn't convinced with either of above as it also increases function
-       name.
-       Besides iop_test/set_clear_ accessors functions for uptodate and dirty
-       status tracking make sense as we are sure we have a valid iop in such
-       cases. Please do let me know if this looks ok to you.
-2. I tried testing gfs2 (initially with no patches) with xfstests. But I always ended up
-   in some or the other deadlock (I couldn't spend any time debugging that).
-   I also ran it with -x log, but still it was always failing for me.
-   @Andreas:
-   - could you please suggest how can I test gfs2 with these patches. I see gfs2
-     can have a smaller blocksize and it uses iomap buffered io path. It will be
-     good if we can get these patches tested on it too.
-
-3. I can now say I have run some good amount of fstests on these patches on
-   these platforms and I haven't found any new failure in my testing so far.
-   arm64 (64k pagesize): with 4k -g quick
-   Power: with 4k -g auto
-   x86: 1k, 4k with -g auto and adv_auto
-
-From my testing so far these patches looks stable to me and if this looks good
-to reviewers as well, do you think this can be queued to linux-next for wider
-testing?
-
-Performance numbers copied from last patch commit message
-==================================================
-Performance testing of below fio workload reveals ~16x performance
-improvement using nvme with XFS (4k blocksize) on Power (64K pagesize)
-FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
-
-1. <test_randwrite.fio>
-[global]
-	ioengine=psync
-	rw=randwrite
-	overwrite=1
-	pre_read=1
-	direct=0
-	bs=4k
-	size=1G
-	dir=./
-	numjobs=8
-	fdatasync=1
-	runtime=60
-	iodepth=64
-	group_reporting=1
-
-[fio-run]
-
-2. Also our internal performance team reported that this patch improves
-   their database workload performance by around ~83% (with XFS on Power)
-
-Ritesh Harjani (IBM) (5):
-  iomap: Rename iomap_page_create/release() to iomap_iop_alloc/free()
-  iomap: Move folio_detach_private() in iomap_iop_free() to the end
-  iomap: Refactor some iop related accessor functions
-  iomap: Allocate iop in ->write_begin() early
-  iomap: Add per-block dirty state tracking to improve performance
-
- fs/gfs2/aops.c         |   2 +-
- fs/iomap/buffered-io.c | 309 ++++++++++++++++++++++++++++++-----------
- fs/xfs/xfs_aops.c      |   2 +-
- fs/zonefs/file.c       |   2 +-
- include/linux/iomap.h  |   1 +
- 5 files changed, 235 insertions(+), 81 deletions(-)
-
---
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 063133ec77f4..4567bdd4fff9 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -43,8 +43,8 @@ static inline struct iomap_page *to_iomap_page(struct folio *folio)
+ 
+ static struct bio_set iomap_ioend_bioset;
+ 
+-static struct iomap_page *
+-iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
++static struct iomap_page *iomap_iop_alloc(struct inode *inode,
++				struct folio *folio, unsigned int flags)
+ {
+ 	struct iomap_page *iop = to_iomap_page(folio);
+ 	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
+@@ -69,7 +69,7 @@ iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
+ 	return iop;
+ }
+ 
+-static void iomap_page_release(struct folio *folio)
++static void iomap_iop_free(struct folio *folio)
+ {
+ 	struct iomap_page *iop = folio_detach_private(folio);
+ 	struct inode *inode = folio->mapping->host;
+@@ -231,7 +231,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
+ 	if (WARN_ON_ONCE(size > iomap->length))
+ 		return -EIO;
+ 	if (offset > 0)
+-		iop = iomap_page_create(iter->inode, folio, iter->flags);
++		iop = iomap_iop_alloc(iter->inode, folio, iter->flags);
+ 	else
+ 		iop = to_iomap_page(folio);
+ 
+@@ -269,7 +269,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 		return iomap_read_inline_data(iter, folio);
+ 
+ 	/* zero post-eof blocks as the page may be mapped */
+-	iop = iomap_page_create(iter->inode, folio, iter->flags);
++	iop = iomap_iop_alloc(iter->inode, folio, iter->flags);
+ 	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
+ 	if (plen == 0)
+ 		goto done;
+@@ -490,7 +490,7 @@ bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags)
+ 	 */
+ 	if (folio_test_dirty(folio) || folio_test_writeback(folio))
+ 		return false;
+-	iomap_page_release(folio);
++	iomap_iop_free(folio);
+ 	return true;
+ }
+ EXPORT_SYMBOL_GPL(iomap_release_folio);
+@@ -507,12 +507,12 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
+ 	if (offset == 0 && len == folio_size(folio)) {
+ 		WARN_ON_ONCE(folio_test_writeback(folio));
+ 		folio_cancel_dirty(folio);
+-		iomap_page_release(folio);
++		iomap_iop_free(folio);
+ 	} else if (folio_test_large(folio)) {
+ 		/* Must release the iop so the page can be split */
+ 		WARN_ON_ONCE(!folio_test_uptodate(folio) &&
+ 			     folio_test_dirty(folio));
+-		iomap_page_release(folio);
++		iomap_iop_free(folio);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
+@@ -559,7 +559,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 		return 0;
+ 	folio_clear_error(folio);
+ 
+-	iop = iomap_page_create(iter->inode, folio, iter->flags);
++	iop = iomap_iop_alloc(iter->inode, folio, iter->flags);
++
+ 	if ((iter->flags & IOMAP_NOWAIT) && !iop && nr_blocks > 1)
+ 		return -EAGAIN;
+ 
+@@ -1612,7 +1613,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 		struct writeback_control *wbc, struct inode *inode,
+ 		struct folio *folio, u64 end_pos)
+ {
+-	struct iomap_page *iop = iomap_page_create(inode, folio, 0);
++	struct iomap_page *iop = iomap_iop_alloc(inode, folio, 0);
+ 	struct iomap_ioend *ioend, *next;
+ 	unsigned len = i_blocksize(inode);
+ 	unsigned nblocks = i_blocks_per_folio(inode, folio);
+-- 
 2.40.1
 
