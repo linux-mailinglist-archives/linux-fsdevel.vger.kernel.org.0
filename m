@@ -2,66 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D725A7224F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 13:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 316AF722557
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 14:15:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232944AbjFELzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 07:55:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35620 "EHLO
+        id S233303AbjFEMPd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 08:15:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232607AbjFELzQ (ORCPT
+        with ESMTP id S233293AbjFEMPa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 07:55:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15D39DA;
-        Mon,  5 Jun 2023 04:55:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9AD4F6230C;
-        Mon,  5 Jun 2023 11:55:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65681C4339B;
-        Mon,  5 Jun 2023 11:55:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685966114;
-        bh=pUSC7oks7piN2gzMx4OqaEMjAcj/eQArd7w290LuOq4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=awIf2YtJkTEPkmDuvdcNoLdI2TUe2b+rwXUgF6JOEhN9dPsxR1nzPOUfEgasv7hXt
-         Pt9PNG9LzJGeDxAVqq9cSp2Q4D5eZTdoFtYXs8r+WaIKFCFJHsXOw3LEzsOA5ljfBI
-         NHApRg+D8Mi0sd06fz2D1iys9KuFD3m9lCoPG/i2HGv4aoztO6W6yZO6jkVNtAd2ny
-         MUzSxdfgfigMWahl7Yoh5nSze7VD06AFB9O1H6dPSHsrnEK14qcmu0NY/zD3WENXky
-         CVxpHhHbJpOIU3CiqYlpNcQ70wNOb9CH/odTk5olviBlB5M0u6usf9bopYLFl/wt81
-         z+FLaZGZbTuSQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Chen Zhongjin <chenzhongjin@huawei.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Jiaqi Yan <jiaqiyan@google.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Peter Collingbourne <pcc@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] highmem: Rename put_and_unmap_page() to unmap_and_put_page()
-Date:   Mon,  5 Jun 2023 13:53:58 +0200
-Message-Id: <20230605-brombeeren-pelle-4c3b79161688@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230602103307.5637-1-fmdefrancesco@gmail.com>
-References: <20230602103307.5637-1-fmdefrancesco@gmail.com>
+        Mon, 5 Jun 2023 08:15:30 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2015BA1
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jun 2023 05:15:29 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-33bbffccf69so46314665ab.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Jun 2023 05:15:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685967328; x=1688559328;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xzcC4Hey3TlLF+JCJrqaNKZNKoPcd2adswJZJqNI+pU=;
+        b=VO/w5gmhlaWXOyPIiaIo1iewh2T3Vo1mwFb0YpNsAud848QEFFo6LDSWOCqOxVfTjK
+         BmnuCze+3PF6Op78zOJltjKDBvAA+J0Kcd8sdn8cB+hGVNXZAgmKR14g3kQct+hz7J7c
+         XbDEnTw2Dj/GmEwFtH7WDltH/VfyGBjrNURtiwPySu7oGEAtrk8zHsgJ6HNprC/twour
+         0e9EHEccdnkHO88+4TzdUNX6yHa/WkFJeoe0hbxUOrc9MPkjsklzbV5n42aEt3eeObVX
+         IKnWEh68ZiTIG9ipWVLAnPjVaN/kPqVoo4SMiMU6zPaElxX1GH23Ixsvn5So6VGGaZ6r
+         FkGw==
+X-Gm-Message-State: AC+VfDzAQ4UGh89E65C8iVh+st7IYepgGHa26//jItk8utQaktO/WMTj
+        SR+15nYdoHIusOfuRp8RSDzH2xqN55vTbRu5au9oT2iil8E8
+X-Google-Smtp-Source: ACHHUZ5NyG760LvUIyh6Ghxb2pDPhqoTUCNhKpeEkwbtVO0go/50gBRFGI2dD9aDpFftz+yrb8n66ibdtn+dNeVhDMtDK08pOHt2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1082; i=brauner@kernel.org; h=from:subject:message-id; bh=jKeD4wVOOupEPtRNzJJqOCLPd5qFAlNPBImFod19/MQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTUnjlvdCyvjDvpSWaTesoNhuP75+mdnc8+wThpT5J944xO k9otHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMRPsjwP2NZeu6aivR3307/k2Od8f aV2I+b6iLvLe/JzZV7Y7uAjZHhf73E+7VVa1qi/Cy44y9o7rv10T59fdy2/5P2HZzeE5/XzQwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Received: by 2002:a92:d405:0:b0:338:b0de:5e5c with SMTP id
+ q5-20020a92d405000000b00338b0de5e5cmr7036919ilm.4.1685967328467; Mon, 05 Jun
+ 2023 05:15:28 -0700 (PDT)
+Date:   Mon, 05 Jun 2023 05:15:28 -0700
+In-Reply-To: <000000000000d1149605fd5b0c0d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b763f505fd60db7a@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING: locking bug in ext4_ioctl
+From:   syzbot <syzbot+a3c8e9ac9f9d77240afd@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,32 +56,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 02 Jun 2023 12:33:07 +0200, Fabio M. De Francesco wrote:
-> With commit 849ad04cf562a ("new helper: put_and_unmap_page()"), Al Viro
-> introduced the put_and_unmap_page() to use in those many places where we
-> have a common pattern consisting of calls to kunmap_local() +
-> put_page().
-> 
-> Obviously, first we unmap and then we put pages. Instead, the original
-> name of this helper seems to imply that we first put and then unmap.
-> 
-> [...]
+syzbot has bisected this issue to:
 
-Grabbed it now. Please yell if this wants to go another route.
+commit aff3bea95388299eec63440389b4545c8041b357
+Author: Theodore Ts'o <tytso@mit.edu>
+Date:   Wed May 24 03:49:51 2023 +0000
 
----
+    ext4: add lockdep annotations for i_data_sem for ea_inode's
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11bdb895280000
+start commit:   9561de3a55be Linux 6.4-rc5
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13bdb895280000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15bdb895280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
+dashboard link: https://syzkaller.appspot.com/bug?extid=a3c8e9ac9f9d77240afd
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ff6e93280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11824101280000
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reported-by: syzbot+a3c8e9ac9f9d77240afd@syzkaller.appspotmail.com
+Fixes: aff3bea95388 ("ext4: add lockdep annotations for i_data_sem for ea_inode's")
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] highmem: Rename put_and_unmap_page() to unmap_and_put_page()
-      https://git.kernel.org/vfs/vfs/c/01af7e7dd0ea
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
