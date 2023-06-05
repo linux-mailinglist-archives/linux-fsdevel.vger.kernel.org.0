@@ -2,63 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC587224BE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 13:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 970C47224E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 13:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232619AbjFELh4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 07:37:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54512 "EHLO
+        id S232854AbjFELul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 07:50:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232273AbjFELhw (ORCPT
+        with ESMTP id S232644AbjFELuj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 07:37:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F77F3;
-        Mon,  5 Jun 2023 04:37:46 -0700 (PDT)
+        Mon, 5 Jun 2023 07:50:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8150CEE;
+        Mon,  5 Jun 2023 04:50:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E98AD622E2;
-        Mon,  5 Jun 2023 11:37:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B00FC433D2;
-        Mon,  5 Jun 2023 11:37:43 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1EDE062265;
+        Mon,  5 Jun 2023 11:50:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD033C433D2;
+        Mon,  5 Jun 2023 11:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685965065;
-        bh=g1Jm1kuE6FZy6aQlpylRVCnAlYFy7qHWSvUkJ8cHFlo=;
+        s=k20201202; t=1685965836;
+        bh=1URBqhyo/+LhuBy1Ia8JA249Fp0j/DA0iuKWYbDeaXU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a8yGl7XeFHkjPAfdT1VFrpKf2/2wku2VGX1YfYyqc60jQatjY23mPzUNAlGt44HGi
-         7TNlyb8iGY1PSlAt8kdkSYa0QcI0BK02UvE8XdZomTHqp3cThBwDs+c+W8VBAIgURd
-         X+5Gy5a3AhoRjY51ktZhmGirZaxcMCTHtSGvzgFPQikFw9vcA8T3yJsnrvXgoQ1oDk
-         8giNz731+MJgyCIRr3yB003IzTXnJHG2j0M0UWDqHTa5s6390u4J2yqsm9+pLzspgl
-         DaYduXtr+m1F2tmVhhOG8B9bEglyuNLkqX3ZmFgfIxt8JzFFHAAJeYNgmMgK9a48ip
-         AyO5oysj9UtFQ==
-Date:   Mon, 5 Jun 2023 13:37:40 +0200
+        b=ICOlloAlAorQJ5z4uRZ5R7hqkpsimzIs8vOtUPJAnsvl9TY1FvhaEUjDisUnGXABi
+         YfJczsf3tk06KobNcPAk+FbjjWeQOwCgVTPEh8+VPs5A2oBwwpOLzirZ6MRA0qv5yp
+         QFZmhVHCyDMz8616KX+pv773whVdW8z620Zn+U0sp4qLXUoZii/rzJDPbUoO+AU5tk
+         zyss8s+XgKo+N43tV+JltB8M0vE5AksuXBJkFzjMEZ+2IXC2dMjvUK1ixOSWoEw+Kg
+         7lEx9xPyVfqsRZxLsPU3nkPIkgfeNkFSWkwTgblMT3gkQdpKlfOuDEyIM/pVgE4C1H
+         VTM8fmkRaWTWA==
+Date:   Mon, 5 Jun 2023 13:50:29 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: uuid ioctl - was: Re: [PATCH] overlayfs: Trigger file
- re-evaluation by IMA / EVM after writes
-Message-ID: <20230605-allgegenwart-bellt-e05884aab89a@brauner>
-References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
- <078d8c1fd6b6de59cde8aa85f8e59a056cb78614.camel@linux.ibm.com>
- <20230520-angenehm-orangen-80fdce6f9012@brauner>
- <ZGqgDjJqFSlpIkz/@dread.disaster.area>
- <20230522-unsensibel-backblech-7be4e920ba87@brauner>
- <20230602012335.GB16848@frogsfrogsfrogs>
- <20230602042714.GE1128744@mit.edu>
- <ZHmNksPcA9tudSVQ@dread.disaster.area>
- <20230602-dividende-model-62b2bdc073cf@brauner>
- <ZH0XVWBqs9zJF69X@dread.disaster.area>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Qi Zheng <qi.zheng@linux.dev>, Dave Chinner <david@fromorbit.com>,
+        akpm@linux-foundation.org, tkhai@ya.ru, roman.gushchin@linux.dev,
+        vbabka@suse.cz, viro@zeniv.linux.org.uk, hughd@google.com,
+        paulmck@kernel.org, muchun.song@linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: Re: [PATCH 6/8] xfs: introduce xfs_fs_destroy_super()
+Message-ID: <20230605-halbtags-gesplittet-c482c62cb2c9@brauner>
+References: <20230531095742.2480623-1-qi.zheng@linux.dev>
+ <20230531095742.2480623-7-qi.zheng@linux.dev>
+ <ZHfc3V4KKmW8QTR2@dread.disaster.area>
+ <b85c0d63-f6a5-73c4-e574-163b0b07d80a@linux.dev>
+ <ZHkkWjt0R1ptV7RZ@dread.disaster.area>
+ <2f34a702-1a57-06a5-1bd9-de54a67a839e@linux.dev>
+ <20230602151532.GP16865@frogsfrogsfrogs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZH0XVWBqs9zJF69X@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <20230602151532.GP16865@frogsfrogsfrogs>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -67,86 +64,160 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 05, 2023 at 08:59:33AM +1000, Dave Chinner wrote:
-> On Fri, Jun 02, 2023 at 03:52:16PM +0200, Christian Brauner wrote:
-> > On Fri, Jun 02, 2023 at 04:34:58PM +1000, Dave Chinner wrote:
-> > > On Fri, Jun 02, 2023 at 12:27:14AM -0400, Theodore Ts'o wrote:
-> > > > On Thu, Jun 01, 2023 at 06:23:35PM -0700, Darrick J. Wong wrote:
-> > > There's an obvious solution: a newly provisioned filesystem needs to
-> > > change the uuid at first mount. The only issue is the
-> > > kernel/filesystem doesn't know when the first mount is.
-> > > 
-> > > Darrick suggested "mount -o setuuid=xxxx" on #xfs earlier, but that
-> > > requires changing userspace init stuff and, well, I hate single use
-> > > case mount options like this.
-> > > 
-> > > However, we have a golden image that every client image is cloned
-> > > from. Say we set a special feature bit in that golden image that
-> > > means "need UUID regeneration". Then on the first mount of the
-> > > cloned image after provisioning, the filesystem sees the bit and
-> > > automatically regenerates the UUID with needing any help from
-> > > userspace at all.
-> > > 
-> > > Problem solved, yes? We don't need userspace to change the uuid on
-> > > first boot of the newly provisioned VM - the filesystem just makes
-> > > it happen.
+On Fri, Jun 02, 2023 at 08:15:32AM -0700, Darrick J. Wong wrote:
+> On Fri, Jun 02, 2023 at 11:13:09AM +0800, Qi Zheng wrote:
+> > Hi Dave,
 > > 
-> > systemd-repart implements the following logic currently: If the GPT
-> > *partition* and *disk* UUIDs are 0 then it will generate new UUIDs
-> > before the first mount.
+> > On 2023/6/2 07:06, Dave Chinner wrote:
+> > > On Thu, Jun 01, 2023 at 04:43:32PM +0800, Qi Zheng wrote:
+> > > > Hi Dave,
+> > > > On 2023/6/1 07:48, Dave Chinner wrote:
+> > > > > On Wed, May 31, 2023 at 09:57:40AM +0000, Qi Zheng wrote:
+> > > > > > From: Kirill Tkhai <tkhai@ya.ru>
+> > > > > I don't really like this ->destroy_super() callback, especially as
+> > > > > it's completely undocumented as to why it exists. This is purely a
+> > > > > work-around for handling extended filesystem superblock shrinker
+> > > > > functionality, yet there's nothing that tells the reader this.
+> > > > > 
+> > > > > It also seems to imply that the superblock shrinker can continue to
+> > > > > run after the existing unregister_shrinker() call before ->kill_sb()
+> > > > > is called. This violates the assumption made in filesystems that the
+> > > > > superblock shrinkers have been stopped and will never run again
+> > > > > before ->kill_sb() is called. Hence ->kill_sb() implementations
+> > > > > assume there is nothing else accessing filesystem owned structures
+> > > > > and it can tear down internal structures safely.
+> > > > > 
+> > > > > Realistically, the days of XFS using this superblock shrinker
+> > > > > extension are numbered. We've got a lot of the infrastructure we
+> > > > > need in place to get rid of the background inode reclaim
+> > > > > infrastructure that requires this shrinker extension, and it's on my
+> > > > > list of things that need to be addressed in the near future.
+> > > > > 
+> > > > > In fact, now that I look at it, I think the shmem usage of this
+> > > > > superblock shrinker interface is broken - it returns SHRINK_STOP to
+> > > > > ->free_cached_objects(), but the only valid return value is the
+> > > > > number of objects freed (i.e. 0 is nothing freed). These special
+> > > > > superblock extension interfaces do not work like a normal
+> > > > > shrinker....
+> > > > > 
+> > > > > Hence I think the shmem usage should be replaced with an separate
+> > > > > internal shmem shrinker that is managed by the filesystem itself
+> > > > > (similar to how XFS has multiple internal shrinkers).
+> > > > > 
+> > > > > At this point, then the only user of this interface is (again) XFS.
+> > > > > Given this, adding new VFS methods for a single filesystem
+> > > > > for functionality that is planned to be removed is probably not the
+> > > > > best approach to solving the problem.
+> > > > 
+> > > > Thanks for such a detailed analysis. Kirill Tkhai just proposeed a
+> > > > new method[1], I cc'd you on the email.
+> > > 
+> > > I;ve just read through that thread, and I've looked at the original
+> > > patch that caused the regression.
+> > > 
+> > > I'm a bit annoyed right now. Nobody cc'd me on the original patches
+> > > nor were any of the subsystems that use shrinkers were cc'd on the
+> > > patches that changed shrinker behaviour. I only find out about this
 > > 
-> > So for the *filesystem* UUID I think the golden image should either have
-> > the UUID set to zero as well or to a special UUID. Either way, it would
-> > mean the filesystem needs to generate a new UUID when it is mounted the
-> > first time.
+> > Sorry about that, my mistake. I followed the results of
+> > scripts/get_maintainer.pl before.
+> 
+> Sometimes I wonder if people who contribute a lot to a subsystem should
+> be more aggressive about listing themselves explicitly in MAINTAINERS
+> but then I look at the ~600 emails that came in while I was on vacation
+> for 6 days over a long weekend and ... shut up. :P
+> 
+> > > because someone tries to fix something they broke by *breaking more
+> > > stuff* and not even realising how broken what they are proposing is.
 > > 
-> > If we do this then all filesystems that support this should use the same
-> > value to indicate "generate new UUID".
+> > Yes, this slows down the speed of umount. But the benefit is that
+> > slab shrink becomes lockless, the mount operation and slab shrink no
+> > longer affect each other, and the IPC no longer drops significantly,
+> > etc.
 > 
-> Ok, the main problem here is that all existing filesystem
-> implementations don't consider a zero UUID special. If you do this
-> on an existing kernel, it won't do anything and will not throw any
-> errors. Now we have the problem that userspace infrastructure can't
-> rely on the kernel telling it that it doesn't support the
-> functionality it is relying on. i.e. we have a mounted filesystems
-> and now userspace has to detect and handle the fact it still needs
-> to change the filesystem UUID.
-> 
-> Further, if this is not handled properly, every root filesystem
-> having a zero or duplicate "special" UUID is a landmine for OS
-> kernel upgrades to trip over. i.e. upgrade from old, unsupported to
-> new supported kernel and the next boot regens the UUID unexpectedly
-> and breaks anything relying on the old UUID.
-> 
-> Hence the point of using a feature bit is that the kernel will
-> refuse to mount the filesysetm if it does not understand the feature
-> bit. This way we have a hard image deployment testing failure that people
-> building and deploying images will notice. Hence they can configure
-> the build scripts to use the correct "change uuid" mechanism
-> with older OS releases and can take appropriate action when building
-> "legacy OS" images.
-> 
-> Yes, distros and vendors can backport the feature bit support if
-> they want, and then deployment of up-to-date older OS releases will
-> work with this new infrastructure correctly. But that is not
-> guaranteed to happen, so we really need a hard failure for
-> unsupported kernels.
-> 
-> So, yeah, I really do think this needs to be driven by a filesystem
-> feature bit, not retrospectively defining a special UUID value to
-> trigger this upgrade behaviour...
+> The lockless shrink seems like a good thing to have, but ... is it
+> really true that the superblock shrinker can still be running after
+> ->kill_sb?  /That/ is surprising to me.
 
-Using a zero/special UUID would have made this usable for most
-filesystems which allows userspace to more easily detect this. Using a
-filesystem feature bit makes this a lot more fragmented between
-filesystems.
+So what's the plan here? If this causes issues for filesystems that rely
+on specific guarantees that are broken by the patch then either it needs
+a clean fix or a revert.
 
-But allowing to refuse being mounted on older kernels when the feature
-bit is set and unknown can be quite useful. So this is also fine by me.
-
-So, the protocol should be to create a filesystem with a zero UUID and
-the new feature bit set. At the first mount the UUID will be generated.
-
-Only thing I would really love to see is a short blurb about this in
-Documentation/filesystems/uuid.rst so we have a reference point for how
-we expect this to work and how a filesystem should implement this.
+> 
+> --D
+> 
+> > And I used bpftrace to measure the time consumption of
+> > unregister_shrinker():
+> > 
+> > ```
+> > And I just tested it on a physical machine (Intel(R) Xeon(R) Platinum
+> > 8260 CPU @ 2.40GHz) and the results are as follows:
+> > 
+> > 1) use synchronize_srcu():
+> > 
+> > @ns[umount]:
+> > [8K, 16K)             83 |@@@@@@@       |
+> > [16K, 32K)           578
+> > |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> > [32K, 64K)            78 |@@@@@@@       |
+> > [64K, 128K)            6 |       |
+> > [128K, 256K)           7 |       |
+> > [256K, 512K)          29 |@@       |
+> > [512K, 1M)            51 |@@@@      |
+> > [1M, 2M)              90 |@@@@@@@@       |
+> > [2M, 4M)              70 |@@@@@@      |
+> > [4M, 8M)               8 |      |
+> > 
+> > 2) use synchronize_srcu_expedited():
+> > 
+> > @ns[umount]:
+> > [8K, 16K)             31 |@@       |
+> > [16K, 32K)           803
+> > |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> > [32K, 64K)           158 |@@@@@@@@@@       |
+> > [64K, 128K)            4 |       |
+> > [128K, 256K)           2 |       |
+> > [256K, 512K)           2 |       |
+> > ```
+> > 
+> > With synchronize_srcu(), most of the time consumption is between 16us and
+> > 32us, the worst case between 4ms and 8ms. Is this totally
+> > unacceptable?
+> > 
+> > This performance regression report comes from a stress test. Will the
+> > umount action be executed so frequently under real workloads?
+> > 
+> > If there are really unacceptable, after applying the newly proposed
+> > method, umount will be as fast as before (or even faster).
+> > 
+> > Thanks,
+> > Qi
+> > 
+> > > 
+> > > The previous code was not broken and it provided specific guarantees
+> > > to subsystems via unregister_shrinker(). From the above discussion,
+> > > it appears that the original authors of these changes either did not
+> > > know about or did not understand them, so that casts doubt in my
+> > > mind about the attempted solution and all the proposed fixes for it.
+> > > 
+> > > I don't have the time right now unravel this mess and fully
+> > > understand the original problem, changes or the band-aids that are
+> > > being thrown around. We are also getting quite late in the cycle to
+> > > be doing major surgery to critical infrastructure, especially as it
+> > > gives so little time to review regression test whatever new solution
+> > > is proposed.
+> > > 
+> > > Given this appears to be a change introduced in 6.4-rc1, I think the
+> > > right thing to do is to revert the change rather than make things
+> > > worse by trying to shove some "quick fix" into the kernel to address
+> > > it.
+> > > 
+> > > Andrew, could you please sort out a series to revert this shrinker
+> > > infrastructure change and all the dependent hacks that have been
+> > > added to try to fix it so far?
+> > > 
+> > > -Dave.
+> > 
+> > -- 
+> > Thanks,
+> > Qi
