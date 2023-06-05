@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C89677223F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 12:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF7607223F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 12:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231829AbjFEKzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 06:55:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60150 "EHLO
+        id S231642AbjFEKzq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 06:55:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231432AbjFEKzZ (ORCPT
+        with ESMTP id S231624AbjFEKza (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 06:55:25 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7612911C;
-        Mon,  5 Jun 2023 03:55:19 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1b01d912924so43170645ad.1;
-        Mon, 05 Jun 2023 03:55:19 -0700 (PDT)
+        Mon, 5 Jun 2023 06:55:30 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A14E18E;
+        Mon,  5 Jun 2023 03:55:23 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-53202149ae2so2543185a12.3;
+        Mon, 05 Jun 2023 03:55:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685962518; x=1688554518;
+        d=gmail.com; s=20221208; t=1685962522; x=1688554522;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TxrzfIp1bwlxrggScZU2c1c7t8HyvxqKo5xx2x+BHzs=;
-        b=a9yswcidqIQodT44r0/9muHlwWLyf8GVMw1Dm4Q0PvIpYODGAzzSarevkO9IEYWmUk
-         uOAsSxRCWyb+9qLVgHAtJckaSupYP0QiRtgbgBIn+8VV/+w1RxbzBhCz9eOMMYYONkkR
-         SyxBN99mt4/fUy4SlBfnWQyFlTz7wqPU3TiC/+RHlNisksAOtfOt6triJVHp8mnDJlSx
-         7Pin25efvEKHfu8sHjtrBEKhHnWar/dvH01ILzJ+4sP2EGvNTLQ/FZiJbc1CKRINcLvz
-         KJQfCJYm3ZbL0ag/7tWjfByk/+s0exTR/4HlSVIPQEARYrtJNepTJEmukYRvbpT6G97c
-         RV6w==
+        bh=ATOgTCD4yzJoITjwwVO7z1jeNiclQOzGdaaC13HT7dU=;
+        b=U3XJZon/zyBw9Xr0o///D7ldH+DK7KtmJJ745H0oL3skfDSbj1nR2l36OpxK+evEAB
+         0I5vxqJziM7OD4g32unebKfgBVSOG5EwBjnrRJhA68QSR4OFajWdnnbh8H9YRb8HbVj7
+         xr6jw5K1hlsnSovZiz1Rspmd/ipqlUOTZUHAetqi53d2Gy4oXIQIke4CbrK/LivD16mC
+         yAK6yk4ADioj+Y72Od4KPyd5vrSu9FIXwJvLuOep8D9FM89H1AqhKQ2P2tm0kbLcTfFt
+         l1pa+F7C40nUbYXOegMsnaCxEZAB804cjB6fG1yZIwZT01hZI7pXSGErxDLbHuIRA/hB
+         VM+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685962518; x=1688554518;
+        d=1e100.net; s=20221208; t=1685962522; x=1688554522;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TxrzfIp1bwlxrggScZU2c1c7t8HyvxqKo5xx2x+BHzs=;
-        b=eAj3PaJy2fP0jZkk4JQVEHWP0yQs5Wm3M5witSBieeI0GucmPvP77vRfdQs6eERD3X
-         prNaq19IY36i5TCTIE2LQ8aP5kG7UB8MxemysdDgUWKLpErvIK4gyZ6ho1poac+t+0DK
-         gohue0Jtraz8aN031cqeAQHvVeE7jQ8X7YudPT8K0ScLKE/xRiUntAAfQ4e979c+Qgq8
-         zDAdI4BTdSQS6Owmh/D38WSmhn734244MQO9YXYovb16cP2YyVfmeGdUQra5a9HM7ssh
-         YQNokKR+ImGAqECH8xRJh1MxyvFSrLU293YwuxqSdgisy19faw4D8jgWy+DIlbKR8xXS
-         xXag==
-X-Gm-Message-State: AC+VfDz3rAjI8yQRXQEwvaGfWOvkLrIY5OguHKZx9oQ8uW8YdzxO/LTf
-        i1dIVaY7M8p95k4IamRDPeA1QKCL33A=
-X-Google-Smtp-Source: ACHHUZ64dDKctH++/r2IBTDMoQhIUBSSuVb3O63nNI3T9gvaB5JEgO22OBuph0UeU1YCffStYCDI0g==
-X-Received: by 2002:a17:902:d506:b0:1b1:9233:bbf5 with SMTP id b6-20020a170902d50600b001b19233bbf5mr9197475plg.57.1685962518438;
-        Mon, 05 Jun 2023 03:55:18 -0700 (PDT)
+        bh=ATOgTCD4yzJoITjwwVO7z1jeNiclQOzGdaaC13HT7dU=;
+        b=PqT1Ptjn1naoRCki42Rs9P8K7x9qS+d/JIEU6XApL+MHicXCm/YQ3aZ7LWfhhG+TUN
+         trRlWaUtCXGRSoFlYhsLT7s0RslcDDrPzO1IzQUlQ2IXPeq4Kk+CEJOiJIkLKGpJY9m9
+         H6FOcnz3cReKI0WRDe6JL2kp3NYrUAH7OcYXkL5mE9pYEj62i4Hslg87G5Qz0Q0FRR/A
+         EeUw9CfDr3i+a/iTepj+2KCCOy2KUF3QtyrCrwr4hsYPa6RCt5u1A3ExlRsX4nwEB2IJ
+         fmBs43PjQNl/ubi+RP0MDqiZ+BWDxLGIvv0G9AtZbmJdhWKZclMR5ylc1Lb7bL6ElHVy
+         rWWw==
+X-Gm-Message-State: AC+VfDx33WvV15tIxSszmxu0eg7QGDn3o9iJc5G/FMf5Bf3eg0uHfbWd
+        Wa4j2nEjpQJ1q7iRkik6SERHVLAnR4o=
+X-Google-Smtp-Source: ACHHUZ5ICNcF4CADAq0qIJmjOJH1ij3Pd+z6r9TrBRYClaEF9aFwSEeRpRLPIvl4RTC1Ty1o4uLTPA==
+X-Received: by 2002:a05:6a20:7d87:b0:10c:c5df:8bb7 with SMTP id v7-20020a056a207d8700b0010cc5df8bb7mr4001097pzj.30.1685962522459;
+        Mon, 05 Jun 2023 03:55:22 -0700 (PDT)
 Received: from dw-tp.c4p-in.ibmmobiledemo.com ([129.41.58.19])
-        by smtp.gmail.com with ESMTPSA id q3-20020a17090311c300b001b0f727bc44sm6266883plh.16.2023.06.05.03.55.15
+        by smtp.gmail.com with ESMTPSA id q3-20020a17090311c300b001b0f727bc44sm6266883plh.16.2023.06.05.03.55.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jun 2023 03:55:18 -0700 (PDT)
+        Mon, 05 Jun 2023 03:55:22 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org,
@@ -61,9 +61,9 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>,
         Disha Goel <disgoel@linux.ibm.com>,
         "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCHv7 1/6] iomap: Rename iomap_page_create/release() to iomap_iop_alloc/free()
-Date:   Mon,  5 Jun 2023 16:25:01 +0530
-Message-Id: <d06abc56a48e3ac7d8c0619fee57506f36fcca5b.1685962158.git.ritesh.list@gmail.com>
+Subject: [PATCHv7 2/6] iomap: Move folio_detach_private() in iomap_iop_free() to the end
+Date:   Mon,  5 Jun 2023 16:25:02 +0530
+Message-Id: <c3a91a81cf449d357e8a0255d720c5760283ee43.1685962158.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <cover.1685962158.git.ritesh.list@gmail.com>
 References: <cover.1685962158.git.ritesh.list@gmail.com>
@@ -79,102 +79,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch renames the iomap_page_create/release() functions to
-iomap_iop_alloc/free() calls. Later patches adds more functions for
-handling iop structure with iomap_iop_** naming conventions.
-Hence iomap_iop_alloc/free() makes more sense to be consistent with all
-APIs.
+In later patches we will add other accessor APIs which will take inode
+and folio to operate over struct iomap_page. Since we need folio's
+private (iomap_page) in those functions, hence this function moves
+detaching of folio's private at the end just before calling kfree(iop).
 
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/iomap/buffered-io.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ fs/iomap/buffered-io.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 063133ec77f4..4567bdd4fff9 100644
+index 4567bdd4fff9..6fffda355c45 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -43,8 +43,8 @@ static inline struct iomap_page *to_iomap_page(struct folio *folio)
+@@ -71,7 +71,7 @@ static struct iomap_page *iomap_iop_alloc(struct inode *inode,
  
- static struct bio_set iomap_ioend_bioset;
- 
--static struct iomap_page *
--iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
-+static struct iomap_page *iomap_iop_alloc(struct inode *inode,
-+				struct folio *folio, unsigned int flags)
+ static void iomap_iop_free(struct folio *folio)
  {
- 	struct iomap_page *iop = to_iomap_page(folio);
- 	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-@@ -69,7 +69,7 @@ iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
- 	return iop;
- }
- 
--static void iomap_page_release(struct folio *folio)
-+static void iomap_iop_free(struct folio *folio)
- {
- 	struct iomap_page *iop = folio_detach_private(folio);
+-	struct iomap_page *iop = folio_detach_private(folio);
++	struct iomap_page *iop = to_iomap_page(folio);
  	struct inode *inode = folio->mapping->host;
-@@ -231,7 +231,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
- 	if (WARN_ON_ONCE(size > iomap->length))
- 		return -EIO;
- 	if (offset > 0)
--		iop = iomap_page_create(iter->inode, folio, iter->flags);
-+		iop = iomap_iop_alloc(iter->inode, folio, iter->flags);
- 	else
- 		iop = to_iomap_page(folio);
+ 	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
  
-@@ -269,7 +269,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 		return iomap_read_inline_data(iter, folio);
- 
- 	/* zero post-eof blocks as the page may be mapped */
--	iop = iomap_page_create(iter->inode, folio, iter->flags);
-+	iop = iomap_iop_alloc(iter->inode, folio, iter->flags);
- 	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
- 	if (plen == 0)
- 		goto done;
-@@ -490,7 +490,7 @@ bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags)
- 	 */
- 	if (folio_test_dirty(folio) || folio_test_writeback(folio))
- 		return false;
--	iomap_page_release(folio);
-+	iomap_iop_free(folio);
- 	return true;
+@@ -81,6 +81,7 @@ static void iomap_iop_free(struct folio *folio)
+ 	WARN_ON_ONCE(atomic_read(&iop->write_bytes_pending));
+ 	WARN_ON_ONCE(bitmap_full(iop->uptodate, nr_blocks) !=
+ 			folio_test_uptodate(folio));
++	folio_detach_private(folio);
+ 	kfree(iop);
  }
- EXPORT_SYMBOL_GPL(iomap_release_folio);
-@@ -507,12 +507,12 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
- 	if (offset == 0 && len == folio_size(folio)) {
- 		WARN_ON_ONCE(folio_test_writeback(folio));
- 		folio_cancel_dirty(folio);
--		iomap_page_release(folio);
-+		iomap_iop_free(folio);
- 	} else if (folio_test_large(folio)) {
- 		/* Must release the iop so the page can be split */
- 		WARN_ON_ONCE(!folio_test_uptodate(folio) &&
- 			     folio_test_dirty(folio));
--		iomap_page_release(folio);
-+		iomap_iop_free(folio);
- 	}
- }
- EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
-@@ -559,7 +559,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
- 		return 0;
- 	folio_clear_error(folio);
  
--	iop = iomap_page_create(iter->inode, folio, iter->flags);
-+	iop = iomap_iop_alloc(iter->inode, folio, iter->flags);
-+
- 	if ((iter->flags & IOMAP_NOWAIT) && !iop && nr_blocks > 1)
- 		return -EAGAIN;
- 
-@@ -1612,7 +1613,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct inode *inode,
- 		struct folio *folio, u64 end_pos)
- {
--	struct iomap_page *iop = iomap_page_create(inode, folio, 0);
-+	struct iomap_page *iop = iomap_iop_alloc(inode, folio, 0);
- 	struct iomap_ioend *ioend, *next;
- 	unsigned len = i_blocksize(inode);
- 	unsigned nblocks = i_blocks_per_folio(inode, folio);
 -- 
 2.40.1
 
