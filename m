@@ -2,86 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE46B7230B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 22:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3CED7231B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 22:48:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231218AbjFEUGz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 5 Jun 2023 16:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41108 "EHLO
+        id S231638AbjFEUs3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 16:48:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230121AbjFEUGu (ORCPT
+        with ESMTP id S232527AbjFEUs2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 16:06:50 -0400
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5198491;
-        Mon,  5 Jun 2023 13:06:47 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 6DD4363CC12F;
-        Mon,  5 Jun 2023 22:06:44 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id yjEGPY6tiAgF; Mon,  5 Jun 2023 22:06:44 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id F1ECA6081100;
-        Mon,  5 Jun 2023 22:06:43 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id zWWbem8M-Ve5; Mon,  5 Jun 2023 22:06:43 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id BFF0663CC12F;
-        Mon,  5 Jun 2023 22:06:43 +0200 (CEST)
-Date:   Mon, 5 Jun 2023 22:06:43 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>,
-        kuba <kuba@kernel.org>, James Morris <jmorris@namei.org>,
-        Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Ritesh Raj Sarraf <ritesh@collabora.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Sjoerd Simons <sjoerd@collabora.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Message-ID: <1324905118.3685909.1685995603629.JavaMail.zimbra@nod.at>
-In-Reply-To: <a0c3e6d4-2827-d9b4-8f4e-aef25997fa8a@digikod.net>
-References: <20230309165455.175131-1-mic@digikod.net> <20230309165455.175131-2-mic@digikod.net> <133970354.9328381.1684703636966.JavaMail.zimbra@nod.at> <8249dd59-ce08-2253-1697-301ad082d905@digikod.net> <a0c3e6d4-2827-d9b4-8f4e-aef25997fa8a@digikod.net>
-Subject: Re: [PATCH v1 1/5] hostfs: Fix ephemeral inodes
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: hostfs: Fix ephemeral inodes
-Thread-Index: XBAxT/JtpH3OjQ/qxi7IxqxKKdqxXg==
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        T_SCC_BODY_TEXT_LINE,T_SPF_PERMERROR autolearn=ham autolearn_force=no
-        version=3.4.6
+        Mon, 5 Jun 2023 16:48:28 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7047692;
+        Mon,  5 Jun 2023 13:48:27 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id 41be03b00d2f7-5289ce6be53so4621237a12.0;
+        Mon, 05 Jun 2023 13:48:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685998107; x=1688590107;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=F7euxcNCuST71EOpyrQmdn5AC8OKdt31Zo+Y7pZ6fLI=;
+        b=qY5Z5JcPdPbP6agRdZnELXIu3QlZ5wqn9vIG/zAotdAQzz0K4mgOvJYuZFl7tYNx5x
+         LCYxMFMWecdL1bKNwXO79kvwsN04RNuvVUbJ8hmci4efx1RBujDL7aynfkdU5Z7QsVlz
+         e4AnOzP5NtXRNOam6okEDxeK3rC7sgT2atrSlrwOydFl2Vhp8/EkaHMhuULdbYykiEMF
+         SSzoQp4x38KDrBB/sGaN2v9qQAhbwdEusrHPfv0weuLxirH8egv5zUWyPYKVA4axpbbC
+         PJ8Rn4q7CvutGHsqtoT7d3zArPTl8Ql99m6JaPEUvHegnOAZ/vr4+Zn8adtL5awr8++l
+         CeNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685998107; x=1688590107;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F7euxcNCuST71EOpyrQmdn5AC8OKdt31Zo+Y7pZ6fLI=;
+        b=eexku4Rs3nfThFyFh+omCDCxu9av+GaRiRH1Os8sMUStKapry0uB1v4oondo72T1FG
+         AuzudppkY2fYmooYeeleQxwYq6awvEWFTDgUkk+M5DwNp4zExuv40pZNHHVc4yl6bF4a
+         zx08nkIjNWhtYaLRjPffDYBc08MRnIGj1RZhvne22eFwMDHQbbtAZM5ay1PqI3J0L0Xu
+         6I9JVBb6/93yacZYAfaIdFyxjwv7VHwjdjQ/JO3sBhAaQkzfgP/8HOA2bgFkjYGbz0sX
+         E1ThkrwB6kac0i+s0K/15t4HYwfQm8ITS/5ryF8mrKstXBolYfH5o3gI2pp1T78sg30G
+         CN9Q==
+X-Gm-Message-State: AC+VfDzJ9w5xFnnP1QP69gJXB4zbp/nvY+NBzc5qoUJyIQ/KbF/TGF54
+        M4ZoviO8CgLZKtDobjR3cvTftFm9N8I=
+X-Google-Smtp-Source: ACHHUZ5UAz4HJ8bUJQfsxdqE0vrsZSzuq085XYJxEl0PKF9tfvgjtzn5bq4AnzysTgLe70Q2ljzo1Q==
+X-Received: by 2002:a17:903:2289:b0:1b1:1168:656b with SMTP id b9-20020a170903228900b001b11168656bmr129718plh.26.1685998106751;
+        Mon, 05 Jun 2023 13:48:26 -0700 (PDT)
+Received: from dw-tp ([49.207.220.159])
+        by smtp.gmail.com with ESMTPSA id 21-20020a170902c11500b001ac94b33ab1sm6940728pli.304.2023.06.05.13.48.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Jun 2023 13:48:26 -0700 (PDT)
+Date:   Tue, 06 Jun 2023 02:18:05 +0530
+Message-Id: <87sfb5k54q.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [PATCHv7 3/6] iomap: Refactor some iop related accessor functions
+In-Reply-To: <ZH3xt3npT9jeBFMG@casper.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ Ursprüngliche Mail -----
->> Good, I'll send a new series with your suggestions.
-> 
-> Can I add your Signed-off-by to this patch (without touching
-> ARCH_EPHEMERAL_INODES changes, but removing the Cc stable)?
-> 
-> Are you OK for me to push this patch (with the whole series) in the
-> Landlock and next tree?
+Matthew Wilcox <willy@infradead.org> writes:
 
-Yes. Feel free to add:
-Acked-by: Richard Weinberger <richard@nod.at>
+> On Mon, Jun 05, 2023 at 04:15:31PM +0200, Andreas Gruenbacher wrote:
+>> Note that to_iomap_page() does folio_test_private() followed by
+>> folio_get_private(), which doesn't really make sense in places where
+>> we know that iop is defined. Maybe we want to split that up.
+>
+> The plan is to retire the folio private flag entirely.  I just haven't
+> got round to cleaning up iomap yet.  For folios which we know to be
+> file-backed, we can just test whether folio->private is NULL or not.
+>
+> So I'd do this as:
+>
+> -	struct iomap_page *iop = to_iomap_page(folio);
+> +	struct iomap_page *iop = folio->private;
+>
+> and not even use folio_get_private() or to_iomap_page() any more.
+>
 
-Thanks,
-//richard
+In that case, shouldn't we just modify to_iomap_page(folio) function
+to just return folio_get_private(folio) or folio->private ?
+
+>> > +       unsigned int first_blk = off >> inode->i_blkbits;
+>> > +       unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
+>> > +       unsigned int nr_blks = last_blk - first_blk + 1;
+>> > +       unsigned long flags;
+>> > +
+>> > +       spin_lock_irqsave(&iop->state_lock, flags);
+>> > +       bitmap_set(iop->state, first_blk, nr_blks);
+>> > +       if (iop_test_full_uptodate(folio))
+>> > +               folio_mark_uptodate(folio);
+>> > +       spin_unlock_irqrestore(&iop->state_lock, flags);
+>> > +}
+>> > +
+>> > +static void iomap_iop_set_range_uptodate(struct inode *inode,
+>> > +               struct folio *folio, size_t off, size_t len)
+>> > +{
+>> > +       struct iomap_page *iop = to_iomap_page(folio);
+>> > +
+>> > +       if (iop)
+>> > +               iop_set_range_uptodate(inode, folio, off, len);
+>> > +       else
+>> > +               folio_mark_uptodate(folio);
+>> > +}
+>>
+>> This patch passes the inode into iomap_iop_set_range_uptodate() and
+>> removes the iop argument. Can this be done in a separate patch,
+>> please?
+>>
+>> We have a few places like the above, where we look up the iop without
+>> using it. Would a function like folio_has_iop() make more sense?
+>
+> I think this is all a symptom of the unnecessary splitting of
+> iomap_iop_set_range_uptodate and iop_set_range_uptodate.
+
+Thanks for the review. The problem in not splitting this would be a lot
+of variable initialization for !iop case as well.
+Hence in one of the previous versions it was discussed that splitting it
+into a helper routine for iop case would be a better approach.
+
+-ritesh
