@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BABF7223F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 12:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F6B57223FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 12:55:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231664AbjFEKzx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 06:55:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60470 "EHLO
+        id S231486AbjFEKzz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 06:55:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231751AbjFEKzh (ORCPT
+        with ESMTP id S231825AbjFEKzi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 06:55:37 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA3510C;
-        Mon,  5 Jun 2023 03:55:30 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id 41be03b00d2f7-53fa455cd94so2116897a12.2;
-        Mon, 05 Jun 2023 03:55:30 -0700 (PDT)
+        Mon, 5 Jun 2023 06:55:38 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6CAF11A;
+        Mon,  5 Jun 2023 03:55:33 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1b02fcde49aso22701565ad.0;
+        Mon, 05 Jun 2023 03:55:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685962529; x=1688554529;
+        d=gmail.com; s=20221208; t=1685962533; x=1688554533;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WupwSFXXwQFHWk6jv9cWFxx36Vr+X7GVSjDECiCjfRE=;
-        b=Kg5jNqx8MyZ+zzEUQ2iY7BALh0gh6CTVSKXxAtS4uerxTHBTFVFyztr8N6z3xnqUNu
-         tvyUDcs34Eck3wkiK+6ch8qt4tetTpaAHKMmud+SVBmVysNyQQoaXDDrp+zQfBxUS6m/
-         zWjbf3r56f7dQvtxa+/tuWvQSy2Xm+jqZWTgCQSnA9IUURCdSdalGse6zf3CdXORWMxG
-         KYrbMpSfhP1wMpmKuVCDHauzO8lufXLLfe+E/3YueuDfeulDti1ZnzEONcDC6S+sD1LK
-         CmUYCff8KuKD2TOvolPVgQfB/Fy+35hlDvjURdeZXu4a5/l/AiPPkz1lksDUEm8nDbn7
-         4d1Q==
+        bh=d69PWHaRaZYvBhBWCvONZIqp7N6hQ/icpHNEJwjyDko=;
+        b=GTXHUkwAlo5x63tRI0za5+P+gNvokdkwdWawVcMrBFIz2K4FRxNMszwLyxrFTGAfff
+         E+9dTzVN89f5Odk+jZWPIJ7DLungw0qPoMt/RlMJ3dyqfijDxCWIZGxmf4w4ceShpbu6
+         uuZ0VMpJPVX11JoKKT6ppHWY3VUB3BMzj2VEFTCIl2fgbv1Pek/2tw9T4MxTmqp9qXeU
+         H1Sc3iQU+fx+HNQ7/4vRvXDKvYJPetcAdOyK7PkqM+7hJpTyTV+i0AgbIRpD5pTHTstX
+         PXTptAwv3nq6t3a1/EYu6zj6cyK7j+knxeIVY/diSCGMBpxX+/OkPmboUvOmMlxHk03m
+         UMLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685962529; x=1688554529;
+        d=1e100.net; s=20221208; t=1685962533; x=1688554533;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WupwSFXXwQFHWk6jv9cWFxx36Vr+X7GVSjDECiCjfRE=;
-        b=DMt+lEK5iuhZv08OELtI+sNBqgYas+LE2qoWMI7N4usQyQtE+bJkHecPGcExQRpHH1
-         Gf1nJz/tV2OsQrehHKzeHIyqp4f1I2aYOk9y3KMc0qJGXLofWBmbJ2M7AKOxjAnUIvwU
-         oaTotJmwDwL+8xbSGc4ftVryYquVLZpdkaxL/d8F4Cl60Tkm8cSmIXMgc6z+N3XKig1M
-         OlXoxQoobGqAPK94+9fQrMOcW4UWClKDtiCQp1IFiY7IxkdMUYGTY0u1iEGns7NLc+oO
-         vgNWy2sYqtpnJmAoQRrFmA96S6XTyYeby3tq5a784HCXTHxrfa1J02ffsPsIN6wH4pSb
-         q/qw==
-X-Gm-Message-State: AC+VfDw/XVmKWh2NUeI6rq2EjCqUZ84LFW7diqgNMfau8tqidkyF64zB
-        bhRcC/VbdmiCgvParY7f5xfUwf8a5MA=
-X-Google-Smtp-Source: ACHHUZ6EH7acXwk36tvkKicdhUuZu6jJpp4NbCtfjiLlqHBx+/Rmnz5nzobzokopySgRWDVDW/4fFw==
-X-Received: by 2002:a05:6a20:3ca1:b0:115:5910:c82d with SMTP id b33-20020a056a203ca100b001155910c82dmr1230613pzj.43.1685962529421;
-        Mon, 05 Jun 2023 03:55:29 -0700 (PDT)
+        bh=d69PWHaRaZYvBhBWCvONZIqp7N6hQ/icpHNEJwjyDko=;
+        b=ZhHZLY2xh5glvrqfwXQ6Rc3wELIUmbB3c/xtsJEj4KoyLh2t4er3y8OTbtcFekzZvF
+         q5vzBAC8fTO40xKCQNbfck250xjvobTmbgng2SnCjHNC8aru3saQeMBOxCbeSQpl7zDD
+         WCFwHVkGdA6wQ1dh6MYossOLgJ2MAIxI8BQOZYG+aQREavFuwiot/jCkhmk7Y/SsSB8o
+         KaoRroyRGlcd9QYSIqzuMbfHk/K68iXeGenFxbGnyZilcqlw95gB72Tsp0137njMlEFv
+         h6RW8ENXF6JmQDpgTWnEQ8YpMtLgKXh5D0KEiVs/I+hpBFJVjHUaL4VqA3mNe4pWmi7P
+         O/Vg==
+X-Gm-Message-State: AC+VfDwxE5XKq/n5XWPmDXNFpCkv8XPELM7o0U5Fc7LiPnublf4UYZr7
+        2TVNNnuHtd5hM4rb+2FsPr6kieUQTWM=
+X-Google-Smtp-Source: ACHHUZ5S2D4jwQX/6faQFgnLPamvlMXOz4oBslTkLKRw6MOSheIYrzX4vJzUm5nzOvLm5zc01xm3JA==
+X-Received: by 2002:a17:903:1252:b0:1ae:50cc:455 with SMTP id u18-20020a170903125200b001ae50cc0455mr3546490plh.39.1685962532819;
+        Mon, 05 Jun 2023 03:55:32 -0700 (PDT)
 Received: from dw-tp.c4p-in.ibmmobiledemo.com ([129.41.58.19])
-        by smtp.gmail.com with ESMTPSA id q3-20020a17090311c300b001b0f727bc44sm6266883plh.16.2023.06.05.03.55.26
+        by smtp.gmail.com with ESMTPSA id q3-20020a17090311c300b001b0f727bc44sm6266883plh.16.2023.06.05.03.55.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jun 2023 03:55:29 -0700 (PDT)
+        Mon, 05 Jun 2023 03:55:32 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org,
@@ -61,9 +61,9 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>,
         Disha Goel <disgoel@linux.ibm.com>,
         "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCHv7 4/6] iomap: Refactor iomap_write_delalloc_punch() function out
-Date:   Mon,  5 Jun 2023 16:25:04 +0530
-Message-Id: <27c39cdf2150f19d91b7118b7399177d6889a358.1685962158.git.ritesh.list@gmail.com>
+Subject: [PATCHv7 5/6] iomap: Allocate iop in ->write_begin() early
+Date:   Mon,  5 Jun 2023 16:25:05 +0530
+Message-Id: <d2bd912ee7d2bcab0b49a0226496631ed5c82e21.1685962158.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <cover.1685962158.git.ritesh.list@gmail.com>
 References: <cover.1685962158.git.ritesh.list@gmail.com>
@@ -79,93 +79,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch moves iomap_write_delalloc_punch() out of
-iomap_write_delalloc_scan(). No functionality change in this patch.
+We dont need to allocate an iop in ->write_begin() for writes where the
+position and length completely overlap with the given folio.
+Therefore, such cases are skipped.
+
+Currently when the folio is uptodate, we only allocate iop at writeback
+time (in iomap_writepage_map()). This is ok until now, but when we are
+going to add support for per-block dirty state bitmap in iop, this
+could cause some performance degradation. The reason is that if we don't
+allocate iop during ->write_begin(), then we will never mark the
+necessary dirty bits in ->write_end() call. And we will have to mark all
+the bits as dirty at the writeback time, that could cause the same write
+amplification and performance problems as it is now.
 
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/iomap/buffered-io.c | 54 ++++++++++++++++++++++++++----------------
- 1 file changed, 34 insertions(+), 20 deletions(-)
+ fs/iomap/buffered-io.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 136f57ccd0be..f55a339f99ec 100644
+index f55a339f99ec..2a97d73edb96 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -894,6 +894,33 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
- }
- EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
+@@ -571,15 +571,24 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 	size_t from = offset_in_folio(folio, pos), to = from + len;
+ 	size_t poff, plen;
  
-+static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
-+		loff_t *punch_start_byte, loff_t start_byte, loff_t end_byte,
-+		int (*punch)(struct inode *inode, loff_t offset, loff_t length))
-+{
-+	int ret = 0;
-+
-+	if (!folio_test_dirty(folio))
-+		return ret;
-+
-+	/* if dirty, punch up to offset */
-+	if (start_byte > *punch_start_byte) {
-+		ret = punch(inode, *punch_start_byte,
-+				start_byte - *punch_start_byte);
-+		if (ret)
-+			goto out;
-+	}
+-	if (folio_test_uptodate(folio))
 +	/*
-+	 * Make sure the next punch start is correctly bound to
-+	 * the end of this data range, not the end of the folio.
++	 * If the write completely overlaps the current folio, then
++	 * entire folio will be dirtied so there is no need for
++	 * per-block state tracking structures to be attached to this folio.
 +	 */
-+	*punch_start_byte = min_t(loff_t, end_byte,
-+				  folio_next_index(folio) << PAGE_SHIFT);
++	if (pos <= folio_pos(folio) &&
++	    pos + len >= folio_pos(folio) + folio_size(folio))
+ 		return 0;
+-	folio_clear_error(folio);
+ 
+ 	iop = iomap_iop_alloc(iter->inode, folio, iter->flags);
+ 
+ 	if ((iter->flags & IOMAP_NOWAIT) && !iop && nr_blocks > 1)
+ 		return -EAGAIN;
+ 
++	if (folio_test_uptodate(folio))
++		return 0;
++	folio_clear_error(folio);
 +
-+out:
-+	return ret;
-+}
-+
- /*
-  * Scan the data range passed to us for dirty page cache folios. If we find a
-  * dirty folio, punch out the preceeding range and update the offset from which
-@@ -917,6 +944,7 @@ static int iomap_write_delalloc_scan(struct inode *inode,
- {
- 	while (start_byte < end_byte) {
- 		struct folio	*folio;
-+		int ret;
- 
- 		/* grab locked page */
- 		folio = filemap_lock_folio(inode->i_mapping,
-@@ -927,26 +955,12 @@ static int iomap_write_delalloc_scan(struct inode *inode,
- 			continue;
- 		}
- 
--		/* if dirty, punch up to offset */
--		if (folio_test_dirty(folio)) {
--			if (start_byte > *punch_start_byte) {
--				int	error;
--
--				error = punch(inode, *punch_start_byte,
--						start_byte - *punch_start_byte);
--				if (error) {
--					folio_unlock(folio);
--					folio_put(folio);
--					return error;
--				}
--			}
--
--			/*
--			 * Make sure the next punch start is correctly bound to
--			 * the end of this data range, not the end of the folio.
--			 */
--			*punch_start_byte = min_t(loff_t, end_byte,
--					folio_next_index(folio) << PAGE_SHIFT);
-+		ret = iomap_write_delalloc_punch(inode, folio, punch_start_byte,
-+						 start_byte, end_byte, punch);
-+		if (ret) {
-+			folio_unlock(folio);
-+			folio_put(folio);
-+			return ret;
- 		}
- 
- 		/* move offset to start of next folio in range */
+ 	do {
+ 		iomap_adjust_read_range(iter->inode, folio, &block_start,
+ 				block_end - block_start, &poff, &plen);
 -- 
 2.40.1
 
