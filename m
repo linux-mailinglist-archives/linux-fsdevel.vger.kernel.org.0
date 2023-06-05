@@ -2,60 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 970C47224E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 13:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D725A7224F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 13:55:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232854AbjFELul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 07:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32834 "EHLO
+        id S232944AbjFELzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 07:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232644AbjFELuj (ORCPT
+        with ESMTP id S232607AbjFELzQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 07:50:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8150CEE;
-        Mon,  5 Jun 2023 04:50:37 -0700 (PDT)
+        Mon, 5 Jun 2023 07:55:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15D39DA;
+        Mon,  5 Jun 2023 04:55:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1EDE062265;
-        Mon,  5 Jun 2023 11:50:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD033C433D2;
-        Mon,  5 Jun 2023 11:50:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9AD4F6230C;
+        Mon,  5 Jun 2023 11:55:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65681C4339B;
+        Mon,  5 Jun 2023 11:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685965836;
-        bh=1URBqhyo/+LhuBy1Ia8JA249Fp0j/DA0iuKWYbDeaXU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ICOlloAlAorQJ5z4uRZ5R7hqkpsimzIs8vOtUPJAnsvl9TY1FvhaEUjDisUnGXABi
-         YfJczsf3tk06KobNcPAk+FbjjWeQOwCgVTPEh8+VPs5A2oBwwpOLzirZ6MRA0qv5yp
-         QFZmhVHCyDMz8616KX+pv773whVdW8z620Zn+U0sp4qLXUoZii/rzJDPbUoO+AU5tk
-         zyss8s+XgKo+N43tV+JltB8M0vE5AksuXBJkFzjMEZ+2IXC2dMjvUK1ixOSWoEw+Kg
-         7lEx9xPyVfqsRZxLsPU3nkPIkgfeNkFSWkwTgblMT3gkQdpKlfOuDEyIM/pVgE4C1H
-         VTM8fmkRaWTWA==
-Date:   Mon, 5 Jun 2023 13:50:29 +0200
+        s=k20201202; t=1685966114;
+        bh=pUSC7oks7piN2gzMx4OqaEMjAcj/eQArd7w290LuOq4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=awIf2YtJkTEPkmDuvdcNoLdI2TUe2b+rwXUgF6JOEhN9dPsxR1nzPOUfEgasv7hXt
+         Pt9PNG9LzJGeDxAVqq9cSp2Q4D5eZTdoFtYXs8r+WaIKFCFJHsXOw3LEzsOA5ljfBI
+         NHApRg+D8Mi0sd06fz2D1iys9KuFD3m9lCoPG/i2HGv4aoztO6W6yZO6jkVNtAd2ny
+         MUzSxdfgfigMWahl7Yoh5nSze7VD06AFB9O1H6dPSHsrnEK14qcmu0NY/zD3WENXky
+         CVxpHhHbJpOIU3CiqYlpNcQ70wNOb9CH/odTk5olviBlB5M0u6usf9bopYLFl/wt81
+         z+FLaZGZbTuSQ==
 From:   Christian Brauner <brauner@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Qi Zheng <qi.zheng@linux.dev>, Dave Chinner <david@fromorbit.com>,
-        akpm@linux-foundation.org, tkhai@ya.ru, roman.gushchin@linux.dev,
-        vbabka@suse.cz, viro@zeniv.linux.org.uk, hughd@google.com,
-        paulmck@kernel.org, muchun.song@linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: Re: [PATCH 6/8] xfs: introduce xfs_fs_destroy_super()
-Message-ID: <20230605-halbtags-gesplittet-c482c62cb2c9@brauner>
-References: <20230531095742.2480623-1-qi.zheng@linux.dev>
- <20230531095742.2480623-7-qi.zheng@linux.dev>
- <ZHfc3V4KKmW8QTR2@dread.disaster.area>
- <b85c0d63-f6a5-73c4-e574-163b0b07d80a@linux.dev>
- <ZHkkWjt0R1ptV7RZ@dread.disaster.area>
- <2f34a702-1a57-06a5-1bd9-de54a67a839e@linux.dev>
- <20230602151532.GP16865@frogsfrogsfrogs>
+To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Chen Zhongjin <chenzhongjin@huawei.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Jiaqi Yan <jiaqiyan@google.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Peter Collingbourne <pcc@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] highmem: Rename put_and_unmap_page() to unmap_and_put_page()
+Date:   Mon,  5 Jun 2023 13:53:58 +0200
+Message-Id: <20230605-brombeeren-pelle-4c3b79161688@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230602103307.5637-1-fmdefrancesco@gmail.com>
+References: <20230602103307.5637-1-fmdefrancesco@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230602151532.GP16865@frogsfrogsfrogs>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1082; i=brauner@kernel.org; h=from:subject:message-id; bh=jKeD4wVOOupEPtRNzJJqOCLPd5qFAlNPBImFod19/MQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTUnjlvdCyvjDvpSWaTesoNhuP75+mdnc8+wThpT5J944xO k9otHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMRPsjwP2NZeu6aivR3307/k2Od8f aV2I+b6iLvLe/JzZV7Y7uAjZHhf73E+7VVa1qi/Cy44y9o7rv10T59fdy2/5P2HZzeE5/XzQwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -64,160 +69,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 02, 2023 at 08:15:32AM -0700, Darrick J. Wong wrote:
-> On Fri, Jun 02, 2023 at 11:13:09AM +0800, Qi Zheng wrote:
-> > Hi Dave,
-> > 
-> > On 2023/6/2 07:06, Dave Chinner wrote:
-> > > On Thu, Jun 01, 2023 at 04:43:32PM +0800, Qi Zheng wrote:
-> > > > Hi Dave,
-> > > > On 2023/6/1 07:48, Dave Chinner wrote:
-> > > > > On Wed, May 31, 2023 at 09:57:40AM +0000, Qi Zheng wrote:
-> > > > > > From: Kirill Tkhai <tkhai@ya.ru>
-> > > > > I don't really like this ->destroy_super() callback, especially as
-> > > > > it's completely undocumented as to why it exists. This is purely a
-> > > > > work-around for handling extended filesystem superblock shrinker
-> > > > > functionality, yet there's nothing that tells the reader this.
-> > > > > 
-> > > > > It also seems to imply that the superblock shrinker can continue to
-> > > > > run after the existing unregister_shrinker() call before ->kill_sb()
-> > > > > is called. This violates the assumption made in filesystems that the
-> > > > > superblock shrinkers have been stopped and will never run again
-> > > > > before ->kill_sb() is called. Hence ->kill_sb() implementations
-> > > > > assume there is nothing else accessing filesystem owned structures
-> > > > > and it can tear down internal structures safely.
-> > > > > 
-> > > > > Realistically, the days of XFS using this superblock shrinker
-> > > > > extension are numbered. We've got a lot of the infrastructure we
-> > > > > need in place to get rid of the background inode reclaim
-> > > > > infrastructure that requires this shrinker extension, and it's on my
-> > > > > list of things that need to be addressed in the near future.
-> > > > > 
-> > > > > In fact, now that I look at it, I think the shmem usage of this
-> > > > > superblock shrinker interface is broken - it returns SHRINK_STOP to
-> > > > > ->free_cached_objects(), but the only valid return value is the
-> > > > > number of objects freed (i.e. 0 is nothing freed). These special
-> > > > > superblock extension interfaces do not work like a normal
-> > > > > shrinker....
-> > > > > 
-> > > > > Hence I think the shmem usage should be replaced with an separate
-> > > > > internal shmem shrinker that is managed by the filesystem itself
-> > > > > (similar to how XFS has multiple internal shrinkers).
-> > > > > 
-> > > > > At this point, then the only user of this interface is (again) XFS.
-> > > > > Given this, adding new VFS methods for a single filesystem
-> > > > > for functionality that is planned to be removed is probably not the
-> > > > > best approach to solving the problem.
-> > > > 
-> > > > Thanks for such a detailed analysis. Kirill Tkhai just proposeed a
-> > > > new method[1], I cc'd you on the email.
-> > > 
-> > > I;ve just read through that thread, and I've looked at the original
-> > > patch that caused the regression.
-> > > 
-> > > I'm a bit annoyed right now. Nobody cc'd me on the original patches
-> > > nor were any of the subsystems that use shrinkers were cc'd on the
-> > > patches that changed shrinker behaviour. I only find out about this
-> > 
-> > Sorry about that, my mistake. I followed the results of
-> > scripts/get_maintainer.pl before.
+On Fri, 02 Jun 2023 12:33:07 +0200, Fabio M. De Francesco wrote:
+> With commit 849ad04cf562a ("new helper: put_and_unmap_page()"), Al Viro
+> introduced the put_and_unmap_page() to use in those many places where we
+> have a common pattern consisting of calls to kunmap_local() +
+> put_page().
 > 
-> Sometimes I wonder if people who contribute a lot to a subsystem should
-> be more aggressive about listing themselves explicitly in MAINTAINERS
-> but then I look at the ~600 emails that came in while I was on vacation
-> for 6 days over a long weekend and ... shut up. :P
+> Obviously, first we unmap and then we put pages. Instead, the original
+> name of this helper seems to imply that we first put and then unmap.
 > 
-> > > because someone tries to fix something they broke by *breaking more
-> > > stuff* and not even realising how broken what they are proposing is.
-> > 
-> > Yes, this slows down the speed of umount. But the benefit is that
-> > slab shrink becomes lockless, the mount operation and slab shrink no
-> > longer affect each other, and the IPC no longer drops significantly,
-> > etc.
-> 
-> The lockless shrink seems like a good thing to have, but ... is it
-> really true that the superblock shrinker can still be running after
-> ->kill_sb?  /That/ is surprising to me.
+> [...]
 
-So what's the plan here? If this causes issues for filesystems that rely
-on specific guarantees that are broken by the patch then either it needs
-a clean fix or a revert.
+Grabbed it now. Please yell if this wants to go another route.
 
-> 
-> --D
-> 
-> > And I used bpftrace to measure the time consumption of
-> > unregister_shrinker():
-> > 
-> > ```
-> > And I just tested it on a physical machine (Intel(R) Xeon(R) Platinum
-> > 8260 CPU @ 2.40GHz) and the results are as follows:
-> > 
-> > 1) use synchronize_srcu():
-> > 
-> > @ns[umount]:
-> > [8K, 16K)             83 |@@@@@@@       |
-> > [16K, 32K)           578
-> > |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> > [32K, 64K)            78 |@@@@@@@       |
-> > [64K, 128K)            6 |       |
-> > [128K, 256K)           7 |       |
-> > [256K, 512K)          29 |@@       |
-> > [512K, 1M)            51 |@@@@      |
-> > [1M, 2M)              90 |@@@@@@@@       |
-> > [2M, 4M)              70 |@@@@@@      |
-> > [4M, 8M)               8 |      |
-> > 
-> > 2) use synchronize_srcu_expedited():
-> > 
-> > @ns[umount]:
-> > [8K, 16K)             31 |@@       |
-> > [16K, 32K)           803
-> > |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> > [32K, 64K)           158 |@@@@@@@@@@       |
-> > [64K, 128K)            4 |       |
-> > [128K, 256K)           2 |       |
-> > [256K, 512K)           2 |       |
-> > ```
-> > 
-> > With synchronize_srcu(), most of the time consumption is between 16us and
-> > 32us, the worst case between 4ms and 8ms. Is this totally
-> > unacceptable?
-> > 
-> > This performance regression report comes from a stress test. Will the
-> > umount action be executed so frequently under real workloads?
-> > 
-> > If there are really unacceptable, after applying the newly proposed
-> > method, umount will be as fast as before (or even faster).
-> > 
-> > Thanks,
-> > Qi
-> > 
-> > > 
-> > > The previous code was not broken and it provided specific guarantees
-> > > to subsystems via unregister_shrinker(). From the above discussion,
-> > > it appears that the original authors of these changes either did not
-> > > know about or did not understand them, so that casts doubt in my
-> > > mind about the attempted solution and all the proposed fixes for it.
-> > > 
-> > > I don't have the time right now unravel this mess and fully
-> > > understand the original problem, changes or the band-aids that are
-> > > being thrown around. We are also getting quite late in the cycle to
-> > > be doing major surgery to critical infrastructure, especially as it
-> > > gives so little time to review regression test whatever new solution
-> > > is proposed.
-> > > 
-> > > Given this appears to be a change introduced in 6.4-rc1, I think the
-> > > right thing to do is to revert the change rather than make things
-> > > worse by trying to shove some "quick fix" into the kernel to address
-> > > it.
-> > > 
-> > > Andrew, could you please sort out a series to revert this shrinker
-> > > infrastructure change and all the dependent hacks that have been
-> > > added to try to fix it so far?
-> > > 
-> > > -Dave.
-> > 
-> > -- 
-> > Thanks,
-> > Qi
+---
+
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] highmem: Rename put_and_unmap_page() to unmap_and_put_page()
+      https://git.kernel.org/vfs/vfs/c/01af7e7dd0ea
