@@ -2,46 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F309C722C52
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 18:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD940722CD1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 18:37:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231146AbjFEQQq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 12:16:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38368 "EHLO
+        id S232514AbjFEQho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 12:37:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbjFEQQn (ORCPT
+        with ESMTP id S232196AbjFEQhm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 12:16:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C8B4E6;
-        Mon,  5 Jun 2023 09:16:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=iB0H24zQ9afWpiMzWIwA6kDQKADXkA7aEQwZd0XdpsA=; b=m1O3EZaCKVFyHwnXGLY+agmDGy
-        uLRg+gJBkoUMCaBPEWqnkoI8H0gdXoBfkXZRKoyMpiQS67KtZwDowayW/o7j1aNb77kgw2JW1IjdN
-        kAwqOAbTNOdxFB5dNwXUNQG/iG+M3bPEDkDDom38C+jCReOe29+2GeQpBkMuZOKZBWCDUqrqXb+F3
-        55o4w4UTsNbGMvuVdJLE4EDi1BFYfnDlMLyxIu6oFzhkff6keZwHy//GUxRJryauhBnw4Y+pBMwnD
-        X356IEnJizGQOa7E11kKIo4aeYHwsjyy3whFG0xEqt3cK9OnJJMFfWd1aNOAyNZBqoXF5+JK1pUop
-        UaZ4spnA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q6Csq-00CBDa-6x; Mon, 05 Jun 2023 16:16:40 +0000
-Date:   Mon, 5 Jun 2023 17:16:40 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: DIO hangs in 6.4.0-rc2
-Message-ID: <ZH4KaEtLS1bdSl1c@casper.infradead.org>
-References: <ZGN20Hp1ho/u4uPY@casper.infradead.org>
- <ZGP/H1UQgMYemYP1@dread.disaster.area>
+        Mon, 5 Jun 2023 12:37:42 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D04ED;
+        Mon,  5 Jun 2023 09:37:36 -0700 (PDT)
+Date:   Mon, 5 Jun 2023 18:37:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1685983055;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4e85demDEm6WmdDySFiywaQz/7CD490NkhFomelOdWQ=;
+        b=Hivf6YwcDltA1JGZW0JmOcX3KwrP7sz4Mj3bYETJCYdnFhZgIYdRVI5GJvhanql0q17LVK
+        GVxnhGVh8mlVdiHAz6crJYtu/ErBoT+DynIQBg2m8ZgguitMjkf/3SjgWGVFx4DVcasTA/
+        SLz+JROh+QDOtQyQqyaxFW/8PWgPXczTpmEM4YSbS7Z60I1XBCT55JK4cUReWjuUbTZfut
+        lboDhY9SnnBaK2gtuPYBPKcxsNqAs9urCji9BTu+pECxmIFR0syc62sQdLvy1Jfo5Vaq9V
+        1FZfuRRZHqIdjakxkmmAVsgSgiuBXS7LNysC7CUDVtvCkUKAQ/2u3HmsCppeRQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1685983055;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4e85demDEm6WmdDySFiywaQz/7CD490NkhFomelOdWQ=;
+        b=Pyyv39RIOOIj9xgY32bW/q0b5buQWDzSDuTfjH3NeR5lxNYphX09uWw9JGbPXMNosoADX9
+        lGUDPUzl/qf1q3Cg==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3] bpf: Remove in_atomic() from bpf_link_put().
+Message-ID: <20230605163733.LD-UCcso@linutronix.de>
+References: <20230509132433.2FSY_6t7@linutronix.de>
+ <CAEf4BzZcPKsRJDQfdVk9D1Nt6kgT4STpEUrsQ=UD3BDZnNp8eQ@mail.gmail.com>
+ <CAADnVQLzZyZ+cPqBFfrqa8wtQ8ZhWvTSN6oD9z4Y2gtrfs8Vdg@mail.gmail.com>
+ <CAEf4BzY-MRYnzGiZmW7AVJYgYdHW1_jOphbipRrHRTtdfq3_wQ@mail.gmail.com>
+ <20230525141813.TFZLWM4M@linutronix.de>
+ <CAEf4Bzaipoo6X_2Fh5WTV-m0yjP0pvhqi7-FPFtGOrSzNpdGJQ@mail.gmail.com>
+ <20230526112356.fOlWmeOF@linutronix.de>
+ <CAEf4Bzawgrn2DhR9uvXwFFiLR9g+j4RYC6cr3n+eRD_RoKBAJA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZGP/H1UQgMYemYP1@dread.disaster.area>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAEf4Bzawgrn2DhR9uvXwFFiLR9g+j4RYC6cr3n+eRD_RoKBAJA@mail.gmail.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -49,31 +72,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 17, 2023 at 08:09:35AM +1000, Dave Chinner wrote:
-> On Tue, May 16, 2023 at 01:28:00PM +0100, Matthew Wilcox wrote:
-> > Plain 6.4.0-rc2 with a relatively minor change to the futex code that
-> > I cannot believe was in any way responsible for this.
-> > 
-> > kworkers blocked all over the place.  Some on XFS_ILOCK_EXCL.  Some on
-> > xfs_buf_lock.  One in xfs_btree_split() calling wait_for_completion.
-> > 
-> > This was an overnight test run that is now dead, so I can't get any
-> > more info from the locked up kernel.  I have the vmlinux if some
-> > decoding of offsets is useful.
-> 
-> This is likely the same AGF try-lock bug that was discovered in this
-> thread:
-> 
-> https://lore.kernel.org/linux-xfs/202305090905.aff4e0e6-oliver.sang@intel.com/
-> 
-> The fact that the try-lock was ignored means that out of order AGF
-> locking can be attempted, and the try-lock prevents deadlocks from
-> occurring.
-> 
-> Can you try the patch below - I was going to send it for review
-> anyway this morning so it can't hurt to see if it also fixes this
-> issue.
+On 2023-05-31 12:00:56 [-0700], Andrii Nakryiko wrote:
+> > On 2023-05-25 10:51:23 [-0700], Andrii Nakryiko wrote:
+> > v2=E2=80=A6v3:
+> >   - Drop bpf_link_put_direct(). Let bpf_link_put() do the direct free
+> >     and add bpf_link_put_from_atomic() to do the delayed free via the
+> >     worker.
+>=20
+> This seems like an unsafe "default put" choice. I think it makes more
+> sense to have bpf_link_put() do a safe scheduled put, and then having
+> a separate bpf_link_put_direct() for those special cases where we care
+> the most (in kernel/bpf/inode.c and kernel/bpf/syscall.c).
 
-I still have this patch in my tree and it's not in rc5.  Was this
-problem fixed some other way, or does it still need to land upstream?
-I don't see any changes to XFS since May 11th's pull request.
+I audited them and ended up with them all being safe except for the one
+=66rom inode.c. I can reverse the logic if you want.
+
+> > diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> > index 9948b542a470e..2e1e9f3c7f701 100644
+> > --- a/kernel/bpf/inode.c
+> > +++ b/kernel/bpf/inode.c
+> > @@ -59,7 +59,10 @@ static void bpf_any_put(void *raw, enum bpf_type typ=
+e)
+> >                 bpf_map_put_with_uref(raw);
+> >                 break;
+> >         case BPF_TYPE_LINK:
+> > -               bpf_link_put(raw);
+> > +               if (may_sleep)
+> > +                       bpf_link_put(raw);
+> > +               else
+> > +                       bpf_link_put_from_atomic(raw);
+>=20
+> Do we need to do this in two different ways here? The only situation
+> that has may_sleep=3Dfalse is when called from superblock->free_inode.
+> According to documentation:
+>=20
+>   Freeing memory in the callback is fine; doing
+>   more than that is possible, but requires a lot of care and is best
+>   avoided.
+>=20
+> So it feels like cleaning up link should be safe to do from this
+> context as well? I've cc'ed linux-fsdevel@, hopefully they can advise.
+
+This is invoked from the RCU callback (which is usually softirq):
+	destroy_inode()
+	 -> call_rcu(&inode->i_rcu, i_callback);
+
+Freeing memory is fine but there is a mutex that is held in the process.
+
+Sebastian
