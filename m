@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1647A721F2E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 09:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 343B5721F3C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jun 2023 09:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230121AbjFEHND (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Jun 2023 03:13:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44398 "EHLO
+        id S230430AbjFEHNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Jun 2023 03:13:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjFEHMs (ORCPT
+        with ESMTP id S229976AbjFEHNl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Jun 2023 03:12:48 -0400
+        Mon, 5 Jun 2023 03:13:41 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E975E6D;
-        Mon,  5 Jun 2023 00:12:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 757AEE78;
+        Mon,  5 Jun 2023 00:13:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=kpvDwBWP98BpcNb3DiIFjEcF/SJseZ6dCm2E0Nls3Ns=; b=VKzKGIJVCpycyBgOJdUi7yckYJ
-        MUc1nrCgRsGQEC7eveCHjMiRG/yDmt0t8gARz/7BFKVtc3zFALFCiD70in/XBuL345GsTuAiDo1MG
-        8p9ELpJdexG4oRO7bEMrBZZIWnvHIaNGxUywDgmb+CT5kHqpdFUgWlMM9rGkrJcCCu2HOT2XXFyGu
-        0Y9KiHIdm2zLiAyJbupFio/iblo1zBKZ2gALOzBMCjnkC/Cw5NLQ03iXrsL2vYh0O2gIgNbecUDSl
-        JL9nphdA+oa9uE7M4WcuI9iLergCuEq2c3f8tOuRJ7xd5ViRoZ6l5kY3GjUUgklnfCn1lKfyHSiR9
-        EhFYiOpw==;
+        bh=24NtoYhKvZ49mRzAxCPfQuGcFIxKUXmj4oYlBfA1+No=; b=HmTaFC7HfXqOAdPtQr2UennWQN
+        wwqjqQyMVixk17VL+BUOwDd6w6dwkss7xDDAMuG/mx8cZY7xDZu3F7REOnh+VJiviA7vUZQf0WAKO
+        N4lZHeg6BVOqRX/a8HGOP/o23sZu29LYTG07bvJ+IYmzPyJQIyHBKW+R8tioNdiRnVHkna/n1CUOx
+        Py15OAhy3VRhqqCqI8gTG/rg1eWiwtsYG7Zci7/nC0+X85jmwZpKPtuPQcepYdByPva7tsEAZbTJl
+        TtF/UVopNdpvsIQjbqj/cfODEjvwdH/XJltP9Gm1UFv3qaSzUoxDOh7+4zRgR7wlAa89jjze1vvvz
+        jOKA60xQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q64No-00EVnU-07;
-        Mon, 05 Jun 2023 07:12:04 +0000
-Date:   Mon, 5 Jun 2023 00:12:04 -0700
+        id 1q64P0-00EVwR-0p;
+        Mon, 05 Jun 2023 07:13:18 +0000
+Date:   Mon, 5 Jun 2023 00:13:18 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
@@ -36,14 +36,15 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH v2 2/7] doc: Correct the description of ->release_folio
-Message-ID: <ZH2KxNW7PxABMOx6@infradead.org>
+Subject: Re: [PATCH v2 3/7] iomap: Remove unnecessary test from
+ iomap_release_folio()
+Message-ID: <ZH2LDjrBjajOSDB+@infradead.org>
 References: <20230602222445.2284892-1-willy@infradead.org>
- <20230602222445.2284892-3-willy@infradead.org>
+ <20230602222445.2284892-4-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230602222445.2284892-3-willy@infradead.org>
+In-Reply-To: <20230602222445.2284892-4-willy@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -55,7 +56,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Never mind the shism on the nature of the holy trinity of
-vfs/mm/pagecache the substance looks good here:
+> -	 * dirty folios to ->release_folio() via shrink_active_list();
+> -	 * skip those here.
+> +	 * If the folio is dirty, we refuse to release our metadata because
+> +	 * it may be partially dirty (FIXME, add a test for that).
+
+I'd prefer not to add this FIXME as we're fine without the per-block
+dirty tracking.
+
+Otherwise looks good:
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
