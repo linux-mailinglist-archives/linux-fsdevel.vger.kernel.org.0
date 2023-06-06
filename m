@@ -2,232 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 491247245A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 16:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF486724143
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 13:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237843AbjFFOTX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 10:19:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54614 "EHLO
+        id S237140AbjFFLoD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 07:44:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237829AbjFFOTV (ORCPT
+        with ESMTP id S229827AbjFFLoC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 10:19:21 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3A010EC
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 07:19:15 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230606141912epoutp041b8e2833029a80de7ee8bce8e1f82d2a~mF69xXHC61194011940epoutp04L
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 14:19:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230606141912epoutp041b8e2833029a80de7ee8bce8e1f82d2a~mF69xXHC61194011940epoutp04L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1686061152;
-        bh=UOxM1GwH4N78/5VcZmRi0SOFUE4InTqlB4yboWdBops=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PZw1PRsP3Vrqe4rBgl2Q+llmA+X/Y64Mgt62j0rqVIiINQHQz37xv9cTHbe78woTb
-         5BxEesBBycF+gggWT9A5ORabSDHqm0HgkJVRO6OoIW9+f+7OZdJFEDgW6HO58kUDBK
-         ZFYVIHdSenb57diO3bEYFPfETDlbB5mJcxWAs+jM=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20230606141911epcas5p3feaf4868278ede2a218037055402778a~mF68ppvKo0226602266epcas5p3G;
-        Tue,  6 Jun 2023 14:19:11 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4QbCJt3gbnz4x9Pp; Tue,  6 Jun
-        2023 14:19:10 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        ED.0D.04567.E504F746; Tue,  6 Jun 2023 23:19:10 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230606113849epcas5p20436fd9c3a47354fc4f5264540cd9887~mDu7kpk5C1243112431epcas5p2V;
-        Tue,  6 Jun 2023 11:38:49 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230606113849epsmtrp1037164b0d5a6cfbe44a01819ba98ed2b~mDu7i-Kls0420604206epsmtrp1I;
-        Tue,  6 Jun 2023 11:38:49 +0000 (GMT)
-X-AuditID: b6c32a49-943ff700000011d7-f9-647f405ec85f
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B7.47.28392.9CA1F746; Tue,  6 Jun 2023 20:38:49 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230606113842epsmtip230b93d2fae8d0d35d5b4cfcfbf869ead~mDu1DVgJ-2435324353epsmtip29;
-        Tue,  6 Jun 2023 11:38:42 +0000 (GMT)
-Date:   Tue, 6 Jun 2023 17:05:35 +0530
-From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        willy@infradead.org, hare@suse.de, djwong@kernel.org,
-        bvanassche@acm.org, ming.lei@redhat.com, dlemoal@kernel.org,
-        nitheshshetty@gmail.com, gost.dev@samsung.com,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v12 5/9] nvme: add copy offload support
-Message-ID: <20230606113535.rjbhe6eqlyqk4pqq@green245>
+        Tue, 6 Jun 2023 07:44:02 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACE7F9E;
+        Tue,  6 Jun 2023 04:44:01 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-65540715b4bso1653677b3a.0;
+        Tue, 06 Jun 2023 04:44:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686051841; x=1688643841;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zFLdd1F7emitKLWZlp12oRc6lUO0GVbEKV953lMIh6Y=;
+        b=OKg/n6r4J5cXw0b9ohx/n84o6gI18K4/G4m7zDnoLj3ra5bycbpVI+9kzL69kWUwUq
+         qg9qF/juH617HlOVBCTyINX/wXexHz28jxAWJAwyTk7q74Ny6YCfL8hJpbFqopsQFIlI
+         T1xQ5PJDQHctbY5sUCSGUEbFZ718zlNDqkEqSGX1XZ4Z5nVdA/HBBRtg72YjpM8/zsjh
+         vnzhhM+gPdwkdVlKHqIdsezOQf6HxIQ05Um8j9gvmgYuddyXGnlanYNrajreVwV0rEkV
+         XySVdQXWzlt7H0mzhzkgvORa1ydkYajG4qIdcWulfnBs2cLAG9VdYgG8IRvzUnhl+qxN
+         b/2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686051841; x=1688643841;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zFLdd1F7emitKLWZlp12oRc6lUO0GVbEKV953lMIh6Y=;
+        b=FIrLKFEdJR47J8HMluPSqQ8slkm+AjtAn31aOWj7yTfCVh72JnbMnMVubfY0kCpLHk
+         EHBkMntoUHkwSuIEAvRWQ/HQ/mP7mto9Q0InKCZUqLk+Aii1gWreXZDlSCuBLV6AqaVS
+         Ka6EjW5hvU3Bko69WgUld9xiU61VoY/dhDbfZnrRwo6hhsxUqeIMZ4nbtEfiLUP/kQsL
+         TxgF5ueQkZFK1dJrm6AELN+5RecHASlBB3L1HU/w+Ccg4Xq7gJltLAxA/BkNTxvQw0AR
+         dV5ygAYgEvzytMnzEKZSjF10kP5b7GUZ5wqEfLTzNQIL/QGYYVHfvOlsp2l49raismt+
+         9O6Q==
+X-Gm-Message-State: AC+VfDykh6uxyKKfzGBwHmBH5mB6dpC30BrY9V1RNBIl3+6c80HKzZt4
+        p7COQ4akC3s3mpc5zAPOxlP5pH52kxg=
+X-Google-Smtp-Source: ACHHUZ5GhVVcaqdXdCxjdNFWTbeYg03F4AQ8KfeDSQTzNObNDyf4l44flnMzPJTaA/Et1CD9qeXYAg==
+X-Received: by 2002:a05:6a20:9591:b0:10b:cb87:f5e with SMTP id iu17-20020a056a20959100b0010bcb870f5emr814845pzb.45.1686051840630;
+        Tue, 06 Jun 2023 04:44:00 -0700 (PDT)
+Received: from dw-tp.localdomain ([49.207.220.159])
+        by smtp.gmail.com with ESMTPSA id y4-20020a170902ed4400b001ab0a30c895sm8325120plb.202.2023.06.06.04.43.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jun 2023 04:44:00 -0700 (PDT)
+From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Subject: [PATCHv8 0/5] iomap: Add support for per-block dirty state to improve write performance
+Date:   Tue,  6 Jun 2023 17:13:47 +0530
+Message-Id: <cover.1686050333.git.ritesh.list@gmail.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-In-Reply-To: <ZH3mjUb+yqI11XD8@infradead.org>
-User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1STZRzHz/O+493QZq9c6nGUcN44JtiAGeADSKChvQEVzTpd/gB2tvcw
-        AradjYlmHW4KAnJRWycWxEUuAiUIZBNEcURDkYAQCPJCBmgQ90MoKLS50fG/z/P9/b7P7/n9
-        fufh4DZX2TxOtCyeUcpEsRSxgXWhzWU7PzwwUeJRnmmHaq//gqOUvCc4qrmdS6DJtnmAvp59
-        hKPR1nSA+kY3oZErAahl+lsrNNR6EUOXSk9hqDOvFENVNe0Yai6Zw9BftxbYqH1tikCn9AMA
-        jfVrMdQyvAOVpJWx0KWWayzU11RAoKKKMTbKGtQRqNKwiiH96VQM6UaTATo3OcNCHcMOqPuJ
-        wQqtPCwgAh3pvpshtPZuF0Ff1N5m0913zrPohrOudF+Xmq6vziDohrJEunkoiaDP5Jy2orNT
-        pwl6bmyYRc9c7ifonMZqQDd0HqEX6reGbf40ZreUEUkYpRMjE8sl0bIofyrkQMSbEV7eHgK+
-        wAftopxkojjGnwoKDePvj441DotyOiiKVRulMJFKRbm/sVspV8czTlK5Kt6fYhSSWIWnwk0l
-        ilOpZVFuMibeV+DhsdPLmBgZIzUMlrIVDQ6HBpYfWiWBKy9kAmsOJD1hT2EFy8Q2ZDOAustv
-        ZYINRp4HMD9LA8yHBQCLu/uxdcdEVwZhDjQB2N8+ZMkaB3B5rR2YslikM2w7M2d0cDgEuQN2
-        rnFMsh3pAocr03ET42Q1G7auUia2Jf3gyODkU51LesM/0qosvBleyx9lma6xJvlwOPsjk2xP
-        vgS/KV/ETWUh+a81LO4xtwDJIFjSfhI3sy2cMDSyzcyDf+emWTgBVn11ljCbjwKoHdQCcyAA
-        Hruea3mcFJb0j1v0l6Hm+jnMrG+C2Sujlklwoe67dX4Ffl9bTJh5CxxYSrYwDc/3PLZM6x6A
-        bSl6LA84ap9pTvtMPTP7wozZFCutsWmcdICVqxwzusDaJvdiYFUNtjAKVVwUo/JSCGRMwv8L
-        F8vj6sHTv+T6tg7cHpl10wOMA/QAcnDKjvtZQKLEhisRHf6cUcojlOpYRqUHXsZdncR59mK5
-        8TPK4iMEnj4ent7e3p4+r3sLqBe5r/pfE9uQUaJ4JoZhFIxy3YdxrHlJGHK4eKFWfMc2fJnn
-        5yzgCJMNB/bZP256b3DJdwCbC+w3iBxDHgiXeoM9uxf9Auq8KiUYN0WhGj9xaT6O3Lq2Udgb
-        Tsn5edJmeye+5uO6LKFPTfmhB7d0E9s60MC+XceL7FM06SNTWWq334lk/s8rFUKe+7bUHu6j
-        9B9GkjUn6HcTZB/8s1odmX/0tRs81nxP4dXf9nwZoqZCe9N6/YV2+p2FU6HHfrxboJvR7V3I
-        HZ2ua5wUf7gH3P9kY2pZuziHf397/g2NRurc4WbI/fMWCH4nKPL9sKidrUXJVZ0d+MzzB8ti
-        vgheFFXcvGc35PTcfuGuw4yj8CdSefwI8WtE3VoYxVJJRQJXXKkS/Qe0f8wY1AQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpileLIzCtJLcpLzFFi42LZdlhJXvekVH2KwYpt8hbrTx1jtmia8JfZ
-        YvXdfjaL14c/MVpM+/CT2eLJgXZGi8tP+Cwe7Le32PtuNqvFzQM7mSz2LJrEZHF6wiImi5Wr
-        jzJZ7F74kcni8Z3P7BZH/79ls5h06BqjxdOrs5gs9t7StljYtoTFYs/ekywWl3fNYbOYv+wp
-        u0X39R1sFsuP/2OyODS5mclix5NGRot1r9+zWJy4JW1x/u9xVovfP+awOch7XL7i7THr/lk2
-        j52z7rJ7nL+3kcVj8wotj8tnSz02repk89i8pN5j980GNo/FfZNZPXqb37F5fHx6i8Xj/b6r
-        bB59W1Yxemw+Xe3xeZNcgGAUl01Kak5mWWqRvl0CV8afTztYC55KVBx5vZi5gbFbpIuRk0NC
-        wETi1dlONhBbSGAHo8SvmxYQcUmJZX+PMEPYwhIr/z1n72LkAqp5wihx9vpeFpAEi4CKxOHF
-        H5m6GDk42AS0JU7/5wAJiwhoStxa3s4MUs8ssI5d4uvWa2CDhAWsJR5cfw1m8wqYSdxuW8kM
-        MfQRo8T/I8ugEoISJ2c+AVvADFQ0b/NDZpAFzALSEsv/cYCYnAK6Erd6w0EqRAVkJGYs/co8
-        gVFwFpLmWUiaZyE0L2BkXsUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJEZxMtLR2MO5Z
-        9UHvECMTB+MhRgkOZiUR3l1e1SlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeS90nYwXEkhPLEnN
-        Tk0tSC2CyTJxcEo1MLU+OaWufuTyRoVPCv08vlE7nq07MuF4bcMm/o60vvMlbcm7Pl/1mLd9
-        ztH9l+72c6ee+DXFKzvLa+ZxCT/JZIblbzofX2vVkWUO0L/6SClK5h6Xs/ilnIlPQ9XXn3vq
-        az1NPSqi7N2O30XznC8Hlk7YfTvg9nRR5xtOV+4Giql2/vgsmRWz+OOxyODJgvZWjS8c5py8
-        fTj96Y+iY/HVKw/4199n3rhRdOf3isRqnWVybZllKaqa1/bfevKp3m99aAznpTviSy66L308
-        TyX0j4DyhcYmmVbBc4zz9NRN+5Z379TodNuh9HDxt9N7zy5+5bJ37v2m09OYj1kk+FwXNmN1
-        bHg75X/8fTv5DyZ9PSFKLMUZiYZazEXFiQAmhJ86lQMAAA==
-X-CMS-MailID: 20230606113849epcas5p20436fd9c3a47354fc4f5264540cd9887
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----JBF_njb0NWiSS48ThI00c_Y9Zxz.JAos93qymBy6wSZnW6dc=_4db83_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230605122310epcas5p4aaebfc26fe5377613a36fe50423cf494
-References: <20230605121732.28468-1-nj.shetty@samsung.com>
-        <CGME20230605122310epcas5p4aaebfc26fe5377613a36fe50423cf494@epcas5p4.samsung.com>
-        <20230605121732.28468-6-nj.shetty@samsung.com>
-        <ZH3mjUb+yqI11XD8@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------JBF_njb0NWiSS48ThI00c_Y9Zxz.JAos93qymBy6wSZnW6dc=_4db83_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+Hello All,
 
-On 23/06/05 06:43AM, Christoph Hellwig wrote:
->>  		break;
->>  	case REQ_OP_READ:
->> -		ret = nvme_setup_rw(ns, req, cmd, nvme_cmd_read);
->> +		if (unlikely(req->cmd_flags & REQ_COPY))
->> +			nvme_setup_copy_read(ns, req);
->> +		else
->> +			ret = nvme_setup_rw(ns, req, cmd, nvme_cmd_read);
->>  		break;
->>  	case REQ_OP_WRITE:
->> -		ret = nvme_setup_rw(ns, req, cmd, nvme_cmd_write);
->> +		if (unlikely(req->cmd_flags & REQ_COPY))
->> +			ret = nvme_setup_copy_write(ns, req, cmd);
->> +		else
->> +			ret = nvme_setup_rw(ns, req, cmd, nvme_cmd_write);
->
->Yikes.  Overloading REQ_OP_READ and REQ_OP_WRITE with something entirely
->different brings us back the horrors of the block layer 15 years ago.
->Don't do that.  Please add separate REQ_COPY_IN/OUT (or maybe
->SEND/RECEIVE or whatever) methods.
->
+Please find PATCHv8 which adds per-block dirty tracking to iomap.
+As discussed earlier this is required to improve write performance and reduce
+write amplification for cases where either blocksize is less than pagesize (such
+as Power platform with 64k pagesize) or when we have a large folio (such as xfs
+which currently supports large folio).
 
-Downside will be duplicating checks which are present for read, write in
-block layer, device-mapper and zoned devices.
-But we can do this, shouldn't be an issue.
+v7 -> v8
+==========
+1. Renamed iomap_page -> iomap_folio & iop -> iof in Patch-1 itself.
+2. Made changes to the naming conventions of iomap_iop_** function to take iop
+   as a function argument (as Darrick suggested). Also changed
+   iomap_iop_test_full_uptodate() -> iomap_iop_is_fully_uptodate() &
+   iomap_iop_test_block_uptodate() -> iomap_iop_is_block_uptodate().
+   (similary for dirty state as well)
+3. Added comment in iomap_set_range_dirty() to explain why we pass inode
+   argument in that.
+4. Added Reviewed-by from Darrick in Patch-3 & Patch-4 as there were no changes
+   in these patches in v8.
 
->> +	/* setting copy limits */
->> +	if (blk_queue_flag_test_and_set(QUEUE_FLAG_COPY, q))
->
->I don't understand this comment.
->
+Thanks to all the review comments. I think the patch series looks in much better
+shape now. Please do let me know if this looks good?
 
-It was a mistake. Comment is misplaced and it should have been
-"setting copy flag" instead of "setting copy limits".
-Anyway now we feel this comment is redundant, will remove it.
-Also, we should have used blk_queue_flag_set to enable copy offload.
+Patchv6 -> Patchv7
+==================
+1. Fixed __maybe_unused annotation.
+2. Added this patch-4
+   iomap: Refactor iomap_write_delalloc_punch() function out
 
->> +struct nvme_copy_token {
->> +	char *subsys;
->> +	struct nvme_ns *ns;
->> +	sector_t src_sector;
->> +	sector_t sectors;
->> +};
->
->Why do we need a subsys token?  Inter-namespace copy is pretty crazy,
->and not really anything we should aim for.  But this whole token design
->is pretty odd anyway.  The only thing we'd need is a sequence number /
->idr / etc to find an input and output side match up, as long as we
->stick to the proper namespace scope.
->
+RFCv5 -> PATCHv6:
+=================
+1. Addresses review comments from Brian, Christoph and Matthew.
+   @Christoph:
+     - I have renamed the higher level functions such as iop_alloc/iop_free() to
+       iomap_iop_alloc/free() in v6.
+     - As for the low level bitmap accessor functions I couldn't find any better
+       naming then iop_test_/set/clear_**. I could have gone for
+       iomap_iop__test/set/clear/_** or iomap__iop_test/set/clear_**, but
+       I wasn't convinced with either of above as it also increases function
+       name.
+       Besides iop_test/set_clear_ accessors functions for uptodate and dirty
+       status tracking make sense as we are sure we have a valid iop in such
+       cases. Please do let me know if this looks ok to you.
+2. I tried testing gfs2 (initially with no patches) with xfstests. But I always ended up
+   in some or the other deadlock (I couldn't spend any time debugging that).
+   I also ran it with -x log, but still it was always failing for me.
+   @Andreas:
+   - could you please suggest how can I test gfs2 with these patches. I see gfs2
+     can have a smaller blocksize and it uses iomap buffered io path. It will be
+     good if we can get these patches tested on it too.
 
-The idea behind subsys is to prevent copy across different subsystem.
-For example, copy across nvme subsystem and the scsi subsystem. [1]
-At present, we don't support inter-namespace(copy across NVMe namespace),
-but after community feedback for previous series we left scope for it.
-About idr per namespace, it will be similar to namespace check that
-we are doing to prevent copy across namespace.
-We went with current structure for token, as it was solving above
-issues as well as provides a placeholder for storing source LBA and
-number of sectors.
-Do have any suggestions on how we can store source info, if we go with
-idr based approach ?
+3. I can now say I have run some good amount of fstests on these patches on
+   these platforms and I haven't found any new failure in my testing so far.
+   arm64 (64k pagesize): with 4k -g quick
+   Power: with 4k -g auto
+   x86: 1k, 4k with -g auto and adv_auto
 
-[1] https://lore.kernel.org/all/alpine.LRH.2.02.2202011327350.22481@file01.intranet.prod.int.rdu2.redhat.com/T/#m407f24fb4454d35c3283a5e51fdb04f1600463af
+From my testing so far these patches looks stable to me and if this looks good
+to reviewers as well, do you think this can be queued to linux-next for wider
+testing?
 
->> +	if (unlikely((req->cmd_flags & REQ_COPY) &&
->> +				(req_op(req) == REQ_OP_READ))) {
->> +		blk_mq_start_request(req);
->> +		return BLK_STS_OK;
->> +	}
->
->This really needs to be hiden inside of nvme_setup_cmd.  And given
->that other drivers might need similar handling the best way is probably
->to have a new magic BLK_STS_* value for request started but we're
->not actually sending it to hardware.
+Performance numbers copied from last patch commit message
+==================================================
+Performance testing of below fio workload reveals ~16x performance
+improvement using nvme with XFS (4k blocksize) on Power (64K pagesize)
+FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
 
-Sure we will add new BLK_STS_* for completion and move the snippet.
+1. <test_randwrite.fio>
+[global]
+	ioengine=psync
+	rw=randwrite
+	overwrite=1
+	pre_read=1
+	direct=0
+	bs=4k
+	size=1G
+	dir=./
+	numjobs=8
+	fdatasync=1
+	runtime=60
+	iodepth=64
+	group_reporting=1
 
-Thank you,
-Nitesh Shetty
+[fio-run]
 
-------JBF_njb0NWiSS48ThI00c_Y9Zxz.JAos93qymBy6wSZnW6dc=_4db83_
-Content-Type: text/plain; charset="utf-8"
+2. Also our internal performance team reported that this patch improves
+   their database workload performance by around ~83% (with XFS on Power)
 
+Ritesh Harjani (IBM) (5):
+  iomap: Rename iomap_page to iomap_folio and others
+  iomap: Renames and refactor iomap_folio state bitmap handling
+  iomap: Refactor iomap_write_delalloc_punch() function out
+  iomap: Allocate iof in ->write_begin() early
+  iomap: Add per-block dirty state tracking to improve performance
 
-------JBF_njb0NWiSS48ThI00c_Y9Zxz.JAos93qymBy6wSZnW6dc=_4db83_--
+ fs/gfs2/aops.c         |   2 +-
+ fs/iomap/buffered-io.c | 378 +++++++++++++++++++++++++++++------------
+ fs/xfs/xfs_aops.c      |   2 +-
+ fs/zonefs/file.c       |   2 +-
+ include/linux/iomap.h  |   1 +
+ 5 files changed, 269 insertions(+), 116 deletions(-)
+
+--
+2.40.1
+
