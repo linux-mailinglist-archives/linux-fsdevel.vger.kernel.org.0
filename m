@@ -2,191 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87B1B7240B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 13:19:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 491247245A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 16:19:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233097AbjFFLTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 07:19:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50158 "EHLO
+        id S237843AbjFFOTX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 10:19:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230411AbjFFLTa (ORCPT
+        with ESMTP id S237829AbjFFOTV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 07:19:30 -0400
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67364B1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 04:19:29 -0700 (PDT)
-Received: by mail-ua1-x92b.google.com with SMTP id a1e0cc1a2514c-786f7e1ea2fso1598808241.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 04:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686050368; x=1688642368;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=egg+oVNc0RTwdbDGV6CuqrkQ8OAPiF2c24P5Mj/BV9g=;
-        b=KUH0eZzBp/X60jDRR2maiFeycb9fKL/zKccIoQY1RgjYOmHBwxyI8Mjm5WOQ0KkO66
-         Ij/jfJ0RXcJ9E9I3LKhkKyBjwt1sjGQcjPwq5AP+YCJIQGOmCuNwvBPbZf8aTvlslhqV
-         NtxTFmxUx8KtUNm1sh8Dw/WxzLYQQECKdYpWSyl9vYgodPlzaWYOhyBl9ALRhA9tNQrD
-         Xp6OeaZA+E8Q5XrvvxR/7jz2ikIzUVZNLjuPASS1Ttm4PhbNKDIe/u1AoIq9QFYIdKey
-         tr0IktJ+WACtIH49OKagBoBTHp65w4lVs7kFflL10qGb58ZVUqOB8YCypeNg36Y+bkA6
-         RkAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686050368; x=1688642368;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=egg+oVNc0RTwdbDGV6CuqrkQ8OAPiF2c24P5Mj/BV9g=;
-        b=VGFHu1mYg0SAJ5p/m2pVvf8uKYt8Ql/x3DXWqEqNcLJuzLlL2SKxUR+iPk8TLur/jf
-         A/I5NRjmssRxV/QYLdhFrKOELEMzMOM3D31URI7H4APuAmmvSUwTut/7ZJl3MMtMd1+6
-         CFsvZZ23o6AURBbxv/+8z+iJkCaJBPhcZ6zWeE1wb+rA6RErgJRedzx6EfoGG+fblzbv
-         hWdViNbTXbJ+sh7g1QX065WZc7xzP3uawqkizz3FrVjNbzFv0/rht3LnjHFr65MVclS0
-         giNbLA6lYAdoz7E2iwn2O5htgF9iXFybxl3EtZ9HpYGMZQglOHGSO+RMTjnusWpbSCTi
-         kn4g==
-X-Gm-Message-State: AC+VfDyIztxm5MgDjWpYwJQPavWZkFk3OMXMHxfXakZIwoKNLuVthvRB
-        /NmHjWGFkn3HHpKqt7vCzIOnSeMpO70eEpgGofg=
-X-Google-Smtp-Source: ACHHUZ55g62hq68ZryjfIKhUZrbnUdB2I1zzHUL+JDnxi01dsYi76cXbLJR+0QFDwiotKNVaP9+08gLrYjl5WlGQ8Fg=
-X-Received: by 2002:a05:6102:52d:b0:43b:4a17:7fc2 with SMTP id
- m13-20020a056102052d00b0043b4a177fc2mr541388vsa.26.1686050368376; Tue, 06 Jun
- 2023 04:19:28 -0700 (PDT)
+        Tue, 6 Jun 2023 10:19:21 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3A010EC
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 07:19:15 -0700 (PDT)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230606141912epoutp041b8e2833029a80de7ee8bce8e1f82d2a~mF69xXHC61194011940epoutp04L
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 14:19:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230606141912epoutp041b8e2833029a80de7ee8bce8e1f82d2a~mF69xXHC61194011940epoutp04L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1686061152;
+        bh=UOxM1GwH4N78/5VcZmRi0SOFUE4InTqlB4yboWdBops=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PZw1PRsP3Vrqe4rBgl2Q+llmA+X/Y64Mgt62j0rqVIiINQHQz37xv9cTHbe78woTb
+         5BxEesBBycF+gggWT9A5ORabSDHqm0HgkJVRO6OoIW9+f+7OZdJFEDgW6HO58kUDBK
+         ZFYVIHdSenb57diO3bEYFPfETDlbB5mJcxWAs+jM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20230606141911epcas5p3feaf4868278ede2a218037055402778a~mF68ppvKo0226602266epcas5p3G;
+        Tue,  6 Jun 2023 14:19:11 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4QbCJt3gbnz4x9Pp; Tue,  6 Jun
+        2023 14:19:10 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        ED.0D.04567.E504F746; Tue,  6 Jun 2023 23:19:10 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230606113849epcas5p20436fd9c3a47354fc4f5264540cd9887~mDu7kpk5C1243112431epcas5p2V;
+        Tue,  6 Jun 2023 11:38:49 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230606113849epsmtrp1037164b0d5a6cfbe44a01819ba98ed2b~mDu7i-Kls0420604206epsmtrp1I;
+        Tue,  6 Jun 2023 11:38:49 +0000 (GMT)
+X-AuditID: b6c32a49-943ff700000011d7-f9-647f405ec85f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B7.47.28392.9CA1F746; Tue,  6 Jun 2023 20:38:49 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230606113842epsmtip230b93d2fae8d0d35d5b4cfcfbf869ead~mDu1DVgJ-2435324353epsmtip29;
+        Tue,  6 Jun 2023 11:38:42 +0000 (GMT)
+Date:   Tue, 6 Jun 2023 17:05:35 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        willy@infradead.org, hare@suse.de, djwong@kernel.org,
+        bvanassche@acm.org, ming.lei@redhat.com, dlemoal@kernel.org,
+        nitheshshetty@gmail.com, gost.dev@samsung.com,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>,
+        Anuj Gupta <anuj20.g@samsung.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v12 5/9] nvme: add copy offload support
+Message-ID: <20230606113535.rjbhe6eqlyqk4pqq@green245>
 MIME-Version: 1.0
-References: <20230519125705.598234-1-amir73il@gmail.com> <CAOQ4uxibuwUwaLaJNKSifLHBm9G-Tgn67k_TKWKcN1+A4Rw-zg@mail.gmail.com>
- <CAJfpegucD6S=yUTzpQGsR6C3E64ve+bgG_4TGP7Y+0NicqyQ_g@mail.gmail.com>
-In-Reply-To: <CAJfpegucD6S=yUTzpQGsR6C3E64ve+bgG_4TGP7Y+0NicqyQ_g@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 6 Jun 2023 14:19:17 +0300
-Message-ID: <CAOQ4uxjGWHnwd5fcp8VwHk59q=BftAhw0uYbdR-KmJCq3fpnDg@mail.gmail.com>
-Subject: Re: [PATCH v13 00/10] fuse: Add support for passthrough read/write
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Daniel Rosenberg <drosen@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Alessio Balsini <balsini@android.com>,
-        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZH3mjUb+yqI11XD8@infradead.org>
+User-Agent: NeoMutt/20171215
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1STZRzHz/O+493QZq9c6nGUcN44JtiAGeADSKChvQEVzTpd/gB2tvcw
+        AradjYlmHW4KAnJRWycWxEUuAiUIZBNEcURDkYAQCPJCBmgQ90MoKLS50fG/z/P9/b7P7/n9
+        fufh4DZX2TxOtCyeUcpEsRSxgXWhzWU7PzwwUeJRnmmHaq//gqOUvCc4qrmdS6DJtnmAvp59
+        hKPR1nSA+kY3oZErAahl+lsrNNR6EUOXSk9hqDOvFENVNe0Yai6Zw9BftxbYqH1tikCn9AMA
+        jfVrMdQyvAOVpJWx0KWWayzU11RAoKKKMTbKGtQRqNKwiiH96VQM6UaTATo3OcNCHcMOqPuJ
+        wQqtPCwgAh3pvpshtPZuF0Ff1N5m0913zrPohrOudF+Xmq6vziDohrJEunkoiaDP5Jy2orNT
+        pwl6bmyYRc9c7ifonMZqQDd0HqEX6reGbf40ZreUEUkYpRMjE8sl0bIofyrkQMSbEV7eHgK+
+        wAftopxkojjGnwoKDePvj441DotyOiiKVRulMJFKRbm/sVspV8czTlK5Kt6fYhSSWIWnwk0l
+        ilOpZVFuMibeV+DhsdPLmBgZIzUMlrIVDQ6HBpYfWiWBKy9kAmsOJD1hT2EFy8Q2ZDOAustv
+        ZYINRp4HMD9LA8yHBQCLu/uxdcdEVwZhDjQB2N8+ZMkaB3B5rR2YslikM2w7M2d0cDgEuQN2
+        rnFMsh3pAocr03ET42Q1G7auUia2Jf3gyODkU51LesM/0qosvBleyx9lma6xJvlwOPsjk2xP
+        vgS/KV/ETWUh+a81LO4xtwDJIFjSfhI3sy2cMDSyzcyDf+emWTgBVn11ljCbjwKoHdQCcyAA
+        Hruea3mcFJb0j1v0l6Hm+jnMrG+C2Sujlklwoe67dX4Ffl9bTJh5CxxYSrYwDc/3PLZM6x6A
+        bSl6LA84ap9pTvtMPTP7wozZFCutsWmcdICVqxwzusDaJvdiYFUNtjAKVVwUo/JSCGRMwv8L
+        F8vj6sHTv+T6tg7cHpl10wOMA/QAcnDKjvtZQKLEhisRHf6cUcojlOpYRqUHXsZdncR59mK5
+        8TPK4iMEnj4ent7e3p4+r3sLqBe5r/pfE9uQUaJ4JoZhFIxy3YdxrHlJGHK4eKFWfMc2fJnn
+        5yzgCJMNB/bZP256b3DJdwCbC+w3iBxDHgiXeoM9uxf9Auq8KiUYN0WhGj9xaT6O3Lq2Udgb
+        Tsn5edJmeye+5uO6LKFPTfmhB7d0E9s60MC+XceL7FM06SNTWWq334lk/s8rFUKe+7bUHu6j
+        9B9GkjUn6HcTZB/8s1odmX/0tRs81nxP4dXf9nwZoqZCe9N6/YV2+p2FU6HHfrxboJvR7V3I
+        HZ2ua5wUf7gH3P9kY2pZuziHf397/g2NRurc4WbI/fMWCH4nKPL9sKidrUXJVZ0d+MzzB8ti
+        vgheFFXcvGc35PTcfuGuw4yj8CdSefwI8WtE3VoYxVJJRQJXXKkS/Qe0f8wY1AQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpileLIzCtJLcpLzFFi42LZdlhJXvekVH2KwYpt8hbrTx1jtmia8JfZ
+        YvXdfjaL14c/MVpM+/CT2eLJgXZGi8tP+Cwe7Le32PtuNqvFzQM7mSz2LJrEZHF6wiImi5Wr
+        jzJZ7F74kcni8Z3P7BZH/79ls5h06BqjxdOrs5gs9t7StljYtoTFYs/ekywWl3fNYbOYv+wp
+        u0X39R1sFsuP/2OyODS5mclix5NGRot1r9+zWJy4JW1x/u9xVovfP+awOch7XL7i7THr/lk2
+        j52z7rJ7nL+3kcVj8wotj8tnSz02repk89i8pN5j980GNo/FfZNZPXqb37F5fHx6i8Xj/b6r
+        bB59W1Yxemw+Xe3xeZNcgGAUl01Kak5mWWqRvl0CV8afTztYC55KVBx5vZi5gbFbpIuRk0NC
+        wETi1dlONhBbSGAHo8SvmxYQcUmJZX+PMEPYwhIr/z1n72LkAqp5wihx9vpeFpAEi4CKxOHF
+        H5m6GDk42AS0JU7/5wAJiwhoStxa3s4MUs8ssI5d4uvWa2CDhAWsJR5cfw1m8wqYSdxuW8kM
+        MfQRo8T/I8ugEoISJ2c+AVvADFQ0b/NDZpAFzALSEsv/cYCYnAK6Erd6w0EqRAVkJGYs/co8
+        gVFwFpLmWUiaZyE0L2BkXsUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJEZxMtLR2MO5Z
+        9UHvECMTB+MhRgkOZiUR3l1e1SlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeS90nYwXEkhPLEnN
+        Tk0tSC2CyTJxcEo1MLU+OaWufuTyRoVPCv08vlE7nq07MuF4bcMm/o60vvMlbcm7Pl/1mLd9
+        ztH9l+72c6ee+DXFKzvLa+ZxCT/JZIblbzofX2vVkWUO0L/6SClK5h6Xs/ilnIlPQ9XXn3vq
+        az1NPSqi7N2O30XznC8Hlk7YfTvg9nRR5xtOV+4Giql2/vgsmRWz+OOxyODJgvZWjS8c5py8
+        fTj96Y+iY/HVKw/4199n3rhRdOf3isRqnWVybZllKaqa1/bfevKp3m99aAznpTviSy66L308
+        TyX0j4DyhcYmmVbBc4zz9NRN+5Z379TodNuh9HDxt9N7zy5+5bJ37v2m09OYj1kk+FwXNmN1
+        bHg75X/8fTv5DyZ9PSFKLMUZiYZazEXFiQAmhJ86lQMAAA==
+X-CMS-MailID: 20230606113849epcas5p20436fd9c3a47354fc4f5264540cd9887
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----JBF_njb0NWiSS48ThI00c_Y9Zxz.JAos93qymBy6wSZnW6dc=_4db83_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230605122310epcas5p4aaebfc26fe5377613a36fe50423cf494
+References: <20230605121732.28468-1-nj.shetty@samsung.com>
+        <CGME20230605122310epcas5p4aaebfc26fe5377613a36fe50423cf494@epcas5p4.samsung.com>
+        <20230605121732.28468-6-nj.shetty@samsung.com>
+        <ZH3mjUb+yqI11XD8@infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 6, 2023 at 12:49=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
->
-> On Tue, 6 Jun 2023 at 11:13, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Fri, May 19, 2023 at 3:57=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
-com> wrote:
-> > >
-> > > Miklos,
-> > >
-> > > This patch set addresses your review feedback on Alesio's V12 patch s=
-et
-> > > from 2021 [1] as well as other bugs that I have found since.
-> > > This patch set uses refcounted backing files as we discussed recently=
- [2].
-> > >
-> > > I am posting this for several possible outcomes:
-> > >
-> > > 1. Either FUSE-BPF develpers can use this as a reference implementati=
-on
-> > >    for their 1st phase of "backing file passthrough"
-> > > 2. Or they can tell me which API changes need to made to this patch s=
-et
-> > >    so the API is flexible enough to extend to "backing inode passthro=
-ugh"
-> > >    and to "BPF filters" later on
-> > > 3. We find there is little overlap in the APIs and merge this as is
-> > >
-> > > These patches are available on github [3] along with libfuse patches =
-[4].
-> > > I tested them by running xfstests (./check -fuse -g quick.rw) with la=
-test
-> > > libfuse xfstest support.
-> > >
-> > > Without FOPEN_PASSTHROUGH, one test in this group fails (generic/451)
-> > > which tests mixed buffered/aio writes.
-> > > With FOPEN_PASSTHROUGH, this test also passes.
-> > >
-> > > This revision does not set any limitations on the number of backing f=
-iles
-> > > that can be mapped by the server.  I considered several ways to addre=
-ss
-> > > this and decided to try a different approach.
-> > >
-> > > Patch 10 (with matching libfuse patch) is an RFC patch for an alterna=
-tive
-> > > API approach. Please see my comments on that patch.
-> > >
-> >
-> > Miklos,
-> >
-> > I wanted to set expectations w.r.t this patch set and the passthrough
-> > feature development in general.
-> >
-> > So far I've seen comments from you up to path 5/10, so I assume you
-> > did not get up to RFC patch 10/10.
-> >
-> > The comments about adding max stack depth to protocol and about
-> > refactoring overlayfs common code are easy to do.
-> >
-> > However, I feel that there are still open core design questions that ne=
-ed
-> > to be spelled out, before we continue.
-> >
-> > Do you find the following acceptable for first implementation, or do yo=
-u
-> > think that those issues must be addressed before merging anything?
-> >
-> > 1. No lsof visibility of backing files (if server closes them)
-> > 2. Derived backing files resource limit (cannot grow beyond nr of fuse =
-files)
-> > 3. No data consistency guaranty between different fd to the same inode
-> >     (i.e. backing is per fd not per inode)
->
-> I think the most important thing is to have the FUSE-BPF team onboard.
+------JBF_njb0NWiSS48ThI00c_Y9Zxz.JAos93qymBy6wSZnW6dc=_4db83_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Yeh, I'd love to get some feedback from you guys.
-
->    I'm not sure that the per-file part of this is necessary, doing
-> everything per-inode should be okay.   What are the benefits?
+On 23/06/05 06:43AM, Christoph Hellwig wrote:
+>>  		break;
+>>  	case REQ_OP_READ:
+>> -		ret = nvme_setup_rw(ns, req, cmd, nvme_cmd_read);
+>> +		if (unlikely(req->cmd_flags & REQ_COPY))
+>> +			nvme_setup_copy_read(ns, req);
+>> +		else
+>> +			ret = nvme_setup_rw(ns, req, cmd, nvme_cmd_read);
+>>  		break;
+>>  	case REQ_OP_WRITE:
+>> -		ret = nvme_setup_rw(ns, req, cmd, nvme_cmd_write);
+>> +		if (unlikely(req->cmd_flags & REQ_COPY))
+>> +			ret = nvme_setup_copy_write(ns, req, cmd);
+>> +		else
+>> +			ret = nvme_setup_rw(ns, req, cmd, nvme_cmd_write);
+>
+>Yikes.  Overloading REQ_OP_READ and REQ_OP_WRITE with something entirely
+>different brings us back the horrors of the block layer 15 years ago.
+>Don't do that.  Please add separate REQ_COPY_IN/OUT (or maybe
+>SEND/RECEIVE or whatever) methods.
 >
 
-I agree that semantics are simpler with per-inode.
-The only benefit I see to per-file is the lifetime of the mapping.
+Downside will be duplicating checks which are present for read, write in
+block layer, device-mapper and zoned devices.
+But we can do this, shouldn't be an issue.
 
-It is very easy IMO to program with a mapping scope of
-open-to-close that is requested by FOPEN_PASSTHROUGH
-and FOPEN_PASSTHROUGH_AUTO_CLOSE.
-
-But I think the same lifetime can still be achieved with per-inode
-mapping. I hand waved how I think that could be done in response
-to patch 10/10 review.
-
-I think if I can make this patch set work per-inode, the roadmap
-from here to FUSE-BPF would be much more clear.
-
-> Not having visibility and resource limits would be okay for a first
-> version, as long as it's somehow constrained to privileged use.  But
-> I'm not sure it would be worth it that way.
+>> +	/* setting copy limits */
+>> +	if (blk_queue_flag_test_and_set(QUEUE_FLAG_COPY, q))
+>
+>I don't understand this comment.
 >
 
-Speaking on behalf of my own use case for FUSE passthrough (HSM),
-FUSE is used for "do something that does not belong in the kernel",
-but running as unprivileged user is a non-requirement.
-So I can say with confidence of paying customers that passthrough is
-useful and essential even with privileged user constraint.
+It was a mistake. Comment is misplaced and it should have been
+"setting copy flag" instead of "setting copy limits".
+Anyway now we feel this comment is redundant, will remove it.
+Also, we should have used blk_queue_flag_set to enable copy offload.
 
-In summary, I will try to come up with v14 that is:
-- privileged user only
-- no resource limitation
-- per-inode mapping
+>> +struct nvme_copy_token {
+>> +	char *subsys;
+>> +	struct nvme_ns *ns;
+>> +	sector_t src_sector;
+>> +	sector_t sectors;
+>> +};
+>
+>Why do we need a subsys token?  Inter-namespace copy is pretty crazy,
+>and not really anything we should aim for.  But this whole token design
+>is pretty odd anyway.  The only thing we'd need is a sequence number /
+>idr / etc to find an input and output side match up, as long as we
+>stick to the proper namespace scope.
+>
 
-If at any time FUSE-BFP team would like to take this patch set
-of my hands, or propose a replacement for it, I would be very happy
-to step down - whatever it takes to land read/write passthrough.
+The idea behind subsys is to prevent copy across different subsystem.
+For example, copy across nvme subsystem and the scsi subsystem. [1]
+At present, we don't support inter-namespace(copy across NVMe namespace),
+but after community feedback for previous series we left scope for it.
+About idr per namespace, it will be similar to namespace check that
+we are doing to prevent copy across namespace.
+We went with current structure for token, as it was solving above
+issues as well as provides a placeholder for storing source LBA and
+number of sectors.
+Do have any suggestions on how we can store source info, if we go with
+idr based approach ?
 
-Thanks,
-Amir.
+[1] https://lore.kernel.org/all/alpine.LRH.2.02.2202011327350.22481@file01.intranet.prod.int.rdu2.redhat.com/T/#m407f24fb4454d35c3283a5e51fdb04f1600463af
+
+>> +	if (unlikely((req->cmd_flags & REQ_COPY) &&
+>> +				(req_op(req) == REQ_OP_READ))) {
+>> +		blk_mq_start_request(req);
+>> +		return BLK_STS_OK;
+>> +	}
+>
+>This really needs to be hiden inside of nvme_setup_cmd.  And given
+>that other drivers might need similar handling the best way is probably
+>to have a new magic BLK_STS_* value for request started but we're
+>not actually sending it to hardware.
+
+Sure we will add new BLK_STS_* for completion and move the snippet.
+
+Thank you,
+Nitesh Shetty
+
+------JBF_njb0NWiSS48ThI00c_Y9Zxz.JAos93qymBy6wSZnW6dc=_4db83_
+Content-Type: text/plain; charset="utf-8"
+
+
+------JBF_njb0NWiSS48ThI00c_Y9Zxz.JAos93qymBy6wSZnW6dc=_4db83_--
