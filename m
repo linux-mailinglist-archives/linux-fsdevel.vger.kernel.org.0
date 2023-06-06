@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1795724C35
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 21:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC21A724C43
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 21:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239293AbjFFTFK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 15:05:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39018 "EHLO
+        id S239340AbjFFTFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 15:05:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239306AbjFFTEg (ORCPT
+        with ESMTP id S239343AbjFFTEs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 15:04:36 -0400
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0CCE19B4
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 12:04:30 -0700 (PDT)
-Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-53f06f7cc74so3500005a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 12:04:30 -0700 (PDT)
+        Tue, 6 Jun 2023 15:04:48 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C68521715
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 12:04:32 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-bb3a35ba742so1536082276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 12:04:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686078270; x=1688670270;
+        d=google.com; s=20221208; t=1686078271; x=1688670271;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QY81mipd5eg6c/BuU1bdNHCWJQ+u0Nbd1U9TPL2kLvI=;
-        b=KOWrQMhz2uWLqPOLL/0JQqPmlrC3dCiI9oJNy8GCgLIowS+OzS7WKaPGY9vPm3PtAT
-         fUuRJYwgpjWgfKigP2vr98VC/4aqX3GYpvsp4hPnsGOFwNN2fFFSeRFXL9FC8QZZeOsv
-         TXZBuwWg2rM6bvxVXZ2UCQuJ6ff8v2+LFRqOgjtb865dVZ2l7fY2f7Z/OtzPXYHKjbfN
-         ZRjrOmzbbZGa3KF/56lwJLd6R/hiuFa+vyvCC7nno3amrl0TRMEIewtSKtG/z8kueDPR
-         Li+slKiOskei/vBhvsQJtHNmBIeIcarnb3mQ6zRjd56sBUc1JOzEZw6pSH3bcClc+mm/
-         tubw==
+        bh=QP9zRN1PPC9/vVggheoZtkj7ew+Av1V49kv617fnYR8=;
+        b=FI4N69NL3RScUYfhkbRLrL4c1EfS/desGI2Shr1/96TXRRDn4geHvyU1N7eGgqKJyG
+         GWBPzDYB1BfYFhv6zCt0EhdFu5tldM3yzA5NvQB4/zCb+hcK/bM/QuqRiIfDvi5+hI04
+         SbvBvKqQxgCQVjt+cTCPYL6N1+wfniCAiJKkEW+sWbUf69X9qSMHub3UvTd9MQDzXMi4
+         1B4c0zvORWB8HqA5+0cdcj+spglhu6jaXUuf69LPtiQvLZve3RcWtPEQxixl3Ypwmw86
+         K8LGygCgyEMNtUVq9AiwfPbvahkLarTMGurJs3foOYOqn4CdQy93rRAZp4edz17ORY67
+         OYlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686078270; x=1688670270;
+        d=1e100.net; s=20221208; t=1686078271; x=1688670271;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QY81mipd5eg6c/BuU1bdNHCWJQ+u0Nbd1U9TPL2kLvI=;
-        b=YjH2UmDD1nk7Zui7JWIt7hxmCYa9t6IYZDuRdo7O72jcObUYu6apaQn7W6H8bujtCz
-         r1QwSrn+cykOIOfmFZH4MW5rPnghST5iWw24twN+z1/vJpXVzGp7DGRlVvlxJXBjL5cr
-         /AwZO/hutI3NCnkHXzZ9mZEOy6i5ymgoY5hjtDmaeDtMI0f8CLEzcNTlfY7WDJbriP3M
-         bfch5gTRK45+o1GjvShFQk3eiMPuQPa5SgdBWUztjaxWyGu3bJ9my1WkUCH56CDMpf+w
-         p5vebFXJjH0Rh7AAdF9AtUDejfmq0rBBKk2GOBF8HRTcH6VaEVf4FL1HDxXjLDfcDTKw
-         YYRQ==
-X-Gm-Message-State: AC+VfDyIeHeEe6r5H4YIvbOxzKs/mC85EpMHnVx9IdnWgGsJXQU/xh3l
-        eBJ9SfNG9HU/pqNAGAygJX9yJ9A9KRFtHaMlAQ==
-X-Google-Smtp-Source: ACHHUZ7uGZgeuxGQjEekaNfEPd3cHpOSpYga7qIjxZtHDS9vRTE59C+39iUxIiNEiIcn3iYrIGeQIhYQVNbQFyY1wQ==
+        bh=QP9zRN1PPC9/vVggheoZtkj7ew+Av1V49kv617fnYR8=;
+        b=kS68L2ZAyq6qEk9vEc2MwHWtY3qIjOAWflAk1YgtfuHRjD+Q9jr0UZsngcKvfTx05f
+         C6aAirYHIxghSbt7HKTkqMsVqxqXYz4wVjnHffWzcG9nrR/Hsz3AbPqvTHmf1YFmfFox
+         qsfvQSLcbZ1BZ4fR3HDfhT+Ik3YgqRjcOm1R14rM6e2YYXPsh8w09qbvPMaCVJjS11uo
+         rOpDOyQrWnK9KRs8QiSI0DbvAn6Zb1SupDXagq4UcgBI9iErMqMvpo/Jh25BStbZeIEq
+         7Su+FGeXn4+6d5F+jhiJM/r+fEsYJMl5/rE2eU6riH2YIbhawbSQ2C6kLlUTppAC5Dwf
+         bFHA==
+X-Gm-Message-State: AC+VfDxjG+SWu4bgBRftwqxivG6MKFd6Us+n/qgH50mX4Lzwe/jtUdD0
+        aZ/gIwThKWXKaYRaLtrWzA/lu/p4SHedsatBgA==
+X-Google-Smtp-Source: ACHHUZ76bqpjC35XKXFBahxA9u7+2eFkt14S7ZQHJlZjw7W0ReYy7o2ytYkzhnc/yAz55ZaZBmAlcbBYdbpzzQGaSA==
 X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a63:4848:0:b0:534:7672:433e with SMTP
- id x8-20020a634848000000b005347672433emr763304pgk.3.1686078269556; Tue, 06
- Jun 2023 12:04:29 -0700 (PDT)
-Date:   Tue,  6 Jun 2023 19:03:54 +0000
+ (user=ackerleytng job=sendgmr) by 2002:a25:105:0:b0:bab:a276:caac with SMTP
+ id 5-20020a250105000000b00baba276caacmr1716574ybb.3.1686078271536; Tue, 06
+ Jun 2023 12:04:31 -0700 (PDT)
+Date:   Tue,  6 Jun 2023 19:03:55 +0000
 In-Reply-To: <cover.1686077275.git.ackerleytng@google.com>
 Mime-Version: 1.0
 References: <cover.1686077275.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.41.0.rc0.172.g3f132b7071-goog
-Message-ID: <7937abfd3f2d071820a1bcb84e05bf48e38e2e5b.1686077275.git.ackerleytng@google.com>
-Subject: [RFC PATCH 09/19] mm: hugetlb: Use restore_reserve_on_error directly
- in filesystems
+Message-ID: <382ee70df7b65c365a1eab1223f84aecc0c5be10.1686077275.git.ackerleytng@google.com>
+Subject: [RFC PATCH 10/19] mm: hugetlb: Parametrize alloc_hugetlb_folio_from_subpool()
+ by resv_map
 From:   Ackerley Tng <ackerleytng@google.com>
 To:     akpm@linux-foundation.org, mike.kravetz@oracle.com,
         muchun.song@linux.dev, pbonzini@redhat.com, seanjc@google.com,
@@ -78,108 +78,67 @@ Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Expose inode_resv_map() so that hugetlbfs can access its own resv_map.
-
-Hide restore_reserve_on_error_vma(), that function is now only used
-within mm/hugetlb.c.
+Parametrize alloc_hugetlb_folio_from_subpool() by resv_map to remove
+the use of vma_resv_map() and decouple hugetlb with hugetlbfs.
 
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 ---
- fs/hugetlbfs/inode.c    |  2 +-
- include/linux/hugetlb.h | 21 +++++++++++++++++++--
- mm/hugetlb.c            | 13 -------------
- 3 files changed, 20 insertions(+), 16 deletions(-)
+ include/linux/hugetlb.h | 2 +-
+ mm/hugetlb.c            | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 44e6ee9a856d..53f6a421499d 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -868,7 +868,7 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 		__folio_mark_uptodate(folio);
- 		error = hugetlb_add_to_page_cache(folio, mapping, index);
- 		if (unlikely(error)) {
--			restore_reserve_on_error_vma(h, &pseudo_vma, addr, folio);
-+			restore_reserve_on_error(inode_resv_map(inode), index, true, folio);
- 			folio_put(folio);
- 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 			goto out;
 diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 02a2766d89a4..5fe9643826d7 100644
+index 5fe9643826d7..d564802ace4b 100644
 --- a/include/linux/hugetlb.h
 +++ b/include/linux/hugetlb.h
-@@ -568,6 +568,20 @@ static inline struct hugepage_subpool *subpool_inode(struct inode *inode)
- 	return HUGETLBFS_SB(inode->i_sb)->spool;
- }
+@@ -767,7 +767,7 @@ struct huge_bootmem_page {
  
-+static inline struct resv_map *inode_resv_map(struct inode *inode)
-+{
-+	/*
-+	 * At inode evict time, i_mapping may not point to the original
-+	 * address space within the inode.  This original address space
-+	 * contains the pointer to the resv_map.  So, always use the
-+	 * address space embedded within the inode.
-+	 * The VERY common case is inode->mapping == &inode->i_data but,
-+	 * this may not be true for device special inodes.
-+	 */
-+	return (struct resv_map *)(&inode->i_data)->private_data;
-+}
-+
-+
- #else /* !CONFIG_HUGETLBFS */
- 
- #define is_file_hugepages(file)			false
-@@ -588,6 +602,11 @@ static inline struct hugepage_subpool *subpool_inode(struct inode *inode)
- 	return NULL;
- }
- 
-+static inline struct resv_map *inode_resv_map(struct inode *inode)
-+{
-+	return NULL;
-+}
-+
- #endif /* !CONFIG_HUGETLBFS */
- 
- #ifdef HAVE_ARCH_HUGETLB_UNMAPPED_AREA
-@@ -762,8 +781,6 @@ int hugetlb_add_to_page_cache(struct folio *folio, struct address_space *mapping
- 			pgoff_t idx);
- void restore_reserve_on_error(struct resv_map *resv, pgoff_t resv_index,
- 			      bool may_share, struct folio *folio);
--void restore_reserve_on_error_vma(struct hstate *h, struct vm_area_struct *vma,
--				  unsigned long address, struct folio *folio);
- 
- /* arch callback */
- int __init __alloc_bootmem_huge_page(struct hstate *h, int nid);
+ int isolate_or_dissolve_huge_page(struct page *page, struct list_head *list);
+ struct folio *alloc_hugetlb_folio_from_subpool(
+-	struct hugepage_subpool *spool, struct hstate *h,
++	struct hugepage_subpool *spool, struct hstate *h, struct resv_map *resv,
+ 	struct vm_area_struct *vma, unsigned long addr, int avoid_reserve);
+ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 				unsigned long addr, int avoid_reserve);
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 4675f9efeba4..540634aec181 100644
+index 540634aec181..aebdd8c63439 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -1091,19 +1091,6 @@ void resv_map_release(struct kref *ref)
- 	kfree(resv_map);
+@@ -3003,7 +3003,7 @@ int isolate_or_dissolve_huge_page(struct page *page, struct list_head *list)
  }
  
--static inline struct resv_map *inode_resv_map(struct inode *inode)
--{
--	/*
--	 * At inode evict time, i_mapping may not point to the original
--	 * address space within the inode.  This original address space
--	 * contains the pointer to the resv_map.  So, always use the
--	 * address space embedded within the inode.
--	 * The VERY common case is inode->mapping == &inode->i_data but,
--	 * this may not be true for device special inodes.
--	 */
--	return (struct resv_map *)(&inode->i_data)->private_data;
--}
--
- static struct resv_map *vma_resv_map(struct vm_area_struct *vma)
+ struct folio *alloc_hugetlb_folio_from_subpool(
+-	struct hugepage_subpool *spool, struct hstate *h,
++	struct hugepage_subpool *spool, struct hstate *h, struct resv_map *resv,
+ 	struct vm_area_struct *vma, unsigned long addr, int avoid_reserve)
  {
- 	VM_BUG_ON_VMA(!is_vm_hugetlb_page(vma), vma);
+ 	struct folio *folio;
+@@ -3013,7 +3013,6 @@ struct folio *alloc_hugetlb_folio_from_subpool(
+ 	struct hugetlb_cgroup *h_cg = NULL;
+ 	bool deferred_reserve;
+ 
+-	struct resv_map *resv = vma_resv_map(vma);
+ 	pgoff_t resv_index = vma_hugecache_offset(h, vma, addr);
+ 	bool may_share = vma->vm_flags & VM_MAYSHARE;
+ 
+@@ -3141,8 +3140,9 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ {
+ 	struct hugepage_subpool *spool = subpool_vma(vma);
+ 	struct hstate *h = hstate_vma(vma);
++	struct resv_map *resv = vma_resv_map(vma);
+ 
+-	return alloc_hugetlb_folio_from_subpool(spool, h, vma, addr, avoid_reserve);
++	return alloc_hugetlb_folio_from_subpool(spool, h, resv, vma, addr, avoid_reserve);
+ }
+ 
+ int alloc_bootmem_huge_page(struct hstate *h, int nid)
 -- 
 2.41.0.rc0.172.g3f132b7071-goog
 
