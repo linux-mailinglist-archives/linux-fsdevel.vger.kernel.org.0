@@ -2,303 +2,332 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 651B47236E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 07:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89A06723734
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 08:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233954AbjFFFiw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 01:38:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48516 "EHLO
+        id S232770AbjFFGIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 02:08:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231622AbjFFFis (ORCPT
+        with ESMTP id S230071AbjFFGIs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 01:38:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E56E1B1
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jun 2023 22:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686029880;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AE1oC930IjSotz3e4slqHTiXbBdlSHZvytEpW919OcA=;
-        b=dmei28Yls9FNtGCSWvkb/9XVIi1wqq8wzotomXduV/rZiZc4EEghFf2paNcXxT4ZBOyyTk
-        Q3qYIeJMTncN+XTCVn6KbXGh1jTi8QxazbnIBZHYfso6clTDPos0BtQRzM7WWozPJHEWf5
-        vECTLUx396JITxm5VKXzaFkd5gMC8l0=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-351-tC8lDbDtNPuixlD0rAbwdw-1; Tue, 06 Jun 2023 01:37:59 -0400
-X-MC-Unique: tC8lDbDtNPuixlD0rAbwdw-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1b024ab0c28so54066675ad.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Jun 2023 22:37:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686029878; x=1688621878;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AE1oC930IjSotz3e4slqHTiXbBdlSHZvytEpW919OcA=;
-        b=fpPJWnalRoJueW4D1alplYiuWe4Ui3rsBQGMYExMU++1ZKSnd0iGVCz2Ih3LVkGX7A
-         iacGuOQK5Rtgj832IfYfcfdAyvYB7gqXfFjJAwQsuBnzyo+3jtRJ4S64BuGCVuZGxP4M
-         FgePQcc62xioxY2tivHlPGc4kcdLYOmXVA1P8iZ86xy8YeslTbL6/vkWskZN/kYR3aj2
-         9rIKoYr79s9DO3/ag838Qjv/c0XhhCj7qKPlqN/q6+X7S4t0v4h/5hN7ORHgmkdaB/1d
-         pmwXwKx9YcmZudSrop4wEGDBZg+VOahVMy9cXKUVUWcc0ZsJOIYbhdZ5bvViCprYsCA7
-         HRQg==
-X-Gm-Message-State: AC+VfDyyOoDTL39+TPtC+3/NAAgom0AL/e/JwXKMM2mLVAtn/8u+k3rr
-        fIIh81khG6QJlCPSF3kMTgrRvR/3FH8C0eoOCzYcvfi0P3kvQO5xF3oy/a95AjmLGyQSAMmdg0I
-        qP53y5czqMx7WtPDPG1jhqU12yQ==
-X-Received: by 2002:a17:902:e886:b0:1b0:6e16:b92c with SMTP id w6-20020a170902e88600b001b06e16b92cmr1359054plg.54.1686029878189;
-        Mon, 05 Jun 2023 22:37:58 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4pl8kVGdN9xgeHu2vYkkLO6G7EzdcKwfNpY+YccTt3n28c6jWRtcC8MBbJ7Sx+1gaB+8HzgQ==
-X-Received: by 2002:a17:902:e886:b0:1b0:6e16:b92c with SMTP id w6-20020a170902e88600b001b06e16b92cmr1359045plg.54.1686029877844;
-        Mon, 05 Jun 2023 22:37:57 -0700 (PDT)
-Received: from [10.72.12.128] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id l4-20020a170903244400b001ab09f5ca61sm7508722pls.55.2023.06.05.22.37.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Jun 2023 22:37:57 -0700 (PDT)
-Message-ID: <4ca56a21-c5aa-6407-0cc1-db68762630ce@redhat.com>
-Date:   Tue, 6 Jun 2023 13:37:46 +0800
+        Tue, 6 Jun 2023 02:08:48 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B2D100;
+        Mon,  5 Jun 2023 23:08:44 -0700 (PDT)
+Received: from localhost.localdomain (unknown [119.152.150.198])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8BAEB6602242;
+        Tue,  6 Jun 2023 07:08:35 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1686031722;
+        bh=qBzXleLFACcs24ztRg+itdyHwQsAhCRJAyG1zQzKAgY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q3Z5eH0EvPHt80uQFX9UXsKoMRRJKav0AieuCSR+9J8a3lKdIL8n+OW5rruAOJXGY
+         w4IR3raFhCaEzfmNZPV0jlVXEEDrhR+2FnhHsmSOqhNZQYV9owal7UeEsIaIOav3AH
+         aZ4sWepQMRi6/PTHV5U6KbW6Ru+KflgnCqas8u0XLrTsTp5O5brpsfL6L5RnAUFd+x
+         Zhc99mgcxvJmQH8XaBnE5vPTWLiS+RDcUlHc9088mhplI/pbLzhxaFcrJuThzMyT79
+         WXt80Ns6tHyI54VEE+jROuH6kdxSEvRytGmFKgXgWRRwT6UcZYvn5k7/yNPQpGb1sv
+         cyumsWWyZs8Ag==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: [PATCH v17 0/5] Implement IOCTL to get and optionally clear info about PTEs
+Date:   Tue,  6 Jun 2023 11:08:17 +0500
+Message-Id: <20230606060822.1065182-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] ceph: Convert ceph_writepages_start() to use folios a
- little more
-Content-Language: en-US
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20230605165418.2909336-1-willy@infradead.org>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230605165418.2909336-1-willy@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,URI_TRY_3LD autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This Looks good to me.
+*Changes in v17*
+- Rebase on top of next-20230606
+- Minor improvements in PAGEMAP_SCAN IOCTL patch
 
-BTW, could you rebase this to the 'testing' branch ? This will introduce 
-a lots of conflicts with the fscrypt patches, I'd prefer this could be 
-applied and merged after them since the fscrypt patches have been well 
-tested.
+*Changes in v16*
+- Fix a corner case
+- Add exclusive PM_SCAN_OP_WP back
 
-Ilya, is that okay ?
+*Changes in v15*
+- Build fix (Add missed build fix in RESEND)
 
-Thanks
+*Changes in v14*
+- Fix build error caused by #ifdef added at last minute in some configs
 
-- Xiubo
+*Changes in v13*
+- Rebase on top of next-20230414
+- Give-up on using uffd_wp_range() and write new helpers, flush tlb only
+  once
 
-On 6/6/23 00:54, Matthew Wilcox (Oracle) wrote:
-> After we iterate through the locked folios using filemap_get_folios_tag(),
-> we currently convert back to a page (and then in some circumstaces back
-> to a folio again!).  Just use a folio throughout and avoid various hidden
-> calls to compound_head().  Ceph still uses a page array to interact with
-> the OSD which should be cleaned up in a subsequent patch.
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->   fs/ceph/addr.c | 79 +++++++++++++++++++++++++-------------------------
->   1 file changed, 39 insertions(+), 40 deletions(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 6bb251a4d613..e2d92a8a53ca 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -888,7 +888,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->   		int num_ops = 0, op_idx;
->   		unsigned i, nr_folios, max_pages, locked_pages = 0;
->   		struct page **pages = NULL, **data_pages;
-> -		struct page *page;
-> +		struct folio *folio;
->   		pgoff_t strip_unit_end = 0;
->   		u64 offset = 0, len = 0;
->   		bool from_pool = false;
-> @@ -902,22 +902,22 @@ static int ceph_writepages_start(struct address_space *mapping,
->   		if (!nr_folios && !locked_pages)
->   			break;
->   		for (i = 0; i < nr_folios && locked_pages < max_pages; i++) {
-> -			page = &fbatch.folios[i]->page;
-> -			dout("? %p idx %lu\n", page, page->index);
-> +			folio = fbatch.folios[i];
-> +			dout("? %p idx %lu\n", folio, folio->index);
->   			if (locked_pages == 0)
-> -				lock_page(page);  /* first page */
-> -			else if (!trylock_page(page))
-> +				folio_lock(folio);  /* first folio */
-> +			else if (!folio_trylock(folio))
->   				break;
->   
->   			/* only dirty pages, or our accounting breaks */
-> -			if (unlikely(!PageDirty(page)) ||
-> -			    unlikely(page->mapping != mapping)) {
-> -				dout("!dirty or !mapping %p\n", page);
-> -				unlock_page(page);
-> +			if (unlikely(!folio_test_dirty(folio)) ||
-> +			    unlikely(folio->mapping != mapping)) {
-> +				dout("!dirty or !mapping %p\n", folio);
-> +				folio_unlock(folio);
->   				continue;
->   			}
->   			/* only if matching snap context */
-> -			pgsnapc = page_snap_context(page);
-> +			pgsnapc = page_snap_context(&folio->page);
->   			if (pgsnapc != snapc) {
->   				dout("page snapc %p %lld != oldest %p %lld\n",
->   				     pgsnapc, pgsnapc->seq, snapc, snapc->seq);
-> @@ -925,12 +925,10 @@ static int ceph_writepages_start(struct address_space *mapping,
->   				    !ceph_wbc.head_snapc &&
->   				    wbc->sync_mode != WB_SYNC_NONE)
->   					should_loop = true;
-> -				unlock_page(page);
-> +				folio_unlock(folio);
->   				continue;
->   			}
-> -			if (page_offset(page) >= ceph_wbc.i_size) {
-> -				struct folio *folio = page_folio(page);
-> -
-> +			if (folio_pos(folio) >= ceph_wbc.i_size) {
->   				dout("folio at %lu beyond eof %llu\n",
->   				     folio->index, ceph_wbc.i_size);
->   				if ((ceph_wbc.size_stable ||
-> @@ -941,31 +939,32 @@ static int ceph_writepages_start(struct address_space *mapping,
->   				folio_unlock(folio);
->   				continue;
->   			}
-> -			if (strip_unit_end && (page->index > strip_unit_end)) {
-> -				dout("end of strip unit %p\n", page);
-> -				unlock_page(page);
-> +			if (strip_unit_end && (folio->index > strip_unit_end)) {
-> +				dout("end of strip unit %p\n", folio);
-> +				folio_unlock(folio);
->   				break;
->   			}
-> -			if (PageWriteback(page) || PageFsCache(page)) {
-> +			if (folio_test_writeback(folio) ||
-> +			    folio_test_fscache(folio)) {
->   				if (wbc->sync_mode == WB_SYNC_NONE) {
-> -					dout("%p under writeback\n", page);
-> -					unlock_page(page);
-> +					dout("%p under writeback\n", folio);
-> +					folio_unlock(folio);
->   					continue;
->   				}
-> -				dout("waiting on writeback %p\n", page);
-> -				wait_on_page_writeback(page);
-> -				wait_on_page_fscache(page);
-> +				dout("waiting on writeback %p\n", folio);
-> +				folio_wait_writeback(folio);
-> +				folio_wait_fscache(folio);
->   			}
->   
-> -			if (!clear_page_dirty_for_io(page)) {
-> -				dout("%p !clear_page_dirty_for_io\n", page);
-> -				unlock_page(page);
-> +			if (!folio_clear_dirty_for_io(folio)) {
-> +				dout("%p !folio_clear_dirty_for_io\n", folio);
-> +				folio_unlock(folio);
->   				continue;
->   			}
->   
->   			/*
->   			 * We have something to write.  If this is
-> -			 * the first locked page this time through,
-> +			 * the first locked folio this time through,
->   			 * calculate max possinle write size and
->   			 * allocate a page array
->   			 */
-> @@ -975,7 +974,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->   				u32 xlen;
->   
->   				/* prepare async write request */
-> -				offset = (u64)page_offset(page);
-> +				offset = folio_pos(folio);
->   				ceph_calc_file_object_mapping(&ci->i_layout,
->   							      offset, wsize,
->   							      &objnum, &objoff,
-> @@ -983,7 +982,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->   				len = xlen;
->   
->   				num_ops = 1;
-> -				strip_unit_end = page->index +
-> +				strip_unit_end = folio->index +
->   					((len - 1) >> PAGE_SHIFT);
->   
->   				BUG_ON(pages);
-> @@ -998,33 +997,33 @@ static int ceph_writepages_start(struct address_space *mapping,
->   				}
->   
->   				len = 0;
-> -			} else if (page->index !=
-> +			} else if (folio->index !=
->   				   (offset + len) >> PAGE_SHIFT) {
->   				if (num_ops >= (from_pool ?  CEPH_OSD_SLAB_OPS :
->   							     CEPH_OSD_MAX_OPS)) {
-> -					redirty_page_for_writepage(wbc, page);
-> -					unlock_page(page);
-> +					folio_redirty_for_writepage(wbc, folio);
-> +					folio_unlock(folio);
->   					break;
->   				}
->   
->   				num_ops++;
-> -				offset = (u64)page_offset(page);
-> +				offset = (u64)folio_pos(folio);
->   				len = 0;
->   			}
->   
->   			/* note position of first page in fbatch */
-> -			dout("%p will write page %p idx %lu\n",
-> -			     inode, page, page->index);
-> +			dout("%p will write folio %p idx %lu\n",
-> +			     inode, folio, folio->index);
->   
->   			if (atomic_long_inc_return(&fsc->writeback_count) >
->   			    CONGESTION_ON_THRESH(
->   				    fsc->mount_options->congestion_kb))
->   				fsc->write_congested = true;
->   
-> -			pages[locked_pages++] = page;
-> +			pages[locked_pages++] = &folio->page;
->   			fbatch.folios[i] = NULL;
->   
-> -			len += thp_size(page);
-> +			len += folio_size(folio);
->   		}
->   
->   		/* did we get anything? */
-> @@ -1073,7 +1072,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->   			BUG_ON(IS_ERR(req));
->   		}
->   		BUG_ON(len < page_offset(pages[locked_pages - 1]) +
-> -			     thp_size(page) - offset);
-> +			     folio_size(folio) - offset);
->   
->   		req->r_callback = writepages_finish;
->   		req->r_inode = inode;
-> @@ -1115,7 +1114,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->   			set_page_writeback(pages[i]);
->   			if (caching)
->   				ceph_set_page_fscache(pages[i]);
-> -			len += thp_size(page);
-> +			len += folio_size(folio);
->   		}
->   		ceph_fscache_write_to_cache(inode, offset, len, caching);
->   
-> @@ -1125,7 +1124,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->   			/* writepages_finish() clears writeback pages
->   			 * according to the data length, so make sure
->   			 * data length covers all locked pages */
-> -			u64 min_len = len + 1 - thp_size(page);
-> +			u64 min_len = len + 1 - folio_size(folio);
->   			len = get_writepages_data_length(inode, pages[i - 1],
->   							 offset);
->   			len = max(len, min_len);
+*Changes in v12*
+- Update and other memory types to UFFD_FEATURE_WP_ASYNC
+- Rebaase on top of next-20230406
+- Review updates
+
+*Changes in v11*
+- Rebase on top of next-20230307
+- Base patches on UFFD_FEATURE_WP_UNPOPULATED
+- Do a lot of cosmetic changes and review updates
+- Remove ENGAGE_WP + !GET operation as it can be performed with
+  UFFDIO_WRITEPROTECT
+
+*Changes in v10*
+- Add specific condition to return error if hugetlb is used with wp
+  async
+- Move changes in tools/include/uapi/linux/fs.h to separate patch
+- Add documentation
+
+*Changes in v9:*
+- Correct fault resolution for userfaultfd wp async
+- Fix build warnings and errors which were happening on some configs
+- Simplify pagemap ioctl's code
+
+*Changes in v8:*
+- Update uffd async wp implementation
+- Improve PAGEMAP_IOCTL implementation
+
+*Changes in v7:*
+- Add uffd wp async
+- Update the IOCTL to use uffd under the hood instead of soft-dirty
+  flags
+
+*Motivation*
+The real motivation for adding PAGEMAP_SCAN IOCTL is to emulate Windows
+GetWriteWatch() syscall [1]. The GetWriteWatch{} retrieves the addresses of
+the pages that are written to in a region of virtual memory.
+
+This syscall is used in Windows applications and games etc. This syscall is
+being emulated in pretty slow manner in userspace. Our purpose is to
+enhance the kernel such that we translate it efficiently in a better way.
+Currently some out of tree hack patches are being used to efficiently
+emulate it in some kernels. We intend to replace those with these patches.
+So the whole gaming on Linux can effectively get benefit from this. It
+means there would be tons of users of this code.
+
+CRIU use case [2] was mentioned by Andrei and Danylo:
+> Use cases for migrating sparse VMAs are binaries sanitized with ASAN,
+> MSAN or TSAN [3]. All of these sanitizers produce sparse mappings of
+> shadow memory [4]. Being able to migrate such binaries allows to highly
+> reduce the amount of work needed to identify and fix post-migration
+> crashes, which happen constantly.
+
+Andrei's defines the following uses of this code:
+* it is more granular and allows us to track changed pages more
+  effectively. The current interface can clear dirty bits for the entire
+  process only. In addition, reading info about pages is a separate
+  operation. It means we must freeze the process to read information
+  about all its pages, reset dirty bits, only then we can start dumping
+  pages. The information about pages becomes more and more outdated,
+  while we are processing pages. The new interface solves both these
+  downsides. First, it allows us to read pte bits and clear the
+  soft-dirty bit atomically. It means that CRIU will not need to freeze
+  processes to pre-dump their memory. Second, it clears soft-dirty bits
+  for a specified region of memory. It means CRIU will have actual info
+  about pages to the moment of dumping them.
+* The new interface has to be much faster because basic page filtering
+  is happening in the kernel. With the old interface, we have to read
+  pagemap for each page.
+
+*Implementation Evolution (Short Summary)*
+From the definition of GetWriteWatch(), we feel like kernel's soft-dirty
+feature can be used under the hood with some additions like:
+* reset soft-dirty flag for only a specific region of memory instead of
+clearing the flag for the entire process
+* get and clear soft-dirty flag for a specific region atomically
+
+So we decided to use ioctl on pagemap file to read or/and reset soft-dirty
+flag. But using soft-dirty flag, sometimes we get extra pages which weren't
+even written. They had become soft-dirty because of VMA merging and
+VM_SOFTDIRTY flag. This breaks the definition of GetWriteWatch(). We were
+able to by-pass this short coming by ignoring VM_SOFTDIRTY until David
+reported that mprotect etc messes up the soft-dirty flag while ignoring
+VM_SOFTDIRTY [5]. This wasn't happening until [6] got introduced. We
+discussed if we can revert these patches. But we could not reach to any
+conclusion. So at this point, I made couple of tries to solve this whole
+VM_SOFTDIRTY issue by correcting the soft-dirty implementation:
+* [7] Correct the bug fixed wrongly back in 2014. It had potential to cause
+regression. We left it behind.
+* [8] Keep a list of soft-dirty part of a VMA across splits and merges. I
+got the reply don't increase the size of the VMA by 8 bytes.
+
+At this point, we left soft-dirty considering it is too much delicate and
+userfaultfd [9] seemed like the only way forward. From there onward, we
+have been basing soft-dirty emulation on userfaultfd wp feature where
+kernel resolves the faults itself when WP_ASYNC feature is used. It was
+straight forward to add WP_ASYNC feature in userfautlfd. Now we get only
+those pages dirty or written-to which are really written in reality. (PS
+There is another WP_UNPOPULATED userfautfd feature is required which is
+needed to avoid pre-faulting memory before write-protecting [9].)
+
+All the different masks were added on the request of CRIU devs to create
+interface more generic and better.
+
+[1] https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-getwritewatch
+[2] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com
+[3] https://github.com/google/sanitizers
+[4] https://github.com/google/sanitizers/wiki/AddressSanitizerAlgorithm#64-bit
+[5] https://lore.kernel.org/all/bfcae708-db21-04b4-0bbe-712badd03071@redhat.com
+[6] https://lore.kernel.org/all/20220725142048.30450-1-peterx@redhat.com/
+[7] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
+[8] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
+[9] https://lore.kernel.org/all/20230306213925.617814-1-peterx@redhat.com
+[10] https://lore.kernel.org/all/20230125144529.1630917-1-mdanylo@google.com
+
+* Original Cover letter from v8*
+Hello,
+
+Note:
+Soft-dirty pages and pages which have been written-to are synonyms. As
+kernel already has soft-dirty feature inside which we have given up to
+use, we are using written-to terminology while using UFFD async WP under
+the hood.
+
+This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
+the info about page table entries. The following operations are
+supported in this ioctl:
+- Get the information if the pages have been written-to (PAGE_IS_WRITTEN),
+  file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
+  (PAGE_IS_SWAPPED).
+- Write-protect the pages (PAGEMAP_WP_ENGAGE) to start finding which
+  pages have been written-to.
+- Find pages which have been written-to and write protect the pages
+  (atomic PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE)
+
+It is possible to find and clear soft-dirty pages entirely in userspace.
+But it isn't efficient:
+- The mprotect and SIGSEGV handler for bookkeeping
+- The userfaultfd wp (synchronous) with the handler for bookkeeping
+
+Some benchmarks can be seen here[1]. This series adds features that weren't
+present earlier:
+- There is no atomic get soft-dirty/Written-to status and clear present in
+  the kernel.
+- The pages which have been written-to can not be found in accurate way.
+  (Kernel's soft-dirty PTE bit + sof_dirty VMA bit shows more soft-dirty
+  pages than there actually are.)
+
+Historically, soft-dirty PTE bit tracking has been used in the CRIU
+project. The procfs interface is enough for finding the soft-dirty bit
+status and clearing the soft-dirty bit of all the pages of a process.
+We have the use case where we need to track the soft-dirty PTE bit for
+only specific pages on-demand. We need this tracking and clear mechanism
+of a region of memory while the process is running to emulate the
+getWriteWatch() syscall of Windows.
+
+*(Moved to using UFFD instead of soft-dirtyi feature to find pages which
+have been written-to from v7 patch series)*:
+Stop using the soft-dirty flags for finding which pages have been
+written to. It is too delicate and wrong as it shows more soft-dirty
+pages than the actual soft-dirty pages. There is no interest in
+correcting it [2][3] as this is how the feature was written years ago.
+It shouldn't be updated to changed behaviour. Peter Xu has suggested
+using the async version of the UFFD WP [4] as it is based inherently
+on the PTEs.
+
+So in this patch series, I've added a new mode to the UFFD which is
+asynchronous version of the write protect. When this variant of the
+UFFD WP is used, the page faults are resolved automatically by the
+kernel. The pages which have been written-to can be found by reading
+pagemap file (!PM_UFFD_WP). This feature can be used successfully to
+find which pages have been written to from the time the pages were
+write protected. This works just like the soft-dirty flag without
+showing any extra pages which aren't soft-dirty in reality.
+
+The information related to pages if the page is file mapped, present and
+swapped is required for the CRIU project [5][6]. The addition of the
+required mask, any mask, excluded mask and return masks are also required
+for the CRIU project [5].
+
+The IOCTL returns the addresses of the pages which match the specific
+masks. The page addresses are returned in struct page_region in a compact
+form. The max_pages is needed to support a use case where user only wants
+to get a specific number of pages. So there is no need to find all the
+pages of interest in the range when max_pages is specified. The IOCTL
+returns when the maximum number of the pages are found. The max_pages is
+optional. If max_pages is specified, it must be equal or greater than the
+vec_size. This restriction is needed to handle worse case when one
+page_region only contains info of one page and it cannot be compacted.
+This is needed to emulate the Windows getWriteWatch() syscall.
+
+The patch series include the detailed selftest which can be used as an
+example for the uffd async wp test and PAGEMAP_IOCTL. It shows the
+interface usages as well.
+
+[1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+[2] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
+[3] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
+[4] https://lore.kernel.org/all/Y6Hc2d+7eTKs7AiH@x1n
+[5] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com/
+[6] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com/
+
+Regards,
+Muhammad Usama Anjum
+
+Muhammad Usama Anjum (4):
+  fs/proc/task_mmu: Implement IOCTL to get and optionally clear info
+    about PTEs
+  tools headers UAPI: Update linux/fs.h with the kernel sources
+  mm/pagemap: add documentation of PAGEMAP_SCAN IOCTL
+  selftests: mm: add pagemap ioctl tests
+
+Peter Xu (1):
+  userfaultfd: UFFD_FEATURE_WP_ASYNC
+
+ Documentation/admin-guide/mm/pagemap.rst     |   58 +
+ Documentation/admin-guide/mm/userfaultfd.rst |   35 +
+ fs/proc/task_mmu.c                           |  505 ++++++
+ fs/userfaultfd.c                             |   26 +-
+ include/linux/hugetlb.h                      |    1 +
+ include/linux/userfaultfd_k.h                |   21 +-
+ include/uapi/linux/fs.h                      |   53 +
+ include/uapi/linux/userfaultfd.h             |    9 +-
+ mm/hugetlb.c                                 |   34 +-
+ mm/memory.c                                  |   27 +-
+ tools/include/uapi/linux/fs.h                |   53 +
+ tools/testing/selftests/mm/.gitignore        |    1 +
+ tools/testing/selftests/mm/Makefile          |    3 +-
+ tools/testing/selftests/mm/config            |    1 +
+ tools/testing/selftests/mm/pagemap_ioctl.c   | 1459 ++++++++++++++++++
+ tools/testing/selftests/mm/run_vmtests.sh    |    4 +
+ 16 files changed, 2266 insertions(+), 24 deletions(-)
+ create mode 100644 tools/testing/selftests/mm/pagemap_ioctl.c
+ mode change 100644 => 100755 tools/testing/selftests/mm/run_vmtests.sh
+
+-- 
+2.39.2
 
