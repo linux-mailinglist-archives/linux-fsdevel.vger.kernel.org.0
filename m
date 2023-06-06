@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D36C723A1E
+	by mail.lfdr.de (Postfix) with ESMTP id EBB1D723A20
 	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 09:46:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236654AbjFFHoq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 03:44:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50538 "EHLO
+        id S236745AbjFFHos (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 03:44:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236655AbjFFHnU (ORCPT
+        with ESMTP id S236660AbjFFHnU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 6 Jun 2023 03:43:20 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B6591BC0;
-        Tue,  6 Jun 2023 00:41:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 639B41BC3;
+        Tue,  6 Jun 2023 00:41:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=vLDKGJIN4sUAMcx+ss63SchZIFVZL96BaI3AvIUMzr4=; b=Kqz67xYl70ncmp7C+TTho2ZAwh
-        yxMVvfTUe4ptMIvjyzv5W3/oGptcu3lODz1GZfs1Dzmfa07wbMjg2x6XNkhPoXVVT8TeEzZ5+vZ85
-        v1qggGnWqxY2bsFKIizZ6LsxrrrPNciu1JwJMH/tySvoqXcRfyJlv85UdaK+gMvOpcMhP0h4rkSzj
-        dd9SWrGeDfCkJGWmtE8+Nh6i9voVwKacayAFzTn1gmxkmc1YJhF7r0Oan23F9ssgVCUQ9Cg3Op4+o
-        gDpWg+ZYjjYuzSCNiQl39lt4KnyhQ9DBoM37xAlqu7P4qY4UvMmUgGNWibsjTk/rgEvj+LqaFZPLH
-        vE5IjFEw==;
+        bh=898bG3yB0h/4R6DBTCYmRThE64ZfC658omyA+boEEQA=; b=Fd6YFaCzXy0iamT55KE0gx+7dN
+        a+UnS0IIigBYWM1bh8mIEwZK5m2tYYmWPhlar96roitd7hUcWGglUePNlImlPUQ6769VWww2VGEkU
+        XhxpcQDKpeaKxfmZK969rkbfWxU3xMsv421yjRbMWuhUdo6GiJevyvAEt6wQBaamvd9I5VOrkmx6D
+        CzAtXwAquq5FUACfU9DbUkBTzhIOTXmXmRbXn9QOJngm7lxD3phyKIOJb8f9it/OJLMzzgq9f5r/R
+        0OqEmdpEteKmZM72kaBy9nkSoZydv8+Wc0w8ePYhhjhaWu+HWQ2S/QBThZ9+ei/zUAgDPd3QonRyj
+        WHf7FBvA==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q6RJX-000Zqu-1D;
-        Tue, 06 Jun 2023 07:41:11 +0000
+        id 1q6RJa-000Ztj-1C;
+        Tue, 06 Jun 2023 07:41:14 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Richard Weinberger <richard@nod.at>,
@@ -52,9 +52,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH 24/31] rnbd-srv: replace sess->open_flags with a "bool readonly"
-Date:   Tue,  6 Jun 2023 09:39:43 +0200
-Message-Id: <20230606073950.225178-25-hch@lst.de>
+Subject: [PATCH 25/31] ubd: remove commented out code in ubd_open
+Date:   Tue,  6 Jun 2023 09:39:44 +0200
+Message-Id: <20230606073950.225178-26-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230606073950.225178-1-hch@lst.de>
 References: <20230606073950.225178-1-hch@lst.de>
@@ -71,102 +71,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Stop passing the fmode_t around and just use a simple bool to track if
-an export is read-only.
+This code has been dead forever, make sure it doesn't show up in code
+searches.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/rnbd/rnbd-srv-sysfs.c |  3 +--
- drivers/block/rnbd/rnbd-srv.c       | 15 +++++++--------
- drivers/block/rnbd/rnbd-srv.h       |  2 +-
- 3 files changed, 9 insertions(+), 11 deletions(-)
+ arch/um/drivers/ubd_kern.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/block/rnbd/rnbd-srv-sysfs.c b/drivers/block/rnbd/rnbd-srv-sysfs.c
-index d5d9267e1fa5e4..ebd95771c85ec7 100644
---- a/drivers/block/rnbd/rnbd-srv-sysfs.c
-+++ b/drivers/block/rnbd/rnbd-srv-sysfs.c
-@@ -88,8 +88,7 @@ static ssize_t read_only_show(struct kobject *kobj, struct kobj_attribute *attr,
- 
- 	sess_dev = container_of(kobj, struct rnbd_srv_sess_dev, kobj);
- 
--	return sysfs_emit(page, "%d\n",
--			  !(sess_dev->open_flags & FMODE_WRITE));
-+	return sysfs_emit(page, "%d\n", sess_dev->readonly);
- }
- 
- static struct kobj_attribute rnbd_srv_dev_session_ro_attr =
-diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
-index 29d560472d05ba..b680071342b898 100644
---- a/drivers/block/rnbd/rnbd-srv.c
-+++ b/drivers/block/rnbd/rnbd-srv.c
-@@ -222,7 +222,7 @@ void rnbd_destroy_sess_dev(struct rnbd_srv_sess_dev *sess_dev, bool keep_id)
- 	blkdev_put(sess_dev->bdev, NULL);
- 	mutex_lock(&sess_dev->dev->lock);
- 	list_del(&sess_dev->dev_list);
--	if (sess_dev->open_flags & FMODE_WRITE)
-+	if (!sess_dev->readonly)
- 		sess_dev->dev->open_write_cnt--;
- 	mutex_unlock(&sess_dev->dev->lock);
- 
-@@ -561,7 +561,7 @@ static void rnbd_srv_fill_msg_open_rsp(struct rnbd_msg_open_rsp *rsp,
- static struct rnbd_srv_sess_dev *
- rnbd_srv_create_set_sess_dev(struct rnbd_srv_session *srv_sess,
- 			      const struct rnbd_msg_open *open_msg,
--			      struct block_device *bdev, fmode_t open_flags,
-+			      struct block_device *bdev, bool readonly,
- 			      struct rnbd_srv_dev *srv_dev)
- {
- 	struct rnbd_srv_sess_dev *sdev = rnbd_sess_dev_alloc(srv_sess);
-@@ -576,7 +576,7 @@ rnbd_srv_create_set_sess_dev(struct rnbd_srv_session *srv_sess,
- 	sdev->bdev		= bdev;
- 	sdev->sess		= srv_sess;
- 	sdev->dev		= srv_dev;
--	sdev->open_flags	= open_flags;
-+	sdev->readonly		= readonly;
- 	sdev->access_mode	= open_msg->access_mode;
- 
- 	return sdev;
-@@ -681,13 +681,12 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
- 	struct rnbd_srv_sess_dev *srv_sess_dev;
- 	const struct rnbd_msg_open *open_msg = msg;
- 	struct block_device *bdev;
--	fmode_t open_flags;
-+	fmode_t open_flags = FMODE_READ;
- 	char *full_path;
- 	struct rnbd_msg_open_rsp *rsp = data;
- 
- 	trace_process_msg_open(srv_sess, open_msg);
- 
--	open_flags = FMODE_READ;
- 	if (open_msg->access_mode != RNBD_ACCESS_RO)
- 		open_flags |= FMODE_WRITE;
- 
-@@ -736,9 +735,9 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
- 		goto blkdev_put;
+diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
+index 8b79554968addb..20c1a16199c503 100644
+--- a/arch/um/drivers/ubd_kern.c
++++ b/arch/um/drivers/ubd_kern.c
+@@ -1170,13 +1170,6 @@ static int ubd_open(struct gendisk *disk, fmode_t mode)
  	}
- 
--	srv_sess_dev = rnbd_srv_create_set_sess_dev(srv_sess, open_msg,
--						     bdev, open_flags,
--						     srv_dev);
-+	srv_sess_dev = rnbd_srv_create_set_sess_dev(srv_sess, open_msg, bdev,
-+				open_msg->access_mode == RNBD_ACCESS_RO,
-+				srv_dev);
- 	if (IS_ERR(srv_sess_dev)) {
- 		pr_err("Opening device '%s' on session %s failed, creating sess_dev failed, err: %ld\n",
- 		       full_path, srv_sess->sessname, PTR_ERR(srv_sess_dev));
-diff --git a/drivers/block/rnbd/rnbd-srv.h b/drivers/block/rnbd/rnbd-srv.h
-index f5962fd31d62e4..76077a9db3dd55 100644
---- a/drivers/block/rnbd/rnbd-srv.h
-+++ b/drivers/block/rnbd/rnbd-srv.h
-@@ -52,7 +52,7 @@ struct rnbd_srv_sess_dev {
- 	struct kobject                  kobj;
- 	u32                             device_id;
- 	bool				keep_id;
--	fmode_t                         open_flags;
-+	bool				readonly;
- 	struct kref			kref;
- 	struct completion               *destroy_comp;
- 	char				pathname[NAME_MAX];
+ 	ubd_dev->count++;
+ 	set_disk_ro(disk, !ubd_dev->openflags.w);
+-
+-	/* This should no more be needed. And it didn't work anyway to exclude
+-	 * read-write remounting of filesystems.*/
+-	/*if((mode & FMODE_WRITE) && !ubd_dev->openflags.w){
+-	        if(--ubd_dev->count == 0) ubd_close_dev(ubd_dev);
+-	        err = -EROFS;
+-	}*/
+ out:
+ 	mutex_unlock(&ubd_mutex);
+ 	return err;
 -- 
 2.39.2
 
