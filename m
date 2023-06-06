@@ -2,253 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A001724670
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 16:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B848972466C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 16:39:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238190AbjFFOja (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 10:39:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41884 "EHLO
+        id S238105AbjFFOj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 10:39:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238195AbjFFOjG (ORCPT
+        with ESMTP id S238099AbjFFOi4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 10:39:06 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B35DF1BFF
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 07:38:10 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-977e0fbd742so317693766b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 07:38:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1686062283; x=1688654283;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tIeHacKUXBl3wNCe/SoZ0G9j6l2l916cMNODLOIB+Cw=;
-        b=VEr5PWCvUfJNT7Cml/NWI0Dk3piC7E1AU4e38Aheb09axj0dVMhU4478RBtGT+GNn1
-         IIOVGmZfXCCPtd+2klnyfpIKutva+P9VUHf9mh7BTVlrLiWlrJ7VJPrudRSE7EkNBWOw
-         LYbfpTHbN71p5D25slwTGKKMDMNQs0PNUS2I0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686062283; x=1688654283;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tIeHacKUXBl3wNCe/SoZ0G9j6l2l916cMNODLOIB+Cw=;
-        b=XhmNomB4K9V8dhfxE+XZGWCryKxSQtjlPn6muPwjbMQZoMo7X3Q5e3hzrPu9wq3ffm
-         4LhbMqCxAsvj1prW/EP7s+F6hzYEuWqjkBHmt/nVjbkct+tasVGe4ho8kubbf+lBOwau
-         S7FQWtOxwcpYJLTUEdmdczojqWvjcB+vj//rlnjIFYAEfGh/Wf/GbJn87kpSRzCFFkoZ
-         sGR7QiqQRxgWoF/erbzy2OLOkZr38EnSMgJA+J2i6D/NWv8R/stts7A0AmmuCAzjyPBD
-         dDMVKEO78x27w/CHxU0RNu10LjJa03X73fwraKqG6gxSw7AQ6004VZHwOrZY9Emj2s5v
-         HaDA==
-X-Gm-Message-State: AC+VfDyUzl437ugb2Ec47RUC3UkSscXUQxDecqD1yaybRz4SdTTjelEc
-        Z9Xt81h9TfFngK9Jx+V3OQ1OyQn3g8CF8wfAnRyo1w==
-X-Google-Smtp-Source: ACHHUZ4K3SMR7FO9doJR5vPa6kooUNGtkS1TgurOkU5LY+CEESPGEtSdoMX8wReEZLBB/vdccKMA4q14dA1n0lml78o=
-X-Received: by 2002:a17:906:7316:b0:973:e79c:3da8 with SMTP id
- di22-20020a170906731600b00973e79c3da8mr2653192ejc.17.1686062282939; Tue, 06
- Jun 2023 07:38:02 -0700 (PDT)
+        Tue, 6 Jun 2023 10:38:56 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D11D01BE6
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 07:38:01 -0700 (PDT)
+Received: from kwepemm600013.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4QbCgr3KGNztQbW;
+        Tue,  6 Jun 2023 22:35:36 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemm600013.china.huawei.com (7.193.23.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Tue, 6 Jun 2023 22:37:57 +0800
+Subject: Re: [PATCH 1/4] ubifs: Convert from writepage to writepages
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Richard Weinberger <richard@nod.at>
+CC:     <linux-mtd@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>
+References: <20230605165029.2908304-1-willy@infradead.org>
+ <20230605165029.2908304-2-willy@infradead.org>
+From:   Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <be9f30d1-d840-fb76-f185-5ebc70a7b72b@huawei.com>
+Date:   Tue, 6 Jun 2023 22:37:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <CAPnZJGDWUT0D7cT_kWa6W9u8MHwhG8ZbGpn=uY4zYRWJkzZzjA@mail.gmail.com>
-In-Reply-To: <CAPnZJGDWUT0D7cT_kWa6W9u8MHwhG8ZbGpn=uY4zYRWJkzZzjA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 6 Jun 2023 16:37:51 +0200
-Message-ID: <CAJfpeguZX5pF8-UNsSfJmMhpgeUFT5XyG_rDzMD-4pB+MjkhZA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] vfs: provide automatic kernel freeze / resume
-To:     Askar Safin <safinaskar@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bernd Schubert <bernd.schubert@fastmail.fm>,
-        linux-pm@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>
-Content-Type: multipart/mixed; boundary="00000000000071ca5d05fd76f736"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <20230605165029.2908304-2-willy@infradead.org>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.178.46]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600013.china.huawei.com (7.193.23.68)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---00000000000071ca5d05fd76f736
-Content-Type: text/plain; charset="UTF-8"
+ÔÚ 2023/6/6 0:50, Matthew Wilcox (Oracle) Ð´µÀ:
+Hi,
+> This is a simplistic conversion to separate out any effects of
+> no longer having a writepage method.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>   fs/ubifs/file.c | 12 ++++++++++--
+>   1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+> index 979ab1d9d0c3..8bb4cb9d528f 100644
+> --- a/fs/ubifs/file.c
+> +++ b/fs/ubifs/file.c
+> @@ -1003,8 +1003,10 @@ static int do_writepage(struct page *page, int len)
+>    * on the page lock and it would not write the truncated inode node to the
+>    * journal before we have finished.
+>    */
+> -static int ubifs_writepage(struct page *page, struct writeback_control *wbc)
+> +static int ubifs_writepage(struct folio *folio, struct writeback_control *wbc,
+> +		void *data)
+>   {
+> +	struct page *page = &folio->page;
+>   	struct inode *inode = page->mapping->host;
+>   	struct ubifs_info *c = inode->i_sb->s_fs_info;
+>   	struct ubifs_inode *ui = ubifs_inode(inode);
+> @@ -1076,6 +1078,12 @@ static int ubifs_writepage(struct page *page, struct writeback_control *wbc)
+>   	return err;
+>   }
+>   
+> +static int ubifs_writepages(struct address_space *mapping,
+> +		struct writeback_control *wbc)
+> +{
+> +	return write_cache_pages(mapping, wbc, ubifs_writepage, NULL);
+> +}
+> +
 
-On Sun, 14 May 2023 at 00:04, Askar Safin <safinaskar@gmail.com> wrote:
->
-> Will this patch fix a long-standing fuse vs suspend bug? (
-> https://bugzilla.kernel.org/show_bug.cgi?id=34932 )
+There is a small difference.
+before patch applied:
+do_writepages -> write_cache_pages -> writepage_cb:
+  ubifs_writepage
+  mapping_set_error(mapping, ret)
 
-No.
+So, we can get error returned from errseq_check_and_advance in syncfs 
+syscall if ubifs_writepage occurs EIO.
 
-The solution to the fuse issue is to freeze processes that initiate
-fuse requests *before* freezing processes that serve fuse requests.
+after patch applied:
 
-The problem is finding out which is which.  This can be complicated by
-the fact that a process could be both serving requests *and*
-initiating them (even without knowing).
+do_writepages -> ubifs_writepages -> write_cache_pages -> 
+ubifs_writepage, mapping won't be set error if ubifs_writepage failed. 
+Unfortunately, ubifs is not a block filesystem, so 
+sync_filesystem->sync_blockdev_nowait will return 0. Finally, syncfs 
+syscall will return 0.
 
-The best idea so far is to let fuse servers set a process flag
-(PF_FREEZE_LATE) that is inherited across fork/clone.  For example the
-sshfs server would do the following before starting request processing
-or starting ssh:
 
-  echo 1 > /proc/self/freeze_late
+>   /**
+>    * do_attr_changes - change inode attributes.
+>    * @inode: inode to change attributes for
+> @@ -1636,7 +1644,7 @@ static int ubifs_symlink_getattr(struct mnt_idmap *idmap,
+>   
+>   const struct address_space_operations ubifs_file_address_operations = {
+>   	.read_folio     = ubifs_read_folio,
+> -	.writepage      = ubifs_writepage,
+> +	.writepages     = ubifs_writepages,
+>   	.write_begin    = ubifs_write_begin,
+>   	.write_end      = ubifs_write_end,
+>   	.invalidate_folio = ubifs_invalidate_folio,
+> 
 
-This would make the sshfs and ssh processes be frozen after processes
-that call into the sshfs mount.
-
-After normal (non-server) processes are frozen, server processes
-should not be getting new requests and can be frozen.
-
-Issues remaining:
-
- - if requests are stuck (e.g. network is down) then the requester
-process can't be frozen and suspend will still fail.
-
- - if server process is generating filesystem activity (new fuse
-requests) spontaneously, then there's nothing to differentiate between
-server processes and we are back to the original problem
-
-Solution to both these are probably non-kernel: impacted servers need
-to receive notification from systemd when suspend is starting and act
-accordingly.
-
-Attaching work-in-progress patch.  This needs to be improved to freeze
-server processes in a separate phase from kernel threads, but it
-should be able to demonstrate the idea.
-
-Thanks,
-Miklos
-
---00000000000071ca5d05fd76f736
-Content-Type: application/x-patch; 
-	name="0001_freezer_configure_user_space_process_frozen_along_with_kernel_threads.patch"
-Content-Disposition: attachment; 
-	filename="0001_freezer_configure_user_space_process_frozen_along_with_kernel_threads.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_likdcauo0>
-X-Attachment-Id: f_likdcauo0
-
-RnJvbTogTGkgRmVpIDxmZWkubGlAaW50ZWwuY29tPgpTdWJqZWN0OiBmcmVlemVyOiBjb25maWd1
-cmUgdXNlciBzcGFjZSBwcm9jZXNzIGZyb3plbiBhbG9uZyB3aXRoIGtlcm5lbCB0aHJlYWRzCkRh
-dGU6IFdlZCwgMjAgRmViIDIwMTMgMTA6MTU6MjUgKzA4MDAKClRoZXJlIGlzIHdlbGwga25vd24g
-aXNzdWUgdGhhdCBmcmVlemluZyB3aWxsIGZhaWwgaW4gY2FzZSB0aGF0IGZ1c2UKZGFlbW9uIGlz
-IGZyb3plbiBmaXJzdGx5IHdpdGggc29tZSByZXF1ZXN0cyBub3QgaGFuZGxlZCwgYXMgdGhlIGZ1
-c2UKdXNhZ2UgdGFzayBpcyB3YWl0aW5nIGZvciB0aGUgcmVzcG9uc2UgZnJvbSBmdXNlIGRhZW1v
-biBhbmQgY2FuJ3QgYmUKZnJvemVuLiBUbyBzb2x2ZSB0aGUgaXNzdWUgYXMgYWJvdmUsIG1ha2Ug
-ZnVzZSBkYWVtb24gZnJvemVuIGFmdGVyCmFsbCB1c2VyIHNwYWNlIHByb2Nlc3NlcyBmcm96ZW4g
-YW5kIGR1cmluZyB0aGUga2VybmVsIHRocmVhZHMgZnJvemVuCnBoYXNlLgoKQWZ0ZXIgZGlzY3Vz
-c2lvbiwgYXQgcHJlc2VudCBpdCdzIGdlbmVyYWxseSBhZ3JlZWQgdGhhdDoKMSkgSXQncyBvbmx5
-IHRoZSBmdXNlIGRhZW1vbiBpdHNlbGYga25vdyBkZWZpbml0ZWx5IHRoYXQgaXQgbmVlZHMKYW5k
-IGNhbiBiZSBmcm96ZW4gdG9nZXRoZXIgd2l0aCBrZXJuZWwgdGhyZWFkczsKMikgSXQncyBoZWxw
-ZnVsIHRvIGV4cG9zZSBpbnRlcmZhY2UgdGhhdCB1c2VyIHNwYWNlIHByb2Nlc3NlcyBjYW4KdXNl
-IHRvIGNvbmZpZ3VyZSB1c2VyIHNwYWNlIHByb2Nlc3NlcyB0byBiZSBmcm96ZW4gdG9nZXRoZXIg
-d2l0aAprZXJuZWwgdGhyZWFkcy4KTW9yZSBpbmZvcm1hdGlvbiBjYW4gYmUgZm91bmQgb24gaHR0
-cHM6Ly9sa21sLm9yZy9sa21sLzIwMTMvMi8xOC8xNzQuCgpUbyBzdXBwb3J0IHRoZSByZXF1aXJl
-bWVudCBhYm92ZSwgYXR0cmlidXRlIC9wcm9jLzxQSUQ+L2ZyZWV6ZV9sYXRlCmlzIGFkZGVkLCB3
-cml0aW5nIDEgdG8gaXQgd2lsbCBtYWtlIHRoZSBwcm9jZXNzIHRvIGJlIGZyb3plbiB0b2dldGhl
-cgp3aXRoIGtlcm5lbCB0aHJlYWRzLCBhbmQgd3JpdGluZyAwIHRvIGl0IHdpbGwgbWFrZSB0aGUg
-cHJvY2VzcyB0byBiZQpmcm96ZW4gdG9nZXRoZXIgd2l0aCB1c2VyIHNwYWNlIHByb2Nlc3Nlcy4K
-ClNpZ25lZC1vZmYtYnk6IExpdSBDaHVhbnNoZW5nIDxjaHVhbnNoZW5nLmxpdUBpbnRlbC5jb20+
-ClNpZ25lZC1vZmYtYnk6IFdhbmcgQmlhbyA8Ymlhby53YW5nQGludGVsLmNvbT4KU2lnbmVkLW9m
-Zi1ieTogTGkgRmVpIDxmZWkubGlAaW50ZWwuY29tPgotLS0KIGZzL3Byb2MvYmFzZS5jICAgICAg
-ICAgIHwgICA3NCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysKIGluY2x1ZGUvbGludXgvZnJlZXplci5oIHwgICAgNiArKysKIGluY2x1ZGUvbGludXgvc2No
-ZWQuaCAgIHwgICAgMiAtCiBrZXJuZWwvZnJlZXplci5jICAgICAgICB8ICAgMjkgKysrKysrKysr
-KysrKysrKysrCiBrZXJuZWwvcG93ZXIvcHJvY2Vzcy5jICB8ICAgIDIgLQogNSBmaWxlcyBjaGFu
-Z2VkLCAxMTAgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCi0tLSBhL2ZzL3Byb2MvYmFz
-ZS5jCisrKyBiL2ZzL3Byb2MvYmFzZS5jCkBAIC05OCw2ICs5OCw5IEBACiAjaW5jbHVkZSA8bGlu
-dXgvY25fcHJvYy5oPgogI2luY2x1ZGUgPGxpbnV4L2tzbS5oPgogI2luY2x1ZGUgPHRyYWNlL2V2
-ZW50cy9vb20uaD4KKyNpZmRlZiBDT05GSUdfRlJFRVpFUgorI2luY2x1ZGUgPGxpbnV4L2ZyZWV6
-ZXIuaD4KKyNlbmRpZgogI2luY2x1ZGUgImludGVybmFsLmgiCiAjaW5jbHVkZSAiZmQuaCIKIApA
-QCAtMjI1Miw2ICsyMjU1LDcwIEBAIHByb2NfbWFwX2ZpbGVzX2dldF9saW5rKHN0cnVjdCBkZW50
-cnkgKmQKIAlyZXR1cm4gcHJvY19waWRfZ2V0X2xpbmsoZGVudHJ5LCBpbm9kZSwgZG9uZSk7CiB9
-CiAKKyNpZmRlZiBDT05GSUdfRlJFRVpFUgorCitzdGF0aWMgc3NpemVfdCBmcmVlemVfbGF0ZV9y
-ZWFkKHN0cnVjdCBmaWxlICpmaWxlLCBjaGFyIF9fdXNlciAqYnVmLAorCQkJCQlzaXplX3QgY291
-bnQsIGxvZmZfdCAqcHBvcykKK3sKKwlzdHJ1Y3QgdGFza19zdHJ1Y3QgKnRhc2sgPSBnZXRfcHJv
-Y190YXNrKGZpbGUtPmZfcGF0aC5kZW50cnktPmRfaW5vZGUpOworCWNoYXIgYnVmZmVyW1BST0Nf
-TlVNQlVGXTsKKwlpbnQgZnJlZXplX2xhdGU7CisJc2l6ZV90IGxlbjsKKwlpZiAoIXRhc2spCisJ
-CXJldHVybiAtRVNSQ0g7CisJZnJlZXplX2xhdGUgPSAodGFzay0+ZmxhZ3MgJiBQRl9GUkVFWkVf
-TEFURSkgPyAxIDogMDsKKwlsZW4gPSBzbnByaW50ZihidWZmZXIsIHNpemVvZihidWZmZXIpLCAi
-JWRcbiIsIGZyZWV6ZV9sYXRlKTsKKwlyZXR1cm4gc2ltcGxlX3JlYWRfZnJvbV9idWZmZXIoYnVm
-LCBjb3VudCwgcHBvcywgYnVmZmVyLCBsZW4pOworfQorCitzdGF0aWMgc3NpemVfdCBmcmVlemVf
-bGF0ZV93cml0ZShzdHJ1Y3QgZmlsZSAqZmlsZSwgY29uc3QgY2hhciBfX3VzZXIgKmJ1ZiwKKwkJ
-CQkJc2l6ZV90IGNvdW50LCBsb2ZmX3QgKnBwb3MpCit7CisJc3RydWN0IHRhc2tfc3RydWN0ICp0
-YXNrOworCWNoYXIgYnVmZmVyW1BST0NfTlVNQlVGXTsKKwlpbnQgZnJlZXplX2xhdGU7CisJaW50
-IGVycjsKKworCW1lbXNldChidWZmZXIsIDAsIHNpemVvZihidWZmZXIpKTsKKwlpZiAoY291bnQg
-PiBzaXplb2YoYnVmZmVyKSAtIDEpCisJCWNvdW50ID0gc2l6ZW9mKGJ1ZmZlcikgLSAxOworCWlm
-IChjb3B5X2Zyb21fdXNlcihidWZmZXIsIGJ1ZiwgY291bnQpKSB7CisJCWVyciA9IC1FRkFVTFQ7
-CisJCWdvdG8gb3V0OworCX0KKworCWVyciA9IGtzdHJ0b2ludChzdHJzdHJpcChidWZmZXIpLCAw
-LCAmZnJlZXplX2xhdGUpOworCWlmIChlcnIpCisJCWdvdG8gb3V0OworCWlmIChmcmVlemVfbGF0
-ZSA8IEZSRUVaRV9MQVRFX01JTiB8fAorCQkJZnJlZXplX2xhdGUgPiBGUkVFWkVfTEFURV9NQVgp
-IHsKKwkJZXJyID0gLUVJTlZBTDsKKwkJZ290byBvdXQ7CisJfQorCisJdGFzayA9IGdldF9wcm9j
-X3Rhc2soZmlsZS0+Zl9wYXRoLmRlbnRyeS0+ZF9pbm9kZSk7CisJaWYgKCF0YXNrKSB7CisJCWVy
-ciA9IC1FU1JDSDsKKwkJZ290byBvdXQ7CisJfQorCisJaWYgKGZyZWV6ZV9sYXRlKQorCQlzZXRf
-ZnJlZXplX2xhdGVfZmxhZyh0YXNrKTsKKwllbHNlCisJCWNsZWFyX2ZyZWV6ZV9sYXRlX2ZsYWco
-dGFzayk7CisKK291dDoKKwlyZXR1cm4gZXJyIDwgMCA/IGVyciA6IGNvdW50OworfQorCitzdGF0
-aWMgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyBwcm9jX2ZyZWV6ZV9sYXRlX29wZXJhdGlv
-bnMgPSB7CisJLnJlYWQJCT0gZnJlZXplX2xhdGVfcmVhZCwKKwkud3JpdGUJCT0gZnJlZXplX2xh
-dGVfd3JpdGUsCisJLmxsc2VlawkJPSBnZW5lcmljX2ZpbGVfbGxzZWVrLAorfTsKKworI2VuZGlm
-CisKIC8qCiAgKiBJZGVudGljYWwgdG8gcHJvY19waWRfbGlua19pbm9kZV9vcGVyYXRpb25zIGV4
-Y2VwdCBmb3IgZ2V0X2xpbmsoKQogICovCkBAIC0zMzUxLDYgKzM0MTgsOSBAQCBzdGF0aWMgY29u
-c3Qgc3RydWN0IHBpZF9lbnRyeSB0Z2lkX2Jhc2VfCiAJT05FKCJrc21fbWVyZ2luZ19wYWdlcyIs
-ICBTX0lSVVNSLCBwcm9jX3BpZF9rc21fbWVyZ2luZ19wYWdlcyksCiAJT05FKCJrc21fc3RhdCIs
-ICBTX0lSVVNSLCBwcm9jX3BpZF9rc21fc3RhdCksCiAjZW5kaWYKKyNpZmRlZiBDT05GSUdfRlJF
-RVpFUgorCVJFRygiZnJlZXplX2xhdGUiLCBTX0lSVUdPfFNfSVdVU1IsIHByb2NfZnJlZXplX2xh
-dGVfb3BlcmF0aW9ucyksCisjZW5kaWYKIH07CiAKIHN0YXRpYyBpbnQgcHJvY190Z2lkX2Jhc2Vf
-cmVhZGRpcihzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IGRpcl9jb250ZXh0ICpjdHgpCkBAIC0z
-Njg5LDYgKzM3NTksMTAgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBwaWRfZW50cnkgdGlkX2Jhc2Vf
-cwogCU9ORSgia3NtX21lcmdpbmdfcGFnZXMiLCAgU19JUlVTUiwgcHJvY19waWRfa3NtX21lcmdp
-bmdfcGFnZXMpLAogCU9ORSgia3NtX3N0YXQiLCAgU19JUlVTUiwgcHJvY19waWRfa3NtX3N0YXQp
-LAogI2VuZGlmCisjaWZkZWYgQ09ORklHX0ZSRUVaRVIKKwlSRUcoImZyZWV6ZV9sYXRlIiwgU19J
-UlVHT3xTX0lXVVNSLCBwcm9jX2ZyZWV6ZV9sYXRlX29wZXJhdGlvbnMpLAorI2VuZGlmCisKIH07
-CiAKIHN0YXRpYyBpbnQgcHJvY190aWRfYmFzZV9yZWFkZGlyKHN0cnVjdCBmaWxlICpmaWxlLCBz
-dHJ1Y3QgZGlyX2NvbnRleHQgKmN0eCkKLS0tIGEvaW5jbHVkZS9saW51eC9mcmVlemVyLmgKKysr
-IGIvaW5jbHVkZS9saW51eC9mcmVlemVyLmgKQEAgLTYwLDYgKzYwLDEwIEBAIHN0YXRpYyBpbmxp
-bmUgYm9vbCB0cnlfdG9fZnJlZXplKHZvaWQpCiAKIGV4dGVybiBib29sIGZyZWV6ZV90YXNrKHN0
-cnVjdCB0YXNrX3N0cnVjdCAqcCk7CiBleHRlcm4gYm9vbCBzZXRfZnJlZXphYmxlKHZvaWQpOwor
-I2RlZmluZSBGUkVFWkVfTEFURV9NSU4gMAorI2RlZmluZSBGUkVFWkVfTEFURV9NQVggMQorZXh0
-ZXJuIHZvaWQgc2V0X2ZyZWV6ZV9sYXRlX2ZsYWcoc3RydWN0IHRhc2tfc3RydWN0ICpwKTsKK2V4
-dGVybiB2b2lkIGNsZWFyX2ZyZWV6ZV9sYXRlX2ZsYWcoc3RydWN0IHRhc2tfc3RydWN0ICpwKTsK
-IAogI2lmZGVmIENPTkZJR19DR1JPVVBfRlJFRVpFUgogZXh0ZXJuIGJvb2wgY2dyb3VwX2ZyZWV6
-aW5nKHN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzayk7CkBAIC04NCw2ICs4OCw4IEBAIHN0YXRpYyBp
-bmxpbmUgdm9pZCB0aGF3X2tlcm5lbF90aHJlYWRzKHYKIHN0YXRpYyBpbmxpbmUgYm9vbCB0cnlf
-dG9fZnJlZXplKHZvaWQpIHsgcmV0dXJuIGZhbHNlOyB9CiAKIHN0YXRpYyBpbmxpbmUgdm9pZCBz
-ZXRfZnJlZXphYmxlKHZvaWQpIHt9CitzdGF0aWMgaW5saW5lIHZvaWQgc2V0X2ZyZWV6ZV9sYXRl
-X2ZsYWcodm9pZCkge30KK3N0YXRpYyBpbmxpbmUgdm9pZCBjbGVhcl9mcmVlemVfbGF0ZV9mbGFn
-KHZvaWQpIHt9CiAKICNlbmRpZiAvKiAhQ09ORklHX0ZSRUVaRVIgKi8KIAotLS0gYS9pbmNsdWRl
-L2xpbnV4L3NjaGVkLmgKKysrIGIvaW5jbHVkZS9saW51eC9zY2hlZC5oCkBAIC0xNzM3LDcgKzE3
-MzcsNyBAQCBleHRlcm4gc3RydWN0IHBpZCAqY2FkX3BpZDsKICNkZWZpbmUgUEZfVVNFRF9NQVRI
-CQkweDAwMDAyMDAwCS8qIElmIHVuc2V0IHRoZSBmcHUgbXVzdCBiZSBpbml0aWFsaXplZCBiZWZv
-cmUgdXNlICovCiAjZGVmaW5lIFBGX1VTRVJfV09SS0VSCQkweDAwMDA0MDAwCS8qIEtlcm5lbCB0
-aHJlYWQgY2xvbmVkIGZyb20gdXNlcnNwYWNlIHRocmVhZCAqLwogI2RlZmluZSBQRl9OT0ZSRUVa
-RQkJMHgwMDAwODAwMAkvKiBUaGlzIHRocmVhZCBzaG91bGQgbm90IGJlIGZyb3plbiAqLwotI2Rl
-ZmluZSBQRl9fSE9MRV9fMDAwMTAwMDAJMHgwMDAxMDAwMAorI2RlZmluZSBQRl9GUkVFWkVfTEFU
-RQkJMHgwMDAxMDAwMAkvKiBUaHJlYWRzIHRvIGJlIGZyb3plbiBhbG9uZyB3aXRoIGtlcm5lbCB0
-aHJlYWRzICovCiAjZGVmaW5lIFBGX0tTV0FQRAkJMHgwMDAyMDAwMAkvKiBJIGFtIGtzd2FwZCAq
-LwogI2RlZmluZSBQRl9NRU1BTExPQ19OT0ZTCTB4MDAwNDAwMDAJLyogQWxsIGFsbG9jYXRpb24g
-cmVxdWVzdHMgd2lsbCBpbmhlcml0IEdGUF9OT0ZTICovCiAjZGVmaW5lIFBGX01FTUFMTE9DX05P
-SU8JMHgwMDA4MDAwMAkvKiBBbGwgYWxsb2NhdGlvbiByZXF1ZXN0cyB3aWxsIGluaGVyaXQgR0ZQ
-X05PSU8gKi8KLS0tIGEva2VybmVsL2ZyZWV6ZXIuYworKysgYi9rZXJuZWwvZnJlZXplci5jCkBA
-IC00Niw3ICs0Niw4IEBAIGJvb2wgZnJlZXppbmdfc2xvd19wYXRoKHN0cnVjdCB0YXNrX3N0cnUK
-IAlpZiAocG1fbm9zaWdfZnJlZXppbmcgfHwgY2dyb3VwX2ZyZWV6aW5nKHApKQogCQlyZXR1cm4g
-dHJ1ZTsKIAotCWlmIChwbV9mcmVlemluZyAmJiAhKHAtPmZsYWdzICYgUEZfS1RIUkVBRCkpCisJ
-aWYgKHBtX2ZyZWV6aW5nICYmICEocC0+ZmxhZ3MgJiBQRl9LVEhSRUFEKSAmJgorCQkJCSEocC0+
-ZmxhZ3MgJiBQRl9GUkVFWkVfTEFURSkpCiAJCXJldHVybiB0cnVlOwogCiAJcmV0dXJuIGZhbHNl
-OwpAQCAtMjMzLDMgKzIzNCwyOSBAQCBib29sIHNldF9mcmVlemFibGUodm9pZCkKIAlyZXR1cm4g
-dHJ5X3RvX2ZyZWV6ZSgpOwogfQogRVhQT1JUX1NZTUJPTChzZXRfZnJlZXphYmxlKTsKKworLyoq
-CisgKiBzZXRfZnJlZXplX2xhdGVfZmxhZyAtIG1ha2UgJXAgdG8gYmUgZnJvemVuIGxhdGUKKyAq
-CisgKiBNYWtlICVwIHRvIGJlIGZyb3plbiBieSBmcmVlemVyIGFsb25nIHdpdGgga2VybmVsIHRo
-cmVhZHMKKyAqLwordm9pZCBzZXRfZnJlZXplX2xhdGVfZmxhZyhzdHJ1Y3QgdGFza19zdHJ1Y3Qg
-KnApCit7CisJc3Bpbl9sb2NrX2lycSgmZnJlZXplcl9sb2NrKTsKKwlwLT5mbGFncyB8PSBQRl9G
-UkVFWkVfTEFURTsKKwlzcGluX3VubG9ja19pcnEoJmZyZWV6ZXJfbG9jayk7Cit9CitFWFBPUlRf
-U1lNQk9MKHNldF9mcmVlemVfbGF0ZV9mbGFnKTsKKworLyoqCisgKiBjbGVhcl9mcmVlemVfbGF0
-ZV9mbGFnIC0gbWFrZSAlcCB0byBiZSBmcm96ZW4gZWFybHkKKyAqCisgKiBNYWtlICVwIHRvIGJl
-IGZyb3plbiBieSBmcmVlemVyIGFsb25nIHdpdGggdXNlciBzcGFjZSBwcm9jZXNzZXMKKyAqLwor
-dm9pZCBjbGVhcl9mcmVlemVfbGF0ZV9mbGFnKHN0cnVjdCB0YXNrX3N0cnVjdCAqcCkKK3sKKwlz
-cGluX2xvY2tfaXJxKCZmcmVlemVyX2xvY2spOworCXAtPmZsYWdzICY9IH5QRl9GUkVFWkVfTEFU
-RTsKKwlzcGluX3VubG9ja19pcnEoJmZyZWV6ZXJfbG9jayk7Cit9CitFWFBPUlRfU1lNQk9MKGNs
-ZWFyX2ZyZWV6ZV9sYXRlX2ZsYWcpOwotLS0gYS9rZXJuZWwvcG93ZXIvcHJvY2Vzcy5jCisrKyBi
-L2tlcm5lbC9wb3dlci9wcm9jZXNzLmMKQEAgLTIyNSw3ICsyMjUsNyBAQCB2b2lkIHRoYXdfa2Vy
-bmVsX3RocmVhZHModm9pZCkKIAogCXJlYWRfbG9jaygmdGFza2xpc3RfbG9jayk7CiAJZm9yX2Vh
-Y2hfcHJvY2Vzc190aHJlYWQoZywgcCkgewotCQlpZiAocC0+ZmxhZ3MgJiBQRl9LVEhSRUFEKQor
-CQlpZiAocC0+ZmxhZ3MgJiAoUEZfS1RIUkVBRCB8IFBGX0ZSRUVaRV9MQVRFKSkKIAkJCV9fdGhh
-d190YXNrKHApOwogCX0KIAlyZWFkX3VubG9jaygmdGFza2xpc3RfbG9jayk7Cg==
---00000000000071ca5d05fd76f736--
