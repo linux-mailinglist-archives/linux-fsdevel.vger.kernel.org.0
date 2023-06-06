@@ -2,262 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07C94724B14
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 20:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2AAB724BAB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 20:46:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237833AbjFFSTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 14:19:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37390 "EHLO
+        id S239067AbjFFSqG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 14:46:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237800AbjFFSTS (ORCPT
+        with ESMTP id S233789AbjFFSqF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 14:19:18 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1D21702;
-        Tue,  6 Jun 2023 11:19:16 -0700 (PDT)
+        Tue, 6 Jun 2023 14:46:05 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83BE810CB;
+        Tue,  6 Jun 2023 11:46:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=SzEzfD8o9MmMZbtTJMh/O3FVpegfomMJ8VE5KDe97bU=; b=CEhhzhsm3xgw7fNAWhMuqkGg1T
-        w5cHgMaODp27e+j24Yg/Kef06hUoOHuswZ8as3MqXUTn0CHbZsTzEhlxDsT2SeacGu585XeVxNdeh
-        7rrPrNvkf7tlJdum2sWdk2OME6Vg2JtA8xeh08i40GFZJUYjls+19V7hrZ/onGmCYHar4swC8aqv4
-        Lrdf71hRtEBCkwQa1FpAIyKKnKpHWhNaRgPGaWMxXuBQy+qfqYJQXRw1iZwvSuqBsRST0ZHzoFK0L
-        MffVAUK6PGOrHA8rgpmwGc1jrjTKIsD+xzB6wWKqXWfeSXWsVtFvES4CWTJ0GVz+nVwjWfrtCqZXg
-        eHMqIAvg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q6bGy-00DP19-Az; Tue, 06 Jun 2023 18:19:12 +0000
-Date:   Tue, 6 Jun 2023 19:19:12 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] ceph: Convert ceph_writepages_start() to use folios a
- little more
-Message-ID: <ZH94oBBFct9b9g3z@casper.infradead.org>
-References: <20230605165418.2909336-1-willy@infradead.org>
- <4ca56a21-c5aa-6407-0cc1-db68762630ce@redhat.com>
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=p+0nLSoJG17KKuiydwKjkEWK72qSSTBX227sDUKnkMI=; b=K8PQtgjHzFM8DsR8pdTrGnhVD2
+        z/OYfEVC48yKut8wf6Nopa2FNs7aMyMSR1EpbfpI/r54+qbSB2Pw4GxeQxJaNXQClit6dBePXMvbv
+        SiWVAkmZuBZcHKLlad7NRqmVtc6k/3LvY2Q0oei4CWLvLZr82F+ikRzih/Z3KirO1b6M7PK87axeR
+        8bLPwahj/gRcWyWZHFvv23YgeMUyO7WGZXM6onH+v9iuibrPt52d1Rr4t/nZrIVOCk91CCVtUn5rd
+        0588ctSoNdj4cxSLilu1LKMGFtHsF5072LwMPxAm5kh/Ul0folqF4paXyeLdgqTAnQfnd9cqBxR9G
+        2Ye0363g==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q6bgf-002nx4-2g;
+        Tue, 06 Jun 2023 18:45:45 +0000
+Date:   Tue, 6 Jun 2023 11:45:45 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     keescook@chromium.org, yzaikin@google.com, dhowells@redhat.com,
+        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com,
+        j.granados@samsung.com, brauner@kernel.org, ebiederm@xmission.com,
+        patches@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] sysctl: move security keys sysctl registration to
+ its own file
+Message-ID: <ZH9+2WFsru1VMPqT@bombadil.infradead.org>
+References: <20230530232914.3689712-1-mcgrof@kernel.org>
+ <20230530232914.3689712-3-mcgrof@kernel.org>
+ <CAHC9VhRA_XkkiZpg=d1RiME+VUYe7bsuV6pOpsseDRWfwV+q9A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4ca56a21-c5aa-6407-0cc1-db68762630ce@redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRA_XkkiZpg=d1RiME+VUYe7bsuV6pOpsseDRWfwV+q9A@mail.gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 01:37:46PM +0800, Xiubo Li wrote:
-> This Looks good to me.
-> 
-> BTW, could you rebase this to the 'testing' branch ? This will introduce a
-
-Umm, which testing branch is that?  It applies cleanly to next-20230606
-which is generally where I work, since it's a bit unreasonable for me
-to keep track of every filesystem development tree.
-
-> lots of conflicts with the fscrypt patches, I'd prefer this could be applied
-> and merged after them since the fscrypt patches have been well tested.
-> 
-> Ilya, is that okay ?
-> 
-> Thanks
-> 
-> - Xiubo
-> 
-> On 6/6/23 00:54, Matthew Wilcox (Oracle) wrote:
-> > After we iterate through the locked folios using filemap_get_folios_tag(),
-> > we currently convert back to a page (and then in some circumstaces back
-> > to a folio again!).  Just use a folio throughout and avoid various hidden
-> > calls to compound_head().  Ceph still uses a page array to interact with
-> > the OSD which should be cleaned up in a subsequent patch.
-> > 
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Wed, May 31, 2023 at 05:20:46PM -0400, Paul Moore wrote:
+> On Tue, May 30, 2023 at 7:29 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > The security keys sysctls are already declared on its own file,
+> > just move the sysctl registration to its own file to help avoid
+> > merge conflicts on sysctls.c, and help with clearing up sysctl.c
+> > further.
+> >
+> > This creates a small penalty of 23 bytes:
+> >
+> > ./scripts/bloat-o-meter vmlinux.1 vmlinux.2
+> > add/remove: 2/0 grow/shrink: 0/1 up/down: 49/-26 (23)
+> > Function                                     old     new   delta
+> > init_security_keys_sysctls                     -      33     +33
+> > __pfx_init_security_keys_sysctls               -      16     +16
+> > sysctl_init_bases                             85      59     -26
+> > Total: Before=21256937, After=21256960, chg +0.00%
+> >
+> > But soon we'll be saving tons of bytes anyway, as we modify the
+> > sysctl registrations to use ARRAY_SIZE and so we get rid of all the
+> > empty array elements so let's just clean this up now.
+> >
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 > > ---
-> >   fs/ceph/addr.c | 79 +++++++++++++++++++++++++-------------------------
-> >   1 file changed, 39 insertions(+), 40 deletions(-)
-> > 
-> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > index 6bb251a4d613..e2d92a8a53ca 100644
-> > --- a/fs/ceph/addr.c
-> > +++ b/fs/ceph/addr.c
-> > @@ -888,7 +888,7 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   		int num_ops = 0, op_idx;
-> >   		unsigned i, nr_folios, max_pages, locked_pages = 0;
-> >   		struct page **pages = NULL, **data_pages;
-> > -		struct page *page;
-> > +		struct folio *folio;
-> >   		pgoff_t strip_unit_end = 0;
-> >   		u64 offset = 0, len = 0;
-> >   		bool from_pool = false;
-> > @@ -902,22 +902,22 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   		if (!nr_folios && !locked_pages)
-> >   			break;
-> >   		for (i = 0; i < nr_folios && locked_pages < max_pages; i++) {
-> > -			page = &fbatch.folios[i]->page;
-> > -			dout("? %p idx %lu\n", page, page->index);
-> > +			folio = fbatch.folios[i];
-> > +			dout("? %p idx %lu\n", folio, folio->index);
-> >   			if (locked_pages == 0)
-> > -				lock_page(page);  /* first page */
-> > -			else if (!trylock_page(page))
-> > +				folio_lock(folio);  /* first folio */
-> > +			else if (!folio_trylock(folio))
-> >   				break;
-> >   			/* only dirty pages, or our accounting breaks */
-> > -			if (unlikely(!PageDirty(page)) ||
-> > -			    unlikely(page->mapping != mapping)) {
-> > -				dout("!dirty or !mapping %p\n", page);
-> > -				unlock_page(page);
-> > +			if (unlikely(!folio_test_dirty(folio)) ||
-> > +			    unlikely(folio->mapping != mapping)) {
-> > +				dout("!dirty or !mapping %p\n", folio);
-> > +				folio_unlock(folio);
-> >   				continue;
-> >   			}
-> >   			/* only if matching snap context */
-> > -			pgsnapc = page_snap_context(page);
-> > +			pgsnapc = page_snap_context(&folio->page);
-> >   			if (pgsnapc != snapc) {
-> >   				dout("page snapc %p %lld != oldest %p %lld\n",
-> >   				     pgsnapc, pgsnapc->seq, snapc, snapc->seq);
-> > @@ -925,12 +925,10 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   				    !ceph_wbc.head_snapc &&
-> >   				    wbc->sync_mode != WB_SYNC_NONE)
-> >   					should_loop = true;
-> > -				unlock_page(page);
-> > +				folio_unlock(folio);
-> >   				continue;
-> >   			}
-> > -			if (page_offset(page) >= ceph_wbc.i_size) {
-> > -				struct folio *folio = page_folio(page);
-> > -
-> > +			if (folio_pos(folio) >= ceph_wbc.i_size) {
-> >   				dout("folio at %lu beyond eof %llu\n",
-> >   				     folio->index, ceph_wbc.i_size);
-> >   				if ((ceph_wbc.size_stable ||
-> > @@ -941,31 +939,32 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   				folio_unlock(folio);
-> >   				continue;
-> >   			}
-> > -			if (strip_unit_end && (page->index > strip_unit_end)) {
-> > -				dout("end of strip unit %p\n", page);
-> > -				unlock_page(page);
-> > +			if (strip_unit_end && (folio->index > strip_unit_end)) {
-> > +				dout("end of strip unit %p\n", folio);
-> > +				folio_unlock(folio);
-> >   				break;
-> >   			}
-> > -			if (PageWriteback(page) || PageFsCache(page)) {
-> > +			if (folio_test_writeback(folio) ||
-> > +			    folio_test_fscache(folio)) {
-> >   				if (wbc->sync_mode == WB_SYNC_NONE) {
-> > -					dout("%p under writeback\n", page);
-> > -					unlock_page(page);
-> > +					dout("%p under writeback\n", folio);
-> > +					folio_unlock(folio);
-> >   					continue;
-> >   				}
-> > -				dout("waiting on writeback %p\n", page);
-> > -				wait_on_page_writeback(page);
-> > -				wait_on_page_fscache(page);
-> > +				dout("waiting on writeback %p\n", folio);
-> > +				folio_wait_writeback(folio);
-> > +				folio_wait_fscache(folio);
-> >   			}
-> > -			if (!clear_page_dirty_for_io(page)) {
-> > -				dout("%p !clear_page_dirty_for_io\n", page);
-> > -				unlock_page(page);
-> > +			if (!folio_clear_dirty_for_io(folio)) {
-> > +				dout("%p !folio_clear_dirty_for_io\n", folio);
-> > +				folio_unlock(folio);
-> >   				continue;
-> >   			}
-> >   			/*
-> >   			 * We have something to write.  If this is
-> > -			 * the first locked page this time through,
-> > +			 * the first locked folio this time through,
-> >   			 * calculate max possinle write size and
-> >   			 * allocate a page array
-> >   			 */
-> > @@ -975,7 +974,7 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   				u32 xlen;
-> >   				/* prepare async write request */
-> > -				offset = (u64)page_offset(page);
-> > +				offset = folio_pos(folio);
-> >   				ceph_calc_file_object_mapping(&ci->i_layout,
-> >   							      offset, wsize,
-> >   							      &objnum, &objoff,
-> > @@ -983,7 +982,7 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   				len = xlen;
-> >   				num_ops = 1;
-> > -				strip_unit_end = page->index +
-> > +				strip_unit_end = folio->index +
-> >   					((len - 1) >> PAGE_SHIFT);
-> >   				BUG_ON(pages);
-> > @@ -998,33 +997,33 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   				}
-> >   				len = 0;
-> > -			} else if (page->index !=
-> > +			} else if (folio->index !=
-> >   				   (offset + len) >> PAGE_SHIFT) {
-> >   				if (num_ops >= (from_pool ?  CEPH_OSD_SLAB_OPS :
-> >   							     CEPH_OSD_MAX_OPS)) {
-> > -					redirty_page_for_writepage(wbc, page);
-> > -					unlock_page(page);
-> > +					folio_redirty_for_writepage(wbc, folio);
-> > +					folio_unlock(folio);
-> >   					break;
-> >   				}
-> >   				num_ops++;
-> > -				offset = (u64)page_offset(page);
-> > +				offset = (u64)folio_pos(folio);
-> >   				len = 0;
-> >   			}
-> >   			/* note position of first page in fbatch */
-> > -			dout("%p will write page %p idx %lu\n",
-> > -			     inode, page, page->index);
-> > +			dout("%p will write folio %p idx %lu\n",
-> > +			     inode, folio, folio->index);
-> >   			if (atomic_long_inc_return(&fsc->writeback_count) >
-> >   			    CONGESTION_ON_THRESH(
-> >   				    fsc->mount_options->congestion_kb))
-> >   				fsc->write_congested = true;
-> > -			pages[locked_pages++] = page;
-> > +			pages[locked_pages++] = &folio->page;
-> >   			fbatch.folios[i] = NULL;
-> > -			len += thp_size(page);
-> > +			len += folio_size(folio);
-> >   		}
-> >   		/* did we get anything? */
-> > @@ -1073,7 +1072,7 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   			BUG_ON(IS_ERR(req));
-> >   		}
-> >   		BUG_ON(len < page_offset(pages[locked_pages - 1]) +
-> > -			     thp_size(page) - offset);
-> > +			     folio_size(folio) - offset);
-> >   		req->r_callback = writepages_finish;
-> >   		req->r_inode = inode;
-> > @@ -1115,7 +1114,7 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   			set_page_writeback(pages[i]);
-> >   			if (caching)
-> >   				ceph_set_page_fscache(pages[i]);
-> > -			len += thp_size(page);
-> > +			len += folio_size(folio);
-> >   		}
-> >   		ceph_fscache_write_to_cache(inode, offset, len, caching);
-> > @@ -1125,7 +1124,7 @@ static int ceph_writepages_start(struct address_space *mapping,
-> >   			/* writepages_finish() clears writeback pages
-> >   			 * according to the data length, so make sure
-> >   			 * data length covers all locked pages */
-> > -			u64 min_len = len + 1 - thp_size(page);
-> > +			u64 min_len = len + 1 - folio_size(folio);
-> >   			len = get_writepages_data_length(inode, pages[i - 1],
-> >   							 offset);
-> >   			len = max(len, min_len);
+> >  include/linux/key.h    | 3 ---
+> >  kernel/sysctl.c        | 4 ----
+> >  security/keys/sysctl.c | 7 +++++++
+> >  3 files changed, 7 insertions(+), 7 deletions(-)
 > 
+> Ultimately I'll leave the ACK to David or Jarkko, but this looks
+> reasonable to me.
+> 
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
+
+I've queued this onto sysctl-next as I haven't seen any complaints.
+I can drop it if there are complaints or regressions reported by
+folks on linux-next.
+
+  Luis
