@@ -2,88 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C95757250B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 01:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C83227250C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 01:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240030AbjFFXWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 19:22:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54168 "EHLO
+        id S239887AbjFFX0U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 19:26:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240256AbjFFXV7 (ORCPT
+        with ESMTP id S239633AbjFFX0R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 19:21:59 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F5C1706
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 16:21:55 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-77abce06481so37477039f.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 16:21:55 -0700 (PDT)
+        Tue, 6 Jun 2023 19:26:17 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EFBA10D4
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 16:26:16 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2b1b2ca09b9so57835431fa.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 16:26:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686093974; x=1688685974;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=D2FxAGdDZl5bgEmc1sdGZWqw52ArESB47KTKiPcLPLY=;
+        b=VJSPZQAPizAr7CFQFRUuDISOpjQ0ltuXz7UN4Ab+0mqiOke4nA1UHE4Sv3PpURk+gA
+         uf/wVXZUvSswUWcdK1FOz+uDdwI902ZdYt+NWjXdHguyuNR4FPgvgRgy8T6/B2YqoKil
+         YtVXcNQabSsL5Qjvflg8PDOLA5upkH2cecynLgDviK+VdmA3X3kI2ThsMTNqPfCBwoxG
+         ilMB49X+NKJjHi6qEmEVJ7DnOWPSdBfIRXAmprN85eS4cfWaP763j2QXAQMefabx+eOT
+         veGO37EO4dTtm+mPPJbZ/o8jRVI6fN2kpA0oaJiWZeT/ZbSbaLvK0fjCfv+UeHhcBIue
+         CuCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686093715; x=1688685715;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uaw8+zjh0NK6MTFy6PtThiP3fMKWcFKEOZLWg7Hnxbo=;
-        b=hT+vP/kEFVWW6Hf8mKQzQx3NyiERMljdtBhmgn8ZdUji1FC8kcjzokIfCjAVgkcpBw
-         Mp9hX+YT+2axZ84vya70ZJ97q9VUdaFnZ9O6B1OY4Vc9cEEVsRHUvqWzkSCDPiubXrvK
-         rdXjgUai2RZsSbs2d+xUHeueLwiEIP1YlCQcVFXhVcFhwum6SVDFes/7VJPtfVBP8nqn
-         nmLnAQeyx7WdP91hEsJYJITkJYG+nbG1qWTlrZ+LP5zMvHQJYrirWMY9vVR3czYrVaIH
-         ejha33M7E/W8gf48C0BFJJpV9FK709aVio75ZiRaFol892tJdsFt4Ci1nE2Zc/ss6p7p
-         OQJw==
-X-Gm-Message-State: AC+VfDzOz4urQXo9ratWkWTSuogbtAL7h1UKT5+b2gZUCHO3ZAZQPE4D
-        ibOhPIF9bJ4s/OFuZEgwsOJnOtBxZRmAeyWy9n6RD9rCv+nH
-X-Google-Smtp-Source: ACHHUZ5wRd9iaUWBeihpwV1Zeu5IxbL8gN+M2f1cUzcipDPEUYYJQpDKIOkGcP2k6Q+vhdGigwER8eTNCw+0SYymmVyhWO3mEhJX
+        d=1e100.net; s=20221208; t=1686093974; x=1688685974;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D2FxAGdDZl5bgEmc1sdGZWqw52ArESB47KTKiPcLPLY=;
+        b=aMEh4jJbYucv6SQVnI0fuRbhEiv8XYnPE42JLR4jvew/f+lNViBFxe3zsVElrBYWgF
+         ZDFNfZ0poiCwh6OZSLtHqoJVO2YyqOchbusERP77NMC8XxwnZKEACN7CiUMwdhUhZgj+
+         7EzDvF34Kv7lXTVANw7+C5CeJM1IVFQH17tow0PwfeeebPLibzbn/LS7S5IqpkthNJ7i
+         2Pq9Wb0423vtLzGUz/G7ehRL2IYgOQTNauuzZo0mkREmBqjVlkQihCp/T+C4X46zrvj5
+         oyX+lM4WOw4/mZ5gjkKM0H5hRX0r3/q/5x5IZ4UdyZNelJeVL99UOOLrL3f5zh6U757I
+         tvWA==
+X-Gm-Message-State: AC+VfDw1KobuZlttCDS39yGoORN/1wH7X/6CmKDAR85Yd7Po+hZkjI0m
+        UfUVjpysnE3MvJflhdj/ATO6AuZeVAVLKEN5jk4=
+X-Google-Smtp-Source: ACHHUZ6SfjaRP3YtOFCNS4yCdkaqCJ8teFuVo8Ikffok1F9vmEH88dw9R12b5x5lWvL8FyzMuYNeHdepsTrMY/MYU40=
+X-Received: by 2002:a2e:7e03:0:b0:2af:1622:a69 with SMTP id
+ z3-20020a2e7e03000000b002af16220a69mr1857907ljc.48.1686093974222; Tue, 06 Jun
+ 2023 16:26:14 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a92:cec6:0:b0:33c:9631:3ea6 with SMTP id
- z6-20020a92cec6000000b0033c96313ea6mr1766215ilq.4.1686093714897; Tue, 06 Jun
- 2023 16:21:54 -0700 (PDT)
-Date:   Tue, 06 Jun 2023 16:21:54 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ef407105fd7e485e@google.com>
-Subject: [syzbot] Monthly f2fs report (Jun 2023)
-From:   syzbot <syzbot+listf5045cc3857cd5f3f4c2@syzkaller.appspotmail.com>
-To:     chao@kernel.org, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+References: <20230606223346.3241328-1-willy@infradead.org> <20230606223346.3241328-8-willy@infradead.org>
+In-Reply-To: <20230606223346.3241328-8-willy@infradead.org>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Wed, 7 Jun 2023 01:26:03 +0200
+Message-ID: <CAHpGcMJgZ3ik4NBW5fY-3nZcQRF+GCfJ=S9+mtndokOi8Lc1fA@mail.gmail.com>
+Subject: Re: [PATCH v2 07/14] buffer: Convert block_page_mkwrite() to use a folio
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
+        Hannes Reinecke <hare@suse.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello f2fs maintainers/developers,
+Am Mi., 7. Juni 2023 um 00:48 Uhr schrieb Matthew Wilcox (Oracle)
+<willy@infradead.org>:
+> If any page in a folio is dirtied, dirty the entire folio.  Removes a
+> number of hidden calls to compound_head() and references to page->mapping
+> and page->index.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/buffer.c | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index d8c2c000676b..f34ed29b1085 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2564,38 +2564,37 @@ EXPORT_SYMBOL(block_commit_write);
+>  int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+>                          get_block_t get_block)
+>  {
+> -       struct page *page = vmf->page;
+> +       struct folio *folio = page_folio(vmf->page);
+>         struct inode *inode = file_inode(vma->vm_file);
+>         unsigned long end;
+>         loff_t size;
+>         int ret;
+>
+> -       lock_page(page);
+> +       folio_lock(folio);
+>         size = i_size_read(inode);
+> -       if ((page->mapping != inode->i_mapping) ||
+> -           (page_offset(page) > size)) {
+> +       if ((folio->mapping != inode->i_mapping) ||
+> +           (folio_pos(folio) > size)) {
 
-This is a 31-day syzbot report for the f2fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/f2fs
+This should probably also be 'folio_pos(folio) >= size', but this was
+wrong before this patch already.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 16 issues are still open and 28 have been fixed so far.
+>                 /* We overload EFAULT to mean page got truncated */
+>                 ret = -EFAULT;
+>                 goto out_unlock;
+>         }
+>
+> -       /* page is wholly or partially inside EOF */
+> -       if (((page->index + 1) << PAGE_SHIFT) > size)
+> -               end = size & ~PAGE_MASK;
+> -       else
+> -               end = PAGE_SIZE;
+> +       end = folio_size(folio);
+> +       /* folio is wholly or partially inside EOF */
+> +       if (folio_pos(folio) + end > size)
+> +               end = size - folio_pos(folio);
+>
+> -       ret = __block_write_begin(page, 0, end, get_block);
+> +       ret = __block_write_begin_int(folio, 0, end, get_block, NULL);
+>         if (!ret)
+> -               ret = block_commit_write(page, 0, end);
+> +               ret = block_commit_write(&folio->page, 0, end);
+>
+>         if (unlikely(ret < 0))
+>                 goto out_unlock;
+> -       set_page_dirty(page);
+> -       wait_for_stable_page(page);
+> +       folio_set_dirty(folio);
+> +       folio_wait_stable(folio);
+>         return 0;
+>  out_unlock:
+> -       unlock_page(page);
+> +       folio_unlock(folio);
+>         return ret;
+>  }
+>  EXPORT_SYMBOL(block_page_mkwrite);
+> --
+> 2.39.2
+>
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 187     Yes   INFO: task hung in f2fs_balance_fs
-                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
-<2> 63      Yes   kernel BUG in f2fs_evict_inode
-                  https://syzkaller.appspot.com/bug?extid=e1246909d526a9d470fa
-<3> 4       Yes   WARNING: lock held when returning to user space in f2fs_write_single_data_page
-                  https://syzkaller.appspot.com/bug?extid=eb6201248f684e99b9f8
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Thanks,
+Andreas
