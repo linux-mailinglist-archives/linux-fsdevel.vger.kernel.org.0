@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D2A00723A36
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 09:46:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9320723A2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 09:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237358AbjFFHqM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 03:46:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51212 "EHLO
+        id S237340AbjFFHqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 03:46:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236530AbjFFHo0 (ORCPT
+        with ESMTP id S234348AbjFFHo1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 03:44:26 -0400
+        Tue, 6 Jun 2023 03:44:27 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E18591703;
-        Tue,  6 Jun 2023 00:41:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD0821BD4;
+        Tue,  6 Jun 2023 00:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=RkaoGw7hxnY7p2Aj4jgl8vVIBxmKSkWEmvUol6CzrBM=; b=NLn6+h1KQ1XPhC8jPNSjuxiI/H
-        d3m1qq+F+uiL75Nt82jjj6hyuacgFBd3QNUYV0sHDor2YZKT1Nxmg04qDVQhMYoevX0tImBwex4VG
-        G+9KvCdLT6m6XXN86IZINhovZ63m0Zc8rws01Ky24GKB/HiugyBnBWZH+oaHS8Q0Idl5inxJoIfSU
-        qi4TPJkaEIQeX6IPAScaGNPHjAr8/VFwUTGdvbJhjlV0CVdqGYYW6JpYO4BQJhreDe+7iuna18m0o
-        /zWoaJMNLycrCXvHvH4YL57SJwMV3vBqiYawbb8oLQ1PPYa/zpRelkQw/bx0xJpawaod/0ZWKLQo4
-        IzSMFktA==;
+        bh=rEj4t4RByNCnEGoVckpjuOqOSqkYA0bI6jBzshMrCBQ=; b=reUq0A7aIRxNvxcQU4tLunP86X
+        H5T3lbnnI0syQYXk4WpwsHbWarRNnbB1Ejinyj0U5j9N6Xc8lDSnGhfVpE0VAyaaNlpshg0cq2AWk
+        H/AiZzOK3MfQZxXIcVz/mFljOI2rr+/oczCVgaSLG8cxdxFFF31FwXIaNfWsS8GjGPwhOhpfR45mL
+        aH1JaNHGBZCbLBZUKvsgUSymRmvl7oDjrh2VVV4WuzeiifXsrTbcjvhBKpBd1lII26GclF49T17yH
+        ETLpJbaNQjbQM5JdMQyVIK0noqFAz2nPbGyIvVaQrFCioTYq14mNIzHq+cGYs24y5oVWcQYhcIXrt
+        trSDszIg==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q6RJr-000aA8-0F;
-        Tue, 06 Jun 2023 07:41:33 +0000
+        id 1q6RJx-000aH6-0p;
+        Tue, 06 Jun 2023 07:41:37 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Richard Weinberger <richard@nod.at>,
@@ -52,9 +52,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH 30/31] block: store the holder in file->private_data
-Date:   Tue,  6 Jun 2023 09:39:49 +0200
-Message-Id: <20230606073950.225178-31-hch@lst.de>
+Subject: [PATCH 31/31] fs: remove the now unused FMODE_* flags
+Date:   Tue,  6 Jun 2023 09:39:50 +0200
+Message-Id: <20230606073950.225178-32-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230606073950.225178-1-hch@lst.de>
 References: <20230606073950.225178-1-hch@lst.de>
@@ -71,57 +71,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Store the file struct used as the holder in file->private_data as an
-indicator that this file descriptor was opened exclusively to  remove
-the last use of FMODE_EXCL.
+FMODE_NDELAY, FMODE_EXCL and FMODE_WRITE_IOCTL were only used for
+block internal purposed and are now entirely unused, so remove them.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/fops.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ include/linux/fs.h | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index c40b9f978e3bc7..915e0ef7560993 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -478,7 +478,7 @@ blk_mode_t file_to_blk_mode(struct file *file)
- 		mode |= BLK_OPEN_READ;
- 	if (file->f_mode & FMODE_WRITE)
- 		mode |= BLK_OPEN_WRITE;
--	if (file->f_mode & FMODE_EXCL)
-+	if (file->private_data)
- 		mode |= BLK_OPEN_EXCL;
- 	if ((file->f_flags & O_ACCMODE) == 3)
- 		mode |= BLK_OPEN_WRITE_IOCTL;
-@@ -501,12 +501,15 @@ static int blkdev_open(struct inode *inode, struct file *filp)
- 	filp->f_flags |= O_LARGEFILE;
- 	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
- 
-+	/*
-+	 * Use the file private data to store the holder, file_to_blk_mode
-+	 * relies on this.
-+	 */
- 	if (filp->f_flags & O_EXCL)
--		filp->f_mode |= FMODE_EXCL;
-+		filp->private_data = filp;
- 
- 	bdev = blkdev_get_by_dev(inode->i_rdev, file_to_blk_mode(filp),
--				 (filp->f_mode & FMODE_EXCL) ? filp : NULL,
--				 NULL);
-+				 filp->private_data, NULL);
- 	if (IS_ERR(bdev))
- 		return PTR_ERR(bdev);
- 
-@@ -517,8 +520,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
- 
- static int blkdev_release(struct inode *inode, struct file *filp)
- {
--	blkdev_put(I_BDEV(filp->f_mapping->host),
--		   (filp->f_mode & FMODE_EXCL) ? filp : NULL);
-+	blkdev_put(I_BDEV(filp->f_mapping->host), filp->private_data);
- 	return 0;
- }
- 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ad1d2c9afb3fa4..8045c7ef4000c2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -119,13 +119,6 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define FMODE_PWRITE		((__force fmode_t)0x10)
+ /* File is opened for execution with sys_execve / sys_uselib */
+ #define FMODE_EXEC		((__force fmode_t)0x20)
+-/* File is opened with O_NDELAY (only set for block devices) */
+-#define FMODE_NDELAY		((__force fmode_t)0x40)
+-/* File is opened with O_EXCL (only set for block devices) */
+-#define FMODE_EXCL		((__force fmode_t)0x80)
+-/* File is opened using open(.., 3, ..) and is writeable only for ioctls
+-   (specialy hack for floppy.c) */
+-#define FMODE_WRITE_IOCTL	((__force fmode_t)0x100)
+ /* 32bit hashes as llseek() offset (for directories) */
+ #define FMODE_32BITHASH         ((__force fmode_t)0x200)
+ /* 64bit hashes as llseek() offset (for directories) */
 -- 
 2.39.2
 
