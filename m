@@ -2,93 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CEED724E3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 22:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF711724E72
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 23:06:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239532AbjFFUj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 16:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54742 "EHLO
+        id S239592AbjFFVGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 17:06:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234146AbjFFUjX (ORCPT
+        with ESMTP id S230504AbjFFVGN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 16:39:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6383CE7E;
-        Tue,  6 Jun 2023 13:39:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EB1806304B;
-        Tue,  6 Jun 2023 20:39:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DBC7C433D2;
-        Tue,  6 Jun 2023 20:39:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686083961;
-        bh=4LWysxv5nCwtynK3qS1kWwwU6nmxSsvm8Ql6bGca8eQ=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=byxcVfbsphXB0kwZukntfYzhk2vydJFqH3Y59ERQtq4PmhFYbmavWBWl3XDznKbDR
-         /+f8z6oNc4z/TFsMu3CLcjwLvIIgRw6ympyvfFvxy4QdrutpubaQwq7HqkzXIMTBcG
-         w+tF3oydEGRuSJ3EbOnV1Lp+huyj0zY4vy/Ei6vNQ86e2uSEd+bJifojrXRLQfs7xl
-         4dI1JZkSKJ+GeQt4dla0K+1Kdpe3hbhU5fNgJqFPgHnuEtpm519bhXEki79sJq8Nui
-         Az1+bxiI5i1cq/Jhc2iB7wC+JGlUxQfJbFBRuTsrT4MkkAUW+2HIjdbXdbZfNTQiuY
-         6+HiwpnOTo84w==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        Tue, 6 Jun 2023 17:06:13 -0400
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 347C71707;
+        Tue,  6 Jun 2023 14:06:08 -0700 (PDT)
+Received: from mail-nwsmtp-smtp-production-main-18.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-18.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:5f1d:0:640:49bf:0])
+        by forward501a.mail.yandex.net (Yandex) with ESMTP id 9705F5EB94;
+        Wed,  7 Jun 2023 00:06:05 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-18.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 36bUBP1DdeA0-FdoUgi57;
+        Wed, 07 Jun 2023 00:06:04 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ya.ru; s=mail; t=1686085564;
+        bh=g+p57RqFmxJ4tzpz/26eK8nSIEQ3A6k2DYL8R5TP9Jo=;
+        h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+        b=hs+DfPcJaUkA0cTRNlzqm0BdIgJqOxd5hZo8lrJTuB3j7JLEo5ZEWDeX0KuY1wIqy
+         Sc8GkCdA/Cg5Dlv0wqDIaqhj8MqZ0x7pMCh2fVG1DW6TZRRMw6d5kfkBd1mXF4o3MZ
+         WUC27bTIOC+uFu4eZrMlOK2rQ4uxMbS+lhjz8Y7g=
+Authentication-Results: mail-nwsmtp-smtp-production-main-18.vla.yp-c.yandex.net; dkim=pass header.i=@ya.ru
+Message-ID: <ef1b0ecd-5a03-4256-2a7a-3e22b755aa53@ya.ru>
+Date:   Wed, 7 Jun 2023 00:06:03 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 0/3] mm: Make unregistration of super_block shrinker
+ more faster
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     akpm@linux-foundation.org, roman.gushchin@linux.dev,
+        vbabka@suse.cz, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        djwong@kernel.org, hughd@google.com, paulmck@kernel.org,
+        muchun.song@linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhengqi.arch@bytedance.com
+References: <168599103578.70911.9402374667983518835.stgit@pro.pro>
+ <ZH5ig590WleaH1Ed@dread.disaster.area>
+Content-Language: en-US
+From:   Kirill Tkhai <tkhai@ya.ru>
+In-Reply-To: <ZH5ig590WleaH1Ed@dread.disaster.area>
 Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 06 Jun 2023 23:39:15 +0300
-Message-Id: <CT5UVNZYSAPZ.1PJWWUUOCHODW@suppilovahvero>
-Cc:     <ebiederm@xmission.com>, <patches@lists.linux.dev>,
-        <linux-fsdevel@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] sysctl: move security keys sysctl registration to
- its own file
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Luis Chamberlain" <mcgrof@kernel.org>, <keescook@chromium.org>,
-        <yzaikin@google.com>, <dhowells@redhat.com>, <paul@paul-moore.com>,
-        <jmorris@namei.org>, <serge@hallyn.com>, <j.granados@samsung.com>,
-        <brauner@kernel.org>
-X-Mailer: aerc 0.14.0
-References: <20230530232914.3689712-1-mcgrof@kernel.org>
- <20230530232914.3689712-3-mcgrof@kernel.org>
-In-Reply-To: <20230530232914.3689712-3-mcgrof@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed May 31, 2023 at 2:29 AM EEST, Luis Chamberlain wrote:
-> The security keys sysctls are already declared on its own file,
-> just move the sysctl registration to its own file to help avoid
-> merge conflicts on sysctls.c, and help with clearing up sysctl.c
-> further.
->
-> This creates a small penalty of 23 bytes:
->
-> ./scripts/bloat-o-meter vmlinux.1 vmlinux.2
-> add/remove: 2/0 grow/shrink: 0/1 up/down: 49/-26 (23)
-> Function                                     old     new   delta
-> init_security_keys_sysctls                     -      33     +33
-> __pfx_init_security_keys_sysctls               -      16     +16
-> sysctl_init_bases                             85      59     -26
-> Total: Before=3D21256937, After=3D21256960, chg +0.00%
->
-> But soon we'll be saving tons of bytes anyway, as we modify the
-> sysctl registrations to use ARRAY_SIZE and so we get rid of all the
-> empty array elements so let's just clean this up now.
->
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  include/linux/key.h    | 3 ---
->  kernel/sysctl.c        | 4 ----
->  security/keys/sysctl.c | 7 +++++++
->  3 files changed, 7 insertions(+), 7 deletions(-)
+On 06.06.2023 01:32, Dave Chinner wrote:
+> On Mon, Jun 05, 2023 at 10:02:46PM +0300, Kirill Tkhai wrote:
+>> This patch set introduces a new scheme of shrinker unregistration. It allows to split
+>> the unregistration in two parts: fast and slow. This allows to hide slow part from
+>> a user, so user-visible unregistration becomes fast.
+>>
+>> This fixes the -88.8% regression of stress-ng.ramfs.ops_per_sec noticed
+>> by kernel test robot:
+>>
+>> https://lore.kernel.org/lkml/202305230837.db2c233f-yujie.liu@intel.com/
+>>
+>> ---
+>>
+>> Kirill Tkhai (2):
+>>       mm: Split unregister_shrinker() in fast and slow part
+>>       fs: Use delayed shrinker unregistration
+> 
+> Did you test any filesystem other than ramfs?
+> 
+> Filesystems more complex than ramfs have internal shrinkers, and so
+> they will still be running the slow synchronize_srcu() - potentially
+> multiple times! - in every unmount. Both XFS and ext4 have 3
+> internal shrinker instances per mount, so they will still call
+> synchronize_srcu() at least 3 times per unmount after this change.
+> 
+> What about any other subsystem that runs a shrinker - do they have
+> context depedent shrinker instances that get frequently created and
+> destroyed? They'll need the same treatment.
 
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Of course, all of shrinkers should be fixed. This patch set just aims to describe
+the idea more wider, because I'm not sure most people read replys to kernel robot reports.
 
-BR, Jarkko
+This is my suggestion of way to go. Probably, Qi is right person to ask whether
+we're going to extend this and to maintain f95bdb700bc6 in tree.
+
+There is not much time. Unfortunately, kernel test robot reported this significantly late.
+
+> Seriously, part of changing shrinker infrastructure is doing an
+> audit of all the shrinker instances to determine how the change will
+> impact those shrinkers, and if the same structural changes are
+> needed to those implementations.
+> 
+> I don't see any of this being done - this looks like a "slap a bandaid
+> over the visible symptom" patch set without any deeper investigation
+> of the scope of the issue having been gained.
+> 
+> Along with all shrinkers now running under a SRCU critical region
+> and requiring a machine wide synchronisation point for every
+> unregister_shrinker() call made, the ability to repeated abort
+> global shrinker passes via external SRCU expediting, and now an
+> intricate locking and state dance in do_shrink_slab() vs
+> unregister_shrinker, I can't say I'm particularly liking any of
+> this, regardles of the benefits it supposedly provides.
+> 
+> -Dave.
+
