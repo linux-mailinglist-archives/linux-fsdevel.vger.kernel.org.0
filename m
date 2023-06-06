@@ -2,103 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4635723F4B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 12:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 700EB72406D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 13:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236014AbjFFKXM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 06:23:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46466 "EHLO
+        id S229758AbjFFLEZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 07:04:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236236AbjFFKWx (ORCPT
+        with ESMTP id S236845AbjFFLDO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 06:22:53 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A49510CC
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 03:22:52 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9768fd99c0cso753219866b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 03:22:52 -0700 (PDT)
+        Tue, 6 Jun 2023 07:03:14 -0400
+Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EEDFBE
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 04:00:37 -0700 (PDT)
+Received: by mail-vk1-xa2c.google.com with SMTP id 71dfb90a1353d-4611eec56bdso1658816e0c.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 04:00:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1686046970; x=1688638970;
-        h=cc:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x3UkVcH45LJKdwWEhnZc1GF+uVpa9YNPFKCaEecYHlk=;
-        b=IVodTB6IywPa+UfWhUmqMJM9kyF/JPX4UdaOD3tuFUuLDDR4oW18Jfl1ZQH0902SdB
-         Xt5sJLXrB2po6kDvd+Jc5FC8j8F9cLqBaoPdVIGu366rG0iwkt+j8hkkzyRCoMfFpy1D
-         tZQmqCtruInuOCo3cxDE2tto1P2MD1QXZJZVU=
+        d=gmail.com; s=20221208; t=1686049236; x=1688641236;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NpgLb5wo0WB5C20UPW1gkeeos/SxD5rvpI//kQwf1u0=;
+        b=ZqZl2itVkFewn3cfK90e7e3uNcKDasy0gL5MixMnr7ZXLZtJLQS+/nS1+oRZta/adW
+         KX16lcPt9TPYh9aRCf+DCa3GfYZmnesh8NZKsxsrvIqDXLVWCngEO0rE+a/MfJ2Os9J2
+         ZAz1KYgP01oAprnJpDgT4TTEyb3AtJWR5jPvDFiGPvfRJDGR1GFMD5GIdJ2x573zrKbv
+         pJheXXqtjcyMG2cZHykL7z8Hvbgt4M2RifQe0TePQ7wPs+9wpjTxxfqEzfBKvx+l3Y5h
+         ZRyDYgvUTFWMeIxw8cCGy1STB5tGRnlCSXDrcIknnyMauBPTWi8lj4FgaRFwR9cvOFyT
+         By4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686046970; x=1688638970;
-        h=cc:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x3UkVcH45LJKdwWEhnZc1GF+uVpa9YNPFKCaEecYHlk=;
-        b=XajfM3jHBmN0QVHfeg9gi5sCQ5f+an/Hm89lmH4o/gUbEq8eCEerIiMfWgdYSdkWww
-         nNObAhoixZZJp6J10iQSeck3Khri6tOjcCPMk+YLJDcC96xlAO2+8jzD178IklnjJA8y
-         qjNt23z52a03hngiAUz6Oy2Y/pMTBgkuTQY5Gbf9GL4Nt1SCdYUtavQl9OuIxUaaIrkz
-         TOe7JFjojqksH9hAPkkOPPahXlYPC9nhHwMBHumL3i1cNSWTzelm7Abhm21midYO7nER
-         qRmnH1G1WoWmr5jz89V4wxd54B/IbIV0jhRndkd+UIIZ8HIg5hemdvJMi/UMMAv8klIz
-         pcFg==
-X-Gm-Message-State: AC+VfDzmlTMIov42HTnSBl0hg83Mxph6fx+JFi7ncNN35Ktj8YV/L5jw
-        Xs8X3vIhU0EOikZnF5yGdjr9yK5fIDn4VYykVtODfw==
-X-Received: by 2002:a17:907:8a05:b0:974:623c:f129 with SMTP id
- sc5-20020a1709078a0500b00974623cf129mt8545295ejc.15.1686046970609; Tue, 06
- Jun 2023 03:22:50 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686049236; x=1688641236;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NpgLb5wo0WB5C20UPW1gkeeos/SxD5rvpI//kQwf1u0=;
+        b=XKO+AhU4q8vC7WUY8+OI4xXaTHIrPh88hL8R3EfzFHSXHuYtqgNQZ6m02U8jSGPf6F
+         2ySR/KUwiijdUE2UVZIOyiOGT4GyetZ6ODvJZL+ZF5fd1QQzRt3/pWMI4q1H+e81ul4A
+         zyMs0tIOokk6psyJdDWVAHshawhTEsVkKLcfb031H414ihvzLwhTNSJIiC5ILE4vyhXX
+         Encc+YLGRZOJW+YYQ9YRscQIlL6o0kgEYsVpIt61+2kB/MpQ5FwEkdmiPMFnvRYCtmbK
+         3U9P8VgmOhNUkfKM4lRiU5XryisLll6V7wgQk9bCQtAUks0GYrjdyjvPXAZYB//zFGfO
+         WKpw==
+X-Gm-Message-State: AC+VfDzzh+59zeF69a/+qT6T0JaJtNPdt3UkYKR0ZUOU7pJ/ivlTtVZZ
+        tYflyZI0vhon9l+XEKqc8zrAvymlEkFXl7gcZzg=
+X-Google-Smtp-Source: ACHHUZ6G1TeADdY1FFkG5BXkfLzsEHaZI64CDOtSSEi6L1850yaPHjquhxzprXKmI/qoSr8MkDn3w+6rCFycCiMp21k=
+X-Received: by 2002:a67:fe98:0:b0:43b:1f8a:d581 with SMTP id
+ b24-20020a67fe98000000b0043b1f8ad581mr977622vsr.31.1686049236661; Tue, 06 Jun
+ 2023 04:00:36 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230519125705.598234-1-amir73il@gmail.com> <20230519125705.598234-11-amir73il@gmail.com>
-In-Reply-To: <20230519125705.598234-11-amir73il@gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 6 Jun 2023 12:22:39 +0200
-Message-ID: <CAJfpegv3sBfw2OKWaxDe+zEEbq5Q6vBDixLd6OYzeguZgGZ_fA@mail.gmail.com>
-Subject: Fwd: [PATCH v13 10/10] fuse: setup a passthrough fd without a
- permanent backing id
-Cc:     Daniel Rosenberg <drosen@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Alessio Balsini <balsini@android.com>,
-        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+ <CAJfpegv3sBfw2OKWaxDe+zEEbq5Q6vBDixLd6OYzeguZgGZ_fA@mail.gmail.com>
+In-Reply-To: <CAJfpegv3sBfw2OKWaxDe+zEEbq5Q6vBDixLd6OYzeguZgGZ_fA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 6 Jun 2023 14:00:25 +0300
+Message-ID: <CAOQ4uxhLFRHAfXs5ZZLf5yakYMVD9edMMofSzwC12MXGvMsnXg@mail.gmail.com>
+Subject: Re: [fuse-devel] Fwd: [PATCH v13 10/10] fuse: setup a passthrough fd
+ without a permanent backing id
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+        Daniel Rosenberg <drosen@google.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MISSING_HEADERS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 19 May 2023 at 14:57, Amir Goldstein <amir73il@gmail.com> wrote:
+On Tue, Jun 6, 2023 at 1:23=E2=80=AFPM Miklos Szeredi via fuse-devel
+<fuse-devel@lists.sourceforge.net> wrote:
 >
-> WIP
+> On Fri, 19 May 2023 at 14:57, Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > WIP
+> >
+> > Add an ioctl to associate a FUSE server open fd with a request.
+> > A later response to this request get use the FOPEN_PASSTHROUGH flag
+> > to request passthrough to the associated backing file.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >
+> > Miklos,
+> >
+> > After implementing refcounted backing files, I started to think how
+> > to limit the server from mapping too many files.
+> >
+> > I wanted to limit the backing files mappings to the number of open fuse
+> > files to simplify backing files accounting (i.e. open files are
+> > effectively accounted to clients).
+> >
+> > It occured to me that creatig a 1-to-1 mapping between fuse files and
+> > backing file ids is quite futile if there is no need to manage 1-to-man=
+y
+> > backing file mappings.
+> >
+> > If only 1-to-1 mapping is desired, the proposed ioctl associates a
+> > backing file with a pending request.  The backing file will be kept
+> > open for as long the request lives, or until its refcount is handed
+> > over to the client, which can then use it to setup passthough to the
+> > backing file without the intermediate idr array.
 >
-> Add an ioctl to associate a FUSE server open fd with a request.
-> A later response to this request get use the FOPEN_PASSTHROUGH flag
-> to request passthrough to the associated backing file.
+> I think I understand what the patch does, but what I don't understand
+> is how this is going to solve the resource accounting problem.
 >
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
+> Can you elaborate?
 >
-> Miklos,
->
-> After implementing refcounted backing files, I started to think how
-> to limit the server from mapping too many files.
->
-> I wanted to limit the backing files mappings to the number of open fuse
-> files to simplify backing files accounting (i.e. open files are
-> effectively accounted to clients).
->
-> It occured to me that creatig a 1-to-1 mapping between fuse files and
-> backing file ids is quite futile if there is no need to manage 1-to-many
-> backing file mappings.
->
-> If only 1-to-1 mapping is desired, the proposed ioctl associates a
-> backing file with a pending request.  The backing file will be kept
-> open for as long the request lives, or until its refcount is handed
-> over to the client, which can then use it to setup passthough to the
-> backing file without the intermediate idr array.
 
-I think I understand what the patch does, but what I don't understand
-is how this is going to solve the resource accounting problem.
+It does not solve the resource accounting in the traditional way
+of limiting the number of open files to the resource limit of the
+server process.
 
-Can you elaborate?
+Instead, it has the similar effect of overlayfs pseudo files
+non accounting.
+
+A FUSE passthrough filesystem can contribute the same number
+of non accounted open fds as the number of FUSE fds accounted
+to different processes.
+
+A non privileged user can indirectly cause unaccounted open fds
+with a FUSE passthough fs in the exact same way that the same
+user can cause unaccounted open fds with an overlayfs mount
+if it can convince other users to open files on the FUSE/ovl that it
+has mounted.
+
+Am I making sense?
+
+One possible improvement to this API is to include the nodeid
+in FUSE_DEV_IOC_PASSTHROUGH_SETUP to make the
+mapping per-inode.
+
+If the mapping was already created during another open of
+the same inode, the setup would fail with a special error
+(EEXIST) so the caller would close the new backing fd, but
+the request already takes a reference to the backing fd of
+the inode, so FOPEN_PASSTHROUGH may proceed.
+
+On the last close, the backing fd refcount drops to zero and
+then is detached from the inode.
+
+A server that wants to manage the mapping lifetime can still
+use FUSE_DEV_IOC_PASSTHROUGH_OPEN/CLOSE to
+do so (with nodeid) argument.
 
 Thanks,
-Miklos
+Amir.
