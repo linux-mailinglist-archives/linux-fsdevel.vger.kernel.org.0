@@ -2,48 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D912724231
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 14:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E153C72424E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 14:37:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232912AbjFFMct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 08:32:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34494 "EHLO
+        id S237459AbjFFMhx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 08:37:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232229AbjFFMcs (ORCPT
+        with ESMTP id S232229AbjFFMhw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 08:32:48 -0400
+        Tue, 6 Jun 2023 08:37:52 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62E34E62
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 05:32:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144ECE5D;
+        Tue,  6 Jun 2023 05:37:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=C7m4d9Qn99Rb7YO8T2udnXvOV6EByBtoiD76wfpbXFw=; b=RWzIu63wtcZwg5DWtIjKGKiNaY
-        4kxG1H7pZ/xMq07nC7n6B8AQhjr0wTQa+uEN0GjOQAaAic8TXHOBxjHisJSCjNfbkD2iPVo1NegMi
-        W43WDZe+pTkFPMeSKVLLsAMQebseUI0eyG/hfcRBqXB+CnxWJqLs00QCtASkeOQEfslgcQnp/yM++
-        NL11d4TO0GtM46eOWH4p+LscJMHsn4TK591Egt+CkbJ6bfLeER00MHmP8jSGnYcIlo+cXrcZnBmab
-        rnihlMN5tBto6p0ifXc+9trms8ItKlyO12423vO+JXjm14Ngslb2jOlqAyhGq7j8rtjaxyIoKQgU7
-        beJ4zT+w==;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ouy6gnlWNylx76NAF9LYqXxycIJBo6Aw1VmTuVi2jVg=; b=GGl4/YUrWzbs3Tiv2Zs5rHdFd2
+        c2ef9UfFQtGXGSzmkIi8xJijXKxBMnMdkT43PQ6zy94P6p8f44xP0Fx+8KkZpZ7b9eRpnQPMWV/OM
+        XQleRzcGYfBUb4HtaVU9JhFrg3W9pe9QEN9KP2bmARZEdHN4IK1juMh+Jw5FHMPQo/pTpKhu31Yhp
+        kY6eyNbB/XHF8kl13Oi5BAwAHJTfr7D6mKstxIYJHcnzItp+fny8MqLgLL1QQm+Bp8UVNHGIWYcUu
+        IEw8UNqjT5cf29ypiJDPFIdMebHC1W4kKvlvajMoP6q8WsHSqklsKIeOgaXiR2wEunb4eZeb4gf04
+        ufZq3oEQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q6Vrf-00D8au-BI; Tue, 06 Jun 2023 12:32:43 +0000
-Date:   Tue, 6 Jun 2023 13:32:43 +0100
+        id 1q6Vwa-00D8oT-8b; Tue, 06 Jun 2023 12:37:48 +0000
+Date:   Tue, 6 Jun 2023 13:37:48 +0100
 From:   Matthew Wilcox <willy@infradead.org>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] ubifs: Convert do_writepage() to take a folio
-Message-ID: <ZH8na21G0W8kmY5r@casper.infradead.org>
-References: <20230605165029.2908304-1-willy@infradead.org>
- <20230605165029.2908304-5-willy@infradead.org>
- <2059298337.3685966.1686001020185.JavaMail.zimbra@nod.at>
- <ZH6mixCMHce1S+vK@casper.infradead.org>
- <406990820.3686390.1686032035024.JavaMail.zimbra@nod.at>
+To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [PATCHv8 0/5] iomap: Add support for per-block dirty state to
+ improve write performance
+Message-ID: <ZH8onIAH8xcrWKE+@casper.infradead.org>
+References: <cover.1686050333.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <406990820.3686390.1686032035024.JavaMail.zimbra@nod.at>
+In-Reply-To: <cover.1686050333.git.ritesh.list@gmail.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
@@ -54,29 +56,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 08:13:55AM +0200, Richard Weinberger wrote:
-> Matthew,
+On Tue, Jun 06, 2023 at 05:13:47PM +0530, Ritesh Harjani (IBM) wrote:
+> Hello All,
 > 
-> ----- Ursprüngliche Mail -----
-> > Von: "Matthew Wilcox" <willy@infradead.org>
-> > len is folio_size(), which is not 0.
-> > 
-> >        len = offset_in_folio(folio, i_size);
-> 
-> offset_in_folio(folio, i_size) can give 0.
+> Please find PATCHv8 which adds per-block dirty tracking to iomap.
+> As discussed earlier this is required to improve write performance and reduce
+> write amplification for cases where either blocksize is less than pagesize (such
+> as Power platform with 64k pagesize) or when we have a large folio (such as xfs
+> which currently supports large folio).
 
-Oh!  There is a bug, because it shouldn't get here!
+You're moving too fast.  Please, allow at least a few hours between
+getting review comments and sending a new version.
 
-        /* Is the folio fully inside i_size? */
-        if (folio_pos(folio) + len < i_size) {
+> v7 -> v8
+> ==========
+> 1. Renamed iomap_page -> iomap_folio & iop -> iof in Patch-1 itself.
 
-should be:
+I don't think iomap_folio is the right name.  Indeed, I did not believe
+that iomap_page was the right name.  As I said on #xfs recently ...
 
-        /* Is the folio fully inside i_size? */
-        if (folio_pos(folio) + len <= i_size) {
-
-right?  Consider a file with i_size 4096.  its single-page folio will
-have a pos of 0 and a length of 4096.  so it should be written back by
-the first call to do_writepage(), not the case where the folio straddles
-i_size.
+<willy> i'm still not crazy about iomap_page as the name of that
+   data structure.  and calling the variable 'iop' just seems doomed
+   to be trouble.  how do people feel about either iomap_block_state or
+   folio_block_state ... or even just calling it block_state since it's
+   local to iomap/buffered-io.c
+<willy> we'd then call the variable either ibs or fbs, both of which
+   have some collisions in the kernel, but none in filesystems
+<dchinner> willy - sounds reasonable
 
