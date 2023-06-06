@@ -2,229 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08D3D724E7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 23:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2107724EB9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 23:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239626AbjFFVI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 17:08:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34200 "EHLO
+        id S238176AbjFFVVt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 17:21:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230504AbjFFVIY (ORCPT
+        with ESMTP id S232511AbjFFVVs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 17:08:24 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 635461726;
-        Tue,  6 Jun 2023 14:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686085702; x=1717621702;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TE+hsFEtgKTdemjU0rpyelI4HlRWI8H2qWCPy0IYQto=;
-  b=Lo2BoPp4DzQ0FPA7KvqSqWf2tYuIgndIVvncp/bueojDsE03Tp1bu442
-   GvsMgrq0/yUWB/h3lxFKM68pZVs/z+wBf8CNsjCtEsuFBrB4UIZopv9eR
-   t1to4/VAgA/NfyGlpHUfz3rWkE08fc5OY36zkMl7YKYBsPFA8swO09YEL
-   7XF63LPiI0Iz5maUB6BdGsbzBETMHgRTXrW4fVJuDLqdNHZp6ouOVP6zn
-   xEh5wZOA07WGcYIqRVfjiq7593xpOXfz+dI5GjdqC08576hhw9XcdKmD6
-   PQvV3VtrRTsbsGFVGkDvrL4z9z1gKuAdva0zzHYpCSx++6nkmUHD6rCML
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="422642039"
-X-IronPort-AV: E=Sophos;i="6.00,222,1681196400"; 
-   d="scan'208";a="422642039"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 14:08:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="833392520"
-X-IronPort-AV: E=Sophos;i="6.00,222,1681196400"; 
-   d="scan'208";a="833392520"
-Received: from lkp-server01.sh.intel.com (HELO 15ab08e44a81) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jun 2023 14:08:14 -0700
-Received: from kbuild by 15ab08e44a81 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q6duY-0005kp-09;
-        Tue, 06 Jun 2023 21:08:14 +0000
-Date:   Wed, 7 Jun 2023 05:08:11 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Greg KH <greg@kroah.com>
-Subject: Re: [PATCH v17 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Message-ID: <202306070414.XDn2ITuw-lkp@intel.com>
-References: <20230606060822.1065182-3-usama.anjum@collabora.com>
+        Tue, 6 Jun 2023 17:21:48 -0400
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E6410EC;
+        Tue,  6 Jun 2023 14:21:46 -0700 (PDT)
+Received: from mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net [IPv6:2a02:6b8:c18:3487:0:640:5432:0])
+        by forward500a.mail.yandex.net (Yandex) with ESMTP id 782E95E88D;
+        Wed,  7 Jun 2023 00:21:44 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id gLb9nX1DXW20-iN3RTibD;
+        Wed, 07 Jun 2023 00:21:43 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ya.ru; s=mail; t=1686086503;
+        bh=RMot/4BQsuRfbRLhJgaV6MPyHz0uyQeRv16SmPWU6H8=;
+        h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+        b=IPPmyYR+daX6HIFKKvQk6V4E1dR0yVfYKzRLugVmFGTmJ6tHUSuBnWefkrvFEilZN
+         Ik6Jh6P98aaPYwLo5Q2mSu5QD9N5OzRJpZxN31caVNkBytQtbyEwlte9duWxBSqqgU
+         XViYQ2v1kXWC35+Dlg2CF12F1Gea5BnZ81wiOhrY=
+Authentication-Results: mail-nwsmtp-smtp-production-main-49.vla.yp-c.yandex.net; dkim=pass header.i=@ya.ru
+Message-ID: <65785745-1fd3-e0d7-26e8-dd74b1074d37@ya.ru>
+Date:   Wed, 7 Jun 2023 00:21:42 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230606060822.1065182-3-usama.anjum@collabora.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 3/3] fs: Use delayed shrinker unregistration
+Content-Language: en-US
+To:     Dave Chinner <david@fromorbit.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, djwong@kernel.org, hughd@google.com,
+        paulmck@kernel.org, muchun.song@linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhengqi.arch@bytedance.com
+References: <168599103578.70911.9402374667983518835.stgit@pro.pro>
+ <168599180526.70911.14606767590861123431.stgit@pro.pro>
+ <ZH6AA72wOd4HKTKE@P9FQF9L96D> <ZH6K0McWBeCjaf16@dread.disaster.area>
+From:   Kirill Tkhai <tkhai@ya.ru>
+In-Reply-To: <ZH6K0McWBeCjaf16@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Muhammad,
+On 06.06.2023 04:24, Dave Chinner wrote:
+> On Mon, Jun 05, 2023 at 05:38:27PM -0700, Roman Gushchin wrote:
+>> On Mon, Jun 05, 2023 at 10:03:25PM +0300, Kirill Tkhai wrote:
+>>> Kernel test robot reports -88.8% regression in stress-ng.ramfs.ops_per_sec
+>>> test case caused by commit: f95bdb700bc6 ("mm: vmscan: make global slab
+>>> shrink lockless"). Qi Zheng investigated that the reason is in long SRCU's
+>>> synchronize_srcu() occuring in unregister_shrinker().
+>>>
+>>> This patch fixes the problem by using new unregistration interfaces,
+>>> which split unregister_shrinker() in two parts. First part actually only
+>>> notifies shrinker subsystem about the fact of unregistration and it prevents
+>>> future shrinker methods calls. The second part completes the unregistration
+>>> and it insures, that struct shrinker is not used during shrinker chain
+>>> iteration anymore, so shrinker memory may be freed. Since the long second
+>>> part is called from delayed work asynchronously, it hides synchronize_srcu()
+>>> delay from a user.
+>>>
+>>> Signed-off-by: Kirill Tkhai <tkhai@ya.ru>
+>>> ---
+>>>  fs/super.c |    3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/super.c b/fs/super.c
+>>> index 8d8d68799b34..f3e4f205ec79 100644
+>>> --- a/fs/super.c
+>>> +++ b/fs/super.c
+>>> @@ -159,6 +159,7 @@ static void destroy_super_work(struct work_struct *work)
+>>>  							destroy_work);
+>>>  	int i;
+>>>  
+>>> +	unregister_shrinker_delayed_finalize(&s->s_shrink);
+>>>  	for (i = 0; i < SB_FREEZE_LEVELS; i++)
+>>>  		percpu_free_rwsem(&s->s_writers.rw_sem[i]);
+>>>  	kfree(s);
+>>> @@ -327,7 +328,7 @@ void deactivate_locked_super(struct super_block *s)
+>>>  {
+>>>  	struct file_system_type *fs = s->s_type;
+>>>  	if (atomic_dec_and_test(&s->s_active)) {
+>>> -		unregister_shrinker(&s->s_shrink);
+>>> +		unregister_shrinker_delayed_initiate(&s->s_shrink);
+>>
+>> Hm, it makes the API more complex and easier to mess with. Like what will happen
+>> if the second part is never called? Or it's called without the first part being
+>> called first?
+> 
+> Bad things.
+> 
+> Also, it doesn't fix the three other unregister_shrinker() calls in
+> the XFS unmount path, nor the three in the ext4/mbcache/jbd2 unmount
+> path.
+> 
+> Those are just some of the unregister_shrinker() calls that have
+> dynamic contexts that would also need this same fix; I haven't
+> audited the 3 dozen other unregister_shrinker() calls around the
+> kernel to determine if any of them need similar treatment, too.
+> 
+> IOWs, this patchset is purely a band-aid to fix the reported
+> regression, not an actual fix for the underlying problems caused by
+> moving the shrinker infrastructure to SRCU protection.  This is why
+> I really want the SRCU changeover reverted.
+> 
+> Not only are the significant changes the API being necessary, it's
+> put the entire shrinker paths under a SRCU critical section. AIUI,
+> this means while the shrinkers are running the RCU grace period
+> cannot expire and no RCU freed memory will actually get freed until
+> the srcu read lock is dropped by the shrinker.
 
-kernel test robot noticed the following build errors:
+Why so? Doesn't SRCU and RCU have different grace period and they does not prolong
+each other?
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on next-20230606]
-[cannot apply to linus/master v6.4-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Also, it looks like every SRCU has it's own namespace like shrinker_srcu for shrinker.
+Don't different SRCU namespaces never prolong each other?!
+ 
+> Given the superblock shrinkers are freeing dentry and inode objects
+> by RCU freeing, this is also a fairly significant change of
+> behaviour. i.e.  cond_resched() in the shrinker processing loops no
+> longer allows RCU grace periods to expire and have memory freed with
+> the shrinkers are running.
+> 
+> Are there problems this will cause? I don't know, but I'm pretty
+> sure they haven't even been considered until now....
+> 
+>> Isn't it possible to hide it from a user and call the second part from a work
+>> context automatically?
+> 
+> Nope, because it has to be done before the struct shrinker is freed.
+> Those are embedded into other structures rather than being
+> dynamically allocated objects. Hence the synchronise_srcu() has to
+> complete before the structure the shrinker is embedded in is freed.
+> 
+> Now, this can be dealt with by having register_shrinker() return an
+> allocated struct shrinker and the callers only keep a pointer, but
+> that's an even bigger API change. But, IMO, it is an API change that
+> should have been done before SRCU was introduced precisely because
+> it allows decoupling of shrinker execution and completion from
+> the owning structure.
+> 
+> Then we can stop shrinker execution, wait for it to complete and
+> prevent future execution in unregister_shrinker(), then punt the
+> expensive shrinker list removal to background work where processing
+> delays just don't matter for dead shrinker instances. It doesn't
+> need SRCU at all...
+> 
+> -Dave.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/userfaultfd-UFFD_FEATURE_WP_ASYNC/20230606-141114
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20230606060822.1065182-3-usama.anjum%40collabora.com
-patch subject: [PATCH v17 2/5] fs/proc/task_mmu: Implement IOCTL to get and optionally clear info about PTEs
-config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20230607/202306070414.XDn2ITuw-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git remote add akpm-mm https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git
-        git fetch akpm-mm mm-everything
-        git checkout akpm-mm/mm-everything
-        b4 shazam https://lore.kernel.org/r/20230606060822.1065182-3-usama.anjum@collabora.com
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arc olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arc SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306070414.XDn2ITuw-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   fs/proc/task_mmu.c: In function 'pagemap_scan_pmd_entry':
->> fs/proc/task_mmu.c:1960:31: error: 'HPAGE_SIZE' undeclared (first use in this function); did you mean 'PAGE_SIZE'?
-    1960 |                     n_pages < HPAGE_SIZE/PAGE_SIZE) {
-         |                               ^~~~~~~~~~
-         |                               PAGE_SIZE
-   fs/proc/task_mmu.c:1960:31: note: each undeclared identifier is reported only once for each function it appears in
-
-
-vim +1960 fs/proc/task_mmu.c
-
-  1931	
-  1932	static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
-  1933					  unsigned long end, struct mm_walk *walk)
-  1934	{
-  1935		struct pagemap_scan_private *p = walk->private;
-  1936		struct vm_area_struct *vma = walk->vma;
-  1937		unsigned long addr = end;
-  1938		pte_t *pte, *orig_pte;
-  1939		spinlock_t *ptl;
-  1940		bool is_written;
-  1941		int ret = 0;
-  1942	
-  1943		arch_enter_lazy_mmu_mode();
-  1944	
-  1945	#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-  1946		ptl = pmd_trans_huge_lock(pmd, vma);
-  1947		if (ptl) {
-  1948			unsigned long n_pages = (end - start)/PAGE_SIZE;
-  1949	
-  1950			if (p->max_pages && n_pages > p->max_pages - p->found_pages)
-  1951				n_pages = p->max_pages - p->found_pages;
-  1952	
-  1953			is_written = !is_pmd_uffd_wp(*pmd);
-  1954	
-  1955			/*
-  1956			 * Break huge page into small pages if the WP operation need to
-  1957			 * be performed is on a portion of the huge page.
-  1958			 */
-  1959			if (is_written && IS_PM_SCAN_WP(p->flags) &&
-> 1960			    n_pages < HPAGE_SIZE/PAGE_SIZE) {
-  1961				spin_unlock(ptl);
-  1962	
-  1963				split_huge_pmd(vma, pmd, start);
-  1964				goto process_smaller_pages;
-  1965			}
-  1966	
-  1967			if (IS_PM_SCAN_GET(p->flags))
-  1968				ret = pagemap_scan_output(is_written, vma->vm_file,
-  1969							  pmd_present(*pmd),
-  1970							  is_swap_pmd(*pmd),
-  1971							  p, start, n_pages);
-  1972	
-  1973			if (ret >= 0 && is_written && IS_PM_SCAN_WP(p->flags))
-  1974				make_uffd_wp_pmd(vma, addr, pmd);
-  1975	
-  1976			if (IS_PM_SCAN_WP(p->flags))
-  1977				flush_tlb_range(vma, start, end);
-  1978	
-  1979			spin_unlock(ptl);
-  1980	
-  1981			arch_leave_lazy_mmu_mode();
-  1982			return ret;
-  1983		}
-  1984	
-  1985	process_smaller_pages:
-  1986		if (pmd_trans_unstable(pmd)) {
-  1987			arch_leave_lazy_mmu_mode();
-  1988			walk->action = ACTION_AGAIN;
-  1989			return 0;
-  1990		}
-  1991	#endif
-  1992	
-  1993		orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
-  1994		for (addr = start; addr < end && !ret; pte++, addr += PAGE_SIZE) {
-  1995			is_written = !is_pte_uffd_wp(*pte);
-  1996	
-  1997			if (IS_PM_SCAN_GET(p->flags))
-  1998				ret = pagemap_scan_output(is_written, vma->vm_file,
-  1999							  pte_present(*pte),
-  2000							  is_swap_pte(*pte),
-  2001							  p, addr, 1);
-  2002	
-  2003			if (ret >= 0 && is_written && IS_PM_SCAN_WP(p->flags))
-  2004				make_uffd_wp_pte(vma, addr, pte);
-  2005		}
-  2006	
-  2007		if (IS_PM_SCAN_WP(p->flags))
-  2008			flush_tlb_range(vma, start, addr);
-  2009	
-  2010		pte_unmap_unlock(orig_pte, ptl);
-  2011		arch_leave_lazy_mmu_mode();
-  2012	
-  2013		cond_resched();
-  2014		return ret;
-  2015	}
-  2016	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
