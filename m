@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6940B724FF9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 00:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC0B0724FFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 00:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239943AbjFFWf3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 18:35:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58926 "EHLO
+        id S239989AbjFFWff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 18:35:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239965AbjFFWe5 (ORCPT
+        with ESMTP id S239995AbjFFWe7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 18:34:57 -0400
+        Tue, 6 Jun 2023 18:34:59 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58CC61BFB
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 15:34:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1F701FC1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 15:34:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=QVNnWFXK6jFzHkA+IkFF3lxJNeiQVfoJXZ8J7ElSc1A=; b=wGC60CxHXSn668dtOsefi4Jajt
-        YAlzoplUXT4Ye0bT42zrxUODhZiWn3Mpk0h1LIX7dSEnZzgxTrlrh92dgl8ySsoeEKpU1L3NpEDX9
-        /UywJ0ce+un+4rcw7DH0VY0+hlhn+bDTEE/rl4cCrvTih89Mn3T04TbRVfW1kkrUVOZfXGZUXEjVS
-        k0FzLVe29dP7/lP/F1juNdDoiKV/7BdmrsZkjeAoShfaUVqbMafZvh/LxKxrzedM8qr3FGX8vuT52
-        vGD0jNC4yDvl6kEV7q0ltVODH09F976USwl7moWO1zGN5wNaoVipFf36JowR3gLpPEERN8LJT9DvB
-        JHNSrydQ==;
+        bh=LqgS6qgWtiqJa73/VdHea0R38qiYynjcB4wwTpq3gcQ=; b=wK+9yyAankXE2L7qoJL2sC+lp9
+        S+4Z+4CAufQlWX3WytHg8rA3VUnOYohXSrELLPMiaYLs6iVcl9ZRigNy3H/fn2puBxF5B5NhBLx1+
+        eaAl5g9p/tE7u8kDPPLUagoTeIPVnNG/F1ltlqti0MYH7ZzTz8m6KFPI85c7rrFFGr9dWWqFBoMft
+        PddkywXZ+0jSQuJPHTF8VFmnTPkND03ZwmFufLxdHOC7a/9QgVEppuQB1arUvjYa0wdsynNAsCllM
+        7ZLVD3wMZUfsKHDk6qZY+5ItV0fOvouUqbSg/hiFnFn5sFKgW7SKJAde9uoypKnf1F/PVs0tODnG/
+        It3Mai5g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q6fFU-00DbEd-QK; Tue, 06 Jun 2023 22:33:56 +0000
+        id 1q6fFU-00DbEg-T1; Tue, 06 Jun 2023 22:33:56 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         Bob Peterson <rpeterso@redhat.com>
-Subject: [PATCH v2 03/14] gfs2: Convert gfs2_write_jdata_page() to gfs2_write_jdata_folio()
-Date:   Tue,  6 Jun 2023 23:33:35 +0100
-Message-Id: <20230606223346.3241328-4-willy@infradead.org>
+Subject: [PATCH v2 04/14] buffer: Convert __block_write_full_page() to __block_write_full_folio()
+Date:   Tue,  6 Jun 2023 23:33:36 +0100
+Message-Id: <20230606223346.3241328-5-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230606223346.3241328-1-willy@infradead.org>
 References: <20230606223346.3241328-1-willy@infradead.org>
@@ -53,75 +53,258 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add support for large folios and remove some accesses to page->mapping
-and page->index.
+Remove nine hidden calls to compound_head() by using a folio instead
+of a page.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Tested-by: Bob Peterson <rpeterso@redhat.com>
 Reviewed-by: Bob Peterson <rpeterso@redhat.com>
 ---
- fs/gfs2/aops.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ fs/buffer.c                 | 53 +++++++++++++++++++------------------
+ fs/gfs2/aops.c              |  5 ++--
+ fs/ntfs/aops.c              |  2 +-
+ fs/reiserfs/inode.c         |  2 +-
+ include/linux/buffer_head.h |  2 +-
+ 5 files changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index 749135252d52..ec5b5c1ea634 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -82,33 +82,33 @@ static int gfs2_get_block_noalloc(struct inode *inode, sector_t lblock,
- }
- 
- /**
-- * gfs2_write_jdata_page - gfs2 jdata-specific version of block_write_full_page
-- * @page: The page to write
-+ * gfs2_write_jdata_folio - gfs2 jdata-specific version of block_write_full_page
-+ * @folio: The folio to write
-  * @wbc: The writeback control
-  *
-  * This is the same as calling block_write_full_page, but it also
-  * writes pages outside of i_size
+diff --git a/fs/buffer.c b/fs/buffer.c
+index a7fc561758b1..4d518df50fab 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1764,7 +1764,7 @@ static struct buffer_head *folio_create_buffers(struct folio *folio,
+  * WB_SYNC_ALL, the writes are posted using REQ_SYNC; this
+  * causes the writes to be flagged as synchronous writes.
   */
--static int gfs2_write_jdata_page(struct page *page,
-+static int gfs2_write_jdata_folio(struct folio *folio,
- 				 struct writeback_control *wbc)
+-int __block_write_full_page(struct inode *inode, struct page *page,
++int __block_write_full_folio(struct inode *inode, struct folio *folio,
+ 			get_block_t *get_block, struct writeback_control *wbc,
+ 			bh_end_io_t *handler)
  {
--	struct inode * const inode = page->mapping->host;
-+	struct inode * const inode = folio->mapping->host;
- 	loff_t i_size = i_size_read(inode);
--	const pgoff_t end_index = i_size >> PAGE_SHIFT;
--	unsigned offset;
+@@ -1776,14 +1776,14 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 	int nr_underway = 0;
+ 	blk_opf_t write_flags = wbc_to_write_flags(wbc);
+ 
+-	head = folio_create_buffers(page_folio(page), inode,
++	head = folio_create_buffers(folio, inode,
+ 				    (1 << BH_Dirty) | (1 << BH_Uptodate));
  
  	/*
--	 * The page straddles i_size.  It must be zeroed out on each and every
-+	 * The folio straddles i_size.  It must be zeroed out on each and every
- 	 * writepage invocation because it may be mmapped.  "A file is mapped
- 	 * in multiples of the page size.  For a file that is not a multiple of
--	 * the  page size, the remaining memory is zeroed when mapped, and
-+	 * the page size, the remaining memory is zeroed when mapped, and
+ 	 * Be very careful.  We have no exclusion from block_dirty_folio
+ 	 * here, and the (potentially unmapped) buffers may become dirty at
+ 	 * any time.  If a buffer becomes dirty here after we've inspected it
+-	 * then we just miss that fact, and the page stays dirty.
++	 * then we just miss that fact, and the folio stays dirty.
+ 	 *
+ 	 * Buffers outside i_size may be dirtied by block_dirty_folio;
+ 	 * handle that here by just cleaning them.
+@@ -1793,7 +1793,7 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 	blocksize = bh->b_size;
+ 	bbits = block_size_bits(blocksize);
+ 
+-	block = (sector_t)page->index << (PAGE_SHIFT - bbits);
++	block = (sector_t)folio->index << (PAGE_SHIFT - bbits);
+ 	last_block = (i_size_read(inode) - 1) >> bbits;
+ 
+ 	/*
+@@ -1804,7 +1804,7 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 		if (block > last_block) {
+ 			/*
+ 			 * mapped buffers outside i_size will occur, because
+-			 * this page can be outside i_size when there is a
++			 * this folio can be outside i_size when there is a
+ 			 * truncate in progress.
+ 			 */
+ 			/*
+@@ -1834,7 +1834,7 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 			continue;
+ 		/*
+ 		 * If it's a fully non-blocking write attempt and we cannot
+-		 * lock the buffer then redirty the page.  Note that this can
++		 * lock the buffer then redirty the folio.  Note that this can
+ 		 * potentially cause a busy-wait loop from writeback threads
+ 		 * and kswapd activity, but those code paths have their own
+ 		 * higher-level throttling.
+@@ -1842,7 +1842,7 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 		if (wbc->sync_mode != WB_SYNC_NONE) {
+ 			lock_buffer(bh);
+ 		} else if (!trylock_buffer(bh)) {
+-			redirty_page_for_writepage(wbc, page);
++			folio_redirty_for_writepage(wbc, folio);
+ 			continue;
+ 		}
+ 		if (test_clear_buffer_dirty(bh)) {
+@@ -1853,11 +1853,11 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 	} while ((bh = bh->b_this_page) != head);
+ 
+ 	/*
+-	 * The page and its buffers are protected by PageWriteback(), so we can
+-	 * drop the bh refcounts early.
++	 * The folio and its buffers are protected by the writeback flag,
++	 * so we can drop the bh refcounts early.
+ 	 */
+-	BUG_ON(PageWriteback(page));
+-	set_page_writeback(page);
++	BUG_ON(folio_test_writeback(folio));
++	folio_start_writeback(folio);
+ 
+ 	do {
+ 		struct buffer_head *next = bh->b_this_page;
+@@ -1867,20 +1867,20 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 		}
+ 		bh = next;
+ 	} while (bh != head);
+-	unlock_page(page);
++	folio_unlock(folio);
+ 
+ 	err = 0;
+ done:
+ 	if (nr_underway == 0) {
+ 		/*
+-		 * The page was marked dirty, but the buffers were
++		 * The folio was marked dirty, but the buffers were
+ 		 * clean.  Someone wrote them back by hand with
+ 		 * write_dirty_buffer/submit_bh.  A rare case.
+ 		 */
+-		end_page_writeback(page);
++		folio_end_writeback(folio);
+ 
+ 		/*
+-		 * The page and buffer_heads can be released at any time from
++		 * The folio and buffer_heads can be released at any time from
+ 		 * here on.
+ 		 */
+ 	}
+@@ -1891,7 +1891,7 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 	 * ENOSPC, or some other error.  We may already have added some
+ 	 * blocks to the file, so we need to write these out to avoid
+ 	 * exposing stale data.
+-	 * The page is currently locked and not marked for writeback
++	 * The folio is currently locked and not marked for writeback
+ 	 */
+ 	bh = head;
+ 	/* Recovery: lock and submit the mapped buffers */
+@@ -1903,15 +1903,15 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 		} else {
+ 			/*
+ 			 * The buffer may have been set dirty during
+-			 * attachment to a dirty page.
++			 * attachment to a dirty folio.
+ 			 */
+ 			clear_buffer_dirty(bh);
+ 		}
+ 	} while ((bh = bh->b_this_page) != head);
+-	SetPageError(page);
+-	BUG_ON(PageWriteback(page));
+-	mapping_set_error(page->mapping, err);
+-	set_page_writeback(page);
++	folio_set_error(folio);
++	BUG_ON(folio_test_writeback(folio));
++	mapping_set_error(folio->mapping, err);
++	folio_start_writeback(folio);
+ 	do {
+ 		struct buffer_head *next = bh->b_this_page;
+ 		if (buffer_async_write(bh)) {
+@@ -1921,10 +1921,10 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 		}
+ 		bh = next;
+ 	} while (bh != head);
+-	unlock_page(page);
++	folio_unlock(folio);
+ 	goto done;
+ }
+-EXPORT_SYMBOL(__block_write_full_page);
++EXPORT_SYMBOL(__block_write_full_folio);
+ 
+ /*
+  * If a page has any new buffers, zero them out here, and mark them uptodate
+@@ -2677,6 +2677,7 @@ EXPORT_SYMBOL(block_truncate_page);
+ int block_write_full_page(struct page *page, get_block_t *get_block,
+ 			struct writeback_control *wbc)
+ {
++	struct folio *folio = page_folio(page);
+ 	struct inode * const inode = page->mapping->host;
+ 	loff_t i_size = i_size_read(inode);
+ 	const pgoff_t end_index = i_size >> PAGE_SHIFT;
+@@ -2684,13 +2685,13 @@ int block_write_full_page(struct page *page, get_block_t *get_block,
+ 
+ 	/* Is the page fully inside i_size? */
+ 	if (page->index < end_index)
+-		return __block_write_full_page(inode, page, get_block, wbc,
++		return __block_write_full_folio(inode, folio, get_block, wbc,
+ 					       end_buffer_async_write);
+ 
+ 	/* Is the page fully outside i_size? (truncate in progress) */
+ 	offset = i_size & (PAGE_SIZE-1);
+ 	if (page->index >= end_index+1 || !offset) {
+-		unlock_page(page);
++		folio_unlock(folio);
+ 		return 0; /* don't care */
+ 	}
+ 
+@@ -2702,7 +2703,7 @@ int block_write_full_page(struct page *page, get_block_t *get_block,
  	 * writes to that region are not written out to the file."
  	 */
--	offset = i_size & (PAGE_SIZE - 1);
--	if (page->index == end_index && offset)
--		zero_user_segment(page, offset, PAGE_SIZE);
-+	if (folio_pos(folio) < i_size &&
-+	    i_size < folio_pos(folio) + folio_size(folio))
-+		folio_zero_segment(folio, offset_in_folio(folio, i_size),
-+				folio_size(folio));
- 
--	return __block_write_full_page(inode, page, gfs2_get_block_noalloc, wbc,
-+	return __block_write_full_page(inode, &folio->page,
-+				       gfs2_get_block_noalloc, wbc,
- 				       end_buffer_async_write);
+ 	zero_user_segment(page, offset, PAGE_SIZE);
+-	return __block_write_full_page(inode, page, get_block, wbc,
++	return __block_write_full_folio(inode, folio, get_block, wbc,
+ 							end_buffer_async_write);
  }
+ EXPORT_SYMBOL(block_write_full_page);
+diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+index ec5b5c1ea634..3a2be1901e1e 100644
+--- a/fs/gfs2/aops.c
++++ b/fs/gfs2/aops.c
+@@ -107,9 +107,8 @@ static int gfs2_write_jdata_folio(struct folio *folio,
+ 		folio_zero_segment(folio, offset_in_folio(folio, i_size),
+ 				folio_size(folio));
  
-@@ -137,7 +137,7 @@ static int __gfs2_jdata_write_folio(struct folio *folio,
- 		}
- 		gfs2_trans_add_databufs(ip, folio, 0, folio_size(folio));
- 	}
--	return gfs2_write_jdata_page(&folio->page, wbc);
-+	return gfs2_write_jdata_folio(folio, wbc);
+-	return __block_write_full_page(inode, &folio->page,
+-				       gfs2_get_block_noalloc, wbc,
+-				       end_buffer_async_write);
++	return __block_write_full_folio(inode, folio, gfs2_get_block_noalloc,
++			wbc, end_buffer_async_write);
  }
  
  /**
+diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
+index e8aeba124a95..4e158bce4192 100644
+--- a/fs/ntfs/aops.c
++++ b/fs/ntfs/aops.c
+@@ -526,7 +526,7 @@ static int ntfs_read_folio(struct file *file, struct folio *folio)
+  *
+  * Return 0 on success and -errno on error.
+  *
+- * Based on ntfs_read_block() and __block_write_full_page().
++ * Based on ntfs_read_block() and __block_write_full_folio().
+  */
+ static int ntfs_write_block(struct page *page, struct writeback_control *wbc)
+ {
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index d8debbb6105f..ff34ee49106f 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -2506,7 +2506,7 @@ static int map_block_for_writepage(struct inode *inode,
+ 
+ /*
+  * mason@suse.com: updated in 2.5.54 to follow the same general io
+- * start/recovery path as __block_write_full_page, along with special
++ * start/recovery path as __block_write_full_folio, along with special
+  * code to handle reiserfs tails.
+  */
+ static int reiserfs_write_full_page(struct page *page,
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index 1520793c72da..a366e01f8bd4 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -263,7 +263,7 @@ extern int buffer_heads_over_limit;
+ void block_invalidate_folio(struct folio *folio, size_t offset, size_t length);
+ int block_write_full_page(struct page *page, get_block_t *get_block,
+ 				struct writeback_control *wbc);
+-int __block_write_full_page(struct inode *inode, struct page *page,
++int __block_write_full_folio(struct inode *inode, struct folio *folio,
+ 			get_block_t *get_block, struct writeback_control *wbc,
+ 			bh_end_io_t *handler);
+ int block_read_full_folio(struct folio *, get_block_t *);
 -- 
 2.39.2
 
