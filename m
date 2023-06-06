@@ -2,61 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A543C724A0F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 19:20:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C5D9724AD9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 20:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238709AbjFFRUI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 13:20:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59924 "EHLO
+        id S233426AbjFFSIP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 14:08:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238687AbjFFRUB (ORCPT
+        with ESMTP id S238897AbjFFSIM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 13:20:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AC4218F;
-        Tue,  6 Jun 2023 10:19:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DA60E633A0;
-        Tue,  6 Jun 2023 17:19:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 345E2C4339B;
-        Tue,  6 Jun 2023 17:19:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686071997;
-        bh=oA+hhvm3fENXUSsKB3tE3UVVkXtL/Q4jgZuj2RxTU7M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PSV10s6YmI47PgxVSu0b/67VA+sM+FSsBQXmL2EAJCW2ZnAVYC7w9Dut7U6S4ZnOA
-         rp81YVwNuzM0rEaxs1rmr3RA/5WbdrvQ923mGMzWNxwozXEKupw3iI8LFd9bjayPqd
-         ojhXu7Lm99Mi8OBABVfvpE3SkIGBizkPMI4rgc2GmVL979GpTNVsBkquhxcZTK1WT5
-         e8UbqVoN7K/Hcs7zffDLEKFNNVEGEZt8r7v2+RYDyrTP9KO7w4wKcwyGdii1VwBlM2
-         dux1SRXC87HXyTYIX+oJiumvFhAXF1vrKRP51ptxrkhbjwiWbd8hsqppf2zUdCKqMX
-         yLLOBGIyfKBVQ==
-Date:   Tue, 6 Jun 2023 10:19:56 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>, hch@infradead.org,
-        sandeen@sandeen.net, song@kernel.org, rafael@kernel.org,
-        gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
-        jikos@kernel.org, bvanassche@acm.org, ebiederm@xmission.com,
-        mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
-        da.gomez@samsung.com, linux-fsdevel@vger.kernel.org,
-        kernel@tuxforce.de, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] fs: distinguish between user initiated freeze and
- kernel initiated freeze
-Message-ID: <20230606171956.GG72267@frogsfrogsfrogs>
-References: <20230508011717.4034511-1-mcgrof@kernel.org>
- <20230508011717.4034511-4-mcgrof@kernel.org>
- <20230522234200.GC11598@frogsfrogsfrogs>
- <20230525141430.slms7f2xkmesezy5@quack3>
+        Tue, 6 Jun 2023 14:08:12 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3886A1730;
+        Tue,  6 Jun 2023 11:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=4ie1db8N9V0M6Yogyw2EjaVMj665tiZSmITTGtrkMxk=; b=wAj6PBdSP2jrRyeQ8YhpKNLd2d
+        XuwB8qrpTortcDiX11wO+JKvFQAzrqzdq1njdeQodEcraQFqjx0CoaaZgwtEgXm18u1eT9Z5QpqYN
+        SVjM7zPxQRLycMSifGq4dXJp6bDjX/I6Mb8oaFFyEUs+CCwFiozqG2L8JSzmHBlCLhFfUNm/VKWiD
+        lL025uQae5hZiTpR2SnryhLuSYFjhgLnQ7ERCBitnSUbvLCUmqNgFXbv6PGvi/rAHJ0rh+Odv8dYQ
+        HSOq65CxN5RV5p6DzqE5/xa3yTkmfFYjMbhwVkIr0OY4mioay6tt6x0+VTV7VBDThWQrFynPtrGct
+        O/C3fWlA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q6b61-00DOWU-IF; Tue, 06 Jun 2023 18:07:53 +0000
+Date:   Tue, 6 Jun 2023 19:07:53 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Yin, Fengwei" <fengwei.yin@intel.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Wang Yugui <wangyugui@e16-tech.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2 7/7] iomap: Copy larger chunks from userspace
+Message-ID: <ZH91+QWd3k8a2x/Z@casper.infradead.org>
+References: <20230602222445.2284892-1-willy@infradead.org>
+ <20230602222445.2284892-8-willy@infradead.org>
+ <20230604182952.GH72241@frogsfrogsfrogs>
+ <ZH0MDtoTyUMQ7eok@casper.infradead.org>
+ <d47f280e-9e98-ffd2-1386-097fc8dc11b5@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230525141430.slms7f2xkmesezy5@quack3>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <d47f280e-9e98-ffd2-1386-097fc8dc11b5@intel.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,256 +57,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 25, 2023 at 04:14:30PM +0200, Jan Kara wrote:
-> On Mon 22-05-23 16:42:00, Darrick J. Wong wrote:
-> > How about this as an alternative patch?  Kernel and userspace freeze
-> > state are stored in s_writers; each type cannot block the other (though
-> > you still can't have nested kernel or userspace freezes); and the freeze
-> > is maintained until /both/ freeze types are dropped.
+On Mon, Jun 05, 2023 at 04:25:22PM +0800, Yin, Fengwei wrote:
+> On 6/5/2023 6:11 AM, Matthew Wilcox wrote:
+> > On Sun, Jun 04, 2023 at 11:29:52AM -0700, Darrick J. Wong wrote:
+> >> On Fri, Jun 02, 2023 at 11:24:44PM +0100, Matthew Wilcox (Oracle) wrote:
+> >>> -		copied = copy_page_from_iter_atomic(page, offset, bytes, i);
+> >>> +		copied = copy_page_from_iter_atomic(&folio->page, offset, bytes, i);
+> >>
+> >> I think I've gotten lost in the weeds.  Does copy_page_from_iter_atomic
+> >> actually know how to deal with a multipage folio?  AFAICT it takes a
+> >> page, kmaps it, and copies @bytes starting at @offset in the page.  If
+> >> a caller feeds it a multipage folio, does that all work correctly?  Or
+> >> will the pagecache split multipage folios as needed to make it work
+> >> right?
 > > 
-> > AFAICT this should work for the two other usecases (quiescing pagefaults
-> > for fsdax pmem pre-removal; and freezing fses during suspend) besides
-> > online fsck for xfs.
+> > It's a smidgen inefficient, but it does work.  First, it calls
+> > page_copy_sane() to check that offset & n fit within the compound page
+> > (ie this all predates folios).
 > > 
-> > --D
+> > ... Oh.  copy_page_from_iter() handles this correctly.
+> > copy_page_from_iter_atomic() doesn't.  I'll have to fix this
+> > first.  Looks like Al fixed copy_page_from_iter() in c03f05f183cd
+> > and didn't fix copy_page_from_iter_atomic().
 > > 
-> > From: Darrick J. Wong <djwong@kernel.org>
-> > Subject: fs: distinguish between user initiated freeze and kernel initiated freeze
+> >> If we create a 64k folio at pos 0 and then want to write a byte at pos
+> >> 40k, does __filemap_get_folio break up the 64k folio so that the folio
+> >> returned by iomap_get_folio starts at 40k?  Or can the iter code handle
+> >> jumping ten pages into a 16-page folio and I just can't see it?
 > > 
-> > Userspace can freeze a filesystem using the FIFREEZE ioctl or by
-> > suspending the block device; this state persists until userspace thaws
-> > the filesystem with the FITHAW ioctl or resuming the block device.
-> > Since commit 18e9e5104fcd ("Introduce freeze_super and thaw_super for
-> > the fsfreeze ioctl") we only allow the first freeze command to succeed.
-> > 
-> > The kernel may decide that it is necessary to freeze a filesystem for
-> > its own internal purposes, such as suspends in progress, filesystem fsck
-> > activities, or quiescing a device prior to removal.  Userspace thaw
-> > commands must never break a kernel freeze, and kernel thaw commands
-> > shouldn't undo userspace's freeze command.
-> > 
-> > Introduce a couple of freeze holder flags and wire it into the
-> > sb_writers state.  One kernel and one userspace freeze are allowed to
-> > coexist at the same time; the filesystem will not thaw until both are
-> > lifted.
-> > 
-> > Inspired-by: Luis Chamberlain <mcgrof@kernel.org>
-> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> 
-> Yes, this is exactly how I'd imagine it. Thanks for writing the patch!
-> 
-> I'd just note that this would need rebasing on top of Luis' patches 1 and
-> 2. Also:
+> > Well ... it handles it fine unless it's highmem.  p is kaddr + offset,
+> > so if offset is 40k, it works correctly on !highmem.
+> So is it better to have implementations for !highmem and highmem? And for
+> !highmem, we don't need the kmap_local_page()/kunmap_local() and chunk
+> size per copy is not limited to PAGE_SIZE. Thanks.
 
-I started doing that, but I noticed that after patch 1, freeze_super no
-longer leaves s_active elevated if the freeze is successful.  The
-callers drop the s_active ref that they themselves obtained, which
-means that we've now changed that behavior, right?  ioctl_fsfreeze now
-does:
+No, that's not needed; we can handle that just fine.  Maybe this can
+use kmap_local_page() instead of kmap_atomic().  Al, what do you think?
+I haven't tested this yet; need to figure out a qemu config with highmem ...
 
-	if (!get_active_super(sb->s_bdev))
-		return -ENOTTY;
-
-(Increase ref)
-
-        /* Freeze */
-        if (sb->s_op->freeze_super)
-		ret = sb->s_op->freeze_super(sb);
-	ret = freeze_super(sb);
-
-(Not sure why we can do both here?)
-
-	deactivate_locked_super(sb);
-
-(Decrease ref; net change to s_active is zero)
-
-	return ret;
-
-Luis hasn't responded to my question, so I stopped.
-
-> > +	if (sbw->frozen == SB_FREEZE_COMPLETE) {
-> > +		switch (who) {
-> > +		case FREEZE_HOLDER_KERNEL:
-> > +			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
-> > +				/*
-> > +				 * Kernel freeze already in effect; caller can
-> > +				 * try again.
-> > +				 */
-> > +				deactivate_locked_super(sb);
-> > +				return -EBUSY;
-> > +			}
-> > +			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
-> > +				/*
-> > +				 * Share the freeze state with the userspace
-> > +				 * freeze already in effect.
-> > +				 */
-> > +				sbw->freeze_holders |= who;
-> > +				deactivate_locked_super(sb);
-> > +				return 0;
-> > +			}
-> > +			break;
-> > +		case FREEZE_HOLDER_USERSPACE:
-> > +			if (sbw->freeze_holders & FREEZE_HOLDER_USERSPACE) {
-> > +				/*
-> > +				 * Userspace freeze already in effect; tell
-> > +				 * the caller we're busy.
-> > +				 */
-> > +				deactivate_locked_super(sb);
-> > +				return -EBUSY;
-> > +			}
-> > +			if (sbw->freeze_holders & FREEZE_HOLDER_KERNEL) {
-> > +				/*
-> > +				 * Share the freeze state with the kernel
-> > +				 * freeze already in effect.
-> > +				 */
-> > +				sbw->freeze_holders |= who;
-> > +				deactivate_locked_super(sb);
-> > +				return 0;
-> > +			}
-> > +			break;
-> > +		default:
-> > +			BUG();
-> > +			deactivate_locked_super(sb);
-> > +			return -EINVAL;
-> > +		}
-> > +	}
-> 
-> Can't this be simplified to:
-> 
-> 	BUG_ON(who & ~(FREEZE_HOLDER_USERSPACE | FREEZE_HOLDER_KERNEL));
-> 	BUG_ON(!(!(who & FREEZE_HOLDER_USERSPACE) ^
-> 	       !(who & FREEZE_HOLDER_KERNEL)));
-> retry:
-> 	if (sb->s_writers.freeze_holders & who)
-> 		return -EBUSY;
-> 	/* Already frozen by someone else? */
-> 	if (sb->s_writers.freeze_holders & ~who) {
-> 		sb->s_writers.freeze_holders |= who;
-> 		return 0;
-> 	}
-
-Yes, it can.
-
-> Now the only remaining issue with the code is that the two different
-> holders can be attempting to freeze the filesystem at once and in that case
-> one of them has to wait for the other one instead of returning -EBUSY as
-> would happen currently. This can happen because we temporarily drop
-> s_umount in freeze_super() due to lock ordering issues. I think we could
-> do something like:
-> 
-> 	if (!sb_unfrozen(sb)) {
-> 		up_write(&sb->s_umount);
-> 		wait_var_event(&sb->s_writers.frozen,
-> 			       sb_unfrozen(sb) || sb_frozen(sb));
-> 		down_write(&sb->s_umount);
-> 		goto retry;
-> 	}
-> 
-> and then sprinkle wake_up_var(&sb->s_writers.frozen) at appropriate places
-> in freeze_super().
-
-I think that'd work.  Let me try that.
-
-> BTW, when reading this code, I've spotted attached cleanup opportunity but
-> I'll queue that separately so that is JFYI.
-> 
-> > +#define FREEZE_HOLDER_USERSPACE	(1U << 1)	/* userspace froze fs */
-> > +#define FREEZE_HOLDER_KERNEL	(1U << 2)	/* kernel froze fs */
-> 
-> Why not start from 1U << 0? And bonus points for using BIT() macro :).
-
-I didn't think filesystem code was supposed to be using stuff from
-vdso.h...
-
---D
-
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-
-> From 9fce35f21f9a62470e764463c84373fb013108fd Mon Sep 17 00:00:00 2001
-> From: Jan Kara <jack@suse.cz>
-> Date: Thu, 25 May 2023 15:56:19 +0200
-> Subject: [PATCH] fs: Drop wait_unfrozen wait queue
-> 
-> wait_unfrozen waitqueue is used only in quota code to wait for
-> filesystem to become unfrozen. In that place we can just use
-> sb_start_write() - sb_end_write() pair to achieve the same. So just
-> remove the waitqueue.
-> 
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/quota/quota.c   | 5 +++--
->  fs/super.c         | 4 ----
->  include/linux/fs.h | 1 -
->  3 files changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> index 052f143e2e0e..0e41fb84060f 100644
-> --- a/fs/quota/quota.c
-> +++ b/fs/quota/quota.c
-> @@ -895,8 +895,9 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
->  			up_write(&sb->s_umount);
->  		else
->  			up_read(&sb->s_umount);
-> -		wait_event(sb->s_writers.wait_unfrozen,
-> -			   sb->s_writers.frozen == SB_UNFROZEN);
-> +		/* Wait for sb to unfreeze */
-> +		sb_start_write(sb);
-> +		sb_end_write(sb);
->  		put_super(sb);
->  		goto retry;
->  	}
-> diff --git a/fs/super.c b/fs/super.c
-> index 34afe411cf2b..6283cea67280 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -236,7 +236,6 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
->  					&type->s_writers_key[i]))
->  			goto fail;
->  	}
-> -	init_waitqueue_head(&s->s_writers.wait_unfrozen);
->  	s->s_bdi = &noop_backing_dev_info;
->  	s->s_flags = flags;
->  	if (s->s_user_ns != &init_user_ns)
-> @@ -1706,7 +1705,6 @@ int freeze_super(struct super_block *sb)
->  	if (ret) {
->  		sb->s_writers.frozen = SB_UNFROZEN;
->  		sb_freeze_unlock(sb, SB_FREEZE_PAGEFAULT);
-> -		wake_up(&sb->s_writers.wait_unfrozen);
->  		deactivate_locked_super(sb);
->  		return ret;
->  	}
-> @@ -1722,7 +1720,6 @@ int freeze_super(struct super_block *sb)
->  				"VFS:Filesystem freeze failed\n");
->  			sb->s_writers.frozen = SB_UNFROZEN;
->  			sb_freeze_unlock(sb, SB_FREEZE_FS);
-> -			wake_up(&sb->s_writers.wait_unfrozen);
->  			deactivate_locked_super(sb);
->  			return ret;
->  		}
-> @@ -1768,7 +1765,6 @@ static int thaw_super_locked(struct super_block *sb)
->  	sb->s_writers.frozen = SB_UNFROZEN;
->  	sb_freeze_unlock(sb, SB_FREEZE_FS);
->  out:
-> -	wake_up(&sb->s_writers.wait_unfrozen);
->  	deactivate_locked_super(sb);
->  	return 0;
->  }
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 21a981680856..3b65a6194485 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1146,7 +1146,6 @@ enum {
->  
->  struct sb_writers {
->  	int				frozen;		/* Is sb frozen? */
-> -	wait_queue_head_t		wait_unfrozen;	/* wait for thaw */
->  	struct percpu_rw_semaphore	rw_sem[SB_FREEZE_LEVELS];
->  };
->  
-> -- 
-> 2.35.3
-> 
-
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 960223ed9199..d3d6a0789625 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -857,24 +857,36 @@ size_t iov_iter_zero(size_t bytes, struct iov_iter *i)
+ }
+ EXPORT_SYMBOL(iov_iter_zero);
+ 
+-size_t copy_page_from_iter_atomic(struct page *page, unsigned offset, size_t bytes,
+-				  struct iov_iter *i)
++size_t copy_page_from_iter_atomic(struct page *page, unsigned offset,
++		size_t bytes, struct iov_iter *i)
+ {
+-	char *kaddr = kmap_atomic(page), *p = kaddr + offset;
+-	if (!page_copy_sane(page, offset, bytes)) {
+-		kunmap_atomic(kaddr);
++	size_t n = bytes, copied = 0;
++
++	if (!page_copy_sane(page, offset, bytes))
+ 		return 0;
+-	}
+-	if (WARN_ON_ONCE(!i->data_source)) {
+-		kunmap_atomic(kaddr);
++	if (WARN_ON_ONCE(!i->data_source))
+ 		return 0;
++
++	page += offset / PAGE_SIZE;
++	offset %= PAGE_SIZE;
++	if (PageHighMem(page))
++		n = min_t(size_t, bytes, PAGE_SIZE);
++	while (1) {
++		char *kaddr = kmap_atomic(page) + offset;
++		iterate_and_advance(i, n, base, len, off,
++			copyin(kaddr + off, base, len),
++			memcpy_from_iter(i, kaddr + off, base, len)
++		)
++		kunmap_atomic(kaddr);
++		copied += n;
++		if (!PageHighMem(page) || copied == bytes || n == 0)
++			break;
++		offset += n;
++		page += offset / PAGE_SIZE;
++		offset %= PAGE_SIZE;
++		n = min_t(size_t, bytes - copied, PAGE_SIZE);
+ 	}
+-	iterate_and_advance(i, bytes, base, len, off,
+-		copyin(p + off, base, len),
+-		memcpy_from_iter(i, p + off, base, len)
+-	)
+-	kunmap_atomic(kaddr);
+-	return bytes;
++	return copied;
+ }
+ EXPORT_SYMBOL(copy_page_from_iter_atomic);
+ 
