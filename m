@@ -2,221 +2,284 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D5A47243B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 15:07:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 249A27243DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 15:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238013AbjFFNHd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 09:07:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
+        id S238132AbjFFNLC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 09:11:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238025AbjFFNHZ (ORCPT
+        with ESMTP id S237504AbjFFNKu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 09:07:25 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B810172B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 06:07:03 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-977cf86aae5so415517066b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 06:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1686056801; x=1688648801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FdcAHdcfevDGcVfHZvMqdM90hrjxBWSTRshUWMpX00w=;
-        b=OLLsOOHX7r7LCPDVHJbMzNBQkNiZ9X/7EOcCz56WGOPdyC2dntTTFukrhFyHwrSAXu
-         W+xGvn7PiQLWt5hUwfjq1mFlr3hCi7tkdq1kLAeUXzPBkZ0HV4U2PkR2B7KQRvxPbcf2
-         MjfmPPFqTHm/yliN3/+0VpGHYn+oHhJGO5ZJo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686056801; x=1688648801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FdcAHdcfevDGcVfHZvMqdM90hrjxBWSTRshUWMpX00w=;
-        b=gEGdBEgukUTNLQF0ZJszxLKLWv8QtnR9k5Qyn6yyVPKbt2sC6tv2jHYwy7leHmVqnW
-         JB3J3APILb3Cm7hq9+lrR1lE/cOtdDwO6i9qVqGH9OeZyLBtEOHwmK1NLAUenrq0KvV3
-         oIKVscguIOoSz/iXisP1Jtg8PBxp6zcq2mcMy99cKiyl5Ne1di+O+x5YxKErefZOlW3A
-         4TrkidkjY3G4DzW/wXrwuK7itwLKwxVVqUlcmnKjrjNS0gUB+dIQcqq/f2wAOr/9RNLb
-         iX4iyl1/mg42hLh5rkDkpxzpGLU9B6ilJdv+MAiaP+SxNZrDPmHanbYNaVcusbs5sqc5
-         jePg==
-X-Gm-Message-State: AC+VfDyj9MLMxW4frTzho4+ZRHOg1xWFdgns8cpwyMjNB7YR6e1G6uP/
-        w86G9dQi6sJW3ClCcktgIFsG/5gXMpzv+oH+B29w8w==
-X-Google-Smtp-Source: ACHHUZ45D4b8IA+yec4ZpUOTn/vBlVGJD/LERu2OBA/3VxqknBizp0oEd9lFYFce0XbpzioPxs0G7W6Zth0rzFj9XlU=
-X-Received: by 2002:a17:907:9620:b0:978:6be4:7efa with SMTP id
- gb32-20020a170907962000b009786be47efamr2596335ejc.18.1686056800861; Tue, 06
- Jun 2023 06:06:40 -0700 (PDT)
+        Tue, 6 Jun 2023 09:10:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B793170C
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 06:09:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686056956;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZHBOmgG41O2vYB4jRtTzs2AqHaKKmgt45nD/2+Cjdrk=;
+        b=KMCqR3+Mi3vAH4/liIb38nAgzSN7GFLaY72/5hiGgKNZglv+LcnZrRzS8kY7AIXCYYFzzU
+        PDRqvPY+wma7eeHpaII7eURCPHtCaObkXd9udAFCQR6u5+bwZNHonQkuYSs8SRBKpErGE7
+        OAwIMnVRiZCvT154vqIQah7BEMe2HNA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-94-sl3pur7ePBy53ZByxt_-VA-1; Tue, 06 Jun 2023 09:09:11 -0400
+X-MC-Unique: sl3pur7ePBy53ZByxt_-VA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6309C3C0CEEF;
+        Tue,  6 Jun 2023 13:09:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C0B514087C62;
+        Tue,  6 Jun 2023 13:09:05 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-crypto@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH net-next v3 01/10] Drop the netfs_ prefix from netfs_extract_iter_to_sg()
+Date:   Tue,  6 Jun 2023 14:08:47 +0100
+Message-ID: <20230606130856.1970660-2-dhowells@redhat.com>
+In-Reply-To: <20230606130856.1970660-1-dhowells@redhat.com>
+References: <20230606130856.1970660-1-dhowells@redhat.com>
 MIME-Version: 1.0
-References: <20230519125705.598234-1-amir73il@gmail.com> <CAOQ4uxibuwUwaLaJNKSifLHBm9G-Tgn67k_TKWKcN1+A4Rw-zg@mail.gmail.com>
- <CAJfpegucD6S=yUTzpQGsR6C3E64ve+bgG_4TGP7Y+0NicqyQ_g@mail.gmail.com> <CAOQ4uxjGWHnwd5fcp8VwHk59q=BftAhw0uYbdR-KmJCq3fpnDg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjGWHnwd5fcp8VwHk59q=BftAhw0uYbdR-KmJCq3fpnDg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 6 Jun 2023 15:06:29 +0200
-Message-ID: <CAJfpegu2+aMaEmUCjem7em0om8ZWr0ENfvihxXMkSsoV-vLKrw@mail.gmail.com>
-Subject: Re: [PATCH v13 00/10] fuse: Add support for passthrough read/write
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Daniel Rosenberg <drosen@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Alessio Balsini <balsini@android.com>,
-        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 6 Jun 2023 at 13:19, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, Jun 6, 2023 at 12:49=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu=
-> wrote:
-> >
-> > On Tue, 6 Jun 2023 at 11:13, Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > On Fri, May 19, 2023 at 3:57=E2=80=AFPM Amir Goldstein <amir73il@gmai=
-l.com> wrote:
-> > > >
-> > > > Miklos,
-> > > >
-> > > > This patch set addresses your review feedback on Alesio's V12 patch=
- set
-> > > > from 2021 [1] as well as other bugs that I have found since.
-> > > > This patch set uses refcounted backing files as we discussed recent=
-ly [2].
-> > > >
-> > > > I am posting this for several possible outcomes:
-> > > >
-> > > > 1. Either FUSE-BPF develpers can use this as a reference implementa=
-tion
-> > > >    for their 1st phase of "backing file passthrough"
-> > > > 2. Or they can tell me which API changes need to made to this patch=
- set
-> > > >    so the API is flexible enough to extend to "backing inode passth=
-rough"
-> > > >    and to "BPF filters" later on
-> > > > 3. We find there is little overlap in the APIs and merge this as is
-> > > >
-> > > > These patches are available on github [3] along with libfuse patche=
-s [4].
-> > > > I tested them by running xfstests (./check -fuse -g quick.rw) with =
-latest
-> > > > libfuse xfstest support.
-> > > >
-> > > > Without FOPEN_PASSTHROUGH, one test in this group fails (generic/45=
-1)
-> > > > which tests mixed buffered/aio writes.
-> > > > With FOPEN_PASSTHROUGH, this test also passes.
-> > > >
-> > > > This revision does not set any limitations on the number of backing=
- files
-> > > > that can be mapped by the server.  I considered several ways to add=
-ress
-> > > > this and decided to try a different approach.
-> > > >
-> > > > Patch 10 (with matching libfuse patch) is an RFC patch for an alter=
-native
-> > > > API approach. Please see my comments on that patch.
-> > > >
-> > >
-> > > Miklos,
-> > >
-> > > I wanted to set expectations w.r.t this patch set and the passthrough
-> > > feature development in general.
-> > >
-> > > So far I've seen comments from you up to path 5/10, so I assume you
-> > > did not get up to RFC patch 10/10.
-> > >
-> > > The comments about adding max stack depth to protocol and about
-> > > refactoring overlayfs common code are easy to do.
-> > >
-> > > However, I feel that there are still open core design questions that =
-need
-> > > to be spelled out, before we continue.
-> > >
-> > > Do you find the following acceptable for first implementation, or do =
-you
-> > > think that those issues must be addressed before merging anything?
-> > >
-> > > 1. No lsof visibility of backing files (if server closes them)
-> > > 2. Derived backing files resource limit (cannot grow beyond nr of fus=
-e files)
-> > > 3. No data consistency guaranty between different fd to the same inod=
-e
-> > >     (i.e. backing is per fd not per inode)
-> >
-> > I think the most important thing is to have the FUSE-BPF team onboard.
->
-> Yeh, I'd love to get some feedback from you guys.
->
-> >    I'm not sure that the per-file part of this is necessary, doing
-> > everything per-inode should be okay.   What are the benefits?
-> >
->
-> I agree that semantics are simpler with per-inode.
-> The only benefit I see to per-file is the lifetime of the mapping.
->
-> It is very easy IMO to program with a mapping scope of
-> open-to-close that is requested by FOPEN_PASSTHROUGH
-> and FOPEN_PASSTHROUGH_AUTO_CLOSE.
+Rename netfs_extract_iter_to_sg() and its auxiliary functions to drop the
+netfs_ prefix.
 
-Right, and this case the resource limiting is also easy to think about.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Herbert Xu <herbert@gondor.apana.org.au>
+cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: linux-crypto@vger.kernel.org
+cc: linux-cachefs@redhat.com
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: netdev@vger.kernel.org
+---
 
-I'm not worried about consistency, fuse server can do whatever it
-wants with the data anyway.  I am worried about the visibility of the
-mapping.  One idea would be to create a kernel thread for each fuse sb
-instance and install mapped files into that thread's file table.  In
-theory this should be trivial as the VFS has all the helpers that can
-do this safely.
+Notes:
+    ver #3)
+     - Deal with fs/cifs/ moving.
+     - Reimpose the ALG_MAX_PAGES limit in hash_sendmsg() for kernel iters.
+    
+    ver #2:
+     - Put the "netfs_" prefix removal first to shorten lines and avoid
+       checkpatch 80-char warnings.
 
->
-> But I think the same lifetime can still be achieved with per-inode
-> mapping. I hand waved how I think that could be done in response
-> to patch 10/10 review.
+ fs/netfs/iterator.c       | 66 +++++++++++++++++++--------------------
+ fs/smb/client/smb2ops.c   |  4 +--
+ fs/smb/client/smbdirect.c |  2 +-
+ include/linux/netfs.h     |  6 ++--
+ 4 files changed, 39 insertions(+), 39 deletions(-)
 
-Yeah, but it's just complicating things further.
+diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
+index 8a4c86687429..f8eba3de1a97 100644
+--- a/fs/netfs/iterator.c
++++ b/fs/netfs/iterator.c
+@@ -106,11 +106,11 @@ EXPORT_SYMBOL_GPL(netfs_extract_user_iter);
+  * Extract and pin a list of up to sg_max pages from UBUF- or IOVEC-class
+  * iterators, and add them to the scatterlist.
+  */
+-static ssize_t netfs_extract_user_to_sg(struct iov_iter *iter,
+-					ssize_t maxsize,
+-					struct sg_table *sgtable,
+-					unsigned int sg_max,
+-					iov_iter_extraction_t extraction_flags)
++static ssize_t extract_user_to_sg(struct iov_iter *iter,
++				  ssize_t maxsize,
++				  struct sg_table *sgtable,
++				  unsigned int sg_max,
++				  iov_iter_extraction_t extraction_flags)
+ {
+ 	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
+ 	struct page **pages;
+@@ -159,11 +159,11 @@ static ssize_t netfs_extract_user_to_sg(struct iov_iter *iter,
+  * Extract up to sg_max pages from a BVEC-type iterator and add them to the
+  * scatterlist.  The pages are not pinned.
+  */
+-static ssize_t netfs_extract_bvec_to_sg(struct iov_iter *iter,
+-					ssize_t maxsize,
+-					struct sg_table *sgtable,
+-					unsigned int sg_max,
+-					iov_iter_extraction_t extraction_flags)
++static ssize_t extract_bvec_to_sg(struct iov_iter *iter,
++				  ssize_t maxsize,
++				  struct sg_table *sgtable,
++				  unsigned int sg_max,
++				  iov_iter_extraction_t extraction_flags)
+ {
+ 	const struct bio_vec *bv = iter->bvec;
+ 	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
+@@ -205,11 +205,11 @@ static ssize_t netfs_extract_bvec_to_sg(struct iov_iter *iter,
+  * scatterlist.  This can deal with vmalloc'd buffers as well as kmalloc'd or
+  * static buffers.  The pages are not pinned.
+  */
+-static ssize_t netfs_extract_kvec_to_sg(struct iov_iter *iter,
+-					ssize_t maxsize,
+-					struct sg_table *sgtable,
+-					unsigned int sg_max,
+-					iov_iter_extraction_t extraction_flags)
++static ssize_t extract_kvec_to_sg(struct iov_iter *iter,
++				  ssize_t maxsize,
++				  struct sg_table *sgtable,
++				  unsigned int sg_max,
++				  iov_iter_extraction_t extraction_flags)
+ {
+ 	const struct kvec *kv = iter->kvec;
+ 	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
+@@ -266,11 +266,11 @@ static ssize_t netfs_extract_kvec_to_sg(struct iov_iter *iter,
+  * Extract up to sg_max folios from an XARRAY-type iterator and add them to
+  * the scatterlist.  The pages are not pinned.
+  */
+-static ssize_t netfs_extract_xarray_to_sg(struct iov_iter *iter,
+-					  ssize_t maxsize,
+-					  struct sg_table *sgtable,
+-					  unsigned int sg_max,
+-					  iov_iter_extraction_t extraction_flags)
++static ssize_t extract_xarray_to_sg(struct iov_iter *iter,
++				    ssize_t maxsize,
++				    struct sg_table *sgtable,
++				    unsigned int sg_max,
++				    iov_iter_extraction_t extraction_flags)
+ {
+ 	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
+ 	struct xarray *xa = iter->xarray;
+@@ -312,7 +312,7 @@ static ssize_t netfs_extract_xarray_to_sg(struct iov_iter *iter,
+ }
+ 
+ /**
+- * netfs_extract_iter_to_sg - Extract pages from an iterator and add ot an sglist
++ * extract_iter_to_sg - Extract pages from an iterator and add ot an sglist
+  * @iter: The iterator to extract from
+  * @maxsize: The amount of iterator to copy
+  * @sgtable: The scatterlist table to fill in
+@@ -339,9 +339,9 @@ static ssize_t netfs_extract_xarray_to_sg(struct iov_iter *iter,
+  * The iov_iter_extract_mode() function should be used to query how cleanup
+  * should be performed.
+  */
+-ssize_t netfs_extract_iter_to_sg(struct iov_iter *iter, size_t maxsize,
+-				 struct sg_table *sgtable, unsigned int sg_max,
+-				 iov_iter_extraction_t extraction_flags)
++ssize_t extract_iter_to_sg(struct iov_iter *iter, size_t maxsize,
++			   struct sg_table *sgtable, unsigned int sg_max,
++			   iov_iter_extraction_t extraction_flags)
+ {
+ 	if (maxsize == 0)
+ 		return 0;
+@@ -349,21 +349,21 @@ ssize_t netfs_extract_iter_to_sg(struct iov_iter *iter, size_t maxsize,
+ 	switch (iov_iter_type(iter)) {
+ 	case ITER_UBUF:
+ 	case ITER_IOVEC:
+-		return netfs_extract_user_to_sg(iter, maxsize, sgtable, sg_max,
+-						extraction_flags);
++		return extract_user_to_sg(iter, maxsize, sgtable, sg_max,
++					  extraction_flags);
+ 	case ITER_BVEC:
+-		return netfs_extract_bvec_to_sg(iter, maxsize, sgtable, sg_max,
+-						extraction_flags);
++		return extract_bvec_to_sg(iter, maxsize, sgtable, sg_max,
++					  extraction_flags);
+ 	case ITER_KVEC:
+-		return netfs_extract_kvec_to_sg(iter, maxsize, sgtable, sg_max,
+-						extraction_flags);
++		return extract_kvec_to_sg(iter, maxsize, sgtable, sg_max,
++					  extraction_flags);
+ 	case ITER_XARRAY:
+-		return netfs_extract_xarray_to_sg(iter, maxsize, sgtable, sg_max,
+-						  extraction_flags);
++		return extract_xarray_to_sg(iter, maxsize, sgtable, sg_max,
++					    extraction_flags);
+ 	default:
+ 		pr_err("%s(%u) unsupported\n", __func__, iov_iter_type(iter));
+ 		WARN_ON_ONCE(1);
+ 		return -EIO;
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(netfs_extract_iter_to_sg);
++EXPORT_SYMBOL_GPL(extract_iter_to_sg);
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 6e3be58cfe49..38d2265c77fd 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -4333,8 +4333,8 @@ static void *smb2_get_aead_req(struct crypto_aead *tfm, struct smb_rqst *rqst,
+ 		}
+ 		sgtable.orig_nents = sgtable.nents;
+ 
+-		rc = netfs_extract_iter_to_sg(iter, count, &sgtable,
+-					      num_sgs - sgtable.nents, 0);
++		rc = extract_iter_to_sg(iter, count, &sgtable,
++					num_sgs - sgtable.nents, 0);
+ 		iov_iter_revert(iter, rc);
+ 		sgtable.orig_nents = sgtable.nents;
+ 	}
+diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
+index 0362ebd4fa0f..223e17c16b60 100644
+--- a/fs/smb/client/smbdirect.c
++++ b/fs/smb/client/smbdirect.c
+@@ -2227,7 +2227,7 @@ static int smbd_iter_to_mr(struct smbd_connection *info,
+ 
+ 	memset(sgt->sgl, 0, max_sg * sizeof(struct scatterlist));
+ 
+-	ret = netfs_extract_iter_to_sg(iter, iov_iter_count(iter), sgt, max_sg, 0);
++	ret = extract_iter_to_sg(iter, iov_iter_count(iter), sgt, max_sg, 0);
+ 	WARN_ON(ret < 0);
+ 	if (sgt->nents > 0)
+ 		sg_mark_end(&sgt->sgl[sgt->nents - 1]);
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index a1f3522daa69..55e201c3a841 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -301,9 +301,9 @@ ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
+ 				struct iov_iter *new,
+ 				iov_iter_extraction_t extraction_flags);
+ struct sg_table;
+-ssize_t netfs_extract_iter_to_sg(struct iov_iter *iter, size_t len,
+-				 struct sg_table *sgtable, unsigned int sg_max,
+-				 iov_iter_extraction_t extraction_flags);
++ssize_t extract_iter_to_sg(struct iov_iter *iter, size_t len,
++			   struct sg_table *sgtable, unsigned int sg_max,
++			   iov_iter_extraction_t extraction_flags);
+ 
+ /**
+  * netfs_inode - Get the netfs inode context from the inode
 
-
->
-> I think if I can make this patch set work per-inode, the roadmap
-> from here to FUSE-BPF would be much more clear.
-
-One advantage of per-inode non-autoclose would be that open could be
-done without a roundtrip to the server.   However the resource
-limiting becomes harder to think about.
-
-So it might make sense to just create two separate modes:
-
- - per-open unmap-on-release (autoclose)
- - per-inode unmap-on-forget (non-autoclose, mapping can be torn down
-explicitly)
-
-We also should at least consider (even if not supported in the first
-version) the block-fuse case where the backing file(s) contain the
-disk image.  In this case the backing fd registration would be per-fs
-not per-inode, and the mapping would contain the
-backing_fd/backing_offset pair.
-
->
-> > Not having visibility and resource limits would be okay for a first
-> > version, as long as it's somehow constrained to privileged use.  But
-> > I'm not sure it would be worth it that way.
-> >
->
-> Speaking on behalf of my own use case for FUSE passthrough (HSM),
-> FUSE is used for "do something that does not belong in the kernel",
-> but running as unprivileged user is a non-requirement.
-> So I can say with confidence of paying customers that passthrough is
-> useful and essential even with privileged user constraint.
->
-> In summary, I will try to come up with v14 that is:
-> - privileged user only
-> - no resource limitation
-> - per-inode mapping
-
-Okay, that's a logical first step.
-
-Thanks,
-Miklos
