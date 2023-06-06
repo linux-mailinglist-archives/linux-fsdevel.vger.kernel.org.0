@@ -2,63 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 700EB72406D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 13:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87B1B7240B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 13:19:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbjFFLEZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 07:04:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41698 "EHLO
+        id S233097AbjFFLTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 07:19:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236845AbjFFLDO (ORCPT
+        with ESMTP id S230411AbjFFLTa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 07:03:14 -0400
-Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EEDFBE
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 04:00:37 -0700 (PDT)
-Received: by mail-vk1-xa2c.google.com with SMTP id 71dfb90a1353d-4611eec56bdso1658816e0c.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 04:00:37 -0700 (PDT)
+        Tue, 6 Jun 2023 07:19:30 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67364B1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 04:19:29 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id a1e0cc1a2514c-786f7e1ea2fso1598808241.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 04:19:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686049236; x=1688641236;
+        d=gmail.com; s=20221208; t=1686050368; x=1688642368;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NpgLb5wo0WB5C20UPW1gkeeos/SxD5rvpI//kQwf1u0=;
-        b=ZqZl2itVkFewn3cfK90e7e3uNcKDasy0gL5MixMnr7ZXLZtJLQS+/nS1+oRZta/adW
-         KX16lcPt9TPYh9aRCf+DCa3GfYZmnesh8NZKsxsrvIqDXLVWCngEO0rE+a/MfJ2Os9J2
-         ZAz1KYgP01oAprnJpDgT4TTEyb3AtJWR5jPvDFiGPvfRJDGR1GFMD5GIdJ2x573zrKbv
-         pJheXXqtjcyMG2cZHykL7z8Hvbgt4M2RifQe0TePQ7wPs+9wpjTxxfqEzfBKvx+l3Y5h
-         ZRyDYgvUTFWMeIxw8cCGy1STB5tGRnlCSXDrcIknnyMauBPTWi8lj4FgaRFwR9cvOFyT
-         By4A==
+        bh=egg+oVNc0RTwdbDGV6CuqrkQ8OAPiF2c24P5Mj/BV9g=;
+        b=KUH0eZzBp/X60jDRR2maiFeycb9fKL/zKccIoQY1RgjYOmHBwxyI8Mjm5WOQ0KkO66
+         Ij/jfJ0RXcJ9E9I3LKhkKyBjwt1sjGQcjPwq5AP+YCJIQGOmCuNwvBPbZf8aTvlslhqV
+         NtxTFmxUx8KtUNm1sh8Dw/WxzLYQQECKdYpWSyl9vYgodPlzaWYOhyBl9ALRhA9tNQrD
+         Xp6OeaZA+E8Q5XrvvxR/7jz2ikIzUVZNLjuPASS1Ttm4PhbNKDIe/u1AoIq9QFYIdKey
+         tr0IktJ+WACtIH49OKagBoBTHp65w4lVs7kFflL10qGb58ZVUqOB8YCypeNg36Y+bkA6
+         RkAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686049236; x=1688641236;
+        d=1e100.net; s=20221208; t=1686050368; x=1688642368;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NpgLb5wo0WB5C20UPW1gkeeos/SxD5rvpI//kQwf1u0=;
-        b=XKO+AhU4q8vC7WUY8+OI4xXaTHIrPh88hL8R3EfzFHSXHuYtqgNQZ6m02U8jSGPf6F
-         2ySR/KUwiijdUE2UVZIOyiOGT4GyetZ6ODvJZL+ZF5fd1QQzRt3/pWMI4q1H+e81ul4A
-         zyMs0tIOokk6psyJdDWVAHshawhTEsVkKLcfb031H414ihvzLwhTNSJIiC5ILE4vyhXX
-         Encc+YLGRZOJW+YYQ9YRscQIlL6o0kgEYsVpIt61+2kB/MpQ5FwEkdmiPMFnvRYCtmbK
-         3U9P8VgmOhNUkfKM4lRiU5XryisLll6V7wgQk9bCQtAUks0GYrjdyjvPXAZYB//zFGfO
-         WKpw==
-X-Gm-Message-State: AC+VfDzzh+59zeF69a/+qT6T0JaJtNPdt3UkYKR0ZUOU7pJ/ivlTtVZZ
-        tYflyZI0vhon9l+XEKqc8zrAvymlEkFXl7gcZzg=
-X-Google-Smtp-Source: ACHHUZ6G1TeADdY1FFkG5BXkfLzsEHaZI64CDOtSSEi6L1850yaPHjquhxzprXKmI/qoSr8MkDn3w+6rCFycCiMp21k=
-X-Received: by 2002:a67:fe98:0:b0:43b:1f8a:d581 with SMTP id
- b24-20020a67fe98000000b0043b1f8ad581mr977622vsr.31.1686049236661; Tue, 06 Jun
- 2023 04:00:36 -0700 (PDT)
+        bh=egg+oVNc0RTwdbDGV6CuqrkQ8OAPiF2c24P5Mj/BV9g=;
+        b=VGFHu1mYg0SAJ5p/m2pVvf8uKYt8Ql/x3DXWqEqNcLJuzLlL2SKxUR+iPk8TLur/jf
+         A/I5NRjmssRxV/QYLdhFrKOELEMzMOM3D31URI7H4APuAmmvSUwTut/7ZJl3MMtMd1+6
+         CFsvZZ23o6AURBbxv/+8z+iJkCaJBPhcZ6zWeE1wb+rA6RErgJRedzx6EfoGG+fblzbv
+         hWdViNbTXbJ+sh7g1QX065WZc7xzP3uawqkizz3FrVjNbzFv0/rht3LnjHFr65MVclS0
+         giNbLA6lYAdoz7E2iwn2O5htgF9iXFybxl3EtZ9HpYGMZQglOHGSO+RMTjnusWpbSCTi
+         kn4g==
+X-Gm-Message-State: AC+VfDyIztxm5MgDjWpYwJQPavWZkFk3OMXMHxfXakZIwoKNLuVthvRB
+        /NmHjWGFkn3HHpKqt7vCzIOnSeMpO70eEpgGofg=
+X-Google-Smtp-Source: ACHHUZ55g62hq68ZryjfIKhUZrbnUdB2I1zzHUL+JDnxi01dsYi76cXbLJR+0QFDwiotKNVaP9+08gLrYjl5WlGQ8Fg=
+X-Received: by 2002:a05:6102:52d:b0:43b:4a17:7fc2 with SMTP id
+ m13-20020a056102052d00b0043b4a177fc2mr541388vsa.26.1686050368376; Tue, 06 Jun
+ 2023 04:19:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230519125705.598234-1-amir73il@gmail.com> <20230519125705.598234-11-amir73il@gmail.com>
- <CAJfpegv3sBfw2OKWaxDe+zEEbq5Q6vBDixLd6OYzeguZgGZ_fA@mail.gmail.com>
-In-Reply-To: <CAJfpegv3sBfw2OKWaxDe+zEEbq5Q6vBDixLd6OYzeguZgGZ_fA@mail.gmail.com>
+References: <20230519125705.598234-1-amir73il@gmail.com> <CAOQ4uxibuwUwaLaJNKSifLHBm9G-Tgn67k_TKWKcN1+A4Rw-zg@mail.gmail.com>
+ <CAJfpegucD6S=yUTzpQGsR6C3E64ve+bgG_4TGP7Y+0NicqyQ_g@mail.gmail.com>
+In-Reply-To: <CAJfpegucD6S=yUTzpQGsR6C3E64ve+bgG_4TGP7Y+0NicqyQ_g@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 6 Jun 2023 14:00:25 +0300
-Message-ID: <CAOQ4uxhLFRHAfXs5ZZLf5yakYMVD9edMMofSzwC12MXGvMsnXg@mail.gmail.com>
-Subject: Re: [fuse-devel] Fwd: [PATCH v13 10/10] fuse: setup a passthrough fd
- without a permanent backing id
+Date:   Tue, 6 Jun 2023 14:19:17 +0300
+Message-ID: <CAOQ4uxjGWHnwd5fcp8VwHk59q=BftAhw0uYbdR-KmJCq3fpnDg@mail.gmail.com>
+Subject: Re: [PATCH v13 00/10] fuse: Add support for passthrough read/write
 To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-        Daniel Rosenberg <drosen@google.com>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Alessio Balsini <balsini@android.com>,
+        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -71,81 +72,121 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 6, 2023 at 1:23=E2=80=AFPM Miklos Szeredi via fuse-devel
-<fuse-devel@lists.sourceforge.net> wrote:
+On Tue, Jun 6, 2023 at 12:49=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
 >
-> On Fri, 19 May 2023 at 14:57, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Tue, 6 Jun 2023 at 11:13, Amir Goldstein <amir73il@gmail.com> wrote:
 > >
-> > WIP
-> >
-> > Add an ioctl to associate a FUSE server open fd with a request.
-> > A later response to this request get use the FOPEN_PASSTHROUGH flag
-> > to request passthrough to the associated backing file.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
+> > On Fri, May 19, 2023 at 3:57=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
+com> wrote:
+> > >
+> > > Miklos,
+> > >
+> > > This patch set addresses your review feedback on Alesio's V12 patch s=
+et
+> > > from 2021 [1] as well as other bugs that I have found since.
+> > > This patch set uses refcounted backing files as we discussed recently=
+ [2].
+> > >
+> > > I am posting this for several possible outcomes:
+> > >
+> > > 1. Either FUSE-BPF develpers can use this as a reference implementati=
+on
+> > >    for their 1st phase of "backing file passthrough"
+> > > 2. Or they can tell me which API changes need to made to this patch s=
+et
+> > >    so the API is flexible enough to extend to "backing inode passthro=
+ugh"
+> > >    and to "BPF filters" later on
+> > > 3. We find there is little overlap in the APIs and merge this as is
+> > >
+> > > These patches are available on github [3] along with libfuse patches =
+[4].
+> > > I tested them by running xfstests (./check -fuse -g quick.rw) with la=
+test
+> > > libfuse xfstest support.
+> > >
+> > > Without FOPEN_PASSTHROUGH, one test in this group fails (generic/451)
+> > > which tests mixed buffered/aio writes.
+> > > With FOPEN_PASSTHROUGH, this test also passes.
+> > >
+> > > This revision does not set any limitations on the number of backing f=
+iles
+> > > that can be mapped by the server.  I considered several ways to addre=
+ss
+> > > this and decided to try a different approach.
+> > >
+> > > Patch 10 (with matching libfuse patch) is an RFC patch for an alterna=
+tive
+> > > API approach. Please see my comments on that patch.
+> > >
 > >
 > > Miklos,
 > >
-> > After implementing refcounted backing files, I started to think how
-> > to limit the server from mapping too many files.
+> > I wanted to set expectations w.r.t this patch set and the passthrough
+> > feature development in general.
 > >
-> > I wanted to limit the backing files mappings to the number of open fuse
-> > files to simplify backing files accounting (i.e. open files are
-> > effectively accounted to clients).
+> > So far I've seen comments from you up to path 5/10, so I assume you
+> > did not get up to RFC patch 10/10.
 > >
-> > It occured to me that creatig a 1-to-1 mapping between fuse files and
-> > backing file ids is quite futile if there is no need to manage 1-to-man=
-y
-> > backing file mappings.
+> > The comments about adding max stack depth to protocol and about
+> > refactoring overlayfs common code are easy to do.
 > >
-> > If only 1-to-1 mapping is desired, the proposed ioctl associates a
-> > backing file with a pending request.  The backing file will be kept
-> > open for as long the request lives, or until its refcount is handed
-> > over to the client, which can then use it to setup passthough to the
-> > backing file without the intermediate idr array.
+> > However, I feel that there are still open core design questions that ne=
+ed
+> > to be spelled out, before we continue.
+> >
+> > Do you find the following acceptable for first implementation, or do yo=
+u
+> > think that those issues must be addressed before merging anything?
+> >
+> > 1. No lsof visibility of backing files (if server closes them)
+> > 2. Derived backing files resource limit (cannot grow beyond nr of fuse =
+files)
+> > 3. No data consistency guaranty between different fd to the same inode
+> >     (i.e. backing is per fd not per inode)
 >
-> I think I understand what the patch does, but what I don't understand
-> is how this is going to solve the resource accounting problem.
+> I think the most important thing is to have the FUSE-BPF team onboard.
+
+Yeh, I'd love to get some feedback from you guys.
+
+>    I'm not sure that the per-file part of this is necessary, doing
+> everything per-inode should be okay.   What are the benefits?
 >
-> Can you elaborate?
+
+I agree that semantics are simpler with per-inode.
+The only benefit I see to per-file is the lifetime of the mapping.
+
+It is very easy IMO to program with a mapping scope of
+open-to-close that is requested by FOPEN_PASSTHROUGH
+and FOPEN_PASSTHROUGH_AUTO_CLOSE.
+
+But I think the same lifetime can still be achieved with per-inode
+mapping. I hand waved how I think that could be done in response
+to patch 10/10 review.
+
+I think if I can make this patch set work per-inode, the roadmap
+from here to FUSE-BPF would be much more clear.
+
+> Not having visibility and resource limits would be okay for a first
+> version, as long as it's somehow constrained to privileged use.  But
+> I'm not sure it would be worth it that way.
 >
 
-It does not solve the resource accounting in the traditional way
-of limiting the number of open files to the resource limit of the
-server process.
+Speaking on behalf of my own use case for FUSE passthrough (HSM),
+FUSE is used for "do something that does not belong in the kernel",
+but running as unprivileged user is a non-requirement.
+So I can say with confidence of paying customers that passthrough is
+useful and essential even with privileged user constraint.
 
-Instead, it has the similar effect of overlayfs pseudo files
-non accounting.
+In summary, I will try to come up with v14 that is:
+- privileged user only
+- no resource limitation
+- per-inode mapping
 
-A FUSE passthrough filesystem can contribute the same number
-of non accounted open fds as the number of FUSE fds accounted
-to different processes.
-
-A non privileged user can indirectly cause unaccounted open fds
-with a FUSE passthough fs in the exact same way that the same
-user can cause unaccounted open fds with an overlayfs mount
-if it can convince other users to open files on the FUSE/ovl that it
-has mounted.
-
-Am I making sense?
-
-One possible improvement to this API is to include the nodeid
-in FUSE_DEV_IOC_PASSTHROUGH_SETUP to make the
-mapping per-inode.
-
-If the mapping was already created during another open of
-the same inode, the setup would fail with a special error
-(EEXIST) so the caller would close the new backing fd, but
-the request already takes a reference to the backing fd of
-the inode, so FOPEN_PASSTHROUGH may proceed.
-
-On the last close, the backing fd refcount drops to zero and
-then is detached from the inode.
-
-A server that wants to manage the mapping lifetime can still
-use FUSE_DEV_IOC_PASSTHROUGH_OPEN/CLOSE to
-do so (with nodeid) argument.
+If at any time FUSE-BFP team would like to take this patch set
+of my hands, or propose a replacement for it, I would be very happy
+to step down - whatever it takes to land read/write passthrough.
 
 Thanks,
 Amir.
