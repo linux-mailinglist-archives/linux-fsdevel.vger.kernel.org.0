@@ -2,144 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AF63723E3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 11:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A98E723E79
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 11:55:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236874AbjFFJto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 05:49:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55154 "EHLO
+        id S236597AbjFFJzk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 05:55:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231626AbjFFJth (ORCPT
+        with ESMTP id S234931AbjFFJzj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 05:49:37 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D871DE7A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 02:49:16 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-977d4a1cf0eso341455766b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 02:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1686044955; x=1688636955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7TpBBFDZE7NXoIwrI7NNl5J1j6FinLKliLX9XSZwulI=;
-        b=ZxzeqLI9rnEiMcmgBNMFYtUgjk0GF5on/7gs/3MZ6fRCIizEgQJEJst2YHGYnxAfnR
-         B7XhtCSSW6nkwaI9RC86D9D/UQzDB372LzuAGgQf2HYgDnIkb3JU6gElCd4Fxi4AfbcH
-         c+6AIR2rAMEM7IbxFhpdvfdMF5gaTUf7DT1xA=
+        Tue, 6 Jun 2023 05:55:39 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B93F0E60
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 02:55:38 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-777097126abso316154839f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 02:55:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686044955; x=1688636955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7TpBBFDZE7NXoIwrI7NNl5J1j6FinLKliLX9XSZwulI=;
-        b=JA/GnmSl7c+zX7afa3fPCvZITVEjRyhZJy3ofNsrH6kOYSLeEKp1jhikESNwWhhjX2
-         iUBIB2HeItKA1q7Da2bXNJ3/qgWtJMqWvmOelsh5fPWWaPK7inashn0ZN7KWyVMevAY7
-         HWyTQ2+6fOz2/IzpyEeeGG8tgW/1nERyLI+DPoKY+jReB1QDYHQAQoOH+xie7BA8LwHm
-         Ip54a94lXMBfh7zMsVq58jzSX7vyQAMmUcF5WuVbHYJBAIwwauD3f18rhPzFBU+xY+lO
-         Q1LXyarAORk30yHSCfpM5CVUr21v9rcPdT0NRU/shZP3kYlG1h5H0zaLV922HhOpjlq+
-         A7kQ==
-X-Gm-Message-State: AC+VfDwgCF6btDb36zJb4Hf9AIPJyg+I48+Ex7Q65WMtSogM2thLIew/
-        bGHlbjv+we8RVIiKNeyO0kkeJrDJp4kthXGXURZFZQ==
-X-Google-Smtp-Source: ACHHUZ62s+JyrOhlo5FytoEXjB5yAo79/xFnLkSkoVpgRFtBuvslchlDzdSi3CqInmBJxCYfO2109l0MNs3lt709ELk=
-X-Received: by 2002:a17:907:3189:b0:974:625d:183f with SMTP id
- xe9-20020a170907318900b00974625d183fmr1711883ejb.36.1686044955403; Tue, 06
- Jun 2023 02:49:15 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686045338; x=1688637338;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vHp7JhKpOLftA8ijBU5NEW0PH0Y4Ly54QRDLuuH98wQ=;
+        b=cRCsKXaMqy9iAv1tnYoBkf51zITCuW6ut1EX/9c7eapDJF+9+7o+jdwNPJ8nnJleSa
+         2naqud6lWTA/Q97adWC/g1F6Ats4pQ7kbi9ekexYiPCOJCrPV8wDuwkDupm+sXRtg16x
+         XeV4ytntdcCTQKDtS1BY8ozxDzuU6XO5W3h4FTmTVDhbpdKPCvfdSri150sLl80R9eLU
+         ulcS/QY6sQ0nL0bOMyvc+9keu9rGhHH3pk9RbBR9xdkcFVX/xqFXC+ZBI4Z7dwoEiOaK
+         l3beL0DQ02K0CWG9fnoxNQH/I6CVa/46k4MSCVzechbhrE/+XUy69wzDvINMcoSFLvBw
+         mSAg==
+X-Gm-Message-State: AC+VfDyWCf9AZmUAKDL1itC0fO65GSvD/EY7Bq65KWIFc64FaQvGpmN1
+        aFt3HUjAlklyWtAiSEj9fYVVdf/E68jAudf3OmfxBLPjyeSC
+X-Google-Smtp-Source: ACHHUZ6WLTcSDIIq1Kv0DMf4wTAm/1RJtlgXs9qRg8KIjuul16D89Csl9JRYFik6L8c4tUMMHqhwzA7cfC+KOGAhKoYpVXcRG3M1
 MIME-Version: 1.0
-References: <20230519125705.598234-1-amir73il@gmail.com> <CAOQ4uxibuwUwaLaJNKSifLHBm9G-Tgn67k_TKWKcN1+A4Rw-zg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxibuwUwaLaJNKSifLHBm9G-Tgn67k_TKWKcN1+A4Rw-zg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 6 Jun 2023 11:49:04 +0200
-Message-ID: <CAJfpegucD6S=yUTzpQGsR6C3E64ve+bgG_4TGP7Y+0NicqyQ_g@mail.gmail.com>
-Subject: Re: [PATCH v13 00/10] fuse: Add support for passthrough read/write
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Daniel Rosenberg <drosen@google.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Alessio Balsini <balsini@android.com>,
-        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+X-Received: by 2002:a02:620e:0:b0:41e:7fef:24ea with SMTP id
+ d14-20020a02620e000000b0041e7fef24eamr799123jac.1.1686045338103; Tue, 06 Jun
+ 2023 02:55:38 -0700 (PDT)
+Date:   Tue, 06 Jun 2023 02:55:38 -0700
+In-Reply-To: <00000000000002eb8105f51cfa96@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000073fb7305fd730525@google.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_ioctl_add_dev
+From:   syzbot <syzbot+afdee14f9fd3d20448e7@syzkaller.appspotmail.com>
+To:     chris@chrisdown.name, clm@fb.com, dsterba@suse.com,
+        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, xiaoshoukui@gmail.com,
+        xiaoshoukui@ruijie.com.cn
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 6 Jun 2023 at 11:13, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Fri, May 19, 2023 at 3:57=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > Miklos,
-> >
-> > This patch set addresses your review feedback on Alesio's V12 patch set
-> > from 2021 [1] as well as other bugs that I have found since.
-> > This patch set uses refcounted backing files as we discussed recently [=
-2].
-> >
-> > I am posting this for several possible outcomes:
-> >
-> > 1. Either FUSE-BPF develpers can use this as a reference implementation
-> >    for their 1st phase of "backing file passthrough"
-> > 2. Or they can tell me which API changes need to made to this patch set
-> >    so the API is flexible enough to extend to "backing inode passthroug=
-h"
-> >    and to "BPF filters" later on
-> > 3. We find there is little overlap in the APIs and merge this as is
-> >
-> > These patches are available on github [3] along with libfuse patches [4=
-].
-> > I tested them by running xfstests (./check -fuse -g quick.rw) with late=
-st
-> > libfuse xfstest support.
-> >
-> > Without FOPEN_PASSTHROUGH, one test in this group fails (generic/451)
-> > which tests mixed buffered/aio writes.
-> > With FOPEN_PASSTHROUGH, this test also passes.
-> >
-> > This revision does not set any limitations on the number of backing fil=
-es
-> > that can be mapped by the server.  I considered several ways to address
-> > this and decided to try a different approach.
-> >
-> > Patch 10 (with matching libfuse patch) is an RFC patch for an alternati=
-ve
-> > API approach. Please see my comments on that patch.
-> >
->
-> Miklos,
->
-> I wanted to set expectations w.r.t this patch set and the passthrough
-> feature development in general.
->
-> So far I've seen comments from you up to path 5/10, so I assume you
-> did not get up to RFC patch 10/10.
->
-> The comments about adding max stack depth to protocol and about
-> refactoring overlayfs common code are easy to do.
->
-> However, I feel that there are still open core design questions that need
-> to be spelled out, before we continue.
->
-> Do you find the following acceptable for first implementation, or do you
-> think that those issues must be addressed before merging anything?
->
-> 1. No lsof visibility of backing files (if server closes them)
-> 2. Derived backing files resource limit (cannot grow beyond nr of fuse fi=
-les)
-> 3. No data consistency guaranty between different fd to the same inode
->     (i.e. backing is per fd not per inode)
+syzbot suspects this issue was fixed by commit:
 
-I think the most important thing is to have the FUSE-BPF team onboard.
-   I'm not sure that the per-file part of this is necessary, doing
-everything per-inode should be okay.   What are the benefits?
+commit ac868bc9d136cde6e3eb5de77019a63d57a540ff
+Author: xiaoshoukui <xiaoshoukui@gmail.com>
+Date:   Thu Apr 13 09:55:07 2023 +0000
 
-Not having visibility and resource limits would be okay for a first
-version, as long as it's somehow constrained to privileged use.  But
-I'm not sure it would be worth it that way.
+    btrfs: fix assertion of exclop condition when starting balance
 
-Thanks,
-Miklos
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12bdc3a3280000
+start commit:   04a357b1f6f0 Merge tag 'mips_6.3_1' of git://git.kernel.or..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f763d89e26d3d4c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=afdee14f9fd3d20448e7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f043b0c80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15d2ea9cc80000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: btrfs: fix assertion of exclop condition when starting balance
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
