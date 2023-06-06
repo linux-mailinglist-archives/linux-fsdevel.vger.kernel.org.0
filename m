@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65501724C6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 21:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E303E724C77
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jun 2023 21:07:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239422AbjFFTHZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 15:07:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39662 "EHLO
+        id S233485AbjFFTHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 15:07:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239397AbjFFTGD (ORCPT
+        with ESMTP id S238606AbjFFTGP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 15:06:03 -0400
-Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C2C1FD4
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 12:04:56 -0700 (PDT)
-Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1b03f9dfd52so25771955ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 12:04:56 -0700 (PDT)
+        Tue, 6 Jun 2023 15:06:15 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 403951FDC
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 12:04:59 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-bb39316a68eso1899788276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 12:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686078280; x=1688670280;
+        d=google.com; s=20221208; t=1686078282; x=1688670282;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qPbJS0NeJm0ebjWuWAGTg4zHB+jUkimTjx0FXzxIc84=;
-        b=08oQhpNB5bPsCTiYZb6zzITcl3NrY7Nrj0gHP7CL4wEm89iCZHqEqZvXMnagv03rkn
-         GPexWIBMA+li5aiwDX4ihlFm6cVZOeax1+AHpQmOU2YD/QwBli/TC1j7FXVthdfotrbj
-         ohAd8tgwk7CZ9llZkCvOzoa+H0uBPFBXEcWSK2TcUhtWGacdRDhynTXSQrFRtxSj03ll
-         +4JVjB3yWPlWCPldFPbqjqq8D3jeR9j4nRL0TBHcuQBOxSh7kt2ZiDSE77C+EmED3XTt
-         Cx6sMOv8frrdr7pYnwu4yVAynavbLFmrX0Dakhf26NBqNaaItWBILzjwUpL7K2OiHx+L
-         mttg==
+        bh=ZBX6a15Tnsz/uKq26LcenmelaNrPaeGwC3t0ZYHlu0o=;
+        b=SiIGZBUhZs629JysZEAyyBg7ttu9GLTQayTGdSZGve4dLO6zhBZcJhFcd1G73mhuek
+         LHQGWYqLVU6XGceDTMr/+ObLmxrXdmeyPE4htH53qamVc0jx3GxeXvlfVB9JCraAIS1o
+         KEzaHjtn2Qo3RoZRS3XAY/vwbMPt0gdnui/cnheq8vpMkjsxIO1Je1R+Or+Zif0wezPw
+         uUYILrxrg8kwyk8/xo82WMddoKWumnm5vCXiz84rf/1WA32vat2RPpMWIr80UC3bv5gu
+         +n3kSoBT8FJFvccnZi21mVuxGSb5VrWJMuxYUlyl2Etedh0yvhauw6W7NlVmyqj5TDoC
+         ZVSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686078280; x=1688670280;
+        d=1e100.net; s=20221208; t=1686078282; x=1688670282;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qPbJS0NeJm0ebjWuWAGTg4zHB+jUkimTjx0FXzxIc84=;
-        b=MI80zQlM3T8vzgRv2k2YaU+t0DHmN3vzJDJkEsxXihp4k2aRenZNzJ01Ia0r7ah5Rp
-         DuG/HTBrFxObupWNbNxvVHoguZXban19kljFSzGeUSmgLfQ6nSplZhI0amJ+QLPDbuu8
-         Ai5FMxG+G2sIkbURXOMoD3kK31fduhRYME6/BvGj1SLU6mlX96inZVECwu5CAlmKIIKf
-         L7Z399cHwyj5N4umebmx0TcLtCTtTZpGASyuouQNycP3SQzdcVu2qmrdPVAxAlMjynDj
-         BDgyesirp6p5+94qIsYwubVzKo9wPWVYYbHCSUknRxH1XvmigazqE5NeZOsBZJnnlRVj
-         7Ttg==
-X-Gm-Message-State: AC+VfDyRzjHPW02BecrZG1wDQ/ziRy1/xceWeSR2VyqXQkhbmdz6/7ae
-        yUGCK44DEZkNTeimmAm4XxqqomC8n33VAKr6/g==
-X-Google-Smtp-Source: ACHHUZ7+W5XWqHy7WGLlye5fNuolaabE941Ydb/Msxa478YJYlgHnPlrM8+Gzs9sRjg5WLNJlGVtgTPDm/CmJ9Gc2A==
+        bh=ZBX6a15Tnsz/uKq26LcenmelaNrPaeGwC3t0ZYHlu0o=;
+        b=PMrGVYQeZqYXi/cgJhwODDH+SSf5PWnYXUPTIhu+pbuo2jiNZkLeMgfXNuB8WjUy6g
+         +mY7JbLhWLf1n8XiHAEAk+XRcaPVmYegBqX0d3KNe+26mQy4Z+1psayuBI+EVZCNn/dz
+         SDjn80VMuwntiCHEBHQ+6H/vs0PJrusJIuMyDk2X7vKXhX1fJ0bBI387cW5qn6GwjBLN
+         wwcdfsay+QeA+RR8FVfZaCdgEw6NF+ohpQFkRnw0Y/fTNU0ayt7wrf9kpTHUrBBlkavt
+         4QTjT7UIA4VtYSIoFecAh82WeDDueQGy7/vSnP28TPet2tPAQ/Ur74lYkNJBgs5tvwzB
+         zQyg==
+X-Gm-Message-State: AC+VfDz10kRo2lOPX7exQ+cZcWKMt2B9arm47v46teGuH8R1qzd6Afmd
+        inG1sRi55C/8Gi/+vsoC1fXLBGVscZ5yCixjdA==
+X-Google-Smtp-Source: ACHHUZ5Cpne/EIdT1I7Li9OeDmgR0RpPGqTGa8YIhJkObOQifrmAjwQv0QQeKIDO8N9Vq8SkzWw7xg09f24itua+cw==
 X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a17:902:da8c:b0:1b0:4b1d:26e1 with
- SMTP id j12-20020a170902da8c00b001b04b1d26e1mr956600plx.8.1686078280564; Tue,
- 06 Jun 2023 12:04:40 -0700 (PDT)
-Date:   Tue,  6 Jun 2023 19:04:00 +0000
+ (user=ackerleytng job=sendgmr) by 2002:a25:2446:0:b0:b9a:703d:e650 with SMTP
+ id k67-20020a252446000000b00b9a703de650mr1068675ybk.7.1686078282407; Tue, 06
+ Jun 2023 12:04:42 -0700 (PDT)
+Date:   Tue,  6 Jun 2023 19:04:01 +0000
 In-Reply-To: <cover.1686077275.git.ackerleytng@google.com>
 Mime-Version: 1.0
 References: <cover.1686077275.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.41.0.rc0.172.g3f132b7071-goog
-Message-ID: <f8354b118e7f630c1340a9d651258606bf8d9400.1686077275.git.ackerleytng@google.com>
-Subject: [RFC PATCH 15/19] KVM: guest_mem: hugetlb: initialization and cleanup
+Message-ID: <18e518695854cc7243866d7b1be2fbbb3aa87c71.1686077275.git.ackerleytng@google.com>
+Subject: [RFC PATCH 16/19] KVM: guest_mem: hugetlb: allocate and truncate from hugetlb
 From:   Ackerley Tng <ackerleytng@google.com>
 To:     akpm@linux-foundation.org, mike.kravetz@oracle.com,
         muchun.song@linux.dev, pbonzini@redhat.com, seanjc@google.com,
@@ -84,215 +84,298 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-First stage of hugetlb support: add initialization and cleanup
-routines
+Introduce kvm_gmem_hugetlb_get_folio(), then update
+kvm_gmem_allocate() and kvm_gmem_truncate() to use hugetlb functions.
 
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 ---
- include/uapi/linux/kvm.h | 25 ++++++++++++
- virt/kvm/guest_mem.c     | 88 +++++++++++++++++++++++++++++++++++++---
- 2 files changed, 108 insertions(+), 5 deletions(-)
+ virt/kvm/guest_mem.c | 215 +++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 188 insertions(+), 27 deletions(-)
 
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 0fa665e8862a..1df0c802c29f 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -13,6 +13,7 @@
- #include <linux/compiler.h>
- #include <linux/ioctl.h>
- #include <asm/kvm.h>
-+#include <asm-generic/hugetlb_encode.h>
- 
- #define KVM_API_VERSION 12
- 
-@@ -2280,6 +2281,30 @@ struct kvm_memory_attributes {
- #define KVM_CREATE_GUEST_MEMFD	_IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
- 
- #define KVM_GUEST_MEMFD_HUGE_PMD		(1ULL << 0)
-+#define KVM_GUEST_MEMFD_HUGETLB			(1ULL << 1)
-+
-+/*
-+ * Huge page size encoding when KVM_GUEST_MEMFD_HUGETLB is specified, and a huge
-+ * page size other than the default is desired.  See hugetlb_encode.h.  All
-+ * known huge page size encodings are provided here.  It is the responsibility
-+ * of the application to know which sizes are supported on the running system.
-+ * See mmap(2) man page for details.
-+ */
-+#define KVM_GUEST_MEMFD_HUGE_SHIFT	HUGETLB_FLAG_ENCODE_SHIFT
-+#define KVM_GUEST_MEMFD_HUGE_MASK	HUGETLB_FLAG_ENCODE_MASK
-+
-+#define KVM_GUEST_MEMFD_HUGE_64KB	HUGETLB_FLAG_ENCODE_64KB
-+#define KVM_GUEST_MEMFD_HUGE_512KB	HUGETLB_FLAG_ENCODE_512KB
-+#define KVM_GUEST_MEMFD_HUGE_1MB	HUGETLB_FLAG_ENCODE_1MB
-+#define KVM_GUEST_MEMFD_HUGE_2MB	HUGETLB_FLAG_ENCODE_2MB
-+#define KVM_GUEST_MEMFD_HUGE_8MB	HUGETLB_FLAG_ENCODE_8MB
-+#define KVM_GUEST_MEMFD_HUGE_16MB	HUGETLB_FLAG_ENCODE_16MB
-+#define KVM_GUEST_MEMFD_HUGE_32MB	HUGETLB_FLAG_ENCODE_32MB
-+#define KVM_GUEST_MEMFD_HUGE_256MB	HUGETLB_FLAG_ENCODE_256MB
-+#define KVM_GUEST_MEMFD_HUGE_512MB	HUGETLB_FLAG_ENCODE_512MB
-+#define KVM_GUEST_MEMFD_HUGE_1GB	HUGETLB_FLAG_ENCODE_1GB
-+#define KVM_GUEST_MEMFD_HUGE_2GB	HUGETLB_FLAG_ENCODE_2GB
-+#define KVM_GUEST_MEMFD_HUGE_16GB	HUGETLB_FLAG_ENCODE_16GB
- 
- struct kvm_create_guest_memfd {
- 	__u64 size;
 diff --git a/virt/kvm/guest_mem.c b/virt/kvm/guest_mem.c
-index 13253af40be6..b533143e2878 100644
+index b533143e2878..6271621f6b73 100644
 --- a/virt/kvm/guest_mem.c
 +++ b/virt/kvm/guest_mem.c
-@@ -19,6 +19,7 @@
- #include <linux/secretmem.h>
- #include <linux/set_memory.h>
- #include <linux/sched/signal.h>
-+#include <linux/hugetlb.h>
- 
- #include <uapi/linux/magic.h>
- 
-@@ -30,6 +31,11 @@ struct kvm_gmem {
- 	struct kvm *kvm;
- 	u64 flags;
- 	struct xarray bindings;
-+	struct {
-+		struct hstate *h;
-+		struct hugepage_subpool *spool;
-+		struct resv_map *resv_map;
-+	} hugetlb;
- };
- 
- static loff_t kvm_gmem_get_size(struct file *file)
-@@ -346,6 +352,46 @@ static const struct inode_operations kvm_gmem_iops = {
- 	.setattr	= kvm_gmem_setattr,
- };
- 
-+static int kvm_gmem_hugetlb_setup(struct inode *inode, struct kvm_gmem *gmem,
-+				  loff_t size, u64 flags)
-+{
-+	int page_size_log;
-+	int hstate_idx;
-+	long hpages;
-+	struct resv_map *resv_map;
-+	struct hugepage_subpool *spool;
-+	struct hstate *h;
-+
-+	page_size_log = (flags >> KVM_GUEST_MEMFD_HUGE_SHIFT) & KVM_GUEST_MEMFD_HUGE_MASK;
-+	hstate_idx = get_hstate_idx(page_size_log);
-+	if (hstate_idx < 0)
-+		return -ENOENT;
-+
-+	h = &hstates[hstate_idx];
-+	/* Round up to accommodate size requests that don't align with huge pages */
-+	hpages = round_up(size, huge_page_size(h)) >> huge_page_shift(h);
-+	spool = hugepage_new_subpool(h, hpages, hpages);
-+	if (!spool)
-+		goto out;
-+
-+	resv_map = resv_map_alloc();
-+	if (!resv_map)
-+		goto out_subpool;
-+
-+	inode->i_blkbits = huge_page_shift(h);
-+
-+	gmem->hugetlb.h = h;
-+	gmem->hugetlb.spool = spool;
-+	gmem->hugetlb.resv_map = resv_map;
-+
-+	return 0;
-+
-+out_subpool:
-+	kfree(spool);
-+out:
-+	return -ENOMEM;
-+}
-+
- static struct inode *kvm_gmem_create_inode(struct kvm *kvm, loff_t size, u64 flags,
- 					   struct vfsmount *mnt)
- {
-@@ -368,6 +414,12 @@ static struct inode *kvm_gmem_create_inode(struct kvm *kvm, loff_t size, u64 fla
- 	if (!gmem)
- 		goto err_inode;
- 
-+	if (flags & KVM_GUEST_MEMFD_HUGETLB) {
-+		err = kvm_gmem_hugetlb_setup(inode, gmem, size, flags);
-+		if (err)
-+			goto err_gmem;
-+	}
-+
- 	xa_init(&gmem->bindings);
- 
- 	kvm_get_kvm(kvm);
-@@ -385,6 +437,8 @@ static struct inode *kvm_gmem_create_inode(struct kvm *kvm, loff_t size, u64 fla
- 
- 	return inode;
- 
-+err_gmem:
-+	kfree(gmem);
- err_inode:
- 	iput(inode);
- 	return ERR_PTR(err);
-@@ -414,6 +468,8 @@ static struct file *kvm_gmem_create_file(struct kvm *kvm, loff_t size, u64 flags
- 	return file;
+@@ -43,6 +43,95 @@ static loff_t kvm_gmem_get_size(struct file *file)
+ 	return i_size_read(file_inode(file));
  }
  
-+#define KVM_GUEST_MEMFD_ALL_FLAGS (KVM_GUEST_MEMFD_HUGE_PMD | KVM_GUEST_MEMFD_HUGETLB)
++static struct folio *kvm_gmem_hugetlb_alloc_and_cache_folio(
++	struct file *file, pgoff_t hindex)
++{
++	int err;
++	struct folio *folio;
++	struct kvm_gmem *gmem;
++	struct hstate *h;
++	struct resv_map *resv_map;
++	unsigned long offset;
++	struct vm_area_struct pseudo_vma;
 +
- int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *gmem)
- {
- 	int fd;
-@@ -424,8 +480,15 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *gmem)
- 	if (size < 0 || !PAGE_ALIGNED(size))
- 		return -EINVAL;
- 
--	if (flags & ~KVM_GUEST_MEMFD_HUGE_PMD)
--		return -EINVAL;
-+	if (!(flags & KVM_GUEST_MEMFD_HUGETLB)) {
-+		if (flags & ~(unsigned int)KVM_GUEST_MEMFD_ALL_FLAGS)
-+			return -EINVAL;
-+	} else {
-+		/* Allow huge page size encoding in flags. */
-+		if (flags & ~(unsigned int)(KVM_GUEST_MEMFD_ALL_FLAGS |
-+				(KVM_GUEST_MEMFD_HUGE_MASK << KVM_GUEST_MEMFD_HUGE_SHIFT)))
-+			return -EINVAL;
++	gmem = file->private_data;
++	h = gmem->hugetlb.h;
++	resv_map = gmem->hugetlb.resv_map;
++	offset = hindex << huge_page_shift(h);
++
++	vma_init(&pseudo_vma, NULL);
++	vm_flags_init(&pseudo_vma, VM_HUGETLB | VM_MAYSHARE | VM_SHARED);
++	/* vma infrastructure is dependent on vm_file being set */
++	pseudo_vma.vm_file = file;
++
++	/* TODO setup NUMA policy. Meanwhile, fallback to get_task_policy(). */
++	pseudo_vma.vm_policy = NULL;
++	folio = alloc_hugetlb_folio_from_subpool(
++		gmem->hugetlb.spool, h, resv_map, &pseudo_vma, offset, 0);
++	/* Remember to take and drop refcount from vm_policy */
++	if (IS_ERR(folio))
++		return folio;
++
++	/*
++	 * FIXME: Skip clearing pages when trusted firmware will do it when
++	 * assigning memory to the guest.
++	 */
++	clear_huge_page(&folio->page, offset, pages_per_huge_page(h));
++	__folio_mark_uptodate(folio);
++	err = hugetlb_filemap_add_folio(file->f_mapping, h, folio, hindex);
++	if (unlikely(err)) {
++		restore_reserve_on_error(resv_map, hindex, true, folio);
++		folio_put(folio);
++		folio = ERR_PTR(err);
 +	}
- 
- 	if (flags & KVM_GUEST_MEMFD_HUGE_PMD) {
++
++	return folio;
++}
++
++/**
++ * Gets a hugetlb folio, from @file, at @index (in terms of PAGE_SIZE) within
++ * the file.
++ *
++ * The returned folio will be in @file's page cache, and locked.
++ */
++static struct folio *kvm_gmem_hugetlb_get_folio(struct file *file, pgoff_t index)
++{
++	struct folio *folio;
++	u32 hash;
++	/* hindex is in terms of huge_page_size(h) and not PAGE_SIZE */
++	pgoff_t hindex;
++	struct kvm_gmem *gmem;
++	struct hstate *h;
++	struct address_space *mapping;
++
++	gmem = file->private_data;
++	h = gmem->hugetlb.h;
++	hindex = index >> huge_page_order(h);
++
++	mapping = file->f_mapping;
++	hash = hugetlb_fault_mutex_hash(mapping, hindex);
++	mutex_lock(&hugetlb_fault_mutex_table[hash]);
++
++	rcu_read_lock();
++	folio = filemap_lock_folio(mapping, hindex);
++	rcu_read_unlock();
++	if (folio)
++		goto folio_valid;
++
++	folio = kvm_gmem_hugetlb_alloc_and_cache_folio(file, hindex);
++	/*
++	 * TODO Perhaps the interface of kvm_gmem_get_folio should change to better
++	 * report errors
++	 */
++	if (IS_ERR(folio))
++		folio = NULL;
++
++folio_valid:
++	mutex_unlock(&hugetlb_fault_mutex_table[hash]);
++
++	return folio;
++}
++
+ static struct folio *kvm_gmem_get_huge_folio(struct file *file, pgoff_t index)
+ {
  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-@@ -610,7 +673,17 @@ static void kvm_gmem_evict_inode(struct inode *inode)
- 	 * pointed at this file.
- 	 */
- 	kvm_gmem_invalidate_begin(kvm, gmem, 0, -1ul);
--	truncate_inode_pages_final(inode->i_mapping);
-+	if (gmem->flags & KVM_GUEST_MEMFD_HUGETLB) {
-+		truncate_inode_pages_final_prepare(inode->i_mapping);
-+		remove_mapping_hugepages(
-+			inode->i_mapping, gmem->hugetlb.h, gmem->hugetlb.spool,
-+			gmem->hugetlb.resv_map, inode, 0, LLONG_MAX);
-+
-+		resv_map_release(&gmem->hugetlb.resv_map->refs);
-+		hugepage_put_subpool(gmem->hugetlb.spool);
-+	} else {
-+		truncate_inode_pages_final(inode->i_mapping);
-+	}
- 	kvm_gmem_invalidate_end(kvm, gmem, 0, -1ul);
+@@ -74,36 +163,56 @@ static struct folio *kvm_gmem_get_huge_folio(struct file *file, pgoff_t index)
+ #endif
+ }
  
- 	mutex_unlock(&kvm->slots_lock);
-@@ -688,10 +761,15 @@ bool kvm_gmem_check_alignment(const struct kvm_userspace_memory_region2 *mem)
++/**
++ * Gets a folio, from @file, at @index (in terms of PAGE_SIZE) within the file.
++ *
++ * The returned folio will be in @file's page cache and locked.
++ */
+ static struct folio *kvm_gmem_get_folio(struct file *file, pgoff_t index)
  {
- 	size_t page_size;
+ 	struct folio *folio;
++	struct kvm_gmem *gmem = file->private_data;
  
--	if (mem->flags & KVM_GUEST_MEMFD_HUGE_PMD)
-+	if (mem->flags & KVM_GUEST_MEMFD_HUGETLB) {
-+		size_t page_size_log = ((mem->flags >> KVM_GUEST_MEMFD_HUGE_SHIFT)
-+					& KVM_GUEST_MEMFD_HUGE_MASK);
-+		page_size = 1UL << page_size_log;
-+	} else if (mem->flags & KVM_GUEST_MEMFD_HUGE_PMD) {
- 		page_size = HPAGE_PMD_SIZE;
--	else
+-	folio = kvm_gmem_get_huge_folio(file, index);
+-	if (!folio) {
+-		folio = filemap_grab_folio(file->f_mapping, index);
++	if (gmem->flags & KVM_GUEST_MEMFD_HUGETLB) {
++		folio = kvm_gmem_hugetlb_get_folio(file, index);
++
++		/* hugetlb gmem does not fall back to non-hugetlb pages */
+ 		if (!folio)
+ 			return NULL;
+-	}
+ 
+-	/*
+-	 * TODO: Confirm this won't zero in-use pages, and skip clearing pages
+-	 * when trusted firmware will do it when assigning memory to the guest.
+-	 */
+-	if (!folio_test_uptodate(folio)) {
+-		unsigned long nr_pages = folio_nr_pages(folio);
+-		unsigned long i;
++		/*
++		 * Don't need to clear pages because
++		 * kvm_gmem_hugetlb_alloc_and_cache_folio() already clears pages
++		 * when allocating
++		 */
 +	} else {
- 		page_size = PAGE_SIZE;
++		folio = kvm_gmem_get_huge_folio(file, index);
++		if (!folio) {
++			folio = filemap_grab_folio(file->f_mapping, index);
++			if (!folio)
++				return NULL;
++		}
+ 
+-		for (i = 0; i < nr_pages; i++)
+-			clear_highpage(folio_page(folio, i));
+-	}
++		/*
++		 * TODO: Confirm this won't zero in-use pages, and skip clearing pages
++		 * when trusted firmware will do it when assigning memory to the guest.
++		 */
++		if (!folio_test_uptodate(folio)) {
++			unsigned long nr_pages = folio_nr_pages(folio);
++			unsigned long i;
+ 
+-	/*
+-	 * filemap_grab_folio() uses FGP_ACCESSED, which already called
+-	 * folio_mark_accessed(), so we clear it.
+-	 * TODO: Should we instead be clearing this when truncating?
+-	 * TODO: maybe don't use FGP_ACCESSED at all and call __filemap_get_folio directly.
+-	 */
+-	folio_clear_referenced(folio);
++			for (i = 0; i < nr_pages; i++)
++				clear_highpage(folio_page(folio, i));
++		}
++
++		/*
++		 * filemap_grab_folio() uses FGP_ACCESSED, which already called
++		 * folio_mark_accessed(), so we clear it.
++		 * TODO: Should we instead be clearing this when truncating?
++		 * TODO: maybe don't use FGP_ACCESSED at all and call __filemap_get_folio directly.
++		 */
++		folio_clear_referenced(folio);
 +	}
  
- 	return (IS_ALIGNED(mem->gmem_offset, page_size) &&
- 		IS_ALIGNED(mem->memory_size, page_size));
+ 	/*
+ 	 * Indicate that this folio matches the backing store (in this case, has
+@@ -156,6 +265,44 @@ static void kvm_gmem_invalidate_end(struct kvm *kvm, struct kvm_gmem *gmem,
+ 	KVM_MMU_UNLOCK(kvm);
+ }
+ 
++static void kvm_gmem_hugetlb_truncate_range(struct inode *inode,
++					    loff_t offset, loff_t len)
++{
++	loff_t hsize;
++	loff_t full_hpage_start;
++	loff_t full_hpage_end;
++	struct kvm_gmem *gmem;
++	struct hstate *h;
++	struct address_space *mapping;
++
++	mapping = inode->i_mapping;
++	gmem = mapping->private_data;
++	h = gmem->hugetlb.h;
++	hsize = huge_page_size(h);
++	full_hpage_start = round_up(offset, hsize);
++	full_hpage_end = round_down(offset + len, hsize);
++
++	/* If range starts before first full page, zero partial page. */
++	if (offset < full_hpage_start) {
++		hugetlb_zero_partial_page(
++			h, mapping, offset, min(offset + len, full_hpage_start));
++	}
++
++	/* Remove full pages from the file. */
++	if (full_hpage_end > full_hpage_start) {
++		remove_mapping_hugepages(mapping, h, gmem->hugetlb.spool,
++					 gmem->hugetlb.resv_map, inode,
++					 full_hpage_start, full_hpage_end);
++	}
++
++
++	/* If range extends beyond last full page, zero partial page. */
++	if ((offset + len) > full_hpage_end && (offset + len) > full_hpage_start) {
++		hugetlb_zero_partial_page(
++			h, mapping, full_hpage_end, offset + len);
++	}
++}
++
+ static long kvm_gmem_punch_hole(struct file *file, loff_t offset, loff_t len)
+ {
+ 	struct kvm_gmem *gmem = file->private_data;
+@@ -171,7 +318,10 @@ static long kvm_gmem_punch_hole(struct file *file, loff_t offset, loff_t len)
+ 
+ 	kvm_gmem_invalidate_begin(kvm, gmem, start, end);
+ 
+-	truncate_inode_pages_range(file->f_mapping, offset, offset + len - 1);
++	if (gmem->flags & KVM_GUEST_MEMFD_HUGETLB)
++		kvm_gmem_hugetlb_truncate_range(file_inode(file), offset, len);
++	else
++		truncate_inode_pages_range(file->f_mapping, offset, offset + len - 1);
+ 
+ 	kvm_gmem_invalidate_end(kvm, gmem, start, end);
+ 
+@@ -183,6 +333,7 @@ static long kvm_gmem_punch_hole(struct file *file, loff_t offset, loff_t len)
+ static long kvm_gmem_allocate(struct file *file, loff_t offset, loff_t len)
+ {
+ 	struct address_space *mapping = file->f_mapping;
++	struct kvm_gmem *gmem = file->private_data;
+ 	pgoff_t start, index, end;
+ 	int r;
+ 
+@@ -192,9 +343,14 @@ static long kvm_gmem_allocate(struct file *file, loff_t offset, loff_t len)
+ 
+ 	filemap_invalidate_lock_shared(mapping);
+ 
+-	start = offset >> PAGE_SHIFT;
+-	/* Align so that at least 1 page is allocated */
+-	end = ALIGN(offset + len, PAGE_SIZE) >> PAGE_SHIFT;
++	if (gmem->flags & KVM_GUEST_MEMFD_HUGETLB) {
++		start = offset >> huge_page_shift(gmem->hugetlb.h);
++		end = ALIGN(offset + len, huge_page_size(gmem->hugetlb.h)) >> PAGE_SHIFT;
++	} else {
++		start = offset >> PAGE_SHIFT;
++		/* Align so that at least 1 page is allocated */
++		end = ALIGN(offset + len, PAGE_SIZE) >> PAGE_SHIFT;
++	}
+ 
+ 	r = 0;
+ 	for (index = start; index < end; ) {
+@@ -211,7 +367,7 @@ static long kvm_gmem_allocate(struct file *file, loff_t offset, loff_t len)
+ 			break;
+ 		}
+ 
+-		index = folio_next_index(folio);
++		index += folio_nr_pages(folio);
+ 
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+@@ -625,7 +781,12 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 		return -ENOMEM;
+ 	}
+ 
+-	page = folio_file_page(folio, index);
++	/*
++	 * folio_file_page() always returns the head page for hugetlb
++	 * folios. Reimplement to get the page within this folio, even for
++	 * hugetlb pages.
++	 */
++	page = folio_page(folio, index & (folio_nr_pages(folio) - 1));
+ 
+ 	*pfn = page_to_pfn(page);
+ 	*order = thp_order(compound_head(page));
 -- 
 2.41.0.rc0.172.g3f132b7071-goog
 
