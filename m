@@ -2,301 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B25A472628A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 16:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 129B6726299
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 16:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240310AbjFGORl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 10:17:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49812 "EHLO
+        id S241076AbjFGOUP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 10:20:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235683AbjFGORk (ORCPT
+        with ESMTP id S241021AbjFGOUO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 10:17:40 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BA41BCA;
-        Wed,  7 Jun 2023 07:17:39 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f739ec88b2so31133805e9.1;
-        Wed, 07 Jun 2023 07:17:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686147457; x=1688739457;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZZLmevYUEc06R0pP7aZ/xgDeyhqxmONqX6ci5XoNRmU=;
-        b=g+3zr6toBDBwVsDINaUVbMpLqxk4SsxuRlwY3qSUwUEgUNof6il4s9sF6Hqvu/bm4t
-         yvCexhZ+HHQZDfGarGZWJ3hDKhcALNAqaDXYwiOLBsd7ZQiVGGdk2BFYzY/Crz37rKP7
-         y/MquDsEYHt7Dy+k3u3LxbWDWbCHFOzzxO0r5hlfDxpmCMXT+/MnaFB4eRZKFut4OqV+
-         NjOth59E+M6eO1/Mdj+Yf/Hpnj7l9uApVxEuEuzwp9CF2L5GVNMo37QDAfMI1OCyEz1V
-         7FhlkU9+BS3qAXpVWEdUJpKXIbZDwKrlhyr9W2R99LHy2THqeQzX4uj91Gvez9i33wX1
-         EXAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686147457; x=1688739457;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZZLmevYUEc06R0pP7aZ/xgDeyhqxmONqX6ci5XoNRmU=;
-        b=L0Dijp1QdoK/Nl4Lgw9uyg6ed4Bql8eAb2bfi14jO9EYgCkzbKbIJftstIdl3Ve1+h
-         Q3vxubX2UrjK/0iG7mWfIoGNUXAddChqUoKqTMI49PsJBCmjHgg71mxjb7zq4UtGsq3B
-         As9Ol0rm2yjO3TPysOWz6NE/0B3tl//kr2tsrxdkyAbrxxtfxISK+61E5EnSChNJtTgh
-         c2GufJmfvrnNtvWDIxnkhvJjKD/hTIZn1ysZjjW2qcvTr8cT/CoFOvF0p+aoTo9tztA+
-         qlsO/snpzKO4LcMQ5+EfSTpgEn2FDMJwpwQTS9KgODad9VstIoQX2qiT9pEkCr4YvqLU
-         gsMg==
-X-Gm-Message-State: AC+VfDwNRGlu6X1ofDqB6x3xqwZxzZb3WZCs2yDIVV99LflGHqP6/yg9
-        Yvc7IG8GXxzsWukmlD/0ltM=
-X-Google-Smtp-Source: ACHHUZ7YFuFXcnTXGAupei4bKMADHVzt9HGOX4Sj50dCEZrY8dm2di7tUBSwpEniTiBcJTiPI8yjzA==
-X-Received: by 2002:a7b:c8d1:0:b0:3f4:239c:f19 with SMTP id f17-20020a7bc8d1000000b003f4239c0f19mr4801078wml.36.1686147457245;
-        Wed, 07 Jun 2023 07:17:37 -0700 (PDT)
-Received: from [192.168.0.107] ([77.126.161.239])
-        by smtp.gmail.com with ESMTPSA id y8-20020a7bcd88000000b003f4ecf1fcbcsm2302109wmj.22.2023.06.07.07.17.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jun 2023 07:17:36 -0700 (PDT)
-Message-ID: <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
-Date:   Wed, 7 Jun 2023 17:17:30 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
-To:     David Howells <dhowells@redhat.com>, netdev@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
-        samiram@nvidia.com, drort@nvidia.com,
-        Tariq Toukan <tariqt@nvidia.com>
-References: <20230522121125.2595254-1-dhowells@redhat.com>
- <20230522121125.2595254-9-dhowells@redhat.com>
+        Wed, 7 Jun 2023 10:20:14 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2089.outbound.protection.outlook.com [40.107.223.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB773137;
+        Wed,  7 Jun 2023 07:20:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c4a98Kt180BJOS2FA+qblsKep9J6J3SQXSWVyt+VIG5J4C+hep31/yqZW34YHvb16vqIyO8uqcgVg1ZJRg7hAtUjtPfxQ050cbDnOPHuRqD+xIwZSGcJiun1Q9+I9vOk+kQ1CoROoUzWs6OPHB0u3SNWsbZxTHdn9Ule5bFWdvRX7/neJE19dXiQ/QrGPzKe7Cgv3ZVT015WLI2tGOCwUvSWNXE3bVrV/pX8Y1wV0AnbjDcQE9EF67xRRxZ3niVrjE6V/pA1C1OR3dQlAdP7eHE3k7YPmFNpzyj5ol/k/uwjrc+PccJGBBZGXHjI6JaEZHUi1v2vULxpGWCmDeCl3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NLh2oRtE/VgRfaB3/2FPgd7s36lGrmafpuQ/aS63PpU=;
+ b=Q2mbwgXQb0CBa3ztv5UOPQ6QULtBZXKPS4b0pfA7/Y6LgtvNBYYlHqs6OALdeWV0oRW6K5FI0Iu0785Bu8EuoDDyLNhTUxqKBajdSi1Of/3sumMPOrX0nIe4GPngj8AXOGAi8tMBIHPGHYaygHV2h6JvplxiuP1HtyaeHIf+CiNfGXdFvKoSRlY8lh2PWR5fQS9I9deYxtoZsYY+4kiWcPgrfv7PPYRQvlPekuxG+BvtgSPeD5ozVddH7A9XTw97iQBLgutNSqr9rUA3sCfKQH9zJK0k+DAJLnMi/fVm3bl9ePxYyHWy+R8uqaG0Fr7AWsDGirQK6B8wNh15Eq4QuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NLh2oRtE/VgRfaB3/2FPgd7s36lGrmafpuQ/aS63PpU=;
+ b=WDeESPRA6Q4U3Kzs03pRuve9rM3YNVgum6UDbAU7U6BVe8xUu4+Gqalny+2pwJ5VZEr608gpc8I0kcqgFNyBB439BAe5lgxgdPYDG1xC2YhKXpzVfaoSJhQuzmtoErp8YZquacDolME9Cy7o3LihywRydT/Z8k3MQXQNtNUpdk4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN8PR12MB3108.namprd12.prod.outlook.com (2603:10b6:408:40::20)
+ by SA1PR12MB8161.namprd12.prod.outlook.com (2603:10b6:806:330::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.33; Wed, 7 Jun
+ 2023 14:20:10 +0000
+Received: from BN8PR12MB3108.namprd12.prod.outlook.com
+ ([fe80::ca6a:7f77:6bb7:17fb]) by BN8PR12MB3108.namprd12.prod.outlook.com
+ ([fe80::ca6a:7f77:6bb7:17fb%3]) with mapi id 15.20.6455.028; Wed, 7 Jun 2023
+ 14:20:10 +0000
+Message-ID: <37f64467-c9d7-826d-de41-aa571b2df0ec@amd.com>
+Date:   Wed, 7 Jun 2023 10:20:07 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Cc:     yazen.ghannam@amd.com, avadnaik@amd.com,
+        alexey.kardashevskiy@amd.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/3] ACPI: APEI: EINJ: Refactor
+ available_error_type_show()
 Content-Language: en-US
-From:   Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20230522121125.2595254-9-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Avadhut Naik <Avadhut.Naik@amd.com>, rafael@kernel.org,
+        gregkh@linuxfoundation.org, lenb@kernel.org,
+        linux-acpi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230525204422.4754-1-Avadhut.Naik@amd.com>
+ <20230525204422.4754-2-Avadhut.Naik@amd.com>
+From:   Yazen Ghannam <yazen.ghannam@amd.com>
+In-Reply-To: <20230525204422.4754-2-Avadhut.Naik@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        NORMAL_HTTP_TO_IP,NUMERIC_HTTP_ADDR,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,WEIRD_PORT autolearn=ham
-        autolearn_force=no version=3.4.6
+X-ClientProxiedBy: BN8PR07CA0036.namprd07.prod.outlook.com
+ (2603:10b6:408:ac::49) To BN8PR12MB3108.namprd12.prod.outlook.com
+ (2603:10b6:408:40::20)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8PR12MB3108:EE_|SA1PR12MB8161:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf4f0f13-97ec-418b-de9d-08db67624d3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: iQbwoXBjPzxiF2NynhEaxSs5kXjPlVVuWFR+FxGLsHVG8wqJdroGlh357jdi1b0a/ArhnHmSZVecpVAKNtDFxVwdKHFK5mYtEAyU8p3QchbJjTK/4HTfPVNqkkFAp0kF9l54zadEEP95G8Le5pAv+fYzH6JExAuxbQZhiAviH97pCnKIYLenAW6l832Bh6Hti2EVZS/YyN9JEPAusi57THY1+d/8bHiAryy1lz50SS0GGeC6P6MP4k/J+oyAa/xobelMEbmVI/ZMczkI4Mwx57AfP31va3MZCesbGhcNk7mlBV6GS7vWelQxZ+2fNI73AlQaDfrikgaIIELK6i6lZpSFl0uzO6enu2jdgBS/M3iCq3jEmR63qUp3xXyopsEemIzA11UXwBPfXiGYJ0stFYpCynoOU3v4UDPWF/Kl4JSYT4sjAw52FxIH3dLvjpbmJMx0xcTcqpgKhwLkGGDW1pzYc3DW7vqCioudWReKq66VsP+N3jfAcY/InEJSZA8IEOUlZxZLUPxsjyoI2DsFlb1BUThzyuZmDRINUT/T3Ql7L20KMOxvI5BIzG18E1uB68p2C1SapUx9dKKSctFi4AzA9JovRpPjsxgmONcLVUQQ2ArbAKYIYxV1dBXquUuI4hAYP4QN4g9fM8Z8ajyoxQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3108.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(366004)(376002)(396003)(136003)(451199021)(83380400001)(2906002)(2616005)(36756003)(31696002)(86362001)(38100700002)(41300700001)(6486002)(316002)(6666004)(5660300002)(8936002)(8676002)(478600001)(66556008)(66946007)(66476007)(4326008)(31686004)(6506007)(53546011)(6512007)(26005)(186003)(44832011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TktJeEtTczBvQ1dyT0haTHlRd2p3emNwK3YrQXloZW02NHZ6RTI4TWhCZzdF?=
+ =?utf-8?B?NjBpemU1akdRTG9CTm1oZlc3Q1dSMWpvTGxVcnA1S1JueFVUbmNaOWxzMnVa?=
+ =?utf-8?B?aXUvZEN2TXVPeDcrNXJpZTJhMkdxSzFmVm9MaE1ybmVObVRCdkxQaUNXQVp4?=
+ =?utf-8?B?NVZYelFyMjRoZlBoV0ZMNys0NW5yTlpwNjhJYVFvWWo5N0FRMEl6K3NldHBj?=
+ =?utf-8?B?M05oSmRBNGlBSUh3UkdTZVk2QXJRdUFBVUVMVkVBZnJNKzB3MDlZQmRHNDQ3?=
+ =?utf-8?B?L0NkZlVmSVgya3JGbWN3ZVZFS2l2WkVDcjdzNkErS0RLUGwzUHB4Z3NuNVdT?=
+ =?utf-8?B?LzIwK0hJY0YwMjdOdmtDL0luc0RMWFBHd2Z6OTEzeXYrWHoySlNMS1I4RmVB?=
+ =?utf-8?B?TmVJNnhUYzE5T04vNFZzbUxESURQMTNIZzVSU2o2RURlR2tSTUo5dmZMSVdV?=
+ =?utf-8?B?R2p2VjBDZWMvWnA2QkpDQWVveDJQdVBOVS9ZenkvaHVYbzBKZlJTWmRWbFZB?=
+ =?utf-8?B?V0F6S3I2R1dZMmxoVzhOZE1tTlMvVi83QnFITUtsN1hCbGhUYU9SUHhHOE5R?=
+ =?utf-8?B?SkdUNUhweGhXdWFjVjhYQjVtQXZWWVFuV2FvUWNWaUNMT29VYUwxZm83NnI0?=
+ =?utf-8?B?OVhSU1QzS2lkWFJVaDNTenZOUmttQm5mR09Yb0ExSlBha2dYODd3a3IzMXQ4?=
+ =?utf-8?B?ZzZoVHRuZGxCUXlnSmxoZGJHSW55K2JVZTIyZGwrcFFqbmZ2U2Q2TjBCTU4r?=
+ =?utf-8?B?bzNaM3ZUWVF6MHNqeW5KMHo3L1lzWTExc2hFSVI1MkVrQWRIL3RJV1lRNmJT?=
+ =?utf-8?B?UkZERHd6S2g3ZkFmYWh5L01qMEpzRnRTMTJSRnBqTWVGZVRZQU0zdUdyK3Fy?=
+ =?utf-8?B?V2lQMGxQSWh5MXlQREExS3IzSzFSdVBxUGJja1liQ0dDU0NDV3ljTU5QdzQy?=
+ =?utf-8?B?bUlyeHNsR0o5TEZ6TnBJQXphUG9uS3pKd2VDQllHSjkrY04rbHVnVEk1ZGJx?=
+ =?utf-8?B?VlhBbDY5Nng3VitQRXRMbXhWZjYvV3NBVnRCcjZaV3FHay83aEk5YjJoWkJW?=
+ =?utf-8?B?Z1E2SUFBMVRFUGxWYlNLQVJ6c1RBVUtlTE1vc3FISnE3NllycTlOcXJUcTZ2?=
+ =?utf-8?B?TXMzeDJkVjhyUE4vZ3crSXlDckZCYXl1NFRaeVVyOVJHVjZMcHplYkpDSm9w?=
+ =?utf-8?B?YkNFYXZEek1QbFpSbVVlUjhCYzJ6TEFFbHk5cFBNQzZSS1p4eWI3RXJyNnJF?=
+ =?utf-8?B?c1FHVU9PUThtamE0WDE4SmRWcXNmZFlVUkg3Tk9DdkZzeUlxa1RHeXhFb1o2?=
+ =?utf-8?B?Ykk4SEJxRUdXR241YmE4YmFocll5WFhBMG5NSXFXVDlMTXI0RlZaaHlRRXdo?=
+ =?utf-8?B?L01aZGdZZnNweWJFeittL1kwWHNONnErNjhZblA5bll3K2ZzbjhrOVBNS0xx?=
+ =?utf-8?B?NEdxVUxiNVVJVzFBSHR2MzhzNmNheWVoY1hxUVNsQnpEd3gxRTM2M04xTWJE?=
+ =?utf-8?B?RWFxN0g3anU4azdKQURJQkNTcmVqVWdpcnRBSzZEUzhoVEtwME5kSUdWbE91?=
+ =?utf-8?B?emRBVi81OEV5RWdoYkFNRldETytVWlFCZFZxdUVYQXB5c0dnT1JpOXV2VS9s?=
+ =?utf-8?B?SlZxOXF5R01oVnVZZjhtY09OSkFBd1ROWHVTU0Npc080QnpENEpRWEVZaXBR?=
+ =?utf-8?B?OUFtenFRS0tBd28ydnhFaDV2T2JEbHp6TUZ5d0piNXBuSGYzOGdOalRsWWxy?=
+ =?utf-8?B?M1FWamVlbytGcmJLcndJQ3l6eXAxbjBQQWsvR0ZzaFlCR3NFR0kva0tiZHhJ?=
+ =?utf-8?B?dWsyVFpIYkR0ZXlQUXJSeTBzZ0JBc1ZQVzVKeEMrNDBqdkxzalNqeG1QMHN4?=
+ =?utf-8?B?MWthQzliTkJhaEsrb3huOG11Um5pSkpTaGFwMXFWV2QvTHA2MUlBblZIeUxX?=
+ =?utf-8?B?eGEyNDJMbWlpLzd5K1RZUHo5V1JodHg3dWc0Ukd5clRqditGYlAxVm9tanE3?=
+ =?utf-8?B?Uzc4c1dRMklrZ2U1bTdPbk1ST2VXbVFCR1o3YjJQSDlQUjNNVFVWK0daTFYx?=
+ =?utf-8?B?bU5kL1cyZVArSkwrcDgyWUd5VVZuL1p5Sy9xbGEybE1XMFo2aEZBZkd1aFE5?=
+ =?utf-8?Q?PVe0sbBWqrEStL24XbbZgMvl0?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf4f0f13-97ec-418b-de9d-08db67624d3e
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3108.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2023 14:20:10.4844
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yNHuhe0QhnlqJcNKsUvZTxs3kLHf/S35QrPAOFig0mtiDRYU6vTcc+tISoHvaIWfKMd8cXf8VkRbL4VmT+7c0A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8161
+X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 22/05/2023 15:11, David Howells wrote:
-> do_tcp_sendpages() is now just a small wrapper around tcp_sendmsg_locked(),
-> so inline it, allowing do_tcp_sendpages() to be removed.  This is part of
-> replacing ->sendpage() with a call to sendmsg() with MSG_SPLICE_PAGES set.
+On 5/25/23 4:44 PM, Avadhut Naik wrote:
+> OSPM can discover the error injection capabilities of the platform by
+> executing GET_ERROR_TYPE error injection action.[1] The action returns
+> a DWORD representing a bitmap of platform supported error injections.[2]
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Boris Pismenny <borisp@nvidia.com>
-> cc: John Fastabend <john.fastabend@gmail.com>
-> cc: Jakub Kicinski <kuba@kernel.org>
-> cc: "David S. Miller" <davem@davemloft.net>
-> cc: Eric Dumazet <edumazet@google.com>
-> cc: Paolo Abeni <pabeni@redhat.com>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: netdev@vger.kernel.org
+> The available_error_type_show() function determines the bits set within
+> this DWORD and provides a verbose output, from einj_error_type_string
+> array, through /sys/kernel/debug/apei/einj/available_error_type file.
+> 
+> The function however, assumes one to one correspondence between an error's
+> position in the bitmap and its array entry offset. Consequently, some
+> errors like Vendor Defined Error Type fail this assumption and will
+> incorrectly be shown as not supported, even if their corresponding bit is
+> set in the bitmap and they have an entry in the array.
+> 
+> Navigate around the issue by converting einj_error_type_string into an
+> array of structures with a predetermined mask for all error types
+> corresponding to their bit position in the DWORD returned by GET_ERROR_TYPE
+> action. The same breaks the aforementioned assumption resulting in all
+> supported error types by a platform being outputted through the above
+> available_error_type file.
+> 
+> [1] ACPI specification 6.5, Table 18.25
+> [2] ACPI specification 6.5, Table 18.30
+> 
+> Suggested-by: Alexey Kardashevskiy <alexey.kardashevskiy@amd.com>
+> Signed-off-by: Avadhut Naik <Avadhut.Naik@amd.com>
 > ---
-
-Hi,
-
-My team spotted a new degradation in TLS TX device offload, bisected to 
-this patch.
-
- From a quick look at the patch, it's not clear to me what's going wrong.
-Please let us know of any helpful information that we can provide to 
-help in the debug.
-
-Regards,
-Tariq
-
-Reproduce Flow:
-client / server test using nginx and  wrk (nothing special/custom about 
-the apps used).
-
-client:
-/opt/mellanox/iproute2/sbin/ip link set dev eth3 up
-/opt/mellanox/iproute2/sbin/ip addr add 11.141.46.9/16 dev eth3
-
-server:
-/opt/mellanox/iproute2/sbin/ip link set dev eth3 up
-/opt/mellanox/iproute2/sbin/ip addr add 11.141.46.10/16 dev eth3
-
-client:
-/auto/sw/regression/sw_net_ver_tools/ktls/tools/x86_64/nginx_openssl_3_0_0 
--p /usr/bin/drivertest_rpms/ktls/nginx/
-/opt/mellanox/iproute2/sbin/ss -i src [11.141.46.9]
-
-server:
-/auto/sw/regression/sw_net_ver_tools/ktls/tools/x86_64/wrk_openssl_3_0_0 
--b11.141.46.10 -t4 -c874 -d14 --timeout 5s 
-https://11.141.46.9:20443/256000b.img
-
-client:
-dmesg
-/auto/sw/regression/sw_net_ver_tools/ktls/tools/x86_64/nginx_openssl_3_0_0 
--p /usr/bin/drivertest_rpms/ktls/nginx/ -s stop
-
-
-[root@c-141-46-1-009 ~]# dmesg
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 977 at net/core/skbuff.c:6957 
-skb_splice_from_iter+0x102/0x300
-Modules linked in: rpcrdma rdma_ucm ib_iser libiscsi 
-scsi_transport_iscsi ib_umad rdma_cm ib_ipoib iw_cm ib_cm mlx5_ib 
-ib_uverbs ib_core xt_conntrack xt_MASQUERADE nf_conntrack_netlink 
-nfnetlink xt_addrtype iptable_nat nf_nat br_netfilter rpcsec_gss_krb5 
-auth_rpcgss oid_registry overlay mlx5_core zram zsmalloc fuse
-CPU: 1 PID: 977 Comm: nginx_openssl_3 Not tainted 
-6.4.0-rc3_for_upstream_min_debug_2023_06_01_23_04 #1
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
-rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
-RIP: 0010:skb_splice_from_iter+0x102/0x300
-Code: ef 48 8b 55 08 f6 c2 01 0f 85 54 01 00 00 8b 0d 98 cf 5f 01 48 89 
-ea 85 c9 0f 8f 4c 01 00 00 48 8b 12 80 e6 02 74 48 49 89 dd <0f> 0b 48 
-c7 c1 fb ff ff ff 45 01 65 70 45 01 65 74 45 01 a5 d0 00
-RSP: 0018:ffff8881045abaa0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff88814370fe00 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffea00051123c0 RDI: ffff88814370fe00
-RBP: ffffea0005112400 R08: 0000000000000011 R09: 0000000000003ffd
-R10: 0000000000003ffd R11: 0000000000000008 R12: 0000000000002e6e
-R13: ffff88814370fe00 R14: ffff8881045abae8 R15: 000000000000118f
-FS:  00007f6e23043740(0000) GS:ffff88852c880000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000009c6c00 CR3: 000000013b791001 CR4: 0000000000370ea0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-
-  ? kmalloc_reserve+0x86/0xe0
-  tcp_sendmsg_locked+0x33e/0xd40
-  tls_push_sg+0xdd/0x230
-  tls_push_data+0x673/0x920
-  tls_device_sendmsg+0x6e/0xc0
-  sock_sendmsg+0x38/0x60
-  sock_write_iter+0x97/0x100
-  vfs_write+0x2df/0x380
-  ksys_write+0xa7/0xe0
-  do_syscall_64+0x3d/0x90
-  entry_SYSCALL_64_after_hwframe+0x46/0xb0
-RIP: 0033:0x7f6e22f018b7
-Code: 0f 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e 
-fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 
-f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
-RSP: 002b:00007ffdb528a2f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000004000 RCX: 00007f6e22f018b7
-RDX: 0000000000004000 RSI: 00000000025cdef0 RDI: 0000000000000028
-RBP: 00000000020103c0 R08: 00007ffdb5289a90 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000025cdef0
-R13: 000000000204fca0 R14: 0000000000004000 R15: 0000000000004000
-
----[ end trace 0000000000000000 ]---
-
-
-
->   include/net/tls.h  |  2 +-
->   net/tls/tls_main.c | 24 +++++++++++++++---------
->   2 files changed, 16 insertions(+), 10 deletions(-)
+>  drivers/acpi/apei/einj.c | 43 ++++++++++++++++++++--------------------
+>  1 file changed, 22 insertions(+), 21 deletions(-)
 > 
-> diff --git a/include/net/tls.h b/include/net/tls.h
-> index 6056ce5a2aa5..5791ca7a189c 100644
-> --- a/include/net/tls.h
-> +++ b/include/net/tls.h
-> @@ -258,7 +258,7 @@ struct tls_context {
->   	struct scatterlist *partially_sent_record;
->   	u16 partially_sent_offset;
->   
-> -	bool in_tcp_sendpages;
-> +	bool splicing_pages;
->   	bool pending_open_record_frags;
->   
->   	struct mutex tx_lock; /* protects partially_sent_* fields and
-> diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-> index f2e7302a4d96..3d45fdb5c4e9 100644
-> --- a/net/tls/tls_main.c
-> +++ b/net/tls/tls_main.c
-> @@ -125,7 +125,10 @@ int tls_push_sg(struct sock *sk,
->   		u16 first_offset,
->   		int flags)
->   {
-> -	int sendpage_flags = flags | MSG_SENDPAGE_NOTLAST;
-> +	struct bio_vec bvec;
-> +	struct msghdr msg = {
-> +		.msg_flags = MSG_SENDPAGE_NOTLAST | MSG_SPLICE_PAGES | flags,
-> +	};
->   	int ret = 0;
->   	struct page *p;
->   	size_t size;
-> @@ -134,16 +137,19 @@ int tls_push_sg(struct sock *sk,
->   	size = sg->length - offset;
->   	offset += sg->offset;
->   
-> -	ctx->in_tcp_sendpages = true;
-> +	ctx->splicing_pages = true;
->   	while (1) {
->   		if (sg_is_last(sg))
-> -			sendpage_flags = flags;
-> +			msg.msg_flags = flags;
->   
->   		/* is sending application-limited? */
->   		tcp_rate_check_app_limited(sk);
->   		p = sg_page(sg);
->   retry:
-> -		ret = do_tcp_sendpages(sk, p, offset, size, sendpage_flags);
-> +		bvec_set_page(&bvec, p, size, offset);
-> +		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-> +
-> +		ret = tcp_sendmsg_locked(sk, &msg, size);
->   
->   		if (ret != size) {
->   			if (ret > 0) {
-> @@ -155,7 +161,7 @@ int tls_push_sg(struct sock *sk,
->   			offset -= sg->offset;
->   			ctx->partially_sent_offset = offset;
->   			ctx->partially_sent_record = (void *)sg;
-> -			ctx->in_tcp_sendpages = false;
-> +			ctx->splicing_pages = false;
->   			return ret;
->   		}
->   
-> @@ -169,7 +175,7 @@ int tls_push_sg(struct sock *sk,
->   		size = sg->length;
->   	}
->   
-> -	ctx->in_tcp_sendpages = false;
-> +	ctx->splicing_pages = false;
->   
->   	return 0;
->   }
-> @@ -247,11 +253,11 @@ static void tls_write_space(struct sock *sk)
->   {
->   	struct tls_context *ctx = tls_get_ctx(sk);
->   
-> -	/* If in_tcp_sendpages call lower protocol write space handler
-> +	/* If splicing_pages call lower protocol write space handler
->   	 * to ensure we wake up any waiting operations there. For example
-> -	 * if do_tcp_sendpages where to call sk_wait_event.
-> +	 * if splicing pages where to call sk_wait_event.
->   	 */
-> -	if (ctx->in_tcp_sendpages) {
-> +	if (ctx->splicing_pages) {
->   		ctx->sk_write_space(sk);
->   		return;
->   	}
-> 
-> 
+> diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+> index 013eb621dc92..d5f8dc4df7a5 100644
+> --- a/drivers/acpi/apei/einj.c
+> +++ b/drivers/acpi/apei/einj.c
+> @@ -577,25 +577,25 @@ static u64 error_param2;
+>  static u64 error_param3;
+>  static u64 error_param4;
+>  static struct dentry *einj_debug_dir;
+> -static const char * const einj_error_type_string[] = {
+> -	"0x00000001\tProcessor Correctable\n",
+> -	"0x00000002\tProcessor Uncorrectable non-fatal\n",
+> -	"0x00000004\tProcessor Uncorrectable fatal\n",
+> -	"0x00000008\tMemory Correctable\n",
+> -	"0x00000010\tMemory Uncorrectable non-fatal\n",
+> -	"0x00000020\tMemory Uncorrectable fatal\n",
+> -	"0x00000040\tPCI Express Correctable\n",
+> -	"0x00000080\tPCI Express Uncorrectable non-fatal\n",
+> -	"0x00000100\tPCI Express Uncorrectable fatal\n",
+> -	"0x00000200\tPlatform Correctable\n",
+> -	"0x00000400\tPlatform Uncorrectable non-fatal\n",
+> -	"0x00000800\tPlatform Uncorrectable fatal\n",
+> -	"0x00001000\tCXL.cache Protocol Correctable\n",
+> -	"0x00002000\tCXL.cache Protocol Uncorrectable non-fatal\n",
+> -	"0x00004000\tCXL.cache Protocol Uncorrectable fatal\n",
+> -	"0x00008000\tCXL.mem Protocol Correctable\n",
+> -	"0x00010000\tCXL.mem Protocol Uncorrectable non-fatal\n",
+> -	"0x00020000\tCXL.mem Protocol Uncorrectable fatal\n",
+> +static struct { u32 mask; const char *str; } const einj_error_type_string[] = {
+> +	{0x00000001, "Processor Correctable"},
+> +	{0x00000002, "Processor Uncorrectable non-fatal"},
+> +	{0x00000004, "Processor Uncorrectable fatal"},
+> +	{0x00000008, "Memory Correctable"},
+> +	{0x00000010, "Memory Uncorrectable non-fatal"},
+> +	{0x00000020, "Memory Uncorrectable fatal"},
+> +	{0x00000040, "PCI Express Correctable"},
+> +	{0x00000080, "PCI Express Uncorrectable non-fatal"},
+> +	{0x00000100, "PCI Express Uncorrectable fatal"},
+> +	{0x00000200, "Platform Correctable"},
+> +	{0x00000400, "Platform Uncorrectable non-fatal"},
+> +	{0x00000800, "Platform Uncorrectable fatal"},
+> +	{0x00001000, "CXL.cache Protocol Correctable"},
+> +	{0x00002000, "CXL.cache Protocol Uncorrectable non-fatal"},
+> +	{0x00004000, "CXL.cache Protocol Uncorrectable fatal"},
+> +	{0x00008000, "CXL.mem Protocol Correctable"},
+> +	{0x00010000, "CXL.mem Protocol Uncorrectable non-fatal"},
+> +	{0x00020000, "CXL.mem Protocol Uncorrectable fatal"},
+>  };
+>
+
+I think it'd be easier to read if the masks used the BIT() macro rather
+than a hex value.
+
+Thanks,
+Yazen
