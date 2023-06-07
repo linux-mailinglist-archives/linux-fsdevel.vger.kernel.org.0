@@ -2,111 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F1C726A05
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 21:44:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE835726A1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 21:47:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230479AbjFGTol (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 15:44:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54296 "EHLO
+        id S231161AbjFGTrR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 15:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjFGTol (ORCPT
+        with ESMTP id S231827AbjFGTrM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 15:44:41 -0400
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE36C1FE0;
-        Wed,  7 Jun 2023 12:44:39 -0700 (PDT)
-Date:   Wed, 7 Jun 2023 21:44:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-        t=1686167076; bh=DHQuMlD6tuImvscO3wkh4mwa16D27WZo2cWB+OFKZfk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=L1XqR3DytaNGIKKsOZQJRNxbUQYt9DIOlmIft3RqxBCPH5rwk4xKu39CNTZNM6G82
-         AludZr5yuij/sjLthOcA1tAnwMyRaeX8chijmaNKdVkhDy8cnyFuI5bS/ksdJqjaVv
-         /+NqyPpaOatDI68pY+Hj/5dRvI4RveUEKmtUPDKU=
-From:   Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Wed, 7 Jun 2023 15:47:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F34F2102;
+        Wed,  7 Jun 2023 12:47:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AA86364337;
+        Wed,  7 Jun 2023 19:47:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F2CC4339B;
+        Wed,  7 Jun 2023 19:47:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686167225;
+        bh=75h7WJz25lMPAMfQcgH7F+k6bNvFGYHYbc1gBOEj+p8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Mz/NBg0wNHHi2pQoYMUS9RwNafR0DA+zLFXI4QZiZA3SenqacejK7wGVJ9lsYN9rq
+         Q59sz/eSg9JOYqDLkOQOWfZPfLKLta8ySq4iljG/Au8wJZ8f6ZEp9QmzZlkwML0Cf3
+         kMXsV0TCPTRYqpQ/Uxvu2YzB5wQrwakRd0f3gLUiMbZBwgUrWFx23iGxSlpW6fhUmB
+         GWK2tgv9RkkCSOSZbjMcrNW0tSRL0Y2OIQjhkGIFALsG7jTnWYH9pZepH8PWi3xxrw
+         iiP54gvwt8iAm09ZpkxKlhZzsPxpPOnTA6bhDunThfeW1GL2adjQbgByu4+3nZXElx
+         MbAiCRMytsOgQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     =?utf-8?q?Thomas_Wei=C3=9Fschuh_=3Clinux=40weissschuh=2Enet=3E?=@vger.kernel.org
+Cc:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
-        Karel Zak <kzag@redhat.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] fs: avoid empty option when generating legacy mount
- string
-Message-ID: <d5377e0b-b02e-40dd-945b-368a3b8c05ce@t-8ch.de>
+        Karel Zak <kzag@redhat.com>, stable@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: avoid empty option when generating legacy mount string
+Date:   Wed,  7 Jun 2023 21:46:48 +0200
+Message-Id: <20230607-nussbaum-erleben-33b0998d9aa0@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230607-fs-empty-option-v1-1-20c8dbf4671b@weissschuh.net>
 References: <20230607-fs-empty-option-v1-1-20c8dbf4671b@weissschuh.net>
- <20230607-rennpferd-stechen-2f645ac78fcc@brauner>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1037; i=brauner@kernel.org; h=from:subject:message-id; bh=75h7WJz25lMPAMfQcgH7F+k6bNvFGYHYbc1gBOEj+p8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ03Fty98uBz277JlX2TOCLfy3JMT979vrvzeYL1FzsxNuD zj7731HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARnxuMDJMDmfqWTuD4subfR7b4S/ OY+K5eY7R6V3O6gvUtI1fuU2dGhn1Ks0/Z2av/PK32Yu3m8sVXbrd8lzsi0pHbdTzjr/yUw+wA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230607-rennpferd-stechen-2f645ac78fcc@brauner>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-06-07 21:39:01+0200, Christian Brauner wrote:
-> On Wed, Jun 07, 2023 at 07:28:48PM +0200, Thomas Weißschuh wrote:
-> > As each option string fragment is always prepended with a comma it would
-> > happen that the whole string always starts with a comma.
-> > This could be interpreted by filesystem drivers as an empty option and
-> > may produce errors.
-> > 
-> > For example the NTFS driver from ntfs.ko behaves like this and fails when
-> > mounted via the new API.
-> > 
-> > Link: https://github.com/util-linux/util-linux/issues/2298
+On Wed, 07 Jun 2023 19:28:48 +0200, Thomas Weißschuh wrote:
+> As each option string fragment is always prepended with a comma it would
+> happen that the whole string always starts with a comma.
+> This could be interpreted by filesystem drivers as an empty option and
+> may produce errors.
 > 
-> Yeah, the old ntfs driver implements its own option parser. It
-> overwrites/splits at ',' returning '\0' and then trips over this.
+> For example the NTFS driver from ntfs.ko behaves like this and fails when
+> mounted via the new API.
 > 
-> Contrast with e.g., ovl_next_op() which does the same thing but skips
-> over '\0' in ovl_parse_opt().
-> 
-> So arguably also a bug in ntfs parsing. But there's no reason we should
-> prepend ',' for legacy mount option strings.
-> 
-> And yeah, I can easily verify this...
-> 
-> Using my custom move-mount tool I originally wrote for another patchset
-> but which is handy to pass mount options via the new mount api _system_
-> calls and not via mount():
-> https://github.com/brauner/move-mount-beneath
-> 
-> I can do:
-> 
->         sudo ./move-mount -f overlay -olowerdir=/mnt/a:/mnt/b,upperdir=/mnt/upper,workdir=/mnt/work /mnt/merged
-> 
-> and clearly see:
-> 
->         > sudo bpftrace -e 'kfunc:legacy_get_tree { @m = args->fc; printf("%s\n", str(((struct legacy_fs_context *)@m->fs_private)->legacy_data)); }'
->         Attaching 1 probe...
->         ,lowerdir=/mnt/a:/mnt/b,upperdir=/mnt/upper,workdir=/mnt/work
-> 
-> > Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock creation/configuration context")
-> 
-> Should be:
-> 
-> Fixes: commit 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock creation/configuration context")
+> [...]
 
-AFAIK the Fixes: tag does not use the "commit" keyword. Only inline
-commit references.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-This is how it's currently documented in
-Documentation/process/submitting-patches.rst.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> and misses a:
-> 
-> Cc: stable@vger.kernel.org
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-This was fixed in v2.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-> I'll fix this up for you though.
-
-Thanks!
-
-
-Thomas
+[1/1] fs: avoid empty option when generating legacy mount string
+      https://git.kernel.org/vfs/vfs/c/de3824801c82
