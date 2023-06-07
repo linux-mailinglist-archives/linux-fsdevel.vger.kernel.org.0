@@ -2,189 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C0D872631C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 16:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36609726271
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 16:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241172AbjFGOmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 10:42:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35244 "EHLO
+        id S241043AbjFGOME (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 10:12:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241116AbjFGOmo (ORCPT
+        with ESMTP id S240468AbjFGOMD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 10:42:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D524619BB
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 07:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686148923;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VfP0KSvbwDpdDK3r99Lo/bGf0PzU9/ETfdNk/1wpqNM=;
-        b=M/t9JxpGG1lbOnwlNGraRSDI9k3eoqUMm34VSpojC1SuXDkyN1Q6V7yXoxUuV2scLYcIb5
-        KVaangsk4sJou22PCdyWtVM+WeIKAxTmW9KtQvq7DDjttR44yCnUcfjAgi49Jzc9eFwvxu
-        3AN1CdREjEuFg0MA6MSIAvMdFvKTfXA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-81-yTkbrzWfOVqVewkXPojfRg-1; Wed, 07 Jun 2023 10:06:48 -0400
-X-MC-Unique: yTkbrzWfOVqVewkXPojfRg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C33823806705;
-        Wed,  7 Jun 2023 14:06:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F23512026D6A;
-        Wed,  7 Jun 2023 14:06:43 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Boris Pismenny <borisp@nvidia.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [PATCH net-next v5 10/14] splice, net: Fix SPLICE_F_MORE signalling in splice_direct_to_actor()
-Date:   Wed,  7 Jun 2023 15:05:55 +0100
-Message-ID: <20230607140559.2263470-11-dhowells@redhat.com>
-In-Reply-To: <20230607140559.2263470-1-dhowells@redhat.com>
-References: <20230607140559.2263470-1-dhowells@redhat.com>
+        Wed, 7 Jun 2023 10:12:03 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD9E8E
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 07:12:00 -0700 (PDT)
+Received: from kwepemm600013.china.huawei.com (unknown [172.30.72.55])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Qbq0Y1ShJz18Lvp;
+        Wed,  7 Jun 2023 22:07:09 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemm600013.china.huawei.com (7.193.23.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Wed, 7 Jun 2023 22:11:56 +0800
+Subject: Re: [PATCH 1/4] ubifs: Convert from writepage to writepages
+From:   Zhihao Cheng <chengzhihao1@huawei.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Richard Weinberger <richard@nod.at>
+CC:     <linux-mtd@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>
+References: <20230605165029.2908304-1-willy@infradead.org>
+ <20230605165029.2908304-2-willy@infradead.org>
+ <be9f30d1-d840-fb76-f185-5ebc70a7b72b@huawei.com>
+Message-ID: <4f885387-ecaa-532c-97dc-14a2fff5c9c3@huawei.com>
+Date:   Wed, 7 Jun 2023 22:11:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <be9f30d1-d840-fb76-f185-5ebc70a7b72b@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Originating-IP: [10.174.178.46]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600013.china.huawei.com (7.193.23.68)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-splice_direct_to_actor() doesn't manage SPLICE_F_MORE correctly[1] - and,
-as a result, it incorrectly signals/fails to signal MSG_MORE when splicing
-to a socket.  The problem I'm seeing happens when a short splice occurs
-because we got a short read due to hitting the EOF on a file: as the length
-read (read_len) is less than the remaining size to be spliced (len),
-SPLICE_F_MORE (and thus MSG_MORE) is set.
+在 2023/6/6 22:37, Zhihao Cheng 写道:
+> 在 2023/6/6 0:50, Matthew Wilcox (Oracle) 写道:
+> Hi,
+>> This is a simplistic conversion to separate out any effects of
+>> no longer having a writepage method.
+>>
+>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>> ---
+>>   fs/ubifs/file.c | 12 ++++++++++--
+>>   1 file changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+>> index 979ab1d9d0c3..8bb4cb9d528f 100644
+>> --- a/fs/ubifs/file.c
+>> +++ b/fs/ubifs/file.c
+>> @@ -1003,8 +1003,10 @@ static int do_writepage(struct page *page, int 
+>> len)
+>>    * on the page lock and it would not write the truncated inode node 
+>> to the
+>>    * journal before we have finished.
+>>    */
+>> -static int ubifs_writepage(struct page *page, struct 
+>> writeback_control *wbc)
+>> +static int ubifs_writepage(struct folio *folio, struct 
+>> writeback_control *wbc,
+>> +        void *data)
+>>   {
+>> +    struct page *page = &folio->page;
+>>       struct inode *inode = page->mapping->host;
+>>       struct ubifs_info *c = inode->i_sb->s_fs_info;
+>>       struct ubifs_inode *ui = ubifs_inode(inode);
+>> @@ -1076,6 +1078,12 @@ static int ubifs_writepage(struct page *page, 
+>> struct writeback_control *wbc)
+>>       return err;
+>>   }
+>> +static int ubifs_writepages(struct address_space *mapping,
+>> +        struct writeback_control *wbc)
+>> +{
+>> +    return write_cache_pages(mapping, wbc, ubifs_writepage, NULL);
+>> +}
+>> +
+> 
+> There is a small difference.
+> before patch applied:
+> do_writepages -> write_cache_pages -> writepage_cb:
+>   ubifs_writepage
+>   mapping_set_error(mapping, ret)
+> 
+> So, we can get error returned from errseq_check_and_advance in syncfs 
+> syscall if ubifs_writepage occurs EIO.
+> 
+> after patch applied:
+> 
+> do_writepages -> ubifs_writepages -> write_cache_pages -> 
+> ubifs_writepage, mapping won't be set error if ubifs_writepage failed. 
+> Unfortunately, ubifs is not a block filesystem, so 
+> sync_filesystem->sync_blockdev_nowait will return 0. Finally, syncfs 
+> syscall will return 0.
+> 
 
-The issue is that, for the moment, we have no way to know *why* the short
-read occurred and so can't make a good decision on whether we *should* keep
-MSG_MORE set.
+I think we can add mapping_set_error in error branch of ubifs_writepage 
+to solve it.
 
-MSG_SENDPAGE_NOTLAST was added to work around this, but that is also set
-incorrectly under some circumstances - for example if a short read fills a
-single pipe_buffer, but the next read would return more (seqfile can do
-this).
+BTW, I notice that shrink_folio_list -> pageout will try to shrink page 
+by writepage method, if we remove '->writepage', the dirty page won't be 
+shrinked in that way?
 
-This was observed with the multi_chunk_sendfile tests in the tls kselftest
-program.  Some of those tests would hang and time out when the last chunk
-of file was less than the sendfile request size:
-
-	build/kselftest/net/tls -r tls.12_aes_gcm.multi_chunk_sendfile
-
-This has been observed before[2] and worked around in AF_TLS[3].
-
-Fix this by making splice_direct_to_actor() always signal SPLICE_F_MORE if
-we haven't yet hit the requested operation size.  SPLICE_F_MORE remains
-signalled if the user passed it in to splice() but otherwise gets cleared
-when we've read sufficient data to fulfill the request.
-
-If, however, we get a premature EOF from ->splice_read(), have sent at
-least one byte and SPLICE_F_MORE was not set by the caller, ->splice_eof()
-will be invoked.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Jan Kara <jack@suse.cz>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: David Hildenbrand <david@redhat.com>
-cc: Christian Brauner <brauner@kernel.org>
-cc: Chuck Lever <chuck.lever@oracle.com>
-cc: Boris Pismenny <borisp@nvidia.com>
-cc: John Fastabend <john.fastabend@gmail.com>
-cc: Eric Dumazet <edumazet@google.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-block@vger.kernel.org
-cc: linux-mm@kvack.org
-cc: netdev@vger.kernel.org
-
-Link: https://lore.kernel.org/r/499791.1685485603@warthog.procyon.org.uk/ [1]
-Link: https://lore.kernel.org/r/1591392508-14592-1-git-send-email-pooja.trivedi@stackpath.com/ [2]
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/?id=d452d48b9f8b1a7f8152d33ef52cfd7fe1735b0a [3]
----
-
-Notes:
-    ver #4)
-     - Use ->splice_eof() to signal a premature EOF to the splice output.
-
- fs/splice.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/fs/splice.c b/fs/splice.c
-index 67dbd85db207..67ddaac1f5c5 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1063,13 +1063,17 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
- 	 */
- 	bytes = 0;
- 	len = sd->total_len;
-+
-+	/* Don't block on output, we have to drain the direct pipe. */
- 	flags = sd->flags;
-+	sd->flags &= ~SPLICE_F_NONBLOCK;
- 
- 	/*
--	 * Don't block on output, we have to drain the direct pipe.
-+	 * We signal MORE until we've read sufficient data to fulfill the
-+	 * request and we keep signalling it if the caller set it.
- 	 */
--	sd->flags &= ~SPLICE_F_NONBLOCK;
- 	more = sd->flags & SPLICE_F_MORE;
-+	sd->flags |= SPLICE_F_MORE;
- 
- 	WARN_ON_ONCE(!pipe_empty(pipe->head, pipe->tail));
- 
-@@ -1085,14 +1089,12 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
- 		sd->total_len = read_len;
- 
- 		/*
--		 * If more data is pending, set SPLICE_F_MORE
--		 * If this is the last data and SPLICE_F_MORE was not set
--		 * initially, clears it.
-+		 * If we now have sufficient data to fulfill the request then
-+		 * we clear SPLICE_F_MORE if it was not set initially.
- 		 */
--		if (read_len < len)
--			sd->flags |= SPLICE_F_MORE;
--		else if (!more)
-+		if (read_len >= len && !more)
- 			sd->flags &= ~SPLICE_F_MORE;
-+
- 		/*
- 		 * NOTE: nonblocking mode only applies to the input. We
- 		 * must not do the output in nonblocking mode as then we
+> 
+>>   /**
+>>    * do_attr_changes - change inode attributes.
+>>    * @inode: inode to change attributes for
+>> @@ -1636,7 +1644,7 @@ static int ubifs_symlink_getattr(struct 
+>> mnt_idmap *idmap,
+>>   const struct address_space_operations ubifs_file_address_operations = {
+>>       .read_folio     = ubifs_read_folio,
+>> -    .writepage      = ubifs_writepage,
+>> +    .writepages     = ubifs_writepages,
+>>       .write_begin    = ubifs_write_begin,
+>>       .write_end      = ubifs_write_end,
+>>       .invalidate_folio = ubifs_invalidate_folio,
+>>
+> 
+> 
+> .
 
