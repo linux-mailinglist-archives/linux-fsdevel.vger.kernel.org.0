@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0330A725E20
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 14:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48882725E2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 14:11:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240206AbjFGMLF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 08:11:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55898 "EHLO
+        id S239822AbjFGMLd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 08:11:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238739AbjFGMLD (ORCPT
+        with ESMTP id S235777AbjFGMLb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 08:11:03 -0400
+        Wed, 7 Jun 2023 08:11:31 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3AD41BDC;
-        Wed,  7 Jun 2023 05:10:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A961FC4;
+        Wed,  7 Jun 2023 05:11:01 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id B2D7D1FDAB;
-        Wed,  7 Jun 2023 12:10:31 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C9F821FDAC;
+        Wed,  7 Jun 2023 12:10:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1686139831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1686139859; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VqcjXu0CZTTpOZmrsxN0Wk6sBEC02dewC7QyNvd2soI=;
-        b=IHfmh7S/uiagddCbXIRJmosPllrO40PYEOdRWLxIJcakAcNIU++BrgHVQz0wc7LcQAKKzC
-        PPRnjWo+UKOWnOBcyWCCyUZkDBITx9Cp6jogvlX5nqnl/7EZ1E52mDDTaguTf4aV9jJ4YH
-        Y0E8fz71thAZEe372iOj6DPRk6Att+g=
+        bh=i3Sp9Vc7BKL2q4ntse5epXVtIDkCZqSEAXdGLa11Y6Y=;
+        b=ttYltdtuUZziPOSY/hUCTk4BQAu/PYFzk6nCigjnFuocXjm/EEBuSY1cCHiiwVwgZr6b+o
+        HViqSuJsDW/Q//ZAWZXF/gRZpDFJ53Q8dmIV5JSyi/5tWvgvn8bGtcv5a+Y1mhqB0S0APT
+        2bUbCWwEdhQ79HwrqnhCMq75lC66+NE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1686139831;
+        s=susede2_ed25519; t=1686139859;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VqcjXu0CZTTpOZmrsxN0Wk6sBEC02dewC7QyNvd2soI=;
-        b=MkcUMKJtjBchJhTKblNCrLqdAmaj8HslDTq0hIfVSuBi5J7Ox9FYzyAcm0vHDIQaJJ1iFw
-        8q1qSbcsmckQBWBA==
+        bh=i3Sp9Vc7BKL2q4ntse5epXVtIDkCZqSEAXdGLa11Y6Y=;
+        b=vfe3ZYUna+XkRBs8Tavq1ONCkn45ty+xLODCzcCXpSMvV9GYUDSA6ZAPHz6GL5XDv6fuMi
+        bFI45cclEet2DCDw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6D65E13776;
-        Wed,  7 Jun 2023 12:10:31 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 98F1913776;
+        Wed,  7 Jun 2023 12:10:59 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id m3hLGrdzgGTFOwAAMHmgww
-        (envelope-from <hare@suse.de>); Wed, 07 Jun 2023 12:10:31 +0000
-Message-ID: <1b1e8640-7bc8-a213-9b6c-2eb0b843ece6@suse.de>
-Date:   Wed, 7 Jun 2023 14:10:27 +0200
+        id ZnGxJNNzgGQKPAAAMHmgww
+        (envelope-from <hare@suse.de>); Wed, 07 Jun 2023 12:10:59 +0000
+Message-ID: <f65481fd-3643-b857-4ce0-d2cbe7645fa2@suse.de>
+Date:   Wed, 7 Jun 2023 14:10:58 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH 01/31] block: also call ->open for incremental partition
- opens
+Subject: Re: [PATCH 02/31] cdrom: remove the unused bdev argument to
+ cdrom_open
 Content-Language: en-US
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Richard Weinberger <richard@nod.at>,
@@ -80,9 +80,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-2-hch@lst.de>
+ <20230606073950.225178-3-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230606073950.225178-2-hch@lst.de>
+In-Reply-To: <20230606073950.225178-3-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -96,15 +96,13 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 6/6/23 09:39, Christoph Hellwig wrote:
-> For whole devices ->open is called for each open, but for partitions it
-> is only called on the first open of a partition.  This is problematic
-> as various block drivers look at open flags and might not do all setup
-> for ioctl only or NDELAY opens.
-> 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   block/bdev.c | 18 ++++++++----------
->   1 file changed, 8 insertions(+), 10 deletions(-)
+>   drivers/cdrom/cdrom.c | 3 +--
+>   drivers/cdrom/gdrom.c | 2 +-
+>   drivers/scsi/sr.c     | 2 +-
+>   include/linux/cdrom.h | 3 +--
+>   4 files changed, 4 insertions(+), 6 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
