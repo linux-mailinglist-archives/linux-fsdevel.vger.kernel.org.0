@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E0C7725927
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 11:02:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F788725937
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 11:02:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239758AbjFGJCG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 05:02:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58754 "EHLO
+        id S239727AbjFGJCf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 05:02:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239495AbjFGJB3 (ORCPT
+        with ESMTP id S238874AbjFGJCE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 05:01:29 -0400
+        Wed, 7 Jun 2023 05:02:04 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 376511BC0;
-        Wed,  7 Jun 2023 01:59:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F20A926AF;
+        Wed,  7 Jun 2023 02:00:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C137963090;
-        Wed,  7 Jun 2023 08:59:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAB4EC433D2;
-        Wed,  7 Jun 2023 08:59:50 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8137863C9B;
+        Wed,  7 Jun 2023 09:00:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B6B9C433D2;
+        Wed,  7 Jun 2023 09:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686128396;
-        bh=dWWAX+xiOcKgosI96OuwvEEnQrX5qRsaWpXnfV3wzsE=;
+        s=k20201202; t=1686128424;
+        bh=M5xM1l9LuXkX4mSzz59D4IdQFYmmNTr6OfgkeVyfa04=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rwe2e1Ca9g5PndSdWAR4ZxhkRR64XFN5oQuwRMk1FjfKraaCfNVTxn+BRhKyU+j/u
-         jg5JQ/jKXtDHzI9Uwmc7YThBmkwPCntyA1Nizp191gMau+kmlELxOjWKjvxjAc9JC2
-         RzBDL0p3j0FOCM7TOYUceH21NOI4PozRLAB2K3uQBAYBUemNsIy2dYg//LtIYEwErf
-         BV8xPRNRnufBYP0cou5VW32ptS1X7HphuSax6//1cqt1yDk43UFdKboMkPJBkTDSpW
-         GYhjav9dOdhYt8kknuatTMef0vgcOMh+q/hcr0bQH+Xq3sSPWUNEM6OXHtet+bxkeT
-         12uBxWHxB1Ryw==
-Date:   Wed, 7 Jun 2023 10:59:48 +0200
+        b=bkgRvGgC50EeuypHe3xl97j+bK6/ZhC9326XXBYH1ZIWYaQ5jbu1O85bi3HGmv9M+
+         hZ2SFMqNmWRyraR3Jgx4RRg8awjy8xDqCx+4vNdQpqr+khy+3Nr2thG3oUeGWCmFLy
+         XyvLCHm2vTS/PPKFg0NhX/7Rvav0gZ/EJtvHCBmt00R9oRm3Ttf4E19bdvBrMVREuf
+         /zBjY37bjH2obx9yTShQpHDAYvGzclq+GoqwGhXKZinmsKkN75qgYYwu5ZHTg6eiYP
+         J5jVActoZkfoLY/PBMoBsxKMx6RMvbVXquwF1Lct1mLaflpQuIgCkcbVYTKwI3tb6X
+         079ePZ3MnBG6Q==
+Date:   Wed, 7 Jun 2023 11:00:16 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
@@ -55,15 +55,15 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH 22/31] nvme: replace the fmode_t argument to the nvme
- ioctl handlers with a simple bool
-Message-ID: <20230607-pechvogel-monument-a22bf628a09c@brauner>
+Subject: Re: [PATCH 23/31] mtd: block: use a simple bool to track open for
+ write
+Message-ID: <20230607-exakt-fahrzeit-31037992dd33@brauner>
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-23-hch@lst.de>
+ <20230606073950.225178-24-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-23-hch@lst.de>
+In-Reply-To: <20230606073950.225178-24-hch@lst.de>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -74,9 +74,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 09:39:41AM +0200, Christoph Hellwig wrote:
-> Instead of passing a fmode_t and only checking it fo0r FMODE_WRITE, pass
-> a bool open_for_write to prepare for callers that won't have the fmode_t.
+On Tue, Jun 06, 2023 at 09:39:42AM +0200, Christoph Hellwig wrote:
+> Instead of propagating the fmode_t, just use a bool to track if a mtd
+> block device was opened for writing.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
