@@ -2,87 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2459725B9A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 12:29:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1FFC725BB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 12:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238739AbjFGK27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 06:28:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48854 "EHLO
+        id S239398AbjFGKjl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 06:39:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233580AbjFGK25 (ORCPT
+        with ESMTP id S234932AbjFGKjj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 06:28:57 -0400
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F1A219AE;
-        Wed,  7 Jun 2023 03:28:56 -0700 (PDT)
-Received: by mail-ot1-x335.google.com with SMTP id 46e09a7af769-6b29b9f5c40so1296468a34.2;
-        Wed, 07 Jun 2023 03:28:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686133735; x=1688725735;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MXI2Gtsei1k0G6deJ67EAfkNJaS9CBOu3IprceQovzY=;
-        b=a7wx2uiptoDsHzFspdGUqfWT6VIvTFL9OM9b4K/sptmB1x4B0A9ExCWBHPzDmaWCrv
-         QsofcsNn0gfZEmK6zpJh0s7MtP1pOYDjBzmUgCtM47FLBLYii5NlWR8k9fm1N6C8F5cm
-         tC9lvCyIdNWwBTrrsUZNtzp0Mytgc9e6gOmPgBErBv+hzODWRbEavcsoWyH8zuz9kqtU
-         qcHV3egOy4Ux3qaI8GBJDS+txS81r7QLWPESAYM5t2BfLm7rCM/Kzxs8S5Gpro8/F2GC
-         2xNukE53+Kygce/Jvz4WcvU9DNZUjHqkE0y6sI6zVzBCAZpofHVapxRGMyIrhUueUIPy
-         M8mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686133735; x=1688725735;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MXI2Gtsei1k0G6deJ67EAfkNJaS9CBOu3IprceQovzY=;
-        b=UI5AOjMNIkG7sfr+qQT3NRnZK5bv5iJ1BGnhzFAJAOj80G3rSJxX0yi8Nng5iwQhhL
-         X2z8If0y/6pkPe8F7rUHlUDi1aVXz/ZwxzcdoyZ8ewCN9s6vDmSh0o1s14yYaRBAL0nS
-         6eW8/QxbKulCTDN05tcdtyZtDmH4lCRG06GdTmNxj3sRnxL+xLO8vY2VCNpbj6S/9R33
-         koS2zllKFhERKsAqThxZY3eGrUfGtROXGspcHnxI5XxZw3P08zHfZBggtibcRw1A5v4T
-         X4Gw22zjYC1ae3gO1s/JrarxK8HeaQ589JcEBFC42eCmOadjWPNglqILaQYtteYHF7nk
-         xu/Q==
-X-Gm-Message-State: AC+VfDxQL5ZrX6leRoH0GOSuiJ7erC1G8Gs4VZvO3PhalbTbrbockR7+
-        0Ideh39D6hqw5O7qtHi7IZt6z7wWdfk=
-X-Google-Smtp-Source: ACHHUZ4rwlnWnl+AIriPUB3Ymbt08F/WtrdGklACsPApeaIjJsK6QtaBYtHilXWmDZ3WEdiqvRZE4A==
-X-Received: by 2002:a9d:69d9:0:b0:6b0:c531:ce3d with SMTP id v25-20020a9d69d9000000b006b0c531ce3dmr5076510oto.24.1686133735337;
-        Wed, 07 Jun 2023 03:28:55 -0700 (PDT)
-Received: from dw-tp ([49.207.220.159])
-        by smtp.gmail.com with ESMTPSA id w14-20020aa7858e000000b0064ca1fa8442sm8442507pfn.178.2023.06.07.03.28.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 03:28:54 -0700 (PDT)
-Date:   Wed, 07 Jun 2023 15:58:50 +0530
-Message-Id: <87zg5bin19.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [PATCHv8 1/5] iomap: Rename iomap_page to iomap_folio and others
-In-Reply-To: <ZIAojzrF5sEKDYmI@infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 7 Jun 2023 06:39:39 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE0D51712;
+        Wed,  7 Jun 2023 03:39:38 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 54467219B2;
+        Wed,  7 Jun 2023 10:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1686134377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Dtu+iDNn3kxs5lrIgaQjjH8mSs0Yu/BpJe+X9Y0Ut9k=;
+        b=xR6uTh8iSzcYV7OUUQs02PQcqVO5ZsQTY8AEkTpbsgRFkjj74fB7bMT0BGWC3jjKc04hL4
+        fG06l4VLQ+DwhAHyUr30Po9Yhd5QRVpG8W37KLLKRoimvm2l3V+CB97P3GeBbVI2AG2+P/
+        EMhpkERIjQYZUSB4hR6HwWbv0N/P8Y8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1686134377;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Dtu+iDNn3kxs5lrIgaQjjH8mSs0Yu/BpJe+X9Y0Ut9k=;
+        b=C5zvnyuXKL7Iyb5uKWatXVj8n/Nm/PA3fV8VLZ8+uJDLoxBJUqGPbJNvXdp1a7ZsVGfUdX
+        qt7kLJiNfYlDWcAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 44BD11346D;
+        Wed,  7 Jun 2023 10:39:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id koLAEGlegGTqBwAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 07 Jun 2023 10:39:37 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id BC7A3A0749; Wed,  7 Jun 2023 12:39:36 +0200 (CEST)
+Date:   Wed, 7 Jun 2023 12:39:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Kemeng Shi <shikemeng@huaweicloud.com>
+Subject: Re: [PATCH v2 12/12] ext4: Give symbolic names to mballoc criterias
+Message-ID: <20230607103936.wqtcrc76tqpbc2ya@quack3>
+References: <cover.1685449706.git.ojaswin@linux.ibm.com>
+ <a2dc6ec5aea5e5e68cf8e788c2a964ffead9c8b0.1685449706.git.ojaswin@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2dc6ec5aea5e5e68cf8e788c2a964ffead9c8b0.1685449706.git.ojaswin@linux.ibm.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> writes:
+On Tue 30-05-23 18:03:50, Ojaswin Mujoo wrote:
+> mballoc criterias have historically been called by numbers
+> like CR0, CR1... however this makes it confusing to understand
+> what each criteria is about.
+> 
+> Change these criterias from numbers to symbolic names and add
+> relevant comments. While we are at it, also reformat and add some
+> comments to ext4_seq_mb_stats_show() for better readability.
+> 
+> Additionally, define CR_FAST which signifies the criteria
+> below which we can make quicker decisions like:
+>   * quitting early if (free block < requested len)
+>   * avoiding to scan free extents smaller than required len.
+>   * avoiding to initialize buddy cache and work with existing cache
+>   * limiting prefetches
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
->> -static struct iomap_page *
->> -iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
->> +static struct iomap_folio *iomap_iof_alloc(struct inode *inode,
->> +				struct folio *folio, unsigned int flags)
->
-> This is really weird indenttion.  Please just use two tabs like the
-> rest of the code.
+Thanks for doing this!
 
-Ok, sure. Will fix this indentation in the next rev.
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 942e97026a60..c29a4e1fcd5d 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -135,16 +135,45 @@ enum SHIFT_DIRECTION {
+>   */
+>  #define EXT4_MB_NUM_CRS 5
+>  /*
+> - * All possible allocation criterias for mballoc
+> + * All possible allocation criterias for mballoc. Lower are faster.
+>   */
+>  enum criteria {
+> -	CR0,
+> -	CR1,
+> -	CR1_5,
+> -	CR2,
+> -	CR3,
+> +	/*
+> +	 * Used when number of blocks needed is a power of 2. This doesn't
+> +	 * trigger any disk IO except prefetch and is the fastest criteria.
+> +	 */
+> +	CR_POWER2_ALIGNED,
+> +
+> +	/*
+> +	 * Tries to lookup in-memory data structures to find the most suitable
+> +	 * group that satisfies goal request. No disk IO except block prefetch.
+> +	 */
+> +	CR_GOAL_LEN_FAST,
+> +
+> +        /*
+> +	 * Same as CR_GOAL_LEN_FAST but is allowed to reduce the goal length to
+> +         * the best available length for faster allocation.
 
--ritesh
+Some whitespace damage here...
+
+> +	 */
+> +	CR_BEST_AVAIL_LEN,
+> +
+> +	/*
+> +	 * Reads each block group sequentially, performing disk IO if necessary, to
+> +	 * find find_suitable block group. Tries to allocate goal length but might trim
+
+Too long line here.
+
+> +	 * the request if nothing is found after enough tries.
+> +	 */
+> +	CR_GOAL_LEN_SLOW,
+> +
+> +	/*
+> +	 * Finds the first free set of blocks and allocates those. This is only
+> +	 * used in rare cases when CR_GOAL_LEN_SLOW also fails to allocate
+> +	 * anything.
+> +	 */
+> +	CR_ANY_FREE,
+>  };
+>  
+> +/* criteria below which we use fast block scanning and avoid unnecessary IO */
+> +#define CR_FAST CR_GOAL_LEN_SLOW
+> +
+
+Maybe instead of defining CR_FAST value we could define
+
+static inline bool mballoc_cr_expensive(enum criteria cr)
+{
+	return cr >= CR_GOAL_LEN_SLOW;
+}
+
+And use this. I think it will make the conditions more understandable.
+
+...
+
+> @@ -1064,7 +1068,7 @@ static inline int should_optimize_scan(struct ext4_allocation_context *ac)
+>  {
+>  	if (unlikely(!test_opt2(ac->ac_sb, MB_OPTIMIZE_SCAN)))
+>  		return 0;
+> -	if (ac->ac_criteria >= CR2)
+> +	if (ac->ac_criteria >= CR_GOAL_LEN_SLOW)
+
+Maybe we should use CR_FAST (or the new function) here?
+
+Otherwise the patch looks good!
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
