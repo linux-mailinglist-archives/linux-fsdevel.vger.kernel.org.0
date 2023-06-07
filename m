@@ -2,71 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA3172596D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 11:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 206DC72597E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 11:06:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238738AbjFGJFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 05:05:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58888 "EHLO
+        id S239588AbjFGJGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 05:06:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239875AbjFGJE6 (ORCPT
+        with ESMTP id S239239AbjFGJGG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 05:04:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD6B8F;
-        Wed,  7 Jun 2023 02:03:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BB1CB6363A;
-        Wed,  7 Jun 2023 09:03:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E80DC4339B;
-        Wed,  7 Jun 2023 09:03:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686128633;
-        bh=Xf/4P91dRygUOBcu7Gf2FM/yIcNpKmxg81kLyQ/xABI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IN6GC1DPfELHi6cX+5K0wKVVtYJ3DXedGhjwgRx699RBFbnd08dZETxrlqxzpLWKC
-         ekLoBpbWyqE6gmBLFLtkaZYgr6+AIeoZpKwDTwgdWG99m14V2UqWKfwBTtVvgUBRu+
-         0e6TBWMLJuIbAlRNYxIXjylaMD7QGrfKMwVXHWPcJnjd57/ddsdyM/BmkOIIfzhzqD
-         30g5q2KZ4YvHf7cCwWG4eQIpdKajUy1CEU/O6AmKN2EBhjjDNdUAUDLCZCHrmIXgZM
-         kwBNuzs8INbYR7r2R62ZE/viyZfDvNDpkswXSRvBH+lz4n+zQ2vNlfy8TcF9REK4vz
-         k5N5wSWsZUJNw==
-Date:   Wed, 7 Jun 2023 11:03:45 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Phillip Potter <phil@philpotter.co.uk>,
-        Coly Li <colyli@suse.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-btrfs@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 27/31] block: remove unused fmode_t arguments from ioctl
- handlers
-Message-ID: <20230607-umgewandelt-fabelhaft-5f3c72318a9a@brauner>
-References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-28-hch@lst.de>
+        Wed, 7 Jun 2023 05:06:06 -0400
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4363B19BB
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 02:06:05 -0700 (PDT)
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-777acdd242eso387356839f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 02:06:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686128764; x=1688720764;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NaKkj5CIZoMi1szes5tAfkQ5eNu+ShAcZ+iK+zubIhE=;
+        b=XTy50P2zn3qa8aMgPYm05hwN/9dUAry+I2N0kKtatqVcqlj6DJU8DVnI49s/KiEpuv
+         5FHLBpPCjlGzL8RVJqxNW1INogdKXg5CD0XIvLTLRifcLx3M+okZHoAm6v/UObNc+824
+         as24WZlYMdxjz8BzBjAznM2O6FZmN5f4EjXwk2xwr4zF0kGEtRga3K5bKCjpsKE6Bnmc
+         E3jClui/plUpSkumhxhfctH+01gjpXvGZmQUaFa/gQeE2L64zngeavgIsazGLjAwcrow
+         /Wx5VQn+pJR1+rqkrzyICuLstAtccZgtUX1ORyWlQBKlH+n3yxtQ3ICsbRyKKjtUmIms
+         JJ/g==
+X-Gm-Message-State: AC+VfDzQ/jB/cdBjfEZ7oQmme3v3lXcOG8rEB8JYx5qjaGqxv8uW/14s
+        7Aw97+fnEtkC9Qm48+D9z0r+yt59KhHN1dwlKTYmjO57c7tA
+X-Google-Smtp-Source: ACHHUZ54nmvuqOa70h0yjf7J/CDjbxQTeWtcBFxRhdpf5IqWuzn7s5jf1dAijkc5X8fX+7vtm+2ebgHYK215BeloirbXmDSy6/E2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-28-hch@lst.de>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Received: by 2002:a05:6e02:4cf:b0:33d:72c0:1a5 with SMTP id
+ f15-20020a056e0204cf00b0033d72c001a5mr2277669ils.2.1686128764598; Wed, 07 Jun
+ 2023 02:06:04 -0700 (PDT)
+Date:   Wed, 07 Jun 2023 02:06:04 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000f42e105fd86725d@google.com>
+Subject: [syzbot] Monthly kernfs report (Jun 2023)
+From:   syzbot <syzbot+list9c24de01f057aca35431@syzkaller.appspotmail.com>
+To:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,12 +55,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 09:39:46AM +0200, Christoph Hellwig wrote:
-> A few ioctl handlers have fmode_t arguments that are entirely unused,
-> remove them.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+Hello kernfs maintainers/developers,
 
-Looks good to me,
-Acked-by: Christian Brauner <brauner@kernel.org>
+This is a 31-day syzbot report for the kernfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/kernfs
+
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 8 issues are still open and 21 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 105     Yes   WARNING in kernfs_remove_by_name_ns (3)
+                  https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
+<2> 49      Yes   inconsistent lock state in find_vmap_area
+                  https://syzkaller.appspot.com/bug?extid=8d19062486784d15dda9
+<3> 41      Yes   KASAN: use-after-free Read in kernfs_next_descendant_post (2)
+                  https://syzkaller.appspot.com/bug?extid=6bc35f3913193fe7f0d3
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
