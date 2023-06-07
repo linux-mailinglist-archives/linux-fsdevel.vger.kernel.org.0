@@ -2,157 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A93E772633D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 16:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10CD972634C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 16:50:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235335AbjFGOsg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 10:48:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39164 "EHLO
+        id S241032AbjFGOub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 10:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234794AbjFGOsf (ORCPT
+        with ESMTP id S240677AbjFGOua (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 10:48:35 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BE9892
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 07:48:30 -0700 (PDT)
-Received: from kwepemm600013.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Qbqpc0lNrzqSNF;
-        Wed,  7 Jun 2023 22:43:36 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm600013.china.huawei.com (7.193.23.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Wed, 7 Jun 2023 22:48:24 +0800
-Subject: Re: [PATCH 2/4] ubifs: Convert ubifs_writepage to use a folio
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Richard Weinberger <richard@nod.at>
-CC:     <linux-mtd@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>
-References: <20230605165029.2908304-1-willy@infradead.org>
- <20230605165029.2908304-3-willy@infradead.org>
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <d5286cf4-6d86-db9e-13e9-0d0bb1229493@huawei.com>
-Date:   Wed, 7 Jun 2023 22:48:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 7 Jun 2023 10:50:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 164DC1BC3;
+        Wed,  7 Jun 2023 07:50:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4763B64046;
+        Wed,  7 Jun 2023 14:50:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9863FC433EF;
+        Wed,  7 Jun 2023 14:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686149425;
+        bh=jpvdpKqCg7yRXcC9wagmSalxX4tBT208ocENAcgD2qM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M015P0k+RebxUvGjIE6ELJ55VdlVJuAWgPlUIztcOYeOzqr9ZGCzIz04RstkJEHyw
+         79HJx8TL06qpCmghtenmaI/KP4xuEGNBjconvvo2m6SfTAtbLzzTTI+oQBFbDGUkzL
+         ghhrf5jOcTzzDki2dID4QFbQN+CF2xfFvpBjjVasOPEaEuuUpyz9Rsf36fezbZhbGu
+         TgaeIU54d9pe8fvVRPN60k+KGWlz52XWtwxS9o8+GYwqkDi9HdKwvIK8T2FEbCwixB
+         mD9YN68PgZBgagTgUTgUJFAbKgfKA6wl7nYJPnVdm+vLVqYZujBZQAhcI8UEghlgd4
+         ZS1nM8Ylnm6IA==
+Date:   Wed, 7 Jun 2023 07:50:25 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, hch@infradead.org,
+        sandeen@sandeen.net, song@kernel.org, rafael@kernel.org,
+        gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
+        jikos@kernel.org, bvanassche@acm.org, ebiederm@xmission.com,
+        mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
+        da.gomez@samsung.com, linux-fsdevel@vger.kernel.org,
+        kernel@tuxforce.de, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] fs: distinguish between user initiated freeze and
+ kernel initiated freeze
+Message-ID: <20230607145025.GB72224@frogsfrogsfrogs>
+References: <20230508011717.4034511-1-mcgrof@kernel.org>
+ <20230508011717.4034511-4-mcgrof@kernel.org>
+ <20230522234200.GC11598@frogsfrogsfrogs>
+ <20230525141430.slms7f2xkmesezy5@quack3>
+ <20230606171956.GG72267@frogsfrogsfrogs>
+ <20230607092243.kv5yxaq3x7kni2yf@quack3>
 MIME-Version: 1.0
-In-Reply-To: <20230605165029.2908304-3-willy@infradead.org>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.178.46]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600013.china.huawei.com (7.193.23.68)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230607092243.kv5yxaq3x7kni2yf@quack3>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ÔÚ 2023/6/6 0:50, Matthew Wilcox (Oracle) Ð´µÀ:
-> We still pass the page down to do_writepage(), but ubifs_writepage()
-> itself is now large folio safe.  It also contains far fewer hidden calls
-> to compound_head().
+On Wed, Jun 07, 2023 at 11:22:43AM +0200, Jan Kara wrote:
+> On Tue 06-06-23 10:19:56, Darrick J. Wong wrote:
+> > On Thu, May 25, 2023 at 04:14:30PM +0200, Jan Kara wrote:
+> > > On Mon 22-05-23 16:42:00, Darrick J. Wong wrote:
+> > > > How about this as an alternative patch?  Kernel and userspace freeze
+> > > > state are stored in s_writers; each type cannot block the other (though
+> > > > you still can't have nested kernel or userspace freezes); and the freeze
+> > > > is maintained until /both/ freeze types are dropped.
+> > > > 
+> > > > AFAICT this should work for the two other usecases (quiescing pagefaults
+> > > > for fsdax pmem pre-removal; and freezing fses during suspend) besides
+> > > > online fsck for xfs.
+> > > > 
+> > > > --D
+> > > > 
+> > > > From: Darrick J. Wong <djwong@kernel.org>
+> > > > Subject: fs: distinguish between user initiated freeze and kernel initiated freeze
+> > > > 
+> > > > Userspace can freeze a filesystem using the FIFREEZE ioctl or by
+> > > > suspending the block device; this state persists until userspace thaws
+> > > > the filesystem with the FITHAW ioctl or resuming the block device.
+> > > > Since commit 18e9e5104fcd ("Introduce freeze_super and thaw_super for
+> > > > the fsfreeze ioctl") we only allow the first freeze command to succeed.
+> > > > 
+> > > > The kernel may decide that it is necessary to freeze a filesystem for
+> > > > its own internal purposes, such as suspends in progress, filesystem fsck
+> > > > activities, or quiescing a device prior to removal.  Userspace thaw
+> > > > commands must never break a kernel freeze, and kernel thaw commands
+> > > > shouldn't undo userspace's freeze command.
+> > > > 
+> > > > Introduce a couple of freeze holder flags and wire it into the
+> > > > sb_writers state.  One kernel and one userspace freeze are allowed to
+> > > > coexist at the same time; the filesystem will not thaw until both are
+> > > > lifted.
+> > > > 
+> > > > Inspired-by: Luis Chamberlain <mcgrof@kernel.org>
+> > > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > > 
+> > > Yes, this is exactly how I'd imagine it. Thanks for writing the patch!
+> > > 
+> > > I'd just note that this would need rebasing on top of Luis' patches 1 and
+> > > 2. Also:
+> > 
+> > I started doing that, but I noticed that after patch 1, freeze_super no
+> > longer leaves s_active elevated if the freeze is successful.  The
+> > callers drop the s_active ref that they themselves obtained, which
+> > means that we've now changed that behavior, right?  ioctl_fsfreeze now
+> > does:
+> > 
+> > 	if (!get_active_super(sb->s_bdev))
+> > 		return -ENOTTY;
+> > 
+> > (Increase ref)
+> > 
+> >         /* Freeze */
+> >         if (sb->s_op->freeze_super)
+> > 		ret = sb->s_op->freeze_super(sb);
+> > 	ret = freeze_super(sb);
+> > 
+> > (Not sure why we can do both here?)
+> > 
+> > 	deactivate_locked_super(sb);
+> > 
+> > (Decrease ref; net change to s_active is zero)
+> > 
+> > 	return ret;
+> > 
+> > Luis hasn't responded to my question, so I stopped.
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->   fs/ubifs/file.c | 39 +++++++++++++++++----------------------
->   1 file changed, 17 insertions(+), 22 deletions(-)
+> Right. I kind of like how he's moved the locking out of freeze_super() /
+> thaw_super() but I agree this semantic change is problematic and needs much
+> more thought - e.g. with Luis' version the fs could be unmounted while
+> frozen which is going to spectacularly deadlock. So yeah let's just ignore
+> patch 1 for now.
+
+Agreed, I like moving the locking out of freeze_super too.
+
+I'm less enthused about patch 2's helpers since there are those
+intermediate freezer states whose existence are only hinted at if you
+get to the point of asking yourself "Why would there be both _is_frozen
+and _is_unfrozen predicates?".
+
+> Longer term I believe if the sb is frozen by userspace, we should refuse to
+> unmount it but that's a separate discussion for some other time.
 > 
-> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-> index 8bb4cb9d528f..1c7a99c36906 100644
-> --- a/fs/ubifs/file.c
-> +++ b/fs/ubifs/file.c
-> @@ -1006,21 +1006,18 @@ static int do_writepage(struct page *page, int len)
->   static int ubifs_writepage(struct folio *folio, struct writeback_control *wbc,
->   		void *data)
->   {
-> -	struct page *page = &folio->page;
-> -	struct inode *inode = page->mapping->host;
-> +	struct inode *inode = folio->mapping->host;
->   	struct ubifs_info *c = inode->i_sb->s_fs_info;
->   	struct ubifs_inode *ui = ubifs_inode(inode);
->   	loff_t i_size =  i_size_read(inode), synced_i_size;
-> -	pgoff_t end_index = i_size >> PAGE_SHIFT;
-> -	int err, len = i_size & (PAGE_SIZE - 1);
-> -	void *kaddr;
-> +	int err, len = folio_size(folio);
->   
->   	dbg_gen("ino %lu, pg %lu, pg flags %#lx",
-> -		inode->i_ino, page->index, page->flags);
-> -	ubifs_assert(c, PagePrivate(page));
-> +		inode->i_ino, folio->index, folio->flags);
-> +	ubifs_assert(c, folio->private != NULL);
->   
-> -	/* Is the page fully outside @i_size? (truncate in progress) */
-> -	if (page->index > end_index || (page->index == end_index && !len)) {
-> +	/* Is the folio fully outside @i_size? (truncate in progress) */
-> +	if (folio_pos(folio) >= i_size) {
->   		err = 0;
->   		goto out_unlock;
->   	}
-> @@ -1029,9 +1026,9 @@ static int ubifs_writepage(struct folio *folio, struct writeback_control *wbc,
->   	synced_i_size = ui->synced_i_size;
->   	spin_unlock(&ui->ui_lock);
->   
-> -	/* Is the page fully inside @i_size? */
-> -	if (page->index < end_index) {
-> -		if (page->index >= synced_i_size >> PAGE_SHIFT) {
-> +	/* Is the folio fully inside i_size? */
-> +	if (folio_pos(folio) + len < i_size) {
-
-if (folio_pos(folio) + len <= i_size) ?
-
-> +		if (folio_pos(folio) >= synced_i_size) {
->   			err = inode->i_sb->s_op->write_inode(inode, NULL);
->   			if (err)
->   				goto out_redirty;
-> @@ -1044,20 +1041,18 @@ static int ubifs_writepage(struct folio *folio, struct writeback_control *wbc,
->   			 * with this.
->   			 */
->   		}
-> -		return do_writepage(page, PAGE_SIZE);
-> +		return do_writepage(&folio->page, len);
->   	}
->   
->   	/*
-> -	 * The page straddles @i_size. It must be zeroed out on each and every
-> +	 * The folio straddles @i_size. It must be zeroed out on each and every
->   	 * writepage invocation because it may be mmapped. "A file is mapped
->   	 * in multiples of the page size. For a file that is not a multiple of
->   	 * the page size, the remaining memory is zeroed when mapped, and
->   	 * writes to that region are not written out to the file."
->   	 */
-> -	kaddr = kmap_atomic(page);
-> -	memset(kaddr + len, 0, PAGE_SIZE - len);
-> -	flush_dcache_page(page);
-> -	kunmap_atomic(kaddr);
-> +	folio_zero_segment(folio, offset_in_folio(folio, i_size), len);
-> +	len = offset_in_folio(folio, i_size);
->   
->   	if (i_size > synced_i_size) {
->   		err = inode->i_sb->s_op->write_inode(inode, NULL);
-> @@ -1065,16 +1060,16 @@ static int ubifs_writepage(struct folio *folio, struct writeback_control *wbc,
->   			goto out_redirty;
->   	}
->   
-> -	return do_writepage(page, len);
-> +	return do_writepage(&folio->page, len);
->   out_redirty:
->   	/*
-> -	 * redirty_page_for_writepage() won't call ubifs_dirty_inode() because
-> +	 * folio_redirty_for_writepage() won't call ubifs_dirty_inode() because
->   	 * it passes I_DIRTY_PAGES flag while calling __mark_inode_dirty(), so
->   	 * there is no need to do space budget for dirty inode.
->   	 */
-> -	redirty_page_for_writepage(wbc, page);
-> +	folio_redirty_for_writepage(wbc, folio);
->   out_unlock:
-> -	unlock_page(page);
-> +	folio_unlock(folio);
->   	return err;
->   }
->   
+> > > BTW, when reading this code, I've spotted attached cleanup opportunity but
+> > > I'll queue that separately so that is JFYI.
+> > > 
+> > > > +#define FREEZE_HOLDER_USERSPACE	(1U << 1)	/* userspace froze fs */
+> > > > +#define FREEZE_HOLDER_KERNEL	(1U << 2)	/* kernel froze fs */
+> > > 
+> > > Why not start from 1U << 0? And bonus points for using BIT() macro :).
+> > 
+> > I didn't think filesystem code was supposed to be using stuff from
+> > vdso.h...
 > 
+> Hum, so BIT() macro is quite widely used in include/linux/ (from generic
+> headers e.g. in trace.h). include/linux/bits.h seems to be the right
+> include to use but I'm pretty sure include/linux/fs.h already gets this
+> header through something.
 
+Ok, will do.
+
+--D
+
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
