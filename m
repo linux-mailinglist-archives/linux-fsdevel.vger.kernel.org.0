@@ -2,52 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EAED725A3A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 11:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0FCB725A40
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 11:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239054AbjFGJZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 05:25:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46406 "EHLO
+        id S239944AbjFGJZa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 05:25:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239955AbjFGJY4 (ORCPT
+        with ESMTP id S240036AbjFGJZI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 05:24:56 -0400
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2D44172E
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 02:24:48 -0700 (PDT)
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-33b7c0bfa55so5680945ab.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 02:24:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686129888; x=1688721888;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mcggyTbJQ4YNKwj8Ogeixygfc+iphiJKgvf+Reoaotc=;
-        b=cjeMI36WJ3lfDKP9rmYTc2aYWX+/usySsaHZCdTfGAC9ffcSnhlR3pQnELhKmsHPiC
-         sbwNREpFxZjsvnmPA1hnIjfNQ87voD3RrfbVOmr0TxmiGuc32smzk/9I60KjyXP7k56n
-         fY8fOd2Fdn+iNk7QdlwBk5uBAZuu2IiEQduwGQFXQ4ZszV2tY3Yzww21eem182fFiNmM
-         tss3450umV5R7uGHENUJY8CwKba0VEz2oMdl61PAZ+9QGKtHhJiI0Whqy60gvN/183PC
-         KGPoBylNjqN7N+wy3DvzlbolxMjKxpXsypNhndsU7lWuv1h1mT3zX2Ebbl55HU+130NT
-         X5Nw==
-X-Gm-Message-State: AC+VfDwng5po4S5nUIL0mlSmLfkNS1TUwCRBKKc8OiiQT01eFKttKXjJ
-        OHaSSV1TciFcBB/K8Ah8j8p/e2OLOK8HkEjHVVkaPWsRMHji
-X-Google-Smtp-Source: ACHHUZ5RZcxOpmqKxbGUxbzJ2zCn2ZEBzjJLkXQdew2w2kmDjRGnl73yEOy7ne/oRP/Ck6TOSj5yWkfzX5h/JE7dTBwRKER14GOQ
+        Wed, 7 Jun 2023 05:25:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179BC1712;
+        Wed,  7 Jun 2023 02:25:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FD2363396;
+        Wed,  7 Jun 2023 09:25:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA78C433EF;
+        Wed,  7 Jun 2023 09:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686129904;
+        bh=PVPEiqQnbOrHGRENvLEdaR/nzeey8b8ZshNSuWbTzrk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ALdNOSLUKbyG4MtN9g4NY65h2phNBq7vkw8myPQgpJG2PzaM8f/SVslVCmF/QOc3T
+         Bwp8JuH17KAppuZAf9ArpxZTmb2lgZ7cED8j2ebPZYTj2IOo1Pq/kE6GkpjP2srCxN
+         XuLDkhy5x7omz7gFdxwTAPV7lc6Gdyrkd5NATTyExP7JIaWtEnHvRju/P8W1jwC/ZQ
+         pgr661S3TGnNa0/R8XJs7I9augkFB3fO/k2xICj9Rw66l5DVIPYSNCIJVnNMEfjw+Z
+         gguliFEjC8Gq4dp0LyuKCQZnO9AA7rkPsqLnWoRqyaIZ4YpfwuJwZivsVp2KmUYvZJ
+         O4+xhtnOR9qOw==
+Date:   Wed, 7 Jun 2023 11:24:55 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Coly Li <colyli@suse.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-btrfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 30/31] block: store the holder in file->private_data
+Message-ID: <20230607-verjagen-weise-4fb3d76a6313@brauner>
+References: <20230606073950.225178-1-hch@lst.de>
+ <20230606073950.225178-31-hch@lst.de>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c709:0:b0:33a:e860:f9dd with SMTP id
- a9-20020a92c709000000b0033ae860f9ddmr2095374ilp.0.1686129888235; Wed, 07 Jun
- 2023 02:24:48 -0700 (PDT)
-Date:   Wed, 07 Jun 2023 02:24:48 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000897b205fd86b576@google.com>
-Subject: [syzbot] Monthly xfs report (Jun 2023)
-From:   syzbot <syzbot+list020cf39d4baa3eb9d54e@syzkaller.appspotmail.com>
-To:     djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230606073950.225178-31-hch@lst.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,40 +73,13 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello xfs maintainers/developers,
+On Tue, Jun 06, 2023 at 09:39:49AM +0200, Christoph Hellwig wrote:
+> Store the file struct used as the holder in file->private_data as an
+> indicator that this file descriptor was opened exclusively to  remove
+> the last use of FMODE_EXCL.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-This is a 31-day syzbot report for the xfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/xfs
-
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 22 issues are still open and 21 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 1885    No    KMSAN: uninit-value in __crc32c_le_base (3)
-                  https://syzkaller.appspot.com/bug?extid=a6d6b8fffa294705dbd8
-<2> 188     Yes   KASAN: stack-out-of-bounds Read in xfs_buf_lock
-                  https://syzkaller.appspot.com/bug?extid=0bc698a422b5e4ac988c
-<3> 127     Yes   INFO: task hung in xfs_buf_item_unpin
-                  https://syzkaller.appspot.com/bug?extid=3f083e9e08b726fcfba2
-<4> 48      No    KCSAN: data-race in __filemap_remove_folio / folio_mapping (2)
-                  https://syzkaller.appspot.com/bug?extid=606f94dfeaaa45124c90
-<5> 13      No    KASAN: use-after-free Read in xfs_inode_item_push
-                  https://syzkaller.appspot.com/bug?extid=f0da51f81ea0b040c803
-<6> 7       Yes   KASAN: stack-out-of-bounds Read in xfs_buf_delwri_submit_buffers
-                  https://syzkaller.appspot.com/bug?extid=d2cdeba65d32ed1d2c4d
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Feels a bit odd to store the object itself but anyway,
+Acked-by: Christian Brauner <brauner@kernel.org>
