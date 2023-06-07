@@ -2,302 +2,280 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 94C04725121
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 02:32:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5E897251E4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 04:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234376AbjFGAcj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Jun 2023 20:32:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44684 "EHLO
+        id S240611AbjFGCBk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Jun 2023 22:01:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233518AbjFGAci (ORCPT
+        with ESMTP id S240551AbjFGCBf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Jun 2023 20:32:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A0FF10EA
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 17:31:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686097914;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=w0Mctuhjyu4X/RFmiqN/rM9nxa2yIrdMSLWcbUaMckc=;
-        b=jERw11Acjm2VuwDY8NYJk64lO/7zUS8JK1hqvCpY+FjdtGWlqjUkb5EYUvjQM6dvcecQIb
-        Mn7gTCxtg18Aykyxyw24P2oeUoRQdlMkWltw3v72KZJBsjAcb4+8KWm1dkYXyQviqhywjQ
-        9fdAKTUVJdkLWwnAF6fhd1mKieRlfpA=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-198-1Up7QQ46N-yAUEfIx4qD0A-1; Tue, 06 Jun 2023 20:31:53 -0400
-X-MC-Unique: 1Up7QQ46N-yAUEfIx4qD0A-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-395ff4dc3abso6623867b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 17:31:53 -0700 (PDT)
+        Tue, 6 Jun 2023 22:01:35 -0400
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25ED410F2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jun 2023 19:01:33 -0700 (PDT)
+Received: by mail-ot1-x32e.google.com with SMTP id 46e09a7af769-6b2993c9652so754226a34.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jun 2023 19:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686103291; x=1688695291;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=j5Cy8tBCL9F/0/npHcEhwYUjt7WcWHdplqXcZoUtV+0=;
+        b=S38JhUY0rjGS8/ejnAM445GcScFR7303fsI7enooXy8aNW0507nQpNQhvO3u3E3lif
+         e60ZRwPp5ITPRpOhi6O7xOnkHrs3vMFzOOaqIzEvAs2Hxy3fCcjCl5yPImkw1L/tuZO3
+         rsgcvEWpJuoUxcbOGL9O4zkuhdrGp/WHrISPsZzNhhNFWYmFj9dsztrtXUgxqcFtpE8I
+         uWGXHvcab1fBbvJZWotAME4Z6VIN2YnnSEjsxv5DF0P3PcXeicy02gd3DQWsYBdR4Y/A
+         FroVS5zqewrJgH81ZL3YfdrvOWUJ98tTmrk04tCNxDyIpeJD1JKKXQvG1IPKG+PqFQPc
+         8PpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686097912; x=1688689912;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1686103291; x=1688695291;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w0Mctuhjyu4X/RFmiqN/rM9nxa2yIrdMSLWcbUaMckc=;
-        b=bORxQMCUYHr0iLSWasqLdxxg2ph6ag7unW1uKmb/v6CVopRBnjpHoYVOSo28h+afLm
-         wbFStB320zYGLq5zKYeHuE1kk7Z3pJ//LwCgMXTNfpDC3HOsrcimJjvSbXStEbDJcSae
-         pixBmD/o7xi+qlaNbZIYP205JFnGlU/IvKGUf7qAjtJ9hcVEBgUc3yOImxNodNVQBt+d
-         Qj8RxfqoXOxElKrJT1ObabLaD6yqunhe89a8KfkWaN3SawTzVRvLJ9eLkLNHsdbsq59f
-         ZqOL7zqnLCU2Hq9puyYd5vhlPpShKuQxO+qzzc6oiu8nHui6BvxYR1Ju15KdImTnuA+e
-         saTQ==
-X-Gm-Message-State: AC+VfDwdtsXGQh2aS8RtnnEwaU6T3V6TjukMxoZ8z2PUPl0iDkptEI8q
-        QDKzzpGCBlktTTaP0X+yncK2dQYvDlXbzdmkNVMLTCB9vHAHLf23rhZPOHEIjyhTuAuAYWoZBtT
-        cJtApHrSI7GOMM9YXqxzyIjWl8A==
-X-Received: by 2002:aca:2b13:0:b0:398:5a28:d80f with SMTP id i19-20020aca2b13000000b003985a28d80fmr3937915oik.4.1686097912288;
-        Tue, 06 Jun 2023 17:31:52 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5EzKqs+X51Wo2AJRb+0nZ6za+JnXX0S8W8YrKwbVoDYVx43s/m4XK0ETyN+AM3bk1M72kVDQ==
-X-Received: by 2002:aca:2b13:0:b0:398:5a28:d80f with SMTP id i19-20020aca2b13000000b003985a28d80fmr3937900oik.4.1686097911958;
-        Tue, 06 Jun 2023 17:31:51 -0700 (PDT)
-Received: from [10.72.12.128] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id q66-20020a17090a1b4800b002533ce5b261sm149359pjq.10.2023.06.06.17.31.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jun 2023 17:31:51 -0700 (PDT)
-Message-ID: <7d5d87ac-bd4d-60c2-ca26-70a52c7fbdc8@redhat.com>
-Date:   Wed, 7 Jun 2023 08:31:46 +0800
+        bh=j5Cy8tBCL9F/0/npHcEhwYUjt7WcWHdplqXcZoUtV+0=;
+        b=PaecjVoACT7t206ENBVf6Dy58wbJqz6nCP6yNqJ8ulyDzh7VfLTNeuiJyroNwY4HN8
+         STojvEk8VQ4eKhN+y/aLpr7/H4ADwQgo0l1ay/BYZnZqT0nubQkpLJFeGaTrgrHoCQYl
+         n483ZYG3XZLga1BeqIqAXU/VStHqNxM3G+ojSW65kZ6+zFWa0KVgXDXFAS4m2LLXDCLt
+         qHeqL8wPoM04fE7Lrot2N0RdAp+qLnJLVGGCkzKIsBPjTbP+OkebaaxwZgwg7kf2EK/J
+         ZWjpOXk547Zt+QKPq46xNQoYxqeD1yO5IRTlygAhU0Ud3KJULAoumFQLpAZvYMAOtCXs
+         weHg==
+X-Gm-Message-State: AC+VfDxN9n//6aWW+Fjb5jjJ1CFN3/TvXakU6dTgKWITET19A5gOMHmn
+        Yu8cBvFvl85xR2oIEF3AjCSJ+A==
+X-Google-Smtp-Source: ACHHUZ5VYVq+3IAbaiVsgoydY4WCLUW/jBSbIonSM1lHWrf78Rur1YGuoiyya2F8GsBWigs9zYnexA==
+X-Received: by 2002:a05:6358:c525:b0:123:4444:e5f8 with SMTP id fb37-20020a056358c52500b001234444e5f8mr141321rwb.18.1686103290958;
+        Tue, 06 Jun 2023 19:01:30 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-79-151.pa.nsw.optusnet.com.au. [49.179.79.151])
+        by smtp.gmail.com with ESMTPSA id q66-20020a17090a1b4800b002533ce5b261sm220132pjq.10.2023.06.06.19.01.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jun 2023 19:01:29 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q6iUI-008iUT-2e;
+        Wed, 07 Jun 2023 12:01:26 +1000
+Date:   Wed, 7 Jun 2023 12:01:26 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Mike Snitzer <snitzer@kernel.org>
+Cc:     Sarthak Kukreti <sarthakkukreti@chromium.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Joe Thornber <thornber@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Bart Van Assche <bvanassche@google.com>,
+        linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, dm-devel@redhat.com,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>
+Subject: Re: [PATCH v7 0/5] Introduce provisioning primitives
+Message-ID: <ZH/k9ss2Cg9HYrEV@dread.disaster.area>
+References: <ZHB954zGG1ag0E/t@dread.disaster.area>
+ <CAJ0trDbspRaDKzTzTjFdPHdB9n0Q9unfu1cEk8giTWoNu3jP8g@mail.gmail.com>
+ <ZHFEfngPyUOqlthr@dread.disaster.area>
+ <CAJ0trDZJQwvAzngZLBJ1hB0XkQ1HRHQOdNQNTw9nK-U5i-0bLA@mail.gmail.com>
+ <ZHYB/6l5Wi+xwkbQ@redhat.com>
+ <CAJ0trDaUOevfiEpXasOESrLHTCcr=oz28ywJU+s+YOiuh7iWow@mail.gmail.com>
+ <ZHYWAGmKhwwmTjW/@redhat.com>
+ <CAG9=OMMnDfN++-bJP3jLmUD6O=Q_ApV5Dr392_5GqsPAi_dDkg@mail.gmail.com>
+ <ZHqOvq3ORETQB31m@dread.disaster.area>
+ <ZHti/MLnX5xGw9b7@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] ceph: Convert ceph_writepages_start() to use folios a
- little more
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20230605165418.2909336-1-willy@infradead.org>
- <4ca56a21-c5aa-6407-0cc1-db68762630ce@redhat.com>
- <ZH94oBBFct9b9g3z@casper.infradead.org>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <ZH94oBBFct9b9g3z@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZHti/MLnX5xGw9b7@redhat.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Jun 03, 2023 at 11:57:48AM -0400, Mike Snitzer wrote:
+> On Fri, Jun 02 2023 at  8:52P -0400,
+> Dave Chinner <david@fromorbit.com> wrote:
+> 
+> > On Fri, Jun 02, 2023 at 11:44:27AM -0700, Sarthak Kukreti wrote:
+> > > On Tue, May 30, 2023 at 8:28 AM Mike Snitzer <snitzer@kernel.org> wrote:
+> > > >
+> > > > On Tue, May 30 2023 at 10:55P -0400,
+> > > > Joe Thornber <thornber@redhat.com> wrote:
+> > > >
+> > > > > On Tue, May 30, 2023 at 3:02 PM Mike Snitzer <snitzer@kernel.org> wrote:
+> > > > >
+> > > > > >
+> > > > > > Also Joe, for you proposed dm-thinp design where you distinquish
+> > > > > > between "provision" and "reserve": Would it make sense for REQ_META
+> > > > > > (e.g. all XFS metadata) with REQ_PROVISION to be treated as an
+> > > > > > LBA-specific hard request?  Whereas REQ_PROVISION on its own provides
+> > > > > > more freedom to just reserve the length of blocks? (e.g. for XFS
+> > > > > > delalloc where LBA range is unknown, but dm-thinp can be asked to
+> > > > > > reserve space to accomodate it).
+> > > > > >
+> > > > >
+> > > > > My proposal only involves 'reserve'.  Provisioning will be done as part of
+> > > > > the usual io path.
+> > > >
+> > > > OK, I think we'd do well to pin down the top-level block interfaces in
+> > > > question. Because this patchset's block interface patch (2/5) header
+> > > > says:
+> > > >
+> > > > "This patch also adds the capability to call fallocate() in mode 0
+> > > > on block devices, which will send REQ_OP_PROVISION to the block
+> > > > device for the specified range,"
+> > > >
+> > > > So it wires up blkdev_fallocate() to call blkdev_issue_provision(). A
+> > > > user of XFS could then use fallocate() for user data -- which would
+> > > > cause thinp's reserve to _not_ be used for critical metadata.
+> > 
+> > Mike, I think you might have misunderstood what I have been proposing.
+> > Possibly unintentionally, I didn't call it REQ_OP_PROVISION but
+> > that's what I intended - the operation does not contain data at all.
+> > It's an operation like REQ_OP_DISCARD or REQ_OP_WRITE_ZEROS - it
+> > contains a range of sectors that need to be provisioned (or
+> > discarded), and nothing else.
+> 
+> No, I understood that.
+> 
+> > The write IOs themselves are not tagged with anything special at all.
+> 
+> I know, but I've been looking at how to also handle the delalloc
+> usecase (and yes I know you feel it doesn't need handling, the issue
+> is XFS does deal nicely with ensuring it has space when it tracks its
+> allocations on "thick" storage
 
-On 6/7/23 02:19, Matthew Wilcox wrote:
-> On Tue, Jun 06, 2023 at 01:37:46PM +0800, Xiubo Li wrote:
->> This Looks good to me.
->>
->> BTW, could you rebase this to the 'testing' branch ? This will introduce a
-> Umm, which testing branch is that?  It applies cleanly to next-20230606
-> which is generally where I work, since it's a bit unreasonable for me
-> to keep track of every filesystem development tree.
+Oh, no it doesn't. It -works for most cases-, but that does not mean
+it provides any guarantees at all. We can still get ENOSPC for user
+data when delayed allocation reservations "run out".
 
-Here https://github.com/ceph/ceph-client/commits/testing.
+This may be news to you, but the ephemeral XFS delayed allocation
+space reservation is not accurate. It contains a "fudge factor"
+called "indirect length". This is a "wet finger in the wind"
+estimation of how much new metadata will need to be allocated to
+index the physical allocations when they are made. It assumes large
+data extents are allocated, which is good enough for most cases, but
+it is no guarantee when there are no large data extents available to
+allocate (e.g. near ENOSPC!).
 
-Thanks
+And therein lies the fundamental problem with ephemeral range
+reservations: at the time of reservation, we don't know how many
+individual physical LBA ranges the reserved data range is actually
+going to span.
 
-- Xiubo
+As a result, XFS delalloc reservations are a "close-but-not-quite"
+reservation backed by a global reserve pool that can be dipped into
+if we run out of delalloc reservation. If the reserve pool is then
+fully depleted before all delalloc conversion completes, we'll still
+give ENOSPC. The pool is sized such that the vast majority of
+workloads will complete delalloc conversion successfully before the
+pool is depleted.
 
->> lots of conflicts with the fscrypt patches, I'd prefer this could be applied
->> and merged after them since the fscrypt patches have been well tested.
->>
->> Ilya, is that okay ?
->>
->> Thanks
->>
->> - Xiubo
->>
->> On 6/6/23 00:54, Matthew Wilcox (Oracle) wrote:
->>> After we iterate through the locked folios using filemap_get_folios_tag(),
->>> we currently convert back to a page (and then in some circumstaces back
->>> to a folio again!).  Just use a folio throughout and avoid various hidden
->>> calls to compound_head().  Ceph still uses a page array to interact with
->>> the OSD which should be cleaned up in a subsequent patch.
->>>
->>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
->>> ---
->>>    fs/ceph/addr.c | 79 +++++++++++++++++++++++++-------------------------
->>>    1 file changed, 39 insertions(+), 40 deletions(-)
->>>
->>> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
->>> index 6bb251a4d613..e2d92a8a53ca 100644
->>> --- a/fs/ceph/addr.c
->>> +++ b/fs/ceph/addr.c
->>> @@ -888,7 +888,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    		int num_ops = 0, op_idx;
->>>    		unsigned i, nr_folios, max_pages, locked_pages = 0;
->>>    		struct page **pages = NULL, **data_pages;
->>> -		struct page *page;
->>> +		struct folio *folio;
->>>    		pgoff_t strip_unit_end = 0;
->>>    		u64 offset = 0, len = 0;
->>>    		bool from_pool = false;
->>> @@ -902,22 +902,22 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    		if (!nr_folios && !locked_pages)
->>>    			break;
->>>    		for (i = 0; i < nr_folios && locked_pages < max_pages; i++) {
->>> -			page = &fbatch.folios[i]->page;
->>> -			dout("? %p idx %lu\n", page, page->index);
->>> +			folio = fbatch.folios[i];
->>> +			dout("? %p idx %lu\n", folio, folio->index);
->>>    			if (locked_pages == 0)
->>> -				lock_page(page);  /* first page */
->>> -			else if (!trylock_page(page))
->>> +				folio_lock(folio);  /* first folio */
->>> +			else if (!folio_trylock(folio))
->>>    				break;
->>>    			/* only dirty pages, or our accounting breaks */
->>> -			if (unlikely(!PageDirty(page)) ||
->>> -			    unlikely(page->mapping != mapping)) {
->>> -				dout("!dirty or !mapping %p\n", page);
->>> -				unlock_page(page);
->>> +			if (unlikely(!folio_test_dirty(folio)) ||
->>> +			    unlikely(folio->mapping != mapping)) {
->>> +				dout("!dirty or !mapping %p\n", folio);
->>> +				folio_unlock(folio);
->>>    				continue;
->>>    			}
->>>    			/* only if matching snap context */
->>> -			pgsnapc = page_snap_context(page);
->>> +			pgsnapc = page_snap_context(&folio->page);
->>>    			if (pgsnapc != snapc) {
->>>    				dout("page snapc %p %lld != oldest %p %lld\n",
->>>    				     pgsnapc, pgsnapc->seq, snapc, snapc->seq);
->>> @@ -925,12 +925,10 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    				    !ceph_wbc.head_snapc &&
->>>    				    wbc->sync_mode != WB_SYNC_NONE)
->>>    					should_loop = true;
->>> -				unlock_page(page);
->>> +				folio_unlock(folio);
->>>    				continue;
->>>    			}
->>> -			if (page_offset(page) >= ceph_wbc.i_size) {
->>> -				struct folio *folio = page_folio(page);
->>> -
->>> +			if (folio_pos(folio) >= ceph_wbc.i_size) {
->>>    				dout("folio at %lu beyond eof %llu\n",
->>>    				     folio->index, ceph_wbc.i_size);
->>>    				if ((ceph_wbc.size_stable ||
->>> @@ -941,31 +939,32 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    				folio_unlock(folio);
->>>    				continue;
->>>    			}
->>> -			if (strip_unit_end && (page->index > strip_unit_end)) {
->>> -				dout("end of strip unit %p\n", page);
->>> -				unlock_page(page);
->>> +			if (strip_unit_end && (folio->index > strip_unit_end)) {
->>> +				dout("end of strip unit %p\n", folio);
->>> +				folio_unlock(folio);
->>>    				break;
->>>    			}
->>> -			if (PageWriteback(page) || PageFsCache(page)) {
->>> +			if (folio_test_writeback(folio) ||
->>> +			    folio_test_fscache(folio)) {
->>>    				if (wbc->sync_mode == WB_SYNC_NONE) {
->>> -					dout("%p under writeback\n", page);
->>> -					unlock_page(page);
->>> +					dout("%p under writeback\n", folio);
->>> +					folio_unlock(folio);
->>>    					continue;
->>>    				}
->>> -				dout("waiting on writeback %p\n", page);
->>> -				wait_on_page_writeback(page);
->>> -				wait_on_page_fscache(page);
->>> +				dout("waiting on writeback %p\n", folio);
->>> +				folio_wait_writeback(folio);
->>> +				folio_wait_fscache(folio);
->>>    			}
->>> -			if (!clear_page_dirty_for_io(page)) {
->>> -				dout("%p !clear_page_dirty_for_io\n", page);
->>> -				unlock_page(page);
->>> +			if (!folio_clear_dirty_for_io(folio)) {
->>> +				dout("%p !folio_clear_dirty_for_io\n", folio);
->>> +				folio_unlock(folio);
->>>    				continue;
->>>    			}
->>>    			/*
->>>    			 * We have something to write.  If this is
->>> -			 * the first locked page this time through,
->>> +			 * the first locked folio this time through,
->>>    			 * calculate max possinle write size and
->>>    			 * allocate a page array
->>>    			 */
->>> @@ -975,7 +974,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    				u32 xlen;
->>>    				/* prepare async write request */
->>> -				offset = (u64)page_offset(page);
->>> +				offset = folio_pos(folio);
->>>    				ceph_calc_file_object_mapping(&ci->i_layout,
->>>    							      offset, wsize,
->>>    							      &objnum, &objoff,
->>> @@ -983,7 +982,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    				len = xlen;
->>>    				num_ops = 1;
->>> -				strip_unit_end = page->index +
->>> +				strip_unit_end = folio->index +
->>>    					((len - 1) >> PAGE_SHIFT);
->>>    				BUG_ON(pages);
->>> @@ -998,33 +997,33 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    				}
->>>    				len = 0;
->>> -			} else if (page->index !=
->>> +			} else if (folio->index !=
->>>    				   (offset + len) >> PAGE_SHIFT) {
->>>    				if (num_ops >= (from_pool ?  CEPH_OSD_SLAB_OPS :
->>>    							     CEPH_OSD_MAX_OPS)) {
->>> -					redirty_page_for_writepage(wbc, page);
->>> -					unlock_page(page);
->>> +					folio_redirty_for_writepage(wbc, folio);
->>> +					folio_unlock(folio);
->>>    					break;
->>>    				}
->>>    				num_ops++;
->>> -				offset = (u64)page_offset(page);
->>> +				offset = (u64)folio_pos(folio);
->>>    				len = 0;
->>>    			}
->>>    			/* note position of first page in fbatch */
->>> -			dout("%p will write page %p idx %lu\n",
->>> -			     inode, page, page->index);
->>> +			dout("%p will write folio %p idx %lu\n",
->>> +			     inode, folio, folio->index);
->>>    			if (atomic_long_inc_return(&fsc->writeback_count) >
->>>    			    CONGESTION_ON_THRESH(
->>>    				    fsc->mount_options->congestion_kb))
->>>    				fsc->write_congested = true;
->>> -			pages[locked_pages++] = page;
->>> +			pages[locked_pages++] = &folio->page;
->>>    			fbatch.folios[i] = NULL;
->>> -			len += thp_size(page);
->>> +			len += folio_size(folio);
->>>    		}
->>>    		/* did we get anything? */
->>> @@ -1073,7 +1072,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    			BUG_ON(IS_ERR(req));
->>>    		}
->>>    		BUG_ON(len < page_offset(pages[locked_pages - 1]) +
->>> -			     thp_size(page) - offset);
->>> +			     folio_size(folio) - offset);
->>>    		req->r_callback = writepages_finish;
->>>    		req->r_inode = inode;
->>> @@ -1115,7 +1114,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    			set_page_writeback(pages[i]);
->>>    			if (caching)
->>>    				ceph_set_page_fscache(pages[i]);
->>> -			len += thp_size(page);
->>> +			len += folio_size(folio);
->>>    		}
->>>    		ceph_fscache_write_to_cache(inode, offset, len, caching);
->>> @@ -1125,7 +1124,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->>>    			/* writepages_finish() clears writeback pages
->>>    			 * according to the data length, so make sure
->>>    			 * data length covers all locked pages */
->>> -			u64 min_len = len + 1 - thp_size(page);
->>> +			u64 min_len = len + 1 - folio_size(folio);
->>>    			len = get_writepages_data_length(inode, pages[i - 1],
->>>    							 offset);
->>>    			len = max(len, min_len);
+Hence XFS gives everyone the -appearance- that it deals nicely with
+ENOSPC conditions, but it never provides a -guarantee- that any
+accepted write will always succeed without ENOSPC.
 
+IMO, using this "close-but-not-quite" reservation as the basis of
+space requirements for other layers to provide "won't ENOSPC"
+guarantees is fraught with problems. We already know that it is
+insufficient in important corner cases at the filesystem level, and
+we also know that lower layers trying to do ephemeral space
+reservations will have exactly the same problems providing a
+guarantee. And these are problems we've been unable to engineer
+around in the past, so the likelihood we can engineer around them
+now or in the future is also very unlikely.
+
+> -- so adding coordination between XFS
+> and dm-thin layers provides comparable safety.. that safety is an
+> expected norm).
+>
+> But rather than discuss in terms of data vs metadata, the distinction
+> is:
+> 1) LBA range reservation (normal case, your proposal)
+> 2) non-LBA reservation (absolute value, LBA range is known at later stage)
+> 
+> But I'm clearly going off script for dwelling on wanting to handle
+> both.
+
+Right, because if we do 1) then we don't need 2). :)
+
+> My looking at (ab)using REQ_META being set (use 1) vs not (use 2) was
+> a crude simplification for branching between the 2 approaches.
+> 
+> And I understand I made you nervous by expanding the scope to a much
+> more muddled/shitty interface. ;)
+
+Nervous? No, I'm simply trying to make sure that everyone is on the
+same page. i.e. that if we water down the guarantee that 1) relies
+on, then it's not actually useful to filesystems at all.
+
+> > It's just not practical for the block device to add arbitrary
+> > constraints based on the type of IO because we then have to add
+> > mechanisms to userspace APIs to allow them to control the IO context
+> > so the block device will do the right thing. Especially considering
+> > we really only need one type of guarantee regardless of where the IO
+> > originates from or what type of data the IO contains....
+> 
+> If anything my disposition on the conditional to require a REQ_META
+> (or some fallocate generated REQ_UNSHARE ditto to reflect the same) to
+> perform your approach to REQ_OP_PROVISION and honor fallocate()
+> requirements is a big problem.  Would be much better to have a flag to
+> express "this reservation does not have an LBA range _yet_,
+> nevertheless try to be mindful of this expected near-term block
+> allocation".
+
+And that's where all the complexity starts ;)
+
+> > Put simply: if we restrict REQ_OP_PROVISION guarantees to just
+> > REQ_META writes (or any other specific type of write operation) then
+> > it's simply not worth persuing at the filesystem level because the
+> > guarantees we actually need just aren't there and the complexity of
+> > discovering and handling those corner cases just isn't worth the
+> > effort.
+> 
+> Here is where I get to say: I think you misunderstood me (but it was
+> my fault for not being absolutely clear: I'm very much on the same
+> page as you and Joe; and your visions need to just be implemented
+> ASAP).
+
+OK, good that we've clarified the misunderstandings on both sides
+quickly :)
+
+> I was taking your designs as a given, but looking further at: how do
+> we also handle the non-LBA (delalloc) usecase _before_ we include
+> REQ_OP_PROVISION in kernel.
+> 
+> But I'm happy to let the delalloc case go (we can revisit addressing
+> it if/when needed).
+
+Again, I really don't think filesystem delalloc ranges ever need to
+be covered by block device provisioning guarantees because the
+filesystem itself provides no guarantees for unprovisioned writes.
+
+I suspect that if, in future, we want to manage unprovisioned space
+in different ways, we're better off taking this sort of approach:
+
+https://lore.kernel.org/linux-xfs/20171026083322.20428-1-david@fromorbit.com/
+
+because using grow/shrink to manage the filesystem's unprovisioned
+space if far, far simpler than trying to use dynamic, cross layer
+ephemeral reservations.  Indeed, with the block device filesystem
+shutdown path Christoph recently posted, we have a model for adding
+in-kernel filesystem control interfaces for block devices...
+
+There's something to be said for turning everything upside down
+occasionally. :)
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
