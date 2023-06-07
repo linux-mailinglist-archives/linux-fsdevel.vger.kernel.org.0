@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 83786725966
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 11:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CA3172596D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 11:05:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235565AbjFGJFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 05:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59004 "EHLO
+        id S238738AbjFGJFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 05:05:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239800AbjFGJEu (ORCPT
+        with ESMTP id S239875AbjFGJE6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 05:04:50 -0400
+        Wed, 7 Jun 2023 05:04:58 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B6F211B;
-        Wed,  7 Jun 2023 02:03:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD6B8F;
+        Wed,  7 Jun 2023 02:03:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4A58361D44;
-        Wed,  7 Jun 2023 09:03:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DCCDC433D2;
-        Wed,  7 Jun 2023 09:03:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BB1CB6363A;
+        Wed,  7 Jun 2023 09:03:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E80DC4339B;
+        Wed,  7 Jun 2023 09:03:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686128597;
-        bh=q7AdZhSDALKQcnwiboxtavjTYhFCYH416kEbuBo82ZY=;
+        s=k20201202; t=1686128633;
+        bh=Xf/4P91dRygUOBcu7Gf2FM/yIcNpKmxg81kLyQ/xABI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LmFv4NUDSWWO12W7cnryBDYV8PpqTiV6m9IiQfaN+Gy1TfavMxnrDvH/1VFaqu0VY
-         pNdbYyRHzF2xHsOOKI87miWMENWlYg9+fsdmVVKTz7wYCo6GM1+2x+3dTWnt7WYDdZ
-         Mcjyuj+xp5weCEAYKk11qk0vTGQUIzOnBLlKJpx07Q5ZRsx7ASXqBbtAW0ZLkT7Ew4
-         zBKVTwzdquqRp3RuennzrpOsYTw2sC0VjBfUPhiyrzzFVaAdPGx6+N+quMH0El0KVh
-         SXVIETbMrhU8sh4IsaqUJwCWqqtEaM+3Y6KO5/S9XwefBpx2SMbZ5aVq7LqHVJcaJB
-         5ShZ62p5oKScw==
-Date:   Wed, 7 Jun 2023 11:03:09 +0200
+        b=IN6GC1DPfELHi6cX+5K0wKVVtYJ3DXedGhjwgRx699RBFbnd08dZETxrlqxzpLWKC
+         ekLoBpbWyqE6gmBLFLtkaZYgr6+AIeoZpKwDTwgdWG99m14V2UqWKfwBTtVvgUBRu+
+         0e6TBWMLJuIbAlRNYxIXjylaMD7QGrfKMwVXHWPcJnjd57/ddsdyM/BmkOIIfzhzqD
+         30g5q2KZ4YvHf7cCwWG4eQIpdKajUy1CEU/O6AmKN2EBhjjDNdUAUDLCZCHrmIXgZM
+         kwBNuzs8INbYR7r2R62ZE/viyZfDvNDpkswXSRvBH+lz4n+zQ2vNlfy8TcF9REK4vz
+         k5N5wSWsZUJNw==
+Date:   Wed, 7 Jun 2023 11:03:45 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
@@ -55,15 +55,15 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH 26/31] block: move a few internal definitions out of
- blkdev.h
-Message-ID: <20230607-kernkompetenz-halbleiter-b8874bc39061@brauner>
+Subject: Re: [PATCH 27/31] block: remove unused fmode_t arguments from ioctl
+ handlers
+Message-ID: <20230607-umgewandelt-fabelhaft-5f3c72318a9a@brauner>
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-27-hch@lst.de>
+ <20230606073950.225178-28-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-27-hch@lst.de>
+In-Reply-To: <20230606073950.225178-28-hch@lst.de>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -74,9 +74,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 09:39:45AM +0200, Christoph Hellwig wrote:
-> All these helpers are only used in core block code, so move them out of
-> the public header.
+On Tue, Jun 06, 2023 at 09:39:46AM +0200, Christoph Hellwig wrote:
+> A few ioctl handlers have fmode_t arguments that are entirely unused,
+> remove them.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
