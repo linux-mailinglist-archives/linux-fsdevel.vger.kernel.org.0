@@ -2,117 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E058A72618C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 15:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D1372619F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 15:48:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239927AbjFGNmS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 09:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59060 "EHLO
+        id S240536AbjFGNr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 09:47:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235565AbjFGNmR (ORCPT
+        with ESMTP id S235549AbjFGNr5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 09:42:17 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B30A219BC
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 06:42:16 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51475e981f0so1455558a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 06:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1686145335; x=1688737335;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xiIXQUoQS8DCNXkzHjQBBuAray21dUopxg1MttS9gnA=;
-        b=iQgS+dx+fa3dWOplc6Y6SGsLPmPzDMWB0E5jSQmg6BaQTGfjbH3gx5Ow0HI930asUF
-         rR6rc+0BF90XhwcnU0JSvCQzsGsfdSQUAmPdXgXlZe2Lka0JtXH8IX9IqW1r3Q5/8yee
-         IkHfhuKoM+mdf2DtcKEDaZhBuZ17fvnhuIOlw=
+        Wed, 7 Jun 2023 09:47:57 -0400
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C281BC7
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 06:47:56 -0700 (PDT)
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-766655c2cc7so559618539f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 06:47:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686145335; x=1688737335;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xiIXQUoQS8DCNXkzHjQBBuAray21dUopxg1MttS9gnA=;
-        b=aavse9KWudKbfKUrbHnE8aukiYneKAPBU6QRd3xZNroGnLIO/BMzcTKBBRpNubmpP0
-         kr29030vIqayrzuQT11ibiBxQh/92GIH7T0M3cyzdqwUDHNIxnLojLg1MSFSCVzW15/T
-         KW0oHArsQxS0LdXLgfy2pJPW7Jdj5divBnZfG9EH2f6dnQ0lO0O7PTFD9l7hpHF2km1w
-         zlkEYwu1GDdRVOxZujccJNq6+Ni9UjYJ14kesRCwwuuj1eaq2j6xEuMjT357tEoWmQQv
-         tkNjOGWY9Z6PYJj4oH16kLhbXtovMz/3GEYAgO845XJLNyOgMNsuqC2euVfWm4u+rE+h
-         wsqw==
-X-Gm-Message-State: AC+VfDyiv5mSu0/OY62TjcsV7LkmYJUjTcCuarTFWqehY/AIEDbyha09
-        SjzvrTIMp3RMtoc9Ku/GrD4czfwEinhYzZh1ovaDbA==
-X-Google-Smtp-Source: ACHHUZ47tmtcWgkaruixaJTTez/azcofW1vGoN2zQicj5pAnVUOmXvyG6poqQABjckd6tjHXzS6MZdtow2Z7NJLVAS8=
-X-Received: by 2002:a17:907:1626:b0:96a:1ee9:4a5 with SMTP id
- hb38-20020a170907162600b0096a1ee904a5mr6776188ejc.8.1686145335153; Wed, 07
- Jun 2023 06:42:15 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686145675; x=1688737675;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pQUIevp3kmh7Rh77lhqlWB6JiMORR4Y83bN8LaMYusg=;
+        b=OvuwZhUqxSPJIgLDJ15xjnacBGvqVgx4g95gZESkJo6CGmdtdF1JRgeFhbCi2LKbmc
+         9aQ8dcGagMZjoHcToaKtXSN5gpArtssEXPgjsM3N1xBb9mtxydk2dmUv87wuQvMyiNIe
+         FEJHEvEXRVB606SjjXdAHmDRlVsZqqGR0LlW67uPosundyGN4skPChScuWhIYftTOirp
+         30GyRq1HIV9T2JzuICWwisU998ue6yDOb8HFFb/+jbR40ehZphN1trtStMkZoZ1dE637
+         tKuu0yErtS86K2tv38Wk0qg7yXgTPQkON8vrES5Ws0AnA2TZfjMlNSOOOPJ/46fWwvhZ
+         HxmA==
+X-Gm-Message-State: AC+VfDwYykuaX6QiaUQO82gmx1o/pk4MdjptUP9LhV9xEmQjJIFgHp7D
+        UKXpIdEpzrzexiLrkrHJp0EUDmqrGFCuBzZyk/XKpyh/MbtK
+X-Google-Smtp-Source: ACHHUZ5RPNC5+tKMTBl7BPNrhzt6ZZ6ENxCd2akQXW3rTYBc71dCFjfsUc8hYja6jBGCneAGrmf3AcOIbugAUV2OYnTN6hjWpRtW
 MIME-Version: 1.0
-References: <CAPnZJGDWUT0D7cT_kWa6W9u8MHwhG8ZbGpn=uY4zYRWJkzZzjA@mail.gmail.com>
- <CAJfpeguZX5pF8-UNsSfJmMhpgeUFT5XyG_rDzMD-4pB+MjkhZA@mail.gmail.com> <CAPnZJGB8XKtv8W7KYtyZ7AFWWB-LTG_nP3wLAzus6jHFp_mWfg@mail.gmail.com>
-In-Reply-To: <CAPnZJGB8XKtv8W7KYtyZ7AFWWB-LTG_nP3wLAzus6jHFp_mWfg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 7 Jun 2023 15:42:03 +0200
-Message-ID: <CAJfpegu4_47=yoe+X7szhknU+GedJTqHO0h_HcctqZuCiA41mw@mail.gmail.com>
-Subject: Re: [PATCH 0/6] vfs: provide automatic kernel freeze / resume
-To:     Askar Safin <safinaskar@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+X-Received: by 2002:a02:b001:0:b0:41d:be7a:21f7 with SMTP id
+ p1-20020a02b001000000b0041dbe7a21f7mr2550987jah.5.1686145675512; Wed, 07 Jun
+ 2023 06:47:55 -0700 (PDT)
+Date:   Wed, 07 Jun 2023 06:47:55 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000753ac05fd8a6256@google.com>
+Subject: [syzbot] Monthly 9p report (Jun 2023)
+From:   syzbot <syzbot+list2ae9773daf371845c70b@syzkaller.appspotmail.com>
+To:     asmadeus@codewreck.org, ericvh@gmail.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bernd Schubert <bernd.schubert@fastmail.fm>,
-        linux-pm@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>
+        lucho@ionkov.net, syzkaller-bugs@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 7 Jun 2023 at 13:13, Askar Safin <safinaskar@gmail.com> wrote:
->
-> I found a workaround for sshfs+suspend problem!
->
-> On Tue, Jun 6, 2023 at 5:38=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu>=
- wrote:
-> > Issues remaining:
-> >
-> >  - if requests are stuck (e.g. network is down) then the requester
-> > process can't be frozen and suspend will still fail.
->
-> > Solution to both these are probably non-kernel: impacted servers need
-> > to receive notification from systemd when suspend is starting and act
-> > accordingly.
->
-> Okay, so you said that the only way to solve the problem "network is
-> down" is to fix the problem at the sshfs side. Unfortunately, sshfs
-> project was closed ( https://github.com/libfuse/sshfs ). So the only
-> remaining option is to use some hack. And I found such a hack!
->
-> I simply added "-o ServerAliveInterval=3D10" to sshfs command. This will
-> cause ssh process exit if remote side is unreachable. Thus the bug is
-> prevented. I tested the fix and it works.
->
-> But this will mean that ssh process will exit in such situation, and
-> thus sshfs process will exit, too. If this is not what you want, then
-> also add "-o reconnect" option, this will restart connection if ssh
-> dies. So the final command will look like this:
->
-> sshfs -o reconnect,ServerAliveInterval=3D10 ...
->
-> This finally solved the problem for me.
->
-> But one issue still remains: if the network goes down and then you
-> immediately try to access sshfs filesystem and then you will try to
-> suspend (and ssh doesn't yet noticed that the network gone down), then
-> suspend will still fail.
+Hello 9p maintainers/developers,
 
-If the ServerAliveInterval is set to less than the freeze timeout (20s
-by default) and you apply the patch and start sshfs like below, then
-suspend should be reliable.
+This is a 31-day syzbot report for the 9p subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/9p
 
-  (echo 1 >  /proc/self/freeze_late; sshfs ...)
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 6 issues are still open and 27 have been fixed so far.
 
-Thanks,
-Miklos
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 1157    Yes   INFO: task hung in iterate_supers
+                  https://syzkaller.appspot.com/bug?extid=2349f5067b1772c1d8a5
+<2> 542     Yes   WARNING in inc_nlink (3)
+                  https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
+<3> 268     Yes   WARNING in v9fs_fid_get_acl
+                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
+<4> 163     Yes   BUG: corrupted list in p9_fd_cancelled (2)
+                  https://syzkaller.appspot.com/bug?extid=1d26c4ed77bc6c5ed5e6
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
