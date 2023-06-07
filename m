@@ -2,90 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91D1372619F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 15:48:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD04C7261EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 16:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240536AbjFGNr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 09:47:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60830 "EHLO
+        id S240889AbjFGOAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 10:00:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235549AbjFGNr5 (ORCPT
+        with ESMTP id S240288AbjFGOAU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 09:47:57 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C281BC7
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 06:47:56 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-766655c2cc7so559618539f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 06:47:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686145675; x=1688737675;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pQUIevp3kmh7Rh77lhqlWB6JiMORR4Y83bN8LaMYusg=;
-        b=OvuwZhUqxSPJIgLDJ15xjnacBGvqVgx4g95gZESkJo6CGmdtdF1JRgeFhbCi2LKbmc
-         9aQ8dcGagMZjoHcToaKtXSN5gpArtssEXPgjsM3N1xBb9mtxydk2dmUv87wuQvMyiNIe
-         FEJHEvEXRVB606SjjXdAHmDRlVsZqqGR0LlW67uPosundyGN4skPChScuWhIYftTOirp
-         30GyRq1HIV9T2JzuICWwisU998ue6yDOb8HFFb/+jbR40ehZphN1trtStMkZoZ1dE637
-         tKuu0yErtS86K2tv38Wk0qg7yXgTPQkON8vrES5Ws0AnA2TZfjMlNSOOOPJ/46fWwvhZ
-         HxmA==
-X-Gm-Message-State: AC+VfDwYykuaX6QiaUQO82gmx1o/pk4MdjptUP9LhV9xEmQjJIFgHp7D
-        UKXpIdEpzrzexiLrkrHJp0EUDmqrGFCuBzZyk/XKpyh/MbtK
-X-Google-Smtp-Source: ACHHUZ5RPNC5+tKMTBl7BPNrhzt6ZZ6ENxCd2akQXW3rTYBc71dCFjfsUc8hYja6jBGCneAGrmf3AcOIbugAUV2OYnTN6hjWpRtW
+        Wed, 7 Jun 2023 10:00:20 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B6C1FE2;
+        Wed,  7 Jun 2023 07:00:11 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 5DD1A1FDAA;
+        Wed,  7 Jun 2023 14:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1686146410;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UrhG/vp+m03DiK3yFBmnkaqHBlBTfdkmOZNwI5+daeI=;
+        b=aaeNmU5ZCbhkqsc+e7TmqELd+MojX+TJ4sW47FDZ16ksOKTS1HV5xIbX0zomficAn/Jh5v
+        VZiRj0mibB+S0/nZ9oVGZBw1IUP0IX/+ZnPW1SQuG9FRCZsxkZPR09gqoOTRnF+vHJM2YE
+        Ooe+gJXDWNv9E7scSycsuGNec+mAcBE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1686146410;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UrhG/vp+m03DiK3yFBmnkaqHBlBTfdkmOZNwI5+daeI=;
+        b=KHxasVxySgF+IfYKHAeDp2hM9up/Wuoe5ajJJXZVSidBzHNz58lOdiZ2OyRWPEh/mFqMqo
+        GNlPBbs8U0FDH+DA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D167113776;
+        Wed,  7 Jun 2023 14:00:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id oAxvMmmNgGS7ewAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Wed, 07 Jun 2023 14:00:09 +0000
+Date:   Wed, 7 Jun 2023 15:53:54 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Coly Li <colyli@suse.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-btrfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 16/31] block: use the holder as indication for exclusive
+ opens
+Message-ID: <20230607135354.GP25292@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20230606073950.225178-1-hch@lst.de>
+ <20230606073950.225178-17-hch@lst.de>
 MIME-Version: 1.0
-X-Received: by 2002:a02:b001:0:b0:41d:be7a:21f7 with SMTP id
- p1-20020a02b001000000b0041dbe7a21f7mr2550987jah.5.1686145675512; Wed, 07 Jun
- 2023 06:47:55 -0700 (PDT)
-Date:   Wed, 07 Jun 2023 06:47:55 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000753ac05fd8a6256@google.com>
-Subject: [syzbot] Monthly 9p report (Jun 2023)
-From:   syzbot <syzbot+list2ae9773daf371845c70b@syzkaller.appspotmail.com>
-To:     asmadeus@codewreck.org, ericvh@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lucho@ionkov.net, syzkaller-bugs@googlegroups.com,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230606073950.225178-17-hch@lst.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello 9p maintainers/developers,
+On Tue, Jun 06, 2023 at 09:39:35AM +0200, Christoph Hellwig wrote:
+> The current interface for exclusive opens is rather confusing as it
+> requires both the FMODE_EXCL flag and a holder.  Remove the need to pass
+> FMODE_EXCL and just key off the exclusive open off a non-NULL holder.
+> 
+> For blkdev_put this requires adding the holder argument, which provides
+> better debug checking that only the holder actually releases the hold,
+> but at the same time allows removing the now superfluous mode argument.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  block/bdev.c                        | 37 ++++++++++++++++------------
+>  block/fops.c                        |  6 +++--
+>  block/genhd.c                       |  5 ++--
+>  block/ioctl.c                       |  5 ++--
+>  drivers/block/drbd/drbd_nl.c        | 23 ++++++++++-------
+>  drivers/block/pktcdvd.c             | 13 +++++-----
+>  drivers/block/rnbd/rnbd-srv.c       |  4 +--
+>  drivers/block/xen-blkback/xenbus.c  |  2 +-
+>  drivers/block/zram/zram_drv.c       |  8 +++---
+>  drivers/md/bcache/super.c           | 15 ++++++------
+>  drivers/md/dm.c                     |  6 ++---
+>  drivers/md/md.c                     | 38 +++++++++++++++--------------
+>  drivers/mtd/devices/block2mtd.c     |  4 +--
+>  drivers/nvme/target/io-cmd-bdev.c   |  2 +-
+>  drivers/s390/block/dasd_genhd.c     |  2 +-
+>  drivers/target/target_core_iblock.c |  6 ++---
+>  drivers/target/target_core_pscsi.c  |  8 +++---
 
-This is a 31-day syzbot report for the 9p subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/9p
+For
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 6 issues are still open and 27 have been fixed so far.
+>  fs/btrfs/dev-replace.c              |  6 ++---
+>  fs/btrfs/ioctl.c                    | 12 ++++-----
+>  fs/btrfs/volumes.c                  | 28 ++++++++++-----------
+>  fs/btrfs/volumes.h                  |  6 ++---
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 1157    Yes   INFO: task hung in iterate_supers
-                  https://syzkaller.appspot.com/bug?extid=2349f5067b1772c1d8a5
-<2> 542     Yes   WARNING in inc_nlink (3)
-                  https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
-<3> 268     Yes   WARNING in v9fs_fid_get_acl
-                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
-<4> 163     Yes   BUG: corrupted list in p9_fd_cancelled (2)
-                  https://syzkaller.appspot.com/bug?extid=1d26c4ed77bc6c5ed5e6
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Acked-by: David Sterba <dsterba@suse.com>
