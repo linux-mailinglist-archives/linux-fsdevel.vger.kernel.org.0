@@ -2,121 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E4972638B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 16:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F7457263DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 17:13:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239164AbjFGO7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 10:59:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47702 "EHLO
+        id S241049AbjFGPNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 11:13:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235140AbjFGO7T (ORCPT
+        with ESMTP id S240202AbjFGPNc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 10:59:19 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E83851BD;
-        Wed,  7 Jun 2023 07:59:17 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f7368126a6so34281265e9.0;
-        Wed, 07 Jun 2023 07:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686149956; x=1688741956;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mc32lgaIBhKotdDaWWQj793WD5Z51UEUi1uIpd7T5Lk=;
-        b=HElglTIyG8gzx4dMVUHPNdXZCuVgJaWMRrPD5UqN6A29NB+hpwnNFMU6CngFEvxjBc
-         lVvWfUejRGgSxjUsdH/fKBoa3IGhMaphs1cQrfLpnHs1i0xzk2KfVNeh/DG9m/MpI+EP
-         XcPMJPiAOC4wPpXs2JXzzTsX++dQPTsner8hPAIp56+nTltUiIrp+9zSfEhMXVqi99sU
-         TZKPzkQXzDEps0fgdpuJGIvDepIcjb6fhDIPFZ4eUS39qWtG0aGb3Ul933Ip6CnPAVTt
-         Keck3Wcicz/14xWPoNn4KSEDpnfZfMivnWWhquVe8pmrnddzzoUE2MK7mxL74K5vfwPG
-         hcnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686149956; x=1688741956;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mc32lgaIBhKotdDaWWQj793WD5Z51UEUi1uIpd7T5Lk=;
-        b=IukcEWbKoaX/xb0xTFRs7hKUI/tZGgqcfAdDBR66XGNUXqqaLV1Dvyuv6M6wgKNpl/
-         I0Jt6KtREOCbO2zXyqZqZIVQaIfrmYv+iaf9tbzgGRWT3jT0c7RqM4k4aibJ9n26XzVs
-         JwCYid40TjC3bAcEy/QdU2hDQlxerrot6J0KS9I+3GUuCcwwd5oamO0N2SEsOFOKFvZg
-         8X3OHDDzSrLsglbvqHi98T5MwCUk+DC1jaBsYyxJjRDlg6VUmDMV6/+xHK8rZzAZwiHU
-         QXEpyUvmcwrRzVQyPCJ88eRtsQA7u1gEQtB8wWDCZNnrcXRE9XSSS3DCjc33Rvjw4RB5
-         vjWA==
-X-Gm-Message-State: AC+VfDzqGZfK84W4ZxY0rG0M4Hxva4q++e5QY/7xcVlCCBB7tKXmxr8J
-        rtzgTCIiqjjXk0IIwnIifjyq6p/+W6M=
-X-Google-Smtp-Source: ACHHUZ6xvD6uymas9CeOxoTcoNoQ20XmLZM6KF4Ov7xSqWao+W9YmDfOGQUlN239/sH1/FdCXJVm9Q==
-X-Received: by 2002:a05:600c:230f:b0:3f5:1241:6cfa with SMTP id 15-20020a05600c230f00b003f512416cfamr4837883wmo.37.1686149956066;
-        Wed, 07 Jun 2023 07:59:16 -0700 (PDT)
-Received: from suse.localnet (host-79-23-99-244.retail.telecomitalia.it. [79.23.99.244])
-        by smtp.gmail.com with ESMTPSA id f5-20020a7bcc05000000b003f18b942338sm2464011wmh.3.2023.06.07.07.59.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 07:59:15 -0700 (PDT)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Kent Overstreet <kent.overstreet@linux.dev>
-Subject: Re: [PATCH v3] fs/aio: Replace kmap{,_atomic}() with kmap_local_page()
-Date:   Wed, 07 Jun 2023 16:59:13 +0200
-Message-ID: <2287966.ElGaqSPkdT@suse>
-In-Reply-To: <ZCGYps2z5IlaEaxU@casper.infradead.org>
-References: <20230119162055.20944-1-fmdefrancesco@gmail.com> <2114426.VsPgYW4pTa@suse>
- <ZCGYps2z5IlaEaxU@casper.infradead.org>
+        Wed, 7 Jun 2023 11:13:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71D31FC2
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 08:12:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686150752;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=K3r/K8HkhE4xuB+jM5Kf0f4GFwH3PwislIM7Zb9RO88=;
+        b=Kx/olDY7n+AR/mWIm3hZiRU0lk9Jhy8V3t2KtoG7v4MYsePw9bNbx41HRVONKQKKHhe6al
+        vRXWWUGYk7Lu7Iryo4M8e44M1vKpusF0bqmQMsQ67FCp3KM33EKCq5waNucshwXPgMff6R
+        WZ7vpjsCfALiead2nDZwLipB3+y0s5A=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-641-v6-IUeUzMTyM9FIOsecLMw-1; Wed, 07 Jun 2023 11:12:28 -0400
+X-MC-Unique: v6-IUeUzMTyM9FIOsecLMw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 93FE0848B6F;
+        Wed,  7 Jun 2023 15:03:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C69F82166B25;
+        Wed,  7 Jun 2023 15:03:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
+References: <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com> <20230522121125.2595254-1-dhowells@redhat.com> <20230522121125.2595254-9-dhowells@redhat.com>
+To:     Tariq Toukan <ttoukan.linux@gmail.com>
+Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
+        samiram@nvidia.com, drort@nvidia.com,
+        Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2267271.1686150217.1@warthog.procyon.org.uk>
+Date:   Wed, 07 Jun 2023 16:03:37 +0100
+Message-ID: <2267272.1686150217@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On luned=EC 27 marzo 2023 15:22:46 CEST Matthew Wilcox wrote:
-> On Mon, Mar 27, 2023 at 12:08:20PM +0200, Fabio M. De Francesco wrote:
-> > On gioved=EC 19 gennaio 2023 17:20:55 CEST Fabio M. De Francesco wrote:
-> > > The use of kmap() and kmap_atomic() are being deprecated in favor of
-> > > kmap_local_page().
-> > >
-> > > [...]
-> > >
-> > > Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
-> > > fs/aio.c.
->
-> Or should we just stop allocating aio rings from HIGHMEM and remove
-> the calls to kmap()?  How much memory are we talking about here?
+Tariq Toukan <ttoukan.linux@gmail.com> wrote:
 
-Matthew,
+> My team spotted a new degradation in TLS TX device offload, bisected to this
+> patch.
 
-Well, I'll do as you suggested. Actually, I should have made this change wh=
-en=20
-you suggested it but... well, I think you can easily guess why I did not.
+I presume you're using some hardware (I'm guessing Mellanox?) that can
+actually do TLS offload?  Unfortunately, I don't have any hardware that can do
+this, so I can't test the tls_device stuff.
 
-Here it seems that a call of find_or_create_pages() with the GFP_USER flag
-instead of GFP_HIGHUSER is all that is required. And then I'll get rid of t=
-he
-mappings in favor of some straight page_address().
+> From a quick look at the patch, it's not clear to me what's going wrong.
+> Please let us know of any helpful information that we can provide to help in
+> the debug.
 
-I just gave a look after months, so I could very well have missed something=
-=20
-else. If what I just saw it's all that must be changed, I'll send the new=20
-patch by tomorrow.
+Can you find out what source line this corresponds to?
 
-Thanks,
+	RIP: 0010:skb_splice_from_iter+0x102/0x300
 
-=46abio
+Assuming you're building your own kernel, something like the following might
+do the trick:
 
-P.S.: I had sent other patches that must also be changed according to a=20
-similar comment you made. Obviously, I'll work also on them (no matter if y=
-ou=20
-can't probably recall the short series to fs/ufs I'm referring to).
+	echo "RIP: 0010:skb_splice_from_iter+0x102/0x300" |
+	./scripts/decode_stacktrace.sh /my/built/vmlinux /my/build/tree
 
+if you run it in the kernel source tree you're using and substitute the
+paths to vmlinux and the build tree for modules.
 
+David
 
