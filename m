@@ -2,136 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44CC97272F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 01:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF3C727325
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 01:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233153AbjFGX2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 19:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40794 "EHLO
+        id S233436AbjFGXi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 19:38:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbjFGX2O (ORCPT
+        with ESMTP id S233376AbjFGXiV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 19:28:14 -0400
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 335E72129
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 16:27:27 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-3f7a546efb1so7611cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 16:27:27 -0700 (PDT)
+        Wed, 7 Jun 2023 19:38:21 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A70270B
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 16:37:56 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-65292f79456so3762494b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 16:37:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1686181076; x=1688773076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q85ALpObps5sc/UCVblmdlmcE0aIZmHRuMxmvi7ZvV4=;
+        b=lV8syWtj43Ff/kNItqdKE8y9KFBRtz3T741CER394a4RMHngbFtuX1OVIX0rOLruXT
+         XkH5dqkCV3iSkoPeFmEZh8PwJCU/4Cdt3mBMneFJ3QGZyUUe1hEbZi9eVOiiXIZz4LRQ
+         ymAYcwB9baokNEZhdcnTBgqOSyGwxz97Y5k6k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686180446; x=1688772446;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=voj5Mda8Zfoqf83eL6TpEP6bEfS34qzT4ho4GEckRy8=;
-        b=OrBcr9Wtko8Tl4DoIL1i73yGgf0ACQEw425hK0Q58ukYdoqMhFNddiCtZehqDFA0Te
-         58i+P2KO9RTM+B8WHyoai3v8gOqR/beKOg54GHpyoOn8PgacgOEnbEorARZTF4tVjur/
-         a4Aqb3V6dD9kesiGMYIioX5PBuG+Do3JHajo/dz+RYkJPnTf6tulpIOTKLZl0s3mAALo
-         GJIPk9UeZ7rhMgCggW6qgI6/RN2dvUOv6cw2t3H49JPQWSktjVGphTr1gRZl/zMjolNn
-         bUOzOQt/Va6v7uWkrlAHK1yPmaGgi0hIby/z6y4F62z72jRV0dJUxsiHB5OsrANA6iLp
-         q8sA==
-X-Gm-Message-State: AC+VfDxbNZT0fnKVK0ZMsDfWxZiFtIE5UekDAL9rUM4uzLXdE7m62tK9
-        IhBs+epPn8/7XAsICyBYDNaK
-X-Google-Smtp-Source: ACHHUZ6bssYu3BmODSfk7D3JoJ9AovgnvY3uNrvFLLvCnNUVf2dqD8Ue69PPoyqRe4HMmDod3/Cmnw==
-X-Received: by 2002:ac8:5c16:0:b0:3d8:2352:a661 with SMTP id i22-20020ac85c16000000b003d82352a661mr6003241qti.3.1686180446161;
-        Wed, 07 Jun 2023 16:27:26 -0700 (PDT)
-Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
-        by smtp.gmail.com with ESMTPSA id i9-20020ac84f49000000b003f018e18c35sm286121qtw.27.2023.06.07.16.27.25
+        d=1e100.net; s=20221208; t=1686181076; x=1688773076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q85ALpObps5sc/UCVblmdlmcE0aIZmHRuMxmvi7ZvV4=;
+        b=Z0nuMK1t2WuLc8kp1JJrzKvN65JtgOmIKr7YRadDdol3GS0HiQwO7HQUhGVzA990sN
+         xKLn7AwcgaQTOBcg7pYraiVubRagN/rHTH0d4wEiSfg4z9wc6DCdPvQ1GtG34DqBKf/i
+         2+LSqYpfywMUC3EJY7amK/XLGYP0kmYWOBsGCAqhMk/BVrOcmAnCjajONezQrNCZY0yC
+         kVXlHhqb6dg2QSDWg+HjPNfQM8rcUKgX7lkl/W2Nsr0/GAkpnCMvCgYG1HiaOyegviZK
+         sqr+fUcB7W4f/L/LeIscvfZrMIReHkafFEjraJyuYPdQClooyaMaU8ALnsimXmZPxJ48
+         2ctg==
+X-Gm-Message-State: AC+VfDzhmTYpgoselS0GTTcE3kTzkAewzYZ10KL1FOxBKICxI4ENXHLi
+        KfcJN56r1pRBwl3aqE0479oAuQ==
+X-Google-Smtp-Source: ACHHUZ6ZXC7p4DKrsltkZH4GRsEhK/UFVuZ7UJv1bOQaR6JO3aYQPtnsPqCAKXnWT3JJJ9X0TBo+zA==
+X-Received: by 2002:a05:6a20:394a:b0:117:51fe:9b4c with SMTP id r10-20020a056a20394a00b0011751fe9b4cmr2792096pzg.7.1686181076046;
+        Wed, 07 Jun 2023 16:37:56 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id p19-20020aa78613000000b006414b2c9efasm8859392pfn.123.2023.06.07.16.37.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 16:27:25 -0700 (PDT)
-Date:   Wed, 7 Jun 2023 19:27:24 -0400
-From:   Mike Snitzer <snitzer@kernel.org>
-To:     Sarthak Kukreti <sarthakkukreti@chromium.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Joe Thornber <thornber@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Bart Van Assche <bvanassche@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
-Subject: Re: [PATCH v7 0/5] Introduce provisioning primitives
-Message-ID: <ZIESXNF5anyvJEjm@redhat.com>
-References: <CAJ0trDbspRaDKzTzTjFdPHdB9n0Q9unfu1cEk8giTWoNu3jP8g@mail.gmail.com>
- <ZHFEfngPyUOqlthr@dread.disaster.area>
- <CAJ0trDZJQwvAzngZLBJ1hB0XkQ1HRHQOdNQNTw9nK-U5i-0bLA@mail.gmail.com>
- <ZHYB/6l5Wi+xwkbQ@redhat.com>
- <CAJ0trDaUOevfiEpXasOESrLHTCcr=oz28ywJU+s+YOiuh7iWow@mail.gmail.com>
- <ZHYWAGmKhwwmTjW/@redhat.com>
- <CAG9=OMMnDfN++-bJP3jLmUD6O=Q_ApV5Dr392_5GqsPAi_dDkg@mail.gmail.com>
- <ZHqOvq3ORETQB31m@dread.disaster.area>
- <ZHti/MLnX5xGw9b7@redhat.com>
- <CAG9=OMNv80fOyVixEY01XESnOFzYyfj9j8etHMq_Ap52z4UWNQ@mail.gmail.com>
+        Wed, 07 Jun 2023 16:37:55 -0700 (PDT)
+Date:   Wed, 7 Jun 2023 16:37:55 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] binfmt_elf: dynamically allocate note.data in
+ parse_elf_properties
+Message-ID: <202306071636.1C35171CC@keescook>
+References: <20230607144227.8956-1-ansuelsmth@gmail.com>
+ <202306071417.79F70AC@keescook>
+ <6480f938.1c0a0220.17a3a.0e1e@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG9=OMNv80fOyVixEY01XESnOFzYyfj9j8etHMq_Ap52z4UWNQ@mail.gmail.com>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+In-Reply-To: <6480f938.1c0a0220.17a3a.0e1e@mx.google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 05 2023 at  5:14P -0400,
-Sarthak Kukreti <sarthakkukreti@chromium.org> wrote:
-
-> On Sat, Jun 3, 2023 at 8:57 AM Mike Snitzer <snitzer@kernel.org> wrote:
+On Wed, Jun 07, 2023 at 08:31:58PM +0200, Christian Marangi wrote:
+> On Wed, Jun 07, 2023 at 02:19:51PM -0700, Kees Cook wrote:
+> > On Wed, Jun 07, 2023 at 04:42:27PM +0200, Christian Marangi wrote:
+> > > Dynamically allocate note.data in parse_elf_properties to fix
+> > > compilation warning on some arch.
+> > 
+> > I'd rather avoid dynamic allocation as much as possible in the exec
+> > path, but we can balance it against how much it may happen.
 > >
-> > We all just need to focus on your proposal and Joe's dm-thin
-> > reservation design...
-> >
-> > [Sarthak: FYI, this implies that it doesn't really make sense to add
-> > dm-thinp support before Joe's design is implemented.  Otherwise we'll
-> > have 2 different responses to REQ_OP_PROVISION.  The one that is
-> > captured in your patchset isn't adequate to properly handle ensuring
-> > upper layer (like XFS) can depend on the space being available across
-> > snapshot boundaries.]
-> >
-> Ack. Would it be premature for the rest of the series to go through
-> (REQ_OP_PROVISION + support for loop and non-dm-thinp device-mapper
-> targets)? I'd like to start using this as a reference to suggest
-> additions to the virtio-spec for virtio-blk support and start looking
-> at what an ext4 implementation would look like.
+> 
+> I guess there isn't a good way to handle this other than static global
+> variables and kmalloc. But check the arch question for additional info
+> on the case.
+> 
+> > > On some arch note.data exceed the stack limit for a single function and
+> > > this cause the following compilation warning:
+> > > fs/binfmt_elf.c: In function 'parse_elf_properties.isra':
+> > > fs/binfmt_elf.c:821:1: error: the frame size of 1040 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+> > >   821 | }
+> > >       | ^
+> > > cc1: all warnings being treated as errors
+> > 
+> > Which architectures see this warning?
+> > 
+> 
+> This is funny. On OpenWRT we are enforcing WERROR and we had FRAME_WARN
+> hardcoded to 1024. (the option is set to 2048 on 64bit arch)
 
-Please drop the dm-thin.c and dm-snap.c changes.  dm-snap.c would need
-more work to provide the type of guarantee XFS requires across
-snapshot boundaries. I'm inclined to _not_ add dm-snap.c support
-because it is best to just use dm-thin.
+Ah-ha. Okay, I was wondering how you got that. :)
 
-And FYI even your dm-thin patch will be the starting point for the
-dm-thin support (we'll keep attribution to you for all the code in a
-separate patch).
+> ARCH_USE_GNU_PROPERTY is set only on arm64 that have a FRAME_WARN set to
+> 2048.
+> 
+> So this was triggered by building arm64 with FRAME_WARN set to 1024.
+> 
+> Now with the configuration of 2048 the stack warn is not triggered, but
+> I wonder if it may happen to have a 32bit system with
+> ARCH_USE_GNU_PROPERTY. That would effectively trigger the warning.
+> 
+> So this is effectively a patch that fix a currently not possible
+> configuration, since:
+> 
+> !IS_ENABLED(CONFIG_ARCH_USE_GNU_PROPERTY) will result in node.data
+> effectively never allocated by the compiler are the function will return
+> 0 on everything that doesn't have CONFIG_ARCH_USE_GNU_PROPERTY.
+> 
+> > > Fix this by dynamically allocating the array.
+> > > Update the sizeof of the union to the biggest element allocated.
+> > 
+> > How common are these notes? I assume they're very common; I see them
+> > even in /bin/true:
+> > 
+> > $ readelf -lW /bin/true | grep PROP
+> >   GNU_PROPERTY   0x000338 0x0000000000000338 0x0000000000000338 0x000030 0x000030 R   0x8
+> > 
+> > -- 
+> 
+> Is there a way to check if this kmalloc actually cause perf regression?
 
-> Fair points, I certainly don't want to derail this conversation; I'd
-> be happy to see this work merged sooner rather than later.
+I don't have a good benchmark besides just an exec loop. But since this
+isn't reachable in a regular config, I'd rather keep things how there
+already are.
 
-Once those dm target changes are dropped I think the rest of the
-series is fine to go upstream now.  Feel free to post a v8.
+-Kees
 
-> For posterity, I'll distill what I said above into the following: I'd like
-> a capability for userspace to create thin snapshots that ignore the
-> thin volume's provisioned areas. IOW, an opt-in flag which makes
-> snapshots fallback to what they do today to provide flexibility to
-> userspace to decide the space requirements for the above mentioned
-> scenarios, and at the same time, not adding separate corner case
-> handling for filesystems. But to reiterate, my intent isn't to pile
-> this onto the work you, Mike and Joe have planned; just some insight
-> into why I'm in favor of ideas that reduce the snapshot size.
-
-I think it'd be useful to ignore a thin device's reservation for
-read-only snapshots.  Adding the ability to create read-only thin
-snapshots could make sense (later activations don't necessarily need
-to impose read-only, doing so would require some additional work).
-
-Mike
+-- 
+Kees Cook
