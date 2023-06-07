@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4255872574E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 10:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB910725757
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 10:20:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238691AbjFGITz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 04:19:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60334 "EHLO
+        id S238999AbjFGIUT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 04:20:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239305AbjFGITw (ORCPT
+        with ESMTP id S233798AbjFGIUS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 04:19:52 -0400
+        Wed, 7 Jun 2023 04:20:18 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7901795;
-        Wed,  7 Jun 2023 01:19:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32EA138;
+        Wed,  7 Jun 2023 01:20:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DC8663335;
-        Wed,  7 Jun 2023 08:19:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BADE5C433EF;
-        Wed,  7 Jun 2023 08:19:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 749C063254;
+        Wed,  7 Jun 2023 08:20:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59570C433EF;
+        Wed,  7 Jun 2023 08:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686125990;
-        bh=bhPEUNqU+a2RwajMYr10YcQod7uo6bRu9m8nbjZC/X8=;
+        s=k20201202; t=1686126016;
+        bh=JsXN/EIW6Kqwigw4wGGVknucfkdIsZm79w1pPIMczSI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T2/u0lK/T6IWNZ+74l+9xHgTu/SF71BRHS/uLEpwZBctcy5g8KGrH6gP/Ho0QQKln
-         5qkVKhsk7HlZgAqdQwLM1MIiEl6T/QfH4Ibv/L9h2nM3uwvE54+8KmZ0oLxbsO91QN
-         hJRwkk/SieajEKOPcGTHaPk2IFlWpwOa2o2z8DAbcDtcM0cAx07db21Whr6OXZ5ZV2
-         j/A0q/XxqVSyk/ZxvJ6AiO8N7bjJJoxe6noi88aFL+OI6FYAwAx3O4cBH7LUNE3N9k
-         tD6Zf/uIvK8Pey+p3eQ9mrIlH9DqCvuU78zpoxTca2sOrNt1KvG2oPvhygH2k33jwn
-         T5lWAZbVwKRIQ==
-Date:   Wed, 7 Jun 2023 10:19:42 +0200
+        b=hPo1mXkKxFqrFJbgKtNEIt5ZHiTabb37wMXxLRAIeNRno5DR3AAGuKjp93g16mzBl
+         /3CNbG6uWs3WhElMnvwbqhmSsjjMwZfwrvzM8T673tQGiHisyduOo/76UvFPx8vWHx
+         9lzYUK3IeThBOk9/FedNGybyiwR4Gdt72t9wwPv9e2CIKHXV4qq0pTv7B7QX81SLyf
+         Iw3ISSaMn4rNIW1sjHFDtLvoDLYD8pYgZXmzPWirpoHmn5112xh4jwvgTxtmQ6Wuk2
+         8Bh4MVxCgMvJMsNDaUbaU0No+32RJCdez5rEuCBZAIC/6oUb+6u9qKz1t5j/Vvz6mQ
+         GPTyAfGP21eBA==
+Date:   Wed, 7 Jun 2023 10:20:08 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
@@ -55,15 +55,15 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH 05/31] cdrom: track if a cdrom_device_info was opened for
- data
-Message-ID: <20230607-partner-reglos-2f455e85a92d@brauner>
+Subject: Re: [PATCH 06/31] cdrom: remove the unused mode argument to
+ cdrom_release
+Message-ID: <20230607-beulen-infiltrieren-4cacf9083274@brauner>
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-6-hch@lst.de>
+ <20230606073950.225178-7-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-6-hch@lst.de>
+In-Reply-To: <20230606073950.225178-7-hch@lst.de>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -74,12 +74,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 09:39:24AM +0200, Christoph Hellwig wrote:
-> Set a flag when a cdrom_device_info is opened for writing, instead of
-> trying to figure out this at release time.  This will allow to eventually
-> remove the mode argument to the ->release block_device_operation as
-> nothing but the CDROM drivers uses that argument.
-> 
+On Tue, Jun 06, 2023 at 09:39:25AM +0200, Christoph Hellwig wrote:
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
 
