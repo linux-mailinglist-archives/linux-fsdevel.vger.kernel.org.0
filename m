@@ -2,111 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F7457263DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 17:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAAE7726417
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 17:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241049AbjFGPNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 11:13:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56746 "EHLO
+        id S241175AbjFGPVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 11:21:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240202AbjFGPNc (ORCPT
+        with ESMTP id S239826AbjFGPVJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 11:13:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71D31FC2
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 08:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686150752;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=K3r/K8HkhE4xuB+jM5Kf0f4GFwH3PwislIM7Zb9RO88=;
-        b=Kx/olDY7n+AR/mWIm3hZiRU0lk9Jhy8V3t2KtoG7v4MYsePw9bNbx41HRVONKQKKHhe6al
-        vRXWWUGYk7Lu7Iryo4M8e44M1vKpusF0bqmQMsQ67FCp3KM33EKCq5waNucshwXPgMff6R
-        WZ7vpjsCfALiead2nDZwLipB3+y0s5A=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-641-v6-IUeUzMTyM9FIOsecLMw-1; Wed, 07 Jun 2023 11:12:28 -0400
-X-MC-Unique: v6-IUeUzMTyM9FIOsecLMw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 7 Jun 2023 11:21:09 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CACD21BF8
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 08:21:07 -0700 (PDT)
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 93FE0848B6F;
-        Wed,  7 Jun 2023 15:03:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C69F82166B25;
-        Wed,  7 Jun 2023 15:03:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
-References: <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com> <20230522121125.2595254-1-dhowells@redhat.com> <20230522121125.2595254-9-dhowells@redhat.com>
-To:     Tariq Toukan <ttoukan.linux@gmail.com>
-Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
-        samiram@nvidia.com, drort@nvidia.com,
-        Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5AF763F0F8
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 15:21:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1686151266;
+        bh=8aY1VEWoPNEUlLBN7rmQq3eOh6/TfDDzDz8dWVmei8E=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=DmDAUP1TNFZPG+1XBqt6gwBW/5iv9ZWJv3vupEce3lzScE8DLpj1vyx6CbBKNAY8g
+         8mF+XJ/NKv2YhnDLwxMPpH5vOYy/cPYw2zyu8kuD4SmnmbMXWvaT7/EbMlwfMbHSaG
+         o2nOYv/q0kD4f9NFBiFtupApkqzbSt4JrFw54yqZ1jXOCQntFZpyu0RAxh8kl7CiBI
+         MpzbpnZfmxyd9SGGGMOBJTxZWXM9+wqGFsVce7r2+WjoW4v4GJ8iFiKvUYH61YRC70
+         XyTff0fwS664eeaG7N4jCdcWpyY7u1J6USNt2FL4Zx8PraVWlm0ebl6YgUjgIfETnB
+         xUwbc8zdANhxQ==
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-514a1501b0eso833950a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 08:21:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686151266; x=1688743266;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8aY1VEWoPNEUlLBN7rmQq3eOh6/TfDDzDz8dWVmei8E=;
+        b=J+fwhlNoHBT3f3ss12cMipjkB1Kdjnz5LnXObXka6beoGAr3HH7yq+BL5MIssOKxKJ
+         fTJG0HxGapq22eXQy2PeQ/SInsHzoYrIRPxDgxO4fgyPCrhj3R+f+yiIHQA9aa9BAP6D
+         c/ELvGWywrv4hWaf3/X7nfCYY1kHRIC21oQfAELLAQakpuQWpus0+hm5u76wVzWHFtuu
+         TLZtx7fjpn//JQTi5eXr9o8Cw24ceCLcidzEV1KBKYkiENv3znTGV3WUqQy1RY9P7BU6
+         ltx5Wru0Rt/iblrWDTwtx/PAaow8a/YNPWFmTeLiGKdcSe7NMOhwDPDr9iTWwstSyfQ5
+         2m/Q==
+X-Gm-Message-State: AC+VfDw+BAzorVI1xqoE6jlJqkW5N6titkkfs6MK/XApTNd0DkSaVlqI
+        ouEGNw3lYJWX9KeegeXB/ubZjIANufdbdWiFrvJCaY8/c9wyx8KNmpZ0orvrQ/VtzTVsvlxdhAo
+        AuuwG9yXOtFFYGfJontaZkRbossEPqtAz4A8NhQ2m5vE=
+X-Received: by 2002:aa7:cd7c:0:b0:514:98c8:9d7c with SMTP id ca28-20020aa7cd7c000000b0051498c89d7cmr4306407edb.4.1686151266033;
+        Wed, 07 Jun 2023 08:21:06 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4jGoY1/cSqCCKJEhcMIh7TGVGPrCBczoHCXvlo5e6XW3XxFcEYbVqs7fQhicmHa1Zuso1ZOg==
+X-Received: by 2002:aa7:cd7c:0:b0:514:98c8:9d7c with SMTP id ca28-20020aa7cd7c000000b0051498c89d7cmr4306389edb.4.1686151265750;
+        Wed, 07 Jun 2023 08:21:05 -0700 (PDT)
+Received: from amikhalitsyn.local (dslb-002-205-064-187.002.205.pools.vodafone-ip.de. [2.205.64.187])
+        by smtp.gmail.com with ESMTPSA id w17-20020a056402129100b005147503a238sm6263441edv.17.2023.06.07.08.21.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Jun 2023 08:21:05 -0700 (PDT)
+From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To:     xiubli@redhat.com
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/14] ceph: support idmapped mounts
+Date:   Wed,  7 Jun 2023 17:20:24 +0200
+Message-Id: <20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2267271.1686150217.1@warthog.procyon.org.uk>
-Date:   Wed, 07 Jun 2023 16:03:37 +0100
-Message-ID: <2267272.1686150217@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tariq Toukan <ttoukan.linux@gmail.com> wrote:
+Dear friends,
 
-> My team spotted a new degradation in TLS TX device offload, bisected to this
-> patch.
+This patchset was originally developed by Christian Brauner but I'll continue
+to push it forward. Christian allowed me to do that :)
 
-I presume you're using some hardware (I'm guessing Mellanox?) that can
-actually do TLS offload?  Unfortunately, I don't have any hardware that can do
-this, so I can't test the tls_device stuff.
+This feature is already actively used/tested with LXD/LXC project.
 
-> From a quick look at the patch, it's not clear to me what's going wrong.
-> Please let us know of any helpful information that we can provide to help in
-> the debug.
+Git tree (based on https://github.com/ceph/ceph-client.git master):
+https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
 
-Can you find out what source line this corresponds to?
+In the version 3 I've changed only two commits:
+- fs: export mnt_idmap_get/mnt_idmap_put
+- ceph: allow idmapped setattr inode op
+and added a new one:
+- ceph: pass idmap to __ceph_setattr
 
-	RIP: 0010:skb_splice_from_iter+0x102/0x300
+I can confirm that version 3 passes xfstests.
 
-Assuming you're building your own kernel, something like the following might
-do the trick:
+Kind regards,
+Alex
 
-	echo "RIP: 0010:skb_splice_from_iter+0x102/0x300" |
-	./scripts/decode_stacktrace.sh /my/built/vmlinux /my/build/tree
+Original description from Christian:
+========================================================================
+This patch series enables cephfs to support idmapped mounts, i.e. the
+ability to alter ownership information on a per-mount basis.
 
-if you run it in the kernel source tree you're using and substitute the
-paths to vmlinux and the build tree for modules.
+Container managers such as LXD support sharaing data via cephfs between
+the host and unprivileged containers and between unprivileged containers.
+They may all use different idmappings. Idmapped mounts can be used to
+create mounts with the idmapping used for the container (or a different
+one specific to the use-case).
 
-David
+There are in fact more use-cases such as remapping ownership for
+mountpoints on the host itself to grant or restrict access to different
+users or to make it possible to enforce that programs running as root
+will write with a non-zero {g,u}id to disk.
+
+The patch series is simple overall and few changes are needed to cephfs.
+There is one cephfs specific issue that I would like to discuss and
+solve which I explain in detail in:
+
+[PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
+
+It has to do with how to handle mds serves which have id-based access
+restrictions configured. I would ask you to please take a look at the
+explanation in the aforementioned patch.
+
+The patch series passes the vfs and idmapped mount testsuite as part of
+xfstests. To run it you will need a config like:
+
+[ceph]
+export FSTYP=ceph
+export TEST_DIR=/mnt/test
+export TEST_DEV=10.103.182.10:6789:/
+export TEST_FS_MOUNT_OPTS="-o name=admin,secret=$password
+
+and then simply call
+
+sudo ./check -g idmapped
+
+========================================================================
+
+Alexander Mikhalitsyn (2):
+  fs: export mnt_idmap_get/mnt_idmap_put
+  ceph: pass idmap to __ceph_setattr
+
+Christian Brauner (12):
+  ceph: stash idmapping in mdsc request
+  ceph: handle idmapped mounts in create_request_message()
+  ceph: allow idmapped mknod inode op
+  ceph: allow idmapped symlink inode op
+  ceph: allow idmapped mkdir inode op
+  ceph: allow idmapped rename inode op
+  ceph: allow idmapped getattr inode op
+  ceph: allow idmapped permission inode op
+  ceph: allow idmapped setattr inode op
+  ceph/acl: allow idmapped set_acl inode op
+  ceph/file: allow idmapped atomic_open inode op
+  ceph: allow idmapped mounts
+
+ fs/ceph/acl.c                 |  6 +++---
+ fs/ceph/dir.c                 |  4 ++++
+ fs/ceph/file.c                | 10 +++++++--
+ fs/ceph/inode.c               | 38 ++++++++++++++++++++++++-----------
+ fs/ceph/mds_client.c          | 29 ++++++++++++++++++++++----
+ fs/ceph/mds_client.h          |  1 +
+ fs/ceph/super.c               |  2 +-
+ fs/ceph/super.h               |  3 ++-
+ fs/mnt_idmapping.c            |  2 ++
+ include/linux/mnt_idmapping.h |  3 +++
+ 10 files changed, 75 insertions(+), 23 deletions(-)
+
+-- 
+2.34.1
 
