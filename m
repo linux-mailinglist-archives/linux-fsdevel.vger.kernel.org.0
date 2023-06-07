@@ -2,79 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9B26726444
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 17:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 242B8726471
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 17:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241352AbjFGPXM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 11:23:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33764 "EHLO
+        id S238742AbjFGP0d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 11:26:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241077AbjFGPWm (ORCPT
+        with ESMTP id S241455AbjFGP0L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 11:22:42 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D27AA2724
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 08:21:54 -0700 (PDT)
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        Wed, 7 Jun 2023 11:26:11 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C16BE26B7
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 08:25:43 -0700 (PDT)
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com [209.85.219.200])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 96BF13F160
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 15:21:51 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 89EC03F154
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 15:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1686151311;
-        bh=sitF6aKufbc7DklTCjus/+uMnJoHcKEt7G8gHEJda3g=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=gXxaEYo9XDdXvT0eOneywVFsSzrWPGAD1iO6HtSMLBInRX8i0rldTOPC9DMygDJFE
-         j1R2b+s4EO48DB8gcXDKo7fm1DeZCiY/MCtnrnIMqGOpEbuCx9uOFO/AgscFZm6yw7
-         GOa/Glu4kzrdgqWjgH3Ul8Mz3EjFfENi38Eq3GAXvO6+AnVbSDEIcWw6qqunYxG5yc
-         609SXo5AvfPCV2Uk4wB+yE4ExFZp+D16IJcMIO+rHXVPuThyuid1VdSviD8wIBhhiQ
-         Hh1gcCGJkQUNWLDhfqOiAFyCjOei9FXsz673kEZGVxURKFp0od1F785NvKCKqL9k6m
-         Gtu7LWRHx1b8A==
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-50daa85e940so1121290a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 08:21:51 -0700 (PDT)
+        s=20210705; t=1686151503;
+        bh=UzyjLDSH3L83BUY14PzO6igurevkkcTAFURgUF3tbLc=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=fkxgZqGqHW+pi559AF3RM4Xqo4MsornXTpBlfpZWzdOkVpji690KH2eNnHJKhWqXG
+         6YMLQL4kY17Z964171EX+fLDe4qQ698rjANTla1OczbOaih3FzPh5KKKSGcT//Of9j
+         QE5eR8NxSCRyqO5KzqOCzxi9Jn87IO+W2nytRWmHlG0y0b/YOCZuxvy9Q0MjzEpv1Z
+         7iydsKfc8H77R8pDGekPYyxeGiwzFrofPw26xuu2OYOH5IZIt1j2r34q/88GUdOd+3
+         uGPwe8o+/tEY7YOmn5F63g4TxKo+6I971SZIRWCjZv6TTGXsno/ucxV6F2qr2665r3
+         4mFX7wOOfWpkQ==
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-bb3cb542875so1803042276.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jun 2023 08:25:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686151308; x=1688743308;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1686151502; x=1688743502;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sitF6aKufbc7DklTCjus/+uMnJoHcKEt7G8gHEJda3g=;
-        b=kWBvisKZRI6P7YHap+FelRaDdnGP982bpAf3NTKkHpSgQQTFHJh7fCNKINbqNLPhWL
-         TG8Nl/eYT/8ZYNmRKiqeYZicZJwA0Lhg1bX2LN2gVskXjeRD/ETiTkbXqjuPvkUnSAij
-         rDy2onBl+H0LH1Zg7rIZL/41lV7/rMKu92/3d53CnAU03quypiCPBMq5j08CQ0Pe4rO2
-         DlgLCQQFtqqTA64UoCrzywRNpjaFoJEQJXXNV8DGR7NAVtHDDFPMziNwoufDFxzKk6aM
-         maG+8TWb0+eREQyr+MsdySvZ5UE5fk7pxcQS9MvH5kSzIPsOYNplpom3moI9pExrVFPe
-         19Bg==
-X-Gm-Message-State: AC+VfDwGo4U9cVHUZxLllnZ6AL810Yu6im39HmkHl1R3Rp1EfId+z4LN
-        RG7v7zWKsJDhA3oF6QJedYVSnPXTGnABRTOW+RB6+q2jEfCJkmF0Opz35m2TUDaHge6vaptuneg
-        zoXgGKg4/d0r7E2VfgMVNXmFJMdabUUf4sizN1v2t620=
-X-Received: by 2002:a05:6402:31e5:b0:514:9422:37dc with SMTP id dy5-20020a05640231e500b00514942237dcmr4479647edb.6.1686151308084;
-        Wed, 07 Jun 2023 08:21:48 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6RVi6/fukZeNZcvZRzUwSUGXDPAwHYX90ZNHPzdh9z1jOlvF2lCQ3DOS9NFUQhNAtgVCXjxQ==
-X-Received: by 2002:a05:6402:31e5:b0:514:9422:37dc with SMTP id dy5-20020a05640231e500b00514942237dcmr4479639edb.6.1686151307933;
-        Wed, 07 Jun 2023 08:21:47 -0700 (PDT)
-Received: from amikhalitsyn.local (dslb-002-205-064-187.002.205.pools.vodafone-ip.de. [2.205.64.187])
-        by smtp.gmail.com with ESMTPSA id w17-20020a056402129100b005147503a238sm6263441edv.17.2023.06.07.08.21.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 08:21:47 -0700 (PDT)
-From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+        bh=UzyjLDSH3L83BUY14PzO6igurevkkcTAFURgUF3tbLc=;
+        b=NCBVHRuBRc7m0lmCEASsWUmGkFnElnI3AALN4sSK7Yj2fmiERFKVgGo7BkWzhSbrg0
+         8Dz9yUq5XPlg65IA6g1nnp8zy+RcGP2355Embou8j0eNEOzc+QRk3gO5Rc6gqZlvQr/2
+         mR1ItYcrdc1uerTYGDAsz0qkVqElL3SCN8BQiErCY2n5QeJcaNQBh9sUJ+g5YOckvunS
+         gnOuSiyVektU6FlmUk7KcFc+eRbL1yJp9COsx+u9l1puKWqdTcexTAVJMI9/oPty2gRB
+         Q19RB/JE/emIv3qQzQrP0fSFi6JDLLY0D5nxxAXLT3O/OlAj9J78HiJc9Xg5Txd6ctN5
+         K3HQ==
+X-Gm-Message-State: AC+VfDwsAtbHzcv6c63ihgrC+KDBdlQUg8nhydryM7xbL9sZiUajlDyj
+        l7hM7+Iz4YsHMPRUqZwCqpnePsFVtLgSoUhPpL1dizVChy8qrN3qLK9D4z64LWFuVdKlH2s5zhN
+        BSFEMD44mHswYiU2H/h/nGnwMotYk1PLdjcG1DM/VfQB7bJWWlau/NTS/96PFsWbEYUZErQ==
+X-Received: by 2002:a25:d490:0:b0:bb3:cc80:ac4a with SMTP id m138-20020a25d490000000b00bb3cc80ac4amr4129201ybf.42.1686151502103;
+        Wed, 07 Jun 2023 08:25:02 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6IXvmlrtEA8JFTZYK+1pTV1djV0J8QwczyxESJ1HLlJOoHkSD4NIuDqcp3jr364rEsXU+wd6zZScC8KyQRz8w=
+X-Received: by 2002:a25:d490:0:b0:bb3:cc80:ac4a with SMTP id
+ m138-20020a25d490000000b00bb3cc80ac4amr4129185ybf.42.1686151501851; Wed, 07
+ Jun 2023 08:25:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com>
+In-Reply-To: <20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Wed, 7 Jun 2023 17:24:50 +0200
+Message-ID: <CAEivzxejMtctdEF2BHMBM5fU-5-Ps7Qt25_yLBTzDayUVNoErg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/13] ceph: support idmapped mounts
 To:     xiubli@redhat.com
 Cc:     brauner@kernel.org, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 14/14] ceph: allow idmapped mounts
-Date:   Wed,  7 Jun 2023 17:20:38 +0200
-Message-Id: <20230607152038.469739-15-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
@@ -85,35 +79,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+version 3 was sent
+https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mikhalitsyn@=
+canonical.com/
 
-Now that we converted cephfs internally to account for idmapped mounts
-allow the creation of idmapped mounts on by setting the FS_ALLOW_IDMAP
-flag.
-
-Cc: Xiubo Li <xiubli@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Ilya Dryomov <idryomov@gmail.com>
-Cc: ceph-devel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- fs/ceph/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 3fc48b43cab0..4f6e6d57f3f1 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1389,7 +1389,7 @@ static struct file_system_type ceph_fs_type = {
- 	.name		= "ceph",
- 	.init_fs_context = ceph_init_fs_context,
- 	.kill_sb	= ceph_kill_sb,
--	.fs_flags	= FS_RENAME_DOES_D_MOVE,
-+	.fs_flags	= FS_RENAME_DOES_D_MOVE | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("ceph");
- 
--- 
-2.34.1
-
+On Wed, May 24, 2023 at 5:33=E2=80=AFPM Alexander Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
+>
+> Dear friends,
+>
+> This patchset was originally developed by Christian Brauner but I'll cont=
+inue
+> to push it forward. Christian allowed me to do that :)
+>
+> This feature is already actively used/tested with LXD/LXC project.
+>
+> v2 is just a rebased version of the original series with some small field=
+ naming change.
+>
+> Git tree (based on https://github.com/ceph/ceph-client.git master):
+> https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph.v2
+>
+> Original description from Christian:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> This patch series enables cephfs to support idmapped mounts, i.e. the
+> ability to alter ownership information on a per-mount basis.
+>
+> Container managers such as LXD support sharaing data via cephfs between
+> the host and unprivileged containers and between unprivileged containers.
+> They may all use different idmappings. Idmapped mounts can be used to
+> create mounts with the idmapping used for the container (or a different
+> one specific to the use-case).
+>
+> There are in fact more use-cases such as remapping ownership for
+> mountpoints on the host itself to grant or restrict access to different
+> users or to make it possible to enforce that programs running as root
+> will write with a non-zero {g,u}id to disk.
+>
+> The patch series is simple overall and few changes are needed to cephfs.
+> There is one cephfs specific issue that I would like to discuss and
+> solve which I explain in detail in:
+>
+> [PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
+>
+> It has to do with how to handle mds serves which have id-based access
+> restrictions configured. I would ask you to please take a look at the
+> explanation in the aforementioned patch.
+>
+> The patch series passes the vfs and idmapped mount testsuite as part of
+> xfstests. To run it you will need a config like:
+>
+> [ceph]
+> export FSTYP=3Dceph
+> export TEST_DIR=3D/mnt/test
+> export TEST_DEV=3D10.103.182.10:6789:/
+> export TEST_FS_MOUNT_OPTS=3D"-o name=3Dadmin,secret=3D$password
+>
+> and then simply call
+>
+> sudo ./check -g idmapped
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Alexander Mikhalitsyn (1):
+>   fs: export mnt_idmap_get/mnt_idmap_put
+>
+> Christian Brauner (12):
+>   ceph: stash idmapping in mdsc request
+>   ceph: handle idmapped mounts in create_request_message()
+>   ceph: allow idmapped mknod inode op
+>   ceph: allow idmapped symlink inode op
+>   ceph: allow idmapped mkdir inode op
+>   ceph: allow idmapped rename inode op
+>   ceph: allow idmapped getattr inode op
+>   ceph: allow idmapped permission inode op
+>   ceph: allow idmapped setattr inode op
+>   ceph/acl: allow idmapped set_acl inode op
+>   ceph/file: allow idmapped atomic_open inode op
+>   ceph: allow idmapped mounts
+>
+>  fs/ceph/acl.c                 |  2 +-
+>  fs/ceph/dir.c                 |  4 ++++
+>  fs/ceph/file.c                | 10 ++++++++--
+>  fs/ceph/inode.c               | 15 +++++++++++----
+>  fs/ceph/mds_client.c          | 29 +++++++++++++++++++++++++----
+>  fs/ceph/mds_client.h          |  1 +
+>  fs/ceph/super.c               |  2 +-
+>  fs/mnt_idmapping.c            |  2 ++
+>  include/linux/mnt_idmapping.h |  3 +++
+>  9 files changed, 56 insertions(+), 12 deletions(-)
+>
+> --
+> 2.34.1
+>
