@@ -2,36 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF67726745
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 19:29:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3D7E72678E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 19:39:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230440AbjFGR26 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 13:28:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33456 "EHLO
+        id S231818AbjFGRjV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 13:39:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbjFGR24 (ORCPT
+        with ESMTP id S229659AbjFGRjU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 13:28:56 -0400
+        Wed, 7 Jun 2023 13:39:20 -0400
 Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7F1A128;
-        Wed,  7 Jun 2023 10:28:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F7CF19BF;
+        Wed,  7 Jun 2023 10:39:19 -0700 (PDT)
 From:   =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-        s=mail; t=1686158932;
-        bh=vGUG5+5oObmVUMabCNgsKcKkHQm2lWjGYzZ1M+89FSk=;
+        s=mail; t=1686159557;
+        bh=5rDKXRphCm5hSfMg9E8EiHD7LdAzDPAqz+JpNaExDw4=;
         h=From:Date:Subject:To:Cc:From;
-        b=REuygNSSwrT5jIxKvsN28vuZ/cs8XfMn+12DSgMfY5RxhC+sWXCL9vc0tEytMCjQb
-         05pt0RsH6dJanwO3393YuAXrE1zqO2ney6umLmXj3kDGfwVqlFC/RHjg0RNyCrbwdU
-         eHtFD9DbByXTIhE8zIJxwvMM0Z0LZFEu3kmHU+5c=
-Date:   Wed, 07 Jun 2023 19:28:48 +0200
-Subject: [PATCH] fs: avoid empty option when generating legacy mount string
+        b=mFHce8rx1V8uP6l1qFTVenfj+CTczcwBtCpvW70GtF4Af+paLIRNu2aqEWbSnQGGK
+         DfkQ1jf4jrgfw4QegZ7L4ZV9r1Mzk04lSSG9tAAblwegNvFcknwLLeHuR6YH/WEQDi
+         qzVNK6hLY9KrlHnjKpwZt9zqAPWfu3Sh5Jmj99Lc=
+Date:   Wed, 07 Jun 2023 19:39:09 +0200
+Subject: [PATCH v2] fs: avoid empty option when generating legacy mount
+ string
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230607-fs-empty-option-v1-1-20c8dbf4671b@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAE++gGQC/x2N0QqDMAxFf0XybKBGVmG/MnxoNc6Aq6VR2RD/3
- bDHczmHe4JyEVZ4VicUPkRlTQZNXcEwh/RmlNEYyFHrvOtwUuRP3n645s1cJP/wRG3XmABWxaC
- MsYQ0zNalfVlszIUn+f5vXv113XtkcZx2AAAA
+Message-Id: <20230607-fs-empty-option-v2-1-ffd0cba3bddb@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIALzAgGQC/3WNQQ6CMBBFr0K6dkxbtBhX3MOwoGWwTbCQTkEJ4
+ e6O7F2+n//yNkGYApK4F5tIuAQKY2TQp0I438YnQuiYhZa6lEZW0BPga8orjFPmL2hzNVqXleK
+ DYMu2hGBTG51nL87DwOOUsA+fI/NomH2gPKb1qC7qt/4PLAoUaOlune0vplK2fmMgIudnf46YR
+ bPv+xdCAgQ7yAAAAA==
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -39,11 +41,11 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Karel Zak <kzag@redhat.com>, stable@vger.kernel.org,
         =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686158931; l=1248;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686159556; l=1435;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=vGUG5+5oObmVUMabCNgsKcKkHQm2lWjGYzZ1M+89FSk=;
- b=xhti7ZhwZRPSH3Hgfw1or7/06qz18rCyqWGpAlyNjvbuso7uaeCsOL0oGQ/kvzetFYV78p9r5
- vOP30ikcCPeC3hE7I9eZEjC4UjhTsX05D9hBZJk67VLhQwwASbWhNsn
+ bh=5rDKXRphCm5hSfMg9E8EiHD7LdAzDPAqz+JpNaExDw4=;
+ b=oUJfE7kshkS/8Wb6safwZYMONGGPt/Ujmta4e4tMx9loVGy9BsmaNub0Ov05930vOSSL3xSae
+ xKlmNP8i6/2AUp3wEoyVOHZqA7Po6WyW1JsRyxMY+xRIxpfTOuGVzfO
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -66,7 +68,12 @@ mounted via the new API.
 
 Link: https://github.com/util-linux/util-linux/issues/2298
 Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock creation/configuration context")
+Cc: stable@vger.kernel.org
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Mention Cc stable@ in sign-off area
+- Link to v1: https://lore.kernel.org/r/20230607-fs-empty-option-v1-1-20c8dbf4671b@weissschuh.net
 ---
  fs/fs_context.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
