@@ -2,71 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5172572580D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 10:40:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B123725867
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jun 2023 10:48:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238742AbjFGIkx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 04:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44444 "EHLO
+        id S236918AbjFGIsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Jun 2023 04:48:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238524AbjFGIkv (ORCPT
+        with ESMTP id S238247AbjFGIsH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 04:40:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B55B1720;
-        Wed,  7 Jun 2023 01:40:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 7 Jun 2023 04:48:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C987A1712
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jun 2023 01:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686127642;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=8b14LlHo3zt86QE7i50t7gWF3Pe+IncdMmgq5VH/CA4=;
+        b=MWPsrQdcsKzUKkNS+vS+Lfq/0sLRKVzv4hlG9gucV1d3hvcKgIB1tXu8wqgMBKosRTKos+
+        r3FmOZcsD5Hk+M01KE7iNEK0P7hGF1BYVST9MWsDTd3hdizCfdsKXoUPVT/7vm7a4VmE0E
+        +DKqcG5v1JP0n/YLUwgtsPopHAvjTZY=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-418-xw3_LTiZMzKbmW33Oy1jXQ-1; Wed, 07 Jun 2023 04:47:15 -0400
+X-MC-Unique: xw3_LTiZMzKbmW33Oy1jXQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B91C063C4C;
-        Wed,  7 Jun 2023 08:40:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A169C433EF;
-        Wed,  7 Jun 2023 08:40:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686127249;
-        bh=rzaXCmDshhO+LXHkp8rQmS2hilpXNGYeK30nLPS+yX4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fdSp6N+EchetyNQ9ELQAK0k0bpXVcnAL/B1ILfEopTiSUxSrqA68P9/6Fq9lp/rvs
-         0PdaFTqQtL7hh+98jKmzKvAI22ckdJ6mpUM7tqdfwc59mGXZfc2UZr3+kEZoNF9iCd
-         rNsY4NJ5wPvPPksQ43AYSH5CsJ9ZZPwPKOSRaPn/FQxz7WMErUvxKsWGr8EuIBUbUv
-         GCwjEeBpBb8r5ert952BDHGVamNUJ1fc0KErTkK5SXMdqq0Lpyjam5mGL+HGGvKta5
-         OZuoqYdC2LP3lItmJ9t7Vn/pgmrJbGFIX1uT/KEmFPNjK+eme8JXQdHwUEcehzKecl
-         PsM6nqwDiF4Hg==
-Date:   Wed, 7 Jun 2023 10:40:40 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Phillip Potter <phil@philpotter.co.uk>,
-        Coly Li <colyli@suse.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-btrfs@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 15/31] btrfs: don't pass a holder for non-exclusive
- blkdev_get_by_path
-Message-ID: <20230607-dagegen-bandmitglieder-427b6130afcf@brauner>
-References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-16-hch@lst.de>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9527B1C0171B;
+        Wed,  7 Jun 2023 08:47:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AE3AB40CFD46;
+        Wed,  7 Jun 2023 08:47:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Jeffrey Altman <jaltman@auristor.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix setting of mtime when creating a file/dir/symlink
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-16-hch@lst.de>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2004569.1686127633.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 07 Jun 2023 09:47:13 +0100
+Message-ID: <2004570.1686127633@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,13 +65,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 09:39:34AM +0200, Christoph Hellwig wrote:
-> Passing a holder to blkdev_get_by_path when FMODE_EXCL isn't set doesn't
-> make sense, so pass NULL instead and remove the holder argument from the
-> call chains the only end up in non-FMODE_EXCL blkdev_get_by_path calls.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+kafs incorrectly passes a zero mtime (ie. 1st Jan 1970) to the server when
+creating a file, dir or symlink because the mtime recorded in the
+afs_operation struct gets passed to the server by the marshalling routines=
+,
+but the afs_mkdir(), afs_create() and afs_symlink() functions don't set it=
+.
 
-Looks good to me,
-Acked-by: Christian Brauner <brauner@kernel.org>
+This gets masked if a file or directory is subsequently modified.
+
+Fix this by filling in op->mtime before calling the create op.
+
+Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" conc=
+ept")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
+Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/afs/dir.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 4dd97afa536c..5219182e52e1 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -1358,6 +1358,7 @@ static int afs_mkdir(struct mnt_idmap *idmap, struct=
+ inode *dir,
+ 	op->dentry	=3D dentry;
+ 	op->create.mode	=3D S_IFDIR | mode;
+ 	op->create.reason =3D afs_edit_dir_for_mkdir;
++	op->mtime	=3D current_time(dir);
+ 	op->ops		=3D &afs_mkdir_operation;
+ 	return afs_do_sync_operation(op);
+ }
+@@ -1661,6 +1662,7 @@ static int afs_create(struct mnt_idmap *idmap, struc=
+t inode *dir,
+ 	op->dentry	=3D dentry;
+ 	op->create.mode	=3D S_IFREG | mode;
+ 	op->create.reason =3D afs_edit_dir_for_create;
++	op->mtime	=3D current_time(dir);
+ 	op->ops		=3D &afs_create_operation;
+ 	return afs_do_sync_operation(op);
+ =
+
+@@ -1796,6 +1798,7 @@ static int afs_symlink(struct mnt_idmap *idmap, stru=
+ct inode *dir,
+ 	op->ops			=3D &afs_symlink_operation;
+ 	op->create.reason	=3D afs_edit_dir_for_symlink;
+ 	op->create.symlink	=3D content;
++	op->mtime		=3D current_time(dir);
+ 	return afs_do_sync_operation(op);
+ =
+
+ error:
+
