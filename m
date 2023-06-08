@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DEED727E16
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 13:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BCA6727E02
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 13:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236326AbjFHLGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 07:06:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36168 "EHLO
+        id S236362AbjFHLFU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 07:05:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236340AbjFHLFF (ORCPT
+        with ESMTP id S236314AbjFHLFD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 07:05:05 -0400
+        Thu, 8 Jun 2023 07:05:03 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE75F359E;
-        Thu,  8 Jun 2023 04:04:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CF543589;
+        Thu,  8 Jun 2023 04:04:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=BWc5z9HT4dUA9mjQNGkIg08JFiqviKFgFc2kwBdnmvA=; b=DSaSxe/TisXuiNZhOR1TgSi7tx
-        33lAtkUXPMOr9WQm9Z+HhNKEJGoeKJSluj7uhXRCmimH7VoHS0E0fvUNcZ7UiWxsb/tBtz6fXhZlr
-        GE9jtxC+Q8FoQSEQz+4vk9nOOH8BTAjfrUuFLcHba2SvPuPGZNkEv8QjVxkATSDkihbdNi6umKqVB
-        7p2NEvk5EAeqwWcAKAwVWRbUBkG4tyEy/NutpgRnWrvU0mWTHAqNh1aG3veS9lJl/Zm3XwnRRN4uy
-        kPNwBnK5dcXc2ETiMnCmg0liMCPKVYmWiFEJ6OPE/jhf6OnfgqyBEoO+PrWwml+/G7QKTlQlKNK+/
-        sLCUxnmg==;
+        bh=HfQKDcXIxVfpxDhJoYVU8U+lxQr2DjI7c93KYK31huo=; b=R7kJ0MJbD7zxTDiQlX4DG3rUJ6
+        rh5jyLNnBqFnzd5SLvlvgUTIjHLhE1Z4ZC05/xS08Qis/ud/p+ahjsdMfce6SBXCGLDTRX5WU3rPr
+        e1YlXWjk/u17FHigPVzV9Ep16pPOxftsIYvcrd3NOH+Y/y8nesj/sVOXqA3/XHYYwUBPNCrz9uj5J
+        UvZhmbrJ6B1bGpvK9T+/USw5677+Byd4dwQWJZR7IbLxYqOHlnIeoYmHZ2z0gCWeCGovJi3/AWsyH
+        vi6dJ9q1AzhkI27fHWkZPrBBvyUMObzSq2uxoT6ARNDZL/Q6zS/Ynz40T44S6S3pflLAIGTNNA2Hw
+        o9SdoJ5Q==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q7DQR-00921s-1m;
-        Thu, 08 Jun 2023 11:03:31 +0000
+        id 1q7DQU-00925z-04;
+        Thu, 08 Jun 2023 11:03:34 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Richard Weinberger <richard@nod.at>,
@@ -52,9 +52,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org, Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 11/30] swsusp: don't pass a stack address to blkdev_get_by_path
-Date:   Thu,  8 Jun 2023 13:02:39 +0200
-Message-Id: <20230608110258.189493-12-hch@lst.de>
+Subject: [PATCH 12/30] bcache: don't pass a stack address to blkdev_get_by_path
+Date:   Thu,  8 Jun 2023 13:02:40 +0200
+Message-Id: <20230608110258.189493-13-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230608110258.189493-1-hch@lst.de>
 References: <20230608110258.189493-1-hch@lst.de>
@@ -71,44 +71,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-holder is just an on-stack pointer that can easily be reused by other calls,
-replace it with a static variable that doesn't change.
+sb is just an on-stack pointer that can easily be reused by other calls.
+Switch to use the bcache-wide bcache_kobj instead as there is no need to
+claim per-bcache device anyway.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 ---
- kernel/power/swap.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/md/bcache/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index 81aec3b2c60510..b03ff1a33c7f68 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -1510,6 +1510,8 @@ int swsusp_read(unsigned int *flags_p)
- 	return error;
- }
- 
-+static void *swsusp_holder;
-+
- /**
-  *      swsusp_check - Check for swsusp signature in the resume device
-  */
-@@ -1517,14 +1519,13 @@ int swsusp_read(unsigned int *flags_p)
- int swsusp_check(bool snapshot_test)
- {
- 	int error;
--	void *holder;
- 	fmode_t mode = FMODE_READ;
- 
- 	if (snapshot_test)
- 		mode |= FMODE_EXCL;
- 
- 	hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device,
--					    mode, &holder, NULL);
-+					    mode, &swsusp_holder, NULL);
- 	if (!IS_ERR(hib_resume_bdev)) {
- 		set_blocksize(hib_resume_bdev, PAGE_SIZE);
- 		clear_page(swsusp_header);
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 94b91c45c9e2a9..4a2aed047aec12 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2560,7 +2560,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 	err = "failed to open device";
+ 	bdev = blkdev_get_by_path(strim(path),
+ 				  FMODE_READ|FMODE_WRITE|FMODE_EXCL,
+-				  sb, NULL);
++				  bcache_kobj, NULL);
+ 	if (IS_ERR(bdev)) {
+ 		if (bdev == ERR_PTR(-EBUSY)) {
+ 			dev_t dev;
 -- 
 2.39.2
 
