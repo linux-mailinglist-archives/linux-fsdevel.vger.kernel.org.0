@@ -2,216 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC467275F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 06:02:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4679072762C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 06:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234035AbjFHECu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 00:02:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45666 "EHLO
+        id S234097AbjFHEiT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 00:38:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234031AbjFHECr (ORCPT
+        with ESMTP id S232805AbjFHEiR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 00:02:47 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2070.outbound.protection.outlook.com [40.107.220.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449BD10EA;
-        Wed,  7 Jun 2023 21:02:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nXph4IgRKeRgh0qmQqhFfw7U/ComRB6DvcSaA4W4Wc52B+y5aWsRypN8c+xeluTh2QUDyoxLuTVfs4gmPewZLDq2xGE83mjl2TH1lWHMyCITz4cu7Pad6IRuFmA/ecmE39GlXSlsjQgcPelDO7TaCeAUxv4Vdjrm3chZGdI8y2i7y0hUanX5qvuXMmld376bvBgwOmgRZQDBx2NVxOYM7yHck2wSLHHTiB6FUbCyfhPrKsiQW3xNbvCgGUp7MVxTWJJ+58Uq22My+NynV6JnVQzxbXKQAcRRJp6TF18MBwn9+j/r06jYh5ySr1fSfmsBGQupbAzrVeQP1QJjULdRKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rAtE6KU8YF/qEVKn0/iDmz8xKM6asMpK+qXfho9HpCk=;
- b=gzS/4eUQEYgatCDperpCQRJ0MFDXjP1S2n7ocMpEJCvdgu1wDAOcY8ZzWdDgx9yLk6cVeIvxr6Wt9F6WB2jBPoDCvVDF8Ge4Odj/qMl4bmZmS8JpQRZZ/MjbTGBvPYQmS6C/on0YT1BVPgQd/MTxaIPxs+zN4zApgbkVvKQFhIPGQ1PTXk2HXRQOlpr483zO/Rcv7ZV4OYPUtJVtvaFE1OKRrXrVB8lO7NP2WiK3mU1D2Kwxqu284JIu9eJ/rEtFxnXEMUGbG6VeEf9GTBrKFkSsm40t71UvPgLlgDO9EiLe75RhCLrrG10cqND7KJLwA8iXAvc1QhFxhp9byp69sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rAtE6KU8YF/qEVKn0/iDmz8xKM6asMpK+qXfho9HpCk=;
- b=k1vIIsXnR9msm1ImA3mGIc0MiI0plkDyRFGTxLlAikwgmbVR0AMi0B2W5SpUSnRkVup+yW3AMYbvMxE/2E04P9RFukrn0Clftl6xEmBmveYY3e9TmKgfgjhf8VGeMTd/XhuYtYJ8IUBmvzT5WhxpLbv9HrGg2T8PMyRxYSmXSU0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB2843.namprd12.prod.outlook.com (2603:10b6:5:48::24) by
- PH8PR12MB7278.namprd12.prod.outlook.com (2603:10b6:510:222::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6455.32; Thu, 8 Jun 2023 04:02:40 +0000
-Received: from DM6PR12MB2843.namprd12.prod.outlook.com
- ([fe80::ff22:cffa:293:5cef]) by DM6PR12MB2843.namprd12.prod.outlook.com
- ([fe80::ff22:cffa:293:5cef%3]) with mapi id 15.20.6455.030; Thu, 8 Jun 2023
- 04:02:39 +0000
-Message-ID: <a310a133-8d4e-0870-adef-0b7b47a452e7@amd.com>
-Date:   Thu, 8 Jun 2023 14:02:29 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.5.1
-Subject: Re: [RFC PATCH v2 2/3] fs: debugfs: Add write functionality to
- debugfs blobs
-Content-Language: en-US
-To:     Avadhut Naik <Avadhut.Naik@amd.com>, rafael@kernel.org,
-        gregkh@linuxfoundation.org, lenb@kernel.org,
-        linux-acpi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     avadnaik@amd.com, yazen.ghannam@amd.com,
-        alexey.kardashevskiy@amd.com, linux-kernel@vger.kernel.org
-References: <20230525204422.4754-1-Avadhut.Naik@amd.com>
- <20230525204422.4754-3-Avadhut.Naik@amd.com>
-From:   Alexey Kardashevskiy <aik@amd.com>
-In-Reply-To: <20230525204422.4754-3-Avadhut.Naik@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SYBPR01CA0117.ausprd01.prod.outlook.com
- (2603:10c6:10:1::33) To DM6PR12MB2843.namprd12.prod.outlook.com
- (2603:10b6:5:48::24)
+        Thu, 8 Jun 2023 00:38:17 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A7C270F;
+        Wed,  7 Jun 2023 21:38:14 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1b04706c974so773905ad.2;
+        Wed, 07 Jun 2023 21:38:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686199093; x=1688791093;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wTSOFzhf2LvbO/f18aHFxbTWWRqmnOPeGB/+V0fARF0=;
+        b=Hxdi6NBuMPQ1mGOD4h2MUw/VQWK48IDZeu68Ch1Zw7dMvFBMTi+oerNB09iE7hyLiL
+         vZ0JMywmm6m+UsQEI1Czocd7TWBP1GAaxUsFPK+nwoIo68zYSQaicYgA0AVVtdaN3hxC
+         ww8s/VI27frfrftXNr26ygj8NnSjeIzcvZ8iaTXQqW3fRxdM/14NiZrIbUqm8cOTy3LW
+         L1Sla6wDUf4ttNoARfkL+CJcES8DNVoK1zzkKGqIBe/8c99dd7lJzErerlGCF9oCMXbU
+         5ByvqdCsGi9NSNzjxDUbma1aWLio3t2DutLJIIpzM6s13qmPK9V+lg37S0zH1slnHrJ2
+         x3yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686199093; x=1688791093;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wTSOFzhf2LvbO/f18aHFxbTWWRqmnOPeGB/+V0fARF0=;
+        b=TbZm0hzT+2ocyUFweUYSLeBhjToz44uBXEUqfq5kg5MdQTmVZ84GtahvstGKTdqpND
+         90sIr6t+ooY2sKiirqjPfdBhABzYdS4gY9WtlCoSzDWDN4FLlrFUo0irmcumJs/kmit7
+         X0mqWV7PDcwifXXUBI3Kor1WStVU1UD6Fyi1s4X5Zf+lVESAecRCpKuaNosNPAlzwoAi
+         z2CjN2eq/yeuSnUWty9Olt0i42rwgNzmCx/85awWrGBEg8PY3LyHFdpl+aQJ91X0jsIN
+         XqKnR7SpzCH9UEtpWZcQ6E/exA7qX4BuSMbmjemREN3tOH7e7MebRJ+i2WOmK4hIajlS
+         Y3pQ==
+X-Gm-Message-State: AC+VfDypcZXEotqzo5HEKKfLg6RPKPlt0MjtHNEMF7Q29MewwfpvK0hq
+        HBEKgw/My0TSkTZN9aEQdzI=
+X-Google-Smtp-Source: ACHHUZ4JLtQp1wbJvbBxyqfIUoQ7eVqhYzAImG0w4ZtrnuzeHLvHZOZu0NGlyX0Ex0Nr8vyAtJapgw==
+X-Received: by 2002:a17:903:18c:b0:1b1:4801:f516 with SMTP id z12-20020a170903018c00b001b14801f516mr8392723plg.68.1686199093206;
+        Wed, 07 Jun 2023 21:38:13 -0700 (PDT)
+Received: from localhost ([192.55.54.50])
+        by smtp.gmail.com with ESMTPSA id n10-20020a170902e54a00b001b01448ba72sm323640plf.215.2023.06.07.21.38.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Jun 2023 21:38:12 -0700 (PDT)
+Date:   Wed, 7 Jun 2023 21:38:10 -0700
+From:   Isaku Yamahata <isaku.yamahata@gmail.com>
+To:     Ackerley Tng <ackerleytng@google.com>
+Cc:     akpm@linux-foundation.org, mike.kravetz@oracle.com,
+        muchun.song@linux.dev, pbonzini@redhat.com, seanjc@google.com,
+        shuah@kernel.org, willy@infradead.org, brauner@kernel.org,
+        chao.p.peng@linux.intel.com, coltonlewis@google.com,
+        david@redhat.com, dhildenb@redhat.com, dmatlack@google.com,
+        erdemaktas@google.com, hughd@google.com, isaku.yamahata@gmail.com,
+        jarkko@kernel.org, jmattson@google.com, joro@8bytes.org,
+        jthoughton@google.com, jun.nakajima@intel.com,
+        kirill.shutemov@linux.intel.com, liam.merwick@oracle.com,
+        mail@maciej.szmigiero.name, mhocko@suse.com, michael.roth@amd.com,
+        qperret@google.com, rientjes@google.com, rppt@kernel.org,
+        steven.price@arm.com, tabba@google.com, vannapurve@google.com,
+        vbabka@suse.cz, vipinsh@google.com, vkuznets@redhat.com,
+        wei.w.wang@intel.com, yu.c.zhang@linux.intel.com,
+        kvm@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        qemu-devel@nongnu.org, x86@kernel.org
+Subject: Re: [RFC PATCH 00/19] hugetlb support for KVM guest_mem
+Message-ID: <20230608043810.GJ2244082@ls.amr.corp.intel.com>
+References: <cover.1686077275.git.ackerleytng@google.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2843:EE_|PH8PR12MB7278:EE_
-X-MS-Office365-Filtering-Correlation-Id: c5896d16-6e46-458a-31a4-08db67d533a2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: l2Kxm9mN1XrtN8Ac3zHLk6LjCSb6hqXt0PxjqTmDn0N7bzcr6DRsh0drJiL9ADwl5hIz66wMHfC0+O2C+/7MDf6IWpKR5RHln50xYdXQRDzDlNC8C6DomzO9fGmvpPFtBFEqplU+BEaNcIVatJL45KCPnTwWFn1yBged5PoShyqFhyEfwh9i+bVQFDTGU19jYysn0ZVxzniPKbB/Dlh1QQ6O4dVBdg2qIJLqTEKGSu4lj3dx9CNfMue9IkIn4Wbf82YrZSyodfey25ZWrWTayTR4Ox1AEzvBwh2v422TmFgsWJc46jxeD5GqIKI++2gI+mdTVQQSHvEfqa1DxyHdHCSKu6HNJCjO+VJwinQRowGjhKnWdUq4BMndREB+WQT9WnAnhbudYQJXJeZyKyusriBd+XyoMM1aXVA6GPYGg0xfRYM9y1sOOKy/qB8AqSCZy+88GOOFN5KDVjE2B20pNtJ4GIMYUBeZSDP6bs04V3kOd7w/GdyB/eLSM8cnxlYYyU1gwkdy3E0T5fWSSM+rkFq5eqQ1pDm4TsSrpjgOB8nlKbdWMwMfONxGynNRx6qDUVsbEKod9obOaA8eo4Cswz0DLHChVWTSky3Sz5yP22swLc/ie5vkSlAN9//TACML5hwxxx+qAKC3zePqHLsMRg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2843.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(376002)(366004)(346002)(396003)(39860400002)(451199021)(5660300002)(31686004)(186003)(31696002)(26005)(6512007)(6506007)(53546011)(2906002)(36756003)(316002)(8676002)(8936002)(41300700001)(38100700002)(66476007)(66556008)(66946007)(478600001)(6486002)(4326008)(2616005)(6666004)(83380400001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?M1h4TExPbDMxcXVNRkxyY3lvNitPeXcvWk82ZVhseHdYUkNqNXIvcU81TXB4?=
- =?utf-8?B?dUlodi9uUGRSQVg3SC8vWnF3Y2JPYVRmcC9SbUNsN3hZcVdhcGxTOTFZWGhw?=
- =?utf-8?B?empZWE5NS0xoWXdVMEhleGR4Y2ZDWkVVcUFGc1ZoMGZtT3drRE1NVXY0ZGw1?=
- =?utf-8?B?cjhjRHlIajVyQmlaNFlUbFVmOGRUMzNFL0hBbUJzaHFhNnRXT3R3NFdITnBs?=
- =?utf-8?B?Mys3akZ6b2kzemNLN2YreXloOUg4WDlLNDh6TmpCKzlpZVZsei9tRFQ0eSt6?=
- =?utf-8?B?Uks3RmRIVW01K2twaW1jRitGU3RMamdRTlQ0V1BIM0YyTmpRMCsrMXhJOTZM?=
- =?utf-8?B?cUh0RkNiLzY3NUN0QVdub0ZuRjB5d3JnQzJLYktnb0ZtR3BjU3Z1UDlReDkw?=
- =?utf-8?B?ZHdJQU5xNTQ5OFM3dlJtOHpxdFpMTFQ1ZEhOUnNCaWtURUoxUnNOZXRmaHV2?=
- =?utf-8?B?TlhoQlZZR1gweVpXVEZDYVdCM0tueVRIME1CdytRb1ZlTm9UTkE3cUFtZGY3?=
- =?utf-8?B?QnFydFJCMDVIUGxhTm1MR0gxR2tIVGpXNGpJUWtlM3ZHUjQ1ZnVRamxuRy8w?=
- =?utf-8?B?S2NHbTByUzRoSUtrbkwrdS9aampvMHl5aE8wUE45NDVvbGFmZFRMR3AxdnRP?=
- =?utf-8?B?UkhHL0tXcUVQSnlOM0lGbUZnNnVtTTJyYmQ3eXZSMTkzem43TG5tQ3B4Q3lK?=
- =?utf-8?B?VTRadWpMcmJEQXBwM0ErWjZPS01VU2tJTDUrbCsxWjM2V1V6dC9KRlBYYThY?=
- =?utf-8?B?STBNdEsyUVBxOW1jWG50V1NIaVhQbkdkbThZN1hZbmFCS1cxV0JkT2ZTS093?=
- =?utf-8?B?aFdaR2xYeVFIdFdDVW5Ldy81akFDRkk5NmRlTnVEU0djaVhEbXlaR0hvSlBw?=
- =?utf-8?B?OVhGRzI0WGdLb1hId00yNDlWRDhMS3VlRkdwNXNQcWtFTFo5VEdDNnVNciti?=
- =?utf-8?B?S051MURkYkFCamZYbkI5Y2cxU09xRG92NWh4M0J2MnYzRFFwMjBOeVdPeHpD?=
- =?utf-8?B?THdqdU15ZU9CSjNxdlBlczhyb2xROWl4ekZpNGFvNXdWeXBiL2VVV2JWM2w0?=
- =?utf-8?B?SVRxNWRKVmQ3V0dTc1lEZk02SFAwcUNidWhsbGtQSnJRY0dkQkJESXF0YzJF?=
- =?utf-8?B?ZFlod2o2RzJiMC9icCtyYWt3REY0azNmOGFQOTlFL0pETGlvQUVMcXF3aUZq?=
- =?utf-8?B?VGRET2d3Q0lJd2xsUksvVDd4NTVUWnJ5eHBleUNNUnc0ZDhHdjFOL20zc2dL?=
- =?utf-8?B?ZXVsTE00NnV5N2IrUjN4T05wbkdSOGxyWWo2TUtxZWNqZ0h4Z1RWaVduMURW?=
- =?utf-8?B?aUhtTkdMczIvMEdMa29qNEJUUHFaS29IekZJRGdoZi8yK3BXY1MrQkZRRnhR?=
- =?utf-8?B?OVhyQU0zbWFwaUM3emswNEVYb0pLL2JrY3pGcjdlMFBabjdwUDhLcGtOYmd4?=
- =?utf-8?B?dDNVS2ZuN2NKTUJ6cTE3MnVoWmk2RnkyZDdvZmczN2xwQmEyd1Z5OFhGaUQ4?=
- =?utf-8?B?NWlOM0RxWnNiSFFNYXRGa2JCRjBnUmFuMXNSTkZHekgraGltZUVXRWEzdGZo?=
- =?utf-8?B?NG44MkhXL3pDVVRmdE42VEM4UmVpNjZQRVpSOVZRRnBURGJqcjZmc255anFx?=
- =?utf-8?B?NVhKUW9mdUpEN082MldSM0lRVEtZcGZaN2M0R1FPQVFod0dQRUk0dHk4RnpY?=
- =?utf-8?B?ZE1rRVpZajFzaEtUUmJ3Y3EvWTBYZnY5eTBLd2x4TFBGOThGNmFKeEtrNkVw?=
- =?utf-8?B?Y1Fpano4UjBJWDNtZFZ6bi9DTXI4WVJzODZvSGI3ZzYwa2xudjdPT2ZvZ3BH?=
- =?utf-8?B?QWhGY2pBajQwTTA1YnFqSy8xV3YyRFRpYzl4NjM0OXBlazd5MGh6OHhyT1ph?=
- =?utf-8?B?b3BsaHU5STlROEE1b0c4aGZieXJiLzh2MzVaYUFjcHppZEp6eVJMM2xDc3BB?=
- =?utf-8?B?Sjl6UzhTRVNScjRaK0d1QTBZT3NacERJUmFRU3dNK3hxVEw1dUp0N3JsTXBQ?=
- =?utf-8?B?MXlDbDdNUTFmNDE2aFF0T1FwSTBBOUlkNlBMZWdoY0taOW5qZTFlaUZiM2tK?=
- =?utf-8?B?bzNYdFo2eUhXOWp0b2lHQmIvYTJ6c2NYWFRBa3pCRnZTbC9HamJrd1RuQ1J6?=
- =?utf-8?Q?SxoURPTkg6oAHPdtOlL9Ksxo9?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5896d16-6e46-458a-31a4-08db67d533a2
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2843.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2023 04:02:39.7757
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cuFkki4NTL1IwHwDyfr2+I+nk+v6TYXpUHimJZkzbCgGBUMId4NLWtzNOgKcpYhpKCusBtTLsLYlBBCV8uPM1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7278
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1686077275.git.ackerleytng@google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Jun 06, 2023 at 07:03:45PM +0000,
+Ackerley Tng <ackerleytng@google.com> wrote:
 
-
-On 26/5/23 06:44, Avadhut Naik wrote:
-> Currently, debugfs_create_blob() creates read-only debugfs binary blob
-> files.
+> Hello,
 > 
-> In some cases, however, userspace tools need to write variable length
-> data structures into predetermined memory addresses. An example is when
-> injecting Vendor-defined error types through the einj module. In such
-> cases, the functionality to write to these blob files in debugfs would
-> be desired since the mapping aspect can be handled within the modules
-> with userspace tools only needing to write into the blob files.
+> This patchset builds upon a soon-to-be-published WIP patchset that Sean
+> published at https://github.com/sean-jc/linux/tree/x86/kvm_gmem_solo, mentioned
+> at [1].
 > 
-> Implement a write callback to enable writing to these blob files in
-> debugfs.
+> The tree can be found at:
+> https://github.com/googleprodkernel/linux-cc/tree/gmem-hugetlb-rfc-v1
 > 
-> Signed-off-by: Avadhut Naik <Avadhut.Naik@amd.com>
+> In this patchset, hugetlb support for KVM's guest_mem (aka gmem) is introduced,
+> allowing VM private memory (for confidential computing) to be backed by hugetlb
+> pages.
+> 
+> guest_mem provides userspace with a handle, with which userspace can allocate
+> and deallocate memory for confidential VMs without mapping the memory into
+> userspace.
+> 
+> Why use hugetlb instead of introducing a new allocator, like gmem does for 4K
+> and transparent hugepages?
+> 
+> + hugetlb provides the following useful functionality, which would otherwise
+>   have to be reimplemented:
+>     + Allocation of hugetlb pages at boot time, including
+>         + Parsing of kernel boot parameters to configure hugetlb
+>         + Tracking of usage in hstate
+>         + gmem will share the same system-wide pool of hugetlb pages, so users
+>           don't have to have separate pools for hugetlb and gmem
+>     + Page accounting with subpools
+>         + hugetlb pages are tracked in subpools, which gmem uses to reserve
+>           pages from the global hstate
+>     + Memory charging
+>         + hugetlb provides code that charges memory to cgroups
+>     + Reporting: hugetlb usage and availability are available at /proc/meminfo,
+>       etc
+> 
+> The first 11 patches in this patchset is a series of refactoring to decouple
+> hugetlb and hugetlbfs.
+> 
+> The central thread binding the refactoring is that some functions (like
+> inode_resv_map(), inode_subpool(), inode_hstate(), etc) rely on a hugetlbfs
+> concept, that the resv_map, subpool, hstate, are in a specific field in a
+> hugetlb inode.
+> 
+> Refactoring to parametrize functions by hstate, subpool, resv_map will allow
+> hugetlb to be used by gmem and in other places where these data structures
+> aren't necessarily stored in the same positions in the inode.
+> 
+> The refactoring proposed here is just the minimum required to get a
+> proof-of-concept working with gmem. I would like to get opinions on this
+> approach before doing further refactoring. (See TODOs)
+> 
+> TODOs:
+> 
+> + hugetlb/hugetlbfs refactoring
+>     + remove_inode_hugepages() no longer needs to be exposed, it is hugetlbfs
+>       specific and used only in inode.c
+>     + remove_mapping_hugepages(), remove_inode_single_folio(),
+>       hugetlb_unreserve_pages() shouldn't need to take inode as a parameter
+>         + Updating inode->i_blocks can be refactored to a separate function and
+>           called from hugetlbfs and gmem
+>     + alloc_hugetlb_folio_from_subpool() shouldn't need to be parametrized by
+>       vma
+>     + hugetlb_reserve_pages() should be refactored to be symmetric with
+>       hugetlb_unreserve_pages()
+>         + It should be parametrized by resv_map
+>         + alloc_hugetlb_folio_from_subpool() could perhaps use
+>           hugetlb_reserve_pages()?
+> + gmem
+>     + Figure out if resv_map should be used by gmem at all
+>         + Probably needs more refactoring to decouple resv_map from hugetlb
+>           functions
 
-Reviewed-by: Alexey Kardashevskiy <aik@amd.com>
+Hi. If kvm gmem is compiled as kernel module, many symbols are failed to link.
+You need to add EXPORT_SYMBOL{,_GPL} for exported symbols.
+Or compile it to kernel instead of module?
 
+Thanks,
+
+> Questions for the community:
+> 
+> 1. In this patchset, every gmem file backed with hugetlb is given a new
+>    subpool. Is that desirable?
+>     + In hugetlbfs, a subpool always belongs to a mount, and hugetlbfs has one
+>       mount per hugetlb size (2M, 1G, etc)
+>     + memfd_create(MFD_HUGETLB) effectively returns a full hugetlbfs file, so it
+>       (rightfully) uses the hugetlbfs kernel mounts and their subpools
+>     + I gave each file a subpool mostly to speed up implementation and still be
+>       able to reserve hugetlb pages from the global hstate based on the gmem
+>       file size.
+>     + gmem, unlike hugetlbfs, isn't meant to be a full filesystem, so
+>         + Should there be multiple mounts, one for each hugetlb size?
+>         + Will the mounts be initialized on boot or on first gmem file creation?
+>         + Or is one subpool per gmem file fine?
+> 2. Should resv_map be used for gmem at all, since gmem doesn't allow userspace
+>    reservations?
+> 
+> [1] https://lore.kernel.org/lkml/ZEM5Zq8oo+xnApW9@google.com/
+> 
 > ---
->   fs/debugfs/file.c | 28 +++++++++++++++++++++++-----
->   1 file changed, 23 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-> index 1f971c880dde..fab5a562b57c 100644
-> --- a/fs/debugfs/file.c
-> +++ b/fs/debugfs/file.c
-> @@ -973,17 +973,35 @@ static ssize_t read_file_blob(struct file *file, char __user *user_buf,
->   	return r;
->   }
->   
-> +static ssize_t write_file_blob(struct file *file, const char __user *user_buf,
-> +			       size_t count, loff_t *ppos)
-> +{
-> +	struct debugfs_blob_wrapper *blob = file->private_data;
-> +	struct dentry *dentry = F_DENTRY(file);
-> +	ssize_t r;
-> +
-> +	r = debugfs_file_get(dentry);
-> +	if (unlikely(r))
-> +		return r;
-> +	r = simple_write_to_buffer(blob->data, blob->size, ppos, user_buf,
-> +				   count);
-> +
-> +	debugfs_file_put(dentry);
-> +	return r;
-> +}
-> +
->   static const struct file_operations fops_blob = {
->   	.read =		read_file_blob,
-> +	.write =	write_file_blob,
->   	.open =		simple_open,
->   	.llseek =	default_llseek,
->   };
->   
->   /**
-> - * debugfs_create_blob - create a debugfs file that is used to read a binary blob
-> + * debugfs_create_blob - create a debugfs file that is used to read and write
-> + * a binary blob
->    * @name: a pointer to a string containing the name of the file to create.
-> - * @mode: the read permission that the file should have (other permissions are
-> - *	  masked out)
-> + * @mode: the permission that the file should have
->    * @parent: a pointer to the parent dentry for this file.  This should be a
->    *          directory dentry if set.  If this parameter is %NULL, then the
->    *          file will be created in the root of the debugfs filesystem.
-> @@ -992,7 +1010,7 @@ static const struct file_operations fops_blob = {
->    *
->    * This function creates a file in debugfs with the given name that exports
->    * @blob->data as a binary blob. If the @mode variable is so set it can be
-> - * read from. Writing is not supported.
-> + * read from and written to.
->    *
->    * This function will return a pointer to a dentry if it succeeds.  This
->    * pointer must be passed to the debugfs_remove() function when the file is
-> @@ -1007,7 +1025,7 @@ struct dentry *debugfs_create_blob(const char *name, umode_t mode,
->   				   struct dentry *parent,
->   				   struct debugfs_blob_wrapper *blob)
->   {
-> -	return debugfs_create_file_unsafe(name, mode & 0444, parent, blob, &fops_blob);
-> +	return debugfs_create_file_unsafe(name, mode, parent, blob, &fops_blob);
->   }
->   EXPORT_SYMBOL_GPL(debugfs_create_blob);
->   
+> Ackerley Tng (19):
+>   mm: hugetlb: Expose get_hstate_idx()
+>   mm: hugetlb: Move and expose hugetlbfs_zero_partial_page
+>   mm: hugetlb: Expose remove_inode_hugepages
+>   mm: hugetlb: Decouple hstate, subpool from inode
+>   mm: hugetlb: Allow alloc_hugetlb_folio() to be parametrized by subpool
+>     and hstate
+>   mm: hugetlb: Provide hugetlb_filemap_add_folio()
+>   mm: hugetlb: Refactor vma_*_reservation functions
+>   mm: hugetlb: Refactor restore_reserve_on_error
+>   mm: hugetlb: Use restore_reserve_on_error directly in filesystems
+>   mm: hugetlb: Parametrize alloc_hugetlb_folio_from_subpool() by
+>     resv_map
+>   mm: hugetlb: Parametrize hugetlb functions by resv_map
+>   mm: truncate: Expose preparation steps for truncate_inode_pages_final
+>   KVM: guest_mem: Refactor kvm_gmem fd creation to be in layers
+>   KVM: guest_mem: Refactor cleanup to separate inode and file cleanup
+>   KVM: guest_mem: hugetlb: initialization and cleanup
+>   KVM: guest_mem: hugetlb: allocate and truncate from hugetlb
+>   KVM: selftests: Add basic selftests for hugetlbfs-backed guest_mem
+>   KVM: selftests: Support various types of backing sources for private
+>     memory
+>   KVM: selftests: Update test for various private memory backing source
+>     types
+> 
+>  fs/hugetlbfs/inode.c                          | 102 ++--
+>  include/linux/hugetlb.h                       |  86 ++-
+>  include/linux/mm.h                            |   1 +
+>  include/uapi/linux/kvm.h                      |  25 +
+>  mm/hugetlb.c                                  | 324 +++++++-----
+>  mm/truncate.c                                 |  24 +-
+>  .../testing/selftests/kvm/guest_memfd_test.c  |  33 +-
+>  .../testing/selftests/kvm/include/test_util.h |  14 +
+>  tools/testing/selftests/kvm/lib/test_util.c   |  74 +++
+>  .../kvm/x86_64/private_mem_conversions_test.c |  38 +-
+>  virt/kvm/guest_mem.c                          | 488 ++++++++++++++----
+>  11 files changed, 882 insertions(+), 327 deletions(-)
+> 
+> --
+> 2.41.0.rc0.172.g3f132b7071-goog
 
 -- 
-Alexey
+Isaku Yamahata <isaku.yamahata@gmail.com>
