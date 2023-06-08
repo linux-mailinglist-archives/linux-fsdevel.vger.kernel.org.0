@@ -2,140 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB7BB728A44
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 23:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49668728A7B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 23:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237080AbjFHVbf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 17:31:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38094 "EHLO
+        id S236897AbjFHV6y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 17:58:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235550AbjFHVbe (ORCPT
+        with ESMTP id S229596AbjFHV6x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 17:31:34 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1D730CF
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jun 2023 14:31:32 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 15C4332004CE;
-        Thu,  8 Jun 2023 17:31:31 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 08 Jun 2023 17:31:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1686259890; x=1686346290; bh=HZB6vXAy27kfDuA46dmNu3kCkW1aO+HBkg3
-        FJaY1AgM=; b=q5cVJwLZWIzv+Zo17C3Ju6t2vWpqYary8wS37XPzTM/iT+XcOty
-        PdBoGb8Nd+TyO3gq+wEEcFI8qzgY6DiwJ/wQlgr38YdaEub0hofQP+bfjEc+nu99
-        /RzPEuCdUE05EgFZodIstcvGUiERxvEGxgWgIP4JNa2YQ3xFMxQ0nS4U7QFXDx8N
-        dDeAMJAfeKEVY5Tzc90mlWtWGM66Ii+551Ce/xTsFf1y+TFP/luL8j28NDf1G0cg
-        KXeqbfH6S1A3J1CV1rh9OeQOidK7jWz8GeP/CpEgTaYZiqrT+M/Syxcoey97Sd4C
-        mjBATsvnolDmSV8eChzGis7s846soKPyTCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1686259890; x=1686346290; bh=HZB6vXAy27kfDuA46dmNu3kCkW1aO+HBkg3
-        FJaY1AgM=; b=R1Xo/WwN1GLwQf5fVcMsmkbGJGSCEYDhy+PNFrSwzSjsbI6FCYS
-        dC4EQl0MixAk2kEBoz3v5B0B929fj/InZjab+bIlmZe40YJJ8xr5iokLJkgTb7o4
-        28YzqKSEOysr6Z+4rI1Lteu2IEh9V5HJstcVe+1+6xqTCTYK/E//k36AGiKcJuA6
-        3LiXHBQrNT2opTYmfXz3GQPnx/KxO4ShY397mXIdJKFsYhj54gngPE7g0I8xkUZe
-        OrlZrveBspp9k5I03uCytSz0mHlWDkQ2UYRTUB6pIpq8kFUWHWcM3/Gu0JcrnsX5
-        /Y+WZ3XUDKYS2DDSYD8crCe2zZUfzh8QVSw==
-X-ME-Sender: <xms:skiCZPh4eiRJYOY9lMYd1cYrXTGoxKAIzKgq_ERVm6rtNpLJKzB14g>
-    <xme:skiCZMBtam0EV67870wsu8eVb43hd0tJ6ASV4_9c8r2cwHhdQgIqv23-u-DUgXzqh
-    IuBRv2BirZdy4-T>
-X-ME-Received: <xmr:skiCZPGSS9nxc8z2NKphzkEvd8yfas8QR_zMMpLKqMzPkUoSwD3HGcp_Swtr6tfdrRFIbhqeBoP6jNx3ezt0a7mRuHl_pT6zPwBQdWATrNRyArKykmm_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedtiedgudeifecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepuegv
-    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeffhfdtvdeviedvudeuudejteffkeeklefg
-    vdefgfeuffeifeejgfejffehtddtfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
-    rdhfmh
-X-ME-Proxy: <xmx:skiCZMSCQSQsX4vXOS2dwOmkoN3N3qRgfK9qySTiecTbGAARctF5nQ>
-    <xmx:skiCZMyJVAzbANh3GwAFjbLJW4l3K-ojQppnFE-na-34DYYEs36lKA>
-    <xmx:skiCZC6QwqTaSRD7hXD_GDXs3_DlkPsRfJky7opXYTHvBC5zOE8UGg>
-    <xmx:skiCZI-N72JYrPPVqRNe1uLsQOeEmkX86wCPBuwHSpDW6YqaF73eiw>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 8 Jun 2023 17:31:29 -0400 (EDT)
-Message-ID: <2ac5a016-505c-125a-a431-8d7547347a65@fastmail.fm>
-Date:   Thu, 8 Jun 2023 23:31:28 +0200
+        Thu, 8 Jun 2023 17:58:53 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1BE2D77
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jun 2023 14:58:50 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1b065154b79so1200625ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jun 2023 14:58:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686261530; x=1688853530;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2/EUtx4ycp4mR6nPhVhDlxvnjzE+zvrfRKVHftXyUsQ=;
+        b=cZPc7zSylxAT6FpIE4tHSHILj+81IHIUImhSd8x1ZEh9BfDo9ClhPAllJEIFmD3i9Z
+         uNVf/KVDMMqXPqGfFx5jiiKabbZUnA2s0R0II2nJq5M/glD3LrAzYS+0OgWfXreFGBkC
+         TG1jMPCIriroCZOIAcZFvO8mM0PqHw1mhENYRK2DbP44uA/FljkfwDXrum1S1yKOCh3H
+         IJK3euKv7R22rYss/6OuXYIaivjw9MeRNiXoHKwPIYz14nw39r8LXPdbz8JzTyocMh76
+         McmR72bUJqRzn2Vn2N13e6tQYVYxF5qxOH2zfFW+8TZgheIgz7osiJkYCRyzn3s9PHVq
+         cJpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686261530; x=1688853530;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2/EUtx4ycp4mR6nPhVhDlxvnjzE+zvrfRKVHftXyUsQ=;
+        b=TpgpKbT12Eluk14x1NnRpHk3z6YQVVaTDiyWtHYI6BJdMRTAhNxA0jy2ipUT3ugbAR
+         Ls2lIdlWsIGOGwTtND479q6SFOKUqv1ePiDCGn5ywiHaPBjJgBdU4u1cIugiPP3nm6Vb
+         bfWXLH09Mw/n5v/LcD9CwAInLlWFtEI/6a2tTjBQfoFbwYaZTtXNntC3VtQNg8jAKGne
+         1lXjlstMqeJWr9xt8XtgsC48GxrI5Q4Ay8yV17gGZipvnOZqioXh3o5pntvx5tCaSgyz
+         Y3W3pfL+fMBZk96fG2PgOGi5vWQKXg7lPm/Q5IsBYzuK/SUgvtuR7kl4PI5h/ijlHAAv
+         0mlw==
+X-Gm-Message-State: AC+VfDyf7REIC27tQu4Li7tF8GgoGeEZSSzq63vMxQS5G49jVSWYe7Sj
+        GohLfAJZGLy42OUbi6IRE7UxDQ==
+X-Google-Smtp-Source: ACHHUZ4HayHnFpb+wxhgpMUZycBd+h1pMgzOPGOqp2bjrxn/nE2uyMC88SzBjmeIuSiMFNqtn8mg4g==
+X-Received: by 2002:a17:902:c952:b0:1b0:3d03:4179 with SMTP id i18-20020a170902c95200b001b03d034179mr4073208pla.6.1686261529696;
+        Thu, 08 Jun 2023 14:58:49 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-79-151.pa.nsw.optusnet.com.au. [49.179.79.151])
+        by smtp.gmail.com with ESMTPSA id 4-20020a170902c14400b001b03d543549sm1892229plj.72.2023.06.08.14.58.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jun 2023 14:58:49 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q7NeY-009Rru-0V;
+        Fri, 09 Jun 2023 07:58:46 +1000
+Date:   Fri, 9 Jun 2023 07:58:46 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Qi Zheng <qi.zheng@linux.dev>
+Cc:     Kirill Tkhai <tkhai@ya.ru>, akpm@linux-foundation.org,
+        roman.gushchin@linux.dev, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, djwong@kernel.org, hughd@google.com,
+        paulmck@kernel.org, muchun.song@linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: Re: [PATCH v2 0/3] mm: Make unregistration of super_block shrinker
+ more faster
+Message-ID: <ZIJPFuIxYpk1+TC5@dread.disaster.area>
+References: <168599103578.70911.9402374667983518835.stgit@pro.pro>
+ <ZH5ig590WleaH1Ed@dread.disaster.area>
+ <ef1b0ecd-5a03-4256-2a7a-3e22b755aa53@ya.ru>
+ <ZH+s+XOI2HlLTDzs@dread.disaster.area>
+ <4176ef18-0125-dee8-f78a-837cb7a5c639@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [RFC PATCH 00/13] fuse uring communication
-Content-Language: en-US, de-DE
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-        Dharmendra Singh <dsingh@ddn.com>
-References: <20230321011047.3425786-1-bschubert@ddn.com>
- <CAOQ4uxjXZHr3DZUQVvcTisRy+HYNWSRWvzKDXuHP0w==QR8Yog@mail.gmail.com>
- <02f19f49-47f8-b1c5-224d-d7233b62bf32@fastmail.fm>
- <CAOQ4uxiDLV2y_HeUy1M-WWrNGdjn-drUxcoNczJBYRKOLXkkUQ@mail.gmail.com>
- <CAJfpegtL3NXPNgK1kuJR8kLu3WkVC_ErBPRfToLEiA_0=w3=hA@mail.gmail.com>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAJfpegtL3NXPNgK1kuJR8kLu3WkVC_ErBPRfToLEiA_0=w3=hA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4176ef18-0125-dee8-f78a-837cb7a5c639@linux.dev>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jun 07, 2023 at 10:51:35AM +0800, Qi Zheng wrote:
+> From my personal point of view, I think it is worth sacrificing the
+> speed of unregistration alone compared to the benefits it brings
+> (lockless shrink, etc).
 
+Nobody is questioning whether this is a worthwhile improvement. The
+lockless shrinker instance iteration is definitely a good direction
+to move in. The problem is the -process- that has been followed has
+lead to a very sub-optimal result.
 
-On 6/7/23 16:20, Miklos Szeredi wrote:
-> On Thu, 23 Mar 2023 at 12:55, Amir Goldstein <amir73il@gmail.com> wrote:
->>
->> On Thu, Mar 23, 2023 at 1:18 PM Bernd Schubert
->> <bernd.schubert@fastmail.fm> wrote:
-> 
->>> there were several zufs threads, but I don't remember discussions about
->>> cache line - maybe I had missed it. I can try to read through the old
->>> threads, in case you don't have it.
->>
->> Miklos talked about it somewhere...
-> 
-> It was a private exchange between Amir and me:
-> 
->      On Tue, 25 Feb 2020 at 20:33, Miklos Szeredi <miklos@szeredi.hu> wrote
->      > On Tue, Feb 25, 2020 at 6:49 PM Amir Goldstein <amir73il@gmail.com> wrote:
->      [...]
->      > > BTW, out of curiosity, what was the purpose of the example of
->      > > "use shared memory instead of threads"?
->      >
->      > In the threaded case there's a shared piece of memory in the kernel
->      > (mm->cpu_bitmap) that is updated on each context switch (i.e. each
->      > time a request is processed by one of the server threads).  If this is
->      > a big NUMA system then cacheline pingpong on this bitmap can be a real
->      > performance hit.
->      >
->      > Using shared memory means that the address space is not shared, hence
->      > each server "thread" will have a separate "mm" structure, hence no
->      > cacheline pingpong.
->      >
->      > It would be nice if the underlying problem with shared address space
->      > could be solved in a scalable way instead of having to resort to this
->      > hack, but it's not a trivial thing to do.  If you look at the
->      > scheduler code, there's already a workaround for this issue in the
->      > kernel threads case, but that doesn't work for user threads.
+> Of course, it would be better if there is a more perfect solution.
+> If you have a better idea, it might be better to post the code first for
+> discussion. Otherwise, I am afraid that if we just revert it, the
+> problem of shrinker_rwsem will continue for many years.
 
-Ah, thank you! I can quote this mail here then for the next version.
+No, a revert doesn't mean we don't want the change; a revert means
+the way the change was attempted has caused unexpected problems.
+We need to go back to the drawing board and work out a better way to
+do this.
 
-Thanks,
-Bernd
+> And hi Dave, I know you're mad that I didn't cc you in the original
+> patch.
 
-PS: I get currently distracted by other work, I hope I can get back to 
-fuse by tomorrow.
+No, I'm not mad at you.
+
+If I'm annoyed at anyone, it's the senior mm developers and
+maintainers that I'm annoyed at - not informing relevant parties
+about modifications to shrinker infrastructure or implementations
+has lead to regressions escaping out to user systems multiple times
+in the past. 
+
+Yet here we are again....
+
+> Sorry again. How about splitting shrinker-related codes into
+> the separate files? Then we can add a MAINTAINERS entry to it and add
+> linux-fsdevel@vger.kernel.org to this entry? So that future people
+> will not miss to cc fs folks.
+
+I don't think that fixes the problem, because the scope if much
+wider than fs-devel:  look at all the different subsystems
+that have a shrinker.
+
+The whole kernel development process has always worked by the rule
+that we're changing common infrastructure, all the subsystems using
+that infrastructure need to be cc'd on the changes to the
+infrastructure they are using. Just cc'ing -fsdevel isn't enough,
+we've also got shrinkers in graphics driver infrastructure, *RCU*,
+virtio, DM, bcache and various other subsystems.
+
+And I'm betting most of them don't know that significant changes
+have been made to how the shrinkers work....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
