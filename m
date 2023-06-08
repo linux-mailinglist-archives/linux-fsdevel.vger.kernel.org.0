@@ -2,55 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67CDF7276A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 07:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 774727276BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 07:33:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234313AbjFHF3T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 01:29:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37672 "EHLO
+        id S233781AbjFHFd4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 01:33:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231320AbjFHF3S (ORCPT
+        with ESMTP id S233779AbjFHFdy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 01:29:18 -0400
+        Thu, 8 Jun 2023 01:33:54 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 528B719BB;
-        Wed,  7 Jun 2023 22:29:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08F926B8;
+        Wed,  7 Jun 2023 22:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=AuoFXc6mC0CchCsTVGZxzFlsH6pVBxlEu3dUOFHvvfQ=; b=Syo8qVTQpUGvrpjzKiLhGW4olW
-        sJuNZOHW1JESoIpqG4kgoklwg3rwUAFASf7B6oBHY5dODAeP78HHiYpWmm8fNpb2AylunV5ggx2nN
-        bSkP1HbE6kIDxyPuD5LPCsuvGdGbFuRVJWHopON+ddKYPDSuIqlVTWeivflo87mpRvQXouGK0DlzL
-        0JIVL5XtASvtBxvljSTzt1cSr2ykwQbgEQ8PcbGpA3OUsb+yQP3VVq65/sDTX85I8iFU+WoAmVGxj
-        vJaMn5xsEK/APxX4HcwaqnHAGlXeRB5D8IkNkiTf1onh9i+Z2yWqjW5r6FltWRt6Dgkk7e4MLuJwz
-        Bo9HgZpQ==;
+        bh=grZMU2vXur0rOn+uMoQQBAunZFp7Hu66pq0e1HfBFT4=; b=Fwwv8hvFc8HxJHocWW/u6PHhNA
+        7bEec/Ojg6PSYVrMS+eSbJF6Ni6xksNTCncf9x/+T0XuMqKeQ8yFEiE9K1lq5BNY9kphDmU0uvnLg
+        5uhhQyDFXl56CbZdMdGdX5308T35ftzijUQW1mVoAjYWfYRUdpVXu1LcYsjRb+fcKlrBovKhhfqFM
+        pIm5tUGgZByBgt31bSnaVqUzH0WQMrByQttPpGqyhU7FSe8KY5VwyKvOVfI5Wspv8mE6L2FFYp6DC
+        ellSPw7/wNzO/QTZ5KhjjDJUzN2kta7BKaQvVaHXYOhG3UJ1zZC69rUrK5fCRTCf31xrCvsAzzkts
+        l/5ocKOA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q78Cm-0089EH-1Y;
-        Thu, 08 Jun 2023 05:29:04 +0000
-Date:   Wed, 7 Jun 2023 22:29:04 -0700
+        id 1q78HQ-0089hC-2i;
+        Thu, 08 Jun 2023 05:33:52 +0000
+Date:   Wed, 7 Jun 2023 22:33:52 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, hch@infradead.org,
-        sandeen@sandeen.net, song@kernel.org, rafael@kernel.org,
-        gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
-        jikos@kernel.org, bvanassche@acm.org, ebiederm@xmission.com,
-        mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
-        da.gomez@samsung.com, linux-fsdevel@vger.kernel.org,
-        kernel@tuxforce.de, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] fs: distinguish between user initiated freeze and
- kernel initiated freeze
-Message-ID: <ZIFnID9ZNpd7zrNa@infradead.org>
-References: <20230508011717.4034511-1-mcgrof@kernel.org>
- <20230508011717.4034511-4-mcgrof@kernel.org>
- <20230522234200.GC11598@frogsfrogsfrogs>
- <20230525141430.slms7f2xkmesezy5@quack3>
+To:     Ritesh Harjani <ritesh.list@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [PATCHv8 5/5] iomap: Add per-block dirty state tracking to
+ improve performance
+Message-ID: <ZIFoQIugyQLbQnfj@infradead.org>
+References: <ZIAsEkURZHRAcxtP@infradead.org>
+ <87o7lri8r4.fsf@doe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230525141430.slms7f2xkmesezy5@quack3>
+In-Reply-To: <87o7lri8r4.fsf@doe.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -62,45 +61,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 25, 2023 at 04:14:30PM +0200, Jan Kara wrote:
-> Yes, this is exactly how I'd imagine it. Thanks for writing the patch!
+On Wed, Jun 07, 2023 at 09:07:19PM +0530, Ritesh Harjani wrote:
+> I think the only remaining piece is the naming of this enum and struct
+> iomap_page.
 > 
-> I'd just note that this would need rebasing on top of Luis' patches 1 and
-> 2. Also:
-
-I'd not do that for now.  1 needs a lot more work, and 2 seems rather
-questionable.
-
-> Now the only remaining issue with the code is that the two different
-> holders can be attempting to freeze the filesystem at once and in that case
-> one of them has to wait for the other one instead of returning -EBUSY as
-> would happen currently. This can happen because we temporarily drop
-> s_umount in freeze_super() due to lock ordering issues. I think we could
-> do something like:
+> Ok, so here is what I think my preference would be -
 > 
-> 	if (!sb_unfrozen(sb)) {
-> 		up_write(&sb->s_umount);
-> 		wait_var_event(&sb->s_writers.frozen,
-> 			       sb_unfrozen(sb) || sb_frozen(sb));
-> 		down_write(&sb->s_umount);
-> 		goto retry;
-> 	}
-> 
-> and then sprinkle wake_up_var(&sb->s_writers.frozen) at appropriate places
-> in freeze_super().
+> This enum perfectly qualifies for "iomap_block_state" as it holds the
+> state of per-block.
+> Then the struct iomap_page (iop) should be renamed to struct
+> "iomap_folio_state" (ifs), because that holds the state information of all the
+> blocks within a folio.
 
-Let's do that separately as a follow on..
+Fine with me.
 
+> > 	if (!iof)
+> > 		return NULL;
+> >
+> > here and unindent the rest.
 > 
-> BTW, when reading this code, I've spotted attached cleanup opportunity but
-> I'll queue that separately so that is JFYI.
-> 
-> > +#define FREEZE_HOLDER_USERSPACE	(1U << 1)	/* userspace froze fs */
-> > +#define FREEZE_HOLDER_KERNEL	(1U << 2)	/* kernel froze fs */
-> 
-> Why not start from 1U << 0? And bonus points for using BIT() macro :).
+> Sure. Is it ok to fold this change in the same patch, right?
+> Or does it qualify for a seperate patch?
 
-BIT() is a nasty thing and actually makes code harder to read. And it
-doesn't interact very well with the __bitwise annotation that might
-actually be useful here.
-
+Either way is fine with me.
