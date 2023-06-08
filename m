@@ -2,123 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8ECB7275E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 05:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EC467275F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 06:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233908AbjFHDtI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Jun 2023 23:49:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43210 "EHLO
+        id S234035AbjFHECu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 00:02:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233153AbjFHDtG (ORCPT
+        with ESMTP id S234031AbjFHECr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Jun 2023 23:49:06 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2053.outbound.protection.outlook.com [40.107.223.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EEF926B5;
-        Wed,  7 Jun 2023 20:49:05 -0700 (PDT)
+        Thu, 8 Jun 2023 00:02:47 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2070.outbound.protection.outlook.com [40.107.220.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449BD10EA;
+        Wed,  7 Jun 2023 21:02:43 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IHzXFC2a3xRXW+OzWKguGNHE/OI69NXwfc6ysegWLxaNtg/KAzAl+hMbNsCY4cG/lYUz5aqACIj1U/YWkMtSLF7QMhxgL6uoTff5RfBYsEQHWHGRAO99Z3L1S7ODDFzVpNCjAVQ0Oayf5R/JkQ9qQcNs+Jer/mgVPwBJdK9a1xhKSL+/NvrCGV9aiXS1mzUdyBx/4fsHGd8haQsTTotUEDBLF5ZDl8kOvw5gFoMJUZBurGNU+pj9cgHh7qh2LcC8bWUSvtzq2yvrXujG9BaPhOkqzseT4d+tCDaMorDj/KZRP9+PVv0LJzUwVrdXEZ1kdl7ChlHhr4dBllVnuKGWBQ==
+ b=nXph4IgRKeRgh0qmQqhFfw7U/ComRB6DvcSaA4W4Wc52B+y5aWsRypN8c+xeluTh2QUDyoxLuTVfs4gmPewZLDq2xGE83mjl2TH1lWHMyCITz4cu7Pad6IRuFmA/ecmE39GlXSlsjQgcPelDO7TaCeAUxv4Vdjrm3chZGdI8y2i7y0hUanX5qvuXMmld376bvBgwOmgRZQDBx2NVxOYM7yHck2wSLHHTiB6FUbCyfhPrKsiQW3xNbvCgGUp7MVxTWJJ+58Uq22My+NynV6JnVQzxbXKQAcRRJp6TF18MBwn9+j/r06jYh5ySr1fSfmsBGQupbAzrVeQP1QJjULdRKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/L0X9j+SlfrIu/KiAv02S1GhXiAL82f1qIegIMq3eDo=;
- b=OFDO4IrnvZVjyNX0fbW77G42XZM9YJTqFeA8tagWfH+q7j/3vH9o2E+juOOrIKXye4IKWkBL5JDoGESw4Z37R8Def1X/tNTn6IUEc3B0nb8rNVgxEExtcaJmDKfBw2PxNCTnm7VP6o44dfhgUQYrKl8JLrqlztRVDKTKTbK63Dq43WXAN8UZ5jDvT1ZwoMjI+6+9mFxCSgNEmOjELO0nqnG14Ojp/tqOF9VEwSX1J6R4NCAB7v7Tzw0ID2/uZ+FmGZ4FIklgHhIGGVyHXhevSsA0L/LHaqayabQJHPamAqBVF9NSn4s4NBk4o2qAmahpooot0QsWnsHV5rSlfEn6fQ==
+ bh=rAtE6KU8YF/qEVKn0/iDmz8xKM6asMpK+qXfho9HpCk=;
+ b=gzS/4eUQEYgatCDperpCQRJ0MFDXjP1S2n7ocMpEJCvdgu1wDAOcY8ZzWdDgx9yLk6cVeIvxr6Wt9F6WB2jBPoDCvVDF8Ge4Odj/qMl4bmZmS8JpQRZZ/MjbTGBvPYQmS6C/on0YT1BVPgQd/MTxaIPxs+zN4zApgbkVvKQFhIPGQ1PTXk2HXRQOlpr483zO/Rcv7ZV4OYPUtJVtvaFE1OKRrXrVB8lO7NP2WiK3mU1D2Kwxqu284JIu9eJ/rEtFxnXEMUGbG6VeEf9GTBrKFkSsm40t71UvPgLlgDO9EiLe75RhCLrrG10cqND7KJLwA8iXAvc1QhFxhp9byp69sw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/L0X9j+SlfrIu/KiAv02S1GhXiAL82f1qIegIMq3eDo=;
- b=QjhYo61U2dujkTFqOjUfFHry0qTMogo2qCVL6kJeGeHgumeEz158gAnLgsoLrh/+Sjvyt33bc9+vwRLX2x5IwGcl1mtooYdcivSgbHQO1PNF6tyMcZH05PWzapUzRHuv1E+BTnJdDWN0eANLSjxsuWtHHh+pL1jpLrsMegI8SmU=
+ bh=rAtE6KU8YF/qEVKn0/iDmz8xKM6asMpK+qXfho9HpCk=;
+ b=k1vIIsXnR9msm1ImA3mGIc0MiI0plkDyRFGTxLlAikwgmbVR0AMi0B2W5SpUSnRkVup+yW3AMYbvMxE/2E04P9RFukrn0Clftl6xEmBmveYY3e9TmKgfgjhf8VGeMTd/XhuYtYJ8IUBmvzT5WhxpLbv9HrGg2T8PMyRxYSmXSU0=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from DM6PR12MB2843.namprd12.prod.outlook.com (2603:10b6:5:48::24) by
- PH0PR12MB7885.namprd12.prod.outlook.com (2603:10b6:510:28f::9) with Microsoft
+ PH8PR12MB7278.namprd12.prod.outlook.com (2603:10b6:510:222::7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6455.31; Thu, 8 Jun 2023 03:49:01 +0000
+ 15.20.6455.32; Thu, 8 Jun 2023 04:02:40 +0000
 Received: from DM6PR12MB2843.namprd12.prod.outlook.com
  ([fe80::ff22:cffa:293:5cef]) by DM6PR12MB2843.namprd12.prod.outlook.com
  ([fe80::ff22:cffa:293:5cef%3]) with mapi id 15.20.6455.030; Thu, 8 Jun 2023
- 03:49:01 +0000
-Message-ID: <aeecb9a0-b3b2-cfa2-e5b7-a64d1ffe1c0c@amd.com>
-Date:   Thu, 8 Jun 2023 13:48:51 +1000
+ 04:02:39 +0000
+Message-ID: <a310a133-8d4e-0870-adef-0b7b47a452e7@amd.com>
+Date:   Thu, 8 Jun 2023 14:02:29 +1000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Firefox/102.0 Thunderbird/102.5.1
-Subject: Re: [RFC PATCH v2 1/3] ACPI: APEI: EINJ: Refactor
- available_error_type_show()
+Subject: Re: [RFC PATCH v2 2/3] fs: debugfs: Add write functionality to
+ debugfs blobs
 Content-Language: en-US
-To:     Yazen Ghannam <yazen.ghannam@amd.com>,
-        Avadhut Naik <Avadhut.Naik@amd.com>, rafael@kernel.org,
+To:     Avadhut Naik <Avadhut.Naik@amd.com>, rafael@kernel.org,
         gregkh@linuxfoundation.org, lenb@kernel.org,
         linux-acpi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     avadnaik@amd.com, alexey.kardashevskiy@amd.com,
-        linux-kernel@vger.kernel.org
+Cc:     avadnaik@amd.com, yazen.ghannam@amd.com,
+        alexey.kardashevskiy@amd.com, linux-kernel@vger.kernel.org
 References: <20230525204422.4754-1-Avadhut.Naik@amd.com>
- <20230525204422.4754-2-Avadhut.Naik@amd.com>
- <37f64467-c9d7-826d-de41-aa571b2df0ec@amd.com>
+ <20230525204422.4754-3-Avadhut.Naik@amd.com>
 From:   Alexey Kardashevskiy <aik@amd.com>
-In-Reply-To: <37f64467-c9d7-826d-de41-aa571b2df0ec@amd.com>
+In-Reply-To: <20230525204422.4754-3-Avadhut.Naik@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SY5PR01CA0048.ausprd01.prod.outlook.com
- (2603:10c6:10:1fc::18) To DM6PR12MB2843.namprd12.prod.outlook.com
+X-ClientProxiedBy: SYBPR01CA0117.ausprd01.prod.outlook.com
+ (2603:10c6:10:1::33) To DM6PR12MB2843.namprd12.prod.outlook.com
  (2603:10b6:5:48::24)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2843:EE_|PH0PR12MB7885:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a54ad92-fcfa-434b-45ad-08db67d34b98
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2843:EE_|PH8PR12MB7278:EE_
+X-MS-Office365-Filtering-Correlation-Id: c5896d16-6e46-458a-31a4-08db67d533a2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: fVIG0m/s2qwLeLN1uRBFRBZ9C6JBa0VnkeEP/2wWd9C5gxbV0MdP0w19NvFCM/+Mx7xBSTFxsXmPbc1YJZpZ46qa6Zdjike0MLe2O1nZ7uCy5fknXhR6RxsbTCiPC3eeGRc0qXdoKbx8VHQakpyd5Mz5Zg9J3wm7IShw//ga4XdRbMzhBfpmkuU1N2tAVo+OAkbDay8ZUFp84axpa+Mm4XWl/yobYLiiiK3WyMWDpBdWRbJqejb4h5mu416OWQWCkLoXljlpIkyk7NIyMShTRVtVT08DEzXKiGhU5dZfdDxZw7oKA6I1sphejgRNVJf5v/Svy8gqtlOGVMIQfHwG9TKUCCIIgAhtgZLnfVz0USjnW1inAQiQooL/GhSCtmg5A9N7xFsz9gNctNLN/fLRFr0b4oQjjOkwxk4s8RJlFNc+HPYYa8cg0hzucSe0Hb9KwM/f19iCZ12+wbTOPqw2Jg6DYmT+qxj/FDRqqAGd3TTaeeYu49r24M2Jp/YWrWGRwt9F8IZSnnCx3lFEgzuvqN6xABz/yWK/PE7sN1vUd8KJIGDUx/CFBCCmpLuVfXiFDX7qc/QZxCZlMTnaqPj+I2biRBmpumfrJevuoJUZkTXiH28zPo3+4OLQqRycVYv0lKw2sXN9dAicP/RGmhsKcA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2843.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(39860400002)(376002)(346002)(366004)(396003)(451199021)(53546011)(478600001)(186003)(36756003)(6506007)(2616005)(83380400001)(6512007)(26005)(6666004)(6486002)(316002)(8676002)(41300700001)(66946007)(66476007)(66556008)(4326008)(31696002)(31686004)(5660300002)(2906002)(110136005)(8936002)(38100700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: l2Kxm9mN1XrtN8Ac3zHLk6LjCSb6hqXt0PxjqTmDn0N7bzcr6DRsh0drJiL9ADwl5hIz66wMHfC0+O2C+/7MDf6IWpKR5RHln50xYdXQRDzDlNC8C6DomzO9fGmvpPFtBFEqplU+BEaNcIVatJL45KCPnTwWFn1yBged5PoShyqFhyEfwh9i+bVQFDTGU19jYysn0ZVxzniPKbB/Dlh1QQ6O4dVBdg2qIJLqTEKGSu4lj3dx9CNfMue9IkIn4Wbf82YrZSyodfey25ZWrWTayTR4Ox1AEzvBwh2v422TmFgsWJc46jxeD5GqIKI++2gI+mdTVQQSHvEfqa1DxyHdHCSKu6HNJCjO+VJwinQRowGjhKnWdUq4BMndREB+WQT9WnAnhbudYQJXJeZyKyusriBd+XyoMM1aXVA6GPYGg0xfRYM9y1sOOKy/qB8AqSCZy+88GOOFN5KDVjE2B20pNtJ4GIMYUBeZSDP6bs04V3kOd7w/GdyB/eLSM8cnxlYYyU1gwkdy3E0T5fWSSM+rkFq5eqQ1pDm4TsSrpjgOB8nlKbdWMwMfONxGynNRx6qDUVsbEKod9obOaA8eo4Cswz0DLHChVWTSky3Sz5yP22swLc/ie5vkSlAN9//TACML5hwxxx+qAKC3zePqHLsMRg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2843.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(376002)(366004)(346002)(396003)(39860400002)(451199021)(5660300002)(31686004)(186003)(31696002)(26005)(6512007)(6506007)(53546011)(2906002)(36756003)(316002)(8676002)(8936002)(41300700001)(38100700002)(66476007)(66556008)(66946007)(478600001)(6486002)(4326008)(2616005)(6666004)(83380400001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZXZiMmxWWlFuNnBZVmZrTjNsb3JJaDBWMldvWFRBRmFZVldDT3BHS2cyUDlF?=
- =?utf-8?B?S3ROeXJiVXZ5eVh4b2dXc1laT1AwS2RabjdtendXcWxObit3Tk81bGpYa2ZJ?=
- =?utf-8?B?VEYxTm5reEJYazVsWWFMQTFQeWdWSXBmdEd4NzFhMDFYWGFtNjJ0Skladjk5?=
- =?utf-8?B?UDJ4OHQ5RjRkcmRQZXY5d0hJdFU5ZzRHWUVQNGJHUmwvNGh5cDh2dmZXWWIz?=
- =?utf-8?B?VjRZRzlJcGNDWUdPMjFsOWFLUlpkR05OUEtFVitCd3Zhak9QMU81d1dBQVRh?=
- =?utf-8?B?VzJ0UlU0WjVPOWQxQ3NpemNDb3ZqMFd6cWZERmpITTVhOWhFL0ZaTGxuUlkz?=
- =?utf-8?B?UENUU3NuaEhoK1gzMkRWOW5uMlM0c3ppem9KVG5XVWl0QWdONzJPZ0UwUXZY?=
- =?utf-8?B?RGpLdmZEUXNOL0pVSUhsMndJUUlPaHVjRS9CTHc2LytXOERhc2FMK1Fnci9B?=
- =?utf-8?B?L2RESFRacVZMc2Mzc0IrK1dNdURtSjZGMzBLR2d2OU5XOFg5R2VVc1hsamlT?=
- =?utf-8?B?YmlZUkpOQUxqVlFaR000WVplbEE2bXRDdXZnL0J2c2lScEVZL1N2b1ZkT2sx?=
- =?utf-8?B?RlZUdW5QSWVpUnhIMUQ4dndFMHFQTGxhUlFTRUt1T1ZDQVQ3WjlmS1lmNzFQ?=
- =?utf-8?B?aDJ5WFd1YjlTZW1HSnFnUUluK1NvZHR5eDhPUzNXTEMyYW5kVUFzS3JNamtM?=
- =?utf-8?B?b09FbjJSQ1d6UllhV3ltaW8vaFJpK2tDOUpHdjhkelVLVDBkbnFzeFl2VXg3?=
- =?utf-8?B?V25BSEdsNUNsVGI2TGlvcktnbEduOXdkdHBFSzhMemFleGt0N01rajJ0R0tm?=
- =?utf-8?B?dUZ5dFhTcmdNWE11Y0VhbXNsS213QkVyQXJucSt3bWhvUVJFWDlOOTBvMmRO?=
- =?utf-8?B?dTk2S29nUEh0K2FJQ3R6LzRHdklJNFJvWk1HUGlqWGpUMVNRUkN1SVJIYUNo?=
- =?utf-8?B?UjlYTUlBYU9vTUxxOXJXcmtmaklNTUlWK2xnT09wbm8wL0lZdkd5SVBHRnNH?=
- =?utf-8?B?MmZ5U041SnZFRkxuRjBhZExrYm84Nnl2VmFuVmpvUTVNTFd5UWFiYUdJMG1D?=
- =?utf-8?B?ZzVIZXhlanByallKTG1UWU5qaFFZTFBGZFNFZ1ZJdWhJMlZNN0g2U3ZSOW9m?=
- =?utf-8?B?RngxUUZjSzM1ZC96YStPMGZId2w3WUFtMStOdEFUaDZwamh4Q0Rnd2Vmc3lQ?=
- =?utf-8?B?REFxK0RzVGRBQkJwN2oxNkVHVnNvRVZ0OEZpODVybVppV2dUZDJIYWJVSU5s?=
- =?utf-8?B?eHZxb0ZKT2JicWhaQjR0SDBrYm1HYURFcjdyZkFjRVNCR0JHd2ZjaVBIZGYw?=
- =?utf-8?B?THdiOWZvMXR0Snk1OEVPVkltZzFFZWF3dCtDNHNjNGJBenhlR3J0d0MyTEtv?=
- =?utf-8?B?aTVaN0p1WThoNTQvaUlPRnlzVWo3c0JBWU45TEtUSDUzdGV3ejd4QU9ZNnZM?=
- =?utf-8?B?c2haRENablQ4eHpDR0J5SFNRb1laeUNYNGJUSHluYWlRYWxBOEJJMS9ldkc3?=
- =?utf-8?B?bVUxQk9LWlpaMkVyK3JOdEkxcjBzS0cwL0Npb01xUWRWazZTTUxKYkRUei9w?=
- =?utf-8?B?QmFZdGhuYVlRbFprMmMwWlJ0VkZIWXAyaXhlUFovZ1FRdi8xVWtqeURVMkFZ?=
- =?utf-8?B?TkkxNklPSjRpQjBLbG9zVmxtakJxS0crY29nSmt6a2kwMW1qejVvbklXcjcr?=
- =?utf-8?B?aGE1T0Z2SFZyQm9KMExYOE12SzRFbkVOZTQ1MGhINnBQTnl5c0xXc1lhVTE0?=
- =?utf-8?B?SWI4SDRDM0x1Y0hPYnhoY0NMWXMyRCtCYm1RMmJub1VHNmJqaHJIbFRSdlYv?=
- =?utf-8?B?ZmJaSENFTnVEcGpGUXdaUHEybzF4Sng0TjI5cjdxK2pLMW1qUWpwUFpBa1g3?=
- =?utf-8?B?NTZFanVNWlprV0ZibGErZ1IyY01vOFhIdisrYnBBazBQaWNBZHpqbWpHRGJy?=
- =?utf-8?B?R3VlZW01alE1UDJQZmhxTUtRc3FmOTh5REt5ZG1xU2EwVVJTZnVnYWFIVzVw?=
- =?utf-8?B?SkNvNnlaNGdMbVpES0doZWlOWXpKUUdRNVlhYXFEYnhtbmIwQjI5UGwvQUk2?=
- =?utf-8?B?Z1E3cXh1YUdDTjlBOWpxNkpJYW4xaVZlWW53OWZnM3k4QWUzdEphdG5GSjRo?=
- =?utf-8?Q?At2ZNzmR34J/QmwKT06fJGdmg?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?M1h4TExPbDMxcXVNRkxyY3lvNitPeXcvWk82ZVhseHdYUkNqNXIvcU81TXB4?=
+ =?utf-8?B?dUlodi9uUGRSQVg3SC8vWnF3Y2JPYVRmcC9SbUNsN3hZcVdhcGxTOTFZWGhw?=
+ =?utf-8?B?empZWE5NS0xoWXdVMEhleGR4Y2ZDWkVVcUFGc1ZoMGZtT3drRE1NVXY0ZGw1?=
+ =?utf-8?B?cjhjRHlIajVyQmlaNFlUbFVmOGRUMzNFL0hBbUJzaHFhNnRXT3R3NFdITnBs?=
+ =?utf-8?B?Mys3akZ6b2kzemNLN2YreXloOUg4WDlLNDh6TmpCKzlpZVZsei9tRFQ0eSt6?=
+ =?utf-8?B?Uks3RmRIVW01K2twaW1jRitGU3RMamdRTlQ0V1BIM0YyTmpRMCsrMXhJOTZM?=
+ =?utf-8?B?cUh0RkNiLzY3NUN0QVdub0ZuRjB5d3JnQzJLYktnb0ZtR3BjU3Z1UDlReDkw?=
+ =?utf-8?B?ZHdJQU5xNTQ5OFM3dlJtOHpxdFpMTFQ1ZEhOUnNCaWtURUoxUnNOZXRmaHV2?=
+ =?utf-8?B?TlhoQlZZR1gweVpXVEZDYVdCM0tueVRIME1CdytRb1ZlTm9UTkE3cUFtZGY3?=
+ =?utf-8?B?QnFydFJCMDVIUGxhTm1MR0gxR2tIVGpXNGpJUWtlM3ZHUjQ1ZnVRamxuRy8w?=
+ =?utf-8?B?S2NHbTByUzRoSUtrbkwrdS9aampvMHl5aE8wUE45NDVvbGFmZFRMR3AxdnRP?=
+ =?utf-8?B?UkhHL0tXcUVQSnlOM0lGbUZnNnVtTTJyYmQ3eXZSMTkzem43TG5tQ3B4Q3lK?=
+ =?utf-8?B?VTRadWpMcmJEQXBwM0ErWjZPS01VU2tJTDUrbCsxWjM2V1V6dC9KRlBYYThY?=
+ =?utf-8?B?STBNdEsyUVBxOW1jWG50V1NIaVhQbkdkbThZN1hZbmFCS1cxV0JkT2ZTS093?=
+ =?utf-8?B?aFdaR2xYeVFIdFdDVW5Ldy81akFDRkk5NmRlTnVEU0djaVhEbXlaR0hvSlBw?=
+ =?utf-8?B?OVhGRzI0WGdLb1hId00yNDlWRDhMS3VlRkdwNXNQcWtFTFo5VEdDNnVNciti?=
+ =?utf-8?B?S051MURkYkFCamZYbkI5Y2cxU09xRG92NWh4M0J2MnYzRFFwMjBOeVdPeHpD?=
+ =?utf-8?B?THdqdU15ZU9CSjNxdlBlczhyb2xROWl4ekZpNGFvNXdWeXBiL2VVV2JWM2w0?=
+ =?utf-8?B?SVRxNWRKVmQ3V0dTc1lEZk02SFAwcUNidWhsbGtQSnJRY0dkQkJESXF0YzJF?=
+ =?utf-8?B?ZFlod2o2RzJiMC9icCtyYWt3REY0azNmOGFQOTlFL0pETGlvQUVMcXF3aUZq?=
+ =?utf-8?B?VGRET2d3Q0lJd2xsUksvVDd4NTVUWnJ5eHBleUNNUnc0ZDhHdjFOL20zc2dL?=
+ =?utf-8?B?ZXVsTE00NnV5N2IrUjN4T05wbkdSOGxyWWo2TUtxZWNqZ0h4Z1RWaVduMURW?=
+ =?utf-8?B?aUhtTkdMczIvMEdMa29qNEJUUHFaS29IekZJRGdoZi8yK3BXY1MrQkZRRnhR?=
+ =?utf-8?B?OVhyQU0zbWFwaUM3emswNEVYb0pLL2JrY3pGcjdlMFBabjdwUDhLcGtOYmd4?=
+ =?utf-8?B?dDNVS2ZuN2NKTUJ6cTE3MnVoWmk2RnkyZDdvZmczN2xwQmEyd1Z5OFhGaUQ4?=
+ =?utf-8?B?NWlOM0RxWnNiSFFNYXRGa2JCRjBnUmFuMXNSTkZHekgraGltZUVXRWEzdGZo?=
+ =?utf-8?B?NG44MkhXL3pDVVRmdE42VEM4UmVpNjZQRVpSOVZRRnBURGJqcjZmc255anFx?=
+ =?utf-8?B?NVhKUW9mdUpEN082MldSM0lRVEtZcGZaN2M0R1FPQVFod0dQRUk0dHk4RnpY?=
+ =?utf-8?B?ZE1rRVpZajFzaEtUUmJ3Y3EvWTBYZnY5eTBLd2x4TFBGOThGNmFKeEtrNkVw?=
+ =?utf-8?B?Y1Fpano4UjBJWDNtZFZ6bi9DTXI4WVJzODZvSGI3ZzYwa2xudjdPT2ZvZ3BH?=
+ =?utf-8?B?QWhGY2pBajQwTTA1YnFqSy8xV3YyRFRpYzl4NjM0OXBlazd5MGh6OHhyT1ph?=
+ =?utf-8?B?b3BsaHU5STlROEE1b0c4aGZieXJiLzh2MzVaYUFjcHppZEp6eVJMM2xDc3BB?=
+ =?utf-8?B?Sjl6UzhTRVNScjRaK0d1QTBZT3NacERJUmFRU3dNK3hxVEw1dUp0N3JsTXBQ?=
+ =?utf-8?B?MXlDbDdNUTFmNDE2aFF0T1FwSTBBOUlkNlBMZWdoY0taOW5qZTFlaUZiM2tK?=
+ =?utf-8?B?bzNYdFo2eUhXOWp0b2lHQmIvYTJ6c2NYWFRBa3pCRnZTbC9HamJrd1RuQ1J6?=
+ =?utf-8?Q?SxoURPTkg6oAHPdtOlL9Ksxo9?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a54ad92-fcfa-434b-45ad-08db67d34b98
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5896d16-6e46-458a-31a4-08db67d533a2
 X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2843.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2023 03:49:01.3620
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2023 04:02:39.7757
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lzT/J9NaoJC2LMqJREdHvkI7QPGDUeJafDY8400cx17Sr2tqCN3pRy0i3ShAaDC3n3cP3aTTnt+iWmobS1fhIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7885
+X-MS-Exchange-CrossTenant-UserPrincipalName: cuFkki4NTL1IwHwDyfr2+I+nk+v6TYXpUHimJZkzbCgGBUMId4NLWtzNOgKcpYhpKCusBtTLsLYlBBCV8uPM1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7278
 X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
@@ -131,97 +129,89 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 8/6/23 00:20, Yazen Ghannam wrote:
-> On 5/25/23 4:44 PM, Avadhut Naik wrote:
->> OSPM can discover the error injection capabilities of the platform by
->> executing GET_ERROR_TYPE error injection action.[1] The action returns
->> a DWORD representing a bitmap of platform supported error injections.[2]
->>
->> The available_error_type_show() function determines the bits set within
->> this DWORD and provides a verbose output, from einj_error_type_string
->> array, through /sys/kernel/debug/apei/einj/available_error_type file.
->>
->> The function however, assumes one to one correspondence between an error's
->> position in the bitmap and its array entry offset. Consequently, some
->> errors like Vendor Defined Error Type fail this assumption and will
->> incorrectly be shown as not supported, even if their corresponding bit is
->> set in the bitmap and they have an entry in the array.
->>
->> Navigate around the issue by converting einj_error_type_string into an
->> array of structures with a predetermined mask for all error types
->> corresponding to their bit position in the DWORD returned by GET_ERROR_TYPE
->> action. The same breaks the aforementioned assumption resulting in all
->> supported error types by a platform being outputted through the above
->> available_error_type file.
->>
->> [1] ACPI specification 6.5, Table 18.25
->> [2] ACPI specification 6.5, Table 18.30
->>
->> Suggested-by: Alexey Kardashevskiy <alexey.kardashevskiy@amd.com>
->> Signed-off-by: Avadhut Naik <Avadhut.Naik@amd.com>
->> ---
->>   drivers/acpi/apei/einj.c | 43 ++++++++++++++++++++--------------------
->>   1 file changed, 22 insertions(+), 21 deletions(-)
->>
->> diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
->> index 013eb621dc92..d5f8dc4df7a5 100644
->> --- a/drivers/acpi/apei/einj.c
->> +++ b/drivers/acpi/apei/einj.c
->> @@ -577,25 +577,25 @@ static u64 error_param2;
->>   static u64 error_param3;
->>   static u64 error_param4;
->>   static struct dentry *einj_debug_dir;
->> -static const char * const einj_error_type_string[] = {
->> -	"0x00000001\tProcessor Correctable\n",
->> -	"0x00000002\tProcessor Uncorrectable non-fatal\n",
->> -	"0x00000004\tProcessor Uncorrectable fatal\n",
->> -	"0x00000008\tMemory Correctable\n",
->> -	"0x00000010\tMemory Uncorrectable non-fatal\n",
->> -	"0x00000020\tMemory Uncorrectable fatal\n",
->> -	"0x00000040\tPCI Express Correctable\n",
->> -	"0x00000080\tPCI Express Uncorrectable non-fatal\n",
->> -	"0x00000100\tPCI Express Uncorrectable fatal\n",
->> -	"0x00000200\tPlatform Correctable\n",
->> -	"0x00000400\tPlatform Uncorrectable non-fatal\n",
->> -	"0x00000800\tPlatform Uncorrectable fatal\n",
->> -	"0x00001000\tCXL.cache Protocol Correctable\n",
->> -	"0x00002000\tCXL.cache Protocol Uncorrectable non-fatal\n",
->> -	"0x00004000\tCXL.cache Protocol Uncorrectable fatal\n",
->> -	"0x00008000\tCXL.mem Protocol Correctable\n",
->> -	"0x00010000\tCXL.mem Protocol Uncorrectable non-fatal\n",
->> -	"0x00020000\tCXL.mem Protocol Uncorrectable fatal\n",
->> +static struct { u32 mask; const char *str; } const einj_error_type_string[] = {
->> +	{0x00000001, "Processor Correctable"},
->> +	{0x00000002, "Processor Uncorrectable non-fatal"},
->> +	{0x00000004, "Processor Uncorrectable fatal"},
->> +	{0x00000008, "Memory Correctable"},
->> +	{0x00000010, "Memory Uncorrectable non-fatal"},
->> +	{0x00000020, "Memory Uncorrectable fatal"},
->> +	{0x00000040, "PCI Express Correctable"},
->> +	{0x00000080, "PCI Express Uncorrectable non-fatal"},
->> +	{0x00000100, "PCI Express Uncorrectable fatal"},
->> +	{0x00000200, "Platform Correctable"},
->> +	{0x00000400, "Platform Uncorrectable non-fatal"},
->> +	{0x00000800, "Platform Uncorrectable fatal"},
->> +	{0x00001000, "CXL.cache Protocol Correctable"},
->> +	{0x00002000, "CXL.cache Protocol Uncorrectable non-fatal"},
->> +	{0x00004000, "CXL.cache Protocol Uncorrectable fatal"},
->> +	{0x00008000, "CXL.mem Protocol Correctable"},
->> +	{0x00010000, "CXL.mem Protocol Uncorrectable non-fatal"},
->> +	{0x00020000, "CXL.mem Protocol Uncorrectable fatal"},
->>   };
->>
+On 26/5/23 06:44, Avadhut Naik wrote:
+> Currently, debugfs_create_blob() creates read-only debugfs binary blob
+> files.
 > 
-> I think it'd be easier to read if the masks used the BIT() macro rather
-> than a hex value.
-
-Makes sense but I'd say because it is easier to match the APCI spec 
-which uses the bit numbers, not easier to read (which is arguable).
-
-
+> In some cases, however, userspace tools need to write variable length
+> data structures into predetermined memory addresses. An example is when
+> injecting Vendor-defined error types through the einj module. In such
+> cases, the functionality to write to these blob files in debugfs would
+> be desired since the mapping aspect can be handled within the modules
+> with userspace tools only needing to write into the blob files.
 > 
-> Thanks,
-> Yazen
+> Implement a write callback to enable writing to these blob files in
+> debugfs.
+> 
+> Signed-off-by: Avadhut Naik <Avadhut.Naik@amd.com>
+
+Reviewed-by: Alexey Kardashevskiy <aik@amd.com>
+
+> ---
+>   fs/debugfs/file.c | 28 +++++++++++++++++++++++-----
+>   1 file changed, 23 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+> index 1f971c880dde..fab5a562b57c 100644
+> --- a/fs/debugfs/file.c
+> +++ b/fs/debugfs/file.c
+> @@ -973,17 +973,35 @@ static ssize_t read_file_blob(struct file *file, char __user *user_buf,
+>   	return r;
+>   }
+>   
+> +static ssize_t write_file_blob(struct file *file, const char __user *user_buf,
+> +			       size_t count, loff_t *ppos)
+> +{
+> +	struct debugfs_blob_wrapper *blob = file->private_data;
+> +	struct dentry *dentry = F_DENTRY(file);
+> +	ssize_t r;
+> +
+> +	r = debugfs_file_get(dentry);
+> +	if (unlikely(r))
+> +		return r;
+> +	r = simple_write_to_buffer(blob->data, blob->size, ppos, user_buf,
+> +				   count);
+> +
+> +	debugfs_file_put(dentry);
+> +	return r;
+> +}
+> +
+>   static const struct file_operations fops_blob = {
+>   	.read =		read_file_blob,
+> +	.write =	write_file_blob,
+>   	.open =		simple_open,
+>   	.llseek =	default_llseek,
+>   };
+>   
+>   /**
+> - * debugfs_create_blob - create a debugfs file that is used to read a binary blob
+> + * debugfs_create_blob - create a debugfs file that is used to read and write
+> + * a binary blob
+>    * @name: a pointer to a string containing the name of the file to create.
+> - * @mode: the read permission that the file should have (other permissions are
+> - *	  masked out)
+> + * @mode: the permission that the file should have
+>    * @parent: a pointer to the parent dentry for this file.  This should be a
+>    *          directory dentry if set.  If this parameter is %NULL, then the
+>    *          file will be created in the root of the debugfs filesystem.
+> @@ -992,7 +1010,7 @@ static const struct file_operations fops_blob = {
+>    *
+>    * This function creates a file in debugfs with the given name that exports
+>    * @blob->data as a binary blob. If the @mode variable is so set it can be
+> - * read from. Writing is not supported.
+> + * read from and written to.
+>    *
+>    * This function will return a pointer to a dentry if it succeeds.  This
+>    * pointer must be passed to the debugfs_remove() function when the file is
+> @@ -1007,7 +1025,7 @@ struct dentry *debugfs_create_blob(const char *name, umode_t mode,
+>   				   struct dentry *parent,
+>   				   struct debugfs_blob_wrapper *blob)
+>   {
+> -	return debugfs_create_file_unsafe(name, mode & 0444, parent, blob, &fops_blob);
+> +	return debugfs_create_file_unsafe(name, mode, parent, blob, &fops_blob);
+>   }
+>   EXPORT_SYMBOL_GPL(debugfs_create_blob);
+>   
 
 -- 
 Alexey
