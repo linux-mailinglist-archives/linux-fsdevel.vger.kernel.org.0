@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2620C727DC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 13:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A0A727DCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 13:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236200AbjFHLEN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 07:04:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35730 "EHLO
+        id S236156AbjFHLES (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 07:04:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236096AbjFHLD4 (ORCPT
+        with ESMTP id S236175AbjFHLEM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 07:03:56 -0400
+        Thu, 8 Jun 2023 07:04:12 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E222736;
-        Thu,  8 Jun 2023 04:03:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6589B2D6A;
+        Thu,  8 Jun 2023 04:03:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=EECaCcGcA2RJB6GrhGH5eYK/rKNHYmRjCPXdXwM5dkY=; b=B3pcNuzXyrkPTloOL+dQb8NZPb
-        H3Rf+5AyeWkNEmKH5966lG6BdeKNORGKNkVfGOEpNxjsEFF4B2pkD+aXWsmS57WMviho1RDvhE9Ww
-        H4PCYwnp242TXX9zZELlXiqR5Feq1GMgrihOjzX4DazABYxKlfjMXsXNObbbgOEhOMqFGhk0ITI6N
-        7knvhBJo/H9tpP3HUwL8HCVIZeTcJ75V2SiGgQSXjuT4FLnG4ANhEWcE2CT40HFa4JXFGYmGsa+60
-        g3McK7+eKyaVZ3ZMj02iv/dMefPnQ+goBCoFE4By213AsnJ5mVt3BfHiz3H1G1Ex/1pVmf0PrDkbV
-        awWtK0xw==;
+        bh=hjjFnesh52uU9Qk+4RHQ5Qe4VK0Xp4FJ5VCWZAoNRNc=; b=Ufwb3KiIV/om3xKM/QjbaGxz1s
+        6Bu4GdnYLkeF+4SmlU7nFNH3oL+BAdZSpZS2KtoqIQvvoLvfKCqqYEFjHPkIL+NPwTE//A6hj003/
+        Y8olHJtjWZZ9IOgnubC/3GL4aEI3eb0g9SrkGeGFnIPjXSrdof7XBxYU0KZRBUWlvGh1Q6aZJHmfK
+        Vh+7LunJW5emyh3WkaA7SF0gh1S/RLZvjBywALlL/G5e43QtQXZt+4iJoxYlMpSnyacuiwdJMVoUU
+        45l42r7T9ZIL78PXiis7Cjw9fHf8fObNRaTrm9lDjcjJtKzmtyrXi2tFpQ21nxU2w6FsXJLv50xBI
+        UxppLpXw==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q7DQJ-0091rf-2k;
-        Thu, 08 Jun 2023 11:03:24 +0000
+        id 1q7DQM-0091uW-1I;
+        Thu, 08 Jun 2023 11:03:26 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Richard Weinberger <richard@nod.at>,
@@ -52,9 +52,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org, Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 08/30] block: pass a gendisk to ->open
-Date:   Thu,  8 Jun 2023 13:02:36 +0200
-Message-Id: <20230608110258.189493-9-hch@lst.de>
+Subject: [PATCH 09/30] block: remove the unused mode argument to ->release
+Date:   Thu,  8 Jun 2023 13:02:37 +0200
+Message-Id: <20230608110258.189493-10-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230608110258.189493-1-hch@lst.de>
 References: <20230608110258.189493-1-hch@lst.de>
@@ -71,853 +71,538 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-->open is only called on the whole device.  Make that explicit by
-passing a gendisk instead of the block_device.
+The mode argument to the ->release block_device_operation is never used,
+so remove it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 Acked-by: Christian Brauner <brauner@kernel.org>
-Acked-by: Jack Wang <jinpu.wang@ionos.com>		[rnbd]
+Acked-by: Jack Wang <jinpu.wang@ionos.com>			[rnbd]
 ---
- arch/um/drivers/ubd_kern.c          |  5 ++---
- arch/xtensa/platforms/iss/simdisk.c |  4 ++--
- block/bdev.c                        |  2 +-
- drivers/block/amiflop.c             |  8 ++++----
- drivers/block/aoe/aoeblk.c          |  4 ++--
- drivers/block/ataflop.c             | 16 +++++++--------
- drivers/block/drbd/drbd_main.c      |  6 +++---
- drivers/block/floppy.c              | 30 +++++++++++++++--------------
- drivers/block/nbd.c                 |  8 ++++----
- drivers/block/pktcdvd.c             |  6 +++---
- drivers/block/rbd.c                 |  4 ++--
- drivers/block/rnbd/rnbd-clt.c       |  4 ++--
- drivers/block/swim.c                | 10 +++++-----
- drivers/block/swim3.c               | 10 +++++-----
- drivers/block/ublk_drv.c            |  4 ++--
- drivers/block/z2ram.c               |  6 ++----
- drivers/block/zram/zram_drv.c       | 13 +++++--------
- drivers/cdrom/gdrom.c               |  4 ++--
- drivers/md/bcache/super.c           |  4 ++--
- drivers/md/dm.c                     |  4 ++--
- drivers/md/md.c                     |  6 +++---
- drivers/mmc/core/block.c            |  4 ++--
- drivers/mtd/mtd_blkdevs.c           |  4 ++--
- drivers/mtd/ubi/block.c             |  4 ++--
- drivers/nvme/host/core.c            |  4 ++--
- drivers/nvme/host/multipath.c       |  4 ++--
- drivers/s390/block/dasd.c           |  4 ++--
- drivers/s390/block/dcssblk.c        |  7 +++----
- drivers/scsi/sd.c                   | 12 ++++++------
- drivers/scsi/sr.c                   |  6 +++---
+ arch/um/drivers/ubd_kern.c          |  4 ++--
+ arch/xtensa/platforms/iss/simdisk.c |  2 +-
+ block/bdev.c                        | 14 +++++++-------
+ drivers/block/amiflop.c             |  2 +-
+ drivers/block/aoe/aoeblk.c          |  2 +-
+ drivers/block/ataflop.c             |  4 ++--
+ drivers/block/drbd/drbd_main.c      |  4 ++--
+ drivers/block/floppy.c              |  2 +-
+ drivers/block/loop.c                |  2 +-
+ drivers/block/nbd.c                 |  2 +-
+ drivers/block/pktcdvd.c             |  4 ++--
+ drivers/block/rbd.c                 |  2 +-
+ drivers/block/rnbd/rnbd-clt.c       |  2 +-
+ drivers/block/swim.c                |  2 +-
+ drivers/block/swim3.c               |  3 +--
+ drivers/block/z2ram.c               |  2 +-
+ drivers/cdrom/gdrom.c               |  2 +-
+ drivers/md/bcache/super.c           |  2 +-
+ drivers/md/dm.c                     |  2 +-
+ drivers/md/md.c                     |  2 +-
+ drivers/mmc/core/block.c            |  2 +-
+ drivers/mtd/mtd_blkdevs.c           |  2 +-
+ drivers/mtd/ubi/block.c             |  2 +-
+ drivers/nvme/host/core.c            |  2 +-
+ drivers/nvme/host/multipath.c       |  2 +-
+ drivers/s390/block/dasd.c           |  2 +-
+ drivers/s390/block/dcssblk.c        |  4 ++--
+ drivers/scsi/sd.c                   |  3 +--
+ drivers/scsi/sr.c                   |  2 +-
  include/linux/blkdev.h              |  2 +-
- 31 files changed, 102 insertions(+), 107 deletions(-)
+ 30 files changed, 41 insertions(+), 43 deletions(-)
 
 diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-index f4c1e6e97ad520..6b831f82881bc4 100644
+index 6b831f82881bc4..8b79554968addb 100644
 --- a/arch/um/drivers/ubd_kern.c
 +++ b/arch/um/drivers/ubd_kern.c
-@@ -108,7 +108,7 @@ static inline void ubd_set_bit(__u64 bit, unsigned char *data)
- static DEFINE_MUTEX(ubd_lock);
+@@ -109,7 +109,7 @@ static DEFINE_MUTEX(ubd_lock);
  static DEFINE_MUTEX(ubd_mutex); /* replaces BKL, might not be needed */
  
--static int ubd_open(struct block_device *bdev, fmode_t mode);
-+static int ubd_open(struct gendisk *disk, fmode_t mode);
- static void ubd_release(struct gendisk *disk, fmode_t mode);
+ static int ubd_open(struct gendisk *disk, fmode_t mode);
+-static void ubd_release(struct gendisk *disk, fmode_t mode);
++static void ubd_release(struct gendisk *disk);
  static int ubd_ioctl(struct block_device *bdev, fmode_t mode,
  		     unsigned int cmd, unsigned long arg);
-@@ -1154,9 +1154,8 @@ static int __init ubd_driver_init(void){
- 
- device_initcall(ubd_driver_init);
- 
--static int ubd_open(struct block_device *bdev, fmode_t mode)
-+static int ubd_open(struct gendisk *disk, fmode_t mode)
- {
--	struct gendisk *disk = bdev->bd_disk;
- 	struct ubd *ubd_dev = disk->private_data;
- 	int err = 0;
- 
-diff --git a/arch/xtensa/platforms/iss/simdisk.c b/arch/xtensa/platforms/iss/simdisk.c
-index f50caaa1c2496e..38f95f79a1270c 100644
---- a/arch/xtensa/platforms/iss/simdisk.c
-+++ b/arch/xtensa/platforms/iss/simdisk.c
-@@ -120,9 +120,9 @@ static void simdisk_submit_bio(struct bio *bio)
- 	bio_endio(bio);
- }
- 
--static int simdisk_open(struct block_device *bdev, fmode_t mode)
-+static int simdisk_open(struct gendisk *disk, fmode_t mode)
- {
--	struct simdisk *dev = bdev->bd_disk->private_data;
-+	struct simdisk *dev = disk->private_data;
- 
- 	spin_lock(&dev->lock);
- 	++dev->users;
-diff --git a/block/bdev.c b/block/bdev.c
-index 981f6135795138..8a5fded303d4ed 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -652,7 +652,7 @@ static int blkdev_get_whole(struct block_device *bdev, fmode_t mode)
- 	int ret;
- 
- 	if (disk->fops->open) {
--		ret = disk->fops->open(bdev, mode);
-+		ret = disk->fops->open(disk, mode);
- 		if (ret) {
- 			/* avoid ghost partitions on a removed medium */
- 			if (ret == -ENOMEDIUM &&
-diff --git a/drivers/block/amiflop.c b/drivers/block/amiflop.c
-index 6de12b311749a1..0cf2e58294be68 100644
---- a/drivers/block/amiflop.c
-+++ b/drivers/block/amiflop.c
-@@ -1654,10 +1654,10 @@ static void fd_probe(int dev)
-  * /dev/PS0 etc), and disallows simultaneous access to the same
-  * drive with different device numbers.
-  */
--static int floppy_open(struct block_device *bdev, fmode_t mode)
-+static int floppy_open(struct gendisk *disk, fmode_t mode)
- {
--	int drive = MINOR(bdev->bd_dev) & 3;
--	int system =  (MINOR(bdev->bd_dev) & 4) >> 2;
-+	int drive = disk->first_minor & 3;
-+	int system = (disk->first_minor & 4) >> 2;
- 	int old_dev;
- 	unsigned long flags;
- 
-@@ -1675,7 +1675,7 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 	}
- 
- 	if (mode & (FMODE_READ|FMODE_WRITE)) {
--		disk_check_media_change(bdev->bd_disk);
-+		disk_check_media_change(disk);
- 		if (mode & FMODE_WRITE) {
- 			int wrprot;
- 
-diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
-index 128722cf6c3cad..4ca6bbb326d5de 100644
---- a/drivers/block/aoe/aoeblk.c
-+++ b/drivers/block/aoe/aoeblk.c
-@@ -204,9 +204,9 @@ aoedisk_rm_debugfs(struct aoedev *d)
- }
- 
- static int
--aoeblk_open(struct block_device *bdev, fmode_t mode)
-+aoeblk_open(struct gendisk *disk, fmode_t mode)
- {
--	struct aoedev *d = bdev->bd_disk->private_data;
-+	struct aoedev *d = disk->private_data;
- 	ulong flags;
- 
- 	if (!virt_addr_valid(d)) {
-diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
-index da481ddbca90db..4febd52be78cfc 100644
---- a/drivers/block/ataflop.c
-+++ b/drivers/block/ataflop.c
-@@ -447,7 +447,7 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
- static void fd_probe( int drive );
- static int fd_test_drive_present( int drive );
- static void config_types( void );
--static int floppy_open(struct block_device *bdev, fmode_t mode);
-+static int floppy_open(struct gendisk *disk, fmode_t mode);
- static void floppy_release(struct gendisk *disk, fmode_t mode);
- 
- /************************* End of Prototypes **************************/
-@@ -1915,10 +1915,10 @@ static void __init config_types( void )
-  * drive with different device numbers.
-  */
- 
--static int floppy_open(struct block_device *bdev, fmode_t mode)
-+static int floppy_open(struct gendisk *disk, fmode_t mode)
- {
--	struct atari_floppy_struct *p = bdev->bd_disk->private_data;
--	int type  = MINOR(bdev->bd_dev) >> 2;
-+	struct atari_floppy_struct *p = disk->private_data;
-+	int type = disk->first_minor >> 2;
- 
- 	DPRINT(("fd_open: type=%d\n",type));
- 	if (p->ref && p->type != type)
-@@ -1938,8 +1938,8 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 		return 0;
- 
- 	if (mode & (FMODE_READ|FMODE_WRITE)) {
--		if (disk_check_media_change(bdev->bd_disk))
--			floppy_revalidate(bdev->bd_disk);
-+		if (disk_check_media_change(disk))
-+			floppy_revalidate(disk);
- 		if (mode & FMODE_WRITE) {
- 			if (p->wpstat) {
- 				if (p->ref < 0)
-@@ -1953,12 +1953,12 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 	return 0;
- }
- 
--static int floppy_unlocked_open(struct block_device *bdev, fmode_t mode)
-+static int floppy_unlocked_open(struct gendisk *disk, fmode_t mode)
- {
- 	int ret;
- 
- 	mutex_lock(&ataflop_mutex);
--	ret = floppy_open(bdev, mode);
-+	ret = floppy_open(disk, mode);
- 	mutex_unlock(&ataflop_mutex);
- 
- 	return ret;
-diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index 54223f64610a05..8b6c19460f3425 100644
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@ -49,7 +49,7 @@
- #include "drbd_debugfs.h"
- 
- static DEFINE_MUTEX(drbd_main_mutex);
--static int drbd_open(struct block_device *bdev, fmode_t mode);
-+static int drbd_open(struct gendisk *disk, fmode_t mode);
- static void drbd_release(struct gendisk *gd, fmode_t mode);
- static void md_sync_timer_fn(struct timer_list *t);
- static int w_bitmap_io(struct drbd_work *w, int unused);
-@@ -1882,9 +1882,9 @@ int drbd_send_all(struct drbd_connection *connection, struct socket *sock, void
- 	return 0;
- }
- 
--static int drbd_open(struct block_device *bdev, fmode_t mode)
-+static int drbd_open(struct gendisk *disk, fmode_t mode)
- {
--	struct drbd_device *device = bdev->bd_disk->private_data;
-+	struct drbd_device *device = disk->private_data;
- 	unsigned long flags;
- 	int rv = 0;
- 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 3accafcbc95c85..ef3bbb7c185b56 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -402,7 +402,7 @@ static struct floppy_drive_struct drive_state[N_DRIVE];
- static struct floppy_write_errors write_errors[N_DRIVE];
- static struct timer_list motor_off_timer[N_DRIVE];
- static struct blk_mq_tag_set tag_sets[N_DRIVE];
--static struct block_device *opened_bdev[N_DRIVE];
-+static struct gendisk *opened_disk[N_DRIVE];
- static DEFINE_MUTEX(open_lock);
- static struct floppy_raw_cmd *raw_cmd, default_raw_cmd;
- 
-@@ -3251,10 +3251,11 @@ static int set_geometry(unsigned int cmd, struct floppy_struct *g,
- 			    floppy_type[type].size + 1;
- 		process_fd_request();
- 		for (cnt = 0; cnt < N_DRIVE; cnt++) {
--			struct block_device *bdev = opened_bdev[cnt];
--			if (!bdev || ITYPE(drive_state[cnt].fd_device) != type)
-+			struct gendisk *disk = opened_disk[cnt];
-+
-+			if (!disk || ITYPE(drive_state[cnt].fd_device) != type)
- 				continue;
--			__invalidate_device(bdev, true);
-+			__invalidate_device(disk->part0, true);
- 		}
- 		mutex_unlock(&open_lock);
- 	} else {
-@@ -3973,7 +3974,7 @@ static void floppy_release(struct gendisk *disk, fmode_t mode)
- 		drive_state[drive].fd_ref = 0;
- 	}
- 	if (!drive_state[drive].fd_ref)
--		opened_bdev[drive] = NULL;
-+		opened_disk[drive] = NULL;
- 	mutex_unlock(&open_lock);
- 	mutex_unlock(&floppy_mutex);
- }
-@@ -3983,9 +3984,9 @@ static void floppy_release(struct gendisk *disk, fmode_t mode)
-  * /dev/PS0 etc), and disallows simultaneous access to the same
-  * drive with different device numbers.
-  */
--static int floppy_open(struct block_device *bdev, fmode_t mode)
-+static int floppy_open(struct gendisk *disk, fmode_t mode)
- {
--	int drive = (long)bdev->bd_disk->private_data;
-+	int drive = (long)disk->private_data;
- 	int old_dev, new_dev;
- 	int try;
- 	int res = -EBUSY;
-@@ -3994,7 +3995,7 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 	mutex_lock(&floppy_mutex);
- 	mutex_lock(&open_lock);
- 	old_dev = drive_state[drive].fd_device;
--	if (opened_bdev[drive] && opened_bdev[drive] != bdev)
-+	if (opened_disk[drive] && opened_disk[drive] != disk)
- 		goto out2;
- 
- 	if (!drive_state[drive].fd_ref && (drive_params[drive].flags & FD_BROKEN_DCL)) {
-@@ -4004,7 +4005,7 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 
- 	drive_state[drive].fd_ref++;
- 
--	opened_bdev[drive] = bdev;
-+	opened_disk[drive] = disk;
- 
- 	res = -ENXIO;
- 
-@@ -4038,7 +4039,7 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 		}
- 	}
- 
--	new_dev = MINOR(bdev->bd_dev);
-+	new_dev = disk->first_minor;
- 	drive_state[drive].fd_device = new_dev;
- 	set_capacity(disks[drive][ITYPE(new_dev)], floppy_sizes[new_dev]);
- 	if (old_dev != -1 && old_dev != new_dev) {
-@@ -4054,8 +4055,8 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 			drive_state[drive].last_checked = 0;
- 			clear_bit(FD_OPEN_SHOULD_FAIL_BIT,
- 				  &drive_state[drive].flags);
--			if (disk_check_media_change(bdev->bd_disk))
--				floppy_revalidate(bdev->bd_disk);
-+			if (disk_check_media_change(disk))
-+				floppy_revalidate(disk);
- 			if (test_bit(FD_DISK_CHANGED_BIT, &drive_state[drive].flags))
- 				goto out;
- 			if (test_bit(FD_OPEN_SHOULD_FAIL_BIT, &drive_state[drive].flags))
-@@ -4073,7 +4074,7 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 	drive_state[drive].fd_ref--;
- 
- 	if (!drive_state[drive].fd_ref)
--		opened_bdev[drive] = NULL;
-+		opened_disk[drive] = NULL;
- out2:
- 	mutex_unlock(&open_lock);
- 	mutex_unlock(&floppy_mutex);
-@@ -4203,7 +4204,8 @@ static int floppy_revalidate(struct gendisk *disk)
- 			drive_state[drive].generation++;
- 		if (drive_no_geom(drive)) {
- 			/* auto-sensing */
--			res = __floppy_read_block_0(opened_bdev[drive], drive);
-+			res = __floppy_read_block_0(opened_disk[drive]->part0,
-+						    drive);
- 		} else {
- 			if (cf)
- 				poll_drive(false, FD_RAW_NEED_DISK);
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 6457a094abcc14..14202b6a3550cc 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1553,13 +1553,13 @@ static struct nbd_config *nbd_alloc_config(void)
- 	return config;
- }
- 
--static int nbd_open(struct block_device *bdev, fmode_t mode)
-+static int nbd_open(struct gendisk *disk, fmode_t mode)
- {
- 	struct nbd_device *nbd;
- 	int ret = 0;
- 
- 	mutex_lock(&nbd_index_mutex);
--	nbd = bdev->bd_disk->private_data;
-+	nbd = disk->private_data;
- 	if (!nbd) {
- 		ret = -ENXIO;
- 		goto out;
-@@ -1587,10 +1587,10 @@ static int nbd_open(struct block_device *bdev, fmode_t mode)
- 		refcount_inc(&nbd->refs);
- 		mutex_unlock(&nbd->config_lock);
- 		if (max_part)
--			set_bit(GD_NEED_PART_SCAN, &bdev->bd_disk->state);
-+			set_bit(GD_NEED_PART_SCAN, &disk->state);
- 	} else if (nbd_disconnected(nbd->config)) {
- 		if (max_part)
--			set_bit(GD_NEED_PART_SCAN, &bdev->bd_disk->state);
-+			set_bit(GD_NEED_PART_SCAN, &disk->state);
- 	}
- out:
- 	mutex_unlock(&nbd_index_mutex);
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index af1140548adb66..93478d5a3fc407 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -2248,14 +2248,14 @@ static struct pktcdvd_device *pkt_find_dev_from_minor(unsigned int dev_minor)
- 	return pkt_devs[dev_minor];
- }
- 
--static int pkt_open(struct block_device *bdev, fmode_t mode)
-+static int pkt_open(struct gendisk *disk, fmode_t mode)
- {
- 	struct pktcdvd_device *pd = NULL;
- 	int ret;
- 
- 	mutex_lock(&pktcdvd_mutex);
- 	mutex_lock(&ctl_mutex);
--	pd = pkt_find_dev_from_minor(MINOR(bdev->bd_dev));
-+	pd = pkt_find_dev_from_minor(disk->first_minor);
- 	if (!pd) {
- 		ret = -ENODEV;
- 		goto out;
-@@ -2277,7 +2277,7 @@ static int pkt_open(struct block_device *bdev, fmode_t mode)
- 		 * needed here as well, since ext2 (among others) may change
- 		 * the blocksize at mount time
- 		 */
--		set_blocksize(bdev, CD_FRAMESIZE);
-+		set_blocksize(disk->part0, CD_FRAMESIZE);
- 	}
- 
- 	mutex_unlock(&ctl_mutex);
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 84ad3b17956f67..93231061db2f2b 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -660,9 +660,9 @@ static bool pending_result_dec(struct pending_result *pending, int *result)
- 	return true;
- }
- 
--static int rbd_open(struct block_device *bdev, fmode_t mode)
-+static int rbd_open(struct gendisk *disk, fmode_t mode)
- {
--	struct rbd_device *rbd_dev = bdev->bd_disk->private_data;
-+	struct rbd_device *rbd_dev = disk->private_data;
- 	bool removing = false;
- 
- 	spin_lock_irq(&rbd_dev->lock);
-diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
-index 5eb8c7855970d1..8ec00f4caf6b4c 100644
---- a/drivers/block/rnbd/rnbd-clt.c
-+++ b/drivers/block/rnbd/rnbd-clt.c
-@@ -921,9 +921,9 @@ rnbd_clt_session *find_or_create_sess(const char *sessname, bool *first)
- 	return sess;
- }
- 
--static int rnbd_client_open(struct block_device *block_device, fmode_t mode)
-+static int rnbd_client_open(struct gendisk *disk, fmode_t mode)
- {
--	struct rnbd_clt_dev *dev = block_device->bd_disk->private_data;
-+	struct rnbd_clt_dev *dev = disk->private_data;
- 
- 	if (get_disk_ro(dev->gd) && (mode & FMODE_WRITE))
- 		return -EPERM;
-diff --git a/drivers/block/swim.c b/drivers/block/swim.c
-index 105bc5fd1b8c62..7ec8554187f7d7 100644
---- a/drivers/block/swim.c
-+++ b/drivers/block/swim.c
-@@ -608,9 +608,9 @@ static void setup_medium(struct floppy_state *fs)
- 	}
- }
- 
--static int floppy_open(struct block_device *bdev, fmode_t mode)
-+static int floppy_open(struct gendisk *disk, fmode_t mode)
- {
--	struct floppy_state *fs = bdev->bd_disk->private_data;
-+	struct floppy_state *fs = disk->private_data;
- 	struct swim __iomem *base = fs->swd->base;
- 	int err;
- 
-@@ -640,7 +640,7 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 		return 0;
- 
- 	if (mode & (FMODE_READ|FMODE_WRITE)) {
--		if (disk_check_media_change(bdev->bd_disk) && fs->disk_in)
-+		if (disk_check_media_change(disk) && fs->disk_in)
- 			fs->ejected = 0;
- 		if ((mode & FMODE_WRITE) && fs->write_protected) {
- 			err = -EROFS;
-@@ -659,12 +659,12 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
+ static int ubd_getgeo(struct block_device *bdev, struct hd_geometry *geo);
+@@ -1182,7 +1182,7 @@ static int ubd_open(struct gendisk *disk, fmode_t mode)
  	return err;
  }
  
--static int floppy_unlocked_open(struct block_device *bdev, fmode_t mode)
-+static int floppy_unlocked_open(struct gendisk *disk, fmode_t mode)
+-static void ubd_release(struct gendisk *disk, fmode_t mode)
++static void ubd_release(struct gendisk *disk)
  {
- 	int ret;
+ 	struct ubd *ubd_dev = disk->private_data;
  
- 	mutex_lock(&swim_mutex);
--	ret = floppy_open(bdev, mode);
-+	ret = floppy_open(disk, mode);
- 	mutex_unlock(&swim_mutex);
+diff --git a/arch/xtensa/platforms/iss/simdisk.c b/arch/xtensa/platforms/iss/simdisk.c
+index 38f95f79a1270c..2ad9da3de0d90f 100644
+--- a/arch/xtensa/platforms/iss/simdisk.c
++++ b/arch/xtensa/platforms/iss/simdisk.c
+@@ -130,7 +130,7 @@ static int simdisk_open(struct gendisk *disk, fmode_t mode)
+ 	return 0;
+ }
  
+-static void simdisk_release(struct gendisk *disk, fmode_t mode)
++static void simdisk_release(struct gendisk *disk)
+ {
+ 	struct simdisk *dev = disk->private_data;
+ 	spin_lock(&dev->lock);
+diff --git a/block/bdev.c b/block/bdev.c
+index 8a5fded303d4ed..2c6888ceb3784a 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -670,12 +670,12 @@ static int blkdev_get_whole(struct block_device *bdev, fmode_t mode)
+ 	return 0;
+ }
+ 
+-static void blkdev_put_whole(struct block_device *bdev, fmode_t mode)
++static void blkdev_put_whole(struct block_device *bdev)
+ {
+ 	if (atomic_dec_and_test(&bdev->bd_openers))
+ 		blkdev_flush_mapping(bdev);
+ 	if (bdev->bd_disk->fops->release)
+-		bdev->bd_disk->fops->release(bdev->bd_disk, mode);
++		bdev->bd_disk->fops->release(bdev->bd_disk);
+ }
+ 
+ static int blkdev_get_part(struct block_device *part, fmode_t mode)
+@@ -699,11 +699,11 @@ static int blkdev_get_part(struct block_device *part, fmode_t mode)
+ 	return 0;
+ 
+ out_blkdev_put:
+-	blkdev_put_whole(bdev_whole(part), mode);
++	blkdev_put_whole(bdev_whole(part));
  	return ret;
+ }
+ 
+-static void blkdev_put_part(struct block_device *part, fmode_t mode)
++static void blkdev_put_part(struct block_device *part)
+ {
+ 	struct block_device *whole = bdev_whole(part);
+ 
+@@ -711,7 +711,7 @@ static void blkdev_put_part(struct block_device *part, fmode_t mode)
+ 		blkdev_flush_mapping(part);
+ 		whole->bd_disk->open_partitions--;
+ 	}
+-	blkdev_put_whole(whole, mode);
++	blkdev_put_whole(whole);
+ }
+ 
+ struct block_device *blkdev_get_no_open(dev_t dev)
+@@ -903,9 +903,9 @@ void blkdev_put(struct block_device *bdev, fmode_t mode)
+ 	disk_flush_events(disk, DISK_EVENT_MEDIA_CHANGE);
+ 
+ 	if (bdev_is_partition(bdev))
+-		blkdev_put_part(bdev, mode);
++		blkdev_put_part(bdev);
+ 	else
+-		blkdev_put_whole(bdev, mode);
++		blkdev_put_whole(bdev);
+ 	mutex_unlock(&disk->open_mutex);
+ 
+ 	module_put(disk->fops->owner);
+diff --git a/drivers/block/amiflop.c b/drivers/block/amiflop.c
+index 0cf2e58294be68..9a0e9dc74a8c57 100644
+--- a/drivers/block/amiflop.c
++++ b/drivers/block/amiflop.c
+@@ -1709,7 +1709,7 @@ static int floppy_open(struct gendisk *disk, fmode_t mode)
+ 	return 0;
+ }
+ 
+-static void floppy_release(struct gendisk *disk, fmode_t mode)
++static void floppy_release(struct gendisk *disk)
+ {
+ 	struct amiga_floppy_struct *p = disk->private_data;
+ 	int drive = p - unit;
+diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
+index 4ca6bbb326d5de..c3a39e02ab9571 100644
+--- a/drivers/block/aoe/aoeblk.c
++++ b/drivers/block/aoe/aoeblk.c
+@@ -232,7 +232,7 @@ aoeblk_open(struct gendisk *disk, fmode_t mode)
+ }
+ 
+ static void
+-aoeblk_release(struct gendisk *disk, fmode_t mode)
++aoeblk_release(struct gendisk *disk)
+ {
+ 	struct aoedev *d = disk->private_data;
+ 	ulong flags;
+diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
+index 4febd52be78cfc..66a3242bb062c3 100644
+--- a/drivers/block/ataflop.c
++++ b/drivers/block/ataflop.c
+@@ -448,7 +448,7 @@ static void fd_probe( int drive );
+ static int fd_test_drive_present( int drive );
+ static void config_types( void );
+ static int floppy_open(struct gendisk *disk, fmode_t mode);
+-static void floppy_release(struct gendisk *disk, fmode_t mode);
++static void floppy_release(struct gendisk *disk);
+ 
+ /************************* End of Prototypes **************************/
+ 
+@@ -1964,7 +1964,7 @@ static int floppy_unlocked_open(struct gendisk *disk, fmode_t mode)
+ 	return ret;
+ }
+ 
+-static void floppy_release(struct gendisk *disk, fmode_t mode)
++static void floppy_release(struct gendisk *disk)
+ {
+ 	struct atari_floppy_struct *p = disk->private_data;
+ 	mutex_lock(&ataflop_mutex);
+diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+index 8b6c19460f3425..7f3d7ca6ce6bcf 100644
+--- a/drivers/block/drbd/drbd_main.c
++++ b/drivers/block/drbd/drbd_main.c
+@@ -50,7 +50,7 @@
+ 
+ static DEFINE_MUTEX(drbd_main_mutex);
+ static int drbd_open(struct gendisk *disk, fmode_t mode);
+-static void drbd_release(struct gendisk *gd, fmode_t mode);
++static void drbd_release(struct gendisk *gd);
+ static void md_sync_timer_fn(struct timer_list *t);
+ static int w_bitmap_io(struct drbd_work *w, int unused);
+ 
+@@ -1908,7 +1908,7 @@ static int drbd_open(struct gendisk *disk, fmode_t mode)
+ 	return rv;
+ }
+ 
+-static void drbd_release(struct gendisk *gd, fmode_t mode)
++static void drbd_release(struct gendisk *gd)
+ {
+ 	struct drbd_device *device = gd->private_data;
+ 	mutex_lock(&drbd_main_mutex);
+diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+index ef3bbb7c185b56..d79fac288a73dc 100644
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3963,7 +3963,7 @@ static void __init config_types(void)
+ 		pr_cont("\n");
+ }
+ 
+-static void floppy_release(struct gendisk *disk, fmode_t mode)
++static void floppy_release(struct gendisk *disk)
+ {
+ 	int drive = (long)disk->private_data;
+ 
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index a73c857f5bfed0..ca40d24572aea6 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1727,7 +1727,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
+ }
+ #endif
+ 
+-static void lo_release(struct gendisk *disk, fmode_t mode)
++static void lo_release(struct gendisk *disk)
+ {
+ 	struct loop_device *lo = disk->private_data;
+ 
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 14202b6a3550cc..cfb83523868411 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1597,7 +1597,7 @@ static int nbd_open(struct gendisk *disk, fmode_t mode)
+ 	return ret;
+ }
+ 
+-static void nbd_release(struct gendisk *disk, fmode_t mode)
++static void nbd_release(struct gendisk *disk)
+ {
+ 	struct nbd_device *nbd = disk->private_data;
+ 
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 93478d5a3fc407..7bfc058cb66504 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -2292,7 +2292,7 @@ static int pkt_open(struct gendisk *disk, fmode_t mode)
+ 	return ret;
+ }
+ 
+-static void pkt_close(struct gendisk *disk, fmode_t mode)
++static void pkt_release(struct gendisk *disk)
+ {
+ 	struct pktcdvd_device *pd = disk->private_data;
+ 
+@@ -2616,7 +2616,7 @@ static const struct block_device_operations pktcdvd_ops = {
+ 	.owner =		THIS_MODULE,
+ 	.submit_bio =		pkt_submit_bio,
+ 	.open =			pkt_open,
+-	.release =		pkt_close,
++	.release =		pkt_release,
+ 	.ioctl =		pkt_ioctl,
+ 	.compat_ioctl =		blkdev_compat_ptr_ioctl,
+ 	.check_events =		pkt_check_events,
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 93231061db2f2b..5215eff94fe94f 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -679,7 +679,7 @@ static int rbd_open(struct gendisk *disk, fmode_t mode)
+ 	return 0;
+ }
+ 
+-static void rbd_release(struct gendisk *disk, fmode_t mode)
++static void rbd_release(struct gendisk *disk)
+ {
+ 	struct rbd_device *rbd_dev = disk->private_data;
+ 	unsigned long open_count_before;
+diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
+index 8ec00f4caf6b4c..d5261d36d78630 100644
+--- a/drivers/block/rnbd/rnbd-clt.c
++++ b/drivers/block/rnbd/rnbd-clt.c
+@@ -935,7 +935,7 @@ static int rnbd_client_open(struct gendisk *disk, fmode_t mode)
+ 	return 0;
+ }
+ 
+-static void rnbd_client_release(struct gendisk *gen, fmode_t mode)
++static void rnbd_client_release(struct gendisk *gen)
+ {
+ 	struct rnbd_clt_dev *dev = gen->private_data;
+ 
+diff --git a/drivers/block/swim.c b/drivers/block/swim.c
+index 7ec8554187f7d7..a629b38dec660a 100644
+--- a/drivers/block/swim.c
++++ b/drivers/block/swim.c
+@@ -670,7 +670,7 @@ static int floppy_unlocked_open(struct gendisk *disk, fmode_t mode)
+ 	return ret;
+ }
+ 
+-static void floppy_release(struct gendisk *disk, fmode_t mode)
++static void floppy_release(struct gendisk *disk)
+ {
+ 	struct floppy_state *fs = disk->private_data;
+ 	struct swim __iomem *base = fs->swd->base;
 diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
-index 3d689ba312f568..c05a4e110d5275 100644
+index c05a4e110d5275..b696deff3d8ba1 100644
 --- a/drivers/block/swim3.c
 +++ b/drivers/block/swim3.c
-@@ -248,7 +248,7 @@ static void release_drive(struct floppy_state *fs);
- static int fd_eject(struct floppy_state *fs);
+@@ -249,7 +249,6 @@ static int fd_eject(struct floppy_state *fs);
  static int floppy_ioctl(struct block_device *bdev, fmode_t mode,
  			unsigned int cmd, unsigned long param);
--static int floppy_open(struct block_device *bdev, fmode_t mode);
-+static int floppy_open(struct gendisk *disk, fmode_t mode);
- static void floppy_release(struct gendisk *disk, fmode_t mode);
+ static int floppy_open(struct gendisk *disk, fmode_t mode);
+-static void floppy_release(struct gendisk *disk, fmode_t mode);
  static unsigned int floppy_check_events(struct gendisk *disk,
  					unsigned int clearing);
-@@ -923,9 +923,9 @@ static int floppy_ioctl(struct block_device *bdev, fmode_t mode,
+ static int floppy_revalidate(struct gendisk *disk);
+@@ -1004,7 +1003,7 @@ static int floppy_unlocked_open(struct block_device *bdev, fmode_t mode)
  	return ret;
  }
  
--static int floppy_open(struct block_device *bdev, fmode_t mode)
-+static int floppy_open(struct gendisk *disk, fmode_t mode)
+-static void floppy_release(struct gendisk *disk, fmode_t mode)
++static void floppy_release(struct gendisk *disk)
  {
--	struct floppy_state *fs = bdev->bd_disk->private_data;
-+	struct floppy_state *fs = disk->private_data;
+ 	struct floppy_state *fs = disk->private_data;
  	struct swim3 __iomem *sw = fs->swim3;
- 	int n, err = 0;
- 
-@@ -963,8 +963,8 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 
- 	if (err == 0 && (mode & FMODE_NDELAY) == 0
- 	    && (mode & (FMODE_READ|FMODE_WRITE))) {
--		if (disk_check_media_change(bdev->bd_disk))
--			floppy_revalidate(bdev->bd_disk);
-+		if (disk_check_media_change(disk))
-+			floppy_revalidate(disk);
- 		if (fs->ejected)
- 			err = -ENXIO;
- 	}
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 222a0341913ffb..92c900ac2ebcb6 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -447,9 +447,9 @@ static void ublk_store_owner_uid_gid(unsigned int *owner_uid,
- 	*owner_gid = from_kgid(&init_user_ns, gid);
- }
- 
--static int ublk_open(struct block_device *bdev, fmode_t mode)
-+static int ublk_open(struct gendisk *disk, fmode_t mode)
- {
--	struct ublk_device *ub = bdev->bd_disk->private_data;
-+	struct ublk_device *ub = disk->private_data;
- 
- 	if (capable(CAP_SYS_ADMIN))
- 		return 0;
 diff --git a/drivers/block/z2ram.c b/drivers/block/z2ram.c
-index c1e85f356e4dfb..a5575e012e291e 100644
+index a5575e012e291e..a2e41cc084ca3a 100644
 --- a/drivers/block/z2ram.c
 +++ b/drivers/block/z2ram.c
-@@ -140,16 +140,14 @@ static void get_chipram(void)
- 	return;
+@@ -288,7 +288,7 @@ static int z2_open(struct gendisk *disk, fmode_t mode)
+ 	return rc;
  }
  
--static int z2_open(struct block_device *bdev, fmode_t mode)
-+static int z2_open(struct gendisk *disk, fmode_t mode)
+-static void z2_release(struct gendisk *disk, fmode_t mode)
++static void z2_release(struct gendisk *disk)
  {
--	int device;
-+	int device = disk->first_minor;
- 	int max_z2_map = (Z2RAM_SIZE / Z2RAM_CHUNKSIZE) * sizeof(z2ram_map[0]);
- 	int max_chip_map = (amiga_chip_size / Z2RAM_CHUNKSIZE) *
- 	    sizeof(z2ram_map[0]);
- 	int rc = -ENOMEM;
- 
--	device = MINOR(bdev->bd_dev);
--
  	mutex_lock(&z2ram_mutex);
- 	if (current_device != -1 && current_device != device) {
- 		rc = -EBUSY;
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 0bc779446c6f8f..f5644c60604070 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -2097,19 +2097,16 @@ static ssize_t reset_store(struct device *dev,
- 	return len;
- }
- 
--static int zram_open(struct block_device *bdev, fmode_t mode)
-+static int zram_open(struct gendisk *disk, fmode_t mode)
- {
--	int ret = 0;
--	struct zram *zram;
-+	struct zram *zram = disk->private_data;
- 
--	WARN_ON(!mutex_is_locked(&bdev->bd_disk->open_mutex));
-+	WARN_ON(!mutex_is_locked(&disk->open_mutex));
- 
--	zram = bdev->bd_disk->private_data;
- 	/* zram was claimed to reset so open request fails */
- 	if (zram->claim)
--		ret = -EBUSY;
--
--	return ret;
-+		return -EBUSY;
-+	return 0;
- }
- 
- static const struct block_device_operations zram_devops = {
+ 	if (current_device == -1) {
 diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index 3cb92df38ebeb8..d35dd717e9fca9 100644
+index d35dd717e9fca9..dac148d4d1feda 100644
 --- a/drivers/cdrom/gdrom.c
 +++ b/drivers/cdrom/gdrom.c
-@@ -474,11 +474,11 @@ static const struct cdrom_device_ops gdrom_ops = {
- 				  CDC_RESET | CDC_DRIVE_STATUS | CDC_CD_R,
- };
- 
--static int gdrom_bdops_open(struct block_device *bdev, fmode_t mode)
-+static int gdrom_bdops_open(struct gendisk *disk, fmode_t mode)
- {
- 	int ret;
- 
--	disk_check_media_change(bdev->bd_disk);
-+	disk_check_media_change(disk);
- 
- 	mutex_lock(&gdrom_mutex);
- 	ret = cdrom_open(gd.cd_info);
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index d84c09a73af803..6683f66e701136 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -732,9 +732,9 @@ static int prio_read(struct cache *ca, uint64_t bucket)
- 
- /* Bcache device */
- 
--static int open_dev(struct block_device *b, fmode_t mode)
-+static int open_dev(struct gendisk *disk, fmode_t mode)
- {
--	struct bcache_device *d = b->bd_disk->private_data;
-+	struct bcache_device *d = disk->private_data;
- 
- 	if (test_bit(BCACHE_DEV_CLOSING, &d->flags))
- 		return -ENXIO;
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index d759f8bdb3df2f..06047a0ca4b315 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -310,13 +310,13 @@ int dm_deleting_md(struct mapped_device *md)
- 	return test_bit(DMF_DELETING, &md->flags);
+@@ -486,7 +486,7 @@ static int gdrom_bdops_open(struct gendisk *disk, fmode_t mode)
+ 	return ret;
  }
  
--static int dm_blk_open(struct block_device *bdev, fmode_t mode)
-+static int dm_blk_open(struct gendisk *disk, fmode_t mode)
+-static void gdrom_bdops_release(struct gendisk *disk, fmode_t mode)
++static void gdrom_bdops_release(struct gendisk *disk)
+ {
+ 	mutex_lock(&gdrom_mutex);
+ 	cdrom_release(gd.cd_info, mode);
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 6683f66e701136..94b91c45c9e2a9 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -743,7 +743,7 @@ static int open_dev(struct gendisk *disk, fmode_t mode)
+ 	return 0;
+ }
+ 
+-static void release_dev(struct gendisk *b, fmode_t mode)
++static void release_dev(struct gendisk *b)
+ {
+ 	struct bcache_device *d = b->private_data;
+ 
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 06047a0ca4b315..246b8f028a98f4 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -334,7 +334,7 @@ static int dm_blk_open(struct gendisk *disk, fmode_t mode)
+ 	return md ? 0 : -ENXIO;
+ }
+ 
+-static void dm_blk_close(struct gendisk *disk, fmode_t mode)
++static void dm_blk_close(struct gendisk *disk)
  {
  	struct mapped_device *md;
  
- 	spin_lock(&_minor_lock);
- 
--	md = bdev->bd_disk->private_data;
-+	md = disk->private_data;
- 	if (!md)
- 		goto out;
- 
 diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 77046c91bea439..aba13830bdb556 100644
+index aba13830bdb556..159197dd7b6de1 100644
 --- a/drivers/md/md.c
 +++ b/drivers/md/md.c
-@@ -7767,13 +7767,13 @@ static int md_set_read_only(struct block_device *bdev, bool ro)
+@@ -7799,7 +7799,7 @@ static int md_open(struct gendisk *disk, fmode_t mode)
  	return err;
  }
  
--static int md_open(struct block_device *bdev, fmode_t mode)
-+static int md_open(struct gendisk *disk, fmode_t mode)
+-static void md_release(struct gendisk *disk, fmode_t mode)
++static void md_release(struct gendisk *disk)
  {
- 	struct mddev *mddev;
- 	int err;
+ 	struct mddev *mddev = disk->private_data;
  
- 	spin_lock(&all_mddevs_lock);
--	mddev = mddev_get(bdev->bd_disk->private_data);
-+	mddev = mddev_get(disk->private_data);
- 	spin_unlock(&all_mddevs_lock);
- 	if (!mddev)
- 		return -ENODEV;
-@@ -7789,7 +7789,7 @@ static int md_open(struct block_device *bdev, fmode_t mode)
- 	atomic_inc(&mddev->openers);
- 	mutex_unlock(&mddev->open_mutex);
- 
--	disk_check_media_change(bdev->bd_disk);
-+	disk_check_media_change(disk);
- 	return 0;
- 
- out_unlock:
 diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 00c33edb9fb94e..fe217658705d1f 100644
+index fe217658705d1f..b16eedf22d4e26 100644
 --- a/drivers/mmc/core/block.c
 +++ b/drivers/mmc/core/block.c
-@@ -357,9 +357,9 @@ static const struct attribute_group *mmc_disk_attr_groups[] = {
- 	NULL,
- };
+@@ -375,7 +375,7 @@ static int mmc_blk_open(struct gendisk *disk, fmode_t mode)
+ 	return ret;
+ }
  
--static int mmc_blk_open(struct block_device *bdev, fmode_t mode)
-+static int mmc_blk_open(struct gendisk *disk, fmode_t mode)
+-static void mmc_blk_release(struct gendisk *disk, fmode_t mode)
++static void mmc_blk_release(struct gendisk *disk)
  {
--	struct mmc_blk_data *md = mmc_blk_get(bdev->bd_disk);
-+	struct mmc_blk_data *md = mmc_blk_get(disk);
- 	int ret = -ENXIO;
+ 	struct mmc_blk_data *md = disk->private_data;
  
- 	mutex_lock(&block_mutex);
 diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
-index 60b222799871e8..95f3ee6bde8440 100644
+index 95f3ee6bde8440..f0bb09fde95e3a 100644
 --- a/drivers/mtd/mtd_blkdevs.c
 +++ b/drivers/mtd/mtd_blkdevs.c
-@@ -182,9 +182,9 @@ static blk_status_t mtd_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	return BLK_STS_OK;
+@@ -225,7 +225,7 @@ static int blktrans_open(struct gendisk *disk, fmode_t mode)
+ 	return ret;
  }
  
--static int blktrans_open(struct block_device *bdev, fmode_t mode)
-+static int blktrans_open(struct gendisk *disk, fmode_t mode)
+-static void blktrans_release(struct gendisk *disk, fmode_t mode)
++static void blktrans_release(struct gendisk *disk)
  {
--	struct mtd_blktrans_dev *dev = bdev->bd_disk->private_data;
-+	struct mtd_blktrans_dev *dev = disk->private_data;
- 	int ret = 0;
+ 	struct mtd_blktrans_dev *dev = disk->private_data;
  
- 	kref_get(&dev->ref);
 diff --git a/drivers/mtd/ubi/block.c b/drivers/mtd/ubi/block.c
-index 3711d7f746003d..2f3442963919fc 100644
+index 2f3442963919fc..e85fb9de0b7004 100644
 --- a/drivers/mtd/ubi/block.c
 +++ b/drivers/mtd/ubi/block.c
-@@ -227,9 +227,9 @@ static blk_status_t ubiblock_read(struct request *req)
- 	return BLK_STS_OK;
+@@ -270,7 +270,7 @@ static int ubiblock_open(struct gendisk *disk, fmode_t mode)
+ 	return ret;
  }
  
--static int ubiblock_open(struct block_device *bdev, fmode_t mode)
-+static int ubiblock_open(struct gendisk *disk, fmode_t mode)
+-static void ubiblock_release(struct gendisk *gd, fmode_t mode)
++static void ubiblock_release(struct gendisk *gd)
  {
--	struct ubiblock *dev = bdev->bd_disk->private_data;
-+	struct ubiblock *dev = disk->private_data;
- 	int ret;
+ 	struct ubiblock *dev = gd->private_data;
  
- 	mutex_lock(&dev->dev_mutex);
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index ccb6eb1282f82d..b1c8af5d9376ad 100644
+index b1c8af5d9376ad..fd7f8e6d66fda6 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -1591,9 +1591,9 @@ static void nvme_ns_release(struct nvme_ns *ns)
- 	nvme_put_ns(ns);
+@@ -1596,7 +1596,7 @@ static int nvme_open(struct gendisk *disk, fmode_t mode)
+ 	return nvme_ns_open(disk->private_data);
  }
  
--static int nvme_open(struct block_device *bdev, fmode_t mode)
-+static int nvme_open(struct gendisk *disk, fmode_t mode)
+-static void nvme_release(struct gendisk *disk, fmode_t mode)
++static void nvme_release(struct gendisk *disk)
  {
--	return nvme_ns_open(bdev->bd_disk->private_data);
-+	return nvme_ns_open(disk->private_data);
+ 	nvme_ns_release(disk->private_data);
  }
- 
- static void nvme_release(struct gendisk *disk, fmode_t mode)
 diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 9171452e2f6d4e..e8d5d62efa6d7c 100644
+index e8d5d62efa6d7c..698c0e70bcfa5b 100644
 --- a/drivers/nvme/host/multipath.c
 +++ b/drivers/nvme/host/multipath.c
-@@ -402,9 +402,9 @@ static void nvme_ns_head_submit_bio(struct bio *bio)
- 	srcu_read_unlock(&head->srcu, srcu_idx);
- }
- 
--static int nvme_ns_head_open(struct block_device *bdev, fmode_t mode)
-+static int nvme_ns_head_open(struct gendisk *disk, fmode_t mode)
- {
--	if (!nvme_tryget_ns_head(bdev->bd_disk->private_data))
-+	if (!nvme_tryget_ns_head(disk->private_data))
- 		return -ENXIO;
+@@ -409,7 +409,7 @@ static int nvme_ns_head_open(struct gendisk *disk, fmode_t mode)
  	return 0;
  }
+ 
+-static void nvme_ns_head_release(struct gendisk *disk, fmode_t mode)
++static void nvme_ns_head_release(struct gendisk *disk)
+ {
+ 	nvme_put_ns_head(disk->private_data);
+ }
 diff --git a/drivers/s390/block/dasd.c b/drivers/s390/block/dasd.c
-index 9fbfce735d5650..e445b5fbd7fd27 100644
+index e445b5fbd7fd27..19295b2df470c8 100644
 --- a/drivers/s390/block/dasd.c
 +++ b/drivers/s390/block/dasd.c
-@@ -3234,12 +3234,12 @@ struct blk_mq_ops dasd_mq_ops = {
- 	.exit_hctx = dasd_exit_hctx,
- };
+@@ -3287,7 +3287,7 @@ static int dasd_open(struct gendisk *disk, fmode_t mode)
+ 	return rc;
+ }
  
--static int dasd_open(struct block_device *bdev, fmode_t mode)
-+static int dasd_open(struct gendisk *disk, fmode_t mode)
+-static void dasd_release(struct gendisk *disk, fmode_t mode)
++static void dasd_release(struct gendisk *disk)
  {
- 	struct dasd_device *base;
- 	int rc;
- 
--	base = dasd_device_from_gendisk(bdev->bd_disk);
-+	base = dasd_device_from_gendisk(disk);
- 	if (!base)
- 		return -ENODEV;
- 
+ 	struct dasd_device *base = dasd_device_from_gendisk(disk);
+ 	if (base) {
 diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
-index c09f2e053bf863..6150d20b584300 100644
+index 6150d20b584300..5aee3106bfda84 100644
 --- a/drivers/s390/block/dcssblk.c
 +++ b/drivers/s390/block/dcssblk.c
-@@ -28,7 +28,7 @@
- #define DCSSBLK_PARM_LEN 400
+@@ -29,7 +29,7 @@
  #define DCSS_BUS_ID_SIZE 20
  
--static int dcssblk_open(struct block_device *bdev, fmode_t mode);
-+static int dcssblk_open(struct gendisk *disk, fmode_t mode);
- static void dcssblk_release(struct gendisk *disk, fmode_t mode);
+ static int dcssblk_open(struct gendisk *disk, fmode_t mode);
+-static void dcssblk_release(struct gendisk *disk, fmode_t mode);
++static void dcssblk_release(struct gendisk *disk);
  static void dcssblk_submit_bio(struct bio *bio);
  static long dcssblk_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
-@@ -809,12 +809,11 @@ dcssblk_remove_store(struct device *dev, struct device_attribute *attr, const ch
+ 		long nr_pages, enum dax_access_mode mode, void **kaddr,
+@@ -825,7 +825,7 @@ dcssblk_open(struct gendisk *disk, fmode_t mode)
  }
  
- static int
--dcssblk_open(struct block_device *bdev, fmode_t mode)
-+dcssblk_open(struct gendisk *disk, fmode_t mode)
+ static void
+-dcssblk_release(struct gendisk *disk, fmode_t mode)
++dcssblk_release(struct gendisk *disk)
  {
--	struct dcssblk_dev_info *dev_info;
-+	struct dcssblk_dev_info *dev_info = disk->private_data;
- 	int rc;
- 
--	dev_info = bdev->bd_disk->private_data;
- 	if (NULL == dev_info) {
- 		rc = -ENODEV;
- 		goto out;
+ 	struct dcssblk_dev_info *dev_info = disk->private_data;
+ 	struct segment_info *entry;
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index aab649d5bad3f8..c31a675db015e8 100644
+index c31a675db015e8..c67c84f6ba6178 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
-@@ -1297,7 +1297,7 @@ static bool sd_need_revalidate(struct gendisk *disk, struct scsi_disk *sdkp)
- 
- /**
-  *	sd_open - open a scsi disk device
-- *	@bdev: Block device of the scsi disk to open
-+ *	@disk: disk to open
-  *	@mode: FMODE_* mask
+@@ -1373,7 +1373,6 @@ static int sd_open(struct gendisk *disk, fmode_t mode)
+  *	sd_release - invoked when the (last) close(2) is called on this
+  *	scsi disk.
+  *	@disk: disk to release
+- *	@mode: FMODE_* mask
   *
-  *	Returns 0 if successful. Returns a negated errno value in case 
-@@ -1308,11 +1308,11 @@ static bool sd_need_revalidate(struct gendisk *disk, struct scsi_disk *sdkp)
-  *	In the latter case @inode and @filp carry an abridged amount
-  *	of information as noted above.
+  *	Returns 0. 
   *
-- *	Locking: called with bdev->bd_disk->open_mutex held.
-+ *	Locking: called with disk->open_mutex held.
+@@ -1382,7 +1381,7 @@ static int sd_open(struct gendisk *disk, fmode_t mode)
+  *
+  *	Locking: called with bdev->bd_disk->open_mutex held.
   **/
--static int sd_open(struct block_device *bdev, fmode_t mode)
-+static int sd_open(struct gendisk *disk, fmode_t mode)
+-static void sd_release(struct gendisk *disk, fmode_t mode)
++static void sd_release(struct gendisk *disk)
  {
--	struct scsi_disk *sdkp = scsi_disk(bdev->bd_disk);
-+	struct scsi_disk *sdkp = scsi_disk(disk);
+ 	struct scsi_disk *sdkp = scsi_disk(disk);
  	struct scsi_device *sdev = sdkp->device;
- 	int retval;
- 
-@@ -1329,8 +1329,8 @@ static int sd_open(struct block_device *bdev, fmode_t mode)
- 	if (!scsi_block_when_processing_errors(sdev))
- 		goto error_out;
- 
--	if (sd_need_revalidate(bdev->bd_disk, sdkp))
--		sd_revalidate_disk(bdev->bd_disk);
-+	if (sd_need_revalidate(disk, sdkp))
-+		sd_revalidate_disk(disk);
- 
- 	/*
- 	 * If the drive is empty, just let the open fail.
 diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 1592e6e10c7452..3ff3a2f9604774 100644
+index 3ff3a2f9604774..55082acb59bcaa 100644
 --- a/drivers/scsi/sr.c
 +++ b/drivers/scsi/sr.c
-@@ -484,9 +484,9 @@ static void sr_revalidate_disk(struct scsi_cd *cd)
- 	get_sectorsize(cd);
+@@ -507,7 +507,7 @@ static int sr_block_open(struct gendisk *disk, fmode_t mode)
+ 	return ret;
  }
  
--static int sr_block_open(struct block_device *bdev, fmode_t mode)
-+static int sr_block_open(struct gendisk *disk, fmode_t mode)
+-static void sr_block_release(struct gendisk *disk, fmode_t mode)
++static void sr_block_release(struct gendisk *disk)
  {
--	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
-+	struct scsi_cd *cd = scsi_cd(disk);
- 	struct scsi_device *sdev = cd->device;
- 	int ret;
+ 	struct scsi_cd *cd = scsi_cd(disk);
  
-@@ -494,7 +494,7 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
- 		return -ENXIO;
- 
- 	scsi_autopm_get_device(sdev);
--	if (disk_check_media_change(bdev->bd_disk))
-+	if (disk_check_media_change(disk))
- 		sr_revalidate_disk(cd);
- 
- 	mutex_lock(&cd->lock);
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index a1688eba7e5e9a..1366eea881860e 100644
+index 1366eea881860e..25bdd0cc74dce4 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -1386,7 +1386,7 @@ struct block_device_operations {
- 	void (*submit_bio)(struct bio *bio);
+@@ -1387,7 +1387,7 @@ struct block_device_operations {
  	int (*poll_bio)(struct bio *bio, struct io_comp_batch *iob,
  			unsigned int flags);
--	int (*open) (struct block_device *, fmode_t);
-+	int (*open)(struct gendisk *disk, fmode_t mode);
- 	void (*release) (struct gendisk *, fmode_t);
+ 	int (*open)(struct gendisk *disk, fmode_t mode);
+-	void (*release) (struct gendisk *, fmode_t);
++	void (*release)(struct gendisk *disk);
  	int (*ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
  	int (*compat_ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
+ 	unsigned int (*check_events) (struct gendisk *disk,
 -- 
 2.39.2
 
