@@ -2,75 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B329F727A8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 10:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39104727AC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 11:05:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234668AbjFHIzd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 04:55:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48366 "EHLO
+        id S235102AbjFHJEw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 05:04:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230499AbjFHIz3 (ORCPT
+        with ESMTP id S231359AbjFHJEu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 04:55:29 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69951984
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jun 2023 01:55:27 -0700 (PDT)
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-77ac4ec0bb7so31576039f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jun 2023 01:55:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686214527; x=1688806527;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=az3/mC3I6rBptIN6g19U3m8h5kdT0uqVmEGL3ErhZf4=;
-        b=SobDig75FwbVr8dl0HQdihai+85C57FGtnWzfMyGOhHjcacs1SHzVJWRXebuxSBGm1
-         x/0YlJtRKA1GZTI4aLveTlYlS7hABpncp7sRpdgfimqlV7mZnNPdsolAgqEPQncipE1k
-         RizMT4J30nJ/or4Z1Licekck4y6tJPAghSoShNWvms2+owjBHF4rsns3dJMJizPtdMkE
-         n4vpiDfnv3rPTAW1BVhTk6VgVfGnjTtYQT9dEhebZUvnSc/QCK/wTA13n2JsmAuucllw
-         lxPl26+mrjOYH531j6vnUKmQO+Td5j75kp5sZFuOHYdU+Q9oEb5Q8EnT1M3e2+NSuLsI
-         mOug==
-X-Gm-Message-State: AC+VfDzOH4BjuohPDi/uNh4USt54B5yWfAvvpqKMslR2oThVGyMLm1Ij
-        RZ4p46xAIED/sngAoPTV9qCqIsgacjNH8SJR2T1qh8CIYN+j
-X-Google-Smtp-Source: ACHHUZ5yyb+RYCCWlyH3EcXKqq8OEbyY76bXgXuq0sD/7Fmaag13b0Dyz/Raq/k815ixLa2X35o4jEcZ1SAyac+IgzCKpC1bbtui
+        Thu, 8 Jun 2023 05:04:50 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 565DB1721;
+        Thu,  8 Jun 2023 02:04:49 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id A178768AA6; Thu,  8 Jun 2023 11:04:44 +0200 (CEST)
+Date:   Thu, 8 Jun 2023 11:04:44 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Phillip Potter <phil@philpotter.co.uk>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Richard Weinberger <richard@nod.at>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@suse.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-btrfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 06/31] cdrom: remove the unused mode argument to
+ cdrom_release
+Message-ID: <20230608090444.GA15075@lst.de>
+References: <20230606073950.225178-1-hch@lst.de> <20230606073950.225178-7-hch@lst.de> <ZH+6qd1W75G49P7p@equinox> <20230608084129.GA14689@lst.de> <ZIGVn9E9ME26V0Gn@equinox>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3f06:b0:416:7d71:1261 with SMTP id
- ck6-20020a0566383f0600b004167d711261mr1001216jab.0.1686214527179; Thu, 08 Jun
- 2023 01:55:27 -0700 (PDT)
-Date:   Thu, 08 Jun 2023 01:55:27 -0700
-In-Reply-To: <ZIF9v+qcdhhuYsMr@infradead.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e8650e05fd9a6902@google.com>
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_split_ordered_extent
-From:   syzbot <syzbot+ee90502d5c8fd1d0dd93@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, hch@infradead.org,
-        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZIGVn9E9ME26V0Gn@equinox>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Jun 08, 2023 at 09:47:27AM +0100, Phillip Potter wrote:
+> Yes indeed - I was under the impression it was appropriate for a
+> maintainer to signal their approval of a patch to maintained code using
+> a Signed-off-by tag due to their involvement in the submission process?
+> Apologies if I've got this wrong, happy to send Reviewed-bys by all
+> means.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-and-tested-by: syzbot+ee90502d5c8fd1d0dd93@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         8176a54b btrfs: fix iomap_begin length for nocow writes
-git tree:       git://git.infradead.org/users/hch/misc.git btrfs-dio-nocow-fix
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d17a43280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
-dashboard link: https://syzkaller.appspot.com/bug?extid=ee90502d5c8fd1d0dd93
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+Signed-off-by is for the chain that the patches pass through.  You add
+it when you apply or forward the patch.  Just give me a Reviewed-by
+tag and say it shold apply to patches 1 to 6 and I'll add it.
