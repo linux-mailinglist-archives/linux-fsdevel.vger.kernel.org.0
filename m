@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D69E4727DE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 13:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DEED727E16
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 13:06:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236110AbjFHLFI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 07:05:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35734 "EHLO
+        id S236326AbjFHLGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 07:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236233AbjFHLEO (ORCPT
+        with ESMTP id S236340AbjFHLFF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 07:04:14 -0400
+        Thu, 8 Jun 2023 07:05:05 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188EB2712;
-        Thu,  8 Jun 2023 04:03:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE75F359E;
+        Thu,  8 Jun 2023 04:04:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=gQ3Spsv4LyW6gkuENKLqfBtm97HUuPElpVTvO1XeD28=; b=jW0zTWF6tfMg7bq3namLXxCJhX
-        9o76HmmsCWifkmnenvxNN9ST2kDHg69JQjRM52ooMvxhJiNBPaSCCFxcHBlMOLs2V774wWqMCQhPj
-        /A1n8jDntoho8B6HC55sEWz9a3tEKJg5IDswpl9YuPwHOg7bQupCwXyuFlfPZADmA+4hFGg2+dmne
-        GY8stUwwlY+yosMPEFLSh7VFkFng9rGoZBIUYp7nJ1KPt83j3gpN/sYgk7DKf0RRjZ9mHuWj6VGu7
-        x+drRsxDDSDwRO0RDfNLxONcMjX6ZN6OS7II7WT15ThtGWxZ4Bd+3m2ZPDdl5LJs0Xqbsb7BknqRk
-        Es3R62fQ==;
+        bh=BWc5z9HT4dUA9mjQNGkIg08JFiqviKFgFc2kwBdnmvA=; b=DSaSxe/TisXuiNZhOR1TgSi7tx
+        33lAtkUXPMOr9WQm9Z+HhNKEJGoeKJSluj7uhXRCmimH7VoHS0E0fvUNcZ7UiWxsb/tBtz6fXhZlr
+        GE9jtxC+Q8FoQSEQz+4vk9nOOH8BTAjfrUuFLcHba2SvPuPGZNkEv8QjVxkATSDkihbdNi6umKqVB
+        7p2NEvk5EAeqwWcAKAwVWRbUBkG4tyEy/NutpgRnWrvU0mWTHAqNh1aG3veS9lJl/Zm3XwnRRN4uy
+        kPNwBnK5dcXc2ETiMnCmg0liMCPKVYmWiFEJ6OPE/jhf6OnfgqyBEoO+PrWwml+/G7QKTlQlKNK+/
+        sLCUxnmg==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q7DQO-0091yH-2h;
-        Thu, 08 Jun 2023 11:03:29 +0000
+        id 1q7DQR-00921s-1m;
+        Thu, 08 Jun 2023 11:03:31 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Richard Weinberger <richard@nod.at>,
@@ -52,9 +52,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org, Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 10/30] block: rename blkdev_close to blkdev_release
-Date:   Thu,  8 Jun 2023 13:02:38 +0200
-Message-Id: <20230608110258.189493-11-hch@lst.de>
+Subject: [PATCH 11/30] swsusp: don't pass a stack address to blkdev_get_by_path
+Date:   Thu,  8 Jun 2023 13:02:39 +0200
+Message-Id: <20230608110258.189493-12-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230608110258.189493-1-hch@lst.de>
 References: <20230608110258.189493-1-hch@lst.de>
@@ -71,37 +71,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make the function name match the method name.
+holder is just an on-stack pointer that can easily be reused by other calls,
+replace it with a static variable that doesn't change.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
-Acked-by: Christian Brauner <brauner@kernel.org>
 ---
- block/fops.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/power/swap.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index 6a3087b750a6cd..26af2b39c758e1 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -500,7 +500,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
- 	return 0;
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index 81aec3b2c60510..b03ff1a33c7f68 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -1510,6 +1510,8 @@ int swsusp_read(unsigned int *flags_p)
+ 	return error;
  }
  
--static int blkdev_close(struct inode *inode, struct file *filp)
-+static int blkdev_release(struct inode *inode, struct file *filp)
++static void *swsusp_holder;
++
+ /**
+  *      swsusp_check - Check for swsusp signature in the resume device
+  */
+@@ -1517,14 +1519,13 @@ int swsusp_read(unsigned int *flags_p)
+ int swsusp_check(bool snapshot_test)
  {
- 	struct block_device *bdev = filp->private_data;
+ 	int error;
+-	void *holder;
+ 	fmode_t mode = FMODE_READ;
  
-@@ -677,7 +677,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+ 	if (snapshot_test)
+ 		mode |= FMODE_EXCL;
  
- const struct file_operations def_blk_fops = {
- 	.open		= blkdev_open,
--	.release	= blkdev_close,
-+	.release	= blkdev_release,
- 	.llseek		= blkdev_llseek,
- 	.read_iter	= blkdev_read_iter,
- 	.write_iter	= blkdev_write_iter,
+ 	hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device,
+-					    mode, &holder, NULL);
++					    mode, &swsusp_holder, NULL);
+ 	if (!IS_ERR(hib_resume_bdev)) {
+ 		set_blocksize(hib_resume_bdev, PAGE_SIZE);
+ 		clear_page(swsusp_header);
 -- 
 2.39.2
 
