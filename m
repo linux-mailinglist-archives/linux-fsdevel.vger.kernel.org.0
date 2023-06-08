@@ -2,105 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63C1F727A53
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 10:47:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DE17727A57
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jun 2023 10:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235560AbjFHIrf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 04:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43358 "EHLO
+        id S235608AbjFHIri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 04:47:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235284AbjFHIrc (ORCPT
+        with ESMTP id S235528AbjFHIre (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 04:47:32 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B2062733
+        Thu, 8 Jun 2023 04:47:34 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3859AE61
         for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jun 2023 01:47:31 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-651f2f38634so284228b3a.0
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f70fc4682aso1837145e9.1
         for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jun 2023 01:47:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1686214051; x=1688806051;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M478tZ0BJPqFdShribkt4DG9LiqmYQZeG2OJxmtwTQI=;
-        b=Yq2Nya/66Vu5w6nNpTUv8LEnsCGR+JlJ895K/cvR0mlClcb2DLPGqhvMmAhPRnVC6P
-         5lyLBb0BanEOEB5t67nNrVRDwmL/nXyneeJKirBxtqfYoX82wSUEyObyvO5lBx5WlZjd
-         7IFu2/h9klmSHROrvtKaxHRzYYf97RrRZ7R6kUT/MptavElCUHxFZYVt8v39v0QUxqH8
-         MBekCo2B/5+W5SBtVF33Auv200I2Z82VjkUUpo4jXKJb6wedh1dfBUxH68MnoVoVRJcq
-         CehSyCf+cG+5K5kWw96LsHynVXZEpos6blrNXcKzRev92YSyY59ZKV4R2rqBlgxN/CeI
-         vyVw==
+        d=philpotter-co-uk.20221208.gappssmtp.com; s=20221208; t=1686214050; x=1688806050;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Z0zXMf0/p1bWmc9mPlzpLlXYRZkfsnJE7sT8NRRA6c=;
+        b=vkzOBIDyJZnE5t4Mj6KFwse5JLCGNYhVpD7M+LgRRAMweH7g5OH2v9GR8Kjk+mPpJm
+         NFJNzRyEA3IyKuvp7ODnGHL2Af5KJgwvRhzjwf+IFMbbs3Ted974+vGTeleHQR5SKwGb
+         b51DB4GATQSJy7/aa6dVBWvtN1fKh3j+MsQqSLaL0gg8C7sUjIaXCDmas7Q82iLoi2Fi
+         ugG3zDp2J/kj+Q3TNNSScGVCX2fMCwjdIX6YCNNx4q8YsyhkIaQSOa714CgWEa7Wuf3g
+         xuWNdIeV51MWblNgszX4dDTQTNus8HSvkBuoP0iMTSy1oAvOKlY2L1m7f7ZPLQvrDhY6
+         hPXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686214051; x=1688806051;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M478tZ0BJPqFdShribkt4DG9LiqmYQZeG2OJxmtwTQI=;
-        b=IIdJ5BqHdko+u8iHJ25sRJlbsFEuTdUrBtxh2l6ZHZ1APaHEHOUIYEdUQk0/jb+fq8
-         FBlIf7K/TzO9LyYIshf+7CTZ2HhxfopgnafeaiMeUyID2x+G1Fc3wvAvPSvF7dZKXYJz
-         ebR+R0Prljz6lJHDAydvFYURpRfMT5E6Rnwp+CCofymPXlYmcWBgQwA+blAp50FZE4yw
-         DMCkSYNzyPbSpA77j4sK3F3ptNJOAdlUzf3w0zlKDX4a146eq+uocseNLb5SftdHWL2z
-         FVqlKkGRjuBws2ss1/Iqhhw1q8tPoIHB1yUicoLntg1ukKxFBLsbHIn5juBAcnz7fmQY
-         xw6w==
-X-Gm-Message-State: AC+VfDxt+ymlCMH+c9NbnO3d+FD0m+JQp5D2xU5rkCmmjrwYyh9vgl+6
-        JeUTJJz5Eg0m9YrHXMK4n1CSOQ==
-X-Google-Smtp-Source: ACHHUZ7154zUvrdNtTgZVFuJ8WpQ3S+Vr8G9uLG4z30KZw1UZuEHkqXzo6u/4y2aW+LeH1v8GBnjxw==
-X-Received: by 2002:a05:6a20:7d85:b0:10d:d0cd:c1c7 with SMTP id v5-20020a056a207d8500b0010dd0cdc1c7mr7184475pzj.15.1686214050909;
-        Thu, 08 Jun 2023 01:47:30 -0700 (PDT)
-Received: from localhost.localdomain ([61.213.176.13])
-        by smtp.gmail.com with ESMTPSA id 23-20020aa79157000000b0063b806b111csm614160pfi.169.2023.06.08.01.47.25
+        d=1e100.net; s=20221208; t=1686214050; x=1688806050;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Z0zXMf0/p1bWmc9mPlzpLlXYRZkfsnJE7sT8NRRA6c=;
+        b=GfAIBd9WF/XUVIYjdf5iveIhA30P5eLkUYVUFRKcilfyHIptRCxXdZpYtxScnadzvb
+         S7m6AZqRr4z2hWjR841d/Mt9bzI2akrbvyOoY37qVTwF1dA2SyVDNRtrvN+yt1E42aRw
+         4V00+iZsf4tg1BblKzx/ttzcqBFn6XMnZ7U2fMXK5yVHdW9lfOTHNweofZsgtpLLc3IQ
+         BSXfDv2A5XDm9m+F1OTD2+2mLosoZI2Yb97pbmUBa72sprNr8pYps0/LoSOKAOds6P4b
+         MWkjgmot1loG7DYflsbH3NzXLPj4inE1btAUj9xOVVXHFFTFAH6OPga99FB+UVacyNWF
+         W/5g==
+X-Gm-Message-State: AC+VfDxoB59gztcq8fk9SnGQbPw1hd9edZTMe/fVglaeFN+nW1Wq/Ura
+        nKDYM1LDwIYCwR+UvZuotmPbjA==
+X-Google-Smtp-Source: ACHHUZ64php+m1QCHow4PROIWkYJdsxvPRvM75l2Ndr3HzBRHztMsSyV31x82/mpTwubbqm80EXyLg==
+X-Received: by 2002:a05:600c:d6:b0:3f6:389:73b1 with SMTP id u22-20020a05600c00d600b003f6038973b1mr839950wmm.6.1686214049725;
+        Thu, 08 Jun 2023 01:47:29 -0700 (PDT)
+Received: from equinox (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.a.1.e.e.d.f.d.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:dfde:e1a0::2])
+        by smtp.gmail.com with ESMTPSA id n19-20020a7bcbd3000000b003f73a101f88sm1253740wmi.16.2023.06.08.01.47.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 01:47:30 -0700 (PDT)
-From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Andrew Morton <akpm@osdl.org>, me@jcix.top,
-        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Subject: [PATCH 2/2] fuse: remove an unnecessary if statement
-Date:   Thu,  8 Jun 2023 16:46:09 +0800
-Message-Id: <20230608084609.14245-3-zhangjiachen.jaycee@bytedance.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20230608084609.14245-1-zhangjiachen.jaycee@bytedance.com>
-References: <20230608084609.14245-1-zhangjiachen.jaycee@bytedance.com>
+        Thu, 08 Jun 2023 01:47:29 -0700 (PDT)
+Date:   Thu, 8 Jun 2023 09:47:27 +0100
+From:   Phillip Potter <phil@philpotter.co.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@suse.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-btrfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 06/31] cdrom: remove the unused mode argument to
+ cdrom_release
+Message-ID: <ZIGVn9E9ME26V0Gn@equinox>
+References: <20230606073950.225178-1-hch@lst.de>
+ <20230606073950.225178-7-hch@lst.de>
+ <ZH+6qd1W75G49P7p@equinox>
+ <20230608084129.GA14689@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230608084129.GA14689@lst.de>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-FUSE remote locking code paths never add any locking state to
-inode->i_flctx, so the locks_remove_posix() function called on
-file close will return without calling fuse_setlk().
+On Thu, Jun 08, 2023 at 10:41:29AM +0200, Christoph Hellwig wrote:
+> On Wed, Jun 07, 2023 at 12:00:57AM +0100, Phillip Potter wrote:
+> > Looks good, thanks.
+> > 
+> > Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+> 
+> Hmm, these signoffs don't really make sense here.  Were they intended
+> as Reviewed-bys?
+> 
+Hi Christoph,
 
-Therefore, as the if statement to be removed in this commit will
-always be false, remove it for clearness.
+Yes indeed - I was under the impression it was appropriate for a
+maintainer to signal their approval of a patch to maintained code using
+a Signed-off-by tag due to their involvement in the submission process?
+Apologies if I've got this wrong, happy to send Reviewed-bys by all
+means.
 
-Fixes: 7142125937e1 ("[PATCH] fuse: add POSIX file locking support")
-Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
----
- fs/fuse/file.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 7fe9d405969e..57789215c666 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2619,10 +2619,6 @@ static int fuse_setlk(struct file *file, struct file_lock *fl, int flock)
- 		return -ENOLCK;
- 	}
- 
--	/* Unlock on close is handled by the flush method */
--	if ((fl->fl_flags & FL_CLOSE_POSIX) == FL_CLOSE_POSIX)
--		return 0;
--
- 	fuse_lk_fill(&args, file, fl, opcode, pid_nr, flock, &inarg);
- 	err = fuse_simple_request(fm, &args);
- 
--- 
-2.20.1
-
+Regards,
+Phil
