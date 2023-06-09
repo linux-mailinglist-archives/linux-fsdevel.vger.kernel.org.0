@@ -2,96 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 093BC728E5F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 05:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7419C728E66
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 05:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbjFIDOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 23:14:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55500 "EHLO
+        id S237665AbjFIDPW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 23:15:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjFIDOx (ORCPT
+        with ESMTP id S237138AbjFIDPK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 23:14:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06FD630F2
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jun 2023 20:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686280448;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xIgL9i3w0AdAhUryhJlWnRJCq0oGm95s0fdioQLwB1I=;
-        b=W1vpGzcKwhhgLnY5BpMMoOmVvojpU8kr83rwXGm9WJnzfV1LgxJiKW4hRKPsTbWB/RprcQ
-        0T/kWoq2+WjKVPgrPdZdsdGdYGR403JFve8s3SQBxL0uuTh9bZZmj68QMbLBGAZ9E2izRU
-        yZXKzDISeKXw2DaZZ/TRUIQv09Ujjzg=
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com
- [209.85.221.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-412-KVGdqCRqM-a_EUPKjl0yug-1; Thu, 08 Jun 2023 23:14:07 -0400
-X-MC-Unique: KVGdqCRqM-a_EUPKjl0yug-1
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-463982ca6f2so31559e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jun 2023 20:14:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686280446; x=1688872446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xIgL9i3w0AdAhUryhJlWnRJCq0oGm95s0fdioQLwB1I=;
-        b=PcxWE8mC1baV692nPGNxp8dsoLNIuLbQO7IvrJmbCYJ46wx90lzrGitNfmOSNuUbM9
-         H1DQUMvQOKsOc5W5FiFy52XSXRvgBuiZzKfOj//2aSHyd4vUzy6EiScQXSUSaOOYufi/
-         KDTgv94BIgGZ/YD+vozYytIeBNHFZsASIyQzP+7yce+NMQ/nQdZw7j6fhx7/eEeEhNxd
-         XEBHPzFnSGC92FQlxMyDrEXPOSvmfDbV7ii5phqhtymZPw2OlNZwlqvWSU0PsgdIt2r7
-         RtSE52d9DzMz0xzNSt+fpWQA90SXHLpWtLHzm/sdK6LTYJaKyuM6wk2ITsYK47nlGFyI
-         UpMQ==
-X-Gm-Message-State: AC+VfDzp6xm1pBw9BoeWbhmAwj6CowoA2E00WBkbfMYEcI0QYBGAz+FZ
-        BDEXlxZIkrYttd/8Zucew3nZyhviv8ObwRTjaqnQZS1n4NofhX95z5Pweqc+66FFbfTCooF5Ubj
-        2zvVx9myHwuWZsyKE/ur27JaWYXYetOvuATlCeOxsqWDZGQQOqwJWK2RJxA==
-X-Received: by 2002:ac5:c858:0:b0:457:3a45:38d2 with SMTP id g24-20020ac5c858000000b004573a4538d2mr203788vkm.1.1686280446396;
-        Thu, 08 Jun 2023 20:14:06 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5++K06QbioYKyQ9Uyh0Xp/3wGCUXlqXahKVRmOXmWm5nsxWpaViogeMufGtgI6Ae4jvfzUyKzwBfawuTdRgb0=
-X-Received: by 2002:ac5:c858:0:b0:457:3a45:38d2 with SMTP id
- g24-20020ac5c858000000b004573a4538d2mr203780vkm.1.1686280446144; Thu, 08 Jun
- 2023 20:14:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230609005158.2421285-1-surenb@google.com> <20230609005158.2421285-2-surenb@google.com>
- <877csdpfcq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <877csdpfcq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From:   Ming Lei <ming.lei@redhat.com>
-Date:   Fri, 9 Jun 2023 11:13:55 +0800
-Message-ID: <CAFj5m9K-Kyu-NV1q3eGeA8MOcC1XYgYyENnti-Qd8Mj-A6=Q5Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] swap: remove remnants of polling from read_swap_cache_async
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-        willy@infradead.org, hannes@cmpxchg.org, mhocko@suse.com,
-        josef@toxicpanda.com, jack@suse.cz, ldufour@linux.ibm.com,
-        laurent.dufour@fr.ibm.com, michel@lespinasse.org,
-        liam.howlett@oracle.com, jglisse@google.com, vbabka@suse.cz,
-        minchan@google.com, dave@stgolabs.net, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, hdanton@sina.com, apopple@nvidia.com,
-        peterx@redhat.com, david@redhat.com, yuzhao@google.com,
-        dhowells@redhat.com, hughd@google.com, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, pasha.tatashin@soleen.com, linux-mm@kvack.org,
+        Thu, 8 Jun 2023 23:15:10 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA89430E8
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jun 2023 20:15:06 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-82-39.bstnma.fios.verizon.net [173.48.82.39])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3593ElI1024536
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 8 Jun 2023 23:14:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1686280489; bh=ZbkQv99SKWdS1oKE/cmlbVEVCgfWmkP7O/305UFGCCc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=gf9UOpPE3OfousdpIh1t5J7FhOjFpyymp1L2s+YrXEB49Ww2h1wfPjzA+PzvRBxfY
+         WDv+WyKgTHLRYaH5hny+lJc4/MqtsU5PcG30/tXtRYel5wKIIOUyIcT7t5d+vJji4M
+         qaW8nVE4sqEy5mpxf7RcSy5C6EEMLXqAeLInAGlO1YiZGyk4mYmlpHLhpP96QKmwI3
+         gTWP8ZFn69CyZAJ/MWR0HI+uAguAc1aitt5OL4IkhD3uh4b1dkhNNeit8OuLoQ+JHB
+         k2NoM4lRg35Hk5TOZstDc+U0MMQ2+368TzSe9Emy7ElPucMumHXKISclNow5DpwxGa
+         5gTg6/I/ZA+DQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id C9FAE15C02DC; Thu,  8 Jun 2023 23:14:46 -0400 (EDT)
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     linux-ext4@vger.kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Jan Kara <jack@suse.cz>, Kemeng Shi <shikemeng@huaweicloud.com>
+Subject: Re: [PATCH v2 00/12] multiblock allocator improvements
+Date:   Thu,  8 Jun 2023 23:14:43 -0400
+Message-Id: <168628045803.1458216.14609598386869495524.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <cover.1685449706.git.ojaswin@linux.ibm.com>
+References: <cover.1685449706.git.ojaswin@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 9, 2023 at 9:58=E2=80=AFAM Huang, Ying <ying.huang@intel.com> w=
-rote:
->
-> + Ming Lei for confirmation.
 
-Good catch, it isn't necessary to pass the polling parameter now.
+On Tue, 30 May 2023 18:03:38 +0530, Ojaswin Mujoo wrote:
+> ** Changed since v1 [2] **
+> 
+>  1. Rebase over Kemeng's recent mballoc patchset [3]
+>  2. Picked up Kemeng's RVB on patch 1/12
+> 
+>  [2] https://lore.kernel.org/all/cover.1685009579.git.ojaswin@linux.ibm.com/
+>  [3] https://lore.kernel.org/all/20230417110617.2664129-1-shikemeng@huaweicloud.com/
+> 
+> [...]
 
-Thanks,
+Applied, thanks!
 
+[01/12] Revert "ext4: remove ac->ac_found > sbi->s_mb_min_to_scan dead check in ext4_mb_check_limits"
+        commit: 3582e74599d376bc18cae123045cd295360d885b
+[02/12] ext4: mballoc: Remove useless setting of ac_criteria
+        commit: fb665804fd62e600b5c2350ea69295261ce8374d
+[03/12] ext4: Remove unused extern variables declaration
+        commit: 3086ed54c0e65c60b0fb142e181e7dd4e3b7b1e0
+[04/12] ext4: Convert mballoc cr (criteria) to enum
+        commit: eb7d4a8b9510887fb690a6b912d80cb0bce21387
+[05/12] ext4: Add per CR extent scanned counter
+        commit: 9e97d81a1fa105b80583b5152e4b9cb794734585
+[06/12] ext4: Add counter to track successful allocation of goal length
+        commit: af97bca67ff63191d44023f895b6033eb7d3423a
+[07/12] ext4: Avoid scanning smaller extents in BG during CR1
+        commit: caf886aecd608a8ef05ab10957cf4b9fd9564712
+[08/12] ext4: Don't skip prefetching BLOCK_UNINIT groups
+        commit: bf912c937ed41c4581d77806b003f22625eee0b5
+[09/12] ext4: Ensure ext4_mb_prefetch_fini() is called for all prefetched BGs
+        commit: 64f6fb876cedc30fc1430b96eb442bd84bc61459
+[10/12] ext4: Abstract out logic to search average fragment list
+        commit: 1918cdc99d125c275dcdd4527520c78bb1a3c1ef
+[11/12] ext4: Add allocation criteria 1.5 (CR1_5)
+        commit: 7b748ea2a6ad2bda304553b5cf8745f542af6b34
+[12/12] ext4: Give symbolic names to mballoc criterias
+        commit: c9f19daa1824a73218526650a9aade17536527c8
+
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
