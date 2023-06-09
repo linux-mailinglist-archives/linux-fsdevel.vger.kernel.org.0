@@ -2,95 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BBC8872A178
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 19:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0786272A1DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 20:13:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231250AbjFIRmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 13:42:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48470 "EHLO
+        id S230111AbjFISNl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 9 Jun 2023 14:13:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231226AbjFIRmT (ORCPT
+        with ESMTP id S229436AbjFISNk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 13:42:19 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 653FA3AAC;
-        Fri,  9 Jun 2023 10:42:07 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-bad010e1e50so2058042276.1;
-        Fri, 09 Jun 2023 10:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686332526; x=1688924526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+mxlR3AAOCReqszR1ozs5CUDyiaXybkfrT03qSlnN+w=;
-        b=mpsTJ8iOKx6DYYGqx9ZkDBj06kPQDTh67xXTMazb7rhKrFD8YA2G3CPhSKyoNqjGK1
-         53yD+ftmTb35rqZgv5ME77kElXlD20xRhMpj6JAFr56kWImzq7ZhrQmxofO5GTQhxPIy
-         nd3SiIhrGhoiOu4UN63S0ibuU32P+3pkiOBfsV984ZConk9CAMNPo2ZWZzo1OTPS54FG
-         oBnBcSgtYEJdhr9+/3ZJie+sZk48L2Q9YB4lmHO53b6KyD67RWHvAs/Pk45R7NeKdKJR
-         Qm32L6kihBmd9RE5bQM+gBs8Uc7RSGupoXmhTVkLafO4xlJOIaJChoTYXj5sWTM07WGF
-         qYzg==
+        Fri, 9 Jun 2023 14:13:40 -0400
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67E913583;
+        Fri,  9 Jun 2023 11:13:39 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-977d3292be0so55136166b.1;
+        Fri, 09 Jun 2023 11:13:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686332526; x=1688924526;
+        d=1e100.net; s=20221208; t=1686334418; x=1688926418;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+mxlR3AAOCReqszR1ozs5CUDyiaXybkfrT03qSlnN+w=;
-        b=hhALGyyPxMzNLgLUL7y0Piw1ijK5MrsA3n02ztHDb4DFvwPBBdXf81i+BERypNgOBM
-         3PuvYevnAfu+20Oi+1iidaEqzgMWWjj6BYZEKn5TqbXD/+17/58KLHPzbaXlm8pbYTFp
-         63exramZUrazBOqNyuGUPb+gJrVTuwwuS7KiPkiHHmd8Ky2NPmGvxSwsLL7cXf8HS9LN
-         pWV7p3gWgZaJKvoqWiCT/9vHWrPNORWY9RIHKC7FKuC8v+kInV4rS5dKOSY8ClER9Ta0
-         h7vfsqjDr6Pq3GrywWPZLi8hgxqD4fiBtRGP0VqP/rjSU++XemrUL3IYnAwFatXeCEvv
-         4f6A==
-X-Gm-Message-State: AC+VfDyhoP08kXP/GHfvS4DTXAqq6Co9Scu57uZrovt8mgDnC17Hxka0
-        g8IvFTNIBhMoWKvk+FUigSrtmzGevkx/74uylhc=
-X-Google-Smtp-Source: ACHHUZ6KExb7dLKBTS9XkE+sBdXLwDqHhvD/sSiitEPOFEBDAlXlierh/9f6nlsBKKiPCy3METv4FE49GtM4Ymc0E38=
-X-Received: by 2002:a0d:dd09:0:b0:559:e180:2197 with SMTP id
- g9-20020a0ddd09000000b00559e1802197mr1912661ywe.21.1686332526471; Fri, 09 Jun
- 2023 10:42:06 -0700 (PDT)
+        bh=f2Xux0G0tFdJlDzvQzZhcAqUXfykTqTn9g16hyE21ys=;
+        b=O8+rgBcSCmr7ISsLmZwhYt2QuRaOx19GpuhElVxPga2ffv3FF6dC4T+tx4hPruvjTb
+         9vRqlJKiSAjiiRGfNO26zl63DYH+9TUf3eaCJGkc+eAoEUDKzBGjKZauFZUlu6Ew4Wu8
+         JhOG4NfTbt8gyRAziil1iXgBKO9cgeHeI9W3aB6hL5YWVqq+X2A7WMIfDY4pDtQBhu4/
+         HU1mPg0HVILj5bd8QjZ6/n1W7Oy8yg4cjCVfngIeZwEmYzSDFJw4tY1FwwTzcIDcPBN4
+         R6O70UJnFPGL80aqDbuMt7vDiS28/aycG46CDyR+7ZSf0Bd1s1M69EeO5OMKX2EGFDh+
+         BtaA==
+X-Gm-Message-State: AC+VfDzM63fEMAKyAwGd7fowQQU+V97ul7KX08jd/wfRHyvKkIpIC42H
+        0ys/UrPI0wjFM1vSdDaS0HFowj62vZw8QuUb3kE=
+X-Google-Smtp-Source: ACHHUZ7r7lbBrTdxRkyp2bTqJCFBDA6+Ddf+RviatN0r97z5LUsaxAu6Q2CxPlvVkZ/6P5sUxBvleBvx6ETeZa4XK48=
+X-Received: by 2002:a17:906:1049:b0:974:56cb:9dfc with SMTP id
+ j9-20020a170906104900b0097456cb9dfcmr1993996ejj.1.1686334417837; Fri, 09 Jun
+ 2023 11:13:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230609063118.24852-1-amiculas@cisco.com> <20230609-feldversuch-fixieren-fa141a2d9694@brauner>
- <CH0PR11MB529981313ED5A1F815350E41CD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
- <20230609-nachrangig-handwagen-375405d3b9f1@brauner> <6b90520e-c46b-4e0d-a1c5-fcbda42f8f87@betaapp.fastmail.com>
- <CH0PR11MB5299117F8EF192CA19A361ADCD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
- <d68eeeaf-17b7-77aa-cad5-2658e3ca2307@quicinc.com> <CH0PR11MB5299314EC8FB8645C90453B5CD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
-In-Reply-To: <CH0PR11MB5299314EC8FB8645C90453B5CD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 9 Jun 2023 19:41:55 +0200
-Message-ID: <CANiq72n2znRm-jeQYP6nd3fHYz5bLNH=iNg9x9Z9HDYmOGnYHQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/80] Rust PuzzleFS filesystem driver
-To:     "Ariel Miculas (amiculas)" <amiculas@cisco.com>
-Cc:     Trilok Soni <quic_tsoni@quicinc.com>,
-        Colin Walters <walters@verbum.org>,
+References: <20230608110258.189493-1-hch@lst.de> <20230608110258.189493-12-hch@lst.de>
+In-Reply-To: <20230608110258.189493-12-hch@lst.de>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 9 Jun 2023 20:13:23 +0200
+Message-ID: <CAJZ5v0h61q6=JxjeUjjMz5k05HuRGWVKp_rK+9N8rug58kU_VQ@mail.gmail.com>
+Subject: Re: [PATCH 11/30] swsusp: don't pass a stack address to blkdev_get_by_path
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Coly Li <colyli@suse.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-btrfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Hannes Reinecke <hare@suse.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 9, 2023 at 7:25=E2=80=AFPM Ariel Miculas (amiculas)
-<amiculas@cisco.com> wrote:
+On Thu, Jun 8, 2023 at 1:03 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> I could switch to my personal gmail, but last time Miguel Ojeda asked me =
-to use my cisco email when I send commits signed off by amiculas@cisco.com.
-> If this is not a hard requirement, then I could switch.
+> holder is just an on-stack pointer that can easily be reused by other calls,
+> replace it with a static variable that doesn't change.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-For patches, yeah, that is ideal, so that it matches the Git author / `From=
-:`.
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
-But for the other emails, you could use your personal address, if that
-makes things easier.
-
-Hope that helps!
-
-Cheers,
-Miguel
+> ---
+>  kernel/power/swap.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+> index 81aec3b2c60510..b03ff1a33c7f68 100644
+> --- a/kernel/power/swap.c
+> +++ b/kernel/power/swap.c
+> @@ -1510,6 +1510,8 @@ int swsusp_read(unsigned int *flags_p)
+>         return error;
+>  }
+>
+> +static void *swsusp_holder;
+> +
+>  /**
+>   *      swsusp_check - Check for swsusp signature in the resume device
+>   */
+> @@ -1517,14 +1519,13 @@ int swsusp_read(unsigned int *flags_p)
+>  int swsusp_check(bool snapshot_test)
+>  {
+>         int error;
+> -       void *holder;
+>         fmode_t mode = FMODE_READ;
+>
+>         if (snapshot_test)
+>                 mode |= FMODE_EXCL;
+>
+>         hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device,
+> -                                           mode, &holder, NULL);
+> +                                           mode, &swsusp_holder, NULL);
+>         if (!IS_ERR(hib_resume_bdev)) {
+>                 set_blocksize(hib_resume_bdev, PAGE_SIZE);
+>                 clear_page(swsusp_header);
+> --
+> 2.39.2
+>
