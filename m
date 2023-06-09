@@ -2,135 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C749A729DC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 17:05:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1BB3729E73
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 17:27:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236984AbjFIPFE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 11:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44708 "EHLO
+        id S241333AbjFIP1e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 11:27:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231344AbjFIPFC (ORCPT
+        with ESMTP id S240733AbjFIP11 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 11:05:02 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113811FEB;
-        Fri,  9 Jun 2023 08:05:01 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-30e3caa6aa7so1920364f8f.1;
-        Fri, 09 Jun 2023 08:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686323099; x=1688915099;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fm1RzwDp533yvq8IXnJJlJWRXI4ay4ojZpMj1ZL4i0Q=;
-        b=YaxCfluHQ/VIRRtKjub/lFepPWEjg5aqVNg6fyE16/08p6eeh+nT1n03hXXs9WAuwI
-         ux9q49U+AYXpmuozmMm9FbXRxTwSOkpF24kMLw2TGYmXHUs9yFZcDWm6F1heZzIX8h94
-         b+xSZ70WhLs29/9XXDLvOqW7qDvY7PYHkDTzsGsfsPQfvc5DcjW/t0OR9hvzQseH5PeA
-         epg7o7Pl39QvPyGnbocxl1DcvJmywV+iuWlxYPFXnrH81CqoIEOUU6vPHcfo3vJPh2WD
-         V2qVtWogwLUWj+HrQ1kGuMpJdKzHP0dlEqk37SOhbKf+qxzoUKuBVd92RzP81hWVdz1/
-         NHFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686323099; x=1688915099;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fm1RzwDp533yvq8IXnJJlJWRXI4ay4ojZpMj1ZL4i0Q=;
-        b=SQh2eEv9a4wZ5Jrxf/V3vYAoN2vEMrncRxK6cBCl0d2Xq5govSv6atCvVYJU7vdljI
-         aOidACpyk9GaKJu+9d4fPJR4JYo95+D8MKHLm5zxmV/hX2rKVJCtFI3f4cM6zRTt7y+g
-         j+jBdHwGQXOd1rC5s7hzylRcYFaeuYGz3f9mmD7vsW0pCRFhMlpcWQ4mrmPoZNQ1M1MJ
-         yvQeAoBc0j/wtRYju/yI+aukpclgTJh9ACPvctRmndlkhWbqGGvjEnVKZHpCTEh2j5Tw
-         vDpdzAmdW4g2K75xmQkZ68yGdndP+LsXGb5BnsbVreTDEu+KrYNWDvdmDqpCVjnoB4ct
-         hGIQ==
-X-Gm-Message-State: AC+VfDyYGesfwU+hbMPL00eT5pYxwc/hnK58nfaRlLAsbJvB1CnSUJBS
-        o4kCFOGLXZ+hnGmzXIy1+HKuxwnUQig=
-X-Google-Smtp-Source: ACHHUZ5fWVo/td8zldlBcdi1ZwlsUd8/y1QFt87zTALroZtEvJ7WQMrgyIAgwsueFn8d5x5vlnZ8WQ==
-X-Received: by 2002:a5d:525b:0:b0:30a:f3ca:17ad with SMTP id k27-20020a5d525b000000b0030af3ca17admr1247470wrc.66.1686323099134;
-        Fri, 09 Jun 2023 08:04:59 -0700 (PDT)
-Received: from suse.localnet (host-95-252-166-216.retail.telecomitalia.it. [95.252.166.216])
-        by smtp.gmail.com with ESMTPSA id b5-20020adff905000000b0030aedb8156esm4636359wrr.102.2023.06.09.08.04.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 08:04:57 -0700 (PDT)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <matthew.wilcox@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
-        Kent Overstreet <kent.overstreet@linux.dev>
-Subject: Re: [PATCH v3] fs/aio: Replace kmap{,_atomic}() with kmap_local_page()
-Date:   Fri, 09 Jun 2023 17:04:56 +0200
-Message-ID: <23757331.ouqheUzb2q@suse>
-In-Reply-To: <20230119162055.20944-1-fmdefrancesco@gmail.com>
-References: <20230119162055.20944-1-fmdefrancesco@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 9 Jun 2023 11:27:27 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B7CC3AAD;
+        Fri,  9 Jun 2023 08:27:22 -0700 (PDT)
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 359FJXd4002613;
+        Fri, 9 Jun 2023 15:27:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=C++pQTQAuHPdrSYY3hZyvTgu1kehwRjQ+jhhSI164wM=;
+ b=bak2cVAEu1GveO4awB5aIsuNgoj4wYmPo0AwLycmHvJAtOg6zC44c9suDMTcom3sBVVM
+ 1U2lAK1Yqw4SL1F45s5nccCo377dYjMh9Y4FjAWUUqcKl6u88oxMzsguoJUdy85dhP+Y
+ bUicPlQbLKOqSD8yU0arVNto+vLtvajcQ6u4xmnuS+TgmYFdOxISq55zhfVHoDQ6lP30
+ EBxuOanfIWlkL5zbEwy8qAhj0ni1x+D4lzIfUaKabfvW283JfzCUYWP3CpQIIP/9kO3L
+ +G7lsLLIaF/bguWWhmHIJ96/pK/+xZMBv5KgpKDuQt5wAwckhIiWg6m1a5KQu7KFrWv6 TQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3r46mc859w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Jun 2023 15:27:06 +0000
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 359FLZHA008339;
+        Fri, 9 Jun 2023 15:27:06 GMT
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3r46mc859q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Jun 2023 15:27:06 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 359DrjVh022695;
+        Fri, 9 Jun 2023 15:27:05 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([9.208.130.102])
+        by ppma03wdc.us.ibm.com (PPS) with ESMTPS id 3r2a77pb54-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Jun 2023 15:27:05 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 359FR4Yt59900292
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 9 Jun 2023 15:27:05 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E6C9458059;
+        Fri,  9 Jun 2023 15:27:04 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 22D1358058;
+        Fri,  9 Jun 2023 15:27:04 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.47.53])
+        by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Fri,  9 Jun 2023 15:27:04 +0000 (GMT)
+Message-ID: <b24beac58595d2b43952cb0112fd84f75651086d.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/3] Reduce impact of overlayfs fake path files
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Date:   Fri, 09 Jun 2023 11:27:03 -0400
+In-Reply-To: <CAOQ4uxh=KfY2mNW1jQk6-wjoGWzi5LdCN=H9LzfCSx2o69K36A@mail.gmail.com>
+References: <20230609073239.957184-1-amir73il@gmail.com>
+         <CAJfpegvDoSWPRaoa_i_Do3JDdaXrhohDtfQNObSJ7tNhhuHAKw@mail.gmail.com>
+         <CAOQ4uxh=KfY2mNW1jQk6-wjoGWzi5LdCN=H9LzfCSx2o69K36A@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: rcs_LWEmQJH8FB4eauyTXfNzOyHeIWih
+X-Proofpoint-ORIG-GUID: szv-tZ_ximXNhKjKM4eyrGyD20g_OIUn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-09_10,2023-06-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=527 impostorscore=0 adultscore=0 mlxscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 priorityscore=1501 spamscore=0 clxscore=1011
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306090126
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On gioved=C3=AC 19 gennaio 2023 17:20:55 CEST Fabio M. De Francesco wrote:
-> The use of kmap() and kmap_atomic() are being deprecated in favor of
-> kmap_local_page().
+On Fri, 2023-06-09 at 17:28 +0300, Amir Goldstein wrote:
+> For IMA/LSMs, I'd imagine that like fanotify, they would rather get
+> the real path where the real policy is stored.
 
-According to a suggestion by Matthew, I just sent another patch which stops=
-=20
-allocating aio rings from ZONE_HIGHMEM.[1]
+Definitely!
 
-Therefore, please drop this patch.
+> If some log files end with relative path instead of full fake path
+> it's probably not the worst outcome.
 
-Since the purpose of the new patch is entirely different from this, I chang=
-ed=20
-the subject and reset the version number to v1.
+-- 
+thanks,
 
-Thanks,
-
-=46abio
-
-[1] https://lore.kernel.org/lkml/20230609145937.17610-1-fmdefrancesco@gmail=
-=2Ecom/
-=20
-> There are two main problems with kmap(): (1) It comes with an overhead as
-> the mapping space is restricted and protected by a global lock for
-> synchronization and (2) it also requires global TLB invalidation when the
-> kmap=E2=80=99s pool wraps and it might block when the mapping space is fu=
-lly
-> utilized until a slot becomes available.
->=20
-> With kmap_local_page() the mappings are per thread, CPU local, can take
-> page faults, and can be called from any context (including interrupts).
-> It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
-> the tasks can be preempted and, when they are scheduled to run again, the
-> kernel virtual addresses are restored and still valid.
->=20
-> The use of kmap_local_page() in fs/aio.c is "safe" in the sense that the
-> code don't hands the returned kernel virtual addresses to other threads
-> and there are no nesting which should be handled with the stack based
-> (LIFO) mappings/un-mappings order. Furthermore, the code between the old
-> kmap_atomic()/kunmap_atomic() did not depend on disabling page-faults
-> and/or preemption, so that there is no need to call pagefault_disable()
-> and/or preempt_disable() before the mappings.
->=20
-> Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
-> fs/aio.c.
->=20
-> Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
-> with HIGHMEM64GB enabled.
->=20
-> Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
-> Suggested-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-> Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
-> ---
-
-
+Mimi
 
