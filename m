@@ -2,152 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07DCC72A378
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 21:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3E9D72A3FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 22:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231777AbjFITyM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 15:54:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50854 "EHLO
+        id S229900AbjFIUBJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 16:01:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230526AbjFITyG (ORCPT
+        with ESMTP id S231375AbjFIUBG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 15:54:06 -0400
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9984BE4A;
-        Fri,  9 Jun 2023 12:53:57 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.west.internal (Postfix) with ESMTP id B069732007CF;
-        Fri,  9 Jun 2023 15:53:54 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 09 Jun 2023 15:53:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
-        :content-transfer-encoding:content-type:content-type:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1686340434; x=1686426834; bh=/umth9x9wlDfRXa0nUo5a8OQ+XI1nihFMP9
-        xQI+rJGQ=; b=kv51jI/2vQqJqWpRDRy6YebtnZrbRelWHznMXHZy1CaAeTWlV/B
-        WUXMZ03NUHEGB+nIJYv6O/G70BKa2euupNcGt+Ji4dic3IgVTqiFFE19XVPc/1lt
-        cyw+XZ0BcmWbPoqLNUhJvHrba73QtFdrTi8c5nYYdAm6MBoIVqNSq9iPK3fLqDX0
-        +9NtqvFAL7gA+CHgtynVyz67z1G590yr4Jp4Fvu3NlemRcF/DLsJAJ5zhyl4wfeu
-        ram0aLeLeGmLISnwX1ocuLv4sughwot4imhpion8eGYc19/SE3ZQ5EAq7XVAOFHx
-        lq2k9tYC7kwlTGlQRMH5DfGZVMkOYuD7GZg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1686340434; x=1686426834; bh=/umth9x9wlDfRXa0nUo5a8OQ+XI1nihFMP9
-        xQI+rJGQ=; b=Uu+uvnkQcizUN9SzSmORK1ZVPRc1KHi9XJ1W+5a9BilRllEL4Vq
-        w0J6kvcqmE3QSHQbsqfVM6jIm3l/TQC1cWM0AJsGBpUS8Q08Fo8pupVisCUWXQQ4
-        boJNfoEbkKbYYhC2go8SOYIOE9Xt40qNygpP2m6Fe5Qcs2HRuW4UxmvBsw9G7UKT
-        QvPOxoEQBodTZQRnu8C+FzFnisHQd0eGIltjDJRx4IbZWhcd2J5o7wWL/3slY7Ee
-        KmOP1OCyoi5PhEx7lghFGkh5lCwV5ui1mofbdqLjiowz2DFMcUliNgMyekiSBXe5
-        Yzd3ltqfAUljxHJe6GmxI3dCg0VT8TlIB+g==
-X-ME-Sender: <xms:UoODZCAtgazRSY8Z6sIpEsluds3u7gIcy7CPDRCqUFlFmAfp0b4p4w>
-    <xme:UoODZMgSASOnJuSfd8owoWPHzm3-ZaNSwYTLEJ7woTxNTsAbNszAx3D_Psm-nFqFe
-    O-Ig7HVhxCHKkShLQ>
-X-ME-Received: <xmr:UoODZFkHFZb-00748ukm_TukYddbHZ8NbuB-6N2rGxEsK9xzk77ZbfDzSsruL6wRvfQhD00lR_b_P_YBDh4x7W4QulSPAuGP1U7MuA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedtkedgudegvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomheptehl
-    ihgtvgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqnecuggftrfgrthhtvghrnh
-    eplefgkedvhfefjeetfedvvdekfeevfeffgeehtdeffeevheeigedvtedvgeduhefgnecu
-    ffhomhgrihhnpehmihgtrhhoshhofhhtrdgtohhmpdhkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlhhitggvsehr
-    hihhlhdrihho
-X-ME-Proxy: <xmx:UoODZAyDfQTZ0Cz2OU7nwmxKk6i69r1t4AZKKH3t6IpZuxgRhE8s7g>
-    <xmx:UoODZHRYgSBr3nqU20Dt0hdJVWk1j4rwDEsKw9br464KUYB24sZHjA>
-    <xmx:UoODZLZ9YbCcM88byX1GThjp7bq9pLMpsi1eKk__5FgIzD98NJr0Nw>
-    <xmx:UoODZGEaFO1ZaLZOvYdAhNmUScguqDW3vLHA8c7tMFAnR5aeOAODEg>
-Feedback-ID: i56684263:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 9 Jun 2023 15:53:52 -0400 (EDT)
-Message-ID: <494331ec-4879-c751-a034-63d91e4d625a@ryhl.io>
-Date:   Fri, 9 Jun 2023 21:53:50 +0200
+        Fri, 9 Jun 2023 16:01:06 -0400
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E2B8359C
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 13:00:27 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-3f9b2b7109dso16496351cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jun 2023 13:00:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686340826; x=1688932826;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XFxNC6AwIefC8h+OVa9YMEjCXThkDxxKP8p9zX4LNFY=;
+        b=U7Sl09wOPD0ux2AzA97S5RNCch2O+SUsb0k7cY6a14OqyFKY0YNNRhLkm2h44KqZT6
+         vGagkgpuHp95G4EIdwwrzSlRqC9a3MTIRp7EIUV9OL8moA/lOmvHxYletgpaEa1CVm+G
+         EHSMnX6VJoaY5p1nsVu7tuN2nenX3wZ1lIlL14uipIEeMNuHRLltUlQ3CeJ1ukjS1P58
+         yOFTW656U75DY1dp1/l4nrzNjGLR3OIgNpOMe9l9Hpz5BLY5reaD++CewLI293MbudP8
+         EeycrGeVf+9rMSTsWPrYf4Ju5wy8AfOPV8SHNbeGiSnnDzxwZUYhbjo3/GhdbdRG/ifq
+         Y5ig==
+X-Gm-Message-State: AC+VfDyR1hud/HQyz+NRfAg6nS4iWbM6031YKp+zgPp8H6VEU+wc11vT
+        wVMR5cWwY9b8DxqpZnWhVEV+
+X-Google-Smtp-Source: ACHHUZ6f5D0na1vDQSbLNkOIR7VVTt7ADDPvJzshNMQToGx2m/jPA4IIyjKZFD+hGnfTs+abIWzkWA==
+X-Received: by 2002:ac8:7e88:0:b0:3f8:6c15:c3a5 with SMTP id w8-20020ac87e88000000b003f86c15c3a5mr3039832qtj.33.1686340826214;
+        Fri, 09 Jun 2023 13:00:26 -0700 (PDT)
+Received: from localhost (pool-68-160-166-30.bstnma.fios.verizon.net. [68.160.166.30])
+        by smtp.gmail.com with ESMTPSA id d3-20020ac85343000000b003f740336bb9sm1418338qto.9.2023.06.09.13.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jun 2023 13:00:25 -0700 (PDT)
+Date:   Fri, 9 Jun 2023 16:00:24 -0400
+From:   Mike Snitzer <snitzer@kernel.org>
+To:     Sarthak Kukreti <sarthakkukreti@chromium.org>
+Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH v7 2/5] block: Introduce provisioning primitives
+Message-ID: <ZIOE2ASeUAXxzpRO@redhat.com>
+References: <20230518223326.18744-1-sarthakkukreti@chromium.org>
+ <20230518223326.18744-3-sarthakkukreti@chromium.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [RFC PATCH 00/80] Rust PuzzleFS filesystem driver
-Content-Language: en-US-large
-To:     "Ariel Miculas (amiculas)" <amiculas@cisco.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Colin Walters <walters@verbum.org>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20230609063118.24852-1-amiculas@cisco.com>
- <20230609-feldversuch-fixieren-fa141a2d9694@brauner>
- <CH0PR11MB529981313ED5A1F815350E41CD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
- <20230609-nachrangig-handwagen-375405d3b9f1@brauner>
- <6b90520e-c46b-4e0d-a1c5-fcbda42f8f87@betaapp.fastmail.com>
- <CH0PR11MB5299117F8EF192CA19A361ADCD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
- <d68eeeaf-17b7-77aa-cad5-2658e3ca2307@quicinc.com>
- <CH0PR11MB5299314EC8FB8645C90453B5CD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
- <6896176b44d5e9675899403c88d82b1d1855311f.camel@HansenPartnership.com>
- <CH0PR11MB529969A40E91169B8CBDDB39CD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
-From:   Alice Ryhl <alice@ryhl.io>
-In-Reply-To: <CH0PR11MB529969A40E91169B8CBDDB39CD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230518223326.18744-3-sarthakkukreti@chromium.org>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/9/23 20:59, Ariel Miculas (amiculas) wrote:
-> I did use git send-email for sending this patch series, but I cannot find any setting in the Outlook web client for disabling "top posting" when replying to emails:
-> https://answers.microsoft.com/en-us/outlook_com/forum/all/eliminate-top-posting/5e1e5729-30f8-41e9-84cb-fb5e81229c7c
-> 
-> Regards,
-> Ariel
+On Thu, May 18 2023 at  6:33P -0400,
+Sarthak Kukreti <sarthakkukreti@chromium.org> wrote:
 
-You can also use git-send-email for sending replies. Just make a .txt 
-file with this format:
+> Introduce block request REQ_OP_PROVISION. The intent of this request
+> is to request underlying storage to preallocate disk space for the given
+> block range. Block devices that support this capability will export
+> a provision limit within their request queues.
+> 
+> This patch also adds the capability to call fallocate() in mode 0
+> on block devices, which will send REQ_OP_PROVISION to the block
+> device for the specified range,
+> 
+> Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
+> ---
+...
+> diff --git a/block/blk-settings.c b/block/blk-settings.c
+> index 896b4654ab00..d303e6614c36 100644
+> --- a/block/blk-settings.c
+> +++ b/block/blk-settings.c
+> @@ -59,6 +59,7 @@ void blk_set_default_limits(struct queue_limits *lim)
+>  	lim->zoned = BLK_ZONED_NONE;
+>  	lim->zone_write_granularity = 0;
+>  	lim->dma_alignment = 511;
+> +	lim->max_provision_sectors = 0;
+>  }
+>  
+>  /**
+> @@ -82,6 +83,7 @@ void blk_set_stacking_limits(struct queue_limits *lim)
+>  	lim->max_dev_sectors = UINT_MAX;
+>  	lim->max_write_zeroes_sectors = UINT_MAX;
+>  	lim->max_zone_append_sectors = UINT_MAX;
+> +	lim->max_provision_sectors = UINT_MAX;
+>  }
+>  EXPORT_SYMBOL(blk_set_stacking_limits);
+>  
+> @@ -578,6 +594,9 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+>  	t->max_segment_size = min_not_zero(t->max_segment_size,
+>  					   b->max_segment_size);
+>  
+> +	t->max_provision_sectors = min_not_zero(t->max_provision_sectors,
+> +						b->max_provision_sectors);
+> +
 
-Subject: <subject goes here>
+This needs to use min() since max_provision_sectors also serves to
+indicate if the device supports REQ_OP_PROVISION.  Otherwise, if I set
+max_provision_sectors to 0 on a dm thin-pool the blk_stack_limits()
+will ignore my having set it to 0 (to disable) and it'll remain as
+UINT_MAX (thanks to blk_set_default_limits).
 
-<your reply after an empty line>
-
-The lore.kernel.org site generates the appropriate git-send-email 
-command for sending the reply, so you can copy-paste that to send it.
-
-I send most of my replies like that.
-
-> From: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Sent: Friday, June 9, 2023 9:43 PM
-> To: Ariel Miculas (amiculas); Trilok Soni; Colin Walters; Christian Brauner
-> Cc: linux-fsdevel@vger.kernel.org; rust-for-linux@vger.kernel.org; linux-mm@kvack.org
-> Subject: Re: [RFC PATCH 00/80] Rust PuzzleFS filesystem driver
-> 
-> On Fri, 2023-06-09 at 17:16 +0000, Ariel Miculas (amiculas) wrote:
->> I could switch to my personal gmail, but last time Miguel Ojeda asked
->> me to use my cisco email when I send commits signed off by
->> amiculas@cisco.com.
->> If this is not a hard requirement, then I could switch.
-> 
-> For sending patches, you can simply use git-send-email.  All you need
-> to point it at is the outgoing email server (which should be a config
-> setting in whatever tool you are using now).  We have a (reasonably) up
-> to date document with some recommendations:
-> 
-> https://www.kernel.org/doc/html/latest/process/email-clients.html
-> 
-> I've successfully used evolution with an exchange server for many
-> years, but the interface isn't to everyone's taste and Mozilla
-> Thunderbird is also known to connect to it.  Basic outlook has proven
-> impossible to configure correctly (which is why it doesn't have an
-> entry).
-> 
-> Regards,
-> 
-> James
-> 
+Mike
