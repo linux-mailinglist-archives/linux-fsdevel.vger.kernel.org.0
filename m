@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDD49729139
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 09:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8B0072913D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 09:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238814AbjFIHeR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 03:34:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45698 "EHLO
+        id S238843AbjFIHeT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 03:34:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238157AbjFIHeP (ORCPT
+        with ESMTP id S238756AbjFIHeP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 9 Jun 2023 03:34:15 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 005CC3A82;
-        Fri,  9 Jun 2023 00:33:39 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f642a24568so1763835e87.2;
-        Fri, 09 Jun 2023 00:33:39 -0700 (PDT)
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA62A4208;
+        Fri,  9 Jun 2023 00:33:40 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-3f7fcdc7f7fso9139275e9.0;
+        Fri, 09 Jun 2023 00:33:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686295968; x=1688887968;
+        d=gmail.com; s=20221208; t=1686295969; x=1688887969;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sQajwurBrexF3RgH/dCXscnFIs5TmYO49NFvfACESZg=;
-        b=a0VZw62YcJ6uuuQAcNULYTBQhJ8ERceFYiIAf9S88dfyEg3hKK4WgQudKxj0ADt5Ua
-         SYVWRyOl4uklX8HSydK5U2ycrh9uW/q0tFWzTC12KvAeaZ8vKevxXWNxZy1ly+aftu8D
-         kW+0rlz1FCqlJ2rFeEs3GXytvRc5TL68p3EglgWXqxNKGPfQujvsWRwnVt+XUUmsETZD
-         4nGOcbtoXy3BZXLxSsgCUQiWB2XpuwPs+SNYVqDldJGCN2TMa1+y2tQJoto+FszVe9Ge
-         bcNrXXiPrrK7ZcU7QITxtNxW/fAszbMdfV3es6bL4B2nvPn5M/mVLCmuQfbEcqlwnnJh
-         mwEQ==
+        bh=uO3UG4+Z6opg2/A9PFDYgyDAt4Y8Slu198NJmKbuNeA=;
+        b=sZqxxQoYox0LsWjsJIoBKDKbvxMlJQn9wGzkn9fkKVD39s6ChShmepxAlrmWNps2w1
+         VR7lowhdwctHGk4bFPHeksgBcSfw8dHOU9TygPFcdYl4kkitzvJtWQYJrMfem0Sfjpcl
+         w2loKyk0cYEuCZwwv82IeKvdtCB1ZXiMYGBhKqr+iPrKjwG57Sp2B2Q6e/o5m+kZKWrs
+         BSlknxKEjNfM0qx7Ook48FNDiPU7dCnOPXTA4JWFuCZvcnIeif2twFittT5kP3uDk1Fz
+         YOOuaxLbeZKszKV3IZiZm4JKqiSeG2jrW2YzVuAoYU1tFEXBngOh1i+uCwKzw8AtofHJ
+         axhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686295968; x=1688887968;
+        d=1e100.net; s=20221208; t=1686295969; x=1688887969;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sQajwurBrexF3RgH/dCXscnFIs5TmYO49NFvfACESZg=;
-        b=aTWN50aCfClmJckBI5cIjhFlNYbmbjPjwKYD1nSGWEudHap2iE51aTuu1/Dt2cEQOy
-         zU6M1wJbchDxLJZmJjpoxm1ghOfAy0RK+wuaTGpWzUdWHce7qtaQ8eq9bhxM4ZLCKszT
-         yyGc0SLCfGpPHyXN54bNzh/Cc+4dO8fdjG8ojWhNgSPGF0rKqWlqK5nKOdvq3ZuwRS09
-         /bk699tlmLr5iqTs1KTJkUwkLY/wNlqMsVN41H9aE6TRthUCKEEmSUl5pBYuEbdafa41
-         uPJJk1Ol8t/Rcksym+qs2tMFZLR2osYHkuxSaF3hKT1bKWRYLkfEuNJkkpGSkfXHCZRC
-         65dQ==
-X-Gm-Message-State: AC+VfDwlLPd3fdGS80how3Mkrie8ZkifsTPrX8i3BVQ1kM22Un/P6txe
-        ly+hIFbh+x4LH52T2LNmMSe/ZdXuavY=
-X-Google-Smtp-Source: ACHHUZ75H1nyUAVTty2YGczZIMyK+HR+48Qu7b7K4xKOqMgJEtdp+25RefPS0WPQT0gUINrPjzBGbQ==
-X-Received: by 2002:a19:5f12:0:b0:4f6:1433:fca0 with SMTP id t18-20020a195f12000000b004f61433fca0mr272216lfb.0.1686295967835;
-        Fri, 09 Jun 2023 00:32:47 -0700 (PDT)
+        bh=uO3UG4+Z6opg2/A9PFDYgyDAt4Y8Slu198NJmKbuNeA=;
+        b=Z8Gm31D58pZTC+tG4qr11Pio1y3Oh0eqSYfYdyUVUlSc+BCf2rS5Bc1vndb4d7T4K4
+         FViYGoehFb5Yh0UtRnnjKb1pS6Arwq4oZWc5sZu107VPlFIaZtOglVTfZeT2P9pm+4r8
+         woJoNMRjZ96sbVk8/u0lH4Vv+fDEVbA8dzJhToKNOtmEW8dn33hG1+WVfAXvnQZpEx6e
+         64fF5oNbbR3ud81owBjDkwtVaFCFq4alaGhn/sFvKoIPKrpSjeYk4Go8sxZlg+gwRbVI
+         yx/9p5tyDHLmQwevRzejeuXhX3BQT4L8S/xW54ZKgS0JTG+Abb1q4CE7Ethfid500bt4
+         Bicg==
+X-Gm-Message-State: AC+VfDwXJb/jEpSNTys1Lwy7+qOFXgRrgawYzrZDWRFH1FMI0QFCiK4b
+        6wZLuhQazBe5QO0Wt3CE4uM=
+X-Google-Smtp-Source: ACHHUZ5vHrxSrE+0EClUjymnoWrvU3CKOs63mXU2NidAxXSbkTP1X9InUdVoZBk+Y4h4ukH3DXns8w==
+X-Received: by 2002:adf:ef4e:0:b0:307:869c:99ce with SMTP id c14-20020adfef4e000000b00307869c99cemr791841wrp.21.1686295969362;
+        Fri, 09 Jun 2023 00:32:49 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id a3-20020a056000050300b003068f5cca8csm3624528wrf.94.2023.06.09.00.32.46
+        by smtp.gmail.com with ESMTPSA id a3-20020a056000050300b003068f5cca8csm3624528wrf.94.2023.06.09.00.32.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 00:32:47 -0700 (PDT)
+        Fri, 09 Jun 2023 00:32:49 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -57,9 +57,9 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Paul Moore <paul@paul-moore.com>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: [PATCH 2/3] fs: use file_fake_path() to get path of mapped files for display
-Date:   Fri,  9 Jun 2023 10:32:38 +0300
-Message-Id: <20230609073239.957184-3-amir73il@gmail.com>
+Subject: [PATCH 3/3] fs: store fake path in file_fake along with real path
+Date:   Fri,  9 Jun 2023 10:32:39 +0300
+Message-Id: <20230609073239.957184-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230609073239.957184-1-amir73il@gmail.com>
 References: <20230609073239.957184-1-amir73il@gmail.com>
@@ -75,111 +75,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-/proc/$pid/maps and /proc/$pid/exe contain display paths of mapped file.
-audot and tomoyo also log the display path of the mapped exec file.
+Instead of storing only the fake path in f_path, store the real path
+in f_path and the fake path in file_fake container.
 
-When the mapped file comes from overlayfs, we need to use the macro
-file_fake_path() to make sure that we get the fake overlayfs path and
-not the real internal path.
+Call sites that use the macro file_fake_path() continue to get the fake
+path from its new location.
 
-At the time of this commit, file_fake_path() always returns f_path,
-where overlayfs has stored the fake overlayfs path, but soon we are
-going to change the location that the fake path is stored.
+Call sites that access f_path directly will now see the overlayfs real
+path instead of the fake overlayfs path, which is the desired bahvior
+for most users, because it makes f_path consistent with f_inode.
 
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/proc/base.c         | 8 +++++---
- fs/seq_file.c          | 2 +-
- kernel/audit.c         | 3 ++-
- kernel/fork.c          | 5 +++--
- security/tomoyo/util.c | 3 ++-
- 5 files changed, 13 insertions(+), 8 deletions(-)
+ fs/open.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 05452c3b9872..d6f8c77a3e38 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1730,8 +1730,9 @@ static int proc_exe_link(struct dentry *dentry, struct path *exe_path)
- 	exe_file = get_task_exe_file(task);
- 	put_task_struct(task);
- 	if (exe_file) {
--		*exe_path = exe_file->f_path;
--		path_get(&exe_file->f_path);
-+		/* Overlayfs mapped files have fake path */
-+		*exe_path = *file_fake_path(exe_file);
-+		path_get(exe_path);
- 		fput(exe_file);
- 		return 0;
- 	} else
-@@ -2218,7 +2219,8 @@ static int map_files_get_link(struct dentry *dentry, struct path *path)
- 	rc = -ENOENT;
- 	vma = find_exact_vma(mm, vm_start, vm_end);
- 	if (vma && vma->vm_file) {
--		*path = vma->vm_file->f_path;
-+		/* Overlayfs mapped files have fake path */
-+		*path = *file_fake_path(vma->vm_file);
- 		path_get(path);
- 		rc = 0;
- 	}
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index f5fdaf3b1572..7e65fde4336a 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -497,7 +497,7 @@ EXPORT_SYMBOL(seq_path);
-  */
- int seq_file_path(struct seq_file *m, struct file *file, const char *esc)
+diff --git a/fs/open.c b/fs/open.c
+index c9e2300a037d..4f4e7534f515 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1120,11 +1120,11 @@ struct file *open_with_fake_path(const struct path *fake_path, int flags,
+ 				 const struct path *path,
+ 				 const struct cred *cred)
  {
--	return seq_path(m, &file->f_path, esc);
-+	return seq_path(m, file_fake_path(file), esc);
- }
- EXPORT_SYMBOL(seq_file_path);
+-	struct file *f = alloc_empty_file_fake(NULL, flags, cred);
++	struct file *f = alloc_empty_file_fake(fake_path, flags, cred);
+ 	if (!IS_ERR(f)) {
+ 		int error;
  
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 9bc0b0301198..91975f139a03 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -2202,7 +2202,8 @@ void audit_log_d_path_exe(struct audit_buffer *ab,
- 	if (!exe_file)
- 		goto out_null;
- 
--	audit_log_d_path(ab, " exe=", &exe_file->f_path);
-+	/* Overlayfs mapped files have fake path */
-+	audit_log_d_path(ab, " exe=", file_fake_path(exe_file));
- 	fput(exe_file);
- 	return;
- out_null:
-diff --git a/kernel/fork.c b/kernel/fork.c
-index ed4e01daccaa..9a3c138a677e 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1455,8 +1455,9 @@ int replace_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
- 		for_each_vma(vmi, vma) {
- 			if (!vma->vm_file)
- 				continue;
--			if (path_equal(&vma->vm_file->f_path,
--				       &old_exe_file->f_path)) {
-+			/* Overlayfs mapped files have fake path */
-+			if (path_equal(file_fake_path(vma->vm_file),
-+				       file_fake_path(old_exe_file))) {
- 				ret = -EBUSY;
- 				break;
- 			}
-diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
-index 6799b1122c9d..ff0d94fb431c 100644
---- a/security/tomoyo/util.c
-+++ b/security/tomoyo/util.c
-@@ -975,7 +975,8 @@ const char *tomoyo_get_exe(void)
- 	if (!exe_file)
- 		return NULL;
- 
--	cp = tomoyo_realpath_from_path(&exe_file->f_path);
-+	/* Overlayfs mapped files have fake path */
-+	cp = tomoyo_realpath_from_path(file_fake_path(exe_file));
- 	fput(exe_file);
- 	return cp;
- }
+-		f->f_path = *fake_path;
++		f->f_path = *path;
+ 		error = do_dentry_open(f, d_inode(path->dentry), NULL);
+ 		if (error) {
+ 			fput(f);
 -- 
 2.34.1
 
