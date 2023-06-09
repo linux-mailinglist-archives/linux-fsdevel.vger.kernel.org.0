@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BDC6C729976
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 14:20:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03189729977
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 14:20:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237720AbjFIMUr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 08:20:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33530 "EHLO
+        id S238387AbjFIMUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 08:20:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229903AbjFIMUo (ORCPT
+        with ESMTP id S229903AbjFIMUs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 08:20:44 -0400
-Received: from out-14.mta0.migadu.com (out-14.mta0.migadu.com [91.218.175.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF85172E
-        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 05:20:43 -0700 (PDT)
+        Fri, 9 Jun 2023 08:20:48 -0400
+Received: from out-34.mta0.migadu.com (out-34.mta0.migadu.com [91.218.175.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79630E50
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 05:20:46 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1686313242;
+        t=1686313244;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=UcRk5qlFQvWJ33hcG3kedIDgrONZn1C9jUn4w2g+xQE=;
-        b=pMVV6ttk9cC1bb9hMbPJ2nhJL4+5iM2MZUL2t5mCo0dMDHDYZF2wWs9FwxyxnaF9fsnbYs
-        cAsk4dLBG8y7YTO3GAthr7JjIK7+l1xk+Ah06/k2MtSibvYeefOjjtJrQTa9UkygKoQvL/
-        PLhjaK4YODsCHyKkGbzrr4aW1I5Ndw8=
+        bh=lhlblQ2RrpBpwre9osp84qt/3/ewTJ5oMF21HYvR9Hs=;
+        b=PG7m+3mk7k9WkLMmkTo5aVGlW2dDZtz1au1E4n90cZ/jY+iuFotB5lWXFXf0RIwyR5BoqF
+        4DycA43tlUQUlhry9QTVnLXvdQzo78x3bR6xW5tWi5evcEHfxky1XIYVZWmhVPErXZx+2n
+        tvkWyRPmXla7Ndju6kl4J3+Eu3eSbbA=
 From:   Hao Xu <hao.xu@linux.dev>
 To:     io-uring@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Wanpeng Li <wanpengli@tencent.com>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 01/11] io-wq: fix worker counting after worker received exit signal
-Date:   Fri,  9 Jun 2023 20:20:21 +0800
-Message-Id: <20230609122031.183730-2-hao.xu@linux.dev>
+Subject: [PATCH 02/11] io-wq: add a new worker flag to indicate worker exit
+Date:   Fri,  9 Jun 2023 20:20:22 +0800
+Message-Id: <20230609122031.183730-3-hao.xu@linux.dev>
 In-Reply-To: <20230609122031.183730-1-hao.xu@linux.dev>
 References: <20230609122031.183730-1-hao.xu@linux.dev>
 MIME-Version: 1.0
@@ -52,30 +52,60 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-acct->nr_workers should be decremented when we break the loop in
-io_wq_worker().
+Add a new worker flag IO_WORKER_F_EXIT to indicate a worker is going to
+exit. This is important for fixed workers.
 
-Fixes: 78f8876c2d9f ("io-wq: exclusively gate signal based exit on get_signal() return")
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- io_uring/io-wq.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ io_uring/io-wq.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index b2715988791e..b70eebec2845 100644
+index b70eebec2845..1717f1465613 100644
 --- a/io_uring/io-wq.c
 +++ b/io_uring/io-wq.c
-@@ -634,6 +634,10 @@ static int io_wq_worker(void *data)
+@@ -29,6 +29,7 @@ enum {
+ 	IO_WORKER_F_RUNNING	= 2,	/* account as running */
+ 	IO_WORKER_F_FREE	= 4,	/* worker on free list */
+ 	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
++	IO_WORKER_F_EXIT	= 16,	/* worker is exiting */
+ };
  
- 			if (!get_signal(&ksig))
- 				continue;
+ enum {
+@@ -592,6 +593,11 @@ static void io_worker_handle_work(struct io_worker *worker)
+ 	} while (1);
+ }
+ 
++static bool is_worker_exiting(struct io_worker *worker)
++{
++	return worker->flags & IO_WORKER_F_EXIT;
++}
 +
+ static int io_wq_worker(void *data)
+ {
+ 	struct io_worker *worker = data;
+@@ -609,7 +615,7 @@ static int io_wq_worker(void *data)
+ 		long ret;
+ 
+ 		set_current_state(TASK_INTERRUPTIBLE);
+-		while (io_acct_run_queue(acct))
++		while (!is_worker_exiting(worker) && io_acct_run_queue(acct))
+ 			io_worker_handle_work(worker);
+ 
+ 		raw_spin_lock(&wq->lock);
+@@ -628,6 +634,12 @@ static int io_wq_worker(void *data)
+ 		raw_spin_unlock(&wq->lock);
+ 		if (io_run_task_work())
+ 			continue;
++		if (is_worker_exiting(worker)) {
 +			raw_spin_lock(&wq->lock);
 +			acct->nr_workers--;
 +			raw_spin_unlock(&wq->lock);
- 			break;
- 		}
- 		if (!ret) {
++			break;
++		}
+ 		ret = schedule_timeout(WORKER_IDLE_TIMEOUT);
+ 		if (signal_pending(current)) {
+ 			struct ksignal ksig;
 -- 
 2.25.1
 
