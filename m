@@ -2,92 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D5FAA729C0B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 15:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91C03729C9E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 16:19:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231821AbjFINzG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 09:55:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59974 "EHLO
+        id S240783AbjFIOTl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 10:19:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240418AbjFINzE (ORCPT
+        with ESMTP id S238912AbjFIOTc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 09:55:04 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7260F210D;
-        Fri,  9 Jun 2023 06:55:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1686318901;
-        bh=UngRapVyTmTrX3eSqSfnf/EGS5RqE7Xw+jcoVn2rgQE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=hYeH2pUQ+XlCSm3fEpl39n/LTqeW8ZvA+FmCNaW4D8ywPDT5ilReQ2x9A/B+R7oYy
-         ZJ67SQAPnCVv8fI1RXIv2wPNXp0G9BEvjm3SLiuQcmnaPQiukyE8CWXQgbIFlPmrbX
-         2yS7iAPre7xm+gaCANAbR3VhEkcE7MUPbZDBXFlBW6ExZXONOiiwbzSX8HsNo0I25l
-         Pa6Ka9mQHqTxXToDWlLCkH4kReOWK3MVenfYL5/BNS3V4JWG5797XKae1yHhoS+REY
-         mx2tox3xprSPXGWEHY2942jdpk/wbOauTYfT42WBolTowxRc1/XYQmaEFs00N13Afp
-         YZOjZC0Xv0Jwg==
-Received: from biznet-home.integral.gnuweeb.org (unknown [103.74.5.63])
-        by gnuweeb.org (Postfix) with ESMTPSA id 03C0823EC4C;
-        Fri,  9 Jun 2023 20:54:59 +0700 (WIB)
-Date:   Fri, 9 Jun 2023 20:54:50 +0700
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Hao Xu <hao.xu@linux.dev>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-Subject: Re: [PATCH 07/11] io_uring: add new api to register fixed workers
-Message-ID: <ZIMvKkZZzAfVLGbj@biznet-home.integral.gnuweeb.org>
-References: <20230609122031.183730-1-hao.xu@linux.dev>
- <20230609122031.183730-8-hao.xu@linux.dev>
+        Fri, 9 Jun 2023 10:19:32 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C465635A9;
+        Fri,  9 Jun 2023 07:19:31 -0700 (PDT)
+Date:   Fri, 9 Jun 2023 16:19:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1686320369;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MYK4KNvEFkce/VyaNbpjmJmft8NrOeqE2CvuyKuAfes=;
+        b=00/wnt2416KaOYbjeftQ8Aw+6g1+/xH5Bykdi+M2tCTxDTjKIH5TVVjahoeDe+387DvZm6
+        jfj/q3HU0x5tkqj8+luaIWB4Le1dDXb66+AS8ZW5oaZaipeHwgtJrF35cD7xEDyS8Nl+BG
+        peJuNm8aFmcpAKCssyvGB4OuETtzPdV3N6dKLQQpxf1NF/hwQy81tG+0ascouCLkjqFPYy
+        kelvqqw9RjNA1OTEIzDORT3/uQZqc3pFjuT1Y4/vQnTg0P/c7NVVmVwuMxLVD5zLDK3yP/
+        cFNnUQpkW73apHeq1L5liIAq2aAOQLQ5nCYnumvpNbfUPJvgFG9BnKGju6RapQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1686320369;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MYK4KNvEFkce/VyaNbpjmJmft8NrOeqE2CvuyKuAfes=;
+        b=/2PZz2T0R7tryMOE67dyWbMyv5wThnzmqRzYWYK6AeCsBz28nKSB6tV/RufqH3SpjOby9q
+        TiGdhGrQFYAhRUDw==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3] bpf: Remove in_atomic() from bpf_link_put().
+Message-ID: <20230609141928.CDC3_W5W@linutronix.de>
+References: <20230509132433.2FSY_6t7@linutronix.de>
+ <CAEf4BzZcPKsRJDQfdVk9D1Nt6kgT4STpEUrsQ=UD3BDZnNp8eQ@mail.gmail.com>
+ <CAADnVQLzZyZ+cPqBFfrqa8wtQ8ZhWvTSN6oD9z4Y2gtrfs8Vdg@mail.gmail.com>
+ <CAEf4BzY-MRYnzGiZmW7AVJYgYdHW1_jOphbipRrHRTtdfq3_wQ@mail.gmail.com>
+ <20230525141813.TFZLWM4M@linutronix.de>
+ <CAEf4Bzaipoo6X_2Fh5WTV-m0yjP0pvhqi7-FPFtGOrSzNpdGJQ@mail.gmail.com>
+ <20230526112356.fOlWmeOF@linutronix.de>
+ <CAEf4Bzawgrn2DhR9uvXwFFiLR9g+j4RYC6cr3n+eRD_RoKBAJA@mail.gmail.com>
+ <20230605163733.LD-UCcso@linutronix.de>
+ <CAEf4BzZ=VZcLZmtRefLtRyRb7uLTb6e=RVw82rxjLNqE=8kT-w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230609122031.183730-8-hao.xu@linux.dev>
-X-Bpl:  hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <CAEf4BzZ=VZcLZmtRefLtRyRb7uLTb6e=RVw82rxjLNqE=8kT-w@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 09, 2023 at 08:20:27PM +0800, Hao Xu wrote:  
-> +static __cold int io_register_iowq_fixed_workers(struct io_ring_ctx *ctx,
-> +					       void __user *arg, int nr_args)
-> +	__must_hold(&ctx->uring_lock)
-> +{
-> +	struct io_uring_task *tctx = NULL;
-> +	struct io_sq_data *sqd = NULL;
-> +	struct io_uring_fixed_worker_arg *res;
-> +	size_t size;
-> +	int i, ret;
-> +	bool zero = true;
-> +
-> +	size = array_size(nr_args, sizeof(*res));
-> +	if (size == SIZE_MAX)
-> +		return -EOVERFLOW;
-> +
-> +	res = memdup_user(arg, size);
-> +	if (IS_ERR(res))
-> +		return PTR_ERR(res);
-> +
-> +	for (i = 0; i < nr_args; i++) {
-> +		if (res[i].nr_workers) {
-> +			zero = false;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (zero)
-> +		return 0;
+On 2023-06-05 15:47:23 [-0700], Andrii Nakryiko wrote:
+> I understand it's safe today, but I'm more worried for future places
+> that will do bpf_link_put(). Given it's only close() and BPF FS
+> unlink() that require synchronous semantics, I think it's fine to make
+> bpf_link_put() to be async, and have bpf_link_put_sync() (or direct,
+> or whatever suffix) as a conscious special case.
 
-You have a memory leak bug here. The memdup_user() needs clean up.
-kfree(res);
+Okay, let me do that then.
 
--- 
-Ammar Faizi
+> > This is invoked from the RCU callback (which is usually softirq):
+> >         destroy_inode()
+> >          -> call_rcu(&inode->i_rcu, i_callback);
+> >
+> > Freeing memory is fine but there is a mutex that is held in the process.
+> 
+> I think it should be fine for BPF link destruction then?
 
+bpf_any_put() needs that "may sleep" exception for BPF_TYPE_LINK if it
+comes from RCU.
+I will swap that patch to be async by default and make sync for
+bpf_any_put() if called from close (except for the RCU case).
+
+Sebastian
