@@ -2,63 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B29EE72A643
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jun 2023 00:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C7372A648
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jun 2023 00:34:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231352AbjFIWaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 18:30:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45382 "EHLO
+        id S231844AbjFIWes (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 18:34:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbjFIWaY (ORCPT
+        with ESMTP id S229680AbjFIWer (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 18:30:24 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0334135BE
-        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 15:30:23 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-568f9caff33so21083537b3.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jun 2023 15:30:22 -0700 (PDT)
+        Fri, 9 Jun 2023 18:34:47 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BC2D35BB
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 15:34:46 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-bb3d122a19fso2157127276.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jun 2023 15:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686349822; x=1688941822;
+        d=google.com; s=20221208; t=1686350085; x=1688942085;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+zT6sV+fvzmgBBI81QXgaF+Btrnt6GH7aWTnX6MCUB4=;
-        b=mXAcURqk+1SjmifAbWS+rzdBg3sJG/XNRZ8y8ysR8INkOv4gWnF+xs+y+SYfhtf6N/
-         RUzqMQwHktqLGXnFqUtsvhF5L9vLpFUwvm2N9epG17Y0Vp2wpI7ZrzX8JDonWRmiow43
-         mX+mucGCdEZRZwBSCuNbliPjS+zKIFFWb9/ic7yJM7pykYyKn+2kH4loCcZKtPEoA1iE
-         lVZoLXJDhsiAM0IcrGBlFgWLUzxo4jWTIDQDnDuTB/9r0dEv+ey0PgmSn+GZP+iXEtW9
-         SOuHwnTb87WF5tfCuyWfCUydVDBd/5vbNI4gxJKZAzwgeQAoWA573b3Zpk+zJz2L5oom
-         Ryow==
+        bh=W81GRpfjhB0fn0UjEwFmdlfLhr9DX7q54fVjX5JcBGg=;
+        b=Jtv10dsQTSwjnb3KMyeLUwInuJddeKAVXNSlN9syLvz8CxqBISG95KzggDHC3reL2w
+         w1Y7ul4RtKxvRW5N4XVfUlaT8sxd4Lc8Vgj+uh74SpkuHibNLDPnP1EOaAw9aoerEnjb
+         YCG0DrI+e5/HK3bln+hTlFdmyqRhN4T7rAvuDPnQMoK2aTl3IIONYrML5POouJAMgL8K
+         fIHpI38+96N2+JOTHnTmatoXycHOyrhNA6Pq429ZH3RdrXT/rGlv3eFPRCZbmuSX3jVi
+         Wu0ha6MiH4hG9zz4bzkECTS4bs/QhW8CCWyVsh56nIvhOatn/OiSvZgND3QHeYdeOx9/
+         OHsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686349822; x=1688941822;
+        d=1e100.net; s=20221208; t=1686350085; x=1688942085;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+zT6sV+fvzmgBBI81QXgaF+Btrnt6GH7aWTnX6MCUB4=;
-        b=fo/yz6++K2ttl+7Xjl8jz/wo2niEIGU17sPJ9wtO3rWnhChCM0Rx3N19mvHgShvgqj
-         34x+Ek3iBU3BjJk72rwIU28BcGGSt5/dEEX0ZM3VEOf6aIk1AuuleSdOdEZY+2CL40Cg
-         hKMca7sFGrzw6aXzLG55bJGsDYiouBRtRUeggyrUENHT2cXWWLlqtWUwe02BVNJTNZ11
-         XUMP8jtC/NyhzMdTw8n+2tADBgeNZl8yywZJcAf+zCRIRw9HKf9YChVkj4NmvIghNanJ
-         HOcCwv7Mf0e6UrKqCPAsxPnNT4u4/oItkqMcRoeDYWY/iZcuNbxn1bWg6nmviuwMzq4p
-         BVGA==
-X-Gm-Message-State: AC+VfDy6SYnryV6fHb68kjhhmdRnMmAaWeSiTQzrbsq9/bg7S30Qg0Uz
-        FP/QXqkRw13KLNvGk5Ucv8MU//LPqzY3HiLI6bFPww==
-X-Google-Smtp-Source: ACHHUZ5TZvpX4UfdCUpjEiPqY6QZGnmNogZwNLVZjipLgMlKuWApKPOOPeExrL9FO8ZqBOPgG6jGQ762Win+1tZG15A=
-X-Received: by 2002:a0d:d8cb:0:b0:559:e1b2:70c6 with SMTP id
- a194-20020a0dd8cb000000b00559e1b270c6mr2210211ywe.34.1686349821843; Fri, 09
- Jun 2023 15:30:21 -0700 (PDT)
+        bh=W81GRpfjhB0fn0UjEwFmdlfLhr9DX7q54fVjX5JcBGg=;
+        b=XwGutOJYr6y5YZ0kWQpzl+2OZC7YopB2+nrYQJ76P6ONV2i19P0/RUsP/swgFlko0f
+         kvDCaOvnDUaLF3QkhdUO4Gq8/gABZU3o4CKW3bEajaU379u+Qusg5caawqlJpgZxOTHs
+         NjWhrCxfwnwrvhph52mobgbcy/0envEIa73RoIF7L99LJj4e20d5b6Dc52a09pk+J1kt
+         VxPRQ5P+Cp6CckLyeZRXMuk8E0r9csIoRhBZZP85SjT8CBmyjv/wp4yxVtuAq7T9KXp7
+         M4q4mW+MHaJMDFLnJ8zuq6smmrlitmREYLmgPknnCCAmI/P8K4BdliBcRqbC89Mndtdu
+         O58A==
+X-Gm-Message-State: AC+VfDwoMOrJdFsiU+4jQwPXJCtuo1qOyGu8RBSgNT6VutQ0RrxuyuHM
+        F59wyOnO//WaKxlezOvbK9cEnujdqqWAFrbboGFo3Q==
+X-Google-Smtp-Source: ACHHUZ7hsTTyON0Svm2oxRxKxCgZHMCoT1i24FWMvQdNlGeE+Ok9RI+L6LTUMJj+vWSUjwBi8sB6WPekuQHZJWi3Ud4=
+X-Received: by 2002:a25:41c4:0:b0:bac:5d73:7f0a with SMTP id
+ o187-20020a2541c4000000b00bac5d737f0amr2420821yba.17.1686350085069; Fri, 09
+ Jun 2023 15:34:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230609005158.2421285-1-surenb@google.com> <20230609005158.2421285-5-surenb@google.com>
- <ZIOOmC26qh4EXUEX@x1n>
-In-Reply-To: <ZIOOmC26qh4EXUEX@x1n>
+References: <20230609005158.2421285-1-surenb@google.com> <20230609005158.2421285-3-surenb@google.com>
+ <ZIOKxoTlRzWQtQQR@x1n> <ZIONJQGuhYiDnFdg@casper.infradead.org> <ZIOPeNAy7viKNU5Z@x1n>
+In-Reply-To: <ZIOPeNAy7viKNU5Z@x1n>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Fri, 9 Jun 2023 15:30:10 -0700
-Message-ID: <CAJuCfpHKUjAwgWbxvJQDyEnneRD03p2M6247Q6=3-oOq_FL7zA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] mm: drop VMA lock before waiting for migration
+Date:   Fri, 9 Jun 2023 15:34:34 -0700
+Message-ID: <CAJuCfpFAh2KOhpCQ-4b+pzY+1GxOGk=eqj6pBj04gc_8eqB6QQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] mm: handle swap page faults under VMA lock if page
+ is uncontended
 To:     Peter Xu <peterx@redhat.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
-        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
-        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+        hannes@cmpxchg.org, mhocko@suse.com, josef@toxicpanda.com,
+        jack@suse.cz, ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
         michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
         vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
         punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
@@ -74,51 +75,39 @@ X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 9, 2023 at 1:42=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+On Fri, Jun 9, 2023 at 1:45=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
 >
-> On Thu, Jun 08, 2023 at 05:51:56PM -0700, Suren Baghdasaryan wrote:
-> > migration_entry_wait does not need VMA lock, therefore it can be droppe=
-d
-> > before waiting. Introduce VM_FAULT_VMA_UNLOCKED to indicate that VMA
-> > lock was dropped while in handle_mm_fault().
-> > Note that once VMA lock is dropped, the VMA reference can't be used as
-> > there are no guarantees it was not freed.
+> On Fri, Jun 09, 2023 at 09:35:49PM +0100, Matthew Wilcox wrote:
+> > On Fri, Jun 09, 2023 at 04:25:42PM -0400, Peter Xu wrote:
+> > > >  bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *=
+mm,
+> > > >                    unsigned int flags)
+> > > >  {
+> > > > + /* Can't do this if not holding mmap_lock */
+> > > > + if (flags & FAULT_FLAG_VMA_LOCK)
+> > > > +         return false;
+> > >
+> > > If here what we need is the page lock, can we just conditionally rele=
+ase
+> > > either mmap lock or vma lock depending on FAULT_FLAG_VMA_LOCK?
+> >
+> > See patch 5 ...
 >
-> Then vma lock behaves differently from mmap read lock, am I right?  Can w=
-e
-> still make them match on behaviors, or there's reason not to do so?
+> Just reaching.. :)
+>
+> Why not in one shot, then?
 
-I think we could match their behavior by also dropping mmap_lock here
-when fault is handled under mmap_lock (!(fault->flags &
-FAULT_FLAG_VMA_LOCK)).
-I missed the fact that VM_FAULT_COMPLETED can be used to skip dropping
-mmap_lock in do_page_fault(), so indeed, I might be able to use
-VM_FAULT_COMPLETED to skip vma_end_read(vma) for per-vma locks as well
-instead of introducing FAULT_FLAG_VMA_LOCK. I think that was your idea
-of reusing existing flags?
+I like small incremental changes, but I can squash them if that helps
+in having a complete picture.
 
->
-> One reason is if they match they can reuse existing flags and there'll be
-> less confusing, e.g. this:
->
->   (fault->flags & FAULT_FLAG_VMA_LOCK) &&
->     (vm_fault_ret && (VM_FAULT_RETRY || VM_FAULT_COMPLETE))
->
-> can replace the new flag, iiuc.
->
-> Thanks,
 >
 > --
 > Peter Xu
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
 >
