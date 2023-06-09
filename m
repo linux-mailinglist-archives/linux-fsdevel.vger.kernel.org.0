@@ -2,95 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91C03729C9E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 16:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75720729CDF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 16:28:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240783AbjFIOTl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 10:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44436 "EHLO
+        id S241349AbjFIO2b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 10:28:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238912AbjFIOTc (ORCPT
+        with ESMTP id S231981AbjFIO2a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 10:19:32 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C465635A9;
-        Fri,  9 Jun 2023 07:19:31 -0700 (PDT)
-Date:   Fri, 9 Jun 2023 16:19:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1686320369;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MYK4KNvEFkce/VyaNbpjmJmft8NrOeqE2CvuyKuAfes=;
-        b=00/wnt2416KaOYbjeftQ8Aw+6g1+/xH5Bykdi+M2tCTxDTjKIH5TVVjahoeDe+387DvZm6
-        jfj/q3HU0x5tkqj8+luaIWB4Le1dDXb66+AS8ZW5oaZaipeHwgtJrF35cD7xEDyS8Nl+BG
-        peJuNm8aFmcpAKCssyvGB4OuETtzPdV3N6dKLQQpxf1NF/hwQy81tG+0ascouCLkjqFPYy
-        kelvqqw9RjNA1OTEIzDORT3/uQZqc3pFjuT1Y4/vQnTg0P/c7NVVmVwuMxLVD5zLDK3yP/
-        cFNnUQpkW73apHeq1L5liIAq2aAOQLQ5nCYnumvpNbfUPJvgFG9BnKGju6RapQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1686320369;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MYK4KNvEFkce/VyaNbpjmJmft8NrOeqE2CvuyKuAfes=;
-        b=/2PZz2T0R7tryMOE67dyWbMyv5wThnzmqRzYWYK6AeCsBz28nKSB6tV/RufqH3SpjOby9q
-        TiGdhGrQFYAhRUDw==
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3] bpf: Remove in_atomic() from bpf_link_put().
-Message-ID: <20230609141928.CDC3_W5W@linutronix.de>
-References: <20230509132433.2FSY_6t7@linutronix.de>
- <CAEf4BzZcPKsRJDQfdVk9D1Nt6kgT4STpEUrsQ=UD3BDZnNp8eQ@mail.gmail.com>
- <CAADnVQLzZyZ+cPqBFfrqa8wtQ8ZhWvTSN6oD9z4Y2gtrfs8Vdg@mail.gmail.com>
- <CAEf4BzY-MRYnzGiZmW7AVJYgYdHW1_jOphbipRrHRTtdfq3_wQ@mail.gmail.com>
- <20230525141813.TFZLWM4M@linutronix.de>
- <CAEf4Bzaipoo6X_2Fh5WTV-m0yjP0pvhqi7-FPFtGOrSzNpdGJQ@mail.gmail.com>
- <20230526112356.fOlWmeOF@linutronix.de>
- <CAEf4Bzawgrn2DhR9uvXwFFiLR9g+j4RYC6cr3n+eRD_RoKBAJA@mail.gmail.com>
- <20230605163733.LD-UCcso@linutronix.de>
- <CAEf4BzZ=VZcLZmtRefLtRyRb7uLTb6e=RVw82rxjLNqE=8kT-w@mail.gmail.com>
+        Fri, 9 Jun 2023 10:28:30 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D8F935AA;
+        Fri,  9 Jun 2023 07:28:19 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id a1e0cc1a2514c-78a065548e3so731737241.0;
+        Fri, 09 Jun 2023 07:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686320898; x=1688912898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fKhqW/e89nWJE6YE0Fov4sww+VnuVJucQaNK7z3tnaQ=;
+        b=UUP2ReqFaHEiQAYvlSE4ZHukjOPNuYB49N07Jfh8384aT4zaSijBvn36uCCnrJ5e0Y
+         291gm0695me7/17J7w1Xp2fA8IuqyNbzfFhEYyjoPWYaqQdWCVwEJ2RtcJGy+qSpbDz6
+         ACujd/0BQwUO0A7PYoLELBwF+9ZYOhAY+SFb3CDghLX20wzi7BC6maT4nTfJdD1oqKTh
+         lUG5sJLnMo99QCsK5NyGVRAZfgV7yCSkGnmC3sppTulm0jmq2XEDxNqMuVEenuXsNLXF
+         ahcY6Yy1x8IbZgXqmRIHMVec8OlaURAJxAP9RTcacpqd1yRqmnd9GJ70boaQPCnNWVDb
+         CFpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686320898; x=1688912898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fKhqW/e89nWJE6YE0Fov4sww+VnuVJucQaNK7z3tnaQ=;
+        b=VJUsABMIkyo4lQMBtS6JKAy1tBqA3LKYp1sgcL8s6fXnMzRiz5qmzkZa5HDuYgLiSC
+         V1EqnaWxrNVhmDfKnmgCjo2j6PZIi3vGJeeUtgAnSTFhBljt69deUDG5kTUKPYobF4uu
+         TTbNcDU42Dw5EQzfmtdAT9jDcf+zlL8uw6Cw4vyy1tiC/LhgfymewgaKB5P+rsSr6+26
+         Z48f08OzdiCdSod5GGtk0cpcx7++TUV04E3/nNfwvWQ7o+g4ugiwmMq623LgJrvzQbGe
+         xUwzR0KcVQpQ8fYs2yoSDJ+tnUP4O7Nzwr+22hbIhg0j+vQ4tVKhcFjmH6YV3Vs0Do+e
+         7h3Q==
+X-Gm-Message-State: AC+VfDyi2q/tJQNr/SpGLmBBV5eBIAjn5av+6yRvZRsSQUbll4URNGgC
+        thhesX0f5kPmJ7tbdKk4uMLrWsawgIZqviw8j1s=
+X-Google-Smtp-Source: ACHHUZ7epdv62nx4NmKdYFQ5PCKOunKvegDAjrO7IT+qzmksaS1cDHh+5+TDIzf6DUu1anibFX5Sdm1ulAvmOEpI/jw=
+X-Received: by 2002:a05:6102:303a:b0:434:3cf1:96e with SMTP id
+ v26-20020a056102303a00b004343cf1096emr1244507vsa.1.1686320898503; Fri, 09 Jun
+ 2023 07:28:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzZ=VZcLZmtRefLtRyRb7uLTb6e=RVw82rxjLNqE=8kT-w@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230609073239.957184-1-amir73il@gmail.com> <CAJfpegvDoSWPRaoa_i_Do3JDdaXrhohDtfQNObSJ7tNhhuHAKw@mail.gmail.com>
+In-Reply-To: <CAJfpegvDoSWPRaoa_i_Do3JDdaXrhohDtfQNObSJ7tNhhuHAKw@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 9 Jun 2023 17:28:07 +0300
+Message-ID: <CAOQ4uxh=KfY2mNW1jQk6-wjoGWzi5LdCN=H9LzfCSx2o69K36A@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Reduce impact of overlayfs fake path files
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-06-05 15:47:23 [-0700], Andrii Nakryiko wrote:
-> I understand it's safe today, but I'm more worried for future places
-> that will do bpf_link_put(). Given it's only close() and BPF FS
-> unlink() that require synchronous semantics, I think it's fine to make
-> bpf_link_put() to be async, and have bpf_link_put_sync() (or direct,
-> or whatever suffix) as a conscious special case.
-
-Okay, let me do that then.
-
-> > This is invoked from the RCU callback (which is usually softirq):
-> >         destroy_inode()
-> >          -> call_rcu(&inode->i_rcu, i_callback);
+On Fri, Jun 9, 2023 at 4:15=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
+>
+> On Fri, 9 Jun 2023 at 09:32, Amir Goldstein <amir73il@gmail.com> wrote:
 > >
-> > Freeing memory is fine but there is a mutex that is held in the process.
-> 
-> I think it should be fine for BPF link destruction then?
+> > Miklos,
+> >
+> > This is the solution that we discussed for removing FMODE_NONOTIFY
+> > from overlayfs real files.
+> >
+> > My branch [1] has an extra patch for remove FMODE_NONOTIFY, but
+> > I am still testing the ovl-fsnotify interaction, so we can defer
+> > that step to later.
+> >
+> > I wanted to post this series earlier to give more time for fsdevel
+> > feedback and if these patches get your blessing and the blessing of
+> > vfs maintainers, it is probably better that they will go through the
+> > vfs tree.
+> >
+> > I've tested that overlay "fake" path are still shown in /proc/self/maps
+> > and in the /proc/self/exe and /proc/self/map_files/ symlinks.
+> >
+> > The audit and tomoyo use of file_fake_path() is not tested
+> > (CC maintainers), but they both look like user displayed paths,
+> > so I assumed they's want to preserve the existing behavior
+> > (i.e. displaying the fake overlayfs path).
+>
+> I did an audit of all ->vm_file  and found a couple of missing ones:
 
-bpf_any_put() needs that "may sleep" exception for BPF_TYPE_LINK if it
-comes from RCU.
-I will swap that patch to be async by default and make sync for
-bpf_any_put() if called from close (except for the RCU case).
+Wait, but why only ->vm_file?
+We were under the assumption the fake path is only needed
+for mapped files, but the list below suggests that it matters
+to other file operations as well...
 
-Sebastian
+>
+> dump_common_audit_data
+> ima_file_mprotect
+> common_file_perm (I don't understand the code enough to know whether
+> it needs fake dentry or not)
+> aa_file_perm
+> __file_path_perm
+> print_bad_pte
+> file_path
+> seq_print_user_ip
+> __mnt_want_write_file
+> __mnt_drop_write_file
+> file_dentry_name
+>
+> Didn't go into drivers/ and didn't follow indirect calls (e.g.
+> f_op->fsysnc).  I also may have missed something along the way, but my
+> guess is that I did catch most cases.
+
+Wow. So much for 3-4 special cases...
+
+Confused by some of the above.
+
+Why would we want __mnt_want_write_file on the fake path?
+We'd already taken __mnt_want_write on overlay and with
+real file we need __mnt_want_write on the real path.
+
+For IMA/LSMs, I'd imagine that like fanotify, they would rather get
+the real path where the real policy is stored.
+If some log files end with relative path instead of full fake path
+it's probably not the worst outcome.
+
+Thoughts?
+
+Thanks,
+Amir.
