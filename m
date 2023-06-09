@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C25F729AB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 14:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D11F0729AA1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 14:52:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241045AbjFIMvM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 08:51:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52414 "EHLO
+        id S241072AbjFIMvN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 08:51:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240709AbjFIMuj (ORCPT
+        with ESMTP id S240830AbjFIMun (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 08:50:39 -0400
+        Fri, 9 Jun 2023 08:50:43 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7D6210A;
-        Fri,  9 Jun 2023 05:50:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FC92D4A;
+        Fri,  9 Jun 2023 05:50:42 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95D58657CE;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E28E0657CE;
+        Fri,  9 Jun 2023 12:50:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C7A3C4339C;
         Fri,  9 Jun 2023 12:50:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFCFFC4339B;
-        Fri,  9 Jun 2023 12:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686315038;
-        bh=LSV/nyUG8bcrL2oEySUmyLQ2HTPvjddC7F+/lUs3jEU=;
+        s=k20201202; t=1686315041;
+        bh=lJalVbz8bKklhHChaahTE7cD559bFtAruDPThJBYQS8=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=bVReiO8hTnvm8VGrn95dIHsOOPSUJZ8yz9Jc2I7oSveR9pcduDeqYC7J3MCwL0mKh
-         c7oGLr72mXGrKJMJlDzJ6kb3ko2jD5qJ5+jn0ss3X2YSDIv4R+YM/0jMeXi1d/kpew
-         Yv2azGxiKqZez+S/oE/51u+VLNyShKTAN+cKhd3GubmVXALno8rS6IrQURqI9eRE4o
-         o4Q0+JftweyHht3vESfSDB584px9d5fIw2xXaTNGxcixgI27n6XryQSISQrxgPM28w
-         wjMLSlExZFxWDbnW1EFP/RVPfJPqw4sNYJnfgyKbEEj7l/qqXv62+yTTX3FDLaifRq
-         OmgBrefuE7OCA==
+        b=sP5cRxejUSzSOBXjAn5IzjLHxWRkzZPOLcpPeyWo+SN3Ti6mf0TF8QaxvnIGW03Ho
+         HuXw4nPcjPhlCMC1ovBBKAjxRYqgoRJ1GLwmXnaPDU95jQIw+BVrmehNbj5gEc8/gR
+         WPWmcL0Je/F3S43/lJpbrACd0SHYWBXDkgXFxgi9GC9GsaeMooWJV2xQh9n2ogwoaB
+         6YQtCk8PpctEoA1s2Jb8OKuYqjS70QI+YoB0fS0YzuPNTYGoKJfELHjS5ceiVl6JBo
+         dceTY/uftWeTosvv/+myjcA438STQDu42pRqtKIxHzjjYydQ4GjiFeo8ICXFhdgv7R
+         e4YfJfdoIrfqg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Christian Brauner <brauner@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -64,9 +64,9 @@ To:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
         linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
         apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-Subject: [PATCH 3/9] autofs: set ctime as well when mtime changes on a dir
-Date:   Fri,  9 Jun 2023 08:50:17 -0400
-Message-Id: <20230609125023.399942-4-jlayton@kernel.org>
+Subject: [PATCH 4/9] bfs: update ctime in addition to mtime when adding entries
+Date:   Fri,  9 Jun 2023 08:50:18 -0400
+Message-Id: <20230609125023.399942-5-jlayton@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230609125023.399942-1-jlayton@kernel.org>
 References: <20230609125023.399942-1-jlayton@kernel.org>
@@ -84,40 +84,22 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/autofs/root.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/bfs/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/autofs/root.c b/fs/autofs/root.c
-index 6baf90b08e0e..93046c9dc461 100644
---- a/fs/autofs/root.c
-+++ b/fs/autofs/root.c
-@@ -600,7 +600,7 @@ static int autofs_dir_symlink(struct mnt_idmap *idmap,
- 	p_ino = autofs_dentry_ino(dentry->d_parent);
- 	p_ino->count++;
- 
--	dir->i_mtime = current_time(dir);
-+	dir->i_mtime = dir->i_ctime = current_time(dir);
- 
- 	return 0;
- }
-@@ -633,7 +633,7 @@ static int autofs_dir_unlink(struct inode *dir, struct dentry *dentry)
- 	d_inode(dentry)->i_size = 0;
- 	clear_nlink(d_inode(dentry));
- 
--	dir->i_mtime = current_time(dir);
-+	dir->i_mtime = dir->i_ctime = current_time(dir);
- 
- 	spin_lock(&sbi->lookup_lock);
- 	__autofs_add_expiring(dentry);
-@@ -749,7 +749,7 @@ static int autofs_dir_mkdir(struct mnt_idmap *idmap,
- 	p_ino = autofs_dentry_ino(dentry->d_parent);
- 	p_ino->count++;
- 	inc_nlink(dir);
--	dir->i_mtime = current_time(dir);
-+	dir->i_mtime = dir->i_ctime = current_time(dir);
- 
- 	return 0;
- }
+diff --git a/fs/bfs/dir.c b/fs/bfs/dir.c
+index 040d5140e426..d2e8a2a56b05 100644
+--- a/fs/bfs/dir.c
++++ b/fs/bfs/dir.c
+@@ -294,7 +294,7 @@ static int bfs_add_entry(struct inode *dir, const struct qstr *child, int ino)
+ 					dir->i_size += BFS_DIRENT_SIZE;
+ 					dir->i_ctime = current_time(dir);
+ 				}
+-				dir->i_mtime = current_time(dir);
++				dir->i_mtime = dir->i_ctime = current_time(dir);
+ 				mark_inode_dirty(dir);
+ 				de->ino = cpu_to_le16((u16)ino);
+ 				for (i = 0; i < BFS_NAMELEN; i++)
 -- 
 2.40.1
 
