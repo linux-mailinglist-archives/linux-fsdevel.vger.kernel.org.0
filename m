@@ -2,137 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D47572A633
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jun 2023 00:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B29EE72A643
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jun 2023 00:30:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229523AbjFIWRJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 18:17:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43644 "EHLO
+        id S231352AbjFIWaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 18:30:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbjFIWRG (ORCPT
+        with ESMTP id S230027AbjFIWaY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 18:17:06 -0400
-Received: from out-17.mta0.migadu.com (out-17.mta0.migadu.com [91.218.175.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE70E358E
-        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 15:17:05 -0700 (PDT)
-Date:   Fri, 9 Jun 2023 18:17:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1686349024;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/faff7ciPHrXU0YBTRHO8FDbb7z7LJWbx1HGgXc9hBU=;
-        b=RpHGergUpf/+bfzqxiqGg09d3NTtvQ/5VYyDDvFw8Uclq3TYaxMOnvejEyGFmcqox0TivQ
-        vNwd1aG+TIDghbz9wY+u+I3no4Z1iUy50SHNh6RM/8MEXIrtR9eEPmdUZtclxp56reKgVQ
-        4/ZfgQ9fACNYVv3cFM49ySAhAE0Ed1M=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     linux-bcachefs@vger.kernel.org, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: fuzzing bcachefs with dm-flakey
-Message-ID: <ZIOk3ANoGxkcl+u7@moria.home.lan>
-References: <alpine.LRH.2.21.2305260915400.12513@file01.intranet.prod.int.rdu2.redhat.com>
- <ZHUcmeYrUmtytdDU@moria.home.lan>
- <alpine.LRH.2.21.2305300809350.13307@file01.intranet.prod.int.rdu2.redhat.com>
- <ZHaGvAvFB3wWPY17@moria.home.lan>
- <e0ad5e2c-48d0-0fe-a2d3-afcfa5f51d1e@redhat.com>
+        Fri, 9 Jun 2023 18:30:24 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0334135BE
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 15:30:23 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-568f9caff33so21083537b3.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jun 2023 15:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1686349822; x=1688941822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+zT6sV+fvzmgBBI81QXgaF+Btrnt6GH7aWTnX6MCUB4=;
+        b=mXAcURqk+1SjmifAbWS+rzdBg3sJG/XNRZ8y8ysR8INkOv4gWnF+xs+y+SYfhtf6N/
+         RUzqMQwHktqLGXnFqUtsvhF5L9vLpFUwvm2N9epG17Y0Vp2wpI7ZrzX8JDonWRmiow43
+         mX+mucGCdEZRZwBSCuNbliPjS+zKIFFWb9/ic7yJM7pykYyKn+2kH4loCcZKtPEoA1iE
+         lVZoLXJDhsiAM0IcrGBlFgWLUzxo4jWTIDQDnDuTB/9r0dEv+ey0PgmSn+GZP+iXEtW9
+         SOuHwnTb87WF5tfCuyWfCUydVDBd/5vbNI4gxJKZAzwgeQAoWA573b3Zpk+zJz2L5oom
+         Ryow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686349822; x=1688941822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+zT6sV+fvzmgBBI81QXgaF+Btrnt6GH7aWTnX6MCUB4=;
+        b=fo/yz6++K2ttl+7Xjl8jz/wo2niEIGU17sPJ9wtO3rWnhChCM0Rx3N19mvHgShvgqj
+         34x+Ek3iBU3BjJk72rwIU28BcGGSt5/dEEX0ZM3VEOf6aIk1AuuleSdOdEZY+2CL40Cg
+         hKMca7sFGrzw6aXzLG55bJGsDYiouBRtRUeggyrUENHT2cXWWLlqtWUwe02BVNJTNZ11
+         XUMP8jtC/NyhzMdTw8n+2tADBgeNZl8yywZJcAf+zCRIRw9HKf9YChVkj4NmvIghNanJ
+         HOcCwv7Mf0e6UrKqCPAsxPnNT4u4/oItkqMcRoeDYWY/iZcuNbxn1bWg6nmviuwMzq4p
+         BVGA==
+X-Gm-Message-State: AC+VfDy6SYnryV6fHb68kjhhmdRnMmAaWeSiTQzrbsq9/bg7S30Qg0Uz
+        FP/QXqkRw13KLNvGk5Ucv8MU//LPqzY3HiLI6bFPww==
+X-Google-Smtp-Source: ACHHUZ5TZvpX4UfdCUpjEiPqY6QZGnmNogZwNLVZjipLgMlKuWApKPOOPeExrL9FO8ZqBOPgG6jGQ762Win+1tZG15A=
+X-Received: by 2002:a0d:d8cb:0:b0:559:e1b2:70c6 with SMTP id
+ a194-20020a0dd8cb000000b00559e1b270c6mr2210211ywe.34.1686349821843; Fri, 09
+ Jun 2023 15:30:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0ad5e2c-48d0-0fe-a2d3-afcfa5f51d1e@redhat.com>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230609005158.2421285-1-surenb@google.com> <20230609005158.2421285-5-surenb@google.com>
+ <ZIOOmC26qh4EXUEX@x1n>
+In-Reply-To: <ZIOOmC26qh4EXUEX@x1n>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 9 Jun 2023 15:30:10 -0700
+Message-ID: <CAJuCfpHKUjAwgWbxvJQDyEnneRD03p2M6247Q6=3-oOq_FL7zA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] mm: drop VMA lock before waiting for migration
+To:     Peter Xu <peterx@redhat.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
+        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
+        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 09, 2023 at 10:57:27PM +0200, Mikulas Patocka wrote:
-> 
-> 
-> On Tue, 30 May 2023, Kent Overstreet wrote:
-> 
-> > On Tue, May 30, 2023 at 05:00:39PM -0400, Mikulas Patocka wrote:
-> > > I'd like to know how do you want to do coverage analysis? By instrumenting 
-> > > each branch and creating a test case that tests that the branch goes both 
-> > > ways?
-> > 
-> > Documentation/dev-tools/gcov.rst. The compiler instruments each branch
-> > and then the results are available in debugfs, then the lcov tool
-> > produces annotated source code as html output.
-> > 
-> > > I know that people who write spacecraft-grade software do such tests, but 
-> > > I can't quite imagine how would that work in a filesystem.
-> > > 
-> > > "grep -w if fs/bcachefs/*.[ch] | wc -l" shows that there are 5828 
-> > > conditions. That's one condition for every 15.5 lines.
-> > 
-> > Most of which are covered by existing tests - but by running the
-> > existing tests with code coverage analylis we can see which branches the
-> > tests aren't hitting, and then we add fault injection points for those.
-> > 
-> > With fault injection we can improve test coverage a lot without needing
-> > to write any new tests (or simple ones, for e.g. init/mount errors) 
-> 
-> I compiled the kernel with gcov, I ran "xfstests-dev" on bcachefs and gcov 
-> shows that there is 56% coverage on "fs/bcachefs/*.o".
+On Fri, Jun 9, 2023 at 1:42=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Thu, Jun 08, 2023 at 05:51:56PM -0700, Suren Baghdasaryan wrote:
+> > migration_entry_wait does not need VMA lock, therefore it can be droppe=
+d
+> > before waiting. Introduce VM_FAULT_VMA_UNLOCKED to indicate that VMA
+> > lock was dropped while in handle_mm_fault().
+> > Note that once VMA lock is dropped, the VMA reference can't be used as
+> > there are no guarantees it was not freed.
+>
+> Then vma lock behaves differently from mmap read lock, am I right?  Can w=
+e
+> still make them match on behaviors, or there's reason not to do so?
 
-Nice :) I haven't personally looked at the gcov output in ages, you
-might motivate me to see if I can get the kbuild issue for ktest
-integration sorted out.
+I think we could match their behavior by also dropping mmap_lock here
+when fault is handled under mmap_lock (!(fault->flags &
+FAULT_FLAG_VMA_LOCK)).
+I missed the fact that VM_FAULT_COMPLETED can be used to skip dropping
+mmap_lock in do_page_fault(), so indeed, I might be able to use
+VM_FAULT_COMPLETED to skip vma_end_read(vma) for per-vma locks as well
+instead of introducing FAULT_FLAG_VMA_LOCK. I think that was your idea
+of reusing existing flags?
 
-Just running xfstests won't exercise a lot of the code though - our own
-tests are written as ktest tests, and those exercise e.g. multiple
-devices (regular raid mode, tiering, erasure coding),
-subvolumes/snapshots, all the compression/checksumming/encryption modes,
-etc.
-
-No doubt our test coverage will still need improving :)
-
-> So, we have 2564 "if" branches (of total 5828) that were not tested. What 
-> are you going to do about them? Will you create a filesystem image for 
-> each branch that triggers it? Or, will you add 2564 fault-injection points 
-> to the source code?
-
-Fault injection points will be the first thing to look at, as well as
-any chunks of code that just have missing tests.
-
-We won't have to manually add individual fault injection points in every
-case: once code tagging and dynamic fault injection go in, that will
-give us distinct fault injection points for every memory allocation, and
-then it's a simple matter to enable a 1% failure rate for all memory
-allocations in the bcachefs module - we'll do this in
-bcachefs_antagonist in ktest/tests/bcachefs/bcachefs-test-libs, which
-runs after mounting.
-
-Similarly, we'll also want to add fault injection for transaction
-restart points.
-
-Fault injection is just the first, easiest thing I want people looking
-at, it won't be the best tool for the job in all situations. Darrick's
-also done cool stuff with injecting filesystem errors into the on disk
-image - he's got a tool that can select which individual field to
-corrupt - and I want to copy that idea. Our kill_btree_node test (in
-single_device.ktest) is some very initial work along those lines, we'll
-want to extend that.
-
-And we will definitely want to still be testing with dm-flakey because
-no doubt those techniques won't catch everything :)
-
-> It seems like extreme amount of work.
-
-It is a fair amount of work - but it's a more focused kind of work, with
-a benchmark to look at to know when we're done. In practice, nobody but
-perhaps automotive & aerospace attains full 100% branch coverage. People
-generally aim for 80%, and with good, easy to use fault injection I'm
-hoping we'll be able to hit 90%.
-
-IIRC when we were working on the predecessor to bcachefs and had fault
-injection available, we were hitting 85-88% code coverage. Granted the
-codebase was _much_ smaller back then, but it's still not a crazy
-unattainable goal.
+>
+> One reason is if they match they can reuse existing flags and there'll be
+> less confusing, e.g. this:
+>
+>   (fault->flags & FAULT_FLAG_VMA_LOCK) &&
+>     (vm_fault_ret && (VM_FAULT_RETRY || VM_FAULT_COMPLETE))
+>
+> can replace the new flag, iiuc.
+>
+> Thanks,
+>
+> --
+> Peter Xu
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kernel-team+unsubscribe@android.com.
+>
