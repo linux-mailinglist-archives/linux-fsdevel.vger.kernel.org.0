@@ -2,85 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56204729B06
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 15:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0438729B10
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 15:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239883AbjFINFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 09:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33970 "EHLO
+        id S231921AbjFINH5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 09:07:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbjFINFo (ORCPT
+        with ESMTP id S231377AbjFINHz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 09:05:44 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EEE130D8
-        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 06:05:43 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-565de4b5be5so25174657b3.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jun 2023 06:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686315943; x=1688907943;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jt8xvqC2nPhBwkNP4OUqRm94IjtUiSOb8Mmp+FzN9Mk=;
-        b=t5QTYuRK0di0z1o55MZaORz3xMCtAxan1FaLB/ffcAlR93intIIQy6MJ0N06SNrhC1
-         3SPwTBSe0C3LrVqUT8tMnQaJq255vWq5I1aH/trIDMlKnMUMZz9An1f+wt+5WYp6XBjU
-         mJS0oWoxxdNaH+BCSKXE1jE4nK9SsqCs5nES6nUMXowKZLq063TCBwhHdBGBEPDA9zjW
-         MYiecrBjQKByerGm5giQ+tK50ACP1dA8wSXyjBo1Nno0Gxv16QbNLEN/r1np4qSan6cI
-         B1zn41qOhHJBa2YxTfx6H/JueFvzL6mvCwr6VX4QlE3NmYJEYdt0abs68zAjO8BvbKhW
-         5EDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686315943; x=1688907943;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jt8xvqC2nPhBwkNP4OUqRm94IjtUiSOb8Mmp+FzN9Mk=;
-        b=ga+LH7fhAtKM7tfscIY+k8A3/LU561TmUMFaAqIKszOqQu/rC2kpmVnzrqCqbTSlqN
-         Tpsf/3pMoB4T0QeVn4Avrg+q+TuFrk7devjx67x7lFyc6m002QD866zfXV6zaY0YVht/
-         6eHUIg7z3UbcIspTsmCgCxIvDFRnlU+0wekcYMU5MSrAc02TJuO3wZlV2/1zu7lFZ9fH
-         V+n/iaq8Sru92ITea3H/A0QRiPSyxVbupeuF84NV9sSHSK/39rdAVXdnD0vRgLP3eAJj
-         R1ArkYix0YcHCpwhPk5CdjbZcEqhivca0FZV6uiZpNYiO8jHqhKDS9lHZjhUhd9oLrcg
-         5eQg==
-X-Gm-Message-State: AC+VfDx8RPnytKCA1zP9YwYuPeok6AjtNwt6ZoMMk2PsE9O3q0S7If8i
-        ZhHqPtQOfiBUeJZaxdxIYhexXBAjOZa79yc=
-X-Google-Smtp-Source: ACHHUZ7QoU2zQfij1jE77i3FaSipHaW0/XKcHSRc3sXUAhZ5HvUY1L0EiqlaYqU3IZEhVkf6uHE/7TN7YbakvIg=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:6c8])
- (user=aliceryhl job=sendgmr) by 2002:a81:ad4f:0:b0:565:ba21:8123 with SMTP id
- l15-20020a81ad4f000000b00565ba218123mr823294ywk.1.1686315942787; Fri, 09 Jun
- 2023 06:05:42 -0700 (PDT)
-Date:   Fri,  9 Jun 2023 13:05:39 +0000
-In-Reply-To: <CANiq72nAcGKBVcVLrfAOkqaKsfftV6D1u97wqNxT38JnNsKp5A@mail.gmail.com>
-Mime-Version: 1.0
-References: <CANiq72nAcGKBVcVLrfAOkqaKsfftV6D1u97wqNxT38JnNsKp5A@mail.gmail.com>
-X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
-Message-ID: <20230609130540.1643605-1-aliceryhl@google.com>
-Subject: Re: [RFC PATCH 00/80] Rust PuzzleFS filesystem driver
-From:   Alice Ryhl <aliceryhl@google.com>
-To:     miguel.ojeda.sandonis@gmail.com, brauner@kernel.org
-Cc:     amiculas@cisco.com, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
-        aliceryhl@google.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Fri, 9 Jun 2023 09:07:55 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 153FC2D74;
+        Fri,  9 Jun 2023 06:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1686316073;
+        bh=0ul0obtGOxYV6/odr4pTROAjF+3eU0MKJl2ER52zhBI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=k1KZokw74XoTtKFKdTSdKU48rp4Q0axJc5YwUhCYQDsC+B585daNmDoaTS4X0/q+M
+         /lYKeUbYnkiXt4aylEeddT+ZLxawc9rp2QOWWNtcy/vAEfk2D2a4cl3DnOAX5D5Icp
+         q6YLTc7EPnmdBAZ3e5Nz2yXQ8BrGlFknnjt8ClqgkVQupQY6jPi5yGVi2BtDQhP+n4
+         +IyIPesNKrPaViQdlfILYDpB6K4+VkllRGsaYKj961ELSEwhlbHSl4XuzRe2aTryxa
+         kyeC+QcgIS5C6J1LF4hB5bUyc0p7+GzoO6zWILna5/giq4qzgoCsLjC+2BTuYxOpS2
+         qAq1wWJbnqfEQ==
+Received: from biznet-home.integral.gnuweeb.org (unknown [103.74.5.63])
+        by gnuweeb.org (Postfix) with ESMTPSA id C05FF23EC43;
+        Fri,  9 Jun 2023 20:07:51 +0700 (WIB)
+Date:   Fri, 9 Jun 2023 20:07:38 +0700
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To:     Hao Xu <hao.xu@linux.dev>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
+        io-uring Mailing List <io-uring@vger.kernel.org>
+Subject: Re: [PATCH 07/11] io_uring: add new api to register fixed workers
+Message-ID: <ZIMkGh3kI0tfoxxp@biznet-home.integral.gnuweeb.org>
+References: <20230609122031.183730-1-hao.xu@linux.dev>
+ <20230609122031.183730-8-hao.xu@linux.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230609122031.183730-8-hao.xu@linux.dev>
+X-Bpl:  hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miguel Ojeda writes:
-> That would be great, thanks Christian! (Cc'ing Alice for binderfs -- I
-> think Rust Binder is keeping binderfs in C for the moment, but if you
-> are willing to try things, they are probably interested :)
+On Fri, Jun 09, 2023 at 08:20:27PM +0800, Hao Xu wrote:
+> +	rcu_read_lock();
+> +
+> +	for (i = 0; i < IO_WQ_ACCT_NR; i++) {
+> +		unsigned int nr = count[i].nr_workers;
+> +
+> +		acct = &wq->acct[i];
+> +		acct->fixed_nr = nr;
+> +		acct->fixed_workers = kcalloc(nr, sizeof(struct io_worker *),
+> +					      GFP_KERNEL);
+> +		if (!acct->fixed_workers) {
+> +			ret = -ENOMEM;
+> +			break;
+> +		}
+> +
+> +		for (j = 0; j < nr; j++) {
+> +			struct io_worker *worker =
+> +				io_wq_create_worker(wq, acct, true);
+> +			if (IS_ERR(worker)) {
+> +				ret = PTR_ERR(worker);
+> +				break;
+> +			}
+> +			acct->fixed_workers[j] = worker;
+> +		}
+> +		if (j < nr)
+> +			break;
+> +	}
+> +	rcu_read_unlock();
 
-Yeah, Rust binder already needs bindings to a lot of other parts of the
-kernel, so I decided to not rewrite the binderfs part for now to cut
-down on the number of subsystems I would need to upstream bindings for.
-Upstreaming bindings has proved to be a lot of work.
+This looks wrong. kcalloc() with GFP_KERNEL may sleep. Note that you're
+not allowed to sleep inside the RCU read lock critical section.
 
-If someone else wants to upstream the filesystem bindings that binderfs
-would need, then we can certainly look into using them in Rust binder.
+Using GFP_KERNEL implies GFP_RECLAIM, which means that direct reclaim
+may be triggered under memory pressure; the calling context must be
+allowed to sleep.
 
-Alice
+-- 
+Ammar Faizi
 
