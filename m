@@ -2,210 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2867C728CA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 02:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE78728D61
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 03:58:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229628AbjFIAwl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 20:52:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52138 "EHLO
+        id S237401AbjFIB6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Jun 2023 21:58:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237386AbjFIAwf (ORCPT
+        with ESMTP id S231580AbjFIB6M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 20:52:35 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B32D830E6
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jun 2023 17:52:17 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-bb39aebdd87so2696855276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jun 2023 17:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686271937; x=1688863937;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R1WyFySTZ0XkKYIf3B7+wOl2DNVNhKC+z/byy1yFxnw=;
-        b=4hO9nbpC9/B59lz7lu7ipLmvPx0TPiRR1YFcnoIIsLsACw+RsmBoY1hg9fpZtuMvoW
-         AsVsIpTf8LfYB4lwQ5sT6jbE8vVaylpAww88SyjrA1LKqGMRXyWLDVtjUMHa3DShm/3L
-         oCZtGpYklKgkoDTmolhi1ndUET6n652IDLkTIObECyb0yackpoS0TrORfZJOHg5/tfhJ
-         JNKbEXfUKTJj0MNVLKCwTOpswbGOlStCgQHRqPjpQAo80ZcJR3KseQgmY2Wv1ZWl+SgC
-         d+U9Bx2apmjK27kmJGDzWSJpSU7aLQV3FnJPhxOI/r8/brluCy0xQxyPUn6xCpotTzHq
-         ehCg==
+        Thu, 8 Jun 2023 21:58:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0447230C5
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jun 2023 18:57:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686275844;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=04Zu5Z7OJEa+9A3BruZap5vAuUoQe5F8F8fOhA3/4Ak=;
+        b=WKirSgOjlzTovrczryBqT7csc4VxGv0a2Xeplmk93AY971++3nQL/7e4xduR6BINVRVEtY
+        aO04GAEzWp6SJXsqlJk+2lj/jzIE04TCKN7apldxydC0Z21rFKQEMNbQK8NPTmQKfqQAb1
+        TTpKF7ZzclKW2ImDcokJhcO4wuvR4eI=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-296-HZ7BJ8eBNUKLZthoO3krOA-1; Thu, 08 Jun 2023 21:57:22 -0400
+X-MC-Unique: HZ7BJ8eBNUKLZthoO3krOA-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2566f2acd88so279647a91.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jun 2023 18:57:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686271937; x=1688863937;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R1WyFySTZ0XkKYIf3B7+wOl2DNVNhKC+z/byy1yFxnw=;
-        b=NSIOMtTq3k1Gjjiuk4AL1RidaDOVp+uVuwFuEP6QJQZjWcGs0/o12cVb+NoOr0SAGq
-         HOlTr/W5y1M/etdN+HEszIS0G2X12fp73VCyBWQWK90j4eKfPzt8Gvo8Y0YSI1XQ105g
-         tGY8TG31fnwqrPRq4iNftFpOngnL46ioJVyEaXycgJBJRDTyQCpyoQvEuJtcYhq27tNI
-         A45+Q7s2W8+uu4V2kyic8Xr+hADu8mVv3s4NZqjpXR9OYqAltAaxYQRmxexPhoSP3rxo
-         VsYzHKnsOrojHCGJkDPE4EU1hEB8EPrzKACOVTIO2Qh0kZmr0c6uin8EfvJktROc4NX8
-         rd6A==
-X-Gm-Message-State: AC+VfDyN75gRdkvwZGpDwuhQfbN7Mdsu9wdx6joVMvvTlGs/N/X7bKoz
-        zkzS09bxcSLmoED/VW1Gir0cs8v9QKY=
-X-Google-Smtp-Source: ACHHUZ4bWROsb838DrUUPzvA00RwKpJHV0L0dTRYqvNM1IO6yvKJkT1erTMTIADmBKvxMqLYZ9xOLKXYFnE=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:c03e:d3b7:767a:9467])
- (user=surenb job=sendgmr) by 2002:a05:6902:211:b0:bb1:569c:f381 with SMTP id
- j17-20020a056902021100b00bb1569cf381mr138781ybs.1.1686271936956; Thu, 08 Jun
- 2023 17:52:16 -0700 (PDT)
-Date:   Thu,  8 Jun 2023 17:51:58 -0700
-In-Reply-To: <20230609005158.2421285-1-surenb@google.com>
-Mime-Version: 1.0
-References: <20230609005158.2421285-1-surenb@google.com>
-X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
-Message-ID: <20230609005158.2421285-7-surenb@google.com>
-Subject: [PATCH v2 6/6] mm: handle userfaults under VMA lock
-From:   Suren Baghdasaryan <surenb@google.com>
-To:     akpm@linux-foundation.org
-Cc:     willy@infradead.org, hannes@cmpxchg.org, mhocko@suse.com,
-        josef@toxicpanda.com, jack@suse.cz, ldufour@linux.ibm.com,
-        laurent.dufour@fr.ibm.com, michel@lespinasse.org,
-        liam.howlett@oracle.com, jglisse@google.com, vbabka@suse.cz,
-        minchan@google.com, dave@stgolabs.net, punit.agrawal@bytedance.com,
-        lstoakes@gmail.com, hdanton@sina.com, apopple@nvidia.com,
-        peterx@redhat.com, ying.huang@intel.com, david@redhat.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        pasha.tatashin@soleen.com, surenb@google.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        d=1e100.net; s=20221208; t=1686275842; x=1688867842;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=04Zu5Z7OJEa+9A3BruZap5vAuUoQe5F8F8fOhA3/4Ak=;
+        b=Xo4UcGycQSd34URCu1gVC4CoDUo2w77hId7BXNwmEW5RFnKI902hIq9rOd3knY7jcT
+         /UAdyfeCb74JOCTYmOqLLM5YxRCKpTZdhjZNvA777kgfR5LjlrX+fyRE/zo9AGK0fNNp
+         6B1YN/L0yc8Cc6i6th8YguFnRRp6RbNIkTw9V2OzfZ1NEetC6/ir6jcdwR/n8mNr67Rm
+         rP0hrQkHN0v8wLvz1LAVH4f0vwLpht34F0WXdI67vJZzhqzDKNJS1C9m/Y6sfckkwE9W
+         CR2/K2M0rPnR2L8ovFbF9rgIEgGMhrX998Zl/47AWzEJcajnhZGc4fsFX/lNGMEK0l25
+         Y6eQ==
+X-Gm-Message-State: AC+VfDwz9AWfLSowvJy3rvjDbLbycn5m9BzOA/9eusea+OhqUaQ9f2tK
+        mNafMTobPEf810SMlThQk6YWROStZIEYXlM8UJVteALTvbKp7SG+f0OM1smf8aeIc9luwD6Qv0j
+        6kW50oWqW+4g2bYhD4eaCVzsOvw==
+X-Received: by 2002:a17:90a:1999:b0:253:3a2c:df52 with SMTP id 25-20020a17090a199900b002533a2cdf52mr113392pji.39.1686275841672;
+        Thu, 08 Jun 2023 18:57:21 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ74nbreqcgq91AQC1EVQ20zFmvIH4QtWe1bGup4Ixa+ummNsCZv3wYGnyW9l5ZwXgNEhB+VtA==
+X-Received: by 2002:a17:90a:1999:b0:253:3a2c:df52 with SMTP id 25-20020a17090a199900b002533a2cdf52mr113385pji.39.1686275841342;
+        Thu, 08 Jun 2023 18:57:21 -0700 (PDT)
+Received: from [10.72.13.135] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id g1-20020a17090a828100b00256504e0937sm3598532pjn.34.2023.06.08.18.57.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Jun 2023 18:57:20 -0700 (PDT)
+Message-ID: <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+Date:   Fri, 9 Jun 2023 09:57:13 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+Content-Language: en-US
+To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Enable handle_userfault to operate under VMA lock by releasing VMA lock
-instead of mmap_lock and retrying with VM_FAULT_VMA_UNLOCKED set.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- fs/userfaultfd.c | 42 ++++++++++++++++++++++--------------------
- mm/memory.c      |  9 ---------
- 2 files changed, 22 insertions(+), 29 deletions(-)
+On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
+> Dear friends,
+>
+> This patchset was originally developed by Christian Brauner but I'll continue
+> to push it forward. Christian allowed me to do that :)
+>
+> This feature is already actively used/tested with LXD/LXC project.
+>
+> Git tree (based on https://github.com/ceph/ceph-client.git master):
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 0fd96d6e39ce..23c3a4ce45d9 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -277,17 +277,17 @@ static inline struct uffd_msg userfault_msg(unsigned long address,
-  * hugepmd ranges.
-  */
- static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
--					 struct vm_area_struct *vma,
--					 unsigned long address,
--					 unsigned long flags,
--					 unsigned long reason)
-+					      struct vm_fault *vmf,
-+					      unsigned long reason)
- {
-+	struct vm_area_struct *vma = vmf->vma;
- 	pte_t *ptep, pte;
- 	bool ret = true;
- 
--	mmap_assert_locked(ctx->mm);
-+	if (!(vmf->flags & FAULT_FLAG_VMA_LOCK))
-+		mmap_assert_locked(ctx->mm);
- 
--	ptep = hugetlb_walk(vma, address, vma_mmu_pagesize(vma));
-+	ptep = hugetlb_walk(vma, vmf->address, vma_mmu_pagesize(vma));
- 	if (!ptep)
- 		goto out;
- 
-@@ -308,10 +308,8 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
- }
- #else
- static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
--					 struct vm_area_struct *vma,
--					 unsigned long address,
--					 unsigned long flags,
--					 unsigned long reason)
-+					      struct vm_fault *vmf,
-+					      unsigned long reason)
- {
- 	return false;	/* should never get here */
- }
-@@ -325,11 +323,11 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
-  * threads.
-  */
- static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
--					 unsigned long address,
--					 unsigned long flags,
-+					 struct vm_fault *vmf,
- 					 unsigned long reason)
- {
- 	struct mm_struct *mm = ctx->mm;
-+	unsigned long address = vmf->address;
- 	pgd_t *pgd;
- 	p4d_t *p4d;
- 	pud_t *pud;
-@@ -337,7 +335,8 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
- 	pte_t *pte;
- 	bool ret = true;
- 
--	mmap_assert_locked(mm);
-+	if (!(vmf->flags & FAULT_FLAG_VMA_LOCK))
-+		mmap_assert_locked(mm);
- 
- 	pgd = pgd_offset(mm, address);
- 	if (!pgd_present(*pgd))
-@@ -445,7 +444,8 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	 * Coredumping runs without mmap_lock so we can only check that
- 	 * the mmap_lock is held, if PF_DUMPCORE was not set.
- 	 */
--	mmap_assert_locked(mm);
-+	if (!(vmf->flags & FAULT_FLAG_VMA_LOCK))
-+		mmap_assert_locked(mm);
- 
- 	ctx = vma->vm_userfaultfd_ctx.ctx;
- 	if (!ctx)
-@@ -561,15 +561,17 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	spin_unlock_irq(&ctx->fault_pending_wqh.lock);
- 
- 	if (!is_vm_hugetlb_page(vma))
--		must_wait = userfaultfd_must_wait(ctx, vmf->address, vmf->flags,
--						  reason);
-+		must_wait = userfaultfd_must_wait(ctx, vmf, reason);
- 	else
--		must_wait = userfaultfd_huge_must_wait(ctx, vma,
--						       vmf->address,
--						       vmf->flags, reason);
-+		must_wait = userfaultfd_huge_must_wait(ctx, vmf, reason);
- 	if (is_vm_hugetlb_page(vma))
- 		hugetlb_vma_unlock_read(vma);
--	mmap_read_unlock(mm);
-+	if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-+		vma_end_read(vma);
-+		/* WARNING: VMA can't be used after this */
-+		ret |= VM_FAULT_VMA_UNLOCKED;
-+	} else
-+		mmap_read_unlock(mm);
- 
- 	if (likely(must_wait && !READ_ONCE(ctx->released))) {
- 		wake_up_poll(&ctx->fd_wqh, EPOLLIN);
-diff --git a/mm/memory.c b/mm/memory.c
-index acb09a3aad53..b2ea015dcb87 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5306,15 +5306,6 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
- 	if (!vma_start_read(vma))
- 		goto inval;
- 
--	/*
--	 * Due to the possibility of userfault handler dropping mmap_lock, avoid
--	 * it for now and fall back to page fault handling under mmap_lock.
--	 */
--	if (userfaultfd_armed(vma)) {
--		vma_end_read(vma);
--		goto inval;
--	}
--
- 	/* Check since vm_start/vm_end might change before we lock the VMA */
- 	if (unlikely(address < vma->vm_start || address >= vma->vm_end)) {
- 		vma_end_read(vma);
--- 
-2.41.0.162.gfafddb0af9-goog
+Could you rebase these patches to 'testing' branch ?
+
+And you still have missed several places, for example the following cases:
+
+
+    1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
+              req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR, 
+mode);
+    2    389  fs/ceph/dir.c <<ceph_readdir>>
+              req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+    3    789  fs/ceph/dir.c <<ceph_lookup>>
+              req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
+    ...
+
+
+For this requests you also need to set the real idmap.
+
+
+Thanks
+
+- Xiubo
+
+
+
+> v5: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v5
+> current: https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
+>
+> In the version 3 I've changed only two commits:
+> - fs: export mnt_idmap_get/mnt_idmap_put
+> - ceph: allow idmapped setattr inode op
+> and added a new one:
+> - ceph: pass idmap to __ceph_setattr
+>
+> In the version 4 I've reworked the ("ceph: stash idmapping in mdsc request")
+> commit. Now we take idmap refcounter just in place where req->r_mnt_idmap
+> is filled. It's more safer approach and prevents possible refcounter underflow
+> on error paths where __register_request wasn't called but ceph_mdsc_release_request is
+> called.
+>
+> Changelog for version 5:
+> - a few commits were squashed into one (as suggested by Xiubo Li)
+> - started passing an idmapping everywhere (if possible), so a caller
+> UID/GID-s will be mapped almost everywhere (as suggested by Xiubo Li)
+>
+> I can confirm that this version passes xfstests.
+>
+> Links to previous versions:
+> v1: https://lore.kernel.org/all/20220104140414.155198-1-brauner@kernel.org/
+> v2: https://lore.kernel.org/lkml/20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com/
+> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v2
+> v3: https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com/#t
+> v4: https://lore.kernel.org/lkml/20230607180958.645115-1-aleksandr.mikhalitsyn@canonical.com/#t
+> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v4
+>
+> Kind regards,
+> Alex
+>
+> Original description from Christian:
+> ========================================================================
+> This patch series enables cephfs to support idmapped mounts, i.e. the
+> ability to alter ownership information on a per-mount basis.
+>
+> Container managers such as LXD support sharaing data via cephfs between
+> the host and unprivileged containers and between unprivileged containers.
+> They may all use different idmappings. Idmapped mounts can be used to
+> create mounts with the idmapping used for the container (or a different
+> one specific to the use-case).
+>
+> There are in fact more use-cases such as remapping ownership for
+> mountpoints on the host itself to grant or restrict access to different
+> users or to make it possible to enforce that programs running as root
+> will write with a non-zero {g,u}id to disk.
+>
+> The patch series is simple overall and few changes are needed to cephfs.
+> There is one cephfs specific issue that I would like to discuss and
+> solve which I explain in detail in:
+>
+> [PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
+>
+> It has to do with how to handle mds serves which have id-based access
+> restrictions configured. I would ask you to please take a look at the
+> explanation in the aforementioned patch.
+>
+> The patch series passes the vfs and idmapped mount testsuite as part of
+> xfstests. To run it you will need a config like:
+>
+> [ceph]
+> export FSTYP=ceph
+> export TEST_DIR=/mnt/test
+> export TEST_DEV=10.103.182.10:6789:/
+> export TEST_FS_MOUNT_OPTS="-o name=admin,secret=$password
+>
+> and then simply call
+>
+> sudo ./check -g idmapped
+>
+> ========================================================================
+>
+> Alexander Mikhalitsyn (5):
+>    fs: export mnt_idmap_get/mnt_idmap_put
+>    ceph: pass idmap to __ceph_setattr
+>    ceph: pass idmap to ceph_do_getattr
+>    ceph: pass idmap to __ceph_setxattr
+>    ceph: pass idmap to ceph_open/ioctl_set_layout
+>
+> Christian Brauner (9):
+>    ceph: stash idmapping in mdsc request
+>    ceph: handle idmapped mounts in create_request_message()
+>    ceph: pass an idmapping to mknod/symlink/mkdir/rename
+>    ceph: allow idmapped getattr inode op
+>    ceph: allow idmapped permission inode op
+>    ceph: allow idmapped setattr inode op
+>    ceph/acl: allow idmapped set_acl inode op
+>    ceph/file: allow idmapped atomic_open inode op
+>    ceph: allow idmapped mounts
+>
+>   fs/ceph/acl.c                 |  8 ++++----
+>   fs/ceph/addr.c                |  3 ++-
+>   fs/ceph/caps.c                |  3 ++-
+>   fs/ceph/dir.c                 |  4 ++++
+>   fs/ceph/export.c              |  2 +-
+>   fs/ceph/file.c                | 21 ++++++++++++++-----
+>   fs/ceph/inode.c               | 38 +++++++++++++++++++++--------------
+>   fs/ceph/ioctl.c               |  9 +++++++--
+>   fs/ceph/mds_client.c          | 27 +++++++++++++++++++++----
+>   fs/ceph/mds_client.h          |  1 +
+>   fs/ceph/quota.c               |  2 +-
+>   fs/ceph/super.c               |  6 +++---
+>   fs/ceph/super.h               | 14 ++++++++-----
+>   fs/ceph/xattr.c               | 18 +++++++++--------
+>   fs/mnt_idmapping.c            |  2 ++
+>   include/linux/mnt_idmapping.h |  3 +++
+>   16 files changed, 111 insertions(+), 50 deletions(-)
+>
 
