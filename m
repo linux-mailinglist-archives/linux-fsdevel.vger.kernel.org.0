@@ -2,98 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C5772984F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 13:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF135729855
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 13:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231932AbjFILmj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 07:42:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39634 "EHLO
+        id S231898AbjFILpe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 07:45:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230129AbjFILmh (ORCPT
+        with ESMTP id S229571AbjFILpd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 07:42:37 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFBCD30EE;
-        Fri,  9 Jun 2023 04:42:36 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-565a63087e9so15470877b3.2;
-        Fri, 09 Jun 2023 04:42:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686310956; x=1688902956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1VWbml9vm0j/K8rXjZ4MZh9cHa+yubilvKrJHb5AUTg=;
-        b=UHK+k8jgzaAlhB8mpPGiLo+0MaFqcVc9TQbS7Vo+X24EphFbjrw4riQzsR3328x3bk
-         Hn0SJX8G9jjyhu4CWh4lmiVyUrChGUTLJA4q3og19Jh3mMpsrh8m/HqwyJUPH8h0PUTX
-         nH0xEh7yA0gqPOnf9i/NhckLgzbJfZnKVL86i1zvqcPg8J7IehYsqGp8sJ21ZkOhpBxI
-         Qcm7oPhRh4/KnWCLbHFDXVUT2aljqm/NCVmT6hARsvDGxphbUs5SSwachXaJuFrgYtfQ
-         W7+idAqBa0UmDCUSItVke2urrb64cF+qTFZcMQSI0pH2S6JQ/qH41eZXZUOYWY2oVTnd
-         PPWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686310956; x=1688902956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1VWbml9vm0j/K8rXjZ4MZh9cHa+yubilvKrJHb5AUTg=;
-        b=UKkPdRLlDuIauc5+FZm8bsN+hDbVskweqLAm5t9j5AsONAs9lBf4fKrqrNfKIhBrA6
-         2iejoaeSqw/7GEJzUgTTdqymUMrnB6+9kJ5EHWnfC2YiNI1DGo5y1p4rIbizItrHJ/m5
-         QOVI4U1EeOYi0/zmdbCSRVEA3npX2KtkFKV4DPL72x6cUDuHoM4EhPquAqT6lj/mLZxA
-         Bc6+cp+2BOmv+IXW7umdaQYFRyXoPhM0MSxe2tA1G4piqb8xNSk7aSxHMSJt3tHDDP66
-         DULljHifNqdTS85u9ChRNGiV3PMCSKyZ6mKan2+4roxmx8CY/kL2JTxqtMOpwGUOJI/M
-         2Y1Q==
-X-Gm-Message-State: AC+VfDxx0SRaSir/rj74qM2H2gpKc5+o+6QB+uK8nnXT4OOH3S3qGjud
-        eYTmz5N5CBcrf6MjWAgbgGtcOoNAmiZFW7PyIFVvK1NxVR8=
-X-Google-Smtp-Source: ACHHUZ6tW53ZXngN93wz9oF7Mpp7POxJTk4IPWWf2sz62WA+74iAWCcJqjZs01/mel0Vpqpu2mXBiHLHt62fjMZRR/g=
-X-Received: by 2002:a0d:eb10:0:b0:565:5cf3:d941 with SMTP id
- u16-20020a0deb10000000b005655cf3d941mr942574ywe.5.1686310955849; Fri, 09 Jun
- 2023 04:42:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230609063118.24852-1-amiculas@cisco.com> <20230609-feldversuch-fixieren-fa141a2d9694@brauner>
-In-Reply-To: <20230609-feldversuch-fixieren-fa141a2d9694@brauner>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 9 Jun 2023 13:42:24 +0200
-Message-ID: <CANiq72kZSKz+Y4Zh2GKxqEx2NpGLPYzU5VAntqJDOhMfzxGO_A@mail.gmail.com>
+        Fri, 9 Jun 2023 07:45:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D14E30EE;
+        Fri,  9 Jun 2023 04:45:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9A681619F2;
+        Fri,  9 Jun 2023 11:45:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6BDDC433EF;
+        Fri,  9 Jun 2023 11:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686311130;
+        bh=v9LI7LVYBOjPg2fzBZyJq+SK2fQsCPaEnoy+9+VJlI8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FDMq2dnqSVx1XltmNnqRYZexoEdgIJABfzz4UIGNKtRvb3/a3UZ9X/JTFchKOfRkQ
+         sRFvBj/wF+vxU6iamY/HlB4f3Aa7Rv9t+KXfLESX4S/ZLONZCzQv2M33GNIxaWNKPA
+         YP6c83TzHj3fi7ia+JNj8CIiai/1ID4pWP4SSG/7n7MUe3mXg37HY/ccdIuqMUxEu8
+         XBoDbs8av8mrAtb+141KM2QkumSJRapi4VAL0YVMeXrHTDvQhsb7+Zrdl+vx32SqKT
+         y9dSVZUrAA2abQY3pSrAR6RdOJSlBxaDL8dU4C7q8nEitdzkJGA+plJoROqGeBQAa6
+         MdsXWxdxfb7dQ==
+Date:   Fri, 9 Jun 2023 13:45:26 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     "Ariel Miculas (amiculas)" <amiculas@cisco.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
 Subject: Re: [RFC PATCH 00/80] Rust PuzzleFS filesystem driver
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Ariel Miculas <amiculas@cisco.com>, linux-fsdevel@vger.kernel.org,
-        rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Message-ID: <20230609-nachrangig-handwagen-375405d3b9f1@brauner>
+References: <20230609063118.24852-1-amiculas@cisco.com>
+ <20230609-feldversuch-fixieren-fa141a2d9694@brauner>
+ <CH0PR11MB529981313ED5A1F815350E41CD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CH0PR11MB529981313ED5A1F815350E41CD51A@CH0PR11MB5299.namprd11.prod.outlook.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 9, 2023 at 1:06=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> Any wrappers and code for core fs should be maintained as part of fs.
-> Rust shouldn't become a way to avoid our reviews once you have a few
-> wrappers added somewhere.
+On Fri, Jun 09, 2023 at 11:22:12AM +0000, Ariel Miculas (amiculas) wrote:
+> Hello Christian,
+> 
+> I didn't send these patches to a wider audience because this is an
+> initial prototype of the PuzzleFS driver, and it has a few
+> prerequisites before it could be even considered for merging. First of
+> all, the rust filesystem abstractions and their dependencies need to
+> be upstreamed, then there needs to be a discussion regarding the
 
-Definitely and, to be clear, we are strict about it (e.g.
-https://rust-for-linux.com/contributing#the-rust-subsystem).
+Yes.
 
-In fact, we appreciate maintainers that are willing to take patches
-through their tree and take ownership of code too (e.g. KUnit and DRM
-are doing so already).
+> inclusion of third-party crates in the linux kernel.
 
-I imagine Ariel sent the RFC as a way to announce his work early on,
-especially given how some patches were split, the lack of commit
-messages and tags, etc.
+> 
+> My plan was to send these patches to the rust-for-linux mailing list and then start a discussion with Miguel Ojeda regarding the upstreaming approach.
+> There are a lot of new files added in this patch series because I've included all the dependencies required so that my patches could be applied to the rust-next branch, but these dependencies will most likely need to be upstreamed separately.
+> 
+> It was never my intention to avoid your reviews, should I also send
+> subsequent patches to linux-fsdevel, even if they're in the early
+> stages of development?
 
-In other cases, we have reviewed patches privately first to iron out
-this sort of thing, but I wasn't aware of this series coming (I knew
-Ariel was working on puzzlefs and that he wanted to submit it
-eventually, but not that an RFC was ready).
+Yeah, I think that would be great.
 
-Also, some of the code here comes from the `rust` branch, but some of
-it may not be ready yet for upstreaming.
+Because the series you sent here touches on a lot of things in terms of
+infrastructure alone. That work could very well be rather interesting
+independent of PuzzleFS. We might just want to get enough infrastructure
+to start porting a tiny existing fs (binderfs or something similar
+small) to Rust to see how feasible this is and to wet our appetite for
+bigger changes such as accepting a new filesystem driver completely
+written in Rust.
 
-Cheers,
-Miguel
+But aside from the infrastructure discussion:
+
+This is yet another filesystem for solving the container image problem
+in the kernel with the addition of yet another filesystem. We just went
+through this excercise with another filesystem. So I'd expect some
+reluctance here. Tbh, the container world keeps sending us filesystems
+at an alarming rate. That's two within a few months and that leaves a
+rather disorganized impression.
