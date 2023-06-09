@@ -2,65 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF4972935B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 10:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A11557293FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 11:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236150AbjFIIhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Jun 2023 04:37:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41144 "EHLO
+        id S239812AbjFIJAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 05:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241066AbjFIIhZ (ORCPT
+        with ESMTP id S241149AbjFII7i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Jun 2023 04:37:25 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475AE4201
-        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 01:36:43 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-977d0ee1736so233787466b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jun 2023 01:36:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1686299788; x=1688891788;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v/SsbKkfXbREIq0fP7DKc16CbxBCfG8YCyzpXQ3vBS0=;
-        b=O/eE6zP7NIkcxMtmzkTgvQ7d5DAjMNp9tR/ZAO3vsRDGhDf5ozvw+y58GvmCX+IP/D
-         P+gJWZ7GuvRYo6z1/JoiAREg+Ph21CP1841E/TFI7TX2I5Y1j3Tr8YoQL3xMtUS9de0g
-         0SX4AMUqSgNeqqxd7x7RWRXr1ijoFLVkO+G7M=
+        Fri, 9 Jun 2023 04:59:38 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 465732711
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 01:59:34 -0700 (PDT)
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com [209.85.219.199])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 72AAF3F15D
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jun 2023 08:59:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1686301172;
+        bh=cTj4GjB/9BDLM3nhk88ZM05TgDh034XIKIkWicIblZI=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=UPEIm71ivdXScEOIPAC7GgUVXPcm0WlIrPV/bMuNNGOmDDTnUsQFrKG0bfBPjnnZQ
+         cSuWRawS2oUpwfB49VKanruhRHmErCOVT2A76yAJBHI0XIufZyCLX144zRgG5Z9LOp
+         4cAwqndEDzUNqangWaXmjLcpUxGESxarArnuPmqtAWk4atvfofabEzYeIu1uSs5uEc
+         kAT1gCWe5EtM17cloK+PAiNN0yD61rC9KYDSKfdoWlhKIBoRkAEVi/wLTWZNoq6BZf
+         LCXJv4d5yMPEFln0rI8pPRUQu/QRe3Uem1GHyPkODjZgRIPn+mKzXHOAqP0kmvjrqL
+         9T95dmiPT4+7g==
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-babb78a3daaso2286994276.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jun 2023 01:59:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686299788; x=1688891788;
+        d=1e100.net; s=20221208; t=1686301171; x=1688893171;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v/SsbKkfXbREIq0fP7DKc16CbxBCfG8YCyzpXQ3vBS0=;
-        b=STE+7JQQBM3fX01Av0n7QC2ANvUM0bM83vOjvsk+isLQQxT7TOqpGGgCsrxBaGNRyv
-         NaUjpX17UWRV+hT+b1Y72DHo5dFDILnHUIGI3/lnGHhuE8lFmqYSxLwTSLQxxCkfKh9D
-         fbBle6D31SXoqvSiazQa3lyy6lZ87fMBuvuc1sOSXcxzWOYSY1cYsJenI8bcfVPGkfS8
-         yQVOUjOjF4zCxBsnnXDNfDWDrLLDamiwI8zqbIVwfecwtcx4Nx0/f5pm7hOiyW3DzhrC
-         dxeBx96QkkuET/Btjs/RarQ02822qBxSqB/BhOqqd870zXXHuWi7HwDMiVnOMqEid9uO
-         TZog==
-X-Gm-Message-State: AC+VfDzDb4kgwf30okKxhodAoHcPBfWQ63CR4YLMNWUabNdFtufAe8Mg
-        FBFews2FIfYYg4sYBYuT1bBrlpQJWwsfk7Yh7UagBA==
-X-Google-Smtp-Source: ACHHUZ77th1NEp2P5IEmo0BzxWXAS1JWWulMkToaSJqWFu67jPNyRPQf1bRXXpdJSTkYmpy9V9RhRIk/r/P+YpXfEHM=
-X-Received: by 2002:a17:907:c15:b0:94e:1764:b09b with SMTP id
- ga21-20020a1709070c1500b0094e1764b09bmr970228ejc.45.1686299788430; Fri, 09
- Jun 2023 01:36:28 -0700 (PDT)
+        bh=cTj4GjB/9BDLM3nhk88ZM05TgDh034XIKIkWicIblZI=;
+        b=SPaZ5S2qgiVGPkVHv2XGzrVqWlrkO4tuitcx810iyccSoexK1qRw3SJWcTspxZuBam
+         zzH26UNLsFeopMQltZbcNMh7BspvktBJS58a7jH20mrFrb/fBntuvdyvppr2abNKLkip
+         TMOTVuRYb/t02GJSC8qbHQoPjntQ3ZwN9hGRqEjZuyx4p5e/EWravIelfRzcjeSdlZoF
+         bovpfyGL1WltK8CXOeYnfxiQMAnjCKEt1DjYsk0YZh28BsWqlkXyj5WIv03Fr+38yzmo
+         lnIafaHpeopJhRDxUA/V0NdV2bVn8PfMlDQQL3sYtdHhMq+HUd9H1Cmod/IrG5HgUF16
+         fRyQ==
+X-Gm-Message-State: AC+VfDxzNSZMeJNUpU3Awu2jxJnc1lcU493pXuZw0Fu+FYIb9Dlp2BNF
+        6z6nlAgL/pa3Jjfvg5CTHVJFNLgAvP7jOK9tK4Vmep4TxMJfdzAgXulzjRbWnhSQ1+wzHr4M4Am
+        7tdX/ESL3cY47ycF0myihB8bM29F5q14XAGhBjLm5VNeQAQVbsck9Xx6UlZA=
+X-Received: by 2002:a5b:804:0:b0:bac:9ba9:ada1 with SMTP id x4-20020a5b0804000000b00bac9ba9ada1mr453479ybp.28.1686301171351;
+        Fri, 09 Jun 2023 01:59:31 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ59zGfy4dc8gYfqdDXyKBfpVeg1LYolpGdxg+escyvURJkfZF5yKxZDvex7d5pDFzFcyR4N0J3pJDQefXNnAL0=
+X-Received: by 2002:a5b:804:0:b0:bac:9ba9:ada1 with SMTP id
+ x4-20020a5b0804000000b00bac9ba9ada1mr453466ybp.28.1686301171072; Fri, 09 Jun
+ 2023 01:59:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230605-fs-overlayfs-mount_api-v1-1-a8d78c3fbeaf@kernel.org>
- <CAOQ4uxhMwet9mO2RpsJn0CFGkqJZ-fTYvDFuV-rAD6xy9RZjkw@mail.gmail.com>
- <20230609-hufen-zensor-490247280b6c@brauner> <CAOQ4uxhzbAZLydw=eEH12XfR37LDV-E5SD9b_et5QsG+qyLu-Q@mail.gmail.com>
- <20230609-tasten-raumfahrt-7b8a499ef787@brauner>
-In-Reply-To: <20230609-tasten-raumfahrt-7b8a499ef787@brauner>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 9 Jun 2023 10:36:17 +0200
-Message-ID: <CAJfpegv4q4=kOM9KLiTmvbPkR15g1vkmWq3brkFuFqy50J7Xwg@mail.gmail.com>
-Subject: Re: [PATCH] ovl: port to new mount api
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com> <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+In-Reply-To: <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Fri, 9 Jun 2023 10:59:19 +0200
+Message-ID: <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -69,211 +79,191 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 9 Jun 2023 at 10:03, Christian Brauner <brauner@kernel.org> wrote:
+On Fri, Jun 9, 2023 at 3:57=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
 >
-> On Fri, Jun 09, 2023 at 10:38:15AM +0300, Amir Goldstein wrote:
-> > On Fri, Jun 9, 2023 at 10:28=E2=80=AFAM Christian Brauner <brauner@kern=
-el.org> wrote:
-> > >
-> > > On Thu, Jun 08, 2023 at 09:29:39PM +0300, Amir Goldstein wrote:
-> > > > On Thu, Jun 8, 2023 at 7:07=E2=80=AFPM Christian Brauner <brauner@k=
-ernel.org> wrote:
-> > > > >
-> > > > > We recently ported util-linux to the new mount api. Now the mount=
-(8)
-> > > > > tool will by default use the new mount api. While trying hard to =
-fall
-> > > > > back to the old mount api gracefully there are still cases where =
-we run
-> > > > > into issues that are difficult to handle nicely.
-> > > > >
-> > > > > Now with mount(8) and libmount supporting the new mount api I exp=
-ect an
-> > > > > increase in the number of bug reports and issues we're going to s=
-ee with
-> > > > > filesystems that don't yet support the new mount api. So it's tim=
-e we
-> > > > > rectify this.
-> > > > >
-> > > > > For overlayfs specifically we ran into issues where mount(8) pass=
-ed
-> > > > > multiple lower layers as one big string through fsconfig(). But t=
-he
-> > > > > fsconfig() FSCONFIG_SET_STRING option is limited to 256 bytes in
-> > > > > strndup_user(). While this would be fixable by extending the fsco=
-nfig()
-> > > > > buffer I'd rather encourage users to append layers via multiple
-> > > > > fsconfig() calls as the interface allows nicely for this. This ha=
-s also
-> > > > > been requested as a feature before.
-> > > > >
-> > > > > With this port to the new mount api the following will be possibl=
-e:
-> > > > >
-> > > > >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "lowerdir", "/lower1=
-", 0);
-> > > > >
-> > > > >         /* set upper layer */
-> > > > >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "upperdir", "/upper"=
-, 0);
-> > > > >
-> > > > >         /* append "/lower2", "/lower3", and "/lower4" */
-> > > > >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "lowerdir", ":/lower=
-2:/lower3:/lower4", 0);
-> > > > >
-> > > > >         /* turn index feature on */
-> > > > >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "index", "on", 0);
-> > > > >
-> > > > >         /* append "/lower5" */
-> > > > >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "lowerdir", ":/lower=
-5", 0);
-> > > > >
-> > > > > Specifying ':' would have been rejected so this isn't a regressio=
-n. And
-> > > > > we can't simply use "lowerdir=3D/lower" to append on top of exist=
-ing
-> > > > > layers as "lowerdir=3D/lower,lowerdir=3D/other-lower" would make
-> > > > > "/other-lower" the only lower layer so we'd break uapi if we chan=
-ged
-> > > > > this. So the ':' prefix seems a good compromise.
-> > > > >
-> > > > > Users can choose to specify multiple layers at once or individual
-> > > > > layers. A layer is appended if it starts with ":". This requires =
-that
-> > > > > the user has already added at least one layer before. If lowerdir=
- is
-> > > > > specified again without a leading ":" then all previous layers ar=
-e
-> > > > > dropped and replaced with the new layers. If lowerdir is specifie=
-d and
-> > > > > empty than all layers are simply dropped.
-> > > > >
-> > > > > An additional change is that overlayfs will now parse and resolve=
- layers
-> > > > > right when they are specified in fsconfig() instead of deferring =
-until
-> > > > > super block creation. This allows users to receive early errors.
-> > > > >
-> > > > > It also allows users to actually use up to 500 layers something w=
-hich
-> > > > > was theoretically possible but ended up not working due to the mo=
-unt
-> > > > > option string passed via mount(2) being too large.
-> > > > >
-> > > > > This also allows a more privileged process to set config options =
-for a
-> > > > > lesser privileged process as the creds for fsconfig() and the cre=
-ds for
-> > > > > fsopen() can differ. We could restrict that they match by enforci=
-ng that
-> > > > > the creds of fsopen() and fsconfig() match but I don't see why th=
-at
-> > > > > needs to be the case and allows for a good delegation mechanism.
-> > > > >
-> > > > > Plus, in the future it means we're able to extend overlayfs mount
-> > > > > options and allow users to specify layers via file descriptors in=
-stead
-> > > > > of paths:
-> > > > >
-> > > > >         fsconfig(FSCONFIG_SET_PATH{_EMPTY}, "lowerdir", "lower1",=
- dirfd);
-> > > > >
-> > > > >         /* append */
-> > > > >         fsconfig(FSCONFIG_SET_PATH{_EMPTY}, "lowerdir", "lower2",=
- dirfd);
-> > > > >
-> > > > >         /* append */
-> > > > >         fsconfig(FSCONFIG_SET_PATH{_EMPTY}, "lowerdir", "lower3",=
- dirfd);
-> > > > >
-> > > > >         /* clear all layers specified until now */
-> > > > >         fsconfig(FSCONFIG_SET_STRING, "lowerdir", NULL, 0);
-> > > > >
-> > > > > This would be especially nice if users create an overlayfs mount =
-on top
-> > > > > of idmapped layers or just in general private mounts created via
-> > > > > open_tree(OPEN_TREE_CLONE). Those mounts would then never have to=
- appear
-> > > > > anywhere in the filesystem. But for now just do the minimal thing=
-.
-> > > > >
-> > > > > We should probably aim to move more validation into ovl_fs_parse_=
-param()
-> > > > > so users get errors before fsconfig(FSCONFIG_CMD_CREATE). But tha=
-t can
-> > > > > be done in additional patches later.
-> > > > >
-> > > > > Link: https://github.com/util-linux/util-linux/issues/2287 [1]
-> > > > > Link: https://github.com/util-linux/util-linux/issues/1992 [2]
-> > > > > Link: https://bugs.archlinux.org/task/78702 [3]
-> > > > > Link: https://lore.kernel.org/linux-unionfs/20230530-klagen-zudem=
--32c0908c2108@brauner [4]
-> > > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > > > ---
-> > > > >
-> > > > > ---
-> > > > >
-> > > > > I'm starting to get the feeling that I stared enough at this and =
-I would
-> > > > > need a fresh set of eyes to review it for any bugs. Plus, Amir se=
-ems to
-> > > > > have conflicting series and I would have to rebase anyway so no p=
-oint in
-> > > > > delaying this any further.
-> > > > > ---
-> > > > >  fs/overlayfs/super.c | 896 ++++++++++++++++++++++++++++++++-----=
---------------
-> > > > >  1 file changed, 568 insertions(+), 328 deletions(-)
-> > > > >
-> > > >
-> > > > Very big patch - Not so easy to review.
-> > > > It feels like a large refactoring mixed with the api change.
-> > > > Can it easily be split to just the refactoring patch
-> > > > and the api change patch? or any other split that will be
-> > > > easier to review.
-> > >
-> > > I don't really think so because you can't do a piecemeal conversion
-> > > unfortunately. But if you have concrete ideas I'm happy to hear them.
-> > >
+>
+> On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
+> > Dear friends,
 > >
-> > To me it looks like besides using new api you changed the order
-> > of config parsing to:
-> > - fill ovl_config and sanitize path arguments
-> >   (replacing string with path in case of upper/workdir)
->
-> Afaict this only makes sense if you cane have a sensible split between
-> option parsing and superblock creation. While the new mount api does
-> have that the old one doesn't. So ovl_fill_super() does option parsing,
-> verification, and superblock creation.
->
-> So the only thing we could do is something where we move
-> ovl_mount_dir_noesc() out of ovl_lower_dir() and ovl_mount_dir() out of
-> ovl_get_workdir() and ovl_get_upper(). And resolve all layers first.
->
-> But it would still need to remain centralized in ovl_fill_super() and
-> then it'd be an equal amount of churn when we implement proper option
-> parsing for the new mount api in ovl_parse_param() as the implementation
-> of the helpers used in there doesn't make sense before the switch.
->
-> So I honestly thing this might end up being churn for churn. But I'll do
-> it if you insist.
->
-> But it'd be good to first get an indication whether this is even
-> acceptable overall and whether I should do rebase and resend asap
-> for v6.5.
+> > This patchset was originally developed by Christian Brauner but I'll co=
+ntinue
+> > to push it forward. Christian allowed me to do that :)
+> >
+> > This feature is already actively used/tested with LXD/LXC project.
+> >
+> > Git tree (based on https://github.com/ceph/ceph-client.git master):
 
-Looks good to me overall.  The only added complexity I see is parsing
-the lowerdir option, so it might make sense to split it like this:
+Hi Xiubo!
 
-1) convert to new API, don't touch lowerdir parsing (technically this
-could be a bisect confusing regression, but I'm not really worried)
+>
+> Could you rebase these patches to 'testing' branch ?
 
-2) add the new split lowerdir handling
+Will do in -v6.
 
-Also would it make sense to move parsing to a separate source file?
+>
+> And you still have missed several places, for example the following cases=
+:
+>
+>
+>     1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
+>               req =3D ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR,
+> mode);
 
-Does the split option handling make sense for other fs?  Is it
-something that could be standardized?
++
+
+>     2    389  fs/ceph/dir.c <<ceph_readdir>>
+>               req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+
++
+
+>     3    789  fs/ceph/dir.c <<ceph_lookup>>
+>               req =3D ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
+
+We don't have an idmapping passed to lookup from the VFS layer. As I
+mentioned before, it's just impossible now.
+
+I've checked all places with ceph_mdsc_create_request and passed
+idmapping everywhere if possible (in v6, that I will send soon).
+
+>     ...
+>
+>
+> For this requests you also need to set the real idmap.
 
 Thanks,
-Miklos
+Alex
+
+>
+>
+> Thanks
+>
+> - Xiubo
+>
+>
+>
+> > v5: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v5
+> > current: https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
+> >
+> > In the version 3 I've changed only two commits:
+> > - fs: export mnt_idmap_get/mnt_idmap_put
+> > - ceph: allow idmapped setattr inode op
+> > and added a new one:
+> > - ceph: pass idmap to __ceph_setattr
+> >
+> > In the version 4 I've reworked the ("ceph: stash idmapping in mdsc requ=
+est")
+> > commit. Now we take idmap refcounter just in place where req->r_mnt_idm=
+ap
+> > is filled. It's more safer approach and prevents possible refcounter un=
+derflow
+> > on error paths where __register_request wasn't called but ceph_mdsc_rel=
+ease_request is
+> > called.
+> >
+> > Changelog for version 5:
+> > - a few commits were squashed into one (as suggested by Xiubo Li)
+> > - started passing an idmapping everywhere (if possible), so a caller
+> > UID/GID-s will be mapped almost everywhere (as suggested by Xiubo Li)
+> >
+> > I can confirm that this version passes xfstests.
+> >
+> > Links to previous versions:
+> > v1: https://lore.kernel.org/all/20220104140414.155198-1-brauner@kernel.=
+org/
+> > v2: https://lore.kernel.org/lkml/20230524153316.476973-1-aleksandr.mikh=
+alitsyn@canonical.com/
+> > tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v2
+> > v3: https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mikh=
+alitsyn@canonical.com/#t
+> > v4: https://lore.kernel.org/lkml/20230607180958.645115-1-aleksandr.mikh=
+alitsyn@canonical.com/#t
+> > tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v4
+> >
+> > Kind regards,
+> > Alex
+> >
+> > Original description from Christian:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > This patch series enables cephfs to support idmapped mounts, i.e. the
+> > ability to alter ownership information on a per-mount basis.
+> >
+> > Container managers such as LXD support sharaing data via cephfs between
+> > the host and unprivileged containers and between unprivileged container=
+s.
+> > They may all use different idmappings. Idmapped mounts can be used to
+> > create mounts with the idmapping used for the container (or a different
+> > one specific to the use-case).
+> >
+> > There are in fact more use-cases such as remapping ownership for
+> > mountpoints on the host itself to grant or restrict access to different
+> > users or to make it possible to enforce that programs running as root
+> > will write with a non-zero {g,u}id to disk.
+> >
+> > The patch series is simple overall and few changes are needed to cephfs=
+.
+> > There is one cephfs specific issue that I would like to discuss and
+> > solve which I explain in detail in:
+> >
+> > [PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
+> >
+> > It has to do with how to handle mds serves which have id-based access
+> > restrictions configured. I would ask you to please take a look at the
+> > explanation in the aforementioned patch.
+> >
+> > The patch series passes the vfs and idmapped mount testsuite as part of
+> > xfstests. To run it you will need a config like:
+> >
+> > [ceph]
+> > export FSTYP=3Dceph
+> > export TEST_DIR=3D/mnt/test
+> > export TEST_DEV=3D10.103.182.10:6789:/
+> > export TEST_FS_MOUNT_OPTS=3D"-o name=3Dadmin,secret=3D$password
+> >
+> > and then simply call
+> >
+> > sudo ./check -g idmapped
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > Alexander Mikhalitsyn (5):
+> >    fs: export mnt_idmap_get/mnt_idmap_put
+> >    ceph: pass idmap to __ceph_setattr
+> >    ceph: pass idmap to ceph_do_getattr
+> >    ceph: pass idmap to __ceph_setxattr
+> >    ceph: pass idmap to ceph_open/ioctl_set_layout
+> >
+> > Christian Brauner (9):
+> >    ceph: stash idmapping in mdsc request
+> >    ceph: handle idmapped mounts in create_request_message()
+> >    ceph: pass an idmapping to mknod/symlink/mkdir/rename
+> >    ceph: allow idmapped getattr inode op
+> >    ceph: allow idmapped permission inode op
+> >    ceph: allow idmapped setattr inode op
+> >    ceph/acl: allow idmapped set_acl inode op
+> >    ceph/file: allow idmapped atomic_open inode op
+> >    ceph: allow idmapped mounts
+> >
+> >   fs/ceph/acl.c                 |  8 ++++----
+> >   fs/ceph/addr.c                |  3 ++-
+> >   fs/ceph/caps.c                |  3 ++-
+> >   fs/ceph/dir.c                 |  4 ++++
+> >   fs/ceph/export.c              |  2 +-
+> >   fs/ceph/file.c                | 21 ++++++++++++++-----
+> >   fs/ceph/inode.c               | 38 +++++++++++++++++++++-------------=
+-
+> >   fs/ceph/ioctl.c               |  9 +++++++--
+> >   fs/ceph/mds_client.c          | 27 +++++++++++++++++++++----
+> >   fs/ceph/mds_client.h          |  1 +
+> >   fs/ceph/quota.c               |  2 +-
+> >   fs/ceph/super.c               |  6 +++---
+> >   fs/ceph/super.h               | 14 ++++++++-----
+> >   fs/ceph/xattr.c               | 18 +++++++++--------
+> >   fs/mnt_idmapping.c            |  2 ++
+> >   include/linux/mnt_idmapping.h |  3 +++
+> >   16 files changed, 111 insertions(+), 50 deletions(-)
+> >
+>
