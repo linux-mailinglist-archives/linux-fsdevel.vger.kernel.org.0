@@ -2,116 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63AD6728E96
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 05:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8E0B728EDE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jun 2023 06:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238031AbjFIDdF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Jun 2023 23:33:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60776 "EHLO
+        id S237095AbjFIEUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Jun 2023 00:20:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237219AbjFIDdD (ORCPT
+        with ESMTP id S229629AbjFIEUb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Jun 2023 23:33:03 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DA3F30F0
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jun 2023 20:33:01 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id 46e09a7af769-6b2b7ca1c5eso316142a34.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jun 2023 20:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686281580; x=1688873580;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6iwigF78U3EwOQGn53e2UyWPNzHupFHtA26oaO3R2wc=;
-        b=IUFu6gG5Y34+fr+pT0fZlm3gbhBerxiSZw2i1915MxIWtDQeIYZTwhIfxZmRHtIyiR
-         NFlOVNBDBv4/iHd9xqTHen6L7cwEJR2miWxty9rxd+mk6AtmzR3I1xxG5LAkyihtV0UE
-         3/jD4CNKGPbNmdD2KK8c1YBe88FwQhH58dTi9C94lOBqYZTDhOFWExKvxj5Kp+IXNOgU
-         zX89XwkY9Pgh5GQ5zDMDjn1C2akzPzmnPzODvfSMY1/G48ZUuRJTjtxkVvp/a53l/BsA
-         SRJ7B68f+Pab/mILI/Gop73OnxPKT98d3/ZDR6sz0msjAMQnDOI/J9Kzm9qPanig48z3
-         RfKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686281580; x=1688873580;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6iwigF78U3EwOQGn53e2UyWPNzHupFHtA26oaO3R2wc=;
-        b=IRATtaho9A9dwrTxCx4K665hrN6PauBpwTNRRVtpwUc0UDxDp1uNOh3P3FnpGZ6v1B
-         o0HQJIsnVY9+rAjc5IYQysImnEKROZPJOMgDFf389y38i82I4g2i2Piol09AARBxV6IW
-         26SVHVlGHdv+yjVPGRAcsz3mKnOwaBhjBmdtvL2H21ZDMjUNl9BPw2v0qrZ+j0h9b+KM
-         ofWjD2TGO3gwpF9yzFB/VdUMo6mWj9hy3cHud0nwGeyTx/DAF4J68nOMOeK1ToNoK4sm
-         7XjPaE8DwxFOE10kjq011i16iS+7KtnbWLgh6nBg/ZdXu/63ueqDfY1yUY3aKP7InKE4
-         yByQ==
-X-Gm-Message-State: AC+VfDz7bP02B2hwOmNHWNRWkQvYiFgUG7aobnqnSXhO4K5u8IS9RLP+
-        uP55QDBpaWx6MuvlmbjY+MtTIA==
-X-Google-Smtp-Source: ACHHUZ4jpAKkv/P4I5GyogL5cyKUBbH9jdQo3rd8sW4sBbrGIyPOxPKXrqwUV/kK78Vqo7hkyQEMOA==
-X-Received: by 2002:a05:6830:3a0a:b0:6a6:6121:dc60 with SMTP id di10-20020a0568303a0a00b006a66121dc60mr317885otb.10.1686281580410;
-        Thu, 08 Jun 2023 20:33:00 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-79-151.pa.nsw.optusnet.com.au. [49.179.79.151])
-        by smtp.gmail.com with ESMTPSA id t1-20020aa79381000000b0064381853bfcsm1723703pfe.89.2023.06.08.20.32.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jun 2023 20:32:59 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1q7Srw-009XUr-2X;
-        Fri, 09 Jun 2023 13:32:56 +1000
-Date:   Fri, 9 Jun 2023 13:32:56 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Mike Snitzer <snitzer@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Joe Thornber <thornber@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Bart Van Assche <bvanassche@google.com>,
-        linux-kernel@vger.kernel.org, Joe Thornber <ejt@redhat.com>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Sarthak Kukreti <sarthakkukreti@chromium.org>,
-        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>
-Subject: Re: [PATCH v7 0/5] Introduce provisioning primitives
-Message-ID: <ZIKdaJNhSq9JfFDU@dread.disaster.area>
-References: <ZHFEfngPyUOqlthr@dread.disaster.area>
- <CAJ0trDZJQwvAzngZLBJ1hB0XkQ1HRHQOdNQNTw9nK-U5i-0bLA@mail.gmail.com>
- <ZHYB/6l5Wi+xwkbQ@redhat.com>
- <CAJ0trDaUOevfiEpXasOESrLHTCcr=oz28ywJU+s+YOiuh7iWow@mail.gmail.com>
- <ZHYWAGmKhwwmTjW/@redhat.com>
- <CAG9=OMMnDfN++-bJP3jLmUD6O=Q_ApV5Dr392_5GqsPAi_dDkg@mail.gmail.com>
- <ZHqOvq3ORETQB31m@dread.disaster.area>
- <ZHti/MLnX5xGw9b7@redhat.com>
- <ZH/k9ss2Cg9HYrEV@dread.disaster.area>
- <ZIEXwTd17z0iYW4s@redhat.com>
+        Fri, 9 Jun 2023 00:20:31 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 889E11A1;
+        Thu,  8 Jun 2023 21:20:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Bf0Imcmrff8IiflvMMZwKHn+EPzovpKROa1e5HANUoM=; b=nue2TtmTamk9kJkszgPEGMpwte
+        lhHnwHuuxogMyeD0BQGtvyzl9mYliO0ISA7i4oG4Eg26b4hQtdcmoQUUCz1Am7UpYm5S66D9LPRcN
+        5/Uy48E/9SEM/MtyvLfTqnHleWvImTBEULArcgIPOro0eI0uH/g8x7xGkNc5T8q6fWD0qd8OLdc97
+        ElapA2f8xr6rBQxc1qCGSsaN+zI29pxUboyrxPIpW2N4x9lZz6fqH1w//lOov0U+KiyyY8W/8QHLC
+        OQ3XqldDQHaU2nU4fWrkx05LA8/dDA0VYONM/hMe7D6Vat+V5OW3FTF5aiXDBdyIfisWlNbvL2C/X
+        YUBAuQVw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q7Tbj-00Ba1H-02;
+        Fri, 09 Jun 2023 04:20:15 +0000
+Date:   Thu, 8 Jun 2023 21:20:14 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, djwong@kernel.org,
+        dchinner@redhat.com, kbusch@kernel.org, hare@suse.de,
+        ritesh.list@gmail.com, rgoldwyn@suse.com, jack@suse.cz,
+        patches@lists.linux.dev, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        p.raghav@samsung.com, da.gomez@samsung.com, rohan.puri@samsung.com,
+        rpuri.linux@gmail.com, corbet@lwn.net, jake@lwn.net
+Subject: Re: [RFC 4/4] bdev: extend bdev inode with it's own super_block
+Message-ID: <ZIKofhpTXREOR3ec@infradead.org>
+References: <20230608032404.1887046-1-mcgrof@kernel.org>
+ <20230608032404.1887046-5-mcgrof@kernel.org>
+ <ZIHZngefNAtYtg7L@casper.infradead.org>
+ <ZIHcl8epO0h3z1TO@infradead.org>
+ <ZIITpjDXyupKom+N@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZIEXwTd17z0iYW4s@redhat.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <ZIITpjDXyupKom+N@bombadil.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 07, 2023 at 07:50:25PM -0400, Mike Snitzer wrote:
-> Do you think you're OK to scope out, and/or implement, the XFS changes
-> if you use v7 of this patchset as the starting point? (v8 should just
-> be v7 minus the dm-thin.c and dm-snap.c changes).  The thinp
-> support in v7 will work enough to allow XFS to issue REQ_OP_PROVISION
-> and/or fallocate (via mkfs.xfs) to dm-thin devices.
+On Thu, Jun 08, 2023 at 10:45:10AM -0700, Luis Chamberlain wrote:
+> > > and then considering only two superblocks instead of having a list of
+> > > all bdevs?
+> > 
+> > Or why the heck we would even do this to start with?
+> 
+> That's what I gathered you suggested at LSFMM on hallway talk.
 
-Yup, XFS only needs blkdev_issue_provision() and
-bdev_max_provision_sectors() to be present.  filesystem code. The
-initial XFS provisioning detection and fallocate() support is just
-under 50 lines of new code...
+No.  I explained you that sharing the superblock or has absolutely no
+effct on the aops after you wanted to it.  I said it might be nice for
+other reasons to have a sb per gendisk.
 
-Cheers,
+> > iomap has absolutely nothing to do with superblocks.
+> > 
+> > Now maybe it might make sense to have a superblock per gendisk just
+> > to remove all the weird special casing for the bdev inode in the
+> > writeback code.  But that's something entirely different than this
+> > patch.
+> 
+> The goal behind this is to allow block devices to have its bdev cache
+> use iomap, right now now we show-horn in the buffer-head aops if we
+> have to build buffer-heads.
+> 
+> If this sort of approach is not desirable, let me know what alternative
+> you would prefer to see, because clearly, I must not have understood
+> your suggestion.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Again, every non-trivial file system right now has more than one set
+of aops per superblock.  I'm not sure what problem you are trying to
+solve here.
