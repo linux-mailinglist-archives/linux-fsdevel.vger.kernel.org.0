@@ -2,161 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC0272AC6D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jun 2023 17:00:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CDE472AEC7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jun 2023 22:41:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235548AbjFJO77 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 10 Jun 2023 10:59:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46078 "EHLO
+        id S231243AbjFJUlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 10 Jun 2023 16:41:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235500AbjFJO74 (ORCPT
+        with ESMTP id S229758AbjFJUli (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Jun 2023 10:59:56 -0400
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B469230F8
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Jun 2023 07:59:54 -0700 (PDT)
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-777a93b3277so303780439f.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Jun 2023 07:59:54 -0700 (PDT)
+        Sat, 10 Jun 2023 16:41:38 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B863A96;
+        Sat, 10 Jun 2023 13:41:22 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f6d3f83d0cso30644695e9.2;
+        Sat, 10 Jun 2023 13:41:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686429681; x=1689021681;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fYcznHcgZcUJ3O5V1OxrWcqLYBG0CpO8YVWYlCq5q0A=;
+        b=HUIKYoL3yr6fod/28Dh1j32TCUlpNnIHT7wvP0COEt25yFlt54oB6WMSLydlfFeR9F
+         8GVj1GKnjpdH867aurWnlQ8T7+je9EbXbP0z4L8t+X3LGdZ0EHbQOOucU61FwcQNgCWU
+         5rSZBvSRcpPo21+GiTYQjavQ3jt0t8I+Dp5HQ14v6/7UhVR1uWiCCNRretFP9pml4Seq
+         2HMLq5hZuYIHo7x0AesY8sa/MUHq018Sx+tytgp6AcvXnhiAG6PDr3TAIhWxcb7ikbd/
+         P+lYtWW9YSp9ZrBL5C073eB9HHtdsv10EdvX4Laqcyy0jBI/H6MjPbV3qswUptKO3dF0
+         AINA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686409194; x=1689001194;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mbe6t2dEkBkVede/hffFYqMKvsenN4bBBlpxem1wQqg=;
-        b=fakBHnvuX8YlUDtJ5nzO2fl1f8b4IyVAWzjJX5aVpJUyUkrUqTdQvKpvFFUK76yZUT
-         WKTyPQU27vHrMC6/UmdFvrdlqtDL0CTwxpHgB/M4LS6QF3DCWwU8cbZIwFbg3Ckxh5yX
-         6F36yVIFSqX8NxXC1z+AcTBw3wtv5tFUX1JYB6J5awMkxxyBWEgC+Ym/odQtQ/xK0Mi2
-         8cH5X5VeLKGV/D6h+JLWJISg2gGmHM2Qf/B+V/yuQglrZFBs6VT7bEtLKhtu5oAsbz3+
-         35hV0E1gZYczGGVrI0DxuW39kk6J3zgP95opGwxAUSsaNFK++rKQGwWIeXciEqZRCCPt
-         yxUQ==
-X-Gm-Message-State: AC+VfDypnoldz4TCIT4M4Eo7drZm02329XsO0//xNpdU3gZWq6TXLEjz
-        Tv/Vik5+JjXGa3+QpQvTJy++mDMhdTy5gRmG2zo8aw4UlXzB
-X-Google-Smtp-Source: ACHHUZ61A3Zt8iS5EybZb5zQI2e8iuVk8IuJd48tQLCZkULoSo1oe8FnTidU5rWoXz00OVE4VXRh9rN5LJjuOjTB7GPX2g3cGSjT
-MIME-Version: 1.0
-X-Received: by 2002:a02:84e7:0:b0:40f:83e7:a965 with SMTP id
- f94-20020a0284e7000000b0040f83e7a965mr1744493jai.4.1686409194056; Sat, 10 Jun
- 2023 07:59:54 -0700 (PDT)
-Date:   Sat, 10 Jun 2023 07:59:54 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f5371205fdc7bc44@google.com>
-Subject: [syzbot] [reiserfs?] [fat?] WARNING: locking bug in remove_wait_queue
-From:   syzbot <syzbot+4152c2c2c9ad88fc6159@syzkaller.appspotmail.com>
-To:     brauner@kernel.org, linkinjeon@kernel.org,
+        d=1e100.net; s=20221208; t=1686429681; x=1689021681;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fYcznHcgZcUJ3O5V1OxrWcqLYBG0CpO8YVWYlCq5q0A=;
+        b=gdHyB4N89r+b5bJV9sNwd9FGG3pJg3Ml6iI8Z8+5LQX4xhMpgghAieUA+43TE/lg6S
+         ZIOiuzjx21butbiQN5ZZqAUr5OEAFy1LROBiS5ZHBC7F386MIcafTMZd4sUAmgO8OxoF
+         vEzlLI1FongVi3uzVN0ghuzQdvkMjWKxnKw5GCsNN4/dS5ubturCNeASL8UIlkzncH8S
+         L7MjO78VkApOqMDQy2bM1IGii3lM03DAbgcdgPZUN0qvPd9kj9lzZlng/9x2bIvhg13s
+         EEaYGbxxQNvBkG4ubO1W+ht7hjmTQxUH0q+eR7BLXT/NAGmvVfBVD3W0J0s8SZ/wS9R5
+         QsPQ==
+X-Gm-Message-State: AC+VfDyjrxoDVMNbVU3SWArcp8CCNT6VvFFnS5EM0KrH+0v85/osmfxA
+        9IdphOQ1NZRHhRVJABpTyCE=
+X-Google-Smtp-Source: ACHHUZ4gqAtOTgdt+7EtQhllxT46bfuZVPWwXVBhOMxXklo8Uy//cUS4CQIwZtV2btI+y98G/PfKYQ==
+X-Received: by 2002:a5d:4441:0:b0:307:8651:258e with SMTP id x1-20020a5d4441000000b003078651258emr1994920wrr.21.1686429680956;
+        Sat, 10 Jun 2023 13:41:20 -0700 (PDT)
+Received: from suse.localnet (host-95-252-166-216.retail.telecomitalia.it. [95.252.166.216])
+        by smtp.gmail.com with ESMTPSA id e10-20020a056000194a00b0030497b3224bsm7877081wry.64.2023.06.10.13.41.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Jun 2023 13:41:20 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, sj1557.seo@samsung.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Cc:     syzbot <syzbot+4acc7d910e617b360859@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [ext4?] BUG: sleeping function called from invalid context in
+ ext4_update_super
+Date:   Sat, 10 Jun 2023 22:41:18 +0200
+Message-ID: <7535327.EvYhyI6sBW@suse>
+In-Reply-To: <00000000000070575805fdc6cdb2@google.com>
+References: <00000000000070575805fdc6cdb2@google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On sabato 10 giugno 2023 15:52:55 CEST syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f8dba31b0a82 Merge tag 'asym-keys-fix-for-linus-v6.4-rc5' ..
+> git tree:       upstream
+>
+> [...]
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-syzbot found the following issue on:
+Unfortunately :-(
 
-HEAD commit:    715abedee4cd Add linux-next specific files for 20230515
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17aab2a5280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6a2745d066dda0ec
-dashboard link: https://syzkaller.appspot.com/bug?extid=4152c2c2c9ad88fc6159
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1264910d280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10aa8a1d280000
+> Downloadable assets:
+>
+> [...]
+> 
+> EXT4-fs error (device loop4): ext4_get_group_info:331: comm syz-executor.4:
+> invalid group 4294819419 BUG: sleeping function called from invalid context
+> at include/linux/buffer_head.h:404 in_atomic(): 1, irqs_disabled(): 0,
+> non_block: 0, pid: 21305, name: syz-executor.4 preempt_count: 1, expected: 0
+> RCU nest depth: 0, expected: 0
+> 5 locks held by syz-executor.4/21305:
+>  #0: ffff8880292c8460 (sb_writers#4){.+.+}-{0:0}, at: do_sendfile+0x5fb/
+0xff0
+> fs/read_write.c:1253 #1: ffff8880391da200
+> (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at: inode_lock
+> include/linux/fs.h:775 [inline] #1: ffff8880391da200
+> (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at:
+> ext4_buffered_write_iter+0xaf/0x3a0 fs/ext4/file.c:283 #2: ffff8880391d9ec8
+> (&ei->xattr_sem){++++}-{3:3}, at: ext4_write_lock_xattr fs/ext4/xattr.h:155
+> [inline] #2: ffff8880391d9ec8 (&ei->xattr_sem){++++}-{3:3}, at:
+> ext4_convert_inline_data_to_extent fs/ext4/inline.c:584 [inline] #2:
+> ffff8880391d9ec8 (&ei->xattr_sem){++++}-{3:3}, at:
+> ext4_try_to_write_inline_data+0x51d/0x1360 fs/ext4/inline.c:740 #3:
+> ffff8880391da088 (&ei->i_data_sem){++++}-{3:3}, at:
+> ext4_map_blocks+0x980/0x1cf0 fs/ext4/inode.c:616 #4: ffff88803944f018
+> (&bgl->locks[i].lock){+.+.}-{2:2}, at: spin_trylock
+> include/linux/spinlock.h:360 [inline] #4: ffff88803944f018
+> (&bgl->locks[i].lock){+.+.}-{2:2}, at: ext4_lock_group fs/ext4/ext4.h:3407
+> [inline] #4: ffff88803944f018 (&bgl->locks[i].lock){+.+.}-{2:2}, at:
+> ext4_mb_try_best_found+0x1ca/0x5a0 fs/ext4/mballoc.c:2166 Preemption 
+disabled
+> at:
+> [<0000000000000000>] 0x0
+> CPU: 0 PID: 21305 Comm: syz-executor.4 Not tainted
+> 6.4.0-rc5-syzkaller-00002-gf8dba31b0a82 #0 Hardware name: Google Google
+> Compute Engine/Google Compute Engine, BIOS Google 05/25/2023 Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+>  __might_resched+0x5cf/0x780 kernel/sched/core.c:10153
+>  lock_buffer include/linux/buffer_head.h:404 [inline]
+>  ext4_update_super+0x93/0x1230 fs/ext4/super.c:6039
+>  ext4_commit_super+0xd0/0x4c0 fs/ext4/super.c:6117
+>  ext4_handle_error+0x5ee/0x8b0 fs/ext4/super.c:676
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d4d1d06b34b8/disk-715abede.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3ef33a86fdc8/vmlinux-715abede.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e0006b413ed1/bzImage-715abede.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/392115368f88/mount_1.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/98193504359c/mount_3.gz
+Well, I'm a new to filesystems. However, I'd like to test a change in 
+ext4_handle_error().
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4152c2c2c9ad88fc6159@syzkaller.appspotmail.com
+Currently I see that errors are handled according to the next snippet of code 
+from the above-mentioned function (please note that we are in atomic context):
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 5003 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 0 PID: 5003 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:221 [inline]
-WARNING: CPU: 0 PID: 5003 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4751 [inline]
-WARNING: CPU: 0 PID: 5003 at kernel/locking/lockdep.c:232 __lock_acquire+0x192f/0x5f30 kernel/locking/lockdep.c:5038
-Modules linked in:
-CPU: 0 PID: 5003 Comm: udevd Not tainted 6.4.0-rc2-next-20230515-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:hlock_class kernel/locking/lockdep.c:221 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4751 [inline]
-RIP: 0010:__lock_acquire+0x192f/0x5f30 kernel/locking/lockdep.c:5038
-Code: 08 84 d2 0f 85 6b 3e 00 00 8b 0d c8 b2 15 0d 85 c9 0f 85 a3 f8 ff ff 48 c7 c6 60 74 4c 8a 48 c7 c7 20 68 4c 8a e8 81 57 e6 ff <0f> 0b e9 89 f8 ff ff c7 44 24 40 fe ff ff ff 41 be 01 00 00 00 c7
-RSP: 0018:ffffc9000390fac0 EFLAGS: 00010086
+if (continue_fs)
+	if (continue_fs && journal)
+		schedule_work(&EXT4_SB(sb)->s_error_work);
+	else
+		ext4_commit_super(sb);
 
-RAX: 0000000000000000 RBX: 1ffff92000721f88 RCX: 0000000000000000
-RDX: ffff88801377bb80 RSI: ffffffff814bd247 RDI: 0000000000000001
-RBP: ffff88801377bb80 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 284e4f5f4e524157 R12: ffff888073d30c58
-R13: 0000000000000b14 R14: ffff88801377c670 R15: ffff88801377c698
-FS:  00007f75968b2c80(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fff26751008 CR3: 000000001879b000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire.part.0+0x11c/0x370 kernel/locking/lockdep.c:5705
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x3d/0x60 kernel/locking/spinlock.c:162
- remove_wait_queue+0x21/0x180 kernel/sched/wait.c:54
- ep_remove_wait_queue+0x87/0x1e0 fs/eventpoll.c:559
- ep_unregister_pollwait fs/eventpoll.c:574 [inline]
- ep_clear_and_put+0x176/0x380 fs/eventpoll.c:803
- ep_eventpoll_release+0x45/0x60 fs/eventpoll.c:834
- __fput+0x27c/0xa90 fs/file_table.c:321
- task_work_run+0x16f/0x270 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
- exit_to_user_mode_prepare+0x210/0x240 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x1d/0x50 kernel/entry/common.c:297
- do_syscall_64+0x46/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f75965170a8
-Code: 48 8b 05 83 9d 0d 00 64 c7 00 16 00 00 00 83 c8 ff 48 83 c4 20 5b c3 64 8b 04 25 18 00 00 00 85 c0 75 20 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 5b 48 8b 15 51 9d 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007fff26750b28 EFLAGS: 00000246
- ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 00007f75968b2ae0 RCX: 00007f75965170a8
-RDX: 0000000000000080 RSI: 00007fff26750c58 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000007 R09: 8f45ebd50ebdce3c
-R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fff26750ba8 R14: 0000000000000001 R15: 000055b5d7e3a910
- </TASK>
+If evaluates false, we directly call ext4_commit_super(), forgetting that, 
+AFAICS we are in atomic context.
+
+Obviously, we know that ext4_update_super() calls lock_buffer(), which 
+might_sleep().
+
+As I said I have only little experience with filesystems, so my question is: 
+despite the overhead, can we delete the check and do the following?
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 05fcecc36244..574b096de059 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -662,19 +662,8 @@ static void ext4_handle_error(struct super_block *sb, 
+bool force_ro, int error,
+                        jbd2_journal_abort(journal, -EIO);
+        }
+ 
+-       if (!bdev_read_only(sb->s_bdev)) {
+-               save_error_info(sb, error, ino, block, func, line);
+-               /*
+-                * In case the fs should keep running, we need to writeout
+-                * superblock through the journal. Due to lock ordering
+-                * constraints, it may not be safe to do it right here so we
+-                * defer superblock flushing to a workqueue.
+-                */
+-               if (continue_fs && journal)
+-                       schedule_work(&EXT4_SB(sb)->s_error_work);
+-               else
+-                       ext4_commit_super(sb);
+-       }
++       if (!bdev_read_only(sb->s_bdev))
++               schedule_work(&EXT4_SB(sb)->s_error_work);
+ 
+        /*
+         * We force ERRORS_RO behavior when system is rebooting. Otherwise we
+
+Am I missing something I'm not able to see here?
+If not, I'll try this diff if and when Syzkaller provides a reproducer.
+
+Thanks,
+
+Fabio
+
+>  __ext4_error+0x277/0x3b0 fs/ext4/super.c:776
+>  ext4_get_group_info+0x382/0x3e0 fs/ext4/balloc.c:331
+>  ext4_mb_new_inode_pa+0x89c/0x1300 fs/ext4/mballoc.c:4915
+>  ext4_mb_try_best_found+0x3a1/0x5a0 fs/ext4/mballoc.c:2171
+>  ext4_mb_regular_allocator+0x3511/0x3c20 fs/ext4/mballoc.c:2784
+>  ext4_mb_new_blocks+0xe5f/0x44a0 fs/ext4/mballoc.c:5843
+>  ext4_alloc_branch fs/ext4/indirect.c:340 [inline]
+>  ext4_ind_map_blocks+0x10d7/0x29e0 fs/ext4/indirect.c:635
+>  ext4_map_blocks+0x9e7/0x1cf0 fs/ext4/inode.c:625
+>  _ext4_get_block+0x238/0x6a0 fs/ext4/inode.c:779
+>  __block_write_begin_int+0x548/0x1a50 fs/buffer.c:2064
+>  ext4_try_to_write_inline_data+0x7ed/0x1360 fs/ext4/inline.c:740
+>  ext4_write_begin+0x290/0x10b0 fs/ext4/inode.c:1147
+>  ext4_da_write_begin+0x300/0xa40 fs/ext4/inode.c:2893
+>  generic_perform_write+0x300/0x5e0 mm/filemap.c:3923
+>  ext4_buffered_write_iter+0x122/0x3a0 fs/ext4/file.c:289
+>  ext4_file_write_iter+0x1d6/0x1930
+>  do_iter_write+0x7b1/0xcb0 fs/read_write.c:860
+>  iter_file_splice_write+0x843/0xfe0 fs/splice.c:795
+>  do_splice_from fs/splice.c:873 [inline]
+>  direct_splice_actor+0xe7/0x1c0 fs/splice.c:1039
+>  splice_direct_to_actor+0x4c4/0xbd0 fs/splice.c:994
+>  do_splice_direct+0x283/0x3d0 fs/splice.c:1082
+>  do_sendfile+0x620/0xff0 fs/read_write.c:1254
+>  __do_sys_sendfile64 fs/read_write.c:1322 [inline]
+>  __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1308
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> RIP: 0033:0x7f0ff0c8c169
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 
+48
+> 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73
+> 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48 RSP: 002b:00007f0ff1944168
+> EFLAGS: 00000246 ORIG_RAX: 0000000000000028 RAX: ffffffffffffffda RBX:
+> 00007f0ff0dabf80 RCX: 00007f0ff0c8c169
+> RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000006
+> RBP: 00007f0ff0ce7ca1 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0001000000201005 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007ffe35f5084f R14: 00007f0ff1944300 R15: 0000000000022000
+>  </TASK>
+> BUG: scheduling while atomic: syz-executor.4/21305/0x00000002
+> 5 locks held by syz-executor.4/21305:
+>  #0: ffff8880292c8460 (sb_writers#4){.+.+}-{0:0}, at: do_sendfile+0x5fb/
+0xff0
+> fs/read_write.c:1253 #1: ffff8880391da200
+> (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at: inode_lock
+> include/linux/fs.h:775 [inline] #1: ffff8880391da200
+> (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at:
+> ext4_buffered_write_iter+0xaf/0x3a0 fs/ext4/file.c:283 #2: ffff8880391d9ec8
+> (&ei->xattr_sem){++++}-{3:3}, at: ext4_write_lock_xattr fs/ext4/xattr.h:155
+> [inline] #2: ffff8880391d9ec8 (&ei->xattr_sem){++++}-{3:3}, at:
+> ext4_convert_inline_data_to_extent fs/ext4/inline.c:584 [inline] #2:
+> ffff8880391d9ec8 (&ei->xattr_sem){++++}-{3:3}, at:
+> ext4_try_to_write_inline_data+0x51d/0x1360 fs/ext4/inline.c:740 #3:
+> ffff8880391da088 (&ei->i_data_sem){++++}-{3:3}, at:
+> ext4_map_blocks+0x980/0x1cf0 fs/ext4/inode.c:616 #4: ffff88803944f018
+> (&bgl->locks[i].lock){+.+.}-{2:2}, at: spin_trylock
+> include/linux/spinlock.h:360 [inline] #4: ffff88803944f018
+> (&bgl->locks[i].lock){+.+.}-{2:2}, at: ext4_lock_group fs/ext4/ext4.h:3407
+> [inline] #4: ffff88803944f018 (&bgl->locks[i].lock){+.+.}-{2:2}, at:
+> ext4_mb_try_best_found+0x1ca/0x5a0 fs/ext4/mballoc.c:2166 Modules linked in:
+> Preemption disabled at:
+> [<0000000000000000>] 0x0
+> 
+> 
+> ---
+
+[...]
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
