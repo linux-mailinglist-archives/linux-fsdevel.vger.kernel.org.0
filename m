@@ -2,875 +2,507 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7370572A9C1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jun 2023 09:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA2872A9C7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jun 2023 09:15:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233518AbjFJHN3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 10 Jun 2023 03:13:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35930 "EHLO
+        id S233654AbjFJHPz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 10 Jun 2023 03:15:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229869AbjFJHN2 (ORCPT
+        with ESMTP id S229867AbjFJHPy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Jun 2023 03:13:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2203A9B;
-        Sat, 10 Jun 2023 00:13:21 -0700 (PDT)
+        Sat, 10 Jun 2023 03:15:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15898AC;
+        Sat, 10 Jun 2023 00:15:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1BFB860F25;
-        Sat, 10 Jun 2023 07:13:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45761C433EF;
-        Sat, 10 Jun 2023 07:13:19 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9552A6337F;
+        Sat, 10 Jun 2023 07:15:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DABC433D2;
+        Sat, 10 Jun 2023 07:15:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686381200;
-        bh=n0FY3OnHSLCH8nrpEBoar3YYMM4tX+csyO3/9N20UQc=;
+        s=k20201202; t=1686381352;
+        bh=ef7dLTT9xeoe6YBt2R0Le59aUg2fGPrF+/zfGXQE2c4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nIBHn7vdu3HHZ0/V/2HU3ZRz6/rojHeZ9pMVCaf2nfG7rqfkJkNF35GFlhSzueiht
-         yExh8XYJRgkY/KO0d6uMr1W57OPp5zJb5Ha2Dv1vX0UUr3gWqS56Z90EZQ1K8OBpVL
-         6BxKJCqgIN7CqzYqU4He6LDu65k9WFpBAjSIoIi/S+2PcHYvlfnNj0ZJvBcdmkK95i
-         7O04NzThggmZENTPPvcxtMtuyqxDJQDEJ4qT/MAvjnIYMr9QpqhJVxR6nRtSQtfQY+
-         sa6mRLh61/BN7MP9OOBecdZaaxVzTOLgdXb4KGY+ijLpJP+JYfZS7V2RB6RQfj636F
-         JaFnaCr93qUxw==
-Date:   Sat, 10 Jun 2023 09:13:16 +0200
+        b=NNEfT2pLT4amVaFG1QagnLmAvV1BVM7mlOBNZLMbY7YjjYuR2XLCeWJjvhxizkC2Z
+         4joOmTraVS0lUH0GPIJKWhOCra0p2dFcNPrjYcQ3+wUD1MIHVweHo4dPOECy/4ZT27
+         0w0rG0wz4MfwblnQSv7b6QLXjnwL2Zs5IPML/B0MB/Lh96DXOpCb/j1uJzcSq0Bymn
+         nNjPf+MlqL8OGHfqAm4II2G4iIG2Aez6ibRMWmhSO3/icsBbqRpB1pLcPjF3ud9ctX
+         9/h1VkiqC3b9jHLkT/+u8bEx6ZCqRzz4LuuSo1D1+A+OnDvguYl3mMny0qMEg2qDEB
+         DEpJ+5B5r3BlQ==
+Date:   Sat, 10 Jun 2023 09:15:48 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Amir Goldstein <amir73il@gmail.com>
 Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
         linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ovl: modify layer parameter parsing
-Message-ID: <20230610-pedantisch-wirsing-33532c145ed1@brauner>
+Subject: Re: [PATCH v2 1/2] ovl: port to new mount api
+Message-ID: <20230610-erbitten-umlaufen-a39b08256e1a@brauner>
 References: <20230605-fs-overlayfs-mount_api-v2-0-3da91c97e0c0@kernel.org>
- <20230605-fs-overlayfs-mount_api-v2-2-3da91c97e0c0@kernel.org>
- <CAOQ4uxhE18yduSTF1tvv_J_zCjVQgWd_6ySuX6RF_rU_qwb5Rg@mail.gmail.com>
+ <20230605-fs-overlayfs-mount_api-v2-1-3da91c97e0c0@kernel.org>
+ <CAOQ4uxge44J1SCF6YiscchB0SjfcqPXf8wQfNuVBfCh6dU5rXA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhE18yduSTF1tvv_J_zCjVQgWd_6ySuX6RF_rU_qwb5Rg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAOQ4uxge44J1SCF6YiscchB0SjfcqPXf8wQfNuVBfCh6dU5rXA@mail.gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 09, 2023 at 10:52:33PM +0300, Amir Goldstein wrote:
+On Fri, Jun 09, 2023 at 10:25:21PM +0300, Amir Goldstein wrote:
 > On Fri, Jun 9, 2023 at 6:42 PM Christian Brauner <brauner@kernel.org> wrote:
 > >
-> > We ran into issues where mount(8) passed multiple lower layers as one
-> > big string through fsconfig(). But the fsconfig() FSCONFIG_SET_STRING
-> > option is limited to 256 bytes in strndup_user(). While this would be
-> > fixable by extending the fsconfig() buffer I'd rather encourage users to
-> > append layers via multiple fsconfig() calls as the interface allows
-> > nicely for this. This has also been requested as a feature before.
+> > We recently ported util-linux to the new mount api. Now the mount(8)
+> > tool will by default use the new mount api. While trying hard to fall
+> > back to the old mount api gracefully there are still cases where we run
+> > into issues that are difficult to handle nicely.
 > >
-> > With this port to the new mount api the following will be possible:
+> > Now with mount(8) and libmount supporting the new mount api I expect an
+> > increase in the number of bug reports and issues we're going to see with
+> > filesystems that don't yet support the new mount api. So it's time we
+> > rectify this.
 > >
-> >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "lowerdir", "/lower1", 0);
-> >
-> >         /* set upper layer */
-> >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "upperdir", "/upper", 0);
-> >
-> >         /* append "/lower2", "/lower3", and "/lower4" */
-> >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "lowerdir", ":/lower2:/lower3:/lower4", 0);
-> >
-> >         /* turn index feature on */
-> >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "index", "on", 0);
-> >
-> >         /* append "/lower5" */
-> >         fsconfig(fs_fd, FSCONFIG_SET_STRING, "lowerdir", ":/lower5", 0);
-> >
-> > Specifying ':' would have been rejected so this isn't a regression. And
-> > we can't simply use "lowerdir=/lower" to append on top of existing
-> > layers as "lowerdir=/lower,lowerdir=/other-lower" would make
-> > "/other-lower" the only lower layer so we'd break uapi if we changed
-> > this. So the ':' prefix seems a good compromise.
-> >
-> > Users can choose to specify multiple layers at once or individual
-> > layers. A layer is appended if it starts with ":". This requires that
-> > the user has already added at least one layer before. If lowerdir is
-> > specified again without a leading ":" then all previous layers are
-> > dropped and replaced with the new layers. If lowerdir is specified and
-> > empty than all layers are simply dropped.
-> >
-> > An additional change is that overlayfs will now parse and resolve layers
-> > right when they are specified in fsconfig() instead of deferring until
-> > super block creation. This allows users to receive early errors.
-> >
-> > It also allows users to actually use up to 500 layers something which
-> > was theoretically possible but ended up not working due to the mount
-> > option string passed via mount(2) being too large.
-> >
-> > This also allows a more privileged process to set config options for a
-> > lesser privileged process as the creds for fsconfig() and the creds for
-> > fsopen() can differ. We could restrict that they match by enforcing that
-> > the creds of fsopen() and fsconfig() match but I don't see why that
-> > needs to be the case and allows for a good delegation mechanism.
-> >
-> > Plus, in the future it means we're able to extend overlayfs mount
-> > options and allow users to specify layers via file descriptors instead
-> > of paths:
-> >
-> >         fsconfig(FSCONFIG_SET_PATH{_EMPTY}, "lowerdir", "lower1", dirfd);
-> >
-> >         /* append */
-> >         fsconfig(FSCONFIG_SET_PATH{_EMPTY}, "lowerdir", "lower2", dirfd);
-> >
-> >         /* append */
-> >         fsconfig(FSCONFIG_SET_PATH{_EMPTY}, "lowerdir", "lower3", dirfd);
-> >
-> >         /* clear all layers specified until now */
-> >         fsconfig(FSCONFIG_SET_STRING, "lowerdir", NULL, 0);
-> >
-> > This would be especially nice if users create an overlayfs mount on top
-> > of idmapped layers or just in general private mounts created via
-> > open_tree(OPEN_TREE_CLONE). Those mounts would then never have to appear
-> > anywhere in the filesystem. But for now just do the minimal thing.
-> >
-> > We should probably aim to move more validation into ovl_fs_parse_param()
-> > so users get errors before fsconfig(FSCONFIG_CMD_CREATE). But that can
-> > be done in additional patches later.
-> >
-> > Link: https://github.com/util-linux/util-linux/issues/2287
-> > Link: https://github.com/util-linux/util-linux/issues/1992
-> > Link: https://bugs.archlinux.org/task/78702
-> > Link: https://lore.kernel.org/linux-unionfs/20230530-klagen-zudem-32c0908c2108@brauner
 > > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > > ---
-> >  fs/overlayfs/Makefile       |   2 +-
-> >  fs/overlayfs/layer_params.c | 288 ++++++++++++++++++++++++++++++++++++++
-> >  fs/overlayfs/ovl_entry.h    |  30 ++++
-> >  fs/overlayfs/super.c        | 328 +++++++++++++++-----------------------------
-> >  4 files changed, 431 insertions(+), 217 deletions(-)
+> >  fs/overlayfs/super.c | 515 ++++++++++++++++++++++++++++-----------------------
+> >  1 file changed, 279 insertions(+), 236 deletions(-)
 > >
-> > diff --git a/fs/overlayfs/Makefile b/fs/overlayfs/Makefile
-> > index 9164c585eb2f..a3ad81c2e64e 100644
-> > --- a/fs/overlayfs/Makefile
-> > +++ b/fs/overlayfs/Makefile
-> > @@ -6,4 +6,4 @@
-> >  obj-$(CONFIG_OVERLAY_FS) += overlay.o
-> >
-> >  overlay-objs := super.o namei.o util.o inode.o file.o dir.o readdir.o \
-> > -               copy_up.o export.o
-> > +               copy_up.o export.o layer_params.o
-> > diff --git a/fs/overlayfs/layer_params.c b/fs/overlayfs/layer_params.c
-> > new file mode 100644
-> > index 000000000000..29907afc9d0d
-> > --- /dev/null
-> > +++ b/fs/overlayfs/layer_params.c
-> 
-> params.c please
-> and please move all the params parsing code here
-> not only the layers parsing.
-> 
-> > @@ -0,0 +1,288 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +#include <linux/fs.h>
-> > +#include <linux/namei.h>
+> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> > index f97ad8b40dbb..ceaf05743f45 100644
+> > --- a/fs/overlayfs/super.c
+> > +++ b/fs/overlayfs/super.c
+> > @@ -16,6 +16,8 @@
+> >  #include <linux/posix_acl_xattr.h>
+> >  #include <linux/exportfs.h>
+> >  #include <linux/file.h>
 > > +#include <linux/fs_context.h>
 > > +#include <linux/fs_parser.h>
-> > +#include <linux/posix_acl_xattr.h>
-> > +#include <linux/xattr.h>
-> > +#include "overlayfs.h"
-> > +
-> > +static size_t ovl_parse_param_split_lowerdirs(char *str)
-> > +{
-> > +       size_t ctr = 1;
-> > +       char *s, *d;
-> > +
-> > +       for (s = d = str;; s++, d++) {
-> > +               if (*s == '\\') {
-> > +                       s++;
-> > +               } else if (*s == ':') {
-> > +                       *d = '\0';
-> > +                       ctr++;
-> > +                       continue;
-> > +               }
-> > +               *d = *s;
-> > +               if (!*s)
-> > +                       break;
-> > +       }
-> > +       return ctr;
-> > +}
-> > +
-> > +static int ovl_mount_dir_noesc(const char *name, struct path *path)
-> > +{
-> > +       int err = -EINVAL;
-> > +
-> > +       if (!*name) {
-> > +               pr_err("empty lowerdir\n");
-> > +               goto out;
-> > +       }
-> > +       err = kern_path(name, LOOKUP_FOLLOW, path);
-> > +       if (err) {
-> > +               pr_err("failed to resolve '%s': %i\n", name, err);
-> > +               goto out;
-> > +       }
-> > +       err = -EINVAL;
-> > +       if (ovl_dentry_weird(path->dentry)) {
-> > +               pr_err("filesystem on '%s' not supported\n", name);
-> > +               goto out_put;
-> > +       }
-> > +       if (!d_is_dir(path->dentry)) {
-> > +               pr_err("'%s' not a directory\n", name);
-> > +               goto out_put;
-> > +       }
-> > +       return 0;
-> > +
-> > +out_put:
-> > +       path_put_init(path);
-> > +out:
-> > +       return err;
-> > +}
-> > +
-> > +static void ovl_unescape(char *s)
-> > +{
-> > +       char *d = s;
-> > +
-> > +       for (;; s++, d++) {
-> > +               if (*s == '\\')
-> > +                       s++;
-> > +               *d = *s;
-> > +               if (!*s)
-> > +                       break;
-> > +       }
-> > +}
-> > +
-> > +static int ovl_mount_dir(const char *name, struct path *path)
-> > +{
-> > +       int err = -ENOMEM;
-> > +       char *tmp = kstrdup(name, GFP_KERNEL);
-> > +
-> > +       if (tmp) {
-> > +               ovl_unescape(tmp);
-> > +               err = ovl_mount_dir_noesc(tmp, path);
-> > +
-> > +               if (!err && path->dentry->d_flags & DCACHE_OP_REAL) {
-> > +                       pr_err("filesystem on '%s' not supported as upperdir\n",
-> > +                              tmp);
-> > +                       path_put_init(path);
-> > +                       err = -EINVAL;
-> > +               }
-> > +               kfree(tmp);
-> > +       }
-> > +       return err;
-> > +}
-> > +
-> > +int ovl_parse_param_upperdir(const char *name, struct fs_context *fc,
-> > +                            bool workdir)
-> > +{
-> > +       int err;
-> > +       struct ovl_fs *ofs = fc->s_fs_info;
-> > +       struct ovl_config *config = &ofs->config;
-> > +       struct ovl_fs_context *ctx = fc->fs_private;
-> > +       struct path path;
-> > +       char *dup;
-> > +
-> > +       err = ovl_mount_dir(name, &path);
-> > +       if (err)
-> > +               return err;
-> > +
-> > +       /*
-> > +        * Check whether upper path is read-only here to report failures
-> > +        * early. Don't forget to recheck when the superblock is created
-> > +        * as the mount attributes could change.
-> > +        */
-> > +       if (__mnt_is_readonly(path.mnt)) {
-> > +               path_put(&path);
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +       dup = kstrdup(name, GFP_KERNEL);
-> > +       if (!dup) {
-> > +               path_put(&path);
-> > +               return -ENOMEM;
-> > +       }
-> > +
-> > +       if (workdir) {
-> > +               kfree(config->workdir);
-> > +               config->workdir = dup;
-> > +               path_put(&ctx->work);
-> > +               ctx->work = path;
-> > +       } else {
-> > +               kfree(config->upperdir);
-> > +               config->upperdir = dup;
-> > +               path_put(&ctx->upper);
-> > +               ctx->upper = path;
-> > +       }
-> > +       return 0;
-> > +}
-> > +
-> > +void ovl_parse_param_drop_lowerdir(struct ovl_fs_context *ctx)
-> > +{
-> > +       for (size_t nr = 0; nr < ctx->nr; nr++) {
-> > +               path_put(&ctx->lower[nr].path);
-> > +               kfree(ctx->lower[nr].name);
-> > +               ctx->lower[nr].name = NULL;
-> > +       }
-> > +       ctx->nr = 0;
-> > +}
-> > +
-> > +/*
-> > + * Parse lowerdir= mount option:
-> > + *
-> > + * (1) lowerdir=/lower1:/lower2:/lower3
-> > + *     Set "/lower1", "/lower2", and "/lower3" as lower layers. Any
-> > + *     existing lower layers are replaced.
-> > + * (2) lowerdir=:/lower4
-> > + *     Append "/lower4" to current stack of lower layers. This requires
-> > + *     that there already is at least one lower layer configured.
-> > + */
-> > +int ovl_parse_param_lowerdir(const char *name, struct fs_context *fc)
-> > +{
-> > +       int err;
-> > +       struct ovl_fs_context *ctx = fc->fs_private;
-> > +       struct ovl_fs_context_layer *l;
-> > +       char *dup = NULL, *dup_iter;
-> > +       size_t nr_lower = 0, nr = 0;
-> > +       bool append = false;
-> > +
-> > +       /* Enforce that users are forced to specify a single ':'. */
-> > +       if (strncmp(name, "::", 2) == 0)
-> > +               return -EINVAL;
-> > +
-> > +       /*
-> > +        * Ensure we're backwards compatible with mount(2)
-> > +        * by allowing relative paths.
-> > +        */
-> > +
-> > +       /* drop all existing lower layers */
-> > +       if (!*name) {
-> > +               ovl_parse_param_drop_lowerdir(ctx);
-> > +               return 0;
-> > +       }
-> > +
-> > +       if (*name == ':') {
-> > +               /*
-> > +                * If users want to append a layer enforce that they
-> > +                * have already specified a first layer before. It's
-> > +                * better to be strict.
-> > +                */
-> > +               if (ctx->nr == 0)
-> > +                       return -EINVAL;
-> > +
-> > +               /*
-> > +                * Drop the leading. We'll create the final mount option
-> > +                * string for the lower layers when we create the superblock.
-> > +                */
-> > +               name++;
-> > +               append = true;
-> > +       }
-> > +
-> > +       dup = kstrdup(name, GFP_KERNEL);
-> > +       if (!dup)
-> > +               return -ENOMEM;
-> > +
-> > +       err = -EINVAL;
-> > +       nr_lower = ovl_parse_param_split_lowerdirs(dup);
-> > +       if ((nr_lower > OVL_MAX_STACK) ||
-> > +           (append && (size_add(ctx->nr, nr_lower) > OVL_MAX_STACK))) {
-> > +               pr_err("too many lower directories, limit is %d\n", OVL_MAX_STACK);
-> > +               goto out_err;
-> > +       }
-> > +
-> > +       if (!append)
-> > +               ovl_parse_param_drop_lowerdir(ctx);
-> > +
-> > +       /*
-> > +        * (1) append
-> > +        *
-> > +        * We want nr <= nr_lower <= capacity We know nr > 0 and nr <=
-> > +        * capacity. If nr == 0 this wouldn't be append. If nr +
-> > +        * nr_lower is <= capacity then nr <= nr_lower <= capacity
-> > +        * already holds. If nr + nr_lower exceeds capacity, we realloc.
-> > +        *
-> > +        * (2) replace
-> > +        *
-> > +        * Ensure we're backwards compatible with mount(2) which allows
-> > +        * "lowerdir=/a:/b:/c,lowerdir=/d:/e:/f" causing the last
-> > +        * specified lowerdir mount option to win.
-> > +        *
-> > +        * We want nr <= nr_lower <= capacity We know either (i) nr == 0
-> > +        * or (ii) nr > 0. We also know nr_lower > 0. The capacity
-> > +        * could've been changed multiple times already so we only know
-> > +        * nr <= capacity. If nr + nr_lower > capacity we realloc,
-> > +        * otherwise nr <= nr_lower <= capacity holds already.
-> > +        */
-> > +       nr_lower += ctx->nr;
-> > +       if (nr_lower > ctx->capacity) {
-> > +               err = -ENOMEM;
-> > +               l = krealloc_array(ctx->lower, nr_lower, sizeof(*ctx->lower),
-> > +                                  GFP_KERNEL_ACCOUNT);
-> > +               if (!l)
-> > +                       goto out_err;
-> > +
-> > +               ctx->lower = l;
-> > +               ctx->capacity = nr_lower;
-> > +       }
-> > +
-> > +       /* By (1) and (2) we know nr <= nr_lower <= capacity. */
-> > +       dup_iter = dup;
-> > +       for (nr = ctx->nr; nr < nr_lower; nr++) {
-> > +               l = &ctx->lower[nr];
-> > +
-> > +               err = ovl_mount_dir_noesc(dup_iter, &l->path);
-> > +               if (err)
-> > +                       goto out_put;
-> > +
-> > +               err = -ENOMEM;
-> > +               l->name = kstrdup(dup_iter, GFP_KERNEL_ACCOUNT);
-> > +               if (!l->name)
-> > +                       goto out_put;
-> > +
-> > +               dup_iter = strchr(dup_iter, '\0') + 1;
-> > +       }
-> > +       ctx->nr = nr_lower;
-> > +       kfree(dup);
-> > +       return 0;
-> > +
-> > +out_put:
-> > +       /*
-> > +        * We know nr >= ctx->nr < nr_lower. If we failed somewhere
-> > +        * we want to undo until nr == ctx->nr. This is correct for
-> > +        * both ctx->nr == 0 and ctx->nr > 0.
-> > +        */
-> > +       for (; nr >= ctx->nr; nr--) {
-> > +               l = &ctx->lower[nr];
-> > +               kfree(l->name);
-> > +               l->name = NULL;
-> > +               path_put(&l->path);
-> > +
-> > +               /* don't overflow */
-> > +               if (nr == 0)
-> > +                       break;
-> > +       }
-> > +
-> > +out_err:
-> > +       kfree(dup);
-> > +
-> > +       /* Intentionally don't realloc to a smaller size. */
-> > +       return err;
-> > +}
-> > diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> > index fd11fe6d6d45..269a9a6f177b 100644
-> > --- a/fs/overlayfs/ovl_entry.h
-> > +++ b/fs/overlayfs/ovl_entry.h
-> > @@ -85,6 +85,36 @@ struct ovl_fs {
-> >         errseq_t errseq;
-> >  };
+> >  #include "overlayfs.h"
 > >
-> > +#define OVL_MAX_STACK 500
-> > +
-> > +struct ovl_fs_context_layer {
-> > +       char *name;
-> > +       struct path path;
+> >  MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
+> > @@ -67,6 +69,59 @@ module_param_named(metacopy, ovl_metacopy_def, bool, 0644);
+> >  MODULE_PARM_DESC(metacopy,
+> >                  "Default to on or off for the metadata only copy up feature");
+> >
+> > +enum {
+> > +       Opt_lowerdir,
+> > +       Opt_upperdir,
+> > +       Opt_workdir,
+> > +       Opt_default_permissions,
+> > +       Opt_redirect_dir,
+> > +       Opt_index,
+> > +       Opt_uuid,
+> > +       Opt_nfs_export,
+> > +       Opt_userxattr,
+> > +       Opt_xino,
+> > +       Opt_metacopy,
+> > +       Opt_volatile,
 > > +};
 > > +
-> > +/*
-> > + * These options imply different behavior when they are explicitly
-> > + * specified than when they are left in their default state.
-> > + */
+> > +static const struct constant_table ovl_parameter_bool[] = {
+> > +       { "on",         true  },
+> > +       { "off",        false },
+> > +       {}
+> > +};
+> > +
+> > +static const struct constant_table ovl_parameter_xino[] = {
+> > +       { "on",         OVL_XINO_ON   },
+> > +       { "off",        OVL_XINO_OFF  },
+> > +       { "auto",       OVL_XINO_AUTO },
+> > +       {}
+> > +};
+> > +
+> > +static const struct fs_parameter_spec ovl_parameter_spec[] = {
+> > +       fsparam_string("lowerdir",          Opt_lowerdir),
+> > +       fsparam_string("upperdir",          Opt_upperdir),
+> > +       fsparam_string("workdir",           Opt_workdir),
+> > +       fsparam_flag("default_permissions", Opt_default_permissions),
+> > +       fsparam_enum("redirect_dir",        Opt_redirect_dir, ovl_parameter_bool),
+> > +       fsparam_enum("index",               Opt_index, ovl_parameter_bool),
+> > +       fsparam_enum("uuid",                Opt_uuid, ovl_parameter_bool),
+> > +       fsparam_enum("nfs_export",          Opt_nfs_export, ovl_parameter_bool),
+> > +       fsparam_flag("userxattr",           Opt_userxattr),
+> > +       fsparam_enum("xino",                Opt_xino, ovl_parameter_xino),
+> > +       fsparam_enum("metacopy",            Opt_metacopy, ovl_parameter_bool),
+> > +       fsparam_flag("volatile",            Opt_volatile),
+> > +       {}
+> > +};
+> > +
 > > +#define OVL_METACOPY_SET       BIT(0)
 > > +#define OVL_REDIRECT_SET       BIT(1)
 > > +#define OVL_NFS_EXPORT_SET     BIT(2)
 > > +#define OVL_INDEX_SET          BIT(3)
 > > +
 > > +struct ovl_fs_context {
-> > +       struct path upper;
-> > +       struct path work;
-> > +       size_t capacity;
-> > +       size_t nr;
 > > +       u8 set;
-> > +       struct ovl_fs_context_layer *lower;
 > > +};
 > > +
-> > +int ovl_parse_param_upperdir(const char *name, struct fs_context *fc,
-> > +                            bool workdir);
-> > +int ovl_parse_param_lowerdir(const char *name, struct fs_context *fc);
-> > +void ovl_parse_param_drop_lowerdir(struct ovl_fs_context *ctx);
-> > +
-> 
-> Please move all this to overlayfs.h.
-> I don't think there is a good reason for it to be in this file.
-> 
-> 
-> >  static inline struct vfsmount *ovl_upper_mnt(struct ovl_fs *ofs)
-> >  {
-> >         return ofs->layers[0].mnt;
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index ceaf05743f45..35c61a1d0886 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -27,8 +27,6 @@ MODULE_LICENSE("GPL");
-> >
-> >  struct ovl_dir_cache;
-> >
-> > -#define OVL_MAX_STACK 500
-> > -
-> >  static bool ovl_redirect_dir_def = IS_ENABLED(CONFIG_OVERLAY_FS_REDIRECT_DIR);
-> >  module_param_named(redirect_dir, ovl_redirect_dir_def, bool, 0644);
-> >  MODULE_PARM_DESC(redirect_dir,
-> > @@ -97,8 +95,11 @@ static const struct constant_table ovl_parameter_xino[] = {
-> >         {}
-> >  };
-> >
-> > +#define fsparam_string_empty(NAME, OPT) \
-> > +       __fsparam(fs_param_is_string, NAME, OPT, fs_param_can_be_empty, NULL)
-> > +
-> >  static const struct fs_parameter_spec ovl_parameter_spec[] = {
-> > -       fsparam_string("lowerdir",          Opt_lowerdir),
-> > +       fsparam_string_empty("lowerdir",    Opt_lowerdir),
-> >         fsparam_string("upperdir",          Opt_upperdir),
-> >         fsparam_string("workdir",           Opt_workdir),
-> >         fsparam_flag("default_permissions", Opt_default_permissions),
-> > @@ -113,15 +114,6 @@ static const struct fs_parameter_spec ovl_parameter_spec[] = {
-> >         {}
-> >  };
-> >
-> > -#define OVL_METACOPY_SET       BIT(0)
-> > -#define OVL_REDIRECT_SET       BIT(1)
-> > -#define OVL_NFS_EXPORT_SET     BIT(2)
-> > -#define OVL_INDEX_SET          BIT(3)
-> > -
-> > -struct ovl_fs_context {
-> > -       u8 set;
-> > -};
-> > -
 > >  static void ovl_dentry_release(struct dentry *dentry)
 > >  {
 > >         struct ovl_entry *oe = dentry->d_fsdata;
-> > @@ -706,69 +698,6 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
-> >         goto out_unlock;
+> > @@ -394,27 +449,6 @@ static int ovl_show_options(struct seq_file *m, struct dentry *dentry)
+> >         return 0;
 > >  }
 > >
-> > -static void ovl_unescape(char *s)
+> > -static int ovl_remount(struct super_block *sb, int *flags, char *data)
 > > -{
-> > -       char *d = s;
+> > -       struct ovl_fs *ofs = sb->s_fs_info;
+> > -       struct super_block *upper_sb;
+> > -       int ret = 0;
 > > -
-> > -       for (;; s++, d++) {
-> > -               if (*s == '\\')
-> > -                       s++;
-> > -               *d = *s;
-> > -               if (!*s)
-> > -                       break;
-> > -       }
-> > -}
+> > -       if (!(*flags & SB_RDONLY) && ovl_force_readonly(ofs))
+> > -               return -EROFS;
 > > -
-> > -static int ovl_mount_dir_noesc(const char *name, struct path *path)
-> > -{
-> > -       int err = -EINVAL;
-> > -
-> > -       if (!*name) {
-> > -               pr_err("empty lowerdir\n");
-> > -               goto out;
-> > -       }
-> > -       err = kern_path(name, LOOKUP_FOLLOW, path);
-> > -       if (err) {
-> > -               pr_err("failed to resolve '%s': %i\n", name, err);
-> > -               goto out;
-> > -       }
-> > -       err = -EINVAL;
-> > -       if (ovl_dentry_weird(path->dentry)) {
-> > -               pr_err("filesystem on '%s' not supported\n", name);
-> > -               goto out_put;
-> > -       }
-> > -       if (!d_is_dir(path->dentry)) {
-> > -               pr_err("'%s' not a directory\n", name);
-> > -               goto out_put;
-> > -       }
-> > -       return 0;
-> > -
-> > -out_put:
-> > -       path_put_init(path);
-> > -out:
-> > -       return err;
-> > -}
-> > -
-> > -static int ovl_mount_dir(const char *name, struct path *path)
-> > -{
-> > -       int err = -ENOMEM;
-> > -       char *tmp = kstrdup(name, GFP_KERNEL);
-> > -
-> > -       if (tmp) {
-> > -               ovl_unescape(tmp);
-> > -               err = ovl_mount_dir_noesc(tmp, path);
-> > -
-> > -               if (!err && path->dentry->d_flags & DCACHE_OP_REAL) {
-> > -                       pr_err("filesystem on '%s' not supported as upperdir\n",
-> > -                              tmp);
-> > -                       path_put_init(path);
-> > -                       err = -EINVAL;
+> > -       if (*flags & SB_RDONLY && !sb_rdonly(sb)) {
+> > -               upper_sb = ovl_upper_mnt(ofs)->mnt_sb;
+> > -               if (ovl_should_sync(ofs)) {
+> > -                       down_read(&upper_sb->s_umount);
+> > -                       ret = sync_filesystem(upper_sb);
+> > -                       up_read(&upper_sb->s_umount);
 > > -               }
-> > -               kfree(tmp);
 > > -       }
-> > -       return err;
+> > -
+> > -       return ret;
 > > -}
 > > -
-> >  static int ovl_check_namelen(const struct path *path, struct ovl_fs *ofs,
-> >                              const char *name)
-> >  {
-> > @@ -789,10 +718,6 @@ static int ovl_lower_dir(const char *name, struct path *path,
-> >         int fh_type;
-> >         int err;
-> >
-> > -       err = ovl_mount_dir_noesc(name, path);
-> > -       if (err)
-> > -               return err;
+> >  static const struct super_operations ovl_super_operations = {
+> >         .alloc_inode    = ovl_alloc_inode,
+> >         .free_inode     = ovl_free_inode,
+> > @@ -424,76 +458,8 @@ static const struct super_operations ovl_super_operations = {
+> >         .sync_fs        = ovl_sync_fs,
+> >         .statfs         = ovl_statfs,
+> >         .show_options   = ovl_show_options,
+> > -       .remount_fs     = ovl_remount,
+> > -};
 > > -
-> >         err = ovl_check_namelen(path, ofs, name);
-> >         if (err)
-> >                 return err;
-> > @@ -841,26 +766,6 @@ static bool ovl_workdir_ok(struct dentry *workdir, struct dentry *upperdir)
-> >         return ok;
+> > -enum {
+> > -       OPT_LOWERDIR,
+> > -       OPT_UPPERDIR,
+> > -       OPT_WORKDIR,
+> > -       OPT_DEFAULT_PERMISSIONS,
+> > -       OPT_REDIRECT_DIR,
+> > -       OPT_INDEX_ON,
+> > -       OPT_INDEX_OFF,
+> > -       OPT_UUID_ON,
+> > -       OPT_UUID_OFF,
+> > -       OPT_NFS_EXPORT_ON,
+> > -       OPT_USERXATTR,
+> > -       OPT_NFS_EXPORT_OFF,
+> > -       OPT_XINO_ON,
+> > -       OPT_XINO_OFF,
+> > -       OPT_XINO_AUTO,
+> > -       OPT_METACOPY_ON,
+> > -       OPT_METACOPY_OFF,
+> > -       OPT_VOLATILE,
+> > -       OPT_ERR,
+> > -};
+> > -
+> > -static const match_table_t ovl_tokens = {
+> > -       {OPT_LOWERDIR,                  "lowerdir=%s"},
+> > -       {OPT_UPPERDIR,                  "upperdir=%s"},
+> > -       {OPT_WORKDIR,                   "workdir=%s"},
+> > -       {OPT_DEFAULT_PERMISSIONS,       "default_permissions"},
+> > -       {OPT_REDIRECT_DIR,              "redirect_dir=%s"},
+> > -       {OPT_INDEX_ON,                  "index=on"},
+> > -       {OPT_INDEX_OFF,                 "index=off"},
+> > -       {OPT_USERXATTR,                 "userxattr"},
+> > -       {OPT_UUID_ON,                   "uuid=on"},
+> > -       {OPT_UUID_OFF,                  "uuid=off"},
+> > -       {OPT_NFS_EXPORT_ON,             "nfs_export=on"},
+> > -       {OPT_NFS_EXPORT_OFF,            "nfs_export=off"},
+> > -       {OPT_XINO_ON,                   "xino=on"},
+> > -       {OPT_XINO_OFF,                  "xino=off"},
+> > -       {OPT_XINO_AUTO,                 "xino=auto"},
+> > -       {OPT_METACOPY_ON,               "metacopy=on"},
+> > -       {OPT_METACOPY_OFF,              "metacopy=off"},
+> > -       {OPT_VOLATILE,                  "volatile"},
+> > -       {OPT_ERR,                       NULL}
+> >  };
+> >
+> > -static char *ovl_next_opt(char **s)
+> > -{
+> > -       char *sbegin = *s;
+> > -       char *p;
+> > -
+> > -       if (sbegin == NULL)
+> > -               return NULL;
+> > -
+> > -       for (p = sbegin; *p; p++) {
+> > -               if (*p == '\\') {
+> > -                       p++;
+> > -                       if (!*p)
+> > -                               break;
+> > -               } else if (*p == ',') {
+> > -                       *p = '\0';
+> > -                       *s = p + 1;
+> > -                       return sbegin;
+> > -               }
+> > -       }
+> > -       *s = NULL;
+> > -       return sbegin;
+> > -}
+> > -
+> >  static int ovl_parse_redirect_mode(struct ovl_config *config, const char *mode)
+> >  {
+> >         if (strcmp(mode, "on") == 0) {
+> > @@ -517,123 +483,14 @@ static int ovl_parse_redirect_mode(struct ovl_config *config, const char *mode)
+> >         return 0;
 > >  }
 > >
-> > -static unsigned int ovl_split_lowerdirs(char *str)
-> > -{
-> > -       unsigned int ctr = 1;
-> > -       char *s, *d;
+> > -static int ovl_parse_opt(char *opt, struct ovl_config *config)
+> > +static int ovl_fs_params_verify(const struct ovl_fs_context *ctx,
+> > +                               struct ovl_config *config)
+> >  {
+> > -       char *p;
+> >         int err;
+> > -       bool metacopy_opt = false, redirect_opt = false;
+> > -       bool nfs_export_opt = false, index_opt = false;
 > > -
-> > -       for (s = d = str;; s++, d++) {
-> > -               if (*s == '\\') {
-> > -                       s++;
-> > -               } else if (*s == ':') {
-> > -                       *d = '\0';
-> > -                       ctr++;
+> > -       config->redirect_mode = kstrdup(ovl_redirect_mode_def(), GFP_KERNEL);
+> > -       if (!config->redirect_mode)
+> > -               return -ENOMEM;
+> > -
+> > -       while ((p = ovl_next_opt(&opt)) != NULL) {
+> > -               int token;
+> > -               substring_t args[MAX_OPT_ARGS];
+> > -
+> > -               if (!*p)
 > > -                       continue;
-> > -               }
-> > -               *d = *s;
-> > -               if (!*s)
+> > -
+> > -               token = match_token(p, ovl_tokens, args);
+> > -               switch (token) {
+> > -               case OPT_UPPERDIR:
+> > -                       kfree(config->upperdir);
+> > -                       config->upperdir = match_strdup(&args[0]);
+> > -                       if (!config->upperdir)
+> > -                               return -ENOMEM;
 > > -                       break;
+> > -
+> > -               case OPT_LOWERDIR:
+> > -                       kfree(config->lowerdir);
+> > -                       config->lowerdir = match_strdup(&args[0]);
+> > -                       if (!config->lowerdir)
+> > -                               return -ENOMEM;
+> > -                       break;
+> > -
+> > -               case OPT_WORKDIR:
+> > -                       kfree(config->workdir);
+> > -                       config->workdir = match_strdup(&args[0]);
+> > -                       if (!config->workdir)
+> > -                               return -ENOMEM;
+> > -                       break;
+> > -
+> > -               case OPT_DEFAULT_PERMISSIONS:
+> > -                       config->default_permissions = true;
+> > -                       break;
+> > -
+> > -               case OPT_REDIRECT_DIR:
+> > -                       kfree(config->redirect_mode);
+> > -                       config->redirect_mode = match_strdup(&args[0]);
+> > -                       if (!config->redirect_mode)
+> > -                               return -ENOMEM;
+> > -                       redirect_opt = true;
+> > -                       break;
+> > -
+> > -               case OPT_INDEX_ON:
+> > -                       config->index = true;
+> > -                       index_opt = true;
+> > -                       break;
+> > -
+> > -               case OPT_INDEX_OFF:
+> > -                       config->index = false;
+> > -                       index_opt = true;
+> > -                       break;
+> > -
+> > -               case OPT_UUID_ON:
+> > -                       config->uuid = true;
+> > -                       break;
+> > -
+> > -               case OPT_UUID_OFF:
+> > -                       config->uuid = false;
+> > -                       break;
+> > -
+> > -               case OPT_NFS_EXPORT_ON:
+> > -                       config->nfs_export = true;
+> > -                       nfs_export_opt = true;
+> > -                       break;
+> > -
+> > -               case OPT_NFS_EXPORT_OFF:
+> > -                       config->nfs_export = false;
+> > -                       nfs_export_opt = true;
+> > -                       break;
+> > -
+> > -               case OPT_XINO_ON:
+> > -                       config->xino = OVL_XINO_ON;
+> > -                       break;
+> > -
+> > -               case OPT_XINO_OFF:
+> > -                       config->xino = OVL_XINO_OFF;
+> > -                       break;
+> > -
+> > -               case OPT_XINO_AUTO:
+> > -                       config->xino = OVL_XINO_AUTO;
+> > -                       break;
+> > -
+> > -               case OPT_METACOPY_ON:
+> > -                       config->metacopy = true;
+> > -                       metacopy_opt = true;
+> > -                       break;
+> > -
+> > -               case OPT_METACOPY_OFF:
+> > -                       config->metacopy = false;
+> > -                       metacopy_opt = true;
+> > -                       break;
+> > -
+> > -               case OPT_VOLATILE:
+> > -                       config->ovl_volatile = true;
+> > -                       break;
+> > -
+> > -               case OPT_USERXATTR:
+> > -                       config->userxattr = true;
+> > -                       break;
+> > -
+> > -               default:
+> > -                       pr_err("unrecognized mount option \"%s\" or missing value\n",
+> > -                                       p);
+> > -                       return -EINVAL;
+> > -               }
 > > -       }
-> > -       return ctr;
-> > -}
-> > -
-> >  static int ovl_own_xattr_get(const struct xattr_handler *handler,
-> >                              struct dentry *dentry, struct inode *inode,
-> >                              const char *name, void *buffer, size_t size)
-> > @@ -961,15 +866,12 @@ static int ovl_report_in_use(struct ovl_fs *ofs, const char *name)
+> > +       bool metacopy_opt = ctx->set & OVL_METACOPY_SET,
+> > +            redirect_opt = ctx->set & OVL_REDIRECT_SET;
+> > +       bool nfs_export_opt = ctx->set & OVL_NFS_EXPORT_SET,
+> > +            index_opt = ctx->set & OVL_INDEX_SET;
+> 
+> Nit: please split lines here.
+> 
+> >
+> >         /* Workdir/index are useless in non-upper mount */
+> >         if (!config->upperdir) {
+> > @@ -1882,12 +1739,143 @@ static struct dentry *ovl_get_root(struct super_block *sb,
+> >         return root;
 > >  }
 > >
-> >  static int ovl_get_upper(struct super_block *sb, struct ovl_fs *ofs,
-> > -                        struct ovl_layer *upper_layer, struct path *upperpath)
-> > +                        struct ovl_layer *upper_layer,
-> > +                        const struct path *upperpath)
+> > -static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+> > +static int ovl_parse_param(struct fs_context *fc, struct fs_parameter *param)
 > >  {
-> >         struct vfsmount *upper_mnt;
-> >         int err;
-> >
-> > -       err = ovl_mount_dir(ofs->config.upperdir, upperpath);
-> > -       if (err)
-> > -               goto out;
-> > -
-> >         /* Upperdir path should not be r/o */
-> >         if (__mnt_is_readonly(upperpath->mnt)) {
-> >                 pr_err("upper fs is r/o, try multi-lower layers mount\n");
-> > @@ -1256,46 +1158,37 @@ static int ovl_make_workdir(struct super_block *sb, struct ovl_fs *ofs,
-> >  }
-> >
-> >  static int ovl_get_workdir(struct super_block *sb, struct ovl_fs *ofs,
-> > -                          const struct path *upperpath)
-> > +                          const struct path *upperpath,
-> > +                          const struct path *workpath)
-> >  {
-> >         int err;
-> > -       struct path workpath = { };
-> > -
-> > -       err = ovl_mount_dir(ofs->config.workdir, &workpath);
-> > -       if (err)
-> > -               goto out;
-> >
-> >         err = -EINVAL;
-> > -       if (upperpath->mnt != workpath.mnt) {
-> > +       if (upperpath->mnt != workpath->mnt) {
-> >                 pr_err("workdir and upperdir must reside under the same mount\n");
-> > -               goto out;
-> > +               return err;
-> >         }
-> > -       if (!ovl_workdir_ok(workpath.dentry, upperpath->dentry)) {
-> > +       if (!ovl_workdir_ok(workpath->dentry, upperpath->dentry)) {
-> >                 pr_err("workdir and upperdir must be separate subtrees\n");
-> > -               goto out;
-> > +               return err;
-> >         }
-> >
-> > -       ofs->workbasedir = dget(workpath.dentry);
-> > +       ofs->workbasedir = dget(workpath->dentry);
-> >
-> >         if (ovl_inuse_trylock(ofs->workbasedir)) {
-> >                 ofs->workdir_locked = true;
-> >         } else {
-> >                 err = ovl_report_in_use(ofs, "workdir");
-> >                 if (err)
-> > -                       goto out;
-> > +                       return err;
-> >         }
-> >
-> >         err = ovl_setup_trap(sb, ofs->workbasedir, &ofs->workbasedir_trap,
-> >                              "workdir");
-> >         if (err)
-> > -               goto out;
-> > -
-> > -       err = ovl_make_workdir(sb, ofs, &workpath);
-> > -
-> > -out:
-> > -       path_put(&workpath);
-> > +               return err;
-> >
-> > -       return err;
-> > +       return ovl_make_workdir(sb, ofs, workpath);
-> >  }
-> >
-> >  static int ovl_get_indexdir(struct super_block *sb, struct ovl_fs *ofs,
-> > @@ -1449,14 +1342,13 @@ static int ovl_get_fsid(struct ovl_fs *ofs, const struct path *path)
-> >  }
-> >
-> >  static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
-> > -                         struct path *stack, unsigned int numlower,
-> > -                         struct ovl_layer *layers)
-> > +                         struct ovl_fs_context *ctx, struct ovl_layer *layers)
-> >  {
-> >         int err;
-> >         unsigned int i;
-> >
-> >         err = -ENOMEM;
-> > -       ofs->fs = kcalloc(numlower + 1, sizeof(struct ovl_sb), GFP_KERNEL);
-> > +       ofs->fs = kcalloc(ctx->nr + 1, sizeof(struct ovl_sb), GFP_KERNEL);
-> >         if (ofs->fs == NULL)
-> >                 goto out;
-> >
-> > @@ -1480,12 +1372,13 @@ static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
-> >                 ofs->fs[0].is_lower = false;
-> >         }
-> >
-> > -       for (i = 0; i < numlower; i++) {
-> > +       for (i = 0; i < ctx->nr; i++) {
-> > +               struct ovl_fs_context_layer *l = &ctx->lower[i];
-> >                 struct vfsmount *mnt;
-> >                 struct inode *trap;
-> >                 int fsid;
-> >
-> > -               err = fsid = ovl_get_fsid(ofs, &stack[i]);
-> > +               err = fsid = ovl_get_fsid(ofs, &l->path);
-> >                 if (err < 0)
-> >                         goto out;
-> >
-> > @@ -1496,11 +1389,11 @@ static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
-> >                  * the upperdir/workdir is in fact in-use by our
-> >                  * upperdir/workdir.
-> >                  */
-> > -               err = ovl_setup_trap(sb, stack[i].dentry, &trap, "lowerdir");
-> > +               err = ovl_setup_trap(sb, l->path.dentry, &trap, "lowerdir");
-> >                 if (err)
-> >                         goto out;
-> >
-> > -               if (ovl_is_inuse(stack[i].dentry)) {
-> > +               if (ovl_is_inuse(l->path.dentry)) {
-> >                         err = ovl_report_in_use(ofs, "lowerdir");
-> >                         if (err) {
-> >                                 iput(trap);
-> > @@ -1508,7 +1401,7 @@ static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
-> >                         }
-> >                 }
-> >
-> > -               mnt = clone_private_mount(&stack[i]);
-> > +               mnt = clone_private_mount(&l->path);
-> >                 err = PTR_ERR(mnt);
-> >                 if (IS_ERR(mnt)) {
-> >                         pr_err("failed to clone lowerpath\n");
-> > @@ -1569,63 +1462,86 @@ static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
-> >  }
-> >
-> >  static struct ovl_entry *ovl_get_lowerstack(struct super_block *sb,
-> > -                               const char *lower, unsigned int numlower,
-> > -                               struct ovl_fs *ofs, struct ovl_layer *layers)
-> > +                                           struct ovl_fs_context *ctx,
-> > +                                           struct ovl_fs *ofs,
-> > +                                           struct ovl_layer *layers)
-> >  {
-> >         int err;
-> > -       struct path *stack = NULL;
-> >         unsigned int i;
-> >         struct ovl_entry *oe;
-> > +       size_t len;
-> > +       char *lowerdir;
-> > +       struct ovl_fs_context_layer *l;
-> >
-> > -       if (!ofs->config.upperdir && numlower == 1) {
-> > +       if (!ofs->config.upperdir && ctx->nr == 1) {
-> >                 pr_err("at least 2 lowerdir are needed while upperdir nonexistent\n");
-> >                 return ERR_PTR(-EINVAL);
-> >         }
-> >
-> > -       stack = kcalloc(numlower, sizeof(struct path), GFP_KERNEL);
-> > -       if (!stack)
-> > -               return ERR_PTR(-ENOMEM);
-> > -
-> >         err = -EINVAL;
-> > -       for (i = 0; i < numlower; i++) {
-> > -               err = ovl_lower_dir(lower, &stack[i], ofs, &sb->s_stack_depth);
-> > +       len = 0;
-> > +       for (i = 0; i < ctx->nr; i++) {
-> > +               l = &ctx->lower[i];
+> > -       struct path upperpath = { };
+> > +       int err = 0;
+> > +       struct fs_parse_result result;
+> > +       struct ovl_fs *ofs = fc->s_fs_info;
+> > +       struct ovl_config *config = &ofs->config;
+> > +       struct ovl_fs_context *ctx = fc->fs_private;
+> > +       struct path path;
+> > +       char *dup;
+> > +       int opt;
+> > +       char *sval;
 > > +
-> > +               err = ovl_lower_dir(l->name, &l->path, ofs, &sb->s_stack_depth);
-> >                 if (err)
-> > -                       goto out_err;
-> > +                       return ERR_PTR(err);
-> >
-> > -               lower = strchr(lower, '\0') + 1;
-> > +               len += strlen(l->name);
-> >         }
-> >
-> >         err = -EINVAL;
-> >         sb->s_stack_depth++;
-> >         if (sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
-> >                 pr_err("maximum fs stacking depth exceeded\n");
-> > -               goto out_err;
-> > +               return ERR_PTR(err);
-> > +       }
-> .> +
 > > +       /*
-> > +        * Create a string of all lower layers that we store in
-> > +        * ofs->config.lowerdir which we can display to userspace in
-> > +        * mount options. For example, this assembles "/lower1",
-> > +        * "/lower2" into "/lower1:/lower2".
-> > +        *
-> > +        * We need to make sure we add a ':'. Thus, we need to account
-> > +        * for the separators when allocating space when multiple layers
-> > +        * are specified. That should be easy since we know that ctx->nr
-> > +        * >= 1. So we know that ctx->nr - 1 will be correct for the
-> > +        * base case ctx->nr == 1 and all other cases.
+> > +        * On remount overlayfs has always ignored all mount options no
+> > +        * matter if malformed or not so for backwards compatibility we
+> > +        * do the same here.
 > > +        */
-> > +       len += ctx->nr - 1;
-> > +       len++; /* and leave room for \0 */
-> > +       lowerdir = kzalloc(len, GFP_KERNEL_ACCOUNT);
-> > +       if (!lowerdir)
-> > +               return ERR_PTR(-ENOMEM);
+> > +       if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE)
+> > +               return 0;
 > > +
-> > +       ofs->config.lowerdir = lowerdir;
-> > +       for (i = 0; i < ctx->nr; i++) {
-> > +               l = &ctx->lower[i];
+> > +       opt = fs_parse(fc, ovl_parameter_spec, param, &result);
+> > +       if (opt < 0)
+> > +               return opt;
 > > +
-> > +               len = strlen(l->name);
-> > +               memcpy(lowerdir, l->name, len);
-> > +               if ((ctx->nr > 1) && ((i + 1) != ctx->nr))
-> > +                       lowerdir[len++] = ':';
-> > +               lowerdir += len;
-> >         }
-> >
+> > +       switch (opt) {
+> > +       case Opt_lowerdir:
+> > +               dup = kstrdup(param->string, GFP_KERNEL);
+> > +               if (!dup) {
+> > +                       path_put(&path);
+> > +                       err = -ENOMEM;
+> > +                       break;
+> > +               }
+> > +
+> > +               kfree(config->lowerdir);
+> > +               config->lowerdir = dup;
+> > +               break;
+> > +       case Opt_upperdir:
+> > +               dup = kstrdup(param->string, GFP_KERNEL);
+> > +               if (!dup) {
+> > +                       path_put(&path);
+> > +                       err = -ENOMEM;
+> > +                       break;
+> > +               }
+> > +
+> > +               kfree(config->upperdir);
+> > +               config->upperdir = dup;
+> > +               break;
+> > +       case Opt_workdir:
+> > +               dup = kstrdup(param->string, GFP_KERNEL);
+> > +               if (!dup) {
+> > +                       path_put(&path);
+> > +                       err = -ENOMEM;
+> > +                       break;
+> > +               }
+> > +
+> > +               kfree(config->workdir);
+> > +               config->workdir = dup;
+> > +               break;
+> > +       case Opt_default_permissions:
+> > +               config->default_permissions = true;
+> > +               break;
+> > +       case Opt_index:
+> > +               config->index = result.uint_32;
+> > +               ctx->set |= OVL_INDEX_SET;
+> > +               break;
+> > +       case Opt_uuid:
+> > +               config->uuid = result.uint_32;
+> > +               break;
+> > +       case Opt_nfs_export:
+> > +               config->nfs_export = result.uint_32;
+> > +               ctx->set |= OVL_NFS_EXPORT_SET;
+> > +               break;
+> > +       case Opt_metacopy:
+> > +               config->metacopy = result.uint_32;
+> > +               ctx->set |= OVL_METACOPY_SET;
+> > +               break;
+> > +       case Opt_userxattr:
+> > +               config->userxattr = true;
+> > +               break;
+> > +       case Opt_volatile:
+> > +               config->ovl_volatile = true;
+> > +               break;
+> > +       case Opt_xino:
+> > +               config->xino = result.uint_32;
+> > +               break;
+> > +       case Opt_redirect_dir:
+> > +               if (result.uint_32 == true)
+> > +                       sval = kstrdup("on", GFP_KERNEL);
+> > +               else
+> > +                       sval = kstrdup("off", GFP_KERNEL);
+> > +               if (!sval) {
+> > +                       err = -ENOMEM;
+> > +                       break;
+> > +               }
+> > +
+> > +               kfree(config->redirect_mode);
+> > +               config->redirect_mode = sval;
+> > +               ctx->set |= OVL_REDIRECT_SET;
+> > +               break;
+> > +       default:
+> > +               pr_err("unrecognized mount option \"%s\" or missing value\n", param->key);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       return err;
+> > +}
 > 
 > 
-> I think it might be simpler and cleaner to move the
-> ctx->lower[i]->name strings as is to layers[i].name after
-> layers is allocated in ovl_get_layers() below and use a
-> loop of seq_printf() in ovl_show_options() instead of preparing
-> the big ofs->config.lowerdir string.
-> 
-> Something to consider.
+> For the end result, all these functions above should be in params.c
+> I don't mind if you move it with an extra patch at the beginning
+> Probably easier at the end. Just as long as you do not move
+> ovl_fs_params_verify() in the same patch that changes half of it.
 
-Works for me. I'll try that out.
+Ok.
