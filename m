@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A855772B41E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jun 2023 23:18:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB8D672B492
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 00:17:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbjFKVSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jun 2023 17:18:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56922 "EHLO
+        id S231664AbjFKWR3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jun 2023 18:17:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbjFKVSc (ORCPT
+        with ESMTP id S229441AbjFKWR2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jun 2023 17:18:32 -0400
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48F48E55
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jun 2023 14:18:30 -0700 (PDT)
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-77abce06481so366063439f.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jun 2023 14:18:30 -0700 (PDT)
+        Sun, 11 Jun 2023 18:17:28 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 209A6E4E
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jun 2023 15:17:28 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-77760439873so477431039f.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jun 2023 15:17:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686518309; x=1689110309;
+        d=1e100.net; s=20221208; t=1686521847; x=1689113847;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=++zemBX/2RrOYOFOLtSc1QjMmPmCs+Z/n8b0jPh3c7o=;
-        b=d83m63B8W1AQ1dCQZZCGV4sdxabdKDfeD6xTylMDSHqBf67UvjU6MKjBC5Gw7Nj3st
-         2SiQ4NN2cQGd/nwL3LADx+dyLcLRDHqtnxvdNq2T8opp18GWfnMBVVjMs755K5EP7c51
-         FGYYWxvnI2wpH5kYrd1ZfXEwPfoD4kY0AHW6zwNWNphjMsCEf9uKw9FY+AyH50Z0Wml2
-         EGj1hPVdrRkcY6IOMUTH7glcs0XVqaxXv424jg7AiNqBeUkCXq6HcI6rQUM1/4x1k2DK
-         Xl9EF2DvsHRsMcceNupc99csTaulyANwjuifytYZJDJ8dnkpAX8Wat5sS0r+Z+wg7jmY
-         A6Aw==
-X-Gm-Message-State: AC+VfDxtsc/vWMv3ECL3ZK15Ah3spyfMEOzIl9GeDnsVIOesB9A88lNX
-        s47HVbIW/v9XFzDUx4bbb4jqGgpC/ZQftL+b9PcZ5ubvY2Sk
-X-Google-Smtp-Source: ACHHUZ5uexlpBPtPJccaNdHhmErmovEuc0aJEQv+DulBACxbzELH3wDT/Ehuljo6vWiQkQ7yLj0tlIJ2iLEPDZLXWLeSG1iJZatu
+        bh=tb0ZpKp5Xcf7c2M/6Lg/dqUujad/vr5X4auVnTDjdJ0=;
+        b=iVZCxcsYHpP8B0pmgklOU3NTfblydWVA1CviQMMEGQxAnMdZq/DZFSs5rpbg96bmEH
+         Bj/cHRtABpNE22mWViyQCXv9JY0oc4bJe+ZkQPTRHs/H1tIEfyzUjN05KImMDn7m9+KA
+         9pTIc2VmGq0OFnkbbwZ8qPCyoqsjTfjpSex4HhScHgAJYuz1xuZRoKZUdb4v7bI0cYl/
+         kMCleC3S7mfdi9w0Yht8uz6qyjqgQxddnS8G6bvS9t97HfEOk6q6d0JwSXkObONrG4+y
+         bu6VaFfGfhtDR/VcwfWfxnHPHb6U/AApQzWugCJIIlqHwgCXXBDO+etK7gC3SapyufG3
+         sLyA==
+X-Gm-Message-State: AC+VfDysi7GrPKyxieEdHKR80BJrLxcOjXfOrGA9kb++TInk50+KceLa
+        KMmVMFEDF6EOykRr7MYNVYzQGTLtv0cLJnnYXZkBrKCg5lZa
+X-Google-Smtp-Source: ACHHUZ76jxhpMkdSOWymiIXSmAP6nlbvMNMejA6KYO29dhEW02hKZhueWLXvaOgfjmygw/0Wl9A7WAYJqR30bFmRG9ZnFevqGqT/
 MIME-Version: 1.0
-X-Received: by 2002:a6b:fd15:0:b0:777:afc6:8da0 with SMTP id
- c21-20020a6bfd15000000b00777afc68da0mr2935869ioi.1.1686518309621; Sun, 11 Jun
- 2023 14:18:29 -0700 (PDT)
-Date:   Sun, 11 Jun 2023 14:18:29 -0700
-In-Reply-To: <000000000000da4f6b05eb9bf593@google.com>
+X-Received: by 2002:a02:735d:0:b0:420:cbe4:af62 with SMTP id
+ a29-20020a02735d000000b00420cbe4af62mr2890400jae.5.1686521847528; Sun, 11 Jun
+ 2023 15:17:27 -0700 (PDT)
+Date:   Sun, 11 Jun 2023 15:17:27 -0700
+In-Reply-To: <000000000000b0cabf05f90bcb15@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c0951105fde12435@google.com>
-Subject: Re: [syzbot] [nilfs?] general protection fault in nilfs_clear_dirty_page
-From:   syzbot <syzbot+53369d11851d8f26735c@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, dsterba@suse.com, hch@lst.de,
-        konishi.ryusuke@gmail.com, linux-block@vger.kernel.org,
+Message-ID: <000000000000a0c29605fde1f706@google.com>
+Subject: Re: [syzbot] [ntfs3?] general protection fault in ni_readpage_cmpr
+From:   syzbot <syzbot+af224b63e76b2d869bc3@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org,
+        almaz.alexandrovich@paragon-software.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        wqu@suse.com
+        neilb@suse.de, ntfs3@lists.linux.dev,
+        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
@@ -60,23 +60,23 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 syzbot has bisected this issue to:
 
-commit 4a445b7b6178d88956192c0202463063f52e8667
-Author: Qu Wenruo <wqu@suse.com>
-Date:   Sat Aug 13 08:06:53 2022 +0000
+commit 9fd472af84abd6da15376353c2283b3df9497646
+Author: NeilBrown <neilb@suse.de>
+Date:   Tue Mar 22 21:38:54 2022 +0000
 
-    btrfs: don't merge pages into bio if their page offset is not contiguous
+    mm: improve cleanup when ->readpages doesn't process all pages
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17778475280000
-start commit:   022ce8862dff Merge tag 'i2c-for-6.4-rc6' of git://git.kern..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1285d453280000
+start commit:   64569520920a Merge tag 'block-6.4-2023-06-09' of git://git..
 git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14f78475280000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f78475280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
-dashboard link: https://syzkaller.appspot.com/bug?extid=53369d11851d8f26735c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e9d48b280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12d7fa63280000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1185d453280000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1685d453280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c980bfe8b399968
+dashboard link: https://syzkaller.appspot.com/bug?extid=af224b63e76b2d869bc3
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15835795280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16966d43280000
 
-Reported-by: syzbot+53369d11851d8f26735c@syzkaller.appspotmail.com
-Fixes: 4a445b7b6178 ("btrfs: don't merge pages into bio if their page offset is not contiguous")
+Reported-by: syzbot+af224b63e76b2d869bc3@syzkaller.appspotmail.com
+Fixes: 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't process all pages")
 
 For information about bisection process see: https://goo.gl/tpsmEJ#bisection
