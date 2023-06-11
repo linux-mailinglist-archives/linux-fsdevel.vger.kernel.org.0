@@ -2,69 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 509F072B1E8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jun 2023 14:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4CA172B213
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jun 2023 15:27:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233536AbjFKMzI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jun 2023 08:55:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51888 "EHLO
+        id S231220AbjFKN1m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jun 2023 09:27:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbjFKMzG (ORCPT
+        with ESMTP id S230489AbjFKN1l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jun 2023 08:55:06 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115F61B8;
-        Sun, 11 Jun 2023 05:55:02 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id 41be03b00d2f7-528cdc9576cso1601444a12.0;
-        Sun, 11 Jun 2023 05:55:02 -0700 (PDT)
+        Sun, 11 Jun 2023 09:27:41 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0C3DE57;
+        Sun, 11 Jun 2023 06:27:39 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f6dfc4e01fso34544865e9.0;
+        Sun, 11 Jun 2023 06:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686488101; x=1689080101;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qoVZW2bivguqn6AKKTwEgxPn9HvFkbakdebxI4R8tV4=;
-        b=gtmQflKPxdDbDPdvpsPwyeaf5S7ll6Ms/7Rpg3IA4lmv5WCLvxp+WxyAuUzKwDizPV
-         mLbCP6F05cPnee6XuCaoH/JnOxJ2U93Cirghre/EaTSvusqdkyX7cVjzyW/mCl9jsPf4
-         lU8TFD4rOT0LIpWVfgcuMUOrS8ZdJ1B8qtzO9o25g41Pk2vATLfn0erGTVrFwVoldqA+
-         XaR2XPmF4375dukxhHVYFeN0gXdoCyMai2GPo9WKhTP4pu0HlDHRBvZXaEn8AiCxRW8t
-         j3GUp/i3tsgG61SVlx1aXXZ5evrE1T2t7qxP3MQ0VwETzH7z9v4NUiKltgLxZtpIORFh
-         i7Ng==
+        d=gmail.com; s=20221208; t=1686490058; x=1689082058;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SUythJtyf4D6pVFb37cdEXL1QhgyDpOkZ6Klz3pGZ3Y=;
+        b=pYktIgsFkOwv4jxz3hqYcDyh+TquaUdu3vTC+qfsSBi3kVqLsVh0dm7M7khPDoBmVl
+         tR7iqHCgauLP2Q+UgTm9bx15+iu9QuFrZkK1w39owylAJJsf7dwV0VGsB1bL4cVWO8CN
+         Zxsz2N/gSjMwtRkiHL8mrHeYPe3PBGRXK1D8RQvMONRGGmIflpKf6oi6FtJthe2dPR4x
+         C8ls97Qb6XbzJaCipklJ5A8m627cP4YCqZLO8msWmqF/VbACvsPX7QFL3zlPteQHJYnu
+         Cl3c9HxrEH04xny4csH6s5O4Sq4LZxULbBG+nN4zGnDOO4MKGEg5mzrgQBvL0e0k1wNf
+         mZdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686488101; x=1689080101;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qoVZW2bivguqn6AKKTwEgxPn9HvFkbakdebxI4R8tV4=;
-        b=JX0oomnAiQeoWQUhDr3iIEEDm9aMbDtF8rAPSJH/RRM7nr1iUNXtT0MMazscf1DtT0
-         4GKdztBTgeZZapOCUcjhFscz0b0fhgtZx60izTmIFVqvdcaU9eqx6eASqv27+bLZHyha
-         xeLc3JtIUOo8chwD71ZGJzYv6lDJH8NYkMwKan8r0jxmRtdu9zB4xWwCZU2lj4CWZdP9
-         jBghLTDN7pd50hnS8n7QT919LBeu0+410loMrdWPmbJzZFbqbddwuT+QQnxaT7cCLRKa
-         ICPHryOYwJbfCaxHSE+BYANx58idpJj4T/pCEMzF0U7tanUKNRp04WB5eyFh6Iv6Wd/u
-         xC6w==
-X-Gm-Message-State: AC+VfDwAcSuFHC+rNRRQPUMnxgNelqS+zvoW8B60zhc2uO5f5zUt+TNh
-        qukk+jcr9j7mY6hr1ZOojhU=
-X-Google-Smtp-Source: ACHHUZ6r7U3mGgGJzSzAU+viZ5EAmnneQo/rSzsl1VQoHb5SWVmusE97aqBxjpoWwUdtvrHR67NIfA==
-X-Received: by 2002:a17:90a:617:b0:256:dbfb:9b5e with SMTP id j23-20020a17090a061700b00256dbfb9b5emr5669642pjj.29.1686488101339;
-        Sun, 11 Jun 2023 05:55:01 -0700 (PDT)
-Received: from debian.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id ms18-20020a17090b235200b0025bbe90d3cbsm1910806pjb.44.2023.06.11.05.55.00
+        d=1e100.net; s=20221208; t=1686490058; x=1689082058;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SUythJtyf4D6pVFb37cdEXL1QhgyDpOkZ6Klz3pGZ3Y=;
+        b=VUQ04ssh1FkVkdEK8lMhH4pwzQa64eV1caSYN6Sx2i3q4A2P5AcB+Y2MXVGnDwFhn4
+         cGd3eZPArXCfIw/cHSCNyf79U8Bn4VBFJqBpKzUkIkff5F5vB/wzUNgwmJdYHtfeZcZV
+         ej6Q1EKypJm5dNXOxa/xhmKXy5q6HWicewrbiAxdjZDb8l3I7INm//yW1bOj8WIH02Ot
+         vgw86iFPgE+QVnspFGEd9nSz79FF3wHWynacY2p5XOyAmx5O6flnHA7zLeZFbNPZ75//
+         Lk9GyK8yHcQa8G31zwpyvCjkPhWXCLuzSupR9qg4JvssCiuhgswLS0ZFXHXv4S0tr+uK
+         DmgQ==
+X-Gm-Message-State: AC+VfDwyytkdKqepMSTyS+wRj0gsj+SNWSTiHSVKT481idQarcax5iBe
+        GC8Ih8gQT7J9R5GSzn1+VXg=
+X-Google-Smtp-Source: ACHHUZ4e8CjHkDYZn5H/j86r+cboslhQduNUNr1Iycn2ruo/TifEK1gWXGZuM1iIkcW0sxd7Ey06Pw==
+X-Received: by 2002:adf:f791:0:b0:306:30ea:a060 with SMTP id q17-20020adff791000000b0030630eaa060mr3107993wrp.51.1686490058303;
+        Sun, 11 Jun 2023 06:27:38 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
+        by smtp.gmail.com with ESMTPSA id c3-20020adffb03000000b0030ab5ebefa8sm9593940wrr.46.2023.06.11.06.27.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Jun 2023 05:55:00 -0700 (PDT)
-Received: by debian.me (Postfix, from userid 1000)
-        id F0AD8106A3A; Sun, 11 Jun 2023 19:54:52 +0700 (WIB)
-Date:   Sun, 11 Jun 2023 19:54:52 +0700
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-To:     Shaomin Deng <dengshaomin@cdjrlc.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mao Zhu <zhumao001@208suo.com>
-Subject: Re: [PATCH] fs: Fix comment typo
-Message-ID: <ZIXEHHvkJVlmE_c4@debian.me>
-References: <20230611123314.5282-1-dengshaomin@cdjrlc.com>
+        Sun, 11 Jun 2023 06:27:37 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: [PATCH v2 0/3] Handle notifications on overlayfs fake path files
+Date:   Sun, 11 Jun 2023 16:27:29 +0300
+Message-Id: <20230611132732.1502040-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+O3zIJTHyNTqGyBt"
-Content-Disposition: inline
-In-Reply-To: <20230611123314.5282-1-dengshaomin@cdjrlc.com>
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -75,66 +70,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Miklos,
 
---+O3zIJTHyNTqGyBt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The first solution that we discussed for removing FMODE_NONOTIFY
+from overlayfs real files using file_fake container got complicated.
 
-On Sun, Jun 11, 2023 at 08:33:14AM -0400, Shaomin Deng wrote:
-> From: Mao Zhu <zhumao001@208suo.com>
->=20
-> Delete duplicated word in comment.
+This alternative solution is less intrusive to vfs and all the vfs
+code should remian unaffected expect for the special fsnotify case
+that we want to fix.
 
-On what function?
+Thanks,
+Amir.
 
->=20
-> Signed-off-by: Mao Zhu <zhumao001@208suo.com>
+Changes since v1:
+- Drop the file_fake container
+- Leave f_path fake and special case only fsnotify
 
-You're carrying someone else's patch, so besides SoB from original
-author, you need to also have your own SoB.
+[1] https://github.com/amir73il/linux/commits/ovl_real_path
 
-> ---
->  include/linux/fs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index df6c1817906f..aa870b77cc2b 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2675,7 +2675,7 @@ extern void evict_inodes(struct super_block *sb);
->  void dump_mapping(const struct address_space *);
-> =20
->  /*
-> - * Userspace may rely on the the inode number being non-zero. For exampl=
-e, glibc
-> + * Userspace may rely on the inode number being non-zero. For example, g=
-libc
->   * simply ignores files with zero i_ino in unlink() and other places.
->   *
->   * As an additional complication, if userspace was compiled with
+Amir Goldstein (3):
+  fs: rename FMODE_NOACCOUNT to FMODE_INTERNAL
+  fs: introduce f_real_path() helper
+  ovl: enable fsnotify events on underlying real files
 
-I don't see the function name in above diff (dump_mapping() isn't the
-function I mean). Regardless, the fix LGTM.
+ Documentation/filesystems/locking.rst |  3 ++-
+ Documentation/filesystems/vfs.rst     |  3 ++-
+ fs/file_table.c                       | 29 ++++++++++++++++++++++++---
+ fs/internal.h                         |  5 +++--
+ fs/namei.c                            |  2 +-
+ fs/open.c                             |  2 +-
+ fs/overlayfs/file.c                   |  4 ++--
+ fs/overlayfs/super.c                  | 27 ++++++++++++++++---------
+ include/linux/dcache.h                | 11 ++++++----
+ include/linux/fs.h                    |  8 +++++---
+ include/linux/fsnotify.h              |  6 ++++--
+ 11 files changed, 71 insertions(+), 29 deletions(-)
 
-@cdjrlc.com developers: I'm really, really fed up with you ignoring
-review comments. It seems like you have issues on your mail setup. Fix
-your mailer! Until then, I just say NAK.
+-- 
+2.34.1
 
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---+O3zIJTHyNTqGyBt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZIXEGQAKCRD2uYlJVVFO
-o7seAP9+215GHU5WZCA77cMwS1Iq2tmRXpMWMURenHy1HQmDPgD+I183rge40np6
-c189kL3vpaibaUYDbla/LnSryNu4oA0=
-=KrJv
------END PGP SIGNATURE-----
-
---+O3zIJTHyNTqGyBt--
