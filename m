@@ -2,47 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 740B072B381
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jun 2023 21:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B71BB72B37F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jun 2023 21:06:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232964AbjFKTID (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jun 2023 15:08:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35384 "EHLO
+        id S230006AbjFKTG1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jun 2023 15:06:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbjFKTIC (ORCPT
+        with ESMTP id S229570AbjFKTG0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jun 2023 15:08:02 -0400
-X-Greylist: delayed 123 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 11 Jun 2023 12:08:00 PDT
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81A139F;
-        Sun, 11 Jun 2023 12:07:59 -0700 (PDT)
+        Sun, 11 Jun 2023 15:06:26 -0400
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD26F1B9;
+        Sun, 11 Jun 2023 12:06:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1686510478;
-        bh=WTlI9lDwIb26jxouPAzEjCQdYursinj8cqf+Aqs40+4=;
+        s=s201512; t=1686510380;
+        bh=8ml7v+xU/fb8GPueIIAwZGo3QlTjbtM+C3EF4n/SEqs=;
         h=From:To:Cc:Subject:Date;
-        b=kVX8U0GdPhqaNU0HkiirFx/P+O6zQ++nYf2RqIUi10Q5ipbA/Mr7KB1+E4i3Ocisi
-         svCim1ww1RrPtnfEdDxFuZhppmuuy7lJ255+DaJfwSox+0zZMo0TSHRVkFcVAVTJyO
-         ZefVPdG/ounYyG7VApn2zcWCKIKlV1WDosCv6Bac=
+        b=QkPBh4vQ5XsOUo8r6E89KkC0QoJdLQurRA2Nz0H+7BszcFuxxGCrCcmZEbnCmdTv4
+         z+Ea+ODfiP99gG9y8WxF+gbj3RMMjCehgWTm7HytQdXzxSzNcsh4/ph0h52i10YWP1
+         bUDGDRvs9JPom/BkbUoQOBnX5pMrpeF976Jc0KG0=
 Received: from wen-VirtualBox.. ([240e:331:cb9:1200:2421:564d:c6df:cf15])
-        by newxmesmtplogicsvrszb1-0.qq.com (NewEsmtp) with SMTP
-        id EDB1DE32; Mon, 12 Jun 2023 02:59:27 +0800
-X-QQ-mid: xmsmtpt1686509967t6yjb17a3
-Message-ID: <tencent_F7EEF9B42A817A28086FF22DBD84B9CF2F05@qq.com>
-X-QQ-XMAILINFO: N1wtWDyxLDbScaoYXG6UwxVPUyZrgHDJLCghEmkj2xgrdfqNoy240ueNe5zuMl
-         ZfuJOg4cPrmUyKGO3XBaWP8aWMNJEq3ZM7EDoKt55xYrnMRs4cBxgYnQp+89N7vbF1jaEMaNwbC3
-         vJRcLzgVSYKGdLG7u6FlTVQkmAQ950Cb0qDSkU5ZyfAdn+KxGhoxk7sPnXj7vq7tozbl9bFwKObu
-         0IK2q9XkVGZ+OdARK91l5ViytwO82HRtGaasjMHVapU0kbqXdrUpM1T5pPJ//QVmQpM1Ovad8OT7
-         XqnoHbrI+mwWg50XSVAVY6VCFpqMykrpx3omBBpolyiuPkDeQoeKd5Cz63sPkNP2ohGrdFn9BHA+
-         TFSD+6AwT+sHTzVY8PfcRh4XiN2bPx41lIfIzjvX9vOIimEz55Wk+xQOe+tr1naOvjo5tJhia9fE
-         HTnnrrs4fL451C43wMX2uhn5uS3YGnwfxixT0BE3krgSquH6Vtgw3ajvDhxYxlCkieSGuUTGDO3P
-         R5o0TNTKkBXJChnsJza9AMgiqWx4WpgHdf/1huIigJDcI7WL2WAYISsJRk3JeddNVAers+FMyJJo
-         UUHFaj1nTIDl7t87Ihu5ghGIZEDdkXZIwj+B12v2sDwywghskVgN2cSOcWctX+f3p9yDqmBDWREu
-         kge2Jibzezg92Dd5rMFAGx2h1A0NGFpYOskJ9shXaoGoW+LS0y3jRphA0JAandJo5FentYiTPaRN
-         JIW0RlWVaP7Ss0ZkjAQMS4VVCOa2ETg1xOtF7iscjCnZrtk6lILjDmtQoMnl+I6BeOhjhxz7Tsf2
-         yDQPiobfIOCDtrACCLiY19IHNi9MrkOIyDbe2b1ZfaT1JqVQw6qTVXniD0FHN2+mzk0mn7Yad8cH
-         3noX9WIDl7FY82InrsqDj/r4pGCdU8F1FA2nJEJ63i76YbCXd8BQXNKdUwJ1GOYIofeLjH9jDKL5
-         M6ozYZZv12OUut8/qxr6+n1PrpGySSLYgOO61VBMM3m2+EvG8The5aTonX2KiIRrVgrs3LTfJJav
-         UQ8KsqjUGIdbYViNlt
+        by newxmesmtplogicsvrszc2-0.qq.com (NewEsmtp) with SMTP
+        id 231CFF; Mon, 12 Jun 2023 03:00:02 +0800
+X-QQ-mid: xmsmtpt1686510002t1ci3qfia
+Message-ID: <tencent_59C3AA88A8F1829226E5D3619837FC4A9E09@qq.com>
+X-QQ-XMAILINFO: OOO9dHjlsLs7PwLIoGFEU7ENLv7uL9cJpfNRVZ+kKV7utWSXonFNPZOs6b2OxN
+         nWmrih+zZaMQgAgK0yvupnrYte2rU+g4bkbqY2oshAlwiOmpB3c/oySOpEeKkdbDqwXC7FQqPv1G
+         Q1YgWJ+Y8JXtUxeXYsFzxo6Phy6Sqby4bG+R7Fzxvz+2BBurbqyNh8V/k/a1q/5QGABp1tZaPweL
+         gYCm2vWA+WrzSliKKF4m0O5ADUB5trKItyJ2oO/mb/k2KeJD4ToYnOImfXe1U96oiLD5tnfkHZsI
+         Ds7JREU5UDlQGqlZi+8Z/mdFvO3Ey0Ld/OsOvj+5uHRA1L8Z+T1oXOhOYw9uNx+e1s5CCohWSan5
+         Mdw7+twfcitizmWe+2Pl5zDjNxisVtl0hU9nAON3upGbiCXD8n58k4Y8RCWtjo+Zy9fN49dDb3FL
+         U+aVHBvq/aFad7bHVXTegdYrWY3RsR/kOIy0R1BShVIBEWS3wDRsxpsd1e7IHYbHXEQLEbMmJ1xw
+         4ClL1nSk4y485J1sMVxqotMDI9IRu1y05HK8dySItCSivtY05NlVC3pbqlASHEfoEbSsyGOeYhMh
+         HPFEUMWfZiB4unwY+LG98T3PXctbveHx7KEywHYhozdQRIFLVvOaRP35fmhnZck/inTEHuKR0Hsw
+         nr2dPk9R51r8sOUV3Rz7X23I6nUR5S1kEAy9mDonxlcuQ3IPxKrwtz9MNtvtsawYdB6i7u9XxYz7
+         vYQwuwVpeBNzCP5H+IRPV/+UEtI6mEjUtavqIxm8qt9DNJiWQL6X7e1Xb/cYE7dVWjAebtHB8jcl
+         yeZMANbgJwikVdHys2YqaxwaH64VcRK4QDZjbYm/wCM08oKxCgNC6co7FhwAOC7IlHgGLE6BFgSI
+         XTGvBsuOvvHXYGdNGl6f8Lzx24uOT6IMuinPVjiuXWRMPqVtmox7wHxeBBiuDZRhLkeKZAqFRvoX
+         VGM1V6wicO8RCDek7k0kERT8PzQMpBjyzAPcNxejxbDwD4tJxUSW0MMXVlfqUD8H5G7arJ/zJoXo
+         PitgszsngPhaxtiX7I6glkPDXlXbO3F9NxnurIziQv6f2w7C/dkd0gNowKvf5wFO616/T19g==
 From:   wenyang.linux@foxmail.com
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Jens Axboe <axboe@kernel.dk>,
@@ -53,9 +52,9 @@ Cc:     Wen Yang <wenyang.linux@foxmail.com>,
         Matthew Wilcox <willy@infradead.org>,
         Eric Biggers <ebiggers@google.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] eventfd: add a uapi header for eventfd userspace APIs
-Date:   Mon, 12 Jun 2023 02:59:20 +0800
-X-OQ-MSGID: <20230611185920.2191-1-wenyang.linux@foxmail.com>
+Subject: [PATCH] eventfd: show flags in fdinfo
+Date:   Mon, 12 Jun 2023 02:59:47 +0800
+X-OQ-MSGID: <20230611185947.2208-1-wenyang.linux@foxmail.com>
 X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -72,8 +71,8 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Wen Yang <wenyang.linux@foxmail.com>
 
-Create a uapi header include/uapi/linux/eventfd.h, move the associated
-flags to the uapi header, and include it from linux/eventfd.h.
+The flags should be displayed in fdinfo, as different flags
+could affect the behavior of eventfd.
 
 Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
@@ -87,76 +86,36 @@ Cc: Eric Biggers <ebiggers@google.com>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- include/linux/eventfd.h      | 16 +---------------
- include/uapi/linux/eventfd.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 28 insertions(+), 15 deletions(-)
- create mode 100644 include/uapi/linux/eventfd.h
+ fs/eventfd.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
-index 98d31cdaca40..c8be8fa6795d 100644
---- a/include/linux/eventfd.h
-+++ b/include/linux/eventfd.h
-@@ -9,26 +9,12 @@
- #ifndef _LINUX_EVENTFD_H
- #define _LINUX_EVENTFD_H
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 6c06a527747f..5b5448e65f6f 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -33,10 +33,10 @@ struct eventfd_ctx {
+ 	/*
+ 	 * Every time that a write(2) is performed on an eventfd, the
+ 	 * value of the __u64 being written is added to "count" and a
+-	 * wakeup is performed on "wqh". A read(2) will return the "count"
+-	 * value to userspace, and will reset "count" to zero. The kernel
+-	 * side eventfd_signal() also, adds to the "count" counter and
+-	 * issue a wakeup.
++	 * wakeup is performed on "wqh". If EFD_SEMAPHORE flag was not
++	 * specified, a read(2) will return the "count" value to userspace,
++	 * and will reset "count" to zero. The kernel side eventfd_signal()
++	 * also, adds to the "count" counter and issue a wakeup.
+ 	 */
+ 	__u64 count;
+ 	unsigned int flags;
+@@ -301,6 +301,7 @@ static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
+ 		   (unsigned long long)ctx->count);
+ 	spin_unlock_irq(&ctx->wqh.lock);
+ 	seq_printf(m, "eventfd-id: %d\n", ctx->id);
++	seq_printf(m, "eventfd-flags: 0%o\n", ctx->flags);
+ }
+ #endif
  
--#include <linux/fcntl.h>
- #include <linux/wait.h>
- #include <linux/err.h>
- #include <linux/percpu-defs.h>
- #include <linux/percpu.h>
- #include <linux/sched.h>
--
--/*
-- * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
-- * new flags, since they might collide with O_* ones. We want
-- * to re-use O_* flags that couldn't possibly have a meaning
-- * from eventfd, in order to leave a free define-space for
-- * shared O_* flags.
-- */
--#define EFD_SEMAPHORE (1 << 0)
--#define EFD_CLOEXEC O_CLOEXEC
--#define EFD_NONBLOCK O_NONBLOCK
--
--#define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
--#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
-+#include <uapi/linux/eventfd.h>
- 
- struct eventfd_ctx;
- struct file;
-diff --git a/include/uapi/linux/eventfd.h b/include/uapi/linux/eventfd.h
-new file mode 100644
-index 000000000000..02e9dcdb8d29
---- /dev/null
-+++ b/include/uapi/linux/eventfd.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _UAPI_LINUX_EVENTFD_H
-+#define _UAPI_LINUX_EVENTFD_H
-+
-+#include <linux/types.h>
-+
-+/* For O_CLOEXEC and O_NONBLOCK */
-+#include <linux/fcntl.h>
-+
-+/* For _IO helpers */
-+#include <linux/ioctl.h>
-+
-+/*
-+ * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
-+ * new flags, since they might collide with O_* ones. We want
-+ * to re-use O_* flags that couldn't possibly have a meaning
-+ * from eventfd, in order to leave a free define-space for
-+ * shared O_* flags.
-+ */
-+#define EFD_SEMAPHORE (1 << 0)
-+#define EFD_CLOEXEC O_CLOEXEC
-+#define EFD_NONBLOCK O_NONBLOCK
-+
-+#define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
-+#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
-+
-+#endif /* _UAPI_LINUX_EVENTFD_H */
 -- 
 2.34.1
 
