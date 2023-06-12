@@ -2,173 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BDC0472CE8A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 20:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D19A472CE8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 20:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235117AbjFLSfj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 14:35:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54666 "EHLO
+        id S231724AbjFLShB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 14:37:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238609AbjFLSff (ORCPT
+        with ESMTP id S231132AbjFLShA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 14:35:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C0DE0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 11:34:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686594876;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nvY2kldHbnI0forOMXs5IpIoD8eht53xLaDy+C7VvMQ=;
-        b=GuWF+e/xwM+LADy3QT8hmDQNX6af5EQKfNftoL04xitgsFbSIdzcHiWKshP0PHKBKF5koW
-        7RKSFamuKtBbTMxAkE+ucmliOKynkbrsZnndxh5qWqOlttcpO9RugJsiff/eAlDYs8uRet
-        DUODSFT7UrKUKn83LA7bF0LC6+wJWE4=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-538-kUU3BuYHNQ2mmlizPCkFiQ-1; Mon, 12 Jun 2023 14:34:35 -0400
-X-MC-Unique: kUU3BuYHNQ2mmlizPCkFiQ-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-76077669a5aso36243185a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 11:34:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686594874; x=1689186874;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nvY2kldHbnI0forOMXs5IpIoD8eht53xLaDy+C7VvMQ=;
-        b=VlP1lew5d5IjDoYoKRYK4+NoQf4Nhl3MDpAczXbwnEpnD8skznnIsFFJ7Z+RednUch
-         psbqvlKKYx0qtkv4LpCpKsnfGa+/j/lIXx9VONmd54KHPVRIvNmN0PDhWeyXroLlrHsp
-         H5QCLPyPlDQc3AJRUukjlphw/BFeJHbzOOq0U4yu+Pw/7b+OSgnCPbUUjbGJyHt65lnL
-         KAy3NVuqlGsGaz+jMD9mpULbXvWsV6b29AS+Mbips5KxpL243VvBETect6V+hCi8vznD
-         4Dfgwe8+Kk/yC3QNaRukEIRemuQsV7Kvf8VRdPhwEC5nzCWotBGNmn62djFbcoivAkdI
-         5hlA==
-X-Gm-Message-State: AC+VfDxzR92WUFoZd5TO4uchKfoXmRbaHrIz1NMVNYuo+zy9ovDLW4bY
-        Xx+rR3pe4J6gR9mOliw8ArO6h1kH/AteqQbRe1dqk3wYPpbwFPLsjkD4jJo4m+2HMeDeV+q7r4w
-        M7XCm8E54hl5VbvikzcjKpYgEng==
-X-Received: by 2002:a05:620a:3d91:b0:75b:23a1:69e4 with SMTP id ts17-20020a05620a3d9100b0075b23a169e4mr9377895qkn.4.1686594874613;
-        Mon, 12 Jun 2023 11:34:34 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6aKEVKZ2FIzN1t/Op9owXNi1km2vS/VHCT9ZQ3B2W4JifsCVcQYVfg3PgJesSfBg/r/kd2kg==
-X-Received: by 2002:a05:620a:3d91:b0:75b:23a1:69e4 with SMTP id ts17-20020a05620a3d9100b0075b23a169e4mr9377889qkn.4.1686594874287;
-        Mon, 12 Jun 2023 11:34:34 -0700 (PDT)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id 6-20020a05620a070600b0075f04e2f556sm2000172qkc.33.2023.06.12.11.34.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 11:34:33 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 14:34:30 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
-        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
-        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
-        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
-        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
-        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
-        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        pasha.tatashin@soleen.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v2 4/6] mm: drop VMA lock before waiting for migration
-Message-ID: <ZIdlNj+X2HDwfCeN@x1n>
-References: <20230609005158.2421285-1-surenb@google.com>
- <20230609005158.2421285-5-surenb@google.com>
- <ZIOOmC26qh4EXUEX@x1n>
- <CAJuCfpHKUjAwgWbxvJQDyEnneRD03p2M6247Q6=3-oOq_FL7zA@mail.gmail.com>
- <CAJuCfpG3PrbGxpDAEkyGQXW88+otb=FsbrhPJ4ePN7Xhn0a+_A@mail.gmail.com>
- <ZIcfYQ1c5teMSHAX@x1n>
- <CAJuCfpGZvhBUdfNHojXwqZbspuhy0bstjT+-JMfwgmnqTnkoHA@mail.gmail.com>
+        Mon, 12 Jun 2023 14:37:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11504102;
+        Mon, 12 Jun 2023 11:36:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AB4CE62D25;
+        Mon, 12 Jun 2023 18:36:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BF05C433EF;
+        Mon, 12 Jun 2023 18:36:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686595018;
+        bh=ipow/V0PjhrSSq2tJdI44+0zoGqli10Qq6k5fAD2mXg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jjvCfg+nFEYKJTSxyu2Q5FZfYz/YKd1ec3p3FhpjnteoSa3bhyuRa/5BQIBPv2bjM
+         d4X4MgAPthzIM8NVVZ0OuZkiw/cTJajkO85oSmpPoo7ZRZFG1xozI8WhkwNNEa5mML
+         tt9mH2meYSQiw0IcS9WyLI93AxTIHoBv3ieyXtAbD2q1coIhXsZrpIwF9kimenVexE
+         1+94himrPE6d2zTFjUqpFr0N5ExhQ7+oU41le1UygAAv19m8GQ44PHq52RMlWRBFE+
+         IYG6Z1wRDoyCPzZAYLf2AJ+DuG996CoIUbyZuuC3uYThQf/1Q4zGB2hgOLYaCUDgaY
+         HxITmB+yKVAbA==
+Date:   Mon, 12 Jun 2023 11:36:57 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        mcgrof@kernel.org, hch@infradead.org, ruansy.fnst@fujitsu.com
+Subject: Re: [PATCH 2/3] fs: wait for partially frozen filesystems
+Message-ID: <20230612183657.GI11441@frogsfrogsfrogs>
+References: <168653971691.755178.4003354804404850534.stgit@frogsfrogsfrogs>
+ <168653972832.755178.18389114450766371923.stgit@frogsfrogsfrogs>
+ <20230612113526.xfhpaohiqusq5ixt@quack3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpGZvhBUdfNHojXwqZbspuhy0bstjT+-JMfwgmnqTnkoHA@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230612113526.xfhpaohiqusq5ixt@quack3>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 09:07:38AM -0700, Suren Baghdasaryan wrote:
-> On Mon, Jun 12, 2023 at 6:36 AM Peter Xu <peterx@redhat.com> wrote:
-> >
-> > On Fri, Jun 09, 2023 at 06:29:43PM -0700, Suren Baghdasaryan wrote:
-> > > On Fri, Jun 9, 2023 at 3:30 PM Suren Baghdasaryan <surenb@google.com> wrote:
-> > > >
-> > > > On Fri, Jun 9, 2023 at 1:42 PM Peter Xu <peterx@redhat.com> wrote:
-> > > > >
-> > > > > On Thu, Jun 08, 2023 at 05:51:56PM -0700, Suren Baghdasaryan wrote:
-> > > > > > migration_entry_wait does not need VMA lock, therefore it can be dropped
-> > > > > > before waiting. Introduce VM_FAULT_VMA_UNLOCKED to indicate that VMA
-> > > > > > lock was dropped while in handle_mm_fault().
-> > > > > > Note that once VMA lock is dropped, the VMA reference can't be used as
-> > > > > > there are no guarantees it was not freed.
-> > > > >
-> > > > > Then vma lock behaves differently from mmap read lock, am I right?  Can we
-> > > > > still make them match on behaviors, or there's reason not to do so?
-> > > >
-> > > > I think we could match their behavior by also dropping mmap_lock here
-> > > > when fault is handled under mmap_lock (!(fault->flags &
-> > > > FAULT_FLAG_VMA_LOCK)).
-> > > > I missed the fact that VM_FAULT_COMPLETED can be used to skip dropping
-> > > > mmap_lock in do_page_fault(), so indeed, I might be able to use
-> > > > VM_FAULT_COMPLETED to skip vma_end_read(vma) for per-vma locks as well
-> > > > instead of introducing FAULT_FLAG_VMA_LOCK. I think that was your idea
-> > > > of reusing existing flags?
-> > > Sorry, I meant VM_FAULT_VMA_UNLOCKED, not FAULT_FLAG_VMA_LOCK in the
-> > > above reply.
-> > >
-> > > I took a closer look into using VM_FAULT_COMPLETED instead of
-> > > VM_FAULT_VMA_UNLOCKED but when we fall back from per-vma lock to
-> > > mmap_lock we need to retry with an indication that the per-vma lock
-> > > was dropped. Returning (VM_FAULT_RETRY | VM_FAULT_COMPLETE) to
-> > > indicate such state seems strange to me ("retry" and "complete" seem
-> >
-> > Not relevant to this migration patch, but for the whole idea I was thinking
-> > whether it should just work if we simply:
-> >
-> >         fault = handle_mm_fault(vma, address, flags | FAULT_FLAG_VMA_LOCK, regs);
-> > -       vma_end_read(vma);
-> > +       if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
-> > +               vma_end_read(vma);
-> >
-> > ?
+On Mon, Jun 12, 2023 at 01:35:26PM +0200, Jan Kara wrote:
+> On Sun 11-06-23 20:15:28, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > Jan Kara suggested that when one thread is in the middle of freezing a
+> > filesystem, another thread trying to freeze the same fs but with a
+> > different freeze_holder should wait until the freezer reaches either end
+> > state (UNFROZEN or COMPLETE) instead of returning EBUSY immediately.
+> > 
+> > Plumb in the extra coded needed to wait for the fs freezer to reach an
+> > end state and try the freeze again.
+> > 
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 > 
-> Today when we can't handle a page fault under per-vma locks we return
-> VM_FAULT_RETRY, in which case per-vma lock is dropped and the fault is
+> You can maybe copy my reasoning from my reply to your patch 1/3 to the
+> changelog to explain why waiting is more desirable.
 
-Oh I see what I missed.  I think it may not be a good idea to reuse
-VM_FAULT_RETRY just for that, because it makes VM_FAULT_RETRY even more
-complicated - now it adds one more case where the lock is not released,
-that's when PER_VMA even if !NOWAIT.
+Done.
 
-> retried under mmap_lock. The condition you suggest above would not
-> drop per-vma lock for VM_FAULT_RETRY case and would break the current
-> fallback mechanism.
-> However your suggestion gave me an idea. I could indicate that per-vma
-> lock got dropped using vmf structure (like Matthew suggested before)
-> and once handle_pte_fault(vmf) returns I could check if it returned
-> VM_FAULT_RETRY but per-vma lock is still held.
-> If that happens I can
-> call vma_end_read() before returning from __handle_mm_fault(). That
-> way any time handle_mm_fault() returns VM_FAULT_RETRY per-vma lock
-> will be already released, so your condition in do_page_fault() will
-> work correctly. That would eliminate the need for a new
-> VM_FAULT_VMA_UNLOCKED flag. WDYT?
+"Neither caller can do anything sensible with this race other than retry
+but they cannot really distinguish EBUSY as in "someone other holder of
+the same type has the sb already frozen" from "freezing raced with
+holder of a different type"
 
-Sounds good.
+is now added to the commit message.
 
-So probably that's the major pain for now with the legacy fallback (I'll
-have commented if I noticed it with the initial vma lock support..).  I
-assume that'll go away as long as we recover the VM_FAULT_RETRY semantics
-to before.
+> > @@ -1690,11 +1699,13 @@ static int freeze_frozen_super(struct super_block *sb, enum freeze_holder who)
+> >   */
+> >  int freeze_super(struct super_block *sb, enum freeze_holder who)
+> >  {
+> > +	bool try_again = true;
+> >  	int ret;
+> >  
+> >  	atomic_inc(&sb->s_active);
+> >  	down_write(&sb->s_umount);
+> >  
+> > +retry:
+> >  	if (sb->s_writers.frozen == SB_FREEZE_COMPLETE) {
+> >  		ret = freeze_frozen_super(sb, who);
+> >  		deactivate_locked_super(sb);
+> > @@ -1702,8 +1713,14 @@ int freeze_super(struct super_block *sb, enum freeze_holder who)
+> >  	}
+> >  
+> >  	if (sb->s_writers.frozen != SB_UNFROZEN) {
+> > -		deactivate_locked_super(sb);
+> > -		return -EBUSY;
+> > +		if (!try_again) {
+> > +			deactivate_locked_super(sb);
+> > +			return -EBUSY;
+> > +		}
+> 
+> Why only one retry? Do you envision someone will be freezing & thawing
+> filesystem so intensively that livelocks are possible?
 
--- 
-Peter Xu
+I was worried about that, but the more I think about it, the more I can
+convince myself that we can take the simpler approach of cycling
+s_umount until we get the state we want.
 
+> In that case I'd
+> think the system has other problems than freeze taking long... Honestly,
+> I'd be looping as long as we either succeed or return error for other
+> reasons.
+
+Ok.
+
+> What we could be doing to limit unnecessary waiting is that we'd update
+> freeze_holders already when we enter freeze_super() and lock s_umount
+> (bailing if our holder type is already set). That way we'd have at most one
+> process for each holder type freezing the fs / waiting for freezing to
+> complete.
+
+<shrug> I don't know how often we even really have threads contending
+for s_umount and elevated freeze state.  How about we go with the
+simpler wait_for_partially_frozen and see if complaints crop up?
+
+> > +
+> > +		wait_for_partially_frozen(sb);
+> > +		try_again = false;
+> > +		goto retry;
+> >  	}
+> >  
+> ...
+> > @@ -1810,6 +1831,7 @@ static int thaw_super_locked(struct super_block *sb, enum freeze_holder who)
+> >  	if (sb_rdonly(sb)) {
+> >  		sb->s_writers.freeze_holders &= ~who;
+> >  		sb->s_writers.frozen = SB_UNFROZEN;
+> > +		wake_up_var(&sb->s_writers.frozen);
+> >  		goto out;
+> >  	}
+> >  
+> > @@ -1828,6 +1850,7 @@ static int thaw_super_locked(struct super_block *sb, enum freeze_holder who)
+> >  
+> >  	sb->s_writers.freeze_holders &= ~who;
+> >  	sb->s_writers.frozen = SB_UNFROZEN;
+> > +	wake_up_var(&sb->s_writers.frozen);
+> >  	sb_freeze_unlock(sb, SB_FREEZE_FS);
+> >  out:
+> >  	wake_up(&sb->s_writers.wait_unfrozen);
+> 
+> I don't think wakeups on thaw are really needed because the waiter should
+> be woken already once the freezing task exits from freeze_super(). I guess
+> you've sprinkled them here just for good measure?
+
+I've changed wait_for_partially_frozen to cycle s_umount until we find
+the locked state we want, so the wake_up_var calls aren't needed
+anymore.
+
+--D
+
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
