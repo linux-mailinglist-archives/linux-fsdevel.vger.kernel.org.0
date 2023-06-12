@@ -2,42 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A046A72D17E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 23:06:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BF6672D17B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 23:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238780AbjFLVFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 17:05:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53210 "EHLO
+        id S238583AbjFLVFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 17:05:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238997AbjFLVEz (ORCPT
+        with ESMTP id S238926AbjFLVEu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 17:04:55 -0400
+        Mon, 12 Jun 2023 17:04:50 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E8E4216
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 14:02:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 525CF4200
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 14:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=txt62ANlIkQygLpGavEyhBItsoRiI+JGiyGc+VsF2/I=; b=tV6The7lOFSZXGB14T35A5+EPO
-        UsO8P5kjU2Ho3f1ASnPWU5NsccZhU6UlkxX7KswhXhsKk3da34R2ShBfTAK2r0FPy20I9Hmz7dtIE
-        NOJQrSXg8tRIfmMzignb6CdfppMxMjgL3tG3xpoNKz6V45WMmB1Mr+vUtFSkcuAuSoWi1SXF8nIZp
-        FyOHnzJ01QKsYZ7VPkQ7C2aJgu2al8vl1QR42nGxJfC7QflFVFav0aSTHtPjQBlIHxHMo2sMnd0JO
-        u3Gi1m6NNihgUSYHHJlSqzyHKTl/Jnv4XPpGoR/Szex7qgN5Nhca9ucwOg6mevbIfhVtJZhMvxEl5
-        IKSMmaVw==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=EpkciJE0cf4CC6YyIRSuST7oQ3gwfKQp0080Wo4Pa/0=; b=C3+jjQEVn2OUlfZ5Oej6JU0/7O
+        rfGfR40i0kzUs+6Dlo4+NN3CBovi6Av3Pu7NBuQaNYU3WPi8/8jmpmGGbrxPyutSoge7MU3WafIcE
+        fiARWufeiK1MAj3R5blXVQh8dRSNDr4C4RRZZ7iiuouelxQg7ipyycjscbim22q26SoBzVIDV0xIN
+        Shvi47XGZ2PhMp86yLH/oJKjggNuhFoG20Hxc2NMlc2f06Bfk7MGDqh8Rs9uRtHfpCrW51DzzPcTn
+        iJkqM9fDAfEd/Pa555tVLW/j8t5OqzF3WVgPVhQtT+fuyk/7U/cQIJXRsQQPuJyzGASnU7fNaygjr
+        ugOEB6eg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q8ofW-0033wc-R9; Mon, 12 Jun 2023 21:01:42 +0000
+        id 1q8ofW-0033we-Um; Mon, 12 Jun 2023 21:01:42 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         cluster-devel@redhat.com, Hannes Reinecke <hare@suse.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v3 00/14] gfs2/buffer folio changes for 6.5
-Date:   Mon, 12 Jun 2023 22:01:27 +0100
-Message-Id: <20230612210141.730128-1-willy@infradead.org>
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Subject: [PATCH v3 01/14] gfs2: Use a folio inside gfs2_jdata_writepage()
+Date:   Mon, 12 Jun 2023 22:01:28 +0100
+Message-Id: <20230612210141.730128-2-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20230612210141.730128-1-willy@infradead.org>
+References: <20230612210141.730128-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -50,46 +53,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This kind of started off as a gfs2 patch series, then became entwined
-with buffer heads once I realised that gfs2 was the only remaining
-caller of __block_write_full_page().  For those not in the gfs2 world,
-the big point of this series is that block_write_full_page() should now
-handle large folios correctly.
+Replace a few implicit calls to compound_head() with one explicit one.
 
-Andrew, if you want, I'll drop it into the pagecache tree, or you
-can just take it.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Tested-by: Bob Peterson <rpeterso@redhat.com>
+Reviewed-by: Bob Peterson <rpeterso@redhat.com>
+---
+ fs/gfs2/aops.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-v3:
- - Fix a patch title
- - Fix some checks against i_size to be >= instead of >
- - Call folio_mark_dirty() instead of folio_set_dirty()
-
-Matthew Wilcox (Oracle) (14):
-  gfs2: Use a folio inside gfs2_jdata_writepage()
-  gfs2: Pass a folio to __gfs2_jdata_write_folio()
-  gfs2: Convert gfs2_write_jdata_page() to gfs2_write_jdata_folio()
-  buffer: Convert __block_write_full_page() to
-    __block_write_full_folio()
-  gfs2: Support ludicrously large folios in gfs2_trans_add_databufs()
-  buffer: Make block_write_full_page() handle large folios correctly
-  buffer: Convert block_page_mkwrite() to use a folio
-  buffer: Convert __block_commit_write() to take a folio
-  buffer: Convert page_zero_new_buffers() to folio_zero_new_buffers()
-  buffer: Convert grow_dev_page() to use a folio
-  buffer: Convert init_page_buffers() to folio_init_buffers()
-  buffer: Convert link_dev_buffers to take a folio
-  buffer: Use a folio in __find_get_block_slow()
-  buffer: Convert block_truncate_page() to use a folio
-
- fs/buffer.c                 | 257 ++++++++++++++++++------------------
- fs/ext4/inode.c             |   4 +-
- fs/gfs2/aops.c              |  69 +++++-----
- fs/gfs2/aops.h              |   2 +-
- fs/ntfs/aops.c              |   2 +-
- fs/reiserfs/inode.c         |   9 +-
- include/linux/buffer_head.h |   4 +-
- 7 files changed, 172 insertions(+), 175 deletions(-)
-
+diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+index a5f4be6b9213..0518861df783 100644
+--- a/fs/gfs2/aops.c
++++ b/fs/gfs2/aops.c
+@@ -150,20 +150,21 @@ static int __gfs2_jdata_writepage(struct page *page, struct writeback_control *w
+ 
+ static int gfs2_jdata_writepage(struct page *page, struct writeback_control *wbc)
+ {
++	struct folio *folio = page_folio(page);
+ 	struct inode *inode = page->mapping->host;
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+ 	struct gfs2_sbd *sdp = GFS2_SB(inode);
+ 
+ 	if (gfs2_assert_withdraw(sdp, gfs2_glock_is_held_excl(ip->i_gl)))
+ 		goto out;
+-	if (PageChecked(page) || current->journal_info)
++	if (folio_test_checked(folio) || current->journal_info)
+ 		goto out_ignore;
+-	return __gfs2_jdata_writepage(page, wbc);
++	return __gfs2_jdata_writepage(&folio->page, wbc);
+ 
+ out_ignore:
+-	redirty_page_for_writepage(wbc, page);
++	folio_redirty_for_writepage(wbc, folio);
+ out:
+-	unlock_page(page);
++	folio_unlock(folio);
+ 	return 0;
+ }
+ 
 -- 
 2.39.2
 
