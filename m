@@ -2,212 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C33B72BB69
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 10:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD1D372BB9D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 11:04:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234230AbjFLI6F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 04:58:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
+        id S230192AbjFLJE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 05:04:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232029AbjFLI5l (ORCPT
+        with ESMTP id S230140AbjFLJD4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 04:57:41 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7554225
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 01:55:02 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 342042282D;
-        Mon, 12 Jun 2023 08:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1686560072; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qDceki86LNVYU5sUtCAYeG3DoPJsBtH8UeV2DRpE6w8=;
-        b=e4jtP8FhVEq8YmgjZzClVlffPrgsYlrx+9HcD85lp1SL7MhnM3ZOFhDNIsbefFBzUida8p
-        Af+/IL/GYMWLLOshEZ1BJdLenJWj4JilYfq3ctcTXYRCNmlufY7GVDxi/cQjJs7GYWAWYx
-        LUAsMKPAK4zuTY2duL3EqmIs0eXSPyw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1686560072;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qDceki86LNVYU5sUtCAYeG3DoPJsBtH8UeV2DRpE6w8=;
-        b=pNgQ5cjAFSb8u9kDrQm5cUgehMqRhfPNAJ9BSRdJs4aswFPTCL+7QSRBQyTTHTySG/kvfc
-        1b01SzQ+1qeoYqBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 26A7F138EC;
-        Mon, 12 Jun 2023 08:54:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Y2xkCUjdhmQnAgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 12 Jun 2023 08:54:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id AE3D4A0717; Mon, 12 Jun 2023 10:54:31 +0200 (CEST)
-Date:   Mon, 12 Jun 2023 10:54:31 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fsnotify: move fsnotify_open() hook into do_dentry_open()
-Message-ID: <20230612085431.ycbzjj7wk6qij3qf@quack3>
-References: <20230611122429.1499617-1-amir73il@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230611122429.1499617-1-amir73il@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Mon, 12 Jun 2023 05:03:56 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59C924686;
+        Mon, 12 Jun 2023 02:00:12 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1b3cc77ccbfso4626595ad.1;
+        Mon, 12 Jun 2023 02:00:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686560412; x=1689152412;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vwAnSv3gRombx0EqlbwbUh+TEz0wTaqk905f3XF/Ynw=;
+        b=KMSWjXpALt2LN4sAGcDkMRqaZGoCpMNbfqH7y54A1LAZBIPxTVwc3bY9a94K7zNnoP
+         gkszhUjq1OlDEol5P0DWbgf1qAyqnywoDDsMFt9Wm3lMHObbERvHLwRr8gzd5Ks/54sF
+         6vY8NuJp3QoY+9Ww/Oy2QKRUQLz/OSoD81xSeDfSvFm1Wnca43KD6CswXDmdLm152wwW
+         l1Sjh+/FZUktcMRH9EIcW6/Z5elXur8IhARbPHC16u1pKRuCtn1QVO5lE1m3Q+KAsdmH
+         9GiGY+L7dORJyEdILwWg/QbP1mMO5j/Uzlf0crXe1jp4sscegxjJm/h++zkOdD9Sk1wR
+         irYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686560412; x=1689152412;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vwAnSv3gRombx0EqlbwbUh+TEz0wTaqk905f3XF/Ynw=;
+        b=O9BPG+vLN6qlB22wKZCCgZEqWquLkQf2vmvuk0BhIDaUF4zDumbRhXlxWj8c1gbV9V
+         nhev6r6P404NcgZwrlVdu0WAftfbHMv1N51CeI6xStX2UkheaJm78ITlKp+cSro8GWdN
+         Ju65N0N73GVdMo6NEq/gEvgItV53KJxXf5Sv9kb7NWWXfC6QH0SPrfpnTKg1eEDDaF53
+         AdU1bV5bnr6DC8pN11nDI84WI/nmL8cimGd7WR0+yJo8UGV2ViJwHfqEsWNJe2OwYbW5
+         wdpGvkkbr6+JuVzAfg6pBsuYv7wPpzDoOmKt/qGqF0y7SWBVJC0lavFFYDchTjy6U8ga
+         w2wQ==
+X-Gm-Message-State: AC+VfDxaRdIoQZCZjw9VDl8Rh30dKYSKZp44a+RXN45oIRq2hrU2q5k6
+        IlRLLFsuv2Lnd5QCUhpRRMk=
+X-Google-Smtp-Source: ACHHUZ6foTcIrsFUqabvqs8ScvaYRDBKOHkybKdnGzWPKCmDHl2U7fJnFS0RQdqNByi7FOgQ9vlMhw==
+X-Received: by 2002:a17:902:cec5:b0:1aa:ef83:34be with SMTP id d5-20020a170902cec500b001aaef8334bemr6354597plg.47.1686560411666;
+        Mon, 12 Jun 2023 02:00:11 -0700 (PDT)
+Received: from dw-tp ([129.41.58.23])
+        by smtp.gmail.com with ESMTPSA id n6-20020a170902968600b001ae469ca0c0sm7702232plp.245.2023.06.12.02.00.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jun 2023 02:00:11 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 14:30:05 +0530
+Message-Id: <875y7thx7u.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [PATCHv9 6/6] iomap: Add per-block dirty state tracking to improve performance
+In-Reply-To: <ZIa7dFb42FkI5jgp@infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 11-06-23 15:24:29, Amir Goldstein wrote:
-> fsnotify_open() hook is called only from high level system calls
-> context and not called for the very many helpers to open files.
-> 
-> This may makes sense for many of the special file open cases, but it is
-> inconsistent with fsnotify_close() hook that is called for every last
-> fput() of on a file object with FMODE_OPENED.
-> 
-> As a result, it is possible to observe ACCESS, MODIFY and CLOSE events
-> without ever observing an OPEN event.
-> 
-> Fix this inconsistency by replacing all the fsnotify_open() hooks with
-> a single hook inside do_dentry_open().
-> 
-> If there are special cases that would like to opt-out of the possible
-> overhead of fsnotify() call in fsnotify_open(), they would probably also
-> want to avoid the overhead of fsnotify() call in the rest of the fsnotify
-> hooks, so they should be opening that file with the __FMODE_NONOTIFY flag.
-> 
-> However, in the majority of those cases, the s_fsnotify_connectors
-> optimization in fsnotify_parent() would be sufficient to avoid the
-> overhead of fsnotify() call anyway.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Christoph Hellwig <hch@infradead.org> writes:
 
-Thanks! The cleanup looks nice so I've applied it with the typo fixup from
-Christian. I have a slight worry this might break something subtle
-somewhere but after searching for a while I didn't find anything and the
-machine boots and ltp tests pass so it's worth a try :)
+> Just some nitpicks,
 
-								Honza
+Sure.
 
-> ---
-> 
-> Jan,
-> 
-> I found out about this problem when I tested the work to remove
-> FMODE_NONOTIFY from overlayfs internal files - even after I enabled
-> notifications on the underlying fs, the LTS tests [2] did not observe
-> the OPEN events.
-> 
-> Because this change is independent of the ovl work and has implications
-> on other subsystems as well (e.g. cachefiles), I think it is better
-> if the change came through your tree.
-> 
-> This change has a potential to regress some micro-benchmarks, so if
-> you could queue it up for soaking in linux-next that would be great.
-> 
-> Thanks,
-> Amir.
-> 
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20230609073239.957184-1-amir73il@gmail.com/
-> [2] https://github.com/amir73il/ltp/commits/ovl_encode_fid
-> 
->  fs/exec.c            | 5 -----
->  fs/fhandle.c         | 1 -
->  fs/open.c            | 6 +++++-
->  io_uring/openclose.c | 1 -
->  4 files changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index a466e797c8e2..238473de1ec5 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -152,8 +152,6 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
->  			 path_noexec(&file->f_path)))
->  		goto exit;
->  
-> -	fsnotify_open(file);
-> -
->  	error = -ENOEXEC;
->  
->  	read_lock(&binfmt_lock);
-> @@ -934,9 +932,6 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
->  	if (err)
->  		goto exit;
->  
-> -	if (name->name[0] != '\0')
-> -		fsnotify_open(file);
-> -
->  out:
->  	return file;
->  
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index fd0d6a3b3699..6ea8d35a9382 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -242,7 +242,6 @@ static long do_handle_open(int mountdirfd, struct file_handle __user *ufh,
->  		retval =  PTR_ERR(file);
->  	} else {
->  		retval = fd;
-> -		fsnotify_open(file);
->  		fd_install(fd, file);
->  	}
->  	path_put(&path);
-> diff --git a/fs/open.c b/fs/open.c
-> index 4478adcc4f3a..81444ebf6091 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -969,6 +969,11 @@ static int do_dentry_open(struct file *f,
->  		}
->  	}
->  
-> +	/*
-> +	 * Once we return a file with FMODE_OPENED, __fput() will call
-> +	 * fsnotify_close(), so we need fsnotify_open() here for symetry.
-> +	 */
-> +	fsnotify_open(f);
->  	return 0;
->  
->  cleanup_all:
-> @@ -1358,7 +1363,6 @@ static long do_sys_openat2(int dfd, const char __user *filename,
->  			put_unused_fd(fd);
->  			fd = PTR_ERR(f);
->  		} else {
-> -			fsnotify_open(f);
->  			fd_install(fd, f);
->  		}
->  	}
-> diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-> index a1b98c81a52d..10ca57f5bd24 100644
-> --- a/io_uring/openclose.c
-> +++ b/io_uring/openclose.c
-> @@ -150,7 +150,6 @@ int io_openat2(struct io_kiocb *req, unsigned int issue_flags)
->  
->  	if ((issue_flags & IO_URING_F_NONBLOCK) && !nonblock_set)
->  		file->f_flags &= ~O_NONBLOCK;
-> -	fsnotify_open(file);
->  
->  	if (!fixed)
->  		fd_install(ret, file);
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> this otherwise looks fine.
+
+Thanks for the review.
+
+>
+> First during the last patches ifs as a variable name has started
+> to really annoy me and I'm not sure why.  I'd like to hear from the
+> others, bu maybe just state might be a better name that flows easier?
+>
+
+Ok. Let's hear from others too.
+
+>> +static void iomap_clear_range_dirty(struct folio *folio, size_t off, size_t len)
+>> +{
+>> +	struct iomap_folio_state *ifs = iomap_get_ifs(folio);
+>> +
+>> +	if (!ifs)
+>> +		return;
+>> +	iomap_ifs_clear_range_dirty(folio, ifs, off, len);
+>
+> Maybe just do
+>
+> 	if (ifs)
+> 		iomap_ifs_clear_range_dirty(folio, ifs, off, len);
+>
+> ?
+
+Sure.
+
+>
+> But also do we even need the ifs argument to iomap_ifs_clear_range_dirty
+> after we've removed it everywhere else earlier?
+>
+
+Some of the previous discussions / reasoning behind it -
+
+- In one of the previous discussions we discussed that functions which
+has _ifs_ in their naming, then it generally should imply that we will
+be working on iomap_folio_state struct. So we should pass that as a
+argument.
+
+- Also in most of these *_ifs_* functions we have "ifs" as a non-null
+  function argument.
+
+- At some places where we are calling these _ifs_ functions, we
+already have derived ifs, so why not just pass it.
+
+FYI - We dropped "ifs" argument in one of the function which is
+iomap_set_range_uptodate(), because we would like this function
+to work in both cases.
+    1. When we have non-null folio->private (ifs)
+    2. When it is null.
+
+So API wise it looks good in my humble opinion. But sure, in
+case if someone has better ideas, I can look into that.
+
+>> +	/*
+>> +	 * When we have per-block dirty tracking, there can be
+>> +	 * blocks within a folio which are marked uptodate
+>> +	 * but not dirty. In that case it is necessary to punch
+>> +	 * out such blocks to avoid leaking any delalloc blocks.
+>> +	 */
+>> +	ifs = iomap_get_ifs(folio);
+>> +	if (!ifs)
+>> +		goto skip_ifs_punch;
+>> +
+>> +	last_byte = min_t(loff_t, end_byte - 1,
+>> +		(folio_next_index(folio) << PAGE_SHIFT) - 1);
+>> +	first_blk = offset_in_folio(folio, start_byte) >> blkbits;
+>> +	last_blk = offset_in_folio(folio, last_byte) >> blkbits;
+>> +	for (i = first_blk; i <= last_blk; i++) {
+>> +		if (!iomap_ifs_is_block_dirty(folio, ifs, i)) {
+>> +			ret = punch(inode, folio_pos(folio) + (i << blkbits),
+>> +				    1 << blkbits);
+>> +			if (ret)
+>> +				goto out;
+>> +		}
+>> +	}
+>> +
+>> +skip_ifs_punch:
+>
+> And happy to hear from the others, but to me having a helper for
+> all the iomap_folio_state manipulation rather than having it in
+> the middle of the function and jumped over if not needed would
+> improve the code structure.
+
+I think Darrick was also pointing towards having a separate funciton.
+But let's hear from him & others too. I can consider adding a separate
+function for above.
+
+Does this look good?
+
+static int iomap_write_delalloc_ifs_punch(struct inode *inode, struct folio *folio,
+		struct iomap_folio_state *ifs, loff_t start_byte, loff_t end_byte,
+		int (*punch)(struct inode *inode, loff_t offset, loff_t length))
+
+The function argument are kept similar to what we have for
+iomap_write_delalloc_punch(), except maybe *punch_start_byte (which is
+not required).
+
+-ritesh
