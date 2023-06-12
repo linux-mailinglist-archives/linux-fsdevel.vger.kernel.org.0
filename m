@@ -2,131 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD5AF72C4A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 14:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38AB372C533
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 14:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233014AbjFLMnP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 08:43:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34702 "EHLO
+        id S237248AbjFLM4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 08:56:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231699AbjFLMnP (ORCPT
+        with ESMTP id S236081AbjFLM43 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 08:43:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27DF8AA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 05:42:34 -0700 (PDT)
+        Mon, 12 Jun 2023 08:56:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43C193C0E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 05:54:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686573753;
+        s=mimecast20190719; t=1686574455;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=1ulHVPL3pXPIo5RmxEBnndl9GfORZdMhAtvNQZYsRb4=;
-        b=WmjMeOJKMHh1OTvcwOqTXBu2/ualUoHfz/11pTd609oDeKNona/kwssYZWhjb9pyJMzsQN
-        xTBBlnYMThu/81tzWzkHMNi9hZGI5Xr742Xk7mejBb+ieuMjotKZo8JHXPdo++xyBFXYdJ
-        2jaIebbjaOdxi2XBkWCBZoSfZ/phUiQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-296-0Iji5oMiMg2ltILwVs-T_Q-1; Mon, 12 Jun 2023 08:42:28 -0400
-X-MC-Unique: 0Iji5oMiMg2ltILwVs-T_Q-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2EBD21019CA2;
-        Mon, 12 Jun 2023 12:42:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9059F40D1B60;
-        Mon, 12 Jun 2023 12:42:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <202306120931.a9606b88-oliver.sang@intel.com>
-References: <202306120931.a9606b88-oliver.sang@intel.com>
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     dhowells@redhat.com, oe-lkp@lists.linux.dev, lkp@intel.com,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Matthew Wilcox" <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [axboe-block:for-6.5/block] [block] 1ccf164ec8: WARNING:at_mm/gup.c:#try_get_folio
+        bh=fz9whUJtpEY98j2Cwj5MhqkEs9MDaC4WXItYB7JCfUE=;
+        b=Hgp7xfDuOIVXI28qxWVFxIaaWwv2LrkV/mDe1PGgl+bA2n1+naQjRej//zniLD+V9bUgDI
+        RQuaW4nMYSdEc5fi29Iegvkk/asnUxJH78hx5RkMOba8aWZus2VH2gD+1jdcwpdH+0vzJE
+        XIeVYEAFcSXNehTtVo8FtYkgxfF4NSU=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-447-7zfpzOjnP-aa30FqC0fUBA-1; Mon, 12 Jun 2023 08:54:13 -0400
+X-MC-Unique: 7zfpzOjnP-aa30FqC0fUBA-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1b3be4189b4so7461365ad.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 05:54:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686574453; x=1689166453;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fz9whUJtpEY98j2Cwj5MhqkEs9MDaC4WXItYB7JCfUE=;
+        b=Z4lvymo5Fv13YN7oak9Uc3NS98oT6UyliLeNKgAef9szrNYrku5xl93KUMtoP7NRLr
+         kiF73NmZib6jpvwi7QXc+2kDP3Q3zLP1RYLpD2b5g+ZjwG4ZQ6/g/FCKoEbKRHXsaWmC
+         K+V+hZ1BTpoFKZNDSVn7D+ETSyM3TpfEQHLAsbltwklrKFLJKfNFN142hBgBpUbko4ao
+         ucehasAzP62y+wxzQUfuQn0ieUedVVuzc7UT0r6GcA5FD/zSmeD2WI5A8CnWnlQMDt1k
+         IBD09gWZRr2UOtZ8W6N01qHiyYcrUUjXojoSLh2xQwm20bh7g1SLi6UnwFBsSa2lLJjs
+         RRiA==
+X-Gm-Message-State: AC+VfDzIioL4IKTptp9pquacvdnh98XSkmSqXSw7BNxAEjmrK9T7+2y4
+        OKvtmk0QyLH8BS4mcqca3DcHprUgF7NvKyuP0IS5tQmHf21mm+QpPRQUaDfWWcSkYtwQX6F4Qph
+        Q1DZS48Jj8d4z8aMbE+g7na1Cz/5h4K1ucBmKs0ICjg==
+X-Received: by 2002:a17:902:d4c2:b0:1b2:5ade:9ebb with SMTP id o2-20020a170902d4c200b001b25ade9ebbmr6912403plg.2.1686574452876;
+        Mon, 12 Jun 2023 05:54:12 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5xN/2g6GJ+QxqHMvmL8Vs4i0rNTTLHb/2VRjjZXB3sAPZjZomoBxDOJKDPLadM3sAR3eMiX8hCHG5JLuLN13Y=
+X-Received: by 2002:a17:902:d4c2:b0:1b2:5ade:9ebb with SMTP id
+ o2-20020a170902d4c200b001b25ade9ebbmr6912392plg.2.1686574452592; Mon, 12 Jun
+ 2023 05:54:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <108490.1686573741.1@warthog.procyon.org.uk>
-Date:   Mon, 12 Jun 2023 13:42:21 +0100
-Message-ID: <108491.1686573741@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+References: <cover.1686395560.git.ritesh.list@gmail.com> <606c3279db7cc189dd3cd94d162a056c23b67514.1686395560.git.ritesh.list@gmail.com>
+ <ZIa6WLknzuxoDDT8@infradead.org>
+In-Reply-To: <ZIa6WLknzuxoDDT8@infradead.org>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Mon, 12 Jun 2023 14:54:00 +0200
+Message-ID: <CAHc6FU5xMQfGPuTBDChS=w2+t4KAbu9po7yE+7qGaLTzV-+AFw@mail.gmail.com>
+Subject: Re: [PATCHv9 3/6] iomap: Add some uptodate state handling helpers for
+ ifs state bitmap
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The attached test reproduces the problem on a loop-back mounted file
-containing a UDF filesystem.  The key appears to be the consecutive DIOs to
-the same page.
+On Mon, Jun 12, 2023 at 8:25=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+> On Sat, Jun 10, 2023 at 05:09:04PM +0530, Ritesh Harjani (IBM) wrote:
+> > This patch adds two of the helper routines iomap_ifs_is_fully_uptodate(=
+)
+> > and iomap_ifs_is_block_uptodate() for managing uptodate state of
+> > ifs state bitmap.
+> >
+> > In later patches ifs state bitmap array will also handle dirty state of=
+ all
+> > blocks of a folio. Hence this patch adds some helper routines for handl=
+ing
+> > uptodate state of the ifs state bitmap.
+> >
+> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > ---
+> >  fs/iomap/buffered-io.c | 28 ++++++++++++++++++++--------
+> >  1 file changed, 20 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index e237f2b786bc..206808f6e818 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -43,6 +43,20 @@ static inline struct iomap_folio_state *iomap_get_if=
+s(struct folio *folio)
+> >
+> >  static struct bio_set iomap_ioend_bioset;
+> >
+> > +static inline bool iomap_ifs_is_fully_uptodate(struct folio *folio,
+> > +                                            struct iomap_folio_state *=
+ifs)
+> > +{
+> > +     struct inode *inode =3D folio->mapping->host;
+> > +
+> > +     return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
+> > +}
+> > +
+> > +static inline bool iomap_ifs_is_block_uptodate(struct iomap_folio_stat=
+e *ifs,
+> > +                                            unsigned int block)
+> > +{
+> > +     return test_bit(block, ifs->state);
 
-David
----
-#define __USE_GNU
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <err.h>
-# define O_DIRECT      040000
+"block_is_uptodate" instead of "is_block_uptodate" here as well, please.
 
-static char buf[256 * 1024] __attribute__((aligned(512)));
-static char *filename;
+Also see by previous mail about iomap_ifs_is_block_uptodate().
 
-static void cleanup(void)
-{
-	if (unlink(filename) == -1)
-		err(1, "unlink");
-}
+> > +}
+>
+> A little nitpicky, but do the _ifs_ name compenents here really add
+> value?
 
-int main(int argc, char **argv)
-{
-	size_t page = 4096;
-	int fd;
+Since we're at the nitpicking, I don't find those names very useful,
+either. How about the following instead?
 
-	if (argc != 2) {
-		fprintf(stderr, "Format: %s <file>\n", argv[1]);
-		exit(2);
-	}
+iomap_ifs_alloc -> iomap_folio_state_alloc
+iomap_ifs_free -> iomap_folio_state_free
+iomap_ifs_calc_range -> iomap_folio_state_calc_range
 
-	filename = argv[1];
+iomap_ifs_is_fully_uptodate -> iomap_folio_is_fully_uptodate
+iomap_ifs_is_block_uptodate -> iomap_block_is_uptodate
+iomap_ifs_is_block_dirty -> iomap_block_is_dirty
 
-	fd = open(filename, O_RDWR | O_CREAT | O_EXCL | O_DIRECT, 0666);
-	if (fd == -1)
-		err(1, "%s", filename);
+iomap_ifs_set_range_uptodate -> __iomap_set_range_uptodate
+iomap_ifs_clear_range_dirty -> __iomap_clear_range_dirty
+iomap_ifs_set_range_dirty -> __iomap_set_range_dirty
 
-	atexit(cleanup);
-
-	if (pwrite(fd, buf, page, 0) != page)
-		err(1, "pwrite/1");
-
-	if (pwrite(fd, buf, page, page) != page)
-		err(1, "pwrite/2");
-
-	if (close(fd) == -1)
-		err(1, "close");
-
-	return 0;
-}
+Thanks,
+Andreas
 
