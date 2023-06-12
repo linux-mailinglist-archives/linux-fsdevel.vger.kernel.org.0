@@ -2,81 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB8D672B492
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 00:17:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06FFB72B526
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 03:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231664AbjFKWR3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Jun 2023 18:17:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34522 "EHLO
+        id S232117AbjFLBlv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Jun 2023 21:41:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjFKWR2 (ORCPT
+        with ESMTP id S229531AbjFLBlt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jun 2023 18:17:28 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 209A6E4E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jun 2023 15:17:28 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-77760439873so477431039f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jun 2023 15:17:28 -0700 (PDT)
+        Sun, 11 Jun 2023 21:41:49 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E80C7;
+        Sun, 11 Jun 2023 18:41:48 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-6537d2a8c20so3025284b3a.2;
+        Sun, 11 Jun 2023 18:41:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686534107; x=1689126107;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yopFSgNdaN//0wszcig4teNnA065e5aIyJpZ3l6KI2Y=;
+        b=DqASSGU8054Ojl4Rp41Eu/AmjYA9jTSyaEJ0cT4Ok9haxIh7MnmOLTwG9MBAEI8LPl
+         FKGFpjsxHXwnExkVBlW5jrYbY1nZqzFZnDQxVk2Mq1G2B1D1Iz5/ycZl92w921k6aNBI
+         nlR3oS+J1LhledE6iR2o6PWPq3zPjFK/qL/iGluaDWpJdqyRvDWI1tD7QRtcVWVYXlgw
+         ERPqU8XoDjjFIVqIyhWizvwdlyzIMmId3RwgXncXMZ02L8OpyReC9xryVc8H6eW98Azc
+         nrIYr1yFfeSrDGJbt4HM3vAZ4Jte68RK47V/GK3oFmdQcqqf8qqV5z4yQkNHUmAJAOML
+         EO0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686521847; x=1689113847;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tb0ZpKp5Xcf7c2M/6Lg/dqUujad/vr5X4auVnTDjdJ0=;
-        b=iVZCxcsYHpP8B0pmgklOU3NTfblydWVA1CviQMMEGQxAnMdZq/DZFSs5rpbg96bmEH
-         Bj/cHRtABpNE22mWViyQCXv9JY0oc4bJe+ZkQPTRHs/H1tIEfyzUjN05KImMDn7m9+KA
-         9pTIc2VmGq0OFnkbbwZ8qPCyoqsjTfjpSex4HhScHgAJYuz1xuZRoKZUdb4v7bI0cYl/
-         kMCleC3S7mfdi9w0Yht8uz6qyjqgQxddnS8G6bvS9t97HfEOk6q6d0JwSXkObONrG4+y
-         bu6VaFfGfhtDR/VcwfWfxnHPHb6U/AApQzWugCJIIlqHwgCXXBDO+etK7gC3SapyufG3
-         sLyA==
-X-Gm-Message-State: AC+VfDysi7GrPKyxieEdHKR80BJrLxcOjXfOrGA9kb++TInk50+KceLa
-        KMmVMFEDF6EOykRr7MYNVYzQGTLtv0cLJnnYXZkBrKCg5lZa
-X-Google-Smtp-Source: ACHHUZ76jxhpMkdSOWymiIXSmAP6nlbvMNMejA6KYO29dhEW02hKZhueWLXvaOgfjmygw/0Wl9A7WAYJqR30bFmRG9ZnFevqGqT/
+        d=1e100.net; s=20221208; t=1686534107; x=1689126107;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yopFSgNdaN//0wszcig4teNnA065e5aIyJpZ3l6KI2Y=;
+        b=MC+zpvDZ4oSqAJUNxN0NjOcQSKGTn259ilXtqvLc1fxpLY61EuS/jQzv91aGjpLYTf
+         IWPcf7yladti8qLm6Fu1Bt3AOs/CFw/15y9quEQuPlted8pMganXUUTihKzo8YUakTOW
+         F3fR+b4AjEyxgLwH0YDEsu/V9j1EmIAzNsMDYk9vhDTZJ3Eh4cmSN6vPlI5LSrxd8Mzg
+         dRDPqVEZ4+RNsd0ayp+9RhGu9DNSHeJvmL8TIWZrxSL0Z4y7T72xXk0gDIJF7ZWtuhFq
+         ttKAMrWwxYcVcsbFg7zaLV7EdUUooR1SSHQL/4+LIrb25EUTGaFpOingWQpj+z4cjIOy
+         mlpQ==
+X-Gm-Message-State: AC+VfDxE5u3+njANwR4YVMmIHYSFxO3rWcrswc0gtl74aqvQOoR/y4+h
+        hlZ0d+cXCHfrjQ51/xbDD7o=
+X-Google-Smtp-Source: ACHHUZ6F08vBBoX4T/x09Do29EIHP3a1t6uCNlx2RFx9MU/8OcrMmTEmgkGCtC7CKgkw3zbk3GyT/w==
+X-Received: by 2002:a05:6a20:8f04:b0:110:9b0b:71ab with SMTP id b4-20020a056a208f0400b001109b0b71abmr10344083pzk.40.1686534107283;
+        Sun, 11 Jun 2023 18:41:47 -0700 (PDT)
+Received: from debian.me (subs02-180-214-232-80.three.co.id. [180.214.232.80])
+        by smtp.gmail.com with ESMTPSA id z17-20020a631911000000b00548fb73874asm4790988pgl.37.2023.06.11.18.41.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Jun 2023 18:41:46 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 211C2106B23; Mon, 12 Jun 2023 08:41:43 +0700 (WIB)
+Date:   Mon, 12 Jun 2023 08:41:42 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Shaomin Deng <dengshaomin@cdjrlc.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mao Zhu <zhumao001@208suo.com>
+Subject: Re: [PATCH] fs: Fix comment typo
+Message-ID: <ZIZ31kVtPmaYBqa0@debian.me>
+References: <20230611123314.5282-1-dengshaomin@cdjrlc.com>
+ <ZIXEHHvkJVlmE_c4@debian.me>
+ <87edmhok1h.fsf@meer.lwn.net>
 MIME-Version: 1.0
-X-Received: by 2002:a02:735d:0:b0:420:cbe4:af62 with SMTP id
- a29-20020a02735d000000b00420cbe4af62mr2890400jae.5.1686521847528; Sun, 11 Jun
- 2023 15:17:27 -0700 (PDT)
-Date:   Sun, 11 Jun 2023 15:17:27 -0700
-In-Reply-To: <000000000000b0cabf05f90bcb15@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a0c29605fde1f706@google.com>
-Subject: Re: [syzbot] [ntfs3?] general protection fault in ni_readpage_cmpr
-From:   syzbot <syzbot+af224b63e76b2d869bc3@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org,
-        almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        neilb@suse.de, ntfs3@lists.linux.dev,
-        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="FGXs17wAABqF2OWs"
+Content-Disposition: inline
+In-Reply-To: <87edmhok1h.fsf@meer.lwn.net>
+X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_SORBS_WEB,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
 
-commit 9fd472af84abd6da15376353c2283b3df9497646
-Author: NeilBrown <neilb@suse.de>
-Date:   Tue Mar 22 21:38:54 2022 +0000
+--FGXs17wAABqF2OWs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    mm: improve cleanup when ->readpages doesn't process all pages
+On Sun, Jun 11, 2023 at 01:50:34PM -0600, Jonathan Corbet wrote:
+> Bagas Sanjaya <bagasdotme@gmail.com> writes:
+>=20
+> > On Sun, Jun 11, 2023 at 08:33:14AM -0400, Shaomin Deng wrote:
+> >> From: Mao Zhu <zhumao001@208suo.com>
+> >>=20
+> >> Delete duplicated word in comment.
+> >
+> > On what function?
+>=20
+> Bagas, do I *really* have to ask you, yet again, to stop nitpicking our
+> contributors into the ground?  It appears I do.  So:
+>=20
+> Bagas, *stop* this.  It's a typo patch removing an extraneous word.  The
+> changelog is fine.  We absolutely do not need you playing changelog cop
+> and harassing contributors over this kind of thing.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1285d453280000
-start commit:   64569520920a Merge tag 'block-6.4-2023-06-09' of git://git..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1185d453280000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1685d453280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c980bfe8b399968
-dashboard link: https://syzkaller.appspot.com/bug?extid=af224b63e76b2d869bc3
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15835795280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16966d43280000
+OK, thanks for reminding me again.
 
-Reported-by: syzbot+af224b63e76b2d869bc3@syzkaller.appspotmail.com
-Fixes: 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't process all pages")
+At the time of reviewing, I had bad feeling that @cdjrlc.com people will
+ignore review comments (I betted due to mail setup problem that prevents
+them from properly repling to mailing lists, which is unfortunate). I
+was nitpicking because the diff context doesn't look clear to me (what
+function name?).
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>=20
+> >> Signed-off-by: Mao Zhu <zhumao001@208suo.com>
+> >
+> > You're carrying someone else's patch, so besides SoB from original
+> > author, you need to also have your own SoB.
+>=20
+> This, instead, is a valid problem that needs to be fixed.
+
+OK.
+
+Sorry for my inconvenience.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--FGXs17wAABqF2OWs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZIZ31gAKCRD2uYlJVVFO
+oxQkAQD/hoO/EDmJSjuflzqFnpSdkF1t/o215NOR4w7GAu2RUwD/TkrHHm+FiR4L
+J5tKq3R8DIFZrBrP4yfaUIkP3SMwuQk=
+=tNfU
+-----END PGP SIGNATURE-----
+
+--FGXs17wAABqF2OWs--
