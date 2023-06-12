@@ -2,68 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C357572B819
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 08:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6583472B81D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 08:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234307AbjFLGdH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 02:33:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54444 "EHLO
+        id S234312AbjFLGeL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 02:34:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231735AbjFLGdG (ORCPT
+        with ESMTP id S232490AbjFLGeJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 02:33:06 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64121985;
-        Sun, 11 Jun 2023 23:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=C57FyCt4CRCDjZL14oYvXlpnAQ8G4WQRCFNwmK9CzOM=; b=LAmOOvi9qr0AHJW/iFSZQE5I9C
-        XzJ58aLU7U6sQm4uFKYqSkVmnakZqgiqn82N1EcETKIpQl3yH2/woRTQXjFi8HaKT/OfWFIktz5kH
-        meLwEpVMyXsF4fumXsH4aQ2II/aSYFIoUV6zwvsjk+cb9tW2PATDtzRYDIo2+9rS6OMQLQScWK91h
-        seUkpAIwewzeVe3ZycP6RlfutMj9OwCA69DmAOQ+XNoshrRVyhdEF25Efh8MpRqbI6iE/unHt8g23
-        a8xMtmzb8eSC7yZo+LCOFi7Uo4T6VsJg+RB0m3mqft8rw6hBruWDWPvJfP+WnYad2QbFyjCjguru/
-        L1qCrdBQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q8b00-002lBX-1J;
-        Mon, 12 Jun 2023 06:25:56 +0000
-Date:   Sun, 11 Jun 2023 23:25:56 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [PATCHv9 4/6] iomap: Refactor iomap_write_delalloc_punch()
- function out
-Message-ID: <ZIa6dD5HZ6etVIe+@infradead.org>
-References: <cover.1686395560.git.ritesh.list@gmail.com>
- <62950460a9e78804df28c548327d779a8d53243f.1686395560.git.ritesh.list@gmail.com>
+        Mon, 12 Jun 2023 02:34:09 -0400
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE3C019B7;
+        Sun, 11 Jun 2023 23:29:08 -0700 (PDT)
+Received: by mail-vs1-xe2e.google.com with SMTP id ada2fe7eead31-43b315e9024so935405137.2;
+        Sun, 11 Jun 2023 23:29:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686551331; x=1689143331;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=euWXaE16F/ugXUu2AMUYqNLZJYAVWQN5GTNPdv6gWGc=;
+        b=hdrvreR3hj3GLhn/ltW6PDGaxlXrGXPokfn8710KKG3uWPZlswzLpw7a6pF7hVNrXF
+         Br2As/6Szm4hK0ARKrMplFQlvP0EeuuiTjtdVbdnPAM8WR+AnY0tmi1n2mxy7tEa3+J/
+         IK//Lx6M0Uozg5HuODNjf2194R33ivf+s5V8VqLEKRDPSSj0U6VdCZCMQWgs0NVP+S6a
+         Pnc/JdH6lW7eQo9mts/V05L4nLMwO026lieATDFrH2and6Q5zemw/PXHYE0+zT+FuKmS
+         s5hS9SMf/4xTuHgO0HzEISJlS7wdYxHA4HqjbPS0K+L1yndpF9FMETtr4541o7L3VaZl
+         nsJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686551331; x=1689143331;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=euWXaE16F/ugXUu2AMUYqNLZJYAVWQN5GTNPdv6gWGc=;
+        b=MfDvhRKR+tSnDmv/KPMsbxtwD5ec1uj0S/woA78lDLUGLvt7A01NebyaDBhDhmuS74
+         bxYbxEMygJ1tTz8TrZRGoj9MBv0PmjqzVEQxs6j0bnSssGq3rGt7je1+fN+qTiWNmQxE
+         dLtjrrzhim8bmF1w0Lfq19Nrm0x64i54og6LV8aSwz2EBynJi9X6m+yqG8YxzJGbPsjN
+         uKF4s5SHW6BmDZQYHbdA6WpZ/8lRHyuilv9dwlDnEmx9GB4TVeYjx3m8d8w0t2IEBwuR
+         1EwGUrMs1+Un2DFVl9hO7PlsqM0PIU17qW3Vz+d9faMritGJkJh8Ge4xynIq/pLQbKZd
+         io8g==
+X-Gm-Message-State: AC+VfDx93WhCLHUH6wDjXlIvdjEs3fyYrE2yZ852zMberKY5oqLd9S68
+        mmZNFYqeATJYcDJfqALCsIlDbpeysdAaGbTNeMw=
+X-Google-Smtp-Source: ACHHUZ4pAAxHXnucW983HrU5rBUAk9CQd/Vt3QT3607XLv5TJ1gwDnE3t9W2M8iRjZJleCzVYQXttl78ah/rkL+ZYDY=
+X-Received: by 2002:a67:fd75:0:b0:43b:240f:b92e with SMTP id
+ h21-20020a67fd75000000b0043b240fb92emr2803174vsa.18.1686551331374; Sun, 11
+ Jun 2023 23:28:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62950460a9e78804df28c548327d779a8d53243f.1686395560.git.ritesh.list@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20230611132732.1502040-1-amir73il@gmail.com> <20230611132732.1502040-3-amir73il@gmail.com>
+ <ZIagx5ObeBDeXmni@infradead.org>
+In-Reply-To: <ZIagx5ObeBDeXmni@infradead.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 12 Jun 2023 09:28:40 +0300
+Message-ID: <CAOQ4uxjm4nXc4cHFCnk69RC2yshBmFBxMTuVxH3QQRm_6LRcSw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] fs: introduce f_real_path() helper
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 10, 2023 at 05:09:05PM +0530, Ritesh Harjani (IBM) wrote:
-> This patch factors iomap_write_delalloc_punch() function out. This function
-> is resposible for actual punch out operation.
-> The reason for doing this is, to avoid deep indentation when we bring punch-out
-> of individual non-dirty blocks within a dirty folio in a later patch
-> (which adds per-block dirty status handling to iomap) to avoid delalloc block
-> leak.
+On Mon, Jun 12, 2023 at 7:36=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Sun, Jun 11, 2023 at 04:27:31PM +0300, Amir Goldstein wrote:
+> > Overlayfs knows the real path of underlying dentries.  Add an optional
+> > struct vfsmount out argument to ->d_real(), so callers could compose th=
+e
+> > real path.
+> >
+> > Add a helper f_real_path() that uses this new interface to return the
+> > real path of f_inode, for overlayfs internal files whose f_path if a
+> > "fake" overlayfs path and f_inode is the underlying real inode.
+>
+> I really don't like this ->d_real nagic.  Most callers of it
+> really can't ever be on overlayfs.
 
-A bunch of overly long lines in the commit message here,
-but otherwise this looks good:
+Which callers are you referring to?
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> So I'd suggest we do an audit
+> of the callers of file_dentry and drop all the pointless ones
+> first, and improve the documentation on when to use it.
 
+Well, v3 is trying to reduce ->d_real() magic and the step
+after introducing the alternative path container is to convert
+file_dentry() to use the stored real_path instead of ->d_real().
+
+But I agree that the documentation about this black magic is
+missing. Will try to improve that with the move to the "fake"
+file container.
+
+Thanks,
+Amir.
