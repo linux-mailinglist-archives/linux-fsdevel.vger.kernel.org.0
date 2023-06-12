@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E1C72C18D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 12:59:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71D7672C0D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 12:55:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236716AbjFLK7G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 06:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60334 "EHLO
+        id S236425AbjFLKyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 06:54:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237066AbjFLK5v (ORCPT
+        with ESMTP id S236213AbjFLKy0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 06:57:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F83D59D0;
-        Mon, 12 Jun 2023 03:45:54 -0700 (PDT)
+        Mon, 12 Jun 2023 06:54:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DCB611DA2;
+        Mon, 12 Jun 2023 03:40:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EB38862457;
-        Mon, 12 Jun 2023 10:45:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B31AC433EF;
-        Mon, 12 Jun 2023 10:45:52 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E792D614F0;
+        Mon, 12 Jun 2023 10:40:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08605C433D2;
+        Mon, 12 Jun 2023 10:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1686566753;
-        bh=nwfWQVFmTNWu2uOBjbkILUhJfQQkyxTQ7VrX+DjFMts=;
+        s=korg; t=1686566435;
+        bh=uoI8i4vfw8cdfeNOmJzsdgmfSxLTaS/cT8pMzKhzaJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0dYfK+DLYYKGYbDJdQeNzwT0z9KNHMs1LbaF0DSQ0qv7l9vkd6WIEpnCbOOll/JvX
-         fiOdeHU5KBlHZ1d/CsM9EhH0g+74Z8xvUM54QjZLn6HQvu70hHatB6FOkMYmCkx4lA
-         Zjr1nkrgaYF8+njhjv7A6X/7WhgyQynltdSpm/XA=
+        b=iAjf0RLFtpaNv2XIUkxbQZe/nsWtgs7VUX9uLZNQjWieCzXLVipTPbnjhj5gCnduc
+         U89X0BEAdpXURz2SXJraHfk5TW/BmwkAC7ZZmBLy8oeIhhUkMGYzjqQ1AHUVBdtCBm
+         8yaXm1+445JPZBQBZWMjiK7ZkH9mS7P2bvowuDiM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,18 +38,18 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.3 005/160] afs: Fix setting of mtime when creating a file/dir/symlink
-Date:   Mon, 12 Jun 2023 12:25:37 +0200
-Message-ID: <20230612101715.379774066@linuxfoundation.org>
+Subject: [PATCH 6.1 007/132] afs: Fix setting of mtime when creating a file/dir/symlink
+Date:   Mon, 12 Jun 2023 12:25:41 +0200
+Message-ID: <20230612101710.635514514@linuxfoundation.org>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230612101715.129581706@linuxfoundation.org>
-References: <20230612101715.129581706@linuxfoundation.org>
+In-Reply-To: <20230612101710.279705932@linuxfoundation.org>
+References: <20230612101710.279705932@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -84,10 +84,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+)
 
 diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index a97499fd747b6..93e8b06ef76a6 100644
+index f73b2f62afaae..07dc4ec73520c 100644
 --- a/fs/afs/dir.c
 +++ b/fs/afs/dir.c
-@@ -1358,6 +1358,7 @@ static int afs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+@@ -1357,6 +1357,7 @@ static int afs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
  	op->dentry	= dentry;
  	op->create.mode	= S_IFDIR | mode;
  	op->create.reason = afs_edit_dir_for_mkdir;
@@ -95,7 +95,7 @@ index a97499fd747b6..93e8b06ef76a6 100644
  	op->ops		= &afs_mkdir_operation;
  	return afs_do_sync_operation(op);
  }
-@@ -1661,6 +1662,7 @@ static int afs_create(struct mnt_idmap *idmap, struct inode *dir,
+@@ -1660,6 +1661,7 @@ static int afs_create(struct user_namespace *mnt_userns, struct inode *dir,
  	op->dentry	= dentry;
  	op->create.mode	= S_IFREG | mode;
  	op->create.reason = afs_edit_dir_for_create;
@@ -103,7 +103,7 @@ index a97499fd747b6..93e8b06ef76a6 100644
  	op->ops		= &afs_create_operation;
  	return afs_do_sync_operation(op);
  
-@@ -1796,6 +1798,7 @@ static int afs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+@@ -1795,6 +1797,7 @@ static int afs_symlink(struct user_namespace *mnt_userns, struct inode *dir,
  	op->ops			= &afs_symlink_operation;
  	op->create.reason	= afs_edit_dir_for_symlink;
  	op->create.symlink	= content;
