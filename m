@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0451D72C175
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 12:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CED372C191
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 12:59:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237350AbjFLK6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 06:58:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60274 "EHLO
+        id S236446AbjFLK7E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 06:59:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237104AbjFLK5q (ORCPT
+        with ESMTP id S236646AbjFLK5u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 06:57:46 -0400
+        Mon, 12 Jun 2023 06:57:50 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C820B127C4;
-        Mon, 12 Jun 2023 03:45:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69FD759D1;
+        Mon, 12 Jun 2023 03:45:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4D3C562418;
-        Mon, 12 Jun 2023 10:45:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF9EC4339B;
-        Mon, 12 Jun 2023 10:45:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7A6D862451;
+        Mon, 12 Jun 2023 10:45:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03C7EC4339C;
+        Mon, 12 Jun 2023 10:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686566747;
-        bh=KX7S7KoBIOHdIFvOtciMzqUF0ZVLgZ3kkDz1+nuzm5g=;
+        s=k20201202; t=1686566750;
+        bh=wKObH6RqfDSKn8NJ5P1Az5k/GApq/hL/pKFLfNG4hQ4=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=oz4WHLbO2jQN18Ove6Yj01Q8O4ys1wPwCmlNiLDNkmgWHI4GseN0zZLHEM92GYoGu
-         boxFJi841L5bbyrUSD3RGup9DgX4l4qriaT0pGf+w6tErLMj+72DpzQ0vSvdMBFlbu
-         KXSDAZv890DWx+cavMPVeGecLZIAIS0tENSJ08AMARyzUalS9uU1veHX9UzzI6FQoK
-         GQ5IcM6JEkKLV02OZ7r4bZ+rjgcKQTK9aoJXpooAwIGA1rf40OBNSpEW02hvFu/dDK
-         7SNhtVCZvEX/ybEeXtinwolY6QwBsyPmrCP8B9kIeImVk/kMoxXe8UPrCWqnyVaGqr
-         GlER8Exgmr4Sg==
+        b=LmmZkhNyD5zDhN30iflITZjik39GhWUe9Zp2752cKSdJF2l1rVLjseSvmT8FZAnUW
+         Tt+Rk6fBUYPjKCd4SxlgSiLiIF8+vtYo5Sb5QtZpNg3apDbKEGO4QI+cdJ3s+yXJw9
+         Bi8/f7AqA8ESRTQKcBuEh6nTtDgtKi4wFVDK8wQLx0Zo25LDolbf5jZMc1ZTwyb7pe
+         0dKP/F7COKkhUtTASLHTMB7PzYC874EBAcrWbqIGcZW5hdEJiHjrXkVqvdBBmZWCPM
+         ITZ9AnpeSKjuXFRWezYx5SYvEEwPZRK+EnpN6qR/ONpj6ISjGT7cQvL7MV0db9dJMg
+         f0/ADoTJDBpSw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Christian Brauner <brauner@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -63,9 +63,9 @@ To:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, apparmor@lists.ubuntu.com,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v2 6/8] exfat: ensure that ctime is updated whenever the mtime is
-Date:   Mon, 12 Jun 2023 06:45:22 -0400
-Message-Id: <20230612104524.17058-7-jlayton@kernel.org>
+Subject: [PATCH v2 7/8] apparmor: update ctime whenever the mtime changes on an inode
+Date:   Mon, 12 Jun 2023 06:45:23 -0400
+Message-Id: <20230612104524.17058-8-jlayton@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230612104524.17058-1-jlayton@kernel.org>
 References: <20230612104524.17058-1-jlayton@kernel.org>
@@ -81,54 +81,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When removing entries from a directory, the ctime must also be updated
-alongside the mtime.
+In general, when updating the mtime on an inode, one must also update
+the ctime. Add the missing ctime updates.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/exfat/namei.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ security/apparmor/apparmorfs.c    |  7 +++++--
+ security/apparmor/policy_unpack.c | 11 +++++++----
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index e0ff9d156f6f..d9b46fa36bff 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -817,7 +817,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
- 	ei->dir.dir = DIR_DELETED;
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index db7a51acf9db..c06053718836 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -1554,8 +1554,11 @@ void __aafs_profile_migrate_dents(struct aa_profile *old,
  
- 	inode_inc_iversion(dir);
--	dir->i_mtime = dir->i_atime = current_time(dir);
-+	dir->i_mtime = dir->i_atime = dir->i_ctime = current_time(dir);
- 	exfat_truncate_atime(&dir->i_atime);
- 	if (IS_DIRSYNC(dir))
- 		exfat_sync_inode(dir);
-@@ -825,7 +825,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
- 		mark_inode_dirty(dir);
+ 	for (i = 0; i < AAFS_PROF_SIZEOF; i++) {
+ 		new->dents[i] = old->dents[i];
+-		if (new->dents[i])
+-			new->dents[i]->d_inode->i_mtime = current_time(new->dents[i]->d_inode);
++		if (new->dents[i]) {
++			struct inode *inode = d_inode(new->dents[i]);
++
++			inode->i_mtime = inode->i_ctime = current_time(inode);
++		}
+ 		old->dents[i] = NULL;
+ 	}
+ }
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index cf2ceec40b28..48a97c1800b9 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -86,10 +86,13 @@ void __aa_loaddata_update(struct aa_loaddata *data, long revision)
  
- 	clear_nlink(inode);
--	inode->i_mtime = inode->i_atime = current_time(inode);
-+	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
- 	exfat_truncate_atime(&inode->i_atime);
- 	exfat_unhash_inode(inode);
- 	exfat_d_version_set(dentry, inode_query_iversion(dir));
-@@ -979,7 +979,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
- 	ei->dir.dir = DIR_DELETED;
+ 	data->revision = revision;
+ 	if ((data->dents[AAFS_LOADDATA_REVISION])) {
+-		d_inode(data->dents[AAFS_LOADDATA_DIR])->i_mtime =
+-			current_time(d_inode(data->dents[AAFS_LOADDATA_DIR]));
+-		d_inode(data->dents[AAFS_LOADDATA_REVISION])->i_mtime =
+-			current_time(d_inode(data->dents[AAFS_LOADDATA_REVISION]));
++		struct inode *inode;
++
++		inode = d_inode(data->dents[AAFS_LOADDATA_DIR]);
++		inode->i_mtime = inode->i_ctime = current_time(inode);
++
++		inode = d_inode(data->dents[AAFS_LOADDATA_REVISION]);
++		inode->i_mtime = inode->i_ctime = current_time(inode);
+ 	}
+ }
  
- 	inode_inc_iversion(dir);
--	dir->i_mtime = dir->i_atime = current_time(dir);
-+	dir->i_mtime = dir->i_atime = dir->i_ctime = current_time(dir);
- 	exfat_truncate_atime(&dir->i_atime);
- 	if (IS_DIRSYNC(dir))
- 		exfat_sync_inode(dir);
-@@ -988,7 +988,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
- 	drop_nlink(dir);
- 
- 	clear_nlink(inode);
--	inode->i_mtime = inode->i_atime = current_time(inode);
-+	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
- 	exfat_truncate_atime(&inode->i_atime);
- 	exfat_unhash_inode(inode);
- 	exfat_d_version_set(dentry, inode_query_iversion(dir));
 -- 
 2.40.1
 
