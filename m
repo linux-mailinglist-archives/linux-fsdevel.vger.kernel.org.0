@@ -2,105 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A9E72B8EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 09:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFDCD72B826
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 08:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235023AbjFLHn1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 03:43:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52168 "EHLO
+        id S232382AbjFLGiC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 02:38:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235018AbjFLHnX (ORCPT
+        with ESMTP id S229476AbjFLGh7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 03:43:23 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E70B2E7A;
-        Mon, 12 Jun 2023 00:42:50 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id 41be03b00d2f7-543d32eed7cso1636193a12.2;
-        Mon, 12 Jun 2023 00:42:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686555694; x=1689147694;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=euWXaE16F/ugXUu2AMUYqNLZJYAVWQN5GTNPdv6gWGc=;
-        b=YAKp79x/Kq6zwHrCw55oosM5zQDMLpzHUX7vJhuFAdSHsJf3kf5jYPkJjBl5Pfw+oG
-         ll5t3YPZuZ8foEsGiP/GgNI+sAXbjOZnFGAXdG9g2r5WQT79JL5bHQzPe/NnC3jG3bsZ
-         n+tWmkwYMwNMc06k42lKhn53hEbFqs6W91Ss+oJ0AyjlQaJS4Mmh/E3i1hFqgrGV99Jx
-         tqjdbdoL/YWD/Zw3zYeVSQrj8gIUUcUIlTihG0hQK/d/FgSVHK2MzFzNCX0InfqRS5zh
-         FCZ1hma+xk/y+Z/kgWuA8Io/t/hJEeoSrBQUdua60Hc+usvHBzeAAL+mpFdQuLrKyngg
-         GN8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686555694; x=1689147694;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=euWXaE16F/ugXUu2AMUYqNLZJYAVWQN5GTNPdv6gWGc=;
-        b=BybZvL1h8GmLX7Y9jH4CGk3rRdJdkLPH2rh5frkgvrbBXp88WAoM/i8CamQeaZ9Kl4
-         ShigGsfqLyOn4THKMKnrNq/mhH+T+UDYFJz3eDUwKpdqBOfNzHZfMJxcX2oBndMIyGei
-         ZRMTL+QT/kEnpzJQS81PgJZ5Ig8q76un13++Ynf+WUeikISnANakcOJXNZNWvDyCIpIW
-         WMF/TygnXk57oGAfGWhgkUfrI/dCmOU5cFPRvhZNWulpfC0sjBaT6A4weT9ME8HK/xbg
-         FsuhA02ji+X7kyJiPUDC4Gks5q47xH8QXL3YJ5UCPOWSwyRJx0m9VOknsf1PSP+xtnlI
-         mUbA==
-X-Gm-Message-State: AC+VfDzYl9jGMXcvue+QTIYTR7ON0KZl/a5aQFWSVvPrLx7yRzYL6GAx
-        77QmmXa1U+brweDwZRG1Yiq7QwNEmAVvl6f7YB/HC4V+RmQ=
-X-Google-Smtp-Source: ACHHUZ4pAAxHXnucW983HrU5rBUAk9CQd/Vt3QT3607XLv5TJ1gwDnE3t9W2M8iRjZJleCzVYQXttl78ah/rkL+ZYDY=
-X-Received: by 2002:a67:fd75:0:b0:43b:240f:b92e with SMTP id
- h21-20020a67fd75000000b0043b240fb92emr2803174vsa.18.1686551331374; Sun, 11
- Jun 2023 23:28:51 -0700 (PDT)
+        Mon, 12 Jun 2023 02:37:59 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EEA719B1;
+        Sun, 11 Jun 2023 23:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kSFn8sj/lx0kbg+1a8CYLNMW9ZwdAaC8S5IDI6vzm0w=; b=jGtelzEdmx90Kuv80+ed14vdI5
+        Ptkguoep13Ev6WbOkOBIvEbe1QnTamC8S4PgFaTJN8u5e5my5cXJ22LVn7mric2dH9AlcKS645nMJ
+        q4YugzFUbSNff6Ge+N9N13WuYVnI4XzK7BINlHJfcIO4O+hjvEeuSt+9+8ZEI6SaeZJxwSlZQRCgG
+        /RyihsYjqvSHsd9mixqi4Dbktt5o80DwSzLUiXeHxaz3IP4BQpuYSttjzYkRGXaGnmwFRQMRBm7/h
+        NvC3LOIa7NJeSHJqC9igeRSnW9Tq3CKvQPFAvt39D0ywAELiC2cWA3C0Fwi2eeUMOnFiD6uOOz7GU
+        OUsz5Lng==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q8b48-002lpk-1z;
+        Mon, 12 Jun 2023 06:30:12 +0000
+Date:   Sun, 11 Jun 2023 23:30:12 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [PATCHv9 6/6] iomap: Add per-block dirty state tracking to
+ improve performance
+Message-ID: <ZIa7dFb42FkI5jgp@infradead.org>
+References: <cover.1686395560.git.ritesh.list@gmail.com>
+ <954d2e61dedbada996653c9d780be70a48dc66ae.1686395560.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
-References: <20230611132732.1502040-1-amir73il@gmail.com> <20230611132732.1502040-3-amir73il@gmail.com>
- <ZIagx5ObeBDeXmni@infradead.org>
-In-Reply-To: <ZIagx5ObeBDeXmni@infradead.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 12 Jun 2023 09:28:40 +0300
-Message-ID: <CAOQ4uxjm4nXc4cHFCnk69RC2yshBmFBxMTuVxH3QQRm_6LRcSw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] fs: introduce f_real_path() helper
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <954d2e61dedbada996653c9d780be70a48dc66ae.1686395560.git.ritesh.list@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 7:36=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Sun, Jun 11, 2023 at 04:27:31PM +0300, Amir Goldstein wrote:
-> > Overlayfs knows the real path of underlying dentries.  Add an optional
-> > struct vfsmount out argument to ->d_real(), so callers could compose th=
-e
-> > real path.
-> >
-> > Add a helper f_real_path() that uses this new interface to return the
-> > real path of f_inode, for overlayfs internal files whose f_path if a
-> > "fake" overlayfs path and f_inode is the underlying real inode.
->
-> I really don't like this ->d_real nagic.  Most callers of it
-> really can't ever be on overlayfs.
+Just some nitpicks, this otherwise looks fine.
 
-Which callers are you referring to?
+First during the last patches ifs as a variable name has started
+to really annoy me and I'm not sure why.  I'd like to hear from the
+others, bu maybe just state might be a better name that flows easier?
 
-> So I'd suggest we do an audit
-> of the callers of file_dentry and drop all the pointless ones
-> first, and improve the documentation on when to use it.
+> +static void iomap_clear_range_dirty(struct folio *folio, size_t off, size_t len)
+> +{
+> +	struct iomap_folio_state *ifs = iomap_get_ifs(folio);
+> +
+> +	if (!ifs)
+> +		return;
+> +	iomap_ifs_clear_range_dirty(folio, ifs, off, len);
 
-Well, v3 is trying to reduce ->d_real() magic and the step
-after introducing the alternative path container is to convert
-file_dentry() to use the stored real_path instead of ->d_real().
+Maybe just do
 
-But I agree that the documentation about this black magic is
-missing. Will try to improve that with the move to the "fake"
-file container.
+	if (ifs)
+		iomap_ifs_clear_range_dirty(folio, ifs, off, len);
 
-Thanks,
-Amir.
+?
+
+But also do we even need the ifs argument to iomap_ifs_clear_range_dirty
+after we've removed it everywhere else earlier?
+
+> +	/*
+> +	 * When we have per-block dirty tracking, there can be
+> +	 * blocks within a folio which are marked uptodate
+> +	 * but not dirty. In that case it is necessary to punch
+> +	 * out such blocks to avoid leaking any delalloc blocks.
+> +	 */
+> +	ifs = iomap_get_ifs(folio);
+> +	if (!ifs)
+> +		goto skip_ifs_punch;
+> +
+> +	last_byte = min_t(loff_t, end_byte - 1,
+> +		(folio_next_index(folio) << PAGE_SHIFT) - 1);
+> +	first_blk = offset_in_folio(folio, start_byte) >> blkbits;
+> +	last_blk = offset_in_folio(folio, last_byte) >> blkbits;
+> +	for (i = first_blk; i <= last_blk; i++) {
+> +		if (!iomap_ifs_is_block_dirty(folio, ifs, i)) {
+> +			ret = punch(inode, folio_pos(folio) + (i << blkbits),
+> +				    1 << blkbits);
+> +			if (ret)
+> +				goto out;
+> +		}
+> +	}
+> +
+> +skip_ifs_punch:
+
+And happy to hear from the others, but to me having a helper for
+all the iomap_folio_state manipulation rather than having it in
+the middle of the function and jumped over if not needed would
+improve the code structure.
