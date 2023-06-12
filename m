@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FD6E72B9F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 10:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FAF672BA9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 10:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229929AbjFLIN7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 04:13:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49434 "EHLO
+        id S231652AbjFLI3p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 04:29:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231650AbjFLINm (ORCPT
+        with ESMTP id S233034AbjFLI3X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 04:13:42 -0400
-Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679A010C7;
-        Mon, 12 Jun 2023 01:13:19 -0700 (PDT)
-Received: by mail-vs1-xe32.google.com with SMTP id ada2fe7eead31-43b4ffbaec6so1105006137.0;
-        Mon, 12 Jun 2023 01:13:19 -0700 (PDT)
+        Mon, 12 Jun 2023 04:29:23 -0400
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2150B3592;
+        Mon, 12 Jun 2023 01:28:36 -0700 (PDT)
+Received: by mail-qk1-x72d.google.com with SMTP id af79cd13be357-75d558c18d0so273958085a.1;
+        Mon, 12 Jun 2023 01:28:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686557597; x=1689149597;
+        d=gmail.com; s=20221208; t=1686558514; x=1689150514;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aKtQOPZeb/boarFRe9Thy1PsA/qXJLSZos8Miv7kPW0=;
-        b=Xp35kLNT9dG77tcqVK8Sor2cdgmboJgXBspMiyhFVAb1Ttjcy1bDQYmHYLSBe0lIJD
-         +PKD57rNEG8a76iXhpuEZNTsySuP9B28GTR8QfQlxqsJDQY3DvO0OjNbQ89dQA70n2xS
-         lBxZDZ3T8PahMr7l9AouHwS/3j0Ux3nLYZgYQ5+/6WqWlpBluIKqI191oSnQZ7r+j5K1
-         1lJVj1xZiJeNO0TFtG/zN8uIMeKyoE4BCxK7ByS2VRSXTGIiUisbkhvUYNp4mJherO14
-         TaJ8Gc5QfdpeRgWhoKAFodKupo4dZmbcaIg53SeQNskfbOtnzyAMM5AaYB2+uVxurq6W
-         F2FA==
+        bh=Exe23xwKh/B0XPnEOtD5aO8wr9GD92cH/+7UkLQDjJY=;
+        b=WnWitCu6SIUgx1dbDAVUX6AmGfwqCoj4hh53c7CUV8uRAYywclMms3pe2oDfzyoyat
+         ij9jmVSw6QbGgcHULp8dnA/eTjSsBy0p3fhI9U3dV0WrE7SvyW0UU6biHKjDdn/56T1B
+         2wRgJiev0zFrxwgHpYpvxm8CUCJxTmNfLzLPpQ+y91BgdR/aOF6IigIQtpZIY4aIPEBo
+         2Nj+i1RXBahfT8iig4RhDYQlB0aWp1y5KkwNPHTKa9WzbnR8ArCiU4kHxxz0Oifx6sLX
+         oZVcgDTAgLyLy3sXfzTPjbt0akSQt9CGzfGjSLaig4eDZUXMpfPdXGnrVzfqzhPyZQwI
+         cBvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686557597; x=1689149597;
+        d=1e100.net; s=20221208; t=1686558514; x=1689150514;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aKtQOPZeb/boarFRe9Thy1PsA/qXJLSZos8Miv7kPW0=;
-        b=VZHTFYTko5QmOpZzEjIh4uRgk4Bm5C23tst9pBltr9/bfgoVw24GLW7sXAXM9csfSS
-         n8YaKx0TvV/q/ajWeiIifaE6lhzruIk5GL87rAzb+8hagD62px9ICdxeDbxNn9k7QdgE
-         +aTdSV0t9LolCdAmNXBPZa+PWqMQ6oj+RYlI/pTvjVAn4kJCaA/3iYF/6Z/pbjztdgwo
-         v91orXc0PsauCrGjqNuZfFmN/v9/HeQTlEhqtQkRooYj4HHAjWPH0iF2Zu6t/uoa0iYd
-         5pHGJuN+zoP8KacnikNZSpuenk8Mk1y66lwJvUp3m9LbKYiWFb3sWvqTetRDEnM43qNZ
-         O0ng==
-X-Gm-Message-State: AC+VfDwF4BLYhez9JHNmQUjtNcizMnqjbJDQnft3bquzQtdNl51wEmXY
-        +9bhllMAM6AyeNwYpskcT6wGL47WEN3UcWPHxhGIzih631M=
-X-Google-Smtp-Source: ACHHUZ6ofolgkTDmRQ0cqlLgXP9VZbM7u8pg4zj4WZacOS56b3PEYF/r3sIVYfachxxtnbT3Plhq9GD1VO0Aq5LzyRo=
-X-Received: by 2002:a67:f495:0:b0:43b:1b9c:6283 with SMTP id
- o21-20020a67f495000000b0043b1b9c6283mr2966906vsn.28.1686557597644; Mon, 12
- Jun 2023 01:13:17 -0700 (PDT)
+        bh=Exe23xwKh/B0XPnEOtD5aO8wr9GD92cH/+7UkLQDjJY=;
+        b=IC7TDg45WeRFUn6Fss1kQ6Y6keEwc6bRs67tRsVS94vL9TD0dHBn1MXFkcJ/fZK2vv
+         6p+fi2icpIIH6KeJeYuwXOD8sYen4rJXFAfRwI/RkkZUGsi2h28ECieGSWCQvcRSMRO/
+         Cp6T/iNRlRM2dJ/aKzsahvuIrjoZ6/BTLHCpS2IXRCJugtdm2UT11d87LEkdOm8z2SG7
+         8f+22wgqND67kvkePjjyrswfO8gtQ7BeJvxA4CTLjJ6f7WWFxwpDqIgcydVQ7P4SBzUV
+         dZtGljQ76PC9jSFNXnHwlqUsuBFpotaPxe9hWIl6pPZ4Rllip7SMT+zJuXcUvQXSMUCc
+         LRbQ==
+X-Gm-Message-State: AC+VfDx1/UNp+u2Mh4xUf25gaZ2dPSXXmkN/Sm7ODAeeHirU6lc8dviK
+        jPJmK0gKiUiE+J/HEDYYigDHnnqTFm4riyUYf0ZK2VJUGVM=
+X-Google-Smtp-Source: ACHHUZ5n13MtNuuWInFj2+V2Pmkt06FulKMWhqqjGZNvTWnSyqggxTd7VOrZ95z3uzCjvshOnSAyIk+Fx2IVhPypLgE=
+X-Received: by 2002:a37:6403:0:b0:75b:25a2:c284 with SMTP id
+ y3-20020a376403000000b0075b25a2c284mr6907450qkb.30.1686558514179; Mon, 12 Jun
+ 2023 01:28:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230611132732.1502040-1-amir73il@gmail.com> <20230611132732.1502040-3-amir73il@gmail.com>
- <ZIagx5ObeBDeXmni@infradead.org> <CAOQ4uxjm4nXc4cHFCnk69RC2yshBmFBxMTuVxH3QQRm_6LRcSw@mail.gmail.com>
- <ZIa81+M0HeOzVQQb@infradead.org>
-In-Reply-To: <ZIa81+M0HeOzVQQb@infradead.org>
+References: <20230611194706.1583818-1-amir73il@gmail.com> <20230611194706.1583818-2-amir73il@gmail.com>
+ <ZIai+UWrU9o2UVcJ@infradead.org> <20230612-erwarben-pflaumen-1916e266edf7@brauner>
+In-Reply-To: <20230612-erwarben-pflaumen-1916e266edf7@brauner>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 12 Jun 2023 11:13:06 +0300
-Message-ID: <CAOQ4uxjJ-a_SWq12j8w7KhocyBuZLMTdOSPko0eRFvzVdjT_bA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] fs: introduce f_real_path() helper
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
+Date:   Mon, 12 Jun 2023 11:28:23 +0300
+Message-ID: <CAOQ4uxi0o+OgVT_GSHQwkDtHBf+QoeAycb7pmhOq+2e9-cx+3g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] fs: use fake_file container for internal files
+ with fake f_path
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
         Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
@@ -73,63 +73,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 9:36=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
+On Mon, Jun 12, 2023 at 11:07=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
 >
-> On Mon, Jun 12, 2023 at 09:28:40AM +0300, Amir Goldstein wrote:
-> > On Mon, Jun 12, 2023 at 7:36=E2=80=AFAM Christoph Hellwig <hch@infradea=
-d.org> wrote:
-> > >
-> > > On Sun, Jun 11, 2023 at 04:27:31PM +0300, Amir Goldstein wrote:
-> > > > Overlayfs knows the real path of underlying dentries.  Add an optio=
-nal
-> > > > struct vfsmount out argument to ->d_real(), so callers could compos=
-e the
-> > > > real path.
-> > > >
-> > > > Add a helper f_real_path() that uses this new interface to return t=
-he
-> > > > real path of f_inode, for overlayfs internal files whose f_path if =
-a
-> > > > "fake" overlayfs path and f_inode is the underlying real inode.
-> > >
-> > > I really don't like this ->d_real nagic.  Most callers of it
-> > > really can't ever be on overlayfs.
+> On Sun, Jun 11, 2023 at 09:45:45PM -0700, Christoph Hellwig wrote:
+> > On Sun, Jun 11, 2023 at 10:47:05PM +0300, Amir Goldstein wrote:
+> > > Overlayfs and cachefiles use open_with_fake_path() to allocate intern=
+al
+> > > files, where overlayfs also puts a "fake" path in f_path - a path whi=
+ch
+> > > is not on the same fs as f_inode.
 > >
-> > Which callers are you referring to?
+> > But cachefs doesn't, so this needs a better explanation / documentation=
+.
+> >
+> > > Allocate a container struct file_fake for those internal files, that
+> > > is used to hold the fake path along with an optional real path.
+> >
+> > The idea looks sensible, but fake a is a really weird term here.
+> > I know open_with_fake_path also uses it, but we really need to
+> > come up with a better name, and also good documentation of the
+> > concept here.
 >
-> Most users of file_dentry are inside file systems and will never
-> see the overlayfs path.
->
+> It's basically a stack so I'd either use struct file_stack or
+> struct file_proxy; with a preference for the latter.
 
-Ay ay ay.
-I suspected that this is what you meant and I do not blame you.
-There is no documentation and it is hard to understand what is going on
-even harder to understand why that is going on...
+Let the bikeshedding begin :)
 
-Before "ovl: stack file ops" series, a file opened from ovl (over xfs) path
-would have ovl f_path and xfs f_inode, as well as xfs f_ops, so indeed xfs
-code had to be careful, but so did a lot of generic vfs code.
+file_proxy too generic to my taste
 
-After ovl stacked f_ops, a file opened from ovl (over xfs) path has an
-ovl f_path and an ovl f_inode, so a lot of hacks could be removed from
-generic vfs code (e.g. locks_inode() macro).
+How about:
 
-Alas, for every ovl file, there is an "internal/real" file (stashed in
-file->f_private)
-which is opened by open_with_fake_path().
-This "internal/real" file has ovl f_path and xfs f_inode, so xfs could
-not get rid
-of file_dentry() just yet.
+/* File is embedded in backing_file object */
+#define FMODE_BACKING           ((__force fmode_t)0x2000000)
 
-Currently, the reason for the fake f_path hack is that the same internal fi=
-le
-is assigned as ->vm_file in ovl_mmap(), ovl does not implement stacked aops
-and some users of ->vm_file need the "fake" ovl path.
+This backing_file container may be usable for cachefiles or FUSE
+passthrough in the future to store the path of the (netfs/fuse) file that
+is backed by the (local) backing file.
 
-Anyway, the first step is to introduce the ovl internal file container.
-Next, we will use the real_path for file_dentry() and we can see if we
-can get rid of some of these file_dentry() uses.
+We had a short attempt to do the same for ovl - store the ovl path
+in the container and not the real_path, to get rid of file_dentry() calls,
+but it got complicated so deferreing that for later.
 
 Thanks,
 Amir.
