@@ -2,52 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 983E972BFF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 12:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9270972C06B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 12:52:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229900AbjFLKsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 06:48:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51096 "EHLO
+        id S235919AbjFLKwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 06:52:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230054AbjFLKr6 (ORCPT
+        with ESMTP id S229736AbjFLKvz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 06:47:58 -0400
+        Mon, 12 Jun 2023 06:51:55 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A5C0469E;
-        Mon, 12 Jun 2023 03:32:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01B993FF;
+        Mon, 12 Jun 2023 03:36:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 59E8D61500;
-        Mon, 12 Jun 2023 10:32:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B86DC433D2;
-        Mon, 12 Jun 2023 10:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1686565967;
-        bh=4JEuqK24RTZHbmzS7TylCNb/mAwUm4REqmtTWQI/w5Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nbo9HcGghtnSIcjew/TWxzbR/gT49bNVstENig0a6BvqAj5l3SgsYJUgLZ0moR9s9
-         4qPODriNfNzP0slMG0ITzX77YZ/TVug5vKtPGDj1aFSIQc6eBCrt1QoTNEWGvf1AfS
-         MPemIVjvLlhOhaE/f7z6k+hdP6hdSclKMCzSssOE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, David Howells <dhowells@redhat.com>,
-        Jeffrey Altman <jaltman@auristor.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.10 14/68] afs: Fix setting of mtime when creating a file/dir/symlink
-Date:   Mon, 12 Jun 2023 12:26:06 +0200
-Message-ID: <20230612101659.057271793@linuxfoundation.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230612101658.437327280@linuxfoundation.org>
-References: <20230612101658.437327280@linuxfoundation.org>
-User-Agent: quilt/0.67
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A808C614F0;
+        Mon, 12 Jun 2023 10:36:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10C3AC4339C;
+        Mon, 12 Jun 2023 10:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686566191;
+        bh=7lfE8n4wCuge2Ilsu3h1F4ipyzhUj7bSJuflx8EXZtw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DU0ZjjsJO4rS5B/LrOhkcDtfvbBZTjXhclQjcMb8L0SMAJ/Zj8o6cOouP0LPA9kRi
+         VqJ/momrCYS9bgBfSwuBqZwMMGlKax5OQGCSRTBF7m/eO1OCct4ECh1Dq3q51n5hhV
+         Yhf0l7cjjbGMIJ2UYDeBi6gwKGFHv0g6f2BclJ5kTS9KJF0zsyYQaetziIibzJHykN
+         7tP2iy40SDcuxMKwZA7N7Mbn26TeBSys37uMErgDMUpaf6wBIfwFsLid/c78sbMh0z
+         WHZh5yV0lSHcOPaWQW6a50hTCYgYFvBa4rOsjTJ1iVF0vlDpRO8qNBXUJAB1ctdV+d
+         JMJSCsxLTJnJg==
+Message-ID: <a1f7a725186082d933aff702d1d50c6456da6f20.camel@kernel.org>
+Subject: Re: [PATCH 7/9] gfs2: update ctime when quota is updated
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Kent <raven@themaw.net>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ruihan Li <lrh2000@pku.edu.cn>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+Date:   Mon, 12 Jun 2023 06:36:26 -0400
+In-Reply-To: <CAHc6FU4wyfQT7T75j2Sd9WNp=ag7hpDZGYkR=m73h2nOaH+AqQ@mail.gmail.com>
+References: <20230609125023.399942-1-jlayton@kernel.org>
+         <20230609125023.399942-8-jlayton@kernel.org>
+         <CAHc6FU4wyfQT7T75j2Sd9WNp=ag7hpDZGYkR=m73h2nOaH+AqQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -58,61 +85,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+On Fri, 2023-06-09 at 18:44 +0200, Andreas Gruenbacher wrote:
+> Jeff,
+>=20
+> On Fri, Jun 9, 2023 at 2:50=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
+rote:
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/gfs2/quota.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+> > index 1ed17226d9ed..6d283e071b90 100644
+> > --- a/fs/gfs2/quota.c
+> > +++ b/fs/gfs2/quota.c
+> > @@ -869,7 +869,7 @@ static int gfs2_adjust_quota(struct gfs2_inode *ip,=
+ loff_t loc,
+> >                 size =3D loc + sizeof(struct gfs2_quota);
+> >                 if (size > inode->i_size)
+> >                         i_size_write(inode, size);
+> > -               inode->i_mtime =3D inode->i_atime =3D current_time(inod=
+e);
+> > +               inode->i_mtime =3D inode->i_atime =3D inode->i_ctime =
+=3D current_time(inode);
+>=20
+> I don't think we need to worry about the ctime of the quota inode as
+> that inode is internal to the filesystem only.
+>=20
 
-[ Upstream commit a27648c742104a833a01c54becc24429898d85bf ]
+Thanks Andreas.  I'll plan to drop this patch from the series for now.
 
-kafs incorrectly passes a zero mtime (ie. 1st Jan 1970) to the server when
-creating a file, dir or symlink because the mtime recorded in the
-afs_operation struct gets passed to the server by the marshalling routines,
-but the afs_mkdir(), afs_create() and afs_symlink() functions don't set it.
+Does updating the mtime and atime here serve any purpose, or should
+those also be removed? If you plan to keep the a/mtime updates then I'd
+still suggest updating the ctime for consistency's sake. It shouldn't
+cost anything extra to do so since you're dirtying the inode below
+anyway.
 
-This gets masked if a file or directory is subsequently modified.
+Thanks!
 
-Fix this by filling in op->mtime before calling the create op.
+> >                 mark_inode_dirty(inode);
+> >                 set_bit(QDF_REFRESH, &qd->qd_flags);
+> >         }
+> > --
+> > 2.40.1
+> >=20
+>=20
+> Thanks,
+> Andreas
+>=20
 
-Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" concept")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/afs/dir.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 159795059547f..a59d6293a32b2 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -1313,6 +1313,7 @@ static int afs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	op->dentry	= dentry;
- 	op->create.mode	= S_IFDIR | mode;
- 	op->create.reason = afs_edit_dir_for_mkdir;
-+	op->mtime	= current_time(dir);
- 	op->ops		= &afs_mkdir_operation;
- 	return afs_do_sync_operation(op);
- }
-@@ -1616,6 +1617,7 @@ static int afs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 	op->dentry	= dentry;
- 	op->create.mode	= S_IFREG | mode;
- 	op->create.reason = afs_edit_dir_for_create;
-+	op->mtime	= current_time(dir);
- 	op->ops		= &afs_create_operation;
- 	return afs_do_sync_operation(op);
- 
-@@ -1745,6 +1747,7 @@ static int afs_symlink(struct inode *dir, struct dentry *dentry,
- 	op->ops			= &afs_symlink_operation;
- 	op->create.reason	= afs_edit_dir_for_symlink;
- 	op->create.symlink	= content;
-+	op->mtime		= current_time(dir);
- 	return afs_do_sync_operation(op);
- 
- error:
--- 
-2.39.2
-
-
-
+--=20
+Jeff Layton <jlayton@kernel.org>
