@@ -2,123 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF3D72C6B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 15:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9884C72C6C4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 16:00:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229750AbjFLN7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 09:59:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45358 "EHLO
+        id S234145AbjFLOAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 10:00:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235438AbjFLN67 (ORCPT
+        with ESMTP id S233757AbjFLOAl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 09:58:59 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A181FCA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 06:58:16 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230612135700euoutp02428e95b9597f19a81683c2f168ba9757~n7fS6Wb_o0368603686euoutp02M
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 13:57:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230612135700euoutp02428e95b9597f19a81683c2f168ba9757~n7fS6Wb_o0368603686euoutp02M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1686578220;
-        bh=3CCDOjcDLGMvxvfhrYdgwRDPhA1VByL794FBwAcU15I=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=T0TDpav+zTxNZC3+tSzaYiCWbRVeHPnYEWH00roVmAnSpsRU9PueLpQud5natEx1Q
-         TRBXGdGK3H4tdf71j4xekfbuXUWGOCUcvKRONuLmyAii1z5hoxsmqMa4UbrGLL++Qz
-         VtoiKdKL5hZsijm54pJHtcg5y31JJCg6RRqGnw7w=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20230612135700eucas1p2d44936c9197431d76cfd9d6be677019f~n7fSotgYn0288002880eucas1p2z;
-        Mon, 12 Jun 2023 13:57:00 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id B3.26.11320.C2427846; Mon, 12
-        Jun 2023 14:57:00 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230612135700eucas1p2269a4e8cc8f5f47186ea3e7e575430df~n7fSPaN9W0287602876eucas1p2u;
-        Mon, 12 Jun 2023 13:57:00 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230612135700eusmtrp1d7f865a6b7843d999b5e499c320877bd~n7fSOqjM01345513455eusmtrp1R;
-        Mon, 12 Jun 2023 13:57:00 +0000 (GMT)
-X-AuditID: cbfec7f4-993ff70000022c38-e7-6487242c0829
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 19.2D.10549.B2427846; Mon, 12
-        Jun 2023 14:57:00 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230612135659eusmtip2989eb786958aab1ff9d76aaf61476a2b~n7fSFNjYE0718807188eusmtip2C;
-        Mon, 12 Jun 2023 13:56:59 +0000 (GMT)
-Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Mon, 12 Jun 2023 14:56:59 +0100
-Date:   Mon, 12 Jun 2023 15:56:58 +0200
-From:   Pankaj Raghav <p.raghav@samsung.com>
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [PATCHv9 4/6] iomap: Refactor iomap_write_delalloc_punch()
- function out
-Message-ID: <20230612135658.gvukpx7567avszph@localhost>
+        Mon, 12 Jun 2023 10:00:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D37BF1AC
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 06:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686578376;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GKBfBKTeVMZb+dt8ekYcaXAyT4nwQrKdK59Oup6XbjM=;
+        b=PMrMOMhygQanLa8wpyi1Lvvv6BIPHNtZ1UAMCK79CtxD/4dcvHhU2Sz3drO2LkmTz72pab
+        kJ3X3Q3brCVxkRcSYXWep3GukPSC3ERPkXJJK8sgYNn2QzcMyh8yLFqdXCauE1md3g0Mxh
+        vF8sr6KYIkFXjP8SjijLbgJ5H4RXF2Q=
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
+ [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-bakhY-MpOw6wrJzd-Z6-qw-1; Mon, 12 Jun 2023 09:59:28 -0400
+X-MC-Unique: bakhY-MpOw6wrJzd-Z6-qw-1
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-463982ca6f2so105091e0c.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 06:59:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686578363; x=1689170363;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GKBfBKTeVMZb+dt8ekYcaXAyT4nwQrKdK59Oup6XbjM=;
+        b=VEgi7shwNclNsyPo7Q9TlwzhV+2gjzXNZI3NnwJmHow22DJ3aTK4Sz9dPCZ/kxRwTV
+         6TexuvmM07LM4JW0Md5kNzl+T5aDKNiTpF1ocYdomwX27r0R3o1rU+4r0glhH411pDun
+         gHiAckn9AP2Xj1Ou/FJk0q0cWaByGt0ykn/cR3YuMXZ/79rSqqCwPHf3vjmIYA1fq7lG
+         J0FoEiwCtKqbrSKFIQzBr89SXZd3zQio7kbF4M3SZIXMXvJN2hMpuCjmPZ2qbSOpaYAQ
+         nHAEelAOHw2UNkBCkEjUAGFW73RYO/uCaKITHsdYSMhjrK9gnBgtic+9evr1NhOd5M39
+         8X/Q==
+X-Gm-Message-State: AC+VfDwJ2hqwlNNZdt2XsNqMoKamgfuHEdkGemN1CIEmJdc7f8m9RiDt
+        PsbWBNOZDy2jFZflfVQudMXlHzRlkGqgUJOgcZsa3c7DEeKwBtZ0Nz8pGkpQzB2J2C+H5ueyAgW
+        iVRX0pK2BXQYHftJYEn0qn+kUTw==
+X-Received: by 2002:ac5:c858:0:b0:457:3a45:38d2 with SMTP id g24-20020ac5c858000000b004573a4538d2mr3539488vkm.1.1686578363651;
+        Mon, 12 Jun 2023 06:59:23 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5TlkHrlSDfBgWo12KHaFjakxWZQ6CGtAWvz+eNVHFMNBM4VurWIdxp0q7dBJcjBu3sxsTD9w==
+X-Received: by 2002:ac5:c858:0:b0:457:3a45:38d2 with SMTP id g24-20020ac5c858000000b004573a4538d2mr3539453vkm.1.1686578363405;
+        Mon, 12 Jun 2023 06:59:23 -0700 (PDT)
+Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
+        by smtp.gmail.com with ESMTPSA id t18-20020a0cea32000000b005ef54657ea0sm3221971qvp.126.2023.06.12.06.59.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jun 2023 06:59:22 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 09:59:19 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+        hannes@cmpxchg.org, mhocko@suse.com, josef@toxicpanda.com,
+        jack@suse.cz, ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v2 2/6] mm: handle swap page faults under VMA lock if
+ page is uncontended
+Message-ID: <ZIcktx8DPYxtV2Sd@x1n>
+References: <20230609005158.2421285-1-surenb@google.com>
+ <20230609005158.2421285-3-surenb@google.com>
+ <ZIOKxoTlRzWQtQQR@x1n>
+ <ZIONJQGuhYiDnFdg@casper.infradead.org>
+ <ZIOPeNAy7viKNU5Z@x1n>
+ <CAJuCfpFAh2KOhpCQ-4b+pzY+1GxOGk=eqj6pBj04gc_8eqB6QQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <62950460a9e78804df28c548327d779a8d53243f.1686395560.git.ritesh.list@gmail.com>
-X-Originating-IP: [106.110.32.140]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPKsWRmVeSWpSXmKPExsWy7djP87o6Ku0pBg+/iFtsW7eb3eLd5yqL
-        LcfuMVqcXHSY0eLyEz6L0xMWMVns2XuSxWLXnx3sFotXhlocPNXBbvH7xxw2B26PU4skPHbO
-        usvusXmFlsemVZ1sHhMWHWD0eL/vKpvH501yAexRXDYpqTmZZalF+nYJXBkfzt5nL/jMWTFv
-        +Qz2BsZv7F2MnBwSAiYSew/MZe5i5OIQEljBKLH7RS9YQkjgC6PE629WEInPjBJXj85mhelY
-        8nITI0RiOaNE7+TNrHBVd258YYFwtjBK7L1wC2wWi4CqxNQ/74BsDg42AS2Jxk6wsIiAkcSD
-        3lVgk5gFfjJJNDy6wAKSEBYIkzh+vpkNxOYVMJfY8e8rE4QtKHFy5hOwGk6BGIn2DwfZIE5S
-        kmjYfIYFwq6VOLXlFhPIUAmByZwSd9vWM0IkXCRebn8M9bWwxKvjW6BsGYnTk3ugmqslnt74
-        zQzR3MIo0b9zPRvI1RIC1hJ9Z3JATGaBDInte2Igyh0lpuz5xAhRwSdx460gSJgZyJy0bToz
-        RJhXoqNNCKJaTWL1vTcsEGEZiXOf+CYwKs1C8tcshPGzwOboSCzY/YkNIiwtsfwfB4SpKbF+
-        l/4CRtZVjOKppcW56anFRnmp5XrFibnFpXnpesn5uZsYgWns9L/jX3YwLn/1Ue8QIxMH4yFG
-        CQ5mJRFebZPmFCHelMTKqtSi/Pii0pzU4kOM0hwsSuK82rYnk4UE0hNLUrNTUwtSi2CyTByc
-        Ug1MjDXpehxfs08I2X+X9Ihfqtqbs6C3KtpbguvVt/VyE60ir2e0LxG6c39TW/3hhNP+iYXJ
-        Nw8zqE/ISzzRsVQ/sDV7d/yjs6uKfqsWlSl6yJ7La2fedao74EDv6+hm6yvnN8TIFW56XfYx
-        NefhMefSaX9WZNTJKt2d8YZnR8wVaSGeM4Uuzuf944/XFR2yf3FxalHXmbObhTsXnHVOmZEt
-        uONs+prJJw+/XiJ8bvX2XyuNsk3qAu/a5Hnwb3k+ST+k/28Zo+GrQ8vflAtp+Vkk3mKYq7lU
-        +TWLY6+bixRbF3/i2tNvBe6Wpa5sjPrA4Ln8Q8eaVT80mV/Im1bNMhH4c3xZg1BIqgVPxPEZ
-        rZOVWIozEg21mIuKEwEF0G1+0gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJIsWRmVeSWpSXmKPExsVy+t/xe7o6Ku0pBn9vM1lsW7eb3eLd5yqL
-        LcfuMVqcXHSY0eLyEz6L0xMWMVns2XuSxWLXnx3sFotXhlocPNXBbvH7xxw2B26PU4skPHbO
-        usvusXmFlsemVZ1sHhMWHWD0eL/vKpvH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpG
-        JpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehl7Ny5gLdjMXrHy/ibWBsbzrF2MnBwSAiYSS15u
-        Yuxi5OIQEljKKLGl/QATREJGYuOXq1BFwhJ/rnWxQRR9ZJToPHecBcLZwijRvuEMC0gVi4Cq
-        xNQ/79i7GDk42AS0JBo72UHCIgJGEg96V4FtYBb4ySQxf/l2sA3CAmESx883s4HYvALmEjv+
-        fWWCGNrFKHHyzyJ2iISgxMmZT8AWMAvoSCzY/YkNZAGzgLTE8n8cIGFOgRiJ9g8H2SAuVZJo
-        2Axxj4RArcTnv88YJzAKz0IyaRaSSbMQJi1gZF7FKJJaWpybnltsqFecmFtcmpeul5yfu4kR
-        GKfbjv3cvINx3quPeocYmTgYDzFKcDArifBqmzSnCPGmJFZWpRblxxeV5qQWH2I0BQbFRGYp
-        0eR8YKLIK4k3NDMwNTQxszQwtTQzVhLn9SzoSBQSSE8sSc1OTS1ILYLpY+LglGpgmua0Ynbd
-        gmnmLdt2Llzwf7v7lvrGrXl7Hs0+ttYopepn2NnF/zl/d8myy8qmz1gdxm4S+//fxXfmd/6l
-        z/r5/fm1U3Omf/+7WvyU9LKuvdFngx074hLuR6svzO9be8k1aO7KeZ15Ey4sVZq8efcHztAm
-        dc9Hp7UjDl4/aJ3dtbP46Z9PSr/e7BMNbvAsP7Z1UZO10+oDHxa2ujJ/OK01rUNjy3vOj4W9
-        hcekgy9uDo9zbz8bOuuCyltJEfGN6Qkb3yVnbc0/0v6kwvzLaraI5r7uZw2rFK0nRRru2cyT
-        HzD7ZreoZ8AUtyNHmuo05kUqbXmU4bmRJ7i4eFcGK8vLTy6TQ1kFNzofmmZt7Gh+foYSS3FG
-        oqEWc1FxIgBC0U0dXAMAAA==
-X-CMS-MailID: 20230612135700eucas1p2269a4e8cc8f5f47186ea3e7e575430df
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----i63qqdr0js3PYYVF7qu0iAMt2eW_b44vb7XDklFFPIsMDmoM=_ddd08_"
-X-RootMTR: 20230612135700eucas1p2269a4e8cc8f5f47186ea3e7e575430df
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230612135700eucas1p2269a4e8cc8f5f47186ea3e7e575430df
-References: <cover.1686395560.git.ritesh.list@gmail.com>
-        <62950460a9e78804df28c548327d779a8d53243f.1686395560.git.ritesh.list@gmail.com>
-        <CGME20230612135700eucas1p2269a4e8cc8f5f47186ea3e7e575430df@eucas1p2.samsung.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpFAh2KOhpCQ-4b+pzY+1GxOGk=eqj6pBj04gc_8eqB6QQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -126,49 +95,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------i63qqdr0js3PYYVF7qu0iAMt2eW_b44vb7XDklFFPIsMDmoM=_ddd08_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+On Fri, Jun 09, 2023 at 03:34:34PM -0700, Suren Baghdasaryan wrote:
+> On Fri, Jun 9, 2023 at 1:45 PM Peter Xu <peterx@redhat.com> wrote:
+> >
+> > On Fri, Jun 09, 2023 at 09:35:49PM +0100, Matthew Wilcox wrote:
+> > > On Fri, Jun 09, 2023 at 04:25:42PM -0400, Peter Xu wrote:
+> > > > >  bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
+> > > > >                    unsigned int flags)
+> > > > >  {
+> > > > > + /* Can't do this if not holding mmap_lock */
+> > > > > + if (flags & FAULT_FLAG_VMA_LOCK)
+> > > > > +         return false;
+> > > >
+> > > > If here what we need is the page lock, can we just conditionally release
+> > > > either mmap lock or vma lock depending on FAULT_FLAG_VMA_LOCK?
+> > >
+> > > See patch 5 ...
+> >
+> > Just reaching.. :)
+> >
+> > Why not in one shot, then?
+> 
+> I like small incremental changes, but I can squash them if that helps
+> in having a complete picture.
 
-Minor nit:
+Yes that'll be appreciated.  IMHO keeping changing semantics of
+FAULT_FLAG_VMA_LOCK for the folio lock function in the same small series is
+confusing.
 
-> +static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
-> +		loff_t *punch_start_byte, loff_t start_byte, loff_t end_byte,
-> +		int (*punch)(struct inode *inode, loff_t offset, loff_t length))
-> +{
-> +	int ret = 0;
-> +
-> +	if (!folio_test_dirty(folio))
-> +		return ret;
-Either this could be changed to `goto out`
+-- 
+Peter Xu
 
-OR
-
-> +
-> +	/* if dirty, punch up to offset */
-> +	if (start_byte > *punch_start_byte) {
-> +		ret = punch(inode, *punch_start_byte,
-> +				start_byte - *punch_start_byte);
-> +		if (ret)
-> +			goto out;
-
-This could be changed to `return ret` and we could get rid of the `out`
-label.
-> +	}
-> +	/*
-> +	 * Make sure the next punch start is correctly bound to
-> +	 * the end of this data range, not the end of the folio.
-> +	 */
-> +	*punch_start_byte = min_t(loff_t, end_byte,
-> +				  folio_next_index(folio) << PAGE_SHIFT);
-> +
-> +out:
-> +	return ret;
-> +}
-> +
-
-------i63qqdr0js3PYYVF7qu0iAMt2eW_b44vb7XDklFFPIsMDmoM=_ddd08_
-Content-Type: text/plain; charset="utf-8"
-
-
-------i63qqdr0js3PYYVF7qu0iAMt2eW_b44vb7XDklFFPIsMDmoM=_ddd08_--
