@@ -2,91 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E59DE72C65C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 15:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 619C372C66D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 15:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236657AbjFLNsA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 09:48:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37920 "EHLO
+        id S236751AbjFLNwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 09:52:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236757AbjFLNrw (ORCPT
+        with ESMTP id S236666AbjFLNwA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 09:47:52 -0400
-Received: from out-18.mta0.migadu.com (out-18.mta0.migadu.com [IPv6:2001:41d0:1004:224b::12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 686F1199E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 06:47:46 -0700 (PDT)
-Message-ID: <85a0bfd6-5e7b-0599-0f7f-96604bfce160@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1686577664;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uL6XwpQ3XgfJMzir+1WHSrYFYcgtPiHvXWJTPW9MYrU=;
-        b=NBeGcysWRmuFgFnbqWG9Zv+R+8/TnPW13gGlhvKccq3OZPH07gioDxYxXkOUXsfa4xZh7l
-        tnUFaEP0QHFo+zlKyg8T+NGSklSBuhj59VdrD9pL9TzhTn3NLpsxNisH2htPdfcnxaWp20
-        LxKGvPfMQWSCaujeQtyieIbCA2JZrpI=
-Date:   Mon, 12 Jun 2023 21:47:40 +0800
+        Mon, 12 Jun 2023 09:52:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A64E6F;
+        Mon, 12 Jun 2023 06:51:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E84C62976;
+        Mon, 12 Jun 2023 13:51:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92EC5C433A1;
+        Mon, 12 Jun 2023 13:51:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686577915;
+        bh=N35u9HNcA2GE6O0RLNmO/H/bI7DFCPIb/J9WbCfp+7I=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=ObL7C8SEHs/LzGPrSxC74RrT9T2yAr7+1XglnX3EW1FZM90y7O6ormobkdpAWuZ0e
+         RdLzx900Hqpy9HE3EfCtu+74BEGhE/aZtEqml+3NJgQSzQx53YAlTOFBgpsZKSbcTh
+         +zXor8GIZ20+va1qDjHAfR3RyRUEaBOMhmjJ7l5g2lpz8/OpJX+h5I3T6nxDG8Q0Ct
+         vPS6mDUmgWbpb1+t3cmEUqFflpPCwKrf9+eWZ+e4rjAuOfKobUeruOpGBYBZ90Wbpa
+         C9ELvqhW19k3IAANYXAYjz0pZ8SMZZaeiSfoRUPDrDPMlZiF0tSo1r2eVMBMPNiBkq
+         +CwHQ9soLqvPA==
+Message-ID: <a6ca6c14a6b3727b7416198824b37bd7bd386180.camel@kernel.org>
+Subject: Re: [PATCH v2 8/8] cifs: update the ctime on a partial page write
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Tom Talpey <tom@talpey.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Kent <raven@themaw.net>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ruihan Li <lrh2000@pku.edu.cn>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org
+Date:   Mon, 12 Jun 2023 09:51:50 -0400
+In-Reply-To: <a34b598a-374b-5dbf-dd36-4b62e52fe36c@talpey.com>
+References: <20230612104524.17058-1-jlayton@kernel.org>
+         <20230612104524.17058-9-jlayton@kernel.org>
+         <a34b598a-374b-5dbf-dd36-4b62e52fe36c@talpey.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
 MIME-Version: 1.0
-Subject: Re: [PATCH 07/11] io_uring: add new api to register fixed workers
-Content-Language: en-US
-To:     Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
-        io-uring Mailing List <io-uring@vger.kernel.org>
-References: <20230609122031.183730-1-hao.xu@linux.dev>
- <20230609122031.183730-8-hao.xu@linux.dev>
- <ZIMvKkZZzAfVLGbj@biznet-home.integral.gnuweeb.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <ZIMvKkZZzAfVLGbj@biznet-home.integral.gnuweeb.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/9/23 21:54, Ammar Faizi wrote:
-> On Fri, Jun 09, 2023 at 08:20:27PM +0800, Hao Xu wrote:
->> +static __cold int io_register_iowq_fixed_workers(struct io_ring_ctx *ctx,
->> +					       void __user *arg, int nr_args)
->> +	__must_hold(&ctx->uring_lock)
->> +{
->> +	struct io_uring_task *tctx = NULL;
->> +	struct io_sq_data *sqd = NULL;
->> +	struct io_uring_fixed_worker_arg *res;
->> +	size_t size;
->> +	int i, ret;
->> +	bool zero = true;
->> +
->> +	size = array_size(nr_args, sizeof(*res));
->> +	if (size == SIZE_MAX)
->> +		return -EOVERFLOW;
->> +
->> +	res = memdup_user(arg, size);
->> +	if (IS_ERR(res))
->> +		return PTR_ERR(res);
->> +
->> +	for (i = 0; i < nr_args; i++) {
->> +		if (res[i].nr_workers) {
->> +			zero = false;
->> +			break;
->> +		}
->> +	}
->> +
->> +	if (zero)
->> +		return 0;
-> 
-> You have a memory leak bug here. The memdup_user() needs clean up.
-> kfree(res);
-> 
+On Mon, 2023-06-12 at 09:41 -0400, Tom Talpey wrote:
+> On 6/12/2023 6:45 AM, Jeff Layton wrote:
+> > POSIX says:
+> >=20
+> >      "Upon successful completion, where nbyte is greater than 0, write(=
+)
+> >       shall mark for update the last data modification and last file st=
+atus
+> >       change timestamps of the file..."
+> >=20
+> > Add the missing ctime update.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >   fs/smb/client/file.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+> > index df88b8c04d03..a00038a326cf 100644
+> > --- a/fs/smb/client/file.c
+> > +++ b/fs/smb/client/file.c
+> > @@ -2596,7 +2596,7 @@ static int cifs_partialpagewrite(struct page *pag=
+e, unsigned from, unsigned to)
+> >   					   write_data, to - from, &offset);
+> >   		cifsFileInfo_put(open_file);
+> >   		/* Does mm or vfs already set times? */
+> > -		inode->i_atime =3D inode->i_mtime =3D current_time(inode);
+> > +		inode->i_atime =3D inode->i_mtime =3D inode->i_ctime =3D current_tim=
+e(inode);
+>=20
+> Question. It appears that roughly half the filesystems in this series
+> don't touch the i_atime in this case. And the other half do. Which is
+> correct? Did they incorrectly set i_atime instead of i_ctime?
+>=20
 
-True, I'll fix it in v2, thanks.
+I noticed that too, and with this set, I decided to not make any atime
+changes since I wasn't sure.
+
+I think the answer to your question is "it depends". atime is supposed
+to be updated on reads, not writes, but sometimes a write requires a RMW
+cycle of some flavor so one can imagine that in some cases we'd need to
+update all three.
+
+In this case, I'm not sure that updating any of these times is the right
+thing to do. This is called from ->launder_folio, so the syscall that
+issued the write is long gone and we're in writeback here.
+
+With NFS, we generally leave timestamp updates to the server. Should any
+of these timestamps be updated by the (SMB1) client here?
+--=20
+Jeff Layton <jlayton@kernel.org>
