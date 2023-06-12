@@ -2,69 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5AC772CA31
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 17:33:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 554A372CA75
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 17:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236889AbjFLPdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 11:33:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58226 "EHLO
+        id S238270AbjFLPlv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 11:41:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234742AbjFLPdJ (ORCPT
+        with ESMTP id S238135AbjFLPlu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 11:33:09 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D6610C2;
-        Mon, 12 Jun 2023 08:33:08 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1b3b3f67ad6so17459735ad.3;
-        Mon, 12 Jun 2023 08:33:08 -0700 (PDT)
+        Mon, 12 Jun 2023 11:41:50 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DD9C10D3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 08:41:49 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-bc4ed01b5d4so1303363276.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 08:41:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686583988; x=1689175988;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nhrxGfhiU8mnI+Qui4ZsDfQuxzfLN1KbJ8U40slvmi4=;
-        b=IY5/++DvYAINuv/PlmPo+XYtXjoLcD3Yf6OBHV52sziyCr/f1bljpB73JIsif+cOoa
-         5Sw8AZM+tRDOwDJAJR3+GmlJAnnmN9o3wmf4Fjz3p330kqiIqY2mPioV5PehoGpyDENV
-         VnIFgK6S6w47QvHc5OXNVqi/M7x8x+jxtT7eBTSgwvGv1bMazVGT1FfitmKnk078/xX7
-         lo3RIa73378LnqEeQ9gpdoD1/tDElpPSqhijSy/kR7ckdb8ZkzYv2IkIPOchhRulb8WV
-         uTLoCev9VB2BYFL5jPSjtnGCZehkHfwv+BskZkAjuIczRBEmRyUMphwi/YQ+IXPFnu4U
-         2r8A==
+        d=google.com; s=20221208; t=1686584508; x=1689176508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kbcWWy6lgJlv49u77NIuToLcJ7w9+T3qZB5UWslqyxQ=;
+        b=A41ks5sFHka57K4fqfE86JUZi8sVGCoTPYI5ynNaLuhHWaVD5wnyI5E/THeG9ezv9h
+         hFUN9NeXdSmdLTfV6cU6RhW6ixeXdJmtNq2y0OhafeE0g900sSc3BM37utl2iCvyu3pS
+         xxfgQmQbYso5DjWghSSS8E/l89+tAaOV68U9KiGP2g9j1jE4hB6T8R6++UPP4RumZMV8
+         LAmAF8KoJr8GavbZrW2RE1zZc3QKRPJhjcCzs5R0EgwiMcU56m0L3HM4XYn+eViUJpyI
+         8vqYxeegj//ny6HzAJhC8KTZYUOxcFLk2OUJoaoVW3wydskZ3x20ve8D1Xwk+AB12dwu
+         q0mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686583988; x=1689175988;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nhrxGfhiU8mnI+Qui4ZsDfQuxzfLN1KbJ8U40slvmi4=;
-        b=FYjUtMDOeV3dgVbh0PDhSrYKISCUC82piZO9ghEjUKHXOurIz+GUVm73QYg8BdvZYX
-         JodaMH+8YYdtji6JDySKhlZg9XmogNILxj5lL040SSIIaW1cga01HgAOC56QK7N+BzGa
-         cR0aRS4vMbb45P5/NWCy4qm+5hbSpqUhHEdzhBKnnIGe+BxpO4W3WfLIUa0Ek6Dvz1SD
-         yonUIQru9vUj67jz6F2jcaKqZjCLPdL5E1tN0N4LkVpN7xnfMX4ADlGD7I6/8WsDRdkY
-         0sKZ2yJszRjNW1kMLK9dChCK7AvfPh6yM/AZr0BT00hXX88Fp12z2dQEgQkqiYT6AHu8
-         dRpg==
-X-Gm-Message-State: AC+VfDxMxMYsFgGs5CjBQf4A14E4jxVLnFs2Apkc8mtGLn7mqf8Vgd6c
-        0krShVe6apqAy3mXTKS9C8c=
-X-Google-Smtp-Source: ACHHUZ7IemVkBcYi3KBXxBvUr8jSD36KFfmmTM63ExphjBf7uwFtoMfREdDgqpMfy0ej5i0Q6fAr2A==
-X-Received: by 2002:a17:902:ce8a:b0:1aa:d545:462e with SMTP id f10-20020a170902ce8a00b001aad545462emr8159783plg.13.1686583987927;
-        Mon, 12 Jun 2023 08:33:07 -0700 (PDT)
-Received: from dw-tp ([49.207.220.159])
-        by smtp.gmail.com with ESMTPSA id t20-20020a1709028c9400b001b176d96da0sm8444430plo.78.2023.06.12.08.33.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 08:33:07 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 21:03:03 +0530
-Message-Id: <87fs6whf0w.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [PATCHv9 3/6] iomap: Add some uptodate state handling helpers for ifs state bitmap
-In-Reply-To: <ZIc4ujLJixghk6Zp@casper.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        d=1e100.net; s=20221208; t=1686584508; x=1689176508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kbcWWy6lgJlv49u77NIuToLcJ7w9+T3qZB5UWslqyxQ=;
+        b=P57u+rzBWIx4jucQCPou/GEhFt0VvCbVAadnH0Cdi/jGoK+DIdMI35WCaQaNyQ0/ES
+         cm3R7l7/j5gsDNE+cs7cnCz8P/D5BRP3UftZr1hw5k0MY9hqJ/Zn0MMkdfePHXrH1VKI
+         /vR6jVyMY0Q0w3yZtcx8OwIcZ8h1sFR9KvzVzbD6eXL5HuHAWKrHR1D9tAJ4oUUSA14k
+         Rmoungy7YZLF/TO6MwEF49+j0LZEXg+fzNDvFfYxVG6GRBrbqXKfo7if5gQJkMpwWcQA
+         SSskt+45t9C3TK16A9MR5bF7z7V/tdaihmRomGn85wIEIO+rb2fecNG28d0wZ3oyy7F7
+         GtJA==
+X-Gm-Message-State: AC+VfDw4LtYaWTgQYocCOX2iGvXlbvqMz4FhhsS/lFQUoUDMC2V/qQPY
+        CfCxtwGbWp5GmuCW1BxwwdScOLKo4h3uDf5IVqpmGA==
+X-Google-Smtp-Source: ACHHUZ6i33Zt6lBAsGFhBQjcAHgEqwffZrn+lh/Sa7XfqbavLy9BGOHe+OV0wQUJlUl+nF7rG6XcZNDeJbNZHnhEQ4U=
+X-Received: by 2002:a25:c744:0:b0:bc4:3e4e:12 with SMTP id w65-20020a25c744000000b00bc43e4e0012mr4781374ybe.36.1686584508078;
+ Mon, 12 Jun 2023 08:41:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230609005158.2421285-1-surenb@google.com> <20230609005158.2421285-5-surenb@google.com>
+ <ZIOOmC26qh4EXUEX@x1n> <CAJuCfpHKUjAwgWbxvJQDyEnneRD03p2M6247Q6=3-oOq_FL7zA@mail.gmail.com>
+ <ZIcddoWjYlDXNKJA@x1n>
+In-Reply-To: <ZIcddoWjYlDXNKJA@x1n>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Mon, 12 Jun 2023 08:41:37 -0700
+Message-ID: <CAJuCfpE_1S9bXPDxz-4i2oCNwrsrP8V8q5=H4rxPtZ0kZk3cjw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] mm: drop VMA lock before waiting for migration
+To:     Peter Xu <peterx@redhat.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
+        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
+        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,36 +81,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> writes:
-
-> On Mon, Jun 12, 2023 at 08:48:16PM +0530, Ritesh Harjani wrote:
->> > Since we're at the nitpicking, I don't find those names very useful,
->> > either. How about the following instead?
->> >
->> > iomap_ifs_alloc -> iomap_folio_state_alloc
->> > iomap_ifs_free -> iomap_folio_state_free
->> > iomap_ifs_calc_range -> iomap_folio_state_calc_range
->>
->> First of all I think we need to get used to the name "ifs" like how we
->> were using "iop" earlier. ifs == iomap_folio_state...
->>
->> >
->> > iomap_ifs_is_fully_uptodate -> iomap_folio_is_fully_uptodate
->> > iomap_ifs_is_block_uptodate -> iomap_block_is_uptodate
->> > iomap_ifs_is_block_dirty -> iomap_block_is_dirty
->> >
->>
->> ...if you then look above functions with _ifs_ == _iomap_folio_state_
->> naming. It will make more sense.
+On Mon, Jun 12, 2023 at 6:28=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
 >
-> Well, it doesn't because it's iomap_iomap_folio_state_is_fully_uptodate.
+> On Fri, Jun 09, 2023 at 03:30:10PM -0700, Suren Baghdasaryan wrote:
+> > On Fri, Jun 9, 2023 at 1:42=E2=80=AFPM Peter Xu <peterx@redhat.com> wro=
+te:
+> > >
+> > > On Thu, Jun 08, 2023 at 05:51:56PM -0700, Suren Baghdasaryan wrote:
+> > > > migration_entry_wait does not need VMA lock, therefore it can be dr=
+opped
+> > > > before waiting. Introduce VM_FAULT_VMA_UNLOCKED to indicate that VM=
+A
+> > > > lock was dropped while in handle_mm_fault().
+> > > > Note that once VMA lock is dropped, the VMA reference can't be used=
+ as
+> > > > there are no guarantees it was not freed.
+> > >
+> > > Then vma lock behaves differently from mmap read lock, am I right?  C=
+an we
+> > > still make them match on behaviors, or there's reason not to do so?
+> >
+> > I think we could match their behavior by also dropping mmap_lock here
+> > when fault is handled under mmap_lock (!(fault->flags &
+> > FAULT_FLAG_VMA_LOCK)).
+> > I missed the fact that VM_FAULT_COMPLETED can be used to skip dropping
+> > mmap_lock in do_page_fault(), so indeed, I might be able to use
+> > VM_FAULT_COMPLETED to skip vma_end_read(vma) for per-vma locks as well
+> > instead of introducing FAULT_FLAG_VMA_LOCK. I think that was your idea
+> > of reusing existing flags?
+>
+> Yes.
+>
+> I'd suggest we move this patch out of the series as it's not really part =
+of
+> it on enabling swap + uffd.  It can be a separate patch and hopefully it'=
+ll
+> always change both vma+mmap lock cases, and with proper reasonings.
 
-:P 
+Ok, I can move it out with mmap_lock support only and then add per-vma
+lock support in my patchset (because this path is still part of
+do_swap_page and my patchset enables swap support for per-vma locks).
 
-> I don't think there's any need to namespace this so fully.
-> ifs_is_fully_uptodate() is just fine for a static function, IMO.
-
-Ohh, we went that road but were shot down. That time the naming was
-iop_is_fully_uptodate(). :(
-
--ritesh
+>
+> Thanks,
+>
+> --
+> Peter Xu
+>
