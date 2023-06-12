@@ -2,127 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9884C72C6C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 16:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C1A72C6D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 16:03:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234145AbjFLOAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 10:00:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46350 "EHLO
+        id S233387AbjFLODg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 10:03:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233757AbjFLOAl (ORCPT
+        with ESMTP id S232004AbjFLODf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 10:00:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D37BF1AC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 06:59:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686578376;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GKBfBKTeVMZb+dt8ekYcaXAyT4nwQrKdK59Oup6XbjM=;
-        b=PMrMOMhygQanLa8wpyi1Lvvv6BIPHNtZ1UAMCK79CtxD/4dcvHhU2Sz3drO2LkmTz72pab
-        kJ3X3Q3brCVxkRcSYXWep3GukPSC3ERPkXJJK8sgYNn2QzcMyh8yLFqdXCauE1md3g0Mxh
-        vF8sr6KYIkFXjP8SjijLbgJ5H4RXF2Q=
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
- [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-bakhY-MpOw6wrJzd-Z6-qw-1; Mon, 12 Jun 2023 09:59:28 -0400
-X-MC-Unique: bakhY-MpOw6wrJzd-Z6-qw-1
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-463982ca6f2so105091e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 06:59:24 -0700 (PDT)
+        Mon, 12 Jun 2023 10:03:35 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9682EE65;
+        Mon, 12 Jun 2023 07:03:34 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-655d1fc8ad8so3572314b3a.1;
+        Mon, 12 Jun 2023 07:03:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686578614; x=1689170614;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=E34Qnj2BYRMuX9RqWZqo8l/XR/cFX7aCEouA7uavgY8=;
+        b=SwBEIzdK8NM4DDykaPpDVbQ9spO6KiLourBes9u7j+fvZuVVKW9WgNXx5FVbCTPj+c
+         a8aCMDLAcqvO1V2R9b8WPLsE0EfbcQjRrDhdtmDOuy0n7GdYPqcNzRSEjUadIIvlaykp
+         5E6K3KpiAxGeXYUnftW3II9q/qffvvwmghKIyreNiOHj5dZ8mfSl1ypDdVbtdURleOh7
+         yiKZg/OCDHHipMA/r2N+u3kKibF6GrYb616A/Qd9ekPbF0V97QJpTkQxe/Xl48KlZNtU
+         OUw8+oJJlnlddVmWcssxXR45hScRBknZg/MA/UbanVBSY2S8vNye8OAuQBnUk8WkXggQ
+         Q+3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686578363; x=1689170363;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GKBfBKTeVMZb+dt8ekYcaXAyT4nwQrKdK59Oup6XbjM=;
-        b=VEgi7shwNclNsyPo7Q9TlwzhV+2gjzXNZI3NnwJmHow22DJ3aTK4Sz9dPCZ/kxRwTV
-         6TexuvmM07LM4JW0Md5kNzl+T5aDKNiTpF1ocYdomwX27r0R3o1rU+4r0glhH411pDun
-         gHiAckn9AP2Xj1Ou/FJk0q0cWaByGt0ykn/cR3YuMXZ/79rSqqCwPHf3vjmIYA1fq7lG
-         J0FoEiwCtKqbrSKFIQzBr89SXZd3zQio7kbF4M3SZIXMXvJN2hMpuCjmPZ2qbSOpaYAQ
-         nHAEelAOHw2UNkBCkEjUAGFW73RYO/uCaKITHsdYSMhjrK9gnBgtic+9evr1NhOd5M39
-         8X/Q==
-X-Gm-Message-State: AC+VfDwJ2hqwlNNZdt2XsNqMoKamgfuHEdkGemN1CIEmJdc7f8m9RiDt
-        PsbWBNOZDy2jFZflfVQudMXlHzRlkGqgUJOgcZsa3c7DEeKwBtZ0Nz8pGkpQzB2J2C+H5ueyAgW
-        iVRX0pK2BXQYHftJYEn0qn+kUTw==
-X-Received: by 2002:ac5:c858:0:b0:457:3a45:38d2 with SMTP id g24-20020ac5c858000000b004573a4538d2mr3539488vkm.1.1686578363651;
-        Mon, 12 Jun 2023 06:59:23 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5TlkHrlSDfBgWo12KHaFjakxWZQ6CGtAWvz+eNVHFMNBM4VurWIdxp0q7dBJcjBu3sxsTD9w==
-X-Received: by 2002:ac5:c858:0:b0:457:3a45:38d2 with SMTP id g24-20020ac5c858000000b004573a4538d2mr3539453vkm.1.1686578363405;
-        Mon, 12 Jun 2023 06:59:23 -0700 (PDT)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id t18-20020a0cea32000000b005ef54657ea0sm3221971qvp.126.2023.06.12.06.59.20
+        d=1e100.net; s=20221208; t=1686578614; x=1689170614;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E34Qnj2BYRMuX9RqWZqo8l/XR/cFX7aCEouA7uavgY8=;
+        b=ZFtdFAl4GQ213HGMDbUsXRt1dZSSpZvh6xni1eRxSFOtlRaIdyj5JpMyei8HVtx6ku
+         s8SFgEKiqAuEBCy13KpAPeh1+M3sUkFEcZXkQZJ7AqY0MPib93l/V8VmCSt5y41F052s
+         v2hqCqJXKc8BLHOWnbcFDrF3ttYdmzK3B9ePq/0rZOOD6Cyasvw3W6ysZoQFNBET7tLB
+         a9gmEYIuOT2xtEoGe5jEEGCS1RAtf7QdDiKNobKmcknVQ7tMosPZJk24ew+ljNgl4Bop
+         17LfLgbT+nZX0hawcjp5GImgITFoFlHEo6CLCfFFInhWbTAtOL6lNVek/b14erxLZRpJ
+         kgYg==
+X-Gm-Message-State: AC+VfDyX3T4i4LaEaLfGG848AoPRnjB3InaugaqKw1BoR7LiR8u4rE4Y
+        pp49BexHjEiI5xwk2Lk4FVI=
+X-Google-Smtp-Source: ACHHUZ769VhHojGTiT9XMHuUwWhbDDYmwYriLIglmsQysTxDDfUpGWUbv1RlHLSntJoHmXXE23cD9w==
+X-Received: by 2002:a05:6a00:180e:b0:659:ae1c:c9e2 with SMTP id y14-20020a056a00180e00b00659ae1cc9e2mr11576585pfa.17.1686578613774;
+        Mon, 12 Jun 2023 07:03:33 -0700 (PDT)
+Received: from dw-tp ([49.207.220.159])
+        by smtp.gmail.com with ESMTPSA id d16-20020aa78690000000b006505bae11bcsm6976010pfo.23.2023.06.12.07.03.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 06:59:22 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 09:59:19 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, mhocko@suse.com, josef@toxicpanda.com,
-        jack@suse.cz, ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
-        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
-        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
-        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
-        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        pasha.tatashin@soleen.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v2 2/6] mm: handle swap page faults under VMA lock if
- page is uncontended
-Message-ID: <ZIcktx8DPYxtV2Sd@x1n>
-References: <20230609005158.2421285-1-surenb@google.com>
- <20230609005158.2421285-3-surenb@google.com>
- <ZIOKxoTlRzWQtQQR@x1n>
- <ZIONJQGuhYiDnFdg@casper.infradead.org>
- <ZIOPeNAy7viKNU5Z@x1n>
- <CAJuCfpFAh2KOhpCQ-4b+pzY+1GxOGk=eqj6pBj04gc_8eqB6QQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpFAh2KOhpCQ-4b+pzY+1GxOGk=eqj6pBj04gc_8eqB6QQ@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 12 Jun 2023 07:03:33 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 19:33:29 +0530
+Message-Id: <87ttvchj66.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [PATCHv9 4/6] iomap: Refactor iomap_write_delalloc_punch() function out
+In-Reply-To: <ZIccDjZQdAMXcnJQ@casper.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 09, 2023 at 03:34:34PM -0700, Suren Baghdasaryan wrote:
-> On Fri, Jun 9, 2023 at 1:45 PM Peter Xu <peterx@redhat.com> wrote:
-> >
-> > On Fri, Jun 09, 2023 at 09:35:49PM +0100, Matthew Wilcox wrote:
-> > > On Fri, Jun 09, 2023 at 04:25:42PM -0400, Peter Xu wrote:
-> > > > >  bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
-> > > > >                    unsigned int flags)
-> > > > >  {
-> > > > > + /* Can't do this if not holding mmap_lock */
-> > > > > + if (flags & FAULT_FLAG_VMA_LOCK)
-> > > > > +         return false;
-> > > >
-> > > > If here what we need is the page lock, can we just conditionally release
-> > > > either mmap lock or vma lock depending on FAULT_FLAG_VMA_LOCK?
-> > >
-> > > See patch 5 ...
-> >
-> > Just reaching.. :)
-> >
-> > Why not in one shot, then?
-> 
-> I like small incremental changes, but I can squash them if that helps
-> in having a complete picture.
+Matthew Wilcox <willy@infradead.org> writes:
 
-Yes that'll be appreciated.  IMHO keeping changing semantics of
-FAULT_FLAG_VMA_LOCK for the folio lock function in the same small series is
-confusing.
+> On Sat, Jun 10, 2023 at 05:09:05PM +0530, Ritesh Harjani (IBM) wrote:
+>> +static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
+>> +		loff_t *punch_start_byte, loff_t start_byte, loff_t end_byte,
+>> +		int (*punch)(struct inode *inode, loff_t offset, loff_t length))
+>
+> I can't help but feel that a
+>
+> typedef iomap_punch_t(struct inode *, loff_t offset, loff_t length);
+>
+> would make all of this easier to read.
+>
 
--- 
-Peter Xu
+Sure. Make sense.
 
+>> +	/*
+>> +	 * Make sure the next punch start is correctly bound to
+>> +	 * the end of this data range, not the end of the folio.
+>> +	 */
+>> +	*punch_start_byte = min_t(loff_t, end_byte,
+>> +				  folio_next_index(folio) << PAGE_SHIFT);
+>
+> 	*punch_start_byte = min(end_byte, folio_pos(folio) + folio_size(folio));
+
+Current code was also correct only. But I guess this just avoids
+min_t/loff_t thing. No other reason right?
+
+-ritesh
