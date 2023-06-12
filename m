@@ -2,44 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0674072D0BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 22:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A046A72D17E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 23:06:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232779AbjFLUjw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 16:39:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58814 "EHLO
+        id S238780AbjFLVFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 17:05:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236989AbjFLUje (ORCPT
+        with ESMTP id S238997AbjFLVEz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 16:39:34 -0400
+        Mon, 12 Jun 2023 17:04:55 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A491739;
-        Mon, 12 Jun 2023 13:39:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E8E4216
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 14:02:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=EkLmyaB6DA8CYGOh1SGUaX5l8dYnTWVJEORmgXgZcN8=; b=R4++hr39ESEVaBhBKwvgXoki8+
-        XyhvyjhtQPZvlNvPojo9/BakFsoohm4U/VqtxhH+l6rJDjrin+mZtWzSsQokP8EsdChfXLjmhBHRp
-        W/yQviM47ooc72QH5qvQv1YlgRxs6LBSvg+44G4KK1LCpgIVTOa0IdCOARbFlga8qqN10jjk0tk6h
-        pYeWlKT28FEytcUzoOmdkKw0knvIW3y3z23uZ1P1AsxVtMp1GGualEk0jCc6jVzeCt/V6/hINkOO5
-        1ma2qPNvsq8Erv8MwWt/YWxDjlI8EHmk/B82dkR4p2RLtJPk3nZNarGjUwDnL/5zvT9QZrO5pB06L
-        eXzATyjg==;
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=txt62ANlIkQygLpGavEyhBItsoRiI+JGiyGc+VsF2/I=; b=tV6The7lOFSZXGB14T35A5+EPO
+        UsO8P5kjU2Ho3f1ASnPWU5NsccZhU6UlkxX7KswhXhsKk3da34R2ShBfTAK2r0FPy20I9Hmz7dtIE
+        NOJQrSXg8tRIfmMzignb6CdfppMxMjgL3tG3xpoNKz6V45WMmB1Mr+vUtFSkcuAuSoWi1SXF8nIZp
+        FyOHnzJ01QKsYZ7VPkQ7C2aJgu2al8vl1QR42nGxJfC7QflFVFav0aSTHtPjQBlIHxHMo2sMnd0JO
+        u3Gi1m6NNihgUSYHHJlSqzyHKTl/Jnv4XPpGoR/Szex7qgN5Nhca9ucwOg6mevbIfhVtJZhMvxEl5
+        IKSMmaVw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q8oJm-0032Sn-3S; Mon, 12 Jun 2023 20:39:14 +0000
+        id 1q8ofW-0033wc-R9; Mon, 12 Jun 2023 21:01:42 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, Wang Yugui <wangyugui@e16-tech.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: [PATCH v3 8/8] iomap: Copy larger chunks from userspace
-Date:   Mon, 12 Jun 2023 21:39:10 +0100
-Message-Id: <20230612203910.724378-9-willy@infradead.org>
+        cluster-devel@redhat.com, Hannes Reinecke <hare@suse.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH v3 00/14] gfs2/buffer folio changes for 6.5
+Date:   Mon, 12 Jun 2023 22:01:27 +0100
+Message-Id: <20230612210141.730128-1-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230612203910.724378-1-willy@infradead.org>
-References: <20230612203910.724378-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -52,74 +50,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we have a large folio, we can copy in larger chunks than PAGE_SIZE.
-Start at the maximum page cache size and shrink by half every time we
-hit the "we are short on memory" problem.
+This kind of started off as a gfs2 patch series, then became entwined
+with buffer heads once I realised that gfs2 was the only remaining
+caller of __block_write_full_page().  For those not in the gfs2 world,
+the big point of this series is that block_write_full_page() should now
+handle large folios correctly.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/iomap/buffered-io.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+Andrew, if you want, I'll drop it into the pagecache tree, or you
+can just take it.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index a5d62c9640cf..818dc350ffc5 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -768,6 +768,7 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- {
- 	loff_t length = iomap_length(iter);
-+	size_t chunk = PAGE_SIZE << MAX_PAGECACHE_ORDER;
- 	loff_t pos = iter->pos;
- 	ssize_t written = 0;
- 	long status = 0;
-@@ -776,15 +777,13 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 
- 	do {
- 		struct folio *folio;
--		struct page *page;
--		unsigned long offset;	/* Offset into pagecache page */
--		unsigned long bytes;	/* Bytes to write to page */
-+		size_t offset;		/* Offset into folio */
-+		unsigned long bytes;	/* Bytes to write to folio */
- 		size_t copied;		/* Bytes copied from user */
- 
--		offset = offset_in_page(pos);
--		bytes = min_t(unsigned long, PAGE_SIZE - offset,
--						iov_iter_count(i));
- again:
-+		offset = pos & (chunk - 1);
-+		bytes = min(chunk - offset, iov_iter_count(i));
- 		status = balance_dirty_pages_ratelimited_flags(mapping,
- 							       bdp_flags);
- 		if (unlikely(status))
-@@ -814,11 +813,14 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 		if (iter->iomap.flags & IOMAP_F_STALE)
- 			break;
- 
--		page = folio_file_page(folio, pos >> PAGE_SHIFT);
-+		offset = offset_in_folio(folio, pos);
-+		if (bytes > folio_size(folio) - offset)
-+			bytes = folio_size(folio) - offset;
-+
- 		if (mapping_writably_mapped(mapping))
--			flush_dcache_page(page);
-+			flush_dcache_folio(folio);
- 
--		copied = copy_page_from_iter_atomic(page, offset, bytes, i);
-+		copied = copy_page_from_iter_atomic(&folio->page, offset, bytes, i);
- 
- 		status = iomap_write_end(iter, pos, bytes, copied, folio);
- 
-@@ -835,6 +837,8 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 			 */
- 			if (copied)
- 				bytes = copied;
-+			if (chunk > PAGE_SIZE)
-+				chunk /= 2;
- 			goto again;
- 		}
- 		pos += status;
+v3:
+ - Fix a patch title
+ - Fix some checks against i_size to be >= instead of >
+ - Call folio_mark_dirty() instead of folio_set_dirty()
+
+Matthew Wilcox (Oracle) (14):
+  gfs2: Use a folio inside gfs2_jdata_writepage()
+  gfs2: Pass a folio to __gfs2_jdata_write_folio()
+  gfs2: Convert gfs2_write_jdata_page() to gfs2_write_jdata_folio()
+  buffer: Convert __block_write_full_page() to
+    __block_write_full_folio()
+  gfs2: Support ludicrously large folios in gfs2_trans_add_databufs()
+  buffer: Make block_write_full_page() handle large folios correctly
+  buffer: Convert block_page_mkwrite() to use a folio
+  buffer: Convert __block_commit_write() to take a folio
+  buffer: Convert page_zero_new_buffers() to folio_zero_new_buffers()
+  buffer: Convert grow_dev_page() to use a folio
+  buffer: Convert init_page_buffers() to folio_init_buffers()
+  buffer: Convert link_dev_buffers to take a folio
+  buffer: Use a folio in __find_get_block_slow()
+  buffer: Convert block_truncate_page() to use a folio
+
+ fs/buffer.c                 | 257 ++++++++++++++++++------------------
+ fs/ext4/inode.c             |   4 +-
+ fs/gfs2/aops.c              |  69 +++++-----
+ fs/gfs2/aops.h              |   2 +-
+ fs/ntfs/aops.c              |   2 +-
+ fs/reiserfs/inode.c         |   9 +-
+ include/linux/buffer_head.h |   4 +-
+ 7 files changed, 172 insertions(+), 175 deletions(-)
+
 -- 
 2.39.2
 
