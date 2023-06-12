@@ -2,54 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9143472CDAF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 20:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B2CC72CDB9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 20:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237384AbjFLSQo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 14:16:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39248 "EHLO
+        id S237415AbjFLSS7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 14:18:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237471AbjFLSQU (ORCPT
+        with ESMTP id S236387AbjFLSS5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 14:16:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 505CBE65;
-        Mon, 12 Jun 2023 11:16:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A1B2062CB0;
-        Mon, 12 Jun 2023 18:16:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04D9CC433EF;
-        Mon, 12 Jun 2023 18:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686593776;
-        bh=x2JA+1sPb2/+C8u/kmbzxZr7G8Ihb/xsc82B9XQ6Mig=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZuQ1dVfMoeaRWrOgeuRQC7Mb5pxY1QTr6l29HXOzccOoPFMTWF+kh/Vo5AjhXbaNc
-         iYq4fjSII5nCbSUqFYCYcoVUsqPsWAq4DUgmzydyThflZi17lC/aYllOUwKxSg9BUB
-         +UErEe0j4XOezAUAlvSxmZUde4cQ8G3cYRyuQrO6iW1Ld0DfMmcQ8vga6XiNYdhBiu
-         ANXBPmnwE458M0WkxGII5db2o7rZAKS8VVxRU60VKaQTm6snFjzqVeMysTAodIUkd5
-         z7rc0DNBYgMQ0c3CtU1CkkMhLVN4R7Q14APqT7wWjWok2cgCNW9sRPJVGRKRiTwhGB
-         GkFxWx63sKRPw==
-Date:   Mon, 12 Jun 2023 11:16:15 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     mcgrof@kernel.org, hch@infradead.org, ruansy.fnst@fujitsu.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fs: distinguish between user initiated freeze and
- kernel initiated freeze
-Message-ID: <20230612181615.GG11441@frogsfrogsfrogs>
-References: <168653971691.755178.4003354804404850534.stgit@frogsfrogsfrogs>
- <168653972267.755178.18328538743442432037.stgit@frogsfrogsfrogs>
- <20230612110811.m7hv42sfqyfr6rwh@quack3>
+        Mon, 12 Jun 2023 14:18:57 -0400
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E776C196
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 11:18:56 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-777ab76f328so460031739f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 11:18:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686593936; x=1689185936;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JNVjzsp4Q/R2CWTBkS3HkSnT+cmZY3d7Ck+YqHTxaQ4=;
+        b=QWBl1l2vQFGABTnfG3Mm3k0ikTIh+WBHgfS1RuVguC9UZU+ooscM9026hTbBKCwJ6W
+         BcE6YJtktLWCGTQfkGxoc/KimgWNKBGPhueaeazuvH0g0cr69JWikQzfM2P0/1fjzl7b
+         q8eUyThNXQMjWahKywOfvSj08VjPeL6T/n2sRCN+EIJZkOfzk5DNkJQ1am68oiMwah49
+         upqLhj4u8gAvJMWiUrQclDlzZYXHoUTRQ5WQh2HEfBplPrLUCmBmq7i7FFH1BGkQvkS7
+         mRI4Ej9/LlpLP1ppNwiMIRGhAAjaap6Kdl69uFUlylzmdthXBrUIQxHnO+sdjTNnAzas
+         2KzA==
+X-Gm-Message-State: AC+VfDwATlMkpPJDVWOputa3PJ9UApdFtsom3JdDgbL/xFZ+0vImoBV8
+        glKtMHu2t0e9TQ7bCacYc3biRzbvtCS7ySUgvxecDH51MeAi
+X-Google-Smtp-Source: ACHHUZ48aJTTbei/IPjlSAzi7Oev8nrti4c/FPklaMEgFKL6RI2JOZdjcLwEfJQUPCHWd9fcQuqZV5tLv1kW0hU+JWnSVlPCnyWW
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230612110811.m7hv42sfqyfr6rwh@quack3>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Received: by 2002:a5e:c10c:0:b0:77a:c494:b4b8 with SMTP id
+ v12-20020a5ec10c000000b0077ac494b4b8mr4397762iol.1.1686593936274; Mon, 12 Jun
+ 2023 11:18:56 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 11:18:56 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000073c14105fdf2c0f0@google.com>
+Subject: [syzbot] [udf?] WARNING in udf_setsize (2)
+From:   syzbot <syzbot+db6df8c0f578bc11e50e@syzkaller.appspotmail.com>
+To:     jack@suse.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,207 +54,83 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 01:08:11PM +0200, Jan Kara wrote:
-> On Sun 11-06-23 20:15:22, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > Userspace can freeze a filesystem using the FIFREEZE ioctl or by
-> > suspending the block device; this state persists until userspace thaws
-> > the filesystem with the FITHAW ioctl or resuming the block device.
-> > Since commit 18e9e5104fcd ("Introduce freeze_super and thaw_super for
-> > the fsfreeze ioctl") we only allow the first freeze command to succeed.
-> > 
-> > The kernel may decide that it is necessary to freeze a filesystem for
-> > its own internal purposes, such as suspends in progress, filesystem fsck
-> > activities, or quiescing a device prior to removal.  Userspace thaw
-> > commands must never break a kernel freeze, and kernel thaw commands
-> > shouldn't undo userspace's freeze command.
-> > 
-> > Introduce a couple of freeze holder flags and wire it into the
-> > sb_writers state.  One kernel and one userspace freeze are allowed to
-> > coexist at the same time; the filesystem will not thaw until both are
-> > lifted.
-> > 
-> > I wonder if the f2fs/gfs2 code should be using a kernel freeze here, but
-> > for now we'll use FREEZE_HOLDER_USERSPACE to preserve existing
-> > behaviors.
-> > 
-> > Cc: mcgrof@kernel.org
-> > Cc: jack@suse.cz
-> > Cc: hch@infradead.org
-> > Cc: ruansy.fnst@fujitsu.com
-> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> 
-> Thanks Darrick. Some comments below.
-> 
-> > +static int freeze_frozen_super(struct super_block *sb, enum freeze_holder who)
-> > +{
-> > +	/* Someone else already holds this type of freeze */
-> > +	if (sb->s_writers.freeze_holders & who)
-> > +		return -EBUSY;
-> > +
-> > +	WARN_ON(sb->s_writers.freeze_holders == 0);
-> > +
-> > +	sb->s_writers.freeze_holders |= who;
-> > +	return 0;
-> > +}
-> > +
-> >  /**
-> >   * freeze_super - lock the filesystem and force it into a consistent state
-> >   * @sb: the super to lock
-> > + * @who: FREEZE_HOLDER_USERSPACE if userspace wants to freeze the fs;
-> > + * FREEZE_HOLDER_KERNEL if the kernel wants to freeze it
-> >   *
-> >   * Syncs the super to make sure the filesystem is consistent and calls the fs's
-> > - * freeze_fs.  Subsequent calls to this without first thawing the fs will return
-> > + * freeze_fs.  Subsequent calls to this without first thawing the fs may return
-> >   * -EBUSY.
-> >   *
-> > + * The @who argument distinguishes between the kernel and userspace trying to
-> > + * freeze the filesystem.  Although there cannot be multiple kernel freezes or
-> > + * multiple userspace freezes in effect at any given time, the kernel and
-> > + * userspace can both hold a filesystem frozen.  The filesystem remains frozen
-> > + * until there are no kernel or userspace freezes in effect.
-> > + *
-> >   * During this function, sb->s_writers.frozen goes through these values:
-> >   *
-> >   * SB_UNFROZEN: File system is normal, all writes progress as usual.
-> > @@ -1668,12 +1688,19 @@ static void sb_freeze_unlock(struct super_block *sb, int level)
-> >   *
-> >   * sb->s_writers.frozen is protected by sb->s_umount.
-> >   */
-> > -int freeze_super(struct super_block *sb)
-> > +int freeze_super(struct super_block *sb, enum freeze_holder who)
-> >  {
-> >  	int ret;
-> >  
-> >  	atomic_inc(&sb->s_active);
-> >  	down_write(&sb->s_umount);
-> > +
-> > +	if (sb->s_writers.frozen == SB_FREEZE_COMPLETE) {
-> > +		ret = freeze_frozen_super(sb, who);
-> > +		deactivate_locked_super(sb);
-> > +		return ret;
-> > +	}
-> 
-> I find it a little bit odd that the second freeze holder does not get the
-> active superblock reference. It all looks correct but I'd find it easier to
-> reason about (and also eventually lift the reference counting out of
-> freeze_super()) if the rule was: Successful freeze_super() <=> you have
-> s_active reference.
+Hello,
 
-Ok, I'll keep the active ref when a freezer starts sharing a freeze.
+syzbot found the following issue on:
 
-> > +
-> >  	if (sb->s_writers.frozen != SB_UNFROZEN) {
-> 
-> I still find it strange that:
-> 
-> Task1					Task2
-> 
-> while (1) {				while (1) {
->   ioctl(f, FIFREEZE);			  freeze_super(sb, FREEZE_HOLDER_KERNEL);
->   ioctl(f, FITHAW);			  thaw_super(sb, FREEZE_HOLDER_KERNEL);
-> }					}
-> 
-> will randomly end up returning EBUSY to Task1 or Task2 although there is no
-> real conflict. I think it will be much more useful behavior if in case of
-> this conflict the second holder just waited for freezing procedure to finish
-> and then report success. Because I don't think either caller can do
-> anything sensible with this race other than retry but it cannot really
-> distinguish EBUSY as in "someone other holder of the same type has the sb
-> already frozen" from "freezing raced with holder of a different type".
+HEAD commit:    5f63595ebd82 Merge tag 'input-for-v6.4-rc5' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1667baf1280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
+dashboard link: https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
 
-<nod> I'll copy this justification into the commit message for the
-second patch.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> 
-> >  		deactivate_locked_super(sb);
-> >  		return -EBUSY;
-> > @@ -1684,8 +1711,10 @@ int freeze_super(struct super_block *sb)
-> >  		return 0;	/* sic - it's "nothing to do" */
-> >  	}
-> >  
-> > +
-> 
-> Why the extra empty line?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d12b9e46ffe8/disk-5f63595e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c9044ded7edd/vmlinux-5f63595e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/09f0fd3926e8/bzImage-5f63595e.xz
 
-Whitespace damage.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+db6df8c0f578bc11e50e@syzkaller.appspotmail.com
 
-> >  	if (sb_rdonly(sb)) {
-> >  		/* Nothing to do really... */
-> > +		sb->s_writers.freeze_holders |= who;
-> >  		sb->s_writers.frozen = SB_FREEZE_COMPLETE;
-> >  		up_write(&sb->s_umount);
-> >  		return 0;
-> > @@ -1731,6 +1760,7 @@ int freeze_super(struct super_block *sb)
-> >  	 * For debugging purposes so that fs can warn if it sees write activity
-> >  	 * when frozen is set to SB_FREEZE_COMPLETE, and for thaw_super().
-> >  	 */
-> > +	sb->s_writers.freeze_holders |= who;
-> >  	sb->s_writers.frozen = SB_FREEZE_COMPLETE;
-> >  	lockdep_sb_freeze_release(sb);
-> >  	up_write(&sb->s_umount);
-> > @@ -1738,16 +1768,47 @@ int freeze_super(struct super_block *sb)
-> >  }
-> >  EXPORT_SYMBOL(freeze_super);
-> >  
-> > -static int thaw_super_locked(struct super_block *sb)
-> > +static int try_thaw_shared_super(struct super_block *sb, enum freeze_holder who)
-> > +{
-> > +	/* Freeze is not held by this type? */
-> > +	if (!(sb->s_writers.freeze_holders & who))
-> > +		return -EINVAL;
-> > +
-> > +	/* Also frozen for someone else? */
-> > +	if (sb->s_writers.freeze_holders & ~who) {
-> > +		sb->s_writers.freeze_holders &= ~who;
-> > +		return 0;
-> > +	}
-> > +
-> > +	/* Magic value to proceed with thaw */
-> > +	return 1;
-> > +}
-> > +
-> > +/*
-> > + * Undoes the effect of a freeze_super_locked call.  If the filesystem is
-> > + * frozen both by userspace and the kernel, a thaw call from either source
-> > + * removes that state without releasing the other state or unlocking the
-> > + * filesystem.
-> > + */
-> > +static int thaw_super_locked(struct super_block *sb, enum freeze_holder who)
-> >  {
-> >  	int error;
-> >  
-> > +	if (sb->s_writers.frozen == SB_FREEZE_COMPLETE) {
-> > +		error = try_thaw_shared_super(sb, who);
-> > +		if (error != 1) {
-> > +			up_write(&sb->s_umount);
-> > +			return error;
-> > +		}
-> > +	}
-> > +
-> >  	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE) {
-> >  		up_write(&sb->s_umount);
-> >  		return -EINVAL;
-> >  	}
-> 
-> I'd first check for the above condition and then just fold
-> try_thaw_shared_super() into here. That way you can avoid the odd special
-> return and the code will be actually more readable. Probably we should grow
-> out_err label for:
-> 
-> 	up_write(&sb->s_umount);
-> 	return error;
-> 
-> and use it for the error returns as well...
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 8731 at fs/udf/inode.c:673 udf_setsize+0x1092/0x1480 fs/udf/inode.c:1275
+Modules linked in:
+CPU: 1 PID: 8731 Comm: syz-executor.4 Not tainted 6.4.0-rc5-syzkaller-00024-g5f63595ebd82 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
+RIP: 0010:udf_extend_file fs/udf/inode.c:672 [inline]
+RIP: 0010:udf_setsize+0x1092/0x1480 fs/udf/inode.c:1275
+Code: 00 00 00 00 fc ff df 74 0a e8 4a fc 8c fe e9 18 ff ff ff 4c 89 64 24 20 e8 3b fc 8c fe 4c 89 fb e9 a7 fd ff ff e8 2e fc 8c fe <0f> 0b e9 1b f6 ff ff 44 89 f9 80 e1 07 38 c1 0f 8c 2b f0 ff ff 4c
+RSP: 0018:ffffc90004fcfae0 EFLAGS: 00010293
+RAX: ffffffff82fe8302 RBX: 0000000000000800 RCX: ffff888035f93b80
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000000800
+RBP: ffffc90004fcfcd0 R08: ffffffff82fe7900 R09: ffffed100ea45358
+R10: 0000000000000000 R11: dffffc0000000001 R12: 1ffff920009f9f70
+R13: 0000000000000751 R14: 0000000000000009 R15: 0000000000001000
+FS:  00007f3365a37700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020001000 CR3: 00000000797b8000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ udf_setattr+0x370/0x540 fs/udf/file.c:239
+ notify_change+0xc8b/0xf40 fs/attr.c:483
+ do_truncate+0x220/0x300 fs/open.c:66
+ do_sys_ftruncate+0x2e4/0x380 fs/open.c:194
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f3364c8c169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3365a37168 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
+RAX: ffffffffffffffda RBX: 00007f3364dac120 RCX: 00007f3364c8c169
+RDX: 0000000000000000 RSI: 0000000000000751 RDI: 0000000000000004
+RBP: 00007f3364ce7ca1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fff6db1fcaf R14: 00007f3365a37300 R15: 0000000000022000
+ </TASK>
 
-<shrug> we're only adding one of these, but I'll tack on a fourth patch
-to clean these up.
 
---D
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
