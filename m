@@ -2,70 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E9172CA1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 17:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5AC772CA31
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 17:33:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238392AbjFLPbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 11:31:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57254 "EHLO
+        id S236889AbjFLPdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 11:33:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237561AbjFLPat (ORCPT
+        with ESMTP id S234742AbjFLPdJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 11:30:49 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3D3DE7A;
-        Mon, 12 Jun 2023 08:30:34 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1b3be6c0b4cso9417065ad.3;
-        Mon, 12 Jun 2023 08:30:34 -0700 (PDT)
+        Mon, 12 Jun 2023 11:33:09 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D6610C2;
+        Mon, 12 Jun 2023 08:33:08 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1b3b3f67ad6so17459735ad.3;
+        Mon, 12 Jun 2023 08:33:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686583834; x=1689175834;
-        h=content-transfer-encoding:mime-version:in-reply-to:subject:cc:to
-         :from:message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TpBZk0NXfqyM/eC1QcotC76PM/BIZEmiezeZryyR9lM=;
-        b=Cxm7eOvMtkymMxywy/ckbNIy7MUnQ14ZSWF4OFfBZ7bZEqYmKQ0+4/169O8iX/eqjF
-         El57r+TGbY31yaIwFQavRx30WGt+gPU2ZGAhpghU9F/CzRZF+djMPq0Xsy0wmW3WTO5M
-         KSvMpBEHe5hTQyEktKVTer4tVjfc7Xg4D6ZRRO8AOsSRyHiFqQyBGM8SVRQH7jyy8rzG
-         RJzUo3c2z9vWd7GbHAtJ9/wN4aVtt+XdaCTsL6GDwTbXAaCO3PWxN0YpSZj97Q3TJpVq
-         gVk2XY5Xrx6m1UJo+UfZvL21N/jvzO0r8B4y3iwP6nE/H7aLVGXi3hZxNduqRP9FWuCj
-         K4Ig==
+        d=gmail.com; s=20221208; t=1686583988; x=1689175988;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nhrxGfhiU8mnI+Qui4ZsDfQuxzfLN1KbJ8U40slvmi4=;
+        b=IY5/++DvYAINuv/PlmPo+XYtXjoLcD3Yf6OBHV52sziyCr/f1bljpB73JIsif+cOoa
+         5Sw8AZM+tRDOwDJAJR3+GmlJAnnmN9o3wmf4Fjz3p330kqiIqY2mPioV5PehoGpyDENV
+         VnIFgK6S6w47QvHc5OXNVqi/M7x8x+jxtT7eBTSgwvGv1bMazVGT1FfitmKnk078/xX7
+         lo3RIa73378LnqEeQ9gpdoD1/tDElpPSqhijSy/kR7ckdb8ZkzYv2IkIPOchhRulb8WV
+         uTLoCev9VB2BYFL5jPSjtnGCZehkHfwv+BskZkAjuIczRBEmRyUMphwi/YQ+IXPFnu4U
+         2r8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686583834; x=1689175834;
-        h=content-transfer-encoding:mime-version:in-reply-to:subject:cc:to
-         :from:message-id:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TpBZk0NXfqyM/eC1QcotC76PM/BIZEmiezeZryyR9lM=;
-        b=c12xFiM1RGIq7ORrR502zoV0DEGHIme+PeBI+dk1b/DqJAcwJ6KBWDI+N6ICBR0yG+
-         ErogyWNnxrIVhJQeiF1JkShmF24TzFYZbThFVm+bXkq4ybFj2SYy+tolNHXlGqV9yuIY
-         bT3nPuWtFZkNysrqtJ0y9RFp0nXp81d0Vaf6LIyVrXI8HIwVKr2jk2e1jdHt1lEAsrE9
-         KQq9vFpelRqPCpma0pPlvQxP1CzZ8YF+K8ixehUX6qIMD1Jbp2kmgL6W+EyK8esuteBD
-         TNU+ahm43S+iYMq0JGuturn3LoQpIT4iE2UtjB5MRtEtOcGQgilRsbCqw1h3bNqUftYB
-         f+Ow==
-X-Gm-Message-State: AC+VfDzAxifH0EuWVB/YVBaqArEFPtAH94k1cpsJjmNQLaiTmiOuetTG
-        z9Rs2i+wzXjI/E9VvvZh8bA=
-X-Google-Smtp-Source: ACHHUZ4Gh5wFrG4doBK/deZiKGPy8M5AYeFd3YVyyM0yw37rgKR/46+BKwKWJKbItakoe6+zTQbYhg==
-X-Received: by 2002:a17:902:ce8a:b0:1aa:e938:3ddf with SMTP id f10-20020a170902ce8a00b001aae9383ddfmr7960205plg.7.1686583834101;
-        Mon, 12 Jun 2023 08:30:34 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686583988; x=1689175988;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nhrxGfhiU8mnI+Qui4ZsDfQuxzfLN1KbJ8U40slvmi4=;
+        b=FYjUtMDOeV3dgVbh0PDhSrYKISCUC82piZO9ghEjUKHXOurIz+GUVm73QYg8BdvZYX
+         JodaMH+8YYdtji6JDySKhlZg9XmogNILxj5lL040SSIIaW1cga01HgAOC56QK7N+BzGa
+         cR0aRS4vMbb45P5/NWCy4qm+5hbSpqUhHEdzhBKnnIGe+BxpO4W3WfLIUa0Ek6Dvz1SD
+         yonUIQru9vUj67jz6F2jcaKqZjCLPdL5E1tN0N4LkVpN7xnfMX4ADlGD7I6/8WsDRdkY
+         0sKZ2yJszRjNW1kMLK9dChCK7AvfPh6yM/AZr0BT00hXX88Fp12z2dQEgQkqiYT6AHu8
+         dRpg==
+X-Gm-Message-State: AC+VfDxMxMYsFgGs5CjBQf4A14E4jxVLnFs2Apkc8mtGLn7mqf8Vgd6c
+        0krShVe6apqAy3mXTKS9C8c=
+X-Google-Smtp-Source: ACHHUZ7IemVkBcYi3KBXxBvUr8jSD36KFfmmTM63ExphjBf7uwFtoMfREdDgqpMfy0ej5i0Q6fAr2A==
+X-Received: by 2002:a17:902:ce8a:b0:1aa:d545:462e with SMTP id f10-20020a170902ce8a00b001aad545462emr8159783plg.13.1686583987927;
+        Mon, 12 Jun 2023 08:33:07 -0700 (PDT)
 Received: from dw-tp ([49.207.220.159])
-        by smtp.gmail.com with ESMTPSA id ft4-20020a17090b0f8400b0025c0cd8a91bsm74787pjb.9.2023.06.12.08.30.31
+        by smtp.gmail.com with ESMTPSA id t20-20020a1709028c9400b001b176d96da0sm8444430plo.78.2023.06.12.08.33.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 08:30:33 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 21:00:29 +0530
-Message-Id: <87ilbshf56.fsf@doe.com>
+        Mon, 12 Jun 2023 08:33:07 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 21:03:03 +0530
+Message-Id: <87fs6whf0w.fsf@doe.com>
 From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
         Dave Chinner <david@fromorbit.com>,
         Brian Foster <bfoster@redhat.com>,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>,
         Disha Goel <disgoel@linux.ibm.com>
 Subject: Re: [PATCHv9 3/6] iomap: Add some uptodate state handling helpers for ifs state bitmap
-In-Reply-To: <CAHc6FU7Hv71ujeb9oEVOD+bpddMMT0KY+KKUp881Am15u-OVvg@mail.gmail.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZIc4ujLJixghk6Zp@casper.infradead.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -76,66 +72,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Andreas Gruenbacher <agruenba@redhat.com> writes:
+Matthew Wilcox <willy@infradead.org> writes:
 
-> On Sat, Jun 10, 2023 at 1:39 PM Ritesh Harjani (IBM)
-> <ritesh.list@gmail.com> wrote:
->> This patch adds two of the helper routines iomap_ifs_is_fully_uptodate()
->> and iomap_ifs_is_block_uptodate() for managing uptodate state of
->> ifs state bitmap.
+> On Mon, Jun 12, 2023 at 08:48:16PM +0530, Ritesh Harjani wrote:
+>> > Since we're at the nitpicking, I don't find those names very useful,
+>> > either. How about the following instead?
+>> >
+>> > iomap_ifs_alloc -> iomap_folio_state_alloc
+>> > iomap_ifs_free -> iomap_folio_state_free
+>> > iomap_ifs_calc_range -> iomap_folio_state_calc_range
 >>
->> In later patches ifs state bitmap array will also handle dirty state of all
->> blocks of a folio. Hence this patch adds some helper routines for handling
->> uptodate state of the ifs state bitmap.
+>> First of all I think we need to get used to the name "ifs" like how we
+>> were using "iop" earlier. ifs == iomap_folio_state...
 >>
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> ---
->>  fs/iomap/buffered-io.c | 28 ++++++++++++++++++++--------
->>  1 file changed, 20 insertions(+), 8 deletions(-)
+>> >
+>> > iomap_ifs_is_fully_uptodate -> iomap_folio_is_fully_uptodate
+>> > iomap_ifs_is_block_uptodate -> iomap_block_is_uptodate
+>> > iomap_ifs_is_block_dirty -> iomap_block_is_dirty
+>> >
 >>
->> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->> index e237f2b786bc..206808f6e818 100644
->> --- a/fs/iomap/buffered-io.c
->> +++ b/fs/iomap/buffered-io.c
->> @@ -43,6 +43,20 @@ static inline struct iomap_folio_state *iomap_get_ifs(struct folio *folio)
->>
->>  static struct bio_set iomap_ioend_bioset;
->>
->> +static inline bool iomap_ifs_is_fully_uptodate(struct folio *folio,
->> +                                              struct iomap_folio_state *ifs)
->> +{
->> +       struct inode *inode = folio->mapping->host;
->> +
->> +       return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
+>> ...if you then look above functions with _ifs_ == _iomap_folio_state_
+>> naming. It will make more sense.
 >
-> This should be written as something like:
->
-> unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
-> return bitmap_full(ifs->state + IOMAP_ST_UPTODATE * blks_per_folio,
-> blks_per_folio);
->
+> Well, it doesn't because it's iomap_iomap_folio_state_is_fully_uptodate.
 
-Nah, I feel it is not required... It make sense when we have the same
-function getting use for both "uptodate" and "dirty" state.
-Here the function anyways operates on uptodate state.
-Hence I feel it is not required.
+:P 
 
->> +}
->> +
->> +static inline bool iomap_ifs_is_block_uptodate(struct iomap_folio_state *ifs,
->> +                                              unsigned int block)
->> +{
->> +       return test_bit(block, ifs->state);
->
-> This function should be called iomap_ifs_block_is_uptodate(), and
-> probably be written as follows, passing in the folio as well (this
-> will optimize out, anyway):
->
-> struct inode *inode = folio->mapping->host;
-> unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
-> return test_bit(block, ifs->state + IOMAP_ST_UPTODATE * blks_per_folio);
->
+> I don't think there's any need to namespace this so fully.
+> ifs_is_fully_uptodate() is just fine for a static function, IMO.
 
-Same here.
+Ohh, we went that road but were shot down. That time the naming was
+iop_is_fully_uptodate(). :(
 
 -ritesh
