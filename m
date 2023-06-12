@@ -2,95 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B13972B644
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 06:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD3FB72B647
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 06:01:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229784AbjFLEAA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 00:00:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33320 "EHLO
+        id S232117AbjFLEBv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 00:01:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231603AbjFLD76 (ORCPT
+        with ESMTP id S230436AbjFLEBt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Jun 2023 23:59:58 -0400
-Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEE3318B;
-        Sun, 11 Jun 2023 20:59:57 -0700 (PDT)
-Received: by mail-ua1-x92a.google.com with SMTP id a1e0cc1a2514c-78cd0c63ae2so94294241.1;
-        Sun, 11 Jun 2023 20:59:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686542396; x=1689134396;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h5eFbd9HFD/KRz0+XmRiub04jDxZ5/25uC97kTShMpE=;
-        b=EHyikn5gRvV78mN0YYf4xUPtAFpwRdYAhXIgBhQsen9zlXyZa6YQlQUu4I0VWvmJh+
-         dhWeExCKRXcTldPlqkBujT4S8hYN9S3Jbd0cMP3UHAxhFpCvnWUtHmMlhjd82cWzsGvU
-         Qb7ARehRdVdQqDwwsuvnhXh3B4toJX9+XvVg9hyMHUdMnCY5RWns/MKwcvTSzaHC+A5z
-         LGWo7zNB0SZBqKipj0F/4Pdmq3YHlJiRJAryzsQ/uZsCXKixJBKSxVNWgBYySL2p8hyI
-         XG2M96nT6JkeIkwNK/tgbq9u68or6XC76h7ZdsAV4l8TrLv8iVPvQyw7+G8nKpB+6EsB
-         ZRJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686542396; x=1689134396;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h5eFbd9HFD/KRz0+XmRiub04jDxZ5/25uC97kTShMpE=;
-        b=O29izzM6VWi3MIrt9LuOqD2CTZj8NvvtlC6b/4dkY1fO8JY53wJ3Lm91+oDx9A1muw
-         fdTxacKpCx7giw5aNhJfUVVef68mb9+0EiiW8VIBW//e+DyMPZw8o730gQlAWPUV0BhG
-         sWjXLX2OasTjkUtTAMuTG4hLJ9tiwha0yW35z5AuQTZ7331fe2CUIPXdAMQa3isZgRUs
-         c3MitrJ7FoiFgFQW1CdpwAygMEBB+RDK8Nt/4jX0I/MskH9as4bgcSpt8FauuHViY8jD
-         NjqeBbNeSPOY68zTqQD4HaiyF1e++8P4Qgqg41osxRtTtu6GDTu9R6didb2UsQAV2c10
-         sOQQ==
-X-Gm-Message-State: AC+VfDysFHCOwwuhuOPxZjBQccTrVLIs1TWsMpqlyt7p6K6NIInipxnI
-        3yLZTQj+Qnnq3f6w2Cz20ESqFjArNyr+MW0SN+Y=
-X-Google-Smtp-Source: ACHHUZ6USzvroyFg92cZrS7qO9IxCrPShW1dFdqmI83KF4j0hqeLShP/3gCnfuLWhWbnhcZB+F5Mz/kUXDkjrqKPDPY=
-X-Received: by 2002:a67:f906:0:b0:43b:2630:477 with SMTP id
- t6-20020a67f906000000b0043b26300477mr2660495vsq.5.1686542395803; Sun, 11 Jun
- 2023 20:59:55 -0700 (PDT)
+        Mon, 12 Jun 2023 00:01:49 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC41F3;
+        Sun, 11 Jun 2023 21:01:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xaenqfQWcrt8tWNB36muhsuAFWAiB1Cw0mrXd/6ozhs=; b=hFyETY+oYsUZtG11PLJnEw7ZYu
+        p2JXob13WXM2yyU16oeU+XARj2lFszgYIBN8pVhz6dH2pyByljza22w7Xire2GdD1NSA0FB4stkCn
+        0zSOyTDM5/dWagM/lFnfPqsgnB9hpFyYOs7saC5DopED9EsJuev8E2rTRENzQlWN5PotjAc4sf7gW
+        OxJM5tSTNFF8c1l255fVz/u6kKkwGGnEcIma+4T56iQJWCw+qyA5isB1Ksctriej6oWoGeRA7sgL2
+        HOx+c3HGz6YXQZ/6p72gl9JYAjeg1SHWinRmJkER/2dfzYJeV44mcJLgJcVSe0FWHl5B+ATcE/+m9
+        0FInOqMg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q8YkW-002UPs-1y;
+        Mon, 12 Jun 2023 04:01:48 +0000
+Date:   Sun, 11 Jun 2023 21:01:48 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        mcgrof@kernel.org, jack@suse.cz, hch@infradead.org,
+        ruansy.fnst@fujitsu.com
+Subject: Re: [PATCH 2/3] fs: wait for partially frozen filesystems
+Message-ID: <ZIaYrA3Jz5Q75X1P@infradead.org>
+References: <168653971691.755178.4003354804404850534.stgit@frogsfrogsfrogs>
+ <168653972832.755178.18389114450766371923.stgit@frogsfrogsfrogs>
 MIME-Version: 1.0
-References: <000000000000da4f6b05eb9bf593@google.com> <000000000000c0951105fde12435@google.com>
- <20230612033023.GA16241@lst.de>
-In-Reply-To: <20230612033023.GA16241@lst.de>
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Mon, 12 Jun 2023 12:59:39 +0900
-Message-ID: <CAKFNMomCUnaB3_3chQm4P8devx2NwAp2hMpYfbyaHKyO2WLEkw@mail.gmail.com>
-Subject: Re: [syzbot] [nilfs?] general protection fault in nilfs_clear_dirty_page
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     syzbot <syzbot+53369d11851d8f26735c@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, dsterba@suse.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        wqu@suse.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <168653972832.755178.18389114450766371923.stgit@frogsfrogsfrogs>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 12:30=E2=80=AFPM Christoph Hellwig wrote:
->
-> On Sun, Jun 11, 2023 at 02:18:29PM -0700, syzbot wrote:
-> > syzbot has bisected this issue to:
-> >
-> > commit 4a445b7b6178d88956192c0202463063f52e8667
-> > Author: Qu Wenruo <wqu@suse.com>
-> > Date:   Sat Aug 13 08:06:53 2022 +0000
-> >
-> >     btrfs: don't merge pages into bio if their page offset is not conti=
-guous
->
-> I can't see how that btrfs commit would affect nilfs2..
+On Sun, Jun 11, 2023 at 08:15:28PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
+> 
+> Jan Kara suggested that when one thread is in the middle of freezing a
+> filesystem, another thread trying to freeze the same fs but with a
+> different freeze_holder should wait until the freezer reaches either end
+> state (UNFROZEN or COMPLETE) instead of returning EBUSY immediately.
+> 
+> Plumb in the extra coded needed to wait for the fs freezer to reach an
+> end state and try the freeze again.
+> 
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> ---
+>  fs/super.c |   27 +++++++++++++++++++++++++--
+>  1 file changed, 25 insertions(+), 2 deletions(-)
+> 
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 36adccecc828..151e0eeff2c2 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1647,6 +1647,15 @@ static int freeze_frozen_super(struct super_block *sb, enum freeze_holder who)
+>  	return 0;
+>  }
+>  
+> +static void wait_for_partially_frozen(struct super_block *sb)
+> +{
+> +	up_write(&sb->s_umount);
+> +	wait_var_event(&sb->s_writers.frozen,
+> +			sb->s_writers.frozen == SB_UNFROZEN ||
+> +			sb->s_writers.frozen == SB_FREEZE_COMPLETE);
+> +	down_write(&sb->s_umount);
 
-Yeah, I think this bisection result is wrong.
-I have already posted a bug-fix patch titled "nilfs2: prevent general
-protection fault in nilfs_clear_dirty_page()"
-for this issue.
+Does sb->s_writers.frozen need WRITE_ONCE/READ_ONCE treatment if we want
+to check it outside of s_umount?  Or should we maybe just open code
+wait_var_event and only drop the lock after checking the variable?
 
-Thanks,
-Ryusuke Konishi
+>  	if (sb->s_writers.frozen != SB_UNFROZEN) {
+> -		deactivate_locked_super(sb);
+> -		return -EBUSY;
+> +		if (!try_again) {
+> +			deactivate_locked_super(sb);
+> +			return -EBUSY;
+> +		}
+> +
+> +		wait_for_partially_frozen(sb);
+> +		try_again = false;
+> +		goto retry;
+
+Can you throw in a comment on wait we're only waiting for a partial
+freeze one here?
