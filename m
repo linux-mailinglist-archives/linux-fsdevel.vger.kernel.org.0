@@ -2,58 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7413D72BABC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 10:32:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FCB572BAC4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 10:35:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233132AbjFLIci (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 04:32:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41078 "EHLO
+        id S231675AbjFLIfN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 04:35:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233145AbjFLIcJ (ORCPT
+        with ESMTP id S233236AbjFLIfD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 04:32:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF21186;
-        Mon, 12 Jun 2023 01:31:26 -0700 (PDT)
+        Mon, 12 Jun 2023 04:35:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3073B9F;
+        Mon, 12 Jun 2023 01:35:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 18BDD62133;
-        Mon, 12 Jun 2023 08:31:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6B75C433EF;
-        Mon, 12 Jun 2023 08:31:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B6F2D62150;
+        Mon, 12 Jun 2023 08:35:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A4EC433D2;
+        Mon, 12 Jun 2023 08:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686558685;
-        bh=Qzj5qrWg7Q0xE/xizm8XgmY0Hk2e0pRBJ2VHc+oHCxY=;
+        s=k20201202; t=1686558900;
+        bh=9ef8ksnCp30UJR78S9cXv1oIl2+eRaHJj41PIcfhvR4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ai6Kvltr7dW+lbrF6sn1yAmTnTCT1W1N9IHnT6zaN/qrOST29U3udc040S/wQcjTz
-         L8Wq3QTU0EJ47uJdme7Jt9wLDcCPGSvVkoEbky3dAbyx9ExsWDTNX9rpeok3AYtXtE
-         ODewMPcJfVRkSoIcWcuxGcjzHf1/0LF+2sSoqyDZJyKrSdH4AfiGxevBKB1vqqMgTh
-         OuDF/SAFnqQMKxd8TVEUE30DZNuUvLiEIHKCeE9+y4Xuq2p7o1j9k7xJzsue7b8s2L
-         4dqaW3yJbGlQdlGbXLpLd0ToQN6QeCXEutTqEyeEMl50iWBrcvS2zywUj9aPKdYrBz
-         4+Km8LVgrCm4w==
-Date:   Mon, 12 Jun 2023 10:31:20 +0200
+        b=XJVn0RVkAHSyGoevsqNZtsq78BCAnUy3P32db4efGj8LOLUaZxHiYCdY7SigiQg+A
+         Am3b4A90Dv43KYZ+RlqfssK1gof9t7Ymwggv05mCTxuYi/CedweuzlD6AwpkD0RuaW
+         EQjuxRxfY4KlKxOkyNmLmmlwSNkjlJxI/SaaJsO6XJnw+DTxXKxm6RLbEWQknUbG6R
+         4/PrrpfDn1J7xZj0aiC1Rm+Bz2LFnj60Tjbs0zi96No7AM8/9xQZqvW7No99PEE9Tz
+         ngo0zYVFX7AClE9j5MP++xCvou1SOjNjXl/Pcqy2D+qqaxqrp+aW3XiGyeGspyR+Xz
+         +ezzAhzCnlNYw==
+Date:   Mon, 12 Jun 2023 10:34:55 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] fs: use fake_file container for internal files
- with fake f_path
-Message-ID: <20230612-auffahren-episoden-4e35b8d1e71c@brauner>
-References: <20230611194706.1583818-1-amir73il@gmail.com>
- <20230611194706.1583818-2-amir73il@gmail.com>
- <ZIai+UWrU9o2UVcJ@infradead.org>
- <20230612-erwarben-pflaumen-1916e266edf7@brauner>
- <CAOQ4uxi0o+OgVT_GSHQwkDtHBf+QoeAycb7pmhOq+2e9-cx+3g@mail.gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
+        Shaomin Deng <dengshaomin@cdjrlc.com>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mao Zhu <zhumao001@208suo.com>
+Subject: Re: [PATCH] fs: Fix comment typo
+Message-ID: <20230612-daran-erhitzen-b839f13a6134@brauner>
+References: <20230611123314.5282-1-dengshaomin@cdjrlc.com>
+ <ZIXEHHvkJVlmE_c4@debian.me>
+ <87edmhok1h.fsf@meer.lwn.net>
+ <20230612-kabarett-vinylplatte-6e3843cd76a3@brauner>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxi0o+OgVT_GSHQwkDtHBf+QoeAycb7pmhOq+2e9-cx+3g@mail.gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+In-Reply-To: <20230612-kabarett-vinylplatte-6e3843cd76a3@brauner>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -62,35 +59,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 11:28:23AM +0300, Amir Goldstein wrote:
-> On Mon, Jun 12, 2023 at 11:07 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Sun, Jun 11, 2023 at 09:45:45PM -0700, Christoph Hellwig wrote:
-> > > On Sun, Jun 11, 2023 at 10:47:05PM +0300, Amir Goldstein wrote:
-> > > > Overlayfs and cachefiles use open_with_fake_path() to allocate internal
-> > > > files, where overlayfs also puts a "fake" path in f_path - a path which
-> > > > is not on the same fs as f_inode.
+On Mon, Jun 12, 2023 at 08:34:53AM +0200, Christian Brauner wrote:
+> On Sun, Jun 11, 2023 at 01:50:34PM -0600, Jonathan Corbet wrote:
+> > Bagas Sanjaya <bagasdotme@gmail.com> writes:
+> > 
+> > > On Sun, Jun 11, 2023 at 08:33:14AM -0400, Shaomin Deng wrote:
+> > >> From: Mao Zhu <zhumao001@208suo.com>
+> > >> 
+> > >> Delete duplicated word in comment.
 > > >
-> > > But cachefs doesn't, so this needs a better explanation / documentation.
+> > > On what function?
+> > 
+> > Bagas, do I *really* have to ask you, yet again, to stop nitpicking our
+> > contributors into the ground?  It appears I do.  So:
+> > 
+> > Bagas, *stop* this.  It's a typo patch removing an extraneous word.  The
+> > changelog is fine.  We absolutely do not need you playing changelog cop
+> > and harassing contributors over this kind of thing.
+> 
+> 100% agreed.
+> 
+> > 
+> > >> Signed-off-by: Mao Zhu <zhumao001@208suo.com>
 > > >
-> > > > Allocate a container struct file_fake for those internal files, that
-> > > > is used to hold the fake path along with an optional real path.
-> > >
-> > > The idea looks sensible, but fake a is a really weird term here.
-> > > I know open_with_fake_path also uses it, but we really need to
-> > > come up with a better name, and also good documentation of the
-> > > concept here.
-> >
-> > It's basically a stack so I'd either use struct file_stack or
-> > struct file_proxy; with a preference for the latter.
+> > > You're carrying someone else's patch, so besides SoB from original
+> > > author, you need to also have your own SoB.
+> > 
+> > This, instead, is a valid problem that needs to be fixed.
 > 
-> Let the bikeshedding begin :)
-> 
-> file_proxy too generic to my taste
-> 
-> How about:
-> 
-> /* File is embedded in backing_file object */
-> #define FMODE_BACKING           ((__force fmode_t)0x2000000)
+> Patch picked up and missing sender SOB added.
 
-Yeah, that'd be ok with me.
+I've been informed that I may not be allowed to do that.
+So dropping the sender SOB for now following willy's argument.
