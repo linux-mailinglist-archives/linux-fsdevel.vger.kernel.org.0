@@ -2,56 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FCB572BAC4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 10:35:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0731872BB40
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 10:53:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231675AbjFLIfN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 04:35:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42428 "EHLO
+        id S229726AbjFLIxN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 04:53:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233236AbjFLIfD (ORCPT
+        with ESMTP id S233821AbjFLIwq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 04:35:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3073B9F;
-        Mon, 12 Jun 2023 01:35:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 12 Jun 2023 04:52:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28657135
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 01:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686559922;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YtD454umQTjuM+zhD06P7S/zUWAIA9FhEjJkQE48IGY=;
+        b=iEfsFtSAYws+e5zpI0K5U36pA+yoHoAUwGqT23TFGercIPif/SnICewG0MuwBEp3wsG/4k
+        NJH0QrxMPIKtZ9tgfBofwpfVRdqYxL/t85Ivq4NUc3Y+qYdRKRycwD/TUzH37L+eFG3q7l
+        yV7mF1SwaZS/LyPA+GwP5i0PDWA7Dc8=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-413-DA-5KvoAPQGbnsuGrZ220Q-1; Mon, 12 Jun 2023 04:51:51 -0400
+X-MC-Unique: DA-5KvoAPQGbnsuGrZ220Q-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B6F2D62150;
-        Mon, 12 Jun 2023 08:35:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A4EC433D2;
-        Mon, 12 Jun 2023 08:34:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686558900;
-        bh=9ef8ksnCp30UJR78S9cXv1oIl2+eRaHJj41PIcfhvR4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XJVn0RVkAHSyGoevsqNZtsq78BCAnUy3P32db4efGj8LOLUaZxHiYCdY7SigiQg+A
-         Am3b4A90Dv43KYZ+RlqfssK1gof9t7Ymwggv05mCTxuYi/CedweuzlD6AwpkD0RuaW
-         EQjuxRxfY4KlKxOkyNmLmmlwSNkjlJxI/SaaJsO6XJnw+DTxXKxm6RLbEWQknUbG6R
-         4/PrrpfDn1J7xZj0aiC1Rm+Bz2LFnj60Tjbs0zi96No7AM8/9xQZqvW7No99PEE9Tz
-         ngo0zYVFX7AClE9j5MP++xCvou1SOjNjXl/Pcqy2D+qqaxqrp+aW3XiGyeGspyR+Xz
-         +ezzAhzCnlNYw==
-Date:   Mon, 12 Jun 2023 10:34:55 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
-        Shaomin Deng <dengshaomin@cdjrlc.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mao Zhu <zhumao001@208suo.com>
-Subject: Re: [PATCH] fs: Fix comment typo
-Message-ID: <20230612-daran-erhitzen-b839f13a6134@brauner>
-References: <20230611123314.5282-1-dengshaomin@cdjrlc.com>
- <ZIXEHHvkJVlmE_c4@debian.me>
- <87edmhok1h.fsf@meer.lwn.net>
- <20230612-kabarett-vinylplatte-6e3843cd76a3@brauner>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F09812A59568;
+        Mon, 12 Jun 2023 08:51:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B6A5D141511A;
+        Mon, 12 Jun 2023 08:51:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <63868def-9a92-3b0f-4369-160a18b447ee@redhat.com>
+References: <63868def-9a92-3b0f-4369-160a18b447ee@redhat.com> <202306120931.a9606b88-oliver.sang@intel.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     dhowells@redhat.com, kernel test robot <oliver.sang@intel.com>,
+        oe-lkp@lists.linux.dev, lkp@intel.com,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [axboe-block:for-6.5/block] [block] 1ccf164ec8: WARNING:at_mm/gup.c:#try_get_folio
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230612-kabarett-vinylplatte-6e3843cd76a3@brauner>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <29271.1686559905.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 12 Jun 2023 09:51:45 +0100
+Message-ID: <29272.1686559905@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,35 +79,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 08:34:53AM +0200, Christian Brauner wrote:
-> On Sun, Jun 11, 2023 at 01:50:34PM -0600, Jonathan Corbet wrote:
-> > Bagas Sanjaya <bagasdotme@gmail.com> writes:
-> > 
-> > > On Sun, Jun 11, 2023 at 08:33:14AM -0400, Shaomin Deng wrote:
-> > >> From: Mao Zhu <zhumao001@208suo.com>
-> > >> 
-> > >> Delete duplicated word in comment.
-> > >
-> > > On what function?
-> > 
-> > Bagas, do I *really* have to ask you, yet again, to stop nitpicking our
-> > contributors into the ground?  It appears I do.  So:
-> > 
-> > Bagas, *stop* this.  It's a typo patch removing an extraneous word.  The
-> > changelog is fine.  We absolutely do not need you playing changelog cop
-> > and harassing contributors over this kind of thing.
-> 
-> 100% agreed.
-> 
-> > 
-> > >> Signed-off-by: Mao Zhu <zhumao001@208suo.com>
-> > >
-> > > You're carrying someone else's patch, so besides SoB from original
-> > > author, you need to also have your own SoB.
-> > 
-> > This, instead, is a valid problem that needs to be fixed.
-> 
-> Patch picked up and missing sender SOB added.
+David Hildenbrand <david@redhat.com> wrote:
 
-I've been informed that I may not be allowed to do that.
-So dropping the sender SOB for now following willy's argument.
+> > [ 121.992093][ T2220] WARNING: CPU: 6 PID: 2220 at mm/gup.c:76 try_get=
+_folio (mm/gup.c:76 (discriminator 1))
+> =
+
+> I assume we have a refcount underflow (but could be an overflow?). Maybe=
+ we
+> used unpin_user_page() on a page not pinned via pin_user_pages() ?
+
+Looking at the disassembly and the register dump, this would appear to be =
+the
+counter:
+
+> RAX: 00000000fffffc01
+
+So my guess it's an underflow by 1 pin.
+
+David
+
