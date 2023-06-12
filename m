@@ -2,128 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2591B72CB0F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 18:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8729D72CB3B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 18:15:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbjFLQKj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 12:10:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50764 "EHLO
+        id S235905AbjFLQPP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 12:15:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbjFLQKh (ORCPT
+        with ESMTP id S237222AbjFLQPA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 12:10:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1242719D;
-        Mon, 12 Jun 2023 09:10:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 82F4A6157C;
-        Mon, 12 Jun 2023 16:10:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFCCEC433EF;
-        Mon, 12 Jun 2023 16:10:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686586234;
-        bh=GGn76tGN0G7Csher7QvAY1txJfjYU5LivWsNseZsoFE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OHPzpMgmndNEDWBSp8E66kgN0j7478UlNcjSt+2VJUlNZwvpMMji7LVDENSEYSSK9
-         MIDjsszVFhyePLQDog/lWXBPyH9qLz278/FNlQH29R/WHIx+Bne2prVOsaHb8rYB/f
-         8qpW3bFFQ/S/kb7cc9jHuUdvy9uUUyea3wvwDD5uOxZWRMff8SiOwH01rIkxtTQ94O
-         NLRrmyeTzDIwFzpjdyhchI/LxJ7lUbnLEqJZZw47Hl6Cmcs+TpoT96gnYhfrVeHJIC
-         ZTV+BWHC9ZadWu/KBC6se08URtApnYr+3PHttLX8CNXlnp4X41jv/Yq21FkxGHQ+vK
-         ePL79W/zVJGGQ==
-Date:   Mon, 12 Jun 2023 09:10:34 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Ritesh Harjani <ritesh.list@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
+        Mon, 12 Jun 2023 12:15:00 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2AEA1BCA;
+        Mon, 12 Jun 2023 09:14:48 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2b1bb2fc9c6so53017581fa.0;
+        Mon, 12 Jun 2023 09:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686586487; x=1689178487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OKPFSSH+caxQHaov+Wv+3EHEkLI7Kcu9oYB4YOFV98c=;
+        b=nA2kSdpXP2aia/RhBgkUf2KODbJBICe97+67Y2LVx1SjZg+SHpRQkHOqP2hMOvdnO8
+         FcysiW3xuywRNWp8vhCHePMVuZYrhNuhLVvnAFAFAqpw+eLfYMrlMfu7bS5tgdWzAy3S
+         mi/kZ54fxizGcQtwjCf4Jh3ZtieeTyF5bhcj4ujw+KcV/TMIRzKVfso4ZUnX/oYIdqyG
+         /A7SnUEmOCN0QLgAC+iSLrfcyhQJmhwO/TtsqaohxoHlOjLFUxLJPuwLD4BJKGuplhZs
+         11qbFmDqL8dcbAR3YxmBjYhnvUG7oRcBlRQwggE5fJcZoPYnKymcmqP3q7BfGAW1C8uf
+         aang==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686586487; x=1689178487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OKPFSSH+caxQHaov+Wv+3EHEkLI7Kcu9oYB4YOFV98c=;
+        b=bD2MeNkHyGWAR7YBuvlNzEiK6MxiWWL+H4y1lYj7Lhg8hSpBwQh08L0ZsAgegm4O3c
+         SL8T20mayVntjzc6e5xN/5iSqhzWyTGjvyi7xPnUWl2xH/ZjK5mr59A/1fK2tP5Xgqz1
+         fywNeTKmk6s30vgQXF9ZGOPDMRzxZxDVHQCPibMdrtx3cEro7sWGybTIA4JzbIkVEM93
+         9HaZ4osODKRTao5Ke0iv0v/Nx4oFx4ijwR6IWv9U9VMWDoeUOTTqWHRp1OYXNAzkAYV0
+         5u8wW7CCooLZ/W0x9qfu4H5pihW/JDkWur5sOzHCUDk8lFdGC43e7JhpHtw+gKufD/1M
+         fhYg==
+X-Gm-Message-State: AC+VfDyeKtRWIqra/8xlbt10wrrb63pkbExhz+cdxgjqxhuzbr7oceCU
+        S/QFQ4X7W7sFqqFLNx7toOtwpwzaOyURhjojPXw=
+X-Google-Smtp-Source: ACHHUZ4bACLCVxl9cBUvtK3ZXrgKi3PuHQRL9j1bC7LRMjUBRu/yMZHmGFK8gjZ6HnznjkbRC+YxRBBXDVbFnmRNAwU=
+X-Received: by 2002:a2e:8606:0:b0:2b1:e74b:2452 with SMTP id
+ a6-20020a2e8606000000b002b1e74b2452mr2969829lji.49.1686586486637; Mon, 12 Jun
+ 2023 09:14:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHc6FU7Hv71ujeb9oEVOD+bpddMMT0KY+KKUp881Am15u-OVvg@mail.gmail.com>
+ <87ilbshf56.fsf@doe.com>
+In-Reply-To: <87ilbshf56.fsf@doe.com>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Mon, 12 Jun 2023 18:14:35 +0200
+Message-ID: <CAHpGcMKV2KGMnBZsjk9NGFRiORZAdOLwpSjW1spGiZCOdNGCzg@mail.gmail.com>
+Subject: Re: [PATCHv9 3/6] iomap: Add some uptodate state handling helpers for
+ ifs state bitmap
+To:     Ritesh Harjani <ritesh.list@gmail.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
         Dave Chinner <david@fromorbit.com>,
         Brian Foster <bfoster@redhat.com>,
         Ojaswin Mujoo <ojaswin@linux.ibm.com>,
         Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [PATCHv9 3/6] iomap: Add some uptodate state handling helpers
- for ifs state bitmap
-Message-ID: <20230612161034.GD11441@frogsfrogsfrogs>
-References: <CAHc6FU5xMQfGPuTBDChS=w2+t4KAbu9po7yE+7qGaLTzV-+AFw@mail.gmail.com>
- <87o7lkhfpj.fsf@doe.com>
- <ZIc4ujLJixghk6Zp@casper.infradead.org>
- <CAHc6FU7GnVeKmUC4GkySqE1bV3WgbA_WTuQ3D0dcMyn193M4VA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHc6FU7GnVeKmUC4GkySqE1bV3WgbA_WTuQ3D0dcMyn193M4VA@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 05:57:48PM +0200, Andreas Gruenbacher wrote:
-> On Mon, Jun 12, 2023 at 5:24 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > On Mon, Jun 12, 2023 at 08:48:16PM +0530, Ritesh Harjani wrote:
-> > > > Since we're at the nitpicking, I don't find those names very useful,
-> > > > either. How about the following instead?
-> > > >
-> > > > iomap_ifs_alloc -> iomap_folio_state_alloc
-> > > > iomap_ifs_free -> iomap_folio_state_free
-> > > > iomap_ifs_calc_range -> iomap_folio_state_calc_range
-> > >
-> > > First of all I think we need to get used to the name "ifs" like how we
-> > > were using "iop" earlier. ifs == iomap_folio_state...
-> > >
-> > > >
-> > > > iomap_ifs_is_fully_uptodate -> iomap_folio_is_fully_uptodate
-> > > > iomap_ifs_is_block_uptodate -> iomap_block_is_uptodate
-> > > > iomap_ifs_is_block_dirty -> iomap_block_is_dirty
-> > > >
-> > >
-> > > ...if you then look above functions with _ifs_ == _iomap_folio_state_
-> > > naming. It will make more sense.
+Am Mo., 12. Juni 2023 um 17:43 Uhr schrieb Ritesh Harjani
+<ritesh.list@gmail.com>:
+> Andreas Gruenbacher <agruenba@redhat.com> writes:
+> > On Sat, Jun 10, 2023 at 1:39=E2=80=AFPM Ritesh Harjani (IBM)
+> > <ritesh.list@gmail.com> wrote:
+> >> This patch adds two of the helper routines iomap_ifs_is_fully_uptodate=
+()
+> >> and iomap_ifs_is_block_uptodate() for managing uptodate state of
+> >> ifs state bitmap.
+> >>
+> >> In later patches ifs state bitmap array will also handle dirty state o=
+f all
+> >> blocks of a folio. Hence this patch adds some helper routines for hand=
+ling
+> >> uptodate state of the ifs state bitmap.
+> >>
+> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> >> ---
+> >>  fs/iomap/buffered-io.c | 28 ++++++++++++++++++++--------
+> >>  1 file changed, 20 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> >> index e237f2b786bc..206808f6e818 100644
+> >> --- a/fs/iomap/buffered-io.c
+> >> +++ b/fs/iomap/buffered-io.c
+> >> @@ -43,6 +43,20 @@ static inline struct iomap_folio_state *iomap_get_i=
+fs(struct folio *folio)
+> >>
+> >>  static struct bio_set iomap_ioend_bioset;
+> >>
+> >> +static inline bool iomap_ifs_is_fully_uptodate(struct folio *folio,
+> >> +                                              struct iomap_folio_stat=
+e *ifs)
+> >> +{
+> >> +       struct inode *inode =3D folio->mapping->host;
+> >> +
+> >> +       return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio=
+));
 > >
-> > Well, it doesn't because it's iomap_iomap_folio_state_is_fully_uptodate.
-> 
-> Exactly.
-> 
-> > I don't think there's any need to namespace this so fully.
-> > ifs_is_fully_uptodate() is just fine for a static function, IMO.
-> 
-> I'd be perfectly happy with that kind of naming scheme as well.
+> > This should be written as something like:
+> >
+> > unsigned int blks_per_folio =3D i_blocks_per_folio(inode, folio);
+> > return bitmap_full(ifs->state + IOMAP_ST_UPTODATE * blks_per_folio,
+> > blks_per_folio);
+> >
+>
+> Nah, I feel it is not required... It make sense when we have the same
+> function getting use for both "uptodate" and "dirty" state.
+> Here the function anyways operates on uptodate state.
+> Hence I feel it is not required.
 
-Ugh, /another/ round of renaming.
+So we have this iomap_block_state enum now, but IOMAP_ST_UPTODATE must
+be 0 or else the code will break. That's worse than not having this
+abstraction in the first place because.
 
-to_folio_state (or just folio->private)
+Andreas
 
-ifs_alloc
-ifs_free
-ifs_calc_range
-
-ifs_set_range_uptodate
-ifs_is_fully_uptodate
-ifs_block_is_uptodate
-
-ifs_block_is_dirty
-ifs_clear_range_dirty
-ifs_set_range_dirty
-
-No more renaming suggestions.  I've reached the point where my eyes and
-brain have both glazed over from repeated re-reads of this series such
-that I don't see the *bugs* anymore.
-
-Anyone else wanting new naming gets to *send in their own patch*.
-Please focus only on finding code defects or friction between iomap and
-some other subsystem.
-
-Flame away about my aggressive tone,
-
-~Your burned out and pissed off maintainer~
-
-> Thanks,
-> Andreas
-> 
+> >> +}
+> >> +
+> >> +static inline bool iomap_ifs_is_block_uptodate(struct iomap_folio_sta=
+te *ifs,
+> >> +                                              unsigned int block)
+> >> +{
+> >> +       return test_bit(block, ifs->state);
+> >
+> > This function should be called iomap_ifs_block_is_uptodate(), and
+> > probably be written as follows, passing in the folio as well (this
+> > will optimize out, anyway):
+> >
+> > struct inode *inode =3D folio->mapping->host;
+> > unsigned int blks_per_folio =3D i_blocks_per_folio(inode, folio);
+> > return test_bit(block, ifs->state + IOMAP_ST_UPTODATE * blks_per_folio)=
+;
+> >
+>
+> Same here.
+>
+> -ritesh
