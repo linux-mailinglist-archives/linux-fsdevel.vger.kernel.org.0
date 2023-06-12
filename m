@@ -2,70 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D6EA72C9A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 17:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69FF572C9AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 17:19:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236165AbjFLPSY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 11:18:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46526 "EHLO
+        id S235495AbjFLPTK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 11:19:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234745AbjFLPSW (ORCPT
+        with ESMTP id S236919AbjFLPTJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 11:18:22 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F075F8F;
-        Mon, 12 Jun 2023 08:18:21 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-653fcd58880so3477661b3a.0;
-        Mon, 12 Jun 2023 08:18:21 -0700 (PDT)
+        Mon, 12 Jun 2023 11:19:09 -0400
+Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1873119;
+        Mon, 12 Jun 2023 08:19:08 -0700 (PDT)
+Received: by mail-vk1-xa30.google.com with SMTP id 71dfb90a1353d-45eabad43c4so1795910e0c.3;
+        Mon, 12 Jun 2023 08:19:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686583101; x=1689175101;
-        h=content-transfer-encoding:mime-version:in-reply-to:subject:cc:to
-         :from:message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwMxHWntdZQxEtbYwPoeuyEsSqRwC+x1e76KZ+LdYKU=;
-        b=LfnL2vDn8hwk0nUMu/8bA4TI0NsPQ2+TVE5xrtyR8ZlShuMVIOkVWMYEIZ1umTYnM6
-         ezoYJZjfX8Ahq8S6uNijF33zGxBpDa52IEPKPRuPjdpRA5a6IuBNl+y998KpfwmhgtDr
-         998pG+kHML7K9Q+Qh2dNuLmxu2WNB5XWNkAHGRCuXDElhu1CaS/BAybzPXLWSkxnd8co
-         WfSNVAnDH5CIoYmEh6O8zlsZOK2lf0cIVfzNeZg7iUkQHeOz6emkHo/PfycPiXtffD3P
-         +0ULJg3ZQgW3DxQzObAGK5eEXQGx2b8mRF0UOhFuVikShasrRcvd4mLgsDZew9x3Yh84
-         +SUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686583101; x=1689175101;
-        h=content-transfer-encoding:mime-version:in-reply-to:subject:cc:to
-         :from:message-id:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1686583148; x=1689175148;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wwMxHWntdZQxEtbYwPoeuyEsSqRwC+x1e76KZ+LdYKU=;
-        b=aiSgD7H/yg+cXQ/Ef20WfL/zNvJ7ilPZFWhXaJs+twj6+mgoZVVWWkJ2Nz8S6FxpzF
-         nXqEqhR47dkpzU5UMy3pHmk4KZf4TVFRoPZlMCm8L4Xn7Eu8HBlgaqbbZ/IO6rnd2gbU
-         SEkeLvxErMZipZb3n8PYSSlMyno4ZD3FKgTpwWZ4SGAgMzzgjXcxa+RPHbrDYTXPxwZa
-         aboWZyeWR3WXTJbcQjcSm4ZRaR/iJ1+2U0kpV7aXo2No/UgN0suvpRMk/+x46aIY0XG/
-         LTazDl1i9PNwsUNo7FSilY8RkUvd0t5BszfRN+ivcMCdIAH7qagfLLpuUvATRrGkmD3L
-         XXLQ==
-X-Gm-Message-State: AC+VfDwihteQSkErnop1K6AtVIChybr7CiSnF95mfq7pVRVQaSoWsTrV
-        f5LZBIncxlyIPaNRKVG2hMw=
-X-Google-Smtp-Source: ACHHUZ5fXlN3Wa4lI3fNCYTPA8m0WhO5JxmJ3Wo2T/61/b8Fo4O9/rYr1GxJek5I5flAWTcr4ub9tA==
-X-Received: by 2002:a05:6a20:7288:b0:111:1c17:3fc6 with SMTP id o8-20020a056a20728800b001111c173fc6mr10801033pzk.10.1686583101226;
-        Mon, 12 Jun 2023 08:18:21 -0700 (PDT)
-Received: from dw-tp ([49.207.220.159])
-        by smtp.gmail.com with ESMTPSA id 26-20020a63175a000000b0053f3797fc4asm7665614pgx.0.2023.06.12.08.18.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 08:18:20 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 20:48:16 +0530
-Message-Id: <87o7lkhfpj.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>,
+        bh=4014MnYye531nYcnxv56ggVOb/ycAPibhhnDkpmU40E=;
+        b=ScxN8PRHphwSNSdor3hmB0jzaF41Y77Gnuf4xUzNAAXmXDoXv3iDfFysKo6beqDASS
+         W1Zx3qJ3IA5Uve2YYzatd7tTjZLzFNy+LAAApP9VAS2dvtstUKke8W2BJDl6Eb4PZKpO
+         TIbzRZsEjVPDiOwxNE0IyimH3Bc7IPQKW93l4uvED7eB/EW3zDrAI7ggshNLnR0gJK3G
+         4FIdHunpItDLNm9ZFE34nvPZjhLGRlhnBQimTfFcZDQSgDmeObnHAQFUpsIce30Za4aY
+         7Re8k+ZtQbNcYkbXgjCb3kD3XY0zAJXHZgIloWKFKnd1+vidRvA7w06GyWHKtvpOQX21
+         YPrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686583148; x=1689175148;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4014MnYye531nYcnxv56ggVOb/ycAPibhhnDkpmU40E=;
+        b=f6m1IKvSrIVmCgtKGUazzpnjLevSWXivp2UHZGpUwB4wqNw91y14sqHWHC9ZxTTkUy
+         0OxtdBD4NThglaS21tA4D6EpxOBjbPaubpisIRSNzWt6OwiLTvk2n0/CYRsEKy/uK5//
+         Ymq6DEc/KRPmczCxvGkZJguFcGrC16TbeNRsbUvTnreG43YPY1VJ63hNMTmKBThpOQTt
+         VI6rUAb5bbOMAz7WdW8aF/YLXu2waqZ54iuqLed0LkUcBIg7soUWwobmDHzAQwBkG8Tg
+         /26AzdqlTxYYd98V9h2tUCaND57CM0F1fOkq6kDIp/LvMopIykOoM3knlSPjJW6GvTCD
+         Ea5A==
+X-Gm-Message-State: AC+VfDyqOx1ZS1wigFXbbzoiC7F2DfHPR3HPIfbHHjLnM8NiXtVpUV7r
+        KTeYESwoFViauMpTV+BxlbAoKjA6whlAjOzROAA=
+X-Google-Smtp-Source: ACHHUZ4d9sJs3BhbyaKvzqafXPdFnfFv8IdeOWtNjWhG0tuo4dqK2qnvo79j8sOIpt1DgtVLMqhOTKMMTTNejP6RnBA=
+X-Received: by 2002:a67:ead1:0:b0:43b:4b0a:1349 with SMTP id
+ s17-20020a67ead1000000b0043b4b0a1349mr4495847vso.14.1686583147690; Mon, 12
+ Jun 2023 08:19:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230611194706.1583818-1-amir73il@gmail.com>
+In-Reply-To: <20230611194706.1583818-1-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 12 Jun 2023 18:18:56 +0300
+Message-ID: <CAOQ4uxhteBXU=3K5CHzgGY30Tiv0qdoVW9d5SFdd1qTn4SBQAA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] Handle notifications on overlayfs fake path files
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [PATCHv9 3/6] iomap: Add some uptodate state handling helpers for ifs state bitmap
-In-Reply-To: <CAHc6FU5xMQfGPuTBDChS=w2+t4KAbu9po7yE+7qGaLTzV-+AFw@mail.gmail.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -76,96 +71,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Andreas Gruenbacher <agruenba@redhat.com> writes:
-
-> On Mon, Jun 12, 2023 at 8:25 AM Christoph Hellwig <hch@infradead.org> wrote:
->> On Sat, Jun 10, 2023 at 05:09:04PM +0530, Ritesh Harjani (IBM) wrote:
->> > This patch adds two of the helper routines iomap_ifs_is_fully_uptodate()
->> > and iomap_ifs_is_block_uptodate() for managing uptodate state of
->> > ifs state bitmap.
->> >
->> > In later patches ifs state bitmap array will also handle dirty state of all
->> > blocks of a folio. Hence this patch adds some helper routines for handling
->> > uptodate state of the ifs state bitmap.
->> >
->> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> > ---
->> >  fs/iomap/buffered-io.c | 28 ++++++++++++++++++++--------
->> >  1 file changed, 20 insertions(+), 8 deletions(-)
->> >
->> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->> > index e237f2b786bc..206808f6e818 100644
->> > --- a/fs/iomap/buffered-io.c
->> > +++ b/fs/iomap/buffered-io.c
->> > @@ -43,6 +43,20 @@ static inline struct iomap_folio_state *iomap_get_ifs(struct folio *folio)
->> >
->> >  static struct bio_set iomap_ioend_bioset;
->> >
->> > +static inline bool iomap_ifs_is_fully_uptodate(struct folio *folio,
->> > +                                            struct iomap_folio_state *ifs)
->> > +{
->> > +     struct inode *inode = folio->mapping->host;
->> > +
->> > +     return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
->> > +}
->> > +
->> > +static inline bool iomap_ifs_is_block_uptodate(struct iomap_folio_state *ifs,
->> > +                                            unsigned int block)
->> > +{
->> > +     return test_bit(block, ifs->state);
+On Sun, Jun 11, 2023 at 10:47=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
+> wrote:
 >
-> "block_is_uptodate" instead of "is_block_uptodate" here as well, please.
+> Miklos,
 >
-> Also see by previous mail about iomap_ifs_is_block_uptodate().
+> Third attempt with the eye towards simplifying d_real() interface.
+>
+> Like v2, most of the vfs code should remain unaffected by this
+> expect for the special fsnotify case that we wanted to fix.
 >
 
-"is_block_uptodate" is what we decided in our previous discussion here [1]
-[1]: https://lore.kernel.org/linux-xfs/20230605225434.GF1325469@frogsfrogsfrogs/
+FYI, I've made some changes based on feedback on v3 from
+Christoph and Christian:
 
+- Rename struct file_fake to backing_file
+- Rename helpers to open_backing_file(), backing_file_real_path()
+- Rename FMODE_FAKE_PATH to FMODE_BACKING
+- Separate flag from FMODE_NOACCOUNT
+- inline the non-backing branch of f_real_path()
 
-Unless any strong objections, for now I will keep Maintainer's suggested name
-;) and wait for his feedback on this.
+Pushed to:
+https://github.com/amir73il/linux/commits/ovl_fake_path
 
->> > +}
->>
->> A little nitpicky, but do the _ifs_ name compenents here really add
->> value?
->
-> Since we're at the nitpicking, I don't find those names very useful,
-> either. How about the following instead?
->
-> iomap_ifs_alloc -> iomap_folio_state_alloc
-> iomap_ifs_free -> iomap_folio_state_free
-> iomap_ifs_calc_range -> iomap_folio_state_calc_range
+Will wait for your feedback before posting v4.
 
-First of all I think we need to get used to the name "ifs" like how we
-were using "iop" earlier. ifs == iomap_folio_state...
+Thanks,
+Amir.
 
 >
-> iomap_ifs_is_fully_uptodate -> iomap_folio_is_fully_uptodate
-> iomap_ifs_is_block_uptodate -> iomap_block_is_uptodate
-> iomap_ifs_is_block_dirty -> iomap_block_is_dirty
+> Changes since v2:
+> - Restore the file_fake container (Miklos)
+> - Re-arrange the v1 helpers (Christian)
 >
-
-...if you then look above functions with _ifs_ == _iomap_folio_state_
-naming. It will make more sense. 
-
-
-> iomap_ifs_set_range_uptodate -> __iomap_set_range_uptodate
-> iomap_ifs_clear_range_dirty -> __iomap_clear_range_dirty
-> iomap_ifs_set_range_dirty -> __iomap_set_range_dirty
-
-Same as above.
-
+> Changes since v1:
+> - Drop the file_fake container
+> - Leave f_path fake and special case only fsnotify
 >
-> Thanks,
-> Andreas
-
-Thanks for the review! 
-
-I am not saying I am not open to changing the name. But AFAIR, Darrick
-and Matthew were ok with "ifs" naming. In fact they first suggested it
-as well. So if others also dislike "ifs" naming, then we could consider
-other options.
-
--ritesh
+> Amir Goldstein (2):
+>   fs: use fake_file container for internal files with fake f_path
+>   ovl: enable fsnotify events on underlying real files
+>
+>  fs/cachefiles/namei.c    |  2 +-
+>  fs/file_table.c          | 91 +++++++++++++++++++++++++++++++++-------
+>  fs/internal.h            |  5 ++-
+>  fs/namei.c               | 16 +++----
+>  fs/open.c                | 28 ++++++++-----
+>  fs/overlayfs/file.c      |  6 +--
+>  include/linux/fs.h       | 15 ++++---
+>  include/linux/fsnotify.h |  3 +-
+>  8 files changed, 121 insertions(+), 45 deletions(-)
+>
+> --
+> 2.34.1
+>
