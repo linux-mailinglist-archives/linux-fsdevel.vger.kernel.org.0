@@ -2,154 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38AB372C533
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 14:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F40F472C54C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 15:00:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237248AbjFLM4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 08:56:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41632 "EHLO
+        id S235831AbjFLNAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 09:00:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236081AbjFLM43 (ORCPT
+        with ESMTP id S235840AbjFLNAp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 08:56:29 -0400
+        Mon, 12 Jun 2023 09:00:45 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43C193C0E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 05:54:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED836C7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 05:59:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686574455;
+        s=mimecast20190719; t=1686574799;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fz9whUJtpEY98j2Cwj5MhqkEs9MDaC4WXItYB7JCfUE=;
-        b=Hgp7xfDuOIVXI28qxWVFxIaaWwv2LrkV/mDe1PGgl+bA2n1+naQjRej//zniLD+V9bUgDI
-        RQuaW4nMYSdEc5fi29Iegvkk/asnUxJH78hx5RkMOba8aWZus2VH2gD+1jdcwpdH+0vzJE
-        XIeVYEAFcSXNehTtVo8FtYkgxfF4NSU=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=7MHUCM5KT8vM2xB13XAxxl/4rNAKHKdVp2VNq4kQ1aI=;
+        b=PJnTVZGLzRDFQrJKTLrDpK6mIKC+UfhBybrW/1JTHQ98Voeo5WwrTYkEd8lholoXclkpL/
+        vQUSnjs8j5/XP/+hQUbIPX7M80VwO8peaiJIg6EluiiU0l4bobmDCypPjFINv3rPv7wQtY
+        jqA1EeK7UO7jMcrm7I8QTKodNwQyQsk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-7zfpzOjnP-aa30FqC0fUBA-1; Mon, 12 Jun 2023 08:54:13 -0400
-X-MC-Unique: 7zfpzOjnP-aa30FqC0fUBA-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1b3be4189b4so7461365ad.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 05:54:13 -0700 (PDT)
+ us-mta-193-OfnxWizsOligJGE38yzhCg-1; Mon, 12 Jun 2023 08:59:57 -0400
+X-MC-Unique: OfnxWizsOligJGE38yzhCg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-3f81bdf4716so3716585e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 05:59:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686574453; x=1689166453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fz9whUJtpEY98j2Cwj5MhqkEs9MDaC4WXItYB7JCfUE=;
-        b=Z4lvymo5Fv13YN7oak9Uc3NS98oT6UyliLeNKgAef9szrNYrku5xl93KUMtoP7NRLr
-         kiF73NmZib6jpvwi7QXc+2kDP3Q3zLP1RYLpD2b5g+ZjwG4ZQ6/g/FCKoEbKRHXsaWmC
-         K+V+hZ1BTpoFKZNDSVn7D+ETSyM3TpfEQHLAsbltwklrKFLJKfNFN142hBgBpUbko4ao
-         ucehasAzP62y+wxzQUfuQn0ieUedVVuzc7UT0r6GcA5FD/zSmeD2WI5A8CnWnlQMDt1k
-         IBD09gWZRr2UOtZ8W6N01qHiyYcrUUjXojoSLh2xQwm20bh7g1SLi6UnwFBsSa2lLJjs
-         RRiA==
-X-Gm-Message-State: AC+VfDzIioL4IKTptp9pquacvdnh98XSkmSqXSw7BNxAEjmrK9T7+2y4
-        OKvtmk0QyLH8BS4mcqca3DcHprUgF7NvKyuP0IS5tQmHf21mm+QpPRQUaDfWWcSkYtwQX6F4Qph
-        Q1DZS48Jj8d4z8aMbE+g7na1Cz/5h4K1ucBmKs0ICjg==
-X-Received: by 2002:a17:902:d4c2:b0:1b2:5ade:9ebb with SMTP id o2-20020a170902d4c200b001b25ade9ebbmr6912403plg.2.1686574452876;
-        Mon, 12 Jun 2023 05:54:12 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5xN/2g6GJ+QxqHMvmL8Vs4i0rNTTLHb/2VRjjZXB3sAPZjZomoBxDOJKDPLadM3sAR3eMiX8hCHG5JLuLN13Y=
-X-Received: by 2002:a17:902:d4c2:b0:1b2:5ade:9ebb with SMTP id
- o2-20020a170902d4c200b001b25ade9ebbmr6912392plg.2.1686574452592; Mon, 12 Jun
- 2023 05:54:12 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686574796; x=1689166796;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7MHUCM5KT8vM2xB13XAxxl/4rNAKHKdVp2VNq4kQ1aI=;
+        b=OwcwXksSWj4RjJHvqFHUUX4l/NPSrXghSvf3UVWirxQYM2pxACsMGiZN0sYUSEweFA
+         dJco3cRyNNSVej5VoVM1B2ziX2xCsGAG39TnHgphmrINzgC/eZMpAmWVBq9h91YnnLap
+         M5AnBL0qvn9KaetTdjmkuJp5dsBS1Y9amM6Dxzy3zG1L9zlo0qHnFtZdWOeRWBa5ksWE
+         p91rbL4Mh+FzmUGRJ+5G6ZetZBVVE8Zd8ayd5hZ0bwyvpSu/fNukHqiMiXWDP0ieRXBa
+         Bp0zy9dkC2uEwYCBpxqPcixKmXmyEWGUN5cmTswGd7Jl5eHDF9tba1gS1ibi8hGWw4o0
+         OvKw==
+X-Gm-Message-State: AC+VfDx/3d3q0p5+u/Yq2lkUipF5I6R8TKBb9vIcvNLGZ4Pe6nrLiR5/
+        +VGQaCPQ5Www4wZ0RsOdzF4yYBssPmLNg5n6PD6d/tDMDUhZkh2iiFupTPzOiY9zidsCPY17uRX
+        TggEiXT5Do6RWFEPfWg1INPyeMg==
+X-Received: by 2002:a05:600c:254:b0:3f7:16dd:1c3b with SMTP id 20-20020a05600c025400b003f716dd1c3bmr9611742wmj.10.1686574795971;
+        Mon, 12 Jun 2023 05:59:55 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7t7eCEsEhz8aFffMmzZUfTSv7eBfjsqj66k61LJGWeNANSXO2kcMvJLq8CANmmXe5IWR0rCA==
+X-Received: by 2002:a05:600c:254:b0:3f7:16dd:1c3b with SMTP id 20-20020a05600c025400b003f716dd1c3bmr9611730wmj.10.1686574795586;
+        Mon, 12 Jun 2023 05:59:55 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c74e:1600:4f67:25b2:3e8c:2a4e? (p200300cbc74e16004f6725b23e8c2a4e.dip0.t-ipconnect.de. [2003:cb:c74e:1600:4f67:25b2:3e8c:2a4e])
+        by smtp.gmail.com with ESMTPSA id 10-20020a05600c22ca00b003f427687ba7sm11309701wmg.41.2023.06.12.05.59.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 05:59:55 -0700 (PDT)
+Message-ID: <080538f2-defc-2000-c9f2-fb520448c93c@redhat.com>
+Date:   Mon, 12 Jun 2023 14:59:53 +0200
 MIME-Version: 1.0
-References: <cover.1686395560.git.ritesh.list@gmail.com> <606c3279db7cc189dd3cd94d162a056c23b67514.1686395560.git.ritesh.list@gmail.com>
- <ZIa6WLknzuxoDDT8@infradead.org>
-In-Reply-To: <ZIa6WLknzuxoDDT8@infradead.org>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Mon, 12 Jun 2023 14:54:00 +0200
-Message-ID: <CAHc6FU5xMQfGPuTBDChS=w2+t4KAbu9po7yE+7qGaLTzV-+AFw@mail.gmail.com>
-Subject: Re: [PATCHv9 3/6] iomap: Add some uptodate state handling helpers for
- ifs state bitmap
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [axboe-block:for-6.5/block] [block] 1ccf164ec8:
+ WARNING:at_mm/gup.c:#try_get_folio
+To:     David Howells <dhowells@redhat.com>,
+        kernel test robot <oliver.sang@intel.com>
+Cc:     oe-lkp@lists.linux.dev, lkp@intel.com,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+References: <202306120931.a9606b88-oliver.sang@intel.com>
+ <108491.1686573741@warthog.procyon.org.uk>
+Content-Language: en-US
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <108491.1686573741@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 8:25=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
-> On Sat, Jun 10, 2023 at 05:09:04PM +0530, Ritesh Harjani (IBM) wrote:
-> > This patch adds two of the helper routines iomap_ifs_is_fully_uptodate(=
-)
-> > and iomap_ifs_is_block_uptodate() for managing uptodate state of
-> > ifs state bitmap.
-> >
-> > In later patches ifs state bitmap array will also handle dirty state of=
- all
-> > blocks of a folio. Hence this patch adds some helper routines for handl=
-ing
-> > uptodate state of the ifs state bitmap.
-> >
-> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > ---
-> >  fs/iomap/buffered-io.c | 28 ++++++++++++++++++++--------
-> >  1 file changed, 20 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index e237f2b786bc..206808f6e818 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -43,6 +43,20 @@ static inline struct iomap_folio_state *iomap_get_if=
-s(struct folio *folio)
-> >
-> >  static struct bio_set iomap_ioend_bioset;
-> >
-> > +static inline bool iomap_ifs_is_fully_uptodate(struct folio *folio,
-> > +                                            struct iomap_folio_state *=
-ifs)
-> > +{
-> > +     struct inode *inode =3D folio->mapping->host;
-> > +
-> > +     return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
-> > +}
-> > +
-> > +static inline bool iomap_ifs_is_block_uptodate(struct iomap_folio_stat=
-e *ifs,
-> > +                                            unsigned int block)
-> > +{
-> > +     return test_bit(block, ifs->state);
+On 12.06.23 14:42, David Howells wrote:
+> The attached test reproduces the problem on a loop-back mounted file
+> containing a UDF filesystem.  The key appears to be the consecutive DIOs to
+> the same page.
 
-"block_is_uptodate" instead of "is_block_uptodate" here as well, please.
+The first DIO messes up the refcount (double-unpin?) such that the 
+second one detects the refcount underflow when trying to pin the page again?
 
-Also see by previous mail about iomap_ifs_is_block_uptodate().
+-- 
+Cheers,
 
-> > +}
->
-> A little nitpicky, but do the _ifs_ name compenents here really add
-> value?
-
-Since we're at the nitpicking, I don't find those names very useful,
-either. How about the following instead?
-
-iomap_ifs_alloc -> iomap_folio_state_alloc
-iomap_ifs_free -> iomap_folio_state_free
-iomap_ifs_calc_range -> iomap_folio_state_calc_range
-
-iomap_ifs_is_fully_uptodate -> iomap_folio_is_fully_uptodate
-iomap_ifs_is_block_uptodate -> iomap_block_is_uptodate
-iomap_ifs_is_block_dirty -> iomap_block_is_dirty
-
-iomap_ifs_set_range_uptodate -> __iomap_set_range_uptodate
-iomap_ifs_clear_range_dirty -> __iomap_clear_range_dirty
-iomap_ifs_set_range_dirty -> __iomap_set_range_dirty
-
-Thanks,
-Andreas
+David / dhildenb
 
