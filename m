@@ -2,136 +2,249 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 619C372C66D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 15:52:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 322A372C675
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 15:52:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236751AbjFLNwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 09:52:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40048 "EHLO
+        id S236663AbjFLNwv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 09:52:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236666AbjFLNwA (ORCPT
+        with ESMTP id S231319AbjFLNwt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 09:52:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A64E6F;
-        Mon, 12 Jun 2023 06:51:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 12 Jun 2023 09:52:49 -0400
+Received: from mx4.veeam.com (mx4.veeam.com [104.41.138.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F52A1;
+        Mon, 12 Jun 2023 06:52:47 -0700 (PDT)
+Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E84C62976;
-        Mon, 12 Jun 2023 13:51:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92EC5C433A1;
-        Mon, 12 Jun 2023 13:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686577915;
-        bh=N35u9HNcA2GE6O0RLNmO/H/bI7DFCPIb/J9WbCfp+7I=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=ObL7C8SEHs/LzGPrSxC74RrT9T2yAr7+1XglnX3EW1FZM90y7O6ormobkdpAWuZ0e
-         RdLzx900Hqpy9HE3EfCtu+74BEGhE/aZtEqml+3NJgQSzQx53YAlTOFBgpsZKSbcTh
-         +zXor8GIZ20+va1qDjHAfR3RyRUEaBOMhmjJ7l5g2lpz8/OpJX+h5I3T6nxDG8Q0Ct
-         vPS6mDUmgWbpb1+t3cmEUqFflpPCwKrf9+eWZ+e4rjAuOfKobUeruOpGBYBZ90Wbpa
-         C9ELvqhW19k3IAANYXAYjz0pZ8SMZZaeiSfoRUPDrDPMlZiF0tSo1r2eVMBMPNiBkq
-         +CwHQ9soLqvPA==
-Message-ID: <a6ca6c14a6b3727b7416198824b37bd7bd386180.camel@kernel.org>
-Subject: Re: [PATCH v2 8/8] cifs: update the ctime on a partial page write
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Tom Talpey <tom@talpey.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Brad Warrum <bwarrum@linux.ibm.com>,
-        Ritu Agarwal <rituagar@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ian Kent <raven@themaw.net>,
-        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ruihan Li <lrh2000@pku.edu.cn>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org
-Date:   Mon, 12 Jun 2023 09:51:50 -0400
-In-Reply-To: <a34b598a-374b-5dbf-dd36-4b62e52fe36c@talpey.com>
-References: <20230612104524.17058-1-jlayton@kernel.org>
-         <20230612104524.17058-9-jlayton@kernel.org>
-         <a34b598a-374b-5dbf-dd36-4b62e52fe36c@talpey.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+        by mx4.veeam.com (Postfix) with ESMTPS id 9B78420E2F;
+        Mon, 12 Jun 2023 16:52:45 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
+        s=mx4-2022; t=1686577965;
+        bh=VMupNHJxB/OlqZAdjGEudFPkvX35rQc51mrvvIsSFSU=;
+        h=From:To:CC:Subject:Date:From;
+        b=mPRX5pUdZUa3Cva+YpjENDfB98Mw07nkySMECMJmqb+UPi3G62sdwhoq49uQsmP4C
+         FUm2Sujfni0MtkmnSeBGTQpF0YkVLT+z07LCkuN7dDKaDlNk/aNG8YWxtTwSQBVpvk
+         x08wjSjuFuGFeTU0869PuhEWmtYlGOfDracbpJaAuurswKWhxcBi5SCuIGOhUjaL1W
+         p6i2j52S2cp7qTA2yL1iBwTpuShYmCPnY9QAtxaMYQZS/APtDPyuN8ArRTEQAloSyJ
+         mS/V80I3WE4KDa90IDNLQ0E85VildOoMGAr+9POr1Srt7zbNYk+oyBhSirpy1bdm7L
+         OZiurO17HNd6Q==
+Received: from ssh-deb10-ssd-vb.amust.local (172.24.10.107) by
+ prgmbx01.amust.local (172.24.128.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 12 Jun 2023 15:52:44 +0200
+From:   Sergei Shtepa <sergei.shtepa@veeam.com>
+To:     <axboe@kernel.dk>, <hch@infradead.org>, <corbet@lwn.net>,
+        <snitzer@kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+        <dchinner@redhat.com>, <willy@infradead.org>, <dlemoal@kernel.org>,
+        <linux@weissschuh.net>, <jack@suse.cz>, <ming.lei@redhat.com>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <sergei.shtepa@veeam.com>
+Subject: [PATCH v5 00/11] blksnap - block devices snapshots module
+Date:   Mon, 12 Jun 2023 15:52:17 +0200
+Message-ID: <20230612135228.10702-1-sergei.shtepa@veeam.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.24.10.107]
+X-ClientProxiedBy: prgmbx02.amust.local (172.24.128.103) To
+ prgmbx01.amust.local (172.24.128.102)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29240315546D776B
+X-Veeam-MMEX: True
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-06-12 at 09:41 -0400, Tom Talpey wrote:
-> On 6/12/2023 6:45 AM, Jeff Layton wrote:
-> > POSIX says:
-> >=20
-> >      "Upon successful completion, where nbyte is greater than 0, write(=
-)
-> >       shall mark for update the last data modification and last file st=
-atus
-> >       change timestamps of the file..."
-> >=20
-> > Add the missing ctime update.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >   fs/smb/client/file.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-> > index df88b8c04d03..a00038a326cf 100644
-> > --- a/fs/smb/client/file.c
-> > +++ b/fs/smb/client/file.c
-> > @@ -2596,7 +2596,7 @@ static int cifs_partialpagewrite(struct page *pag=
-e, unsigned from, unsigned to)
-> >   					   write_data, to - from, &offset);
-> >   		cifsFileInfo_put(open_file);
-> >   		/* Does mm or vfs already set times? */
-> > -		inode->i_atime =3D inode->i_mtime =3D current_time(inode);
-> > +		inode->i_atime =3D inode->i_mtime =3D inode->i_ctime =3D current_tim=
-e(inode);
->=20
-> Question. It appears that roughly half the filesystems in this series
-> don't touch the i_atime in this case. And the other half do. Which is
-> correct? Did they incorrectly set i_atime instead of i_ctime?
->=20
+Hi all.
 
-I noticed that too, and with this set, I decided to not make any atime
-changes since I wasn't sure.
+I am happy to offer a improved version of the Block Devices Snapshots
+Module. It allows to create non-persistent snapshots of any block devices.
+The main purpose of such snapshots is to provide backups of block devices.
+See more in Documentation/block/blksnap.rst.
 
-I think the answer to your question is "it depends". atime is supposed
-to be updated on reads, not writes, but sometimes a write requires a RMW
-cycle of some flavor so one can imagine that in some cases we'd need to
-update all three.
+The Block Device Filtering Mechanism is added to the block layer. This
+allows to attach and detach block device filters to the block layer.
+Filters allow to extend the functionality of the block layer.
+See more in Documentation/block/blkfilter.rst.
 
-In this case, I'm not sure that updating any of these times is the right
-thing to do. This is called from ->launder_folio, so the syscall that
-issued the write is long gone and we're in writeback here.
+The tool, library and tests for working with blksnap can be found on github.
+Link: https://github.com/veeam/blksnap/tree/stable-v2.0
 
-With NFS, we generally leave timestamp updates to the server. Should any
-of these timestamps be updated by the (SMB1) client here?
---=20
-Jeff Layton <jlayton@kernel.org>
+There are few changes in this patch version. The experience of using the
+out-of-tree version of the blksnap module on real servers was taken into
+account.
+
+v5 changes:
+- Rebase for "kernel/git/axboe/linux-block.git" branch "for-6.5/block".
+  Link: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.5/block
+
+v4 changes:
+- Structures for describing the state of chunks are allocated dynamically.
+  This reduces memory consumption, since the struct chunk is allocated only
+  for those blocks for which the snapshot image state differs from the
+  original block device.
+- The algorithm for calculating the chunk size depending on the size of the
+  block device has been changed. For large block devices, it is now
+  possible to allocate a larger number of chunks, and their size is smaller.
+- For block devices, a 'filter' file has been added to /sys/block/<device>.
+  It displays the name of the filter that is attached to the block device.
+- Fixed a problem with the lack of protection against re-adding a block
+  device to a snapshot.
+- Fixed a bug in the algorithm of allocating the next bio for a chunk.
+  This problem was accurred on large disks, for which a chunk consists of
+  at least two bio.
+- The ownership mechanism of the diff_area structure has been changed.
+  This fixed the error of prematurely releasing the diff_area structure
+  when destroying the snapshot.
+- Documentation corrected.
+- The Sparse analyzer is passed.
+- Use __u64 type instead pointers in UAPI.
+
+v3 changes:
+- New block device I/O controls BLKFILTER_ATTACH and BLKFILTER_DETACH allow
+  to attach and detach filters.
+- New block device I/O control BLKFILTER_CTL allow send command to attached
+  block device filter.
+- The copy-on-write algorithm for processing I/O units has been optimized
+  and has become asynchronous.
+- The snapshot image reading algorithm has been optimized and has become
+  asynchronous.
+- Optimized the finite state machine for processing chunks.
+- Fixed a tracking block size calculation bug.
+
+v2 changes:
+- Added documentation for Block Device Filtering Mechanism.
+- Added documentation for Block Devices Snapshots Module (blksnap).
+- The MAINTAINERS file has been updated.
+- Optimized queue code for snapshot images.
+- Fixed comments, log messages and code for better readability.
+
+v1 changes:
+- Forgotten "static" declarations have been added.
+- The text of the comments has been corrected.
+- It is possible to connect only one filter, since there are no others in
+  upstream.
+- Do not have additional locks for attach/detach filter.
+- blksnap.h moved to include/uapi/.
+- #pragma once and commented code removed.
+- uuid_t removed from user API.
+- Removed default values for module parameters from the configuration file.
+- The debugging code for tracking memory leaks has been removed.
+- Simplified Makefile.
+- Optimized work with large memory buffers, CBT tables are now in virtual
+  memory.
+- The allocation code of minor numbers has been optimized.
+- The implementation of the snapshot image block device has been
+  simplified, now it is a bio-based block device.
+- Removed initialization of global variables with null values.
+- only one bio is used to copy one chunk.
+- Checked on ppc64le.
+
+Thanks for preparing v4 patch:
+- Christoph Hellwig <hch@infradead.org> for his significant contribution
+  to the project.
+- Fabio Fantoni <fantonifabio@tiscali.it> for his participation in the
+  project, useful advice and faith in the success of the project.
+- Donald Buczek <buczek@molgen.mpg.de> for researching the module and
+  user-space tool. His fresh look revealed a number of flaw.
+- Bagas Sanjaya <bagasdotme@gmail.com> for comments on the documentation.
+
+Sergei Shtepa (11):
+  documentation: Block Device Filtering Mechanism
+  block: Block Device Filtering Mechanism
+  documentation: Block Devices Snapshots Module
+  blksnap: header file of the module interface
+  blksnap: module management interface functions
+  blksnap: handling and tracking I/O units
+  blksnap: minimum data storage unit of the original block device
+  blksnap: difference storage
+  blksnap: event queue from the difference storage
+  blksnap: snapshot and snapshot image block device
+  blksnap: Kconfig and Makefile
+
+ Documentation/block/blkfilter.rst    |  64 ++++
+ Documentation/block/blksnap.rst      | 345 +++++++++++++++++
+ Documentation/block/index.rst        |   2 +
+ MAINTAINERS                          |  17 +
+ block/Makefile                       |   3 +-
+ block/bdev.c                         |   1 +
+ block/blk-core.c                     |  27 ++
+ block/blk-filter.c                   | 213 ++++++++++
+ block/blk.h                          |  11 +
+ block/genhd.c                        |  10 +
+ block/ioctl.c                        |   7 +
+ block/partitions/core.c              |  10 +
+ drivers/block/Kconfig                |   2 +
+ drivers/block/Makefile               |   2 +
+ drivers/block/blksnap/Kconfig        |  12 +
+ drivers/block/blksnap/Makefile       |  15 +
+ drivers/block/blksnap/cbt_map.c      | 227 +++++++++++
+ drivers/block/blksnap/cbt_map.h      |  90 +++++
+ drivers/block/blksnap/chunk.c        | 454 ++++++++++++++++++++++
+ drivers/block/blksnap/chunk.h        | 114 ++++++
+ drivers/block/blksnap/diff_area.c    | 554 +++++++++++++++++++++++++++
+ drivers/block/blksnap/diff_area.h    | 144 +++++++
+ drivers/block/blksnap/diff_buffer.c  | 127 ++++++
+ drivers/block/blksnap/diff_buffer.h  |  37 ++
+ drivers/block/blksnap/diff_storage.c | 316 +++++++++++++++
+ drivers/block/blksnap/diff_storage.h | 111 ++++++
+ drivers/block/blksnap/event_queue.c  |  87 +++++
+ drivers/block/blksnap/event_queue.h  |  65 ++++
+ drivers/block/blksnap/main.c         | 483 +++++++++++++++++++++++
+ drivers/block/blksnap/params.h       |  16 +
+ drivers/block/blksnap/snapimage.c    | 124 ++++++
+ drivers/block/blksnap/snapimage.h    |  10 +
+ drivers/block/blksnap/snapshot.c     | 443 +++++++++++++++++++++
+ drivers/block/blksnap/snapshot.h     |  68 ++++
+ drivers/block/blksnap/tracker.c      | 339 ++++++++++++++++
+ drivers/block/blksnap/tracker.h      |  75 ++++
+ include/linux/blk-filter.h           |  51 +++
+ include/linux/blk_types.h            |   2 +
+ include/linux/blkdev.h               |   1 +
+ include/uapi/linux/blk-filter.h      |  35 ++
+ include/uapi/linux/blksnap.h         | 421 ++++++++++++++++++++
+ include/uapi/linux/fs.h              |   3 +
+ 42 files changed, 5137 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/block/blkfilter.rst
+ create mode 100644 Documentation/block/blksnap.rst
+ create mode 100644 block/blk-filter.c
+ create mode 100644 drivers/block/blksnap/Kconfig
+ create mode 100644 drivers/block/blksnap/Makefile
+ create mode 100644 drivers/block/blksnap/cbt_map.c
+ create mode 100644 drivers/block/blksnap/cbt_map.h
+ create mode 100644 drivers/block/blksnap/chunk.c
+ create mode 100644 drivers/block/blksnap/chunk.h
+ create mode 100644 drivers/block/blksnap/diff_area.c
+ create mode 100644 drivers/block/blksnap/diff_area.h
+ create mode 100644 drivers/block/blksnap/diff_buffer.c
+ create mode 100644 drivers/block/blksnap/diff_buffer.h
+ create mode 100644 drivers/block/blksnap/diff_storage.c
+ create mode 100644 drivers/block/blksnap/diff_storage.h
+ create mode 100644 drivers/block/blksnap/event_queue.c
+ create mode 100644 drivers/block/blksnap/event_queue.h
+ create mode 100644 drivers/block/blksnap/main.c
+ create mode 100644 drivers/block/blksnap/params.h
+ create mode 100644 drivers/block/blksnap/snapimage.c
+ create mode 100644 drivers/block/blksnap/snapimage.h
+ create mode 100644 drivers/block/blksnap/snapshot.c
+ create mode 100644 drivers/block/blksnap/snapshot.h
+ create mode 100644 drivers/block/blksnap/tracker.c
+ create mode 100644 drivers/block/blksnap/tracker.h
+ create mode 100644 include/linux/blk-filter.h
+ create mode 100644 include/uapi/linux/blk-filter.h
+ create mode 100644 include/uapi/linux/blksnap.h
+
+-- 
+2.20.1
+
