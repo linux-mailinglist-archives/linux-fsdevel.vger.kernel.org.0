@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3612672D0C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 22:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 862AB72D0B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 22:39:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232475AbjFLUkK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 16:40:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58968 "EHLO
+        id S233463AbjFLUj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 16:39:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235111AbjFLUjn (ORCPT
+        with ESMTP id S229836AbjFLUjZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 16:39:43 -0400
+        Mon, 12 Jun 2023 16:39:25 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 966B5E55;
-        Mon, 12 Jun 2023 13:39:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 646DC1728;
+        Mon, 12 Jun 2023 13:39:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=c8745NcmMaAp/1V7qpVz2YDyTLW0s05GpZrPgABIB0g=; b=WPpq4Uloueb/78nVMjfKJzzHwD
-        HxKhRwobRRAUvaiMilIOu7Ej8vYW/amSpLiV15DlJOWvRe41GyMnd6FNYkYA078G//UDbHsf+vGcb
-        oHQbkQh5sWOrOkOXr3QeneosBepNpZJAmWVMGCsbi8rkSDWKFB0tG5M62bkJY4059rUYVGRad5Q+3
-        NMw0C9uJBJiVcxUEmh6ynZCKNeyaFF1vzlLGPxBJry2pLFngr7IoDDbqHNsiks2jF0vlaklvOOBwc
-        MNn9xiMQTH9Cp347iZpZIJ/wrFThierZwx49d4YN6pwep0++1CcTYxTeW+kDjj1V9JwZLbnwseVlM
-        F833eMQg==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=cORmRVIzdhIpaC4SU57rlnv0heDB6fvM/E8z8XJtSVA=; b=UIqS+phdYFKvaKsq8HitWQRCpa
+        zh1WzSIKtV0WnCRVRz/FUuL5VO4GsDGwxht+4qWB2toFATdxKgnPspmBRWH1Y5T0mo8G+OJ44x7Jk
+        pnSc75bSEzGvbCFWxJBtww6EZ4fOnSgmlN+4YCSlJfraI1VG0ow3H86R09bT/1oiJbabkColTA9Sk
+        LI6C5s7ZOeONWzcbrfPA57S8U3qbwpHA5OwY9Pti3tf489zATtu/r9k4Iq0Q3OMZFGr0PTfM/2WL8
+        unOC0KnPEynlOkmefgDhGKFUAI169ztXHl9clUNQZMQPjMKnwjdd0six0c9VWAC6atJim20jT+Wki
+        hpmOmDBg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q8oJl-0032ST-8X; Mon, 12 Jun 2023 20:39:13 +0000
+        id 1q8oJl-0032SV-CZ; Mon, 12 Jun 2023 20:39:13 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -34,10 +34,12 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J . Wong" <djwong@kernel.org>
-Subject: [PATCH v3 0/8] Create large folios in iomap buffered write path
-Date:   Mon, 12 Jun 2023 21:39:02 +0100
-Message-Id: <20230612203910.724378-1-willy@infradead.org>
+Subject: [PATCH v3 1/8] iov_iter: Handle compound highmem pages in copy_page_from_iter_atomic()
+Date:   Mon, 12 Jun 2023 21:39:03 +0100
+Message-Id: <20230612203910.724378-2-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20230612203910.724378-1-willy@infradead.org>
+References: <20230612203910.724378-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -50,67 +52,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit ebb7fb1557b1 limited the length of ioend chains to 4096 entries
-to improve worst-case latency.  Unfortunately, this had the effect of
-limiting the performance of:
+copy_page_from_iter_atomic() already handles !highmem compound
+pages correctly, but if we are passed a highmem compound page,
+each base page needs to be mapped & unmapped individually.
 
-fio -name write-bandwidth -rw=write -bs=1024Ki -size=32Gi -runtime=30 \
-        -iodepth 1 -ioengine sync -zero_buffers=1 -direct=0 -end_fsync=1 \
-        -numjobs=4 -directory=/mnt/test
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ lib/iov_iter.c | 43 ++++++++++++++++++++++++++++---------------
+ 1 file changed, 28 insertions(+), 15 deletions(-)
 
-The problem ends up being lock contention on the i_pages spinlock as we
-clear the writeback bit on each folio (and propagate that up through
-the tree).  By using larger folios, we decrease the number of folios
-to be processed by a factor of 256 for this benchmark, eliminating the
-lock contention.
-
-It's also the right thing to do.  This is a project that has been on
-the back burner for years, it just hasn't been important enough to do
-before now.
-
-I think it's probably best if this goes through the iomap tree since
-the changes outside iomap are either to the page cache or they're
-trivial.
-
-v3:
- - Fix the handling of compound highmem pages in copy_page_from_iter_atomic()
- - Rename fgp_t to fgf_t
- - Clarify some wording in the documentation
-
-v2:
- - Fix misplaced semicolon
- - Rename fgp_order to fgp_set_order
- - Rename FGP_ORDER to FGP_GET_ORDER
- - Add fgp_t
- - Update the documentation for ->release_folio
- - Fix iomap_invalidate_folio()
- - Update iomap_release_folio()
-
-Matthew Wilcox (Oracle) (8):
-  iov_iter: Handle compound highmem pages in
-    copy_page_from_iter_atomic()
-  iomap: Remove large folio handling in iomap_invalidate_folio()
-  doc: Correct the description of ->release_folio
-  iomap: Remove unnecessary test from iomap_release_folio()
-  filemap: Add fgf_t typedef
-  filemap: Allow __filemap_get_folio to allocate large folios
-  iomap: Create large folios in the buffered write path
-  iomap: Copy larger chunks from userspace
-
- Documentation/filesystems/locking.rst | 15 ++++--
- fs/btrfs/file.c                       |  6 +--
- fs/f2fs/compress.c                    |  2 +-
- fs/f2fs/f2fs.h                        |  2 +-
- fs/gfs2/bmap.c                        |  2 +-
- fs/iomap/buffered-io.c                | 43 ++++++++--------
- include/linux/iomap.h                 |  2 +-
- include/linux/pagemap.h               | 71 ++++++++++++++++++++++-----
- lib/iov_iter.c                        | 43 ++++++++++------
- mm/filemap.c                          | 61 ++++++++++++-----------
- mm/folio-compat.c                     |  2 +-
- mm/readahead.c                        | 13 -----
- 12 files changed, 159 insertions(+), 103 deletions(-)
-
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 960223ed9199..1a3fbda0c508 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -857,24 +857,37 @@ size_t iov_iter_zero(size_t bytes, struct iov_iter *i)
+ }
+ EXPORT_SYMBOL(iov_iter_zero);
+ 
+-size_t copy_page_from_iter_atomic(struct page *page, unsigned offset, size_t bytes,
+-				  struct iov_iter *i)
++size_t copy_page_from_iter_atomic(struct page *page, unsigned offset,
++		size_t bytes, struct iov_iter *i)
+ {
+-	char *kaddr = kmap_atomic(page), *p = kaddr + offset;
+-	if (!page_copy_sane(page, offset, bytes)) {
+-		kunmap_atomic(kaddr);
++	size_t n, copied = 0;
++
++	if (!page_copy_sane(page, offset, bytes))
+ 		return 0;
+-	}
+-	if (WARN_ON_ONCE(!i->data_source)) {
+-		kunmap_atomic(kaddr);
++	if (WARN_ON_ONCE(!i->data_source))
+ 		return 0;
+-	}
+-	iterate_and_advance(i, bytes, base, len, off,
+-		copyin(p + off, base, len),
+-		memcpy_from_iter(i, p + off, base, len)
+-	)
+-	kunmap_atomic(kaddr);
+-	return bytes;
++
++	do {
++		char *kaddr;
++
++		n = bytes - copied;
++		if (PageHighMem(page)) {
++			page += offset / PAGE_SIZE;
++			offset %= PAGE_SIZE;
++			n = min_t(size_t, n, PAGE_SIZE - offset);
++		}
++
++		kaddr = kmap_atomic(page) + offset;
++		iterate_and_advance(i, n, base, len, off,
++			copyin(kaddr + off, base, len),
++			memcpy_from_iter(i, kaddr + off, base, len)
++		)
++		kunmap_atomic(kaddr);
++		copied += n;
++		offset += n;
++	} while (PageHighMem(page) && copied != bytes && n > 0);
++
++	return copied;
+ }
+ EXPORT_SYMBOL(copy_page_from_iter_atomic);
+ 
 -- 
 2.39.2
 
