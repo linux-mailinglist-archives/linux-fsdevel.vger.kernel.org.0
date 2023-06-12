@@ -2,78 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 789FF72B827
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 08:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8438072B9B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 10:05:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232800AbjFLGjQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 02:39:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55648 "EHLO
+        id S230509AbjFLIFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 04:05:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbjFLGjP (ORCPT
+        with ESMTP id S232069AbjFLIEm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 02:39:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 479DA10F3;
-        Sun, 11 Jun 2023 23:34:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C6D7161F82;
-        Mon, 12 Jun 2023 06:31:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E01C433D2;
-        Mon, 12 Jun 2023 06:31:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686551471;
-        bh=oOcBJJUtHggjOcuTtHHaLags9ZNQ21iMCFYD/0ziiGE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VXiyBMDAmU59O31Yt9dbrcmADfwC8D+6yIsBdjNjsFdbEh2dAFjeU1EhqbKmhMQtU
-         WWxk+Ni2LQs6tdAZOLjegcriPCV/k3KjcQEYZFnZZYTIuU+U8rTc59ga9Qw851j4Lt
-         3LNdbYkw5fN6ib5H56SnPeygfvnpHdW1aSHerCxK2PmsGf8ZjNYD4cxKuOC5zg6O+A
-         sLiW9NE/5QnTIqK21+Ji6goYtAT6QDzadDD78AjWpWDfV3a/8pfLLFJzkWqytjaqCh
-         q2SroimRbapbvNiDwQDVmfLa+y/rwbi9GZBnNJnyAN3cXzVA/g/0mFJlLeJn2Msfan
-         rOhNBivM5r2Wg==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Shaomin Deng <dengshaomin@cdjrlc.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mao Zhu <zhumao001@208suo.com>, viro@zeniv.linux.org.uk,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] fs: Fix comment typo
-Date:   Mon, 12 Jun 2023 08:31:00 +0200
-Message-Id: <20230612-asphalt-gemalt-f3f0be8a21f3@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230611123314.5282-1-dengshaomin@cdjrlc.com>
-References: <20230611123314.5282-1-dengshaomin@cdjrlc.com>
+        Mon, 12 Jun 2023 04:04:42 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9FBA136;
+        Mon, 12 Jun 2023 01:03:36 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-653436fcc1bso3285879b3a.2;
+        Mon, 12 Jun 2023 01:03:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686556970; x=1689148970;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KP3Pjx93vXIFN83dx/ceEF3t7U3VTCBctTN3DgUC6Os=;
+        b=n1oC4CNtzIPKDUjh7tBeVDeehLK/Uy1MS9S181kz8kJqtJzD8myUQOHKMGtE7GUu3m
+         UJMpSGQ6VkY7BPMqvDBG6z6LFv1o659COaxhns3LES/+Y+1zO42rURqW3IAS7Ed8tQIQ
+         b01rInARivZtNFbuGw/ek++xcN+P7isUhKeZo+bzY1PGkObZSTOzx3LVwjzXvRaZw5Aq
+         mBMCSKuFSiMvLSkbtm7bQKQV2r7mdQJcmuSECvX2dso1AfyA+GIgvUMh52YCVTUJqZ6W
+         w9fKrHWTi3oX1LxUcLlwRLY50YiFXszqMbu2EjCTFr4LZ0j/a68XthzOhHQcyYlxVfbL
+         4Hbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686556970; x=1689148970;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KP3Pjx93vXIFN83dx/ceEF3t7U3VTCBctTN3DgUC6Os=;
+        b=JqKbX6miX+k2+Cmv3/6vu2k0WEiBnqKGwVtz3PMXYPKLm5TmRLeEby5CZNdBLoSIfx
+         KhZvb6COdLSGdDn9wN+GCNxaqZLcWSKHQ1zWo/nMMr4egcYMmkrPeaIdU6/jWSMA2Ehr
+         Z0yLGot7YAz+isfgpqhE4TKj+Ou8uU2dVvPQs5OLlEHtjR3Ctjwn5bPNbNZEdc2Jkbtp
+         c0dMeBBcVJDkXo6HoQFuZxC4IjOLQiUVB5mIBnW4vC1aft7HmLQtzMonxY/LtnUbIv1R
+         TwRN9drbwvhMxfH97akXcWsmnoJLv49aQz8TVZe7At1oAo+/+JG97bZmZ71nl3UZCgJ8
+         DF3Q==
+X-Gm-Message-State: AC+VfDzEqMjdvj9MpgWOy7us2bhG0yejfKGgyFSEe6oRqMAZRXVpIuNb
+        ac2rNjUxY0TjjkwyhzbytmCTYTRtCleT7rw61vrd+VKC8hw=
+X-Google-Smtp-Source: ACHHUZ5vqYcmwNKLSkCtKR8AtyZXy7vcX3GpuEsItccHgwEuoJlqH333DdyFDblRuEy+G91/HsGmq+h6Z2m6L/oM0BE=
+X-Received: by 2002:a67:f646:0:b0:43b:554e:fce8 with SMTP id
+ u6-20020a67f646000000b0043b554efce8mr3736335vso.19.1686551536461; Sun, 11 Jun
+ 2023 23:32:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=720; i=brauner@kernel.org; h=from:subject:message-id; bh=oOcBJJUtHggjOcuTtHHaLags9ZNQ21iMCFYD/0ziiGE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS07V6gExSY5/ondaXoxslHDM36F9xfwMX+4MXi4P3emcLC Lha/OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyajYjw8NJ3ubTTdsXvmyzbGJlmd miHXTi+nexmY8Mtx9Z/dCPS5fhr5TNHMX7UQXyf22W35yyTbA6Sr1u+7OOqsmf1zy2mx5UwAAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20230611132732.1502040-1-amir73il@gmail.com> <20230611132732.1502040-2-amir73il@gmail.com>
+ <ZIaelQAs0EjPw4TR@infradead.org> <CAOQ4uxhNtnzpxUzfxjCJ3_7afCG1ye-pHViHjGi8asXTR_Cm3w@mail.gmail.com>
+ <ZIa3DfH9D0BIBf8G@infradead.org>
+In-Reply-To: <ZIa3DfH9D0BIBf8G@infradead.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 12 Jun 2023 09:32:05 +0300
+Message-ID: <CAOQ4uxgQc3DivjAQNYhpDRZ5PA-wH1wSenoLkzYmFatueGJwUg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] fs: rename FMODE_NOACCOUNT to FMODE_INTERNAL
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+        lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 11 Jun 2023 08:33:14 -0400, Shaomin Deng wrote:
-> Delete duplicated word in comment.
-> 
+On Mon, Jun 12, 2023 at 9:11=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
 >
+> On Mon, Jun 12, 2023 at 09:08:37AM +0300, Amir Goldstein wrote:
+> > Well, I am not sure if FMODE_FAKE_PATH in v3 is a better name,
+> > because you did rightfully say that "fake path" is not that descriptive=
+,
+> > but I will think of a better way to describe "fake path" and match the
+> > flag to the file container name.
+>
+> I suspect the just claling it out what it is and naming it
+> FMODE_OVERLAYFS might be a good idea.  We'd just need to make sure not
+> to set it for the cachefiles use case, which is probably a good idea
+> anyway.
 
-Missing sender SOB added.
+Agree to both.
+As I told Christian, I was reluctant to use the last available flag bit
+(although you did free up a couple of flags:)), but making
+FMODE_OVERLAYFS overlayfs only and keeping cachefiles with
+FMODE_NOACCOUNT would be the cleaner thing to do.
 
----
-
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs: Fix comment typo
-      https://git.kernel.org/vfs/vfs/c/dce5a4da3cf5
+Thanks,
+Amir.
