@@ -2,41 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9270972C06B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 12:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEA8472C14C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 12:57:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235919AbjFLKwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 06:52:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55708 "EHLO
+        id S237130AbjFLK5x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 06:57:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229736AbjFLKvz (ORCPT
+        with ESMTP id S236857AbjFLK5d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 06:51:55 -0400
+        Mon, 12 Jun 2023 06:57:33 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01B993FF;
-        Mon, 12 Jun 2023 03:36:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C3676E8F;
+        Mon, 12 Jun 2023 03:45:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A808C614F0;
-        Mon, 12 Jun 2023 10:36:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10C3AC4339C;
-        Mon, 12 Jun 2023 10:36:27 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4C57762440;
+        Mon, 12 Jun 2023 10:45:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C95ECC433D2;
+        Mon, 12 Jun 2023 10:45:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686566191;
-        bh=7lfE8n4wCuge2Ilsu3h1F4ipyzhUj7bSJuflx8EXZtw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=DU0ZjjsJO4rS5B/LrOhkcDtfvbBZTjXhclQjcMb8L0SMAJ/Zj8o6cOouP0LPA9kRi
-         VqJ/momrCYS9bgBfSwuBqZwMMGlKax5OQGCSRTBF7m/eO1OCct4ECh1Dq3q51n5hhV
-         Yhf0l7cjjbGMIJ2UYDeBi6gwKGFHv0g6f2BclJ5kTS9KJF0zsyYQaetziIibzJHykN
-         7tP2iy40SDcuxMKwZA7N7Mbn26TeBSys37uMErgDMUpaf6wBIfwFsLid/c78sbMh0z
-         WHZh5yV0lSHcOPaWQW6a50hTCYgYFvBa4rOsjTJ1iVF0vlDpRO8qNBXUJAB1ctdV+d
-         JMJSCsxLTJnJg==
-Message-ID: <a1f7a725186082d933aff702d1d50c6456da6f20.camel@kernel.org>
-Subject: Re: [PATCH 7/9] gfs2: update ctime when quota is updated
+        s=k20201202; t=1686566728;
+        bh=gJ8OBMKp8a//Ju9x8kyPOKR1y9jleYMRtZlvKB2haqY=;
+        h=From:To:Subject:Date:From;
+        b=ajv43haiuJi4XPe/D7BlbV0d5Dfbz9Cvp3DS2g5UhWuVJbeHzWPJbD2tBEmIQv46y
+         95VJd3njR2OYSMyYgff7Fg9K4B3yGgm0b3QUT6CPhPinqffou45tgfMkNvnlcGdctq
+         IjMSVM3qFyKJF/wsJnqRzQpZzf4uPYT59IsXnYcVxT2sjEHkRs/Y5k7oya095he0P9
+         wkpoSwiJHvhclSQFCxkLrYjL6/DW5YSIVuOqcblvOkrHlUFDDobgLRsjCb6BCiNuJK
+         /wqfEqxBnDnbW8JjK/MATIKrKrqFTxQ415+OSVHUhZ9GfW508KlcGXnS52pAQbnxlV
+         oLPD9erhPDPMA==
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
+To:     Christian Brauner <brauner@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Brad Warrum <bwarrum@linux.ibm.com>,
         Ritu Agarwal <rituagar@linux.ibm.com>,
@@ -47,7 +44,6 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
         Namjae Jeon <linkinjeon@kernel.org>,
         Sungjong Seo <sj1557.seo@samsung.com>,
-        Bob Peterson <rpeterso@redhat.com>,
         Steve French <sfrench@samba.org>,
         Paulo Alcantara <pc@manguebit.com>,
         Ronnie Sahlberg <lsahlber@redhat.com>,
@@ -58,23 +54,21 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Ruihan Li <lrh2000@pku.edu.cn>,
-        Suren Baghdasaryan <surenb@google.com>,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Suren Baghdasaryan <surenb@google.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
         autofs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-Date:   Mon, 12 Jun 2023 06:36:26 -0400
-In-Reply-To: <CAHc6FU4wyfQT7T75j2Sd9WNp=ag7hpDZGYkR=m73h2nOaH+AqQ@mail.gmail.com>
-References: <20230609125023.399942-1-jlayton@kernel.org>
-         <20230609125023.399942-8-jlayton@kernel.org>
-         <CAHc6FU4wyfQT7T75j2Sd9WNp=ag7hpDZGYkR=m73h2nOaH+AqQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v2 0/8] fs: add some missing ctime updates
+Date:   Mon, 12 Jun 2023 06:45:16 -0400
+Message-Id: <20230612104524.17058-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -85,54 +79,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2023-06-09 at 18:44 +0200, Andreas Gruenbacher wrote:
-> Jeff,
->=20
-> On Fri, Jun 9, 2023 at 2:50=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/gfs2/quota.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
-> > index 1ed17226d9ed..6d283e071b90 100644
-> > --- a/fs/gfs2/quota.c
-> > +++ b/fs/gfs2/quota.c
-> > @@ -869,7 +869,7 @@ static int gfs2_adjust_quota(struct gfs2_inode *ip,=
- loff_t loc,
-> >                 size =3D loc + sizeof(struct gfs2_quota);
-> >                 if (size > inode->i_size)
-> >                         i_size_write(inode, size);
-> > -               inode->i_mtime =3D inode->i_atime =3D current_time(inod=
-e);
-> > +               inode->i_mtime =3D inode->i_atime =3D inode->i_ctime =
-=3D current_time(inode);
->=20
-> I don't think we need to worry about the ctime of the quota inode as
-> that inode is internal to the filesystem only.
->=20
+v2:
+- drop gfs2 patch as it involved (hidden) quota inode
+- clarify patch descriptions to satisfy checkpatch.pl
 
-Thanks Andreas.  I'll plan to drop this patch from the series for now.
+While working on a patch series to change how we handle the ctime, I
+found a number of places that update the mtime without a corresponding
+ctime update.
 
-Does updating the mtime and atime here serve any purpose, or should
-those also be removed? If you plan to keep the a/mtime updates then I'd
-still suggest updating the ctime for consistency's sake. It shouldn't
-cost anything extra to do so since you're dirtying the inode below
-anyway.
+While it's not spelled out explicitly in the POSIX spec, all of the
+operations that update the mtime must also update the ctime. I've not
+been able to find any counterexamples, in any case. Some of these
+patches involve operations not covered by POSIX, but it's still a good
+idea to update the ctime when updating the mtime.
 
-Thanks!
+Note that these are largely untested other than for compilation, so
+please review carefully. These are a preliminary set for the upcoming
+rework of how we handle the ctime.
 
-> >                 mark_inode_dirty(inode);
-> >                 set_bit(QDF_REFRESH, &qd->qd_flags);
-> >         }
-> > --
-> > 2.40.1
-> >=20
->=20
-> Thanks,
-> Andreas
->=20
+None of these seem to be very crucial, but it would be nice if various
+maintainers could pick these up for v6.5. Please let me know if you do,
+or would rather I shepherd the patch upstream.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Jeff Layton (8):
+  ibmvmc: update ctime in conjunction with mtime on write
+  usb: update the ctime as well when updating mtime after an ioctl
+  autofs: set ctime as well when mtime changes on a dir
+  bfs: update ctime in addition to mtime when adding entries
+  efivarfs: update ctime when mtime changes on a write
+  exfat: ensure that ctime is updated whenever the mtime is
+  apparmor: update ctime whenever the mtime changes on an inode
+  cifs: update the ctime on a partial page write
+
+ drivers/misc/ibmvmc.c             |  2 +-
+ drivers/usb/core/devio.c          | 16 ++++++++--------
+ fs/autofs/root.c                  |  6 +++---
+ fs/bfs/dir.c                      |  2 +-
+ fs/efivarfs/file.c                |  2 +-
+ fs/exfat/namei.c                  |  8 ++++----
+ fs/smb/client/file.c              |  2 +-
+ security/apparmor/apparmorfs.c    |  7 +++++--
+ security/apparmor/policy_unpack.c | 11 +++++++----
+ 9 files changed, 31 insertions(+), 25 deletions(-)
+
+-- 
+2.40.1
+
