@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9611372D165
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 23:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D909D72D169
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 23:05:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238014AbjFLVFO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 17:05:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53192 "EHLO
+        id S236860AbjFLVFK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 17:05:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238620AbjFLVEn (ORCPT
+        with ESMTP id S238780AbjFLVEn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 12 Jun 2023 17:04:43 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592DCE55
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D61510C9
         for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 14:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=8TAjc/iGR0TnG7xeR+UbsxUyFbhLwY9D51/Atttv7wM=; b=elmLfq35JDUwMftvUFkfJjGVmL
-        EmY3EQ8DyxiHPGL7B2ebWDdChsd47+1aUi4MbHVvKMDhPRIqfZYLmu4yMOPO+LeDLIZdnHNXYLm0W
-        i8J++9JT/uiGjWMeQ3kNkSXIP7b3gdF2R2BgIDWuxWSPm8eeiszSuQlMWMDEVOD4YDQzVj02aQi8B
-        SipyKLS9VMQRujihEIZiKGBAHoji4cIvU0m013Ptl4oIj9K+ySEPvYK1wDl8gpNE8x8TFZf5EJmiO
-        qrUUoLLbSLsXVyDrot0w4xKGKI2RbQ7Z/Fe25UWi3D7mL+mFN4pf+SdNgpC7cIkB3uacLko/5UD+N
-        eTpKOYjg==;
+        bh=Y3oTUBr8nUbuZPwhJLsYAQkdoLOLLxnDGymoFp7BQW8=; b=X8dun2nKFjxWLL2wyZG6PKYjOy
+        7oRuiHDN09PIGW8XhOtq+2JegWniSG1JEFa52Ha4SBTBnOMfUhhKNcEdr6PZm87muuv/zrcpzB9DD
+        wBuc2kqJhtPk7wep9btVGHoYUSKwbdWP6g1vqjiGqiuPxb88W+HWp8m2HfiAfjTiT5L/7xXLIo/F3
+        dsIJu1Gzjxd7mSaAeHEmIfvrkFnFeATGAwgnlUBS2pnA6bn5H2m1pfjiaQCABo1I9gSmDjuxv97Gf
+        dbJ8lYf0cQNjOhH4/4+7JYCiQuRfw2fWGq+ZOQIjUcqzvirx6p5jzvSv7bMe/+dZjPNtr9smdaEVr
+        Yk2HzYKA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q8ofX-0033wu-M2; Mon, 12 Jun 2023 21:01:43 +0000
+        id 1q8ofX-0033x8-QY; Mon, 12 Jun 2023 21:01:43 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -34,9 +34,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v3 09/14] buffer: Convert page_zero_new_buffers() to folio_zero_new_buffers()
-Date:   Mon, 12 Jun 2023 22:01:36 +0100
-Message-Id: <20230612210141.730128-10-willy@infradead.org>
+Subject: [PATCH v3 10/14] buffer: Convert grow_dev_page() to use a folio
+Date:   Mon, 12 Jun 2023 22:01:37 +0100
+Message-Id: <20230612210141.730128-11-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230612210141.730128-1-willy@infradead.org>
 References: <20230612210141.730128-1-willy@infradead.org>
@@ -52,156 +52,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Most of the callers already have a folio; convert reiserfs_write_end()
-to have a folio.  Removes a couple of hidden calls to compound_head().
+Get a folio from the page cache instead of a page, then use the
+folio API throughout.  Removes a few calls to compound_head()
+and may be needed to support block size > PAGE_SIZE.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/buffer.c                 | 27 ++++++++++++++-------------
- fs/ext4/inode.c             |  4 ++--
- fs/reiserfs/inode.c         |  7 ++++---
- include/linux/buffer_head.h |  2 +-
- 4 files changed, 21 insertions(+), 19 deletions(-)
+ fs/buffer.c | 34 +++++++++++++++-------------------
+ 1 file changed, 15 insertions(+), 19 deletions(-)
 
 diff --git a/fs/buffer.c b/fs/buffer.c
-index 97c64b05151f..e4bd465ecee8 100644
+index e4bd465ecee8..06d031e28bee 100644
 --- a/fs/buffer.c
 +++ b/fs/buffer.c
-@@ -1927,33 +1927,34 @@ int __block_write_full_folio(struct inode *inode, struct folio *folio,
- EXPORT_SYMBOL(__block_write_full_folio);
- 
- /*
-- * If a page has any new buffers, zero them out here, and mark them uptodate
-+ * If a folio has any new buffers, zero them out here, and mark them uptodate
-  * and dirty so they'll be written out (in order to prevent uninitialised
-  * block data from leaking). And clear the new bit.
-  */
--void page_zero_new_buffers(struct page *page, unsigned from, unsigned to)
-+void folio_zero_new_buffers(struct folio *folio, size_t from, size_t to)
+@@ -976,7 +976,7 @@ grow_dev_page(struct block_device *bdev, sector_t block,
+ 	      pgoff_t index, int size, int sizebits, gfp_t gfp)
  {
--	unsigned int block_start, block_end;
-+	size_t block_start, block_end;
- 	struct buffer_head *head, *bh;
- 
--	BUG_ON(!PageLocked(page));
--	if (!page_has_buffers(page))
-+	BUG_ON(!folio_test_locked(folio));
-+	head = folio_buffers(folio);
-+	if (!head)
- 		return;
- 
--	bh = head = page_buffers(page);
-+	bh = head;
- 	block_start = 0;
- 	do {
- 		block_end = block_start + bh->b_size;
- 
- 		if (buffer_new(bh)) {
- 			if (block_end > from && block_start < to) {
--				if (!PageUptodate(page)) {
--					unsigned start, size;
-+				if (!folio_test_uptodate(folio)) {
-+					size_t start, xend;
- 
- 					start = max(from, block_start);
--					size = min(to, block_end) - start;
-+					xend = min(to, block_end);
- 
--					zero_user(page, start, size);
-+					folio_zero_segment(folio, start, xend);
- 					set_buffer_uptodate(bh);
- 				}
- 
-@@ -1966,7 +1967,7 @@ void page_zero_new_buffers(struct page *page, unsigned from, unsigned to)
- 		bh = bh->b_this_page;
- 	} while (bh != head);
- }
--EXPORT_SYMBOL(page_zero_new_buffers);
-+EXPORT_SYMBOL(folio_zero_new_buffers);
- 
- static void
- iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
-@@ -2104,7 +2105,7 @@ int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
- 			err = -EIO;
- 	}
- 	if (unlikely(err))
--		page_zero_new_buffers(&folio->page, from, to);
-+		folio_zero_new_buffers(folio, from, to);
- 	return err;
- }
- 
-@@ -2208,7 +2209,7 @@ int block_write_end(struct file *file, struct address_space *mapping,
- 		if (!folio_test_uptodate(folio))
- 			copied = 0;
- 
--		page_zero_new_buffers(&folio->page, start+copied, start+len);
-+		folio_zero_new_buffers(folio, start+copied, start+len);
- 	}
- 	flush_dcache_folio(folio);
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 02de439bf1f0..9ca583360166 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1093,7 +1093,7 @@ static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
- 			err = -EIO;
- 	}
- 	if (unlikely(err)) {
--		page_zero_new_buffers(&folio->page, from, to);
-+		folio_zero_new_buffers(folio, from, to);
- 	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
- 		for (i = 0; i < nr_wait; i++) {
- 			int err2;
-@@ -1339,7 +1339,7 @@ static int ext4_write_end(struct file *file,
- }
- 
- /*
-- * This is a private version of page_zero_new_buffers() which doesn't
-+ * This is a private version of folio_zero_new_buffers() which doesn't
-  * set the buffer to be dirty, since in data=journalled mode we need
-  * to call ext4_dirty_journalled_data() instead.
-  */
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index ff34ee49106f..77bd3b27059f 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2872,6 +2872,7 @@ static int reiserfs_write_end(struct file *file, struct address_space *mapping,
- 			      loff_t pos, unsigned len, unsigned copied,
- 			      struct page *page, void *fsdata)
- {
-+	struct folio *folio = page_folio(page);
- 	struct inode *inode = page->mapping->host;
+ 	struct inode *inode = bdev->bd_inode;
+-	struct page *page;
++	struct folio *folio;
+ 	struct buffer_head *bh;
+ 	sector_t end_block;
  	int ret = 0;
- 	int update_sd = 0;
-@@ -2887,12 +2888,12 @@ static int reiserfs_write_end(struct file *file, struct address_space *mapping,
+@@ -992,42 +992,38 @@ grow_dev_page(struct block_device *bdev, sector_t block,
+ 	 */
+ 	gfp_mask |= __GFP_NOFAIL;
  
- 	start = pos & (PAGE_SIZE - 1);
- 	if (unlikely(copied < len)) {
--		if (!PageUptodate(page))
-+		if (!folio_test_uptodate(folio))
- 			copied = 0;
+-	page = find_or_create_page(inode->i_mapping, index, gfp_mask);
+-
+-	BUG_ON(!PageLocked(page));
++	folio = __filemap_get_folio(inode->i_mapping, index,
++			FGP_LOCK | FGP_ACCESSED | FGP_CREAT, gfp_mask);
  
--		page_zero_new_buffers(page, start + copied, start + len);
-+		folio_zero_new_buffers(folio, start + copied, start + len);
+-	if (page_has_buffers(page)) {
+-		bh = page_buffers(page);
++	bh = folio_buffers(folio);
++	if (bh) {
+ 		if (bh->b_size == size) {
+-			end_block = init_page_buffers(page, bdev,
++			end_block = init_page_buffers(&folio->page, bdev,
+ 						(sector_t)index << sizebits,
+ 						size);
+ 			goto done;
+ 		}
+-		if (!try_to_free_buffers(page_folio(page)))
++		if (!try_to_free_buffers(folio))
+ 			goto failed;
  	}
--	flush_dcache_page(page);
-+	flush_dcache_folio(folio);
  
- 	reiserfs_commit_page(inode, page, start, start + copied);
+-	/*
+-	 * Allocate some buffers for this page
+-	 */
+-	bh = alloc_page_buffers(page, size, true);
++	bh = folio_alloc_buffers(folio, size, true);
  
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index a366e01f8bd4..c794ea7096ba 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -278,7 +278,7 @@ int block_write_end(struct file *, struct address_space *,
- int generic_write_end(struct file *, struct address_space *,
- 				loff_t, unsigned, unsigned,
- 				struct page *, void *);
--void page_zero_new_buffers(struct page *page, unsigned from, unsigned to);
-+void folio_zero_new_buffers(struct folio *folio, size_t from, size_t to);
- void clean_page_buffers(struct page *page);
- int cont_write_begin(struct file *, struct address_space *, loff_t,
- 			unsigned, struct page **, void **,
+ 	/*
+-	 * Link the page to the buffers and initialise them.  Take the
++	 * Link the folio to the buffers and initialise them.  Take the
+ 	 * lock to be atomic wrt __find_get_block(), which does not
+-	 * run under the page lock.
++	 * run under the folio lock.
+ 	 */
+ 	spin_lock(&inode->i_mapping->private_lock);
+-	link_dev_buffers(page, bh);
+-	end_block = init_page_buffers(page, bdev, (sector_t)index << sizebits,
+-			size);
++	link_dev_buffers(&folio->page, bh);
++	end_block = init_page_buffers(&folio->page, bdev,
++			(sector_t)index << sizebits, size);
+ 	spin_unlock(&inode->i_mapping->private_lock);
+ done:
+ 	ret = (block < end_block) ? 1 : -ENXIO;
+ failed:
+-	unlock_page(page);
+-	put_page(page);
++	folio_unlock(folio);
++	folio_put(folio);
+ 	return ret;
+ }
+ 
 -- 
 2.39.2
 
