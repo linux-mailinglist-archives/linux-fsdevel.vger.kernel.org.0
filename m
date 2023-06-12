@@ -2,139 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F4F972CD52
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 19:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 727FF72CD8C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 20:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232662AbjFLR54 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 13:57:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58474 "EHLO
+        id S236661AbjFLSKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 14:10:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230396AbjFLR5z (ORCPT
+        with ESMTP id S237261AbjFLSJs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 13:57:55 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF812E4E;
-        Mon, 12 Jun 2023 10:57:54 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1b01d3bb571so24695705ad.2;
-        Mon, 12 Jun 2023 10:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686592674; x=1689184674;
-        h=content-transfer-encoding:mime-version:in-reply-to:subject:cc:to
-         :from:message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/51Bi1UkVZlS59hvczkfp3IUubDxrwBQefoJjlP3Kq8=;
-        b=r/wRrfS/3T96nvop7OABuVrp9W/8AWtERwhYOULZL0UZWsb9fb8k7ew6Uzhir3VASZ
-         Unwp66qbVpBDPvKqmy0oqofSL+A48j/QbbxBWZ+d+hbEwNOKS+ugXDI8i05ziT3WLRLY
-         9dnGDafIgtT+jARuaIwmiuXVJNcXl/kA2sRd3H+wITF9aKeOEd0KytUFZb6rPLaDmGBi
-         eMKKzq9euzypDLs6l+fzeaI7HQ4H4f+jnGRE1JftUrxoXYkSduF37Xj77JtZnxPNbIit
-         yLqsbuUD5zloJG6mSEhqE+R34pbjqLqWPwBY9xFroBeZAZA809TCtLlyrsv0PeUB2vU2
-         foOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686592674; x=1689184674;
-        h=content-transfer-encoding:mime-version:in-reply-to:subject:cc:to
-         :from:message-id:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/51Bi1UkVZlS59hvczkfp3IUubDxrwBQefoJjlP3Kq8=;
-        b=bidSzLEhmiXB6UFGfQILY9d1/al34ZFATsCeG32/rQ6CvIztGjrHub/ZYWPDfWCYnu
-         IQ3YdON0bTG2zsvVMuoiswKNUPkrLVEuegHnab1JMPVenddTx9EBs4N/XGgLyMTLos/C
-         Q5Baut/w5buADlaraFF3yRX9WRbSxdWYTv07ZCjspLtovItSuFjY+LJquO3/fEHlL87E
-         aK6rjZmOuKI4PKwj+o0hJTLaoL/vAjSNrc2+5P9raBjKmeb7gTJiiaIErhIKPNHa6hwo
-         QlYrNqglMceuaJiUgRgJjlUEA//xTploPnhrcnkW8r0ZesYUYZ6H8tLAnlTzd2t4/PPB
-         iRAg==
-X-Gm-Message-State: AC+VfDymJ4hU0WuuYxWV73MYKsj8VdVA088Rr1pmjJFUkYQ0ssiHbng/
-        dhaUGcUvYVTdvdvvWISRj5o=
-X-Google-Smtp-Source: ACHHUZ6BvjQmFogjAwPycbaTbzlX3om8jAzJojDPaQXsX/e/F38PAhjAMGn2+X3MUU+csXF8j2ny4w==
-X-Received: by 2002:a17:902:ce8a:b0:1aa:e938:3ddf with SMTP id f10-20020a170902ce8a00b001aae9383ddfmr8371724plg.7.1686592674224;
-        Mon, 12 Jun 2023 10:57:54 -0700 (PDT)
-Received: from dw-tp ([49.207.220.159])
-        by smtp.gmail.com with ESMTPSA id x15-20020a170902ec8f00b001b176ba9f17sm8524918plg.149.2023.06.12.10.57.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 10:57:53 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 23:27:49 +0530
-Message-Id: <87o7lkpnqa.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [PATCHv9 3/6] iomap: Add some uptodate state handling helpers for ifs state bitmap
-In-Reply-To: <20230612161617.GE11441@frogsfrogsfrogs>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 12 Jun 2023 14:09:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAB9AE63;
+        Mon, 12 Jun 2023 11:09:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7AA75624DE;
+        Mon, 12 Jun 2023 18:09:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C50F8C433EF;
+        Mon, 12 Jun 2023 18:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686593385;
+        bh=/qiCGHFDPxPyeSHCMQOEHj9LTJLEmBdBe+GUCPD2vSI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fgjVgSr7YvHSgnfD9cnBi9cR6NswE2hhSUMP5ELnMAxbA0Ip0obQ8gEhyqRwBUKk+
+         5WX1lZp8Gc0BldcLZ3Xlbr7UZzHd4NeNsKE9+Uqnk6TbTV7fUgOAbN75jodfnzWdJC
+         0RXa0IH+EVp00wwkDdzS+nRwzU6vhv/5YTeLaE6jmXUlYTm0xCo0D30EWWZCzS8B0z
+         +5k7BhNVWdN7LMgBLtoLKALkRieUWWTPAmj0q1i9jS+eOa++zk1GHHxxoXeUuNFo7M
+         nOjfvQ7t1/zcGCvC9ljdUr1eSLwey1ZFroqYvdv+7JrWV89sFQoYQpRAzzWVPOlffe
+         F2Jjty2efUASw==
+Date:   Mon, 12 Jun 2023 11:09:45 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     mcgrof@kernel.org, jack@suse.cz, ruansy.fnst@fujitsu.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fs: distinguish between user initiated freeze and
+ kernel initiated freeze
+Message-ID: <20230612180945.GF11441@frogsfrogsfrogs>
+References: <168653971691.755178.4003354804404850534.stgit@frogsfrogsfrogs>
+ <168653972267.755178.18328538743442432037.stgit@frogsfrogsfrogs>
+ <ZIaX8Lz2cnyD+s5R@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZIaX8Lz2cnyD+s5R@infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Darrick J. Wong" <djwong@kernel.org> writes:
+On Sun, Jun 11, 2023 at 08:58:40PM -0700, Christoph Hellwig wrote:
+> On Sun, Jun 11, 2023 at 08:15:22PM -0700, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > Userspace can freeze a filesystem using the FIFREEZE ioctl or by
+> > suspending the block device; this state persists until userspace thaws
+> > the filesystem with the FITHAW ioctl or resuming the block device.
+> > Since commit 18e9e5104fcd ("Introduce freeze_super and thaw_super for
+> > the fsfreeze ioctl") we only allow the first freeze command to succeed.
+> > 
+> > The kernel may decide that it is necessary to freeze a filesystem for
+> > its own internal purposes, such as suspends in progress, filesystem fsck
+> > activities, or quiescing a device prior to removal.  Userspace thaw
+> > commands must never break a kernel freeze, and kernel thaw commands
+> > shouldn't undo userspace's freeze command.
+> > 
+> > Introduce a couple of freeze holder flags and wire it into the
+> > sb_writers state.  One kernel and one userspace freeze are allowed to
+> > coexist at the same time; the filesystem will not thaw until both are
+> > lifted.
+> > 
+> > I wonder if the f2fs/gfs2 code should be using a kernel freeze here, but
+> > for now we'll use FREEZE_HOLDER_USERSPACE to preserve existing
+> > behaviors.
+> > 
+> > Cc: mcgrof@kernel.org
+> > Cc: jack@suse.cz
+> > Cc: hch@infradead.org
+> > Cc: ruansy.fnst@fujitsu.com
+> > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > ---
+> >  Documentation/filesystems/vfs.rst |    4 +-
+> >  block/bdev.c                      |    8 ++--
+> >  fs/f2fs/gc.c                      |    4 +-
+> >  fs/gfs2/glops.c                   |    2 -
+> >  fs/gfs2/super.c                   |    6 +--
+> >  fs/gfs2/sys.c                     |    4 +-
+> >  fs/gfs2/util.c                    |    2 -
+> >  fs/ioctl.c                        |    8 ++--
+> >  fs/super.c                        |   79 +++++++++++++++++++++++++++++++++----
+> >  include/linux/fs.h                |   15 +++++--
+> >  10 files changed, 100 insertions(+), 32 deletions(-)
+> > 
+> > 
+> > diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> > index 769be5230210..41cf2a56cbca 100644
+> > --- a/Documentation/filesystems/vfs.rst
+> > +++ b/Documentation/filesystems/vfs.rst
+> > @@ -260,9 +260,9 @@ filesystem.  The following members are defined:
+> >  		void (*evict_inode) (struct inode *);
+> >  		void (*put_super) (struct super_block *);
+> >  		int (*sync_fs)(struct super_block *sb, int wait);
+> > -		int (*freeze_super) (struct super_block *);
+> > +		int (*freeze_super) (struct super_block *, enum freeze_holder who);
+> >  		int (*freeze_fs) (struct super_block *);
+> > -		int (*thaw_super) (struct super_block *);
+> > +		int (*thaw_super) (struct super_block *, enum freeze_wholder who);
+> 
+> Nit: Can you spell out the sb paramter as well and avoid the overly long
+> lines here?
 
-> On Mon, Jun 12, 2023 at 09:00:29PM +0530, Ritesh Harjani wrote:
->> Andreas Gruenbacher <agruenba@redhat.com> writes:
->> 
->> > On Sat, Jun 10, 2023 at 1:39 PM Ritesh Harjani (IBM)
->> > <ritesh.list@gmail.com> wrote:
->> >> This patch adds two of the helper routines iomap_ifs_is_fully_uptodate()
->> >> and iomap_ifs_is_block_uptodate() for managing uptodate state of
->> >> ifs state bitmap.
->> >>
->> >> In later patches ifs state bitmap array will also handle dirty state of all
->> >> blocks of a folio. Hence this patch adds some helper routines for handling
->> >> uptodate state of the ifs state bitmap.
->> >>
->> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> >> ---
->> >>  fs/iomap/buffered-io.c | 28 ++++++++++++++++++++--------
->> >>  1 file changed, 20 insertions(+), 8 deletions(-)
->> >>
->> >> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->> >> index e237f2b786bc..206808f6e818 100644
->> >> --- a/fs/iomap/buffered-io.c
->> >> +++ b/fs/iomap/buffered-io.c
->> >> @@ -43,6 +43,20 @@ static inline struct iomap_folio_state *iomap_get_ifs(struct folio *folio)
->> >>
->> >>  static struct bio_set iomap_ioend_bioset;
->> >>
->> >> +static inline bool iomap_ifs_is_fully_uptodate(struct folio *folio,
->> >> +                                              struct iomap_folio_state *ifs)
->> >> +{
->> >> +       struct inode *inode = folio->mapping->host;
->> >> +
->> >> +       return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
->> >
->> > This should be written as something like:
->> >
->> > unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
->> > return bitmap_full(ifs->state + IOMAP_ST_UPTODATE * blks_per_folio,
->> > blks_per_folio);
->> >
->> 
->> Nah, I feel it is not required... It make sense when we have the same
->> function getting use for both "uptodate" and "dirty" state.
->> Here the function anyways operates on uptodate state.
->> Hence I feel it is not required.
->
-> Honestly I thought that enum-for-bits thing was excessive considering
-> that ifs has only two state bits.  But, since you included it, it
-> doesn't make much sense /not/ to use it here.
+Done.
 
-Ok. Will make the changes.
+> > +static int freeze_frozen_super(struct super_block *sb, enum freeze_holder who)
+> > +{
+> > +	/* Someone else already holds this type of freeze */
+> > +	if (sb->s_writers.freeze_holders & who)
+> > +		return -EBUSY;
+> > +
+> > +	WARN_ON(sb->s_writers.freeze_holders == 0);
+> > +
+> > +	sb->s_writers.freeze_holders |= who;
+> > +	return 0;
+> > +}
+> 
+> So with the simplification I'm not even sure we need this helper
+> anymore.  But I could live with it either way.
 
->
-> OTOH, if you disassemble the object code and discover that the compiler
-> *isn't* using constant propagation to simplify the object code, then
-> yes, that would be a good reason to get rid of it.
+Ok, gone.  It makes the code flow rather easier to understand,
+especially given Jan's reply asking for a shared freeze to leave
+s_active elevated by 2.
 
-Sure, I will check that once too.
+> >  /**
+> >   * freeze_super - lock the filesystem and force it into a consistent state
+> >   * @sb: the super to lock
+> > + * @who: FREEZE_HOLDER_USERSPACE if userspace wants to freeze the fs;
+> > + * FREEZE_HOLDER_KERNEL if the kernel wants to freeze it
+> 
+> I think the cnonstants should use a % prefix for kerneldoc to notice
+> them.  Also I suspect something like:
+> 
+>  * @who: context that wants to free
+> 
+>  and then in the body:
+> 
+>  * @who should be:
+>  *  * %FREEZE_HOLDER_USERSPACE if userspace wants to freeze the fs
+>  *  * %FREEZE_HOLDER_KERNEL if the kernel wants to freeze it
+> 
+> for better rendering of the comments.  Same applies for the thaw side.
 
+Done.  Thanks for the kerneldoc, I can never keep rst and kerneldoc
+straight anymore.
 
--ritesh
+> > +static int thaw_super_locked(struct super_block *sb, enum freeze_holder who)
+> >  {
+> >  	int error;
+> >  
+> > +	if (sb->s_writers.frozen == SB_FREEZE_COMPLETE) {
+> > +		error = try_thaw_shared_super(sb, who);
+> > +		if (error != 1) {
+> > +			up_write(&sb->s_umount);
+> > +			return error;
+> > +		}
+> > +	}
+> > +
+> >  	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE) {
+> 
+> Make this and
+> 
+> 	} else {
+> 
+> instead of checking the same condition twice?
+
+Ok.
+
+> > +extern int freeze_super(struct super_block *super, enum freeze_holder who);
+> > +extern int thaw_super(struct super_block *super, enum freeze_holder who);
+> 
+> .. and drop the pointless externs here.
+
+Ok done.
+
+> Except for these various nitpicks this looks good:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+Thanks!
+
+--D
+
