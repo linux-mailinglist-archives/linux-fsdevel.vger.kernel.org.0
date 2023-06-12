@@ -2,132 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAAD772CBDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 18:52:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 251B672CC6A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jun 2023 19:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237312AbjFLQwU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 12:52:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45364 "EHLO
+        id S236368AbjFLRZu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 13:25:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237359AbjFLQwO (ORCPT
+        with ESMTP id S234579AbjFLRZt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 12:52:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C48EBE73
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 09:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686588691;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=KUdFKCdBRtXD70pPEw8UKzishmgLHxiTnsybrG/P/8Q=;
-        b=HG0wGPwFuB+pdkmE6BW5LD9jo25cJjFQzPZtkjs7pHgK9yfIlAYTfpFTGgzbFngRr0TjZN
-        /uU9akSonP4T/cQHFYJ8JYLCdvFtpal/0zl3R6aHo0fLG/lXhQzbc7GqNkKIytNkHU/ac8
-        Du247MD6tkNyY5Bq6M7SiAGTaRU0aUc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-557-3Bd9b2jJP1qS--WMQacq3A-1; Mon, 12 Jun 2023 12:51:25 -0400
-X-MC-Unique: 3Bd9b2jJP1qS--WMQacq3A-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D2BFA85A5AA;
-        Mon, 12 Jun 2023 16:51:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1088720234B3;
-        Mon, 12 Jun 2023 16:51:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, David Hildenbrand <david@redhat.com>,
-        kernel test robot <oliver.sang@intel.com>
-cc:     dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Lorenzo Stoakes <lstoakes@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, oe-lkp@lists.linux.dev, lkp@intel.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] block: Fix dio_bio_alloc() to set BIO_PAGE_PINNED
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <431928.1686588681.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 12 Jun 2023 17:51:21 +0100
-Message-ID: <431929.1686588681@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Mon, 12 Jun 2023 13:25:49 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B1510B;
+        Mon, 12 Jun 2023 10:25:47 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-651f2f38634so4749767b3a.0;
+        Mon, 12 Jun 2023 10:25:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686590747; x=1689182747;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ePrLbxees+na8VQ6kKHudm713FyUFUDWHNrQSIDaz9c=;
+        b=l4Z+oNYFv1tJN559du14YDbAs1c1oOmSiTgedDwnNlaIsNT2JhvRW1AeHi6SxzzSiW
+         tIAB11P00+aLniXOUnlFdwShzz+PjGLOZpHCwoBeX6mWpXJiuG3HzPX7zOPcmUBj8uCo
+         B7NAMYCuE63OC81tssG/rjrY5jcfDSXamOfNEqgMdBSDsd7HXEDhQbADlAaz8AAlFAkS
+         qEdZpU4cAKE34sRhEFkTaM+Azz+VgnpLAeMohpjE6xXBNiMua7i0j+i8/YUjqN/h+FBo
+         sMAIhRy8yp8jPCll9eBo3Eb6Ash8pg6eMGKOx55eHFXKmU25t2JdyCzX6K8f5sVhkK5m
+         0zRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686590747; x=1689182747;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ePrLbxees+na8VQ6kKHudm713FyUFUDWHNrQSIDaz9c=;
+        b=V1lK3FZ3+Km8agDBAb1EiKLb3VvzGeqHy+lQtFxNnzClMFol8mgDbttue9tkdw76Ol
+         b9UyMWUxTACXwMYfKm/3fvgvBseFVvi9L6Kd7paQ29N1jtFpS+R5jIHl8wJs9eKW07ZA
+         9fEpgBqxfkFlTGXwtt7/RGV0M7TS9EH9K+MmpN/uPPA3oJHPoBUlp+4nGLY5+Vuw6T9k
+         /9/yu+SRt17ByDu1b1DNg31PdsvA/f+vjXqeRCoNEz1K9F/6dyEM80Biojls3LeR0qgs
+         VKHnBqUI227ZlhV1hT/jzZGK8iTAI0iCPPbSvjsYruQv+d4DLwCTu2CwJUW29kBhPdkS
+         /xIQ==
+X-Gm-Message-State: AC+VfDyx6/vzGLAt+q9nCLRxghDQwXKeVQjCpjcQ3tnaUirBUfJmjMAo
+        +6F0JLHV3g7Rm1tWsafKFA4=
+X-Google-Smtp-Source: ACHHUZ6iNC09OETGM8+0I0s8HuzXvXXjFa4PV5gXB6Ee/RcEmwNbhPc7xydbYdD2F8YUdMRQlmChRA==
+X-Received: by 2002:a17:902:d48f:b0:1b2:1942:9117 with SMTP id c15-20020a170902d48f00b001b219429117mr7940856plg.45.1686590746853;
+        Mon, 12 Jun 2023 10:25:46 -0700 (PDT)
+Received: from dw-tp ([49.207.220.159])
+        by smtp.gmail.com with ESMTPSA id i12-20020a17090332cc00b001a194df5a58sm8519820plr.167.2023.06.12.10.25.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jun 2023 10:25:46 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 22:55:37 +0530
+Message-Id: <87wn08pp7y.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     linux-ext4@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFCv2 2/5] ext4: Remove PAGE_SIZE assumption of folio from mpage_submit_folio
+In-Reply-To: <87a5x6hy8l.fsf@doe.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-    =
+Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
 
-Fix dio_bio_alloc() to set BIO_PAGE_PINNED, not BIO_PAGE_REFFED, so that
-the bio code unpins the pinned pages rather than putting a ref on them.
+> Please ignore the previous email.
+>
+> "Theodore Ts'o" <tytso@mit.edu> writes:
+>
+>> On Mon, May 15, 2023 at 04:10:41PM +0530, Ritesh Harjani (IBM) wrote:
+>>> mpage_submit_folio() was converted to take folio. Even though
+>>> folio_size() in ext4 as of now is PAGE_SIZE, but it's better to
+>>> remove that assumption which I am assuming is a missed left over from
+>>> patch[1].
+>>>
+>>> [1]: https://lore.kernel.org/linux-ext4/20230324180129.1220691-7-willy@infradead.org/
+>>>
+>>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>>
+>> I didn't notice this right away, because the failure is not 100%
+>> reliable, but this commit will sometimes cause "kvm-xfstests -c
+>> ext4/encrypt generic/068" to crash.  Reverting the patch fixes the
+>> problem, so I plan to drop this patch from my tree.
+>>
+>
+> Sorry about the crash. I am now able to reproduce the problem on my
+> setup as well. I will debug this and will update once I have some more info.
+>
+> From the initial look, it looks like the problem might be occurring when
+> folio_pos(folio) itself is > i_size_read(inode).
+>
+> If that is indeed the case, then I think even doing this with folio
+> conversion (below code after folio conversion) looks incorrect for case
+> when size is not PAGE_SIZE aligned.
+>
+> However, I will spend some more time debugging this.
 
-The issue was causing:
+I am still looking into this. I would like to make sure I go through
+all the paths where i_size can be modified.
+- buffered-IO
+- writeback
+- direct-IO
+- page fault
+- truncate
+- fallocate (punch/collapse)
+- evict (not relevant though)
 
-        WARNING: CPU: 6 PID: 2220 at mm/gup.c:76 try_get_folio
+It is easily recreatable if we have one thread doing buffered-io +
+sync and other thread trying to truncate down inode->i_size.
+Kernel panic maybe is happening only with -O encrypt mkfs option +
+-o test_dummy_encryption mount option, but the size - folio_pos(folio)
+is definitely wrong because inode->i_size is not protected in writeback path.
 
-This can be caused by creating a file on a loopback UDF filesystem, openin=
-g
-it O_DIRECT and making two writes to it from the same source buffer.
+More on this later...
 
-Fixes: 1ccf164ec866 ("block: Use iov_iter_extract_pages() and page pinning=
- in direct-io.c")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202306120931.a9606b88-oliver.sang@i=
-ntel.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Christoph Hellwig <hch@infradead.org>
-cc: David Hildenbrand <david@redhat.com>
-cc: Andrew Morton <akpm@linux-foundation.org>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Jan Kara <jack@suse.cz>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Jason Gunthorpe <jgg@nvidia.com>
-cc: Logan Gunthorpe <logang@deltatee.com>
-cc: Hillf Danton <hdanton@sina.com>
-cc: Christian Brauner <brauner@kernel.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-block@vger.kernel.org
-cc: linux-kernel@vger.kernel.org
-cc: linux-mm@kvack.org
----
- fs/direct-io.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 14049204cac8..04e810826ee8 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -415,7 +415,8 @@ dio_bio_alloc(struct dio *dio, struct dio_submit *sdio=
-,
- 	else
- 		bio->bi_end_io =3D dio_bio_end_io;
- 	/* for now require references for all pages */
--	bio_set_flag(bio, BIO_PAGE_REFFED);
-+	if (dio->need_unpin)
-+		bio_set_flag(bio, BIO_PAGE_PINNED);
- 	sdio->bio =3D bio;
- 	sdio->logical_offset_in_bio =3D sdio->cur_page_fs_offset;
- }
-
+-ritesh
