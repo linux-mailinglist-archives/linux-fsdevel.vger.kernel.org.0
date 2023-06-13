@@ -2,53 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A947172D545
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 01:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A80F972D684
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 02:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232554AbjFLX7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 19:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48310 "EHLO
+        id S237967AbjFMAm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 20:42:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbjFLX67 (ORCPT
+        with ESMTP id S232584AbjFMAm5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 19:58:59 -0400
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A8C1718
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 16:58:58 -0700 (PDT)
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-76c5c78bc24so684183639f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 16:58:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686614337; x=1689206337;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I60cThygFBEQa4s2JlbXnAAnVmBToxnr0RN30Ke0zVQ=;
-        b=KdZSCeBSF4YUacGPgnfMkHsMpRBBdzfQVre93JwMP6cvHvSCLvGFof1+NegHclyWWt
-         8KAWDO6jj2ZxbyMxCJn4SCKLvzumGEqrmY1ST1OoLkrqZ+7tfXCueLnCSrj/m11K8Ifr
-         2CgEOfgW1Pu4tzHome95DEEpDJijc8z8DcFKqy+Oo8Rdq1v3pyomg6EsNbkR5VKspwwG
-         L806hiMmcArd/+LV91PS1lxp/ZOVJJqCrB5ZGISOvA/aoFhjRsiUvzl1on3GRovWcDOu
-         foi4Fo3b9z0dt5i5eDecm8BtMnWXGAKmx71tkW5X4Qpx6eLg2+bjDbn2i+zdppnaUw9K
-         8P4A==
-X-Gm-Message-State: AC+VfDysII75NqvKBhaMmOx6Zo41BCkFJWN1CuiOhrl3xNe33ozZjmps
-        P2NxUq9klvW7/LIMS6IyxngBZSWdWIF46WNTeCSKFyDk6jQv
-X-Google-Smtp-Source: ACHHUZ55nByCQPnYhdB5pelTum4aoB271NyGVXkbd+02MVKqPl6kKOb6Qyck86RgkYKlcyQyrKcBRql2C2vDgw1c8shsLlJ000FZ
+        Mon, 12 Jun 2023 20:42:57 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4355B197;
+        Mon, 12 Jun 2023 17:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=p7aw0VIsZS7Nht2qNh9pInAE4cDjMXwvVzTJV++TJ18=; b=Oa7yGVO4QLU5iHwKdEBisWwj6g
+        Dfn3h0LAbAx9d1afS+ERlQklZ16sjepLfWcBT6B1hJ2aqQk5VWaPukWSVnnsBILqu+nqVVZI5+PS3
+        ndVA+tsFlG3jkyT3nlsLyVFgfxyZAIrEL3G18x4v//HlCGZ+EBh0ZuYi+bxEozLcyDLHS8hn0rctM
+        WnN60qur4j292dFhLFsdiEQ+/B+IZ0lpCbPLaMmG9cjlIgLtu5yV3XRHJ1M7EU9Ql+6cBmRHlmqiI
+        fvycyf26CBNVe9+7EARU5x4fYc9oDGEPxvYkk3A2g7rnCLafqpj4BopGF9EXorA9UeXsPxz5+BYAy
+        PQ2AbWTw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q8s7X-003L19-3f; Tue, 13 Jun 2023 00:42:51 +0000
+Date:   Tue, 13 Jun 2023 01:42:51 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Wang Yugui <wangyugui@e16-tech.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>
+Subject: Re: [PATCH v3 6/8] filemap: Allow __filemap_get_folio to allocate
+ large folios
+Message-ID: <ZIe7i4kklXphsfu0@casper.infradead.org>
+References: <20230612203910.724378-1-willy@infradead.org>
+ <20230612203910.724378-7-willy@infradead.org>
+ <ZIeg4Uak9meY1tZ7@dread.disaster.area>
 MIME-Version: 1.0
-X-Received: by 2002:a02:a1c8:0:b0:41d:86fc:4b43 with SMTP id
- o8-20020a02a1c8000000b0041d86fc4b43mr4688613jah.4.1686614337718; Mon, 12 Jun
- 2023 16:58:57 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 16:58:57 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000079134b05fdf78048@google.com>
-Subject: [syzbot] [ext4?] UBSAN: shift-out-of-bounds in ext2_fill_super (2)
-From:   syzbot <syzbot+af5e10f73dbff48f70af@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, jack@suse.com,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZIeg4Uak9meY1tZ7@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,88 +54,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Jun 13, 2023 at 08:49:05AM +1000, Dave Chinner wrote:
+> On Mon, Jun 12, 2023 at 09:39:08PM +0100, Matthew Wilcox (Oracle) wrote:
+> > Allow callers of __filemap_get_folio() to specify a preferred folio
+> > order in the FGP flags.  This is only honoured in the FGP_CREATE path;
+> > if there is already a folio in the page cache that covers the index,
+> > we will return it, no matter what its order is.  No create-around is
+> > attempted; we will only create folios which start at the specified index.
+> > Unmodified callers will continue to allocate order 0 folios.
+> .....
+> > -		/* Init accessed so avoid atomic mark_page_accessed later */
+> > -		if (fgp_flags & FGP_ACCESSED)
+> > -			__folio_set_referenced(folio);
+> > +		if (!mapping_large_folio_support(mapping))
+> > +			order = 0;
+> > +		if (order > MAX_PAGECACHE_ORDER)
+> > +			order = MAX_PAGECACHE_ORDER;
+> > +		/* If we're not aligned, allocate a smaller folio */
+> > +		if (index & ((1UL << order) - 1))
+> > +			order = __ffs(index);
+> 
+> If I read this right, if we pass in an unaligned index, we won't get
+> the size of the folio we ask for?
 
-syzbot found the following issue on:
+Right.  That's implied by (but perhaps not obvious from) the changelog.
+Folios are always naturally aligned in the file, so an order-4 folio
+has to start at a multiple of 16.  If the index you pass in is not
+a multiple of 16, we can't create an order-4 folio without starting
+at an earlier index.
 
-HEAD commit:    908f31f2a05b Merge branch 'for-next/core', remote-tracking..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=124e9053280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c1058fe68f4b7b2c
-dashboard link: https://syzkaller.appspot.com/bug?extid=af5e10f73dbff48f70af
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f66595280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14abde43280000
+For a 4kB block size filesystem, that's what we want.  Applications
+_generally_ don't write backwards, so creating an order-4 folio is just
+wasting memory.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/87d095820229/disk-908f31f2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a1bf67af9675/vmlinux-908f31f2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7784a88b37e8/Image-908f31f2.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2816e591e0fa/mount_0.gz
+> e.g. if we want an order-4 folio (64kB) because we have a 64kB block
+> size in the filesystem, then we have to pass in an index that
+> order-4 aligned, yes?
+> 
+> I ask this, because the later iomap code that asks for large folios
+> only passes in "pos >> PAGE_SHIFT" so it looks to me like it won't
+> allocate large folios for anything other than large folio aligned
+> writes, even if we need them.
+> 
+> What am I missing?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+af5e10f73dbff48f70af@syzkaller.appspotmail.com
-
-memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL, pid=5969 'syz-executor354'
-loop0: detected capacity change from 0 to 512
-EXT2-fs (loop0): (no)user_xattr optionsnot supported
-================================================================================
-UBSAN: shift-out-of-bounds in fs/ext2/super.c:1015:40
-shift exponent 63 is too large for 32-bit type 'int'
-CPU: 0 PID: 5969 Comm: syz-executor354 Not tainted 6.4.0-rc4-syzkaller-g908f31f2a05b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:233
- show_stack+0x2c/0x44 arch/arm64/kernel/stacktrace.c:240
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- dump_stack+0x1c/0x28 lib/dump_stack.c:113
- ubsan_epilogue lib/ubsan.c:217 [inline]
- __ubsan_handle_shift_out_of_bounds+0x2f4/0x36c lib/ubsan.c:387
- ext2_fill_super+0x2270/0x2450 fs/ext2/super.c:1015
- mount_bdev+0x274/0x370 fs/super.c:1380
- ext2_mount+0x44/0x58 fs/ext2/super.c:1491
- legacy_get_tree+0xd4/0x16c fs/fs_context.c:610
- vfs_get_tree+0x90/0x274 fs/super.c:1510
- do_new_mount+0x25c/0x8c4 fs/namespace.c:3039
- path_mount+0x590/0xe04 fs/namespace.c:3369
- do_mount fs/namespace.c:3382 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3568
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x244 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:191
- el0_svc+0x4c/0x160 arch/arm64/kernel/entry-common.c:647
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:665
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-================================================================================
-EXT2-fs (loop0): error: can't find an ext2 filesystem on dev loop0.
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Perhaps what you're missing is that this isn't trying to solve the
+problem of supporting a bs > ps filesystem?  That's also a worthwhile
+project, but it's not this project.  In fact, I'd say that project is
+almost orthogonal to this one; for this usage we can always fall back to
+smaller folios on memory pressure or misalignment.  For a bs > ps block
+device, we have to allocate folios at least as large as the blocksize
+and cannot fall back to smaller folios.  For a bs > ps filesystem on a
+bdev with bs == ps, we can fall back (as your prototype showed).
