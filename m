@@ -2,50 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C267F72EC33
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 21:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71F4872EC44
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 21:48:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238478AbjFMTpN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 15:45:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43346 "EHLO
+        id S233755AbjFMTr5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 15:47:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231499AbjFMTpM (ORCPT
+        with ESMTP id S232143AbjFMTr4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 15:45:12 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A3EC12A;
-        Tue, 13 Jun 2023 12:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MA1u6hfUSr4FyJu2OJC57pk3YK5M+oEDp0ZuNl44zUw=; b=YmvpMCDIKTYvvOMaeqj6ZOeJvo
-        mTjj8tUZgXQlJ+xuvZddI77gYLeZ1ND488EGVdZdCE6zQ0prAr2j88wZ4cxliYSUKa6aijo4r63Ju
-        r7j/DixekYbG5vyRxRKxEz5XmR+x3URnFghzhYir44+NsqmXqcZSnReT33XbJMg5MeYlge7fG7mVJ
-        8WKTAO8y+gVi8FvmFZALfkTx6MYrFwz3CWZDKL5q1IjX6/y/eIwD1edo8m4kQyoqSbuW2bEerAHY5
-        B4/GMEl2uvaoHZvPd1b0o6fcBwNkBKL9vgh2V/s5KfuGPht+cmegb/kHxKyVvR+SZe/WFM+t75tkV
-        J+lzUmHw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q99wx-004GAi-EN; Tue, 13 Jun 2023 19:45:07 +0000
-Date:   Tue, 13 Jun 2023 20:45:07 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Ritesh Harjani <ritesh.list@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Disha Goel <disgoel@linux.ibm.com>
-Subject: Re: [RFCv2 2/5] ext4: Remove PAGE_SIZE assumption of folio from
- mpage_submit_folio
-Message-ID: <ZIjHQ5Nea7eRLjzF@casper.infradead.org>
-References: <20230613095917.trpqw2iv2f7kutaz@quack3>
- <87o7ljw3qo.fsf@doe.com>
+        Tue, 13 Jun 2023 15:47:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC85C171A;
+        Tue, 13 Jun 2023 12:47:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7F46F6350E;
+        Tue, 13 Jun 2023 19:47:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 689F9C433F0;
+        Tue, 13 Jun 2023 19:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686685673;
+        bh=Ih8TncHvHQnGjOpDZNZ3sjjTRueGP2vqBfz8GI8tuzM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Bzvqr3AB+cs7Dxe6cGNRzCtojYdBO9sWkNdcznkUfX9+ZDY25rOi+2u4X6VhgwrOx
+         ohzqtKu5z6NzVdBIiq9UuiKh5r3YxLFfD13lPgSWk+X/9CT1KOQlStbaUZ+aMTqeQm
+         Zv59qXw1fB68ELcdkT0vyiQlSiO88yVoQ6M8wAJ+VRka2OZ2ll9k/t/ptev5PqlA81
+         533DHLNEBBYgJL+ST2ZTHLORnjRBy6TL3jfL+P/Qpvg2wJc4/edGpmxXqJu805iPtw
+         VImFMLd7MrTXUg8CeNHTp5sXPunoh5QsHtCVWD0aPCws9jG5dOyHohBjwDOMrI69JF
+         8sSWsZEKHd6CQ==
+Message-ID: <3b7a224853e2e0557d55e98f171f8b24999c040b.camel@kernel.org>
+Subject: Re: [PATCH v4 2/9] fs: add infrastructure for multigrain inode
+ i_m/ctime
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Neil Brown <neilb@suse.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Theodore T'so <tytso@mit.edu>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Tom Talpey <tom@talpey.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org
+Date:   Tue, 13 Jun 2023 15:47:50 -0400
+In-Reply-To: <20230523101723.xmy7mylbczhki6aa@quack3>
+References: <20230518114742.128950-1-jlayton@kernel.org>
+         <20230518114742.128950-3-jlayton@kernel.org>
+         <20230523100240.mgeu4y46friv7hau@quack3>
+         <20230523101723.xmy7mylbczhki6aa@quack3>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o7ljw3qo.fsf@doe.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,165 +80,138 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 01:09:59AM +0530, Ritesh Harjani wrote:
-> Jan Kara <jack@suse.cz> writes:
-> 
-> > On Tue 13-06-23 09:27:38, Ritesh Harjani wrote:
-> >> Matthew Wilcox <willy@infradead.org> writes:
-> >> > On Mon, Jun 12, 2023 at 11:55:55PM +0530, Ritesh Harjani wrote:
-> >> >> Matthew Wilcox <willy@infradead.org> writes:
-> >> >> I couldn't respond to your change because I still had some confusion
-> >> >> around this suggestion -
-> >> >>
-> >> >> > So do we care if we write a random fragment of a page after a truncate?
-> >> >> > If so, we should add:
-> >> >> >
-> >> >> >         if (folio_pos(folio) >= size)
-> >> >> >                 return 0; /* Do we need to account nr_to_write? */
-> >> >>
-> >> >> I was not sure whether if go with above case then whether it will
-> >> >> work with collapse_range. I initially thought that collapse_range will
-> >> >> truncate the pages between start and end of the file and then
-> >> >> it can also reduce the inode->i_size. That means writeback can find an
-> >> >> inode->i_size smaller than folio_pos(folio) which it is writing to.
-> >> >> But in this case we can't skip the write in writeback case like above
-> >> >> because that write is still required (a spurious write) even though
-> >> >> i_size is reduced as it's corresponding FS blocks are not truncated.
-> >> >>
-> >> >> But just now looking at ext4_collapse_range() code it doesn't look like
-> >> >> it is the problem because it waits for any dirty data to be written
-> >> >> before truncate. So no matter which folio_pos(folio) the writeback is
-> >> >> writing, there should not be an issue if we simply return 0 like how
-> >> >> you suggested above.
-> >> >>
-> >> >>     static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
-> >> >>
-> >> >>     <...>
-> >> >>         ioffset = round_down(offset, PAGE_SIZE);
-> >> >>         /*
-> >> >>         * Write tail of the last page before removed range since it will get
-> >> >>         * removed from the page cache below.
-> >> >>         */
-> >> >>
-> >> >>         ret = filemap_write_and_wait_range(mapping, ioffset, offset);
-> >> >>         if (ret)
-> >> >>             goto out_mmap;
-> >> >>         /*
-> >> >>         * Write data that will be shifted to preserve them when discarding
-> >> >>         * page cache below. We are also protected from pages becoming dirty
-> >> >>         * by i_rwsem and invalidate_lock.
-> >> >>         */
-> >> >>         ret = filemap_write_and_wait_range(mapping, offset + len,
-> >> >>                         LLONG_MAX);
-> >> >>         truncate_pagecache(inode, ioffset);
-> >> >>
-> >> >>         <... within i_data_sem>
-> >> >>         i_size_write(inode, new_size);
-> >> >>
-> >> >>     <...>
-> >> >>
-> >> >>
-> >> >> However to avoid problems like this I felt, I will do some more code
-> >> >> reading. And then I was mostly considering your second suggestion which
-> >> >> is this. This will ensure we keep the current behavior as is and not
-> >> >> change that.
-> >> >>
-> >> >> > If we simply don't care that we're doing a spurious write, then we can
-> >> >> > do something like:
-> >> >> >
-> >> >> > -               len = size & ~PAGE_MASK;
-> >> >> > +               len = size & (len - 1);
-> >> >
-> >> > For all I know, I've found a bug here.  I don't know enough about ext4; if
-> >> > we have truncated a file, and then writeback a page that is past i_size,
-> >> > will the block its writing to have been freed?
-> >> 
-> >> I don't think so. If we look at truncate code, it first reduces i_size,
-> >> then call truncate_pagecache(inode, newsize) and then we will call
-> >> ext4_truncate() which will free the corresponding blocks.
-> >> Since writeback happens with folio lock held until completion, hence I
-> >> think truncate_pagecache() should block on that folio until it's lock
-> >> has been released.
-> >> 
-> >> - IIUC, if truncate would have completed then the folio won't be in the
-> >> foliocache for writeback to happen. Foliocache is kept consistent
-> >> via
-> >>     - first truncate the folio in the foliocache and then remove/free
-> >>     the blocks on device.
-> >
-> > Yes, correct.
-> >
-> >> - Also the reason we update i_size "before" calling truncate_pagecache()
-> >>   is to synchronize with mmap/pagefault.
-> >
-> > Yes, but these days mapping->invalidate_lock works for that instead for
-> > ext4.
-> >
-> >> > Is this potentially a silent data corruptor?
-> >> 
-> >> - Let's consider a case when folio_pos > i_size but both still belongs
-> >> to the last block. i.e. it's a straddle write case.
-> >> In such case we require writeback to write the data of this last folio
-> >> straddling i_size. Because truncate will not remove/free this last folio
-> >> straddling i_size & neither the last block will be freed. And I think
-> >> writeback is supposed to write this last folio to the disk to keep the
-> >> cache and disk data consistent. Because truncate will only zero out
-> >> the rest of the folio in the foliocache. But I don't think it will go and
-> >> write that folio out (It's not required because i_size means that the
-> >> rest of the folio beyond i_size should remain zero).
-> >> 
-> >> So, IMO writeback is supposed to write this last folio to the disk. And,
-> >> if we skip this writeout, then I think it may cause silent data corruption.
-> >> 
-> >> But I am not sure about the rest of the write beyond the last block of
-> >> i_size. I think those could just be spurious writes which won't cause
-> >> any harm because truncate will eventually first remove this folio from
-> >> file mapping and then will release the corresponding disk blocks.
-> >> So writing those out should does no harm
-> >
-> > Correct. The block straddling i_size must be written out, the blocks fully
-> > beyond new i_size (but below old i_size) may or may not be written out. As
-> > you say these extra racing writes to blocks that will get truncated cause
-> > no harm.
-> >
-> 
-> Thanks Jan for confirming. So, I think we should make below change.
-> (note the code which was doing "size - folio_pos(folio)" in
-> mpage_submit_folio() is dropped by Ted in the latest tree).
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 43be684dabcb..006eba9be5e6 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1859,9 +1859,9 @@ static int mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
->          */
->         size = i_size_read(mpd->inode);
->         len = folio_size(folio);
-> -       if (folio_pos(folio) + len > size &&
-> +       if ((folio_pos(folio) >= size || (folio_pos(folio) + len > size)) &&
->             !ext4_verity_in_progress(mpd->inode))
-> -               len = size & ~PAGE_MASK;
-> +               len = size & (len - 1);
->         err = ext4_bio_write_folio(&mpd->io_submit, folio, len);
->         if (!err)
->                 mpd->wbc->nr_to_write--;
-> @@ -2329,9 +2329,9 @@ static int mpage_journal_page_buffers(handle_t *handle,
->         folio_clear_checked(folio);
->         mpd->wbc->nr_to_write--;
-> 
-> -       if (folio_pos(folio) + len > size &&
-> +       if ((folio_pos(folio) >= size || (folio_pos(folio) + len > size)) &&
->             !ext4_verity_in_progress(inode))
-> -               len = size - folio_pos(folio);
-> +               len = size & (len - 1);
-> 
->         return ext4_journal_folio_buffers(handle, folio, len);
->  }
-> 
-> 
-> I will give it some more thoughts and testing.
+On Tue, 2023-05-23 at 12:17 +0200, Jan Kara wrote:
+> On Tue 23-05-23 12:02:40, Jan Kara wrote:
+> > On Thu 18-05-23 07:47:35, Jeff Layton wrote:
+> > > The VFS always uses coarse-grained timestamp updates for filling out =
+the
+> > > ctime and mtime after a change. This has the benefit of allowing
+> > > filesystems to optimize away a lot metadata updates, down to around 1
+> > > per jiffy, even when a file is under heavy writes.
+> > >=20
+> > > Unfortunately, this has always been an issue when we're exporting via
+> > > NFSv3, which relies on timestamps to validate caches. Even with NFSv4=
+, a
+> > > lot of exported filesystems don't properly support a change attribute
+> > > and are subject to the same problems with timestamp granularity. Othe=
+r
+> > > applications have similar issues (e.g backup applications).
+> > >=20
+> > > Switching to always using fine-grained timestamps would improve the
+> > > situation, but that becomes rather expensive, as the underlying
+> > > filesystem will have to log a lot more metadata updates.
+> > >=20
+> > > What we need is a way to only use fine-grained timestamps when they a=
+re
+> > > being actively queried.
+> > >=20
+> > > The kernel always stores normalized ctime values, so only the first 3=
+0
+> > > bits of the tv_nsec field are ever used. Whenever the mtime changes, =
+the
+> > > ctime must also change.
+> > >=20
+> > > Use the 31st bit of the ctime tv_nsec field to indicate that somethin=
+g
+> > > has queried the inode for the i_mtime or i_ctime. When this flag is s=
+et,
+> > > on the next timestamp update, the kernel can fetch a fine-grained
+> > > timestamp instead of the usual coarse-grained one.
+> > >=20
+> > > This patch adds the infrastructure this scheme. Filesytems can opt
+> > > into it by setting the FS_MULTIGRAIN_TS flag in the fstype.
+> > >=20
+> > > Later patches will convert individual filesystems over to use it.
+> > >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> >=20
+> > So there are two things I dislike about this series because I think the=
+y
+> > are fragile:
+> >=20
+> > 1) If we have a filesystem supporting multigrain ts and someone
+> > accidentally directly uses the value of inode->i_ctime, he can get bogu=
+s
+> > value (with QUERIED flag). This mistake is very easy to do. So I think =
+we
+> > should rename i_ctime to something like __i_ctime and always use access=
+or
+> > function for it.
+> >=20
+> > 2) As I already commented in a previous version of the series, the sche=
+me
+> > with just one flag for both ctime and mtime and flag getting cleared in
+> > current_time() relies on the fact that filesystems always do an equival=
+ent
+> > of:
+> >=20
+> > 	inode->i_mtime =3D inode->i_ctime =3D current_time();
+> >=20
+> > Otherwise we can do coarse grained update where we should have done a f=
+ine
+> > grained one. Filesystems often update timestamps like this but not
+> > universally. Grepping shows some instances where only inode->i_mtime is=
+ set
+> > from current_time() e.g. in autofs or bfs. Again a mistake that is rath=
+er
+> > easy to make and results in subtle issues. I think this would be also
+> > nicely solved by renaming i_ctime to __i_ctime and using a function to =
+set
+> > ctime. Mtime could then be updated with inode->i_mtime =3D ctime_peek()=
+.
+> >=20
+> > I understand this is quite some churn but a very mechanical one that co=
+uld
+> > be just done with Coccinelle and a few manual fixups. So IMHO it is wor=
+th
+> > the more robust result.
+>=20
+> Also as I'm thinking about it your current scheme is slightly racy. Suppo=
+se
+> the filesystem does:
+>=20
+> CPU1					CPU2
+>=20
+> 					statx()
+> inode->i_ctime =3D current_time()
+>   current_mg_time()
+>     nsec =3D atomic_long_fetch_andnot(QUERIED, &inode->i_ctime.tv_nsec)
+> 					  nsec =3D atomic_long_fetch_or(QUERIED, &inode->i_ctime.tv_nsec)
+>     if (nsec & QUERIED) - not set
+>       ktime_get_coarse_real_ts64(&now)
+>     return timestamp_truncate(now, inode);
+> - QUERIED flag in the inode->i_ctime gets overwritten by the assignment
+>   =3D> we need not update ctime due to granularity although it was querie=
+d
+>=20
+> One more reason to use explicit function to update inode->i_ctime ;)
 
-Why should ext4 be different from other filesystems which simply do:
+Thinking about this some more, I think we can fix the race you pointed
+out by just not clearing the queried flag when we fetch the
+i_ctime.tv_nsec field when we're updating.
 
-	if (folio_pos(folio) >= size)
-		return 0;
+So, instead of atomic_long_fetch_andnot, we'd just want to use an
+atomic_long_fetch there, and just let the eventual assignment of
+inode->__i_ctime.tv_nsec be what clears the flag.
+
+Any task that goes to update the time during the interim window will
+fetch a fine-grained time, but that's what we want anyway.
+
+Since you bring up races though, there are a couple of other things we
+should be aware of. Note that both problems exist today too:
+
+1) it's possible for two tasks to race in such a way that the ctime goes
+backward. There's no synchronization between tasks doing the updating,
+so an older time can overwrite a newer one. I think you'd need a pretty
+tight race to observe this though.
+
+2) it's possible to fetch a "torn" timestamp out of the inode.
+timespec64 is two words, and we don't order its loads or stores. We
+could consider adding a seqcount_t and some barriers and fixing it that
+way. I'm not sure it's worth it though, given that we haven't worried
+about this in the past.
+
+For now, I propose that we ignore both problems, unless and until we can
+prove that they are more than theoretical.
+--=20
+Jeff Layton <jlayton@kernel.org>
