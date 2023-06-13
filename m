@@ -2,111 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 93FFA72DBEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 10:02:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 148B972DC24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 10:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240910AbjFMICk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 04:02:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54610 "EHLO
+        id S240543AbjFMIQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 04:16:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233941AbjFMIC0 (ORCPT
+        with ESMTP id S239466AbjFMIQ4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 04:02:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD6110DE;
-        Tue, 13 Jun 2023 01:01:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 13 Jun 2023 04:16:56 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD81E4E;
+        Tue, 13 Jun 2023 01:16:54 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BC7A66109A;
-        Tue, 13 Jun 2023 08:01:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD1EC433EF;
-        Tue, 13 Jun 2023 08:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1686643273;
-        bh=v8+tAI1Tiq834oS0lOuXx3xnoqrH6hm5pa17SbvxOzQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bR4QkIqzShbQGknqJs8CcDr1aBX8RTtGriTrjlkzVKigdMwFnYXyWuXjKi3ZJmMv9
-         PbEcnLsQkygehD6YBVfDpiJAC0itQbnAMLBgRMBB1TdiERQlXx4isNIZvjQMPy9m7f
-         GCw5x9/nLwQP9k0g8QO6UK3jrzcDW4xKXaxXCjU8=
-Date:   Tue, 13 Jun 2023 10:01:10 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Avadhut Naik <Avadhut.Naik@amd.com>
-Cc:     rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, avadnaik@amd.com,
-        yazen.ghannam@amd.com, alexey.kardashevskiy@amd.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v3 0/3] Add support for Vendor Defined Error Types in
- Einj Module
-Message-ID: <2023061341-anything-unlimited-cb62@gregkh>
-References: <20230612215139.5132-1-Avadhut.Naik@amd.com>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 834BA2236B;
+        Tue, 13 Jun 2023 08:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1686644213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1Oj/gcuuB44r6saYYM7CYnUwY1Lak3+wZfGJTIYPEpw=;
+        b=MwwIhts8/ksGQ47ht4E2VgYu7vHERjHXPmrPc+xTUrNjOP//oJ4Jns6B18yOlVVdlrQNBV
+        +c8ihibL2UT+8LsO50aFG22VHGRM8Xp8m4+cOfuTsegVVd7Neti6y6dYed0/EmcWKQAXCp
+        AlUXHHS8sxcJ4Aw5OHi9PVaH072+ac8=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6C30813483;
+        Tue, 13 Jun 2023 08:16:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id G6RbGvUliGS3LQAAMHmgww
+        (envelope-from <mhocko@suse.com>); Tue, 13 Jun 2023 08:16:53 +0000
+Date:   Tue, 13 Jun 2023 10:16:53 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     =?utf-8?B?56iL5Z6y5rab?= Chengkaitao Cheng 
+        <chengkaitao@didiglobal.com>
+Cc:     "tj@kernel.org" <tj@kernel.org>,
+        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
+        "shakeelb@google.com" <shakeelb@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "muchun.song@linux.dev" <muchun.song@linux.dev>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+        "pilgrimtao@gmail.com" <pilgrimtao@gmail.com>,
+        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
+        "yuzhao@google.com" <yuzhao@google.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "surenb@google.com" <surenb@google.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "feng.tang@intel.com" <feng.tang@intel.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH v3 0/2] memcontrol: support cgroup level OOM protection
+Message-ID: <ZIgl9Zl5D+Y1RGM0@dhcp22.suse.cz>
+References: <ZHSwhyGnPteiLKs/@dhcp22.suse.cz>
+ <C5E5137F-8754-40CC-9F0C-0EB3D8AC1EC2@didiglobal.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230612215139.5132-1-Avadhut.Naik@amd.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <C5E5137F-8754-40CC-9F0C-0EB3D8AC1EC2@didiglobal.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 09:51:36PM +0000, Avadhut Naik wrote:
-> This patchset adds support for Vendor Defined Error types in the einj
-> module by exporting a binary blob file in module's debugfs directory.
-> Userspace tools can write OEM Defined Structures into the blob file as
-> part of injecting Vendor defined errors.
+On Sun 04-06-23 08:05:53, 程垲涛 Chengkaitao Cheng wrote:
+> At 2023-05-29 22:02:47, "Michal Hocko" <mhocko@suse.com> wrote:
+> >On Thu 25-05-23 07:35:41, 程垲涛 Chengkaitao Cheng wrote:
+> >> At 2023-05-22 21:03:50, "Michal Hocko" <mhocko@suse.com> wrote:
+> >[...]
+> >> >> I have created a new indicator oom_kill_inherit that maintains a negative correlation 
+> >> >> with memory.oom.protect, so we have a ruler to measure the optimal value of 
+> >> >> memory.oom.protect.
+> >> >
+> >> >An example might help here.
+> >> 
+> >> In my testing case, by adjusting memory.oom.protect, I was able to significantly 
+> >> reduce the oom_kill_inherit of the corresponding cgroup. In a physical machine 
+> >> with severely oversold memory, I divided all cgroups into three categories and 
+> >> controlled their probability of being selected by the oom-killer to 0%,% 20, 
+> >> and 80%, respectively.
+> >
+> >I might be just dense but I am lost. Can we focus on the barebone
+> >semantic of the group oom selection and killing first. No magic
+> >auto-tuning at this stage please.
+> >
+> >> >> >> about the semantics of non-leaf memcgs protection,
+> >> >> >> If a non-leaf memcg's oom_protect quota is set, its leaf memcg will proportionally 
+> >> >> >> calculate the new effective oom_protect quota based on non-leaf memcg's quota.
+> >> >> >
+> >> >> >So the non-leaf memcg is never used as a target? What if the workload is
+> >> >> >distributed over several sub-groups? Our current oom.group
+> >> >> >implementation traverses the tree to find a common ancestor in the oom
+> >> >> >domain with the oom.group.
+> >> >> 
+> >> >> If the oom_protect quota of the parent non-leaf memcg is less than the sum of 
+> >> >> sub-groups oom_protect quota, the oom_protect quota of each sub-group will 
+> >> >> be proportionally reduced
+> >> >> If the oom_protect quota of the parent non-leaf memcg is greater than the sum 
+> >> >> of sub-groups oom_protect quota, the oom_protect quota of each sub-group 
+> >> >> will be proportionally increased
+> >> >> The purpose of doing so is that users can set oom_protect quota according to 
+> >> >> their own needs, and the system management process can set appropriate 
+> >> >> oom_protect quota on the parent non-leaf memcg as the final cover, so that 
+> >> >> the system management process can indirectly manage all user processes.
+> >> >
+> >> >I guess that you are trying to say that the oom protection has a
+> >> >standard hierarchical behavior. And that is fine, well, in fact it is
+> >> >mandatory for any control knob to have a sane hierarchical properties.
+> >> >But that doesn't address my above question. Let me try again. When is a
+> >> >non-leaf memcg potentially selected as the oom victim? It doesn't have
+> >> >any tasks directly but it might be a suitable target to kill a multi
+> >> >memcg based workload (e.g. a full container).
+> >> 
+> >> If nonleaf memcg have the higher memory usage and the smaller 
+> >> memory.oom.protect, it will have the higher the probability being 
+> >> selected by the killer. If the non-leaf memcg is selected as the oom 
+> >> victim, OOM-killer will continue to select the appropriate child 
+> >> memcg downwards until the leaf memcg is selected.
+> >
+> >Parent memcg has more or equal memory charged than its child(ren) by
+> >definition. Let me try to ask differently. Say you have the following
+> >hierarchy
+> >
+> >		  root
+> >		/     \
+> >       container_A     container_B
+> >     (oom.prot=100M)   (oom.prot=200M)
+> >     (usage=120M)      (usage=180M)
+> >     /     |     \
+> >    A      B      C
+> >                 / \
+> >		C1  C2
+> >
+> >
+> >container_B is protected so it should be excluded. Correct? So we are at
+> >container_A to chose from. There are multiple ways the system and
+> >continer admin might want to achieve.
+> >1) system admin might want to shut down the whole container.
+> >2) continer admin might want to shut the whole container down
+> >3) cont. admin might want to shut down a whole sub group (e.g. C as it
+> >   is a self contained workload and killing portion of it will put it into
+> >   inconsistent state).
+> >4) cont. admin might want to kill the most excess cgroup with tasks (i.e. a
+> >   leaf memcg).
+> >5) admin might want to kill a process in the most excess memcg.
+> >
+> >Now we already have oom.group thingy that can drive the group killing
+> >policy but it is not really clear how you want to incorporate that to
+> >the protection.
+> >
+> >Again, I think that an oom.protection makes sense but the semantic has
+> >to be very carefully thought through because it is quite easy to create
+> >corner cases and weird behavior. I also think that oom.group has to be
+> >consistent with the protection.
 > 
-> The first patch refactors available_error_type_show() function to ensure
-> all errors supported by the platform are output through einj module's
-> available_error_type file in debugfs.
-> 
-> The second patch adds a write callback for binary blobs created through
-> debugfs_create_blob() API.
-> 
-> The third adds the required support i.e. establishing the memory mapping
-> and exporting it through debugfs blob file for Vendor-defined Error types.
-> 
-> Changes in v2:
->  - Split the v1 patch, as was recommended, to have a separate patch for
-> changes in debugfs.
->  - Refactored available_error_type_show() function into a separate patch.
->  - Changed file permissions to octal format to remove checkpatch warnings.
-> 
-> Changes in v3:
->  - Use BIT macro for generating error masks instead of hex values since
-> ACPI spec uses bit numbers.
->  - Handle the corner case of acpi_os_map_iomem() returning NULL through
-> a local variable to a store the size of OEM defined data structure.
-> 
-> Avadhut Naik (3):
->   ACPI: APEI: EINJ: Refactor available_error_type_show()
->   fs: debugfs: Add write functionality to debugfs blobs
->   ACPI: APEI: EINJ: Add support for vendor defined error types
-> 
->  drivers/acpi/apei/einj.c | 67 +++++++++++++++++++++++++++-------------
->  fs/debugfs/file.c        | 28 ++++++++++++++---
->  2 files changed, 69 insertions(+), 26 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+> The barebone semantic of the function implemented by my patch are 
+> summarized as follows:
+> Memcg only allows processes in the memcg to be selected by their 
+> ancestor's OOM killer when the memory usage exceeds "oom.protect"
 
-Why is a RFC series at v3?  What is left to be done with it to make you
-confident that it can be merged?
+I am sure you would need to break this expectation if there is no such
+memcg with tasks available or do you panic the system in that case in
+the global case and retry for ever for the memcg oom?
 
-I almost never review RFC patches as obviously the submitter doesn't
-think it is good enough to be reviewed, and hundreds of other patches in
-my review queue are from people who think they are ready to be merged,
-so this puts your stuff always at the bottom of the list...
+> It should be noted that "oom.protect" and "oom.group" are completely 
+> different things, and kneading them together may make the explanation 
+> more confusing.
 
-When submitting something with "RFC" ask what type of comments you are
-looking for and why you do not think this is ready yet, otherwise we
-have no idea...
+I am not suggesting to tight those two together by any means. I am
+merely saying that those two have to be mutually cooperative and still
+represent a reasonable semantic. Please have a look at above example
+usecases and try to explain how the memory protection fits in here as
+you have defined and implemented it.
 
-thanks,
-
-greg k-h
+-- 
+Michal Hocko
+SUSE Labs
