@@ -2,95 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 589B472E277
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 14:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F28772E29E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 14:16:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234648AbjFMMGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 08:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52166 "EHLO
+        id S242021AbjFMMP1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 08:15:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240461AbjFMMGr (ORCPT
+        with ESMTP id S234823AbjFMMP0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 08:06:47 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E665AE57;
-        Tue, 13 Jun 2023 05:06:45 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Tue, 13 Jun 2023 08:15:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62BB2E7D;
+        Tue, 13 Jun 2023 05:15:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 8A1D2224C5;
-        Tue, 13 Jun 2023 12:06:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1686658004; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HYVUFO1wPWNonY/X8OsDNVi5gRCOnIF00hLJCgVVXL8=;
-        b=E2hmup+R2QkYLjr7YF45V8o6ojzs8mRStZDGZ4gtvemfRUU6ZMdUti8UWYB14K4N087zID
-        PCmHqx+U0pWm1b+NAhJZWgxdcsmQ+DfDoUQ1SrXhDczXVUyCIOGHqIdZ4Mqv9LGNpjulD7
-        sr0aoAT7cMde28oU3y65lkUec6malk0=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7511513345;
-        Tue, 13 Jun 2023 12:06:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ab+LHNRbiGSNKAAAMHmgww
-        (envelope-from <mhocko@suse.com>); Tue, 13 Jun 2023 12:06:44 +0000
-Date:   Tue, 13 Jun 2023 14:06:44 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Yosry Ahmed <yosryahmed@google.com>
-Cc:     =?utf-8?B?56iL5Z6y5rab?= Chengkaitao Cheng 
-        <chengkaitao@didiglobal.com>, "tj@kernel.org" <tj@kernel.org>,
-        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
-        "shakeelb@google.com" <shakeelb@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "muchun.song@linux.dev" <muchun.song@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-        "pilgrimtao@gmail.com" <pilgrimtao@gmail.com>,
-        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
-        "yuzhao@google.com" <yuzhao@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "surenb@google.com" <surenb@google.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH v3 0/2] memcontrol: support cgroup level OOM protection
-Message-ID: <ZIhb1EwvrdKXpEMb@dhcp22.suse.cz>
-References: <ZFd5bpfYc3nPEVie@dhcp22.suse.cz>
- <66F9BB37-3BE1-4B0F-8DE1-97085AF4BED2@didiglobal.com>
- <ZFkEqhAs7FELUO3a@dhcp22.suse.cz>
- <CAJD7tkaw_7vYACsyzAtY9L0ZVC0B=XJEWgG=Ad_dOtL_pBDDvQ@mail.gmail.com>
- <ZIgodGWoC/R07eak@dhcp22.suse.cz>
- <CAJD7tkawYZAWKYgttgtPjscnZTARj+QaGZLGiMiSadwC3oCELQ@mail.gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DEE8163576;
+        Tue, 13 Jun 2023 12:15:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EB3BC4339C;
+        Tue, 13 Jun 2023 12:15:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686658524;
+        bh=u87nLaY8CnHIf6lGPmCaMeaMMPHADO8Fwc25C1lXyNI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=otNZv5jG2XnneBVDhTwGf5eYQw63jyqJmJKda6cx2mOJeeWSjjpGD5bDDM/UWCJeY
+         qyEsS0cn0QaRG+oKxHxBw16uUwDTBejxpt/coODQCbRTDWRrWTPRiLbaOJEu5CtRNh
+         K+51rxtQY19QsheB8aE1wDuQ1uzvDoup7wV8Ix2xHxKdYZPODGIxdqPY96MlBMLuYr
+         dIZSZ2BRcpKOJ0dg4koIYpI1wAVmHuuvxm5Psxma/su+IGsRtR/RgghDAO0PNIEYB6
+         6meiHSglzzY6fRxU50VBsbgbEogiiiI+6DUsdQN7JNOoq+7a9836UTh4frcHFy/xuQ
+         jwRTSvSYxQKXQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     bcodding@redhat.com, Chris Perl <cperl@janestreet.com>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH] errseq_t: split the ERRSEQ_SEEN flag into two
+Date:   Tue, 13 Jun 2023 08:15:20 -0400
+Message-Id: <20230613121521.146865-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkawYZAWKYgttgtPjscnZTARj+QaGZLGiMiSadwC3oCELQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -98,69 +55,260 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 13-06-23 01:36:51, Yosry Ahmed wrote:
-> +David Rientjes
-> 
-> On Tue, Jun 13, 2023 at 1:27 AM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Sun 04-06-23 01:25:42, Yosry Ahmed wrote:
-> > [...]
-> > > There has been a parallel discussion in the cover letter thread of v4
-> > > [1]. To summarize, at Google, we have been using OOM scores to
-> > > describe different job priorities in a more explicit way -- regardless
-> > > of memory usage. It is strictly priority-based OOM killing. Ties are
-> > > broken based on memory usage.
-> > >
-> > > We understand that something like memory.oom.protect has an advantage
-> > > in the sense that you can skip killing a process if you know that it
-> > > won't free enough memory anyway, but for an environment where multiple
-> > > jobs of different priorities are running, we find it crucial to be
-> > > able to define strict ordering. Some jobs are simply more important
-> > > than others, regardless of their memory usage.
-> >
-> > I do remember that discussion. I am not a great fan of simple priority
-> > based interfaces TBH. It sounds as an easy interface but it hits
-> > complications as soon as you try to define a proper/sensible
-> > hierarchical semantic. I can see how they might work on leaf memcgs with
-> > statically assigned priorities but that sounds like a very narrow
-> > usecase IMHO.
-> 
-> Do you mind elaborating the problem with the hierarchical semantics?
+NFS wants to use the errseq_t mechanism to detect errors that occur
+during a write, but for that use-case we want to ignore anything that
+happened before the sample point.
 
-Well, let me be more specific. If you have a simple hierarchical numeric
-enforcement (assume higher priority more likely to be chosen and the
-effective priority to be max(self, max(parents)) then the semantic
-itslef is straightforward.
+This points out a problem with the current errseq_t implementation. The
+SEEN flag is overloaded:
 
-I am not really sure about the practical manageability though. I have
-hard time to imagine priority assignment on something like a shared
-workload with a more complex hierarchy. For example:
-	    root
-	/    |    \
-cont_A    cont_B  cont_C
+- errseq_set uses it to tell when it can skip incrementing the value
+- errseq_sample uses it to tell when there are unseen errors
 
-each container running its workload with own hierarchy structures that
-might be rather dynamic during the lifetime. In order to have a
-predictable OOM behavior you need to watch and reassign priorities all
-the time, no?
+When sampling for the NFS write usecase, we need to set the former
+without setting the latter.
 
-> The way it works with our internal implementation is (imo) sensible
-> and straightforward from a hierarchy POV. Starting at the OOM memcg
-> (which can be root), we recursively compare the OOM scores of the
-> children memcgs and pick the one with the lowest score, until we
-> arrive at a leaf memcg.
+Carve a new flag bit out of the counter as an ERRSEQ_MUST_INC flag, and
+have errseq_set check for that instead of ERRSEQ_SEEN. Add a new
+errseq_sample_new function that will set this bit, and
+filemap_sample_new_wb_err wrapper that NFS can call from its write
+codepath.
 
-This approach has a strong requirement on the memcg hierarchy
-organization. Siblings have to be directly comparable because you cut
-off many potential sub-trees this way (e.g. is it easy to tell
-whether you want to rule out all system or user slices?).
+This reduces the max size of the errseq_t counter from 512k to 256k, but
+I believe that's an acceptable tradeoff here, as it further clarifies
+the meaning of the flags.
 
-I can imagine usecases where this could work reasonably well e.g. a set
-of workers of a different priority all of them running under a shared
-memcg parent. But more more involved hierarchies seem more complex
-because you always keep in mind how the hierarchy is organize to get to
-your desired victim.
+Reported-by: Chris Perl <cperl@janestreet.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/nfs/file.c           |  2 +-
+ include/linux/errseq.h  | 14 ++++++++++
+ include/linux/pagemap.h | 18 +++++++++++-
+ lib/errseq.c            | 62 +++++++++++++++++++++++++++++++----------
+ 4 files changed, 79 insertions(+), 17 deletions(-)
 
+This patch fixes the issue where an unseen writeback error prior to the
+file being opened is reported on write(). It does _not_ make any
+material difference to Chris' testcase however, because NFS will still
+report the error on close(), so the second "tee" call will still fail
+due to the writeback error.
+
+To _really_ fix that testcase, I think we'd need both this patch and to
+make NFS stop reporting writeback errors at close() (which is something
+problematic and not required by POSIX).
+
+Thoughts?
+
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index 7d21b4ca2ec5..71ab5a396b5d 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -643,7 +643,7 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 	nfs_clear_invalid_mapping(file->f_mapping);
+ 
+-	since = filemap_sample_wb_err(file->f_mapping);
++	since = filemap_sample_new_wb_err(file->f_mapping);
+ 	nfs_start_io_write(inode);
+ 	result = generic_write_checks(iocb, from);
+ 	if (result > 0) {
+diff --git a/include/linux/errseq.h b/include/linux/errseq.h
+index fc2777770768..2403d2f390aa 100644
+--- a/include/linux/errseq.h
++++ b/include/linux/errseq.h
+@@ -7,8 +7,22 @@
+ 
+ typedef u32	errseq_t;
+ 
++/**
++ * errseq_fetch - Grab the current errseq_t value
++ * @eseq: Pointer to errseq_t to peek
++ *
++ * Grab the current errseq_t value and return it. This value is OK
++ * to use as a "since" value later, as long as you don't care about
++ * unseen errors that happened before this point.
++ */
++static inline errseq_t errseq_fetch(errseq_t *eseq)
++{
++	return READ_ONCE(*eseq);
++}
++
+ errseq_t errseq_set(errseq_t *eseq, int err);
+ errseq_t errseq_sample(errseq_t *eseq);
++errseq_t errseq_sample_new(errseq_t *eseq);
+ int errseq_check(errseq_t *eseq, errseq_t since);
+ int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
+ #endif
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index a56308a9d1a4..dbdf00a829fc 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -102,13 +102,29 @@ static inline int filemap_check_wb_err(struct address_space *mapping,
+  * @mapping: mapping to be sampled
+  *
+  * Writeback errors are always reported relative to a particular sample point
+- * in the past. This function provides those sample points.
++ * in the past. This function provides those sample points. In the event that
++ * there are unseen errors at the time of the sample, they will be reported
++ * during the next check.
+  */
+ static inline errseq_t filemap_sample_wb_err(struct address_space *mapping)
+ {
+ 	return errseq_sample(&mapping->wb_err);
+ }
+ 
++/**
++ * filemap_peek_wb_err - peek at the current errseq_t to test for later errors
++ * @mapping: mapping to peek
++ *
++ * Writeback errors are always reported relative to a particular sample point
++ * in the past. This function provides those such sample points. If there are
++ * unseen errors present at the time of the sample, then they will be ignored
++ * in later checks.
++ */
++static inline errseq_t filemap_sample_new_wb_err(struct address_space *mapping)
++{
++	return errseq_sample_new(&mapping->wb_err);
++}
++
+ /**
+  * file_sample_sb_err - sample the current errseq_t to test for later errors
+  * @file: file pointer to be sampled
+diff --git a/lib/errseq.c b/lib/errseq.c
+index 93e9b94358dc..ae28fa13f9c1 100644
+--- a/lib/errseq.c
++++ b/lib/errseq.c
+@@ -36,11 +36,17 @@
+ /* The low bits are designated for error code (max of MAX_ERRNO) */
+ #define ERRSEQ_SHIFT		ilog2(MAX_ERRNO + 1)
+ 
+-/* This bit is used as a flag to indicate whether the value has been seen */
++/* Error has been reported */
+ #define ERRSEQ_SEEN		(1 << ERRSEQ_SHIFT)
+ 
++/* Must increment the counter on the next recorded error */
++#define ERRSEQ_MUST_INC		(1 << (ERRSEQ_SHIFT + 1))
++
+ /* The lowest bit of the counter */
+-#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 1))
++#define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 2))
++
++/* Both of the flag bits */
++#define ERRSEQ_ALL_FLAGS	(ERRSEQ_SEEN|ERRSEQ_MUST_INC)
+ 
+ /**
+  * errseq_set - set a errseq_t for later reporting
+@@ -54,7 +60,7 @@
+  *
+  * Return: The previous value, primarily for debugging purposes. The
+  * return value should not be used as a previously sampled value in later
+- * calls as it will not have the SEEN flag set.
++ * calls as it will not have the MUST_INC flag set.
+  */
+ errseq_t errseq_set(errseq_t *eseq, int err)
+ {
+@@ -69,7 +75,7 @@ errseq_t errseq_set(errseq_t *eseq, int err)
+ 	 * also don't accept zero here as that would effectively clear a
+ 	 * previous error.
+ 	 */
+-	old = READ_ONCE(*eseq);
++	old = errseq_fetch(eseq);
+ 
+ 	if (WARN(unlikely(err == 0 || (unsigned int)-err > MAX_ERRNO),
+ 				"err = %d\n", err))
+@@ -79,10 +85,10 @@ errseq_t errseq_set(errseq_t *eseq, int err)
+ 		errseq_t new;
+ 
+ 		/* Clear out error bits and set new error */
+-		new = (old & ~(MAX_ERRNO|ERRSEQ_SEEN)) | -err;
++		new = (old & ~(MAX_ERRNO|ERRSEQ_ALL_FLAGS)) | -err;
+ 
+-		/* Only increment if someone has looked at it */
+-		if (old & ERRSEQ_SEEN)
++		/* Only increment if marked for it */
++		if (old & ERRSEQ_MUST_INC)
+ 			new += ERRSEQ_CTR_INC;
+ 
+ 		/* If there would be no change, then call it done */
+@@ -122,7 +128,7 @@ EXPORT_SYMBOL(errseq_set);
+  */
+ errseq_t errseq_sample(errseq_t *eseq)
+ {
+-	errseq_t old = READ_ONCE(*eseq);
++	errseq_t old = errseq_fetch(eseq);
+ 
+ 	/* If nobody has seen this error yet, then we can be the first. */
+ 	if (!(old & ERRSEQ_SEEN))
+@@ -131,6 +137,33 @@ errseq_t errseq_sample(errseq_t *eseq)
+ }
+ EXPORT_SYMBOL(errseq_sample);
+ 
++/**
++ * errseq_sample_new() - Sample the errseq_t, ignoring earlier errors
++ * @eseq: Pointer to errseq_t to be sampled.
++ *
++ * This function allows callers to initialise their errseq_t variable.
++ * Any errors that occurred before this point will not be reported if
++ * this value is later used as a "since" value.
++ */
++errseq_t errseq_sample_new(errseq_t *eseq)
++{
++	errseq_t old = errseq_fetch(eseq);
++	errseq_t new = old;
++
++	/*
++	 * For the common case of no errors ever having been set, we can skip
++	 * marking the MUST_INC bit. Once an error has been set, the value
++	 * will never go back to zero.
++	 */
++	if (old != 0) {
++		new |= ERRSEQ_MUST_INC;
++		if (old != new)
++			cmpxchg(eseq, old, new);
++	}
++	return new;
++}
++EXPORT_SYMBOL(errseq_sample_new);
++
+ /**
+  * errseq_check() - Has an error occurred since a particular sample point?
+  * @eseq: Pointer to errseq_t value to be checked.
+@@ -144,9 +177,9 @@ EXPORT_SYMBOL(errseq_sample);
+  */
+ int errseq_check(errseq_t *eseq, errseq_t since)
+ {
+-	errseq_t cur = READ_ONCE(*eseq);
++	errseq_t cur = errseq_fetch(eseq) & ~ERRSEQ_ALL_FLAGS;
+ 
+-	if (likely(cur == since))
++	if (likely(cur == (since & ~ERRSEQ_ALL_FLAGS)))
+ 		return 0;
+ 	return -(cur & MAX_ERRNO);
+ }
+@@ -182,7 +215,7 @@ int errseq_check_and_advance(errseq_t *eseq, errseq_t *since)
+ 	 * so that the common case of no error is handled without needing
+ 	 * to take the lock that protects the "since" value.
+ 	 */
+-	old = READ_ONCE(*eseq);
++	old = errseq_fetch(eseq);
+ 	if (old != *since) {
+ 		/*
+ 		 * Set the flag and try to swap it into place if it has
+@@ -192,11 +225,10 @@ int errseq_check_and_advance(errseq_t *eseq, errseq_t *since)
+ 		 * swap doesn't occur, then it has either been updated by a
+ 		 * writer who is altering the value in some way (updating
+ 		 * counter or resetting the error), or another reader who is
+-		 * just setting the "seen" flag. Either outcome is OK, and we
+-		 * can advance "since" and return an error based on what we
+-		 * have.
++		 * just setting flags. Either outcome is OK, and we can
++		 * advance "since" and return an error based on what we have.
+ 		 */
+-		new = old | ERRSEQ_SEEN;
++		new = old | ERRSEQ_ALL_FLAGS;
+ 		if (new != old)
+ 			cmpxchg(eseq, old, new);
+ 		*since = new;
 -- 
-Michal Hocko
-SUSE Labs
+2.40.1
+
