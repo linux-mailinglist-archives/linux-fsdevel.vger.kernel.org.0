@@ -2,189 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEBB872D729
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 03:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDF6372D738
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 04:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238727AbjFMBw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 21:52:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33644 "EHLO
+        id S233309AbjFMCAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 22:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjFMBwz (ORCPT
+        with ESMTP id S229742AbjFMCAU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 21:52:55 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D49A013E;
-        Mon, 12 Jun 2023 18:52:53 -0700 (PDT)
+        Mon, 12 Jun 2023 22:00:20 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FB1122;
+        Mon, 12 Jun 2023 19:00:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=NjFb2DneMugGIPw5KlK2+oDu3ftr6iDdoaz0Ka2kCgc=; b=uqYivyfZxr4tZ6Ciy1zx0jCDWG
-        1MvyOF1wlySoP6i6IRg7beLoPQ28OH7kxTBb4cK+QIPnDeNTNaiq7Bm41S31+5Ncs7i0dfrWIP+2N
-        51InwiFpifoThbHx2/UIebWu3F/IDOkAwgSKeZ1NKomXQLYCBd9zMqbuYsf1WHKYz/kThqKTUMwsg
-        fg1AlBuxFVJM47s9OkB0wyM1x4syJ/m0RVkMrF2JUC/sQMXKvWnR8hD7i7NDAl+k+Qobazt+uiM2P
-        hfu+mWIpj+AQKLdjDXKxPHRAIvXF2i7/ZZJ2l4C033j7eW837bm+tZ4R/FMpF8/clfv2o33abnrnn
-        PXleK7hA==;
-Received: from [2601:1c2:980:9ec0::2764]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q8tDB-006cLc-08;
-        Tue, 13 Jun 2023 01:52:45 +0000
-Message-ID: <004cc6b2-1941-5aed-6e09-3bd01dfbf8e4@infradead.org>
-Date:   Mon, 12 Jun 2023 18:52:43 -0700
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=AdecLkDwTkadE0WTYpmaGKhXM3Tc09lhCE3OQBP/JvM=; b=grut5WIsGlgQniDfjkfiGayTD1
+        bw18JRGa6k9IPG7bgwlLBrF8vBaBvEdwN92DWn+SdKgDVNDPvBHhr5Y5CBZWgu9kQ9GA9Cl9HfR7s
+        0KhGo0Eb/YxJZF0QgqXfAoxrxQRINaZ8UZkFIL2AilBixO20hCVL/jKHfVMNIqsI7p3iHTMJdlQ7t
+        r5M9oDbtFmPymOv53nMgjSWCj88CwxA7T4fSYIyY0W2ALi9DrmhsKMm1SsVp+G42Gs5RMQQX9IMcT
+        6hYpHY7x/OTV/KtpgYw2EhOar+dwpdhRa7ogRxxmRY/csP/0vPTseCEusmbOlCYhL9PEbAR2SxzJU
+        Gl+8mEWg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q8tKQ-003PiX-A8; Tue, 13 Jun 2023 02:00:14 +0000
+Date:   Tue, 13 Jun 2023 03:00:14 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Wang Yugui <wangyugui@e16-tech.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>
+Subject: Re: [PATCH v3 6/8] filemap: Allow __filemap_get_folio to allocate
+ large folios
+Message-ID: <ZIfNrnUsJbcWGSD8@casper.infradead.org>
+References: <20230612203910.724378-1-willy@infradead.org>
+ <20230612203910.724378-7-willy@infradead.org>
+ <ZIeg4Uak9meY1tZ7@dread.disaster.area>
+ <ZIe7i4kklXphsfu0@casper.infradead.org>
+ <ZIfGpWYNA1yd5K/l@dread.disaster.area>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v4 01/11] documentation: Block Device Filtering Mechanism
-Content-Language: en-US
-To:     Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk,
-        hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org,
-        dlemoal@kernel.org, wsa@kernel.org,
-        heikki.krogerus@linux.intel.com, ming.lei@redhat.com,
-        gregkh@linuxfoundation.org, linux-block@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Bagas Sanjaya <bagasdotme@gmail.com>
-References: <20230609115858.4737-1-sergei.shtepa@veeam.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20230609115858.4737-1-sergei.shtepa@veeam.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZIfGpWYNA1yd5K/l@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi--
-
-On 6/9/23 04:58, Sergei Shtepa wrote:
-> The document contains:
-> * Describes the purpose of the mechanism
-> * A little historical background on the capabilities of handling I/O
->   units of the Linux kernel
-> * Brief description of the design
-> * Reference to interface description
+On Tue, Jun 13, 2023 at 11:30:13AM +1000, Dave Chinner wrote:
+> On Tue, Jun 13, 2023 at 01:42:51AM +0100, Matthew Wilcox wrote:
+> > On Tue, Jun 13, 2023 at 08:49:05AM +1000, Dave Chinner wrote:
+> > > On Mon, Jun 12, 2023 at 09:39:08PM +0100, Matthew Wilcox (Oracle) wrote:
+> > > > Allow callers of __filemap_get_folio() to specify a preferred folio
+> > > > order in the FGP flags.  This is only honoured in the FGP_CREATE path;
+> > > > if there is already a folio in the page cache that covers the index,
+> > > > we will return it, no matter what its order is.  No create-around is
+> > > > attempted; we will only create folios which start at the specified index.
+> > > > Unmodified callers will continue to allocate order 0 folios.
+> > > .....
+> > > > -		/* Init accessed so avoid atomic mark_page_accessed later */
+> > > > -		if (fgp_flags & FGP_ACCESSED)
+> > > > -			__folio_set_referenced(folio);
+> > > > +		if (!mapping_large_folio_support(mapping))
+> > > > +			order = 0;
+> > > > +		if (order > MAX_PAGECACHE_ORDER)
+> > > > +			order = MAX_PAGECACHE_ORDER;
+> > > > +		/* If we're not aligned, allocate a smaller folio */
+> > > > +		if (index & ((1UL << order) - 1))
+> > > > +			order = __ffs(index);
+> > > 
+> > > If I read this right, if we pass in an unaligned index, we won't get
+> > > the size of the folio we ask for?
+> > 
+> > Right.  That's implied by (but perhaps not obvious from) the changelog.
+> > Folios are always naturally aligned in the file, so an order-4 folio
+> > has to start at a multiple of 16.  If the index you pass in is not
+> > a multiple of 16, we can't create an order-4 folio without starting
+> > at an earlier index.
+> > 
+> > For a 4kB block size filesystem, that's what we want.  Applications
+> > _generally_ don't write backwards, so creating an order-4 folio is just
+> > wasting memory.
+> > 
+> > > e.g. if we want an order-4 folio (64kB) because we have a 64kB block
+> > > size in the filesystem, then we have to pass in an index that
+> > > order-4 aligned, yes?
+> > > 
+> > > I ask this, because the later iomap code that asks for large folios
+> > > only passes in "pos >> PAGE_SHIFT" so it looks to me like it won't
+> > > allocate large folios for anything other than large folio aligned
+> > > writes, even if we need them.
+> > > 
+> > > What am I missing?
+> > 
+> > Perhaps what you're missing is that this isn't trying to solve the
+> > problem of supporting a bs > ps filesystem?
 > 
-> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
-> ---
->  Documentation/block/blkfilter.rst | 64 +++++++++++++++++++++++++++++++
->  Documentation/block/index.rst     |  1 +
->  MAINTAINERS                       |  6 +++
->  3 files changed, 71 insertions(+)
->  create mode 100644 Documentation/block/blkfilter.rst
-> 
-> diff --git a/Documentation/block/blkfilter.rst b/Documentation/block/blkfilter.rst
-> new file mode 100644
-> index 000000000000..555625789244
-> --- /dev/null
-> +++ b/Documentation/block/blkfilter.rst
-> @@ -0,0 +1,64 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +================================
-> +Block Device Filtering Mechanism
-> +================================
-> +
-> +The block device filtering mechanism is an API that allows to attach block
+> No, that's not what I'm asking about. I know there's other changes
+> needed to enforce minimum folio size/alignment for bs > ps.
 
-                                                  that allows {what or who} to attach
+OK.  Bringing up the 64kB block size filesystem confused me.
 
-so who/what does the attach? Is it a driver or a user or admin or something else?
-and attach them to what?
+> What I'm asking about is when someone does a 16kB write at offset
+> 12kB, they won't get a large folio allocated at all, right? Even
+> though the write is large enough to enable it?
 
-> +device filters. Block device filters allow perform additional processing
+Right.
 
-                                        allow performing ...
+> Indeed, if we do a 1MB write at offset 4KB, we'll get 4kB at 4KB, 8KB
+> and 12kB (because we can't do order-1 folios), then order-2 at 16KB,
+> order-3 at 32kB, and so on until we hit offset 1MB where we will do
+> an order-0 folio allocation again (because the remaining length is
+> 4KB). The next 1MB write will then follow the same pattern, right?
 
-> +for I/O units.
-> +
-> +Introduction
-> +============
-> +
-> +The idea of handling I/O units on block devices is not new. Back in the
-> +2.6 kernel, there was an undocumented possibility of handling I/O units
-> +by substituting the make_request_fn() function, which belonged to the
-> +request_queue structure. But none of the in-tree kernel modules used this
-> +feature, and it was eliminated in the 5.10 kernel.
-> +
-> +The block device filtering mechanism returns the ability to handle I/O units.
-> +It is possible to safely attach filter to a block device "on the fly" without
+Yes.  Assuming we get another write ...
 
-                            attach a filter
-or
-                            attach filters
+> I think this ends up being sub-optimal and fairly non-obvious
+> non-obvious behaviour from the iomap side of the fence which is
+> clearly asking for high-order folios to be allocated. i.e. a small
+> amount of allocate-around to naturally align large folios when the
+> page cache is otherwise empty would make a big difference to the
+> efficiency of non-large-folio-aligned sequential writes...
 
-> +changing the structure of block devices stack.
+At this point we're arguing about what I/O pattern to optimise for.
+I'm going for a "do no harm" approach where we only allocate exactly as
+much memory as we did before.  You're advocating for a
+higher-risk/higher-reward approach.
 
-                          of the block device's stack.
-
-> +
-> +It supports attaching one filter to one block device, because there is only
-> +one filter implementation in the kernel yet.
-> +See Documentation/block/blksnap.rst.
-> +
-> +Design
-> +======
-> +
-> +The block device filtering mechanism provides registration and unregistration
-> +for filter operations. The struct blkfilter_operations contains a pointer to
-> +the callback functions for the filter. After registering the filter operations,
-> +filter can be managed using block device ioctl BLKFILTER_ATTACH,
-
-   a filter
-or
-   the filter                               ioctls
-
-> +BLKFILTER_DETACH and BLKFILTER_CTL.
-> +
-> +When the filter is attached, the callback function is called for each I/O unit
-> +for a block device, providing I/O unit filtering. Depending on the result of
-> +filtering the I/O unit, it can either be passed for subsequent processing by
-> +the block layer, or skipped.
-> +
-> +The filter can be implemented as a loadable module. In this case, the filter
-> +module cannot be unloaded while the filter is attached to at least one of the
-> +block devices.
-> +
-> +Interface description
-> +=====================
-> +
-> +The ioctl BLKFILTER_ATTACH and BLKFILTER_DETACH use structure blkfilter_name.
-
-       ioctls
-
-> +It allows to attach a filter to a block device or detach it.
-
-   It allows a driver to attach a filter ...
-?
-
-> +
-> +The ioctl BLKFILTER_CTL use structure blkfilter_ctl. It allows to send a
-
-                                                        It allows a driver to send a
-
-> +filter-specific command.
-> +
-> +.. kernel-doc:: include/uapi/linux/blk-filter.h
-> +
-> +To register in the system, the filter creates its own account, which contains
-> +callback functions, unique filter name and module owner. This filter account is
-> +used by the registration functions.
-
-I'm having a problem with this "account" thingy. Can you explain more about it?
-Is there an alternate word that might be used here?
-
-> +
-> +.. kernel-doc:: include/linux/blk-filter.h
-> +
-> +.. kernel-doc:: block/blk-filter.c
-> +   :export:
-
-Thanks.
--- 
-~Randy
+I'd prefer the low-risk approach for now; we can change it later!
+I'd like to see some amount of per-fd write history (as we have per-fd
+readahead history) to decide whether to allocate large folios ahead of
+the current write position.  As with readahead, I'd like to see that even
+doing single-byte writes can result in the allocation of large folios,
+as long as the app has done enough of them.
