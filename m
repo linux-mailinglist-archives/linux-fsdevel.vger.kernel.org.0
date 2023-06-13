@@ -2,203 +2,296 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF29572EF81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 00:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93A9572EF8B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 00:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240473AbjFMWf0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 18:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39568 "EHLO
+        id S240895AbjFMWgm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 18:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241463AbjFMWfR (ORCPT
+        with ESMTP id S240786AbjFMWgk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 18:35:17 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2089.outbound.protection.outlook.com [40.107.101.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592DE127;
-        Tue, 13 Jun 2023 15:35:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dqHUStifxKVQUbQyTjX7HkPjbnIja1EnkbDmVjaRtzqkR5uJmRN1jsrO7Y3tobTeLxcWnVXJXZqkWiMEzY0LFLK+1MyZVhc3kHTpTizgZr01m6D4qaWE6pwPCsnrXM/Z9jjvabqvxf/rZ2/agK8B6ycZyMa5YSlnQpaHt6u3j00MkLc0nMytaDu5N6qoxFyCgO0DVvNQDSyvnBGe3qO0r2LRKzijqVmi6hp+mP4g0bJxmS03GHXK/cNhAq74FrH9pQkeQnBzcHHGFjpjxSGnGu/WuoFA4XpmFYrsikGiF/tLf96pSUoY8XhAI/wd0JDrRmPV+LregAwoLrtCEMM8wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zbwVm3EK+xBi07Frerr63Hf7oLUCRow0SESNHAzH794=;
- b=Vpt2KGZZsx7vk2CU8WwT/2L2iG7z8eZ+u0YqFC9PEZAB91JCM0XO6QuYaqvigKSZQ8Py/4aDKboZlpRq23tivykN4iy8fDmQqKxWgzkXOAy4eiPanvXU5Rx7VOY5yrk5v8DznM7hZ3FZUPag0yQ5aRBFdhea5HmAlCIEFWV7VB0KvKHpBglWquVwRaeV1cG5DDADxFPZcd8kYZ/YFZijAuvB8N6jG2NiEA7EC6cs4sJmiUCHLP1YYZsZQ8E2p8M5tX9I+8VposwwefaXR/WFX/Z46HtAq8Mcl6EBORQLP2LUbg3cdEufvYFmdf+QlHXAFN0u6gxFwMBmVIr4GZEYMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zbwVm3EK+xBi07Frerr63Hf7oLUCRow0SESNHAzH794=;
- b=5qkntxU6LBTZagnZSuIs4AXaQDTvDTuoV5vrSaj8P7UC4hXp9NYHtWAiUklSefsv9kdaxxeLECXobDhQg1m5EpnrA2rxgaBrH69irsrl0yg78XziCGlDOA8RG676h4Gv70VM+9xj161FSu2lrOc5/z6hcPwxfpVw9ycoqBBBTmo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CY5PR12MB6203.namprd12.prod.outlook.com (2603:10b6:930:24::17)
- by LV2PR12MB5944.namprd12.prod.outlook.com (2603:10b6:408:14f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.46; Tue, 13 Jun
- 2023 22:35:14 +0000
-Received: from CY5PR12MB6203.namprd12.prod.outlook.com
- ([fe80::ddd3:9069:b6e9:ed8d]) by CY5PR12MB6203.namprd12.prod.outlook.com
- ([fe80::ddd3:9069:b6e9:ed8d%6]) with mapi id 15.20.6455.039; Tue, 13 Jun 2023
- 22:35:13 +0000
-Message-ID: <417346e2-09cc-3b33-e4cf-57d00a8edbbe@amd.com>
-Date:   Tue, 13 Jun 2023 17:35:11 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: [RFC PATCH v3 2/3] fs: debugfs: Add write functionality to debugfs
- blobs
-Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Alexey Kardashevskiy <aik@amd.com>
-Cc:     Avadhut Naik <Avadhut.Naik@amd.com>, rafael@kernel.org,
-        lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, yazen.ghannam@amd.com,
-        alexey.kardashevskiy@amd.com, linux-kernel@vger.kernel.org
-References: <20230612215139.5132-1-Avadhut.Naik@amd.com>
- <20230612215139.5132-3-Avadhut.Naik@amd.com>
- <2023061334-surplus-eclair-197a@gregkh>
- <1d55a83a-b36a-4319-16bc-c1aa72e361b5@amd.com>
- <2023061329-splinter-rundown-a61a@gregkh>
-From:   Avadhut Naik <avadnaik@amd.com>
-In-Reply-To: <2023061329-splinter-rundown-a61a@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN1PR12CA0058.namprd12.prod.outlook.com
- (2603:10b6:802:20::29) To CY5PR12MB6203.namprd12.prod.outlook.com
- (2603:10b6:930:24::17)
+        Tue, 13 Jun 2023 18:36:40 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 634E410F3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 15:36:37 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-513ea2990b8so4714a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 15:36:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1686695796; x=1689287796;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PvWX2bD0pqjf2LH9LS1XjF7500hItj0+6/IMn+0hUyQ=;
+        b=3Glh+mv9w/hlsr3HtW9bHUVgiWBnoxfzOAwjquvJ1AtpWmAxPHzA/8KB9rQGLI6bPW
+         f7qGlGThGtdA47ymx+HgiBOoyHoX8jWor32TAvaO+WmUaWX3Xn1BpcQf2f1XZitWH15J
+         MDv06bVTji5Ik3ErHeafLVYLUfoKp++ieuFYgvwKgCKflAvoHh5Ewq6xg9zaJ+jxAdsg
+         lyTmXYkYfQvktXvGcfRQcvhxjg6Ujut2b0YJFUIhzfQVJ5PzkiNsrvcO0ZYmSN5sFFLX
+         0WJW3uVykV1WNvlLlgmXEDrdroLofKmh8799uzbRJ6beNn6YsvBet8ulVt1JaK5KjEaQ
+         NW8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686695796; x=1689287796;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PvWX2bD0pqjf2LH9LS1XjF7500hItj0+6/IMn+0hUyQ=;
+        b=FEpVPWsceuuVz6Z/gE/VBa/4UMA0XZRBc+SIDDGrAoOGU40UTiKZNxmH0rvOdLns5e
+         FaWd5pZNKRSB/F0kef0xgUOsV3JMuDk/a7VxQ7yfBwm9ydxRIm9MT3PD9+oR0JNUO2+M
+         CuCpYFvy3O2AHEwTiCT33ctB/xdJSs2/RxXbunHDzUTRcflmSjmFMXvQzcqXmQLWRpfB
+         UDYl3HAe59zJHCC00r6cN0XZ1BS+Yb7qx9GhFJWanDdZKTqUDXCLMn/UD7xrUFm4PPuN
+         iOQTbvWU5XRpq07S2BeCLjL9ZoVhmXOSFKtTgDej1xY1WtbcP6QimGVsghwKehikZqDX
+         xbaw==
+X-Gm-Message-State: AC+VfDx/CylsD4ixdWPJpeVzgSoKeK9HjypXIGopB9kxSg8WTBFV/DOn
+        8DbNjqo60yARzGkncKNJZUSMSU1j/ArPeH08/xMGyw==
+X-Google-Smtp-Source: ACHHUZ4b9ZmvHIHuVqiKCGkay8zIJtZ17R+nhtVYSufNYgAsmJA4+02HPCuDfftyIn3PNzWLVqxf8ToCsmK0FXHe7fI=
+X-Received: by 2002:a50:cc9a:0:b0:506:90c4:b63b with SMTP id
+ q26-20020a50cc9a000000b0050690c4b63bmr36356edi.4.1686695795711; Tue, 13 Jun
+ 2023 15:36:35 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6203:EE_|LV2PR12MB5944:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72d26db0-6215-4e28-13a7-08db6c5e745c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8Y6XcmkdXr2PZe78j5hABBu3q0Q6mBUzsr61lxmAkusZh0gFPNQdnFYeD4yqhA+Hke+KwKIGpV04AfCF87OO4sYURvW+y3tXWVJnZWzD4/i26+UMGmDpt0VXFjk9wj/403jU/Cb5bOAp7f+mQbizQ7G38zg0TP5JGkP82LhvB4bEzvmqUh3Cq0CQN8MLr4ezHv3hw9UgMlB//v5WSXJr0dNlWe5MiEMTYoG7/8YSeHXoZyJR9cjiVXcgVm7fZT4MmuxWZKqWugbWI+0Jejx2vEKxhLrx0gvxdOVp5OvRZ7dY/QBwJRRj/8egEy8Qa+N8S9lkc7Q7NjYAkGOH4n4DTWETwyjq351HT8JhcIRoVpSbYtPlTGGyxSrCWvlRYA/tEIjUQcPCvR1qW+isdZE6nTCVI9GBn8GQ/a5Yc+chma9lkRExgx9KDNaVy7EifwMh7TRkUZ9S9cB+TdNgCzrsKDr8+xx8OJFidGt9g4iKalRIa4ktO2vDJgm4OQ+aFawgXpvxhTNv5Z3RsWPLciZGFLjHbo7kuCsJsWmOyzCeigVeKRzgvPDb42mk2Y4ae4agqxsCFApkVU23HOrcNa8HU5EZd0ZJY7Fwx+UJPQywyrn6aGGNpt+7LxmY00226aLONdu0EbnskqFfr8OQMzznAg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6203.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(136003)(376002)(366004)(346002)(451199021)(6486002)(36756003)(83380400001)(2616005)(38100700002)(31696002)(53546011)(6506007)(6512007)(26005)(186003)(2906002)(110136005)(4326008)(6636002)(316002)(66476007)(31686004)(41300700001)(66556008)(5660300002)(478600001)(66946007)(8936002)(8676002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UEhiWUlhVHY5L1gwQ2cvdmRMTWs1TGV4UU5xVWM1VjFOUnI5OC9xSUtGUXJj?=
- =?utf-8?B?NFpUNVRWQVpUSTFnWWoyaVFOL0VDdkZab2p2ZXYrVkx1bHF6MGFjOTFFUUZa?=
- =?utf-8?B?a0NaYVplZzQ5NHlBZjBGdEFZQ2FxUldBRzlwN3hoL1N0WXIvNjkrNU55SjBj?=
- =?utf-8?B?M05MVGlMck5CbXRUWCt5NWQzZDhNRGJlMFp4UkN2S016TURMUmhaTzZEUVNX?=
- =?utf-8?B?TlhrSEZjV2RvSmlMOW03MHNhYXRXVVpKd1VJSEhSTlJQQ2pMa2JvYnpzV0Zh?=
- =?utf-8?B?RC9lNXFDYTBlQ2d0WlVvaGdXVm9BSHRWYzBzRUxRU3BYcHpTenlvWE5mdnls?=
- =?utf-8?B?c2hadGhZWFZlOFdKb3BPVUxRNXBlZnY4NDFsbm1zOGNKNThTVnAvUVdNN0dM?=
- =?utf-8?B?S0NIYUhtWEhNZlE5aTU1b0lkTlZHOW1nbGdXRzh6QlpBMDEvYUkxU2RWdHRv?=
- =?utf-8?B?N0hNa1JLQXdQQXplSzkxak9mMUtvb1YxdTBGaDVQbW1DZ1VzU2NoeTUwQkpi?=
- =?utf-8?B?S3VLMzFVdWk2ajR3S1ZuSFVNc2xKdUp3RWJvQm9ESG1TdHBXSnZjTXRqcENU?=
- =?utf-8?B?SzZnU09JQWdqSVo1L0h3eUw0Tng1RGppTW9TeXZnTm5yWVdXbWZvS0NKd0RF?=
- =?utf-8?B?bmVTMy9aV0JpQjNBMjJCbEhiMlJTMFZscnFxRDZvUDhNOEdZWWxLYkFTMk1Q?=
- =?utf-8?B?UVROSFF3djYrbkhFaVhmc0ZONCtJTlNyVFhpVzVYMDJMMVZVanovSS9CSHM1?=
- =?utf-8?B?R0NsczNkR0tjY3RWS1k2REdubUp3NEUweU9TU3ZtMGVWbDZxU1ZSd3hBSEY0?=
- =?utf-8?B?Tlh3QTJYY281UURCYkhBVWZrZThzZGJoNWJDMEZxYm4wSGxSSXRuWVMycldS?=
- =?utf-8?B?OVRBRkZ4K21XNGhPcHZKN2l6YmNzV25JRWh3UDZmZlgxMjRIQ1F0MVpacHJm?=
- =?utf-8?B?dmtLd0F0SHhzazZzTnlKdHhjQis3UlcxMVRvYjN2cVVrSE1jYzI1YngvL1hP?=
- =?utf-8?B?TGNsMUVwNHRNcnI1TCtzMWZaZnozdlBBZlQyZjRiTEF6ZUhjVXl1ZSt0R0Vh?=
- =?utf-8?B?UWV0c3BETWNOdUhuRzBML1pJS2pWRlUxTVNsT0J5TjJ6ZS83SHVkeEJsM2gx?=
- =?utf-8?B?bWJ2VEEzZDNHUlM3UlBuaXhzTTZ3cnoxT3V3M29DVHg3a2VGV3JoeWpibVYz?=
- =?utf-8?B?U0pyeCtlTHVLelhtMGhMY2hqQnAybllqQ1UrQWIyTWU3L3BTdkJCVjBUcU1i?=
- =?utf-8?B?SytjY3VTUU1VdlBVdU9nNEpjd1cvQXhiQ1JTYStoc08wRGNrRWdDZlVqanla?=
- =?utf-8?B?cm5DdlNKcjU1eDd4eGdaWTZ3TkdPbUtvSWNrTk42Q3pRbzdpT3NrYlZtMTRn?=
- =?utf-8?B?K2VWcFpyWW1JWmVYRTNTWmhYcEFxWk9IQ2V0VkpKRlBIdzdRdmV4YmFJelU0?=
- =?utf-8?B?cnRIR0ZRaXNwd09XTUJuY1plY1VvdndPVXB5UWdWT0M3d0srajFaYkFUOHZ1?=
- =?utf-8?B?NzdzZVl0ZEI2Qm84UUJJd29nWitkOFpTczBwUThGMzRNZTJuUEwzQ3k3ZDl0?=
- =?utf-8?B?TjdGNXZjVTdMWktEQlZvTzkwc3BEWnJ1dkZTbzkvaHZPUGtBaFFRSktQb3ky?=
- =?utf-8?B?WUREVzNHNWI3eENVOXhSKzRYdzNpdmxBTElndFFJcTdSSzhxVElUdHllOTNC?=
- =?utf-8?B?TFptN05uaTVDYm1mM0FVMDkwNkV2OENqRUlnejNCUzlXOUF0eUFOdC9KZisv?=
- =?utf-8?B?Sk1jSWhnb3lPZ3dQUktEc2J0cHRQYm95RHdDeS9LUTVzaEpGZkZuN3J5aENS?=
- =?utf-8?B?VDg5TnJTaVZxNUFPa2ZLUWk5VHZKWEZMaE9wcmQxeXhyTi9JTTBpR2RSbUdu?=
- =?utf-8?B?bk1VSVY4NXFpOWpoaXVlNzhja0JERlRYbW5SbkNTT281czZCOGJLUVB3NFpn?=
- =?utf-8?B?WmdGNmhQa1NoR2lkeUxuQXhxbTJMckp2VGxMbmg5RGFvcVRKV0F2b2xXQVI1?=
- =?utf-8?B?ckQ1MldVSnVuVHZjUU8wcmJmQmVSeTVQcXNlRk04RWM2WklIOFVWdUFaRzVS?=
- =?utf-8?B?VXBzdlNEYVJxQjJGNkJERnJqSFpNUWRRVWhGbkF0eEFydURCeHhLS1pyM0FV?=
- =?utf-8?Q?0LEt3X/6JHX0ar605eDCCG2VQ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72d26db0-6215-4e28-13a7-08db6c5e745c
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6203.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2023 22:35:13.9354
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MrhaTe7LEB8WXArPlMArVPUxK08iL2D37VRAGpid74LpThPURrQ65EUzDQ7PrShp+ybQ0mVbaha5F0JU6ZwSIg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5944
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+References: <20230613102905.2808371-1-usama.anjum@collabora.com> <20230613102905.2808371-3-usama.anjum@collabora.com>
+In-Reply-To: <20230613102905.2808371-3-usama.anjum@collabora.com>
+From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Date:   Wed, 14 Jun 2023 00:36:24 +0200
+Message-ID: <CABb0KFHWnbrf2ythvO0OKsd1ZS9b4D9BNzwBCbn6g9OX4n6ZOg@mail.gmail.com>
+Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue, 13 Jun 2023 at 12:29, Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+>
+> This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
+> the info about page table entries. The following operations are supported
+> in this ioctl:
+> - Get the information if the pages have been written-to (PAGE_IS_WRITTEN)=
+,
+>   file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
+>   (PAGE_IS_SWAPPED).
+> - Find pages which have been written-to and/or write protect the pages
+>   (atomic PM_SCAN_OP_GET + PM_SCAN_OP_WP)
+>
+> This IOCTL can be extended to get information about more PTE bits.
+[...]
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+[...]
+> +static int pagemap_scan_output(bool wt, bool file, bool pres, bool swap,
+> +                              struct pagemap_scan_private *p,
+> +                              unsigned long addr, unsigned int n_pages)
+> +{
+> +       unsigned long bitmap =3D PM_SCAN_BITMAP(wt, file, pres, swap);
+> +       struct page_region *cur_buf =3D &p->cur_buf;
 
-	Thanks for reviewing!	
+Maybe we can go a step further and say here `cur_buf =3D
+&p->vec_buf[p->vec_buf_index];` and remove `p->cur_buf` entirely?
 
-On 6/13/2023 05:22, Greg KH wrote:
-> On Tue, Jun 13, 2023 at 08:05:41PM +1000, Alexey Kardashevskiy wrote:
->>
->>
->> On 13/6/23 17:59, Greg KH wrote:
->>> On Mon, Jun 12, 2023 at 09:51:38PM +0000, Avadhut Naik wrote:
->>>>   /**
->>>> - * debugfs_create_blob - create a debugfs file that is used to read a binary blob
->>>> + * debugfs_create_blob - create a debugfs file that is used to read and write
->>>> + * a binary blob
->>>>    * @name: a pointer to a string containing the name of the file to create.
->>>> - * @mode: the read permission that the file should have (other permissions are
->>>> - *	  masked out)
->>>> + * @mode: the permission that the file should have
->>>>    * @parent: a pointer to the parent dentry for this file.  This should be a
->>>>    *          directory dentry if set.  If this parameter is %NULL, then the
->>>>    *          file will be created in the root of the debugfs filesystem.
->>>> @@ -992,7 +1010,7 @@ static const struct file_operations fops_blob = {
->>>>    *
->>>>    * This function creates a file in debugfs with the given name that exports
->>>>    * @blob->data as a binary blob. If the @mode variable is so set it can be
->>>> - * read from. Writing is not supported.
->>>> + * read from and written to.
->>>>    *
->>>>    * This function will return a pointer to a dentry if it succeeds.  This
->>>>    * pointer must be passed to the debugfs_remove() function when the file is
->>>> @@ -1007,7 +1025,7 @@ struct dentry *debugfs_create_blob(const char *name, umode_t mode,
->>>>   				   struct dentry *parent,
->>>>   				   struct debugfs_blob_wrapper *blob)
->>>>   {
->>>> -	return debugfs_create_file_unsafe(name, mode & 0444, parent, blob, &fops_blob);
->>>> +	return debugfs_create_file_unsafe(name, mode, parent, blob, &fops_blob);
->>>
->>> Have you audited all calls to this function to verify that you haven't
->>> just turned on write access to some debugfs files?
->>
->> I just did, it is one of S_IRUGO/S_IRUSR/0444/0400/(S_IFREG | 0444). So we
->> are quite safe here. Except (S_IFREG | 0444) in
->> drivers/platform/chrome/cros_ec_debugfs.c which seems wrong as debugfs files
->> are not regular files.
->>
->>> Why not rename this to debugfs_create_blob_wo() and then make a new
->>> debugfs_create_blob_rw() call to ensure that it all is ok?
->>
->> It is already taking the mode for this purpose. imho just
->> cros_ec_create_panicinfo()'s debugfs_create_blob("panicinfo", S_IFREG |
->> 0444,...) needs fixing.
-> 
-> Yes, well it's taking the mode, but silently modifying it :)
-> 
-> Ok, thanks for the audit, respin this with that fix and then I don't
-> have a problem with it (other than binary debugfs files fill me with
-> dread, what could go wrong...)
-> 
-	Will add the fix for cros_ec_create_panicinfo()'s debugfs_create_blob()
-usage.
+> +
+> +       if (!n_pages)
+> +               return -EINVAL;
+> +
+> +       if ((p->required_mask & bitmap) !=3D p->required_mask)
+> +               return 0;
+> +       if (p->anyof_mask && !(p->anyof_mask & bitmap))
+> +               return 0;
+> +       if (p->excluded_mask & bitmap)
+> +               return 0;
+> +
+> +       bitmap &=3D p->return_mask;
+> +       if (!bitmap)
+> +               return 0;
+> +
+> +       if (cur_buf->bitmap =3D=3D bitmap &&
+> +           cur_buf->start + cur_buf->len * PAGE_SIZE =3D=3D addr) {
+> +               cur_buf->len +=3D n_pages;
+> +               p->found_pages +=3D n_pages;
+> +       } else {
+> +               if (cur_buf->len && p->vec_buf_index >=3D p->vec_buf_len)
+> +                       return -ENOMEM;
 
-Thanks,
-Avadhut Naik
+Shouldn't this be -ENOSPC? -ENOMEM usually signifies that the kernel
+ran out of memory when allocating, not that there is no space in a
+user-provided buffer.
 
-> thanks,
-> 
-> greg k-h
+BTW, the check could be inside the if() below for easier reading and
+less redundancy.
 
--- 
+> +               if (cur_buf->len) {
+> +                       memcpy(&p->vec_buf[p->vec_buf_index], cur_buf,
+> +                              sizeof(*p->vec_buf));
+> +                       p->vec_buf_index++;
+> +               }
+> +
+> +               cur_buf->start =3D addr;
+> +               cur_buf->len =3D n_pages;
+> +               cur_buf->bitmap =3D bitmap;
+> +               p->found_pages +=3D n_pages;
+> +       }
+> +
+> +       if (p->max_pages && (p->found_pages =3D=3D p->max_pages))
+
+Since `p->found_pages > 0` holds here, the first check is redundant.
+Nit: the parentheses around =3D=3D are not needed.
+
+> +               return PM_SCAN_FOUND_MAX_PAGES;
+> +
+> +       return 0;
+> +}
+[...]
+> +static inline unsigned long pagemap_scan_check_page_written(struct pagem=
+ap_scan_private *p)
+> +{
+> +       return ((p->required_mask | p->anyof_mask | p->excluded_mask) &
+> +               PAGE_IS_WRITTEN) ? PM_SCAN_OP_WRITE : 0;
+> +}
+
+Please inline at the single callsite.
+
+For flags name: PM_REQUIRE_WRITE_ACCESS?
+Or Is it intended to be checked only if doing WP (as the current name
+suggests) and so it would be redundant as WP currently requires
+`p->required_mask =3D PAGE_IS_WRITTEN`?
+
+> +static int pagemap_scan_args_valid(struct pm_scan_arg *arg, unsigned lon=
+g start,
+> +                                  struct page_region __user *vec)
+> +{
+> +       /* Detect illegal size, flags, len and masks */
+> +       if (arg->size !=3D sizeof(struct pm_scan_arg))
+> +               return -EINVAL;
+> +       if (arg->flags & ~PM_SCAN_OPS)
+> +               return -EINVAL;
+> +       if (!arg->len)
+> +               return -EINVAL;
+> +       if ((arg->required_mask | arg->anyof_mask | arg->excluded_mask |
+> +            arg->return_mask) & ~PM_SCAN_BITS_ALL)
+> +               return -EINVAL;
+> +       if (!arg->required_mask && !arg->anyof_mask &&
+> +           !arg->excluded_mask)
+> +               return -EINVAL;
+> +       if (!arg->return_mask)
+> +               return -EINVAL;
+
+I just noticed that `!arg->return_mask =3D=3D !IS_PM_SCAN_GET()`. So the
+OP_GET is redundant and can be removed from the `flags` if checking
+`return_mask` instead. That way there won't be a "flags-encoded ops"
+thing as it would be a 'scan' with optional 'write-protect'.
+
+> +
+> +       /* Validate memory range */
+> +       if (!IS_ALIGNED(start, PAGE_SIZE))
+> +               return -EINVAL;
+> +       if (!access_ok((void __user *)start, arg->len))
+> +               return -EFAULT;
+> +
+> +       if (IS_PM_SCAN_GET(arg->flags)) {
+> +               if (!arg->vec)
+> +                       return -EINVAL;
+
+access_ok() -> -EFAULT (an early fail-check) (the vec_len should be
+checked first then, failing with -EINVAL if 0)
+
+> +               if (arg->vec_len =3D=3D 0)
+> +                       return -EINVAL;
+> +       }
+> +
+> +       if (IS_PM_SCAN_WP(arg->flags)) {
+> +               if (!IS_PM_SCAN_GET(arg->flags) && arg->max_pages)
+> +                       return -EINVAL;
+> +
+> +               if ((arg->required_mask | arg->anyof_mask | arg->excluded=
+_mask) &
+> +                   ~PAGE_IS_WRITTEN)
+
+Is `excluded_mask =3D PAGE_IS_WRITTEN` intended to be allowed? It would
+make WP do nothing, unless the required/anyof/excluded masks are not
+supposed to limit WP?
+
+
+> +                       return -EINVAL;
+> +       }
+
+If `flags =3D=3D 0` (and `return_mask =3D=3D 0` in case my earlier comment =
+is
+applied) it should fail with -EINVAL.
+
+[...]
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> +/*
+> + * struct page_region - Page region with bitmap flags
+> + * @start:     Start of the region
+> + * @len:       Length of the region in pages
+> + * bitmap:     Bits sets for the region
+
+'@' is missing for the third field. BTW, maybe we can call it
+something like `flags` or `category` (something that hints at the
+meaning of the value instead of its data representation).
+
+> +/*
+> + * struct pm_scan_arg - Pagemap ioctl argument
+> + * @size:              Size of the structure
+> + * @flags:             Flags for the IOCTL
+> + * @start:             Starting address of the region
+> + * @len:               Length of the region (All the pages in this lengt=
+h are included)
+
+Maybe `scan_start`, `scan_len` - so that there is a better distinction
+from the structure's `size` field?
+
+> + * @vec:               Address of page_region struct array for output
+> + * @vec_len:           Length of the page_region struct array
+> + * @max_pages:         Optional max return pages
+> + * @required_mask:     Required mask - All of these bits have to be set =
+in the PTE
+> + * @anyof_mask:                Any mask - Any of these bits are set in t=
+he PTE
+> + * @excluded_mask:     Exclude mask - None of these bits are set in the =
+PTE
+> + * @return_mask:       Bits that are to be reported in page_region
+> + */
+
+I skipped most of the page walk implementation as maybe the comments
+above could make it simpler. Reading this patch and the documentation
+I still feel confused about how the filtering/limiting parameters
+should affect GET, WP and WP+GET. Should they limit the pages walked
+(and WP-ed)? Or only the GET's output? How about GET+WP case?
+
+Best Regards
+
+Micha=C5=82 Miros=C5=82aw
