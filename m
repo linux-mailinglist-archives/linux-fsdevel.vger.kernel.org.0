@@ -2,84 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A9572EF8B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 00:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4BB972F073
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 01:45:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240895AbjFMWgm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 18:36:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40708 "EHLO
+        id S241556AbjFMXpl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 19:45:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240786AbjFMWgk (ORCPT
+        with ESMTP id S233366AbjFMXp0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 18:36:40 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 634E410F3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 15:36:37 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-513ea2990b8so4714a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 15:36:37 -0700 (PDT)
+        Tue, 13 Jun 2023 19:45:26 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1734A2946
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 16:43:59 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-bcd0226607bso114645276.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 16:43:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686695796; x=1689287796;
+        d=google.com; s=20221208; t=1686699757; x=1689291757;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PvWX2bD0pqjf2LH9LS1XjF7500hItj0+6/IMn+0hUyQ=;
-        b=3Glh+mv9w/hlsr3HtW9bHUVgiWBnoxfzOAwjquvJ1AtpWmAxPHzA/8KB9rQGLI6bPW
-         f7qGlGThGtdA47ymx+HgiBOoyHoX8jWor32TAvaO+WmUaWX3Xn1BpcQf2f1XZitWH15J
-         MDv06bVTji5Ik3ErHeafLVYLUfoKp++ieuFYgvwKgCKflAvoHh5Ewq6xg9zaJ+jxAdsg
-         lyTmXYkYfQvktXvGcfRQcvhxjg6Ujut2b0YJFUIhzfQVJ5PzkiNsrvcO0ZYmSN5sFFLX
-         0WJW3uVykV1WNvlLlgmXEDrdroLofKmh8799uzbRJ6beNn6YsvBet8ulVt1JaK5KjEaQ
-         NW8Q==
+        bh=3VaAO0tfFvzWECevTV3w+N670MZ+O46zjrgS35Q87ds=;
+        b=m1eYm1nSDdKQVskgyx1/JAd0lLoVYEEiwZj4xYDgPtd7Ow+0uXpgCaRDjD56380VA8
+         Up4mHtBz6znxXqzkpeI5vuaVxKY5GkMVvBJ3EHsRI+lGtIPi0NXUSlzO0DwvMqsIqGbx
+         x2ercTMVfrb/vX30OuEIFlNJUYLJPJlhW/pwzx/zqa0Z1FUTF3X3dQOkGPBN2dWykVEf
+         MZmZPSeSjma6vv/cMIyRepqjFMqL8V0QFiRlAN/U0Wf6vmr9kZyqQAaIDKsliExT+kLc
+         k21oKhyrJysWQpGMdkoJICUCcZbTqnWE7wSBZzouIl3QY1KM6hjxkou3CiWDZTOtt3rM
+         2SLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686695796; x=1689287796;
+        d=1e100.net; s=20221208; t=1686699757; x=1689291757;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PvWX2bD0pqjf2LH9LS1XjF7500hItj0+6/IMn+0hUyQ=;
-        b=FEpVPWsceuuVz6Z/gE/VBa/4UMA0XZRBc+SIDDGrAoOGU40UTiKZNxmH0rvOdLns5e
-         FaWd5pZNKRSB/F0kef0xgUOsV3JMuDk/a7VxQ7yfBwm9ydxRIm9MT3PD9+oR0JNUO2+M
-         CuCpYFvy3O2AHEwTiCT33ctB/xdJSs2/RxXbunHDzUTRcflmSjmFMXvQzcqXmQLWRpfB
-         UDYl3HAe59zJHCC00r6cN0XZ1BS+Yb7qx9GhFJWanDdZKTqUDXCLMn/UD7xrUFm4PPuN
-         iOQTbvWU5XRpq07S2BeCLjL9ZoVhmXOSFKtTgDej1xY1WtbcP6QimGVsghwKehikZqDX
-         xbaw==
-X-Gm-Message-State: AC+VfDx/CylsD4ixdWPJpeVzgSoKeK9HjypXIGopB9kxSg8WTBFV/DOn
-        8DbNjqo60yARzGkncKNJZUSMSU1j/ArPeH08/xMGyw==
-X-Google-Smtp-Source: ACHHUZ4b9ZmvHIHuVqiKCGkay8zIJtZ17R+nhtVYSufNYgAsmJA4+02HPCuDfftyIn3PNzWLVqxf8ToCsmK0FXHe7fI=
-X-Received: by 2002:a50:cc9a:0:b0:506:90c4:b63b with SMTP id
- q26-20020a50cc9a000000b0050690c4b63bmr36356edi.4.1686695795711; Tue, 13 Jun
- 2023 15:36:35 -0700 (PDT)
+        bh=3VaAO0tfFvzWECevTV3w+N670MZ+O46zjrgS35Q87ds=;
+        b=EMiSRU2rNbDVabW6qGxG/7l20kcXLbtOVuI/E+SbhYwjTt7rYdIB+z2v6/aEyY5//z
+         E1f3rs2MmpquJkyCUpkPFSqXznCjiFwtnXnNsnhfNFeBqNpZy1AHGUlIb0JjuhevaEAK
+         yOn35oTT9xFVOXylrfuNwqiXr9RhB6Lo+ubmqK5bprL9LoaQbZlFiEDM6f+8SFc33jMm
+         wIs8QBwW/JGmE0jr3ExYdQajRh8cSAxPgX7tZWJnE7hVTypFWnKrQzJenL4anGL5b0AR
+         KoQnZ9mUp2GUMqM/4QOs+XQlaFVdKEP14T0OgXIUefF4gt9ju4nsiZ2t2fMB4VnXMkWp
+         EXeA==
+X-Gm-Message-State: AC+VfDy2GMU3SbqgPCdTd6+NgDXGfFl9lFz709oE/JtHWl368Ba4Y89W
+        Lf5zwP7eTi0ciukk54TMau8YOOTrwFTljCGGxj8Yy3vxCUZgv4pgKXpl9A==
+X-Google-Smtp-Source: ACHHUZ6Ke53cunBAFx85AzEm4j/NYN4QtRSQFfVHkiMTeqJ8GL+9bIUepay56jTwKVCaOb6L1uzSM1kxirw+Z1pRHjA=
+X-Received: by 2002:a25:ce0f:0:b0:ba8:4406:dd0b with SMTP id
+ x15-20020a25ce0f000000b00ba84406dd0bmr704419ybe.30.1686699756868; Tue, 13 Jun
+ 2023 16:42:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230613102905.2808371-1-usama.anjum@collabora.com> <20230613102905.2808371-3-usama.anjum@collabora.com>
-In-Reply-To: <20230613102905.2808371-3-usama.anjum@collabora.com>
-From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-Date:   Wed, 14 Jun 2023 00:36:24 +0200
-Message-ID: <CABb0KFHWnbrf2ythvO0OKsd1ZS9b4D9BNzwBCbn6g9OX4n6ZOg@mail.gmail.com>
-Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+References: <20230613062306.101831-1-lujialin4@huawei.com>
+In-Reply-To: <20230613062306.101831-1-lujialin4@huawei.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 13 Jun 2023 16:42:25 -0700
+Message-ID: <CAJuCfpEoCRHkJF-=1Go9E94wchB4BzwQ1E3vHGWxNe+tEmSJoA@mail.gmail.com>
+Subject: Re: [PATCH] sched/psi: Fix use-after-free in poll_freewait()
+To:     Lu Jialin <lujialin4@huawei.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+        Eric Biggers <ebiggers@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
@@ -93,205 +75,173 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 13 Jun 2023 at 12:29, Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
+On Mon, Jun 12, 2023 at 11:24=E2=80=AFPM Lu Jialin <lujialin4@huawei.com> w=
+rote:
 >
-> This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
-> the info about page table entries. The following operations are supported
-> in this ioctl:
-> - Get the information if the pages have been written-to (PAGE_IS_WRITTEN)=
-,
->   file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
->   (PAGE_IS_SWAPPED).
-> - Find pages which have been written-to and/or write protect the pages
->   (atomic PM_SCAN_OP_GET + PM_SCAN_OP_WP)
+> We found a UAF bug in remove_wait_queue as follows:
 >
-> This IOCTL can be extended to get information about more PTE bits.
-[...]
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-[...]
-> +static int pagemap_scan_output(bool wt, bool file, bool pres, bool swap,
-> +                              struct pagemap_scan_private *p,
-> +                              unsigned long addr, unsigned int n_pages)
-> +{
-> +       unsigned long bitmap =3D PM_SCAN_BITMAP(wt, file, pres, swap);
-> +       struct page_region *cur_buf =3D &p->cur_buf;
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: use-after-free in _raw_spin_lock_irqsave+0x71/0xe0
+> Write of size 4 at addr ffff8881150d7b28 by task psi_trigger/15306
+> Call Trace:
+>  dump_stack+0x9c/0xd3
+>  print_address_description.constprop.0+0x19/0x170
+>  __kasan_report.cold+0x6c/0x84
+>  kasan_report+0x3a/0x50
+>  check_memory_region+0xfd/0x1f0
+>  _raw_spin_lock_irqsave+0x71/0xe0
+>  remove_wait_queue+0x26/0xc0
+>  poll_freewait+0x6b/0x120
+>  do_sys_poll+0x305/0x400
+>  do_syscall_64+0x33/0x40
+>  entry_SYSCALL_64_after_hwframe+0x61/0xc6
+>
+> Allocated by task 15306:
+>  kasan_save_stack+0x1b/0x40
+>  __kasan_kmalloc.constprop.0+0xb5/0xe0
+>  psi_trigger_create.part.0+0xfc/0x450
+>  cgroup_pressure_write+0xfc/0x3b0
+>  cgroup_file_write+0x1b3/0x390
+>  kernfs_fop_write_iter+0x224/0x2e0
+>  new_sync_write+0x2ac/0x3a0
+>  vfs_write+0x365/0x430
+>  ksys_write+0xd5/0x1b0
+>  do_syscall_64+0x33/0x40
+>  entry_SYSCALL_64_after_hwframe+0x61/0xc6
+>
+> Freed by task 15850:
+>  kasan_save_stack+0x1b/0x40
+>  kasan_set_track+0x1c/0x30
+>  kasan_set_free_info+0x20/0x40
+>  __kasan_slab_free+0x151/0x180
+>  kfree+0xba/0x680
+>  cgroup_file_release+0x5c/0xe0
+>  kernfs_drain_open_files+0x122/0x1e0
+>  kernfs_drain+0xff/0x1e0
+>  __kernfs_remove.part.0+0x1d1/0x3b0
+>  kernfs_remove_by_name_ns+0x89/0xf0
+>  cgroup_addrm_files+0x393/0x3d0
+>  css_clear_dir+0x8f/0x120
+>  kill_css+0x41/0xd0
+>  cgroup_destroy_locked+0x166/0x300
+>  cgroup_rmdir+0x37/0x140
+>  kernfs_iop_rmdir+0xbb/0xf0
+>  vfs_rmdir.part.0+0xa5/0x230
+>  do_rmdir+0x2e0/0x320
+>  __x64_sys_unlinkat+0x99/0xc0
+>  do_syscall_64+0x33/0x40
+>  entry_SYSCALL_64_after_hwframe+0x61/0xc6
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> If using epoll(), wake_up_pollfree will empty waitqueue and set
+> wait_queue_head is NULL before free waitqueue of psi trigger. But is
+> doesn't work when using poll(), which will lead a UAF problem in
+> poll_freewait coms as following:
+>
+> (cgroup_rmdir)                      |
+> psi_trigger_destroy                 |
+>   wake_up_pollfree(&t->event_wait)  |
 
-Maybe we can go a step further and say here `cur_buf =3D
-&p->vec_buf[p->vec_buf_index];` and remove `p->cur_buf` entirely?
+It's important to note that psi_trigger_destroy() calls
+synchronize_rcu() before doing kfree(t), therefore the usage I think
+is valid.
 
+
+>     kfree(t)                        |
+>                                     |   (poll_freewait)
+>                                     |     free_poll_entry(pwq->inline_ent=
+ries + i)
+>                                     |       remove_wait_queue(entry->wait=
+_address)
+>                                     |         spin_lock_irqsave(&wq_head-=
+>lock)
+>
+> entry->wait_address in poll_freewait() is t->event_wait in cgroup_rmdir()=
+.
+> t->event_wait is free in psi_trigger_destroy before call poll_freewait(),
+> therefore wq_head in poll_freewait() has been already freed, which would
+> lead to a UAF.
+>
+> similar problem for epoll() has been fixed commit c2dbe32d5db5
+> ("sched/psi: Fix use-after-free in ep_remove_wait_queue()").
+> epoll wakeup function ep_poll_callback() will empty waitqueue and set
+> wait_queue_head is NULL when pollflags is POLLFREE and judge pwq->whead
+> is NULL or not before remove_wait_queue in ep_remove_wait_queue(),
+> which will fix the UAF bug in ep_remove_wait_queue.
+>
+> But poll wakeup function pollwake() doesn't do that. To fix the
+> problem, we empty waitqueue and set wait_address is NULL in pollwake() wh=
+en
+> key is POLLFREE. otherwise in remove_wait_queue, which is similar to
+> epoll().
+
+Thanks for the patch!
+This seems similar to what ep_poll_callback/ep_remove_wait_queue do,
+which I think makes sense. CC'ing Oleg Nesterov who implemented
+ep_poll_callback/ep_remove_wait_queue logic and Eric Biggers who
+worked on wake_up_pollfree() - both much more knowledgeable in this
+area than me.
+
+One issue I see with this patch is that the title says "sched/psi:
+..." while it's fixing polling functionality. The patch is fixing the
+mechanism used by psi triggers, not psi triggers themselves (well it
+does but indirectly). Therefore I suggest changing that prefix to
+something like "select: Fix use-after-free in poll_freewait()"
+
+Thanks,
+Suren.
+
+>
+> Fixes: 0e94682b73bf ("psi: introduce psi monitor")
+> Signed-off-by: Lu Jialin <lujialin4@huawei.com>
+> ---
+>  fs/select.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/select.c b/fs/select.c
+> index 0ee55af1a55c..e64c7b4e9959 100644
+> --- a/fs/select.c
+> +++ b/fs/select.c
+> @@ -132,7 +132,17 @@ EXPORT_SYMBOL(poll_initwait);
+>
+>  static void free_poll_entry(struct poll_table_entry *entry)
+>  {
+> -       remove_wait_queue(entry->wait_address, &entry->wait);
+> +       wait_queue_head_t *whead;
 > +
-> +       if (!n_pages)
-> +               return -EINVAL;
-> +
-> +       if ((p->required_mask & bitmap) !=3D p->required_mask)
+> +       rcu_read_lock();
+> +       /* If it is cleared by POLLFREE, it should be rcu-safe.
+> +        * If we read NULL we need a barrier paired with smp_store_releas=
+e()
+> +        * in pollwake().
+> +        */
+> +       whead =3D smp_load_acquire(&entry->wait_address);
+> +       if (whead)
+> +               remove_wait_queue(whead, &entry->wait);
+> +       rcu_read_unlock();
+>         fput(entry->filp);
+>  }
+>
+> @@ -215,6 +225,14 @@ static int pollwake(wait_queue_entry_t *wait, unsign=
+ed mode, int sync, void *key
+>         entry =3D container_of(wait, struct poll_table_entry, wait);
+>         if (key && !(key_to_poll(key) & entry->key))
+>                 return 0;
+> +       if (key_to_poll(key) & POLLFREE) {
+> +               list_del_init(&wait->entry);
+> +               /* wait_address !=3DNULL protects us from the race with
+> +                * poll_freewait().
+> +                */
+> +               smp_store_release(&entry->wait_address, NULL);
 > +               return 0;
-> +       if (p->anyof_mask && !(p->anyof_mask & bitmap))
-> +               return 0;
-> +       if (p->excluded_mask & bitmap)
-> +               return 0;
-> +
-> +       bitmap &=3D p->return_mask;
-> +       if (!bitmap)
-> +               return 0;
-> +
-> +       if (cur_buf->bitmap =3D=3D bitmap &&
-> +           cur_buf->start + cur_buf->len * PAGE_SIZE =3D=3D addr) {
-> +               cur_buf->len +=3D n_pages;
-> +               p->found_pages +=3D n_pages;
-> +       } else {
-> +               if (cur_buf->len && p->vec_buf_index >=3D p->vec_buf_len)
-> +                       return -ENOMEM;
-
-Shouldn't this be -ENOSPC? -ENOMEM usually signifies that the kernel
-ran out of memory when allocating, not that there is no space in a
-user-provided buffer.
-
-BTW, the check could be inside the if() below for easier reading and
-less redundancy.
-
-> +               if (cur_buf->len) {
-> +                       memcpy(&p->vec_buf[p->vec_buf_index], cur_buf,
-> +                              sizeof(*p->vec_buf));
-> +                       p->vec_buf_index++;
-> +               }
-> +
-> +               cur_buf->start =3D addr;
-> +               cur_buf->len =3D n_pages;
-> +               cur_buf->bitmap =3D bitmap;
-> +               p->found_pages +=3D n_pages;
 > +       }
-> +
-> +       if (p->max_pages && (p->found_pages =3D=3D p->max_pages))
-
-Since `p->found_pages > 0` holds here, the first check is redundant.
-Nit: the parentheses around =3D=3D are not needed.
-
-> +               return PM_SCAN_FOUND_MAX_PAGES;
-> +
-> +       return 0;
-> +}
-[...]
-> +static inline unsigned long pagemap_scan_check_page_written(struct pagem=
-ap_scan_private *p)
-> +{
-> +       return ((p->required_mask | p->anyof_mask | p->excluded_mask) &
-> +               PAGE_IS_WRITTEN) ? PM_SCAN_OP_WRITE : 0;
-> +}
-
-Please inline at the single callsite.
-
-For flags name: PM_REQUIRE_WRITE_ACCESS?
-Or Is it intended to be checked only if doing WP (as the current name
-suggests) and so it would be redundant as WP currently requires
-`p->required_mask =3D PAGE_IS_WRITTEN`?
-
-> +static int pagemap_scan_args_valid(struct pm_scan_arg *arg, unsigned lon=
-g start,
-> +                                  struct page_region __user *vec)
-> +{
-> +       /* Detect illegal size, flags, len and masks */
-> +       if (arg->size !=3D sizeof(struct pm_scan_arg))
-> +               return -EINVAL;
-> +       if (arg->flags & ~PM_SCAN_OPS)
-> +               return -EINVAL;
-> +       if (!arg->len)
-> +               return -EINVAL;
-> +       if ((arg->required_mask | arg->anyof_mask | arg->excluded_mask |
-> +            arg->return_mask) & ~PM_SCAN_BITS_ALL)
-> +               return -EINVAL;
-> +       if (!arg->required_mask && !arg->anyof_mask &&
-> +           !arg->excluded_mask)
-> +               return -EINVAL;
-> +       if (!arg->return_mask)
-> +               return -EINVAL;
-
-I just noticed that `!arg->return_mask =3D=3D !IS_PM_SCAN_GET()`. So the
-OP_GET is redundant and can be removed from the `flags` if checking
-`return_mask` instead. That way there won't be a "flags-encoded ops"
-thing as it would be a 'scan' with optional 'write-protect'.
-
-> +
-> +       /* Validate memory range */
-> +       if (!IS_ALIGNED(start, PAGE_SIZE))
-> +               return -EINVAL;
-> +       if (!access_ok((void __user *)start, arg->len))
-> +               return -EFAULT;
-> +
-> +       if (IS_PM_SCAN_GET(arg->flags)) {
-> +               if (!arg->vec)
-> +                       return -EINVAL;
-
-access_ok() -> -EFAULT (an early fail-check) (the vec_len should be
-checked first then, failing with -EINVAL if 0)
-
-> +               if (arg->vec_len =3D=3D 0)
-> +                       return -EINVAL;
-> +       }
-> +
-> +       if (IS_PM_SCAN_WP(arg->flags)) {
-> +               if (!IS_PM_SCAN_GET(arg->flags) && arg->max_pages)
-> +                       return -EINVAL;
-> +
-> +               if ((arg->required_mask | arg->anyof_mask | arg->excluded=
-_mask) &
-> +                   ~PAGE_IS_WRITTEN)
-
-Is `excluded_mask =3D PAGE_IS_WRITTEN` intended to be allowed? It would
-make WP do nothing, unless the required/anyof/excluded masks are not
-supposed to limit WP?
-
-
-> +                       return -EINVAL;
-> +       }
-
-If `flags =3D=3D 0` (and `return_mask =3D=3D 0` in case my earlier comment =
-is
-applied) it should fail with -EINVAL.
-
-[...]
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> +/*
-> + * struct page_region - Page region with bitmap flags
-> + * @start:     Start of the region
-> + * @len:       Length of the region in pages
-> + * bitmap:     Bits sets for the region
-
-'@' is missing for the third field. BTW, maybe we can call it
-something like `flags` or `category` (something that hints at the
-meaning of the value instead of its data representation).
-
-> +/*
-> + * struct pm_scan_arg - Pagemap ioctl argument
-> + * @size:              Size of the structure
-> + * @flags:             Flags for the IOCTL
-> + * @start:             Starting address of the region
-> + * @len:               Length of the region (All the pages in this lengt=
-h are included)
-
-Maybe `scan_start`, `scan_len` - so that there is a better distinction
-from the structure's `size` field?
-
-> + * @vec:               Address of page_region struct array for output
-> + * @vec_len:           Length of the page_region struct array
-> + * @max_pages:         Optional max return pages
-> + * @required_mask:     Required mask - All of these bits have to be set =
-in the PTE
-> + * @anyof_mask:                Any mask - Any of these bits are set in t=
-he PTE
-> + * @excluded_mask:     Exclude mask - None of these bits are set in the =
-PTE
-> + * @return_mask:       Bits that are to be reported in page_region
-> + */
-
-I skipped most of the page walk implementation as maybe the comments
-above could make it simpler. Reading this patch and the documentation
-I still feel confused about how the filtering/limiting parameters
-should affect GET, WP and WP+GET. Should they limit the pages walked
-(and WP-ed)? Or only the GET's output? How about GET+WP case?
-
-Best Regards
-
-Micha=C5=82 Miros=C5=82aw
+>         return __pollwake(wait, mode, sync, key);
+>  }
+>
+> --
+> 2.17.1
+>
