@@ -2,143 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF6372D738
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 04:00:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4848972D789
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 04:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233309AbjFMCAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 22:00:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35882 "EHLO
+        id S238750AbjFMC5G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 22:57:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjFMCAU (ORCPT
+        with ESMTP id S236202AbjFMC5E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 22:00:20 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FB1122;
-        Mon, 12 Jun 2023 19:00:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=AdecLkDwTkadE0WTYpmaGKhXM3Tc09lhCE3OQBP/JvM=; b=grut5WIsGlgQniDfjkfiGayTD1
-        bw18JRGa6k9IPG7bgwlLBrF8vBaBvEdwN92DWn+SdKgDVNDPvBHhr5Y5CBZWgu9kQ9GA9Cl9HfR7s
-        0KhGo0Eb/YxJZF0QgqXfAoxrxQRINaZ8UZkFIL2AilBixO20hCVL/jKHfVMNIqsI7p3iHTMJdlQ7t
-        r5M9oDbtFmPymOv53nMgjSWCj88CwxA7T4fSYIyY0W2ALi9DrmhsKMm1SsVp+G42Gs5RMQQX9IMcT
-        6hYpHY7x/OTV/KtpgYw2EhOar+dwpdhRa7ogRxxmRY/csP/0vPTseCEusmbOlCYhL9PEbAR2SxzJU
-        Gl+8mEWg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q8tKQ-003PiX-A8; Tue, 13 Jun 2023 02:00:14 +0000
-Date:   Tue, 13 Jun 2023 03:00:14 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Wang Yugui <wangyugui@e16-tech.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH v3 6/8] filemap: Allow __filemap_get_folio to allocate
- large folios
-Message-ID: <ZIfNrnUsJbcWGSD8@casper.infradead.org>
-References: <20230612203910.724378-1-willy@infradead.org>
- <20230612203910.724378-7-willy@infradead.org>
- <ZIeg4Uak9meY1tZ7@dread.disaster.area>
- <ZIe7i4kklXphsfu0@casper.infradead.org>
- <ZIfGpWYNA1yd5K/l@dread.disaster.area>
+        Mon, 12 Jun 2023 22:57:04 -0400
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854ED172A
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 19:57:02 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R251e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Vl0D7Sf_1686625017;
+Received: from 30.221.148.254(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Vl0D7Sf_1686625017)
+          by smtp.aliyun-inc.com;
+          Tue, 13 Jun 2023 10:56:58 +0800
+Message-ID: <cdb8f5d4-5a47-4c17-9f9c-8de24aede4c5@linux.alibaba.com>
+Date:   Tue, 13 Jun 2023 10:56:56 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZIfGpWYNA1yd5K/l@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.11.0
+Subject: Re: [PATCH] fuse: add a new flag to allow shared mmap in
+ FOPEN_DIRECT_IO mode
+Content-Language: en-US
+To:     Hao Xu <hao.xu@linux.dev>, Vivek Goyal <vgoyal@redhat.com>
+Cc:     fuse-devel@lists.sourceforge.net, miklos@szeredi.hu,
+        bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org
+References: <20230505081652.43008-1-hao.xu@linux.dev>
+ <ZFVpH1n0VzNe7iVE@redhat.com>
+ <ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev>
+From:   Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 13, 2023 at 11:30:13AM +1000, Dave Chinner wrote:
-> On Tue, Jun 13, 2023 at 01:42:51AM +0100, Matthew Wilcox wrote:
-> > On Tue, Jun 13, 2023 at 08:49:05AM +1000, Dave Chinner wrote:
-> > > On Mon, Jun 12, 2023 at 09:39:08PM +0100, Matthew Wilcox (Oracle) wrote:
-> > > > Allow callers of __filemap_get_folio() to specify a preferred folio
-> > > > order in the FGP flags.  This is only honoured in the FGP_CREATE path;
-> > > > if there is already a folio in the page cache that covers the index,
-> > > > we will return it, no matter what its order is.  No create-around is
-> > > > attempted; we will only create folios which start at the specified index.
-> > > > Unmodified callers will continue to allocate order 0 folios.
-> > > .....
-> > > > -		/* Init accessed so avoid atomic mark_page_accessed later */
-> > > > -		if (fgp_flags & FGP_ACCESSED)
-> > > > -			__folio_set_referenced(folio);
-> > > > +		if (!mapping_large_folio_support(mapping))
-> > > > +			order = 0;
-> > > > +		if (order > MAX_PAGECACHE_ORDER)
-> > > > +			order = MAX_PAGECACHE_ORDER;
-> > > > +		/* If we're not aligned, allocate a smaller folio */
-> > > > +		if (index & ((1UL << order) - 1))
-> > > > +			order = __ffs(index);
-> > > 
-> > > If I read this right, if we pass in an unaligned index, we won't get
-> > > the size of the folio we ask for?
-> > 
-> > Right.  That's implied by (but perhaps not obvious from) the changelog.
-> > Folios are always naturally aligned in the file, so an order-4 folio
-> > has to start at a multiple of 16.  If the index you pass in is not
-> > a multiple of 16, we can't create an order-4 folio without starting
-> > at an earlier index.
-> > 
-> > For a 4kB block size filesystem, that's what we want.  Applications
-> > _generally_ don't write backwards, so creating an order-4 folio is just
-> > wasting memory.
-> > 
-> > > e.g. if we want an order-4 folio (64kB) because we have a 64kB block
-> > > size in the filesystem, then we have to pass in an index that
-> > > order-4 aligned, yes?
-> > > 
-> > > I ask this, because the later iomap code that asks for large folios
-> > > only passes in "pos >> PAGE_SHIFT" so it looks to me like it won't
-> > > allocate large folios for anything other than large folio aligned
-> > > writes, even if we need them.
-> > > 
-> > > What am I missing?
-> > 
-> > Perhaps what you're missing is that this isn't trying to solve the
-> > problem of supporting a bs > ps filesystem?
+
+
+On 5/6/23 1:01 PM, Hao Xu wrote:
+> Hi Vivek,
 > 
-> No, that's not what I'm asking about. I know there's other changes
-> needed to enforce minimum folio size/alignment for bs > ps.
+> On 5/6/23 04:37, Vivek Goyal wrote:
+>> On Fri, May 05, 2023 at 04:16:52PM +0800, Hao Xu wrote:
+>>> From: Hao Xu <howeyxu@tencent.com>
+>>>
+>>> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
+>>> coherency, e.g. network filesystems. Thus shared mmap is disabled since
+>>> it leverages page cache and may write to it, which may cause
+>>> inconsistence. But FOPEN_DIRECT_IO can be used not for coherency but to
+>>> reduce memory footprint as well, e.g. reduce guest memory usage with
+>>> virtiofs. Therefore, add a new flag FOPEN_DIRECT_IO_SHARED_MMAP to allow
+>>> shared mmap for these cases.
+>>>
+>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>>> ---
+>>>   fs/fuse/file.c            | 11 ++++++++---
+>>>   include/uapi/linux/fuse.h |  2 ++
+>>>   2 files changed, 10 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>> index 89d97f6188e0..655896bdb0d5 100644
+>>> --- a/fs/fuse/file.c
+>>> +++ b/fs/fuse/file.c
+>>> @@ -161,7 +161,8 @@ struct fuse_file *fuse_file_open(struct
+>>> fuse_mount *fm, u64 nodeid,
+>>>       }
+>>>         if (isdir)
+>>> -        ff->open_flags &= ~FOPEN_DIRECT_IO;
+>>> +        ff->open_flags &=
+>>> +            ~(FOPEN_DIRECT_IO | FOPEN_DIRECT_IO_SHARED_MMAP);
+>>>         ff->nodeid = nodeid;
+>>>   @@ -2509,8 +2510,12 @@ static int fuse_file_mmap(struct file *file,
+>>> struct vm_area_struct *vma)
+>>>           return fuse_dax_mmap(file, vma);
+>>>         if (ff->open_flags & FOPEN_DIRECT_IO) {
+>>> -        /* Can't provide the coherency needed for MAP_SHARED */
+>>> -        if (vma->vm_flags & VM_MAYSHARE)
+>>> +        /* Can't provide the coherency needed for MAP_SHARED.
+>>> +         * So disable it if FOPEN_DIRECT_IO_SHARED_MMAP is not
+>>> +         * set, which means we do need strong coherency.
+>>> +         */
+>>> +        if (!(ff->open_flags & FOPEN_DIRECT_IO_SHARED_MMAP) &&
+>>> +            vma->vm_flags & VM_MAYSHARE)
+>>>               return -ENODEV;
+>>
+>> Can you give an example how this is useful and how do you plan to
+>> use it?
+>>
+>> If goal is not using guest cache (either for saving memory or for cache
+>> coherency with other clients) and hence you used FOPEN_DIRECT_IO,
+>> then by allowing page cache for mmap(), we are contracting that goal.
+>> We are neither saving memory and at the same time we are not
+>> cache coherent.
+> 
+> We use it to reduce guest memory "as possible as we can", which means we
+> first have to ensure the functionality so shared mmap should work when
+> users call it, then second reduce memory when users use read/write
+> (from/to other files).
+> 
+> In cases where users do read/write in most time and calls shared mmap
+> sometimes, disabling shared mmap makes this case out of service, but
+> with this flag we still reduce memory and the application works.
+> 
+>>
+>> IIUC, for virtiofs, you want to use cache=none but at the same time
+>> allow guest applications to do shared mmap() hence you are introducing
+>> this change. There have been folks who have complained about it
+>> and I think 9pfs offers a mode which does this. So solving this
+>> problem will be nice.
+>>
+>> BTW, if "-o dax" is used, it solves this problem. But unfortunately qemu
+>> does not have DAX support yet and we also have issues with page
+>> truncation
+>> on host and MCE not travelling into the guest. So DAX is not a perfect
+>> option yet.
+> 
+> Yea, just like I relied in another mail, users' IO pattern may be a
+> bunch of small IO to a bunch of small files, dax may help but not so
+> much in that case.
+> 
+>>
+>> I agree that solving this problem will be nice. Just trying to
+>> understand the behavior better. How these cache pages will
+>> interact with read/write?
+> 
+> I went through the code, it looks like there are issues when users mmap
+> a file and then write to it, this may cause coherency problem between
+> the backend file and the frontend page cache.
+> I think this problem exists before this patchset: when we private mmap
+> a file and then write to it in FOPEN_DIRECT_IO mode, the change doesn't
+> update to the page cache because we falsely assume there is no page
+> cache under FOPEN_DIRECT_IO mode. I need to go over the code and do some
+> test to see if it is really there and to solve it.
 
-OK.  Bringing up the 64kB block size filesystem confused me.
+IIUC, I guess the current read/write routine will still initiate DIRECT
+IO to server in FOPEN_DIRECT_IO mode, even there's page cache initiated
+by shared mmap?
 
-> What I'm asking about is when someone does a 16kB write at offset
-> 12kB, they won't get a large folio allocated at all, right? Even
-> though the write is large enough to enable it?
+Private mmap doesn't need to care about the coherency issue, as private
+mmap is private and doesn't need to be flushed to server.  Thus IMHO the
+weakened DIRECT_IO, or dio_shared_mmap mode only applies to scenarios
+where strong coherency is not needed.
 
-Right.
-
-> Indeed, if we do a 1MB write at offset 4KB, we'll get 4kB at 4KB, 8KB
-> and 12kB (because we can't do order-1 folios), then order-2 at 16KB,
-> order-3 at 32kB, and so on until we hit offset 1MB where we will do
-> an order-0 folio allocation again (because the remaining length is
-> 4KB). The next 1MB write will then follow the same pattern, right?
-
-Yes.  Assuming we get another write ...
-
-> I think this ends up being sub-optimal and fairly non-obvious
-> non-obvious behaviour from the iomap side of the fence which is
-> clearly asking for high-order folios to be allocated. i.e. a small
-> amount of allocate-around to naturally align large folios when the
-> page cache is otherwise empty would make a big difference to the
-> efficiency of non-large-folio-aligned sequential writes...
-
-At this point we're arguing about what I/O pattern to optimise for.
-I'm going for a "do no harm" approach where we only allocate exactly as
-much memory as we did before.  You're advocating for a
-higher-risk/higher-reward approach.
-
-I'd prefer the low-risk approach for now; we can change it later!
-I'd like to see some amount of per-fd write history (as we have per-fd
-readahead history) to decide whether to allocate large folios ahead of
-the current write position.  As with readahead, I'd like to see that even
-doing single-byte writes can result in the allocation of large folios,
-as long as the app has done enough of them.
+-- 
+Thanks,
+Jingbo
