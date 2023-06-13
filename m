@@ -2,91 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DECE472E8A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 18:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E03672E8FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 19:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232690AbjFMQk3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 12:40:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58602 "EHLO
+        id S235186AbjFMREm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 13:04:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231517AbjFMQkF (ORCPT
+        with ESMTP id S231363AbjFMREk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 12:40:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4406C198B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 09:39:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686674360;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AcIaHBGFQIXuSfMrtRY4iVaejyldODuRWOKh30XsKHo=;
-        b=UB87ybg8ewOey08/f6hgL/0zLlvHnVqVWLGyN33Kxvp1ySoLHwtRxPs+1HAmnqN1PEiwW6
-        FP4FJVKkdZ7UQNd9oY5jk0AJeIgRZKNb+qRD9C20Z6vQ6C09zERbKABCtUVyGdJ378JGDt
-        Nu1ofml2JqpqZhLyqOf/pyQlYvkYhGs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-14-n5bk6yWKO62xrbbYqo5uGQ-1; Tue, 13 Jun 2023 12:39:15 -0400
-X-MC-Unique: n5bk6yWKO62xrbbYqo5uGQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3F0838039C9;
-        Tue, 13 Jun 2023 16:39:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DE4081C558;
-        Tue, 13 Jun 2023 16:38:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <639735.1686672037@warthog.procyon.org.uk>
-References: <639735.1686672037@warthog.procyon.org.uk> <491da795-e9e0-1d84-558b-df09063228cb@kernel.dk> <545463.1686601473@warthog.procyon.org.uk>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     dhowells@redhat.com, David Hildenbrand <david@redhat.com>,
-        kernel test robot <oliver.sang@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Lorenzo Stoakes <lstoakes@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, oe-lkp@lists.linux.dev, lkp@intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] block: Fix dio_bio_alloc() to set BIO_PAGE_PINNED
+        Tue, 13 Jun 2023 13:04:40 -0400
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 067B2187;
+        Tue, 13 Jun 2023 10:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1686675570;
+        bh=wNAYrdR1DOgfCkW7Ui555prk70VUh+otMs+riDcq/LU=;
+        h=From:To:Cc:Subject:Date;
+        b=yF81Q2UOw0dmjZttica/woTHNAuLSKx7Xjtok6WRTocsDUtqtsyqv9mSXsRQtlx75
+         8FDeai+LFGnTdnMqM4wTdK6OUm+99EH6Rq/xxWXXtNb22hYEmcbbNqpSgYrU1aQfHB
+         QYcLwvQNpfTvyd3bYMDVjaUxzBvHpu2Yem2ysdlI=
+Received: from localhost.localdomain ([240e:331:cc9:d200:8f2b:c42a:801a:dea9])
+        by newxmesmtplogicsvrszc5-0.qq.com (NewEsmtp) with SMTP
+        id EDA2A833; Wed, 14 Jun 2023 00:59:26 +0800
+X-QQ-mid: xmsmtpt1686675566tszwp6qrv
+Message-ID: <tencent_4AF3548D506B04914F12A49F3093F9C53C0A@qq.com>
+X-QQ-XMAILINFO: Nd/Exl7W9DK5dyIyCG8HGgrHUgCDwyaXFvs6r7d1850d0/iaW+4knEO9rE5k3h
+         PV29YvKrTadCkphn+eG8Vj9juavj58gdVMhajt7ea9raxEWN3iYABR45kEUeICEaqg6KqpwOrk+3
+         loy9BhbhfKTRTZ/1l95aoZ3g1C2Z45BrExV/Shbzuxi6ifLGEP+OGYGuZeUZzLq2VmbSFt3C5fJ9
+         KkHYzEVrwmwoSrva+GAKoqvJ5aJnqEa+NnWzqTKYqIOW4kt1aEuMV2dBQ78daEi0UhWYkgtb5Dfe
+         jQbdWyN/XptTFYKY/lPFYRk1famBVcgVS2P0Qu0xiCEecftIyp0APs8c6pWehedw148W078AFgzE
+         7g/iuauBuEcFDMfpmeQXEagV5Ze5SL9dhCwpWO5/bzdDLB/2OKG6VgK+rK8+jlbHFoK7xuIsE8q3
+         pWNmkC3e2N60hujbUUxGXpB/0l7GNVESQEG7Qf3pJIdOZZnJRyz20UA75b8QUoAoTBpwDWRLuveX
+         4aeDegkiemsGkSaAM03dWXsMDmpwTVGhCAAmMSF0rSTrPGK1Kyu2Pp3SdI+vT6TS8S7cQEhNThAB
+         9OzUZquMgv109OpyQdxsQznyOIpzDmhF9EWapRNrzUtCIu/ejS0A84IJ2SSc07UDxVg98z7Q4JZO
+         mBDTW7MKggnjB9N+EmfBC05NJrf+2QfTijoyx/5N3qhepaa1sBU7vscV3nakIhrooVzMVGfEJj2Q
+         uK+cOc2zRa82WsKl1aJC2rDmdVUQAG1yye9cPVuyd5jC2xh8wAAQGDc89PSPSbKkp56qPZd8z68M
+         kQyVueBKattdjzeOWMcsfnuis0p+EG2BmK+HtwSvtoY0bCzxD8kMHQiwM8VZIoBKlQXdsgf0MySg
+         XtOeMM6MOPvpOvF3hdJ2t8HISqkdl1v+wYn8708hWDJnnP3rq5cN2EZX6h/EE8oYSxl6x0V0q9OL
+         7zBCKiaH+WyrPvo1MZOfQtEphfARCCivbHg1qoxHNiYX7zSvfqV3uN2FtDa9mVlAPt9RG/cK6mpS
+         qolIHWNo/l/oQDbwbM8O5+wMIBSXQ=
+X-QQ-XMAILREADINFO: N4rxuMuubwLvS7ommv0RDVk=
+From:   wenyang.linux@foxmail.com
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Wen Yang <wenyang.linux@foxmail.com>,
+        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] eventfd: add a uapi header for eventfd userspace APIs
+Date:   Wed, 14 Jun 2023 00:59:11 +0800
+X-OQ-MSGID: <20230613165911.6703-1-wenyang.linux@foxmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <726323.1686674339.1@warthog.procyon.org.uk>
-Date:   Tue, 13 Jun 2023 17:38:59 +0100
-Message-ID: <726324.1686674339@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        HELO_DYNAMIC_IPADDR,RCVD_IN_DNSWL_NONE,RDNS_DYNAMIC,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+From: Wen Yang <wenyang.linux@foxmail.com>
 
-> > What is this against?
-> 
-> It's against the branch I posted.
+Create a uapi header include/uapi/linux/eventfd.h, move the associated
+flags to the uapi header, and include it from linux/eventfd.h.
 
-Actually, it's not.  It's against an old version of the patch on a different
-branch.  The patches you have applied already have that change - so the issue
-must be something else:-/
+Suggested-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Dylan Yudaken <dylany@fb.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Eric Biggers <ebiggers@google.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ include/linux/eventfd.h      |  6 +-----
+ include/uapi/linux/eventfd.h | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+), 5 deletions(-)
+ create mode 100644 include/uapi/linux/eventfd.h
 
-David
+diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+index 98d31cdaca40..b9d83652c097 100644
+--- a/include/linux/eventfd.h
++++ b/include/linux/eventfd.h
+@@ -9,12 +9,12 @@
+ #ifndef _LINUX_EVENTFD_H
+ #define _LINUX_EVENTFD_H
+ 
+-#include <linux/fcntl.h>
+ #include <linux/wait.h>
+ #include <linux/err.h>
+ #include <linux/percpu-defs.h>
+ #include <linux/percpu.h>
+ #include <linux/sched.h>
++#include <uapi/linux/eventfd.h>
+ 
+ /*
+  * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
+@@ -23,10 +23,6 @@
+  * from eventfd, in order to leave a free define-space for
+  * shared O_* flags.
+  */
+-#define EFD_SEMAPHORE (1 << 0)
+-#define EFD_CLOEXEC O_CLOEXEC
+-#define EFD_NONBLOCK O_NONBLOCK
+-
+ #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+ #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
+ 
+diff --git a/include/uapi/linux/eventfd.h b/include/uapi/linux/eventfd.h
+new file mode 100644
+index 000000000000..9b3eb6fb20c6
+--- /dev/null
++++ b/include/uapi/linux/eventfd.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_EVENTFD_H
++#define _UAPI_LINUX_EVENTFD_H
++
++#include <linux/types.h>
++
++/* For O_CLOEXEC and O_NONBLOCK */
++#include <linux/fcntl.h>
++
++#define EFD_SEMAPHORE (1 << 0)
++#define EFD_CLOEXEC O_CLOEXEC
++#define EFD_NONBLOCK O_NONBLOCK
++
++#endif /* _UAPI_LINUX_EVENTFD_H */
+-- 
+2.25.1
 
