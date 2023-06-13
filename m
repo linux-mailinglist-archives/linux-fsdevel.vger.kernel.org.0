@@ -2,109 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2585172E434
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 15:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F98B72E585
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 16:18:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241862AbjFMNea (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 09:34:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
+        id S242447AbjFMOQs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 10:16:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240133AbjFMNe1 (ORCPT
+        with ESMTP id S240572AbjFMOQr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 09:34:27 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECA4610EC;
-        Tue, 13 Jun 2023 06:34:24 -0700 (PDT)
+        Tue, 13 Jun 2023 10:16:47 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 733C194;
+        Tue, 13 Jun 2023 07:16:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=N950dvjtG/k/DDXqXESHqcm/sUH57Wlt9aTONE78An8=; b=FGYlE5QNMntLzrdCt814PKiJXn
-        xYXYQM4q6bvvKZBYTidsnJ6F3r8x9Khfbt44L9M9HHOeEYDDPpWqQQw2XV48OMCXnQkCtkGVzItDS
-        SaNSU1vjekacjM1Nf2wz+tmCWIbqEAmPzK49W3oKscdSRBr9NzzQufiWbIs8go8k37Fcgbeoh987S
-        hHpg/eNC1c1aKJSLJkGahXSctFowXyM2uN5fzVUeASvEl+HHdGjV3j67oX2Eo+7f3DU1+moXX7RjM
-        moIVXphpXxsbtp2Z+GTmuVCTk81RXqz/yxI4u9r28hfDhsPW/4d68roqKWGKjB8LuwOPG5lCcQNYt
-        NEGdcGHA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q94A7-003wRI-Dv; Tue, 13 Jun 2023 13:34:19 +0000
-Date:   Tue, 13 Jun 2023 14:34:19 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Wang Yugui <wangyugui@e16-tech.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH v3 6/8] filemap: Allow __filemap_get_folio to allocate
- large folios
-Message-ID: <ZIhwW9pEAS8ULc9X@casper.infradead.org>
-References: <20230612203910.724378-1-willy@infradead.org>
- <20230612203910.724378-7-willy@infradead.org>
- <ZIeg4Uak9meY1tZ7@dread.disaster.area>
- <ZIe7i4kklXphsfu0@casper.infradead.org>
- <ZIfGpWYNA1yd5K/l@dread.disaster.area>
- <ZIfNrnUsJbcWGSD8@casper.infradead.org>
- <ZIggux3yxAudUSB1@dread.disaster.area>
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=CbGcyfHi9QA1um+JXK92ovTuo4LzjCmAsPSThsU99qE=; b=YHP/QC3m5r8bf93VtZEyxh/INM
+        9SOJij2U2Pjj1WYK4iuiA5KnydctxBsfTeeOshHG6I5pU/VVHdwrIhivOjqLXT3nzcB1acCCbiql8
+        S2dITLjPcWpzWwA0o1jk3ep/cZh80zjDVXi36DD6YTUnyNSkggJpNz648uDI6nV4UJDjxPt0gaXgQ
+        KlMDjs/fCy5DGFXU3tp5QvcaznNwNLq4CDvuFyyxYHbeZ/n7YABL0evJaWOiVE26mwVdnjgCh81Dm
+        jEiv3jIzyvmTOQ/V6ntL6I59lSH1Qkl1aEHOGSBr+j/meYKNOgSM8/8LFgCJH8F9FmRj9A3byqfaF
+        06OCKDmw==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1q94oy-008IDS-2l;
+        Tue, 13 Jun 2023 14:16:32 +0000
+Message-ID: <77171ea8-c8d9-5f8d-caf0-76bd5ca03f0c@infradead.org>
+Date:   Tue, 13 Jun 2023 07:16:31 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZIggux3yxAudUSB1@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v4 02/11] block: Block Device Filtering Mechanism
+Content-Language: en-US
+To:     Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk,
+        hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, willy@infradead.org,
+        dlemoal@kernel.org, wsa@kernel.org,
+        heikki.krogerus@linux.intel.com, ming.lei@redhat.com,
+        gregkh@linuxfoundation.org, linux-block@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>
+References: <20230609115858.4737-1-sergei.shtepa@veeam.com>
+ <20230609115858.4737-2-sergei.shtepa@veeam.com>
+ <e2f851d7-6b17-7a36-b5b3-2d60d450989d@infradead.org>
+ <f7b67068-62c4-0977-265a-37c84f553eab@veeam.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <f7b67068-62c4-0977-265a-37c84f553eab@veeam.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 13, 2023 at 05:54:35PM +1000, Dave Chinner wrote:
-> On Tue, Jun 13, 2023 at 03:00:14AM +0100, Matthew Wilcox wrote:
-> > On Tue, Jun 13, 2023 at 11:30:13AM +1000, Dave Chinner wrote:
-> > > I think this ends up being sub-optimal and fairly non-obvious
-> > > non-obvious behaviour from the iomap side of the fence which is
-> > > clearly asking for high-order folios to be allocated. i.e. a small
-> > > amount of allocate-around to naturally align large folios when the
-> > > page cache is otherwise empty would make a big difference to the
-> > > efficiency of non-large-folio-aligned sequential writes...
-> > 
-> > At this point we're arguing about what I/O pattern to optimise for.
-> > I'm going for a "do no harm" approach where we only allocate exactly as
-> > much memory as we did before.  You're advocating for a
-> > higher-risk/higher-reward approach.
+
+
+On 6/13/23 05:34, Sergei Shtepa wrote:
 > 
-> Not really - I'm just trying to understand the behaviour the change
-> will result in, compared to what would be considered optimal as it's
-> not clearly spelled out in either the code or the commit messages.
-
-I suppose it depends what you think we're optimising for.  If it's
-minimum memory consumption, then the current patchset is optimal ;-) If
-it's minimum number of folios allocated for a particular set of writes,
-then your proposal makes sense.  I do think we should end up doing
-something along the lines of your sketch; it just doesn't need to be now.
-
-> > I'd like to see some amount of per-fd write history (as we have per-fd
-> > readahead history) to decide whether to allocate large folios ahead of
-> > the current write position.  As with readahead, I'd like to see that even
-> > doing single-byte writes can result in the allocation of large folios,
-> > as long as the app has done enough of them.
 > 
-> *nod*
+> On 6/13/23 03:51, Randy Dunlap wrote:
+>>
+>> On 6/9/23 04:58, Sergei Shtepa wrote:
+>>> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+>>> index b7b56871029c..7904f157b245 100644
+>>> --- a/include/uapi/linux/fs.h
+>>> +++ b/include/uapi/linux/fs.h
+>>> @@ -189,6 +189,9 @@ struct fsxattr {
+>>>   * A jump here: 130-136 are reserved for zoned block devices
+>>>   * (see uapi/linux/blkzoned.h)
+>>>   */
+>>> +#define BLKFILTER_ATTACH	_IOWR(0x12, 140, struct blkfilter_name)
+>>> +#define BLKFILTER_DETACH	_IOWR(0x12, 141, struct blkfilter_name)
+>>> +#define BLKFILTER_CTL		_IOWR(0x12, 142, struct blkfilter_ctl)
+>>
+>> Please update Documentation/userspace-api/ioctl/ioctl-number.rst
+>> with the blkfilter ioctl number usage.
 > 
-> We already have some hints in the iomaps that can tell you this sort
-> of thing. e.g. if ->iomap_begin() returns a delalloc iomap that
-> extends beyond the current write, we're performing a sequence of
-> multiple sequential writes.....
+> It seems to me that there is no need to change anything in the table of
+> numbers for 'blkfilter'. I think the existing record is enough:
+> 
+> 0x10  20-2F  arch/s390/include/uapi/asm/hypfs.h
+> 0x12  all    linux/fs.h
+>              linux/blkpg.h
 
-Well, if this is something the FS is already tracking, then we can
-either try to lift that functionality into the page cache, or just take
-advantage of the FS knowledge.  In iomap_write_begin(), we have access
-to the srcmap and the iomap, and we can pass in something other than
-the length of the write as the hint to __iomap_get_folio() for the
-size of the folio we would like.
+Yes, OK.
 
-I should probably clean up the kernel-doc for iomap_get_folio() ...
+> Maybe it would probably be correct to specify the file 'uapi/linux/fs.h'?
+> And maybe we need to specify the request numbers for blksnap?
 
-- * @len: length of write
-+ * @len: Suggested size of folio to create.
+Yes.
 
+> add ioctls numbers for blksnap
+> 
+> Asked-by: Randy Dunlap <rdunlap@infradead.org>
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
+> ---
+>  Documentation/userspace-api/ioctl/ioctl-number.rst | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> index 176e8fc3f31b..96af64988251 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -202,6 +202,7 @@ Code  Seq#    Include File                                           Comments
+>  'V'   C0     linux/ivtvfb.h                                          conflict!
+>  'V'   C0     linux/ivtv.h                                            conflict!
+>  'V'   C0     media/si4713.h                                          conflict!
+> +'V'   00-1F  uapi/linux/blksnap.h                                    conflict!
+>  'W'   00-1F  linux/watchdog.h                                        conflict!
+>  'W'   00-1F  linux/wanrouter.h                                       conflict! (pre 3.9)
+>  'W'   00-3F  sound/asound.h                                          conflict!
+
+-- 
+~Randy
