@@ -2,127 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9647572E324
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 14:35:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9225072E348
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 14:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234563AbjFMMfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 08:35:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41736 "EHLO
+        id S242403AbjFMMqT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 08:46:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242537AbjFMMfK (ORCPT
+        with ESMTP id S242086AbjFMMqR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 08:35:10 -0400
-Received: from mx4.veeam.com (mx4.veeam.com [104.41.138.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93B3BE7A;
-        Tue, 13 Jun 2023 05:35:08 -0700 (PDT)
-Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 13 Jun 2023 08:46:17 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DE6110EC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 05:46:16 -0700 (PDT)
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com [209.85.219.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx4.veeam.com (Postfix) with ESMTPS id E09391B72E;
-        Tue, 13 Jun 2023 15:35:06 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
-        s=mx4-2022; t=1686659707;
-        bh=4oNmRkLesBC9RjRkU4eqkCoLnWTFT9D5was/erYZ+04=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To:From;
-        b=Y2GAhHPF7F6Nw9yN00Ft+kqym1xOwxfwE3WOYgZap+Vrl9M3uFULJMehxZEY6JTVo
-         qtADvpKq2vnFKHf/2x2nX8721HIr2mGOw7LDkD2b5zd9vj2Uiue4O1cZ6DU6ZmRMx3
-         XwwWX+T7jHAREJ2cnO1lyB3vfuOa4iTVqi3RSKK77D4xXAa+oci2I30A8VVgPssEOX
-         xqii/Plgtwdvaw1M6F0xM2ndkWZ1nX3ew8yh83s3Z61saWXiMqkF5WQAevWFLO7MG+
-         6YFdjZYux3j4VYnWRAiwWjt0LbnPJUWHi0r5qf0HKB6E0do97YsFIfes+NkLSz16/k
-         pE715DtG5+Oug==
-Received: from [172.24.10.107] (172.24.10.107) by prgmbx01.amust.local
- (172.24.128.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.26; Tue, 13 Jun
- 2023 14:35:05 +0200
-Message-ID: <f7b67068-62c4-0977-265a-37c84f553eab@veeam.com>
-Date:   Tue, 13 Jun 2023 14:34:58 +0200
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 2D6013F272
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 12:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1686660375;
+        bh=DJyvntNK5zxh7HK+mp4W1WMoJPxy7nqBJlYeYzOf6Og=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=Pkja2DqtESh9d+TMgoRK0JBCtotZf60iugjn+jyYL33czHh1e9ZL3PMAJ12+ZZQMU
+         qdZ4oF4dZWZqL6P9kLkbI58b3n7nwxD/nMb/l2wiAADXJWL/3Et67HzgUUShywK/Ep
+         v0XTa51au8kIMjZUbcmC0CRA6WeP/rZJx4BEfHLunDwY/7I4pOizD3VxoqE2zyZgeA
+         Zi6W4+jvkk+Yg5i3d9QrTrfRr1meryfb5ZzEMTmE9HA2XQHZVmq6j4gwqgHgOIRQ4H
+         7FkLfml0YtzJ2t4YGGKBNkkT9KPDrUxKRXGn07HAlfFTk0ie8lGFYFyMETYdD0QF6i
+         awYY4VeZPuj3w==
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-bce1d7a8d2aso1828169276.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 05:46:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686660374; x=1689252374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DJyvntNK5zxh7HK+mp4W1WMoJPxy7nqBJlYeYzOf6Og=;
+        b=EVdgvP2xATFoCK6wYoYRZSVPo829zXutJuPKRSjMvfNSIvM7ibSWCoM1qL8Vg9AQjX
+         JNgjlQcVZkNsd4NfLIbiXw9GG0wqqAWk5MIct6B6CyrF47t4HIas0OYbEYOeV62Kqura
+         HcdT15HveyFLM9b/taIlaKlT82+4YruGoXBljB4WvOAGGOkGBpUyTLf7pYj+O2q3stUJ
+         t7dUtf7tbQP1coT6AA9WkQOTIAxHuijrLLfyvR5XQ2sv4zU/zhvRgeFwFcTB3Nt78wVn
+         6dMkGEX1wxwpQRfr/D7uTyWc3vFLfn7fBE7r1CC/E0nj9ousp5D522VVkcv96kiyvFuL
+         34Ug==
+X-Gm-Message-State: AC+VfDy+l7SACaq783PLasMKAW0bboj4aPPYxFbUpt+dPK8nurnat5qK
+        eIB5koonI2w5ubr+LRWdRLqmRdR9XFNfPuest2nE/h/dH5K/4Na7uscnY1Z26tIFROgjCvsy1lD
+        2LFxuhU9FjxE15HlN9JSfhQyL8Rgz38HXOQfQoKC27B6832e7SFzjJ9TO9k4=
+X-Received: by 2002:a25:ba88:0:b0:ba8:3b3d:3dc0 with SMTP id s8-20020a25ba88000000b00ba83b3d3dc0mr1176566ybg.65.1686660374088;
+        Tue, 13 Jun 2023 05:46:14 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6ByVyQMc1FDiM+BMPWPp5Yh34Hpj01MWgfV11RE/419O9gOrGZrLRNRl5YaWKNn5smLlZPr5vjNJmpBm2O3JM=
+X-Received: by 2002:a25:ba88:0:b0:ba8:3b3d:3dc0 with SMTP id
+ s8-20020a25ba88000000b00ba83b3d3dc0mr1176550ybg.65.1686660373803; Tue, 13 Jun
+ 2023 05:46:13 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v4 02/11] block: Block Device Filtering Mechanism
-Content-Language: en-US
-To:     Randy Dunlap <rdunlap@infradead.org>, <axboe@kernel.dk>,
-        <hch@infradead.org>, <corbet@lwn.net>, <snitzer@kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <willy@infradead.org>, <dlemoal@kernel.org>, <wsa@kernel.org>,
-        <heikki.krogerus@linux.intel.com>, <ming.lei@redhat.com>,
-        <gregkh@linuxfoundation.org>, <linux-block@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        "Donald Buczek" <buczek@molgen.mpg.de>
-References: <20230609115858.4737-1-sergei.shtepa@veeam.com>
- <20230609115858.4737-2-sergei.shtepa@veeam.com>
- <e2f851d7-6b17-7a36-b5b3-2d60d450989d@infradead.org>
-From:   Sergei Shtepa <sergei.shtepa@veeam.com>
-In-Reply-To: <e2f851d7-6b17-7a36-b5b3-2d60d450989d@infradead.org>
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com> <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner> <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
+In-Reply-To: <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Tue, 13 Jun 2023 14:46:02 +0200
+Message-ID: <CAEivzxeZ6fDgYMnjk21qXYz13tHqZa8rP-cZ2jdxkY0eX+dOjw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Gregory Farnum <gfarnum@redhat.com>, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.24.10.107]
-X-ClientProxiedBy: prgmbx02.amust.local (172.24.128.103) To
- prgmbx01.amust.local (172.24.128.102)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29240315546D7163
-X-Veeam-MMEX: True
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Jun 13, 2023 at 3:43=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 6/9/23 18:12, Aleksandr Mikhalitsyn wrote:
+> > On Fri, Jun 9, 2023 at 12:00=E2=80=AFPM Christian Brauner <brauner@kern=
+el.org> wrote:
+> >> On Fri, Jun 09, 2023 at 10:59:19AM +0200, Aleksandr Mikhalitsyn wrote:
+> >>> On Fri, Jun 9, 2023 at 3:57=E2=80=AFAM Xiubo Li <xiubli@redhat.com> w=
+rote:
+> >>>>
+> >>>> On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
+> >>>>> Dear friends,
+> >>>>>
+> >>>>> This patchset was originally developed by Christian Brauner but I'l=
+l continue
+> >>>>> to push it forward. Christian allowed me to do that :)
+> >>>>>
+> >>>>> This feature is already actively used/tested with LXD/LXC project.
+> >>>>>
+> >>>>> Git tree (based on https://github.com/ceph/ceph-client.git master):
+> >>> Hi Xiubo!
+> >>>
+> >>>> Could you rebase these patches to 'testing' branch ?
+> >>> Will do in -v6.
+> >>>
+> >>>> And you still have missed several places, for example the following =
+cases:
+> >>>>
+> >>>>
+> >>>>      1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
+> >>>>                req =3D ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GE=
+TATTR,
+> >>>> mode);
+> >>> +
+> >>>
+> >>>>      2    389  fs/ceph/dir.c <<ceph_readdir>>
+> >>>>                req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_M=
+DS);
+> >>> +
+> >>>
+> >>>>      3    789  fs/ceph/dir.c <<ceph_lookup>>
+> >>>>                req =3D ceph_mdsc_create_request(mdsc, op, USE_ANY_MD=
+S);
+> >>> We don't have an idmapping passed to lookup from the VFS layer. As I
+> >>> mentioned before, it's just impossible now.
+> >> ->lookup() doesn't deal with idmappings and really can't otherwise you
+> >> risk ending up with inode aliasing which is really not something you
+> >> want. IOW, you can't fill in inode->i_{g,u}id based on a mount's
+> >> idmapping as inode->i_{g,u}id absolutely needs to be a filesystem wide
+> >> value. So better not even risk exposing the idmapping in there at all.
+> > Thanks for adding, Christian!
+> >
+> > I agree, every time when we use an idmapping we need to be careful with
+> > what we map. AFAIU, inode->i_{g,u}id should be based on the filesystem
+> > idmapping (not mount),
+> > but in this case, Xiubo want's current_fs{u,g}id to be mapped
+> > according to an idmapping.
+> > Anyway, it's impossible at now and IMHO, until we don't have any
+> > practical use case where
+> > UID/GID-based path restriction is used in combination with idmapped
+> > mounts it's not worth to
+> > make such big changes in the VFS layer.
+> >
+> > May be I'm not right, but it seems like UID/GID-based path restriction
+> > is not a widespread
+> > feature and I can hardly imagine it to be used with the container
+> > workloads (for instance),
+> > because it will require to always keep in sync MDS permissions
+> > configuration with the
+> > possible UID/GID ranges on the client. It looks like a nightmare for sy=
+sadmin.
+> > It is useful when cephfs is used as an external storage on the host, bu=
+t if you
+> > share cephfs with a few containers with different user namespaces idmap=
+ping...
+>
+> Hmm, while this will break the MDS permission check in cephfs then in
+> lookup case. If we really couldn't support it we should make it to
+> escape the check anyway or some OPs may fail and won't work as expected.
 
+Hi Xiubo!
 
-On 6/13/23 03:51, Randy Dunlap wrote:
-> 
-> On 6/9/23 04:58, Sergei Shtepa wrote:
->> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
->> index b7b56871029c..7904f157b245 100644
->> --- a/include/uapi/linux/fs.h
->> +++ b/include/uapi/linux/fs.h
->> @@ -189,6 +189,9 @@ struct fsxattr {
->>   * A jump here: 130-136 are reserved for zoned block devices
->>   * (see uapi/linux/blkzoned.h)
->>   */
->> +#define BLKFILTER_ATTACH	_IOWR(0x12, 140, struct blkfilter_name)
->> +#define BLKFILTER_DETACH	_IOWR(0x12, 141, struct blkfilter_name)
->> +#define BLKFILTER_CTL		_IOWR(0x12, 142, struct blkfilter_ctl)
-> 
-> Please update Documentation/userspace-api/ioctl/ioctl-number.rst
-> with the blkfilter ioctl number usage.
+Disabling UID/GID checks on the MDS side looks reasonable. IMHO the
+most important checks are:
+- open
+- mknod/mkdir/symlink/rename
+and for these checks we already have an idmapping.
 
-It seems to me that there is no need to change anything in the table of
-numbers for 'blkfilter'. I think the existing record is enough:
+Also, I want to add that it's a little bit unusual when permission
+checks are done against the caller UID/GID.
+Usually, if we have opened a file descriptor and, for instance, passed
+this file descriptor through a unix socket then
+file descriptor holder will be able to use it in accordance with the
+flags (O_RDONLY, O_RDWR, ...).
+We also have ->f_cred on the struct file that contains credentials of
+the file opener and permission checks are usually done
+based on this. But in cephfs we are always using syscall caller's
+credentials. It makes cephfs file descriptor "not transferable"
+in terms of permission checks.
 
-0x10  20-2F  arch/s390/include/uapi/asm/hypfs.h
-0x12  all    linux/fs.h
-             linux/blkpg.h
+Kind regards,
+Alex
 
-Maybe it would probably be correct to specify the file 'uapi/linux/fs.h'?
-And maybe we need to specify the request numbers for blksnap?
-
-add ioctls numbers for blksnap
-
-Asked-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
----
- Documentation/userspace-api/ioctl/ioctl-number.rst | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index 176e8fc3f31b..96af64988251 100644
---- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-+++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -202,6 +202,7 @@ Code  Seq#    Include File                                           Comments
- 'V'   C0     linux/ivtvfb.h                                          conflict!
- 'V'   C0     linux/ivtv.h                                            conflict!
- 'V'   C0     media/si4713.h                                          conflict!
-+'V'   00-1F  uapi/linux/blksnap.h                                    conflict!
- 'W'   00-1F  linux/watchdog.h                                        conflict!
- 'W'   00-1F  linux/wanrouter.h                                       conflict! (pre 3.9)
- 'W'   00-3F  sound/asound.h                                          conflict!
--- 
-2.20.1
+>
+> @Greg
+>
+> For the lookup requests the idmapping couldn't get the mapped UID/GID
+> just like all the other requests, which is needed by the MDS permission
+> check. Is that okay to make it disable the check for this case ? I am
+> afraid this will break the MDS permssions logic.
+>
+> Any idea ?
+>
+> Thanks
+>
+> - Xiubo
+>
+>
+> > Kind regards,
+> > Alex
+> >
+>
