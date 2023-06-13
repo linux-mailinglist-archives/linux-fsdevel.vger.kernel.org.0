@@ -2,155 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CFBE72D6E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 03:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7273872D713
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jun 2023 03:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237485AbjFMBaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Jun 2023 21:30:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54812 "EHLO
+        id S238503AbjFMBoJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Jun 2023 21:44:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbjFMBaS (ORCPT
+        with ESMTP id S238485AbjFMBoH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Jun 2023 21:30:18 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4212918E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 18:30:17 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-65314ee05c6so4088975b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 18:30:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686619817; x=1689211817;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uytqQvisQYHjxOHA4vjUFzrt/GwbMg4VQA4FTS7AAMY=;
-        b=BcFs2lv0zGN4Mb471XTP36FDHFI9vXzrrFms42vl4qjX64pQCdcf0vUomhhaTaBXHZ
-         MeLguwcGa++fRRI/l1CB8eZGOVRu7WZPlWtGL3OlW7vH+mj1zp7bIyP/lIvuGiH5bJuO
-         TWj72dOO4t4bhe+iY06sSrgmzw73sHlBcYHAtscQWOy7rB0eSj0ukPHmteu+KvUWWe6f
-         CcylXlaAZf9/Nxr06pPbPP/JKSbvJafFBSIbDLvio6VfFucPyypHOI6FYEQLdiUZwoZq
-         a84igTds7TJ1rSTXXAF1OIMYO4vevo0w004wx3m4r1McpUHEDf6ejgHLit1CUPOIBoGH
-         N17A==
+        Mon, 12 Jun 2023 21:44:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 135D9E1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 18:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686620597;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aO3YIuRj1v9NRDAnjivXdeLDCfNfrRHlbKdCGoRnb1g=;
+        b=NO7LuVbelAxddmSWwYtO+hbT9DvHaG2hJIXPJ3pF69B8W6aaTtlF6eGURspVtbYT6uD2DP
+        du7jVa9q419Swjf92sK12Jzd43P1YQ8KDxt6RS5uAqHV2AUghTqF79GXYQJrQq/dJ0ddn1
+        jB2kGlvUT9+GfFHEHXyYPij6+TIthKk=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-346-__UmnquQP-CGkaVXSWs9NQ-1; Mon, 12 Jun 2023 21:43:16 -0400
+X-MC-Unique: __UmnquQP-CGkaVXSWs9NQ-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1b3c575f0c8so10573825ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jun 2023 18:43:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686619817; x=1689211817;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uytqQvisQYHjxOHA4vjUFzrt/GwbMg4VQA4FTS7AAMY=;
-        b=eA6/B4WKwtmtl4sCYDs3gO7qtVfahLjIRSyTygwAuImv7kutwYn0dgAnObT8reqfum
-         1lE2VnT1pyvV6uD4gj2BvgbH2aVxy+5rOR9F7IMc2yBBLjWmF6rNXPcBMP+RXZE8bRkW
-         tzUREXbhajD4IZvRHee9GhaMZ5IeP8RlKMxy/jaeZyED/n1f7CyX8DXhl5/PybQOGoe8
-         XKrdyGIUVjc7yVdPgvs1bAkZMQws2/Ltgp+JTAnTaD5W8vvMyXkFRITkE2F0jdR77aMz
-         wZORznBHhtFNht7G7JtDoSRvaon+IC7T1a6gUhnv1j8S2i7nZ29aibp1H6P4ut/vnLBf
-         DC3A==
-X-Gm-Message-State: AC+VfDy7kmDSlmbUkd6TXfOVCWTdRrssELISOcOamiDZLSIaFa88uKIo
-        tGphGUJni1WMIaWwgzSdtVqcopG1kyJy47fzlxQ=
-X-Google-Smtp-Source: ACHHUZ7IWLXUEJoW+cQmVh45QhQmtdI40L0coelq4Mfa1Yn8gUuJHmMASVvnasfeD/Si+qbpNp6Tgw==
-X-Received: by 2002:aa7:8889:0:b0:64d:1451:8233 with SMTP id z9-20020aa78889000000b0064d14518233mr13309716pfe.21.1686619816691;
-        Mon, 12 Jun 2023 18:30:16 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-79-151.pa.nsw.optusnet.com.au. [49.179.79.151])
-        by smtp.gmail.com with ESMTPSA id l19-20020a62be13000000b0066145d63b1asm7489917pff.138.2023.06.12.18.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 18:30:16 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1q8srN-00B62r-0o;
-        Tue, 13 Jun 2023 11:30:13 +1000
-Date:   Tue, 13 Jun 2023 11:30:13 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Wang Yugui <wangyugui@e16-tech.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH v3 6/8] filemap: Allow __filemap_get_folio to allocate
- large folios
-Message-ID: <ZIfGpWYNA1yd5K/l@dread.disaster.area>
-References: <20230612203910.724378-1-willy@infradead.org>
- <20230612203910.724378-7-willy@infradead.org>
- <ZIeg4Uak9meY1tZ7@dread.disaster.area>
- <ZIe7i4kklXphsfu0@casper.infradead.org>
+        d=1e100.net; s=20221208; t=1686620595; x=1689212595;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aO3YIuRj1v9NRDAnjivXdeLDCfNfrRHlbKdCGoRnb1g=;
+        b=L2WcMVJp8iTNLLWvNUAInHUUXIT2+ZlBf99koPhjJOWwdTg+onht++z+uCExFqcZH5
+         ZJjmP4lfemnyx9k8sygYvdldDXQtyGFXfw6JpkVhkiq285SkMsCrFmzCQrfGNWaqIcDR
+         B/cOoEsjpx+Sz62l1o05AiKWcgHM4va0+/LxqJo3VsIEL4L5riHciLZedmxWkjhGt9+1
+         5zdS4rtNsXscI67HIc60dhx4gC0iLB4b6KiaA+YZS3nxqdKQwj9sS9rqdOEclHvWQEGR
+         VMeJNaZ7WyTNd6aeAXIuuxJfe4VmjTjg6qYo6tuRbSzZrM7h3l4hJzUDpMw+nfwtYQLR
+         iumA==
+X-Gm-Message-State: AC+VfDzLArVrp0yuW41AeRzGLu9+QEWVhMWeVj5ohCKmvfGaRUzPaKu4
+        Rtj0khmEvuSBdkyGtr+lO8A3aplRE3kEwaawr5aMmunF4ttxEAf1upW5s1tcBmYKtt4k/mK4QbJ
+        33KrAQJVXAS/2jmGdWwoGS0SXLQ==
+X-Received: by 2002:a17:902:9343:b0:1b3:e3a4:1512 with SMTP id g3-20020a170902934300b001b3e3a41512mr1331482plp.10.1686620594907;
+        Mon, 12 Jun 2023 18:43:14 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4UqLaeJy8Dx4xPm8hKZz+Zddi8ZLB53ENnzz9yoPHTsJ5i0KKo8CQQ0pO75DTJjcpw527Yww==
+X-Received: by 2002:a17:902:9343:b0:1b3:e3a4:1512 with SMTP id g3-20020a170902934300b001b3e3a41512mr1331473plp.10.1686620594604;
+        Mon, 12 Jun 2023 18:43:14 -0700 (PDT)
+Received: from [10.72.12.125] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id t14-20020a1709028c8e00b001aaed55aff3sm8810948plo.137.2023.06.12.18.43.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 18:43:14 -0700 (PDT)
+Message-ID: <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
+Date:   Tue, 13 Jun 2023 09:43:07 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZIe7i4kklXphsfu0@casper.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+Content-Language: en-US
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Gregory Farnum <gfarnum@redhat.com>
+Cc:     stgraber@ubuntu.com, linux-fsdevel@vger.kernel.org,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+ <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner>
+ <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 13, 2023 at 01:42:51AM +0100, Matthew Wilcox wrote:
-> On Tue, Jun 13, 2023 at 08:49:05AM +1000, Dave Chinner wrote:
-> > On Mon, Jun 12, 2023 at 09:39:08PM +0100, Matthew Wilcox (Oracle) wrote:
-> > > Allow callers of __filemap_get_folio() to specify a preferred folio
-> > > order in the FGP flags.  This is only honoured in the FGP_CREATE path;
-> > > if there is already a folio in the page cache that covers the index,
-> > > we will return it, no matter what its order is.  No create-around is
-> > > attempted; we will only create folios which start at the specified index.
-> > > Unmodified callers will continue to allocate order 0 folios.
-> > .....
-> > > -		/* Init accessed so avoid atomic mark_page_accessed later */
-> > > -		if (fgp_flags & FGP_ACCESSED)
-> > > -			__folio_set_referenced(folio);
-> > > +		if (!mapping_large_folio_support(mapping))
-> > > +			order = 0;
-> > > +		if (order > MAX_PAGECACHE_ORDER)
-> > > +			order = MAX_PAGECACHE_ORDER;
-> > > +		/* If we're not aligned, allocate a smaller folio */
-> > > +		if (index & ((1UL << order) - 1))
-> > > +			order = __ffs(index);
-> > 
-> > If I read this right, if we pass in an unaligned index, we won't get
-> > the size of the folio we ask for?
-> 
-> Right.  That's implied by (but perhaps not obvious from) the changelog.
-> Folios are always naturally aligned in the file, so an order-4 folio
-> has to start at a multiple of 16.  If the index you pass in is not
-> a multiple of 16, we can't create an order-4 folio without starting
-> at an earlier index.
-> 
-> For a 4kB block size filesystem, that's what we want.  Applications
-> _generally_ don't write backwards, so creating an order-4 folio is just
-> wasting memory.
-> 
-> > e.g. if we want an order-4 folio (64kB) because we have a 64kB block
-> > size in the filesystem, then we have to pass in an index that
-> > order-4 aligned, yes?
-> > 
-> > I ask this, because the later iomap code that asks for large folios
-> > only passes in "pos >> PAGE_SHIFT" so it looks to me like it won't
-> > allocate large folios for anything other than large folio aligned
-> > writes, even if we need them.
-> > 
-> > What am I missing?
-> 
-> Perhaps what you're missing is that this isn't trying to solve the
-> problem of supporting a bs > ps filesystem?
 
-No, that's not what I'm asking about. I know there's other changes
-needed to enforce minimum folio size/alignment for bs > ps.
+On 6/9/23 18:12, Aleksandr Mikhalitsyn wrote:
+> On Fri, Jun 9, 2023 at 12:00 PM Christian Brauner <brauner@kernel.org> wrote:
+>> On Fri, Jun 09, 2023 at 10:59:19AM +0200, Aleksandr Mikhalitsyn wrote:
+>>> On Fri, Jun 9, 2023 at 3:57 AM Xiubo Li <xiubli@redhat.com> wrote:
+>>>>
+>>>> On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
+>>>>> Dear friends,
+>>>>>
+>>>>> This patchset was originally developed by Christian Brauner but I'll continue
+>>>>> to push it forward. Christian allowed me to do that :)
+>>>>>
+>>>>> This feature is already actively used/tested with LXD/LXC project.
+>>>>>
+>>>>> Git tree (based on https://github.com/ceph/ceph-client.git master):
+>>> Hi Xiubo!
+>>>
+>>>> Could you rebase these patches to 'testing' branch ?
+>>> Will do in -v6.
+>>>
+>>>> And you still have missed several places, for example the following cases:
+>>>>
+>>>>
+>>>>      1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
+>>>>                req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR,
+>>>> mode);
+>>> +
+>>>
+>>>>      2    389  fs/ceph/dir.c <<ceph_readdir>>
+>>>>                req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+>>> +
+>>>
+>>>>      3    789  fs/ceph/dir.c <<ceph_lookup>>
+>>>>                req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
+>>> We don't have an idmapping passed to lookup from the VFS layer. As I
+>>> mentioned before, it's just impossible now.
+>> ->lookup() doesn't deal with idmappings and really can't otherwise you
+>> risk ending up with inode aliasing which is really not something you
+>> want. IOW, you can't fill in inode->i_{g,u}id based on a mount's
+>> idmapping as inode->i_{g,u}id absolutely needs to be a filesystem wide
+>> value. So better not even risk exposing the idmapping in there at all.
+> Thanks for adding, Christian!
+>
+> I agree, every time when we use an idmapping we need to be careful with
+> what we map. AFAIU, inode->i_{g,u}id should be based on the filesystem
+> idmapping (not mount),
+> but in this case, Xiubo want's current_fs{u,g}id to be mapped
+> according to an idmapping.
+> Anyway, it's impossible at now and IMHO, until we don't have any
+> practical use case where
+> UID/GID-based path restriction is used in combination with idmapped
+> mounts it's not worth to
+> make such big changes in the VFS layer.
+>
+> May be I'm not right, but it seems like UID/GID-based path restriction
+> is not a widespread
+> feature and I can hardly imagine it to be used with the container
+> workloads (for instance),
+> because it will require to always keep in sync MDS permissions
+> configuration with the
+> possible UID/GID ranges on the client. It looks like a nightmare for sysadmin.
+> It is useful when cephfs is used as an external storage on the host, but if you
+> share cephfs with a few containers with different user namespaces idmapping...
 
-What I'm asking about is when someone does a 16kB write at offset
-12kB, they won't get a large folio allocated at all, right? Even
-though the write is large enough to enable it?
+Hmm, while this will break the MDS permission check in cephfs then in 
+lookup case. If we really couldn't support it we should make it to 
+escape the check anyway or some OPs may fail and won't work as expected.
 
-Indeed, if we do a 1MB write at offset 4KB, we'll get 4kB at 4KB, 8KB
-and 12kB (because we can't do order-1 folios), then order-2 at 16KB,
-order-3 at 32kB, and so on until we hit offset 1MB where we will do
-an order-0 folio allocation again (because the remaining length is
-4KB). The next 1MB write will then follow the same pattern, right?
+@Greg
 
-I think this ends up being sub-optimal and fairly non-obvious
-non-obvious behaviour from the iomap side of the fence which is
-clearly asking for high-order folios to be allocated. i.e. a small
-amount of allocate-around to naturally align large folios when the
-page cache is otherwise empty would make a big difference to the
-efficiency of non-large-folio-aligned sequential writes...
+For the lookup requests the idmapping couldn't get the mapped UID/GID 
+just like all the other requests, which is needed by the MDS permission 
+check. Is that okay to make it disable the check for this case ? I am 
+afraid this will break the MDS permssions logic.
 
-Cheers,
+Any idea ?
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks
+
+- Xiubo
+
+
+> Kind regards,
+> Alex
+>
+
