@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0342730124
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 16:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E819A730126
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 16:04:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245367AbjFNOD6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 10:03:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35336 "EHLO
+        id S245383AbjFNOEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 10:04:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245360AbjFNOD5 (ORCPT
+        with ESMTP id S245371AbjFNOEA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 10:03:57 -0400
+        Wed, 14 Jun 2023 10:04:00 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C92511FD5;
-        Wed, 14 Jun 2023 07:03:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDEC41BC6;
+        Wed, 14 Jun 2023 07:03:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=kqzcuvv5+ni30kABbm+RVPgUdj7KFWVibordNlWqX6g=; b=AWae5lUZJZR0gw6CSaF6i8Dbxw
-        skKovZPT6h+rF/aDaEp8pP7DgsSXnQrSqPZnWmt9PMms2TIM/n7YOGPZOS9kW6/dkL5mEeoDCi8ci
-        CHw7rVcx8+IzodkylR66w5rxYKABLuEcjnW9FXVsXfxiriTcUW52Rvm5xCYU5qOh2l9YtJgxrnkUZ
-        9RUnI3tAjmXW7XjVSoMebO+UoJ7IkB74NuLwNbaD05DdUCgKQqjke0k0NA8CCBXU1IYVE7RvH5H8S
-        j/YGXqap3mu2Nuo3AL0ak86ioLKyQXQ+A0kToo4HDQONuALJlfV4l7OvT/x1dx9IIztqgxdEQo7Yk
-        fLHADayw==;
+        bh=y2VOAWVYmfWhLAJZWae0zYCsa52UbsbyvWfbxWr+KKg=; b=a79fBkGGSuBaMmrsdRjJTl2aMx
+        kJNlMRrXEuqahHUEQpJV4QgQ3Ym+2E6bzMPM7oBmx6GxrLhjk58gQyn97sDE2abZhSHDDOayelUCo
+        +pPQkPnwIebiR1qELno5bE9IaEnVDydbBCPcpxtvEuoRXyqfUBdFrGClWaT9p53o4XgV8eCYWyUqU
+        0ymKFTi0dBeNsEFcD07nQBpAMOpvx8xnJifD7244k42gKzfuhiJYs91PZtxY4g9n5HPIUuWUFaCMy
+        +BkCCiyIWzwl3ALP879d/OVOE1a2Id4lHj7XOL8NP/70kqvgawsOf+0bEJzVWCtNxsQ/i9iTNcMPy
+        PQHNbeOw==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q9R6G-00Br9k-0L;
-        Wed, 14 Jun 2023 14:03:52 +0000
+        id 1q9R6J-00BrAS-0M;
+        Wed, 14 Jun 2023 14:03:55 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/4] splice: simplify a conditional in copy_splice_read
-Date:   Wed, 14 Jun 2023 16:03:39 +0200
-Message-Id: <20230614140341.521331-3-hch@lst.de>
+Subject: [PATCH 3/4] block: remove BIO_PAGE_REFFED
+Date:   Wed, 14 Jun 2023 16:03:40 +0200
+Message-Id: <20230614140341.521331-4-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230614140341.521331-1-hch@lst.de>
 References: <20230614140341.521331-1-hch@lst.de>
@@ -53,40 +53,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Check for -EFAULT instead of wrapping the check in an ret < 0 block.
+Now that all block direct I/O helpers use page pinning, this flag is
+unused.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/splice.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ block/blk.h               | 2 --
+ include/linux/bio.h       | 3 +--
+ include/linux/blk_types.h | 1 -
+ 3 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 87c69fdb333dab..7a9565d8ec4f9d 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -368,15 +368,15 @@ ssize_t copy_splice_read(struct file *in, loff_t *ppos,
- 	if (ret > 0) {
- 		keep = DIV_ROUND_UP(ret, PAGE_SIZE);
- 		*ppos = kiocb.ki_pos;
--	} else if (ret < 0) {
--		/*
--		 * callers of ->splice_read() expect -EAGAIN on
--		 * "can't put anything in there", rather than -EFAULT.
--		 */
--		if (ret == -EFAULT)
--			ret = -EAGAIN;
- 	}
+diff --git a/block/blk.h b/block/blk.h
+index 768852a84fefb3..608c5dcc516b55 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -445,8 +445,6 @@ static inline void bio_release_page(struct bio *bio, struct page *page)
+ {
+ 	if (bio_flagged(bio, BIO_PAGE_PINNED))
+ 		unpin_user_page(page);
+-	else if (bio_flagged(bio, BIO_PAGE_REFFED))
+-		put_page(page);
+ }
  
-+	/*
-+	 * Callers of ->splice_read() expect -EAGAIN on "can't put anything in
-+	 * there", rather than -EFAULT.
-+	 */
-+	if (ret == -EFAULT)
-+		ret = -EAGAIN;
-+
- 	/* Free any pages that didn't get touched at all. */
- 	if (keep < npages)
- 		release_pages(pages + keep, npages - keep);
+ struct request_queue *blk_alloc_queue(int node_id);
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 61752292896494..c4f5b5228105fe 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -492,8 +492,7 @@ void zero_fill_bio(struct bio *bio);
+ 
+ static inline void bio_release_pages(struct bio *bio, bool mark_dirty)
+ {
+-	if (bio_flagged(bio, BIO_PAGE_REFFED) ||
+-	    bio_flagged(bio, BIO_PAGE_PINNED))
++	if (bio_flagged(bio, BIO_PAGE_PINNED))
+ 		__bio_release_pages(bio, mark_dirty);
+ }
+ 
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index deb69eeab6bd7b..752a54e3284b27 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -326,7 +326,6 @@ struct bio {
+  */
+ enum {
+ 	BIO_PAGE_PINNED,	/* Unpin pages in bio_release_pages() */
+-	BIO_PAGE_REFFED,	/* put pages in bio_release_pages() */
+ 	BIO_CLONED,		/* doesn't own data */
+ 	BIO_BOUNCED,		/* bio is a bounce bio */
+ 	BIO_QUIET,		/* Make BIO Quiet */
 -- 
 2.39.2
 
