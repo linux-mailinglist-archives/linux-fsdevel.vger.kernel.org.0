@@ -2,60 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D819A72F76D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 10:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BCD872F7A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 10:19:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbjFNIKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 04:10:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43256 "EHLO
+        id S238639AbjFNITJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 04:19:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243184AbjFNIJd (ORCPT
+        with ESMTP id S243420AbjFNISb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 04:09:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC8E5B5;
-        Wed, 14 Jun 2023 01:09:32 -0700 (PDT)
+        Wed, 14 Jun 2023 04:18:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 410F51985;
+        Wed, 14 Jun 2023 01:18:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4ED3963C3F;
-        Wed, 14 Jun 2023 08:09:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B775C433C8;
-        Wed, 14 Jun 2023 08:09:28 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C3F4A639ED;
+        Wed, 14 Jun 2023 08:18:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2E6C433C0;
+        Wed, 14 Jun 2023 08:18:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686730171;
-        bh=znlbGaKAZ44Y3s2Y9/HYLCysbzX2Qza4/9WvzVNIdwg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kUfDf25yknKIpqQSy+tIhNlS6DrLXiV+DUfr9Y2yk9sQrkvI2XlDtABPIqeYsQeQE
-         g+D6eYdaRjTRDIJ9FBv5JjtHgdhmd0mwIZ0C/Y05wpuDc65p4gmAUHF5DaFUnBJyIo
-         6vhh6YA9bf/jlrJLZVdOJXmoihQFf2jxc7Z0DVp6Wyb6tWbz4WZw46eP4BA6/6gYj8
-         K8yc9Qux/PpWDaC1egFYOlmN1RJ+YxnEMwB6UveY/v4e4INsk1k0+SkZdx6G38SXJy
-         lUrRQ35w/2onPzkY6B0v+Ku950rJgyQtVw9SxeoL5JkFTrvQItaGoOE2F19Hgdz/E2
-         At1ysBRZjpS8A==
+        s=k20201202; t=1686730707;
+        bh=UZ7T6wpompPxMLQubsjrqybaIQtHskyAXV9BO5YKxak=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NQaMg0NzSyFNIp4l37g0LkhxIkUOA2wWyn19FzyKDrsWLukuKiFtrM51dRGHu7+j5
+         BJpbxReA8PzxvYFFhuGQ+yJXo9jpZa2XOxXH2KsoZx3z9Dc7LCBGCI63ZxJaYjr1l5
+         klIosYKVIgfUUiH7dhqv4x/46DpN1fCGvbJfcC3n+5PaFo32exCkaFDUjWwLbzUZUG
+         Nvn0AhbXGidOlLWZthNFZWtS1M/AD+vTlFYhSBDdQLO0tBgtNMJ4DYFIL5rTIu1i1G
+         R1yiuvZ7LmkgMwUMnxOQxuWrCLCwtXgS7CJCJJ6/Ds6TWwyZI3BUVYfTrK/LSXyI5K
+         7h/qC8Y5LeAJQ==
+Date:   Wed, 14 Jun 2023 10:18:16 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     wenyang.linux@foxmail.com
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v2] eventfd: show the EFD_SEMAPHORE flag in fdinfo
-Date:   Wed, 14 Jun 2023 10:09:21 +0200
-Message-Id: <20230614-rohstoff-sitzheizung-43fe06a57ce1@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <tencent_05B9CFEFE6B9BC2A9B3A27886A122A7D9205@qq.com>
-References: <tencent_05B9CFEFE6B9BC2A9B3A27886A122A7D9205@qq.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Ted Tso <tytso@mit.edu>, yebin <yebin@huaweicloud.com>,
+        linux-fsdevel@vger.kernel.org,
+        syzkaller <syzkaller@googlegroups.com>
+Subject: Re: [PATCH] block: Add config option to not allow writing to mounted
+ devices
+Message-ID: <20230614-anstalt-gepfercht-affd490e6544@brauner>
+References: <20230612161614.10302-1-jack@suse.cz>
+ <ZIf6RrbeyZVXBRhm@infradead.org>
+ <CACT4Y+ZsN3wemvGLVyNWj9zjykGwcHoy581w7GuAHGpAj1YLxg@mail.gmail.com>
+ <ZIlphqM9cpruwU6m@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=803; i=brauner@kernel.org; h=from:subject:message-id; bh=znlbGaKAZ44Y3s2Y9/HYLCysbzX2Qza4/9WvzVNIdwg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR0lq7q0ljqE2Qg+HRuwy7NA17Kvw+G+v0JPNbRkj35kkXw x7dvOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACby1IWR4UbrHelnJj9+26S+U11gcP hpqopNxaqlr+Z3CU+6+sjumBTDP0O3+m+vkqtuGPTI+f6bsaHGYr2Dy67eA/8mnFkuenS6KS8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZIlphqM9cpruwU6m@infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -64,23 +62,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 14 Jun 2023 01:01:22 +0800, wenyang.linux@foxmail.com wrote:
-> The EFD_SEMAPHORE flag should be displayed in fdinfo,
-> as different value could affect the behavior of eventfd.
+On Wed, Jun 14, 2023 at 12:17:26AM -0700, Christoph Hellwig wrote:
+> On Tue, Jun 13, 2023 at 08:09:14AM +0200, Dmitry Vyukov wrote:
+> > I don't question there are use cases for the flag, but there are use
+> > cases for the config as well.
+> > 
+> > Some distros may want a guarantee that this does not happen as it
+> > compromises lockdown and kernel integrity (on par with unsigned module
+> > loading).
+> > For fuzzing systems it also may be hard to ensure fine-grained
+> > argument constraints, it's much easier and more reliable to prohibit
+> > it on config level.
 > 
+> I'm fine with a config option enforcing write blocking for any
+> BLK_OPEN_EXCL open.  Maybe the way to it is to:
 > 
+>  a) have an option to prevent any writes to exclusive openers, including
+>     a run-time version to enable it
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] eventfd: show the EFD_SEMAPHORE flag in fdinfo
-      https://git.kernel.org/vfs/vfs/c/33c8c098aaf6
+I really would wish we don't make this runtime configurable. Build time
+and boot time yes but toggling it at runtime makes this already a lot
+less interesting.
