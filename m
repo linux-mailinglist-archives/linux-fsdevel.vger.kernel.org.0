@@ -2,81 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7727272FCA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 13:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 940FF72FD49
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 13:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244187AbjFNLhH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 07:37:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49462 "EHLO
+        id S243898AbjFNLrA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 07:47:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244230AbjFNLgu (ORCPT
+        with ESMTP id S235826AbjFNLq7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 07:36:50 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 831472130;
-        Wed, 14 Jun 2023 04:36:44 -0700 (PDT)
-Received: from [192.168.10.55] (unknown [119.155.33.163])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8B57E6606F13;
-        Wed, 14 Jun 2023 12:36:34 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1686742603;
-        bh=ddEWiutTf5joaQDtbE1zvdeXJT8abQOVdmfhIERBMqU=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=oZMTqtmKEycWY8eSGCy8a1JQ9ZSyl+CEMkboLQegfOkJHqo4Y/XOvr3E1CUiNYZvc
-         FBfUbyTWsZNK7+3q4tGbae2ibwAg52ED0Umao5LSbFW51MSSrewZvyuUFQBJ7s3o/Q
-         9LqazNLBNndgAEwbpuFroO0BZerTYSn5uQSRMd0cvkukk1uvepe07sqwBUYgeg//Am
-         Fq8eDR73Vi9K2Vw1baOAI3ECSTGwfNBYcG8bx5e+K1+buctKI6kkNPqQ2eNl36P5RQ
-         XCm3NE6oxIEA3V3v9ZEwW8WCKjoPJxX2dNxe3zKTECP30NLrkuZ6oo+6i+lVo5PBy1
-         MgAXIrnlrN2Bw==
-Message-ID: <28c141df-16d7-80d7-b1f4-2dcd432b1cd7@collabora.com>
-Date:   Wed, 14 Jun 2023 16:36:26 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Content-Language: en-US
-To:     Randy Dunlap <rdunlap@infradead.org>, Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
+        Wed, 14 Jun 2023 07:46:59 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D214C10D8;
+        Wed, 14 Jun 2023 04:46:58 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 9223D1FDEB;
+        Wed, 14 Jun 2023 11:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1686743217; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=YFHMf/7AFROZukssL33URO15KYKs2xMsFMw9VWiHPOA=;
+        b=k5uyzmJjl8nFyPS17MLVkLMQyQAYSsHNR9iCRdJTxOo3Mli2N4LeCJwsg4gGodxtSTebgs
+        L5Q3whjVIHACOH0T+GqVxS5l1abx8As73k2JfYHCg3Kqp3XjKd/tzPu39hsHqasLZUkrtc
+        GlfPPmmwWOgZ9aqN98gqvJFA0Ys6Kas=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1686743217;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=YFHMf/7AFROZukssL33URO15KYKs2xMsFMw9VWiHPOA=;
+        b=gwE4RXfx6xQuGXY51gX1+mV11s57CjBgyCTXv/7QuYxYMB4EaVTWB9c29nQJzwm8vwwe16
+        wADlEWYv1f7JsrAg==
+Received: from adalid.arch.suse.de (adalid.arch.suse.de [10.161.8.13])
+        by relay2.suse.de (Postfix) with ESMTP id 7C1C02C141;
+        Wed, 14 Jun 2023 11:46:57 +0000 (UTC)
+Received: by adalid.arch.suse.de (Postfix, from userid 16045)
+        id 6CF3A51C4E09; Wed, 14 Jun 2023 13:46:57 +0200 (CEST)
+From:   Hannes Reinecke <hare@suse.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
-        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
-References: <20230613102905.2808371-1-usama.anjum@collabora.com>
- <20230613102905.2808371-3-usama.anjum@collabora.com>
- <dacfde0b-bc72-dae7-e823-7905f27ff296@infradead.org>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <dacfde0b-bc72-dae7-e823-7905f27ff296@infradead.org>
-Content-Type: text/plain; charset=UTF-8
+        Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Hannes Reinecke <hare@suse.de>
+Subject: [PATCH 0/7] RFC: high-order folio support for I/O
+Date:   Wed, 14 Jun 2023 13:46:30 +0200
+Message-Id: <20230614114637.89759-1-hare@suse.de>
+X-Mailer: git-send-email 2.35.3
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_SORBS_WEB,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,31 +60,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/14/23 9:09 AM, Randy Dunlap wrote:
-> 
-> 
-> On 6/13/23 03:29, Muhammad Usama Anjum wrote:
->> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
->> index b7b56871029c..47879c38ce2f 100644
->> --- a/include/uapi/linux/fs.h
->> +++ b/include/uapi/linux/fs.h
->> @@ -305,4 +305,57 @@ typedef int __bitwise __kernel_rwf_t;
->>  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
->>  			 RWF_APPEND)
->>  
->> +/* Pagemap ioctl */
->> +#define PAGEMAP_SCAN	_IOWR('f', 16, struct pm_scan_arg)
-> 
-> Please update Documentation/userspace-api/ioctl/ioctl-number.rst also.
-I've just checked this file and found out that the range is already
-correctly mentioned:
+Hi all,
 
-'f'   00-0F  linux/fs.h                                        conflict!
+now, that was easy.
+Thanks to willy and his recent patchset to support large folios in
+gfs2 turns out that most of the work to support high-order folios
+for I/O is actually done.
+It only need twe rather obvious patches to allocate folios with
+the order derived from the mapping blocksize, and to adjust readahead
+to avoid reading off the end of the device.
+But with these two patches (and the patchset from hch to switch
+the block device over to iomap) (and the patchset from ritesh to
+support sub-blocksize iomap buffers) I can now do:
 
+# modprobe brd rd_size=524288 rd_blksize=16384
+# mkfs.xfs -b size=16384 /dev/ram0
 
-> 
-> thanks.
+it still fails when trying to mount the device:
+
+XFS (ram0): Cannot set_blocksize to 16384 on device ram0
+
+but to my understanding this is being worked on.
+
+Christoph, any chance to have an updated submission of your
+patchset to convert block devices over to iomap?
+I don't actually need the last one to switch off buffer heads,
+but the others really do help for this case.
+
+The entire tree can be found at:
+
+git.kernel.org:/pub/scm/linux/git/kernel/hare/scsi-devel.git
+branch brd.v2
+
+Happy hacking!
+
+Hannes Reinecke (6):
+  brd: convert to folios
+  brd: abstract page_size conventions
+  brd: make sector size configurable
+  brd: make logical sector size configurable
+  mm/filemap: allocate folios with mapping blocksize
+  mm/readahead: align readahead down to mapping blocksize
+
+Pankaj Raghav (1):
+  brd: use XArray instead of radix-tree to index backing pages
+
+ drivers/block/brd.c     | 320 +++++++++++++++++++++-------------------
+ include/linux/pagemap.h |   7 +
+ mm/filemap.c            |   7 +-
+ mm/readahead.c          |  10 +-
+ 4 files changed, 186 insertions(+), 158 deletions(-)
 
 -- 
-BR,
-Muhammad Usama Anjum
+2.35.3
+
