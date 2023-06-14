@@ -2,112 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2A0F72FF66
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:03:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B787272FF74
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:06:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244810AbjFNNDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 09:03:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56278 "EHLO
+        id S244828AbjFNNGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 09:06:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235509AbjFNNDb (ORCPT
+        with ESMTP id S244832AbjFNNF5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:03:31 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FDAD199C;
-        Wed, 14 Jun 2023 06:03:30 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D9F35219A1;
-        Wed, 14 Jun 2023 13:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1686747808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MU22H/MNDJGEWTigTjVbKwhrgWPT8oAuPxOTZnn1eHM=;
-        b=RB7pkRCivSsE7KU1e6+RdYW6iTT0HlugUyrVn51a7TWkTduIH6/DOz7IuceXhn+9wnTZhS
-        jNWIKLM6QF4ULmrK7MEuJBaiz07Gihq9s+2HMuT98sEGzglKEVCCfJw6nLnJAEM98KCGG8
-        6+FR0kxGLGpe/n0Arg04TVD3fuWwxjg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1686747808;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MU22H/MNDJGEWTigTjVbKwhrgWPT8oAuPxOTZnn1eHM=;
-        b=lGUd2w/L0TFJ/VWS7jRtIrk6i8FIpWdj7zrzpZ98yqiDKIN2dMv+yY2roBSIyXlFgtiW1h
-        QiBUbTTBlP4myiDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C74021357F;
-        Wed, 14 Jun 2023 13:03:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id zJwLMKC6iWRjTwAAMHmgww
-        (envelope-from <hare@suse.de>); Wed, 14 Jun 2023 13:03:28 +0000
-Message-ID: <549489d7-ff60-b8d0-9241-60e54e454c14@suse.de>
-Date:   Wed, 14 Jun 2023 15:03:28 +0200
+        Wed, 14 Jun 2023 09:05:57 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E121FF7;
+        Wed, 14 Jun 2023 06:05:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686747955; x=1718283955;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gNR1CGlybaW16+0ie8Xomo54V9jN8wtg2oFB0nLPehs=;
+  b=H4ZgI/0wxXC8Y9M5I3HQ143kGtg+8wLZO2k7p2n2IxiiHW088gQXF39Q
+   7FzPuR69TXY2o30kgYpOAD2b47b63/arhrozyNAa1ZbUAMVx9fxeEBH7e
+   G+3ln0LPPn+VhTQ7aJc8usKvYuOhGSawGLtaTa7VmHXWKXrmsilf5yQ6+
+   lhHnWpZ4sbtpXxFPGY5bOOkvTBMqq5BYFtyu2ydabJGvBEECw/gj1KsFT
+   qfPji0CUX8EgZnEf5y70dRkeOJ9qTnLyJkTHB1WbDx9YwnUe67YmVhB4T
+   ZZDMI33YTk5yyJxwFnPifyNABQ3tBlho7TWlZ0lbUWqJ7dTNxfGwyRtAR
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="343301575"
+X-IronPort-AV: E=Sophos;i="6.00,242,1681196400"; 
+   d="scan'208";a="343301575"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2023 06:05:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="712062604"
+X-IronPort-AV: E=Sophos;i="6.00,242,1681196400"; 
+   d="scan'208";a="712062604"
+Received: from lkp-server02.sh.intel.com (HELO d59cacf64e9e) ([10.239.97.151])
+  by orsmga002.jf.intel.com with ESMTP; 14 Jun 2023 06:05:51 -0700
+Received: from kbuild by d59cacf64e9e with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1q9QC7-0000fI-0K;
+        Wed, 14 Jun 2023 13:05:51 +0000
+Date:   Wed, 14 Jun 2023 21:05:26 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Wei Chin Tsai <Wei-chin.Tsai@mediatek.com>,
+        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     oe-kbuild-all@lists.linux.dev, wsd_upstream@mediatek.com,
+        wei-chin.tsai@mediatek.com, mel.lee@mediatek.com,
+        ivan.tseng@mediatek.com, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 2/3] memory: export symbols for memory related
+ functions
+Message-ID: <202306142030.GjGWnIkY-lkp@intel.com>
+References: <20230614032038.11699-3-Wei-chin.Tsai@mediatek.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/7] brd: use XArray instead of radix-tree to index
- backing pages
-Content-Language: en-US
-To:     Pankaj Raghav <p.raghav@samsung.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <20230614114637.89759-1-hare@suse.de>
- <20230614114637.89759-2-hare@suse.de>
- <CGME20230614124605eucas1p13e57b1da46266467a71f124e40ab8252@eucas1p1.samsung.com>
- <ZIm2fqesAKAHHh5j@casper.infradead.org>
- <25657702-19a7-6523-21bd-c671935c2c2e@samsung.com>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <25657702-19a7-6523-21bd-c671935c2c2e@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230614032038.11699-3-Wei-chin.Tsai@mediatek.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/14/23 14:50, Pankaj Raghav wrote:
->>>   
->>> -		/*
->>> -		 * It takes 3.4 seconds to remove 80GiB ramdisk.
->>> -		 * So, we need cond_resched to avoid stalling the CPU.
->>> -		 */
->>> -		cond_resched();
->>> +	xa_for_each(&brd->brd_pages, idx, page) {
->>> +		__free_page(page);
->>> +		cond_resched_rcu();
->>
->> This should be a regular cond_resched().  The body of the loop is run
->> without the RCU read lock held.  Surprised none of the bots have noticed
->> an unlock-underflow.  Perhaps they don't test brd ;-)
->>
->> With that fixed,
->>
->> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> 
-> This patch is already queued up for 6.5 in Jens's tree.
-> I will send this as a fix soon. Thanks.
+Hi Wei,
 
-Ah. Hence. I've been running off akpms mm-unstable branch, which doesn't 
-have that patch (yet).
+kernel test robot noticed the following build errors:
 
-Cheers,
+[auto build test ERROR on char-misc/char-misc-testing]
+[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.4-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Hannes
+url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Chin-Tsai/kernel-process-fork-exit-export-symbol-for-fork-exit-tracing-functions/20230614-112218
+base:   char-misc/char-misc-testing
+patch link:    https://lore.kernel.org/r/20230614032038.11699-3-Wei-chin.Tsai%40mediatek.com
+patch subject: [PATCH v2 2/3] memory: export symbols for memory related functions
+config: arm-randconfig-r033-20230612 (https://download.01.org/0day-ci/archive/20230614/202306142030.GjGWnIkY-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.3.0
+reproduce (this is a W=1 build):
+        mkdir -p ~/bin
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        git remote add char-misc https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
+        git fetch char-misc char-misc-testing
+        git checkout char-misc/char-misc-testing
+        b4 shazam https://lore.kernel.org/r/20230614032038.11699-3-Wei-chin.Tsai@mediatek.com
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306142030.GjGWnIkY-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: vmlinux: 'arch_vma_name' exported twice. Previous export was in vmlinux
+WARNING: modpost: EXPORT symbol "arch_vma_name" [vmlinux] version generation failed, symbol will not be versioned.
+Is "arch_vma_name" prototyped in <asm/asm-prototypes.h>?
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
