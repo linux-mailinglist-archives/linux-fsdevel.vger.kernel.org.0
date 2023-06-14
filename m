@@ -2,71 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 131AE730084
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA0CA730095
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:50:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245164AbjFNNte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 09:49:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53710 "EHLO
+        id S245243AbjFNNuj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 09:50:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245183AbjFNNtL (ORCPT
+        with ESMTP id S245268AbjFNNu0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:49:11 -0400
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F23722100;
-        Wed, 14 Jun 2023 06:49:09 -0700 (PDT)
-Received: by mail-ua1-x92d.google.com with SMTP id a1e0cc1a2514c-789ca7e52d4so674323241.0;
-        Wed, 14 Jun 2023 06:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686750549; x=1689342549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DgmN305Wj0VktfD8rD9oW6+ePHLMd6mOL3Sd4UaWnI0=;
-        b=p81G1Jf2579C38xZnBX6gMdZ9YZWlzudLwMP7orB7Z60xv/CPD08w5rDcfm4mCpFyC
-         v1xGSHxNso5a1pyx36NwdINr9gJpyNrojn/UyrPMmw7Qe06PujKeRp4pi7uKjDVQVGze
-         ohipMF2jF73lpTGfrq0CSm0zlQJ9Ph3kQcqW8/IEOGDrxj7IFdud0ilKU042R7ELr1QV
-         n94xTBGdJFoCk1kAxvZCrakVOClLCkkBlF9g6enNQY7/6XGezlm98axxuZ1sduxHHpQn
-         qUzf62+xdobBvpa5tE352jzdPLJvZhrIJ1itZLjragfNSdidzg1F6kx/U2G8MUKfL3Le
-         TIaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686750549; x=1689342549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DgmN305Wj0VktfD8rD9oW6+ePHLMd6mOL3Sd4UaWnI0=;
-        b=froMGv1S5XtjWSCYXxhQibor8DzVss9hLP72s/sr0PJMAXz1/qS7+7pnqLis8VWq3l
-         r1YxAJnQ0V1Om3tmyilwzNQtvrqyiP7clITh8lQ2nyNKww45MA8JTyKmy+JUdX7aIzRD
-         K9u2j+D3NQxOF0SRAGg51cjQE3rZ0Guwc7Grz7JCg6ORApkyTDxgnkU2mjTsDOg2FLB4
-         rFbYnHnTVT3dT4VH8+mwAFyqKOpGwekJcbKH1jCx6tExE4Y/mr8JJx9cUtvyVzkmlH08
-         BZthmaKu9hR2h+Sb5Km1+O41JHDnzarDlgoGY/8IYLLqgkLc3nPC7CAcwzx6XVH11e86
-         wEjQ==
-X-Gm-Message-State: AC+VfDyp+5deXLl0y9Y4tg+wA1rj7yg5UVI0tLIP+6rYVg66IaeycD7L
-        PBoWgxYAl0q9FEAThUv6U1K5RRNKs1hgfAnR2BI=
-X-Google-Smtp-Source: ACHHUZ4DXAhmvNdojQdOSxTiILri07BloeJIZu3E/ALspY+ee76S0oGx+Sr1gI4DzmLW/IeYs2GlptXe0nV6MqaE83w=
-X-Received: by 2002:a67:b342:0:b0:43b:ee9f:69dd with SMTP id
- b2-20020a67b342000000b0043bee9f69ddmr4465754vsm.10.1686750548930; Wed, 14 Jun
- 2023 06:49:08 -0700 (PDT)
+        Wed, 14 Jun 2023 09:50:26 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1F7C2116;
+        Wed, 14 Jun 2023 06:50:17 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 732882188F;
+        Wed, 14 Jun 2023 13:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1686750616; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a9V/45eMabXhdU3ckOTW7r4gN0IDt7PkTYtZbqmL44k=;
+        b=rM+JpluVe+Jr5/j6YYpyU/tVWR/032uTsXQmf0akGKqtBrnqiv9J2ECp2dp2GKBapSJiXs
+        QGq8CdA6TdZb3np0SgEl3xUSJE8P3IAl7b5W/2sMk1YyzpH+Wz3z2p3wTwSGLQOwdVZAmd
+        zgfwwotfrMbVoYFAIGR6JRBsQKJky7Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1686750616;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a9V/45eMabXhdU3ckOTW7r4gN0IDt7PkTYtZbqmL44k=;
+        b=GkxWrTsFLuSl8ecpM41owT4NXQNz3dJex//nhOgFxl6AD5O6J64r/oYvOmqg9aD9ojvowo
+        Aweo7KXZa1tq22Dw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6101E1357F;
+        Wed, 14 Jun 2023 13:50:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0/wZF5jFiWRuaAAAMHmgww
+        (envelope-from <hare@suse.de>); Wed, 14 Jun 2023 13:50:16 +0000
+Message-ID: <6c6bb81e-04cd-f813-c06c-59a706685d63@suse.de>
+Date:   Wed, 14 Jun 2023 15:50:16 +0200
 MIME-Version: 1.0
-References: <20230614074907.1943007-1-amir73il@gmail.com> <20230614074907.1943007-2-amir73il@gmail.com>
- <20230614-kilowatt-kindgerecht-46c7210ee82e@brauner>
-In-Reply-To: <20230614-kilowatt-kindgerecht-46c7210ee82e@brauner>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 14 Jun 2023 16:48:57 +0300
-Message-ID: <CAOQ4uxgjKUm9-khLsmWAMqfKk03C2FYbJ-Dp75KZ0LJbqbsRdw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] fs: use backing_file container for internal files
- with "fake" f_path
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 2/7] brd: convert to folios
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
         Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        Luis Chamberlain <mcgrof@kernel.org>
+References: <20230614114637.89759-1-hare@suse.de>
+ <20230614114637.89759-3-hare@suse.de> <ZInEeq1lfDUxye58@casper.infradead.org>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <ZInEeq1lfDUxye58@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,106 +77,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 4:26=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Wed, Jun 14, 2023 at 10:49:06AM +0300, Amir Goldstein wrote:
-> > Overlayfs and cachefiles use open_with_fake_path() to allocate internal
-> > files, where overlayfs also puts a "fake" path in f_path - a path which
-> > is not on the same fs as f_inode.
-> >
-> > Allocate a container struct backing_file for those internal files, that
-> > is used to hold the "fake" ovl path along with the real path.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/cachefiles/namei.c |  4 +--
-> >  fs/file_table.c       | 74 +++++++++++++++++++++++++++++++++++++------
-> >  fs/internal.h         |  5 +--
-> >  fs/open.c             | 30 +++++++++++-------
-> >  fs/overlayfs/file.c   |  4 +--
-> >  include/linux/fs.h    | 24 +++++++++++---
-> >  6 files changed, 109 insertions(+), 32 deletions(-)
-> >
-> > diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> > index 82219a8f6084..283534c6bc8d 100644
-> > --- a/fs/cachefiles/namei.c
-> > +++ b/fs/cachefiles/namei.c
-> > @@ -560,8 +560,8 @@ static bool cachefiles_open_file(struct cachefiles_=
-object *object,
-> >        */
-> >       path.mnt =3D cache->mnt;
-> >       path.dentry =3D dentry;
-> > -     file =3D open_with_fake_path(&path, O_RDWR | O_LARGEFILE | O_DIRE=
-CT,
-> > -                                d_backing_inode(dentry), cache->cache_=
-cred);
-> > +     file =3D open_backing_file(&path, O_RDWR | O_LARGEFILE | O_DIRECT=
-,
-> > +                              &path, cache->cache_cred);
-> >       if (IS_ERR(file)) {
-> >               trace_cachefiles_vfs_error(object, d_backing_inode(dentry=
-),
-> >                                          PTR_ERR(file),
-> > diff --git a/fs/file_table.c b/fs/file_table.c
-> > index 372653b92617..138d5d405df7 100644
-> > --- a/fs/file_table.c
-> > +++ b/fs/file_table.c
-> > @@ -44,18 +44,40 @@ static struct kmem_cache *filp_cachep __read_mostly=
-;
-> >
-> >  static struct percpu_counter nr_files __cacheline_aligned_in_smp;
-> >
-> > +/* Container for backing file with optional real path */
-> > +struct backing_file {
-> > +     struct file file;
-> > +     struct path real_path;
-> > +};
-> > +
-> > +static inline struct backing_file *backing_file(struct file *f)
-> > +{
-> > +     return container_of(f, struct backing_file, file);
-> > +}
-> > +
-> > +struct path *backing_file_real_path(struct file *f)
-> > +{
-> > +     return &backing_file(f)->real_path;
-> > +}
-> > +EXPORT_SYMBOL_GPL(backing_file_real_path);
-> > +
-> >  static void file_free_rcu(struct rcu_head *head)
-> >  {
-> >       struct file *f =3D container_of(head, struct file, f_rcuhead);
-> >
-> >       put_cred(f->f_cred);
-> > -     kmem_cache_free(filp_cachep, f);
-> > +     if (unlikely(f->f_mode & FMODE_BACKING))
-> > +             kfree(backing_file(f));
-> > +     else
-> > +             kmem_cache_free(filp_cachep, f);
-> >  }
-> >
-> >  static inline void file_free(struct file *f)
-> >  {
-> >       security_file_free(f);
-> > -     if (!(f->f_mode & FMODE_NOACCOUNT))
-> > +     if (unlikely(f->f_mode & FMODE_BACKING))
-> > +             path_put(backing_file_real_path(f));
-> > +     else
-> >               percpu_counter_dec(&nr_files);
->
-> I think this needs to be:
->
-> if (unlikely(f->f_mode & FMODE_BACKING))
->         path_put(backing_file_real_path(f));
->
-> if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
->         percpu_counter_dec(&nr_files);
->
-> as we do have FMODE_NOACCOUNT without FMODE_BACKING.
->
+On 6/14/23 15:45, Matthew Wilcox wrote:
+> On Wed, Jun 14, 2023 at 01:46:32PM +0200, Hannes Reinecke wrote:
+>>   /*
+>> - * Each block ramdisk device has a xarray brd_pages of pages that stores
+>> - * the pages containing the block device's contents. A brd page's ->index is
+>> - * its offset in PAGE_SIZE units. This is similar to, but in no way connected
+>> - * with, the kernel's pagecache or buffer cache (which sit above our block
+>> - * device).
+>> + * Each block ramdisk device has a xarray of folios that stores the folios
+>> + * containing the block device's contents. A brd folio's ->index is its offset
+>> + * in PAGE_SIZE units. This is similar to, but in no way connected with,
+>> + * the kernel's pagecache or buffer cache (which sit above our block device).
+> 
+> Having read my way to the end of the series, I can now circle back and
+> say this comment is wrong.  The folio->index is its offset in PAGE_SIZE
+> units if the sector size is <= PAGE_SIZE, otherwise it's the offset in
+> sector size units.  This is _different from_ the pagecache which uses
+> PAGE_SIZE units and multi-index entries in the XArray.
+> 
+Hmm. I am aware that brd is using the ->index field in a different way,
+but I thought I got it straigtened out ...
 
-Ouch! good catch!
+>> @@ -144,29 +143,29 @@ static int copy_to_brd_setup(struct brd_device *brd, sector_t sector, size_t n,
+>>   static void copy_to_brd(struct brd_device *brd, const void *src,
+>>   			sector_t sector, size_t n)
+>>   {
+>> -	struct page *page;
+>> +	struct folio *folio;
+>>   	void *dst;
+>>   	unsigned int offset = (sector & (PAGE_SECTORS-1)) << SECTOR_SHIFT;
+>>   	size_t copy;
+>>   
+>>   	copy = min_t(size_t, n, PAGE_SIZE - offset);
+>> -	page = brd_lookup_page(brd, sector);
+>> -	BUG_ON(!page);
+>> +	folio = brd_lookup_folio(brd, sector);
+>> +	BUG_ON(!folio);
+>>   
+>> -	dst = kmap_atomic(page);
+>> -	memcpy(dst + offset, src, copy);
+>> -	kunmap_atomic(dst);
+>> +	dst = kmap_local_folio(folio, offset);
+>> +	memcpy(dst, src, copy);
+>> +	kunmap_local(dst);
+> 
+> This should use memcpy_to_folio(), which doesn't exist yet.
+> Compile-tested patch incoming shortly ...
+> 
+Ah. You live and learn.
 
-Thanks,
-Amir.
+>> +	folio = brd_lookup_folio(brd, sector);
+>> +	if (folio) {
+>> +		src = kmap_local_folio(folio, offset);
+>> +		memcpy(dst, src, copy);
+>> +		kunmap_local(src);
+> 
+> And this will need memcpy_from_folio(), patch for that incoming too.
+> 
+>> @@ -226,15 +225,15 @@ static int brd_do_bvec(struct brd_device *brd, struct page *page,
+>>   			goto out;
+>>   	}
+>>   
+>> -	mem = kmap_atomic(page);
+>> +	mem = kmap_local_folio(folio, off);
+>>   	if (!op_is_write(opf)) {
+>> -		copy_from_brd(mem + off, brd, sector, len);
+>> -		flush_dcache_page(page);
+>> +		copy_from_brd(mem, brd, sector, len);
+>> +		flush_dcache_folio(folio);
+> 
+> Nngh.  This will need to be a more complex loop.  I don't think we can
+> do a simple abstraction here.  Perhaps you can base it on the two
+> patches you're about to see?
+> 
+Sure.
+Might explain the strange crashes I've seen ...
+
+Cheers,
+
+Hannes
+
