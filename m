@@ -2,119 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02FA372F2DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 04:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 916F372F2FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 05:21:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233720AbjFNC5t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 22:57:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42892 "EHLO
+        id S242432AbjFNDVF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 23:21:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231940AbjFNC5s (ORCPT
+        with ESMTP id S242392AbjFNDU5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 22:57:48 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2189C10C2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 19:57:48 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-7-50-124.bstnma.fios.verizon.net [108.7.50.124])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 35E2v7wg001107
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Jun 2023 22:57:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1686711430; bh=o+siL7mO6d4HbHE/YemwrmObXrYPBI9d0hd+VStp+vk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=BPHxycFdvuthb7BAAa6rdRy2cxRVrFcfu3BRddmQsFnwSU00KT67RXFUU+wMVAx2p
-         DSVhH7+I7BK5Ut4d/+3DgBJknQuGkY6MSaLSi2qaqE97EOfaC97p08CTJC9FEi3D+R
-         FCdDRmLYRmfHea96UfSNJgCLQHeszTkeqa1dsNyKp89lIhNU6PVoxv30QJY53W49c2
-         62mOskBufI+VVmbDQd4VHJIOg0chOileNySp9VYKmWL0qb4Rdu+VKh9kfvZVaXZju/
-         mvTqjH1b8Oxrhu7C3/2X2ulOH+yyrO/+cLRp67Q+l+ikL+z0XgRF5CwjYFBgk51/5D
-         v3iUYM2v+O0wA==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 9871A15C00B0; Tue, 13 Jun 2023 22:57:07 -0400 (EDT)
-Date:   Tue, 13 Jun 2023 22:57:07 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        yebin <yebin@huaweicloud.com>, linux-fsdevel@vger.kernel.org,
-        Kees Cook <keescook@google.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH] block: Add config option to not allow writing to mounted
- devices
-Message-ID: <20230614025707.GA48153@mit.edu>
-References: <20230612161614.10302-1-jack@suse.cz>
- <CACT4Y+aEScXmq2F1-vqAfr-b2w-xyOohN+FZxorW1YuRvKDLNQ@mail.gmail.com>
- <20230614020412.GB11423@frogsfrogsfrogs>
+        Tue, 13 Jun 2023 23:20:57 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86BFC196;
+        Tue, 13 Jun 2023 20:20:55 -0700 (PDT)
+X-UUID: 76115b980a6211ee9cb5633481061a41-20230614
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=w48tSpLqh1bjHgLcJdsXqvkcCf7nU4CX/ADnj4B4dnk=;
+        b=WVi6RE4eL72h0ItIjr69r/D4N7M9q45UPK3mGZQ3sMqUgG5nNUO20RSrL9uAEfkQACtT3Ys+Gsg/dz8NzB/0RzQ8HjLq6Sv8U2+14IEAu1Yo4M33HtKh/qXsM1IDPUNB4AKz7N6khn8f8JPZGw0WVrnaauBkIOjB1qgIHcasFXU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.26,REQID:58c44784-1a93-475a-a639-9ef4b69fb3df,IP:0,U
+        RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+        N:release,TS:-25
+X-CID-META: VersionHash:cb9a4e1,CLOUDID:de9b8b3e-7aa7-41f3-a6bd-0433bee822f3,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 76115b980a6211ee9cb5633481061a41-20230614
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+        (envelope-from <wei-chin.tsai@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1036596478; Wed, 14 Jun 2023 11:20:49 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 14 Jun 2023 11:20:48 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 14 Jun 2023 11:20:48 +0800
+From:   Wei Chin Tsai <Wei-chin.Tsai@mediatek.com>
+To:     <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+CC:     <wsd_upstream@mediatek.com>, <wei-chin.tsai@mediatek.com>,
+        <mel.lee@mediatek.com>, <ivan.tseng@mediatek.com>,
+        Wei Chin Tsai <Wei-chin.Tsai@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH v2 2/3] memory: export symbols for memory related functions
+Date:   Wed, 14 Jun 2023 11:20:34 +0800
+Message-ID: <20230614032038.11699-3-Wei-chin.Tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20230614032038.11699-1-Wei-chin.Tsai@mediatek.com>
+References: <20230614032038.11699-1-Wei-chin.Tsai@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230614020412.GB11423@frogsfrogsfrogs>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 13, 2023 at 07:04:12PM -0700, Darrick J. Wong wrote:
-> 
-> Well in that case, post a patchset adding "depends on INSECURE" for
-> every subsystem that syzbot files bugs against, if the maintainers do
-> not immediately drop what they're doing to resolve the bug.
-> 
-> Google extracts a bunch more unpaid labor from society to make its
-> owners richer, and everyone else on the planet suffers for it, just like
-> you all have done for the past 25 years.  That's the definition of
-> Googley!!
+In this patch, we modified 3 files and export symbols
+for 2 functions.
+Export symbols for "smap_gather_stats" functions so that
+user can have an idea for each user process memory's usage.
+Export symbols for "arch_vma_name" functions so that
+user can know the heap usage for each user process.
+According to these two information, user can do the memory
+statistics and anaysis.
 
-To be fair, I don't think this is the official position of Google, but
-rather Dmitry's personal security ideology (as Dave put it).
+Signed-off-by: Wei Chin Tsai <Wei-chin.Tsai@mediatek.com>
+---
+ arch/arm/kernel/process.c | 1 +
+ fs/proc/task_mmu.c        | 5 +++--
+ kernel/signal.c           | 1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-Dmitry, tell you what.  If you can find a vice president inside Google
-who thinks this that preventing an attacker who has the ability to
-modify a block device while it is mounted, while running code under
-the control of the attacker, from being to potentially trigger the
-ability to run ring 0 code --- and who believes it enough to actually
-**fund** a headcount to actually work these syzbot reports --- I'll
-gladly help to supervise that person and mentor their ability to work
-these ext4 syzbot reports.
+diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+index 0e8ff85890ad..df91412a1069 100644
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@ -343,6 +343,7 @@ const char *arch_vma_name(struct vm_area_struct *vma)
+ {
+ 	return is_gate_vma(vma) ? "[vectors]" : NULL;
+ }
++EXPORT_SYMBOL_GPL(arch_vma_name);
+ 
+ /* If possible, provide a placement hint at a random offset from the
+  * stack for the sigpage and vdso pages.
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 6259dd432eeb..814d7829a20b 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -773,8 +773,8 @@ static const struct mm_walk_ops smaps_shmem_walk_ops = {
+  *
+  * Use vm_start of @vma as the beginning address if @start is 0.
+  */
+-static void smap_gather_stats(struct vm_area_struct *vma,
+-		struct mem_size_stats *mss, unsigned long start)
++void smap_gather_stats(struct vm_area_struct *vma,
++		       struct mem_size_stats *mss, unsigned long start)
+ {
+ 	const struct mm_walk_ops *ops = &smaps_walk_ops;
+ 
+@@ -809,6 +809,7 @@ static void smap_gather_stats(struct vm_area_struct *vma,
+ 	else
+ 		walk_page_range(vma->vm_mm, start, vma->vm_end, ops, mss);
+ }
++EXPORT_SYMBOL_GPL(smap_gather_stats);
+ 
+ #define SEQ_PUT_DEC(str, val) \
+ 		seq_put_decimal_ull_width(m, str, (val) >> 10, 8)
+diff --git a/kernel/signal.c b/kernel/signal.c
+index b5370fe5c198..a1abe77fcdc3 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -4700,6 +4700,7 @@ __weak const char *arch_vma_name(struct vm_area_struct *vma)
+ {
+ 	return NULL;
+ }
++EXPORT_SYMBOL_GPL(arch_vma_name);
+ 
+ static inline void siginfo_buildtime_checks(void)
+ {
+-- 
+2.18.0
 
-But I think you will find that the VP's will believe that this is not
-a threat that has a genuine business case which is important enough
-that they are willing to fund it.  And I'm saying as an upstream
-developer, *other* syzbot reports are higher priority, because in my
-judgement, they are much more willing to impact real users, and are
-more likely to be issues that management chain would consider higher
-priority.  (Never mind that *all* of my syzbot work has been done on
-my own time.)
-
-For those of us who are working with limited resources, and doing this
-work out of the kindness of our hearts, it would be nice to filter out
-those syzbot reports that in our best judgement, constitute **noise**.
-If there is not a good way to filter out the noise, it is likely that
-upstream developers will choose to use their time working with other
-tools that are better suited to getting our job done as we understand
-it.
-
-So far, there is been a lot work done by folks on your team which has
-made syzbot easier for us to use, and for that, I thank you.  But your
-position on forcing your ideology of which security bugs I should fix
-on my own time is.... annoying.  And if others feel the same way, your
-attitude is going to be counter-productive towards the goals you have
-towards making Linux more secure.
-
-Sometimes, the "best" is the enemy is the "good enough".  And in this
-era of Google's "sharpened focus" or Facebook's "year of efficiency",
-very often, "good enough" is all the vice presidents are willing to
-fund.
-
-Best regards,
-
-						- Ted
