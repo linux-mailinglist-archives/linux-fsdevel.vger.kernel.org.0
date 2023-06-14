@@ -2,70 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 875CA72FA27
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 12:10:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 842BD72FA31
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 12:13:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235103AbjFNKKp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 06:10:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59950 "EHLO
+        id S235967AbjFNKNB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 06:13:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232853AbjFNKKm (ORCPT
+        with ESMTP id S234949AbjFNKM7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 06:10:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D21DE52
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 03:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686737396;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=MBrjoJbmEWc/Tn6Mkt7SpycUJkuHckypR5ks5lDPTJ8=;
-        b=UGMzHWjCIhqCOtVdgMf3rmjA38B/SrKYCTshUIO1Qw2yx2afgc5w9AKteH4SMXjy9NcF+F
-        5Zo1yCFYxua6u6GKRfchl8VcDDMaQ5a4/DYgLEEhmHlGuneoDGkLwfUmx95FypCOSn69c1
-        BMQtmu44fsmc3R+FW7IcIX2N5ah4kEE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-567-DPX2FsP-PxqlW4E_Wy1R1w-1; Wed, 14 Jun 2023 06:09:53 -0400
-X-MC-Unique: DPX2FsP-PxqlW4E_Wy1R1w-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 14 Jun 2023 06:12:59 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75CA3E5;
+        Wed, 14 Jun 2023 03:12:58 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 55518830EFD;
-        Wed, 14 Jun 2023 10:09:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AEA7740C6F5D;
-        Wed, 14 Jun 2023 10:09:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-cc:     dhowells@redhat.com,
-        syzbot+f9e28a23426ac3b24f20@syzkaller.appspotmail.com,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] splice, net: Fix splice_to_socket() to handle pipe bufs larger than a page
+        by smtp-out1.suse.de (Postfix) with ESMTPS id CFF3C21866;
+        Wed, 14 Jun 2023 10:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1686737576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RcnMyCGQSVLPr1665FLwoANm07JPi2RGJjuXELBzg4Q=;
+        b=l37pL87Tk9c1i+d/d6Ijbo+3GH7yR27y5d3LA7xZaumX/bUQzD0TnCDi/VvmZnoCCAyvSW
+        1HYoiThlXEI7MiQt1XbitAEbzXTC4SYpVhEgTuBpSzzSFZVVrmMYJcJTFlLBOn/g3spppF
+        Iekw4MEXdtUUqzzesdl9ENLeVwDK8wI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1686737576;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RcnMyCGQSVLPr1665FLwoANm07JPi2RGJjuXELBzg4Q=;
+        b=JwvYAcS2nur+2SMuqTxIzt06k6S+8oPtkLXBbdm+BHrYvTgQj7lHlb9jorV81WO01LMo6z
+        2+yVf1b0slvabWBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C1B861391E;
+        Wed, 14 Jun 2023 10:12:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id +bZUL6iSiWTUcQAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 14 Jun 2023 10:12:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 467C5A0755; Wed, 14 Jun 2023 12:12:56 +0200 (CEST)
+Date:   Wed, 14 Jun 2023 12:12:56 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, Colin Walters <walters@verbum.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Theodore Ts'o <tytso@mit.edu>, yebin <yebin@huaweicloud.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] block: Add config option to not allow writing to mounted
+ devices
+Message-ID: <20230614101256.kgnui242k72lmp4e@quack3>
+References: <20230612161614.10302-1-jack@suse.cz>
+ <20230612162545.frpr3oqlqydsksle@quack3>
+ <2f629dc3-fe39-624f-a2fe-d29eee1d2b82@acm.org>
+ <a6c355f7-8c60-4aab-8f0c-5c6310f9c2a8@betaapp.fastmail.com>
+ <20230613113448.5txw46hvmdjvuoif@quack3>
+ <ZIln4s7//kjlApI0@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1428984.1686737388.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 14 Jun 2023 11:09:48 +0100
-Message-ID: <1428985.1686737388@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZIln4s7//kjlApI0@infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,91 +81,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-    =
+On Wed 14-06-23 00:10:26, Christoph Hellwig wrote:
+> On Tue, Jun 13, 2023 at 01:34:48PM +0200, Jan Kara wrote:
+> > > It's not just syzbot here; at least once in my life I accidentally did
+> > > `dd if=/path/to/foo.iso of=/dev/sda` when `/dev/sda` was my booted disk
+> > > and not the target USB device.  I know I'm not alone =)
+> > 
+> > Yeah, so I'm not sure we are going to protect against this particular case.
+> > I mean it is not *that* uncommon to alter partition table of /dev/sda while
+> > /dev/sda1 is mounted. And for the kernel it is difficult to distinguish
+> > this and your mishap.
+> 
+> I think it is actually very easy to distinguish, because the partition
+> table is not mapped to any partition and certainly not an exclusively
+> opened one.
 
-splice_to_socket() assumes that a pipe_buffer won't hold more than a singl=
-e
-page of data - but this assumption can be violated by skb_splice_bits()
-when it splices from a socket into a pipe.
+Well, OK, I have not been precise :). Modifying a partition table (or LVM
+description block) is impossible to distinguish from clobbering a
+filesystem on open(2) time. Once we decide we implement arbitration of each
+individual write(2), we can obviously stop writes to area covered by some
+exclusively open partition. But then you are getting at the complexity
+level of tracking used ranges of block devices which Darrick has suggested
+and you didn't seem to like that (and neither do I). Furthermore the
+protection is never going to be perfect as soon as loopback devices, device
+mapper, and similar come into the mix (or it gets really really complex).
+So I'd really prefer to stick with whatever arbitration we can perform on
+open(2).
 
-The problem is that splice_to_socket() doesn't advance the pipe_buffer
-length and offset when transcribing from the pipe buf into a bio_vec, so i=
-f
-the buf is >PAGE_SIZE, it keeps repeating the same initial chunk and
-doesn't advance the tail index.  It then subtracts this from "remain" and
-overcounts the amount of data to be sent.
+> > 1) If user can write some image and make kernel mount it.
+> > 2) If user can modify device content while mounted (but not buffer cache
+> > of the device).
+> > 3) If user can modify buffer cache of the device while mounted.
+> > 
+> > 3) is the most problematic and effectively equivalent to full machine
+> > control (executing arbitrary code in kernel mode) these days.
+> 
+> If a corrupted image can trigger arbitrary code execution that also
+> means the file system code does not do proper input validation.
 
-The cleanup phase then tries to overclean the pipe, hits an unused pipe bu=
-f
-and a NULL-pointer dereference occurs.
+I agree. But case 3) is not about corrupted image - it is about userspace's
+ability to corrupt data stored in the buffer cache *after* it has been
+loaded from the image and verified. This is not a problem for XFS which has
+its private block device cache incoherent with the buffer cache you access
+when opening the bdev but basically every other filesystem suffers from
+this problem.
 
-Fix this by not restricting the bio_vec size to PAGE_SIZE and instead
-transcribing the entirety of each pipe_buffer into a single bio_vec and
-advancing the tail index if remain hasn't hit zero yet.
-
-Large bio_vecs will then be split up by iterator functions such as
-iov_iter_extract_pages().
-
-This resulted in a KASAN report looking like:
-
-general protection fault, probably for non-canonical address 0xdffffc00000=
-00001: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-...
-RIP: 0010:pipe_buf_release include/linux/pipe_fs_i.h:203 [inline]
-RIP: 0010:splice_to_socket+0xa91/0xe30 fs/splice.c:933
-
-Fixes: 2dc334f1a63a ("splice, net: Use sendmsg(MSG_SPLICE_PAGES) rather th=
-an ->sendpage()")
-Reported-by: syzbot+f9e28a23426ac3b24f20@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/r/0000000000000900e905fdeb8e39@google.com/
-Tested-by: syzbot+f9e28a23426ac3b24f20@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-cc: David Ahern <dsahern@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Christian Brauner <brauner@kernel.org>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: netdev@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/splice.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/splice.c b/fs/splice.c
-index e337630aed64..567a1f03ea1e 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -886,7 +886,6 @@ ssize_t splice_to_socket(struct pipe_inode_info *pipe,=
- struct file *out,
- 			}
- =
-
- 			seg =3D min_t(size_t, remain, buf->len);
--			seg =3D min_t(size_t, seg, PAGE_SIZE);
- =
-
- 			ret =3D pipe_buf_confirm(pipe, buf);
- 			if (unlikely(ret)) {
-@@ -897,10 +896,9 @@ ssize_t splice_to_socket(struct pipe_inode_info *pipe=
-, struct file *out,
- =
-
- 			bvec_set_page(&bvec[bc++], buf->page, seg, buf->offset);
- 			remain -=3D seg;
--			if (seg >=3D buf->len)
--				tail++;
--			if (bc >=3D ARRAY_SIZE(bvec))
-+			if (remain =3D=3D 0 || bc >=3D ARRAY_SIZE(bvec))
- 				break;
-+			tail++;
- 		}
- =
-
- 		if (!bc)
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
