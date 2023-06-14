@@ -2,83 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EACBB7300D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46C8D73011F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 16:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245204AbjFNNxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 09:53:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58230 "EHLO
+        id S245355AbjFNODu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 10:03:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245083AbjFNNxy (ORCPT
+        with ESMTP id S236460AbjFNODt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:53:54 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A748A6;
-        Wed, 14 Jun 2023 06:53:53 -0700 (PDT)
+        Wed, 14 Jun 2023 10:03:49 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56EEFCD;
+        Wed, 14 Jun 2023 07:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BrKiZJ/7P5/xEOj2+1/+w23iGdbuRJcoaS4+TydPQrU=; b=iaVfzAFislHMvK4fgcYmEmftit
-        zSer6ZD4amu8Fdm6wa+O8vMTfFneJYaM+AdziypCD/zY/RTsk8X82jEepoZPIJpJekz3sfvECo7Jb
-        8J86iS2YDuk6a4XkJS0b7NQtp2uxVuhpiypSXRwzVESAUCvqBOTg0UOUkXc95QHpQsLpNOVy9igfz
-        68qStwCEjF3XiQ+yailPKEWyCPdvXQ2v0OM9AVPaRxva87xatn4VUJpPnl6J/D3Ll3cNpgQbqCmF/
-        oVenZBP+RBREOUa29WQnrygaWSg+mWVKZZaNwQ/KX9anVQofdOSwrVsK+8A9j6qXz8utJllUJ9JY0
-        65z3PjCQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q9QwZ-006O5L-B0; Wed, 14 Jun 2023 13:53:51 +0000
-Date:   Wed, 14 Jun 2023 14:53:51 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH 0/7] RFC: high-order folio support for I/O
-Message-ID: <ZInGbz6X/ZQAwdRx@casper.infradead.org>
-References: <20230614114637.89759-1-hare@suse.de>
- <cd816905-0e3e-6397-1a6f-fd4d29dfc739@suse.de>
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=Dxv9yZH5Cq3a68CFMHSbxe2K3jCtV+ECrt+k1qx7EHA=; b=sG9nO9EBC4wDI7ERlLrcD9lQur
+        FlaE1RloXVDpRiK4nl6U6eZlN7VOIy6qOoHr0nNLkhYCwN5mQ4UCBf2NaOvpJGcXv6YZlNvhuBYZy
+        OLeU7PKHpcKPDmUK62QHCAsDlkwXMMiiULUHg2cVuW6oo0TgY06gNLibbC4oVXBAUEIxn8K+z67QE
+        AmgLm/ZXn+j5w68/PaPlXvzoPgDBZifO1FZxOuP3vWRFQn29nXiZrVsaSnAfDziPk1Uyw02ZqhjKT
+        o0OzQ8cgirNgNNHsAke4MRbYngh2gNykkp6L+CsioJLbv4J1DGuPsGgPQq0qbb9bVhkRY0huZALvB
+        hxSmkpsA==;
+Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1q9R69-00Br8z-2T;
+        Wed, 14 Jun 2023 14:03:46 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: dio / splice fixups
+Date:   Wed, 14 Jun 2023 16:03:37 +0200
+Message-Id: <20230614140341.521331-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd816905-0e3e-6397-1a6f-fd4d29dfc739@suse.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 03:17:25PM +0200, Hannes Reinecke wrote:
-> Turns out that was quite easy to fix (just remove the check in
-> set_blocksize()), but now I get this:
-> 
-> SGI XFS with ACLs, security attributes, quota, no debug enabled
-> XFS (ram0): File system with blocksize 16384 bytes. Only pagesize (4096) or
-> less will currently work.
+Hi all,
 
-What happens if you just remove this hunk:
+this series has a small fix and a bunch of cleanups on top of the
+splice and direct I/O rework in the block tree.
 
-+++ b/fs/xfs/xfs_super.c
-@@ -1583,18 +1583,6 @@ xfs_fs_fill_super(
-                goto out_free_sb;
-        }
-
--       /*
--        * Until this is fixed only page-sized or smaller data blocks work.
--        */
--       if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
--               xfs_warn(mp,
--               "File system with blocksize %d bytes. "
--               "Only pagesize (%ld) or less will currently work.",
--                               mp->m_sb.sb_blocksize, PAGE_SIZE);
--               error = -ENOSYS;
--               goto out_free_sb;
--       }
--
-        /* Ensure this filesystem fits in the page cache limits */
-        if (xfs_sb_validate_fsb_count(&mp->m_sb, mp->m_sb.sb_dblocks) ||
-            xfs_sb_validate_fsb_count(&mp->m_sb, mp->m_sb.sb_rblocks)) {
+ block/blk.h               |    2 --
+ fs/splice.c               |   15 +++++++--------
+ include/linux/bio.h       |    3 +--
+ include/linux/blk_types.h |    1 -
+ include/linux/uio.h       |    6 ------
+ lib/iov_iter.c            |   35 +++++++----------------------------
+ 6 files changed, 15 insertions(+), 47 deletions(-)
