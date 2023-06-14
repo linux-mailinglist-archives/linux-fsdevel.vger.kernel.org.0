@@ -2,136 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9D3272F904
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 11:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 980B772F9B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 11:46:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243979AbjFNJ0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 05:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33840 "EHLO
+        id S244238AbjFNJqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 05:46:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243564AbjFNJ0g (ORCPT
+        with ESMTP id S244234AbjFNJqQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 05:26:36 -0400
-Received: from mx2.veeam.com (mx2.veeam.com [64.129.123.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E946D1FD4;
-        Wed, 14 Jun 2023 02:26:33 -0700 (PDT)
-Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 14 Jun 2023 05:46:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFB6B269E;
+        Wed, 14 Jun 2023 02:45:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mx2.veeam.com (Postfix) with ESMTPS id 1EFF9422C4;
-        Wed, 14 Jun 2023 05:26:28 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
-        s=mx2-2022; t=1686734788;
-        bh=TrwuhYcstPik75UcplGmnA0hgEPNnuFfFZc3d9G7byk=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To:From;
-        b=W3a5lkq5kxpezhv3wFI+XM203PRzZQ1+sZJij4aCENw/bd0T8yGdPVvn9vyxYmAyG
-         ek98R3IRPtJ5DB9PBJKc9YGB4YGnKoHBMBxINqgF0hSi8h1fSkwaxIu4oQ27fdXN1e
-         GKJrVLaNGB7mdnNeOuvjUeHvYuW78lKCDMGSa19LeC3vIaJ2Rt9+HARWZc6vzp/Nvq
-         PAhSFfyhuVFNGMviFWy0/2JMNQbKoFiqhxZYoVtGRg83ICXIOa3u3pp6tLTkjhEupY
-         wd6c7d6Z0lg+BZr8c53Qeb+7vfAjOSN6Mu8JNgov83tEnAErmNgyP8TXY++Oh6lwU8
-         USTS0e2ROpbBA==
-Received: from [172.24.10.107] (172.24.10.107) by prgmbx01.amust.local
- (172.24.128.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.26; Wed, 14 Jun
- 2023 11:26:26 +0200
-Message-ID: <733f591e-0e8f-8668-8298-ddb11a74df81@veeam.com>
-Date:   Wed, 14 Jun 2023 11:26:20 +0200
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 183C263A37;
+        Wed, 14 Jun 2023 09:45:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BF80C433C0;
+        Wed, 14 Jun 2023 09:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686735950;
+        bh=bOUTEmQRNYc2XRJruJB03nYq61euHP/sjkiGBDp0jWY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YagmxNqX4bkrWOB9BBQcotdoXxdLP0fEnyz9wXn8Sl7+EjU/LxuJDdp9uBB38g0YT
+         mRxpCUyx9P6EIwxoACtoqJiSwoWqfAbU7UdZVVcdTSLc7F1aPshmkHgjI4E+Eus30y
+         KepqggXk0js7bVCTE8quhjgSx70PCFTnpgQoTJU0SzXjUfKtWdByl13UOcfXTdTsKN
+         3N1RD4YgTpBGTPj1vFue4yhScbXUY8z4yta5NFW094UZGmvAO96SvWQp1e+iQx9E7J
+         aq9N5Z8k/eB5IE529DjlRUXFOVzfT3c+Ch0i+yrrhxr+i8q8T4XLKpTPuNWhenChf0
+         moyzO6KNMk/zA==
+Date:   Wed, 14 Jun 2023 11:45:45 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     Xiubo Li <xiubli@redhat.com>, Gregory Farnum <gfarnum@redhat.com>,
+        stgraber@ubuntu.com, linux-fsdevel@vger.kernel.org,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+Message-ID: <20230614-westseite-urlaub-7a5afcf0577a@brauner>
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+ <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner>
+ <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
+ <CAEivzxeZ6fDgYMnjk21qXYz13tHqZa8rP-cZ2jdxkY0eX+dOjw@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v5 04/11] blksnap: header file of the module interface
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>
-CC:     <axboe@kernel.dk>, <corbet@lwn.net>, <snitzer@kernel.org>,
-        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <dchinner@redhat.com>, <willy@infradead.org>, <dlemoal@kernel.org>,
-        <linux@weissschuh.net>, <jack@suse.cz>, <ming.lei@redhat.com>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Donald Buczek <buczek@molgen.mpg.de>
-References: <20230612135228.10702-1-sergei.shtepa@veeam.com>
- <20230612135228.10702-5-sergei.shtepa@veeam.com>
- <ZIjsywOtHM5nIhSr@dread.disaster.area> <ZIldkb1pwhNsSlfl@infradead.org>
-From:   Sergei Shtepa <sergei.shtepa@veeam.com>
-In-Reply-To: <ZIldkb1pwhNsSlfl@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.24.10.107]
-X-ClientProxiedBy: prgmbx02.amust.local (172.24.128.103) To
- prgmbx01.amust.local (172.24.128.102)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29240315546D7063
-X-Veeam-MMEX: True
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEivzxeZ6fDgYMnjk21qXYz13tHqZa8rP-cZ2jdxkY0eX+dOjw@mail.gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 6/14/23 08:26, Christoph Hellwig wrote:
-> Subject:
-> Re: [PATCH v5 04/11] blksnap: header file of the module interface
-> From:
-> Christoph Hellwig <hch@infradead.org>
-> Date:
-> 6/14/23, 08:26
+On Tue, Jun 13, 2023 at 02:46:02PM +0200, Aleksandr Mikhalitsyn wrote:
+> On Tue, Jun 13, 2023 at 3:43 AM Xiubo Li <xiubli@redhat.com> wrote:
+> >
+> >
+> > On 6/9/23 18:12, Aleksandr Mikhalitsyn wrote:
+> > > On Fri, Jun 9, 2023 at 12:00 PM Christian Brauner <brauner@kernel.org> wrote:
+> > >> On Fri, Jun 09, 2023 at 10:59:19AM +0200, Aleksandr Mikhalitsyn wrote:
+> > >>> On Fri, Jun 9, 2023 at 3:57 AM Xiubo Li <xiubli@redhat.com> wrote:
+> > >>>>
+> > >>>> On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
+> > >>>>> Dear friends,
+> > >>>>>
+> > >>>>> This patchset was originally developed by Christian Brauner but I'll continue
+> > >>>>> to push it forward. Christian allowed me to do that :)
+> > >>>>>
+> > >>>>> This feature is already actively used/tested with LXD/LXC project.
+> > >>>>>
+> > >>>>> Git tree (based on https://github.com/ceph/ceph-client.git master):
+> > >>> Hi Xiubo!
+> > >>>
+> > >>>> Could you rebase these patches to 'testing' branch ?
+> > >>> Will do in -v6.
+> > >>>
+> > >>>> And you still have missed several places, for example the following cases:
+> > >>>>
+> > >>>>
+> > >>>>      1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
+> > >>>>                req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR,
+> > >>>> mode);
+> > >>> +
+> > >>>
+> > >>>>      2    389  fs/ceph/dir.c <<ceph_readdir>>
+> > >>>>                req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+> > >>> +
+> > >>>
+> > >>>>      3    789  fs/ceph/dir.c <<ceph_lookup>>
+> > >>>>                req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
+> > >>> We don't have an idmapping passed to lookup from the VFS layer. As I
+> > >>> mentioned before, it's just impossible now.
+> > >> ->lookup() doesn't deal with idmappings and really can't otherwise you
+> > >> risk ending up with inode aliasing which is really not something you
+> > >> want. IOW, you can't fill in inode->i_{g,u}id based on a mount's
+> > >> idmapping as inode->i_{g,u}id absolutely needs to be a filesystem wide
+> > >> value. So better not even risk exposing the idmapping in there at all.
+> > > Thanks for adding, Christian!
+> > >
+> > > I agree, every time when we use an idmapping we need to be careful with
+> > > what we map. AFAIU, inode->i_{g,u}id should be based on the filesystem
+> > > idmapping (not mount),
+> > > but in this case, Xiubo want's current_fs{u,g}id to be mapped
+> > > according to an idmapping.
+> > > Anyway, it's impossible at now and IMHO, until we don't have any
+> > > practical use case where
+> > > UID/GID-based path restriction is used in combination with idmapped
+> > > mounts it's not worth to
+> > > make such big changes in the VFS layer.
+> > >
+> > > May be I'm not right, but it seems like UID/GID-based path restriction
+> > > is not a widespread
+> > > feature and I can hardly imagine it to be used with the container
+> > > workloads (for instance),
+> > > because it will require to always keep in sync MDS permissions
+> > > configuration with the
+> > > possible UID/GID ranges on the client. It looks like a nightmare for sysadmin.
+> > > It is useful when cephfs is used as an external storage on the host, but if you
+> > > share cephfs with a few containers with different user namespaces idmapping...
+> >
+> > Hmm, while this will break the MDS permission check in cephfs then in
+> > lookup case. If we really couldn't support it we should make it to
+> > escape the check anyway or some OPs may fail and won't work as expected.
 > 
-> To:
-> Dave Chinner <david@fromorbit.com>
-> CC:
-> Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, willy@infradead.org, dlemoal@kernel.org, linux@weissschuh.net, jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>
+> Hi Xiubo!
 > 
+> Disabling UID/GID checks on the MDS side looks reasonable. IMHO the
+> most important checks are:
+> - open
+> - mknod/mkdir/symlink/rename
+> and for these checks we already have an idmapping.
 > 
-> On Wed, Jun 14, 2023 at 08:25:15AM +1000, Dave Chinner wrote:
->>> + * Return: 0 if succeeded, negative errno otherwise.
->>> + */
->>> +#define IOCTL_BLKSNAP_SNAPSHOT_APPEND_STORAGE					\
->>> +	_IOW(BLKSNAP, blksnap_ioctl_snapshot_append_storage,			\
->>> +	     struct blksnap_snapshot_append_storage)
->> That's an API I'm extremely uncomfortable with. We've learnt the
->> lesson *many times* that userspace physical mappings of underlying
->> file storage are unreliable.
->>
->> i.e.  This is reliant on userspace telling the kernel the physical
->> mapping of the filesystem file to block device LBA space and then
->> providing a guarantee (somehow) that the mapping will always remain
->> unchanged. i.e. It's reliant on passing FIEMAP data from the
->> filesystem to userspace and then back into the kernel without it
->> becoming stale and somehow providing a guarantee that nothing (not
->> even the filesystem doing internal garbage collection) will change
->> it.
-> Hmm, I never thought of this API as used on files that somewhere
-> had a logical to physical mapping applied to them.
-> 
-> Sergey, is that the indtended use case?  If so we really should
-> be going through the file system using direct I/O.
-> 
+> Also, I want to add that it's a little bit unusual when permission
+> checks are done against the caller UID/GID.
 
-Hi!
-Thank you, Dave, for such a detailed comment. 
-Yes, everything is really as you described.
+The server side permission checking based on the sender's fs{g,u}id is
+rather esoteric imho. So I would just disable it for idmapped mounts.
 
-This code worked quite successfully for the veeamsnap module, on the
-basis of which blksnap was created. Indeed, such an allocation of an
-area on a block device using a file does not look safe.
+> Usually, if we have opened a file descriptor and, for instance, passed
+> this file descriptor through a unix socket then
+> file descriptor holder will be able to use it in accordance with the
+> flags (O_RDONLY, O_RDWR, ...).
+> We also have ->f_cred on the struct file that contains credentials of
+> the file opener and permission checks are usually done
+> based on this. But in cephfs we are always using syscall caller's
+> credentials. It makes cephfs file descriptor "not transferable"
+> in terms of permission checks.
 
-We've already discussed this with Donald Buczek <buczek@molgen.mpg.de>.
-Link: https://github.com/veeam/blksnap/issues/57#issuecomment-1576569075
-And I have planned work on moving to a more secure ioctl in the future.
-Link: https://github.com/veeam/blksnap/issues/61
-
-Now, thanks to Dave, it becomes clear to me how to solve this problem best.
-swapfile is a good example of how to do it right.
-
-Fixing this vulnerability will entail transferring the algorithm for
-allocating the difference storage from the user-space to the blksnap code.
-The changes are quite significant. The UAPI will be changed.
-
-So I agree that the blksnap module is not good enough for upstream yet.
+Yeah, that's another good point.
