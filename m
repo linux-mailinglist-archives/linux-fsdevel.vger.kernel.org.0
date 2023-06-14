@@ -2,69 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13EFC72FF54
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2A0F72FF66
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:03:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244790AbjFNNCn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 09:02:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56002 "EHLO
+        id S244810AbjFNNDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 09:03:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244078AbjFNNCm (ORCPT
+        with ESMTP id S235509AbjFNNDb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:02:42 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97AAE1727;
-        Wed, 14 Jun 2023 06:02:41 -0700 (PDT)
+        Wed, 14 Jun 2023 09:03:31 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FDAD199C;
+        Wed, 14 Jun 2023 06:03:30 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 867121FDED;
-        Wed, 14 Jun 2023 13:02:39 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D9F35219A1;
+        Wed, 14 Jun 2023 13:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1686747759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1686747808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=RMDeM94d6wWa0bomfv2SniHbOGSKD3bXpgmUgOrpy0Q=;
-        b=Ra2dPs3CHtttweb+YiXpsuYj2ox3yU9tI+r8HkXA3bLgKAnLio2PXO6oison6WVCeXHtF4
-        9wZWB9CWMAKCG+sfhWrWHpzAmKHPcChCrYG0P6Fjki3HjKO6Yq4Jpp9+6ZCst7JqeUCpKV
-        ftumbah5jnpjuvkCswljGQeAuZrghuE=
+        bh=MU22H/MNDJGEWTigTjVbKwhrgWPT8oAuPxOTZnn1eHM=;
+        b=RB7pkRCivSsE7KU1e6+RdYW6iTT0HlugUyrVn51a7TWkTduIH6/DOz7IuceXhn+9wnTZhS
+        jNWIKLM6QF4ULmrK7MEuJBaiz07Gihq9s+2HMuT98sEGzglKEVCCfJw6nLnJAEM98KCGG8
+        6+FR0kxGLGpe/n0Arg04TVD3fuWwxjg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1686747759;
+        s=susede2_ed25519; t=1686747808;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=RMDeM94d6wWa0bomfv2SniHbOGSKD3bXpgmUgOrpy0Q=;
-        b=nHJZuinm4L5vheHZ/w9KqlUZEF/Uyl2VEwzJHPjBzLPrl4bOYLwmEbVeasvpj1hi0KzTEd
-        ttekW3/ZijMfPZBA==
+        bh=MU22H/MNDJGEWTigTjVbKwhrgWPT8oAuPxOTZnn1eHM=;
+        b=lGUd2w/L0TFJ/VWS7jRtIrk6i8FIpWdj7zrzpZ98yqiDKIN2dMv+yY2roBSIyXlFgtiW1h
+        QiBUbTTBlP4myiDA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 72F2B1357F;
-        Wed, 14 Jun 2023 13:02:39 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C74021357F;
+        Wed, 14 Jun 2023 13:03:28 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id qqmcG2+6iWTsTgAAMHmgww
-        (envelope-from <hare@suse.de>); Wed, 14 Jun 2023 13:02:39 +0000
-Message-ID: <7239695e-6dd6-7a00-f4fe-3bd36ae2d924@suse.de>
-Date:   Wed, 14 Jun 2023 15:02:39 +0200
+        id zJwLMKC6iWRjTwAAMHmgww
+        (envelope-from <hare@suse.de>); Wed, 14 Jun 2023 13:03:28 +0000
+Message-ID: <549489d7-ff60-b8d0-9241-60e54e454c14@suse.de>
+Date:   Wed, 14 Jun 2023 15:03:28 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH 4/7] brd: make sector size configurable
+Subject: Re: [PATCH 1/7] brd: use XArray instead of radix-tree to index
+ backing pages
 Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
+To:     Pankaj Raghav <p.raghav@samsung.com>,
+        Matthew Wilcox <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Christoph Hellwig <hch@lst.de>,
         Luis Chamberlain <mcgrof@kernel.org>
 References: <20230614114637.89759-1-hare@suse.de>
- <20230614114637.89759-5-hare@suse.de> <ZIm4wyHZK/YMV2gj@casper.infradead.org>
+ <20230614114637.89759-2-hare@suse.de>
+ <CGME20230614124605eucas1p13e57b1da46266467a71f124e40ab8252@eucas1p1.samsung.com>
+ <ZIm2fqesAKAHHh5j@casper.infradead.org>
+ <25657702-19a7-6523-21bd-c671935c2c2e@samsung.com>
 From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <ZIm4wyHZK/YMV2gj@casper.infradead.org>
+In-Reply-To: <25657702-19a7-6523-21bd-c671935c2c2e@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -77,44 +82,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/14/23 14:55, Matthew Wilcox wrote:
-> On Wed, Jun 14, 2023 at 01:46:34PM +0200, Hannes Reinecke wrote:
->> @@ -43,9 +43,11 @@ struct brd_device {
->>   	 */
->>   	struct xarray	        brd_folios;
->>   	u64			brd_nr_folios;
->> +	unsigned int		brd_sector_shift;
->> +	unsigned int		brd_sector_size;
->>   };
->>   
->> -#define BRD_SECTOR_SHIFT(b) (PAGE_SHIFT - SECTOR_SHIFT)
->> +#define BRD_SECTOR_SHIFT(b) ((b)->brd_sector_shift - SECTOR_SHIFT)
->>   
->>   static pgoff_t brd_sector_index(struct brd_device *brd, sector_t sector)
->>   {
->> @@ -85,7 +87,7 @@ static int brd_insert_folio(struct brd_device *brd, sector_t sector, gfp_t gfp)
->>   {
->>   	pgoff_t idx;
->>   	struct folio *folio, *cur;
->> -	unsigned int rd_sector_order = get_order(PAGE_SIZE);
->> +	unsigned int rd_sector_order = get_order(brd->brd_sector_size);
+On 6/14/23 14:50, Pankaj Raghav wrote:
+>>>   
+>>> -		/*
+>>> -		 * It takes 3.4 seconds to remove 80GiB ramdisk.
+>>> -		 * So, we need cond_resched to avoid stalling the CPU.
+>>> -		 */
+>>> -		cond_resched();
+>>> +	xa_for_each(&brd->brd_pages, idx, page) {
+>>> +		__free_page(page);
+>>> +		cond_resched_rcu();
+>>
+>> This should be a regular cond_resched().  The body of the loop is run
+>> without the RCU read lock held.  Surprised none of the bots have noticed
+>> an unlock-underflow.  Perhaps they don't test brd ;-)
+>>
+>> With that fixed,
+>>
+>> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > 
-> Surely max(0, brd->brd_sector_shift - PAGE_SHIFT) ?
-> 
-Errm. Possibly.
+> This patch is already queued up for 6.5 in Jens's tree.
+> I will send this as a fix soon. Thanks.
 
->> @@ -346,6 +353,25 @@ static int brd_alloc(int i)
->>   		return -ENOMEM;
->>   	brd->brd_number		= i;
->>   	list_add_tail(&brd->brd_list, &brd_devices);
->> +	brd->brd_sector_shift = ilog2(rd_blksize);
->> +	if ((1ULL << brd->brd_sector_shift) != rd_blksize) {
->> +		pr_err("rd_blksize %d is not supported\n", rd_blksize);
-> 
-> Are you trying to require power-of-two here?  We have is_power_of_2()
-> for that purpose.
-> 
-Ah. So let's use that, then :-)
+Ah. Hence. I've been running off akpms mm-unstable branch, which doesn't 
+have that patch (yet).
 
 Cheers,
 
