@@ -2,251 +2,346 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72ED072FEA1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 14:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BC3572FEDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 14:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244454AbjFNM2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 08:28:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32866 "EHLO
+        id S235540AbjFNMkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 08:40:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244488AbjFNM2C (ORCPT
+        with ESMTP id S244714AbjFNMjz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 08:28:02 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BA9119BC
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 05:28:01 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f76386e0daso2098e87.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 05:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686745679; x=1689337679;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ilFt3Wf0Xg7SHRsVDeQuFMTLKE4ngd3U3J5hzDcoXo4=;
-        b=cTQhWggP7uVMgtJqNXfeFXxcqNIkKiNShaZrGDRDQTPF9hTg+4X/rojxSjlVWHM8nE
-         SZ8u+Dib5XvgYdiQH+GE/wUCm1E9HaMFP20/QQ+qnx1zq3z3CvW3u6crfM5U53+6jv3N
-         XnI1nfT4Js7P2AEHqqec+pmQdh8I/bRELCPk8tbiYMwi20MesGW2vAoX7Yeor5E87mn6
-         u8wPEHOnHXL0g0TNqKEsAv207/zsWtyyML4DZA8tosRQrROj0KTRUaLvdwyN6hQFa035
-         hN44mdBy/M2B+a0pis6yjc282SvX+jXBS8LrkyZE03pwUgKtWfPDHSmnkWbSKPzQ9hYi
-         xDXg==
+        Wed, 14 Jun 2023 08:39:55 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1DB19BC
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 05:39:51 -0700 (PDT)
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com [209.85.219.198])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DC8273F188
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 12:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1686746388;
+        bh=DJmITB5tAKBPU4poxuY/XUAm3YwXRszR2NsDhhIbI60=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=imGzi1i3g83VmlbG5Mc+sltizfsC4PzsCArjDNRsAChw2KxPoLvoR6jAbyqx73SBD
+         mg22eNnZoiyieiiUciFvN7FXaRsBEs8UDRjhw7JT99o7BpenFaUA/X/vbpsaImmQAV
+         ixwf51Nbu2KDZEDHkztleW8/2pzV8bkvW15YErlDBY1UlF8OsTE7u09pGRIy4vMqaw
+         vp/wg6ADymvsaWIZMttWSmQrULreXeSF00Jb4oFFUkDtztNfGfV7Ot28VDaF+Ov5f5
+         2QM50gxZTI5dGsTn+gTfxdPZfZQatbUMwH5WjwoTDH9+Rpj5XLuCv31TDMf0UrIhj2
+         Y0mMAG4L5OnhQ==
+Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-bce829aca1bso752461276.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 05:39:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686745679; x=1689337679;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ilFt3Wf0Xg7SHRsVDeQuFMTLKE4ngd3U3J5hzDcoXo4=;
-        b=lQ7XCYwTJpgiJE4eVqNq0DRy3RJKU9o3D51/zgS9eq02bWZiLYaegccQUlRBxasEUZ
-         9gTekHapYxgdpecSbOSgm2ExHLH+jIkdU2tBt0YCjeVuMo7BFZy3rUMlSkHT6EvYfdzL
-         0S2mkzgulsD1D+VauY+HsNU+9Sdqgt29ns8GnBb0ZCj+u9Hjagz/fw4QvBVBoPy1M/+Q
-         s9MvUS3fQBOjhJXYt7Aq/7ZbOg50lu9FuwztbTFyR7VCHnXcHVGBJkUFYw+6JOs3cUOf
-         eWOjkG1z9i4Rrkr2nhX2R81EKMMyoy3Crt7P4NefGXFSbZPiMTYgaSLxAgcdfbARuHTk
-         eejw==
-X-Gm-Message-State: AC+VfDwp/wl7nLnqpj9YQIGuE2bKTWTVHkeWXstmWq1vXlMFyRPHJzBa
-        d41JZptSmyBdLp2vVsj5mu9u+ZYJHmOdqGjh+uUZFQ==
-X-Google-Smtp-Source: ACHHUZ78PmB47H6Q3u8LiOUTNLMFzbu1E3/cGtEAzk8XhtfMgHLkTRk6F66uLYugfpNgxe5DCDbeX7TIDbN/viTha7s=
-X-Received: by 2002:ac2:4823:0:b0:4f7:4b19:1735 with SMTP id
- 3-20020ac24823000000b004f74b191735mr100172lft.6.1686745679324; Wed, 14 Jun
- 2023 05:27:59 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686746388; x=1689338388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DJmITB5tAKBPU4poxuY/XUAm3YwXRszR2NsDhhIbI60=;
+        b=QHDjwTi/wr72VbTKGrfLLU8Ohb6WU9uQDtdgLsr30OYE7p03tmUJ4uvFkwFTakBdNk
+         2nTt+QwLy3Huset/D1zHA9r4ptDQQku59AzclILeb/E7JOBEDN+XK+T4Ku2jU2VmOWdb
+         PCpl/0FRlBnXBC9aLtO/EYcro50d/5PS4g+7OXhwcpGhIKZcWtw0GMlOdvH5sS9RhnEh
+         alctn51LV2voWC7RvyiLLryaPqxBQeV4RPXkI0CtlM6/Jm9iJHiDeNPONFXXXpTJoCKH
+         0MsX9XYWIEvkNqOp7TAzuLuiKz+vsTGVwnGlYsFRlhvv3saers0wEQDR10PpHbXljQP5
+         3PNw==
+X-Gm-Message-State: AC+VfDzb31b7vet3YurAOBckoljI55yuJlqb6tl8d5s0Ar/7q4WDJ8sg
+        o6+bZN3fd9/l15Ud3wE/UIPpV47Zr2zn2sNh/PCk7RMoUkoyBKSHVMXsNCKVztRHlTHL/5dCHcN
+        JD6S7HBmpgGlGOd8w3IjvuMPm5KGy4hHzdfhmiO3RT3ije6C3ZdjzT1Mxp3g=
+X-Received: by 2002:a25:dfcc:0:b0:bac:26e5:9463 with SMTP id w195-20020a25dfcc000000b00bac26e59463mr2450381ybg.61.1686746387745;
+        Wed, 14 Jun 2023 05:39:47 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ48Gb426BrSNTPGl6U5yd6BpIZx4OkH7EKxSx4YA/rRF4VRrsx63JzCab3C94CovjoQmMXC2aBWQdwBFt5b69U=
+X-Received: by 2002:a25:dfcc:0:b0:bac:26e5:9463 with SMTP id
+ w195-20020a25dfcc000000b00bac26e59463mr2450358ybg.61.1686746387410; Wed, 14
+ Jun 2023 05:39:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230612161614.10302-1-jack@suse.cz> <CACT4Y+aEScXmq2F1-vqAfr-b2w-xyOohN+FZxorW1YuRvKDLNQ@mail.gmail.com>
- <20230614020412.GB11423@frogsfrogsfrogs>
-In-Reply-To: <20230614020412.GB11423@frogsfrogsfrogs>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 14 Jun 2023 14:27:46 +0200
-Message-ID: <CACT4Y+YTfim0VhX6mTKyxMDVvY94zh7OiOLjv-Fs0kgj=vi=Qg@mail.gmail.com>
-Subject: Re: [PATCH] block: Add config option to not allow writing to mounted devices
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Ted Tso <tytso@mit.edu>, yebin <yebin@huaweicloud.com>,
-        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@google.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Eric Biggers <ebiggers@google.com>
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com> <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner> <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com> <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
+ <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com>
+In-Reply-To: <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Wed, 14 Jun 2023 14:39:36 +0200
+Message-ID: <CAEivzxcBBJV6DOGzy5S7=TUjrXZfVaGaJX5z7WFzYq1w4MdtiA@mail.gmail.com>
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Gregory Farnum <gfarnum@redhat.com>,
+        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 14 Jun 2023 at 04:04, Darrick J. Wong <djwong@kernel.org> wrote:
+On Wed, Jun 14, 2023 at 3:53=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
 >
-> On Tue, Jun 13, 2023 at 08:49:38AM +0200, Dmitry Vyukov wrote:
-> > On Mon, 12 Jun 2023 at 18:16, Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > Writing to mounted devices is dangerous and can lead to filesystem
-> > > corruption as well as crashes. Furthermore syzbot comes with more and
-> > > more involved examples how to corrupt block device under a mounted
-> > > filesystem leading to kernel crashes and reports we can do nothing
-> > > about. Add config option to disallow writing to mounted (exclusively
-> > > open) block devices. Syzbot can use this option to avoid uninteresting
-> > > crashes. Also users whose userspace setup does not need writing to
-> > > mounted block devices can set this config option for hardening.
-> >
-> > +syzkaller, Kees, Alexander, Eric
-> >
-> > We can enable this on syzbot, however I have the same concerns as with
-> > disabling of XFS_SUPPORT_V4:
-> > https://github.com/google/syzkaller/issues/3918#issuecomment-1560624278
-> >
-> > It's useful to know the actual situation with respect to
-> > bugs/vulnerabilities and one of the goals of syzbot is surfacing this
-> > situation.
-> > For some areas there is mismatch between upstream kernel and
-> > downstream distros. Upstream says "this is buggy and deprecated",
-> > which is fine in itself if not the other part: downstream distros
-> > simply ignore that (maybe not even aware) and keep things enabled for
-> > as long as possible. Stopping testing this is moving more in this
-> > direction: silencing warnings and pretending that everything is fine,
-> > when it's not.
-> >
-> > I wonder if there is a way to at least somehow bridge this gap.
-> >
-> > There is CONFIG_BROKEN, but not sure if it's the right thing here.
-> > Maybe we add something like CONFIG_INSECURE. And such insecure config
-> > settings (not setting BLK_DEV_WRITE_HARDENING, setting XFS_SUPPORT_V4)
-> > will say:
-> >
-> > depends on INSECURE
-> >
-> > So that distros will need to at least acknowledge this to users by saying:
-> >
-> > CONFIG_INSECURE=y
-> >
-> > They are then motivated to work on actually removing dependencies on
-> > these deprecated things.
-> >
-> > CONFIG_INSECURE description can say something along the lines of "this
-> > kernel includes subsystems with known bugs that may cause security and
-> > data integrity issues". When a subsystem adds "depends on INSECURE",
-> > the commit should list some of the known issues.
-> >
-> > Then I see how trading disabling things on syzbot in exchange for
-> > "depends on INSECURE" becomes reasonable and satisfies all parties to
-> > some degree.
 >
-> Well in that case, post a patchset adding "depends on INSECURE" for
-> every subsystem that syzbot files bugs against, if the maintainers do
-> not immediately drop what they're doing to resolve the bug.
+> On 6/13/23 22:53, Gregory Farnum wrote:
+> > On Mon, Jun 12, 2023 at 6:43=E2=80=AFPM Xiubo Li <xiubli@redhat.com> wr=
+ote:
+> >>
+> >> On 6/9/23 18:12, Aleksandr Mikhalitsyn wrote:
+> >>> On Fri, Jun 9, 2023 at 12:00=E2=80=AFPM Christian Brauner <brauner@ke=
+rnel.org> wrote:
+> >>>> On Fri, Jun 09, 2023 at 10:59:19AM +0200, Aleksandr Mikhalitsyn wrot=
+e:
+> >>>>> On Fri, Jun 9, 2023 at 3:57=E2=80=AFAM Xiubo Li <xiubli@redhat.com>=
+ wrote:
+> >>>>>> On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
+> >>>>>>> Dear friends,
+> >>>>>>>
+> >>>>>>> This patchset was originally developed by Christian Brauner but I=
+'ll continue
+> >>>>>>> to push it forward. Christian allowed me to do that :)
+> >>>>>>>
+> >>>>>>> This feature is already actively used/tested with LXD/LXC project=
+.
+> >>>>>>>
+> >>>>>>> Git tree (based on https://github.com/ceph/ceph-client.git master=
+):
+> >>>>> Hi Xiubo!
+> >>>>>
+> >>>>>> Could you rebase these patches to 'testing' branch ?
+> >>>>> Will do in -v6.
+> >>>>>
+> >>>>>> And you still have missed several places, for example the followin=
+g cases:
+> >>>>>>
+> >>>>>>
+> >>>>>>       1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
+> >>>>>>                 req =3D ceph_mdsc_create_request(mdsc, CEPH_MDS_OP=
+_GETATTR,
+> >>>>>> mode);
+> >>>>> +
+> >>>>>
+> >>>>>>       2    389  fs/ceph/dir.c <<ceph_readdir>>
+> >>>>>>                 req =3D ceph_mdsc_create_request(mdsc, op, USE_AUT=
+H_MDS);
+> >>>>> +
+> >>>>>
+> >>>>>>       3    789  fs/ceph/dir.c <<ceph_lookup>>
+> >>>>>>                 req =3D ceph_mdsc_create_request(mdsc, op, USE_ANY=
+_MDS);
+> >>>>> We don't have an idmapping passed to lookup from the VFS layer. As =
+I
+> >>>>> mentioned before, it's just impossible now.
+> >>>> ->lookup() doesn't deal with idmappings and really can't otherwise y=
+ou
+> >>>> risk ending up with inode aliasing which is really not something you
+> >>>> want. IOW, you can't fill in inode->i_{g,u}id based on a mount's
+> >>>> idmapping as inode->i_{g,u}id absolutely needs to be a filesystem wi=
+de
+> >>>> value. So better not even risk exposing the idmapping in there at al=
+l.
+> >>> Thanks for adding, Christian!
+> >>>
+> >>> I agree, every time when we use an idmapping we need to be careful wi=
+th
+> >>> what we map. AFAIU, inode->i_{g,u}id should be based on the filesyste=
+m
+> >>> idmapping (not mount),
+> >>> but in this case, Xiubo want's current_fs{u,g}id to be mapped
+> >>> according to an idmapping.
+> >>> Anyway, it's impossible at now and IMHO, until we don't have any
+> >>> practical use case where
+> >>> UID/GID-based path restriction is used in combination with idmapped
+> >>> mounts it's not worth to
+> >>> make such big changes in the VFS layer.
+> >>>
+> >>> May be I'm not right, but it seems like UID/GID-based path restrictio=
+n
+> >>> is not a widespread
+> >>> feature and I can hardly imagine it to be used with the container
+> >>> workloads (for instance),
+> >>> because it will require to always keep in sync MDS permissions
+> >>> configuration with the
+> >>> possible UID/GID ranges on the client. It looks like a nightmare for =
+sysadmin.
+> >>> It is useful when cephfs is used as an external storage on the host, =
+but if you
+> >>> share cephfs with a few containers with different user namespaces idm=
+apping...
+> >> Hmm, while this will break the MDS permission check in cephfs then in
+> >> lookup case. If we really couldn't support it we should make it to
+> >> escape the check anyway or some OPs may fail and won't work as expecte=
+d.
+> > I don't pretend to know the details of the VFS (or even our linux
+> > client implementation), but I'm confused that this is apparently so
+> > hard. It looks to me like we currently always fill in the "caller_uid"
+> > with "from_kuid(&init_user_ns, req->r_cred->fsuid))". Is this actually
+> > valid to begin with? If it is, why can't the uid mapping be applied on
+> > that?
+> >
+> > As both the client and the server share authority over the inode's
+> > state (including things like mode bits and owners), and need to do
+> > permission checking, being able to tell the server the relevant actor
+> > is inherently necessary. We also let admins restrict keys to
+> > particular UID/GID combinations as they wish, and it's not the most
+> > popular feature but it does get deployed. I would really expect a user
+> > of UID mapping to be one of the *most* likely to employ such a
+> > facility...maybe not with containers, but certainly end-user homedirs
+> > and shared spaces.
+> >
+> > Disabling the MDS auth checks is really not an option. I guess we
+> > could require any user employing idmapping to not be uid-restricted,
+> > and set the anonymous UID (does that work, Xiubo, or was it the broken
+> > one? In which case we'd have to default to root?). But that seems a
+> > bit janky to me.
+>
+> Yeah, this also seems risky.
+>
+> Instead disabling the MDS auth checks there is another option, which is
+> we can prevent  the kclient to be mounted or the idmapping to be
+> applied. But this still have issues, such as what if admins set the MDS
+> auth caps after idmap applied to the kclients ?
 
-Hi Darrick,
+Hi Xiubo,
 
-Open unfixed bugs are fine (for some definition of fine).
-What's discussed here is different. It's not having any filed bugs at
-all due to not testing a thing and then not having any visibility into
-the state of things.
+I thought about this too and came to the same conclusion, that UID/GID base=
+d
+restriction can be applied dynamically, so detecting it on mount-time
+helps not so much.
 
-> Google extracts a bunch more unpaid labor from society to make its
-> owners richer, and everyone else on the planet suffers for it, just like
-> you all have done for the past 25 years.  That's the definition of
-> Googley!!
 >
-> --D
+> IMO there have 2 options: the best way is to fix this in VFS if
+> possible. Else to add one option to disable the corresponding MDS auth
+> caps in ceph if users want to support the idmap feature.
+
+Dear colleagues,
+Dear Xiubo,
+
+Let me try to summarize the previous discussions about cephfs idmapped
+mount support.
+
+This discussion about the need of caller's UID/GID mapping is started
+from the first
+version of this patchset in this [1] thread. Let'me quote Christian here:
+> Since the idmapping is a property of the mount and not a property of the
+> caller the caller's fs{g,u}id aren't mapped. What is mapped are the
+> inode's i{g,u}id when accessed from a particular mount.
 >
+> The fs{g,u}id are only ever mapped when a new filesystem object is
+> created. So if I have an idmapped mount that makes it so that files
+> owned by 1000 on-disk appear to be owned by uid 0 then a user with uid 0
+> creating a new file will create files with uid 1000 on-disk when going
+> through that mount. For cephfs that'd be the uid we would be sending
+> with creation requests as I've currently written it.
+
+This is a key part of this discussion. Idmapped mounts is not a way to prox=
+ify
+caller's UID/GID, but idmapped mounts are designed to perform UID/GID mappi=
+ng
+of inode's owner's UID/GID. Yes, these concepts look really-really
+close and from
+the first glance it looks like it's just an equivalent thing. But they are =
+not.
+
+From my understanding, if someone wants to verify caller UID/GID then he sh=
+ould
+take an unmapped UID/GID and verify it. It's not important if the
+caller does something
+through an idmapped mount or not, from_kuid(&init_user_ns, req->r_cred->fsu=
+id))
+literally "UID of the caller in a root user namespace". But cephfs
+mount can be used
+from any user namespace (yes, cephfs can't be mounted in user namespaces, b=
+ut it
+can be inherited during CLONE_NEWNS, or used as a detached mount with
+open_tree/move_mount).
+What I want to say by providing this example is that even now, without
+idmapped mounts
+we have kinda close problem, that UID/GID based restriction will be
+based on the host's (!),
+root user namespace, UID/GID-s even if the caller sits inside the user
+namespace. And we don't care,
+right? Why it's a problem with an idmapped mounts? If someone wants to
+control caller's UID/GID
+on the MDS side he just needs to take hosts UID/GIDs and use them in
+permission rules. That's it.
+
+Next point is that technically idmapped mounts don't break anything,
+if someone starts using
+idmapped mounts with UID/GID-based restrictions he will get -EACCESS.
+Why is this a problem?
+A user will check configuration, read the clarification in the
+documentation about idmapped mounts
+in cephfs and find a warning that these are not fully compatible
+things right now.
+
+IMHO, there is only one real problem (which makes UID/GID-based
+restrictions is not fully compatible with
+an idmapped mounts). Is that we have to map caller's UID/GID according
+to a mount idmapping when we
+creating a new inode (mknod, mkdir, symlink, open(O_CREAT)). But it's
+only because the caller's UID/GIDs are
+used as the owner's UID/GID for newly created inode. Ideally, we need
+to have two fields in ceph request,
+one for a caller's UID/GID and another one for inode owner UID/GID.
+But this requires cephfs protocol modification
+(yes, it's a bit painful. But global VFS changes are painful too!). As
+Christian pointed this is a reason why
+he went this way in the first patchset version.
+
+Maybe I'm not right, but both options to properly fix that VFS API
+changes or cephfs protocol modification
+are too expensive until we don't have a real requestors with a good
+use case for idmapped mounts + UID/GID
+based permissions. We already have a real and good use case for
+idmapped mounts in Cephfs for LXD/LXC.
+IMHO, it's better to move this thing forward step by step, because VFS
+API/cephfs protocol changes will
+take a really big amount of time and it's not obvious that it's worth
+it, moreover it's not even clear that VFS API
+change is the right way to deal with this problem. It seems to me that
+Cephfs protocol change seems like a
+more proper way here. At the same time I fully understand that you are
+not happy about this option.
+
+Just to conclude, we don't have any kind of cephfs degradation here,
+all users without idmapping will not be affected,
+all users who start using mount idmappings with cephfs will be aware
+of this limitation.
+
+[1] https://lore.kernel.org/all/20220105141023.vrrbfhti5apdvkz7@wittgenstei=
+n/
+
+Kind regards,
+Alex
+
+>
+> Thanks
+>
+> - Xiubo
+>
+> > -Greg
 > >
-> > Btw, if we do this it can make sense to invert this config (enable
-> > concurrent writes), default to 'y' and recommend 'n'.
-> >
-> > Does it make any sense? Any other suggestions?
-> >
-> > P.S. Alex, if this lands this may be a candidate for addition to:
-> > https://github.com/a13xp0p0v/kconfig-hardened-check
-> > (and XFS_SUPPORT_V4 as well).
-> >
-> >
-> > > Link: https://lore.kernel.org/all/60788e5d-5c7c-1142-e554-c21d709acfd9@linaro.org
-> > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > ---
-> > >  block/Kconfig             | 12 ++++++++++++
-> > >  block/bdev.c              | 10 ++++++++++
-> > >  include/linux/blk_types.h |  3 +++
-> > >  3 files changed, 25 insertions(+)
-> > >
-> > > FWIW I've tested this and my test VM with ext4 root fs boots fine and fstests
-> > > on ext4 seem to be also running fine with BLK_DEV_WRITE_HARDENING enabled.
-> > > OTOH my old VM setup which is not using initrd fails to boot with
-> > > BLK_DEV_WRITE_HARDENING enabled because fsck cannot open the root device
-> > > because the root is already mounted (read-only). Anyway this should be useful
-> > > for syzbot (Dmitry indicated interest in this option in the past) and maybe
-> > > other well controlled setups.
-> > >
-> > > diff --git a/block/Kconfig b/block/Kconfig
-> > > index 86122e459fe0..c44e2238e18d 100644
-> > > --- a/block/Kconfig
-> > > +++ b/block/Kconfig
-> > > @@ -77,6 +77,18 @@ config BLK_DEV_INTEGRITY_T10
-> > >         select CRC_T10DIF
-> > >         select CRC64_ROCKSOFT
-> > >
-> > > +config BLK_DEV_WRITE_HARDENING
-> > > +       bool "Do not allow writing to mounted devices"
-> > > +       help
-> > > +       When a block device is mounted, writing to its buffer cache very likely
-> > > +       going to cause filesystem corruption. It is also rather easy to crash
-> > > +       the kernel in this way since the filesystem has no practical way of
-> > > +       detecting these writes to buffer cache and verifying its metadata
-> > > +       integrity. Select this option to disallow writing to mounted devices.
-> > > +       This should be mostly fine but some filesystems (e.g. ext4) rely on
-> > > +       the ability of filesystem tools to write to mounted filesystems to
-> > > +       set e.g. UUID or run fsck on the root filesystem in some setups.
-> > > +
-> > >  config BLK_DEV_ZONED
-> > >         bool "Zoned block device support"
-> > >         select MQ_IOSCHED_DEADLINE
-> > > diff --git a/block/bdev.c b/block/bdev.c
-> > > index 21c63bfef323..ad01f0a6af0d 100644
-> > > --- a/block/bdev.c
-> > > +++ b/block/bdev.c
-> > > @@ -602,6 +602,12 @@ static int blkdev_get_whole(struct block_device *bdev, fmode_t mode)
-> > >         struct gendisk *disk = bdev->bd_disk;
-> > >         int ret;
-> > >
-> > > +       if (IS_ENABLED(BLK_DEV_WRITE_HARDENING)) {
-> > > +               if (mode & FMODE_EXCL && atomic_read(&bdev->bd_writers) > 0)
-> > > +                       return -EBUSY;
-> > > +               if (mode & FMODE_WRITE && bdev->bd_holders > 0)
-> > > +                       return -EBUSY;
-> > > +       }
-> > >         if (disk->fops->open) {
-> > >                 ret = disk->fops->open(bdev, mode);
-> > >                 if (ret) {
-> > > @@ -617,6 +623,8 @@ static int blkdev_get_whole(struct block_device *bdev, fmode_t mode)
-> > >                 set_init_blocksize(bdev);
-> > >         if (test_bit(GD_NEED_PART_SCAN, &disk->state))
-> > >                 bdev_disk_changed(disk, false);
-> > > +       if (IS_ENABLED(BLK_DEV_WRITE_HARDENING) && mode & FMODE_WRITE)
-> > > +               atomic_inc(&bdev->bd_writers);
-> > >         atomic_inc(&bdev->bd_openers);
-> > >         return 0;
-> > >  }
-> > > @@ -625,6 +633,8 @@ static void blkdev_put_whole(struct block_device *bdev, fmode_t mode)
-> > >  {
-> > >         if (atomic_dec_and_test(&bdev->bd_openers))
-> > >                 blkdev_flush_mapping(bdev);
-> > > +       if (IS_ENABLED(BLK_DEV_WRITE_HARDENING) && mode & FMODE_WRITE)
-> > > +               atomic_dec(&bdev->bd_writers);
-> > >         if (bdev->bd_disk->fops->release)
-> > >                 bdev->bd_disk->fops->release(bdev->bd_disk, mode);
-> > >  }
-> > > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> > > index 740afe80f297..25af3340f316 100644
-> > > --- a/include/linux/blk_types.h
-> > > +++ b/include/linux/blk_types.h
-> > > @@ -67,6 +67,9 @@ struct block_device {
-> > >         struct partition_meta_info *bd_meta_info;
-> > >  #ifdef CONFIG_FAIL_MAKE_REQUEST
-> > >         bool                    bd_make_it_fail;
-> > > +#endif
-> > > +#ifdef CONFIG_BLK_DEV_WRITE_HARDENING
-> > > +       atomic_t                bd_writers;
-> > >  #endif
-> > >         /*
-> > >          * keep this out-of-line as it's both big and not needed in the fast
-> > > --
-> > > 2.35.3
-> > >
+> >> @Greg
+> >>
+> >> For the lookup requests the idmapping couldn't get the mapped UID/GID
+> >> just like all the other requests, which is needed by the MDS permissio=
+n
+> >> check. Is that okay to make it disable the check for this case ? I am
+> >> afraid this will break the MDS permssions logic.
+> >>
+> >> Any idea ?
+> >>
+> >> Thanks
+> >>
+> >> - Xiubo
+> >>
+> >>
+> >>> Kind regards,
+> >>> Alex
+> >>>
+>
