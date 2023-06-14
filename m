@@ -2,116 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B787272FF74
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:06:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AB5D72FFCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:17:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244828AbjFNNGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 09:06:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
+        id S244798AbjFNNRa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 09:17:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244832AbjFNNF5 (ORCPT
+        with ESMTP id S235119AbjFNNR3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:05:57 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E121FF7;
-        Wed, 14 Jun 2023 06:05:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686747955; x=1718283955;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gNR1CGlybaW16+0ie8Xomo54V9jN8wtg2oFB0nLPehs=;
-  b=H4ZgI/0wxXC8Y9M5I3HQ143kGtg+8wLZO2k7p2n2IxiiHW088gQXF39Q
-   7FzPuR69TXY2o30kgYpOAD2b47b63/arhrozyNAa1ZbUAMVx9fxeEBH7e
-   G+3ln0LPPn+VhTQ7aJc8usKvYuOhGSawGLtaTa7VmHXWKXrmsilf5yQ6+
-   lhHnWpZ4sbtpXxFPGY5bOOkvTBMqq5BYFtyu2ydabJGvBEECw/gj1KsFT
-   qfPji0CUX8EgZnEf5y70dRkeOJ9qTnLyJkTHB1WbDx9YwnUe67YmVhB4T
-   ZZDMI33YTk5yyJxwFnPifyNABQ3tBlho7TWlZ0lbUWqJ7dTNxfGwyRtAR
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="343301575"
-X-IronPort-AV: E=Sophos;i="6.00,242,1681196400"; 
-   d="scan'208";a="343301575"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2023 06:05:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="712062604"
-X-IronPort-AV: E=Sophos;i="6.00,242,1681196400"; 
-   d="scan'208";a="712062604"
-Received: from lkp-server02.sh.intel.com (HELO d59cacf64e9e) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 14 Jun 2023 06:05:51 -0700
-Received: from kbuild by d59cacf64e9e with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q9QC7-0000fI-0K;
-        Wed, 14 Jun 2023 13:05:51 +0000
-Date:   Wed, 14 Jun 2023 21:05:26 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Wei Chin Tsai <Wei-chin.Tsai@mediatek.com>,
-        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     oe-kbuild-all@lists.linux.dev, wsd_upstream@mediatek.com,
-        wei-chin.tsai@mediatek.com, mel.lee@mediatek.com,
-        ivan.tseng@mediatek.com, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] memory: export symbols for memory related
- functions
-Message-ID: <202306142030.GjGWnIkY-lkp@intel.com>
-References: <20230614032038.11699-3-Wei-chin.Tsai@mediatek.com>
+        Wed, 14 Jun 2023 09:17:29 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A0F191;
+        Wed, 14 Jun 2023 06:17:26 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 651782253C;
+        Wed, 14 Jun 2023 13:17:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1686748645; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TF9KeihZRpsRH7T+tME1HMriDiLYlq5Qpm9I9dncI04=;
+        b=x6D7/vDI4fB3czijhPkylAjL59vWALMoOVZ2+0BgXEWptq2qjL56Qnjc5ytTDPRhW81JVp
+        Zu3XHrUml5Gm+M3iYMSFmN5cDzGA6ZvpmJaDVwokxpzkotS+qbXuHzbNtdlrUfPHF9ubRh
+        7gnvBOTk1EaWlq6FqCDQCHrUO0zq4dQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1686748645;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TF9KeihZRpsRH7T+tME1HMriDiLYlq5Qpm9I9dncI04=;
+        b=yJA1cNdW0aOM6hkHkZafKTzX2u7vwQbYBNCG5FN7DbGBmZG1djKyXVCh/sFWp7UtZX3e9X
+        s5P5SHQv+Jl0zCBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 50DCB1357F;
+        Wed, 14 Jun 2023 13:17:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Vms7E+W9iWT7VgAAMHmgww
+        (envelope-from <hare@suse.de>); Wed, 14 Jun 2023 13:17:25 +0000
+Message-ID: <cd816905-0e3e-6397-1a6f-fd4d29dfc739@suse.de>
+Date:   Wed, 14 Jun 2023 15:17:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230614032038.11699-3-Wei-chin.Tsai@mediatek.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 0/7] RFC: high-order folio support for I/O
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>
+References: <20230614114637.89759-1-hare@suse.de>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20230614114637.89759-1-hare@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Wei,
+On 6/14/23 13:46, Hannes Reinecke wrote:
+> Hi all,
+> 
+> now, that was easy.
+> Thanks to willy and his recent patchset to support large folios in
+> gfs2 turns out that most of the work to support high-order folios
+> for I/O is actually done.
+> It only need twe rather obvious patches to allocate folios with
+> the order derived from the mapping blocksize, and to adjust readahead
+> to avoid reading off the end of the device.
+> But with these two patches (and the patchset from hch to switch
+> the block device over to iomap) (and the patchset from ritesh to
+> support sub-blocksize iomap buffers) I can now do:
+> 
+> # modprobe brd rd_size=524288 rd_blksize=16384
+> # mkfs.xfs -b size=16384 /dev/ram0
+> 
+> it still fails when trying to mount the device:
+> 
+> XFS (ram0): Cannot set_blocksize to 16384 on device ram0
+> 
+> but to my understanding this is being worked on.
+> 
+Turns out that was quite easy to fix (just remove the check in 
+set_blocksize()), but now I get this:
 
-kernel test robot noticed the following build errors:
+SGI XFS with ACLs, security attributes, quota, no debug enabled
+XFS (ram0): File system with blocksize 16384 bytes. Only pagesize (4096) 
+or less will currently work.
 
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.4-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hmm. And btrfs doesn't fare better here:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Chin-Tsai/kernel-process-fork-exit-export-symbol-for-fork-exit-tracing-functions/20230614-112218
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20230614032038.11699-3-Wei-chin.Tsai%40mediatek.com
-patch subject: [PATCH v2 2/3] memory: export symbols for memory related functions
-config: arm-randconfig-r033-20230612 (https://download.01.org/0day-ci/archive/20230614/202306142030.GjGWnIkY-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git remote add char-misc https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
-        git fetch char-misc char-misc-testing
-        git checkout char-misc/char-misc-testing
-        b4 shazam https://lore.kernel.org/r/20230614032038.11699-3-Wei-chin.Tsai@mediatek.com
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arm olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
+BTRFS info (device ram0): using crc32c (crc32c-intel) checksum algorithm
+BTRFS error (device ram0): sectorsize 16384 not yet supported for page 
+size 4096
+BTRFS error (device ram0): superblock contains fatal errors
+BTRFS error (device ram0): open_ctree failed
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306142030.GjGWnIkY-lkp@intel.com/
+But at least we _can_ test these filesystems now :-)
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+Cheers,
 
->> ERROR: modpost: vmlinux: 'arch_vma_name' exported twice. Previous export was in vmlinux
-WARNING: modpost: EXPORT symbol "arch_vma_name" [vmlinux] version generation failed, symbol will not be versioned.
-Is "arch_vma_name" prototyped in <asm/asm-prototypes.h>?
+Hannes
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
