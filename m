@@ -2,121 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AB5D72FFCE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:17:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E030E72FFFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244798AbjFNNRa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 09:17:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38230 "EHLO
+        id S236633AbjFNN0t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 09:26:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235119AbjFNNR3 (ORCPT
+        with ESMTP id S235333AbjFNN0s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:17:29 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A0F191;
-        Wed, 14 Jun 2023 06:17:26 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Wed, 14 Jun 2023 09:26:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11D61BEF;
+        Wed, 14 Jun 2023 06:26:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 651782253C;
-        Wed, 14 Jun 2023 13:17:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1686748645; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TF9KeihZRpsRH7T+tME1HMriDiLYlq5Qpm9I9dncI04=;
-        b=x6D7/vDI4fB3czijhPkylAjL59vWALMoOVZ2+0BgXEWptq2qjL56Qnjc5ytTDPRhW81JVp
-        Zu3XHrUml5Gm+M3iYMSFmN5cDzGA6ZvpmJaDVwokxpzkotS+qbXuHzbNtdlrUfPHF9ubRh
-        7gnvBOTk1EaWlq6FqCDQCHrUO0zq4dQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1686748645;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TF9KeihZRpsRH7T+tME1HMriDiLYlq5Qpm9I9dncI04=;
-        b=yJA1cNdW0aOM6hkHkZafKTzX2u7vwQbYBNCG5FN7DbGBmZG1djKyXVCh/sFWp7UtZX3e9X
-        s5P5SHQv+Jl0zCBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 50DCB1357F;
-        Wed, 14 Jun 2023 13:17:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Vms7E+W9iWT7VgAAMHmgww
-        (envelope-from <hare@suse.de>); Wed, 14 Jun 2023 13:17:25 +0000
-Message-ID: <cd816905-0e3e-6397-1a6f-fd4d29dfc739@suse.de>
-Date:   Wed, 14 Jun 2023 15:17:25 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 0/7] RFC: high-order folio support for I/O
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 77AB364247;
+        Wed, 14 Jun 2023 13:26:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01795C433C0;
+        Wed, 14 Jun 2023 13:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686749206;
+        bh=nPNRrMeXI1rGe6CmC5fnrg+eHs1DY5z0cl/EbfjndVU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XCaqMDjv1V+TLzxklaM9RIBrUWbptvN+ZKs8US/UCssImMMGmBEtjRJz8gTE9uOvb
+         wUmRNKxQYjI4qlzEPHqA9JyBGLIJgFqr0UX8N0oRDALhAJD47wDhQ1uwsyk+6MozGy
+         IuBnuyFOZvk1nW1Bhhj/3hiW8GIsD5ggHVeadQniF3UbIrvQ01jtQLfZTqzDuWQ1+v
+         KNotEDu7qFRqRthl1F7ufQ2JnqwItJlLS3JTgPB/WHzPjFrruUvdGahLBEtNx5jwOi
+         dGPLQKplRjGoVqVTxuNR1rk0Po5PnP9mduN/9Nh39zEFDFVF8UVQkxchM8EVGkU0v4
+         AN+CdaVlFnIKg==
+Date:   Wed, 14 Jun 2023 15:26:41 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
         Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <20230614114637.89759-1-hare@suse.de>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230614114637.89759-1-hare@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] fs: use backing_file container for internal files
+ with "fake" f_path
+Message-ID: <20230614-kilowatt-kindgerecht-46c7210ee82e@brauner>
+References: <20230614074907.1943007-1-amir73il@gmail.com>
+ <20230614074907.1943007-2-amir73il@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230614074907.1943007-2-amir73il@gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/14/23 13:46, Hannes Reinecke wrote:
-> Hi all,
+On Wed, Jun 14, 2023 at 10:49:06AM +0300, Amir Goldstein wrote:
+> Overlayfs and cachefiles use open_with_fake_path() to allocate internal
+> files, where overlayfs also puts a "fake" path in f_path - a path which
+> is not on the same fs as f_inode.
 > 
-> now, that was easy.
-> Thanks to willy and his recent patchset to support large folios in
-> gfs2 turns out that most of the work to support high-order folios
-> for I/O is actually done.
-> It only need twe rather obvious patches to allocate folios with
-> the order derived from the mapping blocksize, and to adjust readahead
-> to avoid reading off the end of the device.
-> But with these two patches (and the patchset from hch to switch
-> the block device over to iomap) (and the patchset from ritesh to
-> support sub-blocksize iomap buffers) I can now do:
+> Allocate a container struct backing_file for those internal files, that
+> is used to hold the "fake" ovl path along with the real path.
 > 
-> # modprobe brd rd_size=524288 rd_blksize=16384
-> # mkfs.xfs -b size=16384 /dev/ram0
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/cachefiles/namei.c |  4 +--
+>  fs/file_table.c       | 74 +++++++++++++++++++++++++++++++++++++------
+>  fs/internal.h         |  5 +--
+>  fs/open.c             | 30 +++++++++++-------
+>  fs/overlayfs/file.c   |  4 +--
+>  include/linux/fs.h    | 24 +++++++++++---
+>  6 files changed, 109 insertions(+), 32 deletions(-)
 > 
-> it still fails when trying to mount the device:
-> 
-> XFS (ram0): Cannot set_blocksize to 16384 on device ram0
-> 
-> but to my understanding this is being worked on.
-> 
-Turns out that was quite easy to fix (just remove the check in 
-set_blocksize()), but now I get this:
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index 82219a8f6084..283534c6bc8d 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -560,8 +560,8 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
+>  	 */
+>  	path.mnt = cache->mnt;
+>  	path.dentry = dentry;
+> -	file = open_with_fake_path(&path, O_RDWR | O_LARGEFILE | O_DIRECT,
+> -				   d_backing_inode(dentry), cache->cache_cred);
+> +	file = open_backing_file(&path, O_RDWR | O_LARGEFILE | O_DIRECT,
+> +				 &path, cache->cache_cred);
+>  	if (IS_ERR(file)) {
+>  		trace_cachefiles_vfs_error(object, d_backing_inode(dentry),
+>  					   PTR_ERR(file),
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index 372653b92617..138d5d405df7 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -44,18 +44,40 @@ static struct kmem_cache *filp_cachep __read_mostly;
+>  
+>  static struct percpu_counter nr_files __cacheline_aligned_in_smp;
+>  
+> +/* Container for backing file with optional real path */
+> +struct backing_file {
+> +	struct file file;
+> +	struct path real_path;
+> +};
+> +
+> +static inline struct backing_file *backing_file(struct file *f)
+> +{
+> +	return container_of(f, struct backing_file, file);
+> +}
+> +
+> +struct path *backing_file_real_path(struct file *f)
+> +{
+> +	return &backing_file(f)->real_path;
+> +}
+> +EXPORT_SYMBOL_GPL(backing_file_real_path);
+> +
+>  static void file_free_rcu(struct rcu_head *head)
+>  {
+>  	struct file *f = container_of(head, struct file, f_rcuhead);
+>  
+>  	put_cred(f->f_cred);
+> -	kmem_cache_free(filp_cachep, f);
+> +	if (unlikely(f->f_mode & FMODE_BACKING))
+> +		kfree(backing_file(f));
+> +	else
+> +		kmem_cache_free(filp_cachep, f);
+>  }
+>  
+>  static inline void file_free(struct file *f)
+>  {
+>  	security_file_free(f);
+> -	if (!(f->f_mode & FMODE_NOACCOUNT))
+> +	if (unlikely(f->f_mode & FMODE_BACKING))
+> +		path_put(backing_file_real_path(f));
+> +	else
+>  		percpu_counter_dec(&nr_files);
 
-SGI XFS with ACLs, security attributes, quota, no debug enabled
-XFS (ram0): File system with blocksize 16384 bytes. Only pagesize (4096) 
-or less will currently work.
+I think this needs to be:
 
-Hmm. And btrfs doesn't fare better here:
+if (unlikely(f->f_mode & FMODE_BACKING))
+        path_put(backing_file_real_path(f));
 
-BTRFS info (device ram0): using crc32c (crc32c-intel) checksum algorithm
-BTRFS error (device ram0): sectorsize 16384 not yet supported for page 
-size 4096
-BTRFS error (device ram0): superblock contains fatal errors
-BTRFS error (device ram0): open_ctree failed
+if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
+        percpu_counter_dec(&nr_files);
 
-But at least we _can_ test these filesystems now :-)
+as we do have FMODE_NOACCOUNT without FMODE_BACKING.
 
-Cheers,
-
-Hannes
-
+No need to resend though.
