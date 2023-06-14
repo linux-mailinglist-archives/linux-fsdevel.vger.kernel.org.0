@@ -2,61 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DFD272F23C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 03:56:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5608672F266
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 04:04:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241018AbjFNBz4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 21:55:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51034 "EHLO
+        id S241935AbjFNCER (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 22:04:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241337AbjFNBzy (ORCPT
+        with ESMTP id S232600AbjFNCEQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 21:55:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F331981;
-        Tue, 13 Jun 2023 18:55:52 -0700 (PDT)
+        Tue, 13 Jun 2023 22:04:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2213F173C;
+        Tue, 13 Jun 2023 19:04:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1592B63544;
-        Wed, 14 Jun 2023 01:55:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A1B6C433C8;
-        Wed, 14 Jun 2023 01:55:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5465A63CCD;
+        Wed, 14 Jun 2023 02:04:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9905C433C8;
+        Wed, 14 Jun 2023 02:04:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686707751;
-        bh=+TQ2BSnPydlyqEA0jKJ3KsS/rKfRN5nG17oZLglMtjk=;
+        s=k20201202; t=1686708252;
+        bh=ZuYjOOMYcIapf1xTzMaH8bllN8MN9sV5m2s612yPNPM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HqXdINT34KKlbL6sIYr1eiGpDH9hm/BX4R41EpKhFhGLp5ZV2dXJM+Lga2B+ZjKYI
-         6xaEw/b53lkYLkPnUXJUtEOpBF8AwhBT+9plqIHFgkU4I5bCjcueriPrtt3XtrvXPT
-         /5ZF0GdC/VnCICj/7u1tPzoftw+x15rMHFW35++tAwzp5DemOiLtbtyx8yl3trzMWz
-         xdWgHmUYFr3I4SGiDfuJVG9qiFaD67stfbxUapn5X9pDuJ1CoKH1SkXyyaXrjngD5d
-         h0y3Sqflrm4uraAeoSYiw2F2RUyzod8O5eq4DIPdqVbFuPlI4Q1gcpu8GqhLFSjVXK
-         28TRG7GewEkOg==
-Date:   Tue, 13 Jun 2023 18:55:50 -0700
+        b=Tp8o8AXugCF/9U+D/4c/3Z5pRrIPqUguRtwn3FlBaG4OOf3P8mKQNAfyGKdzL2bkr
+         X6aTKujlYWbWhpolSfZ0neNy1I3MXY+UbyvwG0CqHv00+Kq6ICp+RBHQjwVORNPgbW
+         N/1cEwZi2a1IUr9Q317NEaQYdfCwRMjCJ3dFbVxbJ4cw74boS7a5Q8DwHOB4gkel3H
+         +7LIAgGak27XpL0TlYOVaJmU/rObgt+tQtek/hB6LvxUQDNwWiiocqU/Qh45GQBgIC
+         7lY125sMXe3cqAV9gBKePwDP0dEbc6G4FGsM2UwmDX7pds+X83QSn/Rz1n6lnXBtBm
+         t/im0oviKIAzw==
+Date:   Tue, 13 Jun 2023 19:04:12 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Colin Walters <walters@verbum.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Theodore Ts'o <tytso@mit.edu>, yebin <yebin@huaweicloud.com>,
-        linux-fsdevel@vger.kernel.org
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Ted Tso <tytso@mit.edu>, yebin <yebin@huaweicloud.com>,
+        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@google.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Eric Biggers <ebiggers@google.com>
 Subject: Re: [PATCH] block: Add config option to not allow writing to mounted
  devices
-Message-ID: <20230614015550.GA11423@frogsfrogsfrogs>
+Message-ID: <20230614020412.GB11423@frogsfrogsfrogs>
 References: <20230612161614.10302-1-jack@suse.cz>
- <20230612162545.frpr3oqlqydsksle@quack3>
- <2f629dc3-fe39-624f-a2fe-d29eee1d2b82@acm.org>
- <a6c355f7-8c60-4aab-8f0c-5c6310f9c2a8@betaapp.fastmail.com>
- <20230613113448.5txw46hvmdjvuoif@quack3>
+ <CACT4Y+aEScXmq2F1-vqAfr-b2w-xyOohN+FZxorW1YuRvKDLNQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230613113448.5txw46hvmdjvuoif@quack3>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <CACT4Y+aEScXmq2F1-vqAfr-b2w-xyOohN+FZxorW1YuRvKDLNQ@mail.gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -65,121 +62,170 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 13, 2023 at 01:34:48PM +0200, Jan Kara wrote:
-> On Mon 12-06-23 14:52:54, Colin Walters wrote:
-> > On Mon, Jun 12, 2023, at 1:39 PM, Bart Van Assche wrote:
-> > > On 6/12/23 09:25, Jan Kara wrote:
-> > >> On Mon 12-06-23 18:16:14, Jan Kara wrote:
-> > >>> Writing to mounted devices is dangerous and can lead to filesystem
-> > >>> corruption as well as crashes. Furthermore syzbot comes with more and
-> > >>> more involved examples how to corrupt block device under a mounted
-> > >>> filesystem leading to kernel crashes and reports we can do nothing
-> > >>> about. Add config option to disallow writing to mounted (exclusively
-> > >>> open) block devices. Syzbot can use this option to avoid uninteresting
-> > >>> crashes. Also users whose userspace setup does not need writing to
-> > >>> mounted block devices can set this config option for hardening.
-> > >>>
-> > >>> Link: https://lore.kernel.org/all/60788e5d-5c7c-1142-e554-c21d709acfd9@linaro.org
-> > >>> Signed-off-by: Jan Kara <jack@suse.cz>
-> > >> 
-> > >> Please disregard this patch. I had uncommited fixups in my tree. I'll send
-> > >> fixed version shortly. I'm sorry for the noise.
-> > >
-> > > Have alternatives been configured to making this functionality configurable
-> > > at build time only? How about a kernel command line parameter instead of a
-> > > config option?
-> > 
-> > It's not just syzbot here; at least once in my life I accidentally did
-> > `dd if=/path/to/foo.iso of=/dev/sda` when `/dev/sda` was my booted disk
-> > and not the target USB device.  I know I'm not alone =)
+On Tue, Jun 13, 2023 at 08:49:38AM +0200, Dmitry Vyukov wrote:
+> On Mon, 12 Jun 2023 at 18:16, Jan Kara <jack@suse.cz> wrote:
+> >
+> > Writing to mounted devices is dangerous and can lead to filesystem
+> > corruption as well as crashes. Furthermore syzbot comes with more and
+> > more involved examples how to corrupt block device under a mounted
+> > filesystem leading to kernel crashes and reports we can do nothing
+> > about. Add config option to disallow writing to mounted (exclusively
+> > open) block devices. Syzbot can use this option to avoid uninteresting
+> > crashes. Also users whose userspace setup does not need writing to
+> > mounted block devices can set this config option for hardening.
 > 
-> Yeah, so I'm not sure we are going to protect against this particular case.
-> I mean it is not *that* uncommon to alter partition table of /dev/sda while
-> /dev/sda1 is mounted. And for the kernel it is difficult to distinguish
-> this and your mishap.
+> +syzkaller, Kees, Alexander, Eric
+> 
+> We can enable this on syzbot, however I have the same concerns as with
+> disabling of XFS_SUPPORT_V4:
+> https://github.com/google/syzkaller/issues/3918#issuecomment-1560624278
+> 
+> It's useful to know the actual situation with respect to
+> bugs/vulnerabilities and one of the goals of syzbot is surfacing this
+> situation.
+> For some areas there is mismatch between upstream kernel and
+> downstream distros. Upstream says "this is buggy and deprecated",
+> which is fine in itself if not the other part: downstream distros
+> simply ignore that (maybe not even aware) and keep things enabled for
+> as long as possible. Stopping testing this is moving more in this
+> direction: silencing warnings and pretending that everything is fine,
+> when it's not.
+> 
+> I wonder if there is a way to at least somehow bridge this gap.
+> 
+> There is CONFIG_BROKEN, but not sure if it's the right thing here.
+> Maybe we add something like CONFIG_INSECURE. And such insecure config
+> settings (not setting BLK_DEV_WRITE_HARDENING, setting XFS_SUPPORT_V4)
+> will say:
+> 
+> depends on INSECURE
+> 
+> So that distros will need to at least acknowledge this to users by saying:
+> 
+> CONFIG_INSECURE=y
+> 
+> They are then motivated to work on actually removing dependencies on
+> these deprecated things.
+> 
+> CONFIG_INSECURE description can say something along the lines of "this
+> kernel includes subsystems with known bugs that may cause security and
+> data integrity issues". When a subsystem adds "depends on INSECURE",
+> the commit should list some of the known issues.
+> 
+> Then I see how trading disabling things on syzbot in exchange for
+> "depends on INSECURE" becomes reasonable and satisfies all parties to
+> some degree.
 
-Honestly?
+Well in that case, post a patchset adding "depends on INSECURE" for
+every subsystem that syzbot files bugs against, if the maintainers do
+not immediately drop what they're doing to resolve the bug.
 
-I'd love it if filesystems actually /could/ lock down the parts of block
-devices they're using.  They could hand out write privileges to the open
-bdev fds at the same time that a block layout lease is created, and
-retract them when the lease terminates.  Areas before the fs (e.g. BIOS
-boot sector) could actually be left writable by filesystems that don't
-use that area; and anything beyond EOFS would still be writable (hello
-lvm).  Then xfs actually /could/ prevent you from blowing away mounted
-xfs filesystem.
-
-ext4 could even still allow primary superblock writes to avoid breaking
-tune2fs, or they could detect secureboot lockdown and prohibit that.
-
-In the past, I was told to go write an LSM if I wanted XFS to protect
-itself from getting nuked, but I've been too busy to learn how to do
-that.  The other nastier question is blocking writes to sda when sda1 is
-mounted; for that I have no response. :(
+Google extracts a bunch more unpaid labor from society to make its
+owners richer, and everyone else on the planet suffers for it, just like
+you all have done for the past 25 years.  That's the definition of
+Googley!!
 
 --D
 
-> > There's a lot of similar accidental-damage protection from this.  Another
-> > stronger argument here is that if one has a security policy that
-> > restricts access to filesystem level objects, if a process can somehow
-> > write to a mounted block device, it effectively subverts all of those
-> > controls. 
 > 
-> Well, there are multiple levels of protection that I can think of:
+> Btw, if we do this it can make sense to invert this config (enable
+> concurrent writes), default to 'y' and recommend 'n'.
 > 
-> 1) If user can write some image and make kernel mount it.
-> 2) If user can modify device content while mounted (but not buffer cache
-> of the device).
-> 3) If user can modify buffer cache of the device while mounted.
+> Does it make any sense? Any other suggestions?
 > 
-> 3) is the most problematic and effectively equivalent to full machine
-> control (executing arbitrary code in kernel mode) these days.  For 1) and
-> 2) there are reasonable protection measures the filesystem driver can take
-> (and effectively you cannot escape these problems if you allow attaching
-> untrusted devices such as USB sticks) so they can cause DoS but we should
-> be able to prevent full machine takeover in the filesystem code.
+> P.S. Alex, if this lands this may be a candidate for addition to:
+> https://github.com/a13xp0p0v/kconfig-hardened-check
+> (and XFS_SUPPORT_V4 as well).
 > 
-> So this patch is mainly aimed at forbiding 3).
 > 
-> > Right now it looks to me we're invoking devcgroup_check_permission pretty
-> > early on; maybe we could extend the device cgroup stuff to have a new
-> > check for write-mounted, like
-> > 
-> > ```
-> > diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-> > index c994ff5b157c..f2af33c5acc1 100644
-> > --- a/tools/include/uapi/linux/bpf.h
-> > +++ b/tools/include/uapi/linux/bpf.h
-> > @@ -6797,6 +6797,7 @@ enum {
-> >  	BPF_DEVCG_ACC_MKNOD	= (1ULL << 0),
-> >  	BPF_DEVCG_ACC_READ	= (1ULL << 1),
-> >  	BPF_DEVCG_ACC_WRITE	= (1ULL << 2),
-> > +	BPF_DEVCG_ACC_WRITE_MOUNTED	= (1ULL << 3),
-> >  };
-> >  
-> >  enum {
-> > ```
-> > 
-> > ?  But probably this would need to be some kind of opt-in flag to avoid
-> > breaking existing bpf progs?
-> > 
-> > If it was configurable via the device cgroup, then it's completely
-> > flexible from userspace; most specifically including supporting some
-> > specially privileged processes from doing it if necessary.
-> 
-> I kind of like the flexibility of device cgroups but it does not seem to
-> fit well with my "stop unactionable syzbot reports" usecase and doing the
-> protection properly would mean that we now need to create way to approve
-> access for all the tools that need this. So I'm not against this but I'd
-> consider this "future extension possibility" :).
-> 
-> > Also, I wonder if we should also support restricting *reads* from mounted
-> > block devices?
-> 
-> I don't see a strong usecase for this. Why would mounted vs unmounted
-> matter here?
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> > Link: https://lore.kernel.org/all/60788e5d-5c7c-1142-e554-c21d709acfd9@linaro.org
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  block/Kconfig             | 12 ++++++++++++
+> >  block/bdev.c              | 10 ++++++++++
+> >  include/linux/blk_types.h |  3 +++
+> >  3 files changed, 25 insertions(+)
+> >
+> > FWIW I've tested this and my test VM with ext4 root fs boots fine and fstests
+> > on ext4 seem to be also running fine with BLK_DEV_WRITE_HARDENING enabled.
+> > OTOH my old VM setup which is not using initrd fails to boot with
+> > BLK_DEV_WRITE_HARDENING enabled because fsck cannot open the root device
+> > because the root is already mounted (read-only). Anyway this should be useful
+> > for syzbot (Dmitry indicated interest in this option in the past) and maybe
+> > other well controlled setups.
+> >
+> > diff --git a/block/Kconfig b/block/Kconfig
+> > index 86122e459fe0..c44e2238e18d 100644
+> > --- a/block/Kconfig
+> > +++ b/block/Kconfig
+> > @@ -77,6 +77,18 @@ config BLK_DEV_INTEGRITY_T10
+> >         select CRC_T10DIF
+> >         select CRC64_ROCKSOFT
+> >
+> > +config BLK_DEV_WRITE_HARDENING
+> > +       bool "Do not allow writing to mounted devices"
+> > +       help
+> > +       When a block device is mounted, writing to its buffer cache very likely
+> > +       going to cause filesystem corruption. It is also rather easy to crash
+> > +       the kernel in this way since the filesystem has no practical way of
+> > +       detecting these writes to buffer cache and verifying its metadata
+> > +       integrity. Select this option to disallow writing to mounted devices.
+> > +       This should be mostly fine but some filesystems (e.g. ext4) rely on
+> > +       the ability of filesystem tools to write to mounted filesystems to
+> > +       set e.g. UUID or run fsck on the root filesystem in some setups.
+> > +
+> >  config BLK_DEV_ZONED
+> >         bool "Zoned block device support"
+> >         select MQ_IOSCHED_DEADLINE
+> > diff --git a/block/bdev.c b/block/bdev.c
+> > index 21c63bfef323..ad01f0a6af0d 100644
+> > --- a/block/bdev.c
+> > +++ b/block/bdev.c
+> > @@ -602,6 +602,12 @@ static int blkdev_get_whole(struct block_device *bdev, fmode_t mode)
+> >         struct gendisk *disk = bdev->bd_disk;
+> >         int ret;
+> >
+> > +       if (IS_ENABLED(BLK_DEV_WRITE_HARDENING)) {
+> > +               if (mode & FMODE_EXCL && atomic_read(&bdev->bd_writers) > 0)
+> > +                       return -EBUSY;
+> > +               if (mode & FMODE_WRITE && bdev->bd_holders > 0)
+> > +                       return -EBUSY;
+> > +       }
+> >         if (disk->fops->open) {
+> >                 ret = disk->fops->open(bdev, mode);
+> >                 if (ret) {
+> > @@ -617,6 +623,8 @@ static int blkdev_get_whole(struct block_device *bdev, fmode_t mode)
+> >                 set_init_blocksize(bdev);
+> >         if (test_bit(GD_NEED_PART_SCAN, &disk->state))
+> >                 bdev_disk_changed(disk, false);
+> > +       if (IS_ENABLED(BLK_DEV_WRITE_HARDENING) && mode & FMODE_WRITE)
+> > +               atomic_inc(&bdev->bd_writers);
+> >         atomic_inc(&bdev->bd_openers);
+> >         return 0;
+> >  }
+> > @@ -625,6 +633,8 @@ static void blkdev_put_whole(struct block_device *bdev, fmode_t mode)
+> >  {
+> >         if (atomic_dec_and_test(&bdev->bd_openers))
+> >                 blkdev_flush_mapping(bdev);
+> > +       if (IS_ENABLED(BLK_DEV_WRITE_HARDENING) && mode & FMODE_WRITE)
+> > +               atomic_dec(&bdev->bd_writers);
+> >         if (bdev->bd_disk->fops->release)
+> >                 bdev->bd_disk->fops->release(bdev->bd_disk, mode);
+> >  }
+> > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> > index 740afe80f297..25af3340f316 100644
+> > --- a/include/linux/blk_types.h
+> > +++ b/include/linux/blk_types.h
+> > @@ -67,6 +67,9 @@ struct block_device {
+> >         struct partition_meta_info *bd_meta_info;
+> >  #ifdef CONFIG_FAIL_MAKE_REQUEST
+> >         bool                    bd_make_it_fail;
+> > +#endif
+> > +#ifdef CONFIG_BLK_DEV_WRITE_HARDENING
+> > +       atomic_t                bd_writers;
+> >  #endif
+> >         /*
+> >          * keep this out-of-line as it's both big and not needed in the fast
+> > --
+> > 2.35.3
+> >
