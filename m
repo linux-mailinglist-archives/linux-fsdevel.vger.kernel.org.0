@@ -2,63 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DFD872FF48
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:01:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13EFC72FF54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 15:02:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244410AbjFNNBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 09:01:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55628 "EHLO
+        id S244790AbjFNNCn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 09:02:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236501AbjFNNBU (ORCPT
+        with ESMTP id S244078AbjFNNCm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 09:01:20 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B2C10DA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 06:01:18 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-30aea656e36so4813046f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 06:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686747677; x=1689339677;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zKcyeIjuX8sywa2E7FEsKNjVnYGon92ntPAS7tyVkXM=;
-        b=EehtkPGgvmAZy9ncu5cJ/tjuIUL+5kv2TYpVVeOgS5yYfW01RhE1AbZFzX1BPtHMhH
-         jwpOcxFcdkMekmW0vx7OQJc2guSSpYCsIdBRseOb0u8oQcDFp3XuXNbO/dHFfb1G0l4U
-         TbMo8/JOpVqQVdgrV7IghpZF6wRtY6YRmbWczds9lNv1ib4fngCbL1JRdegb182zbFxc
-         AlG5xAe1U9c5DDxmkTwQfQT+l2UzPn0e3r66ua1zICC0bN99ReuAo9fM3GCTAIRE12iI
-         QScKwJ5hOg91y2Y4TbQNNv2OkT+Y584Pdcwhh+vM2hK5pNbyohk/fO8w9rylvqbPALxK
-         GfDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686747677; x=1689339677;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zKcyeIjuX8sywa2E7FEsKNjVnYGon92ntPAS7tyVkXM=;
-        b=MezCGrbTRiO0p+bWMydbFAdE+PYNQ+6Tk576mn47I569nWYowRFa4VfmcS35DggPO4
-         x778A+aoV6okNsINN4fqhkUGPLbcX0f834gvKgTQXS+6OcukbvHe7VDd2+6OPE/PDesQ
-         1VK212g7ofinU01GKtUOE+mNqNthlqXm5jPftcgZRXA3pAjYGb69tQ27ntyj6bGTcyui
-         LAO1CQ9m0NNbIdWJHsbU0M4Ebti7KcaP4SDgwCrRUMByCvCCrz1dUYZwZLNBpdyHjQRZ
-         GlkZ6ZcxhLMKT5C1yiDeLkvxVqlCEaYK3mqUXLy7yEDgGrQVlya+1b1zbeGXWKmb74Qw
-         uzBA==
-X-Gm-Message-State: AC+VfDyqMNFgBkATz5h3HGejyfTBrSgv/YttK2CbeeHe13Y0pLd10yQh
-        mMScNETY/KE6FDqO65sWhEC+Bw==
-X-Google-Smtp-Source: ACHHUZ4S4zDpcojMrLWg6NB9lAmjFVlgJQhnDxUOlAr2LszHmuOOmelC06aLOdjxrq8uLunltO44Vg==
-X-Received: by 2002:adf:e945:0:b0:30f:ce60:a3a with SMTP id m5-20020adfe945000000b0030fce600a3amr3320301wrn.10.1686747677415;
-        Wed, 14 Jun 2023 06:01:17 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a10-20020a5d4d4a000000b0030fc079b7f3sm9334796wru.73.2023.06.14.06.01.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 06:01:16 -0700 (PDT)
-Date:   Wed, 14 Jun 2023 16:01:12 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     willy@infradead.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [bug report] buffer: convert block_truncate_page() to use a folio
-Message-ID: <330ceb44-8cd7-41ee-8750-648e90cb165e@moroto.mountain>
+        Wed, 14 Jun 2023 09:02:42 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97AAE1727;
+        Wed, 14 Jun 2023 06:02:41 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 867121FDED;
+        Wed, 14 Jun 2023 13:02:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1686747759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RMDeM94d6wWa0bomfv2SniHbOGSKD3bXpgmUgOrpy0Q=;
+        b=Ra2dPs3CHtttweb+YiXpsuYj2ox3yU9tI+r8HkXA3bLgKAnLio2PXO6oison6WVCeXHtF4
+        9wZWB9CWMAKCG+sfhWrWHpzAmKHPcChCrYG0P6Fjki3HjKO6Yq4Jpp9+6ZCst7JqeUCpKV
+        ftumbah5jnpjuvkCswljGQeAuZrghuE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1686747759;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RMDeM94d6wWa0bomfv2SniHbOGSKD3bXpgmUgOrpy0Q=;
+        b=nHJZuinm4L5vheHZ/w9KqlUZEF/Uyl2VEwzJHPjBzLPrl4bOYLwmEbVeasvpj1hi0KzTEd
+        ttekW3/ZijMfPZBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 72F2B1357F;
+        Wed, 14 Jun 2023 13:02:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id qqmcG2+6iWTsTgAAMHmgww
+        (envelope-from <hare@suse.de>); Wed, 14 Jun 2023 13:02:39 +0000
+Message-ID: <7239695e-6dd6-7a00-f4fe-3bd36ae2d924@suse.de>
+Date:   Wed, 14 Jun 2023 15:02:39 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 4/7] brd: make sector size configurable
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>
+References: <20230614114637.89759-1-hare@suse.de>
+ <20230614114637.89759-5-hare@suse.de> <ZIm4wyHZK/YMV2gj@casper.infradead.org>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <ZIm4wyHZK/YMV2gj@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -67,47 +77,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Matthew Wilcox (Oracle),
+On 6/14/23 14:55, Matthew Wilcox wrote:
+> On Wed, Jun 14, 2023 at 01:46:34PM +0200, Hannes Reinecke wrote:
+>> @@ -43,9 +43,11 @@ struct brd_device {
+>>   	 */
+>>   	struct xarray	        brd_folios;
+>>   	u64			brd_nr_folios;
+>> +	unsigned int		brd_sector_shift;
+>> +	unsigned int		brd_sector_size;
+>>   };
+>>   
+>> -#define BRD_SECTOR_SHIFT(b) (PAGE_SHIFT - SECTOR_SHIFT)
+>> +#define BRD_SECTOR_SHIFT(b) ((b)->brd_sector_shift - SECTOR_SHIFT)
+>>   
+>>   static pgoff_t brd_sector_index(struct brd_device *brd, sector_t sector)
+>>   {
+>> @@ -85,7 +87,7 @@ static int brd_insert_folio(struct brd_device *brd, sector_t sector, gfp_t gfp)
+>>   {
+>>   	pgoff_t idx;
+>>   	struct folio *folio, *cur;
+>> -	unsigned int rd_sector_order = get_order(PAGE_SIZE);
+>> +	unsigned int rd_sector_order = get_order(brd->brd_sector_size);
+> 
+> Surely max(0, brd->brd_sector_shift - PAGE_SHIFT) ?
+> 
+Errm. Possibly.
 
-The patch dd69ce3382a2: "buffer: convert block_truncate_page() to use
-a folio" from Jun 12, 2023, leads to the following Smatch static
-checker warning:
+>> @@ -346,6 +353,25 @@ static int brd_alloc(int i)
+>>   		return -ENOMEM;
+>>   	brd->brd_number		= i;
+>>   	list_add_tail(&brd->brd_list, &brd_devices);
+>> +	brd->brd_sector_shift = ilog2(rd_blksize);
+>> +	if ((1ULL << brd->brd_sector_shift) != rd_blksize) {
+>> +		pr_err("rd_blksize %d is not supported\n", rd_blksize);
+> 
+> Are you trying to require power-of-two here?  We have is_power_of_2()
+> for that purpose.
+> 
+Ah. So let's use that, then :-)
 
-fs/buffer.c:1066 grow_dev_page() error: 'folio' dereferencing possible ERR_PTR()
+Cheers,
 
-This one seems like a false positive,  If you call __filemap_get_folio()
-with __GFP_NOFAIL then it only returns valid pointers, right?
+Hannes
 
-fs/buffer.c:2689 block_truncate_page() warn: 'folio' is an error pointer or valid
-fs/buffer.c:2692 block_truncate_page() error: 'folio' dereferencing possible ERR_PTR()
-
-fs/buffer.c
-    2679         length = from & (blocksize - 1);
-    2680 
-    2681         /* Block boundary? Nothing to do */
-    2682         if (!length)
-    2683                 return 0;
-    2684 
-    2685         length = blocksize - length;
-    2686         iblock = (sector_t)index << (PAGE_SHIFT - inode->i_blkbits);
-    2687         
-    2688         folio = filemap_grab_folio(mapping, index);
---> 2689         if (!folio)
-
-This should be IS_ERR(). 
-
-    2690                 return -ENOMEM;
-    2691 
-    2692         bh = folio_buffers(folio);
-                                    ^^^^^
-Dereferenced.
-
-    2693         if (!bh) {
-    2694                 folio_create_empty_buffers(folio, blocksize, 0);
-    2695                 bh = folio_buffers(folio);
-    2696         }
-    2697 
-    2698         /* Find the buffer that contains "offset" */
-
-regards,
-dan carpenter
