@@ -2,76 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 75AA67303EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 17:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A2167303FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 17:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235703AbjFNPfg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 11:35:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39220 "EHLO
+        id S244249AbjFNPja (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 11:39:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229736AbjFNPfG (ORCPT
+        with ESMTP id S236010AbjFNPj3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 11:35:06 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D99EB6;
-        Wed, 14 Jun 2023 08:35:04 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id F41081FDB5;
-        Wed, 14 Jun 2023 15:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1686756903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kZQgDi2VbOJpatdj+K52qKpMPGdEGQyZQB7VZLDRrk0=;
-        b=fUFVVC3XA/mDZqMaAEfUGeGjVt9wOWzjWc+k0KQr04POAEBD8IDz6iZ9S4+/FWked+CqTL
-        N54EvcEqNVNtgI9C7AnjQ9FBX0GKusVOr6HxuizQr8vtDp9I74hUhiAuwI3jKZHPRkTCX0
-        NRa90g24DNZMo894Pk4AP1FK6LWTSX4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1686756903;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kZQgDi2VbOJpatdj+K52qKpMPGdEGQyZQB7VZLDRrk0=;
-        b=a3SNS2gseRlaWZ4Uk7ssBaGnd+YEFqWgniZp4QSerAuSO5oD9qbSnjsL+Lw/SZML4ijWs/
-        1Rrw8eErycXi86CQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BC8B81357F;
-        Wed, 14 Jun 2023 15:35:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id rdIILCbeiWTDHwAAMHmgww
-        (envelope-from <hare@suse.de>); Wed, 14 Jun 2023 15:35:02 +0000
-Message-ID: <cfa191cc-47e4-5b61-bf4f-33ebd52fa783@suse.de>
-Date:   Wed, 14 Jun 2023 17:35:02 +0200
+        Wed, 14 Jun 2023 11:39:29 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1FDA123;
+        Wed, 14 Jun 2023 08:39:24 -0700 (PDT)
+X-UUID: 9838dc480ac911ee9cb5633481061a41-20230614
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=4NuQo0gKBxrcZxtYCs5sMJl+CvnlRB73xhVEIlMdfzM=;
+        b=D+afP+TbkHa+ign/9qntY9pl89G+SWOpEVA7xnu7KLjvKS2WYRpD2aiahD7wXy7S/8LRFk8OH5iTSweUMYBS1YJ4bFbp5aVYC+zO+BtTQd0U0f6JNki9h88I3/MDnhPK0yQDhDHOerHs+M7voqqLP5/0LpmMf4twtpFFus/SEL8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.26,REQID:0cd6b2c6-be35-4d6c-81cb-cca38bd23cdc,IP:0,U
+        RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+        :release,TS:-5
+X-CID-META: VersionHash:cb9a4e1,CLOUDID:66f8116f-2f20-4998-991c-3b78627e4938,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 9838dc480ac911ee9cb5633481061a41-20230614
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+        (envelope-from <wei-chin.tsai@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 186060915; Wed, 14 Jun 2023 23:39:05 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.186) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 14 Jun 2023 23:39:04 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 14 Jun 2023 23:39:04 +0800
+From:   Wei Chin Tsai <Wei-chin.Tsai@mediatek.com>
+To:     <lkp@intel.com>
+CC:     <Wei-chin.Tsai@mediatek.com>,
+        <angelogioacchino.delregno@collabora.com>,
+        <ivan.tseng@mediatek.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux@armlinux.org.uk>,
+        <matthias.bgg@gmail.com>, <mel.lee@mediatek.com>,
+        <oe-kbuild-all@lists.linux.dev>, <wsd_upstream@mediatek.com>
+Subject: [PATCH v3 1/1] memory: Fix export symbol twice compiler error for "export symbols for memory related functions" patch
+Date:   Wed, 14 Jun 2023 23:39:02 +0800
+Message-ID: <20230614153902.26206-1-Wei-chin.Tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <202306142030.GjGWnIkY-lkp@intel.com>
+References: <202306142030.GjGWnIkY-lkp@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 0/7] RFC: high-order folio support for I/O
-Content-Language: en-US
-From:   Hannes Reinecke <hare@suse.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <20230614114637.89759-1-hare@suse.de>
- <cd816905-0e3e-6397-1a6f-fd4d29dfc739@suse.de>
- <ZInGbz6X/ZQAwdRx@casper.infradead.org>
- <b3fa1b77-d120-f86b-e02f-f79b6d13efcc@suse.de>
-In-Reply-To: <b3fa1b77-d120-f86b-e02f-f79b6d13efcc@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,
+        T_SCC_BODY_TEXT_LINE,T_SPF_TEMPERROR,UNPARSEABLE_RELAY,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,57 +68,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/14/23 17:06, Hannes Reinecke wrote:
-[ .. ]
-> 
-> Whee! That works!
-> 
-> Rebased things with your memcpy_{to,from}_folio() patches, disabled that 
-> chunk, and:
-> 
-> # mount /dev/ram0 /mnt
-> XFS (ram0): Mounting V5 Filesystem 5cd71ab5-2d11-4c18-97dd-71708f40e551
-> XFS (ram0): Ending clean mount
-> xfs filesystem being mounted at /mnt supports timestamps until 
-> 2038-01-19 (0x7fffffff)
-> # umount /mnt
-> XFS (ram0): Unmounting Filesystem 5cd71ab5-2d11-4c18-97dd-71708f40e551
-> 
-> Great work, Matthew!
-> 
-> (Now I just need to check why copying data from NFS crashes ...)
-> 
-Hmm. And for that I'm hitting include/linux/pagemap.h:1250 pretty 
-consistently; something's going haywire with readahead.
+User could not add the export symbol "arch_vma_name"
+in arch/arm/kernel/process.c and kernel/signal.c both.
+It would cause the export symbol twice compiler error
+Reported-by: kernel test robot <lkp@intel.com>
 
-Matthew, are you sure that this one:
+Signed-off-by: Wei Chin Tsai <Wei-chin.Tsai@mediatek.com>
+---
+ arch/arm/kernel/process.c | 3 +++
+ kernel/signal.c           | 3 +++
+ 2 files changed, 6 insertions(+)
 
-/** 
-
-  * readahead_length - The number of bytes in this readahead request. 
-
-  * @rac: The readahead request. 
-
-  */
-static inline size_t readahead_length(struct readahead_control *rac)
-{
-         return rac->_nr_pages * PAGE_SIZE;
-}
-
-is tenable for large folios?
-Especially as we have in mm/readahead.c:499
-
-         ractl->_nr_pages += 1UL << order;
-
-Hmm?
-
-Cheers,
-
-Hannes
+diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+index df91412a1069..d71a9bafb584 100644
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@ -343,7 +343,10 @@ const char *arch_vma_name(struct vm_area_struct *vma)
+ {
+ 	return is_gate_vma(vma) ? "[vectors]" : NULL;
+ }
++
++#ifdef CONFIG_ARM
+ EXPORT_SYMBOL_GPL(arch_vma_name);
++#endif
+ 
+ /* If possible, provide a placement hint at a random offset from the
+  * stack for the sigpage and vdso pages.
+diff --git a/kernel/signal.c b/kernel/signal.c
+index a1abe77fcdc3..f7d03450781e 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -4700,7 +4700,10 @@ __weak const char *arch_vma_name(struct vm_area_struct *vma)
+ {
+ 	return NULL;
+ }
++
++#ifdef CONFIG_ARM64
+ EXPORT_SYMBOL_GPL(arch_vma_name);
++#endif
+ 
+ static inline void siginfo_buildtime_checks(void)
+ {
 -- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
-Myers, Andrew McDonald, Martje Boudien Moerman
+2.18.0
 
