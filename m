@@ -2,87 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF5F72FF28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 14:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 489FF72FF41
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 14:59:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234541AbjFNMzk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 08:55:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52342 "EHLO
+        id S244781AbjFNM7z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 08:59:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236378AbjFNMzj (ORCPT
+        with ESMTP id S244235AbjFNM7x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 08:55:39 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E16291BD4;
-        Wed, 14 Jun 2023 05:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BMaPAYhQ0oHtmG4Cgc94dDi2EYz+dcUDeD41ey8/MQE=; b=RD29uM16q/P7/G4/9L8l/WJgYC
-        ENyt7RbYLiIcrkzDeGcCI0PBVudqcumFbCe4Tzoi+qzIWI6VrIC7h5vAD0GRQ1ENTvq2SV2iXNw6s
-        IwmuK8wu7nLsMFDutkWWqVMHteE7JfpiJMwwxlH0tER+ierTk33zYbSVXyFs9GTEi71r0uxiC18IG
-        mG5WsCWkhk4wqUQMpxEl49oKgwpI6omghQTyvaS8dh2EomJZBa4Rtj8cMdzWSTsaIvge/0VFfcDGS
-        HxWYDo8vOJU29Be/5LIKilWQ1XIxRcea63/z+uyinNPwNZ1qUMtEMzgk6YA8rLxUm/JZQxTu4xJZd
-        m36pCE0w==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1q9Q27-006Jlg-Pq; Wed, 14 Jun 2023 12:55:31 +0000
-Date:   Wed, 14 Jun 2023 13:55:31 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Wed, 14 Jun 2023 08:59:53 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B25D9A0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 05:59:52 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-659f50bc9e7so1728264b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 05:59:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686747592; x=1689339592;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HWiTDY4WoR2vMCPiMoJs99ZZjQHkFPYzfNppOtM83Uk=;
+        b=v59EcOngHXuVEkZBJKhEkbooddVHNoKUx29ZUcM5h6ZR8jfBhq2WdRm/mBbsi9M1gB
+         FXUWTREce0bLYga5nOf4C0NZnh0JlpBGqhvm+SmdtmTPe6kAkWOxbzQwHUbM258m0sRX
+         afNg877qYFRh1vD4YamWlhuSHnPUBHjmgWSFsL/3hk3HEHgE6qoObGgU/VeA3yw2rUdH
+         w1cGmmZxgHqq8hoEdfcJt3SRDQ5v/YJ5KLoUXEE3sEA/ANIy603s1cwM0qZ5fjO1rNgc
+         BvqAbBm129gkbGePSs///1tPYNAu+kksfg/FPj+U5fuH7O56cH7tL3/DWFjvo1UlkSt0
+         Es2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686747592; x=1689339592;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HWiTDY4WoR2vMCPiMoJs99ZZjQHkFPYzfNppOtM83Uk=;
+        b=eFVAL0Bt/JdfkEVC2aZgT9F13W/UYuPQTlYK6B6WI9ObTyOO5+Zz8xNv63FA9RIvWW
+         jPiqUu6GcQhK3IwdtwWbVkOiHrZKIWzN8ryuAzbtsAvi7T2+eJoTrc0sI+yr60Cp1DTg
+         M7/5Ux7UF0HFEuSu8QfWFgLreEUsa1sclHtr7am+JSf0LKzLxnMQupCqRA/hhYZRJI4m
+         azF8kB08oVELdXahbfRYr5NARIuyUEIrKdcNF9hccR/VJUKYeLJzqr0/kKquHhM7NnZt
+         ktK0tPUCn4I1ukHa4HuWEoA+BvcUzu0COqyafJiANswoj13Vao6v70fTU3QtgX63RaPc
+         kt7Q==
+X-Gm-Message-State: AC+VfDxeA/X0fmd0ns2RUAlLD9516h7lpqZwB6YGDYFAgM3WcLvWZlUj
+        fFXw+WQ6NXKKZ7+jogKrSYNy9g==
+X-Google-Smtp-Source: ACHHUZ4x2s2sq446Ucsp4FCfLgGcx3P5A6b7PePPChUdylJlNi1cN6AG2hC8cpOpsk8qWffdd/HvJw==
+X-Received: by 2002:a05:6a20:54a3:b0:117:51fe:9b3a with SMTP id i35-20020a056a2054a300b0011751fe9b3amr18749690pzk.3.1686747592079;
+        Wed, 14 Jun 2023 05:59:52 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id v6-20020aa78506000000b00640defda6d2sm10324418pfn.207.2023.06.14.05.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jun 2023 05:59:51 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     David Hildenbrand <david@redhat.com>,
+        kernel test robot <oliver.sang@intel.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH 4/7] brd: make sector size configurable
-Message-ID: <ZIm4wyHZK/YMV2gj@casper.infradead.org>
-References: <20230614114637.89759-1-hare@suse.de>
- <20230614114637.89759-5-hare@suse.de>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Lorenzo Stoakes <lstoakes@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-mm@kvack.org, oe-lkp@lists.linux.dev, lkp@intel.com,
+        linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>
+In-Reply-To: <1193485.1686693279@warthog.procyon.org.uk>
+References: <1193485.1686693279@warthog.procyon.org.uk>
+Subject: Re: [PATCH] block: Fix dio_cleanup() to advance the head index
+Message-Id: <168674759029.1685273.10047013854473081926.b4-ty@kernel.dk>
+Date:   Wed, 14 Jun 2023 06:59:50 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230614114637.89759-5-hare@suse.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-c6835
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 01:46:34PM +0200, Hannes Reinecke wrote:
-> @@ -43,9 +43,11 @@ struct brd_device {
->  	 */
->  	struct xarray	        brd_folios;
->  	u64			brd_nr_folios;
-> +	unsigned int		brd_sector_shift;
-> +	unsigned int		brd_sector_size;
->  };
->  
-> -#define BRD_SECTOR_SHIFT(b) (PAGE_SHIFT - SECTOR_SHIFT)
-> +#define BRD_SECTOR_SHIFT(b) ((b)->brd_sector_shift - SECTOR_SHIFT)
->  
->  static pgoff_t brd_sector_index(struct brd_device *brd, sector_t sector)
->  {
-> @@ -85,7 +87,7 @@ static int brd_insert_folio(struct brd_device *brd, sector_t sector, gfp_t gfp)
->  {
->  	pgoff_t idx;
->  	struct folio *folio, *cur;
-> -	unsigned int rd_sector_order = get_order(PAGE_SIZE);
-> +	unsigned int rd_sector_order = get_order(brd->brd_sector_size);
 
-Surely max(0, brd->brd_sector_shift - PAGE_SHIFT) ?
+On Tue, 13 Jun 2023 22:54:39 +0100, David Howells wrote:
+> 
+> Fix dio_bio_cleanup() to advance the head index into the list of pages past
+> the pages it has released, as __blockdev_direct_IO() will call it twice if
+> do_direct_IO() fails.
+> 
+> The issue was causing:
+> 
+> [...]
 
-> @@ -346,6 +353,25 @@ static int brd_alloc(int i)
->  		return -ENOMEM;
->  	brd->brd_number		= i;
->  	list_add_tail(&brd->brd_list, &brd_devices);
-> +	brd->brd_sector_shift = ilog2(rd_blksize);
-> +	if ((1ULL << brd->brd_sector_shift) != rd_blksize) {
-> +		pr_err("rd_blksize %d is not supported\n", rd_blksize);
+Applied, thanks!
 
-Are you trying to require power-of-two here?  We have is_power_of_2()
-for that purpose.
+[1/1] block: Fix dio_cleanup() to advance the head index
+      commit: d44c404207831dfe3b301ff479e964b77914488b
+
+Best regards,
+-- 
+Jens Axboe
+
+
 
