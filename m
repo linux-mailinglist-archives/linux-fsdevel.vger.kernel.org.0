@@ -2,110 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D00257304D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 18:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E884F730546
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 18:43:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233253AbjFNQYO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 12:24:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40504 "EHLO
+        id S235415AbjFNQnb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 12:43:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229569AbjFNQYN (ORCPT
+        with ESMTP id S235224AbjFNQn1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 12:24:13 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F19D109;
-        Wed, 14 Jun 2023 09:24:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tL93bI0jCWhGF3WG58T3OaJIDMhjtKg7c9c3OsvljCg=; b=qpvSUqzkIvq2pf6t36jXKr2o0P
-        1Bb6JiMkPcXkWHbaeticZajm/w8h5A8KKPUZjGIRbHW1DdbuoG5p+MfHoSC4KyGHTCJbyBZ9suO+Y
-        l3/uYhPVsVfLBLNYjylwXFXfZHY644VQ5UpytE3b/DsndFToTAGZr5m2Fao8tNA2x4KTW/eg8XS2m
-        obtH625jiwihlTyS/r+/aJBLQSmUpUfWPSPEAqhgxgEIOMyMO/VjPTTlWxg+8flWGQIVe1ZsawW89
-        v6JZszuL/Hepl08MvDDCE1E/v81nXvJ0s5ZhpW4WsMhzRvVkRTyADmSpQ/jCS3jUEdnRV7fo6roLT
-        eoZnZJ4g==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40838)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1q9THx-0001yP-1A; Wed, 14 Jun 2023 17:24:05 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1q9THu-0000Z3-LM; Wed, 14 Jun 2023 17:24:02 +0100
-Date:   Wed, 14 Jun 2023 17:24:02 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Wei Chin Tsai <Wei-chin.Tsai@mediatek.com>
-Cc:     lkp@intel.com, angelogioacchino.delregno@collabora.com,
-        ivan.tseng@mediatek.com, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
-        mel.lee@mediatek.com, oe-kbuild-all@lists.linux.dev,
-        wsd_upstream@mediatek.com
-Subject: Re: [PATCH v3 1/1] memory: Fix export symbol twice compiler error
- for "export symbols for memory related functions" patch
-Message-ID: <ZInpooYdKnhdm3SW@shell.armlinux.org.uk>
-References: <202306142030.GjGWnIkY-lkp@intel.com>
- <20230614153902.26206-1-Wei-chin.Tsai@mediatek.com>
+        Wed, 14 Jun 2023 12:43:27 -0400
+Received: from mx1.veeam.com (mx1.veeam.com [216.253.77.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7C81A3;
+        Wed, 14 Jun 2023 09:43:24 -0700 (PDT)
+Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.veeam.com (Postfix) with ESMTPS id A838441C22;
+        Wed, 14 Jun 2023 12:43:21 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
+        s=mx1-2022; t=1686761001;
+        bh=jNTgcvWm1vw80HHo0h776WVZUmiYhzpPLC0Z4LijRXU=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To:From;
+        b=kIebp/AY7hQOAPU7dr4d2uQksODoxH0g/Z1VW20qAjTclm2YEp/FOQMds78ngEKkK
+         X5AoTgpoN2bGr1/8zPbkNYjRImT29BknuqEfCgYsAeE+gYWJmEMEnv0DdkOLFydauT
+         a7ihjMGKq5BHyq5bAhAGErRN30NDlXD04HhOfwoJn2MeJIVC+Spr9+kVY0UDPIpMA7
+         ICWaidyXrAjvvvMeqSeLy/12zbRN7Hq5ckHeI9IQ3MD1e7IznjuXwbDArQK8V3obt1
+         XSwV2jtKL3cTAlka9tAqd3JrvElD67sQpFr9l+5T6N3FAaMVhxC/hKY7WJzDksj0v9
+         PkFEwWfHNV3PQ==
+Received: from [172.24.10.107] (172.24.10.107) by prgmbx01.amust.local
+ (172.24.128.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.26; Wed, 14 Jun
+ 2023 18:43:20 +0200
+Message-ID: <c4c9da4f-0d82-4e35-0365-f246666f0c37@veeam.com>
+Date:   Wed, 14 Jun 2023 18:43:10 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230614153902.26206-1-Wei-chin.Tsai@mediatek.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v5 04/11] blksnap: header file of the module interface
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Dave Chinner <david@fromorbit.com>, <axboe@kernel.dk>,
+        <corbet@lwn.net>, <snitzer@kernel.org>, <viro@zeniv.linux.org.uk>,
+        <brauner@kernel.org>, <dchinner@redhat.com>, <willy@infradead.org>,
+        <dlemoal@kernel.org>, <linux@weissschuh.net>, <jack@suse.cz>,
+        <ming.lei@redhat.com>, <linux-block@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        "Donald Buczek" <buczek@molgen.mpg.de>
+References: <20230612135228.10702-1-sergei.shtepa@veeam.com>
+ <20230612135228.10702-5-sergei.shtepa@veeam.com>
+ <ZIjsywOtHM5nIhSr@dread.disaster.area> <ZIldkb1pwhNsSlfl@infradead.org>
+ <733f591e-0e8f-8668-8298-ddb11a74df81@veeam.com>
+ <ZInJlD70tMKoBi7T@infradead.org>
+Content-Language: en-US
+From:   Sergei Shtepa <sergei.shtepa@veeam.com>
+In-Reply-To: <ZInJlD70tMKoBi7T@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.24.10.107]
+X-ClientProxiedBy: prgmbx02.amust.local (172.24.128.103) To
+ prgmbx01.amust.local (172.24.128.102)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29240315546D7067
+X-Veeam-MMEX: True
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 11:39:02PM +0800, Wei Chin Tsai wrote:
-> User could not add the export symbol "arch_vma_name"
-> in arch/arm/kernel/process.c and kernel/signal.c both.
-> It would cause the export symbol twice compiler error
-> Reported-by: kernel test robot <lkp@intel.com>
+
+
+On 6/14/23 16:07, Christoph Hellwig wrote:
+> I don't actually think swapfile is a very good idea, in fact the Linux
+> swap code in general is not a very good place to look for inspirations
+> 😄
+
+Perhaps. I haven't looked at the code yet. But I like the idea of
+protecting the file from any access from the user-space, as it is
+implemented for swapfile.
+
 > 
-> Signed-off-by: Wei Chin Tsai <Wei-chin.Tsai@mediatek.com>
+> IFF the usage is always to have a whole file for the diff storage the
+> over all API is very simple - just pass a fd to the kernel for the area,
+> and then use in-kernel direct I/O on it.  Now if that file should also
+> be able to reside on the same file system that the snapshot is taken
+> of things get a little more complicated, because writes to it also need
+> to automatically set the BIO_REFFED flag.
 
-I'm sorry, but this patch is silly.
+There is definitely no task to create a difference storage file on the
+same block device for which the snapshot is being created. The file can
+be created on any block device.
 
-> diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
-> index df91412a1069..d71a9bafb584 100644
-> --- a/arch/arm/kernel/process.c
-> +++ b/arch/arm/kernel/process.c
-> @@ -343,7 +343,10 @@ const char *arch_vma_name(struct vm_area_struct *vma)
->  {
->  	return is_gate_vma(vma) ? "[vectors]" : NULL;
->  }
-> +
-> +#ifdef CONFIG_ARM
->  EXPORT_SYMBOL_GPL(arch_vma_name);
-> +#endif
+Still, the variant when a whole partition is allocated for the difference
+storage can also be useful.
 
-CONFIG_ARM will always be set here, so adding this ifdef is useless.
+> I have some ideas for that and will share some draft code with you.
 
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index a1abe77fcdc3..f7d03450781e 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -4700,7 +4700,10 @@ __weak const char *arch_vma_name(struct vm_area_struct *vma)
->  {
->  	return NULL;
->  }
-> +
-> +#ifdef CONFIG_ARM64
->  EXPORT_SYMBOL_GPL(arch_vma_name);
-> +#endif
-
-Sorry, but no.
-
-Please do the research I've now twice asked for.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+I'll be glad.
