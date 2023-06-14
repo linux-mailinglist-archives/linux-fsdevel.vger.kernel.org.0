@@ -2,246 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A4BB972F073
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 01:45:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 887EE72F0F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 02:26:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241556AbjFMXpl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Jun 2023 19:45:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34772 "EHLO
+        id S241422AbjFNA0l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Jun 2023 20:26:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233366AbjFMXp0 (ORCPT
+        with ESMTP id S230397AbjFNA0j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Jun 2023 19:45:26 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1734A2946
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 16:43:59 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-bcd0226607bso114645276.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 16:43:59 -0700 (PDT)
+        Tue, 13 Jun 2023 20:26:39 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5548C199C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 17:26:35 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id 41be03b00d2f7-53fbb3a013dso4433785a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jun 2023 17:26:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686699757; x=1689291757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3VaAO0tfFvzWECevTV3w+N670MZ+O46zjrgS35Q87ds=;
-        b=m1eYm1nSDdKQVskgyx1/JAd0lLoVYEEiwZj4xYDgPtd7Ow+0uXpgCaRDjD56380VA8
-         Up4mHtBz6znxXqzkpeI5vuaVxKY5GkMVvBJ3EHsRI+lGtIPi0NXUSlzO0DwvMqsIqGbx
-         x2ercTMVfrb/vX30OuEIFlNJUYLJPJlhW/pwzx/zqa0Z1FUTF3X3dQOkGPBN2dWykVEf
-         MZmZPSeSjma6vv/cMIyRepqjFMqL8V0QFiRlAN/U0Wf6vmr9kZyqQAaIDKsliExT+kLc
-         k21oKhyrJysWQpGMdkoJICUCcZbTqnWE7wSBZzouIl3QY1KM6hjxkou3CiWDZTOtt3rM
-         2SLQ==
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686702395; x=1689294395;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QajGQslzzctkaDr1mgFDGYFv/dJbKUMY50GQqUSjsyU=;
+        b=0d+yVoOF9RLKOLDioGzBjk4of6B/ELGbtZeDRidEhiXoi0k01UmVts9bYGLhAALO11
+         It/k6o+eieUvWaAbmWudWu3sHqqmpOhO1Q+JynFDmO0DqYdLhqpz7Gjob/hQYJ2oCQz3
+         mJBo8I0G0/tBIeh5LGCMUD5mSNhe9K8wN/5UJxnFNvPQIIWx9cVOEOVwjJOU2RndF7ph
+         5unDMdpwvVwxNrvF/bhWMhJ5Q5upTHf3Z0wHOTSVJjgKcAYk01g4d/8eJVEn3Du6EUMZ
+         4vxDFkPBFJGpTuNvzqeRGJPloNc4FJ9LsKY4saelLj/IHKq09gcAAeE+wWvGFfObQrg6
+         Ra/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686699757; x=1689291757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3VaAO0tfFvzWECevTV3w+N670MZ+O46zjrgS35Q87ds=;
-        b=EMiSRU2rNbDVabW6qGxG/7l20kcXLbtOVuI/E+SbhYwjTt7rYdIB+z2v6/aEyY5//z
-         E1f3rs2MmpquJkyCUpkPFSqXznCjiFwtnXnNsnhfNFeBqNpZy1AHGUlIb0JjuhevaEAK
-         yOn35oTT9xFVOXylrfuNwqiXr9RhB6Lo+ubmqK5bprL9LoaQbZlFiEDM6f+8SFc33jMm
-         wIs8QBwW/JGmE0jr3ExYdQajRh8cSAxPgX7tZWJnE7hVTypFWnKrQzJenL4anGL5b0AR
-         KoQnZ9mUp2GUMqM/4QOs+XQlaFVdKEP14T0OgXIUefF4gt9ju4nsiZ2t2fMB4VnXMkWp
-         EXeA==
-X-Gm-Message-State: AC+VfDy2GMU3SbqgPCdTd6+NgDXGfFl9lFz709oE/JtHWl368Ba4Y89W
-        Lf5zwP7eTi0ciukk54TMau8YOOTrwFTljCGGxj8Yy3vxCUZgv4pgKXpl9A==
-X-Google-Smtp-Source: ACHHUZ6Ke53cunBAFx85AzEm4j/NYN4QtRSQFfVHkiMTeqJ8GL+9bIUepay56jTwKVCaOb6L1uzSM1kxirw+Z1pRHjA=
-X-Received: by 2002:a25:ce0f:0:b0:ba8:4406:dd0b with SMTP id
- x15-20020a25ce0f000000b00ba84406dd0bmr704419ybe.30.1686699756868; Tue, 13 Jun
- 2023 16:42:36 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686702395; x=1689294395;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QajGQslzzctkaDr1mgFDGYFv/dJbKUMY50GQqUSjsyU=;
+        b=g4Zcr56pJ45rpGeTF+b/1gQEYuc4uB9MZUNmkf04FLuRaxJm3aMHhknhN7uzuYVEZy
+         P5NDdiq8KNwEXP5POCZnOZFF4JMXyc5HR5kefyU4K/AmADIh1DjPzoeEeMVWTlzzN0N8
+         XK9wJgcwkTtUB5YciiBrls6CC4EayEVN2oc4WGZ2x3Dvkd7uldD9X9zn/6c9jxfYhpWp
+         biUW6YdDLn/L5odrllIU3YwhUiU3Q/tkNwOl5gdhctUI5xQzQSB6lNMHlR0oERs75opt
+         TC/vreA43crEU5bGc7PTXCFQFvVWekar68zwEiRIdQxZ2xy+3TzLbRD+SBXqrVQG2ci6
+         619Q==
+X-Gm-Message-State: AC+VfDyGraJBaGP/YiZvHR1x5Wyl1+0JrVFNa9HNy5klW3nsnf0s6wD/
+        y16eefxglqRggsLAITwawnFfcg==
+X-Google-Smtp-Source: ACHHUZ7hUVmtofcr2phlzKmyh0/J/vmdnLeHcAWruzJ4Rla8wEpdmbXk7zXylq6Vb0/lk/S1qmcCpg==
+X-Received: by 2002:a05:6a20:a108:b0:101:73a9:1683 with SMTP id q8-20020a056a20a10800b0010173a91683mr335461pzk.33.1686702394620;
+        Tue, 13 Jun 2023 17:26:34 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
+        by smtp.gmail.com with ESMTPSA id x2-20020a056a00270200b005d22639b577sm971152pfv.165.2023.06.13.17.26.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Jun 2023 17:26:33 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q9ELG-00BTYW-2T;
+        Wed, 14 Jun 2023 10:26:30 +1000
+Date:   Wed, 14 Jun 2023 10:26:30 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Ted Tso <tytso@mit.edu>, yebin <yebin@huaweicloud.com>,
+        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@google.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH] block: Add config option to not allow writing to mounted
+ devices
+Message-ID: <ZIkJNmpO/S7pv0A6@dread.disaster.area>
+References: <20230612161614.10302-1-jack@suse.cz>
+ <CACT4Y+aEScXmq2F1-vqAfr-b2w-xyOohN+FZxorW1YuRvKDLNQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230613062306.101831-1-lujialin4@huawei.com>
-In-Reply-To: <20230613062306.101831-1-lujialin4@huawei.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 13 Jun 2023 16:42:25 -0700
-Message-ID: <CAJuCfpEoCRHkJF-=1Go9E94wchB4BzwQ1E3vHGWxNe+tEmSJoA@mail.gmail.com>
-Subject: Re: [PATCH] sched/psi: Fix use-after-free in poll_freewait()
-To:     Lu Jialin <lujialin4@huawei.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Eric Biggers <ebiggers@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+aEScXmq2F1-vqAfr-b2w-xyOohN+FZxorW1YuRvKDLNQ@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 11:24=E2=80=AFPM Lu Jialin <lujialin4@huawei.com> w=
-rote:
->
-> We found a UAF bug in remove_wait_queue as follows:
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: use-after-free in _raw_spin_lock_irqsave+0x71/0xe0
-> Write of size 4 at addr ffff8881150d7b28 by task psi_trigger/15306
-> Call Trace:
->  dump_stack+0x9c/0xd3
->  print_address_description.constprop.0+0x19/0x170
->  __kasan_report.cold+0x6c/0x84
->  kasan_report+0x3a/0x50
->  check_memory_region+0xfd/0x1f0
->  _raw_spin_lock_irqsave+0x71/0xe0
->  remove_wait_queue+0x26/0xc0
->  poll_freewait+0x6b/0x120
->  do_sys_poll+0x305/0x400
->  do_syscall_64+0x33/0x40
->  entry_SYSCALL_64_after_hwframe+0x61/0xc6
->
-> Allocated by task 15306:
->  kasan_save_stack+0x1b/0x40
->  __kasan_kmalloc.constprop.0+0xb5/0xe0
->  psi_trigger_create.part.0+0xfc/0x450
->  cgroup_pressure_write+0xfc/0x3b0
->  cgroup_file_write+0x1b3/0x390
->  kernfs_fop_write_iter+0x224/0x2e0
->  new_sync_write+0x2ac/0x3a0
->  vfs_write+0x365/0x430
->  ksys_write+0xd5/0x1b0
->  do_syscall_64+0x33/0x40
->  entry_SYSCALL_64_after_hwframe+0x61/0xc6
->
-> Freed by task 15850:
->  kasan_save_stack+0x1b/0x40
->  kasan_set_track+0x1c/0x30
->  kasan_set_free_info+0x20/0x40
->  __kasan_slab_free+0x151/0x180
->  kfree+0xba/0x680
->  cgroup_file_release+0x5c/0xe0
->  kernfs_drain_open_files+0x122/0x1e0
->  kernfs_drain+0xff/0x1e0
->  __kernfs_remove.part.0+0x1d1/0x3b0
->  kernfs_remove_by_name_ns+0x89/0xf0
->  cgroup_addrm_files+0x393/0x3d0
->  css_clear_dir+0x8f/0x120
->  kill_css+0x41/0xd0
->  cgroup_destroy_locked+0x166/0x300
->  cgroup_rmdir+0x37/0x140
->  kernfs_iop_rmdir+0xbb/0xf0
->  vfs_rmdir.part.0+0xa5/0x230
->  do_rmdir+0x2e0/0x320
->  __x64_sys_unlinkat+0x99/0xc0
->  do_syscall_64+0x33/0x40
->  entry_SYSCALL_64_after_hwframe+0x61/0xc6
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> If using epoll(), wake_up_pollfree will empty waitqueue and set
-> wait_queue_head is NULL before free waitqueue of psi trigger. But is
-> doesn't work when using poll(), which will lead a UAF problem in
-> poll_freewait coms as following:
->
-> (cgroup_rmdir)                      |
-> psi_trigger_destroy                 |
->   wake_up_pollfree(&t->event_wait)  |
+On Tue, Jun 13, 2023 at 08:49:38AM +0200, Dmitry Vyukov wrote:
+> On Mon, 12 Jun 2023 at 18:16, Jan Kara <jack@suse.cz> wrote:
+> >
+> > Writing to mounted devices is dangerous and can lead to filesystem
+> > corruption as well as crashes. Furthermore syzbot comes with more and
+> > more involved examples how to corrupt block device under a mounted
+> > filesystem leading to kernel crashes and reports we can do nothing
+> > about. Add config option to disallow writing to mounted (exclusively
+> > open) block devices. Syzbot can use this option to avoid uninteresting
+> > crashes. Also users whose userspace setup does not need writing to
+> > mounted block devices can set this config option for hardening.
+> 
+> +syzkaller, Kees, Alexander, Eric
+> 
+> We can enable this on syzbot, however I have the same concerns as with
+> disabling of XFS_SUPPORT_V4:
+> https://github.com/google/syzkaller/issues/3918#issuecomment-1560624278
 
-It's important to note that psi_trigger_destroy() calls
-synchronize_rcu() before doing kfree(t), therefore the usage I think
-is valid.
+Really?
 
+This is exactly what I *detest most* about syzbot: the recalcitrant
+maintainer who thinks their ideology is more important than any
+other engineering consideration that might exist.
 
->     kfree(t)                        |
->                                     |   (poll_freewait)
->                                     |     free_poll_entry(pwq->inline_ent=
-ries + i)
->                                     |       remove_wait_queue(entry->wait=
-_address)
->                                     |         spin_lock_irqsave(&wq_head-=
->lock)
->
-> entry->wait_address in poll_freewait() is t->event_wait in cgroup_rmdir()=
-.
-> t->event_wait is free in psi_trigger_destroy before call poll_freewait(),
-> therefore wq_head in poll_freewait() has been already freed, which would
-> lead to a UAF.
->
-> similar problem for epoll() has been fixed commit c2dbe32d5db5
-> ("sched/psi: Fix use-after-free in ep_remove_wait_queue()").
-> epoll wakeup function ep_poll_callback() will empty waitqueue and set
-> wait_queue_head is NULL when pollflags is POLLFREE and judge pwq->whead
-> is NULL or not before remove_wait_queue in ep_remove_wait_queue(),
-> which will fix the UAF bug in ep_remove_wait_queue.
->
-> But poll wakeup function pollwake() doesn't do that. To fix the
-> problem, we empty waitqueue and set wait_address is NULL in pollwake() wh=
-en
-> key is POLLFREE. otherwise in remove_wait_queue, which is similar to
-> epoll().
+We want *better quality bug reports* on *current code* that we have
+to *support for the foreseeable future*, not get buried under
+repeated shitty reports containing yet more variants of problems we
+fixed over a decade ago.
 
-Thanks for the patch!
-This seems similar to what ep_poll_callback/ep_remove_wait_queue do,
-which I think makes sense. CC'ing Oleg Nesterov who implemented
-ep_poll_callback/ep_remove_wait_queue logic and Eric Biggers who
-worked on wake_up_pollfree() - both much more knowledgeable in this
-area than me.
+I'll repeat what Eric has already pointed out in the above GH issue
+in the vain hope you'll listen this time rather than making even more
+extreme ideological demands on us.
 
-One issue I see with this patch is that the title says "sched/psi:
-..." while it's fixing polling functionality. The patch is fixing the
-mechanism used by psi triggers, not psi triggers themselves (well it
-does but indirectly). Therefore I suggest changing that prefix to
-something like "select: Fix use-after-free in poll_freewait()"
+The XFS engineers put in place a planned, well documented
+deprecation and removal process for V4 format support back in 2020.
+We are well into that plan - we are not that far from turning it off
+v4 support by default. The V4 format is legacy code and users are
+already migrating away from it.
 
-Thanks,
-Suren.
+As such, it has much lower priority and relevance to us compared to
+supporting v5 filesystems. The syzbot maintainers don't get to
+decide how important XFS v4 format support is - that's the job of
+the XFS engineers responsibile for developing XFS code and
+supporting XFS users.
 
->
-> Fixes: 0e94682b73bf ("psi: introduce psi monitor")
-> Signed-off-by: Lu Jialin <lujialin4@huawei.com>
-> ---
->  fs/select.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/select.c b/fs/select.c
-> index 0ee55af1a55c..e64c7b4e9959 100644
-> --- a/fs/select.c
-> +++ b/fs/select.c
-> @@ -132,7 +132,17 @@ EXPORT_SYMBOL(poll_initwait);
->
->  static void free_poll_entry(struct poll_table_entry *entry)
->  {
-> -       remove_wait_queue(entry->wait_address, &entry->wait);
-> +       wait_queue_head_t *whead;
-> +
-> +       rcu_read_lock();
-> +       /* If it is cleared by POLLFREE, it should be rcu-safe.
-> +        * If we read NULL we need a barrier paired with smp_store_releas=
-e()
-> +        * in pollwake().
-> +        */
-> +       whead =3D smp_load_acquire(&entry->wait_address);
-> +       if (whead)
-> +               remove_wait_queue(whead, &entry->wait);
-> +       rcu_read_unlock();
->         fput(entry->filp);
->  }
->
-> @@ -215,6 +225,14 @@ static int pollwake(wait_queue_entry_t *wait, unsign=
-ed mode, int sync, void *key
->         entry =3D container_of(wait, struct poll_table_entry, wait);
->         if (key && !(key_to_poll(key) & entry->key))
->                 return 0;
-> +       if (key_to_poll(key) & POLLFREE) {
-> +               list_del_init(&wait->entry);
-> +               /* wait_address !=3DNULL protects us from the race with
-> +                * poll_freewait().
-> +                */
-> +               smp_store_release(&entry->wait_address, NULL);
-> +               return 0;
-> +       }
->         return __pollwake(wait, mode, sync, key);
->  }
->
-> --
-> 2.17.1
->
+Because V4 has been deprecated and support is slowing down as people
+migrate off it, we don't need as extensive test coverage as we once
+did. i.e.  we are ramping down the validation in accordance with
+it's lower priority and approaching disabling in 2025. We are
+placing much more importance on validation of v5 format features and
+functionality.
+
+As such, we really don't need syzbot to be exercising v4 formats any
+more - it's much more important to our users that we exercise v5
+formats as extensively as possible. That is what we are asking the
+syzkaller runners (and syzbot) do as a service for us.
+
+If your ideology demands that "the only way to stop syzbot testing
+XFS v4 filesytsems is to remove the code entirely" (paraphrasing
+your comments from the above github issue), then the entire problem
+here is your ideology.
+
+That is, your ideology is getting in the way of practical, well
+thought out, long running end-of-life engineering processes. It is
+creating unnecessary load on limited resources. Further, your
+demands that we place syzbot coverage (if syzbot doesn't test it, it
+must depend on CONFIG_INSECURE!) above our direct responsibilities
+to distro maintainers and other downstream users is, at best,
+terribly misguided.
+
+Syzbot is a *tool*. It's not even a critical tool we depend on - we
+can live without it just fine. We'd really like syzbot to be a
+better tool, but the ideology behind syzbot is the biggest
+impediment to making it a better, more effective tool for the
+community.
+
+If syzbot maintainers won't listen to simple requests to improve
+test coverage according to subsystem requirements, then it's clear
+that syzbot is being driven by ideology rather than engineering
+requirements. This needs to change.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
