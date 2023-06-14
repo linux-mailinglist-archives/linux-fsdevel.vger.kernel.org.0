@@ -2,144 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A60C72F9D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 11:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0478072F9F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jun 2023 12:02:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241271AbjFNJyL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 05:54:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53080 "EHLO
+        id S241771AbjFNKCv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 06:02:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234147AbjFNJyJ (ORCPT
+        with ESMTP id S235657AbjFNKCu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 05:54:09 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2752A1;
-        Wed, 14 Jun 2023 02:54:07 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 27D441FDDF;
-        Wed, 14 Jun 2023 09:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1686736446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Nh8YqqVlBf+FDF91saTLLR9MR+nYMo3Ypt2F6lReKwY=;
-        b=14RTRupxayqjdgHjGVT2uHnKYkFX/E2gmugS6gBp3FOxAQJb3fLWrcpgxxpuXAuT1RyzBh
-        tqPFUo9fyQQSI4hr67pnoPUVaS8tvK2fgVAQDo3YTf5/Y/gksoYK8q0xYogJpd9f4EAPup
-        izVD52mKecOZn3jp7T2cNfAKGiqTcWY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1686736446;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Nh8YqqVlBf+FDF91saTLLR9MR+nYMo3Ypt2F6lReKwY=;
-        b=cdvN2qUeznVq613WvPv8T68zL+y/57cwQ19GkflCRoU0umROtqVTXoyIohcxErx6W3Hqme
-        +g3frd2NmRz3FnAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 18E2B1391E;
-        Wed, 14 Jun 2023 09:54:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id RoMJBj6OiWQpaAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 14 Jun 2023 09:54:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9B9C8A0755; Wed, 14 Jun 2023 11:54:05 +0200 (CEST)
-Date:   Wed, 14 Jun 2023 11:54:05 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] ovl: enable fsnotify events on underlying real
- files
-Message-ID: <20230614095405.e22qzktue4igcula@quack3>
-References: <20230614074907.1943007-1-amir73il@gmail.com>
- <20230614074907.1943007-3-amir73il@gmail.com>
+        Wed, 14 Jun 2023 06:02:50 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EC00195
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 03:02:46 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-766655c2cc7so684939339f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 03:02:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686736965; x=1689328965;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tbry3CeL1KYS7HLNoeY59keftn8OoKLWsLCuyU0Tezc=;
+        b=fCA9hC3OG5DqMebB1a7VdBA2f/pCTZz3S0pnI/v+RuejvaWFxM0lBBe+18KPZotR7z
+         rMcHAia18N7O5v9s5WAsIbhxAwcjiZlInCsliGPXF+X1CTmxBuFKs3505A7gLuGd9M5m
+         FiO/Wp+mStrX2surL6yKLhv+XOuIj28mBOlWVDUoDUVTcfM5EC2cQ6t5gdXBayW2KEP6
+         yr6ei8hI+KKSqcsBZTheXaB+1tN8K+rM8HS9tsruoKtpCeqgi3DPXZ76Jans4rbn2hws
+         rMbnt5xgd3ehkJ41eD/S+w4O0XsYod4f0BhLyTIGM6TfrRWVvjSgcTbIyGZCPgydov0l
+         igUg==
+X-Gm-Message-State: AC+VfDytjtp9mWQHTh0/dvTMFLnKPtJUyOjLqvISYymGsnwLwCkj53jO
+        Iv4GrDMMYf++s1ba++Gy5PWxDVNQsHdgRUq6PXgejih2J71X
+X-Google-Smtp-Source: ACHHUZ5Cw2CSNno0VjcZXjl9srSP0mRFQ395P6uRj7Vr62OPy1ip/51NqUWt88NtV6lhr1nJJCp3EN/Z1xAkIeeMORU86TioNMQK
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230614074907.1943007-3-amir73il@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a6b:a18:0:b0:77a:e8e3:2c02 with SMTP id
+ z24-20020a6b0a18000000b0077ae8e32c02mr5113965ioi.2.1686736965646; Wed, 14 Jun
+ 2023 03:02:45 -0700 (PDT)
+Date:   Wed, 14 Jun 2023 03:02:45 -0700
+In-Reply-To: <1423848.1686733230@warthog.procyon.org.uk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aac23605fe140d6b@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in splice_to_socket
+From:   syzbot <syzbot+f9e28a23426ac3b24f20@syzkaller.appspotmail.com>
+To:     brauner@kernel.org, dhowells@redhat.com, kuba@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 14-06-23 10:49:07, Amir Goldstein wrote:
-> Overlayfs creates the real underlying files with fake f_path, whose
-> f_inode is on the underlying fs and f_path on overlayfs.
-> 
-> Those real files were open with FMODE_NONOTIFY, because fsnotify code was
-> not prapared to handle fsnotify hooks on files with fake path correctly
-> and fanotify would report unexpected event->fd with fake overlayfs path,
-> when the underlying fs was being watched.
-> 
-> Teach fsnotify to handle events on the real files, and do not set real
-> files to FMODE_NONOTIFY to allow operations on real file (e.g. open,
-> access, modify, close) to generate async and permission events.
-> 
-> Because fsnotify does not have notifications on address space
-> operations, we do not need to worry about ->vm_file not reporting
-> events to a watched overlayfs when users are accessing a mapped
-> overlayfs file.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Hello,
 
-Looks good to me. Feel free to add:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Acked-by: Jan Kara <jack@suse.cz>
+Reported-and-tested-by: syzbot+f9e28a23426ac3b24f20@syzkaller.appspotmail.com
 
-								Honza
+Tested on:
 
-> ---
->  fs/overlayfs/file.c      | 4 ++--
->  include/linux/fsnotify.h | 3 ++-
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 8cf099aa97de..1fdfc53f1207 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -34,8 +34,8 @@ static char ovl_whatisit(struct inode *inode, struct inode *realinode)
->  		return 'm';
->  }
->  
-> -/* No atime modification nor notify on underlying */
-> -#define OVL_OPEN_FLAGS (O_NOATIME | FMODE_NONOTIFY)
-> +/* No atime modification on underlying */
-> +#define OVL_OPEN_FLAGS (O_NOATIME)
->  
->  static struct file *ovl_open_realfile(const struct file *file,
->  				      const struct path *realpath)
-> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> index bb8467cd11ae..6f6cbc2dc49b 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -91,7 +91,8 @@ static inline void fsnotify_dentry(struct dentry *dentry, __u32 mask)
->  
->  static inline int fsnotify_file(struct file *file, __u32 mask)
->  {
-> -	const struct path *path = &file->f_path;
-> +	/* Overlayfs internal files have fake f_path */
-> +	const struct path *path = f_real_path(file);
->  
->  	if (file->f_mode & FMODE_NONOTIFY)
->  		return 0;
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+commit:         2bddad9e ethtool: ioctl: account for sopass diff in se..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git main
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d9c93b280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=526f919910d4a671
+dashboard link: https://syzkaller.appspot.com/bug?extid=f9e28a23426ac3b24f20
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c4f0d9280000
+
+Note: testing is done by a robot and is best-effort only.
