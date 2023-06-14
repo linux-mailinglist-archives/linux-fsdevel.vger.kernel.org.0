@@ -2,81 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 824B9730A85
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 00:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE131730BA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 01:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235768AbjFNWUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 18:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58242 "EHLO
+        id S232934AbjFNXir (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 19:38:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235056AbjFNWUh (ORCPT
+        with ESMTP id S231569AbjFNXiq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 18:20:37 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA2C1FE8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 15:20:35 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-77b257b9909so284156239f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 15:20:35 -0700 (PDT)
+        Wed, 14 Jun 2023 19:38:46 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A0251BE5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 16:38:45 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1b3a6469623so30925125ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 16:38:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686785924; x=1689377924;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5NyGIas4r90/YluD0JIEzQzRK0C8GBJBNaUdbHBvHY=;
+        b=OHyB4cwRH53SbjrvO+pTbg+DjGo3UcjoRnU+jpA4chPt6mwT+wfg7SEYO9D/591GVt
+         Suqcey77FvtZsZr28xKTOrHjJKEPMVgOIg/9Gsc2Wcu4Vwpb7iNcA+o0uB1U+njvVWUs
+         yWMBMsIWxtA6kt9A3hAyJQKCISaNE8GsENgUYF8A81eTES7T78WsJFPID8bXDb8T33EV
+         AhA+RrO4Izbacz34DUar3Z3a6xFVJY5AIMwTzMbWzEcIqsl07AWiSf21rs8fo2TB9Asp
+         4osbazZLXR8MFddPu/Mm0c1ynEY3p4rBsSeIyaBvhqwZ0ud78/8zKaSkQVIJEikkzFId
+         +VAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686781235; x=1689373235;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=saQrsy2XrGPJ3k719ppS8DNAI7XodtKtjgjHItuEn30=;
-        b=VSukOIAPL2nJ0rsoqRTzM6Pebaaa9flniBpNUxSkErFiAR9NTx9N0sZaiXnE4vP+ca
-         YDwRRfutwJMvE3PFZvfllDSZw7dDwedK4ay06T5x4LZmuFr0D94aBvcB68vQdaZa+E+M
-         YXf3LCs1MzoZrF7ZiII3B8blmea9V+2LgElkExcz7apHmdaCOUUv8urFwogG5IEPz7MG
-         hWlOaKy3UdhqS52oyq4JlNgQYpSAhRkuAaVqaIoYHuCzpnlbNrE2fS9tFCGXSqxWlp02
-         YAN77gqM2tsiiDomEdd+YSDD7/9NvJ42pJ+HaUeZQVw/nP4yP7eHAuBo6OnmDAbrfDw2
-         QfYg==
-X-Gm-Message-State: AC+VfDx+MnkQtTyMOhLPa+tbHjGJJ6bHk+VMB0zvdwMqLda+L7RFKSpZ
-        oAa+z38sgeDlbTEymrlVNL7nXl/zKi78bsaG2MBdXeIUr6Cm
-X-Google-Smtp-Source: ACHHUZ4Rq8vPI0UKF0LwNM11iVpw+lNRi7DPQKw4Nr0zSl0czZF/ZNGfw/30Cg7/WbBl1KXK9aAQ1q06ZnR1lu0pxzQQ34v296Id
+        d=1e100.net; s=20221208; t=1686785924; x=1689377924;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5NyGIas4r90/YluD0JIEzQzRK0C8GBJBNaUdbHBvHY=;
+        b=T+++fs0+Zx7ayaf8KCJbRR+KJlwzNAlPjcGZ0aUuglubL4G79OowfSDFnCuw6Y3u8w
+         hjMC3ZJbAf47SSqI1OKpqPbyM+SfoWpusVQ1XUpzNNguEN9KU9aQs23l2uMfkBu4rt5B
+         YGBRkbXdtkD4lrixTAs2bkKVb8sagSxPGFrTVGtEIW4LPluarZkBPIWN1c5ERrDcoA0X
+         33khtzsijC1GReOE7aqqhx5yalJ52gnD6j3jewGkPwYA3UqtN5OvbMq5+6tYW0nONBVp
+         KXLBtrzyDSgORKFmozXiQPwM8BqQ4Y3sMxzFMNUXWeMmFkEZOlT/of6NlvtEKejCnIb4
+         DIfg==
+X-Gm-Message-State: AC+VfDyTv9EKEZNiJRyIbZvx7iX1Q/r5Jwcolcy5iKiWbKdbFzYplxOO
+        q/b18GRoOkhxuMTFanen2onFmw==
+X-Google-Smtp-Source: ACHHUZ7Xw2lLpCM+tqXfcBoyp1r9dFsHlRzLZn8ihgL1zrZXZLPoC2+A+kuvjNMZ3Qev17UuPTj26g==
+X-Received: by 2002:a17:902:f816:b0:1b3:f3c7:89d4 with SMTP id ix22-20020a170902f81600b001b3f3c789d4mr4173867plb.12.1686785924363;
+        Wed, 14 Jun 2023 16:38:44 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
+        by smtp.gmail.com with ESMTPSA id az5-20020a170902a58500b001b034faf49csm11227957plb.285.2023.06.14.16.38.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jun 2023 16:38:43 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q9a4W-00BrNP-3D;
+        Thu, 15 Jun 2023 09:38:41 +1000
+Date:   Thu, 15 Jun 2023 09:38:40 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, Ted Tso <tytso@mit.edu>,
+        yebin <yebin@huaweicloud.com>, linux-fsdevel@vger.kernel.org,
+        Kees Cook <keescook@google.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH] block: Add config option to not allow writing to mounted
+ devices
+Message-ID: <ZIpPgC57bhb1cMNL@dread.disaster.area>
+References: <20230612161614.10302-1-jack@suse.cz>
+ <CACT4Y+aEScXmq2F1-vqAfr-b2w-xyOohN+FZxorW1YuRvKDLNQ@mail.gmail.com>
+ <20230614020412.GB11423@frogsfrogsfrogs>
+ <CACT4Y+YTfim0VhX6mTKyxMDVvY94zh7OiOLjv-Fs0kgj=vi=Qg@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:b147:0:b0:41d:71e1:4764 with SMTP id
- s7-20020a02b147000000b0041d71e14764mr6578556jah.3.1686781235127; Wed, 14 Jun
- 2023 15:20:35 -0700 (PDT)
-Date:   Wed, 14 Jun 2023 15:20:35 -0700
-In-Reply-To: <0000000000009dc57505fd85ceb9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000556d9605fe1e5c40@google.com>
-Subject: Re: [syzbot] [reiserfs?] general protection fault in rcu_core (2)
-From:   syzbot <syzbot+b23c4c9d3d228ba328d7@syzkaller.appspotmail.com>
-To:     jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luto@kernel.org,
-        peterz@infradead.org, reiserfs-devel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        yukuai3@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YTfim0VhX6mTKyxMDVvY94zh7OiOLjv-Fs0kgj=vi=Qg@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Wed, Jun 14, 2023 at 02:27:46PM +0200, Dmitry Vyukov wrote:
+> On Wed, 14 Jun 2023 at 04:04, Darrick J. Wong <djwong@kernel.org> wrote:
+> > On Tue, Jun 13, 2023 at 08:49:38AM +0200, Dmitry Vyukov wrote:
+> > > On Mon, 12 Jun 2023 at 18:16, Jan Kara <jack@suse.cz> wrote:
+> > > CONFIG_INSECURE description can say something along the lines of "this
+> > > kernel includes subsystems with known bugs that may cause security and
+> > > data integrity issues". When a subsystem adds "depends on INSECURE",
+> > > the commit should list some of the known issues.
+> > >
+> > > Then I see how trading disabling things on syzbot in exchange for
+> > > "depends on INSECURE" becomes reasonable and satisfies all parties to
+> > > some degree.
+> >
+> > Well in that case, post a patchset adding "depends on INSECURE" for
+> > every subsystem that syzbot files bugs against, if the maintainers do
+> > not immediately drop what they're doing to resolve the bug.
+> 
+> Hi Darrick,
+> 
+> Open unfixed bugs are fine (for some definition of fine).
+> What's discussed here is different. It's not having any filed bugs at
+> all due to not testing a thing and then not having any visibility into
+> the state of things.
 
-commit 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78
-Author: Yu Kuai <yukuai3@huawei.com>
-Date:   Fri Jul 2 04:07:43 2021 +0000
+Just because syzbot doesn't test something, it does not mean the
+code is not tested, nor does it mean the developers who are
+responsible for the code have no visibility into the state of their
+code.
 
-    reiserfs: add check for root_inode in reiserfs_fill_super
+The reason they want to avoid this sort of corruption injection
+testing in syzbot is that it *does not provide a net benefit* to
+anyone. The number (and value) of real bugs it might find are vastly
+outweighed by the cost of filtering out the many, many false
+positives the testing methodology raises.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1715ffdd280000
-start commit:   f8dba31b0a82 Merge tag 'asym-keys-fix-for-linus-v6.4-rc5' ..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1495ffdd280000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1095ffdd280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c980bfe8b399968
-dashboard link: https://syzkaller.appspot.com/bug?extid=b23c4c9d3d228ba328d7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1680f7d1280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12fad50d280000
+Keep in mind that syzbot does not provide useful unit and functional
+test coverage. We have to run tests suites like fstests to provide
+this sort of functionality and visibility into the *correct
+operation of the code*.
 
-Reported-by: syzbot+b23c4c9d3d228ba328d7@syzkaller.appspotmail.com
-Fixes: 2acf15b94d5b ("reiserfs: add check for root_inode in reiserfs_fill_super")
+However, alongside all the unit/functional tests in fstests, we also
+have non-deterministic stress and fuzzer tests that are similar in
+nature to syzbot. They often flush out weird integration level bugs
+before we even get to merging the code. These non-deterministic
+stress tests in fstests have found *hundreds* of bugs over the
+*couple of decades* we have been running them, and they also have a
+history of uncovering entire new classes of bugs we've had to
+address.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+At this point, syzbot is yet to do prove it is more than a one-trick
+pony - it typically only finds a single class of filesystem bug.
+That is, it only finds bugs that are related to undetected physical
+structure corruption of the filesystem that result in macro level
+failures (crash, warn, hang).
+
+Syzbot does nothing to ensure correct behaviour is occuring, that
+data integrity is maintained by the filesystem, that crash recovery
+after failures works correctly, etc. These things are *by far* the
+most important things we have to ensure during filesystem
+development.
+
+IOWs, the sorts of problems that syzbot finds in filesystems are way
+down the list of important things we need to validate.  Yes,
+structural validation testing is something we should be
+running, and it's clear that is does get run (both from fstests and
+syzbot).
+
+Hence the claim that "because syzbot doesn't run we don't have
+visibility of code bugs" is naive, conceited, incredibly
+narcissistic and demonstratable false. It also indicates a very
+poor understanding of where syzbot actually fits into the overall
+engineering processes.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
