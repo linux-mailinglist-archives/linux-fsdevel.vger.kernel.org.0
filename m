@@ -2,165 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1222731357
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 11:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DA317314FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 12:15:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241004AbjFOJPN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 05:15:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51250 "EHLO
+        id S1343608AbjFOKPW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 06:15:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245676AbjFOJPJ (ORCPT
+        with ESMTP id S1343512AbjFOKPV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 05:15:09 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6FDA10EC
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 02:15:08 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f7f7dfc037so87695e9.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 02:15:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686820507; x=1689412507;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XoVSt871a8NGCTmDUS5BfwyaK5m5+GTgYV3kshkE7t4=;
-        b=Dx4le6AYmSF192Sc1T8RggBmikepgdS34Lk8wWGr26axpgLgwuopIfNt280dIFw59g
-         KfLTfSmlf9uSJjHq9JDE9VW3jeI7C/29UxGt0Vs4JmXur50TJR+onmAzeY5gu/CvREM3
-         57hABUPhN+fCvFZMO0DeJVBQ+cI6IZY0Vbj+6UW2hMGZ0kh5QjVes82huaMqA/DEThEc
-         pdOR0yFhgDATTQsZz9/WyNXiSx/45556qpzJp7pCknWfBre2c4d5e9aPYM/t/AV+jpi1
-         EbtCYzvqOyFTrYF/iCR75wfHJpXgnPMn3yiv9OaBVAg+glqnO4R/OxNyUjij2/FY/68e
-         AvdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686820507; x=1689412507;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XoVSt871a8NGCTmDUS5BfwyaK5m5+GTgYV3kshkE7t4=;
-        b=CizqKYsqV+n2tetX8+6mBb+xnHdDTiwP0jQGNV9AxWxB9gNWPj6S2k4DhfDk9ZC3NZ
-         y/VNVMYEw6ZhmFhES93UeSohwdcHJhHTVU2FI2LduV8itsrEQvCf3wuqBo7YFkl0EWhI
-         B7wHJIGUXAWm/HPdoXTmMoLFkAk2oxJVByaIVfoci+ATsJxxnuzhuytLsi3tZ7ftM3Ow
-         04fpF5iMo47+ObpgrdSLv8heIdlHJDXn/oZRxFbop1IOqsXo9THLRYnTzBxgSzbEGj9Z
-         wRsNnwUOEp592FBuHhYwbEzuSbJmsT8ZZhFVq2jdkVlJGMvpsb+uPSfD4uq9d0wb/RSo
-         Gitw==
-X-Gm-Message-State: AC+VfDx9bQA4W4+cx2FF6J0QNhyfTEitgjf1YAuma2ezqd5gAj3ReJpX
-        FctUjweew4LKipRCO8Ecr7suX5JpkIsQL5gyAjXywQ==
-X-Google-Smtp-Source: ACHHUZ7+UwPN9qbvGYCyHwg0Je5fkNMNcAcV2HwQZAGiyqV5c+8mcPMXxd6GtEKSHek8AWqLXX+tMTxJVVxmK21+/5o=
-X-Received: by 2002:a05:600c:880b:b0:3f7:ba55:d038 with SMTP id
- gy11-20020a05600c880b00b003f7ba55d038mr99012wmb.6.1686820506904; Thu, 15 Jun
- 2023 02:15:06 -0700 (PDT)
+        Thu, 15 Jun 2023 06:15:21 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C97C52710;
+        Thu, 15 Jun 2023 03:15:19 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 28C04320095B;
+        Thu, 15 Jun 2023 06:15:14 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 15 Jun 2023 06:15:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1686824113; x=1686910513; bh=jvOa0kUu39x3GQIUZew1mtO2AZHY76muWFu
+        JjSogrbo=; b=EPuJmmgzGiJ225PcqtobDHqYGSJ9FbMR2/HM25N5yJWC19vNsWc
+        Mc6g6a+7u+xOngvo9ql+gTvTIpzuGWBoP/5w/homxwocEszbS2BY66xEYK6rhU39
+        fKC/2J9A/tppqgMokw04lHq9ClAM1NidgPPF8XwPFb8brMaJ+yC9q3lx2oIXOqxk
+        NwLzZE/EEO50omOBh8TzBe3YSIduGwMWsqcNQv/QxRuOtVG1aQhGmfZDS7sPfd2L
+        ivZT6v6WRn+ar6/Ercj4MGKWKcxqfmYJxSQn9HNqtGrfvghNPb7RO/tPUhDvWwyc
+        AMWwvLlS+hTH2y5s8+UvqcROZ9GavRIlJjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1686824113; x=1686910513; bh=jvOa0kUu39x3GQIUZew1mtO2AZHY76muWFu
+        JjSogrbo=; b=WQJvt4ZbovTVmVpd9nLF3ZaQUs0YTu6cciUQMWaCHlkUVtF3OXV
+        BWs4+jr1+AQmOje/HwT59Uc+gCIA11iaI+HKQgg1BQI7sTScTCZe5aMc5Lf00ImL
+        QDpPl/Z5yXuNtNsNhoruSIK8Cot14nLIGVBTkr3kM9F5w/zLjQQXCcCm3wqRDJm2
+        HeWiDlna/Wo0l7rNZ01teWvAvYCqAbsjWmH0BfmI4FUBZcNogxXmZuNoaQmWIcoC
+        YVUfDU4KdHqT7PrUPo6RaUGRnMnVFM5UYZZEwh9IGjmkuLSVwVR7KWHfNcqZIgQY
+        s3tbtsbhHV1NfiIcQHLDi22Z7h98FbB3k5w==
+X-ME-Sender: <xms:ruSKZG5KTXG0gmtGtJo7uRZjEP9L2uA8FceNvEHEUY_HEFxS_vSg6w>
+    <xme:ruSKZP6gJfjPCPkDZxO7P2yfKxqgVshVYIO-BFUqG9gza_kFyrirnLzCAdWBYHHOA
+    rtssRT4dgHj>
+X-ME-Received: <xmr:ruSKZFcYMhzp3p4dVxc0s3Vl51XeTu7AHuu5VgqpTZEpWG00hrQLFYFShS57T4NXamlitnOlpunBaAkLolifmc7XM9J10LAESfQWDhF-ssSeVx6A_CQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvvddgvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epueegveehueejjedvgeeiheekueduhffgueejgfevgedujeeiieegteehkeehvdeknecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:ruSKZDLzSSqLt02FBEIUzHHY4xZZ_TZ_PWC8bGUEs42QZiREyLJTGA>
+    <xmx:ruSKZKI8VzziHd8Su9M3RxLVJW6wU6YgqTLPVAMD4bEXZRsXqShSfg>
+    <xmx:ruSKZEz53POS86abZ0ETHQjNStkncFA38huo4bMy2_h8V5Cw8AqPbg>
+    <xmx:seSKZBjFa-W9fp3GjiPZn6ETCEsVPgY-xM4OpQEnsiOh_w7YUlORjg>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Jun 2023 06:14:59 -0400 (EDT)
+Message-ID: <ebad4167-6fec-b603-9be8-54457b2a32fd@themaw.net>
+Date:   Thu, 15 Jun 2023 18:14:55 +0800
 MIME-Version: 1.0
-References: <20230612161614.10302-1-jack@suse.cz> <CACT4Y+aEScXmq2F1-vqAfr-b2w-xyOohN+FZxorW1YuRvKDLNQ@mail.gmail.com>
- <20230614020412.GB11423@frogsfrogsfrogs> <CACT4Y+YTfim0VhX6mTKyxMDVvY94zh7OiOLjv-Fs0kgj=vi=Qg@mail.gmail.com>
- <ZIpPgC57bhb1cMNL@dread.disaster.area>
-In-Reply-To: <ZIpPgC57bhb1cMNL@dread.disaster.area>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 15 Jun 2023 11:14:53 +0200
-Message-ID: <CACT4Y+aqL_woqyGuxVGc-F2TEbk7i4OguiudDrA1cWpOi-n50Q@mail.gmail.com>
-Subject: Re: [PATCH] block: Add config option to not allow writing to mounted devices
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, Ted Tso <tytso@mit.edu>,
-        yebin <yebin@huaweicloud.com>, linux-fsdevel@vger.kernel.org,
-        Kees Cook <keescook@google.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: (subset) [PATCH v2 3/8] autofs: set ctime as well when mtime
+ changes on a dir
+To:     Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ruihan Li <lrh2000@pku.edu.cn>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        autofs@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org
+References: <20230612104524.17058-1-jlayton@kernel.org>
+ <20230612104524.17058-4-jlayton@kernel.org>
+ <20230614-marmeladen-blechnapf-873c26e176cb@brauner>
+Content-Language: en-US
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <20230614-marmeladen-blechnapf-873c26e176cb@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 15 Jun 2023 at 01:38, Dave Chinner <david@fromorbit.com> wrote:
-> > > > CONFIG_INSECURE description can say something along the lines of "this
-> > > > kernel includes subsystems with known bugs that may cause security and
-> > > > data integrity issues". When a subsystem adds "depends on INSECURE",
-> > > > the commit should list some of the known issues.
-> > > >
-> > > > Then I see how trading disabling things on syzbot in exchange for
-> > > > "depends on INSECURE" becomes reasonable and satisfies all parties to
-> > > > some degree.
-> > >
-> > > Well in that case, post a patchset adding "depends on INSECURE" for
-> > > every subsystem that syzbot files bugs against, if the maintainers do
-> > > not immediately drop what they're doing to resolve the bug.
-> >
-> > Hi Darrick,
-> >
-> > Open unfixed bugs are fine (for some definition of fine).
-> > What's discussed here is different. It's not having any filed bugs at
-> > all due to not testing a thing and then not having any visibility into
-> > the state of things.
->
-> Just because syzbot doesn't test something, it does not mean the
-> code is not tested, nor does it mean the developers who are
-> responsible for the code have no visibility into the state of their
-> code.
->
-> The reason they want to avoid this sort of corruption injection
-> testing in syzbot is that it *does not provide a net benefit* to
-> anyone. The number (and value) of real bugs it might find are vastly
-> outweighed by the cost of filtering out the many, many false
-> positives the testing methodology raises.
->
-> Keep in mind that syzbot does not provide useful unit and functional
-> test coverage. We have to run tests suites like fstests to provide
-> this sort of functionality and visibility into the *correct
-> operation of the code*.
->
-> However, alongside all the unit/functional tests in fstests, we also
-> have non-deterministic stress and fuzzer tests that are similar in
-> nature to syzbot. They often flush out weird integration level bugs
-> before we even get to merging the code. These non-deterministic
-> stress tests in fstests have found *hundreds* of bugs over the
-> *couple of decades* we have been running them, and they also have a
-> history of uncovering entire new classes of bugs we've had to
-> address.
->
-> At this point, syzbot is yet to do prove it is more than a one-trick
-> pony - it typically only finds a single class of filesystem bug.
-> That is, it only finds bugs that are related to undetected physical
-> structure corruption of the filesystem that result in macro level
-> failures (crash, warn, hang).
->
-> Syzbot does nothing to ensure correct behaviour is occuring, that
-> data integrity is maintained by the filesystem, that crash recovery
-> after failures works correctly, etc. These things are *by far* the
-> most important things we have to ensure during filesystem
-> development.
->
-> IOWs, the sorts of problems that syzbot finds in filesystems are way
-> down the list of important things we need to validate.  Yes,
-> structural validation testing is something we should be
-> running, and it's clear that is does get run (both from fstests and
-> syzbot).
->
-> Hence the claim that "because syzbot doesn't run we don't have
-> visibility of code bugs" is naive, conceited, incredibly
-> narcissistic and demonstratable false. It also indicates a very
-> poor understanding of where syzbot actually fits into the overall
-> engineering processes.
+On 14/6/23 16:30, Christian Brauner wrote:
+> On Mon, 12 Jun 2023 06:45:19 -0400, Jeff Layton wrote:
+>> When adding entries to a directory, POSIX generally requires that the
+>> ctime also be updated alongside the mtime.
+>>
+>>
+> Can't find a tree for this patch, so picking this patch up unless told otherwise.
 
-Hi Dave, Ted,
+There's relatively few changes to autofs and Linus asked me to send
 
-We are currently looking into options of how to satisfy all parties.
+changes via. Al or Andrew so there's no point in maintaining a tree
 
-I am not saying that all of these bugs need to be fixed, nor that they
-are more important than bugs in supported parts. And we are very much
-interested in testing supported parts as well as we can do.
+anyway.
 
-By CONFIG_INSECURE I just meant something similar to kernel taint
-bits. A user is free to continue after any bad thing has happened/they
-did, but some warranties are void. And if a kernel developer receives
-a bug report on a tainted kernel, they will take it with a grain of
-salt. So it's important to note the fact and inform about it.
-Something similar here: bugs in deprecated parts do not need to be
-fixed, and distros are still free to enable them, but this fact is
-acknowledged by distros and made visible to users.
 
-But we are looking into other options that won't require even CONFIG_INSECURE.
+Ian
+
+>
+> ---
+>
+> Applied to the vfs.misc branch of the vfs/vfs.git tree.
+> Patches in the vfs.misc branch should appear in linux-next soon.
+>
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+>
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.misc
+>
+> [3/8] autofs: set ctime as well when mtime changes on a dir
+>        https://git.kernel.org/vfs/vfs/c/9b37b3342a98
