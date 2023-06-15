@@ -2,216 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D7EFE731268
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 10:39:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E51247312BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 10:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238942AbjFOIj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 04:39:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59234 "EHLO
+        id S245018AbjFOIwc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 04:52:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244351AbjFOIjO (ORCPT
+        with ESMTP id S245232AbjFOIwF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 04:39:14 -0400
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47AFE296B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 01:39:09 -0700 (PDT)
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-77ac656cae6so808814539f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 01:39:09 -0700 (PDT)
+        Thu, 15 Jun 2023 04:52:05 -0400
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3F530DC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 01:51:39 -0700 (PDT)
+Received: by mail-qt1-x836.google.com with SMTP id d75a77b69052e-3f9b7345fb1so27462301cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 01:51:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686819099; x=1689411099;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tCtd60h4V4EHRJD4vwp1PDGCA8q+mlzKDRGda/PgiKA=;
+        b=Jnq28tmV7ZVC/X1/2KIo5xXOOzRtZDU/hLkuKIMu/YCfNX8Y3MwN3C4vhs+Pth9kGI
+         0JA0zrCLE54cTTOa338uRIQVPJWdSihi0AMTnWuwNQULa0LZ3lH8gFVSh6QQSgqDHku3
+         DjM8lPkW83/rY3onhCLt6et2m2QA0iyWi9XBK0+1Vgwb2zmA7r7SAupdZoPDaYwgcBgE
+         2adMK5KVqBFTYXTfw8yNl3T8lLI1++16gSfPAcGLZYfkJTDDPUW9JzUYpJbbGYkMDzZ8
+         kXxB66693jNdirT/m4XEWUXIsocinenCeMtoko5z/ffPYblXOTSqQrKjjN4JBPSel+vQ
+         P81g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686818348; x=1689410348;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aM+Phr1An1GIiImzmdxTCUrcwlJ97syswvKcfB+xT2c=;
-        b=EiVBBiQbFZaq2NooS2YkrT6t2aNE+MNaXJnOrNPo4J3kkA5JHmN1VuH5z8lpP9pSZ5
-         s9LwIGwwzCLRZnYj3dPcE2hlcfozxWnK5Jtry2yQViq9zBmWTy/d2kVbtAwctqPSb28u
-         cZEVv4RqbYqADo+FlylAkkqLmrFsMr0OJFgpPrxQBcOYRUENTgBxeHuiZ4xj+xs6JOSv
-         awTvpsSfrs8GBvx/No8yGLlHfHLP+24iG2eDJfAgsJ/roZZPw0DjCIw+tYYdI8KIkoqQ
-         S3nFbc4Dz6hKVSyaCMBpO+d1lRBEOhZ1NR1IAzrstLVkW8iRi/DUkezf1+Rxt/GeKXpm
-         s+Bg==
-X-Gm-Message-State: AC+VfDyC9WSOqJFl77M7b4hodO3bzHjw8pwhW3ijkDc9EFtj3pBQaYFY
-        Ev/iFvm7c+OXRpdKyL+g7GOur+CPWzB5LjXde7ZN6+JdirfE
-X-Google-Smtp-Source: ACHHUZ7XYj2xat4zS17Sbt9bRcr5SaxkDqlPIN162EqFbB3AYNU3wgjlFOxUMG9aUDVsUdfLY7hrKbCq0uAQO8rAOFcKH8z397p1
+        d=1e100.net; s=20221208; t=1686819099; x=1689411099;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tCtd60h4V4EHRJD4vwp1PDGCA8q+mlzKDRGda/PgiKA=;
+        b=X9ciwUiiIYJNK22h/NSp1CoMQOUxf2KbwPksfbHUdk0+8s9wYEMglfNkkSREyifxO7
+         kx30SzMfZ0dZaux9uyKL1IYBIhDv/mKOOsGCwkI9m8a5OrncLrPY9yKTrb+8qdgKtoSA
+         eDnULanj4CeieAuV6zTFyH6UHq+rgl8vAHxZhSmRKs3HJDJcMEGYseKe2kVe1SMZFxWS
+         YQmFcQBAL40U0LV9YfrJX6aIVg7aZWStGN2+pmZDfedOHqHNwbDgSH5SWVxkCdbKntPM
+         AGmjbRHVXffXSswQLtqoP9+hH9DR2cCq6SHrIuA+rIV8HxqvkjT4PA95gPSnWoPY58zT
+         wFrQ==
+X-Gm-Message-State: AC+VfDw94WqXqPlJwC9b0qBu1uzt70NDOkRjKWuF6HbPYpDz0EADJQ+h
+        MNLruT8XseQ58j53EmVl0EaNWg==
+X-Google-Smtp-Source: ACHHUZ68AxrCw755I87FG0yFiJfDul/thfltQS6QfCx5gguIzNFJw+y3jyTV9mqBehUOrCi0EVKjxg==
+X-Received: by 2002:ac8:57ce:0:b0:3f6:c0f7:a5c3 with SMTP id w14-20020ac857ce000000b003f6c0f7a5c3mr5976494qta.32.1686819098779;
+        Thu, 15 Jun 2023 01:51:38 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
+        by smtp.gmail.com with ESMTPSA id p3-20020a62ab03000000b00646e7d2b5a7sm934369pff.112.2023.06.15.01.51.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jun 2023 01:51:38 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q9ihb-00C0hg-0F;
+        Thu, 15 Jun 2023 18:51:35 +1000
+Date:   Thu, 15 Jun 2023 18:51:35 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH 0/7] RFC: high-order folio support for I/O
+Message-ID: <ZIrRFwElpZsAnl4Q@dread.disaster.area>
+References: <20230614114637.89759-1-hare@suse.de>
+ <cd816905-0e3e-6397-1a6f-fd4d29dfc739@suse.de>
+ <ZInGbz6X/ZQAwdRx@casper.infradead.org>
+ <b3fa1b77-d120-f86b-e02f-f79b6d13efcc@suse.de>
+ <ZIpS9u4P43PgJwuj@dread.disaster.area>
+ <df8e7a88-f540-af93-77dc-164262a5a3d0@suse.de>
 MIME-Version: 1.0
-X-Received: by 2002:a02:94c1:0:b0:423:1093:c805 with SMTP id
- x59-20020a0294c1000000b004231093c805mr731017jah.3.1686818348544; Thu, 15 Jun
- 2023 01:39:08 -0700 (PDT)
-Date:   Thu, 15 Jun 2023 01:39:08 -0700
-In-Reply-To: <000000000000cbb5f505faa4d920@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000773bb005fe270004@google.com>
-Subject: Re: [syzbot] [f2fs?] possible deadlock in f2fs_release_file
-From:   syzbot <syzbot+e5b81eaab292e00e7d98@syzkaller.appspotmail.com>
-To:     chao@kernel.org, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df8e7a88-f540-af93-77dc-164262a5a3d0@suse.de>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Thu, Jun 15, 2023 at 08:21:10AM +0200, Hannes Reinecke wrote:
+> On 6/15/23 01:53, Dave Chinner wrote:
+> > On Wed, Jun 14, 2023 at 05:06:14PM +0200, Hannes Reinecke wrote:
+> > All you need to do now is run the BS > PS filesytems through a full
+> > fstests pass (reflink + rmap enabled, auto group), and then we can
+> > start on the real data integrity validation work. It'll need tens of
+> > billions of fsx ops run on it, days of recoveryloop testing, days of
+> > fstress based exercise, etc before we can actually enable it in
+> > XFS....
+> > 
+> Hey, c'mon. I do know _that_. All I'm saying is that now we can _start_
+> running tests and figure out corner cases (like NFS crashing on me :-).
+> With this patchset we now have some infrastructure in place making it
+> even _possible_ to run those tests.
 
-HEAD commit:    b6dad5178cea Merge tag 'nios2_fix_v6.4' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12510203280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5bcee04c3b2a8237
-dashboard link: https://syzkaller.appspot.com/bug?extid=e5b81eaab292e00e7d98
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10db66f7280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14577753280000
+I got to this same point several years ago. You know, that patchset
+that Luis went back to when he brought up this whole topic again?
+That's right when I started running fsx, and I realised it
+didn't cover FICLONERANGE, FIDEDUPERANGE and copy_file_range().
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0ae77e66553b/disk-b6dad517.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5b2da4d23e74/vmlinux-b6dad517.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/23130b8e7a8a/bzImage-b6dad517.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/70b8358ae62a/mount_0.gz
+Yep, that's when we first realised we had -zero- test coverage of
+those operations. Darrick and I spent the next *3 months* pretty
+much rewriting the VFS level of those operations and fixing all the
+other bugs in the implementations, just so we could validate they
+worked correct on BS <= PS.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e5b81eaab292e00e7d98@syzkaller.appspotmail.com
+But by then Willy had started working over iomap and filemap for
+folios, and the bs > PS patches were completely bitrotted and needed
+rewriting from scratch. Which I now didn't have time to do....
 
-loop4: rw=2049, sector=77824, nr_sectors = 3048 limit=63271
-syz-executor110: attempt to access beyond end of device
-loop4: rw=2049, sector=80872, nr_sectors = 1048 limit=63271
-======================================================
-WARNING: possible circular locking dependency detected
-6.4.0-rc6-syzkaller-00037-gb6dad5178cea #0 Not tainted
-------------------------------------------------------
-syz-executor110/5218 is trying to acquire lock:
-ffff88806676b660 (&sb->s_type->i_mutex_key#17){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:775 [inline]
-ffff88806676b660 (&sb->s_type->i_mutex_key#17){+.+.}-{3:3}, at: f2fs_release_file fs/f2fs/file.c:1866 [inline]
-ffff88806676b660 (&sb->s_type->i_mutex_key#17){+.+.}-{3:3}, at: f2fs_release_file+0xca/0x100 fs/f2fs/file.c:1856
+So today is deja vu all over again: the first time I run fsx on
+a new 64kB BS on 4KB PS implementation it hangs doing something
+-really weird- and unexpected in copy_file_range(). It shouldn't
+even be in the splice code doing a physical data copy.  So something
+went wrong in ->remap_file_range(), or maybe in the truncate before
+it, before it bugged out over out of range readahead in the page
+cache...
 
-but task is already holding lock:
-ffff88802100c448 (&sbi->node_write){++++}-{3:3}, at: f2fs_down_read fs/f2fs/f2fs.h:2087 [inline]
-ffff88802100c448 (&sbi->node_write){++++}-{3:3}, at: f2fs_write_single_data_page+0x166e/0x19d0 fs/f2fs/data.c:2842
+I got only 3 fsx ops in today, and at least three bugs have already
+manifest themselves....
 
-which lock already depends on the new lock.
+> Don't be so pessimistic ...
 
+I'm not pessimistic. I'm being realistic. I'm speaking from
+experience. Not just as a Linux filesystem engineer who has had to
+run this fsx-based data integrity validation process from the ground
+up multiple times in the past decade, but also as an Irix OS
+engineer that spent many, many hours digging out nasty, subtle bs > ps
+data corruption bugs of the Irix buffer/page cache.
 
-the existing dependency chain (in reverse order) is:
+Cheers,
 
--> #2 (&sbi->node_write){++++}-{3:3}:
-       __lock_release kernel/locking/lockdep.c:5419 [inline]
-       lock_release+0x33c/0x670 kernel/locking/lockdep.c:5725
-       up_write+0x2a/0x520 kernel/locking/rwsem.c:1625
-       f2fs_up_write fs/f2fs/f2fs.h:2122 [inline]
-       block_operations+0xca4/0xe80 fs/f2fs/checkpoint.c:1288
-       f2fs_write_checkpoint+0x5fa/0x4b40 fs/f2fs/checkpoint.c:1651
-       __write_checkpoint_sync fs/f2fs/checkpoint.c:1768 [inline]
-       __checkpoint_and_complete_reqs+0xea/0x350 fs/f2fs/checkpoint.c:1787
-       issue_checkpoint_thread+0xe3/0x250 fs/f2fs/checkpoint.c:1818
-       kthread+0x344/0x440 kernel/kthread.c:379
-       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
-
--> #1 (&sbi->cp_rwsem){++++}-{3:3}:
-       down_read+0x9c/0x480 kernel/locking/rwsem.c:1520
-       f2fs_down_read fs/f2fs/f2fs.h:2087 [inline]
-       f2fs_lock_op fs/f2fs/f2fs.h:2130 [inline]
-       f2fs_convert_inline_inode+0x47b/0x8e0 fs/f2fs/inline.c:218
-       f2fs_preallocate_blocks fs/f2fs/file.c:4480 [inline]
-       f2fs_file_write_iter+0x1a1f/0x24d0 fs/f2fs/file.c:4712
-       call_write_iter include/linux/fs.h:1868 [inline]
-       do_iter_readv_writev+0x20b/0x3b0 fs/read_write.c:735
-       do_iter_write+0x185/0x7e0 fs/read_write.c:860
-       vfs_writev+0x1aa/0x670 fs/read_write.c:933
-       do_pwritev+0x1b6/0x270 fs/read_write.c:1030
-       __do_sys_pwritev2 fs/read_write.c:1089 [inline]
-       __se_sys_pwritev2 fs/read_write.c:1080 [inline]
-       __x64_sys_pwritev2+0xef/0x150 fs/read_write.c:1080
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #0 (&sb->s_type->i_mutex_key#17){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3113 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3232 [inline]
-       validate_chain kernel/locking/lockdep.c:3847 [inline]
-       __lock_acquire+0x2fcd/0x5f30 kernel/locking/lockdep.c:5088
-       lock_acquire kernel/locking/lockdep.c:5705 [inline]
-       lock_acquire+0x1b1/0x520 kernel/locking/lockdep.c:5670
-       down_write+0x92/0x200 kernel/locking/rwsem.c:1573
-       inode_lock include/linux/fs.h:775 [inline]
-       f2fs_release_file fs/f2fs/file.c:1866 [inline]
-       f2fs_release_file+0xca/0x100 fs/f2fs/file.c:1856
-       __fput+0x27c/0xa90 fs/file_table.c:321
-       task_work_run+0x16f/0x270 kernel/task_work.c:179
-       get_signal+0x1c7/0x25b0 kernel/signal.c:2652
-       arch_do_signal_or_restart+0x79/0x5c0 arch/x86/kernel/signal.c:306
-       exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
-       exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
-       syscall_exit_to_user_mode+0x1d/0x50 kernel/entry/common.c:297
-       do_syscall_64+0x46/0xb0 arch/x86/entry/common.c:86
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-other info that might help us debug this:
-
-Chain exists of:
-  &sb->s_type->i_mutex_key#17 --> &sbi->cp_rwsem --> &sbi->node_write
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(&sbi->node_write);
-                               lock(&sbi->cp_rwsem);
-                               lock(&sbi->node_write);
-  lock(&sb->s_type->i_mutex_key#17);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor110/5218:
- #0: ffff88802100c448 (&sbi->node_write){++++}-{3:3}, at: f2fs_down_read fs/f2fs/f2fs.h:2087 [inline]
- #0: ffff88802100c448 (&sbi->node_write){++++}-{3:3}, at: f2fs_write_single_data_page+0x166e/0x19d0 fs/f2fs/data.c:2842
-
-stack backtrace:
-CPU: 1 PID: 5218 Comm: syz-executor110 Not tainted 6.4.0-rc6-syzkaller-00037-gb6dad5178cea #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
- check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2188
- check_prev_add kernel/locking/lockdep.c:3113 [inline]
- check_prevs_add kernel/locking/lockdep.c:3232 [inline]
- validate_chain kernel/locking/lockdep.c:3847 [inline]
- __lock_acquire+0x2fcd/0x5f30 kernel/locking/lockdep.c:5088
- lock_acquire kernel/locking/lockdep.c:5705 [inline]
- lock_acquire+0x1b1/0x520 kernel/locking/lockdep.c:5670
- down_write+0x92/0x200 kernel/locking/rwsem.c:1573
- inode_lock include/linux/fs.h:775 [inline]
- f2fs_release_file fs/f2fs/file.c:1866 [inline]
- f2fs_release_file+0xca/0x100 fs/f2fs/file.c:1856
- __fput+0x27c/0xa90 fs/file_table.c:321
- task_work_run+0x16f/0x270 kernel/task_work.c:179
- get_signal+0x1c7/0x25b0 kernel/signal.c:2652
- arch_do_signal_or_restart+0x79/0x5c0 arch/x86/kernel/signal.c:306
- exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
- exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x1d/0x50 kernel/entry/common.c:297
- do_syscall_64+0x46/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f6b9a0179b9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6b99fc32f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000148
-RAX: fffffffffffffffb RBX: 00007f6b9a0a47a8 RCX: 00007f6b9a0179b9
-RDX: 0000000000000001 RSI: 0000000020000240 RDI: 0000000000000004
-RBP: 00007f6b9a0a47a0 R08: 0000000000000000 R09: 0000000000000003
-R10: 0000000000001400 R11: 0000000000000246 R12: 00007f6b9a0a47ac
-R13: 00007f6b9a071008 R14: 6f6f6c2f7665642f R15: 0000000000022000
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
