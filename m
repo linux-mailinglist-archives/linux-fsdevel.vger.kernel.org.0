@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A663F730FD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 08:50:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AA5B730FCA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 08:50:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244429AbjFOGue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 02:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56068 "EHLO
+        id S244389AbjFOGub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 02:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244560AbjFOGt7 (ORCPT
+        with ESMTP id S244579AbjFOGuA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 02:49:59 -0400
+        Thu, 15 Jun 2023 02:50:00 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 485A118D;
-        Wed, 14 Jun 2023 23:49:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABEF72706;
+        Wed, 14 Jun 2023 23:49:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=WxGCOD+kS6tqPx/B3Mt82Pt+WtvAZhIcaDzeuGE0dN0=; b=CgoCVoJxkvFusGPw4qcsUVrB/I
-        fxfyzimIjbttFMbs0DcrhMN/ol2VxprI+f7Aec+tXhFh11JWhdfhG7rOKemyq6MsjaRY5tRAx4iNw
-        kFlCinzgjbykOwbfTAf5bk5jCtnHwoLICBrxRv2o86i4B6rbZoGydKnov1jSw0flyu+JnoA2Z1k6Y
-        fRNkOkqHnBv6O0ju//NCSA/AlwZe5Gj0tU3IFgV+i/RBC9D1u1H4MIY9e+hf5FGMLX+59p5Fgwex9
-        bnvGO5piDJVI6GKL3k7N/f4uDso2on5iCdz2WBD5DX8fQ79q1nx9Du0A0FbUL6RJsIlTvBfZiMg21
-        RVq3DbDA==;
+        bh=TQxm0uGjCgxdrSRwnj0pjPTwH1EOrN5vgpiJC4YzX0c=; b=UfshM0ZqnpHuKWi0MQk85iIJ+l
+        TPjWQbanvrDPQ328EgWsz/pvD5XIQ23y47ivh2jRTsE7yyzEcShi8qFqiVZhZhtdnKhFfISRID0Eo
+        +/lzRo3MFhGPRMmBwgZYR496cFlw+6IJyKhdBj4i+LT9l3tPWcfTLRJJNS59r85kw0gmMPowXe9lS
+        bzIC72IobvTqET74V0gWkTFlp4PpO7GtWV87JMBVr08Nn1+4utZcI3tJDpAyc2jHLBkOv6wgBMXxq
+        Nb54Gg2Uk7OkpHagg5Zsp8biRbI1Scr6rbOMf52k7g/inXmXET752c25SKyoODCp3iB5t9AZLWsfg
+        HI1u8aBw==;
 Received: from 2a02-8389-2341-5b80-8c8c-28f8-1274-e038.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:8c8c:28f8:1274:e038] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q9gmx-00DuBG-2h;
-        Thu, 15 Jun 2023 06:49:00 +0000
+        id 1q9gn0-00DuBU-0m;
+        Thu, 15 Jun 2023 06:49:02 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Song Liu <song@kernel.org>
 Cc:     linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 07/11] md-bitmap: cleanup read_sb_page
-Date:   Thu, 15 Jun 2023 08:48:36 +0200
-Message-Id: <20230615064840.629492-8-hch@lst.de>
+Subject: [PATCH 08/11] md-bitmap: account for mddev->bitmap_info.offset in read_sb_page
+Date:   Thu, 15 Jun 2023 08:48:37 +0200
+Message-Id: <20230615064840.629492-9-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230615064840.629492-1-hch@lst.de>
 References: <20230615064840.629492-1-hch@lst.de>
@@ -52,57 +52,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert read_sb_page to the normal kernel coding style, calculate the
-target sector only once, and add a local iosize variable to make the call
-to sync_page_io more readable.
+Diretly apply mddev->bitmap_info.offset to the sector number to read
+instead of doing that in both callers.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/md-bitmap.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ drivers/md/md-bitmap.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-index 1f71683b417981..f4bff2dfe2fd8f 100644
+index f4bff2dfe2fd8f..39ff75cc7a16ac 100644
 --- a/drivers/md/md-bitmap.c
 +++ b/drivers/md/md-bitmap.c
-@@ -139,26 +139,25 @@ static void md_bitmap_checkfree(struct bitmap_counts *bitmap, unsigned long page
-  */
- 
- /* IO operations when bitmap is stored near all superblocks */
-+
-+/* choose a good rdev and read the page from there */
- static int read_sb_page(struct mddev *mddev, loff_t offset,
--			struct page *page,
--			unsigned long index, int size)
-+		struct page *page, unsigned long index, int size)
+@@ -145,7 +145,8 @@ static int read_sb_page(struct mddev *mddev, loff_t offset,
+ 		struct page *page, unsigned long index, int size)
  {
--	/* choose a good rdev and read the page from there */
  
-+	sector_t sector = offset + index * (PAGE_SIZE / SECTOR_SIZE);
+-	sector_t sector = offset + index * (PAGE_SIZE / SECTOR_SIZE);
++	sector_t sector = mddev->bitmap_info.offset + offset +
++		index * (PAGE_SIZE / SECTOR_SIZE);
  	struct md_rdev *rdev;
--	sector_t target;
  
  	rdev_for_each(rdev, mddev) {
--		if (! test_bit(In_sync, &rdev->flags)
--		    || test_bit(Faulty, &rdev->flags)
--		    || test_bit(Bitmap_sync, &rdev->flags))
--			continue;
-+		u32 iosize = roundup(size, bdev_logical_block_size(rdev->bdev));
+@@ -593,7 +594,7 @@ static int md_bitmap_read_sb(struct bitmap *bitmap)
+ 	unsigned long sectors_reserved = 0;
+ 	int err = -EINVAL;
+ 	struct page *sb_page;
+-	loff_t offset = bitmap->mddev->bitmap_info.offset;
++	loff_t offset = 0;
  
--		target = offset + index * (PAGE_SIZE/512);
-+		if (!test_bit(In_sync, &rdev->flags) ||
-+		    test_bit(Faulty, &rdev->flags) ||
-+		    test_bit(Bitmap_sync, &rdev->flags))
-+			continue;
- 
--		if (sync_page_io(rdev, target,
--				 roundup(size, bdev_logical_block_size(rdev->bdev)),
--				 page, REQ_OP_READ, true)) {
-+		if (sync_page_io(rdev, sector, iosize, page, REQ_OP_READ,
-+				true)) {
- 			page->index = index;
- 			return 0;
- 		}
+ 	if (!bitmap->storage.file && !bitmap->mddev->bitmap_info.offset) {
+ 		chunksize = 128 * 1024 * 1024;
+@@ -620,7 +621,7 @@ static int md_bitmap_read_sb(struct bitmap *bitmap)
+ 		bm_blocks = ((bm_blocks+7) >> 3) + sizeof(bitmap_super_t);
+ 		/* to 4k blocks */
+ 		bm_blocks = DIV_ROUND_UP_SECTOR_T(bm_blocks, 4096);
+-		offset = bitmap->mddev->bitmap_info.offset + (bitmap->cluster_slot * (bm_blocks << 3));
++		offset = bitmap->cluster_slot * (bm_blocks << 3);
+ 		pr_debug("%s:%d bm slot: %d offset: %llu\n", __func__, __LINE__,
+ 			bitmap->cluster_slot, offset);
+ 	}
+@@ -632,10 +633,8 @@ static int md_bitmap_read_sb(struct bitmap *bitmap)
+ 		err = read_file_page(bitmap->storage.file, 0,
+ 				bitmap, bytes, sb_page);
+ 	} else {
+-		err = read_sb_page(bitmap->mddev,
+-				   offset,
+-				   sb_page,
+-				   0, sizeof(bitmap_super_t));
++		err = read_sb_page(bitmap->mddev, offset, sb_page, 0,
++				   sizeof(bitmap_super_t));
+ 	}
+ 	if (err)
+ 		return err;
+@@ -1127,8 +1126,8 @@ static int md_bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 		if (file)
+ 			ret = read_file_page(file, i, bitmap, count, page);
+ 		else
+-			ret = read_sb_page(mddev, mddev->bitmap_info.offset,
+-					   page, i + node_offset, count);
++			ret = read_sb_page(mddev, 0, page, i + node_offset,
++					   count);
+ 		if (ret)
+ 			goto err;
+ 	}
 -- 
 2.39.2
 
