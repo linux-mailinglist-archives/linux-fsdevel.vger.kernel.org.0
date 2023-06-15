@@ -2,180 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6199A7316B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 13:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 784C97317D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 13:48:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343807AbjFOLcj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 07:32:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50094 "EHLO
+        id S1344651AbjFOLsg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 07:48:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343907AbjFOLcd (ORCPT
+        with ESMTP id S1344650AbjFOLsR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 07:32:33 -0400
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33DAD2729;
-        Thu, 15 Jun 2023 04:32:30 -0700 (PDT)
-Received: by mail-ua1-x92b.google.com with SMTP id a1e0cc1a2514c-7872d7b79e1so1351494241.0;
-        Thu, 15 Jun 2023 04:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686828749; x=1689420749;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fNQhYfypORMjFqwsysMs1sJQPWoHQ3GQv2t7/T8AiqU=;
-        b=MId8gXUXYgqEhPESUWCpo8ic87i0GuFOM6+dCKKW8++K7+LIWnkfzyaIRZdgwshuCJ
-         sKksZFpqoxbsfnu4AapgmcHn7RvpcJgCUtZa+PMfn9iIXHBVG0kpf8d/EEiKkKe6IyWO
-         z58DjRULBrx4rJD2f2ZfgM8NGjBOxTwdrmMRSKHLOg48sDrseTGgrJFpxeAe0uLGkPG+
-         avGcgAAHMXaQSNyez0FlcqtmwM4gVFESDzQe71lZGkFA2YDDPwZPEi8tqRpgznCP6aqf
-         6xtsTYp71y64aQeQ0IRmN+UiXeBcOmdvlNdjcxIfcv5jXesAdmzkvsJ+OflBcM/lBQ0V
-         wJJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686828749; x=1689420749;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fNQhYfypORMjFqwsysMs1sJQPWoHQ3GQv2t7/T8AiqU=;
-        b=PvfK3oZcdasmBR+bkc6LicKvQDlO+bDxPJkkd9fT+OnBv0m1hPAGjik32RnKXHGFDp
-         0C00DUePnUE/hU5QcjQVYSapPzbwViGuWvMhTwCbJ9a8iPrkT/QzpyhfUzWYR8K0BHKp
-         T7fxbExzANZXMjeoEVFdwkt2FE9sRxRnpSw7X7Nr0vQ/aoKLCaVmqkF65RhH1itgUX6m
-         DUE8sszwzgzVf6vt6rOrXv3Y5vhiSIDi3dPF8rCe91det7MBma+w2We67+E7LwezMS9D
-         ihyOUnZOJ+X8Sfw5K7Y0X54BeZwYiRpJUitDJhu6EFZOaifMUz7rrxDvQ4myxos4TN/n
-         jZ9w==
-X-Gm-Message-State: AC+VfDwsJ+pccDsyjC/eZ8ztGSoyOQC1TuSjP+5xNIQYaco0B/vVdEpi
-        T5YmxawFjnomMLEiauyuH9qO9/PrkXvY5CbX9+s=
-X-Google-Smtp-Source: ACHHUZ5hk0bjr+fW+7XqCLNSmknX+HBo7Xwb0bkFIkJO/mMIrTQYo29iNF7wfjxkk2obzPY+Ql+b/UOraJ6tZj94vQM=
-X-Received: by 2002:a67:f7d7:0:b0:43f:54b4:d763 with SMTP id
- a23-20020a67f7d7000000b0043f54b4d763mr2418934vsp.3.1686828749243; Thu, 15 Jun
- 2023 04:32:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230614074907.1943007-1-amir73il@gmail.com> <20230614074907.1943007-2-amir73il@gmail.com>
- <20230614-kilowatt-kindgerecht-46c7210ee82e@brauner>
-In-Reply-To: <20230614-kilowatt-kindgerecht-46c7210ee82e@brauner>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 15 Jun 2023 14:32:18 +0300
-Message-ID: <CAOQ4uxiQeet1_QrDvydygCMUsN4-e0KtYQO9k=3iA1wcJeOUhg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] fs: use backing_file container for internal files
- with "fake" f_path
+        Thu, 15 Jun 2023 07:48:17 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146263AB3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 04:44:06 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 81AD21FD98;
+        Thu, 15 Jun 2023 11:42:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1686829360; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=BhmOHdzCSP0SmFgbVGFENLVTi6XXcBWQemYl+LFq0yg=;
+        b=MKHhtP3c/hU85uay9PFn7TrMv1XVJCcgrftd+bJr2tweWuN2u3xMEKMPPv53uDwMmRs7nx
+        Qxrb9lhU/thOyUYsg6ubga9v5sDH35IHRmd0ari4Gn28dKBikVzvpWOUvMkv2lZ5vs+2rt
+        2av9bOLBe5GsWQweblgCus4aUH2z4S4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1686829360;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=BhmOHdzCSP0SmFgbVGFENLVTi6XXcBWQemYl+LFq0yg=;
+        b=6PYHRCLYYUY/8UA22JCk0YL5r/nC9jX7vFFSW3e4oEj2dCBRIXwSYZxqzXfMDMu0zoAaV7
+        0oYcN9T66RiPewBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7200A13467;
+        Thu, 15 Jun 2023 11:42:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id PHjMGzD5imSgGgAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 15 Jun 2023 11:42:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 06B61A0755; Thu, 15 Jun 2023 13:42:40 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
 To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        Ted Tso <tytso@mit.edu>, David Howells <dhowells@redhat.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH] fs: Protect reconfiguration of sb read-write from racing writes
+Date:   Thu, 15 Jun 2023 13:38:48 +0200
+Message-Id: <20230615113848.8439-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2238; i=jack@suse.cz; h=from:subject; bh=DdnHqbpGLaTgLfSfSjjCW6u8t+xpOjAnel8v+b0m7+M=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkivgyyFJ65tW1X7UGKUHxojWL2a6yYVjAsfhxrSom pmVN/5uJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZIr4MgAKCRCcnaoHP2RA2e1+B/ 4jMLicAZkP2nH16jbYt7igOR3FQRQ1c+5UqHCc+2Hx7TL0pxPXL1Ank5eGZLcNwmexWEQDhauXJRgS lduXCjC9JyMoQv3BkQJiq2crAj6xxOgUZ5VuOH9zp/i8l7re6jYLBfg2X3qnLprLznvz1yg64gJ4+Y nfLG6fXQqdAQZ7TbipUqiA71hHw8b1jVKw1i5b2ARJ+lNArUFKhcVrNJeJZwHijqABozKfOEaXzgXV lZaL8TE4eC2WZTduYTglXjZ1gAEvSv9spdC6Uf+VJvVJtjp3vNmRAZ3DcmRZjk+uM7nIiBvG2dT0T4 RyUB3vEfXRbgKXEtCZTC9FgXtUZQaK
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 4:26=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Wed, Jun 14, 2023 at 10:49:06AM +0300, Amir Goldstein wrote:
-> > Overlayfs and cachefiles use open_with_fake_path() to allocate internal
-> > files, where overlayfs also puts a "fake" path in f_path - a path which
-> > is not on the same fs as f_inode.
-> >
-> > Allocate a container struct backing_file for those internal files, that
-> > is used to hold the "fake" ovl path along with the real path.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/cachefiles/namei.c |  4 +--
-> >  fs/file_table.c       | 74 +++++++++++++++++++++++++++++++++++++------
-> >  fs/internal.h         |  5 +--
-> >  fs/open.c             | 30 +++++++++++-------
-> >  fs/overlayfs/file.c   |  4 +--
-> >  include/linux/fs.h    | 24 +++++++++++---
-> >  6 files changed, 109 insertions(+), 32 deletions(-)
-> >
-> > diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> > index 82219a8f6084..283534c6bc8d 100644
-> > --- a/fs/cachefiles/namei.c
-> > +++ b/fs/cachefiles/namei.c
-> > @@ -560,8 +560,8 @@ static bool cachefiles_open_file(struct cachefiles_=
-object *object,
-> >        */
-> >       path.mnt =3D cache->mnt;
-> >       path.dentry =3D dentry;
-> > -     file =3D open_with_fake_path(&path, O_RDWR | O_LARGEFILE | O_DIRE=
-CT,
-> > -                                d_backing_inode(dentry), cache->cache_=
-cred);
-> > +     file =3D open_backing_file(&path, O_RDWR | O_LARGEFILE | O_DIRECT=
-,
-> > +                              &path, cache->cache_cred);
-> >       if (IS_ERR(file)) {
-> >               trace_cachefiles_vfs_error(object, d_backing_inode(dentry=
-),
-> >                                          PTR_ERR(file),
-> > diff --git a/fs/file_table.c b/fs/file_table.c
-> > index 372653b92617..138d5d405df7 100644
-> > --- a/fs/file_table.c
-> > +++ b/fs/file_table.c
-> > @@ -44,18 +44,40 @@ static struct kmem_cache *filp_cachep __read_mostly=
-;
-> >
-> >  static struct percpu_counter nr_files __cacheline_aligned_in_smp;
-> >
-> > +/* Container for backing file with optional real path */
-> > +struct backing_file {
-> > +     struct file file;
-> > +     struct path real_path;
-> > +};
-> > +
-> > +static inline struct backing_file *backing_file(struct file *f)
-> > +{
-> > +     return container_of(f, struct backing_file, file);
-> > +}
-> > +
-> > +struct path *backing_file_real_path(struct file *f)
-> > +{
-> > +     return &backing_file(f)->real_path;
-> > +}
-> > +EXPORT_SYMBOL_GPL(backing_file_real_path);
-> > +
-> >  static void file_free_rcu(struct rcu_head *head)
-> >  {
-> >       struct file *f =3D container_of(head, struct file, f_rcuhead);
-> >
-> >       put_cred(f->f_cred);
-> > -     kmem_cache_free(filp_cachep, f);
-> > +     if (unlikely(f->f_mode & FMODE_BACKING))
-> > +             kfree(backing_file(f));
-> > +     else
-> > +             kmem_cache_free(filp_cachep, f);
-> >  }
-> >
-> >  static inline void file_free(struct file *f)
-> >  {
-> >       security_file_free(f);
-> > -     if (!(f->f_mode & FMODE_NOACCOUNT))
-> > +     if (unlikely(f->f_mode & FMODE_BACKING))
-> > +             path_put(backing_file_real_path(f));
-> > +     else
-> >               percpu_counter_dec(&nr_files);
->
-> I think this needs to be:
->
-> if (unlikely(f->f_mode & FMODE_BACKING))
->         path_put(backing_file_real_path(f));
->
-> if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
->         percpu_counter_dec(&nr_files);
->
-> as we do have FMODE_NOACCOUNT without FMODE_BACKING.
->
-> No need to resend though.
+The reconfigure / remount code takes a lot of effort to protect
+filesystem's reconfiguration code from racing writes on remounting
+read-only. However during remounting read-only filesystem to read-write
+mode userspace writes can start immediately once we clear SB_RDONLY
+flag. This is inconvenient for example for ext4 because we need to do
+some writes to the filesystem (such as preparation of quota files)
+before we can take userspace writes so we are clearing SB_RDONLY flag
+before we are fully ready to accept userpace writes and syzbot has found
+a way to exploit this [1]. Also as far as I'm reading the code
+the filesystem remount code was protected from racing writes in the
+legacy mount path by the mount's MNT_READONLY flag so this is relatively
+new problem. It is actually fairly easy to protect remount read-write
+from racing writes using sb->s_readonly_remount flag so let's just do
+that instead of having to workaround these races in the filesystem code.
 
-Ay! forgot to include this in v5.
-Please fix it for me again.
+[1] https://lore.kernel.org/all/00000000000006a0df05f6667499@google.com/T/
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/super.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Thanks,
-Amir.
+diff --git a/fs/super.c b/fs/super.c
+index 34afe411cf2b..6cd64961aa07 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -903,6 +903,7 @@ int reconfigure_super(struct fs_context *fc)
+ 	struct super_block *sb = fc->root->d_sb;
+ 	int retval;
+ 	bool remount_ro = false;
++	bool remount_rw = false;
+ 	bool force = fc->sb_flags & SB_FORCE;
+ 
+ 	if (fc->sb_flags_mask & ~MS_RMT_MASK)
+@@ -920,7 +921,7 @@ int reconfigure_super(struct fs_context *fc)
+ 		    bdev_read_only(sb->s_bdev))
+ 			return -EACCES;
+ #endif
+-
++		remount_rw = !(fc->sb_flags & SB_RDONLY) && sb_rdonly(sb);
+ 		remount_ro = (fc->sb_flags & SB_RDONLY) && !sb_rdonly(sb);
+ 	}
+ 
+@@ -950,6 +951,14 @@ int reconfigure_super(struct fs_context *fc)
+ 			if (retval)
+ 				return retval;
+ 		}
++	} else if (remount_rw) {
++		/*
++		 * We set s_readonly_remount here to protect filesystem's
++		 * reconfigure code from writes from userspace until
++		 * reconfigure finishes.
++		 */
++		sb->s_readonly_remount = 1;
++		smp_wmb();
+ 	}
+ 
+ 	if (fc->ops->reconfigure) {
+-- 
+2.35.3
+
