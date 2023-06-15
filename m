@@ -2,174 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2521730D05
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 04:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9E3730D0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 04:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238059AbjFOCIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 22:08:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54134 "EHLO
+        id S238097AbjFOCPQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Jun 2023 22:15:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234019AbjFOCIq (ORCPT
+        with ESMTP id S229453AbjFOCPO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 22:08:46 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C17C1BDB;
-        Wed, 14 Jun 2023 19:08:40 -0700 (PDT)
-X-UUID: 89c760140b2111ee9cb5633481061a41-20230615
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=8PiqmrHHgVDspWVw9GdWNpl4/b9dPbxSEm7wpVtkl+M=;
-        b=Zl8ao0G+tNnljW1zde5AhFiaz5Zuibl/ncsIn7t/oAKuWtzMt8YCQNaFwtKVzv2e1ENfNHGyHk2U6ut/a8jviLW/gIdwhIGQDIQtnOytzOfgPdLRoY67JUofccGstz+q6vkbZDS1Nfd21iEZeQg8tWId7JW/+7mxSv0GPPuxak4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.26,REQID:b0d44b35-05a3-46f1-9006-3bd104d43070,IP:0,U
-        RL:25,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:28,RULE:Release_Ham,ACTI
-        ON:release,TS:98
-X-CID-INFO: VERSION:1.1.26,REQID:b0d44b35-05a3-46f1-9006-3bd104d43070,IP:0,URL
-        :25,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:28,RULE:Spam_GS981B3D,ACTI
-        ON:quarantine,TS:98
-X-CID-META: VersionHash:cb9a4e1,CLOUDID:9d351c6f-2f20-4998-991c-3b78627e4938,B
-        ulkID:2306141516538Z199Q9E,BulkQuantity:58,Recheck:0,SF:48|38|29|28|17|19,
-        TC:nil,Content:0,EDM:-3,IP:nil,URL:11|1,File:nil,Bulk:40|20,QS:nil,BEC:nil
-        ,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_OBB,TF_CID_SPAM_FCD,TF_CID_SPAM_ULN,
-        TF_CID_SPAM_SNR,TF_CID_SPAM_SDM,TF_CID_SPAM_ASC,TF_CID_SPAM_FAS
-X-UUID: 89c760140b2111ee9cb5633481061a41-20230615
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-        (envelope-from <wei-chin.tsai@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 667266198; Thu, 15 Jun 2023 10:08:36 +0800
-Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 15 Jun 2023 10:08:36 +0800
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 15 Jun 2023 10:08:36 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=B4Ed6iXmtIKxY4oRJS65xDmJf0pEFyEU7uEhDRh37xKoqPHTGNlRb3lwzbiSRwQNAlMbHcMJhxKDrIVJdoVnAIFiYK40zuyt81O9qGd40P21GNja0jOc9U0QAJOxmDF9LB4wlV5iLb3Jx3KcTkAGJLMzYTR/PrsLh59/MESBPQHG+WBwIgLvR7HTFvNFLt5Pwpi9l6PAoEO9Ycxch4Bri3HH4Pi6Ftjp6qIigtgXQtYYejd7dL5flzw+PRcn+xAse//L/ojmM/BjkBEIye59vBobVCUb8hKeKdhgUFiNLSc+Xw5mVOLlHtQeTyhTsxUh+UqyntA+K1C4uvxTOMP4ng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8PiqmrHHgVDspWVw9GdWNpl4/b9dPbxSEm7wpVtkl+M=;
- b=C6CLovWVf9Dh7+9JQPOTsw8X420CGsr2+W2aiR8kUD0hSJewZuYfpNMnhAbCsA3CfaofV3unw5k8OsZaCOGjhIIGfyedVsVLrtXY0rGZNp+TzUh2Y7qHnN5e1EG0h0V5tz84V2y9RTXVUnSyA4tyneTVI+TOy2exRCMNdzJZurYkqEezGQdqeeDEEJh8sKabLn3MM0kjiQBfXy04U68CXI8MVS4RZGgTBsklwoxiAeUOWoU+R2Zqtj7O7Xm0i0rxLSTQphT+48Yu7rqIs40OdRehfnnnzGJnsiQfTa3UKg2A/1FsmZLjCqAY/d6AoK4Dxc7AJ6jLiwNUc8T3Kq1TTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8PiqmrHHgVDspWVw9GdWNpl4/b9dPbxSEm7wpVtkl+M=;
- b=RpCLO8Q97aXsyA7rFYof6V6lKFubzreWGH2kMXRm1EKLi8TcYEFGyk6XU4k3/JJTK6lV+7uqVp+FllaUhXtPK/I/wHf66VJczD0hYbqLpl9+Yketpc/8FmhUe+GVuUzOsX4+QE0YjczNvnFVlJBVjuPoEHTnH5vAqPBjJXB1U5U=
-Received: from JH0PR03MB8100.apcprd03.prod.outlook.com (2603:1096:990:37::13)
- by KL1PR03MB7037.apcprd03.prod.outlook.com (2603:1096:820:da::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.37; Thu, 15 Jun
- 2023 02:08:33 +0000
-Received: from JH0PR03MB8100.apcprd03.prod.outlook.com
- ([fe80::56de:54d6:38f2:afcd]) by JH0PR03MB8100.apcprd03.prod.outlook.com
- ([fe80::56de:54d6:38f2:afcd%6]) with mapi id 15.20.6455.037; Thu, 15 Jun 2023
- 02:08:32 +0000
-From:   =?utf-8?B?V2VpLWNoaW4gVHNhaSAo6JSh57at5pmJKQ==?= 
-        <Wei-chin.Tsai@mediatek.com>
-To:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "angelogioacchino.delregno@collabora.com" 
-        <angelogioacchino.delregno@collabora.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?utf-8?B?TWVsIExlZSAo5p2O5aWH6YyaKQ==?= <Mel.Lee@mediatek.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        =?utf-8?B?SXZhbiBUc2VuZyAo5pu+5b+X6LuSKQ==?= 
-        <ivan.tseng@mediatek.com>
-Subject: Re: [PATCH v2 2/3] memory: export symbols for memory related
- functions
-Thread-Topic: [PATCH v2 2/3] memory: export symbols for memory related
- functions
-Thread-Index: AQHZnm86bp64uNQQXU2F/FXPNJ366q+J43aAgAAteQCAACTggIAARe+AgACj84A=
-Date:   Thu, 15 Jun 2023 02:08:32 +0000
-Message-ID: <9cb31614569fb1e121102b6bef7de8870224283c.camel@mediatek.com>
-References: <20230614032038.11699-1-Wei-chin.Tsai@mediatek.com>
-         <20230614032038.11699-3-Wei-chin.Tsai@mediatek.com>
-         <ZIlpWR6/uWwQUc6J@shell.armlinux.org.uk>
-         <fef0006ced8d5e133a3bfbf4dc4353a86578b9cd.camel@mediatek.com>
-         <cb7f49bc-8ed4-a916-44f4-39e360afce41@collabora.com>
-         <ZInpF3aKMLFVQ3Vf@shell.armlinux.org.uk>
-In-Reply-To: <ZInpF3aKMLFVQ3Vf@shell.armlinux.org.uk>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: JH0PR03MB8100:EE_|KL1PR03MB7037:EE_
-x-ms-office365-filtering-correlation-id: 85f95b9d-37f1-42b6-5e28-08db6d456b85
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: WgeU93TiY+cr5EVYkijpHmUNU7o/qJRZKvJt4zzr0htXPG7bvMAZBFlbm7/DkqUTcRk+X8UNlwD9Xm7KxuSwofNEbklfBNc2UehxLTNp/HKCF1kQLd4RFhu30pp+40ydZrYwiV19svsj6bDN3AljAdb+ExvtYoM5Stj8yASvKFPuosoUmcC3tSDB4zBX96xK+zHPWzMXNoMs9Es7nHK45dslfx1SnZbU8yuSbkdJ9oXEFdULglpxlX+OoB0p4G+KIpr7TLdwG6WafddIevemtHUY/7CMdoeu2mv93ZrVgAeQi4ljaFHRplgvHheiAUbaavKzk1+tNM+H/SdeGMJIMEiSWCuCgB8CWdUZzEz7XL7j6b7Cfb9lmHxBuglqEn5NtJqvZ6RNjDbK9CHx7jPVVhODcI6o+ozySopGgVoMPhkI8gF5rZBtd6dM5Mm1tJp2+hD3xZdrYfw5hLgYL77WXfsggTTB0ZaXXLwsxK+djwLV+XjCPT6XcsWsyTTUltT+krO1OqryFdCBugfdaYM/V1Fcw4YbUDS6PnhEaFJUcEB2JHDLkA68XXPYWnI85t/HxtoTz9Px7uJMX2dZvR8MghU5o0d83YR4iXkay0B8xPrgZs9kyBHvOeJxfXo3GzqXqeOHZVYVNbVgulEt3vW/cw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR03MB8100.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(39860400002)(136003)(396003)(346002)(366004)(451199021)(122000001)(38100700002)(38070700005)(71200400001)(478600001)(110136005)(54906003)(966005)(6486002)(316002)(41300700001)(5660300002)(8936002)(8676002)(64756008)(66476007)(66446008)(76116006)(91956017)(66946007)(2906002)(66556008)(4326008)(83380400001)(6512007)(26005)(186003)(107886003)(6506007)(2616005)(36756003)(85182001)(86362001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?T3VjMnUxdTRwekRJMjdTeGR6V2hUNDMyblJ1V0MrVEQwQmp3KzRjNDBIT21o?=
- =?utf-8?B?akVGbUdQeTJZbnJuQURadEV1NjBteUhsbWhONDc2YTloNzArOVdLYzUrdk5k?=
- =?utf-8?B?QkxDaks5eWlFNWQ2QVVsV2ZSQmdUMXl4ZHpvOExPMXZyWVlqeG9aQXFZdUt1?=
- =?utf-8?B?QnJEOFk5cmNuMDlScko3Z3NRL3dIb3pYbWRWMmV5RnJELzZMd1FJQVBVb0Nh?=
- =?utf-8?B?SFdwUlI0OEE5UmJLVkNWb1pxMDBBVnNtQkI2a3ZtREluSm93ZXFoSVB1QzNi?=
- =?utf-8?B?S1BVYWZTdE9rSi9xYWNFdXdMU3JuV1ArR3UzeGE5bUxhRWNUNnJmMk5YME5F?=
- =?utf-8?B?bFFSR2FrYlcrdkljREV1azIrWjZsaU9HRGRUbzZDejMwM0dLRFM1QXhzZkw2?=
- =?utf-8?B?TjRLZVFqS25WZkR4OUJOYmNCcWlsL2V3VWtSSHlydXl2dU52VTc1clg1NGtT?=
- =?utf-8?B?bmw3b1hJaUlJYUI3cmdCd05nVTdQeEQvWXltckxDRXhKOVdpaGF3SzlXd1Vn?=
- =?utf-8?B?Z2tQazV2czNHaEtmRllzOFcrTHh6OFM3ZVF3OXgzb1RueEpiM0lFQTZLNjV1?=
- =?utf-8?B?cGJYb1U1cTFHbTFhSUNXN0Y0R1dEKzZwR01Dc1pjRllpSks0ajlEYldZWnp4?=
- =?utf-8?B?RFVVWTkrUGJPVmFSdWZlNEpPVjh1NGtBVlExUjNaNU5jTGNGOWlvS2V2MTlh?=
- =?utf-8?B?UC85NTVRVGRZUTNFU0NwV0dQUFVwVkx3Y2pmdW5OOGsvT3dRMXl4aFlkTFk0?=
- =?utf-8?B?RUtRSGZ3SWNla25NUlkwUHFvbGM3NlVkem1JWVpsMS9GczUvcExMODQ2VG1D?=
- =?utf-8?B?TUJLK0tTVkZiTmdtb1p5NzducmJUUnQ4VkdINDd3dDdPRTllR0JkdFk3QkQw?=
- =?utf-8?B?WDAxWXREVE9NbW1vNTJkakRjcnZRenZFbDFjQzNzdXF2RFE1aDFic3d6WDdS?=
- =?utf-8?B?d0ZvSzlaVmQyOGZrTFh6eE9rVEwxemVXTlZscUo1MmdXTVFIVXhwb3ZFWEdC?=
- =?utf-8?B?c2RBb1UwM0thcDE0Z1I1K1E4eThDS2cyRDVoVkp1ZVdvNnJXUjVxS0ZWb2ta?=
- =?utf-8?B?R2lmWUNHTmNDc1lUU3FQc0h1YUwxVGZORXZsM2V4b3pscUpOamJSbkhiVjFF?=
- =?utf-8?B?eHY0c2lDV3VOQVZ2ZGNvRlVybzg0ZWJWcVllblFJTC91SzFxY05Nanc2SnA5?=
- =?utf-8?B?Y054ckovajUxU0h6TXZzWEpMYWpwUEZJVkkwS3htYTQrQm5pekR1c0o2eGhh?=
- =?utf-8?B?OXNaVVI4NE91V2FLZ3RaNWRyMEJmVWwveXNHUE9mbFZ5SGljdHRhdHhJWXdk?=
- =?utf-8?B?czZ6Wk9iYmpUTXlkZDJIVStQR3BiWDZ6Kzg0L3hBcFpzVzJzWFNUelJiMUE5?=
- =?utf-8?B?M1d6Wlp2SnNvK3QrTnVVTVYrTnpnL2haT1paaytTdG92WmdYSGxDVDhJUFl2?=
- =?utf-8?B?SWpzQUlsVVozNUp4emNkODNIUVRyL3UxdzhqZWVNQzRUaXVlTFRLRFdGTW83?=
- =?utf-8?B?cVpyMnM4R0QwMk1YV2EreHN5dFdLbGwvbkxrcnQwekJVMlJ5RmYrTE9sVElU?=
- =?utf-8?B?M05KVXJxUHdLeXYzNzVROWZ6cXlhRi92UXY1aVNQL3F4dmFZVkwyU0tRaEZj?=
- =?utf-8?B?a3JVTWxhbHRTZlNqMVhiV1BUdTAyeXpzREtRL2xBSnlmTmN6cGxzZFR3T2I1?=
- =?utf-8?B?OG0xY0RvYTEzY2ExZ1hxaDI3Wm5xNFdsQkNad1kweVdQang5RVdIV1RJMnds?=
- =?utf-8?B?OFczaTlIU1FJUWlFUHNhaCtVZjVJbEdlMmhKUjlqb3E0T1FnOWRYODVIZTdL?=
- =?utf-8?B?djRxWEtEZFZzRG9IRFhNcitHOUNvYTErMHIzdHlveHhZV1dNUUY1K0dlNk5q?=
- =?utf-8?B?dEtpRDZ4YmlVU1Y0S25DNVNkQ2JaVEwyVDNnN2xONWZQRzlPMVg1NHM4Slo4?=
- =?utf-8?B?aUt6VzNUV0sya3pJWHluTHJjbnN3aVRVWkhOelVQSHM5cmtBUlp2UXcwSWtN?=
- =?utf-8?B?VTEzWU04NG1GaEVEbFVHdzl1UzdqbVJTQlF3V0F2ZlNBc0doNEdISkdTNTVv?=
- =?utf-8?B?MzNiT3RKdDQwMEEwcjlyOFdVLzVIUG8yb0cwZC80ZTdMQm9nSGlrUUZ5cnR0?=
- =?utf-8?B?SkZZNkMrQUNpdkZpdzhjeStSVG14OTR2V2lGcXlXN0tSMDVnTnJIL29DWHVl?=
- =?utf-8?Q?Y/0mmGIgsShEsiuV7j5Xt+c=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E0E018AA8780A848A1C5696C90F7A2D8@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 14 Jun 2023 22:15:14 -0400
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 875CC1BE8;
+        Wed, 14 Jun 2023 19:15:12 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.153])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4QhQqH4HGcz4f3knX;
+        Thu, 15 Jun 2023 10:15:07 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+        by APP4 (Coremail) with SMTP id gCh0CgCHLaEodIpkxertLg--.6998S3;
+        Thu, 15 Jun 2023 10:15:06 +0800 (CST)
+Subject: Re: [syzbot] [reiserfs?] general protection fault in rcu_core (2)
+To:     syzbot <syzbot+b23c4c9d3d228ba328d7@syzkaller.appspotmail.com>,
+        jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, luto@kernel.org,
+        peterz@infradead.org, reiserfs-devel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        "yukuai (C)" <yukuai3@huawei.com>
+References: <000000000000556d9605fe1e5c40@google.com>
+From:   Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <1cb93e56-f3e3-c972-1232-bbb67ad4f672@huaweicloud.com>
+Date:   Thu, 15 Jun 2023 10:15:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR03MB8100.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85f95b9d-37f1-42b6-5e28-08db6d456b85
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jun 2023 02:08:32.6912
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8ICCifSc9GkO5tbWLgPCIevu9jMNFmiFOAla96vOW7mJ+aLzphk3J+2E6IkO6uRECBXcCmnRdUViQX7Tj++zvelCxjG8XXOlMvuU0nMaOZg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7037
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,
-        T_SCC_BODY_TEXT_LINE,T_SPF_TEMPERROR,UNPARSEABLE_RELAY autolearn=ham
+In-Reply-To: <000000000000556d9605fe1e5c40@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: gCh0CgCHLaEodIpkxertLg--.6998S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw1fuFy7ur47Ar1fuFy8Krg_yoWrGw4xpF
+        45Kw42yr9YyrWUJwnFkF15ua4I9Fn8WFW7WrW7WrZ2vanIqrnxXa1Iyr43uFWUur4Fy34k
+        Jw1DC3Z3tw1rZa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+        0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+        e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
+        67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+        uYvjxUrR6zUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=0.5 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -177,66 +66,98 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gV2VkLCAyMDIzLTA2LTE0IGF0IDE3OjIxICswMTAwLCBSdXNzZWxsIEtpbmcgKE9yYWNsZSkg
-d3JvdGU6DQo+ICAJIA0KPiBFeHRlcm5hbCBlbWFpbCA6IFBsZWFzZSBkbyBub3QgY2xpY2sgbGlu
-a3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bnRpbA0KPiB5b3UgaGF2ZSB2ZXJpZmllZCB0aGUgc2Vu
-ZGVyIG9yIHRoZSBjb250ZW50Lg0KPiAgT24gV2VkLCBKdW4gMTQsIDIwMjMgYXQgMDI6MTE6MjVQ
-TSArMDIwMCwgQW5nZWxvR2lvYWNjaGlubyBEZWwgUmVnbm8NCj4gd3JvdGU6DQo+ID4gSWwgMTQv
-MDYvMjMgMTE6NTksIFdlaS1jaGluIFRzYWkgKOiUoee2reaZiSkgaGEgc2NyaXR0bzoNCj4gPiA+
-IE9uIFdlZCwgMjAyMy0wNi0xNCBhdCAwODoxNiArMDEwMCwgUnVzc2VsbCBLaW5nIChPcmFjbGUp
-IHdyb3RlOg0KPiA+ID4gPiAgIA0KPiA+ID4gPiBFeHRlcm5hbCBlbWFpbCA6IFBsZWFzZSBkbyBu
-b3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cw0KPiB1bnRpbA0KPiA+ID4gPiB5b3Ug
-aGF2ZSB2ZXJpZmllZCB0aGUgc2VuZGVyIG9yIHRoZSBjb250ZW50Lg0KPiA+ID4gPiAgIE9uIFdl
-ZCwgSnVuIDE0LCAyMDIzIGF0IDExOjIwOjM0QU0gKzA4MDAsIFdlaSBDaGluIFRzYWkNCj4gd3Jv
-dGU6DQo+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2tlcm5lbC9wcm9jZXNzLmMNCj4g
-Yi9hcmNoL2FybS9rZXJuZWwvcHJvY2Vzcy5jDQo+ID4gPiA+ID4gaW5kZXggMGU4ZmY4NTg5MGFk
-Li5kZjkxNDEyYTEwNjkgMTAwNjQ0DQo+ID4gPiA+ID4gLS0tIGEvYXJjaC9hcm0va2VybmVsL3By
-b2Nlc3MuYw0KPiA+ID4gPiA+ICsrKyBiL2FyY2gvYXJtL2tlcm5lbC9wcm9jZXNzLmMNCj4gPiA+
-ID4gPiBAQCAtMzQzLDYgKzM0Myw3IEBAIGNvbnN0IGNoYXIgKmFyY2hfdm1hX25hbWUoc3RydWN0
-DQo+IHZtX2FyZWFfc3RydWN0DQo+ID4gPiA+ICp2bWEpDQo+ID4gPiA+ID4gICB7DQo+ID4gPiA+
-ID4gICByZXR1cm4gaXNfZ2F0ZV92bWEodm1hKSA/ICJbdmVjdG9yc10iIDogTlVMTDsNCj4gPiA+
-ID4gPiAgIH0NCj4gPiA+ID4gPiArRVhQT1JUX1NZTUJPTF9HUEwoYXJjaF92bWFfbmFtZSk7DQo+
-ID4gPiA+IC4uLg0KPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9rZXJuZWwvc2lnbmFsLmMgYi9rZXJu
-ZWwvc2lnbmFsLmMNCj4gPiA+ID4gPiBpbmRleCBiNTM3MGZlNWMxOTguLmExYWJlNzdmY2RjMyAx
-MDA2NDQNCj4gPiA+ID4gPiAtLS0gYS9rZXJuZWwvc2lnbmFsLmMNCj4gPiA+ID4gPiArKysgYi9r
-ZXJuZWwvc2lnbmFsLmMNCj4gPiA+ID4gPiBAQCAtNDcwMCw2ICs0NzAwLDcgQEAgX193ZWFrIGNv
-bnN0IGNoYXIgKmFyY2hfdm1hX25hbWUoc3RydWN0DQo+ID4gPiA+IHZtX2FyZWFfc3RydWN0ICp2
-bWEpDQo+ID4gPiA+ID4gICB7DQo+ID4gPiA+ID4gICByZXR1cm4gTlVMTDsNCj4gPiA+ID4gPiAg
-IH0NCj4gPiA+ID4gPiArRVhQT1JUX1NZTUJPTF9HUEwoYXJjaF92bWFfbmFtZSk7DQo+ID4gPiA+
-IA0KPiA+ID4gPiBIYXZlIHlvdSBjb25maXJtZWQ6DQo+ID4gPiA+IDEpIHdoZXRoZXIgdGhpcyBh
-Y3R1YWxseSBidWlsZHMNCj4gPiA+ID4gMikgd2hldGhlciB0aGlzIHJlc3VsdHMgaW4gb25lIG9y
-IHR3byBhcmNoX3ZtYV9uYW1lIGV4cG9ydHMNCj4gPiA+ID4gDQo+ID4gPiA+ID8NCj4gPiA+ID4g
-DQo+ID4gPiA+IC0tIA0KPiA+ID4gPiBSTUsncyBQYXRjaCBzeXN0ZW06IA0KPiBodHRwczovL3d3
-dy5hcm1saW51eC5vcmcudWsvZGV2ZWxvcGVyL3BhdGNoZXMvDQo+ID4gPiA+IEZUVFAgaXMgaGVy
-ZSEgODBNYnBzIGRvd24gMTBNYnBzIHVwLiBEZWNlbnQgY29ubmVjdGl2aXR5IGF0DQo+IGxhc3Qh
-DQo+ID4gPiANCj4gPiA+IEhpIFJ1c3NlbGwsDQo+ID4gPiANCj4gPiA+IFdlIGRpZCBjb25maXJt
-IHRoYXQgaXQgY2FuIGJlIGJ1aWx0IHN1Y2Nlc3NmdWxseSBpbiBrZXJuZWwgNi4xDQo+IGFuZCBy
-dW4NCj4gPiA+IHdlbGwgaW4gb3VyIHN5c3RlbS4NCj4gPiA+IA0KPiA+IA0KPiA+IEl0IHJ1bnMg
-d2VsbCBpbiB5b3VyIHN5c3RlbSBhbmQgY2FuIGJlIGJ1aWx0IHN1Y2Nlc3NmdWxseSBiZWNhdXNl
-DQo+IHlvdSdyZSBidWlsZGluZw0KPiA+IGZvciBBUk02NCwgbm90IGZvciBBUk0uLi4NCj4gPiAN
-Cj4gPiA+IEFjdHVhbGx5LCB3ZSBvbmx5IHVzZSB0aGlzIGV4cG9ydCBzeW1ib2wgImFyY2hfdm1h
-X25hbWUiDQo+ID4gPiBmcm9tIGtlcm5lbC9zaWduYWwuYyBpbiBhcm02NC4gV2UgYWxzbyBleHBv
-cnQgc3ltYm9sIGZvcg0KPiBhcmNoX3ZtYV9uYW1lDQo+ID4gPiBpbiBhcmNoL2FybS9rZXJuZWwv
-cHJvY2Vzcy5jIGJlY2F1c2UgdGhhdCwgb25lIGRheSBpbiB0aGUNCj4gZnV0dXJlLCAgd2UNCj4g
-PiA+IGFyZSBhZnJhaWQgdGhhdCB3ZSBhbHNvIG5lZWQgdGhpcyBmdW5jdGlvbiBpbiBhcm0gcGxh
-dGZvcm0uDQo+IA0KPiBXaGF0IEknbSB0cnlpbmcgdG8gZ2V0IGF0IGlzIHRoYXQgd2UgaGF2ZSBh
-cmNoX3ZtYV9uYW1lIGluDQo+IGFyY2gvYXJtL2tlcm5lbC9wcm9jZXNzLmMgYW5kIGFsc28gYSB3
-ZWFrIGZ1bmN0aW9uIGluDQo+IGtlcm5lbC9zaWduYWwuYy4NCj4gDQo+IEJvdGggb2YgdGhlc2Ug
-ZW5kIHVwIGFkZGluZyBhbiBlbnRyeSBpbnRvIHRoZSBfX2tzeW10YWJfc3RyaW5ncw0KPiBzZWN0
-aW9uIGFuZCBhIF9fX2tzeW10YWIgc2VjdGlvbiBmb3IgdGhpcyBzeW1ib2wuIFNvIHdlIGVuZCB1
-cCB3aXRoDQo+IHR3byBlbnRyaWVzIGluIGVhY2guDQo+IA0KPiBOb3csIGlmIHRoZSBvbmUgZnJv
-bSBrZXJuZWwvc2lnbmFsLmMgcG9pbnRzIGF0IGl0cyBvd24gd2VhayBmdW5jdGlvbiwNCj4gYW5k
-IHRoYXQgaXMgZm91bmQgZmlyc3QsIHRoZW4gdGhhdCdzIHRoZSBmdW5jdGlvbiB0aGF0IGlzIGdv
-aW5nIHRvIGJlDQo+IGJvdW5kLCBub3QgdGhlIGZ1bmN0aW9uIHRoYXQncyBvdmVycmlkaW5nIGl0
-Lg0KPiANCj4gSWYsIGluc3RlYWQsIHRoZSBleHBvcnQgaW4ga2VybmVsL3NpZ25hbC5jIGVuZHMg
-dXAgcG9pbnRpbmcgYXQgdGhlDQo+IG92ZXJyaWRlbiBmdW5jdGlvbiwgdGhlbiB0aGUgZXhwb3J0
-IGluIGFyY2gvYXJtL2tlcm5lbC9wcm9jZXNzLmMgaXMNCj4gZW50aXJlbHkgcmVkdW5kYW50Lg0K
-PiANCj4gU28sIHlvdSBuZWVkIHRvIGdldCB0byB0aGUgYm90dG9tIG9mIHRoaXMuLi4gYW5kIHVu
-dGlsIHlvdSBkbyBJJ20NCj4gYWZyYWlkIEknbGwgaGF2ZSB0byBOQUsgdGhpcyBwYXRjaC4NCj4g
-DQo+IEZvciB0aGUgcmVjb3JkLCBJIHN1c3BlY3QgaXQncyB0aGUgbGF0dGVyIHNjZW5hcmlvICh3
-ZSBlbmQgdXAgd2l0aA0KPiB0d28gZW50cmllcyBwb2ludGluZyBhdCB0aGUgc2FtZSBmdW5jdGlv
-bikgYnV0IHRoYXQncyBub3RoaW5nIG1vcmUNCj4gdGhhbiBhIGh1bmNoLg0KPiANCj4gLS0gDQo+
-IFJNSydzIFBhdGNoIHN5c3RlbTogaHR0cHM6Ly93d3cuYXJtbGludXgub3JnLnVrL2RldmVsb3Bl
-ci9wYXRjaGVzLw0KDQpIaSBSdXNzZWxsLA0KDQpPSywgSSB3aWxsIGRvIHRoZSByZXNlYXJjaCBm
-b3IgeW91ciBxdWVzdGlvbnMuLi4NCg0KVGhhbmtzLg0KDQoNCj4gRlRUUCBpcyBoZXJlISA4ME1i
-cHMgZG93biAxME1icHMgdXAuIERlY2VudCBjb25uZWN0aXZpdHkgYXQgbGFzdCENCg==
+Hi,
+
+在 2023/06/15 6:20, syzbot 写道:
+> syzbot has bisected this issue to:
+> 
+> commit 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78
+> Author: Yu Kuai <yukuai3@huawei.com>
+> Date:   Fri Jul 2 04:07:43 2021 +0000
+> 
+>      reiserfs: add check for root_inode in reiserfs_fill_super
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1715ffdd280000
+
+git log:
+
+13d257503c09 reiserfs: check directory items on read from disk
+2acf15b94d5b reiserfs: add check for root_inode in reiserfs_fill_super
+
+The bisect log shows that with commit 13d257503c09:
+testing commit 13d257503c0930010ef9eed78b689cec417ab741 gcc
+compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.35.2
+kernel signature: 
+fc456e669984fb9704d9e1d3cb7be68af3b83de4bb55124257ae28bb39a14dc7
+run #0: basic kernel testing failed: possible deadlock in fs_reclaim_acquire
+run #1: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
+run #2: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
+run #3: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
+run #4: crashed: KASAN: use-after-free Read in leaf_insert_into_buf
+run #5: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
+run #6: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
+run #7: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
+run #8: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
+run #9: crashed: KASAN: out-of-bounds Read in leaf_paste_in_buffer
+
+and think this is bad, then bisect to the last commit:
+testing commit 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78 gcc
+compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.35.2
+kernel signature: 
+6d0d5f26a4c0e15188c923383ecfb873ae57ca6a79f592493d6e9ca507949985
+run #0: crashed: possible deadlock in fs_reclaim_acquire
+run #1: OK
+run #2: OK
+run #3: OK
+run #4: OK
+run #5: OK
+run #6: OK
+run #7: OK
+run #8: OK
+run #9: OK
+reproducer seems to be flaky
+# git bisect bad 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78
+
+It seems to me the orignal crash general protection fault is not related
+to this commit. Please kindly correct me if I'm wrong.
+
+For the problem of lockdep warning, it first appeared in bisect log:
+testing commit 406254918b232db198ed60f5bf1f8b84d96bca00 gcc
+compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.35.2
+kernel signature: 
+1c83f3c8b090a4702817c527e741a35506bc06911c71962d4c5fcef577de2fd3
+run #0: basic kernel testing failed: BUG: sleeping function called from 
+invalid context in stack_depot_save
+run #1: basic kernel testing failed: possible deadlock in fs_reclaim_acquire
+run #2: OK
+run #3: OK
+run #4: OK
+run #5: OK
+run #6: OK
+run #7: OK
+run #8: OK
+run #9: OK
+# git bisect good 406254918b232db198ed60f5bf1f8b84d96bca00
+
+And I don't understand why syzbot thinks this is good, and later for the
+same result, syzbot thinks 2acf15b94d5b is bad.
+
+Thanks,
+Kuai
+> start commit:   f8dba31b0a82 Merge tag 'asym-keys-fix-for-linus-v6.4-rc5' ..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1495ffdd280000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1095ffdd280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3c980bfe8b399968
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b23c4c9d3d228ba328d7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1680f7d1280000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12fad50d280000
+> 
+> Reported-by: syzbot+b23c4c9d3d228ba328d7@syzkaller.appspotmail.com
+> Fixes: 2acf15b94d5b ("reiserfs: add check for root_inode in reiserfs_fill_super")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> .
+> 
+
