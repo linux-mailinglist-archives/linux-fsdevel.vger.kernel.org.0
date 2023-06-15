@@ -2,161 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CA47731C44
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 17:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72FB4731D83
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 18:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345029AbjFOPQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 11:16:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51438 "EHLO
+        id S231969AbjFOQMd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 12:12:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345038AbjFOPQ0 (ORCPT
+        with ESMTP id S231233AbjFOQMa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 11:16:26 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 315B22D5D;
-        Thu, 15 Jun 2023 08:16:22 -0700 (PDT)
-Received: from [192.168.10.55] (unknown [119.155.33.163])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id E82676606F67;
-        Thu, 15 Jun 2023 16:16:13 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1686842180;
-        bh=C0LEQtiOTpGeaCKA+5bOCExcFaAsKTYF2+EXB06sxLI=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=biOA/gL+FCKC1STuGTkA27txM7KGqLoOY5QAg/CEkPhfmvwgSp4HyueREBL5JRNqo
-         qj12DWxyl8+iwhbx1is/3rVI2TgwihjblFnKhEiwT0CRQe3bsZ3A7MLBi5IYFik1CN
-         bWkEmO3IjEfyzzb4s4qY6hubBX69vPgsH1+O+Tarr0UCdZyItIpbnGFzdV4YDfksk8
-         NqAoN9vn37M6FC8PW9CQdX98oLmDNfisTmkUh5PmujzhkiCnydIez85QLaRm9IvmpL
-         u2atqKkAwbY2FkCQs5XbUXDoZYn6hm32m9VEfdXIvulNOYgh4UaDN+Cmu/vG2VaUM/
-         +x8t9wZ93KyZA==
-Message-ID: <43c96533-8009-e42f-721c-4b2d1e142f5d@collabora.com>
-Date:   Thu, 15 Jun 2023 20:16:10 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
+        Thu, 15 Jun 2023 12:12:30 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A2F1BF3;
+        Thu, 15 Jun 2023 09:12:25 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1b505665e2fso7282085ad.0;
+        Thu, 15 Jun 2023 09:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686845545; x=1689437545;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DME1NMGsUM2aRxqbyvvHgHixtGQJbWqBPVgXaFtzftk=;
+        b=ckxDFeyo4iQLdRcrjzcqGKuqhZsaUOzwZuy/EHDLbPveHbXXxey2L4EbB96Re9rYa2
+         IY7dI3qtQyRi8yp28aO5pJ0XF5BGAlf3Mdy7z85urcZuYZ14HrAoCKRKph0H3cjKSOPZ
+         FkMkyEHM7jb3LQS0fbRMPI+w+yqsnUzrjwJq3x+O0Em2H6luA52dTjoHjaXtHQlgMHLS
+         Kd4HGGP0SJmmMhVDzVj2h3tsepK047mMp6cg+CD8m/rwKtjroWn96c5ouC2LjYzsHSFk
+         7cF841hVAjzrES9QVpJhVCjiANlIIsQC02lPDeBfZetDDnISawKdsb4HzxS1+y/B2N+0
+         6KbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686845545; x=1689437545;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DME1NMGsUM2aRxqbyvvHgHixtGQJbWqBPVgXaFtzftk=;
+        b=KF23ryF9r9yFRs/gMs1YuPkZRFsHEYuAXtRNdWnCGvxzR00Gb8twG1K0nD2Yi2aiYz
+         L/4iJS3fdJY9yv7y4uTJyq1IDi7IkYcwYEAmPovRVUs0rC5G8EXtCU6x8ELtmkpe7ud1
+         oXnvYIFSclTQA14qdLMyR++ZnymYKe3beGEU6WwivzTPzv8sU3sYO6NiCpEF4zJY2Xtx
+         /8EJY10ceP550PHqjQCME7ir1Q2akTW4KAAzCJolSgEdwwU3eC+ZN8MIm21NKRCBP5Fy
+         qX4SLnrX1x/N+nEdYY9MVD47mnaLxuyAeowd/S7IsGQoWz3PoKAxAAMeQjbST3nrRVf0
+         zLjQ==
+X-Gm-Message-State: AC+VfDz4bAm2wJq9QabGy0B0/xC7pShwYYoamTkAMArnwXFZ6d7sxyaa
+        /w+eWirw+f41E14W6N/5DIo=
+X-Google-Smtp-Source: ACHHUZ4LaiMMPnlq9Z4CLw3tZ7nEf3uTqctWCB4L4GPiVPx6zM+aBadInctf6oyEWvYfSHEAskQMIw==
+X-Received: by 2002:a17:902:e54d:b0:1b2:5d90:fc3f with SMTP id n13-20020a170902e54d00b001b25d90fc3fmr6993693plf.17.1686845544908;
+        Thu, 15 Jun 2023 09:12:24 -0700 (PDT)
+Received: from dw-tp ([49.207.220.159])
+        by smtp.gmail.com with ESMTPSA id d11-20020a170902854b00b001b04dfbe5d0sm14019741plo.309.2023.06.15.09.12.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jun 2023 09:12:24 -0700 (PDT)
+Date:   Thu, 15 Jun 2023 21:42:12 +0530
+Message-Id: <87ttv8ln6r.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Content-Language: en-US
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-References: <20230613102905.2808371-1-usama.anjum@collabora.com>
- <20230613102905.2808371-3-usama.anjum@collabora.com>
- <CABb0KFHWnbrf2ythvO0OKsd1ZS9b4D9BNzwBCbn6g9OX4n6ZOg@mail.gmail.com>
- <0db01d90-09d6-08a4-bbb8-70670d3baa94@collabora.com>
- <CABb0KFEn5TU480A=YiN82nLRtGyKMABi8cZjuiGUU_jFZZo+8g@mail.gmail.com>
- <34203acf-7270-7ade-a60e-ae0f729dcf70@collabora.com>
- <CABb0KFFaXgJD99pWfx3MC+qrq5jUaPis_kZo6U8yL_8xdp0GJA@mail.gmail.com>
- <96b7cc00-d213-ad7d-1b48-b27f75b04d22@collabora.com>
- <CABb0KFEy_mRaT86TEOQ-BoTe_XOVw3Kp5VdzOfEEaiZJuT754g@mail.gmail.com>
- <CABb0KFGuqoDh-+FKcsZXxpSFWSM3mcLVQkotGE3RcNiFKh-a2g@mail.gmail.com>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CABb0KFGuqoDh-+FKcsZXxpSFWSM3mcLVQkotGE3RcNiFKh-a2g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_SORBS_WEB,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+        Dave Chinner <david@fromorbit.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [PATCHv9 0/6] iomap: Add support for per-block dirty state to improve write performance
+In-Reply-To: <87h6r8wyxa.fsf@doe.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Please review the v19. I hope to get your reviewed by tag soon.
+Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
 
-On 6/15/23 7:58 PM, Michał Mirosław wrote:
-> On Thu, 15 Jun 2023 at 16:52, Michał Mirosław <emmir@google.com> wrote:
->> On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
->> <usama.anjum@collabora.com> wrote:
->>> I'll send next revision now.
->>> On 6/14/23 11:00 PM, Michał Mirosław wrote:
->>>> (A quick reply to answer open questions in case they help the next version.)
->>>>
->>>> On Wed, 14 Jun 2023 at 19:10, Muhammad Usama Anjum
->>>> <usama.anjum@collabora.com> wrote:
->>>>> On 6/14/23 8:14 PM, Michał Mirosław wrote:
->>>>>> On Wed, 14 Jun 2023 at 15:46, Muhammad Usama Anjum
->>>>>> <usama.anjum@collabora.com> wrote:
->>>>>>>
->>>>>>> On 6/14/23 3:36 AM, Michał Mirosław wrote:
->>>>>>>> On Tue, 13 Jun 2023 at 12:29, Muhammad Usama Anjum
->>>>>>>> <usama.anjum@collabora.com> wrote:
->>>>>>>> For flags name: PM_REQUIRE_WRITE_ACCESS?
->>>>>>>> Or Is it intended to be checked only if doing WP (as the current name
->>>>>>>> suggests) and so it would be redundant as WP currently requires
->>>>>>>> `p->required_mask = PAGE_IS_WRITTEN`?
->>>>>>> This is intended to indicate that if userfaultfd is needed. If
->>>>>>> PAGE_IS_WRITTEN is mentioned in any of mask, we need to check if
->>>>>>> userfaultfd has been initialized for this memory. I'll rename to
->>>>>>> PM_SCAN_REQUIRE_UFFD.
->>>>>>
->>>>>> Why do we need that check? Wouldn't `is_written = false` work for vmas
->>>>>> not registered via uffd?
->>>>> UFFD_FEATURE_WP_ASYNC and UNPOPULATED needs to be set on the memory region
->>>>> for it to report correct written values on the memory region. Without UFFD
->>>>> WP ASYNC and UNPOUPULATED defined on the memory, we consider UFFD_WP state
->>>>> undefined. If user hasn't initialized memory with UFFD, he has no right to
->>>>> set is_written = false.
->>>>
->>>> How about calculating `is_written = is_uffd_registered() &&
->>>> is_uffd_wp()`? This would enable a user to apply GET+WP for the whole
->>>> address space of a process regardless of whether all of it is
->>>> registered.
->>> I wouldn't want to check if uffd is registered again and again. This is why
->>> we are doing it only once every walk in pagemap_scan_test_walk().
->>
->> There is no need to do the checks repeatedly. If I understand the code
->> correctly, uffd registration is per-vma, so it can be communicated
->> from test_walk to entry/hole callbacks via a field in
->> pagemap_scan_private.
-> 
-> Actually... this could be exposed as a page category for the filter
-> (e.g. PAGE_USES_UFFD_WP) and then you could just make the ioctl() to
-> work for your usecase without tracking the ranges at the userspace
-> side.
-I'm not sure about page category. ASAIK the current check isn't bad when we
-already mention in documentation that memory must be registered with UFFD
-WP before using write feature of the IOCTL.
+> "Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
+>
+> Hello All,
+>
+> So I gave some thoughts about function naming and I guess the reason we
+> are ping ponging between the different namings is that I am not able to
+> properly articulate the reasoning behind, why we chose iomap_ifs_**.
+>
+> Here is my attempt to convince everyone....
+>
+> In one of the previous versions of the patchsets, Christoph opposed the
+> idea of naming these functions with iop_** because he wanted iomap_ as a
+> prefix in all of these function names. Now that I gave more thought to it,
+> I too agree that we should have iomap_ as prefix in these APIs. Because
+> - fs/iomap/buffered-io.c follows that style for all other functions.
+> - It then also becomes easy in finding function names using ctags and
+>   in doing grep or fuzzy searches.
+>
+> Now why "ifs" in the naming because we are abbrevating iomap_folio_state
+> as "ifs". And since we are passing ifs as an argument in these functions
+> and operating upon it, hence the naming of all of these functions should
+> go as iomap_ifs_**.
+>
+> Now if I am reading all of the emails correctly, none of the reviewers have
+> any strong objections with iomap_ifs_** naming style. Some of us just
+> started with nitpicking, but there are no strong objections, I feel.
+> Also I do think iomap_ifs_** naming is completely apt for these
+> functional changes.
+>
+> So if no one has any strong objections, could we please continue with
+> iomap_ifs_** naming itself.
+>
+> In case if someone does oppose strongly, I would humbly request to please
+> also convince the rest of the reviewers on why your function naming
+> should be chosen by giving proper reasoning (like above).
+> I can definitely help with making the required changes and testing them.
+>
+> Does this look good and sound fair for the function naming part?
 
-Just like mincore mentions in documentation that user buffer will be filled
-with values based on the length of the region. Kernel doesn't care if user
-had provided smaller buffer and kernel overwrites because of user's own
-issue. I want to follow the same path. If user doesn't read documentation
-and follow it, he should be punished with the error.
+Hello All,
 
-> 
-> Best Regards
-> Michał Mirosław
+Hope I didn't take too long to respond to my previous email.
+I had a discussion with Darrick and he convinced me with -
 
--- 
-BR,
-Muhammad Usama Anjum
+- ifs_ naming style will be much shorter and hence preferred.
+- ifs_ already means iomap_folio_state_** v/s iomap_fs_** means
+  iomap_iomap_folio_state... makes iomap_ifs_ naming awkward.
+- All of these functions are anyway local and static to
+  fs/iomap/buffered-io.c file so it is ok even if we have a shorter
+  names like ifs_alloc()/ifs_free() etc.
+
+Hence I have decided to go with ifs_ options for v10 which Darrick (including few others) agreed to here [1]
+
+[1]: https://lore.kernel.org/linux-xfs/87h6r8wyxa.fsf@doe.com/T/#m7c061e634243f835ecddfb642bbfb091a9227ec7
+
+-ritesh
+
+
+>
+> If everyone is convinced with iomap_ifs_** naming, then I will go ahead
+> and work on the rest of the review comments.
+>
+> Thanks a lot for all the great review!
+> -ritesh
