@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D40E0731C33
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 17:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA47731C44
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 17:16:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241701AbjFOPL7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 11:11:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48240 "EHLO
+        id S1345029AbjFOPQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 11:16:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241506AbjFOPL6 (ORCPT
+        with ESMTP id S1345038AbjFOPQ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 11:11:58 -0400
+        Thu, 15 Jun 2023 11:16:26 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B233B26A2;
-        Thu, 15 Jun 2023 08:11:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 315B22D5D;
+        Thu, 15 Jun 2023 08:16:22 -0700 (PDT)
 Received: from [192.168.10.55] (unknown [119.155.33.163])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3C6876606F67;
-        Thu, 15 Jun 2023 16:11:47 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E82676606F67;
+        Thu, 15 Jun 2023 16:16:13 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1686841914;
-        bh=3MdXnp0rnSSfhyFgYUFW/54WeVSBpiq5xrBJ+WJvLTA=;
+        s=mail; t=1686842180;
+        bh=C0LEQtiOTpGeaCKA+5bOCExcFaAsKTYF2+EXB06sxLI=;
         h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=cvv4yiSDjEqgmaVk30lc/A1N18hlWQXP3t4XFBlUoaAfMgs9xX8+1fJ5yWk2NNoZj
-         AJ5m9Lp/q9ZnW30G5WveI2rouU5wWSBuXVAsJKd4oImv66qsD9JWkacs4Vtd2rrkZJ
-         cc1/RWaVKeHBPd9N62Ee7eClRJfHdeNtDZx6GTCQLp5cwipiuxWKv/lrPHoE99BxVI
-         dOAQjfANwl/WlLvqh572WAxqxz4Ih3vvdqLhLl78MhDSDLAzyi00oQ2L+BsoxafukV
-         42aI37Al5R1KTGWwek9J/wPw+dDcRmAewfO6178tNZDU9KlbEKJ22FKmqWZBvzHFTc
-         JP+tS0tnOv6Bw==
-Message-ID: <39bc8212-9ee8-dbc1-d468-f6be438b683b@collabora.com>
-Date:   Thu, 15 Jun 2023 20:11:42 +0500
+        b=biOA/gL+FCKC1STuGTkA27txM7KGqLoOY5QAg/CEkPhfmvwgSp4HyueREBL5JRNqo
+         qj12DWxyl8+iwhbx1is/3rVI2TgwihjblFnKhEiwT0CRQe3bsZ3A7MLBi5IYFik1CN
+         bWkEmO3IjEfyzzb4s4qY6hubBX69vPgsH1+O+Tarr0UCdZyItIpbnGFzdV4YDfksk8
+         NqAoN9vn37M6FC8PW9CQdX98oLmDNfisTmkUh5PmujzhkiCnydIez85QLaRm9IvmpL
+         u2atqKkAwbY2FkCQs5XbUXDoZYn6hm32m9VEfdXIvulNOYgh4UaDN+Cmu/vG2VaUM/
+         +x8t9wZ93KyZA==
+Message-ID: <43c96533-8009-e42f-721c-4b2d1e142f5d@collabora.com>
+Date:   Thu, 15 Jun 2023 20:16:10 +0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
@@ -76,8 +76,9 @@ References: <20230613102905.2808371-1-usama.anjum@collabora.com>
  <CABb0KFFaXgJD99pWfx3MC+qrq5jUaPis_kZo6U8yL_8xdp0GJA@mail.gmail.com>
  <96b7cc00-d213-ad7d-1b48-b27f75b04d22@collabora.com>
  <CABb0KFEy_mRaT86TEOQ-BoTe_XOVw3Kp5VdzOfEEaiZJuT754g@mail.gmail.com>
+ <CABb0KFGuqoDh-+FKcsZXxpSFWSM3mcLVQkotGE3RcNiFKh-a2g@mail.gmail.com>
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CABb0KFEy_mRaT86TEOQ-BoTe_XOVw3Kp5VdzOfEEaiZJuT754g@mail.gmail.com>
+In-Reply-To: <CABb0KFGuqoDh-+FKcsZXxpSFWSM3mcLVQkotGE3RcNiFKh-a2g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-0.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -90,135 +91,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/15/23 7:52 PM, Michał Mirosław wrote:
-> On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
-> <usama.anjum@collabora.com> wrote:
->> I'll send next revision now.
->> On 6/14/23 11:00 PM, Michał Mirosław wrote:
->>> (A quick reply to answer open questions in case they help the next version.)
->>>
->>> On Wed, 14 Jun 2023 at 19:10, Muhammad Usama Anjum
->>> <usama.anjum@collabora.com> wrote:
->>>> On 6/14/23 8:14 PM, Michał Mirosław wrote:
->>>>> On Wed, 14 Jun 2023 at 15:46, Muhammad Usama Anjum
->>>>> <usama.anjum@collabora.com> wrote:
->>>>>>
->>>>>> On 6/14/23 3:36 AM, Michał Mirosław wrote:
->>>>>>> On Tue, 13 Jun 2023 at 12:29, Muhammad Usama Anjum
->>>>>>> <usama.anjum@collabora.com> wrote:
->>> [...]
->>>>>>>> +       if (cur_buf->bitmap == bitmap &&
->>>>>>>> +           cur_buf->start + cur_buf->len * PAGE_SIZE == addr) {
->>>>>>>> +               cur_buf->len += n_pages;
->>>>>>>> +               p->found_pages += n_pages;
->>>>>>>> +       } else {
->>>>>>>> +               if (cur_buf->len && p->vec_buf_index >= p->vec_buf_len)
->>>>>>>> +                       return -ENOMEM;
->>>>>>>
->>>>>>> Shouldn't this be -ENOSPC? -ENOMEM usually signifies that the kernel
->>>>>>> ran out of memory when allocating, not that there is no space in a
->>>>>>> user-provided buffer.
->>>>>> There are 3 kinds of return values here:
->>>>>> * PM_SCAN_FOUND_MAX_PAGES (1) ---> max_pages have been found. Abort the
->>>>>> page walk from next entry
->>>>>> * 0 ---> continue the page walk
->>>>>> * -ENOMEM --> Abort the page walk from current entry, user buffer is full
->>>>>> which is not error, but only a stop signal. This -ENOMEM is just
->>>>>> differentiater from (1). This -ENOMEM is for internal use and isn't
->>>>>> returned to user.
->>>>>
->>>>> But why ENOSPC is not good here? I was used before, I think.
->>>> -ENOSPC is being returned in form of true error from
->>>> pagemap_scan_hugetlb_entry(). So I'd to remove -ENOSPC from here as it
->>>> wasn't true error here, it was only a way to abort the walk immediately.
->>>> I'm liking the following erturn code from here now:
->>>>
->>>> #define PM_SCAN_BUFFER_FULL     (-256)
->>>
->>> I guess this will be reworked anyway, but I'd prefer this didn't need
->>> custom errors etc. If we agree to decoupling the selection and GET
->>> output, it could be:
->>>
->>> bool is_interesting_page(p, flags); // this one does the
->>> required/anyof/excluded match
->>> size_t output_range(p, start, len, flags); // this one fills the
->>> output vector and returns how many pages were fit
->>>
->>> In this setup, `is_interesting_page() && (n_out = output_range()) <
->>> n_pages` means this is the final range, no more will fit. And if
->>> `n_out == 0` then no pages fit and no WP is needed (no other special
->>> cases).
->> Right now, pagemap_scan_output() performs the work of both of these two
->> functions. The part can be broken into is_interesting_pages() and we can
->> leave the remaining part as it is.
->>
->> Saying that n_out < n_pages tells us the buffer is full covers one case.
->> But there is case of maximum pages have been found and walk needs to be
->> aborted.
-> 
-> This case is exactly what `n_out < n_pages` will cover (if scan_output
-> uses max_pages properly to limit n_out).
-> Isn't it that when the buffer is full we want to abort the scan always
-> (with WP if `n_out > 0`)?
-Wouldn't it be duplication of condition if buffer is full inside
-pagemap_scan_output() and just outside it. Inside pagemap_scan_output() we
-check if we have space before putting data inside it. I'm using this same
-condition to indicate that buffer is full.
+Please review the v19. I hope to get your reviewed by tag soon.
 
+On 6/15/23 7:58 PM, Michał Mirosław wrote:
+> On Thu, 15 Jun 2023 at 16:52, Michał Mirosław <emmir@google.com> wrote:
+>> On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
+>> <usama.anjum@collabora.com> wrote:
+>>> I'll send next revision now.
+>>> On 6/14/23 11:00 PM, Michał Mirosław wrote:
+>>>> (A quick reply to answer open questions in case they help the next version.)
+>>>>
+>>>> On Wed, 14 Jun 2023 at 19:10, Muhammad Usama Anjum
+>>>> <usama.anjum@collabora.com> wrote:
+>>>>> On 6/14/23 8:14 PM, Michał Mirosław wrote:
+>>>>>> On Wed, 14 Jun 2023 at 15:46, Muhammad Usama Anjum
+>>>>>> <usama.anjum@collabora.com> wrote:
+>>>>>>>
+>>>>>>> On 6/14/23 3:36 AM, Michał Mirosław wrote:
+>>>>>>>> On Tue, 13 Jun 2023 at 12:29, Muhammad Usama Anjum
+>>>>>>>> <usama.anjum@collabora.com> wrote:
+>>>>>>>> For flags name: PM_REQUIRE_WRITE_ACCESS?
+>>>>>>>> Or Is it intended to be checked only if doing WP (as the current name
+>>>>>>>> suggests) and so it would be redundant as WP currently requires
+>>>>>>>> `p->required_mask = PAGE_IS_WRITTEN`?
+>>>>>>> This is intended to indicate that if userfaultfd is needed. If
+>>>>>>> PAGE_IS_WRITTEN is mentioned in any of mask, we need to check if
+>>>>>>> userfaultfd has been initialized for this memory. I'll rename to
+>>>>>>> PM_SCAN_REQUIRE_UFFD.
+>>>>>>
+>>>>>> Why do we need that check? Wouldn't `is_written = false` work for vmas
+>>>>>> not registered via uffd?
+>>>>> UFFD_FEATURE_WP_ASYNC and UNPOPULATED needs to be set on the memory region
+>>>>> for it to report correct written values on the memory region. Without UFFD
+>>>>> WP ASYNC and UNPOUPULATED defined on the memory, we consider UFFD_WP state
+>>>>> undefined. If user hasn't initialized memory with UFFD, he has no right to
+>>>>> set is_written = false.
+>>>>
+>>>> How about calculating `is_written = is_uffd_registered() &&
+>>>> is_uffd_wp()`? This would enable a user to apply GET+WP for the whole
+>>>> address space of a process regardless of whether all of it is
+>>>> registered.
+>>> I wouldn't want to check if uffd is registered again and again. This is why
+>>> we are doing it only once every walk in pagemap_scan_test_walk().
+>>
+>> There is no need to do the checks repeatedly. If I understand the code
+>> correctly, uffd registration is per-vma, so it can be communicated
+>> from test_walk to entry/hole callbacks via a field in
+>> pagemap_scan_private.
 > 
->>>>>>> For flags name: PM_REQUIRE_WRITE_ACCESS?
->>>>>>> Or Is it intended to be checked only if doing WP (as the current name
->>>>>>> suggests) and so it would be redundant as WP currently requires
->>>>>>> `p->required_mask = PAGE_IS_WRITTEN`?
->>>>>> This is intended to indicate that if userfaultfd is needed. If
->>>>>> PAGE_IS_WRITTEN is mentioned in any of mask, we need to check if
->>>>>> userfaultfd has been initialized for this memory. I'll rename to
->>>>>> PM_SCAN_REQUIRE_UFFD.
->>>>>
->>>>> Why do we need that check? Wouldn't `is_written = false` work for vmas
->>>>> not registered via uffd?
->>>> UFFD_FEATURE_WP_ASYNC and UNPOPULATED needs to be set on the memory region
->>>> for it to report correct written values on the memory region. Without UFFD
->>>> WP ASYNC and UNPOUPULATED defined on the memory, we consider UFFD_WP state
->>>> undefined. If user hasn't initialized memory with UFFD, he has no right to
->>>> set is_written = false.
->>>
->>> How about calculating `is_written = is_uffd_registered() &&
->>> is_uffd_wp()`? This would enable a user to apply GET+WP for the whole
->>> address space of a process regardless of whether all of it is
->>> registered.
->> I wouldn't want to check if uffd is registered again and again. This is why
->> we are doing it only once every walk in pagemap_scan_test_walk().
-> 
-> There is no need to do the checks repeatedly. If I understand the code
-> correctly, uffd registration is per-vma, so it can be communicated
-> from test_walk to entry/hole callbacks via a field in
-> pagemap_scan_private.
-> 
->>>>> While here, I wonder if we really need to fail the call if there are
->>>>> unknown bits in those masks set: if this bit set is expanded with
->>>>> another category flags, a newer userspace run on older kernel would
->>>>> get EINVAL even if the "treat unknown as 0" be what it requires.
->>>>> There is no simple way in the API to discover what bits the kernel
->>>>> supports. We could allow a no-op (no WP nor GET) call to help with
->>>>> that and then rejecting unknown bits would make sense.
->>>> I've not seen any examples of this. But I've seen examples of returning
->>>> error if kernel doesn't support a feature. Each new feature comes with a
->>>> kernel version, greater than this version support this feature. If user is
->>>> trying to use advanced feature which isn't present in a kernel, we should
->>>> return error and not proceed to confuse the user/kernel. In fact if we look
->>>> at userfaultfd_api(), we return error immediately if feature has some bit
->>>> set which kernel doesn't support.
->>>
->>> I think we should have a way of detecting the supported flags if we
->>> don't want a forward compatibility policy for flags here. Maybe it
->>> would be enough to allow all the no-op combinations for this purpose?
->> Again I don't think UFFD is doing anything like this.
-> 
-> If it's cheap and easy to provide a user with a way to detect the
-> supported features - why not do it?
-I'm sorry. But it would bring up something new and iterations will be
-needed to just play around. I like the UFFD way.
+> Actually... this could be exposed as a page category for the filter
+> (e.g. PAGE_USES_UFFD_WP) and then you could just make the ioctl() to
+> work for your usecase without tracking the ranges at the userspace
+> side.
+I'm not sure about page category. ASAIK the current check isn't bad when we
+already mention in documentation that memory must be registered with UFFD
+WP before using write feature of the IOCTL.
+
+Just like mincore mentions in documentation that user buffer will be filled
+with values based on the length of the region. Kernel doesn't care if user
+had provided smaller buffer and kernel overwrites because of user's own
+issue. I want to follow the same path. If user doesn't read documentation
+and follow it, he should be punished with the error.
+
 > 
 > Best Regards
 > Michał Mirosław
