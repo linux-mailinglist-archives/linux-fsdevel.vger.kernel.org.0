@@ -2,157 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC26B7322D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 00:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9910A7322F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 01:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231844AbjFOWg6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 18:36:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35264 "EHLO
+        id S232541AbjFOXDP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 19:03:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231534AbjFOWg5 (ORCPT
+        with ESMTP id S231924AbjFOXDO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 18:36:57 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843AB213B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 15:36:56 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-666729f9093so222723b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 15:36:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686868616; x=1689460616;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NwQyuxAyTt1/oKouBdq99atB/qMOTmn/K879yY2V9E4=;
-        b=noOsBr/CspwkQvpbrzj5KCSEhNzXrCsPg93TsJTZhVUEuAdjuyboueTWbZuUA0LZjl
-         NZ8gTkUmwUdVIku8+KBhZiWOqfwBfPBvu4P5/Xo5R/7fkmnDG2vrm8qFrrDGsmWmmlfL
-         VpLqLpIeF3j8FeIsIL6Mi3pKInxZ4/qcnTcuZ3HBAY/aTOF6hPgq+NRHnCABJ5IR7T+z
-         BNK2fiKkSt/zcZ54eDPIwmb44thkxzK2vxHImPJSz+GSIsKGEjnG/3mOhpDVXQJH8Jyl
-         Bpe7Ud3QyS2GYoeoOkt7Aiuzu2A1dfGCiBL+XpwnzI+iLZFcDLov/ZPOBUvRGNtsyLEk
-         p7xg==
+        Thu, 15 Jun 2023 19:03:14 -0400
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A2542965
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 16:03:12 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7773997237cso6067339f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 16:03:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686868616; x=1689460616;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NwQyuxAyTt1/oKouBdq99atB/qMOTmn/K879yY2V9E4=;
-        b=GVjW+TytlsXLSXztS35nJZoD5UfBpxqKdqtcgwbSRkHVI32wNNTv7oQOIiV8cJue3e
-         hdAaGXFaU7S0HW1MiAG7oZUZ80lTNfZoK9yMqczcx2tgmDkz5BephjjZr/8WjRmaAT2l
-         pdW0mswAoT4Ozu9iH84A9DhbKVoJVfrtaX0NdLGwzgRxleTvRuZLqwe3VV4Bs82zzq/3
-         zeoH+MNt1GIrlZzqGx6l3pN2sKQ7DMBs2ZeJTMERWB3KvJ9wnRS8fmsmC3HWe0Z2bg4r
-         HHlJjD5ezUsM1RUWn7tMgnAkk8aYW3xEf9AUIHTGS0q3drn2LZHVOO2r8hCeYdUdZj7g
-         ImSg==
-X-Gm-Message-State: AC+VfDxOYSEZ/Qhrxm7V4pcEehyvtzHemjagm8TLQGs+JgZcRlrNGUoE
-        xkd1ryqYGptL3njUwuFqpJa/qA==
-X-Google-Smtp-Source: ACHHUZ75FXegV6BX2ho2UEFB4ciuweSYC7c5ETB/vEOPK3fmuFv6m+s+m/QOIFceiTM1FeQBqdwqyQ==
-X-Received: by 2002:a17:902:d903:b0:1b0:6031:4480 with SMTP id c3-20020a170902d90300b001b060314480mr321313plz.39.1686868615966;
-        Thu, 15 Jun 2023 15:36:55 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
-        by smtp.gmail.com with ESMTPSA id y20-20020a170902b49400b001a980a23804sm14555755plr.4.2023.06.15.15.36.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 15:36:55 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1q9vaH-00CF1W-0L;
-        Fri, 16 Jun 2023 08:36:53 +1000
-Date:   Fri, 16 Jun 2023 08:36:53 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH] fs: Protect reconfiguration of sb read-write from racing
- writes
-Message-ID: <ZIuShQWnWEWscTWr@dread.disaster.area>
-References: <20230615113848.8439-1-jack@suse.cz>
+        d=1e100.net; s=20221208; t=1686870191; x=1689462191;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uI/qin+IXEGRa3nylH1otRAWekGozAdq8GTVNCdVh5o=;
+        b=IJP8o7HqBk0P4iqHSmoSgebeIxx/5THJkFuLWrmNNcutyv8P5LbBjMlPb6ncAymfwh
+         e+x7KSKH2emYgVyvQ1W60qQvAlNaGYis7dqqpijoOhphLCsupbz4sUsUhsBH8I11igJv
+         UXPPS4m67qp38Ys3ljpo2kHfqQ/PkAW7agRNQ+DYQd9yhy0boB7qP5+vWF1LDgsxRfWo
+         acLm5wTkpM147WJGSPCVuLrr5dcNYd354Hmdok+hIddLX9E2x2R8V1i0QCnTI0RjDuIi
+         FJ/DtKHvHiz1aSZG+IwlMxUozH/aO7CYu5EjPzRiIu6ih3wG7Sr15ws5kE1mYdD1UQcO
+         QdeA==
+X-Gm-Message-State: AC+VfDxzzzP74IOeMHSKo22VnU7XSUisw1kJaWhg3JbzNNILdgUg8Pao
+        CL87fEFPhh4QGvDIyv38FFxM4hyVDmYpIH3Cb8MTKA7s84ao
+X-Google-Smtp-Source: ACHHUZ4iIHMRj8/x9kKb4jIVvW4ik6IoN9ypPW/7WcMpCPeLryEytqJt4FNV1MSA9sIMbUA0ZgCKmFZq/0cej/haU0A7dpgST8dK
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230615113848.8439-1-jack@suse.cz>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a6b:fd03:0:b0:763:dd01:e143 with SMTP id
+ c3-20020a6bfd03000000b00763dd01e143mr280370ioi.2.1686870191727; Thu, 15 Jun
+ 2023 16:03:11 -0700 (PDT)
+Date:   Thu, 15 Jun 2023 16:03:11 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008f70d405fe331298@google.com>
+Subject: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbUpdatePMap (2)
+From:   syzbot <syzbot+91ad2b52815a08caf4ea@syzkaller.appspotmail.com>
+To:     jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 01:38:48PM +0200, Jan Kara wrote:
-> The reconfigure / remount code takes a lot of effort to protect
-> filesystem's reconfiguration code from racing writes on remounting
-> read-only. However during remounting read-only filesystem to read-write
-> mode userspace writes can start immediately once we clear SB_RDONLY
-> flag. This is inconvenient for example for ext4 because we need to do
-> some writes to the filesystem (such as preparation of quota files)
-> before we can take userspace writes so we are clearing SB_RDONLY flag
-> before we are fully ready to accept userpace writes and syzbot has found
-> a way to exploit this [1]. Also as far as I'm reading the code
-> the filesystem remount code was protected from racing writes in the
-> legacy mount path by the mount's MNT_READONLY flag so this is relatively
-> new problem. It is actually fairly easy to protect remount read-write
-> from racing writes using sb->s_readonly_remount flag so let's just do
-> that instead of having to workaround these races in the filesystem code.
-> 
-> [1] https://lore.kernel.org/all/00000000000006a0df05f6667499@google.com/T/
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/super.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index 34afe411cf2b..6cd64961aa07 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -903,6 +903,7 @@ int reconfigure_super(struct fs_context *fc)
->  	struct super_block *sb = fc->root->d_sb;
->  	int retval;
->  	bool remount_ro = false;
-> +	bool remount_rw = false;
->  	bool force = fc->sb_flags & SB_FORCE;
->  
->  	if (fc->sb_flags_mask & ~MS_RMT_MASK)
-> @@ -920,7 +921,7 @@ int reconfigure_super(struct fs_context *fc)
->  		    bdev_read_only(sb->s_bdev))
->  			return -EACCES;
->  #endif
-> -
-> +		remount_rw = !(fc->sb_flags & SB_RDONLY) && sb_rdonly(sb);
->  		remount_ro = (fc->sb_flags & SB_RDONLY) && !sb_rdonly(sb);
->  	}
->  
-> @@ -950,6 +951,14 @@ int reconfigure_super(struct fs_context *fc)
->  			if (retval)
->  				return retval;
->  		}
-> +	} else if (remount_rw) {
-> +		/*
-> +		 * We set s_readonly_remount here to protect filesystem's
-> +		 * reconfigure code from writes from userspace until
-> +		 * reconfigure finishes.
-> +		 */
-> +		sb->s_readonly_remount = 1;
-> +		smp_wmb();
+Hello,
 
-What does the magic random memory barrier do? What is it ordering,
-and what is it paired with?
+syzbot found the following issue on:
 
-This sort of thing is much better done with small helpers that
-encapsulate the necessary memory barriers:
+HEAD commit:    4c605260bc60 Merge tag 'x86_urgent_for_v6.4_rc6' of git://..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=170c95b3280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
+dashboard link: https://syzkaller.appspot.com/bug?extid=91ad2b52815a08caf4ea
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16bc032d280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14aa25b3280000
 
-sb_set_readonly_remount()
-sb_clear_readonly_remount()
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b8183c640f8a/disk-4c605260.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/66b85f02d905/vmlinux-4c605260.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/80073dbaded3/bzImage-4c605260.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/85d11f73be8a/mount_0.gz
 
-alongside the helper that provides the read-side check and memory
-barrier the write barrier is associated with.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+91ad2b52815a08caf4ea@syzkaller.appspotmail.com
 
-I don't often ask for code to be cleaned up before a bug fix can be
-added, but I think this is one of the important cases where it does
-actually matter - we should never add undocumented memory barriers
-in the code like this...
+================================================================================
+UBSAN: shift-out-of-bounds in fs/jfs/jfs_dmap.c:470:12
+shift exponent 131072 is too large for 64-bit type 'long long'
+CPU: 0 PID: 106 Comm: jfsCommit Not tainted 6.4.0-rc5-syzkaller-00313-g4c605260bc60 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ ubsan_epilogue lib/ubsan.c:217 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c3/0x420 lib/ubsan.c:387
+ dbUpdatePMap+0xe4e/0xf50 fs/jfs/jfs_dmap.c:470
+ txAllocPMap+0x57b/0x6b0 fs/jfs/jfs_txnmgr.c:2420
+ txUpdateMap+0x7cc/0x9e0 fs/jfs/jfs_txnmgr.c:2358
+ txLazyCommit fs/jfs/jfs_txnmgr.c:2659 [inline]
+ jfs_lazycommit+0x47a/0xb70 fs/jfs/jfs_txnmgr.c:2727
+ kthread+0x2b8/0x350 kernel/kthread.c:379
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
+================================================================================
+Kernel panic - not syncing: UBSAN: panic_on_warn set ...
+CPU: 0 PID: 106 Comm: jfsCommit Not tainted 6.4.0-rc5-syzkaller-00313-g4c605260bc60 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ panic+0x30f/0x770 kernel/panic.c:340
+ check_panic_on_warn+0x82/0xa0 kernel/panic.c:236
+ ubsan_epilogue lib/ubsan.c:223 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3e2/0x420 lib/ubsan.c:387
+ dbUpdatePMap+0xe4e/0xf50 fs/jfs/jfs_dmap.c:470
+ txAllocPMap+0x57b/0x6b0 fs/jfs/jfs_txnmgr.c:2420
+ txUpdateMap+0x7cc/0x9e0 fs/jfs/jfs_txnmgr.c:2358
+ txLazyCommit fs/jfs/jfs_txnmgr.c:2659 [inline]
+ jfs_lazycommit+0x47a/0xb70 fs/jfs/jfs_txnmgr.c:2727
+ kthread+0x2b8/0x350 kernel/kthread.c:379
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-Cheers,
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
