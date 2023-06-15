@@ -2,258 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F4239732248
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 00:00:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC26B7322D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 00:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232087AbjFOWA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 18:00:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45342 "EHLO
+        id S231844AbjFOWg6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 18:36:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231580AbjFOWA4 (ORCPT
+        with ESMTP id S231534AbjFOWg5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 18:00:56 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 906522943;
-        Thu, 15 Jun 2023 15:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686866454; x=1718402454;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JN/6v0RRe0LtIZ2wBFgUzMVCscs41NCa1blW5xLxo3g=;
-  b=F/ENdiuYXABmQCVTvCmSbarOpYFCCtsEYxECfBDDI6dnUUnN/ndd8NHt
-   J4mUz8D3oTmfW6Dwr+TiNIIKRdqChHbQyfmtsNv9R0npvLbhXysbyUBIa
-   5MMjHvaO1lM0kEhaWDIKYSmHlEX/A8OimeUa4+jJrX/+EHzSXzOLHUhry
-   4Z3YfP56VYQgIPpAV+6Uj2RRF7MVUW9kivrpSb86T4lHt+KEEKMCLwHJ7
-   /C7EzJZwBhBobD40vWi7wOjgKiV1Xs0s2vSAZofPFKxQtxlJsOX9kMpP+
-   lXH2b1EdyBkXjSZdPSI8cTg1neMx6fnQaRnbY3bsPDN4KMt7yybzpD7rs
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="338669731"
-X-IronPort-AV: E=Sophos;i="6.00,245,1681196400"; 
-   d="scan'208";a="338669731"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2023 15:00:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="825471879"
-X-IronPort-AV: E=Sophos;i="6.00,245,1681196400"; 
-   d="scan'208";a="825471879"
-Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 15 Jun 2023 15:00:52 -0700
-Received: from kbuild by 783282924a45 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q9v1P-0000Qt-1c;
-        Thu, 15 Jun 2023 22:00:51 +0000
-Date:   Fri, 16 Jun 2023 05:59:54 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Christoph Hellwig <hch@lst.de>, Song Liu <song@kernel.org>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 06/11] md-bitmap: refactor md_bitmap_init_from_disk
-Message-ID: <202306160552.smw0qbmb-lkp@intel.com>
-References: <20230615064840.629492-7-hch@lst.de>
+        Thu, 15 Jun 2023 18:36:57 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843AB213B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 15:36:56 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-666729f9093so222723b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 15:36:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686868616; x=1689460616;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NwQyuxAyTt1/oKouBdq99atB/qMOTmn/K879yY2V9E4=;
+        b=noOsBr/CspwkQvpbrzj5KCSEhNzXrCsPg93TsJTZhVUEuAdjuyboueTWbZuUA0LZjl
+         NZ8gTkUmwUdVIku8+KBhZiWOqfwBfPBvu4P5/Xo5R/7fkmnDG2vrm8qFrrDGsmWmmlfL
+         VpLqLpIeF3j8FeIsIL6Mi3pKInxZ4/qcnTcuZ3HBAY/aTOF6hPgq+NRHnCABJ5IR7T+z
+         BNK2fiKkSt/zcZ54eDPIwmb44thkxzK2vxHImPJSz+GSIsKGEjnG/3mOhpDVXQJH8Jyl
+         Bpe7Ud3QyS2GYoeoOkt7Aiuzu2A1dfGCiBL+XpwnzI+iLZFcDLov/ZPOBUvRGNtsyLEk
+         p7xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686868616; x=1689460616;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NwQyuxAyTt1/oKouBdq99atB/qMOTmn/K879yY2V9E4=;
+        b=GVjW+TytlsXLSXztS35nJZoD5UfBpxqKdqtcgwbSRkHVI32wNNTv7oQOIiV8cJue3e
+         hdAaGXFaU7S0HW1MiAG7oZUZ80lTNfZoK9yMqczcx2tgmDkz5BephjjZr/8WjRmaAT2l
+         pdW0mswAoT4Ozu9iH84A9DhbKVoJVfrtaX0NdLGwzgRxleTvRuZLqwe3VV4Bs82zzq/3
+         zeoH+MNt1GIrlZzqGx6l3pN2sKQ7DMBs2ZeJTMERWB3KvJ9wnRS8fmsmC3HWe0Z2bg4r
+         HHlJjD5ezUsM1RUWn7tMgnAkk8aYW3xEf9AUIHTGS0q3drn2LZHVOO2r8hCeYdUdZj7g
+         ImSg==
+X-Gm-Message-State: AC+VfDxOYSEZ/Qhrxm7V4pcEehyvtzHemjagm8TLQGs+JgZcRlrNGUoE
+        xkd1ryqYGptL3njUwuFqpJa/qA==
+X-Google-Smtp-Source: ACHHUZ75FXegV6BX2ho2UEFB4ciuweSYC7c5ETB/vEOPK3fmuFv6m+s+m/QOIFceiTM1FeQBqdwqyQ==
+X-Received: by 2002:a17:902:d903:b0:1b0:6031:4480 with SMTP id c3-20020a170902d90300b001b060314480mr321313plz.39.1686868615966;
+        Thu, 15 Jun 2023 15:36:55 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
+        by smtp.gmail.com with ESMTPSA id y20-20020a170902b49400b001a980a23804sm14555755plr.4.2023.06.15.15.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jun 2023 15:36:55 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1q9vaH-00CF1W-0L;
+        Fri, 16 Jun 2023 08:36:53 +1000
+Date:   Fri, 16 Jun 2023 08:36:53 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH] fs: Protect reconfiguration of sb read-write from racing
+ writes
+Message-ID: <ZIuShQWnWEWscTWr@dread.disaster.area>
+References: <20230615113848.8439-1-jack@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230615064840.629492-7-hch@lst.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230615113848.8439-1-jack@suse.cz>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christoph,
+On Thu, Jun 15, 2023 at 01:38:48PM +0200, Jan Kara wrote:
+> The reconfigure / remount code takes a lot of effort to protect
+> filesystem's reconfiguration code from racing writes on remounting
+> read-only. However during remounting read-only filesystem to read-write
+> mode userspace writes can start immediately once we clear SB_RDONLY
+> flag. This is inconvenient for example for ext4 because we need to do
+> some writes to the filesystem (such as preparation of quota files)
+> before we can take userspace writes so we are clearing SB_RDONLY flag
+> before we are fully ready to accept userpace writes and syzbot has found
+> a way to exploit this [1]. Also as far as I'm reading the code
+> the filesystem remount code was protected from racing writes in the
+> legacy mount path by the mount's MNT_READONLY flag so this is relatively
+> new problem. It is actually fairly easy to protect remount read-write
+> from racing writes using sb->s_readonly_remount flag so let's just do
+> that instead of having to workaround these races in the filesystem code.
+> 
+> [1] https://lore.kernel.org/all/00000000000006a0df05f6667499@google.com/T/
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>  fs/super.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 34afe411cf2b..6cd64961aa07 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -903,6 +903,7 @@ int reconfigure_super(struct fs_context *fc)
+>  	struct super_block *sb = fc->root->d_sb;
+>  	int retval;
+>  	bool remount_ro = false;
+> +	bool remount_rw = false;
+>  	bool force = fc->sb_flags & SB_FORCE;
+>  
+>  	if (fc->sb_flags_mask & ~MS_RMT_MASK)
+> @@ -920,7 +921,7 @@ int reconfigure_super(struct fs_context *fc)
+>  		    bdev_read_only(sb->s_bdev))
+>  			return -EACCES;
+>  #endif
+> -
+> +		remount_rw = !(fc->sb_flags & SB_RDONLY) && sb_rdonly(sb);
+>  		remount_ro = (fc->sb_flags & SB_RDONLY) && !sb_rdonly(sb);
+>  	}
+>  
+> @@ -950,6 +951,14 @@ int reconfigure_super(struct fs_context *fc)
+>  			if (retval)
+>  				return retval;
+>  		}
+> +	} else if (remount_rw) {
+> +		/*
+> +		 * We set s_readonly_remount here to protect filesystem's
+> +		 * reconfigure code from writes from userspace until
+> +		 * reconfigure finishes.
+> +		 */
+> +		sb->s_readonly_remount = 1;
+> +		smp_wmb();
 
-kernel test robot noticed the following build warnings:
+What does the magic random memory barrier do? What is it ordering,
+and what is it paired with?
 
-[auto build test WARNING on song-md/md-next]
-[also build test WARNING on device-mapper-dm/for-next linus/master v6.4-rc6 next-20230615]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This sort of thing is much better done with small helpers that
+encapsulate the necessary memory barriers:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christoph-Hellwig/md-bitmap-initialize-variables-at-declaration-time-in-md_bitmap_file_unmap/20230615-154928
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/song/md.git md-next
-patch link:    https://lore.kernel.org/r/20230615064840.629492-7-hch%40lst.de
-patch subject: [PATCH 06/11] md-bitmap: refactor md_bitmap_init_from_disk
-config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20230616/202306160552.smw0qbmb-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git remote add song-md git://git.kernel.org/pub/scm/linux/kernel/git/song/md.git
-        git fetch song-md md-next
-        git checkout song-md/md-next
-        b4 shazam https://lore.kernel.org/r/20230615064840.629492-7-hch@lst.de
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang ~/bin/make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang ~/bin/make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/md/
+sb_set_readonly_remount()
+sb_clear_readonly_remount()
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306160552.smw0qbmb-lkp@intel.com/
+alongside the helper that provides the read-side check and memory
+barrier the write barrier is associated with.
 
-All warnings (new ones prefixed by >>):
+I don't often ask for code to be cleaned up before a bug fix can be
+added, but I think this is one of the important cases where it does
+actually matter - we should never add undocumented memory barriers
+in the code like this...
 
->> drivers/md/md-bitmap.c:1107:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-           if (file && i_size_read(file->f_mapping->host) < store->bytes) {
-               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/md/md-bitmap.c:1198:9: note: uninitialized use occurs here
-           return ret;
-                  ^~~
-   drivers/md/md-bitmap.c:1107:2: note: remove the 'if' if its condition is always false
-           if (file && i_size_read(file->f_mapping->host) < store->bytes) {
-           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/md/md-bitmap.c:1090:9: note: initialize the variable 'ret' to silence this warning
-           int ret;
-                  ^
-                   = 0
-   1 warning generated.
+Cheers,
 
-
-vim +1107 drivers/md/md-bitmap.c
-
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1068  
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1069  /*
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1070   * Initialize the in-memory bitmap from the on-disk bitmap and set up the memory
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1071   * mapping of the bitmap file.
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1072   *
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1073   * Special case: If there's no bitmap file, or if the bitmap file had been
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1074   * previously kicked from the array, we mark all the bits as 1's in order to
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1075   * cause a full resync.
-6a07997fc34ac1 drivers/md/bitmap.c    NeilBrown         2005-09-09  1076   *
-6a07997fc34ac1 drivers/md/bitmap.c    NeilBrown         2005-09-09  1077   * We ignore all bits for sectors that end earlier than 'start'.
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1078   * This is used when reading an out-of-date bitmap.
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1079   */
-e64e4018d57271 drivers/md/md-bitmap.c Andy Shevchenko   2018-08-01  1080  static int md_bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1081  {
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1082  	bool outofdate = test_bit(BITMAP_STALE, &bitmap->flags);
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1083  	struct mddev *mddev = bitmap->mddev;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1084  	unsigned long chunks = bitmap->counts.chunks;
-1ec885cdd01a9a drivers/md/bitmap.c    NeilBrown         2012-05-22  1085  	struct bitmap_storage *store = &bitmap->storage;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1086  	struct file *file = store->file;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1087  	unsigned long node_offset = 0;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1088  	unsigned long bit_cnt = 0;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1089  	unsigned long i;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1090  	int ret;
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1091  
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1092  	if (!file && !mddev->bitmap_info.offset) {
-ef99bf480de9bd drivers/md/bitmap.c    NeilBrown         2012-05-22  1093  		/* No permanent bitmap - fill with '1s'. */
-1ec885cdd01a9a drivers/md/bitmap.c    NeilBrown         2012-05-22  1094  		store->filemap = NULL;
-1ec885cdd01a9a drivers/md/bitmap.c    NeilBrown         2012-05-22  1095  		store->file_pages = 0;
-ef99bf480de9bd drivers/md/bitmap.c    NeilBrown         2012-05-22  1096  		for (i = 0; i < chunks ; i++) {
-ef99bf480de9bd drivers/md/bitmap.c    NeilBrown         2012-05-22  1097  			/* if the disk bit is set, set the memory bit */
-40cffcc0e8f9f6 drivers/md/bitmap.c    NeilBrown         2012-05-22  1098  			int needed = ((sector_t)(i+1) << (bitmap->counts.chunkshift)
-ef99bf480de9bd drivers/md/bitmap.c    NeilBrown         2012-05-22  1099  				      >= start);
-e64e4018d57271 drivers/md/md-bitmap.c Andy Shevchenko   2018-08-01  1100  			md_bitmap_set_memory_bits(bitmap,
-40cffcc0e8f9f6 drivers/md/bitmap.c    NeilBrown         2012-05-22  1101  						  (sector_t)i << bitmap->counts.chunkshift,
-ef99bf480de9bd drivers/md/bitmap.c    NeilBrown         2012-05-22  1102  						  needed);
-ef99bf480de9bd drivers/md/bitmap.c    NeilBrown         2012-05-22  1103  		}
-ef99bf480de9bd drivers/md/bitmap.c    NeilBrown         2012-05-22  1104  		return 0;
-ef99bf480de9bd drivers/md/bitmap.c    NeilBrown         2012-05-22  1105  	}
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1106  
-d1244cb062750b drivers/md/bitmap.c    NeilBrown         2012-05-22 @1107  	if (file && i_size_read(file->f_mapping->host) < store->bytes) {
-ec0cc226854a79 drivers/md/bitmap.c    NeilBrown         2016-11-02  1108  		pr_warn("%s: bitmap file too short %lu < %lu\n",
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1109  			bmname(bitmap),
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1110  			(unsigned long) i_size_read(file->f_mapping->host),
-d1244cb062750b drivers/md/bitmap.c    NeilBrown         2012-05-22  1111  			store->bytes);
-4ad1366376bfef drivers/md/bitmap.c    NeilBrown         2007-07-17  1112  		goto err;
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1113  	}
-bc7f77de2cd817 drivers/md/bitmap.c    NeilBrown         2005-06-21  1114  
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1115  	if (mddev_is_clustered(mddev))
-b97e92574c0bf3 drivers/md/bitmap.c    Goldwyn Rodrigues 2014-06-06  1116  		node_offset = bitmap->cluster_slot * (DIV_ROUND_UP(store->bytes, PAGE_SIZE));
-b97e92574c0bf3 drivers/md/bitmap.c    Goldwyn Rodrigues 2014-06-06  1117  
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1118  	for (i = 0; i < store->file_pages; i++) {
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1119  		struct page *page = store->filemap[i];
-d785a06a0b9d0c drivers/md/bitmap.c    NeilBrown         2006-06-26  1120  		int count;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1121  
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1122  		/* unmap the old page, we're done with it */
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1123  		if (i == store->file_pages - 1)
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1124  			count = store->bytes - i * PAGE_SIZE;
-d785a06a0b9d0c drivers/md/bitmap.c    NeilBrown         2006-06-26  1125  		else
-d785a06a0b9d0c drivers/md/bitmap.c    NeilBrown         2006-06-26  1126  			count = PAGE_SIZE;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1127  
-27581e5ae01f77 drivers/md/bitmap.c    NeilBrown         2012-05-22  1128  		if (file)
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1129  			ret = read_file_page(file, i, bitmap, count, page);
-27581e5ae01f77 drivers/md/bitmap.c    NeilBrown         2012-05-22  1130  		else
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1131  			ret = read_sb_page(mddev, mddev->bitmap_info.offset,
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1132  					   page, i + node_offset, count);
-27581e5ae01f77 drivers/md/bitmap.c    NeilBrown         2012-05-22  1133  		if (ret)
-4ad1366376bfef drivers/md/bitmap.c    NeilBrown         2007-07-17  1134  			goto err;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1135  	}
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1136  
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1137  	if (outofdate) {
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1138  		pr_warn("%s: bitmap file is out of date, doing full recovery\n",
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1139  			bmname(bitmap));
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1140  
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1141  		for (i = 0; i < store->file_pages; i++) {
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1142  			struct page *page = store->filemap[i];
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1143  			unsigned long offset = 0;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1144  			void *paddr;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1145  	
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1146  			if (i == 0 && !mddev->bitmap_info.external)
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1147  				offset = sizeof(bitmap_super_t);
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1148  
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1149  			/*
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1150  			 * If the bitmap is out of date, dirty the whole page
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1151  			 * and write it out
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1152  			 */
-b2f46e68825648 drivers/md/bitmap.c    Cong Wang         2011-11-28  1153  			paddr = kmap_atomic(page);
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1154  			memset(paddr + offset, 0xff, PAGE_SIZE - offset);
-b2f46e68825648 drivers/md/bitmap.c    Cong Wang         2011-11-28  1155  			kunmap_atomic(paddr);
-4ad1366376bfef drivers/md/bitmap.c    NeilBrown         2007-07-17  1156  
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1157  			write_page(bitmap, page, 1);
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1158  			if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags)) {
-4ad1366376bfef drivers/md/bitmap.c    NeilBrown         2007-07-17  1159  				ret = -EIO;
-4ad1366376bfef drivers/md/bitmap.c    NeilBrown         2007-07-17  1160  				goto err;
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1161  			}
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1162  		}
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1163  	}
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1164  
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1165  	for (i = 0; i < chunks; i++) {
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1166  		struct page *page = filemap_get_page(&bitmap->storage, i);
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1167  		unsigned long bit = file_page_offset(&bitmap->storage, i);
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1168  		void *paddr;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1169  		bool was_set;
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1170  
-b2f46e68825648 drivers/md/bitmap.c    Cong Wang         2011-11-28  1171  		paddr = kmap_atomic(page);
-b405fe91e50c60 drivers/md/bitmap.c    NeilBrown         2012-05-22  1172  		if (test_bit(BITMAP_HOSTENDIAN, &bitmap->flags))
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1173  			was_set = test_bit(bit, paddr);
-bd926c63b7a684 drivers/md/bitmap.c    NeilBrown         2005-11-08  1174  		else
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1175  			was_set = test_bit_le(bit, paddr);
-b2f46e68825648 drivers/md/bitmap.c    Cong Wang         2011-11-28  1176  		kunmap_atomic(paddr);
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1177  
-5479b6ae3886b9 drivers/md/md-bitmap.c Christoph Hellwig 2023-06-15  1178  		if (was_set) {
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1179  			/* if the disk bit is set, set the memory bit */
-40cffcc0e8f9f6 drivers/md/bitmap.c    NeilBrown         2012-05-22  1180  			int needed = ((sector_t)(i+1) << bitmap->counts.chunkshift
-db305e507d5544 drivers/md/bitmap.c    NeilBrown         2009-05-07  1181  				      >= start);
-e64e4018d57271 drivers/md/md-bitmap.c Andy Shevchenko   2018-08-01  1182  			md_bitmap_set_memory_bits(bitmap,
-40cffcc0e8f9f6 drivers/md/bitmap.c    NeilBrown         2012-05-22  1183  						  (sector_t)i << bitmap->counts.chunkshift,
-db305e507d5544 drivers/md/bitmap.c    NeilBrown         2009-05-07  1184  						  needed);
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1185  			bit_cnt++;
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1186  		}
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1187  	}
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1188  
-ec0cc226854a79 drivers/md/bitmap.c    NeilBrown         2016-11-02  1189  	pr_debug("%s: bitmap initialized from disk: read %lu pages, set %lu of %lu bits\n",
-1ec885cdd01a9a drivers/md/bitmap.c    NeilBrown         2012-05-22  1190  		 bmname(bitmap), store->file_pages,
-d1244cb062750b drivers/md/bitmap.c    NeilBrown         2012-05-22  1191  		 bit_cnt, chunks);
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1192  
-4ad1366376bfef drivers/md/bitmap.c    NeilBrown         2007-07-17  1193  	return 0;
-4ad1366376bfef drivers/md/bitmap.c    NeilBrown         2007-07-17  1194  
-4ad1366376bfef drivers/md/bitmap.c    NeilBrown         2007-07-17  1195   err:
-ec0cc226854a79 drivers/md/bitmap.c    NeilBrown         2016-11-02  1196  	pr_warn("%s: bitmap initialisation failed: %d\n",
-4ad1366376bfef drivers/md/bitmap.c    NeilBrown         2007-07-17  1197  		bmname(bitmap), ret);
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1198  	return ret;
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1199  }
-32a7627cf3a353 drivers/md/bitmap.c    NeilBrown         2005-06-21  1200  
-
+Dave.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dave Chinner
+david@fromorbit.com
