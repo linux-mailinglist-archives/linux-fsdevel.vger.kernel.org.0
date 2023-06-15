@@ -2,77 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7751730DA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 05:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B132A730E0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 06:22:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237002AbjFODoh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Jun 2023 23:44:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50358 "EHLO
+        id S238202AbjFOEWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 00:22:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236043AbjFODof (ORCPT
+        with ESMTP id S234125AbjFOEWi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Jun 2023 23:44:35 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1521FD7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 20:44:32 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id 5614622812f47-39ce0ab782fso2894128b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 20:44:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686800671; x=1689392671;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+JDes7jRvGsGMMdD7UFRGccqLECG4zJw/AXOu7VOdwQ=;
-        b=I4Wlesfjp370iJsVjnl5XNi527Qq2vafNdaCD7KmjSFQ5s1vjXZLXCeU1pMeKig6DH
-         FYmVJJevKUtGn9PsZJJb+7RRNitfI3er6jescvapSmNmW7wVRLM9/LSbDhIEXUDNd2rQ
-         98j3LklNIGAA/mB/dsfHFiPFlSfyUNW1OKQPjiCM63mnMUZRv7WfydbOanNjMcZh0KZ2
-         cu2CeXj8OSo5i13Oa2skKIQa0KRgQv0htadLcqx27/IzCuqL4mpFotLBgFKaxuu8VUBC
-         57crKz5Y53JvpASom4YCYA2SWeArEraK2gR2qXh/hfZ4vdqx/Us8ZBnaUJ8hIqOgpEfU
-         QhJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686800671; x=1689392671;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+JDes7jRvGsGMMdD7UFRGccqLECG4zJw/AXOu7VOdwQ=;
-        b=ZaJmooAygQFcvl9y9yn6jmsZ2SH1zKe9HNK1tXUTDU4TwaXAcqfjmgbscMxfKp8bVl
-         bU9oOetdcKeHBuUcAs4Sp3uNk2ZuYmr/hwJjQdYHfzcuFJRdvML83eiyl7SYD4ZiweUF
-         xMIxnWy7rKxrZi7nxCFj1F6EQL5qxBBUHfqBEtZbT12w3CYTPoNu9EuwdkZaIJ/aire7
-         yXhxdOF4HNZDkf/t+/BfVwjvCQbm8kKbHwrRMy/KPJWlITrDnhJ/HYYQ8zCe3oGLb5EI
-         q/3B2fO7bbexzKvRbTvXy2kq8vH77mqgtokyiPaZaQA7ufuiDR5PKbj4yH+XzEqdEPN3
-         JK0Q==
-X-Gm-Message-State: AC+VfDxcKROX0Xf3t3J9wP8EExQNOZckYfBSdGHh4BCkmc9qU9cC+v/c
-        xYqvKGMo9KvuhIJEpIsQ0Newig==
-X-Google-Smtp-Source: ACHHUZ7wQxTUTsKfsNvmtb6gohaYaKjOSnZAo7meX8h8d37E6CHZYQBEgmn1KwNeTZ8Ja7H05UX0KA==
-X-Received: by 2002:a05:6808:1313:b0:38e:a824:27d3 with SMTP id y19-20020a056808131300b0038ea82427d3mr15185405oiv.27.1686800671489;
-        Wed, 14 Jun 2023 20:44:31 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
-        by smtp.gmail.com with ESMTPSA id bk17-20020a17090b081100b00256b9d26a2bsm13411133pjb.44.2023.06.14.20.44.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 20:44:30 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1q9duN-00BvW5-2S;
-        Thu, 15 Jun 2023 13:44:27 +1000
-Date:   Thu, 15 Jun 2023 13:44:27 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH 0/7] RFC: high-order folio support for I/O
-Message-ID: <ZIqJG1fR53Jf0Jjg@dread.disaster.area>
-References: <20230614114637.89759-1-hare@suse.de>
- <cd816905-0e3e-6397-1a6f-fd4d29dfc739@suse.de>
- <ZInGbz6X/ZQAwdRx@casper.infradead.org>
- <b3fa1b77-d120-f86b-e02f-f79b6d13efcc@suse.de>
+        Thu, 15 Jun 2023 00:22:38 -0400
+X-Greylist: delayed 3190 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 14 Jun 2023 21:22:37 PDT
+Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC5B61720
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jun 2023 21:22:37 -0700 (PDT)
+Received: from pps.filterd (m0209321.ppops.net [127.0.0.1])
+        by mx08-001d1705.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35F0ZIUE003698;
+        Thu, 15 Jun 2023 03:29:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=S1;
+ bh=LKK9CJ3mDtQ1Fj34PpAuFjhjhOUeIM/8rShic0UMPn0=;
+ b=hiEbB7PbJ6xZkYRw26g9JLhXLPCbtOXOsPyEj2uKcKj37oOmybwPQ/Yh97uwfk8tpv2q
+ GumBvEKXdLsAi/rk8uh9d6GdhY3ERBvU1CcPe1M4d8LMxNBV4A1AdvgHxA1bz2X3jDKl
+ VY4lSDNR4Ft5JjRjb8m2lWD0aM6aIXmRwFp6ej84Ex5a+rsWjqh9j6qeRMf4zH9bx2z1
+ Exxdu7iud8S54zDftIe6ta3wh6978YqJD+SQkEXQXVHgF1d8lwfm8Jmg7jw11oxrP4cg
+ vZWWPKcrcuur4gYV7PaJDePX5/rCXwJbYJY1uuXaVibqfDkLrks4MUhPWqZtpFcZD8+0 ug== 
+Received: from apc01-sg2-obe.outbound.protection.outlook.com (mail-sgaapc01lp2104.outbound.protection.outlook.com [104.47.26.104])
+        by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3r64q1u2gu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Jun 2023 03:29:06 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Zmlvp+ZdYy9dFYT7MraSsqEEs6vItE+nFc5nf/cg6Q7rvJhLMvOc0GTKk3LOrS+4cH4VpfY2tN0/mjrTwsR2y0+eoL6emdyJPC1zLWct4lCDHXAvLeVhZiwAIrVqbvRy0lGJkwWPRcpbS6OK9ckB4IVvUVBXoNARxFQdsCH/nh2m54/2iF9Oc+1d3FjsRevXVmodY6/OqcwruDg6M625AruJnK9soXk4zVANj3zG2QgHSwjMmQpFpT+HKjCWcuxd54KE8w0Q3PaxGd8atAl2xepbfw5dvMJHny/zxgD82Zu54HVQm82NEtzJF1VsTmPXWh8G8NI9uBscKdO4oRs/hQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LKK9CJ3mDtQ1Fj34PpAuFjhjhOUeIM/8rShic0UMPn0=;
+ b=GnjpVA4eik4hDrLKjsIJN5mr6cdPB7XbkcU+3v3PHSLrOOCgpvE22gdiUiVuy9BsWm9RiXbFToy0VX5kB1PnFBNe7jxzGePXu+knf0syq1rw1Na4QVoO967l+PnilXzcXao5JbxPpFPlsDpTw00NZa6o2x9VqTiGs9AWe9vwVeuq21z6hGoY22adaK7PChNk+cmRBaXqYo7D15j/Q/e6WELGCCr6+i96QvUF8g5cR8YBHLk71FXY+qL2MY/Sr/uNcmW4VkLBgSIJyDSwVNzmCt+W6ze0GOB5cQavSeWnGwRm3JG2ZEJJqurKu1UKhm+dhDUSGgGApzFV2GFGyBu2Qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
+ by KL1PR0401MB4212.apcprd04.prod.outlook.com (2603:1096:820:27::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.25; Thu, 15 Jun
+ 2023 03:29:00 +0000
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::ce2d:a9dc:4955:5275]) by PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::ce2d:a9dc:4955:5275%5]) with mapi id 15.20.6455.037; Thu, 15 Jun 2023
+ 03:29:00 +0000
+From:   "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+To:     "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
+        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+Subject: [PATCH v1 0/2] exfat: get file size from DataLength
+Thread-Topic: [PATCH v1 0/2] exfat: get file size from DataLength
+Thread-Index: AdmfODMxTKFC/pCyRPukKkKvxSTr0A==
+Date:   Thu, 15 Jun 2023 03:29:00 +0000
+Message-ID: <PUZPR04MB6316DB8A8CB6107D56716EBC815BA@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|KL1PR0401MB4212:EE_
+x-ms-office365-filtering-correlation-id: a47adf70-02ff-4d63-d0ac-08db6d50a910
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: A/bOUdm8pzNr6QepZzXJc2xshkdY0x6/F1UC0Mg+LC0+GUWDFepgnPbWlFz6MbrqQF9AYQR043UYs0CtEj9M9NKKOigccruVHqwLCjHMQyXqkd8vxTe747rkG8f4DM+0XlP4dCRD2IC5JbyoMmCJ7kyTnMwOMzHulb9g36PM+Dl/7w6m3SYPCoqBVCx1HkLqOXnpGuu1fvkf3xJO5bjE26mvpoI7yGOkF+94JCH4otko4nssmmnd8ps57o3utQrABRShsHrZybpTpt9tLO+JvtIXvs8OdxmoTHWm8l/mfFTBy8506S4ZYoH8LKh1rBsG7wY/6Cs21APr5YtW24frpUzWIkMoROexcDMxSJIksdC9dVGX0lgwVPsjhtBclfyMlEQwxBziOqzwSMeP6tFUaI/pskdK3um1NSEKDcDlgQnx4TaZZQvkkJ1/suB+ucFOw4KadNbY8RHICPK5QfM0owA5Z+eWmP03QVTd6hGBhn1qsR0ErA3YgNyH9T/Oh+okh1OX725lz043DKyFvK1KaR4HJOiHsTYnQqlqhgrwHDsM+gU73DjbFvGt5gu6KVrXT/3EUtnnQ4k68cOdOLNUh162hD1zAHEIKeX5udkR/cHF4T0+e5wzp/FPoCC+zf53
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(366004)(136003)(346002)(39860400002)(376002)(451199021)(76116006)(4326008)(2906002)(4744005)(86362001)(38070700005)(316002)(64756008)(66446008)(66476007)(66556008)(66946007)(41300700001)(110136005)(5660300002)(52536014)(8936002)(8676002)(54906003)(38100700002)(478600001)(122000001)(82960400001)(7696005)(71200400001)(83380400001)(107886003)(55016003)(9686003)(26005)(6506007)(186003)(33656002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TnE3a0svRm40M2IrMzRmYjIyaXQ5SXNDVjNoUFNuRmhvaGxRU2tHTDgwRFJq?=
+ =?utf-8?B?OFN2K2xIYVVrTWc1aDNyeGJFSGZ3WXVHR0Voa0RWWFhQNDZYOHcrRE1qMzRG?=
+ =?utf-8?B?OTFHZ0h3Y1hwWjNQenRvWjZnb1I2UnBvY1d0WERXRmhBbW9pVFc4NVFsUCtX?=
+ =?utf-8?B?VFRFYThSYnBGVWVPNGJsWjNtQ2FrcXY3ZE13WnJOSnJTd0lkekpYRUFqbFV2?=
+ =?utf-8?B?b2lydTBNQ3UwSDFoSWN1TkVqTmkvZGZvTlBBbk5YSWI1T21obzJyaXh2SGZj?=
+ =?utf-8?B?Y2hmblJURU5XRUVhbGJHRGpjRXk5MTBSdk16bDBSL1FHUGIzd2xQdDVabCs2?=
+ =?utf-8?B?SU42bmtiYkNsMjFHbmdMRHpHaGhLQVZBUHM3TzVEZFJGQWdPRy9oZnNaVGhw?=
+ =?utf-8?B?WHo5R2NyeDZsMmM3Y2hqQ0FBWjVjU1BhTXZ0NkFZMEhsQ1R3Zmk1U2VYei9l?=
+ =?utf-8?B?VXNWYjllcklQUFppUEkwZUR6a21JS0FKMUNHSUNTbEUyNXdhZkVnWisrdWlW?=
+ =?utf-8?B?bnJNZDM0TDJKYkdSMGtGUVdHMTltdnVrd1F1NHM3SklyWjErUmR3QVIzZEpi?=
+ =?utf-8?B?dExHUmQvTmdJQWtLQTdoeldDMWtITTBvNUdXSlc0K1FURHFVVzJ6SnAzaFA4?=
+ =?utf-8?B?N0RuWHhteUorZWhoYmZnZTdPNng2K3p3Q3BndkMxdFN5U2R4Vld2MHlmeDM5?=
+ =?utf-8?B?aWcrd2UyYWNWcjhwNzlHNDFBT204UUFIdGpVRk1VWVJYb3RsZjI0UkhZczI3?=
+ =?utf-8?B?b003c3JvcWljeE9ndFkyUG1pVU8venlBbUd6d2hnZmJuMHlkM3FOYTZzSXpk?=
+ =?utf-8?B?cnBKVUhGbUh0Yndud21BOTl6TFJsall3S1ZtYUdkRmdXSjlHL2FRZ0NtYlhU?=
+ =?utf-8?B?RVlZbU0wTlNSODhLdnRycmtJV0hVcVJKMStYcEtIWUcxYWxWNUxnTitJbk9z?=
+ =?utf-8?B?Ni8rdFczV2FsNW52U1ErYkl3bmFMWU5aWTVoWGFsblZWNldab21xbktqY2JZ?=
+ =?utf-8?B?WWVSVWlCNWc5Rk1pSEtqSWFZcTA0MEVOM0lZRm5CWnVRY2RpQ2ROMUxpYXVm?=
+ =?utf-8?B?R0tCSDk3ZnJFMjB4V29JL2V4anNkMHlFdmtOa012UGQweHk3QkNVLzhvd3ZR?=
+ =?utf-8?B?N3djTEhzcC96U3JYT0NOSHFUM2U3UXU1VitXMXRwYVUrcjVhZ1VFME1YTHVT?=
+ =?utf-8?B?TDRyejRXRmM3TzFOSmR0aC9FcXFzZk8vazZMSHppd0J1M1pCandsSXlHRVZt?=
+ =?utf-8?B?ZUFRWU05VDQ5TmNuRU9aRm41UDB4TFJSMVE5MEE1UFRFTW5zYmFRYXpjY2V2?=
+ =?utf-8?B?RkF2WmdTbnBWM2dlbGpvSDVwOUNZNWhIUkU1QS9RMWk0WWJCOHdjZkViWWF3?=
+ =?utf-8?B?MXlUSXlXdGVvRS9ETDFFQmdHdEhEK2J3aHBGOHFJaXBWaWplYVBRSjQ3WkFK?=
+ =?utf-8?B?cE1PcFpoRlZLOTdlNmV3Ym9OdFBmNzJGTTg5YVpNL2R2Nk11dlVmOU9WUjRu?=
+ =?utf-8?B?d1hmZ3RXWEhhN3NBd2kvbFc4R1NlSGo1bjdRbFY1eVF2UHJ4RkdBNlpVb1V1?=
+ =?utf-8?B?Nnk0dU92bm1pWXhrNmdRcUxBZFZYRmV3blF0TlpRS1liTTNmbnZXRnlPVWZZ?=
+ =?utf-8?B?UUFkcld2NDNURXJOcXg1ZGdlY1pMTEpnMUhMM1NOcDFtckk4bDFnZUVZM3JK?=
+ =?utf-8?B?NmI2S0UzT0xlS081bVNJdGJGMi9ZTGlVNTNGcVRIelhyay9iMU9GZkErRGlh?=
+ =?utf-8?B?RnZrN005ZW4rK2pRVHFyQnEvTVp0aG9WOVhUeHd4QXJqNXJid2ZTd2RHczVm?=
+ =?utf-8?B?M3dKdElaYmJkeG5HNFppZUdtQzFtTU5Vbm5saWFjTmlKTldNdExpVHpWLzBL?=
+ =?utf-8?B?alJQQzFzQ3hHQVdQdkZLVWNWUE9yQ2p0TldiaEdONkEvK0JjSzVRNE9VaEF2?=
+ =?utf-8?B?QVBHS0JSOC8xWFFGY2p6YWtjdFhDaU9Kd0oza0xiaDRjMGhGcWdmR01uakF4?=
+ =?utf-8?B?SE5lOEZ5Q2hXOStoZTBRNWxJN0JoeHZFeitsVzMwWGhteXhLSk9PTWNobDRC?=
+ =?utf-8?B?bzl1SnVWMm10MWRyUXlsT3RheUc3UEFqdWhULzMyKzlMcmtJMDhBcUxFNFVB?=
+ =?utf-8?Q?qWRD0fxQKhhyUAxvgzizfjxhe?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3fa1b77-d120-f86b-e02f-f79b6d13efcc@suse.de>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: txVe7GSxE+Ygk9/7mEIISp6/VZ8Nb3CUWB/wVY3uEo1v9srohrqw7ktn2mRCRnQww9kObXppLLAJdShWG/82kh89TREA3MH5tdskFHwnkHHORivX001b9FF455O7CHKsus4SuqG0xYt9K4klaLtk3sfjQ2v/rBOR/n/BHG3uJcxQkgKJs0CQamEn5Rp0ZaZZLe1Mm+rtOkTBaOPEZTB0LMF+5CrlGSKI7g+mQ4S0Y2T/GOC8aJdMShEhJQ3+PSUzUuWLDoPE7dea5dPPy+czWJHEqo1E84BHLjrV4DISg2AuvX9B6nfelZ28PQ04q5K2OQIWqt9nPlZzkpEY4po4HHlblXo4SR0UBGB+HDvG6mwX9xGEjXtl1aG611FAbCbRL9biLJw/LSx0gYR2HNC0yCLzbgbvVDkeS3Zd0YsZQBTW6awTT+LOlEpmcndcTgKD4kVFs0lpmuK50omqURGntarz9iRdb4dNUdOsWYVtVPLcWRKxZX3ZOZK/ffcdh9S++AH71ZjQN353AT4pH/v6nUk8CptK3pRnpw4m6R5gGqKXxnC3ubPeO9jZYWMviBFmFiZgJgDlB9mcxk8bs+rFtcZ0fwtJdkGlgvH1Gd6GKyYAZtrpnDY8EchP7C9kxj6UHkdpBPvqVyl1SqZP2f7157ANNuz/EFR6H4SQ2ax56zPzyGK9mKhfb/h4bR/r612nbEy1IuGl2k4S5pGJFMk0ZD5xLvKgC5hJ5Yxjk6mbIMhNlHup1+jKPM/+ZW/5UF39kB7uyfyK7B06o5OBQTFjoIIFWNqhF8no3op9hfiN7Ok1SDDQClUDKyiUXtsxdKB6YQi5eEnfSROTZzxJOJZ6Lw==
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a47adf70-02ff-4d63-d0ac-08db6d50a910
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jun 2023 03:29:00.3764
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: v+p9adcJ0kKKPJtZfQqeRDLO8EjLIjh+D86wrl3ZY6syadS4JFBblVpOR9moWDUZyModPTKszC30F/swTHVyRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0401MB4212
+X-Proofpoint-GUID: eVa9Ews-bTTxPtc04NjfjDgtq_tbT4Bn
+X-Proofpoint-ORIG-GUID: eVa9Ews-bTTxPtc04NjfjDgtq_tbT4Bn
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+X-Sony-Outbound-GUID: eVa9Ews-bTTxPtc04NjfjDgtq_tbT4Bn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-14_14,2023-06-14_02,2023-05-22_02
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,394 +143,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 05:06:14PM +0200, Hannes Reinecke wrote:
-> On 6/14/23 15:53, Matthew Wilcox wrote:
-> > On Wed, Jun 14, 2023 at 03:17:25PM +0200, Hannes Reinecke wrote:
-> > > Turns out that was quite easy to fix (just remove the check in
-> > > set_blocksize()), but now I get this:
-> > > 
-> > > SGI XFS with ACLs, security attributes, quota, no debug enabled
-> > > XFS (ram0): File system with blocksize 16384 bytes. Only pagesize (4096) or
-> > > less will currently work.
-> > 
-> > What happens if you just remove this hunk:
-> > 
-> > +++ b/fs/xfs/xfs_super.c
-> > @@ -1583,18 +1583,6 @@ xfs_fs_fill_super(
-> >                  goto out_free_sb;
-> >          }
-> > 
-> > -       /*
-> > -        * Until this is fixed only page-sized or smaller data blocks work.
-> > -        */
-> > -       if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
-> > -               xfs_warn(mp,
-> > -               "File system with blocksize %d bytes. "
-> > -               "Only pagesize (%ld) or less will currently work.",
-> > -                               mp->m_sb.sb_blocksize, PAGE_SIZE);
-> > -               error = -ENOSYS;
-> > -               goto out_free_sb;
-> > -       }
-> > -
-> >          /* Ensure this filesystem fits in the page cache limits */
-> >          if (xfs_sb_validate_fsb_count(&mp->m_sb, mp->m_sb.sb_dblocks) ||
-> >              xfs_sb_validate_fsb_count(&mp->m_sb, mp->m_sb.sb_rblocks)) {
-> 
-> Whee! That works!
-> 
-> Rebased things with your memcpy_{to,from}_folio() patches, disabled that
-> chunk, and:
-> 
-> # mount /dev/ram0 /mnt
-
-What is the output of mkfs.xfs?
-
-> XFS (ram0): Mounting V5 Filesystem 5cd71ab5-2d11-4c18-97dd-71708f40e551
-> XFS (ram0): Ending clean mount
-> xfs filesystem being mounted at /mnt supports timestamps until 2038-01-19
-> (0x7fffffff)
-> # umount /mnt
-> XFS (ram0): Unmounting Filesystem 5cd71ab5-2d11-4c18-97dd-71708f40e551
-
-Nope. Not here.
-
-Debug kernel builds assert fail at mount time with:
-
-XFS: Assertion failed: PAGE_SHIFT >= sbp->sb_blocklog, file: fs/xfs/xfs_mount.c, line: 133
-
-Because we do a check to ensure that the entire filesystem address
-range can be indexed by the page cache. I suspect this is actually a
-stale, left over check from the days we used the page cache for
-indexing cached metadata, but with that sorted....
-
-It fails here (8GB ram disk):
-
-#mkfs.xfs -f -b size=64k /dev/ram0
-meta-data=/dev/ram0              isize=512    agcount=4, agsize=32000 blks
-         =                       sectsz=512   attr=2, projid32bit=1
-         =                       crc=1        finobt=1, sparse=1, rmapbt=0
-         =                       reflink=1    bigtime=1 inobtcount=1 nrext64=0
-data     =                       bsize=65536  blocks=128000, imaxpct=25
-         =                       sunit=0      swidth=0 blks
-naming   =version 2              bsize=65536  ascii-ci=0, ftype=1
-log      =internal log           bsize=65536  blocks=1024, version=2
-         =                       sectsz=512   sunit=0 blks, lazy-count=1
-realtime =none                   extsz=65536  blocks=0, rtextents=0
-# mount /dev/ram0 /mnt/test
-[   34.047433] XFS (ram0): Mounting V5 Filesystem 074579ae-9c33-447a-a336-8ea99cda87c3
-[   34.053962] BUG: Bad rss-counter state mm:00000000b41e2cf6 type:MM_FILEPAGES val:11
-[   34.054451] general protection fault, probably for non-canonical address 0x4002888237d00000: 0000 [#1] PREEMPT SMP
-[   34.057426] psi: task underflow! cpu=8 t=2 tasks=[0 0 0 0] clear=4 set=0
-[   34.065011] CPU: 2 PID: 3689 Comm: mount Not tainted 6.4.0-rc6-dgc+ #1832
-[   34.068647] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[   34.073236] RIP: 0010:__submit_bio+0x9e/0x110
-[   34.075124] Code: c3 e8 d6 c5 88 ff 48 8b 43 08 48 89 df 4c 8b 60 10 49 8b 44 24 60 ff 10 49 8b 5c 24 68 e8 3a 92 88 ff 48 8b 43 10 a8 03 75 56 <65> 48 8
-[   34.084879] RSP: 0018:ffffc900045c3a10 EFLAGS: 00010246
-[   34.087501] RAX: 4003000000000000 RBX: ffff8885c1568000 RCX: 0000000000000080
-[   34.090455] RDX: ffff888805d8a900 RSI: 0000000000000286 RDI: ffffc900045c3ad8
-[   34.093419] RBP: ffffc900045c3a20 R08: 0000000000000000 R09: 0000000000000000
-[   34.096381] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88880124b000
-[   34.099340] R13: ffff8885c1568000 R14: ffff888100620000 R15: 0000000000fa0000
-[   34.102285] FS:  00007f1b86428840(0000) GS:ffff888237d00000(0000) knlGS:0000000000000000
-[   34.105410] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   34.107577] CR2: 00007f1b86364000 CR3: 000000010482d003 CR4: 0000000000060ee0
-[   34.110114] Call Trace:
-[   34.111031]  <TASK>
-[   34.111782]  ? show_regs+0x61/0x70
-[   34.112945]  ? die_addr+0x37/0x90
-[   34.114080]  ? exc_general_protection+0x19e/0x3b0
-[   34.115619]  ? asm_exc_general_protection+0x27/0x30
-[   34.117162]  ? __submit_bio+0x9e/0x110
-[   34.118355]  submit_bio_noacct_nocheck+0xf3/0x330
-[   34.119819]  submit_bio_noacct+0x196/0x490
-[   34.121042]  submit_bio+0x58/0x60
-[   34.122045]  submit_bio_wait+0x70/0xd0
-[   34.123178]  xfs_rw_bdev+0x188/0x1b0
-[   34.124255]  xlog_do_io+0x95/0x170
-[   34.125283]  xlog_bwrite+0x14/0x20
-[   34.126310]  xlog_write_log_records+0x179/0x260
-[   34.127637]  xlog_clear_stale_blocks+0xa5/0x1c0
-[   34.128917]  xlog_find_tail+0x372/0x3b0
-[   34.130011]  xlog_recover+0x2f/0x190
-[   34.131041]  xfs_log_mount+0x1b8/0x350
-[   34.132055]  xfs_mountfs+0x451/0x9a0
-[   34.133019]  xfs_fs_fill_super+0x4d9/0x920
-[   34.134113]  get_tree_bdev+0x16e/0x270
-[   34.135130]  ? xfs_open_devices+0x230/0x230
-[   34.136184]  xfs_fs_get_tree+0x15/0x20
-[   34.137144]  vfs_get_tree+0x24/0xd0
-[   34.138041]  path_mount+0x2fd/0xae0
-[   34.138955]  ? putname+0x53/0x60
-[   34.139749]  __x64_sys_mount+0x108/0x140
-[   34.140698]  do_syscall_64+0x34/0x80
-[   34.141574]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-
-Hmmmm - that's logical sector aligned/sized IO that is failing like
-this. The fs is using 64kB block size, 512 byte sector size.
-
-So I went looking.
-
-# blockdev --report /dev/ram0
-RO    RA   SSZ   BSZ        StartSec            Size   Device
-rw   256   512  4096               0      8388608000   /dev/ram0
-#
-
-Huh. sector size is fine, block size for the device isn't.
-
-# cat /sys/block/ram0/queue/physical_block_size
-65536
-#
-
-Yup, brd definitely picked up that it is supposed to be using 64kB
-blocks.
-
-# blockdev --setbsz 65536 /dev/ram0
-blockdev: ioctl error on BLKBSZSET: Invalid argument
-#
-
-Huh.
-
-<dig dig dig>
-
-int set_blocksize(struct block_device *bdev, int size)
-{
-        /* Size must be a power of two, and between 512 and PAGE_SIZE */
-        if (size > PAGE_SIZE || size < 512 || !is_power_of_2(size))
-                return -EINVAL;
-	.....
-
-Yeah, ok. The block device doesn't support 64kB block sizes. Lucky
-that XFs uses this as it's sector size:
-
-# mkfs.xfs -f -b size=64k -s size=16k /dev/ram0
-....
-# mount /dev/ram0 /mnt/test
-[  692.564375] XFS (ram0): Cannot set_blocksize to 16384 on device ram0
-<mount fails>
-#
-
-Now expected. I wonder if the problem is 512 byte sector sizes....
-
-# mkfs.xfs -f -s size=4k -b size=64k /dev/ram0
-meta-data=/dev/ram0              isize=512    agcount=4, agsize=32000 blks
-         =                       sectsz=4096  attr=2, projid32bit=1
-         =                       crc=1        finobt=1, sparse=1, rmapbt=0
-         =                       reflink=1    bigtime=1 inobtcount=1 nrext64=0
-data     =                       bsize=65536  blocks=128000, imaxpct=25
-         =                       sunit=0      swidth=0 blks
-naming   =version 2              bsize=65536  ascii-ci=0, ftype=1
-log      =internal log           bsize=65536  blocks=1024, version=2
-         =                       sectsz=4096  sunit=1 blks, lazy-count=1
-realtime =none                   extsz=65536  blocks=0, rtextents=0
-# mount /dev/ram0 /mnt/test
-[  835.711473] XFS (ram0): Mounting V5 Filesystem 72743c95-1264-43cd-8867-1f2b2e30ba24
-[  835.722700] XFS (ram0): Ending clean mount
-#
-
-Okay, there we go. The patchset appears to have some kind of problem
-with the filesystem using the minimum logical sector size of 512
-bytes on this modified driver. Setting sector size == PAGE_SIZE
-allows the filesystem to mount, but brd should not break if logical
-sector aligned/sized IO is done.
-
-$ sudo xfs_io -f -d -c "pwrite -b 1M 0 1M" -c "pread -v 0 1M" /mnt/test/foo
-wrote 1048576/1048576 bytes at offset 0
-1 MiB, 1 ops; 0.0004 sec (2.266 GiB/sec and 2320.1856 ops/sec)
-.....
-000ffff0:  cd cd cd cd cd cd cd cd cd cd cd cd cd cd cd cd  ................
-read 1048576/1048576 bytes at offset 0
-1 MiB, 16 ops; 0.9233 sec (1.083 MiB/sec and 17.3284 ops/sec)
-$
-
-Ok, direct IO works just fine.
-
-$ xfs_io -c "pwrite -S 0xaa -b 1M 0 1M" -c "pread 0 1M -v" /mnt/test/foo
-.....
-000ffff0:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
-read 1048576/1048576 bytes at offset 0
-1 MiB, 16 ops; 0.7035 sec (1.421 MiB/sec and 22.7428 ops/sec)
-$
-
-Ok, well aligned buffered IO looks like it works.
-
-Right, let's step it up and do some more complex stuff. Let's run a
-basic fsx pass on the filesystem:
-
-
-$ sudo ~/src/xfstests-dev/ltp/fsx -d /mnt/test/baz
-Seed set to 1
-main: filesystem does not support dedupe range, disabling!
-main: filesystem does not support exchange range, disabling!
-truncating to largest ever: 0x3aea7
-2 trunc from 0x0 to 0x3aea7
-3 copy  from 0x1a3d6 to 0x26608, (0xc232 bytes) at 0x2ea8c
-Segmentation fault
-$
-
-And there's the boom, only 3 operations into the test. This is kinda
-what I expected - getting fsx to run for billions of ops without
-failure might take a while.
-
-Huh, why did it say FIDEDUPERANGE was not supported - that's weird,
-something is broken there, maybe the fsx test.
-
-[ 1787.365339] ------------[ cut here ]------------
-[ 1787.368623] kernel BUG at include/linux/pagemap.h:1248!
-[ 1787.371488] invalid opcode: 0000 [#1] PREEMPT SMP
-[ 1787.374814] CPU: 10 PID: 5153 Comm: fsx Not tainted 6.4.0-rc6-dgc+ #1832
-[ 1787.377240] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[ 1787.383061] RIP: 0010:read_pages+0x11d/0x230
-[ 1787.385268] Code: 4c 89 e7 e8 c5 14 ff ff f0 41 ff 4c 24 34 0f 85 55 ff ff ff 4c 89 e7 e8 61 1d 00 00 8b 73 24 8b 43 20 39 f0 0f 83 4d ff ff ff <0f> 0b 0
-[ 1787.395078] RSP: 0018:ffffc90004113918 EFLAGS: 00010283
-[ 1787.396636] RAX: 0000000000000001 RBX: ffffc90004113ab0 RCX: 0000000000000000
-[ 1787.400357] RDX: 0000000000001000 RSI: 0000000000000010 RDI: ffffea0017421000
-[ 1787.403989] RBP: ffffc90004113960 R08: 0000000000001000 R09: 0000000000000000
-[ 1787.407915] R10: ffff8885d084a000 R11: ffffc900041137d8 R12: ffffffff822b2e60
-[ 1787.411472] R13: 000000000000001b R14: ffffea0017421000 R15: ffff8885c0cc8318
-[ 1787.415342] FS:  00007f96c86fcc40(0000) GS:ffff8885fed00000(0000) knlGS:0000000000000000
-[ 1787.418404] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1787.420717] CR2: 000055ecf4289908 CR3: 00000005feceb001 CR4: 0000000000060ee0
-[ 1787.423110] Call Trace:
-[ 1787.424214]  <TASK>
-[ 1787.425606]  ? show_regs+0x61/0x70
-[ 1787.426568]  ? die+0x37/0x90
-[ 1787.427584]  ? do_trap+0xec/0x100
-[ 1787.428959]  ? do_error_trap+0x6c/0x90
-[ 1787.430672]  ? read_pages+0x11d/0x230
-[ 1787.432259]  ? exc_invalid_op+0x52/0x70
-[ 1787.433312]  ? read_pages+0x11d/0x230
-[ 1787.434544]  ? asm_exc_invalid_op+0x1b/0x20
-[ 1787.436038]  ? read_pages+0x11d/0x230
-[ 1787.437442]  ? read_pages+0x5c/0x230
-[ 1787.438943]  page_cache_ra_unbounded+0x128/0x1b0
-[ 1787.440419]  do_page_cache_ra+0x6c/0x70
-[ 1787.441765]  ondemand_readahead+0x31f/0x350
-[ 1787.443426]  page_cache_sync_ra+0x49/0x50
-[ 1787.445070]  filemap_get_pages+0x10e/0x680
-[ 1787.446259]  ? xfs_ilock+0xc1/0x220
-[ 1787.447426]  filemap_read+0xed/0x380
-[ 1787.448632]  ? kmem_cache_free+0x1f5/0x480
-[ 1787.449926]  ? xfs_log_ticket_put+0x2f/0x60
-[ 1787.451152]  ? xfs_inode_item_release+0x2e/0xa0
-[ 1787.453128]  generic_file_read_iter+0xdb/0x160
-[ 1787.454527]  xfs_file_buffered_read+0x54/0xd0
-[ 1787.455894]  xfs_file_read_iter+0x74/0xe0
-[ 1787.457544]  generic_file_splice_read+0x8c/0x150
-[ 1787.460094]  do_splice_to+0x85/0xb0
-[ 1787.461285]  splice_direct_to_actor+0xb3/0x210
-[ 1787.462336]  ? pipe_to_sendpage+0xa0/0xa0
-[ 1787.463287]  do_splice_direct+0x92/0xd0
-[ 1787.464203]  vfs_copy_file_range+0x2af/0x560
-[ 1787.465229]  __do_sys_copy_file_range+0xe3/0x1f0
-[ 1787.466429]  __x64_sys_copy_file_range+0x24/0x30
-[ 1787.468053]  do_syscall_64+0x34/0x80
-[ 1787.469392]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-static inline struct folio *__readahead_folio(struct readahead_control *ractl)
-{
-        struct folio *folio;
-
->>>>>   BUG_ON(ractl->_batch_count > ractl->_nr_pages);
-        ractl->_nr_pages -= ractl->_batch_count;
-        ractl->_index += ractl->_batch_count;
-
-....
-
-So something is going wrong in the readahead path from a splice
-operation from copy_file_range().
-
-..... Wait, what?
-
-Why is it splicing rather than doing a remap operation?  'cp
---reflink=always bar bar2' appears to work fine, so it's unexpected
-that it's copying data rather than cloning extents. Something is
-going wrong there...
-
-.....
-
-Ok, that's enough time spent on this right now. The BS > PS stuff in
-this patchset doesn't allow filesystems to work correctly, 
-and the reasons for things going wrong are not obvious.
-
-I suspect that this is going to take quite some work just to muscle
-through all these whacky corner cases - fsx will find a lot of
-them; you'll need to work through them until it runs without fail
-for a couple of billion ops.
-
-The patch I was using is below.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
-
-xfs: support block size > page size
-
-From: Dave Chinner <dchinner@redhat.com>
-
-Everything is supposed to work, so turn on the BOOM.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
- drivers/block/brd.c |  2 +-
- fs/xfs/xfs_mount.c  |  4 +++-
- fs/xfs/xfs_super.c  | 12 ------------
- 3 files changed, 4 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index a9f3c6591e75..e6e4f31bfcf5 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -314,7 +314,7 @@ static int max_part = 1;
- module_param(max_part, int, 0444);
- MODULE_PARM_DESC(max_part, "Num Minors to reserve between devices");
- 
--static unsigned int rd_blksize = PAGE_SIZE;
-+static unsigned int rd_blksize = 65536;
- module_param(rd_blksize, uint, 0444);
- MODULE_PARM_DESC(rd_blksize, "Blocksize of each RAM disk in bytes.");
- 
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index fb87ffb48f7f..921acd02787c 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -130,10 +130,12 @@ xfs_sb_validate_fsb_count(
- 	xfs_sb_t	*sbp,
- 	uint64_t	nblocks)
- {
--	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
- 	ASSERT(sbp->sb_blocklog >= BBSHIFT);
- 
- 	/* Limited by ULONG_MAX of page cache index */
-+	if (sbp->sb_blocklog > PAGE_SHIFT &&
-+	    (nblocks << (sbp->sb_blocklog - PAGE_SHIFT) > ULONG_MAX))
-+		return -EFBIG;
- 	if (nblocks >> (PAGE_SHIFT - sbp->sb_blocklog) > ULONG_MAX)
- 		return -EFBIG;
- 	return 0;
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 4120bd1cba90..3c2fc203a5c0 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1583,18 +1583,6 @@ xfs_fs_fill_super(
- 		goto out_free_sb;
- 	}
- 
--	/*
--	 * Until this is fixed only page-sized or smaller data blocks work.
--	 */
--	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
--		xfs_warn(mp,
--		"File system with blocksize %d bytes. "
--		"Only pagesize (%ld) or less will currently work.",
--				mp->m_sb.sb_blocksize, PAGE_SIZE);
--		error = -ENOSYS;
--		goto out_free_sb;
--	}
--
- 	/* Ensure this filesystem fits in the page cache limits */
- 	if (xfs_sb_validate_fsb_count(&mp->m_sb, mp->m_sb.sb_dblocks) ||
- 	    xfs_sb_validate_fsb_count(&mp->m_sb, mp->m_sb.sb_rblocks)) {
+RnJvbSB0aGUgZXhGQVQgc3BlY2lmaWNhdGlvbiwgdGhlIGZpbGUgc2l6ZSBzaG91bGQgZ2V0IGZy
+b20gJ0RhdGFMZW5ndGgnDQpvZiBTdHJlYW0gRXh0ZW5zaW9uIERpcmVjdG9yeSBFbnRyeSwgbm90
+ICdWYWxpZERhdGFMZW5ndGgnLg0KDQpXaXRob3V0IHRoaXMgcGF0Y2ggc2V0LCAnRGF0YUxlbmd0
+aCcgaXMgYWx3YXlzIHNhbWUgd2l0aCAnVmFsaWREYXRhTGVuZ3RoJw0KYW5kIGdldCBmaWxlIHNp
+emUgZnJvbSAnVmFsaWREYXRhTGVuZ3RoJy4gQnV0IGlmIHRoZSBmaWxlIGlzIGNyZWF0ZWQgYnkg
+b3RoZXINCmV4RkFUIGltcGxlbWVudGF0aW9uIGFuZCAnRGF0YUxlbmd0aCcgaXMgZGlmZmVyZW50
+IGZyb20gJ1ZhbGlkRGF0YUxlbmd0aCcsDQp0aGlzIGV4RkFUIGltcGxlbWVudGF0aW9uIHdpbGwg
+bm90IGJlIGNvbXBhdGlibGUuDQoNCll1ZXpoYW5nIE1vICgyKToNCiAgZXhmYXQ6IGNoYW5nZSB0
+byBnZXQgZmlsZSBzaXplIGZyb20gRGF0YUxlbmd0aA0KICBleGZhdDogZG8gbm90IHplcm9lZCB0
+aGUgZXh0ZW5kZWQgcGFydA0KDQogZnMvZXhmYXQvZXhmYXRfZnMuaCB8ICAgMiArDQogZnMvZXhm
+YXQvZmlsZS5jICAgICB8IDIxMiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrLQ0KIGZzL2V4ZmF0L2lub2RlLmMgICAgfCAxMDggKysrKysrKysrKysrKysrKysrKy0t
+LQ0KIGZzL2V4ZmF0L25hbWVpLmMgICAgfCAgIDcgKy0NCiA0IGZpbGVzIGNoYW5nZWQsIDMxMCBp
+bnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMoLSkNCg==
