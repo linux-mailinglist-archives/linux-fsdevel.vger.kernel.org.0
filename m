@@ -2,140 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E51247312BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 10:52:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1222731357
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 11:15:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245018AbjFOIwc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 04:52:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38456 "EHLO
+        id S241004AbjFOJPN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 05:15:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245232AbjFOIwF (ORCPT
+        with ESMTP id S245676AbjFOJPJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 04:52:05 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3F530DC
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 01:51:39 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id d75a77b69052e-3f9b7345fb1so27462301cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 01:51:39 -0700 (PDT)
+        Thu, 15 Jun 2023 05:15:09 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6FDA10EC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 02:15:08 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f7f7dfc037so87695e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 02:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686819099; x=1689411099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tCtd60h4V4EHRJD4vwp1PDGCA8q+mlzKDRGda/PgiKA=;
-        b=Jnq28tmV7ZVC/X1/2KIo5xXOOzRtZDU/hLkuKIMu/YCfNX8Y3MwN3C4vhs+Pth9kGI
-         0JA0zrCLE54cTTOa338uRIQVPJWdSihi0AMTnWuwNQULa0LZ3lH8gFVSh6QQSgqDHku3
-         DjM8lPkW83/rY3onhCLt6et2m2QA0iyWi9XBK0+1Vgwb2zmA7r7SAupdZoPDaYwgcBgE
-         2adMK5KVqBFTYXTfw8yNl3T8lLI1++16gSfPAcGLZYfkJTDDPUW9JzUYpJbbGYkMDzZ8
-         kXxB66693jNdirT/m4XEWUXIsocinenCeMtoko5z/ffPYblXOTSqQrKjjN4JBPSel+vQ
-         P81g==
+        d=google.com; s=20221208; t=1686820507; x=1689412507;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XoVSt871a8NGCTmDUS5BfwyaK5m5+GTgYV3kshkE7t4=;
+        b=Dx4le6AYmSF192Sc1T8RggBmikepgdS34Lk8wWGr26axpgLgwuopIfNt280dIFw59g
+         KfLTfSmlf9uSJjHq9JDE9VW3jeI7C/29UxGt0Vs4JmXur50TJR+onmAzeY5gu/CvREM3
+         57hABUPhN+fCvFZMO0DeJVBQ+cI6IZY0Vbj+6UW2hMGZ0kh5QjVes82huaMqA/DEThEc
+         pdOR0yFhgDATTQsZz9/WyNXiSx/45556qpzJp7pCknWfBre2c4d5e9aPYM/t/AV+jpi1
+         EbtCYzvqOyFTrYF/iCR75wfHJpXgnPMn3yiv9OaBVAg+glqnO4R/OxNyUjij2/FY/68e
+         AvdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686819099; x=1689411099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tCtd60h4V4EHRJD4vwp1PDGCA8q+mlzKDRGda/PgiKA=;
-        b=X9ciwUiiIYJNK22h/NSp1CoMQOUxf2KbwPksfbHUdk0+8s9wYEMglfNkkSREyifxO7
-         kx30SzMfZ0dZaux9uyKL1IYBIhDv/mKOOsGCwkI9m8a5OrncLrPY9yKTrb+8qdgKtoSA
-         eDnULanj4CeieAuV6zTFyH6UHq+rgl8vAHxZhSmRKs3HJDJcMEGYseKe2kVe1SMZFxWS
-         YQmFcQBAL40U0LV9YfrJX6aIVg7aZWStGN2+pmZDfedOHqHNwbDgSH5SWVxkCdbKntPM
-         AGmjbRHVXffXSswQLtqoP9+hH9DR2cCq6SHrIuA+rIV8HxqvkjT4PA95gPSnWoPY58zT
-         wFrQ==
-X-Gm-Message-State: AC+VfDw94WqXqPlJwC9b0qBu1uzt70NDOkRjKWuF6HbPYpDz0EADJQ+h
-        MNLruT8XseQ58j53EmVl0EaNWg==
-X-Google-Smtp-Source: ACHHUZ68AxrCw755I87FG0yFiJfDul/thfltQS6QfCx5gguIzNFJw+y3jyTV9mqBehUOrCi0EVKjxg==
-X-Received: by 2002:ac8:57ce:0:b0:3f6:c0f7:a5c3 with SMTP id w14-20020ac857ce000000b003f6c0f7a5c3mr5976494qta.32.1686819098779;
-        Thu, 15 Jun 2023 01:51:38 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
-        by smtp.gmail.com with ESMTPSA id p3-20020a62ab03000000b00646e7d2b5a7sm934369pff.112.2023.06.15.01.51.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 01:51:38 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1q9ihb-00C0hg-0F;
-        Thu, 15 Jun 2023 18:51:35 +1000
-Date:   Thu, 15 Jun 2023 18:51:35 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH 0/7] RFC: high-order folio support for I/O
-Message-ID: <ZIrRFwElpZsAnl4Q@dread.disaster.area>
-References: <20230614114637.89759-1-hare@suse.de>
- <cd816905-0e3e-6397-1a6f-fd4d29dfc739@suse.de>
- <ZInGbz6X/ZQAwdRx@casper.infradead.org>
- <b3fa1b77-d120-f86b-e02f-f79b6d13efcc@suse.de>
- <ZIpS9u4P43PgJwuj@dread.disaster.area>
- <df8e7a88-f540-af93-77dc-164262a5a3d0@suse.de>
+        d=1e100.net; s=20221208; t=1686820507; x=1689412507;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XoVSt871a8NGCTmDUS5BfwyaK5m5+GTgYV3kshkE7t4=;
+        b=CizqKYsqV+n2tetX8+6mBb+xnHdDTiwP0jQGNV9AxWxB9gNWPj6S2k4DhfDk9ZC3NZ
+         y/VNVMYEw6ZhmFhES93UeSohwdcHJhHTVU2FI2LduV8itsrEQvCf3wuqBo7YFkl0EWhI
+         B7wHJIGUXAWm/HPdoXTmMoLFkAk2oxJVByaIVfoci+ATsJxxnuzhuytLsi3tZ7ftM3Ow
+         04fpF5iMo47+ObpgrdSLv8heIdlHJDXn/oZRxFbop1IOqsXo9THLRYnTzBxgSzbEGj9Z
+         wRsNnwUOEp592FBuHhYwbEzuSbJmsT8ZZhFVq2jdkVlJGMvpsb+uPSfD4uq9d0wb/RSo
+         Gitw==
+X-Gm-Message-State: AC+VfDx9bQA4W4+cx2FF6J0QNhyfTEitgjf1YAuma2ezqd5gAj3ReJpX
+        FctUjweew4LKipRCO8Ecr7suX5JpkIsQL5gyAjXywQ==
+X-Google-Smtp-Source: ACHHUZ7+UwPN9qbvGYCyHwg0Je5fkNMNcAcV2HwQZAGiyqV5c+8mcPMXxd6GtEKSHek8AWqLXX+tMTxJVVxmK21+/5o=
+X-Received: by 2002:a05:600c:880b:b0:3f7:ba55:d038 with SMTP id
+ gy11-20020a05600c880b00b003f7ba55d038mr99012wmb.6.1686820506904; Thu, 15 Jun
+ 2023 02:15:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df8e7a88-f540-af93-77dc-164262a5a3d0@suse.de>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20230612161614.10302-1-jack@suse.cz> <CACT4Y+aEScXmq2F1-vqAfr-b2w-xyOohN+FZxorW1YuRvKDLNQ@mail.gmail.com>
+ <20230614020412.GB11423@frogsfrogsfrogs> <CACT4Y+YTfim0VhX6mTKyxMDVvY94zh7OiOLjv-Fs0kgj=vi=Qg@mail.gmail.com>
+ <ZIpPgC57bhb1cMNL@dread.disaster.area>
+In-Reply-To: <ZIpPgC57bhb1cMNL@dread.disaster.area>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 15 Jun 2023 11:14:53 +0200
+Message-ID: <CACT4Y+aqL_woqyGuxVGc-F2TEbk7i4OguiudDrA1cWpOi-n50Q@mail.gmail.com>
+Subject: Re: [PATCH] block: Add config option to not allow writing to mounted devices
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, Ted Tso <tytso@mit.edu>,
+        yebin <yebin@huaweicloud.com>, linux-fsdevel@vger.kernel.org,
+        Kees Cook <keescook@google.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 08:21:10AM +0200, Hannes Reinecke wrote:
-> On 6/15/23 01:53, Dave Chinner wrote:
-> > On Wed, Jun 14, 2023 at 05:06:14PM +0200, Hannes Reinecke wrote:
-> > All you need to do now is run the BS > PS filesytems through a full
-> > fstests pass (reflink + rmap enabled, auto group), and then we can
-> > start on the real data integrity validation work. It'll need tens of
-> > billions of fsx ops run on it, days of recoveryloop testing, days of
-> > fstress based exercise, etc before we can actually enable it in
-> > XFS....
-> > 
-> Hey, c'mon. I do know _that_. All I'm saying is that now we can _start_
-> running tests and figure out corner cases (like NFS crashing on me :-).
-> With this patchset we now have some infrastructure in place making it
-> even _possible_ to run those tests.
+On Thu, 15 Jun 2023 at 01:38, Dave Chinner <david@fromorbit.com> wrote:
+> > > > CONFIG_INSECURE description can say something along the lines of "this
+> > > > kernel includes subsystems with known bugs that may cause security and
+> > > > data integrity issues". When a subsystem adds "depends on INSECURE",
+> > > > the commit should list some of the known issues.
+> > > >
+> > > > Then I see how trading disabling things on syzbot in exchange for
+> > > > "depends on INSECURE" becomes reasonable and satisfies all parties to
+> > > > some degree.
+> > >
+> > > Well in that case, post a patchset adding "depends on INSECURE" for
+> > > every subsystem that syzbot files bugs against, if the maintainers do
+> > > not immediately drop what they're doing to resolve the bug.
+> >
+> > Hi Darrick,
+> >
+> > Open unfixed bugs are fine (for some definition of fine).
+> > What's discussed here is different. It's not having any filed bugs at
+> > all due to not testing a thing and then not having any visibility into
+> > the state of things.
+>
+> Just because syzbot doesn't test something, it does not mean the
+> code is not tested, nor does it mean the developers who are
+> responsible for the code have no visibility into the state of their
+> code.
+>
+> The reason they want to avoid this sort of corruption injection
+> testing in syzbot is that it *does not provide a net benefit* to
+> anyone. The number (and value) of real bugs it might find are vastly
+> outweighed by the cost of filtering out the many, many false
+> positives the testing methodology raises.
+>
+> Keep in mind that syzbot does not provide useful unit and functional
+> test coverage. We have to run tests suites like fstests to provide
+> this sort of functionality and visibility into the *correct
+> operation of the code*.
+>
+> However, alongside all the unit/functional tests in fstests, we also
+> have non-deterministic stress and fuzzer tests that are similar in
+> nature to syzbot. They often flush out weird integration level bugs
+> before we even get to merging the code. These non-deterministic
+> stress tests in fstests have found *hundreds* of bugs over the
+> *couple of decades* we have been running them, and they also have a
+> history of uncovering entire new classes of bugs we've had to
+> address.
+>
+> At this point, syzbot is yet to do prove it is more than a one-trick
+> pony - it typically only finds a single class of filesystem bug.
+> That is, it only finds bugs that are related to undetected physical
+> structure corruption of the filesystem that result in macro level
+> failures (crash, warn, hang).
+>
+> Syzbot does nothing to ensure correct behaviour is occuring, that
+> data integrity is maintained by the filesystem, that crash recovery
+> after failures works correctly, etc. These things are *by far* the
+> most important things we have to ensure during filesystem
+> development.
+>
+> IOWs, the sorts of problems that syzbot finds in filesystems are way
+> down the list of important things we need to validate.  Yes,
+> structural validation testing is something we should be
+> running, and it's clear that is does get run (both from fstests and
+> syzbot).
+>
+> Hence the claim that "because syzbot doesn't run we don't have
+> visibility of code bugs" is naive, conceited, incredibly
+> narcissistic and demonstratable false. It also indicates a very
+> poor understanding of where syzbot actually fits into the overall
+> engineering processes.
 
-I got to this same point several years ago. You know, that patchset
-that Luis went back to when he brought up this whole topic again?
-That's right when I started running fsx, and I realised it
-didn't cover FICLONERANGE, FIDEDUPERANGE and copy_file_range().
+Hi Dave, Ted,
 
-Yep, that's when we first realised we had -zero- test coverage of
-those operations. Darrick and I spent the next *3 months* pretty
-much rewriting the VFS level of those operations and fixing all the
-other bugs in the implementations, just so we could validate they
-worked correct on BS <= PS.
+We are currently looking into options of how to satisfy all parties.
 
-But by then Willy had started working over iomap and filemap for
-folios, and the bs > PS patches were completely bitrotted and needed
-rewriting from scratch. Which I now didn't have time to do....
+I am not saying that all of these bugs need to be fixed, nor that they
+are more important than bugs in supported parts. And we are very much
+interested in testing supported parts as well as we can do.
 
-So today is deja vu all over again: the first time I run fsx on
-a new 64kB BS on 4KB PS implementation it hangs doing something
--really weird- and unexpected in copy_file_range(). It shouldn't
-even be in the splice code doing a physical data copy.  So something
-went wrong in ->remap_file_range(), or maybe in the truncate before
-it, before it bugged out over out of range readahead in the page
-cache...
+By CONFIG_INSECURE I just meant something similar to kernel taint
+bits. A user is free to continue after any bad thing has happened/they
+did, but some warranties are void. And if a kernel developer receives
+a bug report on a tainted kernel, they will take it with a grain of
+salt. So it's important to note the fact and inform about it.
+Something similar here: bugs in deprecated parts do not need to be
+fixed, and distros are still free to enable them, but this fact is
+acknowledged by distros and made visible to users.
 
-I got only 3 fsx ops in today, and at least three bugs have already
-manifest themselves....
-
-> Don't be so pessimistic ...
-
-I'm not pessimistic. I'm being realistic. I'm speaking from
-experience. Not just as a Linux filesystem engineer who has had to
-run this fsx-based data integrity validation process from the ground
-up multiple times in the past decade, but also as an Irix OS
-engineer that spent many, many hours digging out nasty, subtle bs > ps
-data corruption bugs of the Irix buffer/page cache.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+But we are looking into other options that won't require even CONFIG_INSECURE.
