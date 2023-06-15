@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D00373208E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 22:00:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE16C73209B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 22:07:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230062AbjFOUAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 16:00:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33124 "EHLO
+        id S232003AbjFOUHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 16:07:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229748AbjFOUAU (ORCPT
+        with ESMTP id S229997AbjFOUHh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 16:00:20 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D19C295B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 13:00:18 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51400fa347dso2870a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 13:00:17 -0700 (PDT)
+        Thu, 15 Jun 2023 16:07:37 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF5F1FD7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 13:07:36 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-513ea2990b8so2810a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 13:07:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1686859216; x=1689451216;
+        d=google.com; s=20221208; t=1686859654; x=1689451654;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+RWqrzTlZYe8/Gfpdw2HrcNGicUcMl9+E9jN4a7pTg0=;
-        b=r8b1n9ZwhABfsIVwNrOC+42qy+6eKOYn88GRmm5/860S+dOA70/GmS+MgS6xsMu8Dy
-         U7CEjqWFIT5C/GKLEtTwTjzUmds0heLEdHByLQeDqGqa7BGMfnrdciyjCH9beLdxeUgW
-         OMbz4q5EZkoHPmwl9Z/mpvg4v77WVolcyjGqiEqNgidrU8n44T48dg4yBjV4oEURlVEA
-         uE6OvmGJKphObmjGKcEj3YSZBs+pShjnTUDpiMtWCfUWStekfQKoIQ7WCYH6HgkdVQl+
-         7gNTpWgRF9tnJfJKjb8M2cZdiPfiZYJ5vhALMc1BWoJoL7g+5WKhC9/YkwkbvAL6r1Yx
-         uGGw==
+        bh=TcXKgHkINlZtkH6FcAJl31LqrUpiNimJraZYTIfEacY=;
+        b=grNeFjMFUEplWpGORmy77WwGAa6tuYg9L3WkV5mckN5vDk/zbhDik+lHM/UNgpP4pd
+         hOOm+WnJ7a4iQyAmGfMIEHtYCyEjiOB4fybvLRjQ953HrpODT7pybSJLC9oyrmvc1uAa
+         Q5t0iw3S7Cu+ZA/WqgFLv0n3V0z2Iv+BsFTHoBDgXWNu+X4LTbCrMOKZdBHMF2+Gz+9E
+         C8mezgnBZ0C8B3l28HKwJtAiDRd/qOx2CFcehRN62EOe8r6f8Izc6DyVxQ48aAB/jfzZ
+         Fbunklgz4dlOAoPmDadl7tLsJBvnhxposHcHyBr7ITs8tsH4/taorio4KkE5YTJeEn/y
+         +CYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686859216; x=1689451216;
+        d=1e100.net; s=20221208; t=1686859654; x=1689451654;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+RWqrzTlZYe8/Gfpdw2HrcNGicUcMl9+E9jN4a7pTg0=;
-        b=Gun+I9Izja8HACORL40UEJ2juXwADh7oW25YEUoVk6IWuKDPusj4aO57fClf5J6Qeg
-         job7iCtQX7UOjNJ+c7WxowlE7wdEP51EyQ5qSJUPAYPHqyTwjKiXGCZ/U4bE7RxMmLxp
-         ZCWWaUdL7lBxRH6iTZQcRuzyzRqCgwmZJ2iJfP2nFerUPil51QM8LFHegS02vJp+OsZ9
-         yTWn3E8/oYGQgqTTZ/48INOCKnzGrzh+xPX7TiF6wheAtOwTUuN69ctK4wZIixUPD4WX
-         flQOLkFWAf4qYvfQO3fbtwCO4s/SUVdPVoHN1Z0++5f7oIppBA8UM5b8PI9BOquz3C4F
-         PjDw==
-X-Gm-Message-State: AC+VfDw0IenvZJnQIqcdb2Qvox5Pmwpof/L7cYj0QDkClWWNh12Jylm3
-        cqrmMMw652E+DS4TY2xLAt/CAXACyfHdDEW12c+JQg==
-X-Google-Smtp-Source: ACHHUZ59IUn6ONdci8fY72qJ+fprLwkmaLiabWTmH9HLJPn3BDB2NQeOO/TEIF/PybYaw++bw7+gWImgKfMD6QqIj5s=
-X-Received: by 2002:a50:bac3:0:b0:506:b280:4993 with SMTP id
- x61-20020a50bac3000000b00506b2804993mr128656ede.2.1686859216245; Thu, 15 Jun
- 2023 13:00:16 -0700 (PDT)
+        bh=TcXKgHkINlZtkH6FcAJl31LqrUpiNimJraZYTIfEacY=;
+        b=bga6SV+Mov4wMPIh+ZWIZ9qVKsiKFGpBNeri0HzoyoFwkG3qccc3VRFm3rLsRtGEOh
+         9JU9WPnI0Ms++grHvx+xwRBuWg0QeYcQQyKoFskdl4S5G6DemmZv9MrKzE2a1WGTfzo2
+         rRDwnLdADp1GsUROh5kUMlQzSTG9OkQ8yplA+edk9iGSUwX6IEQOMgBP8CNTHI/4Ezng
+         2zBoLaaeaE4/Zbi4B6/XxwcioGNJrG2ulvaEPK8JWCUixfcCQchKrjEuGPzNUJkZND83
+         bAlM/pf+cnzls3v1ejybipgBOnkh+WL/CYFQCd4RGNUaTya43aXYRPlWJy4gDet6Cy59
+         RygQ==
+X-Gm-Message-State: AC+VfDxM1P2jUV97eOjZGsIF2dzSOvfBs2bAcs+3fmVoBNzK3IAo+p6s
+        H30M0XzagfOf4KBUixd5/OsbKBwYilWWE6U/icQXew==
+X-Google-Smtp-Source: ACHHUZ4X+9erQPhmydL6aaFuWi9P+BEB8cvKp3i4+5UPNoYBQtJLxjzSx6pSUJJ8b5JUmvgtrKsHYgvI4lYLFVRURZE=
+X-Received: by 2002:a50:a6d3:0:b0:51a:1ffd:10e with SMTP id
+ f19-20020a50a6d3000000b0051a1ffd010emr133474edc.3.1686859654409; Thu, 15 Jun
+ 2023 13:07:34 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230613102905.2808371-1-usama.anjum@collabora.com>
  <20230613102905.2808371-3-usama.anjum@collabora.com> <CABb0KFHWnbrf2ythvO0OKsd1ZS9b4D9BNzwBCbn6g9OX4n6ZOg@mail.gmail.com>
  <0db01d90-09d6-08a4-bbb8-70670d3baa94@collabora.com> <CABb0KFEn5TU480A=YiN82nLRtGyKMABi8cZjuiGUU_jFZZo+8g@mail.gmail.com>
  <34203acf-7270-7ade-a60e-ae0f729dcf70@collabora.com> <CABb0KFFaXgJD99pWfx3MC+qrq5jUaPis_kZo6U8yL_8xdp0GJA@mail.gmail.com>
  <96b7cc00-d213-ad7d-1b48-b27f75b04d22@collabora.com> <CABb0KFEy_mRaT86TEOQ-BoTe_XOVw3Kp5VdzOfEEaiZJuT754g@mail.gmail.com>
- <CABb0KFGuqoDh-+FKcsZXxpSFWSM3mcLVQkotGE3RcNiFKh-a2g@mail.gmail.com> <43c96533-8009-e42f-721c-4b2d1e142f5d@collabora.com>
-In-Reply-To: <43c96533-8009-e42f-721c-4b2d1e142f5d@collabora.com>
+ <39bc8212-9ee8-dbc1-d468-f6be438b683b@collabora.com>
+In-Reply-To: <39bc8212-9ee8-dbc1-d468-f6be438b683b@collabora.com>
 From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-Date:   Thu, 15 Jun 2023 22:00:04 +0200
-Message-ID: <CABb0KFF5LCmvdY_hVmH0SSCOdyeT1dAA=Kh=T7wUSx=9eLLy=g@mail.gmail.com>
+Date:   Thu, 15 Jun 2023 22:07:22 +0200
+Message-ID: <CABb0KFHx2hV9M7oinCdKnagRmcrGHagH9eAO3TkVTQH+o9x=5A@mail.gmail.com>
 Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
  optionally clear info about PTEs
 To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
@@ -98,83 +98,141 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 15 Jun 2023 at 17:16, Muhammad Usama Anjum
+On Thu, 15 Jun 2023 at 17:11, Muhammad Usama Anjum
 <usama.anjum@collabora.com> wrote:
->
-> Please review the v19. I hope to get your reviewed by tag soon.
->
-> On 6/15/23 7:58=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
-> > On Thu, 15 Jun 2023 at 16:52, Micha=C5=82 Miros=C5=82aw <emmir@google.c=
-om> wrote:
-> >> On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
-> >> <usama.anjum@collabora.com> wrote:
-> >>> I'll send next revision now.
-> >>> On 6/14/23 11:00=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
-> >>>> (A quick reply to answer open questions in case they help the next v=
-ersion.)
-> >>>>
-> >>>> On Wed, 14 Jun 2023 at 19:10, Muhammad Usama Anjum
-> >>>> <usama.anjum@collabora.com> wrote:
-> >>>>> On 6/14/23 8:14=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
-> >>>>>> On Wed, 14 Jun 2023 at 15:46, Muhammad Usama Anjum
-> >>>>>> <usama.anjum@collabora.com> wrote:
-> >>>>>>>
-> >>>>>>> On 6/14/23 3:36=E2=80=AFAM, Micha=C5=82 Miros=C5=82aw wrote:
-> >>>>>>>> On Tue, 13 Jun 2023 at 12:29, Muhammad Usama Anjum
-> >>>>>>>> <usama.anjum@collabora.com> wrote:
-> >>>>>>>> For flags name: PM_REQUIRE_WRITE_ACCESS?
-> >>>>>>>> Or Is it intended to be checked only if doing WP (as the current=
- name
-> >>>>>>>> suggests) and so it would be redundant as WP currently requires
-> >>>>>>>> `p->required_mask =3D PAGE_IS_WRITTEN`?
-> >>>>>>> This is intended to indicate that if userfaultfd is needed. If
-> >>>>>>> PAGE_IS_WRITTEN is mentioned in any of mask, we need to check if
-> >>>>>>> userfaultfd has been initialized for this memory. I'll rename to
-> >>>>>>> PM_SCAN_REQUIRE_UFFD.
+> On 6/15/23 7:52=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> > On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
+> > <usama.anjum@collabora.com> wrote:
+> >> I'll send next revision now.
+> >> On 6/14/23 11:00=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>> (A quick reply to answer open questions in case they help the next ve=
+rsion.)
+> >>>
+> >>> On Wed, 14 Jun 2023 at 19:10, Muhammad Usama Anjum
+> >>> <usama.anjum@collabora.com> wrote:
+> >>>> On 6/14/23 8:14=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>>>> On Wed, 14 Jun 2023 at 15:46, Muhammad Usama Anjum
+> >>>>> <usama.anjum@collabora.com> wrote:
 > >>>>>>
-> >>>>>> Why do we need that check? Wouldn't `is_written =3D false` work fo=
-r vmas
-> >>>>>> not registered via uffd?
-> >>>>> UFFD_FEATURE_WP_ASYNC and UNPOPULATED needs to be set on the memory=
- region
-> >>>>> for it to report correct written values on the memory region. Witho=
-ut UFFD
-> >>>>> WP ASYNC and UNPOUPULATED defined on the memory, we consider UFFD_W=
-P state
-> >>>>> undefined. If user hasn't initialized memory with UFFD, he has no r=
-ight to
-> >>>>> set is_written =3D false.
+> >>>>>> On 6/14/23 3:36=E2=80=AFAM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>>>>>> On Tue, 13 Jun 2023 at 12:29, Muhammad Usama Anjum
+> >>>>>>> <usama.anjum@collabora.com> wrote:
+> >>> [...]
+> >>>>>>>> +       if (cur_buf->bitmap =3D=3D bitmap &&
+> >>>>>>>> +           cur_buf->start + cur_buf->len * PAGE_SIZE =3D=3D add=
+r) {
+> >>>>>>>> +               cur_buf->len +=3D n_pages;
+> >>>>>>>> +               p->found_pages +=3D n_pages;
+> >>>>>>>> +       } else {
+> >>>>>>>> +               if (cur_buf->len && p->vec_buf_index >=3D p->vec=
+_buf_len)
+> >>>>>>>> +                       return -ENOMEM;
+> >>>>>>>
+> >>>>>>> Shouldn't this be -ENOSPC? -ENOMEM usually signifies that the ker=
+nel
+> >>>>>>> ran out of memory when allocating, not that there is no space in =
+a
+> >>>>>>> user-provided buffer.
+> >>>>>> There are 3 kinds of return values here:
+> >>>>>> * PM_SCAN_FOUND_MAX_PAGES (1) ---> max_pages have been found. Abor=
+t the
+> >>>>>> page walk from next entry
+> >>>>>> * 0 ---> continue the page walk
+> >>>>>> * -ENOMEM --> Abort the page walk from current entry, user buffer =
+is full
+> >>>>>> which is not error, but only a stop signal. This -ENOMEM is just
+> >>>>>> differentiater from (1). This -ENOMEM is for internal use and isn'=
+t
+> >>>>>> returned to user.
+> >>>>>
+> >>>>> But why ENOSPC is not good here? I was used before, I think.
+> >>>> -ENOSPC is being returned in form of true error from
+> >>>> pagemap_scan_hugetlb_entry(). So I'd to remove -ENOSPC from here as =
+it
+> >>>> wasn't true error here, it was only a way to abort the walk immediat=
+ely.
+> >>>> I'm liking the following erturn code from here now:
 > >>>>
-> >>>> How about calculating `is_written =3D is_uffd_registered() &&
-> >>>> is_uffd_wp()`? This would enable a user to apply GET+WP for the whol=
-e
-> >>>> address space of a process regardless of whether all of it is
-> >>>> registered.
-> >>> I wouldn't want to check if uffd is registered again and again. This =
-is why
-> >>> we are doing it only once every walk in pagemap_scan_test_walk().
+> >>>> #define PM_SCAN_BUFFER_FULL     (-256)
+> >>>
+> >>> I guess this will be reworked anyway, but I'd prefer this didn't need
+> >>> custom errors etc. If we agree to decoupling the selection and GET
+> >>> output, it could be:
+> >>>
+> >>> bool is_interesting_page(p, flags); // this one does the
+> >>> required/anyof/excluded match
+> >>> size_t output_range(p, start, len, flags); // this one fills the
+> >>> output vector and returns how many pages were fit
+> >>>
+> >>> In this setup, `is_interesting_page() && (n_out =3D output_range()) <
+> >>> n_pages` means this is the final range, no more will fit. And if
+> >>> `n_out =3D=3D 0` then no pages fit and no WP is needed (no other spec=
+ial
+> >>> cases).
+> >> Right now, pagemap_scan_output() performs the work of both of these tw=
+o
+> >> functions. The part can be broken into is_interesting_pages() and we c=
+an
+> >> leave the remaining part as it is.
 > >>
-> >> There is no need to do the checks repeatedly. If I understand the code
-> >> correctly, uffd registration is per-vma, so it can be communicated
-> >> from test_walk to entry/hole callbacks via a field in
-> >> pagemap_scan_private.
+> >> Saying that n_out < n_pages tells us the buffer is full covers one cas=
+e.
+> >> But there is case of maximum pages have been found and walk needs to b=
+e
+> >> aborted.
 > >
-> > Actually... this could be exposed as a page category for the filter
-> > (e.g. PAGE_USES_UFFD_WP) and then you could just make the ioctl() to
-> > work for your usecase without tracking the ranges at the userspace
-> > side.
-> I'm not sure about page category. ASAIK the current check isn't bad when =
-we
-> already mention in documentation that memory must be registered with UFFD
-> WP before using write feature of the IOCTL.
+> > This case is exactly what `n_out < n_pages` will cover (if scan_output
+> > uses max_pages properly to limit n_out).
+> > Isn't it that when the buffer is full we want to abort the scan always
+> > (with WP if `n_out > 0`)?
+> Wouldn't it be duplication of condition if buffer is full inside
+> pagemap_scan_output() and just outside it. Inside pagemap_scan_output() w=
+e
+> check if we have space before putting data inside it. I'm using this same
+> condition to indicate that buffer is full.
 
-You could relax the (documentation) rule to be "WP works only on
-ranges registeder via UFFD for ASYNC_WP". That way you allow people,
-who don't read documentation to shoot their foot, but don't block
-people that know what they are doing from exploiting the nice feature
-that they don't need to track all the WP-registered ranges calling the
-ioctl() for each one and instead can just call it once for the whole
-address space.
+I'm not sure what do you mean? The buffer-full conditions would be
+checked in ..scan_output() and communicated to the caller by returning
+N less than `n_pages` passed in. This is exactly how e.g. read()
+works: if you get less than requested you've hit the end of the file.
+If the file happens to have size that is equal to the provided buffer
+length, the next read() will return 0.
+
+> >>>>> While here, I wonder if we really need to fail the call if there ar=
+e
+> >>>>> unknown bits in those masks set: if this bit set is expanded with
+> >>>>> another category flags, a newer userspace run on older kernel would
+> >>>>> get EINVAL even if the "treat unknown as 0" be what it requires.
+> >>>>> There is no simple way in the API to discover what bits the kernel
+> >>>>> supports. We could allow a no-op (no WP nor GET) call to help with
+> >>>>> that and then rejecting unknown bits would make sense.
+> >>>> I've not seen any examples of this. But I've seen examples of return=
+ing
+> >>>> error if kernel doesn't support a feature. Each new feature comes wi=
+th a
+> >>>> kernel version, greater than this version support this feature. If u=
+ser is
+> >>>> trying to use advanced feature which isn't present in a kernel, we s=
+hould
+> >>>> return error and not proceed to confuse the user/kernel. In fact if =
+we look
+> >>>> at userfaultfd_api(), we return error immediately if feature has som=
+e bit
+> >>>> set which kernel doesn't support.
+> >>>
+> >>> I think we should have a way of detecting the supported flags if we
+> >>> don't want a forward compatibility policy for flags here. Maybe it
+> >>> would be enough to allow all the no-op combinations for this purpose?
+> >> Again I don't think UFFD is doing anything like this.
+> >
+> > If it's cheap and easy to provide a user with a way to detect the
+> > supported features - why not do it?
+> I'm sorry. But it would bring up something new and iterations will be
+> needed to just play around. I like the UFFD way.
+
+Let's then first agree on what would have to be changed. I guess we
+could leverage that `scan_len =3D 0` doesn't make much sense otherwise
+and let it be used to check the other fields for support.
 
 Best Regards
 Micha=C5=82 Miros=C5=82aw
