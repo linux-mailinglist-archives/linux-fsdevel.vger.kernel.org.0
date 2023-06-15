@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6856373166B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 13:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93F1C73166C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jun 2023 13:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343820AbjFOLWr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 07:22:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45664 "EHLO
+        id S1343825AbjFOLWt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 07:22:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239118AbjFOLWo (ORCPT
+        with ESMTP id S241642AbjFOLWq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 07:22:44 -0400
+        Thu, 15 Jun 2023 07:22:46 -0400
 Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7761F268C;
-        Thu, 15 Jun 2023 04:22:43 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f769c37d26so2343078e87.1;
-        Thu, 15 Jun 2023 04:22:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3152C271F;
+        Thu, 15 Jun 2023 04:22:45 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f004cc54f4so10362096e87.3;
+        Thu, 15 Jun 2023 04:22:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686828162; x=1689420162;
+        d=gmail.com; s=20221208; t=1686828163; x=1689420163;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WpZu3AzfDONf2ZeTTGU/Q/7Z9wDaizjBTr2YR+1aWi8=;
-        b=El8facWjF93Z9DrdTlJkuexnlIw6XkHhCE2XT9fdAf/2i1T6TTYYz5GfaVERiLDvY5
-         G6+XucIfrauaWiMTYK5lKU0zKQWPCsWcR0lMMU5Yby3ouK7j3NHHgFV6a7Yi3FGoTVrq
-         5V+Zro33gXSgpa6NxU4JohDEWpURZmjRSd9PLS7OaAg9HH2Yc/OuRvecHZNL/8KHwfTT
-         hMxVIpdFKFgyRdQJSHO8u88LKMzu8e/M/YnFn3B8idPKJd+E4br2j1jKBQD/zNHgVMvo
-         3y64F7peMY6szwttP1tqtavx6/vo3PECyaabMQhZJFH7+Slp0X2S4EFrMNTu5g5PCUG0
-         I2eg==
+        bh=mfefqjxSvVD9BbTwo3NdrX31TFDTJBfhj1IHGiXoDY0=;
+        b=Upc5czpKDXUGKdN3oikOFIHOBiwwLSJzA5sDYtyo+BJ36xnqRlqpmMCQ6iFwOKTZ5+
+         vuWeCDnNOak0VNr1xIGG3eHGb3ICOXloM+j6NE8UPfaA7aYOpttHUh+7wWqKckKN0Dus
+         Go58eTY9Ac6a9gbj7aHd6Bn9/Mce/oZ1unk6/MGje2Gr6d1eX8hunBrnAnEcn3Hm6zPE
+         OY0titqSL4M6gptMfUadcSea95iZkJOIDvOFSHD5MHjeCvJokrJEVdiJHcDc9cRmMJAU
+         buqC/0luA6S0b94Rnay9PdKJyHSxoYGBA2fAD0HIweBS6W7I/Kdar2FY4KAY6HnfVCYz
+         2OhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686828162; x=1689420162;
+        d=1e100.net; s=20221208; t=1686828163; x=1689420163;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WpZu3AzfDONf2ZeTTGU/Q/7Z9wDaizjBTr2YR+1aWi8=;
-        b=h6TI2wX8hxLz/bHVSRv9Tz8nYVbuv9ZU/l30HpvOsfG3dl694XIEDCc+cTsIdo7dIV
-         RExYcLzTalfj2GW/O8bXh3T9SCHmyyEJIgtxu9kaLKumqXE+F5OfrDPeVOSP6FYNyU/+
-         JlbnHhk2+abdVkpxJH/YtlCQGaqTbdT987bVaDU2DPy7NS7WDcSUXuIVIJQW6+qmg/c8
-         hwZWYgT7qk3oIJ8r3zq2f+8DiUYMFoTSEN+5rsYx2t423IyNBrTbjG6cfVfEmp4QEio3
-         T1YPb+vDCWU7w0ZVT3Ld2kveVQlcOXCPH87IavOVWpNZX3FkL0a0FuCjkYQcuGewR3+i
-         CIyw==
-X-Gm-Message-State: AC+VfDxhCBtOrO/krR0mYMVRC8UT1JjWPXMMt7eoHXu3y/q30uys8no9
-        lXC0ppEUkgUl2iDqkJ7BFeU=
-X-Google-Smtp-Source: ACHHUZ50f1odv8a8kBfhGJZ6zkzR49Ys2kno/jVqCqtz+fxxYTCg6xDYW9QgN+mfuiHaOAwPt1GV9w==
-X-Received: by 2002:a19:505b:0:b0:4f6:14d1:596d with SMTP id z27-20020a19505b000000b004f614d1596dmr9732589lfj.61.1686828161660;
-        Thu, 15 Jun 2023 04:22:41 -0700 (PDT)
+        bh=mfefqjxSvVD9BbTwo3NdrX31TFDTJBfhj1IHGiXoDY0=;
+        b=EpEcWLQpmloPHCQp7GYBH1QmbUzJNOcinvr4NxLzTOcFo4Lz/Zuyi6W6J0AojRwwld
+         Y+X8a9BTZpK7Furx3Cfn7Gl/lmiCHPNIPsdUtb681CLctJhVyYW0agAOtqvSdh+szVXb
+         dbbpsBxq4KAQ+LJ6JOOjiwcYtneDmrGQa6m8NFOQ0A+hnxpLw+/8ux5XyelK2xrti1yZ
+         teiaQJ6GTgXXNJdln4MUDSgruJoFwDa/gDi8Frk57PiNP9zLngugdjoaVXis07e/LSRs
+         V+FbMKlu8tjmjM2Nx4vcYAMlsYrn9ZKmVZuBoOOszwFTc36vtG/+aqLWSx6X9mImE7uf
+         +T9Q==
+X-Gm-Message-State: AC+VfDw/Jg0rcqTc4Hd5uyC2ov98IR6mwmyBWCmuxrE/vf74LC9xIvv+
+        P1ZlOznBcSqHzub/bJlEFR8=
+X-Google-Smtp-Source: ACHHUZ4GfJ5lyvQZqxuxHwc9n9+5EUb1K3sEqtKfwUZu3VLPEBd8wBHCbaVZWSaZkcNeJA+yl26EDQ==
+X-Received: by 2002:a19:d619:0:b0:4f6:6037:128e with SMTP id n25-20020a19d619000000b004f66037128emr10286530lfg.57.1686828163334;
+        Thu, 15 Jun 2023 04:22:43 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id h25-20020a197019000000b004f80f03d990sm355089lfc.259.2023.06.15.04.22.40
+        by smtp.gmail.com with ESMTPSA id h25-20020a197019000000b004f80f03d990sm355089lfc.259.2023.06.15.04.22.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 04:22:41 -0700 (PDT)
+        Thu, 15 Jun 2023 04:22:42 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
@@ -57,9 +57,9 @@ Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
         David Howells <dhowells@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: [PATCH v5 2/5] fs: use a helper for opening kernel internal files
-Date:   Thu, 15 Jun 2023 14:22:26 +0300
-Message-Id: <20230615112229.2143178-3-amir73il@gmail.com>
+Subject: [PATCH v5 3/5] fs: move kmem_cache_zalloc() into alloc_empty_file*() helpers
+Date:   Thu, 15 Jun 2023 14:22:27 +0300
+Message-Id: <20230615112229.2143178-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230615112229.2143178-1-amir73il@gmail.com>
 References: <20230615112229.2143178-1-amir73il@gmail.com>
@@ -75,92 +75,109 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cachefiles uses kernel_open_tmpfile() to open kernel internal tmpfile
-without accounting for nr_files.
+Use a common helper init_file() instead of __alloc_file() for
+alloc_empty_file*() helpers and improrve the documentation.
 
-cachefiles uses open_with_fake_path() for the same reason without the
-need for a fake path.
+This is needed for a follow up patch that allocates a backing_file
+container.
 
-Fork open_with_fake_path() to kernel_file_open() which only does the
-noaccount part and use it in cachefiles.
-
+Suggested-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/cachefiles/namei.c |  4 ++--
- fs/open.c             | 31 +++++++++++++++++++++++++++++++
- include/linux/fs.h    |  2 ++
- 3 files changed, 35 insertions(+), 2 deletions(-)
+ fs/file_table.c | 41 ++++++++++++++++++++++++++---------------
+ 1 file changed, 26 insertions(+), 15 deletions(-)
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 6c7d4e97c219..499cf73f097b 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -560,8 +560,8 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
- 	 */
- 	path.mnt = cache->mnt;
- 	path.dentry = dentry;
--	file = open_with_fake_path(&path, O_RDWR | O_LARGEFILE | O_DIRECT,
--				   d_backing_inode(dentry), cache->cache_cred);
-+	file = kernel_file_open(&path, O_RDWR | O_LARGEFILE | O_DIRECT,
-+				d_backing_inode(dentry), cache->cache_cred);
- 	if (IS_ERR(file)) {
- 		trace_cachefiles_vfs_error(object, d_backing_inode(dentry),
- 					   PTR_ERR(file),
-diff --git a/fs/open.c b/fs/open.c
-index 005ca91a173b..c5da2b3eb105 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1121,6 +1121,37 @@ struct file *dentry_create(const struct path *path, int flags, umode_t mode,
- }
- EXPORT_SYMBOL(dentry_create);
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 372653b92617..4bc713865212 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -131,20 +131,15 @@ static int __init init_fs_stat_sysctls(void)
+ fs_initcall(init_fs_stat_sysctls);
+ #endif
  
-+/**
-+ * kernel_file_open - open a file for kernel internal use
-+ * @path:	path of the file to open
-+ * @flags:	open flags
-+ * @inode:	the inode
-+ * @cred:	credentials for open
-+ *
-+ * Open a file that is not accounted in nr_files.
-+ * This is only for kernel internal use, and must not be installed into
-+ * file tables or such.
-+ */
-+struct file *kernel_file_open(const struct path *path, int flags,
-+				struct inode *inode, const struct cred *cred)
-+{
+-static struct file *__alloc_file(int flags, const struct cred *cred)
++static int init_file(struct file *f, int flags, const struct cred *cred)
+ {
+-	struct file *f;
+ 	int error;
+ 
+-	f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
+-	if (unlikely(!f))
+-		return ERR_PTR(-ENOMEM);
+-
+ 	f->f_cred = get_cred(cred);
+ 	error = security_file_alloc(f);
+ 	if (unlikely(error)) {
+ 		file_free_rcu(&f->f_rcuhead);
+-		return ERR_PTR(error);
++		return error;
+ 	}
+ 
+ 	atomic_long_set(&f->f_count, 1);
+@@ -155,7 +150,7 @@ static struct file *__alloc_file(int flags, const struct cred *cred)
+ 	f->f_mode = OPEN_FMODE(flags);
+ 	/* f->f_version: 0 */
+ 
+-	return f;
++	return 0;
+ }
+ 
+ /* Find an unused file structure and return a pointer to it.
+@@ -172,6 +167,7 @@ struct file *alloc_empty_file(int flags, const struct cred *cred)
+ {
+ 	static long old_max;
+ 	struct file *f;
++	int error;
+ 
+ 	/*
+ 	 * Privileged users can go above max_files
+@@ -185,9 +181,15 @@ struct file *alloc_empty_file(int flags, const struct cred *cred)
+ 			goto over;
+ 	}
+ 
+-	f = __alloc_file(flags, cred);
+-	if (!IS_ERR(f))
+-		percpu_counter_inc(&nr_files);
++	f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
++	if (unlikely(!f))
++		return ERR_PTR(-ENOMEM);
++
++	error = init_file(f, flags, cred);
++	if (unlikely(error))
++		return ERR_PTR(error);
++
++	percpu_counter_inc(&nr_files);
+ 
+ 	return f;
+ 
+@@ -203,14 +205,23 @@ struct file *alloc_empty_file(int flags, const struct cred *cred)
+ /*
+  * Variant of alloc_empty_file() that doesn't check and modify nr_files.
+  *
+- * Should not be used unless there's a very good reason to do so.
++ * This is only for kernel internal use, and the allocate file must not be
++ * installed into file tables or such.
+  */
+ struct file *alloc_empty_file_noaccount(int flags, const struct cred *cred)
+ {
+-	struct file *f = __alloc_file(flags, cred);
 +	struct file *f;
 +	int error;
 +
-+	f = alloc_empty_file_noaccount(flags, cred);
-+	if (IS_ERR(f))
-+		return f;
++	f = kmem_cache_zalloc(filp_cachep, GFP_KERNEL);
++	if (unlikely(!f))
++		return ERR_PTR(-ENOMEM);
 +
-+	f->f_path = *path;
-+	error = do_dentry_open(f, inode, NULL);
-+	if (error) {
-+		fput(f);
-+		f = ERR_PTR(error);
-+	}
-+	return f;
-+}
-+EXPORT_SYMBOL_GPL(kernel_file_open);
-+
- struct file *open_with_fake_path(const struct path *path, int flags,
- 				struct inode *inode, const struct cred *cred)
- {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 62237beeac2a..1f8486e773af 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1676,6 +1676,8 @@ struct file *kernel_tmpfile_open(struct mnt_idmap *idmap,
- 				 const struct path *parentpath,
- 				 umode_t mode, int open_flag,
- 				 const struct cred *cred);
-+struct file *kernel_file_open(const struct path *path, int flags,
-+			      struct inode *inode, const struct cred *cred);
++	error = init_file(f, flags, cred);
++	if (unlikely(error))
++		return ERR_PTR(error);
  
- int vfs_mkobj(struct dentry *, umode_t,
- 		int (*f)(struct dentry *, umode_t, void *),
+-	if (!IS_ERR(f))
+-		f->f_mode |= FMODE_NOACCOUNT;
++	f->f_mode |= FMODE_NOACCOUNT;
+ 
+ 	return f;
+ }
 -- 
 2.34.1
 
