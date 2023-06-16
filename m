@@ -2,64 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E55732AD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 11:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF01732ACF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 11:01:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343880AbjFPJAl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jun 2023 05:00:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52100 "EHLO
+        id S245458AbjFPJAk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jun 2023 05:00:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343595AbjFPI7i (ORCPT
+        with ESMTP id S1343887AbjFPI7t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jun 2023 04:59:38 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA9210F6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 01:59:37 -0700 (PDT)
+        Fri, 16 Jun 2023 04:59:49 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC46130CB
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 01:59:38 -0700 (PDT)
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230616085935euoutp02611d50a5fbac8bb279bb3a9c470adc8d~pGAwm-1OY3175731757euoutp02a
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 08:59:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230616085935euoutp02611d50a5fbac8bb279bb3a9c470adc8d~pGAwm-1OY3175731757euoutp02a
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230616085937euoutp01f41d2d36c70cb02944dbe0463951b0e7~pGAyMo1Hd0287502875euoutp011
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 08:59:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230616085937euoutp01f41d2d36c70cb02944dbe0463951b0e7~pGAyMo1Hd0287502875euoutp011
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1686905975;
-        bh=f1HjrLD6njVVPjduaddJfi5+Ds9joRkOIy3esLq1bnY=;
+        s=mail20170921; t=1686905977;
+        bh=bxclUZv9jPrQ5jKcyYEbND/Krq83dxgsRJ8rzENWdE8=;
         h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=KoXZXarVSr/tD/cq7Yr116Qpv0UTVbKgzPKO47hFfs5Ou7v5oY2VR2r1o77XmxHl+
-         l996+etLl/hWWokJ0qKPX5rdIbEX+hVlBb1QRWaSSoX44e6vyYrFrj1ck2pNDbNbFZ
-         Beje4hzUUapjgY0PMNBPSVe7UTXhO14VGhqp6p/c=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230616085935eucas1p1171b73897e1cd825a5d5ab373ed4c9c9~pGAwaB_uZ1146911469eucas1p1m;
-        Fri, 16 Jun 2023 08:59:35 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 6C.45.42423.7742C846; Fri, 16
-        Jun 2023 09:59:35 +0100 (BST)
+        b=axotJ3q9jypT/P70UZod6ZYCnJKI3b7eew1unLG9EFfIT2BpiziHXtpd1MKziIcTh
+         0ZOEvtXkjJqaQ0SLaNxV4JfO/gAjFkkLGc2UZOtVVpCozDTBfduMV+K69FuFP9NwEh
+         HPlqMHci/IPTlw3sCMkhqL1Vqv4tVQk0hJd/JKeM=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230616085937eucas1p2049999b954d45f4ea4c8bb141d303b2b~pGAyHQPra1525715257eucas1p2Y;
+        Fri, 16 Jun 2023 08:59:37 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 1D.C4.11320.9742C846; Fri, 16
+        Jun 2023 09:59:37 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230616085935eucas1p2439375978f0ee33afd6310a9f8c5d07a~pGAwHTLq61755217552eucas1p2_;
-        Fri, 16 Jun 2023 08:59:35 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        20230616085937eucas1p2128b2ddb3c01c887a606f376de850767~pGAxw7LIy1755217552eucas1p2B;
+        Fri, 16 Jun 2023 08:59:37 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230616085935eusmtrp1c68c5c817c528c9d8849b36ad7e6f2d5~pGAwGsbAm0890108901eusmtrp1a;
-        Fri, 16 Jun 2023 08:59:35 +0000 (GMT)
-X-AuditID: cbfec7f2-a51ff7000002a5b7-4d-648c24771e35
+        20230616085937eusmtrp18f4a6e5e8bc6988652294b0a7480e8bc~pGAxwYBGj0876708767eusmtrp1R;
+        Fri, 16 Jun 2023 08:59:37 +0000 (GMT)
+X-AuditID: cbfec7f4-993ff70000022c38-51-648c2479a117
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id DC.9E.14344.7742C846; Fri, 16
-        Jun 2023 09:59:35 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id B9.2B.10549.9742C846; Fri, 16
+        Jun 2023 09:59:37 +0100 (BST)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230616085935eusmtip252b10b84713a96d7276b9661b401440f~pGAv_AsVC1986719867eusmtip25;
-        Fri, 16 Jun 2023 08:59:35 +0000 (GMT)
+        20230616085936eusmtip26d75365940dfa4d7f6bbbc981595f2bb~pGAxmWPUB1986419864eusmtip2-;
+        Fri, 16 Jun 2023 08:59:36 +0000 (GMT)
 Received: from localhost (106.210.248.231) by CAMSVWEXC02.scsc.local
         (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 16 Jun 2023 09:59:34 +0100
+        Fri, 16 Jun 2023 09:59:36 +0100
 From:   Joel Granados <j.granados@samsung.com>
 To:     <mcgrof@kernel.org>
 CC:     <linux-kselftest@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Joel Granados <j.granados@samsung.com>
-Subject: [PATCH v2 4/8] test_sysctl: Add an unregister sysctl test
-Date:   Fri, 16 Jun 2023 10:59:18 +0200
-Message-ID: <20230616085922.3066990-5-j.granados@samsung.com>
+Subject: [PATCH v2 5/8] test_sysctl: Add an option to prevent test skip
+Date:   Fri, 16 Jun 2023 10:59:19 +0200
+Message-ID: <20230616085922.3066990-6-j.granados@samsung.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230616085922.3066990-1-j.granados@samsung.com>
 MIME-Version: 1.0
@@ -68,44 +68,44 @@ Content-Type: text/plain
 X-Originating-IP: [106.210.248.231]
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
         CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsWy7djPc7rlKj0pBpuuqFjs2XuSxeLyrjls
-        FtPvvGezuDHhKaMDi8emVZ1sHp83yQUwRXHZpKTmZJalFunbJXBlHGpZwlhwWqRiVf9dlgbG
-        NwJdjJwcEgImEj2v7zKC2EICKxglph/N7mLkArK/MEosa7zEAuF8ZpTYvGMqO0zHz+6z7BAd
-        yxklFvdawRXd+nSCCcLZyijRvOEAE0gVm4COxPk3d5hBbBEBcYkTpzeD7WMWmMAoMesQB4gt
-        LOAkcejsMhYQm0VAVWL+ri9g9bwCthKP73ZDbZaXaLs+HayXU8BO4vGkBnaIGkGJkzOfsEDM
-        lJdo3jqbGcKWkDj44gWQzQHUqyzx6XkCxJhaiVNbboHdKSFwgEPiR9dNNoiEi8SPKXtYIWxh
-        iVfHt0DtlZE4PbmHBaJhMqPE/n8f2CGc1aBA+soEUWUt0XLlCVSHo8TNd6dZIDbzSdx4Kwhx
-        EJ/EpG3ToQ7ilehoE5rAqDILyQuzkLwwC8kLCxiZVzGKp5YW56anFhvmpZbrFSfmFpfmpesl
-        5+duYgSmjNP/jn/awTj31Ue9Q4xMHIyHGCU4mJVEeJed6EoR4k1JrKxKLcqPLyrNSS0+xCjN
-        waIkzqttezJZSCA9sSQ1OzW1ILUIJsvEwSnVwKTokj6h6puZyRH3aW/eZW452WR1+ov/1bDF
-        030OHp9QP2+l7q39P2bcPdZRvLjrzpkd/zz7+ics+KOsu3unZO6SsOzUWXtTf/2YOdX7XrmT
-        oGPcf9GmprLAXd3fZxYIFjZ+FmcT36t+eNXeFTq3vlznjzX2D4zJ739quWHz499nwmw1exdO
-        uPhMLEjwGeO9o7PdQiT0nwhfi9pz7Jx0o6hxbAq7xmnOSee2BCnPfW279uyMT/YKs6Rq+fOF
-        5S+rPRffG+2/7B5X2HL9TcqzLGdXJBnsvHXpzwGmwzXRrtmLGtqC+9c8l5d9smWhwha/H4um
-        TMo54K4oUDS5vpDraeKl4JkTPtYHhUvW8C1y3bVHiaU4I9FQi7moOBEAYYU3+ogDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsVy+t/xe7rlKj0pBve+CFns2XuSxeLyrjls
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGIsWRmVeSWpSXmKPExsWy7djP87qVKj0pBu+apCz27D3JYnF51xw2
+        i+l33rNZ3JjwlNGBxWPTqk42j8+b5AKYorhsUlJzMstSi/TtErgyVtztZin4J1ux7tJTtgbG
+        +xJdjJwcEgImEltbWtm6GLk4hARWMEp8WPmYHcL5wijxb9kLZgjnM6NE45edjDAt8+ZdY4FI
+        LGeUWLlrPhtc1f7++VD9WxklDk1sYwFpYRPQkTj/5g4ziC0iIC5x4vRmsFHMAhMYJWYd4gCx
+        hQXcJY7N3gJWzyKgKvHn5EYmEJtXwFbiwOHtzBCr5SXark8H6+UUsJN4PKmBHaJGUOLkzCcs
+        EDPlJZq3zmaGsCUkDr4A+YEDqFdZ4tPzBIgxtRKnttxiArlTQuAIh8TphnZ2iISLxPn7a1kh
+        bGGJV8e3QMVlJE5P7mGBaJgM9OW/D+wQzmpGiWWNX5kgqqwlWq48YYfY5iixaGclhMknceOt
+        IMQ9fBKTtk2HuodXoqNNaAKjyiwkH8xC8sEsJB8sYGRexSieWlqcm55abJSXWq5XnJhbXJqX
+        rpecn7uJEZg0Tv87/mUH4/JXH/UOMTJxMB5ilOBgVhLhXXaiK0WINyWxsiq1KD++qDQntfgQ
+        ozQHi5I4r7btyWQhgfTEktTs1NSC1CKYLBMHp1QDkw+Xakpq8qyKJe4TL+1b73f219KVHX8y
+        f+dW1TI92WgixuPWssXl7pULsl+nOMldVuBovbjyp+NkCzedpTKTKqKv3/giL3qqquSldfzD
+        L6t+zVzXaq/pOeeSnYjF1L/ch2bt+yjxcXHG3+Ktweqppwpt5gRfMn3Badwu1sB5dWmF74LA
+        SDfWQ/IxWzncmFRue5w30BC6G8AqlJa3ZfdHuaaiD/feNC+4csxgzg53pzq20l7+eQXuMuyP
+        rzP+fTDLbDUH375puw88u/qRI6RKnqXCoKCnbfe1OZ8PzJjEzvSgTite9Uv5nsTr0kohBzdd
+        tPtYJbPbXV/I8KTsrMiXDl26HQxPZM+kLL/cuzN7nRJLcUaioRZzUXEiAFNvRSSJAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsVy+t/xe7qVKj0pBpf2s1js2XuSxeLyrjls
         FtPvvGezuDHhKaMDi8emVZ1sHp83yQUwRenZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hka
-        m8daGZkq6dvZpKTmZJalFunbJehlHGpZwlhwWqRiVf9dlgbGNwJdjJwcEgImEj+7z7J3MXJx
-        CAksZZS48LCTCSIhI7Hxy1VWCFtY4s+1LjaIoo+MEu2ft7JCOFsZJf48mQhWxSagI3H+zR1m
-        EFtEQFzixOnNjCA2s8AERolZhzhAbGEBJ4lDZ5exgNgsAqoS83d9AavnFbCVeHy3mx1im7xE
-        2/XpYL2cAnYSjyc1gMWFgGoab/ezQ9QLSpyc+YQFYr68RPPW2cwQtoTEwRcvgGwOoDnKEp+e
-        J0CMrJX4/PcZ4wRGkVlIumch6Z6FpHsBI/MqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwIja
-        duznlh2MK1991DvEyMTBeIhRgoNZSYR32YmuFCHelMTKqtSi/Pii0pzU4kOMpkBvTmSWEk3O
-        B8Z0Xkm8oZmBqaGJmaWBqaWZsZI4r2dBR6KQQHpiSWp2ampBahFMHxMHp1QDk+Nt5qjca9Z8
-        Z+dZpWZ9ucwto9dkp+6jwGTmXdBh4M4ZOXWuxhy9mLPsCwPSDziuj5sh8SmXP/Vj8oRtDyT+
-        v7V7p29y51SZ17ZNB5dVTMi/pqzxVN4wt3bVu4mbztktNZ5/f/uOYhf5vjNlSbbLJSINq1Td
-        j8TOOvC08muqcJvewrNsrlaa6gfXH3y39uT6bG6DpTt6s6XCLVd2/qj4E18tqXdlzsa9TT/3
-        Hrw78fhBBxN7yUvbeW7GVct2HFXe4L7qWqb0osfbKu9NfDiPP87t8R/BXy2ZHZkyKu4/VZed
-        sHZSkvR7Jf1s1nbR9CWurVs1I/Vu7vlblhEbeiOBia2zYtfrLNtal00rJJ8mKLEUZyQaajEX
-        FScCAI0Gvi0xAwAA
-X-CMS-MailID: 20230616085935eucas1p2439375978f0ee33afd6310a9f8c5d07a
+        m8daGZkq6dvZpKTmZJalFunbJehlrLjbzVLwT7Zi3aWnbA2M9yW6GDk5JARMJObNu8bSxcjF
+        ISSwlFHi2Z9rTBAJGYmNX66yQtjCEn+udbFBFH1klNj+eBUzhLOVUeLNx9fsIFVsAjoS59/c
+        YQaxRQTEJU6c3swIYjMLTGCUmHWIA8QWFnCXODZ7CwuIzSKgKvHn5EawbbwCthIHDm9nhtgm
+        L9F2fTpYL6eAncTjSQ1g84WAahpv97ND1AtKnJz5hAVivrxE89bZzBC2hMTBFy+AbA6gOcoS
+        n54nQIyslfj89xnjBEaRWUi6ZyHpnoWkewEj8ypGkdTS4tz03GJDveLE3OLSvHS95PzcTYzA
+        iNp27OfmHYzzXn3UO8TIxMF4iFGCg1lJhHfZia4UId6UxMqq1KL8+KLSnNTiQ4ymQG9OZJYS
+        Tc4HxnReSbyhmYGpoYmZpYGppZmxkjivZ0FHopBAemJJanZqakFqEUwfEwenVAOT+qrqeTH1
+        uTLdzQ4rmwyyrOO2Pi4NO/bxfuX9yzK/e6au4+bYE8NfOWWnyIdbi4tkVFNVPKNdo67e5y36
+        s6hS+k0p55+77ofDrn2d8pexZe7NHPZlDL0Jl3Zz/jo75XNh5a3tcmITK7/kqnQs91L+M3OK
+        yrPabPkz56e4yp5cfoFT5Hrnqpb5sZyxU8oellofCgrc9svYk/ecMX96dGfgm3mpQa3iEfv6
+        X2kv84w9KTnJIYFP4UKOSYTa1C/r9xgvZ2WPU34/8cG1OZJFF/k3pq8NuOr5q+nJ9JPLDu+Y
+        vtIgJPzgihsCMrrXNrOxu8ls3vbo7snGa1P4V+96seD1mjXzV8scCD9yfmV3/iK3TCWW4oxE
+        Qy3mouJEAPuksBIxAwAA
+X-CMS-MailID: 20230616085937eucas1p2128b2ddb3c01c887a606f376de850767
 X-Msg-Generator: CA
-X-RootMTR: 20230616085935eucas1p2439375978f0ee33afd6310a9f8c5d07a
+X-RootMTR: 20230616085937eucas1p2128b2ddb3c01c887a606f376de850767
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230616085935eucas1p2439375978f0ee33afd6310a9f8c5d07a
+X-CMS-RootMailID: 20230616085937eucas1p2128b2ddb3c01c887a606f376de850767
 References: <20230616085922.3066990-1-j.granados@samsung.com>
-        <CGME20230616085935eucas1p2439375978f0ee33afd6310a9f8c5d07a@eucas1p2.samsung.com>
+        <CGME20230616085937eucas1p2128b2ddb3c01c887a606f376de850767@eucas1p2.samsung.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
@@ -117,103 +117,133 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a test that checks that the unregistered directory is removed from
-/proc/sys/debug
+Tests were being skipped because the target was not present. Add a flag
+that controls whether to skip a test based on the presence of the target.
+Actually skip tests in the test_case function with a "return" instead of
+a "continue".
 
 Signed-off-by: Joel Granados <j.granados@samsung.com>
 ---
- lib/test_sysctl.c                        | 30 ++++++++++++++++++++++++
- tools/testing/selftests/sysctl/sysctl.sh | 16 +++++++++++++
- 2 files changed, 46 insertions(+)
+ tools/testing/selftests/sysctl/sysctl.sh | 66 ++++++++++++++++--------
+ 1 file changed, 44 insertions(+), 22 deletions(-)
 
-diff --git a/lib/test_sysctl.c b/lib/test_sysctl.c
-index 0cf7c547d61a..555244687443 100644
---- a/lib/test_sysctl.c
-+++ b/lib/test_sysctl.c
-@@ -170,12 +170,42 @@ static int test_sysctl_setup_node_tests(void)
- 	return 0;
- }
- 
-+/* Used to test that unregister actually removes the directory */
-+static struct ctl_table test_table_unregister[] = {
-+	{
-+		.procname	= "unregister_error",
-+		.data		= &test_data.int_0001,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+	},
-+	{}
-+};
-+
-+static int test_sysctl_run_unregister_nested(void)
-+{
-+	struct ctl_table_header *unregister;
-+
-+	unregister = register_sysctl("debug/test_sysctl/unregister_error",
-+				   test_table_unregister);
-+	if (!unregister)
-+		return -ENOMEM;
-+
-+	unregister_sysctl_table(unregister);
-+	return 0;
-+}
-+
- static int __init test_sysctl_init(void)
- {
- 	int err;
- 
- 	err = test_sysctl_setup_node_tests();
-+	if (err)
-+		goto out;
- 
-+	err = test_sysctl_run_unregister_nested();
-+
-+out:
- 	return err;
- }
- module_init(test_sysctl_init);
 diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-index cb8f83dfe16b..a6d79d7a36e4 100755
+index a6d79d7a36e4..9c0e9711138b 100755
 --- a/tools/testing/selftests/sysctl/sysctl.sh
 +++ b/tools/testing/selftests/sysctl/sysctl.sh
-@@ -31,6 +31,7 @@ ALL_TESTS="$ALL_TESTS 0005:3:1:int_0003"
- ALL_TESTS="$ALL_TESTS 0006:50:1:bitmap_0001"
- ALL_TESTS="$ALL_TESTS 0007:1:1:boot_int"
- ALL_TESTS="$ALL_TESTS 0008:1:1:match_int"
-+ALL_TESTS="$ALL_TESTS 0009:1:1:unregister_error"
+@@ -14,24 +14,26 @@ TEST_FILE=$(mktemp)
+ 
+ # This represents
+ #
+-# TEST_ID:TEST_COUNT:ENABLED:TARGET
++# TEST_ID:TEST_COUNT:ENABLED:TARGET:SKIP_NO_TARGET
+ #
+ # TEST_ID: is the test id number
+ # TEST_COUNT: number of times we should run the test
+ # ENABLED: 1 if enabled, 0 otherwise
+ # TARGET: test target file required on the test_sysctl module
++# SKIP_NO_TARGET: 1 skip if TARGET not there
++#                 0 run eventhough TARGET not there
+ #
+ # Once these are enabled please leave them as-is. Write your own test,
+ # we have tons of space.
+-ALL_TESTS="0001:1:1:int_0001"
+-ALL_TESTS="$ALL_TESTS 0002:1:1:string_0001"
+-ALL_TESTS="$ALL_TESTS 0003:1:1:int_0002"
+-ALL_TESTS="$ALL_TESTS 0004:1:1:uint_0001"
+-ALL_TESTS="$ALL_TESTS 0005:3:1:int_0003"
+-ALL_TESTS="$ALL_TESTS 0006:50:1:bitmap_0001"
+-ALL_TESTS="$ALL_TESTS 0007:1:1:boot_int"
+-ALL_TESTS="$ALL_TESTS 0008:1:1:match_int"
+-ALL_TESTS="$ALL_TESTS 0009:1:1:unregister_error"
++ALL_TESTS="0001:1:1:int_0001:1"
++ALL_TESTS="$ALL_TESTS 0002:1:1:string_0001:1"
++ALL_TESTS="$ALL_TESTS 0003:1:1:int_0002:1"
++ALL_TESTS="$ALL_TESTS 0004:1:1:uint_0001:1"
++ALL_TESTS="$ALL_TESTS 0005:3:1:int_0003:1"
++ALL_TESTS="$ALL_TESTS 0006:50:1:bitmap_0001:1"
++ALL_TESTS="$ALL_TESTS 0007:1:1:boot_int:1"
++ALL_TESTS="$ALL_TESTS 0008:1:1:match_int:1"
++ALL_TESTS="$ALL_TESTS 0009:1:1:unregister_error:0"
  
  function allow_user_defaults()
  {
-@@ -797,6 +798,20 @@ sysctl_test_0008()
- 	return 0
+@@ -614,7 +616,6 @@ target_exists()
+ 	TEST_ID="$2"
+ 
+ 	if [ ! -f ${TARGET} ] ; then
+-		echo "Target for test $TEST_ID: $TARGET not exist, skipping test ..."
+ 		return 0
+ 	fi
+ 	return 1
+@@ -902,16 +903,36 @@ function get_test_target()
+ 	echo ${TEST_DATA} | awk -F":" '{print $4}'
  }
  
-+sysctl_test_0009()
++function get_test_skip_no_target()
 +{
-+	TARGET="${SYSCTL}/$(get_test_target 0009)"
-+	echo -n "Testing if $TARGET unregistered correctly ..."
-+	if [ -d $TARGET ]; then
-+		echo "TEST FAILED"
-+		rc=1
-+		test_rc
-+	fi
-+
-+	echo "ok"
-+	return 0
++	test_num $1
++	awk_field=$(remove_leading_zeros $1)
++	TEST_DATA=$(echo $ALL_TESTS | awk '{print $'$awk_field'}')
++	echo ${TEST_DATA} | awk -F":" '{print $5}'
 +}
 +
- list_tests()
++function skip_test()
++{
++	TEST_ID=$1
++	TEST_TARGET=$2
++	if target_exists $TEST_TARGET $TEST_ID; then
++		TEST_SKIP=$(get_test_skip_no_target $TEST_ID)
++		if [[ $TEST_SKIP -eq "1" ]]; then
++			echo "Target for test $TEST_ID: $TEST_TARGET not exist, skipping test ..."
++			return 0
++		fi
++	fi
++	return 1
++}
++
+ function run_all_tests()
  {
- 	echo "Test ID list:"
-@@ -813,6 +828,7 @@ list_tests()
- 	echo "0006 x $(get_test_count 0006) - tests proc_do_large_bitmap()"
- 	echo "0007 x $(get_test_count 0007) - tests setting sysctl from kernel boot param"
- 	echo "0008 x $(get_test_count 0008) - tests sysctl macro values match"
-+	echo "0009 x $(get_test_count 0009) - tests sysct unregister"
- }
+ 	for i in $ALL_TESTS ; do
+-		TEST_ID=${i%:*:*:*}
++		TEST_ID=${i%:*:*:*:*}
+ 		ENABLED=$(get_test_enabled $TEST_ID)
+ 		TEST_COUNT=$(get_test_count $TEST_ID)
+ 		TEST_TARGET=$(get_test_target $TEST_ID)
+-		if target_exists $TEST_TARGET $TEST_ID; then
+-			continue
+-		fi
++
+ 		if [[ $ENABLED -eq "1" ]]; then
+ 			test_case $TEST_ID $TEST_COUNT $TEST_TARGET
+ 		fi
+@@ -946,18 +967,19 @@ function watch_case()
  
- usage()
+ function test_case()
+ {
++	TEST_ID=$1
+ 	NUM_TESTS=$2
++	TARGET=$3
+ 
+-	i=0
+-
+-	if target_exists $3 $1; then
+-		continue
++	if skip_test $TEST_ID $TARGET; then
++		return
+ 	fi
+ 
++	i=0
+ 	while [ $i -lt $NUM_TESTS ]; do
+-		test_num $1
+-		watch_log $i ${TEST_NAME}_test_$1 noclear
+-		RUN_TEST=${TEST_NAME}_test_$1
++		test_num $TEST_ID
++		watch_log $i ${TEST_NAME}_test_${TEST_ID} noclear
++		RUN_TEST=${TEST_NAME}_test_${TEST_ID}
+ 		$RUN_TEST
+ 		let i=$i+1
+ 	done
 -- 
 2.30.2
 
