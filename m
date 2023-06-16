@@ -2,125 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 836D173251A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 04:16:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4073732523
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 04:19:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240318AbjFPCQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Jun 2023 22:16:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42072 "EHLO
+        id S232791AbjFPCTY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Jun 2023 22:19:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240288AbjFPCQb (ORCPT
+        with ESMTP id S240331AbjFPCTW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Jun 2023 22:16:31 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE66296C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 19:16:28 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id af79cd13be357-762204d0459so25384285a.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 19:16:28 -0700 (PDT)
+        Thu, 15 Jun 2023 22:19:22 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 879B126B8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 19:19:21 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id 98e67ed59e1d1-256712d65ceso241203a91.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jun 2023 19:19:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686881788; x=1689473788;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1686881961; x=1689473961;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZw3pdY0opDLGDsTpwuj97Ucsrogt/lYMMv4qSi3gyk=;
-        b=LcdHAK6OBNquNv/JQRwCg+VrLHLuSftgvh8ISu6SSLBLGyEbonYMW/tJNgmjliiwYh
-         V1iz7wFjZASvHjLNdI2LU+GoXeF0AYJC/UHJWypAZ9Eb3/eJCRRb/KxYMueNf7QwxkHS
-         JDU4DpV/qAWKCx3S9eC27KlerVYlt5WfGVdZl+4poxBOk5u3etIbg+gknXL7cS+f1ijD
-         jd/p9VaUMj2EAvkPLjZRCTC5B8GevcKzvOh+Nvf1oJhA7wC3ZvTvod7+6ig5OC3ax+1U
-         snDBEwed5e1tYtKODV3WqGTsOVCBzO50G2lGszNDENQ975Ox5KWEHsmAnRmFUWkIIAps
-         OhwQ==
+        bh=HQDcn9tZwM6dJWJSarO3qZdUTtjx5HJEKAidy6nCHT0=;
+        b=j2Bjm6kf5Eqktbi2p/5amdCmf/zA3T1CQ2B0xd9dhgAyt49o66qLgnbEGlDoFlO5tV
+         LevH1j2L06gW9RJZr4cm7eYHevPQwswKT0pOKZ/4hNcw5KprhsnRZ2MW2RMbUY+UWHAK
+         eixBMvC3sKNypLBkgHhbcGNAta0gjGRAyx+POa2JxyUOJ4MURgJ+CTJN9fEsviIxXdVv
+         K/1e8id1/NlEyTDG7SOVa/P6q4PrT4EWT5RBqkfChkSQ5IdfzHkpZpdvAabkLafgP0Vm
+         E+fU1Y6Iy1Sg89e5edKssqBl7bR8R5/j/HQApYctj2KE5Tvssms1+IrmAjV1Q9kKPOD+
+         9zKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686881788; x=1689473788;
+        d=1e100.net; s=20221208; t=1686881961; x=1689473961;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IZw3pdY0opDLGDsTpwuj97Ucsrogt/lYMMv4qSi3gyk=;
-        b=eCayBxnx+N2Hf60edaqVqrqvpxk2FhnNmghut/w3AeYw+5oya4UpjkxabQj2lalj6p
-         eM7Fdbtmck2i8GBw/L8uMy3E6rfNaKhcdDGvkn9389eQNmY9T5cMYzo2AmcLOvmDttXw
-         M0u+0wEm2QyyB84q1Wa+JE8ykw4T7+Md+XlCoDvJpnpZVIw/bX8aRJFsrq2qjgWpL+eJ
-         GZd88oGq8LmP1gBVo3onx6LZR4vkRCdbaPHU95gBsga8ZkL7LOzKxXY40gpBe4C2Htkb
-         rq6CI704XfVnDfYJoGG4Vy/yWjFs1C1BF4KvoztdAbe9MILa262nUgX1t5DgulzhCXd6
-         ZX9w==
-X-Gm-Message-State: AC+VfDwVeujAMEyof+UVqeVyBru0PumGOmhaNB+0XGTQ/ZytWlKp56dr
-        MDh6Fdgsyp3wgA+8EwTv/I+hjQ==
-X-Google-Smtp-Source: ACHHUZ4JZ83vV8quUTC03gNsp2qjvYIN2N3WDX9eoxTSBd2ZhQw6YgM1ThlfXTDMar3ksVs40dvuSQ==
-X-Received: by 2002:a05:620a:2ee:b0:75e:bb66:5155 with SMTP id a14-20020a05620a02ee00b0075ebb665155mr400690qko.36.1686881787753;
-        Thu, 15 Jun 2023 19:16:27 -0700 (PDT)
+        bh=HQDcn9tZwM6dJWJSarO3qZdUTtjx5HJEKAidy6nCHT0=;
+        b=an6d7jMMkBplWMBI9sEpMDsRw9BNZi/LfCBQ54KWShi4HyzrG59K8u4oXeXqZ4n1oN
+         jzFMgHfj8JDpkuW7FM0XQhDRHLD2FlAMBa7CBCaUvngybC/Q++X5yyxve1Go3ZXNUeT/
+         S5cg3Et47BrKJzedq0/Qw+eeQ7AmWw8m0IdvKQXANrrz1TNQ/oYOGFZizgaFzouseLMK
+         8aRcFve6QRj8FtgnB5a1ZSg/piF2LvvFGxmTSB6ZEg5GUS8TX2/FOcSpFWx6Ni0RYFsA
+         0C1QPN8/offAsjBsn+CgSXFTGHcjK7MzHWlWa3PLMdN4H8OddXBz9+cKuAW+fTuseyzV
+         ascw==
+X-Gm-Message-State: AC+VfDwONbfnJUkwPug8jN3BFN6S9CHSQzx6d6bKwGGJ8Q/LFDPwEiPv
+        jyxpJxWqSv83V/k6nEl1+ccv4A==
+X-Google-Smtp-Source: ACHHUZ5gdqKB8aPPzmlVp9TXL0vRSZ6J5bLE9MDUGnPpw7n/6lr01gdGxkb417+pntnNBOxPU177+A==
+X-Received: by 2002:a17:90a:3903:b0:246:634d:a89c with SMTP id y3-20020a17090a390300b00246634da89cmr445509pjb.41.1686881960993;
+        Thu, 15 Jun 2023 19:19:20 -0700 (PDT)
 Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
-        by smtp.gmail.com with ESMTPSA id s9-20020a637709000000b005533dcb7586sm372614pgc.20.2023.06.15.19.16.26
+        by smtp.gmail.com with ESMTPSA id w5-20020a170902d70500b001ac94b33ab1sm5965687ply.304.2023.06.15.19.19.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 19:16:27 -0700 (PDT)
+        Thu, 15 Jun 2023 19:19:20 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
         (envelope-from <david@fromorbit.com>)
-        id 1q9z0h-00CIiC-1x;
-        Fri, 16 Jun 2023 12:16:23 +1000
-Date:   Fri, 16 Jun 2023 12:16:23 +1000
+        id 1q9z3W-00CIkU-0c;
+        Fri, 16 Jun 2023 12:19:18 +1000
+Date:   Fri, 16 Jun 2023 12:19:18 +1000
 From:   Dave Chinner <david@fromorbit.com>
 To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     mcgrof@kernel.org, jack@suse.cz, hch@infradead.org,
-        ruansy.fnst@fujitsu.com, Christoph Hellwig <hch@lst.de>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fs: distinguish between user initiated freeze and
- kernel initiated freeze
-Message-ID: <ZIvF9/UjxBuBGF9Z@dread.disaster.area>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        mcgrof@kernel.org, jack@suse.cz, hch@infradead.org,
+        ruansy.fnst@fujitsu.com
+Subject: Re: [PATCH 2/3] fs: wait for partially frozen filesystems
+Message-ID: <ZIvGpuS5is6Sc6ln@dread.disaster.area>
 References: <168688010689.860947.1788875898367401950.stgit@frogsfrogsfrogs>
- <168688011268.860947.290191757543068705.stgit@frogsfrogsfrogs>
+ <168688011838.860947.2073512011056060112.stgit@frogsfrogsfrogs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <168688011268.860947.290191757543068705.stgit@frogsfrogsfrogs>
+In-Reply-To: <168688011838.860947.2073512011056060112.stgit@frogsfrogsfrogs>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 06:48:32PM -0700, Darrick J. Wong wrote:
+On Thu, Jun 15, 2023 at 06:48:38PM -0700, Darrick J. Wong wrote:
 > From: Darrick J. Wong <djwong@kernel.org>
 > 
-> Userspace can freeze a filesystem using the FIFREEZE ioctl or by
-> suspending the block device; this state persists until userspace thaws
-> the filesystem with the FITHAW ioctl or resuming the block device.
-> Since commit 18e9e5104fcd ("Introduce freeze_super and thaw_super for
-> the fsfreeze ioctl") we only allow the first freeze command to succeed.
+> Jan Kara suggested that when one thread is in the middle of freezing a
+> filesystem, another thread trying to freeze the same fs but with a
+> different freeze_holder should wait until the freezer reaches either end
+> state (UNFROZEN or COMPLETE) instead of returning EBUSY immediately.
 > 
-> The kernel may decide that it is necessary to freeze a filesystem for
-> its own internal purposes, such as suspends in progress, filesystem fsck
-> activities, or quiescing a device prior to removal.  Userspace thaw
-> commands must never break a kernel freeze, and kernel thaw commands
-> shouldn't undo userspace's freeze command.
+> Neither caller can do anything sensible with this race other than retry
+> but they cannot really distinguish EBUSY as in "someone other holder of
+> the same type has the sb already frozen" from "freezing raced with
+> holder of a different type".
 > 
-> Introduce a couple of freeze holder flags and wire it into the
-> sb_writers state.  One kernel and one userspace freeze are allowed to
-> coexist at the same time; the filesystem will not thaw until both are
-> lifted.
+> Plumb in the extra coded needed to wait for the fs freezer to reach an
+> end state and try the freeze again.
 > 
-> I wonder if the f2fs/gfs2 code should be using a kernel freeze here, but
-> for now we'll use FREEZE_HOLDER_USERSPACE to preserve existing
-> behaviors.
-> 
-> Cc: mcgrof@kernel.org
-> Cc: jack@suse.cz
-> Cc: hch@infradead.org
-> Cc: ruansy.fnst@fujitsu.com
 > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > ---
->  Documentation/filesystems/vfs.rst |    6 ++-
->  block/bdev.c                      |    8 ++--
->  fs/f2fs/gc.c                      |    4 +-
->  fs/gfs2/glops.c                   |    2 -
->  fs/gfs2/super.c                   |    6 +--
->  fs/gfs2/sys.c                     |    4 +-
->  fs/gfs2/util.c                    |    2 -
->  fs/ioctl.c                        |    8 ++--
->  fs/super.c                        |   79 +++++++++++++++++++++++++++++++++----
->  include/linux/fs.h                |   15 +++++--
->  10 files changed, 101 insertions(+), 33 deletions(-)
+>  fs/super.c |   34 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 32 insertions(+), 2 deletions(-)
 
-Looks good to me.
+Simple enough. I was going to comment about replacing wait_unfrozen
+with a variant on wait_for_partially_frozen(), but then I looked at
+the next patch....
 
 Reviewed-by: Dave Chinner <dchinner@redhat.com>
 -- 
