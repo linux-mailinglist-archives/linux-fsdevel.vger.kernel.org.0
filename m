@@ -2,107 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8363732AC1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 10:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BFAA732ABD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 10:59:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbjFPI7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jun 2023 04:59:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
+        id S234125AbjFPI7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jun 2023 04:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244797AbjFPI7c (ORCPT
+        with ESMTP id S245031AbjFPI7c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 16 Jun 2023 04:59:32 -0400
 Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26E5E2D7B
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26F462D7E
         for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 01:59:30 -0700 (PDT)
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230616085926euoutp012f5e67d6b02a4185080175f2b0730e8b~pGAn_Lm5A0259702597euoutp01B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 08:59:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230616085926euoutp012f5e67d6b02a4185080175f2b0730e8b~pGAn_Lm5A0259702597euoutp01B
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230616085928euoutp01187c3ecfe6264a4404ee5f3f6cc43430~pGApfJsmi0259202592euoutp01X
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 08:59:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230616085928euoutp01187c3ecfe6264a4404ee5f3f6cc43430~pGApfJsmi0259202592euoutp01X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1686905966;
-        bh=bKHjXNy8SicMLK3u6h0oFziVZ8C7v67WiPAhXVlVsb8=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=IMYAGleM1fK+arwXQ5/9ZUWDHZ/WufnR846k9wgsV7wjon4g2KUnnPkq0JLQXFokz
-         7TRzA0xgwH82k5J8tyz8bfifcwcZIDIzQKyuTUdtKc6yxapinoKKqrr8nE3+zjLxsj
-         zHJoOin94goV8ZRpHWjAO3+8zPjxqb3hFZQx551Q=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        s=mail20170921; t=1686905968;
+        bh=dg1KPdqa1g30CQqgCK1VP5CwiQO47gFwHbWyH2hvLF4=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=VwbANNbpWrZru++AVnexz+2JjOlPP/TkCVDCFtPigSwiRq2kkRx0S8rDHzXNqhzeB
+         y/OohgInSBnExpD7FDI5L6QXGoDAM+SbK64bDy82WpcSRdRVupbSngmhqLDegM25Ah
+         UwcC8qAfCBW7bkjiYkJCbuhkUCUJa8xUxvekiDV0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230616085926eucas1p102ba06ecb1d8313a8e2667ea9be7df12~pGAn3c-4W2508725087eucas1p1U;
-        Fri, 16 Jun 2023 08:59:26 +0000 (GMT)
+        20230616085928eucas1p1959b798afec98ae3b8f1a1d3426307d3~pGApXwMii0928509285eucas1p1l;
+        Fri, 16 Jun 2023 08:59:28 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 17.A7.37758.E642C846; Fri, 16
-        Jun 2023 09:59:26 +0100 (BST)
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 77.45.42423.0742C846; Fri, 16
+        Jun 2023 09:59:28 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230616085926eucas1p10709e25a4c0246ed2b22da602f919b4e~pGAnme8-10928509285eucas1p1i;
-        Fri, 16 Jun 2023 08:59:26 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230616085927eucas1p265c6e3512e3102a7df507da9d3f1f094~pGApH_LI40622606226eucas1p2y;
+        Fri, 16 Jun 2023 08:59:27 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230616085926eusmtrp193c6d0f2ca73e2460ebada6f7af3b808~pGAnlulpZ0890108901eusmtrp1D;
-        Fri, 16 Jun 2023 08:59:26 +0000 (GMT)
-X-AuditID: cbfec7f5-815ff7000002937e-42-648c246ec29d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id B3.2B.10549.E642C846; Fri, 16
-        Jun 2023 09:59:26 +0100 (BST)
+        20230616085927eusmtrp1dfc1ac545dffb05a28527161c9716660~pGApHafTJ0876708767eusmtrp16;
+        Fri, 16 Jun 2023 08:59:27 +0000 (GMT)
+X-AuditID: cbfec7f2-a51ff7000002a5b7-35-648c2470551e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 74.2B.10549.F642C846; Fri, 16
+        Jun 2023 09:59:27 +0100 (BST)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230616085926eusmtip2c3aadf6d77f65254c937ddad6a3e3b07~pGAnZVpuE1470414704eusmtip2j;
-        Fri, 16 Jun 2023 08:59:26 +0000 (GMT)
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230616085927eusmtip1b502a18d8eb5188582174eccc78b4e8e~pGAo-QwfQ0863908639eusmtip1t;
+        Fri, 16 Jun 2023 08:59:27 +0000 (GMT)
 Received: from localhost (106.210.248.231) by CAMSVWEXC02.scsc.local
         (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 16 Jun 2023 09:59:25 +0100
+        Fri, 16 Jun 2023 09:59:27 +0100
 From:   Joel Granados <j.granados@samsung.com>
 To:     <mcgrof@kernel.org>
 CC:     <linux-kselftest@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Joel Granados <j.granados@samsung.com>
-Subject: [PATCH v2 0/8] Remove child from struct ctl_table
-Date:   Fri, 16 Jun 2023 10:59:14 +0200
-Message-ID: <20230616085922.3066990-1-j.granados@samsung.com>
+Subject: [PATCH v2 1/8] parport: plug a sysctl register leak
+Date:   Fri, 16 Jun 2023 10:59:15 +0200
+Message-ID: <20230616085922.3066990-2-j.granados@samsung.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230616085922.3066990-1-j.granados@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [106.210.248.231]
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
         CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsWy7djP87p5Kj0pBnemylrs2XuSxeLyrjls
-        FtPvvGezuDHhKaMDi8emVZ1sHp83yQUwRXHZpKTmZJalFunbJXBlPGl9w15wXKji5qarbA2M
-        O/i6GDk5JARMJC6dXsPYxcjFISSwglFi+YpdzBDOF0aJNwv72SGcz4wSk2e2McG0HJ7WDVW1
-        nFGi688NhKrLi59BZbYySpy+tZUNpIVNQEfi/Js7zCC2iIC4xInTmxlBbGaBCYwSsw5xgNjC
-        AlYSt//eAYuzCKhKHHwynxXE5hWwlbi0dQ0LxGp5ibbr0xkh4oISJ2c+YYGYIy/RvHU20HwO
-        oBpliU/PEyDKayVObbnFBHKPhMBSDomWzXNZIRIuEi0fT0G9Iyzx6vgWdghbRuL05B4WiIbJ
-        jBL7/31gh3BWM0osa/wK1WEt0XLlCTvINmYBTYn1u/Qhwo4S79qOsUAcwSdx460gxG18EpO2
-        TYe6jVeio00IolpNYvW9NywTGJVnIflmFpJvZiHMX8DIvIpRPLW0ODc9tdg4L7Vcrzgxt7g0
-        L10vOT93EyMwZZz+d/zrDsYVrz7qHWJk4mA8xCjBwawkwrvsRFeKEG9KYmVValF+fFFpTmrx
-        IUZpDhYlcV5t25PJQgLpiSWp2ampBalFMFkmDk6pBqbWWf8dYpJD921lj5XNbv58uVphkVXp
-        WZaaw084PeoK//+waTyjpc8/y13+b7LbvA/GPpmFEjo/D57W47Yr14pd0h3UctShYP72j19X
-        RPxmOPXl/gTru+cOp5f43RCoFOGe2Lnw2O9EtXPmbDFLAmeb6r7e+2anSPE6Lhk1WZXVl9Y8
-        rc950Nh/QUr2aFDJO29LJfWsCxsrll/993nq2xidXWlXDnu/e6i053i8xuM4pwnvOV+FBu9i
-        YGLMSROuS7R5YMktNklB4/TS00bXHkzbUyodlLZ4y7qfoTksbuVibxk2TW3nC6ztvbNj7dwA
-        3Tj1BVk6C/Ycfyx/ZFlMysG7LzXmnI17e5X5/J3j2xmVWIozEg21mIuKEwELGxReiAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42I5/e/4Pd08lZ4Ug+XT2C327D3JYnF51xw2
-        i+l33rNZ3JjwlNGBxWPTqk42j8+b5AKYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyN
-        zWOtjEyV9O1sUlJzMstSi/TtEvQynrS+YS84LlRxc9NVtgbGHXxdjJwcEgImEoendTOD2EIC
-        SxklfjxLhYjLSGz8cpUVwhaW+HOti62LkQuo5iOjxIq9e1kgnK2MEh2nTzCCVLEJ6Eicf3MH
-        bJKIgLjEidObweLMAhMYJWYd4gCxhQWsJG7/vQMWZxFQlTj4ZD7YBl4BW4lLW9ewQGyTl2i7
-        Ph2ohgOoV1Ni/S59iBJBiZMzn7BAjJSXaN46mxmkREJAWeLT8wSIzlqJz3+fMU5gFJqF0DwL
-        SfMsJM0LGJlXMYqklhbnpucWG+oVJ+YWl+al6yXn525iBMbGtmM/N+9gnPfqo94hRiYOxkOM
-        EhzMSiK8y050pQjxpiRWVqUW5ccXleakFh9iNAV6ZiKzlGhyPjA680riDc0MTA1NzCwNTC3N
-        jJXEeT0LOhKFBNITS1KzU1MLUotg+pg4OKUamJL07qceFjZXdQ06yZgTZd4x6f+RIyGFfn9W
-        yfbMq9ze3/MkiOOs/PTE0DWnr8Zo9T1eaui/4JTpY8byWyZrrugqcHP7O61+5f1lj3jGNHlB
-        W2Yd7cdSZwMCjwlO5fYubW6bKNUWVtq+JkDe519YfIDXzhqvB7VeBeWuRbdddmhenNzwZFlF
-        WjZXVaGr/Ofs/qxFsyokltTITrqUPc3mPaPwNbe/5Tm3IvR9QuO1mnXf37H2uvr4vul6bW6J
-        X6x8Gus17liJFO4oEbx35eGc3XM2Z9z+UBugJbvnqsEWsZzzv5sW3Xys3snl0HspYC+Hvy5H
-        yozAbNGsST/z0o2mqizf+rA7xV2CUWKXnaUSS3FGoqEWc1FxIgDeI/R4FgMAAA==
-X-CMS-MailID: 20230616085926eucas1p10709e25a4c0246ed2b22da602f919b4e
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGIsWRmVeSWpSXmKPExsWy7djP87oFKj0pBsdvsFjs2XuSxeLyrjls
+        FtPvvGezuDHhKaMDi8emVZ1sHp83yQUwRXHZpKTmZJalFunbJXBl/N2/l7VghWjFlF1fmBsY
+        Lwt2MXJySAiYSFx6tIi5i5GLQ0hgBaPEoi33mSCcL4wSH3dvZ4RwPjNK3Dm1gx2m5eqrJewQ
+        ieWMEoe7rzKDJMCqHh9OhUhsZZSYf2sXE0iCTUBH4vybO2BFIgLiEidOb2YEsZkFJjBKzDrE
+        AWILC9hIbF53mQ3EZhFQlVg2cQFYL6+ArcTLvQvYIDbLS7Rdnw7WyylgJ/F4UgM7RI2gxMmZ
+        T1ggZspLNG+dzQxhS0gcfPECyOYA6lWW+PQ8AWJMrcSpLbfA3pQQOMIh0TvvL9RnLhL7/jxl
+        hrCFJV4d3wIVl5E4PbmHBaJhMqPE/n8f2CGc1YwSyxq/MkFUWUu0XHkC1eEoceHXeXaIzXwS
+        N94KQhzEJzFp23Sog3glOtqEJjCqzELywiwkL8xC8sICRuZVjOKppcW56anFhnmp5XrFibnF
+        pXnpesn5uZsYgUnj9L/jn3Ywzn31Ue8QIxMH4yFGCQ5mJRHeZSe6UoR4UxIrq1KL8uOLSnNS
+        iw8xSnOwKInzatueTBYSSE8sSc1OTS1ILYLJMnFwSjUwNS1cZxKe7hM+LYJl++IjBp9/WYW0
+        RkmtO3EmYVFgjcolZV9Xfg6TYpaKPQt/tHlOP/sqJkj7pWjF54xml1WZchVf+vP35H7yY3Y1
+        YBWd59nj4j2Lzbj2sqSMm7drickkkTqJE3u1A/x9n9h/ruMr2bVcTqi7zbLqQxWvoyvjXien
+        VNVTp8Nb09JTbbb7CX9glIqe/nzmh0fmZvvnMdr5SsozfN4+9wwnc8T6tb9vf0pqORjq9t2v
+        yq9bcUV8meDtZTvamFqPnNy/rlgkZ/Fz7QD9RcbMer2MUSJZHzWZT6pe9Dlo+/Rz56t8geez
+        VcMT93lP+PbtvXyCsLlgig67z58DSkKGa6bw2adUKrEUZyQaajEXFScCAKmkzECJAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsVy+t/xu7r5Kj0pBluvG1rs2XuSxeLyrjls
+        FtPvvGezuDHhKaMDi8emVZ1sHp83yQUwRenZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hka
+        m8daGZkq6dvZpKTmZJalFunbJehl/N2/l7VghWjFlF1fmBsYLwt2MXJySAiYSFx9tYS9i5GL
+        Q0hgKaPEvgdTGCESMhIbv1xlhbCFJf5c62KDKPrIKHF913lWCGcro8TL+63MIFVsAjoS59/c
+        AbNFBMQlTpzeDDaJWWACo8SsQxwgtrCAjcTmdZfZQGwWAVWJZRMXMIHYvAK2Ei/3LmCD2CYv
+        0XZ9Olgvp4CdxONJDewgthBQTePtfnaIekGJkzOfsEDMl5do3jqbGcKWkDj44gWQzQE0R1ni
+        0/MEiJG1Ep//PmOcwCgyC0n3LCTds5B0L2BkXsUoklpanJueW2yoV5yYW1yal66XnJ+7iREY
+        UduO/dy8g3Heq496hxiZOBgPMUpwMCuJ8C470ZUixJuSWFmVWpQfX1Sak1p8iNEU6M2JzFKi
+        yfnAmM4riTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJzU5NLUgtgulj4uCUamDyO/0pWCB+
+        19eXcw/pPo/P4LV8l+xRlLLskeZa441iWjPdS7+s2bg0qu2oe1HVjkO2autlm1gSRF52h57g
+        emKWrHzk8LMlC465nTW0qmv8Kly68Unz1s5KnpLWvdYxRSxNl478mnPIscGk/qpU5vp8jiD+
+        1wcP/vu8xWNFl99CcdHj/rqb9BdVbzKQ4Gd1ln0elP9aftE5jVt5CbXne5QvCthLh5lds++W
+        7uru/WD3cqe2+a3JvIeC2ae/2uFns3INZ/uz53+CC9l3TlKanLh/oz57afua5WkrwjdbOiQz
+        TQmcWvh7WmDPardAjvobAvEppx8/DetnyRP5voj3rlb3ovXc0z29NTintJZUv1BiKc5INNRi
+        LipOBADLOq60MQMAAA==
+X-CMS-MailID: 20230616085927eucas1p265c6e3512e3102a7df507da9d3f1f094
 X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230616085926eucas1p10709e25a4c0246ed2b22da602f919b4e
+X-RootMTR: 20230616085927eucas1p265c6e3512e3102a7df507da9d3f1f094
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230616085926eucas1p10709e25a4c0246ed2b22da602f919b4e
-References: <CGME20230616085926eucas1p10709e25a4c0246ed2b22da602f919b4e@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20230616085927eucas1p265c6e3512e3102a7df507da9d3f1f094
+References: <20230616085922.3066990-1-j.granados@samsung.com>
+        <CGME20230616085927eucas1p265c6e3512e3102a7df507da9d3f1f094@eucas1p2.samsung.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
@@ -114,57 +117,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is part of the effort to remove the empty element of the ctl_table
-structures (used to calculate size) and replace it with an ARRAY_SIZE call. By
-replacing the child element in struct ctl_table with a flags element we make
-sure that there are no forward recursions on child nodes and therefore set
-ourselves up for just using an ARRAY_SIZE. We also added some self tests to
-make sure that we do not break anything.
+parport registers two sysctl directories in the parport_proc_register
+function but only one of them was getting unregistered in
+parport_proc_unregister. Keep track of both sysctl table headers and
+handle them together when (un)registering.
 
-Patchset is separated in 4: parport fixes, selftests fixes, selftests additions and
-replacement of child element. Tested everything with sysctl self tests and everything
-seems "ok".
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+---
+ drivers/parport/procfs.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-1. parport fixes: This is related to my previous series and it plugs a sysct
-   table leak in the parport driver. @mcgrof: I'm just leaving this here so we
-   don't have to retest the parport stuff
-
-2. Selftests fixes: Remove the prefixed zeros when passing a awk field to the
-   awk print command because it was causing $0009 to be interpreted as $0.
-   Replaced continue with return in sysctl.sh(test_case) so the test actually
-   gets skipped. The skip decision is now in sysctl.sh(skip_test).
-
-3. Selftest additions: New test to confirm that unregister actually removes
-   targets. New test to confirm that permanently empty targets are indeed
-   created and that no other targets can be created "on top".
-
-4. Replaced the child pointer in struct ctl_table with an enum which is used to
-   differentiate between permanently empty targets and non-empty ones.
-
-V2: Replaced the u8 flag with an enumeration.
-
-Comments/feedback greatly appreciated
-
-Best
-Joel
-
-Joel Granados (8):
-  parport: plug a sysctl register leak
-  test_sysctl: Fix test metadata getters
-  test_sysctl: Group node sysctl test under one func
-  test_sysctl: Add an unregister sysctl test
-  test_sysctl: Add an option to prevent test skip
-  test_sysclt: Test for registering a mount point
-  sysctl: Remove debugging dump_stack
-  sysctl: replace child with an enumeration
-
- drivers/parport/procfs.c                 |  23 ++---
- fs/proc/proc_sysctl.c                    |  82 ++++------------
- include/linux/sysctl.h                   |  14 ++-
- lib/test_sysctl.c                        |  91 ++++++++++++++++--
- tools/testing/selftests/sysctl/sysctl.sh | 115 +++++++++++++++++------
- 5 files changed, 214 insertions(+), 111 deletions(-)
-
+diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
+index cbb1fb5127ce..0f2d2e1ee28e 100644
+--- a/drivers/parport/procfs.c
++++ b/drivers/parport/procfs.c
+@@ -257,14 +257,16 @@ PARPORT_MAX_SPINTIME_VALUE;
+ 
+ 
+ struct parport_sysctl_table {
+-	struct ctl_table_header *sysctl_header;
++	struct ctl_table_header *port_header;
++	struct ctl_table_header *devices_header;
+ 	struct ctl_table vars[12];
+ 	struct ctl_table device_dir[2];
+ };
+ 
+ static const struct parport_sysctl_table parport_sysctl_template = {
+-	.sysctl_header = NULL,
+-        {
++	.port_header = NULL,
++	.devices_header = NULL,
++	{
+ 		{
+ 			.procname	= "spintime",
+ 			.data		= NULL,
+@@ -429,7 +431,6 @@ parport_default_sysctl_table = {
+ int parport_proc_register(struct parport *port)
+ {
+ 	struct parport_sysctl_table *t;
+-	struct ctl_table_header *devices_h;
+ 	char *tmp_dir_path;
+ 	size_t tmp_path_len, port_name_len;
+ 	int bytes_written, i, err = 0;
+@@ -464,8 +465,8 @@ int parport_proc_register(struct parport *port)
+ 		err = -ENOENT;
+ 		goto exit_free_tmp_dir_path;
+ 	}
+-	devices_h = register_sysctl(tmp_dir_path, t->device_dir);
+-	if (devices_h == NULL) {
++	t->devices_header = register_sysctl(tmp_dir_path, t->device_dir);
++	if (t->devices_header == NULL) {
+ 		err = -ENOENT;
+ 		goto  exit_free_tmp_dir_path;
+ 	}
+@@ -478,8 +479,8 @@ int parport_proc_register(struct parport *port)
+ 		goto unregister_devices_h;
+ 	}
+ 
+-	t->sysctl_header = register_sysctl(tmp_dir_path, t->vars);
+-	if (t->sysctl_header == NULL) {
++	t->port_header = register_sysctl(tmp_dir_path, t->vars);
++	if (t->port_header == NULL) {
+ 		err = -ENOENT;
+ 		goto unregister_devices_h;
+ 	}
+@@ -490,7 +491,7 @@ int parport_proc_register(struct parport *port)
+ 	return 0;
+ 
+ unregister_devices_h:
+-	unregister_sysctl_table(devices_h);
++	unregister_sysctl_table(t->devices_header);
+ 
+ exit_free_tmp_dir_path:
+ 	kfree(tmp_dir_path);
+@@ -505,7 +506,8 @@ int parport_proc_unregister(struct parport *port)
+ 	if (port->sysctl_table) {
+ 		struct parport_sysctl_table *t = port->sysctl_table;
+ 		port->sysctl_table = NULL;
+-		unregister_sysctl_table(t->sysctl_header);
++		unregister_sysctl_table(t->devices_header);
++		unregister_sysctl_table(t->port_header);
+ 		kfree(t);
+ 	}
+ 	return 0;
 -- 
 2.30.2
 
