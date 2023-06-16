@@ -2,87 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC78A733563
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 18:07:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54E0873356B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 18:08:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231208AbjFPQHK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jun 2023 12:07:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36326 "EHLO
+        id S234473AbjFPQI2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jun 2023 12:08:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjFPQHI (ORCPT
+        with ESMTP id S229540AbjFPQI1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jun 2023 12:07:08 -0400
-Received: from out-31.mta0.migadu.com (out-31.mta0.migadu.com [IPv6:2001:41d0:1004:224b::1f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C07C62D72
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 09:07:04 -0700 (PDT)
-Date:   Fri, 16 Jun 2023 12:06:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1686931622;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1USo/ooQu2H7EgxmruGrjOf5Ce4S9FGHhwjIFSZcL8g=;
-        b=AvYIpx2IZmfDjuE83FMHHGRVn5CHoIbLozXAhwVh2bD5fACJ29EVxnu2MCMm9d09OEipb0
-        MgBFJDyj/QpsA3DesKX/8Wq3MHqu3wV57uW4yJuqfX7cUCLXM4Ps7pDBGLX2LGOBc8No7b
-        9+LlES+CUK2YNrstj0ZkECR9Qpqy0vY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Hannes Reinecke <hare@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH 0/7] RFC: high-order folio support for I/O
-Message-ID: <ZIyIon3DCdA14pWR@moria.home.lan>
-References: <20230614114637.89759-1-hare@suse.de>
- <cd816905-0e3e-6397-1a6f-fd4d29dfc739@suse.de>
- <ZInGbz6X/ZQAwdRx@casper.infradead.org>
- <b3fa1b77-d120-f86b-e02f-f79b6d13efcc@suse.de>
- <ZIpS9u4P43PgJwuj@dread.disaster.area>
- <df8e7a88-f540-af93-77dc-164262a5a3d0@suse.de>
- <ZIrRFwElpZsAnl4Q@dread.disaster.area>
+        Fri, 16 Jun 2023 12:08:27 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435C5269E
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 09:08:26 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id ca18e2360f4ac-760dff4b701so10233139f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 09:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686931705; x=1689523705;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2YfEH8qoqKE2ArVjSGCyI8u91V3DIju5xdxwJAakLmE=;
+        b=YNP5kETLrm8T/RRnZdDcLyOkiDJYyJwp+cTeIfg89bpejVpm5crpLiTODsa/EZ0ezn
+         6YXH317Iv6PZIxOKTERy616a808YLQdjGUUYZ1VlR2HTSBY9OkIgCM5MvasgUQIKA8oQ
+         UgZq+eWLAnSJdy7Tl0KEAgf0KAd8AcjBcrvwU/Xz8SkNHsbyipJONhw5SEzQkyPzDW5n
+         ihAQC53imOPIHBM1vZu5/7ZQPlEALgmTT0GtGbLzablAxMbtO1S+GvbHzbcQNRRpqy7X
+         1wRlYfNqOx566BtD3Xg2LUXoftbybpIgMSO/RWyAG5MbyxJdFb5mbfZfYCfwduqTCMSU
+         EZUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686931705; x=1689523705;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2YfEH8qoqKE2ArVjSGCyI8u91V3DIju5xdxwJAakLmE=;
+        b=R/7xHMn3pF7ozUtQ/BI9OoHFCAMuZ/65bKPRx4dhlG6Mvr8tzIWuNhY2FNF12YGjJP
+         SlhP/ut3rS5HCBPknoKxvrLM2ba7jvJjgMgJHiqTYzGZTOTLIsF4wZAWrIwr4W5QAeyQ
+         rNiQLKYo/9pTq13W4KqpkDy+39YyBjBig+N3IU/DHtEYICR8gCltADFJQf86o3xkB39g
+         bWQMvXhSqQbdbPLlQxnwmyHZMdzPuraz+txFNwbMu3o0OjZZUaCXdC6dfYLAfhDcfouC
+         qwRWK5uy3k+h/kiPfAd/IkFB/ZHaR4yD7fp2Ug0k4ggDPNCv9v0u/oLtaT4LmuReHHSF
+         YyQw==
+X-Gm-Message-State: AC+VfDyD/c/CVV8lWWZAkRNUk7gXTDmPj8sBz88gkinhQCR8k2d5OYCq
+        eLbS0wZcoLgxwO/u9xnJdGWpHw==
+X-Google-Smtp-Source: ACHHUZ4cKsFlo8t58r1Lk9uE5JPxsZHPspWy3gYS2SrJmhQPp5WRVCbqt5753z2TzwDBlED4W3bJsw==
+X-Received: by 2002:a05:6602:1a87:b0:774:9337:2d4c with SMTP id bn7-20020a0566021a8700b0077493372d4cmr2784811iob.1.1686931705526;
+        Fri, 16 Jun 2023 09:08:25 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id g6-20020a05663811c600b00420c29f7938sm3687115jas.100.2023.06.16.09.08.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Jun 2023 09:08:24 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+In-Reply-To: <20230614140341.521331-1-hch@lst.de>
+References: <20230614140341.521331-1-hch@lst.de>
+Subject: Re: dio / splice fixups
+Message-Id: <168693170439.2452694.2683453223561840064.b4-ty@kernel.dk>
+Date:   Fri, 16 Jun 2023 10:08:24 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZIrRFwElpZsAnl4Q@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-c6835
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 06:51:35PM +1000, Dave Chinner wrote:
-> On Thu, Jun 15, 2023 at 08:21:10AM +0200, Hannes Reinecke wrote:
-> > On 6/15/23 01:53, Dave Chinner wrote:
-> > > On Wed, Jun 14, 2023 at 05:06:14PM +0200, Hannes Reinecke wrote:
-> > > All you need to do now is run the BS > PS filesytems through a full
-> > > fstests pass (reflink + rmap enabled, auto group), and then we can
-> > > start on the real data integrity validation work. It'll need tens of
-> > > billions of fsx ops run on it, days of recoveryloop testing, days of
-> > > fstress based exercise, etc before we can actually enable it in
-> > > XFS....
-> > > 
-> > Hey, c'mon. I do know _that_. All I'm saying is that now we can _start_
-> > running tests and figure out corner cases (like NFS crashing on me :-).
-> > With this patchset we now have some infrastructure in place making it
-> > even _possible_ to run those tests.
-> 
-> I got to this same point several years ago. You know, that patchset
-> that Luis went back to when he brought up this whole topic again?
-> That's right when I started running fsx, and I realised it
-> didn't cover FICLONERANGE, FIDEDUPERANGE and copy_file_range().
-> 
-> Yep, that's when we first realised we had -zero- test coverage of
-> those operations. Darrick and I spent the next *3 months* pretty
-> much rewriting the VFS level of those operations and fixing all the
-> other bugs in the implementations, just so we could validate they
-> worked correct on BS <= PS.
 
-code coverage analysis...
+On Wed, 14 Jun 2023 16:03:37 +0200, Christoph Hellwig wrote:
+> this series has a small fix and a bunch of cleanups on top of the
+> splice and direct I/O rework in the block tree.
+> 
+> block/blk.h               |    2 --
+>  fs/splice.c               |   15 +++++++--------
+>  include/linux/bio.h       |    3 +--
+>  include/linux/blk_types.h |    1 -
+>  include/linux/uio.h       |    6 ------
+>  lib/iov_iter.c            |   35 +++++++----------------------------
+>  6 files changed, 15 insertions(+), 47 deletions(-)
+> 
+> [...]
+
+Applied, thanks!
+
+[1/4] splice: don't call file_accessed in copy_splice_read
+      commit: 0b24be4691c9e6ea13ca70050d42a9f9032fa788
+[2/4] splice: simplify a conditional in copy_splice_read
+      commit: 2e82f6c3bfd1acde2610dd9feb4f2b264c4ef742
+[3/4] block: remove BIO_PAGE_REFFED
+      commit: e4cc64657becbd073c3ecc9d5938a1fe0d59913f
+[4/4] iov_iter: remove iov_iter_get_pages and iov_iter_get_pages_alloc
+      commit: 84bd06c632c6d5279849f5f8ab47d9517d259422
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
