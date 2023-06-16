@@ -2,68 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74481732F34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 12:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC014733004
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jun 2023 13:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345531AbjFPK5E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Jun 2023 06:57:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53504 "EHLO
+        id S234156AbjFPLjO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Jun 2023 07:39:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345522AbjFPK4p (ORCPT
+        with ESMTP id S1343556AbjFPLjN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Jun 2023 06:56:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CDE93C2D;
-        Fri, 16 Jun 2023 03:48:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Fri, 16 Jun 2023 07:39:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D5842713
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jun 2023 04:38:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686915506;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8tN5v3o0zv/y8j8TIojIIEgXvfa2nroMudyhxjFLG/U=;
+        b=ACJjxrd5EmRGIxfUmqNF7d474/osL9nq8Qs8Vf8RQDEJrmghGGd2pCzVMR7XLwCfQdOiCE
+        SBjTM0fmCCig6dYm7JTsyMN8tu7h0DONSyTjTiyK7zQem6tbpRCfMIU/RdPU/QghKNM3uj
+        iwUloR+o8ZHU/tx9yLMGXzvljKB/U9U=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-620-CFU_VXqONECwx-pX0zZDJg-1; Fri, 16 Jun 2023 07:38:23 -0400
+X-MC-Unique: CFU_VXqONECwx-pX0zZDJg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DA9B762134;
-        Fri, 16 Jun 2023 10:48:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84F6C433C9;
-        Fri, 16 Jun 2023 10:48:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686912529;
-        bh=zJoq3wQX3ovbhIc5OKGVYEKFikOCP2u1EuDaSV+Qb1M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oyZU4KcbEAIIansQQ/f5Vg9gIBjh4BlE2oc0Vyw0NLqdoQuvEwaxNtqI++c8hWuAD
-         vhBrC1+2ZAkH5D0PMJYXA4K4fhwfM5Tvs8RSvAituAqtULxZ/+UJVXqfr7VJFQNOd6
-         ytW0blcdu3uFDaTtaZTOudfEJd17VE1y167CZhyCRcdfeqPSJstyXpjcRojtV6X7BJ
-         +6OSEPMpMa0vDQKNDmPGUhbk3kTf9uZK9WD7C1eQ0W+28MKZQ8b11Iit4Nqjsee6hF
-         Dsd1HpkcktzHVnLKRGPjWUgwjG6l2k0NSBmTS0zWzxtxtI3210QklAzCVx/32f4YyF
-         xL+yeqR8sO1Ig==
-Date:   Fri, 16 Jun 2023 12:48:45 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/4] iov_iter: remove iov_iter_get_pages and
- iov_iter_get_pages_alloc
-Message-ID: <20230616-ladung-fundort-262df0f58fb4@brauner>
-References: <20230614140341.521331-1-hch@lst.de>
- <20230614140341.521331-5-hch@lst.de>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B7B8D101A52C;
+        Fri, 16 Jun 2023 11:38:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5212E2026D49;
+        Fri, 16 Jun 2023 11:38:22 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAOg9mSR6Yh=p0QLvYFH168W1_fyNo-wd3WhXdSSuHoYOFmf9mw@mail.gmail.com>
+References: <CAOg9mSR6Yh=p0QLvYFH168W1_fyNo-wd3WhXdSSuHoYOFmf9mw@mail.gmail.com> <20230519074047.1739879-1-dhowells@redhat.com>
+To:     Mike Marshall <hubcap@omnibond.com>
+Cc:     dhowells@redhat.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v20 00/32] splice, block: Use page pinning and kill ITER_PIPE
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230614140341.521331-5-hch@lst.de>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <433152.1686915501.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 16 Jun 2023 12:38:21 +0100
+Message-ID: <433153.1686915501@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 04:03:41PM +0200, Christoph Hellwig wrote:
-> Now that the direct I/O helpers have switched to use
-> iov_iter_extract_pages, these helpers are unused.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+Mike Marshall <hubcap@omnibond.com> wrote:
 
-Looks good to me,
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/lo=
+g/?h=3Diov-extract
+> to build 6.4.0-rc2-00037-g0c3c931ab6d1 and ran xfstests
+> through with no regressions on orangefs. You can add a
+> tested by me if you'd like...
+
+Thanks:-)  I'm pushing this branch in bits, though.  Some of it is in the
+block tree and some in the net-next tree.
+
+David
+
