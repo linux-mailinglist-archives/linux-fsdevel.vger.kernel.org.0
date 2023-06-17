@@ -2,91 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B14E9733EBC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jun 2023 08:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 656FD733F08
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jun 2023 09:14:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233712AbjFQGj3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Jun 2023 02:39:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32896 "EHLO
+        id S234036AbjFQHOO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Jun 2023 03:14:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233616AbjFQGj1 (ORCPT
+        with ESMTP id S232806AbjFQHON (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Jun 2023 02:39:27 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D0F2721;
-        Fri, 16 Jun 2023 23:39:26 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1b51780bed0so12601325ad.3;
-        Fri, 16 Jun 2023 23:39:26 -0700 (PDT)
+        Sat, 17 Jun 2023 03:14:13 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17DD4213B;
+        Sat, 17 Jun 2023 00:14:12 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-666eec46206so556976b3a.3;
+        Sat, 17 Jun 2023 00:14:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686983966; x=1689575966;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Crj4AOYfyqhNznIGfJkLyC4r78ZNyHEK1sC4/e8zC8Q=;
-        b=fklUhfQKPt3Iry+A81Ec6X7AIUzJQZpIBbAmaM/YPmosETutG7a+zNYvNhcR28P6j2
-         XciQcchKtNnSc7bI+cSL8fp94+Kk4sUWdSOfZwzownoKuiXuujRmd5bCJ7IXerO51mgF
-         PRlYSlBIPJWcDnU3DLNmrjxmg7D+1lw5okkBNVTrDK/e4xPFZeWFGBkdoo5Cg9vi2/ex
-         HDEHDElQa3co2pRoY5jPEFfXJVJd1yXhH/mms7macwkv53PJy6lrV9uWWySCBOt/1S3y
-         aDh5ov9YjW7hi+WOKOpjJ0KIjhfToJR2hVCq0yzV9Aq2RSbv7XOonbWfRGBpwA0ZWhfx
-         5Ncw==
+        d=gmail.com; s=20221208; t=1686986051; x=1689578051;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1i7He5Kbp1aVNgVcTn6mnSa9HnbTYwL5h+VE5kZxvRE=;
+        b=regMC1h2001emd30POLwhQx9x+BV/EMfI1+S5oUl5OeI9kgbSfm+VQvBooo31tgIt+
+         +SR/rpn4YXlHE7CGJQcrEPOUtDpvjvW4mwmx0mCST5qKb0Uy+Dj64oDcKbdP1Sgkc27k
+         oOl3SDDrd8IFYfdqRSxAQo6Uyg1hPf6/OpdG7nrxB8dzkmZCwOLETAvWKPUfn77kCSkT
+         dhC6TMgl1cnkvUQPpyY3ClXRBhYNzo+pJae017brd+fDiLFHHY60aQG9FHLusnlNg81K
+         IjV3sXhqSszdHRPxh9ycVttQAf6vXwiscZIhNsMtPnafmc3WBjHiLlPuqs61sdOD4sNJ
+         d4/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686983966; x=1689575966;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Crj4AOYfyqhNznIGfJkLyC4r78ZNyHEK1sC4/e8zC8Q=;
-        b=hvsxYd2lb0xp4ruR2YZo5wEknOv/kpwgNvjF9Q7VHHUH6nReIXiVQ1h6oDNIJTcUW5
-         9vAHDUkqe0oL3dMIKDqf0b5uIuOtMT6wafU+Ssc5cUSuAj8Gch6j7FdRYW3kX3chOhY+
-         tt488QgsEi85pPqbMYDugvZTQ5q9QPVXulebU7ZqE4BIbBTZUStnC57lclt2zbfbBDmd
-         wd7ATnFJ355Uey3glJyf1TYKuos8fAhk3hiPiOzxyAoOCMDH5TGyuLmlnWbdZpQ9Vvyd
-         uxMFdt9cMeDbBnnhdzwU8KBFTc+vkQ+TADXIgXoBHZbsBrQQwXdtVSS+9ekWkZztP2dA
-         pXJQ==
-X-Gm-Message-State: AC+VfDy9dL81ybGU4pNo672+1Xa/l28E0m7FmBLyAiptwj2ZtoSlAM5E
-        3IXyVseDcPuoPpkXtip7Rmg=
-X-Google-Smtp-Source: ACHHUZ7iPZK2HsJkSI4IWkzZnY3DPWpM+K+RU282vWFFZeHOF7C1AUyrCKJKtjGNaYpYwevP69tdcw==
-X-Received: by 2002:a17:903:22c4:b0:1b0:5c0a:3f80 with SMTP id y4-20020a17090322c400b001b05c0a3f80mr5552777plg.44.1686983965905;
-        Fri, 16 Jun 2023 23:39:25 -0700 (PDT)
-Received: from gmail.com ([2601:600:8500:5f14:d627:c51e:516e:a105])
-        by smtp.gmail.com with ESMTPSA id w20-20020a1709029a9400b001b536aaf7c2sm1898337plp.189.2023.06.16.23.39.24
+        d=1e100.net; s=20221208; t=1686986051; x=1689578051;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1i7He5Kbp1aVNgVcTn6mnSa9HnbTYwL5h+VE5kZxvRE=;
+        b=Js82Ay19dUsIBkIdrq4/+mETQHZBGxV2cbdD369YXUMM0BpCiDAshWt9YWL9Q4Wf67
+         xbRqeTZQbES2r6bw/YlS1Jcj2imM02C4O63GGz6CB3nYY8qJMqZRBc9SYCXGo49s+LIT
+         ocXv11CXy9FvlSsEgVCg/Wl31RD4ORer5PtX40wHz9zJ2H4nRyYs7GRC6wsE07ibHgrV
+         sQaB0n1O0vPipsMt1++WaeHa3pNprNI4zbBak8y/7GxKTioHOwBzb6HYejq1fxpvkc++
+         HDPsXgyhgWeJ2v6dSSkTysH5xVDYAA+U5pe0d35f9XVmyc5KcCwyw6GqmchzBjMFU79c
+         wPDQ==
+X-Gm-Message-State: AC+VfDx2lj9LsFUSlWZZ4BTL6tAxcRqw7qSlhqNrlbx+HptCKSNaBmK5
+        JyjZF4/E7YsWy9zTKk8DwTw=
+X-Google-Smtp-Source: ACHHUZ5jWdv4Pj3ilPEWX0sNeZN9HNkl7A3D9PORp4+UQzb+V1mG0HoUfOk5LisLKA1UtFOPIAyzqw==
+X-Received: by 2002:a17:902:e5d0:b0:1af:babd:7b84 with SMTP id u16-20020a170902e5d000b001afbabd7b84mr4771156plf.41.1686986051391;
+        Sat, 17 Jun 2023 00:14:11 -0700 (PDT)
+Received: from dw-tp ([49.207.220.159])
+        by smtp.gmail.com with ESMTPSA id d5-20020a170902b70500b001aad714400asm16814382pls.229.2023.06.17.00.14.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jun 2023 23:39:25 -0700 (PDT)
-Date:   Fri, 16 Jun 2023 23:39:22 -0700
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v19 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Message-ID: <ZI1VGsaOZ2a1HiKN@gmail.com>
-References: <20230615141144.665148-1-usama.anjum@collabora.com>
- <20230615141144.665148-3-usama.anjum@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20230615141144.665148-3-usama.anjum@collabora.com>
+        Sat, 17 Jun 2023 00:14:10 -0700 (PDT)
+Date:   Sat, 17 Jun 2023 12:43:59 +0530
+Message-Id: <877cs2o91k.fsf@doe.com>
+From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, Wang Yugui <wangyugui@e16-tech.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>
+Subject: Re: [PATCH v3 8/8] iomap: Copy larger chunks from userspace
+In-Reply-To: <20230612203910.724378-9-willy@infradead.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FSL_HELO_FAKE,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -95,100 +70,87 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 07:11:41PM +0500, Muhammad Usama Anjum wrote:
-> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
-> +				  unsigned long end, struct mm_walk *walk)
-> +{
-> +	bool is_written, flush = false, is_interesting = true;
-> +	struct pagemap_scan_private *p = walk->private;
-> +	struct vm_area_struct *vma = walk->vma;
-> +	unsigned long bitmap, addr = end;
-> +	pte_t *pte, *orig_pte, ptent;
-> +	spinlock_t *ptl;
-> +	int ret = 0;
-> +
-> +	arch_enter_lazy_mmu_mode();
-> +
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	ptl = pmd_trans_huge_lock(pmd, vma);
-> +	if (ptl) {
-> +		unsigned long n_pages = (end - start)/PAGE_SIZE;
-> +
-> +		if (p->max_pages && n_pages > p->max_pages - p->found_pages)
-> +			n_pages = p->max_pages - p->found_pages;
-> +
-> +		is_written = !is_pmd_uffd_wp(*pmd);
-> +
-> +		/*
-> +		 * Break huge page into small pages if the WP operation need to
-> +		 * be performed is on a portion of the huge page.
-> +		 */
-> +		if (is_written && IS_PM_SCAN_WP(p->flags) &&
-> +		    n_pages < HPAGE_SIZE/PAGE_SIZE) {
-> +			spin_unlock(ptl);
-> +
-> +			split_huge_pmd(vma, pmd, start);
-> +			goto process_smaller_pages;
-> +		}
-> +
-> +		bitmap = PM_SCAN_FLAGS(is_written, (bool)vma->vm_file,
-> +				       pmd_present(*pmd), is_swap_pmd(*pmd));
-> +
-> +		if (IS_PM_SCAN_GET(p->flags)) {
-> +			is_interesting = pagemap_scan_is_interesting_page(bitmap, p);
-> +			if (is_interesting)
-> +				ret = pagemap_scan_output(bitmap, p, start, n_pages);
-> +		}
-> +
-> +		if (IS_PM_SCAN_WP(p->flags) && is_written && is_interesting &&
-> +		    ret >= 0) {
-> +			make_uffd_wp_pmd(vma, start, pmd);
-> +			flush_tlb_range(vma, start, end);
-> +		}
-> +
-> +		spin_unlock(ptl);
-> +
-> +		arch_leave_lazy_mmu_mode();
-> +		return ret;
-> +	}
-> +
-> +process_smaller_pages:
-> +#endif
-> +
-> +	orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
-> +	if (!pte) {
+"Matthew Wilcox (Oracle)" <willy@infradead.org> writes:
 
-Do we need to unlock ptl here?
+> If we have a large folio, we can copy in larger chunks than PAGE_SIZE.
+> Start at the maximum page cache size and shrink by half every time we
+> hit the "we are short on memory" problem.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/iomap/buffered-io.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index a5d62c9640cf..818dc350ffc5 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -768,6 +768,7 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
+>  static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  {
+>  	loff_t length = iomap_length(iter);
+> +	size_t chunk = PAGE_SIZE << MAX_PAGECACHE_ORDER;
+>  	loff_t pos = iter->pos;
+>  	ssize_t written = 0;
+>  	long status = 0;
+> @@ -776,15 +777,13 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  
+>  	do {
+>  		struct folio *folio;
+> -		struct page *page;
+> -		unsigned long offset;	/* Offset into pagecache page */
+> -		unsigned long bytes;	/* Bytes to write to page */
+> +		size_t offset;		/* Offset into folio */
+> +		unsigned long bytes;	/* Bytes to write to folio */
 
-		spin_unlock(ptl);
+why not keep typeof "bytes" as size_t same as of "copied".
 
-> +		walk->action = ACTION_AGAIN;
-> +		return 0;
-> +	}
+>  		size_t copied;		/* Bytes copied from user */
+>  
+> -		offset = offset_in_page(pos);
+> -		bytes = min_t(unsigned long, PAGE_SIZE - offset,
+> -						iov_iter_count(i));
+>  again:
+> +		offset = pos & (chunk - 1);
+> +		bytes = min(chunk - offset, iov_iter_count(i));
+>  		status = balance_dirty_pages_ratelimited_flags(mapping,
+>  							       bdp_flags);
+>  		if (unlikely(status))
+> @@ -814,11 +813,14 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  		if (iter->iomap.flags & IOMAP_F_STALE)
+>  			break;
+>  
+> -		page = folio_file_page(folio, pos >> PAGE_SHIFT);
+> +		offset = offset_in_folio(folio, pos);
+> +		if (bytes > folio_size(folio) - offset)
+> +			bytes = folio_size(folio) - offset;
 > +
-> +	for (addr = start; addr < end && !ret; pte++, addr += PAGE_SIZE) {
-> +		ptent = ptep_get(pte);
-> +		is_written = !is_pte_uffd_wp(ptent);
-> +
-> +		bitmap = PM_SCAN_FLAGS(is_written, (bool)vma->vm_file,
-> +				       pte_present(ptent), is_swap_pte(ptent));
+>  		if (mapping_writably_mapped(mapping))
+> -			flush_dcache_page(page);
+> +			flush_dcache_folio(folio);
+>  
+> -		copied = copy_page_from_iter_atomic(page, offset, bytes, i);
+> +		copied = copy_page_from_iter_atomic(&folio->page, offset, bytes, i);
+>  
+>  		status = iomap_write_end(iter, pos, bytes, copied, folio);
+>  
+> @@ -835,6 +837,8 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>  			 */
+>  			if (copied)
+>  				bytes = copied;
 
-The vma->vm_file check isn't correct in this case. You can look when
-pte_to_pagemap_entry sets PM_FILE. This flag is used to detect what
-pages have a file backing store and what pages are anonymous.
-
-I was trying to integrate this new interace into CRIU and I found
-one more thing that is required. We need to detect zero pages.
-
-It should look something like this:
-
-#define PM_SCAN_FLAGS(wt, file, present, swap, zero)   \
-       ((wt) | ((file) << 1) | ((present) << 2) | ((swap) << 3) | ((zero) << 4))
+I think with your code change which changes the label position of
+"again", the above lines doing bytes = copied becomes dead code.
+We anyway recalculate bytes after "again" label. 
 
 
-bitmap = PM_SCAN_FLAGS(is_written, page && !PageAnon(page),
-		      pte_present(ptent), is_swap_pte(ptent),
-		      pte_present(ptent) && is_zero_pfn(pte_pfn(ptent)));
+-ritesh
 
-Thanks,
-Andrei
+
+> +			if (chunk > PAGE_SIZE)
+> +				chunk /= 2;
+>  			goto again;
+>  		}
+>  		pos += status;
+> -- 
+> 2.39.2
