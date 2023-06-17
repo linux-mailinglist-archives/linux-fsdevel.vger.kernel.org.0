@@ -2,183 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8197341CF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jun 2023 17:05:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4EF27341ED
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jun 2023 17:34:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232783AbjFQPFe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Jun 2023 11:05:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60096 "EHLO
+        id S235780AbjFQPeu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Jun 2023 11:34:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229972AbjFQPFd (ORCPT
+        with ESMTP id S229782AbjFQPes (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Jun 2023 11:05:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF5610C0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jun 2023 08:05:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4A4F26093C
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jun 2023 15:05:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D0A8C433C8;
-        Sat, 17 Jun 2023 15:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687014330;
-        bh=zndg0NjmkIHkhnnfvUPhrOEhL3aJ2luavtWBpDGvUmE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hZn3+He1HwlEzBNwLcjbYTr+ry1ofZpScVeo0Dir2yRClp6nCJ8UBaemWhscw9PuL
-         8+TuJ+qd5g0oDyeLf7j9clsSqpDaR2chAQCpULbZksp5GknUs3no3nixPgmdcKP+4F
-         hDRapaOusKNOyGJvXq9XogEmRzmLtI2pCUGr7XwbnWZDYtwiRtm+wu1jSds7FYOjxo
-         dhy5Vec12hRzXkoVKyX4P9vbOAlnWeQooIPh1OXNAJIXyF4yn2WXAu14N4az9R/PWk
-         eNdsm/hoJsGJI2+1fXsjLlGv1kMIt37vtjm49Yjo08p9FvnEOU/3i2A8rX0pXm+5/3
-         pmBRuLpWIVV+w==
-Date:   Sat, 17 Jun 2023 17:05:25 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH] fs: Provide helpers for manipulating
- sb->s_readonly_remount
-Message-ID: <20230617-hitze-weingut-17034408ebc2@brauner>
-References: <20230616163827.19377-1-jack@suse.cz>
- <ZIzxVvLgukjBOBBW@dread.disaster.area>
+        Sat, 17 Jun 2023 11:34:48 -0400
+Received: from out-58.mta0.migadu.com (out-58.mta0.migadu.com [91.218.175.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435351FF3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jun 2023 08:34:45 -0700 (PDT)
+Date:   Sat, 17 Jun 2023 11:34:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1687016083;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=y/n1M3rkIqj2fYlcf86oQKmm6toDjWN0ksVwZeIikJo=;
+        b=dOatmczg4Jywa17R64WDUuNlLFHSl0gHLdFxUjiRip5Y9HERUHlvyqQktBUOYz3C04QOpZ
+        yi8bWqsNiwlZWZ1G/Lf4997PNQLyIwqM+VFcfnJ0l2MuAillQ1X2IWn1/r9IYihlBZtgR0
+        NixVJmtd1KAhXd70CJAq2tCS+y+D2d4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
+Message-ID: <ZI3Sh6p8b4FcP0Y2@moria.home.lan>
+References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
+ <20230509165657.1735798-8-kent.overstreet@linux.dev>
+ <3508afc0-6f03-a971-e716-999a7373951f@wdc.com>
+ <202305111525.67001E5C4@keescook>
+ <ZF6Ibvi8U9B+mV1d@moria.home.lan>
+ <202305161401.F1E3ACFAC@keescook>
+ <ZGPzocRpSlg+4vgN@moria.home.lan>
+ <1d249326-e3dd-9c9d-7b53-2fffeb39bfb4@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZIzxVvLgukjBOBBW@dread.disaster.area>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <1d249326-e3dd-9c9d-7b53-2fffeb39bfb4@kernel.org>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 17, 2023 at 09:33:42AM +1000, Dave Chinner wrote:
-> On Fri, Jun 16, 2023 at 06:38:27PM +0200, Jan Kara wrote:
-> > Provide helpers to set and clear sb->s_readonly_remount including
-> > appropriate memory barriers. Also use this opportunity to document what
-> > the barriers pair with and why they are needed.
+On Fri, Jun 16, 2023 at 09:13:22PM -0700, Andy Lutomirski wrote:
+> On 5/16/23 14:20, Kent Overstreet wrote:
+> > On Tue, May 16, 2023 at 02:02:11PM -0700, Kees Cook wrote:
+> > > For something that small, why not use the text_poke API?
 > > 
-> > Suggested-by: Dave Chinner <david@fromorbit.com>
-> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > This looks like it's meant for patching existing kernel text, which
+> > isn't what I want - I'm generating new functions on the fly, one per
+> > btree node.
 > 
-> The helper conversion looks fine so from that perspective the patch
-> looks good.
+> Dynamically generating code is a giant can of worms.
 > 
-> However, I'm not sure the use of memory barriers is correct, though.
+> Kees touched on a basic security thing: a linear address mapped W+X is a big
+> no-no.  And that's just scratching the surface -- ideally we would have a
+> strong protocol for generating code: the code is generated in some
+> extra-secure context, then it's made immutable and double-checked, then
+> it becomes live.
+
+"Double checking" arbitrary code is is fantasy. You can't "prove the
+security" of arbitrary code post compilation.
+
+Rice's theorem states that any nontrivial property of a program is
+either a direct consequence of the syntax, or is undecidable. It's why
+programs in statically typed languages are easier to reason about, and
+it's also why the borrow checker in Rust is a syntactic construct.
+
+You just have to be able to trust the code that generates the code. Just
+like you have to be able to trust any other code that lives in kernel
+space.
+
+This is far safer and easier to reason about than what BPF is doing
+because we're not compiling arbitrary code, the actual codegen part is
+200 loc and the input is just a single table.
+
 > 
-> IIUC, we want mnt_is_readonly() to return true when ever
-> s_readonly_remount is set. Is that the behaviour we are trying to
-> acheive for both ro->rw and rw->ro transactions?
+> (When x86 modifies itself at boot or for static keys, it changes out the
+> page tables temporarily.)
 > 
-> > ---
-> >  fs/internal.h      | 26 ++++++++++++++++++++++++++
-> >  fs/namespace.c     | 10 ++++------
-> >  fs/super.c         | 17 ++++++-----------
-> >  include/linux/fs.h |  2 +-
-> >  4 files changed, 37 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/fs/internal.h b/fs/internal.h
-> > index bd3b2810a36b..01bff3f6db79 100644
-> > --- a/fs/internal.h
-> > +++ b/fs/internal.h
-> > @@ -120,6 +120,32 @@ void put_super(struct super_block *sb);
-> >  extern bool mount_capable(struct fs_context *);
-> >  int sb_init_dio_done_wq(struct super_block *sb);
-> >  
-> > +/*
-> > + * Prepare superblock for changing its read-only state (i.e., either remount
-> > + * read-write superblock read-only or vice versa). After this function returns
-> > + * mnt_is_readonly() will return true for any mount of the superblock if its
-> > + * caller is able to observe any changes done by the remount. This holds until
-> > + * sb_end_ro_state_change() is called.
-> > + */
-> > +static inline void sb_start_ro_state_change(struct super_block *sb)
-> > +{
-> > +	WRITE_ONCE(sb->s_readonly_remount, 1);
-> > +	/* The barrier pairs with the barrier in mnt_is_readonly() */
-> > +	smp_wmb();
-> > +}
-> 
-> I'm not sure how this wmb pairs with the memory barrier in
-> mnt_is_readonly() to provide the correct behavior. The barrier in
-> mnt_is_readonly() happens after it checks s_readonly_remount, so
-> the s_readonly_remount in mnt_is_readonly is not ordered in any way
-> against this barrier.
-> 
-> The barrier in mnt_is_readonly() ensures that the loads of SB_RDONLY
-> and MNT_READONLY are ordered after s_readonly_remount(), but we
-> don't change those flags until a long way after s_readonly_remount
-> is set.
-> 
-> Hence if this is a ro->rw transistion, then I can see that racing on
-> s_readonly_remount being isn't an issue, because the mount/sb
-> flags will have SB_RDONLY/MNT_READONLY set and the correct thing
-> will be done (i.e. consider code between sb_start_ro_state_change()
-> and sb_end_ro_state_change() is RO).
-> 
-> However, it's not obvious (to me, anyway) how this works at all for
-> a rw->ro transition - if we race on s_readonly_remount being set
-> then we'll consider the fs to still be read-write regardless of the
-> smp_rmb() in mnt_is_readonly() because neither SB_RDONLY or
-> MNT_READONLY are set at this point.
+> And even beyond security, we have correctness.  x86 is a fairly forgiving
+> architecture.  If you go back in time about 20 years, modify
+> some code *at the same linear address at which you intend to execute it*,
+> and jump to it, it works.  It may even work if you do it through
+> an alias (the manual is vague).  But it's not 20 years ago, and you have
+> multiple cores.  This does *not* work with multiple CPUs -- you need to
+> serialize on the CPU executing the modified code.  On all the but the very
+> newest CPUs, you need to kludge up the serialization, and that's
+> sloooooooooooooow.  Very new CPUs have the SERIALIZE instruction, which
+> is merely sloooooow.
 
-Let me try and remember it all. I've documented a good portion of this
-in the relevant functions but I should probably upstream some more
-longer documentation blurb as well.
+If what you were saying was true, it would be an issue any time we
+mapped in new executable code for userspace - minor page faults would be
+stupidly slow.
 
-A rw->ro transition happen in two ways.
+This code has been running on thousands of machines for years, and the
+only issues that have come up have been due to the recent introduction
+of indirect branch tracking. x86 doesn't have such broken caches, and
+architectures that do have utterly broken caches (because that's what
+you're describing: you're describing caches that _are not coherent
+across cores_) are not high on my list of things I care about.
 
-(1) A mount or mount tree is made read-only via
-    mount_setattr(MNT_ATTR_READONLY) or
-    mount(MS_BIND|MS_RDONLY|MS_REMOUNT).
-(2) The filesystems/superblock is made read-only via fspick()+fsconfig()
-    or mount(MS_REMOUNT|MS_RDONLY).
+Also, SERIALIZE is a spectre thing. Not relevant here.
 
-For both (1) and (2) we grab lock_mount_hash() in relevant codepaths
-(because that's required for any vfsmount->mnt_flags changes) and then
-call mnt_hold_writers().
+> Based on the above, I regret to inform you that jit_update() will either
+> need to sync all cores via IPI or all cores will need to check whether a
+> sync is needed and do it themselves.
 
-mnt_hold_writers() will first raise MNT_WRITE_HOLD in @mnt->mnt_flags
-before checking the write counter of that mount to see whether there are
-any active writers on that mount. If there are any active writers we'll
-fail mnt_hold_writers() and the whole rw->ro transition.
+text_poke() doesn't even send IPIs.
 
-A memory barrier is used to order raising MNT_WRITE_HOLD against the
-increment of the write counter of that mount in __mnt_want_write().
-If __mnt_want_write() detects that MNT_WRITE_HOLD has been set after
-it incremented the write counter it will spin until MNT_WRITE_HOLD is
-cleared via mnt_unhold_writers(). This uses another memory barrier to
-ensure ordering with the mnt_is_readonly() check in __mnt_want_write().
-
-__mnt_want_write() doesn't know about the ro/rw state of the mount at
-all until MNT_WRITE_HOLD has cleared. Then it calls mnt_is_readonly().
-
-If the mount did indeed transition from rw->ro after MNT_WRITE_HOLD was
-cleared __mnt_want_write() will back off. If not write access to the
-mount is granted.
-
-A superblock rw->ro transition is done the same way. It also requires
-mnt_hold_writers() to be done. This is done in
-sb_prepare_remount_readonly() which is called in reconfigure_super().
-
-Only after mnt_hold_writers() has been raised successfully on every
-mount of that filesystem (i.e., all bind mounts) will
-sb->s_readonly_remount be set. After MNT_WRITE_HOLD is cleared and
-mnt_is_readonly() is called sb->s_readonly_remount is guaranteed to be
-visible or MNT_READONLY or SB_RDONLY are visible. The memory barrier in
-sb->s_readonly_remount orders it against reading sb->s_flags. It doesn't
-protect/order the rw->ro transition itself.
-
-(The only exception is an emergency read-only remount where we don't
-know what state the fs is in and don't care for any active writers on
-that superblock so omit wading through all the mounts of that
-filesystem. But that's only doable from withing the kernel via
-SB_FORCE.)
-
-Provided I understand your question/concern correctly.
+I think you've been misled about some things :)
