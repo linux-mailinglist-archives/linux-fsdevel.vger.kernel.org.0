@@ -2,332 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02636734663
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jun 2023 15:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8B857346C8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jun 2023 17:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbjFRN2R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Jun 2023 09:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43094 "EHLO
+        id S229618AbjFRPRe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Jun 2023 11:17:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbjFRN2Q (ORCPT
+        with ESMTP id S229525AbjFRPRe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Jun 2023 09:28:16 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4BB919C;
-        Sun, 18 Jun 2023 06:28:13 -0700 (PDT)
-Received: from kwepemm000003.china.huawei.com (unknown [172.30.72.56])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4QkYZF70MSzLmjZ;
-        Sun, 18 Jun 2023 21:26:13 +0800 (CST)
-Received: from [10.67.109.150] (10.67.109.150) by
- kwepemm000003.china.huawei.com (7.193.23.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Sun, 18 Jun 2023 21:28:08 +0800
-Subject: Re: [PATCH v2] poll: Fix use-after-free in poll_freewait()
-To:     Suren Baghdasaryan <surenb@google.com>,
-        Eric Biggers <ebiggers@kernel.org>
-CC:     Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <20230614070733.113068-1-lujialin4@huawei.com>
- <20230614174004.GC1146@sol.localdomain>
- <CAJuCfpFROxDn-Yv48zKw5PuiLd_LQ5+b1Nt4+jEw8wHMWcRDWw@mail.gmail.com>
- <CAJuCfpGA4Zy-NAsoFrs7R6MJDO0rW1R2gXCzoVkkcsUzfeXbzA@mail.gmail.com>
-From:   "lujialin (A)" <lujialin4@huawei.com>
-Message-ID: <c83f2076-8dfa-7650-f3c6-bb6884a6729a@huawei.com>
-Date:   Sun, 18 Jun 2023 21:28:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Sun, 18 Jun 2023 11:17:34 -0400
+X-Greylist: delayed 744 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 18 Jun 2023 08:17:29 PDT
+Received: from esg.nwe.de (esg.nwe.de [195.226.126.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9200BB
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jun 2023 08:17:29 -0700 (PDT)
+X-ASG-Debug-ID: 1687100696-1ed71d5dc76ac8d0001-kl68QG
+Received: from mail.scram.de ([213.206.175.31]) by esg.nwe.de with ESMTP id 5LINuM2jHp5BNg3Q; Sun, 18 Jun 2023 17:04:56 +0200 (CEST)
+X-Barracuda-Envelope-From: jochen@scram.de
+X-Barracuda-Effective-Source-IP: UNKNOWN[213.206.175.31]
+X-Barracuda-Apparent-Source-IP: 213.206.175.31
+Received: (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender)
+        by mail.scram.de (Postfix) with ESMTPSA id E6CBA8A7031;
+        Sun, 18 Jun 2023 17:04:55 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.scram.de E6CBA8A7031
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=scram.de;
+        s=mail2021; t=1687100696;
+        bh=UgbVYs9bJq5rL+mcmnpFz/R6KU2ExQ5ruBLD7G1IyVI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=eA34T42g7aM7SOihdOKH4LG1CSBozCMcIKnQd+b1Ui9BaET/dK7YHApw/utWrnqIu
+         10slmyjm5l3uvkvG9K1Jx6mGOPPfLQHdAwMAw6w8TZqQ7IMiacG+mprr56zvZYKu6g
+         +odaNIW+eGZNgVylrRSrmFCdlodXTnvdQPnDSpT0=
+Message-ID: <46e78dab-72fd-99f4-97c5-99733bf34c6c@scram.de>
+Date:   Sun, 18 Jun 2023 17:04:55 +0200
 MIME-Version: 1.0
-In-Reply-To: <CAJuCfpGA4Zy-NAsoFrs7R6MJDO0rW1R2gXCzoVkkcsUzfeXbzA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.109.150]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm000003.china.huawei.com (7.193.23.66)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 1/2] fuse: support unlock remote OFD locks on file release
+To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+X-ASG-Orig-Subj: Re: [PATCH 1/2] fuse: support unlock remote OFD locks on file release
+Cc:     Andrew Morton <akpm@osdl.org>, me@jcix.top, jan.peschke@quobyte.com
+References: <20230608084609.14245-1-zhangjiachen.jaycee@bytedance.com>
+ <20230608084609.14245-2-zhangjiachen.jaycee@bytedance.com>
+From:   Jochen Friedrich <jochen@scram.de>
+In-Reply-To: <20230608084609.14245-2-zhangjiachen.jaycee@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[213.206.175.31]
+X-Barracuda-Start-Time: 1687100696
+X-Barracuda-URL: https://195.226.126.84:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at nwe.de
+X-Barracuda-Scan-Msg-Size: 8820
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Spam-Score: 0.50
+X-Barracuda-Spam-Status: No, SCORE=0.50 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=5.0 tests=BSF_RULE7568M
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.110212
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.50 BSF_RULE7568M          Custom Rule 7568M
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Suren:
+Tested-By: Jochen Friedrich <jochen@scram.de>
 
-kernel config:
-x86_64_defconfig
-CONFIG_PSI=y
-CONFIG_SLUB_DEBUG=y
-CONFIG_SLUB_DEBUG_ON=y
-CONFIG_KASAN=y
-CONFIG_KASAN_INLINE=y
+On an unpatched Kernel, running Volume migrations in QEMU on a fuse 
+backed file (linke Quobyte) fails with 'Failed to get "consistent read" 
+lock' error messages.
+With this patch applied, all works well :-)
 
-I make some change in code, in order to increase the recurrence probability.
-diff --git a/fs/select.c b/fs/select.c
-index 5edffee1162c..5ee5b74a8386 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -139,6 +139,7 @@ void poll_freewait(struct poll_wqueues *pwq)
-  {
-         struct poll_table_page * p = pwq->table;
-         int i;
-+       mdelay(50);
-         for (i = 0; i < pwq->inline_index; i++)
-                 free_poll_entry(pwq->inline_entries + i);
-         while (p) {
+Best regards, Jochen
 
-Here is the simple repo test.sh:
-#!/bin/bash
-
-RESOURCE_TYPES=("cpu" "memory" "io" "irq")
-#RESOURCE_TYPES=("cpu")
-cgroup_num=50
-test_dir=/sys/fs/cgroup/test
-
-function restart_cgroup() {
-         num=$(expr $RANDOM % $cgroup_num + 1)
-         rmdir $test_dir/test_$num
-         mkdir $test_dir/test_$num
-}
-
-function create_triggers() {
-         num=$(expr $RANDOM % $cgroup_num + 1)
-         random=$(expr $RANDOM % "${#RESOURCE_TYPES[@]}")
-         psi_type="${RESOURCE_TYPES[${random}]}"
-         ./psi_monitor $test_dir/test_$num $psi_type &
-}
-
-mkdir $test_dir
-for i in $(seq 1 $cgroup_num)
-do
-         mkdir $test_dir/test_$i
-done
-for j in $(seq 1 100)
-do
-         restart_cgroup &
-         create_triggers &
-done
-
-psi_monitor.c:
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <poll.h>
-#include <string.h>
-#include <unistd.h>
-
-int main(int argc, char *argv[]) {
-         const char trig[] = "full 1000000 1000000";
-         struct pollfd fds;
-         char filename[100];
-
-         sprintf(filename, "%s/%s.pressure", argv[1], argv[2]);
-
-         fds.fd = open(filename, O_RDWR | O_NONBLOCK);
-         if (fds.fd < 0) {
-                 printf("%s open error: %s\n", filename,strerror(errno));
-                 return 1;
-         }
-         fds.events = POLLPRI;
-         if (write(fds.fd, trig, strlen(trig) + 1) < 0) {
-                 printf("%s write error: %s\n",filename,strerror(errno));
-                 return 1;
-         }
-         while (1) {
-                 poll(&fds, 1, -1);
-         }
-         close(fds.fd);
-         return 0;
-}
-Thanks,
-Lu
-在 2023/6/16 7:13, Suren Baghdasaryan 写道:
-> On Wed, Jun 14, 2023 at 11:19 AM Suren Baghdasaryan <surenb@google.com> wrote:
->>
->> On Wed, Jun 14, 2023 at 10:40 AM Eric Biggers <ebiggers@kernel.org> wrote:
->>>
->>> On Wed, Jun 14, 2023 at 03:07:33PM +0800, Lu Jialin wrote:
->>>> We found a UAF bug in remove_wait_queue as follows:
->>>>
->>>> ==================================================================
->>>> BUG: KASAN: use-after-free in _raw_spin_lock_irqsave+0x71/0xe0
->>>> Write of size 4 at addr ffff8881150d7b28 by task psi_trigger/15306
->>>> Call Trace:
->>>>   dump_stack+0x9c/0xd3
->>>>   print_address_description.constprop.0+0x19/0x170
->>>>   __kasan_report.cold+0x6c/0x84
->>>>   kasan_report+0x3a/0x50
->>>>   check_memory_region+0xfd/0x1f0
->>>>   _raw_spin_lock_irqsave+0x71/0xe0
->>>>   remove_wait_queue+0x26/0xc0
->>>>   poll_freewait+0x6b/0x120
->>>>   do_sys_poll+0x305/0x400
->>>>   do_syscall_64+0x33/0x40
->>>>   entry_SYSCALL_64_after_hwframe+0x61/0xc6
->>>>
->>>> Allocated by task 15306:
->>>>   kasan_save_stack+0x1b/0x40
->>>>   __kasan_kmalloc.constprop.0+0xb5/0xe0
->>>>   psi_trigger_create.part.0+0xfc/0x450
->>>>   cgroup_pressure_write+0xfc/0x3b0
->>>>   cgroup_file_write+0x1b3/0x390
->>>>   kernfs_fop_write_iter+0x224/0x2e0
->>>>   new_sync_write+0x2ac/0x3a0
->>>>   vfs_write+0x365/0x430
->>>>   ksys_write+0xd5/0x1b0
->>>>   do_syscall_64+0x33/0x40
->>>>   entry_SYSCALL_64_after_hwframe+0x61/0xc6
->>>>
->>>> Freed by task 15850:
->>>>   kasan_save_stack+0x1b/0x40
->>>>   kasan_set_track+0x1c/0x30
->>>>   kasan_set_free_info+0x20/0x40
->>>>   __kasan_slab_free+0x151/0x180
->>>>   kfree+0xba/0x680
->>>>   cgroup_file_release+0x5c/0xe0
->>>>   kernfs_drain_open_files+0x122/0x1e0
->>>>   kernfs_drain+0xff/0x1e0
->>>>   __kernfs_remove.part.0+0x1d1/0x3b0
->>>>   kernfs_remove_by_name_ns+0x89/0xf0
->>>>   cgroup_addrm_files+0x393/0x3d0
->>>>   css_clear_dir+0x8f/0x120
->>>>   kill_css+0x41/0xd0
->>>>   cgroup_destroy_locked+0x166/0x300
->>>>   cgroup_rmdir+0x37/0x140
->>>>   kernfs_iop_rmdir+0xbb/0xf0
->>>>   vfs_rmdir.part.0+0xa5/0x230
->>>>   do_rmdir+0x2e0/0x320
->>>>   __x64_sys_unlinkat+0x99/0xc0
->>>>   do_syscall_64+0x33/0x40
->>>>   entry_SYSCALL_64_after_hwframe+0x61/0xc6
->>>> ==================================================================
->>>>
->>>> If using epoll(), wake_up_pollfree will empty waitqueue and set
->>>> wait_queue_head is NULL before free waitqueue of psi trigger. But is
->>>> doesn't work when using poll(), which will lead a UAF problem in
->>>> poll_freewait coms as following:
->>>>
->>>> (cgroup_rmdir)                      |
->>>> psi_trigger_destroy                 |
->>>>    wake_up_pollfree(&t->event_wait)  |
->>>>     synchronize_rcu();               |
->>>>      kfree(t)                        |
->>>>                                    |   (poll_freewait)
->>>>                                    |     free_poll_entry(pwq->inline_entries + i)
->>>>                                    |       remove_wait_queue(entry->wait_address)
->>>>                                    |         spin_lock_irqsave(&wq_head->lock)
->>>>
->>>> entry->wait_address in poll_freewait() is t->event_wait in cgroup_rmdir().
->>>> t->event_wait is free in psi_trigger_destroy before call poll_freewait(),
->>>> therefore wq_head in poll_freewait() has been already freed, which would
->>>> lead to a UAF.
-> 
-> Hi Lu,
-> Could you please share your reproducer along with the kernel config
-> you used? I'm trying to reproduce this UAF but every time I delete the
-> cgroup being polled, poll() simply returns POLLERR.
-> Thanks,
-> Suren.
-> 
->>>>
->>>> similar problem for epoll() has been fixed commit c2dbe32d5db5
->>>> ("sched/psi: Fix use-after-free in ep_remove_wait_queue()").
->>>> epoll wakeup function ep_poll_callback() will empty waitqueue and set
->>>> wait_queue_head is NULL when pollflags is POLLFREE and judge pwq->whead
->>>> is NULL or not before remove_wait_queue in ep_remove_wait_queue(),
->>>> which will fix the UAF bug in ep_remove_wait_queue.
->>>>
->>>> But poll wakeup function pollwake() doesn't do that. To fix the
->>>> problem, we empty waitqueue and set wait_address is NULL in pollwake() when
->>>> key is POLLFREE. otherwise in remove_wait_queue, which is similar to
->>>> epoll().
->>>>
->>>> Fixes: 0e94682b73bf ("psi: introduce psi monitor")
->>>> Suggested-by: Suren Baghdasaryan <surenb@google.com>
->>>> Link: https://lore.kernel.org/all/CAJuCfpEoCRHkJF-=1Go9E94wchB4BzwQ1E3vHGWxNe+tEmSJoA@mail.gmail.com/#t
->>>> Signed-off-by: Lu Jialin <lujialin4@huawei.com>
->>>> ---
->>>> v2: correct commit msg and title suggested by Suren Baghdasaryan
->>>> ---
->>>>   fs/select.c | 20 +++++++++++++++++++-
->>>>   1 file changed, 19 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/select.c b/fs/select.c
->>>> index 0ee55af1a55c..e64c7b4e9959 100644
->>>> --- a/fs/select.c
->>>> +++ b/fs/select.c
->>>> @@ -132,7 +132,17 @@ EXPORT_SYMBOL(poll_initwait);
->>>>
->>>>   static void free_poll_entry(struct poll_table_entry *entry)
->>>>   {
->>>> -     remove_wait_queue(entry->wait_address, &entry->wait);
->>>> +     wait_queue_head_t *whead;
->>>> +
->>>> +     rcu_read_lock();
->>>> +     /* If it is cleared by POLLFREE, it should be rcu-safe.
->>>> +      * If we read NULL we need a barrier paired with smp_store_release()
->>>> +      * in pollwake().
->>>> +      */
->>>> +     whead = smp_load_acquire(&entry->wait_address);
->>>> +     if (whead)
->>>> +             remove_wait_queue(whead, &entry->wait);
->>>> +     rcu_read_unlock();
->>>>        fput(entry->filp);
->>>>   }
->>>>
->>>> @@ -215,6 +225,14 @@ static int pollwake(wait_queue_entry_t *wait, unsigned mode, int sync, void *key
->>>>        entry = container_of(wait, struct poll_table_entry, wait);
->>>>        if (key && !(key_to_poll(key) & entry->key))
->>>>                return 0;
->>>> +     if (key_to_poll(key) & POLLFREE) {
->>>> +             list_del_init(&wait->entry);
->>>> +             /* wait_address !=NULL protects us from the race with
->>>> +              * poll_freewait().
->>>> +              */
->>>> +             smp_store_release(&entry->wait_address, NULL);
->>>> +             return 0;
->>>> +     }
->>>>        return __pollwake(wait, mode, sync, key);
->>>
->>> I don't understand why this patch is needed.
->>>
->>> The last time I looked at POLLFREE, it is only needed because of asynchronous
->>> polls.  See my explanation in the commit message of commit 50252e4b5e989ce6.
->>
->> Ah, I missed that. Thanks for the correction.
->>
->>>
->>> In summary, POLLFREE solves the problem of polled waitqueues whose lifetime is
->>> tied to the current task rather than to the file being polled.  Also refer to
->>> the comment above wake_up_pollfree(), which mentions this.
->>>
->>> fs/select.c is synchronous polling, not asynchronous.  Therefore, it should not
->>> need to handle POLLFREE.
->>>
->>> If there's actually a bug here, most likely it's a bug in psi_trigger_poll()
->>> where it is using a waitqueue whose lifetime is tied to neither the current task
->>> nor the file being polled.  That needs to be fixed.
->>
->> Yeah. We discussed this issue in
->> https://lore.kernel.org/all/CAJuCfpFb0J5ZwO6kncjRG0_4jQLXUy-_dicpH5uGiWP8aKYEJQ@mail.gmail.com
->> and the root cause is that cgroup_file_release() where
->> psi_trigger_destroy() is called is not tied to the cgroup file's real
->> lifetime (see my analysis here:
->> https://lore.kernel.org/all/CAJuCfpFZ3B4530TgsSHqp5F_gwfrDujwRYewKReJru==MdEHQg@mail.gmail.com/#t).
->> I guess it's time to do a deeper surgery and figure out a way to call
->> psi_trigger_destroy() when the polled cgroup file is actually being
->> destroyed. I'll take a closer look into this later today.
->> A fix will likely require some cgroup or kernfs code changes, so
->> CC'ing Tejun for visibility.
->> Thanks,
->> Suren.
->>
->>>
->>> - Eric
-> .
-> 
+Am 08.06.2023 um 10:46 schrieb Jiachen Zhang:
+> Like flock(2), the fcntl(2) OFD locks also use struct file addresses as
+> the lock owner ID, and also should be unlocked on file release.
+>
+> The commit 37fb3a30b462 ("fuse: fix flock") fixed the flock unlocking
+> issue on file release. This commit aims to fix the OFD lock by reusing
+> the release_flag 'FUSE_RELEASE_FLOCK_UNLOCK'. The FUSE daemons should
+> unlock both OFD locks and flocks in the FUSE_RELEASE handler.
+>
+> To make it more clear, rename 'ff->flock' to 'ff->unlock_on_release', as
+> it would be used for both flock and OFD lock. It will be set true if the
+> value of fl->fl_owner equals to the struct file address.
+>
+> Fixes: 37fb3a30b462 ("fuse: fix flock")
+> Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+> ---
+>   fs/fuse/file.c   | 17 ++++++++++++++---
+>   fs/fuse/fuse_i.h |  2 +-
+>   2 files changed, 15 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index de37a3a06a71..7fe9d405969e 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -312,7 +312,7 @@ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
+>   
+>   	fuse_prepare_release(fi, ff, open_flags, opcode);
+>   
+> -	if (ff->flock) {
+> +	if (ff->unlock_on_release) {
+>   		ra->inarg.release_flags |= FUSE_RELEASE_FLOCK_UNLOCK;
+>   		ra->inarg.lock_owner = fuse_lock_owner_id(ff->fm->fc, id);
+>   	}
+> @@ -2650,8 +2650,19 @@ static int fuse_file_lock(struct file *file, int cmd, struct file_lock *fl)
+>   	} else {
+>   		if (fc->no_lock)
+>   			err = posix_lock_file(file, fl, NULL);
+> -		else
+> +		else {
+> +			/*
+> +			 * Like flock, the OFD lock also uses the struct
+> +			 * file address as the fl_owner, and should be
+> +			 * unlocked on file release.
+> +			 */
+> +			if (file == fl->fl_owner) {
+> +				struct fuse_file *ff = file->private_data;
+> +
+> +				ff->unlock_on_release = true;
+> +			}
+>   			err = fuse_setlk(file, fl, 0);
+> +		}
+>   	}
+>   	return err;
+>   }
+> @@ -2668,7 +2679,7 @@ static int fuse_file_flock(struct file *file, int cmd, struct file_lock *fl)
+>   		struct fuse_file *ff = file->private_data;
+>   
+>   		/* emulate flock with POSIX locks */
+> -		ff->flock = true;
+> +		ff->unlock_on_release = true;
+>   		err = fuse_setlk(file, fl, 1);
+>   	}
+>   
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 9b7fc7d3c7f1..574f67bd5684 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -225,7 +225,7 @@ struct fuse_file {
+>   	wait_queue_head_t poll_wait;
+>   
+>   	/** Has flock been performed on this file? */
+> -	bool flock:1;
+> +	bool unlock_on_release:1;
+>   };
+>   
+>   /** One input argument of a request */
+>
+>  From patchwork Thu Jun  8 08:46:09 2023
+> Content-Type: text/plain; charset="utf-8"
+> MIME-Version: 1.0
+> Content-Transfer-Encoding: 7bit
+> X-Patchwork-Submitter: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+> X-Patchwork-Id: 13271765
+> Return-Path: <linux-fsdevel-owner@vger.kernel.org>
+> X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+> 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
+> Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+> 	by smtp.lore.kernel.org (Postfix) with ESMTP id 5194CC7EE25
+> 	for <linux-fsdevel@archiver.kernel.org>;
+>   Thu,  8 Jun 2023 08:47:37 +0000 (UTC)
+> Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+>          id S235560AbjFHIrf (ORCPT
+>          <rfc822;linux-fsdevel@archiver.kernel.org>);
+>          Thu, 8 Jun 2023 04:47:35 -0400
+> Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43358 "EHLO
+>          lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+>          with ESMTP id S235284AbjFHIrc (ORCPT
+>          <rfc822;linux-fsdevel@vger.kernel.org>);
+>          Thu, 8 Jun 2023 04:47:32 -0400
+> Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com
+>   [IPv6:2607:f8b0:4864:20::432])
+>          by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B2062733
+>          for <linux-fsdevel@vger.kernel.org>;
+>   Thu,  8 Jun 2023 01:47:31 -0700 (PDT)
+> Received: by mail-pf1-x432.google.com with SMTP id
+>   d2e1a72fcca58-651f2f38634so284228b3a.0
+>          for <linux-fsdevel@vger.kernel.org>;
+>   Thu, 08 Jun 2023 01:47:31 -0700 (PDT)
+> DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+>          d=bytedance.com; s=google; t=1686214051; x=1688806051;
+>          h=content-transfer-encoding:mime-version:references:in-reply-to
+>           :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+>           :message-id:reply-to;
+>          bh=M478tZ0BJPqFdShribkt4DG9LiqmYQZeG2OJxmtwTQI=;
+>          b=Yq2Nya/66Vu5w6nNpTUv8LEnsCGR+JlJ895K/cvR0mlClcb2DLPGqhvMmAhPRnVC6P
+>           5lyLBb0BanEOEB5t67nNrVRDwmL/nXyneeJKirBxtqfYoX82wSUEyObyvO5lBx5WlZjd
+>           7IFu2/h9klmSHROrvtKaxHRzYYf97RrRZ7R6kUT/MptavElCUHxFZYVt8v39v0QUxqH8
+>           MBekCo2B/5+W5SBtVF33Auv200I2Z82VjkUUpo4jXKJb6wedh1dfBUxH68MnoVoVRJcq
+>           CehSyCf+cG+5K5kWw96LsHynVXZEpos6blrNXcKzRev92YSyY59ZKV4R2rqBlgxN/CeI
+>           vyVw==
+> X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+>          d=1e100.net; s=20221208; t=1686214051; x=1688806051;
+>          h=content-transfer-encoding:mime-version:references:in-reply-to
+>           :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+>           :subject:date:message-id:reply-to;
+>          bh=M478tZ0BJPqFdShribkt4DG9LiqmYQZeG2OJxmtwTQI=;
+>          b=IIdJ5BqHdko+u8iHJ25sRJlbsFEuTdUrBtxh2l6ZHZ1APaHEHOUIYEdUQk0/jb+fq8
+>           FBlIf7K/TzO9LyYIshf+7CTZ2HhxfopgnafeaiMeUyID2x+G1Fc3wvAvPSvF7dZKXYJz
+>           ebR+R0Prljz6lJHDAydvFYURpRfMT5E6Rnwp+CCofymPXlYmcWBgQwA+blAp50FZE4yw
+>           DMCkSYNzyPbSpA77j4sK3F3ptNJOAdlUzf3w0zlKDX4a146eq+uocseNLb5SftdHWL2z
+>           FVqlKkGRjuBws2ss1/Iqhhw1q8tPoIHB1yUicoLntg1ukKxFBLsbHIn5juBAcnz7fmQY
+>           xw6w==
+> X-Gm-Message-State: AC+VfDxt+ymlCMH+c9NbnO3d+FD0m+JQp5D2xU5rkCmmjrwYyh9vgl+6
+>          JeUTJJz5Eg0m9YrHXMK4n1CSOQ==
+> X-Google-Smtp-Source:
+>   ACHHUZ7154zUvrdNtTgZVFuJ8WpQ3S+Vr8G9uLG4z30KZw1UZuEHkqXzo6u/4y2aW+LeH1v8GBnjxw==
+> X-Received: by 2002:a05:6a20:7d85:b0:10d:d0cd:c1c7 with SMTP id
+>   v5-20020a056a207d8500b0010dd0cdc1c7mr7184475pzj.15.1686214050909;
+>          Thu, 08 Jun 2023 01:47:30 -0700 (PDT)
+> Received: from localhost.localdomain ([61.213.176.13])
+>          by smtp.gmail.com with ESMTPSA id
+>   23-20020aa79157000000b0063b806b111csm614160pfi.169.2023.06.08.01.47.25
+>          (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+>          Thu, 08 Jun 2023 01:47:30 -0700 (PDT)
+> From: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+> To: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+>          linux-kernel@vger.kernel.org
+> Cc: Andrew Morton <akpm@osdl.org>, me@jcix.top,
+>          Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+> Subject: [PATCH 2/2] fuse: remove an unnecessary if statement
+> Date: Thu,  8 Jun 2023 16:46:09 +0800
+> Message-Id: <20230608084609.14245-3-zhangjiachen.jaycee@bytedance.com>
+> X-Mailer: git-send-email 2.35.1
+> In-Reply-To: <20230608084609.14245-1-zhangjiachen.jaycee@bytedance.com>
+> References: <20230608084609.14245-1-zhangjiachen.jaycee@bytedance.com>
+> MIME-Version: 1.0
+> Precedence: bulk
+> List-ID: <linux-fsdevel.vger.kernel.org>
+> X-Mailing-List: linux-fsdevel@vger.kernel.org
+>
+> FUSE remote locking code paths never add any locking state to
+> inode->i_flctx, so the locks_remove_posix() function called on
+> file close will return without calling fuse_setlk().
+>
+> Therefore, as the if statement to be removed in this commit will
+> always be false, remove it for clearness.
+>
+> Fixes: 7142125937e1 ("[PATCH] fuse: add POSIX file locking support")
+> Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+> ---
+>   fs/fuse/file.c | 4 ----
+>   1 file changed, 4 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 7fe9d405969e..57789215c666 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -2619,10 +2619,6 @@ static int fuse_setlk(struct file *file, struct file_lock *fl, int flock)
+>   		return -ENOLCK;
+>   	}
+>   
+> -	/* Unlock on close is handled by the flush method */
+> -	if ((fl->fl_flags & FL_CLOSE_POSIX) == FL_CLOSE_POSIX)
+> -		return 0;
+> -
+>   	fuse_lk_fill(&args, file, fl, opcode, pid_nr, flock, &inarg);
+>   	err = fuse_simple_request(fm, &args);
+>   
