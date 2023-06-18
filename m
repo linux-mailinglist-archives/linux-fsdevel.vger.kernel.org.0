@@ -2,95 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 79B3B734384
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jun 2023 22:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B81F73448A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jun 2023 02:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346442AbjFQUf1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Jun 2023 16:35:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40928 "EHLO
+        id S230212AbjFRAYC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Jun 2023 20:24:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346432AbjFQUf0 (ORCPT
+        with ESMTP id S229874AbjFRAYB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Jun 2023 16:35:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8785172C;
-        Sat, 17 Jun 2023 13:35:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5C4926121F;
-        Sat, 17 Jun 2023 20:35:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34307C433CA;
-        Sat, 17 Jun 2023 20:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687034123;
-        bh=LPH4D0EuhGovBKf9L5cFwblZMXTjBgzV3kREfhZQ+ks=;
-        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-        b=OMexxDFernOxeez6bulKg5fmSNlPAmeoBGhEVrSW6IrKR+yXX7BDZ8gZfohRD99x8
-         5lqCoIniVeRKUfW0lBQ/r/LqEdE1qcGMzMPP2cCjlxZDVLgPlEKKIEyAc8w2Axjgad
-         7Xhc7WxMVcDjoqayjmfB3/B83ay17wAU8WtbrhyGsIeGeyHJRAnOmGlyU1x+NzA3Q9
-         OMzruAH5Dj73NVyYkpbzf4+vCSRIWIadjOaV5wggGPtAf/E6rHuvmR8wgccNH/SuOC
-         xWiOXbRRU86tShqrLXKF/0OqGzoNOAe2Tpl85QFQno9LCMtbvr8JO6h+jEGTUfIr7o
-         L1ja1jjCKA3xw==
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 16EED27C005B;
-        Sat, 17 Jun 2023 16:35:22 -0400 (EDT)
-Received: from imap48 ([10.202.2.98])
-  by compute3.internal (MEProxy); Sat, 17 Jun 2023 16:35:22 -0400
-X-ME-Sender: <xms:CRmOZA_uQC2fjzsQD54my1MeXphVCaUfV-Ah9x5x4gfIXSvpyka3aA>
-    <xme:CRmOZIvyUFoPxVSKEk29Bv-sscEebfWvijmbdiHz_HVtB84NkFLtlDRyPrZ3jeHCY
-    oII4dlkqxeac_WOZuY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvjedgudehtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    nhguhicunfhuthhomhhirhhskhhifdcuoehluhhtoheskhgvrhhnvghlrdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpedvhfeuvddthfdufffhkeekffetgffhledtleegffetheeugeej
-    ffduhefgteeihfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpegrnhguhidomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudduiedu
-    keehieefvddqvdeifeduieeitdekqdhluhhtoheppehkvghrnhgvlhdrohhrgheslhhinh
-    hugidrlhhuthhordhush
-X-ME-Proxy: <xmx:CRmOZGB_5EetWlq8yUIXPGH-qotgY7vAXqsBc1RxtEeErkdD-f_ilQ>
-    <xmx:CRmOZAfoHdjCo5SC0XAtCcCi_rbzObNB2Dz2pOdKsYIzy4R5ola_sA>
-    <xmx:CRmOZFPZ6Rc23PfHcm7CM9A_lzm4GypiTlOcui-0Hg8mX_CprXlmxA>
-    <xmx:ChmOZIoYqfsPixz7i_DBNMwusVMNipEUDMBkFoEXcH0eM39l3yyVsA>
-Feedback-ID: ieff94742:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 8AC4E31A0063; Sat, 17 Jun 2023 16:35:21 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-496-g8c46984af0-fm-20230615.001-g8c46984a
-Mime-Version: 1.0
-Message-Id: <cb6533c6-cea0-4f04-95cf-b8240c6ab405@app.fastmail.com>
-In-Reply-To: <ZI4SyXjmA1DsR3Gl@moria.home.lan>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-8-kent.overstreet@linux.dev>
- <3508afc0-6f03-a971-e716-999a7373951f@wdc.com>
- <202305111525.67001E5C4@keescook> <ZF6Ibvi8U9B+mV1d@moria.home.lan>
- <202305161401.F1E3ACFAC@keescook> <ZGPzocRpSlg+4vgN@moria.home.lan>
- <1d249326-e3dd-9c9d-7b53-2fffeb39bfb4@kernel.org>
- <ZI3Sh6p8b4FcP0Y2@moria.home.lan>
- <1d332a4f-3c45-4e6c-81ca-7f8e669b0366@app.fastmail.com>
- <ZI4SyXjmA1DsR3Gl@moria.home.lan>
-Date:   Sat, 17 Jun 2023 13:35:01 -0700
-From:   "Andy Lutomirski" <luto@kernel.org>
-To:     "Kent Overstreet" <kent.overstreet@linux.dev>
-Cc:     "Kees Cook" <keescook@chromium.org>,
-        "Johannes Thumshirn" <Johannes.Thumshirn@wdc.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-bcachefs@vger.kernel.org" <linux-bcachefs@vger.kernel.org>,
-        "Kent Overstreet" <kent.overstreet@gmail.com>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Uladzislau Rezki" <urezki@gmail.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
-Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
-Content-Type: text/plain
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        Sat, 17 Jun 2023 20:24:01 -0400
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4E4F1733
+        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jun 2023 17:23:59 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-77ac4ec0bb7so163697239f.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jun 2023 17:23:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687047839; x=1689639839;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BzhFHvEiw2Iy18UyD0iJdSi5zJ0xOqiPpgBwI0LaJoM=;
+        b=bFOUUXjs5NEskRLaT3mT0C6EpMg4pYDAodSfK5luYyxosvSZufd261++2EAGXkxcSh
+         3UmfTW619LHT4UpA+xqixcBvAxpYin9tjlTk5G2A+Tixt0uBgunz+sWYSOGgDSIKugrK
+         edptx33OqIV6VgWCDmDxXMW5rBtlhV0Nf64gS0LdpXZGrl01+7uZ2KOlUO6xEgmuT1FM
+         fwresVST2RN5Y2TuvbCLM2ccvLfzVz9lTWEN6prj/hfP0GrnCZ5bYVomyGzgOrhbX3Qn
+         3hczaIQwIRQDHKiWh4IJm3ho6jxpgGyliKPI7x7B+X6Q0NHuhBXpJSMfXs9Yd2/Orfp+
+         gXTw==
+X-Gm-Message-State: AC+VfDwCvx35LGazExiamT+yOB0cI7Tr7DHtSGnq5UMSA9vCSEQhjTtM
+        D1unHSeVLJR75+Hfupv4yAzMaInGMU/fNo3PF0riYA9QNQy8
+X-Google-Smtp-Source: ACHHUZ5BvB8OzrHboiOZaYtsxTJlm4QBE71x/rB/xcVYzaUkN0O20hU7Ha3UyzUpHj8lsDF5vdUgONn9Vpy7XNFt4qwuYnl7sogm
+MIME-Version: 1.0
+X-Received: by 2002:a6b:3b8b:0:b0:777:b0ee:a512 with SMTP id
+ i133-20020a6b3b8b000000b00777b0eea512mr1802544ioa.2.1687047838984; Sat, 17
+ Jun 2023 17:23:58 -0700 (PDT)
+Date:   Sat, 17 Jun 2023 17:23:58 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000029729c05fe5c6f5c@google.com>
+Subject: [syzbot] [xfs?] KASAN: slab-out-of-bounds Read in xlog_pack_data
+From:   syzbot <syzbot+b7854dc75e15ffc8c2ae@syzkaller.appspotmail.com>
+To:     djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -98,118 +55,165 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    15adb51c04cc Merge tag 'devicetree-fixes-for-6.4-3' of git..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17554263280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3731e922b1097b2e
+dashboard link: https://syzkaller.appspot.com/bug?extid=b7854dc75e15ffc8c2ae
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1323469d280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12975795280000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/733f46de69b0/disk-15adb51c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f9a6a2c566b8/vmlinux-15adb51c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/55e80680ef0e/bzImage-15adb51c.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/99d5407c555b/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b7854dc75e15ffc8c2ae@syzkaller.appspotmail.com
+
+xfs filesystem being mounted at /root/file0 supports timestamps until 2038-01-19 (0x7fffffff)
+XFS (loop0): Unmounting Filesystem acfebfcd-0806-4e27-9777-0ac4ff5ddf54
+==================================================================
+BUG: KASAN: slab-out-of-bounds in xlog_pack_data+0x370/0x540 fs/xfs/xfs_log.c:1822
+Read of size 4 at addr ffff888075c64e00 by task syz-executor205/4996
+
+CPU: 0 PID: 4996 Comm: syz-executor205 Not tainted 6.4.0-rc6-syzkaller-00035-g15adb51c04cc #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:351 [inline]
+ print_report+0x163/0x540 mm/kasan/report.c:462
+ kasan_report+0x176/0x1b0 mm/kasan/report.c:572
+ xlog_pack_data+0x370/0x540 fs/xfs/xfs_log.c:1822
+ xlog_sync+0x366/0xd50 fs/xfs/xfs_log.c:2093
+ xlog_state_release_iclog+0x46d/0x7f0 fs/xfs/xfs_log.c:619
+ xlog_force_iclog fs/xfs/xfs_log.c:888 [inline]
+ xlog_force_and_check_iclog fs/xfs/xfs_log.c:3172 [inline]
+ xlog_force_lsn+0x5e5/0x770 fs/xfs/xfs_log.c:3344
+ xfs_log_force_seq+0x1da/0x450 fs/xfs/xfs_log.c:3409
+ __xfs_trans_commit+0xb38/0x11d0 fs/xfs/xfs_trans.c:1021
+ xfs_sync_sb+0x140/0x190 fs/xfs/libxfs/xfs_sb.c:1015
+ xfs_log_cover fs/xfs/xfs_log.c:1300 [inline]
+ xfs_log_quiesce+0x38f/0x680 fs/xfs/xfs_log.c:1109
+ xfs_log_clean+0xa4/0xc10 fs/xfs/xfs_log.c:1116
+ xfs_log_unmount+0x2c/0x1c0 fs/xfs/xfs_log.c:1131
+ xfs_unmountfs+0x1d6/0x280 fs/xfs/xfs_mount.c:1096
+ xfs_fs_put_super+0x74/0x2d0 fs/xfs/xfs_super.c:1130
+ generic_shutdown_super+0x134/0x340 fs/super.c:500
+ kill_block_super+0x84/0xf0 fs/super.c:1407
+ deactivate_locked_super+0xa4/0x110 fs/super.c:331
+ cleanup_mnt+0x426/0x4c0 fs/namespace.c:1177
+ task_work_run+0x24a/0x300 kernel/task_work.c:179
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0x68f/0x2290 kernel/exit.c:874
+ do_group_exit+0x206/0x2c0 kernel/exit.c:1024
+ __do_sys_exit_group kernel/exit.c:1035 [inline]
+ __se_sys_exit_group kernel/exit.c:1033 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1033
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f7ff46d4999
+Code: Unable to access opcode bytes at 0x7f7ff46d496f.
+RSP: 002b:00007ffde997c8a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f7ff4756330 RCX: 00007f7ff46d4999
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
+RBP: 0000000000000001 R08: ffffffffffffffc0 R09: 000000000000c157
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7ff4756330
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000001
+ </TASK>
+
+The buggy address belongs to the physical page:
+page:ffffea0001d71000 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x75c40
+head:ffffea0001d71000 order:6 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000010000(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffffff()
+raw: 00fff00000010000 0000000000000000 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 6, migratetype Unmovable, gfp_mask 0x46dc0(GFP_KERNEL|__GFP_NOWARN|__GFP_RETRY_MAYFAIL|__GFP_COMP|__GFP_ZERO), pid 4996, tgid 4996 (syz-executor205), ts 65296013335, free_ts 18373394447
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x1e6/0x210 mm/page_alloc.c:1731
+ prep_new_page mm/page_alloc.c:1738 [inline]
+ get_page_from_freelist+0x321c/0x33a0 mm/page_alloc.c:3502
+ __alloc_pages+0x255/0x670 mm/page_alloc.c:4768
+ __alloc_pages_node include/linux/gfp.h:237 [inline]
+ alloc_pages_node include/linux/gfp.h:260 [inline]
+ __kmalloc_large_node+0x91/0x1d0 mm/slab_common.c:1107
+ __do_kmalloc_node mm/slab_common.c:954 [inline]
+ __kmalloc_node+0x116/0x230 mm/slab_common.c:973
+ kmalloc_node include/linux/slab.h:579 [inline]
+ kvmalloc_node+0x72/0x180 mm/util.c:604
+ kvmalloc include/linux/slab.h:697 [inline]
+ kvzalloc include/linux/slab.h:705 [inline]
+ xlog_alloc_log+0x638/0x13a0 fs/xfs/xfs_log.c:1649
+ xfs_log_mount+0xe7/0x770 fs/xfs/xfs_log.c:658
+ xfs_mountfs+0xcbf/0x1f10 fs/xfs/xfs_mount.c:819
+ xfs_fs_fill_super+0xfd7/0x1230 fs/xfs/xfs_super.c:1694
+ get_tree_bdev+0x405/0x620 fs/super.c:1303
+ vfs_get_tree+0x8c/0x270 fs/super.c:1510
+ do_new_mount+0x28f/0xae0 fs/namespace.c:3039
+ do_mount fs/namespace.c:3382 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1302 [inline]
+ free_unref_page_prepare+0x903/0xa30 mm/page_alloc.c:2564
+ free_unref_page+0x37/0x3f0 mm/page_alloc.c:2659
+ free_contig_range+0x9e/0x150 mm/page_alloc.c:6994
+ destroy_args+0x102/0x9a0 mm/debug_vm_pgtable.c:1023
+ debug_vm_pgtable+0x405/0x490 mm/debug_vm_pgtable.c:1403
+ do_one_initcall+0x23d/0x7d0 init/main.c:1246
+ do_initcall_level+0x157/0x210 init/main.c:1319
+ do_initcalls+0x3f/0x80 init/main.c:1335
+ kernel_init_freeable+0x43b/0x5d0 init/main.c:1571
+ kernel_init+0x1d/0x2a0 init/main.c:1462
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+
+Memory state around the buggy address:
+ ffff888075c64d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888075c64d80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff888075c64e00: 01 fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+                   ^
+ ffff888075c64e80: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+ ffff888075c64f00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+==================================================================
 
 
-On Sat, Jun 17, 2023, at 1:08 PM, Kent Overstreet wrote:
-> On Sat, Jun 17, 2023 at 12:19:41PM -0700, Andy Lutomirski wrote:
->> On Sat, Jun 17, 2023, at 8:34 AM, Kent Overstreet wrote:
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->> Great, then propose a model where the codegen operates in an
->> extra-safe protected context.  Or pre-generate the most common
->> variants, have them pull their constants from memory instead of
->> immediates, and use that.
->
-> I'll do no such nonsense.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-You can avoid generating code beyond what gcc generates at all, or you can pre-generate code but not on an ongoing basis at runtime, or you can generate code at runtime correctly.  I don't think there are many other options.
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->
->> > If what you were saying was true, it would be an issue any time we
->> > mapped in new executable code for userspace - minor page faults would be
->> > stupidly slow.
->> 
->> I literally mentioned this in the email.
->
-> No, you didn't. Feel free to link or cite if you think otherwise.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-"It's clear that a way to do this without 
-serializing must exist, because that's what happens when code is paged 
-in from a user program."
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
->> > text_poke() doesn't even send IPIs.
->> 
->> text_poke() and the associated machinery is unbelievably complicated.  
->
-> It's not that bad.
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
-This is a useless discussion.
-
->
-> The only reference to IPIs in text_poke() is the comment that indicates
-> that flush_tlb_mm_range() may sometimes do IPIs, but explicitly
-> indicates that it does _not_ do IPIs the way text_poke() is using it.
->
->> Also, arch/x86/kernel/alternative.c contains:
->> 
->> void text_poke_sync(void)
->> {
->> 	on_each_cpu(do_sync_core, NULL, 1);
->> }
->
-> ...which is for modifying code that is currently being executed, not the
-> text_poke() or text_poke_copy() paths.
->
->> 
->> The magic in text_poke() was developed over the course of years, and
->> Intel architects were involved.
->> 
->> (And I think some text_poke() stuff uses RCU, which is another way to
->> sync without IPI.  I doubt the performance characteristics are
->> appropriate for bcachefs, but I could be wrong.)
->
-> No, it doesn't use RCU.
-
-It literally says in alternative.c:
-
- * Not safe against concurrent execution; useful for JITs to dump
- * new code blocks into unused regions of RX memory. Can be used in
- * conjunction with synchronize_rcu_tasks() to wait for existing
- * execution to quiesce after having made sure no existing functions
- * pointers are live.
-
-I don't know whether any callers actually do this.  I didn't look.
-
->
->> > I think you've been misled about some things :)
->> 
->> I wish.
->
-> Given your comments on text_poke(), I think you are. You're confusing
-> synchronization requirements for _self modifying_ code with the
-> synchronization requirements for writing new code to memory, and then
-> executing it.
-
-No, you are misunderstanding the difference.
-
-Version A:
-
-User mmap()s an executable file (DSO, whatever).  At first, there is either no PTE or a not-present PTE.  At some point, in response to a page fault or just the kernel prefetching, the kernel fills in the backing page and then creates the PTE.  From the CPU's perspective, the virtual address atomically transitions from having nothing there to having the final code there.  It works (despite the manual having nothing to say about this case).  It's also completely unavoidable.
-
-Version B:
-
-Kernel vmallocs some space *and populates the pagetables*.  There is backing storage, that is executable (or it's a non-NX system, although those are quite rare these days).
-
-Because the CPU hates you, it speculatively executes that code.  (Maybe you're under attack.  Maybe you're just unlucky.  Doesn't matter.)  It populates the instruction cache, remembers the decoded instructions, etc.  It does all the things that make the manual say scary things about serialization.  It notices that the speculative execution was wrong and backs it out, but nothing is invalidated.
-
-Now you write code into there.  Either you do this from a different CPU or you do it at a different linear address, so the magic hardware that invalidates for you does not trigger.
-
-Now you jump into that code, and you tell yourself that it was new code because it was all zeros before and you never intentionally executed it.  But the CPU could not care less what you think, and you lose.
-
->
-> And given that bcachefs is not doing anything new here - we're doing a
-> more limited form of what BPF is already doing - I don't think this is
-> even the appropriate place for this discussion. There is a new
-> executable memory allocator being developed and posted, which is
-> expected to wrap text_poke() in an arch-independent way so that
-> allocations can share pages, and so that we can remove the need to have
-> pages mapped both writeable and executable.
-
-I don't really care what BPF is doing, and BPF may well have the same problem.
-
-But if I understood what bcachefs is doing, it's creating code vastly more frequently than BPF, in response to entirely unprivileged operations from usermode.  It's a whole different amount of exposure.
-
->
-> If you've got knowledge you wish to share on how to get cache coherency
-> right, I think that might be a more appropriate thread.
-
-I'll look.
+If you want to undo deduplication, reply with:
+#syz undup
