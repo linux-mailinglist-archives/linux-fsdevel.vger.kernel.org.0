@@ -2,219 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4591734D58
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 10:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A591734D81
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 10:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbjFSIQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jun 2023 04:16:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55968 "EHLO
+        id S229808AbjFSIXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jun 2023 04:23:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbjFSIQR (ORCPT
+        with ESMTP id S229552AbjFSIX2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jun 2023 04:16:17 -0400
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4FF94
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 01:16:14 -0700 (PDT)
-Received: by mail-il1-x129.google.com with SMTP id e9e14a558f8ab-33d928a268eso279175ab.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 01:16:14 -0700 (PDT)
+        Mon, 19 Jun 2023 04:23:28 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C3EA110;
+        Mon, 19 Jun 2023 01:23:27 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-3112c11fdc9so1323386f8f.3;
+        Mon, 19 Jun 2023 01:23:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687162574; x=1689754574;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nUxNLC+gaxAx6q4yk9Zr89shiO34QlAjv1HZ696Wg1U=;
-        b=6jB0Vaksw7QYyR3aieZrQMpKBSoFdhf1SglIAWLr1IUfcUcsjNjZT047OxQ/zQDxn/
-         Q9VLzY0piRJkaAmLa8H4wzNvh8yfWhfZ2IWwJ+gHskDnk2EqS3ffbkHr01hFU11k/zF0
-         xgsVP5PPjtZeLsInnU48wBXWitsB5Cg42pRR7NSKqCaGZsK8UpHqajQTimFQ0q5vd/9r
-         acH2E9d4CQJy/awvToQdq8wrpNqwUmb65hWO8yhrGnfXzNPlCCI+qzY7RPDt1S85CFV0
-         QZ8a7hay4Wk37tQGl8s76uSpDIge/MKmH10WPIqNLvcYLXmP9kohSEeLvCiG8udvDi4l
-         XIRw==
+        d=gmail.com; s=20221208; t=1687163006; x=1689755006;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sSBDd1/f6xXmLpw9z/ese37NiOW7x5KUx8osjqdGUnM=;
+        b=Lsl9EsX4jszeG2zvJgvVKjDAR4ejPIDTxSfqQw+n1L8gF+f7OgxW8IkzEQptJqo3jv
+         3f+ywIeXHzCLnN0BoQSzh140TYGbvtlQxK/WgKGmeNw5JVjmePsBpRc/5edy2o+A6K4e
+         xKbkbq4gGu1DhMfFjrYklap/6XWzpXgxGliXuvoPQVpsRAJWgm94xVVfGJ9BpMkUgxUk
+         VRC7iOeu1H2s4wj6R7f9m3VkuG5nOKdFVuL4rAX8gCJpS7QXFsDSL6zOUNjme/F2KwVY
+         qpTmxDZhXR9U4EmlqJnuWTgGn7HiKIssbn/9KC7Lc3wQ6vF4BFh1IhIM7br3SEmVKnG+
+         3kHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687162574; x=1689754574;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nUxNLC+gaxAx6q4yk9Zr89shiO34QlAjv1HZ696Wg1U=;
-        b=diZY+nxF/PNuFLW8jj1bM7f04NLM6i89Ca5EG9D2paj1oM62PM1/gawMUTttGN0nOI
-         FDlsLDR0fyQ2cIa2yB9SiqsCmr0aWLER5WuI83O6smZuHcqDMlS6tTLFvhsUpKMep2BX
-         rLjkpLRKxf6YnVO6O1glrJCytKcNnCjrvmjfAzBJ0SDqWSAYXrvH0v0XX844YGOGvXLZ
-         5AuIlTRNz/emBdr4AccbbAmj6esCPaWjBA+ns0Ok99t8ffz/w+Hs8gW0GKHkpwBm3XCa
-         DUUlfgEGfn7lPc02ftM/nNYVE0/gCGZhsL+u0gg7oMPT7w0fZllobOasG5IB7CZN2S5U
-         68Ag==
-X-Gm-Message-State: AC+VfDyY684dUSI3ONWXhUXyhjdAOlG4zVJyy+QSeb2TO8RnrWbDEzi4
-        gGGfXNtq/cZsVjmsx57oDWWcJEGKguwqH6PUgp7Dsw==
-X-Google-Smtp-Source: ACHHUZ7pPgmfxfjpyVDu/lfSWd41l6pU01tdM9sEKUPUeywUHyKDUU+RDI/ym0egdMQruqWyQjzGX8yWcNRZAY/X9kE=
-X-Received: by 2002:a92:c243:0:b0:340:f76:4292 with SMTP id
- k3-20020a92c243000000b003400f764292mr894272ilo.0.1687162574121; Mon, 19 Jun
- 2023 01:16:14 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687163006; x=1689755006;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sSBDd1/f6xXmLpw9z/ese37NiOW7x5KUx8osjqdGUnM=;
+        b=bqcnJUftHIQ3+r099798U31RNTb3kTy5C5C09aZB8kMpZwDHPBEa4LerxE8yNMRK6e
+         wqC9PmOk53RtAKhPoIU46TLV1tJQf0d/DiWUfjyEZAfl68SFbrHROn/D0RN9f7Qee0fG
+         1LZ/jV5JYpCdyanFpL9DA1RM7cHhuGDrhLCNfo6o0pXE+xvPnQvGQQ8vU/wG8GGEyrZ3
+         7WIb16HM/IXkE/nBHryNc6Nk1X6MVR95ug1JZIMWTvgvuz3gKBVdtSSNKE1NakMmoUu/
+         0oURujZA+gu6PhrIRK8yHYHxoLAZb2FJaAlQNTPan+LYCkuTcGIubNz8d1UsbYx/j5T5
+         80BQ==
+X-Gm-Message-State: AC+VfDyfMvKd4HD2+WzzE61WT/PTRUREWdmITyBOl4HVkDlwXkGWRCv9
+        jXc/PciiepjJZr84w0dITJr1x/3/csc=
+X-Google-Smtp-Source: ACHHUZ7EeWzzK8WgDL/QMovggKVNr0k/fH9meoPoVMqoAtP4sO1FreA9c6hWXDPwYHtwf9V0pzIqIg==
+X-Received: by 2002:a5d:568a:0:b0:311:1497:a002 with SMTP id f10-20020a5d568a000000b003111497a002mr5516686wrv.3.1687163005624;
+        Mon, 19 Jun 2023 01:23:25 -0700 (PDT)
+Received: from [10.158.37.55] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id e3-20020a056000194300b0030ae901bc54sm30867342wry.62.2023.06.19.01.23.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Jun 2023 01:23:25 -0700 (PDT)
+Message-ID: <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com>
+Date:   Mon, 19 Jun 2023 11:23:22 +0300
 MIME-Version: 1.0
-References: <20230613102905.2808371-1-usama.anjum@collabora.com>
- <20230613102905.2808371-3-usama.anjum@collabora.com> <CABb0KFHWnbrf2ythvO0OKsd1ZS9b4D9BNzwBCbn6g9OX4n6ZOg@mail.gmail.com>
- <0db01d90-09d6-08a4-bbb8-70670d3baa94@collabora.com> <CABb0KFEn5TU480A=YiN82nLRtGyKMABi8cZjuiGUU_jFZZo+8g@mail.gmail.com>
- <34203acf-7270-7ade-a60e-ae0f729dcf70@collabora.com> <CABb0KFFaXgJD99pWfx3MC+qrq5jUaPis_kZo6U8yL_8xdp0GJA@mail.gmail.com>
- <96b7cc00-d213-ad7d-1b48-b27f75b04d22@collabora.com> <CABb0KFEy_mRaT86TEOQ-BoTe_XOVw3Kp5VdzOfEEaiZJuT754g@mail.gmail.com>
- <39bc8212-9ee8-dbc1-d468-f6be438b683b@collabora.com> <CABb0KFHx2hV9M7oinCdKnagRmcrGHagH9eAO3TkVTQH+o9x=5A@mail.gmail.com>
- <2e1b80f1-0385-0674-ae5f-9703a6ef975d@collabora.com>
-In-Reply-To: <2e1b80f1-0385-0674-ae5f-9703a6ef975d@collabora.com>
-From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-Date:   Mon, 19 Jun 2023 10:16:01 +0200
-Message-ID: <CABb0KFGOx69Sz6w9JenYUwSTFmW-Cmcns3X-oDyWsC+H57vkvg@mail.gmail.com>
-Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
+To:     David Howells <dhowells@redhat.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
+        samiram@nvidia.com, drort@nvidia.com,
+        Tariq Toukan <tariqt@nvidia.com>
+References: <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
+ <20230522121125.2595254-1-dhowells@redhat.com>
+ <20230522121125.2595254-9-dhowells@redhat.com>
+ <2267272.1686150217@warthog.procyon.org.uk>
+ <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com>
+Content-Language: en-US
+From:   Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 16 Jun 2023 at 08:57, Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
->
-> On 6/16/23 1:07=E2=80=AFAM, Micha=C5=82 Miros=C5=82aw wrote:
-> > On Thu, 15 Jun 2023 at 17:11, Muhammad Usama Anjum
-> > <usama.anjum@collabora.com> wrote:
-> >> On 6/15/23 7:52=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
-> >>> On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
-> >>> <usama.anjum@collabora.com> wrote:
-> >>>> I'll send next revision now.
-> >>>> On 6/14/23 11:00=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
-> >>>>> (A quick reply to answer open questions in case they help the next =
-version.)
-[...]
-> >>>>> I guess this will be reworked anyway, but I'd prefer this didn't ne=
-ed
-> >>>>> custom errors etc. If we agree to decoupling the selection and GET
-> >>>>> output, it could be:
-> >>>>>
-> >>>>> bool is_interesting_page(p, flags); // this one does the
-> >>>>> required/anyof/excluded match
-> >>>>> size_t output_range(p, start, len, flags); // this one fills the
-> >>>>> output vector and returns how many pages were fit
-> >>>>>
-> >>>>> In this setup, `is_interesting_page() && (n_out =3D output_range())=
- <
-> >>>>> n_pages` means this is the final range, no more will fit. And if
-> >>>>> `n_out =3D=3D 0` then no pages fit and no WP is needed (no other sp=
-ecial
-> >>>>> cases).
-> >>>> Right now, pagemap_scan_output() performs the work of both of these =
-two
-> >>>> functions. The part can be broken into is_interesting_pages() and we=
- can
-> >>>> leave the remaining part as it is.
-> >>>>
-> >>>> Saying that n_out < n_pages tells us the buffer is full covers one c=
-ase.
-> >>>> But there is case of maximum pages have been found and walk needs to=
- be
-> >>>> aborted.
-> >>>
-> >>> This case is exactly what `n_out < n_pages` will cover (if scan_outpu=
-t
-> >>> uses max_pages properly to limit n_out).
-> >>> Isn't it that when the buffer is full we want to abort the scan alway=
-s
-> >>> (with WP if `n_out > 0`)?
-> >> Wouldn't it be duplication of condition if buffer is full inside
-> >> pagemap_scan_output() and just outside it. Inside pagemap_scan_output(=
-) we
-> >> check if we have space before putting data inside it. I'm using this s=
-ame
-> >> condition to indicate that buffer is full.
-> >
-> > I'm not sure what do you mean? The buffer-full conditions would be
-> > checked in ..scan_output() and communicated to the caller by returning
-> > N less than `n_pages` passed in. This is exactly how e.g. read()
-> > works: if you get less than requested you've hit the end of the file.
-> > If the file happens to have size that is equal to the provided buffer
-> > length, the next read() will return 0.
-> Right now we have:
->
-> pagemap_scan_output():
->         if (p->vec_buf_index >=3D p->vec_buf_len)
->                 return PM_SCAN_BUFFER_FULL;
->         if (p->found_pages =3D=3D p->max_pages)
->                 return PM_SCAN_FOUND_MAX_PAGES;
 
-Why do you need to differentiate between those cases?
 
-> pagemap_scan_pmd_entry():
->         ret =3D pagemap_scan_output(bitmap, p, start, n_pages);
->         if (ret >=3D 0) // success
->                 make_UFFD_WP and flush
->         else
->                 buffer_error
->
-> You are asking me to do:
->
-> pagemap_scan_output():
->         if (p->vec_buf_index >=3D p->vec_buf_len)
->                 return 0;
+On 13/06/2023 14:15, Tariq Toukan wrote:
+> 
+> 
+> On 07/06/2023 18:03, David Howells wrote:
+>> Tariq Toukan <ttoukan.linux@gmail.com> wrote:
+>>
+>>> My team spotted a new degradation in TLS TX device offload, bisected 
+>>> to this
+>>> patch.
+>>
+>> I presume you're using some hardware (I'm guessing Mellanox?) that can
+>> actually do TLS offload?  Unfortunately, I don't have any hardware 
+>> that can do
+>> this, so I can't test the tls_device stuff.
+>>
+>>>  From a quick look at the patch, it's not clear to me what's going 
+>>> wrong.
+>>> Please let us know of any helpful information that we can provide to 
+>>> help in
+>>> the debug.
+>>
+>> Can you find out what source line this corresponds to?
+>>
+>>     RIP: 0010:skb_splice_from_iter+0x102/0x300
+>>
+>> Assuming you're building your own kernel, something like the following 
+>> might
+>> do the trick:
+>>
+>>     echo "RIP: 0010:skb_splice_from_iter+0x102/0x300" |
+>>     ./scripts/decode_stacktrace.sh /my/built/vmlinux /my/build/tree
+>>
+> 
+> Hi,
+> 
+> It's:
+> RIP: 0010:skb_splice_from_iter (/usr/linux/net/core/skbuff.c:6957)
+> 
+> which coresponds to this line:
+>                          if (WARN_ON_ONCE(!sendpage_ok(page)))
+> 
 
->         if (p->found_pages =3D=3D p->max_pages)
->                 return PM_SCAN_FOUND_MAX_PAGES;
-
-This should be instead:
-
-n_pages =3D min(p->max_pags - p_found_pages, n_pages)
-...
-return n_pages;
-
-> pagemap_scan_pmd_entry():
->         ret =3D pagemap_scan_output(bitmap, p, start, n_pages);
->         if (ret > 0) // success
->                 make_UFFD_WP and flush
->         else if (ret =3D=3D 0) // buffer full
->                 return PM_SCAN_BUFFER_FULL;
->         else //other errors
->                 buffer_error
-
-And this would be:
-
-if (ret > 0 && WP)
-   WP + flush
-
-if (ret < n_pages)
-   return -ENOSPC;
-
-> So you are asking me to go from consie code to write more lines of code. =
-I
-> would write more lines without any issue if it improves readability and
-> logical sense. But I don't see here any benefit.
-
-Please see the clarifications above.
-
-Best Regards
-Micha=C5=82 Miros=C5=82aw
+Hi David,
+Any other debug information that we can provide to progress with the 
+analysis?
