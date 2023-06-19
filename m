@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 943517350E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 11:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F6D735100
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 11:56:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbjFSJwf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jun 2023 05:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40586 "EHLO
+        id S231152AbjFSJ4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jun 2023 05:56:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbjFSJwe (ORCPT
+        with ESMTP id S230469AbjFSJ4I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jun 2023 05:52:34 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6CD6F3;
-        Mon, 19 Jun 2023 02:52:32 -0700 (PDT)
+        Mon, 19 Jun 2023 05:56:08 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B18E7E77;
+        Mon, 19 Jun 2023 02:56:06 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 838F8210E7;
-        Mon, 19 Jun 2023 09:52:31 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 422ED1F38A;
+        Mon, 19 Jun 2023 09:56:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1687168351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1687168565; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=DxIJDuuYClXmgqYM4N1lEgYI6VAbXG1zZ254H2n4+qw=;
-        b=cfNES0tRgRt0IZv0nqHW23+HqATlwNpQKXeKBshiiYxpUWvkGCDRZ+Xv/27M4Oas5e7Am3
-        SGaDzkXL1/aWl/XjXWpwAP3yJUyAa0getdW6KZzTkY31VyFlS0WWeYjvFZdOrGyi4BJ6js
-        Kqe0majp2iBdXrYARIc++DT8QhLXOBE=
+        bh=hjSIn/gl7eGaq16iD3zKNds5FKdXaWAXy03foKwXdXA=;
+        b=iyUnxx0G+hifGpfNQU1q/8CW0Z6azO7T88n3M4sjs6fb9UNJABk2dZjwuP+9Bm8w27gvgZ
+        zjJ45j/aJK3nkuQKEO7GzkncTcsU4gJfhOZwO6NDDOIzkFYGufecw/J2Dv2KgNe9C/59SX
+        fWulkdHPd58FHJiSEoHfTrbHatluQc4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1687168351;
+        s=susede2_ed25519; t=1687168565;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=DxIJDuuYClXmgqYM4N1lEgYI6VAbXG1zZ254H2n4+qw=;
-        b=7kExUx51RD0vHom4H8oJKaZpf32mIjedU88Fjzph254nHGLgby4ShOkk2dzXoePKpxwLt0
-        kRtpzEJMEkigAKDw==
+        bh=hjSIn/gl7eGaq16iD3zKNds5FKdXaWAXy03foKwXdXA=;
+        b=VjXJ8b32ZLLPMd2YU/s+D+sxyFhGw26RTgODDJZS82t5iIY52NEERkUnuP5HOE6HMbTXIw
+        6LsvITHbDbJYI6Cw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6EB02138E8;
-        Mon, 19 Jun 2023 09:52:31 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2F36F138E8;
+        Mon, 19 Jun 2023 09:56:05 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id Esz8Gl8lkGQmNQAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 19 Jun 2023 09:52:31 +0000
+        id Lnt8CzUmkGTANgAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 19 Jun 2023 09:56:05 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 059ABA0755; Mon, 19 Jun 2023 11:52:31 +0200 (CEST)
-Date:   Mon, 19 Jun 2023 11:52:30 +0200
+        id BB61FA0755; Mon, 19 Jun 2023 11:56:04 +0200 (CEST)
+Date:   Mon, 19 Jun 2023 11:56:04 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Bean Huo <beanhuo@iokpp.de>
 Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org,
@@ -59,14 +59,15 @@ Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
         beanhuo@micron.com
-Subject: Re: [PATCH v1 1/5] fs/buffer: clean up block_commit_write
-Message-ID: <20230619095230.undchckir57stooe@quack3>
+Subject: Re: [PATCH v1 2/5] fs/buffer.c: convert block_commit_write to return
+ void
+Message-ID: <20230619095604.uknf7uovnn2az2wu@quack3>
 References: <20230618213250.694110-1-beanhuo@iokpp.de>
- <20230618213250.694110-2-beanhuo@iokpp.de>
+ <20230618213250.694110-3-beanhuo@iokpp.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230618213250.694110-2-beanhuo@iokpp.de>
+In-Reply-To: <20230618213250.694110-3-beanhuo@iokpp.de>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -77,80 +78,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 18-06-23 23:32:46, Bean Huo wrote:
+On Sun 18-06-23 23:32:47, Bean Huo wrote:
 > From: Bean Huo <beanhuo@micron.com>
 > 
-> Originally inode is used to get blksize, after commit 45bce8f3e343
-> ("fs/buffer.c: make block-size be per-page and protected by the page lock"),
-> __block_commit_write no longer uses this parameter inode, this patch is to
-> remove inode and clean up block_commit_write.
+> block_commit_write() always returns 0, this patch changes it to
+> return void.
 > 
 > Signed-off-by: Bean Huo <beanhuo@micron.com>
 
-Nice! Feel free to add:
+Looks good to me but you'll need to reorder this patch at the end of the
+patch series to avoid breaking compilation in the middle of the series.
+Otherwise feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  fs/buffer.c | 15 +++------------
->  1 file changed, 3 insertions(+), 12 deletions(-)
+>  fs/buffer.c                 | 11 +++++------
+>  include/linux/buffer_head.h |  2 +-
+>  2 files changed, 6 insertions(+), 7 deletions(-)
 > 
 > diff --git a/fs/buffer.c b/fs/buffer.c
-> index a7fc561758b1..b88bb7ec38be 100644
+> index b88bb7ec38be..fa09cf94f771 100644
 > --- a/fs/buffer.c
 > +++ b/fs/buffer.c
-> @@ -2116,8 +2116,7 @@ int __block_write_begin(struct page *page, loff_t pos, unsigned len,
+> @@ -2116,7 +2116,7 @@ int __block_write_begin(struct page *page, loff_t pos, unsigned len,
 >  }
 >  EXPORT_SYMBOL(__block_write_begin);
 >  
-> -static int __block_commit_write(struct inode *inode, struct page *page,
-> -		unsigned from, unsigned to)
-> +int block_commit_write(struct page *page, unsigned int from, unsigned int to)
+> -int block_commit_write(struct page *page, unsigned int from, unsigned int to)
+> +void block_commit_write(struct page *page, unsigned int from, unsigned int to)
 >  {
 >  	unsigned block_start, block_end;
 >  	int partial = 0;
-> @@ -2154,6 +2153,7 @@ static int __block_commit_write(struct inode *inode, struct page *page,
+> @@ -2151,7 +2151,6 @@ int block_commit_write(struct page *page, unsigned int from, unsigned int to)
+>  	 */
+>  	if (!partial)
 >  		SetPageUptodate(page);
->  	return 0;
->  }
-> +EXPORT_SYMBOL(block_commit_write);
->  
->  /*
->   * block_write_begin takes care of the basic task of block allocation and
-> @@ -2188,7 +2188,6 @@ int block_write_end(struct file *file, struct address_space *mapping,
->  			loff_t pos, unsigned len, unsigned copied,
->  			struct page *page, void *fsdata)
->  {
-> -	struct inode *inode = mapping->host;
->  	unsigned start;
->  
->  	start = pos & (PAGE_SIZE - 1);
-> @@ -2214,7 +2213,7 @@ int block_write_end(struct file *file, struct address_space *mapping,
->  	flush_dcache_page(page);
->  
->  	/* This could be a short (even 0-length) commit */
-> -	__block_commit_write(inode, page, start, start+copied);
-> +	block_commit_write(page, start, start+copied);
->  
->  	return copied;
->  }
-> @@ -2535,14 +2534,6 @@ int cont_write_begin(struct file *file, struct address_space *mapping,
->  }
->  EXPORT_SYMBOL(cont_write_begin);
->  
-> -int block_commit_write(struct page *page, unsigned from, unsigned to)
-> -{
-> -	struct inode *inode = page->mapping->host;
-> -	__block_commit_write(inode,page,from,to);
 > -	return 0;
-> -}
-> -EXPORT_SYMBOL(block_commit_write);
+>  }
+>  EXPORT_SYMBOL(block_commit_write);
+>  
+> @@ -2577,11 +2576,11 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+>  		end = PAGE_SIZE;
+>  
+>  	ret = __block_write_begin(page, 0, end, get_block);
+> -	if (!ret)
+> -		ret = block_commit_write(page, 0, end);
 > -
->  /*
->   * block_page_mkwrite() is not allowed to change the file size as it gets
->   * called from a page fault handler when a page is first dirtied. Hence we must
+> -	if (unlikely(ret < 0))
+> +	if (unlikely(ret))
+>  		goto out_unlock;
+> +
+> +	block_commit_write(page, 0, end);
+> +
+>  	set_page_dirty(page);
+>  	wait_for_stable_page(page);
+>  	return 0;
+> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+> index 1520793c72da..873653d2f1aa 100644
+> --- a/include/linux/buffer_head.h
+> +++ b/include/linux/buffer_head.h
+> @@ -284,7 +284,7 @@ int cont_write_begin(struct file *, struct address_space *, loff_t,
+>  			unsigned, struct page **, void **,
+>  			get_block_t *, loff_t *);
+>  int generic_cont_expand_simple(struct inode *inode, loff_t size);
+> -int block_commit_write(struct page *page, unsigned from, unsigned to);
+> +void block_commit_write(struct page *page, unsigned int from, unsigned int to);
+>  int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+>  				get_block_t get_block);
+>  /* Convert errno to return value from ->page_mkwrite() call */
 > -- 
 > 2.34.1
 > 
