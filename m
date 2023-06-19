@@ -2,46 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA127734F7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 11:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A71673506D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 11:36:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbjFSJTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jun 2023 05:19:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47608 "EHLO
+        id S230374AbjFSJgh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jun 2023 05:36:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229618AbjFSJTH (ORCPT
+        with ESMTP id S230313AbjFSJge (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jun 2023 05:19:07 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 92DBA83;
-        Mon, 19 Jun 2023 02:19:05 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 279F612FC;
-        Mon, 19 Jun 2023 02:19:49 -0700 (PDT)
-Received: from FVFF77S0Q05N (unknown [10.57.28.22])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B0053F64C;
-        Mon, 19 Jun 2023 02:19:03 -0700 (PDT)
-Date:   Mon, 19 Jun 2023 10:19:00 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 07/32] mm: Bring back vmalloc_exec
-Message-ID: <ZJAdhBIvwFBOFQU/@FVFF77S0Q05N>
-References: <20230509165657.1735798-1-kent.overstreet@linux.dev>
- <20230509165657.1735798-8-kent.overstreet@linux.dev>
+        Mon, 19 Jun 2023 05:36:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FACB91
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 02:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687167354;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ng+E0NeMqDKZUxuGsfTZut3d43qxTfY/toyOijwdydQ=;
+        b=TRu0QXPe3gE1XmIvwGNNDbmi2qz4xFVNRf2KIj9KBlTFVUHjlHbsNoCwFLAzj7IpfITasx
+        VoHo0xtx+XBXxxw4D2t+L1IxV8DlUjK94KGbkhqhr9R6acZxws8TBpk6ZYdByfbDFX3fp7
+        1W4MVYQ1BsrkYfhnHSvYx7C9RAR1kIY=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-189-Ogap4TbsOaGWh0WlpyYy_w-1; Mon, 19 Jun 2023 05:35:50 -0400
+X-MC-Unique: Ogap4TbsOaGWh0WlpyYy_w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7D16729AA2C1;
+        Mon, 19 Jun 2023 09:35:49 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D81140C20F5;
+        Mon, 19 Jun 2023 09:35:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com>
+References: <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com> <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com> <20230522121125.2595254-1-dhowells@redhat.com> <20230522121125.2595254-9-dhowells@redhat.com> <2267272.1686150217@warthog.procyon.org.uk> <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com>
+To:     Tariq Toukan <ttoukan.linux@gmail.com>
+Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
+        samiram@nvidia.com, drort@nvidia.com,
+        Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230509165657.1735798-8-kent.overstreet@linux.dev>
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <776548.1687167344.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 19 Jun 2023 10:35:44 +0100
+Message-ID: <776549.1687167344@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -49,127 +84,21 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 09, 2023 at 12:56:32PM -0400, Kent Overstreet wrote:
-> From: Kent Overstreet <kent.overstreet@gmail.com>
-> 
-> This is needed for bcachefs, which dynamically generates per-btree node
-> unpack functions.
+Tariq Toukan <ttoukan.linux@gmail.com> wrote:
 
-Much like Kees and Andy, I have concerns with adding new code generators to the
-kernel. Even ignoring the actual code generation, there are a bunch of subtle
-ordering/maintenance/synchronization concerns across architectures, and we
-already have a fair amount of pain with the existing cases.
+> Any other debug information that we can provide to progress with the ana=
+lysis?
 
-Can you share more detail on how you want to use this?
+Can you see if the problem still happens on this branch of my tree?
 
-From a quick scan of your gitweb for the bcachefs-for-upstream branch I
-couldn't spot the relevant patches.
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/=
+?h=3Dsendpage-3-frag
 
-Thanks,
-Mark.
+It eases the restriction that the WARN_ON is warning about by (in patch 1[=
+*])
+copying slab objects into page fragments.
 
-> 
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Uladzislau Rezki <urezki@gmail.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: linux-mm@kvack.org
-> ---
->  include/linux/vmalloc.h |  1 +
->  kernel/module/main.c    |  4 +---
->  mm/nommu.c              | 18 ++++++++++++++++++
->  mm/vmalloc.c            | 21 +++++++++++++++++++++
->  4 files changed, 41 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-> index 69250efa03..ff147fe115 100644
-> --- a/include/linux/vmalloc.h
-> +++ b/include/linux/vmalloc.h
-> @@ -145,6 +145,7 @@ extern void *vzalloc(unsigned long size) __alloc_size(1);
->  extern void *vmalloc_user(unsigned long size) __alloc_size(1);
->  extern void *vmalloc_node(unsigned long size, int node) __alloc_size(1);
->  extern void *vzalloc_node(unsigned long size, int node) __alloc_size(1);
-> +extern void *vmalloc_exec(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
->  extern void *vmalloc_32(unsigned long size) __alloc_size(1);
->  extern void *vmalloc_32_user(unsigned long size) __alloc_size(1);
->  extern void *__vmalloc(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index d3be89de70..9eaa89e84c 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -1607,9 +1607,7 @@ static void dynamic_debug_remove(struct module *mod, struct _ddebug_info *dyndbg
->  
->  void * __weak module_alloc(unsigned long size)
->  {
-> -	return __vmalloc_node_range(size, 1, VMALLOC_START, VMALLOC_END,
-> -			GFP_KERNEL, PAGE_KERNEL_EXEC, VM_FLUSH_RESET_PERMS,
-> -			NUMA_NO_NODE, __builtin_return_address(0));
-> +	return vmalloc_exec(size, GFP_KERNEL);
->  }
->  
->  bool __weak module_init_section(const char *name)
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index 57ba243c6a..8d9ab19e39 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -280,6 +280,24 @@ void *vzalloc_node(unsigned long size, int node)
->  }
->  EXPORT_SYMBOL(vzalloc_node);
->  
-> +/**
-> + *	vmalloc_exec  -  allocate virtually contiguous, executable memory
-> + *	@size:		allocation size
-> + *
-> + *	Kernel-internal function to allocate enough pages to cover @size
-> + *	the page level allocator and map them into contiguous and
-> + *	executable kernel virtual space.
-> + *
-> + *	For tight control over page level allocator and protection flags
-> + *	use __vmalloc() instead.
-> + */
-> +
-> +void *vmalloc_exec(unsigned long size, gfp_t gfp_mask)
-> +{
-> +	return __vmalloc(size, gfp_mask);
-> +}
-> +EXPORT_SYMBOL_GPL(vmalloc_exec);
-> +
->  /**
->   * vmalloc_32  -  allocate virtually contiguous memory (32bit addressable)
->   *	@size:		allocation size
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 31ff782d36..2ebb9ea7f0 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3401,6 +3401,27 @@ void *vzalloc_node(unsigned long size, int node)
->  }
->  EXPORT_SYMBOL(vzalloc_node);
->  
-> +/**
-> + * vmalloc_exec - allocate virtually contiguous, executable memory
-> + * @size:	  allocation size
-> + *
-> + * Kernel-internal function to allocate enough pages to cover @size
-> + * the page level allocator and map them into contiguous and
-> + * executable kernel virtual space.
-> + *
-> + * For tight control over page level allocator and protection flags
-> + * use __vmalloc() instead.
-> + *
-> + * Return: pointer to the allocated memory or %NULL on error
-> + */
-> +void *vmalloc_exec(unsigned long size, gfp_t gfp_mask)
-> +{
-> +	return __vmalloc_node_range(size, 1, VMALLOC_START, VMALLOC_END,
-> +			gfp_mask, PAGE_KERNEL_EXEC, VM_FLUSH_RESET_PERMS,
-> +			NUMA_NO_NODE, __builtin_return_address(0));
-> +}
-> +EXPORT_SYMBOL_GPL(vmalloc_exec);
-> +
->  #if defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA32)
->  #define GFP_VMALLOC32 (GFP_DMA32 | GFP_KERNEL)
->  #elif defined(CONFIG_64BIT) && defined(CONFIG_ZONE_DMA)
-> -- 
-> 2.40.1
-> 
-> 
+David
+
+[*] "net: Copy slab data for sendmsg(MSG_SPLICE_PAGES)"
+
