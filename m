@@ -2,123 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B2F7735112
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 11:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2577473532D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 12:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231764AbjFSJ5F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jun 2023 05:57:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42244 "EHLO
+        id S232026AbjFSKmY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jun 2023 06:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231738AbjFSJ4s (ORCPT
+        with ESMTP id S231146AbjFSKmH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jun 2023 05:56:48 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B86E713D;
-        Mon, 19 Jun 2023 02:56:44 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 63C8E1F37C;
-        Mon, 19 Jun 2023 09:56:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1687168603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=muUTjP25aYFmNXaLyBGB13a2mB/gemsyPXw0y/fSJkY=;
-        b=tbtiGiX80YAT6jPK+U/vZj+hgHIg9p75BCFi001xezlolDZyipzy07OqrfRefEbf4dV5EM
-        qXKCOaiOOm2drgGa2uzkAfBrTMGs0u6y6O+gXdLb9LR8mYoiABphYf2A+3aSuBEeJUSfl0
-        080X67FW1yX8DDMW4ffGWuYyUOV+FXE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1687168603;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=muUTjP25aYFmNXaLyBGB13a2mB/gemsyPXw0y/fSJkY=;
-        b=4yj3hR/7cdSaAU6VGtPxoXcyKUVufEHzpM/+ahqqUyabkHOKXKxncQcCLFyPHoWlgf1yyq
-        JQEMpcSJZvgYYYBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 57717138E8;
-        Mon, 19 Jun 2023 09:56:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 8edaFVsmkGQRNwAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 19 Jun 2023 09:56:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id EE4CFA0755; Mon, 19 Jun 2023 11:56:42 +0200 (CEST)
-Date:   Mon, 19 Jun 2023 11:56:42 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Bean Huo <beanhuo@iokpp.de>
+        Mon, 19 Jun 2023 06:42:07 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 559B6199;
+        Mon, 19 Jun 2023 03:42:06 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-988f066f665so21960166b.2;
+        Mon, 19 Jun 2023 03:42:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687171325; x=1689763325;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Lc8A8Vw9LtMkTqv5o4GSfreuArCukUUbiIQJyiLS2Gs=;
+        b=meJYO/VluisrybFU77MgPXARQR8H/BczsgubpOvzbai2yX5V/vNJ1a44DdL5P+gT9h
+         zWaMyX4vsVMcZpdzrqrHuVgt+KJuH3wxsdVuftFTJAWDxqpYYhN8DbGuM3qnFIwm16oj
+         82X3mXu6193cPrAuBqSkaBVCPjA+IlrSg0lVP2EgXLsSKrDYFwgPWW6rm/HGLgLKKYIl
+         34H3ha0Lr8mUP3vvONSgYZQMDRcXXwTvK2ivTbHlbWcynep/tWcyXhjnXuYYReLgQVjd
+         0N2/eM5FJL05+0TX1P5SmIhH8m9bEJkBy7lV3xJ+RlpmSHuYsp1dMtRC0O3xgQ4t5YUO
+         G+mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687171325; x=1689763325;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lc8A8Vw9LtMkTqv5o4GSfreuArCukUUbiIQJyiLS2Gs=;
+        b=e8QBXfYw1FmFcjMWNM9p80fjZMlWzvET+1v5sjuhl1Uj3TiDUvMXiDHFONDGD+qIGq
+         7KnEDCdZUM8BK9k/CfXpSvGyXDYNhmI4JKoxhCnw2fuxzrCZsP/c4Yv7wLit7c4uNRyz
+         /6oUqlL3I4zUYIZgH8tjvbnK41DF83RtOEXCJYhBeSWknt5If11RNlBswyJDqO9PPJbo
+         yGe/7yxkpxOBcV8yJOqXjX/kn5vmwmaXdAAQqgeZXka6cQn+kxPyuif46hdFuc2IkZwE
+         5M2cruzwQrFezHTfyFfqIrpshQqJVtmZPAJhfGgTGQRPvlpp18ONF1g6pav9nUKeL0gG
+         hnbw==
+X-Gm-Message-State: AC+VfDxSeK4NsYG3ZG914aPV99pKWPPbZHiAuyUtMLE/jfTb8qHQKLAm
+        pW8/CIaRNzLLQLWfjZS0BzgutEKG6uX6Zw==
+X-Google-Smtp-Source: ACHHUZ6gvL3qDfw9MwR4eqOkuWp5n5zJry97i6r137AZVb9sYts/gHSzat3Fvpas0VxRgRcJ5YqdUQ==
+X-Received: by 2002:a17:907:7207:b0:988:8786:f56c with SMTP id dr7-20020a170907720700b009888786f56cmr3273576ejc.0.1687171324574;
+        Mon, 19 Jun 2023 03:42:04 -0700 (PDT)
+Received: from [10.176.234.233] ([147.161.245.31])
+        by smtp.gmail.com with ESMTPSA id m23-20020a1709060d9700b00988e400c468sm421140eji.190.2023.06.19.03.42.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jun 2023 03:42:04 -0700 (PDT)
+Message-ID: <efb4cbf2ee6f006b2b458c209fc0f31e8ba655e2.camel@gmail.com>
+Subject: Re: [PATCH v1 2/5] fs/buffer.c: convert block_commit_write to
+ return void
+From:   Bean Huo <huobean@gmail.com>
+To:     Jan Kara <jack@suse.cz>, Bean Huo <beanhuo@iokpp.de>
 Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org,
-        akpm@linux-foundation.org, jack@suse.cz, jack@suse.com,
-        tytso@mit.edu, adilger.kernel@dilger.ca, mark@fasheh.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        beanhuo@micron.com
-Subject: Re: [PATCH v1 5/5] udf: No need to check return value of
- block_commit_write()
-Message-ID: <20230619095642.vjb5fjyhgnbp2drc@quack3>
+        akpm@linux-foundation.org, jack@suse.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, mark@fasheh.com, jlbec@evilplan.org,
+        joseph.qi@linux.alibaba.com, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, beanhuo@micron.com
+Date:   Mon, 19 Jun 2023 12:42:02 +0200
+In-Reply-To: <20230619095604.uknf7uovnn2az2wu@quack3>
 References: <20230618213250.694110-1-beanhuo@iokpp.de>
- <20230618213250.694110-6-beanhuo@iokpp.de>
+         <20230618213250.694110-3-beanhuo@iokpp.de>
+         <20230619095604.uknf7uovnn2az2wu@quack3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230618213250.694110-6-beanhuo@iokpp.de>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 18-06-23 23:32:50, Bean Huo wrote:
-> From: Bean Huo <beanhuo@micron.com>
-> 
-> Remove unnecessary check on the return value of block_commit_write().
-> 
-> Signed-off-by: Bean Huo <beanhuo@micron.com>
+T24gTW9uLCAyMDIzLTA2LTE5IGF0IDExOjU2ICswMjAwLCBKYW4gS2FyYSB3cm90ZToKPiBMb29r
+cyBnb29kIHRvIG1lIGJ1dCB5b3UnbGwgbmVlZCB0byByZW9yZGVyIHRoaXMgcGF0Y2ggYXQgdGhl
+IGVuZCBvZgo+IHRoZQo+IHBhdGNoIHNlcmllcyB0byBhdm9pZCBicmVha2luZyBjb21waWxhdGlv
+biBpbiB0aGUgbWlkZGxlIG9mIHRoZQo+IHNlcmllcy4KPiBPdGhlcndpc2UgZmVlbCBmcmVlIHRv
+IGFkZDoKPiAKPiBSZXZpZXdlZC1ieTogSmFuIEthcmEgPGphY2tAc3VzZS5jej4KPiAKPiDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoEhvbnphCnRoYW5rcyBKYW4sIEkgd2lsbCByZW9yZGVyIGl0IGluIHRoZSB2Mi4K
+CktpbmQgcmVnYXJkcywKQmVhbgo=
 
-Looks good to me. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/udf/file.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/udf/file.c b/fs/udf/file.c
-> index 8238f742377b..b1a062922a24 100644
-> --- a/fs/udf/file.c
-> +++ b/fs/udf/file.c
-> @@ -67,13 +67,13 @@ static vm_fault_t udf_page_mkwrite(struct vm_fault *vmf)
->  	else
->  		end = PAGE_SIZE;
->  	err = __block_write_begin(page, 0, end, udf_get_block);
-> -	if (!err)
-> -		err = block_commit_write(page, 0, end);
-> -	if (err < 0) {
-> +	if (err) {
->  		unlock_page(page);
->  		ret = block_page_mkwrite_return(err);
->  		goto out_unlock;
->  	}
-> +
-> +	block_commit_write(page, 0, end);
->  out_dirty:
->  	set_page_dirty(page);
->  	wait_for_stable_page(page);
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
