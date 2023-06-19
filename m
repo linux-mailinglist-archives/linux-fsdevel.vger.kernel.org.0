@@ -2,105 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B1A7358EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 15:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABD9D73597E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 16:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbjFSNtl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jun 2023 09:49:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46222 "EHLO
+        id S230474AbjFSO01 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jun 2023 10:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232070AbjFSNtk (ORCPT
+        with ESMTP id S229563AbjFSO00 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jun 2023 09:49:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA2F6E59
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 06:48:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687182533;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=rbkpbKU4zNImW8Ox6PAE6hc6BtGlcpoEWuzNxPHb0d0=;
-        b=K0sprwQajuQTdgdU35KEMphiA3Zo6KKu//vetITinRSqdAnbVbiVlqc/0DrB7ZfL9Ej6lx
-        an4IDeAc0O3r/e2+gidR09aoniNqBl0GDBozrCXFU5f/JKH8xIp1s0RzhIJOcPFW5Pqfmf
-        /U60sKhVROfSBqAkScoitrwJGK/lkFw=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-49-PWi8h3-WO46KN9wJmfBPug-1; Mon, 19 Jun 2023 09:48:50 -0400
-X-MC-Unique: PWi8h3-WO46KN9wJmfBPug-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3B1BD2A5956D;
-        Mon, 19 Jun 2023 13:48:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8850A1415102;
-        Mon, 19 Jun 2023 13:48:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] afs: Fix writeback
+        Mon, 19 Jun 2023 10:26:26 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CD2E7;
+        Mon, 19 Jun 2023 07:26:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PGke1o7SJJYJg7mh7bo7HBv4qqYeX/5Bm/JlwCFjPtc=; b=f5wgmZgWdZ/eXaVG6JqXIh+iry
+        LGxYzMaV2TiTNGyo8A9eJrxxXCIh/7kYmUyDahGjW+fGPVpLe7SoDdJM19x0ECUlZ9N57ybIn789N
+        XJ3qAzCNaOMLl8HXcCr2FCP9q6mFTqoZ+0ekv1OmE/6VGnxiDvJZA3QBaeocqPk3J1evn/MdLoTII
+        d4BVBZolLcSqclZtMvmIsp6vUAxuooYQukmo26PjLhgaNnWiABAhaFh39nLPnT/lrzxMBhEvW1R5I
+        Vs/7J2dpP2x1vDPcxb8pT3ByONlQrUnQ/TpXS+Wn5v49MHs2imx4Obt10LaKWjCPmEBBzSAugxnh6
+        xSxq0fug==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qBFpj-00Bx1S-DF; Mon, 19 Jun 2023 14:26:19 +0000
+Date:   Mon, 19 Jun 2023 15:26:19 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Disha Goel <disgoel@linux.ibm.com>,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [PATCHv10 8/8] iomap: Add per-block dirty state tracking to
+ improve performance
+Message-ID: <ZJBli4JznbJkyF0U@casper.infradead.org>
+References: <cover.1687140389.git.ritesh.list@gmail.com>
+ <6db62a08dda3a348303e2262454837149c2afe2a.1687140389.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <923155.1687182529.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 19 Jun 2023 14:48:49 +0100
-Message-ID: <923156.1687182529@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6db62a08dda3a348303e2262454837149c2afe2a.1687140389.git.ritesh.list@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Mon, Jun 19, 2023 at 07:58:51AM +0530, Ritesh Harjani (IBM) wrote:
+> +static void ifs_calc_range(struct folio *folio, size_t off, size_t len,
+> +		enum iomap_block_state state, unsigned int *first_blkp,
+> +		unsigned int *nr_blksp)
+> +{
+> +	struct inode *inode = folio->mapping->host;
+> +	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
+> +	unsigned int first = off >> inode->i_blkbits;
+> +	unsigned int last = (off + len - 1) >> inode->i_blkbits;
+> +
+> +	*first_blkp = first + (state * blks_per_folio);
+> +	*nr_blksp = last - first + 1;
+> +}
 
-Could you apply these fixes to AFS writeback code from Vishal?
+As I said, this is not 'first_blkp'.  It's first_bitp.  I think this
+misunderstanding is related to Andreas' complaint, but it's not quite
+the same.
 
- (1) Release the acquired batch before returning if we got >=3D5 skips.
+>  static inline bool ifs_is_fully_uptodate(struct folio *folio,
+>  					       struct iomap_folio_state *ifs)
+>  {
+>  	struct inode *inode = folio->mapping->host;
+> +	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
+> +	unsigned int nr_blks = (IOMAP_ST_UPTODATE + 1) * blks_per_folio;
+>  
+> -	return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
+> +	return bitmap_full(ifs->state, nr_blks);
 
- (2) Retry a page we had to wait for rather than skipping over it after th=
-e
-     wait.
+I think we have a gap in our bitmap APIs.  We don't have a
+'bitmap_range_full(src, pos, nbits)'.  We could use find_next_zero_bit(),
+but that's going to do more work than necessary.
 
-Thanks,
-David
----
-The following changes since commit 45a3e24f65e90a047bef86f927ebdc4c710edaa=
-1:
-
-  Linux 6.4-rc7 (2023-06-18 14:06:27 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/afs-fixes-20230719
-
-for you to fetch changes up to 819da022dd007398d0c42ebcd8dbb1b681acea53:
-
-  afs: Fix waiting for writeback then skipping folio (2023-06-19 14:30:58 =
-+0100)
-
-----------------------------------------------------------------
-AFS fixes
-
-----------------------------------------------------------------
-Vishal Moola (Oracle) (2):
-      afs: Fix dangling folio ref counts in writeback
-      afs: Fix waiting for writeback then skipping folio
-
- fs/afs/write.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Given this lack, perhaps it's time to say that you're making all of
+this too hard by using an enum, and pretending that we can switch the
+positions of 'uptodate' and 'dirty' in the bitmap just by changing
+the enum.  Define the uptodate bits to be the first ones in the bitmap,
+document it (and why), and leave it at that.
 
