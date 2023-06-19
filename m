@@ -2,195 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A77734D35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 10:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4591734D58
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 10:16:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229618AbjFSIKP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jun 2023 04:10:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50480 "EHLO
+        id S229704AbjFSIQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jun 2023 04:16:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230053AbjFSIJv (ORCPT
+        with ESMTP id S229998AbjFSIQR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jun 2023 04:09:51 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D8581BD6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 01:09:24 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20230619080903euoutp01c7e998cec6f3ebd454d338f8452d9b39~qAQfLVK3t3117831178euoutp013
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 08:09:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20230619080903euoutp01c7e998cec6f3ebd454d338f8452d9b39~qAQfLVK3t3117831178euoutp013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1687162143;
-        bh=0RiBzXViYev57qzFaEFn6uZf9JksWi4MG5BSsmyK/ho=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=DRR+MnsOa9JIpssTAxpYyQ0GA0in4MQ6LIrhTzWAjKEUd/Uk+ppjNFh7xvjGwznIx
-         21l4UbLXjGONQjQZr6ToaPhnXNmiZdCw/d70P+PLmlAWTTds9MDxB6o0G8TutEZxVt
-         SC7fcXJwr3louI3FMYrl5rxCiPDXtVZh+N0uncgw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230619080902eucas1p1ab7ab9ce51c9d687eedc699f33478518~qAQegsimU1347613476eucas1p1K;
-        Mon, 19 Jun 2023 08:09:02 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 31.19.42423.E1D00946; Mon, 19
-        Jun 2023 09:09:02 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230619080901eucas1p224e67aa31866d2ad8d259b2209c2db67~qAQdMycnx0244102441eucas1p2Y;
-        Mon, 19 Jun 2023 08:09:01 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230619080901eusmtrp2b7cc41676a8ba9a4d0b7c33b2c3ccc1f~qAQdMCURE0117001170eusmtrp2E;
-        Mon, 19 Jun 2023 08:09:01 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-7f-64900d1e46f2
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9A.E3.14344.D1D00946; Mon, 19
-        Jun 2023 09:09:01 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230619080900eusmtip25f4fb56d3849cf1e0c88908d39b21a2b~qAQcdmB3w2848728487eusmtip2k;
-        Mon, 19 Jun 2023 08:09:00 +0000 (GMT)
-Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
-        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Mon, 19 Jun 2023 09:08:58 +0100
-Date:   Mon, 19 Jun 2023 10:08:57 +0200
-From:   Pankaj Raghav <p.raghav@samsung.com>
-To:     Hannes Reinecke <hare@suse.de>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Luis Chamberlain <mcgrof@kernel.org>, <p.raghav@samsung.com>,
-        <gost.dev@samsung.com>
-Subject: Re: [PATCH 6/7] mm/filemap: allocate folios with mapping blocksize
-Message-ID: <20230619080857.qxx5c7uaz6pm4h3m@localhost>
+        Mon, 19 Jun 2023 04:16:17 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4FF94
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 01:16:14 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id e9e14a558f8ab-33d928a268eso279175ab.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 01:16:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1687162574; x=1689754574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nUxNLC+gaxAx6q4yk9Zr89shiO34QlAjv1HZ696Wg1U=;
+        b=6jB0Vaksw7QYyR3aieZrQMpKBSoFdhf1SglIAWLr1IUfcUcsjNjZT047OxQ/zQDxn/
+         Q9VLzY0piRJkaAmLa8H4wzNvh8yfWhfZ2IWwJ+gHskDnk2EqS3ffbkHr01hFU11k/zF0
+         xgsVP5PPjtZeLsInnU48wBXWitsB5Cg42pRR7NSKqCaGZsK8UpHqajQTimFQ0q5vd/9r
+         acH2E9d4CQJy/awvToQdq8wrpNqwUmb65hWO8yhrGnfXzNPlCCI+qzY7RPDt1S85CFV0
+         QZ8a7hay4Wk37tQGl8s76uSpDIge/MKmH10WPIqNLvcYLXmP9kohSEeLvCiG8udvDi4l
+         XIRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687162574; x=1689754574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nUxNLC+gaxAx6q4yk9Zr89shiO34QlAjv1HZ696Wg1U=;
+        b=diZY+nxF/PNuFLW8jj1bM7f04NLM6i89Ca5EG9D2paj1oM62PM1/gawMUTttGN0nOI
+         FDlsLDR0fyQ2cIa2yB9SiqsCmr0aWLER5WuI83O6smZuHcqDMlS6tTLFvhsUpKMep2BX
+         rLjkpLRKxf6YnVO6O1glrJCytKcNnCjrvmjfAzBJ0SDqWSAYXrvH0v0XX844YGOGvXLZ
+         5AuIlTRNz/emBdr4AccbbAmj6esCPaWjBA+ns0Ok99t8ffz/w+Hs8gW0GKHkpwBm3XCa
+         DUUlfgEGfn7lPc02ftM/nNYVE0/gCGZhsL+u0gg7oMPT7w0fZllobOasG5IB7CZN2S5U
+         68Ag==
+X-Gm-Message-State: AC+VfDyY684dUSI3ONWXhUXyhjdAOlG4zVJyy+QSeb2TO8RnrWbDEzi4
+        gGGfXNtq/cZsVjmsx57oDWWcJEGKguwqH6PUgp7Dsw==
+X-Google-Smtp-Source: ACHHUZ7pPgmfxfjpyVDu/lfSWd41l6pU01tdM9sEKUPUeywUHyKDUU+RDI/ym0egdMQruqWyQjzGX8yWcNRZAY/X9kE=
+X-Received: by 2002:a92:c243:0:b0:340:f76:4292 with SMTP id
+ k3-20020a92c243000000b003400f764292mr894272ilo.0.1687162574121; Mon, 19 Jun
+ 2023 01:16:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20230614114637.89759-7-hare@suse.de>
-X-Originating-IP: [106.110.32.140]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzHfX+/63e/bu58O9FnpWxHHopE6IyMMa6FiH80ltvdb9V6kDt5
-        Os2x9GjXCalcac2KiuzuxLkLnZREnjlPl7ZiGrYeWHU96Pqd8d/783m/X5+9v9uXJoXVbt50
-        fPJ+RpEsTRRRPE5d0+DThX58rTz4xUd/sa62hhJbyvMJ8ZXqB4S4/n2g2FLfwhHbtF1I7BjQ
-        UWu4EsPlAIm+KpuSPCx0cCTmd2pKYmhVSfr0flupaN4qOZMYf4BRLFq9hxfXbS2lUuqnHzpj
-        M1BqNOqRg9xpwEtBV9qOchCPFuLLCC7kaFxDPwJTegfFDn0IKr70cP4iBkurG2tUIjDr7vxL
-        nT35imQHI4KOoVzSiXCwP3RmqMcRmqZwABzP5jrXnlgEPZlWrjNP4jwCsu12wmlMxRFQ0X5i
-        guXjUKjq+4ZY7QEtRZ0TNdzxEnhy9xmXrSQCteGxq14aPDK+J5xHAX+nocRhQ6yxHtJrvrr0
-        VOhuNrrgGTBmukiwWgVdNgfJwukI8ky1lLM14JWgeZzozJA4Hq7Zv7jurAVtXgdiIwKw/fBg
-        IwLIrztPsms+ZGUI2fQcqLZ/57DrGdDWK9AiUfF/Dyv+7z6rF0CZuZcqHidI7AOVozQr50Pt
-        7UVlyK0KeTGpyqRYRrk4mTkYpJQmKVOTY4Nke5P0aPw/tY42995CJd09QVZE0MiKgCZFnvyo
-        eo1cyJdLDx9hFHtjFKmJjNKKfGiOyIsfGNYiE+JY6X4mgWFSGMVfl6DdvdXElrkH32WGXjpl
-        bbCUWmTReV2mLTAQclVffOP6+mBrXOS9I1tz1bI1GRpf4eusQZFi9/YO0yEYJYeyGpvJt6fD
-        Px17WfRscsxvjPftLv84JdZcXXGd16i7YKz9nJY/FLlxW67vbS23dUOIOcz986bOAu+Zsg85
-        DmNh/Af9WMrcBP25BbtGCnCQ4GVPpKrSUdIwHEEl3Fx48+fszb/8V7y52zTNcDRKP2kkqy36
-        uDGzvF2yzlRT5Kc6MJOalWRriJOc9/49KWr5j1DdPE142vPcOf0R8vu24cbUiD6D3+mmhsYB
-        q2/B8DLBzl8aZWCz6tGttDK7z1jNjo392y0OqX92nVTEUcZJFweQCqX0D9hWA3O+AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsVy+t/xe7qyvBNSDOY0cFjMWb+GzWLPoklM
-        FitXH2Wy2HtL22LP3pMsFjcmPGW0+P1jDpsDu8fmFVoem1Z1snmcmPGbxWP3zQY2j82nqz0+
-        b5ILYIvSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQ
-        y/jwcjZTwS/hiosLHzE3MF7h72Lk5JAQMJHYvOc0axcjF4eQwFJGif+LXzBCJGQkNn65ygph
-        C0v8udbFBmILCXxklPh9lQ+iYQujROuuY8wgCRYBVYknbQ1ADRwcbAJaEo2d7CBhEQEliY/t
-        h9hB6pkF+pkkOu/dYwJJCAt4Syy73wTWyytgLrHq80tGiAWREq93djNCxAUlTs58wgJiMwvo
-        SCzY/YkNZD6zgLTE8n8cIGFOASOJs/svsEPcqSTRsPkMC4RdK/H57zPGCYzCs5BMmoVk0iyE
-        SQsYmVcxiqSWFuem5xYb6RUn5haX5qXrJefnbmIERt22Yz+37GBc+eqj3iFGJg7GQ4wSHMxK
-        IrxBe/tShHhTEiurUovy44tKc1KLDzGaAkNiIrOUaHI+MO7zSuINzQxMDU3MLA1MLc2MlcR5
-        PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqYzG4w+PeefcTuGFx4w9c6P8M6XvflKWmhN7MnKWSI
-        PvJ+OifIcVKq38WNR06bvGoMzTr1ouC214cje6sXzP+4j1e0sP+jkE5mtSmLxxJ/uZ18petD
-        uu9utisQLVy1ccFt6zKuXbK9sRPmqcb5JeyMWpRi8tnBMLxp/bFZr7Qnr/vxt/1p/oQpv3e2
-        yknMWfNoaffTaZfUNSf8Pzil+sdi/p+nxcTWXwmsMp1wyq02Zu4Jzn1nHPn9StKt5B2mrjpR
-        x3rxZVn8689bL9xw7kv58oxDqNd8HldMxf/lvN/lIj7PuuY8ZcedJRdEP/vz5jyas5IpIY4t
-        55jyhk+2NY07S4NiHmw0mrixMb1TdHcyvxJLcUaioRZzUXEiAOyKiElDAwAA
-X-CMS-MailID: 20230619080901eucas1p224e67aa31866d2ad8d259b2209c2db67
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----VNgDLSb4c7ZKb-8DtXAfXWqOiEfz7BS1m7F6.Sab_7Xb42PA=_11bbf7_"
-X-RootMTR: 20230619080901eucas1p224e67aa31866d2ad8d259b2209c2db67
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230619080901eucas1p224e67aa31866d2ad8d259b2209c2db67
-References: <20230614114637.89759-1-hare@suse.de>
-        <20230614114637.89759-7-hare@suse.de>
-        <CGME20230619080901eucas1p224e67aa31866d2ad8d259b2209c2db67@eucas1p2.samsung.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20230613102905.2808371-1-usama.anjum@collabora.com>
+ <20230613102905.2808371-3-usama.anjum@collabora.com> <CABb0KFHWnbrf2ythvO0OKsd1ZS9b4D9BNzwBCbn6g9OX4n6ZOg@mail.gmail.com>
+ <0db01d90-09d6-08a4-bbb8-70670d3baa94@collabora.com> <CABb0KFEn5TU480A=YiN82nLRtGyKMABi8cZjuiGUU_jFZZo+8g@mail.gmail.com>
+ <34203acf-7270-7ade-a60e-ae0f729dcf70@collabora.com> <CABb0KFFaXgJD99pWfx3MC+qrq5jUaPis_kZo6U8yL_8xdp0GJA@mail.gmail.com>
+ <96b7cc00-d213-ad7d-1b48-b27f75b04d22@collabora.com> <CABb0KFEy_mRaT86TEOQ-BoTe_XOVw3Kp5VdzOfEEaiZJuT754g@mail.gmail.com>
+ <39bc8212-9ee8-dbc1-d468-f6be438b683b@collabora.com> <CABb0KFHx2hV9M7oinCdKnagRmcrGHagH9eAO3TkVTQH+o9x=5A@mail.gmail.com>
+ <2e1b80f1-0385-0674-ae5f-9703a6ef975d@collabora.com>
+In-Reply-To: <2e1b80f1-0385-0674-ae5f-9703a6ef975d@collabora.com>
+From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Date:   Mon, 19 Jun 2023 10:16:01 +0200
+Message-ID: <CABb0KFGOx69Sz6w9JenYUwSTFmW-Cmcns3X-oDyWsC+H57vkvg@mail.gmail.com>
+Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------VNgDLSb4c7ZKb-8DtXAfXWqOiEfz7BS1m7F6.Sab_7Xb42PA=_11bbf7_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+On Fri, 16 Jun 2023 at 08:57, Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+>
+> On 6/16/23 1:07=E2=80=AFAM, Micha=C5=82 Miros=C5=82aw wrote:
+> > On Thu, 15 Jun 2023 at 17:11, Muhammad Usama Anjum
+> > <usama.anjum@collabora.com> wrote:
+> >> On 6/15/23 7:52=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>> On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
+> >>> <usama.anjum@collabora.com> wrote:
+> >>>> I'll send next revision now.
+> >>>> On 6/14/23 11:00=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>>>> (A quick reply to answer open questions in case they help the next =
+version.)
+[...]
+> >>>>> I guess this will be reworked anyway, but I'd prefer this didn't ne=
+ed
+> >>>>> custom errors etc. If we agree to decoupling the selection and GET
+> >>>>> output, it could be:
+> >>>>>
+> >>>>> bool is_interesting_page(p, flags); // this one does the
+> >>>>> required/anyof/excluded match
+> >>>>> size_t output_range(p, start, len, flags); // this one fills the
+> >>>>> output vector and returns how many pages were fit
+> >>>>>
+> >>>>> In this setup, `is_interesting_page() && (n_out =3D output_range())=
+ <
+> >>>>> n_pages` means this is the final range, no more will fit. And if
+> >>>>> `n_out =3D=3D 0` then no pages fit and no WP is needed (no other sp=
+ecial
+> >>>>> cases).
+> >>>> Right now, pagemap_scan_output() performs the work of both of these =
+two
+> >>>> functions. The part can be broken into is_interesting_pages() and we=
+ can
+> >>>> leave the remaining part as it is.
+> >>>>
+> >>>> Saying that n_out < n_pages tells us the buffer is full covers one c=
+ase.
+> >>>> But there is case of maximum pages have been found and walk needs to=
+ be
+> >>>> aborted.
+> >>>
+> >>> This case is exactly what `n_out < n_pages` will cover (if scan_outpu=
+t
+> >>> uses max_pages properly to limit n_out).
+> >>> Isn't it that when the buffer is full we want to abort the scan alway=
+s
+> >>> (with WP if `n_out > 0`)?
+> >> Wouldn't it be duplication of condition if buffer is full inside
+> >> pagemap_scan_output() and just outside it. Inside pagemap_scan_output(=
+) we
+> >> check if we have space before putting data inside it. I'm using this s=
+ame
+> >> condition to indicate that buffer is full.
+> >
+> > I'm not sure what do you mean? The buffer-full conditions would be
+> > checked in ..scan_output() and communicated to the caller by returning
+> > N less than `n_pages` passed in. This is exactly how e.g. read()
+> > works: if you get less than requested you've hit the end of the file.
+> > If the file happens to have size that is equal to the provided buffer
+> > length, the next read() will return 0.
+> Right now we have:
+>
+> pagemap_scan_output():
+>         if (p->vec_buf_index >=3D p->vec_buf_len)
+>                 return PM_SCAN_BUFFER_FULL;
+>         if (p->found_pages =3D=3D p->max_pages)
+>                 return PM_SCAN_FOUND_MAX_PAGES;
 
-Hi Hannes,
-On Wed, Jun 14, 2023 at 01:46:36PM +0200, Hannes Reinecke wrote:
-> The mapping has an underlying blocksize (by virtue of
-> mapping->host->i_blkbits), so if the mapping blocksize
-> is larger than the pagesize we should allocate folios
-> in the correct order.
-> 
-Network filesystems such as 9pfs set the blkbits to be maximum data it
-wants to transfer leading to unnecessary memory pressure as we will try
-to allocate higher order folios(Order 5 in my setup). Isn't it better
-for each filesystem to request the minimum folio order it needs for its
-page cache early on? Block devices can do the same for its block cache.
+Why do you need to differentiate between those cases?
 
-I have prototype along those lines and I will it soon. This is also
-something willy indicated before in a mailing list conversation.
+> pagemap_scan_pmd_entry():
+>         ret =3D pagemap_scan_output(bitmap, p, start, n_pages);
+>         if (ret >=3D 0) // success
+>                 make_UFFD_WP and flush
+>         else
+>                 buffer_error
+>
+> You are asking me to do:
+>
+> pagemap_scan_output():
+>         if (p->vec_buf_index >=3D p->vec_buf_len)
+>                 return 0;
 
-> Signed-off-by: Hannes Reinecke <hare@suse.de>
-> ---
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 47afbca1d122..031935b78af7 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -245,7 +245,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			continue;
->  		}
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask, mapping_get_order(mapping));
->  		if (!folio)
->  			break;
->  		if (filemap_add_folio(mapping, folio, index + i,
+>         if (p->found_pages =3D=3D p->max_pages)
+>                 return PM_SCAN_FOUND_MAX_PAGES;
 
-Did you turn on CONFIG_DEBUG_VM while testing? I don't think we are
-incrementing the counter in this function correctly as this function
-assumes order 0. We might need something like this:
+This should be instead:
 
--               ractl->_nr_pages++;
-+               ractl->_nr_pages += folio_nr_pages(folio);
-+               i += folio_nr_pages(folio) - 1;
-> @@ -806,7 +806,7 @@ void readahead_expand(struct readahead_control *ractl,
->  		if (folio && !xa_is_value(folio))
->  			return; /* Folio apparently present */
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask, mapping_get_order(mapping));
->  		if (!folio)
->  			return;
->  		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
-> @@ -833,7 +833,7 @@ void readahead_expand(struct readahead_control *ractl,
->  		if (folio && !xa_is_value(folio))
->  			return; /* Folio apparently present */
-Same here:
--               ractl->_nr_pages++;
-+               ractl->_nr_pages += folio_nr_pages(folio);
+n_pages =3D min(p->max_pags - p_found_pages, n_pages)
+...
+return n_pages;
 
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask, mapping_get_order(mapping));
->  		if (!folio)
->  			return;
->  		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
-> -- 
-> 2.35.3
-> 
+> pagemap_scan_pmd_entry():
+>         ret =3D pagemap_scan_output(bitmap, p, start, n_pages);
+>         if (ret > 0) // success
+>                 make_UFFD_WP and flush
+>         else if (ret =3D=3D 0) // buffer full
+>                 return PM_SCAN_BUFFER_FULL;
+>         else //other errors
+>                 buffer_error
 
-------VNgDLSb4c7ZKb-8DtXAfXWqOiEfz7BS1m7F6.Sab_7Xb42PA=_11bbf7_
-Content-Type: text/plain; charset="utf-8"
+And this would be:
 
+if (ret > 0 && WP)
+   WP + flush
 
-------VNgDLSb4c7ZKb-8DtXAfXWqOiEfz7BS1m7F6.Sab_7Xb42PA=_11bbf7_--
+if (ret < n_pages)
+   return -ENOSPC;
+
+> So you are asking me to go from consie code to write more lines of code. =
+I
+> would write more lines without any issue if it improves readability and
+> logical sense. But I don't see here any benefit.
+
+Please see the clarifications above.
+
+Best Regards
+Micha=C5=82 Miros=C5=82aw
