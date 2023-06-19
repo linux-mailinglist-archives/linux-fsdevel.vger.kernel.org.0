@@ -2,204 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0152D734B87
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 08:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4DDC734BD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 08:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbjFSGGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jun 2023 02:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35520 "EHLO
+        id S230045AbjFSGoM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jun 2023 02:44:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbjFSGGy (ORCPT
+        with ESMTP id S229803AbjFSGoL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jun 2023 02:06:54 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC73B83;
-        Sun, 18 Jun 2023 23:06:50 -0700 (PDT)
-Received: from [192.168.10.54] (unknown [119.155.63.248])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C077B6606EAC;
-        Mon, 19 Jun 2023 07:06:40 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1687154808;
-        bh=LaJGH3yqvxiz7d1XRjjTwc0675jX+65TTloxqyBYO7U=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=ZZBnyw/q0oyg8M5onwbOGeUldCra5i4t8Y6TXg1FATA0XytwqnkyLKYhtlljOmxHV
-         x9VXbAAAsUjR4O9YFEcumZ97jQ4PyYDmvE95A76O9+QBEKLGOgsN/pYLlXJ5WWhYcJ
-         K7TQEkKyAOm9qxrb5qpg5S/67YsjIYCrXycQbpYWezJ7Su/m/1R52fjGdWc5F7WQkr
-         zpwqMpA27VIRaiVqH+AMuDMjzgP+UQcYo0ow+xTKjvXSau3C2wi38EHDVTMRrVFqx0
-         B486VTYWSShgUMcfp21eXciYZyGJRkwDloqCPcGDQ5tNSyKozpZCDzEk5nEqWBcdah
-         E4an2PlXpZDHg==
-Message-ID: <212e331f-35b0-5ae7-6371-26caa577d637@collabora.com>
-Date:   Mon, 19 Jun 2023 11:06:36 +0500
+        Mon, 19 Jun 2023 02:44:11 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67AB9E5A;
+        Sun, 18 Jun 2023 23:44:08 -0700 (PDT)
+Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Ql0bg4SFKzqTnB;
+        Mon, 19 Jun 2023 14:43:59 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Mon, 19 Jun 2023 14:44:04 +0800
+Message-ID: <c8daf4a0-769f-f769-50f6-8b7063542499@huawei.com>
+Date:   Mon, 19 Jun 2023 14:44:03 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
-        <emmir@google.com>, Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v19 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Andrei Vagin <avagin@gmail.com>
-References: <20230615141144.665148-1-usama.anjum@collabora.com>
- <20230615141144.665148-3-usama.anjum@collabora.com>
- <ZI1VGsaOZ2a1HiKN@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH] quota: fix race condition between dqput() and
+ dquot_mark_dquot_dirty()
 Content-Language: en-US
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <ZI1VGsaOZ2a1HiKN@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+To:     Jan Kara <jack@suse.cz>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
+        <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+        <yukuai3@huawei.com>, Baokun Li <libaokun1@huawei.com>
+References: <20230616085608.42435-1-libaokun1@huawei.com>
+ <20230616152824.ndpgvkegvvip2ahh@quack3>
+From:   Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20230616152824.ndpgvkegvvip2ahh@quack3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.177.174]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/17/23 11:39 AM, Andrei Vagin wrote:
-> On Thu, Jun 15, 2023 at 07:11:41PM +0500, Muhammad Usama Anjum wrote:
->> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->> +				  unsigned long end, struct mm_walk *walk)
->> +{
->> +	bool is_written, flush = false, is_interesting = true;
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +	unsigned long bitmap, addr = end;
->> +	pte_t *pte, *orig_pte, ptent;
->> +	spinlock_t *ptl;
->> +	int ret = 0;
->> +
->> +	arch_enter_lazy_mmu_mode();
->> +
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +	ptl = pmd_trans_huge_lock(pmd, vma);
->> +	if (ptl) {
->> +		unsigned long n_pages = (end - start)/PAGE_SIZE;
->> +
->> +		if (p->max_pages && n_pages > p->max_pages - p->found_pages)
->> +			n_pages = p->max_pages - p->found_pages;
->> +
->> +		is_written = !is_pmd_uffd_wp(*pmd);
->> +
->> +		/*
->> +		 * Break huge page into small pages if the WP operation need to
->> +		 * be performed is on a portion of the huge page.
->> +		 */
->> +		if (is_written && IS_PM_SCAN_WP(p->flags) &&
->> +		    n_pages < HPAGE_SIZE/PAGE_SIZE) {
->> +			spin_unlock(ptl);
->> +
->> +			split_huge_pmd(vma, pmd, start);
->> +			goto process_smaller_pages;
->> +		}
->> +
->> +		bitmap = PM_SCAN_FLAGS(is_written, (bool)vma->vm_file,
->> +				       pmd_present(*pmd), is_swap_pmd(*pmd));
->> +
->> +		if (IS_PM_SCAN_GET(p->flags)) {
->> +			is_interesting = pagemap_scan_is_interesting_page(bitmap, p);
->> +			if (is_interesting)
->> +				ret = pagemap_scan_output(bitmap, p, start, n_pages);
->> +		}
->> +
->> +		if (IS_PM_SCAN_WP(p->flags) && is_written && is_interesting &&
->> +		    ret >= 0) {
->> +			make_uffd_wp_pmd(vma, start, pmd);
->> +			flush_tlb_range(vma, start, end);
->> +		}
->> +
->> +		spin_unlock(ptl);
->> +
->> +		arch_leave_lazy_mmu_mode();
->> +		return ret;
->> +	}
->> +
->> +process_smaller_pages:
->> +#endif
->> +
->> +	orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
->> +	if (!pte) {
-> 
-> Do we need to unlock ptl here?
-> 
-> 		spin_unlock(ptl);
-No, please look at these recently merged patches:
-https://lore.kernel.org/all/c1c9a74a-bc5b-15ea-e5d2-8ec34bc921d@google.com
+Hello Honza !
 
-> 
->> +		walk->action = ACTION_AGAIN;
->> +		return 0;
->> +	}
->> +
->> +	for (addr = start; addr < end && !ret; pte++, addr += PAGE_SIZE) {
->> +		ptent = ptep_get(pte);
->> +		is_written = !is_pte_uffd_wp(ptent);
->> +
->> +		bitmap = PM_SCAN_FLAGS(is_written, (bool)vma->vm_file,
->> +				       pte_present(ptent), is_swap_pte(ptent));
-> 
-> The vma->vm_file check isn't correct in this case. You can look when
-> pte_to_pagemap_entry sets PM_FILE. This flag is used to detect what
-> pages have a file backing store and what pages are anonymous.
-I'll update.
+On 2023/6/16 23:28, Jan Kara wrote:
+> Hello Baokun!
+>
+> On Fri 16-06-23 16:56:08, Baokun Li wrote:
+>> To solve this problem, it is similar to the way dqget() avoids racing with
+>> dquot_release(). First set the DQ_MOD_B flag, then execute wait_on_dquot(),
+>> after this we know that either dquot_release() is already finished or it
+>> will be canceled due to DQ_MOD_B flag test, at this point if the quota is
+>> DQ_ACTIVE_B, then we can safely add the dquot to the dqi_dirty_list,
+>> otherwise clear the DQ_MOD_B flag and exit directly.
+>>
+>> Fixes: 4580b30ea887 ("quota: Do not dirty bad dquots")
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> ---
+>>
+>> Hello Honza,
+>>
+>> This problem can also be solved by modifying the reference count mechanism,
+>> where dquots hold a reference count after they are allocated until they are
+>> destroyed, i.e. the dquots in the free_dquots list have dq_count == 1. This
+>> allows us to reduce the reference count as soon as we enter the dqput(),
+>> and then add the dquot to the dqi_dirty_list only when dq_count > 1. This
+>> also prevents the dquot in the dqi_dirty_list from not having the
+>> DQ_ACTIVE_B flag, but this is a more impactful modification, so we chose to
+>> refer to dqget() to avoid racing with dquot_release(). If you prefer this
+>> solution by modifying the dq_count mechanism, I would be happy to send
+>> another version of the patch.
+> The way this *should* work is that dquot_mark_dquot_dirty() using dquot
+> references from the inode should be protected by dquot_srcu. quota_off
+> code takes care to call synchronize_srcu(&dquot_srcu) to not drop dquot
+> references while they are used by other users. But you are right
+> dquot_transfer() breaks this assumption. Most callers are fine since they
+> are also protected by inode->i_lock but still I'd prefer to fix
+> dquot_transfer() to follow the guarantees dquot_srcu should provide.
+Indeed!
+Operation accessing dquots via inode pointers shuould be protectedby 
+dquot_srcu.
+And inode->i_lock ensures that we do not record usage changes in a 
+deprecated
+dquota pointer, even when concurrent with dquot_transfer().
+> Now calling synchronize_srcu() directly from dquot_transfer() is too
+> expensive (and mostly unnecessary) so what I would rather suggest is to
+> create another dquot list (use dq_free list_head inside struct dquot for
+> it) and add dquot whose last reference should be dropped there. We'd then
+> queue work item which would call synchronize_srcu() and after that perform
+> the final cleanup of all the dquots on the list.
+>
+> Now this also needs some modifications to dqget() and to quotaoff code to
+> handle various races with the new dqput() code so if you feel it is too
+> complex for your taste, I can implement this myself.
+>
+> 								Honza
+I see what you mean, what we are doing here is very similar to 
+drop_dquot_ref(),
+and if we have to modify it this way, I am happy to implement it.
 
-> 
-> I was trying to integrate this new interace into CRIU and I found
-> one more thing that is required. We need to detect zero pages.
-Should we name it ZERO_PFN_PRESENT_PAGE to be exact or what?
+But as you said, calling synchronize_srcu() is too expensive and it 
+blocks almost all
+mark dirty processes, so we only call it now in performance insensitive 
+scenarios
+like dquot_disable(). And how do we control how often synchronize_srcu() 
+is called?
+Are there more than a certain number of dquots in releasing_dquots or 
+are they
+executed at regular intervals? And it would introduce various new 
+competitions.
+Is it worthwhile to do this for a corner scenario like this one?
 
-> 
-> It should look something like this:
-> 
-> #define PM_SCAN_FLAGS(wt, file, present, swap, zero)   \
->        ((wt) | ((file) << 1) | ((present) << 2) | ((swap) << 3) | ((zero) << 4))
-> 
-> 
-> bitmap = PM_SCAN_FLAGS(is_written, page && !PageAnon(page),
-> 		      pte_present(ptent), is_swap_pte(ptent),
-> 		      pte_present(ptent) && is_zero_pfn(pte_pfn(ptent)));
-Okay. Can you please confirm my assumptions:
-- A THP cannot be file backed. (PM_FILE isn't being set for THP case)
-- A hole is also not file backed.
+I think we can simply focus on the race between the DQ_ACTIVE_B flag and the
+DQ_MOD_B flag, which is the core problem, because the same quota should not
+have both flags. These two flags are protected by dq_list_lock and 
+dquot->dq_lock
+respectively, so it makes sense to add a wait_on_dquot() to ensure the 
+accuracy of
+DQ_ACTIVE_B.
 
-A hole isn't present in memory. So its pfn would be zero. But as it isn't
-present, it shouldn't report zero page. Right? For hole::
+The addition of wait_on_dquot() to this solution also seems very 
+expensive, and I had
+similar concerns before, but testing found no performance impact due to 
+the fast path
+without any locks. We returns 1 directly when the current dquot is 
+already dirty, so there
+is no locking involved after dquot is dirty until DQ_MOD_B is cleared. 
+And clear the
+dirtying of the dqi_dirty_list only happens in last dqput and 
+dquot_writeback_dquots(),
+both of which occur very infrequently.
 
-PM_SCAN_FLAGS(false, false, false, false, false)
+And if we don't care about the harmless warning in 
+dquot_writeback_dquots() in the
+second function graph (just skip it), wait_on_dquot() in the solution 
+can be removed.
+We only need to determine again whether dquot is DQ_ACTIVE_B under 
+dq_list_lock
+protection to solve the problem in the first function graph. This is why 
+there are two
+function graphs in the patch description, because with the second 
+problem, we have
+to be more careful if we want to keep the warning.
 
-
-> 
-> Thanks,
-> Andrei
-
+Thanks!
 -- 
-BR,
-Muhammad Usama Anjum
+With Best Regards,
+Baokun Li
+.
