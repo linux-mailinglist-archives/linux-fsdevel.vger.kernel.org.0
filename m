@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFEAA734A3F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 04:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57F9F734A44
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 04:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbjFSC3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Jun 2023 22:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51338 "EHLO
+        id S229772AbjFSC32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Jun 2023 22:29:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229752AbjFSC3X (ORCPT
+        with ESMTP id S229769AbjFSC31 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Jun 2023 22:29:23 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDC3E4D;
-        Sun, 18 Jun 2023 19:29:22 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-666eef03ebdso503249b3a.1;
-        Sun, 18 Jun 2023 19:29:22 -0700 (PDT)
+        Sun, 18 Jun 2023 22:29:27 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD3AE49;
+        Sun, 18 Jun 2023 19:29:26 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-666683eb028so1464079b3a.0;
+        Sun, 18 Jun 2023 19:29:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687141762; x=1689733762;
+        d=gmail.com; s=20221208; t=1687141765; x=1689733765;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JYZjaySF9JoUvT+4F61KVWv6hVHnaw6nITF7B1RwW2Q=;
-        b=GznOkpzisZDETZz2EGPGiRV87zD3UEIWZTafxCLV8Wh9UMl+ZYgFGCKbrSCGm2wdJf
-         9UYsxiTrEm4Kb6L8J8jb1Afd1M6pdM7lbNi30Pxgt5q2+AyvG9aN6AVfxeYraDxQJrJ8
-         9ysuggk9l9F5CAXmMNE4carjIZg1tACcUNcKUqMYBJsQruwlanweyEMGQqcZY7nbP5m8
-         YwMvvHo8AoYNofpmSC9vPDHkBbyZ3QVDrKcc7Ejz41uN1eQF+Y27FvsTwv0ZJagGYXEw
-         7WJtf+72IrhRu6/Q5K1T9CNiSlVBHPXdGvLQJUu0axAUmm+Fbg11bhXuTjwZ390h61o3
-         xp5g==
+        bh=avYaHpRrNXBTBhOS3iew364J6rgNtP8dJzHXxbv0G/s=;
+        b=WirzkyTrrRuOs/txJ6VhSCPkRu1BBkPQS0WjnOYST30Bc8p21h+G/10hWQ0SxZtena
+         edLRLdEWROAW02bYQmk/oLwMiALkQcSegSzPIxtPQwucdupHSL7Cd9ZXWfU8sP+Vc9wQ
+         2w1oP3OfE7YlEFm3VXNV0UPz+NUwMFVgKEOd2MH+zukx2O8ociScjKHAiSt0q6l6rWYC
+         2BAEpFHHJjGYp2W2j//dkI+oBG5vqSfDBWwoBTb/kb/KOdVXw9RtomEAFKo8YbaxY/CT
+         wWYZXvVjEcFHz/wlLGSuICaxr4XuFBNTSH3swFao8Ppy7kiVWh8Yze6hMxjo9DA2+DV4
+         Jpkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687141762; x=1689733762;
+        d=1e100.net; s=20221208; t=1687141765; x=1689733765;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JYZjaySF9JoUvT+4F61KVWv6hVHnaw6nITF7B1RwW2Q=;
-        b=TaCQxtQus24gl2NcyMz/o8DUb7yosZKHHDM2L8ABq9f0nyEIQGwVoAtjtLabTL211C
-         WFFE6sL+huAV2ils3LetbyQ602MC9PMYLNnGCen2jD1UaId6uZVzEu/RIesdbNwLsisu
-         shqeQ2mvBcF2/38bcP/fgsCXovkcvLyAkd9pQr+T+6uBbd2qUBBL4Nxb/sTaogPNlhzX
-         9pRVF4aRerUNe93xbZJtdsvRlDI/+J+66h+o/8bDRUviFoScSlrpi4B6ZJ0OsurwMuqV
-         gYY/rd4Z4kBNAsEspJmz9i93VnBBgTlH+3G6EFg77midRWvb3opIyFtMUE050y7vYUww
-         WEJg==
-X-Gm-Message-State: AC+VfDwgOYnsvfMJFU6kh9TuhlDt/qJzfZNIGQnHJjj1CpaTOGvyfmip
-        ymjU0bmtZCaYp4j3tBF3Y4YqRrr387o=
-X-Google-Smtp-Source: ACHHUZ7z+dXHOphk2XXW6H2JNWA8xIcju4RWXI7suk4uHY2NamCGpeaBzP6TkrcK6MmUwGn9tlU6jQ==
-X-Received: by 2002:a05:6a00:21c2:b0:666:ada0:4b01 with SMTP id t2-20020a056a0021c200b00666ada04b01mr5195831pfj.32.1687141761726;
-        Sun, 18 Jun 2023 19:29:21 -0700 (PDT)
+        bh=avYaHpRrNXBTBhOS3iew364J6rgNtP8dJzHXxbv0G/s=;
+        b=Jl7B/AwOfeLzSd8UcbjC8Bg1sQl+uaXaKtt5cWhqoPdRFJuHOMqv6ZlLSl0dCgGFNP
+         kvQ7J5MRXCZPFSQnvTdvm9HEJGClyyL8s+OZ9DHpI3HHOvA1EZjWDt8jc8uziLnNTL3d
+         CJ8kEy/YS7PWVK2ECFqp5D0SGHz1kG8Lv+2Nr72Jsy5T/sCX5kkL0v7HRniut3z+g5eq
+         RSrBz2AGR2QTlaFLUspzfkwwkyCuSFpBhGPRQqE3gSP/pzqFXjUiYHG+w9dSrphB87uS
+         V20Ysqqoz7kH7i6kPkDlun7o0P3GZLhEj3It2YpY5UFhA/YwXXmLQZAykhy7HHVvoDCC
+         xXDA==
+X-Gm-Message-State: AC+VfDzr/XfbYPkQNwtLvBGJ1mZo9HwFUdKqxEyqXorTyb1VcH3Nphd+
+        r1Ax0E+WUZnuoTCpWBM4nHb46OtSsw0=
+X-Google-Smtp-Source: ACHHUZ5GyfNaCMcyjkbFcM/T9XDWgBWjEdBVvPZj2gDiQkPZHAJPGTEfm0G2LYGzyJBkdwf1U0k5Kg==
+X-Received: by 2002:a05:6a00:2342:b0:668:71a1:2e68 with SMTP id j2-20020a056a00234200b0066871a12e68mr1451293pfj.11.1687141765332;
+        Sun, 18 Jun 2023 19:29:25 -0700 (PDT)
 Received: from dw-tp.ihost.com ([49.207.220.159])
-        by smtp.gmail.com with ESMTPSA id g18-20020aa78752000000b0064ff1f1df65sm399531pfo.61.2023.06.18.19.29.18
+        by smtp.gmail.com with ESMTPSA id g18-20020aa78752000000b0064ff1f1df65sm399531pfo.61.2023.06.18.19.29.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jun 2023 19:29:21 -0700 (PDT)
+        Sun, 18 Jun 2023 19:29:24 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org,
@@ -62,9 +62,9 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Disha Goel <disgoel@linux.ibm.com>,
         "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCHv10 6/8] iomap: Refactor iomap_write_delalloc_punch() function out
-Date:   Mon, 19 Jun 2023 07:58:49 +0530
-Message-Id: <1b7e89f65fbee7cc0b1909f136d40552e68d9829.1687140389.git.ritesh.list@gmail.com>
+Subject: [PATCHv10 7/8] iomap: Allocate ifs in ->write_begin() early
+Date:   Mon, 19 Jun 2023 07:58:50 +0530
+Message-Id: <cf54798bfcc720c70b489ff859e9a1672f57c064.1687140389.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <cover.1687140389.git.ritesh.list@gmail.com>
 References: <cover.1687140389.git.ritesh.list@gmail.com>
@@ -80,98 +80,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch factors iomap_write_delalloc_punch() function out. This function
-is resposible for actual punch out operation.
-The reason for doing this is, to avoid deep indentation when we bring
-punch-out of individual non-dirty blocks within a dirty folio in a later
-patch (which adds per-block dirty status handling to iomap) to avoid
-delalloc block leak.
+We dont need to allocate an ifs in ->write_begin() for writes where the
+position and length completely overlap with the given folio.
+Therefore, such cases are skipped.
+
+Currently when the folio is uptodate, we only allocate ifs at writeback
+time (in iomap_writepage_map()). This is ok until now, but when we are
+going to add support for per-block dirty state bitmap in ifs, this
+could cause some performance degradation. The reason is that if we don't
+allocate ifs during ->write_begin(), then we will never mark the
+necessary dirty bits in ->write_end() call. And we will have to mark all
+the bits as dirty at the writeback time, that could cause the same write
+amplification and performance problems as it is now.
 
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/iomap/buffered-io.c | 53 ++++++++++++++++++++++++++----------------
- 1 file changed, 33 insertions(+), 20 deletions(-)
+ fs/iomap/buffered-io.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index e03ffdc259c4..2d79061022d8 100644
+index 2d79061022d8..391d918ddd22 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -882,6 +882,32 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
- }
- EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
+@@ -561,14 +561,23 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 	size_t from = offset_in_folio(folio, pos), to = from + len;
+ 	size_t poff, plen;
  
-+static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
-+		loff_t *punch_start_byte, loff_t start_byte, loff_t end_byte,
-+		iomap_punch_t punch)
-+{
-+	int ret = 0;
-+
-+	if (!folio_test_dirty(folio))
-+		return ret;
-+
-+	/* if dirty, punch up to offset */
-+	if (start_byte > *punch_start_byte) {
-+		ret = punch(inode, *punch_start_byte,
-+				start_byte - *punch_start_byte);
-+		if (ret)
-+			return ret;
-+	}
+-	if (folio_test_uptodate(folio))
 +	/*
-+	 * Make sure the next punch start is correctly bound to
-+	 * the end of this data range, not the end of the folio.
++	 * If the write completely overlaps the current folio, then
++	 * entire folio will be dirtied so there is no need for
++	 * per-block state tracking structures to be attached to this folio.
 +	 */
-+	*punch_start_byte = min_t(loff_t, end_byte,
-+				folio_pos(folio) + folio_size(folio));
++	if (pos <= folio_pos(folio) &&
++	    pos + len >= folio_pos(folio) + folio_size(folio))
+ 		return 0;
+-	folio_clear_error(folio);
+ 
+ 	ifs = ifs_alloc(iter->inode, folio, iter->flags);
+ 	if ((iter->flags & IOMAP_NOWAIT) && !ifs && nr_blocks > 1)
+ 		return -EAGAIN;
+ 
++	if (folio_test_uptodate(folio))
++		return 0;
++	folio_clear_error(folio);
 +
-+	return ret;
-+}
-+
- /*
-  * Scan the data range passed to us for dirty page cache folios. If we find a
-  * dirty folio, punch out the preceeding range and update the offset from which
-@@ -905,6 +931,7 @@ static int iomap_write_delalloc_scan(struct inode *inode,
- {
- 	while (start_byte < end_byte) {
- 		struct folio	*folio;
-+		int ret;
- 
- 		/* grab locked page */
- 		folio = filemap_lock_folio(inode->i_mapping,
-@@ -915,26 +942,12 @@ static int iomap_write_delalloc_scan(struct inode *inode,
- 			continue;
- 		}
- 
--		/* if dirty, punch up to offset */
--		if (folio_test_dirty(folio)) {
--			if (start_byte > *punch_start_byte) {
--				int	error;
--
--				error = punch(inode, *punch_start_byte,
--						start_byte - *punch_start_byte);
--				if (error) {
--					folio_unlock(folio);
--					folio_put(folio);
--					return error;
--				}
--			}
--
--			/*
--			 * Make sure the next punch start is correctly bound to
--			 * the end of this data range, not the end of the folio.
--			 */
--			*punch_start_byte = min_t(loff_t, end_byte,
--					folio_pos(folio) + folio_size(folio));
-+		ret = iomap_write_delalloc_punch(inode, folio, punch_start_byte,
-+						 start_byte, end_byte, punch);
-+		if (ret) {
-+			folio_unlock(folio);
-+			folio_put(folio);
-+			return ret;
- 		}
- 
- 		/* move offset to start of next folio in range */
+ 	do {
+ 		iomap_adjust_read_range(iter->inode, folio, &block_start,
+ 				block_end - block_start, &poff, &plen);
 -- 
 2.40.1
 
