@@ -2,156 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F7DC735EEB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jun 2023 23:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2253B735FF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 00:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbjFSVTa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jun 2023 17:19:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48302 "EHLO
+        id S229593AbjFSW5z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jun 2023 18:57:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229922AbjFSVTV (ORCPT
+        with ESMTP id S229462AbjFSW5x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jun 2023 17:19:21 -0400
-Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [85.215.255.102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309E61701;
-        Mon, 19 Jun 2023 14:19:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1687209526; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=m14ydInAO32RSNeBAEUmo5VtS9IdNsIE1lEAXPUqN3jpWhmRIQgK47Y/rbAT3wMzzQ
-    zFtEMz7KVxS3NSfPnKVhU8xUFPgcXLrgGIWN2Mu6997FuL8lqVsKbxqkA5fE3gv3MDvZ
-    JWD0zt4m7taKUiiTj/MHW/kGwq6EOfjUlaUH7tbWkr4Af8BIy7xIimnnWnFOzHZDScLt
-    3eQQywEXNYQ+IC988XlH/CzjqwE7RWPjci5ZMT3eKpmQ4AYgRzTbVvGQ14Z3slHIt375
-    Yy3e8mWPjZSUhmyrItczO8JH8++rOTMjFybtj/1ToabmROD6JBE3b3hIRI6t4sFE0TtU
-    aoQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1687209526;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=4VoCJCkUkGyuMs9ktPD9dGvwPKJ6aIyifN3L5LWABx8=;
-    b=JvbswYT1Nxu/3JVFow4AGCMKUY/2XH05O3KHS/AN8d5uMp/6ohrS1PkKNW1d/qNfgx
-    ehqaHoKJtUwJelBXbn8r72WycTsEtzleB3hRsAdSOiMxKKKUyyzM1b0QCThREEAj4AVl
-    q5Zch4h3R7Uu5hmKzx0c67sYBQ7RCDzOg2GeGoQXN0rqERPliWUQ7yvIll/pNLS86+kk
-    ycpoPF2xhfADP3mWfL3TWsU3V7nm1cIVk4/xiq4xy4rgcMqi+C1ZDffmzSuCPuUy2QbM
-    /SnVisX5HcQFQW9BMmEdDPGdYuiBwFgNDv/UpoVl9iqq0weeChmJvaYg58IuIMlqC5Qo
-    pzxA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo03
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1687209526;
-    s=strato-dkim-0002; d=iokpp.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=4VoCJCkUkGyuMs9ktPD9dGvwPKJ6aIyifN3L5LWABx8=;
-    b=GQuLI20iuo/3e3+FcTWN+gW33eL6iyjV5edlrwBquBLU1yKxMk3gJO7CkF6DC8eUq6
-    gHTqB7hfa+ATxhvaPSMfQF2q1ieLcDoBiT59Fsr1IPCYkHAsKStHGpL5+2bmwDdUy5o6
-    wWcaHwSe4L7bsjHTc+Z2xsLCyrvZnNGEpGXihjQrDj+pGs7x89Ywj1dSAEhZdOzDw30X
-    xBQqWzsXqNbS7+ugJ5EL0MiFGcZuz8DhcDB1mRCCRnQFkCb9JzLKyz9t7rn+bd+LO1cC
-    bPTxr2ni/HsxkQCdCwk6SUJrBKWPg4dVvZ6emoZsJFm5HNNbg2fpUBWqLP/n/eSdf1Eq
-    JkWg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1687209526;
-    s=strato-dkim-0003; d=iokpp.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=4VoCJCkUkGyuMs9ktPD9dGvwPKJ6aIyifN3L5LWABx8=;
-    b=Fi7GsifBZj+G9wnlO1nTmf1xXDrGLocv0iS6G3hKSGfd89rdXROo90SMzMsF39I5um
-    2ld4NTWy8oTessFRFiCw==
-X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSedrgBzPc9DUyubU4DD1EQ33bneoxgmq7ABeEwyjghc0WGLJ+05px4XK4px0+bSzE8qij5Q="
-Received: from blinux.speedport.ip
-    by smtp.strato.de (RZmta 49.6.0 AUTH)
-    with ESMTPSA id zb0c8bz5JLIjDvk
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Mon, 19 Jun 2023 23:18:45 +0200 (CEST)
-From:   Bean Huo <beanhuo@iokpp.de>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org,
-        akpm@linux-foundation.org, jack@suse.cz, jack@suse.com,
-        tytso@mit.edu, adilger.kernel@dilger.ca, mark@fasheh.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        beanhuo@micron.com
-Subject: [PATCH v2 5/5] fs/buffer.c: convert block_commit_write to return void
-Date:   Mon, 19 Jun 2023 23:18:27 +0200
-Message-Id: <20230619211827.707054-6-beanhuo@iokpp.de>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230619211827.707054-1-beanhuo@iokpp.de>
-References: <20230619211827.707054-1-beanhuo@iokpp.de>
+        Mon, 19 Jun 2023 18:57:53 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41B14E58
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 15:57:52 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-666eb03457cso1398345b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 15:57:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687215472; x=1689807472;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SjXwtZnJw92XR661FFt1WCJs9pFxmVufx8xRZE1MlmA=;
+        b=fovhd81vHX+kdEyYuyB+Zfu4MO9kROfPT54Lgr7qb8ZoefAX06xHlEhWuKLNw0GIbD
+         oefMv1glR3njUPLJ2AAsUYZMVSYhiBoj8l7BlJXJDpoNtSULk+eJ/qqtVxopuZH+Ud8u
+         4fYpZ1tny/cL+uoxRNXmagyo10ZukGRtywD+alN5avXBzae58IPKZf01g/CcAQ5+Az4v
+         BTLFWAPJ0XnGhQQGQimHCP1iS9J2k+HtXO9HTAyw826Dkshs45DjB25n3EHWEbK00Xdu
+         AnAFC1fFjv38EMT/MbCndQR72fJ6dGdN9CVN7GAr1Vc8wYs/j8cMCI04/XGrAgcr15JT
+         Lobw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687215472; x=1689807472;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SjXwtZnJw92XR661FFt1WCJs9pFxmVufx8xRZE1MlmA=;
+        b=hd71/3EJoUBCqSes6cK5sdSDbNOUfqy2OisHNQFX05oLyBpBPncSTMdTB3TdCc5h+U
+         MzGK+Y/xId2FNB1RcST9VTwevxXPeAA70CtRsIOUm02862I//ZuWh8GA3JMb6ZECebN8
+         1uRYyoL62F+oM1OMo2f+LVf0Lc33jkRmP20SJQGA7CGL397/i+bxx0ZE78WCYpnyknYy
+         WqeDGDjhRs98XeQ0ib/vEq/k2JouNrcpcewAX9gE+a0Mz4S/Z+rQ6SS1YOtMMzU5zST+
+         QB9WanTzB6Jz+lznOfx5Zidy0ivybJkLYzU+WuI+sEAEBf5MR0OwSWiLYAynA954VsK1
+         V5oQ==
+X-Gm-Message-State: AC+VfDwaLChX7j2SWh4238/Bm71LQbRgxFUOA4/5we+jzwzLDmuMgc64
+        e/morZZ5sV1WHsKr4APgc5/BVg==
+X-Google-Smtp-Source: ACHHUZ4mYODDAn40TIMpC6vCOTcHo8TSKgeWuTVjpTKBzCCzwdkWkEOFRRkg2SNGaBzU0dlGAN+qZQ==
+X-Received: by 2002:a05:6a00:2406:b0:63d:260d:f9dd with SMTP id z6-20020a056a00240600b0063d260df9ddmr7109838pfh.33.1687215471663;
+        Mon, 19 Jun 2023 15:57:51 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
+        by smtp.gmail.com with ESMTPSA id z16-20020aa785d0000000b00643355ff6a6sm155493pfn.99.2023.06.19.15.57.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jun 2023 15:57:50 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qBNoi-00DpLn-0h;
+        Tue, 20 Jun 2023 08:57:48 +1000
+Date:   Tue, 20 Jun 2023 08:57:48 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Pankaj Raghav <p.raghav@samsung.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>, gost.dev@samsung.com
+Subject: Re: [PATCH 6/7] mm/filemap: allocate folios with mapping blocksize
+Message-ID: <ZJDdbPwfXI6eR5vB@dread.disaster.area>
+References: <20230614114637.89759-1-hare@suse.de>
+ <20230614114637.89759-7-hare@suse.de>
+ <CGME20230619080901eucas1p224e67aa31866d2ad8d259b2209c2db67@eucas1p2.samsung.com>
+ <20230619080857.qxx5c7uaz6pm4h3m@localhost>
+ <b6d982ce-3e7e-e433-8339-28ec8474df03@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b6d982ce-3e7e-e433-8339-28ec8474df03@suse.de>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Bean Huo <beanhuo@micron.com>
+On Mon, Jun 19, 2023 at 10:42:38AM +0200, Hannes Reinecke wrote:
+> On 6/19/23 10:08, Pankaj Raghav wrote:
+> > Hi Hannes,
+> > On Wed, Jun 14, 2023 at 01:46:36PM +0200, Hannes Reinecke wrote:
+> > > The mapping has an underlying blocksize (by virtue of
+> > > mapping->host->i_blkbits), so if the mapping blocksize
+> > > is larger than the pagesize we should allocate folios
+> > > in the correct order.
+> > > 
+> > Network filesystems such as 9pfs set the blkbits to be maximum data it
+> > wants to transfer leading to unnecessary memory pressure as we will try
+> > to allocate higher order folios(Order 5 in my setup). Isn't it better
+> > for each filesystem to request the minimum folio order it needs for its
+> > page cache early on? Block devices can do the same for its block cache.
 
-block_commit_write() always returns 0, this patch changes it to
-return void.
+Folio size is not a "filesystem wide" thing - it's a per-inode
+configuration. We can have inodes within a filesystem that have
+different "block" sizes. A prime example of this is XFS directories
+- they can have 64kB block sizes on 4kB block size filesystem.
 
-Signed-off-by: Bean Huo <beanhuo@micron.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/buffer.c                 | 11 +++++------
- include/linux/buffer_head.h |  2 +-
- 2 files changed, 6 insertions(+), 7 deletions(-)
+Another example is extent size hints in XFS data files - they
+trigger aligned allocation-around similar to using large folios in
+the page cache for small writes. Effectively this gives data files a
+"block size" of the extent size hint regardless of the filesystem
+block size.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index b88bb7ec38be..fa09cf94f771 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2116,7 +2116,7 @@ int __block_write_begin(struct page *page, loff_t pos, unsigned len,
- }
- EXPORT_SYMBOL(__block_write_begin);
- 
--int block_commit_write(struct page *page, unsigned int from, unsigned int to)
-+void block_commit_write(struct page *page, unsigned int from, unsigned int to)
- {
- 	unsigned block_start, block_end;
- 	int partial = 0;
-@@ -2151,7 +2151,6 @@ int block_commit_write(struct page *page, unsigned int from, unsigned int to)
- 	 */
- 	if (!partial)
- 		SetPageUptodate(page);
--	return 0;
- }
- EXPORT_SYMBOL(block_commit_write);
- 
-@@ -2577,11 +2576,11 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
- 		end = PAGE_SIZE;
- 
- 	ret = __block_write_begin(page, 0, end, get_block);
--	if (!ret)
--		ret = block_commit_write(page, 0, end);
--
--	if (unlikely(ret < 0))
-+	if (unlikely(ret))
- 		goto out_unlock;
-+
-+	block_commit_write(page, 0, end);
-+
- 	set_page_dirty(page);
- 	wait_for_stable_page(page);
- 	return 0;
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 1520793c72da..873653d2f1aa 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -284,7 +284,7 @@ int cont_write_begin(struct file *, struct address_space *, loff_t,
- 			unsigned, struct page **, void **,
- 			get_block_t *, loff_t *);
- int generic_cont_expand_simple(struct inode *inode, loff_t size);
--int block_commit_write(struct page *page, unsigned from, unsigned to);
-+void block_commit_write(struct page *page, unsigned int from, unsigned int to);
- int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
- 				get_block_t get_block);
- /* Convert errno to return value from ->page_mkwrite() call */
+Hence in future we might want different sizes of folios for
+different types of inodes and so whatever we do we need to support
+per-inode folio size configuration for the inode mapping tree.
+
+> > I have prototype along those lines and I will it soon. This is also
+> > something willy indicated before in a mailing list conversation.
+> > 
+> Well; I _though_ that's why we had things like optimal I/O size and
+> maximal I/O size. But this seem to be relegated to request queue limits,
+> so I guess it's not available from 'struct block_device' or 'struct
+> gendisk'.
+
+Yes, those are block device constructs to enable block device based
+filesystems to be laid out best for the given block device. They
+don't exist for non-block-based filesystems like network
+filesystems...
+
+> So I've been thinking of adding a flag somewhere (possibly in
+> 'struct address_space') to indicate that blkbits is a hard limit
+> and not just an advisory thing.
+
+This still relies on interpreting inode->i_blkbits repeatedly at
+runtime in some way, in mm code that really has no business looking
+at filesystem block sizes.
+
+What is needed is a field into the mapping that defines the
+folio order that all folios allocated for the page cache must be
+aligned/sized to to allow them to be inserted into the mapping.
+
+This means the minimum folio order and alignment is maintained
+entirely by the mapping (e.g. it allows truncate to do the right
+thing), and the filesystem/device side code does not need to do
+anything special (except support large folios) to ensure that the
+page cache always contains folios that are block sized and aligned.
+
+We already have mapping_set_large_folios() that we use at
+inode/mapping instantiation time to enable large folios in the page
+cache for that mapping. What we need is a new
+mapping_set_large_folio_order() API to enable the filesystem/device
+to set the base folio order for the mapping tree at instantiation
+time, and for all the page cache instantiation code to align/size to
+the order stored in the mapping...
+
+Cheers,
+
+Dave.
 -- 
-2.34.1
-
+Dave Chinner
+david@fromorbit.com
