@@ -2,58 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35F88736AAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 13:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DADD2736AB1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 13:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232229AbjFTLPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 07:15:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49328 "EHLO
+        id S232627AbjFTLQL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 07:16:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231334AbjFTLPo (ORCPT
+        with ESMTP id S232248AbjFTLQJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 07:15:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0EC170D;
-        Tue, 20 Jun 2023 04:15:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Tue, 20 Jun 2023 07:16:09 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81130E41;
+        Tue, 20 Jun 2023 04:16:07 -0700 (PDT)
+Received: from [192.168.10.54] (unknown [119.155.63.248])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 15B21611D7;
-        Tue, 20 Jun 2023 11:15:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D368BC433C8;
-        Tue, 20 Jun 2023 11:15:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687259740;
-        bh=gY7r5fhXjGMEV4iMCERo0oKWNzD4Sri8qWgbpiUBRcc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=t3BnSv/S97c1CPksUHzlRRMHJk93SzMJYVD5kDScBhoYNXLdICZ4ki8BaEYMNN0To
-         s8NvrQH41CoosUfjRv5gUbDqA6vCVfM/VNA7yMQmbghpBOrTlpKiC4GWdolzQ/+L2m
-         2F9x/JVhA8SojTnk2DLsNwXHHjcnnV1/DZsu2JPFPS8MR9GiMif7lGwqKW8biyXU7v
-         1rbSaOAqtqUB8HbU1BVjD4J99gG5nCWgsLIVRk2BG5lGtrk/7wSYiOU+iog7HTVqvY
-         jrLAIqa4DZwCOmvNOMUK0krmpMiz0rhoIxMBbDIjv+rD0Yg0f3HwWuDkxh4TdCAJ1l
-         4hZA64ZMLEYqQ==
-Message-ID: <e1a59fa3eb821e66cdc95fcecc68ef9f9434ddf5.camel@kernel.org>
-Subject: Re: [PATCH 1/3] fs/locks: F_UNLCK extension for F_OFD_GETLK
-From:   Jeff Layton <jlayton@kernel.org>
-To:     stsp <stsp2@yandex.ru>, linux-kernel@vger.kernel.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Date:   Tue, 20 Jun 2023 07:15:38 -0400
-In-Reply-To: <e7586b46-ff65-27ff-e829-c6009d7d4808@yandex.ru>
-References: <20230620095507.2677463-1-stsp2@yandex.ru>
-         <20230620095507.2677463-2-stsp2@yandex.ru>
-         <c6d4e620cad72da5f85df03443a64747b5719939.camel@kernel.org>
-         <e7586b46-ff65-27ff-e829-c6009d7d4808@yandex.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 625B56606F8B;
+        Tue, 20 Jun 2023 12:15:59 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1687259765;
+        bh=9GLoBafzRKep+sfRcHSOXwHpBcUQH7mDHyYgcZt+Ayo=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=nuRdlc/dlE4e+aZlxWLESNo2ASmaZ9pydw7shRqKbOuVl6ZV2pE7U+gUqVBjVjmqE
+         XKrx1Fi8LV5uvNBV7NzQcQA+FlyVHDifO4VuB50ITuTeqjQxbXyBF+T+kA+nu+9KnP
+         eEnfoUPlAlMkw5ELiNCnI+gCVnTPw4zl6uFzI8aKeqr/B4SpVDz1mZMiBxyG9qTo+p
+         cVubvh598HIQVoF0HMAEHsvvHqe8Wgu1ieFCf6y21KRvwIdVt8W3G262bFPOu7GX2/
+         u47jq44EqqR2k+MaUSV2BBDlx/7d5xwDa4380MFiMfITvxCXPD8RoC3DlTZQpThO+0
+         QiUUrZYoND6pg==
+Message-ID: <444ed144-a2ee-cb16-880a-128383c83a08@collabora.com>
+Date:   Tue, 20 Jun 2023 16:15:55 +0500
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+Content-Language: en-US
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+References: <20230613102905.2808371-1-usama.anjum@collabora.com>
+ <20230613102905.2808371-3-usama.anjum@collabora.com>
+ <CABb0KFHWnbrf2ythvO0OKsd1ZS9b4D9BNzwBCbn6g9OX4n6ZOg@mail.gmail.com>
+ <0db01d90-09d6-08a4-bbb8-70670d3baa94@collabora.com>
+ <CABb0KFEn5TU480A=YiN82nLRtGyKMABi8cZjuiGUU_jFZZo+8g@mail.gmail.com>
+ <34203acf-7270-7ade-a60e-ae0f729dcf70@collabora.com>
+ <CABb0KFFaXgJD99pWfx3MC+qrq5jUaPis_kZo6U8yL_8xdp0GJA@mail.gmail.com>
+ <96b7cc00-d213-ad7d-1b48-b27f75b04d22@collabora.com>
+ <CABb0KFEy_mRaT86TEOQ-BoTe_XOVw3Kp5VdzOfEEaiZJuT754g@mail.gmail.com>
+ <39bc8212-9ee8-dbc1-d468-f6be438b683b@collabora.com>
+ <CABb0KFHx2hV9M7oinCdKnagRmcrGHagH9eAO3TkVTQH+o9x=5A@mail.gmail.com>
+ <2e1b80f1-0385-0674-ae5f-9703a6ef975d@collabora.com>
+ <CABb0KFGOx69Sz6w9JenYUwSTFmW-Cmcns3X-oDyWsC+H57vkvg@mail.gmail.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CABb0KFGOx69Sz6w9JenYUwSTFmW-Cmcns3X-oDyWsC+H57vkvg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,113 +94,124 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-06-20 at 16:00 +0500, stsp wrote:
-> Hello,
->=20
-> 20.06.2023 15:46, Jeff Layton =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Tue, 2023-06-20 at 14:55 +0500, Stas Sergeev wrote:
-> > > Currently F_UNLCK with F_OFD_GETLK returns -EINVAL.
-> > > The proposed extension allows to use it for getting the lock
-> > > information from the particular fd.
-> > >=20
-> > > Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
-> > >=20
-> > > CC: Jeff Layton <jlayton@kernel.org>
-> > > CC: Chuck Lever <chuck.lever@oracle.com>
-> > > CC: Alexander Viro <viro@zeniv.linux.org.uk>
-> > > CC: Christian Brauner <brauner@kernel.org>
-> > > CC: linux-fsdevel@vger.kernel.org
-> > > CC: linux-kernel@vger.kernel.org
-> > >=20
-> > > ---
-> > >   fs/locks.c | 23 ++++++++++++++++++++---
-> > >   1 file changed, 20 insertions(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/fs/locks.c b/fs/locks.c
-> > > index df8b26a42524..210766007e63 100644
-> > > --- a/fs/locks.c
-> > > +++ b/fs/locks.c
-> > > @@ -868,6 +868,21 @@ static bool posix_locks_conflict(struct file_loc=
-k *caller_fl,
-> > >   	return locks_conflict(caller_fl, sys_fl);
-> > >   }
-> > >  =20
-> > > +/* Determine if lock sys_fl blocks lock caller_fl. Used on xx_GETLK
-> > > + * path so checks for additional GETLK-specific things like F_UNLCK.
-> > > + */
-> > > +static bool posix_test_locks_conflict(struct file_lock *caller_fl,
-> > > +				      struct file_lock *sys_fl)
-> > > +{
-> > > +	/* F_UNLCK checks any locks on the same fd. */
-> > > +	if (caller_fl->fl_type =3D=3D F_UNLCK) {
-> > > +		if (!posix_same_owner(caller_fl, sys_fl))
-> > > +			return false;
-> > > +		return locks_overlap(caller_fl, sys_fl);
-> > > +	}
-> > > +	return posix_locks_conflict(caller_fl, sys_fl);
-> > > +}
-> > > +
-> > >   /* Determine if lock sys_fl blocks lock caller_fl. FLOCK specific
-> > >    * checking before calling the locks_conflict().
-> > >    */
-> > > @@ -901,7 +916,7 @@ posix_test_lock(struct file *filp, struct file_lo=
-ck *fl)
-> > >   retry:
-> > >   	spin_lock(&ctx->flc_lock);
-> > >   	list_for_each_entry(cfl, &ctx->flc_posix, fl_list) {
-> > > -		if (!posix_locks_conflict(fl, cfl))
-> > > +		if (!posix_test_locks_conflict(fl, cfl))
-> > >   			continue;
-> > >   		if (cfl->fl_lmops && cfl->fl_lmops->lm_lock_expirable
-> > >   			&& (*cfl->fl_lmops->lm_lock_expirable)(cfl)) {
-> > > @@ -2207,7 +2222,8 @@ int fcntl_getlk(struct file *filp, unsigned int=
- cmd, struct flock *flock)
-> > >   	if (fl =3D=3D NULL)
-> > >   		return -ENOMEM;
-> > >   	error =3D -EINVAL;
-> > > -	if (flock->l_type !=3D F_RDLCK && flock->l_type !=3D F_WRLCK)
-> > > +	if (cmd !=3D F_OFD_GETLK && flock->l_type !=3D F_RDLCK
-> > > +			&& flock->l_type !=3D F_WRLCK)
-> > >   		goto out;
-> > >  =20
-> > >   	error =3D flock_to_posix_lock(filp, fl, flock);
-> > > @@ -2414,7 +2430,8 @@ int fcntl_getlk64(struct file *filp, unsigned i=
-nt cmd, struct flock64 *flock)
-> > >   		return -ENOMEM;
-> > >  =20
-> > >   	error =3D -EINVAL;
-> > > -	if (flock->l_type !=3D F_RDLCK && flock->l_type !=3D F_WRLCK)
-> > > +	if (cmd !=3D F_OFD_GETLK && flock->l_type !=3D F_RDLCK
-> > > +			&& flock->l_type !=3D F_WRLCK)
-> > >   		goto out;
-> > >  =20
-> > >   	error =3D flock64_to_posix_lock(filp, fl, flock);
-> > This seems like a reasonable sort of interface to add, particularly for
-> > the CRIU case.
->=20
-> Just for the record: my own cases are
-> the remaining 2. CRIU case is not mine
-> and I haven't talked to CRIU people
-> about that.
->=20
->=20
-> >   Using F_UNLCK for this is a bit kludgey, but adding a new
-> > constant is probably worse.
-> >=20
-> > I'm willing to take this in with an eye toward v6.6. Are you also
-> > willing to draft up some manpage patches that detail this new interface=
-?
-> Sure thing.
-> As soon as its applied, I'll prepare a man
-> patch, or should it be done before that point?
+On 6/19/23 1:16 PM, Michał Mirosław wrote:
+> On Fri, 16 Jun 2023 at 08:57, Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
+>>
+>> On 6/16/23 1:07 AM, Michał Mirosław wrote:
+>>> On Thu, 15 Jun 2023 at 17:11, Muhammad Usama Anjum
+>>> <usama.anjum@collabora.com> wrote:
+>>>> On 6/15/23 7:52 PM, Michał Mirosław wrote:
+>>>>> On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
+>>>>> <usama.anjum@collabora.com> wrote:
+>>>>>> I'll send next revision now.
+>>>>>> On 6/14/23 11:00 PM, Michał Mirosław wrote:
+>>>>>>> (A quick reply to answer open questions in case they help the next version.)
+> [...]
+>>>>>>> I guess this will be reworked anyway, but I'd prefer this didn't need
+>>>>>>> custom errors etc. If we agree to decoupling the selection and GET
+>>>>>>> output, it could be:
+>>>>>>>
+>>>>>>> bool is_interesting_page(p, flags); // this one does the
+>>>>>>> required/anyof/excluded match
+>>>>>>> size_t output_range(p, start, len, flags); // this one fills the
+>>>>>>> output vector and returns how many pages were fit
+>>>>>>>
+>>>>>>> In this setup, `is_interesting_page() && (n_out = output_range()) <
+>>>>>>> n_pages` means this is the final range, no more will fit. And if
+>>>>>>> `n_out == 0` then no pages fit and no WP is needed (no other special
+>>>>>>> cases).
+>>>>>> Right now, pagemap_scan_output() performs the work of both of these two
+>>>>>> functions. The part can be broken into is_interesting_pages() and we can
+>>>>>> leave the remaining part as it is.
+>>>>>>
+>>>>>> Saying that n_out < n_pages tells us the buffer is full covers one case.
+>>>>>> But there is case of maximum pages have been found and walk needs to be
+>>>>>> aborted.
+>>>>>
+>>>>> This case is exactly what `n_out < n_pages` will cover (if scan_output
+>>>>> uses max_pages properly to limit n_out).
+>>>>> Isn't it that when the buffer is full we want to abort the scan always
+>>>>> (with WP if `n_out > 0`)?
+>>>> Wouldn't it be duplication of condition if buffer is full inside
+>>>> pagemap_scan_output() and just outside it. Inside pagemap_scan_output() we
+>>>> check if we have space before putting data inside it. I'm using this same
+>>>> condition to indicate that buffer is full.
+>>>
+>>> I'm not sure what do you mean? The buffer-full conditions would be
+>>> checked in ..scan_output() and communicated to the caller by returning
+>>> N less than `n_pages` passed in. This is exactly how e.g. read()
+>>> works: if you get less than requested you've hit the end of the file.
+>>> If the file happens to have size that is equal to the provided buffer
+>>> length, the next read() will return 0.
+>> Right now we have:
+>>
+>> pagemap_scan_output():
+>>         if (p->vec_buf_index >= p->vec_buf_len)
+>>                 return PM_SCAN_BUFFER_FULL;
+>>         if (p->found_pages == p->max_pages)
+>>                 return PM_SCAN_FOUND_MAX_PAGES;
+> 
+> Why do you need to differentiate between those cases?
+> 
+>> pagemap_scan_pmd_entry():
+>>         ret = pagemap_scan_output(bitmap, p, start, n_pages);
+>>         if (ret >= 0) // success
+>>                 make_UFFD_WP and flush
+>>         else
+>>                 buffer_error
+>>
+>> You are asking me to do:
+>>
+>> pagemap_scan_output():
+>>         if (p->vec_buf_index >= p->vec_buf_len)
+>>                 return 0;
+> 
+>>         if (p->found_pages == p->max_pages)
+>>                 return PM_SCAN_FOUND_MAX_PAGES;
+> 
+> This should be instead:
+> 
+> n_pages = min(p->max_pags - p_found_pages, n_pages)
+> ...
+> return n_pages;
+You are missing the optimization here that we check for full buffer every
+time adding to user buffer. This was added to remove extra iteration of
+page walk if buffer is full already. The way you are suggesting will remove it.
 
-These days, it's a good idea to go ahead and draft that up early. You'll
-be surprised what sort of details you notice once you have to start
-writing documentation. ;)
+So you are returning remaining pages to be found now. This doesn't seem
+right. If max_pages is 520, found_pages is 0 and n_pages is 512 before
+calling pagemap_scan_output(). found_pages would become 512 after adding
+512 pages to output buffer. But n_pages would return 8 instead of 512. You
+were saying we should return the number of pages added to the output buffer.
 
-You can post it as part of this set on the next posting and just mention
-that it's a draft manpage patch. You should also include the linux-api
-mailing list on the next posting so we get some feedback on the
-interface itself.
---=20
-Jeff Layton <jlayton@kernel.org>
+> 
+>> pagemap_scan_pmd_entry():
+>>         ret = pagemap_scan_output(bitmap, p, start, n_pages);
+>>         if (ret > 0) // success
+>>                 make_UFFD_WP and flush
+>>         else if (ret == 0) // buffer full
+>>                 return PM_SCAN_BUFFER_FULL;
+>>         else //other errors
+>>                 buffer_error
+> 
+> And this would be:
+> 
+> if (ret > 0 && WP)
+>    WP + flush
+> 
+> if (ret < n_pages)
+>    return -ENOSPC;
+> 
+>> So you are asking me to go from consie code to write more lines of code. I
+>> would write more lines without any issue if it improves readability and
+>> logical sense. But I don't see here any benefit.
+> 
+> Please see the clarifications above.
+> 
+> Best Regards
+> Michał Mirosław
+
+-- 
+BR,
+Muhammad Usama Anjum
