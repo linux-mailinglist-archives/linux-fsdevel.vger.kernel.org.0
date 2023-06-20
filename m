@@ -2,80 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 199D9736B57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 13:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7050C736B65
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 13:50:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232766AbjFTLpb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 07:45:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36738 "EHLO
+        id S232107AbjFTLuN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 07:50:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232774AbjFTLp2 (ORCPT
+        with ESMTP id S231649AbjFTLuM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 07:45:28 -0400
-X-Greylist: delayed 2682 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 20 Jun 2023 04:45:23 PDT
-Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d502])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 514B0172E;
-        Tue, 20 Jun 2023 04:45:23 -0700 (PDT)
-Received: from mail-nwsmtp-smtp-production-main-84.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:332f:0:640:4ab4:0])
-        by forward502b.mail.yandex.net (Yandex) with ESMTP id 4A74C5EED2;
-        Tue, 20 Jun 2023 14:45:19 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-84.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id HjfjJSpWl0U0-wUWdqa9A;
-        Tue, 20 Jun 2023 14:45:18 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1687261518;
-        bh=sy+CJgdIdcZUFxJ4WQL0cSo0CwChT2uhxEUrKoqH9no=;
-        h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-        b=O8MxQZgQ7ROlR94lHObblR00iiEZVoP3C9fTG3+2pbFzZWDkmxv/RNXdCB+M63rfi
-         8+/tgX3nwDpl/9jxNkwbdt/bTekwykh5Gevd8415wKOC08eVVEi/g0H3muo94nMVpW
-         621INpeHqBHt1054zLsOPhSt+L0EtrMEBQfU7lS4=
-Authentication-Results: mail-nwsmtp-smtp-production-main-84.iva.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <5f644a24-90b5-a02f-b593-49336e8e0f5a@yandex.ru>
-Date:   Tue, 20 Jun 2023 16:45:16 +0500
+        Tue, 20 Jun 2023 07:50:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF8B8186
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 04:50:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 275CC611EA
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 11:50:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C12C433C0;
+        Tue, 20 Jun 2023 11:50:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687261810;
+        bh=kSvztI56FO1Zkr5LutuDa30cOInJ3oxsUK1M4aZpHWI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rFnNz6eCfm6XV68TdiVMNI+PUp61705rnbUZgFSYr4gLDPPTeCgyrGJUdumqsKW5+
+         FPeFlCprXM45d9aWlQemTGN2T6m88sYGMimnQlq/Sj9VDR/eswBVC6UU1SEEdbyCvL
+         K35ZfEQYaHVuHbhG/uvlqrXgE2Vnl54jP5jYmuS5H7J5UioiKIaKIH1y5/5BgTtr5r
+         33DxJHqJASo4xRxKrZ+aGd2o62DibkxCXeieSHnWe8FFGLi2aHa4dD0Fm8WT0qTd/R
+         JqggzDZmVFomwbNShES3/PYDD6KFCSP1SZFTU5kzDMki2uhfa9FjXfB7NueBOhxj0K
+         C9m7O3/pIB98Q==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v3] fs: Provide helpers for manipulating sb->s_readonly_remount
+Date:   Tue, 20 Jun 2023 13:49:59 +0200
+Message-Id: <20230620-frisieren-zugute-1b1e9486e388@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230620112832.5158-1-jack@suse.cz>
+References: <20230620112832.5158-1-jack@suse.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
-Content-Language: en-US
-To:     Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-References: <20230620095507.2677463-1-stsp2@yandex.ru>
- <20230620095507.2677463-3-stsp2@yandex.ru>
- <5728ebda22a723b0eb209ae078e8f132d7b4ac7b.camel@kernel.org>
- <a1e7f5c1-76ef-19e5-91db-a62f7615b28a@yandex.ru>
- <eaccc14ddc6b546e5913eb557fec55f77cb5424d.camel@kernel.org>
-From:   stsp <stsp2@yandex.ru>
-In-Reply-To: <eaccc14ddc6b546e5913eb557fec55f77cb5424d.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=877; i=brauner@kernel.org; h=from:subject:message-id; bh=JQbOzrYQtOjM2yByK9ejTp/ybXq+2XR1LqTAz197w6Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRMnBSqOuulcs9jltMpQdv/HKhmaheKCunyb+PWnK/1d7/r N668jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInkrWT4p/dZKFfsx5mknk8hC4MPFK R222UWJKyNCXeYGD67d660JSPDoZglM35Lm7d/OOz+e/eidM/Xah4m5XsVZSLL16VtfvqNFwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, 20 Jun 2023 13:28:32 +0200, Jan Kara wrote:
+> Provide helpers to set and clear sb->s_readonly_remount including
+> appropriate memory barriers. Also use this opportunity to document what
+> the barriers pair with and why they are needed.
+> 
+> 
 
-20.06.2023 16:12, Jeff Layton пишет:
-> Multithreaded processes are also a bit of a gray area here: Suppose I
-> open a file and set an OFD lock on it in one task, and then let that
-> task exit while the file is still open. What should l_pid say in that
-> case?
+Thanks for the updated comments.
 
-If by the "task" you mean a process, then
-the result should be no lock at all.
-If you mean the thread exit, then I would
-expect l_pid to contain tgid, in which case
-it will still point to the valid pid.
-Or do you mean l_pid contains tid?
-Checking... no, l_pid contains tgid.
-So I don't really see the problem you are
-pointing with the above example, could
-you please clarify?
+---
 
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs: Provide helpers for manipulating sb->s_readonly_remount
+      https://git.kernel.org/vfs/vfs/c/67a91f780e98
