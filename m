@@ -2,41 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE046736DA7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 15:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57501736DC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 15:48:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232699AbjFTNqK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 09:46:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
+        id S233119AbjFTNsR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 09:48:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231144AbjFTNqJ (ORCPT
+        with ESMTP id S233161AbjFTNsN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 09:46:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A7CBA4;
-        Tue, 20 Jun 2023 06:46:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=keI+2flqm4to7Jr8mzcSDDgqcShbyqtzxfzQgnZ0qog=; b=jTq+IV5h59rvjlOO6YYrNtjjPt
-        bAmKiz6/Ep2DxxTi8VFXiBjJfFUOYIPXz/kLau8BTzX8Mp7BZI5Fr9B+LIVGJDyMGcARdZNYj46iS
-        rpnBf66HcTp+gmS8AOdeVprArWsmm+kASoPjbBvmHYEGB9NLFMaXljmShUPSwc92TILDPakpK57De
-        TJc8pRr+QYEQb0RI/C+xggcmVH0N/iD4S1kOQYbkB2GYLv6qjyHX1fVBoMYuS6lSJ6HjVbA6BtQbc
-        mQtP1E/EauBHxH8IOelOLl7maOIWBolLAttvH8qZ5Xhn4aqdXM5CcPp0Eb5j9vtjRBismujWeWv//
-        kQwR++4A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qBbgI-00D8bI-Mh; Tue, 20 Jun 2023 13:46:02 +0000
-Date:   Tue, 20 Jun 2023 14:46:02 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     stsp <stsp2@yandex.ru>
+        Tue, 20 Jun 2023 09:48:13 -0400
+Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d502])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146901B6;
+        Tue, 20 Jun 2023 06:47:44 -0700 (PDT)
+Received: from mail-nwsmtp-smtp-production-main-90.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-90.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:2505:0:640:a85f:0])
+        by forward502b.mail.yandex.net (Yandex) with ESMTP id 9C8C95ECEC;
+        Tue, 20 Jun 2023 16:47:34 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-90.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id VlhAhMiWkGk0-SGMglbM2;
+        Tue, 20 Jun 2023 16:47:33 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1687268854;
+        bh=Rr4hsTfTLT33LbrU7L4vWcoYlqbg8c6p38egzx11+3M=;
+        h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+        b=I9j8WBvGiB/0yyKXb68uOQNJ65a3hINN8DfE4EBy/22PbDy7R/nTW63x5F9efc8Gu
+         jJFJllEiKiZPhC1yetAf8qT85xHsg3/W/5Xq4KxIHM+r6+0NZCiX58FuiLLW0bJP+1
+         g+prqW6cVxGfvb5ojkuC2SHmYSRuME8dBWMs+550=
+Authentication-Results: mail-nwsmtp-smtp-production-main-90.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <cb88d464-30d8-810e-f3c4-35432d12a32d@yandex.ru>
+Date:   Tue, 20 Jun 2023 18:47:31 +0500
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
         Chuck Lever <chuck.lever@oracle.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
-Message-ID: <ZJGtmrej8LraEsjj@casper.infradead.org>
 References: <20230620095507.2677463-1-stsp2@yandex.ru>
  <20230620095507.2677463-3-stsp2@yandex.ru>
  <5728ebda22a723b0eb209ae078e8f132d7b4ac7b.camel@kernel.org>
@@ -47,25 +51,28 @@ References: <20230620095507.2677463-1-stsp2@yandex.ru>
  <d70b6831-3443-51d0-f64c-6f6996367a85@yandex.ru>
  <d0c18369245db91a3b78017fabdc81417418af67.camel@kernel.org>
  <ddb48e05-ab26-ae5d-86d5-01e47f0f0cd2@yandex.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ddb48e05-ab26-ae5d-86d5-01e47f0f0cd2@yandex.ru>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+ <ZJGtmrej8LraEsjj@casper.infradead.org>
+From:   stsp <stsp2@yandex.ru>
+In-Reply-To: <ZJGtmrej8LraEsjj@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 20, 2023 at 06:39:07PM +0500, stsp wrote:
-> Though it will, for sure, represent the
-> task that _owns_ the lock.
 
-No, it *DOESN'T*.  I can open a file, SCM_RIGHTS pass it to another task
-and then exit.  Now the only owner of that lock is the recipient ...
-who may not even have received the fd yet.
-
+20.06.2023 18:46, Matthew Wilcox пишет:
+> On Tue, Jun 20, 2023 at 06:39:07PM +0500, stsp wrote:
+>> Though it will, for sure, represent the
+>> task that _owns_ the lock.
+> No, it *DOESN'T*.  I can open a file, SCM_RIGHTS pass it to another task
+> and then exit.  Now the only owner of that lock is the recipient ...
+Won't I get the recipient's pid in an
+l_pid then?
