@@ -2,82 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 484AC736AD1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 13:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC6CB736AEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 13:28:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232120AbjFTLUG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 07:20:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52506 "EHLO
+        id S231765AbjFTL2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 07:28:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjFTLUE (ORCPT
+        with ESMTP id S230295AbjFTL2o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 07:20:04 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 986961708;
-        Tue, 20 Jun 2023 04:19:39 -0700 (PDT)
-Received: from [192.168.10.54] (unknown [119.155.63.248])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Tue, 20 Jun 2023 07:28:44 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D37A130
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 04:28:43 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id ADDA16606F55;
-        Tue, 20 Jun 2023 12:19:30 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1687259977;
-        bh=w8Q4vKMQFmuajKNPlPTCQbzOZl5aCRmpDJ5fB3c4fm8=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=nMwLd464ivUuXC7Q2sLXA7ZzNELRv3wO1V2k9CDaYKGFRsmoFOwfqwclGsmWr7CZi
-         rDZEhGTv5U+SsdhIOJtLmYrq4sORoL1jrefM0m5uS4UYuLelyD5ANXWvWAi6e4T+4G
-         KfD0Dl6PNn0+zTOrVQCjn1QDQ8vShWBb3pnOAzcG+p/32TeOe9E0hmZuPTsoRFBQcr
-         9Kg/VAzN0Zxqv9WJEKmBpCvUTch3/2atH6K1cFYGN5bZcJNh5FKuwhAgOIJspBQczM
-         kHdCoMm6Ihc++MBZam8MzCMbZ2ezGTxr0kzc4TV79l7diJX53uKDTYAD/OnPkSxEpI
-         tVEk3p1JaNyDw==
-Message-ID: <344449fe-56f1-ed2a-b13f-d66abb57a1fe@collabora.com>
-Date:   Tue, 20 Jun 2023 16:19:26 +0500
+        by smtp-out2.suse.de (Postfix) with ESMTPS id E27041F37E;
+        Tue, 20 Jun 2023 11:28:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1687260521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=pSAQRNGlw7wnnNLtODSuXEr+DaFfQ/773ZR0Hgfyj6M=;
+        b=BFIs3HwU+E0VblejSg8uofyZ+jKr1V3SETdu5TCXElNGBBDE2ui1oIIEj1+yAsAZytRA1a
+        EC2LQimuFV0ELq/r2lvPOSkm8JLA85IGvJ4bypNuesjXECilt6ax3Z2gENv9dn7Nm/mHDK
+        EagCpbJ96fy8ojl7zYEcxxPJcqoiVhY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1687260521;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=pSAQRNGlw7wnnNLtODSuXEr+DaFfQ/773ZR0Hgfyj6M=;
+        b=cb2ovI4tLnB8jNbgZMqidPOFttRUKCFEIfEd0C5RvyVsJVRasxgwqVH3YlV1j6c9oGhVIS
+        V6DtgQC/ocVeMFBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CF5B2133A9;
+        Tue, 20 Jun 2023 11:28:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id q0eQMmmNkWSreQAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 20 Jun 2023 11:28:41 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 67708A075D; Tue, 20 Jun 2023 13:28:41 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>
+Subject: [PATCH v3] fs: Provide helpers for manipulating sb->s_readonly_remount
+Date:   Tue, 20 Jun 2023 13:28:32 +0200
+Message-Id: <20230620112832.5158-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
-        <emmir@google.com>, Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v19 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Content-Language: en-US
-To:     Andrei Vagin <avagin@gmail.com>
-References: <20230615141144.665148-1-usama.anjum@collabora.com>
- <20230615141144.665148-3-usama.anjum@collabora.com>
- <ZI1VGsaOZ2a1HiKN@gmail.com>
- <212e331f-35b0-5ae7-6371-26caa577d637@collabora.com>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <212e331f-35b0-5ae7-6371-26caa577d637@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6369; i=jack@suse.cz; h=from:subject; bh=LCHbdopSvVSmU8Jmd8eKqVrMFPpF5QXkJgPYCj14YcM=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkkY1PyliuAf7t3Q66YdlO5Bf5CC8jCzwumSxTsx+s uCshoMKJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZJGNTwAKCRCcnaoHP2RA2QstB/ 0fcn9oIRQcZqZMRpdl17cxve9AgoajUat5RWpgt6Vk3Pu4KE8r3PhKPdvSvtfHcbSLBHPTLRFyaqI6 JdykCXneqsbzSFjpLEFz7WwoAQfxOsdK6Qw3k+wPqHItlMnGER2amLFKi12JDK00O1Yq+hvOf4x4qd 34/gYsGHFK47pe0DSfGXaVggFF73o0lGHL0bkpkJENsoYtxKW3ZKoEwWtcxP1iIG1/pPjSbmwuM2ng J/tqq1iXUTGqSBQtsKIpWTyMEIsvTy70UC1/pQCvWGntrfMftTX5V2TeY+OfnhqL8XblmPl9wCxtFE td7FK9ca+MG8SC55txXY3SeV/T9Rir
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,129 +70,185 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/19/23 11:06 AM, Muhammad Usama Anjum wrote:
-> On 6/17/23 11:39 AM, Andrei Vagin wrote:
->> On Thu, Jun 15, 2023 at 07:11:41PM +0500, Muhammad Usama Anjum wrote:
->>> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->>> +				  unsigned long end, struct mm_walk *walk)
->>> +{
->>> +	bool is_written, flush = false, is_interesting = true;
->>> +	struct pagemap_scan_private *p = walk->private;
->>> +	struct vm_area_struct *vma = walk->vma;
->>> +	unsigned long bitmap, addr = end;
->>> +	pte_t *pte, *orig_pte, ptent;
->>> +	spinlock_t *ptl;
->>> +	int ret = 0;
->>> +
->>> +	arch_enter_lazy_mmu_mode();
->>> +
->>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>> +	ptl = pmd_trans_huge_lock(pmd, vma);
->>> +	if (ptl) {
->>> +		unsigned long n_pages = (end - start)/PAGE_SIZE;
->>> +
->>> +		if (p->max_pages && n_pages > p->max_pages - p->found_pages)
->>> +			n_pages = p->max_pages - p->found_pages;
->>> +
->>> +		is_written = !is_pmd_uffd_wp(*pmd);
->>> +
->>> +		/*
->>> +		 * Break huge page into small pages if the WP operation need to
->>> +		 * be performed is on a portion of the huge page.
->>> +		 */
->>> +		if (is_written && IS_PM_SCAN_WP(p->flags) &&
->>> +		    n_pages < HPAGE_SIZE/PAGE_SIZE) {
->>> +			spin_unlock(ptl);
->>> +
->>> +			split_huge_pmd(vma, pmd, start);
->>> +			goto process_smaller_pages;
->>> +		}
->>> +
->>> +		bitmap = PM_SCAN_FLAGS(is_written, (bool)vma->vm_file,
->>> +				       pmd_present(*pmd), is_swap_pmd(*pmd));
->>> +
->>> +		if (IS_PM_SCAN_GET(p->flags)) {
->>> +			is_interesting = pagemap_scan_is_interesting_page(bitmap, p);
->>> +			if (is_interesting)
->>> +				ret = pagemap_scan_output(bitmap, p, start, n_pages);
->>> +		}
->>> +
->>> +		if (IS_PM_SCAN_WP(p->flags) && is_written && is_interesting &&
->>> +		    ret >= 0) {
->>> +			make_uffd_wp_pmd(vma, start, pmd);
->>> +			flush_tlb_range(vma, start, end);
->>> +		}
->>> +
->>> +		spin_unlock(ptl);
->>> +
->>> +		arch_leave_lazy_mmu_mode();
->>> +		return ret;
->>> +	}
->>> +
->>> +process_smaller_pages:
->>> +#endif
->>> +
->>> +	orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
->>> +	if (!pte) {
->>
->> Do we need to unlock ptl here?
->>
->> 		spin_unlock(ptl);
-> No, please look at these recently merged patches:
-> https://lore.kernel.org/all/c1c9a74a-bc5b-15ea-e5d2-8ec34bc921d@google.com
-> 
->>
->>> +		walk->action = ACTION_AGAIN;
->>> +		return 0;
->>> +	}
->>> +
->>> +	for (addr = start; addr < end && !ret; pte++, addr += PAGE_SIZE) {
->>> +		ptent = ptep_get(pte);
->>> +		is_written = !is_pte_uffd_wp(ptent);
->>> +
->>> +		bitmap = PM_SCAN_FLAGS(is_written, (bool)vma->vm_file,
->>> +				       pte_present(ptent), is_swap_pte(ptent));
->>
->> The vma->vm_file check isn't correct in this case. You can look when
->> pte_to_pagemap_entry sets PM_FILE. This flag is used to detect what
->> pages have a file backing store and what pages are anonymous.
-> I'll update.
-> 
->>
->> I was trying to integrate this new interace into CRIU and I found
->> one more thing that is required. We need to detect zero pages.
-Can we not add this zero page flag now as we are already at v20? If you
-have time to review and test the patches, then something can be done.
+Provide helpers to set and clear sb->s_readonly_remount including
+appropriate memory barriers. Also use this opportunity to document what
+the barriers pair with and why they are needed.
 
-> Should we name it ZERO_PFN_PRESENT_PAGE to be exact or what?
-> 
->>
->> It should look something like this:
->>
->> #define PM_SCAN_FLAGS(wt, file, present, swap, zero)   \
->>        ((wt) | ((file) << 1) | ((present) << 2) | ((swap) << 3) | ((zero) << 4))
->>
->>
->> bitmap = PM_SCAN_FLAGS(is_written, page && !PageAnon(page),
->> 		      pte_present(ptent), is_swap_pte(ptent),
->> 		      pte_present(ptent) && is_zero_pfn(pte_pfn(ptent)));
-> Okay. Can you please confirm my assumptions:
-> - A THP cannot be file backed. (PM_FILE isn't being set for THP case)
-> - A hole is also not file backed.
-> 
-> A hole isn't present in memory. So its pfn would be zero. But as it isn't
-> present, it shouldn't report zero page. Right? For hole::
-> 
-> PM_SCAN_FLAGS(false, false, false, false, false)
-Please let me know about the test results you have been doing.
+Suggested-by: Dave Chinner <david@fromorbit.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/internal.h      | 41 +++++++++++++++++++++++++++++++++++++++++
+ fs/namespace.c     | 25 ++++++++++++++++---------
+ fs/super.c         | 17 ++++++-----------
+ include/linux/fs.h |  2 +-
+ 4 files changed, 64 insertions(+), 21 deletions(-)
 
-> 
-> 
->>
->> Thanks,
->> Andrei
-> 
-
+diff --git a/fs/internal.h b/fs/internal.h
+index bd3b2810a36b..b916b84809f3 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -120,6 +120,47 @@ void put_super(struct super_block *sb);
+ extern bool mount_capable(struct fs_context *);
+ int sb_init_dio_done_wq(struct super_block *sb);
+ 
++/*
++ * Prepare superblock for changing its read-only state (i.e., either remount
++ * read-write superblock read-only or vice versa). After this function returns
++ * mnt_is_readonly() will return true for any mount of the superblock if its
++ * caller is able to observe any changes done by the remount. This holds until
++ * sb_end_ro_state_change() is called.
++ */
++static inline void sb_start_ro_state_change(struct super_block *sb)
++{
++	WRITE_ONCE(sb->s_readonly_remount, 1);
++	/*
++	 * For RO->RW transition, the barrier pairs with the barrier in
++	 * mnt_is_readonly() making sure if mnt_is_readonly() sees SB_RDONLY
++	 * cleared, it will see s_readonly_remount set.
++	 * For RW->RO transition, the barrier pairs with the barrier in
++	 * __mnt_want_write() before the mnt_is_readonly() check. The barrier
++	 * makes sure if __mnt_want_write() sees MNT_WRITE_HOLD already
++	 * cleared, it will see s_readonly_remount set.
++	 */
++	smp_wmb();
++}
++
++/*
++ * Ends section changing read-only state of the superblock. After this function
++ * returns if mnt_is_readonly() returns false, the caller will be able to
++ * observe all the changes remount did to the superblock.
++ */
++static inline void sb_end_ro_state_change(struct super_block *sb)
++{
++	/*
++	 * This barrier provides release semantics that pairs with
++	 * the smp_rmb() acquire semantics in mnt_is_readonly().
++	 * This barrier pair ensure that when mnt_is_readonly() sees
++	 * 0 for sb->s_readonly_remount, it will also see all the
++	 * preceding flag changes that were made during the RO state
++	 * change.
++	 */
++	smp_wmb();
++	WRITE_ONCE(sb->s_readonly_remount, 0);
++}
++
+ /*
+  * open.c
+  */
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 54847db5b819..5ba1eca6f720 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -309,9 +309,16 @@ static unsigned int mnt_get_writers(struct mount *mnt)
+ 
+ static int mnt_is_readonly(struct vfsmount *mnt)
+ {
+-	if (mnt->mnt_sb->s_readonly_remount)
++	if (READ_ONCE(mnt->mnt_sb->s_readonly_remount))
+ 		return 1;
+-	/* Order wrt setting s_flags/s_readonly_remount in do_remount() */
++	/*
++	 * The barrier pairs with the barrier in sb_start_ro_state_change()
++	 * making sure if we don't see s_readonly_remount set yet, we also will
++	 * not see any superblock / mount flag changes done by remount.
++	 * It also pairs with the barrier in sb_end_ro_state_change()
++	 * assuring that if we see s_readonly_remount already cleared, we will
++	 * see the values of superblock / mount flags updated by remount.
++	 */
+ 	smp_rmb();
+ 	return __mnt_is_readonly(mnt);
+ }
+@@ -364,9 +371,11 @@ int __mnt_want_write(struct vfsmount *m)
+ 		}
+ 	}
+ 	/*
+-	 * After the slowpath clears MNT_WRITE_HOLD, mnt_is_readonly will
+-	 * be set to match its requirements. So we must not load that until
+-	 * MNT_WRITE_HOLD is cleared.
++	 * The barrier pairs with the barrier sb_start_ro_state_change() making
++	 * sure that if we see MNT_WRITE_HOLD cleared, we will also see
++	 * s_readonly_remount set (or even SB_RDONLY / MNT_READONLY flags) in
++	 * mnt_is_readonly() and bail in case we are racing with remount
++	 * read-only.
+ 	 */
+ 	smp_rmb();
+ 	if (mnt_is_readonly(m)) {
+@@ -588,10 +597,8 @@ int sb_prepare_remount_readonly(struct super_block *sb)
+ 	if (!err && atomic_long_read(&sb->s_remove_count))
+ 		err = -EBUSY;
+ 
+-	if (!err) {
+-		sb->s_readonly_remount = 1;
+-		smp_wmb();
+-	}
++	if (!err)
++		sb_start_ro_state_change(sb);
+ 	list_for_each_entry(mnt, &sb->s_mounts, mnt_instance) {
+ 		if (mnt->mnt.mnt_flags & MNT_WRITE_HOLD)
+ 			mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
+diff --git a/fs/super.c b/fs/super.c
+index 6cd64961aa07..8a39902b859f 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -944,8 +944,7 @@ int reconfigure_super(struct fs_context *fc)
+ 	 */
+ 	if (remount_ro) {
+ 		if (force) {
+-			sb->s_readonly_remount = 1;
+-			smp_wmb();
++			sb_start_ro_state_change(sb);
+ 		} else {
+ 			retval = sb_prepare_remount_readonly(sb);
+ 			if (retval)
+@@ -953,12 +952,10 @@ int reconfigure_super(struct fs_context *fc)
+ 		}
+ 	} else if (remount_rw) {
+ 		/*
+-		 * We set s_readonly_remount here to protect filesystem's
+-		 * reconfigure code from writes from userspace until
+-		 * reconfigure finishes.
++		 * Protect filesystem's reconfigure code from writes from
++		 * userspace until reconfigure finishes.
+ 		 */
+-		sb->s_readonly_remount = 1;
+-		smp_wmb();
++		sb_start_ro_state_change(sb);
+ 	}
+ 
+ 	if (fc->ops->reconfigure) {
+@@ -974,9 +971,7 @@ int reconfigure_super(struct fs_context *fc)
+ 
+ 	WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
+ 				 (fc->sb_flags & fc->sb_flags_mask)));
+-	/* Needs to be ordered wrt mnt_is_readonly() */
+-	smp_wmb();
+-	sb->s_readonly_remount = 0;
++	sb_end_ro_state_change(sb);
+ 
+ 	/*
+ 	 * Some filesystems modify their metadata via some other path than the
+@@ -991,7 +986,7 @@ int reconfigure_super(struct fs_context *fc)
+ 	return 0;
+ 
+ cancel_readonly:
+-	sb->s_readonly_remount = 0;
++	sb_end_ro_state_change(sb);
+ 	return retval;
+ }
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 133f0640fb24..ede51d60d124 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1242,7 +1242,7 @@ struct super_block {
+ 	 */
+ 	atomic_long_t s_fsnotify_connectors;
+ 
+-	/* Being remounted read-only */
++	/* Read-only state of the superblock is being changed */
+ 	int s_readonly_remount;
+ 
+ 	/* per-sb errseq_t for reporting writeback errors via syncfs */
 -- 
-BR,
-Muhammad Usama Anjum
+2.35.3
+
