@@ -2,160 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D787D73601E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 01:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A2C873604C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 02:01:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229978AbjFSX2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Jun 2023 19:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46564 "EHLO
+        id S229765AbjFTABE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Jun 2023 20:01:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbjFSX1w (ORCPT
+        with ESMTP id S229448AbjFTABD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Jun 2023 19:27:52 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D7D1982
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 16:25:08 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-666e916b880so1529839b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jun 2023 16:25:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687217108; x=1689809108;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nq8ZwPfadoIy5gd1Fgjrv5Py55QScCrFH6K7CQ++xtI=;
-        b=xN4bbnyrWS/7pssMWn96NGcXWGQktdo3DzHJxASULdo3PHyslzoEamSjbGffn+W4y6
-         UL4qiNRc99Trl5UcFLfmpELCKF5JMBRe4JZ6xjp5UGWpEH+83387J3LDlauIcjhfZ/iY
-         uYUa96gMb9M1D/B1B2gRbcoxfmmPB8YZa8nC8d49W/J9gdIT+Se/HKp0e3ZKPJnwcF9m
-         XuEgK3ZKi95P0Vbro1gru0BjjuBwxbzL+SsVUhvbZ59BrNKFQ+XWSv8DELLWE6B5K9i/
-         w5+MvkwOm3rKflpGoMaKBH3SX1V4DT0YQmavzHYLVlXRR6Il2hMQSxbGx5xcPurCTEbQ
-         +6HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687217108; x=1689809108;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nq8ZwPfadoIy5gd1Fgjrv5Py55QScCrFH6K7CQ++xtI=;
-        b=BSWTtvUmCroCM8zBk/DUw3JBzGPMI38gdb4sQVMqxaOi2HZWYyulwS4kijhY621fTe
-         j4vgziMc2Fym2RBiVPtwV2HmbVSn4JjAT676KSBjfysr1vPD5RwIVN9u0HxLX2b1FjBn
-         BhyGy6DQKK/UtB/thl/v0xP3v71O26/OctN26WiNDQKrtmpJ8zxT0ZCruBNO3LUKyj+7
-         N2zRMD/IWWd5CTCdUVBJ0lSMlIID27ZNUYPff31LS8UiXCSZmAS1emHSPQN7ELNXujjP
-         hBkeZq9HPGhgT2ZXa3Q96uNS2hv9AaCo5ek5Ax9LfJELRF0Ihu6nH41b5nDuTsYLuApn
-         cdag==
-X-Gm-Message-State: AC+VfDxlAM6tFV1wogTJ+yKqu+PPbVXpVcV6as2+0S33CNNTpt3rZmvp
-        +sk7BJgT40d4RcJPVf1Z35X6FA==
-X-Google-Smtp-Source: ACHHUZ5dDxjGCeD+SuVwpsSgcKKxcwUvzIoxiIzQylwE228kmeoZyMGQKQlwJbTy1rXIVM8O/mO1pg==
-X-Received: by 2002:a05:6a20:7295:b0:115:a2f4:6284 with SMTP id o21-20020a056a20729500b00115a2f46284mr1903473pzk.16.1687217107705;
-        Mon, 19 Jun 2023 16:25:07 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
-        by smtp.gmail.com with ESMTPSA id z11-20020a170903018b00b001a072aedec7sm328346plg.75.2023.06.19.16.25.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jun 2023 16:25:07 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qBOF7-00Dpof-02;
-        Tue, 20 Jun 2023 09:25:05 +1000
-Date:   Tue, 20 Jun 2023 09:25:05 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v2] fs: Provide helpers for manipulating
- sb->s_readonly_remount
-Message-ID: <ZJDj0XjkeVK7AHIx@dread.disaster.area>
-References: <20230619111832.3886-1-jack@suse.cz>
+        Mon, 19 Jun 2023 20:01:03 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81951B6;
+        Mon, 19 Jun 2023 17:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KKEFTk8JRt6auD81VmKR05IrMCjbBWj2nan8iYrIAco=; b=BkOXYWjJMwuH6Zf/knOFxYVi98
+        fd+s04668WzEdHaEN9knVPmhJD88r5Szwp+63svW58n4YWbjfgEe5IUbE/4WcNI6oZPY2i6agFS+W
+        5i7NMU95kpsHnNvQGotvj0CfVzaBAjxuMvkBRIv8u8F/dbtLUDW8bI7qJLuqflpUxilYGUY2S1k7p
+        WYnZLwpdxquK22uwkYZ4u2WREnhvin0OQxu0LqII3DZ++DhdTDswWBJk9j35e0dkhGdbvV68Cj3n8
+        96t48dolFnSI0lvPb64uVXfNLJP9FmSS4bTPQW1frFi5prRSOlsXarDZElqNB72Cb7uv8nthCP4v9
+        edo1OPfg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qBOnn-00CPuf-MT; Tue, 20 Jun 2023 00:00:55 +0000
+Date:   Tue, 20 Jun 2023 01:00:55 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Hannes Reinecke <hare@suse.de>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>, gost.dev@samsung.com
+Subject: Re: [PATCH 6/7] mm/filemap: allocate folios with mapping blocksize
+Message-ID: <ZJDsN3UHphxbFGDq@casper.infradead.org>
+References: <20230614114637.89759-1-hare@suse.de>
+ <20230614114637.89759-7-hare@suse.de>
+ <CGME20230619080901eucas1p224e67aa31866d2ad8d259b2209c2db67@eucas1p2.samsung.com>
+ <20230619080857.qxx5c7uaz6pm4h3m@localhost>
+ <b6d982ce-3e7e-e433-8339-28ec8474df03@suse.de>
+ <ZJDdbPwfXI6eR5vB@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="XLFzhUqy5ZX2e7O9"
 Content-Disposition: inline
-In-Reply-To: <20230619111832.3886-1-jack@suse.cz>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZJDdbPwfXI6eR5vB@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 19, 2023 at 01:18:32PM +0200, Jan Kara wrote:
-> Provide helpers to set and clear sb->s_readonly_remount including
-> appropriate memory barriers. Also use this opportunity to document what
-> the barriers pair with and why they are needed.
-> 
-> Suggested-by: Dave Chinner <david@fromorbit.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/internal.h      | 34 ++++++++++++++++++++++++++++++++++
->  fs/namespace.c     | 10 ++++------
->  fs/super.c         | 17 ++++++-----------
->  include/linux/fs.h |  2 +-
->  4 files changed, 45 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/internal.h b/fs/internal.h
-> index bd3b2810a36b..e206eb58bd3e 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -120,6 +120,40 @@ void put_super(struct super_block *sb);
->  extern bool mount_capable(struct fs_context *);
->  int sb_init_dio_done_wq(struct super_block *sb);
->  
-> +/*
-> + * Prepare superblock for changing its read-only state (i.e., either remount
-> + * read-write superblock read-only or vice versa). After this function returns
-> + * mnt_is_readonly() will return true for any mount of the superblock if its
-> + * caller is able to observe any changes done by the remount. This holds until
-> + * sb_end_ro_state_change() is called.
-> + */
-> +static inline void sb_start_ro_state_change(struct super_block *sb)
-> +{
-> +	WRITE_ONCE(sb->s_readonly_remount, 1);
-> +	/*
-> +	 * For RO->RW transition, the barrier pairs with the barrier in
-> +	 * mnt_is_readonly() making sure if mnt_is_readonly() sees SB_RDONLY
-> +	 * cleared, it will see s_readonly_remount set.
-> +	 * For RW->RO transition, the barrier pairs with the barrier in
-> +	 * __mnt_want_write() before the mnt_is_readonly() check. The barrier
-> +	 * makes sure if __mnt_want_write() sees MNT_WRITE_HOLD already
-> +	 * cleared, it will see s_readonly_remount set.
-> +	 */
-> +	smp_wmb();
-> +}
 
-Can you please also update mnt_is_readonly/__mnt_want_write to
-indicate that there is a pairing with this helper from those
-functions?
+--XLFzhUqy5ZX2e7O9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +
-> +/*
-> + * Ends section changing read-only state of the superblock. After this function
-> + * returns if mnt_is_readonly() returns false, the caller will be able to
-> + * observe all the changes remount did to the superblock.
-> + */
-> +static inline void sb_end_ro_state_change(struct super_block *sb)
-> +{
-> +	/* The barrier pairs with the barrier in mnt_is_readonly() */
-> +	smp_wmb();
-> +	WRITE_ONCE(sb->s_readonly_remount, 0);
-> +}
+On Tue, Jun 20, 2023 at 08:57:48AM +1000, Dave Chinner wrote:
+> What is needed is a field into the mapping that defines the
+> folio order that all folios allocated for the page cache must be
+> aligned/sized to to allow them to be inserted into the mapping.
 
-	/*
-	 * This barrier provides release semantics that pair with
-	 * the smp_rmb() acquire semantics in mnt_is_readonly().
-	 * This barrier pair ensure that when mnt_is_readonly() sees
-	 * 0 for sb->s_readonly_remount, it will also see all the
-	 * preceding flag changes that were made during the RO state
-	 * change.
-	 */
+Attached patch from December 2020 ;-)
 
-And a comment in mnt_is_readonly() to indicate that it also pairs
-with sb_end_ro_state_change() in a different way to the barriers in
-sb_start_ro_state_change(), __mnt_want_write(), MNT_WRITE_HOLD, etc.
+--XLFzhUqy5ZX2e7O9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-fs-Allow-fine-grained-control-of-folio-sizes.patch"
 
-Memory barriers need clear, concise documentation, otherwise they
-are impossible to understand from just reading the code...
+From 1aeee696f4d322af5f34544e39fc00006c399fb8 Mon Sep 17 00:00:00 2001
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Date: Tue, 15 Dec 2020 10:57:34 -0500
+Subject: [PATCH] fs: Allow fine-grained control of folio sizes
 
-Cheers,
+Some filesystems want to be able to limit the maximum size of folios,
+and some want to be able to ensure that folios are at least a certain
+size.  Add mapping_set_folio_orders() to allow this level of control
+(although it is not yet honoured).
 
-Dave.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/pagemap.h | 41 +++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 37 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index cad81db32e61..9cbb8bdbaee7 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -198,9 +198,15 @@ enum mapping_flags {
+ 	AS_EXITING	= 4, 	/* final truncate in progress */
+ 	/* writeback related tags are not used */
+ 	AS_NO_WRITEBACK_TAGS = 5,
+-	AS_LARGE_FOLIO_SUPPORT = 6,
++	AS_FOLIO_ORDER_MIN = 8,
++	AS_FOLIO_ORDER_MAX = 13,
++	/* 8-17 are used for FOLIO_ORDER */
+ };
+ 
++#define AS_FOLIO_ORDER_MIN_MASK	0x00001f00
++#define AS_FOLIO_ORDER_MAX_MASK 0x0002e000
++#define AS_FOLIO_ORDER_MASK (AS_FOLIO_ORDER_MIN_MASK | AS_FOLIO_ORDER_MAX_MASK)
++
+ /**
+  * mapping_set_error - record a writeback error in the address_space
+  * @mapping: the mapping in which an error should be set
+@@ -290,6 +296,29 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+ 	m->gfp_mask = mask;
+ }
+ 
++/**
++ * mapping_set_folio_orders() - Set the range of folio sizes supported.
++ * @mapping: The file.
++ * @min: Minimum folio order (between 0-31 inclusive).
++ * @max: Maximum folio order (between 0-31 inclusive).
++ *
++ * The filesystem should call this function in its inode constructor to
++ * indicate which sizes of folio the VFS can use to cache the contents
++ * of the file.  This should only be used if the filesystem needs special
++ * handling of folio sizes (ie there is something the core cannot know).
++ * Do not tune it based on, eg, i_size.
++ * 
++ * Context: This should not be called while the inode is active as it
++ * is non-atomic.
++ */
++static inline void mapping_set_folio_orders(struct address_space *mapping,
++		unsigned int min, unsigned int max)
++{
++	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
++			(min << AS_FOLIO_ORDER_MIN) |
++			(max << AS_FOLIO_ORDER_MAX);
++}
++
+ /**
+  * mapping_set_large_folios() - Indicate the file supports large folios.
+  * @mapping: The file.
+@@ -303,7 +332,12 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+  */
+ static inline void mapping_set_large_folios(struct address_space *mapping)
+ {
+-	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
++	mapping_set_folio_orders(mapping, 0, 31);
++}
++
++static inline unsigned mapping_max_folio_order(struct address_space *mapping)
++{
++	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
+ }
+ 
+ /*
+@@ -312,8 +346,7 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
+  */
+ static inline bool mapping_large_folio_support(struct address_space *mapping)
+ {
+-	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+-		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
++	return mapping_max_folio_order(mapping) > 0;
+ }
+ 
+ static inline int filemap_nr_thps(struct address_space *mapping)
 -- 
-Dave Chinner
-david@fromorbit.com
+2.35.1
+
+
+--XLFzhUqy5ZX2e7O9--
