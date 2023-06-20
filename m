@@ -2,87 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F8AE736A0C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 12:57:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1ACB736A11
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 12:57:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232434AbjFTK50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 06:57:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
+        id S232442AbjFTK5v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 06:57:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232412AbjFTK5U (ORCPT
+        with ESMTP id S232458AbjFTK5n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 06:57:20 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E46C1100;
-        Tue, 20 Jun 2023 03:57:14 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-988c495f35fso234512366b.1;
-        Tue, 20 Jun 2023 03:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687258633; x=1689850633;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3O+Bnjxxx0szcdEOMgNn8iZcHNEXXIsPlro4HGaBB6o=;
-        b=aIWa1nXGNFgmtzFIBA1RqWdd8m52b+jvDm3A4V/u+05m/hAmX/0tZU9iyWAHFDN5Hb
-         BspNl1+bwRjG2f60MjkRD81qMsjE1kSoD0f7dN8XBOrNrG69sa5B4WxtCkv/eQX9wAwE
-         KRfuAoub+Wf3wXYRhtHk/C238QnAmSnzinmq/g8NlaagE3zegKs5TbJVUYTfZ1O5MVz/
-         qBFtkHw30Uc5D+rWEPL+kLodz3ZS845mn6y2K8rkJQ/9xwv7ySEVZ4lmkEyIqR5JYLaS
-         jo/ginTbyVqH/CCSG0kYljwrLR4SpSGmUtJtI//LGkaPnrg2P65yv3cIdd3h4Z0kYQFf
-         EqiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687258633; x=1689850633;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3O+Bnjxxx0szcdEOMgNn8iZcHNEXXIsPlro4HGaBB6o=;
-        b=RxqpjDSBYj2TQFLyyqMu+FWZsvFS/bnQAbbf3k2Ytl1rlJnpHL8uKlBagBhA37k1ZO
-         GaW7lJ0C8ZBuhlCUvK9CoX7ksRk+5moixT035AlLFhiWsWSeyl1gCO0rSkqqUkyVp9C9
-         Js8z2LrYoPTLePqpqe3wNbPgY3VmazEEl7hBdOlAnY2IRNyNxf11RJc1aQhVhmg7Hz1P
-         26+UzQX2U8QWREbFcAxKh98AblnMeBScJvQVTA4qfUgwSsrZwWGnEf3CvXUpWoLl3rn5
-         XjVkSjLtRDvysNdgthPE3MRy1X7EkeaoLvxfTie/zlFcy7r64yI0bKdzB1h3p4Cd1a+C
-         UE9A==
-X-Gm-Message-State: AC+VfDyAEBJOCSyRKWmLVhZUZ/z53iDuYjzu6KhTUTZCTfC/vc/4bjSu
-        PkVZ0LNRJDAkpmKQXVqpgtE=
-X-Google-Smtp-Source: ACHHUZ7/IxL+j4tMhMmtnE6mA76gQ7qCMC3vtfvWh/rIklR4GzXcN84K4iRqi4lH0JifLvzTy8Mh7g==
-X-Received: by 2002:a17:907:1c9c:b0:965:6aff:4f02 with SMTP id nb28-20020a1709071c9c00b009656aff4f02mr12375780ejc.41.1687258633089;
-        Tue, 20 Jun 2023 03:57:13 -0700 (PDT)
-Received: from [10.176.234.233] ([147.161.245.31])
-        by smtp.gmail.com with ESMTPSA id t4-20020a17090605c400b009663582a90bsm1187627ejt.19.2023.06.20.03.57.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jun 2023 03:57:12 -0700 (PDT)
-Message-ID: <9513017b07522373d9e886478f889867b7cae54d.camel@gmail.com>
-Subject: Re: [PATCH v2 1/5] fs/buffer: clean up block_commit_write
-From:   Bean Huo <huobean@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>, Bean Huo <beanhuo@iokpp.de>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org,
-        akpm@linux-foundation.org, jack@suse.cz, jack@suse.com,
-        tytso@mit.edu, adilger.kernel@dilger.ca, mark@fasheh.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        beanhuo@micron.com
-Date:   Tue, 20 Jun 2023 12:57:11 +0200
-In-Reply-To: <ZJE6Nf6XmeHIlFJI@casper.infradead.org>
-References: <20230619211827.707054-1-beanhuo@iokpp.de>
-         <20230619211827.707054-2-beanhuo@iokpp.de>
-         <ZJE6Nf6XmeHIlFJI@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu1 
+        Tue, 20 Jun 2023 06:57:43 -0400
+Received: from forward101b.mail.yandex.net (forward101b.mail.yandex.net [178.154.239.148])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D591510E2;
+        Tue, 20 Jun 2023 03:57:37 -0700 (PDT)
+Received: from mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1e2b:0:640:94b5:0])
+        by forward101b.mail.yandex.net (Yandex) with ESMTP id 332E36012D;
+        Tue, 20 Jun 2023 13:57:27 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id Ove6axoDbKo0-nCAOC5kc;
+        Tue, 20 Jun 2023 13:57:26 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1687258646;
+        bh=8FUU/Xa/yU6MIGBp4GSl/zvrLBpWLS521oJYuRHSseE=;
+        h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+        b=xFE/ov3F6+ItKmJ6eOk67Vb1CbEyk+vE9zyZrtnnNVF1WxL0IKQoKeteIuvNBtACA
+         FY4NmEVVZahjsVl9v/Tx47AqBadSyoNOn6Sk+pzn1qd321IrrDRfAr0bhs7GRKd+S7
+         pCj/UFepciTUNyFi5wHraMfy1IDZiJKaaBvbaeDI=
+Authentication-Results: mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <a1e7f5c1-76ef-19e5-91db-a62f7615b28a@yandex.ru>
+Date:   Tue, 20 Jun 2023 15:57:23 +0500
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
+Content-Language: en-US
+To:     Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20230620095507.2677463-1-stsp2@yandex.ru>
+ <20230620095507.2677463-3-stsp2@yandex.ru>
+ <5728ebda22a723b0eb209ae078e8f132d7b4ac7b.camel@kernel.org>
+From:   stsp <stsp2@yandex.ru>
+In-Reply-To: <5728ebda22a723b0eb209ae078e8f132d7b4ac7b.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-06-20 at 06:33 +0100, Matthew Wilcox wrote:
-> You're going to need to redo these patches, I'm afraid.=C2=A0 A series of
-> patches I wrote just went in that convert __block_commit_write (but
-> not block_commit_write) to take a folio instead of a page.
+Hello,
 
-Do you know which git repo merged with your patches?=20
+20.06.2023 15:51, Jeff Layton пишет:
+> On Tue, 2023-06-20 at 14:55 +0500, Stas Sergeev wrote:
+>> Currently F_OFD_GETLK sets the pid of the lock owner to -1.
+>> Remove such behavior to allow getting the proper owner's pid.
+>> This may be helpful when you want to send some message (like SIGKILL)
+>> to the offending locker.
+>>
+>> Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+>>
+>> CC: Jeff Layton <jlayton@kernel.org>
+>> CC: Chuck Lever <chuck.lever@oracle.com>
+>> CC: Alexander Viro <viro@zeniv.linux.org.uk>
+>> CC: Christian Brauner <brauner@kernel.org>
+>> CC: linux-fsdevel@vger.kernel.org
+>> CC: linux-kernel@vger.kernel.org
+>>
+>> ---
+>>   fs/locks.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/fs/locks.c b/fs/locks.c
+>> index 210766007e63..ee265e166542 100644
+>> --- a/fs/locks.c
+>> +++ b/fs/locks.c
+>> @@ -2158,8 +2158,6 @@ static pid_t locks_translate_pid(struct file_lock *fl, struct pid_namespace *ns)
+>>   	pid_t vnr;
+>>   	struct pid *pid;
+>>   
+>> -	if (IS_OFDLCK(fl))
+>> -		return -1;
+>>   	if (IS_REMOTELCK(fl))
+>>   		return fl->fl_pid;
+>>   	/*
+> NACK on this one.
+>
+> OFD locks are not owned by processes. They are owned by the file
+> description (hence the name). Because of this, returning a pid here is
+> wrong.
+
+But fd is owned by a process.
+PID has a meaning, you can send SIGKILL
+to the returned PID, and the lock is clear.
+Was there any reason to hide the PID at
+a first place?
+
+
+> This precedent comes from BSD, where flock() and POSIX locks can
+> conflict. BSD returns -1 for the pid if you call F_GETLK on a file
+> locked with flock(). Since OFD locks have similar ownership semantics to
+> flock() locks, we use the same convention here.
+OK if you insist I can drop this one and
+search the PID by some other means.
+Just a bit unsure what makes it so important
+to overwrite the potentially useful info
+with -1.
+
+So in case you insist on that, then should
+I send a v2 or can you just drop the patch
+yourself?
