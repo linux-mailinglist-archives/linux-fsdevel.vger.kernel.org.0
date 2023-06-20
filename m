@@ -2,143 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF737376B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 23:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC876737730
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 00:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbjFTVeu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 17:34:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53162 "EHLO
+        id S229808AbjFTWFV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 18:05:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbjFTVet (ORCPT
+        with ESMTP id S229694AbjFTWFU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 17:34:49 -0400
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66883172B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 14:34:47 -0700 (PDT)
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-77a1d6d2f7fso465582139f.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 14:34:47 -0700 (PDT)
+        Tue, 20 Jun 2023 18:05:20 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F83E1730
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 15:05:18 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-513ea2990b8so1982a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 15:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1687298717; x=1689890717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6QnZ16+cR3SKz8OZyy5d1CsXcXjkIRyncSh8yNxkG1M=;
+        b=B8QESZcPS8IOqAQ9veug7dutrAkK9Ty1tsh2jQp6IbIscVsQ3171n8gu4ay4YA1jka
+         SkkY8idwFT4BOwqktrmuEbxD0Q/eYeyQGlApPqQBEFgsOCmzBHnvaRCdjry6zWAgVZ4G
+         yyFUmiO18E4j8x97g+1K1kjmm85SQxOEFP0ccV/TiJVtZ2muvDpMiypubUXTcZdN/Hk6
+         vQ570hXUuFVnwEmSHLwMjj9UoRrL3kKGlkVcqEUvhhOT2ok9Y2mDTVOnKKEQQvCbbpHD
+         b9luoM6mpvHQG2q9UDVJ10SdF0+qSH5L0gjwTYjn8fi3DenuPM9N1G70ZZFBE3/zqrBq
+         ZVaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687296886; x=1689888886;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C8h56+Nw3PHyDQJJw90SrezeFvT6bY7SsQPlbTisbW4=;
-        b=hL7qiGpzEqczj0E8J0UWUX6xszkbe+yaaBU7Qg4VVRW4Lxoa4+sP5zzoPeaAFfxImX
-         UJa8eYsZwvWpqvm2W4F0Sf4wW09asjJazuGq6H9EkR8fA67zGLFogZRJgNHPnDWIJL98
-         Mb6xMUFW2zxMSOGag1suFgPylIt5atUr6eR37Sbzrfd/6BDJR5zJPgB3kt2c1uVkXndq
-         wwUQQ5T2Q/LdPbdQEC1oIeooRzJll1hbkIieWIu6YmP6azS28naDlvO7UDhmaL9Sh82w
-         NFVfhCKip8DySrjEAW5qMaCMj/JYQRqdvdy70mZHAcNFgQjebq3P3+t1+mFVi78PRoaI
-         3+6Q==
-X-Gm-Message-State: AC+VfDwJkjVedxqlZgNy8ShMnXuRVYNnK8WqU/VW4lvV7/Pk18Og1d5D
-        CTOYSAvkUaRoSvjblKeCylS/2rMzO/mu/I7xYrXoLfR59Smn
-X-Google-Smtp-Source: ACHHUZ7s5BWFtaXX+GD4lynOIab5pCHEzcyo6r3PEcvVeW2mggSZKq9Ayak/l8gDoBuo3aw7MHc/f0YbOeEtl0xtF8xd1vExtr95
+        d=1e100.net; s=20221208; t=1687298717; x=1689890717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6QnZ16+cR3SKz8OZyy5d1CsXcXjkIRyncSh8yNxkG1M=;
+        b=IDgFOOtWjVsBlF2Dlx0PPYI4SDRbu5+Np3GFcqQTgEY6QcgZ4rDgF0m4Hiz6MJojOP
+         qp5KsRE1yQmbMpCxw43JCjrEyxQ7xuxfP5Nk3tWPvffHIwbRgrMC71OvwQ7MOI1Ay/Rb
+         n+SmulE1G+nvQy8GUvKSob3nAcN8hn+KXkPsJfElJbZ4/VN37ETTH4mRh3x1PS27m+pe
+         AmWph6r33cRusz7JxPKsliVCCPVObtnZCGHgRJH59qlH5Zn9PqLuaW5W19dYFp4Q4imW
+         jrsNZuJSxO4G03eqpPz+trFgEdoJ8i9TfiI+90mA8Tr/HC7Xh96caAeZLc2H6NAuNjz3
+         wE2A==
+X-Gm-Message-State: AC+VfDzvxhlM1+MEenAyFIAnsRpQ/pjrNzjX2jZmt+QG+Uvj4lEIt7Fe
+        it9XLsFJKR5UvXFdjcAxRBjrIAzn0s5pRq3ph7GmvA==
+X-Google-Smtp-Source: ACHHUZ59qq5aWENB/BjU7unJQ0/yUrpV9cMPMC3H9gw6cRwjKcqMmpGu7hrOaqCTn7aGXRAjC3awXkHyEymz3yE+18M=
+X-Received: by 2002:a50:9e07:0:b0:50b:f6ce:2f3d with SMTP id
+ z7-20020a509e07000000b0050bf6ce2f3dmr574426ede.0.1687298716727; Tue, 20 Jun
+ 2023 15:05:16 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a02:95a3:0:b0:41d:9cf2:f41d with SMTP id
- b32-20020a0295a3000000b0041d9cf2f41dmr4280642jai.0.1687296886770; Tue, 20 Jun
- 2023 14:34:46 -0700 (PDT)
-Date:   Tue, 20 Jun 2023 14:34:46 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000091164305fe966bdd@google.com>
-Subject: [syzbot] [btrfs?] WARNING in emit_fiemap_extent
-From:   syzbot <syzbot+9992306148b06272f3bb@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20230613102905.2808371-1-usama.anjum@collabora.com>
+ <20230613102905.2808371-3-usama.anjum@collabora.com> <CABb0KFHWnbrf2ythvO0OKsd1ZS9b4D9BNzwBCbn6g9OX4n6ZOg@mail.gmail.com>
+ <0db01d90-09d6-08a4-bbb8-70670d3baa94@collabora.com> <CABb0KFEn5TU480A=YiN82nLRtGyKMABi8cZjuiGUU_jFZZo+8g@mail.gmail.com>
+ <34203acf-7270-7ade-a60e-ae0f729dcf70@collabora.com> <CABb0KFFaXgJD99pWfx3MC+qrq5jUaPis_kZo6U8yL_8xdp0GJA@mail.gmail.com>
+ <96b7cc00-d213-ad7d-1b48-b27f75b04d22@collabora.com> <CABb0KFEy_mRaT86TEOQ-BoTe_XOVw3Kp5VdzOfEEaiZJuT754g@mail.gmail.com>
+ <39bc8212-9ee8-dbc1-d468-f6be438b683b@collabora.com> <CABb0KFHx2hV9M7oinCdKnagRmcrGHagH9eAO3TkVTQH+o9x=5A@mail.gmail.com>
+ <2e1b80f1-0385-0674-ae5f-9703a6ef975d@collabora.com> <CABb0KFGOx69Sz6w9JenYUwSTFmW-Cmcns3X-oDyWsC+H57vkvg@mail.gmail.com>
+ <444ed144-a2ee-cb16-880a-128383c83a08@collabora.com>
+In-Reply-To: <444ed144-a2ee-cb16-880a-128383c83a08@collabora.com>
+From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Date:   Wed, 21 Jun 2023 00:05:05 +0200
+Message-ID: <CABb0KFEqJasf9nM3wL1oaK9ObcYzwzjtrRBcWRc3wGqdZRUpXg@mail.gmail.com>
+Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, 20 Jun 2023 at 13:16, Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+> On 6/19/23 1:16=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> > On Fri, 16 Jun 2023 at 08:57, Muhammad Usama Anjum
+> > <usama.anjum@collabora.com> wrote:
+> >>
+> >> On 6/16/23 1:07=E2=80=AFAM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>> On Thu, 15 Jun 2023 at 17:11, Muhammad Usama Anjum
+> >>> <usama.anjum@collabora.com> wrote:
+> >>>> On 6/15/23 7:52=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>>>> On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
+> >>>>> <usama.anjum@collabora.com> wrote:
+> >>>>>> I'll send next revision now.
+> >>>>>> On 6/14/23 11:00=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> >>>>>>> (A quick reply to answer open questions in case they help the nex=
+t version.)
+> > [...]
+> >>>>>>> I guess this will be reworked anyway, but I'd prefer this didn't =
+need
+> >>>>>>> custom errors etc. If we agree to decoupling the selection and GE=
+T
+> >>>>>>> output, it could be:
+> >>>>>>>
+> >>>>>>> bool is_interesting_page(p, flags); // this one does the
+> >>>>>>> required/anyof/excluded match
+> >>>>>>> size_t output_range(p, start, len, flags); // this one fills the
+> >>>>>>> output vector and returns how many pages were fit
+> >>>>>>>
+> >>>>>>> In this setup, `is_interesting_page() && (n_out =3D output_range(=
+)) <
+> >>>>>>> n_pages` means this is the final range, no more will fit. And if
+> >>>>>>> `n_out =3D=3D 0` then no pages fit and no WP is needed (no other =
+special
+> >>>>>>> cases).
+> >>>>>> Right now, pagemap_scan_output() performs the work of both of thes=
+e two
+> >>>>>> functions. The part can be broken into is_interesting_pages() and =
+we can
+> >>>>>> leave the remaining part as it is.
+> >>>>>>
+> >>>>>> Saying that n_out < n_pages tells us the buffer is full covers one=
+ case.
+> >>>>>> But there is case of maximum pages have been found and walk needs =
+to be
+> >>>>>> aborted.
+> >>>>>
+> >>>>> This case is exactly what `n_out < n_pages` will cover (if scan_out=
+put
+> >>>>> uses max_pages properly to limit n_out).
+> >>>>> Isn't it that when the buffer is full we want to abort the scan alw=
+ays
+> >>>>> (with WP if `n_out > 0`)?
+> >>>> Wouldn't it be duplication of condition if buffer is full inside
+> >>>> pagemap_scan_output() and just outside it. Inside pagemap_scan_outpu=
+t() we
+> >>>> check if we have space before putting data inside it. I'm using this=
+ same
+> >>>> condition to indicate that buffer is full.
+> >>>
+> >>> I'm not sure what do you mean? The buffer-full conditions would be
+> >>> checked in ..scan_output() and communicated to the caller by returnin=
+g
+> >>> N less than `n_pages` passed in. This is exactly how e.g. read()
+> >>> works: if you get less than requested you've hit the end of the file.
+> >>> If the file happens to have size that is equal to the provided buffer
+> >>> length, the next read() will return 0.
+> >> Right now we have:
+> >>
+> >> pagemap_scan_output():
+> >>         if (p->vec_buf_index >=3D p->vec_buf_len)
+> >>                 return PM_SCAN_BUFFER_FULL;
+> >>         if (p->found_pages =3D=3D p->max_pages)
+> >>                 return PM_SCAN_FOUND_MAX_PAGES;
+> >
+> > Why do you need to differentiate between those cases?
+> >
+> >> pagemap_scan_pmd_entry():
+> >>         ret =3D pagemap_scan_output(bitmap, p, start, n_pages);
+> >>         if (ret >=3D 0) // success
+> >>                 make_UFFD_WP and flush
+> >>         else
+> >>                 buffer_error
+> >>
+> >> You are asking me to do:
+> >>
+> >> pagemap_scan_output():
+> >>         if (p->vec_buf_index >=3D p->vec_buf_len)
+> >>                 return 0;
+> >
+> >>         if (p->found_pages =3D=3D p->max_pages)
+> >>                 return PM_SCAN_FOUND_MAX_PAGES;
+> >
+> > This should be instead:
+> >
+> > n_pages =3D min(p->max_pags - p_found_pages, n_pages)
+> > ...
+> > return n_pages;
+> You are missing the optimization here that we check for full buffer every
+> time adding to user buffer. This was added to remove extra iteration of
+> page walk if buffer is full already. The way you are suggesting will remo=
+ve it.
+>
+> So you are returning remaining pages to be found now. This doesn't seem
+> right. If max_pages is 520, found_pages is 0 and n_pages is 512 before
+> calling pagemap_scan_output(). found_pages would become 512 after adding
+> 512 pages to output buffer. But n_pages would return 8 instead of 512. Yo=
+u
+> were saying we should return the number of pages added to the output buff=
+er.
 
-syzbot found the following issue on:
+Ok, if we want this optimization, then i'd rework it so that we have:
 
-HEAD commit:    40f71e7cd3c6 Merge tag 'net-6.4-rc7' of git://git.kernel.o..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=166d2acf280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7ff8f87c7ab0e04e
-dashboard link: https://syzkaller.appspot.com/bug?extid=9992306148b06272f3bb
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c65e87280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1094a78b280000
+bool pagemap_scan_output(..., int *n_pages)
+{
+   limit n_pages;
+  ...
+  return have_more_room_in_output;
+}
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2dc89d5fee38/disk-40f71e7c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0ced5a475218/vmlinux-40f71e7c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d543a4f69684/bzImage-40f71e7c.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7cde8d2312ae/mount_0.gz
+The compiler should remove the pointer and memory storage for
+`n_pages` when inlining the function.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9992306148b06272f3bb@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5351 at fs/btrfs/extent_io.c:2824 emit_fiemap_extent+0xee/0x410
-Modules linked in:
-CPU: 1 PID: 5351 Comm: syz-executor148 Not tainted 6.4.0-rc6-syzkaller-00195-g40f71e7cd3c6 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-RIP: 0010:emit_fiemap_extent+0xee/0x410 fs/btrfs/extent_io.c:2824
-Code: d8 24 52 fe 49 8b 45 00 48 89 04 24 48 8b 4c 24 28 48 8d 2c 08 48 89 ef 4c 89 f6 e8 3c 4f fa fd 4c 39 f5 76 1b e8 22 4d fa fd <0f> 0b bd ea ff ff ff e9 25 02 00 00 e8 11 4d fa fd e9 97 01 00 00
-RSP: 0018:ffffc90004b7f4a8 EFLAGS: 00010293
-RAX: ffffffff8391327e RBX: ffffc90004b7f8e0 RCX: ffff88807658bb80
-RDX: 0000000000000000 RSI: 00000000000b3000 RDI: 0000000000101000
-RBP: 0000000000101000 R08: ffffffff83913274 R09: 0000000000000800
-R10: ffffc90004b7f478 R11: dffffc0000000001 R12: 1ffff9200096ff1f
-R13: ffffc90004b7f8f0 R14: 00000000000b3000 R15: 1ffff9200096ff1e
-FS:  00007f2063529700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055dbf02d3668 CR3: 0000000079ce7000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- fiemap_process_hole+0xa27/0xaf0 fs/btrfs/extent_io.c:3104
- extent_fiemap+0xe7d/0x1fc0
- btrfs_fiemap+0x178/0x1e0 fs/btrfs/inode.c:7802
- ioctl_fiemap fs/ioctl.c:219 [inline]
- do_vfs_ioctl+0x19ba/0x2b10 fs/ioctl.c:810
- __do_sys_ioctl fs/ioctl.c:868 [inline]
- __se_sys_ioctl+0x81/0x160 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f206a99eae9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f20635292f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f206aa287f0 RCX: 00007f206a99eae9
-RDX: 00000000200012c0 RSI: 00000000c020660b RDI: 0000000000000004
-RBP: 00007f206a9f5290 R08: 00007f2063529700 R09: 0000000000000000
-R10: 00007f2063529700 R11: 0000000000000246 R12: 5f65646f6e696f6e
-R13: 0032656c69662f2e R14: 8000000000000001 R15: 00007f206aa287f8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best Regards
+Micha=C5=82 Miros=C5=82aw
