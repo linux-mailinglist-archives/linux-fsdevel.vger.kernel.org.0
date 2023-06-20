@@ -2,71 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 93F52736AFF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 13:31:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D9E0736B40
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 13:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232692AbjFTLbL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 07:31:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56960 "EHLO
+        id S232072AbjFTLnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 07:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232710AbjFTLbA (ORCPT
+        with ESMTP id S232281AbjFTLnJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 07:31:00 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C231728
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 04:30:57 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Tue, 20 Jun 2023 07:43:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9C891713;
+        Tue, 20 Jun 2023 04:42:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 16F70218B1;
-        Tue, 20 Jun 2023 11:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1687260656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gPBBupq3aAR0LnJaCdT3ypfb4SDeMIZaDRaCzZVgww8=;
-        b=bJpic291JqoA3aMECeKtaU5l/7iNNTZX9nrKPttUSQDuGwRkLDGYqOiKwNWXzv+ui3taIp
-        RrN8jDw6UqBWKaEkNUGFuPlhwtiFsklgAP36gFaDOKhypR/wMs6nFsJiCEaB/ltRVIp/md
-        TSdgnCcc2aw9F4+E+ehHw44Qis2nKJA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1687260656;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gPBBupq3aAR0LnJaCdT3ypfb4SDeMIZaDRaCzZVgww8=;
-        b=I4hdUkwKvDuGgb/oeR8xskhJrcQxa/4FAn5+mejHBcMKMYda/hv0j6o3QL5HYPfOkWB/f5
-        iizJNfFTzZ5VYtBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 09DC2133A9;
-        Tue, 20 Jun 2023 11:30:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id uCFiAvCNkWQSewAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 20 Jun 2023 11:30:56 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9A184A075D; Tue, 20 Jun 2023 13:30:55 +0200 (CEST)
-Date:   Tue, 20 Jun 2023 13:30:55 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v2] fs: Provide helpers for manipulating
- sb->s_readonly_remount
-Message-ID: <20230620113055.wle3paef4xslnhue@quack3>
-References: <20230619111832.3886-1-jack@suse.cz>
- <ZJDj0XjkeVK7AHIx@dread.disaster.area>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 66E80611F0;
+        Tue, 20 Jun 2023 11:42:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8123C433C8;
+        Tue, 20 Jun 2023 11:42:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687261362;
+        bh=hCldbNsO0TOwUgfRbSGNvJYMsoqIvF/JUDNRqS4H3r4=;
+        h=From:Date:Subject:To:Cc:From;
+        b=LddhIzmAOCzTU5FvNDZ4unhevkwERqZTOQsCobwr/4xdvNG0JeFEAmMZPOWnf4QLW
+         ecOjy+UUYTTLmjOvvUpM26K6asvI0gj2Cjl/R4wTd5rOKuhCp94A/cbmy3r6tAyqeC
+         ZCcSVksd/ghjWhwx1QDgYn7PsSwprV0b64O8rvLhIpkYZl3cxG3MLVRF+UEoqksA9i
+         g1kqdnF8+X0IHEUvE+sthhsef4uikB0JG20KnQs00+PIMDPFdhT2unnVIDD+OFdDoU
+         6oS5qYfl2BfZIdbzRJjLJGpLJ6UtLCx9qSmhMFlH15TxVmV0iq0CFfC3XW6gqoCRJy
+         3q9NmbumbMzPA==
+From:   Christian Brauner <brauner@kernel.org>
+Date:   Tue, 20 Jun 2023 13:42:38 +0200
+Subject: [PATCH] ovl: reserve ability to reconfigure mount options with new
+ mount api
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZJDj0XjkeVK7AHIx@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230620-fs-overlayfs-mount-api-remount-v1-1-6dfcb89088e3@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAK2QkWQC/0WOwQqDQAxEf0VybmBdQdr+Sukhu8YaaLOSVbGI/
+ 961PfQ2D2Yes0FmE85wrTYwXiRL0gL1qYI4kD4YpSsM3vnGtd5hnzEtbE96l/RKs05Io6DxL1+
+ a4GvHbYzdGYokUGYMRhqHQ/OfKq/TURiNe1m/D273ff8Ab9n2GJEAAAA=
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.13-dev-c6835
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2784; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=hCldbNsO0TOwUgfRbSGNvJYMsoqIvF/JUDNRqS4H3r4=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRMnLDxiOX6nTOeTEyLnmsXeHvCQrHXD2N0Y1anisy8ffZR
+ mj4ja0cpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE5uQz/E/z3Zs9mZ0nmHHHI+6vFz
+ c6JZjrmRc3PGvyWybpqNW8oYnhf5n5fO0M5zufZTxfa207vV/jc/qVtO5lYX7u+0wEl5neYAAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,87 +66,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 20-06-23 09:25:05, Dave Chinner wrote:
-> On Mon, Jun 19, 2023 at 01:18:32PM +0200, Jan Kara wrote:
-> > Provide helpers to set and clear sb->s_readonly_remount including
-> > appropriate memory barriers. Also use this opportunity to document what
-> > the barriers pair with and why they are needed.
-> > 
-> > Suggested-by: Dave Chinner <david@fromorbit.com>
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/internal.h      | 34 ++++++++++++++++++++++++++++++++++
-> >  fs/namespace.c     | 10 ++++------
-> >  fs/super.c         | 17 ++++++-----------
-> >  include/linux/fs.h |  2 +-
-> >  4 files changed, 45 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/fs/internal.h b/fs/internal.h
-> > index bd3b2810a36b..e206eb58bd3e 100644
-> > --- a/fs/internal.h
-> > +++ b/fs/internal.h
-> > @@ -120,6 +120,40 @@ void put_super(struct super_block *sb);
-> >  extern bool mount_capable(struct fs_context *);
-> >  int sb_init_dio_done_wq(struct super_block *sb);
-> >  
-> > +/*
-> > + * Prepare superblock for changing its read-only state (i.e., either remount
-> > + * read-write superblock read-only or vice versa). After this function returns
-> > + * mnt_is_readonly() will return true for any mount of the superblock if its
-> > + * caller is able to observe any changes done by the remount. This holds until
-> > + * sb_end_ro_state_change() is called.
-> > + */
-> > +static inline void sb_start_ro_state_change(struct super_block *sb)
-> > +{
-> > +	WRITE_ONCE(sb->s_readonly_remount, 1);
-> > +	/*
-> > +	 * For RO->RW transition, the barrier pairs with the barrier in
-> > +	 * mnt_is_readonly() making sure if mnt_is_readonly() sees SB_RDONLY
-> > +	 * cleared, it will see s_readonly_remount set.
-> > +	 * For RW->RO transition, the barrier pairs with the barrier in
-> > +	 * __mnt_want_write() before the mnt_is_readonly() check. The barrier
-> > +	 * makes sure if __mnt_want_write() sees MNT_WRITE_HOLD already
-> > +	 * cleared, it will see s_readonly_remount set.
-> > +	 */
-> > +	smp_wmb();
-> > +}
-> 
-> Can you please also update mnt_is_readonly/__mnt_want_write to
-> indicate that there is a pairing with this helper from those
-> functions?
+Using the old mount api to remount an overlayfs superblock via
+mount(MS_REMOUNT) all mount options will be silently ignored. For
+example, if you create an overlayfs mount:
 
-Ok, I've expanded / updated the comments there.
+        mount -t overlay overlay -o lowerdir=/mnt/a:/mnt/b,upperdir=/mnt/upper,workdir=/mnt/work /mnt/merged
 
-> > +
-> > +/*
-> > + * Ends section changing read-only state of the superblock. After this function
-> > + * returns if mnt_is_readonly() returns false, the caller will be able to
-> > + * observe all the changes remount did to the superblock.
-> > + */
-> > +static inline void sb_end_ro_state_change(struct super_block *sb)
-> > +{
-> > +	/* The barrier pairs with the barrier in mnt_is_readonly() */
-> > +	smp_wmb();
-> > +	WRITE_ONCE(sb->s_readonly_remount, 0);
-> > +}
-> 
-> 	/*
-> 	 * This barrier provides release semantics that pair with
-> 	 * the smp_rmb() acquire semantics in mnt_is_readonly().
-> 	 * This barrier pair ensure that when mnt_is_readonly() sees
-> 	 * 0 for sb->s_readonly_remount, it will also see all the
-> 	 * preceding flag changes that were made during the RO state
-> 	 * change.
-> 	 */
-> 
-> And a comment in mnt_is_readonly() to indicate that it also pairs
-> with sb_end_ro_state_change() in a different way to the barriers in
-> sb_start_ro_state_change(), __mnt_want_write(), MNT_WRITE_HOLD, etc.
+and then issue a remount via:
 
-Thanks! I've added your comment and expanded more on pairing with
-sb_end_ro_state_change().
+        # force mount(8) to use mount(2)
+        export LIBMOUNT_FORCE_MOUNT2=always
+        mount -t overlay overlay -o remount,WOOTWOOT,lowerdir=/DOESNT-EXIST /mnt/merged
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+with completely nonsensical mount options whatsoever it will succeed
+nonetheless. This prevents us from every changing any mount options we
+might introduce in the future that could reasonably be changed during a
+remount.
+
+We don't need to carry this issue into the new mount api port. Similar
+to FUSE we can use the fs_context::oldapi member to figure out that this
+is a request coming through the legacy mount api. If we detect it we
+continue silently ignoring all mount options.
+
+But for the new mount api we simply report that mount options cannot
+currently be changed. This will allow us to potentially alter mount
+properties for new or even old properties. It any case, silently
+ignoring everything is not something new apis should do.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+
+---
+ fs/overlayfs/super.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index ed4b35c9d647..c14c52560fd6 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -499,13 +499,24 @@ static int ovl_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 	struct ovl_fs_context *ctx = fc->fs_private;
+ 	int opt;
+ 
+-	/*
+-	 * On remount overlayfs has always ignored all mount options no
+-	 * matter if malformed or not so for backwards compatibility we
+-	 * do the same here.
+-	 */
+-	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE)
+-		return 0;
++	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
++		/*
++		 * On remount overlayfs has always ignored all mount
++		 * options no matter if malformed or not so for
++		 * backwards compatibility we do the same here.
++		 */
++		if (fc->oldapi)
++			return 0;
++
++		/*
++		 * Give us the freedom to allow changing mount options
++		 * with the new mount api in the future. So instead of
++		 * silently ignoring everything we report a proper
++		 * error. This is only visible for users of the new
++		 * mount api.
++		 */
++		return invalfc(fc, "No changes allowed in reconfigure");
++	}
+ 
+ 	opt = fs_parse(fc, ovl_parameter_spec, param, &result);
+ 	if (opt < 0)
+
+---
+base-commit: cc7e4d7ce5ea183b9ca735f7466b4491a1ee440e
+change-id: 20230620-fs-overlayfs-mount-api-remount-93b210e6ccd8
+
