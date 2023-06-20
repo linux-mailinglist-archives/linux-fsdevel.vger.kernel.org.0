@@ -2,76 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 930B9736993
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 12:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 481D17369C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 12:47:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230490AbjFTKl1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 06:41:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58626 "EHLO
+        id S232237AbjFTKq7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 06:46:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230527AbjFTKlY (ORCPT
+        with ESMTP id S232183AbjFTKqz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 06:41:24 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FF90101;
-        Tue, 20 Jun 2023 03:41:13 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Tue, 20 Jun 2023 06:46:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9C351A8;
+        Tue, 20 Jun 2023 03:46:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 0666E21877;
-        Tue, 20 Jun 2023 10:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1687257672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XKKbRxLiK5MjN6DjyshZqib7TaD9MYDDfRwwRT9YtA8=;
-        b=Jp+q+4HyZOYYp945K1qX1fnrs3NUtbB81jfuZV9cVnKbgkoaWeSpWlR8G1ZBZp90D5PovL
-        2Zax+vZx6iyAztNuVuYLYgmSff3LNGkamFmXTfAfyfs/0B8FJIpqS3MnLFqBcXoAJi2FaF
-        TWY29e6pyjAXTLk8gQ4QyKC9PY5ZjSw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1687257672;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XKKbRxLiK5MjN6DjyshZqib7TaD9MYDDfRwwRT9YtA8=;
-        b=aIiT1BnpOztM/uhMdtG68JiZScMq/zFaK63h9zDnaq1S39ORTlSI7tr2Jgjxmhv0j9vftF
-        u1N2cZbduLv9C6Aw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E98651346D;
-        Tue, 20 Jun 2023 10:41:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id VwP9OEeCkWRTYQAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 20 Jun 2023 10:41:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 776D4A075D; Tue, 20 Jun 2023 12:41:11 +0200 (CEST)
-Date:   Tue, 20 Jun 2023 12:41:11 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Ted Tso <tytso@mit.edu>, yebin <yebin@huaweicloud.com>,
-        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@google.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH] block: Add config option to not allow writing to mounted
- devices
-Message-ID: <20230620104111.pnjoouegp2dx6pcp@quack3>
-References: <20230612161614.10302-1-jack@suse.cz>
- <ZIf6RrbeyZVXBRhm@infradead.org>
- <20230613205614.atlrwst55bpqjzxf@quack3>
- <ZIlqLJ6dFs1P4aj7@infradead.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6656E61027;
+        Tue, 20 Jun 2023 10:46:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB50C433C8;
+        Tue, 20 Jun 2023 10:46:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687258012;
+        bh=lWjifKf2FqCNvCK8X0R9it3LY9aiFl5yBJrM3U6vEDA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DFbs4vp/37QViUs9RoMT1km2vJ8Au8sNPfqXgC7CadroS7dk/qWbnDACJwMpRwYPc
+         AOUCi19c2ntjTvizNCoeKVYwF6rukjBReVBWC02Y7UIu/JNqG/Dvx2zIZuO/y7oXc+
+         IOpQn3y2Dxf9lZ1puT7RfRXHkG7yJHxCkDa8tqGYk4MKHzXCPUXFsYsurgTH6hR3Ws
+         OrWCZ4u5LZa3QVdFBCEUsVhqBOqgZccDgW4XgQrI6A9qgfaNNn87vjq+xBFul/G3Qr
+         x4LTpDKdXC2PPhs2G1hVg4eBcSCcFdcuuAyCncneQ3WO8xOWXwvOtv+7NiK+XyduBd
+         Ii8Ii2LxYs5gA==
+Message-ID: <c6d4e620cad72da5f85df03443a64747b5719939.camel@kernel.org>
+Subject: Re: [PATCH 1/3] fs/locks: F_UNLCK extension for F_OFD_GETLK
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Stas Sergeev <stsp2@yandex.ru>, linux-kernel@vger.kernel.org
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Date:   Tue, 20 Jun 2023 06:46:50 -0400
+In-Reply-To: <20230620095507.2677463-2-stsp2@yandex.ru>
+References: <20230620095507.2677463-1-stsp2@yandex.ru>
+         <20230620095507.2677463-2-stsp2@yandex.ru>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZIlqLJ6dFs1P4aj7@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,47 +59,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Christoph!
+On Tue, 2023-06-20 at 14:55 +0500, Stas Sergeev wrote:
+> Currently F_UNLCK with F_OFD_GETLK returns -EINVAL.
+> The proposed extension allows to use it for getting the lock
+> information from the particular fd.
+>=20
+> Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+>=20
+> CC: Jeff Layton <jlayton@kernel.org>
+> CC: Chuck Lever <chuck.lever@oracle.com>
+> CC: Alexander Viro <viro@zeniv.linux.org.uk>
+> CC: Christian Brauner <brauner@kernel.org>
+> CC: linux-fsdevel@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+>=20
+> ---
+>  fs/locks.c | 23 ++++++++++++++++++++---
+>  1 file changed, 20 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/locks.c b/fs/locks.c
+> index df8b26a42524..210766007e63 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -868,6 +868,21 @@ static bool posix_locks_conflict(struct file_lock *c=
+aller_fl,
+>  	return locks_conflict(caller_fl, sys_fl);
+>  }
+> =20
+> +/* Determine if lock sys_fl blocks lock caller_fl. Used on xx_GETLK
+> + * path so checks for additional GETLK-specific things like F_UNLCK.
+> + */
+> +static bool posix_test_locks_conflict(struct file_lock *caller_fl,
+> +				      struct file_lock *sys_fl)
+> +{
+> +	/* F_UNLCK checks any locks on the same fd. */
+> +	if (caller_fl->fl_type =3D=3D F_UNLCK) {
+> +		if (!posix_same_owner(caller_fl, sys_fl))
+> +			return false;
+> +		return locks_overlap(caller_fl, sys_fl);
+> +	}
+> +	return posix_locks_conflict(caller_fl, sys_fl);
+> +}
+> +
+>  /* Determine if lock sys_fl blocks lock caller_fl. FLOCK specific
+>   * checking before calling the locks_conflict().
+>   */
+> @@ -901,7 +916,7 @@ posix_test_lock(struct file *filp, struct file_lock *=
+fl)
+>  retry:
+>  	spin_lock(&ctx->flc_lock);
+>  	list_for_each_entry(cfl, &ctx->flc_posix, fl_list) {
+> -		if (!posix_locks_conflict(fl, cfl))
+> +		if (!posix_test_locks_conflict(fl, cfl))
+>  			continue;
+>  		if (cfl->fl_lmops && cfl->fl_lmops->lm_lock_expirable
+>  			&& (*cfl->fl_lmops->lm_lock_expirable)(cfl)) {
+> @@ -2207,7 +2222,8 @@ int fcntl_getlk(struct file *filp, unsigned int cmd=
+, struct flock *flock)
+>  	if (fl =3D=3D NULL)
+>  		return -ENOMEM;
+>  	error =3D -EINVAL;
+> -	if (flock->l_type !=3D F_RDLCK && flock->l_type !=3D F_WRLCK)
+> +	if (cmd !=3D F_OFD_GETLK && flock->l_type !=3D F_RDLCK
+> +			&& flock->l_type !=3D F_WRLCK)
+>  		goto out;
+> =20
+>  	error =3D flock_to_posix_lock(filp, fl, flock);
+> @@ -2414,7 +2430,8 @@ int fcntl_getlk64(struct file *filp, unsigned int c=
+md, struct flock64 *flock)
+>  		return -ENOMEM;
+> =20
+>  	error =3D -EINVAL;
+> -	if (flock->l_type !=3D F_RDLCK && flock->l_type !=3D F_WRLCK)
+> +	if (cmd !=3D F_OFD_GETLK && flock->l_type !=3D F_RDLCK
+> +			&& flock->l_type !=3D F_WRLCK)
+>  		goto out;
+> =20
+>  	error =3D flock64_to_posix_lock(filp, fl, flock);
 
-On Wed 14-06-23 00:20:12, Christoph Hellwig wrote:
-> On Tue, Jun 13, 2023 at 10:56:14PM +0200, Jan Kara wrote:
-> > Well, as I've mentioned in the changelog there are old setups (without
-> > initrd) that run fsck on root filesystem mounted read-only and fsck
-> > programs tend to open the device with O_RDWR. These would be broken by this
-> > change (for the filesystems that would use BLK_OPEN_ flag).
-> 
-> But that's also a really broken setup that will corrupt data in many
-> cases.  So yes, maybe we need a way to allow it, but it probably would
-> have to be per-file system.
+This seems like a reasonable sort of interface to add, particularly for
+the CRIU case. Using F_UNLCK for this is a bit kludgey, but adding a new
+constant is probably worse.
 
-I was looking into implementing the write hardening support and I've come
-across the following obstacle: Your patch series that is in linux-block.git
-removes the 'mode' argument from blkdev_put() which makes it impossible to
-track how many writers there are for the block device. This is needed so
-that we can check whether the filesystem is safe when mounting the device.
+I'm willing to take this in with an eye toward v6.6. Are you also
+willing to draft up some manpage patches that detail this new interface?
 
-I can see several solutions but since you've just reworked the code and I'm
-not 100% certain about the motivation, I figured I'll ask you first before
-spending significant time on something you won't like:
-
-1) Just return the mode argument to blkdev_put().
-
-2) Only pass to blkdev_put() whether we have write access or not as a
-separate argument.
-
-3) Don't track number of opens for writing, instead check whether writes
-are blocked on each write access. I think this has a number of downsides
-but I mention it for completeness. One problem is we have to add checks to
-multiple places (buffered IO, direct IO) and existing mmap in particular
-will be very hard to deal with (need to add page_mkwrite() handler). All
-these checks add performance overhead. It is practically impossible
-(without significant performance overhead or new percpu datastructures) to
-properly synchronize open that wants to block writers against already
-running writes.
-
-So what would you prefer? Thanks in advance for your input.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=20
+Jeff Layton <jlayton@kernel.org>
