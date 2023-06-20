@@ -2,93 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 427ED7368D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 12:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 930B9736993
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jun 2023 12:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231372AbjFTKIW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 06:08:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37994 "EHLO
+        id S230490AbjFTKl1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 06:41:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231419AbjFTKIP (ORCPT
+        with ESMTP id S230527AbjFTKlY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 06:08:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47976A2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 03:07:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687255642;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mnUIleGLnJnV1R5zNo2NApBTcaLL4wPyP/w4+xH/thE=;
-        b=LU8wF+rugnh9fS3ipJEmxreY3ZuLs7A+IPfOWAZDQyCn5Le/MrdL7h4vsnSXiRzVO8OklF
-        tJtIwQCMzR0nfPFb8XdJkZEMcMouehUhZfo6nh5LoN5TjP/8zBjZaWT6CHbEXjTlsw2eu5
-        woER/6Nw5tAXUALVoK9gWfLNKlpvGO4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-354-aMBqZ9_kPkqieAhNWuteVQ-1; Tue, 20 Jun 2023 06:07:21 -0400
-X-MC-Unique: aMBqZ9_kPkqieAhNWuteVQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 20 Jun 2023 06:41:24 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FF90101;
+        Tue, 20 Jun 2023 03:41:13 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AE1F0810BB2;
-        Tue, 20 Jun 2023 10:07:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AD83200A398;
-        Tue, 20 Jun 2023 10:07:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CANT5p=qDON8uO9z92xEcP16kvRdHrf84owmcb20MGZnOxT_xmg@mail.gmail.com>
-References: <CANT5p=qDON8uO9z92xEcP16kvRdHrf84owmcb20MGZnOxT_xmg@mail.gmail.com>
-To:     Shyam Prasad N <nspmangalore@gmail.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Steve French <smfrench@gmail.com>,
-        CIFS <linux-cifs@vger.kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: Hang seen with the latest mainline kernel
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0666E21877;
+        Tue, 20 Jun 2023 10:41:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1687257672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XKKbRxLiK5MjN6DjyshZqib7TaD9MYDDfRwwRT9YtA8=;
+        b=Jp+q+4HyZOYYp945K1qX1fnrs3NUtbB81jfuZV9cVnKbgkoaWeSpWlR8G1ZBZp90D5PovL
+        2Zax+vZx6iyAztNuVuYLYgmSff3LNGkamFmXTfAfyfs/0B8FJIpqS3MnLFqBcXoAJi2FaF
+        TWY29e6pyjAXTLk8gQ4QyKC9PY5ZjSw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1687257672;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XKKbRxLiK5MjN6DjyshZqib7TaD9MYDDfRwwRT9YtA8=;
+        b=aIiT1BnpOztM/uhMdtG68JiZScMq/zFaK63h9zDnaq1S39ORTlSI7tr2Jgjxmhv0j9vftF
+        u1N2cZbduLv9C6Aw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E98651346D;
+        Tue, 20 Jun 2023 10:41:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id VwP9OEeCkWRTYQAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 20 Jun 2023 10:41:11 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 776D4A075D; Tue, 20 Jun 2023 12:41:11 +0200 (CEST)
+Date:   Tue, 20 Jun 2023 12:41:11 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Ted Tso <tytso@mit.edu>, yebin <yebin@huaweicloud.com>,
+        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@google.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH] block: Add config option to not allow writing to mounted
+ devices
+Message-ID: <20230620104111.pnjoouegp2dx6pcp@quack3>
+References: <20230612161614.10302-1-jack@suse.cz>
+ <ZIf6RrbeyZVXBRhm@infradead.org>
+ <20230613205614.atlrwst55bpqjzxf@quack3>
+ <ZIlqLJ6dFs1P4aj7@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1238459.1687255639.1@warthog.procyon.org.uk>
-Date:   Tue, 20 Jun 2023 11:07:19 +0100
-Message-ID: <1238460.1687255639@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZIlqLJ6dFs1P4aj7@infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Shyam Prasad N <nspmangalore@gmail.com> wrote:
+Hello Christoph!
 
-> [Mon Jun 19 16:05:49 2023]  invalidate_inode_pages2+0x17/0x30
-> [Mon Jun 19 16:05:49 2023]  cifs_invalidate_mapping+0x57/0x90 [cifs]
-> [Mon Jun 19 16:05:49 2023]  cifs_revalidate_mapping+0xd5/0x130 [cifs]
-> [Mon Jun 19 16:05:49 2023]  cifs_revalidate_dentry+0x32/0x40 [cifs]
-> [Mon Jun 19 16:05:49 2023]  cifs_d_revalidate+0xa3/0x220 [cifs]
-> [Mon Jun 19 16:05:49 2023]  lookup_fast+0xfc/0x1c0
-> [Mon Jun 19 16:05:49 2023]  walk_component+0x39/0x240
-> [Mon Jun 19 16:05:49 2023]  path_lookupat+0xb2/0x2f0
-> [Mon Jun 19 16:05:49 2023]  filename_lookup+0x16f/0x340
+On Wed 14-06-23 00:20:12, Christoph Hellwig wrote:
+> On Tue, Jun 13, 2023 at 10:56:14PM +0200, Jan Kara wrote:
+> > Well, as I've mentioned in the changelog there are old setups (without
+> > initrd) that run fsck on root filesystem mounted read-only and fsck
+> > programs tend to open the device with O_RDWR. These would be broken by this
+> > change (for the filesystems that would use BLK_OPEN_ flag).
+> 
+> But that's also a really broken setup that will corrupt data in many
+> cases.  So yes, maybe we need a way to allow it, but it probably would
+> have to be per-file system.
 
-You don't have a deadlock between two inode locks, do you?  The one on the
-parent dir and the one on whatever is being invalidated.
+I was looking into implementing the write hardening support and I've come
+across the following obstacle: Your patch series that is in linux-block.git
+removes the 'mode' argument from blkdev_put() which makes it impossible to
+track how many writers there are for the block device. This is needed so
+that we can check whether the filesystem is safe when mounting the device.
 
-Or between invalidate and a write.  It doesn't seem that it should be that,
-since in both cases it should take the inode lock first and then PG_lock.
+I can see several solutions but since you've just reworked the code and I'm
+not 100% certain about the motivation, I figured I'll ask you first before
+spending significant time on something you won't like:
 
-There's the possibility that we missed unlocking a page after splitting a
-read or a write.
+1) Just return the mode argument to blkdev_put().
 
-What's the testcase like?  Would it be feasible to trace page activity on smb
-pages?  I have a patch to restrict the page count tracing to just trace the
-page lock flag that I might be able to adapt.
+2) Only pass to blkdev_put() whether we have write access or not as a
+separate argument.
 
-David
+3) Don't track number of opens for writing, instead check whether writes
+are blocked on each write access. I think this has a number of downsides
+but I mention it for completeness. One problem is we have to add checks to
+multiple places (buffered IO, direct IO) and existing mmap in particular
+will be very hard to deal with (need to add page_mkwrite() handler). All
+these checks add performance overhead. It is practically impossible
+(without significant performance overhead or new percpu datastructures) to
+properly synchronize open that wants to block writers against already
+running writes.
 
+So what would you prefer? Thanks in advance for your input.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
