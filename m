@@ -2,124 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DEEF7384F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 15:28:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DEB9738515
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 15:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232128AbjFUN2p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 09:28:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
+        id S232600AbjFUN3n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 09:29:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231664AbjFUN2n (ORCPT
+        with ESMTP id S232586AbjFUN3m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 09:28:43 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB4E198D;
-        Wed, 21 Jun 2023 06:28:41 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 226A11FE70;
-        Wed, 21 Jun 2023 13:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1687354120; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kjdJelqDTVhJUB/xjRe3YFSz+MZjkGpTSPWW+f3VVfc=;
-        b=VT7erQCIx5B9U482i18hc1ZfkKVW5obeo78ahGlb6a59CHtH8U1LW82pxwZbTip6OD1Gt6
-        sC2KmiSWjoL6ARe4oO3vYd8l2tVpbcFIDWUSc22Y3+femt7NA3QfN6rNqYREqJuF63W/JR
-        Tqm+WnHIP1ge31S2kNosLapdStp5nfg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1687354120;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kjdJelqDTVhJUB/xjRe3YFSz+MZjkGpTSPWW+f3VVfc=;
-        b=e/dOLJvQtsColjPEN4nfhF32U0kiM6zDcysERVE6H/veBdnsWn0VH7/G3pND2UbiZh0kBj
-        WURBZsifNDv5h1Cg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 14CC3134B1;
-        Wed, 21 Jun 2023 13:28:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id YMMHBQj7kmSmaAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 21 Jun 2023 13:28:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id A2190A075D; Wed, 21 Jun 2023 15:28:39 +0200 (CEST)
-Date:   Wed, 21 Jun 2023 15:28:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] fsdax: remove redundant variable 'error'
-Message-ID: <20230621132839.rvu2pvhcizhbzmyf@quack3>
-References: <20230621130256.2676126-1-colin.i.king@gmail.com>
+        Wed, 21 Jun 2023 09:29:42 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8522819B7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 06:29:34 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f9b4b286aaso127535e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 06:29:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1687354172; x=1689946172;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EdD6cJh6qu5svt4tCCc88YcqEs1pBBrW5+aY8WHVANw=;
+        b=FVWCzeaws/zcBjOjUu1n3j7WTelwG9JXw5CEnSXuVyoExnw46Vm7mXMycj7Ey0QchI
+         UVjgVZ4W3h5G5DyoOoZIhV8s+QLEGIuDiv7FHV5vIOU910wUI0T7BqJIL3hiUULNn3pB
+         VdLBj/gmBNQfPFQVDSrnzVcXK2S0UMtK8OtAgvQT4uoauo/jz+/SpPUkkiLkSsQxZd2z
+         AEO/hNolEPFpBTzv4Bg80pQfyL3BI9NXzGgzGhDMGTnQxEUxqfg/L5oCp96E0x9VwNVo
+         gpzHx1Oy1YyVpGtZNzIKXvRaHqC7XKKGAEWWjdzzHQPIo3iS6lSAwNv8U3KzzfxEcpnE
+         heFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687354172; x=1689946172;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EdD6cJh6qu5svt4tCCc88YcqEs1pBBrW5+aY8WHVANw=;
+        b=OwMZfKNHi3fccrkxXDeu5zE8mjOk8t2D5LUTls+lOyf0SHSCE7hdAYzcD9MNRLanpT
+         yUJKHIdHhou0TQ+zWSZRHh/1w/1HyYe/4gUmvgC5XiN3SOeQ7t2YIMQpKcLUWwT9pmS3
+         vU51aklCMkZwLfWJDEcyyN8pRFyB7XEheAndutzr5SFMIzBMRk3kCDArWGH1yUz69USQ
+         cW3QriZTYShJ+3VXeTDTJTtPOMno5IibWUYfw/d3WQ7UZZ5r7r2HumxnjYyH/gVfHluV
+         P0I30nwgzeasd8zRpvRxWksl/IH0DjBCuzT4n+t+08Aqm9h6VeZpWQNosH0jE1zLpFjx
+         fCJw==
+X-Gm-Message-State: AC+VfDyHLZ6ynDFpBRuMfeelI5Vx061jAsPzAMOQZopC8LVPjDut+ibk
+        nVUhxMJL2RdUUJzjA0VE7L0q7a2iICD5KZ4Hlf09NQ==
+X-Google-Smtp-Source: ACHHUZ5oAZ9+8akmbC5AZy2U+cfa4H8NZ/OYc/GWPMsKsUpaTNBCrKI6BrBopugvdCFxO09eZzJcDuVKBMM6NPG7gzE=
+X-Received: by 2002:a05:600c:3ac9:b0:3f7:3e85:36a with SMTP id
+ d9-20020a05600c3ac900b003f73e85036amr1128926wms.7.1687354172487; Wed, 21 Jun
+ 2023 06:29:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230621130256.2676126-1-colin.i.king@gmail.com>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230615141144.665148-1-usama.anjum@collabora.com>
+ <20230615141144.665148-3-usama.anjum@collabora.com> <ZJHp6hSeS6lMo7qx@gmail.com>
+ <1c1beeda-ceed-fdab-bbf5-1881e0a8b102@collabora.com>
+In-Reply-To: <1c1beeda-ceed-fdab-bbf5-1881e0a8b102@collabora.com>
+From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Date:   Wed, 21 Jun 2023 15:29:20 +0200
+Message-ID: <CABb0KFHpE+jJH0MmxZTFaQ9FNFNUnJcnnv7sSGDYqDqqB_FRqw@mail.gmail.com>
+Subject: Re: [PATCH v19 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Andrei Vagin <avagin@gmail.com>, Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 21-06-23 14:02:56, Colin Ian King wrote:
-> The variable 'error' is being assigned a value that is never read,
-> the assignment and the variable and redundant and can be removed.
-> Cleans up clang scan build warning:
-> 
-> fs/dax.c:1880:10: warning: Although the value stored to 'error' is
-> used in the enclosing expression, the value is never actually read
-> from 'error' [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Wed, 21 Jun 2023 at 08:35, Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+> On 6/20/23 11:03=E2=80=AFPM, Andrei Vagin wrote:
+> ...
+> >> +struct pagemap_scan_private {
+> >> +    struct page_region *vec_buf, cur_buf;
+> >> +    unsigned long long vec_buf_len, vec_buf_index, max_pages, found_p=
+ages, flags;
+> >
+> > should it be just unsigned long?
+> These internal values are storing data coming from user in struct
+> pm_scan_arg in which all variables are 64 bit(__u64) explicitly. This is
+> why we have unsigned long long here. It is absolutely necessary.
 
-Yeah, good spotting. Feel free to add:
+vec_buf_len and vec_buf_index can only have values in 0..512 range.
+flags has only a few lower bits defined (this is checked on ioctl
+entry) and max_pages can be limited to ULONG_MAX. Actually putting `if
+(!max_pages || max_pages > ULONG_MAX) max_pages =3D ULONG_MAX` would
+avoid having to check !max_pages during the walk.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/dax.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 2ababb89918d..cb36c6746fc4 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1830,7 +1830,6 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	vm_fault_t ret = VM_FAULT_FALLBACK;
->  	pgoff_t max_pgoff;
->  	void *entry;
-> -	int error;
->  
->  	if (vmf->flags & FAULT_FLAG_WRITE)
->  		iter.flags |= IOMAP_WRITE;
-> @@ -1877,7 +1876,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	}
->  
->  	iter.pos = (loff_t)xas.xa_index << PAGE_SHIFT;
-> -	while ((error = iomap_iter(&iter, ops)) > 0) {
-> +	while (iomap_iter(&iter, ops) > 0) {
->  		if (iomap_length(&iter) < PMD_SIZE)
->  			continue; /* actually breaks out of the loop */
->  
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best Regards
+Micha=C5=82 Miros=C5=82aw
