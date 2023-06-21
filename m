@@ -2,100 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A5C7737962
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 04:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF7DC7379EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 05:51:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbjFUCyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Jun 2023 22:54:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54108 "EHLO
+        id S229778AbjFUDvk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Jun 2023 23:51:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjFUCyU (ORCPT
+        with ESMTP id S229709AbjFUDvi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Jun 2023 22:54:20 -0400
-Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 917851704;
-        Tue, 20 Jun 2023 19:54:18 -0700 (PDT)
-Received: from mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net [IPv6:2a02:6b8:c14:2481:0:640:e0:0])
-        by forward501b.mail.yandex.net (Yandex) with ESMTP id 036065F01D;
-        Wed, 21 Jun 2023 05:54:16 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id DsXQr41DViE0-SPDjKbks;
-        Wed, 21 Jun 2023 05:54:15 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1687316055;
-        bh=elhQiYgc/jirqX3wBHnMttM8AI1mnDD23NxVQeQhyPE=;
-        h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-        b=d/wmJgV+Kb8xW7NsO5+V8bCyHSYmrnnfmeiuJWLSpvJXZ4DBbqSZeZt4zgbDSCVTq
-         SZ8PBm9LbeD7Lf7kDGuUqT4QtVhtuzEtIXXssbOYqNeaC4sATlhJziXs2qjhlEoZ+A
-         1H4d6VRu6sG3IJcu3c51ifBApQuFx8lz7Z8enlKY=
-Authentication-Results: mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <a874f022-bdd9-8f87-e571-75626f5901ee@yandex.ru>
-Date:   Wed, 21 Jun 2023 07:54:13 +0500
+        Tue, 20 Jun 2023 23:51:38 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2057.outbound.protection.outlook.com [40.107.100.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E7E9B4;
+        Tue, 20 Jun 2023 20:51:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KxPaM2jCTfQeYFdIUl2hClsO3PBZoCOlCmWAAbaxwd4gjxo6UmEM6HjWCiO3QsPTzJpl64nF03prWAqvLi1HwdHPkcvIH835arW6zbkCrFjfQLgEhGzPBeqt8XvngHJcJLmfnY/wHGkEnhDoArCl/fJH8FOfn4FcmMU/UtSnOgPLJcLBFvVie6HpeW5BQDp9OszCRgXQaLczyv4olsVZnZvD4PR0jtfN+s7ufBLf8JavZqE/3SbguPB0M4WwKUZP2WtlGVh/5xkDhfAbYYC8HWxwltDS3Rh6Swd4aUuAl1gkaagBnFgz8qvycIl57jFedOuRu1JYtXxP7gU7a//c7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lf3zBP/5V7VE6JujARpu8Qoubot3mBWPCsiRWZz12fk=;
+ b=fPGgvNNWYR95E/MFhRcvQ2OxmXBZ1MiqIv5RXs0hIbXYZGnI9pnc/VcTFu8qnEUWaTSe0SUg+cIc+SWsWjLW72brCQiqu5gFeteBNRgItH+oYrh/JXLBW9VGwRu/9kH4f7S0gAVnsOatFPPhN8bBRbjq8FG67D5GxWqjefxHSvv4S0NGz6TXR0ISGS6ojh2KzIIUqhYR9AbMfcTbRtahZf3qV9b3HW29zEz+6SKvz6O5Q+5y5wjdduIxGDx0f9ki78ThSkf/WWOrePijOkU1e3WDkIqgNJsyYBQOtPowVYDudrGS8JPaWyrznYOfhIOX05JqPDtxEhNk83t1ONKLSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lf3zBP/5V7VE6JujARpu8Qoubot3mBWPCsiRWZz12fk=;
+ b=5O/lP9D3Ayui1p/GlANNHQdvfDiQlVAqErn9/IRkKpss69FNxuCxHm5w+3boztdnEpImHbudYA3n9zHDNFAxRmo0g3vgoZLY8Yqc6GuZWAxePBqHa53c94/xtEkHSRcA3tDj7+mRucbIy6SbsLlHom/e94TK1phcHy9EN2a++sk=
+Received: from CYXPR02CA0024.namprd02.prod.outlook.com (2603:10b6:930:cf::22)
+ by DS7PR12MB5743.namprd12.prod.outlook.com (2603:10b6:8:72::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.23; Wed, 21 Jun
+ 2023 03:51:32 +0000
+Received: from CY4PEPF0000EE32.namprd05.prod.outlook.com
+ (2603:10b6:930:cf:cafe::c3) by CYXPR02CA0024.outlook.office365.com
+ (2603:10b6:930:cf::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.21 via Frontend
+ Transport; Wed, 21 Jun 2023 03:51:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000EE32.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6521.17 via Frontend Transport; Wed, 21 Jun 2023 03:51:32 +0000
+Received: from onyx-7400host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Tue, 20 Jun
+ 2023 22:51:27 -0500
+From:   Avadhut Naik <avadhut.naik@amd.com>
+To:     <rafael@kernel.org>, <gregkh@linuxfoundation.org>,
+        <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <yazen.ghannam@amd.com>, <alexey.kardashevskiy@amd.com>,
+        <linux-kernel@vger.kernel.org>, <avadnaik@amd.com>
+Subject: [PATCH v4 0/4] Add support for Vendor Defined Error Types in Einj Module
+Date:   Wed, 21 Jun 2023 03:50:58 +0000
+Message-ID: <20230621035102.13463-1-avadhut.naik@amd.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-References: <eaccc14ddc6b546e5913eb557fec55f77cb5424d.camel@kernel.org>
- <5f644a24-90b5-a02f-b593-49336e8e0f5a@yandex.ru>
- <2eb8566726e95a01536b61a3b8d0343379092b94.camel@kernel.org>
- <d70b6831-3443-51d0-f64c-6f6996367a85@yandex.ru>
- <d0c18369245db91a3b78017fabdc81417418af67.camel@kernel.org>
- <ddb48e05-ab26-ae5d-86d5-01e47f0f0cd2@yandex.ru>
- <ZJGtmrej8LraEsjj@casper.infradead.org>
- <cb88d464-30d8-810e-f3c4-35432d12a32d@yandex.ru>
- <ZJG5ZOK8HKl/eWmM@casper.infradead.org>
- <08612562-d2d7-a931-0c40-c401fff772c7@yandex.ru>
- <ZJHcT9DPGWVlTsHg@casper.infradead.org>
-From:   stsp <stsp2@yandex.ru>
-In-Reply-To: <ZJHcT9DPGWVlTsHg@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE32:EE_|DS7PR12MB5743:EE_
+X-MS-Office365-Filtering-Correlation-Id: b5cec050-75b8-417f-f9b4-08db720acd7a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: JXjWeOiaqj5fVY2mvMVG7sqkO71WOsRuBXwJtEGsDLFAdCcJOZVPkewMlHN0+yNwWHNIkTU8ZrYJlcC6KtA9WmF6exE7bOETsYdfLsKNwPzky1JuEaAryWkjUUFqmKHiwCxXtNp/+LAPjiSOTWOxA/LPf8N35CGFCn6R32IWLhN6bHvBCwvc7wwLT6h2b7AFaNv8GDiv1VpWCyLwrKKsJVfW2+ToUFTxycLEsVxL8Ov8zdLhQ42XhpCC4WN0J5gp6BxLakERLG53cyEXL6pJHSM4eu4wFzt/GpySGJBlfY75iJH+MmOp4HDgPbZeHcj2LVVq/TtnjQiy2KAIfAZTPj4K93czP+T7ZivMlyaTujktIqRwdUSMRy0qakQsUXba3gs5Wi9qJx9HTkIVrg57FATREBBp6CSXhOxJtgctpm2LQkJC2DwLkkFsOMdWlXupmUKpt20lyEc4LIMXjEXi6dCvDExhV2YJeLsT0F8hCHZEcmizoDB9Vx30UoMpGYsy/Sp61qsdosfii7/XUKcj/Dss2bJ6ZqC3vNp8MSZwgQ1LA20qsN63cikwpDXS6P5ZiV4/G5Ef/o3gyeYh3u8NQrwEl0qb+I3rmvPEFGfodNg1p7eW57m7ySFoZ9aPaLPo4IGCCRNXR5dYAbyxPBDlzaqjcBSReUj5uFyN6T1fT8ZHhFOd+cHoWwoEiKmpcNdpLVit2d+ptlZpwHc+Q/v3u0vjHfX2dUYakIym+T04FJeI6OirHS4CjrVtvyij/W8kC2Cxi1Fpejq7+8HV/5ja6tNLCTpbINc8cn1QZX392pc=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(376002)(136003)(39860400002)(346002)(396003)(451199021)(46966006)(36840700001)(40470700004)(81166007)(356005)(82740400003)(426003)(336012)(47076005)(26005)(1076003)(83380400001)(186003)(2616005)(16526019)(40480700001)(36860700001)(44832011)(2906002)(5660300002)(41300700001)(8676002)(8936002)(36756003)(6666004)(7696005)(478600001)(4326008)(70206006)(70586007)(40460700003)(316002)(54906003)(110136005)(86362001)(82310400005)(36900700001)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2023 03:51:32.4591
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5cec050-75b8-417f-f9b4-08db720acd7a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000EE32.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5743
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Avadhut Naik <Avadhut.Naik@amd.com>
 
-20.06.2023 22:05, Matthew Wilcox пишет:
->> Does this mean, by any chance, that the
->> recipient actually owns an fd before
->> recvmsg() is done?
-> no, it's not in their fd table.  they don't own it.
-OK, thanks for showing this pathological
-case. Let me just note that this changes
-nothing at all. :)
+This patchset adds support for Vendor Defined Error types in the einj
+module by exporting a binary blob file in module's debugfs directory.
+Userspace tools can write OEM Defined Structures into the blob file as
+part of injecting Vendor defined errors.
 
-The important thing to note here is that
-any lock query is race-prone: locks can
-come and go at any time. So if you need
-some sequence of operations, you need
-to employ some global locking for that.
-I use flock(LOCK_EX) on the same fd, before
-doing F_OFD_GETLK, and I do flock(LOCK_UN)
-only when the entire sequence of operations
-is completed. And I do the same on an
-F_OFD_SETLK's side to guarantee the
-atomicity. You can't do it otherwise,
-it would be race-prone.
+The first patch refactors available_error_type_show() function to ensure
+all errors supported by the platform are output through einj module's
+available_error_type file in debugfs.
 
-So given the above, the only thing we
-need for l_pid consistency is for the
-"donor" process to put LOCK_EX on an
-fd before doing SCM_RIGHTS, and the
-recipient should do LOCK_UN. Then
-the other side, which also uses LOCK_EX,
-will never see the owner-less state.
-And as for the kernel's POV, l_pid should
-be set to -1 only when there is no owner,
-like in an example you mentioned.
+The second patch adds a write callback for binary blobs created through
+debugfs_create_blob() API.
+
+The third patch fixes the permissions of panicinfo file in debugfs to
+ensure it remains read-only
+
+The fourth patch adds the required support i.e. establishing the memory
+mapping and exporting it through debugfs blob file for Vendor-defined
+Error types.
+
+Changes in v2:
+ - Split the v1 patch, as was recommended, to have a separate patch for
+changes in debugfs.
+ - Refactored available_error_type_show() function into a separate patch.
+ - Changed file permissions to octal format to remove checkpatch warnings.
+
+Changes in v3:
+ - Use BIT macro for generating error masks instead of hex values since
+ACPI spec uses bit numbers.
+ - Handle the corner case of acpi_os_map_iomem() returning NULL through
+a local variable to a store the size of OEM defined data structure.
+
+Changes in v4:
+ - Fix permissions for panicinfo file in debugfs.
+ - Replace acpi_os_map_iomem() and acpi_os_unmap_iomem() calls with
+   acpi_os_map_memory() and acpi_os_unmap_memory() respectively to avert
+   sparse warnings as suggested by Alexey.
+
+Avadhut Naik (4):
+  ACPI: APEI: EINJ: Refactor available_error_type_show()
+  fs: debugfs: Add write functionality to debugfs blobs
+  platform/chrome: cros_ec_debugfs: Fix permissions for panicinfo
+  ACPI: APEI: EINJ: Add support for vendor defined error types
+
+ drivers/acpi/apei/einj.c                  | 67 ++++++++++++++++-------
+ drivers/platform/chrome/cros_ec_debugfs.c |  2 +-
+ fs/debugfs/file.c                         | 28 ++++++++--
+ 3 files changed, 70 insertions(+), 27 deletions(-)
+
+-- 
+2.34.1
+
