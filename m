@@ -2,159 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA270737A04
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 06:01:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E25F737A0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 06:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229944AbjFUEBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 00:01:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46616 "EHLO
+        id S229638AbjFUEHr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 00:07:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbjFUEBH (ORCPT
+        with ESMTP id S229479AbjFUEHq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 00:01:07 -0400
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFEF619B0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 21:00:47 -0700 (PDT)
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-77d99de0e9bso419921239f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 21:00:47 -0700 (PDT)
+        Wed, 21 Jun 2023 00:07:46 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA0410F0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 21:07:43 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-988a2715b8cso555379166b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 21:07:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1687320461; x=1689912461;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tjpf2LNWAu5TESk6v0uIpuStTcjqIcl5DiVX9hjgHWA=;
+        b=DQhlPZ06mDtfMmXJAdaGsE72NH09GVEauLAk948FEUB9UW+fQTfLehs9zCQIrH8kUc
+         k/dkK1E2zpcoeUb3BJ8rqQElnKasK+fW8lCWFuFAZdOy7Ftwx9RzD4q4y5b5621HrrvQ
+         oPWLTVP/f57dHQ0Q9FjGqPevJrLc+waSJlIIA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687320047; x=1689912047;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PgVoTAj3kuss3kFr1267Rg5VeIZx1hZjiH49N3zkAhA=;
-        b=HOJUiRMK7tcUwD3B2IoTRU/n+TL3bIIQGk0TWuAe/p0zTxsiqaV+qm3l+Wi/0Q/4Ek
-         +9yZYAIoVNLoR8EU51balXFi/tNghQMZSdGVPIlcQpdK1kYTxwNIxfL0j6fVvXUoHYUM
-         W+HgRLGT/OZytgIpRZSDTlH8jM2405DMvCLDw8zjalPCi7/JM1voUpMxWa/dLkMlfh+d
-         YL5SC5OEBcWA7MjfB4OVk3aWl6V1mYp5QY1Yr03Q1D+Tc1gjWwLMbUCSS/vViOqrE/4L
-         GsgvRt+2aBJwbpO3AiUToyy21skz+YxZBoUDa1NX9XKKJ7/JM3hNcX6EbeKcQWjuFU3q
-         mwUg==
-X-Gm-Message-State: AC+VfDwUw1poxflrSNGPOAnLC7bnVhtAPAcf84YdqQQygt5MHSvuEbOo
-        hYySUQCtPfolQta9rE2TzaHpwL51PLtMJMpSo4I6Y1q2zERX4ZA8Fg==
-X-Google-Smtp-Source: ACHHUZ45C64BJjKSVk1PjWF96QGQgC8o90sOe7KtjM/Jxj2R97YCAGYSR5ZaiOBQ6cOzRHovOtR7eUj/DquuyhpZAc0KLcW25gy2
+        d=1e100.net; s=20221208; t=1687320461; x=1689912461;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tjpf2LNWAu5TESk6v0uIpuStTcjqIcl5DiVX9hjgHWA=;
+        b=YjH0BPqR+XqlQa9vF5uGn1LzyStyG/BTpocs7g/Sgtac+6ScXYHCt32TpFLNBZOwa6
+         rNvrjnSxzeG0NDJZuVliZZAzxTnG4t/zCP7f+HJ5njAnzozZ7Gg0KyZ7JFA9pPTIbwGr
+         cG8f7G/D6C8t/eXJuReYs4KXgX4yrmIYNUMCeTfsxNESJEujMUSEKNj36Lf75QrT8l1r
+         e3PuX1NRWsk0EmzOajfgVz+WCdc2kLVAmXklL64xNHsTnB5ETJFMmfDXx7R6NwSQTW7F
+         Ii4mbnPkdzU8sFptk1SAhGpLnd1FZUCQjqFuKzx4CR30VaJU5KouZQcuEEdsQm5xHkeh
+         np6Q==
+X-Gm-Message-State: AC+VfDxuzUfi9jS8vq5dakxD4Xwkljx9efTDe5xLlqHn6hdKRmlMhnKm
+        917P+yhP1OWz+O69BJ4rdz3ZCoB27irPSk3OdNY42X7qYiqPuF2q
+X-Google-Smtp-Source: ACHHUZ6dlEzQGxviDNfRh9WULTYrGJlSL36wgKxkYrPejXJybbCPSPMh0GMhThTr9eaIHmPbUYpW8aJpGvyMjeOyZ0c=
+X-Received: by 2002:a17:907:802:b0:974:fb94:8067 with SMTP id
+ wv2-20020a170907080200b00974fb948067mr19736659ejb.23.1687320461511; Tue, 20
+ Jun 2023 21:07:41 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:22b6:b0:41c:fc86:d338 with SMTP id
- z22-20020a05663822b600b0041cfc86d338mr4651191jas.2.1687320047317; Tue, 20 Jun
- 2023 21:00:47 -0700 (PDT)
-Date:   Tue, 20 Jun 2023 21:00:47 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000afa6e05fe9bd037@google.com>
-Subject: [syzbot] [hfs?] KASAN: wild-memory-access Read in hfsplus_bnode_read_u16
-From:   syzbot <syzbot+9947d6d413633b3877d2@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+References: <20230620151328.1637569-1-keiichiw@chromium.org>
+ <20230620151328.1637569-3-keiichiw@chromium.org> <CAJfpegton83boLEL7n-Tf6ON4Nq_g2=mTus7vhX2n0C+yuUC4w@mail.gmail.com>
+ <CADgJSGGDeu_dPduBuK7N324oJ9641VKv2+fAVAbDY=-itsFjEQ@mail.gmail.com>
+In-Reply-To: <CADgJSGGDeu_dPduBuK7N324oJ9641VKv2+fAVAbDY=-itsFjEQ@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 21 Jun 2023 06:07:30 +0200
+Message-ID: <CAJfpegtNjAELur_AtqiGdO6LJRDyT+WQ1UKtG-o=Em0rAhOKMg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] fuse: Add negative_dentry_timeout option
+To:     =?UTF-8?B?SnVuaWNoaSBVZWthd2EgKOS4iuW3nee0lOS4gCk=?= 
+        <uekawa@google.com>
+Cc:     Keiichi Watanabe <keiichiw@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>, mhiramat@google.com,
+        takayas@chromium.org, drosen@google.com, sarthakkukreti@google.com,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, 21 Jun 2023 at 00:53, Junichi Uekawa (=E4=B8=8A=E5=B7=9D=E7=B4=94=
+=E4=B8=80) <uekawa@google.com> wrote:
+>
+> Hi
+>
+>
+>
+> 2023=E5=B9=B46=E6=9C=8821=E6=97=A5(=E6=B0=B4) 4:28 Miklos Szeredi <miklos=
+@szeredi.hu>:
+>>
+>> On Tue, 20 Jun 2023 at 17:14, Keiichi Watanabe <keiichiw@chromium.org> w=
+rote:
+>> >
+>> > Add `negative_dentry_timeout` mount option for FUSE to cache negative
+>> > dentries for the specified duration.
+>>
+>> This is already possible, no kernel changes needed.  See e.g.
+>> xmp_init() in libfuse/example/passthrough.c.
+>>
+>
+> Thank you for the pointer!
+>
+> So reading libfuse/fuse.c, fuse_lib_lookup does a reply with e.ino=3D0 er=
+r=3D0 (instead of ENOENT) with e.entry_timeout=3Dnegative_timeout,
+> for each lookup (and there's no global configuration but that's okay) ?
 
-syzbot found the following issue on:
+Yes.
 
-HEAD commit:    40f71e7cd3c6 Merge tag 'net-6.4-rc7' of git://git.kernel.o..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1376ceef280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7ff8f87c7ab0e04e
-dashboard link: https://syzkaller.appspot.com/bug?extid=9947d6d413633b3877d2
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b4a78b280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120c7727280000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/073eea957569/disk-40f71e7c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c8a97aaa4cdc/vmlinux-40f71e7c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f536015eacbd/bzImage-40f71e7c.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a357fe8e79fa/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9947d6d413633b3877d2@syzkaller.appspotmail.com
-
-         option from the mount to silence this warning.
-=======================================================
-==================================================================
-BUG: KASAN: wild-memory-access in memcpy_from_page include/linux/highmem.h:417 [inline]
-BUG: KASAN: wild-memory-access in hfsplus_bnode_read fs/hfsplus/bnode.c:32 [inline]
-BUG: KASAN: wild-memory-access in hfsplus_bnode_read_u16+0x146/0x2c0 fs/hfsplus/bnode.c:45
-Read of size 1 at addr 000508800000103f by task syz-executor206/4992
-
-CPU: 1 PID: 4992 Comm: syz-executor206 Not tainted 6.4.0-rc6-syzkaller-00195-g40f71e7cd3c6 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- print_report+0xe6/0x540 mm/kasan/report.c:465
- kasan_report+0x176/0x1b0 mm/kasan/report.c:572
- kasan_check_range+0x283/0x290 mm/kasan/generic.c:187
- __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
- memcpy_from_page include/linux/highmem.h:417 [inline]
- hfsplus_bnode_read fs/hfsplus/bnode.c:32 [inline]
- hfsplus_bnode_read_u16+0x146/0x2c0 fs/hfsplus/bnode.c:45
- hfsplus_bnode_find+0x769/0x10c0 fs/hfsplus/bnode.c:522
- hfsplus_bmap_alloc+0xc9/0x640 fs/hfsplus/btree.c:390
- hfs_btree_inc_height+0x11e/0xdb0 fs/hfsplus/brec.c:475
- hfsplus_brec_insert+0x166/0xdd0 fs/hfsplus/brec.c:75
- __hfsplus_ext_write_extent+0x36b/0x5b0 fs/hfsplus/extents.c:107
- __hfsplus_ext_cache_extent+0x84/0xe00 fs/hfsplus/extents.c:186
- hfsplus_ext_read_extent fs/hfsplus/extents.c:218 [inline]
- hfsplus_file_extend+0x439/0x1b10 fs/hfsplus/extents.c:461
- hfsplus_get_block+0x406/0x14e0 fs/hfsplus/extents.c:245
- __block_write_begin_int+0x548/0x1a50 fs/buffer.c:2064
- __block_write_begin fs/buffer.c:2114 [inline]
- block_write_begin+0x9c/0x1f0 fs/buffer.c:2175
- cont_write_begin+0x643/0x880 fs/buffer.c:2534
- hfsplus_write_begin+0x8a/0xd0 fs/hfsplus/inode.c:52
- cont_expand_zero fs/buffer.c:2461 [inline]
- cont_write_begin+0x316/0x880 fs/buffer.c:2524
- hfsplus_write_begin+0x8a/0xd0 fs/hfsplus/inode.c:52
- generic_cont_expand_simple+0x18b/0x2a0 fs/buffer.c:2425
- hfsplus_setattr+0x16d/0x280 fs/hfsplus/inode.c:263
- notify_change+0xc8b/0xf40 fs/attr.c:483
- do_truncate+0x220/0x300 fs/open.c:66
- do_sys_ftruncate+0x2e4/0x380 fs/open.c:194
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7ffa4b6957c9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdd40bdb58 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ffa4b6957c9
-RDX: 0000000000000000 RSI: 0000000000048280 RDI: 0000000000000004
-RBP: 00007ffa4b655060 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000000005f1 R11: 0000000000000246 R12: 00007ffa4b6550f0
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Miklos
