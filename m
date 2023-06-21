@@ -2,110 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7866F737D88
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 10:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF1EB737DA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 10:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbjFUIii (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 04:38:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33472 "EHLO
+        id S231249AbjFUIig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 04:38:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231136AbjFUIic (ORCPT
+        with ESMTP id S229470AbjFUIib (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 04:38:32 -0400
+        Wed, 21 Jun 2023 04:38:31 -0400
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41781733
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C351710E6
         for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 01:38:28 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230621083825euoutp02cd6e7407a010295c1fe4a0e9570c6d8d~qn8tOZyVJ0552105521euoutp02J
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230621083825euoutp02cd6e7407a010295c1fe4a0e9570c6d8d~qn8tOZyVJ0552105521euoutp02J
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230621083827euoutp02879bb0ed861808457e1b540386e969f1~qn8ugi5uS0616906169euoutp02D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 08:38:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230621083827euoutp02879bb0ed861808457e1b540386e969f1~qn8ugi5uS0616906169euoutp02D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1687336705;
-        bh=xvc2sXLnGhjLFsmbguf3lN8FCrGCE+c6gqNP7gHJ+6E=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=Fog8brKPDWpTPI2mhjAInqaNxIrdyluJLk3bGvJKKJgjQMgnG1LjGoEo4HjjHGntT
-         qua/u/YvKLzfRvKnWU2ZEA/sjx57CRcWjtNPe+MS15hMyaa1e8eEf0+f+yJTwOayet
-         4BjzZEbGLtqo6bJnVvLkKZDTyOvNovbeSDVwXK4w=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        s=mail20170921; t=1687336707;
+        bh=p+ceLN5ku7io/26SFBn3OjERPGRRlK1fZyar/4zm1hE=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=Pbg9tlpu43bSlPstWN1z2aHRMRhP9yYMjrT+938dBQS2kg+pCATCsv3EssKYLsNwR
+         0zrQlqCEa/36bbVctj8ZPghsV+jBGds3qGACru66FQPhTXg1j+tbruTzQxgvOgBzVM
+         3gkqs7EiMZ1n/sn3pcg1uq5n4lT55wVo4xKKCLkw=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230621083825eucas1p16d3b63ee510633d075e53ae04dc89616~qn8s_KRHt2117621176eucas1p1V;
-        Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
+        20230621083826eucas1p10a3c96207c0a16f84fd975a996fe662a~qn8uHF7p82121821218eucas1p1X;
+        Wed, 21 Jun 2023 08:38:26 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 39.1A.42423.107B2946; Wed, 21
-        Jun 2023 09:38:25 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6A.7C.37758.207B2946; Wed, 21
+        Jun 2023 09:38:26 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a~qn8sk8gNA1658116581eucas1p11;
-        Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230621083825eusmtrp233925ce44cddfcf590425c8d7e60f792~qn8sjqxzl0284602846eusmtrp28;
-        Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-81-6492b7018925
+        20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0~qn8tyilf71725417254eucas1p1_;
+        Wed, 21 Jun 2023 08:38:26 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230621083826eusmtrp1ebc64a4952224c75cae2a6bbd5708f81~qn8twaleB0064800648eusmtrp1C;
+        Wed, 21 Jun 2023 08:38:26 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-be-6492b702d655
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 64.8B.14344.107B2946; Wed, 21
-        Jun 2023 09:38:25 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 9A.D8.10549.207B2946; Wed, 21
+        Jun 2023 09:38:26 +0100 (BST)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230621083825eusmtip22703050621435331ea1809e6ba0deb8c~qn8saRz8T3188231882eusmtip2T;
-        Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
+        20230621083826eusmtip2c5a952dde2b7c93e4a70881e76d21c04~qn8tjM7TM0773907739eusmtip20;
+        Wed, 21 Jun 2023 08:38:26 +0000 (GMT)
 Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
         (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Wed, 21 Jun 2023 09:38:24 +0100
+        Wed, 21 Jun 2023 09:38:25 +0100
 From:   Pankaj Raghav <p.raghav@samsung.com>
 To:     <hare@suse.de>, <willy@infradead.org>, <david@fromorbit.com>
 CC:     <gost.dev@samsung.com>, <mcgrof@kernel.org>, <hch@lst.de>,
         <jwong@kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Pankaj Raghav <p.raghav@samsung.com>
-Subject: [RFC 0/4] minimum folio order support in filemap
-Date:   Wed, 21 Jun 2023 10:38:19 +0200
-Message-ID: <20230621083823.1724337-1-p.raghav@samsung.com>
+Subject: [RFC 1/4] fs: Allow fine-grained control of folio sizes
+Date:   Wed, 21 Jun 2023 10:38:20 +0200
+Message-ID: <20230621083823.1724337-2-p.raghav@samsung.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230621083823.1724337-1-p.raghav@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [106.110.32.140]
-X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
         CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRmVeSWpSXmKPExsWy7djP87qM2yelGHx5pGKx5dg9Ros9iyYx
-        WaxcfZTJ4tqZHiaLPXtPslhc3jWHzeLGhKeMFr9/zGFz4PA4tUjCY/MKLY9NqzrZPHbfbGDz
-        2Hy62uPzJrkAtigum5TUnMyy1CJ9uwSujJZpD9gKukUr5s3SbGDcKdjFyMEhIWAi8aNZrYuR
-        k0NIYAWjxK35yV2MXED2F0aJw/t2MUE4nxklurt3s4FUgTR0znjIDNGxnFGi9b4LhA1UtP6U
-        NETDFkaJrW/WsYBsYBPQkmjsZAepERFwkNi8cQ4rSA2zwB5GiQONn5hAEsIClhIz164Cs1kE
-        VCV+PZ4DZvMKWEt8f7qPEeJSeYnFDyQgwoISJ2c+YQGxmYHCzVtnM0PcpiTRsPkMC4RdK7G3
-        +QA7yC4JgSccEssf7mSFmOMicXtCAUSNsMSr41vYIWwZif875zNB2NUST2/8ZobobWGU6N+5
-        ng2i11qi70wOiMksoCmxfpc+RLmjxNNt15ghKvgkbrwVhLiMT2LStulQYV6JjjYhiGo1idX3
-        3rBMYFSeheSXWUh+mYUwfwEj8ypG8dTS4tz01GLDvNRyveLE3OLSvHS95PzcTYzAZHP63/FP
-        Oxjnvvqod4iRiYPxEKMEB7OSCK/spkkpQrwpiZVVqUX58UWlOanFhxilOViUxHm1bU8mCwmk
-        J5akZqemFqQWwWSZODilGpi4LLcYtjFOPG7x97V1hovF5vgQ3RdL/tZcmOBWnbPJYrGnqM7U
-        HN3KUFavzrtca+OlpfztltY41W5OWVWm1zArhvfb017GlvY72VNkVJ3udX07aXeDY2Na/80v
-        y8+rdTNpLjisdngNt+5NNh0hg5wjJUVe5qxBl/Xtf+SJsm6x0wr82yAm03Uu0zQtZKfh42km
-        bef6KvZdWHbj9Zvl+TwGxo+K/MNyVm6cadzMqqT0wVTLVLdXY8U89XU7jI7cCDilHL099wZn
-        0fY/D+zqOLTWL/PbnVUeGHlYWcUkwN3z899LvmZyhrore++9+Leg2vSiT9PbKZ+3L2vmr+hd
-        4incJqqxaD3T58UsMyVslViKMxINtZiLihMBZ9GixqUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsVy+t/xe7qM2yelGCy6xGWx5dg9Ros9iyYx
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xScRTe7168XWjU9VrjpGWLVX/Qoqy27grL1mP0Mre27LWK4KYkkuNq
+        L7NhmqU9Jcsg2ir/0HRlApYkpZEJiGmPaVjr/ZjLXCt1SbWWeK3533e+851zvm87JE6bwyJJ
+        rT6dNehVOikhEtxsDLZOx26ZNDO7mmYwjsZXiHFdMWHM1YoHGNPefBxjXHd8AubpbSvBBE5/
+        RMyvfisRRyqbroDSXiZT2srzCWVth5FQ2v2Zyh5bdAKxUaTQsDrtbtYwY8E2UXKtvyEs7cz4
+        vdYqK2FENkkBEpJAzQHj8ypBARKRNFWGoL7wRhhf9CIo6csfwRc9CJznHejfyBtb/9BIKYJ+
+        zy38vyrb4h1U0ZQDgSeYWIBIkqBkkB3aJCTHUHFgr7IOnsAp18C97O9YqBEx0HBVBwZFAmoK
+        5FzLJ0JYTM0H78snYaE9QE2EkjcQooWUAqqu3kO8JBx85g+CEMYHJDnVF3AeA9zr7MR501Iw
+        2psFPM6CJsdzLOQBqH4S3IcfDyVbAqXXnUOiCPjscYzg8Xjwnzk+xGfCx8AvnB/ORXDKWUnw
+        5ubDyWYdr1kEroJWxNOjINAdzvsZBaabxThPi+FoHn0aTbYMS2AZlsAyLMElhJcjCZvBpSax
+        3Gw9u0fOqVK5DH2SXL0r1YYGvsf/x9NXg8o+f5O7EUYiNwISl44RT7CZNLRYo9q3nzXs2mrI
+        0LGcG0WRAqlEPC3Wp6apJFU6m8KyaazhXxcjhZFGzBnTnfDzmIYeKYuv7u2snNXIBKPfT+Z8
+        Dxaqn0bNnXfw8pOinS2KonrtiQ5t3tfEF1GLDitSltEHNFrm7pqy2+90dtm+lottX7d8iZzo
+        bl+qW1+4QhEZ5Iql6XXfW+RdyKNP7zD92etc0m1+Kd9xdtIGqW/CdvHUSTW9yfSmdcvp7sKx
+        Xc9E0HNupjfKnLbincQo8caerH29OcLHHMkxVzelBjMbcqM73Vlo7KfR8XNjFbMLT7wV3njf
+        9rYid9XqT4/67D/aHnt3bj6VF5e2EI8ZV1Lxe39dTUDdfmhtVlJ+YP0le9H9+AZ1a31J8e+G
+        hz3+NUd7Awrj4hSTJXpl3bJjUgGXrIqR4QZO9RdSoL9orAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xe7pM2yelGCxeLGGx5dg9Ros9iyYx
         WaxcfZTJ4tqZHiaLPXtPslhc3jWHzeLGhKeMFr9/zGFz4PA4tUjCY/MKLY9NqzrZPHbfbGDz
         2Hy62uPzJrkAtig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy
-        1CJ9uwS9jJZpD9gKukUr5s3SbGDcKdjFyMkhIWAi0TnjIXMXIxeHkMBSRomddw4zQiRkJDZ+
-        ucoKYQtL/LnWxQZR9JFR4tKls1DOFkaJyU9+M3UxcnCwCWhJNHaygzSICDhIbN44hxWkhllg
-        D6PEgcZPTCAJYQFLiZlrV4HZLAKqEr8ezwGzeQWsJb4/3ccIMkdCQF5i8QMJEJNZQFNi/S59
-        iApBiZMzn7CA2MxAFc1bZzND3KYk0bD5DAuEXSvR+eo02wRGoVkI3bOQdM9C0r2AkXkVo0hq
-        aXFuem6xkV5xYm5xaV66XnJ+7iZGYJRtO/Zzyw7Gla8+6h1iZOJgPMQowcGsJMIru2lSihBv
-        SmJlVWpRfnxRaU5q8SFGU6BnJjJLiSbnA+M8ryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2x
-        JDU7NbUgtQimj4mDU6qBSeOY2KOk29wdTCwSdsIaD88GJRx6mpm1eVXi4oTsycwbs2ofGl3f
-        3akd8Txra/csluB/jsUJvxW/vzhpu/T/cu+5jy9e2bdx3xMXQ8e3EQ3z2pgW7oiYvq7+8pkZ
-        PTdD5m57rd3SVKZ1unGX8ssFtmkMXhc//1dZOPnT3096Xm2dc3k1V2Rcfqf4yn1tjz1v6P6j
-        09ZZPVso8t/hhfXNeYuzNI8WBbsdzHP7pWsX/Ejj1s6eVLPqTS9PeHGFeepdt1/tuvtXfQNf
-        0NQE/5j40601L/7sP+K44OuL/2wiSQrMTy8svnNkUmUC0+5/ykbKTzhenvq7aSM/z4v7uycf
-        kL1v3Hr3vP9yk/1S1zXfnLqkxFKckWioxVxUnAgAppSQgzsDAAA=
-X-CMS-MailID: 20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a
+        1CJ9uwS9jN2nj7AWTJapmLNxDlsD4ybxLkZODgkBE4kHm36wdDFycQgJLGWUmDmhlx0iISOx
+        8ctVVghbWOLPtS42iKKPjBLXpj9lAkkICWxhlFh/s7yLkYODTUBLorETrFdEwEFi88Y5rCD1
+        zAJ7GCUONH4CqxcGSuzZegOsiEVAVaJ5bScbiM0rYC1x4u4lVpA5EgLyEosfSICEOQVsJDau
+        PMgIscpaov34VHaIckGJkzOfsIDYzEDlzVtnM0PYEhIHX7xghrhZSaJh8xkWCLtW4vPfZ4wT
+        GEVmIWmfhaR9FpL2BYzMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQIjc9uxn5t3MM579VHv
+        ECMTB+MhRgkOZiURXtlNk1KEeFMSK6tSi/Lji0pzUosPMZoCvTmRWUo0OR+YGvJK4g3NDEwN
+        TcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpj2PCussruv7/q9iPm1RFbCFvHX
+        oYbmGaabuN+fCzmz9JVjqfw0//UWV1KfGH9POCs65+GVWTs2cmUe39EaV6x/gWlbA2uLx/re
+        t1/3bAqM5S76eW2xXZy7yoazcVk2Pa3fvidILb3nu7aKd0FO3TZW78aYBKYmHyeGTc8kszgE
+        VsXvCo8y1s6e1PPu8BQlPeE5HczbNEN9dxrHhJVcfGHWbqKpKVs88c1SoeVnv3lZfI4Q333v
+        nYhy8aHCQ15NmeU2FzdWTcw5sLtuM8fZo/euJpS+WCQrwNw6KZyrYPPVvemMH6w85U3PhE6S
+        3r15XWPCs+duz9+43/jSvkPNM6Nlm7KUi1JEt7/11ZmT65RYijMSDbWYi4oTAStx/jBVAwAA
+X-CMS-MailID: 20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0
 X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a
+X-RootMTR: 20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a
-References: <CGME20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0
+References: <20230621083823.1724337-1-p.raghav@samsung.com>
+        <CGME20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0@eucas1p1.samsung.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
@@ -117,64 +119,101 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There has been a lot of discussion recently to support devices and fs for
-bs > ps. One of the main plumbing to support buffered IO is to have a minimum
-order while allocating folios in the page cache.
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Hannes sent recently a series[1] where he deduces the minimum folio
-order based on the i_blkbits in struct inode. This takes a different
-approach based on the discussion in that thread where the minimum and
-maximum folio order can be set individually per inode.
+Some filesystems want to be able to limit the maximum size of folios,
+and some want to be able to ensure that folios are at least a certain
+size.  Add mapping_set_folio_orders() to allow this level of control
+(although it is not yet honoured).
 
-This series is based on top of Christoph's patches to have iomap aops
-for the block cache[2]. I rebased his remaining patches to
-next-20230621. The whole tree can be found here[3].
+[Pankaj]: added mapping_min_folio_order()
 
-Compiling the tree with CONFIG_BUFFER_HEAD=n, I am able to do a buffered
-IO on a nvme drive with bs>ps in QEMU without any issues:
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/pagemap.h | 46 +++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 42 insertions(+), 4 deletions(-)
 
-[root@archlinux ~]# cat /sys/block/nvme0n2/queue/logical_block_size
-16384
-[root@archlinux ~]# fio -bs=16k -iodepth=8 -rw=write -ioengine=io_uring -size=500M
-		    -name=io_uring_1 -filename=/dev/nvme0n2 -verify=md5
-io_uring_1: (g=0): rw=write, bs=(R) 16.0KiB-16.0KiB, (W) 16.0KiB-16.0KiB, (T) 16.0KiB-16.0KiB, ioengine=io_uring, iodepth=8
-fio-3.34
-Starting 1 process
-Jobs: 1 (f=1): [V(1)][100.0%][r=336MiB/s][r=21.5k IOPS][eta 00m:00s]
-io_uring_1: (groupid=0, jobs=1): err= 0: pid=285: Wed Jun 21 07:58:29 2023
-  read: IOPS=27.3k, BW=426MiB/s (447MB/s)(500MiB/1174msec)
-  <snip>
-Run status group 0 (all jobs):
-   READ: bw=426MiB/s (447MB/s), 426MiB/s-426MiB/s (447MB/s-447MB/s), io=500MiB (524MB), run=1174-1174msec
-  WRITE: bw=198MiB/s (207MB/s), 198MiB/s-198MiB/s (207MB/s-207MB/s), io=500MiB (524MB), run=2527-2527msec
-
-Disk stats (read/write):
-  nvme0n2: ios=35614/4297, merge=0/0, ticks=11283/1441, in_queue=12725, util=96.27%
-
-One of the main dependency to work on a block device with bs>ps is
-Christoph's work on converting block device aops to use iomap.
-
-[1] https://lwn.net/Articles/934651/
-[2] https://lwn.net/ml/linux-kernel/20230424054926.26927-1-hch@lst.de/
-[3] https://github.com/Panky-codes/linux/tree/next-20230523-filemap-order-generic-v1
-
-Luis Chamberlain (1):
-  block: set mapping order for the block cache in set_init_blocksize
-
-Matthew Wilcox (Oracle) (1):
-  fs: Allow fine-grained control of folio sizes
-
-Pankaj Raghav (2):
-  filemap: use minimum order while allocating folios
-  nvme: enable logical block size > PAGE_SIZE
-
- block/bdev.c             |  9 ++++++++
- drivers/nvme/host/core.c |  2 +-
- include/linux/pagemap.h  | 46 ++++++++++++++++++++++++++++++++++++----
- mm/filemap.c             |  9 +++++---
- mm/readahead.c           | 34 ++++++++++++++++++++---------
- 5 files changed, 82 insertions(+), 18 deletions(-)
-
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 716953ee1ebd..462c36c9dd88 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -202,9 +202,15 @@ enum mapping_flags {
+ 	AS_EXITING	= 4, 	/* final truncate in progress */
+ 	/* writeback related tags are not used */
+ 	AS_NO_WRITEBACK_TAGS = 5,
+-	AS_LARGE_FOLIO_SUPPORT = 6,
++	AS_FOLIO_ORDER_MIN = 8,
++	AS_FOLIO_ORDER_MAX = 13,
++	/* 8-17 are used for FOLIO_ORDER */
+ };
+ 
++#define AS_FOLIO_ORDER_MIN_MASK	0x00001f00
++#define AS_FOLIO_ORDER_MAX_MASK 0x0002e000
++#define AS_FOLIO_ORDER_MASK (AS_FOLIO_ORDER_MIN_MASK | AS_FOLIO_ORDER_MAX_MASK)
++
+ /**
+  * mapping_set_error - record a writeback error in the address_space
+  * @mapping: the mapping in which an error should be set
+@@ -294,6 +300,29 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+ 	m->gfp_mask = mask;
+ }
+ 
++/**
++ * mapping_set_folio_orders() - Set the range of folio sizes supported.
++ * @mapping: The file.
++ * @min: Minimum folio order (between 0-31 inclusive).
++ * @max: Maximum folio order (between 0-31 inclusive).
++ *
++ * The filesystem should call this function in its inode constructor to
++ * indicate which sizes of folio the VFS can use to cache the contents
++ * of the file.  This should only be used if the filesystem needs special
++ * handling of folio sizes (ie there is something the core cannot know).
++ * Do not tune it based on, eg, i_size.
++ *
++ * Context: This should not be called while the inode is active as it
++ * is non-atomic.
++ */
++static inline void mapping_set_folio_orders(struct address_space *mapping,
++		unsigned int min, unsigned int max)
++{
++	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
++			(min << AS_FOLIO_ORDER_MIN) |
++			(max << AS_FOLIO_ORDER_MAX);
++}
++
+ /**
+  * mapping_set_large_folios() - Indicate the file supports large folios.
+  * @mapping: The file.
+@@ -307,7 +336,17 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+  */
+ static inline void mapping_set_large_folios(struct address_space *mapping)
+ {
+-	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
++	mapping_set_folio_orders(mapping, 0, 31);
++}
++
++static inline unsigned mapping_max_folio_order(struct address_space *mapping)
++{
++	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
++}
++
++static inline unsigned mapping_min_folio_order(struct address_space *mapping)
++{
++	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
+ }
+ 
+ /*
+@@ -316,8 +355,7 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
+  */
+ static inline bool mapping_large_folio_support(struct address_space *mapping)
+ {
+-	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
+-		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
++	return mapping_max_folio_order(mapping) > 0;
+ }
+ 
+ static inline int filemap_nr_thps(struct address_space *mapping)
 -- 
 2.39.2
 
