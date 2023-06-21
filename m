@@ -2,144 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A86B7381F5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 13:12:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A2447381D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 13:12:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232036AbjFUJ4M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 05:56:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52128 "EHLO
+        id S232156AbjFUKBB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 06:01:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231752AbjFUJ4K (ORCPT
+        with ESMTP id S232160AbjFUKAg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 05:56:10 -0400
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A089B;
-        Wed, 21 Jun 2023 02:56:08 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2b477e9d396so47609651fa.3;
-        Wed, 21 Jun 2023 02:56:08 -0700 (PDT)
+        Wed, 21 Jun 2023 06:00:36 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30F78EA
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 03:00:32 -0700 (PDT)
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EFDFF3F17D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 10:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1687341630;
+        bh=AWRzGH6ZSf0xboDPPn0o1FV8eJ+EiIwoZtGC1w36Sx4=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=npdxzj7yRqxkcgl236nPTF0E8q7Wj56W7l750S7EFGgtWVkNK6nf2eBSG9z5kL6rX
+         FNf3bf16mxBr1TOOoRvpo9qBOcoKx5c80tbGFejuAxD7dFGJCzO/ySpo5U+j4rR9/C
+         F02uVZ7uwz+5WvoL4WKihdImwfzIUDhhmXe3Sv/OluZ55XGtL5gbgj8xsy3b1xfh7/
+         uAxD+54DPyJgsyLpXtFFASEukGWGjaxsYnpKIN/xx09aSnxoS+0nG3YprPjSuEiKi/
+         m04a9rioB8Wf5t00diBe3g0jHqhFA0ZqOItZIFqJdHSXaXsreu6omKyGuDtfKEsO1m
+         kFXg8wXb7s22g==
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3113da8b778so1338110f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 03:00:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687341367; x=1689933367;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7QfqFAs+LUbqWKQg3CDgDFj/Ai/EFvoPAUEVH6zEuh0=;
-        b=RwawYWuTKJn64CRDe1NcFPPtAeUHodvFBD5epWUqqbkQqAWvS64peIcriBCCT6Rxvf
-         VVL+eIEeKbAmT14URvYpdcknGiLqjzVhGbJShDfg7kMjc4KPBDadW5ivGhmnxXku/G37
-         Y8H+MP3dnv004WodMe7MAQN3cCuRLxrbLHTXgvHSpRkciW8+h7lCGTw4zFL16TmFn+Pc
-         Z2TBUPmjVywBWaEbdoeNb9BJ+9K+qWCR/fduJaYeb7pDb+0Xbp9FnWqLC+nTUkvPKbwV
-         PFAgYx9uoG+w5mdcyWNvOZFaPbloKR05Cbf6fclHSo+jALMug2ZK3vBsEa7VwlEk9tOO
-         JLJQ==
-X-Gm-Message-State: AC+VfDxTZDpe2t8kPROKzxs2wcnUqn/oTex+3diNNImPZnvivljUTVPJ
-        s09IUcTzBWaE70RAHKAvTII=
-X-Google-Smtp-Source: ACHHUZ4GQBsPStePkHDKNlzEaMWr+Bp+ebV1Ur4N9HjkC8j8Qd1kDy/CWY6Orh1D9sVCHniBDQ4DcQ==
-X-Received: by 2002:a2e:9846:0:b0:2b4:737c:e316 with SMTP id e6-20020a2e9846000000b002b4737ce316mr7027828ljj.14.1687341366842;
-        Wed, 21 Jun 2023 02:56:06 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:59? ([2a0b:e7c0:0:107::aaaa:59])
-        by smtp.gmail.com with ESMTPSA id m20-20020a7bca54000000b003f80e81705asm4477120wml.45.2023.06.21.02.56.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Jun 2023 02:56:06 -0700 (PDT)
-Message-ID: <36fae2b0-4cd2-58b5-cc12-9abdd5ce235b@kernel.org>
-Date:   Wed, 21 Jun 2023 11:56:03 +0200
+        d=1e100.net; s=20221208; t=1687341630; x=1689933630;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AWRzGH6ZSf0xboDPPn0o1FV8eJ+EiIwoZtGC1w36Sx4=;
+        b=OLrgCQRZZ4LI/iCRAIsVppY7CLCOYk21fs5fX/jUPM2rdnBwEKBsHEq0KPCoUCyl7c
+         +uxhTN6+2gIx5eQyh31kv+YWNFcjj0XdsBsLTGT2HUupzp64ynsUUVENI5NHx7w1XNkS
+         URIPTpXsvp+vL6zre5DHotlQvuiPoaASQVKCntpsQcckQpvTy3A3IncSveH4XKdHE9rT
+         GBVaPePCcblkeiqEXMSzhHLO/HBvQUL69NYMcWW5qnPTxFdQBeRcQyH2429MttImB7AU
+         08A40pIbg9HBkqNUIXz3eCESVPWGPn/V+SbSnn2ZISZAgJd+s4OHAilXHHINbzqwtuoN
+         zD1A==
+X-Gm-Message-State: AC+VfDwIQ2P6NFtNy5XlBH7skWJ6K6Zxek6JQiWc+I5Vn4uI0rKgQPbd
+        QLOqEARzdPs7ivwdfbJVWd94pBDR7Bg9Px9lsIISZmRwgv04lkeebVmOq6AepyIewVBcM0QMk0H
+        YjZ/VsceUU+m5KwObNlgbUfJJf9GmLZ7dNCvKGAs3Za8=
+X-Received: by 2002:a5d:6ad1:0:b0:311:18ce:152b with SMTP id u17-20020a5d6ad1000000b0031118ce152bmr9508844wrw.61.1687341630630;
+        Wed, 21 Jun 2023 03:00:30 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6oq+fIPGFA+sWLn7jvMuxe5Lvalcwkqv7UzsK6f+Iq0Y+CIzxjFvRPS+Xk+lXhEcKckC55vw==
+X-Received: by 2002:a5d:6ad1:0:b0:311:18ce:152b with SMTP id u17-20020a5d6ad1000000b0031118ce152bmr9508830wrw.61.1687341630348;
+        Wed, 21 Jun 2023 03:00:30 -0700 (PDT)
+Received: from amikhalitsyn.local (dslb-002-205-064-187.002.205.pools.vodafone-ip.de. [2.205.64.187])
+        by smtp.gmail.com with ESMTPSA id o10-20020a5d58ca000000b003111fd2e33dsm4024427wrf.30.2023.06.21.03.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jun 2023 03:00:29 -0700 (PDT)
+From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To:     brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        Seth Forshee <sforshee@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: filesystems: idmappings: clarify from where idmappings are taken
+Date:   Wed, 21 Jun 2023 11:59:05 +0200
+Message-Id: <20230621095905.31346-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 08/11] sysctl: Add size to register_sysctl_init
-To:     Joel Granados <j.granados@samsung.com>, mcgrof@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, bpf@vger.kernel.org, kexec@lists.infradead.org,
-        linux-trace-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20230621091000.424843-1-j.granados@samsung.com>
- <CGME20230621091037eucas1p188e11d8064526a5a0549217d5a419647@eucas1p1.samsung.com>
- <20230621091000.424843-9-j.granados@samsung.com>
-Content-Language: en-US
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <20230621091000.424843-9-j.granados@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 21. 06. 23, 11:09, Joel Granados wrote:
-> In order to remove the end element from the ctl_table struct arrays, we
-> explicitly define the size when registering the targes. We add a size
-> argument to the register_sysctl_init call and pass an ARRAY_SIZE for all
-> the callers.
+Let's clarify from where we take idmapping of each type:
+- caller
+- filesystem
+- mount
 
-Hi, I am missing here (or in 00/00) _why_ you are doing that. Is it by a 
-chance those saved 9k? I hope not.
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ Documentation/filesystems/idmappings.rst | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-thanks,
+diff --git a/Documentation/filesystems/idmappings.rst b/Documentation/filesystems/idmappings.rst
+index ad6d21640576..c20382f8bbb0 100644
+--- a/Documentation/filesystems/idmappings.rst
++++ b/Documentation/filesystems/idmappings.rst
+@@ -373,6 +373,12 @@ kernel maps the caller's userspace id down into a kernel id according to the
+ caller's idmapping and then maps that kernel id up according to the
+ filesystem's idmapping.
+ 
++From the implementation point it's worth mentioning how idmappings are represented.
++All idmappings are taken from the corresponding user namespace.
++    - caller's idmapping (usually taken from ``current_user_ns()``)
++    - filesystem's idmapping (``sb->s_user_ns``)
++    - mount's idmapping (``mnt_idmap(vfsmnt)``)
++
+ Let's see some examples with caller/filesystem idmapping but without mount
+ idmappings. This will exhibit some problems we can hit. After that we will
+ revisit/reconsider these examples, this time using mount idmappings, to see how
 -- 
-js
-suse labs
+2.34.1
 
