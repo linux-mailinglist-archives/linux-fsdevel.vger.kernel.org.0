@@ -2,139 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 64F80737CC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 10:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7866F737D88
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 10:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231674AbjFUIFn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 04:05:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45044 "EHLO
+        id S231365AbjFUIii (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 04:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231708AbjFUIF0 (ORCPT
+        with ESMTP id S231136AbjFUIic (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 04:05:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E691199E;
-        Wed, 21 Jun 2023 01:05:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3222B6148D;
-        Wed, 21 Jun 2023 08:05:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 533AFC433C0;
-        Wed, 21 Jun 2023 08:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687334723;
-        bh=A0nwC/s2ji+8UKgD6FCXPyKxJZJQg3sYdNzUYtkF8cc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TF1TB1X1ojZbqpj39jYJnNpIrddkPfoGr61YuBVsLHjD7C/ixqCfulfKAU4cj7USq
-         cfbumCWgDf3xGlK7BdjT5IFed2TMYYIkbB6eRyczbUwlmS2WqkShU/RnsFDweJz5mr
-         khf41H49v1SoN4AMQbMDMBOj1J7S2w1THHnUHmo6A/k/oR0TB0bYN0TTclQ8OwJYv+
-         eLobEDN9pM3iJq7VX/nMiyIbxuoK4Ilox7QxVugRG4859Dij9mjU0iTQyLmAMEquzm
-         CG1jMbrRRMFA9eVnxdW88IcGi1Px7Gebg7jAdc7EW18XQqFUYzObnWVEElZheu4G4X
-         9AAZLvsoxtINA==
-Date:   Wed, 21 Jun 2023 01:05:21 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     syzbot <syzbot+510dcbdc6befa1e6b2f6@syzkaller.appspotmail.com>,
-        djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] UBSAN: array-index-out-of-bounds in
- xfs_attr3_leaf_add_work
-Message-ID: <20230621080521.GB56560@sol.localdomain>
-References: <0000000000001c8edb05fe518644@google.com>
- <ZI+3QXDHiohgv/Pb@dread.disaster.area>
+        Wed, 21 Jun 2023 04:38:32 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41781733
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 01:38:28 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230621083825euoutp02cd6e7407a010295c1fe4a0e9570c6d8d~qn8tOZyVJ0552105521euoutp02J
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230621083825euoutp02cd6e7407a010295c1fe4a0e9570c6d8d~qn8tOZyVJ0552105521euoutp02J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1687336705;
+        bh=xvc2sXLnGhjLFsmbguf3lN8FCrGCE+c6gqNP7gHJ+6E=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=Fog8brKPDWpTPI2mhjAInqaNxIrdyluJLk3bGvJKKJgjQMgnG1LjGoEo4HjjHGntT
+         qua/u/YvKLzfRvKnWU2ZEA/sjx57CRcWjtNPe+MS15hMyaa1e8eEf0+f+yJTwOayet
+         4BjzZEbGLtqo6bJnVvLkKZDTyOvNovbeSDVwXK4w=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230621083825eucas1p16d3b63ee510633d075e53ae04dc89616~qn8s_KRHt2117621176eucas1p1V;
+        Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 39.1A.42423.107B2946; Wed, 21
+        Jun 2023 09:38:25 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a~qn8sk8gNA1658116581eucas1p11;
+        Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230621083825eusmtrp233925ce44cddfcf590425c8d7e60f792~qn8sjqxzl0284602846eusmtrp28;
+        Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
+X-AuditID: cbfec7f2-a3bff7000002a5b7-81-6492b7018925
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 64.8B.14344.107B2946; Wed, 21
+        Jun 2023 09:38:25 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230621083825eusmtip22703050621435331ea1809e6ba0deb8c~qn8saRz8T3188231882eusmtip2T;
+        Wed, 21 Jun 2023 08:38:25 +0000 (GMT)
+Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Wed, 21 Jun 2023 09:38:24 +0100
+From:   Pankaj Raghav <p.raghav@samsung.com>
+To:     <hare@suse.de>, <willy@infradead.org>, <david@fromorbit.com>
+CC:     <gost.dev@samsung.com>, <mcgrof@kernel.org>, <hch@lst.de>,
+        <jwong@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Pankaj Raghav <p.raghav@samsung.com>
+Subject: [RFC 0/4] minimum folio order support in filemap
+Date:   Wed, 21 Jun 2023 10:38:19 +0200
+Message-ID: <20230621083823.1724337-1-p.raghav@samsung.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZI+3QXDHiohgv/Pb@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [106.110.32.140]
+X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRmVeSWpSXmKPExsWy7djP87qM2yelGHx5pGKx5dg9Ros9iyYx
+        WaxcfZTJ4tqZHiaLPXtPslhc3jWHzeLGhKeMFr9/zGFz4PA4tUjCY/MKLY9NqzrZPHbfbGDz
+        2Hy62uPzJrkAtigum5TUnMyy1CJ9uwSujJZpD9gKukUr5s3SbGDcKdjFyMEhIWAi8aNZrYuR
+        k0NIYAWjxK35yV2MXED2F0aJw/t2MUE4nxklurt3s4FUgTR0znjIDNGxnFGi9b4LhA1UtP6U
+        NETDFkaJrW/WsYBsYBPQkmjsZAepERFwkNi8cQ4rSA2zwB5GiQONn5hAEsIClhIz164Cs1kE
+        VCV+PZ4DZvMKWEt8f7qPEeJSeYnFDyQgwoISJ2c+YQGxmYHCzVtnM0PcpiTRsPkMC4RdK7G3
+        +QA7yC4JgSccEssf7mSFmOMicXtCAUSNsMSr41vYIWwZif875zNB2NUST2/8ZobobWGU6N+5
+        ng2i11qi70wOiMksoCmxfpc+RLmjxNNt15ghKvgkbrwVhLiMT2LStulQYV6JjjYhiGo1idX3
+        3rBMYFSeheSXWUh+mYUwfwEj8ypG8dTS4tz01GLDvNRyveLE3OLSvHS95PzcTYzAZHP63/FP
+        Oxjnvvqod4iRiYPxEKMEB7OSCK/spkkpQrwpiZVVqUX58UWlOanFhxilOViUxHm1bU8mCwmk
+        J5akZqemFqQWwWSZODilGpi4LLcYtjFOPG7x97V1hovF5vgQ3RdL/tZcmOBWnbPJYrGnqM7U
+        HN3KUFavzrtca+OlpfztltY41W5OWVWm1zArhvfb017GlvY72VNkVJ3udX07aXeDY2Na/80v
+        y8+rdTNpLjisdngNt+5NNh0hg5wjJUVe5qxBl/Xtf+SJsm6x0wr82yAm03Uu0zQtZKfh42km
+        bef6KvZdWHbj9Zvl+TwGxo+K/MNyVm6cadzMqqT0wVTLVLdXY8U89XU7jI7cCDilHL099wZn
+        0fY/D+zqOLTWL/PbnVUeGHlYWcUkwN3z899LvmZyhrore++9+Leg2vSiT9PbKZ+3L2vmr+hd
+        4incJqqxaD3T58UsMyVslViKMxINtZiLihMBZ9GixqUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsVy+t/xe7qM2yelGCy6xGWx5dg9Ros9iyYx
+        WaxcfZTJ4tqZHiaLPXtPslhc3jWHzeLGhKeMFr9/zGFz4PA4tUjCY/MKLY9NqzrZPHbfbGDz
+        2Hy62uPzJrkAtig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy
+        1CJ9uwS9jJZpD9gKukUr5s3SbGDcKdjFyMkhIWAi0TnjIXMXIxeHkMBSRomddw4zQiRkJDZ+
+        ucoKYQtL/LnWxQZR9JFR4tKls1DOFkaJyU9+M3UxcnCwCWhJNHaygzSICDhIbN44hxWkhllg
+        D6PEgcZPTCAJYQFLiZlrV4HZLAKqEr8ezwGzeQWsJb4/3ccIMkdCQF5i8QMJEJNZQFNi/S59
+        iApBiZMzn7CA2MxAFc1bZzND3KYk0bD5DAuEXSvR+eo02wRGoVkI3bOQdM9C0r2AkXkVo0hq
+        aXFuem6xkV5xYm5xaV66XnJ+7iZGYJRtO/Zzyw7Gla8+6h1iZOJgPMQowcGsJMIru2lSihBv
+        SmJlVWpRfnxRaU5q8SFGU6BnJjJLiSbnA+M8ryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2x
+        JDU7NbUgtQimj4mDU6qBSeOY2KOk29wdTCwSdsIaD88GJRx6mpm1eVXi4oTsycwbs2ofGl3f
+        3akd8Txra/csluB/jsUJvxW/vzhpu/T/cu+5jy9e2bdx3xMXQ8e3EQ3z2pgW7oiYvq7+8pkZ
+        PTdD5m57rd3SVKZ1unGX8ssFtmkMXhc//1dZOPnT3096Xm2dc3k1V2Rcfqf4yn1tjz1v6P6j
+        09ZZPVso8t/hhfXNeYuzNI8WBbsdzHP7pWsX/Ejj1s6eVLPqTS9PeHGFeepdt1/tuvtXfQNf
+        0NQE/5j40601L/7sP+K44OuL/2wiSQrMTy8svnNkUmUC0+5/ykbKTzhenvq7aSM/z4v7uycf
+        kL1v3Hr3vP9yk/1S1zXfnLqkxFKckWioxVxUnAgAppSQgzsDAAA=
+X-CMS-MailID: 20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a
+References: <CGME20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a@eucas1p1.samsung.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Dave,
+There has been a lot of discussion recently to support devices and fs for
+bs > ps. One of the main plumbing to support buffered IO is to have a minimum
+order while allocating folios in the page cache.
 
-On Mon, Jun 19, 2023 at 12:02:41PM +1000, 'Dave Chinner' via syzkaller-bugs wrote:
-> On Sat, Jun 17, 2023 at 04:22:59AM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    1f6ce8392d6f Add linux-next specific files for 20230613
-> > git tree:       linux-next
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=14e629dd280000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=d103d5f9125e9fe9
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=510dcbdc6befa1e6b2f6
-> > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=139d8d2d280000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b371f1280000
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/2d9bf45aeae9/disk-1f6ce839.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/e0b03ef83e17/vmlinux-1f6ce839.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/b6c21a24174d/bzImage-1f6ce839.xz
-> > mounted in repro: https://storage.googleapis.com/syzbot-assets/65eca6891c21/mount_0.gz
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+510dcbdc6befa1e6b2f6@syzkaller.appspotmail.com
-> > 
-> > XFS (loop0): Mounting V4 Filesystem 5e6273b8-2167-42bb-911b-418aa14a1261
-> > XFS (loop0): Ending clean mount
-> > xfs filesystem being mounted at /root/file0 supports timestamps until 2038-01-19 (0x7fffffff)
-> > ================================================================================
-> > UBSAN: array-index-out-of-bounds in fs/xfs/libxfs/xfs_attr_leaf.c:1560:3
-> > index 14 is out of range for type '__u8 [1]'
-> > CPU: 1 PID: 5021 Comm: syz-executor198 Not tainted 6.4.0-rc6-next-20230613-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:88 [inline]
-> >  dump_stack_lvl+0x136/0x150 lib/dump_stack.c:106
-> >  ubsan_epilogue lib/ubsan.c:217 [inline]
-> >  __ubsan_handle_out_of_bounds+0xd5/0x140 lib/ubsan.c:348
-> >  xfs_attr3_leaf_add_work+0x1528/0x1730 fs/xfs/libxfs/xfs_attr_leaf.c:1560
-> >  xfs_attr3_leaf_add+0x750/0x880 fs/xfs/libxfs/xfs_attr_leaf.c:1438
-> >  xfs_attr_leaf_try_add+0x1b7/0x660 fs/xfs/libxfs/xfs_attr.c:1242
-> >  xfs_attr_leaf_addname fs/xfs/libxfs/xfs_attr.c:444 [inline]
-> >  xfs_attr_set_iter+0x16c4/0x2f90 fs/xfs/libxfs/xfs_attr.c:721
-> >  xfs_xattri_finish_update+0x3c/0x140 fs/xfs/xfs_attr_item.c:332
-> 
-> The on disk format for this field is defined as:
-> 
-> typedef struct xfs_attr_leaf_name_local {
->         __be16  valuelen;               /* number of bytes in value */
->         __u8    namelen;                /* length of name bytes */
->         __u8    nameval[1];             /* name/value bytes */
-> } xfs_attr_leaf_name_local_t
-> 
-> If someone wants to do change the on-disk format definition to use
-> "kernel proper" flex arrays in both the kernel code and user space,
-> update all the documentation and do all the validation work that
-> on-disk format changes require for all XFS disk structures that are
-> defined this way, then we'll fix this.
-> 
-> But as it stands, these structures have been defined this way for 25
-> years and the code accessing them has been around for just as long.
-> The code is not broken and it does not need fixing. We have way more
-> important things to be doing that fiddling with on disk format
-> definitions and long standing, working code just to shut up UBSAN
-> and/or syzbot.
-> 
-> WONTFIX, NOTABUG.
+Hannes sent recently a series[1] where he deduces the minimum folio
+order based on the i_blkbits in struct inode. This takes a different
+approach based on the discussion in that thread where the minimum and
+maximum folio order can be set individually per inode.
 
-My understanding is that the main motivation for the conversions to flex arrays
-is kernel hardening, as it allows bounds checking to be enabled.
+This series is based on top of Christoph's patches to have iomap aops
+for the block cache[2]. I rebased his remaining patches to
+next-20230621. The whole tree can be found here[3].
 
-You can probably get away with not fixing this for a little while longer, as
-that stuff is still a work in progress.  But I would suggest you be careful
-about potentially getting yourself into a position where XFS is blocking
-enabling security mitigations for the whole kernel...
+Compiling the tree with CONFIG_BUFFER_HEAD=n, I am able to do a buffered
+IO on a nvme drive with bs>ps in QEMU without any issues:
 
-- Eric
+[root@archlinux ~]# cat /sys/block/nvme0n2/queue/logical_block_size
+16384
+[root@archlinux ~]# fio -bs=16k -iodepth=8 -rw=write -ioengine=io_uring -size=500M
+		    -name=io_uring_1 -filename=/dev/nvme0n2 -verify=md5
+io_uring_1: (g=0): rw=write, bs=(R) 16.0KiB-16.0KiB, (W) 16.0KiB-16.0KiB, (T) 16.0KiB-16.0KiB, ioengine=io_uring, iodepth=8
+fio-3.34
+Starting 1 process
+Jobs: 1 (f=1): [V(1)][100.0%][r=336MiB/s][r=21.5k IOPS][eta 00m:00s]
+io_uring_1: (groupid=0, jobs=1): err= 0: pid=285: Wed Jun 21 07:58:29 2023
+  read: IOPS=27.3k, BW=426MiB/s (447MB/s)(500MiB/1174msec)
+  <snip>
+Run status group 0 (all jobs):
+   READ: bw=426MiB/s (447MB/s), 426MiB/s-426MiB/s (447MB/s-447MB/s), io=500MiB (524MB), run=1174-1174msec
+  WRITE: bw=198MiB/s (207MB/s), 198MiB/s-198MiB/s (207MB/s-207MB/s), io=500MiB (524MB), run=2527-2527msec
+
+Disk stats (read/write):
+  nvme0n2: ios=35614/4297, merge=0/0, ticks=11283/1441, in_queue=12725, util=96.27%
+
+One of the main dependency to work on a block device with bs>ps is
+Christoph's work on converting block device aops to use iomap.
+
+[1] https://lwn.net/Articles/934651/
+[2] https://lwn.net/ml/linux-kernel/20230424054926.26927-1-hch@lst.de/
+[3] https://github.com/Panky-codes/linux/tree/next-20230523-filemap-order-generic-v1
+
+Luis Chamberlain (1):
+  block: set mapping order for the block cache in set_init_blocksize
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (2):
+  filemap: use minimum order while allocating folios
+  nvme: enable logical block size > PAGE_SIZE
+
+ block/bdev.c             |  9 ++++++++
+ drivers/nvme/host/core.c |  2 +-
+ include/linux/pagemap.h  | 46 ++++++++++++++++++++++++++++++++++++----
+ mm/filemap.c             |  9 +++++---
+ mm/readahead.c           | 34 ++++++++++++++++++++---------
+ 5 files changed, 82 insertions(+), 18 deletions(-)
+
+-- 
+2.39.2
+
