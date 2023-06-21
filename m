@@ -2,99 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72E17738D71
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 19:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F3D8738DC6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 19:51:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231613AbjFURmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 13:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44350 "EHLO
+        id S231736AbjFURvy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 13:51:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231468AbjFURmW (ORCPT
+        with ESMTP id S231769AbjFURu5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 13:42:22 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB712122;
-        Wed, 21 Jun 2023 10:41:58 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-6686a1051beso3610832b3a.1;
-        Wed, 21 Jun 2023 10:41:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687369305; x=1689961305;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=67RsiRkf7V/7CF4F5OqcQiUMN3aCyMIaXikCRwf0Jt0=;
-        b=R59LXc7dG49D6BDqvOLv8GFhZv2D6DZ82JAvRkDEgOvlZ6JClcVZVxGGybx4+Ffb5z
-         1+9lb3zlQdir/sdk0/Ajla4bsBmgEnNE2rxQcjTymuaoBcjgEYLAT+6sEqwgVDWy0hga
-         rGmsZu+VGZc3P9vvQbraSGntMZj62M8KEJX1srUAOtc6Yb5VejGySLtueyPPMpd8bV8/
-         oaQjrqidJSLUNQKory36TCvEnPg9/UuzoP6gjebAfwYXj6sO8vwix6dXyCjuw6723XXu
-         vyVewTMvpocOynazlUcFH3FeJ4Xl5ZRYrHETYNqDHwJcHc8sixWUmsCugHbLfhG0JANp
-         P70g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687369305; x=1689961305;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=67RsiRkf7V/7CF4F5OqcQiUMN3aCyMIaXikCRwf0Jt0=;
-        b=bB/JRWXBFBiKm57886GE0wpdi//2spzGpPdmi0UhKHZfHM5Dk8OZy3WmF3zdoHINfN
-         FuNcSFz4+SJkUjKKjTZSmePUYrvRkJ2ST7nNoORcb1Sl7JpEPXbgWI0m83/ow8hk1uzD
-         lbD69HDLVGEDGpTi3TFNbbaebYgidzArCx+fMpvAM77pxP2qWMcEO5OJvR6cMNW+zCSy
-         HDs9FCZVYYI60l2QZ9XZmC9u43OqckVVdwalNAoPQQyJWsecnLDXBawzjyPhZLsnypbt
-         lmSAp3gsLX4BEkxygMofmf7DwoZ+CjOMe/DKsoDkkCqxexsw97DFAmYVGjXakjwcQ30m
-         nmMQ==
-X-Gm-Message-State: AC+VfDyG2NjiOPxrtU4VVUURkULpeD78qEA7IZikn++MS//TsGXSggk+
-        yhUJSzSmD1GlQ0MF2UkOyyY=
-X-Google-Smtp-Source: ACHHUZ6JlmenchXri4RPSn4XqTCoyIaoew1oOdBlDm8S9UjvE4XrVvZvToU0uZ51tZrf+IixGqqUAw==
-X-Received: by 2002:a05:6a00:1a94:b0:653:91c1:1611 with SMTP id e20-20020a056a001a9400b0065391c11611mr19660672pfv.14.1687369304633;
-        Wed, 21 Jun 2023 10:41:44 -0700 (PDT)
-Received: from jbongio9100214.lan ([2606:6000:cfc0:25:4c92:9b61:6920:c02c])
-        by smtp.googlemail.com with ESMTPSA id j23-20020a62e917000000b0066a4636c777sm1246824pfh.192.2023.06.21.10.41.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jun 2023 10:41:44 -0700 (PDT)
-From:   Jeremy Bongio <bongiojp@gmail.com>
-To:     Ted Tso <tytso@mit.edu>, "Darrick J . Wong" <djwong@kernel.org>,
-        Allison Henderson <allison.henderson@oracle.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Jeremy Bongio <bongiojp@gmail.com>
-Subject: [PATCH 1/1] For DIO writes with no mapped pages for inode, skip deferring completion.
-Date:   Wed, 21 Jun 2023 10:29:20 -0700
-Message-ID: <20230621174114.1320834-2-bongiojp@gmail.com>
-X-Mailer: git-send-email 2.41.0.185.g7c58973941-goog
-In-Reply-To: <20230621174114.1320834-1-bongiojp@gmail.com>
-References: <20230621174114.1320834-1-bongiojp@gmail.com>
+        Wed, 21 Jun 2023 13:50:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08D69268A;
+        Wed, 21 Jun 2023 10:50:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 433FA61666;
+        Wed, 21 Jun 2023 17:50:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF744C433CC;
+        Wed, 21 Jun 2023 17:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687369831;
+        bh=cIQE0tqYqde1wQS9/IcLrDtGE0ZwQxHO+6tde8cVt4E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AYva0/5W7t0NxIgVeP53vFnVTqwMOS59neZkd9E2R3q/WoNeHdWpSaEZrCBAgnNvZ
+         OZblVRAyPgDiw5WctBsoo9L3Arvz5mqxj7q/DcmLR0zYNJXbXUEhK4nW6hnlL0Kn0K
+         EG2tHOVn/uhj4Fgy8ml/PRX+0nixFAdEnAy9IIL8Ej9UeYnn8/cXVNjinfbHefzGrh
+         FwmwzO5ItB8xnxbnZgy+N/5CBOVLiqLQUXvXdwWvd/RUOaHknzUqB+5I1T8bCU4cnX
+         4smek8cmnOm6kSHHkKKJui4WQ3aLMV26JdX/MTrOTAtfahzYcKu+6h09EanF26OCHN
+         cIjisblPWM5vQ==
+Date:   Wed, 21 Jun 2023 13:50:28 -0400
+From:   Chuck Lever <cel@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH 09/13] net: Convert sunrpc from pagevec to folio_batch
+Message-ID: <ZJM4ZK8cKI4AmOgy@manet.1015granger.net>
+References: <20230621164557.3510324-1-willy@infradead.org>
+ <20230621164557.3510324-10-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230621164557.3510324-10-willy@infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If there are no mapped pages for an DIO write then the page cache does not
-need to be updated. For very fast SSDs and direct async IO, deferring work
-completion can result in a significant performance loss.
----
- fs/iomap/direct-io.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Wed, Jun 21, 2023 at 05:45:53PM +0100, Matthew Wilcox (Oracle) wrote:
+> Remove the last usage of pagevecs.  There is a slight change here; we
+> now free the folio_batch as soon as it fills up instead of freeing the
+> folio_batch when we try to add a page to a full batch.  This should have
+> no effect in practice.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 019cc87d0fb3..8f27d0dc4f6d 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -168,7 +168,9 @@ void iomap_dio_bio_end_io(struct bio *bio)
- 			struct task_struct *waiter = dio->submit.waiter;
- 			WRITE_ONCE(dio->submit.waiter, NULL);
- 			blk_wake_io_task(waiter);
--		} else if (dio->flags & IOMAP_DIO_WRITE) {
-+		} else if (dio->flags & IOMAP_DIO_WRITE &&
-+			(!dio->iocb->ki_filp->f_inode ||
-+			    dio->iocb->ki_filp->f_inode->i_mapping->nrpages))) {
- 			struct inode *inode = file_inode(dio->iocb->ki_filp);
- 
- 			WRITE_ONCE(dio->iocb->private, NULL);
--- 
-2.41.0.185.g7c58973941-goog
+I don't yet have visibility into the folio_batch_* helpers, but this
+looks like a wholly mechanical replacement of pagevec. LGTM.
 
+I assume this is going to be merged via another tree, not nfsd-next,
+so:
+
+Acked-by: Chuck Lever <chuck.lever@oracle.com>
+
+
+> ---
+>  include/linux/sunrpc/svc.h |  2 +-
+>  net/sunrpc/svc.c           | 10 +++++-----
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
+> index c2807e301790..f8751118c122 100644
+> --- a/include/linux/sunrpc/svc.h
+> +++ b/include/linux/sunrpc/svc.h
+> @@ -222,7 +222,7 @@ struct svc_rqst {
+>  	struct page *		*rq_next_page; /* next reply page to use */
+>  	struct page *		*rq_page_end;  /* one past the last page */
+>  
+> -	struct pagevec		rq_pvec;
+> +	struct folio_batch	rq_fbatch;
+>  	struct kvec		rq_vec[RPCSVC_MAXPAGES]; /* generally useful.. */
+>  	struct bio_vec		rq_bvec[RPCSVC_MAXPAGES];
+>  
+> diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
+> index e7c101290425..587811a002c9 100644
+> --- a/net/sunrpc/svc.c
+> +++ b/net/sunrpc/svc.c
+> @@ -640,7 +640,7 @@ svc_rqst_alloc(struct svc_serv *serv, struct svc_pool *pool, int node)
+>  	if (!rqstp)
+>  		return rqstp;
+>  
+> -	pagevec_init(&rqstp->rq_pvec);
+> +	folio_batch_init(&rqstp->rq_fbatch);
+>  
+>  	__set_bit(RQ_BUSY, &rqstp->rq_flags);
+>  	rqstp->rq_server = serv;
+> @@ -851,9 +851,9 @@ bool svc_rqst_replace_page(struct svc_rqst *rqstp, struct page *page)
+>  	}
+>  
+>  	if (*rqstp->rq_next_page) {
+> -		if (!pagevec_space(&rqstp->rq_pvec))
+> -			__pagevec_release(&rqstp->rq_pvec);
+> -		pagevec_add(&rqstp->rq_pvec, *rqstp->rq_next_page);
+> +		if (!folio_batch_add(&rqstp->rq_fbatch,
+> +				page_folio(*rqstp->rq_next_page)))
+> +			__folio_batch_release(&rqstp->rq_fbatch);
+>  	}
+>  
+>  	get_page(page);
+> @@ -887,7 +887,7 @@ void svc_rqst_release_pages(struct svc_rqst *rqstp)
+>  void
+>  svc_rqst_free(struct svc_rqst *rqstp)
+>  {
+> -	pagevec_release(&rqstp->rq_pvec);
+> +	folio_batch_release(&rqstp->rq_fbatch);
+>  	svc_release_buffer(rqstp);
+>  	if (rqstp->rq_scratch_page)
+>  		put_page(rqstp->rq_scratch_page);
+> -- 
+> 2.39.2
+> 
