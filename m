@@ -2,156 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7470A737ECD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 11:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F06DF738154
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 13:11:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230226AbjFUJRo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 05:17:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53836 "EHLO
+        id S232024AbjFUJly (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 05:41:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229727AbjFUJRm (ORCPT
+        with ESMTP id S232012AbjFUJlO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 05:17:42 -0400
-X-Greylist: delayed 137996 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 21 Jun 2023 02:17:39 PDT
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A85E10FE
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 02:17:39 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4QmHw15pQqzMpnrZ;
-        Wed, 21 Jun 2023 09:17:37 +0000 (UTC)
-Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4QmHw02Qj2zMsmSf;
-        Wed, 21 Jun 2023 11:17:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1687339057;
-        bh=veOtCaJt3Hey607zkXQSppG6fPPqafaKDZ9+dmpVLHM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=OnZL2JgboFxsS3s56X5OTJb7RVNkFDh123KRefPFI56o6P0uqaz9h623kRadbz71u
-         aF4YiSGnl34ufWWh5OMlhNoXXwaCgWTa17D+vEvpt4L5biWHoMEKltH5LYBi1DHn13
-         vMqaXyi8Ri33FtKndtTdd1mnMJD3wyQ4Zw/vya2k=
-Message-ID: <a4c973df-ed4d-960a-217c-3027e525e953@digikod.net>
-Date:   Wed, 21 Jun 2023 11:17:35 +0200
+        Wed, 21 Jun 2023 05:41:14 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F811BF1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 02:40:33 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-57015b368c3so49930257b3.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 02:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1687340433; x=1689932433;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gybbZJh87t3Qbe/MI3uBbaP9SdOn3CjaNUEl9acnWiU=;
+        b=LMsWpjK/zwBZNA1C5SJA9i5BdNGjDeTVa2OgQLr/7lE4liaOh5aUKAM7KRFsGokN8A
+         dm8Zr0tt2azGKtuRNawsivTN9vPbiUN9S4IHK7njdo7Kut7rp9jW7k2fntYJ1XCXFUNE
+         B9RGljUqsGrDN2R+e43B6gpPxoySxfiXM6dQI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687340433; x=1689932433;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gybbZJh87t3Qbe/MI3uBbaP9SdOn3CjaNUEl9acnWiU=;
+        b=EOomvI08UcF7AE7Uf7NRSLSfExS3YZ5+Rw9YPMQkDXsC8gS0HAnyr0QK7hSktoPpXz
+         l4Tn3tDHE24qFbytXyyMgONDDIcHKTaMHzJzZha+8f6Z7fqbhprLl3PRGeb7zbklnucC
+         KSpe3ZA+7TQyKJEJpX+4ZAiBV+5b9Kbd5enmL2fm0Uce8Fb9lSUONzFlWy4D/OtdEf6k
+         jZiLjn4WXOyVRccsv97xfae9aHWYWa+wNYfhNqnWQ6Au0CslS7HulQBdrf+Ll0WmPhGi
+         xMVI9IplPb1XNixKd/cLE3lWS6oaUsFaH2PIPrs+wdllLo4lKJk6NvgZFHtpEgBtgGAT
+         CdSg==
+X-Gm-Message-State: AC+VfDwUzpmo+FQ/36mzVXV4cP9s+qUisWd19HtneiivGHgjItx7DGMK
+        bS3djfp5nvMcp/A99wB2HIJL5POv0l+zzFaPd55tTQ==
+X-Google-Smtp-Source: ACHHUZ6Xo6f+HdwrjmUZ92VYxxeamu+uiO1MAEKtWfZVchSbMrG/0dyJ7p/uTcOURmMpfhQ1An4kwnDTzD4qwozqoag=
+X-Received: by 2002:a0d:eb89:0:b0:56d:3d83:15cb with SMTP id
+ u131-20020a0deb89000000b0056d3d8315cbmr13588007ywe.44.1687340432773; Wed, 21
+ Jun 2023 02:40:32 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [RFC 0/4] Landlock: ioctl support
-Content-Language: en-US
-To:     Jeff Xu <jeffxu@chromium.org>
-Cc:     Jeff Xu <jeffxu@google.com>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20230502171755.9788-1-gnoack3000@gmail.com>
- <1cb74c81-3c88-6569-5aff-154b8cf626fa@digikod.net>
- <20230510.c667268d844f@gnoack.org>
- <CALmYWFv4f=YsRFHvj4LTog4GY9NmfSOE6hZnJNOpCzPM-5G06g@mail.gmail.com>
- <a932bbb5-7b19-2299-0ca4-3fa13d63d817@digikod.net>
- <CABi2SkV79kPt+8vD=-9C2TDkVoNfkOxtaT2C470MWpV1EJvvpg@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <CABi2SkV79kPt+8vD=-9C2TDkVoNfkOxtaT2C470MWpV1EJvvpg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230620151328.1637569-1-keiichiw@chromium.org>
+ <20230620151328.1637569-3-keiichiw@chromium.org> <CAJfpegton83boLEL7n-Tf6ON4Nq_g2=mTus7vhX2n0C+yuUC4w@mail.gmail.com>
+ <CADgJSGGDeu_dPduBuK7N324oJ9641VKv2+fAVAbDY=-itsFjEQ@mail.gmail.com> <CAJfpegtNjAELur_AtqiGdO6LJRDyT+WQ1UKtG-o=Em0rAhOKMg@mail.gmail.com>
+In-Reply-To: <CAJfpegtNjAELur_AtqiGdO6LJRDyT+WQ1UKtG-o=Em0rAhOKMg@mail.gmail.com>
+From:   Keiichi Watanabe <keiichiw@chromium.org>
+Date:   Wed, 21 Jun 2023 18:40:21 +0900
+Message-ID: <CAD90VcZeoagh7a-0qA1SudJ3v53fvyr7t2iwGx_+dnAL7M=jnw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] fuse: Add negative_dentry_timeout option
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     =?UTF-8?B?SnVuaWNoaSBVZWthd2EgKOS4iuW3nee0lOS4gCk=?= 
+        <uekawa@google.com>, LKML <linux-kernel@vger.kernel.org>,
+        mhiramat@google.com, takayas@chromium.org, drosen@google.com,
+        sarthakkukreti@google.com, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 21/06/2023 01:44, Jeff Xu wrote:
-> On Sat, Jun 17, 2023 at 2:49 AM Mickaël Salaün <mic@digikod.net> wrote:
->>
->>
->> On 24/05/2023 23:43, Jeff Xu wrote:
->>> Sorry for the late reply.
->>>>
->>>> (Looking in the direction of Jeff Xu, who has inquired about Landlock
->>>> for Chromium in the past -- do you happen to know in which ways you'd
->>>> want to restrict ioctls, if you have that need? :))
->>>>
->>>
->>> Regarding this patch, here is some feedback from ChromeOS:
->>>    - In the short term: we are looking to integrate Landlock into our
->>> sandboxer, so the ability to restrict to a specific device is huge.
->>> - Fundamentally though, in the effort of bringing process expected
->>> behaviour closest to allowed behaviour, the ability to speak of
->>> ioctl() path access in Landlock would be huge -- at least we can
->>> continue to enumerate in policy what processes are allowed to do, even
->>> if we still lack the ability to restrict individual ioctl commands for
->>> a specific device node.
->>
->> Thanks for the feedback!
->>
->>>
->>> Regarding medium term:
->>> My thoughts are, from software architecture point of view, it would be
->>> nice to think in planes: i.e. Data plane / Control plane/ Signaling
->>> Plane/Normal User Plane/Privileged User Plane. Let the application
->>> define its planes, and assign operations to them. Landlock provides
->>> data structure and syscall to construct the planes.
->>
->> I'm not sure to follow this plane thing. Could you give examples for
->> these planes applied to Landlock?
->>
-> The idea is probably along the same lines as yours: let user space
-> define/categorize ioctls.  For example, for a camera driver, users can
-> define two planes - control plane: setup parameters of lens, data
-> plane: setup data buffers for data transfer and do start/stop (I'm
-> just making up the example since I don't really know the camera
-> driver).
-> 
-> The idea is for Landlock to provide a mechanism to let user space to
-> divide/assign ioctls to different planes, such that the user space
-> processes can set/define security boundaries according to the plane it
-> is on.
-
-Right, we're on the same track. :)
+On Wed, Jun 21, 2023 at 1:07=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Wed, 21 Jun 2023 at 00:53, Junichi Uekawa (=E4=B8=8A=E5=B7=9D=E7=B4=94=
+=E4=B8=80) <uekawa@google.com> wrote:
+> >
+> > Hi
+> >
+> >
+> >
+> > 2023=E5=B9=B46=E6=9C=8821=E6=97=A5(=E6=B0=B4) 4:28 Miklos Szeredi <mikl=
+os@szeredi.hu>:
+> >>
+> >> On Tue, 20 Jun 2023 at 17:14, Keiichi Watanabe <keiichiw@chromium.org>=
+ wrote:
+> >> >
+> >> > Add `negative_dentry_timeout` mount option for FUSE to cache negativ=
+e
+> >> > dentries for the specified duration.
+> >>
+> >> This is already possible, no kernel changes needed.  See e.g.
+> >> xmp_init() in libfuse/example/passthrough.c.
+> >>
+> >
+> > Thank you for the pointer!
+> >
+> > So reading libfuse/fuse.c, fuse_lib_lookup does a reply with e.ino=3D0 =
+err=3D0 (instead of ENOENT) with e.entry_timeout=3Dnegative_timeout,
+> > for each lookup (and there's no global configuration but that's okay) ?
+>
+> Yes.
 
 
-> 
->>
->>>
->>> However, one thing I'm not sure is the third arg from ioctl:
->>> int ioctl(int fd, unsigned long request, ...);
->>> Is it possible for the driver to use the same request id, then put
->>> whatever into the third arg ? how to deal with that effectively ?
->>
->> I'm not sure about the value of all the arguments (except the command
->> one) vs. the complexity to filter them, but we could discuss that when
->> we'll reach this step.
->>
->>>
->>> For real world user cases, Dmitry Torokhov (added to list) can help.
->>
->> Yes please!
->>
-> ya,  it will help with the design if there is a real world scenario to study.
+Oh, good to know!
+I could make it work in our VMM (crosvm) without any kernel changes.
+https://crrev.com/c/4630879
+Thanks a lot!
 
-I'll get internal requirements too.
+Keiichi
 
 
-> 
->>>
->>> PS: There is also lwn article about SELinux implementation of ioctl: [1]
->>> [1] https://lwn.net/Articles/428140/
->>
->> Thanks for the pointer, this shows how complex this IOCTL access control
->> is. For Landlock, I'd like to provide the minimal required features to
->> enable user space to define their own rules, which means to let user
->> space (and especially libraries) to identify useful or potentially
->> harmful IOCTLs.
->>
-> Yes. That makes sense.
-> 
->>>
->>> Thanks!
->>> -Jeff Xu
+>
+>
+> Thanks,
+> Miklos
