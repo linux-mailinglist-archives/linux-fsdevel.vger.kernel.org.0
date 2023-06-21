@@ -2,93 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C4AA737A68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 06:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45BE5737B30
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 08:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229826AbjFUEoi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 00:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59190 "EHLO
+        id S229789AbjFUGWP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 02:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229806AbjFUEoe (ORCPT
+        with ESMTP id S230263AbjFUGWC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 00:44:34 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA5F1730;
-        Tue, 20 Jun 2023 21:44:32 -0700 (PDT)
-Received: from [192.168.10.54] (unknown [119.155.63.248])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id CB8C8660296C;
-        Wed, 21 Jun 2023 05:44:24 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1687322671;
-        bh=GMo8qOz67u7jFTir2W0Vb2JjW6eOFryP62A0pb2a4vg=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=mECV2qzaIw2HDiIJoHLohz28PMiMooPxorgX7oPAO79aAUmwROJXPamG+FHYH5riW
-         UHRd6Gn7UF9YnMklRpwuep3lbxIQgX4skqbCqWdNDQ4pW3fiXpY0aLznKuawlHzfIf
-         +xiOfoWxnQc4UTA6jsYu+JFdnKJiXgIAuBhibcgFMbOri7gI39ykB74+7ps7Hs2TMG
-         uTcaHz2QyQaqyDSLhTuljXEexQG0XpsOUy/TFv+bRNjwlglnjRhQSGBEXlFX6cgO2P
-         JloN4BReLPrD979jg0E8sEQ5USoRMTr2qKZXzkytNmNze5RSv7vRXBX2p6Av92j3dr
-         0Cd9WXqgyE/Xg==
-Message-ID: <9b6d55e3-1f5f-04e1-d68f-0591a0f4f60c@collabora.com>
-Date:   Wed, 21 Jun 2023 09:44:19 +0500
+        Wed, 21 Jun 2023 02:22:02 -0400
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAF6C10DB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 23:21:57 -0700 (PDT)
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-342345934a8so28736175ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jun 2023 23:21:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687328517; x=1689920517;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FiMal5spkWzxQuFQIfK2vMHUo4FNmdwa/V87z8doXGc=;
+        b=dQb68kc6ArbEF9Tar+uGLpIsPk7Qtzh2AoYioN25BV8ludYA6bUKbVga+4lIuSWjdE
+         0YRRUZO/JiTN0dtrLxNbr/AT4ZriykvLy4x+MrRNoD4CGE2Pc7rYHLL49Duu/B/sjKK6
+         dKG6016wQTPq6ApiwMilSUuX/XQZ9rRJMjdVnFs7HR8sZs8+Z9UGGYbAfeg3shnJEN4V
+         Q2/1u7RvRxpsEL4XBYIUWJ7sYiO281RsULxoveQVneqc01OQuv9RTQHlcab9bUu8oqiS
+         RCINwRlAd3pFMSOhdRFs5yc9fW8dWmGd2hoeet7FMr+n5lHzwhe/H8Yjsm8Rcht+y4Ad
+         VCXA==
+X-Gm-Message-State: AC+VfDwB84L89xAY5r54CywrEW/HNffVdNSSFSjcsPCX+IMwrVb+PbIS
+        HjsZzJEtKjaWhwDwTb05jl8zL4NUtDe+bpR+vfXgSXj6SJWw
+X-Google-Smtp-Source: ACHHUZ5SNaRAP4AlQomcHJ+cQkJ/JYbpSfleiz9DmSgIpbdo3Y+yEDxUPEAfrkmmJuOytq7wEY72T5Y752YY3GgvaS+gYL8anMNM
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v18 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-References: <20230613102905.2808371-1-usama.anjum@collabora.com>
- <20230613102905.2808371-3-usama.anjum@collabora.com>
- <CABb0KFHWnbrf2ythvO0OKsd1ZS9b4D9BNzwBCbn6g9OX4n6ZOg@mail.gmail.com>
- <0db01d90-09d6-08a4-bbb8-70670d3baa94@collabora.com>
- <CABb0KFEn5TU480A=YiN82nLRtGyKMABi8cZjuiGUU_jFZZo+8g@mail.gmail.com>
- <34203acf-7270-7ade-a60e-ae0f729dcf70@collabora.com>
- <CABb0KFFaXgJD99pWfx3MC+qrq5jUaPis_kZo6U8yL_8xdp0GJA@mail.gmail.com>
- <96b7cc00-d213-ad7d-1b48-b27f75b04d22@collabora.com>
- <CABb0KFEy_mRaT86TEOQ-BoTe_XOVw3Kp5VdzOfEEaiZJuT754g@mail.gmail.com>
- <39bc8212-9ee8-dbc1-d468-f6be438b683b@collabora.com>
- <CABb0KFHx2hV9M7oinCdKnagRmcrGHagH9eAO3TkVTQH+o9x=5A@mail.gmail.com>
- <2e1b80f1-0385-0674-ae5f-9703a6ef975d@collabora.com>
- <CABb0KFGOx69Sz6w9JenYUwSTFmW-Cmcns3X-oDyWsC+H57vkvg@mail.gmail.com>
- <444ed144-a2ee-cb16-880a-128383c83a08@collabora.com>
- <CABb0KFEqJasf9nM3wL1oaK9ObcYzwzjtrRBcWRc3wGqdZRUpXg@mail.gmail.com>
-Content-Language: en-US
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CABb0KFEqJasf9nM3wL1oaK9ObcYzwzjtrRBcWRc3wGqdZRUpXg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+X-Received: by 2002:a05:6e02:541:b0:341:d190:ca88 with SMTP id
+ i1-20020a056e02054100b00341d190ca88mr5412963ils.6.1687328517151; Tue, 20 Jun
+ 2023 23:21:57 -0700 (PDT)
+Date:   Tue, 20 Jun 2023 23:21:57 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e2638a05fe9dc8f9@google.com>
+Subject: [syzbot] [udf?] KMSAN: uninit-value in udf_name_from_CS0
+From:   syzbot <syzbot+cd311b1e43cc25f90d18@syzkaller.appspotmail.com>
+To:     glider@google.com, jack@suse.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -96,121 +54,87 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/21/23 3:05 AM, Michał Mirosław wrote:
-> On Tue, 20 Jun 2023 at 13:16, Muhammad Usama Anjum
-> <usama.anjum@collabora.com> wrote:
->> On 6/19/23 1:16 PM, Michał Mirosław wrote:
->>> On Fri, 16 Jun 2023 at 08:57, Muhammad Usama Anjum
->>> <usama.anjum@collabora.com> wrote:
->>>>
->>>> On 6/16/23 1:07 AM, Michał Mirosław wrote:
->>>>> On Thu, 15 Jun 2023 at 17:11, Muhammad Usama Anjum
->>>>> <usama.anjum@collabora.com> wrote:
->>>>>> On 6/15/23 7:52 PM, Michał Mirosław wrote:
->>>>>>> On Thu, 15 Jun 2023 at 15:58, Muhammad Usama Anjum
->>>>>>> <usama.anjum@collabora.com> wrote:
->>>>>>>> I'll send next revision now.
->>>>>>>> On 6/14/23 11:00 PM, Michał Mirosław wrote:
->>>>>>>>> (A quick reply to answer open questions in case they help the next version.)
->>> [...]
->>>>>>>>> I guess this will be reworked anyway, but I'd prefer this didn't need
->>>>>>>>> custom errors etc. If we agree to decoupling the selection and GET
->>>>>>>>> output, it could be:
->>>>>>>>>
->>>>>>>>> bool is_interesting_page(p, flags); // this one does the
->>>>>>>>> required/anyof/excluded match
->>>>>>>>> size_t output_range(p, start, len, flags); // this one fills the
->>>>>>>>> output vector and returns how many pages were fit
->>>>>>>>>
->>>>>>>>> In this setup, `is_interesting_page() && (n_out = output_range()) <
->>>>>>>>> n_pages` means this is the final range, no more will fit. And if
->>>>>>>>> `n_out == 0` then no pages fit and no WP is needed (no other special
->>>>>>>>> cases).
->>>>>>>> Right now, pagemap_scan_output() performs the work of both of these two
->>>>>>>> functions. The part can be broken into is_interesting_pages() and we can
->>>>>>>> leave the remaining part as it is.
->>>>>>>>
->>>>>>>> Saying that n_out < n_pages tells us the buffer is full covers one case.
->>>>>>>> But there is case of maximum pages have been found and walk needs to be
->>>>>>>> aborted.
->>>>>>>
->>>>>>> This case is exactly what `n_out < n_pages` will cover (if scan_output
->>>>>>> uses max_pages properly to limit n_out).
->>>>>>> Isn't it that when the buffer is full we want to abort the scan always
->>>>>>> (with WP if `n_out > 0`)?
->>>>>> Wouldn't it be duplication of condition if buffer is full inside
->>>>>> pagemap_scan_output() and just outside it. Inside pagemap_scan_output() we
->>>>>> check if we have space before putting data inside it. I'm using this same
->>>>>> condition to indicate that buffer is full.
->>>>>
->>>>> I'm not sure what do you mean? The buffer-full conditions would be
->>>>> checked in ..scan_output() and communicated to the caller by returning
->>>>> N less than `n_pages` passed in. This is exactly how e.g. read()
->>>>> works: if you get less than requested you've hit the end of the file.
->>>>> If the file happens to have size that is equal to the provided buffer
->>>>> length, the next read() will return 0.
->>>> Right now we have:
->>>>
->>>> pagemap_scan_output():
->>>>         if (p->vec_buf_index >= p->vec_buf_len)
->>>>                 return PM_SCAN_BUFFER_FULL;
->>>>         if (p->found_pages == p->max_pages)
->>>>                 return PM_SCAN_FOUND_MAX_PAGES;
->>>
->>> Why do you need to differentiate between those cases?
->>>
->>>> pagemap_scan_pmd_entry():
->>>>         ret = pagemap_scan_output(bitmap, p, start, n_pages);
->>>>         if (ret >= 0) // success
->>>>                 make_UFFD_WP and flush
->>>>         else
->>>>                 buffer_error
->>>>
->>>> You are asking me to do:
->>>>
->>>> pagemap_scan_output():
->>>>         if (p->vec_buf_index >= p->vec_buf_len)
->>>>                 return 0;
->>>
->>>>         if (p->found_pages == p->max_pages)
->>>>                 return PM_SCAN_FOUND_MAX_PAGES;
->>>
->>> This should be instead:
->>>
->>> n_pages = min(p->max_pags - p_found_pages, n_pages)
->>> ...
->>> return n_pages;
->> You are missing the optimization here that we check for full buffer every
->> time adding to user buffer. This was added to remove extra iteration of
->> page walk if buffer is full already. The way you are suggesting will remove it.
->>
->> So you are returning remaining pages to be found now. This doesn't seem
->> right. If max_pages is 520, found_pages is 0 and n_pages is 512 before
->> calling pagemap_scan_output(). found_pages would become 512 after adding
->> 512 pages to output buffer. But n_pages would return 8 instead of 512. You
->> were saying we should return the number of pages added to the output buffer.
-> 
-> Ok, if we want this optimization, then i'd rework it so that we have:
-> 
-> bool pagemap_scan_output(..., int *n_pages)
-> {
->    limit n_pages;
->   ...
->   return have_more_room_in_output;
-> }
-This is becoming more and more closer to what I have in the code. The only
-difference now is that you are asking me to not return the buffer full
-status from inside this function and instead there should be a input+output
-pointer to n_pages and the caller would return the buffer full status. As
-compared to the suggestion, the current form looks simpler. My earlier
-point (
-https://lore.kernel.org/all/2e1b80f1-0385-0674-ae5f-9703a6ef975d@collabora.com
-) is valid again. I don't want to bring logic out of pagemap_scan_output().
-This is internal function. There could be thousand ways how internal code
-can be written. I've really liked so many optimizations which you have
-advised. This isn't something worth doing. It would increase lines of code
-with no added readability benefit.
+Hello,
 
--- 
-BR,
-Muhammad Usama Anjum
+syzbot found the following issue on:
+
+HEAD commit:    e6bc8833d80f string: use __builtin_memcpy() in strlcpy/str..
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=16c43f97280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6a7e173060c804ee
+dashboard link: https://syzkaller.appspot.com/bug?extid=cd311b1e43cc25f90d18
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/df1e5cb3acfa/disk-e6bc8833.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/55bdfe53ed68/vmlinux-e6bc8833.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3e2a33babf5f/bzImage-e6bc8833.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cd311b1e43cc25f90d18@syzkaller.appspotmail.com
+
+UDF-fs: INFO Mounting volume 'LinuxUDF', timestamp 2022/11/22 14:59 (1000)
+=====================================================
+BUG: KMSAN: uninit-value in udf_name_from_CS0+0x1581/0x1a40 fs/udf/unicode.c:250
+ udf_name_from_CS0+0x1581/0x1a40 fs/udf/unicode.c:250
+ udf_get_filename+0xa4/0x150 fs/udf/unicode.c:390
+ udf_fiiter_find_entry+0x77b/0xa60 fs/udf/namei.c:90
+ udf_unlink+0x80/0x920 fs/udf/namei.c:547
+ vfs_unlink+0x66f/0xa20 fs/namei.c:4327
+ do_unlinkat+0x3fa/0xed0 fs/namei.c:4393
+ __do_sys_unlink fs/namei.c:4441 [inline]
+ __se_sys_unlink fs/namei.c:4439 [inline]
+ __ia32_sys_unlink+0x77/0xa0 fs/namei.c:4439
+ do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+ __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+ do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
+ entry_SYSENTER_compat_after_hwframe+0x70/0x82
+
+Uninit was created at:
+ slab_post_alloc_hook+0x12d/0xb60 mm/slab.h:716
+ slab_alloc_node mm/slub.c:3451 [inline]
+ __kmem_cache_alloc_node+0x4ff/0x8b0 mm/slub.c:3490
+ kmalloc_trace+0x51/0x200 mm/slab_common.c:1057
+ kmalloc include/linux/slab.h:559 [inline]
+ udf_fiiter_find_entry+0x213/0xa60 fs/udf/namei.c:66
+ udf_unlink+0x80/0x920 fs/udf/namei.c:547
+ vfs_unlink+0x66f/0xa20 fs/namei.c:4327
+ do_unlinkat+0x3fa/0xed0 fs/namei.c:4393
+ __do_sys_unlink fs/namei.c:4441 [inline]
+ __se_sys_unlink fs/namei.c:4439 [inline]
+ __ia32_sys_unlink+0x77/0xa0 fs/namei.c:4439
+ do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+ __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+ do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
+ entry_SYSENTER_compat_after_hwframe+0x70/0x82
+
+CPU: 1 PID: 5699 Comm: syz-executor.2 Not tainted 6.4.0-rc7-syzkaller-ge6bc8833d80f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
