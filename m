@@ -2,40 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7CE17382B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 14:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 627E77383F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 14:40:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231818AbjFUMDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 08:03:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37360 "EHLO
+        id S232026AbjFUMkU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 08:40:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231807AbjFUMDY (ORCPT
+        with ESMTP id S229871AbjFUMkQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 08:03:24 -0400
-Received: from out28-67.mail.aliyun.com (out28-67.mail.aliyun.com [115.124.28.67])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 880EA1731;
-        Wed, 21 Jun 2023 05:03:15 -0700 (PDT)
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.05035161|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0594308-0.000475321-0.940094;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047198;MF=wangyugui@e16-tech.com;NM=1;PH=DS;RN=6;RT=6;SR=0;TI=SMTPD_---.TaOR52l_1687348985;
-Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.TaOR52l_1687348985)
-          by smtp.aliyun-inc.com;
-          Wed, 21 Jun 2023 20:03:11 +0800
-Date:   Wed, 21 Jun 2023 20:03:13 +0800
-From:   Wang Yugui <wangyugui@e16-tech.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: Re: [PATCH v3 0/8] Create large folios in iomap buffered write path
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>
-In-Reply-To: <20230612203910.724378-1-willy@infradead.org>
-References: <20230612203910.724378-1-willy@infradead.org>
-Message-Id: <20230621200305.23CB.409509F4@e16-tech.com>
+        Wed, 21 Jun 2023 08:40:16 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9578B9B;
+        Wed, 21 Jun 2023 05:40:15 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 3BFCC21C99;
+        Wed, 21 Jun 2023 12:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1687351214;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fFl+TwM20LVAi4D/M42g+0o8Juj67CDLcdDgvpi5mGk=;
+        b=2FPVqngejQ6nbFfhWhapGLmZpDHw6BVy8/mlH5YZ5kpptEdS0oRwhJuBfnnpkuZpbv1uOm
+        L9oZmWHbuzhc1ihKKk2l5VkbYnj2nbdJggbx7yrGbWNBVPHvGgv+ZUf6OhBgIOzL106MxH
+        9BeTN2dUokYmMBAI0GWR5BlMqx8BwJY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1687351214;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fFl+TwM20LVAi4D/M42g+0o8Juj67CDLcdDgvpi5mGk=;
+        b=D+LeytsQ+1KY5k+wYxnYApJQ9IVKTvtEW3lRs8hBUhQOSs5GBZLYb6vs2ZhA2/oVZQSIOb
+        BB6KwNEjAz36kBAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1152D133E6;
+        Wed, 21 Jun 2023 12:40:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 1kRSA67vkmRpUAAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Wed, 21 Jun 2023 12:40:14 +0000
+Date:   Wed, 21 Jun 2023 14:33:50 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     syzbot <syzbot+9992306148b06272f3bb@syzkaller.appspotmail.com>
+Cc:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] WARNING in emit_fiemap_extent
+Message-ID: <20230621123350.GP16168@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <00000000000091164305fe966bdd@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.81.04 [en]
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000091164305fe966bdd@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -43,79 +73,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue, Jun 20, 2023 at 02:34:46PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    40f71e7cd3c6 Merge tag 'net-6.4-rc7' of git://git.kernel.o..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=166d2acf280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=7ff8f87c7ab0e04e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9992306148b06272f3bb
+> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c65e87280000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1094a78b280000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/2dc89d5fee38/disk-40f71e7c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/0ced5a475218/vmlinux-40f71e7c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d543a4f69684/bzImage-40f71e7c.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/7cde8d2312ae/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9992306148b06272f3bb@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 5351 at fs/btrfs/extent_io.c:2824 emit_fiemap_extent+0xee/0x410
 
-> Commit ebb7fb1557b1 limited the length of ioend chains to 4096 entries
-> to improve worst-case latency.  Unfortunately, this had the effect of
-> limiting the performance of:
-> 
-> fio -name write-bandwidth -rw=write -bs=1024Ki -size=32Gi -runtime=30 \
->         -iodepth 1 -ioengine sync -zero_buffers=1 -direct=0 -end_fsync=1 \
->         -numjobs=4 -directory=/mnt/test
-> 
-> The problem ends up being lock contention on the i_pages spinlock as we
-> clear the writeback bit on each folio (and propagate that up through
-> the tree).  By using larger folios, we decrease the number of folios
-> to be processed by a factor of 256 for this benchmark, eliminating the
-> lock contention.
-> 
-> It's also the right thing to do.  This is a project that has been on
-> the back burner for years, it just hasn't been important enough to do
-> before now.
-> 
-> I think it's probably best if this goes through the iomap tree since
-> the changes outside iomap are either to the page cache or they're
-> trivial.
-> 
-> v3:
->  - Fix the handling of compound highmem pages in copy_page_from_iter_atomic()
->  - Rename fgp_t to fgf_t
->  - Clarify some wording in the documentation
+2804 static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
+2805                                 struct fiemap_cache *cache,
+2806                                 u64 offset, u64 phys, u64 len, u32 flags)
+2807 {
+2808         int ret = 0;
+2809
+2810         /* Set at the end of extent_fiemap(). */
+2811         ASSERT((flags & FIEMAP_EXTENT_LAST) == 0);
+2812
+2813         if (!cache->cached)
+2814                 goto assign;
+2815
+2816         /*
+2817          * Sanity check, extent_fiemap() should have ensured that new
+2818          * fiemap extent won't overlap with cached one.
+2819          * Not recoverable.
+2820          *
+2821          * NOTE: Physical address can overlap, due to compression
+2822          */
+2823         if (cache->offset + cache->len > offset) {
+2824                 WARN_ON(1);
+2825                 return -EINVAL;
+2826         }
 
-This v3 patches broken linux 6.4-rc7.
-
-fstests(btrfs/007 and more) will fail with the v3 patches .
-but it works well without the v3 patches.
-
-Best Regards
-Wang Yugui (wangyugui@e16-tech.com)
-2023/06/21
-
-> v2:
->  - Fix misplaced semicolon
->  - Rename fgp_order to fgp_set_order
->  - Rename FGP_ORDER to FGP_GET_ORDER
->  - Add fgp_t
->  - Update the documentation for ->release_folio
->  - Fix iomap_invalidate_folio()
->  - Update iomap_release_folio()
-> 
-> Matthew Wilcox (Oracle) (8):
->   iov_iter: Handle compound highmem pages in
->     copy_page_from_iter_atomic()
->   iomap: Remove large folio handling in iomap_invalidate_folio()
->   doc: Correct the description of ->release_folio
->   iomap: Remove unnecessary test from iomap_release_folio()
->   filemap: Add fgf_t typedef
->   filemap: Allow __filemap_get_folio to allocate large folios
->   iomap: Create large folios in the buffered write path
->   iomap: Copy larger chunks from userspace
-> 
->  Documentation/filesystems/locking.rst | 15 ++++--
->  fs/btrfs/file.c                       |  6 +--
->  fs/f2fs/compress.c                    |  2 +-
->  fs/f2fs/f2fs.h                        |  2 +-
->  fs/gfs2/bmap.c                        |  2 +-
->  fs/iomap/buffered-io.c                | 43 ++++++++--------
->  include/linux/iomap.h                 |  2 +-
->  include/linux/pagemap.h               | 71 ++++++++++++++++++++++-----
->  lib/iov_iter.c                        | 43 ++++++++++------
->  mm/filemap.c                          | 61 ++++++++++++-----------
->  mm/folio-compat.c                     |  2 +-
->  mm/readahead.c                        | 13 -----
->  12 files changed, 159 insertions(+), 103 deletions(-)
-> 
-> -- 
-> 2.39.2
-
-
+Either we can drop the warning as the error is handled, or there was
+another issue that was supposed to be caught earlier.
