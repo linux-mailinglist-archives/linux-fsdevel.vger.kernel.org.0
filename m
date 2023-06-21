@@ -2,45 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3597387CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 16:50:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 245507387D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 16:51:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232405AbjFUOut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 10:50:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56726 "EHLO
+        id S232632AbjFUOv2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 10:51:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232631AbjFUOt7 (ORCPT
+        with ESMTP id S232750AbjFUOuD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 10:49:59 -0400
+        Wed, 21 Jun 2023 10:50:03 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DDB41FE3;
-        Wed, 21 Jun 2023 07:48:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E80C2720;
+        Wed, 21 Jun 2023 07:48:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6D9BD6157D;
-        Wed, 21 Jun 2023 14:48:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442ADC433C8;
-        Wed, 21 Jun 2023 14:48:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CFCFD61599;
+        Wed, 21 Jun 2023 14:48:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B994CC433C8;
+        Wed, 21 Jun 2023 14:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687358911;
-        bh=GO2Zpq+zEeHviRURrvBxPy0RDxVvHVMo8mIPU4EFgtg=;
+        s=k20201202; t=1687358916;
+        bh=pggVtFIJOHc1WNCGw/P+3qaXBccgFmkuMQjd2r0u1l0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U6V2naQbXigFIXeLsdIg+qFhnexPblANO1n1Qw09zr3ud+7tpbSov9FnBQ9mYnTXL
-         lifWCy/aZRl1cp/LyGpUoFCLjh1TomzKwS5OCA1W2o9dyQ1zQdyi4sGCbpizOrepbZ
-         jLsLII0Xj4zuH4jAQH3fA4URf0EgEhhpQAMTT2RoUxGxKS1nvmK6OV6bq/wmzkCi7n
-         JOAX+Be7lojDWJKrukgrXTyHjQKzoHthsktNuaRdaVkoCnv0Qt2XZOrfayEkiO3l3L
-         ea0TR+VWFKqktvcTnqkvok+YzvhlMBWzt8ntkhnNAWMTgawREke+taAklU3pBjGVvL
-         C8qikFw+exckw==
+        b=q11OQ8ZmZ/n9TdwyupcKDBpx/CYhNdfVGriqFHvIzk98dH+/2O+EX5/XeMXoOFir9
+         w3Ro2JtaocJ0QS2i4pXM1CI9omsEqRTNg72Pe6GkPd4PiLDqaFFISG+rP3h9oNZ8k8
+         LV/W+7Z15TpaIFOhY2u0HoM0P+KAPaosr8VSvgekIFiJab0ztnE9gCdYeWfThYpPZf
+         LBrL7RpwYIoJwvZXFVdu8t6JagcLz9+abcpDst5hKv9Q9xWQQv3qNTVR7FIdlggC7V
+         sBFAZyYbILWWeFs5c8c2V8IUohl14dHSK4WMu6ckndwgQPa56KNBj32xn20cYHS5Hz
+         bme3xz26A8RbA==
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
+To:     Christian Brauner <brauner@kernel.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 33/79] fuse: switch to new ctime accessors
-Date:   Wed, 21 Jun 2023 10:45:46 -0400
-Message-ID: <20230621144735.55953-32-jlayton@kernel.org>
+Subject: [PATCH 35/79] hfs: switch to new ctime accessors
+Date:   Wed, 21 Jun 2023 10:45:48 -0400
+Message-ID: <20230621144735.55953-34-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230621144735.55953-1-jlayton@kernel.org>
 References: <20230621144507.55591-1-jlayton@kernel.org>
@@ -63,115 +62,123 @@ inode->i_ctime.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/fuse/control.c |  2 +-
- fs/fuse/dir.c     |  8 ++++----
- fs/fuse/inode.c   | 18 ++++++++++--------
- 3 files changed, 15 insertions(+), 13 deletions(-)
+ fs/hfs/catalog.c |  8 ++++----
+ fs/hfs/dir.c     |  2 +-
+ fs/hfs/inode.c   | 13 ++++++-------
+ fs/hfs/sysdep.c  |  2 +-
+ 4 files changed, 12 insertions(+), 13 deletions(-)
 
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index 247ef4f76761..b5df89d0c95a 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -235,7 +235,7 @@ static struct dentry *fuse_ctl_add_dentry(struct dentry *parent,
- 	inode->i_mode = mode;
- 	inode->i_uid = fc->user_id;
- 	inode->i_gid = fc->group_id;
--	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
-+	inode->i_atime = inode->i_mtime = inode_ctime_set_current(inode);
- 	/* setting ->i_op to NULL is not allowed */
- 	if (iop)
- 		inode->i_op = iop;
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 5a4a7155cf1c..03fbb83b7127 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -933,7 +933,7 @@ void fuse_flush_time_update(struct inode *inode)
- static void fuse_update_ctime_in_cache(struct inode *inode)
- {
- 	if (!IS_NOCMTIME(inode)) {
--		inode->i_ctime = current_time(inode);
-+		inode_ctime_set_current(inode);
- 		mark_inode_dirty_sync(inode);
- 		fuse_flush_time_update(inode);
- 	}
-@@ -1715,8 +1715,8 @@ int fuse_flush_times(struct inode *inode, struct fuse_file *ff)
- 	inarg.mtimensec = inode->i_mtime.tv_nsec;
- 	if (fm->fc->minor >= 23) {
- 		inarg.valid |= FATTR_CTIME;
--		inarg.ctime = inode->i_ctime.tv_sec;
--		inarg.ctimensec = inode->i_ctime.tv_nsec;
-+		inarg.ctime = inode_ctime_peek(inode).tv_sec;
-+		inarg.ctimensec = inode_ctime_peek(inode).tv_nsec;
- 	}
- 	if (ff) {
- 		inarg.valid |= FATTR_FH;
-@@ -1857,7 +1857,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
- 		if (attr->ia_valid & ATTR_MTIME)
- 			inode->i_mtime = attr->ia_mtime;
- 		if (attr->ia_valid & ATTR_CTIME)
--			inode->i_ctime = attr->ia_ctime;
-+			inode_ctime_set(inode, attr->ia_ctime);
- 		/* FIXME: clear I_DIRTY_SYNC? */
+diff --git a/fs/hfs/catalog.c b/fs/hfs/catalog.c
+index d365bf0b8c77..6fd2ae856178 100644
+--- a/fs/hfs/catalog.c
++++ b/fs/hfs/catalog.c
+@@ -133,7 +133,7 @@ int hfs_cat_create(u32 cnid, struct inode *dir, const struct qstr *str, struct i
+ 		goto err1;
+ 
+ 	dir->i_size++;
+-	dir->i_mtime = dir->i_ctime = current_time(dir);
++	dir->i_mtime = inode_ctime_set_current(dir);
+ 	mark_inode_dirty(dir);
+ 	hfs_find_exit(&fd);
+ 	return 0;
+@@ -269,7 +269,7 @@ int hfs_cat_delete(u32 cnid, struct inode *dir, const struct qstr *str)
  	}
  
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 660be31aaabc..54e06d3874e7 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -194,8 +194,8 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
- 		inode->i_mtime.tv_nsec  = attr->mtimensec;
- 	}
- 	if (!(cache_mask & STATX_CTIME)) {
--		inode->i_ctime.tv_sec   = attr->ctime;
--		inode->i_ctime.tv_nsec  = attr->ctimensec;
-+		inode_ctime_set_sec(inode, attr->ctime);
-+		inode_ctime_set_nsec(inode, attr->ctimensec);
+ 	dir->i_size--;
+-	dir->i_mtime = dir->i_ctime = current_time(dir);
++	dir->i_mtime = inode_ctime_set_current(dir);
+ 	mark_inode_dirty(dir);
+ 	res = 0;
+ out:
+@@ -337,7 +337,7 @@ int hfs_cat_move(u32 cnid, struct inode *src_dir, const struct qstr *src_name,
+ 	if (err)
+ 		goto out;
+ 	dst_dir->i_size++;
+-	dst_dir->i_mtime = dst_dir->i_ctime = current_time(dst_dir);
++	dst_dir->i_mtime = inode_ctime_set_current(dst_dir);
+ 	mark_inode_dirty(dst_dir);
+ 
+ 	/* finally remove the old entry */
+@@ -349,7 +349,7 @@ int hfs_cat_move(u32 cnid, struct inode *src_dir, const struct qstr *src_name,
+ 	if (err)
+ 		goto out;
+ 	src_dir->i_size--;
+-	src_dir->i_mtime = src_dir->i_ctime = current_time(src_dir);
++	src_dir->i_mtime = inode_ctime_set_current(src_dir);
+ 	mark_inode_dirty(src_dir);
+ 
+ 	type = entry.type;
+diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+index 3e1e3dcf0b48..bb9e651c1008 100644
+--- a/fs/hfs/dir.c
++++ b/fs/hfs/dir.c
+@@ -263,7 +263,7 @@ static int hfs_remove(struct inode *dir, struct dentry *dentry)
+ 	if (res)
+ 		return res;
+ 	clear_nlink(inode);
+-	inode->i_ctime = current_time(inode);
++	inode_ctime_set_current(inode);
+ 	hfs_delete_inode(inode);
+ 	mark_inode_dirty(inode);
+ 	return 0;
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index 441d7fc952e3..d8008d926a19 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -200,7 +200,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
+ 	inode->i_uid = current_fsuid();
+ 	inode->i_gid = current_fsgid();
+ 	set_nlink(inode, 1);
+-	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
++	inode->i_mtime = inode->i_atime = inode_ctime_set_current(inode);
+ 	HFS_I(inode)->flags = 0;
+ 	HFS_I(inode)->rsrc_inode = NULL;
+ 	HFS_I(inode)->fs_blocks = 0;
+@@ -355,8 +355,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
+ 			inode->i_mode |= S_IWUGO;
+ 		inode->i_mode &= ~hsb->s_file_umask;
+ 		inode->i_mode |= S_IFREG;
+-		inode->i_ctime = inode->i_atime = inode->i_mtime =
+-				hfs_m_to_utime(rec->file.MdDat);
++		inode->i_atime = inode->i_mtime = hfs_m_to_utime(rec->file.MdDat);
++		inode_ctime_set(inode, inode->i_mtime);
+ 		inode->i_op = &hfs_file_inode_operations;
+ 		inode->i_fop = &hfs_file_operations;
+ 		inode->i_mapping->a_ops = &hfs_aops;
+@@ -366,8 +366,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
+ 		inode->i_size = be16_to_cpu(rec->dir.Val) + 2;
+ 		HFS_I(inode)->fs_blocks = 0;
+ 		inode->i_mode = S_IFDIR | (S_IRWXUGO & ~hsb->s_dir_umask);
+-		inode->i_ctime = inode->i_atime = inode->i_mtime =
+-				hfs_m_to_utime(rec->dir.MdDat);
++		inode->i_atime = inode->i_mtime = hfs_m_to_utime(rec->dir.MdDat);
++		inode_ctime_set(inode, inode->i_mtime);
+ 		inode->i_op = &hfs_dir_inode_operations;
+ 		inode->i_fop = &hfs_dir_operations;
+ 		break;
+@@ -654,8 +654,7 @@ int hfs_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 
+ 		truncate_setsize(inode, attr->ia_size);
+ 		hfs_file_truncate(inode);
+-		inode->i_atime = inode->i_mtime = inode->i_ctime =
+-						  current_time(inode);
++		inode->i_atime = inode->i_mtime = inode_ctime_set_current(inode);
  	}
  
- 	if (attr->blksize != 0)
-@@ -259,8 +259,8 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
- 		attr->mtimensec = inode->i_mtime.tv_nsec;
- 	}
- 	if (cache_mask & STATX_CTIME) {
--		attr->ctime = inode->i_ctime.tv_sec;
--		attr->ctimensec = inode->i_ctime.tv_nsec;
-+		attr->ctime = inode_ctime_peek(inode).tv_sec;
-+		attr->ctimensec = inode_ctime_peek(inode).tv_nsec;
- 	}
- 
- 	if ((attr_version != 0 && fi->attr_version > attr_version) ||
-@@ -318,8 +318,8 @@ static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr,
- 	inode->i_size = attr->size;
- 	inode->i_mtime.tv_sec  = attr->mtime;
- 	inode->i_mtime.tv_nsec = attr->mtimensec;
--	inode->i_ctime.tv_sec  = attr->ctime;
--	inode->i_ctime.tv_nsec = attr->ctimensec;
-+	inode_ctime_set_sec(inode, attr->ctime);
-+	inode_ctime_set_nsec(inode, attr->ctimensec);
- 	if (S_ISREG(inode->i_mode)) {
- 		fuse_init_common(inode);
- 		fuse_init_file_inode(inode, attr->flags);
-@@ -1398,16 +1398,18 @@ EXPORT_SYMBOL_GPL(fuse_dev_free);
- static void fuse_fill_attr_from_inode(struct fuse_attr *attr,
- 				      const struct fuse_inode *fi)
- {
-+	struct timespec64 ctime = inode_ctime_peek(&fi->inode);
-+
- 	*attr = (struct fuse_attr){
- 		.ino		= fi->inode.i_ino,
- 		.size		= fi->inode.i_size,
- 		.blocks		= fi->inode.i_blocks,
- 		.atime		= fi->inode.i_atime.tv_sec,
- 		.mtime		= fi->inode.i_mtime.tv_sec,
--		.ctime		= fi->inode.i_ctime.tv_sec,
-+		.ctime		= ctime.tv_sec,
- 		.atimensec	= fi->inode.i_atime.tv_nsec,
- 		.mtimensec	= fi->inode.i_mtime.tv_nsec,
--		.ctimensec	= fi->inode.i_ctime.tv_nsec,
-+		.ctimensec	= ctime.tv_nsec,
- 		.mode		= fi->inode.i_mode,
- 		.nlink		= fi->inode.i_nlink,
- 		.uid		= fi->inode.i_uid.val,
+ 	setattr_copy(&nop_mnt_idmap, inode, attr);
+diff --git a/fs/hfs/sysdep.c b/fs/hfs/sysdep.c
+index 2875961fdc10..e2949390fadc 100644
+--- a/fs/hfs/sysdep.c
++++ b/fs/hfs/sysdep.c
+@@ -28,7 +28,7 @@ static int hfs_revalidate_dentry(struct dentry *dentry, unsigned int flags)
+ 	/* fix up inode on a timezone change */
+ 	diff = sys_tz.tz_minuteswest * 60 - HFS_I(inode)->tz_secondswest;
+ 	if (diff) {
+-		inode->i_ctime.tv_sec += diff;
++		inode_ctime_set_sec(inode, inode_ctime_peek(inode).tv_sec + diff);
+ 		inode->i_atime.tv_sec += diff;
+ 		inode->i_mtime.tv_sec += diff;
+ 		HFS_I(inode)->tz_secondswest += diff;
 -- 
 2.41.0
 
