@@ -2,218 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF1EB737DA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 10:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D79B5737D6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jun 2023 10:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231249AbjFUIig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Jun 2023 04:38:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33460 "EHLO
+        id S230294AbjFUIim (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Jun 2023 04:38:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjFUIib (ORCPT
+        with ESMTP id S231146AbjFUIie (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Jun 2023 04:38:31 -0400
+        Wed, 21 Jun 2023 04:38:34 -0400
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C351710E6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 01:38:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693371981
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 01:38:29 -0700 (PDT)
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230621083827euoutp02879bb0ed861808457e1b540386e969f1~qn8ugi5uS0616906169euoutp02D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 08:38:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230621083827euoutp02879bb0ed861808457e1b540386e969f1~qn8ugi5uS0616906169euoutp02D
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230621083828euoutp02e6a87b8839d883c42a6f0976e8847ab4~qn8vVmqQg0634806348euoutp023
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 08:38:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230621083828euoutp02e6a87b8839d883c42a6f0976e8847ab4~qn8vVmqQg0634806348euoutp023
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1687336707;
-        bh=p+ceLN5ku7io/26SFBn3OjERPGRRlK1fZyar/4zm1hE=;
+        s=mail20170921; t=1687336708;
+        bh=p3mOYJ8f1hVTCexaglZ7i/L8HoJqlurEbyVlQliHZdg=;
         h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=Pbg9tlpu43bSlPstWN1z2aHRMRhP9yYMjrT+938dBQS2kg+pCATCsv3EssKYLsNwR
-         0zrQlqCEa/36bbVctj8ZPghsV+jBGds3qGACru66FQPhTXg1j+tbruTzQxgvOgBzVM
-         3gkqs7EiMZ1n/sn3pcg1uq5n4lT55wVo4xKKCLkw=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        b=RaplaNf1wD/mwGTQe7KrTATIyCaJoFt2irKviIfjU0pDW6CWKHtrBLCHDHKQvwqpk
+         6b0rBkL0UzeXgIfPw8hSf11Hfl7g4KDbdK1Tt8Y4hoLoGhAkiKlceQMWHFq6aozxvY
+         S4tAdL5htcY1Q5vHyb4BzPLzcTGONgw3f+gD3JDg=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230621083826eucas1p10a3c96207c0a16f84fd975a996fe662a~qn8uHF7p82121821218eucas1p1X;
-        Wed, 21 Jun 2023 08:38:26 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6A.7C.37758.207B2946; Wed, 21
-        Jun 2023 09:38:26 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0~qn8tyilf71725417254eucas1p1_;
-        Wed, 21 Jun 2023 08:38:26 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230621083826eusmtrp1ebc64a4952224c75cae2a6bbd5708f81~qn8twaleB0064800648eusmtrp1C;
-        Wed, 21 Jun 2023 08:38:26 +0000 (GMT)
-X-AuditID: cbfec7f5-7ffff7000002937e-be-6492b702d655
+        20230621083827eucas1p1911afb01b8e07c4de65ceb9ae1cca543~qn8vFJWSq2121821218eucas1p1Z;
+        Wed, 21 Jun 2023 08:38:27 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 91.2A.42423.307B2946; Wed, 21
+        Jun 2023 09:38:27 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230621083827eucas1p2948b4efaf55064c3761c924b5b049219~qn8u0qtvQ2799227992eucas1p27;
+        Wed, 21 Jun 2023 08:38:27 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230621083827eusmtrp2c2782f3198b3fa03d1bb09a40cf6c73f~qn8u0FFW40288202882eusmtrp2n;
+        Wed, 21 Jun 2023 08:38:27 +0000 (GMT)
+X-AuditID: cbfec7f2-25927a800002a5b7-93-6492b703aa1d
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 9A.D8.10549.207B2946; Wed, 21
-        Jun 2023 09:38:26 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4B.8B.14344.307B2946; Wed, 21
+        Jun 2023 09:38:27 +0100 (BST)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230621083826eusmtip2c5a952dde2b7c93e4a70881e76d21c04~qn8tjM7TM0773907739eusmtip20;
-        Wed, 21 Jun 2023 08:38:26 +0000 (GMT)
+        20230621083827eusmtip239f1c51b1230f7e64d3e672ac51768e8~qn8uq2k3_0773907739eusmtip22;
+        Wed, 21 Jun 2023 08:38:27 +0000 (GMT)
 Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
         (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Wed, 21 Jun 2023 09:38:25 +0100
+        Wed, 21 Jun 2023 09:38:26 +0100
 From:   Pankaj Raghav <p.raghav@samsung.com>
 To:     <hare@suse.de>, <willy@infradead.org>, <david@fromorbit.com>
 CC:     <gost.dev@samsung.com>, <mcgrof@kernel.org>, <hch@lst.de>,
         <jwong@kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Pankaj Raghav <p.raghav@samsung.com>
-Subject: [RFC 1/4] fs: Allow fine-grained control of folio sizes
-Date:   Wed, 21 Jun 2023 10:38:20 +0200
-Message-ID: <20230621083823.1724337-2-p.raghav@samsung.com>
+Subject: [RFC 2/4] filemap: use minimum order while allocating folios
+Date:   Wed, 21 Jun 2023 10:38:21 +0200
+Message-ID: <20230621083823.1724337-3-p.raghav@samsung.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230621083823.1724337-1-p.raghav@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-Originating-IP: [106.110.32.140]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
         CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xScRTe7168XWjU9VrjpGWLVX/Qoqy27grL1mP0Mre27LWK4KYkkuNq
-        L7NhmqU9Jcsg2ir/0HRlApYkpZEJiGmPaVjr/ZjLXCt1SbWWeK3533e+851zvm87JE6bwyJJ
-        rT6dNehVOikhEtxsDLZOx26ZNDO7mmYwjsZXiHFdMWHM1YoHGNPefBxjXHd8AubpbSvBBE5/
-        RMyvfisRRyqbroDSXiZT2srzCWVth5FQ2v2Zyh5bdAKxUaTQsDrtbtYwY8E2UXKtvyEs7cz4
-        vdYqK2FENkkBEpJAzQHj8ypBARKRNFWGoL7wRhhf9CIo6csfwRc9CJznHejfyBtb/9BIKYJ+
-        zy38vyrb4h1U0ZQDgSeYWIBIkqBkkB3aJCTHUHFgr7IOnsAp18C97O9YqBEx0HBVBwZFAmoK
-        5FzLJ0JYTM0H78snYaE9QE2EkjcQooWUAqqu3kO8JBx85g+CEMYHJDnVF3AeA9zr7MR501Iw
-        2psFPM6CJsdzLOQBqH4S3IcfDyVbAqXXnUOiCPjscYzg8Xjwnzk+xGfCx8AvnB/ORXDKWUnw
-        5ubDyWYdr1kEroJWxNOjINAdzvsZBaabxThPi+FoHn0aTbYMS2AZlsAyLMElhJcjCZvBpSax
-        3Gw9u0fOqVK5DH2SXL0r1YYGvsf/x9NXg8o+f5O7EUYiNwISl44RT7CZNLRYo9q3nzXs2mrI
-        0LGcG0WRAqlEPC3Wp6apJFU6m8KyaazhXxcjhZFGzBnTnfDzmIYeKYuv7u2snNXIBKPfT+Z8
-        Dxaqn0bNnXfw8pOinS2KonrtiQ5t3tfEF1GLDitSltEHNFrm7pqy2+90dtm+lottX7d8iZzo
-        bl+qW1+4QhEZ5Iql6XXfW+RdyKNP7zD92etc0m1+Kd9xdtIGqW/CdvHUSTW9yfSmdcvp7sKx
-        Xc9E0HNupjfKnLbincQo8caerH29OcLHHMkxVzelBjMbcqM73Vlo7KfR8XNjFbMLT7wV3njf
-        9rYid9XqT4/67D/aHnt3bj6VF5e2EI8ZV1Lxe39dTUDdfmhtVlJ+YP0le9H9+AZ1a31J8e+G
-        hz3+NUd7Awrj4hSTJXpl3bJjUgGXrIqR4QZO9RdSoL9orAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xe7pM2yelGCxeLGGx5dg9Ros9iyYx
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0yMcRzHfZ/n6bmn42lPd9FnUXJjUio34Ugk5JDNj8T8k1NPaa6r3ZX8
+        ijslOqJdfswpWvltXd1dnVLRD8dSGkucX2E6qsmms0lt0vWw9d/r/X2/39v7s30pXHDBxYtK
+        UqSxSoVMLiL5hOXR7/ZA/K4uft554wJJ5aMuJKkr0WGSW3esmORl2ylMUlffQkg67hWSElu+
+        HUmGBwvJcEr6pASk5pv+UtPtXFJa+1pNSs2tB6UOk89Gcgd/aTwrT9rLKoOX7eTvtl8eJFLv
+        +e1ztH9FatTnq0WuFDAhUKxpxrSITwmYmwi6TZ9JTvxE8KqljHSmBIwDQV1xwv9GxadKFy50
+        A4HjgwFxYjQ0XPGBx4lKBC+thYQWURTJ+IMml+dsezDhYDYWjrVxpg5Bg2YAcxpCZjVUPcsj
+        nEwws6D8Ys5Yl2ZCocGgdCIw06H0IzgTrsxSMN5qRE6mGXdoudg91sRHI1lVl3COARp7enBu
+        tAjU5jaC40yoz2oYmwnMCAXV2iIXzlgFnY1ZPI6F0Pe48h9Pg5GaKxjHB8FuG8a5cjaCMzXl
+        JDcuFE63yTlcAfYXOzh0A1u/OzfHDXSWCzj3TMOJHEE+mqkfd4B+3AH6cQcUI/w28mTTVcmJ
+        rEqsYDOCVLJkVboiMSguJdmERv9O65/HA9WoqO9HUBPCKNSEgMJFHrS3SRcvoONl+w+wypRY
+        ZbqcVTWhqRQh8qQDwlriBEyiLI3dw7KprPK/i1GuXmosc2skr3+ka+XQ8prrBQuN5ZOOJezK
+        Prkxw7fDgs/kead55fZOClky51xXqLB8zcTtJ709Sqdsmus7O2PN5zsJv4xWka3bWv3GEEFn
+        pya+isJ+mo7e78wNs19dFKXUDvUaDj+MVFhDHN+igmv18wJritQLN+8vCDv7tDVgm3tXTo9o
+        4Jx+vbYpzP56bfaEKn5seP9ay/pmIm9LdMgig3idW+aRFXb5Es20oudCR8wvn+/B7wYHHamX
+        vXSG6PeRETPmD4UeK/va/q6xd3HKsg3Nf0pviGeU9gYc9xPR6r7oLz4RtkPr8h9kvBWXLCiw
+        dMho+po9bihNaI6JSZImqYzRk/00IkK1Wyb2x5Uq2V87wpuHqgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xe7rM2yelGOy6qWKx5dg9Ros9iyYx
         WaxcfZTJ4tqZHiaLPXtPslhc3jWHzeLGhKeMFr9/zGFz4PA4tUjCY/MKLY9NqzrZPHbfbGDz
         2Hy62uPzJrkAtig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy
-        1CJ9uwS9jN2nj7AWTJapmLNxDlsD4ybxLkZODgkBE4kHm36wdDFycQgJLGWUmDmhlx0iISOx
-        8ctVVghbWOLPtS42iKKPjBLXpj9lAkkICWxhlFh/s7yLkYODTUBLorETrFdEwEFi88Y5rCD1
-        zAJ7GCUONH4CqxcGSuzZegOsiEVAVaJ5bScbiM0rYC1x4u4lVpA5EgLyEosfSICEOQVsJDau
-        PMgIscpaov34VHaIckGJkzOfsIDYzEDlzVtnM0PYEhIHX7xghrhZSaJh8xkWCLtW4vPfZ4wT
-        GEVmIWmfhaR9FpL2BYzMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQIjc9uxn5t3MM579VHv
-        ECMTB+MhRgkOZiURXtlNk1KEeFMSK6tSi/Lji0pzUosPMZoCvTmRWUo0OR+YGvJK4g3NDEwN
-        TcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpj2PCussruv7/q9iPm1RFbCFvHX
-        oYbmGaabuN+fCzmz9JVjqfw0//UWV1KfGH9POCs65+GVWTs2cmUe39EaV6x/gWlbA2uLx/re
-        t1/3bAqM5S76eW2xXZy7yoazcVk2Pa3fvidILb3nu7aKd0FO3TZW78aYBKYmHyeGTc8kszgE
-        VsXvCo8y1s6e1PPu8BQlPeE5HczbNEN9dxrHhJVcfGHWbqKpKVs88c1SoeVnv3lZfI4Q333v
-        nYhy8aHCQ15NmeU2FzdWTcw5sLtuM8fZo/euJpS+WCQrwNw6KZyrYPPVvemMH6w85U3PhE6S
-        3r15XWPCs+duz9+43/jSvkPNM6Nlm7KUi1JEt7/11ZmT65RYijMSDbWYi4oTAStx/jBVAwAA
-X-CMS-MailID: 20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0
+        1CJ9uwS9jKfzfrAU7NKo+HzuOWMD4yuFLkZODgkBE4kND7ewdjFycQgJLGWUaPy0iQUiISOx
+        8ctVVghbWOLPtS42iKKPjBLdy14yQThbGCX+PjoM1MHBwSagJdHYyQ7SICLgILF54xywqcwC
+        exglDjR+YgJJCAu4Smy90Au2gUVAVWL9zDawXl4Ba4kD64pATAkBeYnFDyRAKjgFbCQ2rjzI
+        CGILAVW0H58KNp5XQFDi5MwnYFOYgcqbt85mhrAlJA6+eMEMcbOSRMPmM1C/1Ep0vjrNNoFR
+        ZBaS9llI2mchaV/AyLyKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMDK3Hfu5ZQfjylcf9Q4x
+        MnEwHmKU4GBWEuGV3TQpRYg3JbGyKrUoP76oNCe1+BCjKdCXE5mlRJPzgakhryTe0MzA1NDE
+        zNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qBae/L6W9T1wbu3uCwYNr/ZQ4BNyO1
+        LQ8wbLL8k5l0rT99ddz/r6sF446+/NF6q3vurennH0e+dvtz48SCsh6B0mm3407ObT77yjH2
+        svm6SE3e4zdUTgp9uzntoc/G59s3SnQmtpp/v9NZ1623pvP7tyuzTtcX86qkik1i3K80waTz
+        7/rVPF+b3n2aJSi1v/9HtNIMe8fp00Rmeehk/PZereLMxqCygLV5buT1iWoncjNV+R5ut7nX
+        1fL33rOb+3Su3zg/+6jiR5Xs63v63wY+fP3o3AHRs/N2qK+wmPvvCqNIfpX9oq4DO9R+BPnq
+        WCyN/r/t2L/T113aufYJcjc9nxxlsntir0ick9u1RQcOLajuV2Ipzkg01GIuKk4EAByVAs1V
+        AwAA
+X-CMS-MailID: 20230621083827eucas1p2948b4efaf55064c3761c924b5b049219
 X-Msg-Generator: CA
-X-RootMTR: 20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0
+X-RootMTR: 20230621083827eucas1p2948b4efaf55064c3761c924b5b049219
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0
+X-CMS-RootMailID: 20230621083827eucas1p2948b4efaf55064c3761c924b5b049219
 References: <20230621083823.1724337-1-p.raghav@samsung.com>
-        <CGME20230621083826eucas1p11fc8d3e023caafa8b30fd04c66c9c7d0@eucas1p1.samsung.com>
+        <CGME20230621083827eucas1p2948b4efaf55064c3761c924b5b049219@eucas1p2.samsung.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-
-Some filesystems want to be able to limit the maximum size of folios,
-and some want to be able to ensure that folios are at least a certain
-size.  Add mapping_set_folio_orders() to allow this level of control
-(although it is not yet honoured).
-
-[Pankaj]: added mapping_min_folio_order()
+Add support to filemap and readahead to use the folio order set by
+mapping_min_folio_order().
 
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/pagemap.h | 46 +++++++++++++++++++++++++++++++++++++----
- 1 file changed, 42 insertions(+), 4 deletions(-)
+ mm/filemap.c   |  9 ++++++---
+ mm/readahead.c | 34 ++++++++++++++++++++++++----------
+ 2 files changed, 30 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 716953ee1ebd..462c36c9dd88 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -202,9 +202,15 @@ enum mapping_flags {
- 	AS_EXITING	= 4, 	/* final truncate in progress */
- 	/* writeback related tags are not used */
- 	AS_NO_WRITEBACK_TAGS = 5,
--	AS_LARGE_FOLIO_SUPPORT = 6,
-+	AS_FOLIO_ORDER_MIN = 8,
-+	AS_FOLIO_ORDER_MAX = 13,
-+	/* 8-17 are used for FOLIO_ORDER */
- };
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 3b73101f9f86..9dc8568e9336 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1936,7 +1936,8 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+ 			gfp |= GFP_NOWAIT | __GFP_NOWARN;
+ 		}
  
-+#define AS_FOLIO_ORDER_MIN_MASK	0x00001f00
-+#define AS_FOLIO_ORDER_MAX_MASK 0x0002e000
-+#define AS_FOLIO_ORDER_MASK (AS_FOLIO_ORDER_MIN_MASK | AS_FOLIO_ORDER_MAX_MASK)
+-		folio = filemap_alloc_folio(gfp, 0);
++		folio = filemap_alloc_folio(gfp,
++					    mapping_min_folio_order(mapping));
+ 		if (!folio)
+ 			return ERR_PTR(-ENOMEM);
+ 
+@@ -2495,7 +2496,8 @@ static int filemap_create_folio(struct file *file,
+ 	struct folio *folio;
+ 	int error;
+ 
+-	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
++	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
++				    mapping_min_folio_order(mapping));
+ 	if (!folio)
+ 		return -ENOMEM;
+ 
+@@ -3663,7 +3665,8 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
+ repeat:
+ 	folio = filemap_get_folio(mapping, index);
+ 	if (IS_ERR(folio)) {
+-		folio = filemap_alloc_folio(gfp, 0);
++		folio = filemap_alloc_folio(gfp,
++					    mapping_min_folio_order(mapping));
+ 		if (!folio)
+ 			return ERR_PTR(-ENOMEM);
+ 		err = filemap_add_folio(mapping, folio, index, gfp);
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 47afbca1d122..090b810ddeed 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -245,7 +245,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 			continue;
+ 		}
+ 
+-		folio = filemap_alloc_folio(gfp_mask, 0);
++		folio = filemap_alloc_folio(gfp_mask,
++					    mapping_min_folio_order(mapping));
+ 		if (!folio)
+ 			break;
+ 		if (filemap_add_folio(mapping, folio, index + i,
+@@ -259,7 +260,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+ 		if (i == nr_to_read - lookahead_size)
+ 			folio_set_readahead(folio);
+ 		ractl->_workingset |= folio_test_workingset(folio);
+-		ractl->_nr_pages++;
++		ractl->_nr_pages += folio_nr_pages(folio);
++		i += folio_nr_pages(folio) - 1;
+ 	}
+ 
+ 	/*
+@@ -311,6 +313,8 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 	struct file_ra_state *ra = ractl->ra;
+ 	struct backing_dev_info *bdi = inode_to_bdi(mapping->host);
+ 	unsigned long max_pages, index;
++	unsigned int folio_order = mapping_min_folio_order(mapping);
++	unsigned int nr_of_pages = (1  << folio_order);
+ 
+ 	if (unlikely(!mapping->a_ops->read_folio && !mapping->a_ops->readahead))
+ 		return;
+@@ -320,6 +324,13 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 	 * be up to the optimal hardware IO size
+ 	 */
+ 	index = readahead_index(ractl);
++	if (folio_order && (index & (nr_of_pages - 1))) {
++		unsigned long old_index = index;
 +
- /**
-  * mapping_set_error - record a writeback error in the address_space
-  * @mapping: the mapping in which an error should be set
-@@ -294,6 +300,29 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
- 	m->gfp_mask = mask;
++		index = round_down(index, nr_of_pages);
++		nr_to_read += (old_index - index);
++	}
++
+ 	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+ 	nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
+ 	while (nr_to_read) {
+@@ -795,18 +806,20 @@ void readahead_expand(struct readahead_control *ractl,
+ 	struct file_ra_state *ra = ractl->ra;
+ 	pgoff_t new_index, new_nr_pages;
+ 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
++	unsigned min_folio_count = 1U << mapping_min_folio_order(mapping);
+ 
+-	new_index = new_start / PAGE_SIZE;
++	new_index = new_start / (min_folio_count * PAGE_SIZE);
+ 
+ 	/* Expand the leading edge downwards */
+ 	while (ractl->_index > new_index) {
+-		unsigned long index = ractl->_index - 1;
++		unsigned long index = ractl->_index - min_folio_count;
+ 		struct folio *folio = xa_load(&mapping->i_pages, index);
+ 
+ 		if (folio && !xa_is_value(folio))
+ 			return; /* Folio apparently present */
+ 
+-		folio = filemap_alloc_folio(gfp_mask, 0);
++		folio = filemap_alloc_folio(gfp_mask,
++					    mapping_min_folio_order(mapping));
+ 		if (!folio)
+ 			return;
+ 		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
+@@ -818,7 +831,7 @@ void readahead_expand(struct readahead_control *ractl,
+ 			ractl->_workingset = true;
+ 			psi_memstall_enter(&ractl->_pflags);
+ 		}
+-		ractl->_nr_pages++;
++		ractl->_nr_pages += folio_nr_pages(folio);
+ 		ractl->_index = folio->index;
+ 	}
+ 
+@@ -833,7 +846,8 @@ void readahead_expand(struct readahead_control *ractl,
+ 		if (folio && !xa_is_value(folio))
+ 			return; /* Folio apparently present */
+ 
+-		folio = filemap_alloc_folio(gfp_mask, 0);
++		folio = filemap_alloc_folio(gfp_mask,
++					    mapping_min_folio_order(mapping));
+ 		if (!folio)
+ 			return;
+ 		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
+@@ -845,10 +859,10 @@ void readahead_expand(struct readahead_control *ractl,
+ 			ractl->_workingset = true;
+ 			psi_memstall_enter(&ractl->_pflags);
+ 		}
+-		ractl->_nr_pages++;
++		ractl->_nr_pages += folio_nr_pages(folio);
+ 		if (ra) {
+-			ra->size++;
+-			ra->async_size++;
++			ra->size += folio_nr_pages(folio);
++			ra->async_size += folio_nr_pages(folio);
+ 		}
+ 	}
  }
- 
-+/**
-+ * mapping_set_folio_orders() - Set the range of folio sizes supported.
-+ * @mapping: The file.
-+ * @min: Minimum folio order (between 0-31 inclusive).
-+ * @max: Maximum folio order (between 0-31 inclusive).
-+ *
-+ * The filesystem should call this function in its inode constructor to
-+ * indicate which sizes of folio the VFS can use to cache the contents
-+ * of the file.  This should only be used if the filesystem needs special
-+ * handling of folio sizes (ie there is something the core cannot know).
-+ * Do not tune it based on, eg, i_size.
-+ *
-+ * Context: This should not be called while the inode is active as it
-+ * is non-atomic.
-+ */
-+static inline void mapping_set_folio_orders(struct address_space *mapping,
-+		unsigned int min, unsigned int max)
-+{
-+	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
-+			(min << AS_FOLIO_ORDER_MIN) |
-+			(max << AS_FOLIO_ORDER_MAX);
-+}
-+
- /**
-  * mapping_set_large_folios() - Indicate the file supports large folios.
-  * @mapping: The file.
-@@ -307,7 +336,17 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
-  */
- static inline void mapping_set_large_folios(struct address_space *mapping)
- {
--	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-+	mapping_set_folio_orders(mapping, 0, 31);
-+}
-+
-+static inline unsigned mapping_max_folio_order(struct address_space *mapping)
-+{
-+	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
-+}
-+
-+static inline unsigned mapping_min_folio_order(struct address_space *mapping)
-+{
-+	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
- }
- 
- /*
-@@ -316,8 +355,7 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
-  */
- static inline bool mapping_large_folio_support(struct address_space *mapping)
- {
--	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
--		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-+	return mapping_max_folio_order(mapping) > 0;
- }
- 
- static inline int filemap_nr_thps(struct address_space *mapping)
 -- 
 2.39.2
 
