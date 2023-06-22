@@ -2,57 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A62C73A00C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 13:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D81F73A05F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 14:02:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230280AbjFVLsn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jun 2023 07:48:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46602 "EHLO
+        id S231332AbjFVMC2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jun 2023 08:02:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230169AbjFVLsk (ORCPT
+        with ESMTP id S231311AbjFVMCM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jun 2023 07:48:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5576210DB;
-        Thu, 22 Jun 2023 04:48:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A0B7C61852;
-        Thu, 22 Jun 2023 11:48:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C231C433C0;
-        Thu, 22 Jun 2023 11:48:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687434517;
-        bh=hDxDCv7zSgyITMTVqgTLgVj3+A5rrzl8kUtCWmH4PP4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=pDZaUE2fLRTTmSGrgzeudLthHAhtDlMgPHpp5i7iKO2+rkTJWcdbb5mcqMwn5ST/w
-         qj6qozBW4LuzXQhhcRF0ti/ctkSXuM4RBjvWLlFpi7bbov9/HkmGQ9tuPzSk43x91K
-         hWGIw1AYfJxy8am10REIgpnmM/ZblyqT3FI4TR4PEm+2ShrKPnG1MTOUCvQ6yyrBY4
-         oLi4TaYIvWWvkNfC5XDP70IKYNCAbADNyTZBq+dmDgTxWUnw/7X15RKfm7TwfxEzvv
-         BkAAl+HolbSXRuZbwQXRWnkO38i6t01tX82ApM9p0v8yoQKNpKvKxHm8Tomzp/mMNq
-         hcU8oLxcmvifA==
-Message-ID: <4db7c65bee0739fe7983059296cfc95f20647fa3.camel@kernel.org>
-Subject: Re: [PATCH 2/2] selftests: add OFD lock tests
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Stas Sergeev <stsp2@yandex.ru>, linux-kernel@vger.kernel.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
-Date:   Thu, 22 Jun 2023 07:48:34 -0400
-In-Reply-To: <20230621152214.2720319-3-stsp2@yandex.ru>
-References: <20230621152214.2720319-1-stsp2@yandex.ru>
-         <20230621152214.2720319-3-stsp2@yandex.ru>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+        Thu, 22 Jun 2023 08:02:12 -0400
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4CCC1BF2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jun 2023 05:01:50 -0700 (PDT)
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-34245536f58so44047765ab.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jun 2023 05:01:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687435305; x=1690027305;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N1cxu0iAoPZS1HY5aOwRamdOMX95U6KeklcxbDcJhB8=;
+        b=Pilkpys1n5gwG8zdotekiLlPW/1Du91CukVL/5egzp4/FFs5SaNFTF9K35MQ0VP5af
+         /k9vuXyqVcPuE+z/7ir/LNnwxbrmEilQTCnjVetTnPWGGSsFWSqZ8wMHx2slAiSWxwig
+         Dz1jJIwaaFSwfF+itP6vlDShsM2Kcar61xzKWAbP6n/8qkU+PaILu/ocdAN5saARIQr4
+         4H4Nu6Jxex2bQRM0BcZgARWm+GnFGdaA+GuSoJLj9aCBW08pWepVm9ygeZCGQ5xxAQ02
+         RXUS9TWP8QurPMnFlxlbXN0ZFUj4OWWOB0VA76qlIELylk0CbfvRzq5FpwH0GKTpY6nB
+         cHLA==
+X-Gm-Message-State: AC+VfDxzzRHHzEAJvyFOggRf78/9DVo+RWLdeqph+Tc+E6ZcF9b+U9JG
+        U4BmgO4WO5bCB+mI8rt5vhz+XjBwrNt1070MWLokx0h65QmZ
+X-Google-Smtp-Source: ACHHUZ5VA9fpHn051cyL3FqA2cB/6o0LMEt0X/lJxekftRL5iu/OUPfMv/9LEpV9hv+xsKY91s7dnx/kb2X4WxARq4AOFydQFyPn
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Received: by 2002:a05:6e02:541:b0:341:e2fe:bddd with SMTP id
+ i1-20020a056e02054100b00341e2febdddmr7424038ils.3.1687435304888; Thu, 22 Jun
+ 2023 05:01:44 -0700 (PDT)
+Date:   Thu, 22 Jun 2023 05:01:44 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000edf08305feb6a5f6@google.com>
+Subject: [syzbot] [ext4?] UBSAN: shift-out-of-bounds in ext4_handle_clustersize
+From:   syzbot <syzbot+f4cf49c6365d87eb8e0e@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+        syzkaller-bugs@googlegroups.com, trix@redhat.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,202 +56,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-06-21 at 20:22 +0500, Stas Sergeev wrote:
-> Test the basic locking stuff on 2 fds: multiple read locks,
-> conflicts between read and write locks, use of len=3D=3D0 for queries.
-> Also tests for F_UNLCK F_OFD_GETLK extension.
->=20
-> Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
->=20
-> CC: Jeff Layton <jlayton@kernel.org>
-> CC: Chuck Lever <chuck.lever@oracle.com>
-> CC: Alexander Viro <viro@zeniv.linux.org.uk>
-> CC: Christian Brauner <brauner@kernel.org>
-> CC: linux-fsdevel@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> CC: Shuah Khan <shuah@kernel.org>
-> CC: linux-kselftest@vger.kernel.org
-> CC: linux-api@vger.kernel.org
->=20
-> ---
->  tools/testing/selftests/locking/Makefile   |   2 +
->  tools/testing/selftests/locking/ofdlocks.c | 132 +++++++++++++++++++++
->  2 files changed, 134 insertions(+)
->  create mode 100644 tools/testing/selftests/locking/ofdlocks.c
->=20
-> diff --git a/tools/testing/selftests/locking/Makefile b/tools/testing/sel=
-ftests/locking/Makefile
-> index 6e7761ab3536..a83ced1626de 100644
-> --- a/tools/testing/selftests/locking/Makefile
-> +++ b/tools/testing/selftests/locking/Makefile
-> @@ -7,4 +7,6 @@ all:
-> =20
->  TEST_PROGS :=3D ww_mutex.sh
-> =20
-> +TEST_GEN_PROGS :=3D ofdlocks
-> +
->  include ../lib.mk
+Hello,
 
-I'm not sure this really belongs in the "locking" directory. Given that
-there is only the ww_mutex test in there, that's more for internal
-synchronization mechanisms, I think.
+syzbot found the following issue on:
 
-Can you create a new "filelock" directory and drop this into there
-instead?
+HEAD commit:    1b29d271614a Merge tag 'staging-6.4-rc7' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fefd03280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7ff8f87c7ab0e04e
+dashboard link: https://syzkaller.appspot.com/bug?extid=f4cf49c6365d87eb8e0e
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bd5aafc3a720/disk-1b29d271.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6689979a4ad9/vmlinux-1b29d271.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7f1acb11ce85/bzImage-1b29d271.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f4cf49c6365d87eb8e0e@syzkaller.appspotmail.com
+
+UBSAN: shift-out-of-bounds in fs/ext4/super.c:4401:27
+shift exponent 374 is too large for 32-bit type 'int'
+CPU: 0 PID: 27421 Comm: syz-executor.0 Not tainted 6.4.0-rc6-syzkaller-00269-g1b29d271614a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ ubsan_epilogue lib/ubsan.c:217 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c3/0x420 lib/ubsan.c:387
+ ext4_handle_clustersize+0x592/0x5c0 fs/ext4/super.c:4401
+ __ext4_fill_super fs/ext4/super.c:5279 [inline]
+ ext4_fill_super+0x3a66/0x6c60 fs/ext4/super.c:5672
+ get_tree_bdev+0x405/0x620 fs/super.c:1303
+ vfs_get_tree+0x8c/0x270 fs/super.c:1510
+ do_new_mount+0x28f/0xae0 fs/namespace.c:3039
+ do_mount fs/namespace.c:3382 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f7e1888d8ba
+Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7e195cef88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 000000000000043c RCX: 00007f7e1888d8ba
+RDX: 0000000020000440 RSI: 0000000020000180 RDI: 00007f7e195cefe0
+RBP: 00007f7e195cf020 R08: 00007f7e195cf020 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000440
+R13: 0000000020000180 R14: 00007f7e195cefe0 R15: 00000000200001c0
+ </TASK>
+================================================================================
 
 
-> diff --git a/tools/testing/selftests/locking/ofdlocks.c b/tools/testing/s=
-elftests/locking/ofdlocks.c
-> new file mode 100644
-> index 000000000000..1ccb2b9b5ead
-> --- /dev/null
-> +++ b/tools/testing/selftests/locking/ofdlocks.c
-> @@ -0,0 +1,132 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#define _GNU_SOURCE
-> +#include <fcntl.h>
-> +#include <assert.h>
-> +#include <stdio.h>
-> +#include <unistd.h>
-> +#include <string.h>
-> +#include "../kselftest.h"
-> +
-> +static int lock_set(int fd, struct flock *fl)
-> +{
-> +	int ret;
-> +
-> +	fl->l_pid =3D 0;		// needed for OFD locks
-> +	fl->l_whence =3D SEEK_SET;
-> +	ret =3D fcntl(fd, F_OFD_SETLK, fl);
-> +	if (ret)
-> +		perror("fcntl()");
-> +	return ret;
-> +}
-> +
-> +static int lock_get(int fd, struct flock *fl)
-> +{
-> +	int ret;
-> +
-> +	fl->l_pid =3D 0;		// needed for OFD locks
-> +	fl->l_whence =3D SEEK_SET;
-> +	ret =3D fcntl(fd, F_OFD_GETLK, fl);
-> +	if (ret)
-> +		perror("fcntl()");
-> +	return ret;
-> +}
-> +
-> +int main(void)
-> +{
-> +	int rc;
-> +	struct flock fl, fl2;
-> +	int fd =3D open("/tmp/aa", O_RDWR | O_CREAT | O_EXCL, 0600);
-> +	int fd2 =3D open("/tmp/aa", O_RDONLY);
-> +
-> +	unlink("aa");
-> +	assert(fd !=3D -1);
-> +	assert(fd2 !=3D -1);
-> +	ksft_print_msg("[INFO] opened fds %i %i\n", fd, fd2);
-> +
-> +	/* Set some read lock */
-> +	fl.l_type =3D F_RDLCK;
-> +	fl.l_start =3D 5;
-> +	fl.l_len =3D 3;
-> +	rc =3D lock_set(fd, &fl);
-> +	if (rc =3D=3D 0) {
-> +		ksft_print_msg
-> +		    ("[SUCCESS] set OFD read lock on first fd\n");
-> +	} else {
-> +		ksft_print_msg("[FAIL] to set OFD read lock on first fd\n");
-> +		return -1;
-> +	}
-> +	/* Make sure read locks do not conflict on different fds. */
-> +	fl.l_type =3D F_RDLCK;
-> +	fl.l_start =3D 5;
-> +	fl.l_len =3D 1;
-> +	rc =3D lock_get(fd2, &fl);
-> +	if (rc !=3D 0)
-> +		return -1;
-> +	if (fl.l_type !=3D F_UNLCK) {
-> +		ksft_print_msg("[FAIL] read locks conflicted\n");
-> +		return -1;
-> +	}
-> +	/* Make sure read/write locks do conflict on different fds. */
-> +	fl.l_type =3D F_WRLCK;
-> +	fl.l_start =3D 5;
-> +	fl.l_len =3D 1;
-> +	rc =3D lock_get(fd2, &fl);
-> +	if (rc !=3D 0)
-> +		return -1;
-> +	if (fl.l_type !=3D F_UNLCK) {
-> +		ksft_print_msg
-> +		    ("[SUCCESS] read and write locks conflicted\n");
-> +	} else {
-> +		ksft_print_msg
-> +		    ("[SUCCESS] read and write locks not conflicted\n");
-> +		return -1;
-> +	}
-> +	/* Get info about the lock on first fd. */
-> +	fl.l_type =3D F_UNLCK;
-> +	fl.l_start =3D 5;
-> +	fl.l_len =3D 1;
-> +	rc =3D lock_get(fd, &fl);
-> +	if (rc !=3D 0) {
-> +		ksft_print_msg
-> +		    ("[FAIL] F_OFD_GETLK with F_UNLCK not supported\n");
-> +		return -1;
-> +	}
-> +	if (fl.l_type !=3D F_UNLCK) {
-> +		ksft_print_msg
-> +		    ("[SUCCESS] F_UNLCK test returns: locked, type %i pid %i len %zi\n=
-",
-> +		     fl.l_type, fl.l_pid, fl.l_len);
-> +	} else {
-> +		ksft_print_msg
-> +		    ("[FAIL] F_OFD_GETLK with F_UNLCK did not return lock info\n");
-> +		return -1;
-> +	}
-> +	/* Try the same but by locking everything by len=3D=3D0. */
-> +	fl2.l_type =3D F_UNLCK;
-> +	fl2.l_start =3D 0;
-> +	fl2.l_len =3D 0;
-> +	rc =3D lock_get(fd, &fl2);
-> +	if (rc !=3D 0) {
-> +		ksft_print_msg
-> +		    ("[FAIL] F_OFD_GETLK with F_UNLCK not supported\n");
-> +		return -1;
-> +	}
-> +	if (memcmp(&fl, &fl2, sizeof(fl))) {
-> +		ksft_print_msg
-> +		    ("[FAIL] F_UNLCK test returns: locked, type %i pid %i len %zi\n",
-> +		     fl.l_type, fl.l_pid, fl.l_len);
-> +		return -1;
-> +	}
-> +	ksft_print_msg("[SUCCESS] F_UNLCK with len=3D=3D0 returned the same\n")=
-;
-> +	/* Get info about the lock on second fd - no locks on it. */
-> +	fl.l_type =3D F_UNLCK;
-> +	fl.l_start =3D 0;
-> +	fl.l_len =3D 0;
-> +	lock_get(fd2, &fl);
-> +	if (fl.l_type !=3D F_UNLCK) {
-> +		ksft_print_msg
-> +		    ("[FAIL] F_OFD_GETLK with F_UNLCK return lock info from another fd=
-\n");
-> +		return -1;
-> +	}
-> +	return 0;
-> +}
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I'm not opposed to adding a selftest here, but most filesystem testing
-is done via xfstests:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-    https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-It would be better to add this test to the existing generic/478 test
-that tests OFD locks. Can you patch that to add a test for the new
-functionality?
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
