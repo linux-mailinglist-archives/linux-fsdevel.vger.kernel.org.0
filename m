@@ -2,179 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B8F6739DD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 11:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DE43739DEB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 12:00:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230460AbjFVJzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jun 2023 05:55:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53240 "EHLO
+        id S229944AbjFVKAI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jun 2023 06:00:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231889AbjFVJzA (ORCPT
+        with ESMTP id S230125AbjFVKAG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jun 2023 05:55:00 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B3A84236
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jun 2023 02:51:28 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-66767d628e2so2923044b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jun 2023 02:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687427487; x=1690019487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D/R3CsCgyC5I5IFTAwGkIo+LTgke09vH4sxQ8OwfMMA=;
-        b=lDW8Tmr7YvzYwUjPKXDIkMEibMm5wSGSfYsX93fB1BC6vEPhP+LcJmca6BnQWVWwaz
-         axoD5PMkKfNQh6BQCJo8lAkMH3bJdGX0bf5+reGjft2knfQ2Z5V30c0VColb1xMf776h
-         kXoNvUvrhbLLK6qsXo7kVuHAoeNwGOQO9VUL2eeZIEyO8W69W7ZzY76z2W5eqG7E9Jaj
-         /YPwJ8t+mPfuDa2ZsaANNXui1vUlYhU7XDQr582wpGVa+X0YoBV3aCaa+MRul5kw/7TD
-         USEEZy3tKINZEtUw/4hKvoW1OMW9xNDPTFpEZ9JvO2FT5F4P3cYwzuXI3mYYkh4N1+mI
-         x9Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687427487; x=1690019487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D/R3CsCgyC5I5IFTAwGkIo+LTgke09vH4sxQ8OwfMMA=;
-        b=aNr9+5e1m4mgtXLVFLjsR5K+UxRtIvkFiLjL47iKVJxnCAJT+HYEC7u7XIuaO6tS18
-         dh/7XmxDyfgmddV0dVWwOSPYW192ACvO1r85BfBAj1GTgHQgN8EGkhNbgQOTbrDBZtX4
-         vkfMMm5UH0MVcf1gvT0EVFnhUAWvVk+a9lWtYIdxV5l6Txcoy5URDe3IMOGTMxQo1VRj
-         GQXgm0NP9/yeI/emqm+bMOUFIvGvPtVYQhIS/lrTdFVbebbrMZL6ZXdJaMFPaT5rpzNd
-         MRVSBsLJeR01vuNPR39tGDz2hV7cX9r7PmprVQLsl/AcDumdjEfXDwvHlkapQ5GkBOZD
-         Zpcg==
-X-Gm-Message-State: AC+VfDwjwG3IPuF1+cZ3r8mZZjOi3yzM9hd74uqHskEFUu1uLVYMny0s
-        gXP6hDcUe/oLGHq96prD60jyRQ==
-X-Google-Smtp-Source: ACHHUZ6QW4bD2NsuF8Dbb2eiUlzJuhazbkcCQ1wnphTvXqm76A/VVle0TlCNY1IO9YJC0ldtCDxayQ==
-X-Received: by 2002:a05:6a00:124f:b0:66a:4dd2:7b38 with SMTP id u15-20020a056a00124f00b0066a4dd27b38mr2992762pfi.0.1687427487510;
-        Thu, 22 Jun 2023 02:51:27 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
-        by smtp.gmail.com with ESMTPSA id m2-20020aa79002000000b0064d1d8fd24asm4222621pfo.60.2023.06.22.02.51.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 02:51:26 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qCGyJ-00Enhc-1G;
-        Thu, 22 Jun 2023 19:51:23 +1000
-Date:   Thu, 22 Jun 2023 19:51:23 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     syzbot <syzbot+510dcbdc6befa1e6b2f6@syzkaller.appspotmail.com>,
-        djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] UBSAN: array-index-out-of-bounds in
- xfs_attr3_leaf_add_work
-Message-ID: <ZJQZm+UGyJZZNTvN@dread.disaster.area>
-References: <0000000000001c8edb05fe518644@google.com>
- <ZI+3QXDHiohgv/Pb@dread.disaster.area>
- <20230621080521.GB56560@sol.localdomain>
+        Thu, 22 Jun 2023 06:00:06 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D27B1A4;
+        Thu, 22 Jun 2023 03:00:04 -0700 (PDT)
+Received: from [192.168.10.55] (unknown [182.179.162.32])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id ACB56660700E;
+        Thu, 22 Jun 2023 10:59:52 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1687428003;
+        bh=j6EIKy4cSoieiiC75xDAROKxOVZOc1C1Q3ERjaD2rrg=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=kRefeMfElCB0LrRwAPYztcZVCqNLKlAY97v3Q/+gSbt8FQGxVOiOkBAPJfhVBGx6v
+         mmAZmocJdVTX/rjNz+1F8eGoJUORk1IdrLsGp3Z+dcEEKCCY/1POO+SLkGxgtPyYea
+         iClcyMr22ugS09ZVw0JKZ6pJdESY0iN07Ru7l6Qh33JovoYECG8HFySgIz9RZ5dsJu
+         m9TQvgRJTypc6GSUtvLPgvhCEmkeWHTN2YsuBmkHOGCG5voJ/WyscBGvjpKtQx2QQX
+         5Af7LXdLzf2Ldq09coY0AWmqPVxnnPRgYHszu5hdJrN502Q6JPV8YwM4auwxYskvqc
+         pr/YXHD+luiDA==
+Message-ID: <76725a75-b17d-8a88-8d41-15c8daafe7e4@collabora.com>
+Date:   Thu, 22 Jun 2023 14:59:48 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230621080521.GB56560@sol.localdomain>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Andrei Vagin <avagin@gmail.com>, Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v19 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+References: <20230615141144.665148-1-usama.anjum@collabora.com>
+ <20230615141144.665148-3-usama.anjum@collabora.com>
+ <ZJHp6hSeS6lMo7qx@gmail.com>
+ <1c1beeda-ceed-fdab-bbf5-1881e0a8b102@collabora.com>
+ <CABb0KFHpE+jJH0MmxZTFaQ9FNFNUnJcnnv7sSGDYqDqqB_FRqw@mail.gmail.com>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CABb0KFHpE+jJH0MmxZTFaQ9FNFNUnJcnnv7sSGDYqDqqB_FRqw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 21, 2023 at 01:05:21AM -0700, Eric Biggers wrote:
-> On Mon, Jun 19, 2023 at 12:02:41PM +1000, 'Dave Chinner' via syzkaller-bugs wrote:
-> > > XFS (loop0): Mounting V4 Filesystem 5e6273b8-2167-42bb-911b-418aa14a1261
-> > > XFS (loop0): Ending clean mount
-> > > xfs filesystem being mounted at /root/file0 supports timestamps until 2038-01-19 (0x7fffffff)
-> > > ================================================================================
-> > > UBSAN: array-index-out-of-bounds in fs/xfs/libxfs/xfs_attr_leaf.c:1560:3
-> > > index 14 is out of range for type '__u8 [1]'
-> > > CPU: 1 PID: 5021 Comm: syz-executor198 Not tainted 6.4.0-rc6-next-20230613-syzkaller #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/25/2023
-> > > Call Trace:
-> > >  <TASK>
-> > >  __dump_stack lib/dump_stack.c:88 [inline]
-> > >  dump_stack_lvl+0x136/0x150 lib/dump_stack.c:106
-> > >  ubsan_epilogue lib/ubsan.c:217 [inline]
-> > >  __ubsan_handle_out_of_bounds+0xd5/0x140 lib/ubsan.c:348
-> > >  xfs_attr3_leaf_add_work+0x1528/0x1730 fs/xfs/libxfs/xfs_attr_leaf.c:1560
-> > >  xfs_attr3_leaf_add+0x750/0x880 fs/xfs/libxfs/xfs_attr_leaf.c:1438
-> > >  xfs_attr_leaf_try_add+0x1b7/0x660 fs/xfs/libxfs/xfs_attr.c:1242
-> > >  xfs_attr_leaf_addname fs/xfs/libxfs/xfs_attr.c:444 [inline]
-> > >  xfs_attr_set_iter+0x16c4/0x2f90 fs/xfs/libxfs/xfs_attr.c:721
-> > >  xfs_xattri_finish_update+0x3c/0x140 fs/xfs/xfs_attr_item.c:332
-> > 
-> > The on disk format for this field is defined as:
-> > 
-> > typedef struct xfs_attr_leaf_name_local {
-> >         __be16  valuelen;               /* number of bytes in value */
-> >         __u8    namelen;                /* length of name bytes */
-> >         __u8    nameval[1];             /* name/value bytes */
-> > } xfs_attr_leaf_name_local_t
-> > 
-> > If someone wants to do change the on-disk format definition to use
-> > "kernel proper" flex arrays in both the kernel code and user space,
-> > update all the documentation and do all the validation work that
-> > on-disk format changes require for all XFS disk structures that are
-> > defined this way, then we'll fix this.
-> > 
-> > But as it stands, these structures have been defined this way for 25
-> > years and the code accessing them has been around for just as long.
-> > The code is not broken and it does not need fixing. We have way more
-> > important things to be doing that fiddling with on disk format
-> > definitions and long standing, working code just to shut up UBSAN
-> > and/or syzbot.
-> > 
-> > WONTFIX, NOTABUG.
+
+
+On 6/21/23 6:29 PM, Michał Mirosław wrote:
+> On Wed, 21 Jun 2023 at 08:35, Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
+>> On 6/20/23 11:03 PM, Andrei Vagin wrote:
+>> ...
+>>>> +struct pagemap_scan_private {
+>>>> +    struct page_region *vec_buf, cur_buf;
+>>>> +    unsigned long long vec_buf_len, vec_buf_index, max_pages, found_pages, flags;
+>>>
+>>> should it be just unsigned long?
+>> These internal values are storing data coming from user in struct
+>> pm_scan_arg in which all variables are 64 bit(__u64) explicitly. This is
+>> why we have unsigned long long here. It is absolutely necessary.
 > 
-> My understanding is that the main motivation for the conversions to flex arrays
-> is kernel hardening, as it allows bounds checking to be enabled.
+> vec_buf_len and vec_buf_index can only have values in 0..512 range.
+> flags has only a few lower bits defined (this is checked on ioctl
+> entry) and max_pages can be limited to ULONG_MAX. Actually putting `if
+> (!max_pages || max_pages > ULONG_MAX) max_pages = ULONG_MAX` would
+> avoid having to check !max_pages during the walk.
+I'll update.
 
-<sigh>
+> 
+> Best Regards
+> Michał Mirosław
 
-Do you think we don't know this?
-
-We can't actually rely on the compiler checking here. We *must* to
-do runtime verification of these on-disk format structures because
-we are parsing dynamic structures, not fixed size arrays.  IOWs, we
-already bounds check these arrays (in multiple ways!) before we do
-the memcpy(), and have done so for many, many years.
-
-*This code is safe* no matter what the compiler says.
-
-Last time this came up in a FORTIFY_SOURCE context, Darrick proposed
-to change this to use unsafe_memcpy() to switch off the compile time
-checking because we *must* do runtime checking of the array lengths
-provided in the structure itself.
-
-Kees pretty much knocked that down by instead proposing some
-"flex_cpy()" API he was working on that never went anywhere. So
-kernel security people essentially said "no, we don't want you to
-fix it that way, but then failed to provide the new infrastructure
-they said we should use for this purpose.
-
-Damned if we do, damned if we don't.
-
-So until someone from the security side of the fence ponies up the
-resources to fix this in a way that is acceptible to the security
-people and they do all the testing and validation we require for
-such an on-disk format change, the status quo is unlikely to change.
-
-> You can probably get away with not fixing this for a little while longer, as
-> that stuff is still a work in progress.  But I would suggest you be careful
-> about potentially getting yourself into a position where XFS is blocking
-> enabling security mitigations for the whole kernel...
-
-<sigh>
-
-I'm really getting tired of all these "you'll do what we say or
-else" threats that have been made over the past few months.
-
-As I said: if this is a priority, then the entities who have given
-it priority need to provide resources to fix it, not demand that
-others do the work they want done right now for free. If anyone
-wants work done for free, then they'll just have to wait in line
-until we've got time to address it.
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+BR,
+Muhammad Usama Anjum
