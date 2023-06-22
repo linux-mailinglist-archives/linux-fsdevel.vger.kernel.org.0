@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C93C739A5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 10:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81D7A739A6D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 10:43:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230474AbjFVIm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jun 2023 04:42:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55938 "EHLO
+        id S230381AbjFVIn1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jun 2023 04:43:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230142AbjFVImU (ORCPT
+        with ESMTP id S231305AbjFVImf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jun 2023 04:42:20 -0400
-Received: from out-41.mta1.migadu.com (out-41.mta1.migadu.com [IPv6:2001:41d0:203:375::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D476526A5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jun 2023 01:41:28 -0700 (PDT)
+        Thu, 22 Jun 2023 04:42:35 -0400
+Received: from out-7.mta1.migadu.com (out-7.mta1.migadu.com [IPv6:2001:41d0:203:375::7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9902B1BD0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jun 2023 01:41:36 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1687423285;
+        t=1687423293;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FjncEPBmZQNKtUMkKxyWnfUd+QNedTmj64H5ENjps78=;
-        b=lnC4EAsriqzk6Vg3PsGJ6YdZPgIBp18Lhel2S0f8vfVmaxOMpUH7w6LfdRXOcYPLlNu3I3
-        j/qu/8a2yrW6Gfq3DhvSuklliGWfa6l2tvkk9Ar9ygKDw9xtKuJU8ntv2Opi7E65LTv/fu
-        oxqUNwg0dU4TV+Hlx7tn3EnVt9tgXR8=
+        bh=Z+30fV/iN1iesGacxkaE9JIcYdi6gua+ASW3Yz7h8bY=;
+        b=CxBImOW/hNO5cXp3wK8RSStC+rLEzyxL2mXDMqLFN/YsRlgHVgf5PvDLFcI34eWQmCvkd9
+        3THwQNEw1YQyanLWHvcbM97v3IDV1byn3r24RVpy9KTWBRd2fEO4Ah83WPt2zZsEN37/0a
+        ZxWtreKvDzY3GuQKFUgAQo+IR9ZiSZc=
 From:   Qi Zheng <qi.zheng@linux.dev>
 To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
@@ -39,9 +39,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-btrfs@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH 12/29] mbcache: dynamically allocate the mbcache shrinker
-Date:   Thu, 22 Jun 2023 08:39:15 +0000
-Message-Id: <20230622083932.4090339-13-qi.zheng@linux.dev>
+Subject: [PATCH 13/29] ext4: dynamically allocate the ext4-es shrinker
+Date:   Thu, 22 Jun 2023 08:39:16 +0000
+Message-Id: <20230622083932.4090339-14-qi.zheng@linux.dev>
 In-Reply-To: <20230622083932.4090339-1-qi.zheng@linux.dev>
 References: <20230622083932.4090339-1-qi.zheng@linux.dev>
 MIME-Version: 1.0
@@ -60,102 +60,87 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 From: Qi Zheng <zhengqi.arch@bytedance.com>
 
 In preparation for implementing lockless slab shrink,
-we need to dynamically allocate the mbcache shrinker,
+we need to dynamically allocate the ext4-es shrinker,
 so that it can be freed asynchronously using kfree_rcu().
 Then it doesn't need to wait for RCU read-side critical
-section when releasing the struct mb_cache.
+section when releasing the struct ext4_sb_info.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- fs/mbcache.c | 39 +++++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 18 deletions(-)
+ fs/ext4/ext4.h           |  2 +-
+ fs/ext4/extents_status.c | 21 ++++++++++++---------
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/fs/mbcache.c b/fs/mbcache.c
-index 2a4b8b549e93..fec393e55a66 100644
---- a/fs/mbcache.c
-+++ b/fs/mbcache.c
-@@ -37,7 +37,7 @@ struct mb_cache {
- 	struct list_head	c_list;
- 	/* Number of entries in cache */
- 	unsigned long		c_entry_count;
--	struct shrinker		c_shrink;
-+	struct shrinker		*c_shrink;
- 	/* Work for shrinking when the cache has too many entries */
- 	struct work_struct	c_shrink_work;
- };
-@@ -293,8 +293,7 @@ EXPORT_SYMBOL(mb_cache_entry_touch);
- static unsigned long mb_cache_count(struct shrinker *shrink,
- 				    struct shrink_control *sc)
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 0a2d55faa095..1bd150d454f5 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1651,7 +1651,7 @@ struct ext4_sb_info {
+ 	__u32 s_csum_seed;
+ 
+ 	/* Reclaim extents from extent status tree */
+-	struct shrinker s_es_shrinker;
++	struct shrinker *s_es_shrinker;
+ 	struct list_head s_es_list;	/* List of inodes with reclaimable extents */
+ 	long s_es_nr_inode;
+ 	struct ext4_es_stats s_es_stats;
+diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+index 9b5b8951afb4..fea82339f4b4 100644
+--- a/fs/ext4/extents_status.c
++++ b/fs/ext4/extents_status.c
+@@ -1596,7 +1596,7 @@ static unsigned long ext4_es_count(struct shrinker *shrink,
+ 	unsigned long nr;
+ 	struct ext4_sb_info *sbi;
+ 
+-	sbi = container_of(shrink, struct ext4_sb_info, s_es_shrinker);
++	sbi = shrink->private_data;
+ 	nr = percpu_counter_read_positive(&sbi->s_es_stats.es_stats_shk_cnt);
+ 	trace_ext4_es_shrink_count(sbi->s_sb, sc->nr_to_scan, nr);
+ 	return nr;
+@@ -1605,8 +1605,7 @@ static unsigned long ext4_es_count(struct shrinker *shrink,
+ static unsigned long ext4_es_scan(struct shrinker *shrink,
+ 				  struct shrink_control *sc)
  {
--	struct mb_cache *cache = container_of(shrink, struct mb_cache,
--					      c_shrink);
-+	struct mb_cache *cache = shrink->private_data;
+-	struct ext4_sb_info *sbi = container_of(shrink,
+-					struct ext4_sb_info, s_es_shrinker);
++	struct ext4_sb_info *sbi = shrink->private_data;
+ 	int nr_to_scan = sc->nr_to_scan;
+ 	int ret, nr_shrunk;
  
- 	return cache->c_entry_count;
- }
-@@ -333,8 +332,8 @@ static unsigned long mb_cache_shrink(struct mb_cache *cache,
- static unsigned long mb_cache_scan(struct shrinker *shrink,
- 				   struct shrink_control *sc)
- {
--	struct mb_cache *cache = container_of(shrink, struct mb_cache,
--					      c_shrink);
-+	struct mb_cache *cache = shrink->private_data;
+@@ -1690,15 +1689,19 @@ int ext4_es_register_shrinker(struct ext4_sb_info *sbi)
+ 	if (err)
+ 		goto err3;
+ 
+-	sbi->s_es_shrinker.scan_objects = ext4_es_scan;
+-	sbi->s_es_shrinker.count_objects = ext4_es_count;
+-	sbi->s_es_shrinker.seeks = DEFAULT_SEEKS;
+-	err = register_shrinker(&sbi->s_es_shrinker, "ext4-es:%s",
++	sbi->s_es_shrinker = shrinker_alloc_and_init(ext4_es_count, ext4_es_scan,
++						     0, DEFAULT_SEEKS, 0, sbi);
++	if (!sbi->s_es_shrinker)
++		goto err4;
 +
- 	return mb_cache_shrink(cache, sc->nr_to_scan);
++	err = register_shrinker(sbi->s_es_shrinker, "ext4-es:%s",
+ 				sbi->s_sb->s_id);
+ 	if (err)
+-		goto err4;
++		goto err5;
+ 
+ 	return 0;
++err5:
++	shrinker_free(sbi->s_es_shrinker);
+ err4:
+ 	percpu_counter_destroy(&sbi->s_es_stats.es_stats_shk_cnt);
+ err3:
+@@ -1716,7 +1719,7 @@ void ext4_es_unregister_shrinker(struct ext4_sb_info *sbi)
+ 	percpu_counter_destroy(&sbi->s_es_stats.es_stats_cache_misses);
+ 	percpu_counter_destroy(&sbi->s_es_stats.es_stats_all_cnt);
+ 	percpu_counter_destroy(&sbi->s_es_stats.es_stats_shk_cnt);
+-	unregister_shrinker(&sbi->s_es_shrinker);
++	unregister_and_free_shrinker(sbi->s_es_shrinker);
  }
  
-@@ -370,26 +369,30 @@ struct mb_cache *mb_cache_create(int bucket_bits)
- 	cache->c_hash = kmalloc_array(bucket_count,
- 				      sizeof(struct hlist_bl_head),
- 				      GFP_KERNEL);
--	if (!cache->c_hash) {
--		kfree(cache);
--		goto err_out;
--	}
-+	if (!cache->c_hash)
-+		goto err_c_hash;
-+
- 	for (i = 0; i < bucket_count; i++)
- 		INIT_HLIST_BL_HEAD(&cache->c_hash[i]);
- 
--	cache->c_shrink.count_objects = mb_cache_count;
--	cache->c_shrink.scan_objects = mb_cache_scan;
--	cache->c_shrink.seeks = DEFAULT_SEEKS;
--	if (register_shrinker(&cache->c_shrink, "mbcache-shrinker")) {
--		kfree(cache->c_hash);
--		kfree(cache);
--		goto err_out;
--	}
-+	cache->c_shrink = shrinker_alloc_and_init(mb_cache_count, mb_cache_scan,
-+						  0, DEFAULT_SEEKS, 0, cache);
-+	if (!cache->c_shrink)
-+		goto err_shrinker;
-+
-+	if (register_shrinker(cache->c_shrink, "mbcache-shrinker"))
-+		goto err_register;
- 
- 	INIT_WORK(&cache->c_shrink_work, mb_cache_shrink_worker);
- 
- 	return cache;
- 
-+err_register:
-+	shrinker_free(cache->c_shrink);
-+err_shrinker:
-+	kfree(cache->c_hash);
-+err_c_hash:
-+	kfree(cache);
- err_out:
- 	return NULL;
- }
-@@ -406,7 +409,7 @@ void mb_cache_destroy(struct mb_cache *cache)
- {
- 	struct mb_cache_entry *entry, *next;
- 
--	unregister_shrinker(&cache->c_shrink);
-+	unregister_and_free_shrinker(cache->c_shrink);
- 
- 	/*
- 	 * We don't bother with any locking. Cache must not be used at this
+ /*
 -- 
 2.30.2
 
