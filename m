@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C59D739654
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 06:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7622373965F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 06:25:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbjFVEWJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jun 2023 00:22:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41688 "EHLO
+        id S229889AbjFVEZZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jun 2023 00:25:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230417AbjFVEWF (ORCPT
+        with ESMTP id S229472AbjFVEZW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jun 2023 00:22:05 -0400
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 421F61BE3;
-        Wed, 21 Jun 2023 21:21:54 -0700 (PDT)
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-311394406d0so4220831f8f.2;
-        Wed, 21 Jun 2023 21:21:54 -0700 (PDT)
+        Thu, 22 Jun 2023 00:25:22 -0400
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D79AE65;
+        Wed, 21 Jun 2023 21:25:21 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-4f86bc35f13so6761493e87.1;
+        Wed, 21 Jun 2023 21:25:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687407713; x=1689999713;
+        d=1e100.net; s=20221208; t=1687407919; x=1689999919;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ECnfbr1yMldiaqGJ4AwBQXH8Qu2uEGTBBXNGiQr9KY=;
-        b=JdM4u+HlPkJEwG2PTTdNk6gkZLEAipSkMuxkwuy29Nswu7Rv6kci/ZauLKY5zfJoye
-         F2sDO0PLowady/RMAVVpVdh/7lJ5Z2W+d7N4xJ6zyt9zd8S3dGvzrehGAWNVr6ATYJKg
-         c5Fbbcs5IFsGpQr7gnERMMjwunT3Q3+V6IXwvbb4Igf6IyTSVLTi5npSDK8ZU/796eOD
-         8dFfe0zPPP34IqOG86+nn7chj5/Tvhsy/00jGSw6CMv/lqEX49Rjn2QqHcBwR1ZiGMGe
-         TCkCuP9xP7zKWHk/u23csS43ipN2qov8LqhWcIy5DaU00mmQHo1KH/AF7SvvLK2sUJDn
-         W9yQ==
-X-Gm-Message-State: AC+VfDzl+QuYSxQQ+2TgzOp5M1c576ipciyMyO+wRvhKvjU32phktY1D
-        A72Xtc9Jy0QYfc4VwnXf8VY=
-X-Google-Smtp-Source: ACHHUZ6noBUR8iTvT8VR1EETx/SJbcA6a56KL+Jlcz/+OUxvfjHqkrQVqSA29+PLsepDYKMNhlEycQ==
-X-Received: by 2002:a05:6000:10ce:b0:312:9eb6:33da with SMTP id b14-20020a05600010ce00b003129eb633damr17577wrx.20.1687407712404;
-        Wed, 21 Jun 2023 21:21:52 -0700 (PDT)
-Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
-        by smtp.gmail.com with ESMTPSA id j10-20020a5d604a000000b0031272fced4dsm5942680wrt.52.2023.06.21.21.21.49
+        bh=A5vC2aRsA2WDjAiqv/C0BR7ctU6hTo76uwUZaC8vGUs=;
+        b=e6F8fko4BYJFHTF4on103Lcgb1pv1rWWncx67Q87nXomutGCc2pmjmtRcq+HHAh9Zz
+         ZpOfpKMXjZ5A5GK/V4Sj7hoEWTtlUshbuobnWXs1v9qjH0mVTHjn5E44xfF6ArK+GHG2
+         4LAGMtr4Du0kfH+s229E70KmOTZTdNq62TY2nkwIL1IStpIehH05Zz/AmUx3xc792l8P
+         6QuGTft1UDM9RqGhdh4w1/BVGz9bFyuhmbKL/JuXXrtncgCplVAoow4MOdDTEDwM3twO
+         vGB5w82asHvBwBUmHTlsPRwj9V2Td0xiZXyNK1FdyXhszsP+kSUr3hHKh/Xwx/pGw+ey
+         CnDQ==
+X-Gm-Message-State: AC+VfDzQ7XoMC5Kzk1ecAIBAUosvB073D3vZJXRekIjTD2rU/ey6Gyo4
+        UD6ac+JRZ6jlvILL8Yzbo6k=
+X-Google-Smtp-Source: ACHHUZ6mLLpZ2jzgBbisqW8BsQ34AJIZtXtyRLGlK/Pv18m3vLOsDnG3vORq9yee5CR+W4060ihrFA==
+X-Received: by 2002:a05:6512:313c:b0:4f9:566f:1aab with SMTP id p28-20020a056512313c00b004f9566f1aabmr3597524lfd.29.1687407919067;
+        Wed, 21 Jun 2023 21:25:19 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:59? ([2a0b:e7c0:0:107::aaaa:59])
+        by smtp.gmail.com with ESMTPSA id y7-20020a1c4b07000000b003f17848673fsm6553494wma.27.2023.06.21.21.25.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Jun 2023 21:21:51 -0700 (PDT)
-Message-ID: <fc37eccc-b9b3-d888-6b57-78cd61986a11@kernel.org>
-Date:   Thu, 22 Jun 2023 06:21:48 +0200
+        Wed, 21 Jun 2023 21:25:18 -0700 (PDT)
+Message-ID: <68038b83-3221-e351-909c-7f2722b612df@kernel.org>
+Date:   Thu, 22 Jun 2023 06:25:15 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
 Subject: Re: [PATCH 08/11] sysctl: Add size to register_sysctl_init
 Content-Language: en-US
-To:     Joel Granados <j.granados@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Joel Granados <j.granados@samsung.com>
 Cc:     mcgrof@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
         Theodore Ts'o <tytso@mit.edu>,
         "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Juergen Gross <jgross@suse.com>,
         Stefano Stabellini <sstabellini@kernel.org>,
         Benjamin LaHaise <bcrl@kvack.org>,
@@ -114,10 +114,10 @@ Cc:     mcgrof@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
 References: <20230621091000.424843-1-j.granados@samsung.com>
  <CGME20230621091037eucas1p188e11d8064526a5a0549217d5a419647@eucas1p1.samsung.com>
  <20230621091000.424843-9-j.granados@samsung.com>
- <2023062150-outbound-quiet-2609@gregkh>
- <20230621131552.pqsordxcjmiopciq@localhost>
+ <36fae2b0-4cd2-58b5-cc12-9abdd5ce235b@kernel.org>
+ <20230621131147.c3jegl4hgjplcrpu@localhost>
 From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <20230621131552.pqsordxcjmiopciq@localhost>
+In-Reply-To: <20230621131147.c3jegl4hgjplcrpu@localhost>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,
@@ -131,23 +131,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 21. 06. 23, 15:15, Joel Granados wrote:
-> On Wed, Jun 21, 2023 at 12:47:58PM +0200, Greg Kroah-Hartman wrote:
->> On Wed, Jun 21, 2023 at 11:09:57AM +0200, Joel Granados wrote:
->>>   static int __init random_sysctls_init(void)
->>>   {
->>> -	register_sysctl_init("kernel/random", random_table);
->>> +	register_sysctl_init("kernel/random", random_table,
->>> +			     ARRAY_SIZE(random_table));
+On 21. 06. 23, 15:11, Joel Granados wrote:
+> On Wed, Jun 21, 2023 at 11:56:03AM +0200, Jiri Slaby wrote:
+>> On 21. 06. 23, 11:09, Joel Granados wrote:
+>>> In order to remove the end element from the ctl_table struct arrays, we
+>>> explicitly define the size when registering the targes. We add a size
+>>> argument to the register_sysctl_init call and pass an ARRAY_SIZE for all
+>>> the callers.
 >>
->> As mentioned before, why not just do:
->>
->> #define register_sysctl_init(string, table)	\
->> 	__register_sysctl_init(string, table, ARRAY_SIZE(table);
-> Answered you in the original mail where you suggested it.
+>> Hi, I am missing here (or in 00/00) _why_ you are doing that. Is it by a
+> Not sure what happened. I used the kernels get_maintainers.pl script
+> together with git-send-email. These are my settings:
+> 
+> "
+> tocmd ="`pwd`/scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --m --nol --nor"
+> cccmd ="`pwd`/scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --l --r --nom"
+> "
+> 
+> Could it be that there is an error in MAINTAINERS?
 
-I am curious what that was, do you have a link?
+Sorry, I don't see what you are asking about. I was asking about 
+motivation behind the series. That is a must in commit logs.
 
+thanks,
 -- 
 js
 suse labs
