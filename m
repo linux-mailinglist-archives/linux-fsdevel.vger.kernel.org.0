@@ -2,142 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 76404739683
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 06:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61C4E739706
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Jun 2023 07:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229837AbjFVEsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jun 2023 00:48:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46806 "EHLO
+        id S230527AbjFVFv3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jun 2023 01:51:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230327AbjFVEsF (ORCPT
+        with ESMTP id S230477AbjFVFv1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jun 2023 00:48:05 -0400
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F66F1BD0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 21:48:04 -0700 (PDT)
-Received: by mail-qk1-x72e.google.com with SMTP id af79cd13be357-7651c01c753so47412485a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Jun 2023 21:48:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687409283; x=1690001283;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6UCsy+QyUCZWP4W4J9LZYEzDKcZk8p92T6bjDRjYR2w=;
-        b=oHfwniBLfU5HGulzijE8rCOrITTPgYSHgaooGQjjBWcKJFnuX4h7FKKdx3euoGAiag
-         CNXrIlIW6VqzXj5t4QwmXirYnnI8yjgA0tWab8D5CWa7JGh5T2YLjLyE62Wb3r1XSep/
-         UkB5SOoL7QfpVuMjXErHR5GzS/3vV6jgOe7ATt5W50N37sMlHXXBiECxpmIFyEgrlkaA
-         eqkYtwh+PaO9xjpExzf7QOIrgyko8Ae6+vexQzTCtwB27FAlIP/D5s/RY27bakRdkIGc
-         H3bcV9rwCVJj6leoNif7r0OG+mrGE0daQXPoveDc3nZ8dve0t4D9vge6I+ABbIj0BqkK
-         7vrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687409283; x=1690001283;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6UCsy+QyUCZWP4W4J9LZYEzDKcZk8p92T6bjDRjYR2w=;
-        b=LY9RrquVfdVzX66UlLsQENMhLrIrLOF4S226F849vCFhJN+2WC5bAdQeJCfg2LHVRn
-         b6i7Xze55yo0sQaBmgdKIE/TH6HKrvILpmkI2RWEG6JrUeqFwM7zdRucKjKsP1TOZhTR
-         b+iUUmXQbiqLxl6n3+RQ1/ontgJMCqQ19+JH6gy+K701PHN0X37mgoRba7QmnmShgsoo
-         mXcvghA3M52YYM+6KicFd3YuiGVbegh8Jo2OW/8lfXGqcX2VUXErhBJl3ZZwWIYjbQTP
-         mxjBAQuH49ZOzg/pIXE0Y/dqbksXCF7JdjuNISCsQiAscDpKJlybqN1IEt2I1Y4bFYmi
-         X2/A==
-X-Gm-Message-State: AC+VfDyh/H6AMefsx3VHJCxxuIIPPo+alof5bwHaipszUND611OlgcFW
-        al9ceO+VWBFOq6Gpk7OZeWY6GqznY25Zl3qqPMI=
-X-Google-Smtp-Source: ACHHUZ72A1f9sdf2FYb00UtlkIKrC2QPw8XEMRY/JilXxNxyniq4rSm97aY9T6jpPwLgh+IxJerivQ==
-X-Received: by 2002:a05:6214:27e3:b0:62b:4590:78e8 with SMTP id jt3-20020a05621427e300b0062b459078e8mr21102017qvb.34.1687409283200;
-        Wed, 21 Jun 2023 21:48:03 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
-        by smtp.gmail.com with ESMTPSA id 17-20020aa79251000000b0063b6cccd5dfsm3649765pfp.195.2023.06.21.21.48.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jun 2023 21:48:02 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qCCEh-00EiVj-2w;
-        Thu, 22 Jun 2023 14:47:59 +1000
-Date:   Thu, 22 Jun 2023 14:47:59 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jeremy Bongio <bongiojp@gmail.com>, Ted Tso <tytso@mit.edu>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Allison Henderson <allison.henderson@oracle.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 0/1] iomap regression for aio dio 4k writes
-Message-ID: <ZJPSf0nEYoH9Oq14@dread.disaster.area>
-References: <20230621174114.1320834-1-bongiojp@gmail.com>
- <ZJOO4SobNFaQ+C5g@dread.disaster.area>
- <ZJOqC7Cfjr5AoW7S@dread.disaster.area>
- <ZJO4OAYhJlXOBXMf@casper.infradead.org>
+        Thu, 22 Jun 2023 01:51:27 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABAA21FC0;
+        Wed, 21 Jun 2023 22:51:10 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D7C5D227D3;
+        Thu, 22 Jun 2023 05:51:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1687413068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/b1YC+jVLUGl+HFFnZmBiiwFgpQkqSBJtWi2YnEPA60=;
+        b=vHT9XrJi9Gc54SntSB8lWRRVkbvNo0t3+5aGWZ60QbfNzhHpLH03Knz4b6NvtFsxfpm3ge
+        Zl9tTJzUsQC7YoMhHsCflCp6Pp27wjo/SjMO8DFNIWocHhgas5Xhe4By8iGpcErHOizdd9
+        PrSN7qILA1OBQVU71imGExsW9Cd2/GU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1687413068;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/b1YC+jVLUGl+HFFnZmBiiwFgpQkqSBJtWi2YnEPA60=;
+        b=lU9lXd9Wl2Acku5pm/PMB7E+VwtwrrzpevJf2N30TnOTJJa9Wv5kXKw++0vdfD/LaUYWh5
+        d/ejM7fGA5CaVfCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9E52E1346D;
+        Thu, 22 Jun 2023 05:51:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id kLXnJUzhk2RCQQAAMHmgww
+        (envelope-from <hare@suse.de>); Thu, 22 Jun 2023 05:51:08 +0000
+Message-ID: <4270b5c7-04b4-28e0-6181-ef98d1f5130c@suse.de>
+Date:   Thu, 22 Jun 2023 07:51:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZJO4OAYhJlXOBXMf@casper.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [RFC 0/4] minimum folio order support in filemap
+Content-Language: en-US
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Pankaj Raghav <p.raghav@samsung.com>, willy@infradead.org,
+        gost.dev@samsung.com, mcgrof@kernel.org, hch@lst.de,
+        jwong@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <CGME20230621083825eucas1p1b05a6d7e0bf90e7a3d8e621f6578ff0a@eucas1p1.samsung.com>
+ <20230621083823.1724337-1-p.raghav@samsung.com>
+ <b311ae01-cec9-8e06-02a6-f139e37d5863@suse.de>
+ <ZJN0pvgA2TqOQ9BC@dread.disaster.area>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <ZJN0pvgA2TqOQ9BC@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 22, 2023 at 03:55:52AM +0100, Matthew Wilcox wrote:
-> On Thu, Jun 22, 2023 at 11:55:23AM +1000, Dave Chinner wrote:
-> > Ok, so having spent a bit more thought on this away from the office
-> > this morning, I think there is a generic way we can avoid deferring
-> > completions for pure overwrites.
+On 6/22/23 00:07, Dave Chinner wrote:
+> On Wed, Jun 21, 2023 at 11:00:24AM +0200, Hannes Reinecke wrote:
+>> On 6/21/23 10:38, Pankaj Raghav wrote:
+>>> There has been a lot of discussion recently to support devices and fs for
+>>> bs > ps. One of the main plumbing to support buffered IO is to have a minimum
+>>> order while allocating folios in the page cache.
+>>>
+>>> Hannes sent recently a series[1] where he deduces the minimum folio
+>>> order based on the i_blkbits in struct inode. This takes a different
+>>> approach based on the discussion in that thread where the minimum and
+>>> maximum folio order can be set individually per inode.
+>>>
+>>> This series is based on top of Christoph's patches to have iomap aops
+>>> for the block cache[2]. I rebased his remaining patches to
+>>> next-20230621. The whole tree can be found here[3].
+>>>
+>>> Compiling the tree with CONFIG_BUFFER_HEAD=n, I am able to do a buffered
+>>> IO on a nvme drive with bs>ps in QEMU without any issues:
+>>>
+>>> [root@archlinux ~]# cat /sys/block/nvme0n2/queue/logical_block_size
+>>> 16384
+>>> [root@archlinux ~]# fio -bs=16k -iodepth=8 -rw=write -ioengine=io_uring -size=500M
+>>> 		    -name=io_uring_1 -filename=/dev/nvme0n2 -verify=md5
+>>> io_uring_1: (g=0): rw=write, bs=(R) 16.0KiB-16.0KiB, (W) 16.0KiB-16.0KiB, (T) 16.0KiB-16.0KiB, ioengine=io_uring, iodepth=8
+>>> fio-3.34
+>>> Starting 1 process
+>>> Jobs: 1 (f=1): [V(1)][100.0%][r=336MiB/s][r=21.5k IOPS][eta 00m:00s]
+>>> io_uring_1: (groupid=0, jobs=1): err= 0: pid=285: Wed Jun 21 07:58:29 2023
+>>>     read: IOPS=27.3k, BW=426MiB/s (447MB/s)(500MiB/1174msec)
+>>>     <snip>
+>>> Run status group 0 (all jobs):
+>>>      READ: bw=426MiB/s (447MB/s), 426MiB/s-426MiB/s (447MB/s-447MB/s), io=500MiB (524MB), run=1174-1174msec
+>>>     WRITE: bw=198MiB/s (207MB/s), 198MiB/s-198MiB/s (207MB/s-207MB/s), io=500MiB (524MB), run=2527-2527msec
+>>>
+>>> Disk stats (read/write):
+>>>     nvme0n2: ios=35614/4297, merge=0/0, ticks=11283/1441, in_queue=12725, util=96.27%
+>>>
+>>> One of the main dependency to work on a block device with bs>ps is
+>>> Christoph's work on converting block device aops to use iomap.
+>>>
+>>> [1] https://lwn.net/Articles/934651/
+>>> [2] https://lwn.net/ml/linux-kernel/20230424054926.26927-1-hch@lst.de/
+>>> [3] https://github.com/Panky-codes/linux/tree/next-20230523-filemap-order-generic-v1
+>>>
+>>> Luis Chamberlain (1):
+>>>     block: set mapping order for the block cache in set_init_blocksize
+>>>
+>>> Matthew Wilcox (Oracle) (1):
+>>>     fs: Allow fine-grained control of folio sizes
+>>>
+>>> Pankaj Raghav (2):
+>>>     filemap: use minimum order while allocating folios
+>>>     nvme: enable logical block size > PAGE_SIZE
+>>>
+>>>    block/bdev.c             |  9 ++++++++
+>>>    drivers/nvme/host/core.c |  2 +-
+>>>    include/linux/pagemap.h  | 46 ++++++++++++++++++++++++++++++++++++----
+>>>    mm/filemap.c             |  9 +++++---
+>>>    mm/readahead.c           | 34 ++++++++++++++++++++---------
+>>>    5 files changed, 82 insertions(+), 18 deletions(-)
+>>>
+>>
+>> Hmm. Most unfortunate; I've just finished my own patchset (duplicating much
+>> of this work) to get 'brd' running with large folios.
+>> And it even works this time, 'fsx' from the xfstest suite runs happily on
+>> that.
 > 
-> OK, this is how we can, but should we?  The same amount of work
-> needs to be done, no matter whether we do it in interrupt context or
-> workqueue context.  Doing it in interrupt context has lower latency,
-> but maybe allows us to batch up the work and so get better bandwidth.
-> And we can't handle other interrupts while we're handling this one,
-> so from a whole-system perspective, I think we'd rather do the work in
-> the workqueue.
-
-Yup, I agree with you there, but I can also be easily convinced that
-optimising the pure in-place DIO overwrite path is worth the effort.
-
-> Latency is important for reads, but why is it important for writes?
-> There's such a thing as a dependent read, but writes are usually buffered
-> and we can wait as long as we like for a write to complete.
-
-The OP cares about async direct IO performance, not buffered writes.
-And for DIO writes, there is most definitely such a thing as
-"dependent writes".
-
-Think about journalled data - you can't overwrite data in place
-until the data write to the journal has first completed all the way
-down to stable storage.  i.e. there's an inherent IO
-completion-to-submission write ordering constraint in the algorithm,
-and so we have dependent writes.
-
-And that's the whole point of the DIO write FUA optimisations in
-iomap; they avoid the dependent "write" that provides data integrity
-i.e.  the journal flush and/or device cache flush that
-generic_write_sync() issues in IO completion is a dependent write
-because it cannot start until all the data being written has reached
-the device entirely.
-
-Using completion-to-submission ordering of the integrity operations
-means we don't need to block other IOs to the same file, other
-journal operations in the filesystem or other data IO to provide
-that data integrity requirement for the specific O_DSYNC DIO write
-IO. If we can use an FUA write for this instead of a separate cache
-flush, then we end up providing O_DSYNC writes with about 40% lower
-completion latency than a "write + cache flush" sequential IO pair.
-
-This means that things like high performance databases improve
-throughput by 25-50% and operational latency goes down by ~30-40% if
-we can make extensive use of FUA writes to provide the desired data
-integrity guarantees.
-
-From that perspective, an application doing pure overwrites with
-ordering depedencies might actually be very dependent on minimising
-individual DIO write latency for overall performance...
+> So you've converted a filesystem to use bs > ps, too? Or is the
+> filesystem that fsx is running on just using normal 4kB block size?
+> If the latter, then fsx is not actually testing the large folio page
+> cache support, it's mostly just doing 4kB aligned IO to brd....
+> 
+I have been running fsx on an xfs with bs=16k, and it worked like a charm.
+I'll try to run the xfstest suite once I'm finished with merging
+Pankajs patches into my patchset.
 
 Cheers,
 
-Dave.
+Hannes
 -- 
-Dave Chinner
-david@fromorbit.com
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
+Myers, Andrew McDonald, Martje Boudien Moerman
+
