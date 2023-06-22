@@ -2,169 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 520E373B0C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 08:29:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DB9F73B447
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 11:59:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229726AbjFWG3s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jun 2023 02:29:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46440 "EHLO
+        id S231520AbjFWJ7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jun 2023 05:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230423AbjFWG3q (ORCPT
+        with ESMTP id S229686AbjFWJ7d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jun 2023 02:29:46 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36CD1BC6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jun 2023 23:29:43 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1b5452b77b4so2080295ad.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Jun 2023 23:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687501783; x=1690093783;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zCEqJX5mm9cbUE56OVCDucRVQniQh/jh7QjO1tCYRyw=;
-        b=VCN1cKAzYZWGpOm/hUHuPZp8plVnErZlG9G0OlFzhPpXaNGHYvVufkX79JUDsPqJVj
-         SxdYAM9A9ivCYhtFxc3SyvMZr6s5SlnDngyF1CSlxpEdm/HUuOSGwHgmJomuuYgedrRX
-         aqax0M2Dw9QUTGwitN8bpL0qLseKhs7EVUc6lepS488qyivLAQHSFGtevNE0LyqUhWPi
-         NKkNR95/QZWn2OoaLsjXJllgmMFsp0mHDlbo5o60jR1YeUkdYXlMSdAiD7/jZsXdB48G
-         reDdzoxXO5mM4WdQ8i9rMsSwtC5huiBFlnlMXvIXzYTlsiTrC5P7Z8F16npWgNIfnf8B
-         ShDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687501783; x=1690093783;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zCEqJX5mm9cbUE56OVCDucRVQniQh/jh7QjO1tCYRyw=;
-        b=Zgd16xw/gQiv3rrS+KxXgFFU4w0RmdAr2hYMmcfjhdi5jLQIgQ2+xAyllh64xjQvis
-         vha29mDApn3M9HDfJPpWUvASzpoYIq9YhLK21TdT7fRXrf3k9zPx0eejnrz39b3549tc
-         +O1XgABYVVXnrooYSs8TPwKWmErF6lbnuD2dBi+mezbhwjyRo15uABygPsxIYdZb6F3o
-         Hg7IRm6OkL+t6meEuXx7f/7k+jtxIJW5J4vn7rof5fdl5cy6PUrXZDc084MeIGI5KeGX
-         kj9dHn24aYICYzFG/Qs/v9FpVXQ05XQc1/1YGicqxFal4DZ7Wa+ijkbxXJMRB7eGqPJg
-         7/Ow==
-X-Gm-Message-State: AC+VfDzWigd/hdZrmukXA83UtyWD9uUfTwqnIaj1qW40HQ7brOkvFhE8
-        i5FmMeQr4HcDOnUcjd1PSP3AWg==
-X-Google-Smtp-Source: ACHHUZ6xCu/M/0AOwG5LVLb8OX3DoTsqyFTeplRrHsUG1u2SLkBGduWAm9ZrSI41Zhf0Zeq1UunMJA==
-X-Received: by 2002:a17:902:8214:b0:1aa:d971:4623 with SMTP id x20-20020a170902821400b001aad9714623mr18870991pln.38.1687501783228;
-        Thu, 22 Jun 2023 23:29:43 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-13-202.pa.nsw.optusnet.com.au. [49.180.13.202])
-        by smtp.gmail.com with ESMTPSA id x5-20020a1709027c0500b001b246dcffb7sm6311389pll.300.2023.06.22.23.29.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 23:29:42 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qCaId-00F8x8-0s;
-        Fri, 23 Jun 2023 16:29:39 +1000
-Date:   Fri, 23 Jun 2023 16:29:39 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Qi Zheng <zhengqi.arch@bytedance.com>, akpm@linux-foundation.org,
-        tkhai@ya.ru, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, dm-devel@redhat.com,
-        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 24/29] mm: vmscan: make global slab shrink lockless
-Message-ID: <ZJU708VIyJ/3StAX@dread.disaster.area>
-References: <20230622085335.77010-1-zhengqi.arch@bytedance.com>
- <20230622085335.77010-25-zhengqi.arch@bytedance.com>
- <cf0d9b12-6491-bf23-b464-9d01e5781203@suse.cz>
+        Fri, 23 Jun 2023 05:59:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D287E75;
+        Fri, 23 Jun 2023 02:59:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C4A82619E6;
+        Fri, 23 Jun 2023 09:59:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59253C433C0;
+        Fri, 23 Jun 2023 09:59:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687514371;
+        bh=4Sre3Xe85q5AdiCISxJI7jZ0ap6BzfWgIsXsmS9GAeg=;
+        h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
+        b=qF0FqNbgti2kUjCNRZktFY/T7IkOS0lKFWJ9d35XUkpV//Dbgvb/A+EveLG/fgnVo
+         UBdskociHfOd35HYD5d9Ejx+hHn5FlaaMy1ZxRFsCZxAIRQMdjXNjn/LhxbPPpS4be
+         BwZ1+tg5L/ix1eyqDu0EpvEBHyMUsxCZMm5YLzXAE4Rg/2NbYGcaow+8cYsmm97kTk
+         AAWHCTCDYVo4rlXoCnoAy2LoQo9yGxuh3RbXT04+6Yc6HrBRpFZVUJ5Tq0X8HQNY8L
+         CVrz3xO+Qv32lcWcKkaFiQ3SLSVKXTK1PTXOcgc1jqkceav+NXiglVIbSD3TFJl6zl
+         chQQUgcz8Krmw==
+Message-ID: <3719669bc40890e3a8221593ff8a178411ad749b.camel@kernel.org>
+Subject: Re: [PATCH] fcntl.2: document F_UNLCK F_OFD_GETLK extension
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Stas Sergeev <stsp2@yandex.ru>, linux-kernel@vger.kernel.org
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
+In-Reply-To: <20230621152214.2720319-4-stsp2@yandex.ru>
+References: <20230621152214.2720319-1-stsp2@yandex.ru>
+         <20230621152214.2720319-4-stsp2@yandex.ru>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf0d9b12-6491-bf23-b464-9d01e5781203@suse.cz>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Date:   Thu, 22 Jun 2023 08:03:53 -0400
+User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DATE_IN_PAST_12_24,
+        DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 22, 2023 at 05:12:02PM +0200, Vlastimil Babka wrote:
-> On 6/22/23 10:53, Qi Zheng wrote:
-> > @@ -1067,33 +1068,27 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
-> >  	if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
-> >  		return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
-> >  
-> > -	if (!down_read_trylock(&shrinker_rwsem))
-> > -		goto out;
-> > -
-> > -	list_for_each_entry(shrinker, &shrinker_list, list) {
-> > +	rcu_read_lock();
-> > +	list_for_each_entry_rcu(shrinker, &shrinker_list, list) {
-> >  		struct shrink_control sc = {
-> >  			.gfp_mask = gfp_mask,
-> >  			.nid = nid,
-> >  			.memcg = memcg,
-> >  		};
-> >  
-> > +		if (!shrinker_try_get(shrinker))
-> > +			continue;
-> > +		rcu_read_unlock();
-> 
-> I don't think you can do this unlock?
-> 
-> > +
-> >  		ret = do_shrink_slab(&sc, shrinker, priority);
-> >  		if (ret == SHRINK_EMPTY)
-> >  			ret = 0;
-> >  		freed += ret;
-> > -		/*
-> > -		 * Bail out if someone want to register a new shrinker to
-> > -		 * prevent the registration from being stalled for long periods
-> > -		 * by parallel ongoing shrinking.
-> > -		 */
-> > -		if (rwsem_is_contended(&shrinker_rwsem)) {
-> > -			freed = freed ? : 1;
-> > -			break;
-> > -		}
-> > -	}
-> >  
-> > -	up_read(&shrinker_rwsem);
-> > -out:
-> > +		rcu_read_lock();
-> 
-> That new rcu_read_lock() won't help AFAIK, the whole
-> list_for_each_entry_rcu() needs to be under the single rcu_read_lock() to be
-> safe.
+On Wed, 2023-06-21 at 20:22 +0500, Stas Sergeev wrote:
+> F_UNLCK has the special meaning when used as a lock type on input.
+> It returns the information about any lock found in the specified
+> region on that particular file descriptor. Locks on other file
+> descriptors are ignored by F_UNLCK.
+>=20
+> Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+>=20
+> CC: Jeff Layton <jlayton@kernel.org>
+> CC: Chuck Lever <chuck.lever@oracle.com>
+> CC: Alexander Viro <viro@zeniv.linux.org.uk>
+> CC: Christian Brauner <brauner@kernel.org>
+> CC: linux-fsdevel@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> CC: Shuah Khan <shuah@kernel.org>
+> CC: linux-kselftest@vger.kernel.org
+> CC: linux-api@vger.kernel.org
+>=20
+> ---
+>  man2/fcntl.2 | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/man2/fcntl.2 b/man2/fcntl.2
+> index 7b5604e3a..e3e3e7b8c 100644
+> --- a/man2/fcntl.2
+> +++ b/man2/fcntl.2
+> @@ -604,6 +604,13 @@ then details about one of these locks are returned v=
+ia
+>  .IR lock ,
+>  as described above for
+>  .BR F_GETLK .
+> +.B F_UNLCK
+> +has the special meaning when put into
+> +.I l_type
+> +as an input. It returns the information about any lock in the specified
+> +range on that particular file descriptor. The locks on other file
+> +descriptors are ignored by
+> +.BR F_UNLCK .
+>  .PP
+>  In the current implementation,
+>  .\" commit 57b65325fe34ec4c917bc4e555144b4a94d9e1f7
 
-Yeah, that's the pattern we've been taught and the one we can look
-at and immediately say "this is safe".
 
-This is a different pattern, as has been explained bi Qi, and I
-think it *might* be safe.
+We need to be pedantic for manpages. A "file description" is the
+representation of the open file in the kernel (basically, the "struct
+file" in the kernel). A file _descriptor_ is the numeric identifier
+returned by open() and similar functions.
 
-*However.*
+The locks are owned by the file description, so that would be the better
+term to use here. I think you want something like:
 
-Right now I don't have time to go through a novel RCU list iteration
-pattern it one step at to determine the correctness of the
-algorithm. I'm mostly worried about list manipulations that can
-occur outside rcu_read_lock() section bleeding into the RCU
-critical section because rcu_read_lock() by itself is not a memory
-barrier.
+"When the l_type is set to F_UNLCK, returned locks are limited to ones
+set on the given file description. Locks set on other file descriptions
+are ignored on F_GETLK requests with the l_type set to F_UNLCK."
 
-Maybe Paul has seen this pattern often enough he could simply tell
-us what conditions it is safe in. But for me to work that out from
-first principles? I just don't have the time to do that right now.
-
-> IIUC this is why Dave in [4] suggests unifying shrink_slab() with
-> shrink_slab_memcg(), as the latter doesn't iterate the list but uses IDR.
-
-Yes, I suggested the IDR route because radix tree lookups under RCU
-with reference counted objects are a known safe pattern that we can
-easily confirm is correct or not.  Hence I suggested the unification
-+ IDR route because it makes the life of reviewers so, so much
-easier...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--=20
+Jeff Layton <jlayton@kernel.org>
