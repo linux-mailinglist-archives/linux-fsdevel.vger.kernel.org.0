@@ -2,53 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A67E773B5D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 13:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 423D473B5D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 13:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229989AbjFWLD5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jun 2023 07:03:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51584 "EHLO
+        id S231147AbjFWLE5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jun 2023 07:04:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231532AbjFWLD0 (ORCPT
+        with ESMTP id S231433AbjFWLEz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jun 2023 07:03:26 -0400
+        Fri, 23 Jun 2023 07:04:55 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E07122;
-        Fri, 23 Jun 2023 04:03:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A231211E;
+        Fri, 23 Jun 2023 04:04:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2DF8561A24;
-        Fri, 23 Jun 2023 11:03:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7636BC433C0;
-        Fri, 23 Jun 2023 11:03:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 09DD061A24;
+        Fri, 23 Jun 2023 11:04:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5445FC433C0;
+        Fri, 23 Jun 2023 11:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687518204;
-        bh=MMGjpOEua7jLGCXGS4y6BIkirEFGtAnmtFN36zX7JEc=;
+        s=k20201202; t=1687518291;
+        bh=RiiVlQwV/9GSBWBPyiAF9NjTeA5hjoUr8371OTnuyH0=;
         h=From:To:Cc:Subject:Date:From;
-        b=rSrSkqSEmIX1jd3vzt2LmUa5L9XobG8OiHs9ljOfZRn7j8DNHX6vyV0NYnSK69lgP
-         ToDv3DgOdSLEUxLMkRQcdWFII4Q5psdrIb275UjTellz6ThDc3fBS7HAOo4VX7d7ha
-         qGB4CMbIuiAWxg3kFxfOphCUH1E9VqVMmr4HTo6+kqWHJedb+/8+SwQPn7j/aFAxT6
-         T4LgEjDJAH6ADJEr9eHHwL5pxalY3FlHP8+pDH1GlnCUvKMGHHt6W7woS6cmIjM+jk
-         StX6QSlVULdhDcDbx9az1T8NKMx40u9//ej0SDEZEfYeHFcusBYEKcx02n+OEqb6P9
-         /7BtjZLHacemA==
+        b=nMMi6VI1w5v3O+9fK0/pVyz4rMdq8qo5YZ5Vp0dstzMXDlgiyWmtO/SbrSzCA11VM
+         i3UbWnS1dT4VbLl8MOlQeRYcHfsgQ1+YtIK47sZJ+cR+KgHXDF/XnHx1uuNoYbAsTI
+         TDwqgFl2XxXeetGnV1Gvm+GQx7YysPHa325jnDm32YajymDQGbAry8kh7TL/aOtHu0
+         oLys+lQjtP2BDGUKnmhU/xriY6Wu0AIVZUd/HTAk3x6i9WdkIcwljOQVPofOERHDP/
+         v7/cu+8QOSpyOvEe2oseEqhADlSG0Ms4BpLCKqW36CKMbO/WqW6gIgjXK55TyS//c9
+         5eSoqXPFClUVg==
 From:   Christian Brauner <brauner@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs: file
-Date:   Fri, 23 Jun 2023 13:03:18 +0200
-Message-Id: <20230623-waldarbeiten-normung-c160bb98bf10@brauner>
+Subject: [GIT PULL] vfs: mount
+Date:   Fri, 23 Jun 2023 13:03:58 +0200
+Message-Id: <20230623-leise-anlassen-5499500f0ce0@brauner>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5331; i=brauner@kernel.org; h=from:subject:message-id; bh=MMGjpOEua7jLGCXGS4y6BIkirEFGtAnmtFN36zX7JEc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRMrf5401hf8cPtBRkt02Qrthw4NCFH/NtC7zeeWxZImn1L 1VM/21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRCUIM/8xELoudP8ZiWBe5IuLqK9 Pk28ff7rioIdFSvKDM992SfwcYGf75/H2fxn33gvR8I20WTpeDh5Ry3ARUd0zj85+48PEWbW4A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9363; i=brauner@kernel.org; h=from:subject:message-id; bh=RiiVlQwV/9GSBWBPyiAF9NjTeA5hjoUr8371OTnuyH0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRMrRFmvJ5bm9KwMJbp874Q/0s7BBW/MXJUGR1r6NY3nnB/ htusjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImsE2P4pzhR7WCXzqMNc7meHpRfU+ I7cV1M9l4jdzZ7y2WK1+YtusjwT0GnMIx35uRlSxrqH05JN5yx5toB3d7HCRWdEu1dNWbmXAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -58,69 +59,160 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 Hey Linus,
 
 /* Summary */
-This contains Amir's work to fix a long-standing problem where an
-unprivileged overlayfs mount can be used to avoid fanotify permission
-events that were requested for an inode or superblock on the underlying
-filesystem.
+This contains the work to extend move_mount() to allow adding a mount
+beneath the topmost mount of a mount stack.
 
-Some background about files opened in overlayfs. If a file is opened in
-overlayfs @file->f_path will refer to a "fake" path. What this means is
-that while @file->f_inode will refer to inode of the underlying layer,
-@file->f_path refers to an overlayfs {dentry,vfsmount} pair. The reasons
-for doing this are out of scope here but it is the reason why the vfs
-has been providing the open_with_fake_path() helper for overlayfs for
-very long time now. So nothing new here.
+There are two LWN articles about this. One covers the original patch
+series in [1]. The other in [2] summarizes the session and roughly the
+discussion between Al and me at LSFMM. The second article also goes into
+some good questions from attendees.
 
-This is for sure not very elegant and everyone including the overlayfs
-maintainers agree. Improving this significantly would involve more
-fragile and potentially rather invasive changes.
+Since all details are found in the relevant commit with a technical dive
+into semantics and locking at the end I'm only adding the motivation and
+core functionality for this from commit message and leave out the
+invasive details. The code is also heavily commented and annotated as
+well which was explicitly requested.
 
-In various codepaths access to the path of the underlying
-filesystem is needed for such hybrid file. The best example is fsnotify
-where this becomes security relevant. Passing the overlayfs
-@file->f_path->dentry will cause fsnotify to skip generating fsnotify
-events registered on the underlying inode or superblock.
+TL;DR:
 
-To fix this we extend the vfs provided open_with_fake_path() concept for
-overlayfs to create a backing file container that holds the real path
-and to expose a helper that can be used by relevant callers to get
-access to the path of the underlying filesystem through the new
-file_real_path() helper. This pattern is similar to what we do in
-d_real() and d_real_inode().
+> mount -t ext4 /dev/sda /mnt
+  |
+  └─/mnt    /dev/sda    ext4
 
-The first beneficiary is fsnotify and fixes the security sensitive
-problem mentioned above.
+> mount --beneath -t xfs /dev/sdb /mnt
+  |
+  └─/mnt    /dev/sdb    xfs
+    └─/mnt  /dev/sda    ext4
 
-There's a couple of nice cleanups included as well.
+> umount /mnt
+  |
+  └─/mnt    /dev/sdb    xfs
 
-Over time, the old open_with_fake_path() helper added specifically for
-overlayfs a long time ago started to get used in other places such as
-cachefiles. Even though cachefiles have nothing to do with hybrid files.
+The longer motivation is that various distributions are adding or are in
+the process of adding support for system extensions and in the future
+configuration extensions through various tools. A more detailed
+explanation on system and configuration extensions can be found on the
+manpage which is listed below at [3].
 
-The only reason cachefiles used that concept was that files opened with
-open_with_fake_path() aren't charged against the caller's open file
-limit by raising FMODE_NOACCOUNT. It's just mere coincidence that both
-overlayfs and cachefiles need to ensure to not overcharge the caller for
-their internal open calls.
+System extension images may – dynamically at runtime — extend the /usr/
+and /opt/ directory hierarchies with additional files. This is
+particularly useful on immutable system images where a /usr/ and/or
+/opt/ hierarchy residing on a read-only file system shall be extended
+temporarily at runtime without making any persistent modifications.
 
-So this work disentangles FMODE_NOACCOUNT use cases and backing file
-use-cases by adding the FMODE_BACKING flag which indicates that the file
-can be used to retrieve the backing file of another filesystem. (Fyi,
-Jens will be sending you a really nice cleanup from Christoph that gets
-rid of 3 FMODE_* flags otherwise this would be the last fmode_t bit we'd
-be using.)
+When one or more system extension images are activated, their /usr/ and
+/opt/ hierarchies are combined via overlayfs with the same hierarchies
+of the host OS, and the host /usr/ and /opt/ overmounted with it
+("merging"). When they are deactivated, the mount point is disassembled
+— again revealing the unmodified original host version of the hierarchy
+("unmerging"). Merging thus makes the extension's resources suddenly
+appear below the /usr/ and /opt/ hierarchies as if they were included in
+the base OS image itself. Unmerging makes them disappear again, leaving
+in place only the files that were shipped with the base OS image itself.
 
-So now overlayfs becomes the sole user of the renamed
-open_with_fake_path() helper which is now named backing_file_open(). For
-internal kernel users such as cachefiles that are only interested in
-FMODE_NOACCOUNT but not in FMODE_BACKING we add a new kernel_file_open()
-helper which opens a file without being charged against the caller's
-open file limit. All new helpers are properly documented and clearly
-annotated to mention their special uses.
+System configuration images are similar but operate on directories
+containing system or service configuration.
 
-We also rename vfs_tmpfile_open() to kernel_tmpfile_open() to clearly
-distinguish it from vfs_tmpfile() and align it the other kernel_*()
-internal helpers.
+On nearly all modern distributions mount propagation plays a crucial
+role and the rootfs of the OS is a shared mount in a peer group (usually
+with peer group id 1):
+
+       TARGET  SOURCE  FSTYPE  PROPAGATION  MNT_ID  PARENT_ID
+       /       /       ext4    shared:1     29      1
+
+On such systems all services and containers run in a separate mount
+namespace and are pivot_root()ed into their rootfs. A separate mount
+namespace is almost always used as it is the minimal isolation mechanism
+services have. But usually they are even much more isolated up to the
+point where they almost become indistinguishable from containers.
+
+Mount propagation again plays a crucial role here. The rootfs of all
+these services is a slave mount to the peer group of the host rootfs.
+This is done so the service will receive mount propagation events from
+the host when certain files or directories are updated.
+
+In addition, the rootfs of each service, container, and sandbox is also
+a shared mount in its separate peer group:
+
+       TARGET  SOURCE  FSTYPE  PROPAGATION         MNT_ID  PARENT_ID
+       /       /       ext4    shared:24 master:1  71      47
+
+For people not too familiar with mount propagation, the master:1 means
+that this is a slave mount to peer group 1. Which as one can see is the
+host rootfs as indicated by shared:1 above. The shared:24 indicates that
+the service rootfs is a shared mount in a separate peer group with peer
+group id 24.
+
+A service may run other services. Such nested services will also have a
+rootfs mount that is a slave to the peer group of the outer service
+rootfs mount.
+
+For containers things are just slighly different. A container's rootfs
+isn't a slave to the service's or host rootfs' peer group. The rootfs
+mount of a container is simply a shared mount in its own peer group:
+
+       TARGET                    SOURCE  FSTYPE  PROPAGATION  MNT_ID  PARENT_ID
+       /home/ubuntu/debian-tree  /       ext4    shared:99    61      60
+
+So whereas services are isolated OS components a container is treated
+like a separate world and mount propagation into it is restricted to a
+single well known mount that is a slave to the peer group of the shared
+mount /run on the host:
+
+       TARGET                  SOURCE              FSTYPE  PROPAGATION  MNT_ID  PARENT_ID
+       /propagate/debian-tree  /run/host/incoming  tmpfs   master:5     71      68
+
+Here, the master:5 indicates that this mount is a slave to the peer
+group with peer group id 5. This allows to propagate mounts into the
+container and served as a workaround for not being able to insert mounts
+into mount namespaces directly. But the new mount api does support
+inserting mounts directly. For the interested reader the blogpost in [4]
+might be worth reading where I explain the old and the new approach to
+inserting mounts into mount namespaces.
+
+Containers of course, can themselves be run as services. They often run
+full systems themselves which means they again run services and
+containers with the exact same propagation settings explained above.
+
+The whole system is designed so that it can be easily updated, including
+all services in various fine-grained ways without having to enter every
+single service's mount namespace which would be prohibitively expensive.
+The mount propagation layout has been carefully chosen so it is possible
+to propagate updates for system extensions and configurations from the
+host into all services.
+
+The simplest model to update the whole system is to mount on top of
+/usr, /opt, or /etc on the host. The new mount on /usr, /opt, or /etc
+will then propagate into every service. This works cleanly the first
+time. However, when the system is updated multiple times it becomes
+necessary to unmount the first update on /opt, /usr, /etc and then
+propagate the new update. But this means, there's an interval where the
+old base system is accessible. This has to be avoided to protect against
+downgrade attacks.
+
+The vfs already exposes a mechanism to userspace whereby mounts can be
+mounted beneath an existing mount. Such mounts are internally referred
+to as "tucked". The patch series exposes the ability to mount beneath a
+top mount through the new MOVE_MOUNT_BENEATH flag for the move_mount()
+system call. This allows userspace to seamlessly upgrade mounts. After
+this series the only thing that will have changed is that mounting
+beneath an existing mount can be done explicitly instead of just
+implicitly.
+
+The crux is that the proposed mechanism already exists and that it is so
+powerful as to cover cases where mounts are supposed to be updated with
+new versions. Crucially, it offers an important flexibility. Namely that
+updates to a system may either be forced or can be delayed and the
+umount of the top mount be left to a service if it is a cooperative one.
+
+Link: https://lwn.net/Articles/927491 [1]
+Link: https://lwn.net/Articles/934094 [2]
+Link: https://man7.org/linux/man-pages/man8/systemd-sysext.8.html [3]
+Link: https://brauner.io/2023/02/28/mounting-into-mount-namespaces.html [4]
+Link: https://github.com/flatcar/sysext-bakery
+Link: https://fedoraproject.org/wiki/Changes/Unified_Kernel_Support_Phase_1
+Link: https://fedoraproject.org/wiki/Changes/Unified_Kernel_Support_Phase_2
+Link: https://github.com/systemd/systemd/pull/26013
 
 /* Testing */
 clang: Ubuntu clang version 15.0.7
@@ -131,11 +223,9 @@ No build failures or warnings were observed. All old and new tests in
 fstests, selftests, and LTP pass without regressions.
 
 /* Conflicts */
-There has one merge conflict:
-
-(1) This will cause a minor merge conflict with my v6.5/vfs.misc pull
-    request as we rename an internal helper that's used in cachefiles.
-    I would suggest to merge v6.5/vfs.misc first.
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with
+current mainline.
 
 The following changes since commit f1fcbaa18b28dec10281551dfe6ed3a3ed80e3d6:
 
@@ -143,35 +233,29 @@ The following changes since commit f1fcbaa18b28dec10281551dfe6ed3a3ed80e3d6:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.5/vfs.file
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.5/vfs.mount
 
-for you to fetch changes up to bc2473c90fca55bf95b2ab6af1dacee26a4f92f6:
+for you to fetch changes up to 6ac392815628f317fcfdca1a39df00b9cc4ebc8b:
 
-  ovl: enable fsnotify events on underlying real files (2023-06-19 18:18:04 +0200)
+  fs: allow to mount beneath top mount (2023-05-19 04:30:22 +0200)
 
-Please consider pulling these changes from the signed v6.5/vfs.file tag.
+Please consider pulling these changes from the signed v6.5/vfs.mount tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-v6.5/vfs.file
+v6.5/vfs.mount
 
 ----------------------------------------------------------------
-Amir Goldstein (5):
-      fs: rename {vfs,kernel}_tmpfile_open()
-      fs: use a helper for opening kernel internal files
-      fs: move kmem_cache_zalloc() into alloc_empty_file*() helpers
-      fs: use backing_file container for internal files with "fake" f_path
-      ovl: enable fsnotify events on underlying real files
+Christian Brauner (4):
+      fs: add path_mounted()
+      fs: properly document __lookup_mnt()
+      fs: use a for loop when locking a mount
+      fs: allow to mount beneath top mount
 
- fs/cachefiles/namei.c    | 10 +++---
- fs/file_table.c          | 91 +++++++++++++++++++++++++++++++++++++++---------
- fs/internal.h            |  5 +--
- fs/namei.c               | 24 +++++++------
- fs/open.c                | 76 ++++++++++++++++++++++++++++++++++------
- fs/overlayfs/file.c      |  8 ++---
- fs/overlayfs/overlayfs.h |  5 +--
- include/linux/fs.h       | 42 +++++++++++++++++-----
- include/linux/fsnotify.h |  4 ++-
- 9 files changed, 204 insertions(+), 61 deletions(-)
+ fs/namespace.c             | 451 +++++++++++++++++++++++++++++++++++++--------
+ fs/pnode.c                 |  42 ++++-
+ fs/pnode.h                 |   3 +
+ include/uapi/linux/mount.h |   3 +-
+ 4 files changed, 417 insertions(+), 82 deletions(-)
