@@ -2,125 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2511773B829
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 14:51:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A14673B870
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 15:10:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231349AbjFWMvV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jun 2023 08:51:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38696 "EHLO
+        id S231538AbjFWNKe convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jun 2023 09:10:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231571AbjFWMvO (ORCPT
+        with ESMTP id S231483AbjFWNKd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jun 2023 08:51:14 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0FCD2713
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 05:50:51 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-66c2d4e507aso73139b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 05:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1687524651; x=1690116651;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3J6qedKH7rACUI+d8+QjoI1iru+7/a5M9lap7RdXq+s=;
-        b=Q524DUGT6itGV4gw01qJj/zWbJLa4vy2WCXqnWOngK0C3q+dq5EKhIS0CVZv0oxxho
-         LJ6tY9YfoIHNM/tflF8trZPv/Spx8OYgEAYGDhp6iajWSx+dfQpGCxtVSU4j+uchKR2K
-         6jjaYk2avrTfJwxxTgNPxH+prD4PA2RYda//8FNhgDDbtNG8gCEmPUtJ+VXKPa4DXVej
-         a5KLbc1PmFNVMjg9t+MjU8GHA1HEy3OLaOZU0A/n71b/fjkikDpbyETS6JPqwOfw6qlc
-         81KayU6/lII4/pSrE7vPjFTNx81tmGljnxk2j498q4g7qxCoplXlCdPQ4N13nBnNs8tt
-         8JpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687524651; x=1690116651;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3J6qedKH7rACUI+d8+QjoI1iru+7/a5M9lap7RdXq+s=;
-        b=kPuxCSJcv7FehfRf0/6upYoKB84XnWcU26WOIkxv4cBVLeHuZPriHfpll5oxzeZWz5
-         uUFOA3MhKCNiikO4PmyMFoNGMPoVfOYw4eXc0D6BxUGzw4Ekqte+phXPBU8ehoC/Xv+K
-         K2azbj4YdzNXLBJL3XdAV+/y3T/SprvuKKIsbGWyyWuOkNvQvJmwN3dNZMXbMewjPs6+
-         l5jEAie1YSZj5Yvr2YFeQ4OI3DulpDUlgGczs0kBqv/WyO2/NTnaRKvTgyGokALh9ffJ
-         kCxYJ0XBYLhkF1dWIBd7uOZAJ0E4oh96EUIdZZQ23jOz39KFMP93rq+MvNRbg4Z/1zc/
-         LD9w==
-X-Gm-Message-State: AC+VfDzVL+kTj5Q9hrOq+f8D7as/Nn1CCQPH48+DgEP7zMC8MVlF4SfM
-        xBhb1+QZDXeKOCcDKjblvHlY9A==
-X-Google-Smtp-Source: ACHHUZ6Fjrszr4MOiG7PTx+CVGVeY59XJZwzJifNOvY5NLzJaatECslqahuGwHQe8HJSyn0Dmf/QQQ==
-X-Received: by 2002:a05:6a00:3186:b0:668:7fe6:c220 with SMTP id bj6-20020a056a00318600b006687fe6c220mr14325912pfb.3.1687524651198;
-        Fri, 23 Jun 2023 05:50:51 -0700 (PDT)
-Received: from [10.4.168.167] ([139.177.225.254])
-        by smtp.gmail.com with ESMTPSA id x21-20020aa79195000000b0063a04905379sm6063171pfa.137.2023.06.23.05.50.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Jun 2023 05:50:50 -0700 (PDT)
-Message-ID: <31d3f685-3017-25d8-5b0b-2795ed7049bc@bytedance.com>
-Date:   Fri, 23 Jun 2023 20:50:41 +0800
+        Fri, 23 Jun 2023 09:10:33 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA261213A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 06:10:30 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-308-LL79zkSiMMOLClOvKXuMbQ-1; Fri, 23 Jun 2023 14:10:27 +0100
+X-MC-Unique: LL79zkSiMMOLClOvKXuMbQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 23 Jun
+ 2023 14:10:26 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 23 Jun 2023 14:10:26 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Matthew Wilcox' <willy@infradead.org>, stsp <stsp2@yandex.ru>
+CC:     Jeff Layton <jlayton@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
+Thread-Topic: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
+Thread-Index: AQHZo32TC5N9nkgT8E+AvQ/6iJ//gK+YXybw
+Date:   Fri, 23 Jun 2023 13:10:26 +0000
+Message-ID: <f712a5551ebd4626acd17ac80fe51879@AcuMS.aculab.com>
+References: <20230620095507.2677463-1-stsp2@yandex.ru>
+ <20230620095507.2677463-3-stsp2@yandex.ru>
+ <5728ebda22a723b0eb209ae078e8f132d7b4ac7b.camel@kernel.org>
+ <a1e7f5c1-76ef-19e5-91db-a62f7615b28a@yandex.ru>
+ <eaccc14ddc6b546e5913eb557fec55f77cb5424d.camel@kernel.org>
+ <5f644a24-90b5-a02f-b593-49336e8e0f5a@yandex.ru>
+ <2eb8566726e95a01536b61a3b8d0343379092b94.camel@kernel.org>
+ <d70b6831-3443-51d0-f64c-6f6996367a85@yandex.ru>
+ <d0c18369245db91a3b78017fabdc81417418af67.camel@kernel.org>
+ <ddb48e05-ab26-ae5d-86d5-01e47f0f0cd2@yandex.ru>
+ <ZJGtmrej8LraEsjj@casper.infradead.org>
+In-Reply-To: <ZJGtmrej8LraEsjj@casper.infradead.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.12.0
-Subject: Re: [External] Re: [PATCH 01/29] mm: shrinker: add
- shrinker::private_data field
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-To:     Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
-        david@fromorbit.com, tkhai@ya.ru, roman.gushchin@linux.dev,
-        djwong@kernel.org, brauner@kernel.org, paulmck@kernel.org,
-        tytso@mit.edu
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, dm-devel@redhat.com,
-        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-References: <20230622085335.77010-1-zhengqi.arch@bytedance.com>
- <20230622085335.77010-2-zhengqi.arch@bytedance.com>
- <b04a0191-fa27-f8dc-440c-ec363d9c0636@suse.cz>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <b04a0191-fa27-f8dc-440c-ec363d9c0636@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Vlastimil,
-
-On 2023/6/22 22:47, Vlastimil Babka wrote:
-> On 6/22/23 10:53, Qi Zheng wrote:
->> To prepare for the dynamic allocation of shrinker instances
->> embedded in other structures, add a private_data field to
->> struct shrinker, so that we can use shrinker::private_data
->> to record and get the original embedded structure.
->>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+From: Matthew Wilcox
+> Sent: 20 June 2023 14:46
 > 
-> I would fold this to 02/29, less churn.
-
-OK, I will fold this to 02/29 in the v2.
-
-Thanks,
-Qi
-
+> On Tue, Jun 20, 2023 at 06:39:07PM +0500, stsp wrote:
+> > Though it will, for sure, represent the
+> > task that _owns_ the lock.
 > 
->> ---
->>   include/linux/shrinker.h | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
->> index 224293b2dd06..43e6fcabbf51 100644
->> --- a/include/linux/shrinker.h
->> +++ b/include/linux/shrinker.h
->> @@ -70,6 +70,8 @@ struct shrinker {
->>   	int seeks;	/* seeks to recreate an obj */
->>   	unsigned flags;
->>   
->> +	void *private_data;
->> +
->>   	/* These are for internal use */
->>   	struct list_head list;
->>   #ifdef CONFIG_MEMCG
-> 
+> No, it *DOESN'T*.  I can open a file, SCM_RIGHTS pass it to another task
+> and then exit.  Now the only owner of that lock is the recipient ...
+> who may not even have received the fd yet.
+
+Do these locks persist across fork+exec?
+
+What happens is a completely unrelated process opens /proc/<pid>/fd
+while a lock is held and then the (nominally) lock-holding
+process closes the fd (or exits).
+
+While it might be a useful diagnostic to know the pid of the
+process that acquired the lock it clearly has no relationship
+with any process that currently has an fd[] table entry that
+references the file.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
