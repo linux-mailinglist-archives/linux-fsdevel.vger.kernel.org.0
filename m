@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6211C73ADFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 02:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA03C73AE59
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 03:35:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230163AbjFWA4W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Jun 2023 20:56:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55014 "EHLO
+        id S230260AbjFWBfU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Jun 2023 21:35:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229647AbjFWA4V (ORCPT
+        with ESMTP id S229865AbjFWBfR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Jun 2023 20:56:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB871FC0;
-        Thu, 22 Jun 2023 17:56:20 -0700 (PDT)
+        Thu, 22 Jun 2023 21:35:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F0AE1FE6;
+        Thu, 22 Jun 2023 18:35:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EB2A56192B;
-        Fri, 23 Jun 2023 00:56:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9271C433C8;
-        Fri, 23 Jun 2023 00:56:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B7EAE6192D;
+        Fri, 23 Jun 2023 01:35:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBBFC433C0;
+        Fri, 23 Jun 2023 01:35:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687481779;
-        bh=kWDryXT3zHLfqH7KuqzjKL9QgoI1DQZpla8O5BtXxCg=;
+        s=k20201202; t=1687484115;
+        bh=BENbwHHfW81MdCp/+XdRp7Ie0dwQl1EB71KhGk24v9w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tTAP/Kx+CSX/LjnIML1dzm8XvbAXwPoyGP7ckfiiYQdMdTz+ruugORkW9j4ib5QSi
-         kpARrKWYX0bDssLN6/5cLn94EirBlsAAIJP9zXGYzUgmSs3pMIHr34+5PqRLOSRcYf
-         LCA06BHgk8Cg4HEnaQ3MXP9mqX0/YZc7xajTIeZ243yrGQreVa7bRTXSa/dnFqSbXW
-         tO6EgSazr7MzHLrDMnhJOAfHa4OBaM3mOkS8QEI7xpAKPVdAwy+DCbyNN8gMnuOErn
-         WL6gtKyazi5RnFAdxllKPjp+K4XZ8dYSNU94IgewkObgSGK15LdERTERyD9m+urifi
-         fUnGvLgWrAIzQ==
-Date:   Thu, 22 Jun 2023 17:56:17 -0700
+        b=Ly2socOM67onLI5zRrn2Mf3HGRSnt11h5ezz4RzpWhNSRUCtIzu2CH5hhpPoAA2xM
+         r8mRZiroC7fvol2mpqBFzMxrB3PNzs9ZWKQsCzURneB54OA6hSD+9r0xavcW3/32Iv
+         y/KQrIIXjGvtef7L2jpuMJzfCC9SLO+I7q8d42fzQNPO9JOKLAXVxG81QZdoh6przm
+         0JPSSZhreG1rSl83BTWoCVgsp1fbP+5ftm8rMvM8quPozXl1gu+Cd8l0kmf7VB/s4Q
+         4PEX9NyYP/6BZ1h1Cw3dTSvWyx5ZnkIp7bVMRrmt2m7IwlCgDiN//NjpfSqmE3Uq+O
+         7k1as+iTioViw==
+Date:   Thu, 22 Jun 2023 18:35:13 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Dave Chinner <david@fromorbit.com>
-Cc:     syzbot <syzbot+9d0b0d54a8bd799f6ae4@syzkaller.appspotmail.com>,
-        dchinner@redhat.com, djwong@kernel.org, hch@lst.de,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] WARNING: Reset corrupted AGFL on AG NUM. NUM
- blocks leaked. Please unmount and run xfs_repair.
-Message-ID: <20230623005617.GA1949@sol.localdomain>
-References: <000000000000ffcb2e05fe9a445c@google.com>
- <ZJKhoxnkNF3VspbP@dread.disaster.area>
- <20230621075421.GA56560@sol.localdomain>
- <ZJQNjFJhLh0C84u/@dread.disaster.area>
+Cc:     syzbot <syzbot+510dcbdc6befa1e6b2f6@syzkaller.appspotmail.com>,
+        djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] UBSAN: array-index-out-of-bounds in
+ xfs_attr3_leaf_add_work
+Message-ID: <20230623013513.GB1949@sol.localdomain>
+References: <0000000000001c8edb05fe518644@google.com>
+ <ZI+3QXDHiohgv/Pb@dread.disaster.area>
+ <20230621080521.GB56560@sol.localdomain>
+ <ZJQZm+UGyJZZNTvN@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZJQNjFJhLh0C84u/@dread.disaster.area>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+In-Reply-To: <ZJQZm+UGyJZZNTvN@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -61,80 +61,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 22, 2023 at 06:59:56PM +1000, Dave Chinner wrote:
-> On Wed, Jun 21, 2023 at 12:54:21AM -0700, Eric Biggers wrote:
-> > On Wed, Jun 21, 2023 at 05:07:15PM +1000, 'Dave Chinner' via syzkaller-bugs wrote:
-> > > On Tue, Jun 20, 2023 at 07:10:19PM -0700, syzbot wrote:
-> > > So exactly what is syzbot complaining about here? There's no kernel
-> > > issue here at all.
-> > > 
-> > > Also, I cannot tell syzbot "don't ever report this as a bug again",
-> > > so the syzbot developers are going to have to triage and fix this
-> > > syzbot problem themselves so it doesn't keep getting reported to
-> > > us...
+On Thu, Jun 22, 2023 at 07:51:23PM +1000, 'Dave Chinner' via syzkaller-bugs wrote:
 > > 
-> > I think the problem here was that XFS logged a message beginning with
-> > "WARNING:", followed by a stack trace.  In the log that looks like a warning
-> > generated by the WARN_ON() macro, which is meant for reporting recoverable
-> > kernel bugs.  It's difficult for any program to understand the log in cases like
-> > this.  This is why include/asm-generic/bug.h contains the following comment:
-> > 
-> >  * Do not include "BUG"/"WARNING" in format strings manually to make these
-> >  * conditions distinguishable from kernel issues.
+> > My understanding is that the main motivation for the conversions to flex arrays
+> > is kernel hardening, as it allows bounds checking to be enabled.
 > 
-> Nice.
+> <sigh>
 > 
-> Syzbot author doesn't like log messages using certain key words
-> because it's hard for syzbot to work out what went wrong.
-> 
-> Gets new rule added to kernel in a comment in some header file that
-> almost nobody doing kernel development work ever looks at.
-> 
-> Nothing was added to the coding style rules or checkpatch so nobody
-> is likely to accidentally trip over this new rule that nobody has
-> been told about.
-> 
-> Syzbot maintainer also fails to do an audit of the kernel to remove
-> all existing "WARNING" keywords from existing log messages so leaves
-> landmines for subsystems to have to handle at some time in the
-> future.
-> 
-> Five years later, syzbot trips over a log message containing WARNING
-> in it that was in code introduced before the rule was "introduced".
-> Subsystem maintainers are blamed for not know the rule existed.
-> 
-> Result: *yet again* we are being told that our only option is
-> to *change code that is not broken* just to *shut up some fucking
-> bot* we have no control over and could happily live without.
-> 
-> > If you have a constructive suggestion of how all programs that
-> > parse the kernel log can identify real warnings reliably without
-> > getting confused by cases like this, I'm sure that would be
-> > appreciated.  It would need to be documented and then the guidance
-> > in bug.h could then be removed.  But until then, the above is the
-> > current guidance.
-> 
-> That is so not the problem here, Eric.
-> 
+> Do you think we don't know this?
 
-Grepping for "WARNING:" is how other kernel testing systems find WARN_ON's in
-the log too.  For example, see _check_dmesg() in common/rc in xfstests.
-xfstests fails tests if "WARNING:" is logged.  You might be aware of this, as
-you reviewed and applied xfstests commit 47e5d7d2bb17 which added the code.
+You said the only reason to fix this would be to "shut up UBSAN and/or syzbot".
+So it seemed you were not aware of the kernel hardening motivation.
 
-I understand it's frustrating that Dmitry's attempt to do something about this
-problem was incomplete.  I don't think it is helpful to then send a reflexive,
-adversarial response that shifts the blame for this longstanding problem with
-the kernel logs entirely onto syzbot and even Dmitry personally.  That just
-causes confusion about the problem that needs to be solved.
+> 
+> We can't actually rely on the compiler checking here. We *must* to
+> do runtime verification of these on-disk format structures because
+> we are parsing dynamic structures, not fixed size arrays.  IOWs, we
+> already bounds check these arrays (in multiple ways!) before we do
+> the memcpy(), and have done so for many, many years.
+> 
+> *This code is safe* no matter what the compiler says.
+> 
+> Last time this came up in a FORTIFY_SOURCE context, Darrick proposed
+> to change this to use unsafe_memcpy() to switch off the compile time
+> checking because we *must* do runtime checking of the array lengths
+> provided in the structure itself.
+> 
+> Kees pretty much knocked that down by instead proposing some
+> "flex_cpy()" API he was working on that never went anywhere. So
+> kernel security people essentially said "no, we don't want you to
+> fix it that way, but then failed to provide the new infrastructure
+> they said we should use for this purpose.
+> 
+> Damned if we do, damned if we don't.
+> 
+> So until someone from the security side of the fence ponies up the
+> resources to fix this in a way that is acceptible to the security
+> people and they do all the testing and validation we require for
+> such an on-disk format change, the status quo is unlikely to change.
 
-Anyway, either everything that parses the kernel logs needs to be smarter about
-identifying real WARN_ON's, or all instances of "WARNING:" need to be eliminated
-from the log (with existing code, coding style guidelines, and checkpatch
-updated as you mentioned).  I think I'm leaning towards the position that fake
-"WARNING:"s should be eliminated.  It does seem like a hack, but it makes the
-"obvious" log pattern matching that everyone tends to write work as expected...
+I think you've missed the point.  The point is not about improving the bounds
+checks for this specific field.  Rather, it's about eliminating a "false
+positive" so that automatic bounds checking of known-sized arrays can be enabled
+universally as a hardening measure.  Without code like this fixed, it will be
+impossible to enable automatic bounds checking, at least in the affected files.
 
-If you don't want to help, fine, but at least please try not to be obstructive.
+> 
+> > You can probably get away with not fixing this for a little while longer, as
+> > that stuff is still a work in progress.  But I would suggest you be careful
+> > about potentially getting yourself into a position where XFS is blocking
+> > enabling security mitigations for the whole kernel...
+> 
+> <sigh>
+> 
+> I'm really getting tired of all these "you'll do what we say or
+> else" threats that have been made over the past few months.
+> 
+> As I said: if this is a priority, then the entities who have given
+> it priority need to provide resources to fix it, not demand that
+> others do the work they want done right now for free. If anyone
+> wants work done for free, then they'll just have to wait in line
+> until we've got time to address it.
+
+Well, good news: Gustavo Silva, Kees Cook, and others are going through the
+kernel and doing the conversions to flex arrays.
+
+I am trying to help you understand the problem, not force you to fix it.  If you
+do not want to fix it yourself, then you can simply consider this bug report as
+a heads up.
+
+I would just ask that you please try to be cooperative when you eventually do
+get a patch from someone trying to fix it.
+
+XFS does not need to be the "problem subsystem" every time.
 
 - Eric
