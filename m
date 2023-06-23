@@ -2,263 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E10B73B8DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 15:34:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7730A73BA79
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 16:44:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231504AbjFWNeD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jun 2023 09:34:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55726 "EHLO
+        id S232263AbjFWOoJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jun 2023 10:44:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231493AbjFWNeC (ORCPT
+        with ESMTP id S232269AbjFWOnv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jun 2023 09:34:02 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7529E2693
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 06:33:34 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1b5466bc5f8so910865ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 06:33:34 -0700 (PDT)
+        Fri, 23 Jun 2023 10:43:51 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38838184
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 07:43:36 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-570553a18deso9829597b3.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 07:43:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1687527214; x=1690119214;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ACoox6lHywQa9wO0MGPPVAOCZzDjfudqnGd2G0lw0os=;
-        b=fa1yyl1XuChlZVeuHnAOkkfkq2hZyLQlU7Qx7FIzebWZlha3QE3pftRSrj+DJxI7Rv
-         UhXvlkHo3Vcdolq+ME68HhnTz0k5XIGoqWorIAsqCzinXOgMm/YBV2p6rPjxxhB9xA+p
-         CKbtixmq104K/XaeP7c/FRQEzfBhOolOJ13XEqLz2Vl/3W9UCdfjI5o3p38fxwPZQ7jM
-         f2Nv1spQskpxwNqmrAc0KV9Etlyt/W0NlU64HVCq3FTgTv7qi6xblmtVtEFrypVRLxTd
-         swjUrDnQOk53j5e/5rffnzu2n8zAvNVx/4KpVQ/7vpT1VvkShyKZT45f4U4Mq3kIEUCc
-         sA+A==
+        d=google.com; s=20221208; t=1687531415; x=1690123415;
+        h=content-transfer-encoding:cc:to:from:subject:mime-version
+         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cAAFffNo5n7JO9asv2/EjTz77Q8bdKCTYdHhFz9jqbk=;
+        b=w8OUSYv2sPOqw/SZj4Fu0+C7CcU5elCykdgSTzKDfTFcj6I/Q3AGnnyOxpWaCiUZPG
+         UaH+k2FGrnNmj83RBIyeD5V05QNYvNIWyHFwYN0TWh2Bo3xR5+CgGesmgFxwkagAa4mK
+         mokpUzC3BZuDkW/SzpoEHI5cKtFPLHG2jB1M98Lbktmh6CDycQb7TAhaZgOyAWrGcZLw
+         kM9pJQrvJHOlogB2AI+yPWJfLkwihq4qBUu4ZBxt8tco/nDJF9ArQlPzqkomdPeVGQm/
+         ieoW3/k39a77M91v/227CXLlV7LfCi+AW2w5aSlDw7t3w2yl9TUkirjyo9sLIRvke4mj
+         dLTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687527214; x=1690119214;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ACoox6lHywQa9wO0MGPPVAOCZzDjfudqnGd2G0lw0os=;
-        b=Nfuo1pq+bWZHm94P6Yn0zTCQk8THl9tsIAGY6h4WFmgcWd5c6UAHJSzyZkJUXrETMH
-         G0ZjXsOqcXY09q0lOqxa/Gug0Wqj0dsgxNQZAyuyipKQY6tAKVoUMioXOGmoGMKtg2De
-         0wS+LSQJY8oE7H7aAZ/xdWNlGYHTsuxipzi8MCWkr30F2RlO7AAsG8HnXaSZVy3vlYyd
-         tzjORt14TJQHFf6EBOkaaSeF7/77QSIRs5KDNUBLfodWTPChB+OJ5wsPdtLOTzDxCx8b
-         lsR0nYlc42ALPhxxUf+8jEYfg7HsTFME5FJw8nQ81g4bwhaX98uQOvJxs6T+B5w+2w1m
-         Qkew==
-X-Gm-Message-State: AC+VfDwzkQSgjLPyk2WUjc8ZRsypgKk/956McmUIMpPVRJH218XMmS/1
-        AZtVYoZitX/jNZY5ptB110aTyw==
-X-Google-Smtp-Source: ACHHUZ7fC8cfi9SbpxWbw1P19vY2WFeiY5bxjWE/lWxj83YOdeMLdFfAi7QBoo42W5+SZOFqK06Ryw==
-X-Received: by 2002:a17:902:c945:b0:1ae:3ff8:7fa7 with SMTP id i5-20020a170902c94500b001ae3ff87fa7mr26069073pla.4.1687527213878;
-        Fri, 23 Jun 2023 06:33:33 -0700 (PDT)
-Received: from [10.4.168.167] ([139.177.225.254])
-        by smtp.gmail.com with ESMTPSA id kg14-20020a170903060e00b001b6a27dff99sm4341406plb.159.2023.06.23.06.33.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Jun 2023 06:33:33 -0700 (PDT)
-Message-ID: <43a07dbe-5049-8596-da58-51e0a0d6243c@bytedance.com>
-Date:   Fri, 23 Jun 2023 21:33:24 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.12.0
-Subject: Re: [PATCH 05/29] drm/panfrost: dynamically allocate the drm-panfrost
- shrinker
-Content-Language: en-US
-To:     Steven Price <steven.price@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, dm-devel@redhat.com,
-        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, akpm@linux-foundation.org,
-        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
-        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
-        paulmck@kernel.org, tytso@mit.edu
-References: <20230622085335.77010-1-zhengqi.arch@bytedance.com>
- <20230622085335.77010-6-zhengqi.arch@bytedance.com>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20230622085335.77010-6-zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        d=1e100.net; s=20221208; t=1687531415; x=1690123415;
+        h=content-transfer-encoding:cc:to:from:subject:mime-version
+         :message-id:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cAAFffNo5n7JO9asv2/EjTz77Q8bdKCTYdHhFz9jqbk=;
+        b=Gpcr9A+AP5Gpu2iZ+BovfFhv6Ee7lEgS3DqSLeyT2ZW6TSwRqBG4i3k2bs3//IS2t0
+         Fef6vHyLlLQLcE/HzukxZSP7ThUREGLivWbABzMqhxrG37dLDKeY5Sg2TYqYbuFiYsEk
+         kRK/VbyeoO4lZ3RYN8CcGxUJjMwVy+SyylFHgtRkr7R2U7ekGK3+AqU5Ci9H754KRjAX
+         1yuFljqDfiCYOJuirr3rCSSL6pi4ls6KiBse4i9r0mGRNZYFOEeNRnbOt2AmmGzBVLh/
+         9eGIGTanlYmq52ttgZ8r/ZXifA55T83jTPGku1gztWtOc4G2kSu4Hgzx9FSwReTUZgRc
+         +C0w==
+X-Gm-Message-State: AC+VfDyVWiK9J8soVmTWEvG64EXVR2/6ZBxjYx5cA84DFuj2URjpxMLU
+        4IzBz1VJSxleN79/LHgGelfeIfSaliY=
+X-Google-Smtp-Source: ACHHUZ6jIe8yLLFFywqjCie14gjNnE2bQMF+pAbJG96LJQF0Z6Re5SaQWD+3ax1Xz9vy5tCXqS8mC5uAAYQ=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:8b55:dee0:6991:c318])
+ (user=gnoack job=sendgmr) by 2002:a81:ac42:0:b0:56d:ca1:cd6c with SMTP id
+ z2-20020a81ac42000000b0056d0ca1cd6cmr5524779ywj.2.1687531415477; Fri, 23 Jun
+ 2023 07:43:35 -0700 (PDT)
+Date:   Fri, 23 Jun 2023 16:43:23 +0200
+Message-Id: <20230623144329.136541-1-gnoack@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
+Subject: [PATCH v2 0/6] Landlock: ioctl support
+From:   "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To:     linux-security-module@vger.kernel.org,
+        "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
+Cc:     Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        linux-fsdevel@vger.kernel.org,
+        "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,
+        USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Steven,
+Hello!
 
-The email you replied to was the failed version (due to the error
-below), so I copied your reply and replied to you on this successful
-version.
+These patches add simple ioctl(2) support to Landlock.
 
-(4.7.1 Error: too many recipients from 49.7.199.173)
+Objective
+~~~~~~~~~
 
-On 2023/6/23 18:01, Steven Price wrote:
- > On 22/06/2023 09:39, Qi Zheng wrote:
- >> From: Qi Zheng <zhengqi.arch@bytedance.com>
- >>
- >> In preparation for implementing lockless slab shrink,
- >> we need to dynamically allocate the drm-panfrost shrinker,
- >> so that it can be freed asynchronously using kfree_rcu().
- >> Then it doesn't need to wait for RCU read-side critical
- >> section when releasing the struct panfrost_device.
- >>
- >> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
- >> ---
- >>   drivers/gpu/drm/panfrost/panfrost_device.h    |  2 +-
- >>   .../gpu/drm/panfrost/panfrost_gem_shrinker.c  | 24 ++++++++++---------
- >>   2 files changed, 14 insertions(+), 12 deletions(-)
- >>
- >> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h 
-b/drivers/gpu/drm/panfrost/panfrost_device.h
- >> index b0126b9fbadc..e667e5689353 100644
- >> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
- >> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
- >> @@ -118,7 +118,7 @@ struct panfrost_device {
- >>
- >>   	struct mutex shrinker_lock;
- >>   	struct list_head shrinker_list;
- >> -	struct shrinker shrinker;
- >> +	struct shrinker *shrinker;
- >>
- >>   	struct panfrost_devfreq pfdevfreq;
- >>   };
- >> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c 
-b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
- >> index bf0170782f25..2a5513eb9e1f 100644
- >> --- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
- >> +++ b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
- >> @@ -18,8 +18,7 @@
- >>   static unsigned long
- >>   panfrost_gem_shrinker_count(struct shrinker *shrinker, struct 
-shrink_control *sc)
- >>   {
- >> -	struct panfrost_device *pfdev =
- >> -		container_of(shrinker, struct panfrost_device, shrinker);
- >> +	struct panfrost_device *pfdev = shrinker->private_data;
- >>   	struct drm_gem_shmem_object *shmem;
- >>   	unsigned long count = 0;
- >>
- >> @@ -65,8 +64,7 @@ static bool panfrost_gem_purge(struct 
-drm_gem_object *obj)
- >>   static unsigned long
- >>   panfrost_gem_shrinker_scan(struct shrinker *shrinker, struct 
-shrink_control *sc)
- >>   {
- >> -	struct panfrost_device *pfdev =
- >> -		container_of(shrinker, struct panfrost_device, shrinker);
- >> +	struct panfrost_device *pfdev = shrinker->private_data;
- >>   	struct drm_gem_shmem_object *shmem, *tmp;
- >>   	unsigned long freed = 0;
- >>
- >> @@ -100,10 +98,15 @@ panfrost_gem_shrinker_scan(struct shrinker 
-*shrinker, struct shrink_control *sc)
- >>   void panfrost_gem_shrinker_init(struct drm_device *dev)
- >>   {
- >>   	struct panfrost_device *pfdev = dev->dev_private;
- >> -	pfdev->shrinker.count_objects = panfrost_gem_shrinker_count;
- >> -	pfdev->shrinker.scan_objects = panfrost_gem_shrinker_scan;
- >> -	pfdev->shrinker.seeks = DEFAULT_SEEKS;
- >> -	WARN_ON(register_shrinker(&pfdev->shrinker, "drm-panfrost"));
- >> +
- >> +	pfdev->shrinker = shrinker_alloc_and_init(panfrost_gem_shrinker_count,
- >> +						  panfrost_gem_shrinker_scan, 0,
- >> +						  DEFAULT_SEEKS, 0, pfdev);
- >> +	if (pfdev->shrinker &&
- >> +	    register_shrinker(pfdev->shrinker, "drm-panfrost")) {
- >> +		shrinker_free(pfdev->shrinker);
- >> +		WARN_ON(1);
- >> +	}
- >
- > So we didn't have good error handling here before, but this is
- > significantly worse. Previously if register_shrinker() failed then the
- > driver could safely continue without a shrinker - it would waste memory
- > but still function.
- >
- > However we now have two failure conditions:
- >   * shrinker_alloc_init() returns NULL. No warning and NULL deferences
- >     will happen later.
- >
- >   * register_shrinker() fails, shrinker_free() will free pdev->shrinker
- >     we get a warning, but followed by a use-after-free later.
- >
- > I think we need to modify panfrost_gem_shrinker_init() to be able to
- > return an error, so a change something like the below (untested) before
- > your change.
+Make ioctl(2) requests restrictable with Landlock,
+in a way that is useful for real-world applications.
 
-Indeed. I will fix it in the v2.
+Proposed approach
+~~~~~~~~~~~~~~~~~
 
-Thanks,
-Qi
+Introduce the LANDLOCK_ACCESS_FS_IOCTL right, which restricts the use
+of ioctl(2) on file descriptors.
 
- >
- > Steve
- >
- > ----8<---
- > diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c
- > b/drivers/gpu/drm/panfrost/panfrost_drv.c
- > index bbada731bbbd..f705bbdea360 100644
- > --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
- > +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
- > @@ -598,10 +598,14 @@ static int panfrost_probe(struct platform_device
- > *pdev)
- >   	if (err < 0)
- >   		goto err_out1;
- >
- > -	panfrost_gem_shrinker_init(ddev);
- > +	err = panfrost_gem_shrinker_init(ddev);
- > +	if (err)
- > +		goto err_out2;
- >
- >   	return 0;
- >
- > +err_out2:
- > +	drm_dev_unregister(ddev);
- >   err_out1:
- >   	pm_runtime_disable(pfdev->dev);
- >   	panfrost_device_fini(pfdev);
- > diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h
- > b/drivers/gpu/drm/panfrost/panfrost_gem.h
- > index ad2877eeeccd..863d2ec8d4f0 100644
- > --- a/drivers/gpu/drm/panfrost/panfrost_gem.h
- > +++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
- > @@ -81,7 +81,7 @@ panfrost_gem_mapping_get(struct panfrost_gem_object 
-*bo,
- >   void panfrost_gem_mapping_put(struct panfrost_gem_mapping *mapping);
- >   void panfrost_gem_teardown_mappings_locked(struct 
-panfrost_gem_object *bo);
- >
- > -void panfrost_gem_shrinker_init(struct drm_device *dev);
- > +int panfrost_gem_shrinker_init(struct drm_device *dev);
- >   void panfrost_gem_shrinker_cleanup(struct drm_device *dev);
- >
- >   #endif /* __PANFROST_GEM_H__ */
- > diff --git a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
- > b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
- > index bf0170782f25..90265b37636f 100644
- > --- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
- > +++ b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
- > @@ -97,13 +97,17 @@ panfrost_gem_shrinker_scan(struct shrinker
- > *shrinker, struct shrink_control *sc)
- >    *
- >    * This function registers and sets up the panfrost shrinker.
- >    */
- > -void panfrost_gem_shrinker_init(struct drm_device *dev)
- > +int panfrost_gem_shrinker_init(struct drm_device *dev)
- >   {
- >   	struct panfrost_device *pfdev = dev->dev_private;
- > +	int ret;
- > +
- >   	pfdev->shrinker.count_objects = panfrost_gem_shrinker_count;
- >   	pfdev->shrinker.scan_objects = panfrost_gem_shrinker_scan;
- >   	pfdev->shrinker.seeks = DEFAULT_SEEKS;
- > -	WARN_ON(register_shrinker(&pfdev->shrinker, "drm-panfrost"));
- > +	ret = register_shrinker(&pfdev->shrinker, "drm-panfrost");
- > +
- > +	return ret;
- >   }
- >
- >   /**
- >
+We attach the LANDLOCK_ACCESS_FS_IOCTL right to opened file
+descriptors, as we already do for LANDLOCK_ACCESS_FS_TRUNCATE.
+
+I believe that this approach works for the majority of use cases, and
+offers a good trade-off between Landlock API and implementation
+complexity and flexibility when the feature is used.
+
+Current limitations
+~~~~~~~~~~~~~~~~~~~
+
+With this patch set, ioctl(2) requests can *not* be filtered based on
+file type, device number (dev_t) or on the ioctl(2) request number.
+
+On the initial RFC patch set [1], we have reached consensus to start
+with this simpler coarse-grained approach, and build additional ioctl
+restriction capabilities on top in subsequent steps.
+
+[1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2=
+a0c023dd761@digikod.net/
+
+Notable implications of this approach
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Existing inherited file descriptors stay unaffected
+  when a program enables Landlock.
+
+  This means in particular that in common scenarios,
+  the terminal's ioctls (ioctl_tty(2)) continue to work.
+
+* ioctl(2) continues to be available for file descriptors acquired
+  through means other than open(2).  Example: Network sockets,
+  memfd_create(2), file descriptors that are already open before the
+  Landlock ruleset is enabled.
+
+Examples
+~~~~~~~~
+
+Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+
+  LL_FS_RO=3D/ LL_FS_RW=3D. ./sandboxer /bin/bash
+
+The LANDLOCK_ACCESS_FS_IOCTL right is part of the "read-write" rights
+here, so we expect that newly opened files outside of $HOME don't work
+with ioctl(2).
+
+  * "stty" works: It probes terminal properties
+
+  * "stty </dev/tty" fails: /dev/tty can be reopened, but the ioctl is
+    denied.
+
+  * "eject" fails: ioctls to use CD-ROM drive are denied.
+
+  * "ls /dev" works: It uses ioctl to get the terminal size for
+    columnar layout
+
+  * The text editors "vim" and "mg" work.  (GNU Emacs fails because it
+    attempts to reopen /dev/tty.)
+
+Related Work
+~~~~~~~~~~~~
+
+OpenBSD's pledge(2) [2] restricts ioctl(2) independent of the file
+descriptor which is used.  The implementers maintain multiple
+allow-lists of predefined ioctl(2) operations required for different
+application domains such as "audio", "bpf", "tty" and "inet".
+
+OpenBSD does not guarantee ABI backwards compatibility to the same
+extent as Linux does, so it's easier for them to update these lists in
+later versions.  It might not be a feasible approach for Linux though.
+
+[2] https://man.openbsd.org/OpenBSD-7.3/pledge.2
+
+Changes
+~~~~~~~
+
+V2:
+ * rebased on mic-next
+ * added documentation
+ * exercise ioctl in the memfd test
+ * test: Use layout0 for the test
+
+---
+
+V1: https://lore.kernel.org/linux-security-module/20230502171755.9788-1-gno=
+ack3000@gmail.com/
+
+G=C3=BCnther Noack (6):
+  landlock: Increment Landlock ABI version to 4
+  landlock: Add LANDLOCK_ACCESS_FS_IOCTL access right
+  selftests/landlock: Test ioctl support
+  selftests/landlock: Test ioctl with memfds
+  samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL
+  landlock: Document ioctl support
+
+ Documentation/userspace-api/landlock.rst     | 52 ++++++++-----
+ include/uapi/linux/landlock.h                | 19 +++--
+ samples/landlock/sandboxer.c                 | 12 ++-
+ security/landlock/fs.c                       | 21 +++++-
+ security/landlock/limits.h                   |  2 +-
+ security/landlock/syscalls.c                 |  2 +-
+ tools/testing/selftests/landlock/base_test.c |  2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 77 ++++++++++++++++++--
+ 8 files changed, 149 insertions(+), 38 deletions(-)
+
+
+base-commit: 35ca4239929737bdc021ee923f97ebe7aff8fcc4
+--=20
+2.41.0.162.gfafddb0af9-goog
 
