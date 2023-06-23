@@ -2,112 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BDC7173BDAF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 19:19:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CFDC73BF5E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Jun 2023 22:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232440AbjFWRTG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jun 2023 13:19:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46924 "EHLO
+        id S231861AbjFWUTB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jun 2023 16:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232487AbjFWRSd (ORCPT
+        with ESMTP id S229531AbjFWUSx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jun 2023 13:18:33 -0400
-Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FB922721;
-        Fri, 23 Jun 2023 10:18:28 -0700 (PDT)
-Received: from mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net [IPv6:2a02:6b8:c18:58f:0:640:3768:0])
-        by forward500a.mail.yandex.net (Yandex) with ESMTP id EACBE5EA4E;
-        Fri, 23 Jun 2023 20:18:25 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NILcZOZDaGk0-S35Pwuwb;
-        Fri, 23 Jun 2023 20:18:25 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1687540705;
-        bh=kQSS/qORopd8NDqlspWE4bP9dR8P/jQxd/JVi56VTuY=;
-        h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-        b=Qh85RWDQ3psXAxoFrVkq5VLpFnk0QM7UCXiewRLIfwAQV99tDf0OhvRCE1Smaj8P5
-         XWtGT+0a9khrZntiHHI5jqdHtZKWkVWDzPpMTMR4qaI72hLcjcbMGaNNZQgZdLNqDN
-         o8mW36AG/AEqCe6tQDVUBTQ+USc1W5y1eoyNREQg=
-Authentication-Results: mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <0697f0d1-490b-6613-fea0-967a40861b25@yandex.ru>
-Date:   Fri, 23 Jun 2023 22:18:23 +0500
+        Fri, 23 Jun 2023 16:18:53 -0400
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4701410D2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 13:18:51 -0700 (PDT)
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-77e3eaa1343so67379039f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 13:18:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687551530; x=1690143530;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gTCEZ6avU993SuP7+FfOluMMZwAt+AbEtN50uBtijb4=;
+        b=YEcKspn6J0vO9tNyi05LafjdHnPxjGHygBbvq/eYBHVTCuTLraXshQcVIGsCnZdvQD
+         v+p9HirBPH9es8ysV/by8PZpsH5H4HWpxg1r55OC7bZ+OhrZUFK6+fLE1PdGqKsr6Q0w
+         xmFJkYO/hES1oxivpUWGrXOFlJa0xkhv6wA0/kuRlABX4otgEltx36QEhC7UR7tt0VQM
+         RXQLuT0W/0sxXv7OzVU5Enh/WGTAcHRPoW93MDk8LVNGZyWJrotWLza305zzocz6gF/p
+         Hetx0C87bpDnngBW9jaO9ELkqcFB1aLa957eM2PnDajv1ko3Pj1NIB3TSSRerpjSX81v
+         iPgQ==
+X-Gm-Message-State: AC+VfDwjm7KTgCq3V1z2gZI+YH81Q11h6WM2Xb3Kh2RjyRRowP4f4XvB
+        Vo9zgIPNrP8tTbcnp0eif0ROLRXwfQ2nVYdnqzwKJYpv0mzI
+X-Google-Smtp-Source: ACHHUZ7MnU3fEHNaCiaC+rTxSzteDE/1T9Rw0ED/rHT786IEQPgBpxn3IzLTKdA/dtBp0puiJUlgumgE6vE2Da8OZp2Dgpe0bg4N
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-References: <5f644a24-90b5-a02f-b593-49336e8e0f5a@yandex.ru>
- <2eb8566726e95a01536b61a3b8d0343379092b94.camel@kernel.org>
- <d70b6831-3443-51d0-f64c-6f6996367a85@yandex.ru>
- <d0c18369245db91a3b78017fabdc81417418af67.camel@kernel.org>
- <ddb48e05-ab26-ae5d-86d5-01e47f0f0cd2@yandex.ru>
- <e8c8c7d8bf871a0282f3e629d017c09ed38e2c5e.camel@kernel.org>
- <9c0a7cde-da32-bc09-0724-5b1387909d18@yandex.ru>
- <26dce201000d32fd3ca1ca5b5f8cd4f5ae0b38b2.camel@kernel.org>
- <0188af4b-fc74-df61-8e00-5bc81bbcb1cc@yandex.ru>
- <b7fd8146f9c758a8e16faeb371ca04a701e1a7b8.camel@kernel.org>
- <20230623-paranoia-reinschauen-329185eac276@brauner>
-From:   stsp <stsp2@yandex.ru>
-In-Reply-To: <20230623-paranoia-reinschauen-329185eac276@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a02:8506:0:b0:422:ce09:bb7c with SMTP id
+ g6-20020a028506000000b00422ce09bb7cmr8141088jai.4.1687551530594; Fri, 23 Jun
+ 2023 13:18:50 -0700 (PDT)
+Date:   Fri, 23 Jun 2023 13:18:50 -0700
+In-Reply-To: <000000000000a6229505fc213b06@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008577de05fed1b50b@google.com>
+Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_relocate_block_group
+From:   syzbot <syzbot+07a7e6273e07bda9ef8b@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+syzbot has found a reproducer for the following issue on:
 
-23.06.2023 20:25, Christian Brauner пишет:
-> On Wed, Jun 21, 2023 at 07:05:12AM -0400, Jeff Layton wrote:
->> On Wed, 2023-06-21 at 15:42 +0500, stsp wrote:
->>> 21.06.2023 15:35, Jeff Layton пишет:
->>>> I don't think we can change this at this point.
->>>>
->>>> The bottom line (again) is that OFD locks are owned by the file
->>>> descriptor (much like with flock()), and since file descriptors can be
->>>> shared across multiple process it's impossible to say that some single
->>>> process owns it.
->>> What's the problem with 2 owners?
->>> Can't you get one of them, rather than
->>> meaningless -1?
->>> Compare this situation with read locks.
->>> They can overlap, so when you get an
->>> info about a read lock (except for the
->>> new F_UNLCK case), you get the info
->>> about *some* of the locks in that range.
->>> In the case of multiple owners, you
->>> likewise get the info about about some
->>> owner. If you iteratively send them a
->>> "please release this lock" message
->>> (eg in a form of SIGKILL), then you
->>> traverse all, and end up with the
->>> lock-free area.
->>> Is there really any problem here?
->> Yes. Ambiguous answers are worse than none at all.
-> I agree.
->
-> A few minor observations:
->
-> SCM_RIGHTS have already been mentioned multiple times. But I'm not sure
-> it's been mentioned explicitly but that trivially means it's possible to
-> send an fd to a completely separate thread-group, then kill off the
-> sending thread-group by killing their thread-group leader. Bad enough as
-> the identifier is now useless. But it also means that at some later
-> point that pid can be recycled.
-Come on.
-I never proposed anything like this.
-Of course the returned pid should be
-the pid of the current, actual owner,
-or one of current owners.
-If someone else proposed to return
-stalled pids, then it wasn't me.
+HEAD commit:    8a28a0b6f1a1 Merge tag 'net-6.4-rc8' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1391b0e0a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2cbd298d0aff1140
+dashboard link: https://syzkaller.appspot.com/bug?extid=07a7e6273e07bda9ef8b
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16243fdb280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1200bc77280000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d02009a9822d/disk-8a28a0b6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f33ad4ef1182/vmlinux-8a28a0b6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f795a8ae7a8c/bzImage-8a28a0b6.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ed54a18fab29/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+07a7e6273e07bda9ef8b@syzkaller.appspotmail.com
+
+BTRFS info (device loop0): balance: start -d -m
+BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5709 at fs/btrfs/relocation.c:4123 btrfs_relocate_block_group+0xaaa/0xe50 fs/btrfs/relocation.c:4123
+Modules linked in:
+CPU: 0 PID: 5709 Comm: syz-executor272 Not tainted 6.4.0-rc7-syzkaller-00194-g8a28a0b6f1a1 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:btrfs_relocate_block_group+0xaaa/0xe50 fs/btrfs/relocation.c:4123
+Code: 4c 89 ef e8 c8 38 59 fe e9 5d fe ff ff e8 5e 6b 06 fe 4c 89 f7 41 bc e6 ff ff ff e8 80 e4 0b 00 e9 11 f8 ff ff e8 46 6b 06 fe <0f> 0b e9 d7 fe ff ff e8 3a 6b 06 fe 0f 0b e9 90 fe ff ff e8 2e 6b
+RSP: 0018:ffffc90005df7968 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000190000 RCX: 0000000000000000
+RDX: ffff88807dfc5940 RSI: ffffffff837dde1a RDI: 0000000000000007
+RBP: ffff888023904000 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000190000 R11: 0000000000094001 R12: 0000000000000000
+R13: ffff888015bd0000 R14: ffff88802cb88000 R15: ffff88802cb88000
+FS:  00007fbbd1de1700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd3bb0ed028 CR3: 0000000016f19000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ btrfs_relocate_chunk+0x14a/0x440 fs/btrfs/volumes.c:3276
+ __btrfs_balance fs/btrfs/volumes.c:4011 [inline]
+ btrfs_balance+0x1e8f/0x40f0 fs/btrfs/volumes.c:4395
+ btrfs_ioctl_balance fs/btrfs/ioctl.c:3599 [inline]
+ btrfs_ioctl+0x12a6/0x5b30 fs/btrfs/ioctl.c:4632
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl fs/ioctl.c:856 [inline]
+ __x64_sys_ioctl+0x197/0x210 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fbbd92586f9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fbbd1de12f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fbbd92e37f0 RCX: 00007fbbd92586f9
+RDX: 00000000200003c0 RSI: 00000000c4009420 RDI: 0000000000000005
+RBP: 00007fbbd92af4cc R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 61635f7261656c63 R14: 0100000000008001 R15: 00007fbbd92e37f8
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
