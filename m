@@ -2,169 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99BAE73C5C5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jun 2023 03:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A8BE73C5E2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Jun 2023 03:38:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231134AbjFXBO4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Jun 2023 21:14:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53510 "EHLO
+        id S231843AbjFXBiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Jun 2023 21:38:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230501AbjFXBOw (ORCPT
+        with ESMTP id S229543AbjFXBh6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Jun 2023 21:14:52 -0400
-Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C60D726BD
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 18:14:50 -0700 (PDT)
-Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-39ecef7a101so1064119b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 18:14:50 -0700 (PDT)
+        Fri, 23 Jun 2023 21:37:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A20E45
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 18:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687570630;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SWrf17db78ezE6/aH1TL74NU60boy/nUbrBlOEfT/sU=;
+        b=hMclPX1M8U+zpt+kUJc30oAJaKRydBzPfTNyaZQ32GCqNSON1J5iSfRPSJlAnFW6qkY2la
+        87VYSk5gIRhtRj6Z4VxvTcTFj2CTi8I76mjutifaKDaDxTDQ+bXowQJo3aXo9zcuoFRu5/
+        ryW/qDFqsoiL6EiHrhGN/v4Ml+TiDLA=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-536-B4OXAR6TNWuTfApHYVUMvw-1; Fri, 23 Jun 2023 21:37:09 -0400
+X-MC-Unique: B4OXAR6TNWuTfApHYVUMvw-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1b5381523bcso8872885ad.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Jun 2023 18:37:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687569290; x=1690161290;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7PyQKurHCJE/uC1oMG5etBoAcnflEGjb/6C6sV4i/OA=;
-        b=XR9SJioIKmoWxaWOhEsBF6/1cBQXoZApBScrw9J3M/13Q4neRfLFw92OJEp2zZX4vD
-         MPgp+/1ryvbpfSgpmn+Kj6v5sAw2F1S1YqrO3mv8MexNMBOlrEpQtyl4YJbH4WA+L0V9
-         olUravX0U0p655U/VUzJYXeFnbLOjytX1fm3/haetENGmTdAIY3DqX7WdTeJLM4kBJhr
-         ugBuy1qVEt8S6/8tMcv5Rvg9fV7+uNUcfKBRcFjwtMNbJUHdbgo/shXXB0ernzn3MgRW
-         59WVBc3/XdCOPVmKHSymlsYNEGtXf85LgodYT3ipbf9j+Naj6rwRYGmPnylP8d+jyqqi
-         k4Ig==
-X-Gm-Message-State: AC+VfDwaRQl66Pmx4ZSUTkfPeEiT776kwIz6pIMkhwovI0lGcYXxAEsL
-        hU69Ze5nNo05gnr2CQIUBDkPQ2I758qPGtKk73SfNCrEG4/r
-X-Google-Smtp-Source: ACHHUZ7V23mNNHKiZk8IiUsr2ju2MM6HnB6VLbLyv7p2C6H+uRyfPwJlAOLJhxR63bAXEVdd22CelXroF3bkA1IY/LsJvaYJRlfI
+        d=1e100.net; s=20221208; t=1687570628; x=1690162628;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SWrf17db78ezE6/aH1TL74NU60boy/nUbrBlOEfT/sU=;
+        b=CRlqZVZVvDzzUYAZfWxhGtJeWA9o4dcRR3Ph2HgD2w3WWAEig2jeSZUXLx9tJ0JXgu
+         1OGD2wjYnRBbJBEIQ3z1RNO90g47DlfoOc7QEcoguPheesNqf4fvVOd1g5cm+7anC/Hm
+         9luvJqyCrHHk32vimWS5etxJVmdmj2EGbGt2sso+KwWCd2vmtM3Dg4P/bLRNmFJQVad8
+         ASqU0HG8LA2qQmuLebXtgxKYuq+bAqVGc/nd+VMcrlMXkbGMDmpWoWNYl9kfPtBVMmxb
+         d62kmjMaR4NL2a1YIUs/NVI0M7X+KzWdMmfrOxpbNtkLFqagV3TnPLcpqyudam0sOd9z
+         TXFg==
+X-Gm-Message-State: AC+VfDwbD8k64nCOIDqEAvarr3+SmpyejDUhhN2Ya4Gxxv4cZewblJMb
+        cLPz0e8ALNoN1nx8q0/mM2Oz7WqtyLsTLFATP5/KoddiJW7emDJjo2fxjlDj4lYPoQba/3HmTKm
+        WwOnSa7EJu49wY0N9jSLVQe1fuKYQbF1uE/t/
+X-Received: by 2002:a17:903:24d:b0:1ae:8595:153 with SMTP id j13-20020a170903024d00b001ae85950153mr1087399plh.20.1687570628101;
+        Fri, 23 Jun 2023 18:37:08 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ70F87Rbv/R9XMaSzZcQtw3TRpiFahOhZs33X4KSJY20FL+t3G4c1wHrNU4qH+U5MgkwpyEHA==
+X-Received: by 2002:a17:903:24d:b0:1ae:8595:153 with SMTP id j13-20020a170903024d00b001ae85950153mr1087385plh.20.1687570627829;
+        Fri, 23 Jun 2023 18:37:07 -0700 (PDT)
+Received: from [10.72.12.106] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id gf4-20020a17090ac7c400b00256dff5f8e3sm259169pjb.49.2023.06.23.18.37.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Jun 2023 18:37:07 -0700 (PDT)
+Message-ID: <64241ff0-9af3-6817-478f-c24a0b9de9b3@redhat.com>
+Date:   Sat, 24 Jun 2023 09:36:54 +0800
 MIME-Version: 1.0
-X-Received: by 2002:aca:e184:0:b0:39c:edc0:202b with SMTP id
- y126-20020acae184000000b0039cedc0202bmr3942828oig.11.1687569289997; Fri, 23
- Jun 2023 18:14:49 -0700 (PDT)
-Date:   Fri, 23 Jun 2023 18:14:49 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000010719b05fed5d82f@google.com>
-Subject: [syzbot] [reiserfs?] [fat?] BUG: corrupted list in __mark_inode_dirty
-From:   syzbot <syzbot+4a16683f5520de8e47c4@syzkaller.appspotmail.com>
-To:     brauner@kernel.org, linkinjeon@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, sj1557.seo@samsung.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+From:   Xiubo Li <xiubli@redhat.com>
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     Gregory Farnum <gfarnum@redhat.com>,
+        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+ <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner>
+ <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
+ <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
+ <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com>
+ <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
+ <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com>
+Content-Language: en-US
+In-Reply-To: <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+[...]
 
-syzbot found the following issue on:
+ > > >
+ > > > I thought about this too and came to the same conclusion, that 
+UID/GID
+ > > > based
+ > > > restriction can be applied dynamically, so detecting it on mount-time
+ > > > helps not so much.
+ > > >
+ > > For this you please raise one PR to ceph first to support this, and in
+ > > the PR we can discuss more for the MDS auth caps. And after the PR
+ > > getting merged then in this patch series you need to check the
+ > > corresponding option or flag to determine whether could the idmap
+ > > mounting succeed.
+ >
+ > I'm sorry but I don't understand what we want to support here. Do we 
+want to
+ > add some new ceph request that allows to check if UID/GID-based
+ > permissions are applied for
+ > a particular ceph client user?
 
-HEAD commit:    45a3e24f65e9 Linux 6.4-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12848413280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=24ce1b2abaee24cc
-dashboard link: https://syzkaller.appspot.com/bug?extid=4a16683f5520de8e47c4
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16bd1013280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101d4adf280000
+IMO we should prevent user to set UID/GID-based permisions caps from 
+ceph side.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/90ee4ebebbf0/disk-45a3e24f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/01569690e4bb/vmlinux-45a3e24f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/19f38d7ce866/bzImage-45a3e24f.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/245a7035bcde/mount_1.gz
+As I know currently there is no way to prevent users to set MDS auth 
+caps, IMO in ceph side at least we need one flag or option to disable 
+this once users want this fs cluster sever for idmap mounts use case.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4a16683f5520de8e47c4@syzkaller.appspotmail.com
+Thanks
 
-list_add corruption. next->prev should be prev (ffffffff91dfe878), but was 0000060100040048. (next=ffff888070e8fc38).
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:27!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 4986 Comm: udevd Not tainted 6.4.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-RIP: 0010:__list_add_valid+0xa5/0x100 lib/list_debug.c:27
-Code: c7 c7 00 f8 a6 8a e8 8a df 50 fd 0f 0b 48 c7 c7 a0 f8 a6 8a e8 7c df 50 fd 0f 0b 4c 89 e1 48 c7 c7 00 f9 a6 8a e8 6b df 50 fd <0f> 0b 48 89 f1 48 c7 c7 80 f9 a6 8a 4c 89 e6 e8 57 df 50 fd 0f 0b
-RSP: 0018:ffffc900033cfa20 EFLAGS: 00010286
-RAX: 0000000000000075 RBX: ffff88802068ee08 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8167dd6c RDI: 0000000000000005
-RBP: ffff88802068efa0 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000001 R12: ffff888070e8fc38
-R13: ffff88802068efa0 R14: ffff88802068efa0 R15: ffff888070e8fc38
-FS:  00007fc75aad2c80(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000060100040048 CR3: 0000000028d93000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __list_add include/linux/list.h:69 [inline]
- list_add include/linux/list.h:88 [inline]
- list_move include/linux/list.h:218 [inline]
- inode_io_list_move_locked+0x1fa/0x3f0 fs/fs-writeback.c:126
- __mark_inode_dirty+0x522/0xd60 fs/fs-writeback.c:2505
- generic_update_time fs/inode.c:1859 [inline]
- inode_update_time fs/inode.c:1872 [inline]
- touch_atime+0x687/0x740 fs/inode.c:1944
- file_accessed include/linux/fs.h:2198 [inline]
- filemap_read+0xa5a/0xc70 mm/filemap.c:2765
- blkdev_read_iter+0x3eb/0x760 block/fops.c:606
- call_read_iter include/linux/fs.h:1862 [inline]
- new_sync_read fs/read_write.c:389 [inline]
- vfs_read+0x4b1/0x8a0 fs/read_write.c:470
- ksys_read+0x12b/0x250 fs/read_write.c:613
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fc75a716b6a
-Code: 00 3d 00 00 41 00 75 0d 50 48 8d 3d 2d 08 0a 00 e8 ea 7d 01 00 31 c0 e9 07 ff ff ff 64 8b 04 25 18 00 00 00 85 c0 75 1b 0f 05 <48> 3d 00 f0 ff ff 76 6c 48 8b 15 8f a2 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffdb3cd93f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00000000003f0000 RCX: 00007fc75a716b6a
-RDX: 0000000000000040 RSI: 000055c536a3f038 RDI: 0000000000000009
-RBP: 0000000000000040 R08: 000055c536a3f010 R09: 0000000000002000
-R10: 0000000000000015 R11: 0000000000000246 R12: 000055c536a3f010
-R13: 000055c536a3f028 R14: 000055c536a58bc8 R15: 000055c536a58b70
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_add_valid+0xa5/0x100 lib/list_debug.c:27
-Code: c7 c7 00 f8 a6 8a e8 8a df 50 fd 0f 0b 48 c7 c7 a0 f8 a6 8a e8 7c df 50 fd 0f 0b 4c 89 e1 48 c7 c7 00 f9 a6 8a e8 6b df 50 fd <0f> 0b 48 89 f1 48 c7 c7 80 f9 a6 8a 4c 89 e6 e8 57 df 50 fd 0f 0b
-RSP: 0018:ffffc900033cfa20 EFLAGS: 00010286
+- Xiubo
 
-RAX: 0000000000000075 RBX: ffff88802068ee08 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8167dd6c RDI: 0000000000000005
-RBP: ffff88802068efa0 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000001 R12: ffff888070e8fc38
-R13: ffff88802068efa0 R14: ffff88802068efa0 R15: ffff888070e8fc38
-FS:  00007fc75aad2c80(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000060100040048 CR3: 0000000028d93000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
