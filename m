@@ -2,109 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7701173D172
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jun 2023 16:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D612473D2C5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Jun 2023 19:45:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230157AbjFYOZt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Jun 2023 10:25:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54426 "EHLO
+        id S229824AbjFYRpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Jun 2023 13:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjFYOZr (ORCPT
+        with ESMTP id S229566AbjFYRpt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Jun 2023 10:25:47 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F06C9E;
-        Sun, 25 Jun 2023 07:25:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687703145; x=1719239145;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tEXa7+daJWFICujQmk+hUpt7ny1BGIDcYKYZnvLrbks=;
-  b=P8aVHsa9tup3jKFKDe/1Xg3Ws207HHfiCVXkz6kZxiRKD7xcf1CSLKWL
-   0zMK+PHnSliyP0JYGjOq39YpdD6MNpTD5SPoTae2zYc6NYsE2nnXhTdbv
-   /iY2CMTAXOR2Db3MdQbO5YzjbwaEdWSnjQe6IufWc7GBZPBRXX/zVXGYc
-   BDcgJqXfGH12TUOdMhdznKkkau98f+Y6b9iO0JyDt8JdZwe2Qezg964+6
-   4EOx95t0113NVqg3JIRnbUKiQVm8I9Zgbx3QpNAfZlBDM1VGqrIVb9l7a
-   8+UioTl8NmUR9f7e0EYpIU+y65DYi6TqD9LLFVddoWnqVLa702DVWTcqE
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10752"; a="363621796"
-X-IronPort-AV: E=Sophos;i="6.01,157,1684825200"; 
-   d="scan'208";a="363621796"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2023 07:25:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10752"; a="962498173"
-X-IronPort-AV: E=Sophos;i="6.01,157,1684825200"; 
-   d="scan'208";a="962498173"
-Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 25 Jun 2023 07:25:43 -0700
-Received: from kbuild by 783282924a45 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qDQgQ-000A4T-1B;
-        Sun, 25 Jun 2023 14:25:42 +0000
-Date:   Sun, 25 Jun 2023 22:25:02 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-        brauner@kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Seth Forshee <sforshee@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: filesystems: idmappings: clarify from where
- idmappings are taken
-Message-ID: <202306252253.qxHG1txo-lkp@intel.com>
-References: <20230621095905.31346-1-aleksandr.mikhalitsyn@canonical.com>
+        Sun, 25 Jun 2023 13:45:49 -0400
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87A5D18E
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 10:45:48 -0700 (PDT)
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-345ac144755so96145ab.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 10:45:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687715148; x=1690307148;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nMnS8yteeq908fCMk+lnJPrDlGNebwY4YZGBzDeFebs=;
+        b=AOVP/bzJd0ht+AGlUSv0KU3E+anJN3y2tZDrQJkFNXqh38LlZbNdLFvsavrIZA8lSl
+         YpFNYW1SKKkbKm6FB/M+nS7fB/QC9i4+yzlNO+28lChLIlXdkI0h1++skqE96orvxDgk
+         kkE++d0ocuQhRqp3tPMaa7kw1m/2Cr8ggPqwKIIjQ8EFCev2bqjcY68H0WmAqu9oR4tt
+         LbtuiY1fFHHmJW9YrjnvHJmrcB7CwXk1aqMf1xJ4xuz6fNgiQwTVcphq0SyRWx51TSih
+         Y2w/BXeF5dO6GAjRcz53Et2geBQZduKSKzbKKKlA2TgU29sfq5zHUBhINVHPmc5n3ZIo
+         jlPQ==
+X-Gm-Message-State: AC+VfDxHdPayR68ZUonxM/G2fn06sPwyFpljfBm0WiliYHaZ6vhr3pBg
+        1oiT2l7yLrWyw7t+jWEboh3HRBkSRNnP/M/gwoXO6m1BNgvE
+X-Google-Smtp-Source: ACHHUZ7meTc6+Z+5poB65do2Ielys1kCaWw4bc2j1x7NcxiHnCpOClMs2a8om3mzT5+pT5aWWSWVhdcq3n7MnESuzK/B67HFQxgl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230621095905.31346-1-aleksandr.mikhalitsyn@canonical.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:d350:0:b0:345:a49a:32d7 with SMTP id
+ a16-20020a92d350000000b00345a49a32d7mr608409ilh.5.1687715147862; Sun, 25 Jun
+ 2023 10:45:47 -0700 (PDT)
+Date:   Sun, 25 Jun 2023 10:45:47 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ded70105fef7cd35@google.com>
+Subject: [syzbot] [f2fs?] possible deadlock in f2fs_fiemap
+From:   syzbot <syzbot+dd6352699b8027673b35@syzkaller.appspotmail.com>
+To:     chao@kernel.org, jaegeuk@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Alexander,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on vfs-idmapping/for-next]
-[also build test WARNING on linus/master v6.4-rc7 next-20230623]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    15e71592dbae Add linux-next specific files for 20230621
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=101c827b280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b4e51841f618f374
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd6352699b8027673b35
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Mikhalitsyn/docs-filesystems-idmappings-clarify-from-where-idmappings-are-taken/20230621-180345
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git for-next
-patch link:    https://lore.kernel.org/r/20230621095905.31346-1-aleksandr.mikhalitsyn%40canonical.com
-patch subject: [PATCH] docs: filesystems: idmappings: clarify from where idmappings are taken
-reproduce: (https://download.01.org/0day-ci/archive/20230625/202306252253.qxHG1txo-lkp@intel.com/reproduce)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306252253.qxHG1txo-lkp@intel.com/
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6b6464ef4887/disk-15e71592.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/81eba5775318/vmlinux-15e71592.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bc7983587629/bzImage-15e71592.xz
 
-All warnings (new ones prefixed by >>):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dd6352699b8027673b35@syzkaller.appspotmail.com
 
->> Documentation/filesystems/idmappings.rst:378: WARNING: Unexpected indentation.
+loop4: detected capacity change from 0 to 40427
+F2FS-fs (loop4): Found nat_bits in checkpoint
+F2FS-fs (loop4): Mounted with checkpoint version = 48b305e5
+======================================================
+WARNING: possible circular locking dependency detected
+6.4.0-rc7-next-20230621-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor.4/7658 is trying to acquire lock:
+ffff888012869e20 (&mm->mmap_lock){++++}-{3:3}, at: __might_fault+0xb2/0x190 mm/memory.c:5716
 
-vim +378 Documentation/filesystems/idmappings.rst
+but task is already holding lock:
+ffff8880865b1a10 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:771 [inline]
+ffff8880865b1a10 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: f2fs_fiemap+0x1e3/0x1670 fs/f2fs/data.c:1998
 
-   375	
-   376	From the implementation point it's worth mentioning how idmappings are represented.
-   377	All idmappings are taken from the corresponding user namespace.
- > 378	    - caller's idmapping (usually taken from ``current_user_ns()``)
-   379	    - filesystem's idmapping (``sb->s_user_ns``)
-   380	    - mount's idmapping (``mnt_idmap(vfsmnt)``)
-   381	
+which lock already depends on the new lock.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}:
+       down_write+0x92/0x200 kernel/locking/rwsem.c:1573
+       inode_lock include/linux/fs.h:771 [inline]
+       f2fs_file_mmap+0x154/0x290 fs/f2fs/file.c:527
+       call_mmap include/linux/fs.h:1876 [inline]
+       mmap_region+0x6cf/0x2570 mm/mmap.c:2669
+       do_mmap+0x850/0xee0 mm/mmap.c:1373
+       vm_mmap_pgoff+0x1a2/0x3b0 mm/util.c:543
+       ksys_mmap_pgoff+0x42b/0x5b0 mm/mmap.c:1419
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #0 (&mm->mmap_lock){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3142 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3261 [inline]
+       validate_chain kernel/locking/lockdep.c:3876 [inline]
+       __lock_acquire+0x2e9d/0x5e20 kernel/locking/lockdep.c:5144
+       lock_acquire.part.0+0x11c/0x370 kernel/locking/lockdep.c:5761
+       __might_fault mm/memory.c:5717 [inline]
+       __might_fault+0x115/0x190 mm/memory.c:5710
+       _copy_to_user+0x2b/0xc0 lib/usercopy.c:36
+       copy_to_user include/linux/uaccess.h:191 [inline]
+       fiemap_fill_next_extent+0x217/0x370 fs/ioctl.c:144
+       f2fs_fiemap+0x5a5/0x1670 fs/f2fs/data.c:2066
+       ioctl_fiemap fs/ioctl.c:219 [inline]
+       do_vfs_ioctl+0x478/0x16c0 fs/ioctl.c:810
+       __do_sys_ioctl fs/ioctl.c:868 [inline]
+       __se_sys_ioctl fs/ioctl.c:856 [inline]
+       __x64_sys_ioctl+0x10c/0x210 fs/ioctl.c:856
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sb->s_type->i_mutex_key#23);
+                               lock(&mm->mmap_lock);
+                               lock(&sb->s_type->i_mutex_key#23);
+  rlock(&mm->mmap_lock);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.4/7658:
+ #0: ffff8880865b1a10 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:771 [inline]
+ #0: ffff8880865b1a10 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: f2fs_fiemap+0x1e3/0x1670 fs/f2fs/data.c:1998
+
+stack backtrace:
+CPU: 1 PID: 7658 Comm: syz-executor.4 Not tainted 6.4.0-rc7-next-20230621-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ check_noncircular+0x2df/0x3b0 kernel/locking/lockdep.c:2195
+ check_prev_add kernel/locking/lockdep.c:3142 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3261 [inline]
+ validate_chain kernel/locking/lockdep.c:3876 [inline]
+ __lock_acquire+0x2e9d/0x5e20 kernel/locking/lockdep.c:5144
+ lock_acquire.part.0+0x11c/0x370 kernel/locking/lockdep.c:5761
+ __might_fault mm/memory.c:5717 [inline]
+ __might_fault+0x115/0x190 mm/memory.c:5710
+ _copy_to_user+0x2b/0xc0 lib/usercopy.c:36
+ copy_to_user include/linux/uaccess.h:191 [inline]
+ fiemap_fill_next_extent+0x217/0x370 fs/ioctl.c:144
+ f2fs_fiemap+0x5a5/0x1670 fs/f2fs/data.c:2066
+ ioctl_fiemap fs/ioctl.c:219 [inline]
+ do_vfs_ioctl+0x478/0x16c0 fs/ioctl.c:810
+ __do_sys_ioctl fs/ioctl.c:868 [inline]
+ __se_sys_ioctl fs/ioctl.c:856 [inline]
+ __x64_sys_ioctl+0x10c/0x210 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f3f8028c389
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3f81084168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f3f803abf80 RCX: 00007f3f8028c389
+RDX: 00000000200000c0 RSI: 00000000c020660b RDI: 0000000000000004
+RBP: 00007f3f802d7493 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe04349abf R14: 00007f3f81084300 R15: 0000000000022000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
