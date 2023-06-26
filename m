@@ -2,224 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE30F73D79B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 08:12:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B8F873D810
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 08:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbjFZGMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 02:12:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38298 "EHLO
+        id S229667AbjFZGy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 02:54:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjFZGMH (ORCPT
+        with ESMTP id S229783AbjFZGyx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 02:12:07 -0400
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44B8EEE;
-        Sun, 25 Jun 2023 23:12:05 -0700 (PDT)
-Received: by mail-ua1-x92b.google.com with SMTP id a1e0cc1a2514c-78a5384a5daso557659241.0;
-        Sun, 25 Jun 2023 23:12:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687759924; x=1690351924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aWiNkr7svo+LwhrDq8mI2+KVwjyWuAbuHc8qcJJ40l4=;
-        b=NVg6UP3h1sfMl7waiNHRNbbIMeY6YlVJ7w6iJOS7AQkWO6A/RRe1Z8RbIBX6B7uiHm
-         5kumfhuY3QGWNkP687csxPo2nc3kN8+h9Uy6D0wqt8FanGeIWzAQoLsmr3RebM00psJ/
-         qyUCP3GVubSTfmD1G+wuxBXJEw5wNNXajnBsJYuCnLBjWE3rrwyrKeR7PMBGveVzN90g
-         zw6KcqCrQfdyWxDsKajhLY11SqX3q9tEdX3xhP5djybzrRxEdHDtk/BsCTYLm9T8PfMf
-         pHpgQGpJuCOB8Hi4sgPf7K79xwahtVeKfOn0L/lZaC7G5/wlbRawP7WrIK7OKj71QZ4n
-         B0xQ==
+        Mon, 26 Jun 2023 02:54:53 -0400
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AC0DE70
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 23:54:49 -0700 (PDT)
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-345ac144755so2642155ab.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 23:54:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687759924; x=1690351924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aWiNkr7svo+LwhrDq8mI2+KVwjyWuAbuHc8qcJJ40l4=;
-        b=P2P84rSnpQ7VOa9Z2dKz8lyR+d+DMwI7+x6TKtRiJ2JLn0qunr0BJzzR3PsURiQH8e
-         avMRtwe3G8S8yLjoU75Lr3kIlS4UBWUtEbUBm74mpTNVJ7rAQSRGfBWaGhnZSoG42ERL
-         wIiS28pwrpjPuLen4ipLOmw+4w02DFTgW09IxepgnZul+kaygxz1WZYOB+/Y/6zqEby6
-         zLKENA2QtK/PHxyrhksG1d5wKi1iedmiQhAkC9e4rkOR9cuMDd5ztExo88QYtl9PIRxl
-         CY42hggAF0t84MxnsIFamXGqJRMo0+KiH1u4Ho6+NIq9S0zyrx2CL+MULEE0xJReXRSI
-         EKAA==
-X-Gm-Message-State: AC+VfDwaB/GEn3hiPENxeEg2JaMKcn8JTvUt8KXjxPAF1H4CXttG6kjy
-        Nc89zk3f4tO5lfuZg6+krRlBvDwEkl6J2MmZex/xl+5ENRc=
-X-Google-Smtp-Source: ACHHUZ6Mt7T7WOGheqCz8eTtbl6Lv6c6WI57bKj4DOh871nBqkbJWws+6lSTfjxGhFnoy77ryhgUCD4nAaIM+KAI15w=
-X-Received: by 2002:a67:fc41:0:b0:443:682e:2088 with SMTP id
- p1-20020a67fc41000000b00443682e2088mr127623vsq.12.1687759924180; Sun, 25 Jun
- 2023 23:12:04 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687762488; x=1690354488;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8mEi6poOBLtYC1W5WtbrRIYe+es2VTG5P987tbWLzsw=;
+        b=OCVcBMgPNjBeV0EYUhtlvB/4evv/Qn5LGSz+ZqCrGzI4V7TYkm8+ztpSAf4Pb6elfN
+         D+JWg9Uj+ZJ8MCXWhfPOVWNL+XbVGPkPQNo8Ztmi4frxmMZ/dgBg6IA5lrO9u4U4BrMZ
+         s8HTGmJh0WqJI69L/wAH2BnrH/E943NHedDyqtTy4ayhLz9pw+e7BKrrSNTm06A1cpIj
+         6zat8Xdfo7FnLateEWCcL7LkDYQeB2hJUsHpuL1Ao4XkFgKMz7/xeqytxNWlxIWdP0P1
+         P0TuAB3wS46miy1R8C+C0lIL1lbIgD4V85iQs2RyHwyZ59ImaO3zc0pp+98w/d5Luohi
+         xulw==
+X-Gm-Message-State: AC+VfDxS45wjTYMcCJqsxIpAmWpMg8ekJOjHbEaTuX3ZnAe2W4U3Pffo
+        ISskSoX3qabWyLTkellafvqHcu63EqjTGm/EceD8qzCfsr4A
+X-Google-Smtp-Source: ACHHUZ7zLfPBwSCF/f6vdEneINOaDNd0j9+qLXY9mgaYJt+jhBjTPa0ZV8ku3SRi6nLRUREcoxX5QayjylmT2NgKjC0O1VClkgku
 MIME-Version: 1.0
-References: <jbyihkyk5dtaohdwjyivambb2gffyjs3dodpofafnkkunxq7bu@jngkdxx65pux>
-In-Reply-To: <jbyihkyk5dtaohdwjyivambb2gffyjs3dodpofafnkkunxq7bu@jngkdxx65pux>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 26 Jun 2023 09:11:53 +0300
-Message-ID: <CAOQ4uxhut2NHc+MY-XOJay5B-OKXU2X5Fe0-6-RCMKt584ft5A@mail.gmail.com>
-Subject: Re: splice(-> FIFO) never wakes up inotify IN_MODIFY?
-To:     =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
+X-Received: by 2002:a92:4b06:0:b0:345:93da:209 with SMTP id
+ m6-20020a924b06000000b0034593da0209mr1557103ilg.2.1687762488685; Sun, 25 Jun
+ 2023 23:54:48 -0700 (PDT)
+Date:   Sun, 25 Jun 2023 23:54:48 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009a7f2105ff02d381@google.com>
+Subject: [syzbot] [reiserfs?] [fat?] [mm?] general protection fault in
+ unlink_file_vma (2)
+From:   syzbot <syzbot+7fbdbd17a5bd6d01bc65@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linkinjeon@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
+        linux-mm@kvack.org, reiserfs-devel@vger.kernel.org,
+        sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 26, 2023 at 6:54=E2=80=AFAM Ahelenia Ziemia=C5=84ska
-<nabijaczleweli@nabijaczleweli.xyz> wrote:
->
-> Hi!
->
-> Consider the following programs:
-> -- >8 --
-> =3D=3D> ino.c <=3D=3D
-> #define _GNU_SOURCE
-> #include <stdio.h>
-> #include <sys/inotify.h>
-> #include <unistd.h>
-> int main() {
->   int ino =3D inotify_init1(IN_CLOEXEC);
->   inotify_add_watch(ino, "/dev/fd/0", IN_MODIFY);
->
->   char buf[64 * 1024];
->   struct inotify_event ev;
->   while (read(ino, &ev, sizeof(ev)) > 0) {
->     fprintf(stderr, "%d: mask=3D%x, cook=3D%x, len=3D%x, name=3D%.*s\n", =
-ev.wd, ev.mask,
->             ev.cookie, ev.len, (int)ev.len, ev.name);
->     fprintf(stderr, "rd=3D%zd\n", read(0, buf, sizeof(buf)));
->   }
-> }
->
+Hello,
 
-That's a very odd (and wrong) way to implement poll(2).
-This is not a documented way to use pipes, so it may
-happen to work with sendfile(2), but there is no guarantee.
+syzbot found the following issue on:
 
-> =3D=3D> se.c <=3D=3D
-> #define _GNU_SOURCE
-> #include <stdio.h>
-> #include <sys/sendfile.h>
-> int main() {
->   ssize_t rd, acc =3D 0;
->   while ((rd =3D sendfile(1, 0, 0, 128 * 1024 * 1024)) > 0)
->     acc +=3D rd;
->   fprintf(stderr, "se=3D%zd: %m\n", acc);
-> }
->
-> =3D=3D> sp.c <=3D=3D
-> #define _GNU_SOURCE
-> #include <fcntl.h>
-> #include <stdio.h>
-> int main() {
->   ssize_t rd, acc =3D 0;
->   while ((rd =3D splice(0, 0, 1, 0, 128 * 1024 * 1024, 0)) > 0)
->     acc +=3D rd;
->   fprintf(stderr, "sp=3D%zd: %m\n", acc);
-> }
-> -- >8 --
->
-> By all means, ./sp | ./ino and ./se | ./ino should be equivalent,
-> right?
->
+HEAD commit:    547cc9be86f4 Merge tag 'perf_urgent_for_v6.4' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=120f1677280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2cbd298d0aff1140
+dashboard link: https://syzkaller.appspot.com/bug?extid=7fbdbd17a5bd6d01bc65
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13a58757280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134a0f1f280000
 
-Maybe it should, but it's not.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7daf3e78f564/disk-547cc9be.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cb3208252f02/vmlinux-547cc9be.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/209415d43289/bzImage-547cc9be.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ad9db3ff710e/mount_1.gz
 
-> -- >8 --
-> $ make se sp ino
-> $ mkfifo fifo
-> $ ./ino < fifo &
-> [1] 230
-> $ echo a > fifo
-> $ echo a > fifo
-> 1: mask=3D2, cook=3D0, len=3D0, name=3D
-> rd=3D4
-> $ echo c > fifo
-> 1: mask=3D2, cook=3D0, len=3D0, name=3D
-> rd=3D2
-> $ ./se > fifo
-> abcdef
-> 1: mask=3D2, cook=3D0, len=3D0, name=3D
-> asd
-> ^D
-> se=3D11: Success
-> rd=3D11
-> 1: mask=3D2, cook=3D0, len=3D0, name=3D
-> rd=3D0
-> $ ./sp > fifo
-> abcdefg
-> asd
-> dsasdadadad
-> sp=3D24: Success
-> $ < sp ./sp > fifo
-> sp=3D25856: Success
-> $ < sp ./sp > fifo
-> ^C
-> $ echo sp > fifo
-> ^C
-> -- >8 --
->
-> Note how in all ./sp > fifo cases, ./ino doesn't wake up!
-> Note also how, thus, we've managed to fill the pipe buffer with ./sp
-> (when it transferred 25856), and now we can't /ever/ write there again
-> (both splicing and normal writes block, since there's no space left in
->  the pipe; ./ino hasn't seen this and will never wake up or service the
->  pipe):
-> so we've effectively "denied service" by slickily using a different
-> syscall to do the write, right?
->
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7fbdbd17a5bd6d01bc65@syzkaller.appspotmail.com
 
-Only applications that do not check for availability
-of input in the pipe correctly will get "denied service".
+general protection fault, probably for non-canonical address 0xdffffc0000000030: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000180-0x0000000000000187]
+CPU: 0 PID: 4994 Comm: udevd Not tainted 6.4.0-rc7-syzkaller-00234-g547cc9be86f4 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:__lock_acquire+0xe01/0x5f30 kernel/locking/lockdep.c:4956
+Code: 00 00 3b 05 01 b0 59 0f 0f 87 7a 09 00 00 41 be 01 00 00 00 e9 84 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 9e 33 00 00 49 81 3c 24 20 38 16 90 0f 84 cd f2
+RSP: 0000:ffffc90003b0f5d8 EFLAGS: 00010016
 
-> I consider this to be unexpected behaviour because (a) obviously and
-> (b) sendfile() sends the inotify event.
->
+RAX: dffffc0000000000 RBX: 1ffff92000761eec RCX: 0000000000000000
+RDX: 0000000000000030 RSI: 0000000000000000 RDI: 0000000000000180
+RBP: ffff888076abbb80 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: ffffffff81d6f0d2 R12: 0000000000000180
+R13: 0000000000000000 R14: 0000000000000180 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffffffffffff9 CR3: 00000000278f2000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ lock_acquire kernel/locking/lockdep.c:5705 [inline]
+ lock_acquire+0x1b1/0x520 kernel/locking/lockdep.c:5670
+ down_write+0x92/0x200 kernel/locking/rwsem.c:1573
+ i_mmap_lock_write include/linux/fs.h:485 [inline]
+ unlink_file_vma+0x81/0x120 mm/mmap.c:128
+ free_pgtables+0x147/0x930 mm/memory.c:386
+ exit_mmap+0x29e/0x930 mm/mmap.c:3118
+ __mmput+0x128/0x4c0 kernel/fork.c:1351
+ mmput+0x60/0x70 kernel/fork.c:1373
+ exit_mm kernel/exit.c:567 [inline]
+ do_exit+0x9b0/0x29b0 kernel/exit.c:861
+ do_group_exit+0xd4/0x2a0 kernel/exit.c:1024
+ get_signal+0x2318/0x25b0 kernel/signal.c:2876
+ arch_do_signal_or_restart+0x79/0x5c0 arch/x86/kernel/signal.c:306
+ exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
+ exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
+ irqentry_exit_to_user_mode+0x9/0x40 kernel/entry/common.c:310
+ exc_page_fault+0xc0/0x170 arch/x86/mm/fault.c:1593
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+RIP: 0033:0x7fd9a06c926e
+Code: Unable to access opcode bytes at 0x7fd9a06c9244.
+RSP: 002b:00007fffd3ceb1d0 EFLAGS: 00010202
+RAX: 000056344395de44 RBX: fffffffffffffe60 RCX: 000000000000001f
+RDX: 000056344395f79e RSI: 000056312086e010 RDI: 0000000000000001
+RBP: 0000563120882320 R08: 0000000000000000 R09: 8ad69a18ea1c0cdc
+R10: 00000000ffffffff R11: 0000000000000007 R12: fffffffffffffff1
+R13: 000056311ea72040 R14: 0000000000000000 R15: 000056312086e910
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__lock_acquire+0xe01/0x5f30 kernel/locking/lockdep.c:4956
+Code: 00 00 3b 05 01 b0 59 0f 0f 87 7a 09 00 00 41 be 01 00 00 00 e9 84 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 9e 33 00 00 49 81 3c 24 20 38 16 90 0f 84 cd f2
+RSP: 0000:ffffc90003b0f5d8 EFLAGS: 00010016
+RAX: dffffc0000000000 RBX: 1ffff92000761eec RCX: 0000000000000000
+RDX: 0000000000000030 RSI: 0000000000000000 RDI: 0000000000000180
+RBP: ffff888076abbb80 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: ffffffff81d6f0d2 R12: 0000000000000180
+R13: 0000000000000000 R14: 0000000000000180 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffffffffffff9 CR3: 00000000278f2000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess):
+   0:	00 00                	add    %al,(%rax)
+   2:	3b 05 01 b0 59 0f    	cmp    0xf59b001(%rip),%eax        # 0xf59b009
+   8:	0f 87 7a 09 00 00    	ja     0x988
+   e:	41 be 01 00 00 00    	mov    $0x1,%r14d
+  14:	e9 84 00 00 00       	jmpq   0x9d
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	4c 89 e2             	mov    %r12,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 9e 33 00 00    	jne    0x33d2
+  34:	49 81 3c 24 20 38 16 	cmpq   $0xffffffff90163820,(%r12)
+  3b:	90
+  3c:	0f                   	.byte 0xf
+  3d:	84 cd                	test   %cl,%ch
+  3f:	f2                   	repnz
 
-The fact is that relying on inotify IN_MODIFY and IN_ACCESS events
-for pipes is not a good idea.
 
-splice(2) differentiates three different cases:
-        if (ipipe && opipe) {
-...
-        if (ipipe) {
-...
-        if (opipe) {
-...
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-IN_ACCESS will only be generated for non-pipe input
-IN_MODIFY will only be generated for non-pipe output
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Similarly FAN_ACCESS_PERM fanotify permission events
-will only be generated for non-pipe input.
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-sendfile(2) OTOH does not special cases the pipe input
-case at all and it generates IN_MODIFY for the pipe output
-case as well.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-If you would insist on fixing this inconsistency, I would be
-willing to consider a patch that matches sendfile(2) behavior
-to that of splice(2) and not the other way around.
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-My general opinion about IN_ACCESS/IN_MODIFY
-(as well as FAN_ACCESS_PERM) is that they are not
-very practical, not well defined for pipes and anyway do
-not cover all the ways that a file can be modified/accessed
-(i.e. mmap). Therefore, IMO, there is no incentive to fix
-something that has been broken for decades unless
-you have a very real use case - not a made up one.
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
-Incidentally, I am working on a new set of fanotify
-permission events (FAN_PRE_ACCESS/MODIFY)
-that will have better defined semantics - those are not
-going to be applicable to pipes though.
-
-Thanks,
-Amir.
+If you want to undo deduplication, reply with:
+#syz undup
