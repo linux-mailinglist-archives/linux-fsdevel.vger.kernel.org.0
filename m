@@ -2,46 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D68E73EF0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 01:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12FED73EF0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 01:09:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229828AbjFZXIp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 19:08:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55144 "EHLO
+        id S229983AbjFZXJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 19:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbjFZXIo (ORCPT
+        with ESMTP id S229571AbjFZXJG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 19:08:44 -0400
+        Mon, 26 Jun 2023 19:09:06 -0400
 Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EF82610FB;
-        Mon, 26 Jun 2023 16:08:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A77FD1701;
+        Mon, 26 Jun 2023 16:09:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-        s=202305; t=1687820919;
-        bh=iASaIQSREKLq2OFVu4k4J+TAbxohSrL+yjCExkMJmeY=;
+        s=202305; t=1687820942;
+        bh=sub/f/fHhbhbOWVCyd50R46uZcOKsIBrfjQMG/W+FCw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bk6TKlHsfUUcFxuVbDcSAjmmsUMXwKgcojyjXMlinXZS4Q45RXGFagnjSa2Y5MRXb
-         U/chkw+pv6FTegKkZVDpN389XaGF6+VudrsW6Z3tsbr/BQD9LRGdkxdMrrS7Em+TbS
-         HmZ1L2pYudBMIKl6lpDQxDgG/Em/HbwUh8HneMsja0jzSo6I5ov+E5ZTM9PEmjKIAo
-         8TrD4E/bYehXw0LS3wzH5y82JDbZHkI2BlqWwZ+YZYBW4wOjzwDfaL4MhaozxyW/p/
-         n+xywt0inXLQb3nA9S+/2d5xtHxK8fiVuwOAcaq8DjPL9XnBR14SB+aCi11VSni8Bp
-         Uu6ogLMbwAweA==
+        b=HxqwL28g71pwu+IzMPEwCvy41NJdhiKG+zYcdx2zjgKQ91pOvlul3YCIP+DzvVLKG
+         f6IEv3xbPmNa28JVA/k1ED8XGqkXTn0qniqHcv3n68NlNyYcV4BwDq1lBVdOEh/FIf
+         3bK5xwypKzuEqZ2REhkXsk1H3B0PYfqdQXB/M+4chFeS+ETdxatb1RXAnpN85AYBJi
+         SEU0yauqTvLue95Rq252Ihl1kM7pT7uR3Q7zOFH/n0slXtIvHuXq3c1CPkyzYszmXM
+         n0Efd7R1qXXshbGFMj1l4aJDkJW/joG6HztqM6DRXyTk4iPo2Ir12J/IQVsP1OCNKp
+         Lh+dcGejjbOSw==
 Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id A6EC9CFC;
-        Tue, 27 Jun 2023 01:08:39 +0200 (CEST)
-Date:   Tue, 27 Jun 2023 01:08:38 +0200
-From:   =?utf-8?B?0L3QsNCx?= <nabijaczleweli@nabijaczleweli.xyz>
+        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id EA355CFE;
+        Tue, 27 Jun 2023 01:09:01 +0200 (CEST)
+Date:   Tue, 27 Jun 2023 01:09:00 +0200
+From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
 To:     Amir Goldstein <amir73il@gmail.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jan Kara <jack@suse.cz>,
         Chung-Chiang Cheng <cccheng@synology.com>
-Subject: [PATCH v2 0/3] fanotify accounting for fs/splice.c
-Message-ID: <pw3ljisf6ctpku2o44bdy3aaqdt4ofnedrdt4a4qylhasxsli6@wxhy3nsjcwn4>
+Subject: [PATCH v2 1/3] splice: always fsnotify_access(in),
+ fsnotify_modify(out) on success
+Message-ID: <al4pxc2uftonry5vyunx5qblllbaakjsehrc74fbbk7pxddyv7@gn3k55eldmmp>
 References: <CAOQ4uxj_DLm8_stRJPR7i8bp9aJ5VtjzWqHL2egCTKe3M-6KSw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u5ahfxgiox6lrsd2"
+        protocol="application/pgp-signature"; boundary="gryd5vox5utp35lw"
 Content-Disposition: inline
 In-Reply-To: <CAOQ4uxj_DLm8_stRJPR7i8bp9aJ5VtjzWqHL2egCTKe3M-6KSw@mail.gmail.com>
 User-Agent: NeoMutt/20230517
@@ -56,91 +58,112 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---u5ahfxgiox6lrsd2
+--gryd5vox5utp35lw
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-"people just forget to add inotify hooks to their I/O routines as a rule"?
-Guess what I did, fully knowing that some are missing in this file :)
+The current behaviour caused an asymmetry where some write APIs
+(write, sendfile) would notify the written-to/read-from objects,
+but splice wouldn't.
 
-=3D=3D> te.c <=3D=3D
-#define _GNU_SOURCE
-#include <fcntl.h>
-#include <stdio.h>
-int main() {
-  ssize_t rd, acc =3D 0;
-  while ((rd =3D tee(0, 1, 128 * 1024 * 1024, 0)) > 0)
-    acc +=3D rd;
-  fprintf(stderr, "te=3D%zd: %m\n", acc);
-}
+This affected userspace which used inotify, like coreutils tail -f.
 
-=3D=3D> vm.c <=3D=3D
-#define _GNU_SOURCE
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-static char sb[1024 * 1024];
-int main() {
-  memcpy(sb, "=C5=BCupan", sizeof("=C5=BCupan"));
-  ssize_t rd =3D
-      vmsplice(1, &(struct iovec){.iov_base =3D sb, .iov_len =3D sizeof(sb)=
-}, 1,
-               SPLICE_F_GIFT);
-  fprintf(stderr, "vm=3D%zd: %m\n", rd);
-}
+Fixes: 983652c69199 ("splice: report related fsnotify events")
+Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs=
+3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
+Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+---
+No changes since v1 (except in the message).
 
+ fs/splice.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-echo zupa | ./te > fifo tees a few times and then blocks when the pipe
-fills, at which point we get into the broken state.
-
-Similarly, ./vm > fifo (with the default 64k F_GETPIPE_SZ) enters that
-same state instantly.
-
-With 2/3 and 3/3, they instead do
-  1: mask=3D2, cook=3D0, len=3D0, name=3D
-  rd=3D80
-  1: mask=3D2, cook=3D0, len=3D0, name=3D
-  rd=3D80
-  ...
-in a loop, as-expected, and=20
-  # ./vm > fifo
-  vm=3D65200: Success
-  1: mask=3D2, cook=3D0, len=3D0, name=3D
-  rd=3D65200
-
-I took the liberty of marking 2/3 and 3/3 as Fixes: of the original
-fanotify-in-splice commit as well, I think they fit the bill.
-
-Ahelenia Ziemia=C5=84ska (3):
-  splice: always fsnotify_access(in), fsnotify_modify(out) on success
-  splice: fsnotify_modify(fd) in vmsplice
-  splice: fsnotify_access(in), fsnotify_modify(out) on success in tee
-
- fs/splice.c | 29 ++++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
-
+diff --git a/fs/splice.c b/fs/splice.c
+index 3e06611d19ae..94fae24f9d54 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1154,7 +1154,8 @@ long do_splice(struct file *in, loff_t *off_in, struc=
+t file *out,
+ 		if ((in->f_flags | out->f_flags) & O_NONBLOCK)
+ 			flags |=3D SPLICE_F_NONBLOCK;
+=20
+-		return splice_pipe_to_pipe(ipipe, opipe, len, flags);
++		ret =3D splice_pipe_to_pipe(ipipe, opipe, len, flags);
++		goto notify;
+ 	}
+=20
+ 	if (ipipe) {
+@@ -1182,15 +1183,12 @@ long do_splice(struct file *in, loff_t *off_in, str=
+uct file *out,
+ 		ret =3D do_splice_from(ipipe, out, &offset, len, flags);
+ 		file_end_write(out);
+=20
+-		if (ret > 0)
+-			fsnotify_modify(out);
+-
+ 		if (!off_out)
+ 			out->f_pos =3D offset;
+ 		else
+ 			*off_out =3D offset;
+=20
+-		return ret;
++		goto notify;
+ 	}
+=20
+ 	if (opipe) {
+@@ -1209,18 +1207,23 @@ long do_splice(struct file *in, loff_t *off_in, str=
+uct file *out,
+=20
+ 		ret =3D splice_file_to_pipe(in, opipe, &offset, len, flags);
+=20
+-		if (ret > 0)
+-			fsnotify_access(in);
+-
+ 		if (!off_in)
+ 			in->f_pos =3D offset;
+ 		else
+ 			*off_in =3D offset;
+=20
+-		return ret;
++		goto notify;
+ 	}
+=20
+ 	return -EINVAL;
++
++notify:
++	if (ret > 0) {
++		fsnotify_access(in);
++		fsnotify_modify(out);
++	}
++
++	return ret;
+ }
+=20
+ static long __do_splice(struct file *in, loff_t __user *off_in,
 --=20
 2.39.2
 
---u5ahfxgiox6lrsd2
+
+--gryd5vox5utp35lw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSaGnYACgkQvP0LAY0m
-WPE5LA//cvaUBrA93SjLEn8aSKrha/Xdzj+yQwa1lvefbPW7DIJ4rCc8RepslTie
-ShLW0t+MAfOIpMLRNxLWv3SlhyWtCTN/XqsfwmL/4jtpGfM3vcyPOiXbQPp7304H
-1qOzYCV/FUEgEUu1ZtYD2PRNtLJfIwg473Yx/+ib/0trWAWDid3BfkfmSEbK13ix
-ZCxd+/gcEX/a7GTrIAiSW4ki8Mi/yX7FyMK5VvHoDIWop3z1EEYwapKxYzSvqjCu
-g+KVXFXtBOvVPhcpsbqPoo4xyT7Ew+LzMKdnogaySOOMiEpogjQ2aL7JxGPiZj/M
-0JcGqjVJUvWhZw5g1egwMdq1mZP4SIjL66Q2BC3SD1K89v8JsJtfGZr5l9u8IS/r
-k1rmKZ1ClnHPNyIQtFl34n2F5KkRdyJHvF6u4ZzQy0px2tr6EkUTNH5qBbSFSiNy
-S4p3BbR3vnxyKFYud6gDPBXkOMm3euIJcdjAnT6nmjFXab5OuMBTAKWsoMxeKg7x
-06JoMBaTFhp/LHCV1KMNjdJGIXWnVnmONX0FDIkKSncayKGBAZapzhCc56ADaDK2
-0XR2Jua+uux8ueuYqWg7CwChS1oSHtSE1SCZMAZkqvHjkBou6ogLN/AKTDzIvH85
-OEPRfej4bd439khKCAQNVZio0cSV7KdLxzWBVne2fPZ8HmGxKU4=
-=TrVD
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSaGowACgkQvP0LAY0m
+WPEDSw//ayNYath/dKwG3xqHQEgbQxT/PNnP5LsdRIbTatY1FVLYDWKyI9/6IkGm
+VYDDQQwBlq4GpCY+jjK8fO+NhoscJB1FtTFcMfGbttzF6b4Nzu4cjYnacgYjGS6B
+ofEB2uIc7rv0ilUz9Cst+0VsA5EBR0r9geFxGei2lVYLi1UCi3jyN33wtQ0z5c3O
+b9KjSjuJjbtP3tkxsGa74icXNS3TNUOPtikVxqrWbf+UBAkN1KHom65P2GIqixjS
+Fi1ic9W+K4koz5Tr7qBCSUZdwVdH2Bnkis4L8725yMfxitjX+VomqnF6ifFClKeu
+8wT/iW9P+Gr7Rn4g7DN/0U2BGgvcakStGA3Gtsm9uHy6sj58yAVNEeX62r+IXU9a
+j/OxUbYzzSwEMY23YFYW0QtmzR5q+TjmJVKVQtJcCOaflqz/OlfceyR2ss78UNQs
+Yefl9U7FM3LVQoS78fvM4WiFNqlGwDjEeo9FdUJUjf9D4hwQcWqXOjEfXgK4LLdg
+StKJfk9mOGNofI1sYgBMOZL7lnF9x7ILCdNFGRnemmkilOoWjXmPFmw9n+Dkpc4b
+SHD8pdFoXCExujyeaxDm4NLZS6cmYUV9w3/l2g48t86Lxe7BpX53Eu4nf03opVF6
+nN26aORRZ/Lb/OF1BUIot9VAszPtFBus78vaMxvAd240N6Uym0o=
+=12tM
 -----END PGP SIGNATURE-----
 
---u5ahfxgiox6lrsd2--
+--gryd5vox5utp35lw--
