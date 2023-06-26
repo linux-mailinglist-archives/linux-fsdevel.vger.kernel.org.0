@@ -2,89 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4245B73E719
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 20:00:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C303373E72B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 20:07:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbjFZR76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 13:59:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52434 "EHLO
+        id S231178AbjFZSHI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 14:07:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231339AbjFZR75 (ORCPT
+        with ESMTP id S229806AbjFZSHE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 13:59:57 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8297B1A1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 10:59:56 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 425F55C0184;
-        Mon, 26 Jun 2023 13:59:53 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 26 Jun 2023 13:59:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1687802393; x=1687888793; bh=MNrgYl7w7RUmrqzT7GC0tSc7RZnCY40zks/
-        IqMqjjmw=; b=NXdLzC9VswIoaM8sye1vnsiTKAKuF33n9Q6PeoJes+HeMVaufnf
-        JbDxpFmTlciPxOF2jQcZfa6gY3oO3j4l9zrhc1heYunRV5SJT+S4ELn9Xo5L62eP
-        /AjfmUkFUOjUe8y7XhTBI7g5zWTniUL4pTDu+1j1uDeOPRSr/AI9/1Ez+LVp+oEt
-        6HIG10cqSy2w2YK7Svq3WFU4f55cko97XizuiadEXvEgB6GpnkCIsg2ixxadh3yy
-        d6FgkN+8iYfjVW32CegMoOIr5LTkTfj9n2aCA8fUHYQ1q3TeNIgb9mq5b2M+S5vP
-        YcuY0oA1JfQiBW+Q2X2n6HQVSdJ04ytHHlA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1687802393; x=1687888793; bh=MNrgYl7w7RUmrqzT7GC0tSc7RZnCY40zks/
-        IqMqjjmw=; b=iMOq7jBK4lCBQNymvjggcLc73VSLFmrDiDvvu/cCGOkAbsTyB57
-        tihLWkbuPw9+AFz3ZwkOEXuafZNFeyHRt1ZUsbT1rZHjP3ewIhuVm/7Qf0+QWWZr
-        p7YdnxvUJxuwsvouX2h/AzMGez8f+8zW5kUm4YQy6+eTCvat8HcJD/Jw9jbyu8WT
-        vXVMRPPg5iCmH4akHDh7Qz4VMDXh+lo+I0t8Ktv8UFpf4s82a+1l5u7IOxwEfBeM
-        NFXJBg+ckCt3mron+8tihoHqQRmTQXSuME7W1cJZbWDjpRZNYdCg4RCeKm9ZFpGl
-        52TLpuKKalbmwbUE+yWM+yWeU29YdGLWVNg==
-X-ME-Sender: <xms:GNKZZAaAPRXV30Unmd2A2hrG37QiRgTp4k1fr8kfPKKZcF2jVmdo9g>
-    <xme:GNKZZLYCs83Z9ZQs12_DvNgvp3b-FfVu7qSoV-wQbAU4rQPZ6A4X0NXyL_b5HyLmB
-    7SZqnTubVkzK4hK>
-X-ME-Received: <xmr:GNKZZK8D0LTVHROD7g1ec-G4LhURXYfH0Vzd_RwLz9jIRflOYaoe6z0PXonrTTNUIw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeehfedgudduhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepuegv
-    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeffhfdtvdeviedvudeuudejteffkeeklefg
-    vdefgfeuffeifeejgfejffehtddtfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
-    rdhfmh
-X-ME-Proxy: <xmx:GNKZZKo3GEx4Is8AeGzzNzLMa9liXS8s36bK9YQJiQe8x1M-Cd2qTA>
-    <xmx:GNKZZLozTiEOHhA0hOQVjW0pM26pL7bqkgtv0XlUXozazortkWvHuQ>
-    <xmx:GNKZZIS-I-2-wWnqD7_S0t7KSRyeNzkjn-66rS0Lj7lfcRo7d_JuwQ>
-    <xmx:GdKZZC0-4pl6r2nAHxEoyBZAPv7h9AyTwbYoG79tjv9sR0R0IIFA7w>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 26 Jun 2023 13:59:52 -0400 (EDT)
-Message-ID: <aea85aa9-0af0-287d-bdad-b203e7258872@fastmail.fm>
-Date:   Mon, 26 Jun 2023 19:59:50 +0200
+        Mon, 26 Jun 2023 14:07:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B0121B1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 11:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687802773;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=il3HTgPDxa0mQ+wSSkQc8OYkxm+WI6iN4tN+WT86o9g=;
+        b=X/gJv/DRqZaVUGP6dsjrhAQH2D8OTjh2TlHY38EVsWIN0XOB0q9R31GDyPhJ9SOOs3phlA
+        z66CuVIR32EGvvEql8rmT9yIKQwxTJNznbYi6m/vhTqhgOfbucO9wEq3WBIgZrnYciYoJx
+        iz3CWCBvbwEstJFb7rtybANxQcWh6xs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-582-pv2jUNpcPy2GdR1o1fkO9A-1; Mon, 26 Jun 2023 14:06:09 -0400
+X-MC-Unique: pv2jUNpcPy2GdR1o1fkO9A-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9D077858F1E;
+        Mon, 26 Jun 2023 18:06:08 +0000 (UTC)
+Received: from tpad.localdomain (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 88200F5AE9;
+        Mon, 26 Jun 2023 18:06:07 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+        id 43D36400F7B60; Mon, 26 Jun 2023 15:04:53 -0300 (-03)
+Date:   Mon, 26 Jun 2023 15:04:53 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Leonardo Bras <leobras@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
+Subject: [PATCH] fs/buffer.c: remove per-CPU buffer_head lookup cache
+Message-ID: <ZJnTRfHND0Wi4YcU@tpad>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [fuse-devel] [PATCH] fuse: add a new flag to allow shared mmap in
- FOPEN_DIRECT_IO mode
-To:     Hao Xu <hao.xu@linux.dev>, fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-References: <20230505081652.43008-1-hao.xu@linux.dev>
- <fc6fe539-64ae-aa35-8b6e-3b22e07af31f@fastmail.fm>
- <92595369-f378-b6ac-915f-f046921f1d59@linux.dev>
-Content-Language: en-US
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <92595369-f378-b6ac-915f-f046921f1d59@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -93,141 +68,583 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+For certain types of applications (for example PLC software or
+RAN processing), upon occurrence of an event, it is necessary to
+complete a certain task in a maximum amount of time (deadline).
 
-On 5/6/23 09:03, Hao Xu wrote:
-> Hi Bernd,
-> 
-> 
-> On 5/5/23 22:39, Bernd Schubert wrote:
->>
->>
->> On 5/5/23 10:16, Hao Xu wrote:
->>> From: Hao Xu <howeyxu@tencent.com>
->>>
->>> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
->>> coherency, e.g. network filesystems. Thus shared mmap is disabled since
->>> it leverages page cache and may write to it, which may cause
->>> inconsistence. But FOPEN_DIRECT_IO can be used not for coherency but to
->>> reduce memory footprint as well, e.g. reduce guest memory usage with
->>> virtiofs. Therefore, add a new flag FOPEN_DIRECT_IO_SHARED_MMAP to allow
->>> shared mmap for these cases.
->>>
->>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->>> ---
->>>   fs/fuse/file.c            | 11 ++++++++---
->>>   include/uapi/linux/fuse.h |  2 ++
->>>   2 files changed, 10 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>> index 89d97f6188e0..655896bdb0d5 100644
->>> --- a/fs/fuse/file.c
->>> +++ b/fs/fuse/file.c
->>> @@ -161,7 +161,8 @@ struct fuse_file *fuse_file_open(struct 
->>> fuse_mount *fm, u64 nodeid,
->>>       }
->>>         if (isdir)
->>> -        ff->open_flags &= ~FOPEN_DIRECT_IO;
->>> +        ff->open_flags &=
->>> +            ~(FOPEN_DIRECT_IO | FOPEN_DIRECT_IO_SHARED_MMAP);
->>>         ff->nodeid = nodeid;
->>>   @@ -2509,8 +2510,12 @@ static int fuse_file_mmap(struct file *file, 
->>> struct vm_area_struct *vma)
->>>           return fuse_dax_mmap(file, vma);
->>>         if (ff->open_flags & FOPEN_DIRECT_IO) {
->>> -        /* Can't provide the coherency needed for MAP_SHARED */
->>> -        if (vma->vm_flags & VM_MAYSHARE)
->>> +        /* Can't provide the coherency needed for MAP_SHARED.
->>> +         * So disable it if FOPEN_DIRECT_IO_SHARED_MMAP is not
->>> +         * set, which means we do need strong coherency.
->>> +         */
->>> +        if (!(ff->open_flags & FOPEN_DIRECT_IO_SHARED_MMAP) &&
->>> +            vma->vm_flags & VM_MAYSHARE)
->>>               return -ENODEV;
->>>             invalidate_inode_pages2(file->f_mapping);
->>> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
->>> index 1b9d0dfae72d..003dcf42e8c2 100644
->>> --- a/include/uapi/linux/fuse.h
->>> +++ b/include/uapi/linux/fuse.h
->>> @@ -314,6 +314,7 @@ struct fuse_file_lock {
->>>    * FOPEN_STREAM: the file is stream-like (no file position at all)
->>>    * FOPEN_NOFLUSH: don't flush data cache on close (unless 
->>> FUSE_WRITEBACK_CACHE)
->>>    * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on 
->>> the same inode
->>> + * FOPEN_DIRECT_IO_SHARED_MMAP: allow shared mmap when 
->>> FOPEN_DIRECT_IO is set
->>>    */
->>>   #define FOPEN_DIRECT_IO        (1 << 0)
->>>   #define FOPEN_KEEP_CACHE    (1 << 1)
->>> @@ -322,6 +323,7 @@ struct fuse_file_lock {
->>>   #define FOPEN_STREAM        (1 << 4)
->>>   #define FOPEN_NOFLUSH        (1 << 5)
->>>   #define FOPEN_PARALLEL_DIRECT_WRITES    (1 << 6)
->>> +#define FOPEN_DIRECT_IO_SHARED_MMAP    (1 << 7)
->>
->> Thanks, that is what I had in my mind as well.
->>
->> I don't have a strong opinion on it (so don't change it before Miklos 
->> commented), but maybe FOPEN_DIRECT_IO_WEAK? Just in case there would 
->> be later on other conditions that need to be weakened? The comment 
->> would say then something like
->> "Weakens FOPEN_DIRECT_IO enforcement, allows MAP_SHARED mmap"
->>
->> Thanks,
->> Bernd
->>
-> 
-> Hi Bernd,
-> 
-> BTW, I have another question:
-> 
-> ```
-> 
->    static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
-> {
->            struct fuse_file *ff = file->private_data;
-> 
->            /* DAX mmap is superior to direct_io mmap */
->            if (FUSE_IS_DAX(file_inode(file)))
->                    return fuse_dax_mmap(file, vma);
-> 
->            if (ff->open_flags & FOPEN_DIRECT_IO) {
->                    /* Can't provide the coherency needed for MAP_SHARED */
->                    if (vma->vm_flags & VM_MAYSHARE)
->                            return -ENODEV;
-> 
-> invalidate_inode_pages2(file->f_mapping);
-> 
->                    return generic_file_mmap(file, vma);
-> }
-> 
->            if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & 
-> VM_MAYWRITE))
-> fuse_link_write_file(file);
-> 
-> file_accessed(file);
->            vma->vm_ops = &fuse_file_vm_ops;
->            return 0;
-> }
-> 
-> ```
-> 
-> For FOPEN_DIRECT_IO and !FOPEN_DIRECT_IO case, the former set vm_ops to 
-> generic_file_vm_ops
-> 
-> while the latter set it to fuse_file_vm_ops, and also it does the 
-> fuse_link_write_file() stuff. Why is so?
-> 
-> What causes the difference here?
+One way to express this requirement is with a pair of numbers, 
+deadline time and execution time, where:
 
-Sorry, this slipped through and I had been busy with other work.
+        * deadline time: length of time between event and deadline.
+        * execution time: length of time it takes for processing of event
+                          to occur on a particular hardware platform
+                          (uninterrupted).
 
-Looks rather similar, I actually wonder if fuse_page_mkwrite() shouldn't 
-be replaced with filemap_page_mkwrite. Going back in history, fuse got 
-mmap in 2.6.26 and had page_mkwrite method, but 2.6.26 didn't have the 
-filemap_page_mkwrite method - when it was added fuse was just not updated?
-So that leaves the additional fuse_vma_close, I guess the direct-io code 
-path could also use fuse_file_vm_ops.
+The particular values depend on use-case. For the case
+where the realtime application executes in a virtualized
+guest, an IPI which must be serviced in the host will cause 
+the following sequence of events:
 
+        1) VM-exit
+        2) execution of IPI (and function call)
+        3) VM-entry
 
-Bernd
+Which causes an excess of 50us latency as observed by cyclictest
+(this violates the latency requirement of vRAN application with 1ms TTI,
+for example).
+
+invalidate_bh_lrus calls an IPI on each CPU that has non empty
+per-CPU cache:
+
+        on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
+
+Upon closer investigation, it was found that in current codebase, lookup_bh_lru
+is slower than __find_get_block_slow:
+
+ 114 ns per __find_get_block
+ 68 ns per __find_get_block_slow
+
+So remove the per-CPU buffer_head caching.
+
+Test program:
+
+#define NRLOOPS 200000
+static int __init example_init(void)
+{
+        ktime_t s, e;
+        s64 delta;
+        int i, suc;
+
+        bdev = blkdev_get_by_path("/dev/loop0", FMODE_READ, NULL);
+        if (IS_ERR(bdev)) {
+                printk(KERN_ERR "failed to load /dev/loop0\n");
+                return -ENODEV;
+        }
+
+        suc = 0;
+        delta = 0;
+        for (i=0; i < NRLOOPS; i++) {
+                struct buffer_head *bh;
+
+                s = ktime_get();
+                bh = __find_get_block(bdev, 1, 512);
+                e = ktime_get();
+                if (bh) {
+                                suc++;
+                                __brelse(bh);
+                }
+                delta = delta + ktime_to_ns(ktime_sub(e, s));
+
+        }
+        printk(KERN_ERR "%lld ns per __find_get_block (suc=%d)\n", delta/NRLOOPS, suc);
+
+        suc = 0;
+        delta = 0;
+        for (i=0; i < NRLOOPS; i++) {
+                struct buffer_head *bh;
+
+                s = ktime_get();
+                bh = __find_get_block_slow(bdev, 1);
+                e = ktime_get();
+                if (bh) {
+                        suc++;
+                        __brelse(bh);
+                }
+                delta = delta + ktime_to_ns(ktime_sub(e, s));
+        }
+        printk(KERN_ERR "%lld ns per __find_get_block_slow (suc=%d)\n", delta/NRLOOPS, suc);
+
+        return 0;
+}
+
+Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+
+---
+
+ block/bdev.c                |    2 -
+ fs/buffer.c                 |  209 +++++-------------------------------------------------------------------------------------------------------------------------------------------------------
+ fs/jbd2/revoke.c            |    9 ++----
+ fs/mpage.c                  |    3 --
+ fs/ocfs2/journal.c          |    3 --
+ fs/reiserfs/reiserfs.h      |    2 -
+ include/linux/buffer_head.h |   11 ++------
+ mm/migrate.c                |   12 +-------
+ mm/swap.c                   |    4 --
+ 9 files changed, 21 insertions(+), 234 deletions(-)
+
+diff --git a/block/bdev.c b/block/bdev.c
+index 21c63bfef323..dc511024b11f 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -72,7 +72,6 @@ static void kill_bdev(struct block_device *bdev)
+ 	if (mapping_empty(mapping))
+ 		return;
+ 
+-	invalidate_bh_lrus();
+ 	truncate_inode_pages(mapping, 0);
+ }
+ 
+@@ -82,7 +81,6 @@ void invalidate_bdev(struct block_device *bdev)
+ 	struct address_space *mapping = bdev->bd_inode->i_mapping;
+ 
+ 	if (mapping->nrpages) {
+-		invalidate_bh_lrus();
+ 		lru_add_drain_all();	/* make sure all lru add caches are flushed */
+ 		invalidate_mapping_pages(mapping, 0, -1);
+ 	}
+diff --git a/fs/buffer.c b/fs/buffer.c
+index a7fc561758b1..916d35af8628 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -186,8 +186,8 @@ EXPORT_SYMBOL(end_buffer_write_sync);
+  * may be quite high.  This code could TryLock the page, and if that
+  * succeeds, there is no need to take private_lock.
+  */
+-static struct buffer_head *
+-__find_get_block_slow(struct block_device *bdev, sector_t block)
++struct buffer_head *
++__find_get_block(struct block_device *bdev, sector_t block)
+ {
+ 	struct inode *bd_inode = bdev->bd_inode;
+ 	struct address_space *bd_mapping = bd_inode->i_mapping;
+@@ -227,7 +227,7 @@ __find_get_block_slow(struct block_device *bdev, sector_t block)
+ 	 */
+ 	ratelimit_set_flags(&last_warned, RATELIMIT_MSG_ON_RELEASE);
+ 	if (all_mapped && __ratelimit(&last_warned)) {
+-		printk("__find_get_block_slow() failed. block=%llu, "
++		printk("__find_get_block() failed. block=%llu, "
+ 		       "b_blocknr=%llu, b_state=0x%08lx, b_size=%zu, "
+ 		       "device %pg blocksize: %d\n",
+ 		       (unsigned long long)block,
+@@ -241,6 +241,7 @@ __find_get_block_slow(struct block_device *bdev, sector_t block)
+ out:
+ 	return ret;
+ }
++EXPORT_SYMBOL(__find_get_block);
+ 
+ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
+ {
+@@ -598,10 +599,9 @@ EXPORT_SYMBOL(sync_mapping_buffers);
+  * `bblock + 1' is probably a dirty indirect block.  Hunt it down and, if it's
+  * dirty, schedule it for IO.  So that indirects merge nicely with their data.
+  */
+-void write_boundary_block(struct block_device *bdev,
+-			sector_t bblock, unsigned blocksize)
++void write_boundary_block(struct block_device *bdev, sector_t bblock)
+ {
+-	struct buffer_head *bh = __find_get_block(bdev, bblock + 1, blocksize);
++	struct buffer_head *bh = __find_get_block(bdev, bblock + 1);
+ 	if (bh) {
+ 		if (buffer_dirty(bh))
+ 			write_dirty_buffer(bh, 0);
+@@ -1080,7 +1080,7 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+ 		struct buffer_head *bh;
+ 		int ret;
+ 
+-		bh = __find_get_block(bdev, block, size);
++		bh = __find_get_block(bdev, block);
+ 		if (bh)
+ 			return bh;
+ 
+@@ -1232,137 +1232,6 @@ static struct buffer_head *__bread_slow(struct buffer_head *bh)
+ 	return NULL;
+ }
+ 
+-/*
+- * Per-cpu buffer LRU implementation.  To reduce the cost of __find_get_block().
+- * The bhs[] array is sorted - newest buffer is at bhs[0].  Buffers have their
+- * refcount elevated by one when they're in an LRU.  A buffer can only appear
+- * once in a particular CPU's LRU.  A single buffer can be present in multiple
+- * CPU's LRUs at the same time.
+- *
+- * This is a transparent caching front-end to sb_bread(), sb_getblk() and
+- * sb_find_get_block().
+- *
+- * The LRUs themselves only need locking against invalidate_bh_lrus.  We use
+- * a local interrupt disable for that.
+- */
+-
+-#define BH_LRU_SIZE	16
+-
+-struct bh_lru {
+-	struct buffer_head *bhs[BH_LRU_SIZE];
+-};
+-
+-static DEFINE_PER_CPU(struct bh_lru, bh_lrus) = {{ NULL }};
+-
+-#ifdef CONFIG_SMP
+-#define bh_lru_lock()	local_irq_disable()
+-#define bh_lru_unlock()	local_irq_enable()
+-#else
+-#define bh_lru_lock()	preempt_disable()
+-#define bh_lru_unlock()	preempt_enable()
+-#endif
+-
+-static inline void check_irqs_on(void)
+-{
+-#ifdef irqs_disabled
+-	BUG_ON(irqs_disabled());
+-#endif
+-}
+-
+-/*
+- * Install a buffer_head into this cpu's LRU.  If not already in the LRU, it is
+- * inserted at the front, and the buffer_head at the back if any is evicted.
+- * Or, if already in the LRU it is moved to the front.
+- */
+-static void bh_lru_install(struct buffer_head *bh)
+-{
+-	struct buffer_head *evictee = bh;
+-	struct bh_lru *b;
+-	int i;
+-
+-	check_irqs_on();
+-	bh_lru_lock();
+-
+-	/*
+-	 * the refcount of buffer_head in bh_lru prevents dropping the
+-	 * attached page(i.e., try_to_free_buffers) so it could cause
+-	 * failing page migration.
+-	 * Skip putting upcoming bh into bh_lru until migration is done.
+-	 */
+-	if (lru_cache_disabled()) {
+-		bh_lru_unlock();
+-		return;
+-	}
+-
+-	b = this_cpu_ptr(&bh_lrus);
+-	for (i = 0; i < BH_LRU_SIZE; i++) {
+-		swap(evictee, b->bhs[i]);
+-		if (evictee == bh) {
+-			bh_lru_unlock();
+-			return;
+-		}
+-	}
+-
+-	get_bh(bh);
+-	bh_lru_unlock();
+-	brelse(evictee);
+-}
+-
+-/*
+- * Look up the bh in this cpu's LRU.  If it's there, move it to the head.
+- */
+-static struct buffer_head *
+-lookup_bh_lru(struct block_device *bdev, sector_t block, unsigned size)
+-{
+-	struct buffer_head *ret = NULL;
+-	unsigned int i;
+-
+-	check_irqs_on();
+-	bh_lru_lock();
+-	for (i = 0; i < BH_LRU_SIZE; i++) {
+-		struct buffer_head *bh = __this_cpu_read(bh_lrus.bhs[i]);
+-
+-		if (bh && bh->b_blocknr == block && bh->b_bdev == bdev &&
+-		    bh->b_size == size) {
+-			if (i) {
+-				while (i) {
+-					__this_cpu_write(bh_lrus.bhs[i],
+-						__this_cpu_read(bh_lrus.bhs[i - 1]));
+-					i--;
+-				}
+-				__this_cpu_write(bh_lrus.bhs[0], bh);
+-			}
+-			get_bh(bh);
+-			ret = bh;
+-			break;
+-		}
+-	}
+-	bh_lru_unlock();
+-	return ret;
+-}
+-
+-/*
+- * Perform a pagecache lookup for the matching buffer.  If it's there, refresh
+- * it in the LRU and mark it as accessed.  If it is not present then return
+- * NULL
+- */
+-struct buffer_head *
+-__find_get_block(struct block_device *bdev, sector_t block, unsigned size)
+-{
+-	struct buffer_head *bh = lookup_bh_lru(bdev, block, size);
+-
+-	if (bh == NULL) {
+-		/* __find_get_block_slow will mark the page accessed */
+-		bh = __find_get_block_slow(bdev, block);
+-		if (bh)
+-			bh_lru_install(bh);
+-	} else
+-		touch_buffer(bh);
+-
+-	return bh;
+-}
+-EXPORT_SYMBOL(__find_get_block);
+-
+ /*
+  * __getblk_gfp() will locate (and, if necessary, create) the buffer_head
+  * which corresponds to the passed block_device, block and size. The
+@@ -1375,7 +1244,7 @@ struct buffer_head *
+ __getblk_gfp(struct block_device *bdev, sector_t block,
+ 	     unsigned size, gfp_t gfp)
+ {
+-	struct buffer_head *bh = __find_get_block(bdev, block, size);
++	struct buffer_head *bh = __find_get_block(bdev, block);
+ 
+ 	might_sleep();
+ 	if (bh == NULL)
+@@ -1421,61 +1290,6 @@ __bread_gfp(struct block_device *bdev, sector_t block,
+ }
+ EXPORT_SYMBOL(__bread_gfp);
+ 
+-static void __invalidate_bh_lrus(struct bh_lru *b)
+-{
+-	int i;
+-
+-	for (i = 0; i < BH_LRU_SIZE; i++) {
+-		brelse(b->bhs[i]);
+-		b->bhs[i] = NULL;
+-	}
+-}
+-/*
+- * invalidate_bh_lrus() is called rarely - but not only at unmount.
+- * This doesn't race because it runs in each cpu either in irq
+- * or with preempt disabled.
+- */
+-static void invalidate_bh_lru(void *arg)
+-{
+-	struct bh_lru *b = &get_cpu_var(bh_lrus);
+-
+-	__invalidate_bh_lrus(b);
+-	put_cpu_var(bh_lrus);
+-}
+-
+-bool has_bh_in_lru(int cpu, void *dummy)
+-{
+-	struct bh_lru *b = per_cpu_ptr(&bh_lrus, cpu);
+-	int i;
+-	
+-	for (i = 0; i < BH_LRU_SIZE; i++) {
+-		if (b->bhs[i])
+-			return true;
+-	}
+-
+-	return false;
+-}
+-
+-void invalidate_bh_lrus(void)
+-{
+-	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
+-}
+-EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
+-
+-/*
+- * It's called from workqueue context so we need a bh_lru_lock to close
+- * the race with preemption/irq.
+- */
+-void invalidate_bh_lrus_cpu(void)
+-{
+-	struct bh_lru *b;
+-
+-	bh_lru_lock();
+-	b = this_cpu_ptr(&bh_lrus);
+-	__invalidate_bh_lrus(b);
+-	bh_lru_unlock();
+-}
+-
+ void set_bh_page(struct buffer_head *bh,
+ 		struct page *page, unsigned long offset)
+ {
+@@ -2997,13 +2811,6 @@ EXPORT_SYMBOL(free_buffer_head);
+ 
+ static int buffer_exit_cpu_dead(unsigned int cpu)
+ {
+-	int i;
+-	struct bh_lru *b = &per_cpu(bh_lrus, cpu);
+-
+-	for (i = 0; i < BH_LRU_SIZE; i++) {
+-		brelse(b->bhs[i]);
+-		b->bhs[i] = NULL;
+-	}
+ 	this_cpu_add(bh_accounting.nr, per_cpu(bh_accounting, cpu).nr);
+ 	per_cpu(bh_accounting, cpu).nr = 0;
+ 	return 0;
+diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
+index 4556e4689024..f68b9207737d 100644
+--- a/fs/jbd2/revoke.c
++++ b/fs/jbd2/revoke.c
+@@ -345,7 +345,7 @@ int jbd2_journal_revoke(handle_t *handle, unsigned long long blocknr,
+ 	bh = bh_in;
+ 
+ 	if (!bh) {
+-		bh = __find_get_block(bdev, blocknr, journal->j_blocksize);
++		bh = __find_get_block(bdev, blocknr);
+ 		if (bh)
+ 			BUFFER_TRACE(bh, "found on hash");
+ 	}
+@@ -355,7 +355,7 @@ int jbd2_journal_revoke(handle_t *handle, unsigned long long blocknr,
+ 
+ 		/* If there is a different buffer_head lying around in
+ 		 * memory anywhere... */
+-		bh2 = __find_get_block(bdev, blocknr, journal->j_blocksize);
++		bh2 = __find_get_block(bdev, blocknr);
+ 		if (bh2) {
+ 			/* ... and it has RevokeValid status... */
+ 			if (bh2 != bh && buffer_revokevalid(bh2))
+@@ -466,7 +466,7 @@ int jbd2_journal_cancel_revoke(handle_t *handle, struct journal_head *jh)
+ 	 * state machine will get very upset later on. */
+ 	if (need_cancel) {
+ 		struct buffer_head *bh2;
+-		bh2 = __find_get_block(bh->b_bdev, bh->b_blocknr, bh->b_size);
++		bh2 = __find_get_block(bh->b_bdev, bh->b_blocknr);
+ 		if (bh2) {
+ 			if (bh2 != bh)
+ 				clear_buffer_revoked(bh2);
+@@ -496,8 +496,7 @@ void jbd2_clear_buffer_revoked_flags(journal_t *journal)
+ 			struct buffer_head *bh;
+ 			record = (struct jbd2_revoke_record_s *)list_entry;
+ 			bh = __find_get_block(journal->j_fs_dev,
+-					      record->blocknr,
+-					      journal->j_blocksize);
++					      record->blocknr);
+ 			if (bh) {
+ 				clear_buffer_revoked(bh);
+ 				__brelse(bh);
+diff --git a/fs/mpage.c b/fs/mpage.c
+index 242e213ee064..e50d30a009ce 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -634,8 +634,7 @@ static int __mpage_writepage(struct folio *folio, struct writeback_control *wbc,
+ 	if (boundary || (first_unmapped != blocks_per_page)) {
+ 		bio = mpage_bio_submit_write(bio);
+ 		if (boundary_block) {
+-			write_boundary_block(boundary_bdev,
+-					boundary_block, 1 << blkbits);
++			write_boundary_block(boundary_bdev, boundary_block);
+ 		}
+ 	} else {
+ 		mpd->last_block_in_bio = blocks[blocks_per_page - 1];
+diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+index 25d8072ccfce..12be1471c9aa 100644
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -1212,8 +1212,7 @@ static int ocfs2_force_read_journal(struct inode *inode)
+ 		}
+ 
+ 		for (i = 0; i < p_blocks; i++, p_blkno++) {
+-			bh = __find_get_block(osb->sb->s_bdev, p_blkno,
+-					osb->sb->s_blocksize);
++			bh = __find_get_block(osb->sb->s_bdev, p_blkno);
+ 			/* block not cached. */
+ 			if (!bh)
+ 				continue;
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 1bccf6a2e908..19708f600bce 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -2810,7 +2810,7 @@ struct reiserfs_journal_header {
+ #define journal_hash(t,sb,block) ((t)[_jhashfn((sb),(block)) & JBH_HASH_MASK])
+ 
+ /* We need these to make journal.c code more readable */
+-#define journal_find_get_block(s, block) __find_get_block(SB_JOURNAL(s)->j_dev_bd, block, s->s_blocksize)
++#define journal_find_get_block(s, block) __find_get_block(SB_JOURNAL(s)->j_dev_bd, block)
+ #define journal_getblk(s, block) __getblk(SB_JOURNAL(s)->j_dev_bd, block, s->s_blocksize)
+ #define journal_bread(s, block) __bread(SB_JOURNAL(s)->j_dev_bd, block, s->s_blocksize)
+ 
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index 1520793c72da..084a9d5f53d3 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -227,8 +227,7 @@ static inline void clean_bdev_bh_alias(struct buffer_head *bh)
+ void mark_buffer_async_write(struct buffer_head *bh);
+ void __wait_on_buffer(struct buffer_head *);
+ wait_queue_head_t *bh_waitq_head(struct buffer_head *bh);
+-struct buffer_head *__find_get_block(struct block_device *bdev, sector_t block,
+-			unsigned size);
++struct buffer_head *__find_get_block(struct block_device *bdev, sector_t block);
+ struct buffer_head *__getblk_gfp(struct block_device *bdev, sector_t block,
+ 				  unsigned size, gfp_t gfp);
+ void __brelse(struct buffer_head *);
+@@ -236,9 +235,6 @@ void __bforget(struct buffer_head *);
+ void __breadahead(struct block_device *, sector_t block, unsigned int size);
+ struct buffer_head *__bread_gfp(struct block_device *,
+ 				sector_t block, unsigned size, gfp_t gfp);
+-void invalidate_bh_lrus(void);
+-void invalidate_bh_lrus_cpu(void);
+-bool has_bh_in_lru(int cpu, void *dummy);
+ struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
+ void free_buffer_head(struct buffer_head * bh);
+ void unlock_buffer(struct buffer_head *bh);
+@@ -247,8 +243,7 @@ int sync_dirty_buffer(struct buffer_head *bh);
+ int __sync_dirty_buffer(struct buffer_head *bh, blk_opf_t op_flags);
+ void write_dirty_buffer(struct buffer_head *bh, blk_opf_t op_flags);
+ void submit_bh(blk_opf_t, struct buffer_head *);
+-void write_boundary_block(struct block_device *bdev,
+-			sector_t bblock, unsigned blocksize);
++void write_boundary_block(struct block_device *bdev, sector_t bblock);
+ int bh_uptodate_or_lock(struct buffer_head *bh);
+ int __bh_read(struct buffer_head *bh, blk_opf_t op_flags, bool wait);
+ void __bh_read_batch(int nr, struct buffer_head *bhs[],
+@@ -375,7 +370,7 @@ sb_getblk_gfp(struct super_block *sb, sector_t block, gfp_t gfp)
+ static inline struct buffer_head *
+ sb_find_get_block(struct super_block *sb, sector_t block)
+ {
+-	return __find_get_block(sb->s_bdev, block, sb->s_blocksize);
++	return __find_get_block(sb->s_bdev, block);
+ }
+ 
+ static inline void
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 01cac26a3127..ceecd95cfd49 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -747,9 +747,7 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+ 
+ 	if (check_refs) {
+ 		bool busy;
+-		bool invalidated = false;
+ 
+-recheck_buffers:
+ 		busy = false;
+ 		spin_lock(&mapping->private_lock);
+ 		bh = head;
+@@ -761,14 +759,8 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+ 			bh = bh->b_this_page;
+ 		} while (bh != head);
+ 		if (busy) {
+-			if (invalidated) {
+-				rc = -EAGAIN;
+-				goto unlock_buffers;
+-			}
+-			spin_unlock(&mapping->private_lock);
+-			invalidate_bh_lrus();
+-			invalidated = true;
+-			goto recheck_buffers;
++			rc = -EAGAIN;
++			goto unlock_buffers;
+ 		}
+ 	}
+ 
+diff --git a/mm/swap.c b/mm/swap.c
+index 423199ee8478..64ce7255ff4d 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -765,7 +765,6 @@ static void lru_add_and_bh_lrus_drain(void)
+ 	local_lock(&cpu_fbatches.lock);
+ 	lru_add_drain_cpu(smp_processor_id());
+ 	local_unlock(&cpu_fbatches.lock);
+-	invalidate_bh_lrus_cpu();
+ 	mlock_drain_local();
+ }
+ 
+@@ -798,8 +797,7 @@ static bool cpu_needs_drain(unsigned int cpu)
+ 		folio_batch_count(&fbatches->lru_deactivate) ||
+ 		folio_batch_count(&fbatches->lru_lazyfree) ||
+ 		folio_batch_count(&fbatches->activate) ||
+-		need_mlock_drain(cpu) ||
+-		has_bh_in_lru(cpu, NULL);
++		need_mlock_drain(cpu);
+ }
+ 
+ /*
+
