@@ -2,208 +2,346 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16C1A73DD5F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 13:23:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E527673DD9A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 13:33:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbjFZLXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 07:23:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59402 "EHLO
+        id S229812AbjFZLdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 07:33:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbjFZLXt (ORCPT
+        with ESMTP id S229629AbjFZLdA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 07:23:49 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EE0EE7E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 04:23:32 -0700 (PDT)
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com [209.85.219.200])
+        Mon, 26 Jun 2023 07:33:00 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E27610C;
+        Mon, 26 Jun 2023 04:32:58 -0700 (PDT)
+Received: from localhost.localdomain (unknown [182.179.162.32])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C3457423E6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 11:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1687778610;
-        bh=Z5dfNx1riqTyw4HtL2XD/3WFjVhdY5Y5WByZUvpoBs0=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=ClvSaL6EEMpOBrq47Ued40D9diSkm/N5Ci7eJsEIOGztvf8Ai59hKHXA0T3iCnu+0
-         ziSJKhkM3S/1SfW3WyWVIV/WOhIEZvTBrGFeILyxf0yajbtbYfKRQ6TpGFBpJN5Vmx
-         1UdTZVQio1zeCxzjzcstE6dvimYx8i3G+KSdUl3j641HhhzbEWBlWKB/L3URlOejm6
-         dSRTPYioK54yLL4E/FfGNXWVMoDDWbsNTC7uwgfKD4DlcTol68pFka0byjP/Y2w1nA
-         Qa6hBvg3y2oSko9sxo35LatjYACjG99Xk42NbSwHFGilSxI8rqkZZMdhObRh3v56Wc
-         TpLCVREo+8bQA==
-Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-bfee66a6398so3058773276.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 04:23:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687778608; x=1690370608;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z5dfNx1riqTyw4HtL2XD/3WFjVhdY5Y5WByZUvpoBs0=;
-        b=Fz4ozd6JaC4jKgDivr+Hbf+cuOl66PrCSqQXTWfq/xqUxf4adlahyt2Law3K69lNft
-         xQICgoYWIM0bVvUkIwEvFVZ9/mhCDh0/G+PPUE9DBuMW7xGSF8EWNzrvfv6RWUh+Z79c
-         yK6aY8V0M4cqvu6hSIsNh11hUm0k4S6NGHxEjXQX09ZcLUyxvSeHO2+WdRSC6m6lvy1F
-         7+7KPgh9MBgEM0BixjmvLUxTlSfRqgfaMquP/TKy7EcuQHXH8U69SuNMzPVN4U7CLXyl
-         8GqnL9crpEghIcK7kF/sXMm/5z+LYSPU3i77ujtB6aJDTXI0vxBMIcReCqVR5ThCidRF
-         J39g==
-X-Gm-Message-State: AC+VfDz1dBZUVkRpgg3Dd5AaglNO+Ma0Ptg8l6YY3x71tr4m4ZJEs4Vg
-        HU5s4sOArLQnKCV/ZSmWmhrU5w3DKinWYwqf5AQAolh9TO+TJo9NXb3DSdkHmy9XnCTY2CrSPhe
-        PtnJSqBRZnW7GeltQdYChYtB0BdzIzV5WUxXg/DbRameDYUDW+TfFCO03DTU=
-X-Received: by 2002:a25:ae50:0:b0:bc8:56b0:dbf9 with SMTP id g16-20020a25ae50000000b00bc856b0dbf9mr19465326ybe.24.1687778608059;
-        Mon, 26 Jun 2023 04:23:28 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5AI9fbk3WwSsbUOyoxAuMs9m0uDlRR6nSOYCE2kIustaiqTCjBZBy1yMaUIjS2hoP+K9ivcZ3ctKP2S0PPS9M=
-X-Received: by 2002:a25:ae50:0:b0:bc8:56b0:dbf9 with SMTP id
- g16-20020a25ae50000000b00bc856b0dbf9mr19465313ybe.24.1687778607661; Mon, 26
- Jun 2023 04:23:27 -0700 (PDT)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A71D96607093;
+        Mon, 26 Jun 2023 12:32:45 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1687779176;
+        bh=Z4u0r3sq+rqbYCljYp+tCHxSPkTg1bF2AyNC01d4kYA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AvGKgDFjGy8Kxbf4pOfa9oH/i0OHf7eMb/cWwC0MOy0ifVW9Dv5BR24k+Mh9uqO85
+         fBckCaKssm6UwQ3ghVbWt8gPSuhswmNMM6F2N79dZnTlPQRJ+YS8mN2DIMiGsgAa+p
+         mrvTRsqGH01FVsTdWiVhTTdFxgQGLDfVBRx8WqV3qtggqA4BuT/T209ZdGam48Skpa
+         F/oE4RKJlUEcKieYv6ZNr3uJVY2SSdCkA3hl3Pp+RM1thENC5YG6Q2gowawm8hHBnz
+         bTlEVjst7idNTxuYkni5tEPaWe4VHPOyKYoXvhInweOBl1WINH77HHa2UgdEDg/wEI
+         edp8TQKQD8o0Q==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: [PATCH v21 0/5] Implement IOCTL to get and optionally clear info about PTEs
+Date:   Mon, 26 Jun 2023 16:31:51 +0500
+Message-Id: <20230626113156.1274521-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
- <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com> <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
- <20230609-alufolie-gezaubert-f18ef17cda12@brauner> <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
- <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com> <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
- <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com> <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
- <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com> <64241ff0-9af3-6817-478f-c24a0b9de9b3@redhat.com>
- <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com> <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com>
-In-Reply-To: <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Mon, 26 Jun 2023 13:23:16 +0200
-Message-ID: <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Gregory Farnum <gfarnum@redhat.com>,
-        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URI_TRY_3LD autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 26, 2023 at 4:12=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
->
->
-> On 6/24/23 15:11, Aleksandr Mikhalitsyn wrote:
-> > On Sat, Jun 24, 2023 at 3:37=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wr=
-ote:
-> >> [...]
-> >>
-> >>   > > >
-> >>   > > > I thought about this too and came to the same conclusion, that
-> >> UID/GID
-> >>   > > > based
-> >>   > > > restriction can be applied dynamically, so detecting it on mou=
-nt-time
-> >>   > > > helps not so much.
-> >>   > > >
-> >>   > > For this you please raise one PR to ceph first to support this, =
-and in
-> >>   > > the PR we can discuss more for the MDS auth caps. And after the =
-PR
-> >>   > > getting merged then in this patch series you need to check the
-> >>   > > corresponding option or flag to determine whether could the idma=
-p
-> >>   > > mounting succeed.
-> >>   >
-> >>   > I'm sorry but I don't understand what we want to support here. Do =
-we
-> >> want to
-> >>   > add some new ceph request that allows to check if UID/GID-based
-> >>   > permissions are applied for
-> >>   > a particular ceph client user?
-> >>
-> >> IMO we should prevent user to set UID/GID-based permisions caps from
-> >> ceph side.
-> >>
-> >> As I know currently there is no way to prevent users to set MDS auth
-> >> caps, IMO in ceph side at least we need one flag or option to disable
-> >> this once users want this fs cluster sever for idmap mounts use case.
-> > How this should be visible from the user side? We introducing a new
-> > kernel client mount option,
-> > like "nomdscaps", then pass flag to the MDS and MDS should check that
-> > MDS auth permissions
-> > are not applied (on the mount time) and prevent them from being
-> > applied later while session is active. Like that?
-> >
-> > At the same time I'm thinking about protocol extension that adds 2
-> > additional fields for UID/GID. This will allow to correctly
-> > handle everything. I wanted to avoid any changes to the protocol or
-> > server-side things. But if we want to change MDS side,
-> > maybe it's better then to go this way?
+Changes in v21:
+- Abort walk instead of returning error if WP is to be performed on
+  partial hugetlb
 
-Hi Xiubo,
+*Changes in v20*
+- Correct PAGE_IS_FILE and add PAGE_IS_PFNZERO
 
->
-> There is another way:
->
-> For each client it will have a dedicated client auth caps, something like=
-:
->
-> client.foo
->    key: *key*
->    caps: [mds] allow r, allow rw path=3D/bar
->    caps: [mon] allow r
->    caps: [osd] allow rw tag cephfs data=3Dcephfs_a
+*Changes in v19*
+- Minor changes and interface updates
 
-Do we have any infrastructure to get this caps list on the client side
-right now?
-(I've taken a quick look through the code and can't find anything
-related to this.)
+*Changes in v18*
+- Rebase on top of next-20230613
+- Minor updates
 
->
-> When mounting this client with idmap enabled, then we can just check the
-> above [mds] caps, if there has any UID/GID based permissions set, then
-> fail the mounting.
+*Changes in v17*
+- Rebase on top of next-20230606
+- Minor improvements in PAGEMAP_SCAN IOCTL patch
 
-understood
+*Changes in v16*
+- Fix a corner case
+- Add exclusive PM_SCAN_OP_WP back
 
->
-> That means this kind client couldn't be mounted with idmap enabled.
->
-> Also we need to make sure that once there is a mount with idmap enabled,
-> the corresponding client caps couldn't be append the UID/GID based
-> permissions. This need a patch in ceph anyway IMO.
+*Changes in v15*
+- Build fix (Add missed build fix in RESEND)
 
-So, yeah we will need to effectively block cephx permission changes if
-there is a client mounted with
-an active idmapped mount. Sounds as something that require massive
-changes on the server side.
+*Changes in v14*
+- Fix build error caused by #ifdef added at last minute in some configs
 
-At the same time this will just block users from using idmapped mounts
-along with UID/GID restrictions.
+*Changes in v13*
+- Rebase on top of next-20230414
+- Give-up on using uffd_wp_range() and write new helpers, flush tlb only
+  once
 
-If you want me to change server-side anyways, isn't it better just to
-extend cephfs protocol to properly
-handle UID/GIDs with idmapped mounts? (It was originally proposed by Christ=
-ian.)
-What we need to do here is to add a separate UID/GID fields for ceph
-requests those are creating a new inodes
-(like mknod, symlink, etc).
+*Changes in v12*
+- Update and other memory types to UFFD_FEATURE_WP_ASYNC
+- Rebaase on top of next-20230406
+- Review updates
 
-Kind regards,
-Alex
+*Changes in v11*
+- Rebase on top of next-20230307
+- Base patches on UFFD_FEATURE_WP_UNPOPULATED
+- Do a lot of cosmetic changes and review updates
+- Remove ENGAGE_WP + !GET operation as it can be performed with
+  UFFDIO_WRITEPROTECT
 
->
-> Thanks
->
-> - Xiubo
->
->
->
->
->
-> >
-> > Thanks,
-> > Alex
-> >
-> >> Thanks
-> >>
-> >> - Xiubo
-> >>
->
+*Changes in v10*
+- Add specific condition to return error if hugetlb is used with wp
+  async
+- Move changes in tools/include/uapi/linux/fs.h to separate patch
+- Add documentation
+
+*Changes in v9:*
+- Correct fault resolution for userfaultfd wp async
+- Fix build warnings and errors which were happening on some configs
+- Simplify pagemap ioctl's code
+
+*Changes in v8:*
+- Update uffd async wp implementation
+- Improve PAGEMAP_IOCTL implementation
+
+*Changes in v7:*
+- Add uffd wp async
+- Update the IOCTL to use uffd under the hood instead of soft-dirty
+  flags
+
+*Motivation*
+The real motivation for adding PAGEMAP_SCAN IOCTL is to emulate Windows
+GetWriteWatch() syscall [1]. The GetWriteWatch{} retrieves the addresses of
+the pages that are written to in a region of virtual memory.
+
+This syscall is used in Windows applications and games etc. This syscall is
+being emulated in pretty slow manner in userspace. Our purpose is to
+enhance the kernel such that we translate it efficiently in a better way.
+Currently some out of tree hack patches are being used to efficiently
+emulate it in some kernels. We intend to replace those with these patches.
+So the whole gaming on Linux can effectively get benefit from this. It
+means there would be tons of users of this code.
+
+CRIU use case [2] was mentioned by Andrei and Danylo:
+> Use cases for migrating sparse VMAs are binaries sanitized with ASAN,
+> MSAN or TSAN [3]. All of these sanitizers produce sparse mappings of
+> shadow memory [4]. Being able to migrate such binaries allows to highly
+> reduce the amount of work needed to identify and fix post-migration
+> crashes, which happen constantly.
+
+Andrei's defines the following uses of this code:
+* it is more granular and allows us to track changed pages more
+  effectively. The current interface can clear dirty bits for the entire
+  process only. In addition, reading info about pages is a separate
+  operation. It means we must freeze the process to read information
+  about all its pages, reset dirty bits, only then we can start dumping
+  pages. The information about pages becomes more and more outdated,
+  while we are processing pages. The new interface solves both these
+  downsides. First, it allows us to read pte bits and clear the
+  soft-dirty bit atomically. It means that CRIU will not need to freeze
+  processes to pre-dump their memory. Second, it clears soft-dirty bits
+  for a specified region of memory. It means CRIU will have actual info
+  about pages to the moment of dumping them.
+* The new interface has to be much faster because basic page filtering
+  is happening in the kernel. With the old interface, we have to read
+  pagemap for each page.
+
+*Implementation Evolution (Short Summary)*
+From the definition of GetWriteWatch(), we feel like kernel's soft-dirty
+feature can be used under the hood with some additions like:
+* reset soft-dirty flag for only a specific region of memory instead of
+clearing the flag for the entire process
+* get and clear soft-dirty flag for a specific region atomically
+
+So we decided to use ioctl on pagemap file to read or/and reset soft-dirty
+flag. But using soft-dirty flag, sometimes we get extra pages which weren't
+even written. They had become soft-dirty because of VMA merging and
+VM_SOFTDIRTY flag. This breaks the definition of GetWriteWatch(). We were
+able to by-pass this short coming by ignoring VM_SOFTDIRTY until David
+reported that mprotect etc messes up the soft-dirty flag while ignoring
+VM_SOFTDIRTY [5]. This wasn't happening until [6] got introduced. We
+discussed if we can revert these patches. But we could not reach to any
+conclusion. So at this point, I made couple of tries to solve this whole
+VM_SOFTDIRTY issue by correcting the soft-dirty implementation:
+* [7] Correct the bug fixed wrongly back in 2014. It had potential to cause
+regression. We left it behind.
+* [8] Keep a list of soft-dirty part of a VMA across splits and merges. I
+got the reply don't increase the size of the VMA by 8 bytes.
+
+At this point, we left soft-dirty considering it is too much delicate and
+userfaultfd [9] seemed like the only way forward. From there onward, we
+have been basing soft-dirty emulation on userfaultfd wp feature where
+kernel resolves the faults itself when WP_ASYNC feature is used. It was
+straight forward to add WP_ASYNC feature in userfautlfd. Now we get only
+those pages dirty or written-to which are really written in reality. (PS
+There is another WP_UNPOPULATED userfautfd feature is required which is
+needed to avoid pre-faulting memory before write-protecting [9].)
+
+All the different masks were added on the request of CRIU devs to create
+interface more generic and better.
+
+[1] https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-getwritewatch
+[2] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com
+[3] https://github.com/google/sanitizers
+[4] https://github.com/google/sanitizers/wiki/AddressSanitizerAlgorithm#64-bit
+[5] https://lore.kernel.org/all/bfcae708-db21-04b4-0bbe-712badd03071@redhat.com
+[6] https://lore.kernel.org/all/20220725142048.30450-1-peterx@redhat.com/
+[7] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
+[8] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
+[9] https://lore.kernel.org/all/20230306213925.617814-1-peterx@redhat.com
+[10] https://lore.kernel.org/all/20230125144529.1630917-1-mdanylo@google.com
+
+* Original Cover letter from v8*
+Hello,
+
+Note:
+Soft-dirty pages and pages which have been written-to are synonyms. As
+kernel already has soft-dirty feature inside which we have given up to
+use, we are using written-to terminology while using UFFD async WP under
+the hood.
+
+This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
+the info about page table entries. The following operations are
+supported in this ioctl:
+- Get the information if the pages have been written-to (PAGE_IS_WRITTEN),
+  file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
+  (PAGE_IS_SWAPPED).
+- Write-protect the pages (PAGEMAP_WP_ENGAGE) to start finding which
+  pages have been written-to.
+- Find pages which have been written-to and write protect the pages
+  (atomic PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE)
+
+It is possible to find and clear soft-dirty pages entirely in userspace.
+But it isn't efficient:
+- The mprotect and SIGSEGV handler for bookkeeping
+- The userfaultfd wp (synchronous) with the handler for bookkeeping
+
+Some benchmarks can be seen here[1]. This series adds features that weren't
+present earlier:
+- There is no atomic get soft-dirty/Written-to status and clear present in
+  the kernel.
+- The pages which have been written-to can not be found in accurate way.
+  (Kernel's soft-dirty PTE bit + sof_dirty VMA bit shows more soft-dirty
+  pages than there actually are.)
+
+Historically, soft-dirty PTE bit tracking has been used in the CRIU
+project. The procfs interface is enough for finding the soft-dirty bit
+status and clearing the soft-dirty bit of all the pages of a process.
+We have the use case where we need to track the soft-dirty PTE bit for
+only specific pages on-demand. We need this tracking and clear mechanism
+of a region of memory while the process is running to emulate the
+getWriteWatch() syscall of Windows.
+
+*(Moved to using UFFD instead of soft-dirtyi feature to find pages which
+have been written-to from v7 patch series)*:
+Stop using the soft-dirty flags for finding which pages have been
+written to. It is too delicate and wrong as it shows more soft-dirty
+pages than the actual soft-dirty pages. There is no interest in
+correcting it [2][3] as this is how the feature was written years ago.
+It shouldn't be updated to changed behaviour. Peter Xu has suggested
+using the async version of the UFFD WP [4] as it is based inherently
+on the PTEs.
+
+So in this patch series, I've added a new mode to the UFFD which is
+asynchronous version of the write protect. When this variant of the
+UFFD WP is used, the page faults are resolved automatically by the
+kernel. The pages which have been written-to can be found by reading
+pagemap file (!PM_UFFD_WP). This feature can be used successfully to
+find which pages have been written to from the time the pages were
+write protected. This works just like the soft-dirty flag without
+showing any extra pages which aren't soft-dirty in reality.
+
+The information related to pages if the page is file mapped, present and
+swapped is required for the CRIU project [5][6]. The addition of the
+required mask, any mask, excluded mask and return masks are also required
+for the CRIU project [5].
+
+The IOCTL returns the addresses of the pages which match the specific
+masks. The page addresses are returned in struct page_region in a compact
+form. The max_pages is needed to support a use case where user only wants
+to get a specific number of pages. So there is no need to find all the
+pages of interest in the range when max_pages is specified. The IOCTL
+returns when the maximum number of the pages are found. The max_pages is
+optional. If max_pages is specified, it must be equal or greater than the
+vec_size. This restriction is needed to handle worse case when one
+page_region only contains info of one page and it cannot be compacted.
+This is needed to emulate the Windows getWriteWatch() syscall.
+
+The patch series include the detailed selftest which can be used as an
+example for the uffd async wp test and PAGEMAP_IOCTL. It shows the
+interface usages as well.
+
+[1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+[2] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
+[3] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
+[4] https://lore.kernel.org/all/Y6Hc2d+7eTKs7AiH@x1n
+[5] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com/
+[6] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com/
+
+Regards,
+Muhammad Usama Anjum
+
+Muhammad Usama Anjum (4):
+  fs/proc/task_mmu: Implement IOCTL to get and optionally clear info
+    about PTEs
+  tools headers UAPI: Update linux/fs.h with the kernel sources
+  mm/pagemap: add documentation of PAGEMAP_SCAN IOCTL
+  selftests: mm: add pagemap ioctl tests
+
+Peter Xu (1):
+  userfaultfd: UFFD_FEATURE_WP_ASYNC
+
+ Documentation/admin-guide/mm/pagemap.rst     |   58 +
+ Documentation/admin-guide/mm/userfaultfd.rst |   35 +
+ fs/proc/task_mmu.c                           |  560 +++++++
+ fs/userfaultfd.c                             |   26 +-
+ include/linux/hugetlb.h                      |    1 +
+ include/linux/userfaultfd_k.h                |   21 +-
+ include/uapi/linux/fs.h                      |   54 +
+ include/uapi/linux/userfaultfd.h             |    9 +-
+ mm/hugetlb.c                                 |   34 +-
+ mm/memory.c                                  |   27 +-
+ tools/include/uapi/linux/fs.h                |   54 +
+ tools/testing/selftests/mm/.gitignore        |    2 +
+ tools/testing/selftests/mm/Makefile          |    3 +-
+ tools/testing/selftests/mm/config            |    1 +
+ tools/testing/selftests/mm/pagemap_ioctl.c   | 1464 ++++++++++++++++++
+ tools/testing/selftests/mm/run_vmtests.sh    |    4 +
+ 16 files changed, 2329 insertions(+), 24 deletions(-)
+ create mode 100644 tools/testing/selftests/mm/pagemap_ioctl.c
+ mode change 100644 => 100755 tools/testing/selftests/mm/run_vmtests.sh
+
+-- 
+2.39.2
+
