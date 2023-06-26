@@ -2,84 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 49CE273DE17
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 13:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF3F73DE52
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 13:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230003AbjFZLtp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 07:49:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41578 "EHLO
+        id S229743AbjFZL7P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 07:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229992AbjFZLto (ORCPT
+        with ESMTP id S229523AbjFZL7P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 07:49:44 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42E891AA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 04:49:42 -0700 (PDT)
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com [209.85.219.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 893E93F0F8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 11:49:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1687780179;
-        bh=SkktNo4E/0s7QKbN6YpAzSM3/V8UkU4phNXLLQD/vlk=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=ohXsRUDRoxBckEsmyIdOPc/zMEfYV3TenjWNepHRWCrp3HBfwqeR3GUKWSSmmckhr
-         whhazEfe3zjMmUre/9qg1DfUK/tsC+DrRWv6J3cwp920vvcVX1xmBMdKsCV6AxxZ35
-         ehVwGFxtk7LziiRL/5BLQuVQ/Olbwg51gYyC648BtLJj7l6fWmuMlZewFxSrF7+c5k
-         CpsVDxWCI5pwVidsMGcHYjNURqhr907XW3L9YnfkGILhuZ3EeGc4txCsSHbl5WvWSB
-         xy+ec4R2m6yMWPTbDtO9UtCi4g4Dqsinf3qFcu3ZNq3n+gjOBpMxZjceqwlqFF2/Sy
-         5VDxC75NG6WXg==
-Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-bd6df68105cso4649113276.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 04:49:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687780178; x=1690372178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SkktNo4E/0s7QKbN6YpAzSM3/V8UkU4phNXLLQD/vlk=;
-        b=Fvcq/SfZQN+nHChVLFZSu1d6wTlEI5zCOKgUfBDPgf+Zgfs1OnR+9q+F9u0RRnZpkF
-         txGH/tJ0I6AgC8RiPK2tuW2x8YuM06nysJ93Od3L7bdpmnbHrFyrAa9OpPnX5+d7EnLH
-         nuDD1SQxztHGzJCVKLhat/m2tF6Ap1GJVkijMKZ3hJemI4HtfRxL1yOw0ZYhPGbWQ/Jr
-         +Cj9o5rPPICTf7Kjr2na8slr30n5B8RVjWsDAAj+UiOLU8Wb/Th1Z4Okp0zI44MtLqwf
-         gewU8kkmpQnqF6sGubmXzduIra8Dk4dObqBBanaPLPEUA4BSYQK1IyGB2FPK7bY99g/f
-         cLCQ==
-X-Gm-Message-State: AC+VfDxo1v3qj5/jQp7poZHTnv49xW5RO66zH+OzbBHImuXkCwTDKIaG
-        BGyrLr6XyqYr949WwKexKSH/5sgKapEo6z7brfDXGTIyPjtz6lywn2WjWb6OUMTce1vy/X3rLVL
-        8VQzLyHAj58RqWTMssC3JYNMw+ZpU6qd7AN/AVvbjoCFqs6CTHtoX57KEU6k=
-X-Received: by 2002:a25:4fd4:0:b0:c00:514c:55f with SMTP id d203-20020a254fd4000000b00c00514c055fmr12566176ybb.47.1687780178629;
-        Mon, 26 Jun 2023 04:49:38 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4gOuF0Yoe62/3EKcneuR0gY+4P9xXY339dBnM45ZMCVrydc2zdkwiR0X0tFxSfR4Ye1SpnkWCaNSTYoUDTWo8=
-X-Received: by 2002:a25:4fd4:0:b0:c00:514c:55f with SMTP id
- d203-20020a254fd4000000b00c00514c055fmr12566171ybb.47.1687780178400; Mon, 26
- Jun 2023 04:49:38 -0700 (PDT)
+        Mon, 26 Jun 2023 07:59:15 -0400
+Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C5FF71B7;
+        Mon, 26 Jun 2023 04:59:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
+        s=202305; t=1687780749;
+        bh=4+z7ZIoyhovoKpw400Rj+g0SxUL0TZKEfQaco6Uy+Qc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EC3hBj+VIbQUxleZu5Afv7t6LJKnTnwaUIQ8gtjw5GZYAdPoT6qcmdOXInhUoddOO
+         1SovPdtabzbpSbnXQpiBhiRKN+5dDU4HobVBLXGTjfjSWvxCRmUuMNWcSfs+x0+Hqy
+         wLvSSOaUwqhsYPOleOZluxQ2XukUcmKYC95m2jN4LLMRMt7G599jouUr6Weuklpp88
+         bArSc6V2VS6iTF2he/KGCW8ZeWGSS9UJioEsiIg9lKvcNyqV2pRZ+xZGXGNM1QXyxd
+         vkIC+eSrP4YOig0Omj37F4hdtxeuoLISV4ERa4xtYnSvYPouDcCNV6ySmUHd2EkaFw
+         q1F0B0dLACo6g==
+Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
+        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 1034F1642;
+        Mon, 26 Jun 2023 13:59:09 +0200 (CEST)
+Date:   Mon, 26 Jun 2023 13:59:07 +0200
+From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: Pending splice(file -> FIFO) excludes all other FIFO operations
+ forever (was: ... always blocks read(FIFO), regardless of O_NONBLOCK on read
+ side?)
+Message-ID: <4sdy3yn462gdvubecjp4u7wj7hl5aah4kgsxslxlyqfnv67i72@euauz57cr3ex>
+References: <qk6hjuam54khlaikf2ssom6custxf5is2ekkaequf4hvode3ls@zgf7j5j4ubvw>
+ <20230626-vorverlegen-setzen-c7f96e10df34@brauner>
 MIME-Version: 1.0
-References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
- <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com> <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
- <20230609-alufolie-gezaubert-f18ef17cda12@brauner> <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
- <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com> <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
- <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com> <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
- <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com> <64241ff0-9af3-6817-478f-c24a0b9de9b3@redhat.com>
- <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com>
- <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com> <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
-In-Reply-To: <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Mon, 26 Jun 2023 13:49:27 +0200
-Message-ID: <CAEivzxeBNOeufOraU27Y+qVApVjAoLhzwPnw0HSkqSt6P3MV9w@mail.gmail.com>
-Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Gregory Farnum <gfarnum@redhat.com>,
-        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zy4pzrdco23rr33p"
+Content-Disposition: inline
+In-Reply-To: <20230626-vorverlegen-setzen-c7f96e10df34@brauner>
+User-Agent: NeoMutt/20230517
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
+        RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -87,137 +58,324 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 26, 2023 at 1:23=E2=80=AFPM Aleksandr Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
->
-> On Mon, Jun 26, 2023 at 4:12=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrot=
-e:
-> >
-> >
-> > On 6/24/23 15:11, Aleksandr Mikhalitsyn wrote:
-> > > On Sat, Jun 24, 2023 at 3:37=E2=80=AFAM Xiubo Li <xiubli@redhat.com> =
-wrote:
-> > >> [...]
-> > >>
-> > >>   > > >
-> > >>   > > > I thought about this too and came to the same conclusion, th=
-at
-> > >> UID/GID
-> > >>   > > > based
-> > >>   > > > restriction can be applied dynamically, so detecting it on m=
-ount-time
-> > >>   > > > helps not so much.
-> > >>   > > >
-> > >>   > > For this you please raise one PR to ceph first to support this=
-, and in
-> > >>   > > the PR we can discuss more for the MDS auth caps. And after th=
-e PR
-> > >>   > > getting merged then in this patch series you need to check the
-> > >>   > > corresponding option or flag to determine whether could the id=
-map
-> > >>   > > mounting succeed.
-> > >>   >
-> > >>   > I'm sorry but I don't understand what we want to support here. D=
-o we
-> > >> want to
-> > >>   > add some new ceph request that allows to check if UID/GID-based
-> > >>   > permissions are applied for
-> > >>   > a particular ceph client user?
-> > >>
-> > >> IMO we should prevent user to set UID/GID-based permisions caps from
-> > >> ceph side.
-> > >>
-> > >> As I know currently there is no way to prevent users to set MDS auth
-> > >> caps, IMO in ceph side at least we need one flag or option to disabl=
-e
-> > >> this once users want this fs cluster sever for idmap mounts use case=
-.
-> > > How this should be visible from the user side? We introducing a new
-> > > kernel client mount option,
-> > > like "nomdscaps", then pass flag to the MDS and MDS should check that
-> > > MDS auth permissions
-> > > are not applied (on the mount time) and prevent them from being
-> > > applied later while session is active. Like that?
-> > >
-> > > At the same time I'm thinking about protocol extension that adds 2
-> > > additional fields for UID/GID. This will allow to correctly
-> > > handle everything. I wanted to avoid any changes to the protocol or
-> > > server-side things. But if we want to change MDS side,
-> > > maybe it's better then to go this way?
->
-> Hi Xiubo,
->
-> >
-> > There is another way:
-> >
-> > For each client it will have a dedicated client auth caps, something li=
-ke:
-> >
-> > client.foo
-> >    key: *key*
-> >    caps: [mds] allow r, allow rw path=3D/bar
-> >    caps: [mon] allow r
-> >    caps: [osd] allow rw tag cephfs data=3Dcephfs_a
->
-> Do we have any infrastructure to get this caps list on the client side
-> right now?
-> (I've taken a quick look through the code and can't find anything
-> related to this.)
 
-I've found your PR that looks related https://github.com/ceph/ceph/pull/480=
-27
+--zy4pzrdco23rr33p
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> >
-> > When mounting this client with idmap enabled, then we can just check th=
-e
-> > above [mds] caps, if there has any UID/GID based permissions set, then
-> > fail the mounting.
->
-> understood
->
-> >
-> > That means this kind client couldn't be mounted with idmap enabled.
-> >
-> > Also we need to make sure that once there is a mount with idmap enabled=
-,
-> > the corresponding client caps couldn't be append the UID/GID based
-> > permissions. This need a patch in ceph anyway IMO.
->
-> So, yeah we will need to effectively block cephx permission changes if
-> there is a client mounted with
-> an active idmapped mount. Sounds as something that require massive
-> changes on the server side.
->
-> At the same time this will just block users from using idmapped mounts
-> along with UID/GID restrictions.
->
-> If you want me to change server-side anyways, isn't it better just to
-> extend cephfs protocol to properly
-> handle UID/GIDs with idmapped mounts? (It was originally proposed by Chri=
-stian.)
-> What we need to do here is to add a separate UID/GID fields for ceph
-> requests those are creating a new inodes
-> (like mknod, symlink, etc).
->
-> Kind regards,
-> Alex
->
-> >
-> > Thanks
-> >
-> > - Xiubo
-> >
-> >
-> >
-> >
-> >
-> > >
-> > > Thanks,
-> > > Alex
-> > >
-> > >> Thanks
-> > >>
-> > >> - Xiubo
-> > >>
-> >
+On Mon, Jun 26, 2023 at 11:32:16AM +0200, Christian Brauner wrote:
+> On Mon, Jun 26, 2023 at 03:12:09AM +0200, Ahelenia Ziemia=C5=84ska wrote:
+> > Hi! (starting with get_maintainers.pl fs/splice.c,
+> >      idk if that's right though)
+> >=20
+> > Per fs/splice.c:
+> >  * The traditional unix read/write is extended with a "splice()" operat=
+ion
+> >  * that transfers data buffers to or from a pipe buffer.
+> > so I expect splice() to work just about the same as read()/write()
+> > (and, to a large extent, it does so).
+> >=20
+> > Thus, a refresher on pipe read() semantics
+> > (quoting Issue 8 Draft 3; Linux when writing with write()):
+> > 60746  When attempting to read from an empty pipe or FIFO:
+> > 60747  =E2=80=A2 If no process has the pipe open for writing, read( ) s=
+hall return 0 to indicate end-of-file.
+> > 60748  =E2=80=A2 If some process has the pipe open for writing and O_NO=
+NBLOCK is set, read( ) shall return
+> > 60749    =E2=88=921 and set errno to [EAGAIN].
+> > 60750  =E2=80=A2 If some process has the pipe open for writing and O_NO=
+NBLOCK is clear, read( ) shall
+> > 60751    block the calling thread until some data is written or the pip=
+e is closed by all processes that
+> > 60752    had the pipe open for writing.
+> >=20
+> > However, I've observed that this is not the case when splicing from
+> > something that sleeps on read to a pipe, and that in that case all
+> > readers block, /including/ ones that are reading from fds with
+> > O_NONBLOCK set!
+> >=20
+> > As an example, consider these two programs:
+> > -- >8 --
+> > // wr.c
+> > #define _GNU_SOURCE
+> > #include <fcntl.h>
+> > #include <stdio.h>
+> > int main() {
+> >   while (splice(0, 0, 1, 0, 128 * 1024 * 1024, 0) > 0)
+> >     ;
+> >   fprintf(stderr, "wr: %m\n");
+> > }
+> > -- >8 --
+> >=20
+> > -- >8 --
+> > // rd.c
+> > #define _GNU_SOURCE
+> > #include <errno.h>
+> > #include <fcntl.h>
+> > #include <stdio.h>
+> > #include <unistd.h>
+> > int main() {
+> >   fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK);
+> >=20
+> >   char buf[64 * 1024] =3D {};
+> >   for (ssize_t rd;;) {
+> > #if 1
+> >     while ((rd =3D read(0, buf, sizeof(buf))) =3D=3D -1 && errno =3D=3D=
+ EINTR)
+> >       ;
+> > #else
+> >     while ((rd =3D splice(0, 0, 1, 0, 128 * 1024 * 1024, 0)) =3D=3D -1 =
+&&
+> >            errno =3D=3D EINTR)
+> >       ;
+> > #endif
+> >     fprintf(stderr, "rd=3D%zd: %m\n", rd);
+> >     write(1, buf, rd);
+> >=20
+> >     errno =3D 0;
+> >     sleep(1);
+> >   }
+> > }
+> > -- >8 --
+> >=20
+> > Thus:
+> > -- >8 --
+> > a$ make rd wr
+> > a$ mkfifo fifo
+> > a$ ./rd < fifo                           b$ echo qwe > fifo
+> > rd=3D4: Success
+> > qwe
+> > rd=3D0: Success
+> > rd=3D0: Success                            b$ sleep 2 > fifo
+> > rd=3D-1: Resource temporarily unavailable
+> > rd=3D-1: Resource temporarily unavailable
+> > rd=3D0: Success
+> > rd=3D0: Success                           =20
+> > rd=3D-1: Resource temporarily unavailable  b$ /bin/cat > fifo
+> > rd=3D-1: Resource temporarily unavailable
+> > rd=3D4: Success                            abc
+> > abc
+> > rd=3D-1: Resource temporarily unavailable
+> > rd=3D4: Success                            def
+> > def
+> > rd=3D0: Success                            ^D
+> > rd=3D0: Success
+> > rd=3D0: Success                            b$ ./wr > fifo
+> > -- >8 --
+> > and nothing. Until you actually type a line (or a few) into teletype b
+> > so that the splice completes, at which point so does the read.
+> >=20
+> > An even simpler case is=20
+> > -- >8 --
+> > $ ./wr | ./rd
+> > abc
+> > def
+> > rd=3D8: Success
+> > abc
+> > def
+> > ghi
+> > jkl
+> > rd=3D8: Success
+> > ghi
+> > jkl
+> > ^D
+> > wr: Success
+> > rd=3D-1: Resource temporarily unavailable
+> > rd=3D0: Success
+> > rd=3D0: Success
+> > -- >8 --
+> >=20
+> > splice flags don't do anything.
+> > Tested on bookworm (6.1.27-1) and Linus' HEAD (v6.4-rc7-234-g547cc9be86=
+f4).
+> >=20
+> > You could say this is a "denial of service", since this is a valid
+> > way of following pipes (and, sans SIGIO, the only portable one),
+> splice() may block for any of the two file descriptors if they don't
+> have O_NONBLOCK set even if SPLICE_F_NONBLOCK is raised.
+>=20
+> SPLICE_F_NONBLOCK in splice_file_to_pipe() is only relevant if the pipe
+> is full. If the pipe isn't full then the write is attempted. That of
+> course involves reading the data to splice from the source file. If the
+> source file isn't O_NONBLOCK that read may block holding pipe_lock().
+>=20
+> If you raise O_NONBLOCK on the source fd in wr.c then your problems go
+> away. This is pretty long-standing behavior.
+I don't see how this is relevant here. Whether the writer splice blocks
+=E2=80=92 or how it behaves at all =E2=80=92 doesn't matter.
+
+The /reader/ demands non-blocking reads. Just by running a splice()
+we've managed to permanently hang the reader in a way that's fully
+impervious to everything.
+
+Actually, hold that: in testing this on an actual program that relies on
+this (nullmailer), I've found that trying to /open the FIFO/ also hangs
+forever, in that same signal-impervious state.
+
+To wit:
+  $ ps 3766
+    PID TTY      STAT   TIME COMMAND
+   3766 ?        Ss     0:01 /usr/sbin/nullmailer-send
+  $ ls -l /proc/3766/fd
+  total 0
+  lr-x------ 1 mail mail 64 Jun 14 15:03 0 -> /dev/null
+  lrwx------ 1 mail mail 64 Jun 14 15:03 1 -> 'socket:[81721760]'
+  lrwx------ 1 mail mail 64 Jun 14 15:03 2 -> 'socket:[81721760]'
+  lr-x------ 1 mail mail 64 Apr 28 15:38 3 -> 'pipe:[81721763]'
+  l-wx------ 1 mail mail 64 Jun 14 15:03 4 -> 'pipe:[81721763]'
+  lr-x------ 1 mail mail 64 Jun 14 15:03 5 -> /var/spool/nullmailer/trigger
+  lrwx------ 1 mail mail 64 Jun 14 15:03 9 -> /dev/null
+  # cat /proc/3766/fdinfo/5
+  pos:    0
+  flags:  0104000
+  mnt_id: 64
+  ino:    393969
+  # < /proc/3766/fdinfo/5 fdinfo
+  O_RDONLY        O_NONBLOCK O_LARGEFILE
+  # strace -yp 3766 &
+  strace: Process 3766 attached
+  $ strace out/cmd/cat > /var/spool/nullmailer/trigger
+  [cat] (normal libc setup)
+  [cat] splice(0, NULL, 1, NULL, 134217728, SPLICE_F_MOVE|SPLICE_F_MOREa
+  [cat] ) =3D 2
+  [cat] splice(0, NULL, 1, NULL, 134217728, SPLICE_F_MOVE|SPLICE_F_MORE
+  [nullmailer] pselect6(6, [5</var/spool/nullmailer/trigger>], NULL, NULL, =
+{tv_sec=3D86397, tv_nsec=3D624894145}, NULL) =3D 1 (in [5], left {tv_sec=3D=
+86394, tv_nsec=3D841299215})
+  [nullmailer] write(1<socket:[81721760]>, "Trigger pulled.\n", 16) =3D 16
+  [nullmailer] read(5</var/spool/nullmailer/trigger>,
+and
+  $ strace -y sh -c 'echo zupa > /var/spool/nullmailer/trigger'
+  (...whatever shell setup)
+  rt_sigaction(SIGTERM, {sa_handler=3DSIG_DFL, sa_mask=3D~[RTMIN RT_1], sa_=
+flags=3DSA_RESTORER, sa_restorer=3D0xf7d21bb0}, NULL, 8) =3D 0
+  openat(AT_FDCWD, "/var/spool/nullmailer/trigger", O_WRONLY|O_CREAT|O_TRUN=
+C, 0666
+
+This is a "you've lost" situation to me. This system will /never/
+send mail now, and any mailer program will also hang forever
+(again, to wit:
+   # echo zupa | strace -yfo /tmp/ss mail root
+ does hang forever and /tmp/ss ends in
+   16915 close(6</var/spool/nullmailer/queue>) =3D 0
+   16915 unlink("/var/spool/nullmailer/tmp/16915") =3D 0
+   16915 openat(AT_FDCWD, "/var/spool/nullmailer/trigger", O_WRONLY|O_NONBL=
+OCK
+ )
+which means that, on this system, I will never get events from smartd
+or ZED, so fuck me if I wanted to get "scrub errored" or "disk
+will die soon" notifications (in pre-2.0.0 ZED this would also have
+ broken autoreplace=3Don since it waited synchronously),
+or from other monitoring, so again fuck me if I wanted to get
+overheating/packet drops/whatever notifications,
+or again fuck me if I wanted to get cron mail.
+In many ways I've brought the system down (or will have done in like a
+day once some mails go out) by sending a mail weird.
+
+
+Naturally systemd stopping nullmailer failed after a few minutes with
+  =C3=97 nullmailer.service - Nullmailer relay-only MTA
+       Loaded: loaded (/lib/systemd/system/nullmailer.service; enabled; pre=
+set: enabled)
+       Active: failed (Result: timeout) since Mon 2023-06-26 13:10:02 CEST;=
+ 6min ago
+     Duration: 1month 4w 10h 55min 29.666s
+         Docs: man:nullmailer(7)
+     Main PID: 3766
+        Tasks: 1 (limit: 4673)
+       Memory: 3.1M
+          CPU: 1min 26.893s
+       CGroup: /system.slice/nullmailer.service
+               =E2=94=94=E2=94=803766 /usr/sbin/nullmailer-send
+ =20
+  Jun 26 13:05:32 szarotka systemd[1]: nullmailer.service: State 'stop-sigt=
+erm' timed out. Killing.
+  Jun 26 13:05:32 szarotka systemd[1]: nullmailer.service: Killing process =
+3766 (nullmailer-send) with signal SIGKILL.
+  Jun 26 13:07:02 szarotka systemd[1]: nullmailer.service: Processes still =
+around after SIGKILL. Ignoring.
+  Jun 26 13:08:32 szarotka systemd[1]: nullmailer.service: State 'final-sig=
+term' timed out. Killing.
+  Jun 26 13:08:32 szarotka systemd[1]: nullmailer.service: Killing process =
+3766 (nullmailer-send) with signal SIGKILL.
+  Jun 26 13:10:02 szarotka systemd[1]: nullmailer.service: Processes still =
+around after final SIGKILL. Entering failed mode.
+  Jun 26 13:10:02 szarotka systemd[1]: nullmailer.service: Failed with resu=
+lt 'timeout'.
+  Jun 26 13:10:02 szarotka systemd[1]: nullmailer.service: Unit process 376=
+6 (nullmailer-send) remains running after unit s>
+  Jun 26 13:10:02 szarotka systemd[1]: Stopped nullmailer.service - Nullmai=
+ler relay-only MTA.
+  Jun 26 13:10:02 szarotka systemd[1]: nullmailer.service: Consumed 1min 26=
+=2E893s CPU time.
+
+But not to fret! Maybe we can still kill it with the cgroup! No:
+  # strace -y sh -c 'echo 1 > /sys/fs/cgroup/system.slice/nullmailer.servic=
+e/cgroup.kill'
+  ...
+  dup2(3</sys/fs/cgroup/system.slice/nullmailer.service/cgroup.kill>, 1) =
+=3D 1</sys/fs/cgroup/system.slice/nullmailer.service/cgroup.kill>
+  close(3</sys/fs/cgroup/system.slice/nullmailer.service/cgroup.kill>) =3D 0
+  write(1</sys/fs/cgroup/system.slice/nullmailer.service/cgroup.kill>, "1\n=
+", 2) =3D 2
+  ...
+This completes, sure, but doesn't do anything at all
+(admittedly, I'm not a cgroup expert, but it did work on other,
+ non-poisoned, cgroups, so I'd expect it to work).
+
+Opening the FIFO with O_NONBLOCK also hangs, obviously.
+Killing the splicer restores order, as expected.
+
+> Splice would have to be
+> refactored to not rely on pipe_lock(). That's likely major work with a
+> good portion of regressions if the past is any indication.
+That's likely; however, it =E2=80=92 or an equivalent solution =E2=80=92 wo=
+uld
+probably be a good idea to do, on balance of all my points above,
+I think.
+
+> If you need that ability to fully async read from a pipe with splice
+> rn then io_uring will at least allow you to punt that read into an async
+> worker thread afaict.
+I need my system to not be hanged by any user with a magic syscall.
+I think you've confused the splice bit as being contentious =E2=80=92 I don=
+'t
+care, and couldn't care less about how this is triggered =E2=80=92 the issu=
+e is
+that a splice fully excludes /ALL OTHER/ operations on a pipe,
+and zombifies all processes that try.
+
+Consider the case where messages arrive at a collection pipe
+(this is well-specified and well-used with O_DIRECT and <=3DPIPE_MAX,
+ I don't have a demo off-hand),
+or, hell, even a case where logs do:
+giving any user with append capability effectively exclusive control
+for as long as they want is, well, suboptimal;
+you could analyse this as a stronger variant of
+  https://lore.kernel.org/linux-fsdevel/fa6de786ee1241c6ba54c3cce0b980aa@Ac=
+uMS.aculab.com/t/#e74be7131861099a7f3d82d51dfc96645d26e9a94
+and indeed, my original use-case was this broke tail -f,
+but you know how it be.
+
+--zy4pzrdco23rr33p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSZfYkACgkQvP0LAY0m
+WPFOFQ//UMb0K6WagxO5Slf6UHxsoLlORv50BHV31biJ4IIAPkhx1TUfREU2Z5yo
+WApksyydzWymYwep5y3UzqeNEC9ZsRocXHyr9bsGZtBAXjSbV0PRuyKEe3CgXpL2
+12NnDsN9YLvGl3beLX+BHkpgLRrfGJzY6xTuTwDFsrLqLJ6Ip2uHarIxHjhUWJBY
+bUJ711wkUmdr/Ss1alXDsE1Wlry1g8lGzYSZvS6EJhhjwtnQTnNxmzt0d+HUL02N
+JddZ0yXA2Sg/IiqvQQkWud+OU5lIXoyVhtZKkx4U3tdiprlaiKz+TnSbEfjfKNnU
+XVadvfklQL5K6lvr3ckkNPeav02xehmRaoN9f9xpKi1YcuWBeptiRQaSqgq8rFpf
+uPzzeS1W+OR7NLfJTmqQH4ivdEGx+upYO8IYqo/Bg4LafUgAr+FeJ1XkrPLFteNl
+2ERgBFWukDLWu9FuApCyRV5s8eYsZIcpeMinm87vKuXKdyyWRrrw+XWkhdsS21ow
+Js5FzjnohYQjoPUpwQh4uKZrJ7gm7P6Z4fQvkiI7hN/nfQU70ZO/wmmalcrIqu5H
+W/NKLXh5EhM1qxzefBt7wcTkKi/QUt+CBx+298nDGLHWufYSlF40sPX3lpwCgFlz
+8iGPLKFI3tZWwGHB9vJXrGwUmdCdKqwjIfSqiGxghi/kunRRdzI=
+=XpH2
+-----END PGP SIGNATURE-----
+
+--zy4pzrdco23rr33p--
