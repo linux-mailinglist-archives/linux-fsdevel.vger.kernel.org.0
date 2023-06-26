@@ -2,392 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1011873DF0D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFDA973DEE2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:20:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229666AbjFZMZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 08:25:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53820 "EHLO
+        id S230506AbjFZMUf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 08:20:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230020AbjFZMYg (ORCPT
+        with ESMTP id S231295AbjFZMUJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 08:24:36 -0400
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 754562974;
-        Mon, 26 Jun 2023 05:22:52 -0700 (PDT)
-X-AuditID: a67dfc5b-d85ff70000001748-39-64997d6ef944
-From:   Byungchul Park <byungchul@sk.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
-        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        mingo@redhat.com, peterz@infradead.org, will@kernel.org,
-        tglx@linutronix.de, rostedt@goodmis.org, joel@joelfernandes.org,
-        sashal@kernel.org, daniel.vetter@ffwll.ch, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
-        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
-        gregkh@linuxfoundation.org, kernel-team@lge.com,
-        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-        ngupta@vflare.org, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.cz, jlayton@kernel.org, dan.j.williams@intel.com,
-        hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
-        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
-        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
-        gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
-        boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com,
-        her0gyugyu@gmail.com
-Subject: [PATCH v10 25/25] dept: Track the potential waits of PG_{locked,writeback}
-Date:   Mon, 26 Jun 2023 20:57:00 +0900
-Message-Id: <20230626115700.13873-26-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230626115700.13873-1-byungchul@sk.com>
-References: <20230626115700.13873-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0yTZxiGfb8zHTVfKs7PQ8TUoE4yRAP4NBqD/vHVRENiXMwWo936bTSW
-        Ai1yMDFDDopVDJBAQYmB4koD3cS2BhVKKkWOAzokiKagMDKGnDa2NiBs2mL88+TOdee+fj0c
-        KWuhN3FqbZqo0yo1ckZCSWZDq7/UXq5QRRsskVB8Mxp8/xZQUHnfyoDnl3oEVscVAqaeHYUX
-        /hkEy739JBhLPQiqx0ZIcLSPInBachh4PrEWBn3zDHSV3mAgt+Y+A79NrxDgLSshoN52AnqK
-        TAS4liYpME4xcMeYSwTOnwQsmetYMGdHwLjlNgsrY3uha3SIBuerSKi462Wg2dlFQfujcQKe
-        P6lkYNT6noae9k4KPMWFNPw8Z2Jg2m8mweybZ2HAVUVAQ15A9HbFScDVf/6noaPQFUj3HhAw
-        +LIJQUvBGwJs1iEG3L4ZAuy2UhLe1T5DMH5rloX8m0ss3LlyC8GN/DIK+v/roCHPGwvLi5VM
-        /AHsnpkncZ49Azv9VRTuNgn48e0RFue1vGJxle0itlt245rmKQJXL/hobKu7zmDbQgmLDbOD
-        BPYONTN4rq+PxZ3ly1TClq8lB1WiRp0u6vYcOi9JzGnrIVOun8m0uK1kNurABhTCCXyMMDB3
-        FxkQt5obHIogZvidwvDwEhnMYfw2wV74B21AEo7kaz4TJjvb2GCxjj8lPPZ2E8EtxUcIPznS
-        gljKxwl93d3ooz5cqG9wrXpCArzpV9Mql/GxQo63lQk6Bd4YIpgbm9iPg43CU8swVYSkVWhN
-        HZKptelJSrUmJioxS6vOjPouOcmGAl9lvrzyzSO04DnVingOyUOl0VvLVTJama7PSmpFAkfK
-        w6SfLxpVMqlKmXVJ1CWf013UiPpWtJmj5Buk+/wZKhn/gzJNvCCKKaLuU0twIZuyUcSbq3/F
-        G/f4e69pdnybevzYkZ5+ad341rb1tQ/d90YiE+Iuucue9k78npBw5qvpRsXL5rfF+0/Py6P9
-        r0dTlYrvh7dviPvC0bgr1f5atkOdq7Akn20SYtXtJ8Nd53o9Y2MxiwXx+fawotAXin10mL72
-        /d9pKWWm0ydG1h52/hjVdnBATukTlXt3kzq98gOx23jmUQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0yTZxiGfd/v2Lq6z0LGNxYP6UIwGAGTsTwqETcTfaORuGzJnH9GY7+M
-        Cq2kRQ5GDUeDKERMoB7QFNDSQSf4lR8gVFk5lAJWNghDU4mQbcrkkDnKhKJba+KfJ1euO/f9
-        6+EptZWJ5vXGbMlk1GZqWCWtTN1VvM145qou8ecfBai6mAiBxTIaalscLIzcaUbgaCvEMNO3
-        H35bmkUQfPiIAkv1CIK6qacUtPVPInDZi1gY/X0djAUWWPBWX2ChuKGFhV9ermLw11zG0Cwf
-        gqFL9Ri6l5/TYJlh4bqlGIfOCwzLtiYObAUxMG2/xsHq1HbwTo4z0HPDy4DryVa4etPPQpfL
-        S0N/+zSG0Xu1LEw6/mNgqH+AhpGqCgZ+mq9n4eWSjQJbYIGDX7utGFpLQmt/rbownPvnLQOe
-        iu4Q3bqLYexxJ4L7Zc8wyI5xFnoCsxiccjUFK419CKYr5zgovbjMwfXCSgQXSmtoePTGw0CJ
-        PwmCr2vZPcmkZ3aBIiXOXOJastJksF4kHdeecqTk/hOOWOWTxGmPIw1dM5jUvQowRG46zxL5
-        1WWOlM+NYeIf72LJvM/HkYErQfrwhqPKZJ2Uqc+RTAm705TpRb1DVNb5I3n2HgdVgDykHPG8
-        KHwmtrbtKEcKnhVixYmJZSrMkcJm0VnxJ1OOlDwlNKwVnw/0cuEgQvha7PAP4nCXFmLE223Z
-        Ya0SPhd9g4MozKKwSWxu7X63owj5zuH6d14tJIlFfjd7CSmtaE0TitQbcwxafWZSvDkjPd+o
-        z4s/dsIgo9Df2M6sVrWjxdH9biTwSPOBKnHjFZ2a0eaY8w1uJPKUJlL10WuLTq3SafNPSaYT
-        35tOZkpmN/qEpzVRqgPfSmlq4QdttpQhSVmS6X2KeUV0AYp4tnlbr7/Td9qw9UE7xjHDUUG3
-        Je3fVoUnIWU8mCx6ovo23F358sW+4KmD0VVGQ9euuOidxqyOiQN/721IscsZ2R9q+o7WTA2t
-        ST8rxY6dLU6VSzfVnfvD7vvqJu1sVDR+aqs8pFh5483tT/viwfoE8JV9nGGJeHx8y9sd34jf
-        pWhoc7p2exxlMmv/BwGnJ2kzAwAA
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Mon, 26 Jun 2023 08:20:09 -0400
+Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D570B170D;
+        Mon, 26 Jun 2023 05:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
+        s=202305; t=1687781982;
+        bh=J9L/5JuVInuF5NaqRJE9KRe0F/GfXtqHLAHb+kv1VSQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lLaNAZu+/e6K4mn/eUBVhJNdYsbxdQgEcV1NaGkGhwCAEjqkg4z7iSOQc7hIVFUBL
+         kvHa0E/4uBa8iZ5/lmDndNc3nn5TFO/IWnDMKV+ePcXPRQ3ouPgRsx7e1z1aI5CEx4
+         WOURWP3PIL5qtRulRDJcN/xHiuBmWfdgICXy+VK7rXQ/4Va+LKQriG+A0fPsooBCpH
+         IfUYhIQk5FJycaem+YQKMAB2TnI9pEPNes7rg5b9947sw5z1H/7l7p4eq9UMuciz5B
+         7tWRmzYt5oFxeW9ALFrtAq6VbED4GIJirRmCpl8eh/W3nddzpyy3/a8pdOibg9gIg4
+         lrr8mAwRex/Jw==
+Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
+        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id C7DAAEDC;
+        Mon, 26 Jun 2023 14:19:42 +0200 (CEST)
+Date:   Mon, 26 Jun 2023 14:19:41 +0200
+From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: splice(-> FIFO) never wakes up inotify IN_MODIFY?
+Message-ID: <ndm45oojyc5swspfxejfq4nd635xnx5m35otsireckxp6heduh@2opifgi3b3cw>
+References: <jbyihkyk5dtaohdwjyivambb2gffyjs3dodpofafnkkunxq7bu@jngkdxx65pux>
+ <CAOQ4uxhut2NHc+MY-XOJay5B-OKXU2X5Fe0-6-RCMKt584ft5A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="y5ql4mqia7g2rmqd"
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhut2NHc+MY-XOJay5B-OKXU2X5Fe0-6-RCMKt584ft5A@mail.gmail.com>
+User-Agent: NeoMutt/20230517
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
+        RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently, Dept only tracks the real waits of PG_{locked,writeback} that
-actually happened having gone through __schedule() to avoid false
-positives. However, it ends in limited capacity for deadlock detection,
-because anyway there might be still way more potential dependencies by
-the waits that have yet to happen but may happen in the future so as to
-cause a deadlock.
 
-So let Dept assume that when PG_{locked,writeback} bit gets cleared,
-there might be waits on the bit to be woken up.
+--y5ql4mqia7g2rmqd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Even though false positives may increase with the aggressive tracking,
-it's worth doing it because it's going to be useful in practice. See the
-following link for instance:
+On Mon, Jun 26, 2023 at 09:11:53AM +0300, Amir Goldstein wrote:
+> On Mon, Jun 26, 2023 at 6:54=E2=80=AFAM Ahelenia Ziemia=C5=84ska
+> <nabijaczleweli@nabijaczleweli.xyz> wrote:
+> >
+> > Hi!
+> >
+> > Consider the following programs:
+> > -- >8 --
+> > =3D=3D> ino.c <=3D=3D
+> > #define _GNU_SOURCE
+> > #include <stdio.h>
+> > #include <sys/inotify.h>
+> > #include <unistd.h>
+> > int main() {
+> >   int ino =3D inotify_init1(IN_CLOEXEC);
+> >   inotify_add_watch(ino, "/dev/fd/0", IN_MODIFY);
+> >
+> >   char buf[64 * 1024];
+> >   struct inotify_event ev;
+> >   while (read(ino, &ev, sizeof(ev)) > 0) {
+> >     fprintf(stderr, "%d: mask=3D%x, cook=3D%x, len=3D%x, name=3D%.*s\n"=
+, ev.wd, ev.mask,
+> >             ev.cookie, ev.len, (int)ev.len, ev.name);
+> >     fprintf(stderr, "rd=3D%zd\n", read(0, buf, sizeof(buf)));
+> >   }
+> > }
+> >
+>=20
+> That's a very odd (and wrong) way to implement poll(2).
+> This is not a documented way to use pipes, so it may
+> happen to work with sendfile(2), but there is no guarantee.
+That's what I'm trying to do, yes.
+What's the right way to implement poll here? Because I don't think Linux
+has poll for pipes that behaves like this and POSIX certainly doesn't
+guarantee it, and, indeed, requires that polling a pipe that was hanged
+up instantly returns with POLLHUP forever.
 
-   https://lore.kernel.org/lkml/1674268856-31807-1-git-send-email-byungchul.park@lge.com/
+> > -- >8 --
+> > $ make se sp ino
+> > $ mkfifo fifo
+> > $ ./ino < fifo &
+> > [1] 230
+> > $ echo a > fifo
+> > $ echo a > fifo
+> > 1: mask=3D2, cook=3D0, len=3D0, name=3D
+> > rd=3D4
+> > $ echo c > fifo
+> > 1: mask=3D2, cook=3D0, len=3D0, name=3D
+> > rd=3D2
+> > $ ./se > fifo
+> > abcdef
+> > 1: mask=3D2, cook=3D0, len=3D0, name=3D
+> > asd
+> > ^D
+> > se=3D11: Success
+> > rd=3D11
+> > 1: mask=3D2, cook=3D0, len=3D0, name=3D
+> > rd=3D0
+> > $ ./sp > fifo
+> > abcdefg
+> > asd
+> > dsasdadadad
+> > sp=3D24: Success
+> > $ < sp ./sp > fifo
+> > sp=3D25856: Success
+> > $ < sp ./sp > fifo
+> > ^C
+> > $ echo sp > fifo
+> > ^C
+> > -- >8 --
+> >
+> > Note how in all ./sp > fifo cases, ./ino doesn't wake up!
+> > Note also how, thus, we've managed to fill the pipe buffer with ./sp
+> > (when it transferred 25856), and now we can't /ever/ write there again
+> > (both splicing and normal writes block, since there's no space left in
+> >  the pipe; ./ino hasn't seen this and will never wake up or service the
+> >  pipe):
+> > so we've effectively "denied service" by slickily using a different
+> > syscall to do the write, right?
+> >
+> > I consider this to be unexpected behaviour because (a) obviously and
+> > (b) sendfile() sends the inotify event.
+> >
+> Only applications that do not check for availability
+> of input in the pipe correctly will get "denied service".
+>=20
+> The fact is that relying on inotify IN_MODIFY and IN_ACCESS events
+> for pipes is not a good idea.
+Okay, so how /is/ "correctly" then?
+Sleep in a loop and read non-blockingly?
+splice also breaks that (and, well, the pipe it's splicing to in general)
+  https://lore.kernel.org/linux-fsdevel/qk6hjuam54khlaikf2ssom6custxf5is2ek=
+kaequf4hvode3ls@zgf7j5j4ubvw/t/#u
+but that's beside the point I guess.
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- include/linux/mm_types.h   |   3 +
- include/linux/page-flags.h | 112 +++++++++++++++++++++++++++++++++----
- include/linux/pagemap.h    |   7 ++-
- mm/filemap.c               |  11 +++-
- mm/page_alloc.c            |   3 +
- 5 files changed, 121 insertions(+), 15 deletions(-)
+> splice(2) differentiates three different cases:
+>         if (ipipe && opipe) {
+> ...
+>         if (ipipe) {
+> ...
+>         if (opipe) {
+> ...
+>=20
+> IN_ACCESS will only be generated for non-pipe input
+> IN_MODIFY will only be generated for non-pipe output
+>
+> Similarly FAN_ACCESS_PERM fanotify permission events
+> will only be generated for non-pipe input.
+inotify(7) and fanotify(7) don't squeak on that,
+and imply the *ACCESS stuff is just for reading.
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 3b8475007734..61d982eea8d1 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -19,6 +19,7 @@
- #include <linux/workqueue.h>
- #include <linux/seqlock.h>
- #include <linux/percpu_counter.h>
-+#include <linux/dept.h>
- 
- #include <asm/mmu.h>
- 
-@@ -252,6 +253,8 @@ struct page {
- #ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
- 	int _last_cpupid;
- #endif
-+	struct dept_ext_wgen PG_locked_wgen;
-+	struct dept_ext_wgen PG_writeback_wgen;
- } _struct_page_alignment;
- 
- /*
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 69e93a0c1277..d6ca1148d21d 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -202,6 +202,50 @@ enum pageflags {
- 
- #ifndef __GENERATING_BOUNDS_H
- 
-+#ifdef CONFIG_DEPT
-+#include <linux/kernel.h>
-+#include <linux/dept.h>
-+
-+extern struct dept_map PG_locked_map;
-+extern struct dept_map PG_writeback_map;
-+
-+/*
-+ * Place the following annotations in its suitable point in code:
-+ *
-+ *	Annotate dept_page_set_bit() around firstly set_bit*()
-+ *	Annotate dept_page_clear_bit() around clear_bit*()
-+ *	Annotate dept_page_wait_on_bit() around wait_on_bit*()
-+ */
-+
-+static inline void dept_page_set_bit(struct page *p, int bit_nr)
-+{
-+	if (bit_nr == PG_locked)
-+		dept_request_event(&PG_locked_map, &p->PG_locked_wgen);
-+	else if (bit_nr == PG_writeback)
-+		dept_request_event(&PG_writeback_map, &p->PG_writeback_wgen);
-+}
-+
-+static inline void dept_page_clear_bit(struct page *p, int bit_nr)
-+{
-+	if (bit_nr == PG_locked)
-+		dept_event(&PG_locked_map, 1UL, _RET_IP_, __func__, &p->PG_locked_wgen);
-+	else if (bit_nr == PG_writeback)
-+		dept_event(&PG_writeback_map, 1UL, _RET_IP_, __func__, &p->PG_writeback_wgen);
-+}
-+
-+static inline void dept_page_wait_on_bit(struct page *p, int bit_nr)
-+{
-+	if (bit_nr == PG_locked)
-+		dept_wait(&PG_locked_map, 1UL, _RET_IP_, __func__, 0, -1L);
-+	else if (bit_nr == PG_writeback)
-+		dept_wait(&PG_writeback_map, 1UL, _RET_IP_, __func__, 0, -1L);
-+}
-+#else
-+#define dept_page_set_bit(p, bit_nr)		do { } while (0)
-+#define dept_page_clear_bit(p, bit_nr)		do { } while (0)
-+#define dept_page_wait_on_bit(p, bit_nr)	do { } while (0)
-+#endif
-+
- #ifdef CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
- DECLARE_STATIC_KEY_FALSE(hugetlb_optimize_vmemmap_key);
- 
-@@ -383,44 +427,88 @@ static __always_inline int Page##uname(struct page *page)		\
- #define SETPAGEFLAG(uname, lname, policy)				\
- static __always_inline							\
- void folio_set_##lname(struct folio *folio)				\
--{ set_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); }		\
-+{									\
-+	set_bit(PG_##lname, folio_flags(folio, FOLIO_##policy));	\
-+	dept_page_set_bit(&folio->page, PG_##lname);			\
-+}									\
- static __always_inline void SetPage##uname(struct page *page)		\
--{ set_bit(PG_##lname, &policy(page, 1)->flags); }
-+{									\
-+	set_bit(PG_##lname, &policy(page, 1)->flags);			\
-+	dept_page_set_bit(page, PG_##lname);				\
-+}
- 
- #define CLEARPAGEFLAG(uname, lname, policy)				\
- static __always_inline							\
- void folio_clear_##lname(struct folio *folio)				\
--{ clear_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); }		\
-+{									\
-+	clear_bit(PG_##lname, folio_flags(folio, FOLIO_##policy));	\
-+	dept_page_clear_bit(&folio->page, PG_##lname);			\
-+}									\
- static __always_inline void ClearPage##uname(struct page *page)		\
--{ clear_bit(PG_##lname, &policy(page, 1)->flags); }
-+{									\
-+	clear_bit(PG_##lname, &policy(page, 1)->flags);			\
-+	dept_page_clear_bit(page, PG_##lname);				\
-+}
- 
- #define __SETPAGEFLAG(uname, lname, policy)				\
- static __always_inline							\
- void __folio_set_##lname(struct folio *folio)				\
--{ __set_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); }		\
-+{									\
-+	__set_bit(PG_##lname, folio_flags(folio, FOLIO_##policy));	\
-+	dept_page_set_bit(&folio->page, PG_##lname);			\
-+}									\
- static __always_inline void __SetPage##uname(struct page *page)		\
--{ __set_bit(PG_##lname, &policy(page, 1)->flags); }
-+{									\
-+	__set_bit(PG_##lname, &policy(page, 1)->flags);			\
-+	dept_page_set_bit(page, PG_##lname);				\
-+}
- 
- #define __CLEARPAGEFLAG(uname, lname, policy)				\
- static __always_inline							\
- void __folio_clear_##lname(struct folio *folio)				\
--{ __clear_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); }	\
-+{									\
-+	__clear_bit(PG_##lname, folio_flags(folio, FOLIO_##policy));	\
-+	dept_page_clear_bit(&folio->page, PG_##lname);			\
-+}									\
- static __always_inline void __ClearPage##uname(struct page *page)	\
--{ __clear_bit(PG_##lname, &policy(page, 1)->flags); }
-+{									\
-+	__clear_bit(PG_##lname, &policy(page, 1)->flags);		\
-+	dept_page_clear_bit(page, PG_##lname);				\
-+}
- 
- #define TESTSETFLAG(uname, lname, policy)				\
- static __always_inline							\
- bool folio_test_set_##lname(struct folio *folio)			\
--{ return test_and_set_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); } \
-+{									\
-+	bool ret = test_and_set_bit(PG_##lname, folio_flags(folio, FOLIO_##policy));\
-+	if (!ret)							\
-+		dept_page_set_bit(&folio->page, PG_##lname);		\
-+	return ret;							\
-+}									\
- static __always_inline int TestSetPage##uname(struct page *page)	\
--{ return test_and_set_bit(PG_##lname, &policy(page, 1)->flags); }
-+{									\
-+	bool ret = test_and_set_bit(PG_##lname, &policy(page, 1)->flags);\
-+	if (!ret)							\
-+		dept_page_set_bit(page, PG_##lname);			\
-+	return ret;							\
-+}
- 
- #define TESTCLEARFLAG(uname, lname, policy)				\
- static __always_inline							\
- bool folio_test_clear_##lname(struct folio *folio)			\
--{ return test_and_clear_bit(PG_##lname, folio_flags(folio, FOLIO_##policy)); } \
-+{									\
-+	bool ret = test_and_clear_bit(PG_##lname, folio_flags(folio, FOLIO_##policy));\
-+	if (ret)							\
-+		dept_page_clear_bit(&folio->page, PG_##lname);		\
-+	return ret;							\
-+}									\
- static __always_inline int TestClearPage##uname(struct page *page)	\
--{ return test_and_clear_bit(PG_##lname, &policy(page, 1)->flags); }
-+{									\
-+	bool ret = test_and_clear_bit(PG_##lname, &policy(page, 1)->flags);\
-+	if (ret)							\
-+		dept_page_clear_bit(page, PG_##lname);			\
-+	return ret;							\
-+}
- 
- #define PAGEFLAG(uname, lname, policy)					\
- 	TESTPAGEFLAG(uname, lname, policy)				\
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 29e1f9e76eb6..2843619264d3 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -898,7 +898,12 @@ void folio_unlock(struct folio *folio);
-  */
- static inline bool folio_trylock(struct folio *folio)
- {
--	return likely(!test_and_set_bit_lock(PG_locked, folio_flags(folio, 0)));
-+	bool ret = !test_and_set_bit_lock(PG_locked, folio_flags(folio, 0));
-+
-+	if (ret)
-+		dept_page_set_bit(&folio->page, PG_locked);
-+
-+	return likely(ret);
- }
- 
- /*
-diff --git a/mm/filemap.c b/mm/filemap.c
-index adc49cb59db6..b80c8e2bd5f2 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1097,6 +1097,7 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
- 		if (flags & WQ_FLAG_CUSTOM) {
- 			if (test_and_set_bit(key->bit_nr, &key->folio->flags))
- 				return -1;
-+			dept_page_set_bit(&key->folio->page, key->bit_nr);
- 			flags |= WQ_FLAG_DONE;
- 		}
- 	}
-@@ -1206,6 +1207,7 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
- 	if (wait->flags & WQ_FLAG_EXCLUSIVE) {
- 		if (test_and_set_bit(bit_nr, &folio->flags))
- 			return false;
-+		dept_page_set_bit(&folio->page, bit_nr);
- 	} else if (test_bit(bit_nr, &folio->flags))
- 		return false;
- 
-@@ -1216,8 +1218,10 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
- /* How many times do we accept lock stealing from under a waiter? */
- int sysctl_page_lock_unfairness = 5;
- 
--static struct dept_map __maybe_unused PG_locked_map = DEPT_MAP_INITIALIZER(PG_locked_map, NULL);
--static struct dept_map __maybe_unused PG_writeback_map = DEPT_MAP_INITIALIZER(PG_writeback_map, NULL);
-+struct dept_map __maybe_unused PG_locked_map = DEPT_MAP_INITIALIZER(PG_locked_map, NULL);
-+struct dept_map __maybe_unused PG_writeback_map = DEPT_MAP_INITIALIZER(PG_writeback_map, NULL);
-+EXPORT_SYMBOL(PG_locked_map);
-+EXPORT_SYMBOL(PG_writeback_map);
- 
- static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 		int state, enum behavior behavior)
-@@ -1230,6 +1234,7 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 	unsigned long pflags;
- 	bool in_thrashing;
- 
-+	dept_page_wait_on_bit(&folio->page, bit_nr);
- 	if (bit_nr == PG_locked)
- 		sdt_might_sleep_start(&PG_locked_map);
- 	else if (bit_nr == PG_writeback)
-@@ -1327,6 +1332,7 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 		wait->flags |= WQ_FLAG_DONE;
- 		break;
- 	}
-+	dept_page_set_bit(&folio->page, bit_nr);
- 
- 	/*
- 	 * If a signal happened, this 'finish_wait()' may remove the last
-@@ -1534,6 +1540,7 @@ void folio_unlock(struct folio *folio)
- 	BUILD_BUG_ON(PG_waiters != 7);
- 	BUILD_BUG_ON(PG_locked > 7);
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
-+	dept_page_clear_bit(&folio->page, PG_locked);
- 	if (clear_bit_unlock_is_negative_byte(PG_locked, folio_flags(folio, 0)))
- 		folio_wake_bit(folio, PG_locked);
- }
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 0745aedebb37..57d6c82eb8fd 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -76,6 +76,7 @@
- #include <linux/khugepaged.h>
- #include <linux/buffer_head.h>
- #include <linux/delayacct.h>
-+#include <linux/dept.h>
- #include <asm/sections.h>
- #include <asm/tlbflush.h>
- #include <asm/div64.h>
-@@ -1626,6 +1627,8 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- 	page_mapcount_reset(page);
- 	page_cpupid_reset_last(page);
- 	page_kasan_tag_reset(page);
-+	dept_ext_wgen_init(&page->PG_locked_wgen);
-+	dept_ext_wgen_init(&page->PG_writeback_wgen);
- 
- 	INIT_LIST_HEAD(&page->lru);
- #ifdef WANT_PAGE_VIRTUAL
--- 
-2.17.1
+> sendfile(2) OTOH does not special cases the pipe input
+> case at all and it generates IN_MODIFY for the pipe output
+> case as well.
+>=20
+> My general opinion about IN_ACCESS/IN_MODIFY
+> (as well as FAN_ACCESS_PERM) is that they are not
+> very practical, not well defined for pipes and anyway do
+> not cover all the ways that a file can be modified/accessed
+> (i.e. mmap). Therefore, IMO, there is no incentive to fix
+> something that has been broken for decades unless
+> you have a very real use case - not a made up one.
+My made-up use-case is tail -f, but I can just request
+IN_MOFIFY|IN_ACCESS for pipes, so if that's "correctly" then great.
+If it isn't, then, again, how /do/ you poll pipes.
 
+> If you would insist on fixing this inconsistency, I would be
+> willing to consider a patch that matches sendfile(2) behavior
+> to that of splice(2) and not the other way around.
+Meh, platform-specific API, long-standing behaviour, it's whatever;
+I'll just update *notify(7) to include that *ACCESSses are generated
+for "wants to/has read OR pipe was written".
+
+--y5ql4mqia7g2rmqd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSZglsACgkQvP0LAY0m
+WPHKZg//QxpXVsySg3GHGem9itEDr2rmSZQNm5W7/2RuK/AsbXhNHfIcK9JzOcDb
+a6xzESBWsihIDsKok81MqIfaWMpGNlVi+Qbsb2vWzLkSzKJaRdzGAXhfoZLKYhRK
+HKDiMTzwjvEyUkv7GL27O6spXQmmzFqEeSNI5ncXad+lIfHdKjmGw4/mH+TDWVZ9
+STG8kUBocD+mJEXFd/zKDav+CxM4miUbea+gx8x/QFf53GzUSotJBiE8I44SLTXw
+JO5AFr1LZIz7Owddd+EzEE3Wv2T+r7ras0I107xmPUJfu+nMwEw83/ab42yJk3NF
+l6p+NjkUhX0jWoDHcEJ1wxj+ip+Wdz+s8qwph3VJhR+mZQMqcghlW2aXARmdTWB7
+tVGFDSI7qRNaHjgMjf5hQ+OQwLSOBKgVtW/vVHYKHXdNWDdWGOSWceFsKQIXuzZC
+icRSFX8TqjJQqXxsa12P4IWD+GhMQ/edzYCML1Df91Xp7qve8K15HXThRGEzusxs
+ujeXt+2IwjqseH0x4U6zAXoc+tV/lS2XkyuzmsyKm5yixtwn19PCzDTSJFw3Ugw/
+yIo4myLTFRSwjYMqQ1VB1qKdD9BOqZ+t0+K+D+SpHc6wnpcRp7qjCM0oJZAmcw6e
+eWOCIX1swC0gXCSDWCv/1XNs8e9lphKymOn7biQ7385XySgq46E=
+=z3gq
+-----END PGP SIGNATURE-----
+
+--y5ql4mqia7g2rmqd--
