@@ -2,49 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8D5273DFD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38DC873DFE6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:58:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229812AbjFZMw5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 08:52:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45174 "EHLO
+        id S229663AbjFZM6C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 08:58:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231495AbjFZMwi (ORCPT
+        with ESMTP id S229601AbjFZM6A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 08:52:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABD310D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 05:51:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2144F60E00
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 12:51:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35415C433C8;
-        Mon, 26 Jun 2023 12:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687783906;
-        bh=CRfd+fm3QT1mCmPU7Q0A9vFAajVfwBbhh4Kqthxev6g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UDFC2wjOEcP9nurdOVjtxMKWZZ2nNqGbpk5Yp7InQuQ6Qy5f06wxs0bqjfDQpAUR/
-         F4lG26VzK41wLOEFrGe0rBe3aIW6qDxUVtLINh1Q86bwFXhEZ0FZuFdzCxycidlCrj
-         69arsH3GeYHhZmTqshH5xAq4A/LkN9N1VFIvSyE06ApfHh2ej9w6EMEdJCUZouNnAl
-         tlkA+3oWIKurRSLlfLu8xWq6yAISff7x19PI9PNUAntFYg6iCkE/fgJ9iKtnjD6QKU
-         oTH5mtdn8g1B6els3vfw8N/poZaOmUMzly3dGa0UVT8ImfDgCI22pG5vz4i7o6m/Rh
-         Tzj8plPGi7SHw==
-From:   Damien Le Moal <dlemoal@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] zonefs changes for 6.5-rc1
-Date:   Mon, 26 Jun 2023 21:51:45 +0900
-Message-Id: <20230626125145.1865163-1-dlemoal@kernel.org>
-X-Mailer: git-send-email 2.40.1
+        Mon, 26 Jun 2023 08:58:00 -0400
+Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 40E45125;
+        Mon, 26 Jun 2023 05:57:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
+        s=202305; t=1687784276;
+        bh=A/60Mehy2gEPdHOhKuvb29K5E/lHwYktVCiUO81YhVg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WTzf/tAqpNxj+m/LGdIioFeXMgVqZJt5PqcFowaip6qE56AjZmzNwx7fLtFHQvy9f
+         5Om84sinbt4mZPHgy6coGdlGgupO64W6VLgoQ1kaYcadRlfw8GJi7dZM1dNFTDGCVC
+         qBKLiB6hXx8+0tyNrIQLmtWR31mPFzLOeyTcXaUkFWumiDSXPOE0GbwhEHk0fjbbKI
+         TSNAK9Heaqf0rzBHjoCWTZC8VcmR6tXx9PjHwW5j+HsjjJK+1vRFFMgxfQk5FURUbd
+         cM1mciolye4Aam3k1WOipDJJe/kjD5BX/DvtfFApB+hmNebRsUsAjLuR8RVoEX72Jd
+         8Ufe9xI9r71JA==
+Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
+        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 6C49D131C;
+        Mon, 26 Jun 2023 14:57:56 +0200 (CEST)
+Date:   Mon, 26 Jun 2023 14:57:55 +0200
+From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: splice(-> FIFO) never wakes up inotify IN_MODIFY?
+Message-ID: <vlzqpije6ltf2jga7btkccraxxnucxrcsqbskdnk6s2sarkitb@5huvtml62a5c>
+References: <jbyihkyk5dtaohdwjyivambb2gffyjs3dodpofafnkkunxq7bu@jngkdxx65pux>
+ <CAOQ4uxhut2NHc+MY-XOJay5B-OKXU2X5Fe0-6-RCMKt584ft5A@mail.gmail.com>
+ <ndm45oojyc5swspfxejfq4nd635xnx5m35otsireckxp6heduh@2opifgi3b3cw>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ekt4xsobei4itlj7"
+Content-Disposition: inline
+In-Reply-To: <ndm45oojyc5swspfxejfq4nd635xnx5m35otsireckxp6heduh@2opifgi3b3cw>
+User-Agent: NeoMutt/20230517
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
+        RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,40 +57,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Damien Le Moal <damien.lemoal@opensource.wdc.com>
 
-Linus,
+--ekt4xsobei4itlj7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 9561de3a55bed6bdd44a12820ba81ec416e705a7:
+On Mon, Jun 26, 2023 at 02:19:42PM +0200, Ahelenia Ziemia=C5=84ska wrote:
+> > splice(2) differentiates three different cases:
+> >         if (ipipe && opipe) {
+> > ...
+> >         if (ipipe) {
+> > ...
+> >         if (opipe) {
+> > ...
+> >=20
+> > IN_ACCESS will only be generated for non-pipe input
+> > IN_MODIFY will only be generated for non-pipe output
+> >
+> > Similarly FAN_ACCESS_PERM fanotify permission events
+> > will only be generated for non-pipe input.
+Sorry, I must've misunderstood this as "splicing to a pipe generates
+*ACCESS". Testing reveals this is not the case. So is it really true
+that the only way to poll a pipe is a sleep()/read(O_NONBLOCK) loop?
 
-  Linux 6.4-rc5 (2023-06-04 14:04:27 -0400)
+--ekt4xsobei4itlj7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-are available in the Git repository at:
+-----BEGIN PGP SIGNATURE-----
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs tags/zonefs-6.5-rc1
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSZi1AACgkQvP0LAY0m
+WPHojQ/8Dca03RA9GygaCJ8mDUbT+U/Gqnugp+zljoVBLoiichVLnHP+K80x4mpZ
+IYARMuM4jpDGmaxr/W806OQRi/Sx63PiqDG0FrLGafyrJzUZrvaoYRZ3A7m/tRaV
+hVpJeSOiaeJ4wJo9Z1J7RxCOS9JrrPF3gHdWPza9Hn80pJJDLKO1bPOgJC5vjwQO
+ECrzB1IHa+hqTqrxcM+ZDI72VVvlhPkZnzmwkeHduGVRBJNquaZxTZf+BIfA4NLO
+wFLFB+4VCP3ZLA2GePQMIEVbUyqI8ue7PG039Vs1UTl94aRE0liQcYqajEoeuliu
+YPB8WrzYyNYMKpTTQgETnW8/iBiEJhl3sqNHJD3EBeCih/N8eZs/WRDYtUtj8lqz
+cMiJTxmUDPxBUhnSpV+/pe7uz3A/QDNb+V/y13DIixxYy8YLjbdUzec4diGc1nmV
+Oo6+w4fFwZz6zICyTqwwTOr245iITKSTgBGxyCUlm+7XwApJKygiC4XjeXec9x4X
+QTnrUKBhfmD1eXXcm/FlpF7rLwUXmMjwHWAwWXZrpwozV4ghot6hCJsV8pSJ8ufE
+p9jViAjpUm+ogkQif51mbmqWqYoTpzRur7TL71XeoxVAk7tlba+rlkyCxMNCHMa6
+587F/RtRIvw1JzBxyRpF3vcWgGQpl9Pm8Udcd+Hjk9D76t4EQQY=
+=ZCkQ
+-----END PGP SIGNATURE-----
 
-for you to fetch changes up to 8812387d056957355ef1d026cd38bed3830649db:
-
-  zonefs: set FMODE_CAN_ODIRECT instead of a dummy direct_IO method (2023-06-14 08:51:18 +0900)
-
-----------------------------------------------------------------
-zonefs changes for 6.5
-
- - Modify the synchronous direct write path to use iomap instead of
-   manually coding issuing zone append write BIOs, from me.
-
- - Use the FMODE_CAN_ODIRECT file flag to indicate support from direct
-   IO instead of using the old way with noop direct_io methods, from
-   Christoph.
-
-----------------------------------------------------------------
-Christoph Hellwig (1):
-      zonefs: set FMODE_CAN_ODIRECT instead of a dummy direct_IO method
-
-Damien Le Moal (1):
-      zonefs: use iomap for synchronous direct writes
-
- fs/zonefs/file.c   | 208 ++++++++++++++++++++++++++++-------------------------
- fs/zonefs/super.c  |   9 ++-
- fs/zonefs/zonefs.h |   2 +
- 3 files changed, 121 insertions(+), 98 deletions(-)
+--ekt4xsobei4itlj7--
