@@ -2,75 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D1D73E8F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 20:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22FA073E867
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 20:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232085AbjFZSas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 14:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44814 "EHLO
+        id S231851AbjFZSZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 14:25:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232163AbjFZSao (ORCPT
+        with ESMTP id S232024AbjFZSZQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 14:30:44 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29EB010D7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 11:30:38 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51d9890f368so1676582a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 11:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20221208.gappssmtp.com; s=20221208; t=1687804236; x=1690396236;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AZcNk5dnSDXU4m2jPSZ7WfsjYlgWRPbt7AFCuwHpRlI=;
-        b=A2giA9Bk4mKvzTvcXd56HVsiwY1MA/5G8/WnQQwCVZ8hctrkLzU/3GAMe3NnMn/u8B
-         NpZm0LpDjcPa/23jgeGQIE9+BTpAWccBcl3TjuezoPqZW1+4b0j5ZGeDLqOCAv7C7sFp
-         JL1OsKBifrdJ+5FxvilZVX+CuvLZqgh9nfxjeUrQSIibUTtYtLSAq8NMoe7UJVmspKbc
-         zayiFLsaHpmyUTfrmdmfY4oszU7Hwzf01lVOxLENcx6TrXucpnW4CZIc7ATS2hQTG8AV
-         DM5yRTHfOu2nFktjjCgJQS/sBB5iTMR7nsh+3gOGKz/UWQDG0C7k/yYfxmlrBHEzhoG1
-         sQnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687804236; x=1690396236;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AZcNk5dnSDXU4m2jPSZ7WfsjYlgWRPbt7AFCuwHpRlI=;
-        b=T4lmKNG8J8SlpwSkT+0nc7W+eibnfR6bRArA8cCACgGza/FxXUtslimHU6qiHQjsfU
-         19Z07cp7LsPJJcupWJIdzr7SPKDlDfnRiDzNAlqiEkEqSYpRHYid05Oa9pyunDUecwnp
-         dPdNDlUSMbpyviBfaOYdUdxA2f24CjZu8CjHJO3Guv7FYnFMvR9xjOT2cLMA8DbXo1pE
-         /OET7bBfQ06r5QEMqFZ31EtH1ul4h4/w8OjaRZf4BtcjOgmqmc9nk3i2Os7YgXqQiRGQ
-         SApfQ/9PUI/4kSPZkjWEPOTO7Yu7hksAGlNRKmeBmm0FljtlZej0qlKz7zMDebx5OwbZ
-         /Iwg==
-X-Gm-Message-State: AC+VfDx3SHq649c0QilnhBWtxBmtzMuNXXPRwpsFKga2mKqmRwQJIt9m
-        tGbgCHPIPhGTgKkmiGcpxgU/7Q==
-X-Google-Smtp-Source: ACHHUZ6xUBxB1HXnuaoz07JtPXm+JO2uwoH+KaAJy3XVZENmrd8PqJ16iMuF32RMJGApdeZ6EoFW/Q==
-X-Received: by 2002:a05:6402:7d3:b0:51d:a01d:afd3 with SMTP id u19-20020a05640207d300b0051da01dafd3mr1548108edy.22.1687804236266;
-        Mon, 26 Jun 2023 11:30:36 -0700 (PDT)
-Received: from localhost ([79.142.230.34])
-        by smtp.gmail.com with ESMTPSA id o7-20020aa7dd47000000b0051bf57aa0c6sm3099746edw.87.2023.06.26.11.30.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 11:30:35 -0700 (PDT)
-References: <20230626164752.1098394-1-nmi@metaspace.dk>
- <02730282-88b0-572e-439c-719cfef379bb@wdc.com>
-User-agent: mu4e 1.10.3; emacs 28.2.50
-From:   "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     Damien Le Moal <dlemoal@kernel.org>,
-        "open list:ZONEFS FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
-        "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] zonefs: do not use append if device does not support it
-Date:   Mon, 26 Jun 2023 20:23:48 +0200
-In-reply-to: <02730282-88b0-572e-439c-719cfef379bb@wdc.com>
-Message-ID: <87r0pygjp1.fsf@metaspace.dk>
+        Mon, 26 Jun 2023 14:25:16 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E60E7295A
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 11:24:32 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 695755C006C;
+        Mon, 26 Jun 2023 14:23:57 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 26 Jun 2023 14:23:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1687803837; x=1687890237; bh=pBPcyXVQcMEwlTM+Dnsk9E+eLu5slHNFy0b
+        YTO0+8ok=; b=nogYACru8dE3PcZ7tLo/liTVYtLEQbkCR/n/Veq46eN/K96hwmf
+        amVks5sPCHFgP6LlpW4gGLwjlszjrJT7/HMcszCa3DiQ2sUqP2MSGu5iCHiPzdc1
+        8uoDRJhmciv97Vibct8dkShtw3etNJWaqxI81/PkPJvsflT6C/8SBelOmD1yLgQD
+        2H/I06xtMa4SKEcwbuUGpVYTp7a4c2841p14lD8WbdeEJmKE1eLsEd3iTCiuI9C8
+        mEsR+bN1nOlBXPAI6YsPsE5tKUVfYkyCOAfJE19zLziOMz7Lz7uovPxQmtWF4vtx
+        nkA/F9MhaznVYBcKaixq0k9l975q2m9DG4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1687803837; x=1687890237; bh=pBPcyXVQcMEwlTM+Dnsk9E+eLu5slHNFy0b
+        YTO0+8ok=; b=CvDagTCzTlnfWd2FzmitQORWTIEAA6kBRifUJz0zaJZIfFxWzhF
+        r1VeTeAow7Mrt+b33SQysiMEFSStGKsgmOGf+a6t0rS80WnKbfLr885MSTpNdsXY
+        SYUZsMYvRYyTUK6jN9dnN4czjvApnTzam817DmcGrmAWXKwK9Ww3rr5sSUcTaG7U
+        YId9PDUaTEaGqZ/Pzkqz6l6woI2874xxjYYZ5N0RLi4ik+AOaSj1zR6A70X2ZUEZ
+        LbPdY/rkgZ2X2rmHg4OlbTI1nTtVEL6hgFqmkyJHyrqzIZ6fnQ16H6cUnV0Ryasu
+        rdEW9vxXab/hFkzv7ljcYcIuUQHQsLjhGKA==
+X-ME-Sender: <xms:vNeZZBT27BMOXD8J3-5bV_K7DCXxccIBF4FLXxxYlh5V_VxCdDLYOQ>
+    <xme:vNeZZKzaYNvP7NINEgzCtzP_JRlnEk2ZmYEf4wfvJ-q2MGWUMk1igx47iVb4FKU_l
+    a0Xx9KsAmyXsgcD>
+X-ME-Received: <xmr:vNeZZG37oyJrwuPwQ9HPu-fEj07IrysWiv8hdDCvsSKiTngmR7CKdBNLf0tKKKGNUw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeehfedguddvudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepuegv
+    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
+    hilhdrfhhmqeenucggtffrrghtthgvrhhnpefgudevueevveeiudejveeffeejkeegvddu
+    heekvdefhfetgeegheekkeetleehgfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhn
+    ugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
+X-ME-Proxy: <xmx:vNeZZJBnFaexQnSa9j4JVsTDhwJzn4oyEDAOWsfLgRcvq6XAy2g-FA>
+    <xmx:vNeZZKg8LPTgh_5gQ2-Km3Fy0NTN-AusPs36uPN5DqP_4sKpYMp5qQ>
+    <xmx:vNeZZNpfG9GZsT3GF7c6X9BDAbZMmoIvrvDSJtjOw7RW1q4FKGZZ-A>
+    <xmx:vdeZZCcfho15OIyKs0GDlPGGL-FQLfbBWYWo7aGf_G2n0s476XfZnA>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 26 Jun 2023 14:23:55 -0400 (EDT)
+Message-ID: <7da6719c-23ee-736e-6787-1aad56d22e07@fastmail.fm>
+Date:   Mon, 26 Jun 2023 20:23:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [RFC PATCH] fuse: invalidate page cache pages before direct write
+Content-Language: en-US
+To:     Hao Xu <hao.xu@linux.dev>, fuse-devel@lists.sourceforge.net
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        Wanpeng Li <wanpengli@tencent.com>, cgxu519@mykernel.net
+References: <20230509080128.457489-1-hao.xu@linux.dev>
+ <0625d0cb-2a65-ffae-b072-e14a3f6c7571@linux.dev>
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <0625d0cb-2a65-ffae-b072-e14a3f6c7571@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,36 +92,73 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-Johannes Thumshirn <Johannes.Thumshirn@wdc.com> writes:
 
-> On 26.06.23 18:47, Andreas Hindborg wrote:
->> From: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
->>=20
->> Zonefs will try to use `zonefs_file_dio_append()` for direct sync writes=
- even if
->> device `max_zone_append_sectors` is zero. This will cause the IO to fail=
- as the
->> io vector is truncated to zero. It also causes a call to
->> `invalidate_inode_pages2_range()` with end set to UINT_MAX, which is pro=
-bably
->> not intentional. Thus, do not use append when device does not support it.
->>=20
->
-> I'm sorry but I think it has been stated often enough that for Linux Zone=
- Append
-> is a mandatory feature for a Zoned Block Device. Therefore this path is e=
-ssentially
-> dead code as max_zone_append_sectors will always be greater than zero.
->
-> So this is a clear NAK from my side.
+On 6/8/23 09:17, Hao Xu wrote:
+> Ping...
+> 
+> On 5/9/23 16:01, Hao Xu wrote:
+>> From: Hao Xu <howeyxu@tencent.com>
+>>
+>> In FOPEN_DIRECT_IO, page cache may still be there for a file, direct
+>> write should respect that and invalidate the corresponding pages so
+>> that page cache readers don't get stale data. Another thing this patch
+>> does is flush related pages to avoid its loss.
+>>
+>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>> ---
+>>
+>> Reference:
+>> https://lore.kernel.org/linux-fsdevel/ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev/#:~:text=I%20think%20this%20problem%20exists%20before%20this%20patchset
+>>
+>>   fs/fuse/file.c | 14 +++++++++++++-
+>>   1 file changed, 13 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>> index 89d97f6188e0..edc84c1dfc5c 100644
+>> --- a/fs/fuse/file.c
+>> +++ b/fs/fuse/file.c
+>> @@ -1490,7 +1490,8 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, 
+>> struct iov_iter *iter,
+>>       int write = flags & FUSE_DIO_WRITE;
+>>       int cuse = flags & FUSE_DIO_CUSE;
+>>       struct file *file = io->iocb->ki_filp;
+>> -    struct inode *inode = file->f_mapping->host;
+>> +    struct address_space *mapping = file->f_mapping;
+>> +    struct inode *inode = mapping->host;
+>>       struct fuse_file *ff = file->private_data;
+>>       struct fuse_conn *fc = ff->fm->fc;
+>>       size_t nmax = write ? fc->max_write : fc->max_read;
+>> @@ -1516,6 +1517,17 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, 
+>> struct iov_iter *iter,
+>>               inode_unlock(inode);
+>>       }
+>> +    res = filemap_write_and_wait_range(mapping, pos, pos + count - 1);
+>> +    if (res)
+>> +        return res;
+>> +
+>> +    if (write) {
+>> +        if (invalidate_inode_pages2_range(mapping,
+>> +                idx_from, idx_to)) {
+>> +            return -ENOTBLK;
+>> +        }
+>> +    }
+>> +
+>>       io->should_dirty = !write && user_backed_iter(iter);
+>>       while (count) {
+>>           ssize_t nres;
+> 
 
-OK, thanks for clarifying =F0=9F=91=8D I came across this bugging out while
-playing around with zone append for ublk. The code makes sense if the
-stack expects append to always be present.
+Is this part not working?
 
-I didn't follow the discussion, could you reiterate why the policy is
-that zoned devices _must_ support append?
+	if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
+		if (!write)
+			inode_lock(inode);
+		fuse_sync_writes(inode);
+		if (!write)
+			inode_unlock(inode);
+	}
 
-Best regards,
-Andreas
 
+
+Thanks,
+Bernd
