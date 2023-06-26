@@ -2,253 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F16E73D5F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 04:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1DE673D616
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 05:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230320AbjFZCjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Jun 2023 22:39:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41568 "EHLO
+        id S229864AbjFZDFN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Jun 2023 23:05:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230079AbjFZCjP (ORCPT
+        with ESMTP id S229481AbjFZDFL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Jun 2023 22:39:15 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 616F6E55
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 19:38:56 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1b5466bc5f8so4085475ad.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 19:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687747136; x=1690339136;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q6QMf5QrwEgx53gYkrHQJk/Oxe88JWhNQBmRK1nNjic=;
-        b=eZ/OzEuSP1va8h9QynhzU5yYHQ+k5Y44vcY6mDCRpd4uYok8zZ0DNFzXXnv6chCTYP
-         QaRIKfdgmFRh/edlNhyGENHn1THsId493uC6amGUGRdcRuxbkMLPiJMRjAOYwJw9LqHd
-         ZQ0SY7GKWzUu1O3YaFtUQNEBM4xzXhQLbezCChMFsas34TXstatRTV4SSYMLOJoUaFA5
-         fMxFJ4cyTrL1NbZtL1Q786hkMFMxC+l+zlS7V1ShzmcH/PcXv8FBtl/uwD5n/VLxd8KW
-         Mu58l6JbZC5S58nd5OcU0/e8Luyt6E1bikfVXZ7sk+r3AjTGfEJH6jXn8vLJade6UXCa
-         /ADQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687747136; x=1690339136;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Q6QMf5QrwEgx53gYkrHQJk/Oxe88JWhNQBmRK1nNjic=;
-        b=aL0jbjP8xt4Irg3a4NMyw/eT5UNBWtoe/cGS8OcxKSWsChtzy1bjKJMsF41HoZH7zz
-         NbZoRta0FPizNK8sPcM4FWo1br3gGxzZkXfLNhasnDk/CiRKlbTDL3DXBSMEAQTH/6av
-         MeTLpWnz+WmPp3djAIXQ5izA4zVHaCkJBUkOY1+PeBDLhvetfLtEPwlJFM5bubHI5LAy
-         4lcW9bPxBj36zBtiS+9lzwqiNxgKnfG90PdKyB3TquT0tZFH1QYXcokMmnnG7z9O1OZ9
-         vwzAuEGYCPgYKguDdIxfYHEAK/W4RX5rSJcXwPNY8i8q/u1Md7yB/tXj08sBfV5VhG+L
-         m/kg==
-X-Gm-Message-State: AC+VfDzv6vRM/SQhuNATvKyH1NDzyS1ZPDsjoaGL1qiAHa4ig4AGqqn9
-        unQp430FvtENbRTTewbjVhmr+ixJJJJ0bxwnXmE=
-X-Google-Smtp-Source: ACHHUZ5cnxjR8kxjgCBaymXFtJf7f9vFBanQVBDoxVSmWNORp94cGU11uDWag+IdMCR/84Alk/3kmw==
-X-Received: by 2002:a17:903:230c:b0:1b3:ec39:f42c with SMTP id d12-20020a170903230c00b001b3ec39f42cmr34736346plh.5.1687747135730;
-        Sun, 25 Jun 2023 19:38:55 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id jk17-20020a170903331100b001b54cf5186csm497986plb.126.2023.06.25.19.38.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Jun 2023 19:38:54 -0700 (PDT)
-Message-ID: <81469b33-44cf-8b42-a024-25aa22f9c2a0@kernel.dk>
-Date:   Sun, 25 Jun 2023 20:38:53 -0600
+        Sun, 25 Jun 2023 23:05:11 -0400
+Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F0C37E58;
+        Sun, 25 Jun 2023 20:05:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
+        s=202305; t=1687748699;
+        bh=0edVz5yigfQngdKgWO2r/1KXyXrbS0vsfLBCYGnjUOw=;
+        h=Date:From:To:Subject:From;
+        b=C3nJ8JBAe/bv3WPFX8kM/ZV6WDOz1qbfugBogTvfUUkP3Kn4rvtz0die0lhoLoaId
+         5EFV6ULOBdwC0jI3f2Hg3C6V47JTlujPaqXqyTv5g+7Sq0bOFQl+rnaOSWw0bexuGd
+         iFUPTqj4olJ+EbyeseyUhDNm6OLXeUMkK8FASAyM/ZLZ0g3+JhQoyoVKjhAAOPEc47
+         AEU2pkaf6iOsDcxhjUZ1R6S5mCjQn6cyUb4Zy7Y3NXGfDCOg9qVXhDXCf0/xY60WI1
+         TLLX2TpnlZWrd03k0ztuC2P+xMT/1nTWKlM+/3kQgihl71l6Wzs1dndvtp92EkMm8u
+         /eoqLhpaawdcw==
+Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
+        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 9C072C7A;
+        Mon, 26 Jun 2023 05:04:59 +0200 (CEST)
+Date:   Mon, 26 Jun 2023 05:04:58 +0200
+From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: splice(-> FIFO) never wakes up inotify IN_MODIFY?
+Message-ID: <jbyihkyk5dtaohdwjyivambb2gffyjs3dodpofafnkkunxq7bu@jngkdxx65pux>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] Splice updates for 6.5
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ld2mt2xgxgm2cqup"
+Content-Disposition: inline
+User-Agent: NeoMutt/20230517
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
+        RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
 
-First batch of splice updates via David, the block side depends on these
-and will be going out after this one. In David's words:
+--ld2mt2xgxgm2cqup
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patchset kills off ITER_PIPE to avoid a race between truncate,
-iov_iter_revert() on the pipe and an as-yet incomplete DMA to a bio with
-unpinned/unref'ed pages from an O_DIRECT splice read.  This causes memory
-corruption[2].  Instead, we use filemap_splice_read(), which invokes the
-buffered file reading code and splices from the pagecache into the pipe;
-copy_splice_read(), which bulk-allocates a buffer, reads into it and then
-pushes the filled pages into the pipe; or handle it in filesystem-specific
-code.
+Hi!
 
- (1) Rename direct_splice_read() to copy_splice_read().
+Consider the following programs:
+-- >8 --
+==> ino.c <==
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <sys/inotify.h>
+#include <unistd.h>
+int main() {
+  int ino = inotify_init1(IN_CLOEXEC);
+  inotify_add_watch(ino, "/dev/fd/0", IN_MODIFY);
 
- (2) Simplify the calculations for the number of pages to be reclaimed in
-     copy_splice_read().
+  char buf[64 * 1024];
+  struct inotify_event ev;
+  while (read(ino, &ev, sizeof(ev)) > 0) {
+    fprintf(stderr, "%d: mask=%x, cook=%x, len=%x, name=%.*s\n", ev.wd, ev.mask,
+            ev.cookie, ev.len, (int)ev.len, ev.name);
+    fprintf(stderr, "rd=%zd\n", read(0, buf, sizeof(buf)));
+  }
+}
 
- (3) Turn do_splice_to() into a helper, vfs_splice_read(), so that it can
-     be used by overlayfs and coda to perform the checks on the lower fs.
+==> se.c <==
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <sys/sendfile.h>
+int main() {
+  ssize_t rd, acc = 0;
+  while ((rd = sendfile(1, 0, 0, 128 * 1024 * 1024)) > 0)
+    acc += rd;
+  fprintf(stderr, "se=%zd: %m\n", acc);
+}
 
- (4) Make vfs_splice_read() jump to copy_splice_read() to handle direct-I/O
-     and DAX.
+==> sp.c <==
+#define _GNU_SOURCE
+#include <fcntl.h>
+#include <stdio.h>
+int main() {
+  ssize_t rd, acc = 0;
+  while ((rd = splice(0, 0, 1, 0, 128 * 1024 * 1024, 0)) > 0)
+    acc += rd;
+  fprintf(stderr, "sp=%zd: %m\n", acc);
+}
+-- >8 --
 
- (5) Provide shmem with its own splice_read to handle non-existent pages
-     in the pagecache.  We don't want a ->read_folio() as we don't want to
-     populate holes, but filemap_get_pages() requires it.
+By all means, ./sp | ./ino and ./se | ./ino should be equivalent,
+right?
 
- (6) Provide overlayfs with its own splice_read to call down to a lower
-     layer as overlayfs doesn't provide ->read_folio().
+-- >8 --
+$ make se sp ino
+$ mkfifo fifo
+$ ./ino < fifo &
+[1] 230
+$ echo a > fifo
+$ echo a > fifo
+1: mask=2, cook=0, len=0, name=
+rd=4
+$ echo c > fifo
+1: mask=2, cook=0, len=0, name=
+rd=2
+$ ./se > fifo
+abcdef
+1: mask=2, cook=0, len=0, name=
+asd
+^D
+se=11: Success
+rd=11
+1: mask=2, cook=0, len=0, name=
+rd=0
+$ ./sp > fifo
+abcdefg
+asd
+dsasdadadad
+sp=24: Success
+$ < sp ./sp > fifo
+sp=25856: Success
+$ < sp ./sp > fifo
+^C
+$ echo sp > fifo
+^C
+-- >8 --
 
- (7) Provide coda with its own splice_read to call down to a lower layer as
-     coda doesn't provide ->read_folio().
+Note how in all ./sp > fifo cases, ./ino doesn't wake up!
+Note also how, thus, we've managed to fill the pipe buffer with ./sp
+(when it transferred 25856), and now we can't /ever/ write there again
+(both splicing and normal writes block, since there's no space left in
+ the pipe; ./ino hasn't seen this and will never wake up or service the
+ pipe):
+so we've effectively "denied service" by slickily using a different
+syscall to do the write, right?
 
- (8) Direct ->splice_read to copy_splice_read() in tty, procfs, kernfs
-     and random files as they just copy to the output buffer and don't
-     splice pages.
+I consider this to be unexpected behaviour because (a) obviously and
+(b) sendfile() sends the inotify event.
 
- (9) Provide wrappers for afs, ceph, ecryptfs, ext4, f2fs, nfs, ntfs3,
-     ocfs2, orangefs, xfs and zonefs to do locking and/or revalidation.
+Happens on my linus checkout (v6.4-rc7-234-g547cc9be86f4) and bookworm (6.1.27-1).
 
-(10) Make cifs use filemap_splice_read().
+--ld2mt2xgxgm2cqup
+Content-Type: application/pgp-signature; name="signature.asc"
 
-(11) Replace pointers to generic_file_splice_read() with pointers to
-     filemap_splice_read() as DIO and DAX are handled in the caller;
-     filesystems can still provide their own alternate ->splice_read() op.
+-----BEGIN PGP SIGNATURE-----
 
-(12) Remove generic_file_splice_read().
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSZAFgACgkQvP0LAY0m
+WPEj+xAArngJ5sIFn5AM1VnqV2Q9bCbBOdPAeibWSiD8aa9K5uGlaMRnAalHnHxf
+rckHg8YpQ1gktG5tEME4hBmuPbpFPkbgK9dWgYBQQkuUzsltAav8P5uIof2EIe3y
+Cq0CCEK0Jfw8/8N+X9Fgdw/ZcVgbbWMF6TvOHUPL+tvmdAXf083kJvORt5bV7AgU
+o3BIns27GREBHxJA9sIdxhcHrx4MyldEI4q6Q/Yf2SuITnpBk6S9sjLONF9qVs63
+fuoyr6DAle8/svSA2t1srMwJxYJsZChGBYi6Rec7UJupCGYQLJ3SM1rvmf5M5Kd/
+nBnqw1fiXwTysgnJlpIyLZMjSf4m8akwRTQTW9AzOBfctijbkYzdqZUr9/rYfPTo
+vM7tqV7Az85Ko0q3NL8fmXPYfJcuAeiiFnJlPrLdDxE/lnPmd/LEryucH+DRqVgb
+P98Y3VWOJ/skGmX8BYaGV6hDgQafGaWjwPDCmd0Gq/WHBRnBbfG4P5KQvqlWnbMl
+5SyjS8KSchRU3maBMFnpEcCpSvTqcWRHIpQunfBEdJBVQM5YNTSKy0WwEA6q9Qfb
+mzlsxe8lEnjHz/i8gAclINpljWlUdhFOW1IR6bPGw1XTGpScFZrBogWLkbfh4qY5
+mShDweKYE7u7kUU2XF7MeX2U0mWj/h4RrO2HdTKGYV+jsF8cUt0=
+=lt2X
+-----END PGP SIGNATURE-----
 
-(13) Remove ITER_PIPE and its paraphernalia as generic_file_splice_read()
-     was the only user.
-
-Please pull!
-
-
-The following changes since commit f1fcbaa18b28dec10281551dfe6ed3a3ed80e3d6:
-
-  Linux 6.4-rc2 (2023-05-14 12:51:40 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/for-6.5/splice-2023-06-23
-
-for you to fetch changes up to 9eee8bd81421c5e961cbb1a3c3fa1a06fad545e8:
-
-  splice: kdoc for filemap_splice_read() and copy_splice_read() (2023-05-24 08:42:17 -0600)
-
-----------------------------------------------------------------
-for-6.5/splice-2023-06-23
-
-----------------------------------------------------------------
-David Howells (31):
-      splice: Fix filemap_splice_read() to use the correct inode
-      splice: Make filemap_splice_read() check s_maxbytes
-      splice: Rename direct_splice_read() to copy_splice_read()
-      splice: Clean up copy_splice_read() a bit
-      splice: Make do_splice_to() generic and export it
-      splice: Check for zero count in vfs_splice_read()
-      splice: Make splice from an O_DIRECT fd use copy_splice_read()
-      splice: Make splice from a DAX file use copy_splice_read()
-      shmem: Implement splice-read
-      overlayfs: Implement splice-read
-      coda: Implement splice-read
-      tty, proc, kernfs, random: Use copy_splice_read()
-      net: Make sock_splice_read() use copy_splice_read() by default
-      9p: Add splice_read wrapper
-      afs: Provide a splice-read wrapper
-      ceph: Provide a splice-read wrapper
-      ecryptfs: Provide a splice-read wrapper
-      ext4: Provide a splice-read wrapper
-      f2fs: Provide a splice-read wrapper
-      nfs: Provide a splice-read wrapper
-      ntfs3: Provide a splice-read wrapper
-      ocfs2: Provide a splice-read wrapper
-      orangefs: Provide a splice-read wrapper
-      xfs: Provide a splice-read wrapper
-      zonefs: Provide a splice-read wrapper
-      trace: Convert trace/seq to use copy_splice_read()
-      cifs: Use filemap_splice_read()
-      splice: Use filemap_splice_read() instead of generic_file_splice_read()
-      splice: Remove generic_file_splice_read()
-      iov_iter: Kill ITER_PIPE
-      splice: kdoc for filemap_splice_read() and copy_splice_read()
-
- block/fops.c            |   2 +-
- drivers/char/random.c   |   4 +-
- drivers/tty/tty_io.c    |   4 +-
- fs/9p/vfs_file.c        |  26 ++-
- fs/adfs/file.c          |   2 +-
- fs/affs/file.c          |   2 +-
- fs/afs/file.c           |  20 ++-
- fs/bfs/file.c           |   2 +-
- fs/btrfs/file.c         |   2 +-
- fs/ceph/file.c          |  65 +++++++-
- fs/cifs/cifsfs.c        |  12 +-
- fs/cifs/cifsfs.h        |   3 -
- fs/cifs/file.c          |  16 --
- fs/coda/file.c          |  29 +++-
- fs/cramfs/inode.c       |   2 +-
- fs/ecryptfs/file.c      |  27 ++-
- fs/erofs/data.c         |   2 +-
- fs/exfat/file.c         |   2 +-
- fs/ext2/file.c          |   2 +-
- fs/ext4/file.c          |  13 +-
- fs/f2fs/file.c          |  43 ++++-
- fs/fat/file.c           |   2 +-
- fs/fuse/file.c          |   2 +-
- fs/gfs2/file.c          |   4 +-
- fs/hfs/inode.c          |   2 +-
- fs/hfsplus/inode.c      |   2 +-
- fs/hostfs/hostfs_kern.c |   2 +-
- fs/hpfs/file.c          |   2 +-
- fs/jffs2/file.c         |   2 +-
- fs/jfs/file.c           |   2 +-
- fs/kernfs/file.c        |   2 +-
- fs/minix/file.c         |   2 +-
- fs/nfs/file.c           |  23 ++-
- fs/nfs/internal.h       |   2 +
- fs/nfs/nfs4file.c       |   2 +-
- fs/nilfs2/file.c        |   2 +-
- fs/ntfs/file.c          |   2 +-
- fs/ntfs3/file.c         |  31 +++-
- fs/ocfs2/file.c         |  43 ++++-
- fs/ocfs2/ocfs2_trace.h  |   3 +
- fs/omfs/file.c          |   2 +-
- fs/orangefs/file.c      |  22 ++-
- fs/overlayfs/file.c     |  23 ++-
- fs/proc/inode.c         |   4 +-
- fs/proc/proc_sysctl.c   |   2 +-
- fs/proc_namespace.c     |   6 +-
- fs/ramfs/file-mmu.c     |   2 +-
- fs/ramfs/file-nommu.c   |   2 +-
- fs/read_write.c         |   2 +-
- fs/reiserfs/file.c      |   2 +-
- fs/romfs/mmap-nommu.c   |   2 +-
- fs/splice.c             | 127 +++++++-------
- fs/sysv/file.c          |   2 +-
- fs/ubifs/file.c         |   2 +-
- fs/udf/file.c           |   2 +-
- fs/ufs/file.c           |   2 +-
- fs/vboxsf/file.c        |   2 +-
- fs/xfs/xfs_file.c       |  30 +++-
- fs/xfs/xfs_trace.h      |   2 +-
- fs/zonefs/file.c        |  40 ++++-
- include/linux/fs.h      |   8 +-
- include/linux/splice.h  |   3 +
- include/linux/uio.h     |  14 --
- kernel/trace/trace.c    |   2 +-
- lib/iov_iter.c          | 431 +-----------------------------------------------
- mm/filemap.c            |  31 +++-
- mm/shmem.c              | 134 ++++++++++++++-
- net/socket.c            |   2 +-
- 68 files changed, 694 insertions(+), 621 deletions(-)
-
--- 
-Jens Axboe
-
+--ld2mt2xgxgm2cqup--
